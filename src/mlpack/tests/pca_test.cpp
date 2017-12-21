@@ -226,13 +226,14 @@ BOOST_AUTO_TEST_CASE(RandomizedPCADimensionalityReductionTest)
  */
 BOOST_AUTO_TEST_CASE(QUICPCADimensionalityReductionTest)
 {
+  math::RandomSeed(std::time(NULL));
   arma::mat data, data1;
   data::Load("test_data_3_1000.csv", data);
   data1 = data;
 
   // It isn't guaranteed that the QUIC-SVD will match with the exact SVD method,
   // starting with random samples. If this works 1 of 5 times, I'm fine with
-  // that. All I want to know is that the QUIC-SVD method is  able to solve the
+  // that. All I want to know is that the QUIC-SVD method is able to solve the
   // task and is at least as good as the exact method (plus a little bit for
   // noise).
   size_t successes = 0;
