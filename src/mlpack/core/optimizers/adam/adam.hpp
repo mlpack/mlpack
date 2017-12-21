@@ -6,11 +6,11 @@
  * @author Vivek Pal
  * @author Sourabh Varshney
  *
- * Adam, AdaMax, AMSGrad and Nadam optimizers. Adam is an an algorithm for 
- * first-order gradient-based optimization of stochastic objective 
- * functions, based on adaptive estimates of lower-order moments. 
- * AdaMax is simply a variant of Adam based on the infinity norm. 
- * AMSGrad is another variant of Adam with guaranteed convergence.
+ * Adam, AdaMax, AMSGrad and Nadam optimizers. Adam is an an algorithm for
+ * first-order gradient-based optimization of stochastic objective functions,
+ * based on adaptive estimates of lower-order moments. AdaMax is simply a
+ * variant of Adam based on the infinity norm. AMSGrad is another variant of
+ * Adam with guaranteed convergence.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -25,7 +25,7 @@
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include "adam_update.hpp"
 #include "adamax_update.hpp"
-#include "amsgrad_update.hpp
+#include "amsgrad_update.hpp"
 #include "nadam_update.hpp"
 
 namespace mlpack {
@@ -35,7 +35,7 @@ namespace optimization {
  * Adam is an optimizer that computes individual adaptive learning rates for
  * different parameters from estimates of first and second moments of the
  * gradients. AdaMax is a variant of Adam based on the infinity norm as given
- * in the section 7 of the following paper. Nadam is an optimizer that 
+ * in the section 7 of the following paper. Nadam is an optimizer that
  * combines the Adam and NAG.
  *
  * For more information, see the following.
@@ -55,8 +55,9 @@ namespace optimization {
  * }
  * @endcode
  *
- * For Adam, AdaMax, AMSGrad and Nadam to work, a DecomposableFunctionType template
- * parameter is required. This class must implement the following function:
+ * For Adam, AdaMax, AMSGrad and Nadam to work, a DecomposableFunctionType
+ * template parameter is required. This class must implement the following
+ * function:
  *
  *   size_t NumFunctions();
  *   double Evaluate(const arma::mat& coordinates,
