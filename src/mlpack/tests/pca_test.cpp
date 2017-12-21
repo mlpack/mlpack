@@ -301,21 +301,21 @@ BOOST_AUTO_TEST_CASE(PCAScalingTest)
   // The first two components of the eigenvector with largest eigenvalue should
   // be somewhere near sqrt(2) / 2.  The third component should be close to
   // zero.  There is noise, of course...
-  BOOST_REQUIRE_CLOSE(std::abs(eigvec(0, 0)), sqrt(2) / 2, 0.2);
-  BOOST_REQUIRE_CLOSE(std::abs(eigvec(1, 0)), sqrt(2) / 2, 0.2);
-  BOOST_REQUIRE_SMALL(eigvec(2, 0), 0.08); // Large tolerance for noise.
+  BOOST_REQUIRE_CLOSE(std::abs(eigvec(0, 0)), sqrt(2) / 2, 0.35);
+  BOOST_REQUIRE_CLOSE(std::abs(eigvec(1, 0)), sqrt(2) / 2, 0.35);
+  BOOST_REQUIRE_SMALL(eigvec(2, 0), 0.1); // Large tolerance for noise.
 
   // The second component should be focused almost entirely in the third
   // dimension.
-  BOOST_REQUIRE_SMALL(eigvec(0, 1), 0.08);
-  BOOST_REQUIRE_SMALL(eigvec(1, 1), 0.08);
-  BOOST_REQUIRE_CLOSE(std::abs(eigvec(2, 1)), 1.0, 0.2);
+  BOOST_REQUIRE_SMALL(eigvec(0, 1), 0.1);
+  BOOST_REQUIRE_SMALL(eigvec(1, 1), 0.1);
+  BOOST_REQUIRE_CLOSE(std::abs(eigvec(2, 1)), 1.0, 0.35);
 
   // The third component should have the same absolute value characteristics as
   // the first (plus 20% tolerance).
-  BOOST_REQUIRE_CLOSE(std::abs(eigvec(0, 0)), sqrt(2) / 2, 0.2);
-  BOOST_REQUIRE_CLOSE(std::abs(eigvec(1, 0)), sqrt(2) / 2, 0.2);
-  BOOST_REQUIRE_SMALL(eigvec(2, 0), 0.08); // Large tolerance for noise.
+  BOOST_REQUIRE_CLOSE(std::abs(eigvec(0, 0)), sqrt(2) / 2, 0.35);
+  BOOST_REQUIRE_CLOSE(std::abs(eigvec(1, 0)), sqrt(2) / 2, 0.35);
+  BOOST_REQUIRE_SMALL(eigvec(2, 0), 0.1); // Large tolerance for noise.
 
   // The eigenvalues should sum to three.
   BOOST_REQUIRE_CLOSE(accu(eigval), 3.0, 0.1); // 10% tolerance.
