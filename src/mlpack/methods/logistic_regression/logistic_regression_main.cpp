@@ -162,8 +162,8 @@ void mlpackMain()
   ReportIgnoredParam({{ "test", false }}, "output_probabilities");
 
   // Tolerance needs to be positive.
-  RequireParamValue<double>("tolerance", [](double x) { return x > 0.0; },
-      true, "tolerance must be positive");
+  RequireParamValue<double>("tolerance", [](double x) { return x >= 0.0; },
+      true, "tolerance must be positive or zero");
 
   // Optimizer has to be L-BFGS or SGD.
   RequireParamInSet<string>("optimizer", { "lbfgs", "sgd" },
