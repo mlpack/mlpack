@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(CNELogisticRegressionTest)
     testResponses[i] = 1;
   }
 
-  CNE opt(30, 500, 0.2, 0.2, 0.3, 65, -1);
+  CNE opt(200, 10000, 0.2, 0.2, 0.3, 65, -1);
 
   LogisticRegression<> lr(shuffledData, shuffledResponses, opt, 0.5);
 
