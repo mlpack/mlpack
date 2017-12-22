@@ -69,7 +69,7 @@ class NadaMaxUpdate
   void Initialize(const size_t rows, const size_t cols)
   {
     m = arma::zeros<arma::mat>(rows, cols);
-    v = arma::zeros<arma::mat>(rows, cols);
+    u = arma::zeros<arma::mat>(rows, cols);
   }
 
   /**
