@@ -5,6 +5,7 @@ set(SOURCES
   adamax_update.hpp
   amsgrad_update.hpp
   nadam_update.hpp
+  nadamax_update.hpp
 )
 
 set(DIR_SRCS)
