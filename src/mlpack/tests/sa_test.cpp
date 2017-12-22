@@ -12,7 +12,8 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/sa/sa.hpp>
 #include <mlpack/core/optimizers/sa/exponential_schedule.hpp>
-#include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
+#include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
+#include <mlpack/core/optimizers/problems/rosenbrock_function.hpp>
 
 #include <mlpack/core/metrics/ip_metric.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
