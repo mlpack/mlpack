@@ -72,7 +72,7 @@ BOOST_FIXTURE_TEST_SUITE(PreprocessBinarizeMainTest,
 BOOST_AUTO_TEST_CASE(PreprocessBinarizeDimensionTest)
 {
   // synthetic dataset.
-  arma::mat inputData("0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0");
+  arma::mat inputData = arma::randu<arma::mat>(2, 5);
 
   // Store size of input dataset.
   size_t input_size  = inputData.n_cols;
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(PreprocessBinarizeDimensionTest)
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 2);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, input_size);
 }
 
@@ -94,9 +94,9 @@ BOOST_AUTO_TEST_CASE(PreprocessBinarizeDimensionTest)
  */
 BOOST_AUTO_TEST_CASE(PreprocessBinarizeNegativeDimensionTest)
 {
-  arma::mat x = arma::randu<arma::mat>(2, 2);
+  arma::mat inputData = arma::randu<arma::mat>(2, 2);
 
-  SetInputParam("input", std::move(x));
+  SetInputParam("input", std::move(inputData));
   SetInputParam("threshold", (double) 0.5);
   SetInputParam("dimension", (int) -2); // Invalid.
 
@@ -110,9 +110,9 @@ BOOST_AUTO_TEST_CASE(PreprocessBinarizeNegativeDimensionTest)
  */
 BOOST_AUTO_TEST_CASE(PreprocessBinarizelargerDimensionTest)
 {
-  arma::mat x = arma::randu<arma::mat>(2, 2);
+  arma::mat inputData = arma::randu<arma::mat>(2, 2);
 
-  SetInputParam("input", std::move(x));
+  SetInputParam("input", std::move(inputData));
   SetInputParam("threshold", (double) 0.5);
   SetInputParam("dimension", (int) 6); // Invalid.
 
