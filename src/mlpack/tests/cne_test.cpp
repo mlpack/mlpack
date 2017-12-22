@@ -47,37 +47,49 @@ BOOST_AUTO_TEST_CASE(CNEXORTest)
   arma::mat train("1, 0, 0, 1; 1, 0, 1, 0");
   arma::mat labels("1, 1, 2, 2");
 
-  // network with 2 input 2 hidden and 2 output layer
-  FFN<NegativeLogLikelihood<> > network;
-
-  network.Add<Linear<> >(2, 2);
-  network.Add<SigmoidLayer<> >();
-  network.Add<Linear<> >(2, 2);
-  network.Add<LogSoftMax<> >();
-
-  // CNE object.
-  CNE opt(60, 5000, 0.1, 0.02, 0.2, 0.1, -1);
-
-  // Training the network with CNE
-  network.Train(train, labels, opt);
-
-  // Predicting for the same train data
-  arma::mat predictionTemp;
-  network.Predict(train, predictionTemp);
-
-  arma::mat prediction = arma::zeros<arma::mat>(1, predictionTemp.n_cols);
-
-  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
+  // CNE may fail to find a good optimum.  But if it can succeed one out of 6
+  // times I think that is sufficient to say it is working.
+  size_t successes = 0;
+  for (size_t trial = 0; trial < 6; ++trial)
   {
-    prediction(i) = arma::as_scalar(arma::find(
-        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+    // Build a network with 2 input, 2 hidden, and 2 output layers.
+    FFN<NegativeLogLikelihood<> > network;
+
+    network.Add<Linear<> >(2, 2);
+    network.Add<SigmoidLayer<> >();
+    network.Add<Linear<> >(2, 2);
+    network.Add<LogSoftMax<> >();
+
+    // CNE object.
+    CNE opt(60, 5000, 0.1, 0.02, 0.2, 0.1, -1);
+
+    // Training the network with CNE
+    network.Train(train, labels, opt);
+
+    // Predicting for the same train data
+    arma::mat predictionTemp;
+    network.Predict(train, predictionTemp);
+
+    arma::mat prediction = arma::zeros<arma::mat>(1, predictionTemp.n_cols);
+
+    for (size_t i = 0; i < predictionTemp.n_cols; ++i)
+    {
+      prediction(i) = arma::as_scalar(arma::find(
+          arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+    }
+
+    // 1 means 0 and 2 means 1 as the output to XOR.
+    if ((prediction[0] == 1) &&
+        (prediction[1] == 1) &&
+        (prediction[2] == 2) &&
+        (prediction[3] == 2))
+    {
+      ++successes;
+      break;
+    }
   }
 
-  // 1 means 0 and 2 means 1 as the output to XOR
-  BOOST_REQUIRE_EQUAL(1, prediction[0]);
-  BOOST_REQUIRE_EQUAL(1, prediction[1]);
-  BOOST_REQUIRE_EQUAL(2, prediction[2]);
-  BOOST_REQUIRE_EQUAL(2, prediction[3]);
+  BOOST_REQUIRE_GT(successes, 0);
 }
 
 /**
