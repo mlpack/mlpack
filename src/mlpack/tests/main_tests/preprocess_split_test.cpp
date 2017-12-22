@@ -124,8 +124,6 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitTestRatioTest)
 
   SetInputParam("test_ratio", (double) -0.2);
 
-  mlpackMain();
-
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
