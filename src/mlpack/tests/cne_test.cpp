@@ -171,41 +171,52 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkWithCNETest)
   data::Load("iris_test_labels.csv", testLabels, true);
   testLabels += 1;
 
-  // Create vanilla network with 4 input, 4 hidden and 3 output nodes.
-  FFN<NegativeLogLikelihood<> > model;
-  model.Add<Linear<> >(trainData.n_rows, 4);
-  model.Add<SigmoidLayer<> >();
-  model.Add<Linear<> >(4, 3);
-  model.Add<LogSoftMax<> >();
-
-  // Creating CNE object.
-  // The tolerance and objectiveChange are not taken into consideration.
-  CNE opt(30, 200, 0.2, 0.2, 0.3, -1, -1);
-
-  model.Train(trainData, trainLabels, opt);
-
-  arma::mat predictionTemp;
-  model.Predict(testData, predictionTemp);
-  arma::mat prediction = arma::zeros<arma::mat>(1, predictionTemp.n_cols);
-
-  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
+  // Training the network may fail, so we will try a few times.
+  size_t successes = 0;
+  for (size_t trial = 0; trial < 4; ++trial)
   {
-    prediction(i) = arma::as_scalar(arma::find(
-        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
-  }
+    // Create vanilla network with 4 input, 4 hidden and 3 output nodes.
+    FFN<NegativeLogLikelihood<> > model;
+    model.Add<Linear<> >(trainData.n_rows, 4);
+    model.Add<SigmoidLayer<> >();
+    model.Add<Linear<> >(4, 3);
+    model.Add<LogSoftMax<> >();
 
-  size_t error = 0;
-  for (size_t i = 0; i < testData.n_cols; i++)
-  {
-    if (int(arma::as_scalar(prediction.col(i))) ==
-        int(arma::as_scalar(testLabels.col(i))))
+    // Creating CNE object.
+    // The tolerance and objectiveChange are not taken into consideration.
+    CNE opt(30, 200, 0.2, 0.2, 0.3, -1, -1);
+
+    model.Train(trainData, trainLabels, opt);
+
+    arma::mat predictionTemp;
+    model.Predict(testData, predictionTemp);
+    arma::mat prediction = arma::zeros<arma::mat>(1, predictionTemp.n_cols);
+
+    for (size_t i = 0; i < predictionTemp.n_cols; ++i)
     {
-      error++;
+      prediction(i) = arma::as_scalar(arma::find(
+          arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+    }
+
+    size_t error = 0;
+    for (size_t i = 0; i < testData.n_cols; i++)
+    {
+      if (int(arma::as_scalar(prediction.col(i))) ==
+          int(arma::as_scalar(testLabels.col(i))))
+      {
+        error++;
+      }
+    }
+
+    double classificationError = 1 - double(error) / testData.n_cols;
+    if (classificationError <= 0.1)
+    {
+      ++successes;
+      break;
     }
   }
 
-  double classificationError = 1 - double(error) / testData.n_cols;
-  BOOST_REQUIRE_LE(classificationError, 0.1);
+  BOOST_REQUIRE_GT(successes, 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
