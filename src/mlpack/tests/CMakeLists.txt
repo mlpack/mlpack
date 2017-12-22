@@ -122,10 +122,11 @@ add_executable(mlpack_test
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
+  main_tests/decision_tree_test.cpp
 # main_tests/pca_test.cpp
 # main_tests/preprocess_binarize_test.cpp
 # main_tests/preprocess_imputer_test.cpp
-  main_tests/preprocess_split_test.cpp
+# main_tests/preprocess_split_test.cpp
 )
 
 # Link dependencies of test executable.
