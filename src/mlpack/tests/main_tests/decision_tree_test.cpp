@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
 
   // Check that number of output points
   // are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, 
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
                       testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
                       testSize);
