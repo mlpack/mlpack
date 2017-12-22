@@ -12,7 +12,9 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
-#include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
+
+#include <mlpack/core/optimizers/problems/rosenbrock_function.hpp>
+#include <mlpack/core/optimizers/problems/rosenbrock_wood_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"

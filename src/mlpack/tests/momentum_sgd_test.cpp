@@ -13,7 +13,7 @@
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include <mlpack/core/optimizers/sgd/update_policies/gradient_clipping.hpp>
 #include <mlpack/core/optimizers/sgd/update_policies/momentum_update.hpp>
-#include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
+#include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
 #include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
 
 #include <boost/test/unit_test.hpp>

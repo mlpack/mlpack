@@ -11,12 +11,18 @@ set(SOURCES
   easom_function.cpp
   eggholder_function.hpp
   eggholder_function.cpp
+  generalized_rosenbrock_function.hpp
+  generalized_rosenbrock_function.cpp
   matyas_function.hpp
   matyas_function.cpp
   mc_cormick_function.hpp
   mc_cormick_function.cpp
   rastrigin_function.hpp
   rastrigin_function.cpp
+  rosenbrock_function.hpp
+  rosenbrock_wood_function.hpp
+  rosenbrock_wood_function.cpp
+  rosenbrock_function.cpp
   schwefel_function.hpp
   schwefel_function.cpp
   sgd_test_function.hpp
@@ -25,6 +31,8 @@ set(SOURCES
   sphere_function.cpp
   styblinski_tang_function.hpp
   styblinski_tang_function.cpp
+  wood_function.hpp
+  wood_function.cpp
 )
 
 set(DIR_SRCS)

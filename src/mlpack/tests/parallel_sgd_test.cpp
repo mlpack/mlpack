@@ -13,7 +13,8 @@
 #include <mlpack/core/optimizers/parallel_sgd/decay_policies/constant_step.hpp>
 #include <mlpack/core/optimizers/parallel_sgd/decay_policies/exponential_backoff.hpp>
 #include <mlpack/core/optimizers/parallel_sgd/sparse_test_function.hpp>
-#include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
+#include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
+
 // We need some thorough testing
 #define private public
 #include <mlpack/core/optimizers/parallel_sgd/parallel_sgd.hpp>
