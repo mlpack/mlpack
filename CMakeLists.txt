@@ -531,8 +531,8 @@ if (PKG_CONFIG_FOUND)
   foreach (incldir ${MLPACK_INCLUDE_DIRS})
     # Filter out some obviously unnecessary directories.
     if (NOT "${incldir}" STREQUAL "/usr/include")
-      set(MLPACK_INCLUDE_DIRS_STRING "${MLPACK_INCLUDE_DIRS_STRING}
-          -I${incldir}")
+      set(MLPACK_INCLUDE_DIRS_STRING
+          "${MLPACK_INCLUDE_DIRS_STRING} -I${incldir}")
     endif ()
   endforeach ()
   # Add the install directory too.
