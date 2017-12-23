@@ -528,6 +528,7 @@ if (PKG_CONFIG_FOUND)
   # So, we have to parse our list of library directories, libraries, and include
   # directories in order to get the correct line to give to pkg-config.
   # Next, adapt the list of include directories.
+  list(REMOVE_DUPLICATES MLPACK_INCLUDE_DIRS)
   foreach (incldir ${MLPACK_INCLUDE_DIRS})
     # Filter out some obviously unnecessary directories.
     if (NOT "${incldir}" STREQUAL "/usr/include")
