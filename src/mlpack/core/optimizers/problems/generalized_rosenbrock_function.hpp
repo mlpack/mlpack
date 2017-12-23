@@ -86,7 +86,7 @@ class GeneralizedRosenbrockFunction
   double Evaluate(const arma::mat& coordinates) const;
 
   /*
-   * Evaluate the gradient of a function for a particular batch-size
+   * Evaluate the gradient of a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
    * @param begin The first function.
@@ -97,6 +97,17 @@ class GeneralizedRosenbrockFunction
                 const size_t begin,
                 arma::mat& gradient,
                 const size_t batchSize = 1) const;
+
+  /*
+   * Evaluate the gradient of a function for a particular batch-size.
+   *
+   * @param coordinates The function coordinates.
+   * @param begin The first function.
+   * @param gradient The function gradient.
+   */
+  void Gradient(const arma::mat& coordinates,
+                const size_t begin,
+                arma::sp_mat& gradient) const;
 
   /*
    * Evaluate the gradient of a function with the given coordinates.

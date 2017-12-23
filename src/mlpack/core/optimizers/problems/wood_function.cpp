@@ -65,7 +65,8 @@ void WoodFunction::Gradient(const arma::mat& coordinates,
       (1.0 / 5.0) * (x2 - x4);
 }
 
-void WoodFunction::Gradient(const arma::mat& coordinates, arma::mat& gradient) const
+void WoodFunction::Gradient(const arma::mat& coordinates, arma::mat& gradient)
+    const
 {
   Gradient(coordinates, 0, gradient, 1);
 }

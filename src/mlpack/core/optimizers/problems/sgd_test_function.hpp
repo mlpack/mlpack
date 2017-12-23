@@ -45,7 +45,7 @@ class SGDTestFunction
   //! Evaluate a function.
   double Evaluate(const arma::mat& coordinates, const size_t i) const;
 
-  //! Evaluate a function for a particular batch-size
+  //! Evaluate a function for a particular batch-size.
   double Evaluate(const arma::mat& coordinates,
                   const size_t begin,
                   const size_t batchSize) const;
