@@ -81,7 +81,7 @@ class SphereFunction
   double Evaluate(const arma::mat& coordinates) const;
 
   /*
-   * Evaluate the gradient of a function for a particular batch-size
+   * Evaluate the gradient of a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
    * @param begin The first function.
