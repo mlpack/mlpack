@@ -21,13 +21,7 @@ RastriginFunction::RastriginFunction(const size_t n) :
 
 {
   initialPoint.set_size(n, 1);
-  for (size_t i = 0; i < n; ++i) // Set to [4.13 -4.15 4.13 -4.15...].
-  {
-    if (i % 2 == 1)
-      initialPoint(i) = -4.15;
-    else
-      initialPoint(i) = 4.13;
-  }
+  initialPoint.fill(-3);
 }
 
 void RastriginFunction::Shuffle()
@@ -47,7 +41,7 @@ double RastriginFunction::Evaluate(const arma::mat& coordinates,
     objective += std::pow(coordinates(p), 2) - 10.0 *
         std::cos(2.0 * M_PI * coordinates(p));
   }
-  objective *= 10.0 * n;
+  objective += 10.0 * n;
 
   return objective;
 }
