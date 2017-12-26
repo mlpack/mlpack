@@ -457,7 +457,7 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
     MomentumSGD opt(0.06, 50, 2, -50000);
 
     arma::mat inputTemp, labelsTemp;
-    for (size_t iteration = 0; i < (iterations + offset); iteration++)
+    for (size_t iteration = 0; iteration < (iterations + offset); iteration++)
     {
       for (size_t j = 0; j < trainReberGrammarCount; j++)
       {
