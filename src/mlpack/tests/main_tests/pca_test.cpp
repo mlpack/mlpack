@@ -18,21 +18,13 @@ static const std::string testName = "PrincipalComponentAnalysis";
 
 using namespace mlpack;
 
-// Utility function to set a parameter and mark it as passed, using copy
-// semantics.
-template<typename T>
-void SetInputParam(const std::string& name, const T& value)
-{
-  CLI::GetParam<T>(name) = value;
-  CLI::SetPassed(name);
-}
-
-// Utility function to set a parameter and mark it as passed, using move
-// semantics.
+// Utility function to set a parameter and mark it as passed,
+// using copy semantics for lvalues and move semantics for rvalues
 template<typename T>
 void SetInputParam(const std::string& name, T&& value)
 {
-  CLI::GetParam<T>(name) = std::move(value);
+  CLI::GetParam<typename std::remove_reference<T>::type>(name)
+    = std::forward<T>(value);
   CLI::SetPassed(name);
 }
 
