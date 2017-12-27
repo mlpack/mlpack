@@ -1,4 +1,4 @@
-  /**
+/**
  * @file linear_regression_test.cpp
  *
  * Test for linear regression.
