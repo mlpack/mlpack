@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(LRDifferentLambdas)
 
   arma::mat trainX = arma::rowvec({1.0, 2.0, 3.0});
   arma::mat testX = arma::rowvec({4.0});
-  arma::rowvec trainY = {1.0, 4.0, 9.0};
+  arma::rowvec trainY = arma::rowvec({1.0, 4.0, 9.0});
   SetInputParam("training", trainX);
   SetInputParam("training_responses", trainY);
   SetInputParam("test", testX);
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentation)
   ResetSettings();
 
   arma::mat trainX2 = arma::rowvec({1.0, 2.0, 3.0});
-  arma::rowvec trainY2 = {1.0, 4.0, 9.0};
+  arma::rowvec trainY2 = arma::rowvec({1.0, 4.0, 9.0});
   SetInputParam("training", std::move(trainX2));
   SetInputParam("training_responses", std::move(trainY2));
   SetInputParam("test", std::move(testX));
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(LRWrongResponseSizeTest)
   constexpr int D = 2;
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
-  arma::rowvec trainY = arma::randu<arma::rowvec>(N + 3);// wrong size
+  arma::rowvec trainY = arma::randu<arma::rowvec>(N + 3); // wrong size
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("training_responses", std::move(trainY));
@@ -188,7 +188,7 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest1)
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
   arma::rowvec trainY = arma::randu<arma::rowvec>(N);
-  arma::mat testX = arma::randu<arma::mat>(D - 1, M);// wrong dimensionality
+  arma::mat testX = arma::randu<arma::mat>(D - 1, M); // wrong dimensionality
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("training_responses", std::move(trainY));
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest2)
 
   ResetSettings();
 
-  arma::mat testX = arma::randu<arma::mat>(D - 1, M);// wrong dimensionality
+  arma::mat testX = arma::randu<arma::mat>(D - 1, M); // wrong dimensionality
   SetInputParam("input_model", std::move(model));
   SetInputParam("test", std::move(testX));
 
