@@ -53,7 +53,7 @@ using namespace arma;
 using namespace std;
 using namespace data;
 
-void mlpackMain()
+static void mlpackMain()
 {
   const string inputFile = CLI::GetParam<string>("input_file");
   const string outputFile = CLI::GetParam<string>("output_file");

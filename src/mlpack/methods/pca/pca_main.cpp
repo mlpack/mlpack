@@ -99,7 +99,7 @@ void RunPCA(arma::mat& dataset,
       dataset.n_rows << " dimensions)." << endl;
 }
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Load input dataset.
   arma::mat& dataset = CLI::GetParam<arma::mat>("input");

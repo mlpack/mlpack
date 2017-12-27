@@ -95,7 +95,7 @@ PARAM_DOUBLE_IN("percentage", "If specified, will do approximate furthest "
     "neighbors will be at least (p*100) % of the distance as the true furthest "
     "neighbor.", "p", 1);
 
-void mlpackMain()
+static void mlpackMain()
 {
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));

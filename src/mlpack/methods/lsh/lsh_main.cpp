@@ -82,7 +82,7 @@ PARAM_INT_IN("bucket_size", "The size of a bucket in the second level hash.",
     "B", 500);
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
-void mlpackMain()
+static void mlpackMain()
 {
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));

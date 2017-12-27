@@ -92,7 +92,7 @@ struct Generate
   }
 };
 
-void mlpackMain()
+static void mlpackMain()
 {
   RequireAtLeastOnePassed({ "output", "state" }, false, "no output will be "
       "saved");

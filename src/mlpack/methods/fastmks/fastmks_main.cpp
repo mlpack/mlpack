@@ -83,7 +83,7 @@ PARAM_FLAG("single", "If true, single-tree search is used (as opposed to "
 PARAM_MATRIX_OUT("kernels", "Output matrix of kernels.", "p");
 PARAM_UMATRIX_OUT("indices", "Output matrix of indices.", "i");
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Validate command-line parameters.
   RequireOnlyOnePassed({ "reference", "input_model" }, true);

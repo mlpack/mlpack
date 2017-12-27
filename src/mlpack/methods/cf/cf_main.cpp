@@ -263,7 +263,7 @@ void AssembleFactorizerType(const std::string& algorithm,
   }
 }
 
-void mlpackMain()
+static void mlpackMain()
 {
   if (CLI::GetParam<int>("seed") == 0)
     math::RandomSeed(std::time(NULL));
