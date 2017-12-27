@@ -53,6 +53,8 @@ class TestOption
    * @param input Whether or not the option is an input option.
    * @param noTranspose If the parameter is a matrix and this is true, then the
    *      matrix will not be transposed on loading.
+   * @param testName Name of the test (used for identifiying which binding test 
+   *      this option belongs to)
    */
   TestOption(const N defaultValue,
              const std::string& identifier,
@@ -62,7 +64,7 @@ class TestOption
              const bool required = false,
              const bool input = true,
              const bool noTranspose = false,
-             const std::string& programName = "")
+             const std::string& testName = "")
   {
     // Create the ParamData object to give to CLI.
     util::ParamData data;
@@ -82,7 +84,7 @@ class TestOption
 
     const std::string tname = data.tname;
 
-    CLI::RestoreSettings(programName, false);
+    CLI::RestoreSettings(testName, false);
 
     // Set some function pointers that we need.
     CLI::GetSingleton().functionMap[tname]["GetPrintableParam"] =
@@ -95,7 +97,7 @@ class TestOption
     if (!input)
       CLI::SetPassed(identifier);
 
-    CLI::StoreSettings(programName);
+    CLI::StoreSettings(testName);
     CLI::ClearSettings();
   }
 };

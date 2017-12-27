@@ -32,7 +32,7 @@ class FullSelection
    * @param iterate starting point.
    */
   template<typename DecomposableFunctionType>
-  const double Select(DecomposableFunctionType& function,
+  double Select(DecomposableFunctionType& function,
                       const size_t batchSize,
                       const arma::mat& iterate)
   {
