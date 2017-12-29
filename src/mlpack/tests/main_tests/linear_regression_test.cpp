@@ -61,9 +61,9 @@ BOOST_AUTO_TEST_CASE(LRDifferentLambdas)
   // required minimal difference between solutions
   const double delta = 0.1;
 
-  arma::mat trainX = arma::rowvec({1.0, 2.0, 3.0});
-  arma::mat testX = arma::rowvec({4.0});
-  arma::rowvec trainY = arma::rowvec({1.0, 4.0, 9.0});
+  arma::mat trainX = { 1.0, 2.0, 3.0 };
+  arma::mat testX = { 4.0 };
+  arma::rowvec trainY = { 1.0, 4.0, 9.0 };
   SetInputParam("training", trainX);
   SetInputParam("training_responses", trainY);
   SetInputParam("test", testX);
@@ -98,8 +98,8 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentation)
 {
   constexpr double delta = 1e-5;
 
-  arma::mat trainX1 = arma::mat({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}});
-  arma::mat testX = arma::rowvec({4.0});
+  arma::mat trainX1 = {{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}};
+  arma::mat testX = {4.0};
   SetInputParam("training", trainX1);
   SetInputParam("test", testX);
 
@@ -109,8 +109,8 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentation)
 
   ResetSettings();
 
-  arma::mat trainX2 = arma::rowvec({1.0, 2.0, 3.0});
-  arma::rowvec trainY2 = arma::rowvec({1.0, 4.0, 9.0});
+  arma::mat trainX2 = {1.0, 2.0, 3.0};
+  arma::rowvec trainY2 = {1.0, 4.0, 9.0};
   SetInputParam("training", std::move(trainX2));
   SetInputParam("training_responses", std::move(trainY2));
   SetInputParam("test", std::move(testX));
