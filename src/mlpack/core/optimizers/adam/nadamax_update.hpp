@@ -107,7 +107,7 @@ class NadaMaxUpdate
     const double biasCorrection2 = 1.0 - (cumBeta1 * beta1T1);
 
     if ((biasCorrection1 != 0) && (biasCorrection2 != 0))
-    {  
+    {
        iterate -= (stepSize * (((1 - beta1T) / biasCorrection1) * gradient
            + (beta1T1 / biasCorrection2) * m)) / (u + epsilon);
     }
