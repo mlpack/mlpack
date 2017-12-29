@@ -39,18 +39,16 @@ void PrintOutputProcessing(
      *
      * result = CLI.GetParam[int]('param_name')
      */
-    std::cout << prefix << "result = ";
-    if (GetCythonType<T>(d) == "vector[string]")
+    std::cout << prefix << "result = " << "CLI.GetParam[" << GetCythonType<T>(d)
+        << "](\"" << d.name << "\")";
+    if (GetCythonType<T>(d) == "string")
     {
-      std::cout << "[x.decode(\"UTF-8\") for x in CLI.GetParam["
-          << GetCythonType<T>(d) << "](\"" << d.name << "\")]";
+      std::cout << std::endl << prefix << "result = result.decode(\"UTF-8\")";
     }
-    else
+    else if (GetCythonType<T>(d) == "vector[string]")
     {
-      std::cout << "CLI.GetParam[" << GetCythonType<T>(d) << "](\"" << d.name
-          << "\")";
-      if (GetCythonType<T>(d) == "string")
-        std::cout << ".decode(\"UTF-8\")";
+      std::cout << std::endl << prefix
+          << "result = [x.decode(\"UTF-8\") for x in result]";
     }
   }
   else
@@ -60,19 +58,17 @@ void PrintOutputProcessing(
      *
      * result['param_name'] = CLI.GetParam[int]('param_name')
      */
-    std::cout << prefix << "result['" << d.name << "'] = ";
-    if (GetCythonType<T>(d) == "vector[string]")
+    std::cout << prefix << "result['" << d.name << "'] = CLI.GetParam["
+        << GetCythonType<T>(d) << "](\"" << d.name << "\")" << std::endl;
+    if (GetCythonType<T>(d) == "string")
     {
-      std::cout << "[x.decode(\"UTF-8\") for x in CLI.GetParam["
-          << GetCythonType<T>(d) << "](\"" << d.name << "\")]" << std::endl;
+      std::cout << prefix << "result['" << d.name << "'] = result['" << d.name
+          << "'].decode(\"UTF-8\")" << std::endl;
     }
-    else
+    else if (GetCythonType<T>(d) == "vector[string]")
     {
-      std::cout << "CLI.GetParam[" << GetCythonType<T>(d) << "](\"" << d.name
-          << "\")";
-      if (GetCythonType<T>(d) == "string")
-        std::cout << ".decode(\"UTF-8\")";
-      std::cout << std::endl;
+      std::cout << prefix << "result['" << d.name << "'] = [x.decode(\"UTF-8\")"
+          << " for x in result['" << d.name << "']]" << std::endl;
     }
   }
 }
