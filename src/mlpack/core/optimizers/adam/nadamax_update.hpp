@@ -24,12 +24,13 @@ namespace optimization {
  * For more information, see the following.
  *
  * @code
- * @misc{Dozat2015,
- *   title       = {},
- *   author      = {},
- *   institution = {},
- *   address     = {},
- *   year        = {}
+ * @techreport{Dozat2015,
+ *   title       = {Incorporating Nesterov momentum into Adam},
+ *   author      = {Timothy Dozat},
+ *   institution = {Stanford University},
+ *   address     = {Stanford},
+ *   year        = {2015},
+ *   url         = {https://openreview.net/pdf?id=OM0jvwB8jIp57ZJjtNEZ}
  * }
  * @endcode
  */
@@ -37,7 +38,7 @@ class NadaMaxUpdate
 {
  public:
   /**
-   * Construct the Nadam update policy with the given parameters.
+   * Construct the Nadamax update policy with the given parameters.
    *
    * @param epsilon The epsilon value used to initialise the squared gradient
    *        parameter.
@@ -46,10 +47,10 @@ class NadaMaxUpdate
    * @param scheduleDecay The decay parameter for decay coefficients
    */
   NadaMaxUpdate(const double epsilon = 1e-8,
-              const double beta1 = 0.9,
-              const double beta2 = 0.99,
-              const double scheduleDecay = 4e-3)
-      :epsilon(epsilon),
+                const double beta1 = 0.9,
+                const double beta2 = 0.99,
+                const double scheduleDecay = 4e-3):
+      epsilon(epsilon),
       beta1(beta1),
       beta2(beta2),
       scheduleDecay(scheduleDecay),
@@ -106,8 +107,10 @@ class NadaMaxUpdate
     const double biasCorrection2 = 1.0 - (cumBeta1 * beta1T1);
 
     if ((biasCorrection1 != 0) && (biasCorrection2 != 0))
-      iterate -= (stepSize * (((1 - beta1T) / biasCorrection1) * gradient
-          + (beta1T1 / biasCorrection2) * m)) / (u + epsilon);
+    {  
+       iterate -= (stepSize * (((1 - beta1T) / biasCorrection1) * gradient
+           + (beta1T1 / biasCorrection2) * m)) / (u + epsilon);
+    }
   }
 
   //! Get the value used to initialise the squared gradient parameter.
