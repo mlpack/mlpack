@@ -21,6 +21,8 @@ static const std::string testName = "PreprocessBinarize";
 #include <boost/test/unit_test.hpp>
 #include "../test_tools.hpp"
 
+using namespace mlpack;
+
 // Utility function to set a parameter and mark it as passed,
 // using copy semantics for lvalues and move semantics for rvalues.
 template<typename T>
