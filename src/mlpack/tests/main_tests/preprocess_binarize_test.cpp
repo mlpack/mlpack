@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(PreprocessBinarizeDimensionTest)
   // Store size of input dataset.
   size_t input_size  = inputData.n_cols;
 
-  // Input custom data points and labels.
+  // Input custom data and labels.
   SetInputParam("input", std::move(inputData));
   SetInputParam("threshold", (double) 0.5);
   SetInputParam("dimension", (int) 1);
