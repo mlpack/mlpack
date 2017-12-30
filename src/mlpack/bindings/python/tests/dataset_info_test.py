@@ -38,7 +38,7 @@ class TestToMatrix(unittest.TestCase):
     """
     Test that a matrix holding ints is properly turned into a double matrix.
     """
-    d = pd.DataFrame(range(5), columns=list('a'))
+    d = pd.DataFrame({'a': range(5)})
 
     m = to_matrix(d)
 
@@ -53,7 +53,7 @@ class TestToMatrix(unittest.TestCase):
     Test that a matrix with one int and one double feature are transformed
     correctly.
     """
-    d = pd.DataFrame(range(50), columns=list('a'))
+    d = pd.DataFrame({'a': range(50)})
     d['b'] = np.random.randn(50, 1)
     self.assertEqual(d['a'].dtype, int)
     self.assertEqual(d['b'].dtype, np.dtype(np.double))
@@ -165,7 +165,7 @@ class TestToMatrixWithInfo(unittest.TestCase):
     """
     Test that a matrix holding ints is properly turned into a double matrix.
     """
-    d = pd.DataFrame(range(5), columns=list('a'))
+    d = pd.DataFrame({'a': range(5)})
 
     m, dims = to_matrix_with_info(d, np.double)
 
@@ -183,7 +183,7 @@ class TestToMatrixWithInfo(unittest.TestCase):
     Test that a matrix with one int and one double feature are transformed
     correctly.
     """
-    d = pd.DataFrame(range(50), columns=list('a'))
+    d = pd.DataFrame({'a': range(50)})
     d['b'] = np.random.randn(50, 1)
     self.assertEqual(d['a'].dtype, int)
     self.assertEqual(d['b'].dtype, np.dtype(np.double))
