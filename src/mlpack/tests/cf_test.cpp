@@ -108,11 +108,12 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyTest)
   data::Load("GroupLensSmall.csv", dataset);
 
   // Save the columns we've removed.
-  arma::mat savedCols(3, 300); // Remove 300 5-star ratings.
+  arma::mat savedCols(3, 50); // Remove 50 5-star ratings.
+  savedCols.fill(/* random very large value */ 10000000);
   size_t currentCol = 0;
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    if (currentCol == 300)
+    if (currentCol == 50)
       break;
 
     if (dataset(2, i) > 4.5) // 5-star rating.
@@ -150,18 +151,18 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyTest)
   // Obtain 150 recommendations for the users in savedCols, and make sure the
   // missing item shows up in most of them.  First, create the list of users,
   // which requires casting from doubles...
-  arma::Col<size_t> users(300);
-  for (size_t i = 0; i < 300; ++i)
+  arma::Col<size_t> users(50);
+  for (size_t i = 0; i < 50; ++i)
     users(i) = (size_t) savedCols(0, i);
   arma::Mat<size_t> recommendations;
   size_t numRecs = 150;
   c.GetRecommendations(numRecs, recommendations, users);
 
   BOOST_REQUIRE_EQUAL(recommendations.n_rows, numRecs);
-  BOOST_REQUIRE_EQUAL(recommendations.n_cols, 300);
+  BOOST_REQUIRE_EQUAL(recommendations.n_cols, 50);
 
   size_t failures = 0;
-  for (size_t i = 0; i < 300; ++i)
+  for (size_t i = 0; i < 50; ++i)
   {
     size_t targetItem = (size_t) savedCols(1, i);
     bool found = false;
@@ -187,11 +188,10 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyTest)
   }
 
   // Make sure the right item showed up in at least 1/3 of the recommendations.
-  // Random chance (that is, if we selected recommendations randomly) for this
   // GroupLens dataset would give somewhere around a 10% success rate (failures
   // would be closer to 270).  The failure rate is allowed to be so high because
   // the dataset used here is pretty small and it is hard to generalize.
-  BOOST_REQUIRE_LT(failures, 200);
+  BOOST_REQUIRE_LT(failures, 17);
 }
 
 // Make sure that Predict() is returning reasonable results.
@@ -202,11 +202,12 @@ BOOST_AUTO_TEST_CASE(CFPredictTest)
   data::Load("GroupLensSmall.csv", dataset);
 
   // Save the columns we've removed.
-  arma::mat savedCols(3, 300); // Remove 300 5-star ratings.
+  arma::mat savedCols(3, 50); // Remove 50 5-star ratings.
+  savedCols.fill(/* random very large value */ 10000000);
   size_t currentCol = 0;
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    if (currentCol == 300)
+    if (currentCol == 50)
       break;
 
     if (dataset(2, i) > 4.5) // 5-star rating.
@@ -268,11 +269,12 @@ BOOST_AUTO_TEST_CASE(CFBatchPredictTest)
   data::Load("GroupLensSmall.csv", dataset);
 
   // Save the columns we've removed.
-  arma::mat savedCols(3, 300); // Remove 300 5-star ratings.
+  arma::mat savedCols(3, 50); // Remove 50 5-star ratings.
+  savedCols.fill(/* random very large value */ 10000000);
   size_t currentCol = 0;
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    if (currentCol == 300)
+    if (currentCol == 50)
       break;
 
     if (dataset(2, i) > 4.5) // 5-star rating.
@@ -340,11 +342,12 @@ BOOST_AUTO_TEST_CASE(TrainTest)
   data::Load("GroupLensSmall.csv", dataset);
 
   // Save the columns we've removed.
-  arma::mat savedCols(3, 300); // Remove 300 5-star ratings.
+  arma::mat savedCols(3, 50); // Remove 50 5-star ratings.
+  savedCols.fill(/* random very large value */ 10000000);
   size_t currentCol = 0;
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    if (currentCol == 300)
+    if (currentCol == 50)
       break;
 
     if (dataset(2, i) > 4.5) // 5-star rating.
@@ -410,11 +413,12 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTrainTest)
   data::Load("GroupLensSmall.csv", dataset);
 
   // Save the columns we've removed.
-  arma::mat savedCols(3, 300); // Remove 300 5-star ratings.
+  arma::mat savedCols(3, 50); // Remove 300 5-star ratings.
+  savedCols.fill(/* random very large value */ 10000000);
   size_t currentCol = 0;
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    if (currentCol == 300)
+    if (currentCol == 50)
       break;
 
     if (dataset(2, i) > 4.5) // 5-star rating.
