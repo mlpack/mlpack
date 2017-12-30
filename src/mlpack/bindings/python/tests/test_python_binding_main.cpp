@@ -52,7 +52,7 @@ PARAM_MODEL_OUT(GaussianKernel, "model_out", "Output model, with twice the "
     "bandwidth.", "");
 PARAM_DOUBLE_OUT("model_bw_out", "The bandwidth of the model.");
 
-void mlpackMain()
+static void mlpackMain()
 {
   const string s = CLI::GetParam<string>("string_in");
   const int i = CLI::GetParam<int>("int_in");

@@ -67,13 +67,13 @@ void GenerateNoisySines(arma::mat& data,
 BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
 {
   // It isn't guaranteed that the recurrent network will converge in the
-  // specified number of iterations using random weights. If this works 1 of 5
+  // specified number of iterations using random weights. If this works 1 of 6
   // times, I'm fine with that. All I want to know is that the network is able
   // to escape from local minima and to solve the task.
   size_t successes = 0;
   const size_t rho = 10;
 
-  for (size_t trial = 0; trial < 5; ++trial)
+  for (size_t trial = 0; trial < 6; ++trial)
   {
     // Generate 12 (2 * 6) noisy sines. A single sine contains rho
     // points/features.
@@ -287,7 +287,8 @@ void GenerateNextReber(const arma::Mat<char>& transitions,
  * @param nextReber All reachable next symbols.
  */
 void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
-                               const std::string& reber, std::string& nextReber)
+                                const std::string& reber,
+                                std::string& nextReber)
 {
   size_t state = 0;
   size_t numPs = 0;
@@ -457,7 +458,7 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
     MomentumSGD opt(0.06, 50, 2, -50000);
 
     arma::mat inputTemp, labelsTemp;
-    for (size_t i = 0; i < (iterations + offset); i++)
+    for (size_t iteration = 0; iteration < (iterations + offset); iteration++)
     {
       for (size_t j = 0; j < trainReberGrammarCount; j++)
       {
@@ -672,7 +673,7 @@ void DistractedSequenceRecallTestNetwork(
     // We increase the number of iterations (training) if the first run didn't
     // pass.
     arma::mat inputTemp, labelsTemp;
-    for (size_t i = 0; i < (9 + offset); i++)
+    for (size_t iteration = 0; iteration < (9 + offset); iteration++)
     {
       for (size_t j = 0; j < trainDistractedSequenceCount; j++)
       {
@@ -741,6 +742,83 @@ BOOST_AUTO_TEST_CASE(FastLSTMDistractedSequenceRecallTest)
 BOOST_AUTO_TEST_CASE(GRUDistractedSequenceRecallTest)
 {
   DistractedSequenceRecallTestNetwork<GRU<> >(4, 8);
+}
+
+/**
+ * Create a simple recurrent neural network for the noisy sines task, and
+ * require that it produces the exact same network for a few batch sizes.
+ */
+template<typename RecurrentLayerType>
+void BatchSizeTest()
+{
+  const size_t rho = 10;
+
+  // Generate 12 (2 * 6) noisy sines. A single sine contains rho
+  // points/features.
+  arma::mat input, labelsTemp;
+  GenerateNoisySines(input, labelsTemp, rho, 6);
+
+  arma::mat labels = arma::zeros<arma::mat>(rho, labelsTemp.n_cols);
+  for (size_t i = 0; i < labelsTemp.n_cols; ++i)
+  {
+    const int value = arma::as_scalar(arma::find(
+        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+    labels.col(i).fill(value);
+  }
+
+  RNN<> model(rho);
+  model.Add<Linear<>>(1, 10);
+  model.Add<SigmoidLayer<>>();
+  model.Add<RecurrentLayerType>(10, 10);
+  model.Add<SigmoidLayer<>>();
+  model.Add<Linear<>>(10, 10);
+  model.Add<SigmoidLayer<>>();
+
+  model.Reset();
+  arma::mat initParams = model.Parameters();
+
+  StandardSGD opt(1e-5, 1, 5, -100, false);
+  model.Train(input, labels, opt);
+
+  // This is trained with one point.
+  arma::mat outputParams = model.Parameters();
+
+  model.Reset();
+  model.Parameters() = initParams;
+  opt.BatchSize() = 2;
+  model.Train(input, labels, opt);
+
+  CheckMatrices(outputParams, model.Parameters(), 1);
+
+  model.Parameters() = initParams;
+  opt.BatchSize() = 5;
+  model.Train(input, labels, opt);
+
+  CheckMatrices(outputParams, model.Parameters(), 1);
+}
+
+/**
+ * Ensure LSTMs work with larger batch sizes.
+ */
+BOOST_AUTO_TEST_CASE(LSTMBatchSizeTest)
+{
+  BatchSizeTest<LSTM<>>();
+}
+
+/**
+ * Ensure fast LSTMs work with larger batch sizes.
+ */
+BOOST_AUTO_TEST_CASE(FastLSTMBatchSizeTest)
+{
+  BatchSizeTest<FastLSTM<>>();
+}
+
+/**
+ * Ensure GRUs work with larger batch sizes.
+ */
+BOOST_AUTO_TEST_CASE(GRUBatchSizeTest)
+{
+  BatchSizeTest<GRU<>>();
 }
 
 /**

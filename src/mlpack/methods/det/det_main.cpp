@@ -100,7 +100,7 @@ PARAM_FLAG("volume_regularization", "This flag gives the used the option to use"
 */
 
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Validate input parameters.
   RequireOnlyOnePassed({ "training", "input_model" }, true);

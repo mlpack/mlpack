@@ -76,7 +76,7 @@ PARAM_DOUBLE_IN("min_residue", "The minimum root mean square residue allowed "
 PARAM_STRING_IN("update_rules", "Update rules for each iteration; ( multdist | "
     "multdiv | als ).", "u", "multdist");
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Initialize random seed.
   if (CLI::GetParam<int>("seed") != 0)

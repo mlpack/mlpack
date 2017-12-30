@@ -91,7 +91,7 @@ PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
     "dual-tree search).", "S");
 
-void mlpackMain()
+static void mlpackMain()
 {
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));

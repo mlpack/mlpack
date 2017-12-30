@@ -340,7 +340,7 @@ struct Train
   }
 };
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)

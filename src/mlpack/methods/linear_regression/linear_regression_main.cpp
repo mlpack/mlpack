@@ -85,7 +85,7 @@ PARAM_COL_OUT("output_predictions", "If --test_file is specified, this "
 PARAM_DOUBLE_IN("lambda", "Tikhonov regularization for ridge regression.  If 0,"
     " the method reduces to linear regression.", "l", 0.0);
 
-void mlpackMain()
+static void mlpackMain()
 {
   const double lambda = CLI::GetParam<double>("lambda");
 

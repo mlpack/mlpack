@@ -103,7 +103,7 @@ PARAM_MODEL_OUT(DSModel, "output_model", "Output decision stump model to save.",
 PARAM_INT_IN("bucket_size", "The minimum number of training points in each "
     "decision stump bucket.", "b", 6);
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Check that the parameters are reasonable.
   RequireOnlyOnePassed({ "training", "input_model" }, true);

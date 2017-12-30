@@ -96,7 +96,7 @@ PARAM_MATRIX_OUT("codes", "Matrix to save the output sparse codes of the test "
 
 PARAM_MATRIX_IN("test", "Optional matrix to be encoded by trained model.", "T");
 
-void mlpackMain()
+static void mlpackMain()
 {
   if (CLI::GetParam<int>("seed") != 0)
     RandomSeed((size_t) CLI::GetParam<int>("seed"));

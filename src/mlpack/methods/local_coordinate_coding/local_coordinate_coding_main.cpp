@@ -93,7 +93,7 @@ PARAM_MATRIX_OUT("codes", "Output codes matrix.", "c");
 
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
-void mlpackMain()
+static void mlpackMain()
 {
   if (CLI::GetParam<int>("seed") != 0)
     RandomSeed((size_t) CLI::GetParam<int>("seed"));

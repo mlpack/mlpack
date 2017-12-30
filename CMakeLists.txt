@@ -126,7 +126,7 @@ if(BUILD_WITH_COVERAGE)
 endif()
 
 # For clock_gettime().
-if (UNIX AND NOT APPLE)
+if (UNIX AND NOT APPLE AND NOT HAIKU)
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "rt")
 endif ()
 
@@ -528,11 +528,12 @@ if (PKG_CONFIG_FOUND)
   # So, we have to parse our list of library directories, libraries, and include
   # directories in order to get the correct line to give to pkg-config.
   # Next, adapt the list of include directories.
+  list(REMOVE_DUPLICATES MLPACK_INCLUDE_DIRS)
   foreach (incldir ${MLPACK_INCLUDE_DIRS})
     # Filter out some obviously unnecessary directories.
     if (NOT "${incldir}" STREQUAL "/usr/include")
-      set(MLPACK_INCLUDE_DIRS_STRING "${MLPACK_INCLUDE_DIRS_STRING}
-          -I${incldir}")
+      set(MLPACK_INCLUDE_DIRS_STRING
+          "${MLPACK_INCLUDE_DIRS_STRING} -I${incldir}")
     endif ()
   endforeach ()
   # Add the install directory too.
