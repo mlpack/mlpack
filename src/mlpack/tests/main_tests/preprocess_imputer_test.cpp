@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerDimensionTest)
 
   // Input custom data points and labels.
   SetInputParam("input_file", (string) "preprocess_imputer_test.csv");
-  SetInputParam("missing_value", (string) "NAN");
+  SetInputParam("missing_value", (string) "nan");
   SetInputParam("strategy", (string) "mean");
   SetInputParam("output_file", (string) "preprocess_imputer_output_test.csv");
 
