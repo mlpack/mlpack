@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(SVDBatchMomentumTest)
 
   const double momentumRMSE = amf2.Apply(cleanedData, 2, m1, m2);
 
-  BOOST_REQUIRE_LE(momentumRMSE, regularRMSE + 0.05);
+  BOOST_REQUIRE_LE(momentumRMSE, regularRMSE + 0.08);
 }
 
 /**

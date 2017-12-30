@@ -105,7 +105,7 @@ PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
 PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability"
     " of labels for the test set will be written.", "p");
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Check input parameters.
   RequireOnlyOnePassed({ "training", "input_model" }, true);

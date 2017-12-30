@@ -121,7 +121,7 @@ PARAM_MODEL_IN(GMM, "input_model", "Initial input GMM model to start training "
     "with.", "m");
 PARAM_MODEL_OUT(GMM, "output_model", "Output for trained GMM model.", "M");
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Check parameters and load data.
   if (CLI::GetParam<int>("seed") != 0)

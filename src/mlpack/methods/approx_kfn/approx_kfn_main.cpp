@@ -141,7 +141,7 @@ PARAM_MODEL_IN(ApproxKFNModel, "input_model", "File containing input model.",
 PARAM_MODEL_OUT(ApproxKFNModel, "output_model", "File to save output model to.",
     "M");
 
-void mlpackMain()
+static void mlpackMain()
 {
   // We have to pass either a reference set or an input model.
   RequireOnlyOnePassed({ "reference", "input_model" });

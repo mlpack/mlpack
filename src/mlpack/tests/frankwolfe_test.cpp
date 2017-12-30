@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(regularizedOMP)
   mat B1 = 0.1 * eye(k, k);
   mat B2 = 100 * randn(k, k);
   mat A = join_horiz(B1, B2); // The dictionary is input as columns of A.
-  vec b(k); // Vector to be sparsely approximated.
+  vec b(k, arma::fill::zeros); // Vector to be sparsely approximated.
   b(0) = 1;
   b(1) = 1;
   vec lambda(A.n_cols);
@@ -98,8 +98,8 @@ BOOST_AUTO_TEST_CASE(PruneSupportOMP)
   int k = 3;
   mat B1;
   B1 << 1 << 0 << 1 << endr
-    << 0 << 1 << 1 << endr
-    << 0 << 0 << 1 << endr;
+     << 0 << 1 << 1 << endr
+     << 0 << 0 << 1 << endr;
   mat B2 = randu(k, k);
   mat A = join_horiz(B1, B2); // The dictionary is input as columns of A.
   vec b;

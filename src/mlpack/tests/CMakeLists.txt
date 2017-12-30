@@ -123,7 +123,8 @@ add_executable(mlpack_test
   union_find_test.cpp
   vantage_point_tree_test.cpp
   main_tests/emst_test.cpp
-# main_tests/pca_test.cpp
+  main_tests/linear_regression_test.cpp
+  main_tests/pca_test.cpp
 )
 
 # Link dependencies of test executable.

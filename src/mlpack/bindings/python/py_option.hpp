@@ -33,7 +33,8 @@ class PyOption
  public:
   /**
    * Construct a PyOption object.  When constructed, it will register itself
-   * with CLI.
+   * with CLI. The testName parameter is not used and added for compatibility 
+   * reasons.
    */
   PyOption(const T defaultValue,
            const std::string& identifier,
@@ -42,7 +43,8 @@ class PyOption
            const std::string& cppName,
            const bool required = false,
            const bool input = true,
-           const bool noTranspose = false)
+           const bool noTranspose = false,
+           const std::string& /*testName*/ = "")
   {
     // Create the ParamData object to give to CLI.
     util::ParamData data;

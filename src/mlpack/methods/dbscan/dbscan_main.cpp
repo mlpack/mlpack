@@ -112,7 +112,7 @@ void RunDBSCAN(RangeSearchType rs = RangeSearchType())
     CLI::GetParam<arma::Row<size_t>>("assignments") = std::move(assignments);
 }
 
-void mlpackMain()
+static void mlpackMain()
 {
   RequireAtLeastOnePassed({ "assignments", "centroids" }, false,
       "no output will be saved");

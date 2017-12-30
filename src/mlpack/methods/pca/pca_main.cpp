@@ -99,7 +99,7 @@ void RunPCA(arma::mat& dataset,
       dataset.n_rows << " dimensions)." << endl;
 }
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Load input dataset.
   arma::mat& dataset = CLI::GetParam<arma::mat>("input");
@@ -119,7 +119,8 @@ void mlpackMain()
   error << "cannot be greater than existing dimensionality (" << dataset.n_rows
       << ")";
   RequireParamValue<int>("new_dimensionality",
-      [dataset](int x) { return x <= dataset.n_rows; }, true, error.str());
+      [dataset](int x) { return x <= (int) dataset.n_rows; }, true,
+      error.str());
 
   RequireParamValue<double>("var_to_retain",
       [](double x) { return x >= 0.0 && x <= 1.0; }, true,

@@ -96,7 +96,7 @@ PARAM_FLAG("first_leaf_exact", "The flag to trigger sampling only after "
 PARAM_INT_IN("single_sample_limit", "The limit on the maximum number of "
     "samples (and hence the largest node you can approximate).", "z", 20);
 
-void mlpackMain()
+static void mlpackMain()
 {
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));

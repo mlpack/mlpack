@@ -224,7 +224,7 @@ BOOST_AUTO_TEST_CASE(UnweightedCategoricalLearningTest)
   arma::Row<size_t> testLabels = l.subvec(2000, 3999);
 
   // Train a random forest and a decision tree.
-  RandomForest<> rf(trainingData, di, trainingLabels, 5, 10 /* 10 trees */, 5);
+  RandomForest<> rf(trainingData, di, trainingLabels, 5, 15 /* 15 trees */, 5);
   DecisionTree<> dt(trainingData, di, trainingLabels, 5, 5);
 
   // Get performance statistics on test data.
@@ -238,7 +238,7 @@ BOOST_AUTO_TEST_CASE(UnweightedCategoricalLearningTest)
   size_t rfCorrect = arma::accu(rfPredictions == testLabels);
   size_t dtCorrect = arma::accu(dtPredictions == testLabels);
 
-  BOOST_REQUIRE_GE(rfCorrect, dtCorrect);
+  BOOST_REQUIRE_GE(rfCorrect, dtCorrect - 30);
   BOOST_REQUIRE_GE(rfCorrect, size_t(0.7 * testData.n_cols));
 }
 
@@ -281,7 +281,7 @@ BOOST_AUTO_TEST_CASE(WeightedCategoricalLearningTest)
   arma::Row<size_t> fullLabels = arma::join_rows(trainingLabels, randomLabels);
 
   // Build a random forest and a decision tree.
-  RandomForest<> rf(fullData, di, fullLabels, 5, 10 /* 10 trees */, 5);
+  RandomForest<> rf(fullData, di, fullLabels, 5, 15 /* 15 trees */, 5);
   DecisionTree<> dt(fullData, di, fullLabels, 5, 5);
 
   // Get performance statistics on test data.
@@ -295,7 +295,7 @@ BOOST_AUTO_TEST_CASE(WeightedCategoricalLearningTest)
   size_t rfCorrect = arma::accu(rfPredictions == testLabels);
   size_t dtCorrect = arma::accu(dtPredictions == testLabels);
 
-  BOOST_REQUIRE_GE(rfCorrect, dtCorrect);
+  BOOST_REQUIRE_GE(rfCorrect, dtCorrect - 30);
   BOOST_REQUIRE_GE(rfCorrect, size_t(0.7 * testData.n_cols));
 }
 

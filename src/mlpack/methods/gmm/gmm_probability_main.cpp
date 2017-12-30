@@ -41,7 +41,7 @@ PARAM_MATRIX_IN_REQ("input", "Input matrix to calculate probabilities of.",
 
 PARAM_MATRIX_OUT("output", "Matrix to store calculated probabilities in.", "o");
 
-void mlpackMain()
+static void mlpackMain()
 {
   RequireAtLeastOnePassed({ "output" }, false, "no results will be saved");
 

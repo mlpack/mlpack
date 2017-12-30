@@ -99,7 +99,7 @@ PARAM_STRING_IN("algorithm", "Type of neighbor search: 'naive', 'single_tree', "
 PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate nearest neighbor "
     "search with given relative error.", "e", 0);
 
-void mlpackMain()
+static void mlpackMain()
 {
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));

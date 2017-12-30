@@ -222,7 +222,14 @@ class RNN
   size_t& Rho() { return rho; }
 
   /**
-   * Reset the module infomration (weights/parameters).
+   * Reset the state of the network.  This ensures that all internally-held
+   * gradients are set to 0, all memory cells are reset, and the parameters
+   * matrix is the right size.
+   */
+  void Reset();
+
+  /**
+   * Reset the module information (weights/parameters).
    */
   void ResetParameters();
 
