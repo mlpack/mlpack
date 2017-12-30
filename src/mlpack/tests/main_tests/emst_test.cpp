@@ -9,7 +9,11 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#include <string>
+
 #define BINDING_TYPE BINDING_TYPE_TEST
+static const std::string testName = "EMST";
+
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/emst/emst_main.cpp>
@@ -21,31 +25,13 @@
 
 using namespace mlpack;
 
-namespace mlpack {
-namespace bindings {
-namespace tests {
-
-extern std::string programName;
-
-}
-}
-}
-
-// Utility function to set a parameter and mark it as passed, using copy
-// semantics.
-template<typename T>
-void SetInputParam(const std::string& name, const T& value)
-{
-  CLI::GetParam<T>(name) = value;
-  CLI::SetPassed(name);
-}
-
-// Utility function to set a parameter and mark it as passed, using move
-// semantics.
+// Utility function to set a parameter and mark it as passed,
+// using copy semantics for lvalues and move semantics for rvalues.
 template<typename T>
 void SetInputParam(const std::string& name, T&& value)
 {
-  CLI::GetParam<T>(name) = std::move(value);
+   CLI::GetParam<typename std::remove_reference<T>::type>(name)
+        = std::forward<T>(value);
   CLI::SetPassed(name);
 }
 
@@ -55,7 +41,7 @@ struct EMSTTestFixture
   EMSTTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(mlpack::bindings::tests::programName);
+    CLI::RestoreSettings(testName);
   }
 
   ~EMSTTestFixture()
