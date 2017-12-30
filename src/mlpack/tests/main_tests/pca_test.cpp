@@ -11,22 +11,13 @@ static const std::string testName = "PrincipalComponentAnalysis";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/util/test_helper.hpp>
 #include <mlpack/methods/pca/pca_main.cpp>
 
 #include <boost/test/unit_test.hpp>
 #include "../test_tools.hpp"
 
 using namespace mlpack;
-
-// Utility function to set a parameter and mark it as passed,
-// using copy semantics for lvalues and move semantics for rvalues
-template<typename T>
-void SetInputParam(const std::string& name, T&& value)
-{
-  CLI::GetParam<typename std::remove_reference<T>::type>(name)
-    = std::forward<T>(value);
-  CLI::SetPassed(name);
-}
 
 struct PCATestFixture
 {

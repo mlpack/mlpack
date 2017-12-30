@@ -4,6 +4,7 @@
  *
  * Test mlpackMain() of linear_regression_main.cpp.
  */
+
 #include <string>
 
 #define BINDING_TYPE BINDING_TYPE_TEST
@@ -11,22 +12,13 @@ static const std::string testName = "LinearRegression";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/util/test_helper.hpp>
 #include <mlpack/methods/linear_regression/linear_regression_main.cpp>
 
 #include <boost/test/unit_test.hpp>
 #include "../test_tools.hpp"
 
 using namespace mlpack;
-
-// Utility function to set a parameter and mark it as passed,
-// using copy semantics for lvalues and move semantics for rvalues
-template<typename T>
-void SetInputParam(const std::string& name, T&& value)
-{
-  CLI::GetParam<typename std::remove_reference<T>::type>(name)
-    = std::forward<T>(value);
-  CLI::SetPassed(name);
-}
 
 struct LRTestFixture
 {
@@ -54,22 +46,23 @@ BOOST_FIXTURE_TEST_SUITE(LinearRegressionMainTest, LRTestFixture);
 
 /**
  * Training a model with different regularization parameter
- * and ensuring that predictions are different
+ * and ensuring that predictions are different.
  */
 BOOST_AUTO_TEST_CASE(LRDifferentLambdas)
 {
-  // required minimal difference between solutions
+  // A required minimal difference between solutions.
   const double delta = 0.1;
 
-  arma::mat trainX = { 1.0, 2.0, 3.0 };
-  arma::mat testX = { 4.0 };
-  arma::rowvec trainY = { 1.0, 4.0, 9.0 };
+  arma::mat trainX("1.0, 2.0, 3.0");
+  arma::mat testX("4.0");
+  arma::rowvec trainY("1.0, 4.0, 9.0");
+
   SetInputParam("training", trainX);
   SetInputParam("training_responses", trainY);
   SetInputParam("test", testX);
   SetInputParam("lambda", 0.1);
 
-  // first solution
+  // The first solution.
   mlpackMain();
   const double testY1 = CLI::GetParam<arma::rowvec>("output_predictions")(0);
 
@@ -80,42 +73,42 @@ BOOST_AUTO_TEST_CASE(LRDifferentLambdas)
   SetInputParam("test", std::move(testX));
   SetInputParam("lambda", 1.0);
 
-  // second solution
+  // The second solution.
   mlpackMain();
   const double testY2 = CLI::GetParam<arma::rowvec>("output_predictions")(0);
 
-  // second solution has stronger regularization,
-  // so the predicted value should be smaller
-  BOOST_REQUIRE(testY1 - delta > testY2);
+  // Second solution has stronger regularization,
+  // so the predicted value should be smaller.
+  BOOST_REQUIRE_GT(testY1 - delta, testY2);
 }
 
 
 /**
  * Checking two options of specifying responses (extra row in train matrix and
- * extra parameter) and ensuring that predictions are the same
+ * extra parameter) and ensuring that predictions are the same.
  */
 BOOST_AUTO_TEST_CASE(LRResponsesRepresentation)
 {
   constexpr double delta = 1e-5;
 
-  arma::mat trainX1 = {{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}};
-  arma::mat testX = {4.0};
+  arma::mat trainX1("1.0, 2.0, 3.0; 1.0, 4.0, 9.0");
+  arma::mat testX("4.0");
   SetInputParam("training", trainX1);
   SetInputParam("test", testX);
 
-  // first solution
+  // The first solution.
   mlpackMain();
   const double testY1 = CLI::GetParam<arma::rowvec>("output_predictions")(0);
 
   ResetSettings();
 
-  arma::mat trainX2 = {1.0, 2.0, 3.0};
-  arma::rowvec trainY2 = {1.0, 4.0, 9.0};
+  arma::mat trainX2("1.0, 2.0, 3.0");
+  arma::rowvec trainY2("1.0, 4.0, 9.0");
   SetInputParam("training", std::move(trainX2));
   SetInputParam("training_responses", std::move(trainY2));
   SetInputParam("test", std::move(testX));
 
-  // second solution
+  // The second solution.
   mlpackMain();
   const double testY2 = CLI::GetParam<arma::rowvec>("output_predictions")(0);
 
@@ -124,7 +117,7 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentation)
 
 /**
  * Check that model can saved / loaded and used. Ensuring that
- * results are the same
+ * results are the same.
  */
 BOOST_AUTO_TEST_CASE(LRModelReload)
 {
@@ -159,7 +152,7 @@ BOOST_AUTO_TEST_CASE(LRModelReload)
 }
 
 /**
- * Ensuring that response size is is checked
+ * Ensuring that response size is is checked.
  */
 BOOST_AUTO_TEST_CASE(LRWrongResponseSizeTest)
 {
@@ -167,7 +160,7 @@ BOOST_AUTO_TEST_CASE(LRWrongResponseSizeTest)
   constexpr int D = 2;
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
-  arma::rowvec trainY = arma::randu<arma::rowvec>(N + 3); // wrong size
+  arma::rowvec trainY = arma::randu<arma::rowvec>(N + 3); // Wrong size.
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("training_responses", std::move(trainY));
@@ -178,7 +171,7 @@ BOOST_AUTO_TEST_CASE(LRWrongResponseSizeTest)
 }
 
 /**
- * Ensuring that test data dimensionality is is checked
+ * Ensuring that test data dimensionality is is checked.
  */
 BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest1)
 {
@@ -188,7 +181,7 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest1)
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
   arma::rowvec trainY = arma::randu<arma::rowvec>(N);
-  arma::mat testX = arma::randu<arma::mat>(D - 1, M); // wrong dimensionality
+  arma::mat testX = arma::randu<arma::mat>(D - 1, M); // Wrong dimensionality.
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("training_responses", std::move(trainY));
@@ -201,7 +194,7 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest1)
 
 /**
  * Ensuring that test data dimensionality is is checked
- * when model is loaded
+ * when model is loaded.
  */
 BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest2)
 {
@@ -221,7 +214,7 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest2)
 
   ResetSettings();
 
-  arma::mat testX = arma::randu<arma::mat>(D - 1, M); // wrong dimensionality
+  arma::mat testX = arma::randu<arma::mat>(D - 1, M); // Wrong dimensionality.
   SetInputParam("input_model", std::move(model));
   SetInputParam("test", std::move(testX));
 
@@ -231,7 +224,7 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest2)
 }
 
 /**
- * Checking that that size and dimensionality of prediction is correct
+ * Checking that that size and dimensionality of prediction is correct.
  */
 BOOST_AUTO_TEST_CASE(LRPridictionSizeCheck)
 {
@@ -256,7 +249,7 @@ BOOST_AUTO_TEST_CASE(LRPridictionSizeCheck)
 }
 
 /**
- * Ensuring that absence of responses is checked
+ * Ensuring that absence of responses is checked.
  */
 BOOST_AUTO_TEST_CASE(LRNoResponses)
 {
@@ -272,7 +265,7 @@ BOOST_AUTO_TEST_CASE(LRNoResponses)
 }
 
 /**
- * Ensuring that absence of training data is checked
+ * Ensuring that absence of training data is checked.
  */
 BOOST_AUTO_TEST_CASE(LRNoTrainingData)
 {
