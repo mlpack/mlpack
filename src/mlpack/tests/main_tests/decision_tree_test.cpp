@@ -24,7 +24,7 @@ static const std::string testName = "DecisionTree";
 using namespace mlpack;
 
 // Utility function to set a parameter and mark it as passed,
-// using copy semantics for lvalues and move semantics for rvalues
+// using copy semantics for lvalues and move semantics for rvalues.
 template<typename T>
 void SetInputParam(const std::string& name, T&& value)
 {
