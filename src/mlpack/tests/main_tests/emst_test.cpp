@@ -55,7 +55,7 @@ BOOST_FIXTURE_TEST_SUITE(EMSTMainTest, EMSTTestFixture);
 
 /**
  * Make sure that Output has 3 Dimensions and
- * check number of output edges.
+ * check the number of output edges.
  */
 BOOST_AUTO_TEST_CASE(EMSTOutputDimensionTest)
 {
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(EMSTOutputDimensionTest)
 
 /**
  * Check Naive algorithm Output has 3 Dimensions and
- * check number of output edges.
+ * check the number of output edges.
  */
 BOOST_AUTO_TEST_CASE(EMSTNaiveOutputDimensionTest)
 {
