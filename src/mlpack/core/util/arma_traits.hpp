@@ -12,6 +12,8 @@
 #ifndef MLPACK_CORE_UTIL_ARMA_TRAITS_HPP
 #define MLPACK_CORE_UTIL_ARMA_TRAITS_HPP
 
+#include <mlpack/arma_inc.hpp>
+
 // Structs have public members by default (that's why they are chosen over
 // classes).
 
