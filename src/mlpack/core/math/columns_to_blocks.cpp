@@ -11,6 +11,8 @@
  */
 #include "columns_to_blocks.hpp"
 
+#include <mlpack/arma_inc.hpp>
+
 namespace mlpack {
 namespace math {
 

@@ -13,6 +13,9 @@
 #define MLPACK_CORE_MATH_LIN_ALG_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/arma_inc.hpp>
+
+#include <vector>
 
 /**
  * Linear algebra utility functions, generally performed on matrices or vectors.

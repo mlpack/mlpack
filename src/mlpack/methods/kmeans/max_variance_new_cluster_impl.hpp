@@ -15,6 +15,8 @@
 // Just in case it has not been included.
 #include "max_variance_new_cluster.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 #include <cfloat>
 
 namespace mlpack {

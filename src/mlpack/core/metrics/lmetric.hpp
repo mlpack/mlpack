@@ -17,6 +17,8 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include <climits>
+
 namespace mlpack {
 namespace metric {
 

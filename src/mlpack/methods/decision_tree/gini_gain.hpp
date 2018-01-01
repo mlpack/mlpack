@@ -13,8 +13,6 @@
 #ifndef MLPACK_METHODS_DECISION_TREE_GINI_GAIN_HPP
 #define MLPACK_METHODS_DECISION_TREE_GINI_GAIN_HPP
 
-#include <mlpack/core.hpp>
-
 namespace mlpack {
 namespace tree {
 

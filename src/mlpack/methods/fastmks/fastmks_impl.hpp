@@ -18,6 +18,7 @@
 #include "fastmks_rules.hpp"
 
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
+#include <mlpack/core/util/timers.hpp>
 
 namespace mlpack {
 namespace fastmks {

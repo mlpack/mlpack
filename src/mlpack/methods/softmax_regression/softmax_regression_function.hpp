@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/arma_inc.hpp>
 
 namespace mlpack {
 namespace regression {

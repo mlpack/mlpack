@@ -12,8 +12,6 @@
 #ifndef MLPACK_CORE_HPT_CV_FUNCTION_HPP
 #define MLPACK_CORE_HPT_CV_FUNCTION_HPP
 
-#include <mlpack/core.hpp>
-
 namespace mlpack {
 namespace hpt {
 

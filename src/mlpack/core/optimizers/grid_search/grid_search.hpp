@@ -12,8 +12,6 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_GRID_SEARCH_GRID_SEARCH_HPP
 #define MLPACK_CORE_OPTIMIZERS_GRID_SEARCH_GRID_SEARCH_HPP
 
-#include <mlpack/core.hpp>
-
 namespace mlpack {
 namespace optimization {
 

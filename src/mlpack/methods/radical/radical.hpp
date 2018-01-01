@@ -15,6 +15,7 @@
 #define MLPACK_METHODS_RADICAL_RADICAL_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/arma_inc.hpp>
 
 namespace mlpack {
 namespace radical {

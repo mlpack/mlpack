@@ -12,8 +12,6 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_SCD_DESCENT_POLICIES_GREEDY_HPP
 #define MLPACK_CORE_OPTIMIZERS_SCD_DESCENT_POLICIES_GREEDY_HPP
 
-#include <mlpack/core.hpp>
-
 namespace mlpack {
 namespace optimization {
 

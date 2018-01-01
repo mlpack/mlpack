@@ -6,7 +6,6 @@
 #ifndef BOOST_MATH_POLICY_HPP
 #define BOOST_MATH_POLICY_HPP
 
-#include <mlpack/core.hpp>
 #include <boost/mpl/list.hpp>
 #include <boost/mpl/contains.hpp>
 #include <boost/mpl/if.hpp>

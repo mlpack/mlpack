@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_NN_MAXIMAL_INPUTS_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/arma_inc.hpp>
 
 namespace mlpack {
 namespace nn {

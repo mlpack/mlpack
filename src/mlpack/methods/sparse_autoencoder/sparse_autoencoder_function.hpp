@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_SPARSE_AUTOENCODER_SPARSE_AUTOENCODER_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/arma_inc.hpp>
 
 namespace mlpack {
 namespace nn {

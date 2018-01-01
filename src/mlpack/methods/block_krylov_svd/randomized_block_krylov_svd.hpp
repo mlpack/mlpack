@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_BLOCK_KRYLOV_SVD_RANDOMIZED_BLOCK_KRYLOV_SVD_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/arma_inc.hpp>
 
 namespace mlpack {
 namespace svd {

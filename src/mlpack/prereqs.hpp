@@ -46,9 +46,4 @@ using enable_if_t = typename enable_if<B, T>::type;
 // We need to be able to mark functions deprecated.
 #include <mlpack/core/util/deprecated.hpp>
 
-#include "arma_inc.hpp"
-#include "boost_inc.hpp"
-
-#include "common_inc.hpp"
-
 #endif

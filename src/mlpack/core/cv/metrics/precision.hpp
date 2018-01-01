@@ -12,7 +12,6 @@
 #ifndef MLPACK_CORE_CV_METRICS_PRECISION_HPP
 #define MLPACK_CORE_CV_METRICS_PRECISION_HPP
 
-#include <mlpack/core.hpp>
 #include <mlpack/core/cv/metrics/average_strategy.hpp>
 
 namespace mlpack {

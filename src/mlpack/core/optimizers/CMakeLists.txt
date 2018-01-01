@@ -14,6 +14,7 @@ set(DIRS
   proximal
   rmsprop
   sa
+  scd
   sdp
   sgd
   smorms3

@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "softmax_regression.hpp"
 
+#include <mlpack/core/util/timers.hpp>
+
 namespace mlpack {
 namespace regression {
 

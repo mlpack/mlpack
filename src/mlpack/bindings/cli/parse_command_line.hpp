@@ -8,9 +8,9 @@
 #ifndef MLPACK_BINDINGS_CLI_PARSE_COMMAND_LINE_HPP
 #define MLPACK_BINDINGS_CLI_PARSE_COMMAND_LINE_HPP
 
-#include <mlpack/core.hpp>
-#include <boost/program_options.hpp>
 #include "print_help.hpp"
+
+#include <boost/program_options.hpp>
 
 namespace mlpack {
 namespace bindings {

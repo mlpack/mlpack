@@ -14,6 +14,8 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include <mlpack/arma_inc.hpp>
+
 namespace mlpack {
 namespace optimization {
 

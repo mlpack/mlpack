@@ -12,6 +12,8 @@
  */
 #include "ra_util.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 using namespace mlpack;
 using namespace mlpack::neighbor;
 

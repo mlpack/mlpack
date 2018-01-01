@@ -14,21 +14,22 @@
 #ifndef MLPACK_CORE_UTIL_CLI_HPP
 #define MLPACK_CORE_UTIL_CLI_HPP
 
-#include <list>
-#include <iostream>
-#include <map>
-#include <string>
-
-#include <boost/any.hpp>
-
-#include <mlpack/prereqs.hpp>
-
 #include "timers.hpp"
 #include "program_doc.hpp"
 #include "cli_deleter.hpp" // To make sure we can delete the singleton.
 #include "version.hpp"
 
 #include "param_data.hpp"
+
+#include <mlpack/prereqs.hpp>
+
+#include <boost/any.hpp>
+
+#include <list>
+#include <iostream>
+#include <map>
+#include <string>
+
 
 namespace mlpack {
 namespace util {
