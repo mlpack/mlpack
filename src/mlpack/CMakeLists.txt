@@ -1,7 +1,14 @@
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/..) # mlpack/mlpack_export.hpp
 
 # Add core.hpp to list of sources.
-set(MLPACK_SRCS ${MLPACK_SRCS} "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp")
+set(MLPACK_SRCS ${MLPACK_SRCS}
+        "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/prereqs.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/common_inc.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/std_inc.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/arma_inc.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/boost_inc.hpp"
+)
 
 ## Recurse into both core/ and methods/.
 set(DIRS
