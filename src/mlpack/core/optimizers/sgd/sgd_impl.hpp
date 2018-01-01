@@ -17,6 +17,8 @@
 // In case it hasn't been included yet.
 #include "sgd.hpp"
 
+#include <cfloat>
+
 namespace mlpack {
 namespace optimization {
 

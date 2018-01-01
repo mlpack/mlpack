@@ -14,7 +14,9 @@
 
 // In case it hasn't been included yet.
 #include "hoeffding_tree.hpp"
+
 #include <stack>
+#include <cfloat>
 
 namespace mlpack {
 namespace tree {

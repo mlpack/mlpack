@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "lcc.hpp"
 
+#include <cfloat>
+
 namespace mlpack {
 namespace lcc {
 

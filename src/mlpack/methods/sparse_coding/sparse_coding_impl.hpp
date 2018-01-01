@@ -16,6 +16,8 @@
 // In case it hasn't already been included.
 #include "sparse_coding.hpp"
 
+#include <cfloat>
+
 namespace mlpack {
 namespace sparse_coding {
 

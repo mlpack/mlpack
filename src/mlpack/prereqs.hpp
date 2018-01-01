@@ -48,7 +48,6 @@ using enable_if_t = typename enable_if<B, T>::type;
 
 #include "arma_inc.hpp"
 #include "boost_inc.hpp"
-#include "std_inc.hpp"
 
 #include "common_inc.hpp"
 

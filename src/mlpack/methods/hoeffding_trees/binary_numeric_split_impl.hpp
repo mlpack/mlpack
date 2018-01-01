@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "binary_numeric_split.hpp"
 
+#include <cfloat>
+
 namespace mlpack {
 namespace tree {
 

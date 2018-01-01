@@ -15,6 +15,8 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/tree/tree_traits.hpp>
 
+#include <cfloat>
+
 namespace mlpack {
 namespace fastmks {
 

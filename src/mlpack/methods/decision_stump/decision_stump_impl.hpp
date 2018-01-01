@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "decision_stump.hpp"
 
+#include <cfloat>
+
 namespace mlpack {
 namespace decision_stump {
 
