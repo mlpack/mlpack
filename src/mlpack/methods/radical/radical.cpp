@@ -9,10 +9,12 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #include "radical.hpp"
+
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/timers.hpp>
+
+#include <mlpack/math_inc.hpp>
 
 using namespace std;
 using namespace arma;

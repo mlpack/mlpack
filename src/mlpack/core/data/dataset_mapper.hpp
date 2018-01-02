@@ -16,6 +16,8 @@
 #define MLPACK_CORE_DATA_DATASET_INFO_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/boost_inc.hpp>
+
 #include <unordered_map>
 
 #include "map_policies/increment_policy.hpp"

@@ -16,6 +16,7 @@
 #include <mlpack/prereqs.hpp>
 
 #include <string>
+#include <algorithm>
 
 namespace mlpack {
 namespace data {
