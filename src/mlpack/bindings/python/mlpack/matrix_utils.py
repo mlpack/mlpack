@@ -25,6 +25,18 @@ elif int(pd.__version__.split('.')[1]) == 17:
 elif int(pd.__version__.split('.')[1]) >= 15:
   from pandas.core.common import CategoricalDtype
 
+# We need a unicode type, but on python3 we don't have it.
+try:
+  UNICODE_EXISTS = bool(type(unicode))
+except NameError:
+  unicode = str
+
+# We also need a buffer type.
+try:
+  BUFFER_EXISTS = bool(type(buffer))
+except:
+  buffer = memoryview
+
 def to_matrix(x, dtype=np.double):
   """
   Given some array-like X, return a numpy ndarray of the same type.
@@ -63,17 +75,17 @@ def to_matrix_with_info(x, dtype):
     dtype_array = x.dtypes.values if len(x.dtypes) > 0 else [x.dtypes]
     if not any(isinstance(t, CategoricalDtype)
         for t in dtype_array) and \
-       not 'object' in dtype_array and \
-       not 'str' in dtype_array and \
-       not 'unicode' in dtype_array:
+       not np.dtype(object) in dtype_array and \
+       not np.dtype(str) in dtype_array and \
+       not np.dtype(unicode) in dtype_array:
         # We can just return the matrix as-is; it's all numeric.
         d = np.zeros([x.shape[1]], dtype=np.bool)
         return (to_matrix(x), d)
 
-    if 'str' in dtype_array or 'unicode' in dtype_array:
+    if np.dtype(str) in dtype_array or np.dtype(unicode) in dtype_array:
       raise TypeError('cannot convert matrices with string types')
 
-    if 'buffer' in dtype_array:
+    if np.dtype(buffer) in dtype_array:
       raise TypeError("'buffer' dtype not supported")
 
     # If we get to here, then we are going to need to do some type conversion,

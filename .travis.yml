@@ -4,6 +4,7 @@ language: cpp
 
 env:
   - CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON=/usr/bin/python"
+  - CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON=/usr/bin/python3"
   - CMAKE_OPTIONS="-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF"
 
 before_install:
@@ -12,10 +13,13 @@ before_install:
   - sudo rm -f /var/lib/dpkg/lock && sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo rm -f /var/lib/dpkg/lock && sudo apt-get update -qq
   - printenv
-  - sudo rm -f /var/lib/dpkg/lock && sudo apt-get install -qq libopenblas-dev liblapack-dev g++ libboost-all-dev
+  - sudo rm -f /var/lib/dpkg/lock && sudo apt-get install -qq libopenblas-dev liblapack-dev g++ libboost-all-dev python3-pip
   - sudo wget https://launchpadlibrarian.net/260609315/fix-std-vector-load.diff -O /usr/include/fix-std-vector-load.diff
   - cd /usr/include && sudo patch -p1 < fix-std-vector-load.diff && sudo rm fix-std-vector-load.diff && cd -
+  # Install both python2 and python3 modules, and the build will decide which to
+  # use.
   - sudo pip install cython setuptools numpy pandas
+  - sudo pip3 install cython setuptools numpy pandas
   - curl http://masterblaster.mlpack.org:5005/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
   - cmake . && make && sudo make install && cd ..
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
