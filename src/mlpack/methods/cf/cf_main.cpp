@@ -250,16 +250,27 @@ void AssembleFactorizerType(const std::string& algorithm,
     const double minResidue = CLI::GetParam<double>("min_residue");
     SimpleResidueTermination srt(minResidue, maxIterations);
     if (algorithm == "NMF")
+    {
       PerformAction(NMFALSFactorizer(srt), dataset, rank);
+    }
     else if (algorithm == "BatchSVD")
-      PerformAction(SVDBatchFactorizer(srt), dataset, rank);
+    {
+      PerformAction(SVDBatchFactorizer<>(srt), dataset, rank);
+    }
     else if (algorithm == "SVDIncompleteIncremental")
-      PerformAction(SparseSVDIncompleteIncrementalFactorizer(srt), dataset,
-          rank);
+    {
+      PerformAction(SVDIncompleteIncrementalFactorizer<arma::sp_mat>(srt),
+          dataset, rank);
+    }
     else if (algorithm == "SVDCompleteIncremental")
-      PerformAction(SparseSVDCompleteIncrementalFactorizer(srt), dataset, rank);
+    {
+      PerformAction(SVDCompleteIncrementalFactorizer<arma::sp_mat>(srt),
+          dataset, rank);
+    }
     else if (algorithm == "RegSVD")
+    {
       PerformAction(RegularizedSVD<>(maxIterations), dataset, rank);
+    }
   }
 }
 
