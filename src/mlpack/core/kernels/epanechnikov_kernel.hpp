@@ -15,6 +15,8 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/kernels/kernel_traits.hpp>
 
+#include <cstddef>
+
 namespace mlpack {
 namespace kernel {
 
