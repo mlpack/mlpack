@@ -10,6 +10,8 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/is_std_vector.hpp>
 
+#include <mlpack/boost_inc.hpp>
+
 namespace mlpack {
 namespace bindings {
 namespace python {

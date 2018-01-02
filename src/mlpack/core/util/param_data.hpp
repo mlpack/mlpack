@@ -9,6 +9,8 @@
 #define MLPACK_CORE_UTIL_PARAM_DATA_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/boost_inc.hpp>
+
 #include <boost/any.hpp>
 
 /**

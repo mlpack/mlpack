@@ -15,6 +15,10 @@
 // In case it hasn't been included yet.
 #include "spalera_sgd.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
+#include <cfloat>
+
 namespace mlpack {
 namespace optimization {
 

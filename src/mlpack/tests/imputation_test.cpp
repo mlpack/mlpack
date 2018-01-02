@@ -11,7 +11,8 @@
  */
 #include <sstream>
 
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
+
 #include <mlpack/core/data/load_impl.hpp>
 #include <mlpack/core/data/dataset_mapper.hpp>
 #include <mlpack/core/data/map_policies/increment_policy.hpp>
@@ -23,7 +24,6 @@
 #include <mlpack/core/data/imputation_methods/median_imputation.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::data;

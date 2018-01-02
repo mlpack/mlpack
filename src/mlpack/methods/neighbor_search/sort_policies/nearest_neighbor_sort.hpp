@@ -15,6 +15,8 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include <cfloat>
+
 namespace mlpack {
 namespace neighbor {
 

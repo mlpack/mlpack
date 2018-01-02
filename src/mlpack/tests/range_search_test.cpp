@@ -9,12 +9,13 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
+
 #include <mlpack/methods/range_search/range_search.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/methods/range_search/rs_model.hpp>
+
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::range;

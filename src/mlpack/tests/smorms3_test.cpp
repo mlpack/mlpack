@@ -9,14 +9,15 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
 
 #include <mlpack/core/optimizers/smorms3/smorms3.hpp>
 #include <mlpack/core/optimizers/sgd/test_function.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
+#include <mlpack/core/dists/gaussian_distribution.hpp>
+
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 using namespace arma;
 using namespace mlpack::optimization;

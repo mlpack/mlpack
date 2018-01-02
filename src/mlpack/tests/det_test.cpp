@@ -10,9 +10,9 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
-#include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
+
+#include <boost/test/unit_test.hpp>
 
 // This trick does not work on Windows.  We will have to comment out the tests
 // that depend on it.

@@ -15,8 +15,10 @@
 // In case it hasn't been included yet.
 #include "qdafn.hpp"
 
-#include <queue>
 #include <mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
+
+#include <queue>
 
 namespace mlpack {
 namespace neighbor {

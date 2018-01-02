@@ -12,10 +12,12 @@
 
 // Note: We don't use BOOST_REQUIRE_CLOSE in the code below because we need
 // to use FPC_WEAK, and it's not at all intuitive how to do that.
+#include "test_tools.hpp"
+
 #include <mlpack/methods/local_coordinate_coding/lcc.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+
 #include "serialization.hpp"
 
 using namespace arma;

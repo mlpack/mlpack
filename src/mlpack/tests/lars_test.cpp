@@ -12,11 +12,12 @@
 
 // Note: We don't use BOOST_REQUIRE_CLOSE in the code below because we need
 // to use FPC_WEAK, and it's not at all intuitive how to do that.
+#include "test_tools.hpp"
+
 #include <mlpack/methods/lars/lars.hpp>
 #include <mlpack/core/data/load.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::regression;

@@ -9,7 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
+
 #include <mlpack/methods/amf/amf.hpp>
 #include <mlpack/methods/amf/update_rules/svd_batch_learning.hpp>
 #include <mlpack/methods/amf/init_rules/random_init.hpp>
@@ -17,8 +18,9 @@
 #include <mlpack/methods/amf/termination_policies/validation_RMSE_termination.hpp>
 #include <mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp>
 
+#include <mlpack/core/data/load.hpp>
+
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 BOOST_AUTO_TEST_SUITE(SVDBatchTest);
 

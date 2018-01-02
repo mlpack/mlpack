@@ -15,6 +15,8 @@
 // In case it hasn't yet been included.
 #include "negative_log_likelihood.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 

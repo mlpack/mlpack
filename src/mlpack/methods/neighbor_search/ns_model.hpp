@@ -15,12 +15,16 @@
 #ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_HPP
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_HPP
 
+#include <mlpack/boost_inc.hpp>
+
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 #include <mlpack/core/tree/spill_tree.hpp>
 #include <mlpack/core/tree/octree.hpp>
+
 #include <boost/variant.hpp>
+
 #include "neighbor_search.hpp"
 
 namespace mlpack {

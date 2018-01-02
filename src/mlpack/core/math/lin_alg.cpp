@@ -12,7 +12,7 @@
 #include "lin_alg.hpp"
 
 #include <mlpack/core/math/random.hpp>
-#include <mlpack/arma_inc.hpp>
+#include <mlpack/math_inc.hpp>
 
 using namespace mlpack;
 using namespace math;

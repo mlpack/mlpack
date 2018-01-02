@@ -12,6 +12,8 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_LAYER_HPP
 
+#include <mlpack/boost_inc.hpp>
+
 #include "add_merge.hpp"
 #include "concat_performance.hpp"
 #include "convolution.hpp"

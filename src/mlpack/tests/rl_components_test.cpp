@@ -9,8 +9,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
 
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
@@ -18,7 +17,6 @@
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::rl;

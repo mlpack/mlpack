@@ -23,6 +23,9 @@
 #include "visitor/set_input_height_visitor.hpp"
 #include "visitor/set_input_width_visitor.hpp"
 
+#include <mlpack/core/util/timers.hpp>
+#include <mlpack/core/math/shuffle_data.hpp>
+
 #include <boost/serialization/variant.hpp>
 
 namespace mlpack {

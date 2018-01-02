@@ -4,11 +4,9 @@
  *
  * Test of the mlpack log class.
  **/
-
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
 
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 using namespace mlpack;
 

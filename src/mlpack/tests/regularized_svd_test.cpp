@@ -9,13 +9,13 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
+
 #include <mlpack/methods/regularized_svd/regularized_svd.hpp>
 #include <mlpack/core/optimizers/parallel_sgd/parallel_sgd.hpp>
 #include <mlpack/core/optimizers/parallel_sgd/decay_policies/constant_step.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::svd;

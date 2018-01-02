@@ -9,15 +9,18 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
+
 #include <mlpack/methods/decision_tree/decision_tree.hpp>
 #include <mlpack/methods/decision_tree/information_gain.hpp>
 #include <mlpack/methods/decision_tree/gini_gain.hpp>
 #include <mlpack/methods/decision_tree/random_dimension_select.hpp>
 #include <mlpack/methods/decision_tree/multiple_random_dimension_select.hpp>
 
+#include <mlpack/core/data/load.hpp>
+
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+
 #include "serialization.hpp"
 #include "mock_categorical_data.hpp"
 

@@ -25,6 +25,9 @@
 #include "visitor/gradient_visitor.hpp"
 #include "visitor/weight_set_visitor.hpp"
 
+#include <mlpack/core/util/timers.hpp>
+#include <mlpack/core/math/shuffle_data.hpp>
+
 #include <boost/serialization/variant.hpp>
 
 namespace mlpack {

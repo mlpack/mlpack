@@ -9,11 +9,12 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
+
+#include <boost/test/unit_test.hpp>
+
 #include "serialization.hpp"
 
-#include <mlpack/core.hpp>
 #include <mlpack/methods/approx_kfn/qdafn.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 

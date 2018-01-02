@@ -14,6 +14,10 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
+
+#include <mlpack/core/math/range.hpp>
+#include <mlpack/core/dists/gaussian_distribution.hpp>
+
 #include "bound_traits.hpp"
 
 namespace mlpack {

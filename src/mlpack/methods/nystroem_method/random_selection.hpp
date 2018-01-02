@@ -16,6 +16,8 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include <mlpack/core/math/random.hpp>
+
 namespace mlpack {
 namespace kernel {
 

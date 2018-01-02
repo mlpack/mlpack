@@ -13,6 +13,8 @@
 
 #include "../visitor/reward_set_visitor.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 

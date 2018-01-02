@@ -10,15 +10,16 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
 */
-#include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
-
-#include <mlpack/core.hpp>
 
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp>
+
+#include <mlpack/core/data/load.hpp>
+
+#include <boost/test/unit_test.hpp>
 
 using namespace mlpack;
 using namespace mlpack::ann;

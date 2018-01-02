@@ -9,11 +9,15 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#include "test_tools.hpp"
+
 #include <mlpack/core/math/clamp.hpp>
 #include <mlpack/core/math/random.hpp>
 #include <mlpack/core/math/range.hpp>
+
+#include <mlpack/core/math/shuffle_data.hpp>
+
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace math;

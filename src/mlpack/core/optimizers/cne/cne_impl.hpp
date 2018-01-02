@@ -18,6 +18,8 @@
 
 #include "cne.hpp"
 
+#include <mlpack/core/math/random.hpp>
+
 namespace mlpack {
 namespace optimization {
 

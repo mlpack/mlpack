@@ -9,14 +9,19 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <sstream>
+#include "test_tools.hpp"
 
-#include <mlpack/core.hpp>
 #include <mlpack/core/data/load_arff.hpp>
 #include <mlpack/core/data/map_policies/missing_policy.hpp>
 
+#include <mlpack/core/data/load.hpp>
+#include <mlpack/core/data/normalize_labels.hpp>
+#include <mlpack/core/data/save.hpp>
+#include <mlpack/core/math/random.hpp>
+
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+
+#include <sstream>
 
 using namespace mlpack;
 using namespace mlpack::data;

@@ -8,6 +8,8 @@
 #define MLPACK_BINDINGS_PYTHON_PY_OPTION_HPP
 
 #include <mlpack/core/util/param_data.hpp>
+#include <mlpack/core/util/cli.hpp>
+
 #include "get_param.hpp"
 #include "get_printable_param.hpp"
 #include "print_class_defn.hpp"
