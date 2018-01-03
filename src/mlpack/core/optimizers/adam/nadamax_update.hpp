@@ -91,8 +91,7 @@ class NadaMaxUpdate
     m *= beta1;
     m += (1 - beta1) * gradient;
 
-    u *= beta2;
-    u = arma::max(u, arma::abs(gradient));
+    u = arma::max(u * beta2, arma::abs(gradient));
 
     double beta1T = beta1 * (1 - (0.5 *
         std::pow(0.96, iteration * scheduleDecay)));
