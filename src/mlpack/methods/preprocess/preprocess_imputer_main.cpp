@@ -116,32 +116,6 @@ static void mlpackMain()
   }
   else
   {
-    // Initialize imputer class
-    Imputer<double, MapperType, MeanImputation<double>> imputer(info);
-    if (strategy == "mean")
-    {
-      Imputer<double, MapperType, MeanImputation<double>> imputer(info);
-    }
-    else if (strategy == "median")
-    {
-      Imputer<double, MapperType, MedianImputation<double>> imputer(info);
-    }
-    else if (strategy == "listwise_deletion")
-    {
-      Imputer<double, MapperType, ListwiseDeletion<double>> imputer(info);
-    }
-    else if (strategy == "custom")
-    {
-      CustomImputation<double> strat(customValue);
-      Imputer<double, MapperType, CustomImputation<double>> imputer(
-          info, strat);
-    }
-    else
-    {
-      Log::Fatal << "'" <<  strategy << "' imputation strategy does not exist"
-          << endl;
-    }
-
     Timer::Start("imputation");
     if (CLI::HasParam("dimension"))
     {
@@ -150,8 +124,33 @@ static void mlpackMain()
       Log::Info << "Performing '" << strategy << "' imputation strategy "
           << "to replace '" << missingValue << "' on dimension " << dimension
           << "." << endl;
-
-      imputer.Impute(input, missingValue, dimension);
+      if (strategy == "mean")
+      {
+        Imputer<double, MapperType, MeanImputation<double>> imputer(info);
+        imputer.Impute(input, missingValue, dimension);
+      }
+      else if (strategy == "median")
+      {
+        Imputer<double, MapperType, MedianImputation<double>> imputer(info);
+        imputer.Impute(input, missingValue, dimension);
+      }
+      else if (strategy == "listwise_deletion")
+      {
+        Imputer<double, MapperType, ListwiseDeletion<double>> imputer(info);
+        imputer.Impute(input, missingValue, dimension);
+      }
+      else if (strategy == "custom")
+      {
+        CustomImputation<double> strat(customValue);
+        Imputer<double, MapperType, CustomImputation<double>> imputer(
+            info, strat);
+        imputer.Impute(input, missingValue, dimension);
+      }
+      else
+      {
+        Log::Fatal << "'" <<  strategy << "' imputation strategy does not exist"
+          << endl;
+      }
     }
     else
     {
@@ -162,7 +161,33 @@ static void mlpackMain()
 
       for (size_t i : dirtyDimensions)
       {
-        imputer.Impute(input, missingValue, i);
+        if (strategy == "mean")
+        {
+          Imputer<double, MapperType, MeanImputation<double>> imputer(info);
+          imputer.Impute(input, missingValue, i);
+        }
+        else if (strategy == "median")
+        {
+          Imputer<double, MapperType, MedianImputation<double>> imputer(info);
+          imputer.Impute(input, missingValue, i);
+        }
+        else if (strategy == "listwise_deletion")
+        {
+          Imputer<double, MapperType, ListwiseDeletion<double>> imputer(info);
+          imputer.Impute(input, missingValue, i);
+        }
+        else if (strategy == "custom")
+        {
+          CustomImputation<double> strat(customValue);
+          Imputer<double, MapperType, CustomImputation<double>> imputer(
+              info, strat);
+          imputer.Impute(input, missingValue, i);
+        }
+        else
+        {
+          Log::Fatal << "'" <<  strategy << "' imputation strategy does not exist"
+            << endl;
+        }
       }
     }
     Timer::Stop("imputation");
@@ -174,4 +199,3 @@ static void mlpackMain()
     }
   }
 }
-
