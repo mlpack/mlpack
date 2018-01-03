@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerListwiseDimensionTest)
   // Count number of unavailable entries.
   for (size_t i = 0; i < input_size; i++)
   {
-    if(std::to_string(inputData(1,i)) == "nan")
+    if (std::to_string(inputData(1, i)) == "nan")
       countNaN++;
   }
 
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerStrategyTest)
   // Input custom data points and labels.
   SetInputParam("input_file", (string) "preprocess_imputer_test.csv");
   SetInputParam("missing_value", (string) "nan");
-  SetInputParam("strategy", (string) "notmean"); //Invalid.
+  SetInputParam("strategy", (string) "notmean"); // Invalid.
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
