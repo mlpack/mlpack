@@ -81,4 +81,58 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerDimensionTest)
   BOOST_REQUIRE_EQUAL(outputData.n_cols, input_size);
 }
 
+/**
+ * Check that output has less points in
+ * case of listwise_deletion strategy.
+ */
+BOOST_AUTO_TEST_CASE(PreprocessImputerListwiseDimensionTest)
+{
+  // Load synthetic dataset.
+  arma::mat inputData;
+  data::Load("preprocess_imputer_test.csv", inputData);
+
+  // Store size of input dataset.
+  size_t input_size  = inputData.n_cols;
+  size_t countNaN = 0;
+
+  // Count number of unavailable entries.
+  for (size_t i = 0; i < input_size; i++)
+  {
+    if(std::to_string(inputData(1,i)) == "nan")
+      countNaN++;
+  }
+
+  // Input custom data points and labels.
+  SetInputParam("input_file", (string) "preprocess_imputer_test.csv");
+  SetInputParam("missing_value", (string) "nan");
+  SetInputParam("strategy", (string) "listwise_deletion");
+  SetInputParam("output_file", (string) "preprocess_imputer_output_test.csv");
+
+  mlpackMain();
+
+  // Now check that the output has desired dimensions.
+  arma::mat outputData;
+  data::Load(CLI::GetParam<string>("output_file"), outputData);
+  BOOST_REQUIRE_EQUAL(outputData.n_cols + countNaN, input_size);
+}
+
+/**
+ * Check that invalid strategy can't be specified.
+ */
+BOOST_AUTO_TEST_CASE(PreprocessImputerStrategyTest)
+{
+  // Load synthetic dataset.
+  arma::mat inputData;
+  data::Load("preprocess_imputer_test.csv", inputData);
+
+  // Input custom data points and labels.
+  SetInputParam("input_file", (string) "preprocess_imputer_test.csv");
+  SetInputParam("missing_value", (string) "nan");
+  SetInputParam("strategy", (string) "notmean"); //Invalid.
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
 BOOST_AUTO_TEST_SUITE_END();
