@@ -227,6 +227,7 @@
  *   - N Rajiv Vaidyanathan <rajivvaidyanathan4@gmail.com>
  *   - Kartik Nighania <kartiknighania@gmail.com>
  *   - Eugene Freyman <evg.freyman@gmail.com>
+ *   - Manish Kumar <manish887kr@gmail.com>
  */
 
 // First, include all of the prerequisites.

@@ -428,15 +428,18 @@ class Octree
   /**
    * This is used for sorting points while splitting.
    */
-  struct SplitInfo
+  struct SplitType
   {
-    //! Create the SplitInfo object.
-    SplitInfo(const size_t d, const arma::vec& c) : d(d), center(c) {}
+    struct SplitInfo
+    {
+      //! Create the SplitInfo object.
+      SplitInfo(const size_t d, const arma::vec& c) : d(d), center(c) {}
 
-    //! The dimension we are splitting on.
-    size_t d;
-    //! The center of the node.
-    const arma::vec& center;
+      //! The dimension we are splitting on.
+      size_t d;
+      //! The center of the node.
+      const arma::vec& center;
+    };
 
     template<typename VecType>
     static bool AssignToLeftNode(const VecType& point, const SplitInfo& s)
