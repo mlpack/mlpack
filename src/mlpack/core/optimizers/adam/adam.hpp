@@ -5,12 +5,14 @@
  * @author Marcus Edel
  * @author Vivek Pal
  * @author Sourabh Varshney
+ * @author Haritha Nair
  *
- * Adam, AdaMax, AMSGrad and Nadam optimizers. Adam is an an algorithm for
- * first-order gradient-based optimization of stochastic objective functions,
- * based on adaptive estimates of lower-order moments. AdaMax is simply a
- * variant of Adam based on the infinity norm. AMSGrad is another variant of
- * Adam with guaranteed convergence.
+ * Adam, AdaMax, AMSGrad, Nadam and Nadamax optimizers. Adam is an an algorithm
+ * for first-order gradient-based optimization of stochastic objective
+ * functions, based on adaptive estimates of lower-order moments. AdaMax is
+ * simply a variant of Adam based on the infinity norm. AMSGrad is another
+ * variant of Adam with guaranteed convergence. Nadam is another variant of 
+ * Adam based on NAG. NadaMax is a variant for Nadam based on Infinity form.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -27,6 +29,7 @@
 #include "adamax_update.hpp"
 #include "amsgrad_update.hpp"
 #include "nadam_update.hpp"
+#include "nadamax_update.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -36,7 +39,8 @@ namespace optimization {
  * different parameters from estimates of first and second moments of the
  * gradients. AdaMax is a variant of Adam based on the infinity norm as given
  * in the section 7 of the following paper. Nadam is an optimizer that
- * combines the Adam and NAG.
+ * combines the Adam and NAG. NadaMax is an variant of Nadam based on Infinity
+ * form.
  *
  * For more information, see the following.
  *
@@ -55,7 +59,7 @@ namespace optimization {
  * }
  * @endcode
  *
- * For Adam, AdaMax, AMSGrad and Nadam to work, a DecomposableFunctionType
+ * For Adam, AdaMax, AMSGrad, Nadam and NadaMax to work, a DecomposableFunctionType
  * template parameter is required. This class must implement the following
  * function:
  *
@@ -179,6 +183,8 @@ using AdaMax = AdamType<AdaMaxUpdate>;
 using AMSGrad = AdamType<AMSGradUpdate>;
 
 using Nadam = AdamType<NadamUpdate>;
+
+using NadaMax = AdamType<NadaMaxUpdate>;
 
 } // namespace optimization
 } // namespace mlpack
