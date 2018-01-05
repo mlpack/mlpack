@@ -6,6 +6,8 @@
  **/
 #include "test_tools.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 #include <boost/test/unit_test.hpp>
 
 using namespace mlpack;
