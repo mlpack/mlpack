@@ -187,7 +187,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
                       1);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
 
-  // Check that initial predictions and predictions using saved model are same. 
+  // Check that initial predictions and predictions using saved model are same.
   CheckMatrices(predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
   CheckMatrices(probabilities, CLI::GetParam<arma::mat>("probabilities"));
 }
