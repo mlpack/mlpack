@@ -9,12 +9,11 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "PreprocessBinarize";
 
 #include <mlpack/core.hpp>
+static const std::string testName = "PreprocessBinarize";
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/preprocess/preprocess_binarize_main.cpp>
 
@@ -61,7 +60,7 @@ BOOST_AUTO_TEST_CASE(PreprocessBinarizeDimensionTest)
   arma::mat inputData = arma::randu<arma::mat>(2, 5);
 
   // Store size of input dataset.
-  size_t input_size  = inputData.n_cols;
+  size_t inputSize  = inputData.n_cols;
 
   // Input custom data and labels.
   SetInputParam("input", std::move(inputData));
@@ -72,7 +71,7 @@ BOOST_AUTO_TEST_CASE(PreprocessBinarizeDimensionTest)
 
   // Now check that the output has desired dimensions.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 2);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, input_size);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, inputSize);
 }
 
 /**
