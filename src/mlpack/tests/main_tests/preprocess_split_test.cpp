@@ -9,12 +9,11 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "PreprocessSplit";
 
 #include <mlpack/core.hpp>
+static const std::string testName = "PreprocessSplit";
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/preprocess/preprocess_split_main.cpp>
 
@@ -67,8 +66,8 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitDimensionTest)
   data::Load("vc2_labels.txt", labels);
 
   // Store size of input dataset.
-  int input_size  = inputData.n_cols;
-  int labels_size  = labels.n_cols;
+  int inputSize  = inputData.n_cols;
+  int labelSize  = labels.n_cols;
 
   // Input custom data points and labels.
   SetInputParam("input", std::move(inputData));
@@ -81,16 +80,44 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitDimensionTest)
 
   // Now check that the output has desired dimensions.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("training").n_cols,
-                      std::ceil(0.9 * input_size));
+                      std::ceil(0.9 * inputSize));
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("test").n_cols,
-                      std::floor(0.1 * input_size));
+                      std::floor(0.1 * inputSize));
 
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>
                       ("training_labels").n_cols,
-                      std::ceil(0.9 * labels_size));
+                      std::ceil(0.9 * labelSize));
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>
                       ("test_labels").n_cols,
-                      std::floor(0.1 * labels_size));
+                      std::floor(0.1 * labelSize));
+}
+
+/**
+ * Check that desired output dimensions are received
+ * for input data when labels are not provided.
+ */
+BOOST_AUTO_TEST_CASE(PreprocessSplitLabelLessDimensionTest)
+{
+  // Load custom dataset.
+  arma::mat inputData;
+  data::Load("vc2.csv", inputData);
+
+  // Store size of input dataset.
+  int inputSize  = inputData.n_cols;
+
+  // Input custom data points and labels.
+  SetInputParam("input", std::move(inputData));
+
+  // Input test_ratio.
+  SetInputParam("test_ratio", (double) 0.1);
+
+  mlpackMain();
+
+  // Now check that the output has desired dimensions.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("training").n_cols,
+                      std::ceil(0.9 * inputSize));
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("test").n_cols,
+                      std::floor(0.1 * inputSize));
 }
 
 /**
@@ -128,8 +155,8 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitZeroTestRatioTest)
   data::Load("vc2_labels.txt", labels);
 
   // Store size of input dataset.
-  int input_size  = inputData.n_cols;
-  int labels_size  = labels.n_cols;
+  int inputSize  = inputData.n_cols;
+  int labelSize  = labels.n_cols;
 
   // Input custom data points and labels.
   SetInputParam("input", std::move(inputData));
@@ -141,12 +168,12 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitZeroTestRatioTest)
 
   // Now check that the output has desired dimensions.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("training").n_cols,
-                      input_size);
+                      inputSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("test").n_cols,
                       0);
 
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>
-                      ("training_labels").n_cols, labels_size);
+                      ("training_labels").n_cols, labelSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>
                       ("test_labels").n_cols, 0);
 }
@@ -164,8 +191,8 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitUnityTestRatioTest)
   data::Load("vc2_labels.txt", labels);
 
   // Store size of input dataset.
-  int input_size  = inputData.n_cols;
-  int labels_size  = labels.n_cols;
+  int inputSize  = inputData.n_cols;
+  int labelSize  = labels.n_cols;
 
   // Input custom data points and labels.
   SetInputParam("input", std::move(inputData));
@@ -179,12 +206,12 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitUnityTestRatioTest)
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("training").n_cols,
                       0);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("test").n_cols,
-                      input_size);
+                      inputSize);
 
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>
                       ("training_labels").n_cols, 0);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>
-                      ("test_labels").n_cols, labels_size);
+                      ("test_labels").n_cols, labelSize);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
