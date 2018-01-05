@@ -132,7 +132,7 @@ target_link_libraries(mlpack_test
   ${BOOST_unit_test_framework_LIBRARY}
 )
 
-set_target_properties(mlpack_test PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "${_mlpackPrefixHeader}")
+set_target_properties(mlpack_test PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "../prereqs.hpp")
 cotire(mlpack_test)
 
 # Copy test data into right place.
