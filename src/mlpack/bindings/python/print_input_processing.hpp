@@ -56,7 +56,14 @@ void PrintInputProcessing(
         << std::endl;
 
     std::cout << prefix << "  SetParam[" << GetCythonType<T>(d) << "](<const "
-        << "string> '" << d.name << "', " << name << ")" << std::endl;
+        << "string> '" << d.name << "', ";
+    if (GetCythonType<T>(d) == "string")
+      std::cout << name << ".encode(\"UTF-8\")";
+    else if (GetCythonType<T>(d) == "vector[string]")
+      std::cout << "[i.encode(\"UTF-8\") for i in " << name << "]";
+    else
+      std::cout << name;
+    std::cout << ")" << std::endl;
     std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
 
@@ -67,7 +74,14 @@ void PrintInputProcessing(
   else
   {
     std::cout << prefix << "SetParam[" << GetCythonType<T>(d) << "](<const "
-        << "string> '" << d.name << "', " << name << ")" << std::endl;
+        << "string> '" << d.name << "', ";
+    if (GetCythonType<T>(d) == "string")
+      std::cout << name << ".encode(\"UTF-8\")";
+    else if (GetCythonType<T>(d) == "vector[string]")
+      std::cout << "[i.encode(\"UTF-8\") for i in " << name << "]";
+    else
+      std::cout << name;
+    std::cout << ")" << std::endl;
     std::cout << prefix << "CLI.SetPassed(<const string> '" << d.name << "')"
         << std::endl;
   }

@@ -115,7 +115,7 @@ PARAM_MODEL_IN(DecisionTreeModel, "input_model", "Pre-trained decision tree, "
 PARAM_MODEL_OUT(DecisionTreeModel, "output_model", "Output for trained decision"
     " tree.", "M");
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Check parameters.
   RequireOnlyOnePassed({ "training", "input_model" }, true);

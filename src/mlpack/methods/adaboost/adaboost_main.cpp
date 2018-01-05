@@ -111,7 +111,7 @@ PARAM_MODEL_IN(AdaBoostModel, "input_model", "Input AdaBoost model.", "m");
 PARAM_MODEL_OUT(AdaBoostModel, "output_model", "Output trained AdaBoost model.",
     "M");
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Check input parameters and issue warnings/errors as necessary.
 

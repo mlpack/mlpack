@@ -124,7 +124,7 @@ using namespace mlpack::optimization;
 using namespace mlpack::util;
 using namespace std;
 
-void mlpackMain()
+static void mlpackMain()
 {
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));

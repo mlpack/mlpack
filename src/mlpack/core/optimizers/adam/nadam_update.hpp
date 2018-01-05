@@ -19,7 +19,7 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * Nadam is an optimizer that combines the Adam and NAG.
+ * Nadam is an optimizer that combines the Adam and NAG optimization strategies.
  *
  * For more information, see the following.
  *
@@ -49,7 +49,7 @@ class NadamUpdate
   NadamUpdate(const double epsilon = 1e-8,
               const double beta1 = 0.9,
               const double beta2 = 0.99,
-              const double scheduleDecay = 4e-3):
+              const double scheduleDecay = 4e-3) :
       epsilon(epsilon),
       beta1(beta1),
       beta2(beta2),
@@ -61,8 +61,8 @@ class NadamUpdate
   }
 
   /**
-   * The Initialize method is called by SGD Optimizer method before the start 
-   * of the iteration update process.
+   * The Initialize() method is called by the optimizer before the start of the
+   * iteration update process.
    *
    * @param rows Number of rows in the gradient matrix.
    * @param cols Number of columns in the gradient matrix.

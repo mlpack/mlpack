@@ -67,13 +67,13 @@ void GenerateNoisySines(arma::mat& data,
 BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
 {
   // It isn't guaranteed that the recurrent network will converge in the
-  // specified number of iterations using random weights. If this works 1 of 5
+  // specified number of iterations using random weights. If this works 1 of 6
   // times, I'm fine with that. All I want to know is that the network is able
   // to escape from local minima and to solve the task.
   size_t successes = 0;
   const size_t rho = 10;
 
-  for (size_t trial = 0; trial < 5; ++trial)
+  for (size_t trial = 0; trial < 6; ++trial)
   {
     // Generate 12 (2 * 6) noisy sines. A single sine contains rho
     // points/features.
@@ -458,7 +458,7 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
     MomentumSGD opt(0.06, 50, 2, -50000);
 
     arma::mat inputTemp, labelsTemp;
-    for (size_t i = 0; i < (iterations + offset); i++)
+    for (size_t iteration = 0; iteration < (iterations + offset); iteration++)
     {
       for (size_t j = 0; j < trainReberGrammarCount; j++)
       {
@@ -673,7 +673,7 @@ void DistractedSequenceRecallTestNetwork(
     // We increase the number of iterations (training) if the first run didn't
     // pass.
     arma::mat inputTemp, labelsTemp;
-    for (size_t i = 0; i < (9 + offset); i++)
+    for (size_t iteration = 0; iteration < (9 + offset); iteration++)
     {
       for (size_t j = 0; j < trainDistractedSequenceCount; j++)
       {

@@ -153,7 +153,7 @@ double StandardError(const size_t size, const double& fStd)
   return fStd / sqrt(size);
 }
 
-void mlpackMain()
+static void mlpackMain()
 {
   const size_t dimension = static_cast<size_t>(CLI::GetParam<int>("dimension"));
   const size_t precision = static_cast<size_t>(CLI::GetParam<int>("precision"));

@@ -38,7 +38,7 @@ class NadaMaxUpdate
 {
  public:
   /**
-   * Construct the Nadamax update policy with the given parameters.
+   * Construct the NadaMax update policy with the given parameters.
    *
    * @param epsilon The epsilon value used to initialise the squared gradient
    *        parameter.
@@ -49,7 +49,7 @@ class NadaMaxUpdate
   NadaMaxUpdate(const double epsilon = 1e-8,
                 const double beta1 = 0.9,
                 const double beta2 = 0.99,
-                const double scheduleDecay = 4e-3):
+                const double scheduleDecay = 4e-3) :
       epsilon(epsilon),
       beta1(beta1),
       beta2(beta2),
@@ -61,8 +61,8 @@ class NadaMaxUpdate
   }
 
   /**
-   * The Initialize method is called by SGD Optimizer method before the start 
-   * of the iteration update process.
+   * The Initialize() method is called by the optimizer before the start of the
+   * iteration update process.
    *
    * @param rows Number of rows in the gradient matrix.
    * @param cols Number of columns in the gradient matrix.

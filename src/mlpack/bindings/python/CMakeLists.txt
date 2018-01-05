@@ -220,7 +220,7 @@ if (BUILD_PYTHON_BINDINGS)
   # Add the convenience import to __init__.py.  Note that this happens during
   # configuration.
   file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py
-      "from ${name} import ${name}\n")
+      "from .${name} import ${name}\n")
 endif ()
 endmacro ()
 

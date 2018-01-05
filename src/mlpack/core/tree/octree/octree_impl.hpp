@@ -695,8 +695,8 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
     // children of index 2^(d - 1) - 1 and less will be on the left side, and
     // all points belonging to children of index 2^(d - 1) and above will be on
     // the right side.
-    SplitInfo s(d, center);
-    const size_t firstRight = split::PerformSplit<MatType, SplitInfo>(*dataset,
+    typename SplitType::SplitInfo s(d, center);
+    const size_t firstRight = split::PerformSplit<MatType, SplitType>(*dataset,
         childBegin, childCount, s);
 
     // We can set the first index of the right child.  The first index of the
@@ -797,8 +797,8 @@ void Octree<MetricType, StatisticType, MatType>::SplitNode(
     // children of index 2^(d - 1) - 1 and less will be on the left side, and
     // all points belonging to children of index 2^(d - 1) and above will be on
     // the right side.
-    SplitInfo s(d, center);
-    const size_t firstRight = split::PerformSplit<MatType, SplitInfo>(*dataset,
+    typename SplitType::SplitInfo s(d, center);
+    const size_t firstRight = split::PerformSplit<MatType, SplitType>(*dataset,
         childBegin, childCount, s, oldFromNew);
 
     // We can set the first index of the right child.  The first index of the

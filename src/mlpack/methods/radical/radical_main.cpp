@@ -57,7 +57,7 @@ using namespace mlpack::util;
 using namespace std;
 using namespace arma;
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)

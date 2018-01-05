@@ -109,7 +109,7 @@ PARAM_INT_IN("observations_before_binning", "If the 'domingos' split strategy "
 // Convenience typedef.
 typedef tuple<DatasetInfo, arma::mat> TupleType;
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Check input parameters for validity.
   const string numericSplitStrategy =

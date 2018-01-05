@@ -42,7 +42,7 @@ PARAM_MATRIX_OUT("output", "Matrix to save output samples in.", "o");
 
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Parameter sanity checks.
   RequireAtLeastOnePassed({ "output" }, false, "no results will be saved");
