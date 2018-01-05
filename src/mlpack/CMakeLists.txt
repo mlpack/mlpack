@@ -1,7 +1,10 @@
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/..) # mlpack/mlpack_export.hpp
 
 # Add core.hpp to list of sources.
-set(MLPACK_SRCS ${MLPACK_SRCS} "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp")
+set(MLPACK_SRCS ${MLPACK_SRCS}
+  "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/prereqs.hpp"
+)
 
 ## Recurse into both core/ and methods/.
 set(DIRS
@@ -43,6 +46,9 @@ endif ()
 
 target_link_libraries(mlpack
   ${MLPACK_LIBRARIES})
+
+set_target_properties(mlpack PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "prereqs.hpp")
+cotire(mlpack)
 
 set_target_properties(mlpack
   PROPERTIES

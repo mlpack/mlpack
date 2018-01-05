@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.5)
 project(mlpack C CXX)
 
+include(CMake/cotire.cmake)
+
 # First, define all the compilation options.
 # We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information." OFF)
