@@ -128,14 +128,14 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerListwiseDimensionTest)
   // Count number of unavailable entries in all dimensions.
   for (size_t i = 0; i < inputSize; i++)
   {
-    if(std::to_string(inputData(0,i)) == "nan" ||
-       std::to_string(inputData(1,i)) == "nan" ||
-       std::to_string(inputData(2,i)) == "nan")
+    if (std::to_string(inputData(0, i)) == "nan" ||
+       std::to_string(inputData(1, i)) == "nan" ||
+       std::to_string(inputData(2, i)) == "nan")
       {
         countNaN++;
       }
   }
-  
+
   // Input custom data points and labels.
   SetInputParam("input_file", (string) "preprocess_imputer_test.csv");
   SetInputParam("missing_value", (string) "nan");
