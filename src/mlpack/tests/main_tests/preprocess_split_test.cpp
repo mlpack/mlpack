@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitDimensionTest)
 
 /**
  * Check that desired output dimensions are received
- * for input data when labels are not provided.
+ * for the input data when labels are not provided.
  */
 BOOST_AUTO_TEST_CASE(PreprocessSplitLabelLessDimensionTest)
 {
