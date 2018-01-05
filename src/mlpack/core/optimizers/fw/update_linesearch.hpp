@@ -2,7 +2,7 @@
  * @file update_linesearch.hpp
  * @author Chenzhe Diao
  *
- * Minimize convex function with line search, using secant method. 
+ * Minimize convex function with line search, using secant method.
  * In FrankWolfe algorithm, used as UpdateRuleType.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -71,7 +71,7 @@ class UpdateLineSearch
               const arma::mat& oldCoords,
               const arma::mat& s,
               arma::mat& newCoords,
-              const size_t numIter)
+              const size_t /* numIter */)
 
   {
     LineSearch solver(maxIterations, tolerance);
