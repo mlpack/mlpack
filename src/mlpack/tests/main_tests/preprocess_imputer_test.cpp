@@ -9,12 +9,11 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "PreprocessImputer";
 
 #include <mlpack/core.hpp>
+static const std::string testName = "PreprocessImputer";
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/preprocess/preprocess_imputer_main.cpp>
 
@@ -64,21 +63,52 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerDimensionTest)
   arma::mat inputData;
   data::Load("preprocess_imputer_test.csv", inputData);
 
+  arma::mat outputData;
+
   // Store size of input dataset.
-  size_t input_size  = inputData.n_cols;
+  size_t inputSize  = inputData.n_cols;
 
   // Input custom data points and labels.
   SetInputParam("input_file", (string) "preprocess_imputer_test.csv");
   SetInputParam("missing_value", (string) "nan");
-  SetInputParam("strategy", (string) "mean");
   SetInputParam("output_file", (string) "preprocess_imputer_output_test.csv");
+
+  // Check for mean strategy.
+  SetInputParam("strategy", (string) "mean");
 
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  arma::mat outputData;
   data::Load(CLI::GetParam<string>("output_file"), outputData);
-  BOOST_REQUIRE_EQUAL(outputData.n_cols, input_size);
+  BOOST_REQUIRE_EQUAL(outputData.n_cols, inputSize);
+  BOOST_REQUIRE_EQUAL(outputData.n_rows, 3); // Input Dimension.
+
+  // Reset passed strategy.
+  CLI::GetSingleton().Parameters()["strategy"].wasPassed = false;
+
+  // Check for median strategy.
+  SetInputParam("strategy", (string) "median");
+
+  mlpackMain();
+
+  // Now check that the output has desired dimensions.
+  data::Load(CLI::GetParam<string>("output_file"), outputData);
+  BOOST_REQUIRE_EQUAL(outputData.n_cols, inputSize);
+  BOOST_REQUIRE_EQUAL(outputData.n_rows, 3); // Input Dimension.
+
+  // Reset passed strategy.
+  CLI::GetSingleton().Parameters()["strategy"].wasPassed = false;
+
+  // Check for custom strategy.
+  SetInputParam("strategy", (string) "custom");
+  SetInputParam("custom_value", (double) 75.12);
+
+  mlpackMain();
+
+  // Now check that the output has desired dimensions.
+  data::Load(CLI::GetParam<string>("output_file"), outputData);
+  BOOST_REQUIRE_EQUAL(outputData.n_cols, inputSize);
+  BOOST_REQUIRE_EQUAL(outputData.n_rows, 3); // Input Dimension.
 }
 
 /**
@@ -92,16 +122,20 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerListwiseDimensionTest)
   data::Load("preprocess_imputer_test.csv", inputData);
 
   // Store size of input dataset.
-  size_t input_size  = inputData.n_cols;
+  size_t inputSize  = inputData.n_cols;
   size_t countNaN = 0;
 
-  // Count number of unavailable entries.
-  for (size_t i = 0; i < input_size; i++)
+  // Count number of unavailable entries in all dimensions.
+  for (size_t i = 0; i < inputSize; i++)
   {
-    if (std::to_string(inputData(1, i)) == "nan")
-      countNaN++;
+    if(std::to_string(inputData(0,i)) == "nan" ||
+       std::to_string(inputData(1,i)) == "nan" ||
+       std::to_string(inputData(2,i)) == "nan")
+      {
+        countNaN++;
+      }
   }
-
+  
   // Input custom data points and labels.
   SetInputParam("input_file", (string) "preprocess_imputer_test.csv");
   SetInputParam("missing_value", (string) "nan");
@@ -113,7 +147,8 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerListwiseDimensionTest)
   // Now check that the output has desired dimensions.
   arma::mat outputData;
   data::Load(CLI::GetParam<string>("output_file"), outputData);
-  BOOST_REQUIRE_EQUAL(outputData.n_cols + countNaN, input_size);
+  BOOST_REQUIRE_EQUAL(outputData.n_cols + countNaN, inputSize);
+  BOOST_REQUIRE_EQUAL(outputData.n_rows, 3); // Input Dimension.
 }
 
 /**
