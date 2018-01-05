@@ -9,12 +9,11 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "DecisionTree";
 
 #include <mlpack/core.hpp>
+static const std::string testName = "DecisionTree";
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/decision_tree/decision_tree_main.cpp>
 
@@ -91,6 +90,12 @@ BOOST_AUTO_TEST_CASE(DecisionTreeOutputDimensionTest)
                       testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
                       testSize);
+
+  // Check number of output rows equals number of classes in
+  // case of probabilities and 1 for predicitions.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
+                      1);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
 }
 
 /**
@@ -132,25 +137,37 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
   // Initialize an all-ones weight matrix.
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
-  // Input training data.
-  SetInputParam("training", std::move(inputData));
-  SetInputParam("labels", std::move(labels));
-  SetInputParam("weights", std::move(weights));
-
-  mlpackMain();
-
-  // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["weights"].wasPassed = false;
-
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData))
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
 
+  // Input training data.
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("weights", std::move(weights));
+
   // Input test data.
+  SetInputParam("test", std::move(testData));
+
+  mlpackMain();
+
+  arma::Row<size_t> predictions;
+  arma::mat probabilities;
+  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+  probabilities = std::move(CLI::GetParam<arma::mat>("probabilities"));
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["weights"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+
+  if (!data::Load("vc2_test.csv", testData))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
                 std::move(CLI::GetParam<DecisionTreeModel>("output_model")));
@@ -163,6 +180,16 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
                       testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
                       testSize);
+
+  // Check number of output rows equals number of classes in
+  // case of probabilities and 1 for predicitions.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
+                      1);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
+
+  // Check that initial predictions and predictions using saved model are same. 
+  CheckMatrices(predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
+  CheckMatrices(probabilities, CLI::GetParam<arma::mat>("probabilities"));
 }
 
 BOOST_AUTO_TEST_SUITE_END();
