@@ -149,7 +149,7 @@ static void mlpackMain()
       else
       {
         Log::Fatal << "'" <<  strategy << "' imputation strategy does not exist"
-          << endl;
+            << endl;
       }
     }
     else
@@ -159,35 +159,36 @@ static void mlpackMain()
       Log::Info << "Performing '" << strategy << "' imputation strategy "
           << "to replace '" << missingValue << "' on all dimensions." << endl;
 
-      for (size_t i : dirtyDimensions)
+      if (strategy == "mean")
       {
-        if (strategy == "mean")
-        {
-          Imputer<double, MapperType, MeanImputation<double>> imputer(info);
+        Imputer<double, MapperType, MeanImputation<double>> imputer(info);
+        for (size_t i : dirtyDimensions)
           imputer.Impute(input, missingValue, i);
-        }
-        else if (strategy == "median")
-        {
-          Imputer<double, MapperType, MedianImputation<double>> imputer(info);
+      }
+      else if (strategy == "median")
+      {
+        Imputer<double, MapperType, MedianImputation<double>> imputer(info);
+        for (size_t i : dirtyDimensions)
           imputer.Impute(input, missingValue, i);
-        }
-        else if (strategy == "listwise_deletion")
-        {
-          Imputer<double, MapperType, ListwiseDeletion<double>> imputer(info);
+      }
+      else if (strategy == "listwise_deletion")
+      {
+        Imputer<double, MapperType, ListwiseDeletion<double>> imputer(info);
+        for (size_t i : dirtyDimensions)
           imputer.Impute(input, missingValue, i);
-        }
-        else if (strategy == "custom")
-        {
-          CustomImputation<double> strat(customValue);
-          Imputer<double, MapperType, CustomImputation<double>> imputer(
-              info, strat);
+      }
+      else if (strategy == "custom")
+      {
+        CustomImputation<double> strat(customValue);
+        Imputer<double, MapperType, CustomImputation<double>> imputer(
+            info, strat);
+        for (size_t i : dirtyDimensions)
           imputer.Impute(input, missingValue, i);
-        }
-        else
-        {
-          Log::Fatal << "'" <<  strategy << "' imputation strategy "
-              <<" does not exist "<< endl;
-        }
+      }
+      else
+      {
+        Log::Fatal << "'" <<  strategy << "' imputation strategy "
+            <<" does not exist "<< endl;
       }
     }
     Timer::Stop("imputation");
