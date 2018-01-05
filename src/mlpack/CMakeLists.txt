@@ -60,8 +60,6 @@ endif()
 set_target_properties(mlpack PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "prereqs.hpp")
 cotire(mlpack)
 
-get_target_property(_mlpackPrefixHeader mlpack COTIRE_CXX_PREFIX_HEADER)
-
 if (BUILD_TESTS)
   add_subdirectory(tests)
 endif ()
