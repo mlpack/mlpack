@@ -14,6 +14,8 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_SGDR_SNAPSHOT_ENSEMBLES_HPP
 #define MLPACK_CORE_OPTIMIZERS_SGDR_SNAPSHOT_ENSEMBLES_HPP
 
+#include <mlpack/math_inc.hpp>
+
 namespace mlpack {
 namespace optimization {
 

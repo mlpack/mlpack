@@ -15,6 +15,8 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_SGDR_CYCLICAL_DECAY_HPP
 #define MLPACK_CORE_OPTIMIZERS_SGDR_CYCLICAL_DECAY_HPP
 
+#include <mlpack/math_inc.hpp>
+
 namespace mlpack {
 namespace optimization {
 
