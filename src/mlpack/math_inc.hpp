@@ -4,7 +4,7 @@
 
 // Defining _USE_MATH_DEFINES should set M_PI.
 #define _USE_MATH_DEFINES
-#include <cmath>
+#include <math.h>
 
 // But if it's not defined, we'll do it.
 #ifndef M_PI
