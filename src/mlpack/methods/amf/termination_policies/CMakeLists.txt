@@ -3,7 +3,7 @@
 set(SOURCES
   simple_residue_termination.hpp
   simple_tolerance_termination.hpp
-  validation_rmse_termination.hpp
+  validation_RMSE_termination.hpp
   incomplete_incremental_termination.hpp
   complete_incremental_termination.hpp
   max_iteration_termination.hpp
