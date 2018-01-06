@@ -13,9 +13,13 @@
 #ifndef MLPACK_CORE_UTIL_HAS_SERIALIZE_HPP
 #define MLPACK_CORE_UTIL_HAS_SERIALIZE_HPP
 
+#include <mlpack/prereqs.hpp>
+#include <mlpack/boost_inc.hpp>
 #include <mlpack/core/util/sfinae_utility.hpp>
+
 #include <boost/serialization/serialization.hpp>
 #include <boost/archive/xml_oarchive.hpp>
+
 #include <type_traits>
 
 namespace mlpack {

@@ -10,8 +10,11 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "lars.hpp"
+
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/timers.hpp>
+
+#include <cfloat>
 
 using namespace mlpack;
 using namespace mlpack::regression;

@@ -14,6 +14,9 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include <mlpack/core/math/lin_alg.hpp>
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 namespace optimization {
 

@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <utility>
 
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
 
 #include <mlpack/core/data/binarize.hpp>
 
@@ -23,7 +23,6 @@
 #include <mlpack/methods/ann/augmented/tasks/score.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 using std::vector;
 using std::pair;

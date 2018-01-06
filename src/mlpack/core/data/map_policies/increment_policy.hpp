@@ -13,8 +13,11 @@
 #define MLPACK_CORE_DATA_MAP_POLICIES_INCREMENT_POLICY_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <unordered_map>
 #include <mlpack/core/data/map_policies/datatype.hpp>
+
+#include <unordered_map>
+#include <vector>
+#include <sstream>
 
 namespace mlpack {
 namespace data {

@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_SCD_DESCENT_POLICIES_RANDOM_HPP
 #define MLPACK_CORE_OPTIMIZERS_SCD_DESCENT_POLICIES_RANDOM_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
 namespace optimization {

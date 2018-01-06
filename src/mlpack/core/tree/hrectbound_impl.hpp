@@ -12,7 +12,8 @@
 #ifndef MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP
 #define MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP
 
-#include <math.h>
+#include <mlpack/math_inc.hpp>
+#include <mlpack/core/util/log.hpp>
 
 // In case it has not been included yet.
 #include "hrectbound.hpp"

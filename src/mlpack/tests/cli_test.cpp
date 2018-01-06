@@ -9,9 +9,11 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
 // We'll use CLIOptions.
 #include <mlpack/bindings/cli/cli_option.hpp>
+
+#include <mlpack/core/kernels/gaussian_kernel.hpp>
 
 namespace mlpack {
 namespace util {
@@ -29,7 +31,6 @@ static const std::string testName = "";
 #include <mlpack/bindings/cli/end_program.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::util;

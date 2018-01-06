@@ -13,6 +13,7 @@
 #define MLPACK_CORE_OPTIMIZERS_GD_TEST_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/arma_inc.hpp>
 
 namespace mlpack {
 namespace optimization {

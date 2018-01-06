@@ -9,7 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
+
 #include <mlpack/core/tree/binary_space_tree.hpp>
 
 // Classes to test.
@@ -17,7 +18,6 @@
 #include <mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::neighbor;

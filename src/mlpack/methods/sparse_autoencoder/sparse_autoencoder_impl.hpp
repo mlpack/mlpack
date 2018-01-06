@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "sparse_autoencoder.hpp"
 
+#include <mlpack/core/util/timers.hpp>
+
 namespace mlpack {
 namespace nn {
 

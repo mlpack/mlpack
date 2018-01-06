@@ -12,8 +12,6 @@
 #ifndef MLPACK_CORE_HPT_HPT_IMPL_HPP
 #define MLPACK_CORE_HPT_HPT_IMPL_HPP
 
-#include <mlpack/core.hpp>
-
 namespace mlpack {
 namespace hpt {
 

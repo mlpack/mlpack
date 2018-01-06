@@ -15,6 +15,9 @@
 // In case it hasn't been included.
 #include "lmetric.hpp"
 
+#include <mlpack/math_inc.hpp>
+#include <mlpack/arma_inc.hpp>
+
 namespace mlpack {
 namespace metric {
 

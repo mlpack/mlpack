@@ -14,8 +14,6 @@
 
 #include <type_traits>
 
-#include <mlpack/core.hpp>
-
 namespace mlpack {
 namespace hpt {
 

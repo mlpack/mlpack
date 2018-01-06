@@ -12,7 +12,11 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_GRADIENT_DESCENT_GRADIENT_DESCENT_HPP
 #define MLPACK_CORE_OPTIMIZERS_GRADIENT_DESCENT_GRADIENT_DESCENT_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/arma_inc.hpp>
+#include <mlpack/core/data/map_policies/increment_policy.hpp>
+#include <mlpack/core/data/dataset_mapper.hpp>
+
+#include <cstddef>
 
 namespace mlpack {
 namespace optimization {

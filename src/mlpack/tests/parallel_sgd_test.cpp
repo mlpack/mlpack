@@ -9,7 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
+
 #include <mlpack/core/optimizers/parallel_sgd/decay_policies/constant_step.hpp>
 #include <mlpack/core/optimizers/parallel_sgd/decay_policies/exponential_backoff.hpp>
 #include <mlpack/core/optimizers/parallel_sgd/sparse_test_function.hpp>
@@ -20,7 +21,7 @@
 #undef private
 
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+
 
 using namespace std;
 using namespace arma;

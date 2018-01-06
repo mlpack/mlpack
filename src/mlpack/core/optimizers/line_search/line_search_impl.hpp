@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "line_search.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 namespace optimization {
 

@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "frank_wolfe.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 namespace optimization {
 

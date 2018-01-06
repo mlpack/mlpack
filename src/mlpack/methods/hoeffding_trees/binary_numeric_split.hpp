@@ -15,6 +15,8 @@
 
 #include "binary_numeric_split_info.hpp"
 
+#include <map>
+
 namespace mlpack {
 namespace tree {
 

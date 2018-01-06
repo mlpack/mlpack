@@ -12,8 +12,12 @@
 #ifndef MLPACK_TESTS_TEST_TOOLS_HPP
 #define MLPACK_TESTS_TEST_TOOLS_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/boost_inc.hpp>
+#include <mlpack/arma_inc.hpp>
+
 #include <boost/version.hpp>
+#include <boost/test/test_tools.hpp>
 
 // Require the approximation L to be within a relative error of E respect to the
 // actual value R.

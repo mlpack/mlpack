@@ -7,6 +7,8 @@
 #ifndef MLPACK_METHODS_DECISION_TREE_RANDOM_DIMENSION_SELECT_HPP
 #define MLPACK_METHODS_DECISION_TREE_RANDOM_DIMENSION_SELECT_HPP
 
+#include <mlpack/core/math/random.hpp>
+
 namespace mlpack {
 namespace tree {
 

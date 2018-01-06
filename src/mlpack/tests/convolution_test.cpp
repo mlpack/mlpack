@@ -10,7 +10,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
 
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
@@ -18,7 +18,6 @@
 #include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;

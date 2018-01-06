@@ -10,11 +10,13 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
+
 #include <mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp>
 
+#include <mlpack/core/math/lin_alg.hpp>
+
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 BOOST_AUTO_TEST_SUITE(BlockKrylovSVDTest);
 

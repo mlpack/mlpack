@@ -13,6 +13,8 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/mlpack_export.hpp>
+#include <mlpack/arma_inc.hpp>
+
 #include <random>
 
 namespace mlpack {

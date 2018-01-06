@@ -18,10 +18,11 @@
   #include <windows.h>
 #endif
 
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
+
+#include <mlpack/core/util/timers.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 using namespace mlpack;
 

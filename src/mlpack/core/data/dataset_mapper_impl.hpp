@@ -16,6 +16,10 @@
 // In case it hasn't already been included.
 #include "dataset_mapper.hpp"
 
+#include <mlpack/math_inc.hpp>
+
+#include <limits>
+
 namespace mlpack {
 namespace data {
 

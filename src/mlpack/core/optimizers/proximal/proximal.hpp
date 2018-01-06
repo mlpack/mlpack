@@ -15,6 +15,7 @@
 #define MLPACK_CORE_OPTIMIZERS_PROXIMAL_PROXIMAL_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/arma_inc.hpp>
 
 namespace mlpack {
 namespace optimization {

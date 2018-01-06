@@ -19,6 +19,7 @@
 #define MLPACK_CORE_OPTIMIZERS_LBFGS_TEST_FUNCTIONS_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/arma_inc.hpp>
 
 // To fulfill the template policy class 'FunctionType', we must implement
 // the following:

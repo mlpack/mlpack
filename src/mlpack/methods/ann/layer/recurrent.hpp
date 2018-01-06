@@ -13,7 +13,6 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_RECURRENT_HPP
 #define MLPACK_METHODS_ANN_LAYER_RECURRENT_HPP
 
-#include <mlpack/core.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 
 #include "../visitor/delta_visitor.hpp"

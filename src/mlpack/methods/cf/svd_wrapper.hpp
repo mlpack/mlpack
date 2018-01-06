@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_SVDWRAPPER_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/log.hpp>
 
 namespace mlpack
 {

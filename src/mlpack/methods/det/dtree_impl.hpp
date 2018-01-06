@@ -12,8 +12,12 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "dtree.hpp"
+
+#include <mlpack/core/util/log.hpp>
+
 #include <stack>
 #include <vector>
+#include <cfloat>
 
 using namespace mlpack;
 using namespace det;

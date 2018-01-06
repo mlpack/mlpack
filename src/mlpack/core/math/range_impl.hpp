@@ -12,8 +12,9 @@
 #define MLPACK_CORE_MATH_RANGE_IMPL_HPP
 
 #include "range.hpp"
-#include <float.h>
+#include <cfloat>
 #include <sstream>
+#include <limits>
 
 namespace mlpack {
 namespace math {

@@ -10,6 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#include "test_tools.hpp"
+
 #include <mlpack/core/kernels/cosine_distance.hpp>
 #include <mlpack/core/kernels/epanechnikov_kernel.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
@@ -23,7 +25,7 @@
 #include <mlpack/core/metrics/mahalanobis_distance.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+
 #include "serialization.hpp"
 
 using namespace mlpack;

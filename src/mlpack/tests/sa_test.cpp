@@ -9,17 +9,21 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
+
 #include <mlpack/core/optimizers/sa/sa.hpp>
 #include <mlpack/core/optimizers/sa/exponential_schedule.hpp>
 #include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
-
 #include <mlpack/core/metrics/ip_metric.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/metrics/mahalanobis_distance.hpp>
 
+#include <mlpack/core/math/random.hpp>
+#include <mlpack/core/util/log.hpp>
+
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+
+#include <cfloat>
 
 using namespace std;
 using namespace arma;

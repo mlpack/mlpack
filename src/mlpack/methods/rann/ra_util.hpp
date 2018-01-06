@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_RANN_RA_UTIL_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/arma_inc.hpp>
 
 namespace mlpack {
 namespace neighbor {

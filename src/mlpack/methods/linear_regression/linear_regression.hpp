@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_LINEAR_REGRESSION_LINEAR_REGRESSION_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/arma_inc.hpp>
 
 namespace mlpack {
 namespace regression /** Regression methods. */ {

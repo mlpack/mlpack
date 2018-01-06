@@ -12,8 +12,6 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_SCD_DESCENT_POLICIES_CYCLIC_HPP
 #define MLPACK_CORE_OPTIMIZERS_SCD_DESCENT_POLICIES_CYCLIC_HPP
 
-#include <mlpack/core.hpp>
-
 namespace mlpack {
 namespace optimization {
 

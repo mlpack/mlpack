@@ -18,6 +18,9 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/lin_alg.hpp>
+#include <mlpack/core/util/timers.hpp>
+#include <mlpack/core/util/log.hpp>
+
 #include "pca.hpp"
 
 using namespace std;

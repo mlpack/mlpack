@@ -16,6 +16,8 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include <mlpack/core/util/log.hpp>
+
 #include "union_find.hpp"
 
 namespace mlpack {

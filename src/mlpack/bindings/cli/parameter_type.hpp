@@ -9,6 +9,7 @@
 #define MLPACK_BINDINGS_CLI_PARAMETER_TYPE_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/boost_inc.hpp>
 
 namespace mlpack {
 namespace bindings {

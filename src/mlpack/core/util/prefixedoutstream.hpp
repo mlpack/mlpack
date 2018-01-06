@@ -14,6 +14,7 @@
 #define MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/arma_inc.hpp>
 
 namespace mlpack {
 namespace util {

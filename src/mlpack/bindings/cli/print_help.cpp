@@ -7,8 +7,9 @@
  */
 #include "print_help.hpp"
 
-#include <mlpack/core.hpp>
 #include <mlpack/core/util/hyphenate_string.hpp>
+#include <mlpack/core/util/param_data.hpp>
+#include <mlpack/core/util/cli.hpp>
 
 namespace mlpack {
 namespace bindings {

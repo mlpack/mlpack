@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_HOEFFDING_TREES_GINI_INDEX_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/arma_inc.hpp>
 
 namespace mlpack {
 namespace tree {

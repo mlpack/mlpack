@@ -17,6 +17,7 @@
 #include "single_tree_traverser.hpp"
 
 #include <queue>
+#include <map>
 
 namespace mlpack {
 namespace tree {

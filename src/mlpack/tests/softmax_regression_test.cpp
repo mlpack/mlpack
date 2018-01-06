@@ -9,11 +9,14 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
+
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 
+#include <mlpack/core/dists/gaussian_distribution.hpp>
+#include <mlpack/core/math/random.hpp>
+
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::regression;

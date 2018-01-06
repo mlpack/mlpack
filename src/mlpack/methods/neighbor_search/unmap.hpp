@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_NEIGHBOR_SEARCH_UNMAP_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/arma_inc.hpp>
 
 namespace mlpack {
 namespace neighbor {

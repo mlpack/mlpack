@@ -14,6 +14,10 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/tree/tree_traits.hpp>
+#include <mlpack/arma_inc.hpp>
+#include <mlpack/boost_inc.hpp>
+
+#include <cfloat>
 
 namespace mlpack {
 namespace fastmks {

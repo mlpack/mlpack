@@ -12,10 +12,11 @@
 #include <iostream>
 #include <sstream>
 
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
+
+#include <mlpack/core/util/prefixedoutstream.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 #define BASH_RED "\033[0;31m"
 #define BASH_GREEN "\033[0;32m"

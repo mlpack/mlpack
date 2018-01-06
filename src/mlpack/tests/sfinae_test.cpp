@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#include "test_tools.hpp"
 
-#include <mlpack/core.hpp>
 #include <mlpack/core/util/sfinae_utility.hpp>
 
 #include <boost/test/unit_test.hpp>

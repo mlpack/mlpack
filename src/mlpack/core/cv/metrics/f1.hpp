@@ -12,10 +12,9 @@
 #ifndef MLPACK_CORE_CV_METRICS_F1_HPP
 #define MLPACK_CORE_CV_METRICS_F1_HPP
 
-#include <type_traits>
-
-#include <mlpack/core.hpp>
 #include <mlpack/core/cv/metrics/average_strategy.hpp>
+
+#include <type_traits>
 
 namespace mlpack {
 namespace cv {

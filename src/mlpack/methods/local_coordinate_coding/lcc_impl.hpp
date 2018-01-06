@@ -15,6 +15,11 @@
 // In case it hasn't been included yet.
 #include "lcc.hpp"
 
+#include <mlpack/core/util/timers.hpp>
+#include <mlpack/core/util/log.hpp>
+
+#include <cfloat>
+
 namespace mlpack {
 namespace lcc {
 

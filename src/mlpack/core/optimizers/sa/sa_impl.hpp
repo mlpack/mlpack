@@ -14,6 +14,9 @@
 
 #include <mlpack/core/dists/laplace_distribution.hpp>
 
+#include <mlpack/core/math/random.hpp>
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 namespace optimization {
 

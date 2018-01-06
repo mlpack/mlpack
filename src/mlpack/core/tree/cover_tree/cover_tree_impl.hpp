@@ -15,6 +15,8 @@
 // In case it hasn't already been included.
 #include "cover_tree.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 #include <queue>
 #include <string>
 

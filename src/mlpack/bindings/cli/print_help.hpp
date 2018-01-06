@@ -7,7 +7,7 @@
 #ifndef MLPACK_BINDINGS_CLI_PRINT_HELP_HPP
 #define MLPACK_BINDINGS_CLI_PRINT_HELP_HPP
 
-#include <mlpack/core.hpp>
+#include <string>
 
 namespace mlpack {
 namespace bindings {

@@ -13,6 +13,8 @@
 #ifndef MLPACK_CORE_DISTRIBUTIONS_LAPLACE_DISTRIBUTION_HPP
 #define MLPACK_CORE_DISTRIBUTIONS_LAPLACE_DISTRIBUTION_HPP
 
+#include <mlpack/arma_inc.hpp>
+
 namespace mlpack {
 namespace distribution {
 

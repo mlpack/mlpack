@@ -9,7 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include "test_tools.hpp"
+
 #include <mlpack/methods/hoeffding_trees/gini_impurity.hpp>
 #include <mlpack/methods/hoeffding_trees/information_gain.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
@@ -17,8 +18,10 @@
 #include <mlpack/methods/hoeffding_trees/binary_numeric_split.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp>
 
+#include <mlpack/core/math/random.hpp>
+
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+
 #include "serialization.hpp"
 
 #include <stack>

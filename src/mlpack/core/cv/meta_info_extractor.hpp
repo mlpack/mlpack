@@ -12,10 +12,10 @@
 #ifndef MLPACK_CORE_CV_META_INFO_EXTRACTOR_HPP
 #define MLPACK_CORE_CV_META_INFO_EXTRACTOR_HPP
 
-#include <type_traits>
-
-#include <mlpack/core.hpp>
 #include <mlpack/core/util/sfinae_utility.hpp>
+#include <mlpack/core/data/dataset_mapper.hpp>
+
+#include <type_traits>
 
 namespace mlpack {
 namespace cv {

@@ -28,6 +28,8 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include <cfloat>
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 

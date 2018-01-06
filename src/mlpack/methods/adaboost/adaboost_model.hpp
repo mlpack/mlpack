@@ -7,8 +7,6 @@
 #ifndef MLPACK_METHODS_ADABOOST_ADABOOST_MODEL_HPP
 #define MLPACK_METHODS_ADABOOST_ADABOOST_MODEL_HPP
 
-#include <mlpack/core.hpp>
-
 // Use forward declaration instead of include to accelerate compilation.
 class AdaBoost;
 

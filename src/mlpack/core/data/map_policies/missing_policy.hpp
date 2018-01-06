@@ -13,9 +13,12 @@
 #define MLPACK_CORE_DATA_MAP_POLICIES_MISSING_POLICY_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <unordered_map>
+
 #include <mlpack/core/data/map_policies/datatype.hpp>
+
+#include <unordered_map>
 #include <limits>
+#include <set>
 
 namespace mlpack {
 namespace data {

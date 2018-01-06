@@ -12,6 +12,8 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_LAYER_TYPES_HPP
 #define MLPACK_METHODS_ANN_LAYER_LAYER_TYPES_HPP
 
+#include <mlpack/boost_inc.hpp>
+
 #include <boost/variant.hpp>
 
 // Layer modules.

@@ -31,6 +31,8 @@
 
 #include "primal_dual.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 namespace optimization {
 

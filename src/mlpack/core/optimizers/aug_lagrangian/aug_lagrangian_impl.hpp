@@ -17,6 +17,8 @@
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 #include "aug_lagrangian_function.hpp"
 
+#include <cfloat>
+
 namespace mlpack {
 namespace optimization {
 

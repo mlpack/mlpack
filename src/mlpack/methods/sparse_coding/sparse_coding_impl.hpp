@@ -16,6 +16,11 @@
 // In case it hasn't already been included.
 #include "sparse_coding.hpp"
 
+#include <mlpack/core/util/timers.hpp>
+#include <mlpack/core/util/log.hpp>
+
+#include <cfloat>
+
 namespace mlpack {
 namespace sparse_coding {
 

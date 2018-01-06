@@ -9,12 +9,12 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 static const std::string testName = "LinearRegression";
 
-#include <mlpack/core.hpp>
+#include "../test_tools.hpp"
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/linear_regression/linear_regression_main.cpp>
 
 #include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
 
 using namespace mlpack;
 

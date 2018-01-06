@@ -15,6 +15,7 @@
 #define MLPACK_CORE_OPTIMIZERS_IQN_IQN_IMPL_HPP
 
 // In case it hasn't been included yet.
+#include <mlpack/core/util/log.hpp>
 #include "iqn.hpp"
 
 namespace mlpack {

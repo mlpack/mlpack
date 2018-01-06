@@ -14,6 +14,10 @@
 #define MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/arma_inc.hpp>
+#include <mlpack/core/util/log.hpp>
+
+#include <utility>
 
 namespace mlpack {
 namespace optimization {

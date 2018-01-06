@@ -12,8 +12,6 @@
 #ifndef MLPACK_CORE_CV_METRICS_FACILITIES_HPP
 #define MLPACK_CORE_CV_METRICS_FACILITIES_HPP
 
-#include <mlpack/core.hpp>
-
 namespace mlpack {
 namespace cv {
 

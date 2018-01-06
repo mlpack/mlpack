@@ -13,10 +13,12 @@
 #ifndef MLPACK_METHODS_FASTMKS_FASTMKS_HPP
 #define MLPACK_METHODS_FASTMKS_FASTMKS_HPP
 
+#include "fastmks_stat.hpp"
+
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/metrics/ip_metric.hpp>
-#include "fastmks_stat.hpp"
 #include <mlpack/core/tree/cover_tree.hpp>
+
 #include <queue>
 
 namespace mlpack {

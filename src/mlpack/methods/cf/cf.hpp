@@ -21,6 +21,7 @@
 #include <mlpack/methods/amf/amf.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_als.hpp>
 #include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
+
 #include <set>
 #include <map>
 #include <iostream>

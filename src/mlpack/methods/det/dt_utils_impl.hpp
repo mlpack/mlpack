@@ -14,7 +14,9 @@
 #define MLPACK_METHODS_DET_DT_UTILS_IMPL_HPP
 
 #include "dt_utils.hpp"
+
 #include <mlpack/core/tree/enumerate_tree.hpp>
+#include <mlpack/core/util/timers.hpp>
 
 namespace mlpack {
 namespace det {

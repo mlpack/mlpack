@@ -15,6 +15,8 @@
 // In case it was not already included.
 #include "nca.hpp"
 
+#include <mlpack/core/util/timers.hpp>
+
 namespace mlpack {
 namespace nca {
 

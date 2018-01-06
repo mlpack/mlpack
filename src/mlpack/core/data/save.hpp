@@ -15,7 +15,7 @@
 #define MLPACK_CORE_DATA_SAVE_HPP
 
 #include <mlpack/core/util/log.hpp>
-#include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
+#include <mlpack/arma_inc.hpp>
 #include <string>
 
 #include "format.hpp"

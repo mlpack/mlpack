@@ -13,6 +13,9 @@
 #define _MLPACK_METHODS_AMF_SIMPLERESIDUETERMINATION_HPP_INCLUDED
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/log.hpp>
+
+#include <cfloat>
 
 namespace mlpack {
 namespace amf {

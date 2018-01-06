@@ -20,6 +20,8 @@
 #include "../visitor/backward_visitor.hpp"
 #include "../visitor/gradient_visitor.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
