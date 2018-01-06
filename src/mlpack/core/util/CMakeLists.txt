@@ -1,6 +1,7 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  arma_traits.hpp
   arma_config.hpp
   arma_config_check.hpp
   backtrace.hpp
@@ -11,15 +12,18 @@ set(SOURCES
   cli_deleter.cpp
   cli_impl.hpp
   deprecated.hpp
+  gitversion.hpp
   hyphenate_string.hpp
   is_std_vector.hpp
   log.hpp
   log.cpp
   mlpack_main.hpp
   nulloutstream.hpp
+  param.hpp
   param_checks.hpp
   param_checks_impl.hpp
   param_data.hpp
+  param_data_impl.hpp
   prefixedoutstream.hpp
   prefixedoutstream.cpp
   prefixedoutstream_impl.hpp

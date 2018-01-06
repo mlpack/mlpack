@@ -5,6 +5,10 @@ set(SOURCES
   amf_impl.hpp
 )
 
+add_subdirectory(update_rules)
+add_subdirectory(init_rules)
+add_subdirectory(termination_policies)
+
 # Add directory name to sources.
 set(DIR_SRCS)
 foreach(file ${SOURCES})
@@ -13,7 +17,3 @@ endforeach()
 # Append sources (with directory name) to list of all mlpack sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-add_subdirectory(update_rules)
-add_subdirectory(init_rules)
-add_subdirectory(termination_policies)

@@ -7,13 +7,17 @@ set(SOURCES
   lin_alg.hpp
   lin_alg_impl.hpp
   lin_alg.cpp
+  make_alias.hpp
   random.hpp
   random.cpp
   random_basis.hpp
   random_basis.cpp
   range.hpp
   range_impl.hpp
+  range_serialization.hpp
+  range_serialization.cpp
   round.hpp
+  shuffle_data.hpp
 )
 
 # add directory name to sources

@@ -45,13 +45,12 @@ set(DIRS
   local_coordinate_coding
   logistic_regression
   lsh
-#  mvu
+  mvu
   matrix_completion
   naive_bayes
   nca
   neighbor_search
   nmf
-#  lmf
   pca
   perceptron
   quic_svd
@@ -60,11 +59,12 @@ set(DIRS
   random_forest
   range_search
   rann
-#  rmva
   regularized_svd
+  reinforcement_learning
   softmax_regression
   sparse_autoencoder
   sparse_coding
+  sparse_svm
   nystroem_method
 )
 
