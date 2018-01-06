@@ -133,6 +133,9 @@ target_link_libraries(mlpack_test
   ${BOOST_unit_test_framework_LIBRARY}
 )
 
+set_target_properties(mlpack_test PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "../core.hpp")
+cotire(mlpack_test)
+
 # Copy test data into right place.
 add_custom_command(TARGET mlpack_test
   POST_BUILD
