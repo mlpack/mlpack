@@ -45,7 +45,7 @@ set(DIRS
   local_coordinate_coding
   logistic_regression
   lsh
-  mvu
+  # mvu # Note: this implementation of MVU does not work.  See #189.
   matrix_completion
   naive_bayes
   nca
