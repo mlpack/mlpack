@@ -40,7 +40,7 @@ double SchwefelFunction::Evaluate(const arma::mat& coordinates,
     const size_t p = visitationOrder[j];
     objective += coordinates(p) * std::sin(std::sqrt(std::abs(coordinates(p))));
   }
-  objective *= 418.9829 * n;
+  objective -= 418.9829 * batchSize;
 
   return objective;
 }
@@ -60,7 +60,7 @@ void SchwefelFunction::Gradient(const arma::mat& coordinates,
   for (size_t j = begin; j < begin + batchSize; ++j)
   {
     const size_t p = visitationOrder[j];
-    gradient(p) += (418.9829 * n) * (std::pow(coordinates(p), 2) *
+    gradient(p) += (std::pow(coordinates(p), 2) *
         std::cos(std::sqrt(std::abs(coordinates(p)))) /
         (2 * std::pow(std::abs(coordinates(p)), 1.5)) +
         std::sin(std::sqrt(std::abs(coordinates(p)))));
