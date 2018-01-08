@@ -57,4 +57,5 @@ cache:
 # the machine takes 30 minutes to build the code and at least 50 minutes to run
 # all tests.
 test_script:
-  - ctest -C Release
+#  - ctest -C Release
+  - "%APPVEYOR_BUILD_FOLDER%\build\Release\mlpack_test.exe"
