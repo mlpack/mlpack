@@ -106,4 +106,64 @@ BOOST_AUTO_TEST_CASE(PreprocessBinarizelargerDimensionTest)
   Log::Fatal.ignoreInput = false;
 }
 
+/**
+ * Check that binarization took place for the specified dimension.
+ */
+BOOST_AUTO_TEST_CASE(PreprocessBinarizeVerificationTest)
+{
+  arma::mat inputData({{7.0, 4.0, 5.0}, {2.0, 5.0, 9.0}, {7.0, 3.0, 8.0}});
+
+  SetInputParam("input", std::move(inputData));
+  SetInputParam("threshold", (double) 5.0);
+  SetInputParam("dimension", (int) 1);
+
+  mlpackMain();
+
+  arma::mat output;
+  output = std::move(CLI::GetParam<arma::mat>("output"));
+
+  // All values dimension should remain unchanged.
+  BOOST_REQUIRE_CLOSE(output(0, 0), 7.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(0, 1), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(0, 2), 5.0, 1e-5);
+
+  // All values should be binarized according to theshold.
+  BOOST_REQUIRE_SMALL(output(1, 0), 1e-5);
+  BOOST_REQUIRE_SMALL(output(1, 1), 1e-5);
+  BOOST_REQUIRE_CLOSE(output(1, 2), 1.0, 1e-5);
+
+  // All values dimension should remain unchanged.
+  BOOST_REQUIRE_CLOSE(output(2, 0), 7.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(2, 1), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(2, 2), 8.0, 1e-5);
+}
+
+/**
+ * Check that all dimensions are binarized when dimension
+ * is not specified.
+ */
+BOOST_AUTO_TEST_CASE(PreprocessBinarizeDimensionLessVerTest)
+{
+  arma::mat inputData({{7.0, 4.0, 5.0}, {2.0, 5.0, 9.0}, {7.0, 3.0, 8.0}});
+
+  SetInputParam("input", std::move(inputData));
+  SetInputParam("threshold", (double) 5.0);
+
+  mlpackMain();
+
+  arma::mat output;
+  output = std::move(CLI::GetParam<arma::mat>("output"));
+
+  // All values should be binarized according to theshold.
+  BOOST_REQUIRE_CLOSE(output(0, 0), 1.0, 1e-5);
+  BOOST_REQUIRE_SMALL(output(0, 1), 1e-5);
+  BOOST_REQUIRE_SMALL(output(0, 2), 1e-5);
+  BOOST_REQUIRE_SMALL(output(1, 0), 1e-5);
+  BOOST_REQUIRE_SMALL(output(1, 1), 1e-5);
+  BOOST_REQUIRE_CLOSE(output(1, 2), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(output(2, 0), 1.0, 1e-5);
+  BOOST_REQUIRE_SMALL(output(2, 1), 1e-5);
+  BOOST_REQUIRE_CLOSE(output(2, 2), 1.0, 1e-5);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
