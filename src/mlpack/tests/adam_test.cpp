@@ -97,8 +97,6 @@ BOOST_AUTO_TEST_CASE(AdamMatyasFunctionTest)
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  std::cout << coordinates << std::endl;
-
   // 3% error tolerance.
   BOOST_REQUIRE_CLOSE(std::trunc(100.0 * coordinates[0]) / 100.0, 0.0, 3.0);
   BOOST_REQUIRE_CLOSE(std::trunc(100.0 * coordinates[1]) / 100.0, 0.0, 3.0);
