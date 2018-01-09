@@ -58,4 +58,4 @@ cache:
 # all tests.
 test_script:
 #  - ctest -C Release
-  - "%APPVEYOR_BUILD_FOLDER%\build\Release\mlpack_test.exe"
+  - "%APPVEYOR_BUILD_FOLDER%/build/Release/mlpack_test.exe"
