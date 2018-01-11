@@ -24,7 +24,8 @@ void ShuffleData(const MatType& inputPoints,
                  const LabelsType& inputLabels,
                  MatType& outputPoints,
                  LabelsType& outputLabels,
-                 const std::enable_if_t<!arma::is_SpMat<MatType>::value>* = 0)
+                 const std::enable_if_t<!arma::is_SpMat<MatType>::value>* = 0,
+                 const std::enable_if_t<!arma::is_Cube<MatType>::value>* = 0)
 {
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -46,11 +47,13 @@ void ShuffleData(const MatType& inputPoints,
                  const LabelsType& inputLabels,
                  MatType& outputPoints,
                  LabelsType& outputLabels,
-                 const std::enable_if_t<arma::is_SpMat<MatType>::value>* = 0)
+                 const std::enable_if_t<arma::is_SpMat<MatType>::value>* = 0,
+                 const std::enable_if_t<!arma::is_Cube<MatType>::value>* = 0)
 {
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
       inputPoints.n_cols - 1, inputPoints.n_cols));
+//  std::cout << "ordering:\n" << ordering.t();
 
   // Extract coordinate list representation.
   arma::umat locations(2, inputPoints.n_nonzero);
@@ -67,11 +70,80 @@ void ShuffleData(const MatType& inputPoints,
     ++index;
   }
 
-  outputPoints = MatType(locations, values, inputPoints.n_rows,
-      inputPoints.n_cols, true);
-  outputLabels.set_size(inputLabels.n_elem);
-  for (size_t i = 0; i < inputLabels.n_elem; ++i)
-    outputLabels[ordering[i]] = inputLabels[i];
+  if (&inputPoints == &outputPoints || &inputLabels == &outputLabels)
+  {
+    MatType newOutputPoints(locations, values, inputPoints.n_rows,
+        inputPoints.n_cols, true);
+    LabelsType newOutputLabels(inputLabels.n_elem);
+    for (size_t i = 0; i < inputLabels.n_elem; ++i)
+      newOutputLabels[ordering[i]] = inputLabels[i];
+
+    outputPoints = std::move(newOutputPoints);
+    outputLabels = std::move(newOutputLabels);
+  }
+  else
+  {
+    outputPoints = MatType(locations, values, inputPoints.n_rows,
+        inputPoints.n_cols, true);
+    outputLabels.set_size(inputLabels.n_elem);
+    for (size_t i = 0; i < inputLabels.n_elem; ++i)
+      outputLabels[ordering[i]] = inputLabels[i];
+  }
+}
+
+/**
+ * Shuffle a cube-shaped dataset and associated labels (or responses) which are
+ * also cube-shaped.  It is expected that inputPoints and inputLabels have the
+ * same number of columns.
+ *
+ * Shuffled data will be output into outputPoints and outputLabels.
+ */
+template<typename MatType, typename LabelsType>
+void ShuffleData(const MatType& inputPoints,
+                 const LabelsType& inputLabels,
+                 MatType& outputPoints,
+                 LabelsType& outputLabels,
+                 const std::enable_if_t<!arma::is_SpMat<MatType>::value>* = 0,
+                 const std::enable_if_t<arma::is_Cube<MatType>::value>* = 0,
+                 const std::enable_if_t<arma::is_Cube<LabelsType>::value>* = 0)
+{
+  // Generate ordering.
+  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
+      inputPoints.n_cols - 1, inputPoints.n_cols));
+
+  // Properly handle the case where the input and output data are the same
+  // object.
+  MatType* outputPointsPtr = &outputPoints;
+  LabelsType* outputLabelsPtr = &outputLabels;
+  if (&inputPoints == &outputPoints)
+    outputPointsPtr = new MatType();
+  if (&inputLabels == &outputLabels)
+    outputLabelsPtr = new LabelsType();
+
+  outputPointsPtr->set_size(inputPoints.n_rows, inputPoints.n_cols,
+      inputPoints.n_slices);
+  outputLabelsPtr->set_size(inputLabels.n_rows, inputLabels.n_cols,
+      inputLabels.n_slices);
+  for (size_t i = 0; i < ordering.n_elem; ++i)
+  {
+    outputPointsPtr->tube(0, ordering[i], outputPointsPtr->n_rows - 1,
+        ordering[i]) = inputPoints.tube(0, i, inputPoints.n_rows - 1, i);
+    outputLabelsPtr->tube(0, ordering[i], outputLabelsPtr->n_rows - 1,
+        ordering[i]) = inputLabels.tube(0, i, inputLabels.n_rows - 1, i);
+  }
+
+  // Clean up memory if needed.
+  if (&inputPoints == &outputPoints)
+  {
+    outputPoints = std::move(*outputPointsPtr);
+    delete outputPointsPtr;
+  }
+
+  if (&inputLabels == &outputLabels)
+  {
+    outputLabels = std::move(*outputLabelsPtr);
+    delete outputLabelsPtr;
+  }
 }
 
 } // namespace math
