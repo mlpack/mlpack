@@ -35,8 +35,6 @@ BOOST_AUTO_TEST_CASE(QUICSVDReconstructionError)
   for (size_t i = 0; i < 3; ++i)
   {
     // Obtain the SVD using default parameters.
-    Log::Info.ignoreInput = false;
-    Log::Warn.ignoreInput = false;
     arma::mat u, v, sigma;
     svd::QUIC_SVD quicsvd(dataset, u, v, sigma);
 
