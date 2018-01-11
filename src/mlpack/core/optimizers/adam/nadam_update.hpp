@@ -53,9 +53,9 @@ class NadamUpdate
       epsilon(epsilon),
       beta1(beta1),
       beta2(beta2),
-      cumBeta1(1),
       scheduleDecay(scheduleDecay),
-      iteration(0)
+      iteration(0),
+      cumBeta1(1)
   {
     // Nothing to do.
   }
