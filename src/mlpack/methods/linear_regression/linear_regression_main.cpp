@@ -79,7 +79,7 @@ PARAM_MODEL_OUT(LinearRegression, "output_model", "Output LinearRegression "
 PARAM_MATRIX_IN("test", "Matrix containing X' (test regressors).", "T");
 
 // This is the future name of the parameter.
-PARAM_COL_OUT("output_predictions", "If --test_file is specified, this "
+PARAM_ROW_OUT("output_predictions", "If --test_file is specified, this "
     "matrix is where the predicted responses will be saved.", "o");
 
 PARAM_DOUBLE_IN("lambda", "Tikhonov regularization for ridge regression.  If 0,"
@@ -97,11 +97,9 @@ static void mlpackMain()
   rowvec responses;
 
   LinearRegression lr;
-  lr.Lambda() = lambda;
 
-  bool computeModel = false;
-  if (!CLI::HasParam("input_model"))
-    computeModel = true;
+  const bool computeModel = !CLI::HasParam("input_model");
+  const bool computePrediction = CLI::HasParam("test");
 
   // If they specified a model file, we also need a test file or we
   // have nothing to do.
@@ -127,6 +125,11 @@ static void mlpackMain()
     if (!CLI::HasParam("training_responses"))
     {
       // The initial predictors for y, Nx1.
+      if (regressors.n_rows < 2)
+      {
+        Log::Fatal << "Can't get responses from training data "
+            "since it has less than 2 rows" << endl;
+      }
       responses = regressors.row(regressors.n_rows - 1);
       regressors.shed_row(regressors.n_rows - 1);
     }
@@ -139,31 +142,26 @@ static void mlpackMain()
 
       if (responses.n_cols != regressors.n_cols)
       {
-        Log::Fatal << "The responses must have the same number of rows as the "
-            "training set." << endl;
+        Log::Fatal << "The responses must have the same number of columns "
+            "as the training set." << endl;
       }
     }
 
     Timer::Start("regression");
-    lr = LinearRegression(regressors, responses);
+    lr = LinearRegression(regressors, responses, lambda);
     Timer::Stop("regression");
-
-    // Save the parameters.
-    if (CLI::HasParam("output_model"))
-      CLI::GetParam<LinearRegression>("output_model") = std::move(lr);
+  }
+  else
+  {
+    // A model file was passed in, so load it.
+    Timer::Start("load_model");
+    lr = std::move(CLI::GetParam<LinearRegression>("input_model"));
+    Timer::Stop("load_model");
   }
 
   // Did we want to predict, too?
-  if (CLI::HasParam("test"))
+  if (computePrediction)
   {
-    // A model file was passed in, so load it.
-    if (!computeModel)
-    {
-      Timer::Start("load_model");
-      lr = std::move(CLI::GetParam<LinearRegression>("input_model"));
-      Timer::Stop("load_model");
-    }
-
     // Load the test file data.
     Timer::Start("load_test_points");
     mat points = std::move(CLI::GetParam<mat>("test"));
@@ -186,6 +184,10 @@ static void mlpackMain()
 
     // Save predictions.
     if (CLI::HasParam("output_predictions"))
-      CLI::GetParam<vec>("output_predictions") = std::move(predictions);
+      CLI::GetParam<rowvec>("output_predictions") = std::move(predictions);
   }
+
+  // Save the model if needed.
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<LinearRegression>("output_model") = std::move(lr);
 }
