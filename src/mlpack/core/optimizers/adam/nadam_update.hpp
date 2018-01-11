@@ -157,14 +157,14 @@ class NadamUpdate
   // The exponential moving average of squared gradient values.
   arma::mat v;
 
-  // The cumulative product of decay coefficients
-  double cumBeta1;
-
   // The decay parameter for decay coefficients
   double scheduleDecay;
 
   // The number of iterations.
   double iteration;
+
+  // The cumulative product of decay coefficients
+  double cumBeta1;
 };
 
 } // namespace optimization

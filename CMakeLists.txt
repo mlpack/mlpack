@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.5)
 project(mlpack C CXX)
 
+include(CMake/cotire.cmake)
+
 # First, define all the compilation options.
 # We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information." OFF)
@@ -36,6 +38,10 @@ if ((${CMAKE_MAJOR_VERSION} LESS 3 OR
     message(FATAL_ERROR "No C++11 compiler available!")
   endif()
   enable_cxx11()
+else()
+  # set required standard to c++11
+  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif ()
 # Otherwise, we may have to set the C++11 mode after the mlpack target is
 # defined.

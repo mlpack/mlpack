@@ -53,8 +53,8 @@ class NadaMaxUpdate
       epsilon(epsilon),
       beta1(beta1),
       beta2(beta2),
-      cumBeta1(1),
       scheduleDecay(scheduleDecay),
+      cumBeta1(1),
       iteration(0)
   {
     // Nothing to do.
@@ -153,11 +153,11 @@ class NadaMaxUpdate
   // The exponentially weighted infinity norm.
   arma::mat u;
 
-  // The cumulative product of decay coefficients
-  double cumBeta1;
-
   // The decay parameter for decay coefficients
   double scheduleDecay;
+
+  // The cumulative product of decay coefficients
+  double cumBeta1;
 
   // The number of iterations.
   double iteration;

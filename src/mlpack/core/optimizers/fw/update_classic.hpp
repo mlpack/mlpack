@@ -32,8 +32,7 @@ class UpdateClassic
   /**
    * Construct the classic update rule for FrankWolfe algorithm.
    */
-  UpdateClassic()
-  { /* Do nothing. */ }
+  UpdateClassic() { /* Do nothing. */ }
 
   /**
    * Classic update rule for FrankWolfe.

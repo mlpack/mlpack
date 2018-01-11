@@ -89,9 +89,9 @@ If you would like use or build the mlpack Python bindings, make sure that the
 following Python packages are installed:
 
       setuptools
-      cython
+      cython >= 0.24
       numpy
-      pandas
+      pandas >= 0.15.0
 
 If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 

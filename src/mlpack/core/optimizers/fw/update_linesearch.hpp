@@ -2,7 +2,7 @@
  * @file update_linesearch.hpp
  * @author Chenzhe Diao
  *
- * Minimize convex function with line search, using secant method. 
+ * Minimize convex function with line search, using secant method.
  * In FrankWolfe algorithm, used as UpdateRuleType.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the

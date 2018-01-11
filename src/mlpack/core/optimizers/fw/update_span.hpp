@@ -30,12 +30,11 @@ class UpdateSpan
 {
  public:
   /**
-   * Construct the span update rule. The function to be optimized is 
-   * input here.
+   * Construct the span update rule. The function to be optimized is input here.
    *
    * @param function Function to be optimized in FrankWolfe algorithm.
    */
-  UpdateSpan(bool isPrune = false) : isPrune(isPrune)
+  UpdateSpan(const bool isPrune = false) : isPrune(isPrune)
   { /* Do nothing. */ }
 
   /**
