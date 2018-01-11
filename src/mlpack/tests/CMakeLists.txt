@@ -122,6 +122,7 @@ add_executable(mlpack_test
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
+  main_tests/test_helper.hpp
   main_tests/emst_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/pca_test.cpp

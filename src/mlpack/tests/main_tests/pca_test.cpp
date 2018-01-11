@@ -11,7 +11,7 @@ static const std::string testName = "PrincipalComponentAnalysis";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/core/util/test_helper.hpp>
+#include "test_helper.hpp"
 #include <mlpack/methods/pca/pca_main.cpp>
 
 #include <boost/test/unit_test.hpp>

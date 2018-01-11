@@ -17,6 +17,7 @@ static const std::string testName = "EMST";
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/emst/emst_main.cpp>
+#include "test_helper.hpp"
 
 #include <boost/test/unit_test.hpp>
 #include "../test_tools.hpp"
@@ -24,16 +25,6 @@ static const std::string testName = "EMST";
 #include <boost/math/special_functions/round.hpp>
 
 using namespace mlpack;
-
-// Utility function to set a parameter and mark it as passed,
-// using copy semantics for lvalues and move semantics for rvalues.
-template<typename T>
-void SetInputParam(const std::string& name, T&& value)
-{
-  CLI::GetParam<typename std::remove_reference<T>::type>(name) =
-       std::forward<T>(value);
-  CLI::SetPassed(name);
-}
 
 struct EMSTTestFixture
 {

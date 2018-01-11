@@ -13,9 +13,14 @@
 namespace mlpack {
 namespace util {
 
-// Utility function that is used in binding tests for setting a parameter and
-// marking it as passed, it uses copy semantics for lvalues and move semantics
-// for rvalues.
+/**
+ * Utility function that is used in binding tests for setting a parameter and
+ * marking it as passed; it uses copy semantics for lvalues and move semantics
+ * for rvalues.
+ *
+ * @param name Name of parameter to set.
+ * @param value Value to set parameter to.
+ */
 template<typename T>
 void SetInputParam(const std::string& name, T&& value)
 {

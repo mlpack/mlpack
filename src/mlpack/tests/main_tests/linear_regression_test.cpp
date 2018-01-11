@@ -12,7 +12,7 @@ static const std::string testName = "LinearRegression";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/core/util/test_helper.hpp>
+#include "test_helper.hpp"
 #include <mlpack/methods/linear_regression/linear_regression_main.cpp>
 
 #include <boost/test/unit_test.hpp>
@@ -45,8 +45,8 @@ void ResetSettings()
 BOOST_FIXTURE_TEST_SUITE(LinearRegressionMainTest, LRTestFixture);
 
 /**
- * Training a model with different regularization parameter
- * and ensuring that predictions are different.
+ * Training a model with different regularization parameter and ensuring that
+ * predictions are different.
  */
 BOOST_AUTO_TEST_CASE(LRDifferentLambdas)
 {
@@ -116,8 +116,8 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentation)
 }
 
 /**
- * Check that model can saved / loaded and used. Ensuring that
- * results are the same.
+ * Check that model can saved / loaded and used. Ensuring that results are the
+ * same.
  */
 BOOST_AUTO_TEST_CASE(LRModelReload)
 {
@@ -193,8 +193,7 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest1)
 }
 
 /**
- * Ensuring that test data dimensionality is is checked
- * when model is loaded.
+ * Ensuring that test data dimensionality is is checked when model is loaded.
  */
 BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest2)
 {
