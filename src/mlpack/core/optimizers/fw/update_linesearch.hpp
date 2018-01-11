@@ -71,7 +71,7 @@ class UpdateLineSearch
               const arma::mat& oldCoords,
               const arma::mat& s,
               arma::mat& newCoords,
-              const size_t numIter)
+              const size_t /* numIter */)
 
   {
     LineSearch solver(maxIterations, tolerance);

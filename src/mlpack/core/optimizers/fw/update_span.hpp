@@ -52,7 +52,7 @@ class UpdateSpan
               const arma::mat& oldCoords,
               const arma::mat& s,
               arma::mat& newCoords,
-              const size_t numIter)
+              const size_t /* numIter */)
   {
     // Add new atom into soluton space.
     atoms.AddAtom(s, function);

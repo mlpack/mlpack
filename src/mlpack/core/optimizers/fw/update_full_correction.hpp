@@ -61,7 +61,7 @@ class UpdateFullCorrection
               const arma::mat& oldCoords,
               const arma::mat& s,
               arma::mat& newCoords,
-              const size_t numIter)
+              const size_t /* numIter */)
   {
     // Line search, with explicit solution here.
     arma::mat v = tau * s - oldCoords;
