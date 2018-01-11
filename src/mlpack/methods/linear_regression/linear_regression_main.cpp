@@ -128,7 +128,7 @@ static void mlpackMain()
       if (regressors.n_rows < 2)
       {
         Log::Fatal << "Can't get responses from training data "
-            "since it has less than 2 rows" << endl;
+            "since it has less than 2 rows." << endl;
       }
       responses = regressors.row(regressors.n_rows - 1);
       regressors.shed_row(regressors.n_rows - 1);

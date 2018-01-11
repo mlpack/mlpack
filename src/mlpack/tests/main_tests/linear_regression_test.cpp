@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(LRModelReload)
 }
 
 /**
- * Ensuring that response size is is checked.
+ * Ensuring that response size is checked.
  */
 BOOST_AUTO_TEST_CASE(LRWrongResponseSizeTest)
 {
