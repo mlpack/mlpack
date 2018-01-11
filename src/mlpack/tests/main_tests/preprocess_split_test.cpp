@@ -17,22 +17,13 @@ static const std::string testName = "PreprocessSplit";
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/preprocess/preprocess_split_main.cpp>
 
+#include "test_helper.hpp"
 #include <boost/test/unit_test.hpp>
 #include "../test_tools.hpp"
 
 #include <cmath>
 
 using namespace mlpack;
-
-// Utility function to set a parameter and mark it as passed,
-// using copy semantics for lvalues and move semantics for rvalues.
-template<typename T>
-void SetInputParam(const std::string& name, T&& value)
-{
-  CLI::GetParam<typename std::remove_reference<T>::type>(name)
-       = std::forward<T>(value);
-  CLI::SetPassed(name);
-}
 
 struct PreprocessSplitTestFixture
 {
@@ -54,8 +45,8 @@ BOOST_FIXTURE_TEST_SUITE(PreprocessSplitMainTest,
                          PreprocessSplitTestFixture);
 
 /**
- * Check that desired output dimensions are received
- * for both input data and labels.
+ * Check that desired output dimensions are received for both input data and
+ * labels.
  */
 BOOST_AUTO_TEST_CASE(PreprocessSplitDimensionTest)
 {
@@ -84,17 +75,16 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitDimensionTest)
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("test").n_cols,
                       std::floor(0.1 * inputSize));
 
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>
-                      ("training_labels").n_cols,
-                      std::ceil(0.9 * labelSize));
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>
-                      ("test_labels").n_cols,
-                      std::floor(0.1 * labelSize));
+  BOOST_REQUIRE_EQUAL(
+      CLI::GetParam<arma::Mat<size_t>>("training_labels").n_cols,
+      std::ceil(0.9 * labelSize));
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("test_labels").n_cols,
+      std::floor(0.1 * labelSize));
 }
 
 /**
- * Check that desired output dimensions are received
- * for the input data when labels are not provided.
+ * Check that desired output dimensions are received for the input data when
+ * labels are not provided.
  */
 BOOST_AUTO_TEST_CASE(PreprocessSplitLabelLessDimensionTest)
 {
@@ -143,8 +133,7 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitTestRatioTest)
 }
 
 /**
- * Check that if test size is 0 then
- * train consist of whole input data.
+ * Check that if test size is 0 then train consist of whole input data.
  */
 BOOST_AUTO_TEST_CASE(PreprocessSplitZeroTestRatioTest)
 {
@@ -155,8 +144,8 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitZeroTestRatioTest)
   data::Load("vc2_labels.txt", labels);
 
   // Store size of input dataset.
-  int inputSize  = inputData.n_cols;
-  int labelSize  = labels.n_cols;
+  int inputSize = inputData.n_cols;
+  int labelSize = labels.n_cols;
 
   // Input custom data points and labels.
   SetInputParam("input", std::move(inputData));
@@ -167,20 +156,17 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitZeroTestRatioTest)
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("training").n_cols,
-                      inputSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("test").n_cols,
-                      0);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("training").n_cols, inputSize);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("test").n_cols, 0);
 
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>
-                      ("training_labels").n_cols, labelSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>
-                      ("test_labels").n_cols, 0);
+  BOOST_REQUIRE_EQUAL(
+      CLI::GetParam<arma::Mat<size_t>>("training_labels").n_cols, labelSize);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("test_labels").n_cols,
+      0);
 }
 
 /**
- * Check that if test size is 1 then
- * test consist of whole input data.
+ * Check that if test size is 1 then test consist of whole input data.
  */
 BOOST_AUTO_TEST_CASE(PreprocessSplitUnityTestRatioTest)
 {
@@ -191,8 +177,8 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitUnityTestRatioTest)
   data::Load("vc2_labels.txt", labels);
 
   // Store size of input dataset.
-  int inputSize  = inputData.n_cols;
-  int labelSize  = labels.n_cols;
+  int inputSize = inputData.n_cols;
+  int labelSize = labels.n_cols;
 
   // Input custom data points and labels.
   SetInputParam("input", std::move(inputData));
@@ -203,15 +189,13 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitUnityTestRatioTest)
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("training").n_cols,
-                      0);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("test").n_cols,
-                      inputSize);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("training").n_cols, 0);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("test").n_cols, inputSize);
 
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>
-                      ("training_labels").n_cols, 0);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>
-                      ("test_labels").n_cols, labelSize);
+  BOOST_REQUIRE_EQUAL(
+      CLI::GetParam<arma::Mat<size_t>>("training_labels").n_cols, 0);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("test_labels").n_cols,
+      labelSize);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

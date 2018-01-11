@@ -17,20 +17,11 @@ static const std::string testName = "PreprocessBinarize";
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/preprocess/preprocess_binarize_main.cpp>
 
+#include "test_helper.hpp"
 #include <boost/test/unit_test.hpp>
 #include "../test_tools.hpp"
 
 using namespace mlpack;
-
-// Utility function to set a parameter and mark it as passed,
-// using copy semantics for lvalues and move semantics for rvalues.
-template<typename T>
-void SetInputParam(const std::string& name, T&& value)
-{
-  CLI::GetParam<typename std::remove_reference<T>::type>(name)
-       = std::forward<T>(value);
-  CLI::SetPassed(name);
-}
 
 struct PreprocessBinarizeTestFixture
 {
@@ -56,7 +47,7 @@ BOOST_FIXTURE_TEST_SUITE(PreprocessBinarizeMainTest,
  */
 BOOST_AUTO_TEST_CASE(PreprocessBinarizeDimensionTest)
 {
-  // synthetic dataset.
+  // Create a synthetic dataset.
   arma::mat inputData = arma::randu<arma::mat>(2, 5);
 
   // Store size of input dataset.
@@ -127,7 +118,7 @@ BOOST_AUTO_TEST_CASE(PreprocessBinarizeVerificationTest)
   BOOST_REQUIRE_CLOSE(output(0, 1), 4.0, 1e-5);
   BOOST_REQUIRE_CLOSE(output(0, 2), 5.0, 1e-5);
 
-  // All values should be binarized according to theshold.
+  // All values should be binarized according to the threshold.
   BOOST_REQUIRE_SMALL(output(1, 0), 1e-5);
   BOOST_REQUIRE_SMALL(output(1, 1), 1e-5);
   BOOST_REQUIRE_CLOSE(output(1, 2), 1.0, 1e-5);
@@ -139,8 +130,7 @@ BOOST_AUTO_TEST_CASE(PreprocessBinarizeVerificationTest)
 }
 
 /**
- * Check that all dimensions are binarized when dimension
- * is not specified.
+ * Check that all dimensions are binarized when dimension is not specified.
  */
 BOOST_AUTO_TEST_CASE(PreprocessBinarizeDimensionLessVerTest)
 {
@@ -154,7 +144,7 @@ BOOST_AUTO_TEST_CASE(PreprocessBinarizeDimensionLessVerTest)
   arma::mat output;
   output = std::move(CLI::GetParam<arma::mat>("output"));
 
-  // All values should be binarized according to theshold.
+  // All values should be binarized according to the threshold.
   BOOST_REQUIRE_CLOSE(output(0, 0), 1.0, 1e-5);
   BOOST_REQUIRE_SMALL(output(0, 1), 1e-5);
   BOOST_REQUIRE_SMALL(output(0, 2), 1e-5);

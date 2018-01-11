@@ -187,8 +187,8 @@ static void mlpackMain()
       }
       else
       {
-        Log::Fatal << "'" <<  strategy << "' imputation strategy "
-            <<" does not exist "<< endl;
+        Log::Fatal << "'" <<  strategy << "' imputation strategy does not "
+            << "exist!" << endl;
       }
     }
     Timer::Stop("imputation");

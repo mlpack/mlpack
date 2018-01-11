@@ -17,22 +17,13 @@ static const std::string testName = "PreprocessImputer";
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/preprocess/preprocess_imputer_main.cpp>
 
+#include "test_helper.hpp"
 #include <boost/test/unit_test.hpp>
 #include "../test_tools.hpp"
 
 #include <cmath>
 
 using namespace mlpack;
-
-// Utility function to set a parameter and mark it as passed,
-// using copy semantics for lvalues and move semantics for rvalues.
-template<typename T>
-void SetInputParam(const std::string& name, T&& value)
-{
-  CLI::GetParam<typename std::remove_reference<T>::type>(name)
-       = std::forward<T>(value);
-  CLI::SetPassed(name);
-}
 
 struct PreprocessImputerTestFixture
 {
@@ -66,20 +57,21 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerDimensionTest)
   arma::mat outputData;
 
   // Store size of input dataset.
-  size_t inputSize  = inputData.n_cols;
+  size_t inputSize = inputData.n_cols;
 
   // Input custom data points and labels.
-  SetInputParam("input_file", (string) "preprocess_imputer_test.csv");
-  SetInputParam("missing_value", (string) "nan");
-  SetInputParam("output_file", (string) "preprocess_imputer_output_test.csv");
+  SetInputParam("input_file", (std::string) "preprocess_imputer_test.csv");
+  SetInputParam("missing_value", (std::string) "nan");
+  SetInputParam("output_file",
+      (std::string) "preprocess_imputer_output_test.csv");
 
   // Check for mean strategy.
-  SetInputParam("strategy", (string) "mean");
+  SetInputParam("strategy", (std::string) "mean");
 
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  data::Load(CLI::GetParam<string>("output_file"), outputData);
+  data::Load(CLI::GetParam<std::string>("output_file"), outputData);
   BOOST_REQUIRE_EQUAL(outputData.n_cols, inputSize);
   BOOST_REQUIRE_EQUAL(outputData.n_rows, 3); // Input Dimension.
 
@@ -87,12 +79,12 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerDimensionTest)
   CLI::GetSingleton().Parameters()["strategy"].wasPassed = false;
 
   // Check for median strategy.
-  SetInputParam("strategy", (string) "median");
+  SetInputParam("strategy", (std::string) "median");
 
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  data::Load(CLI::GetParam<string>("output_file"), outputData);
+  data::Load(CLI::GetParam<std::string>("output_file"), outputData);
   BOOST_REQUIRE_EQUAL(outputData.n_cols, inputSize);
   BOOST_REQUIRE_EQUAL(outputData.n_rows, 3); // Input Dimension.
 
@@ -100,20 +92,19 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerDimensionTest)
   CLI::GetSingleton().Parameters()["strategy"].wasPassed = false;
 
   // Check for custom strategy.
-  SetInputParam("strategy", (string) "custom");
+  SetInputParam("strategy", (std::string) "custom");
   SetInputParam("custom_value", (double) 75.12);
 
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  data::Load(CLI::GetParam<string>("output_file"), outputData);
+  data::Load(CLI::GetParam<std::string>("output_file"), outputData);
   BOOST_REQUIRE_EQUAL(outputData.n_cols, inputSize);
   BOOST_REQUIRE_EQUAL(outputData.n_rows, 3); // Input Dimension.
 }
 
 /**
- * Check that output has less points in
- * case of listwise_deletion strategy.
+ * Check that output has fewer points in case of listwise_deletion strategy.
  */
 BOOST_AUTO_TEST_CASE(PreprocessImputerListwiseDimensionTest)
 {
@@ -129,24 +120,25 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerListwiseDimensionTest)
   for (size_t i = 0; i < inputSize; i++)
   {
     if (std::to_string(inputData(0, i)) == "nan" ||
-       std::to_string(inputData(1, i)) == "nan" ||
-       std::to_string(inputData(2, i)) == "nan")
+        std::to_string(inputData(1, i)) == "nan" ||
+        std::to_string(inputData(2, i)) == "nan")
       {
         countNaN++;
       }
   }
 
   // Input custom data points and labels.
-  SetInputParam("input_file", (string) "preprocess_imputer_test.csv");
-  SetInputParam("missing_value", (string) "nan");
-  SetInputParam("strategy", (string) "listwise_deletion");
-  SetInputParam("output_file", (string) "preprocess_imputer_output_test.csv");
+  SetInputParam("input_file", (std::string) "preprocess_imputer_test.csv");
+  SetInputParam("missing_value", (std::string) "nan");
+  SetInputParam("strategy", (std::string) "listwise_deletion");
+  SetInputParam("output_file",
+      (std::string) "preprocess_imputer_output_test.csv");
 
   mlpackMain();
 
   // Now check that the output has desired dimensions.
   arma::mat outputData;
-  data::Load(CLI::GetParam<string>("output_file"), outputData);
+  data::Load(CLI::GetParam<std::string>("output_file"), outputData);
   BOOST_REQUIRE_EQUAL(outputData.n_cols + countNaN, inputSize);
   BOOST_REQUIRE_EQUAL(outputData.n_rows, 3); // Input Dimension.
 }
@@ -161,9 +153,9 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerStrategyTest)
   data::Load("preprocess_imputer_test.csv", inputData);
 
   // Input custom data points and labels.
-  SetInputParam("input_file", (string) "preprocess_imputer_test.csv");
-  SetInputParam("missing_value", (string) "nan");
-  SetInputParam("strategy", (string) "notmean"); // Invalid.
+  SetInputParam("input_file", (std::string) "preprocess_imputer_test.csv");
+  SetInputParam("missing_value", (std::string) "nan");
+  SetInputParam("strategy", (std::string) "notmean"); // Invalid.
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);

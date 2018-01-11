@@ -16,21 +16,12 @@ static const std::string testName = "DecisionTree";
 
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/decision_tree/decision_tree_main.cpp>
+#include "test_helper.hpp"
 
 #include <boost/test/unit_test.hpp>
 #include "../test_tools.hpp"
 
 using namespace mlpack;
-
-// Utility function to set a parameter and mark it as passed,
-// using copy semantics for lvalues and move semantics for rvalues.
-template<typename T>
-void SetInputParam(const std::string& name, T&& value)
-{
-  CLI::GetParam<typename std::remove_reference<T>::type>(name)
-       = std::forward<T>(value);
-  CLI::SetPassed(name);
-}
 
 struct DecisionTreeTestFixture
 {
@@ -49,7 +40,7 @@ struct DecisionTreeTestFixture
 };
 
 BOOST_FIXTURE_TEST_SUITE(DecisionTreeMainTest,
-                       DecisionTreeTestFixture);
+                         DecisionTreeTestFixture);
 
 /**
  * Check that number of output points and
@@ -84,15 +75,14 @@ BOOST_AUTO_TEST_CASE(DecisionTreeOutputDimensionTest)
 
   mlpackMain();
 
-  // Check that number of output points
-  // are equal to number of input points.
+  // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
                       testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
                       testSize);
 
-  // Check number of output rows equals number of classes in
-  // case of probabilities and 1 for predicitions.
+  // Check number of output rows equals number of classes in case of
+  // probabilities and 1 for predictions.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
                       1);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
@@ -174,15 +164,14 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
 
   mlpackMain();
 
-  // Check that number of output points
-  // are equal to number of input points.
+  // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
                       testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
                       testSize);
 
-  // Check number of output rows equals number of classes in
-  // case of probabilities and 1 for predicitions.
+  // Check number of output rows equals number of classes in case of
+  // probabilities and 1 for predicitions.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
                       1);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);

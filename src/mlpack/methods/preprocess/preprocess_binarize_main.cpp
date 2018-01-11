@@ -85,7 +85,7 @@ static void mlpackMain()
   error << "dimension to binarize must be less than the number of dimensions "
       << "of the input data (" << input.n_rows << ")";
   RequireParamValue<int>("dimension",
-      [input](int x) { return x < input.n_rows; }, true, error.str());
+      [input](int x) { return size_t(x) < input.n_rows; }, true, error.str());
 
   Timer::Start("binarize");
   if (CLI::HasParam("dimension"))
