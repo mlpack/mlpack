@@ -53,7 +53,6 @@ void ShuffleData(const MatType& inputPoints,
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
       inputPoints.n_cols - 1, inputPoints.n_cols));
-//  std::cout << "ordering:\n" << ordering.t();
 
   // Extract coordinate list representation.
   arma::umat locations(2, inputPoints.n_nonzero);
@@ -75,8 +74,7 @@ void ShuffleData(const MatType& inputPoints,
     MatType newOutputPoints(locations, values, inputPoints.n_rows,
         inputPoints.n_cols, true);
     LabelsType newOutputLabels(inputLabels.n_elem);
-    for (size_t i = 0; i < inputLabels.n_elem; ++i)
-      newOutputLabels[ordering[i]] = inputLabels[i];
+    newOutputLabels.cols(ordering) = inputLabels;
 
     outputPoints = std::move(newOutputPoints);
     outputLabels = std::move(newOutputLabels);
@@ -86,8 +84,7 @@ void ShuffleData(const MatType& inputPoints,
     outputPoints = MatType(locations, values, inputPoints.n_rows,
         inputPoints.n_cols, true);
     outputLabels.set_size(inputLabels.n_elem);
-    for (size_t i = 0; i < inputLabels.n_elem; ++i)
-      outputLabels[ordering[i]] = inputLabels[i];
+    outputLabels.cols(ordering) = inputLabels;
   }
 }
 

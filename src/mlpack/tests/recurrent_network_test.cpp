@@ -710,8 +710,6 @@ void DistractedSequenceRecallTestNetwork(
         output.slice(j) = outputSlice;
       }
 
-//      std::cout << "label:\n" << label << "\noutput:" << output
-
       arma::cube label(testLabels.at(0, i).memptr(), outputSize, 1,
           testLabels.at(0, i).n_elem / outputSize, false, true);
       if (arma::accu(arma::abs(label - output)) != 0)
