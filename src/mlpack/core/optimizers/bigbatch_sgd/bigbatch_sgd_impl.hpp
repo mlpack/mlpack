@@ -41,27 +41,15 @@ template<typename DecomposableFunctionType>
 double BigBatchSGD<UpdatePolicyType>::Optimize(
     DecomposableFunctionType& function, arma::mat& iterate)
 {
-  // Find the number of functions.
+  // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
-  size_t numBatches = numFunctions / batchSize;
-  if (numFunctions % batchSize != 0)
-    ++numBatches; // Capture last few.
-
-  // Batch visitation order.
-  arma::Col<size_t> visitationOrder = arma::linspace<arma::Col<size_t>>(0,
-      (numBatches - 1), numBatches);
-
-  if (shuffle)
-    visitationOrder = arma::shuffle(visitationOrder);
 
   // To keep track of where we are and how things are going.
-  std::vector<arma::mat> funcGradients(batchSize);
-  size_t currentBatch = 0;
+  size_t currentFunction = 0;
   double overallObjective = 0;
   double lastObjective = DBL_MAX;
-  double vB = 0;
-  double gB = 0;
   bool reset = false;
+  arma::mat delta0, delta1;
 
   // Calculate the first objective function.
   for (size_t i = 0; i < numFunctions; ++i)
@@ -69,10 +57,13 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  for (size_t i = 1; i != maxIterations; ++i, ++currentBatch)
+  arma::mat functionGradient(iterate.n_rows, iterate.n_cols);
+  const size_t actualMaxIterations = (maxIterations == 0) ?
+      std::numeric_limits<size_t>::max() : maxIterations;
+  for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
   {
     // Is this iteration the start of a sequence?
-    if ((currentBatch % numBatches) == 0)
+    if ((currentFunction % numFunctions) == 0)
     {
       // Output current objective function.
       Log::Info << "Big-batch SGD: iteration " << i << ", objective "
@@ -96,37 +87,49 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
       // Reset the counter variables.
       lastObjective = overallObjective;
       overallObjective = 0;
-      currentBatch = 0;
+      currentFunction = 0;
 
-      if (shuffle)
-        visitationOrder = arma::shuffle(visitationOrder);
+      if (shuffle) // Determine order of visitation.
+        function.Shuffle();
     }
 
-    const size_t offset = batchSize * visitationOrder[currentBatch];
-    if (visitationOrder[currentBatch] != numBatches - 1)
+    // Find the effective batch size; we have to take the minimum of three
+    // things:
+    // - the batch size can't be larger than the user-specified batch size;
+    // - the batch size can't be larger than the number of iterations left
+    //       before actualMaxIterations is hit;
+    // - the batch size can't be larger than the number of functions left.
+    size_t effectiveBatchSize = std::min(
+        std::min(batchSize, actualMaxIterations - i),
+        numFunctions - currentFunction);
+
+    size_t k = 1;
+    double vB = 0;
+
+    // Compute the stochastic gradient estimation.
+    function.Gradient(iterate, currentFunction, gradient, 1);
+
+    delta1 = gradient;
+    for (size_t j = 1; j < effectiveBatchSize; ++j, ++k)
     {
-      // Compute the stochastic gradient estimation.
-      function.Gradient(iterate, offset, funcGradients[0]);
-      gradient = funcGradients[0];
-      for (size_t j = 1; j < batchSize; ++j)
-      {
-        function.Gradient(iterate, offset + j, funcGradients[j]);
-        gradient += funcGradients[j];
-      }
-      gB = std::pow(arma::norm(gradient / batchSize, 2), 2.0);
+      function.Gradient(iterate, currentFunction + j, functionGradient, 1);
+      delta0 = delta1 + (functionGradient - delta1) / k;
 
       // Compute sample variance.
-      vB = std::pow(arma::norm(funcGradients[0] - (gradient / batchSize),
-          2.0), 2.0);
-      for (size_t j = 1; j < batchSize; ++j)
-      {
-        vB += std::pow(arma::norm(funcGradients[j] - (gradient / batchSize),
-            2.0), 2.0);
-      }
+      vB += arma::norm(functionGradient - delta1, 2.0) *
+          arma::norm(functionGradient - delta0, 2.0);
 
-      // Reset the batch size update process counter.
-      reset = false;
+      delta1 = delta0;
+      gradient += functionGradient;
+    }
+    double gB = std::pow(arma::norm(gradient / effectiveBatchSize, 2), 2.0);
 
+    // Reset the batch size update process counter.
+    reset = false;
+
+    // Increase batchSize only if there are more samples left.
+    if (effectiveBatchSize == batchSize)
+    {
       // Update batch size.
       while (gB <= ((1 / ((double) batchSize - 1) * vB) / batchSize))
       {
@@ -135,102 +138,46 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
         if (batchOffset <= 0)
           batchOffset = 1;
 
-        funcGradients.resize(batchSize + batchOffset);
-
-        // Generate new batch indices.
-        arma::Col<size_t> batchVisitationOrder;
-        if ((offset + batchSize + batchOffset - 1) < numFunctions)
-        {
-          batchVisitationOrder = arma::linspace<arma::Col<size_t>>(offset +
-              batchSize, (offset + batchSize + batchOffset - 1), batchOffset);
-        }
-        else if (((int) offset - (int) batchOffset) >= 0)
-        {
-          batchVisitationOrder = arma::linspace<arma::Col<size_t>>(offset -
-              batchOffset, offset - 1, batchOffset);
-        }
-        else
-        {
-          batchVisitationOrder = arma::randi<arma::Col<size_t> >(batchOffset,
-              arma::distr_param(0, numFunctions - 1));
-        }
+        if (batchSize + batchOffset >= numFunctions)
+          break;
 
         // Update the stochastic gradient estimation.
-        for (size_t j = 0; j < batchOffset; ++j)
+        const size_t batchStart = (currentFunction + batchSize + batchOffset
+            - 1) < numFunctions ? currentFunction + batchSize - 1 : 0;
+        for (size_t j = 0; j < batchOffset; ++j, ++k)
         {
-          function.Gradient(iterate, batchVisitationOrder[j],
-                funcGradients[batchSize + j]);
-          gradient += funcGradients[batchSize + j];
+          function.Gradient(iterate, batchStart + j, functionGradient, 1);
+          delta0 = delta1 + (functionGradient - delta1) / (k + 1);
+
+          // Compute sample variance.
+          vB += arma::norm(functionGradient - delta1, 2.0) *
+              arma::norm(functionGradient - delta0, 2.0);
+
+          delta1 = delta0;
+          gradient += functionGradient;
         }
-        gB = std::pow(arma::norm(gradient /
-            (batchSize + batchOffset), 2), 2.0);
+        gB = std::pow(arma::norm(gradient / (batchSize + batchOffset), 2), 2.0);
 
-        // Update sample variance.
-        for (size_t j = 0; j < batchOffset; ++j)
-        {
-          vB += std::pow(arma::norm(funcGradients[batchSize + j] - (gradient /
-              (batchSize + batchOffset)), 2.0), 2.0);
-        }
-
-        batchSize = batchSize + batchOffset;
-
-        // Reset the counter variable and visitation order.
-        numBatches = numFunctions / batchSize;
-        if (numFunctions % batchSize != 0)
-          ++numBatches; // Capture last few.
-
-        visitationOrder = arma::shuffle(
-            arma::linspace<arma::Col<size_t>>(0, (numBatches - 1), numBatches));
-
-        if ((currentBatch % numBatches) == 0 || currentBatch >= numBatches)
-          currentBatch = 0;
+        // Update the batchSize.
+        batchSize += batchOffset;
+        effectiveBatchSize += batchOffset;
 
         // Batch size updated.
         reset = true;
       }
-
-      size_t backtrackingBatchSize = batchSize;
-      if ((offset + batchSize) > numFunctions)
-        backtrackingBatchSize = numFunctions - offset;
-
-      updatePolicy.Update(function, stepSize, iterate, gradient, gB, vB, offset,
-          batchSize, backtrackingBatchSize, reset);
-
-      // Update the iterate.
-      iterate -= stepSize * gradient;
-
-      // Add that to the overall objective function.
-      for (size_t j = 0; j < backtrackingBatchSize; ++j)
-        overallObjective += function.Evaluate(iterate, offset + j);
     }
-    else
-    {
-      // Handle last batch differently: it's not a full-size batch.
-      const size_t lastBatchSize = numFunctions - offset - 1;
-      function.Gradient(iterate, offset, gradient);
-      for (size_t j = 1; j < lastBatchSize; ++j)
-      {
-        function.Gradient(iterate, offset + j, funcGradients[0]);
-        gradient += funcGradients[0];
-      }
 
-      // Ensure the last batch size isn't zero, to avoid division by zero before
-      // updating.
-      if (lastBatchSize > 0)
-      {
-        // Now update the iterate.
-        iterate -= (stepSize / lastBatchSize) * gradient;
-      }
-      else
-      {
-        // Now update the iterate.
-        iterate -= stepSize * gradient;
-      }
+    updatePolicy.Update(function, stepSize, iterate, gradient, gB, vB,
+        currentFunction, batchSize, effectiveBatchSize, reset);
 
-      // Add that to the overall objective function.
-      for (size_t j = 0; j < lastBatchSize; ++j)
-        overallObjective += function.Evaluate(iterate, offset + j);
-    }
+    // Update the iterate.
+    iterate -= stepSize * gradient;
+
+    overallObjective += function.Evaluate(iterate, currentFunction,
+        effectiveBatchSize);
+
+    i += effectiveBatchSize;
+    currentFunction += effectiveBatchSize;
   }
 
   Log::Info << "Big-batch SGD: maximum iterations (" << maxIterations << ") "
@@ -238,9 +185,11 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
 
   // Calculate final objective.
   overallObjective = 0;
-  for (size_t i = 0; i < numFunctions; ++i)
-    overallObjective += function.Evaluate(iterate, i);
-
+  for (size_t i = 0; i < numFunctions; i += batchSize)
+  {
+    const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
+    overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
+  }
   return overallObjective;
 }
 

@@ -142,14 +142,12 @@ class AdaptiveStepsize
                     const size_t offset,
                     const size_t backtrackingBatchSize)
   {
-    double overallObjective = 0;
-    for (size_t j = 0; j < backtrackingBatchSize; ++j)
-      overallObjective += function.Evaluate(iterate, offset + j);
+    double overallObjective = function.Evaluate(iterate, offset,
+        backtrackingBatchSize);
 
     arma::mat iterateUpdate = iterate - (stepSize * gradient);
-    double overallObjectiveUpdate = 0;
-    for (size_t j = 0; j < backtrackingBatchSize; ++j)
-      overallObjectiveUpdate += function.Evaluate(iterateUpdate, offset + j);
+    double overallObjectiveUpdate = function.Evaluate(iterateUpdate, offset,
+        backtrackingBatchSize);
 
     while (overallObjectiveUpdate >
         (overallObjective + searchParameter * stepSize * gradientNorm))
@@ -157,9 +155,8 @@ class AdaptiveStepsize
       stepSize *= backtrackStepSize;
 
       iterateUpdate = iterate - (stepSize * gradient);
-      overallObjectiveUpdate = 0;
-      for (size_t j = 0; j < backtrackingBatchSize; ++j)
-        overallObjectiveUpdate += function.Evaluate(iterateUpdate, offset + j);
+      overallObjectiveUpdate = function.Evaluate(iterateUpdate, offset,
+          backtrackingBatchSize);
     }
   }
 
