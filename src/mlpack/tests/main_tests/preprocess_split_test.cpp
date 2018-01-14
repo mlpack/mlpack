@@ -105,9 +105,9 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitLabelLessDimensionTest)
 
   // Now check that the output has desired dimensions.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("training").n_cols,
-                      std::ceil(0.9 * inputSize));
+      std::ceil(0.9 * inputSize));
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("test").n_cols,
-                      std::floor(0.1 * inputSize));
+      std::floor(0.1 * inputSize));
 }
 
 /**
@@ -161,8 +161,8 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitZeroTestRatioTest)
 
   BOOST_REQUIRE_EQUAL(
       CLI::GetParam<arma::Mat<size_t>>("training_labels").n_cols, labelSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("test_labels").n_cols,
-      0);
+  BOOST_REQUIRE_EQUAL(
+      CLI::GetParam<arma::Mat<size_t>>("test_labels").n_cols, 0);
 }
 
 /**

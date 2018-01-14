@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(GermanTest)
   // The bandwidth of the kernel is selected to be the half the average
   // distance between each point and the mean of the dataset.  This isn't
   // _exactly_ what the paper says, but I've modified what it said because our
-  // formulation of what the Gaussian kernel is is different.
+  // formulation of what the Gaussian kernel is different.
   GaussianKernel gk(16.461);
 
   // Calculate the true kernel matrix.
