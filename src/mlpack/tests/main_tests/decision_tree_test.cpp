@@ -77,14 +77,14 @@ BOOST_AUTO_TEST_CASE(DecisionTreeOutputDimensionTest)
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
-                      testSize);
+      testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
-                      testSize);
+      testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
-                      1);
+  BOOST_REQUIRE_EQUAL(
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
 }
 
@@ -160,20 +160,20 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                std::move(CLI::GetParam<DecisionTreeModel>("output_model")));
+      std::move(CLI::GetParam<DecisionTreeModel>("output_model")));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
-                      testSize);
+      testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
-                      testSize);
+      testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predicitions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
-                      1);
+  BOOST_REQUIRE_EQUAL(
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
 
   // Check that initial predictions and predictions using saved model are same.

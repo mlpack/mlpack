@@ -122,11 +122,9 @@ BOOST_AUTO_TEST_CASE(EMSTFirstTwoOutputRowsIntegerTest)
   for (size_t i = 0; i < CLI::GetParam<arma::mat>("output").n_cols; i++)
   {
     BOOST_REQUIRE_CLOSE(CLI::GetParam<arma::mat>("output")(0, i),
-                        boost::math::iround(
-                        CLI::GetParam<arma::mat>("output")(0, i)), 1e-5);
+        boost::math::iround(CLI::GetParam<arma::mat>("output")(0, i)), 1e-5);
     BOOST_REQUIRE_CLOSE(CLI::GetParam<arma::mat>("output")(1, i),
-                        boost::math::iround(
-                        CLI::GetParam<arma::mat>("output")(1, i)), 1e-5);
+        boost::math::iround(CLI::GetParam<arma::mat>("output")(1, i)), 1e-5);
   }
 }
 

@@ -355,7 +355,7 @@ BOOST_AUTO_TEST_CASE(SimpleDropoutLayerTest)
 
 /**
  * Perform dropout x times using ones as input, sum the number of ones and
- * validate that the layer is is producing approximately the right number of
+ * validate that the layer is producing approximately the correct number of
  * ones.
  */
 BOOST_AUTO_TEST_CASE(DropoutProbabilityTest)
