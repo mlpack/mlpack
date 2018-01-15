@@ -1,8 +1,8 @@
 /**
- * @file nbc_test.cpp
+ * @file decision_stump_test.cpp
  * @author Manish Kumar
  *
- * Test mlpackMain() of nbc_main.cpp.
+ * Test mlpackMain() of decision_stump_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -12,10 +12,10 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-static const std::string testName = "NBC";
+static const std::string testName = "DecisionStump";
 
 #include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/methods/naive_bayes/nbc_main.cpp>
+#include <mlpack/methods/decision_stump/decision_stump_main.cpp>
 #include "test_helper.hpp"
 
 #include <boost/test/unit_test.hpp>
@@ -23,29 +23,29 @@ static const std::string testName = "NBC";
 
 using namespace mlpack;
 
-struct NBCTestFixture
+struct DecisionStumpTestFixture
 {
  public:
-  NBCTestFixture()
+  DecisionStumpTestFixture()
   {
     // Cache in the options for this program.
     CLI::RestoreSettings(testName);
   }
 
-  ~NBCTestFixture()
+  ~DecisionStumpTestFixture()
   {
     // Clear the settings.
     CLI::ClearSettings();
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(NBCMainTest, NBCTestFixture);
+BOOST_FIXTURE_TEST_SUITE(DecisionStumpMainTest, DecisionStumpTestFixture);
 
 /**
  * Ensure that we get desired dimensions when both training
  * data and labels are passed.
  */
-BOOST_AUTO_TEST_CASE(NBCOutputDimensionTest)
+BOOST_AUTO_TEST_CASE(DecisionStumpOutputDimensionTest)
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
@@ -78,21 +78,19 @@ BOOST_AUTO_TEST_CASE(NBCOutputDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_cols,
-                      testSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_probs").n_cols,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
                       testSize);
 
-  // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_probs").n_rows, 2);
+  // Check prediction have only single row.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
+                      1);
 }
 
 /**
  * Check that last row of input file is used as labels
  * when labels are not passed specifically.
  */
-BOOST_AUTO_TEST_CASE(NBCLabelsLessDimensionTest)
+BOOST_AUTO_TEST_CASE(DecisionStumpLabelsLessDimensionTest)
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
@@ -116,20 +114,18 @@ BOOST_AUTO_TEST_CASE(NBCLabelsLessDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_cols,
-                      testSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_probs").n_cols,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
                       testSize);
 
-  // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_probs").n_rows, 2);
+  // Check prediction have only single row.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
+                      1);
 }
 
 /**
  * Ensure that saved model can be used again.
  */
-BOOST_AUTO_TEST_CASE(NBCModelReuseTest)
+BOOST_AUTO_TEST_CASE(DecisionStumpModelReuseTest)
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
@@ -152,10 +148,8 @@ BOOST_AUTO_TEST_CASE(NBCModelReuseTest)
 
   mlpackMain();
 
-  arma::Row<size_t> output;
-  arma::mat output_probs;
-  output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
-  output_probs = std::move(CLI::GetParam<arma::mat>("output_probs"));
+  arma::Row<size_t> predictions;
+  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
 
   // Reset passed parameters.
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
@@ -170,30 +164,45 @@ BOOST_AUTO_TEST_CASE(NBCModelReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                std::move(CLI::GetParam<NBCModel>("output_model")));
+                std::move(CLI::GetParam<DSModel>("output_model")));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_cols,
-                      testSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_probs").n_cols,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
                       testSize);
 
-  // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_probs").n_rows, 2);
+  // Check predictions have only single row.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
+                      1);
 
-  // Check that initial output and final output
-  // matrix using saved model are same.
-  CheckMatrices(output, CLI::GetParam<arma::Row<size_t>>("output"));
-  CheckMatrices(output_probs, CLI::GetParam<arma::mat>("output_probs"));
+  // Check that initial predictions and final predicitons matrix
+  // using saved model are same.
+  CheckMatrices(predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
+}
+
+/**
+ * Ensure that bucket_size is always positive.
+ */
+BOOST_AUTO_TEST_CASE(DecisionStumpBucketSizeTest)
+{
+  arma::mat inputData;
+  if (!data::Load("trainSet.csv", inputData))
+    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+
+  // Input training data.
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("bucket_size", (int) 0);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Make sure only one of training data or pre-trained model is passed.
  */
-BOOST_AUTO_TEST_CASE(NBCTrainingVerTest)
+BOOST_AUTO_TEST_CASE(DecisionStumpTrainingVerTest)
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
@@ -206,7 +215,7 @@ BOOST_AUTO_TEST_CASE(NBCTrainingVerTest)
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                std::move(CLI::GetParam<NBCModel>("output_model")));
+                std::move(CLI::GetParam<DSModel>("output_model")));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
