@@ -22,6 +22,7 @@ static const std::string testName = "DecisionTree";
 #include "../test_tools.hpp"
 
 using namespace mlpack;
+using namespace data;
 
 struct DecisionTreeTestFixture
 {
@@ -49,7 +50,8 @@ BOOST_FIXTURE_TEST_SUITE(DecisionTreeMainTest,
 BOOST_AUTO_TEST_CASE(DecisionTreeOutputDimensionTest)
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  DatasetInfo info;
+  if (!data::Load("vc2.csv", inputData, info))
     BOOST_FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
@@ -60,18 +62,61 @@ BOOST_AUTO_TEST_CASE(DecisionTreeOutputDimensionTest)
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!data::Load("vc2_test.csv", testData, info))
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(inputData));
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
   // Input test data.
-  SetInputParam("test", std::move(testData));
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+
+  mlpackMain();
+
+  // Check that number of output points are equal to number of input points.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
+      testSize);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
+      testSize);
+
+  // Check number of output rows equals number of classes in case of
+  // probabilities and 1 for predictions.
+  BOOST_REQUIRE_EQUAL(
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
+}
+
+/**
+ * Check that number of output points and number
+ * of input points are equal for categorical dataset.
+ */
+BOOST_AUTO_TEST_CASE(DecisionTreeCategoricalOutputDimensionTest)
+{
+  arma::mat inputData;
+  DatasetInfo info;
+  if (!data::Load("t1.arff", inputData, info))
+    BOOST_FAIL("Cannot load train dataset t1.arff!");
+
+  // Initialize an all-ones weight matrix.
+  arma::mat weights(1, inputData.n_cols, arma::fill::ones);
+
+  arma::mat testData;
+  if (!data::Load("t1_test.arff", testData, info))
+    BOOST_FAIL("Cannot load test dataset t1_test.arff!");
+
+  size_t testSize = testData.n_cols;
+
+  // Input training data.
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  // Get labels from last column of training data.
+  SetInputParam("weights", std::move(weights));
+
+  // Input test data.
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
 
   mlpackMain();
 
@@ -117,7 +162,8 @@ BOOST_AUTO_TEST_CASE(DecisionTreeMinimumLeafSizeTest)
 BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  DatasetInfo info;
+  if (!data::Load("vc2.csv", inputData, info))
     BOOST_FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
@@ -128,18 +174,18 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!data::Load("vc2_test.csv", testData, info))
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(inputData));
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
   // Input test data.
-  SetInputParam("test", std::move(testData));
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
 
   mlpackMain();
 
@@ -154,11 +200,11 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
   CLI::GetSingleton().Parameters()["weights"].wasPassed = false;
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
-  if (!data::Load("vc2_test.csv", testData))
+  if (!data::Load("vc2_test.csv", testData, info))
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input trained model.
-  SetInputParam("test", std::move(testData));
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
   SetInputParam("input_model",
       std::move(CLI::GetParam<DecisionTreeModel>("output_model")));
 
