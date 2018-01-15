@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(DecisionTreeCategoricalOutputDimensionTest)
   // probabilities and 1 for predictions.
   BOOST_REQUIRE_EQUAL(
       CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 6);
 }
 
 /**
