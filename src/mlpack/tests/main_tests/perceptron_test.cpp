@@ -306,7 +306,7 @@ BOOST_AUTO_TEST_CASE(PerceptronNonNegMaxIterationTest)
 
   trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << endr; // 10 responses
 
-  arma::testX =  arma::randu<arma::mat>(D,N);
+  arma::mat testX =  arma::randu<arma::mat>(D,N);
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
@@ -316,7 +316,7 @@ BOOST_AUTO_TEST_CASE(PerceptronNonNegMaxIterationTest)
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
-  
+
 }
 
 BOOST_AUTO_TEST_SUITE_END();
