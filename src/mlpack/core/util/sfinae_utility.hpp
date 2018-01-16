@@ -46,56 +46,56 @@ struct MethodFormDetector;
 template<typename Class, template<typename...> class MethodForm>
 struct MethodFormDetector<Class, MethodForm, 0>
 {
-  void operator()(MethodForm<Class>);
+  void operator() ( MethodForm<Class> );
 };
 
 template<typename Class, template<typename...> class MethodForm>
 struct MethodFormDetector<Class, MethodForm, 1>
 {
   template<class T1>
-  void operator()(MethodForm<Class, T1>);
+  void operator() ( MethodForm<Class, T1> );
 };
 
 template<typename Class, template<typename...> class MethodForm>
 struct MethodFormDetector<Class, MethodForm, 2>
 {
   template<class T1, class T2>
-  void operator()(MethodForm<Class, T1, T2>);
+  void operator() ( MethodForm<Class, T1, T2> );
 };
 
 template<typename Class, template<typename...> class MethodForm>
 struct MethodFormDetector<Class, MethodForm, 3>
 {
   template<class T1, class T2, class T3>
-  void operator()(MethodForm<Class, T1, T2, T3>);
+  void operator() ( MethodForm<Class, T1, T2, T3> );
 };
 
 template<typename Class, template<typename...> class MethodForm>
 struct MethodFormDetector<Class, MethodForm, 4>
 {
   template<class T1, class T2, class T3, class T4>
-  void operator()(MethodForm<Class, T1, T2, T3, T4>);
+  void operator() ( MethodForm<Class, T1, T2, T3, T4> );
 };
 
 template<typename Class, template<typename...> class MethodForm>
 struct MethodFormDetector<Class, MethodForm, 5>
 {
   template<class T1, class T2, class T3, class T4, class T5>
-  void operator()(MethodForm<Class, T1, T2, T3, T4, T5>);
+  void operator() ( MethodForm<Class, T1, T2, T3, T4, T5> );
 };
 
 template<typename Class, template<typename...> class MethodForm>
 struct MethodFormDetector<Class, MethodForm, 6>
 {
   template<class T1, class T2, class T3, class T4, class T5, class T6>
-  void operator()(MethodForm<Class, T1, T2, T3, T4, T5, T6>);
+  void operator() ( MethodForm<Class, T1, T2, T3, T4, T5, T6> );
 };
 
 template<typename Class, template<typename...> class MethodForm>
 struct MethodFormDetector<Class, MethodForm, 7>
 {
   template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
-  void operator()(MethodForm<Class, T1, T2, T3, T4, T5, T6, T7>);
+  void operator() ( MethodForm<Class, T1, T2, T3, T4, T5, T6, T7> );
 };
 
 } // namespace sfinae
@@ -180,6 +180,45 @@ struct NAME                                                                    \
                                                                                \
   static const bool value =                                                    \
       WithGreaterOrEqualNumberOfAdditionalArgs<MinN>::value;                   \
+};
+
+/**
+ * Constructs a template structure, which will define a boolean static variable, to true if
+ * the passed template parameter, has a member function with the specified name.
+ * The check does not care about the signature or the function parameters
+ *
+ * @param FUNC the name of the function, whose existence is to be detected
+ * @param NAME the name of the structure that will be generated
+ *
+ * Use this like: NAME<ClassName>::value to check for the existence of the function
+ * in the given class name.
+ * This can also be used in conjunction with std::enale_if.
+ */
+#define HAS_ANY_METHOD_FORM( FUNC, NAME )                                                     \
+template < typename T >                                                                       \
+struct has_member_function                                                                    \
+{                                                                                             \
+  template < typename Q = T >                                                                 \
+  static typename                                                                             \
+  std::enable_if< std::is_member_function_pointer< decltype( &Q::FUNC ) >::value, int >::type \
+  f( int t )                                                                                  \
+  {                                                                                           \
+    return 1;                                                                                 \
+  }                                                                                           \
+                                                                                              \
+  template < typename Q = T >                                                                 \
+  static char f( char t )                                                                     \
+  {                                                                                           \
+    return 0;                                                                                 \
+  }                                                                                           \
+                                                                                              \
+  static const bool value = sizeof( f< T >( 0 ) ) != sizeof( char );                          \
+};                                                                                            \
+                                                                                              \
+template < typename T >                                                                       \
+struct NAME                                                                                   \
+{                                                                                             \
+  static const bool value = has_member_function< T >::value;                                  \
 };
 
 /*
