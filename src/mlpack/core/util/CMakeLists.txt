@@ -12,7 +12,6 @@ set(SOURCES
   cli_deleter.cpp
   cli_impl.hpp
   deprecated.hpp
-  gitversion.hpp
   hyphenate_string.hpp
   is_std_vector.hpp
   log.hpp
@@ -23,7 +22,6 @@ set(SOURCES
   param_checks.hpp
   param_checks_impl.hpp
   param_data.hpp
-  param_data_impl.hpp
   prefixedoutstream.hpp
   prefixedoutstream.cpp
   prefixedoutstream_impl.hpp
