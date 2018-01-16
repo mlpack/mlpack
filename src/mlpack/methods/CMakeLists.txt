@@ -21,11 +21,11 @@ endmacro ()
 
 # Recurse into each method mlpack provides.
 set(DIRS
-  preprocess
+  # mvu # Note: this implementation of MVU does not work.  See #189.
   adaboost
-  approx_kfn
   amf
   ann
+  approx_kfn
   block_krylov_svd
   cf
   dbscan
@@ -39,24 +39,25 @@ set(DIRS
   hoeffding_trees
   kernel_pca
   kmeans
-  mean_shift
   lars
   linear_regression
   local_coordinate_coding
   logistic_regression
   lsh
-  # mvu # Note: this implementation of MVU does not work.  See #189.
   matrix_completion
+  mean_shift
   naive_bayes
   nca
   neighbor_search
   nmf
+  nystroem_method
   pca
   perceptron
+  preprocess
   quic_svd
   radical
-  randomized_svd
   random_forest
+  randomized_svd
   range_search
   rann
   regularized_svd
@@ -65,7 +66,6 @@ set(DIRS
   sparse_autoencoder
   sparse_coding
   sparse_svm
-  nystroem_method
 )
 
 foreach(dir ${DIRS})
