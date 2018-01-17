@@ -34,6 +34,10 @@
 #include <mlpack/methods/lsh/lsh_search.hpp>
 #include <mlpack/methods/decision_stump/decision_stump.hpp>
 #include <mlpack/methods/lars/lars.hpp>
+#include <mlpack/methods/ann/rbm.hpp>
+#include <mlpack/methods/ann/rbm/binary_rbm_policy.hpp>
+#include <mlpack/methods/ann/rbm/spike_slab_rbm_policy.hpp>
+#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -46,6 +50,7 @@ using namespace mlpack::regression;
 using namespace mlpack::naive_bayes;
 using namespace mlpack::neighbor;
 using namespace mlpack::decision_stump;
+using namespace mlpack::ann;
 
 using namespace arma;
 using namespace boost;
@@ -1688,6 +1693,107 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeTest)
     BOOST_REQUIRE_EQUAL(tree.Child(i).SplitDimension(),
         binaryTree.Child(i).SplitDimension());
   }
+}
+
+/**
+ * Build a Binary RBM, then save it and make sure the parameters of the
+ * all the RBM are equal.
+ */
+
+BOOST_AUTO_TEST_CASE(BinaryRBMTest)
+{
+  arma::mat data;
+  size_t hiddenLayerSize = 5;
+  data.randu(3, 100);
+
+  BinaryRBMPolicy<> binary_rbm(data.n_rows, hiddenLayerSize);
+  GaussianInitialization gaussian(0, 0.1);
+  RBM<GaussianInitialization, BinaryRBMPolicy<> > Rbm(data,
+      gaussian, binary_rbm, 1,  true, true);
+  RBM<GaussianInitialization, BinaryRBMPolicy<> > RbmXml(data,
+      gaussian, binary_rbm, 1,  true, true);
+  RBM<GaussianInitialization, BinaryRBMPolicy<> > RbmText(data,
+      gaussian, binary_rbm, 1,  true, true);
+  RBM<GaussianInitialization, BinaryRBMPolicy<> > RbmBinary(data,
+      gaussian, binary_rbm, 1,  true, true);
+  Rbm.Reset();
+
+  SerializeObjectAll(Rbm, RbmXml, RbmText, RbmBinary);
+  CheckMatrices(Rbm.Parameters(), RbmXml.Parameters(), RbmText.Parameters(),
+      RbmBinary.Parameters());
+  CheckMatrices(Rbm.Policy().VisibleBias(), RbmXml.Policy().VisibleBias());
+  CheckMatrices(Rbm.Policy().VisibleBias(), RbmText.Policy().VisibleBias());
+  CheckMatrices(Rbm.Policy().VisibleBias(), RbmBinary.Policy().VisibleBias());
+
+  CheckMatrices(Rbm.Policy().HiddenBias(), RbmXml.Policy().HiddenBias());
+  CheckMatrices(Rbm.Policy().HiddenBias(), RbmText.Policy().HiddenBias());
+  CheckMatrices(Rbm.Policy().HiddenBias(), RbmBinary.Policy().HiddenBias());
+
+  CheckMatrices(Rbm.Policy().Weight(), RbmXml.Policy().Weight());
+  CheckMatrices(Rbm.Policy().Weight(), RbmText.Policy().Weight());
+  CheckMatrices(Rbm.Policy().Weight(), RbmBinary.Policy().Weight());
+}
+
+/**
+ * Build a ssRBM, then save it and make sure the parameters of the
+ * all the RBM are equal.
+ */
+
+BOOST_AUTO_TEST_CASE(ssRBMTest)
+{
+  arma::mat data;
+  size_t hiddenLayerSize = 5;
+  data.randu(3, 100);
+  double slabPenalty = 1;
+  double radius, tempRadius;
+  for (size_t i = 0; i < data.n_cols; i++)
+  {
+    tempRadius = arma::norm(data.col(i));
+    if (radius < tempRadius)
+      radius = tempRadius;
+  }
+
+  size_t poolSize = 1;
+
+  SpikeSlabRBMPolicy<> ss_rbm(data.n_rows, hiddenLayerSize, poolSize,
+      slabPenalty, radius);
+  GaussianInitialization gaussian(0, 0.1);
+  RBM<GaussianInitialization, SpikeSlabRBMPolicy<> > Rbm(data,
+      gaussian, ss_rbm, 1,  true, true);
+  RBM<GaussianInitialization, SpikeSlabRBMPolicy<>> RbmXml(data,
+      gaussian, ss_rbm, 1,  true, true);
+  RBM<GaussianInitialization, SpikeSlabRBMPolicy<>> RbmText(data,
+      gaussian, ss_rbm, 1,  true, true);
+  RBM<GaussianInitialization, SpikeSlabRBMPolicy<>> RbmBinary(data,
+      gaussian, ss_rbm, 1,  true, true);
+  Rbm.Reset();
+  Rbm.Policy().VisiblePenalty().fill(15);
+  Rbm.Policy().SpikeBias().ones();
+
+  SerializeObjectAll(Rbm, RbmXml, RbmText, RbmBinary);
+  CheckMatrices(Rbm.Parameters(), RbmXml.Parameters(), RbmText.Parameters(),
+      RbmBinary.Parameters());
+
+  CheckMatrices(Rbm.Policy().VisiblePenalty(),
+      RbmXml.Policy().VisiblePenalty());
+  CheckMatrices(Rbm.Policy().VisiblePenalty(),
+      RbmText.Policy().VisiblePenalty());
+  CheckMatrices(Rbm.Policy().VisiblePenalty(),
+      RbmBinary.Policy().VisiblePenalty());
+
+  CheckMatrices(Rbm.Policy().SpikeBias(),
+      RbmXml.Policy().SpikeBias());
+  CheckMatrices(Rbm.Policy().SpikeBias(),
+      RbmText.Policy().SpikeBias());
+  CheckMatrices(Rbm.Policy().SpikeBias(),
+      RbmBinary.Policy().SpikeBias());
+
+  CheckMatrices(Rbm.Policy().Weight(),
+      RbmXml.Policy().Weight());
+  CheckMatrices(Rbm.Policy().Weight(),
+      RbmText.Policy().Weight());
+  CheckMatrices(Rbm.Policy().Weight(),
+      RbmBinary.Policy().Weight());
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -90,6 +90,7 @@ add_executable(mlpack_test
   random_test.cpp
   randomized_svd_test.cpp
   range_search_test.cpp
+  rbm_network_test.cpp
   rectangle_tree_test.cpp
   recurrent_network_test.cpp
   regularized_svd_test.cpp
@@ -150,6 +151,14 @@ add_custom_command(TARGET mlpack_test
 add_custom_command(TARGET mlpack_test
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E tar xjpf mnist_first250_training_4s_and_9s.tar.bz2
+  WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+)
+add_custom_command(TARGET mlpack_test
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E tar xjpf digits_train.tar.bz2
+  COMMAND ${CMAKE_COMMAND} -E tar xjpf digits_test.tar.bz2
+  COMMAND ${CMAKE_COMMAND} -E tar xjpf digits_train_label.tar.bz2
+  COMMAND ${CMAKE_COMMAND} -E tar xjpf digits_test_label.tar.bz2
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
 )
 

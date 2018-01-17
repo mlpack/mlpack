@@ -1223,3 +1223,4 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorLayerTest)
 }
 
 BOOST_AUTO_TEST_SUITE_END();
+
