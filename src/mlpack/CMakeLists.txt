@@ -17,10 +17,6 @@ foreach(dir ${DIRS})
     add_subdirectory(${dir})
 endforeach()
 
-if (BUILD_TESTS)
-  add_subdirectory(tests)
-endif ()
-
 # MLPACK_SRCS is set in the subdirectories.  The dependencies (MLPACK_LIBRARIES)
 # are set in the root CMakeLists.txt.
 add_library(mlpack ${MLPACK_SRCS})
@@ -60,6 +56,13 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_link_libraries(mlpack ${LIBDL_LIBRARIES})
   endif()
 endif()
+
+set_target_properties(mlpack PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "prereqs.hpp")
+cotire(mlpack)
+
+if (BUILD_TESTS)
+  add_subdirectory(tests)
+endif ()
 
 # Collect all header files in the library.
 file(GLOB_RECURSE INCLUDE_H_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)

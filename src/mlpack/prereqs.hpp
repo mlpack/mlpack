@@ -93,6 +93,14 @@ problems.  Instead specify the C++11 standard (-std=c++11 with gcc or clang), \
 or upgrade Boost to 1.59 or newer.
 #endif
 
+// On Visual Studio, disable C4519 (default arguments for function templates)
+// since it's by default an error, which doesn't even make any sense because
+// it's part of the C++11 standard.
+#ifdef _MSC_VER
+  #pragma warning(disable : 4519)
+  #define ARMA_USE_CXX11
+#endif
+
 // Now include Armadillo through the special mlpack extensions.
 #include <mlpack/core/arma_extend/arma_extend.hpp>
 #include <mlpack/core/util/arma_traits.hpp>
@@ -105,13 +113,6 @@ or upgrade Boost to 1.59 or newer.
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/timers.hpp>
 
-// On Visual Studio, disable C4519 (default arguments for function templates)
-// since it's by default an error, which doesn't even make any sense because
-// it's part of the C++11 standard.
-#ifdef _MSC_VER
-  #pragma warning(disable : 4519)
-  #define ARMA_USE_CXX11
-#endif
 // This can be removed with Visual Studio supports an OpenMP version with
 // unsigned loop variables.
 #ifdef _WIN32
