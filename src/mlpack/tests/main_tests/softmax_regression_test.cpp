@@ -130,6 +130,9 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionModelReuseTest)
 
   size_t testSize = testData.n_cols;
 
+  // Create a copy of testData to be reused.
+  arma::mat testData2 = testData;
+
   // Input training data.
   SetInputParam("training", std::move(inputData));
   SetInputParam("labels", std::move(labels));
@@ -146,12 +149,6 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionModelReuseTest)
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
   CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
-
-  if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
-
-  // Delete the last row containing labels from test dataset.
-  testData.shed_row(testData.n_rows - 1);
 
   // Input trained model.
   SetInputParam("test", std::move(testData));

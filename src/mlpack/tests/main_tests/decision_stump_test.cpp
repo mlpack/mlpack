@@ -88,13 +88,20 @@ BOOST_AUTO_TEST_CASE(DecisionStumpOutputDimensionTest)
 
 /**
  * Check that last row of input file is used as labels
- * when labels are not passed specifically.
+ * when labels are not passed specifically and results
+ * are same from both label and labeless models.
  */
-BOOST_AUTO_TEST_CASE(DecisionStumpLabelsLessDimensionTest)
+BOOST_AUTO_TEST_CASE(NBCLabelsLessDimensionTest)
 {
+  // Train DS without providing labels.
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
     BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+
+  // Get the labels out.
+  arma::Row<size_t> labels(inputData.n_cols);
+  for (size_t i = 0; i < inputData.n_cols; ++i)
+    labels[i] = inputData(inputData.n_rows - 1, i);
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
@@ -104,6 +111,15 @@ BOOST_AUTO_TEST_CASE(DecisionStumpLabelsLessDimensionTest)
   testData.shed_row(testData.n_rows - 1);
 
   size_t testSize = testData.n_cols;
+
+  // Delete the last row containing labels from input dataset
+  // and store it as a new dataset to be used while training 
+  // second model.
+  arma::mat inputData2 = inputData;
+  inputData2.shed_row(inputData2.n_rows - 1);
+
+  // Create a copy of testData to be reused.
+  arma::mat testData2 = testData;
 
   // Input training data.
   SetInputParam("training", std::move(inputData));
@@ -120,6 +136,36 @@ BOOST_AUTO_TEST_CASE(DecisionStumpLabelsLessDimensionTest)
   // Check prediction have only single row.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
                       1);
+
+  // Reset data passed.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+
+  // Store outputs.
+  arma::Row<size_t> predictions;
+  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+
+  // Now train DS with labels provided.
+
+  // Input training data.
+  SetInputParam("training", std::move(inputData2));
+  SetInputParam("test", std::move(testData2));
+  // Pass Labels.
+  SetInputParam("labels", std::move(labels));
+
+  mlpackMain();
+
+  // Check that number of output points are equal to number of input points.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
+                      testSize);
+
+  // Check prediction have only single row.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
+                      1);
+
+  // Check that initial output and final output matrix
+  // from two models are same. 
+  CheckMatrices(predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
 }
 
 /**
@@ -140,6 +186,9 @@ BOOST_AUTO_TEST_CASE(DecisionStumpModelReuseTest)
 
   size_t testSize = testData.n_cols;
 
+  // Create a copy of testData to be reused.
+  arma::mat testData2 = testData;
+
   // Input training data.
   SetInputParam("training", std::move(inputData));
 
@@ -155,14 +204,8 @@ BOOST_AUTO_TEST_CASE(DecisionStumpModelReuseTest)
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
-  if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
-
-  // Delete the last row containing labels from test dataset.
-  testData.shed_row(testData.n_rows - 1);
-
   // Input trained model.
-  SetInputParam("test", std::move(testData));
+  SetInputParam("test", std::move(testData2));
   SetInputParam("input_model",
                 std::move(CLI::GetParam<DSModel>("output_model")));
 

@@ -102,6 +102,9 @@ BOOST_AUTO_TEST_CASE(RandomForestModelReuseTest)
 
   size_t testSize = testData.n_cols;
 
+  // Create a copy of testData to be reused.
+  arma::mat testData2 = testData;
+
   // Input training data.
   SetInputParam("training", std::move(inputData));
   SetInputParam("labels", std::move(labels));
@@ -121,11 +124,8 @@ BOOST_AUTO_TEST_CASE(RandomForestModelReuseTest)
   CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
-  if (!data::Load("vc2_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
-
   // Input trained model.
-  SetInputParam("test", std::move(testData));
+  SetInputParam("test", std::move(testData2));
   SetInputParam("input_model",
                 std::move(CLI::GetParam<RandomForestModel>("output_model")));
 
