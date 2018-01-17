@@ -1,6 +1,6 @@
 /**
  * @file sigmoid_cross_entropy_error.hpp
- * @author Kris Singh
+ * @author Kris Singh and Shikhar Jaiswal
  *
  * Definition of the cross-entropy with logit performance function.
  *
@@ -19,14 +19,25 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The SigmoidCrossEntropyError performance function measures the network's
- * performance according to the cross-entropy function.
- * between the input and target distributions.
- * This function calculates the cross entropy
+ * performance according to the cross-entropy function between the input and
+ * target distributions. This function calculates the cross entropy
  * given the real values instead of providing the sigmoid activations.
- * The functions is much more numerically stable as can be found from the 
- * formula below.
+ * The function uses this equivalent formulation:
  * \f$max(x, 0) - x * z + \log(1 +  e^{-|x|})\f$
- * For more detail look here goo.gl/tRjS6j
+ * where x = input and z = target.
+ *
+ * For more information, see the following paper.
+ *
+ * @code
+ * @article{1702.05659,
+ *   title={On Loss Functions for Deep Neural Networks in Classification},
+ *   author={Katarzyna Janocha, Wojciech Marian Czarnecki},
+ *   url = {http://arxiv.org/abs/1702.05659},
+ *   journal = {CoRR},
+ *   eprint={arXiv:1702.05659},
+ *   year={2017}
+ * }
+ * @endcode
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -85,7 +96,7 @@ class SigmoidCrossEntropyError
    * Serialize the layer.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored delta object.

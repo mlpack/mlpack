@@ -1,6 +1,6 @@
 /**
  * @file sigmoid_cross_entropy_error_impl.hpp
- * @author Kris Singh
+ * @author Kris Singh and Shikhar Jaiswal
  *
  * Implementation of the sigmoid cross entropy error performance function.
  *
@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_SIGMOID_CROSS_ENTROPY_ERROR
-#define MLPACK_METHODS_ANN_LAYER_SIGMOID_CROSS_ENTROPY_ERROR
+#ifndef MLPACK_METHODS_ANN_LAYER_SIGMOID_CROSS_ENTROPY_ERROR_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_SIGMOID_CROSS_ENTROPY_ERROR_IMPL_HPP
 
 // In case it hasn't yet been included.
 #include "sigmoid_cross_entropy_error.hpp"
@@ -31,39 +31,28 @@ template<typename eT>
 inline double SigmoidCrossEntropyError<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input, const arma::Mat<eT>&& target)
 {
-  arma::uvec positive = arma::find(input > 0);
-  arma::mat output;
-  SoftplusFunction::Fn(static_cast<arma::mat>(-arma::abs(input)), output);
-  double loss = arma::accu(input(positive)) - arma::accu(input % target) +
-        arma::accu(output);
-
-  return loss;
+  double maximum = 0;
+  for (size_t i = 0; i < input.n_elem; ++i)
+  {
+    maximum += std::max(input[i], 0.0) +
+        std::log(1 + std::exp(-std::abs(input[i])));
+  }
+  return maximum - arma::accu(input % target);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-inline  void SigmoidCrossEntropyError<InputDataType, OutputDataType>::Backward(
+inline void SigmoidCrossEntropyError<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& input,
     const arma::Mat<eT>&& target,
     arma::Mat<eT>&& output)
 {
-  arma::mat temp;
-  output.set_size(input.n_rows, input.n_cols);
-
-  arma::uvec positive = arma::find(input > 0);
-  arma::uvec negative = arma::find(input < 0 || input == 0);
-
-  SoftplusFunction::Deriv(static_cast<arma::mat>(-arma::abs(input(positive))),
-      temp);
-  output(positive) = 1 - target(positive) - temp;
-  SoftplusFunction::Deriv(static_cast<arma::mat>(-arma::abs(input(negative))),
-      temp);
-  output(negative) = -(target(negative)) - negative;
+  output = 1.0 / (1.0 + arma::exp(-input)) - target;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void SigmoidCrossEntropyError<InputDataType, OutputDataType>::Serialize(
+void SigmoidCrossEntropyError<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
     const unsigned int /* version */)
 {
