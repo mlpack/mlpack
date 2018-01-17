@@ -83,6 +83,7 @@ Copyright:
   Copyright 2017, Samikshya Chand <samikshya289@gmail.com>
   Copyright 2017, N Rajiv Vaidyanathan <rajivvaidyanathan4@gmail.com>
   Copyright 2017, Kartik Nighania <kartiknighania@gmail.com>
+  Copyright 2017-2018, Eugene Freyman <evg.freyman@gmail.com>
   Copyright 2017, Manish Kumar <manish887kr@gmail.com>
   Copyright 2017, Haritha Sreedharan Nair <haritha1313@gmail.com>
   Copyright 2017&2018, Sourabh Varshney <sourabhvarshney111@gmail.com>

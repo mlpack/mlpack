@@ -79,13 +79,13 @@ static void mlpackMain()
   arma::mat input = std::move(CLI::GetParam<arma::mat>("input"));
   arma::mat output;
 
-  RequireParamValue<int>("dimension", [](int x) { return x > 0; }, true,
+  RequireParamValue<int>("dimension", [](int x) { return x >= 0; }, true,
       "dimension to binarize must be nonnegative");
   std::ostringstream error;
   error << "dimension to binarize must be less than the number of dimensions "
       << "of the input data (" << input.n_rows << ")";
   RequireParamValue<int>("dimension",
-      [input](int x) { return x < input.n_rows; }, true, error.str());
+      [input](int x) { return size_t(x) < input.n_rows; }, true, error.str());
 
   Timer::Start("binarize");
   if (CLI::HasParam("dimension"))
