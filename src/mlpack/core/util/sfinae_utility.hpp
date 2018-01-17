@@ -46,56 +46,56 @@ struct MethodFormDetector;
 template<typename Class, template<typename...> class MethodForm>
 struct MethodFormDetector<Class, MethodForm, 0>
 {
-  void operator() ( MethodForm<Class> );
+  void operator()(MethodForm<Class>);
 };
 
 template<typename Class, template<typename...> class MethodForm>
 struct MethodFormDetector<Class, MethodForm, 1>
 {
   template<class T1>
-  void operator() ( MethodForm<Class, T1> );
+  void operator()(MethodForm<Class, T1>);
 };
 
 template<typename Class, template<typename...> class MethodForm>
 struct MethodFormDetector<Class, MethodForm, 2>
 {
   template<class T1, class T2>
-  void operator() ( MethodForm<Class, T1, T2> );
+  void operator()(MethodForm<Class, T1, T2>);
 };
 
 template<typename Class, template<typename...> class MethodForm>
 struct MethodFormDetector<Class, MethodForm, 3>
 {
   template<class T1, class T2, class T3>
-  void operator() ( MethodForm<Class, T1, T2, T3> );
+  void operator()(MethodForm<Class, T1, T2, T3>);
 };
 
 template<typename Class, template<typename...> class MethodForm>
 struct MethodFormDetector<Class, MethodForm, 4>
 {
   template<class T1, class T2, class T3, class T4>
-  void operator() ( MethodForm<Class, T1, T2, T3, T4> );
+  void operator()(MethodForm<Class, T1, T2, T3, T4>);
 };
 
 template<typename Class, template<typename...> class MethodForm>
 struct MethodFormDetector<Class, MethodForm, 5>
 {
   template<class T1, class T2, class T3, class T4, class T5>
-  void operator() ( MethodForm<Class, T1, T2, T3, T4, T5> );
+  void operator()(MethodForm<Class, T1, T2, T3, T4, T5>);
 };
 
 template<typename Class, template<typename...> class MethodForm>
 struct MethodFormDetector<Class, MethodForm, 6>
 {
   template<class T1, class T2, class T3, class T4, class T5, class T6>
-  void operator() ( MethodForm<Class, T1, T2, T3, T4, T5, T6> );
+  void operator()(MethodForm<Class, T1, T2, T3, T4, T5, T6>);
 };
 
 template<typename Class, template<typename...> class MethodForm>
 struct MethodFormDetector<Class, MethodForm, 7>
 {
   template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
-  void operator() ( MethodForm<Class, T1, T2, T3, T4, T5, T6, T7> );
+  void operator()(MethodForm<Class, T1, T2, T3, T4, T5, T6, T7>);
 };
 
 } // namespace sfinae
@@ -196,31 +196,18 @@ struct NAME                                                                    \
  */
 #define HAS_ANY_METHOD_FORM( FUNC, NAME )                                                     \
 template < typename T >                                                                       \
-struct has_member_function                                                                    \
+struct NAME                                                                                   \
 {                                                                                             \
   template < typename Q = T >                                                                 \
   static typename                                                                             \
   std::enable_if< std::is_member_function_pointer< decltype( &Q::FUNC ) >::value, int >::type \
-  f( int t )                                                                                  \
-  {                                                                                           \
-    return 1;                                                                                 \
-  }                                                                                           \
+  f( int t ) { return 1;}                                                                     \
                                                                                               \
   template < typename Q = T >                                                                 \
-  static char f( char t )                                                                     \
-  {                                                                                           \
-    return 0;                                                                                 \
-  }                                                                                           \
+  static char f( char t ) { return 0; }                                                       \
                                                                                               \
   static const bool value = sizeof( f< T >( 0 ) ) != sizeof( char );                          \
-};                                                                                            \
-                                                                                              \
-template < typename T >                                                                       \
-struct NAME                                                                                   \
-{                                                                                             \
-  static const bool value = has_member_function< T >::value;                                  \
 };
-
 /*
  * A macro that can be used for passing arguments containing commas to other
  * macros.
