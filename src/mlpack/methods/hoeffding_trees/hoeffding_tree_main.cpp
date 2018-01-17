@@ -189,7 +189,7 @@ static void mlpackMain()
     }
     else
     {
-      // Extract the labels as the last
+      // Extract the labels from the last dimension of training set.
       Log::Info << "Using the last dimension of training set as labels."
           << endl;
       labels = arma::conv_to<arma::Row<size_t>>::from(
