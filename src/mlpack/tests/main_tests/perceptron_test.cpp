@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(PerceptronLabelsLessDimensionTest)
   size_t testSize = testData.n_cols;
 
   // Delete the last row containing labels from input dataset
-  // and store it as a new dataset to be used while training 
+  // and store it as a new dataset to be used while training
   // second model.
   arma::mat inputData2 = inputData;
   inputData2.shed_row(inputData2.n_rows - 1);
@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE(PerceptronLabelsLessDimensionTest)
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_rows, 1);
 
   // Check that initial output and final output matrix
-  // from two models are same. 
+  // from two models are same.
   CheckMatrices(output, CLI::GetParam<arma::Row<size_t>>("output"));
 }
 

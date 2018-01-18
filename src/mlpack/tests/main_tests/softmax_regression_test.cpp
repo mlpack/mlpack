@@ -319,7 +319,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffLambdaTest)
   // Input training data.
   SetInputParam("training", std::move(inputData));
   SetInputParam("labels", std::move(labels));
-  SetInputParam("lambda",(double) 0.1);
+  SetInputParam("lambda", (double) 0.1);
 
   // Input test data.
   SetInputParam("test", std::move(testData));
@@ -341,18 +341,25 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffLambdaTest)
   // Input training data.
   SetInputParam("training", std::move(inputData2));
   SetInputParam("labels", std::move(labels2));
-  SetInputParam("lambda",(double) 0.9);
+  SetInputParam("lambda", (double) 0.9);
   SetInputParam("test", std::move(testData2));
 
   mlpackMain();
 
   // Check that initial parameters and final parameters matrix
   // using saved model are different.
-  Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(CheckMatrices(modelParam,
-      CLI::GetParam<SoftmaxRegression>("output_model").Parameters()),
-      std::exception);
-  Log::Fatal.ignoreInput = false;
+  bool flag = true;
+  bool* flagPtr = &flag;
+  for (size_t i = 0; i < modelParam.n_elem; ++i)
+  {
+    if((int) modelParam[i] * 1e+6 == (int) CLI::GetParam<SoftmaxRegression>
+                                     ("output_model").Parameters()[i] * 1e+6)
+    {
+      *flagPtr = false;
+      break;
+    }
+  }
+  BOOST_REQUIRE_EQUAL(flag, false);
 }
 
 /**
@@ -391,7 +398,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffMaxItrTest)
   // Input training data.
   SetInputParam("training", std::move(inputData));
   SetInputParam("labels", std::move(labels));
-  SetInputParam("max_iterations",(int) 500);
+  SetInputParam("max_iterations", (int) 500);
 
   // Input test data.
   SetInputParam("test", std::move(testData));
@@ -413,18 +420,25 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffMaxItrTest)
   // Input training data.
   SetInputParam("training", std::move(inputData2));
   SetInputParam("labels", std::move(labels2));
-  SetInputParam("max_iterations",(int) 1000);
+  SetInputParam("max_iterations", (int) 1000);
   SetInputParam("test", std::move(testData2));
 
   mlpackMain();
 
   // Check that initial parameters and final parameters matrix
   // using saved model are different.
-  Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(CheckMatrices(modelParam,
-      CLI::GetParam<SoftmaxRegression>("output_model").Parameters()),
-      std::exception);
-  Log::Fatal.ignoreInput = false;
+  bool flag = true;
+  bool* flagPtr = &flag;
+  for (size_t i = 0; i < modelParam.n_elem; ++i)
+  {
+    if((int) modelParam[i] * 1e+6 == (int) CLI::GetParam<SoftmaxRegression>
+                                     ("output_model").Parameters()[i] * 1e+6)
+    {
+      *flagPtr = false;
+      break;
+    }
+  }
+  BOOST_REQUIRE_EQUAL(flag, false);
 }
 
 /**
@@ -463,7 +477,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffInterceptTest)
   // Input training data.
   SetInputParam("training", std::move(inputData));
   SetInputParam("labels", std::move(labels));
-  SetInputParam("no_intercept",(bool) true);
+  SetInputParam("no_intercept", (bool) true);
 
   // Input test data.
   SetInputParam("test", std::move(testData));
