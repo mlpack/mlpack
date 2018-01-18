@@ -1,4 +1,6 @@
 set(SOURCES
+  decay_policies/constant_step.hpp
+  decay_policies/exponential_backoff.hpp
   parallel_sgd.hpp
   parallel_sgd_impl.hpp
   sparse_test_function.hpp

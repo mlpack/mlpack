@@ -6,6 +6,8 @@ set(SOURCES
   hmm_model.hpp
   hmm_regression.hpp
   hmm_regression_impl.hpp
+  hmm_util.hpp
+  hmm_util_impl.hpp
 )
 
 # Add directory name to sources.
