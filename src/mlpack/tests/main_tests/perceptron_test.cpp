@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(PerceptronOutputDimensionTest)
  * when labels are not passed specifically and results
  * are same from both label and labeless models.
  */
-BOOST_AUTO_TEST_CASE(NBCLabelsLessDimensionTest)
+BOOST_AUTO_TEST_CASE(PerceptronLabelsLessDimensionTest)
 {
   // Train perceptron without providing labels.
   arma::mat inputData;

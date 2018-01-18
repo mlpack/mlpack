@@ -151,7 +151,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionModelReuseTest)
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Input trained model.
-  SetInputParam("test", std::move(testData));
+  SetInputParam("test", std::move(testData2));
   SetInputParam("input_model",
                 std::move(CLI::GetParam<SoftmaxRegression>("output_model")));
 
@@ -281,6 +281,219 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainingVerTest)
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Check that output object parameters are
+ * different for different lambda values.
+ */
+BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffLambdaTest)
+{
+  // Train SR for lambda 0.1.
+  arma::mat inputData;
+  if (!data::Load("trainSet.csv", inputData))
+    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+
+  // Get the labels out.
+  arma::Row<size_t> labels(inputData.n_cols);
+  for (size_t i = 0; i < inputData.n_cols; ++i)
+    labels[i] = inputData(inputData.n_rows - 1, i);
+
+  // Delete the last row containing labels from input dataset.
+  inputData.shed_row(inputData.n_rows - 1);
+
+  arma::mat testData;
+  if (!data::Load("testSet.csv", testData))
+    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+
+  // Delete the last row containing labels from test dataset.
+  testData.shed_row(testData.n_rows - 1);
+
+  size_t testSize = testData.n_cols;
+
+  // Create a copy of data to be reused.
+  arma::mat inputData2 = inputData;
+  arma::mat testData2 = testData;
+  arma::Row<size_t> labels2 = labels;
+
+  // Input training data.
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("lambda",(double) 0.1);
+
+  // Input test data.
+  SetInputParam("test", std::move(testData));
+
+  mlpackMain();
+
+  // Store output parameters.
+  arma::mat modelParam;
+  modelParam = CLI::GetParam<SoftmaxRegression>("output_model").Parameters();
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["lambda"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+
+  // Train SR for lamda 0.9.
+
+  // Input training data.
+  SetInputParam("training", std::move(inputData2));
+  SetInputParam("labels", std::move(labels2));
+  SetInputParam("lambda",(double) 0.9);
+  SetInputParam("test", std::move(testData2));
+
+  mlpackMain();
+
+  // Check that initial parameters and final parameters matrix
+  // using saved model are different.
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CheckMatrices(modelParam,
+      CLI::GetParam<SoftmaxRegression>("output_model").Parameters()),
+      std::exception);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Check that output object parameters are different
+ * for different max_iterations.
+ */
+BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffMaxItrTest)
+{
+  // Train SR for lambda 0.1.
+  arma::mat inputData;
+  if (!data::Load("trainSet.csv", inputData))
+    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+
+  // Get the labels out.
+  arma::Row<size_t> labels(inputData.n_cols);
+  for (size_t i = 0; i < inputData.n_cols; ++i)
+    labels[i] = inputData(inputData.n_rows - 1, i);
+
+  // Delete the last row containing labels from input dataset.
+  inputData.shed_row(inputData.n_rows - 1);
+
+  arma::mat testData;
+  if (!data::Load("testSet.csv", testData))
+    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+
+  // Delete the last row containing labels from test dataset.
+  testData.shed_row(testData.n_rows - 1);
+
+  size_t testSize = testData.n_cols;
+
+  // Create a copy of data to be reused.
+  arma::mat inputData2 = inputData;
+  arma::mat testData2 = testData;
+  arma::Row<size_t> labels2 = labels;
+
+  // Input training data.
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("max_iterations",(int) 500);
+
+  // Input test data.
+  SetInputParam("test", std::move(testData));
+
+  mlpackMain();
+
+  // Store output parameters.
+  arma::mat modelParam;
+  modelParam = CLI::GetParam<SoftmaxRegression>("output_model").Parameters();
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["max_iterations"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+
+  // Train SR for lamda 0.9.
+
+  // Input training data.
+  SetInputParam("training", std::move(inputData2));
+  SetInputParam("labels", std::move(labels2));
+  SetInputParam("max_iterations",(int) 1000);
+  SetInputParam("test", std::move(testData2));
+
+  mlpackMain();
+
+  // Check that initial parameters and final parameters matrix
+  // using saved model are different.
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(CheckMatrices(modelParam,
+      CLI::GetParam<SoftmaxRegression>("output_model").Parameters()),
+      std::exception);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Check that output object parameter for no_intercept
+ * term is one less than with intercept term.
+ */
+BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffInterceptTest)
+{
+  // Train SR with intercept.
+  arma::mat inputData;
+  if (!data::Load("trainSet.csv", inputData))
+    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+
+  // Get the labels out.
+  arma::Row<size_t> labels(inputData.n_cols);
+  for (size_t i = 0; i < inputData.n_cols; ++i)
+    labels[i] = inputData(inputData.n_rows - 1, i);
+
+  // Delete the last row containing labels from input dataset.
+  inputData.shed_row(inputData.n_rows - 1);
+
+  arma::mat testData;
+  if (!data::Load("testSet.csv", testData))
+    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+
+  // Delete the last row containing labels from test dataset.
+  testData.shed_row(testData.n_rows - 1);
+
+  size_t testSize = testData.n_cols;
+
+  // Create a copy of data to be reused.
+  arma::mat inputData2 = inputData;
+  arma::mat testData2 = testData;
+  arma::Row<size_t> labels2 = labels;
+
+  // Input training data.
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("no_intercept",(bool) true);
+
+  // Input test data.
+  SetInputParam("test", std::move(testData));
+
+  mlpackMain();
+
+  // Store output parameters.
+  arma::mat modelParam;
+  modelParam = CLI::GetParam<SoftmaxRegression>("output_model").Parameters();
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["no_intercept"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+
+  // Train SR for no_intercept.
+
+  // Input training data.
+  SetInputParam("training", std::move(inputData2));
+  SetInputParam("labels", std::move(labels2));
+  SetInputParam("test", std::move(testData2));
+
+  mlpackMain();
+
+  // Check that initial parameters has 1 more parameter than
+  // final parameters matrix.
+  BOOST_REQUIRE_EQUAL(
+    CLI::GetParam<SoftmaxRegression>("output_model").Parameters().n_cols,
+    modelParam.n_cols + 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
