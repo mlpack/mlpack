@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(DecisionTreeCategoricalOutputDimensionTest)
 
   // Input training data.
   SetInputParam("training", std::move(std::make_tuple(info, inputData)));
-  // Get labels from last column of training data.
+  SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
   // Input test data.
