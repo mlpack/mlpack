@@ -45,6 +45,30 @@ class C
   double M(const arma::mat&, const arma::rowvec&, double);
 };
 
+class WithFunctionModelA
+{
+ public:
+  size_t Model()
+  {
+    return 0;
+  }
+};
+
+class WithFunctionModelB
+{
+ public:
+  double Model(int a)
+  {
+    return 0;
+  }
+};
+
+class WithOutFunctionModel
+{
+ public:
+  size_t Model;
+};
+
 template<typename Class, typename...T>
 using MForm1 = void(Class::*)(const arma::mat&, const arma::Row<size_t>&, T...);
 
@@ -62,6 +86,7 @@ HAS_METHOD_FORM(M, HasM);
 HAS_METHOD_FORM(template M<arma::mat>, HasTemplatedM);
 HAS_METHOD_FORM(SINGLE_ARG(template M<arma::mat, arma::rowvec>),
     HasVeryTemplatedM);
+HAS_ANY_METHOD_FORM(Model, HasModel);
 
 /*
  * Test at compile time the presence of methods of the specified forms with the
@@ -132,6 +157,13 @@ BOOST_AUTO_TEST_CASE(HasMethodFormTest)
   static_assert(HasM<C, MForm4, 1>::value, "value should be true");
 
   static_assert(HasTemplatedM<B, MForm4, 1>::value, "value should be true");
+}
+
+BOOST_AUTO_TEST_CASE(HasMethodNameTest)
+{
+  static_assert(!HasModel<WithOutFunctionModel>::value, "value should be false");
+  static_assert(HasModel<WithFunctionModelA>::value, "value should be true");
+  static_assert(HasModel<WithFunctionModelB>::value, "value should be true");
 }
 
 BOOST_AUTO_TEST_SUITE_END();
