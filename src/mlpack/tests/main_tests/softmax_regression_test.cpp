@@ -364,7 +364,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffLambdaTest)
 
 /**
  * Check that output object parameters are different
- * for different max_iterations.
+ * for different numbers of max_iterations.
  */
 BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffMaxItrTest)
 {
