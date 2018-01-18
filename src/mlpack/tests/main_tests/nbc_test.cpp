@@ -114,20 +114,11 @@ BOOST_AUTO_TEST_CASE(NBCLabelsLessDimensionTest)
 
   size_t testSize = testData.n_cols;
 
-  // Delete the last row containing labels from input dataset
-  // and store it as a new dataset to be used while training
-  // second model.
-  arma::mat inputData2 = inputData;
-  inputData2.shed_row(inputData2.n_rows - 1);
-
-  // Create a copy of testData to be reused.
-  arma::mat testData2 = testData;
-
   // Input training data.
-  SetInputParam("training", std::move(inputData));
+  SetInputParam("training", inputData);
 
   // Input test data.
-  SetInputParam("test", std::move(testData));
+  SetInputParam("test", testData);
 
   mlpackMain();
 
@@ -153,9 +144,11 @@ BOOST_AUTO_TEST_CASE(NBCLabelsLessDimensionTest)
 
   // Now train NBC with labels provided.
 
+  inputData.shed_row(inputData.n_rows - 1);
+
   // Input training data.
-  SetInputParam("training", std::move(inputData2));
-  SetInputParam("test", std::move(testData2));
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("test", std::move(testData));
   // Pass Labels.
   SetInputParam("labels", std::move(labels));
 
@@ -195,14 +188,11 @@ BOOST_AUTO_TEST_CASE(NBCModelReuseTest)
 
   size_t testSize = testData.n_cols;
 
-  // Create a copy of testData to be reused.
-  arma::mat testData2 = testData;
-
   // Input training data.
   SetInputParam("training", std::move(inputData));
 
   // Input test data.
-  SetInputParam("test", std::move(testData));
+  SetInputParam("test", testData);
 
   mlpackMain();
 
@@ -216,7 +206,7 @@ BOOST_AUTO_TEST_CASE(NBCModelReuseTest)
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Input trained model.
-  SetInputParam("test", std::move(testData2));
+  SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
                 std::move(CLI::GetParam<NBCModel>("output_model")));
 
@@ -281,17 +271,11 @@ BOOST_AUTO_TEST_CASE(NBCIncrementalVarianceTest)
 
   size_t testSize = testData.n_cols;
 
-  // Create a copy of inputData to be reused.
-  arma::mat inputData2 = inputData;
-
-  // Create a copy of testData to be reused.
-  arma::mat testData2 = testData;
-
   // Input training data.
-  SetInputParam("training", std::move(inputData));
+  SetInputParam("training", inputData);
 
   // Input test data.
-  SetInputParam("test", std::move(testData));
+  SetInputParam("test", testData);
   SetInputParam("incremental_variance", (bool) true);
 
   mlpackMain();
@@ -320,8 +304,8 @@ BOOST_AUTO_TEST_CASE(NBCIncrementalVarianceTest)
   // Now train NBC without incremental_variance.
 
   // Input training data.
-  SetInputParam("training", std::move(inputData2));
-  SetInputParam("test", std::move(testData2));
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("test", std::move(testData));
   SetInputParam("incremental_variance", (bool) false);
 
   mlpackMain();

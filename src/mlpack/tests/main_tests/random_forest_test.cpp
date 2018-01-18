@@ -102,15 +102,12 @@ BOOST_AUTO_TEST_CASE(RandomForestModelReuseTest)
 
   size_t testSize = testData.n_cols;
 
-  // Create a copy of testData to be reused.
-  arma::mat testData2 = testData;
-
   // Input training data.
   SetInputParam("training", std::move(inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(testData));
+  SetInputParam("test", testData);
 
   mlpackMain();
 
@@ -125,7 +122,7 @@ BOOST_AUTO_TEST_CASE(RandomForestModelReuseTest)
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Input trained model.
-  SetInputParam("test", std::move(testData2));
+  SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
                 std::move(CLI::GetParam<RandomForestModel>("output_model")));
 
@@ -230,34 +227,26 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
   if (!data::Load("vc2_labels.txt", labels))
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
 
-  // Create copy of training data.
-  arma::mat inputData2 = inputData;
-  arma::Row<size_t> labels2 = labels;
-
   // Input training data.
-  SetInputParam("training", std::move(inputData));
-  SetInputParam("labels", std::move(labels));
+  SetInputParam("training", inputData);
+  SetInputParam("labels", labels);
   SetInputParam("minimum_leaf_size", (int) 20);
 
   mlpackMain();
 
   // Calculate training accuracy.
   arma::Row<size_t> predictions;
-  CLI::GetParam<RandomForestModel>("output_model").rf.Classify(inputData2,
+  CLI::GetParam<RandomForestModel>("output_model").rf.Classify(inputData,
        predictions);
 
-  size_t correct = arma::accu(predictions == labels2);
-  double accuracy20 = (double(correct) / double(labels2.n_elem) * 100);
-
-  // Create copy of training data.
-  inputData = inputData2;
-  labels = labels2;
+  size_t correct = arma::accu(predictions == labels);
+  double accuracy20 = (double(correct) / double(labels.n_elem) * 100);
 
   // Train for minimium leaf size 10.
 
   // Input training data.
-  SetInputParam("training", std::move(inputData2));
-  SetInputParam("labels", std::move(labels2));
+  SetInputParam("training", inputData);
+  SetInputParam("labels", labels);
   SetInputParam("minimum_leaf_size", (int) 10);
 
   mlpackMain();
@@ -269,25 +258,21 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
   correct = arma::accu(predictions == labels);
   double accuracy10 = (double(correct) / double(labels.n_elem) * 100);
 
-  // Create copy of training data.
-  inputData2 = inputData;
-  labels2 = labels;
-
   // Train for minimium leaf size 1.
 
   // Input training data.
-  SetInputParam("training", std::move(inputData));
-  SetInputParam("labels", std::move(labels));
+  SetInputParam("training", inputData);
+  SetInputParam("labels", labels);
   SetInputParam("minimum_leaf_size", (int) 1);
 
   mlpackMain();
 
   // Calculate training accuracy.
-  CLI::GetParam<RandomForestModel>("output_model").rf.Classify(inputData2,
+  CLI::GetParam<RandomForestModel>("output_model").rf.Classify(inputData,
        predictions);
 
-  correct = arma::accu(predictions == labels2);
-  double accuracy1 = (double(correct) / double(labels2.n_elem) * 100);
+  correct = arma::accu(predictions == labels);
+  double accuracy1 = (double(correct) / double(labels.n_elem) * 100);
 
   BOOST_REQUIRE(accuracy1 > accuracy10 && accuracy10 > accuracy20);
 }
@@ -314,12 +299,9 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
   if (!data::Load("vc2_test_labels.txt", testLabels))
     BOOST_FAIL("Cannot load labels for vc2__test_labels.txt");
 
-  // Create copy of training data.
-  arma::mat inputData2 = inputData;
-  arma::Row<size_t> labels2 = labels;
   // Input training data.
-  SetInputParam("training", std::move(inputData));
-  SetInputParam("labels", std::move(labels));
+  SetInputParam("training", inputData);
+  SetInputParam("labels", labels);
   SetInputParam("num_trees", (int) 1);
 
   mlpackMain();
@@ -332,15 +314,11 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
   size_t correct = arma::accu(predictions == testLabels);
   double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
 
-  // Create copy of training data.
-  inputData = inputData2;
-  labels = labels2;
-
   // Train for num_trees 5.
 
   // Input training data.
-  SetInputParam("training", std::move(inputData2));
-  SetInputParam("labels", std::move(labels2));
+  SetInputParam("training", inputData);
+  SetInputParam("labels", labels);
   SetInputParam("num_trees", (int) 5);
 
   mlpackMain();
@@ -351,10 +329,6 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
 
   correct = arma::accu(predictions == testLabels);
   double accuracy5 = (double(correct) / double(testLabels.n_elem) * 100);
-
-  // Create copy of training data.
-  inputData2 = inputData;
-  labels2 = labels;
 
   // Train for num_trees 10.
 

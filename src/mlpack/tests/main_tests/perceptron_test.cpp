@@ -112,20 +112,11 @@ BOOST_AUTO_TEST_CASE(PerceptronLabelsLessDimensionTest)
 
   size_t testSize = testData.n_cols;
 
-  // Delete the last row containing labels from input dataset
-  // and store it as a new dataset to be used while training
-  // second model.
-  arma::mat inputData2 = inputData;
-  inputData2.shed_row(inputData2.n_rows - 1);
-
-  // Create a copy of testData to be reused.
-  arma::mat testData2 = testData;
-
   // Input training data.
-  SetInputParam("training", std::move(inputData));
+  SetInputParam("training", inputData);
 
   // Input test data.
-  SetInputParam("test", std::move(testData));
+  SetInputParam("test", testData);
 
   mlpackMain();
 
@@ -140,6 +131,8 @@ BOOST_AUTO_TEST_CASE(PerceptronLabelsLessDimensionTest)
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
+  inputData.shed_row(inputData.n_rows - 1);
+
   // Store outputs.
   arma::Row<size_t> output;
   output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
@@ -147,8 +140,8 @@ BOOST_AUTO_TEST_CASE(PerceptronLabelsLessDimensionTest)
   // Now train pereptron with labels provided.
 
   // Input training data.
-  SetInputParam("training", std::move(inputData2));
-  SetInputParam("test", std::move(testData2));
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("test", std::move(testData));
   // Pass Labels.
   SetInputParam("labels", std::move(labels));
 
@@ -184,14 +177,11 @@ BOOST_AUTO_TEST_CASE(PerceptronModelReuseTest)
 
   size_t testSize = testData.n_cols;
 
-  // Create a copy of testData to be reused.
-  arma::mat testData2 = testData;
-
   // Input training data.
   SetInputParam("training", std::move(inputData));
 
   // Input test data.
-  SetInputParam("test", std::move(testData));
+  SetInputParam("test", testData);
 
   mlpackMain();
 
@@ -203,7 +193,7 @@ BOOST_AUTO_TEST_CASE(PerceptronModelReuseTest)
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Input trained model.
-  SetInputParam("test", std::move(testData2));
+  SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
                 std::move(CLI::GetParam<PerceptronModel>("output_model")));
 

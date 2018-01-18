@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
   SetInputParam("weights", std::move(weights));
 
   // Input test data.
-  SetInputParam("test", std::move(testData));
+  SetInputParam("test", testData);
 
   mlpackMain();
 
@@ -153,9 +153,6 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
   CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
   CLI::GetSingleton().Parameters()["weights"].wasPassed = false;
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
-
-  if (!data::Load("vc2_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input trained model.
   SetInputParam("test", std::move(testData));
