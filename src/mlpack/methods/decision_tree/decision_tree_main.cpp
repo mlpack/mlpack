@@ -193,7 +193,7 @@ static void mlpackMain()
 
       // Print number of correct points.
       Log::Info << double(correct) / double(trainingSet.n_cols) * 100 << "%% "
-          << "correct on training set (" << correct << " / " 
+          << "correct on training set (" << correct << " / "
           << trainingSet.n_cols << ")." << endl;
     }
   }
