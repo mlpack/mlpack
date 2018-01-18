@@ -352,8 +352,8 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffLambdaTest)
   bool* flagPtr = &flag;
   for (size_t i = 0; i < modelParam.n_elem; ++i)
   {
-    if((int) modelParam[i] * 1e+6 == (int) CLI::GetParam<SoftmaxRegression>
-                                     ("output_model").Parameters()[i] * 1e+6)
+    if ((int) modelParam[i] * 1e+6 == (int) CLI::GetParam<SoftmaxRegression>
+                                      ("output_model").Parameters()[i] * 1e+6)
     {
       *flagPtr = false;
       break;
@@ -431,8 +431,8 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffMaxItrTest)
   bool* flagPtr = &flag;
   for (size_t i = 0; i < modelParam.n_elem; ++i)
   {
-    if((int) modelParam[i] * 1e+6 == (int) CLI::GetParam<SoftmaxRegression>
-                                     ("output_model").Parameters()[i] * 1e+6)
+    if ((int) modelParam[i] * 1e+6 == (int) CLI::GetParam<SoftmaxRegression>
+                                      ("output_model").Parameters()[i] * 1e+6)
     {
       *flagPtr = false;
       break;
