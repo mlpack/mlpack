@@ -355,7 +355,7 @@ BOOST_AUTO_TEST_CASE(SimpleDropoutLayerTest)
 
 /**
  * Perform dropout x times using ones as input, sum the number of ones and
- * validate that the layer is is producing approximately the right number of
+ * validate that the layer is producing approximately the correct number of
  * ones.
  */
 BOOST_AUTO_TEST_CASE(DropoutProbabilityTest)
@@ -742,8 +742,8 @@ BOOST_AUTO_TEST_CASE(SimpleAddMergeLayerTest)
 BOOST_AUTO_TEST_CASE(LSTMRrhoTest)
 {
   const size_t rho = 5;
-  arma::mat input = arma::randu(5, 1);
-  arma::mat target = arma::mat("1; 1; 1; 1; 1");
+  arma::cube input = arma::randu(1, 1, 5);
+  arma::cube target = arma::ones(1, 1, 5);
   RandomInitialization init(0.5, 0.5);
 
   // Create model with user defined rho parameter.
@@ -774,7 +774,7 @@ BOOST_AUTO_TEST_CASE(LSTMRrhoTest)
 }
 
 /**
- * LSTM layer numerically gradient test.
+ * LSTM layer numerical gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
 {
@@ -783,8 +783,8 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
   {
     GradientFunction()
     {
-      input = arma::randu(5, 1);
-      target = arma::mat("1; 1; 1; 1; 1");
+      input = arma::randu(1, 1, 5);
+      target.ones(1, 1, 5);
       const size_t rho = 5;
 
       model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
@@ -810,7 +810,7 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
     arma::mat& Parameters() { return model->Parameters(); }
 
     RNN<NegativeLogLikelihood<> >* model;
-    arma::mat input, target;
+    arma::cube input, target;
   } function;
 
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
@@ -822,8 +822,8 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
 BOOST_AUTO_TEST_CASE(FastLSTMRrhoTest)
 {
   const size_t rho = 5;
-  arma::mat input = arma::randu(5, 1);
-  arma::mat target = arma::mat("1; 1; 1; 1; 1");
+  arma::cube input = arma::randu(1, 1, 5);
+  arma::cube target = arma::ones(1, 1, 5);
   RandomInitialization init(0.5, 0.5);
 
   // Create model with user defined rho parameter.
@@ -854,7 +854,7 @@ BOOST_AUTO_TEST_CASE(FastLSTMRrhoTest)
 }
 
 /**
- * FastLSTM layer numerically gradient test.
+ * FastLSTM layer numerical gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
 {
@@ -863,8 +863,8 @@ BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
   {
     GradientFunction()
     {
-      input = arma::randu(5, 1);
-      target = arma::mat("1; 1; 1; 1; 1");
+      input = arma::randu(1, 1, 5);
+      target = arma::ones(1, 1, 5);
       const size_t rho = 5;
 
       model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
@@ -890,7 +890,7 @@ BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
     arma::mat& Parameters() { return model->Parameters(); }
 
     RNN<NegativeLogLikelihood<> >* model;
-    arma::mat input, target;
+    arma::cube input, target;
   } function;
 
   // The threshold should be << 0.1 but since the Fast LSTM layer uses an
@@ -910,8 +910,8 @@ BOOST_AUTO_TEST_CASE(GradientGRULayerTest)
   {
     GradientFunction()
     {
-      input = arma::randu(5, 1);
-      target = arma::mat("1; 1; 1; 1; 1");
+      input = arma::randu(1, 1, 5);
+      target = arma::ones(1, 1, 5);
       const size_t rho = 5;
 
       model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
@@ -937,7 +937,7 @@ BOOST_AUTO_TEST_CASE(GradientGRULayerTest)
     arma::mat& Parameters() { return model->Parameters(); }
 
     RNN<NegativeLogLikelihood<> >* model;
-    arma::mat input, target;
+    arma::cube input, target;
   } function;
 
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
@@ -995,7 +995,6 @@ BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
 
   BOOST_REQUIRE_LE(arma::as_scalar(arma::trans(output) * expectedOutput), 1e-2);
 }
-
 
 /**
  * Simple concat module test.

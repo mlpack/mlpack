@@ -122,9 +122,9 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerListwiseDimensionTest)
     if (std::to_string(inputData(0, i)) == "nan" ||
         std::to_string(inputData(1, i)) == "nan" ||
         std::to_string(inputData(2, i)) == "nan")
-      {
-        countNaN++;
-      }
+    {
+      countNaN++;
+    }
   }
 
   // Input custom data points and labels.

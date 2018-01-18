@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE(LRWrongResponseSizeTest)
 }
 
 /**
- * Ensuring that test data dimensionality is is checked.
+ * Ensuring that test data dimensionality is checked.
  */
 BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest1)
 {
@@ -193,7 +193,7 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest1)
 }
 
 /**
- * Ensuring that test data dimensionality is is checked when model is loaded.
+ * Ensuring that test data dimensionality is checked when model is loaded.
  */
 BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest2)
 {
