@@ -98,6 +98,7 @@ class DecisionTreeModel
  public:
   // The tree itself, left public for direct access by this program.
   DecisionTree<> tree;
+  DatasetInfo info;
 
   // Create the model.
   DecisionTreeModel() { /* Nothing to do. */ }
@@ -107,6 +108,7 @@ class DecisionTreeModel
   void serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & BOOST_SERIALIZATION_NVP(tree);
+    ar & BOOST_SERIALIZATION_NVP(info);
   }
 };
 
@@ -136,13 +138,12 @@ static void mlpackMain()
 
   // Load the model or build the tree.
   DecisionTreeModel model;
-  DatasetInfo datasetInfo;
   arma::mat trainingSet;
   arma::Row<size_t> labels;
 
   if (CLI::HasParam("training"))
   {
-    datasetInfo = std::move(std::get<0>(CLI::GetParam<TupleType>("training")));
+    model.info = std::move(std::get<0>(CLI::GetParam<TupleType>("training")));
     trainingSet = std::move(std::get<1>(CLI::GetParam<TupleType>("training")));
     if (CLI::HasParam("labels"))
     {
@@ -158,7 +159,6 @@ static void mlpackMain()
       trainingSet.shed_row(trainingSet.n_rows - 1);
     }
 
-    // Calculate number of classes.
     const size_t numClasses = arma::max(arma::max(labels)) + 1;
 
     // Now build the tree.
@@ -169,12 +169,12 @@ static void mlpackMain()
     {
       arma::Row<double> weights =
           std::move(CLI::GetParam<arma::Mat<double>>("weights"));
-      model.tree = DecisionTree<>(trainingSet, datasetInfo, labels,
+      model.tree = DecisionTree<>(trainingSet, model.info, labels,
           numClasses, weights, minLeafSize);
     }
     else
     {
-      model.tree = DecisionTree<>(trainingSet, datasetInfo, labels,
+      model.tree = DecisionTree<>(trainingSet, model.info, labels,
           numClasses, minLeafSize);
     }
 
@@ -193,8 +193,8 @@ static void mlpackMain()
 
       // Print number of correct points.
       Log::Info << double(correct) / double(trainingSet.n_cols) * 100 << "%% "
-          << "correct on training set (" << correct << " / " << trainingSet.n_cols
-          << ")." << endl;
+          << "correct on training set (" << correct << " / " 
+          << trainingSet.n_cols << ")." << endl;
     }
   }
   else
@@ -205,7 +205,7 @@ static void mlpackMain()
   // Do we need to get predictions?
   if (CLI::HasParam("test"))
   {
-    std::get<0>(CLI::GetRawParam<TupleType>("test")) = datasetInfo;
+    std::get<0>(CLI::GetRawParam<TupleType>("test")) = model.info;
     arma::mat testPoints = std::get<1>(CLI::GetParam<TupleType>("test"));
 
     arma::Row<size_t> predictions;
