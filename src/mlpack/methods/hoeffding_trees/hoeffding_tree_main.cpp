@@ -38,7 +38,7 @@ PROGRAM_INFO("Hoeffding trees",
     " parameters, respectively. Optionally, if " +
     PRINT_PARAM_STRING("labels") + " is not specified, the labels are assumed "
     "to be the last dimension of the training dataset."
-    "\n\n" 
+    "\n\n"
     "The training may be performed in batch mode "
     "(like a typical decision tree algorithm) by specifying the " +
     PRINT_PARAM_STRING("batch_mode") + " option, but this may not be the best "
