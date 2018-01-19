@@ -161,7 +161,8 @@ BOOST_AUTO_TEST_CASE(HasMethodFormTest)
 
 BOOST_AUTO_TEST_CASE(HasMethodNameTest)
 {
-  static_assert(!HasModel<WithOutFunctionModel>::value, "value should be false");
+  static_assert(!HasModel<WithOutFunctionModel>::value,
+                "value should be false");
   static_assert(HasModel<WithFunctionModelA>::value, "value should be true");
   static_assert(HasModel<WithFunctionModelB>::value, "value should be true");
 }
