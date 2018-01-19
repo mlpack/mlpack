@@ -1,8 +1,8 @@
 /**
  * @file gan_network_test.cpp
- * @author Kris Singh
+ * @author Kris Singh and Shikhar Jaiswal
  *
- * Tests the gan Network
+ * Tests the GAN network.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -16,7 +16,6 @@
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-#include <mlpack/core/optimizers/minibatch_sgd/minibatch_sgd.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -72,7 +71,7 @@ BOOST_AUTO_TEST_CASE(GanTest)
   generator.Add<SoftPlusLayer<>>();
   generator.Add<Linear<>>(generatorHiddenLayerSize, generatorOutputSize);
 
-  // Create Gan
+  // Create GAN
   GaussianInitialization gaussian(0, 0.1);
   std::function<double ()> noiseFunction = [](){ return math::Random(-8, 8) +
       math::RandNormal(0, 1) * 0.01;};
@@ -128,4 +127,5 @@ BOOST_AUTO_TEST_CASE(GanTest)
   BOOST_REQUIRE_LE(generatedMean - originalMean, 0.2);
   BOOST_REQUIRE_LE(generatedStd - originalStd, 0.2);
 }
+
 BOOST_AUTO_TEST_SUITE_END();

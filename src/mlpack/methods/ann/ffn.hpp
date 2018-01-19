@@ -395,7 +395,7 @@ class FFN
   //! Locally-stored copy visitor
   CopyVisitor<CustomLayers...> copyVisitor;
 
-template<typename Model, typename IntializerType, class NoiseType>
+template<typename Model, typename InitializerType, class NoiseType>
 friend class GAN;
 }; // class FFN
 

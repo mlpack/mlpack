@@ -25,11 +25,3 @@ endforeach()
 # Append sources (with directory name) to list of all mlpack sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-add_subdirectory(visitor)
-add_subdirectory(activation_functions)
-add_subdirectory(init_rules)
-add_subdirectory(layer)
-add_subdirectory(convolution_rules)
-add_subdirectory(augmented)
-add_subdirectory(image_functions)

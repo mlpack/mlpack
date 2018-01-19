@@ -1,10 +1,10 @@
 /**
- * @file gan.hpp
- * @author Kris Singh
+ * @file gan_impl.hpp
+ * @author Kris Singh and Shikhar Jaiswal
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
+ * terms of the 3-clause BSD license. You should have received a copy of the
+ * 3-clause BSD license along with mlpack. If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_GAN_IMPL_HPP
@@ -17,11 +17,11 @@
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/network_init.hpp>
 #include <mlpack/methods/ann/visitor/output_parameter_visitor.hpp>
-
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
+#include <boost/serialization/variant.hpp>
 
 namespace mlpack {
-namespace ann /** artifical neural network  */ {
+namespace ann /** Artifical Neural Network.  */ {
 template<typename Model, typename InitializationRuleType, class Noise>
 GAN<Model, InitializationRuleType, Noise>::GAN(
     arma::mat& predictors,
@@ -46,7 +46,7 @@ GAN<Model, InitializationRuleType, Noise>::GAN(
     multiplier(multiplier),
     reset(false)
 {
-  // Insert IdentityLayer for joining the generator and discriminator
+  // Insert IdentityLayer for joining the Generator and Discriminator.
   discriminator.network.insert(
       discriminator.network.begin(),
       new IdentityLayer<>());
@@ -92,15 +92,13 @@ void GAN<Model, InitializationRuleType, Noise>::Reset()
   discriminator.Parameters() = arma::mat(parameter.memptr() + genWeights,
       discWeights, 1 , false, false);
 
-  // Intialise the parmaeters generator
+  // Initialize the parameters generator
   networkInit.Initialize(generator.network, parameter);
-  // Intialise the parameters discriminator
+  // Initialize the parameters discriminator
   networkInit.Initialize(discriminator.network, parameter, genWeights);
 
   reset = true;
 }
-
-
 
 template<typename Model, typename InitializationRuleType, typename Noise>
 template<typename OptimizerType>
@@ -181,7 +179,7 @@ Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient)
       gradientGenerator.n_elem,
       discriminator.Parameters().n_elem, 1, false, false);
 
-  // get the gradients of the discriminator
+  // Get the gradients of the Discriminator.
   discriminator.Gradient(discriminator.parameter, i, gradientDiscriminator);
 
   noise.imbue( [&]() { return noiseFunction();} );
@@ -196,8 +194,8 @@ Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient)
 
   if (currentBatch % generatorUpdateStep == 0 && preTrainSize == 0)
   {
-    // Minimize -log(D(G(noise)))
-    // pass the error from discriminator to generator
+    // Minimize -log(D(G(noise))).
+    // Pass the error from Discriminator to Generator.
     discriminator.responses(numFunctions) = 1;
     discriminator.Gradient(discriminator.parameter, numFunctions,
       noiseGradientDiscriminator);
@@ -224,8 +222,6 @@ Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient)
     {
       preTrainSize--;
     }
-    if (preTrainSize)
-      Log::Info << "Pre Training batch " << preTrainSize << std::endl;
   }
 }
 
@@ -253,6 +249,17 @@ Predict(arma::mat&& input, arma::mat& output)
 
   output = boost::apply_visitor(outputParameterVisitor,
       discriminator.network.back());
+}
+
+template<typename Model, typename InitializationRuleType, typename Noise>
+template<typename Archive>
+void GAN<Model, InitializationRuleType, Noise>::
+serialize(Archive& ar, const unsigned int /* version */)
+{
+  ar & BOOST_SERIALIZATION_NVP(parameter);
+  ar & BOOST_SERIALIZATION_NVP(generator);
+  ar & BOOST_SERIALIZATION_NVP(discriminator);
+  ar & BOOST_SERIALIZATION_NVP(noiseFunction);
 }
 
 } // namespace ann

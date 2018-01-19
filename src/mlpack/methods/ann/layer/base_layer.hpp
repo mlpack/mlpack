@@ -170,7 +170,7 @@ using TanHLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
 /**
- * Standard hyperbolic tangent layer.
+ * Standard Softplus-Layer using the Softplus activation function.
  */
 template <
     class ActivationFunction = SoftplusFunction,

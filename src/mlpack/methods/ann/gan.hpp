@@ -1,10 +1,10 @@
 /**
  * @file gan.hpp
- * @author Kris Singh
+ * @author Kris Singh and Shikhar Jaiswal
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
+ * terms of the 3-clause BSD license. You should have received a copy of the
+ * 3-clause BSD license along with mlpack. If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_GAN_HPP
@@ -20,26 +20,25 @@
 
 
 namespace mlpack {
-namespace ann /** artifical neural network **/ {
+namespace ann /** Artificial Neural Network. **/ {
 template<typename Model, typename InitializationRuleType, class Noise>
 class GAN
 {
  public:
   /**
-   * Constructor for GAN class
+   * Constructor for GAN class.
    *
-   * @tparam Model The class type of generator and discriminator.
-   
+   * @tparam Model The class type of Generator and Discriminator.
+   * @tparam InitializationRuleType Type of Initializer.
+   * @tparam Noise The noise function to use.
    * @param trainData The real data.
    * @param generator Generator network.
    * @param discriminator Discriminator network.
-   * @param InitializationRuleType Type of Intializer.
-   * @param noiseFunction The noise function to use.
    * @param batchSize BatchSize to be used for training.
-   * @param generatorUpdateStep Num of steps of discriminator training before 
-   *                            updating generator.
-   * @param preTrainSize Num of preTraining step of discriminator.
-   * @parma multiplier Ratio of learning rate of discriminator to the generator.
+   * @param generatorUpdateStep Number of steps of Discriminator training
+   *                            before updating generator.
+   * @param preTrainSize Num of preTraining step of Discriminator.
+   * @param multiplier Ratio of learning rate of Discriminator to the Generator.
    */
   GAN(arma::mat& trainData,
       Model& generator,
@@ -52,49 +51,46 @@ class GAN
       size_t preTrainSize,
       double multiplier);
 
-  // Reset function
+  // Reset function.
   void Reset();
 
-  // Train function
+  // Train function.
   template<typename OptimizerType>
   void Train(OptimizerType& Optimizer);
 
   /**
-   * Evaluate function for the GAN
-   * gives the perfomance of the gan
-   * on the current input.
+   * Evaluate function for the GAN gives the performance of the GAN on the
+   * current input.
    *
-   * @param parameters The parameters of the network
-   * @param i The idx of the current input
+   * @param parameters The parameters of the network.
+   * @param i Index of the current input.
    */
   double Evaluate(const arma::mat& parameters, const size_t i);
 
   /**
-   * Gradient function for gan. 
-   * This function is passes the gradient based
-   * on which network is being trained ie generator or Discriminator.
+   * Gradient function for GAN.
+   * This function passes the gradient based on which network is being
+   * trained, i.e., Generator or Discriminator.
    * 
-   * @param parameters present parameters of the network
-   * @param i index of the predictors
-   * @param gradient variable to store the present gradient
+   * @param parameters present parameters of the network.
+   * @param i Index of the predictors.
+   * @param gradient Variable to store the present gradient.
    */
   void Gradient(const arma::mat& parameters, const size_t i,
       arma::mat& gradient);
 
   /**
-   * This function does forward pass through the GAN
-   * network.
+   * This function does a forward pass through the GAN network.
    *
-   * @param input Sampled noise
+   * @param input Sampled noise.
    */
   void Forward(arma::mat&& input);
 
   /**
-   * This function predicts the output of the network
-   * on the given input.
+   * This function predicts the output of the network on the given input.
    *
-   * @param input  the input  the discriminator network
-   * @param output result of the discriminator network
+   * @param input The input the Discriminator network.
+   * @param output Result of the Discriminator network.
    */
   void Predict(arma::mat&& input, arma::mat& output);
 
@@ -108,22 +104,22 @@ class GAN
 
   //! Serialize the model.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally stored parameter for training data + noise data.
   arma::mat predictors;
   //! Locally stored parameters of the network.
   arma::mat parameter;
-  //! Locally stored generator network.
+  //! Locally stored Generator network.
   Model& generator;
-  //! Locally stored discriminator network.
+  //! Locally stored Discriminator network.
   Model& discriminator;
-  //! Locally stored Intialiser.
+  //! Locally stored Initializer.
   InitializationRuleType  initializeRule;
   //! Locally stored Noise function
   Noise noiseFunction;
-  //! Locally stored input dimension of the generator network.
+  //! Locally stored input dimension of the Generator network.
   size_t noiseDim;
   //! Locally stored number of data points.
   size_t numFunctions;
@@ -133,13 +129,13 @@ class GAN
   size_t counter;
   //! Locally stored batch number which is being processed.
   size_t currentBatch;
-  //! Locally stored number of training step before generator is trained.
+  //! Locally stored number of training step before Generator is trained.
   size_t generatorUpdateStep;
-  //! Locally stored number of pre-train step for discriminator.
+  //! Locally stored number of pre-train step for Discriminator.
   size_t preTrainSize;
-  //! Locally stored learning rate ratio for generator network.
+  //! Locally stored learning rate ratio for Generator network.
   double multiplier;
-  //! Locally stored reset parmaeter.
+  //! Locally stored reset parameter.
   bool reset;
   //! Locally stored delta visitor.
   DeltaVisitor deltaVisitor;
@@ -157,15 +153,15 @@ class GAN
   ResetVisitor resetVisitor;
   //! Locally stored gradient parameters.
   arma::mat gradient;
-  //! Locally stored gradient for discriminator.
+  //! Locally stored gradient for Discriminator.
   arma::mat gradientDiscriminator;
   //! Locally stored gradient for noise data in the predictors.
   arma::mat noiseGradientDiscriminator;
   //! Locally stored noise using the noise function.
   arma::mat noise;
-  //! Locally stored gradient for generator.
+  //! Locally stored gradient for Generator.
   arma::mat gradientGenerator;
-  //! Locally stored output of the generator network.
+  //! Locally stored output of the Generator network.
   arma::mat ganOutput;
 };
 } // namespace ann
