@@ -184,30 +184,32 @@ struct NAME                                                                    \
 };
 
 /**
- * Constructs a template structure, which will define a boolean static variable, to true if
- * the passed template parameter, has a member function with the specified name.
- * The check does not care about the signature or the function parameters
+ * Constructs a template structure, which will define a boolean static variable
+ * ,to true if the passed template parameter, has a member function with the
+ * specified name. The check does not care about the signature or the function
+ * parameters
  *
  * @param FUNC the name of the function, whose existence is to be detected
  * @param NAME the name of the structure that will be generated
  *
- * Use this like: NAME<ClassName>::value to check for the existence of the function
- * in the given class name.
- * This can also be used in conjunction with std::enale_if.
+ * Use this like: NAME<ClassName>::value to check for the existence of the
+ * function in the given class name.
+ * This can also be used in conjunction with std::enable_if.
  */
-#define HAS_ANY_METHOD_FORM( FUNC, NAME )                                                     \
-template < typename T >                                                                       \
-struct NAME                                                                                   \
-{                                                                                             \
-  template < typename Q = T >                                                                 \
-  static typename                                                                             \
-  std::enable_if< std::is_member_function_pointer< decltype( &Q::FUNC ) >::value, int >::type \
-  f( int t ) { return 1;}                                                                     \
-                                                                                              \
-  template < typename Q = T >                                                                 \
-  static char f( char t ) { return 0; }                                                       \
-                                                                                              \
-  static const bool value = sizeof( f< T >( 0 ) ) != sizeof( char );                          \
+#define HAS_ANY_METHOD_FORM(FUNC, NAME)                                      \
+template <typename T>                                                        \
+struct NAME                                                                  \
+{                                                                            \
+  template <typename Q = T>                                                  \
+  static typename                                                            \
+  std::enable_if<std::is_member_function_pointer<decltype(&Q::FUNC)>::value, \
+                 int>::type                                                  \
+  f(int t) { return 1;}                                                      \
+                                                                             \
+  template <typename Q = T>                                                  \
+  static char f(char t) { return 0; }                                        \
+                                                                             \
+  static const bool value = sizeof( f<T>(0) ) != sizeof(char);               \
 };
 /*
  * A macro that can be used for passing arguments containing commas to other
