@@ -159,6 +159,10 @@ BOOST_AUTO_TEST_CASE(HasMethodFormTest)
   static_assert(HasTemplatedM<B, MForm4, 1>::value, "value should be true");
 }
 
+/*
+ * Test at compile time, for the presence/absence of a specific member
+ * function in a class.
+ */
 BOOST_AUTO_TEST_CASE(HasMethodNameTest)
 {
   static_assert(!HasModel<WithOutFunctionModel>::value,
