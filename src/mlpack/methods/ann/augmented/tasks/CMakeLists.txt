@@ -2,9 +2,13 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   add.hpp
+  add_impl.hpp
   copy.hpp
+  copy_impl.hpp
   score.hpp
+  score_impl.hpp
   sort.hpp
+  sort_impl.hpp
 )
 
 # Add directory name to sources.

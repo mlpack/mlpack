@@ -18,7 +18,7 @@
 #include <mlpack/methods/amf/termination_policies/incomplete_incremental_termination.hpp>
 #include <mlpack/methods/amf/termination_policies/complete_incremental_termination.hpp>
 #include <mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp>
-#include <mlpack/methods/amf/termination_policies/validation_RMSE_termination.hpp>
+#include <mlpack/methods/amf/termination_policies/validation_rmse_termination.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"

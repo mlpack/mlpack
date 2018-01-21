@@ -171,7 +171,7 @@ void RNN<OutputLayerType, InitializationRuleType>::Predict(
 
   results = arma::zeros<arma::cube>(outputSize, predictors.n_cols, rho);
   // Process in accordance with the given batch size.
-  for (size_t begin = 0; begin < predictors.n_cols; begin += batchSize) // wrong
+  for (size_t begin = 0; begin < predictors.n_cols; begin += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize,
         size_t(predictors.n_cols - begin));
