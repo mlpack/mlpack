@@ -26,7 +26,6 @@ set(SOURCES
   program_doc.hpp
   program_doc.cpp
   sfinae_utility.hpp
-  singletons.hpp
   singletons.cpp
   timers.hpp
   timers.cpp

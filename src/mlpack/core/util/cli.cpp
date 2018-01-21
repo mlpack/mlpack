@@ -18,7 +18,6 @@
 #include "log.hpp"
 #include "hyphenate_string.hpp"
 
-#include "cli_deleter.hpp" // To make sure we can delete the singleton.
 #include "version.hpp"
 
 #include <mlpack/core/data/load.hpp>

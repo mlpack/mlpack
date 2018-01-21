@@ -11,7 +11,6 @@
  */
 #include "cli.hpp"
 #include "log.hpp"
-#include "singletons.hpp"
 #include <iostream>
 
 using namespace mlpack;
