@@ -282,7 +282,9 @@ class LSHSearch
 
   //! Get the second hash table.
   const std::vector<arma::Col<size_t>>& SecondHashTable() const
-      { return secondHashTable; }
+  {
+    return secondHashTable;
+  }
 
   //! Get the projection tables.
   const arma::cube& Projections() { return projections; }
@@ -291,8 +293,13 @@ class LSHSearch
   void Projections(const arma::cube& projTables)
   {
     // Simply call Train() with the given projection tables.
-    Train(referenceSet, numProj, numTables, hashWidth, secondHashSize,
-        bucketSize, projTables);
+    Train(referenceSet,
+          numProj,
+          numTables,
+          hashWidth,
+          secondHashSize,
+          bucketSize,
+          projTables);
   }
 
  private:
@@ -459,7 +466,8 @@ class LSHSearch
   typedef std::pair<double, size_t> Candidate;
 
   //! Compare two candidates based on the distance.
-  struct CandidateCmp {
+  struct CandidateCmp
+  {
     bool operator()(const Candidate& c1, const Candidate& c2)
     {
       return !SortPolicy::IsBetter(c2.first, c1.first);
@@ -476,7 +484,8 @@ class LSHSearch
 
 //! Set the serialization version of the LSHSearch class.
 BOOST_TEMPLATE_CLASS_VERSION(template<typename SortPolicy>,
-    mlpack::neighbor::LSHSearch<SortPolicy>, 1);
+                             mlpack::neighbor::LSHSearch<SortPolicy>,
+                             1);
 
 // Include implementation.
 #include "lsh_search_impl.hpp"

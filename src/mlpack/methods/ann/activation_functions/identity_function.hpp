@@ -34,10 +34,7 @@ class IdentityFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
-  {
-    return x;
-  }
+  static double Fn(const double x) { return x; }
 
   /**
    * Computes the identity function.
@@ -57,10 +54,7 @@ class IdentityFunction
    * @param x Input data.
    * @return f'(x)
    */
-  static double Deriv(const double /* unused */)
-  {
-    return 1.0;
-  }
+  static double Deriv(const double /* unused */) { return 1.0; }
 
   /**
    * Computes the first derivatives of the identity function.

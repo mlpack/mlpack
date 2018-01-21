@@ -75,8 +75,8 @@ class MeanSplit
                              const size_t count,
                              const SplitInfo& splitInfo)
   {
-    return split::PerformSplit<MatType, MeanSplit>(data, begin, count,
-        splitInfo);
+    return split::PerformSplit<MatType, MeanSplit>(
+        data, begin, count, splitInfo);
   }
 
   /**
@@ -101,8 +101,8 @@ class MeanSplit
                              const SplitInfo& splitInfo,
                              std::vector<size_t>& oldFromNew)
   {
-    return split::PerformSplit<MatType, MeanSplit>(data, begin, count,
-        splitInfo, oldFromNew);
+    return split::PerformSplit<MatType, MeanSplit>(
+        data, begin, count, splitInfo, oldFromNew);
   }
 
   /**
@@ -112,8 +112,7 @@ class MeanSplit
    * @param splitInfo An information about the split.
    */
   template<typename VecType>
-  static bool AssignToLeftNode(const VecType& point,
-                               const SplitInfo& splitInfo)
+  static bool AssignToLeftNode(const VecType& point, const SplitInfo& splitInfo)
   {
     return point[splitInfo.splitDimension] < splitInfo.splitVal;
   }

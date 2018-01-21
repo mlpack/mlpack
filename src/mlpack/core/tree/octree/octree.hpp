@@ -226,9 +226,8 @@ class Octree
    * @param ar Archive to load tree from.  Must be an iarchive, not an oarchive.
    */
   template<typename Archive>
-  Octree(
-      Archive& ar,
-      const typename std::enable_if_t<Archive::is_loading::value>* = 0);
+  Octree(Archive& ar,
+         const typename std::enable_if_t<Archive::is_loading::value>* = 0);
 
   /**
    * Destroy the tree.
@@ -365,19 +364,19 @@ class Octree
 
   //! Return the minimum distance to the given point.
   template<typename VecType>
-  ElemType MinDistance(
-      const VecType& point,
-      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
+  ElemType
+  MinDistance(const VecType& point,
+              typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
   //! Return the maximum distance to the given point.
   template<typename VecType>
-  ElemType MaxDistance(
-      const VecType& point,
-      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
+  ElemType
+  MaxDistance(const VecType& point,
+              typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
   //! Return the minimum and maximum distance to another node.
   template<typename VecType>
-  math::RangeType<ElemType> RangeDistance(
-      const VecType& point,
-      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
+  math::RangeType<ElemType>
+  RangeDistance(const VecType& point,
+                typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   //! Store the center of the bounding region in the given vector.
   void Center(arma::vec& center) const { bound.Center(center); }

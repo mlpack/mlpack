@@ -22,17 +22,16 @@ namespace data {
 // Default constructor.
 template<typename PolicyType, typename InputType>
 inline DatasetMapper<PolicyType, InputType>::DatasetMapper(
-    const size_t dimensionality) :
-    types(dimensionality, Datatype::numeric)
+    const size_t dimensionality)
+  : types(dimensionality, Datatype::numeric)
 {
   // Nothing to initialize here.
 }
 
 template<typename PolicyType, typename InputType>
-inline DatasetMapper<PolicyType, InputType>::DatasetMapper(PolicyType& policy,
-    const size_t dimensionality) :
-    types(dimensionality, Datatype::numeric),
-    policy(std::move(policy))
+inline DatasetMapper<PolicyType, InputType>::DatasetMapper(
+    PolicyType& policy, const size_t dimensionality)
+  : types(dimensionality, Datatype::numeric), policy(std::move(policy))
 {
   // Nothing to initialize here.
 }
@@ -74,9 +73,8 @@ void DatasetMapper<PolicyType, InputType>::MapFirstPass(const InputType& input,
 // input.
 template<typename PolicyType, typename InputType>
 template<typename T>
-inline T DatasetMapper<PolicyType, InputType>::MapString(
-    const InputType& input,
-    const size_t dimension)
+inline T DatasetMapper<PolicyType, InputType>::MapString(const InputType& input,
+                                                         const size_t dimension)
 {
   return policy.template MapString<MapType, T>(input, dimension, maps, types);
 }
@@ -110,20 +108,17 @@ inline bool isnanSafe(const long double& t)
   return std::isnan(t);
 }
 
-
 // Return the input corresponding to a value in a given dimension.
 template<typename PolicyType, typename InputType>
 template<typename T>
 inline const InputType& DatasetMapper<PolicyType, InputType>::UnmapString(
-    const T value,
-    const size_t dimension,
-    const size_t unmappingIndex) const
+    const T value, const size_t dimension, const size_t unmappingIndex) const
 {
   // If the value is std::numeric_limits<T>::quiet_NaN(), we can't use it as a
   // key---so we will use something else...
-  const T usedValue = isnanSafe(value) ?
-      std::nexttoward(std::numeric_limits<T>::max(), T(0)) :
-      value;
+  const T usedValue = isnanSafe(value)
+                          ? std::nexttoward(std::numeric_limits<T>::max(), T(0))
+                          : value;
 
   // Throw an exception if the value doesn't exist.
   if (maps.at(dimension).second.count(usedValue) == 0)
@@ -150,8 +145,7 @@ inline const InputType& DatasetMapper<PolicyType, InputType>::UnmapString(
 template<typename PolicyType, typename InputType>
 template<typename T>
 inline size_t DatasetMapper<PolicyType, InputType>::NumUnmappings(
-    const T value,
-    const size_t dimension) const
+    const T value, const size_t dimension) const
 {
   // If the value is std::numeric_limits<T>::quiet_NaN(), we can't use it as a
   // key---so we will use something else...
@@ -167,9 +161,8 @@ inline size_t DatasetMapper<PolicyType, InputType>::NumUnmappings(
 // Return the value corresponding to an input in a given dimension.
 template<typename PolicyType, typename InputType>
 inline typename PolicyType::MappedType
-DatasetMapper<PolicyType, InputType>::UnmapValue(
-    const InputType& input,
-    const size_t dimension)
+DatasetMapper<PolicyType, InputType>::UnmapValue(const InputType& input,
+                                                 const size_t dimension)
 {
   // Throw an exception if the value doesn't exist.
   if (maps[dimension].first.count(input) == 0)
@@ -185,8 +178,8 @@ DatasetMapper<PolicyType, InputType>::UnmapValue(
 
 // Get the type of a particular dimension.
 template<typename PolicyType, typename InputType>
-inline Datatype DatasetMapper<PolicyType, InputType>::Type(
-    const size_t dimension) const
+inline Datatype
+DatasetMapper<PolicyType, InputType>::Type(const size_t dimension) const
 {
   if (dimension >= types.size())
   {
@@ -200,8 +193,8 @@ inline Datatype DatasetMapper<PolicyType, InputType>::Type(
 }
 
 template<typename PolicyType, typename InputType>
-inline Datatype& DatasetMapper<PolicyType, InputType>::Type(
-    const size_t dimension)
+inline Datatype&
+DatasetMapper<PolicyType, InputType>::Type(const size_t dimension)
 {
   if (dimension >= types.size())
     types.resize(dimension + 1, Datatype::numeric);

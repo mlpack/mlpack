@@ -23,32 +23,25 @@ FastMKSRules<KernelType, TreeType>::FastMKSRules(
     const typename TreeType::Mat& referenceSet,
     const typename TreeType::Mat& querySet,
     const size_t k,
-    KernelType& kernel) :
-    referenceSet(referenceSet),
-    querySet(querySet),
-    k(k),
-    kernel(kernel),
-    lastQueryIndex(-1),
-    lastReferenceIndex(-1),
-    lastKernel(0.0),
-    baseCases(0),
+    KernelType& kernel)
+  : referenceSet(referenceSet), querySet(querySet), k(k), kernel(kernel),
+    lastQueryIndex(-1), lastReferenceIndex(-1), lastKernel(0.0), baseCases(0),
     scores(0)
 {
   // Precompute each self-kernel.
   queryKernels.set_size(querySet.n_cols);
   for (size_t i = 0; i < querySet.n_cols; ++i)
-    queryKernels[i] = sqrt(kernel.Evaluate(querySet.col(i),
-                                           querySet.col(i)));
+    queryKernels[i] = sqrt(kernel.Evaluate(querySet.col(i), querySet.col(i)));
 
   referenceKernels.set_size(referenceSet.n_cols);
   for (size_t i = 0; i < referenceSet.n_cols; ++i)
-    referenceKernels[i] = sqrt(kernel.Evaluate(referenceSet.col(i),
-                                               referenceSet.col(i)));
+    referenceKernels[i] =
+        sqrt(kernel.Evaluate(referenceSet.col(i), referenceSet.col(i)));
 
   // Set to invalid memory, so that the first node combination does not try to
   // dereference null pointers.
-  traversalInfo.LastQueryNode() = (TreeType*) this;
-  traversalInfo.LastReferenceNode() = (TreeType*) this;
+  traversalInfo.LastQueryNode() = (TreeType*)this;
+  traversalInfo.LastReferenceNode() = (TreeType*)this;
 
   // Let's build the list of candidate points for each query point.
   // It will be initialized with k candidates: (-DBL_MAX, size_t() - 1)
@@ -65,9 +58,8 @@ FastMKSRules<KernelType, TreeType>::FastMKSRules(
 }
 
 template<typename KernelType, typename TreeType>
-void FastMKSRules<KernelType, TreeType>::GetResults(
-    arma::Mat<size_t>& indices,
-    arma::mat& products)
+void FastMKSRules<KernelType, TreeType>::GetResults(arma::Mat<size_t>& indices,
+                                                    arma::mat& products)
 {
   indices.set_size(k, querySet.n_cols);
   products.set_size(k, querySet.n_cols);
@@ -85,10 +77,9 @@ void FastMKSRules<KernelType, TreeType>::GetResults(
 }
 
 template<typename KernelType, typename TreeType>
-inline force_inline
-double FastMKSRules<KernelType, TreeType>::BaseCase(
-    const size_t queryIndex,
-    const size_t referenceIndex)
+inline force_inline double
+FastMKSRules<KernelType, TreeType>::BaseCase(const size_t queryIndex,
+                                             const size_t referenceIndex)
 {
   // Score() always happens before BaseCase() for a given node combination.  For
   // cover trees, the kernel evaluation between the two centroid points already
@@ -96,8 +87,8 @@ double FastMKSRules<KernelType, TreeType>::BaseCase(
   // first conditional is false (its result is known at compile time).
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
   {
-    if ((queryIndex == lastQueryIndex) &&
-        (referenceIndex == lastReferenceIndex))
+    if ((queryIndex == lastQueryIndex)
+        && (referenceIndex == lastReferenceIndex))
       return lastKernel;
 
     // Store new values.
@@ -146,8 +137,8 @@ double FastMKSRules<KernelType, TreeType>::Score(const size_t queryIndex,
       if (lastKernel <= delta)
       {
         const double gamma = combinedDistBound * sqrt(1 - 0.25 * squaredDist);
-        maxKernelBound = lastKernel * delta +
-             gamma * sqrt(1 - std::pow(lastKernel, 2.0));
+        maxKernelBound =
+            lastKernel * delta + gamma * sqrt(1 - std::pow(lastKernel, 2.0));
       }
       else
       {
@@ -156,8 +147,8 @@ double FastMKSRules<KernelType, TreeType>::Score(const size_t queryIndex,
     }
     else
     {
-      maxKernelBound = lastKernel +
-          combinedDistBound * queryKernels[queryIndex];
+      maxKernelBound =
+          lastKernel + combinedDistBound * queryKernels[queryIndex];
     }
 
     if (maxKernelBound < bestKernel)
@@ -171,9 +162,9 @@ double FastMKSRules<KernelType, TreeType>::Score(const size_t queryIndex,
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
   {
     // Could it be that this kernel evaluation has already been calculated?
-    if (tree::TreeTraits<TreeType>::HasSelfChildren &&
-        referenceNode.Parent() != NULL &&
-        referenceNode.Point(0) == referenceNode.Parent()->Point(0))
+    if (tree::TreeTraits<TreeType>::HasSelfChildren
+        && referenceNode.Parent() != NULL
+        && referenceNode.Point(0) == referenceNode.Parent()->Point(0))
     {
       kernelEval = referenceNode.Parent()->Stat().LastKernel();
     }
@@ -200,8 +191,8 @@ double FastMKSRules<KernelType, TreeType>::Score(const size_t queryIndex,
     if (kernelEval <= delta)
     {
       const double gamma = furthestDist * sqrt(1 - 0.25 * squaredDist);
-      maxKernel = kernelEval * delta +
-          gamma * sqrt(1 - std::pow(kernelEval, 2.0));
+      maxKernel =
+          kernelEval * delta + gamma * sqrt(1 - std::pow(kernelEval, 2.0));
     }
     else
     {
@@ -257,8 +248,8 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
     // NULL.  We also should be guaranteed that
     // traversalInfo.LastReferenceNode() is either the reference node or the
     // parent of the reference node.
-    adjustedScore += queryDistBound *
-        traversalInfo.LastReferenceNode()->Stat().SelfKernel();
+    adjustedScore +=
+        queryDistBound * traversalInfo.LastReferenceNode()->Stat().SelfKernel();
     dualQueryTerm = queryDistBound;
   }
   else
@@ -267,8 +258,8 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
     // consider.
     if (traversalInfo.LastReferenceNode() != NULL)
     {
-      adjustedScore += queryDescDist *
-          traversalInfo.LastReferenceNode()->Stat().SelfKernel();
+      adjustedScore += queryDescDist
+                       * traversalInfo.LastReferenceNode()->Stat().SelfKernel();
       dualQueryTerm = queryDescDist;
     }
     else
@@ -285,8 +276,8 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
     // We can assume that referenceNode.Parent() != NULL, because at the root
     // node combination, the traversalInfo.LastReferenceNode() pointer will
     // _not_ be NULL.
-    adjustedScore += refDistBound *
-        traversalInfo.LastQueryNode()->Stat().SelfKernel();
+    adjustedScore +=
+        refDistBound * traversalInfo.LastQueryNode()->Stat().SelfKernel();
     dualRefTerm = refDistBound;
   }
   else
@@ -295,8 +286,8 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
     // to consider.
     if (traversalInfo.LastQueryNode() != NULL)
     {
-      adjustedScore += refDescDist *
-          traversalInfo.LastQueryNode()->Stat().SelfKernel();
+      adjustedScore +=
+          refDescDist * traversalInfo.LastQueryNode()->Stat().SelfKernel();
       dualRefTerm = refDescDist;
     }
     else
@@ -326,10 +317,11 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
   {
     // For this type of tree, we may have already calculated the base case in
     // the parents.
-    if ((traversalInfo.LastQueryNode() != NULL) &&
-        (traversalInfo.LastReferenceNode() != NULL) &&
-        (traversalInfo.LastQueryNode()->Point(0) == queryNode.Point(0)) &&
-        (traversalInfo.LastReferenceNode()->Point(0) == referenceNode.Point(0)))
+    if ((traversalInfo.LastQueryNode() != NULL)
+        && (traversalInfo.LastReferenceNode() != NULL)
+        && (traversalInfo.LastQueryNode()->Point(0) == queryNode.Point(0))
+        && (traversalInfo.LastReferenceNode()->Point(0)
+            == referenceNode.Point(0)))
     {
       // Base case already done.
       kernelEval = traversalInfo.LastBaseCase();
@@ -378,9 +370,9 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
       const double refDelta = (1 - 0.5 * refSqDist);
       const double refGamma = refDescDist * sqrt(1 - 0.25 * refSqDist);
 
-      maxKernel = kernelEval * (queryDelta * refDelta - queryGamma * refGamma) +
-          sqrt(1 - std::pow(kernelEval, 2.0)) *
-          (queryGamma * refDelta + queryDelta * refGamma);
+      maxKernel = kernelEval * (queryDelta * refDelta - queryGamma * refGamma)
+                  + sqrt(1 - std::pow(kernelEval, 2.0))
+                        * (queryGamma * refDelta + queryDelta * refGamma);
     }
     else
     {
@@ -390,12 +382,12 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
   else
   {
     // Use standard bound; kernel is not normalized.
-    const double refKernelTerm = queryDescDist *
-        referenceNode.Stat().SelfKernel();
+    const double refKernelTerm =
+        queryDescDist * referenceNode.Stat().SelfKernel();
     const double queryKernelTerm = refDescDist * queryNode.Stat().SelfKernel();
 
-    maxKernel = kernelEval + refKernelTerm + queryKernelTerm +
-        (queryDescDist * refDescDist);
+    maxKernel = kernelEval + refKernelTerm + queryKernelTerm
+                + (queryDescDist * refDescDist);
   }
 
   // Store relevant information for parent-child pruning.
@@ -436,8 +428,8 @@ double FastMKSRules<KernelType, TreeType>::Rescore(TreeType& queryNode,
  * @param queryNode Query node to calculate bound for.
  */
 template<typename KernelType, typename TreeType>
-double FastMKSRules<KernelType, TreeType>::CalculateBound(TreeType& queryNode)
-    const
+double
+FastMKSRules<KernelType, TreeType>::CalculateBound(TreeType& queryNode) const
 {
   // We have four possible bounds -- just like NeighborSearchRules, but they are
   // slightly different in this context.
@@ -481,8 +473,8 @@ double FastMKSRules<KernelType, TreeType>::CalculateBound(TreeType& queryNode)
     typedef typename CandidateList::const_iterator iter;
     for (iter it = candidatesPoints.begin(); it != candidatesPoints.end(); ++it)
     {
-      const double candidateKernel = it->first - queryDescendantDistance *
-          referenceKernels[it->second];
+      const double candidateKernel =
+          it->first - queryDescendantDistance * referenceKernels[it->second];
       if (candidateKernel < worstPointCandidateKernel)
         worstPointCandidateKernel = candidateKernel;
     }
@@ -501,16 +493,19 @@ double FastMKSRules<KernelType, TreeType>::CalculateBound(TreeType& queryNode)
   }
 
   // Now assemble bound (1).
-  const double firstBound = (worstPointKernel < worstChildKernel) ?
-      worstPointKernel : worstChildKernel;
+  const double firstBound = (worstPointKernel < worstChildKernel)
+                                ? worstPointKernel
+                                : worstChildKernel;
 
   // Bound (2) is bestAdjustedPointKernel.
-  const double fourthBound = (queryNode.Parent() == NULL) ? -DBL_MAX :
-      queryNode.Parent()->Stat().Bound();
+  const double fourthBound = (queryNode.Parent() == NULL)
+                                 ? -DBL_MAX
+                                 : queryNode.Parent()->Stat().Bound();
 
   // Pick the best of these bounds.
-  const double interA = (firstBound > bestAdjustedPointKernel) ? firstBound :
-      bestAdjustedPointKernel;
+  const double interA = (firstBound > bestAdjustedPointKernel)
+                            ? firstBound
+                            : bestAdjustedPointKernel;
   const double interB = fourthBound;
 
   return (interA > interB) ? interA : interB;
@@ -525,9 +520,7 @@ double FastMKSRules<KernelType, TreeType>::CalculateBound(TreeType& queryNode)
  */
 template<typename KernelType, typename TreeType>
 inline void FastMKSRules<KernelType, TreeType>::InsertNeighbor(
-    const size_t queryIndex,
-    const size_t index,
-    const double product)
+    const size_t queryIndex, const size_t index, const double product)
 {
   CandidateList& pqueue = candidates[queryIndex];
   if (product > pqueue.top().first)

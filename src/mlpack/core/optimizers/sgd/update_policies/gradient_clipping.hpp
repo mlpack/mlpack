@@ -39,10 +39,9 @@ class GradientClipping
    */
   GradientClipping(const double minGradient,
                    const double maxGradient,
-                   UpdatePolicyType& updatePolicy) :
-    minGradient(minGradient),
-    maxGradient(maxGradient),
-    updatePolicy(updatePolicy)
+                   UpdatePolicyType& updatePolicy)
+    : minGradient(minGradient), maxGradient(maxGradient),
+      updatePolicy(updatePolicy)
   {
     // Nothing to do here
   }
@@ -68,9 +67,8 @@ class GradientClipping
    * @param stepSize Step size to be used for the given iteration.
    * @param gradient The gradient matrix.
    */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
+  void
+  Update(arma::mat& iterate, const double stepSize, const arma::mat& gradient)
   {
     // First, clip the gradient.
     arma::mat clippedGradient = arma::clamp(gradient, minGradient, maxGradient);

@@ -46,10 +46,10 @@ class MinimalCoverageSweep
    * @param axisCut The coordinate at which the node may be split.
    */
   template<typename TreeType>
-  static typename TreeType::ElemType SweepNonLeafNode(
-      const size_t axis,
-      const TreeType* node,
-      typename TreeType::ElemType& axisCut);
+  static typename TreeType::ElemType
+  SweepNonLeafNode(const size_t axis,
+                   const TreeType* node,
+                   typename TreeType::ElemType& axisCut);
 
   /**
    * Find a suitable partition of a leaf node along the provided axis.
@@ -60,10 +60,10 @@ class MinimalCoverageSweep
    * @param axisCut The coordinate at which the node may be split.
    */
   template<typename TreeType>
-  static typename TreeType::ElemType SweepLeafNode(
-      const size_t axis,
-      const TreeType* node,
-      typename TreeType::ElemType& axisCut);
+  static typename TreeType::ElemType
+  SweepLeafNode(const size_t axis,
+                const TreeType* node,
+                typename TreeType::ElemType& axisCut);
 
   /**
    * Check if an intermediate node can be split along the axis at the provided
@@ -98,5 +98,4 @@ class MinimalCoverageSweep
 // Include implementation
 #include "minimal_coverage_sweep_impl.hpp"
 
-#endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_MINIMAL_COVERAGE_SWEEP_HPP
-
+#endif //  MLPACK_CORE_TREE_RECTANGLE_TREE_MINIMAL_COVERAGE_SWEEP_HPP

@@ -30,7 +30,7 @@ namespace det {
  * @param numClasses Number of classes in dataset.
  * @param leafClassMembershipFile Name of file to print to (optional).
  */
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 void PrintLeafMembership(DTree<MatType, TagType>* dtree,
                          const MatType& data,
                          const arma::Mat<size_t>& labels,
@@ -45,7 +45,7 @@ void PrintLeafMembership(DTree<MatType, TagType>* dtree,
  * @param dtree Density tree to use.
  * @param viFile Name of file to print to (optional).
  */
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 void PrintVariableImportance(const DTree<MatType, TagType>* dtree,
                              const std::string viFile = "");
 
@@ -61,7 +61,7 @@ void PrintVariableImportance(const DTree<MatType, TagType>* dtree,
  * @param minLeafSize Minimum number of points allowed in a leaf.
  * @param unprunedTreeOutput Filename to print unpruned tree to (optional).
  */
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 DTree<MatType, TagType>* Trainer(MatType& dataset,
                                  const size_t folds,
                                  const bool useVolumeReg = false,
@@ -131,14 +131,14 @@ class PathCacher
   size_t NumNodes() const { return pathCache.size(); }
 
  protected:
-  typedef std::list<std::pair<bool, int>>          PathType;
+  typedef std::list<std::pair<bool, int>> PathType;
   typedef std::vector<std::pair<int, std::string>> PathCacheType;
 
-  PathType      path;
-  PathFormat    format;
+  PathType path;
+  PathFormat format;
   PathCacheType pathCache;
 
-  std::string   BuildString();
+  std::string BuildString();
 };
 
 } // namespace det

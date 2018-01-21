@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionRandomTest)
   actualProb.zeros();
 
   for (size_t i = 0; i < 50000; i++)
-    actualProb((size_t) (d.Random()[0] + 0.5))++;
+    actualProb((size_t)(d.Random()[0] + 0.5))++;
 
   // Normalize.
   actualProb /= accu(actualProb);
@@ -272,8 +272,8 @@ BOOST_AUTO_TEST_CASE(GaussianUnivariateProbabilityTest)
   // Simple case.
   BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("0.0")), 0.398942280401433, 1e-5);
   BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("1.0")), 0.241970724519143, 1e-5);
-  BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("-1.0")), 0.241970724519143,
-      1e-5);
+  BOOST_REQUIRE_CLOSE(
+      g.Probability(arma::vec("-1.0")), 0.241970724519143, 1e-5);
 
   // A few more cases...
   arma::mat covariance;
@@ -282,8 +282,8 @@ BOOST_AUTO_TEST_CASE(GaussianUnivariateProbabilityTest)
   g.Covariance(std::move(covariance));
   BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("0.0")), 0.282094791773878, 1e-5);
   BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("1.0")), 0.219695644733861, 1e-5);
-  BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("-1.0")), 0.219695644733861,
-      1e-5);
+  BOOST_REQUIRE_CLOSE(
+      g.Probability(arma::vec("-1.0")), 0.219695644733861, 1e-5);
 
   g.Mean().fill(1.0);
   covariance = 1.0;
@@ -292,8 +292,8 @@ BOOST_AUTO_TEST_CASE(GaussianUnivariateProbabilityTest)
 
   covariance = 2.0;
   g.Covariance(std::move(covariance));
-  BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("-1.0")), 0.103776874355149,
-      1e-5);
+  BOOST_REQUIRE_CLOSE(
+      g.Probability(arma::vec("-1.0")), 0.103776874355149, 1e-5);
 }
 
 /**
@@ -502,7 +502,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithProbabilitiesTest)
 BOOST_AUTO_TEST_CASE(GaussianDistributionWithProbabilties1Test)
 {
   arma::vec mean = ("5.0");
-  arma::vec cov  = ("4.0");
+  arma::vec cov = ("4.0");
 
   GaussianDistribution dist(mean, cov);
   size_t N = 50000;
@@ -511,7 +511,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionWithProbabilties1Test)
   arma::mat rdata(d, N);
 
   for (size_t i = 0; i < N; i++)
-      rdata.col(i) = Random();
+    rdata.col(i) = Random();
 
   arma::vec probabilities(N, arma::fill::ones);
 
@@ -565,7 +565,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithTwoDistProbabilitiesTest)
 
   // Assign high probabilities to points drawn from dist1 and low probabilities
   // to numbers drawn from dist2.
-  for (size_t i = 0 ; i < N ; i++)
+  for (size_t i = 0; i < N; i++)
   {
     if (i % 2 == 0)
       probabilities(i) = Random(0.98, 1);
@@ -913,8 +913,7 @@ BOOST_AUTO_TEST_CASE(GammaDistributionProbabilityTest)
   // Combine into one 2-dimensional distribution.
   const arma::vec a3("2.0 3.1"), b3("0.9 1.4");
   arma::mat x3(2, 2);
-  x3 << 2.0 << 2.94 << arma::endr
-     << 2.0 << 2.94;
+  x3 << 2.0 << 2.94 << arma::endr << 2.0 << 2.94;
   arma::vec prob3;
 
   // Expect that the 2-dimensional distribution returns the product of the
@@ -945,9 +944,7 @@ BOOST_AUTO_TEST_CASE(GammaDistributionLogProbabilityTest)
   // Combine into one 2-dimensional distribution.
   const arma::vec a3("2.0 3.1"), b3("0.9 1.4");
   arma::mat x3(2, 2);
-  x3
-    << 2.0 << 2.94 << arma::endr
-    << 2.0 << 2.94;
+  x3 << 2.0 << 2.94 << arma::endr << 2.0 << 2.94;
   arma::vec prob3;
 
   // Expect that the 2-dimensional distribution returns the product of the

@@ -37,18 +37,17 @@ class GaussianKernel
   /**
    * Default constructor; sets bandwidth to 1.0.
    */
-  GaussianKernel() : bandwidth(1.0), gamma(-0.5)
-  { }
+  GaussianKernel() : bandwidth(1.0), gamma(-0.5) {}
 
   /**
    * Construct the Gaussian kernel with a custom bandwidth.
    *
    * @param bandwidth The bandwidth of the kernel (@f$\mu@f$).
    */
-  GaussianKernel(const double bandwidth) :
-      bandwidth(bandwidth),
-      gamma(-0.5 * pow(bandwidth, -2.0))
-  { }
+  GaussianKernel(const double bandwidth)
+    : bandwidth(bandwidth), gamma(-0.5 * pow(bandwidth, -2.0))
+  {
+  }
 
   /**
    * Evaluation of the Gaussian kernel.  This could be generalized to use any
@@ -89,7 +88,8 @@ class GaussianKernel
    * @return K(t) using the bandwidth (@f$\mu@f$) specified in the
    *     constructor.
    */
-  double Gradient(const double t) const {
+  double Gradient(const double t) const
+  {
     return 2 * t * gamma * exp(gamma * std::pow(t, 2.0));
   }
 
@@ -101,7 +101,8 @@ class GaussianKernel
    * @return K(t) using the bandwidth (@f$\mu@f$) specified in the
    *     constructor.
    */
-  double GradientForSquaredDistance(const double t) const {
+  double GradientForSquaredDistance(const double t) const
+  {
     return gamma * exp(gamma * t);
   }
 
@@ -113,7 +114,7 @@ class GaussianKernel
    */
   double Normalizer(const size_t dimension)
   {
-    return pow(sqrt(2.0 * M_PI) * bandwidth, (double) dimension);
+    return pow(sqrt(2.0 * M_PI) * bandwidth, (double)dimension);
   }
 
   /**
@@ -126,10 +127,10 @@ class GaussianKernel
   template<typename VecTypeA, typename VecTypeB>
   double ConvolutionIntegral(const VecTypeA& a, const VecTypeB& b)
   {
-    return Evaluate(sqrt(metric::SquaredEuclideanDistance::Evaluate(a, b) /
-        2.0)) / (Normalizer(a.n_rows) * pow(2.0, (double) a.n_rows / 2.0));
+    return Evaluate(
+               sqrt(metric::SquaredEuclideanDistance::Evaluate(a, b) / 2.0))
+           / (Normalizer(a.n_rows) * pow(2.0, (double)a.n_rows / 2.0));
   }
-
 
   //! Get the bandwidth.
   double Bandwidth() const { return bandwidth; }
@@ -149,8 +150,8 @@ class GaussianKernel
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(bandwidth);
-    ar & BOOST_SERIALIZATION_NVP(gamma);
+    ar& BOOST_SERIALIZATION_NVP(bandwidth);
+    ar& BOOST_SERIALIZATION_NVP(gamma);
   }
 
  private:

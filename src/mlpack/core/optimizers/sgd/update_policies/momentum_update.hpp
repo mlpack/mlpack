@@ -69,8 +69,8 @@ class MomentumUpdate
    *
    * @param momentum The momentum decay hyperparameter
    */
-  MomentumUpdate(const double momentum = 0.5) : momentum(momentum)
-  { /* Do nothing. */ };
+  MomentumUpdate(const double momentum = 0.5)
+    : momentum(momentum){/* Do nothing. */};
 
   /**
    * The Initialize method is called by SGD Optimizer method before the start of
@@ -96,9 +96,8 @@ class MomentumUpdate
    * @param stepSize Step size to be used for the given iteration.
    * @param gradient The gradient matrix.
    */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
+  void
+  Update(arma::mat& iterate, const double stepSize, const arma::mat& gradient)
   {
     velocity = momentum * velocity - stepSize * gradient;
     iterate += velocity;

@@ -2,7 +2,8 @@
  * @file enumerate_tree.hpp
  * @author Ivan (Jonan) Georgiev
  *
- * This file contains function that performs a simple depth-first walk on the tree
+ * This file contains function that performs a simple depth-first walk on the
+ * tree
  * calling `Enter` and `Leave` methods of a provided walker.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -20,7 +21,7 @@ namespace enumerate {
 // Actual implementation of the enumeration. The problem is the unified
 // detection if we're on the root, because Enter and Leave expect the
 // parent being passed.
-template <class TreeType, class Walker>
+template<class TreeType, class Walker>
 void EnumerateTreeImpl(TreeType* tree, Walker& walker, bool root)
 {
   if (root)
@@ -41,7 +42,6 @@ void EnumerateTreeImpl(TreeType* tree, Walker& walker, bool root)
 
 } // namespace enumerate
 
-
 /**
  * Traverses all nodes of the tree, including the inner ones. On each node
  * two methods of the `enumer` are called:
@@ -51,7 +51,7 @@ void EnumerateTreeImpl(TreeType* tree, Walker& walker, bool root)
  *
  * @param walker An instance of custom class, receiver of the enumeration.
  */
-template <class TreeType, class Walker>
+template<class TreeType, class Walker>
 inline void EnumerateTree(TreeType* tree, Walker& walker)
 {
   enumerate::EnumerateTreeImpl(tree, walker, true);
@@ -59,6 +59,5 @@ inline void EnumerateTree(TreeType* tree, Walker& walker)
 
 } // namespace tree
 } // namespace mlpack
-
 
 #endif // MLPACK_CORE_TREE_ENUMERATE_TREE_HPP

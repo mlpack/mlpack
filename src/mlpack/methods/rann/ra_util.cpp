@@ -22,10 +22,10 @@ size_t mlpack::neighbor::RAUtil::MinimumSamplesReqd(const size_t n,
 {
   size_t ub = n; // The upper bound on the binary search.
   size_t lb = k; // The lower bound on the binary search.
-  size_t  m = lb; // The minimum number of random samples.
+  size_t m = lb; // The minimum number of random samples.
 
   // The rank-approximation.
-  const size_t t = (size_t) std::ceil(tau * (double) n / 100.0);
+  const size_t t = (size_t)std::ceil(tau * (double)n / 100.0);
 
   double prob;
   Log::Assert(alpha <= 1.0);
@@ -79,9 +79,9 @@ double mlpack::neighbor::RAUtil::SuccessProbability(const size_t n,
     if (m > n - t)
       return 1.0;
 
-    double eps = (double) t / (double) n;
+    double eps = (double)t / (double)n;
 
-    return 1.0 - std::pow(1.0 - eps, (double) m);
+    return 1.0 - std::pow(1.0 - eps, (double)m);
   } // Faster implementation for topK = 1.
   else
   {
@@ -91,7 +91,7 @@ double mlpack::neighbor::RAUtil::SuccessProbability(const size_t n,
     if (m > n - t + k - 1)
       return 1.0;
 
-    double eps = (double) t / (double) n;
+    double eps = (double)t / (double)n;
     double sum = 0.0;
 
     // The probability that 'k' of the 'm' samples lie within the top 't'
@@ -117,7 +117,7 @@ double mlpack::neighbor::RAUtil::SuccessProbability(const size_t n,
       lb = 1;
       ub = k;
       topHalf = true;
-      sum = std::pow(1 - eps, (double) m);
+      sum = std::pow(1 - eps, (double)m);
     }
     else
     {
@@ -129,13 +129,13 @@ double mlpack::neighbor::RAUtil::SuccessProbability(const size_t n,
       lb = k;
       ub = m;
       topHalf = false;
-      sum = std::pow(eps, (double) m);
+      sum = std::pow(eps, (double)m);
     }
 
     for (size_t j = lb; j < ub; j++)
     {
       // Compute Choose(m, j).
-      double mCj = (double) m;
+      double mCj = (double)m;
       size_t jTrans;
 
       // If j < m - j, compute Choose(m, j).
@@ -147,12 +147,12 @@ double mlpack::neighbor::RAUtil::SuccessProbability(const size_t n,
 
       for (size_t i = 2; i <= jTrans; i++)
       {
-        mCj *= (double) (m - (i - 1));
-        mCj /= (double) i;
+        mCj *= (double)(m - (i - 1));
+        mCj /= (double)i;
       }
 
-      sum += (mCj * std::pow(eps, (double) j)
-              * std::pow(1.0 - eps, (double) (m - j)));
+      sum += (mCj * std::pow(eps, (double)j)
+              * std::pow(1.0 - eps, (double)(m - j)));
     }
 
     if (topHalf)

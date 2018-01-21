@@ -59,12 +59,12 @@ double GMM::Train(const arma::mat& observations,
 
     bestLikelihood = LogLikelihood(observations, dists, weights);
 
-    Log::Info << "GMM::Train(): Log-likelihood of trial 0 is "
-        << bestLikelihood << "." << std::endl;
+    Log::Info << "GMM::Train(): Log-likelihood of trial 0 is " << bestLikelihood
+              << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<distribution::GaussianDistribution> distsTrial(gaussians,
-        distribution::GaussianDistribution(dimensionality));
+    std::vector<distribution::GaussianDistribution> distsTrial(
+        gaussians, distribution::GaussianDistribution(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)
@@ -78,11 +78,11 @@ double GMM::Train(const arma::mat& observations,
       fitter.Estimate(observations, distsTrial, weightsTrial, useExistingModel);
 
       // Check to see if the log-likelihood of this one is better.
-      double newLikelihood = LogLikelihood(observations, distsTrial,
-          weightsTrial);
+      double newLikelihood =
+          LogLikelihood(observations, distsTrial, weightsTrial);
 
       Log::Info << "GMM::Train(): Log-likelihood of trial " << trial << " is "
-          << newLikelihood << "." << std::endl;
+                << newLikelihood << "." << std::endl;
 
       if (newLikelihood > bestLikelihood)
       {
@@ -97,7 +97,7 @@ double GMM::Train(const arma::mat& observations,
 
   // Report final log-likelihood and return it.
   Log::Info << "GMM::Train(): log-likelihood of trained GMM is "
-      << bestLikelihood << "." << std::endl;
+            << bestLikelihood << "." << std::endl;
   return bestLikelihood;
 }
 
@@ -119,8 +119,8 @@ double GMM::Train(const arma::mat& observations,
   {
     // Train the model.  The user will have been warned earlier if the GMM was
     // initialized with no parameters (0 gaussians, dimensionality of 0).
-    fitter.Estimate(observations, probabilities, dists, weights,
-        useExistingModel);
+    fitter.Estimate(
+        observations, probabilities, dists, weights, useExistingModel);
     bestLikelihood = LogLikelihood(observations, dists, weights);
   }
   else
@@ -139,17 +139,17 @@ double GMM::Train(const arma::mat& observations,
 
     // We need to keep temporary copies.  We'll do the first training into the
     // actual model position, so that if it's the best we don't need to copy it.
-    fitter.Estimate(observations, probabilities, dists, weights,
-        useExistingModel);
+    fitter.Estimate(
+        observations, probabilities, dists, weights, useExistingModel);
 
     bestLikelihood = LogLikelihood(observations, dists, weights);
 
     Log::Debug << "GMM::Train(): Log-likelihood of trial 0 is "
-        << bestLikelihood << "." << std::endl;
+               << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<distribution::GaussianDistribution> distsTrial(gaussians,
-        distribution::GaussianDistribution(dimensionality));
+    std::vector<distribution::GaussianDistribution> distsTrial(
+        gaussians, distribution::GaussianDistribution(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)
@@ -160,15 +160,18 @@ double GMM::Train(const arma::mat& observations,
         weightsTrial = weightsOrig;
       }
 
-      fitter.Estimate(observations, probabilities, distsTrial, weightsTrial,
-          useExistingModel);
+      fitter.Estimate(observations,
+                      probabilities,
+                      distsTrial,
+                      weightsTrial,
+                      useExistingModel);
 
       // Check to see if the log-likelihood of this one is better.
-      double newLikelihood = LogLikelihood(observations, distsTrial,
-          weightsTrial);
+      double newLikelihood =
+          LogLikelihood(observations, distsTrial, weightsTrial);
 
       Log::Debug << "GMM::Train(): Log-likelihood of trial " << trial << " is "
-          << newLikelihood << "." << std::endl;
+                 << newLikelihood << "." << std::endl;
 
       if (newLikelihood > bestLikelihood)
       {
@@ -183,7 +186,7 @@ double GMM::Train(const arma::mat& observations,
 
   // Report final log-likelihood and return it.
   Log::Info << "GMM::Train(): log-likelihood of trained GMM is "
-      << bestLikelihood << "." << std::endl;
+            << bestLikelihood << "." << std::endl;
   return bestLikelihood;
 }
 
@@ -193,8 +196,8 @@ double GMM::Train(const arma::mat& observations,
 template<typename Archive>
 void GMM::serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(gaussians);
-  ar & BOOST_SERIALIZATION_NVP(dimensionality);
+  ar& BOOST_SERIALIZATION_NVP(gaussians);
+  ar& BOOST_SERIALIZATION_NVP(dimensionality);
 
   // Load (or save) the gaussians.  Not going to use the default std::vector
   // serialize here because it won't call out correctly to serialize() for each
@@ -202,13 +205,12 @@ void GMM::serialize(Archive& ar, const unsigned int /* version */)
   if (Archive::is_loading::value)
     dists.resize(gaussians);
 
-  ar & BOOST_SERIALIZATION_NVP(dists);
+  ar& BOOST_SERIALIZATION_NVP(dists);
 
-  ar & BOOST_SERIALIZATION_NVP(weights);
+  ar& BOOST_SERIALIZATION_NVP(weights);
 }
 
 } // namespace gmm
 } // namespace mlpack
 
 #endif
-

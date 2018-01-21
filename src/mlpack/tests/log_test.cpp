@@ -25,19 +25,19 @@ BOOST_AUTO_TEST_SUITE(LogTest);
  */
 BOOST_AUTO_TEST_CASE(LogAssertConditionTest)
 {
-  // Only do anything for Assert() if in debugging mode.
-  #ifdef DEBUG
-      // If everything goes well we reach the boost test condition which is
-      // always true by simplicity's sake.
-      Log::Assert(true, "test");
-      BOOST_REQUIRE_EQUAL(1, 1);
+// Only do anything for Assert() if in debugging mode.
+#ifdef DEBUG
+  // If everything goes well we reach the boost test condition which is
+  // always true by simplicity's sake.
+  Log::Assert(true, "test");
+  BOOST_REQUIRE_EQUAL(1, 1);
 
-      // The test case should halt the program execution and prints a custom
-      // error message. Since the program is halted we should never reach the
-      // boost test condition which is always false by simplicity's sake.
-      // Log::Assert(false, "test");
-      // BOOST_REQUIRE_EQUAL(1, 0);
-  #endif
+// The test case should halt the program execution and prints a custom
+// error message. Since the program is halted we should never reach the
+// boost test condition which is always false by simplicity's sake.
+// Log::Assert(false, "test");
+// BOOST_REQUIRE_EQUAL(1, 0);
+#endif
 }
 
 BOOST_AUTO_TEST_SUITE_END();

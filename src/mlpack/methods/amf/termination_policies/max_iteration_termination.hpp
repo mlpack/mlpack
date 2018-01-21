@@ -30,12 +30,12 @@ class MaxIterationTermination
    *
    * @param maxIterations Maximum number of allowed iterations.
    */
-  MaxIterationTermination(const size_t maxIterations) :
-      maxIterations(maxIterations),
-      iteration(0)
+  MaxIterationTermination(const size_t maxIterations)
+    : maxIterations(maxIterations), iteration(0)
   {
     if (maxIterations == 0)
-      Log::Warn << "MaxIterationTermination::MaxIterationTermination(): given "
+      Log::Warn
+          << "MaxIterationTermination::MaxIterationTermination(): given "
           << "number of iterations is 0, so algorithm will never terminate!"
           << std::endl;
   }
@@ -44,7 +44,9 @@ class MaxIterationTermination
    * Initialize for the given matrix V (there is nothing to do).
    */
   template<typename MatType>
-  void Initialize(const MatType& /* V */) { }
+  void Initialize(const MatType& /* V */)
+  {
+  }
 
   /**
    * Check if convergence has occurred.

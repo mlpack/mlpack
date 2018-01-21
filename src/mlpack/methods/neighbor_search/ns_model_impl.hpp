@@ -25,7 +25,7 @@ namespace neighbor {
 
 //! Monochromatic neighbor search on the given NSType instance.
 template<typename NSType>
-void MonoSearchVisitor::operator()(NSType *ns) const
+void MonoSearchVisitor::operator()(NSType* ns) const
 {
   if (ns)
     return ns->Search(k, neighbors, distances);
@@ -40,15 +40,11 @@ BiSearchVisitor<SortPolicy>::BiSearchVisitor(const arma::mat& querySet,
                                              arma::mat& distances,
                                              const size_t leafSize,
                                              const double tau,
-                                             const double rho) :
-    querySet(querySet),
-    k(k),
-    neighbors(neighbors),
-    distances(distances),
-    leafSize(leafSize),
-    tau(tau),
-    rho(rho)
-{}
+                                             const double rho)
+  : querySet(querySet), k(k), neighbors(neighbors), distances(distances),
+    leafSize(leafSize), tau(tau), rho(rho)
+{
+}
 
 //! Default Bichromatic neighbor search on the given NSType instance.
 template<typename SortPolicy>
@@ -90,8 +86,8 @@ void BiSearchVisitor<SortPolicy>::operator()(SpillKNN* ns) const
     {
       // For Dual Tree Search on SpillTrees, the queryTree must be built with
       // non overlapping (tau = 0).
-      typename SpillKNN::Tree queryTree(std::move(querySet), 0 /* tau*/,
-          leafSize, rho);
+      typename SpillKNN::Tree queryTree(
+          std::move(querySet), 0 /* tau*/, leafSize, rho);
       ns->Search(queryTree, k, neighbors, distances);
     }
     else
@@ -118,8 +114,8 @@ void BiSearchVisitor<SortPolicy>::SearchLeaf(NSType* ns) const
   if (ns->SearchMode() == DUAL_TREE_MODE)
   {
     std::vector<size_t> oldFromNewQueries;
-    typename NSType::Tree queryTree(std::move(querySet), oldFromNewQueries,
-        leafSize);
+    typename NSType::Tree queryTree(
+        std::move(querySet), oldFromNewQueries, leafSize);
 
     arma::Mat<size_t> neighborsOut;
     arma::mat distancesOut;
@@ -143,12 +139,11 @@ template<typename SortPolicy>
 TrainVisitor<SortPolicy>::TrainVisitor(arma::mat&& referenceSet,
                                        const size_t leafSize,
                                        const double tau,
-                                       const double rho) :
-    referenceSet(std::move(referenceSet)),
-    leafSize(leafSize),
-    tau(tau),
+                                       const double rho)
+  : referenceSet(std::move(referenceSet)), leafSize(leafSize), tau(tau),
     rho(rho)
-{}
+{
+}
 
 //! Default Train on the given NSType instance.
 template<typename SortPolicy>
@@ -217,8 +212,8 @@ void TrainVisitor<SortPolicy>::TrainLeaf(NSType* ns) const
   else
   {
     std::vector<size_t> oldFromNewReferences;
-    typename NSType::Tree referenceTree(std::move(referenceSet),
-        oldFromNewReferences, leafSize);
+    typename NSType::Tree referenceTree(
+        std::move(referenceSet), oldFromNewReferences, leafSize);
     ns->Train(std::move(referenceTree));
     // Set the mappings.
     ns->oldFromNewReferences = std::move(oldFromNewReferences);
@@ -265,37 +260,25 @@ void DeleteVisitor::operator()(NSType* ns) const
  * basis should be used.
  */
 template<typename SortPolicy>
-NSModel<SortPolicy>::NSModel(TreeTypes treeType, bool randomBasis) :
-    treeType(treeType),
-    leafSize(20),
-    tau(0),
-    rho(0.7),
-    randomBasis(randomBasis)
+NSModel<SortPolicy>::NSModel(TreeTypes treeType, bool randomBasis)
+  : treeType(treeType), leafSize(20), tau(0), rho(0.7), randomBasis(randomBasis)
 {
   // Nothing to do.
 }
 
 template<typename SortPolicy>
-NSModel<SortPolicy>::NSModel(const NSModel& other) :
-    treeType(other.treeType),
-    leafSize(other.leafSize),
-    tau(other.tau),
-    rho(other.rho),
-    randomBasis(other.randomBasis),
-    q(other.q),
+NSModel<SortPolicy>::NSModel(const NSModel& other)
+  : treeType(other.treeType), leafSize(other.leafSize), tau(other.tau),
+    rho(other.rho), randomBasis(other.randomBasis), q(other.q),
     nSearch(other.nSearch)
 {
   // Nothing to do.
 }
 
 template<typename SortPolicy>
-NSModel<SortPolicy>::NSModel(NSModel&& other) :
-    treeType(other.treeType),
-    leafSize(other.leafSize),
-    tau(other.tau),
-    rho(other.rho),
-    randomBasis(other.randomBasis),
-    q(std::move(other.q)),
+NSModel<SortPolicy>::NSModel(NSModel&& other)
+  : treeType(other.treeType), leafSize(other.leafSize), tau(other.tau),
+    rho(other.rho), randomBasis(other.randomBasis), q(std::move(other.q)),
     nSearch(other.nSearch)
 {
   // Reset parameters of the other model.
@@ -360,23 +343,23 @@ template<typename SortPolicy>
 template<typename Archive>
 void NSModel<SortPolicy>::serialize(Archive& ar, const unsigned int version)
 {
-  ar & BOOST_SERIALIZATION_NVP(treeType);
+  ar& BOOST_SERIALIZATION_NVP(treeType);
   // Backward compatibility: older versions of NSModel didn't include these
   // parameters.
   if (version > 0)
   {
-    ar & BOOST_SERIALIZATION_NVP(leafSize);
-    ar & BOOST_SERIALIZATION_NVP(tau);
-    ar & BOOST_SERIALIZATION_NVP(rho);
+    ar& BOOST_SERIALIZATION_NVP(leafSize);
+    ar& BOOST_SERIALIZATION_NVP(tau);
+    ar& BOOST_SERIALIZATION_NVP(rho);
   }
-  ar & BOOST_SERIALIZATION_NVP(randomBasis);
-  ar & BOOST_SERIALIZATION_NVP(q);
+  ar& BOOST_SERIALIZATION_NVP(randomBasis);
+  ar& BOOST_SERIALIZATION_NVP(q);
 
   // This should never happen, but just in case, be clean with memory.
   if (Archive::is_loading::value)
     boost::apply_visitor(DeleteVisitor(), nSearch);
 
-  ar & BOOST_SERIALIZATION_NVP(nSearch);
+  ar& BOOST_SERIALIZATION_NVP(nSearch);
 }
 
 //! Expose the dataset.
@@ -429,8 +412,10 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
       // [Q, R] = qr(randn(d, d));
       // Q = Q * diag(sign(diag(R)));
       arma::mat r;
-      if (arma::qr(q, r, arma::randn<arma::mat>(referenceSet.n_rows,
-              referenceSet.n_rows)))
+      if (arma::qr(
+              q,
+              r,
+              arma::randn<arma::mat>(referenceSet.n_rows, referenceSet.n_rows)))
       {
         arma::vec rDiag(r.n_rows);
         for (size_t i = 0; i < rDiag.n_elem; ++i)
@@ -471,8 +456,8 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
       nSearch = new NSType<SortPolicy, tree::KDTree>(searchMode, epsilon);
       break;
     case COVER_TREE:
-      nSearch = new NSType<SortPolicy, tree::StandardCoverTree>(searchMode,
-          epsilon);
+      nSearch =
+          new NSType<SortPolicy, tree::StandardCoverTree>(searchMode, epsilon);
       break;
     case R_TREE:
       nSearch = new NSType<SortPolicy, tree::RTree>(searchMode, epsilon);
@@ -493,8 +478,8 @@ void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
       nSearch = new NSType<SortPolicy, tree::RPlusTree>(searchMode, epsilon);
       break;
     case R_PLUS_PLUS_TREE:
-      nSearch = new NSType<SortPolicy, tree::RPlusPlusTree>(searchMode,
-          epsilon);
+      nSearch =
+          new NSType<SortPolicy, tree::RPlusPlusTree>(searchMode, epsilon);
       break;
     case VP_TREE:
       nSearch = new NSType<SortPolicy, tree::VPTree>(searchMode, epsilon);
@@ -552,12 +537,12 @@ void NSModel<SortPolicy>::Search(arma::mat&& querySet,
       break;
     case GREEDY_SINGLE_TREE_MODE:
       Log::Info << "greedy single-tree " << TreeName() << " search..."
-          << std::endl;
+                << std::endl;
       break;
   }
 
-  BiSearchVisitor<SortPolicy> search(querySet, k, neighbors, distances,
-      leafSize, tau, rho);
+  BiSearchVisitor<SortPolicy> search(
+      querySet, k, neighbors, distances, leafSize, tau, rho);
   boost::apply_visitor(search, nSearch);
 }
 
@@ -582,13 +567,13 @@ void NSModel<SortPolicy>::Search(const size_t k,
       break;
     case GREEDY_SINGLE_TREE_MODE:
       Log::Info << "greedy single-tree " << TreeName() << " search..."
-          << std::endl;
+                << std::endl;
       break;
   }
 
   if (Epsilon() != 0 && SearchMode() != NAIVE_MODE)
     Log::Info << "Maximum of " << Epsilon() * 100 << "% relative error."
-        << std::endl;
+              << std::endl;
 
   MonoSearchVisitor search(k, neighbors, distances);
   boost::apply_visitor(search, nSearch);

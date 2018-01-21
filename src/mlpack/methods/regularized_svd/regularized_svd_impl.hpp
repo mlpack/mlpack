@@ -19,10 +19,8 @@ namespace svd {
 template<typename OptimizerType>
 RegularizedSVD<OptimizerType>::RegularizedSVD(const size_t iterations,
                                               const double alpha,
-                                              const double lambda) :
-    iterations(iterations),
-    alpha(alpha),
-    lambda(lambda)
+                                              const double lambda)
+  : iterations(iterations), alpha(alpha), lambda(lambda)
 {
   // Nothing to do.
 }

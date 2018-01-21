@@ -47,17 +47,17 @@ typedef NeighborSearch<FurthestNeighborSort, metric::EuclideanDistance> KFN;
 template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType = tree::SPTree>
-using DefeatistKNN = NeighborSearch<
-    NearestNeighborSort,
-    metric::EuclideanDistance,
-    arma::mat,
-    TreeType,
-    TreeType<metric::EuclideanDistance,
-        NeighborSearchStat<NearestNeighborSort>,
-        arma::mat>::template DefeatistDualTreeTraverser,
-    TreeType<metric::EuclideanDistance,
-        NeighborSearchStat<NearestNeighborSort>,
-        arma::mat>::template DefeatistSingleTreeTraverser>;
+using DefeatistKNN =
+    NeighborSearch<NearestNeighborSort,
+                   metric::EuclideanDistance,
+                   arma::mat,
+                   TreeType,
+                   TreeType<metric::EuclideanDistance,
+                            NeighborSearchStat<NearestNeighborSort>,
+                            arma::mat>::template DefeatistDualTreeTraverser,
+                   TreeType<metric::EuclideanDistance,
+                            NeighborSearchStat<NearestNeighborSort>,
+                            arma::mat>::template DefeatistSingleTreeTraverser>;
 
 /**
  * The SpillKNN class is the k-nearest-neighbors method considering defeatist

@@ -23,12 +23,12 @@ template<typename MetricType>
 SoftmaxErrorFunction<MetricType>::SoftmaxErrorFunction(
     const arma::mat& dataset,
     const arma::Row<size_t>& labels,
-    MetricType metric) :
-    dataset(math::MakeAlias(const_cast<arma::mat&>(dataset), false)),
+    MetricType metric)
+  : dataset(math::MakeAlias(const_cast<arma::mat&>(dataset), false)),
     labels(math::MakeAlias(const_cast<arma::Row<size_t>&>(labels), false)),
-    metric(metric),
-    precalculated(false)
-{ /* nothing to do */ }
+    metric(metric), precalculated(false)
+{ /* nothing to do */
+}
 
 //! Shuffle the dataset.
 template<typename MetricType>
@@ -154,8 +154,8 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
 }
 
 //! The separable implementation for a given batch size and an initial index.
-template <typename MetricType>
-template <typename GradType>
+template<typename MetricType>
+template<typename GradType>
 void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
                                                 const size_t begin,
                                                 GradType& gradient,
@@ -243,8 +243,8 @@ void SoftmaxErrorFunction<MetricType>::Precalculate(
   lastCoordinates.set_size(coordinates.n_rows, coordinates.n_cols);
 
   // Make sure the calculation is necessary.
-  if ((accu(coordinates == lastCoordinates) == coordinates.n_elem) &&
-      precalculated)
+  if ((accu(coordinates == lastCoordinates) == coordinates.n_elem)
+      && precalculated)
     return; // No need to calculate; we already have this stuff saved.
 
   // Coordinates are different; save the new ones, and stretch the dataset.

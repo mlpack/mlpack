@@ -79,8 +79,11 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
   arma::icolvec sampledTerminal;
 
   //! So far there should be only one record in the memory
-  replay.Sample(sampledState, sampledAction, sampledReward, sampledNextState,
-      sampledTerminal);
+  replay.Sample(sampledState,
+                sampledAction,
+                sampledReward,
+                sampledNextState,
+                sampledTerminal);
 
   CheckMatrices(state.Encode(), sampledState);
   BOOST_REQUIRE_EQUAL(action, arma::as_scalar(sampledAction));
@@ -98,8 +101,11 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
   //! Sample several times, the original record shouldn't appear
   for (size_t i = 0; i < 30; ++i)
   {
-    replay.Sample(sampledState, sampledAction, sampledReward, sampledNextState,
-        sampledTerminal);
+    replay.Sample(sampledState,
+                  sampledAction,
+                  sampledReward,
+                  sampledNextState,
+                  sampledTerminal);
 
     CheckMatrices(state.Encode(), sampledNextState);
     CheckMatrices(nextState.Encode(), sampledState);

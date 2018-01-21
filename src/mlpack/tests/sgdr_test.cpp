@@ -44,10 +44,10 @@ BOOST_AUTO_TEST_CASE(CyclicalResetTest)
       double epochStepSize = stepSize;
 
       CyclicalDecay cyclicalDecay(restart, double(mult), stepSize);
-      cyclicalDecay.EpochBatches() = (double) 1000 / 10;
+      cyclicalDecay.EpochBatches() = (double)1000 / 10;
 
       // Create all restart epochs.
-      arma::Col<size_t> nextRestart(1000 / 10 /  mult);
+      arma::Col<size_t> nextRestart(1000 / 10 / mult);
       nextRestart(0) = restart;
       for (size_t j = 1; j < nextRestart.n_elem; ++j)
         nextRestart(j) = nextRestart(j - 1) * mult;
@@ -87,8 +87,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   }
 
   // Shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
-      data.n_cols - 1, data.n_cols));
+  arma::uvec indices = arma::shuffle(
+      arma::linspace<arma::uvec>(0, data.n_cols - 1, data.n_cols));
   arma::mat shuffledData(3, 1000);
   arma::Row<size_t> shuffledResponses(1000);
   for (size_t i = 0; i < data.n_cols; ++i)

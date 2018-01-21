@@ -50,10 +50,8 @@ class SPALeRAStepsize
    */
   SPALeRAStepsize(const double alpha = 0.001,
                   const double epsilon = 1e-6,
-                  const double adaptRate = 3.10e-8) :
-      alpha(alpha),
-      epsilon(epsilon),
-      adaptRate(adaptRate)
+                  const double adaptRate = 3.10e-8)
+    : alpha(alpha), epsilon(epsilon), adaptRate(adaptRate)
   {
     /* Nothing to do here. */
   }
@@ -97,7 +95,7 @@ class SPALeRAStepsize
   {
     // The ratio of mini-batch size to training set size; needed for the
     // Page-Hinkley relaxed objective computations.
-    const double mbRatio = batchSize / (double) numFunctions;
+    const double mbRatio = batchSize / (double)numFunctions;
 
     // Page-Hinkley iteration, check if we have to reset the parameter and
     // adjust the step size.
@@ -143,11 +141,13 @@ class SPALeRAStepsize
     }
     else
     {
-      const double paramMean = (alpha / (2 - alpha) *
-          (1 - std::pow(1 - alpha, 2 * (eveCounter + 1)))) / iterate.n_elem;
+      const double paramMean =
+          (alpha / (2 - alpha)
+           * (1 - std::pow(1 - alpha, 2 * (eveCounter + 1))))
+          / iterate.n_elem;
 
-      const double paramStd = (alpha / std::sqrt(iterate.n_elem)) /
-          std::sqrt(iterate.n_elem);
+      const double paramStd =
+          (alpha / std::sqrt(iterate.n_elem)) / std::sqrt(iterate.n_elem);
 
       const double normGradient = std::sqrt(arma::accu(arma::pow(gradient, 2)));
 
@@ -155,8 +155,8 @@ class SPALeRAStepsize
       if (normGradient > epsilon)
         relaxedSums += gradient * (alpha / normGradient);
 
-      learningRates %= arma::exp((arma::pow(relaxedSums, 2) - paramMean) *
-          (adaptRate / paramStd));
+      learningRates %= arma::exp((arma::pow(relaxedSums, 2) - paramMean)
+                                 * (adaptRate / paramStd));
 
       previousIterate = iterate;
 

@@ -19,47 +19,35 @@
 namespace mlpack {
 namespace rl {
 
-template <
-  typename WorkerType,
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename PolicyType
->
-AsyncLearning<
-  WorkerType,
-  EnvironmentType,
-  NetworkType,
-  UpdaterType,
-  PolicyType
->::AsyncLearning(
-    TrainingConfig config,
-    NetworkType network,
-    PolicyType policy,
-    UpdaterType updater,
-    EnvironmentType environment):
-    config(std::move(config)),
-    learningNetwork(std::move(network)),
-    policy(std::move(policy)),
-    updater(std::move(updater)),
-    environment(std::move(environment))
-{ /* Nothing to do here. */ };
+template<typename WorkerType,
+         typename EnvironmentType,
+         typename NetworkType,
+         typename UpdaterType,
+         typename PolicyType>
+AsyncLearning<WorkerType,
+              EnvironmentType,
+              NetworkType,
+              UpdaterType,
+              PolicyType>::AsyncLearning(TrainingConfig config,
+                                         NetworkType network,
+                                         PolicyType policy,
+                                         UpdaterType updater,
+                                         EnvironmentType environment)
+  : config(std::move(config)), learningNetwork(std::move(network)),
+    policy(std::move(policy)), updater(std::move(updater)),
+    environment(std::move(environment)){/* Nothing to do here. */};
 
-template <
-  typename WorkerType,
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename PolicyType
->
-template <typename Measure>
-void AsyncLearning<
-  WorkerType,
-  EnvironmentType,
-  NetworkType,
-  UpdaterType,
-  PolicyType
->::Train(Measure& measure)
+template<typename WorkerType,
+         typename EnvironmentType,
+         typename NetworkType,
+         typename UpdaterType,
+         typename PolicyType>
+template<typename Measure>
+void AsyncLearning<WorkerType,
+                   EnvironmentType,
+                   NetworkType,
+                   UpdaterType,
+                   PolicyType>::Train(Measure& measure)
 {
   /**
    * OpenMP doesn't support shared class member variables.
@@ -91,26 +79,26 @@ void AsyncLearning<
    * compiler. We can switch to OpenMP task once MSVC supports OpenMP 3.0.
    */
   size_t numThreads = 0;
-  #pragma omp parallel reduction(+:numThreads)
+#pragma omp parallel reduction(+ : numThreads)
   numThreads++;
   Log::Debug << numThreads << " threads will be used in total." << std::endl;
 
-  #pragma omp parallel for shared(stop, workers, tasks, learningNetwork, \
-      targetNetwork, totalSteps, policy)
+#pragma omp parallel for shared(                                               \
+    stop, workers, tasks, learningNetwork, targetNetwork, totalSteps, policy)
   for (omp_size_t i = 0; i < numThreads; ++i)
   {
-    #pragma omp critical
+#pragma omp critical
     {
-      #ifdef HAS_OPENMP
-        Log::Debug << "Thread " << omp_get_thread_num() <<
-            " started." << std::endl;
-      #endif
+#ifdef HAS_OPENMP
+      Log::Debug << "Thread " << omp_get_thread_num() << " started."
+                 << std::endl;
+#endif
     }
     size_t task = std::numeric_limits<size_t>::max();
     while (!stop)
     {
-      // Assign task to current thread from queue.
-      #pragma omp critical
+// Assign task to current thread from queue.
+#pragma omp critical
       {
         if (task != std::numeric_limits<size_t>::max())
           tasks.push(task);
@@ -129,8 +117,9 @@ void AsyncLearning<
       // Get corresponding worker.
       WorkerType& worker = workers[task];
       double episodeReturn;
-      if (worker.Step(learningNetwork, targetNetwork, totalSteps,
-          policy, episodeReturn) && !task)
+      if (worker.Step(
+              learningNetwork, targetNetwork, totalSteps, policy, episodeReturn)
+          && !task)
       {
         stop = measure(episodeReturn);
       }
@@ -145,4 +134,3 @@ void AsyncLearning<
 } // namespace mlpack
 
 #endif
-

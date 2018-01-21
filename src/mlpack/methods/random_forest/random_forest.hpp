@@ -23,14 +23,18 @@ class RandomForest
 {
  public:
   //! Allow access to the underlying decision tree type.
-  typedef DecisionTree<FitnessFunction, NumericSplitType, CategoricalSplitType,
-      DimensionSelectionType, ElemType> DecisionTreeType;
+  typedef DecisionTree<FitnessFunction,
+                       NumericSplitType,
+                       CategoricalSplitType,
+                       DimensionSelectionType,
+                       ElemType>
+      DecisionTreeType;
 
   /**
    * Construct the random forest without any training or specifying the number
    * of trees.  Predict() will throw an exception until Train() is called.
    */
-  RandomForest() { }
+  RandomForest() {}
 
   /**
    * Create a random forest, training on the given labeled training data with
@@ -227,8 +231,7 @@ class RandomForest
    * @param predictions Output predictions for each point in the dataset.
    */
   template<typename MatType>
-  void Classify(const MatType& data,
-                arma::Row<size_t>& predictions) const;
+  void Classify(const MatType& data, arma::Row<size_t>& predictions) const;
 
   /**
    * Predict the classes of each point in the given dataset, also returning the

@@ -24,7 +24,8 @@ using namespace mlpack::distribution;
 BOOST_AUTO_TEST_SUITE(PerceptronTest);
 
 /**
- * This test tests whether the SimpleWeightUpdate updates weights and biases correctly,
+ * This test tests whether the SimpleWeightUpdate updates weights and biases
+ * correctly,
  * without specifying the instance weight.
  */
 BOOST_AUTO_TEST_CASE(SimpleWeightUpdateWeights)
@@ -45,8 +46,8 @@ BOOST_AUTO_TEST_CASE(SimpleWeightUpdateWeights)
   size_t incorrectClass = 0;
   size_t correctClass = 2;
 
-  wip.UpdateWeights(trainingPoint, weights, biases, incorrectClass,
-                    correctClass);
+  wip.UpdateWeights(
+      trainingPoint, weights, biases, incorrectClass, correctClass);
 
   BOOST_CHECK_EQUAL(weights(0, 0), -1);
   BOOST_CHECK_EQUAL(weights(1, 0), 0);
@@ -65,7 +66,8 @@ BOOST_AUTO_TEST_CASE(SimpleWeightUpdateWeights)
 }
 
 /**
- * This test tests whether the SimpleWeightUpdate updates weights and biases correctly,
+ * This test tests whether the SimpleWeightUpdate updates weights and biases
+ * correctly,
  * and specifies the instance weight.
  */
 BOOST_AUTO_TEST_CASE(SimpleWeightUpdateInstanceWeight)
@@ -88,8 +90,12 @@ BOOST_AUTO_TEST_CASE(SimpleWeightUpdateInstanceWeight)
   size_t correctClass = 2;
   double instanceWeight = 3.0;
 
-  wip.UpdateWeights(trainingPoint, weights, biases, incorrectClass,
-                    correctClass, instanceWeight);
+  wip.UpdateWeights(trainingPoint,
+                    weights,
+                    biases,
+                    incorrectClass,
+                    correctClass,
+                    instanceWeight);
 
   BOOST_CHECK_EQUAL(weights(0, 0), -3);
   BOOST_CHECK_EQUAL(weights(1, 0), -4);
@@ -113,16 +119,14 @@ BOOST_AUTO_TEST_CASE(SimpleWeightUpdateInstanceWeight)
 BOOST_AUTO_TEST_CASE(And)
 {
   mat trainData;
-  trainData << 0 << 1 << 1 << 0 << endr
-            << 1 << 0 << 1 << 0 << endr;
+  trainData << 0 << 1 << 1 << 0 << endr << 1 << 0 << 1 << 0 << endr;
   Mat<size_t> labels;
   labels << 0 << 0 << 1 << 0;
 
   Perceptron<> p(trainData, labels.row(0), 2, 1000);
 
   mat testData;
-  testData << 0 << 1 << 1 << 0 << endr
-           << 1 << 0 << 1 << 0 << endr;
+  testData << 0 << 1 << 1 << 0 << endr << 1 << 0 << 1 << 0 << endr;
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
@@ -138,8 +142,7 @@ BOOST_AUTO_TEST_CASE(And)
 BOOST_AUTO_TEST_CASE(Or)
 {
   mat trainData;
-  trainData << 0 << 1 << 1 << 0 << endr
-            << 1 << 0 << 1 << 0 << endr;
+  trainData << 0 << 1 << 1 << 0 << endr << 1 << 0 << 1 << 0 << endr;
 
   Mat<size_t> labels;
   labels << 1 << 1 << 1 << 0;
@@ -147,8 +150,7 @@ BOOST_AUTO_TEST_CASE(Or)
   Perceptron<> p(trainData, labels.row(0), 2, 1000);
 
   mat testData;
-  testData << 0 << 1 << 1 << 0 << endr
-           << 1 << 0 << 1 << 0 << endr;
+  testData << 0 << 1 << 1 << 0 << endr << 1 << 0 << 1 << 0 << endr;
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
@@ -165,8 +167,8 @@ BOOST_AUTO_TEST_CASE(Or)
 BOOST_AUTO_TEST_CASE(Random3)
 {
   mat trainData;
-  trainData << 0 << 1 << 1 << 4 << 5 << 4 << 1 << 2 << 1 << endr
-            << 1 << 0 << 1 << 1 << 1 << 2 << 4 << 5 << 4 << endr;
+  trainData << 0 << 1 << 1 << 4 << 5 << 4 << 1 << 2 << 1 << endr << 1 << 0 << 1
+            << 1 << 1 << 2 << 4 << 5 << 4 << endr;
 
   Mat<size_t> labels;
   labels << 0 << 0 << 0 << 1 << 1 << 1 << 2 << 2 << 2;
@@ -174,8 +176,7 @@ BOOST_AUTO_TEST_CASE(Random3)
   Perceptron<> p(trainData, labels.row(0), 3, 1000);
 
   mat testData;
-  testData << 0 << 1 << 1 << endr
-           << 1 << 0 << 1 << endr;
+  testData << 0 << 1 << 1 << endr << 1 << 0 << 1 << endr;
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
@@ -190,8 +191,7 @@ BOOST_AUTO_TEST_CASE(Random3)
 BOOST_AUTO_TEST_CASE(TwoPoints)
 {
   mat trainData;
-  trainData << 0 << 1 << endr
-            << 1 << 0 << endr;
+  trainData << 0 << 1 << endr << 1 << 0 << endr;
 
   Mat<size_t> labels;
   labels << 0 << 1;
@@ -199,8 +199,7 @@ BOOST_AUTO_TEST_CASE(TwoPoints)
   Perceptron<> p(trainData, labels.row(0), 2, 1000);
 
   mat testData;
-  testData << 0 << 1 << endr
-           << 1 << 0 << endr;
+  testData << 0 << 1 << endr << 1 << 0 << endr;
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
@@ -215,20 +214,18 @@ BOOST_AUTO_TEST_CASE(TwoPoints)
 BOOST_AUTO_TEST_CASE(NonLinearlySeparableDataset)
 {
   mat trainData;
-  trainData << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8
-            << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << endr
-            << 1 << 1 << 1 << 1 << 1 << 1 << 1 << 1
-            << 2 << 2 << 2 << 2 << 2 << 2 << 2 << 2 << endr;
+  trainData << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 1 << 2 << 3 << 4 << 5
+            << 6 << 7 << 8 << endr << 1 << 1 << 1 << 1 << 1 << 1 << 1 << 1 << 2
+            << 2 << 2 << 2 << 2 << 2 << 2 << 2 << endr;
 
   Mat<size_t> labels;
-  labels << 0 << 0 << 0 << 1 << 0 << 1 << 1 << 1
-         << 0 << 0 << 0 << 1 << 0 << 1 << 1 << 1;
+  labels << 0 << 0 << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 0 << 0 << 1 << 0 << 1
+         << 1 << 1;
 
   Perceptron<> p(trainData, labels.row(0), 2, 1000);
 
   mat testData;
-  testData << 3 << 4   << 5   << 6   << endr
-           << 3 << 2.3 << 1.7 << 1.5 << endr;
+  testData << 3 << 4 << 5 << 6 << endr << 3 << 2.3 << 1.7 << 1.5 << endr;
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
@@ -241,14 +238,13 @@ BOOST_AUTO_TEST_CASE(NonLinearlySeparableDataset)
 BOOST_AUTO_TEST_CASE(SecondaryConstructor)
 {
   mat trainData;
-  trainData << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8
-            << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << endr
-            << 1 << 1 << 1 << 1 << 1 << 1 << 1 << 1
-            << 2 << 2 << 2 << 2 << 2 << 2 << 2 << 2 << endr;
+  trainData << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 1 << 2 << 3 << 4 << 5
+            << 6 << 7 << 8 << endr << 1 << 1 << 1 << 1 << 1 << 1 << 1 << 1 << 2
+            << 2 << 2 << 2 << 2 << 2 << 2 << 2 << endr;
 
   Mat<size_t> labels;
-  labels << 0 << 0 << 0 << 1 << 0 << 1 << 1 << 1
-         << 0 << 0 << 0 << 1 << 0 << 1 << 1 << 1;
+  labels << 0 << 0 << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 0 << 0 << 1 << 0 << 1
+         << 1 << 1;
 
   Perceptron<> p1(trainData, labels.row(0), 2, 1000);
 

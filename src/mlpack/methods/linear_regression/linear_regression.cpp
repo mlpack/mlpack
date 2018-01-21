@@ -20,24 +20,25 @@ LinearRegression::LinearRegression(const arma::mat& predictors,
                                    const arma::vec& responses,
                                    const double lambda,
                                    const bool intercept,
-                                   const arma::vec& weights) :
-    LinearRegression(predictors, responses.t(), weights.t(), lambda, intercept)
-{}
+                                   const arma::vec& weights)
+  : LinearRegression(predictors, responses.t(), weights.t(), lambda, intercept)
+{
+}
 
 LinearRegression::LinearRegression(const arma::mat& predictors,
                                    const arma::rowvec& responses,
                                    const double lambda,
-                                   const bool intercept) :
-    LinearRegression(predictors, responses, arma::rowvec(), lambda, intercept)
-{}
+                                   const bool intercept)
+  : LinearRegression(predictors, responses, arma::rowvec(), lambda, intercept)
+{
+}
 
 LinearRegression::LinearRegression(const arma::mat& predictors,
                                    const arma::rowvec& responses,
                                    const arma::rowvec& weights,
                                    const double lambda,
-                                   const bool intercept) :
-    lambda(lambda),
-    intercept(intercept)
+                                   const bool intercept)
+  : lambda(lambda), intercept(intercept)
 {
   Train(predictors, responses, weights, intercept);
 }
@@ -98,9 +99,12 @@ void LinearRegression::Train(const arma::mat& predictors,
     // regression).  See http://math.stackexchange.com/questions/299481/ for
     // more information.
     p.insert_cols(nCols, predictors.n_rows);
-    p.submat(p.n_rows - predictors.n_rows, nCols, p.n_rows - 1, nCols +
-    predictors.n_rows - 1) = sqrt(lambda) *
-        arma::eye<arma::mat>(predictors.n_rows, predictors.n_rows);
+    p.submat(p.n_rows - predictors.n_rows,
+             nCols,
+             p.n_rows - 1,
+             nCols + predictors.n_rows - 1) =
+        sqrt(lambda)
+        * arma::eye<arma::mat>(predictors.n_rows, predictors.n_rows);
   }
 
   // We compute the QR decomposition of the predictors.
@@ -122,8 +126,8 @@ void LinearRegression::Train(const arma::mat& predictors,
   }
 }
 
-void LinearRegression::Predict(const arma::mat& points, arma::vec& predictions)
-    const
+void LinearRegression::Predict(const arma::mat& points,
+                               arma::vec& predictions) const
 {
   arma::rowvec rowPredictions;
   Predict(points, rowPredictions);
@@ -131,7 +135,7 @@ void LinearRegression::Predict(const arma::mat& points, arma::vec& predictions)
 }
 
 void LinearRegression::Predict(const arma::mat& points,
-    arma::rowvec& predictions) const
+                               arma::rowvec& predictions) const
 {
   if (intercept)
   {
@@ -140,8 +144,8 @@ void LinearRegression::Predict(const arma::mat& points,
     Log::Assert(points.n_rows == parameters.n_rows - 1);
     // Get the predictions, but this ignores the intercept value
     // (parameters[0]).
-    predictions = arma::trans(parameters.subvec(1, parameters.n_elem - 1))
-        * points;
+    predictions =
+        arma::trans(parameters.subvec(1, parameters.n_elem - 1)) * points;
     // Now add the intercept.
     predictions += parameters(0);
   }
@@ -178,10 +182,13 @@ double LinearRegression::ComputeError(const arma::mat& predictors,
     if (nRows != parameters.n_rows - 1)
     {
       Log::Fatal << "The test data must have the same number of columns as the "
-          "training file." << std::endl;
+                    "training file."
+                 << std::endl;
     }
-    temp = responses - (parameters(0) +
-        arma::trans(parameters.subvec(1, parameters.n_elem - 1)) * predictors);
+    temp =
+        responses - (parameters(0)
+                     + arma::trans(parameters.subvec(1, parameters.n_elem - 1))
+                           * predictors);
   }
   else
   {
@@ -189,7 +196,8 @@ double LinearRegression::ComputeError(const arma::mat& predictors,
     if (nRows != parameters.n_rows)
     {
       Log::Fatal << "The test data must have the same number of columns as the "
-          "training file." << std::endl;
+                    "training file."
+                 << std::endl;
     }
     temp = responses - arma::trans(parameters) * predictors;
   }

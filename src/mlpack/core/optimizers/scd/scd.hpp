@@ -58,7 +58,7 @@ namespace optimization {
  *  @tparam DescentPolicy Descent policy to decide the order in which the
  *      coordinate for descent is selected.
  */
-template <typename DescentPolicyType = RandomDescent>
+template<typename DescentPolicyType = RandomDescent>
 class SCD
 {
  public:
@@ -95,7 +95,7 @@ class SCD
    * @param iterate Starting point (will be modified).
    * @return Objective value at the final point.
    */
-  template <typename ResolvableFunctionType>
+  template<typename ResolvableFunctionType>
   double Optimize(ResolvableFunctionType& function, arma::mat& iterate);
 
   //! Get the step size.

@@ -28,44 +28,38 @@ namespace neighbor {
 template<typename MatType>
 DrusillaSelect<MatType>::DrusillaSelect(const MatType& referenceSet,
                                         const size_t l,
-                                        const size_t m) :
-    candidateSet(referenceSet.n_cols, l * m),
-    candidateIndices(l * m),
-    l(l),
+                                        const size_t m)
+  : candidateSet(referenceSet.n_cols, l * m), candidateIndices(l * m), l(l),
     m(m)
 {
   if (l == 0)
     throw std::invalid_argument("DrusillaSelect::DrusillaSelect(): invalid "
-        "value of l; must be greater than 0!");
+                                "value of l; must be greater than 0!");
   else if (m == 0)
     throw std::invalid_argument("DrusillaSelect::DrusillaSelect(): invalid "
-        "value of m; must be greater than 0!");
+                                "value of m; must be greater than 0!");
 
   Train(referenceSet, l, m);
 }
 
 // Constructor with no training.
 template<typename MatType>
-DrusillaSelect<MatType>::DrusillaSelect(const size_t l, const size_t m) :
-    candidateSet(0, l * m),
-    candidateIndices(l * m),
-    l(l),
-    m(m)
+DrusillaSelect<MatType>::DrusillaSelect(const size_t l, const size_t m)
+  : candidateSet(0, l * m), candidateIndices(l * m), l(l), m(m)
 {
   if (l == 0)
     throw std::invalid_argument("DrusillaSelect::DrusillaSelect(): invalid "
-        "value of l; must be greater than 0!");
+                                "value of l; must be greater than 0!");
   else if (m == 0)
     throw std::invalid_argument("DrusillaSelect::DrusillaSelect(): invalid "
-        "value of m; must be greater than 0!");
+                                "value of m; must be greater than 0!");
 }
 
 // Train the model.
 template<typename MatType>
-void DrusillaSelect<MatType>::Train(
-    const MatType& referenceSet,
-    const size_t lIn,
-    const size_t mIn)
+void DrusillaSelect<MatType>::Train(const MatType& referenceSet,
+                                    const size_t lIn,
+                                    const size_t mIn)
 {
   // Did the user specify a new size?  If so, use it.
   if (lIn > 0)
@@ -74,7 +68,8 @@ void DrusillaSelect<MatType>::Train(
     m = mIn;
 
   if ((l * m) > referenceSet.n_cols)
-    throw std::invalid_argument("DrusillaSelect::Train(): l and m are too "
+    throw std::invalid_argument(
+        "DrusillaSelect::Train(): l and m are too "
         "large!  Choose smaller values.  l*m must be smaller than the number "
         "of points in the dataset.");
 
@@ -129,10 +124,10 @@ void DrusillaSelect<MatType>::Train(
       }
     };
 
-    std::vector<Candidate> clist(
-        m, std::make_pair(double(-DBL_MAX), size_t(-1)));
-    std::priority_queue<Candidate, std::vector<Candidate>, CandidateCmp>
-        pq(CandidateCmp(), std::move(clist));
+    std::vector<Candidate> clist(m,
+                                 std::make_pair(double(-DBL_MAX), size_t(-1)));
+    std::priority_queue<Candidate, std::vector<Candidate>, CandidateCmp> pq(
+        CandidateCmp(), std::move(clist));
 
     for (size_t j = 0; j < sums.n_elem; ++j)
     {
@@ -173,18 +168,22 @@ void DrusillaSelect<MatType>::Search(const MatType& querySet,
 {
   if (candidateSet.n_cols == 0)
     throw std::runtime_error("DrusillaSelect::Search(): candidate set not "
-        "initialized!  Call Train() first.");
+                             "initialized!  Call Train() first.");
 
   if (k > (l * m))
-    throw std::invalid_argument("DrusillaSelect::Search(): requested k is "
+    throw std::invalid_argument(
+        "DrusillaSelect::Search(): requested k is "
         "greater than number of points in candidate set!  Increase l or m.");
 
   // We'll use the NeighborSearchRules class to perform our brute-force search.
   // Note that we aren't using trees for our search, so we can use 'int' as a
   // TreeType.
   metric::EuclideanDistance metric;
-  NeighborSearchRules<FurthestNeighborSort, metric::EuclideanDistance,
-      tree::KDTree<metric::EuclideanDistance, tree::EmptyStatistic, MatType>>
+  NeighborSearchRules<FurthestNeighborSort,
+                      metric::EuclideanDistance,
+                      tree::KDTree<metric::EuclideanDistance,
+                                   tree::EmptyStatistic,
+                                   MatType>>
       rules(candidateSet, querySet, k, metric, 0, false);
 
   for (size_t q = 0; q < querySet.n_cols; ++q)
@@ -204,10 +203,10 @@ template<typename Archive>
 void DrusillaSelect<MatType>::serialize(Archive& ar,
                                         const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(candidateSet);
-  ar & BOOST_SERIALIZATION_NVP(candidateIndices);
-  ar & BOOST_SERIALIZATION_NVP(l);
-  ar & BOOST_SERIALIZATION_NVP(m);
+  ar& BOOST_SERIALIZATION_NVP(candidateSet);
+  ar& BOOST_SERIALIZATION_NVP(candidateIndices);
+  ar& BOOST_SERIALIZATION_NVP(l);
+  ar& BOOST_SERIALIZATION_NVP(m);
 }
 
 } // namespace neighbor

@@ -72,7 +72,8 @@ namespace optimization {
  * objective function on the first point in the dataset (presumably, the dataset
  * is held internally in the DecomposableFunctionType).
  *
- * @tparam UpdatePolicyType update policy used by SGD during the iterative update
+ * @tparam UpdatePolicyType update policy used by SGD during the iterative
+ * update
  *     process. By default vanilla update policy (see
  *     mlpack::optimization::VanillaUpdate) is used.
  * @tparam DecayPolicyType Decay policy used during the iterative update
@@ -125,8 +126,7 @@ class SGD
    * @return Objective value of the final point.
    */
   template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function,
-                  arma::mat& iterate);
+  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
 
   //! Get the step size.
   double StepSize() const { return stepSize; }

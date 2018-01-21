@@ -16,24 +16,17 @@
 namespace mlpack {
 namespace optimization {
 
-template <typename ObjectiveMatrixType>
-SDP<ObjectiveMatrixType>::SDP() :
-    c(),
-    sparseA(),
-    sparseB(),
-    denseA(),
-    denseB()
-{ /* Nothing to do. */ }
+template<typename ObjectiveMatrixType>
+SDP<ObjectiveMatrixType>::SDP() : c(), sparseA(), sparseB(), denseA(), denseB()
+{ /* Nothing to do. */
+}
 
-template <typename ObjectiveMatrixType>
+template<typename ObjectiveMatrixType>
 SDP<ObjectiveMatrixType>::SDP(const size_t n,
                               const size_t numSparseConstraints,
-                              const size_t numDenseConstraints) :
-    c(n, n),
-    sparseA(numSparseConstraints),
-    sparseB(numSparseConstraints),
-    denseA(numDenseConstraints),
-    denseB(numDenseConstraints)
+                              const size_t numDenseConstraints)
+  : c(n, n), sparseA(numSparseConstraints), sparseB(numSparseConstraints),
+    denseA(numDenseConstraints), denseB(numDenseConstraints)
 {
   for (size_t i = 0; i < numSparseConstraints; i++)
     sparseA[i].zeros(n, n);
@@ -41,7 +34,7 @@ SDP<ObjectiveMatrixType>::SDP(const size_t n,
     denseA[i].zeros(n, n);
 }
 
-template <typename ObjectiveMatrixType>
+template<typename ObjectiveMatrixType>
 bool SDP<ObjectiveMatrixType>::HasLinearlyIndependentConstraints() const
 {
   // Very inefficient, should only be used for testing/debugging

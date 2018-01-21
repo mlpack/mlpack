@@ -35,16 +35,10 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
     const size_t rho,
     const bool single,
     OutputLayerType outputLayer,
-    InitializationRuleType initializeRule) :
-    rho(rho),
-    outputLayer(std::move(outputLayer)),
-    initializeRule(std::move(initializeRule)),
-    inputSize(0),
-    outputSize(0),
-    targetSize(0),
-    reset(false),
-    single(single),
-    numFunctions(0),
+    InitializationRuleType initializeRule)
+  : rho(rho), outputLayer(std::move(outputLayer)),
+    initializeRule(std::move(initializeRule)), inputSize(0), outputSize(0),
+    targetSize(0), reset(false), single(single), numFunctions(0),
     deterministic(true)
 {
   /* Nothing to do here */
@@ -57,19 +51,12 @@ RNN<OutputLayerType, InitializationRuleType>::RNN(
     const size_t rho,
     const bool single,
     OutputLayerType outputLayer,
-    InitializationRuleType initializeRule) :
-    rho(rho),
-    outputLayer(std::move(outputLayer)),
-    initializeRule(std::move(initializeRule)),
-    inputSize(0),
-    outputSize(0),
-    targetSize(0),
-    reset(false),
-    single(single),
-    predictors(std::move(predictors)),
-    responses(std::move(responses)),
-    numFunctions(0),
-    deterministic(true)
+    InitializationRuleType initializeRule)
+  : rho(rho), outputLayer(std::move(outputLayer)),
+    initializeRule(std::move(initializeRule)), inputSize(0), outputSize(0),
+    targetSize(0), reset(false), single(single),
+    predictors(std::move(predictors)), responses(std::move(responses)),
+    numFunctions(0), deterministic(true)
 {
   numFunctions = this->responses.n_cols;
   ResetDeterministic();
@@ -87,9 +74,7 @@ RNN<OutputLayerType, InitializationRuleType>::~RNN()
 template<typename OutputLayerType, typename InitializationRuleType>
 template<typename OptimizerType>
 void RNN<OutputLayerType, InitializationRuleType>::Train(
-    arma::cube predictors,
-    arma::cube responses,
-    OptimizerType& optimizer)
+    arma::cube predictors, arma::cube responses, OptimizerType& optimizer)
 {
   numFunctions = responses.n_cols;
 
@@ -109,8 +94,8 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
   const double out = optimizer.Optimize(*this, parameter);
   Timer::Stop("rnn_optimization");
 
-  Log::Info << "RNN::RNN(): final objective of trained model is " << out
-      << "." << std::endl;
+  Log::Info << "RNN::RNN(): final objective of trained model is " << out << "."
+            << std::endl;
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
@@ -124,9 +109,8 @@ void RNN<OutputLayerType, InitializationRuleType>::ResetCells()
 
 template<typename OutputLayerType, typename InitializationRuleType>
 template<typename OptimizerType>
-void RNN<OutputLayerType, InitializationRuleType>::Train(
-    arma::cube predictors,
-    arma::cube responses)
+void RNN<OutputLayerType, InitializationRuleType>::Train(arma::cube predictors,
+                                                         arma::cube responses)
 {
   numFunctions = responses.n_cols;
 
@@ -148,8 +132,8 @@ void RNN<OutputLayerType, InitializationRuleType>::Train(
   const double out = optimizer.Optimize(*this, parameter);
   Timer::Stop("rnn_optimization");
 
-  Log::Info << "RNN::RNN(): final objective of trained model is " << out
-      << "." << std::endl;
+  Log::Info << "RNN::RNN(): final objective of trained model is " << out << "."
+            << std::endl;
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
@@ -173,16 +157,19 @@ void RNN<OutputLayerType, InitializationRuleType>::Predict(
   // Process in accordance with the given batch size.
   for (size_t begin = 0; begin < predictors.n_cols; begin += batchSize)
   {
-    const size_t effectiveBatchSize = std::min(batchSize,
-        size_t(predictors.n_cols - begin));
+    const size_t effectiveBatchSize =
+        std::min(batchSize, size_t(predictors.n_cols - begin));
     for (size_t seqNum = 0; seqNum < rho; ++seqNum)
     {
       Forward(std::move(arma::mat(predictors.slice(seqNum).colptr(begin),
-          predictors.n_rows, effectiveBatchSize, false, true)));
+                                  predictors.n_rows,
+                                  effectiveBatchSize,
+                                  false,
+                                  true)));
 
-      results.slice(seqNum).submat(0, begin, results.n_rows - 1, begin +
-          effectiveBatchSize - 1) = boost::apply_visitor(outputParameterVisitor,
-          network.back());
+      results.slice(seqNum).submat(
+          0, begin, results.n_rows - 1, begin + effectiveBatchSize - 1) =
+          boost::apply_visitor(outputParameterVisitor, network.back());
     }
   }
 }
@@ -223,30 +210,41 @@ double RNN<OutputLayerType, InitializationRuleType>::Evaluate(
   {
     // Wrap a matrix around our data to avoid a copy.
     arma::mat stepData(predictors.slice(seqNum).colptr(begin),
-        predictors.n_rows, batchSize, false, true);
+                       predictors.n_rows,
+                       batchSize,
+                       false,
+                       true);
     Forward(std::move(stepData));
     arma::mat respData(responses.slice(seqNum).colptr(begin),
-        responses.n_rows, batchSize, false, true);
+                       responses.n_rows,
+                       batchSize,
+                       false,
+                       true);
 
     if (!deterministic)
     {
       for (size_t l = 0; l < network.size(); ++l)
       {
-        boost::apply_visitor(SaveOutputParameterVisitor(
-            std::move(moduleOutputParameter)), network[l]);
+        boost::apply_visitor(
+            SaveOutputParameterVisitor(std::move(moduleOutputParameter)),
+            network[l]);
       }
     }
 
-    performance += outputLayer.Forward(std::move(boost::apply_visitor(
-        outputParameterVisitor, network.back())),
+    performance += outputLayer.Forward(
+        std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
         std::move(arma::mat(responses.slice(seqNum).colptr(begin),
-            responses.n_rows, batchSize, false, true)));
+                            responses.n_rows,
+                            batchSize,
+                            false,
+                            true)));
   }
 
   if (outputSize == 0)
   {
-    outputSize = boost::apply_visitor(outputParameterVisitor,
-        network.back()).n_elem / batchSize;
+    outputSize =
+        boost::apply_visitor(outputParameterVisitor, network.back()).n_elem
+        / batchSize;
   }
 
   return performance;
@@ -279,8 +277,8 @@ void RNN<OutputLayerType, InitializationRuleType>::Gradient(
   // Initialize current/working gradient.
   if (currentGradient.is_empty())
   {
-    currentGradient = arma::zeros<arma::mat>(parameter.n_rows,
-        parameter.n_cols);
+    currentGradient =
+        arma::zeros<arma::mat>(parameter.n_rows, parameter.n_cols);
   }
 
   ResetGradients(currentGradient);
@@ -291,8 +289,9 @@ void RNN<OutputLayerType, InitializationRuleType>::Gradient(
 
     for (size_t l = 0; l < network.size(); ++l)
     {
-      boost::apply_visitor(LoadOutputParameterVisitor(
-          std::move(moduleOutputParameter)), network[network.size() - 1 - l]);
+      boost::apply_visitor(
+          LoadOutputParameterVisitor(std::move(moduleOutputParameter)),
+          network[network.size() - 1 - l]);
     }
 
     if (single && seqNum > 0)
@@ -301,17 +300,24 @@ void RNN<OutputLayerType, InitializationRuleType>::Gradient(
     }
     else
     {
-      outputLayer.Backward(std::move(boost::apply_visitor(
-          outputParameterVisitor, network.back())),
+      outputLayer.Backward(
+          std::move(
+              boost::apply_visitor(outputParameterVisitor, network.back())),
           std::move(arma::mat(responses.slice(rho - seqNum - 1).colptr(begin),
-              responses.n_rows, batchSize, false, true)),
+                              responses.n_rows,
+                              batchSize,
+                              false,
+                              true)),
           std::move(error));
     }
 
     Backward();
-    Gradient(std::move(
-        arma::mat(predictors.slice(rho - seqNum - 1).colptr(begin),
-            predictors.n_rows, batchSize, false, true)));
+    Gradient(
+        std::move(arma::mat(predictors.slice(rho - seqNum - 1).colptr(begin),
+                            predictors.n_rows,
+                            batchSize,
+                            false,
+                            true)));
     gradient += currentGradient;
   }
 }
@@ -351,8 +357,9 @@ template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::ResetDeterministic()
 {
   DeterministicSetVisitor deterministicSetVisitor(deterministic);
-  std::for_each(network.begin(), network.end(),
-      boost::apply_visitor(deterministicSetVisitor));
+  std::for_each(network.begin(),
+                network.end(),
+                boost::apply_visitor(deterministicSetVisitor));
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
@@ -362,23 +369,27 @@ void RNN<OutputLayerType, InitializationRuleType>::ResetGradients(
   size_t offset = 0;
   for (LayerTypes& layer : network)
   {
-    offset += boost::apply_visitor(GradientSetVisitor(std::move(gradient),
-        offset), layer);
+    offset += boost::apply_visitor(
+        GradientSetVisitor(std::move(gradient), offset), layer);
   }
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::Forward(arma::mat&& input)
 {
-  boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
-      boost::apply_visitor(outputParameterVisitor, network.front()))),
+  boost::apply_visitor(
+      ForwardVisitor(std::move(input),
+                     std::move(boost::apply_visitor(outputParameterVisitor,
+                                                    network.front()))),
       network.front());
 
   for (size_t i = 1; i < network.size(); ++i)
   {
-    boost::apply_visitor(ForwardVisitor(
-        std::move(boost::apply_visitor(outputParameterVisitor, network[i - 1])),
-        std::move(boost::apply_visitor(outputParameterVisitor, network[i]))),
+    boost::apply_visitor(
+        ForwardVisitor(std::move(boost::apply_visitor(outputParameterVisitor,
+                                                      network[i - 1])),
+                       std::move(boost::apply_visitor(outputParameterVisitor,
+                                                      network[i]))),
         network[i]);
   }
 }
@@ -386,18 +397,24 @@ void RNN<OutputLayerType, InitializationRuleType>::Forward(arma::mat&& input)
 template<typename OutputLayerType, typename InitializationRuleType>
 void RNN<OutputLayerType, InitializationRuleType>::Backward()
 {
-  boost::apply_visitor(BackwardVisitor(
-        std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
-        std::move(error), std::move(boost::apply_visitor(deltaVisitor,
-        network.back()))), network.back());
+  boost::apply_visitor(
+      BackwardVisitor(
+          std::move(
+              boost::apply_visitor(outputParameterVisitor, network.back())),
+          std::move(error),
+          std::move(boost::apply_visitor(deltaVisitor, network.back()))),
+      network.back());
 
   for (size_t i = 2; i < network.size(); ++i)
   {
-    boost::apply_visitor(BackwardVisitor(
-        std::move(boost::apply_visitor(outputParameterVisitor,
-        network[network.size() - i])), std::move(boost::apply_visitor(
-        deltaVisitor, network[network.size() - i + 1])), std::move(
-        boost::apply_visitor(deltaVisitor, network[network.size() - i]))),
+    boost::apply_visitor(
+        BackwardVisitor(
+            std::move(boost::apply_visitor(outputParameterVisitor,
+                                           network[network.size() - i])),
+            std::move(boost::apply_visitor(deltaVisitor,
+                                           network[network.size() - i + 1])),
+            std::move(boost::apply_visitor(deltaVisitor,
+                                           network[network.size() - i]))),
         network[network.size() - i]);
   }
 }
@@ -406,14 +423,18 @@ template<typename OutputLayerType, typename InitializationRuleType>
 template<typename InputType>
 void RNN<OutputLayerType, InitializationRuleType>::Gradient(InputType&& input)
 {
-  boost::apply_visitor(GradientVisitor(std::move(input), std::move(
-      boost::apply_visitor(deltaVisitor, network[1]))), network.front());
+  boost::apply_visitor(GradientVisitor(std::move(input),
+                                       std::move(boost::apply_visitor(
+                                           deltaVisitor, network[1]))),
+                       network.front());
 
   for (size_t i = 1; i < network.size() - 1; ++i)
   {
-    boost::apply_visitor(GradientVisitor(
-        std::move(boost::apply_visitor(outputParameterVisitor, network[i - 1])),
-        std::move(boost::apply_visitor(deltaVisitor, network[i + 1]))),
+    boost::apply_visitor(
+        GradientVisitor(
+            std::move(
+                boost::apply_visitor(outputParameterVisitor, network[i - 1])),
+            std::move(boost::apply_visitor(deltaVisitor, network[i + 1]))),
         network[i]);
   }
 }
@@ -423,21 +444,21 @@ template<typename Archive>
 void RNN<OutputLayerType, InitializationRuleType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(parameter);
-  ar & BOOST_SERIALIZATION_NVP(rho);
-  ar & BOOST_SERIALIZATION_NVP(single);
-  ar & BOOST_SERIALIZATION_NVP(inputSize);
-  ar & BOOST_SERIALIZATION_NVP(outputSize);
-  ar & BOOST_SERIALIZATION_NVP(targetSize);
+  ar& BOOST_SERIALIZATION_NVP(parameter);
+  ar& BOOST_SERIALIZATION_NVP(rho);
+  ar& BOOST_SERIALIZATION_NVP(single);
+  ar& BOOST_SERIALIZATION_NVP(inputSize);
+  ar& BOOST_SERIALIZATION_NVP(outputSize);
+  ar& BOOST_SERIALIZATION_NVP(targetSize);
 
   if (Archive::is_loading::value)
   {
-    std::for_each(network.begin(), network.end(),
-        boost::apply_visitor(deleteVisitor));
+    std::for_each(
+        network.begin(), network.end(), boost::apply_visitor(deleteVisitor));
     network.clear();
   }
 
-  ar & BOOST_SERIALIZATION_NVP(network);
+  ar& BOOST_SERIALIZATION_NVP(network);
 
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)
@@ -447,8 +468,8 @@ void RNN<OutputLayerType, InitializationRuleType>::serialize(
     size_t offset = 0;
     for (LayerTypes& layer : network)
     {
-      offset += boost::apply_visitor(WeightSetVisitor(std::move(parameter),
-          offset), layer);
+      offset += boost::apply_visitor(
+          WeightSetVisitor(std::move(parameter), offset), layer);
 
       boost::apply_visitor(resetVisitor, layer);
     }

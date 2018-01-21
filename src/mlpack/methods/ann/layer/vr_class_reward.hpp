@@ -26,10 +26,8 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
 class VRClassReward
 {
  public:
@@ -69,17 +67,17 @@ class VRClassReward
                 OutputType&& output);
 
   //! Get the input parameter.
-  InputDataType& InputParameter() const {return inputParameter; }
+  InputDataType& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const {return outputParameter; }
+  OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType& Delta() const {return delta; }
+  OutputDataType& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
@@ -93,8 +91,11 @@ class VRClassReward
    *
    * @param args The layer parameter.
    */
-  template <class LayerType, class... Args>
-  void Add(Args... args) { network.push_back(new LayerType(args...)); }
+  template<class LayerType, class... Args>
+  void Add(Args... args)
+  {
+    network.push_back(new LayerType(args...));
+  }
 
   /*
    * Add a new module to the model.

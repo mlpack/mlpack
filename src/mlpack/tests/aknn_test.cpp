@@ -148,8 +148,10 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
   arma::mat distancesExact;
   exact.Search(dataset, 15, neighborsExact, distancesExact);
 
-  StandardCoverTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> tree(dataset);
+  StandardCoverTree<EuclideanDistance,
+                    NeighborSearchStat<NearestNeighborSort>,
+                    arma::mat>
+      tree(dataset);
 
   NeighborSearch<NearestNeighborSort, LMetric<2>, arma::mat, StandardCoverTree>
       coverTreeSearch(std::move(tree), SINGLE_TREE_MODE, 0.05);
@@ -178,8 +180,11 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   arma::mat distancesExact;
   exact.Search(dataset, 15, neighborsExact, distancesExact);
 
-  NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      StandardCoverTree> coverTreeSearch(dataset, DUAL_TREE_MODE, 0.05);
+  NeighborSearch<NearestNeighborSort,
+                 EuclideanDistance,
+                 arma::mat,
+                 StandardCoverTree>
+      coverTreeSearch(dataset, DUAL_TREE_MODE, 0.05);
 
   arma::Mat<size_t> neighborsCoverTree;
   arma::mat distancesCoverTree;
@@ -299,8 +304,11 @@ BOOST_AUTO_TEST_CASE(SparseKNNKDTreeTest)
   arma::mat denseQuery(queryDataset);
   arma::mat denseReference(referenceDataset);
 
-  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::sp_mat,
-      KDTree> SparseKNN;
+  typedef NeighborSearch<NearestNeighborSort,
+                         EuclideanDistance,
+                         arma::sp_mat,
+                         KDTree>
+      SparseKNN;
 
   SparseKNN aknn(referenceDataset, DUAL_TREE_MODE, 0.05);
   arma::mat distancesSparse;
@@ -371,19 +379,19 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
       arma::mat referenceCopy(referenceData);
       arma::mat queryCopy(queryData);
       if (j == 0)
-        models[i].BuildModel(std::move(referenceCopy), 20, DUAL_TREE_MODE,
-            0.05);
+        models[i].BuildModel(
+            std::move(referenceCopy), 20, DUAL_TREE_MODE, 0.05);
       if (j == 1)
-        models[i].BuildModel(std::move(referenceCopy), 20,
-            SINGLE_TREE_MODE, 0.05);
+        models[i].BuildModel(
+            std::move(referenceCopy), 20, SINGLE_TREE_MODE, 0.05);
       if (j == 2)
         models[i].BuildModel(std::move(referenceCopy), 20, NAIVE_MODE);
 
       arma::Mat<size_t> neighborsApprox;
       arma::mat distancesApprox;
 
-      models[i].Search(std::move(queryCopy), 3, neighborsApprox,
-          distancesApprox);
+      models[i].Search(
+          std::move(queryCopy), 3, neighborsApprox, distancesApprox);
 
       BOOST_REQUIRE_EQUAL(neighborsApprox.n_rows, neighborsExact.n_rows);
       BOOST_REQUIRE_EQUAL(neighborsApprox.n_cols, neighborsExact.n_cols);
@@ -449,11 +457,11 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
       // We only have a std::move() constructor... so copy the data.
       arma::mat referenceCopy(referenceData);
       if (j == 0)
-        models[i].BuildModel(std::move(referenceCopy), 20, DUAL_TREE_MODE,
-            0.05);
+        models[i].BuildModel(
+            std::move(referenceCopy), 20, DUAL_TREE_MODE, 0.05);
       if (j == 1)
-        models[i].BuildModel(std::move(referenceCopy), 20,
-            SINGLE_TREE_MODE, 0.05);
+        models[i].BuildModel(
+            std::move(referenceCopy), 20, SINGLE_TREE_MODE, 0.05);
 
       arma::Mat<size_t> neighborsApprox;
       arma::mat distancesApprox;

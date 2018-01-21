@@ -24,12 +24,9 @@ Radical::Radical(const double noiseStdDev,
                  const size_t replicates,
                  const size_t angles,
                  const size_t sweeps,
-                 const size_t m) :
-    noiseStdDev(noiseStdDev),
-    replicates(replicates),
-    angles(angles),
-    sweeps(sweeps),
-    m(m)
+                 const size_t m)
+  : noiseStdDev(noiseStdDev), replicates(replicates), angles(angles),
+    sweeps(sweeps), m(m)
 {
   // Nothing to do here.
 }
@@ -37,11 +34,10 @@ Radical::Radical(const double noiseStdDev,
 void Radical::CopyAndPerturb(mat& xNew, const mat& x) const
 {
   Timer::Start("radical_copy_and_perturb");
-  xNew = repmat(x, replicates, 1) + noiseStdDev * randn(replicates * x.n_rows,
-      x.n_cols);
+  xNew = repmat(x, replicates, 1)
+         + noiseStdDev * randn(replicates * x.n_rows, x.n_cols);
   Timer::Stop("radical_copy_and_perturb");
 }
-
 
 double Radical::Vasicek(vec& z) const
 {
@@ -65,7 +61,6 @@ double Radical::Vasicek(vec& z) const
   return sum;
 }
 
-
 double Radical::DoRadical2D(const mat& matX)
 {
   CopyAndPerturb(perturbed, matX);
@@ -76,7 +71,7 @@ double Radical::DoRadical2D(const mat& matX)
 
   for (size_t i = 0; i < angles; i++)
   {
-    const double theta = (i / (double) angles) * M_PI / 2.0;
+    const double theta = (i / (double)angles) * M_PI / 2.0;
     const double cosTheta = cos(theta);
     const double sinTheta = sin(theta);
 
@@ -94,9 +89,8 @@ double Radical::DoRadical2D(const mat& matX)
 
   uword indOpt = 0;
   values.min(indOpt); // we ignore the return value; we don't care about it
-  return (indOpt / (double) angles) * M_PI / 2.0;
+  return (indOpt / (double)angles) * M_PI / 2.0;
 }
-
 
 void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
 {
@@ -111,7 +105,7 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
   // If m was not specified, initialize m as recommended in
   // (Learned-Miller and Fisher, 2003).
   if (m < 1)
-    m = floor(sqrt((double) matX.n_rows));
+    m = floor(sqrt((double)matX.n_rows));
 
   const size_t nDims = matX.n_cols;
   const size_t nPoints = matX.n_rows;
@@ -145,7 +139,7 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
       for (size_t j = i + 1; j < nDims; j++)
       {
         Log::Debug << "RADICAL 2D on dimensions " << i << " and " << j << "."
-            << std::endl;
+                   << std::endl;
 
         matYSubspace.col(0) = matY.col(i);
         matYSubspace.col(1) = matY.col(j);

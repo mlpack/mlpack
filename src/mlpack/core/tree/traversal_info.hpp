@@ -53,11 +53,11 @@ class TraversalInfo
   /**
    * Create the TraversalInfo object and initialize the pointers to NULL.
    */
-  TraversalInfo() :
-    lastQueryNode(NULL),
-    lastReferenceNode(NULL),
-    lastScore(0.0),
-    lastBaseCase(0.0) { /* Nothing to do. */ }
+  TraversalInfo()
+    : lastQueryNode(NULL), lastReferenceNode(NULL), lastScore(0.0),
+      lastBaseCase(0.0)
+  { /* Nothing to do. */
+  }
 
   //! Get the last query node.
   TreeType* LastQueryNode() const { return lastQueryNode; }

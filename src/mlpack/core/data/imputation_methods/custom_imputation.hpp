@@ -20,12 +20,11 @@ namespace data {
  * A simple custom imputation class
  * @tparam T Type of armadillo matrix
  */
-template <typename T>
+template<typename T>
 class CustomImputation
 {
  public:
-  CustomImputation(T customValue):
-      customValue(std::move(customValue))
+  CustomImputation(T customValue) : customValue(std::move(customValue))
   {
     // nothing to initialize here
   }
@@ -51,8 +50,8 @@ class CustomImputation
     {
       for (size_t i = 0; i < input.n_cols; ++i)
       {
-        if (input(dimension, i) == mappedValue ||
-            std::isnan(input(dimension, i)))
+        if (input(dimension, i) == mappedValue
+            || std::isnan(input(dimension, i)))
         {
           input(dimension, i) = customValue;
         }
@@ -62,8 +61,8 @@ class CustomImputation
     {
       for (size_t i = 0; i < input.n_rows; ++i)
       {
-        if (input(i, dimension) == mappedValue ||
-            std::isnan(input(i, dimension)))
+        if (input(i, dimension) == mappedValue
+            || std::isnan(input(i, dimension)))
         {
           input(i, dimension) = customValue;
         }

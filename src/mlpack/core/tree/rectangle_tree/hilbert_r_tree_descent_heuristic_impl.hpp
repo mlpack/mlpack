@@ -19,15 +19,17 @@ namespace mlpack {
 namespace tree {
 
 template<typename TreeType>
-size_t HilbertRTreeDescentHeuristic::ChooseDescentNode(
-    const TreeType* node,
-    const size_t point)
+size_t HilbertRTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
+                                                       const size_t point)
 {
   size_t bestIndex = 0;
 
   for (bestIndex = 0; bestIndex < node->NumChildren() - 1; bestIndex++)
-    if (node->Child(bestIndex).AuxiliaryInfo().HilbertValue().
-        CompareWithCachedPoint(node->Dataset().col(point)) > 0)
+    if (node->Child(bestIndex)
+            .AuxiliaryInfo()
+            .HilbertValue()
+            .CompareWithCachedPoint(node->Dataset().col(point))
+        > 0)
       break;
 
   return bestIndex;
@@ -35,14 +37,14 @@ size_t HilbertRTreeDescentHeuristic::ChooseDescentNode(
 
 template<typename TreeType>
 size_t HilbertRTreeDescentHeuristic::ChooseDescentNode(
-    const TreeType* node,
-    const TreeType* /* insertedNode */)
+    const TreeType* node, const TreeType* /* insertedNode */)
 {
   size_t bestIndex = 0;
 
   for (bestIndex = 0; bestIndex < node->NumChildren() - 1; bestIndex++)
-    if (node->Child(bestIndex).AuxiliaryInfo().HilbertValue().
-        CompareWith(node, node->AuxiliaryInfo().HilbertValue()) > 0)
+    if (node->Child(bestIndex).AuxiliaryInfo().HilbertValue().CompareWith(
+            node, node->AuxiliaryInfo().HilbertValue())
+        > 0)
       break;
 
   return bestIndex;

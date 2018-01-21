@@ -37,8 +37,8 @@ BOOST_AUTO_TEST_SUITE(QLearningTest);
 BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
 {
   // Set up the network.
-  FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
-      GaussianInitialization(0, 0.001));
+  FFN<MeanSquaredError<>, GaussianInitialization> model(
+      MeanSquaredError<>(), GaussianInitialization(0, 0.001));
   model.Add<Linear<>>(4, 128);
   model.Add<ReLULayer<>>();
   model.Add<Linear<>>(128, 128);
@@ -58,9 +58,11 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
   config.StepLimit() = 200;
 
   // Set up DQN agent.
-  QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy)>
-      agent(std::move(config), std::move(model), std::move(policy),
-          std::move(replayMethod));
+  QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy)> agent(
+      std::move(config),
+      std::move(model),
+      std::move(policy),
+      std::move(replayMethod));
 
   arma::running_stat<double> averageReturn;
   size_t episodes = 0;
@@ -83,7 +85,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
      * For the speed of the test case, I didn't set high criterion.
      */
     Log::Debug << "Average return: " << averageReturn.mean()
-        << " Episode return: " << episodeReturn << std::endl;
+               << " Episode return: " << episodeReturn << std::endl;
     if (averageReturn.mean() > 35)
     {
       agent.Deterministic() = true;
@@ -92,7 +94,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
         testReturn(agent.Episode());
 
       Log::Debug << "Average return in deterministic test: "
-          << testReturn.mean() << std::endl;
+                 << testReturn.mean() << std::endl;
       break;
     }
   }
@@ -110,8 +112,8 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
   for (size_t trial = 0; trial < 4; ++trial)
   {
     // Set up the network.
-    FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
-        GaussianInitialization(0, 0.001));
+    FFN<MeanSquaredError<>, GaussianInitialization> model(
+        MeanSquaredError<>(), GaussianInitialization(0, 0.001));
     model.Add<Linear<>>(4, 20);
     model.Add<ReLULayer<>>();
     model.Add<Linear<>>(20, 20);
@@ -131,9 +133,11 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
     config.StepLimit() = 200;
 
     // Set up the DQN agent.
-    QLearning<CartPole, decltype(model), RMSPropUpdate, decltype(policy)>
-        agent(std::move(config), std::move(model), std::move(policy),
-            std::move(replayMethod));
+    QLearning<CartPole, decltype(model), RMSPropUpdate, decltype(policy)> agent(
+        std::move(config),
+        std::move(model),
+        std::move(policy),
+        std::move(replayMethod));
 
     arma::running_stat<double> averageReturn;
 
@@ -147,7 +151,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
        * For the speed of the test case, I didn't set high criterion.
        */
       Log::Debug << "Average return: " << averageReturn.mean()
-          << " Episode return: " << episodeReturn << std::endl;
+                 << " Episode return: " << episodeReturn << std::endl;
       if (averageReturn.mean() > 40)
       {
         agent.Deterministic() = true;
@@ -155,7 +159,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
         for (size_t i = 0; i < 10; ++i)
           testReturn(agent.Episode());
         Log::Debug << "Average return in deterministic test: "
-            << testReturn.mean() << std::endl;
+                   << testReturn.mean() << std::endl;
         break;
       }
     }

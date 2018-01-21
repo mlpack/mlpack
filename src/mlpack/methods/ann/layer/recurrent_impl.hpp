@@ -25,38 +25,29 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-Recurrent<InputDataType, OutputDataType>::Recurrent() :
-    rho(0),
-    forwardStep(0),
-    backwardStep(0),
-    gradientStep(0),
+Recurrent<InputDataType, OutputDataType>::Recurrent()
+  : rho(0), forwardStep(0), backwardStep(0), gradientStep(0),
     deterministic(false)
 {
   // Nothing to do.
 }
 
-template <typename InputDataType, typename OutputDataType>
-template<
-    typename StartModuleType,
-    typename InputModuleType,
-    typename FeedbackModuleType,
-    typename TransferModuleType
->
+template<typename InputDataType, typename OutputDataType>
+template<typename StartModuleType,
+         typename InputModuleType,
+         typename FeedbackModuleType,
+         typename TransferModuleType>
 Recurrent<InputDataType, OutputDataType>::Recurrent(
     const StartModuleType& start,
     const InputModuleType& input,
     const FeedbackModuleType& feedback,
     const TransferModuleType& transfer,
-    const size_t rho) :
-    startModule(new StartModuleType(start)),
+    const size_t rho)
+  : startModule(new StartModuleType(start)),
     inputModule(new InputModuleType(input)),
     feedbackModule(new FeedbackModuleType(feedback)),
-    transferModule(new TransferModuleType(transfer)),
-    rho(rho),
-    forwardStep(0),
-    backwardStep(0),
-    gradientStep(0),
-    deterministic(false)
+    transferModule(new TransferModuleType(transfer)), rho(rho), forwardStep(0),
+    backwardStep(0), gradientStep(0), deterministic(false)
 {
   initialModule = new Sequential<>();
   mergeModule = new AddMerge<>();
@@ -84,27 +75,31 @@ Recurrent<InputDataType, OutputDataType>::Recurrent(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void Recurrent<InputDataType, OutputDataType>::Forward(
-    arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+void Recurrent<InputDataType, OutputDataType>::Forward(arma::Mat<eT>&& input,
+                                                       arma::Mat<eT>&& output)
 {
   if (forwardStep == 0)
   {
     boost::apply_visitor(ForwardVisitor(std::move(input), std::move(output)),
-        initialModule);
+                         initialModule);
   }
   else
   {
-    boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
-        boost::apply_visitor(outputParameterVisitor, inputModule))),
+    boost::apply_visitor(
+        ForwardVisitor(std::move(input),
+                       std::move(boost::apply_visitor(outputParameterVisitor,
+                                                      inputModule))),
         inputModule);
 
-    boost::apply_visitor(ForwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, transferModule)), std::move(
-        boost::apply_visitor(outputParameterVisitor, feedbackModule))),
+    boost::apply_visitor(
+        ForwardVisitor(std::move(boost::apply_visitor(outputParameterVisitor,
+                                                      transferModule)),
+                       std::move(boost::apply_visitor(outputParameterVisitor,
+                                                      feedbackModule))),
         feedbackModule);
 
     boost::apply_visitor(ForwardVisitor(std::move(input), std::move(output)),
-        recurrentModule);
+                         recurrentModule);
   }
 
   output = boost::apply_visitor(outputParameterVisitor, transferModule);
@@ -144,26 +139,38 @@ void Recurrent<InputDataType, OutputDataType>::Backward(
 
   if (backwardStep < (rho - 1))
   {
-    boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, recurrentModule)), std::move(recurrentError),
-        std::move(boost::apply_visitor(deltaVisitor, recurrentModule))),
+    boost::apply_visitor(
+        BackwardVisitor(
+            std::move(
+                boost::apply_visitor(outputParameterVisitor, recurrentModule)),
+            std::move(recurrentError),
+            std::move(boost::apply_visitor(deltaVisitor, recurrentModule))),
         recurrentModule);
 
-    boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, inputModule)), std::move(
-        boost::apply_visitor(deltaVisitor, recurrentModule)), std::move(g)),
+    boost::apply_visitor(
+        BackwardVisitor(
+            std::move(
+                boost::apply_visitor(outputParameterVisitor, inputModule)),
+            std::move(boost::apply_visitor(deltaVisitor, recurrentModule)),
+            std::move(g)),
         inputModule);
 
-    boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, feedbackModule)), std::move(
-        boost::apply_visitor(deltaVisitor, recurrentModule)), std::move(
-        boost::apply_visitor(deltaVisitor, feedbackModule))), feedbackModule);
+    boost::apply_visitor(
+        BackwardVisitor(
+            std::move(
+                boost::apply_visitor(outputParameterVisitor, feedbackModule)),
+            std::move(boost::apply_visitor(deltaVisitor, recurrentModule)),
+            std::move(boost::apply_visitor(deltaVisitor, feedbackModule))),
+        feedbackModule);
   }
   else
   {
-    boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, initialModule)), std::move(recurrentError),
-        std::move(g)), initialModule);
+    boost::apply_visitor(
+        BackwardVisitor(std::move(boost::apply_visitor(outputParameterVisitor,
+                                                       initialModule)),
+                        std::move(recurrentError),
+                        std::move(g)),
+        initialModule);
   }
 
   recurrentError = boost::apply_visitor(deltaVisitor, feedbackModule);
@@ -180,15 +187,19 @@ void Recurrent<InputDataType, OutputDataType>::Gradient(
   if (gradientStep < (rho - 1))
   {
     boost::apply_visitor(GradientVisitor(std::move(input), std::move(error)),
-        recurrentModule);
+                         recurrentModule);
 
-    boost::apply_visitor(GradientVisitor(std::move(input), std::move(
-        boost::apply_visitor(deltaVisitor, mergeModule))), inputModule);
+    boost::apply_visitor(GradientVisitor(std::move(input),
+                                         std::move(boost::apply_visitor(
+                                             deltaVisitor, mergeModule))),
+                         inputModule);
 
-    boost::apply_visitor(GradientVisitor(std::move(
-        feedbackOutputParameter[feedbackOutputParameter.size() - 2 -
-        gradientStep]), std::move(boost::apply_visitor(deltaVisitor,
-        mergeModule))), feedbackModule);
+    boost::apply_visitor(
+        GradientVisitor(
+            std::move(feedbackOutputParameter[feedbackOutputParameter.size() - 2
+                                              - gradientStep]),
+            std::move(boost::apply_visitor(deltaVisitor, mergeModule))),
+        feedbackModule);
   }
   else
   {
@@ -196,8 +207,10 @@ void Recurrent<InputDataType, OutputDataType>::Gradient(
     boost::apply_visitor(GradientZeroVisitor(), inputModule);
     boost::apply_visitor(GradientZeroVisitor(), feedbackModule);
 
-    boost::apply_visitor(GradientVisitor(std::move(input), std::move(
-        boost::apply_visitor(deltaVisitor, startModule))), initialModule);
+    boost::apply_visitor(GradientVisitor(std::move(input),
+                                         std::move(boost::apply_visitor(
+                                             deltaVisitor, startModule))),
+                         initialModule);
   }
 
   gradientStep++;
@@ -229,11 +242,11 @@ void Recurrent<InputDataType, OutputDataType>::serialize(
     network.clear();
   }
 
-  ar & BOOST_SERIALIZATION_NVP(startModule);
-  ar & BOOST_SERIALIZATION_NVP(inputModule);
-  ar & BOOST_SERIALIZATION_NVP(feedbackModule);
-  ar & BOOST_SERIALIZATION_NVP(transferModule);
-  ar & BOOST_SERIALIZATION_NVP(rho);
+  ar& BOOST_SERIALIZATION_NVP(startModule);
+  ar& BOOST_SERIALIZATION_NVP(inputModule);
+  ar& BOOST_SERIALIZATION_NVP(feedbackModule);
+  ar& BOOST_SERIALIZATION_NVP(transferModule);
+  ar& BOOST_SERIALIZATION_NVP(rho);
 
   // Set up the network.
   if (Archive::is_loading::value)

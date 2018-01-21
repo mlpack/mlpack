@@ -47,15 +47,14 @@ namespace ann /** Artificial Neural Network. */ {
  * w_i &=& \hat{w} \cdot \sqrt{a_i + 1}
  * @f}
  *
- * Where f is the transfer function epsilon, k custom parameters, n the number of
+ * Where f is the transfer function epsilon, k custom parameters, n the number
+ * of
  * neurons in the outgoing layer and gamma a parameter that defines the random
  * interval.
  *
  * @tparam ActivationFunction The activation function used for the oivs method.
  */
-template<
-    class ActivationFunction = LogisticFunction
->
+template<class ActivationFunction = LogisticFunction>
 class OivsInitialization
 {
  public:
@@ -68,15 +67,15 @@ class OivsInitialization
    */
   OivsInitialization(const double epsilon = 0.1,
                      const int k = 5,
-                     const double gamma = 0.9) :
-      k(k), gamma(gamma),
-      b(std::abs(ActivationFunction::Inv(1 - epsilon) -
-                 ActivationFunction::Inv(epsilon)))
+                     const double gamma = 0.9)
+    : k(k), gamma(gamma), b(std::abs(ActivationFunction::Inv(1 - epsilon)
+                                     - ActivationFunction::Inv(epsilon)))
   {
   }
 
   /**
-   * Initialize the elements of the specified weight matrix with the oivs method.
+   * Initialize the elements of the specified weight matrix with the oivs
+   * method.
    *
    * @param W Weight matrix to initialize.
    * @param rows Number of rows.
@@ -88,7 +87,7 @@ class OivsInitialization
     RandomInitialization randomInit(-gamma, gamma);
     randomInit.Initialize(W, rows, cols);
 
-    W = (b / (k  * rows)) * arma::sqrt(W + 1);
+    W = (b / (k * rows)) * arma::sqrt(W + 1);
   }
 
   /**
@@ -122,7 +121,6 @@ class OivsInitialization
   //! Parameter to control the activation region.
   double b;
 }; // class OivsInitialization
-
 
 } // namespace ann
 } // namespace mlpack

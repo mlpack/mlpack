@@ -104,10 +104,7 @@ BOOST_AUTO_TEST_CASE(CyclicDescentTest)
   const size_t features = 10;
   struct DummyFunction
   {
-    static size_t NumFeatures()
-    {
-      return features;
-    }
+    static size_t NumFeatures() { return features; }
   };
 
   DummyFunction dummy;
@@ -116,8 +113,8 @@ BOOST_AUTO_TEST_CASE(CyclicDescentTest)
 
   for (size_t i = 0; i < 15; ++i)
   {
-    BOOST_REQUIRE_EQUAL(descentPolicy.DescentFeature(i, arma::mat(), dummy), i %
-        features);
+    BOOST_REQUIRE_EQUAL(descentPolicy.DescentFeature(i, arma::mat(), dummy),
+                        i % features);
   }
 }
 
@@ -129,10 +126,7 @@ BOOST_AUTO_TEST_CASE(RandomDescentTest)
   const size_t features = 10;
   struct DummyFunction
   {
-    static size_t NumFeatures()
-    {
-      return features;
-    }
+    static size_t NumFeatures() { return features; }
   };
 
   DummyFunction dummy;

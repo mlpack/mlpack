@@ -45,10 +45,8 @@ class MaxPoolingRule
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
 class MaxPooling
 {
  public:
@@ -141,13 +139,13 @@ class MaxPooling
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
- /**
-   * Apply pooling to the input and store the results.
-   *
-   * @param input The input to be apply the pooling rule.
-   * @param output The pooled result.
-   * @param poolingIndices The pooled indices.
-   */
+  /**
+    * Apply pooling to the input and store the results.
+    *
+    * @param input The input to be apply the pooling rule.
+    * @param output The pooled result.
+    * @param poolingIndices The pooled indices.
+    */
   template<typename eT>
   void PoolingOperation(const arma::Mat<eT>& input,
                         arma::Mat<eT>& output,
@@ -157,17 +155,18 @@ class MaxPooling
     {
       for (size_t i = 0, rowidx = 0; i < output.n_rows; ++i, rowidx += dH)
       {
-        arma::mat subInput = input(arma::span(rowidx, rowidx + kW - 1 - offset),
-            arma::span(colidx, colidx + kH - 1 - offset));
+        arma::mat subInput =
+            input(arma::span(rowidx, rowidx + kW - 1 - offset),
+                  arma::span(colidx, colidx + kH - 1 - offset));
 
         const size_t idx = pooling.Pooling(subInput);
         output(i, j) = subInput(idx);
 
         if (!deterministic)
         {
-          arma::Mat<size_t> subIndices = indices(arma::span(rowidx,
-              rowidx + kW - 1 - offset),
-              arma::span(colidx, colidx + kH - 1 - offset));
+          arma::Mat<size_t> subIndices =
+              indices(arma::span(rowidx, rowidx + kW - 1 - offset),
+                      arma::span(colidx, colidx + kH - 1 - offset));
 
           poolingIndices(i, j) = subIndices(idx);
         }

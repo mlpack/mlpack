@@ -29,7 +29,6 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-
 /*
  * The mean pooling rule for convolution neural networks. Average all values
  * within the receptive block.
@@ -75,10 +74,8 @@ class MeanPoolingRule
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
 class Glimpse
 {
  public:
@@ -123,12 +120,12 @@ class Glimpse
                 arma::Mat<eT>&& g);
 
   //! Get the input parameter.
-  InputDataType& InputParameter() const {return inputParameter; }
+  InputDataType& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const {return outputParameter; }
+  OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
@@ -139,10 +136,7 @@ class Glimpse
 
   //! Set the locationthe x and y coordinate of the center of the output
   //! glimpse.
-  void Location(const arma::mat& location)
-  {
-    this->location = location;
-  }
+  void Location(const arma::mat& location) { this->location = location; }
 
   //! Get the input width.
   size_t const& InputWidth() const { return inputWidth; }
@@ -217,9 +211,8 @@ class Glimpse
    * @param output The pooled result.
    */
   template<typename eT>
-  void Pooling(const size_t kSize,
-               const arma::Mat<eT>& input,
-               arma::Mat<eT>& output)
+  void
+  Pooling(const size_t kSize, const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
     const size_t rStep = kSize;
     const size_t cStep = kSize;
@@ -254,14 +247,14 @@ class Glimpse
     {
       for (size_t i = 0; i < input.n_rows; i += rStep)
       {
-        const arma::Mat<eT>& inputArea = input(arma::span(i, i + rStep - 1),
-                                               arma::span(j, j + cStep - 1));
+        const arma::Mat<eT>& inputArea =
+            input(arma::span(i, i + rStep - 1), arma::span(j, j + cStep - 1));
 
-        pooling.Unpooling(inputArea, error(i / rStep, j / cStep),
-            unpooledError);
+        pooling.Unpooling(
+            inputArea, error(i / rStep, j / cStep), unpooledError);
 
-        output(arma::span(i, i + rStep - 1),
-            arma::span(j, j + cStep - 1)) += unpooledError;
+        output(arma::span(i, i + rStep - 1), arma::span(j, j + cStep - 1)) +=
+            unpooledError;
       }
     }
   }
@@ -276,8 +269,8 @@ class Glimpse
   template<typename eT>
   void ReSampling(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
-    double wRatio = (double) (input.n_rows - 1) / (size - 1);
-    double hRatio = (double) (input.n_cols - 1) / (size - 1);
+    double wRatio = (double)(input.n_rows - 1) / (size - 1);
+    double hRatio = (double)(input.n_cols - 1) / (size - 1);
 
     double iWidth = input.n_rows - 1;
     double iHeight = input.n_cols - 1;
@@ -302,10 +295,10 @@ class Glimpse
         double nw = (ixNe - ix) * (iySw - iy);
 
         // Calculate the weighted sum.
-        output(y, x) = input(iyNw, ixNw) * nw +
-            input(iyNw, std::min(ixNe,  iWidth)) * ne +
-            input(std::min(iySw, iHeight), ixNw) * sw +
-            input(std::min(iySw, iHeight), std::min(ixNe, iWidth)) * se;
+        output(y, x) =
+            input(iyNw, ixNw) * nw + input(iyNw, std::min(ixNe, iWidth)) * ne
+            + input(std::min(iySw, iHeight), ixNw) * sw
+            + input(std::min(iySw, iHeight), std::min(ixNe, iWidth)) * se;
       }
     }
   }
@@ -351,12 +344,13 @@ class Glimpse
         double ograd = error(y, x);
 
         output(iyNw, ixNw) = output(iyNw, ixNw) + nw * ograd;
-        output(iyNw, std::min(ixNe, iWidth)) = output(iyNw,
-            std::min(ixNe, iWidth)) + ne * ograd;
-        output(std::min(iySw, iHeight), ixNw) = output(std::min(iySw, iHeight),
-            ixNw) + sw * ograd;
-        output(std::min(iySw, iHeight), std::min(ixNe, iWidth)) = output(
-            std::min(iySw, iHeight), std::min(ixNe, iWidth)) + se * ograd;
+        output(iyNw, std::min(ixNe, iWidth)) =
+            output(iyNw, std::min(ixNe, iWidth)) + ne * ograd;
+        output(std::min(iySw, iHeight), ixNw) =
+            output(std::min(iySw, iHeight), ixNw) + sw * ograd;
+        output(std::min(iySw, iHeight), std::min(ixNe, iWidth)) =
+            output(std::min(iySw, iHeight), std::min(ixNe, iWidth))
+            + se * ograd;
       }
     }
   }

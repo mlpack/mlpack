@@ -24,28 +24,30 @@ namespace cf {
 
 // Apply the factorizer when a coordinate list is used.
 template<typename FactorizerType>
-void ApplyFactorizer(FactorizerType& factorizer,
-                     const arma::mat& data,
-                     const arma::sp_mat& /* cleanedData */,
-                     const size_t rank,
-                     arma::mat& w,
-                     arma::mat& h,
-                     const typename std::enable_if_t<FactorizerTraits<
-                         FactorizerType>::UsesCoordinateList>* = 0)
+void ApplyFactorizer(
+    FactorizerType& factorizer,
+    const arma::mat& data,
+    const arma::sp_mat& /* cleanedData */,
+    const size_t rank,
+    arma::mat& w,
+    arma::mat& h,
+    const typename std::
+        enable_if_t<FactorizerTraits<FactorizerType>::UsesCoordinateList>* = 0)
 {
   factorizer.Apply(data, rank, w, h);
 }
 
 // Apply the factorizer when coordinate lists are not used.
 template<typename FactorizerType>
-void ApplyFactorizer(FactorizerType& factorizer,
-                     const arma::mat& /* data */,
-                     const arma::sp_mat& cleanedData,
-                     const size_t rank,
-                     arma::mat& w,
-                     arma::mat& h,
-                     const typename std::enable_if_t<!FactorizerTraits<
-                         FactorizerType>::UsesCoordinateList>* = 0)
+void ApplyFactorizer(
+    FactorizerType& factorizer,
+    const arma::mat& /* data */,
+    const arma::sp_mat& cleanedData,
+    const size_t rank,
+    arma::mat& w,
+    arma::mat& h,
+    const typename std::
+        enable_if_t<!FactorizerTraits<FactorizerType>::UsesCoordinateList>* = 0)
 {
   factorizer.Apply(cleanedData, rank, w, h);
 }
@@ -57,15 +59,14 @@ template<typename FactorizerType>
 CF::CF(const arma::mat& data,
        FactorizerType factorizer,
        const size_t numUsersForSimilarity,
-       const size_t rank) :
-    numUsersForSimilarity(numUsersForSimilarity),
-    rank(rank)
+       const size_t rank)
+  : numUsersForSimilarity(numUsersForSimilarity), rank(rank)
 {
   // Validate neighbourhood size.
   if (numUsersForSimilarity < 1)
   {
     Log::Warn << "CF::CF(): neighbourhood size should be > 0 ("
-        << numUsersForSimilarity << " given). Setting value to 5.\n";
+              << numUsersForSimilarity << " given). Setting value to 5.\n";
     // Set default value of 5.
     this->numUsersForSimilarity = 5;
   }
@@ -81,16 +82,15 @@ CF::CF(const arma::sp_mat& data,
        FactorizerType factorizer,
        const size_t numUsersForSimilarity,
        const size_t rank,
-       const typename std::enable_if_t<
-           !FactorizerTraits<FactorizerType>::UsesCoordinateList>*) :
-    numUsersForSimilarity(numUsersForSimilarity),
-    rank(rank)
+       const typename std::
+           enable_if_t<!FactorizerTraits<FactorizerType>::UsesCoordinateList>*)
+  : numUsersForSimilarity(numUsersForSimilarity), rank(rank)
 {
   // Validate neighbourhood size.
   if (numUsersForSimilarity < 1)
   {
     Log::Warn << "CF::CF(): neighbourhood size should be > 0("
-        << numUsersForSimilarity << " given). Setting value to 5.\n";
+              << numUsersForSimilarity << " given). Setting value to 5.\n";
     // Setting Default Value of 5
     this->numUsersForSimilarity = 5;
   }
@@ -113,8 +113,8 @@ void CF::Train(const arma::mat& data, FactorizerType factorizer)
 
     // Set to heuristic value.
     Log::Info << "No rank given for decomposition; using rank of "
-        << rankEstimate << " calculated by density-based heuristic."
-        << std::endl;
+              << rankEstimate << " calculated by density-based heuristic."
+              << std::endl;
     this->rank = rankEstimate;
   }
 
@@ -126,10 +126,11 @@ void CF::Train(const arma::mat& data, FactorizerType factorizer)
 }
 
 template<typename FactorizerType>
-void CF::Train(const arma::sp_mat& data,
-               FactorizerType factorizer,
-               const typename std::enable_if_t<!FactorizerTraits<
-                   FactorizerType>::UsesCoordinateList>*)
+void CF::Train(
+    const arma::sp_mat& data,
+    FactorizerType factorizer,
+    const typename std::
+        enable_if_t<!FactorizerTraits<FactorizerType>::UsesCoordinateList>*)
 {
   cleanedData = data;
 
@@ -143,8 +144,8 @@ void CF::Train(const arma::sp_mat& data,
 
     // Set to heuristic value.
     Log::Info << "No rank given for decomposition; using rank of "
-        << rankEstimate << " calculated by density-based heuristic."
-        << std::endl;
+              << rankEstimate << " calculated by density-based heuristic."
+              << std::endl;
     this->rank = rankEstimate;
   }
 
@@ -159,11 +160,11 @@ void CF::serialize(Archive& ar, const unsigned int /* version */)
 {
   // This model is simple; just serialize all the members.  No special handling
   // required.
-  ar & BOOST_SERIALIZATION_NVP(numUsersForSimilarity);
-  ar & BOOST_SERIALIZATION_NVP(rank);
-  ar & BOOST_SERIALIZATION_NVP(w);
-  ar & BOOST_SERIALIZATION_NVP(h);
-  ar & BOOST_SERIALIZATION_NVP(cleanedData);
+  ar& BOOST_SERIALIZATION_NVP(numUsersForSimilarity);
+  ar& BOOST_SERIALIZATION_NVP(rank);
+  ar& BOOST_SERIALIZATION_NVP(w);
+  ar& BOOST_SERIALIZATION_NVP(h);
+  ar& BOOST_SERIALIZATION_NVP(cleanedData);
 }
 
 } // namespace cf

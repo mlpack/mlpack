@@ -52,11 +52,8 @@ class AdamUpdate
    */
   AdamUpdate(const double epsilon = 1e-8,
              const double beta1 = 0.9,
-             const double beta2 = 0.999) :
-    epsilon(epsilon),
-    beta1(beta1),
-    beta2(beta2),
-    iteration(0)
+             const double beta2 = 0.999)
+    : epsilon(epsilon), beta1(beta1), beta2(beta2), iteration(0)
   {
     // Nothing to do.
   }
@@ -81,9 +78,8 @@ class AdamUpdate
    * @param stepSize Step size to be used for the given iteration.
    * @param gradient The gradient matrix.
    */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
+  void
+  Update(arma::mat& iterate, const double stepSize, const arma::mat& gradient)
   {
     // Increment the iteration counter variable.
     ++iteration;
@@ -103,8 +99,8 @@ class AdamUpdate
      * following expression is an approximation of the following actual term;
      * m / (arma::sqrt(v) + (arma::sqrt(biasCorrection2) * eps).
      */
-    iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-        m / (arma::sqrt(v) + epsilon);
+    iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) * m
+               / (arma::sqrt(v) + epsilon);
   }
 
   //! Get the value used to initialise the squared gradient parameter.

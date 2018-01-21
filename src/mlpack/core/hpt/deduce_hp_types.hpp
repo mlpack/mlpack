@@ -76,14 +76,14 @@ struct DeduceHyperParameterTypes<T, Args...>
     template<typename>
     static No& Check(...);
 
-    static const bool value  =
-      sizeof(decltype(Check<Type>(0))) == sizeof(Yes);
+    static const bool value = sizeof(decltype(Check<Type>(0))) == sizeof(Yes);
   };
 
   template<typename CollectionType>
   struct ResultHPType<CollectionType, false>
   {
-    static_assert(IsCollectionType<CollectionType>::value,
+    static_assert(
+        IsCollectionType<CollectionType>::value,
         "One of the passed arguments is neither of an arithmetic type, nor of "
         "a collection type, nor fixed with the Fixed function.");
 
@@ -93,8 +93,9 @@ struct DeduceHyperParameterTypes<T, Args...>
   template<typename... HPTypes>
   struct ResultHolder
   {
-    using TupleType = typename DeduceHyperParameterTypes<Args...>::template
-        ResultHolder<HPTypes..., typename ResultHPType<T>::Type>::TupleType;
+    using TupleType = typename DeduceHyperParameterTypes<Args...>::
+        template ResultHolder<HPTypes...,
+                              typename ResultHPType<T>::Type>::TupleType;
   };
 
   using TupleType = typename ResultHolder<>::TupleType;
@@ -111,8 +112,8 @@ struct DeduceHyperParameterTypes<PreFixedArg<T>, Args...>
   template<typename... HPTypes>
   struct ResultHolder
   {
-    using TupleType = typename DeduceHyperParameterTypes<Args...>::template
-        ResultHolder<HPTypes...>::TupleType;
+    using TupleType = typename DeduceHyperParameterTypes<Args...>::
+        template ResultHolder<HPTypes...>::TupleType;
   };
 
   using TupleType = typename ResultHolder<>::TupleType;

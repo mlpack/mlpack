@@ -26,11 +26,11 @@ namespace mlpack {
 namespace pca {
 
 template<typename DecompositionPolicy>
-PCAType<DecompositionPolicy>::PCAType(
-    const bool scaleData, const DecompositionPolicy& decomposition) :
-    scaleData(scaleData),
-    decomposition(decomposition)
-{ }
+PCAType<DecompositionPolicy>::PCAType(const bool scaleData,
+                                      const DecompositionPolicy& decomposition)
+  : scaleData(scaleData), decomposition(decomposition)
+{
+}
 
 /**
  * Apply Principal Component Analysis to the provided data set.
@@ -55,8 +55,8 @@ void PCAType<DecompositionPolicy>::Apply(const arma::mat& data,
   // Scale the data if the user ask for.
   ScaleData(centeredData);
 
-  decomposition.Apply(data, centeredData, transformedData, eigVal, eigvec,
-      data.n_rows);
+  decomposition.Apply(
+      data, centeredData, transformedData, eigVal, eigvec, data.n_rows);
 
   Timer::Stop("pca");
 }
@@ -95,11 +95,11 @@ double PCAType<DecompositionPolicy>::Apply(arma::mat& data,
   // Parameter validation.
   if (newDimension == 0)
     Log::Fatal << "PCA::Apply(): newDimension (" << newDimension << ") cannot "
-        << "be zero!" << endl;
+               << "be zero!" << endl;
   if (newDimension > data.n_rows)
     Log::Fatal << "PCA::Apply(): newDimension (" << newDimension << ") cannot "
-        << "be greater than the existing dimensionality of the data ("
-        << data.n_rows << ")!" << endl;
+               << "be greater than the existing dimensionality of the data ("
+               << data.n_rows << ")!" << endl;
 
   arma::mat eigvec;
   arma::vec eigVal;
@@ -121,7 +121,7 @@ double PCAType<DecompositionPolicy>::Apply(arma::mat& data,
 
   // The svd method returns only non-zero eigenvalues so we have to calculate
   // the right dimension before calculating the amount of variance retained.
-  double eigDim = std::min(newDimension - 1, (size_t) eigVal.n_elem - 1);
+  double eigDim = std::min(newDimension - 1, (size_t)eigVal.n_elem - 1);
 
   Timer::Stop("pca");
 
@@ -146,10 +146,10 @@ double PCAType<DecompositionPolicy>::Apply(arma::mat& data,
   // Parameter validation.
   if (varRetained < 0)
     Log::Fatal << "PCA::Apply(): varRetained (" << varRetained << ") must be "
-        << "greater than or equal to 0." << endl;
+               << "greater than or equal to 0." << endl;
   if (varRetained > 1)
     Log::Fatal << "PCA::Apply(): varRetained (" << varRetained << ") should be "
-        << "less than or equal to 1." << endl;
+               << "less than or equal to 1." << endl;
 
   arma::mat eigvec;
   arma::vec eigVal;

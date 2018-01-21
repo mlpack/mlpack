@@ -41,34 +41,32 @@ namespace adaboost {
  * @param other Weak Learner, which has been initialized already.
  */
 template<typename WeakLearnerType, typename MatType>
-AdaBoost<WeakLearnerType, MatType>::AdaBoost(
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    const WeakLearnerType& other,
-    const size_t iterations,
-    const double tol)
+AdaBoost<WeakLearnerType, MatType>::AdaBoost(const MatType& data,
+                                             const arma::Row<size_t>& labels,
+                                             const size_t numClasses,
+                                             const WeakLearnerType& other,
+                                             const size_t iterations,
+                                             const double tol)
 {
   Train(data, labels, numClasses, other, iterations, tol);
 }
 
 // Empty constructor.
 template<typename WeakLearnerType, typename MatType>
-AdaBoost<WeakLearnerType, MatType>::AdaBoost(const double tolerance) :
-    tolerance(tolerance)
+AdaBoost<WeakLearnerType, MatType>::AdaBoost(const double tolerance)
+  : tolerance(tolerance)
 {
   // Nothing to do.
 }
 
 // Train AdaBoost.
 template<typename WeakLearnerType, typename MatType>
-void AdaBoost<WeakLearnerType, MatType>::Train(
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    const WeakLearnerType& other,
-    const size_t iterations,
-    const double tolerance)
+void AdaBoost<WeakLearnerType, MatType>::Train(const MatType& data,
+                                               const arma::Row<size_t>& labels,
+                                               const size_t numClasses,
+                                               const WeakLearnerType& other,
+                                               const size_t iterations,
+                                               const double tolerance)
 {
   // Clear information from previous runs.
   wl.clear();
@@ -90,8 +88,8 @@ void AdaBoost<WeakLearnerType, MatType>::Train(
   MatType tempData(data);
 
   // This matrix is a helper matrix used to calculate the final hypothesis.
-  arma::mat sumFinalH = arma::zeros<arma::mat>(numClasses,
-      predictedLabels.n_cols);
+  arma::mat sumFinalH =
+      arma::zeros<arma::mat>(numClasses, predictedLabels.n_cols);
 
   // Load the initial weights into a 2-D matrix.
   const double initWeight = 1.0 / double(data.n_cols * numClasses);
@@ -205,8 +203,7 @@ void AdaBoost<WeakLearnerType, MatType>::Train(
  */
 template<typename WeakLearnerType, typename MatType>
 void AdaBoost<WeakLearnerType, MatType>::Classify(
-    const MatType& test,
-    arma::Row<size_t>& predictedLabels)
+    const MatType& test, arma::Row<size_t>& predictedLabels)
 {
   arma::Row<size_t> tempPredictedLabels(test.n_cols);
   arma::mat cMatrix(numClasses, test.n_cols);
@@ -238,13 +235,13 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
  */
 template<typename WeakLearnerType, typename MatType>
 template<typename Archive>
-void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
-                                               const unsigned int /* version */)
+void AdaBoost<WeakLearnerType, MatType>::serialize(
+    Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(numClasses);
-  ar & BOOST_SERIALIZATION_NVP(tolerance);
-  ar & BOOST_SERIALIZATION_NVP(ztProduct);
-  ar & BOOST_SERIALIZATION_NVP(alpha);
+  ar& BOOST_SERIALIZATION_NVP(numClasses);
+  ar& BOOST_SERIALIZATION_NVP(tolerance);
+  ar& BOOST_SERIALIZATION_NVP(ztProduct);
+  ar& BOOST_SERIALIZATION_NVP(alpha);
 
   // Now serialize each weak learner.
   if (Archive::is_loading::value)
@@ -252,7 +249,7 @@ void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
     wl.clear();
     wl.resize(alpha.size());
   }
-  ar & BOOST_SERIALIZATION_NVP(wl);
+  ar& BOOST_SERIALIZATION_NVP(wl);
 }
 
 } // namespace adaboost

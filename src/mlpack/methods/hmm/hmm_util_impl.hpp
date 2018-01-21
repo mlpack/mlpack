@@ -35,8 +35,7 @@ template<typename ActionType,
 void DeserializeHMMAndPerformAction(ArchiveType& ar, ExtraInfoType* x = NULL);
 
 template<typename ActionType, typename ExtraInfoType>
-void LoadHMMAndPerformAction(const std::string& modelFile,
-                             ExtraInfoType* x)
+void LoadHMMAndPerformAction(const std::string& modelFile, ExtraInfoType* x)
 {
   using namespace boost::archive;
 
@@ -49,19 +48,17 @@ void LoadHMMAndPerformAction(const std::string& modelFile,
     LoadHMMAndPerformActionHelper<ActionType, text_iarchive>(modelFile, x);
   else
     Log::Fatal << "Unknown extension '" << extension << "' for HMM model file "
-        << "(known: 'xml', 'txt', 'bin')." << std::endl;
+               << "(known: 'xml', 'txt', 'bin')." << std::endl;
 }
 
-template<typename ActionType,
-         typename ArchiveType,
-         typename ExtraInfoType>
+template<typename ActionType, typename ArchiveType, typename ExtraInfoType>
 void LoadHMMAndPerformActionHelper(const std::string& modelFile,
                                    ExtraInfoType* x)
 {
   std::ifstream ifs(modelFile);
   if (ifs.fail())
     Log::Fatal << "Cannot open model file '" << modelFile << "' for loading!"
-        << std::endl;
+               << std::endl;
   ArchiveType ar(ifs);
 
   // Read in the unsigned integer that denotes the type of the model.
@@ -73,23 +70,25 @@ void LoadHMMAndPerformActionHelper(const std::string& modelFile,
   switch (type)
   {
     case HMMType::DiscreteHMM:
-      DeserializeHMMAndPerformAction<ActionType, ArchiveType,
-          HMM<DiscreteDistribution>>(ar, x);
+      DeserializeHMMAndPerformAction<ActionType,
+                                     ArchiveType,
+                                     HMM<DiscreteDistribution>>(ar, x);
       break;
 
     case HMMType::GaussianHMM:
-      DeserializeHMMAndPerformAction<ActionType, ArchiveType,
-          HMM<GaussianDistribution>>(ar, x);
+      DeserializeHMMAndPerformAction<ActionType,
+                                     ArchiveType,
+                                     HMM<GaussianDistribution>>(ar, x);
       break;
 
     case HMMType::GaussianMixtureModelHMM:
-      DeserializeHMMAndPerformAction<ActionType, ArchiveType,
-          HMM<gmm::GMM>>(ar, x);
+      DeserializeHMMAndPerformAction<ActionType, ArchiveType, HMM<gmm::GMM>>(ar,
+                                                                             x);
       break;
 
     default:
-      Log::Fatal << "Unknown HMM type '" << (unsigned int) type << "'!"
-          << std::endl;
+      Log::Fatal << "Unknown HMM type '" << (unsigned int)type << "'!"
+                 << std::endl;
   }
 }
 
@@ -126,7 +125,7 @@ void SaveHMM(HMMType& hmm, const std::string& modelFile)
     SaveHMMHelper<text_oarchive>(hmm, modelFile);
   else
     Log::Fatal << "Unknown extension '" << extension << "' for HMM model file."
-        << std::endl;
+               << std::endl;
 }
 
 template<typename ArchiveType, typename HMMType>
@@ -135,7 +134,7 @@ void SaveHMMHelper(HMMType& hmm, const std::string& modelFile)
   std::ofstream ofs(modelFile);
   if (ofs.fail())
     Log::Fatal << "Cannot open model file '" << modelFile << "' for saving!"
-        << std::endl;
+               << std::endl;
   ArchiveType ar(ofs);
 
   // Write out the unsigned integer that denotes the type of the model.
@@ -149,7 +148,10 @@ void SaveHMMHelper(HMMType& hmm, const std::string& modelFile)
 
 // Utility functions to turn a type into something we can store.
 template<typename HMMType>
-char GetHMMType() { return char(-1); }
+char GetHMMType()
+{
+  return char(-1);
+}
 
 template<>
 char GetHMMType<HMM<distribution::DiscreteDistribution>>()

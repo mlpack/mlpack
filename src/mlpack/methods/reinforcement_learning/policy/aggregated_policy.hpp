@@ -23,7 +23,7 @@ namespace rl {
 /**
  * @tparam PolicyType The type of the child policy.
  */
-template <typename PolicyType>
+template<typename PolicyType>
 class AggregatedPolicy
 {
  public:
@@ -37,10 +37,9 @@ class AggregatedPolicy
    *     and the sum of its element is equal to 1.
    */
   AggregatedPolicy(std::vector<PolicyType> policies,
-                   const arma::colvec& distribution) :
-      policies(std::move(policies)),
-      sampler({distribution})
-  { /* Nothing to do here. */ };
+                   const arma::colvec& distribution)
+    : policies(std::move(policies)),
+      sampler({distribution}){/* Nothing to do here. */};
 
   /**
    * Sample an action based on given action values.

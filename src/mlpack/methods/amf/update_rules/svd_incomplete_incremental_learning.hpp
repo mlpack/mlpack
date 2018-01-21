@@ -12,10 +12,8 @@
 #ifndef MLPACK_METHODS_AMF_SVD_INCOMPLETE_INCREMENTAL_LEARNING_HPP
 #define MLPACK_METHODS_AMF_SVD_INCOMPLETE_INCREMENTAL_LEARNING_HPP
 
-namespace mlpack
-{
-namespace amf
-{
+namespace mlpack {
+namespace amf {
 
 /**
  * This class computes SVD using incomplete incremental batch learning, as
@@ -53,7 +51,7 @@ class SVDIncompleteIncrementalLearning
   SVDIncompleteIncrementalLearning(double u = 0.001,
                                    double kw = 0,
                                    double kh = 0)
-          : u(u), kw(kw), kh(kh)
+    : u(u), kw(kw), kh(kh)
   {
     // Nothing to do.
   }
@@ -83,9 +81,7 @@ class SVDIncompleteIncrementalLearning
    * @param H Encoding matrix.
    */
   template<typename MatType>
-  inline void WUpdate(const MatType& V,
-                      arma::mat& W,
-                      const arma::mat& H)
+  inline void WUpdate(const MatType& V, arma::mat& W, const arma::mat& H)
   {
     arma::mat deltaW;
     deltaW.zeros(V.n_rows, W.n_cols);
@@ -98,8 +94,8 @@ class SVDIncompleteIncrementalLearning
       // Update only if the rating is non-zero.
       if (val != 0)
       {
-        deltaW.row(i) += (val - arma::dot(W.row(i), H.col(currentUserIndex))) *
-            H.col(currentUserIndex).t();
+        deltaW.row(i) += (val - arma::dot(W.row(i), H.col(currentUserIndex)))
+                         * H.col(currentUserIndex).t();
       }
       // Add regularization.
       if (kw != 0)
@@ -118,9 +114,7 @@ class SVDIncompleteIncrementalLearning
    * @param H Encoding matrix to be updated.
    */
   template<typename MatType>
-  inline void HUpdate(const MatType& V,
-                      const arma::mat& W,
-                      arma::mat& H)
+  inline void HUpdate(const MatType& V, const arma::mat& W, arma::mat& H)
   {
     arma::vec deltaH;
     deltaH.zeros(H.n_rows);
@@ -133,8 +127,8 @@ class SVDIncompleteIncrementalLearning
       // Update only if the rating is non-zero.
       if (val != 0)
       {
-        deltaH += (val - arma::dot(W.row(i), H.col(currentUserIndex))) *
-            W.row(i).t();
+        deltaH +=
+            (val - arma::dot(W.row(i), H.col(currentUserIndex))) * W.row(i).t();
       }
     }
     // Add regularization.
@@ -169,16 +163,18 @@ inline void SVDIncompleteIncrementalLearning::WUpdate<arma::sp_mat>(
   arma::mat deltaW(V.n_rows, W.n_cols);
   deltaW.zeros();
   for (arma::sp_mat::const_iterator it = V.begin_col(currentUserIndex);
-      it != V.end_col(currentUserIndex); it++)
+       it != V.end_col(currentUserIndex);
+       it++)
   {
     double val = *it;
     size_t i = it.row();
-    deltaW.row(i) += (val - arma::dot(W.row(i), H.col(currentUserIndex))) *
-        arma::trans(H.col(currentUserIndex));
-    if (kw != 0) deltaW.row(i) -= kw * W.row(i);
+    deltaW.row(i) += (val - arma::dot(W.row(i), H.col(currentUserIndex)))
+                     * arma::trans(H.col(currentUserIndex));
+    if (kw != 0)
+      deltaW.row(i) -= kw * W.row(i);
   }
 
-  W += u*deltaW;
+  W += u * deltaW;
 }
 
 template<>
@@ -189,17 +185,19 @@ inline void SVDIncompleteIncrementalLearning::HUpdate<arma::sp_mat>(
   deltaH.zeros();
 
   for (arma::sp_mat::const_iterator it = V.begin_col(currentUserIndex);
-      it != V.end_col(currentUserIndex); it++)
+       it != V.end_col(currentUserIndex);
+       it++)
   {
     double val = *it;
     size_t i = it.row();
     if ((val = V(i, currentUserIndex)) != 0)
     {
-      deltaH += (val - arma::dot(W.row(i), H.col(currentUserIndex))) *
-          arma::trans(W.row(i));
+      deltaH += (val - arma::dot(W.row(i), H.col(currentUserIndex)))
+                * arma::trans(W.row(i));
     }
   }
-  if (kh != 0) deltaH -= kh * H.col(currentUserIndex);
+  if (kh != 0)
+    deltaH -= kh * H.col(currentUserIndex);
 
   H.col(currentUserIndex++) += u * deltaH;
   currentUserIndex = currentUserIndex % V.n_cols;

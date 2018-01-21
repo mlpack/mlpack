@@ -53,12 +53,12 @@ class GiniGain
     // to exploit SIMD instructions if possible.
     arma::vec countSpace(4 * numClasses, arma::fill::zeros);
     arma::vec counts(countSpace.memptr(), numClasses, false, true);
-    arma::vec counts2(countSpace.memptr() + numClasses, numClasses, false,
-        true);
-    arma::vec counts3(countSpace.memptr() + 2 * numClasses, numClasses, false,
-        true);
-    arma::vec counts4(countSpace.memptr() + 3 * numClasses, numClasses, false,
-        true);
+    arma::vec counts2(
+        countSpace.memptr() + numClasses, numClasses, false, true);
+    arma::vec counts3(
+        countSpace.memptr() + 2 * numClasses, numClasses, false, true);
+    arma::vec counts4(
+        countSpace.memptr() + 3 * numClasses, numClasses, false, true);
 
     // Calculate the Gini impurity of the un-split node.
     double impurity = 0.0;
@@ -66,7 +66,7 @@ class GiniGain
     if (UseWeights)
     {
       // Sum all the weights up.
-      double accWeights[4] = { 0.0, 0.0, 0.0, 0.0 };
+      double accWeights[4] = {0.0, 0.0, 0.0, 0.0};
 
       // SIMD loop: add counts for four elements simultaneously (if the compiler
       // manages to vectorize the loop).
@@ -130,7 +130,7 @@ class GiniGain
 
       for (size_t i = 0; i < numClasses; ++i)
       {
-        const double f = ((double) counts[i] / (double) accWeights[0]);
+        const double f = ((double)counts[i] / (double)accWeights[0]);
         impurity += f * (1.0 - f);
       }
     }
@@ -167,7 +167,7 @@ class GiniGain
 
       for (size_t i = 0; i < numClasses; ++i)
       {
-        const double f = ((double) counts[i] / (double) labels.n_elem);
+        const double f = ((double)counts[i] / (double)labels.n_elem);
         impurity += f * (1.0 - f);
       }
     }

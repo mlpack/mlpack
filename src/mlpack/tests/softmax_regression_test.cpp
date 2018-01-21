@@ -103,9 +103,11 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionRegularizationEvaluate)
     const double bigRegTerm = 10 * wL2SquaredNorm;
 
     BOOST_REQUIRE_CLOSE(srfNoReg.Evaluate(parameters) + smallRegTerm,
-        srfSmallReg.Evaluate(parameters), 1e-5);
+                        srfSmallReg.Evaluate(parameters),
+                        1e-5);
     BOOST_REQUIRE_CLOSE(srfNoReg.Evaluate(parameters) + bigRegTerm,
-        srfBigReg.Evaluate(parameters), 1e-5);
+                        srfBigReg.Evaluate(parameters),
+                        1e-5);
   }
 }
 
@@ -208,7 +210,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
   for (size_t i = 0; i < points / 2; i++)
   {
     data.col(i) = g1.Random();
-    labels(i) =  0;
+    labels(i) = 0;
   }
   for (size_t i = points / 2; i < points; i++)
   {

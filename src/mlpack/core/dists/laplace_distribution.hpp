@@ -53,7 +53,7 @@ class LaplaceDistribution
    * Default constructor, which creates a Laplace distribution with zero
    * dimension and zero scale parameter.
    */
-  LaplaceDistribution() : scale(0) { }
+  LaplaceDistribution() : scale(0) {}
 
   /**
    * Construct the Laplace distribution with the given scale and dimensionality.
@@ -62,8 +62,10 @@ class LaplaceDistribution
    * @param dimensionality Dimensionality of distribution.
    * @param scale Scale of distribution.
    */
-  LaplaceDistribution(const size_t dimensionality, const double scale) :
-      mean(arma::zeros<arma::vec>(dimensionality)), scale(scale) { }
+  LaplaceDistribution(const size_t dimensionality, const double scale)
+    : mean(arma::zeros<arma::vec>(dimensionality)), scale(scale)
+  {
+  }
 
   /**
    * Construct the Laplace distribution with the given mean and scale parameter.
@@ -71,8 +73,10 @@ class LaplaceDistribution
    * @param mean Mean of distribution.
    * @param scale Scale of distribution.
    */
-  LaplaceDistribution(const arma::vec& mean, const double scale) :
-      mean(mean), scale(scale) { }
+  LaplaceDistribution(const arma::vec& mean, const double scale)
+    : mean(mean), scale(scale)
+  {
+  }
 
   //! Return the dimensionality of this distribution.
   size_t Dimensionality() const { return mean.n_elem; }
@@ -127,8 +131,7 @@ class LaplaceDistribution
    * account the probability of each observation actually being from this
    * distribution.
    */
-  void Estimate(const arma::mat& observations,
-                const arma::vec& probabilities);
+  void Estimate(const arma::mat& observations, const arma::vec& probabilities);
 
   //! Return the mean.
   const arma::vec& Mean() const { return mean; }
@@ -146,8 +149,8 @@ class LaplaceDistribution
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(mean);
-    ar & BOOST_SERIALIZATION_NVP(scale);
+    ar& BOOST_SERIALIZATION_NVP(mean);
+    ar& BOOST_SERIALIZATION_NVP(scale);
   }
 
  private:

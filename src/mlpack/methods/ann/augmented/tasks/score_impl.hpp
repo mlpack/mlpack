@@ -32,16 +32,15 @@ double SequencePrecision(arma::field<MatType> trueOutputs,
     std::ostringstream oss;
     oss << "SequencePrecision(): number of predicted sequences ("
         << predOutputs.n_elem << ") should be equal to the number "
-        << "of ground-truth sequences ("
-        << trueOutputs.n_elem << ")"
+        << "of ground-truth sequences (" << trueOutputs.n_elem << ")"
         << std::endl;
     throw std::invalid_argument(oss.str());
   }
 
   for (size_t i = 0; i < testSize; i++)
   {
-    arma::vec delta = arma::vectorise(arma::abs(
-      trueOutputs.at(i) - predOutputs.at(i)));
+    arma::vec delta =
+        arma::vectorise(arma::abs(trueOutputs.at(i) - predOutputs.at(i)));
     double maxDelta = arma::max(delta);
     if (maxDelta < tol)
     {

@@ -39,16 +39,16 @@ class RAQueryStat
    * Initialize the statistic with the worst possible distance according to our
    * sorting policy.
    */
-  RAQueryStat() : bound(SortPolicy::WorstDistance()), numSamplesMade(0) { }
+  RAQueryStat() : bound(SortPolicy::WorstDistance()), numSamplesMade(0) {}
 
   /**
    * Initialization for a node.
    */
   template<typename TreeType>
-  RAQueryStat(const TreeType& /* node */) :
-    bound(SortPolicy::WorstDistance()),
-    numSamplesMade(0)
-  { }
+  RAQueryStat(const TreeType& /* node */)
+    : bound(SortPolicy::WorstDistance()), numSamplesMade(0)
+  {
+  }
 
   //! Get the bound.
   double Bound() const { return bound; }
@@ -64,8 +64,8 @@ class RAQueryStat
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(bound);
-    ar & BOOST_SERIALIZATION_NVP(numSamplesMade);
+    ar& BOOST_SERIALIZATION_NVP(bound);
+    ar& BOOST_SERIALIZATION_NVP(numSamplesMade);
   }
 
  private:

@@ -22,11 +22,12 @@ void OutputParamImpl(
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
+    const typename boost::
+        disable_if<std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::
+            type* /* junk */)
 {
   std::cout << data.name << ": " << *boost::any_cast<T>(&data.value)
-      << std::endl;
+            << std::endl;
 }
 
 //! Output a vector option.
@@ -55,10 +56,10 @@ void OutputParamImpl(
 
   if (output.n_elem > 0 && filename != "")
   {
-      if (arma::is_Row<T>::value || arma::is_Col<T>::value)
-        data::Save(filename, output, false);
-      else
-        data::Save(filename, output, false, !data.noTranspose);
+    if (arma::is_Row<T>::value || arma::is_Col<T>::value)
+      data::Save(filename, output, false);
+    else
+      data::Save(filename, output, false, !data.noTranspose);
   }
 }
 
@@ -73,8 +74,8 @@ void OutputParamImpl(
   // const.  In this case we can assume it though, since we will be saving and
   // not loading.
   typedef std::tuple<T, std::string> TupleType;
-  T& output = const_cast<T&>(std::get<0>(*boost::any_cast<TupleType>(
-      &data.value)));
+  T& output =
+      const_cast<T&>(std::get<0>(*boost::any_cast<TupleType>(&data.value)));
   const std::string& filename =
       std::get<1>(*boost::any_cast<TupleType>(&data.value));
 
@@ -86,8 +87,9 @@ void OutputParamImpl(
 template<typename T>
 void OutputParamImpl(
     const util::ParamData& data,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
+    const typename boost::
+        enable_if<std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::
+            type* /* junk */)
 {
   // Output the matrix with the mappings.
   typedef std::tuple<T, std::string> TupleType;

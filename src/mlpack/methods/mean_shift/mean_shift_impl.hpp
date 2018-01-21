@@ -30,13 +30,10 @@ namespace meanshift {
  * Construct the Mean Shift object.
  */
 template<bool UseKernel, typename KernelType, typename MatType>
-MeanShift<UseKernel, KernelType, MatType>::
-MeanShift(const double radius,
-          const size_t maxIterations,
-          const KernelType kernel) :
-    radius(radius),
-    maxIterations(maxIterations),
-    kernel(kernel)
+MeanShift<UseKernel, KernelType, MatType>::MeanShift(const double radius,
+                                                     const size_t maxIterations,
+                                                     const KernelType kernel)
+  : radius(radius), maxIterations(maxIterations), kernel(kernel)
 {
   // Nothing to do.
 }
@@ -49,8 +46,9 @@ void MeanShift<UseKernel, KernelType, MatType>::Radius(double radius)
 
 // Estimate radius based on given dataset.
 template<bool UseKernel, typename KernelType, typename MatType>
-double MeanShift<UseKernel, KernelType, MatType>::
-EstimateRadius(const MatType& data, double ratio)
+double
+MeanShift<UseKernel, KernelType, MatType>::EstimateRadius(const MatType& data,
+                                                          double ratio)
 {
   neighbor::KNN neighborSearch(data);
 
@@ -68,11 +66,11 @@ EstimateRadius(const MatType& data, double ratio)
   arma::rowvec maxDistances = max(distances);
 
   // Calculate and return the radius.
-  return sum(maxDistances) / (double) data.n_cols;
+  return sum(maxDistances) / (double)data.n_cols;
 }
 
 // Class to compare two vectors.
-template <typename VecType>
+template<typename VecType>
 class less
 {
  public:
@@ -90,14 +88,13 @@ class less
 
 // Generate seeds from given data set.
 template<bool UseKernel, typename KernelType, typename MatType>
-void MeanShift<UseKernel, KernelType, MatType>::GenSeeds(
-    const MatType& data,
-    const double binSize,
-    const int minFreq,
-    MatType& seeds)
+void MeanShift<UseKernel, KernelType, MatType>::GenSeeds(const MatType& data,
+                                                         const double binSize,
+                                                         const int minFreq,
+                                                         MatType& seeds)
 {
   typedef arma::colvec VecType;
-  std::map<VecType, int, less<VecType> > allSeeds;
+  std::map<VecType, int, less<VecType>> allSeeds;
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     VecType binnedPoint = arma::floor(data.unsafe_col(i) / binSize);
@@ -109,7 +106,7 @@ void MeanShift<UseKernel, KernelType, MatType>::GenSeeds(
 
   // Remove seeds with too few points.  First we count the number of seeds we
   // end up with, then we add them.
-  std::map<VecType, int, less<VecType> >::iterator it;
+  std::map<VecType, int, less<VecType>>::iterator it;
   size_t count = 0;
   for (it = allSeeds.begin(); it != allSeeds.end(); ++it)
     if (it->second >= minFreq)
@@ -133,11 +130,11 @@ void MeanShift<UseKernel, KernelType, MatType>::GenSeeds(
 template<bool UseKernel, typename KernelType, typename MatType>
 template<bool ApplyKernel>
 typename std::enable_if<ApplyKernel, bool>::type
-MeanShift<UseKernel, KernelType, MatType>::
-CalculateCentroid(const MatType& data,
-                  const std::vector<size_t>& neighbors,
-                  const std::vector<double>& distances,
-                  arma::colvec& centroid)
+MeanShift<UseKernel, KernelType, MatType>::CalculateCentroid(
+    const MatType& data,
+    const std::vector<size_t>& neighbors,
+    const std::vector<double>& distances,
+    arma::colvec& centroid)
 {
   double sumWeight = 0;
   for (size_t i = 0; i < neighbors.size(); ++i)
@@ -163,11 +160,11 @@ CalculateCentroid(const MatType& data,
 template<bool UseKernel, typename KernelType, typename MatType>
 template<bool ApplyKernel>
 typename std::enable_if<!ApplyKernel, bool>::type
-MeanShift<UseKernel, KernelType, MatType>::
-CalculateCentroid(const MatType& data,
-                  const std::vector<size_t>& neighbors,
-                  const std::vector<double>&, /*unused*/
-                  arma::colvec& centroid)
+MeanShift<UseKernel, KernelType, MatType>::CalculateCentroid(
+    const MatType& data,
+    const std::vector<size_t>& neighbors,
+    const std::vector<double>&, /*unused*/
+    arma::colvec& centroid)
 {
   for (size_t i = 0; i < neighbors.size(); ++i)
     centroid += data.unsafe_col(neighbors[i]);
@@ -208,8 +205,8 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
 
   range::RangeSearch<> rangeSearcher(data);
   math::Range validRadius(0, radius);
-  std::vector<std::vector<size_t> > neighbors;
-  std::vector<std::vector<double> > distances;
+  std::vector<std::vector<size_t>> neighbors;
+  std::vector<std::vector<double>> distances;
 
   // For each seed, perform mean shift algorithm.
   for (size_t i = 0; i < pSeeds->n_cols; ++i)
@@ -222,8 +219,8 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
       // Store new centroid in this.
       arma::colvec newCentroid = arma::zeros<arma::colvec>(pSeeds->n_rows);
 
-      rangeSearcher.Search(allCentroids.unsafe_col(i), validRadius,
-          neighbors, distances);
+      rangeSearcher.Search(
+          allCentroids.unsafe_col(i), validRadius, neighbors, distances);
       if (neighbors[0].size() <= 1)
         break;
 
@@ -233,7 +230,8 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
 
       // If the mean shift vector is small enough, it has converged.
       if (metric::EuclideanDistance::Evaluate(newCentroid,
-          allCentroids.unsafe_col(i)) < 1e-3 * radius)
+                                              allCentroids.unsafe_col(i))
+          < 1e-3 * radius)
       {
         // Determine if the new centroid is duplicate with old ones.
         bool isDuplicated = false;

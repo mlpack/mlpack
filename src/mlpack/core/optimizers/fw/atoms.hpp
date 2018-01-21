@@ -25,7 +25,7 @@ namespace optimization {
 class Atoms
 {
  public:
-  Atoms(){ /* Nothing to do. */ }
+  Atoms() { /* Nothing to do. */}
 
   /**
    * Add atom into the solution space.
@@ -56,12 +56,8 @@ class Atoms
     }
   }
 
-
   //! Recover the solution coordinate from the coefficients of current atoms.
-  void RecoverVector(arma::mat& x)
-  {
-    x = currentAtoms * currentCoeffs;
-  }
+  void RecoverVector(arma::mat& x) { x = currentAtoms * currentCoeffs; }
 
   /**
    * Prune the support, delete previous atoms if they don't contribute much.
@@ -73,7 +69,8 @@ class Atoms
    *    Number = {21},
    *    Pages = {5798--5811},
    *    Publisher = {IEEE},
-   *    Title = {Forward--backward greedy algorithms for atomic norm regularization},
+   *    Title = {Forward--backward greedy algorithms for atomic norm
+   * regularization},
    *    Volume = {63},
    *    Year = {2015}
    * }
@@ -95,8 +92,8 @@ class Atoms
       function.Gradient(x, gradient);
 
       // Find possible atom to be deleted.
-      arma::vec gap = sqTerm -
-          currentCoeffs % trans(gradient.t() * currentAtoms);
+      arma::vec gap =
+          sqTerm - currentCoeffs % trans(gradient.t() * currentAtoms);
       arma::uword ind;
       gap.min(ind);
 
@@ -131,9 +128,8 @@ class Atoms
         atomSqTerm.shed_row(ind);
         sqTerm.shed_row(ind);
       } // else
-    } // while
+    }   // while
   }
-
 
   /**
    * Enhance the solution in the convex hull of current atoms with atom norm
@@ -150,7 +146,8 @@ class Atoms
    *    Number = {21},
    *    Pages = {5798--5811},
    *    Publisher = {IEEE},
-   *    Title = {Forward--backward greedy algorithms for atomic norm regularization},
+   *    Title = {Forward--backward greedy algorithms for atomic norm
+   * regularization},
    *    Volume = {63},
    *    Year = {2015}
    * }
@@ -172,7 +169,7 @@ class Atoms
     RecoverVector(x);
     double value = function.Evaluate(x);
 
-    for (size_t iter = 1; iter<maxIteration; iter++)
+    for (size_t iter = 1; iter < maxIteration; iter++)
     {
       // Update currentCoeffs with gradient descent method.
       arma::mat g;
@@ -192,7 +189,6 @@ class Atoms
       value = valueNew;
     }
   }
-
 
   //! Get the current atom coefficients.
   const arma::vec& CurrentCoeffs() const { return currentCoeffs; }
@@ -215,7 +211,7 @@ class Atoms
   //! when an atom is added.
   arma::vec atomSqTerm;
 }; // class Atoms
-}  // namespace optimization
-}  // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 #endif

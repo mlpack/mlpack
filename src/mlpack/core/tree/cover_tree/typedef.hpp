@@ -36,10 +36,8 @@ namespace tree {
  * @see @ref trees, CoverTree
  */
 template<typename MetricType, typename StatisticType, typename MatType>
-using StandardCoverTree = CoverTree<MetricType,
-                                    StatisticType,
-                                    MatType,
-                                    FirstPointIsRoot>;
+using StandardCoverTree =
+    CoverTree<MetricType, StatisticType, MatType, FirstPointIsRoot>;
 
 } // namespace tree
 } // namespace mlpack

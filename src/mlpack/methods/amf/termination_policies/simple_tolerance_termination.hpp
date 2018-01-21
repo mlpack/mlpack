@@ -19,15 +19,17 @@ namespace amf {
 
 /**
  * This class implements residue tolerance termination policy. Termination
- * criterion is met when increase in residue value drops below the given tolerance.
- * To accommodate spikes certain number of successive residue drops are accepted.
+ * criterion is met when increase in residue value drops below the given
+ * tolerance.
+ * To accommodate spikes certain number of successive residue drops are
+ * accepted.
  * This upper imit on successive drops can be adjusted with reverseStepCount.
  * Secondary termination criterion terminates algorithm when iteration count
  * goes above the threshold.
  *
  * @see AMF
  */
-template <class MatType>
+template<class MatType>
 class SimpleToleranceTermination
 {
  public:
@@ -35,9 +37,10 @@ class SimpleToleranceTermination
   SimpleToleranceTermination(const double tolerance = 1e-5,
                              const size_t maxIterations = 10000,
                              const size_t reverseStepTolerance = 3)
-            : tolerance(tolerance),
-              maxIterations(maxIterations),
-              reverseStepTolerance(reverseStepTolerance) {}
+    : tolerance(tolerance), maxIterations(maxIterations),
+      reverseStepTolerance(reverseStepTolerance)
+  {
+  }
 
   /**
    * Initializes the termination policy before stating the factorization.
@@ -80,17 +83,17 @@ class SimpleToleranceTermination
     size_t count = 0;
     for (size_t i = 0; i < n; i++)
     {
-        for (size_t j = 0; j < m; j++)
+      for (size_t j = 0; j < m; j++)
+      {
+        double temp = 0;
+        if ((temp = (*V)(i, j)) != 0)
         {
-            double temp = 0;
-            if ((temp = (*V)(i, j)) != 0)
-            {
-                temp = (temp - WH(i, j));
-                temp = temp * temp;
-                sum += temp;
-                count++;
-            }
+          temp = (temp - WH(i, j));
+          temp = temp * temp;
+          sum += temp;
+          count++;
         }
+      }
     }
     residue = sum / count;
     residue = sqrt(residue);
@@ -98,7 +101,7 @@ class SimpleToleranceTermination
     // increment iteration count
     iteration++;
     Log::Info << "Iteration " << iteration << "; residue "
-        << ((residueOld - residue) / residueOld) << ".\n";
+              << ((residueOld - residue) / residueOld) << ".\n";
 
     // if residue tolerance is not satisfied
     if ((residueOld - residue) / residueOld < tolerance && iteration > 4)
@@ -142,7 +145,8 @@ class SimpleToleranceTermination
       }
       return true;
     }
-    else return false;
+    else
+      return false;
   }
 
   //! Get current value of residue
@@ -196,4 +200,3 @@ class SimpleToleranceTermination
 } // namespace mlpack
 
 #endif // _MLPACK_METHODS_AMF_SIMPLE_TOLERANCE_TERMINATION_HPP_INCLUDED
-

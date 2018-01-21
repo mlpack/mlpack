@@ -14,17 +14,17 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack
-{
-namespace amf
-{
+namespace mlpack {
+namespace amf {
 
 /**
  * This class implements validation termination policy based on RMSE index.
- * The input data matrix is divided into 2 sets, training set and validation set.
+ * The input data matrix is divided into 2 sets, training set and validation
+ * set.
  * Entries of validation set are nullifed in the input matrix. Termination
  * criterion is met when increase in validation set RMSe value drops below the
- * given tolerance. To accommodate spikes certain number of successive validation
+ * given tolerance. To accommodate spikes certain number of successive
+ * validation
  * RMSE drops are accepted. This upper imit on successive drops can be adjusted
  * with reverseStepCount. Secondary termination criterion terminates algorithm
  * when iteration count goes above the threshold.
@@ -33,7 +33,7 @@ namespace amf
  *
  * @see AMF
  */
-template <class MatType>
+template<class MatType>
 class ValidationRMSETermination
 {
  public:
@@ -51,10 +51,9 @@ class ValidationRMSETermination
                             double tolerance = 1e-5,
                             size_t maxIterations = 10000,
                             size_t reverseStepTolerance = 3)
-        : tolerance(tolerance),
-          maxIterations(maxIterations),
-          num_test_points(num_test_points),
-          reverseStepTolerance(reverseStepTolerance)
+    : tolerance(tolerance), maxIterations(maxIterations),
+      num_test_points(num_test_points),
+      reverseStepTolerance(reverseStepTolerance)
   {
     size_t n = V.n_rows;
     size_t m = V.n_cols;
@@ -180,7 +179,8 @@ class ValidationRMSETermination
       }
       return true;
     }
-    else return false;
+    else
+      return false;
   }
 
   //! Get current value of residue
@@ -236,6 +236,5 @@ class ValidationRMSETermination
 
 } // namespace amf
 } // namespace mlpack
-
 
 #endif // _MLPACK_METHODS_AMF_VALIDATIONRMSETERMINATION_HPP_INCLUDED

@@ -33,26 +33,27 @@ class EigenvalueRatioConstraint
    * which is the largest eigenvalue, so the first element of the vector should
    * be 1.  In addition, all other elements should be less than or equal to 1.
    */
-  EigenvalueRatioConstraint(const arma::vec& ratios) :
-      // Make an alias of the ratios vector.  It will never be modified here.
+  EigenvalueRatioConstraint(const arma::vec& ratios)
+    : // Make an alias of the ratios vector.  It will never be modified here.
       ratios(const_cast<double*>(ratios.memptr()), ratios.n_elem, false)
   {
     // Check validity of ratios.
     if (std::abs(ratios[0] - 1.0) > 1e-20)
       Log::Fatal << "EigenvalueRatioConstraint::EigenvalueRatioConstraint(): "
-          << "first element of ratio vector is not 1.0!" << std::endl;
+                 << "first element of ratio vector is not 1.0!" << std::endl;
 
     for (size_t i = 1; i < ratios.n_elem; ++i)
     {
       if (ratios[i] > 1.0)
         Log::Fatal << "EigenvalueRatioConstraint::EigenvalueRatioConstraint(): "
-            << "element " << i << " of ratio vector is greater than 1.0!"
-            << std::endl;
+                   << "element " << i << " of ratio vector is greater than 1.0!"
+                   << std::endl;
       if (ratios[i] < 0.0)
         Log::Warn << "EigenvalueRatioConstraint::EigenvalueRatioConstraint(): "
-            << "element " << i << " of ratio vectors is negative and will "
-            << "probably cause the covariance to be non-invertible..."
-            << std::endl;
+                  << "element " << i
+                  << " of ratio vectors is negative and will "
+                  << "probably cause the covariance to be non-invertible..."
+                  << std::endl;
     }
   }
 
@@ -82,7 +83,7 @@ class EigenvalueRatioConstraint
   {
     // Strip the const for the sake of loading/saving.  This is the only time it
     // is modified (other than the constructor).
-    ar & BOOST_SERIALIZATION_NVP(const_cast<arma::vec&>(ratios));
+    ar& BOOST_SERIALIZATION_NVP(const_cast<arma::vec&>(ratios));
   }
 
  private:

@@ -43,8 +43,7 @@ class HardCodedCopyModel
  public:
   HardCodedCopyModel() : nRepeats(1) {}
 
-  void Train(arma::field<arma::mat>& predictors,
-             arma::field<arma::mat>& labels)
+  void Train(arma::field<arma::mat>& predictors, arma::field<arma::mat>& labels)
   {
     arma::mat input = predictors.at(0);
     arma::mat output = labels.at(0);
@@ -58,8 +57,7 @@ class HardCodedCopyModel
     nRepeats = oneCnt / zeroCnt;
   }
 
-  void Predict(arma::mat& predictors,
-               arma::mat& labels)
+  void Predict(arma::mat& predictors, arma::mat& labels)
   {
     size_t seqLen = (predictors.n_rows / 2) / (nRepeats + 1);
     size_t outputLen = nRepeats * seqLen;
@@ -67,7 +65,7 @@ class HardCodedCopyModel
     labels.zeros(predictors.n_rows / 2, 1);
     for (size_t i = 0; i < outputLen; ++i)
     {
-      labels.at(seqLen+i) = predictors.at(2 * (i % seqLen));
+      labels.at(seqLen + i) = predictors.at(2 * (i % seqLen));
     }
   }
 
@@ -92,14 +90,12 @@ class HardCodedSortModel
  public:
   HardCodedSortModel(size_t bitLen) : bitLen(bitLen) {}
 
-  void Train(arma::field<arma::mat>& predictors,
-             arma::field<arma::mat>& labels)
+  void Train(arma::field<arma::mat>& predictors, arma::field<arma::mat>& labels)
   {
     assert(predictors.n_elem == labels.n_elem);
   }
 
-  void Predict(arma::mat& predictors,
-               arma::mat& labels)
+  void Predict(arma::mat& predictors, arma::mat& labels)
   {
     predictors = predictors.t();
     predictors.reshape(bitLen, predictors.n_elem / bitLen);
@@ -151,8 +147,7 @@ class HardCodedAddModel
     return;
   }
 
-  void Predict(arma::mat& predictors,
-               arma::mat& labels)
+  void Predict(arma::mat& predictors, arma::mat& labels)
   {
     assert(predictors.n_elem % 3 == 0);
     predictors = predictors.t();
@@ -206,9 +201,8 @@ class HardCodedAddModel
     labels.reshape(predictors.n_elem, 1);
   }
 
-  void Predict(
-      arma::field<arma::mat>& predictors,
-      arma::field<arma::mat>& labels)
+  void Predict(arma::field<arma::mat>& predictors,
+               arma::field<arma::mat>& labels)
   {
     size_t sz = predictors.n_elem;
     labels = arma::field<arma::mat>(sz);

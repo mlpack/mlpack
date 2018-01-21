@@ -36,7 +36,7 @@ template<typename T>
 void GetParam(const util::ParamData& d, const void* /* input */, void* output)
 {
   // Cast to the correct type.
-  *((T**) output) = &GetParam<T>(const_cast<util::ParamData&>(d));
+  *((T**)output) = &GetParam<T>(const_cast<util::ParamData&>(d));
 }
 
 } // namespace tests

@@ -22,19 +22,18 @@ namespace nca {
 template<typename MetricType, typename OptimizerType>
 NCA<MetricType, OptimizerType>::NCA(const arma::mat& dataset,
                                     const arma::Row<size_t>& labels,
-                                    MetricType metric) :
-    dataset(dataset),
-    labels(labels),
-    metric(metric),
+                                    MetricType metric)
+  : dataset(dataset), labels(labels), metric(metric),
     errorFunction(dataset, labels, metric)
-{ /* Nothing to do. */ }
+{ /* Nothing to do. */
+}
 
 template<typename MetricType, typename OptimizerType>
 void NCA<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix)
 {
   // See if we were passed an initialized matrix.
-  if ((outputMatrix.n_rows != dataset.n_rows) ||
-      (outputMatrix.n_cols != dataset.n_rows))
+  if ((outputMatrix.n_rows != dataset.n_rows)
+      || (outputMatrix.n_cols != dataset.n_rows))
     outputMatrix.eye(dataset.n_rows, dataset.n_rows);
 
   Timer::Start("nca_sgd_optimization");

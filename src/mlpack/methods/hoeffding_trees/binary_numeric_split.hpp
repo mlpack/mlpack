@@ -42,8 +42,7 @@ namespace tree {
  * @tparam FitnessFunction Fitness function to use for calculating gain.
  * @tparam ObservationType Type of observation used by this dimension.
  */
-template<typename FitnessFunction,
-         typename ObservationType = double>
+template<typename FitnessFunction, typename ObservationType = double>
 class BinaryNumericSplit
 {
  public:
@@ -86,8 +85,7 @@ class BinaryNumericSplit
    * @param secondBestFitness Fitness function value for second best possible
    *      split.
    */
-  void EvaluateFitnessFunction(double& bestFitness,
-                               double& secondBestFitness);
+  void EvaluateFitnessFunction(double& bestFitness, double& secondBestFitness);
 
   // Return the number of children if this node were to split on this feature.
   size_t NumChildren() const { return 2; }

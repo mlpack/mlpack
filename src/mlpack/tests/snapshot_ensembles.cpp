@@ -43,12 +43,12 @@ BOOST_AUTO_TEST_CASE(SnapshotEnsemblesResetTest)
     {
       double epochStepSize = stepSize;
 
-      SnapshotEnsembles snapshotEnsembles(restart,
-          double(mult), stepSize, 1000, 2);
+      SnapshotEnsembles snapshotEnsembles(
+          restart, double(mult), stepSize, 1000, 2);
 
       snapshotEnsembles.EpochBatches() = 10 / (double)1000;
       // Create all restart epochs.
-      arma::Col<size_t> nextRestart(1000 / 10 /  mult);
+      arma::Col<size_t> nextRestart(1000 / 10 / mult);
       nextRestart(0) = restart;
       for (size_t j = 1; j < nextRestart.n_elem; ++j)
         nextRestart(j) = nextRestart(j - 1) * mult;
@@ -91,8 +91,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   }
 
   // Shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
-      data.n_cols - 1, data.n_cols));
+  arma::uvec indices = arma::shuffle(
+      arma::linspace<arma::uvec>(0, data.n_cols - 1, data.n_cols));
   arma::mat shuffledData(3, 1000);
   arma::Row<size_t> shuffledResponses(1000);
   for (size_t i = 0; i < data.n_cols; ++i)

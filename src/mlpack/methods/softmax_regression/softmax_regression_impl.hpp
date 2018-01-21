@@ -19,16 +19,13 @@ namespace mlpack {
 namespace regression {
 
 template<typename OptimizerType>
-SoftmaxRegression::SoftmaxRegression(
-    const arma::mat& data,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    const double lambda,
-    const bool fitIntercept,
-    OptimizerType optimizer) :
-    numClasses(numClasses),
-    lambda(lambda),
-    fitIntercept(fitIntercept)
+SoftmaxRegression::SoftmaxRegression(const arma::mat& data,
+                                     const arma::Row<size_t>& labels,
+                                     const size_t numClasses,
+                                     const double lambda,
+                                     const bool fitIntercept,
+                                     OptimizerType optimizer)
+  : numClasses(numClasses), lambda(lambda), fitIntercept(fitIntercept)
 {
   Train(data, labels, numClasses, optimizer);
 }
@@ -47,8 +44,8 @@ double SoftmaxRegression::Train(const arma::mat& data,
                                 const size_t numClasses,
                                 OptimizerType optimizer)
 {
-  SoftmaxRegressionFunction regressor(data, labels, numClasses,
-                                      lambda, fitIntercept);
+  SoftmaxRegressionFunction regressor(
+      data, labels, numClasses, lambda, fitIntercept);
   if (parameters.is_empty())
     parameters = regressor.GetInitialPoint();
 

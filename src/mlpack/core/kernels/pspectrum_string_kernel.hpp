@@ -72,7 +72,7 @@ class PSpectrumStringKernel
    * @param datasets Sets of string data.
    * @param p The length of substrings to search.
    */
-  PSpectrumStringKernel(const std::vector<std::vector<std::string> >& datasets,
+  PSpectrumStringKernel(const std::vector<std::vector<std::string>>& datasets,
                         const size_t p);
 
   /**
@@ -90,11 +90,15 @@ class PSpectrumStringKernel
   double Evaluate(const VecType& a, const VecType& b) const;
 
   //! Access the lists of substrings.
-  const std::vector<std::vector<std::map<std::string, int> > >& Counts() const
-  { return counts; }
+  const std::vector<std::vector<std::map<std::string, int>>>& Counts() const
+  {
+    return counts;
+  }
   //! Modify the lists of substrings.
-  std::vector<std::vector<std::map<std::string, int> > >& Counts()
-  { return counts; }
+  std::vector<std::vector<std::map<std::string, int>>>& Counts()
+  {
+    return counts;
+  }
 
   //! Access the value of p.
   size_t P() const { return p; }
@@ -104,7 +108,7 @@ class PSpectrumStringKernel
  private:
   //! Mappings of the datasets to counts of substrings.  Such a huge structure
   //! is not wonderful...
-  std::vector<std::vector<std::map<std::string, int> > > counts;
+  std::vector<std::vector<std::map<std::string, int>>> counts;
 
   //! The value of p to use in calculation.
   size_t p;

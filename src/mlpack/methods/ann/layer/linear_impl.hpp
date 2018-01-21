@@ -25,12 +25,10 @@ Linear<InputDataType, OutputDataType>::Linear()
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType>
-Linear<InputDataType, OutputDataType>::Linear(
-    const size_t inSize,
-    const size_t outSize) :
-    inSize(inSize),
-    outSize(outSize)
+template<typename InputDataType, typename OutputDataType>
+Linear<InputDataType, OutputDataType>::Linear(const size_t inSize,
+                                              const size_t outSize)
+  : inSize(inSize), outSize(outSize)
 {
   weights.set_size(outSize * inSize + outSize, 1);
 }
@@ -39,14 +37,13 @@ template<typename InputDataType, typename OutputDataType>
 void Linear<InputDataType, OutputDataType>::Reset()
 {
   weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
-  bias = arma::mat(weights.memptr() + weight.n_elem,
-      outSize, 1, false, false);
+  bias = arma::mat(weights.memptr() + weight.n_elem, outSize, 1, false, false);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void Linear<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+void Linear<InputDataType, OutputDataType>::Forward(const arma::Mat<eT>&& input,
+                                                    arma::Mat<eT>&& output)
 {
   output = weight * input;
   output.each_col() += bias;
@@ -67,8 +64,8 @@ void Linear<InputDataType, OutputDataType>::Gradient(
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
-  gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
-      error * input.t());
+  gradient.submat(0, 0, weight.n_elem - 1, 0) =
+      arma::vectorise(error * input.t());
   gradient.submat(weight.n_elem, 0, gradient.n_elem - 1, 0) =
       arma::sum(error, 1);
 }
@@ -78,8 +75,8 @@ template<typename Archive>
 void Linear<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar& BOOST_SERIALIZATION_NVP(inSize);
+  ar& BOOST_SERIALIZATION_NVP(outSize);
 
   // This is inefficient, but we have to allocate this memory so that
   // WeightSetVisitor gets the right size.

@@ -57,7 +57,8 @@ BOOST_AUTO_TEST_CASE(AMFMaxIterationTerminationTest)
   MaxIterationTermination mit(10); // Only 10 iterations.
   AMF<MaxIterationTermination,
       RandomInitialization,
-      NMFMultiplicativeDivergenceUpdate> nmf(mit);
+      NMFMultiplicativeDivergenceUpdate>
+      nmf(mit);
   nmf.Apply(v, r, w, h);
 
   BOOST_REQUIRE_EQUAL(nmf.TerminationPolicy().Iteration(), 10);

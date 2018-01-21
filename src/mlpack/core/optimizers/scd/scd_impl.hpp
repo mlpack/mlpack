@@ -18,23 +18,20 @@
 namespace mlpack {
 namespace optimization {
 
-template <typename DescentPolicyType>
-SCD<DescentPolicyType>::SCD(
-    const double stepSize,
-    const size_t maxIterations,
-    const double tolerance,
-    const size_t updateInterval,
-    const DescentPolicyType descentPolicy) :
-    stepSize(stepSize),
-    maxIterations(maxIterations),
-    tolerance(tolerance),
-    updateInterval(updateInterval),
-    descentPolicy(descentPolicy)
-{ /* Nothing to do */ }
+template<typename DescentPolicyType>
+SCD<DescentPolicyType>::SCD(const double stepSize,
+                            const size_t maxIterations,
+                            const double tolerance,
+                            const size_t updateInterval,
+                            const DescentPolicyType descentPolicy)
+  : stepSize(stepSize), maxIterations(maxIterations), tolerance(tolerance),
+    updateInterval(updateInterval), descentPolicy(descentPolicy)
+{ /* Nothing to do */
+}
 
 //! Optimize the function (minimize).
-template <typename DescentPolicyType>
-template <typename ResolvableFunctionType>
+template<typename DescentPolicyType>
+template<typename ResolvableFunctionType>
 double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
                                         arma::mat& iterate)
 {
@@ -62,19 +59,19 @@ double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
 
       // Output current objective function.
       Log::Info << "SCD: iteration " << i << ", objective " << overallObjective
-          << "." << std::endl;
+                << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
         Log::Warn << "SCD: converged to " << overallObjective << "; terminating"
-            << " with failure.  Try a smaller step size?" << std::endl;
+                  << " with failure.  Try a smaller step size?" << std::endl;
         return overallObjective;
       }
 
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
         Log::Info << "SCD: minimized within tolerance " << tolerance << "; "
-            << "terminating optimization." << std::endl;
+                  << "terminating optimization." << std::endl;
         return overallObjective;
       }
 
@@ -83,7 +80,7 @@ double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
   }
 
   Log::Info << "SCD: maximum iterations (" << maxIterations << ") reached; "
-      << "terminating optimization." << std::endl;
+            << "terminating optimization." << std::endl;
 
   // Calculate and return final objective.
   return function.Evaluate(iterate);

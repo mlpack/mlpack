@@ -20,8 +20,8 @@ arma::Mat<ElemType> MakeAlias(arma::Mat<ElemType>& input,
                               const bool strict = true)
 {
   // Use the advanced constructor.
-  return arma::Mat<ElemType>(input.memptr(), input.n_rows, input.n_cols, false,
-      strict);
+  return arma::Mat<ElemType>(
+      input.memptr(), input.n_rows, input.n_cols, false, strict);
 }
 
 /**
@@ -104,7 +104,6 @@ void ClearAlias(arma::SpMat<ElemType>& /* mat */)
 {
   // Nothing to do.
 }
-
 
 } // namespace math
 } // namespace mlpack

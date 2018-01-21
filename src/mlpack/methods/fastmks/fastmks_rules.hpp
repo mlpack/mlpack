@@ -134,7 +134,8 @@ class FastMKSRules
   typedef std::pair<double, size_t> Candidate;
 
   //! Compare two candidates based on the value.
-  struct CandidateCmp {
+  struct CandidateCmp
+  {
     bool operator()(const Candidate& c1, const Candidate& c2) const
     {
       return c1.first > c2.first;
@@ -146,7 +147,8 @@ class FastMKSRules
   //! because we need to iterate over all the candidates and std::priority_queue
   //! doesn't provide that interface.
   typedef boost::heap::priority_queue<Candidate,
-      boost::heap::compare<CandidateCmp>> CandidateList;
+                                      boost::heap::compare<CandidateCmp>>
+      CandidateList;
 
   //! Set of candidates for each point.
   std::vector<CandidateList> candidates;

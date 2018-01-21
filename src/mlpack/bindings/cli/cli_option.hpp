@@ -95,36 +95,37 @@ class CLIOption
     else
     {
       typename ParameterType<N>::type tmp;
-      data.value = boost::any(std::tuple<N, typename ParameterType<N>::type>(
-          defaultValue, tmp));
+      data.value = boost::any(
+          std::tuple<N, typename ParameterType<N>::type>(defaultValue, tmp));
     }
 
     const std::string tname = data.tname;
     const std::string boostName = MapParameterName<N>(identifier);
-    std::string progOptId = (alias[0] != '\0') ? boostName + ","
-        + std::string(1, alias[0]) : boostName;
+    std::string progOptId = (alias[0] != '\0')
+                                ? boostName + "," + std::string(1, alias[0])
+                                : boostName;
 
     // Do a check to ensure that the boost name isn't already in use.
     const std::map<std::string, util::ParamData>& parameters =
         CLI::Parameters();
     if (parameters.count(boostName) > 0)
     {
-      // Create a fake Log::Fatal since it may not yet be initialized.
-      // Temporarily define color code escape sequences.
-      #ifndef _WIN32
-        #define BASH_RED "\033[0;31m"
-        #define BASH_CLEAR "\033[0m"
-      #else
-        #define BASH_RED ""
-        #define BASH_CLEAR ""
-      #endif
+// Create a fake Log::Fatal since it may not yet be initialized.
+// Temporarily define color code escape sequences.
+#ifndef _WIN32
+#define BASH_RED "\033[0;31m"
+#define BASH_CLEAR "\033[0m"
+#else
+#define BASH_RED ""
+#define BASH_CLEAR ""
+#endif
 
       // Temporary outstream object for detecting duplicate identifiers.
-      util::PrefixedOutStream outstr(std::cerr,
-            BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
+      util::PrefixedOutStream outstr(
+          std::cerr, BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
 
-      #undef BASH_RED
-      #undef BASH_CLEAR
+#undef BASH_RED
+#undef BASH_CLEAR
 
       outstr << "Parameter --" << boostName << " (" << data.alias << ") "
              << "is defined multiple times with the same identifiers."
@@ -134,10 +135,8 @@ class CLIOption
     CLI::Add(std::move(data));
 
     // Set some function pointers that we need.
-    CLI::GetSingleton().functionMap[tname]["DefaultParam"] =
-        &DefaultParam<N>;
-    CLI::GetSingleton().functionMap[tname]["OutputParam"] =
-        &OutputParam<N>;
+    CLI::GetSingleton().functionMap[tname]["DefaultParam"] = &DefaultParam<N>;
+    CLI::GetSingleton().functionMap[tname]["OutputParam"] = &OutputParam<N>;
     CLI::GetSingleton().functionMap[tname]["GetPrintableParam"] =
         &GetPrintableParam<N>;
     CLI::GetSingleton().functionMap[tname]["StringTypeParam"] =
@@ -175,8 +174,7 @@ class ProgramDoc
    *     program and what it is.  No newline characters are necessary; this is
    *     taken care of by CLI later.
    */
-  ProgramDoc(const std::string& programName,
-             const std::string& documentation);
+  ProgramDoc(const std::string& programName, const std::string& documentation);
 
   //! The name of the program.
   std::string programName;

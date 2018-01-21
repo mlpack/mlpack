@@ -89,8 +89,7 @@ class LogisticRegression
    * @param dimensionality Dimensionality of the data.
    * @param lambda L2-regularization parameter.
    */
-  LogisticRegression(const size_t dimensionality = 0,
-                     const double lambda = 0);
+  LogisticRegression(const size_t dimensionality = 0, const double lambda = 0);
 
   /**
    * Construct the LogisticRegression class with the given labeled training
@@ -127,8 +126,7 @@ class LogisticRegression
    * @param responses Outputs results from input training variables.
    */
   template<typename OptimizerType = mlpack::optimization::L_BFGS>
-  void Train(const MatType& predictors,
-             const arma::Row<size_t>& responses);
+  void Train(const MatType& predictors, const arma::Row<size_t>& responses);
 
   /**
    * Train the LogisticRegression model with the given instantiated optimizer.
@@ -214,8 +212,7 @@ class LogisticRegression
    * @param dataset Set of points to classify.
    * @param probabilities Class probabilities for each point (output).
    */
-  void Classify(const MatType& dataset,
-                arma::mat& probabilities) const;
+  void Classify(const MatType& dataset, arma::mat& probabilities) const;
 
   /**
    * Compute the accuracy of the model on the given predictors and responses,

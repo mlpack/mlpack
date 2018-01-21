@@ -118,10 +118,12 @@ BOOST_AUTO_TEST_CASE(MappingsTest)
 
   for (size_t i = 0; i < oldFromNewCopy.size(); ++i)
   {
-    BOOST_REQUIRE_SMALL(arma::norm(datacopy.col(oldFromNewCopy[i]) -
-        t1.Dataset().col(i)), 1e-3);
-    BOOST_REQUIRE_SMALL(arma::norm(datacopy.col(oldFromNewMove[i]) -
-        t2.Dataset().col(i)), 1e-3);
+    BOOST_REQUIRE_SMALL(
+        arma::norm(datacopy.col(oldFromNewCopy[i]) - t1.Dataset().col(i)),
+        1e-3);
+    BOOST_REQUIRE_SMALL(
+        arma::norm(datacopy.col(oldFromNewMove[i]) - t2.Dataset().col(i)),
+        1e-3);
   }
 }
 
@@ -141,10 +143,12 @@ BOOST_AUTO_TEST_CASE(ReverseMappingsTest)
 
   for (size_t i = 0; i < oldFromNewCopy.size(); ++i)
   {
-    BOOST_REQUIRE_SMALL(arma::norm(datacopy.col(oldFromNewCopy[i]) -
-        t1.Dataset().col(i)), 1e-3);
-    BOOST_REQUIRE_SMALL(arma::norm(datacopy.col(oldFromNewMove[i]) -
-        t2.Dataset().col(i)), 1e-3);
+    BOOST_REQUIRE_SMALL(
+        arma::norm(datacopy.col(oldFromNewCopy[i]) - t1.Dataset().col(i)),
+        1e-3);
+    BOOST_REQUIRE_SMALL(
+        arma::norm(datacopy.col(oldFromNewMove[i]) - t2.Dataset().col(i)),
+        1e-3);
 
     BOOST_REQUIRE_EQUAL(newFromOldCopy[oldFromNewCopy[i]], i);
     BOOST_REQUIRE_EQUAL(newFromOldMove[oldFromNewMove[i]], i);
@@ -161,7 +165,7 @@ void CheckOverlap(TreeType& node)
   for (size_t i = 0; i < node.NumChildren(); ++i)
     for (size_t j = i + 1; j < node.NumChildren(); ++j)
       BOOST_REQUIRE_EQUAL(node.Child(i).Bound().Overlap(node.Child(j).Bound()),
-          0.0); // We need exact equality here.
+                          0.0); // We need exact equality here.
 
   for (size_t i = 0; i < node.NumChildren(); ++i)
     CheckOverlap(node.Child(i));
@@ -194,8 +198,8 @@ void CheckFurthestDistances(TreeType& node)
   {
     // Handle floating-point inaccuracies.
     BOOST_REQUIRE_LE(metric::EuclideanDistance::Evaluate(
-        node.Dataset().col(node.Point(i)), center),
-        node.FurthestPointDistance() * (1 + 1e-5));
+                         node.Dataset().col(node.Point(i)), center),
+                     node.FurthestPointDistance() * (1 + 1e-5));
   }
 
   // Compare descendants held in the node.
@@ -203,8 +207,8 @@ void CheckFurthestDistances(TreeType& node)
   {
     // Handle floating-point inaccuracies.
     BOOST_REQUIRE_LE(metric::EuclideanDistance::Evaluate(
-        node.Dataset().col(node.Descendant(i)),
-        center), node.FurthestDescendantDistance() * (1 + 1e-5));
+                         node.Dataset().col(node.Descendant(i)), center),
+                     node.FurthestDescendantDistance() * (1 + 1e-5));
   }
 
   for (size_t i = 0; i < node.NumChildren(); ++i)
@@ -277,10 +281,11 @@ void CheckSameNode(TreeType& node1, TreeType& node2)
   }
 
   // Check that the furthest point and descendant distance are the same.
-  BOOST_REQUIRE_CLOSE(node1.FurthestPointDistance(),
-      node2.FurthestPointDistance(), 1e-5);
+  BOOST_REQUIRE_CLOSE(
+      node1.FurthestPointDistance(), node2.FurthestPointDistance(), 1e-5);
   BOOST_REQUIRE_CLOSE(node1.FurthestDescendantDistance(),
-      node2.FurthestDescendantDistance(), 1e-5);
+                      node2.FurthestDescendantDistance(),
+                      1e-5);
 }
 
 BOOST_AUTO_TEST_CASE(CopyConstructorTest)

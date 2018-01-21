@@ -72,7 +72,7 @@ void CheckSplit(const TreeType& tree)
   for (size_t i = 0; i < tree.Left()->NumDescendants(); i++)
   {
     addr::PointToAddress(address,
-        tree.Dataset().col(tree.Left()->Descendant(i)));
+                         tree.Dataset().col(tree.Left()->Descendant(i)));
 
     if (addr::CompareAddresses(address, hi) > 0)
       hi = address;
@@ -82,7 +82,7 @@ void CheckSplit(const TreeType& tree)
   for (size_t i = 0; i < tree.Right()->NumDescendants(); i++)
   {
     addr::PointToAddress(address,
-        tree.Dataset().col(tree.Right()->Descendant(i)));
+                         tree.Dataset().col(tree.Right()->Descendant(i)));
 
     if (addr::CompareAddresses(address, lo) < 0)
       lo = address;
@@ -127,8 +127,8 @@ void CheckBound(const TreeType& tree)
       success = true;
       for (size_t k = 0; k < loBound.n_rows; k++)
       {
-        if (point[k] < loBound(k, j) - 1e-14 * std::fabs(loBound(k, j)) ||
-            point[k] > hiBound(k, j) + 1e-14 * std::fabs(hiBound(k, j)))
+        if (point[k] < loBound(k, j) - 1e-14 * std::fabs(loBound(k, j))
+            || point[k] > hiBound(k, j) + 1e-14 * std::fabs(hiBound(k, j)))
         {
           success = false;
           break;
@@ -175,14 +175,13 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
 
     for (size_t j = 0; j < tree.Dataset().n_cols; j++)
     {
-      const arma::Col<ElemType>& point = tree.  Dataset().col(j);
+      const arma::Col<ElemType>& point = tree.Dataset().col(j);
       ElemType maxDist = 0;
       ElemType minDist = std::numeric_limits<ElemType>::max();
       for (size_t i = 0; i < tree.NumDescendants(); i++)
       {
         ElemType dist = MetricType::Evaluate(
-            tree.Dataset().col(tree.Descendant(i)),
-            tree.Dataset().col(j));
+            tree.Dataset().col(tree.Descendant(i)), tree.Dataset().col(j));
 
         if (dist > maxDist)
           maxDist = dist;
@@ -190,17 +189,22 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
           minDist = dist;
       }
 
-      BOOST_REQUIRE_LE(tree.Bound().MinDistance(point), minDist *
-          (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
-      BOOST_REQUIRE_LE(maxDist, tree.Bound().MaxDistance(point) *
-          (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
+      BOOST_REQUIRE_LE(
+          tree.Bound().MinDistance(point),
+          minDist * (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
+      BOOST_REQUIRE_LE(
+          maxDist,
+          tree.Bound().MaxDistance(point)
+              * (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
 
       math::RangeType<ElemType> r = tree.Bound().RangeDistance(point);
 
-      BOOST_REQUIRE_LE(r.Lo(), minDist *
-          (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
-      BOOST_REQUIRE_LE(maxDist, r.Hi() *
-          (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
+      BOOST_REQUIRE_LE(
+          r.Lo(),
+          minDist * (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
+      BOOST_REQUIRE_LE(
+          maxDist,
+          r.Hi() * (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
     }
 
     if (!tree.IsLeaf())
@@ -218,9 +222,9 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
       for (size_t i = 0; i < tree.NumDescendants(); i++)
         for (size_t j = 0; j < node->NumDescendants(); j++)
         {
-          ElemType dist = MetricType::Evaluate(
-              tree.Dataset().col(tree.Descendant(i)),
-              node->Dataset().col(node->Descendant(j)));
+          ElemType dist =
+              MetricType::Evaluate(tree.Dataset().col(tree.Descendant(i)),
+                                   node->Dataset().col(node->Descendant(j)));
 
           if (dist > maxDist)
             maxDist = dist;
@@ -228,17 +232,22 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
             minDist = dist;
         }
 
-      BOOST_REQUIRE_LE(tree.Bound().MinDistance(node->Bound()), minDist *
-          (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
-      BOOST_REQUIRE_LE(maxDist, tree.Bound().MaxDistance(node->Bound()) *
-          (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
+      BOOST_REQUIRE_LE(
+          tree.Bound().MinDistance(node->Bound()),
+          minDist * (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
+      BOOST_REQUIRE_LE(
+          maxDist,
+          tree.Bound().MaxDistance(node->Bound())
+              * (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
 
       math::RangeType<ElemType> r = tree.Bound().RangeDistance(node->Bound());
 
-      BOOST_REQUIRE_LE(r.Lo(), minDist *
-          (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
-      BOOST_REQUIRE_LE(maxDist, r.Hi() *
-          (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
+      BOOST_REQUIRE_LE(
+          r.Lo(),
+          minDist * (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
+      BOOST_REQUIRE_LE(
+          maxDist,
+          r.Hi() * (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
     }
     if (!node->IsLeaf())
     {
@@ -259,12 +268,11 @@ BOOST_AUTO_TEST_CASE(UBTreeDistanceTest)
   CheckDistance<TreeType, EuclideanDistance>(tree);
 }
 
-
 BOOST_AUTO_TEST_CASE(UBTreeTest)
 {
   typedef UBTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
 
-  size_t maxRuns = 10; // Ten total tests.
+  size_t maxRuns = 10;           // Ten total tests.
   size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
 
   // We use the default leaf size of 20.
@@ -313,8 +321,11 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
   arma::mat distances2;
 
   // Nearest neighbor search with the UB tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      UBTree> knn1(dataset, SINGLE_TREE_MODE);
+  NeighborSearch<NearestNeighborSort,
+                 metric::LMetric<2, true>,
+                 arma::mat,
+                 UBTree>
+      knn1(dataset, SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -340,8 +351,11 @@ BOOST_AUTO_TEST_CASE(DualTreeTraverserTest)
   arma::mat distances2;
 
   // Nearest neighbor search with the UB tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      UBTree> knn1(dataset, DUAL_TREE_MODE);
+  NeighborSearch<NearestNeighborSort,
+                 metric::LMetric<2, true>,
+                 arma::mat,
+                 UBTree>
+      knn1(dataset, DUAL_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 

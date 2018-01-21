@@ -16,7 +16,6 @@
 using namespace mlpack;
 using namespace mlpack::distribution;
 
-
 GaussianDistribution::GaussianDistribution(const arma::vec& mean,
                                            const arma::mat& covariance)
   : mean(mean)

@@ -39,11 +39,12 @@ BOOST_AUTO_TEST_CASE(SVDIncompleteIncrementalConvergenceTest)
   data.sprandn(100, 100, 0.2);
 
   SVDIncompleteIncrementalLearning svd(0.01);
-  IncompleteIncrementalTermination<SimpleToleranceTermination<sp_mat> > iit;
+  IncompleteIncrementalTermination<SimpleToleranceTermination<sp_mat>> iit;
 
-  AMF<IncompleteIncrementalTermination<SimpleToleranceTermination<sp_mat> >,
+  AMF<IncompleteIncrementalTermination<SimpleToleranceTermination<sp_mat>>,
       RandomInitialization,
-      SVDIncompleteIncrementalLearning> amf(iit, RandomInitialization(), svd);
+      SVDIncompleteIncrementalLearning>
+      amf(iit, RandomInitialization(), svd);
 
   mat m1, m2;
   amf.Apply(data, 2, m1, m2);
@@ -61,13 +62,12 @@ BOOST_AUTO_TEST_CASE(SVDCompleteIncrementalConvergenceTest)
   data.sprandn(100, 100, 0.2);
 
   SVDCompleteIncrementalLearning<sp_mat> svd(0.01);
-  CompleteIncrementalTermination<SimpleToleranceTermination<sp_mat> > iit;
+  CompleteIncrementalTermination<SimpleToleranceTermination<sp_mat>> iit;
 
-  AMF<CompleteIncrementalTermination<SimpleToleranceTermination<sp_mat> >,
+  AMF<CompleteIncrementalTermination<SimpleToleranceTermination<sp_mat>>,
       RandomInitialization,
-      SVDCompleteIncrementalLearning<sp_mat> > amf(iit,
-                                                   RandomInitialization(),
-                                                   svd);
+      SVDCompleteIncrementalLearning<sp_mat>>
+      amf(iit, RandomInitialization(), svd);
   mat m1, m2;
   amf.Apply(data, 2, m1, m2);
 
@@ -79,9 +79,10 @@ BOOST_AUTO_TEST_CASE(SVDCompleteIncrementalConvergenceTest)
 class SpecificRandomInitialization
 {
  public:
-  SpecificRandomInitialization(const size_t n, const size_t r, const size_t m) :
-      W(arma::randu<arma::mat>(n, r)),
-      H(arma::randu<arma::mat>(r, m)) { }
+  SpecificRandomInitialization(const size_t n, const size_t r, const size_t m)
+    : W(arma::randu<arma::mat>(n, r)), H(arma::randu<arma::mat>(r, m))
+  {
+  }
 
   template<typename MatType>
   inline void Initialize(const MatType& /* V */,
@@ -110,14 +111,14 @@ BOOST_AUTO_TEST_CASE(SVDIncompleteIncrementalRegularizationTest)
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     // We have to transpose it because items are rows, and users are columns.
-    locations(0, i) = ((arma::uword) dataset(0, i));
-    locations(1, i) = ((arma::uword) dataset(1, i));
+    locations(0, i) = ((arma::uword)dataset(0, i));
+    locations(1, i) = ((arma::uword)dataset(1, i));
     values(i) = dataset(2, i);
   }
 
   // Find maximum user and item IDs.
-  const size_t maxUserID = (size_t) max(locations.row(0)) + 1;
-  const size_t maxItemID = (size_t) max(locations.row(1)) + 1;
+  const size_t maxUserID = (size_t)max(locations.row(0)) + 1;
+  const size_t maxItemID = (size_t)max(locations.row(1)) + 1;
 
   // Fill sparse matrix.
   sp_mat cleanedData = arma::sp_mat(locations, values, maxUserID, maxItemID);
@@ -126,19 +127,19 @@ BOOST_AUTO_TEST_CASE(SVDIncompleteIncrementalRegularizationTest)
   SpecificRandomInitialization sri(cleanedData.n_rows, 2, cleanedData.n_cols);
 
   ValidationRMSETermination<sp_mat> vrt(cleanedData, 2000);
-  AMF<IncompleteIncrementalTermination<ValidationRMSETermination<sp_mat> >,
+  AMF<IncompleteIncrementalTermination<ValidationRMSETermination<sp_mat>>,
       SpecificRandomInitialization,
-      SVDIncompleteIncrementalLearning> amf1(vrt, sri,
-      SVDIncompleteIncrementalLearning(0.001, 0, 0));
+      SVDIncompleteIncrementalLearning>
+      amf1(vrt, sri, SVDIncompleteIncrementalLearning(0.001, 0, 0));
 
   mat m1, m2;
   double regularRMSE = amf1.Apply(cleanedData, 2, m1, m2);
 
   ValidationRMSETermination<sp_mat> vrt2(cleanedData2, 2000);
-  AMF<IncompleteIncrementalTermination<ValidationRMSETermination<sp_mat> >,
+  AMF<IncompleteIncrementalTermination<ValidationRMSETermination<sp_mat>>,
       SpecificRandomInitialization,
-      SVDIncompleteIncrementalLearning> amf2(vrt2, sri,
-      SVDIncompleteIncrementalLearning(0.001, 0.01, 0.01));
+      SVDIncompleteIncrementalLearning>
+      amf2(vrt2, sri, SVDIncompleteIncrementalLearning(0.001, 0.01, 0.01));
 
   mat m3, m4;
   double regularizedRMSE = amf2.Apply(cleanedData2, 2, m3, m4);

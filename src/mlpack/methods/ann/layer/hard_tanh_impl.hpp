@@ -19,32 +19,32 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-HardTanH<InputDataType, OutputDataType>::HardTanH(
-    const double maxValue,
-    const double minValue) :
-    maxValue(maxValue),
-    minValue(minValue)
+HardTanH<InputDataType, OutputDataType>::HardTanH(const double maxValue,
+                                                  const double minValue)
+  : maxValue(maxValue), minValue(minValue)
 {
   // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void HardTanH<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+void HardTanH<InputDataType, OutputDataType>::Forward(const InputType&& input,
+                                                      OutputType&& output)
 {
   output = input;
   for (size_t i = 0; i < input.n_elem; i++)
   {
-    output(i) = (output(i) > maxValue ? maxValue :
-        (output(i) < minValue ? minValue : output(i)));
+    output(i) =
+        (output(i) > maxValue ? maxValue
+                              : (output(i) < minValue ? minValue : output(i)));
   }
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
-void HardTanH<InputDataType, OutputDataType>::Backward(
-    const DataType&& input, DataType&& gy, DataType&& g)
+void HardTanH<InputDataType, OutputDataType>::Backward(const DataType&& input,
+                                                       DataType&& gy,
+                                                       DataType&& g)
 {
   g = gy;
   for (size_t i = 0; i < input.n_elem; i++)
@@ -59,11 +59,10 @@ void HardTanH<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void HardTanH<InputDataType, OutputDataType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(maxValue);
-  ar & BOOST_SERIALIZATION_NVP(minValue);
+  ar& BOOST_SERIALIZATION_NVP(maxValue);
+  ar& BOOST_SERIALIZATION_NVP(minValue);
 }
 
 } // namespace ann

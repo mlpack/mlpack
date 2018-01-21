@@ -54,10 +54,8 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
 class FastLSTM
 {
  public:
@@ -99,9 +97,7 @@ class FastLSTM
    * @param g The calculated gradient.
    */
   template<typename InputType, typename ErrorType, typename GradientType>
-  void Backward(const InputType&& input,
-                ErrorType&& gy,
-                GradientType&& g);
+  void Backward(const InputType&& input, ErrorType&& gy, GradientType&& g);
 
   /*
    * Reset the layer parameter.
@@ -124,9 +120,7 @@ class FastLSTM
    * @param gradient The calculated gradient.
    */
   template<typename InputType, typename ErrorType, typename GradientType>
-  void Gradient(InputType&& input,
-                ErrorType&& error,
-                GradientType&& gradient);
+  void Gradient(InputType&& input, ErrorType&& error, GradientType&& gradient);
 
   //! Get the maximum number of steps to backpropagate through time (BPTT).
   size_t Rho() const { return rho; }

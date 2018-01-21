@@ -35,9 +35,8 @@ class DataDependentRandomInitializer
    * @param atoms Number of atoms in dictionary.
    * @param dictionary Dictionary to initialize.
    */
-  static void Initialize(const arma::mat& data,
-                         const size_t atoms,
-                         arma::mat& dictionary)
+  static void
+  Initialize(const arma::mat& data, const size_t atoms, arma::mat& dictionary)
   {
     // Set the size of the dictionary.
     dictionary.set_size(data.n_rows, atoms);
@@ -46,9 +45,9 @@ class DataDependentRandomInitializer
     for (size_t i = 0; i < atoms; ++i)
     {
       // Add three atoms together.
-      dictionary.col(i) = (data.col(math::RandInt(data.n_cols)) +
-          data.col(math::RandInt(data.n_cols)) +
-          data.col(math::RandInt(data.n_cols)));
+      dictionary.col(i) = (data.col(math::RandInt(data.n_cols))
+                           + data.col(math::RandInt(data.n_cols))
+                           + data.col(math::RandInt(data.n_cols)));
 
       // Now normalize the atom.
       dictionary.col(i) /= norm(dictionary.col(i), 2);

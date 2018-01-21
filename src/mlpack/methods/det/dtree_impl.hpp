@@ -18,8 +18,7 @@
 using namespace mlpack;
 using namespace det;
 
-namespace details
-{
+namespace details {
 
 /**
  * This one sorts and scand the given per-dimension extract and puts all splits
@@ -34,8 +33,8 @@ void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
                    const size_t minLeafSize)
 {
   static_assert(
-    std::is_same<typename MatType::elem_type, ElemType>::value == true,
-    "The ElemType does not correspond to the matrix's element type.");
+      std::is_same<typename MatType::elem_type, ElemType>::value == true,
+      "The ElemType does not correspond to the matrix's element type.");
 
   typedef std::pair<ElemType, size_t> SplitItem;
   const typename MatType::row_type dimVec =
@@ -150,38 +149,23 @@ void ExtractSplits(std::vector<std::pair<ElemType, size_t>>& splitVec,
 } // namespace details
 
 template<typename MatType, typename TagType>
-DTree<MatType, TagType>::DTree() :
-    start(0),
-    end(0),
-    splitDim(size_t(-1)),
-    splitValue(std::numeric_limits<ElemType>::max()),
-    logNegError(-DBL_MAX),
-    subtreeLeavesLogNegError(-DBL_MAX),
-    subtreeLeaves(0),
-    root(true),
-    ratio(1.0),
-    logVolume(-DBL_MAX),
-    bucketTag(-1),
-    alphaUpper(0.0),
-    left(NULL),
+DTree<MatType, TagType>::DTree()
+  : start(0), end(0), splitDim(size_t(-1)),
+    splitValue(std::numeric_limits<ElemType>::max()), logNegError(-DBL_MAX),
+    subtreeLeavesLogNegError(-DBL_MAX), subtreeLeaves(0), root(true),
+    ratio(1.0), logVolume(-DBL_MAX), bucketTag(-1), alphaUpper(0.0), left(NULL),
     right(NULL)
-{ /* Nothing to do. */ }
+{ /* Nothing to do. */
+}
 
 template<typename MatType, typename TagType>
-DTree<MatType, TagType>::DTree(const DTree& obj) :
-    start(obj.start),
-    end(obj.end),
-    maxVals(obj.maxVals),
-    minVals(obj.minVals),
-    splitDim(obj.splitDim),
-    splitValue(obj.splitValue),
+DTree<MatType, TagType>::DTree(const DTree& obj)
+  : start(obj.start), end(obj.end), maxVals(obj.maxVals), minVals(obj.minVals),
+    splitDim(obj.splitDim), splitValue(obj.splitValue),
     logNegError(obj.logNegError),
     subtreeLeavesLogNegError(obj.subtreeLeavesLogNegError),
-    subtreeLeaves(obj.subtreeLeaves),
-    root(obj.root),
-    ratio(obj.ratio),
-    logVolume(obj.logVolume),
-    bucketTag(obj.bucketTag),
+    subtreeLeaves(obj.subtreeLeaves), root(obj.root), ratio(obj.ratio),
+    logVolume(obj.logVolume), bucketTag(obj.bucketTag),
     alphaUpper(obj.alphaUpper),
     left((obj.left == NULL) ? NULL : new DTree(*obj.left)),
     right((obj.right == NULL) ? NULL : new DTree(*obj.right))
@@ -190,8 +174,8 @@ DTree<MatType, TagType>::DTree(const DTree& obj) :
 }
 
 template<typename MatType, typename TagType>
-DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(
-    const DTree<MatType, TagType>& obj)
+DTree<MatType, TagType>& DTree<MatType, TagType>::
+operator=(const DTree<MatType, TagType>& obj)
 {
   if (this == &obj)
     return *this;
@@ -224,23 +208,14 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(
 }
 
 template<typename MatType, typename TagType>
-DTree<MatType, TagType>::DTree(DTree&& obj):
-    start(obj.start),
-    end(obj.end),
-    maxVals(std::move(obj.maxVals)),
-    minVals(std::move(obj.minVals)),
-    splitDim(obj.splitDim),
-    splitValue(std::move(obj.splitValue)),
-    logNegError(obj.logNegError),
+DTree<MatType, TagType>::DTree(DTree&& obj)
+  : start(obj.start), end(obj.end), maxVals(std::move(obj.maxVals)),
+    minVals(std::move(obj.minVals)), splitDim(obj.splitDim),
+    splitValue(std::move(obj.splitValue)), logNegError(obj.logNegError),
     subtreeLeavesLogNegError(obj.subtreeLeavesLogNegError),
-    subtreeLeaves(obj.subtreeLeaves),
-    root(obj.root),
-    ratio(obj.ratio),
-    logVolume(obj.logVolume),
-    bucketTag(std::move(obj.bucketTag)),
-    alphaUpper(obj.alphaUpper),
-    left(obj.left),
-    right(obj.right)
+    subtreeLeaves(obj.subtreeLeaves), root(obj.root), ratio(obj.ratio),
+    logVolume(obj.logVolume), bucketTag(std::move(obj.bucketTag)),
+    alphaUpper(obj.alphaUpper), left(obj.left), right(obj.right)
 {
   // Set obj to default values.
   obj.start = 0;
@@ -260,8 +235,8 @@ DTree<MatType, TagType>::DTree(DTree&& obj):
 }
 
 template<typename MatType, typename TagType>
-DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(
-    DTree<MatType, TagType>&& obj)
+DTree<MatType, TagType>& DTree<MatType, TagType>::
+operator=(DTree<MatType, TagType>&& obj)
 {
   if (this == &obj)
     return *this;
@@ -309,46 +284,27 @@ DTree<MatType, TagType>& DTree<MatType, TagType>::operator=(
   return *this;
 }
 
-
 // Root node initializers.
 template<typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree(const StatType& maxVals,
                                const StatType& minVals,
-                               const size_t totalPoints) :
-    start(0),
-    end(totalPoints),
-    maxVals(maxVals),
-    minVals(minVals),
-    splitDim(size_t(-1)),
-    splitValue(std::numeric_limits<ElemType>::max()),
+                               const size_t totalPoints)
+  : start(0), end(totalPoints), maxVals(maxVals), minVals(minVals),
+    splitDim(size_t(-1)), splitValue(std::numeric_limits<ElemType>::max()),
     logNegError(LogNegativeError(totalPoints)),
-    subtreeLeavesLogNegError(-DBL_MAX),
-    subtreeLeaves(0),
-    root(true),
-    ratio(1.0),
-    logVolume(-DBL_MAX),
-    bucketTag(-1),
-    alphaUpper(0.0),
-    left(NULL),
+    subtreeLeavesLogNegError(-DBL_MAX), subtreeLeaves(0), root(true),
+    ratio(1.0), logVolume(-DBL_MAX), bucketTag(-1), alphaUpper(0.0), left(NULL),
     right(NULL)
-{ /* Nothing to do. */ }
+{ /* Nothing to do. */
+}
 
 template<typename MatType, typename TagType>
-DTree<MatType, TagType>::DTree(MatType & data) :
-    start(0),
-    end(data.n_cols),
-    maxVals(arma::max(data, 1)),
-    minVals(arma::min(data, 1)),
-    splitDim(size_t(-1)),
+DTree<MatType, TagType>::DTree(MatType& data)
+  : start(0), end(data.n_cols), maxVals(arma::max(data, 1)),
+    minVals(arma::min(data, 1)), splitDim(size_t(-1)),
     splitValue(std::numeric_limits<ElemType>::max()),
-    subtreeLeavesLogNegError(-DBL_MAX),
-    subtreeLeaves(0),
-    root(true),
-    ratio(1.0),
-    logVolume(-DBL_MAX),
-    bucketTag(-1),
-    alphaUpper(0.0),
-    left(NULL),
+    subtreeLeavesLogNegError(-DBL_MAX), subtreeLeaves(0), root(true),
+    ratio(1.0), logVolume(-DBL_MAX), bucketTag(-1), alphaUpper(0.0), left(NULL),
     right(NULL)
 {
   logNegError = LogNegativeError(data.n_cols);
@@ -360,54 +316,35 @@ DTree<MatType, TagType>::DTree(const StatType& maxVals,
                                const StatType& minVals,
                                const size_t start,
                                const size_t end,
-                               const double logNegError) :
-    start(start),
-    end(end),
-    maxVals(maxVals),
-    minVals(minVals),
-    splitDim(size_t(-1)),
-    splitValue(std::numeric_limits<ElemType>::max()),
-    logNegError(logNegError),
-    subtreeLeavesLogNegError(-DBL_MAX),
-    subtreeLeaves(0),
-    root(false),
-    ratio(1.0),
-    logVolume(-DBL_MAX),
-    bucketTag(-1),
-    alphaUpper(0.0),
-    left(NULL),
-    right(NULL)
-{ /* Nothing to do. */ }
+                               const double logNegError)
+  : start(start), end(end), maxVals(maxVals), minVals(minVals),
+    splitDim(size_t(-1)), splitValue(std::numeric_limits<ElemType>::max()),
+    logNegError(logNegError), subtreeLeavesLogNegError(-DBL_MAX),
+    subtreeLeaves(0), root(false), ratio(1.0), logVolume(-DBL_MAX),
+    bucketTag(-1), alphaUpper(0.0), left(NULL), right(NULL)
+{ /* Nothing to do. */
+}
 
 template<typename MatType, typename TagType>
 DTree<MatType, TagType>::DTree(const StatType& maxVals,
                                const StatType& minVals,
                                const size_t totalPoints,
                                const size_t start,
-                               const size_t end) :
-    start(start),
-    end(end),
-    maxVals(maxVals),
-    minVals(minVals),
-    splitDim(size_t(-1)),
-    splitValue(std::numeric_limits<ElemType>::max()),
+                               const size_t end)
+  : start(start), end(end), maxVals(maxVals), minVals(minVals),
+    splitDim(size_t(-1)), splitValue(std::numeric_limits<ElemType>::max()),
     logNegError(LogNegativeError(totalPoints)),
-    subtreeLeavesLogNegError(-DBL_MAX),
-    subtreeLeaves(0),
-    root(false),
-    ratio(1.0),
-    logVolume(-DBL_MAX),
-    bucketTag(-1),
-    alphaUpper(0.0),
-    left(NULL),
+    subtreeLeavesLogNegError(-DBL_MAX), subtreeLeaves(0), root(false),
+    ratio(1.0), logVolume(-DBL_MAX), bucketTag(-1), alphaUpper(0.0), left(NULL),
     right(NULL)
-{ /* Nothing to do. */ }
+{ /* Nothing to do. */
+}
 
 template<typename MatType, typename TagType>
 DTree<MatType, TagType>::~DTree()
 {
-    delete left;
-    delete right;
+  delete left;
+  delete right;
 }
 
 // This function computes the log-l2-negative-error of a given node from the
@@ -416,8 +353,8 @@ template<typename MatType, typename TagType>
 double DTree<MatType, TagType>::LogNegativeError(const size_t totalPoints) const
 {
   // log(-|t|^2 / (N^2 V_t)) = log(-1) + 2 log(|t|) - 2 log(N) - log(V_t).
-  double err = 2 * std::log((double) (end - start)) -
-               2 * std::log((double) totalPoints);
+  double err =
+      2 * std::log((double)(end - start)) - 2 * std::log((double)totalPoints);
 
   StatType valDiffs = maxVals - minVals;
   for (size_t i = 0; i < valDiffs.n_elem; ++i)
@@ -453,12 +390,12 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
   double minError = logNegError;
   bool splitFound = false;
 
-  // Loop through each dimension.
+// Loop through each dimension.
 #ifdef _WIN32
-  #pragma omp parallel for default(shared)
-  for (intmax_t dim = 0; dim < (intmax_t) maxVals.n_elem; ++dim)
+#pragma omp parallel for default(shared)
+  for (intmax_t dim = 0; dim < (intmax_t)maxVals.n_elem; ++dim)
 #else
-  #pragma omp parallel for default(shared)
+#pragma omp parallel for default(shared)
   for (size_t dim = 0; dim < maxVals.n_elem; ++dim)
 #endif
   {
@@ -476,7 +413,7 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
     bool dimSplitFound = false;
     // Take an error estimate for this dimension.
     double minDimError = std::pow(points, 2.0) / (max - min);
-    double dimLeftError = 0.0; // For -Wuninitialized.  These variables will
+    double dimLeftError = 0.0;  // For -Wuninitialized.  These variables will
     double dimRightError = 0.0; // always be set to something else before use.
     ElemType dimSplitValue = 0.0;
 
@@ -488,8 +425,8 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
     // sparse matrices.
 
     std::vector<SplitItem> splitVec;
-    details::ExtractSplits<ElemType>(splitVec, data, dim, start, end,
-        minLeafSize);
+    details::ExtractSplits<ElemType>(
+        splitVec, data, dim, start, end, minLeafSize);
 
     // Iterate on all the splits for this dimension
     for (typename std::vector<SplitItem>::iterator i = splitVec.begin();
@@ -529,8 +466,8 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
     }
 
     const double actualMinDimError = std::log(minDimError)
-      - 2 * std::log((double) data.n_cols)
-      - volumeWithoutDim;
+                                     - 2 * std::log((double)data.n_cols)
+                                     - volumeWithoutDim;
 
 #pragma omp critical(DTreeFindUpdate)
     if ((actualMinDimError > minError) && dimSplitFound)
@@ -540,10 +477,10 @@ bool DTree<MatType, TagType>::FindSplit(const MatType& data,
       minError = actualMinDimError;
       splitDim = dim;
       splitValue = dimSplitValue;
-      leftError = std::log(dimLeftError) - 2 * std::log((double) data.n_cols)
-        - volumeWithoutDim;
-      rightError = std::log(dimRightError) - 2 * std::log((double) data.n_cols)
-        - volumeWithoutDim;
+      leftError = std::log(dimLeftError) - 2 * std::log((double)data.n_cols)
+                  - volumeWithoutDim;
+      rightError = std::log(dimRightError) - 2 * std::log((double)data.n_cols)
+                   - volumeWithoutDim;
       splitFound = true;
     } // end if better split found in this dimension.
   }
@@ -599,7 +536,7 @@ double DTree<MatType, TagType>::Grow(MatType& data,
   double leftG, rightG;
 
   // Compute points ratio.
-  ratio = (double) (end - start) / (double) oldFromNew.n_elem;
+  ratio = (double)(end - start) / (double)oldFromNew.n_elem;
 
   // Compute the log of the volume of the node.
   logVolume = 0;
@@ -608,7 +545,7 @@ double DTree<MatType, TagType>::Grow(MatType& data,
       logVolume += std::log(maxVals[i] - minVals[i]);
 
   // Check if node is large enough to split.
-  if ((size_t) (end - start) > maxLeafSize)
+  if ((size_t)(end - start) > maxLeafSize)
   {
     // Find the split.
     size_t dim;
@@ -637,10 +574,9 @@ double DTree<MatType, TagType>::Grow(MatType& data,
       left = new DTree(maxValsL, minValsL, start, splitIndex, leftError);
       right = new DTree(maxValsR, minValsR, splitIndex, end, rightError);
 
-      leftG = left->Grow(data, oldFromNew, useVolReg, maxLeafSize,
-                         minLeafSize);
-      rightG = right->Grow(data, oldFromNew, useVolReg, maxLeafSize,
-                           minLeafSize);
+      leftG = left->Grow(data, oldFromNew, useVolReg, maxLeafSize, minLeafSize);
+      rightG =
+          right->Grow(data, oldFromNew, useVolReg, maxLeafSize, minLeafSize);
 
       // Store values of R(T~) and |T~|.
       subtreeLeaves = left->SubtreeLeaves() + right->SubtreeLeaves();
@@ -653,9 +589,9 @@ double DTree<MatType, TagType>::Grow(MatType& data,
       // As a result we do leave log-space, but the largest quantity we
       // represent is on the order of (V_t / V_i) where V_i is the smallest leaf
       // node below this node, which depends heavily on the depth of the tree.
-      subtreeLeavesLogNegError = std::log(
-          std::exp(logVolume + left->SubtreeLeavesLogNegError()) +
-          std::exp(logVolume + right->SubtreeLeavesLogNegError()))
+      subtreeLeavesLogNegError =
+          std::log(std::exp(logVolume + left->SubtreeLeavesLogNegError())
+                   + std::exp(logVolume + right->SubtreeLeavesLogNegError()))
           - logVolume;
     }
     else
@@ -668,7 +604,7 @@ double DTree<MatType, TagType>::Grow(MatType& data,
   else
   {
     // We can make this a leaf node.
-    Log::Assert((size_t) (end - start) >= minLeafSize);
+    Log::Assert((size_t)(end - start) >= minLeafSize);
     subtreeLeaves = 1;
     subtreeLeavesLogNegError = logNegError;
   }
@@ -686,17 +622,17 @@ double DTree<MatType, TagType>::Grow(MatType& data,
     const double leftRatio = (splitValue - minVals[splitDim]) / range;
     const double rightRatio = (maxVals[splitDim] - splitValue) / range;
 
-    const size_t leftPow = std::pow((double) (left->End() - left->Start()), 2);
-    const size_t rightPow = std::pow((double) (right->End() - right->Start()),
-        2);
-    const size_t thisPow = std::pow((double) (end - start), 2);
+    const size_t leftPow = std::pow((double)(left->End() - left->Start()), 2);
+    const size_t rightPow =
+        std::pow((double)(right->End() - right->Start()), 2);
+    const size_t thisPow = std::pow((double)(end - start), 2);
 
     double tmpAlphaSum = leftPow / leftRatio + rightPow / rightRatio - thisPow;
 
     if (left->SubtreeLeaves() > 1)
     {
-      const double exponent = 2 * std::log((double) data.n_cols) + logVolume +
-          left->AlphaUpper();
+      const double exponent =
+          2 * std::log((double)data.n_cols) + logVolume + left->AlphaUpper();
 
       // Whether or not this will overflow is highly dependent on the depth of
       // the tree.
@@ -705,15 +641,14 @@ double DTree<MatType, TagType>::Grow(MatType& data,
 
     if (right->SubtreeLeaves() > 1)
     {
-      const double exponent = 2 * std::log((double) data.n_cols)
-        + logVolume
-        + right->AlphaUpper();
+      const double exponent =
+          2 * std::log((double)data.n_cols) + logVolume + right->AlphaUpper();
 
       tmpAlphaSum += std::exp(exponent);
     }
 
-    alphaUpper = std::log(tmpAlphaSum) - 2 * std::log((double) data.n_cols)
-      - logVolume;
+    alphaUpper =
+        std::log(tmpAlphaSum) - 2 * std::log((double)data.n_cols) - logVolume;
 
     double gT;
     if (useVolReg)
@@ -723,7 +658,7 @@ double DTree<MatType, TagType>::Grow(MatType& data,
     }
     else
     {
-      gT = alphaUpper - std::log((double) (subtreeLeaves - 1));
+      gT = alphaUpper - std::log((double)(subtreeLeaves - 1));
     }
 
     return std::min(gT, std::min(leftG, rightG));
@@ -733,7 +668,6 @@ double DTree<MatType, TagType>::Grow(MatType& data,
   // n_t ^ 2 / r_t * n ^ 2 = -error.  Therefore the value we need is actually
   // -1.0 * subtreeLeavesError.
 }
-
 
 template<typename MatType, typename TagType>
 double DTree<MatType, TagType>::PruneAndUpdate(const double oldAlpha,
@@ -752,7 +686,7 @@ double DTree<MatType, TagType>::PruneAndUpdate(const double oldAlpha,
     if (useVolReg)
       gT = alphaUpper; // - std::log(subtreeLeavesVTInv - vTInv);
     else
-      gT = alphaUpper - std::log((double) (subtreeLeaves - 1));
+      gT = alphaUpper - std::log((double)(subtreeLeaves - 1));
 
     if (gT > oldAlpha)
     {
@@ -771,9 +705,9 @@ double DTree<MatType, TagType>::PruneAndUpdate(const double oldAlpha,
       // As a result we do leave log-space, but the largest quantity we
       // represent is on the order of (V_t / V_i) where V_i is the smallest leaf
       // node below this node, which depends heavily on the depth of the tree.
-      subtreeLeavesLogNegError = std::log(
-          std::exp(logVolume + left->SubtreeLeavesLogNegError()) +
-          std::exp(logVolume + right->SubtreeLeavesLogNegError()))
+      subtreeLeavesLogNegError =
+          std::log(std::exp(logVolume + left->SubtreeLeavesLogNegError())
+                   + std::exp(logVolume + right->SubtreeLeavesLogNegError()))
           - logVolume;
 
       // Recalculate upper alpha.
@@ -781,19 +715,18 @@ double DTree<MatType, TagType>::PruneAndUpdate(const double oldAlpha,
       const double leftRatio = (splitValue - minVals[splitDim]) / range;
       const double rightRatio = (maxVals[splitDim] - splitValue) / range;
 
-      const size_t leftPow = std::pow((double) (left->End() - left->Start()),
-          2);
-      const size_t rightPow = std::pow((double) (right->End() - right->Start()),
-          2);
-      const size_t thisPow = std::pow((double) (end - start), 2);
+      const size_t leftPow = std::pow((double)(left->End() - left->Start()), 2);
+      const size_t rightPow =
+          std::pow((double)(right->End() - right->Start()), 2);
+      const size_t thisPow = std::pow((double)(end - start), 2);
 
-      double tmpAlphaSum = leftPow / leftRatio + rightPow / rightRatio -
-          thisPow;
+      double tmpAlphaSum =
+          leftPow / leftRatio + rightPow / rightRatio - thisPow;
 
       if (left->SubtreeLeaves() > 1)
       {
-        const double exponent = 2 * std::log((double) points) + logVolume +
-            left->AlphaUpper();
+        const double exponent =
+            2 * std::log((double)points) + logVolume + left->AlphaUpper();
 
         // Whether or not this will overflow is highly dependent on the depth of
         // the tree.
@@ -802,14 +735,14 @@ double DTree<MatType, TagType>::PruneAndUpdate(const double oldAlpha,
 
       if (right->SubtreeLeaves() > 1)
       {
-        const double exponent = 2 * std::log((double) points) + logVolume +
-            right->AlphaUpper();
+        const double exponent =
+            2 * std::log((double)points) + logVolume + right->AlphaUpper();
 
         tmpAlphaSum += std::exp(exponent);
       }
 
-      alphaUpper = std::log(tmpAlphaSum) - 2 * std::log((double) points) -
-          logVolume;
+      alphaUpper =
+          std::log(tmpAlphaSum) - 2 * std::log((double)points) - logVolume;
 
       // Update gT value.
       if (useVolReg)
@@ -819,12 +752,12 @@ double DTree<MatType, TagType>::PruneAndUpdate(const double oldAlpha,
       }
       else
       {
-        gT = alphaUpper - std::log((double) (subtreeLeaves - 1));
+        gT = alphaUpper - std::log((double)(subtreeLeaves - 1));
       }
 
       Log::Assert(gT < std::numeric_limits<double>::max());
 
-      return std::min((double) gT, std::min(leftG, rightG));
+      return std::min((double)gT, std::min(leftG, rightG));
     }
     else
     {
@@ -860,7 +793,6 @@ bool DTree<MatType, TagType>::WithinRange(const VecType& query) const
   return true;
 }
 
-
 template<typename MatType, typename TagType>
 double DTree<MatType, TagType>::ComputeValue(const VecType& query) const
 {
@@ -873,7 +805,7 @@ double DTree<MatType, TagType>::ComputeValue(const VecType& query) const
       return 0.0;
   }
 
-  if (subtreeLeaves == 1)  // If we are a leaf...
+  if (subtreeLeaves == 1) // If we are a leaf...
   {
     return std::exp(std::log(ratio) - logVolume);
   }
@@ -881,9 +813,8 @@ double DTree<MatType, TagType>::ComputeValue(const VecType& query) const
   {
     // Return either of the two children - left or right, depending on the
     // splitValue
-    return (query[splitDim] <= splitValue) ?
-      left->ComputeValue(query) :
-      right->ComputeValue(query);
+    return (query[splitDim] <= splitValue) ? left->ComputeValue(query)
+                                           : right->ComputeValue(query);
   }
 
   return 0.0;
@@ -932,15 +863,14 @@ TagType DTree<MatType, TagType>::FindBucket(const VecType& query) const
   else
   {
     // Return the tag from either of the two children - left or right.
-    return (query[splitDim] <= splitValue) ?
-      left->FindBucket(query) :
-      right->FindBucket(query);
+    return (query[splitDim] <= splitValue) ? left->FindBucket(query)
+                                           : right->FindBucket(query);
   }
 }
 
 template<typename MatType, typename TagType>
-void DTree<MatType, TagType>::ComputeVariableImportance(arma::vec& importances)
-    const
+void DTree<MatType, TagType>::ComputeVariableImportance(
+    arma::vec& importances) const
 {
   // Clear and set to right size.
   importances.zeros(maxVals.n_elem);
@@ -958,9 +888,10 @@ void DTree<MatType, TagType>::ComputeVariableImportance(arma::vec& importances)
 
     // The way to do this entirely in log-space is (at this time) somewhat
     // unclear.  So this risks overflow.
-    importances[curNode.SplitDim()] += (-std::exp(curNode.LogNegError()) -
-        (-std::exp(curNode.Left()->LogNegError()) +
-         -std::exp(curNode.Right()->LogNegError())));
+    importances[curNode.SplitDim()] +=
+        (-std::exp(curNode.LogNegError())
+         - (-std::exp(curNode.Left()->LogNegError())
+            + -std::exp(curNode.Right()->LogNegError())));
 
     nodes.push(curNode.Left());
     nodes.push(curNode.Right());
@@ -990,25 +921,25 @@ void DTree<MatType, TagType>::FillMinMax(const StatType& mins,
   }
 }
 
-template <typename MatType, typename TagType>
-template <typename Archive>
+template<typename MatType, typename TagType>
+template<typename Archive>
 void DTree<MatType, TagType>::serialize(Archive& ar,
                                         const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(start);
-  ar & BOOST_SERIALIZATION_NVP(end);
-  ar & BOOST_SERIALIZATION_NVP(maxVals);
-  ar & BOOST_SERIALIZATION_NVP(minVals);
-  ar & BOOST_SERIALIZATION_NVP(splitDim);
-  ar & BOOST_SERIALIZATION_NVP(splitValue);
-  ar & BOOST_SERIALIZATION_NVP(logNegError);
-  ar & BOOST_SERIALIZATION_NVP(subtreeLeavesLogNegError);
-  ar & BOOST_SERIALIZATION_NVP(subtreeLeaves);
-  ar & BOOST_SERIALIZATION_NVP(root);
-  ar & BOOST_SERIALIZATION_NVP(ratio);
-  ar & BOOST_SERIALIZATION_NVP(logVolume);
-  ar & BOOST_SERIALIZATION_NVP(bucketTag);
-  ar & BOOST_SERIALIZATION_NVP(alphaUpper);
+  ar& BOOST_SERIALIZATION_NVP(start);
+  ar& BOOST_SERIALIZATION_NVP(end);
+  ar& BOOST_SERIALIZATION_NVP(maxVals);
+  ar& BOOST_SERIALIZATION_NVP(minVals);
+  ar& BOOST_SERIALIZATION_NVP(splitDim);
+  ar& BOOST_SERIALIZATION_NVP(splitValue);
+  ar& BOOST_SERIALIZATION_NVP(logNegError);
+  ar& BOOST_SERIALIZATION_NVP(subtreeLeavesLogNegError);
+  ar& BOOST_SERIALIZATION_NVP(subtreeLeaves);
+  ar& BOOST_SERIALIZATION_NVP(root);
+  ar& BOOST_SERIALIZATION_NVP(ratio);
+  ar& BOOST_SERIALIZATION_NVP(logVolume);
+  ar& BOOST_SERIALIZATION_NVP(bucketTag);
+  ar& BOOST_SERIALIZATION_NVP(alphaUpper);
 
   if (Archive::is_loading::value)
   {
@@ -1018,13 +949,13 @@ void DTree<MatType, TagType>::serialize(Archive& ar,
       delete right;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(left);
-  ar & BOOST_SERIALIZATION_NVP(right);
+  ar& BOOST_SERIALIZATION_NVP(left);
+  ar& BOOST_SERIALIZATION_NVP(right);
 
   if (root)
   {
-    ar & BOOST_SERIALIZATION_NVP(maxVals);
-    ar & BOOST_SERIALIZATION_NVP(minVals);
+    ar& BOOST_SERIALIZATION_NVP(maxVals);
+    ar& BOOST_SERIALIZATION_NVP(minVals);
 
     // This is added in order to reduce (dramatically!) the model file size.
     if (Archive::is_loading::value && left && right)

@@ -21,8 +21,7 @@ using namespace mlpack;
 arma::mat CreateMaximalInput()
 {
   arma::mat w1(2, 4);
-  w1 << 0 << 1 << 2 << 3 << arma::endr
-     << 4 << 5 << 6 << 7;
+  w1 << 0 << 1 << 2 << 3 << arma::endr << 4 << 5 << 6 << 7;
 
   arma::mat input(5, 5);
   input.submat(0, 0, 1, 3) = w1;
@@ -33,7 +32,7 @@ arma::mat CreateMaximalInput()
   return maximalInputs;
 }
 
-void TestResults(const arma::mat&actualResult, const arma::mat& expectResult)
+void TestResults(const arma::mat& actualResult, const arma::mat& expectResult)
 {
   BOOST_REQUIRE_EQUAL(expectResult.n_rows, actualResult.n_rows);
   BOOST_REQUIRE_EQUAL(expectResult.n_cols, actualResult.n_cols);
@@ -53,12 +52,11 @@ BOOST_AUTO_TEST_CASE(ColumnToBlocksEvaluate)
   ctb.Transform(CreateMaximalInput(), output);
 
   arma::mat matlabResults;
-  matlabResults << -1 << -1 << -1 << -1 << -1 << -1 << -1 << arma::endr
-                << -1 << -1<< -0.42857 << -1 << 0.14286 << 0.71429 << -1
-                    << arma::endr
-                << -1 << -0.71429 << -0.14286 << -1 << 0.42857 << 1 << -1
-                    << arma::endr
-                << -1 << -1 << -1 << -1 << -1 << -1 << -1;
+  matlabResults << -1 << -1 << -1 << -1 << -1 << -1 << -1 << arma::endr << -1
+                << -1 << -0.42857 << -1 << 0.14286 << 0.71429 << -1
+                << arma::endr << -1 << -0.71429 << -0.14286 << -1 << 0.42857
+                << 1 << -1 << arma::endr << -1 << -1 << -1 << -1 << -1 << -1
+                << -1;
 
   TestResults(output, matlabResults);
 }
@@ -73,12 +71,11 @@ BOOST_AUTO_TEST_CASE(ColumnToBlocksChangeBlockSize)
   ctb.Transform(CreateMaximalInput(), output);
 
   arma::mat matlabResults;
-  matlabResults<< -3 << -3 << -3 << -3 << -3
-               << -3 << -3 << -3 << -3 << -3 << -3 << arma::endr
-               << -3 << -1 << -0.71429 << -0.42857 << -0.14286
-               << -3 << 0.14286 << 0.42857 << 0.71429 << 1 << -3 << arma::endr
-               << -3 << -3 << -3 << -3 << -3 << -3 << -3 << -3 << -3 << -3
-                  << -3 << arma::endr;
+  matlabResults << -3 << -3 << -3 << -3 << -3 << -3 << -3 << -3 << -3 << -3
+                << -3 << arma::endr << -3 << -1 << -0.71429 << -0.42857
+                << -0.14286 << -3 << 0.14286 << 0.42857 << 0.71429 << 1 << -3
+                << arma::endr << -3 << -3 << -3 << -3 << -3 << -3 << -3 << -3
+                << -3 << -3 << -3 << arma::endr;
 
   TestResults(output, matlabResults);
 }

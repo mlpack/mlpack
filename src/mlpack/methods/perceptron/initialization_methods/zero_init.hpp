@@ -23,7 +23,7 @@ namespace perceptron {
 class ZeroInitialization
 {
  public:
-  ZeroInitialization() { }
+  ZeroInitialization() {}
 
   inline static void Initialize(arma::mat& weights,
                                 arma::vec& biases,

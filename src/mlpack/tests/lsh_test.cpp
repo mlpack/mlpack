@@ -39,16 +39,13 @@ void GetPointset(const size_t N, arma::mat& rdata)
   arma::mat c4(d, N / 4, arma::fill::randu);
 
   arma::colvec offset1;
-  offset1 << 0 << arma::endr
-          << 3 << arma::endr;
+  offset1 << 0 << arma::endr << 3 << arma::endr;
 
   arma::colvec offset2;
-  offset2 << 3 << arma::endr
-          << 3 << arma::endr;
+  offset2 << 3 << arma::endr << 3 << arma::endr;
 
   arma::colvec offset4;
-  offset4 << 3 << arma::endr
-          << 0 << arma::endr;
+  offset4 << 3 << arma::endr << 0 << arma::endr;
 
   // Spread points in plane.
   for (size_t p = 0; p < N / 4; ++p)
@@ -110,7 +107,7 @@ BOOST_AUTO_TEST_CASE(NumTablesTest)
 
   // Test parameters.
   const double epsilon = 0.1; // Allowed deviation from expected monotonicity.
-  const int numTries = 5; // Tries for each test before declaring failure.
+  const int numTries = 5;     // Tries for each test before declaring failure.
 
   // Read iris training and testing data as reference and query sets.
   const string trainSet = "iris_train.csv";
@@ -131,15 +128,15 @@ BOOST_AUTO_TEST_CASE(NumTablesTest)
   {
     fail = false;
 
-    const int lSize = 6; // Number of runs.
+    const int lSize = 6;                          // Number of runs.
     const int lValue[] = {1, 8, 16, 32, 64, 128}; // Number of tables.
-    double lValueRecall[lSize] = {0.0}; // Recall of each LSH run.
+    double lValueRecall[lSize] = {0.0};           // Recall of each LSH run.
 
     for (size_t l = 0; l < lSize; ++l)
     {
       // Run LSH with only numTables varying (other values are defaults).
-      LSHSearch<> lshTest(rdata, numProj, lValue[l], hashWidth, secondHashSize,
-          bucketSize);
+      LSHSearch<> lshTest(
+          rdata, numProj, lValue[l], hashWidth, secondHashSize, bucketSize);
       arma::Mat<size_t> lshNeighbors;
       arma::mat lshDistances;
       lshTest.Search(qdata, k, lshNeighbors, lshDistances);
@@ -197,20 +194,15 @@ BOOST_AUTO_TEST_CASE(HashWidthTest)
   arma::Mat<size_t> groundTruth;
   arma::mat groundDistances;
   knn.Search(qdata, k, groundTruth, groundDistances);
-  const int hSize = 7; // Number of runs.
+  const int hSize = 7;                                   // Number of runs.
   const double hValue[] = {0.1, 0.5, 1, 5, 10, 50, 500}; // Hash width.
-  double hValueRecall[hSize] = {0.0}; // Recall of each run.
+  double hValueRecall[hSize] = {0.0};                    // Recall of each run.
 
   for (size_t h = 0; h < hSize; ++h)
   {
     // Run LSH with only hashWidth varying (other values are defaults).
     LSHSearch<> lshTest(
-        rdata,
-        numProj,
-        numTables,
-        hValue[h],
-        secondHashSize,
-        bucketSize);
+        rdata, numProj, numTables, hValue[h], secondHashSize, bucketSize);
 
     arma::Mat<size_t> lshNeighbors;
     arma::mat lshDistances;
@@ -259,20 +251,15 @@ BOOST_AUTO_TEST_CASE(NumProjTest)
   knn.Search(qdata, k, groundTruth, groundDistances);
 
   // LSH test parameters for numProj.
-  const int pSize = 5; // Number of runs.
+  const int pSize = 5;                       // Number of runs.
   const int pValue[] = {1, 10, 20, 50, 100}; // Number of projections.
-  double pValueRecall[pSize] = {0.0}; // Recall of each run.
+  double pValueRecall[pSize] = {0.0};        // Recall of each run.
 
   for (size_t p = 0; p < pSize; ++p)
   {
     // Run LSH with only numProj varying (other values are defaults).
     LSHSearch<> lshTest(
-        rdata,
-        pValue[p],
-        numTables,
-        hashWidth,
-        secondHashSize,
-        bucketSize);
+        rdata, pValue[p], numTables, hashWidth, secondHashSize, bucketSize);
 
     arma::Mat<size_t> lshNeighbors;
     arma::mat lshDistances;
@@ -320,46 +307,34 @@ BOOST_AUTO_TEST_CASE(RecallTest)
 
   // Expensive LSH run.
   const int hExp = 10000; // First-level hash width.
-  const int kExp = 1; // Projections per table.
-  const int tExp = 128; // Number of tables.
+  const int kExp = 1;     // Projections per table.
+  const int tExp = 128;   // Number of tables.
   const double recallThreshExp = 0.5;
 
-  LSHSearch<> lshTestExp(
-      rdata,
-      kExp,
-      tExp,
-      hExp,
-      secondHashSize,
-      bucketSize);
+  LSHSearch<> lshTestExp(rdata, kExp, tExp, hExp, secondHashSize, bucketSize);
   arma::Mat<size_t> lshNeighborsExp;
   arma::mat lshDistancesExp;
   lshTestExp.Search(qdata, k, lshNeighborsExp, lshDistancesExp);
 
-  const double recallExp = LSHSearch<>::ComputeRecall(
-      lshNeighborsExp, groundTruth);
+  const double recallExp =
+      LSHSearch<>::ComputeRecall(lshNeighborsExp, groundTruth);
 
   // This run should have recall higher than the threshold.
   BOOST_REQUIRE_GE(recallExp, recallThreshExp);
 
   // Cheap LSH run.
-  const int hChp = 1; // Small first-level hash width.
-  const int kChp = 100; // Large number of projections per table.
-  const int tChp = 1; // Only one table.
+  const int hChp = 1;                  // Small first-level hash width.
+  const int kChp = 100;                // Large number of projections per table.
+  const int tChp = 1;                  // Only one table.
   const double recallThreshChp = 0.25; // Recall threshold.
 
-  LSHSearch<> lshTestChp(
-      rdata,
-      kChp,
-      tChp,
-      hChp,
-      secondHashSize,
-      bucketSize);
+  LSHSearch<> lshTestChp(rdata, kChp, tChp, hChp, secondHashSize, bucketSize);
   arma::Mat<size_t> lshNeighborsChp;
   arma::mat lshDistancesChp;
   lshTestChp.Search(qdata, k, lshNeighborsChp, lshDistancesChp);
 
-  const double recallChp = LSHSearch<>::ComputeRecall(lshNeighborsChp,
-      groundTruth);
+  const double recallChp =
+      LSHSearch<>::ComputeRecall(lshNeighborsChp, groundTruth);
 
   // This run should have recall lower than the threshold.
   BOOST_REQUIRE_LE(recallChp, recallThreshChp);
@@ -392,8 +367,8 @@ BOOST_AUTO_TEST_CASE(DeterministicMerge)
   projections(0, 0, 0) = 0;
   projections(1, 0, 0) = 1;
 
-  LSHSearch<> lshTest(rdata, projections, hashWidth, secondHashSize,
-      bucketSize);
+  LSHSearch<> lshTest(
+      rdata, projections, hashWidth, secondHashSize, bucketSize);
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
@@ -450,8 +425,8 @@ BOOST_AUTO_TEST_CASE(DeterministicNoMerge)
   projections(0, 1, 0) = 1;
   projections(1, 1, 0) = 0;
 
-  LSHSearch<> lshTest(rdata, projections, hashWidth, secondHashSize,
-      bucketSize);
+  LSHSearch<> lshTest(
+      rdata, projections, hashWidth, secondHashSize, bucketSize);
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
@@ -518,8 +493,8 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
   for (size_t rep = 0; rep < repetitions; ++rep)
   {
     // Train a model.
-    LSHSearch<> multiprobeTest(rdata, numProj, numTables, hashWidth,
-        secondHashSize, bucketSize);
+    LSHSearch<> multiprobeTest(
+        rdata, numProj, numTables, hashWidth, secondHashSize, bucketSize);
 
     double prevRecall = 0;
     // Search with varying number of probes.
@@ -528,8 +503,8 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
       arma::Mat<size_t> lshNeighbors;
       arma::mat lshDistances;
 
-      multiprobeTest.Search(qdata, k, lshNeighbors, lshDistances, 0,
-          numProbes[p]);
+      multiprobeTest.Search(
+          qdata, k, lshNeighbors, lshDistances, 0, numProbes[p]);
 
       // Compute recall of this run.
       double recall = LSHSearch<>::ComputeRecall(lshNeighbors, groundTruth);
@@ -577,8 +552,8 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
   projections(1, 1, 0) = 1;
 
   // Construct LSH object with given tables.
-  LSHSearch<> lshTest(rdata, projections,
-                      hashWidth, secondHashSize, bucketSize);
+  LSHSearch<> lshTest(
+      rdata, projections, hashWidth, secondHashSize, bucketSize);
 
   const arma::mat offsets = lshTest.Offsets();
 
@@ -602,19 +577,19 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
   // Test that q1 search with 1 additional probe returns some C2 points.
   lshTest.Search(q1, k, neighbors, distances, 0, 1);
   BOOST_REQUIRE(arma::all(
-        (neighbors.col(0) == N) ||
-        ((neighbors.col(0) >= N / 4) && (neighbors.col(0) < N / 2))));
+      (neighbors.col(0) == N)
+      || ((neighbors.col(0) >= N / 4) && (neighbors.col(0) < N / 2))));
 
   // Test that q2 simple search returns some C2 points.
   lshTest.Search(q2, k, neighbors, distances);
   BOOST_REQUIRE(arma::all(
-      (neighbors.col(0) == N) ||
-      ((neighbors.col(0) >= N / 4) && (neighbors.col(0) < N / 2))));
+      (neighbors.col(0) == N)
+      || ((neighbors.col(0) >= N / 4) && (neighbors.col(0) < N / 2))));
 
   // Test that q2 with 3 additional probes returns all C2 points.
   lshTest.Search(q2, k, neighbors, distances, 0, 3);
-  BOOST_REQUIRE(arma::all(
-      (neighbors.col(0) >= N / 4) && (neighbors.col(0) < N / 2)));
+  BOOST_REQUIRE(
+      arma::all((neighbors.col(0) >= N / 4) && (neighbors.col(0) < N / 2)));
 }
 
 BOOST_AUTO_TEST_CASE(LSHTrainTest)
@@ -653,12 +628,12 @@ BOOST_AUTO_TEST_CASE(RecallTestIdentical)
   // base = [1; 2; 3; 4; 5]
   arma::Mat<size_t> base;
   base.set_size(k, numQueries);
-  base.col(0) = arma::linspace< arma::Col<size_t> >(1, k, k);
+  base.col(0) = arma::linspace<arma::Col<size_t>>(1, k, k);
 
   // q1 = [1; 2; 3; 4; 5]. Expect recall = 1
   arma::Mat<size_t> q1;
   q1.set_size(k, numQueries);
-  q1.col(0) = arma::linspace< arma::Col<size_t> >(1, k, k);
+  q1.col(0) = arma::linspace<arma::Col<size_t>>(1, k, k);
 
   BOOST_REQUIRE_EQUAL(LSHSearch<>::ComputeRecall(base, q1), 1);
 }
@@ -677,19 +652,15 @@ BOOST_AUTO_TEST_CASE(RecallTestPartiallyCorrect)
   // base = [1; 2; 3; 4; 5]
   arma::Mat<size_t> base;
   base.set_size(k, numQueries);
-  base.col(0) = arma::linspace< arma::Col<size_t> >(1, k, k);
+  base.col(0) = arma::linspace<arma::Col<size_t>>(1, k, k);
 
   // q2 = [2; 3; 4; 6; 7]. Expect recall = 0.6. This is important because this
   // is a good example of how recall and accuracy differ. Accuracy here would
   // be 0 but recall should not be.
   arma::Mat<size_t> q2;
   q2.set_size(k, numQueries);
-  q2 <<
-    2 << arma::endr <<
-    3 << arma::endr <<
-    4 << arma::endr <<
-    6 << arma::endr <<
-    7 << arma::endr;
+  q2 << 2 << arma::endr << 3 << arma::endr << 4 << arma::endr << 6 << arma::endr
+     << 7 << arma::endr;
 
   BOOST_REQUIRE_CLOSE(LSHSearch<>::ComputeRecall(base, q2), 0.6, 0.0001);
 }
@@ -705,11 +676,11 @@ BOOST_AUTO_TEST_CASE(RecallTestIncorrect)
   // base = [1; 2; 3; 4; 5]
   arma::Mat<size_t> base;
   base.set_size(k, numQueries);
-  base.col(0) = arma::linspace< arma::Col<size_t> >(1, k, k);
+  base.col(0) = arma::linspace<arma::Col<size_t>>(1, k, k);
   // q3 = [6; 7; 8; 9; 10]. Expected recall = 0
   arma::Mat<size_t> q3;
   q3.set_size(k, numQueries);
-  q3.col(0) = arma::linspace< arma::Col<size_t> >(k + 1, 2 * k, k);
+  q3.col(0) = arma::linspace<arma::Col<size_t>>(k + 1, 2 * k, k);
 
   BOOST_REQUIRE_EQUAL(LSHSearch<>::ComputeRecall(base, q3), 0);
 }
@@ -726,13 +697,13 @@ BOOST_AUTO_TEST_CASE(RecallTestException)
   // base = [1; 2; 3; 4; 5]
   arma::Mat<size_t> base;
   base.set_size(k, numQueries);
-  base.col(0) = arma::linspace< arma::Col<size_t> >(1, k, k);
+  base.col(0) = arma::linspace<arma::Col<size_t>>(1, k, k);
   // verify that nonsense arguments throw exception
   arma::Mat<size_t> q4;
   q4.set_size(2 * k, numQueries);
 
   BOOST_REQUIRE_THROW(LSHSearch<>::ComputeRecall(base, q4),
-      std::invalid_argument);
+                      std::invalid_argument);
 }
 
 BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
@@ -745,7 +716,7 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
   arma::mat distances;
   arma::Mat<size_t> neighbors;
   BOOST_REQUIRE_THROW(lsh.Search(dataset, 2, neighbors, distances),
-      std::invalid_argument);
+                      std::invalid_argument);
 
   // Now, train.
   lsh.Train(dataset, 4, 3, 3.0, 12, 4);
@@ -797,8 +768,8 @@ BOOST_AUTO_TEST_CASE(ParallelBichromatic)
   omp_set_num_threads(prevNumThreads);
 
   // Require both have same results
-  double recall = LSHSearch<>::ComputeRecall(
-      sequentialNeighbors, parallelNeighbors);
+  double recall =
+      LSHSearch<>::ComputeRecall(sequentialNeighbors, parallelNeighbors);
   BOOST_REQUIRE_EQUAL(recall, 1);
 }
 
@@ -835,8 +806,8 @@ BOOST_AUTO_TEST_CASE(ParallelMonochromatic)
   omp_set_num_threads(prevNumThreads);
 
   // Require both have same results.
-  double recall = LSHSearch<>::ComputeRecall(
-      sequentialNeighbors, parallelNeighbors);
+  double recall =
+      LSHSearch<>::ComputeRecall(sequentialNeighbors, parallelNeighbors);
   BOOST_REQUIRE_EQUAL(recall, 1);
 }
 #endif

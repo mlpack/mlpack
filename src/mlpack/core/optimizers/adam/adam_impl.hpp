@@ -22,22 +22,22 @@ namespace mlpack {
 namespace optimization {
 
 template<typename UpdateRule>
-AdamType<UpdateRule>::AdamType(
-    const double stepSize,
-    const size_t batchSize,
-    const double beta1,
-    const double beta2,
-    const double epsilon,
-    const size_t maxIterations,
-    const double tolerance,
-    const bool shuffle) :
-    optimizer(stepSize,
+AdamType<UpdateRule>::AdamType(const double stepSize,
+                               const size_t batchSize,
+                               const double beta1,
+                               const double beta2,
+                               const double epsilon,
+                               const size_t maxIterations,
+                               const double tolerance,
+                               const bool shuffle)
+  : optimizer(stepSize,
               batchSize,
               maxIterations,
               tolerance,
               shuffle,
               UpdateRule(epsilon, beta1, beta2))
-{ /* Nothing to do. */ }
+{ /* Nothing to do. */
+}
 
 } // namespace optimization
 } // namespace mlpack

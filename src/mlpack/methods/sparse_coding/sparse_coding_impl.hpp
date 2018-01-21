@@ -20,29 +20,24 @@ namespace mlpack {
 namespace sparse_coding {
 
 template<typename DictionaryInitializer>
-SparseCoding::SparseCoding(
-    const arma::mat& data,
-    const size_t atoms,
-    const double lambda1,
-    const double lambda2,
-    const size_t maxIterations,
-    const double objTolerance,
-    const double newtonTolerance,
-    const DictionaryInitializer& initializer) :
-    atoms(atoms),
-    lambda1(lambda1),
-    lambda2(lambda2),
-    maxIterations(maxIterations),
-    objTolerance(objTolerance),
+SparseCoding::SparseCoding(const arma::mat& data,
+                           const size_t atoms,
+                           const double lambda1,
+                           const double lambda2,
+                           const size_t maxIterations,
+                           const double objTolerance,
+                           const double newtonTolerance,
+                           const DictionaryInitializer& initializer)
+  : atoms(atoms), lambda1(lambda1), lambda2(lambda2),
+    maxIterations(maxIterations), objTolerance(objTolerance),
     newtonTolerance(newtonTolerance)
 {
   Train(data, initializer);
 }
 
 template<typename DictionaryInitializer>
-void SparseCoding::Train(
-    const arma::mat& data,
-    const DictionaryInitializer& initializer)
+void SparseCoding::Train(const arma::mat& data,
+                         const DictionaryInitializer& initializer)
 {
   // Now, train.
   Timer::Start("sparse_coding");
@@ -60,10 +55,12 @@ void SparseCoding::Train(
   Encode(data, codes);
   arma::uvec adjacencies = find(codes);
 
-  Log::Info << "  Sparsity level: " << 100.0 * ((double) (adjacencies.n_elem))
-      / ((double) (atoms * data.n_cols)) << "%." << std::endl;
+  Log::Info << "  Sparsity level: "
+            << 100.0 * ((double)(adjacencies.n_elem))
+                   / ((double)(atoms * data.n_cols))
+            << "%." << std::endl;
   Log::Info << "  Objective value: " << Objective(data, codes) << "."
-      << std::endl;
+            << std::endl;
 
   for (size_t t = 1; t != maxIterations; ++t)
   {
@@ -78,22 +75,24 @@ void SparseCoding::Train(
     Log::Info << "Performing dictionary step... " << std::endl;
     OptimizeDictionary(data, codes, adjacencies);
     Log::Info << "  Objective value: " << Objective(data, codes) << "."
-        << std::endl;
+              << std::endl;
 
     // Second step: perform the coding.
     Log::Info << "Performing coding step..." << std::endl;
     Encode(data, codes);
     // Get the indices of all the nonzero elements in the codes.
     adjacencies = find(codes);
-    Log::Info << "  Sparsity level: " << 100.0 * ((double) (adjacencies.n_elem))
-        / ((double) (atoms * data.n_cols)) << "%." << std::endl;
+    Log::Info << "  Sparsity level: "
+              << 100.0 * ((double)(adjacencies.n_elem))
+                     / ((double)(atoms * data.n_cols))
+              << "%." << std::endl;
 
     // Find the new objective value and improvement so we can check for
     // convergence.
     double curObjVal = Objective(data, codes);
     double improvement = lastObjVal - curObjVal;
     Log::Info << "  Objective value: " << curObjVal << " (improvement "
-        << std::scientific << improvement << ")." << std::endl;
+              << std::scientific << improvement << ")." << std::endl;
 
     // Have we converged?
     if (improvement < objTolerance)
@@ -111,13 +110,13 @@ void SparseCoding::Train(
 template<typename Archive>
 void SparseCoding::serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(atoms);
-  ar & BOOST_SERIALIZATION_NVP(dictionary);
-  ar & BOOST_SERIALIZATION_NVP(lambda1);
-  ar & BOOST_SERIALIZATION_NVP(lambda2);
-  ar & BOOST_SERIALIZATION_NVP(maxIterations);
-  ar & BOOST_SERIALIZATION_NVP(objTolerance);
-  ar & BOOST_SERIALIZATION_NVP(newtonTolerance);
+  ar& BOOST_SERIALIZATION_NVP(atoms);
+  ar& BOOST_SERIALIZATION_NVP(dictionary);
+  ar& BOOST_SERIALIZATION_NVP(lambda1);
+  ar& BOOST_SERIALIZATION_NVP(lambda2);
+  ar& BOOST_SERIALIZATION_NVP(maxIterations);
+  ar& BOOST_SERIALIZATION_NVP(objTolerance);
+  ar& BOOST_SERIALIZATION_NVP(newtonTolerance);
 }
 
 } // namespace sparse_coding

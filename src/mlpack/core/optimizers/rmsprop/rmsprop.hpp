@@ -79,7 +79,8 @@ class RMSProp
    * @param batchSize Number of points to process in each step.
    * @param alpha Smoothing constant, similar to that used in AdaDelta and
    *        momentum methods.
-   * @param epsilon Value used to initialise the mean squared gradient parameter.
+   * @param epsilon Value used to initialise the mean squared gradient
+   * parameter.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.

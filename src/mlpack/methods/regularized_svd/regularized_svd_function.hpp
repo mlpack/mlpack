@@ -27,7 +27,7 @@ namespace svd {
  *
  * @tparam MatType The matrix type of the dataset.
  */
-template <typename MatType = arma::mat>
+template<typename MatType = arma::mat>
 class RegularizedSVDFunction
 {
  public:
@@ -75,8 +75,7 @@ class RegularizedSVDFunction
    * @param parameters Parameters(user/item matrices) of the decomposition.
    * @param gradient Calculated gradient for the parameters.
    */
-  void Gradient(const arma::mat& parameters,
-                arma::mat& gradient) const;
+  void Gradient(const arma::mat& parameters, arma::mat& gradient) const;
 
   /**
    * Evaluates the gradient of the cost function over one training example.
@@ -90,7 +89,7 @@ class RegularizedSVDFunction
    * @param gradient Calculated gradient for the parameters.
    * @param batchSize Size of batch to calculate gradient for.
    */
-  template <typename GradType>
+  template<typename GradType>
   void Gradient(const arma::mat& parameters,
                 const size_t start,
                 GradType& gradient,
@@ -138,23 +137,23 @@ class RegularizedSVDFunction
 namespace mlpack {
 namespace optimization {
 
-  /**
-   * Template specialization for the SGD and parallel SGD optimizer. Used
-   * because the gradient affects only a small number of parameters per example,
-   * and thus the normal abstraction does not work as fast as we might like it
-   * to.
-   */
-  template <>
-  template <>
-  inline double StandardSGD::Optimize(
-      mlpack::svd::RegularizedSVDFunction<arma::mat>& function,
-      arma::mat& parameters);
+/**
+ * Template specialization for the SGD and parallel SGD optimizer. Used
+ * because the gradient affects only a small number of parameters per example,
+ * and thus the normal abstraction does not work as fast as we might like it
+ * to.
+ */
+template<>
+template<>
+inline double
+StandardSGD::Optimize(mlpack::svd::RegularizedSVDFunction<arma::mat>& function,
+                      arma::mat& parameters);
 
-  template <>
-  template <>
-  inline double ParallelSGD<ExponentialBackoff>::Optimize(
-      mlpack::svd::RegularizedSVDFunction<arma::mat>& function,
-      arma::mat& parameters);
+template<>
+template<>
+inline double ParallelSGD<ExponentialBackoff>::Optimize(
+    mlpack::svd::RegularizedSVDFunction<arma::mat>& function,
+    arma::mat& parameters);
 
 } // namespace optimization
 } // namespace mlpack

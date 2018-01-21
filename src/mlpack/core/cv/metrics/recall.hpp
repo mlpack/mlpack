@@ -75,8 +75,8 @@ class Recall
            typename DataType,
            typename = std::enable_if_t<_AS == Binary>>
   static double Evaluate(MLAlgorithm& model,
-                        const DataType& data,
-                        const arma::Row<size_t>& labels);
+                         const DataType& data,
+                         const arma::Row<size_t>& labels);
 
   /**
    * Run classification and calculate microaveraged recall.
@@ -87,8 +87,8 @@ class Recall
            typename = std::enable_if_t<_AS == Micro>,
            typename = void>
   static double Evaluate(MLAlgorithm& model,
-                        const DataType& data,
-                        const arma::Row<size_t>& labels);
+                         const DataType& data,
+                         const arma::Row<size_t>& labels);
 
   /**
    * Run classification and calculate macroaveraged recall.
@@ -100,8 +100,8 @@ class Recall
            typename = void,
            typename = void>
   static double Evaluate(MLAlgorithm& model,
-                        const DataType& data,
-                        const arma::Row<size_t>& labels);
+                         const DataType& data,
+                         const arma::Row<size_t>& labels);
 };
 
 } // namespace cv

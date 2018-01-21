@@ -32,8 +32,10 @@ class RandomInitialization
    * @param upperBound The number used as upper bound.
    */
   RandomInitialization(const double lowerBound = -1,
-                       const double upperBound = 1) :
-      lowerBound(lowerBound), upperBound(upperBound) { }
+                       const double upperBound = 1)
+    : lowerBound(lowerBound), upperBound(upperBound)
+  {
+  }
 
   /**
    * Initialize the random initialization rule with the given bound.
@@ -42,8 +44,10 @@ class RandomInitialization
    *
    * @param bound The number used as lower bound
    */
-  RandomInitialization(const double bound) :
-      lowerBound(-std::abs(bound)), upperBound(std::abs(bound)) { }
+  RandomInitialization(const double bound)
+    : lowerBound(-std::abs(bound)), upperBound(std::abs(bound))
+  {
+  }
 
   /**
    * Initialize randomly the elements of the specified weight matrix.
@@ -55,8 +59,8 @@ class RandomInitialization
   template<typename eT>
   void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
   {
-    W = lowerBound + arma::randu<arma::Mat<eT>>(rows, cols) *
-        (upperBound - lowerBound);
+    W = lowerBound
+        + arma::randu<arma::Mat<eT>>(rows, cols) * (upperBound - lowerBound);
   }
 
   /**

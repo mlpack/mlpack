@@ -82,7 +82,6 @@ BOOST_AUTO_TEST_CASE(LRDifferentLambdas)
   BOOST_REQUIRE_GT(testY1 - delta, testY2);
 }
 
-
 /**
  * Checking two options of specifying responses (extra row in train matrix and
  * extra parameter) and ensuring that predictions are the same.

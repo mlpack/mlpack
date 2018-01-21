@@ -39,7 +39,7 @@ namespace rl {
  *
  * @tparam EnvironmentType Desired task.
  */
-template <typename EnvironmentType>
+template<typename EnvironmentType>
 class RandomReplay
 {
  public:
@@ -58,17 +58,12 @@ class RandomReplay
    */
   RandomReplay(const size_t batchSize,
                const size_t capacity,
-               const size_t dimension = StateType::dimension) :
-      batchSize(batchSize),
-      capacity(capacity),
-      position(0),
-      states(dimension, capacity),
-      actions(capacity),
-      rewards(capacity),
-      nextStates(dimension, capacity),
-      isTerminal(capacity),
-      full(false)
-  { /* Nothing to do here. */ }
+               const size_t dimension = StateType::dimension)
+    : batchSize(batchSize), capacity(capacity), position(0),
+      states(dimension, capacity), actions(capacity), rewards(capacity),
+      nextStates(dimension, capacity), isTerminal(capacity), full(false)
+  { /* Nothing to do here. */
+  }
 
   /**
    * Store the given experience.
@@ -130,10 +125,7 @@ class RandomReplay
    *
    * @return Actual used memory size
    */
-  const size_t& Size()
-  {
-    return full ? capacity : position;
-  }
+  const size_t& Size() { return full ? capacity : position; }
 
  private:
   //! Locally-stored number of examples of each sample.

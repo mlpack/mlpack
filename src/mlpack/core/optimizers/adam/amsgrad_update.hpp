@@ -2,7 +2,7 @@
  * @file amsgrad_update.hpp
  * @author Haritha Nair
  *
- * Implementation of AMSGrad optimizer. AMSGrad is an exponential moving average 
+ * Implementation of AMSGrad optimizer. AMSGrad is an exponential moving average
  * optimizer that dynamically adapts over time with guaranteed convergence.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -47,11 +47,8 @@ class AMSGradUpdate
    */
   AMSGradUpdate(const double epsilon = 1e-8,
                 const double beta1 = 0.9,
-                const double beta2 = 0.999) :
-    epsilon(epsilon),
-    beta1(beta1),
-    beta2(beta2),
-    iteration(0)
+                const double beta2 = 0.999)
+    : epsilon(epsilon), beta1(beta1), beta2(beta2), iteration(0)
   {
     // Nothing to do.
   }
@@ -77,9 +74,8 @@ class AMSGradUpdate
    * @param stepSize Step size to be used for the given iteration.
    * @param gradient The gradient matrix.
    */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
+  void
+  Update(arma::mat& iterate, const double stepSize, const arma::mat& gradient)
   {
     // Increment the iteration counter variable.
     ++iteration;
@@ -97,8 +93,8 @@ class AMSGradUpdate
     // Element wise maximum of past and present squared gradients.
     vImproved = arma::max(vImproved, v);
 
-    iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-                m / (arma::sqrt(vImproved) + epsilon);
+    iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) * m
+               / (arma::sqrt(vImproved) + epsilon);
   }
 
   //! Get the value used to initialise the squared gradient parameter.

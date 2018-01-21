@@ -34,9 +34,8 @@ class RandomInitializer
    * @param atoms Number of atoms (columns) in the dictionary.
    * @param dictionary Dictionary to initialize.
    */
-  static void Initialize(const arma::mat& data,
-                         const size_t atoms,
-                         arma::mat& dictionary)
+  static void
+  Initialize(const arma::mat& data, const size_t atoms, arma::mat& dictionary)
   {
     // Create random dictionary.
     dictionary.randn(data.n_rows, atoms);

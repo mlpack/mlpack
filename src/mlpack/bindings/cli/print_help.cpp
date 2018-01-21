@@ -18,8 +18,7 @@ namespace cli {
 void PrintHelp(const std::string& param)
 {
   std::string usedParam = param;
-  const std::map<std::string, util::ParamData>& parameters =
-      CLI::Parameters();
+  const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
   const std::map<char, std::string>& aliases = CLI::Aliases();
 
   std::map<std::string, util::ParamData>::const_iterator iter;
@@ -33,13 +32,13 @@ void PrintHelp(const std::string& param)
   if (usedParam != "" && parameters.count(usedParam))
   {
     const util::ParamData& data = parameters.at(usedParam);
-    std::string alias = (data.alias != '\0') ? " (-"
-        + std::string(1, data.alias) + ")" : "";
+    std::string alias =
+        (data.alias != '\0') ? " (-" + std::string(1, data.alias) + ")" : "";
 
     // Figure out the name of the type.
     std::string printableType;
-    CLI::GetSingleton().functionMap[data.tname]["StringTypeParam"](data, NULL,
-        (void*) &printableType);
+    CLI::GetSingleton().functionMap[data.tname]["StringTypeParam"](
+        data, NULL, (void*)&printableType);
     std::string type = " [" + printableType + "]";
 
     // Now, print the descriptions.
@@ -56,8 +55,7 @@ void PrintHelp(const std::string& param)
   else if (usedParam != "")
   {
     // User passed a single variable, but it doesn't exist.
-    std::cerr << "Parameter --" << usedParam << " does not exist."
-        << std::endl;
+    std::cerr << "Parameter --" << usedParam << " does not exist." << std::endl;
     exit(1); // Nothing left to do.
   }
 
@@ -66,7 +64,8 @@ void PrintHelp(const std::string& param)
   {
     std::cout << docs.programName << std::endl << std::endl;
     std::cout << "  " << util::HyphenateString(docs.documentation(), 2)
-        << std::endl << std::endl;
+              << std::endl
+              << std::endl;
   }
   else
     std::cout << "[undocumented program]" << std::endl << std::endl;
@@ -80,12 +79,13 @@ void PrintHelp(const std::string& param)
     {
       const util::ParamData& data = iter->second;
       const std::string key;
-      CLI::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
-          NULL, (void*) &key);
+      CLI::GetSingleton().functionMap[data.tname]["MapParameterName"](
+          data, NULL, (void*)&key);
 
       std::string desc = data.desc;
-      std::string alias = (iter->second.alias != '\0') ?
-          std::string(1, iter->second.alias) : "";
+      std::string alias = (iter->second.alias != '\0')
+                              ? std::string(1, iter->second.alias)
+                              : "";
       alias = alias.length() ? " (-" + alias + ")" : alias;
 
       // Filter un-printed options.
@@ -116,15 +116,15 @@ void PrintHelp(const std::string& param)
       if (pass >= 1 && data.cppType != "bool")
       {
         std::string defaultValue;
-        CLI::GetSingleton().functionMap[data.tname]["DefaultParam"](data,
-            NULL, (void*) &defaultValue);
+        CLI::GetSingleton().functionMap[data.tname]["DefaultParam"](
+            data, NULL, (void*)&defaultValue);
         desc += "  Default value " + defaultValue + ".";
       }
 
       // Now, print the descriptions.
       std::string printableType;
-      CLI::GetSingleton().functionMap[data.tname]["StringTypeParam"](data,
-          NULL, (void*) &printableType);
+      CLI::GetSingleton().functionMap[data.tname]["StringTypeParam"](
+          data, NULL, (void*)&printableType);
       std::string type = " [" + printableType + "]";
       std::string fullDesc = "  --" + key + alias + type + "  ";
 
@@ -143,11 +143,13 @@ void PrintHelp(const std::string& param)
   // Helpful information at the bottom of the help output, to point the user to
   // citations and better documentation (if necessary).  See ticket #195.
   std::cout << util::HyphenateString("For further information, including "
-      "relevant papers, citations, and theory, consult the documentation found "
-      "at http://www.mlpack.org or included with your distribution of mlpack.",
-      0) << std::endl;
+                                     "relevant papers, citations, and theory, "
+                                     "consult the documentation found "
+                                     "at http://www.mlpack.org or included "
+                                     "with your distribution of mlpack.",
+                                     0)
+            << std::endl;
 }
-
 
 } // namespace cli
 } // namespace bindings

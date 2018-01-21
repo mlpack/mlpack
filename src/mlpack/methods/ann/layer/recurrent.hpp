@@ -36,10 +36,8 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
 class Recurrent
 {
  public:
@@ -107,7 +105,7 @@ class Recurrent
   //! Get the model modules.
   std::vector<LayerTypes>& Model() { return network; }
 
-    //! The value of the deterministic parameter.
+  //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }

@@ -77,10 +77,7 @@ class SoftplusFunction
    * @param y Input data.
    * @return f'(x)
    */
-  static double Deriv(const double y)
-  {
-    return 1.0 / (1 + std::exp(-y));
-  }
+  static double Deriv(const double y) { return 1.0 / (1 + std::exp(-y)); }
 
   /**
    * Computes the first derivatives of the softplus function.

@@ -55,8 +55,8 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTestCase)
 
   // Generate responses.
   for (size_t elem = 0; elem < responses.n_elem; elem++)
-    responses[elem] = coeffs[0] +
-        dot(coeffs.rows(1, 3), arma::ones<arma::rowvec>(3) * elem);
+    responses[elem] =
+        coeffs[0] + dot(coeffs.rows(1, 3), arma::ones<arma::rowvec>(3) * elem);
 
   // Initialize and predict.
   LinearRegression lr(predictors, responses);
@@ -74,16 +74,16 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTestCase)
 BOOST_AUTO_TEST_CASE(ComputeErrorTest)
 {
   arma::mat predictors;
-  predictors << 0 << 1 << 2 << 4 << 8 << 16 << arma::endr
-             << 16 << 8 << 4 << 2 << 1 << 0 << arma::endr;
+  predictors << 0 << 1 << 2 << 4 << 8 << 16 << arma::endr << 16 << 8 << 4 << 2
+             << 1 << 0 << arma::endr;
   arma::rowvec responses = "0 2 4 3 8 8";
 
   // http://www.mlpack.org/trac/ticket/298
   // This dataset gives a cost of 1.189500337 (as calculated in Octave).
   LinearRegression lr(predictors, responses);
 
-  BOOST_REQUIRE_CLOSE(lr.ComputeError(predictors, responses), 1.189500337,
-      1e-3);
+  BOOST_REQUIRE_CLOSE(
+      lr.ComputeError(predictors, responses), 1.189500337, 1e-3);
 }
 
 /**
@@ -93,8 +93,8 @@ BOOST_AUTO_TEST_CASE(ComputeErrorPerfectFitTest)
 {
   // Linear regression should perfectly model this dataset.
   arma::mat predictors;
-  predictors << 0 << 1 << 2 << 1 << 6 << 2 << arma::endr
-             << 0 << 1 << 2 << 2 << 2 << 6 << arma::endr;
+  predictors << 0 << 1 << 2 << 1 << 6 << 2 << arma::endr << 0 << 1 << 2 << 2
+             << 2 << 6 << arma::endr;
   arma::rowvec responses = "0 2 4 3 8 8";
 
   LinearRegression lr(predictors, responses);
@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(RidgeRegressionTest)
   lr.Predict(data, predictedResponses);
 
   for (size_t i = 0; i < 5000; ++i)
-    BOOST_REQUIRE_SMALL((double) predictedResponses[i], 1e-20);
+    BOOST_REQUIRE_SMALL((double)predictedResponses[i], 1e-20);
 }
 
 /**
@@ -165,8 +165,8 @@ BOOST_AUTO_TEST_CASE(RidgeRegressionTestCase)
 
   // Generate responses.
   for (size_t elem = 0; elem < responses.n_elem; elem++)
-    responses[elem] = coeffs[0] +
-        dot(coeffs.rows(1, 3), arma::ones<arma::rowvec>(3) * elem);
+    responses[elem] =
+        coeffs[0] + dot(coeffs.rows(1, 3), arma::ones<arma::rowvec>(3) * elem);
 
   // Initialize and predict with very small lambda.
   LinearRegression lr(predictors, responses, 0.001);

@@ -19,20 +19,18 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template <typename InputDataType, typename OutputDataType>
-Lookup<InputDataType, OutputDataType>::Lookup(
-    const size_t inSize,
-    const size_t outSize) :
-    inSize(inSize),
-    outSize(outSize)
+template<typename InputDataType, typename OutputDataType>
+Lookup<InputDataType, OutputDataType>::Lookup(const size_t inSize,
+                                              const size_t outSize)
+  : inSize(inSize), outSize(outSize)
 {
   weights.set_size(outSize, inSize);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void Lookup<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+void Lookup<InputDataType, OutputDataType>::Forward(const arma::Mat<eT>&& input,
+                                                    arma::Mat<eT>&& output)
 {
   output = weights.cols(arma::conv_to<arma::uvec>::from(input) - 1);
 }
@@ -54,7 +52,7 @@ void Lookup<InputDataType, OutputDataType>::Gradient(
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
-  gradient = arma::zeros<arma::Mat<eT> >(weights.n_rows, weights.n_cols);
+  gradient = arma::zeros<arma::Mat<eT>>(weights.n_rows, weights.n_cols);
   gradient.cols(arma::conv_to<arma::uvec>::from(input) - 1) = error;
 }
 
@@ -63,8 +61,8 @@ template<typename Archive>
 void Lookup<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar& BOOST_SERIALIZATION_NVP(inSize);
+  ar& BOOST_SERIALIZATION_NVP(outSize);
 }
 
 } // namespace ann

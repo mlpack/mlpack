@@ -41,15 +41,14 @@ namespace det /** Density Estimation Trees */ {
  * }
  * @endcode
  */
-template<typename MatType = arma::mat,
-         typename TagType = int>
+template<typename MatType = arma::mat, typename TagType = int>
 class DTree
 {
  public:
   //! The actual, underlying type we're working with.
-  typedef typename MatType::elem_type  ElemType;
+  typedef typename MatType::elem_type ElemType;
   //! The type of vector we are using.
-  typedef typename MatType::vec_type   VecType;
+  typedef typename MatType::vec_type VecType;
   //! The statistic type we are holding.
   typedef typename arma::Col<ElemType> StatType;
 
@@ -192,7 +191,6 @@ class DTree
    */
   TagType TagTree(const TagType& tag = 0, bool everyNode = false);
 
-
   /**
    * Return the tag of the leaf containing the query.  This is useful for
    * generating class memberships.
@@ -200,7 +198,6 @@ class DTree
    * @param query Query to search for.
    */
   TagType FindBucket(const VecType& query) const;
-
 
   /**
    * Compute the variable importance of each dimension in the learned tree.
@@ -352,8 +349,7 @@ class DTree
                    const ElemType splitValue,
                    arma::Col<size_t>& oldFromNew) const;
 
-  void  FillMinMax(const StatType& mins,
-                   const StatType& maxs);
+  void FillMinMax(const StatType& mins, const StatType& maxs);
 };
 
 } // namespace det

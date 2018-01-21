@@ -50,7 +50,7 @@ class InformationGain
     double gain = 0.0;
     for (size_t i = 0; i < classCounts.n_elem; ++i)
     {
-      const double f = ((double) classCounts[i] / (double) numElem);
+      const double f = ((double)classCounts[i] / (double)numElem);
       if (f > 0.0)
         gain -= f * std::log2(f);
     }
@@ -64,12 +64,12 @@ class InformationGain
         double splitGain = 0.0;
         for (size_t j = 0; j < counts.n_rows; ++j)
         {
-          const double f = ((double) counts(j, i) / (double) splitCounts[i]);
+          const double f = ((double)counts(j, i) / (double)splitCounts[i]);
           if (f > 0.0)
             splitGain += f * std::log2(f);
         }
 
-        gain += ((double) splitCounts[i] / (double) numElem) * splitGain;
+        gain += ((double)splitCounts[i] / (double)numElem) * splitGain;
       }
     }
 

@@ -22,9 +22,11 @@ template<typename ObservationType = double>
 class BinaryNumericSplitInfo
 {
  public:
-  BinaryNumericSplitInfo() { /* Nothing to do. */ }
-  BinaryNumericSplitInfo(const ObservationType& splitPoint) :
-      splitPoint(splitPoint) { /* Nothing to do. */ }
+  BinaryNumericSplitInfo() { /* Nothing to do. */}
+  BinaryNumericSplitInfo(const ObservationType& splitPoint)
+    : splitPoint(splitPoint)
+  { /* Nothing to do. */
+  }
 
   template<typename eT>
   size_t CalculateDirection(const eT& value) const
@@ -36,7 +38,7 @@ class BinaryNumericSplitInfo
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(splitPoint);
+    ar& BOOST_SERIALIZATION_NVP(splitPoint);
   }
 
  private:

@@ -42,8 +42,8 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
   {
     ExponentialSchedule schedule;
     // The convergence is very sensitive to the choices of maxMove and initMove.
-    SA<ExponentialSchedule> sa(schedule, 1000000, 1000., 1000, 100, 1e-10, 3,
-        1.5, 0.5, 0.3);
+    SA<ExponentialSchedule> sa(
+        schedule, 1000000, 1000., 1000, 100, 1e-10, 3, 1.5, 0.5, 0.3);
     coordinates = f.GetInitialPoint();
     result = sa.Optimize(f, coordinates);
     ++iteration;
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
   // 0.1% tolerance for each coordinate.
   BOOST_REQUIRE_SMALL(result, 1e-6);
   for (size_t j = 0; j < dim; ++j)
-      BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 0.1);
+    BOOST_REQUIRE_CLOSE(coordinates[j], (double)1.0, 0.1);
 }
 
 // The Rosenbrock function is a simple function to optimize.
@@ -90,18 +90,15 @@ class RastrigrinFunction
   double Evaluate(const arma::mat& coordinates) const
   {
     double objective = 20; // 10 * n, n = 2.
-    objective += std::pow(coordinates[0], 2.0) -
-        10 * std::cos(2 * M_PI * coordinates[0]);
-    objective += std::pow(coordinates[1], 2.0) -
-        10 * std::cos(2 * M_PI * coordinates[1]);
+    objective += std::pow(coordinates[0], 2.0)
+                 - 10 * std::cos(2 * M_PI * coordinates[0]);
+    objective += std::pow(coordinates[1], 2.0)
+                 - 10 * std::cos(2 * M_PI * coordinates[1]);
 
     return objective;
   }
 
-  arma::mat GetInitialPoint() const
-  {
-    return arma::mat("-3 -3");
-  }
+  arma::mat GetInitialPoint() const { return arma::mat("-3 -3"); }
 };
 
 BOOST_AUTO_TEST_CASE(RastrigrinFunctionTest)
@@ -121,9 +118,8 @@ BOOST_AUTO_TEST_CASE(RastrigrinFunctionTest)
 
     const double result = sa.Optimize(f, coordinates);
 
-    if ((std::abs(result) < 1e-3) &&
-        (std::abs(coordinates[0]) < 1e-3) &&
-        (std::abs(coordinates[1]) < 1e-3))
+    if ((std::abs(result) < 1e-3) && (std::abs(coordinates[0]) < 1e-3)
+        && (std::abs(coordinates[1]) < 1e-3))
     {
       ++successes;
       break; // No need to continue.

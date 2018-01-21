@@ -15,28 +15,23 @@
 namespace mlpack {
 namespace regression {
 
-SoftmaxRegression::
-SoftmaxRegression(const size_t inputSize,
-                  const size_t numClasses,
-                  const bool fitIntercept) :
-    numClasses(numClasses),
-    lambda(0.0001),
-    fitIntercept(fitIntercept)
+SoftmaxRegression::SoftmaxRegression(const size_t inputSize,
+                                     const size_t numClasses,
+                                     const bool fitIntercept)
+  : numClasses(numClasses), lambda(0.0001), fitIntercept(fitIntercept)
 {
   SoftmaxRegressionFunction::InitializeWeights(
       parameters, inputSize, numClasses, fitIntercept);
 }
 
 void SoftmaxRegression::Predict(const arma::mat& testData,
-                                arma::Row<size_t>& predictions)
-    const
+                                arma::Row<size_t>& predictions) const
 {
   Classify(testData, predictions);
 }
 
 void SoftmaxRegression::Classify(const arma::mat& dataset,
-                                 arma::Row<size_t>& labels)
-    const
+                                 arma::Row<size_t>& labels) const
 {
   arma::mat probabilities;
   Classify(dataset, probabilities);
@@ -66,8 +61,7 @@ void SoftmaxRegression::Classify(const arma::mat& dataset,
 
 void SoftmaxRegression::Classify(const arma::mat& dataset,
                                  arma::Row<size_t>& labels,
-                                 arma::mat& probabilities)
-    const
+                                 arma::mat& probabilities) const
 {
   Classify(dataset, probabilities);
 
@@ -95,8 +89,7 @@ void SoftmaxRegression::Classify(const arma::mat& dataset,
 }
 
 void SoftmaxRegression::Classify(const arma::mat& dataset,
-                                 arma::mat& probabilities)
-    const
+                                 arma::mat& probabilities) const
 {
   if (dataset.n_rows != FeatureSize())
   {
@@ -116,22 +109,21 @@ void SoftmaxRegression::Classify(const arma::mat& dataset,
     //
     // Since the cost of join maybe high due to the copy of original data,
     // split the hypothesis computation to two components.
-    hypothesis = arma::exp(
-      arma::repmat(parameters.col(0), 1, dataset.n_cols) +
-      parameters.cols(1, parameters.n_cols - 1) * dataset);
+    hypothesis =
+        arma::exp(arma::repmat(parameters.col(0), 1, dataset.n_cols)
+                  + parameters.cols(1, parameters.n_cols - 1) * dataset);
   }
   else
   {
     hypothesis = arma::exp(parameters * dataset);
   }
 
-  probabilities = hypothesis / arma::repmat(arma::sum(hypothesis, 0),
-                                            numClasses, 1);
+  probabilities =
+      hypothesis / arma::repmat(arma::sum(hypothesis, 0), numClasses, 1);
 }
 
-double SoftmaxRegression::ComputeAccuracy(
-    const arma::mat& testData,
-    const arma::Row<size_t>& labels) const
+double SoftmaxRegression::ComputeAccuracy(const arma::mat& testData,
+                                          const arma::Row<size_t>& labels) const
 {
   arma::Row<size_t> predictions;
 

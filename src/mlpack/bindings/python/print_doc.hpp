@@ -28,11 +28,9 @@ namespace python {
  * @param output Unused parameter.
  */
 template<typename T>
-void PrintDoc(const util::ParamData& d,
-              const void* input,
-              void* /* output */)
+void PrintDoc(const util::ParamData& d, const void* input, void* /* output */)
 {
-  const size_t indent = *((size_t*) input);
+  const size_t indent = *((size_t*)input);
   std::ostringstream oss;
   oss << " - ";
   if (d.name == "lambda") // Don't print Python keywords.

@@ -23,18 +23,15 @@ namespace metric {
 
 // Constructor with no instantiated kernel.
 template<typename KernelType>
-IPMetric<KernelType>::IPMetric() :
-    kernel(new KernelType()),
-    kernelOwner(true)
+IPMetric<KernelType>::IPMetric() : kernel(new KernelType()), kernelOwner(true)
 {
   // Nothing to do.
 }
 
 // Constructor with instantiated kernel.
 template<typename KernelType>
-IPMetric<KernelType>::IPMetric(KernelType& kernel) :
-    kernel(&kernel),
-    kernelOwner(false)
+IPMetric<KernelType>::IPMetric(KernelType& kernel)
+  : kernel(&kernel), kernelOwner(false)
 {
   // Nothing to do.
 }
@@ -49,14 +46,13 @@ IPMetric<KernelType>::~IPMetric()
 
 template<typename KernelType>
 template<typename Vec1Type, typename Vec2Type>
-inline typename Vec1Type::elem_type IPMetric<KernelType>::Evaluate(
-    const Vec1Type& a,
-    const Vec2Type& b)
+inline typename Vec1Type::elem_type
+IPMetric<KernelType>::Evaluate(const Vec1Type& a, const Vec2Type& b)
 {
   // This is the metric induced by the kernel function.
   // Maybe we can do better by caching some of this?
-  return sqrt(kernel->Evaluate(a, a) + kernel->Evaluate(b, b) -
-      2 * kernel->Evaluate(a, b));
+  return sqrt(kernel->Evaluate(a, a) + kernel->Evaluate(b, b)
+              - 2 * kernel->Evaluate(a, b));
 }
 
 // Serialize the kernel.
@@ -70,16 +66,15 @@ void IPMetric<KernelType>::serialize(Archive& ar,
   if (Archive::is_loading::value)
     kernelOwner = true;
 
-  ar & BOOST_SERIALIZATION_NVP(kernel);
+  ar& BOOST_SERIALIZATION_NVP(kernel);
 }
 
 // A specialization for the linear kernel, which actually just turns out to be
 // the Euclidean distance.
 template<>
 template<typename Vec1Type, typename Vec2Type>
-inline typename Vec1Type::elem_type IPMetric<kernel::LinearKernel>::Evaluate(
-    const Vec1Type& a,
-    const Vec2Type& b)
+inline typename Vec1Type::elem_type
+IPMetric<kernel::LinearKernel>::Evaluate(const Vec1Type& a, const Vec2Type& b)
 {
   return metric::LMetric<2, true>::Evaluate(a, b);
 }

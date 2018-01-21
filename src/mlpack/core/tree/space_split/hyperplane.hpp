@@ -46,9 +46,7 @@ class HyperplaneBase
   /**
    * Empty Constructor. By default will consider all points to the left.
    */
-  HyperplaneBase() :
-      splitVal(DBL_MAX)
-  {};
+  HyperplaneBase() : splitVal(DBL_MAX){};
 
   /**
    * Create the hyperplane with the specified projection vector and split value.
@@ -56,10 +54,8 @@ class HyperplaneBase
    * @param projVect Projection vector.
    * @param splitVal Split value.
    */
-  HyperplaneBase(const ProjVectorType& projVect, double splitVal) :
-      projVect(projVect),
-      splitVal(splitVal)
-  {};
+  HyperplaneBase(const ProjVectorType& projVect, double splitVal)
+    : projVect(projVect), splitVal(splitVal){};
 
   /**
    * Project the given point on the projection vector and subtract the
@@ -97,7 +93,7 @@ class HyperplaneBase
    */
   template<typename VecType>
   bool Right(const VecType& point,
-            typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
+             typename std::enable_if_t<IsVector<VecType>::value>* = 0) const
   {
     return Project(point) > 0;
   };
@@ -132,8 +128,8 @@ class HyperplaneBase
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(projVect);
-    ar & BOOST_SERIALIZATION_NVP(splitVal);
+    ar& BOOST_SERIALIZATION_NVP(projVect);
+    ar& BOOST_SERIALIZATION_NVP(splitVal);
   };
 };
 
@@ -141,8 +137,8 @@ class HyperplaneBase
  * AxisOrthogonalHyperplane represents a hyperplane orthogonal to an axis.
  */
 template<typename MetricType>
-using AxisOrthogonalHyperplane = HyperplaneBase<bound::HRectBound<MetricType>,
-    AxisParallelProjVector>;
+using AxisOrthogonalHyperplane =
+    HyperplaneBase<bound::HRectBound<MetricType>, AxisParallelProjVector>;
 
 /**
  * Hyperplane represents a general hyperplane (not necessarily axis-orthogonal).

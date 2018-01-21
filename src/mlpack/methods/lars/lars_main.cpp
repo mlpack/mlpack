@@ -21,7 +21,9 @@ using namespace mlpack;
 using namespace mlpack::regression;
 using namespace mlpack::util;
 
-PROGRAM_INFO("LARS", "An implementation of LARS: Least Angle Regression "
+PROGRAM_INFO(
+    "LARS",
+    "An implementation of LARS: Least Angle Regression "
     "(Stagewise/laSso).  This is a stage-wise homotopy-based algorithm for "
     "L1-regularized linear regression (LASSO) and L1+L2-regularized linear "
     "regression (Elastic Net)."
@@ -46,41 +48,79 @@ PROGRAM_INFO("LARS", "An implementation of LARS: Least Angle Regression "
     "regression."
     "\n\n"
     "For efficiency reasons, it is not recommended to use this algorithm with"
-    " " + PRINT_PARAM_STRING("lambda1") + " = 0.  In that case, use the "
-    "'linear_regression' program, which implements both unregularized linear "
-    "regression and ridge regression."
-    "\n\n"
-    "To train a LARS/LASSO/Elastic Net model, the " +
-    PRINT_PARAM_STRING("input") + " and " + PRINT_PARAM_STRING("responses") +
-    " parameters must be given.  The " + PRINT_PARAM_STRING("lambda1") +
-    ", " + PRINT_PARAM_STRING("lambda2") + ", and " +
-    PRINT_PARAM_STRING("use_cholesky") + " parameters control the training "
-    "options.  A trained model can be saved with the " +
-    PRINT_PARAM_STRING("output_model") + ".  If no training is desired at all,"
-    " a model can be passed via the " + PRINT_PARAM_STRING("input_model") +
-    " parameter."
-    "\n\n"
-    "The program can also provide predictions for test data using either the "
-    "trained model or the given input model.  Test points can be specified with"
-    " the " + PRINT_PARAM_STRING("test") + " parameter.  Predicted responses "
-    "to the test points can be saved with the " +
-    PRINT_PARAM_STRING("output_predictions") + " output parameter."
-    "\n\n"
-    "For example, the following command trains a model on the data " +
-    PRINT_DATASET("data") + " and responses " + PRINT_DATASET("responses") +
-    " with lambda1 set to 0.4 and lambda2 set to 0 (so, LASSO is being "
-    "solved), and then the model is saved to " + PRINT_MODEL("lasso_model") +
-    ":"
-    "\n\n" +
-    PRINT_CALL("lars", "input", "data", "responses", "responses", "lambda1",
-        0.4, "lambda2", 0.0, "output_model", "lasso_model") +
-    "\n\n"
-    "The following command uses the " + PRINT_MODEL("lasso_model") + " to "
-    "provide predicted responses for the data " + PRINT_DATASET("test") + " "
-    "and save those responses to " + PRINT_DATASET("test_predictions") + ": "
-    "\n\n" +
-    PRINT_CALL("lars", "input_model", "lasso_model", "test", "test",
-        "output_predictions", "test_predictions"));
+    " " + PRINT_PARAM_STRING("lambda1")
+        + " = 0.  In that case, use the "
+          "'linear_regression' program, which implements both unregularized "
+          "linear "
+          "regression and ridge regression."
+          "\n\n"
+          "To train a LARS/LASSO/Elastic Net model, the "
+        + PRINT_PARAM_STRING("input")
+        + " and "
+        + PRINT_PARAM_STRING("responses")
+        + " parameters must be given.  The "
+        + PRINT_PARAM_STRING("lambda1")
+        + ", "
+        + PRINT_PARAM_STRING("lambda2")
+        + ", and "
+        + PRINT_PARAM_STRING("use_cholesky")
+        + " parameters control the training "
+          "options.  A trained model can be saved with the "
+        + PRINT_PARAM_STRING("output_model")
+        + ".  If no training is desired at all,"
+          " a model can be passed via the "
+        + PRINT_PARAM_STRING("input_model")
+        + " parameter."
+          "\n\n"
+          "The program can also provide predictions for test data using either "
+          "the "
+          "trained model or the given input model.  Test points can be "
+          "specified with"
+          " the "
+        + PRINT_PARAM_STRING("test")
+        + " parameter.  Predicted responses "
+          "to the test points can be saved with the "
+        + PRINT_PARAM_STRING("output_predictions")
+        + " output parameter."
+          "\n\n"
+          "For example, the following command trains a model on the data "
+        + PRINT_DATASET("data")
+        + " and responses "
+        + PRINT_DATASET("responses")
+        + " with lambda1 set to 0.4 and lambda2 set to 0 (so, LASSO is being "
+          "solved), and then the model is saved to "
+        + PRINT_MODEL("lasso_model")
+        + ":"
+          "\n\n"
+        + PRINT_CALL("lars",
+                     "input",
+                     "data",
+                     "responses",
+                     "responses",
+                     "lambda1",
+                     0.4,
+                     "lambda2",
+                     0.0,
+                     "output_model",
+                     "lasso_model")
+        + "\n\n"
+          "The following command uses the "
+        + PRINT_MODEL("lasso_model")
+        + " to "
+          "provide predicted responses for the data "
+        + PRINT_DATASET("test")
+        + " "
+          "and save those responses to "
+        + PRINT_DATASET("test_predictions")
+        + ": "
+          "\n\n"
+        + PRINT_CALL("lars",
+                     "input_model",
+                     "lasso_model",
+                     "test",
+                     "test",
+                     "output_predictions",
+                     "test_predictions"));
 
 PARAM_TMATRIX_IN("input", "Matrix of covariates (X).", "i");
 PARAM_MATRIX_IN("responses", "Matrix of responses/observations (y).", "r");
@@ -88,18 +128,28 @@ PARAM_MATRIX_IN("responses", "Matrix of responses/observations (y).", "r");
 PARAM_MODEL_IN(LARS, "input_model", "Trained LARS model to use.", "m");
 PARAM_MODEL_OUT(LARS, "output_model", "Output LARS model.", "M");
 
-PARAM_TMATRIX_IN("test", "Matrix containing points to regress on (test "
-    "points).", "t");
+PARAM_TMATRIX_IN("test",
+                 "Matrix containing points to regress on (test "
+                 "points).",
+                 "t");
 
-PARAM_TMATRIX_OUT("output_predictions", "If --test_file is specified, this "
-    "file is where the predicted responses will be saved.", "o");
+PARAM_TMATRIX_OUT("output_predictions",
+                  "If --test_file is specified, this "
+                  "file is where the predicted responses will be saved.",
+                  "o");
 
-PARAM_DOUBLE_IN("lambda1", "Regularization parameter for l1-norm penalty.", "l",
-    0);
-PARAM_DOUBLE_IN("lambda2", "Regularization parameter for l2-norm penalty.", "L",
-    0);
-PARAM_FLAG("use_cholesky", "Use Cholesky decomposition during computation "
-    "rather than explicitly computing the full Gram matrix.", "c");
+PARAM_DOUBLE_IN("lambda1",
+                "Regularization parameter for l1-norm penalty.",
+                "l",
+                0);
+PARAM_DOUBLE_IN("lambda2",
+                "Regularization parameter for l2-norm penalty.",
+                "L",
+                0);
+PARAM_FLAG("use_cholesky",
+           "Use Cholesky decomposition during computation "
+           "rather than explicitly computing the full Gram matrix.",
+           "c");
 
 static void mlpackMain()
 {
@@ -108,17 +158,20 @@ static void mlpackMain()
   bool useCholesky = CLI::HasParam("use_cholesky");
 
   // Check parameters -- make sure everything given makes sense.
-  RequireOnlyOnePassed({ "input", "input_model" }, true);
+  RequireOnlyOnePassed({"input", "input_model"}, true);
   if (CLI::HasParam("input"))
   {
-    RequireOnlyOnePassed({ "responses" }, true, "if input data is specified, "
-        "responses must also be specified");
+    RequireOnlyOnePassed({"responses"},
+                         true,
+                         "if input data is specified, "
+                         "responses must also be specified");
   }
-  ReportIgnoredParam({{ "input", false }}, "responses");
+  ReportIgnoredParam({{"input", false}}, "responses");
 
-  RequireAtLeastOnePassed({ "output_predictions", "output_model" }, false,
-      "no results will be saved");
-  ReportIgnoredParam({{ "test", true }}, "output_predictions");
+  RequireAtLeastOnePassed({"output_predictions", "output_model"},
+                          false,
+                          "no results will be saved");
+  ReportIgnoredParam({{"test", true}}, "output_predictions");
 
   // Initialize the object.
   LARS lars(useCholesky, lambda1, lambda2);
@@ -142,7 +195,7 @@ static void mlpackMain()
 
     if (matY.n_elem != matX.n_rows)
       Log::Fatal << "Number of responses must be equal to number of rows of X!"
-          << endl;
+                 << endl;
 
     vec beta;
     arma::rowvec y = std::move(matY);
@@ -164,8 +217,8 @@ static void mlpackMain()
     // check n_cols not n_rows.
     if (testPoints.n_cols != lars.BetaPath().back().n_elem)
       Log::Fatal << "Dimensionality of test set (" << testPoints.n_cols << ") "
-          << "is not equal to the dimensionality of the model ("
-          << lars.BetaPath().back().n_elem << ")!" << endl;
+                 << "is not equal to the dimensionality of the model ("
+                 << lars.BetaPath().back().n_elem << ")!" << endl;
 
     arma::rowvec predictions;
     lars.Predict(testPoints.t(), predictions, false);

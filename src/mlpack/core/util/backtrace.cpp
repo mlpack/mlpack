@@ -12,34 +12,34 @@
 #include <sstream>
 
 #ifdef HAS_BFD_DL
-  #include <execinfo.h>
-  #include <signal.h>
-  #include <unistd.h>
-  #include <cxxabi.h>
+#include <execinfo.h>
+#include <signal.h>
+#include <unistd.h>
+#include <cxxabi.h>
 
-  // Some versions of libbfd require PACKAGE and PACKAGE_VERSION to be set in
-  // order for the include to not fail.  For more information:
-  // https://github.com/mlpack/mlpack/issues/574
-  #ifndef PACKAGE
-    #define PACKAGE
-    #ifndef PACKAGE_VERSION
-      #define PACKAGE_VERSION
-      #include <bfd.h>
-      #undef PACKAGE_VERSION
-    #else
-      #include <bfd.h>
-    #endif
-    #undef PACKAGE
-  #else
-    #ifndef PACKAGE_VERSION
-      #define PACKAGE_VERSION
-      #include <bfd.h>
-      #undef PACKAGE_VERSION
-    #else
-      #include <bfd.h>
-    #endif
-  #endif
-  #include <dlfcn.h>
+// Some versions of libbfd require PACKAGE and PACKAGE_VERSION to be set in
+// order for the include to not fail.  For more information:
+// https://github.com/mlpack/mlpack/issues/574
+#ifndef PACKAGE
+#define PACKAGE
+#ifndef PACKAGE_VERSION
+#define PACKAGE_VERSION
+#include <bfd.h>
+#undef PACKAGE_VERSION
+#else
+#include <bfd.h>
+#endif
+#undef PACKAGE
+#else
+#ifndef PACKAGE_VERSION
+#define PACKAGE_VERSION
+#include <bfd.h>
+#undef PACKAGE_VERSION
+#else
+#include <bfd.h>
+#endif
+#endif
+#include <dlfcn.h>
 #endif
 
 #include "backtrace.hpp"
@@ -53,9 +53,9 @@ std::vector<Backtrace::Frames> Backtrace::stack;
 
 #ifdef HAS_BFD_DL
 // Binary File Descriptor objects.
-bfd* abfd = 0;          // Descriptor datastructure.
-asymbol **syms = 0;     // Symbols datastructure.
-asection *text = 0;     // Strings datastructure.
+bfd* abfd = 0;      // Descriptor datastructure.
+asymbol** syms = 0; // Symbols datastructure.
+asection* text = 0; // Strings datastructure.
 #endif
 
 #ifdef HAS_BFD_DL
@@ -96,7 +96,7 @@ void Backtrace::GetAddress(int maxDepth)
 
     frame.address = addressHandler.dli_saddr;
 
-    DecodeAddress((long) frame.address);
+    DecodeAddress((long)frame.address);
   }
 }
 
@@ -127,7 +127,7 @@ void Backtrace::DecodeAddress(long addr)
     bfd_check_format(abfd, bfd_object);
 
     unsigned storageNeeded = bfd_get_symtab_upper_bound(abfd);
-    syms = (asymbol **) malloc(storageNeeded);
+    syms = (asymbol**)malloc(storageNeeded);
     bfd_canonicalize_symtab(abfd, syms);
 
     text = bfd_get_section_by_name(abfd, ".text");
@@ -137,8 +137,9 @@ void Backtrace::DecodeAddress(long addr)
 
   if (offset > 0)
   {
-    if (bfd_find_nearest_line(abfd, text, syms, offset, &frame.file,
-        &frame.function, &frame.line) && frame.file)
+    if (bfd_find_nearest_line(
+            abfd, text, syms, offset, &frame.file, &frame.function, &frame.line)
+        && frame.file)
     {
       DemangleFunction();
       // Save retrieved information.
@@ -160,9 +161,9 @@ void Backtrace::DemangleFunction()
   }
 }
 #else
-void Backtrace::GetAddress(int /* maxDepth */) { }
-void Backtrace::DecodeAddress(long /* address */) { }
-void Backtrace::DemangleFunction() { }
+void Backtrace::GetAddress(int /* maxDepth */) {}
+void Backtrace::DecodeAddress(long /* address */) {}
+void Backtrace::DemangleFunction() {}
 #endif
 
 std::string Backtrace::ToString()
@@ -189,10 +190,8 @@ std::string Backtrace::ToString()
     lineOss << frame.line;
     it << i + 1;
 
-      stackStr += "[bt]: (" + it.str() + ") "
-          + frame.file + ":"
-          + lineOss.str() + " "
-          + frame.function + ":\n";
+    stackStr += "[bt]: (" + it.str() + ") " + frame.file + ":" + lineOss.str()
+                + " " + frame.function + ":\n";
 
     lineOss.str("");
     it.str("");

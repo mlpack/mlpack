@@ -23,9 +23,8 @@ namespace gmm {
  * @param gaussians Number of Gaussians in this GMM.
  * @param dimensionality Dimensionality of each Gaussian.
  */
-GMM::GMM(const size_t gaussians, const size_t dimensionality) :
-    gaussians(gaussians),
-    dimensionality(dimensionality),
+GMM::GMM(const size_t gaussians, const size_t dimensionality)
+  : gaussians(gaussians), dimensionality(dimensionality),
     dists(gaussians, distribution::GaussianDistribution(dimensionality)),
     weights(gaussians)
 {
@@ -34,11 +33,11 @@ GMM::GMM(const size_t gaussians, const size_t dimensionality) :
 }
 
 // Copy constructor for when the other GMM uses the same fitting type.
-GMM::GMM(const GMM& other) :
-    gaussians(other.Gaussians()),
-    dimensionality(other.dimensionality),
-    dists(other.dists),
-    weights(other.weights) { /* Nothing to do. */ }
+GMM::GMM(const GMM& other)
+  : gaussians(other.Gaussians()), dimensionality(other.dimensionality),
+    dists(other.dists), weights(other.weights)
+{ /* Nothing to do. */
+}
 
 GMM& GMM::operator=(const GMM& other)
 {
@@ -97,8 +96,9 @@ arma::vec GMM::Random() const
     }
   }
 
-  return trans(chol(dists[gaussian].Covariance())) *
-      arma::randn<arma::vec>(dimensionality) + dists[gaussian].Mean();
+  return trans(chol(dists[gaussian].Covariance()))
+             * arma::randn<arma::vec>(dimensionality)
+         + dists[gaussian].Mean();
 }
 
 /**

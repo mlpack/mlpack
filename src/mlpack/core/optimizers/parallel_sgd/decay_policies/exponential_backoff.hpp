@@ -49,12 +49,11 @@ class ExponentialBackoff
    */
   ExponentialBackoff(const size_t firstBackoffEpoch,
                      const double step,
-                     const double beta) :
-    firstBackoffEpoch(firstBackoffEpoch),
-    cutoffEpoch(firstBackoffEpoch),
-    step(step),
-    beta(beta)
-  { /* Nothing to do. */ }
+                     const double beta)
+    : firstBackoffEpoch(firstBackoffEpoch), cutoffEpoch(firstBackoffEpoch),
+      step(step), beta(beta)
+  { /* Nothing to do. */
+  }
 
   /**
    * Get the step size for the current gradient update.

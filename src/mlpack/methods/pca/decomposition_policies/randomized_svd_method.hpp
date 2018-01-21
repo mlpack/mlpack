@@ -36,9 +36,8 @@ class RandomizedSVDPolicy
    *        (Default: 2).
    */
   RandomizedSVDPolicy(const size_t iteratedPower = 0,
-                      const size_t maxIterations = 2) :
-      iteratedPower(iteratedPower),
-      maxIterations(maxIterations)
+                      const size_t maxIterations = 2)
+    : iteratedPower(iteratedPower), maxIterations(maxIterations)
   {
     /* Nothing to do here */
   }

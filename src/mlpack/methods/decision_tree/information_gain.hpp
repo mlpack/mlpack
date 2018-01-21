@@ -40,9 +40,9 @@ class InformationGain
                          const size_t numClasses,
                          const arma::Row<double>& weights)
   {
-     // Edge case: if there are no elements, the gain is zero.
-     if (labels.n_elem == 0)
-       return 0.0;
+    // Edge case: if there are no elements, the gain is zero.
+    if (labels.n_elem == 0)
+      return 0.0;
 
     // Calculate the information gain.
     double gain = 0.0;
@@ -51,17 +51,17 @@ class InformationGain
     // to exploit SIMD instructions if possible.
     arma::vec countSpace(4 * numClasses, arma::fill::zeros);
     arma::vec counts(countSpace.memptr(), numClasses, false, true);
-    arma::vec counts2(countSpace.memptr() + numClasses, numClasses, false,
-        true);
-    arma::vec counts3(countSpace.memptr() + 2 * numClasses, numClasses, false,
-        true);
-    arma::vec counts4(countSpace.memptr() + 3 * numClasses, numClasses, false,
-        true);
+    arma::vec counts2(
+        countSpace.memptr() + numClasses, numClasses, false, true);
+    arma::vec counts3(
+        countSpace.memptr() + 2 * numClasses, numClasses, false, true);
+    arma::vec counts4(
+        countSpace.memptr() + 3 * numClasses, numClasses, false, true);
 
     if (UseWeights)
     {
       // Sum all the weights up.
-      double accWeights[4] = { 0.0, 0.0, 0.0, 0.0 };
+      double accWeights[4] = {0.0, 0.0, 0.0, 0.0};
 
       // SIMD loop: add counts for four elements simultaneously (if the compiler
       // manages to vectorize the loop).
@@ -125,7 +125,7 @@ class InformationGain
 
       for (size_t i = 0; i < numClasses; ++i)
       {
-        const double f = ((double) counts[i] / (double) accWeights[0]);
+        const double f = ((double)counts[i] / (double)accWeights[0]);
         if (f > 0.0)
           gain += f * std::log2(f);
       }
@@ -163,7 +163,7 @@ class InformationGain
 
       for (size_t i = 0; i < numClasses; ++i)
       {
-        const double f = ((double) counts[i] / (double) labels.n_elem);
+        const double f = ((double)counts[i] / (double)labels.n_elem);
         if (f > 0.0)
           gain += f * std::log2(f);
       }

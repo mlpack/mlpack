@@ -23,8 +23,7 @@ GammaDistribution::GammaDistribution(const size_t dimensionality)
   beta.zeros(dimensionality);
 }
 
-GammaDistribution::GammaDistribution(const arma::mat& data,
-                                     const double tol)
+GammaDistribution::GammaDistribution(const arma::mat& data, const double tol)
 {
   Train(data, tol);
 }
@@ -109,8 +108,8 @@ void GammaDistribution::Train(const arma::vec& logMeanxVec,
   size_t ndim = logMeanxVec.n_rows;
 
   // Sanity check - all vectors are same size.
-  if (logMeanxVec.n_rows != meanLogxVec.n_rows ||
-      logMeanxVec.n_rows != meanxVec.n_rows)
+  if (logMeanxVec.n_rows != meanLogxVec.n_rows
+      || logMeanxVec.n_rows != meanxVec.n_rows)
     throw std::runtime_error("Statistic vectors must be of the same size.");
 
   // Allocate space for alphas and betas (Assume independent rows).
@@ -143,14 +142,14 @@ void GammaDistribution::Train(const arma::vec& logMeanxVec,
       // Protect against division by 0.
       if (denominator == 0)
         throw std::logic_error("GammaDistribution::Train() attempted division"
-            " by 0.");
+                               " by 0.");
 
       aEst = 1.0 / ((1.0 / aEst) + nominator / denominator);
 
       // Protect against nan values (aEst will be passed to logarithm).
       if (aEst <= 0)
         throw std::logic_error("GammaDistribution::Train(): estimated invalid "
-            "negative value for parameter alpha!");
+                               "negative value for parameter alpha!");
     } while (!Converged(aEst, aOld, tol));
 
     alpha(row) = aEst;
@@ -190,8 +189,8 @@ void GammaDistribution::Probability(const arma::mat& observations,
 // dimensions.
 double GammaDistribution::Probability(double x, size_t dim) const
 {
-  return std::pow(x, alpha(dim) - 1) * std::exp(-x / beta(dim)) /
-      (std::tgamma(alpha(dim)) * std::pow(beta(dim), alpha(dim)));
+  return std::pow(x, alpha(dim) - 1) * std::exp(-x / beta(dim))
+         / (std::tgamma(alpha(dim)) * std::pow(beta(dim), alpha(dim)));
 }
 
 // Returns the log probability of the provided observations.

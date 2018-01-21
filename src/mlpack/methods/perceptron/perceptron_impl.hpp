@@ -21,16 +21,14 @@ namespace perceptron {
  * Construct the perceptron with the given number of classes and maximum number
  * of iterations.
  */
-template<
-    typename LearnPolicy,
-    typename WeightInitializationPolicy,
-    typename MatType
->
+template<typename LearnPolicy,
+         typename WeightInitializationPolicy,
+         typename MatType>
 Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     const size_t numClasses,
     const size_t dimensionality,
-    const size_t maxIterations) :
-    maxIterations(maxIterations)
+    const size_t maxIterations)
+  : maxIterations(maxIterations)
 {
   WeightInitializationPolicy wip;
   wip.Initialize(weights, biases, dimensionality, numClasses);
@@ -46,17 +44,15 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
  * @param maxIterations Maximum number of iterations for the perceptron learning
  *      algorithm.
  */
-template<
-    typename LearnPolicy,
-    typename WeightInitializationPolicy,
-    typename MatType
->
+template<typename LearnPolicy,
+         typename WeightInitializationPolicy,
+         typename MatType>
 Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    const size_t maxIterations) :
-    maxIterations(maxIterations)
+    const size_t maxIterations)
+  : maxIterations(maxIterations)
 {
   // Start training.
   Train(data, labels, numClasses);
@@ -73,18 +69,16 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
  *      purposes.
  * @param labels The labels of data.
  */
-template<
-    typename LearnPolicy,
-    typename WeightInitializationPolicy,
-    typename MatType
->
+template<typename LearnPolicy,
+         typename WeightInitializationPolicy,
+         typename MatType>
 Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     const Perceptron& other,
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    const arma::rowvec& instanceWeights) :
-    maxIterations(other.maxIterations)
+    const arma::rowvec& instanceWeights)
+  : maxIterations(other.maxIterations)
 {
   Train(data, labels, numClasses, instanceWeights);
 }
@@ -97,14 +91,11 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
  * @param predictedLabels Vector to store the predicted classes after
  *      classifying test.
  */
-template<
-    typename LearnPolicy,
-    typename WeightInitializationPolicy,
-    typename MatType
->
+template<typename LearnPolicy,
+         typename WeightInitializationPolicy,
+         typename MatType>
 void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
-    const MatType& test,
-    arma::Row<size_t>& predictedLabels)
+    const MatType& test, arma::Row<size_t>& predictedLabels)
 {
   arma::vec tempLabelMat;
   arma::uword maxIndex = 0;
@@ -127,11 +118,9 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
  * @param instanceWeights Cost matrix. Stores the cost of mispredicting
  *      instances.  This is useful for boosting.
  */
-template<
-    typename LearnPolicy,
-    typename WeightInitializationPolicy,
-    typename MatType
->
+template<typename LearnPolicy,
+         typename WeightInitializationPolicy,
+         typename MatType>
 void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
@@ -182,11 +171,15 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
         // the value of the vector to update it with.  Send tempLabel to know
         // the correct class.
         if (hasWeights)
-          LP.UpdateWeights(data.col(j), weights, biases, maxIndexRow, tempLabel,
-              instanceWeights(j));
+          LP.UpdateWeights(data.col(j),
+                           weights,
+                           biases,
+                           maxIndexRow,
+                           tempLabel,
+                           instanceWeights(j));
         else
-          LP.UpdateWeights(data.col(j), weights, biases, maxIndexRow,
-              tempLabel);
+          LP.UpdateWeights(
+              data.col(j), weights, biases, maxIndexRow, tempLabel);
       }
     }
   }
@@ -198,14 +191,13 @@ template<typename LearnPolicy,
          typename MatType>
 template<typename Archive>
 void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
   // We just need to serialize the maximum number of iterations, the weights,
   // and the biases.
-  ar & BOOST_SERIALIZATION_NVP(maxIterations);
-  ar & BOOST_SERIALIZATION_NVP(weights);
-  ar & BOOST_SERIALIZATION_NVP(biases);
+  ar& BOOST_SERIALIZATION_NVP(maxIterations);
+  ar& BOOST_SERIALIZATION_NVP(weights);
+  ar& BOOST_SERIALIZATION_NVP(biases);
 }
 
 } // namespace perceptron

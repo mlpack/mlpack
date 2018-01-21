@@ -42,7 +42,6 @@ namespace util {
 
 template<typename T>
 using Option = mlpack::bindings::cli::CLIOption<T>;
-
 }
 }
 
@@ -70,7 +69,7 @@ int main(int argc, char** argv)
   mlpack::bindings::cli::EndProgram();
 }
 
-#elif(BINDING_TYPE == BINDING_TYPE_TEST) // This is a unit test.
+#elif (BINDING_TYPE == BINDING_TYPE_TEST) // This is a unit test.
 
 #include <mlpack/bindings/tests/test_option.hpp>
 #include <mlpack/bindings/tests/ignore_check.hpp>
@@ -88,7 +87,6 @@ namespace util {
 
 template<typename T>
 using Option = mlpack::bindings::tests::TestOption<T>;
-
 }
 }
 
@@ -96,11 +94,11 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 #include <mlpack/core/util/param.hpp>
 
 #undef PROGRAM_INFO
-#define PROGRAM_INFO(NAME, DESC) static mlpack::util::ProgramDoc \
-    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, \
-        []() { return DESC; });
+#define PROGRAM_INFO(NAME, DESC)                                               \
+  static mlpack::util::ProgramDoc cli_programdoc_dummy_object =                \
+      mlpack::util::ProgramDoc(NAME, []() { return DESC; });
 
-#elif(BINDING_TYPE == BINDING_TYPE_PYX) // This is a Python binding.
+#elif (BINDING_TYPE == BINDING_TYPE_PYX) // This is a Python binding.
 
 #include <mlpack/bindings/python/py_option.hpp>
 #include <mlpack/bindings/python/print_doc_functions.hpp>
@@ -117,7 +115,6 @@ namespace util {
 
 template<typename T>
 using Option = mlpack::bindings::python::PyOption<T>;
-
 }
 }
 
@@ -125,19 +122,21 @@ static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
 #undef PROGRAM_INFO
-#define PROGRAM_INFO(NAME, DESC) static mlpack::util::ProgramDoc \
-    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, \
-        []() { return DESC; }); \
-    namespace mlpack { \
-    namespace bindings { \
-    namespace python { \
-    std::string programName = NAME; \
-    } \
-    } \
-    }
+#define PROGRAM_INFO(NAME, DESC)                                               \
+  static mlpack::util::ProgramDoc cli_programdoc_dummy_object =                \
+      mlpack::util::ProgramDoc(NAME, []() { return DESC; });                   \
+  namespace mlpack {                                                           \
+  namespace bindings {                                                         \
+  namespace python {                                                           \
+  std::string programName = NAME;                                              \
+  }                                                                            \
+  }                                                                            \
+  }
 
-PARAM_FLAG("verbose", "Display informational messages and the full list of "
-    "parameters and timers at the end of execution.", "v");
+PARAM_FLAG("verbose",
+           "Display informational messages and the full list of "
+           "parameters and timers at the end of execution.",
+           "v");
 
 // Nothing else needs to be defined---the binding will use mlpackMain() as-is.
 

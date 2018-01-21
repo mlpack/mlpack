@@ -17,7 +17,7 @@
 #include "prefixedoutstream.hpp"
 
 #ifdef HAS_BFD_DL
-  #include "backtrace.hpp"
+#include "backtrace.hpp"
 #endif
 
 #include <iostream>
@@ -58,7 +58,8 @@ PrefixedOutStream::BaseLogic(const T& val)
     if (!ignoreInput)
     {
       destination << "Failed type conversion to string for output; output not "
-          "shown." << std::endl;
+                     "shown."
+                  << std::endl;
       newlined = true;
     }
   }
@@ -111,7 +112,7 @@ PrefixedOutStream::BaseLogic(const T& val)
     if (!ignoreInput)
       destination << std::endl;
 
-    // Print a backtrace, if we can.
+// Print a backtrace, if we can.
 #ifdef HAS_BFD_DL
     if (fatal && !ignoreInput && backtrace)
     {
@@ -160,8 +161,8 @@ PrefixedOutStream::BaseLogic(const T& val)
   std::ostringstream convert;
 
   // Check if the stream is in the default state.
-  if (destination.flags() == convert.flags() &&
-      destination.precision() == convert.precision())
+  if (destination.flags() == convert.flags()
+      && destination.precision() == convert.precision())
   {
     printVal.print(convert);
   }
@@ -191,7 +192,8 @@ PrefixedOutStream::BaseLogic(const T& val)
     if (!ignoreInput)
     {
       destination << "Failed type conversion to string for output; output not "
-          "shown." << std::endl;
+                     "shown."
+                  << std::endl;
       newlined = true;
     }
   }
@@ -244,7 +246,7 @@ PrefixedOutStream::BaseLogic(const T& val)
     if (!ignoreInput)
       destination << std::endl;
 
-    // Print a backtrace, if we can.
+// Print a backtrace, if we can.
 #ifdef HAS_BFD_DL
     if (fatal && !ignoreInput)
     {

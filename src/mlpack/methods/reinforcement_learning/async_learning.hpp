@@ -47,13 +47,11 @@ namespace rl {
  * @tparam UpdaterType The type of the optimizer.
  * @tparam PolicyType The type of the behavior policy.
  */
-template <
-  typename WorkerType,
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename PolicyType
->
+template<typename WorkerType,
+         typename EnvironmentType,
+         typename NetworkType,
+         typename UpdaterType,
+         typename PolicyType>
 class AsyncLearning
 {
  public:
@@ -85,7 +83,7 @@ class AsyncLearning
    *   process is completed.
    * @param measure The measurement instance.
    */
-  template <typename Measure>
+  template<typename Measure>
   void Train(Measure& measure);
 
   //! Get training config.
@@ -138,12 +136,10 @@ class AsyncLearning
  * @tparam UpdaterType The type of the optimizer.
  * @tparam PolicyType The type of the behavior policy.
  */
-template <
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename PolicyType
->
+template<typename EnvironmentType,
+         typename NetworkType,
+         typename UpdaterType,
+         typename PolicyType>
 class OneStepQLearningWorker;
 
 /**
@@ -154,12 +150,10 @@ class OneStepQLearningWorker;
  * @tparam UpdaterType The type of the optimizer.
  * @tparam PolicyType The type of the behavior policy.
  */
-template <
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename PolicyType
->
+template<typename EnvironmentType,
+         typename NetworkType,
+         typename UpdaterType,
+         typename PolicyType>
 class OneStepSarsaWorker;
 
 /**
@@ -170,12 +164,10 @@ class OneStepSarsaWorker;
  * @tparam UpdaterType The type of the optimizer.
  * @tparam PolicyType The type of the behavior policy.
  */
-template <
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename PolicyType
->
+template<typename EnvironmentType,
+         typename NetworkType,
+         typename UpdaterType,
+         typename PolicyType>
 class NStepQLearningWorker;
 
 /**
@@ -186,15 +178,18 @@ class NStepQLearningWorker;
  * @tparam UpdaterType The type of the optimizer.
  * @tparam PolicyType The type of the behavior policy.
  */
-template <
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename PolicyType
->
+template<typename EnvironmentType,
+         typename NetworkType,
+         typename UpdaterType,
+         typename PolicyType>
 using OneStepQLearning = AsyncLearning<OneStepQLearningWorker<EnvironmentType,
-    NetworkType, UpdaterType, PolicyType>, EnvironmentType, NetworkType,
-    UpdaterType, PolicyType>;
+                                                              NetworkType,
+                                                              UpdaterType,
+                                                              PolicyType>,
+                                       EnvironmentType,
+                                       NetworkType,
+                                       UpdaterType,
+                                       PolicyType>;
 
 /**
  * Convenient typedef for async one step Sarsa.
@@ -204,15 +199,18 @@ using OneStepQLearning = AsyncLearning<OneStepQLearningWorker<EnvironmentType,
  * @tparam UpdaterType The type of the optimizer.
  * @tparam PolicyType The type of the behavior policy.
  */
-template <
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename PolicyType
->
+template<typename EnvironmentType,
+         typename NetworkType,
+         typename UpdaterType,
+         typename PolicyType>
 using OneStepSarsa = AsyncLearning<OneStepSarsaWorker<EnvironmentType,
-    NetworkType, UpdaterType, PolicyType>, EnvironmentType, NetworkType,
-    UpdaterType, PolicyType>;
+                                                      NetworkType,
+                                                      UpdaterType,
+                                                      PolicyType>,
+                                   EnvironmentType,
+                                   NetworkType,
+                                   UpdaterType,
+                                   PolicyType>;
 
 /**
  * Convenient typedef for async n step q-learning.
@@ -222,15 +220,18 @@ using OneStepSarsa = AsyncLearning<OneStepSarsaWorker<EnvironmentType,
  * @tparam UpdaterType The type of the optimizer.
  * @tparam PolicyType The type of the behavior policy.
  */
-template <
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename PolicyType
->
+template<typename EnvironmentType,
+         typename NetworkType,
+         typename UpdaterType,
+         typename PolicyType>
 using NStepQLearning = AsyncLearning<NStepQLearningWorker<EnvironmentType,
-    NetworkType, UpdaterType, PolicyType>, EnvironmentType, NetworkType,
-    UpdaterType, PolicyType>;
+                                                          NetworkType,
+                                                          UpdaterType,
+                                                          PolicyType>,
+                                     EnvironmentType,
+                                     NetworkType,
+                                     UpdaterType,
+                                     PolicyType>;
 
 } // namespace rl
 } // namespace mlpack

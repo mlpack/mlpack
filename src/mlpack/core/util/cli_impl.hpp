@@ -36,29 +36,30 @@ template<typename T>
 T& CLI::GetParam(const std::string& identifier)
 {
   // Only use the alias if the parameter does not exist as given.
-  std::string key =
-      (GetSingleton().parameters.count(identifier) == 0 &&
-       identifier.length() == 1 && GetSingleton().aliases.count(identifier[0]))
-      ? GetSingleton().aliases[identifier[0]] : identifier;
+  std::string key = (GetSingleton().parameters.count(identifier) == 0
+                     && identifier.length() == 1
+                     && GetSingleton().aliases.count(identifier[0]))
+                        ? GetSingleton().aliases[identifier[0]]
+                        : identifier;
 
   if (GetSingleton().parameters.count(key) == 0)
     Log::Fatal << "Parameter --" << key << " does not exist in this program!"
-        << std::endl;
+               << std::endl;
 
   util::ParamData& d = GetSingleton().parameters[key];
 
   // Make sure the types are correct.
   if (TYPENAME(T) != d.tname)
     Log::Fatal << "Attempted to access parameter --" << key << " as type "
-        << TYPENAME(T) << ", but its true type is " << d.tname << "!"
-        << std::endl;
+               << TYPENAME(T) << ", but its true type is " << d.tname << "!"
+               << std::endl;
 
   // Do we have a special mapped function?
   if (CLI::GetSingleton().functionMap[d.tname].count("GetParam") != 0)
   {
     T* output = NULL;
-    CLI::GetSingleton().functionMap[d.tname]["GetParam"](d, NULL,
-        (void*) &output);
+    CLI::GetSingleton().functionMap[d.tname]["GetParam"](
+        d, NULL, (void*)&output);
     return *output;
   }
   else
@@ -78,29 +79,30 @@ template<typename T>
 std::string CLI::GetPrintableParam(const std::string& identifier)
 {
   // Only use the alias if the parameter does not exist as given.
-  std::string key = ((GetSingleton().parameters.count(identifier) == 0) &&
-      (identifier.length() == 1) &&
-      (GetSingleton().aliases.count(identifier[0]) > 0)) ?
-      GetSingleton().aliases[identifier[0]] : identifier;
+  std::string key = ((GetSingleton().parameters.count(identifier) == 0)
+                     && (identifier.length() == 1)
+                     && (GetSingleton().aliases.count(identifier[0]) > 0))
+                        ? GetSingleton().aliases[identifier[0]]
+                        : identifier;
 
   if (GetSingleton().parameters.count(key) == 0)
     Log::Fatal << "Parameter --" << key << " does not exist in this program!"
-        << std::endl;
+               << std::endl;
 
   util::ParamData& d = GetSingleton().parameters[key];
 
   // Make sure the types are correct.
   if (TYPENAME(T) != d.tname)
     Log::Fatal << "Attempted to access parameter --" << key << " as type "
-        << TYPENAME(T) << ", but its true type is " << d.tname << "!"
-        << std::endl;
+               << TYPENAME(T) << ", but its true type is " << d.tname << "!"
+               << std::endl;
 
   // Do we have a special mapped function?
   if (CLI::GetSingleton().functionMap[d.tname].count("GetPrintableParam") != 0)
   {
     std::string output;
-    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParam"](d, NULL,
-        (void*) &output);
+    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParam"](
+        d, NULL, (void*)&output);
     return output;
   }
   else
@@ -116,29 +118,30 @@ template<typename T>
 T& CLI::GetRawParam(const std::string& identifier)
 {
   // Only use the alias if the parameter does not exist as given.
-  std::string key =
-      (GetSingleton().parameters.count(identifier) == 0 &&
-       identifier.length() == 1 && GetSingleton().aliases.count(identifier[0]))
-      ? GetSingleton().aliases[identifier[0]] : identifier;
+  std::string key = (GetSingleton().parameters.count(identifier) == 0
+                     && identifier.length() == 1
+                     && GetSingleton().aliases.count(identifier[0]))
+                        ? GetSingleton().aliases[identifier[0]]
+                        : identifier;
 
   if (GetSingleton().parameters.count(key) == 0)
     Log::Fatal << "Parameter --" << key << " does not exist in this program!"
-        << std::endl;
+               << std::endl;
 
   util::ParamData& d = GetSingleton().parameters[key];
 
   // Make sure the types are correct.
   if (TYPENAME(T) != d.tname)
     Log::Fatal << "Attempted to access parameter --" << key << " as type "
-        << TYPENAME(T) << ", but its true type is " << d.tname << "!"
-        << std::endl;
+               << TYPENAME(T) << ", but its true type is " << d.tname << "!"
+               << std::endl;
 
   // Do we have a special mapped function?
   if (CLI::GetSingleton().functionMap[d.tname].count("GetRawParam") != 0)
   {
     T* output = NULL;
-    CLI::GetSingleton().functionMap[d.tname]["GetRawParam"](d, NULL,
-        (void*) &output);
+    CLI::GetSingleton().functionMap[d.tname]["GetRawParam"](
+        d, NULL, (void*)&output);
     return *output;
   }
   else

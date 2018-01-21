@@ -43,8 +43,8 @@ BOOST_AUTO_TEST_CASE(QUICSVDReconstructionError)
     reconstruct = u * sigma * v.t();
 
     // The relative reconstruction error should be small.
-    double relativeError = arma::norm(dataset - reconstruct, "frob") /
-                           arma::norm(dataset, "frob");
+    double relativeError =
+        arma::norm(dataset - reconstruct, "frob") / arma::norm(dataset, "frob");
     if (relativeError < 1e-5)
       ++successes;
   }

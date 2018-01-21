@@ -96,10 +96,14 @@ template<typename T>
 class IsPreFixedArg
 {
   template<typename>
-  struct Implementation : std::false_type {};
+  struct Implementation : std::false_type
+  {
+  };
 
   template<typename Type>
-  struct Implementation<PreFixedArg<Type>> : std::true_type {};
+  struct Implementation<PreFixedArg<Type>> : std::true_type
+  {
+  };
 
  public:
   static const bool value = Implementation<typename std::decay<T>::type>::value;

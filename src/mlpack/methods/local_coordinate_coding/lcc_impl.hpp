@@ -25,10 +25,8 @@ LocalCoordinateCoding::LocalCoordinateCoding(
     const double lambda,
     const size_t maxIterations,
     const double tolerance,
-    const DictionaryInitializer& initializer) :
-    atoms(atoms),
-    lambda(lambda),
-    maxIterations(maxIterations),
+    const DictionaryInitializer& initializer)
+  : atoms(atoms), lambda(lambda), maxIterations(maxIterations),
     tolerance(tolerance)
 {
   // Train the model.
@@ -36,9 +34,8 @@ LocalCoordinateCoding::LocalCoordinateCoding(
 }
 
 template<typename DictionaryInitializer>
-void LocalCoordinateCoding::Train(
-    const arma::mat& data,
-    const DictionaryInitializer& initializer)
+void LocalCoordinateCoding::Train(const arma::mat& data,
+                                  const DictionaryInitializer& initializer)
 {
   Timer::Start("local_coordinate_coding");
 
@@ -55,15 +52,17 @@ void LocalCoordinateCoding::Train(
   Encode(data, codes);
   arma::uvec adjacencies = find(codes);
 
-  Log::Info << "  Sparsity level: " << 100.0 * ((double)(adjacencies.n_elem)) /
-      ((double)(atoms * data.n_cols)) << "%.\n";
+  Log::Info << "  Sparsity level: "
+            << 100.0 * ((double)(adjacencies.n_elem))
+                   / ((double)(atoms * data.n_cols))
+            << "%.\n";
   Log::Info << "  Objective value: " << Objective(data, codes, adjacencies)
-      << "." << std::endl;
+            << "." << std::endl;
 
   for (size_t t = 1; t != maxIterations; t++)
   {
     Log::Info << "Iteration " << t << " of " << maxIterations << "."
-        << std::endl;
+              << std::endl;
 
     // First step: optimize the dictionary.
     Log::Info << "Performing dictionary step..." << std::endl;
@@ -75,15 +74,17 @@ void LocalCoordinateCoding::Train(
     Log::Info << "Performing coding step..." << std::endl;
     Encode(data, codes);
     adjacencies = find(codes);
-    Log::Info << "  Sparsity level: " << 100.0 * ((double) (adjacencies.n_elem))
-        / ((double)(atoms * data.n_cols)) << "%.\n";
+    Log::Info << "  Sparsity level: "
+              << 100.0 * ((double)(adjacencies.n_elem))
+                     / ((double)(atoms * data.n_cols))
+              << "%.\n";
 
     // Terminate if the objective increased in the coding step.
     double curObjVal = Objective(data, codes, adjacencies);
     if (curObjVal > dsObjVal)
     {
       Log::Warn << "Objective increased in coding step!  Terminating."
-          << std::endl;
+                << std::endl;
       break;
     }
 
@@ -91,7 +92,7 @@ void LocalCoordinateCoding::Train(
     // convergence.
     double improvement = lastObjVal - curObjVal;
     Log::Info << "Objective value: " << curObjVal << " (improvement "
-        << std::scientific << improvement << ")." << std::endl;
+              << std::scientific << improvement << ")." << std::endl;
 
     if (improvement < tolerance)
     {
@@ -109,11 +110,11 @@ template<typename Archive>
 void LocalCoordinateCoding::serialize(Archive& ar,
                                       const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(atoms);
-  ar & BOOST_SERIALIZATION_NVP(dictionary);
-  ar & BOOST_SERIALIZATION_NVP(lambda);
-  ar & BOOST_SERIALIZATION_NVP(maxIterations);
-  ar & BOOST_SERIALIZATION_NVP(tolerance);
+  ar& BOOST_SERIALIZATION_NVP(atoms);
+  ar& BOOST_SERIALIZATION_NVP(dictionary);
+  ar& BOOST_SERIALIZATION_NVP(lambda);
+  ar& BOOST_SERIALIZATION_NVP(maxIterations);
+  ar& BOOST_SERIALIZATION_NVP(tolerance);
 }
 
 } // namespace lcc

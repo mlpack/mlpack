@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(RosenbrockTest)
 
   BOOST_REQUIRE_SMALL(result, 1e-10);
   for (size_t j = 0; j < 2; ++j)
-    BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 1e-3);
+    BOOST_REQUIRE_CLOSE(coordinates[j], (double)1.0, 1e-3);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -47,9 +47,8 @@ class AdaDeltaUpdate
    * @param epsilon The epsilon value used to initialise the squared gradient
    *    parameter.
    */
-  AdaDeltaUpdate(const double rho = 0.95, const double epsilon = 1e-6) :
-      rho(rho),
-      epsilon(epsilon)
+  AdaDeltaUpdate(const double rho = 0.95, const double epsilon = 1e-6)
+    : rho(rho), epsilon(epsilon)
   {
     // Nothing to do.
   }
@@ -80,15 +79,15 @@ class AdaDeltaUpdate
    * @param stepSize Step size to be used for the given iteration.
    * @param gradient The gradient matrix.
    */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
+  void
+  Update(arma::mat& iterate, const double stepSize, const arma::mat& gradient)
   {
     // Accumulate gradient.
     meanSquaredGradient *= rho;
     meanSquaredGradient += (1 - rho) * (gradient % gradient);
-    arma::mat dx = arma::sqrt((meanSquaredGradientDx + epsilon) /
-        (meanSquaredGradient + epsilon)) % gradient;
+    arma::mat dx = arma::sqrt((meanSquaredGradientDx + epsilon)
+                              / (meanSquaredGradient + epsilon))
+                   % gradient;
 
     // Accumulate updates.
     meanSquaredGradientDx *= rho;

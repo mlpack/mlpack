@@ -362,9 +362,8 @@ class RASearch
    * @param distances Matrix storing distances of neighbors for each query
    *      point.
    */
-  void Search(const size_t k,
-              arma::Mat<size_t>& neighbors,
-              arma::mat& distances);
+  void
+  Search(const size_t k, arma::Mat<size_t>& neighbors, arma::mat& distances);
 
   /**
    * This function recursively resets the RAQueryStat of the given query tree to

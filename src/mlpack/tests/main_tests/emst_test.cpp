@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(EMSTOutputDimensionTest)
 
   // Input random data points.
   SetInputParam("input", std::move(x));
-  SetInputParam("leaf_size", (int) 2);
+  SetInputParam("leaf_size", (int)2);
 
   mlpackMain();
 
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(EMSTInvalidLeafSizeTest)
 
   // Input random data points.
   SetInputParam("input", std::move(x));
-  SetInputParam("leaf_size", (int) -1); // Invalid leaf size.
+  SetInputParam("leaf_size", (int)-1); // Invalid leaf size.
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -117,14 +117,18 @@ BOOST_AUTO_TEST_CASE(EMSTFirstTwoOutputRowsIntegerTest)
 
   // Input random data points.
   SetInputParam("input", std::move(x));
-  SetInputParam("leaf_size", (int) 2);
+  SetInputParam("leaf_size", (int)2);
 
   for (size_t i = 0; i < CLI::GetParam<arma::mat>("output").n_cols; i++)
   {
-    BOOST_REQUIRE_CLOSE(CLI::GetParam<arma::mat>("output")(0, i),
-        boost::math::iround(CLI::GetParam<arma::mat>("output")(0, i)), 1e-5);
-    BOOST_REQUIRE_CLOSE(CLI::GetParam<arma::mat>("output")(1, i),
-        boost::math::iround(CLI::GetParam<arma::mat>("output")(1, i)), 1e-5);
+    BOOST_REQUIRE_CLOSE(
+        CLI::GetParam<arma::mat>("output")(0, i),
+        boost::math::iround(CLI::GetParam<arma::mat>("output")(0, i)),
+        1e-5);
+    BOOST_REQUIRE_CLOSE(
+        CLI::GetParam<arma::mat>("output")(1, i),
+        boost::math::iround(CLI::GetParam<arma::mat>("output")(1, i)),
+        1e-5);
   }
 }
 

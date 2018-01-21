@@ -18,50 +18,48 @@
 namespace mlpack {
 namespace tree {
 
-template<typename TreeType,
-         template<typename> class HilbertValueType>
+template<typename TreeType, template<typename> class HilbertValueType>
 HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
-HilbertRTreeAuxiliaryInformation()
-{ }
+    HilbertRTreeAuxiliaryInformation()
+{
+}
 
-template<typename TreeType,
-         template<typename> class HilbertValueType>
+template<typename TreeType, template<typename> class HilbertValueType>
 HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
-HilbertRTreeAuxiliaryInformation(const TreeType* node) :
-    hilbertValue(node)
-{ }
+    HilbertRTreeAuxiliaryInformation(const TreeType* node)
+  : hilbertValue(node)
+{
+}
 
-template<typename TreeType,
-         template<typename> class HilbertValueType>
+template<typename TreeType, template<typename> class HilbertValueType>
 HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
-HilbertRTreeAuxiliaryInformation(
-    const HilbertRTreeAuxiliaryInformation& other,
-    TreeType* tree,
-    bool deepCopy) :
-    hilbertValue(other.HilbertValue(), tree, deepCopy)
-{ }
+    HilbertRTreeAuxiliaryInformation(
+        const HilbertRTreeAuxiliaryInformation& other,
+        TreeType* tree,
+        bool deepCopy)
+  : hilbertValue(other.HilbertValue(), tree, deepCopy)
+{
+}
 
-template<typename TreeType,
-         template<typename> class HilbertValueType>
+template<typename TreeType, template<typename> class HilbertValueType>
 HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
-HilbertRTreeAuxiliaryInformation(HilbertRTreeAuxiliaryInformation&& other) :
-    hilbertValue(std::move(other.hilbertValue))
-{ }
+    HilbertRTreeAuxiliaryInformation(HilbertRTreeAuxiliaryInformation&& other)
+  : hilbertValue(std::move(other.hilbertValue))
+{
+}
 
-template<typename TreeType,
-         template<typename> class HilbertValueType>
+template<typename TreeType, template<typename> class HilbertValueType>
 HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>&
-HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::operator=(
-    const HilbertRTreeAuxiliaryInformation& other)
+HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
+operator=(const HilbertRTreeAuxiliaryInformation& other)
 {
   hilbertValue = other.hilbertValue;
   return *this;
 }
 
-template<typename TreeType,
-         template<typename> class HilbertValueType>
+template<typename TreeType, template<typename> class HilbertValueType>
 bool HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
-HandlePointInsertion(TreeType* node, const size_t point)
+    HandlePointInsertion(TreeType* node, const size_t point)
 {
   if (node->IsLeaf())
   {
@@ -86,10 +84,11 @@ HandlePointInsertion(TreeType* node, const size_t point)
   return true;
 }
 
-template<typename TreeType,
-         template<typename> class HilbertValueType>
+template<typename TreeType, template<typename> class HilbertValueType>
 bool HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
-HandleNodeInsertion(TreeType* node, TreeType* nodeToInsert, bool insertionLevel)
+    HandleNodeInsertion(TreeType* node,
+                        TreeType* nodeToInsert,
+                        bool insertionLevel)
 {
   if (insertionLevel)
   {
@@ -99,9 +98,10 @@ HandleNodeInsertion(TreeType* node, TreeType* nodeToInsert, bool insertionLevel)
     // The node should be inserted according to its Hilbert value.
     for (pos = 0; pos < node->NumChildren(); pos++)
       if (HilbertValueType<ElemType>::CompareValues(
-                 node->Child(pos).AuxiliaryInfo().HilbertValue(),
-                 nodeToInsert->AuxiliaryInfo().HilbertValue()) < 0)
-          break;
+              node->Child(pos).AuxiliaryInfo().HilbertValue(),
+              nodeToInsert->AuxiliaryInfo().HilbertValue())
+          < 0)
+        break;
 
     // Move nodes.
     for (size_t i = node->NumChildren(); i > pos; i--)
@@ -120,10 +120,9 @@ HandleNodeInsertion(TreeType* node, TreeType* nodeToInsert, bool insertionLevel)
   return true;
 }
 
-template<typename TreeType,
-         template<typename> class HilbertValueType>
+template<typename TreeType, template<typename> class HilbertValueType>
 bool HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
-HandlePointDeletion(TreeType* node, const size_t localIndex)
+    HandlePointDeletion(TreeType* node, const size_t localIndex)
 {
   // Update the largest Hilbert value.
   hilbertValue.DeletePoint(node, localIndex);
@@ -135,10 +134,9 @@ HandlePointDeletion(TreeType* node, const size_t localIndex)
   return true;
 }
 
-template<typename TreeType,
-         template<typename> class HilbertValueType>
+template<typename TreeType, template<typename> class HilbertValueType>
 bool HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
-HandleNodeRemoval(TreeType* node, const size_t nodeIndex)
+    HandleNodeRemoval(TreeType* node, const size_t nodeIndex)
 {
   // Update the largest Hilbert value.
   hilbertValue.RemoveNode(node, nodeIndex);
@@ -150,12 +148,11 @@ HandleNodeRemoval(TreeType* node, const size_t nodeIndex)
   return true;
 }
 
-template<typename TreeType,
-         template<typename> class HilbertValueType>
+template<typename TreeType, template<typename> class HilbertValueType>
 bool HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
-UpdateAuxiliaryInfo(TreeType* node)
+    UpdateAuxiliaryInfo(TreeType* node)
 {
-  if (node->IsLeaf())  //  Should already be updated
+  if (node->IsLeaf()) //  Should already be updated
     return true;
 
   TreeType& child = node->Child(node->NumChildren() - 1);
@@ -167,24 +164,19 @@ UpdateAuxiliaryInfo(TreeType* node)
   return false;
 }
 
-template<typename TreeType,
-         template<typename> class HilbertValueType>
-void HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::
-NullifyData()
+template<typename TreeType, template<typename> class HilbertValueType>
+void HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::NullifyData()
 {
   hilbertValue.NullifyData();
 }
 
-template<typename TreeType,
-         template<typename> class HilbertValueType>
+template<typename TreeType, template<typename> class HilbertValueType>
 template<typename Archive>
 void HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(hilbertValue);
+  ar& BOOST_SERIALIZATION_NVP(hilbertValue);
 }
-
 
 } // namespace tree
 } // namespace mlpack

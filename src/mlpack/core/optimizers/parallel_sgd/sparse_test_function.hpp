@@ -45,8 +45,8 @@ class SparseTestFunction
   //! Evaluate a function.
   double Evaluate(const arma::mat& coordinates, const size_t i) const
   {
-    return coordinates[i] * coordinates[i] + bi[i] * coordinates[i] +
-      intercepts[i];
+    return coordinates[i] * coordinates[i] + bi[i] * coordinates[i]
+           + intercepts[i];
   }
 
   //! Evaluate all the functions.
@@ -55,8 +55,8 @@ class SparseTestFunction
     double objective = 0.0;
     for (size_t i = 0; i < NumFunctions(); ++i)
     {
-      objective += coordinates[i] * coordinates[i] + bi[i] * coordinates[i] +
-        intercepts[i];
+      objective += coordinates[i] * coordinates[i] + bi[i] * coordinates[i]
+                   + intercepts[i];
     }
 
     return objective;

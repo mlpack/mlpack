@@ -68,7 +68,7 @@ class SoftmaxRegressionFunction
    * @param numClasses Number of classes for classification.
    * @param fitIntercept Intercept term flag.
    */
-  static void InitializeWeights(arma::mat &weights,
+  static void InitializeWeights(arma::mat& weights,
                                 const size_t featureSize,
                                 const size_t numClasses,
                                 const bool fitIntercept = false);
@@ -171,10 +171,7 @@ class SoftmaxRegressionFunction
   size_t NumClasses() const { return numClasses; }
 
   //! Gets the features size of the training data.
-  size_t NumFeatures() const
-  {
-    return initialPoint.n_cols;
-  }
+  size_t NumFeatures() const { return initialPoint.n_cols; }
 
   //! Sets the regularization parameter.
   double& Lambda() { return lambda; }

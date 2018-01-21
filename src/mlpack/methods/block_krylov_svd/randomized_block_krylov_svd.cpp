@@ -21,9 +21,8 @@ RandomizedBlockKrylovSVD::RandomizedBlockKrylovSVD(const arma::mat& data,
                                                    arma::mat& v,
                                                    const size_t maxIterations,
                                                    const size_t rank,
-                                                   const size_t blockSize) :
-    maxIterations(maxIterations),
-    blockSize(blockSize)
+                                                   const size_t blockSize)
+  : maxIterations(maxIterations), blockSize(blockSize)
 {
   if (rank == 0)
   {
@@ -36,9 +35,8 @@ RandomizedBlockKrylovSVD::RandomizedBlockKrylovSVD(const arma::mat& data,
 }
 
 RandomizedBlockKrylovSVD::RandomizedBlockKrylovSVD(const size_t maxIterations,
-                                                   const size_t blockSize) :
-    maxIterations(maxIterations),
-    blockSize(blockSize)
+                                                   const size_t blockSize)
+  : maxIterations(maxIterations), blockSize(blockSize)
 {
   /* Nothing to do here */
 }
@@ -68,17 +66,17 @@ void RandomizedBlockKrylovSVD::Apply(const arma::mat& data,
   arma::qr_econ(block, R, data * G);
 
   for (size_t blockOffset = block.n_elem; blockOffset < K.n_elem;
-      blockOffset += block.n_elem)
+       blockOffset += block.n_elem)
   {
     // Temporary working matrix to store the result in the correct place.
-    blockIteration = arma::mat(K.memptr() + blockOffset, block.n_rows,
-        block.n_cols, false, false);
+    blockIteration = arma::mat(
+        K.memptr() + blockOffset, block.n_rows, block.n_cols, false, false);
 
     arma::qr_econ(blockIteration, R, data * (data.t() * block));
 
     // Update working matrix for the next iteration.
-    block = arma::mat(K.memptr() + blockOffset, block.n_rows, block.n_cols,
-        false, false);
+    block = arma::mat(
+        K.memptr() + blockOffset, block.n_rows, block.n_cols, false, false);
   }
 
   arma::qr_econ(Q, R, K);

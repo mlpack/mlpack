@@ -28,7 +28,7 @@
 namespace mlpack {
 // Neighbor-search routines. These include all-nearest-neighbors and
 // all-furthest-neighbors searches.
-namespace neighbor  {
+namespace neighbor {
 
 // Forward declaration.
 template<typename SortPolicy>
@@ -73,13 +73,11 @@ template<typename SortPolicy = NearestNeighborSort,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType = tree::KDTree,
          template<typename RuleType> class DualTreeTraversalType =
-             TreeType<MetricType,
-                      NeighborSearchStat<SortPolicy>,
-                      MatType>::template DualTreeTraverser,
+             TreeType<MetricType, NeighborSearchStat<SortPolicy>, MatType>::
+                 template DualTreeTraverser,
          template<typename RuleType> class SingleTreeTraversalType =
-             TreeType<MetricType,
-                      NeighborSearchStat<SortPolicy>,
-                      MatType>::template SingleTreeTraverser>
+             TreeType<MetricType, NeighborSearchStat<SortPolicy>, MatType>::
+                 template SingleTreeTraverser>
 class NeighborSearch
 {
  public:
@@ -153,11 +151,10 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated distance metric.
    */
-  NeighborSearch(
-      const Tree& referenceTree,
-      const NeighborSearchMode mode = DUAL_TREE_MODE,
-      const double epsilon = 0,
-      const MetricType metric = MetricType());
+  NeighborSearch(const Tree& referenceTree,
+                 const NeighborSearchMode mode = DUAL_TREE_MODE,
+                 const double epsilon = 0,
+                 const MetricType metric = MetricType());
 
   /**
    * Initialize the NeighborSearch object with the given pre-constructed
@@ -183,11 +180,10 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated distance metric.
    */
-  NeighborSearch(
-      Tree&& referenceTree,
-      const NeighborSearchMode mode = DUAL_TREE_MODE,
-      const double epsilon = 0,
-      const MetricType metric = MetricType());
+  NeighborSearch(Tree&& referenceTree,
+                 const NeighborSearchMode mode = DUAL_TREE_MODE,
+                 const double epsilon = 0,
+                 const MetricType metric = MetricType());
 
   /**
    * Create a NeighborSearch object without any reference data.  If Search() is
@@ -339,9 +335,8 @@ class NeighborSearch
    * @param distances Matrix storing distances of neighbors for each query
    *      point.
    */
-  void Search(const size_t k,
-              arma::Mat<size_t>& neighbors,
-              arma::mat& distances);
+  void
+  Search(const size_t k, arma::Mat<size_t>& neighbors, arma::mat& distances);
 
   /**
    * Calculate the average relative error (effective error) between the

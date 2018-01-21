@@ -107,7 +107,7 @@ void PCADimensionalityReduction(
 template<typename DecompositionPolicy>
 void PCAVarianceRetained()
 {
-    // Fake, simple dataset.
+  // Fake, simple dataset.
   mat data("1 0 2 3 9;"
            "5 2 8 4 8;"
            "6 7 3 1 8");
@@ -208,7 +208,7 @@ BOOST_AUTO_TEST_CASE(RandomizedBlockKrylovPCADimensionalityReductionTest)
 {
   RandomizedBlockKrylovSVDPolicy decomposition(5);
   PCADimensionalityReduction<RandomizedBlockKrylovSVDPolicy>(false,
-      decomposition);
+                                                             decomposition);
 }
 
 /**
@@ -320,6 +320,5 @@ BOOST_AUTO_TEST_CASE(PCAScalingTest)
   // The eigenvalues should sum to three.
   BOOST_REQUIRE_CLOSE(accu(eigval), 3.0, 0.1); // 10% tolerance.
 }
-
 
 BOOST_AUTO_TEST_SUITE_END();

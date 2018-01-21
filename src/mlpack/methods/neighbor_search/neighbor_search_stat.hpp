@@ -45,22 +45,24 @@ class NeighborSearchStat
    * Initialize the statistic with the worst possible distance according to
    * our sorting policy.
    */
-  NeighborSearchStat() :
-      firstBound(SortPolicy::WorstDistance()),
+  NeighborSearchStat()
+    : firstBound(SortPolicy::WorstDistance()),
       secondBound(SortPolicy::WorstDistance()),
-      auxBound(SortPolicy::WorstDistance()),
-      lastDistance(0.0) { }
+      auxBound(SortPolicy::WorstDistance()), lastDistance(0.0)
+  {
+  }
 
   /**
    * Initialization for a fully initialized node.  In this case, we don't need
    * to worry about the node.
    */
   template<typename TreeType>
-  NeighborSearchStat(TreeType& /* node */) :
-      firstBound(SortPolicy::WorstDistance()),
+  NeighborSearchStat(TreeType& /* node */)
+    : firstBound(SortPolicy::WorstDistance()),
       secondBound(SortPolicy::WorstDistance()),
-      auxBound(SortPolicy::WorstDistance()),
-      lastDistance(0.0) { }
+      auxBound(SortPolicy::WorstDistance()), lastDistance(0.0)
+  {
+  }
 
   /**
    * Reset statistic parameters to initial values.
@@ -94,10 +96,10 @@ class NeighborSearchStat
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(firstBound);
-    ar & BOOST_SERIALIZATION_NVP(secondBound);
-    ar & BOOST_SERIALIZATION_NVP(auxBound);
-    ar & BOOST_SERIALIZATION_NVP(lastDistance);
+    ar& BOOST_SERIALIZATION_NVP(firstBound);
+    ar& BOOST_SERIALIZATION_NVP(secondBound);
+    ar& BOOST_SERIALIZATION_NVP(auxBound);
+    ar& BOOST_SERIALIZATION_NVP(lastDistance);
   }
 };
 

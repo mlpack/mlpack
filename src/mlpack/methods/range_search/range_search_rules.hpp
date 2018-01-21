@@ -44,8 +44,8 @@ class RangeSearchRules
   RangeSearchRules(const arma::mat& referenceSet,
                    const arma::mat& querySet,
                    const math::Range& range,
-                   std::vector<std::vector<size_t> >& neighbors,
-                   std::vector<std::vector<double> >& distances,
+                   std::vector<std::vector<size_t>>& neighbors,
+                   std::vector<std::vector<double>>& distances,
                    MetricType& metric,
                    const bool sameSet = false);
 
@@ -128,10 +128,10 @@ class RangeSearchRules
   const math::Range& range;
 
   //! The vector the resultant neighbor indices should be stored in.
-  std::vector<std::vector<size_t> >& neighbors;
+  std::vector<std::vector<size_t>>& neighbors;
 
   //! The vector the resultant neighbor distances should be stored in.
-  std::vector<std::vector<double> >& distances;
+  std::vector<std::vector<double>>& distances;
 
   //! The instantiated metric.
   MetricType& metric;
@@ -147,8 +147,7 @@ class RangeSearchRules
   //! Add all the points in the given node to the results for the given query
   //! point.  If the base case has already been calculated, we make sure to not
   //! add that to the results twice.
-  void AddResult(const size_t queryIndex,
-                 TreeType& referenceNode);
+  void AddResult(const size_t queryIndex, TreeType& referenceNode);
 
   TraversalInfoType traversalInfo;
 

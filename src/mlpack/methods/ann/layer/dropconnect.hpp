@@ -55,10 +55,8 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template<
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
 class DropConnect
 {
  public:
@@ -96,9 +94,7 @@ class DropConnect
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(arma::Mat<eT>&& input,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -144,7 +140,7 @@ class DropConnect
   bool Deterministic() const { return deterministic; }
 
   //! Modify the value of the deterministic parameter.
-  bool &Deterministic() { return deterministic; }
+  bool& Deterministic() { return deterministic; }
 
   //! The probability of setting a value to zero.
   double Ratio() const { return ratio; }
@@ -200,8 +196,8 @@ class DropConnect
   std::vector<LayerTypes> network;
 }; // class DropConnect.
 
-}  // namespace ann
-}  // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 // Include implementation.
 #include "dropconnect_impl.hpp"

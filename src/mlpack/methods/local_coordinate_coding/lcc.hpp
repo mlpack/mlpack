@@ -99,17 +99,15 @@ class LocalCoordinateCoding
    *      until convergence).
    * @param tolerance Tolerance for the objective function.
    */
-  template<
-      typename DictionaryInitializer =
-          sparse_coding::DataDependentRandomInitializer
-  >
-  LocalCoordinateCoding(const arma::mat& data,
-                        const size_t atoms,
-                        const double lambda,
-                        const size_t maxIterations = 0,
-                        const double tolerance = 0.01,
-                        const DictionaryInitializer& initializer =
-                            DictionaryInitializer());
+  template<typename DictionaryInitializer =
+               sparse_coding::DataDependentRandomInitializer>
+  LocalCoordinateCoding(
+      const arma::mat& data,
+      const size_t atoms,
+      const double lambda,
+      const size_t maxIterations = 0,
+      const double tolerance = 0.01,
+      const DictionaryInitializer& initializer = DictionaryInitializer());
 
   /**
    * Set the parameters to LocalCoordinateCoding.  This constructor will not
@@ -136,13 +134,11 @@ class LocalCoordinateCoding
    *     function changes by a value lower than this tolerance, the optimization
    *     terminates.
    */
-  template<
-      typename DictionaryInitializer =
-          sparse_coding::DataDependentRandomInitializer
-  >
-  void Train(const arma::mat& data,
-             const DictionaryInitializer& initializer =
-                 DictionaryInitializer());
+  template<typename DictionaryInitializer =
+               sparse_coding::DataDependentRandomInitializer>
+  void
+  Train(const arma::mat& data,
+        const DictionaryInitializer& initializer = DictionaryInitializer());
 
   /**
    * Code each point via distance-weighted LARS.

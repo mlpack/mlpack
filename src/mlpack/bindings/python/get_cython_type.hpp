@@ -86,17 +86,17 @@ inline std::string GetCythonType<bool>(
 }
 
 template<typename T>
-inline std::string GetCythonType(
-    const util::ParamData& d,
-    const typename boost::enable_if<util::IsStdVector<T>>::type* = 0)
+inline std::string
+GetCythonType(const util::ParamData& d,
+              const typename boost::enable_if<util::IsStdVector<T>>::type* = 0)
 {
   return "vector[" + GetCythonType<typename T::value_type>(d) + "]";
 }
 
 template<typename T>
-inline std::string GetCythonType(
-    const util::ParamData& d,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+inline std::string
+GetCythonType(const util::ParamData& d,
+              const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
 {
   std::string type = "Mat";
   if (T::is_row)

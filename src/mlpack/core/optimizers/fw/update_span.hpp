@@ -34,8 +34,7 @@ class UpdateSpan
    *
    * @param function Function to be optimized in FrankWolfe algorithm.
    */
-  UpdateSpan(const bool isPrune = false) : isPrune(isPrune)
-  { /* Do nothing. */ }
+  UpdateSpan(const bool isPrune = false) : isPrune(isPrune) { /* Do nothing. */}
 
   /**
    * Update rule for FrankWolfe, reoptimize in the span of current

@@ -190,7 +190,7 @@ class HMM
    *     observation.
    */
   void Train(const std::vector<arma::mat>& dataSeq,
-             const std::vector<arma::Row<size_t> >& stateSeq);
+             const std::vector<arma::Row<size_t>>& stateSeq);
 
   /**
    * Estimate the probabilities of each hidden state at each time step for each
@@ -227,8 +227,7 @@ class HMM
    * @param stateProb Probabilities of each state at each time interval.
    * @return Log-likelihood of most likely state sequence.
    */
-  double Estimate(const arma::mat& dataSeq,
-                  arma::mat& stateProb) const;
+  double Estimate(const arma::mat& dataSeq, arma::mat& stateProb) const;
 
   /**
    * Generate a random data sequence of the given length.  The data sequence is
@@ -256,8 +255,7 @@ class HMM
    *    stored.
    * @return Log-likelihood of most probable state sequence.
    */
-  double Predict(const arma::mat& dataSeq,
-                 arma::Row<size_t>& stateSeq) const;
+  double Predict(const arma::mat& dataSeq, arma::Row<size_t>& stateSeq) const;
 
   /**
    * Compute the log-likelihood of the given data sequence.
@@ -294,8 +292,7 @@ class HMM
    * @param smoothSeq Vector in which the expected emission sequence will be
    *    stored.
    */
-  void Smooth(const arma::mat& dataSeq,
-              arma::mat& smoothSeq) const;
+  void Smooth(const arma::mat& dataSeq, arma::mat& smoothSeq) const;
 
   //! Return the vector of initial state probabilities.
   const arma::vec& Initial() const { return initial; }

@@ -21,32 +21,26 @@ namespace kernel {
 
 template<typename KernelType, typename PointSelectionPolicy>
 NystroemMethod<KernelType, PointSelectionPolicy>::NystroemMethod(
-    const arma::mat& data,
-    KernelType& kernel,
-    const size_t rank) :
-    data(data),
-    kernel(kernel),
-    rank(rank)
-{ }
+    const arma::mat& data, KernelType& kernel, const size_t rank)
+  : data(data), kernel(kernel), rank(rank)
+{
+}
 
 template<typename KernelType, typename PointSelectionPolicy>
 void NystroemMethod<KernelType, PointSelectionPolicy>::GetKernelMatrix(
-    const arma::mat* selectedData,
-    arma::mat& miniKernel,
-    arma::mat& semiKernel)
+    const arma::mat* selectedData, arma::mat& miniKernel, arma::mat& semiKernel)
 {
   // Assemble mini-kernel matrix.
   for (size_t i = 0; i < rank; ++i)
     for (size_t j = 0; j < rank; ++j)
-      miniKernel(i, j) = kernel.Evaluate(selectedData->col(i),
-                                         selectedData->col(j));
+      miniKernel(i, j) =
+          kernel.Evaluate(selectedData->col(i), selectedData->col(j));
 
   // Construct semi-kernel matrix with interactions between selected data and
   // all points.
   for (size_t i = 0; i < data.n_cols; ++i)
     for (size_t j = 0; j < rank; ++j)
-      semiKernel(i, j) = kernel.Evaluate(data.col(i),
-                                         selectedData->col(j));
+      semiKernel(i, j) = kernel.Evaluate(data.col(i), selectedData->col(j));
   // Clean the memory.
   delete selectedData;
 }
@@ -67,8 +61,8 @@ void NystroemMethod<KernelType, PointSelectionPolicy>::GetKernelMatrix(
   // all points.
   for (size_t i = 0; i < data.n_cols; ++i)
     for (size_t j = 0; j < rank; ++j)
-      semiKernel(i, j) = kernel.Evaluate(data.col(i),
-                                         data.col(selectedPoints(j)));
+      semiKernel(i, j) =
+          kernel.Evaluate(data.col(i), data.col(selectedPoints(j)));
 }
 
 template<typename KernelType, typename PointSelectionPolicy>
@@ -77,8 +71,8 @@ void NystroemMethod<KernelType, PointSelectionPolicy>::Apply(arma::mat& output)
   arma::mat miniKernel(rank, rank);
   arma::mat semiKernel(data.n_cols, rank);
 
-  GetKernelMatrix(PointSelectionPolicy::Select(data, rank), miniKernel,
-                  semiKernel);
+  GetKernelMatrix(
+      PointSelectionPolicy::Select(data, rank), miniKernel, semiKernel);
 
   // Singular value decomposition mini-kernel matrix.
   arma::mat U, V;

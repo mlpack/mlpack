@@ -17,36 +17,25 @@
 namespace mlpack {
 namespace kmeans {
 
-class DualTreeKMeansStatistic : public
-    neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>
+class DualTreeKMeansStatistic
+    : public neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>
 {
  public:
-  DualTreeKMeansStatistic() :
-      neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>(),
-      upperBound(DBL_MAX),
-      lowerBound(DBL_MAX),
-      owner(size_t(-1)),
-      pruned(size_t(-1)),
-      staticPruned(false),
-      staticUpperBoundMovement(0.0),
-      staticLowerBoundMovement(0.0),
-      centroid(),
-      trueParent(NULL)
+  DualTreeKMeansStatistic()
+    : neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>(),
+      upperBound(DBL_MAX), lowerBound(DBL_MAX), owner(size_t(-1)),
+      pruned(size_t(-1)), staticPruned(false), staticUpperBoundMovement(0.0),
+      staticLowerBoundMovement(0.0), centroid(), trueParent(NULL)
   {
     // Nothing to do.
   }
 
   template<typename TreeType>
-  DualTreeKMeansStatistic(TreeType& node) :
-      neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>(),
-      upperBound(DBL_MAX),
-      lowerBound(DBL_MAX),
-      owner(size_t(-1)),
-      pruned(size_t(-1)),
-      staticPruned(false),
-      staticUpperBoundMovement(0.0),
-      staticLowerBoundMovement(0.0),
-      trueParent(node.Parent())
+  DualTreeKMeansStatistic(TreeType& node)
+    : neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>(),
+      upperBound(DBL_MAX), lowerBound(DBL_MAX), owner(size_t(-1)),
+      pruned(size_t(-1)), staticPruned(false), staticUpperBoundMovement(0.0),
+      staticLowerBoundMovement(0.0), trueParent(node.Parent())
   {
     // Empirically calculate the centroid.
     centroid.zeros(node.Dataset().n_rows);
@@ -54,15 +43,15 @@ class DualTreeKMeansStatistic : public
     {
       // Correct handling of cover tree: don't double-count the point which
       // appears in the children.
-      if (tree::TreeTraits<TreeType>::HasSelfChildren && i == 0 &&
-          node.NumChildren() > 0)
+      if (tree::TreeTraits<TreeType>::HasSelfChildren && i == 0
+          && node.NumChildren() > 0)
         continue;
       centroid += node.Dataset().col(node.Point(i));
     }
 
     for (size_t i = 0; i < node.NumChildren(); ++i)
-      centroid += node.Child(i).NumDescendants() *
-          node.Child(i).Stat().Centroid();
+      centroid +=
+          node.Child(i).NumDescendants() * node.Child(i).Stat().Centroid();
 
     centroid /= node.NumDescendants();
 

@@ -609,7 +609,7 @@ BOOST_AUTO_TEST_CASE(ShuffleTest)
   arma::Row<size_t> counts(10, arma::fill::zeros);
   for (size_t i = 0; i < 10; ++i)
   {
-    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
+    BOOST_REQUIRE_EQUAL((size_t)outputData(0, i), outputLabels[i]);
     BOOST_REQUIRE_SMALL(outputData(1, i), 1e-5);
     BOOST_REQUIRE_SMALL(outputData(2, i), 1e-5);
     counts[labels[i]]++;
@@ -647,9 +647,9 @@ BOOST_AUTO_TEST_CASE(SparseShuffleTest)
   arma::Row<size_t> counts(10, arma::fill::zeros);
   for (size_t i = 0; i < 10; ++i)
   {
-    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
-    BOOST_REQUIRE_SMALL((double) outputData(1, i), 1e-5);
-    BOOST_REQUIRE_SMALL((double) outputData(2, i), 1e-5);
+    BOOST_REQUIRE_EQUAL((size_t)outputData(0, i), outputLabels[i]);
+    BOOST_REQUIRE_SMALL((double)outputData(1, i), 1e-5);
+    BOOST_REQUIRE_SMALL((double)outputData(2, i), 1e-5);
     counts[labels[i]]++;
   }
 
@@ -728,7 +728,7 @@ BOOST_AUTO_TEST_CASE(InplaceShuffleTest)
   arma::Row<size_t> counts(10, arma::fill::zeros);
   for (size_t i = 0; i < 10; ++i)
   {
-    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
+    BOOST_REQUIRE_EQUAL((size_t)outputData(0, i), outputLabels[i]);
     BOOST_REQUIRE_SMALL(outputData(1, i), 1e-5);
     BOOST_REQUIRE_SMALL(outputData(2, i), 1e-5);
     counts[labels[i]]++;
@@ -765,9 +765,9 @@ BOOST_AUTO_TEST_CASE(InplaceSparseShuffleTest)
   arma::Row<size_t> counts(10, arma::fill::zeros);
   for (size_t i = 0; i < 10; ++i)
   {
-    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
-    BOOST_REQUIRE_SMALL((double) outputData(1, i), 1e-5);
-    BOOST_REQUIRE_SMALL((double) outputData(2, i), 1e-5);
+    BOOST_REQUIRE_EQUAL((size_t)outputData(0, i), outputLabels[i]);
+    BOOST_REQUIRE_SMALL((double)outputData(1, i), 1e-5);
+    BOOST_REQUIRE_SMALL((double)outputData(2, i), 1e-5);
     counts[labels[i]]++;
   }
 

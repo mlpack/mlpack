@@ -27,9 +27,7 @@
 namespace mlpack {
 
 // Test function for loading and saving Armadillo objects.
-template<typename CubeType,
-         typename IArchiveType,
-         typename OArchiveType>
+template<typename CubeType, typename IArchiveType, typename OArchiveType>
 void TestArmadilloSerialization(arma::Cube<CubeType>& x)
 {
   // First save it.
@@ -87,8 +85,8 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
         if (double(origSlice(j, i)) == 0.0)
           BOOST_REQUIRE_SMALL(double(xSlice(j, i)), 1e-8);
         else
-          BOOST_REQUIRE_CLOSE(double(origSlice(j, i)), double(xSlice(j, i)),
-              1e-8);
+          BOOST_REQUIRE_CLOSE(
+              double(origSlice(j, i)), double(xSlice(j, i)), 1e-8);
       }
     }
   }
@@ -98,18 +96,19 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
 template<typename CubeType>
 void TestAllArmadilloSerialization(arma::Cube<CubeType>& x)
 {
-  TestArmadilloSerialization<CubeType, boost::archive::xml_iarchive,
-      boost::archive::xml_oarchive>(x);
-  TestArmadilloSerialization<CubeType, boost::archive::text_iarchive,
-      boost::archive::text_oarchive>(x);
-  TestArmadilloSerialization<CubeType, boost::archive::binary_iarchive,
-      boost::archive::binary_oarchive>(x);
+  TestArmadilloSerialization<CubeType,
+                             boost::archive::xml_iarchive,
+                             boost::archive::xml_oarchive>(x);
+  TestArmadilloSerialization<CubeType,
+                             boost::archive::text_iarchive,
+                             boost::archive::text_oarchive>(x);
+  TestArmadilloSerialization<CubeType,
+                             boost::archive::binary_iarchive,
+                             boost::archive::binary_oarchive>(x);
 }
 
 // Test function for loading and saving Armadillo objects.
-template<typename MatType,
-         typename IArchiveType,
-         typename OArchiveType>
+template<typename MatType, typename IArchiveType, typename OArchiveType>
 void TestArmadilloSerialization(MatType& x)
 {
   // First save it.
@@ -165,12 +164,15 @@ void TestArmadilloSerialization(MatType& x)
 template<typename MatType>
 void TestAllArmadilloSerialization(MatType& x)
 {
-  TestArmadilloSerialization<MatType, boost::archive::xml_iarchive,
-      boost::archive::xml_oarchive>(x);
-  TestArmadilloSerialization<MatType, boost::archive::text_iarchive,
-      boost::archive::text_oarchive>(x);
-  TestArmadilloSerialization<MatType, boost::archive::binary_iarchive,
-      boost::archive::binary_oarchive>(x);
+  TestArmadilloSerialization<MatType,
+                             boost::archive::xml_iarchive,
+                             boost::archive::xml_oarchive>(x);
+  TestArmadilloSerialization<MatType,
+                             boost::archive::text_iarchive,
+                             boost::archive::text_oarchive>(x);
+  TestArmadilloSerialization<MatType,
+                             boost::archive::binary_iarchive,
+                             boost::archive::binary_oarchive>(x);
 }
 
 // Save and load an mlpack object.
@@ -219,12 +221,15 @@ void SerializeObject(T& t, T& newT)
 template<typename T>
 void SerializeObjectAll(T& t, T& xmlT, T& textT, T& binaryT)
 {
-  SerializeObject<T, boost::archive::xml_iarchive,
-      boost::archive::xml_oarchive>(t, xmlT);
-  SerializeObject<T, boost::archive::text_iarchive,
-      boost::archive::text_oarchive>(t, textT);
-  SerializeObject<T, boost::archive::binary_iarchive,
-      boost::archive::binary_oarchive>(t, binaryT);
+  SerializeObject<T,
+                  boost::archive::xml_iarchive,
+                  boost::archive::xml_oarchive>(t, xmlT);
+  SerializeObject<T,
+                  boost::archive::text_iarchive,
+                  boost::archive::text_oarchive>(t, textT);
+  SerializeObject<T,
+                  boost::archive::binary_iarchive,
+                  boost::archive::binary_oarchive>(t, binaryT);
 }
 
 // Save and load a non-default-constructible mlpack object.
@@ -271,12 +276,15 @@ void SerializePointerObject(T* t, T*& newT)
 template<typename T>
 void SerializePointerObjectAll(T* t, T*& xmlT, T*& textT, T*& binaryT)
 {
-  SerializePointerObject<T, boost::archive::text_iarchive,
-      boost::archive::text_oarchive>(t, textT);
-  SerializePointerObject<T, boost::archive::binary_iarchive,
-      boost::archive::binary_oarchive>(t, binaryT);
-  SerializePointerObject<T, boost::archive::xml_iarchive,
-      boost::archive::xml_oarchive>(t, xmlT);
+  SerializePointerObject<T,
+                         boost::archive::text_iarchive,
+                         boost::archive::text_oarchive>(t, textT);
+  SerializePointerObject<T,
+                         boost::archive::binary_iarchive,
+                         boost::archive::binary_oarchive>(t, binaryT);
+  SerializePointerObject<T,
+                         boost::archive::xml_iarchive,
+                         boost::archive::xml_oarchive>(t, xmlT);
 }
 
 // Utility function to check the equality of two Armadillo matrices.

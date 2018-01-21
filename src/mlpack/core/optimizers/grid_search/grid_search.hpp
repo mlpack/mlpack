@@ -41,10 +41,10 @@ class GridSearch
    * @return Objective value of the final point.
    */
   template<typename FunctionType>
-  double Optimize(
-      FunctionType& function,
-      arma::mat& bestParameters,
-      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo);
+  double
+  Optimize(FunctionType& function,
+           arma::mat& bestParameters,
+           data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo);
 
  private:
   /**
@@ -55,13 +55,12 @@ class GridSearch
    * argument.
    */
   template<typename FunctionType>
-  void Optimize(
-      FunctionType& function,
-      double& bestObjective,
-      arma::mat& bestParameters,
-      arma::vec& currentParameters,
-      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
-      size_t i);
+  void Optimize(FunctionType& function,
+                double& bestObjective,
+                arma::mat& bestParameters,
+                arma::vec& currentParameters,
+                data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+                size_t i);
 };
 
 } // namespace optimization

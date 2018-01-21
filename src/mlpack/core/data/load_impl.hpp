@@ -31,28 +31,27 @@
 namespace mlpack {
 namespace data {
 
-namespace details{
+namespace details {
 
 template<typename Tokenizer>
-std::vector<std::string> ToTokens(Tokenizer &lineTok)
+std::vector<std::string> ToTokens(Tokenizer& lineTok)
 {
   std::vector<std::string> tokens;
-  std::transform(std::begin(lineTok), std::end(lineTok),
+  std::transform(std::begin(lineTok),
+                 std::end(lineTok),
                  std::back_inserter(tokens),
-                 [&tokens](std::string const &str)
-  {
-    std::string trimmedToken(str);
-    boost::trim(trimmedToken);
-    return std::move(trimmedToken);
-  });
+                 [&tokens](std::string const& str) {
+                   std::string trimmedToken(str);
+                   boost::trim(trimmedToken);
+                   return std::move(trimmedToken);
+                 });
 
   return tokens;
 }
 
-inline
-void TransposeTokens(std::vector<std::vector<std::string>> const &input,
-                     std::vector<std::string> &output,
-                     size_t index)
+inline void TransposeTokens(std::vector<std::vector<std::string>> const& input,
+                            std::vector<std::string>& output,
+                            size_t index)
 {
   output.clear();
   for (size_t i = 0; i != input.size(); ++i)
@@ -90,7 +89,7 @@ bool Load(const std::string& filename,
 
   // Catch nonexistent files by opening the stream ourselves.
   std::fstream stream;
-#ifdef  _WIN32 // Always open in binary mode on Windows.
+#ifdef _WIN32 // Always open in binary mode on Windows.
   stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
 #else
   stream.open(filename.c_str(), std::fstream::in);
@@ -102,7 +101,7 @@ bool Load(const std::string& filename,
       Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
     else
       Log::Warn << "Cannot open file '" << filename << "'; load failed."
-          << std::endl;
+                << std::endl;
 
     return false;
   }
@@ -118,7 +117,8 @@ bool Load(const std::string& filename,
     {
       if (extension == "tsv")
         Log::Warn << "'" << filename << "' is comma-separated, not "
-            "tab-separated!" << std::endl;
+                                        "tab-separated!"
+                  << std::endl;
       stringType = "CSV data";
     }
     else if (loadType == arma::raw_ascii) // .csv file can be tsv.
@@ -138,11 +138,11 @@ bool Load(const std::string& filename,
 
         // If there are no spaces or whitespace in the line, then we shouldn't
         // print the warning.
-        if ((line.find(' ') != std::string::npos) ||
-            (line.find('\t') != std::string::npos))
+        if ((line.find(' ') != std::string::npos)
+            || (line.find('\t') != std::string::npos))
         {
           Log::Warn << "'" << filename << "' is not a standard csv file."
-              << std::endl;
+                    << std::endl;
         }
       }
       stringType = "raw ASCII formatted data";
@@ -216,8 +216,8 @@ bool Load(const std::string& filename,
     loadType = arma::pgm_binary;
     stringType = "PGM data";
   }
-  else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
-           extension == "he5")
+  else if (extension == "h5" || extension == "hdf5" || extension == "hdf"
+           || extension == "he5")
   {
 #ifdef ARMA_USE_HDF5
     loadType = arma::hdf5_binary;
@@ -226,12 +226,12 @@ bool Load(const std::string& filename,
     Timer::Stop("loading_data");
     if (fatal)
       Log::Fatal << "Attempted to load '" << filename << "' as HDF5 data, but "
-          << "Armadillo was compiled without HDF5 support.  Load failed."
-          << std::endl;
+                 << "Armadillo was compiled without HDF5 support.  Load failed."
+                 << std::endl;
     else
       Log::Warn << "Attempted to load '" << filename << "' as HDF5 data, but "
-          << "Armadillo was compiled without HDF5 support.  Load failed."
-          << std::endl;
+                << "Armadillo was compiled without HDF5 support.  Load failed."
+                << std::endl;
 
     return false;
 #endif
@@ -249,10 +249,10 @@ bool Load(const std::string& filename,
     Timer::Stop("loading_data");
     if (fatal)
       Log::Fatal << "Unable to detect type of '" << filename << "'; "
-          << "incorrect extension?" << std::endl;
+                 << "incorrect extension?" << std::endl;
     else
       Log::Warn << "Unable to detect type of '" << filename << "'; load failed."
-          << " Incorrect extension?" << std::endl;
+                << " Incorrect extension?" << std::endl;
 
     return false;
   }
@@ -260,10 +260,10 @@ bool Load(const std::string& filename,
   // Try to load the file; but if it's raw_binary, it could be a problem.
   if (loadType == arma::raw_binary)
     Log::Warn << "Loading '" << filename << "' as " << stringType << "; "
-        << "but this may not be the actual filetype!" << std::endl;
+              << "but this may not be the actual filetype!" << std::endl;
   else
     Log::Info << "Loading '" << filename << "' as " << stringType << ".  "
-        << std::flush;
+              << std::flush;
 
   // We can't use the stream if the type is HDF5.
   bool success;
@@ -285,7 +285,7 @@ bool Load(const std::string& filename,
   }
   else
     Log::Info << "Size is " << (transpose ? matrix.n_cols : matrix.n_rows)
-        << " x " << (transpose ? matrix.n_rows : matrix.n_cols) << ".\n";
+              << " x " << (transpose ? matrix.n_rows : matrix.n_cols) << ".\n";
 
   // Now transpose the matrix, if necessary.
   if (transpose)
@@ -324,7 +324,7 @@ bool Load(const std::string& filename,
       Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
     else
       Log::Warn << "Cannot open file '" << filename << "'; load failed."
-          << std::endl;
+                << std::endl;
 
     return false;
   }
@@ -351,7 +351,7 @@ bool Load(const std::string& filename,
   else if (extension == "arff")
   {
     Log::Info << "Loading '" << filename << "' as ARFF dataset.  "
-        << std::flush;
+              << std::flush;
     try
     {
       LoadARFF(filename, matrix, info);
@@ -377,16 +377,16 @@ bool Load(const std::string& filename,
     Timer::Stop("loading_data");
     if (fatal)
       Log::Fatal << "Unable to detect type of '" << filename << "'; "
-          << "incorrect extension?" << std::endl;
+                 << "incorrect extension?" << std::endl;
     else
       Log::Warn << "Unable to detect type of '" << filename << "'; load failed."
-          << " Incorrect extension?" << std::endl;
+                << " Incorrect extension?" << std::endl;
 
     return false;
   }
 
   Log::Info << "Size is " << (transpose ? matrix.n_cols : matrix.n_rows)
-      << " x " << (transpose ? matrix.n_rows : matrix.n_cols) << ".\n";
+            << " x " << (transpose ? matrix.n_rows : matrix.n_cols) << ".\n";
 
   Timer::Stop("loading_data");
 

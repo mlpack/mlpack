@@ -49,13 +49,9 @@ class NadaMaxUpdate
   NadaMaxUpdate(const double epsilon = 1e-8,
                 const double beta1 = 0.9,
                 const double beta2 = 0.99,
-                const double scheduleDecay = 4e-3) :
-      epsilon(epsilon),
-      beta1(beta1),
-      beta2(beta2),
-      scheduleDecay(scheduleDecay),
-      cumBeta1(1),
-      iteration(0)
+                const double scheduleDecay = 4e-3)
+    : epsilon(epsilon), beta1(beta1), beta2(beta2),
+      scheduleDecay(scheduleDecay), cumBeta1(1), iteration(0)
   {
     // Nothing to do.
   }
@@ -80,9 +76,8 @@ class NadaMaxUpdate
    * @param stepSize Step size to be used for the given iteration.
    * @param gradient The gradient matrix.
    */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
+  void
+  Update(arma::mat& iterate, const double stepSize, const arma::mat& gradient)
   {
     // Increment the iteration counter variable.
     ++iteration;
@@ -93,11 +88,11 @@ class NadaMaxUpdate
 
     u = arma::max(u * beta2, arma::abs(gradient));
 
-    double beta1T = beta1 * (1 - (0.5 *
-        std::pow(0.96, iteration * scheduleDecay)));
+    double beta1T =
+        beta1 * (1 - (0.5 * std::pow(0.96, iteration * scheduleDecay)));
 
-    double beta1T1 = beta1 * (1 - (0.5 *
-        std::pow(0.96, (iteration + 1) * scheduleDecay)));
+    double beta1T1 =
+        beta1 * (1 - (0.5 * std::pow(0.96, (iteration + 1) * scheduleDecay)));
 
     cumBeta1 *= beta1T;
 
@@ -107,8 +102,9 @@ class NadaMaxUpdate
 
     if ((biasCorrection1 != 0) && (biasCorrection2 != 0))
     {
-       iterate -= (stepSize * (((1 - beta1T) / biasCorrection1) * gradient
-           + (beta1T1 / biasCorrection2) * m)) / (u + epsilon);
+      iterate -= (stepSize * (((1 - beta1T) / biasCorrection1) * gradient
+                              + (beta1T1 / biasCorrection2) * m))
+                 / (u + epsilon);
     }
   }
 

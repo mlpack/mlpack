@@ -23,36 +23,35 @@ BOOST_AUTO_TEST_SUITE(MeanShiftTest);
 
 // Generate dataset; written transposed because it's easier to read.
 arma::mat meanShiftData("  0.0   0.0;" // Class 1.
-                     "  0.3   0.4;"
-                     "  0.1   0.0;"
-                     "  0.1   0.3;"
-                     " -0.2  -0.2;"
-                     " -0.1   0.3;"
-                     " -0.4   0.1;"
-                     "  0.2  -0.1;"
-                     "  0.3   0.0;"
-                     " -0.3  -0.3;"
-                     "  0.1  -0.1;"
-                     "  0.2  -0.3;"
-                     " -0.3   0.2;"
-                     " 10.0  10.0;" // Class 2.
-                     " 10.1   9.9;"
-                     "  9.9  10.0;"
-                     " 10.2   9.7;"
-                     " 10.2   9.8;"
-                     "  9.7  10.3;"
-                     "  9.9  10.1;"
-                     "-10.0   5.0;" // Class 3.
-                     " -9.8   5.1;"
-                     " -9.9   4.9;"
-                     "-10.0   4.9;"
-                     "-10.2   5.2;"
-                     "-10.1   5.1;"
-                     "-10.3   5.3;"
-                     "-10.0   4.8;"
-                     " -9.6   5.0;"
-                     " -9.8   5.1;");
-
+                        "  0.3   0.4;"
+                        "  0.1   0.0;"
+                        "  0.1   0.3;"
+                        " -0.2  -0.2;"
+                        " -0.1   0.3;"
+                        " -0.4   0.1;"
+                        "  0.2  -0.1;"
+                        "  0.3   0.0;"
+                        " -0.3  -0.3;"
+                        "  0.1  -0.1;"
+                        "  0.2  -0.3;"
+                        " -0.3   0.2;"
+                        " 10.0  10.0;" // Class 2.
+                        " 10.1   9.9;"
+                        "  9.9  10.0;"
+                        " 10.2   9.7;"
+                        " 10.2   9.8;"
+                        "  9.7  10.3;"
+                        "  9.9  10.1;"
+                        "-10.0   5.0;" // Class 3.
+                        " -9.8   5.1;"
+                        " -9.9   4.9;"
+                        "-10.0   4.9;"
+                        "-10.2   5.2;"
+                        "-10.1   5.1;"
+                        "-10.3   5.3;"
+                        "-10.0   4.8;"
+                        " -9.6   5.0;"
+                        " -9.8   5.1;");
 
 /**
  * 30-point 3-class test case for Mean Shift.
@@ -63,7 +62,7 @@ BOOST_AUTO_TEST_CASE(MeanShiftSimpleTest)
 
   arma::Col<size_t> assignments;
   arma::mat centroids;
-  meanShift.Cluster((arma::mat) trans(meanShiftData), assignments, centroids);
+  meanShift.Cluster((arma::mat)trans(meanShiftData), assignments, centroids);
 
   // Now make sure we got it all right.  There is no restriction on how the
   // clusters are ordered, so we have to be careful about that.
@@ -124,14 +123,14 @@ BOOST_AUTO_TEST_CASE(GaussianClustering)
   arma::uvec minIndices(4);
   for (size_t i = 0; i < 4; ++i)
   {
-    centroidDistances(0) = metric::EuclideanDistance::Evaluate(g1.Mean(),
-        centroids.col(i));
-    centroidDistances(1) = metric::EuclideanDistance::Evaluate(g2.Mean(),
-        centroids.col(i));
-    centroidDistances(2) = metric::EuclideanDistance::Evaluate(g3.Mean(),
-        centroids.col(i));
-    centroidDistances(3) = metric::EuclideanDistance::Evaluate(g4.Mean(),
-        centroids.col(i));
+    centroidDistances(0) =
+        metric::EuclideanDistance::Evaluate(g1.Mean(), centroids.col(i));
+    centroidDistances(1) =
+        metric::EuclideanDistance::Evaluate(g2.Mean(), centroids.col(i));
+    centroidDistances(2) =
+        metric::EuclideanDistance::Evaluate(g3.Mean(), centroids.col(i));
+    centroidDistances(3) =
+        metric::EuclideanDistance::Evaluate(g4.Mean(), centroids.col(i));
 
     // Are we near a centroid of a Gaussian?
     const double minVal = centroidDistances.min(minIndices[i]);

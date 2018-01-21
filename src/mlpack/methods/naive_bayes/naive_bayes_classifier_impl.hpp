@@ -31,10 +31,11 @@ NaiveBayesClassifier<ModelMatType>::NaiveBayesClassifier(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    const bool incremental) :
-    trainingPoints(0) // Set when we call Train().
+    const bool incremental)
+  : trainingPoints(0) // Set when we call Train().
 {
-  static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
+  static_assert(
+      std::is_same<ElemType, typename MatType::elem_type>::value,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
@@ -59,9 +60,8 @@ NaiveBayesClassifier<ModelMatType>::NaiveBayesClassifier(
 
 template<typename ModelMatType>
 NaiveBayesClassifier<ModelMatType>::NaiveBayesClassifier(
-    const size_t dimensionality,
-    const size_t numClasses) :
-    trainingPoints(0)
+    const size_t dimensionality, const size_t numClasses)
+  : trainingPoints(0)
 {
   // Initialize model to 0.
   probabilities.zeros(numClasses);
@@ -71,13 +71,13 @@ NaiveBayesClassifier<ModelMatType>::NaiveBayesClassifier(
 
 template<typename ModelMatType>
 template<typename MatType>
-void NaiveBayesClassifier<ModelMatType>::Train(
-    const MatType& data,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    const bool incremental)
+void NaiveBayesClassifier<ModelMatType>::Train(const MatType& data,
+                                               const arma::Row<size_t>& labels,
+                                               const size_t numClasses,
+                                               const bool incremental)
 {
-  static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
+  static_assert(
+      std::is_same<ElemType, typename MatType::elem_type>::value,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
@@ -178,7 +178,8 @@ template<typename VecType>
 void NaiveBayesClassifier<ModelMatType>::Train(const VecType& point,
                                                const size_t label)
 {
-  static_assert(std::is_same<ElemType, typename VecType::elem_type>::value,
+  static_assert(
+      std::is_same<ElemType, typename VecType::elem_type>::value,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
@@ -201,10 +202,10 @@ void NaiveBayesClassifier<ModelMatType>::Train(const VecType& point,
 template<typename ModelMatType>
 template<typename MatType>
 void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
-    const MatType& data,
-    ModelMatType& logLikelihoods) const
+    const MatType& data, ModelMatType& logLikelihoods) const
 {
-  static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
+  static_assert(
+      std::is_same<ElemType, typename MatType::elem_type>::value,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
@@ -223,8 +224,10 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
     ModelMatType rhs = -0.5 * arma::diagmat(invVar.col(i)) * diffs;
     arma::Mat<ElemType> exponents = arma::sum(diffs % rhs, 0);
 
-    logLikelihoods.row(i) += (data.n_rows / -2.0 * log(2 * M_PI) - 0.5 *
-        std::log(arma::det(arma::diagmat(variances.col(i)))) + exponents);
+    logLikelihoods.row(i) +=
+        (data.n_rows / -2.0 * log(2 * M_PI)
+         - 0.5 * std::log(arma::det(arma::diagmat(variances.col(i))))
+         + exponents);
   }
 }
 
@@ -232,7 +235,8 @@ template<typename ModelMatType>
 template<typename VecType>
 size_t NaiveBayesClassifier<ModelMatType>::Classify(const VecType& point) const
 {
-  static_assert(std::is_same<ElemType, typename VecType::elem_type>::value,
+  static_assert(
+      std::is_same<ElemType, typename VecType::elem_type>::value,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
@@ -252,11 +256,12 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
     size_t& prediction,
     ProbabilitiesVecType& probabilities) const
 {
-  static_assert(std::is_same<ElemType, typename VecType::elem_type>::value,
+  static_assert(
+      std::is_same<ElemType, typename VecType::elem_type>::value,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
-  static_assert(std::is_same<ElemType,
-                             typename ProbabilitiesVecType::elem_type>::value,
+  static_assert(
+      std::is_same<ElemType, typename ProbabilitiesVecType::elem_type>::value,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
@@ -271,17 +276,17 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
 
   arma::uword maxIndex = 0;
   logLikelihoods.max(maxIndex);
-  prediction = (size_t) maxIndex;
+  prediction = (size_t)maxIndex;
   probabilities = exp(logLikelihoods); // log(exp(value)) == value.
 }
 
 template<typename ModelMatType>
 template<typename MatType>
 void NaiveBayesClassifier<ModelMatType>::Classify(
-    const MatType& data,
-    arma::Row<size_t>& predictions) const
+    const MatType& data, arma::Row<size_t>& predictions) const
 {
-  static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
+  static_assert(
+      std::is_same<ElemType, typename MatType::elem_type>::value,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
@@ -305,11 +310,12 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
     arma::Row<size_t>& predictions,
     ProbabilitiesMatType& predictionProbs) const
 {
-  static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
+  static_assert(
+      std::is_same<ElemType, typename MatType::elem_type>::value,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
-  static_assert(std::is_same<ElemType,
-                             typename ProbabilitiesMatType::elem_type>::value,
+  static_assert(
+      std::is_same<ElemType, typename ProbabilitiesMatType::elem_type>::value,
       "NaiveBayesClassifier: element type of given data must match the element "
       "type of the model!");
 
@@ -340,12 +346,11 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
 template<typename ModelMatType>
 template<typename Archive>
 void NaiveBayesClassifier<ModelMatType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(means);
-  ar & BOOST_SERIALIZATION_NVP(variances);
-  ar & BOOST_SERIALIZATION_NVP(probabilities);
+  ar& BOOST_SERIALIZATION_NVP(means);
+  ar& BOOST_SERIALIZATION_NVP(variances);
+  ar& BOOST_SERIALIZATION_NVP(probabilities);
 }
 
 } // namespace naive_bayes

@@ -31,8 +31,8 @@ void Bootstrap(const MatType& dataset,
     bootstrapWeights.set_size(weights.n_elem);
 
   // Random sampling with replacement.
-  arma::uvec indices = arma::randi<arma::uvec>(dataset.n_cols,
-      arma::distr_param(0, dataset.n_cols - 1));
+  arma::uvec indices = arma::randi<arma::uvec>(
+      dataset.n_cols, arma::distr_param(0, dataset.n_cols - 1));
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     bootstrapDataset.col(i) = dataset.col(indices[i]);

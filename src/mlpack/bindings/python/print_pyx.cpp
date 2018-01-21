@@ -46,8 +46,7 @@ void PrintPYX(const ProgramDoc& programInfo,
     if (d.input && d.required)
     {
       // Ignore some parameters.
-      if (d.name != "help" && d.name != "info" &&
-          d.name != "version")
+      if (d.name != "help" && d.name != "info" && d.name != "version")
         inputOptions.push_back(it->first);
     }
     else if (!d.input)
@@ -59,9 +58,8 @@ void PrintPYX(const ProgramDoc& programInfo,
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
     const util::ParamData& d = it->second;
-    if (d.input && !d.required &&
-        d.name != "help" && d.name != "info" &&
-        d.name != "version")
+    if (d.input && !d.required && d.name != "help" && d.name != "info"
+        && d.name != "version")
       inputOptions.push_back(it->first);
   }
 
@@ -73,7 +71,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "from cli cimport CLI" << endl;
   cout << "from cli cimport SetParam, SetParamWithInfo" << endl;
   cout << "from cli cimport EnableVerbose, DisableVerbose, DisableBacktrace, "
-      << "ResetTimers, EnableTimers" << endl;
+       << "ResetTimers, EnableTimers" << endl;
   cout << "from cli cimport MoveFromPtr, MoveToPtr" << endl;
   cout << "from matrix_utils import to_matrix, to_matrix_with_info" << endl;
   cout << "from serialization cimport SerializeIn, SerializeOut" << endl;
@@ -100,8 +98,8 @@ void PrintPYX(const ProgramDoc& programInfo,
     if (classes.count(d.cppType) == 0)
     {
       const size_t indent = 2;
-      CLI::GetSingleton().functionMap[d.tname]["ImportDecl"](d, (void*) &indent,
-          NULL);
+      CLI::GetSingleton().functionMap[d.tname]["ImportDecl"](
+          d, (void*)&indent, NULL);
 
       // Make sure we don't double-print the definition.
       classes.insert(d.cppType);
@@ -148,8 +146,8 @@ void PrintPYX(const ProgramDoc& programInfo,
 
     cout << "  ";
     size_t indent = 4;
-    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
-        NULL);
+    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](
+        d, (void*)&indent, NULL);
     cout << endl;
   }
   cout << endl;
@@ -161,13 +159,13 @@ void PrintPYX(const ProgramDoc& programInfo,
 
     cout << "  ";
     size_t indent = 4;
-    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
-        NULL);
+    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](
+        d, (void*)&indent, NULL);
     cout << endl;
   }
   cout << endl;
   cout << "A dict containing each of the named output parameters will be "
-      << "returned." << endl;
+       << "returned." << endl;
   cout << "  \"\"\"" << endl;
 
   // Reset any timers and disable backtraces.
@@ -185,8 +183,8 @@ void PrintPYX(const ProgramDoc& programInfo,
     const util::ParamData& d = parameters.at(inputOptions[i]);
 
     size_t indent = 2;
-    CLI::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
-        (void*) &indent, NULL);
+    CLI::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](
+        d, (void*)&indent, NULL);
   }
 
   // Set all output options as passed.
@@ -211,8 +209,8 @@ void PrintPYX(const ProgramDoc& programInfo,
     const util::ParamData& d = parameters.at(outputOptions[i]);
 
     std::tuple<size_t, bool> t = std::make_tuple(2, false);
-    CLI::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
-        (void*) &t, NULL);
+    CLI::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](
+        d, (void*)&t, NULL);
   }
 
   // Clear the parameters.

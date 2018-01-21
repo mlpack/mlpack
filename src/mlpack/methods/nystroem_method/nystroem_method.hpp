@@ -21,10 +21,7 @@
 namespace mlpack {
 namespace kernel {
 
-template<
-  typename KernelType,
-  typename PointSelectionPolicy = KMeansSelection<>
->
+template<typename KernelType, typename PointSelectionPolicy = KMeansSelection<>>
 class NystroemMethod
 {
  public:

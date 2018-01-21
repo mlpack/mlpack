@@ -29,8 +29,11 @@ template<typename MetricType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
-class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+         class SplitType>
+class TreeTraits<BinarySpaceTree<MetricType,
+                                 StatisticType,
+                                 MatType,
+                                 BoundType,
                                  SplitType>>
 {
  public:
@@ -82,7 +85,10 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType>
-class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+class TreeTraits<BinarySpaceTree<MetricType,
+                                 StatisticType,
+                                 MatType,
+                                 BoundType,
                                  RPTreeMaxSplit>>
 {
  public:
@@ -132,7 +138,10 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType>
-class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+class TreeTraits<BinarySpaceTree<MetricType,
+                                 StatisticType,
+                                 MatType,
+                                 BoundType,
                                  RPTreeMeanSplit>>
 {
  public:
@@ -183,9 +192,12 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
-class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
-    bound::BallBound, SplitType>>
+         class SplitType>
+class TreeTraits<BinarySpaceTree<MetricType,
+                                 StatisticType,
+                                 MatType,
+                                 bound::BallBound,
+                                 SplitType>>
 {
  public:
   static const bool HasOverlappingChildren = true;
@@ -207,9 +219,12 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
-class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
-    bound::HollowBallBound, SplitType>>
+         class SplitType>
+class TreeTraits<BinarySpaceTree<MetricType,
+                                 StatisticType,
+                                 MatType,
+                                 bound::HollowBallBound,
+                                 SplitType>>
 {
  public:
   static const bool HasOverlappingChildren = true;
@@ -231,9 +246,12 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
-class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType,
-    bound::CellBound, SplitType>>
+         class SplitType>
+class TreeTraits<BinarySpaceTree<MetricType,
+                                 StatisticType,
+                                 MatType,
+                                 bound::CellBound,
+                                 SplitType>>
 {
  public:
   static const bool HasOverlappingChildren = true;

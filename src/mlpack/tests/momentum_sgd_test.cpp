@@ -2,7 +2,8 @@
  * @file momentum_sgd_test.cpp
  * @author Ryan Curtin
  *
- * Test file for MomentumSGD (stochastic gradient descent with momentum updates).
+ * Test file for MomentumSGD (stochastic gradient descent with momentum
+ * updates).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -72,7 +73,7 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
 
     BOOST_REQUIRE_SMALL(result, 1e-4);
     for (size_t j = 0; j < i; ++j)
-      BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 1e-3);
+      BOOST_REQUIRE_CLOSE(coordinates[j], (double)1.0, 1e-3);
   }
 }
 

@@ -21,9 +21,9 @@ using namespace mlpack::kernel;
  */
 double EpanechnikovKernel::Normalizer(const size_t dimension)
 {
-  return 2.0 * pow(bandwidth, (double) dimension) *
-      std::pow(M_PI, dimension / 2.0) /
-      (std::tgamma(dimension / 2.0 + 1.0) * (dimension + 2.0));
+  return 2.0 * pow(bandwidth, (double)dimension)
+         * std::pow(M_PI, dimension / 2.0)
+         / (std::tgamma(dimension / 2.0 + 1.0) * (dimension + 2.0));
 }
 
 /**
@@ -59,18 +59,17 @@ double EpanechnikovKernel::Gradient(const double distance) const
  * Evaluate gradient of the kernel not for two points
  * but for a numerical value.
  */
-double EpanechnikovKernel::GradientForSquaredDistance(const double
-                                                  distanceSquared) const
+double EpanechnikovKernel::GradientForSquaredDistance(
+    const double distanceSquared) const
 {
   double bandwidthSquared = bandwidth * bandwidth;
   if (distanceSquared < bandwidthSquared)
   {
     return -1 * inverseBandwidthSquared;
   }
-  else if (distanceSquared > bandwidthSquared &&
-             distanceSquared >= 0)
+  else if (distanceSquared > bandwidthSquared && distanceSquared >= 0)
   {
-    return  0;
+    return 0;
   }
   else
   {

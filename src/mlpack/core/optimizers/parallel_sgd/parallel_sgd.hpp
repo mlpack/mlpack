@@ -56,7 +56,7 @@ namespace optimization {
  * @tparam DecayPolicyType Step size update policy used by parallel SGD
  *     to update the stepsize after each iteration.
  */
-template <typename DecayPolicyType = ConstantStep>
+template<typename DecayPolicyType = ConstantStep>
 class ParallelSGD
 {
  public:
@@ -94,7 +94,7 @@ class ParallelSGD
    * @param iterate Starting point(will be modified).
    * @return Objective value at the final point.
    */
-  template <typename SparseFunctionType>
+  template<typename SparseFunctionType>
   double Optimize(SparseFunctionType& function, arma::mat& iterate);
 
   //! Get the maximum number of iterations (0 indicates no limits).

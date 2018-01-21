@@ -34,7 +34,10 @@ class FirstPointIsRoot
    * returns 0.
    */
   template<typename MatType>
-  static size_t ChooseRoot(const MatType& /* dataset */) { return 0; }
+  static size_t ChooseRoot(const MatType& /* dataset */)
+  {
+    return 0;
+  }
 };
 
 } // namespace tree

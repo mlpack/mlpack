@@ -45,16 +45,17 @@ class NaiveConvolution
    * @param dH Stride of filter application in the y direction.
    */
   template<typename eT, typename Border = BorderMode>
-  static typename std::enable_if<
-      std::is_same<Border, ValidConvolution>::value, void>::type
+  static typename std::enable_if<std::is_same<Border, ValidConvolution>::value,
+                                 void>::type
   Convolution(const arma::Mat<eT>& input,
               const arma::Mat<eT>& filter,
               arma::Mat<eT>& output,
               const size_t dW = 1,
               const size_t dH = 1)
   {
-    output = arma::zeros<arma::Mat<eT> >((input.n_rows - filter.n_rows + 1) /
-        dW, (input.n_cols - filter.n_cols + 1) / dH);
+    output =
+        arma::zeros<arma::Mat<eT>>((input.n_rows - filter.n_rows + 1) / dW,
+                                   (input.n_cols - filter.n_cols + 1) / dH);
 
     // It seems to be about 3.5 times faster to use pointers instead of
     // filter(ki, kj) * input(leftInput + ki, topInput + kj) and output(i, j).
@@ -85,8 +86,8 @@ class NaiveConvolution
    * @param dH Stride of filter application in the y direction.
    */
   template<typename eT, typename Border = BorderMode>
-  static typename std::enable_if<
-      std::is_same<Border, FullConvolution>::value, void>::type
+  static typename std::enable_if<std::is_same<Border, FullConvolution>::value,
+                                 void>::type
   Convolution(const arma::Mat<eT>& input,
               const arma::Mat<eT>& filter,
               arma::Mat<eT>& output,
@@ -97,14 +98,15 @@ class NaiveConvolution
     const size_t outputCols = (input.n_cols + 2 * (filter.n_cols - 1)) * dH;
 
     // Pad filter and input to the working output shape.
-    arma::Mat<eT> inputPadded = arma::zeros<arma::Mat<eT> >(outputRows,
-        outputCols);
-    inputPadded.submat(filter.n_rows - 1, filter.n_cols - 1,
-        filter.n_rows - 1 + input.n_rows - 1,
-        filter.n_cols - 1 + input.n_cols - 1) = input;
+    arma::Mat<eT> inputPadded =
+        arma::zeros<arma::Mat<eT>>(outputRows, outputCols);
+    inputPadded.submat(filter.n_rows - 1,
+                       filter.n_cols - 1,
+                       filter.n_rows - 1 + input.n_rows - 1,
+                       filter.n_cols - 1 + input.n_cols - 1) = input;
 
-    NaiveConvolution<ValidConvolution>::Convolution(inputPadded, filter,
-        output, 1, 1);
+    NaiveConvolution<ValidConvolution>::Convolution(
+        inputPadded, filter, output, 1, 1);
   }
 
   /*
@@ -124,17 +126,17 @@ class NaiveConvolution
                           const size_t dH = 1)
   {
     arma::Mat<eT> convOutput;
-    NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
-        convOutput, dW, dH);
+    NaiveConvolution<BorderMode>::Convolution(
+        input.slice(0), filter.slice(0), convOutput, dW, dH);
 
-    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
-        input.n_slices);
+    output =
+        arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols, input.n_slices);
     output.slice(0) = convOutput;
 
     for (size_t i = 1; i < input.n_slices; i++)
     {
-      NaiveConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
-          output.slice(i), dW, dH);
+      NaiveConvolution<BorderMode>::Convolution(
+          input.slice(i), filter.slice(i), output.slice(i), dW, dH);
     }
   }
 
@@ -156,17 +158,17 @@ class NaiveConvolution
                           const size_t dH = 1)
   {
     arma::Mat<eT> convOutput;
-    NaiveConvolution<BorderMode>::Convolution(input, filter.slice(0),
-        convOutput, dW, dH);
+    NaiveConvolution<BorderMode>::Convolution(
+        input, filter.slice(0), convOutput, dW, dH);
 
-    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
-        filter.n_slices);
+    output =
+        arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols, filter.n_slices);
     output.slice(0) = convOutput;
 
     for (size_t i = 1; i < filter.n_slices; i++)
     {
-      NaiveConvolution<BorderMode>::Convolution(input, filter.slice(i),
-          output.slice(i), dW, dH);
+      NaiveConvolution<BorderMode>::Convolution(
+          input, filter.slice(i), output.slice(i), dW, dH);
     }
   }
 
@@ -188,20 +190,20 @@ class NaiveConvolution
                           const size_t dH = 1)
   {
     arma::Mat<eT> convOutput;
-    NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter,
-        convOutput, dW, dH);
+    NaiveConvolution<BorderMode>::Convolution(
+        input.slice(0), filter, convOutput, dW, dH);
 
-    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
-        input.n_slices);
+    output =
+        arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols, input.n_slices);
     output.slice(0) = convOutput;
 
     for (size_t i = 1; i < input.n_slices; i++)
     {
-      NaiveConvolution<BorderMode>::Convolution(input.slice(i), filter,
-          output.slice(i), dW, dH);
+      NaiveConvolution<BorderMode>::Convolution(
+          input.slice(i), filter, output.slice(i), dW, dH);
     }
   }
-};  // class NaiveConvolution
+}; // class NaiveConvolution
 
 } // namespace ann
 } // namespace mlpack

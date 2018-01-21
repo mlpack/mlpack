@@ -53,9 +53,8 @@ inline std::string ProcessOptions() { return ""; }
  * Print an option for a command-line argument.
  */
 template<typename T, typename... Args>
-std::string ProcessOptions(const std::string& paramName,
-                           const T& value,
-                           Args... args)
+std::string
+ProcessOptions(const std::string& paramName, const T& value, Args... args)
 {
   // See if it is part of the program.
   std::string result = "";
@@ -64,15 +63,15 @@ std::string ProcessOptions(const std::string& paramName,
     const util::ParamData& d = CLI::Parameters()[paramName];
 
     std::string name;
-    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParamName"](d, NULL,
-        (void*) &name);
+    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParamName"](
+        d, NULL, (void*)&name);
 
     std::ostringstream ossValue;
     ossValue << value;
     std::string rawValue = ossValue.str();
     std::string fullValue;
-    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParamValue"](d,
-        (void*) &rawValue, (void*) &fullValue);
+    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParamValue"](
+        d, (void*)&rawValue, (void*)&fullValue);
 
     std::ostringstream oss;
     if (d.tname != TYPENAME(bool))
@@ -83,9 +82,10 @@ std::string ProcessOptions(const std::string& paramName,
   }
   else
   {
-    throw std::runtime_error("Unknown parameter '" + paramName + "' " +
-        "encountered while assembling documentation!  Check PROGRAM_INFO() " +
-        "declaration.");
+    throw std::runtime_error(
+        "Unknown parameter '" + paramName + "' "
+        + "encountered while assembling documentation!  Check PROGRAM_INFO() "
+        + "declaration.");
   }
 
   std::string rest = ProcessOptions(args...);
@@ -102,8 +102,8 @@ std::string ProcessOptions(const std::string& paramName,
 template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args)
 {
-  return util::HyphenateString("$ " + programName + " " +
-      ProcessOptions(args...), 2);
+  return util::HyphenateString(
+      "$ " + programName + " " + ProcessOptions(args...), 2);
 }
 
 /**
@@ -120,8 +120,8 @@ inline std::string ParamString(const std::string& paramName)
     util::ParamData& d = CLI::Parameters()[paramName];
 
     std::string output;
-    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParamName"](d, NULL,
-        (void*) &output);
+    CLI::GetSingleton().functionMap[d.tname]["GetPrintableParamName"](
+        d, NULL, (void*)&output);
     // Is there an alias?
     std::string alias = "";
     if (d.alias != '\0')
@@ -131,8 +131,9 @@ inline std::string ParamString(const std::string& paramName)
   }
   else
   {
-    throw std::runtime_error("Parameter '" + paramName + "' not known!  Check "
-        "PROGRAM_INFO() definition.");
+    throw std::runtime_error("Parameter '" + paramName
+                             + "' not known!  Check "
+                               "PROGRAM_INFO() definition.");
   }
 }
 

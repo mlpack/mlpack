@@ -20,11 +20,9 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-Constant<InputDataType, OutputDataType>::Constant(
-    const size_t outSize,
-    const double scalar) :
-    inSize(0),
-    outSize(outSize)
+Constant<InputDataType, OutputDataType>::Constant(const size_t outSize,
+                                                  const double scalar)
+  : inSize(0), outSize(outSize)
 {
   constantOutput = OutputDataType(outSize, 1);
   constantOutput.fill(scalar);
@@ -32,8 +30,8 @@ Constant<InputDataType, OutputDataType>::Constant(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void Constant<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+void Constant<InputDataType, OutputDataType>::Forward(const InputType&& input,
+                                                      OutputType&& output)
 {
   if (inSize == 0)
   {
@@ -56,7 +54,7 @@ template<typename Archive>
 void Constant<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(constantOutput);
+  ar& BOOST_SERIALIZATION_NVP(constantOutput);
 }
 
 } // namespace ann

@@ -12,35 +12,35 @@ using namespace mlpack;
 using namespace mlpack::tree;
 
 // Constructor.
-HoeffdingTreeModel::HoeffdingTreeModel(const TreeType& type) :
-    type(type),
-    giniHoeffdingTree(NULL),
-    giniBinaryTree(NULL),
-    infoHoeffdingTree(NULL),
-    infoBinaryTree(NULL)
+HoeffdingTreeModel::HoeffdingTreeModel(const TreeType& type)
+  : type(type), giniHoeffdingTree(NULL), giniBinaryTree(NULL),
+    infoHoeffdingTree(NULL), infoBinaryTree(NULL)
 {
   // Nothing to do.
 }
 
 // Copy constructor.
-HoeffdingTreeModel::HoeffdingTreeModel(const HoeffdingTreeModel& other) :
-    type(other.type),
-    giniHoeffdingTree(other.giniHoeffdingTree ? new GiniHoeffdingTreeType(
-        *other.giniHoeffdingTree) : NULL),
-    giniBinaryTree(other.giniBinaryTree ? new GiniBinaryTreeType(
-        *other.giniBinaryTree) : NULL),
-    infoHoeffdingTree(other.infoHoeffdingTree ? new InfoHoeffdingTreeType(
-        *other.infoHoeffdingTree) : NULL),
-    infoBinaryTree(other.infoBinaryTree ? new InfoBinaryTreeType(
-        *other.infoBinaryTree) : NULL)
+HoeffdingTreeModel::HoeffdingTreeModel(const HoeffdingTreeModel& other)
+  : type(other.type),
+    giniHoeffdingTree(other.giniHoeffdingTree
+                          ? new GiniHoeffdingTreeType(*other.giniHoeffdingTree)
+                          : NULL),
+    giniBinaryTree(other.giniBinaryTree
+                       ? new GiniBinaryTreeType(*other.giniBinaryTree)
+                       : NULL),
+    infoHoeffdingTree(other.infoHoeffdingTree
+                          ? new InfoHoeffdingTreeType(*other.infoHoeffdingTree)
+                          : NULL),
+    infoBinaryTree(other.infoBinaryTree
+                       ? new InfoBinaryTreeType(*other.infoBinaryTree)
+                       : NULL)
 {
   // Nothing else to do.
 }
 
 // Move constructor.
-HoeffdingTreeModel::HoeffdingTreeModel(HoeffdingTreeModel&& other) :
-    type(other.type),
-    giniHoeffdingTree(other.giniHoeffdingTree),
+HoeffdingTreeModel::HoeffdingTreeModel(HoeffdingTreeModel&& other)
+  : type(other.type), giniHoeffdingTree(other.giniHoeffdingTree),
     giniBinaryTree(other.giniBinaryTree),
     infoHoeffdingTree(other.infoHoeffdingTree),
     infoBinaryTree(other.infoBinaryTree)
@@ -54,8 +54,8 @@ HoeffdingTreeModel::HoeffdingTreeModel(HoeffdingTreeModel&& other) :
 }
 
 // Copy operator.
-HoeffdingTreeModel& HoeffdingTreeModel::operator=(
-    const HoeffdingTreeModel& other)
+HoeffdingTreeModel& HoeffdingTreeModel::
+operator=(const HoeffdingTreeModel& other)
 {
   // Clear this model.
   delete giniHoeffdingTree;
@@ -117,18 +117,17 @@ HoeffdingTreeModel::~HoeffdingTreeModel()
 }
 
 // Create the model.
-void HoeffdingTreeModel::BuildModel(
-    const arma::mat& dataset,
-    const data::DatasetInfo& datasetInfo,
-    const arma::Row<size_t>& labels,
-    const size_t numClasses,
-    const bool batchTraining,
-    const double successProbability,
-    const size_t maxSamples,
-    const size_t checkInterval,
-    const size_t minSamples,
-    const size_t bins,
-    const size_t observationsBeforeBinning)
+void HoeffdingTreeModel::BuildModel(const arma::mat& dataset,
+                                    const data::DatasetInfo& datasetInfo,
+                                    const arma::Row<size_t>& labels,
+                                    const size_t numClasses,
+                                    const bool batchTraining,
+                                    const double successProbability,
+                                    const size_t maxSamples,
+                                    const size_t checkInterval,
+                                    const size_t minSamples,
+                                    const size_t bins,
+                                    const size_t observationsBeforeBinning)
 {
   // Depending on the type, create the tree.
   switch (type)
@@ -136,39 +135,67 @@ void HoeffdingTreeModel::BuildModel(
     case GINI_HOEFFDING:
       // Create instantiated numeric split.
       {
-        HoeffdingDoubleNumericSplit<GiniImpurity> ns(0, bins,
-            observationsBeforeBinning);
+        HoeffdingDoubleNumericSplit<GiniImpurity> ns(
+            0, bins, observationsBeforeBinning);
 
-        giniHoeffdingTree = new GiniHoeffdingTreeType(dataset, datasetInfo,
-            labels, numClasses, batchTraining, successProbability, maxSamples,
-            checkInterval, minSamples,
-            HoeffdingCategoricalSplit<GiniImpurity>(0, 0), ns);
+        giniHoeffdingTree = new GiniHoeffdingTreeType(
+            dataset,
+            datasetInfo,
+            labels,
+            numClasses,
+            batchTraining,
+            successProbability,
+            maxSamples,
+            checkInterval,
+            minSamples,
+            HoeffdingCategoricalSplit<GiniImpurity>(0, 0),
+            ns);
       }
       break;
 
     case GINI_BINARY:
-      giniBinaryTree = new GiniBinaryTreeType(dataset, datasetInfo, labels,
-          numClasses, batchTraining, successProbability, maxSamples,
-          checkInterval, minSamples);
+      giniBinaryTree = new GiniBinaryTreeType(dataset,
+                                              datasetInfo,
+                                              labels,
+                                              numClasses,
+                                              batchTraining,
+                                              successProbability,
+                                              maxSamples,
+                                              checkInterval,
+                                              minSamples);
       break;
 
     case INFO_HOEFFDING:
       // Create instantiated numeric split.
       {
-        HoeffdingDoubleNumericSplit<InformationGain> ns(0, bins,
-            observationsBeforeBinning);
+        HoeffdingDoubleNumericSplit<InformationGain> ns(
+            0, bins, observationsBeforeBinning);
 
-        infoHoeffdingTree = new InfoHoeffdingTreeType(dataset, datasetInfo,
-            labels, numClasses, batchTraining, successProbability, maxSamples,
-            checkInterval, minSamples,
-            HoeffdingCategoricalSplit<InformationGain>(0, 0), ns);
+        infoHoeffdingTree = new InfoHoeffdingTreeType(
+            dataset,
+            datasetInfo,
+            labels,
+            numClasses,
+            batchTraining,
+            successProbability,
+            maxSamples,
+            checkInterval,
+            minSamples,
+            HoeffdingCategoricalSplit<InformationGain>(0, 0),
+            ns);
       }
       break;
 
     case INFO_BINARY:
-      infoBinaryTree = new InfoBinaryTreeType(dataset, datasetInfo, labels,
-          numClasses, batchTraining, successProbability, maxSamples,
-          checkInterval, minSamples);
+      infoBinaryTree = new InfoBinaryTreeType(dataset,
+                                              datasetInfo,
+                                              labels,
+                                              numClasses,
+                                              batchTraining,
+                                              successProbability,
+                                              maxSamples,
+                                              checkInterval,
+                                              minSamples);
       break;
   }
 }

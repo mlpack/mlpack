@@ -48,7 +48,7 @@ typedef RASearch<FurthestNeighborSort> KRAFN;
 
 /**
  * @deprecated
- * The AllkRANN class is the all-k-rank-approximate-nearest-neighbors method.  It
+ * The AllkRANN class is the all-k-rank-approximate-nearest-neighbors method. It
  * returns L2 distances for each of the k rank-approximate nearest-neighbors.
  *
  * The approximation is controlled with two parameters (see allkrann_main.cpp)

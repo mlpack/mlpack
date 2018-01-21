@@ -49,7 +49,7 @@ class NMFMultiplicativeDivergenceUpdate
 {
  public:
   // Empty constructor required for the WUpdateRule template.
-  NMFMultiplicativeDivergenceUpdate() { }
+  NMFMultiplicativeDivergenceUpdate() {}
 
   /**
    * Initialize the factorization.  These rules don't store any state, so the
@@ -77,9 +77,7 @@ class NMFMultiplicativeDivergenceUpdate
    * @param H Encoding matrix.
    */
   template<typename MatType>
-  inline static void WUpdate(const MatType& V,
-                             arma::mat& W,
-                             const arma::mat& H)
+  inline static void WUpdate(const MatType& V, arma::mat& W, const arma::mat& H)
   {
     // Simple implementation left in the header file.
     arma::mat t1;
@@ -121,9 +119,7 @@ class NMFMultiplicativeDivergenceUpdate
    * @param H Encoding matrix to updated.
    */
   template<typename MatType>
-  inline static void HUpdate(const MatType& V,
-                            const arma::mat& W,
-                            arma::mat& H)
+  inline static void HUpdate(const MatType& V, const arma::mat& W, arma::mat& H)
   {
     // Simple implementation left in the header file.
     arma::mat t1;
@@ -151,7 +147,9 @@ class NMFMultiplicativeDivergenceUpdate
 
   //! Serialize the object (in this case, there is nothing to serialize).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const unsigned int /* version */)
+  {
+  }
 };
 
 } // namespace amf

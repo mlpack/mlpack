@@ -61,8 +61,10 @@ class NguyenWidrowInitialization
    * @param upperBound The number used as upper bound.
    */
   NguyenWidrowInitialization(const double lowerBound = -0.5,
-                             const double upperBound = 0.5) :
-      lowerBound(lowerBound), upperBound(upperBound) { }
+                             const double upperBound = 0.5)
+    : lowerBound(lowerBound), upperBound(upperBound)
+  {
+  }
 
   /**
    * Initialize the elements of the specified weight matrix with the
@@ -119,7 +121,6 @@ class InitTraits<NguyenWidrowInitialization>
   //! The Nguyen-Widrow initialization rule is applied over the entire network.
   static const bool UseLayer = false;
 };
-
 
 } // namespace ann
 } // namespace mlpack

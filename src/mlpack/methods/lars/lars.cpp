@@ -19,29 +19,23 @@ using namespace mlpack::regression;
 LARS::LARS(const bool useCholesky,
            const double lambda1,
            const double lambda2,
-           const double tolerance) :
-    matGram(&matGramInternal),
-    useCholesky(useCholesky),
-    lasso((lambda1 != 0)),
-    lambda1(lambda1),
-    elasticNet((lambda1 != 0) && (lambda2 != 0)),
-    lambda2(lambda2),
-    tolerance(tolerance)
-{ /* Nothing left to do. */ }
+           const double tolerance)
+  : matGram(&matGramInternal), useCholesky(useCholesky), lasso((lambda1 != 0)),
+    lambda1(lambda1), elasticNet((lambda1 != 0) && (lambda2 != 0)),
+    lambda2(lambda2), tolerance(tolerance)
+{ /* Nothing left to do. */
+}
 
 LARS::LARS(const bool useCholesky,
            const arma::mat& gramMatrix,
            const double lambda1,
            const double lambda2,
-           const double tolerance) :
-    matGram(&gramMatrix),
-    useCholesky(useCholesky),
-    lasso((lambda1 != 0)),
-    lambda1(lambda1),
-    elasticNet((lambda1 != 0) && (lambda2 != 0)),
-    lambda2(lambda2),
-    tolerance(tolerance)
-{ /* Nothing left to do */ }
+           const double tolerance)
+  : matGram(&gramMatrix), useCholesky(useCholesky), lasso((lambda1 != 0)),
+    lambda1(lambda1), elasticNet((lambda1 != 0) && (lambda2 != 0)),
+    lambda2(lambda2), tolerance(tolerance)
+{ /* Nothing left to do */
+}
 
 LARS::LARS(const arma::mat& data,
            const arma::vec& responses,
@@ -49,14 +43,10 @@ LARS::LARS(const arma::mat& data,
            const bool useCholesky,
            const double lambda1,
            const double lambda2,
-           const double tolerance) :
-    matGram(&matGramInternal),
-    useCholesky(useCholesky),
-    lasso((lambda1 != 0)),
-    lambda1(lambda1),
-    elasticNet((lambda1 != 0) && (lambda2 != 0)),
-    lambda2(lambda2),
-    tolerance(tolerance)
+           const double tolerance)
+  : matGram(&matGramInternal), useCholesky(useCholesky), lasso((lambda1 != 0)),
+    lambda1(lambda1), elasticNet((lambda1 != 0) && (lambda2 != 0)),
+    lambda2(lambda2), tolerance(tolerance)
 {
   arma::rowvec rowResponses = responses.t();
   Train(data, rowResponses, transposeData);
@@ -69,14 +59,10 @@ LARS::LARS(const arma::mat& data,
            const arma::mat& gramMatrix,
            const double lambda1,
            const double lambda2,
-           const double tolerance) :
-    matGram(&gramMatrix),
-    useCholesky(useCholesky),
-    lasso((lambda1 != 0)),
-    lambda1(lambda1),
-    elasticNet((lambda1 != 0) && (lambda2 != 0)),
-    lambda2(lambda2),
-    tolerance(tolerance)
+           const double tolerance)
+  : matGram(&gramMatrix), useCholesky(useCholesky), lasso((lambda1 != 0)),
+    lambda1(lambda1), elasticNet((lambda1 != 0) && (lambda2 != 0)),
+    lambda2(lambda2), tolerance(tolerance)
 {
   arma::rowvec rowResponses = responses.t();
   Train(data, rowResponses, transposeData);
@@ -88,8 +74,8 @@ LARS::LARS(const arma::mat& data,
            const bool useCholesky,
            const double lambda1,
            const double lambda2,
-           const double tolerance) :
-    LARS(useCholesky, lambda1, lambda2, tolerance)
+           const double tolerance)
+  : LARS(useCholesky, lambda1, lambda2, tolerance)
 {
   Train(data, responses, transposeData);
 }
@@ -101,8 +87,8 @@ LARS::LARS(const arma::mat& data,
            const arma::mat& gramMatrix,
            const double lambda1,
            const double lambda2,
-           const double tolerance) :
-    LARS(useCholesky, gramMatrix, lambda1, lambda2, tolerance)
+           const double tolerance)
+  : LARS(useCholesky, gramMatrix, lambda1, lambda2, tolerance)
 {
   Train(data, responses, transposeData);
 }
@@ -201,8 +187,8 @@ void LARS::Train(const arma::mat& matX,
   }
 
   // Main loop.
-  while (((activeSet.size() + ignoreSet.size()) < dataRef.n_cols) &&
-         (maxCorr > tolerance))
+  while (((activeSet.size() + ignoreSet.size()) < dataRef.n_cols)
+         && (maxCorr > tolerance))
   {
     // Compute the maximum correlation among inactive dimensions.
     maxCorr = 0;
@@ -225,8 +211,9 @@ void LARS::Train(const arma::mat& matX,
         //   newGramCol[i] = dot(matX.col(activeSet[i]), matX.col(changeInd));
         // }
         // This is equivalent to the above 5 lines.
-        arma::vec newGramCol = matGram->elem(changeInd * dataRef.n_cols +
-            arma::conv_to<arma::uvec>::from(activeSet));
+        arma::vec newGramCol =
+            matGram->elem(changeInd * dataRef.n_cols
+                          + arma::conv_to<arma::uvec>::from(activeSet));
 
         CholeskyInsert((*matGram)(changeInd, changeInd), newGramCol);
       }
@@ -265,8 +252,9 @@ void LARS::Train(const arma::mat& matX,
          *    = Solve(R % S, Solve(R^T, s)
          *    = s % Solve(R, Solve(R^T, s))
          */
-        unnormalizedBetaDirection = solve(trimatu(matUtriCholFactor),
-            solve(trimatl(trans(matUtriCholFactor)), s));
+        unnormalizedBetaDirection =
+            solve(trimatu(matUtriCholFactor),
+                  solve(trimatl(trans(matUtriCholFactor)), s));
 
         normalization = 1.0 / sqrt(dot(s, unnormalizedBetaDirection));
         betaDirection = normalization * unnormalizedBetaDirection;
@@ -276,8 +264,8 @@ void LARS::Train(const arma::mat& matX,
         // Singularity, so remove variable from active set, add to ignores set,
         // and look for new variable to add.
         Log::Warn << "Encountered singularity when adding variable "
-            << changeInd << " to active set; permanently removing."
-            << std::endl;
+                  << changeInd << " to active set; permanently removing."
+                  << std::endl;
         Deactivate(activeSet.size() - 1);
         Ignore(changeInd);
         CholeskyDelete(matUtriCholFactor.n_rows - 1);
@@ -294,8 +282,8 @@ void LARS::Train(const arma::mat& matX,
       // Check for singularity.
       arma::mat matS = s * arma::ones<arma::mat>(1, activeSet.size());
       const bool solvedOk = solve(unnormalizedBetaDirection,
-          matGramActive % trans(matS) % matS,
-          arma::ones<arma::mat>(activeSet.size(), 1));
+                                  matGramActive % trans(matS) % matS,
+                                  arma::ones<arma::mat>(activeSet.size(), 1));
       if (solvedOk)
       {
         // Ok, no singularity.
@@ -309,8 +297,8 @@ void LARS::Train(const arma::mat& matX,
         Deactivate(activeSet.size() - 1);
         Ignore(changeInd);
         Log::Warn << "Encountered singularity when adding variable "
-            << changeInd << " to active set; permanently removing."
-            << std::endl;
+                  << changeInd << " to active set; permanently removing."
+                  << std::endl;
         continue;
       }
     }
@@ -399,7 +387,7 @@ void LARS::Train(const arma::mat& matX,
     for (size_t i = 0; i < activeSet.size(); i++)
       curLambda += fabs(corr(activeSet[i]));
 
-    curLambda /= ((double) activeSet.size());
+    curLambda /= ((double)activeSet.size());
 
     lambdaPath.push_back(curLambda);
 
@@ -483,11 +471,11 @@ void LARS::InterpolateBeta()
   // interpolate beta and stop
   double ultimateLambda = lambdaPath[pathLength - 1];
   double penultimateLambda = lambdaPath[pathLength - 2];
-  double interp = (penultimateLambda - lambda1)
-      / (penultimateLambda - ultimateLambda);
+  double interp =
+      (penultimateLambda - lambda1) / (penultimateLambda - ultimateLambda);
 
   betaPath[pathLength - 1] = (1 - interp) * (betaPath[pathLength - 2])
-      + interp * betaPath[pathLength - 1];
+                             + interp * betaPath[pathLength - 1];
 
   lambdaPath[pathLength - 1] = lambda1;
 }
@@ -530,14 +518,14 @@ void LARS::CholeskyInsert(double sqNormNewX, const arma::vec& newGramCol)
     if (elasticNet)
       sqNormNewX += lambda2;
 
-    arma::vec matUtriCholFactork = solve(trimatl(trans(matUtriCholFactor)),
-        newGramCol);
+    arma::vec matUtriCholFactork =
+        solve(trimatl(trans(matUtriCholFactor)), newGramCol);
 
     matNewR(arma::span(0, n - 1), arma::span(0, n - 1)) = matUtriCholFactor;
     matNewR(arma::span(0, n - 1), n) = matUtriCholFactork;
     matNewR(n, arma::span(0, n - 1)).fill(0.0);
-    matNewR(n, n) = sqrt(sqNormNewX - dot(matUtriCholFactork,
-                                          matUtriCholFactork));
+    matNewR(n, n) =
+        sqrt(sqNormNewX - dot(matUtriCholFactork, matUtriCholFactork));
 
     matUtriCholFactor = matNewR;
   }
@@ -577,8 +565,8 @@ void LARS::CholeskyDelete(const size_t colToKill)
 
   if (colToKill == (n - 1))
   {
-    matUtriCholFactor = matUtriCholFactor(arma::span(0, n - 2),
-                                          arma::span(0, n - 2));
+    matUtriCholFactor =
+        matUtriCholFactor(arma::span(0, n - 2), arma::span(0, n - 2));
   }
   else
   {
@@ -589,14 +577,14 @@ void LARS::CholeskyDelete(const size_t colToKill)
     {
       arma::mat matG;
       arma::vec::fixed<2> rotatedVec;
-      GivensRotate(matUtriCholFactor(arma::span(k, k + 1), k), rotatedVec,
-          matG);
+      GivensRotate(
+          matUtriCholFactor(arma::span(k, k + 1), k), rotatedVec, matG);
       matUtriCholFactor(arma::span(k, k + 1), k) = rotatedVec;
       if (k < n - 1)
       {
         matUtriCholFactor(arma::span(k, k + 1), arma::span(k + 1, n - 1)) =
-            matG * matUtriCholFactor(arma::span(k, k + 1),
-            arma::span(k + 1, n - 1));
+            matG
+            * matUtriCholFactor(arma::span(k, k + 1), arma::span(k + 1, n - 1));
       }
     }
 

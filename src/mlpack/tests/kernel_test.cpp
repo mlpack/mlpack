@@ -398,7 +398,7 @@ BOOST_AUTO_TEST_CASE(LaplacianKernelTest)
 // substrings from the data.
 BOOST_AUTO_TEST_CASE(PSpectrumSubstringExtractionTest)
 {
-  std::vector<std::vector<std::string> > datasets;
+  std::vector<std::vector<std::string>> datasets;
 
   datasets.push_back(std::vector<std::string>());
 
@@ -554,7 +554,7 @@ BOOST_AUTO_TEST_CASE(PSpectrumSubstringExtractionTest)
 BOOST_AUTO_TEST_CASE(PSpectrumStringEvaluateTest)
 {
   // Construct simple dataset.
-  std::vector<std::vector<std::string> > dataset;
+  std::vector<std::vector<std::string>> dataset;
   dataset.push_back(std::vector<std::string>());
   dataset[0].push_back("hello");
   dataset[0].push_back("jello");

@@ -73,13 +73,11 @@ namespace emst /** Euclidean Minimum Spanning Trees. */ {
  * @tparam TreeType Type of tree to use.  This should follow the TreeType policy
  *      API.
  */
-template<
-    typename MetricType = metric::EuclideanDistance,
-    typename MatType = arma::mat,
-    template<typename TreeMetricType,
-             typename TreeStatType,
-             typename TreeMatType> class TreeType = tree::KDTree
->
+template<typename MetricType = metric::EuclideanDistance,
+         typename MatType = arma::mat,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType = tree::KDTree>
 class DualTreeBoruvka
 {
  public:
@@ -157,8 +155,7 @@ class DualTreeBoruvka
    * @param tree Pre-built tree.
    * @param metric An optional instantiated metric to use.
    */
-  DualTreeBoruvka(Tree* tree,
-                  const MetricType metric = MetricType());
+  DualTreeBoruvka(Tree* tree, const MetricType metric = MetricType());
 
   /**
    * Delete the tree, if it was created inside the object.

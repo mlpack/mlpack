@@ -37,21 +37,17 @@ class HMMModel
 
  public:
   //! Construct an uninitialized model.
-  HMMModel() :
-      type(HMMType::DiscreteHMM),
+  HMMModel()
+    : type(HMMType::DiscreteHMM),
       discreteHMM(new HMM<distribution::DiscreteDistribution>()),
-      gaussianHMM(NULL),
-      gmmHMM(NULL)
+      gaussianHMM(NULL), gmmHMM(NULL)
   {
     // Nothing to do.
   }
 
   //! Construct a model of the given type.
-  HMMModel(const HMMType type) :
-      type(type),
-      discreteHMM(NULL),
-      gaussianHMM(NULL),
-      gmmHMM(NULL)
+  HMMModel(const HMMType type)
+    : type(type), discreteHMM(NULL), gaussianHMM(NULL), gmmHMM(NULL)
   {
     if (type == HMMType::DiscreteHMM)
       discreteHMM = new HMM<distribution::DiscreteDistribution>();
@@ -62,11 +58,8 @@ class HMMModel
   }
 
   //! Copy another model.
-  HMMModel(const HMMModel& other) :
-      type(other.type),
-      discreteHMM(NULL),
-      gaussianHMM(NULL),
-      gmmHMM(NULL)
+  HMMModel(const HMMModel& other)
+    : type(other.type), discreteHMM(NULL), gaussianHMM(NULL), gmmHMM(NULL)
   {
     if (type == HMMType::DiscreteHMM)
       discreteHMM =
@@ -79,11 +72,9 @@ class HMMModel
   }
 
   //! Take ownership of another model.
-  HMMModel(HMMModel&& other) :
-      type(other.type),
-      discreteHMM(other.discreteHMM),
-      gaussianHMM(other.gaussianHMM),
-      gmmHMM(other.gmmHMM)
+  HMMModel(HMMModel&& other)
+    : type(other.type), discreteHMM(other.discreteHMM),
+      gaussianHMM(other.gaussianHMM), gmmHMM(other.gmmHMM)
   {
     other.type = HMMType::DiscreteHMM;
     other.discreteHMM = new HMM<distribution::DiscreteDistribution>();
@@ -127,8 +118,7 @@ class HMMModel
    * Given a functor type, perform that functor with the optional extra info on
    * the HMM.
    */
-  template<typename ActionType,
-           typename ExtraInfoType>
+  template<typename ActionType, typename ExtraInfoType>
   void PerformAction(ExtraInfoType* x)
   {
     if (type == HMMType::DiscreteHMM)
@@ -143,7 +133,7 @@ class HMMModel
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(type);
+    ar& BOOST_SERIALIZATION_NVP(type);
 
     // If necessary, clean memory.
     if (Archive::is_loading::value)
@@ -158,11 +148,11 @@ class HMMModel
     }
 
     if (type == HMMType::DiscreteHMM)
-      ar & BOOST_SERIALIZATION_NVP(discreteHMM);
+      ar& BOOST_SERIALIZATION_NVP(discreteHMM);
     else if (type == HMMType::GaussianHMM)
-      ar & BOOST_SERIALIZATION_NVP(gaussianHMM);
+      ar& BOOST_SERIALIZATION_NVP(gaussianHMM);
     else if (type == HMMType::GaussianMixtureModelHMM)
-      ar & BOOST_SERIALIZATION_NVP(gmmHMM);
+      ar& BOOST_SERIALIZATION_NVP(gmmHMM);
   }
 };
 

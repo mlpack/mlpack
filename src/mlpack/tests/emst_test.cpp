@@ -231,8 +231,8 @@ BOOST_AUTO_TEST_CASE(CoverTreeTest)
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   DualTreeBoruvka<> bst(inputData);
-  DualTreeBoruvka<EuclideanDistance, arma::mat, StandardCoverTree>
-      ct(inputData);
+  DualTreeBoruvka<EuclideanDistance, arma::mat, StandardCoverTree> ct(
+      inputData);
 
   arma::mat bstResults;
   arma::mat coverResults;

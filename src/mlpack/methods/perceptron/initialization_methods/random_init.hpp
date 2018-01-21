@@ -24,7 +24,7 @@ namespace perceptron {
 class RandomInitialization
 {
  public:
-  RandomInitialization() { }
+  RandomInitialization() {}
 
   inline static void Initialize(arma::mat& weights,
                                 arma::vec& biases,

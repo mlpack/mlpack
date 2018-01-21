@@ -28,8 +28,12 @@ template<typename MetricType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-class RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                    DescentType, AuxiliaryInformationType>::DualTreeTraverser
+class RectangleTree<MetricType,
+                    StatisticType,
+                    MatType,
+                    SplitType,
+                    DescentType,
+                    AuxiliaryInformationType>::DualTreeTraverser
 {
  public:
   /**
@@ -76,8 +80,7 @@ class RectangleTree<MetricType, StatisticType, MatType, SplitType,
     typename RuleType::TraversalInfoType travInfo;
   };
 
-  static bool nodeComparator(const NodeAndScore& obj1,
-                             const NodeAndScore& obj2)
+  static bool nodeComparator(const NodeAndScore& obj1, const NodeAndScore& obj2)
   {
     return obj1.score < obj2.score;
   }

@@ -94,15 +94,13 @@ class GMM
   /**
    * Create an empty Gaussian Mixture Model, with zero gaussians.
    */
-  GMM() :
-      gaussians(0),
-      dimensionality(0)
+  GMM() : gaussians(0), dimensionality(0)
   {
     // Warn the user.  They probably don't want to do this.  If this constructor
     // is being used (because it is required by some template classes), the user
     // should know that it is potentially dangerous.
     Log::Debug << "GMM::GMM(): no parameters given; Estimate() may fail "
-        << "unless parameters are set." << std::endl;
+               << "unless parameters are set." << std::endl;
   }
 
   /**
@@ -120,12 +118,13 @@ class GMM
    * @param dists Distributions of the model.
    * @param weights Weights of the model.
    */
-  GMM(const std::vector<distribution::GaussianDistribution> & dists,
-      const arma::vec& weights) :
-      gaussians(dists.size()),
+  GMM(const std::vector<distribution::GaussianDistribution>& dists,
+      const arma::vec& weights)
+    : gaussians(dists.size()),
       dimensionality((!dists.empty()) ? dists[0].Mean().n_elem : 0),
-      dists(dists),
-      weights(weights) { /* Nothing to do. */ }
+      dists(dists), weights(weights)
+  { /* Nothing to do. */
+  }
 
   //! Copy constructor for GMMs.
   GMM(const GMM& other);
@@ -143,8 +142,10 @@ class GMM
    *
    * @param i index of component.
    */
-  const distribution::GaussianDistribution& Component(size_t i) const {
-      return dists[i]; }
+  const distribution::GaussianDistribution& Component(size_t i) const
+  {
+    return dists[i];
+  }
   /**
    * Return a reference to a component distribution.
    *
@@ -258,8 +259,7 @@ class GMM
    * @param observations List of observations to classify.
    * @param labels Object which will be filled with labels.
    */
-  void Classify(const arma::mat& observations,
-                arma::Row<size_t>& labels) const;
+  void Classify(const arma::mat& observations, arma::Row<size_t>& labels) const;
 
   /**
    * Serialize the GMM.
@@ -277,10 +277,10 @@ class GMM
    * @param covars Covariances of the given mixture model.
    * @param weights Weights of the given mixture model.
    */
-  double LogLikelihood(
-      const arma::mat& dataPoints,
-      const std::vector<distribution::GaussianDistribution>& distsL,
-      const arma::vec& weights) const;
+  double
+  LogLikelihood(const arma::mat& dataPoints,
+                const std::vector<distribution::GaussianDistribution>& distsL,
+                const arma::vec& weights) const;
 };
 
 } // namespace gmm
@@ -290,4 +290,3 @@ class GMM
 #include "gmm_impl.hpp"
 
 #endif
-

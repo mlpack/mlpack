@@ -47,10 +47,9 @@ class MinimalSplitsNumberSweep
    * @param axisCut The coordinate at which the node may be split.
    */
   template<typename TreeType>
-  static size_t SweepNonLeafNode(
-      const size_t axis,
-      const TreeType* node,
-      typename TreeType::ElemType& axisCut);
+  static size_t SweepNonLeafNode(const size_t axis,
+                                 const TreeType* node,
+                                 typename TreeType::ElemType& axisCut);
 
   /**
    * Find a suitable partition of a leaf node along the provided axis.
@@ -61,10 +60,9 @@ class MinimalSplitsNumberSweep
    * @param axisCut The coordinate at which the node may be split.
    */
   template<typename TreeType>
-  static size_t SweepLeafNode(
-      const size_t axis,
-      const TreeType* node,
-      typename TreeType::ElemType& axisCut);
+  static size_t SweepLeafNode(const size_t axis,
+                              const TreeType* node,
+                              typename TreeType::ElemType& axisCut);
 };
 
 } // namespace tree
@@ -73,6 +71,4 @@ class MinimalSplitsNumberSweep
 // Include implementation
 #include "minimal_splits_number_sweep_impl.hpp"
 
-#endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_MINIMAL_SPLITS_NUMBER_SWEEP_HPP
-
-
+#endif //  MLPACK_CORE_TREE_RECTANGLE_TREE_MINIMAL_SPLITS_NUMBER_SWEEP_HPP

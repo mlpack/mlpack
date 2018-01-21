@@ -27,18 +27,16 @@ SortTask::SortTask(const size_t maxLength,
   if (maxLength <= 1)
   {
     std::ostringstream oss;
-    oss << "SortTask::SortTask(): maximum sequence length ("
-        << maxLength << ") "
-        << "should be at least 2!"
-        << std::endl;
+    oss << "SortTask::SortTask(): maximum sequence length (" << maxLength
+        << ") "
+        << "should be at least 2!" << std::endl;
     throw std::invalid_argument(oss.str());
   }
   if (bitLen <= 0)
   {
     std::ostringstream oss;
     oss << "SortTask::SortTask(): binary length (" << bitLen << ") "
-        << "is not positive!"
-        << std::endl;
+        << "is not positive!" << std::endl;
     throw std::invalid_argument(oss.str());
   }
 }
@@ -56,7 +54,7 @@ void SortTask::Generate(arma::field<arma::mat>& input,
     if (!fixedLength)
     {
       // Generate random uniform length from [2..maxLength].
-      size = mlpack::math::RandInt(2, maxLength+1);
+      size = mlpack::math::RandInt(2, maxLength + 1);
     }
     input(i) = arma::randi<arma::mat>(bitLen, size, arma::distr_param(0, 1));
     arma::mat itemAns(bitLen, size);
@@ -85,7 +83,7 @@ void SortTask::Generate(arma::field<arma::mat>& input,
       for (size_t j = 0; j < size; ++j)
       {
         sepInput.rows(ptr, ptr + bitLen - 1) =
-          input(i).rows(origPtr, origPtr + bitLen - 1);
+            input(i).rows(origPtr, origPtr + bitLen - 1);
         ptr += bitLen;
         origPtr += bitLen;
         sepInput.at(ptr, 0) = 0.5;

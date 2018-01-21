@@ -42,7 +42,7 @@ class NMFALSUpdate
 {
  public:
   //! Empty constructor required for the UpdateRule template.
-  NMFALSUpdate() { }
+  NMFALSUpdate() {}
 
   /**
    * Set initial values for the factorization.  In this case, we don't need to
@@ -69,9 +69,7 @@ class NMFALSUpdate
    * @param H Encoding matrix.
    */
   template<typename MatType>
-  inline static void WUpdate(const MatType& V,
-                             arma::mat& W,
-                             const arma::mat& H)
+  inline static void WUpdate(const MatType& V, arma::mat& W, const arma::mat& H)
   {
     // The call to inv() sometimes fails; so we are using the psuedoinverse.
     // W = (inv(H * H.t()) * H * V.t()).t();
@@ -102,9 +100,7 @@ class NMFALSUpdate
    * @param H Encoding matrix to be updated.
    */
   template<typename MatType>
-  inline static void HUpdate(const MatType& V,
-                             const arma::mat& W,
-                             arma::mat& H)
+  inline static void HUpdate(const MatType& V, const arma::mat& W, arma::mat& H)
   {
     H = pinv(W.t() * W) * W.t() * V;
 
@@ -120,7 +116,9 @@ class NMFALSUpdate
 
   //! Serialize the object (in this case, there is nothing to serialize).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const unsigned int /* version */)
+  {
+  }
 }; // class NMFALSUpdate
 
 } // namespace amf

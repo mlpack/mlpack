@@ -96,8 +96,8 @@ BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
       rightIndices = currentRight->VectorIndices();
 
       // The columns in the popped should be split into left and right nodes.
-      BOOST_REQUIRE_EQUAL(currentNode->NumColumns(), leftIndices.size() +
-          rightIndices.size());
+      BOOST_REQUIRE_EQUAL(currentNode->NumColumns(),
+                          leftIndices.size() + rightIndices.size());
 
       // Calculate the cosine values for each of the columns in the node.
       arma::vec cosines;
@@ -119,7 +119,6 @@ BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
       // If max(cosines) is close to 1.0 cosineMax and cosineMax2 may
       // differ significantly.
       double cosineMax2 = arma::max(cosines % (cosines < 1.0 - precision));
-
 
       if (std::fabs(cosineMax - cosineMax2) < precision)
       {

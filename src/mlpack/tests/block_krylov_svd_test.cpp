@@ -35,8 +35,8 @@ void CreateNoisyLowRankMatrix(arma::mat& data,
 
   arma::vec ids = arma::linspace<arma::vec>(0, n - 1, n);
 
-  arma::vec lowRank = ((1 - strength) *
-      arma::exp(-1.0 * arma::pow((ids / rank), 2)));
+  arma::vec lowRank =
+      ((1 - strength) * arma::exp(-1.0 * arma::pow((ids / rank), 2)));
   arma::vec tail = strength * arma::exp(-0.1 * ids / rank);
 
   arma::mat s = arma::zeros<arma::mat>(n, n);
@@ -83,8 +83,8 @@ BOOST_AUTO_TEST_CASE(RandomizedBlockKrylovSVDReconstructionError)
   arma::mat reconstruct = U2 * arma::diagmat(s2) * V2.t();
 
   // The relative reconstruction error should be small.
-  error = arma::norm(centeredData - reconstruct, "frob") /
-      arma::norm(centeredData, "frob");
+  error = arma::norm(centeredData - reconstruct, "frob")
+          / arma::norm(centeredData, "frob");
   BOOST_REQUIRE_SMALL(error, 1e-5);
 }
 

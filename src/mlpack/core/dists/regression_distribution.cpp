@@ -23,7 +23,9 @@ using namespace mlpack::distribution;
 void RegressionDistribution::Train(const arma::mat& observations)
 {
   regression::LinearRegression lr(observations.rows(1, observations.n_rows - 1),
-      arma::rowvec(observations.row(0)), 0, true);
+                                  arma::rowvec(observations.row(0)),
+                                  0,
+                                  true);
   rf = lr;
   arma::rowvec fitted;
   lr.Predict(observations.rows(1, observations.n_rows - 1), fitted);
@@ -45,7 +47,10 @@ void RegressionDistribution::Train(const arma::mat& observations,
                                    const arma::rowvec& weights)
 {
   regression::LinearRegression lr(observations.rows(1, observations.n_rows - 1),
-      arma::rowvec(observations.row(0)), weights, 0, true);
+                                  arma::rowvec(observations.row(0)),
+                                  weights,
+                                  0,
+                                  true);
   rf = lr;
   arma::rowvec fitted;
   lr.Predict(observations.rows(1, observations.n_rows - 1), fitted);
@@ -60,8 +65,8 @@ void RegressionDistribution::Train(const arma::mat& observations,
 double RegressionDistribution::Probability(const arma::vec& observation) const
 {
   arma::rowvec fitted;
-  rf.Predict(observation.rows(1, observation.n_rows-1), fitted);
-  return err.Probability(observation(0)-fitted.t());
+  rf.Predict(observation.rows(1, observation.n_rows - 1), fitted);
+  return err.Probability(observation(0) - fitted.t());
 }
 
 void RegressionDistribution::Predict(const arma::mat& points,

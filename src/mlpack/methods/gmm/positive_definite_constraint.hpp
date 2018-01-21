@@ -47,8 +47,8 @@ class PositiveDefiniteConstraint
     // large, we must project it back onto the cone of positive definite
     // matrices with reasonable condition number (I'm picking 1e5 here, not for
     // any particular reason).
-    if ((eigval[0] < 0.0) || ((eigval[eigval.n_elem - 1] / eigval[0]) > 1e5) ||
-        (eigval[eigval.n_elem - 1] < 1e-50))
+    if ((eigval[0] < 0.0) || ((eigval[eigval.n_elem - 1] / eigval[0]) > 1e5)
+        || (eigval[eigval.n_elem - 1] < 1e-50))
     {
       // Project any negative eigenvalues back to non-negative, and project any
       // too-small eigenvalues to a large enough value.  Make them as small as
@@ -64,11 +64,12 @@ class PositiveDefiniteConstraint
 
   //! Serialize the constraint (which stores nothing, so, nothing to do).
   template<typename Archive>
-  static void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  static void serialize(Archive& /* ar */, const unsigned int /* version */)
+  {
+  }
 };
 
 } // namespace gmm
 } // namespace mlpack
 
 #endif
-

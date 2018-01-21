@@ -20,10 +20,8 @@ namespace kmeans {
 
 template<typename MetricType, typename MatType>
 HamerlyKMeans<MetricType, MatType>::HamerlyKMeans(const MatType& dataset,
-                                                  MetricType& metric) :
-    dataset(dataset),
-    metric(metric),
-    distanceCalculations(0)
+                                                  MetricType& metric)
+  : dataset(dataset), metric(metric), distanceCalculations(0)
 {
   // Nothing to do.
 }
@@ -55,8 +53,8 @@ double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
   {
     for (size_t j = i + 1; j < centroids.n_cols; ++j)
     {
-      const double dist = metric.Evaluate(centroids.col(i), centroids.col(j)) /
-          2.0;
+      const double dist =
+          metric.Evaluate(centroids.col(i), centroids.col(j)) / 2.0;
       ++distanceCalculations;
 
       // Update bounds, if this intra-cluster distance is smaller.
@@ -69,8 +67,8 @@ double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
 
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    const double m = std::max(minClusterDistances(assignments[i]),
-                              lowerBounds(i));
+    const double m =
+        std::max(minClusterDistances(assignments[i]), lowerBounds(i));
 
     // First bound test.
     if (upperBounds(i) <= m)
@@ -82,8 +80,8 @@ double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
     }
 
     // Tighten upper bound.
-    upperBounds(i) = metric.Evaluate(dataset.col(i),
-                                     centroids.col(assignments[i]));
+    upperBounds(i) =
+        metric.Evaluate(dataset.col(i), centroids.col(assignments[i]));
     ++distanceCalculations;
 
     // Second bound test.
@@ -139,8 +137,8 @@ double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
       newCentroids.col(c) /= counts(c);
 
     // Calculate movement.
-    const double movement = metric.Evaluate(centroids.col(c),
-                                            newCentroids.col(c));
+    const double movement =
+        metric.Evaluate(centroids.col(c), newCentroids.col(c));
     centroidMovements(c) = movement;
     centroidMovement += std::pow(movement, 2.0);
     ++distanceCalculations;

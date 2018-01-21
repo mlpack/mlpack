@@ -26,12 +26,10 @@ namespace rl {
  * @tparam UpdaterType The type of the optimizer.
  * @tparam PolicyType The type of the behavior policy.
  */
-template <
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename PolicyType
->
+template<typename EnvironmentType,
+         typename NetworkType,
+         typename UpdaterType,
+         typename PolicyType>
 class NStepQLearningWorker
 {
  public:
@@ -48,17 +46,15 @@ class NStepQLearningWorker
    * @param config Hyper-parameters.
    * @param deterministic Whether it should be deterministic.
    */
-  NStepQLearningWorker(
-      const UpdaterType& updater,
-      const EnvironmentType& environment,
-      const TrainingConfig& config,
-      bool deterministic):
-      updater(updater),
-      environment(environment),
-      config(config),
-      deterministic(deterministic),
-      pending(config.UpdateInterval())
-  { Reset(); }
+  NStepQLearningWorker(const UpdaterType& updater,
+                       const EnvironmentType& environment,
+                       const TrainingConfig& config,
+                       bool deterministic)
+    : updater(updater), environment(environment), config(config),
+      deterministic(deterministic), pending(config.UpdateInterval())
+  {
+    Reset();
+  }
 
   /**
    * Initialize the worker.
@@ -67,7 +63,7 @@ class NStepQLearningWorker
   void Initialize(NetworkType& learningNetwork)
   {
     updater.Initialize(learningNetwork.Parameters().n_rows,
-        learningNetwork.Parameters().n_cols);
+                       learningNetwork.Parameters().n_cols);
     // Build local network.
     network = learningNetwork;
   }
@@ -115,7 +111,7 @@ class NStepQLearningWorker
       return false;
     }
 
-    #pragma omp atomic
+#pragma omp atomic
     totalSteps++;
 
     pending[pendingIndex] = std::make_tuple(state, action, reward, nextState);
@@ -125,22 +121,25 @@ class NStepQLearningWorker
     {
       // Initialize the gradient storage.
       arma::mat totalGradients(learningNetwork.Parameters().n_rows,
-          learningNetwork.Parameters().n_cols, arma::fill::zeros);
+                               learningNetwork.Parameters().n_cols,
+                               arma::fill::zeros);
 
       // Bootstrap from the value of next state.
       arma::colvec actionValue;
       double target = 0;
       if (!terminal)
       {
-        #pragma omp critical
-        { targetNetwork.Predict(nextState.Encode(), actionValue); };
+#pragma omp critical
+        {
+          targetNetwork.Predict(nextState.Encode(), actionValue);
+        };
         target = actionValue.max();
       }
 
       // Update in reverse order.
       for (int i = pending.size() - 1; i >= 0; --i)
       {
-        TransitionType &transition = pending[i];
+        TransitionType& transition = pending[i];
         target = config.Discount() * target + std::get<2>(transition);
 
         // Compute the training target for current state.
@@ -156,14 +155,14 @@ class NStepQLearningWorker
       }
 
       // Clamp the accumulated gradients.
-      totalGradients.transform(
-          [&](double gradient)
-          { return std::min(std::max(gradient, -config.GradientLimit()),
-          config.GradientLimit()); });
+      totalGradients.transform([&](double gradient) {
+        return std::min(std::max(gradient, -config.GradientLimit()),
+                        config.GradientLimit());
+      });
 
       // Perform async update of the global network.
-      updater.Update(learningNetwork.Parameters(),
-          config.StepSize(), totalGradients);
+      updater.Update(
+          learningNetwork.Parameters(), config.StepSize(), totalGradients);
 
       // Sync the local network with the global network.
       network = learningNetwork;
@@ -174,8 +173,10 @@ class NStepQLearningWorker
     // Update global target network.
     if (totalSteps % config.TargetNetworkSyncInterval() == 0)
     {
-      #pragma omp critical
-      { targetNetwork = learningNetwork; }
+#pragma omp critical
+      {
+        targetNetwork = learningNetwork;
+      }
     }
 
     policy.Anneal();

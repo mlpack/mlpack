@@ -34,10 +34,8 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputLayerType The output layer type used to evaluate the network.
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
  */
-template<
-  typename OutputLayerType = NegativeLogLikelihood<>,
-  typename InitializationRuleType = RandomInitialization
->
+template<typename OutputLayerType = NegativeLogLikelihood<>,
+         typename InitializationRuleType = RandomInitialization>
 class RNN
 {
  public:
@@ -122,9 +120,8 @@ class RNN
    * @param optimizer Instantiated optimizer used to train the model.
    */
   template<typename OptimizerType>
-  void Train(arma::cube predictors,
-             arma::cube responses,
-             OptimizerType& optimizer);
+  void
+  Train(arma::cube predictors, arma::cube responses, OptimizerType& optimizer);
 
   /**
    * Train the recurrent neural network on the given input data. By default, the
@@ -222,15 +219,21 @@ class RNN
    * @param layer The layer to be added to the model.
    */
   template<typename LayerType>
-  void Add(const LayerType& layer) { network.push_back(new LayerType(layer)); }
+  void Add(const LayerType& layer)
+  {
+    network.push_back(new LayerType(layer));
+  }
 
   /**
    * Add a new layer to the model.
    *
    * @param args The parameters to be passed to the layer constructor.
    */
-  template <class LayerType, class... Args>
-  void Add(Args... args) { network.push_back(new LayerType(args...)); }
+  template<class LayerType, class... Args>
+  void Add(Args... args)
+  {
+    network.push_back(new LayerType(args...));
+  }
 
   /**
    * Add a new layer to the model.
@@ -329,7 +332,7 @@ class RNN
   //! Indicator if we already trained the model.
   bool reset;
 
-    //! Only predict the last element of the input sequence.
+  //! Only predict the last element of the input sequence.
   bool single;
 
   //! Locally-stored model modules.

@@ -48,8 +48,8 @@ class DiscreteDistribution
   /**
    * Default constructor, which creates a distribution that has no observations.
    */
-  DiscreteDistribution() :
-      probabilities(std::vector<arma::vec>(1)){ /* Nothing to do. */ }
+  DiscreteDistribution()
+    : probabilities(std::vector<arma::vec>(1)) { /* Nothing to do. */}
 
   /**
    * Define the discrete distribution as having numObservations possible
@@ -59,13 +59,15 @@ class DiscreteDistribution
    * @param numObservations Number of possible observations this distribution
    *    can have.
    */
-  DiscreteDistribution(const size_t numObservations) :
-      probabilities(std::vector<arma::vec>(1,
-          arma::ones<arma::vec>(numObservations) / numObservations))
-  { /* Nothing to do. */ }
+  DiscreteDistribution(const size_t numObservations)
+    : probabilities(std::vector<arma::vec>(
+          1, arma::ones<arma::vec>(numObservations) / numObservations))
+  { /* Nothing to do. */
+  }
 
   /**
-   * Define the multidimensional discrete distribution as having numObservations possible
+   * Define the multidimensional discrete distribution as having numObservations
+   * possible
    * observations.  The probability in each state will be set to (1 /
    * numObservations of each dimension).
    *
@@ -89,7 +91,8 @@ class DiscreteDistribution
   }
 
   /**
-   * Define the multidimensional discrete distribution as having the given probabilities for each
+   * Define the multidimensional discrete distribution as having the given
+   * probabilities for each
    * observation.
    *
    * @param probabilities Probabilities of each possible observation.
@@ -105,7 +108,7 @@ class DiscreteDistribution
       else
       {
         this->probabilities.push_back(arma::ones<arma::vec>(temp.n_elem)
-            / temp.n_elem);
+                                      / temp.n_elem);
       }
     }
   }
@@ -130,8 +133,9 @@ class DiscreteDistribution
     if (observation.n_elem != probabilities.size())
     {
       Log::Fatal << "DiscreteDistribution::Probability(): observation has "
-          << "incorrect dimension " << observation.n_elem << " but should have "
-          << "dimension " << probabilities.size() << "!" << std::endl;
+                 << "incorrect dimension " << observation.n_elem
+                 << " but should have "
+                 << "dimension " << probabilities.size() << "!" << std::endl;
     }
 
     for (size_t dimension = 0; dimension < observation.n_elem; dimension++)
@@ -144,9 +148,9 @@ class DiscreteDistribution
       if (obs >= probabilities[dimension].n_elem)
       {
         Log::Fatal << "DiscreteDistribution::Probability(): received "
-            << "observation " << obs << "; observation must be in [0, "
-            << probabilities[dimension].n_elem << "] for this distribution."
-            << std::endl;
+                   << "observation " << obs << "; observation must be in [0, "
+                   << probabilities[dimension].n_elem
+                   << "] for this distribution." << std::endl;
       }
       probability *= probabilities[dimension][obs];
     }
@@ -195,14 +199,15 @@ class DiscreteDistribution
    * @param probabilities List of probabilities that each observation is
    *    actually from this distribution.
    */
-  void Train(const arma::mat& observations,
-             const arma::vec& probabilities);
+  void Train(const arma::mat& observations, const arma::vec& probabilities);
 
   //! Return the vector of probabilities for the given dimension.
   arma::vec& Probabilities(const size_t dim = 0) { return probabilities[dim]; }
   //! Modify the vector of probabilities for the given dimension.
   const arma::vec& Probabilities(const size_t dim = 0) const
-  { return probabilities[dim]; }
+  {
+    return probabilities[dim];
+  }
 
   /**
    * Serialize the distribution.
@@ -210,7 +215,7 @@ class DiscreteDistribution
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(probabilities);
+    ar& BOOST_SERIALIZATION_NVP(probabilities);
   }
 
  private:

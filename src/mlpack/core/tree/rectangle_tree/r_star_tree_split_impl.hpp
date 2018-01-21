@@ -52,8 +52,8 @@ size_t RStarTreeSplit::ReinsertPoints(TreeType* tree,
       tree->Bound().Center(center);
       for (size_t i = 0; i < sorted.size(); i++)
       {
-        sorted[i].first = tree->Metric().Evaluate(center,
-            tree->Dataset().col(tree->Point(i)));
+        sorted[i].first = tree->Metric().Evaluate(
+            center, tree->Dataset().col(tree->Point(i)));
         sorted[i].second = tree->Point(i);
       }
 
@@ -105,8 +105,8 @@ void RStarTreeSplit::PickLeafSplit(TreeType* tree,
     arma::uvec sortedIndices = arma::sort_index(dimValues);
 
     // We'll store each of the three scores for each distribution.
-    const size_t numPossibleSplits = tree->MaxLeafSize() -
-        2 * tree->MinLeafSize() + 2;
+    const size_t numPossibleSplits =
+        tree->MaxLeafSize() - 2 * tree->MinLeafSize() + 2;
     arma::Col<ElemType> areas(numPossibleSplits, arma::fill::zeros);
     arma::Col<ElemType> margins(numPossibleSplits, arma::fill::zeros);
     arma::Col<ElemType> overlaps(numPossibleSplits, arma::fill::zeros);
@@ -174,7 +174,7 @@ void RStarTreeSplit::PickLeafSplit(TreeType* tree,
  * new nodes into the tree, spliting the parent if necessary.
  */
 template<typename TreeType>
-void RStarTreeSplit::SplitLeafNode(TreeType *tree, std::vector<bool>& relevels)
+void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -218,7 +218,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree, std::vector<bool>& relevels)
    * duplication.
    */
   TreeType* par = tree->Parent();
-  TreeType* treeOne = (par) ? tree              : new TreeType(tree);
+  TreeType* treeOne = (par) ? tree : new TreeType(tree);
   TreeType* treeTwo = (par) ? new TreeType(par) : new TreeType(tree);
 
   // Now clean the node, and we will re-use this.
@@ -268,9 +268,8 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree, std::vector<bool>& relevels)
  * higher up the tree because they were already updated if necessary.
  */
 template<typename TreeType>
-bool RStarTreeSplit::SplitNonLeafNode(
-    TreeType *tree,
-    std::vector<bool>& relevels)
+bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
+                                      std::vector<bool>& relevels)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -309,8 +308,8 @@ bool RStarTreeSplit::SplitNonLeafNode(
     // We'll store each of the three scores for each distribution.  Remember
     // that these are the sums calculated over both the low and high bounds of
     // each rectangle.
-    const size_t numPossibleSplits = tree->MaxNumChildren() -
-        2 * tree->MinNumChildren() + 2;
+    const size_t numPossibleSplits =
+        tree->MaxNumChildren() - 2 * tree->MinNumChildren() + 2;
     arma::Col<ElemType> areas(2 * numPossibleSplits, arma::fill::zeros);
     arma::Col<ElemType> margins(2 * numPossibleSplits, arma::fill::zeros);
     arma::Col<ElemType> overlaps(2 * numPossibleSplits, arma::fill::zeros);
@@ -349,7 +348,7 @@ bool RStarTreeSplit::SplitNonLeafNode(
       // Now calculate margins for each.
       for (size_t k = 0; k < lb1.Dim(); k++)
       {
-        margins[2 * i]     += lb1[k].Width() + lb2[k].Width();
+        margins[2 * i] += lb1[k].Width() + lb2[k].Width();
         margins[2 * i + 1] += hb1[k].Width() + hb2[k].Width();
       }
 
@@ -399,7 +398,7 @@ bool RStarTreeSplit::SplitNonLeafNode(
       }
 
       bestIndex = ((tiedOnOverlap ? areaIndex : overlapIndex) - indexOffset) / 2
-          + tree->MinNumChildren();
+                  + tree->MinNumChildren();
     }
   }
 
@@ -420,7 +419,7 @@ bool RStarTreeSplit::SplitNonLeafNode(
    * duplication.
    */
   TreeType* par = tree->Parent();
-  TreeType* treeOne = par ? tree              : new TreeType(tree);
+  TreeType* treeOne = par ? tree : new TreeType(tree);
   TreeType* treeTwo = par ? new TreeType(par) : new TreeType(tree);
 
   // Now clean the node.

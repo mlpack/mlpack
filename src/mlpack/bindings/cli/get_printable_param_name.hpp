@@ -23,8 +23,9 @@ std::string GetPrintableParamName(
     const util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0);
+    const typename boost::
+        disable_if<std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::
+            type* = 0);
 
 /**
  * Get the parameter name for a matrix type (where the user has to pass the file
@@ -52,19 +53,19 @@ std::string GetPrintableParamName(
 template<typename T>
 std::string GetPrintableParamName(
     const util::ParamData& data,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0);
+    const typename boost::
+        enable_if<std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::
+            type* = 0);
 
 /**
  * Get the parameter's name as seen by the user.
  */
 template<typename T>
-void GetPrintableParamName(
-    const util::ParamData& d,
-    const void* /* input */,
-    void* output)
+void GetPrintableParamName(const util::ParamData& d,
+                           const void* /* input */,
+                           void* output)
 {
-  *((std::string*) output) = GetPrintableParamName<T>(d);
+  *((std::string*)output) = GetPrintableParamName<T>(d);
 }
 
 } // namespace cli

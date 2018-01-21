@@ -52,82 +52,82 @@ BOOST_AUTO_TEST_CASE(HollowBallBoundTest)
 
   BOOST_REQUIRE_EQUAL(b.Contains(arma::vec("1.0 2.0 3.0 5.0 5.0")), false);
 
-  HollowBallBound<EuclideanDistance> b2(0.5, 1,
-      arma::vec("1.0 2.0 3.0 7.0 5.0"));
+  HollowBallBound<EuclideanDistance> b2(
+      0.5, 1, arma::vec("1.0 2.0 3.0 7.0 5.0"));
   BOOST_REQUIRE_EQUAL(b.Contains(b2), true);
 
-  b2 = HollowBallBound<EuclideanDistance>(2.5, 3.5,
-      arma::vec("1.0 2.0 3.0 4.5 5.0"));
+  b2 = HollowBallBound<EuclideanDistance>(
+      2.5, 3.5, arma::vec("1.0 2.0 3.0 4.5 5.0"));
   BOOST_REQUIRE_EQUAL(b.Contains(b2), true);
 
-  b2 = HollowBallBound<EuclideanDistance>(2.0, 3.5,
-      arma::vec("1.0 2.0 3.0 4.5 5.0"));
+  b2 = HollowBallBound<EuclideanDistance>(
+      2.0, 3.5, arma::vec("1.0 2.0 3.0 4.5 5.0"));
   BOOST_REQUIRE_EQUAL(b.Contains(b2), false);
 
-  BOOST_REQUIRE_CLOSE(b.MinDistance(arma::vec("1.0 2.0 8.0 4.0 5.0")), 1.0,
-      1e-5);
-  BOOST_REQUIRE_CLOSE(b.MinDistance(arma::vec("1.0 2.0 4.0 4.0 5.0")), 1.0,
-      1e-5);
-  BOOST_REQUIRE_CLOSE(b.MinDistance(arma::vec("1.0 2.0 3.0 4.0 5.0")), 2.0,
-      1e-5);
-  BOOST_REQUIRE_CLOSE(b.MinDistance(arma::vec("1.0 2.0 5.0 4.0 5.0")), 0.0,
-      1e-5);
-  BOOST_REQUIRE_CLOSE(b.MinDistance(arma::vec("5.0 2.0 3.0 4.0 5.0")), 0.0,
-      1e-5);
-  BOOST_REQUIRE_CLOSE(b.MinDistance(arma::vec("3.0 2.0 3.0 4.0 5.0")), 0.0,
-      1e-5);
+  BOOST_REQUIRE_CLOSE(
+      b.MinDistance(arma::vec("1.0 2.0 8.0 4.0 5.0")), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(
+      b.MinDistance(arma::vec("1.0 2.0 4.0 4.0 5.0")), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(
+      b.MinDistance(arma::vec("1.0 2.0 3.0 4.0 5.0")), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(
+      b.MinDistance(arma::vec("1.0 2.0 5.0 4.0 5.0")), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(
+      b.MinDistance(arma::vec("5.0 2.0 3.0 4.0 5.0")), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(
+      b.MinDistance(arma::vec("3.0 2.0 3.0 4.0 5.0")), 0.0, 1e-5);
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(arma::vec("1.0 2.0 4.0 4.0 5.0")), 5.0,
-      1e-5);
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(arma::vec("1.0 2.0 8.0 4.0 5.0")), 9.0,
-      1e-5);
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(arma::vec("1.0 2.0 3.0 4.0 5.0")), 4.0,
-      1e-5);
+  BOOST_REQUIRE_CLOSE(
+      b.MaxDistance(arma::vec("1.0 2.0 4.0 4.0 5.0")), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(
+      b.MaxDistance(arma::vec("1.0 2.0 8.0 4.0 5.0")), 9.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(
+      b.MaxDistance(arma::vec("1.0 2.0 3.0 4.0 5.0")), 4.0, 1e-5);
 
-  b2 = HollowBallBound<EuclideanDistance>(3, 4,
-      arma::vec("1.0 2.0 3.0 5.0 5.0"));
+  b2 = HollowBallBound<EuclideanDistance>(
+      3, 4, arma::vec("1.0 2.0 3.0 5.0 5.0"));
   BOOST_REQUIRE_CLOSE(b.MinDistance(b2), 0.0, 1e-5);
 
-  b2 = HollowBallBound<EuclideanDistance>(1, 2,
-      arma::vec("1.0 2.0 3.0 4.0 5.0"));
+  b2 = HollowBallBound<EuclideanDistance>(
+      1, 2, arma::vec("1.0 2.0 3.0 4.0 5.0"));
   BOOST_REQUIRE_CLOSE(b.MinDistance(b2), 0.0, 1e-5);
 
-  b2 = HollowBallBound<EuclideanDistance>(0.5, 1.0,
-      arma::vec("1.0 2.5 3.0 4.0 5.0"));
+  b2 = HollowBallBound<EuclideanDistance>(
+      0.5, 1.0, arma::vec("1.0 2.5 3.0 4.0 5.0"));
   BOOST_REQUIRE_CLOSE(b.MinDistance(b2), 0.5, 1e-5);
 
-  b2 = HollowBallBound<EuclideanDistance>(0.5, 1.0,
-      arma::vec("1.0 8.0 3.0 4.0 5.0"));
+  b2 = HollowBallBound<EuclideanDistance>(
+      0.5, 1.0, arma::vec("1.0 8.0 3.0 4.0 5.0"));
   BOOST_REQUIRE_CLOSE(b.MinDistance(b2), 1.0, 1e-5);
 
-  b2 = HollowBallBound<EuclideanDistance>(0.5, 2.0,
-      arma::vec("1.0 8.0 3.0 4.0 5.0"));
+  b2 = HollowBallBound<EuclideanDistance>(
+      0.5, 2.0, arma::vec("1.0 8.0 3.0 4.0 5.0"));
   BOOST_REQUIRE_CLOSE(b.MinDistance(b2), 0.0, 1e-5);
 
-  b2 = HollowBallBound<EuclideanDistance>(0.5, 2.0,
-      arma::vec("1.0 8.0 3.0 4.0 5.0"));
+  b2 = HollowBallBound<EuclideanDistance>(
+      0.5, 2.0, arma::vec("1.0 8.0 3.0 4.0 5.0"));
   BOOST_REQUIRE_CLOSE(b.MaxDistance(b2), 12.0, 1e-5);
 
-  b2 = HollowBallBound<EuclideanDistance>(0.5, 2.0,
-      arma::vec("1.0 3.0 3.0 4.0 5.0"));
+  b2 = HollowBallBound<EuclideanDistance>(
+      0.5, 2.0, arma::vec("1.0 3.0 3.0 4.0 5.0"));
   BOOST_REQUIRE_CLOSE(b.MaxDistance(b2), 7.0, 1e-5);
 
   HollowBallBound<EuclideanDistance> b1 = b;
-  b2 = HollowBallBound<EuclideanDistance>(1.0, 2.0,
-      arma::vec("1.0 2.5 3.0 4.0 5.0"));
+  b2 = HollowBallBound<EuclideanDistance>(
+      1.0, 2.0, arma::vec("1.0 2.5 3.0 4.0 5.0"));
 
   b1 |= b2;
   BOOST_REQUIRE_CLOSE(b1.InnerRadius(), 0.5, 1e-5);
 
   b1 = b;
-  b2 = HollowBallBound<EuclideanDistance>(0.5, 2.0,
-      arma::vec("1.0 3.0 3.0 4.0 5.0"));
+  b2 = HollowBallBound<EuclideanDistance>(
+      0.5, 2.0, arma::vec("1.0 3.0 3.0 4.0 5.0"));
   b1 |= b2;
   BOOST_REQUIRE_CLOSE(b1.InnerRadius(), 0.0, 1e-5);
 
   b1 = b;
-  b2 = HollowBallBound<EuclideanDistance>(0.5, 4.0,
-      arma::vec("1.0 3.0 3.0 4.0 5.0"));
+  b2 = HollowBallBound<EuclideanDistance>(
+      0.5, 4.0, arma::vec("1.0 3.0 3.0 4.0 5.0"));
   b1 |= b2;
   BOOST_REQUIRE_CLOSE(b1.OuterRadius(), 5.0, 1e-5);
 }
@@ -141,17 +141,19 @@ void CheckBound(TreeType& tree)
     // Ensure that the bound contains all descendant points.
     for (size_t i = 0; i < tree.NumPoints(); i++)
     {
-      ElemType dist = tree.Bound().Metric().Evaluate(tree.Bound().Center(),
-          tree.Dataset().col(tree.Point(i)));
+      ElemType dist = tree.Bound().Metric().Evaluate(
+          tree.Bound().Center(), tree.Dataset().col(tree.Point(i)));
       ElemType hollowDist = tree.Bound().Metric().Evaluate(
-          tree.Bound().HollowCenter(),
-          tree.Dataset().col(tree.Point(i)));
+          tree.Bound().HollowCenter(), tree.Dataset().col(tree.Point(i)));
 
-      BOOST_REQUIRE_LE(tree.Bound().InnerRadius(), hollowDist  *
-          (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
+      BOOST_REQUIRE_LE(
+          tree.Bound().InnerRadius(),
+          hollowDist * (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
 
-      BOOST_REQUIRE_LE(dist, tree.Bound().OuterRadius() *
-          (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
+      BOOST_REQUIRE_LE(
+          dist,
+          tree.Bound().OuterRadius()
+              * (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
     }
   }
   else
@@ -159,17 +161,19 @@ void CheckBound(TreeType& tree)
     // Ensure that the bound contains all descendant points.
     for (size_t i = 0; i < tree.NumDescendants(); i++)
     {
-      ElemType dist = tree.Bound().Metric().Evaluate(tree.Bound().Center(),
-          tree.Dataset().col(tree.Descendant(i)));
+      ElemType dist = tree.Bound().Metric().Evaluate(
+          tree.Bound().Center(), tree.Dataset().col(tree.Descendant(i)));
       ElemType hollowDist = tree.Bound().Metric().Evaluate(
-          tree.Bound().HollowCenter(),
-          tree.Dataset().col(tree.Descendant(i)));
+          tree.Bound().HollowCenter(), tree.Dataset().col(tree.Descendant(i)));
 
-      BOOST_REQUIRE_LE(tree.Bound().InnerRadius(), hollowDist  *
-          (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
+      BOOST_REQUIRE_LE(
+          tree.Bound().InnerRadius(),
+          hollowDist * (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
 
-      BOOST_REQUIRE_LE(dist, tree.Bound().OuterRadius() *
-          (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
+      BOOST_REQUIRE_LE(
+          dist,
+          tree.Bound().OuterRadius()
+              * (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
     }
 
     CheckBound(*tree.Left());
@@ -192,7 +196,7 @@ BOOST_AUTO_TEST_CASE(VPTreeTest)
 {
   typedef VPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
 
-  size_t maxRuns = 10; // Ten total tests.
+  size_t maxRuns = 10;           // Ten total tests.
   size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
 
   // We use the default leaf size of 20.
@@ -241,8 +245,11 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
   arma::mat distances2;
 
   // Nearest neighbor search with the VP tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      VPTree> knn1(dataset, SINGLE_TREE_MODE);
+  NeighborSearch<NearestNeighborSort,
+                 metric::LMetric<2, true>,
+                 arma::mat,
+                 VPTree>
+      knn1(dataset, SINGLE_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 
@@ -268,8 +275,11 @@ BOOST_AUTO_TEST_CASE(DualTreeTraverserTest)
   arma::mat distances2;
 
   // Nearest neighbor search with the VP tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
-      VPTree> knn1(dataset, DUAL_TREE_MODE);
+  NeighborSearch<NearestNeighborSort,
+                 metric::LMetric<2, true>,
+                 arma::mat,
+                 VPTree>
+      knn1(dataset, DUAL_TREE_MODE);
 
   knn1.Search(5, neighbors1, distances1);
 

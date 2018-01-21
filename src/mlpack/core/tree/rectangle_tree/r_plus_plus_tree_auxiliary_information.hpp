@@ -113,7 +113,6 @@ class RPlusPlusTreeAuxiliaryInformation
    */
   bool HandleNodeRemoval(TreeType* /* node */, const size_t /* nodeIndex */);
 
-
   /**
    * Some tree types require to propagate the information upward.
    * This method should return false if this is not the case. If true is
@@ -157,7 +156,7 @@ class RPlusPlusTreeAuxiliaryInformation
    * Serialize the information.
    */
   template<typename Archive>
-  void serialize(Archive &, const unsigned int /* version */);
+  void serialize(Archive&, const unsigned int /* version */);
 };
 
 } // namespace tree

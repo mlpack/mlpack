@@ -29,23 +29,18 @@ SGD<UpdatePolicyType, DecayPolicyType>::SGD(
     const bool shuffle,
     const UpdatePolicyType& updatePolicy,
     const DecayPolicyType& decayPolicy,
-    const bool resetPolicy) :
-    stepSize(stepSize),
-    batchSize(batchSize),
-    maxIterations(maxIterations),
-    tolerance(tolerance),
-    shuffle(shuffle),
-    updatePolicy(updatePolicy),
-    decayPolicy(decayPolicy),
-    resetPolicy(resetPolicy)
-{ /* Nothing to do. */ }
+    const bool resetPolicy)
+  : stepSize(stepSize), batchSize(batchSize), maxIterations(maxIterations),
+    tolerance(tolerance), shuffle(shuffle), updatePolicy(updatePolicy),
+    decayPolicy(decayPolicy), resetPolicy(resetPolicy)
+{ /* Nothing to do. */
+}
 
 //! Optimize the function (minimize).
 template<typename UpdatePolicyType, typename DecayPolicyType>
 template<typename DecomposableFunctionType>
 double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
-    DecomposableFunctionType& function,
-    arma::mat& iterate)
+    DecomposableFunctionType& function, arma::mat& iterate)
 {
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
@@ -68,8 +63,8 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  const size_t actualMaxIterations = (maxIterations == 0) ?
-      std::numeric_limits<size_t>::max() : maxIterations;
+  const size_t actualMaxIterations =
+      (maxIterations == 0) ? std::numeric_limits<size_t>::max() : maxIterations;
   for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
   {
     // Is this iteration the start of a sequence?
@@ -77,19 +72,19 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     {
       // Output current objective function.
       Log::Info << "SGD: iteration " << i << ", objective " << overallObjective
-          << "." << std::endl;
+                << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
         Log::Warn << "SGD: converged to " << overallObjective << "; terminating"
-            << " with failure.  Try a smaller step size?" << std::endl;
+                  << " with failure.  Try a smaller step size?" << std::endl;
         return overallObjective;
       }
 
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
         Log::Info << "SGD: minimized within tolerance " << tolerance << "; "
-            << "terminating optimization." << std::endl;
+                  << "terminating optimization." << std::endl;
         return overallObjective;
       }
 
@@ -108,17 +103,17 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     // - the batch size can't be larger than the number of iterations left
     //       before actualMaxIterations is hit;
     // - the batch size can't be larger than the number of functions left.
-    const size_t effectiveBatchSize = std::min(
-        std::min(batchSize, actualMaxIterations - i),
-        numFunctions - currentFunction);
+    const size_t effectiveBatchSize =
+        std::min(std::min(batchSize, actualMaxIterations - i),
+                 numFunctions - currentFunction);
 
     function.Gradient(iterate, currentFunction, gradient, effectiveBatchSize);
 
     // Use the update policy to take a step.
     updatePolicy.Update(iterate, stepSize, gradient);
 
-    overallObjective += function.Evaluate(iterate, currentFunction,
-        effectiveBatchSize);
+    overallObjective +=
+        function.Evaluate(iterate, currentFunction, effectiveBatchSize);
 
     // Now update the learning rate if requested by the user.
     decayPolicy.Update(iterate, stepSize, gradient);
@@ -128,7 +123,7 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   }
 
   Log::Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
-      << "terminating optimization." << std::endl;
+            << "terminating optimization." << std::endl;
 
   // Calculate final objective.
   overallObjective = 0;

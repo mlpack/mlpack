@@ -21,7 +21,7 @@ namespace data {
  * Removes all data for a case that has one or more missing values.
  * @tparam T Type of armadillo matrix
  */
-template <typename T>
+template<typename T>
 class ListwiseDeletion
 {
  public:
@@ -45,11 +45,11 @@ class ListwiseDeletion
     {
       for (size_t i = 0; i < input.n_cols; ++i)
       {
-         if (!(input(dimension, i) == mappedValue ||
-             std::isnan(input(dimension, i))))
-         {
-           colsToKeep.push_back(i);
-         }
+        if (!(input(dimension, i) == mappedValue
+              || std::isnan(input(dimension, i))))
+        {
+          colsToKeep.push_back(i);
+        }
       }
       input = input.cols(arma::uvec(colsToKeep));
     }
@@ -57,10 +57,10 @@ class ListwiseDeletion
     {
       for (size_t i = 0; i < input.n_rows; ++i)
       {
-        if (!(input(i, dimension) == mappedValue ||
-             std::isnan(input(i, dimension))))
+        if (!(input(i, dimension) == mappedValue
+              || std::isnan(input(i, dimension))))
         {
-           colsToKeep.push_back(i);
+          colsToKeep.push_back(i);
         }
       }
       input = input.rows(arma::uvec(colsToKeep));

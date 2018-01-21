@@ -20,10 +20,8 @@
 namespace mlpack {
 namespace kpca {
 
-template<
-  typename KernelType,
-  typename PointSelectionPolicy = kernel::KMeansSelection<>
->
+template<typename KernelType,
+         typename PointSelectionPolicy = kernel::KMeansSelection<>>
 class NystroemKernelRule
 {
  public:
@@ -45,8 +43,8 @@ class NystroemKernelRule
                                 KernelType kernel = KernelType())
   {
     arma::mat G, v;
-    kernel::NystroemMethod<KernelType, PointSelectionPolicy> nm(data, kernel,
-        rank);
+    kernel::NystroemMethod<KernelType, PointSelectionPolicy> nm(
+        data, kernel, rank);
     nm.Apply(G);
     transformedData = G.t() * G;
 

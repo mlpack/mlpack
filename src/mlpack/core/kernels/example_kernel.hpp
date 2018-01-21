@@ -83,7 +83,7 @@ class ExampleKernel
    * constructor does not need to do anything.  For a more complex example, see
    * the GaussianKernel, which stores an internal parameter.
    */
-  ExampleKernel() { }
+  ExampleKernel() {}
 
   /**
    * Evaluates the kernel function for two given vectors.  In this case, because
@@ -100,14 +100,18 @@ class ExampleKernel
    */
   template<typename VecTypeA, typename VecTypeB>
   static double Evaluate(const VecTypeA& /* a */, const VecTypeB& /* b */)
-  { return 0; }
+  {
+    return 0;
+  }
 
   /**
    * Serializes the kernel.  In this case, the kernel has no members, so we do
    * not need to do anything at all.
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const unsigned int /* version */)
+  {
+  }
 
   /**
    * Obtains the convolution integral [integral K(||x-a||)K(||b-x||)dx]
@@ -125,7 +129,10 @@ class ExampleKernel
    */
   template<typename VecTypeA, typename VecTypeB>
   static double ConvolutionIntegral(const VecTypeA& /* a */,
-                                    const VecTypeB& /* b */) { return 0; }
+                                    const VecTypeB& /* b */)
+  {
+    return 0;
+  }
 
   /**
    * Obtains the normalizing volume for the kernel with dimension $dimension$.

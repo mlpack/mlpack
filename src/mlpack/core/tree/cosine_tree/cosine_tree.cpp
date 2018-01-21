@@ -17,11 +17,8 @@
 namespace mlpack {
 namespace tree {
 
-CosineTree::CosineTree(const arma::mat& dataset) :
-    dataset(dataset),
-    parent(NULL),
-    left(NULL),
-    right(NULL),
+CosineTree::CosineTree(const arma::mat& dataset)
+  : dataset(dataset), parent(NULL), left(NULL), right(NULL),
     numColumns(dataset.n_cols)
 {
   // Initialize sizes of column indices and l2 norms.
@@ -46,12 +43,9 @@ CosineTree::CosineTree(const arma::mat& dataset) :
 }
 
 CosineTree::CosineTree(CosineTree& parentNode,
-                       const std::vector<size_t>& subIndices) :
-    dataset(parentNode.GetDataset()),
-    parent(&parentNode),
-    left(NULL),
-    right(NULL),
-    numColumns(subIndices.size())
+                       const std::vector<size_t>& subIndices)
+  : dataset(parentNode.GetDataset()), parent(&parentNode), left(NULL),
+    right(NULL), numColumns(subIndices.size())
 {
   // Initialize sizes of column indices and l2 norms.
   indices.resize(numColumns);
@@ -75,11 +69,8 @@ CosineTree::CosineTree(CosineTree& parentNode,
 
 CosineTree::CosineTree(const arma::mat& dataset,
                        const double epsilon,
-                       const double delta) :
-    dataset(dataset),
-    delta(delta),
-    left(NULL),
-    right(NULL)
+                       const double delta)
+  : dataset(dataset), delta(delta), left(NULL), right(NULL)
 {
   // Declare the cosine tree priority queue.
   CosineNodeQueue treeQueue;
@@ -94,8 +85,8 @@ CosineTree::CosineTree(const arma::mat& dataset,
   // Initialize Monte Carlo error estimate for comparison.
   double monteCarloError = root.FrobNormSquared();
 
-  while (treeQueue.size() > 0 &&
-         (monteCarloError > epsilon * root.FrobNormSquared()))
+  while (treeQueue.size() > 0
+         && (monteCarloError > epsilon * root.FrobNormSquared()))
   {
     // Pop node from queue with highest projection error.
     CosineTree* currentNode;
@@ -107,9 +98,11 @@ CosineTree::CosineTree(const arma::mat& dataset,
     if (currentNode->L2Error() == 0.0)
     {
       Log::Warn << "CosineTree::CosineTree(): could not build tree to "
-          << "desired relative error " << epsilon << "; failing with estimated "
-          << "relative error " << (monteCarloError / root.FrobNormSquared())
-          << "." << std::endl;
+                << "desired relative error " << epsilon
+                << "; failing with estimated "
+                << "relative error "
+                << (monteCarloError / root.FrobNormSquared()) << "."
+                << std::endl;
       break;
     }
 
@@ -127,8 +120,8 @@ CosineTree::CosineTree(const arma::mat& dataset,
     arma::vec lBasisVector, rBasisVector;
 
     ModifiedGramSchmidt(treeQueue, currentLeft->Centroid(), lBasisVector);
-    ModifiedGramSchmidt(treeQueue, currentRight->Centroid(), rBasisVector,
-                        &lBasisVector);
+    ModifiedGramSchmidt(
+        treeQueue, currentRight->Centroid(), rBasisVector, &lBasisVector);
 
     // Add basis vectors to their respective nodes.
     currentLeft->BasisVector(lBasisVector);
@@ -167,12 +160,12 @@ void CosineTree::ModifiedGramSchmidt(CosineNodeQueue& treeQueue,
   newBasisVector = centroid;
 
   // Variables for iterating throught the priority queue.
-  CosineTree *currentNode;
+  CosineTree* currentNode;
   CosineNodeQueue::const_iterator i = treeQueue.begin();
 
   // For every vector in the current basis, remove its projection from the
   // centroid.
-  for ( ; i != treeQueue.end(); i++)
+  for (; i != treeQueue.end(); i++)
   {
     currentNode = *i;
 
@@ -227,25 +220,25 @@ double CosineTree::MonteCarloError(CosineTree* node,
     arma::vec projection;
     projection.zeros(projectionSize);
 
-    CosineTree *currentNode;
+    CosineTree* currentNode;
     CosineNodeQueue::const_iterator j = treeQueue.begin();
 
     size_t k = 0;
     // Compute the projection of the sampled vector onto the existing subspace.
-    for ( ; j != treeQueue.end(); j++, k++)
+    for (; j != treeQueue.end(); j++, k++)
     {
       currentNode = *j;
 
-      projection(k) = arma::dot(dataset.col(sampledIndices[i]),
-                                currentNode->BasisVector());
+      projection(k) =
+          arma::dot(dataset.col(sampledIndices[i]), currentNode->BasisVector());
     }
     // If two additional vectors are passed, take their projections.
     if (addBasisVector1 && addBasisVector2)
     {
-      projection(k++) = arma::dot(dataset.col(sampledIndices[i]),
-                                  *addBasisVector1);
-      projection(k) = arma::dot(dataset.col(sampledIndices[i]),
-                                *addBasisVector2);
+      projection(k++) =
+          arma::dot(dataset.col(sampledIndices[i]), *addBasisVector1);
+      projection(k) =
+          arma::dot(dataset.col(sampledIndices[i]), *addBasisVector2);
     }
 
     // Calculate the Frobenius norm squared of the projected vector.
@@ -283,12 +276,12 @@ void CosineTree::ConstructBasis(CosineNodeQueue& treeQueue)
   basis.zeros(dataset.n_rows, treeQueue.size());
 
   // Variables for iterating through the priority queue.
-  CosineTree *currentNode;
+  CosineTree* currentNode;
   CosineNodeQueue::const_iterator i = treeQueue.begin();
 
   // Transfer basis vectors from the queue to the basis matrix.
   size_t j = 0;
-  for ( ; i != treeQueue.end(); i++, j++)
+  for (; i != treeQueue.end(); i++, j++)
   {
     currentNode = *i;
     basis.col(j) = currentNode->BasisVector();
@@ -343,8 +336,8 @@ void CosineTree::ColumnSamplesLS(std::vector<size_t>& sampledIndices,
   // Calculate cumulative length-squared distribution for the node.
   for (size_t i = 0; i < numColumns; i++)
   {
-    cDistribution(i + 1) = cDistribution(i) +
-        (l2NormsSquared(i) / frobNormSquared);
+    cDistribution(i + 1) =
+        cDistribution(i) + (l2NormsSquared(i) / frobNormSquared);
   }
 
   // Initialize sizes of the 'sampledIndices' and 'probabilities' vectors.
@@ -379,8 +372,8 @@ size_t CosineTree::ColumnSampleLS()
   // Calculate cumulative length-squared distribution for the node.
   for (size_t i = 0; i < numColumns; i++)
   {
-    cDistribution(i + 1) = cDistribution(i) +
-        (l2NormsSquared(i) / frobNormSquared);
+    cDistribution(i + 1) =
+        cDistribution(i) + (l2NormsSquared(i) / frobNormSquared);
   }
 
   // Generate a random value for sampling.
@@ -434,9 +427,8 @@ void CosineTree::CalculateCosines(arma::vec& cosines)
     }
     else
     {
-      cosines(i) =
-          std::abs(arma::norm_dot(dataset.col(indices[splitPointIndex]),
-                                  dataset.col(indices[i])));
+      cosines(i) = std::abs(arma::norm_dot(
+          dataset.col(indices[splitPointIndex]), dataset.col(indices[i])));
     }
   }
 }

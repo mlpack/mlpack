@@ -118,9 +118,7 @@ class FastMKSModel
    * @param kernels A matrix in which to store the max-kernel candidate kernel
    *      values.
    */
-  void Search(const size_t k,
-              arma::Mat<size_t>& indices,
-              arma::mat& kernels);
+  void Search(const size_t k, arma::Mat<size_t>& indices, arma::mat& kernels);
 
   /**
    * Serialize the model.

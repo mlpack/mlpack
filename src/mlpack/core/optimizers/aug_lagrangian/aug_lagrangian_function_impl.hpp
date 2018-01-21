@@ -23,10 +23,8 @@ namespace optimization {
 // Initialize the AugLagrangianFunction.
 template<typename LagrangianFunction>
 AugLagrangianFunction<LagrangianFunction>::AugLagrangianFunction(
-    LagrangianFunction& function) :
-    function(function),
-    lambda(function.NumConstraints()),
-    sigma(10)
+    LagrangianFunction& function)
+  : function(function), lambda(function.NumConstraints()), sigma(10)
 {
   // Initialize lambda vector to all zeroes.
   lambda.zeros();
@@ -35,12 +33,8 @@ AugLagrangianFunction<LagrangianFunction>::AugLagrangianFunction(
 // Initialize the AugLagrangianFunction.
 template<typename LagrangianFunction>
 AugLagrangianFunction<LagrangianFunction>::AugLagrangianFunction(
-    LagrangianFunction& function,
-    const arma::vec& lambda,
-    const double sigma) :
-    function(function),
-    lambda(lambda),
-    sigma(sigma)
+    LagrangianFunction& function, const arma::vec& lambda, const double sigma)
+  : function(function), lambda(lambda), sigma(sigma)
 {
   // Nothing else to do.
 }
@@ -61,8 +55,8 @@ double AugLagrangianFunction<LagrangianFunction>::Evaluate(
   {
     double constraint = function.EvaluateConstraint(i, coordinates);
 
-    objective += (-lambda[i] * constraint) +
-        sigma * std::pow(constraint, 2) / 2;
+    objective +=
+        (-lambda[i] * constraint) + sigma * std::pow(constraint, 2) / 2;
   }
 
   return objective;
@@ -71,8 +65,7 @@ double AugLagrangianFunction<LagrangianFunction>::Evaluate(
 // Evaluate the gradient of the AugLagrangianFunction at the given coordinates.
 template<typename LagrangianFunction>
 void AugLagrangianFunction<LagrangianFunction>::Gradient(
-    const arma::mat& coordinates,
-    arma::mat& gradient) const
+    const arma::mat& coordinates, arma::mat& gradient) const
 {
   // The augmented Lagrangian's gradient is evaluted as
   // f'(x) + {(-lambda_i + sigma * c_i(x)) * c'_i(x)} for all constraints
@@ -86,16 +79,17 @@ void AugLagrangianFunction<LagrangianFunction>::Gradient(
 
     // Now calculate scaling factor and add to existing gradient.
     arma::mat tmpGradient;
-    tmpGradient = (-lambda[i] + sigma *
-        function.EvaluateConstraint(i, coordinates)) * constraintGradient;
+    tmpGradient =
+        (-lambda[i] + sigma * function.EvaluateConstraint(i, coordinates))
+        * constraintGradient;
     gradient += tmpGradient;
   }
 }
 
 // Get the initial point.
 template<typename LagrangianFunction>
-const arma::mat& AugLagrangianFunction<LagrangianFunction>::GetInitialPoint()
-    const
+const arma::mat&
+AugLagrangianFunction<LagrangianFunction>::GetInitialPoint() const
 {
   return function.GetInitialPoint();
 }
@@ -104,4 +98,3 @@ const arma::mat& AugLagrangianFunction<LagrangianFunction>::GetInitialPoint()
 } // namespace mlpack
 
 #endif
-

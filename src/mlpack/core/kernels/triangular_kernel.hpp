@@ -35,7 +35,7 @@ class TriangularKernel
    *
    * @param bandwidth Bandwidth of the triangular kernel.
    */
-  TriangularKernel(const double bandwidth = 1.0) : bandwidth(bandwidth) { }
+  TriangularKernel(const double bandwidth = 1.0) : bandwidth(bandwidth) {}
 
   /**
    * Evaluate the triangular kernel for the two given vectors.
@@ -48,8 +48,8 @@ class TriangularKernel
   template<typename VecTypeA, typename VecTypeB>
   double Evaluate(const VecTypeA& a, const VecTypeB& b) const
   {
-    return std::max(0.0, (1 - metric::EuclideanDistance::Evaluate(a, b) /
-        bandwidth));
+    return std::max(
+        0.0, (1 - metric::EuclideanDistance::Evaluate(a, b) / bandwidth));
   }
 
   /**
@@ -95,7 +95,7 @@ class TriangularKernel
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(bandwidth);
+    ar& BOOST_SERIALIZATION_NVP(bandwidth);
   }
 
  private:

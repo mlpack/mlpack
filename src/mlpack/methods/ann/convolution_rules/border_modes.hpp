@@ -19,13 +19,17 @@ namespace ann {
 /*
  * The FullConvolution class represents the full two-dimensional convolution.
  */
-class FullConvolution { /* Nothing to do here */ };
+class FullConvolution
+{ /* Nothing to do here */
+};
 
 /*
  * The ValidConvolution represents only those parts of the convolution that are
  * computed without the zero-padded edges.
  */
-class ValidConvolution { /* Nothing to do here */ };
+class ValidConvolution
+{ /* Nothing to do here */
+};
 
 } // namespace ann
 } // namespace mlpack

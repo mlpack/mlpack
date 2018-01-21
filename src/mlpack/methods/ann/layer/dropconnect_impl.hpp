@@ -28,27 +28,23 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-DropConnect<InputDataType, OutputDataType>::DropConnect() :
-    ratio(0.5),
-    scale(2.0),
-    deterministic(true)
+DropConnect<InputDataType, OutputDataType>::DropConnect()
+  : ratio(0.5), scale(2.0), deterministic(true)
 {
   // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
-DropConnect<InputDataType, OutputDataType>::DropConnect(
-    const size_t inSize,
-    const size_t outSize,
-    const double ratio) :
-    ratio(ratio),
-    scale(1.0 / (1 - ratio)),
+DropConnect<InputDataType, OutputDataType>::DropConnect(const size_t inSize,
+                                                        const size_t outSize,
+                                                        const double ratio)
+  : ratio(ratio), scale(1.0 / (1 - ratio)),
     baseLayer(new Linear<InputDataType, OutputDataType>(inSize, outSize))
 {
   network.push_back(baseLayer);
 }
 
-template <typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType>
 DropConnect<InputDataType, OutputDataType>::~DropConnect()
 {
   boost::apply_visitor(DeleteVisitor(), baseLayer);
@@ -56,16 +52,15 @@ DropConnect<InputDataType, OutputDataType>::~DropConnect()
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void DropConnect<InputDataType, OutputDataType>::Forward(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& output)
+void DropConnect<InputDataType, OutputDataType>::Forward(arma::Mat<eT>&& input,
+                                                         arma::Mat<eT>&& output)
 {
   // The DropConnect mask will not be multiplied in the deterministic mode
   // (during testing).
   if (deterministic)
   {
     boost::apply_visitor(ForwardVisitor(std::move(input), std::move(output)),
-        baseLayer);
+                         baseLayer);
   }
   else
   {
@@ -74,14 +69,14 @@ void DropConnect<InputDataType, OutputDataType>::Forward(
 
     // Scale with input / (1 - ratio) and set values to zero with
     // probability ratio.
-    mask = arma::randu<arma::Mat<eT> >(denoise.n_rows, denoise.n_cols);
+    mask = arma::randu<arma::Mat<eT>>(denoise.n_rows, denoise.n_cols);
     mask.transform([&](double val) { return (val > ratio); });
 
     boost::apply_visitor(ParametersSetVisitor(std::move(denoise % mask)),
-        baseLayer);
+                         baseLayer);
 
     boost::apply_visitor(ForwardVisitor(std::move(input), std::move(output)),
-        baseLayer);
+                         baseLayer);
 
     output = output * scale;
   }
@@ -89,13 +84,13 @@ void DropConnect<InputDataType, OutputDataType>::Forward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void DropConnect<InputDataType, OutputDataType>::Backward(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& gy,
-    arma::Mat<eT>&& g)
+void DropConnect<InputDataType, OutputDataType>::Backward(arma::Mat<eT>&& input,
+                                                          arma::Mat<eT>&& gy,
+                                                          arma::Mat<eT>&& g)
 {
-  boost::apply_visitor(BackwardVisitor(std::move(input), std::move(gy),
-      std::move(g)), baseLayer);
+  boost::apply_visitor(
+      BackwardVisitor(std::move(input), std::move(gy), std::move(g)),
+      baseLayer);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -106,7 +101,7 @@ void DropConnect<InputDataType, OutputDataType>::Gradient(
     arma::Mat<eT>&& /* gradient */)
 {
   boost::apply_visitor(GradientVisitor(std::move(input), std::move(error)),
-      baseLayer);
+                       baseLayer);
 
   // Denoise the weights.
   boost::apply_visitor(ParametersSetVisitor(std::move(denoise)), baseLayer);
@@ -115,8 +110,7 @@ void DropConnect<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void DropConnect<InputDataType, OutputDataType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
   // Delete the old network first, if needed.
   if (Archive::is_loading::value)
@@ -124,9 +118,9 @@ void DropConnect<InputDataType, OutputDataType>::serialize(
     boost::apply_visitor(DeleteVisitor(), baseLayer);
   }
 
-  ar & BOOST_SERIALIZATION_NVP(ratio);
-  ar & BOOST_SERIALIZATION_NVP(scale);
-  ar & BOOST_SERIALIZATION_NVP(baseLayer);
+  ar& BOOST_SERIALIZATION_NVP(ratio);
+  ar& BOOST_SERIALIZATION_NVP(scale);
+  ar& BOOST_SERIALIZATION_NVP(baseLayer);
 
   if (Archive::is_loading::value)
   {
@@ -135,7 +129,7 @@ void DropConnect<InputDataType, OutputDataType>::serialize(
   }
 }
 
-}  // namespace ann
-}  // namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif

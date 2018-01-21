@@ -23,14 +23,15 @@ AdaDelta::AdaDelta(const double stepSize,
                    const double epsilon,
                    const size_t maxIterations,
                    const double tolerance,
-                   const bool shuffle) :
-    optimizer(stepSize,
+                   const bool shuffle)
+  : optimizer(stepSize,
               batchSize,
               maxIterations,
               tolerance,
               shuffle,
               AdaDeltaUpdate(rho, epsilon))
-{ /* Nothing to do. */ }
+{ /* Nothing to do. */
+}
 
 } // namespace optimization
 } // namespace mlpack

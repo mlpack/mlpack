@@ -29,7 +29,7 @@ template<typename MetricType,
          typename MatType,
          template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitMetricType, typename SplitMatType>
-             class SplitType>
+         class SplitType>
 template<typename RuleType, bool Defeatist>
 class SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     SpillSingleTreeTraverser

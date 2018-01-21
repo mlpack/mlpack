@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(KMeansSimpleTest)
   KMeans<EuclideanDistance, RandomPartition> kmeans;
 
   arma::Row<size_t> assignments;
-  kmeans.Cluster((arma::mat) trans(kMeansData), 3, assignments);
+  kmeans.Cluster((arma::mat)trans(kMeansData), 3, assignments);
 
   // Now make sure we got it all right.  There is no restriction on how the
   // clusters are ordered, so we have to be careful about that.
@@ -122,8 +122,10 @@ BOOST_AUTO_TEST_CASE(AllowEmptyClusterTest)
 
   // Make sure the method doesn't modify any points.
   metric::LMetric<2, true> metric;
-  BOOST_REQUIRE_EQUAL(AllowEmptyClusters::EmptyCluster(kMeansData, 2, centroids,
-      centroids, counts, metric, 0), 0);
+  BOOST_REQUIRE_EQUAL(
+      AllowEmptyClusters::EmptyCluster(
+          kMeansData, 2, centroids, centroids, counts, metric, 0),
+      0);
 
   // Make sure no assignments were changed.
   for (size_t i = 0; i < assignments.n_elem; i++)
@@ -158,8 +160,8 @@ BOOST_AUTO_TEST_CASE(MaxVarianceNewClusterTest)
 
   // This should only change one point.
   MaxVarianceNewCluster mvnc;
-  BOOST_REQUIRE_EQUAL(mvnc.EmptyCluster(data, 2, centroids, centroids, counts,
-      metric, 0), 1);
+  BOOST_REQUIRE_EQUAL(
+      mvnc.EmptyCluster(data, 2, centroids, centroids, counts, metric, 0), 1);
 
   // Add the variance of each point's distance away from the cluster.  I think
   // this is the sensible thing to do.
@@ -248,8 +250,8 @@ BOOST_AUTO_TEST_CASE(RandomInitialAssignmentFailureTest)
     kmeans.Cluster(dataset, 2, assignments, centroids);
 
     // Inspect centroids.  See if one is close to the second Gaussian.
-    if ((centroids(0, 0) >= 30.0 && centroids(1, 0) >= 30.0) ||
-        (centroids(0, 1) >= 30.0 && centroids(1, 1) >= 30.0))
+    if ((centroids(0, 0) >= 30.0 && centroids(1, 0) >= 30.0)
+        || (centroids(0, 1) >= 30.0 && centroids(1, 1) >= 30.0))
       ++successes;
   }
 
@@ -441,8 +443,8 @@ BOOST_AUTO_TEST_CASE(RefinedStartTest)
   // Calculate sum of distances from centroid means.
   double distortion = 0;
   for (size_t i = 0; i < 3000; ++i)
-    distortion += metric::EuclideanDistance::Evaluate(data.col(i),
-        resultingCentroids.col(assignments[i]));
+    distortion += metric::EuclideanDistance::Evaluate(
+        data.col(i), resultingCentroids.col(assignments[i]));
 
   // Using the refined start, the distance for this dataset is usually around
   // 13500.  Regular k-means is between 10000 and 30000 (I think the 10000
@@ -475,8 +477,12 @@ BOOST_AUTO_TEST_CASE(SparseKMeansTest)
 
   arma::Row<size_t> assignments;
 
-  KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-         NaiveKMeans, arma::sp_mat> kmeans; // Default options.
+  KMeans<metric::EuclideanDistance,
+         RandomPartition,
+         MaxVarianceNewCluster,
+         NaiveKMeans,
+         arma::sp_mat>
+      kmeans; // Default options.
 
   kmeans.Cluster(data, 2, assignments);
 
@@ -519,8 +525,11 @@ BOOST_AUTO_TEST_CASE(ElkanTest)
     arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
-    KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-         ElkanKMeans> elkan;
+    KMeans<metric::EuclideanDistance,
+           RandomPartition,
+           MaxVarianceNewCluster,
+           ElkanKMeans>
+        elkan;
     arma::Row<size_t> elkanAssignments;
     arma::mat elkanCentroids(centroids);
     elkan.Cluster(dataset, k, elkanAssignments, elkanCentroids, false, true);
@@ -553,12 +562,15 @@ BOOST_AUTO_TEST_CASE(HamerlyTest)
     arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
-    KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-        HamerlyKMeans> hamerly;
+    KMeans<metric::EuclideanDistance,
+           RandomPartition,
+           MaxVarianceNewCluster,
+           HamerlyKMeans>
+        hamerly;
     arma::Row<size_t> hamerlyAssignments;
     arma::mat hamerlyCentroids(centroids);
-    hamerly.Cluster(dataset, k, hamerlyAssignments, hamerlyCentroids, false,
-        true);
+    hamerly.Cluster(
+        dataset, k, hamerlyAssignments, hamerlyCentroids, false, true);
 
     for (size_t i = 0; i < dataset.n_cols; ++i)
       BOOST_REQUIRE_EQUAL(assignments[i], hamerlyAssignments[i]);
@@ -588,8 +600,11 @@ BOOST_AUTO_TEST_CASE(PellegMooreTest)
     arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
-    KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-        PellegMooreKMeans> pellegMoore;
+    KMeans<metric::EuclideanDistance,
+           RandomPartition,
+           MaxVarianceNewCluster,
+           PellegMooreKMeans>
+        pellegMoore;
     arma::Row<size_t> pmAssignments;
     arma::mat pmCentroids(centroids);
     pellegMoore.Cluster(dataset, k, pmAssignments, pmCentroids, false, true);
@@ -620,8 +635,11 @@ BOOST_AUTO_TEST_CASE(DTNNTest)
     arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
-    KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-        DefaultDualTreeKMeans> dtnn;
+    KMeans<metric::EuclideanDistance,
+           RandomPartition,
+           MaxVarianceNewCluster,
+           DefaultDualTreeKMeans>
+        dtnn;
     arma::Row<size_t> dtnnAssignments;
     arma::mat dtnnCentroids(centroids);
     dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);
@@ -652,8 +670,11 @@ BOOST_AUTO_TEST_CASE(DTNNCoverTreeTest)
     arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
-    KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-        CoverTreeDualTreeKMeans> dtnn;
+    KMeans<metric::EuclideanDistance,
+           RandomPartition,
+           MaxVarianceNewCluster,
+           CoverTreeDualTreeKMeans>
+        dtnn;
     arma::Row<size_t> dtnnAssignments;
     arma::mat dtnnCentroids(centroids);
     dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);
@@ -690,8 +711,8 @@ BOOST_AUTO_TEST_CASE(SampleInitializationTest)
     size_t j;
     for (j = 0; j < dataset.n_cols; ++j)
     {
-      const double distance = metric::EuclideanDistance::Evaluate(
-          centroids.col(i), dataset.col(j));
+      const double distance =
+          metric::EuclideanDistance::Evaluate(centroids.col(i), dataset.col(j));
       if (distance < 1e-10)
         break;
     }

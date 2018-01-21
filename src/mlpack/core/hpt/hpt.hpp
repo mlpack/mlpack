@@ -82,17 +82,16 @@ namespace hpt {
  *     Train methods of the given MLAlgorithm; arma::vec will be used
  *     otherwise).
  */
-template<typename MLAlgorithm,
-         typename Metric,
-         template<typename, typename, typename, typename, typename> class CV,
-         typename OptimizerType = mlpack::optimization::GridSearch,
-         typename MatType = arma::mat,
-         typename PredictionsType =
-             typename cv::MetaInfoExtractor<MLAlgorithm,
-                 MatType>::PredictionsType,
-         typename WeightsType =
-             typename cv::MetaInfoExtractor<MLAlgorithm, MatType,
-                 PredictionsType>::WeightsType>
+template<
+    typename MLAlgorithm,
+    typename Metric,
+    template<typename, typename, typename, typename, typename> class CV,
+    typename OptimizerType = mlpack::optimization::GridSearch,
+    typename MatType = arma::mat,
+    typename PredictionsType =
+        typename cv::MetaInfoExtractor<MLAlgorithm, MatType>::PredictionsType,
+    typename WeightsType = typename cv::
+        MetaInfoExtractor<MLAlgorithm, MatType, PredictionsType>::WeightsType>
 class HyperParameterTuner
 {
  public:
@@ -104,7 +103,7 @@ class HyperParameterTuner
    *     strategy (the CV class).
    */
   template<typename... CVArgs>
-  HyperParameterTuner(const CVArgs& ...args);
+  HyperParameterTuner(const CVArgs&... args);
 
   //! Access and modify the optimizer.
   OptimizerType& Optimizer() { return optimizer; }
@@ -193,18 +192,25 @@ class HyperParameterTuner
   template<typename OriginalMetric>
   struct Negated
   {
-    static double Evaluate(MLAlgorithm& model,
-                           const MatType& xs,
-                           const PredictionsType& ys)
-    { return -OriginalMetric::Evaluate(model, xs, ys); }
+    static double
+    Evaluate(MLAlgorithm& model, const MatType& xs, const PredictionsType& ys)
+    {
+      return -OriginalMetric::Evaluate(model, xs, ys);
+    }
   };
 
   //! A short alias for the full type of the cross-validation.
   using CVType = typename std::conditional<Metric::NeedsMinimization,
-      CV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
-      CV<MLAlgorithm, Negated<Metric>, MatType, PredictionsType,
-          WeightsType>>::type;
-
+                                           CV<MLAlgorithm,
+                                              Metric,
+                                              MatType,
+                                              PredictionsType,
+                                              WeightsType>,
+                                           CV<MLAlgorithm,
+                                              Negated<Metric>,
+                                              MatType,
+                                              PredictionsType,
+                                              WeightsType>>::type;
 
   //! The cross-validation object for assessing sets of hyper-parameters.
   CVType cv;
@@ -293,8 +299,8 @@ class HyperParameterTuner
            typename ArgsTuple,
            typename... FixedArgs,
            typename = std::enable_if_t<(I < std::tuple_size<ArgsTuple>::value)>,
-           typename = std::enable_if_t<!IsPreFixed<ArgsTuple, I>::value &&
-                   IsArithmetic<ArgsTuple, I>::value>,
+           typename = std::enable_if_t<!IsPreFixed<ArgsTuple, I>::value
+                                       && IsArithmetic<ArgsTuple, I>::value>,
            typename = void>
   inline void InitAndOptimize(
       const ArgsTuple& args,
@@ -314,8 +320,8 @@ class HyperParameterTuner
            typename ArgsTuple,
            typename... FixedArgs,
            typename = std::enable_if_t<(I < std::tuple_size<ArgsTuple>::value)>,
-           typename = std::enable_if_t<!IsPreFixed<ArgsTuple, I>::value &&
-                   !IsArithmetic<ArgsTuple, I>::value>,
+           typename = std::enable_if_t<!IsPreFixed<ArgsTuple, I>::value
+                                       && !IsArithmetic<ArgsTuple, I>::value>,
            typename = void,
            typename = void>
   inline void InitAndOptimize(
@@ -331,19 +337,20 @@ class HyperParameterTuner
   template<typename TupleType,
            size_t I /* Index of the element in vector to handle. */,
            typename... Args,
-           typename = typename
-               std::enable_if_t<(I < std::tuple_size<TupleType>::value)>>
+           typename = typename std::enable_if_t<(
+               I < std::tuple_size<TupleType>::value)>>
   inline TupleType VectorToTuple(const arma::vec& vector, const Args&... args);
 
   /**
    * Create a tuple from args.
    */
-  template<typename TupleType,
-           size_t I /* Index of the element in vector to handle. */,
-           typename... Args,
-           typename = typename
-               std::enable_if_t<I == std::tuple_size<TupleType>::value>,
-           typename = void>
+  template<
+      typename TupleType,
+      size_t I /* Index of the element in vector to handle. */,
+      typename... Args,
+      typename =
+          typename std::enable_if_t<I == std::tuple_size<TupleType>::value>,
+      typename = void>
   inline TupleType VectorToTuple(const arma::vec& vector, const Args&... args);
 };
 

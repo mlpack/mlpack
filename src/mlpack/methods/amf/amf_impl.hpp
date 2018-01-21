@@ -23,11 +23,11 @@ template<typename TerminationPolicyType,
 AMF<TerminationPolicyType, InitializationRuleType, UpdateRuleType>::AMF(
     const TerminationPolicyType& terminationPolicy,
     const InitializationRuleType& initializationRule,
-    const UpdateRuleType& update) :
-    terminationPolicy(terminationPolicy),
-    initializationRule(initializationRule),
-    update(update)
-{ }
+    const UpdateRuleType& update)
+  : terminationPolicy(terminationPolicy),
+    initializationRule(initializationRule), update(update)
+{
+}
 
 /**
  * Apply Alternating Matrix Factorization to the provided matrix.
@@ -41,11 +41,9 @@ template<typename TerminationPolicyType,
          typename InitializationRuleType,
          typename UpdateRuleType>
 template<typename MatType>
-double AMF<TerminationPolicyType, InitializationRuleType, UpdateRuleType>::
-Apply(const MatType& V,
-      const size_t r,
-      arma::mat& W,
-      arma::mat& H)
+double
+AMF<TerminationPolicyType, InitializationRuleType, UpdateRuleType>::Apply(
+    const MatType& V, const size_t r, arma::mat& W, arma::mat& H)
 {
   // Initialize W and H.
   initializationRule.Initialize(V, r, W, H);
@@ -69,8 +67,8 @@ Apply(const MatType& V,
   const double residue = terminationPolicy.Index();
   const size_t iteration = terminationPolicy.Iteration();
 
-  Log::Info << "AMF converged to residue of " << residue << " in "
-      << iteration << " iterations." << std::endl;
+  Log::Info << "AMF converged to residue of " << residue << " in " << iteration
+            << " iterations." << std::endl;
 
   return residue;
 }

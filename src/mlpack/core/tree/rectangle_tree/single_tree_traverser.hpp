@@ -28,8 +28,12 @@ template<typename MetricType,
          typename DescentType,
          template<typename> class AuxiliaryInformationType>
 template<typename RuleType>
-class RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                    DescentType, AuxiliaryInformationType>::SingleTreeTraverser
+class RectangleTree<MetricType,
+                    StatisticType,
+                    MatType,
+                    SplitType,
+                    DescentType,
+                    AuxiliaryInformationType>::SingleTreeTraverser
 {
  public:
   /**

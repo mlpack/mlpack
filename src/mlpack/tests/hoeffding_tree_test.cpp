@@ -39,9 +39,9 @@ BOOST_AUTO_TEST_CASE(GiniImpurityPerfectSimpleTest)
   arma::Mat<size_t> counts(2, 2); // 2 categories, 2 classes.
 
   counts(0, 0) = 10; // 10 points in category 0 with class 0.
-  counts(0, 1) = 0; // 0 points in category 0 with class 1.
+  counts(0, 1) = 0;  // 0 points in category 0 with class 1.
   counts(1, 0) = 12; // 12 points in category 1 with class 0.
-  counts(1, 1) = 0; // 0 points in category 1 with class 1.
+  counts(1, 1) = 0;  // 0 points in category 1 with class 1.
 
   // Since the split gets us nothing, there should be no gain.
   BOOST_REQUIRE_SMALL(GiniImpurity::Evaluate(counts), 1e-10);
@@ -53,8 +53,8 @@ BOOST_AUTO_TEST_CASE(GiniImpurityImperfectSimpleTest)
   arma::Mat<size_t> counts(2, 2); // 2 categories, 2 classes.
 
   counts(0, 0) = 10; // 10 points in category 0 with class 0.
-  counts(1, 0) = 0; // 0 points in category 0 with class 1.
-  counts(0, 1) = 0; // 0 points in category 1 with class 0.
+  counts(1, 0) = 0;  // 0 points in category 0 with class 1.
+  counts(0, 1) = 0;  // 0 points in category 1 with class 0.
   counts(1, 1) = 10; // 10 points in category 1 with class 1.
 
   // The impurity before the split should be 0.5^2 + 0.5^2 = 0.5.
@@ -140,9 +140,9 @@ BOOST_AUTO_TEST_CASE(InformationGainPerfectSimpleTest)
   arma::Mat<size_t> counts(2, 2); // 2 categories, 2 classes.
 
   counts(0, 0) = 10; // 10 points in category 0 with class 0.
-  counts(0, 1) = 0; // 0 points in category 0 with class 1.
+  counts(0, 1) = 0;  // 0 points in category 0 with class 1.
   counts(1, 0) = 12; // 12 points in category 1 with class 0.
-  counts(1, 1) = 0; // 0 points in category 1 with class 1.
+  counts(1, 1) = 0;  // 0 points in category 1 with class 1.
 
   // Since the split gets us nothing, there should be no gain.
   BOOST_REQUIRE_SMALL(InformationGain::Evaluate(counts), 1e-10);
@@ -154,8 +154,8 @@ BOOST_AUTO_TEST_CASE(InformationGainImperfectSimpleTest)
   arma::Mat<size_t> counts(2, 2); // 2 categories, 2 classes.
 
   counts(0, 0) = 10; // 10 points in category 0 with class 0.
-  counts(1, 0) = 0; // 0 points in category 0 with class 1.
-  counts(0, 1) = 0; // 0 points in category 1 with class 0.
+  counts(1, 0) = 0;  // 0 points in category 0 with class 1.
+  counts(0, 1) = 0;  // 0 points in category 1 with class 0.
   counts(1, 1) = 10; // 10 points in category 1 with class 1.
 
   // The impurity before the split should be 0.5 log2(0.5) + 0.5 log2(0.5) = -1.
@@ -494,8 +494,8 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeEqualSplitTest)
 
 // This is used in the next test.
 template<typename FitnessFunction>
-using HoeffdingSizeTNumericSplit = HoeffdingNumericSplit<FitnessFunction,
-    size_t>;
+using HoeffdingSizeTNumericSplit =
+    HoeffdingNumericSplit<FitnessFunction, size_t>;
 
 /**
  * Build a decision tree on a dataset with two meaningless dimensions and ensure
@@ -541,8 +541,10 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeSimpleDatasetTest)
 
   // Now train two streaming decision trees; one on the whole dataset, and one
   // on streaming data.
-  typedef HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
-      HoeffdingCategoricalSplit> TreeType;
+  typedef HoeffdingTree<GiniImpurity,
+                        HoeffdingSizeTNumericSplit,
+                        HoeffdingCategoricalSplit>
+      TreeType;
   TreeType batchTree(dataset, info, labels, 3, false);
   TreeType streamTree(info, 3);
   for (size_t i = 0; i < 9000; ++i)
@@ -578,7 +580,7 @@ BOOST_AUTO_TEST_CASE(NumDescendantsTest1)
   arma::mat dataset(3, 500);
   arma::Row<size_t> labels(500);
   data::DatasetInfo info(3); // All features are numeric.
-  for (size_t i = 0; i <500; i ++)
+  for (size_t i = 0; i < 500; i++)
   {
     dataset(0, i) = mlpack::math::Random();
     dataset(1, i) = mlpack::math::Random();
@@ -636,8 +638,10 @@ BOOST_AUTO_TEST_CASE(NumDescendantsTest2)
 
   // Now train the streaming decision tree.  This should split because splitting
   // on dimension 2 gives a perfect split.
-  typedef HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
-      HoeffdingCategoricalSplit> TreeType;
+  typedef HoeffdingTree<GiniImpurity,
+                        HoeffdingSizeTNumericSplit,
+                        HoeffdingCategoricalSplit>
+      TreeType;
   TreeType batchTree(dataset, info, labels, 3, false);
 
   BOOST_REQUIRE_EQUAL(batchTree.NumDescendants(), 3);
@@ -983,8 +987,8 @@ BOOST_AUTO_TEST_CASE(BatchTrainingTest)
   for (size_t i = 0; i < 10000; ++i)
   {
     // One circle every 20000 samples.  Plus some noise.
-    const double magnitude = 2.0 + (double(i) / 20000.0) +
-        0.5 * mlpack::math::Random();
+    const double magnitude =
+        2.0 + (double(i) / 20000.0) + 0.5 * mlpack::math::Random();
     const double angle = (i % 20000) * (2 * M_PI) + mlpack::math::Random();
 
     const double x = magnitude * cos(angle);
@@ -1007,8 +1011,8 @@ BOOST_AUTO_TEST_CASE(BatchTrainingTest)
     labels[i] = 4;
 
   // Now shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0, 9999,
-      10000));
+  arma::uvec indices =
+      arma::shuffle(arma::linspace<arma::uvec>(0, 9999, 10000));
   arma::mat d(2, 10000);
   arma::Row<size_t> l(10000);
   for (size_t i = 0; i < 10000; ++i)
@@ -1028,10 +1032,10 @@ BOOST_AUTO_TEST_CASE(BatchTrainingTest)
   // Now build two decision trees; one in batch mode, and one in streaming mode.
   // We need to set the confidence pretty high so that the streaming tree isn't
   // able to have enough samples to build to the same leaves.
-  HoeffdingTree<> batchTree(trainingData, info, trainingLabels, 5, true,
-      0.99999999);
-  HoeffdingTree<> streamTree(trainingLabels, info, trainingLabels, 5, false,
-      0.99999999);
+  HoeffdingTree<> batchTree(
+      trainingData, info, trainingLabels, 5, true, 0.99999999);
+  HoeffdingTree<> streamTree(
+      trainingLabels, info, trainingLabels, 5, false, 0.99999999);
 
   // Ensure that the performance of the batch tree is better.
   size_t batchCorrect = 0;
@@ -1431,8 +1435,8 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeModelSerializationTest)
     // Train in batch.
     m.BuildModel(dataset, info, labels, 3, true, 0.99, 1000, 100, 100, 4, 100);
     // False training of XML model.
-    xmlM.BuildModel(dataset, info, labels, 3, false, 0.5, 100, 100, 100, 2,
-        100);
+    xmlM.BuildModel(
+        dataset, info, labels, 3, false, 0.5, 100, 100, 100, 2, 100);
 
     // Now make sure the performance is reasonable.
     arma::Row<size_t> predictions, predictionsXml, predictionsText,

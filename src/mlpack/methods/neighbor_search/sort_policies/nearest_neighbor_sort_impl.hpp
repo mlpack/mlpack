@@ -17,9 +17,9 @@ namespace mlpack {
 namespace neighbor {
 
 template<typename TreeType>
-inline double NearestNeighborSort::BestNodeToNodeDistance(
-    const TreeType* queryNode,
-    const TreeType* referenceNode)
+inline double
+NearestNeighborSort::BestNodeToNodeDistance(const TreeType* queryNode,
+                                            const TreeType* referenceNode)
 {
   // This is not implemented yet for the general case because the trees do not
   // accept arbitrary distance metrics.
@@ -27,29 +27,29 @@ inline double NearestNeighborSort::BestNodeToNodeDistance(
 }
 
 template<typename TreeType>
-inline double NearestNeighborSort::BestNodeToNodeDistance(
-    const TreeType* queryNode,
-    const TreeType* referenceNode,
-    const double centerToCenterDistance)
+inline double
+NearestNeighborSort::BestNodeToNodeDistance(const TreeType* queryNode,
+                                            const TreeType* referenceNode,
+                                            const double centerToCenterDistance)
 {
   return queryNode->MinDistance(*referenceNode, centerToCenterDistance);
 }
 
 template<typename TreeType>
-inline double NearestNeighborSort::BestNodeToNodeDistance(
-    const TreeType* queryNode,
-    const TreeType* /* referenceNode */,
-    const TreeType* referenceChildNode,
-    const double centerToCenterDistance)
+inline double
+NearestNeighborSort::BestNodeToNodeDistance(const TreeType* queryNode,
+                                            const TreeType* /* referenceNode */,
+                                            const TreeType* referenceChildNode,
+                                            const double centerToCenterDistance)
 {
-  return queryNode->MinDistance(*referenceChildNode, centerToCenterDistance) -
-      referenceChildNode->ParentDistance();
+  return queryNode->MinDistance(*referenceChildNode, centerToCenterDistance)
+         - referenceChildNode->ParentDistance();
 }
 
 template<typename VecType, typename TreeType>
-inline double NearestNeighborSort::BestPointToNodeDistance(
-    const VecType& point,
-    const TreeType* referenceNode)
+inline double
+NearestNeighborSort::BestPointToNodeDistance(const VecType& point,
+                                             const TreeType* referenceNode)
 {
   // This is not implemented yet for the general case because the trees do not
   // accept arbitrary distance metrics.
@@ -57,10 +57,10 @@ inline double NearestNeighborSort::BestPointToNodeDistance(
 }
 
 template<typename VecType, typename TreeType>
-inline double NearestNeighborSort::BestPointToNodeDistance(
-    const VecType& point,
-    const TreeType* referenceNode,
-    const double pointToCenterDistance)
+inline double
+NearestNeighborSort::BestPointToNodeDistance(const VecType& point,
+                                             const TreeType* referenceNode,
+                                             const double pointToCenterDistance)
 {
   return referenceNode->MinDistance(point, pointToCenterDistance);
 }

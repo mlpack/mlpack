@@ -21,15 +21,17 @@ class NoAuxiliaryInformation
 {
  public:
   //! Construct the auxiliary information object.
-  NoAuxiliaryInformation() { }
+  NoAuxiliaryInformation() {}
   //! Construct the auxiliary information object.
-  NoAuxiliaryInformation(const TreeType* /* node */) { }
+  NoAuxiliaryInformation(const TreeType* /* node */) {}
   //! Construct the auxiliary information object.
   NoAuxiliaryInformation(const NoAuxiliaryInformation& /* other */,
                          TreeType* /* tree */,
-                         bool /* deepCopy */ = true) { }
+                         bool /* deepCopy */ = true)
+  {
+  }
   //! Construct the auxiliary information object.
-  NoAuxiliaryInformation(NoAuxiliaryInformation&& /* other */) { }
+  NoAuxiliaryInformation(NoAuxiliaryInformation&& /* other */) {}
 
   //! Copy the auxiliary information object.
   NoAuxiliaryInformation& operator=(const NoAuxiliaryInformation& /* other */)
@@ -108,10 +110,7 @@ class NoAuxiliaryInformation
    *
    * @param node The node in which the auxiliary information being update.
    */
-  bool UpdateAuxiliaryInfo(TreeType* /* node */)
-  {
-    return false;
-  }
+  bool UpdateAuxiliaryInfo(TreeType* /* node */) { return false; }
 
   /**
    * The R++ tree requires to split the maximum bounding rectangle of a node
@@ -128,23 +127,24 @@ class NoAuxiliaryInformation
                           TreeType* /* treeTwo */,
                           size_t /* axis */,
                           typename TreeType::ElemType /* cut */)
-  { }
-
+  {
+  }
 
   /**
    * Nullify the auxiliary information in order to prevent an invalid free.
    */
-  void NullifyData()
-  { }
+  void NullifyData() {}
 
   /**
    * Serialize the information.
    */
   template<typename Archive>
-  void serialize(Archive &, const unsigned int /* version */) { }
+  void serialize(Archive&, const unsigned int /* version */)
+  {
+  }
 };
 
 } // namespace tree
 } // namespace mlpack
 
-#endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_NO_AUXILIARY_INFORMATION_HPP
+#endif //  MLPACK_CORE_TREE_RECTANGLE_TREE_NO_AUXILIARY_INFORMATION_HPP

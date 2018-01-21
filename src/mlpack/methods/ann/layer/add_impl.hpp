@@ -20,16 +20,15 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-Add<InputDataType, OutputDataType>::Add(const size_t outSize) :
-    outSize(outSize)
+Add<InputDataType, OutputDataType>::Add(const size_t outSize) : outSize(outSize)
 {
   weights.set_size(outSize, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void Add<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+void Add<InputDataType, OutputDataType>::Forward(const arma::Mat<eT>&& input,
+                                                 arma::Mat<eT>&& output)
 {
   output = input;
   output.each_col() += weights;
@@ -60,7 +59,7 @@ template<typename Archive>
 void Add<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar& BOOST_SERIALIZATION_NVP(outSize);
 
   if (Archive::is_loading::value)
     weights.set_size(outSize, 1);

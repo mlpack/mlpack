@@ -18,27 +18,20 @@ namespace mlpack {
 namespace optimization {
 
 template<typename CoolingScheduleType>
-SA<CoolingScheduleType>::SA(
-    CoolingScheduleType& coolingSchedule,
-    const size_t maxIterations,
-    const double initT,
-    const size_t initMoves,
-    const size_t moveCtrlSweep,
-    const double tolerance,
-    const size_t maxToleranceSweep,
-    const double maxMoveCoef,
-    const double initMoveCoef,
-    const double gain) :
-    coolingSchedule(coolingSchedule),
-    maxIterations(maxIterations),
-    temperature(initT),
-    initMoves(initMoves),
-    moveCtrlSweep(moveCtrlSweep),
-    tolerance(tolerance),
-    maxToleranceSweep(maxToleranceSweep),
-    maxMoveCoef(maxMoveCoef),
-    initMoveCoef(initMoveCoef),
-    gain(gain)
+SA<CoolingScheduleType>::SA(CoolingScheduleType& coolingSchedule,
+                            const size_t maxIterations,
+                            const double initT,
+                            const size_t initMoves,
+                            const size_t moveCtrlSweep,
+                            const double tolerance,
+                            const size_t maxToleranceSweep,
+                            const double maxMoveCoef,
+                            const double initMoveCoef,
+                            const double gain)
+  : coolingSchedule(coolingSchedule), maxIterations(maxIterations),
+    temperature(initT), initMoves(initMoves), moveCtrlSweep(moveCtrlSweep),
+    tolerance(tolerance), maxToleranceSweep(maxToleranceSweep),
+    maxMoveCoef(maxMoveCoef), initMoveCoef(initMoveCoef), gain(gain)
 {
   // Nothing to do.
 }
@@ -65,15 +58,15 @@ double SA<CoolingScheduleType>::Optimize(FunctionType& function,
 
   // Initial moves to get rid of dependency of initial states.
   for (size_t i = 0; i < initMoves; ++i)
-    GenerateMove(function, iterate, accept, moveSize, energy, idx,
-        sweepCounter);
+    GenerateMove(
+        function, iterate, accept, moveSize, energy, idx, sweepCounter);
 
   // Iterating and cooling.
   for (size_t i = 0; i != maxIterations; ++i)
   {
     oldEnergy = energy;
-    GenerateMove(function, iterate, accept, moveSize, energy, idx,
-        sweepCounter);
+    GenerateMove(
+        function, iterate, accept, moveSize, energy, idx, sweepCounter);
     temperature = coolingSchedule.NextTemperature(temperature, energy);
 
     // Determine if the optimization has entered (or continues to be in) a
@@ -87,14 +80,15 @@ double SA<CoolingScheduleType>::Optimize(FunctionType& function,
     if (frozenCount >= maxToleranceSweep * moveCtrlSweep * iterate.n_elem)
     {
       Log::Debug << "SA: minimized within tolerance " << tolerance << " for "
-          << maxToleranceSweep << " sweeps after " << i << " iterations; "
-          << "terminating optimization." << std::endl;
+                 << maxToleranceSweep << " sweeps after " << i
+                 << " iterations; "
+                 << "terminating optimization." << std::endl;
       return energy;
     }
   }
 
   Log::Debug << "SA: maximum iterations (" << maxIterations << ") reached; "
-      << "terminating optimization." << std::endl;
+             << "terminating optimization." << std::endl;
   return energy;
 }
 
@@ -108,14 +102,13 @@ double SA<CoolingScheduleType>::Optimize(FunctionType& function,
  */
 template<typename CoolingScheduleType>
 template<typename FunctionType>
-void SA<CoolingScheduleType>::GenerateMove(
-    FunctionType& function,
-    arma::mat& iterate,
-    arma::mat& accept,
-    arma::mat& moveSize,
-    double& energy,
-    size_t& idx,
-    size_t& sweepCounter)
+void SA<CoolingScheduleType>::GenerateMove(FunctionType& function,
+                                           arma::mat& iterate,
+                                           arma::mat& accept,
+                                           arma::mat& moveSize,
+                                           double& energy,
+                                           size_t& idx,
+                                           size_t& sweepCounter)
 {
   const double prevEnergy = energy;
   const double prevValue = iterate(idx);
@@ -126,8 +119,8 @@ void SA<CoolingScheduleType>::GenerateMove(
 
   // Sample from a Laplace distribution with scale parameter moveSize(idx).
   const double unif = 2.0 * math::Random() - 1.0;
-  const double move = (unif < 0) ? (moveSize(idx) * std::log(1 + unif)) :
-      (-moveSize(idx) * std::log(1 - unif));
+  const double move = (unif < 0) ? (moveSize(idx) * std::log(1 + unif))
+                                 : (-moveSize(idx) * std::log(1 - unif));
 
   iterate(idx) += move;
   energy = function.Evaluate(iterate);
@@ -183,7 +176,7 @@ inline void SA<CoolingScheduleType>::MoveControl(const size_t nMoves,
   target.copy_size(accept);
   target.fill(0.44);
   moveSize = arma::log(moveSize);
-  moveSize += gain * (accept / (double) nMoves - target);
+  moveSize += gain * (accept / (double)nMoves - target);
   moveSize = arma::exp(moveSize);
 
   // To avoid the use of element-wise arma::min(), which is only available in

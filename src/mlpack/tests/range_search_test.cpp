@@ -281,8 +281,8 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
     // Now do it again with a different range: [1.0 inf].
     if (rs->ReferenceTree())
       CleanTree(*rs->ReferenceTree());
-    rs->Search(Range(1.0, numeric_limits<double>::infinity()), neighbors,
-        distances);
+    rs->Search(
+        Range(1.0, numeric_limits<double>::infinity()), neighbors, distances);
     SortResults(neighbors, distances, sortedOutput);
 
     // Neighbors of point 0.
@@ -492,8 +492,8 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive1)
     for (size_t j = 0; j < sortedTree[i].size(); j++)
     {
       BOOST_REQUIRE(sortedTree[i][j].second == sortedNaive[i][j].second);
-      BOOST_REQUIRE_CLOSE(sortedTree[i][j].first, sortedNaive[i][j].first,
-          1e-5);
+      BOOST_REQUIRE_CLOSE(
+          sortedTree[i][j].first, sortedNaive[i][j].first, 1e-5);
     }
   }
 }
@@ -541,8 +541,8 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive2)
     for (size_t j = 0; j < sortedTree[i].size(); j++)
     {
       BOOST_REQUIRE(sortedTree[i][j].second == sortedNaive[i][j].second);
-      BOOST_REQUIRE_CLOSE(sortedTree[i][j].first, sortedNaive[i][j].first,
-          1e-5);
+      BOOST_REQUIRE_CLOSE(
+          sortedTree[i][j].first, sortedNaive[i][j].first, 1e-5);
     }
   }
 }
@@ -590,8 +590,8 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
     for (size_t j = 0; j < sortedTree[i].size(); j++)
     {
       BOOST_REQUIRE(sortedTree[i][j].second == sortedNaive[i][j].second);
-      BOOST_REQUIRE_CLOSE(sortedTree[i][j].first, sortedNaive[i][j].first,
-          1e-5);
+      BOOST_REQUIRE_CLOSE(
+          sortedTree[i][j].first, sortedNaive[i][j].first, 1e-5);
     }
   }
 }
@@ -606,8 +606,8 @@ BOOST_AUTO_TEST_CASE(CoverTreeTest)
   data.randu(8, 1000); // 1000 points in 8 dimensions.
 
   // Set up cover tree range search.
-  RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>
-      coversearch(data);
+  RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree> coversearch(
+      data);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -663,8 +663,8 @@ BOOST_AUTO_TEST_CASE(CoverTreeTest)
       for (size_t j = 0; j < kdSorted[i].size(); ++j)
       {
         BOOST_REQUIRE_EQUAL(kdSorted[i][j].second, coverSorted[i][j].second);
-        BOOST_REQUIRE_CLOSE(kdSorted[i][j].first, coverSorted[i][j].first,
-            1e-5);
+        BOOST_REQUIRE_CLOSE(
+            kdSorted[i][j].first, coverSorted[i][j].first, 1e-5);
       }
       BOOST_REQUIRE_EQUAL(kdSorted[i].size(), coverSorted[i].size());
     }
@@ -683,8 +683,8 @@ BOOST_AUTO_TEST_CASE(CoverTreeTwoDatasetsTest)
   queries.randu(8, 350); // 350 points in 8 dimensions.
 
   // Set up cover tree range search.
-  RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>
-      coversearch(data);
+  RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree> coversearch(
+      data);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -741,8 +741,8 @@ BOOST_AUTO_TEST_CASE(CoverTreeTwoDatasetsTest)
       for (size_t j = 0; j < kdSorted[i].size(); ++j)
       {
         BOOST_REQUIRE_EQUAL(kdSorted[i][j].second, coverSorted[i][j].second);
-        BOOST_REQUIRE_CLOSE(kdSorted[i][j].first, coverSorted[i][j].first,
-            1e-5);
+        BOOST_REQUIRE_CLOSE(
+            kdSorted[i][j].first, coverSorted[i][j].first, 1e-5);
       }
       BOOST_REQUIRE_EQUAL(kdSorted[i].size(), coverSorted[i].size());
     }
@@ -758,8 +758,8 @@ BOOST_AUTO_TEST_CASE(CoverTreeSingleTreeTest)
   data.randu(8, 1000); // 1000 points in 8 dimensions.
 
   // Set up cover tree range search.
-  RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>
-      coversearch(data, false, true);
+  RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree> coversearch(
+      data, false, true);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -815,8 +815,8 @@ BOOST_AUTO_TEST_CASE(CoverTreeSingleTreeTest)
       for (size_t j = 0; j < kdSorted[i].size(); ++j)
       {
         BOOST_REQUIRE_EQUAL(kdSorted[i][j].second, coverSorted[i][j].second);
-        BOOST_REQUIRE_CLOSE(kdSorted[i][j].first, coverSorted[i][j].first,
-            1e-5);
+        BOOST_REQUIRE_CLOSE(
+            kdSorted[i][j].first, coverSorted[i][j].first, 1e-5);
       }
       BOOST_REQUIRE_EQUAL(kdSorted[i].size(), coverSorted[i].size());
     }
@@ -832,8 +832,8 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
   data.randu(8, 1000); // 1000 points in 8 dimensions.
 
   // Set up ball tree range search.
-  RangeSearch<EuclideanDistance, arma::mat, BallTree> ballsearch(data, false,
-      true);
+  RangeSearch<EuclideanDistance, arma::mat, BallTree> ballsearch(
+      data, false, true);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -889,8 +889,7 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
       for (size_t j = 0; j < kdSorted[i].size(); ++j)
       {
         BOOST_REQUIRE_EQUAL(kdSorted[i][j].second, ballSorted[i][j].second);
-        BOOST_REQUIRE_CLOSE(kdSorted[i][j].first, ballSorted[i][j].first,
-            1e-5);
+        BOOST_REQUIRE_CLOSE(kdSorted[i][j].first, ballSorted[i][j].first, 1e-5);
       }
       BOOST_REQUIRE_EQUAL(kdSorted[i].size(), ballSorted[i].size());
     }
@@ -963,8 +962,7 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
       for (size_t j = 0; j < kdSorted[i].size(); ++j)
       {
         BOOST_REQUIRE_EQUAL(kdSorted[i][j].second, ballSorted[i][j].second);
-        BOOST_REQUIRE_CLOSE(kdSorted[i][j].first, ballSorted[i][j].first,
-            1e-5);
+        BOOST_REQUIRE_CLOSE(kdSorted[i][j].first, ballSorted[i][j].first, 1e-5);
       }
       BOOST_REQUIRE_EQUAL(kdSorted[i].size(), ballSorted[i].size());
     }
@@ -1042,8 +1040,7 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest2)
       for (size_t j = 0; j < kdSorted[i].size(); ++j)
       {
         BOOST_REQUIRE_EQUAL(kdSorted[i][j].second, ballSorted[i][j].second);
-        BOOST_REQUIRE_CLOSE(kdSorted[i][j].first, ballSorted[i][j].first,
-            1e-5);
+        BOOST_REQUIRE_CLOSE(kdSorted[i][j].first, ballSorted[i][j].first, 1e-5);
       }
     }
   }
@@ -1068,8 +1065,9 @@ BOOST_AUTO_TEST_CASE(EmptySearchTest)
   // Now check with a query set.
   arma::mat querySet = arma::randu<arma::mat>(3, 100);
 
-  BOOST_REQUIRE_THROW(rs.Search(querySet, math::Range(0.0, 10.0), neighbors,
-      distances), std::invalid_argument);
+  BOOST_REQUIRE_THROW(
+      rs.Search(querySet, math::Range(0.0, 10.0), neighbors, distances),
+      std::invalid_argument);
 }
 
 /**
@@ -1290,8 +1288,10 @@ BOOST_AUTO_TEST_CASE(RSModelTest)
     RangeSearch<> rs(referenceData);
     vector<vector<size_t>> baselineNeighbors;
     vector<vector<double>> baselineDistances;
-    rs.Search(queryData, math::Range(0.25, 0.75), baselineNeighbors,
-        baselineDistances);
+    rs.Search(queryData,
+              math::Range(0.25, 0.75),
+              baselineNeighbors,
+              baselineDistances);
 
     vector<vector<pair<double, size_t>>> baselineSorted;
     SortResults(baselineNeighbors, baselineDistances, baselineSorted);
@@ -1311,8 +1311,8 @@ BOOST_AUTO_TEST_CASE(RSModelTest)
       vector<vector<size_t>> neighbors;
       vector<vector<double>> distances;
 
-      models[i].Search(std::move(queryCopy), math::Range(0.25, 0.75), neighbors,
-          distances);
+      models[i].Search(
+          std::move(queryCopy), math::Range(0.25, 0.75), neighbors, distances);
 
       BOOST_REQUIRE_EQUAL(neighbors.size(), baselineNeighbors.size());
       BOOST_REQUIRE_EQUAL(distances.size(), baselineDistances.size());
@@ -1326,8 +1326,8 @@ BOOST_AUTO_TEST_CASE(RSModelTest)
         for (size_t l = 0; l < sorted[k].size(); ++l)
         {
           BOOST_REQUIRE_EQUAL(sorted[k][l].second, baselineSorted[k][l].second);
-          BOOST_REQUIRE_CLOSE(sorted[k][l].first, baselineSorted[k][l].first,
-              1e-5);
+          BOOST_REQUIRE_CLOSE(
+              sorted[k][l].first, baselineSorted[k][l].first, 1e-5);
         }
       }
     }
@@ -1409,8 +1409,8 @@ BOOST_AUTO_TEST_CASE(RSModelMonochromaticTest)
         for (size_t l = 0; l < sorted[k].size(); ++l)
         {
           BOOST_REQUIRE_EQUAL(sorted[k][l].second, baselineSorted[k][l].second);
-          BOOST_REQUIRE_CLOSE(sorted[k][l].first, baselineSorted[k][l].first,
-              1e-5);
+          BOOST_REQUIRE_CLOSE(
+              sorted[k][l].first, baselineSorted[k][l].first, 1e-5);
         }
       }
     }

@@ -27,8 +27,7 @@ namespace optimization {
 class TestFuncFW
 {
  public:
-  TestFuncFW()
-  {/* Nothing to do. */}
+  TestFuncFW() { /* Nothing to do. */}
 
   /**
    * Evaluation of the function.
@@ -58,7 +57,7 @@ class TestFuncFW
   }
 };
 
-}  // namespace optimization
-}  // namespace mlpack
+} // namespace optimization
+} // namespace mlpack
 
 #endif

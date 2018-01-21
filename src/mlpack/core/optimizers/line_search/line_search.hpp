@@ -12,7 +12,6 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_LINE_SEARCH_LINE_SEARCH_HPP
 #define MLPACK_CORE_OPTIMIZERS_LINE_SEARCH_LINE_SEARCH_HPP
 
-
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
@@ -31,10 +30,10 @@ namespace optimization {
 class LineSearch
 {
  public:
-  LineSearch(const size_t maxIterations = 100000,
-             const double tolerance = 1e-5) :
-      maxIterations(maxIterations), tolerance(tolerance)
-  {/* Do nothing */ }
+  LineSearch(const size_t maxIterations = 100000, const double tolerance = 1e-5)
+    : maxIterations(maxIterations), tolerance(tolerance)
+  { /* Do nothing */
+  }
 
   /**
    * Line search to minimize function between two points with Secant method,
@@ -83,7 +82,7 @@ class LineSearch
                     const arma::mat& x0,
                     const arma::mat& deltaX,
                     const double gamma);
-};  // class LineSearch
+}; // class LineSearch
 } // namespace optimization
 } // namespace mlpack
 

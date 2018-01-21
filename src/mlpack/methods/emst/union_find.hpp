@@ -45,7 +45,7 @@ class UnionFind
   }
 
   //! Destroy the object (nothing to do).
-  ~UnionFind() { }
+  ~UnionFind() {}
 
   /**
    * Returns the component containing an element.

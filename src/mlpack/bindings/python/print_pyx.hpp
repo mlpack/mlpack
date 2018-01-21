@@ -28,7 +28,6 @@ void PrintPYX(const util::ProgramDoc& programInfo,
               const std::string& mainFilename,
               const std::string& functionName);
 
-
 } // namespace python
 } // namespace bindings
 } // namespace mlpack

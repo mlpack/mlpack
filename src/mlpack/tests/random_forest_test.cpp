@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(BootstrapNoWeightsTest)
   arma::mat dataset(1, 1000);
   dataset.row(0) = arma::linspace<arma::rowvec>(1000, 1999, 1000);
   arma::Row<size_t> labels(1000);
-  labels.fill(1); // Don't care about the labels.
+  labels.fill(1);       // Don't care about the labels.
   arma::rowvec weights; // Unused.
 
   // When we make bootstrap samples, they should include elements from 1k to 2k.
@@ -41,8 +41,12 @@ BOOST_AUTO_TEST_CASE(BootstrapNoWeightsTest)
     arma::Row<size_t> bootstrapLabels;
     arma::rowvec bootstrapWeights;
 
-    Bootstrap<false>(dataset, labels, weights, bootstrapDataset,
-        bootstrapLabels, bootstrapWeights);
+    Bootstrap<false>(dataset,
+                     labels,
+                     weights,
+                     bootstrapDataset,
+                     bootstrapLabels,
+                     bootstrapWeights);
 
     BOOST_REQUIRE_EQUAL(bootstrapDataset.n_cols, 1000);
     BOOST_REQUIRE_EQUAL(bootstrapDataset.n_rows, 1);
@@ -66,7 +70,7 @@ BOOST_AUTO_TEST_CASE(BootstrapWeightsTest)
   arma::mat dataset(1, 1000);
   dataset.row(0) = arma::linspace<arma::rowvec>(1000, 1999, 1000);
   arma::Row<size_t> labels(1000);
-  labels.fill(1); // Don't care about the labels.
+  labels.fill(1);                                // Don't care about the labels.
   arma::rowvec weights(1000, arma::fill::randu); // Unused.
 
   // When we make bootstrap samples, they should include elements from 1k to 2k.
@@ -76,8 +80,12 @@ BOOST_AUTO_TEST_CASE(BootstrapWeightsTest)
     arma::Row<size_t> bootstrapLabels;
     arma::rowvec bootstrapWeights;
 
-    Bootstrap<true>(dataset, labels, weights, bootstrapDataset,
-        bootstrapLabels, bootstrapWeights);
+    Bootstrap<true>(dataset,
+                    labels,
+                    weights,
+                    bootstrapDataset,
+                    bootstrapLabels,
+                    bootstrapWeights);
 
     BOOST_REQUIRE_EQUAL(bootstrapDataset.n_cols, 1000);
     BOOST_REQUIRE_EQUAL(bootstrapDataset.n_rows, 1);
@@ -111,9 +119,10 @@ BOOST_AUTO_TEST_CASE(EmptyClassifyTest)
   BOOST_REQUIRE_THROW(rf.Classify(points, predictions), std::invalid_argument);
   BOOST_REQUIRE_THROW(rf.Classify(points.col(0)), std::invalid_argument);
   BOOST_REQUIRE_THROW(rf.Classify(points, predictions, probabilities),
+                      std::invalid_argument);
+  BOOST_REQUIRE_THROW(
+      rf.Classify(points.col(0), prediction, pointProbabilities),
       std::invalid_argument);
-  BOOST_REQUIRE_THROW(rf.Classify(points.col(0), prediction,
-      pointProbabilities), std::invalid_argument);
 }
 
 /**
@@ -129,8 +138,8 @@ BOOST_AUTO_TEST_CASE(UnweightedNumericLearningTest)
   data::Load("vc2_labels.txt", labels);
 
   // Build a random forest and a decision tree.
-  RandomForest<GiniGain, RandomDimensionSelect> rf(dataset, labels, 3,
-      10 /* 10 trees */, 5);
+  RandomForest<GiniGain, RandomDimensionSelect> rf(
+      dataset, labels, 3, 10 /* 10 trees */, 5);
   DecisionTree<> dt(dataset, labels, 3, 5);
 
   // Get performance statistics on test data.
@@ -182,8 +191,8 @@ BOOST_AUTO_TEST_CASE(WeightedNumericLearningTest)
     weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
 
   // Train decision tree and random forest.
-  RandomForest<GiniGain, RandomDimensionSelect> rf(dataset, labels, 3, weights,
-      10, 5);
+  RandomForest<GiniGain, RandomDimensionSelect> rf(
+      dataset, labels, 3, weights, 10, 5);
   DecisionTree<> dt(dataset, labels, 3, weights, 5);
 
   // Get performance statistics on test data.
@@ -344,7 +353,7 @@ BOOST_AUTO_TEST_CASE(LeafSizeDatasetTest)
   majorityProbs /= dataset.n_cols;
   arma::uword max;
   majorityProbs.max(max);
-  size_t majorityClass = (size_t) max;
+  size_t majorityClass = (size_t)max;
 
   // Predict on the training set.
   arma::Row<size_t> predictions;
@@ -389,10 +398,12 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   textForest.Classify(dataset, textPredictions, textProbabilities);
   binaryForest.Classify(dataset, binaryPredictions, binaryProbabilities);
 
-  CheckMatrices(beforePredictions, xmlPredictions, textPredictions,
-      binaryPredictions);
-  CheckMatrices(beforeProbabilities, xmlProbabilities, textProbabilities,
-      binaryProbabilities);
+  CheckMatrices(
+      beforePredictions, xmlPredictions, textPredictions, binaryPredictions);
+  CheckMatrices(beforeProbabilities,
+                xmlProbabilities,
+                textProbabilities,
+                binaryProbabilities);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

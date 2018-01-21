@@ -84,8 +84,7 @@ class CF
    * Initialize the CF object without performing any factorization.  Be sure to
    * call Train() before calling GetRecommendations() or any other functions!
    */
-  CF(const size_t numUsersForSimilarity = 5,
-     const size_t rank = 0);
+  CF(const size_t numUsersForSimilarity = 5, const size_t rank = 0);
 
   /**
    * Initialize the CF object using an instantiated factorizer, immediately
@@ -132,8 +131,9 @@ class CF
      FactorizerType factorizer = FactorizerType(),
      const size_t numUsersForSimilarity = 5,
      const size_t rank = 0,
-     const typename std::enable_if_t<
-         !FactorizerTraits<FactorizerType>::UsesCoordinateList>* = 0);
+     const typename std::
+         enable_if_t<!FactorizerTraits<FactorizerType>::UsesCoordinateList>* =
+             0);
 
   /**
    * Train the CF model (i.e. factorize the input matrix) using the parameters
@@ -158,8 +158,8 @@ class CF
   template<typename FactorizerType = amf::NMFALSFactorizer>
   void Train(const arma::sp_mat& data,
              FactorizerType factorizer = FactorizerType(),
-             const typename std::enable_if_t<
-                 !FactorizerTraits<FactorizerType>::UsesCoordinateList>* = 0);
+             const typename std::enable_if_t<!FactorizerTraits<FactorizerType>::
+                                                 UsesCoordinateList>* = 0);
 
   //! Sets number of users for calculating similarity.
   void NumUsersForSimilarity(const size_t num)
@@ -167,29 +167,21 @@ class CF
     if (num < 1)
     {
       Log::Warn << "CF::NumUsersForSimilarity(): invalid value (< 1) "
-          "ignored." << std::endl;
+                   "ignored."
+                << std::endl;
       return;
     }
     this->numUsersForSimilarity = num;
   }
 
   //! Gets number of users for calculating similarity.
-  size_t NumUsersForSimilarity() const
-  {
-    return numUsersForSimilarity;
-  }
+  size_t NumUsersForSimilarity() const { return numUsersForSimilarity; }
 
   //! Sets rank parameter for matrix factorization.
-  void Rank(const size_t rankValue)
-  {
-    this->rank = rankValue;
-  }
+  void Rank(const size_t rankValue) { this->rank = rankValue; }
 
   //! Gets rank parameter for matrix factorization.
-  size_t Rank() const
-  {
-    return rank;
-  }
+  size_t Rank() const { return rank; }
 
   //! Get the User Matrix.
   const arma::mat& W() const { return w; }
@@ -266,7 +258,8 @@ class CF
   typedef std::pair<double, size_t> Candidate;
 
   //! Compare two candidates based on the value.
-  struct CandidateCmp {
+  struct CandidateCmp
+  {
     bool operator()(const Candidate& c1, const Candidate& c2)
     {
       return c1.first > c2.first;

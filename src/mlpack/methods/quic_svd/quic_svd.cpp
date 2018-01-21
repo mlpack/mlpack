@@ -23,8 +23,8 @@ QUIC_SVD::QUIC_SVD(const arma::mat& dataset,
                    arma::mat& v,
                    arma::mat& sigma,
                    const double epsilon,
-                   const double delta) :
-    dataset(dataset)
+                   const double delta)
+  : dataset(dataset)
 {
   // Since columns are sample in the implementation, the matrix is transposed if
   // necessary for maximum speedup.
@@ -45,9 +45,7 @@ QUIC_SVD::QUIC_SVD(const arma::mat& dataset,
   ExtractSVD(u, v, sigma);
 }
 
-void QUIC_SVD::ExtractSVD(arma::mat& u,
-                          arma::mat& v,
-                          arma::mat& sigma)
+void QUIC_SVD::ExtractSVD(arma::mat& u, arma::mat& v, arma::mat& sigma)
 {
   // Calculate A * V_hat, necessary for further calculations.
   arma::mat projectedMat;

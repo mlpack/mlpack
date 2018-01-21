@@ -31,8 +31,8 @@ class FuncSq
    * @param A matrix A.
    * @param b vector b.
    */
-  FuncSq(const arma::mat& A, const arma::vec& b) : A(A), b(b)
-  {/* Nothing to do. */}
+  FuncSq(const arma::mat& A, const arma::vec& b)
+    : A(A), b(b) { /* Nothing to do. */}
 
   /**
    * Evaluation of the function.
@@ -61,9 +61,9 @@ class FuncSq
   }
 
   //! Get the matrix A.
-  arma::mat MatrixA() const {return A;}
+  arma::mat MatrixA() const { return A; }
   //! Modify the matrix A.
-  arma::mat& MatrixA() {return A;}
+  arma::mat& MatrixA() { return A; }
 
   //! Get the vector b.
   arma::vec Vectorb() const { return b; }

@@ -48,14 +48,14 @@ void Proximal::ProjectToL1Ball(arma::vec& v, double tau)
   for (size_t j = 1; j <= simplexSol.n_rows; j++)
   {
     rho = simplexSol.n_rows - j;
-    nu = simplexSol(rho) - (simplexSum(rho) - tau)/(rho + 1);
+    nu = simplexSol(rho) - (simplexSum(rho) - tau) / (rho + 1);
     if (nu > 0)
       break;
   }
-  double theta = (simplexSum(rho) - tau)/rho;
+  double theta = (simplexSum(rho) - tau) / rho;
 
   // Threshold on absolute value of v with theta.
-  for (arma::uword j = 0; j< simplexSol.n_rows; j++)
+  for (arma::uword j = 0; j < simplexSol.n_rows; j++)
   {
     if (v(j) >= 0.0)
       v(j) = std::max(v(j) - theta, 0.0);

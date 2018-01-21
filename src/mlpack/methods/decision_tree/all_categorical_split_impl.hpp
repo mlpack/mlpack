@@ -40,11 +40,11 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 
   for (size_t i = 0; i < data.n_elem; ++i)
   {
-    counts[(size_t) data[i]]++;
+    counts[(size_t)data[i]]++;
 
     if (UseWeights)
     {
-      childWeightSums[(size_t) data[i]] += weights[i];
+      childWeightSums[(size_t)data[i]] += weights[i];
       sumWeight += weights[i];
     }
   }
@@ -70,7 +70,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
   // Extract labels for each child.
   for (size_t i = 0; i < data.n_elem; ++i)
   {
-    const size_t category = (size_t) data[i];
+    const size_t category = (size_t)data[i];
 
     if (UseWeights)
     {
@@ -87,9 +87,9 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
   for (size_t i = 0; i < counts.n_elem; ++i)
   {
     // Calculate the gain of this child.
-    const double childPct = UseWeights ?
-        double(childWeightSums[i]) / sumWeight :
-        double(counts[i]) / double(data.n_elem);
+    const double childPct = UseWeights
+                                ? double(childWeightSums[i]) / sumWeight
+                                : double(counts[i]) / double(data.n_elem);
     const double childGain = FitnessFunction::template Evaluate<UseWeights>(
         childLabels[i], numClasses, childWeights[i]);
 
@@ -124,7 +124,7 @@ size_t AllCategoricalSplit<FitnessFunction>::CalculateDirection(
     const arma::Col<ElemType>& /* classProbabilities */,
     const AuxiliarySplitInfo<ElemType>& /* aux */)
 {
-  return (size_t) point;
+  return (size_t)point;
 }
 
 } // namespace tree

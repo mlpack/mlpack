@@ -32,17 +32,25 @@ class HoeffdingTreeModel
   };
 
   //! Convenience typedef for GINI_HOEFFDING tree type.
-  typedef HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit,
-      HoeffdingCategoricalSplit> GiniHoeffdingTreeType;
+  typedef HoeffdingTree<GiniImpurity,
+                        HoeffdingDoubleNumericSplit,
+                        HoeffdingCategoricalSplit>
+      GiniHoeffdingTreeType;
   //! Convenience typedef for GINI_BINARY tree type.
-  typedef HoeffdingTree<GiniImpurity, BinaryDoubleNumericSplit,
-      HoeffdingCategoricalSplit> GiniBinaryTreeType;
+  typedef HoeffdingTree<GiniImpurity,
+                        BinaryDoubleNumericSplit,
+                        HoeffdingCategoricalSplit>
+      GiniBinaryTreeType;
   //! Convenience typedef for INFO_HOEFFDING tree type.
-  typedef HoeffdingTree<InformationGain, HoeffdingDoubleNumericSplit,
-      HoeffdingCategoricalSplit> InfoHoeffdingTreeType;
+  typedef HoeffdingTree<InformationGain,
+                        HoeffdingDoubleNumericSplit,
+                        HoeffdingCategoricalSplit>
+      InfoHoeffdingTreeType;
   //! Convenience typedef for INFO_BINARY tree type.
-  typedef HoeffdingTree<InformationGain, BinaryDoubleNumericSplit,
-      HoeffdingCategoricalSplit> InfoBinaryTreeType;
+  typedef HoeffdingTree<InformationGain,
+                        BinaryDoubleNumericSplit,
+                        HoeffdingCategoricalSplit>
+      InfoBinaryTreeType;
 
   /**
    * Construct the Hoeffding tree model, but don't initialize any tree.
@@ -137,8 +145,7 @@ class HoeffdingTreeModel
    * @param dataset Dataset to classify.
    * @param predictions Vector to store predictions for test points in.
    */
-  void Classify(const arma::mat& dataset,
-                arma::Row<size_t>& predictions) const;
+  void Classify(const arma::mat& dataset, arma::Row<size_t>& predictions) const;
 
   /**
    * Using the model, classify the given test points, returning class
@@ -177,7 +184,7 @@ class HoeffdingTreeModel
       infoBinaryTree = NULL;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(type);
+    ar& BOOST_SERIALIZATION_NVP(type);
 
     // Fake dataset info may be needed to create fake trees.
     data::DatasetInfo info;
@@ -186,28 +193,28 @@ class HoeffdingTreeModel
       // Create fake tree to load into if needed.
       if (Archive::is_loading::value)
         giniHoeffdingTree = new GiniHoeffdingTreeType(info, 1, 1);
-      ar & BOOST_SERIALIZATION_NVP(giniHoeffdingTree);
+      ar& BOOST_SERIALIZATION_NVP(giniHoeffdingTree);
     }
     else if (type == GINI_BINARY)
     {
       // Create fake tree to load into if needed.
       if (Archive::is_loading::value)
         giniBinaryTree = new GiniBinaryTreeType(info, 1, 1);
-      ar & BOOST_SERIALIZATION_NVP(giniBinaryTree);
+      ar& BOOST_SERIALIZATION_NVP(giniBinaryTree);
     }
     else if (type == INFO_HOEFFDING)
     {
       // Create fake tree to load into if needed.
       if (Archive::is_loading::value)
         infoHoeffdingTree = new InfoHoeffdingTreeType(info, 1, 1);
-      ar & BOOST_SERIALIZATION_NVP(infoHoeffdingTree);
+      ar& BOOST_SERIALIZATION_NVP(infoHoeffdingTree);
     }
     else if (type == INFO_BINARY)
     {
       // Create fake tree to load into if needed.
       if (Archive::is_loading::value)
         infoBinaryTree = new InfoBinaryTreeType(info, 1, 1);
-      ar & BOOST_SERIALIZATION_NVP(infoBinaryTree);
+      ar& BOOST_SERIALIZATION_NVP(infoBinaryTree);
     }
   }
 

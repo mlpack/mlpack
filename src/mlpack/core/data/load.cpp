@@ -15,10 +15,8 @@
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
 
-template bool Load<int>(const std::string&,
-                        arma::Mat<int>&,
-                        const bool,
-                        const bool);
+template bool
+Load<int>(const std::string&, arma::Mat<int>&, const bool, const bool);
 
 template bool Load<unsigned int>(const std::string&,
                                  arma::Mat<unsigned int>&,
@@ -35,15 +33,11 @@ template bool Load<unsigned long long>(const std::string&,
                                        const bool,
                                        const bool);
 
-template bool Load<float>(const std::string&,
-                          arma::Mat<float>&,
-                          const bool,
-                          const bool);
+template bool
+Load<float>(const std::string&, arma::Mat<float>&, const bool, const bool);
 
-template bool Load<double>(const std::string&,
-                           arma::Mat<double>&,
-                           const bool,
-                           const bool);
+template bool
+Load<double>(const std::string&, arma::Mat<double>&, const bool, const bool);
 
 template bool Load<int, IncrementPolicy>(const std::string&,
                                          arma::Mat<int>&,
@@ -51,26 +45,26 @@ template bool Load<int, IncrementPolicy>(const std::string&,
                                          const bool,
                                          const bool);
 
-template bool Load<unsigned int, IncrementPolicy>(
-    const std::string&,
-    arma::Mat<unsigned int>&,
-    DatasetMapper<IncrementPolicy>&,
-    const bool,
-    const bool);
+template bool
+Load<unsigned int, IncrementPolicy>(const std::string&,
+                                    arma::Mat<unsigned int>&,
+                                    DatasetMapper<IncrementPolicy>&,
+                                    const bool,
+                                    const bool);
 
-template bool Load<unsigned long, IncrementPolicy>(
-    const std::string&,
-    arma::Mat<unsigned long>&,
-    DatasetMapper<IncrementPolicy>&,
-    const bool,
-    const bool);
+template bool
+Load<unsigned long, IncrementPolicy>(const std::string&,
+                                     arma::Mat<unsigned long>&,
+                                     DatasetMapper<IncrementPolicy>&,
+                                     const bool,
+                                     const bool);
 
-template bool Load<unsigned long long, IncrementPolicy>(
-    const std::string&,
-    arma::Mat<unsigned long long>&,
-    DatasetMapper<IncrementPolicy>&,
-    const bool,
-    const bool);
+template bool
+Load<unsigned long long, IncrementPolicy>(const std::string&,
+                                          arma::Mat<unsigned long long>&,
+                                          DatasetMapper<IncrementPolicy>&,
+                                          const bool,
+                                          const bool);
 
 template bool Load<float, IncrementPolicy>(const std::string&,
                                            arma::Mat<float>&,

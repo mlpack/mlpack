@@ -27,21 +27,37 @@ using namespace mlpack::gmm;
 using namespace arma;
 using namespace std;
 
-PROGRAM_INFO("Hidden Markov Model (HMM) Viterbi State Prediction", "This "
-    "utility takes an already-trained HMM, specified as " +
-    PRINT_PARAM_STRING("input_model") + ", and evaluates the most probable "
-    "hidden state sequence of a given sequence of observations (specified as "
-    "'" + PRINT_PARAM_STRING("input") + ", using the Viterbi algorithm.  The "
-    "computed state sequence may be saved using the " +
-    PRINT_PARAM_STRING("output") + " output parameter."
-    "\n\n"
-    "For example, to predict the state sequence of the observations " +
-    PRINT_DATASET("obs") + " using the HMM " + PRINT_MODEL("hmm") + ", "
-    "storing the predicted state sequence to " + PRINT_DATASET("states") +
-    ", the following command could be used:"
-    "\n\n" +
-    PRINT_CALL("hmm_viterbi", "input", "obs", "input_model", "hmm", "output",
-        "states"));
+PROGRAM_INFO(
+    "Hidden Markov Model (HMM) Viterbi State Prediction",
+    "This "
+    "utility takes an already-trained HMM, specified as "
+        + PRINT_PARAM_STRING("input_model")
+        + ", and evaluates the most probable "
+          "hidden state sequence of a given sequence of observations "
+          "(specified as "
+          "'"
+        + PRINT_PARAM_STRING("input")
+        + ", using the Viterbi algorithm.  The "
+          "computed state sequence may be saved using the "
+        + PRINT_PARAM_STRING("output")
+        + " output parameter."
+          "\n\n"
+          "For example, to predict the state sequence of the observations "
+        + PRINT_DATASET("obs")
+        + " using the HMM "
+        + PRINT_MODEL("hmm")
+        + ", "
+          "storing the predicted state sequence to "
+        + PRINT_DATASET("states")
+        + ", the following command could be used:"
+          "\n\n"
+        + PRINT_CALL("hmm_viterbi",
+                     "input",
+                     "obs",
+                     "input_model",
+                     "hmm",
+                     "output",
+                     "states"));
 
 PARAM_MATRIX_IN_REQ("input", "Matrix containing observations,", "i");
 PARAM_MODEL_IN_REQ(HMMModel, "input_model", "Trained HMM to use.", "m");
@@ -61,7 +77,7 @@ struct Viterbi
     if ((dataSeq.n_cols == 1) && (hmm.Emission()[0].Dimensionality() == 1))
     {
       Log::Info << "Data sequence appears to be transposed; correcting."
-          << endl;
+                << endl;
       dataSeq = dataSeq.t();
     }
 
@@ -69,8 +85,8 @@ struct Viterbi
     if (dataSeq.n_rows != hmm.Emission()[0].Dimensionality())
     {
       Log::Fatal << "Observation dimensionality (" << dataSeq.n_rows << ") "
-          << "does not match HMM Gaussian dimensionality ("
-          << hmm.Emission()[0].Dimensionality() << ")!" << endl;
+                 << "does not match HMM Gaussian dimensionality ("
+                 << hmm.Emission()[0].Dimensionality() << ")!" << endl;
     }
 
     arma::Row<size_t> sequence;
@@ -84,7 +100,7 @@ struct Viterbi
 
 static void mlpackMain()
 {
-  RequireAtLeastOnePassed({ "output" }, false, "no results will be saved");
+  RequireAtLeastOnePassed({"output"}, false, "no results will be saved");
 
-  CLI::GetParam<HMMModel>("input_model").PerformAction<Viterbi>((void*) NULL);
+  CLI::GetParam<HMMModel>("input_model").PerformAction<Viterbi>((void*)NULL);
 }

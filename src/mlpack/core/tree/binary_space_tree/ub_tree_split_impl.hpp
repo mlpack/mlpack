@@ -64,8 +64,8 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
     size_t bit = 0;
 
     for (; bit < order; bit++)
-      if ((lo[row] & ((AddressElemType) 1 << (order - 1 - bit))) !=
-          (hi[row] & ((AddressElemType) 1 << (order - 1 - bit))))
+      if ((lo[row] & ((AddressElemType)1 << (order - 1 - bit)))
+          != (hi[row] & ((AddressElemType)1 << (order - 1 - bit))))
         break;
 
     bit++;
@@ -79,13 +79,13 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
     else
     {
       for (; bit < order; bit++)
-        lo[row] |= ((AddressElemType) 1 << (order - 1 - bit));
+        lo[row] |= ((AddressElemType)1 << (order - 1 - bit));
       row++;
     }
 
     for (; row < data.n_rows; row++)
       for (; bit < order; bit++)
-        lo[row] |= ((AddressElemType) 1 << (order - 1 - bit));
+        lo[row] |= ((AddressElemType)1 << (order - 1 - bit));
   }
 
   // The bound shouldn't contain too many subrectangles.
@@ -107,8 +107,8 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
     size_t bit = 0;
 
     for (; bit < order; bit++)
-      if ((lo[row] & ((AddressElemType) 1 << (order - 1 - bit))) !=
-          (hi[row] & ((AddressElemType) 1 << (order - 1 - bit))))
+      if ((lo[row] & ((AddressElemType)1 << (order - 1 - bit)))
+          != (hi[row] & ((AddressElemType)1 << (order - 1 - bit))))
         break;
 
     bit++;
@@ -122,13 +122,13 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
     else
     {
       for (; bit < order; bit++)
-        hi[row] &= ~((AddressElemType) 1 << (order - 1 - bit));
+        hi[row] &= ~((AddressElemType)1 << (order - 1 - bit));
       row++;
     }
 
     for (; row < data.n_rows; row++)
       for (; bit < order; bit++)
-        hi[row] &= ~((AddressElemType) 1 << (order - 1 - bit));
+        hi[row] &= ~((AddressElemType)1 << (order - 1 - bit));
   }
 
   // Set the minimum and the maximum addresses.
@@ -157,11 +157,10 @@ void UBTreeSplit<BoundType, MatType>::InitializeAddresses(const MatType& data)
 }
 
 template<typename BoundType, typename MatType>
-size_t UBTreeSplit<BoundType, MatType>::PerformSplit(
-    MatType& data,
-    const size_t begin,
-    const size_t count,
-    const SplitInfo& splitInfo)
+size_t UBTreeSplit<BoundType, MatType>::PerformSplit(MatType& data,
+                                                     const size_t begin,
+                                                     const size_t count,
+                                                     const SplitInfo& splitInfo)
 {
   // For the first time we have to rearrange the dataset.
   if (splitInfo.addresses)
@@ -198,12 +197,12 @@ size_t UBTreeSplit<BoundType, MatType>::PerformSplit(
 }
 
 template<typename BoundType, typename MatType>
-size_t UBTreeSplit<BoundType, MatType>::PerformSplit(
-    MatType& data,
-    const size_t begin,
-    const size_t count,
-    const SplitInfo& splitInfo,
-    std::vector<size_t>& oldFromNew)
+size_t
+UBTreeSplit<BoundType, MatType>::PerformSplit(MatType& data,
+                                              const size_t begin,
+                                              const size_t count,
+                                              const SplitInfo& splitInfo,
+                                              std::vector<size_t>& oldFromNew)
 {
   // For the first time we have to rearrange the dataset.
   if (splitInfo.addresses)

@@ -85,8 +85,8 @@ class RPTreeMeanSplit
                              const size_t count,
                              const SplitInfo& splitInfo)
   {
-    return split::PerformSplit<MatType, RPTreeMeanSplit>(data, begin, count,
-        splitInfo);
+    return split::PerformSplit<MatType, RPTreeMeanSplit>(
+        data, begin, count, splitInfo);
   }
 
   /**
@@ -111,8 +111,8 @@ class RPTreeMeanSplit
                              const SplitInfo& splitInfo,
                              std::vector<size_t>& oldFromNew)
   {
-    return split::PerformSplit<MatType, RPTreeMeanSplit>(data, begin, count,
-        splitInfo, oldFromNew);
+    return split::PerformSplit<MatType, RPTreeMeanSplit>(
+        data, begin, count, splitInfo, oldFromNew);
   }
 
   /**
@@ -125,8 +125,8 @@ class RPTreeMeanSplit
   static bool AssignToLeftNode(const VecType& point, const SplitInfo& splitInfo)
   {
     if (splitInfo.meanSplit)
-      return arma::dot(point - splitInfo.mean, point - splitInfo.mean) <=
-          splitInfo.splitVal;
+      return arma::dot(point - splitInfo.mean, point - splitInfo.mean)
+             <= splitInfo.splitVal;
 
     return (arma::dot(point, splitInfo.direction) <= splitInfo.splitVal);
   }

@@ -20,10 +20,9 @@ namespace tree {
 
 template<typename FitnessFunction, typename ObservationType>
 BinaryNumericSplit<FitnessFunction, ObservationType>::BinaryNumericSplit(
-    const size_t numClasses) :
-    classCounts(numClasses),
-    bestSplit(std::numeric_limits<ObservationType>::min()),
-    isAccurate(true)
+    const size_t numClasses)
+  : classCounts(numClasses),
+    bestSplit(std::numeric_limits<ObservationType>::min()), isAccurate(true)
 {
   // Zero out class counts.
   classCounts.zeros();
@@ -31,11 +30,9 @@ BinaryNumericSplit<FitnessFunction, ObservationType>::BinaryNumericSplit(
 
 template<typename FitnessFunction, typename ObservationType>
 BinaryNumericSplit<FitnessFunction, ObservationType>::BinaryNumericSplit(
-    const size_t numClasses,
-    const BinaryNumericSplit& /* other */) :
-    classCounts(numClasses),
-    bestSplit(std::numeric_limits<ObservationType>::min()),
-    isAccurate(true)
+    const size_t numClasses, const BinaryNumericSplit& /* other */)
+  : classCounts(numClasses),
+    bestSplit(std::numeric_limits<ObservationType>::min()), isAccurate(true)
 {
   // Zero out class counts.
   classCounts.zeros();
@@ -43,8 +40,7 @@ BinaryNumericSplit<FitnessFunction, ObservationType>::BinaryNumericSplit(
 
 template<typename FitnessFunction, typename ObservationType>
 void BinaryNumericSplit<FitnessFunction, ObservationType>::Train(
-    ObservationType value,
-    const size_t label)
+    ObservationType value, const size_t label)
 {
   // Push it into the multimap, and update the class counts.
   sortedElements.insert(std::pair<ObservationType, size_t>(value, label));
@@ -56,8 +52,7 @@ void BinaryNumericSplit<FitnessFunction, ObservationType>::Train(
 
 template<typename FitnessFunction, typename ObservationType>
 void BinaryNumericSplit<FitnessFunction, ObservationType>::
-    EvaluateFitnessFunction(double& bestFitness,
-                            double& secondBestFitness)
+    EvaluateFitnessFunction(double& bestFitness, double& secondBestFitness)
 {
   // Unfortunately, we have to iterate over the map.
   bestSplit = std::numeric_limits<ObservationType>::min();
@@ -75,7 +70,9 @@ void BinaryNumericSplit<FitnessFunction, ObservationType>::
   ObservationType lastObservation = (*sortedElements.begin()).first;
   size_t lastClass = classCounts.n_elem;
   for (typename std::multimap<ObservationType, size_t>::const_iterator it =
-      sortedElements.begin(); it != sortedElements.end(); ++it)
+           sortedElements.begin();
+       it != sortedElements.end();
+       ++it)
   {
     // If this value is the same as the last, or if this is the first value, or
     // we have the same class as the previous observation, don't calculate the
@@ -107,8 +104,7 @@ void BinaryNumericSplit<FitnessFunction, ObservationType>::
 
 template<typename FitnessFunction, typename ObservationType>
 void BinaryNumericSplit<FitnessFunction, ObservationType>::Split(
-    arma::Col<size_t>& childMajorities,
-    SplitInfo& splitInfo)
+    arma::Col<size_t>& childMajorities, SplitInfo& splitInfo)
 {
   if (!isAccurate)
   {
@@ -126,8 +122,9 @@ void BinaryNumericSplit<FitnessFunction, ObservationType>::Split(
   double min = DBL_MAX;
   double max = -DBL_MAX;
   for (typename std::multimap<ObservationType, size_t>::const_iterator it =
-      sortedElements.begin(); // (*it).first < bestSplit; ++it)
-      it != sortedElements.end(); ++it)
+           sortedElements.begin(); // (*it).first < bestSplit; ++it)
+       it != sortedElements.end();
+       ++it)
   {
     // Move the point to the correct side of the split.
     if ((*it).first < bestSplit)
@@ -153,8 +150,8 @@ void BinaryNumericSplit<FitnessFunction, ObservationType>::Split(
 }
 
 template<typename FitnessFunction, typename ObservationType>
-size_t BinaryNumericSplit<FitnessFunction, ObservationType>::MajorityClass()
-    const
+size_t
+BinaryNumericSplit<FitnessFunction, ObservationType>::MajorityClass() const
 {
   arma::uword maxIndex;
   classCounts.max(maxIndex);
@@ -162,8 +159,9 @@ size_t BinaryNumericSplit<FitnessFunction, ObservationType>::MajorityClass()
 }
 
 template<typename FitnessFunction, typename ObservationType>
-double BinaryNumericSplit<FitnessFunction, ObservationType>::
-    MajorityProbability() const
+double
+BinaryNumericSplit<FitnessFunction, ObservationType>::MajorityProbability()
+    const
 {
   return double(arma::max(classCounts)) / double(arma::accu(classCounts));
 }
@@ -171,14 +169,12 @@ double BinaryNumericSplit<FitnessFunction, ObservationType>::
 template<typename FitnessFunction, typename ObservationType>
 template<typename Archive>
 void BinaryNumericSplit<FitnessFunction, ObservationType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
   // Serialize.
-  ar & BOOST_SERIALIZATION_NVP(sortedElements);
-  ar & BOOST_SERIALIZATION_NVP(classCounts);
+  ar& BOOST_SERIALIZATION_NVP(sortedElements);
+  ar& BOOST_SERIALIZATION_NVP(classCounts);
 }
-
 
 } // namespace tree
 } // namespace mlpack

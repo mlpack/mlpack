@@ -35,7 +35,7 @@ namespace optimization {
  *
  * @tparam ObjectiveMatrixType Should be either arma::mat or arma::sp_mat.
  */
-template <typename ObjectiveMatrixType>
+template<typename ObjectiveMatrixType>
 class SDP
 {
  public:

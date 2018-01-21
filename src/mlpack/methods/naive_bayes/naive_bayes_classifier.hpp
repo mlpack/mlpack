@@ -167,8 +167,7 @@ class NaiveBayesClassifier
    * @param predictions Vector that class predictions will be placed into.
    */
   template<typename MatType>
-  void Classify(const MatType& data,
-                arma::Row<size_t>& predictions) const;
+  void Classify(const MatType& data, arma::Row<size_t>& predictions) const;
 
   /**
    * Classify the given points using the trained NaiveBayesClassifier model and
@@ -234,8 +233,7 @@ class NaiveBayesClassifier
    * @param logLikelihoods Matrix to store log likelihoods in.
    */
   template<typename MatType>
-  void LogLikelihood(const MatType& data,
-                     ModelMatType& logLikelihoods) const;
+  void LogLikelihood(const MatType& data, ModelMatType& logLikelihoods) const;
 };
 
 } // namespace naive_bayes

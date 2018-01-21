@@ -42,9 +42,10 @@ class RefinedStart
    * number of samplings to perform and the percentage of the dataset to use in
    * each sampling.
    */
-  RefinedStart(const size_t samplings = 100,
-               const double percentage = 0.02) :
-      samplings(samplings), percentage(percentage) { }
+  RefinedStart(const size_t samplings = 100, const double percentage = 0.02)
+    : samplings(samplings), percentage(percentage)
+  {
+  }
 
   /**
    * Partition the given dataset into the given number of clusters according to
@@ -91,8 +92,8 @@ class RefinedStart
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(samplings);
-    ar & BOOST_SERIALIZATION_NVP(percentage);
+    ar& BOOST_SERIALIZATION_NVP(samplings);
+    ar& BOOST_SERIALIZATION_NVP(percentage);
   }
 
  private:

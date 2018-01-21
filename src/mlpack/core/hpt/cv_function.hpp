@@ -124,8 +124,8 @@ class CVFunction
   template<size_t BoundArgIndex,
            size_t ParamIndex,
            typename... Args,
-           typename = typename
-               std::enable_if<(BoundArgIndex + ParamIndex < TotalArgs)>::type>
+           typename = typename std::enable_if<(BoundArgIndex + ParamIndex
+                                               < TotalArgs)>::type>
   inline double Evaluate(const arma::mat& parameters, const Args&... args);
 
   /**
@@ -134,8 +134,8 @@ class CVFunction
   template<size_t BoundArgIndex,
            size_t ParamIndex,
            typename... Args,
-           typename = typename
-               std::enable_if<BoundArgIndex + ParamIndex == TotalArgs>::type,
+           typename = typename std::enable_if<BoundArgIndex + ParamIndex
+                                              == TotalArgs>::type,
            typename = void>
   inline double Evaluate(const arma::mat& parameters, const Args&... args);
 
@@ -145,8 +145,8 @@ class CVFunction
   template<size_t BoundArgIndex,
            size_t ParamIndex,
            typename... Args,
-           typename = typename std::enable_if<
-               UseBoundArg<BoundArgIndex, ParamIndex>::value>::type>
+           typename = typename std::
+               enable_if<UseBoundArg<BoundArgIndex, ParamIndex>::value>::type>
   inline double PutNextArg(const arma::mat& parameters, const Args&... args);
 
   /**
@@ -156,12 +156,11 @@ class CVFunction
   template<size_t BoundArgIndex,
            size_t ParamIndex,
            typename... Args,
-           typename = typename std::enable_if<
-               !UseBoundArg<BoundArgIndex, ParamIndex>::value>::type,
+           typename = typename std::
+               enable_if<!UseBoundArg<BoundArgIndex, ParamIndex>::value>::type,
            typename = void>
   inline double PutNextArg(const arma::mat& parameters, const Args&... args);
 };
-
 
 } // namespace hpt
 } // namespace mlpack

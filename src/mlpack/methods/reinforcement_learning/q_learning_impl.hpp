@@ -17,55 +17,38 @@
 namespace mlpack {
 namespace rl {
 
-template <
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename PolicyType,
-  typename ReplayType
->
-QLearning<
-  EnvironmentType,
-  NetworkType,
-  UpdaterType,
-  PolicyType,
-  ReplayType
->::QLearning(TrainingConfig config,
-             NetworkType network,
-             PolicyType policy,
-             ReplayType replayMethod,
-             UpdaterType updater,
-             EnvironmentType environment):
-    config(std::move(config)),
-    learningNetwork(std::move(network)),
-    updater(std::move(updater)),
-    policy(std::move(policy)),
-    replayMethod(std::move(replayMethod)),
-    environment(std::move(environment)),
-    totalSteps(0),
-    deterministic(false)
+template<typename EnvironmentType,
+         typename NetworkType,
+         typename UpdaterType,
+         typename PolicyType,
+         typename ReplayType>
+QLearning<EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType>::
+    QLearning(TrainingConfig config,
+              NetworkType network,
+              PolicyType policy,
+              ReplayType replayMethod,
+              UpdaterType updater,
+              EnvironmentType environment)
+  : config(std::move(config)), learningNetwork(std::move(network)),
+    updater(std::move(updater)), policy(std::move(policy)),
+    replayMethod(std::move(replayMethod)), environment(std::move(environment)),
+    totalSteps(0), deterministic(false)
 {
   if (learningNetwork.Parameters().is_empty())
     learningNetwork.ResetParameters();
   this->updater.Initialize(learningNetwork.Parameters().n_rows,
-      learningNetwork.Parameters().n_cols);
+                           learningNetwork.Parameters().n_cols);
   targetNetwork = learningNetwork;
 }
 
-template <
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename PolicyType,
-  typename ReplayType
->
-arma::Col<size_t> QLearning<
-  EnvironmentType,
-  NetworkType,
-  UpdaterType,
-  PolicyType,
-  ReplayType
->::BestAction(const arma::mat& actionValues)
+template<typename EnvironmentType,
+         typename NetworkType,
+         typename UpdaterType,
+         typename PolicyType,
+         typename ReplayType>
+arma::Col<size_t>
+QLearning<EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType>::
+    BestAction(const arma::mat& actionValues)
 {
   arma::Col<size_t> bestActions(actionValues.n_cols);
   arma::rowvec maxActionValues = arma::max(actionValues, 0);
@@ -77,20 +60,16 @@ arma::Col<size_t> QLearning<
   return bestActions;
 };
 
-template <
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename BehaviorPolicyType,
-  typename ReplayType
->
-double QLearning<
-  EnvironmentType,
-  NetworkType,
-  UpdaterType,
-  BehaviorPolicyType,
-  ReplayType
->::Step()
+template<typename EnvironmentType,
+         typename NetworkType,
+         typename UpdaterType,
+         typename BehaviorPolicyType,
+         typename ReplayType>
+double QLearning<EnvironmentType,
+                 NetworkType,
+                 UpdaterType,
+                 BehaviorPolicyType,
+                 ReplayType>::Step()
 {
   // Get the action value for each action at current state.
   arma::colvec actionValue;
@@ -104,8 +83,8 @@ double QLearning<
   double reward = environment.Sample(state, action, nextState);
 
   // Store the transition for replay.
-  replayMethod.Store(state, action, reward,
-      nextState, environment.IsTerminal(nextState));
+  replayMethod.Store(
+      state, action, reward, nextState, environment.IsTerminal(nextState));
 
   // Update current state.
   state = nextState;
@@ -121,8 +100,11 @@ double QLearning<
   arma::colvec sampledRewards;
   arma::mat sampledNextStates;
   arma::icolvec isTerminal;
-  replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
-      sampledNextStates, isTerminal);
+  replayMethod.Sample(sampledStates,
+                      sampledActions,
+                      sampledRewards,
+                      sampledNextStates,
+                      isTerminal);
 
   // Compute action value for next state with target network.
   arma::mat nextActionValues;
@@ -146,8 +128,10 @@ double QLearning<
   learningNetwork.Forward(sampledStates, target);
   for (size_t i = 0; i < sampledNextStates.n_cols; ++i)
   {
-    target(sampledActions[i], i) = sampledRewards[i] + config.Discount() *
-        (isTerminal[i] ? 0.0 : nextActionValues(bestActions[i], i));
+    target(sampledActions[i], i) =
+        sampledRewards[i]
+        + config.Discount()
+              * (isTerminal[i] ? 0.0 : nextActionValues(bestActions[i], i));
   }
 
   // Learn form experience.
@@ -158,20 +142,16 @@ double QLearning<
   return reward;
 }
 
-template <
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename BehaviorPolicyType,
-  typename ReplayType
->
-double QLearning<
-  EnvironmentType,
-  NetworkType,
-  UpdaterType,
-  BehaviorPolicyType,
-  ReplayType
->::Episode()
+template<typename EnvironmentType,
+         typename NetworkType,
+         typename UpdaterType,
+         typename BehaviorPolicyType,
+         typename ReplayType>
+double QLearning<EnvironmentType,
+                 NetworkType,
+                 UpdaterType,
+                 BehaviorPolicyType,
+                 ReplayType>::Episode()
 {
   // Get the initial state from environment.
   state = environment.InitialSample();
@@ -211,4 +191,3 @@ double QLearning<
 } // namespace mlpack
 
 #endif
-

@@ -26,15 +26,14 @@ LinearNoBias<InputDataType, OutputDataType>::LinearNoBias()
 }
 
 template<typename InputDataType, typename OutputDataType>
-LinearNoBias<InputDataType, OutputDataType>::LinearNoBias(
-    const size_t inSize, const size_t outSize) :
-    inSize(inSize),
-    outSize(outSize)
+LinearNoBias<InputDataType, OutputDataType>::LinearNoBias(const size_t inSize,
+                                                          const size_t outSize)
+  : inSize(inSize), outSize(outSize)
 {
   weights.set_size(outSize * inSize, 1);
 }
 
-template <typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType>
 void LinearNoBias<InputDataType, OutputDataType>::Reset()
 {
   weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
@@ -63,8 +62,8 @@ void LinearNoBias<InputDataType, OutputDataType>::Gradient(
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
-  gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
-      error * input.t());
+  gradient.submat(0, 0, weight.n_elem - 1, 0) =
+      arma::vectorise(error * input.t());
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -72,8 +71,8 @@ template<typename Archive>
 void LinearNoBias<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar& BOOST_SERIALIZATION_NVP(inSize);
+  ar& BOOST_SERIALIZATION_NVP(outSize);
 
   // This is inefficient, but necessary so that WeightSetVisitor sets the right
   // size.

@@ -33,8 +33,8 @@ class FullSelection
    */
   template<typename DecomposableFunctionType>
   double Select(DecomposableFunctionType& function,
-                      const size_t batchSize,
-                      const arma::mat& iterate)
+                const size_t batchSize,
+                const arma::mat& iterate)
   {
     // Find the number of functions to use.
     const size_t numFunctions = function.NumFunctions();

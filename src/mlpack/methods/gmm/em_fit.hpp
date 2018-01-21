@@ -157,14 +157,14 @@ class EMFit
    * @param covariances Vector of covariance matrices.
    * @param weights Vector of a priori weights.
    */
-  double LogLikelihood(const arma::mat& data,
-                       const std::vector<distribution::GaussianDistribution>&
-                           dists,
-                       const arma::vec& weights) const;
+  double
+  LogLikelihood(const arma::mat& data,
+                const std::vector<distribution::GaussianDistribution>& dists,
+                const arma::vec& weights) const;
 
-  // Armadillo uses uword internally as an OpenMP index type, which crashes
-  // Visual Studio.
-  #ifndef _WIN32
+// Armadillo uses uword internally as an OpenMP index type, which crashes
+// Visual Studio.
+#ifndef _WIN32
   /**
    * Use the Armadillo gmm_diag clusterer to train a GMM with diagonal
    * covariance.  If InitialClusteringType == kmeans::KMeans<>, this will use
@@ -175,12 +175,12 @@ class EMFit
    * @param weights Prior weights.
    * @param useInitialModel If true, the existing model will be used.
    */
-  void ArmadilloGMMWrapper(
-      const arma::mat& observations,
-      std::vector<distribution::GaussianDistribution>& dists,
-      arma::vec& weights,
-      const bool useInitialModel);
-  #endif
+  void
+  ArmadilloGMMWrapper(const arma::mat& observations,
+                      std::vector<distribution::GaussianDistribution>& dists,
+                      arma::vec& weights,
+                      const bool useInitialModel);
+#endif
 
   //! Maximum iterations of EM algorithm.
   size_t maxIterations;

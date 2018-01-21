@@ -43,83 +43,90 @@
 namespace mlpack {
 namespace ann {
 
-template<typename InputDataType, typename OutputDataType> class AddMerge;
-template<typename InputDataType, typename OutputDataType> class Concat;
-template<typename InputDataType, typename OutputDataType> class DropConnect;
-template<typename InputDataType, typename OutputDataType> class Glimpse;
-template<typename InputDataType, typename OutputDataType> class Linear;
-template<typename InputDataType, typename OutputDataType> class LinearNoBias;
-template<typename InputDataType, typename OutputDataType> class LSTM;
-template<typename InputDataType, typename OutputDataType> class GRU;
-template<typename InputDataType, typename OutputDataType> class FastLSTM;
-template<typename InputDataType, typename OutputDataType> class Recurrent;
-template<typename InputDataType, typename OutputDataType> class Sequential;
-template<typename InputDataType, typename OutputDataType> class VRClassReward;
+template<typename InputDataType, typename OutputDataType>
+class AddMerge;
+template<typename InputDataType, typename OutputDataType>
+class Concat;
+template<typename InputDataType, typename OutputDataType>
+class DropConnect;
+template<typename InputDataType, typename OutputDataType>
+class Glimpse;
+template<typename InputDataType, typename OutputDataType>
+class Linear;
+template<typename InputDataType, typename OutputDataType>
+class LinearNoBias;
+template<typename InputDataType, typename OutputDataType>
+class LSTM;
+template<typename InputDataType, typename OutputDataType>
+class GRU;
+template<typename InputDataType, typename OutputDataType>
+class FastLSTM;
+template<typename InputDataType, typename OutputDataType>
+class Recurrent;
+template<typename InputDataType, typename OutputDataType>
+class Sequential;
+template<typename InputDataType, typename OutputDataType>
+class VRClassReward;
 
-template<
-    typename OutputLayerType,
-    typename InputDataType,
-    typename OutputDataType
->
+template<typename OutputLayerType,
+         typename InputDataType,
+         typename OutputDataType>
 class ConcatPerformance;
 
-template<
-    typename ForwardConvolutionRule,
-    typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
->
+template<typename ForwardConvolutionRule,
+         typename BackwardConvolutionRule,
+         typename GradientConvolutionRule,
+         typename InputDataType,
+         typename OutputDataType>
 class Convolution;
 
-template<
-    typename InputDataType,
-    typename OutputDataType
->
+template<typename InputDataType, typename OutputDataType>
 class RecurrentAttention;
 
-using LayerTypes = boost::variant<
-    Add<arma::mat, arma::mat>*,
-    AddMerge<arma::mat, arma::mat>*,
-    BaseLayer<LogisticFunction, arma::mat, arma::mat>*,
-    BaseLayer<IdentityFunction, arma::mat, arma::mat>*,
-    BaseLayer<TanhFunction, arma::mat, arma::mat>*,
-    BaseLayer<RectifierFunction, arma::mat, arma::mat>*,
-    Concat<arma::mat, arma::mat>*,
-    ConcatPerformance<NegativeLogLikelihood<arma::mat, arma::mat>,
-                      arma::mat, arma::mat>*,
-    Constant<arma::mat, arma::mat>*,
-    Convolution<NaiveConvolution<ValidConvolution>,
-                NaiveConvolution<FullConvolution>,
-                NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
-    CrossEntropyError<arma::mat, arma::mat>*,
-    DropConnect<arma::mat, arma::mat>*,
-    Dropout<arma::mat, arma::mat>*,
-    ELU<arma::mat, arma::mat>*,
-    Glimpse<arma::mat, arma::mat>*,
-    HardTanH<arma::mat, arma::mat>*,
-    Join<arma::mat, arma::mat>*,
-    LeakyReLU<arma::mat, arma::mat>*,
-    Linear<arma::mat, arma::mat>*,
-    LinearNoBias<arma::mat, arma::mat>*,
-    LogSoftMax<arma::mat, arma::mat>*,
-    Lookup<arma::mat, arma::mat>*,
-    LSTM<arma::mat, arma::mat>*,
-    GRU<arma::mat, arma::mat>*,
-    FastLSTM<arma::mat, arma::mat>*,
-    MaxPooling<arma::mat, arma::mat>*,
-    MeanPooling<arma::mat, arma::mat>*,
-    MeanSquaredError<arma::mat, arma::mat>*,
-    MultiplyConstant<arma::mat, arma::mat>*,
-    NegativeLogLikelihood<arma::mat, arma::mat>*,
-    PReLU<arma::mat, arma::mat>*,
-    Recurrent<arma::mat, arma::mat>*,
-    RecurrentAttention<arma::mat, arma::mat>*,
-    ReinforceNormal<arma::mat, arma::mat>*,
-    Select<arma::mat, arma::mat>*,
-    Sequential<arma::mat, arma::mat>*,
-    VRClassReward<arma::mat, arma::mat>*
->;
+using LayerTypes = boost::
+    variant<Add<arma::mat, arma::mat>*,
+            AddMerge<arma::mat, arma::mat>*,
+            BaseLayer<LogisticFunction, arma::mat, arma::mat>*,
+            BaseLayer<IdentityFunction, arma::mat, arma::mat>*,
+            BaseLayer<TanhFunction, arma::mat, arma::mat>*,
+            BaseLayer<RectifierFunction, arma::mat, arma::mat>*,
+            Concat<arma::mat, arma::mat>*,
+            ConcatPerformance<NegativeLogLikelihood<arma::mat, arma::mat>,
+                              arma::mat,
+                              arma::mat>*,
+            Constant<arma::mat, arma::mat>*,
+            Convolution<NaiveConvolution<ValidConvolution>,
+                        NaiveConvolution<FullConvolution>,
+                        NaiveConvolution<ValidConvolution>,
+                        arma::mat,
+                        arma::mat>*,
+            CrossEntropyError<arma::mat, arma::mat>*,
+            DropConnect<arma::mat, arma::mat>*,
+            Dropout<arma::mat, arma::mat>*,
+            ELU<arma::mat, arma::mat>*,
+            Glimpse<arma::mat, arma::mat>*,
+            HardTanH<arma::mat, arma::mat>*,
+            Join<arma::mat, arma::mat>*,
+            LeakyReLU<arma::mat, arma::mat>*,
+            Linear<arma::mat, arma::mat>*,
+            LinearNoBias<arma::mat, arma::mat>*,
+            LogSoftMax<arma::mat, arma::mat>*,
+            Lookup<arma::mat, arma::mat>*,
+            LSTM<arma::mat, arma::mat>*,
+            GRU<arma::mat, arma::mat>*,
+            FastLSTM<arma::mat, arma::mat>*,
+            MaxPooling<arma::mat, arma::mat>*,
+            MeanPooling<arma::mat, arma::mat>*,
+            MeanSquaredError<arma::mat, arma::mat>*,
+            MultiplyConstant<arma::mat, arma::mat>*,
+            NegativeLogLikelihood<arma::mat, arma::mat>*,
+            PReLU<arma::mat, arma::mat>*,
+            Recurrent<arma::mat, arma::mat>*,
+            RecurrentAttention<arma::mat, arma::mat>*,
+            ReinforceNormal<arma::mat, arma::mat>*,
+            Select<arma::mat, arma::mat>*,
+            Sequential<arma::mat, arma::mat>*,
+            VRClassReward<arma::mat, arma::mat>*>;
 
 } // namespace ann
 } // namespace mlpack

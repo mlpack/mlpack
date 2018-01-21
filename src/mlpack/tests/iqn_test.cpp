@@ -46,8 +46,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   }
 
   // Shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
-      data.n_cols - 1, data.n_cols));
+  arma::uvec indices = arma::shuffle(
+      arma::linspace<arma::uvec>(0, data.n_cols - 1, data.n_cols));
   arma::mat shuffledData(3, 1000);
   arma::Row<size_t> shuffledResponses(1000);
   for (size_t i = 0; i < data.n_cols; ++i)

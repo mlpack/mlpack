@@ -31,8 +31,8 @@ BOOST_AUTO_TEST_SUITE(CLIBindingTest);
 BOOST_AUTO_TEST_CASE(CLIOptionTest)
 {
   CLI::ClearSettings();
-  CLIOption<double> co1(0.0, "test", "test2", "t", "double", false, true,
-      false);
+  CLIOption<double> co1(
+      0.0, "test", "test2", "t", "double", false, true, false);
 
   // Now check that it's in CLI.
   BOOST_REQUIRE_GT(CLI::Parameters().count("test"), 0);
@@ -45,8 +45,8 @@ BOOST_AUTO_TEST_CASE(CLIOptionTest)
   BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].input, true);
   BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].cppType, "double");
 
-  CLIOption<arma::mat> co2(arma::mat(), "mat", "mat2", "m", "arma::mat", true,
-      true, true);
+  CLIOption<arma::mat> co2(
+      arma::mat(), "mat", "mat2", "m", "arma::mat", true, true, true);
 
   // Now check that it's in CLI.
   BOOST_REQUIRE_GT(CLI::Parameters().count("mat"), 0);
@@ -72,8 +72,8 @@ BOOST_AUTO_TEST_CASE(GetParamDoubleTest)
   d.value = boost::any(x);
 
   double* output = NULL;
-  GetParam<double>((const util::ParamData&) d, (const void*) NULL,
-      (void*) &output);
+  GetParam<double>(
+      (const util::ParamData&)d, (const void*)NULL, (void*)&output);
 
   BOOST_REQUIRE_EQUAL(*output, 5.0);
 }
@@ -91,8 +91,7 @@ BOOST_AUTO_TEST_CASE(GetParamLoadedMatTest)
   d.loaded = true;
 
   arma::mat* output = NULL;
-  GetParam<arma::mat>((const util::ParamData&) d, (void*) NULL,
-      (void*) &output);
+  GetParam<arma::mat>((const util::ParamData&)d, (void*)NULL, (void*)&output);
 
   BOOST_REQUIRE_EQUAL(output->n_rows, 5);
   BOOST_REQUIRE_EQUAL(output->n_cols, 5);
@@ -117,8 +116,7 @@ BOOST_AUTO_TEST_CASE(GetParamUnloadedMatTest)
 
   // Now getting the parameter should load it.
   arma::mat* output = NULL;
-  GetParam<arma::mat>((const util::ParamData&) d, (void*) NULL,
-      (void*) &output);
+  GetParam<arma::mat>((const util::ParamData&)d, (void*)NULL, (void*)&output);
 
   BOOST_REQUIRE_EQUAL(output->n_rows, 5);
   BOOST_REQUIRE_EQUAL(output->n_cols, 5);
@@ -142,8 +140,8 @@ BOOST_AUTO_TEST_CASE(GetParamUmatTest)
   d.noTranspose = false;
 
   arma::Mat<size_t>* output = NULL;
-  GetParam<arma::Mat<size_t>>((const util::ParamData&) d, (void*) NULL,
-      (void*) &output);
+  GetParam<arma::Mat<size_t>>(
+      (const util::ParamData&)d, (void*)NULL, (void*)&output);
 
   BOOST_REQUIRE_EQUAL(output->n_rows, 5);
   BOOST_REQUIRE_EQUAL(output->n_cols, 5);
@@ -168,8 +166,8 @@ BOOST_AUTO_TEST_CASE(GetParamUnloadedUmatTest)
 
   // Now getting the parameter should load it.
   arma::Mat<size_t>* output = NULL;
-  GetParam<arma::Mat<size_t>>((const util::ParamData&) d, (void*) NULL,
-      (void*) &output);
+  GetParam<arma::Mat<size_t>>(
+      (const util::ParamData&)d, (void*)NULL, (void*)&output);
 
   BOOST_REQUIRE_EQUAL(output->n_rows, 5);
   BOOST_REQUIRE_EQUAL(output->n_cols, 5);
@@ -212,16 +210,16 @@ BOOST_AUTO_TEST_CASE(GetParamDatasetInfoMatTest)
 
   // Set up object to load into.
   tuple<data::DatasetInfo, arma::mat>* output = NULL;
-  GetParam<tuple<data::DatasetInfo, arma::mat>>((const util::ParamData&) d,
-      (void*) NULL, (void*) &output);
+  GetParam<tuple<data::DatasetInfo, arma::mat>>(
+      (const util::ParamData&)d, (void*)NULL, (void*)&output);
 
   BOOST_REQUIRE_EQUAL(get<0>(*output).Dimensionality(), 3);
-  BOOST_REQUIRE_EQUAL((int) get<0>(*output).Type(0),
-      (int) data::Datatype::numeric);
-  BOOST_REQUIRE_EQUAL((int) get<0>(*output).Type(1),
-      (int) data::Datatype::numeric);
-  BOOST_REQUIRE_EQUAL((int) get<0>(*output).Type(2),
-      (int) data::Datatype::categorical);
+  BOOST_REQUIRE_EQUAL((int)get<0>(*output).Type(0),
+                      (int)data::Datatype::numeric);
+  BOOST_REQUIRE_EQUAL((int)get<0>(*output).Type(1),
+                      (int)data::Datatype::numeric);
+  BOOST_REQUIRE_EQUAL((int)get<0>(*output).Type(2),
+                      (int)data::Datatype::categorical);
   BOOST_REQUIRE_EQUAL(get<1>(*output).n_rows, 3);
   BOOST_REQUIRE_EQUAL(get<1>(*output).n_cols, 7);
 
@@ -246,8 +244,8 @@ BOOST_AUTO_TEST_CASE(GetParamModelTest)
   d.loaded = false;
 
   GaussianKernel* output = NULL;
-  GetParam<GaussianKernel>((const util::ParamData&) d, (void*) NULL,
-      (void*) &output);
+  GetParam<GaussianKernel>(
+      (const util::ParamData&)d, (void*)NULL, (void*)&output);
 
   BOOST_REQUIRE_EQUAL(output->Bandwidth(), 5.0);
 
@@ -262,8 +260,8 @@ BOOST_AUTO_TEST_CASE(RawParamDoubleTest)
   d.value = boost::any(x);
 
   double* output = NULL;
-  GetParam<double>((const util::ParamData&) d, (const void*) NULL,
-      (void*) &output);
+  GetParam<double>(
+      (const util::ParamData&)d, (const void*)NULL, (void*)&output);
 
   BOOST_REQUIRE_EQUAL(*output, 5.0);
 }
@@ -282,8 +280,8 @@ BOOST_AUTO_TEST_CASE(RawParamMatTest)
   d.noTranspose = false;
 
   arma::mat* output = NULL;
-  GetRawParam<arma::mat>((const util::ParamData&) d, (void*) NULL,
-      (void*) &output);
+  GetRawParam<arma::mat>(
+      (const util::ParamData&)d, (void*)NULL, (void*)&output);
 
   BOOST_REQUIRE_EQUAL(output->n_rows, 5);
   BOOST_REQUIRE_EQUAL(output->n_cols, 5);
@@ -307,8 +305,8 @@ BOOST_AUTO_TEST_CASE(GetRawParamModelTest)
   d.loaded = false;
 
   tuple<GaussianKernel, string>* output = NULL;
-  GetRawParam<tuple<GaussianKernel, string>>((const util::ParamData&) d,
-      (void*) NULL, (void*) &output);
+  GetRawParam<tuple<GaussianKernel, string>>(
+      (const util::ParamData&)d, (void*)NULL, (void*)&output);
 
   BOOST_REQUIRE_EQUAL(get<0>(*output).Bandwidth(), 5.0);
 }
@@ -335,8 +333,8 @@ BOOST_AUTO_TEST_CASE(GetRawParamDatasetInfoTest)
 
   // Set up object to load into.
   tuple<data::DatasetInfo, arma::mat>* output = NULL;
-  GetRawParam<tuple<data::DatasetInfo, arma::mat>>((const util::ParamData&) d,
-      (void*) NULL, (void*) &output);
+  GetRawParam<tuple<data::DatasetInfo, arma::mat>>(
+      (const util::ParamData&)d, (void*)NULL, (void*)&output);
 
   BOOST_REQUIRE_EQUAL(get<0>(*output).Dimensionality(), 3);
   BOOST_REQUIRE_EQUAL(get<1>(*output).n_rows, 3);
@@ -358,8 +356,8 @@ BOOST_AUTO_TEST_CASE(OutputParamMatTest)
   d.noTranspose = false;
 
   // Now save it.
-  OutputParam<arma::mat>((const util::ParamData&) d, (const void*) NULL,
-      (void*) NULL);
+  OutputParam<arma::mat>(
+      (const util::ParamData&)d, (const void*)NULL, (void*)NULL);
 
   arma::mat m2;
   BOOST_REQUIRE(data::Load("test.csv", m2));
@@ -384,8 +382,8 @@ BOOST_AUTO_TEST_CASE(OutputParamUmatTest)
   d.noTranspose = false;
 
   // Now save it.
-  OutputParam<arma::Mat<size_t>>((const util::ParamData&) d, (const void*) NULL,
-      (void*) NULL);
+  OutputParam<arma::Mat<size_t>>(
+      (const util::ParamData&)d, (const void*)NULL, (void*)NULL);
 
   arma::Mat<size_t> m2;
   BOOST_REQUIRE(data::Load("test.csv", m2));
@@ -409,8 +407,8 @@ BOOST_AUTO_TEST_CASE(OutputParamModelTest)
   d.input = false;
 
   // Now save it.
-  OutputParam<GaussianKernel>((const util::ParamData&) d, (const void*) NULL,
-      (void*) NULL);
+  OutputParam<GaussianKernel>(
+      (const util::ParamData&)d, (const void*)NULL, (void*)NULL);
 
   GaussianKernel gk2(1.0);
   BOOST_REQUIRE(data::Load("kernel.bin", "model", gk2));
@@ -432,12 +430,11 @@ BOOST_AUTO_TEST_CASE(SetParamDoubleTest)
   // Now create second value.
   double dd2 = 1.0;
   boost::any a(dd2);
-  SetParam<double>((const util::ParamData&) d, (const void*) &a, (void*) NULL);
+  SetParam<double>((const util::ParamData&)d, (const void*)&a, (void*)NULL);
 
   // Make sure it's the right thing.
   double* dd3 = NULL;
-  GetParam<double>((const util::ParamData&) d, (const void*) NULL,
-      (void*) &dd3);
+  GetParam<double>((const util::ParamData&)d, (const void*)NULL, (void*)&dd3);
 
   BOOST_REQUIRE_EQUAL((*dd3), dd2);
 }
@@ -455,7 +452,7 @@ BOOST_AUTO_TEST_CASE(SetParamBoolTest)
   // Now create second value.
   bool b2 = true;
   boost::any a(b2);
-  SetParam<bool>((const util::ParamData&) d, (const void*) &a, (void*) NULL);
+  SetParam<bool>((const util::ParamData&)d, (const void*)&a, (void*)NULL);
 
   BOOST_REQUIRE_EQUAL(boost::any_cast<bool>(d.value), true);
 }
@@ -474,8 +471,7 @@ BOOST_AUTO_TEST_CASE(SetParamMatrixTest)
   string newFilename = "new.csv";
   boost::any a2(newFilename);
 
-  SetParam<arma::mat>((const util::ParamData&) d, (const void*) &a2,
-      (void*) NULL);
+  SetParam<arma::mat>((const util::ParamData&)d, (const void*)&a2, (void*)NULL);
 
   // Make sure the change went through.
   tuple<arma::mat, string>& t =
@@ -497,8 +493,8 @@ BOOST_AUTO_TEST_CASE(SetParamModelTest)
   string newFilename = "new_kernel.bin";
   boost::any a2(newFilename);
 
-  SetParam<GaussianKernel>((const util::ParamData&) d, (const void*) &a2,
-      (void*) NULL);
+  SetParam<GaussianKernel>(
+      (const util::ParamData&)d, (const void*)&a2, (void*)NULL);
 
   // Make sure the change went through.
   tuple<GaussianKernel, string>& t =
@@ -527,8 +523,8 @@ BOOST_AUTO_TEST_CASE(SetParamDatasetInfoMatTest)
   string newFilename = "new_filename.csv";
   boost::any a2(newFilename);
 
-  SetParam<tuple<DatasetInfo, arma::mat>>((const util::ParamData&) d,
-      (const void*) &a2, (void*) NULL);
+  SetParam<tuple<DatasetInfo, arma::mat>>(
+      (const util::ParamData&)d, (const void*)&a2, (void*)NULL);
 
   // Check that the name is right.
   tuple<tuple<DatasetInfo, arma::mat>, string>& t3 =

@@ -30,7 +30,7 @@ template<typename MetricType,
          typename MatType,
          template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitMetricType, typename SplitMatType>
-             class SplitType>
+         class SplitType>
 template<typename RuleType, bool Defeatist>
 class SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     SpillDualTreeTraverser
@@ -48,8 +48,7 @@ class SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
    * @param referenceNode The reference node to be traversed.
    * @param score The score of the current node combination.
    */
-  void Traverse(SpillTree& queryNode,
-                SpillTree& referenceNode);
+  void Traverse(SpillTree& queryNode, SpillTree& referenceNode);
 
   //! Get the number of prunes.
   size_t NumPrunes() const { return numPrunes; }
@@ -99,4 +98,3 @@ class SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 #include "spill_dual_tree_traverser_impl.hpp"
 
 #endif // MLPACK_CORE_TREE_SPILL_TREE_SPILL_DUAL_TREE_TRAVERSER_HPP
-

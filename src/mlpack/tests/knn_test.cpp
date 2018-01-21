@@ -93,8 +93,8 @@ BOOST_AUTO_TEST_CASE(DualTreeUnmapTest)
   }
 
   // Now try taking the square root.
-  Unmap(neighbors, distances, refMap, queryMap, neighborsOut, distancesOut,
-      true);
+  Unmap(
+      neighbors, distances, refMap, queryMap, neighborsOut, distancesOut, true);
 
   for (size_t i = 0; i < correctNeighbors.n_elem; ++i)
   {
@@ -180,11 +180,11 @@ BOOST_AUTO_TEST_CASE(EmptySearchTest)
   arma::mat distances;
 
   BOOST_REQUIRE_THROW(empty.Search(dataset, 5, neighbors, distances),
-      std::invalid_argument);
+                      std::invalid_argument);
   BOOST_REQUIRE_THROW(empty.Search(5, neighbors, distances),
-      std::invalid_argument);
+                      std::invalid_argument);
   BOOST_REQUIRE_THROW(empty.Search(queryTree, 5, neighbors, distances),
-      std::invalid_argument);
+                      std::invalid_argument);
 }
 
 /**
@@ -371,8 +371,10 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
   data[9] = 0.90;
   data[10] = 1.00;
 
-  typedef KDTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> TreeType;
+  typedef KDTree<EuclideanDistance,
+                 NeighborSearchStat<NearestNeighborSort>,
+                 arma::mat>
+      TreeType;
 
   // We will loop through three times, one for each method of performing the
   // calculation.
@@ -765,8 +767,10 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
   arma::mat data;
   data.randu(75, 1000); // 75 dimensional, 1000 points.
 
-  StandardCoverTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> tree(data);
+  StandardCoverTree<EuclideanDistance,
+                    NeighborSearchStat<NearestNeighborSort>,
+                    arma::mat>
+      tree(data);
 
   NeighborSearch<NearestNeighborSort, LMetric<2>, arma::mat, StandardCoverTree>
       coverTreeSearch(std::move(tree), SINGLE_TREE_MODE);
@@ -803,11 +807,16 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   arma::mat kdDistances;
   tree.Search(dataset, 5, kdNeighbors, kdDistances);
 
-  StandardCoverTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> referenceTree(dataset);
+  StandardCoverTree<EuclideanDistance,
+                    NeighborSearchStat<NearestNeighborSort>,
+                    arma::mat>
+      referenceTree(dataset);
 
-  NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      StandardCoverTree> coverTreeSearch(std::move(referenceTree));
+  NeighborSearch<NearestNeighborSort,
+                 EuclideanDistance,
+                 arma::mat,
+                 StandardCoverTree>
+      coverTreeSearch(std::move(referenceTree));
 
   arma::Mat<size_t> coverNeighbors;
   arma::mat coverDistances;
@@ -831,8 +840,10 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
   arma::mat data;
   data.randu(50, 300); // 50 dimensional, 300 points.
 
-  typedef BallTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> TreeType;
+  typedef BallTree<EuclideanDistance,
+                   NeighborSearchStat<NearestNeighborSort>,
+                   arma::mat>
+      TreeType;
   TreeType tree(data);
 
   KNN naive(tree.Dataset(), NAIVE_MODE);
@@ -971,8 +982,10 @@ BOOST_AUTO_TEST_CASE(DuplicatedSpillSearchTest)
           if (distancesSPTree(j, i) == DBL_MAX)
             break;
           // All candidates with same distances must be different points.
-          for (size_t k = j + 1; k < neighborsSPTree.n_rows &&
-              distancesSPTree(k, i) == distancesSPTree(j, i); ++k)
+          for (size_t k = j + 1;
+               k < neighborsSPTree.n_rows
+               && distancesSPTree(k, i) == distancesSPTree(j, i);
+               ++k)
             BOOST_REQUIRE(neighborsSPTree(k, i) != neighborsSPTree(j, i));
         }
       }
@@ -996,8 +1009,11 @@ BOOST_AUTO_TEST_CASE(SparseKNNKDTreeTest)
   arma::mat denseQuery(queryDataset);
   arma::mat denseReference(referenceDataset);
 
-  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::sp_mat,
-      KDTree> SparseKNN;
+  typedef NeighborSearch<NearestNeighborSort,
+                         EuclideanDistance,
+                         arma::sp_mat,
+                         KDTree>
+      SparseKNN;
 
   SparseKNN a(referenceDataset);
   KNN naive(denseReference, NAIVE_MODE);
@@ -1115,8 +1131,7 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
       if (j == 0)
         models[i].BuildModel(std::move(referenceCopy), 20, DUAL_TREE_MODE);
       if (j == 1)
-        models[i].BuildModel(std::move(referenceCopy), 20,
-            SINGLE_TREE_MODE);
+        models[i].BuildModel(std::move(referenceCopy), 20, SINGLE_TREE_MODE);
       if (j == 2)
         models[i].BuildModel(std::move(referenceCopy), 20, NAIVE_MODE);
 
@@ -1197,8 +1212,7 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
       if (j == 0)
         models[i].BuildModel(std::move(referenceCopy), 20, DUAL_TREE_MODE);
       if (j == 1)
-        models[i].BuildModel(std::move(referenceCopy), 20,
-            SINGLE_TREE_MODE);
+        models[i].BuildModel(std::move(referenceCopy), 20, SINGLE_TREE_MODE);
       if (j == 2)
         models[i].BuildModel(std::move(referenceCopy), 20, NAIVE_MODE);
 

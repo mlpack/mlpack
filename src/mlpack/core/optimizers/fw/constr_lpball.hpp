@@ -61,8 +61,7 @@ class ConstrLpBallSolver
    *
    * @param p The constraint is unit lp ball.
    */
-  ConstrLpBallSolver(const double p) : p(p)
-  { /* Do nothing. */ }
+  ConstrLpBallSolver(const double p) : p(p) { /* Do nothing. */}
 
   /**
    * Construct the solver of constrained problem, with regularization parameter
@@ -71,10 +70,10 @@ class ConstrLpBallSolver
    * @param p The constraint is unit lp ball.
    * @param lambda Regularization parameter.
    */
-  ConstrLpBallSolver(const double p, const arma::vec lambda) :
-      p(p), regFlag(true), lambda(lambda)
-  { /* Do nothing. */ }
-
+  ConstrLpBallSolver(const double p, const arma::vec lambda)
+    : p(p), regFlag(true), lambda(lambda)
+  { /* Do nothing. */
+  }
 
   /**
    * Optimizer of Linear Constrained Problem for FrankWolfe.
@@ -82,15 +81,14 @@ class ConstrLpBallSolver
    * @param v Input local gradient.
    * @param s Output optimal solution in the constrained domain (lp ball).
    */
-  void Optimize(const arma::mat& v,
-                arma::mat& s)
+  void Optimize(const arma::mat& v, arma::mat& s)
   {
     if (p == std::numeric_limits<double>::infinity())
     {
       // l-inf ball.
       s = -sign(v);
       if (regFlag)
-        s = s / lambda;   // element-wise division.
+        s = s / lambda; // element-wise division.
     }
     else if (p > 1.0)
     {
@@ -101,7 +99,7 @@ class ConstrLpBallSolver
         s = v;
 
       double q = 1 / (1.0 - 1.0 / p);
-      s = - sign(v) % pow(abs(s), q - 1);  // element-wise multiplication.
+      s = -sign(v) % pow(abs(s), q - 1); // element-wise multiplication.
       s = arma::normalise(s, p);
 
       if (regFlag)
@@ -116,9 +114,9 @@ class ConstrLpBallSolver
         s = arma::abs(v);
 
       arma::uword k;
-      s.max(k);  // k is the linear index of the largest element.
+      s.max(k); // k is the linear index of the largest element.
       s.zeros();
-      s(k) = - mlpack::math::Sign(v(k));
+      s(k) = -mlpack::math::Sign(v(k));
 
       if (regFlag)
         s = s / lambda;
@@ -134,17 +132,17 @@ class ConstrLpBallSolver
   //! Get the p-norm.
   double P() const { return p; }
   //! Modify the p-norm.
-  double& P() { return p;}
+  double& P() { return p; }
 
   //! Get regularization flag.
-  bool RegFlag() const {return regFlag;}
+  bool RegFlag() const { return regFlag; }
   //! Modify regularization flag.
-  bool& RegFlag() {return regFlag;}
+  bool& RegFlag() { return regFlag; }
 
   //! Get the regularization parameter.
-  arma::vec Lambda() const {return lambda;}
+  arma::vec Lambda() const { return lambda; }
   //! Modify the regularization parameter.
-  arma::vec& Lambda() {return lambda;}
+  arma::vec& Lambda() { return lambda; }
 
  private:
   //! lp norm, 1<=p<=inf;

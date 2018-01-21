@@ -30,8 +30,8 @@ bool AugLagrangian::Optimize(LagrangianFunctionType& function,
   lambda = initLambda;
   sigma = initSigma;
 
-  AugLagrangianFunction<LagrangianFunctionType> augfunc(function,
-      lambda, sigma);
+  AugLagrangianFunction<LagrangianFunctionType> augfunc(
+      function, lambda, sigma);
 
   return Optimize(augfunc, coordinates, maxIterations);
 }
@@ -45,8 +45,8 @@ bool AugLagrangian::Optimize(LagrangianFunctionType& function,
   // use defaults.
   if (!lambda.is_empty())
   {
-    AugLagrangianFunction<LagrangianFunctionType> augfunc(function, lambda,
-        sigma);
+    AugLagrangianFunction<LagrangianFunctionType> augfunc(
+        function, lambda, sigma);
     return Optimize(augfunc, coordinates, maxIterations);
   }
   else
@@ -76,7 +76,7 @@ bool AugLagrangian::Optimize(
     penalty += std::pow(function.EvaluateConstraint(i, coordinates), 2);
 
   Log::Debug << "Penalty is " << penalty << " (threshold " << penaltyThreshold
-      << ")." << std::endl;
+             << ")." << std::endl;
 
   // The odd comparison allows user to pass maxIterations = 0 (i.e. no limit on
   // number of iterations).
@@ -84,16 +84,16 @@ bool AugLagrangian::Optimize(
   for (it = 0; it != (maxIterations - 1); it++)
   {
     Log::Info << "AugLagrangian on iteration " << it
-        << ", starting with objective "  << lastObjective << "." << std::endl;
+              << ", starting with objective " << lastObjective << "."
+              << std::endl;
 
     if (!lbfgs.Optimize(augfunc, coordinates))
-      Log::Info << "L-BFGS reported an error during optimization."
-          << std::endl;
+      Log::Info << "L-BFGS reported an error during optimization." << std::endl;
 
     // Check if we are done with the entire optimization (the threshold we are
     // comparing with is arbitrary).
-    if (std::abs(lastObjective - function.Evaluate(coordinates)) < 1e-10 &&
-        augfunc.Sigma() > 500000)
+    if (std::abs(lastObjective - function.Evaluate(coordinates)) < 1e-10
+        && augfunc.Sigma() > 500000)
     {
       lambda = std::move(augfunc.Lambda());
       sigma = augfunc.Sigma();
@@ -113,16 +113,16 @@ bool AugLagrangian::Optimize(
       penalty += std::pow(function.EvaluateConstraint(i, coordinates), 2);
     }
 
-    Log::Info << "Penalty is " << penalty << " (threshold "
-        << penaltyThreshold << ")." << std::endl;
+    Log::Info << "Penalty is " << penalty << " (threshold " << penaltyThreshold
+              << ")." << std::endl;
 
     if (penalty < penaltyThreshold) // We update lambda.
     {
       // We use the update: lambda_{k + 1} = lambda_k - sigma * c(coordinates),
       // but we have to write a loop to do this for each constraint.
       for (size_t i = 0; i < function.NumConstraints(); i++)
-        augfunc.Lambda()[i] -= augfunc.Sigma() *
-            function.EvaluateConstraint(i, coordinates);
+        augfunc.Lambda()[i] -=
+            augfunc.Sigma() * function.EvaluateConstraint(i, coordinates);
 
       // We also update the penalty threshold to be a factor of the current
       // penalty.  TODO: this factor should be a parameter (from CLI).  The
@@ -147,4 +147,3 @@ bool AugLagrangian::Optimize(
 } // namespace mlpack
 
 #endif // MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP
-

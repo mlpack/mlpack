@@ -49,7 +49,7 @@ class CyclicDescent
    * @param function The function to be optimized.
    * @return The index of the coordinate to be descended.
    */
-  template <typename ResolvableFunctionType>
+  template<typename ResolvableFunctionType>
   static size_t DescentFeature(const size_t iteration,
                                const arma::mat& /* iterate */,
                                const ResolvableFunctionType& function)

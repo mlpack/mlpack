@@ -34,8 +34,8 @@ class GaussianInitialization
    * @param mean Mean of the gaussian.
    * @param variance Variance of the gaussian.
    */
-  GaussianInitialization(const double mean = 0, const double variance = 1) :
-      mean(mean), variance(variance)
+  GaussianInitialization(const double mean = 0, const double variance = 1)
+    : mean(mean), variance(variance)
   {
     // Nothing to do here.
   }
@@ -47,15 +47,13 @@ class GaussianInitialization
    * @param rows Number of rows.
    * @param cols Number of columns.
    */
-  void Initialize(arma::mat& W,
-                  const size_t rows,
-                  const size_t cols)
+  void Initialize(arma::mat& W, const size_t rows, const size_t cols)
   {
     if (W.is_empty())
     {
       W = arma::mat(rows, cols);
     }
-    W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
+    W.imbue([&]() { return arma::as_scalar(RandNormal(mean, variance)); });
   }
 
   /**
@@ -66,7 +64,7 @@ class GaussianInitialization
    * @param cols Number of columns.
    * @param slice Numbers of slices.
    */
-  void Initialize(arma::cube & W,
+  void Initialize(arma::cube& W,
                   const size_t rows,
                   const size_t cols,
                   const size_t slices)

@@ -12,7 +12,6 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_FW_FRANK_WOLFE_HPP
 #define MLPACK_CORE_OPTIMIZERS_FW_FRANK_WOLFE_HPP
 
-
 #include <mlpack/prereqs.hpp>
 #include "update_span.hpp"
 #include "constr_lpball.hpp"
@@ -22,7 +21,7 @@ namespace optimization {
 
 /**
  * Frank-Wolfe is a technique to minimize a continuously differentiable convex
- * function \f$ f \f$ over a compact convex subset \f$ D \f$ of a vector space. 
+ * function \f$ f \f$ over a compact convex subset \f$ D \f$ of a vector space.
  * It is also known as conditional gradient method.
  *
  * To find minimum of a function using Frank-Wolfe in each iteration \f$ k \f$:
@@ -76,16 +75,14 @@ namespace optimization {
  * @tparam UpdateRuleType Rule to update the solution in each iteration.
  *
  */
-template<
-    typename LinearConstrSolverType,
-    typename UpdateRuleType>
+template<typename LinearConstrSolverType, typename UpdateRuleType>
 class FrankWolfe
 {
  public:
   /**
    * Construct the Frank-Wolfe optimizer with the given function and
    * parameters. Notice that the constraint domain \f$ D \f$ is input
-   * at the initialization of linear_constr_solver, the function to be  
+   * at the initialization of linear_constr_solver, the function to be
    * optimized is stored in update_rule.
    *
    * @param linearConstrSolver Solver for linear constrained problem.
@@ -111,7 +108,7 @@ class FrankWolfe
    *                 arma::mat& gradient);
    *
    * @param function Function to be optimized.
-   * @param iterate Input with starting point, and will be modified to save 
+   * @param iterate Input with starting point, and will be modified to save
    *                the output optimial solution coordinates.
    * @return Objective value at the final solution.
    */
@@ -119,8 +116,10 @@ class FrankWolfe
   double Optimize(FunctionType& function, arma::mat& iterate);
 
   //! Get the linear constrained solver.
-  const LinearConstrSolverType& LinearConstrSolver()
-      const { return linearConstrSolver; }
+  const LinearConstrSolverType& LinearConstrSolver() const
+  {
+    return linearConstrSolver;
+  }
   //! Modify the linear constrained solver.
   LinearConstrSolverType& LinearConstrSolver() { return linearConstrSolver; }
 
@@ -153,7 +152,7 @@ class FrankWolfe
   double tolerance;
 };
 
-/** 
+/**
  * Orthogonal Matching Pursuit. It is a sparse approximation algorithm which
  * involves finding the "best matching" projections of multidimensional data
  * onto the span of an over-complete dictionary. To use it, the dictionary is

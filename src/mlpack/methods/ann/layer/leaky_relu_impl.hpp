@@ -21,24 +21,25 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-LeakyReLU<InputDataType, OutputDataType>::LeakyReLU(
-    const double alpha) : alpha(alpha)
+LeakyReLU<InputDataType, OutputDataType>::LeakyReLU(const double alpha)
+  : alpha(alpha)
 {
   // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void LeakyReLU<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+void LeakyReLU<InputDataType, OutputDataType>::Forward(const InputType&& input,
+                                                       OutputType&& output)
 {
   Fn(input, output);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
-void LeakyReLU<InputDataType, OutputDataType>::Backward(
-    const DataType&& input, DataType&& gy, DataType&& g)
+void LeakyReLU<InputDataType, OutputDataType>::Backward(const DataType&& input,
+                                                        DataType&& gy,
+                                                        DataType&& g)
 {
   DataType derivative;
   Deriv(input, derivative);
@@ -48,10 +49,9 @@ void LeakyReLU<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void LeakyReLU<InputDataType, OutputDataType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(alpha);
+  ar& BOOST_SERIALIZATION_NVP(alpha);
 }
 
 } // namespace ann

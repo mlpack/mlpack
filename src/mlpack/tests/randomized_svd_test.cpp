@@ -59,8 +59,8 @@ BOOST_AUTO_TEST_CASE(RandomizedSVDReconstructionError)
   arma::mat reconstruct = U2 * arma::diagmat(s2) * V2.t();
 
   // The relative reconstruction error should be small.
-  error = arma::norm(centeredData - reconstruct, "frob") /
-      arma::norm(centeredData, "frob");
+  error = arma::norm(centeredData - reconstruct, "frob")
+          / arma::norm(centeredData, "frob");
   BOOST_REQUIRE_SMALL(error, 1e-5);
 }
 

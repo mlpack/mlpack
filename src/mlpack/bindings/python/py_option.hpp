@@ -33,7 +33,7 @@ class PyOption
  public:
   /**
    * Construct a PyOption object.  When constructed, it will register itself
-   * with CLI. The testName parameter is not used and added for compatibility 
+   * with CLI. The testName parameter is not used and added for compatibility
    * reasons.
    */
   PyOption(const T defaultValue,

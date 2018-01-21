@@ -16,12 +16,12 @@
 
 // We only need to do this for old Boost versions.
 #if BOOST_VERSION < 103600
-  #define BOOST_AUTO_TEST_MAIN
+#define BOOST_AUTO_TEST_MAIN
 #endif
 
 #if BOOST_VERSION >= 105900
-  #include <boost/test/tree/visitor.hpp>
-  #include <boost/test/tree/traverse.hpp>
+#include <boost/test/tree/visitor.hpp>
+#include <boost/test/tree/traverse.hpp>
 #endif
 
 #include <boost/test/unit_test.hpp>
@@ -41,7 +41,7 @@ struct TestsVisitor : boost::unit_test::test_tree_visitor
   void visit(boost::unit_test::test_case const& test)
   {
     std::cout << std::string(indentations, ' ') << std::string(test.p_name)
-        << "*" << std::endl;
+              << "*" << std::endl;
   }
 
   /*
@@ -59,7 +59,7 @@ struct TestsVisitor : boost::unit_test::test_tree_visitor
     }
 
     std::cout << std::string(indentations, ' ') << std::string(suite.p_name)
-        << "*" << std::endl;
+              << "*" << std::endl;
 
     // Increase tab width (4 spaces).
     indentations += 4;
@@ -102,17 +102,17 @@ struct GlobalFixture
 {
   GlobalFixture()
   {
-    #ifndef TEST_VERBOSE
-      #ifdef DEBUG
-        mlpack::Log::Debug.ignoreInput = true;
-      #endif
+#ifndef TEST_VERBOSE
+#ifdef DEBUG
+    mlpack::Log::Debug.ignoreInput = true;
+#endif
 
-      mlpack::Log::Info.ignoreInput = true;
-      mlpack::Log::Warn.ignoreInput = true;
-    #endif
+    mlpack::Log::Info.ignoreInput = true;
+    mlpack::Log::Warn.ignoreInput = true;
+#endif
 
     for (int i = 0; i < boost::unit_test::framework::master_test_suite().argc;
-        i++)
+         i++)
     {
       std::string argument(
           boost::unit_test::framework::master_test_suite().argv[i]);
@@ -122,7 +122,7 @@ struct GlobalFixture
       {
         TestsVisitor testsVisitor;
         traverse_test_tree(boost::unit_test::framework::master_test_suite(),
-            testsVisitor);
+                           testsVisitor);
         exit(0);
       }
     }

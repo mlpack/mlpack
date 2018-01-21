@@ -94,10 +94,10 @@ class GradientDescent
    * @return Objective value of the final point.
    */
   template<typename FunctionType>
-  double Optimize(
-      FunctionType& function,
-      arma::mat& iterate,
-      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo);
+  double
+  Optimize(FunctionType& function,
+           arma::mat& iterate,
+           data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo);
 
   //! Get the step size.
   double StepSize() const { return stepSize; }

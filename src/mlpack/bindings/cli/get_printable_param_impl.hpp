@@ -20,8 +20,9 @@ std::string GetPrintableParam(
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
+    const typename boost::
+        disable_if<std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::
+            type* /* junk */)
 {
   std::ostringstream oss;
   oss << boost::any_cast<T>(data.value);
@@ -33,7 +34,7 @@ template<typename T>
 std::string GetPrintableParam(
     const util::ParamData& data,
     const typename std::enable_if<util::IsStdVector<T>::value>::type*
-        /* junk */)
+    /* junk */)
 {
   const T& t = boost::any_cast<T>(data.value);
 
@@ -47,10 +48,10 @@ std::string GetPrintableParam(
 template<typename T>
 std::string GetPrintableParam(
     const util::ParamData& data,
-    const typename std::enable_if<arma::is_arma_type<T>::value ||
-                                  data::HasSerialize<T>::value ||
-                                  std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* /* junk */)
+    const typename std::
+        enable_if<arma::is_arma_type<T>::value || data::HasSerialize<T>::value
+                  || std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>::
+                         value>::type* /* junk */)
 {
   // Extract the string from the tuple that's being held.
   typedef std::tuple<T, typename ParameterType<T>::type> TupleType;

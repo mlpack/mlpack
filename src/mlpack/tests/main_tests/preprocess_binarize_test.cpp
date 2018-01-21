@@ -51,12 +51,12 @@ BOOST_AUTO_TEST_CASE(PreprocessBinarizeDimensionTest)
   arma::mat inputData = arma::randu<arma::mat>(2, 5);
 
   // Store size of input dataset.
-  size_t inputSize  = inputData.n_cols;
+  size_t inputSize = inputData.n_cols;
 
   // Input custom data and labels.
   SetInputParam("input", std::move(inputData));
-  SetInputParam("threshold", (double) 0.5);
-  SetInputParam("dimension", (int) 1);
+  SetInputParam("threshold", (double)0.5);
+  SetInputParam("dimension", (int)1);
 
   mlpackMain();
 
@@ -73,8 +73,8 @@ BOOST_AUTO_TEST_CASE(PreprocessBinarizeNegativeDimensionTest)
   arma::mat inputData = arma::randu<arma::mat>(2, 2);
 
   SetInputParam("input", std::move(inputData));
-  SetInputParam("threshold", (double) 0.5);
-  SetInputParam("dimension", (int) -2); // Invalid.
+  SetInputParam("threshold", (double)0.5);
+  SetInputParam("dimension", (int)-2); // Invalid.
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -89,8 +89,8 @@ BOOST_AUTO_TEST_CASE(PreprocessBinarizelargerDimensionTest)
   arma::mat inputData = arma::randu<arma::mat>(2, 2);
 
   SetInputParam("input", std::move(inputData));
-  SetInputParam("threshold", (double) 0.5);
-  SetInputParam("dimension", (int) 6); // Invalid.
+  SetInputParam("threshold", (double)0.5);
+  SetInputParam("dimension", (int)6); // Invalid.
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -105,8 +105,8 @@ BOOST_AUTO_TEST_CASE(PreprocessBinarizeVerificationTest)
   arma::mat inputData({{7.0, 4.0, 5.0}, {2.0, 5.0, 9.0}, {7.0, 3.0, 8.0}});
 
   SetInputParam("input", std::move(inputData));
-  SetInputParam("threshold", (double) 5.0);
-  SetInputParam("dimension", (int) 1);
+  SetInputParam("threshold", (double)5.0);
+  SetInputParam("dimension", (int)1);
 
   mlpackMain();
 
@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_CASE(PreprocessBinarizeDimensionLessVerTest)
   arma::mat inputData({{7.0, 4.0, 5.0}, {2.0, 5.0, 9.0}, {7.0, 3.0, 8.0}});
 
   SetInputParam("input", std::move(inputData));
-  SetInputParam("threshold", (double) 5.0);
+  SetInputParam("threshold", (double)5.0);
 
   mlpackMain();
 

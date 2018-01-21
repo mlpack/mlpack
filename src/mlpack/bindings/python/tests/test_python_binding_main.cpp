@@ -13,7 +13,8 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::kernel;
 
-PROGRAM_INFO("Python binding test",
+PROGRAM_INFO(
+    "Python binding test",
     "A simple program to test Python binding functionality.  You can build "
     "mlpack with the BUILD_TESTS option set to off, and this binding will "
     "no longer be built.");
@@ -44,12 +45,17 @@ PARAM_COL_OUT("col_out", "Output column. 2x input column", "");
 PARAM_UCOL_OUT("ucol_out", "Output unsigned column. 2x input column.", "");
 PARAM_ROW_OUT("row_out", "Output row.  2x input row.", "");
 PARAM_UROW_OUT("urow_out", "Output unsigned row.  2x input row.", "");
-PARAM_MATRIX_OUT("matrix_and_info_out", "Output matrix and info; all numeric "
-    "elements multiplied by 3.", "");
+PARAM_MATRIX_OUT("matrix_and_info_out",
+                 "Output matrix and info; all numeric "
+                 "elements multiplied by 3.",
+                 "");
 PARAM_VECTOR_OUT(int, "vector_out", "Output vector.", "");
 PARAM_VECTOR_OUT(string, "str_vector_out", "Output string vector.", "");
-PARAM_MODEL_OUT(GaussianKernel, "model_out", "Output model, with twice the "
-    "bandwidth.", "");
+PARAM_MODEL_OUT(GaussianKernel,
+                "model_out",
+                "Output model, with twice the "
+                "bandwidth.",
+                "");
 PARAM_DOUBLE_OUT("model_bw_out", "The bandwidth of the model.");
 
 static void mlpackMain()
@@ -110,8 +116,7 @@ static void mlpackMain()
 
   if (CLI::HasParam("ucol_in"))
   {
-    arma::Col<size_t> out =
-        move(CLI::GetParam<arma::Col<size_t>>("ucol_in"));
+    arma::Col<size_t> out = move(CLI::GetParam<arma::Col<size_t>>("ucol_in"));
     out *= 2;
 
     CLI::GetParam<arma::Col<size_t>>("ucol_out") = move(out);
@@ -127,8 +132,7 @@ static void mlpackMain()
 
   if (CLI::HasParam("urow_in"))
   {
-    arma::Row<size_t> out =
-        move(CLI::GetParam<arma::Row<size_t>>("urow_in"));
+    arma::Row<size_t> out = move(CLI::GetParam<arma::Row<size_t>>("urow_in"));
     out *= 2;
 
     CLI::GetParam<arma::Row<size_t>>("urow_out") = move(out);

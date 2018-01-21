@@ -31,14 +31,14 @@ template<typename T>
 struct HasSerializeFunction
 {
   template<typename C>
-  using NonStaticSerialize = void(C::*)(boost::archive::xml_oarchive&,
-                                        const unsigned int);
+  using NonStaticSerialize = void (C::*)(boost::archive::xml_oarchive&,
+                                         const unsigned int);
   template<typename /* C */>
-  using StaticSerialize = void(*)(boost::archive::xml_oarchive&,
-                                  const unsigned int);
+  using StaticSerialize = void (*)(boost::archive::xml_oarchive&,
+                                   const unsigned int);
 
-  static const bool value = HasSerializeCheck<T, NonStaticSerialize>::value ||
-                            HasSerializeCheck<T, StaticSerialize>::value;
+  static const bool value = HasSerializeCheck<T, NonStaticSerialize>::value
+                            || HasSerializeCheck<T, StaticSerialize>::value;
 };
 
 template<typename T>
@@ -46,13 +46,16 @@ struct HasSerialize
 {
   // We have to handle the case where T isn't a class...
   typedef char yes[1];
-  typedef char no [2];
-  template<typename U, typename V, typename W> struct check;
-  template<typename U> static yes& chk( // This matches classes.
+  typedef char no[2];
+  template<typename U, typename V, typename W>
+  struct check;
+  template<typename U>
+  static yes& chk( // This matches classes.
       check<U,
             typename std::enable_if_t<std::is_class<U>::value>*,
             typename std::enable_if_t<HasSerializeFunction<U>::value>*>*);
-  template<typename  > static no&  chk(...); // This matches non-classes.
+  template<typename>
+  static no& chk(...); // This matches non-classes.
 
   static const bool value = (sizeof(chk<T>(0)) == sizeof(yes));
 };

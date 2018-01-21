@@ -26,7 +26,7 @@ namespace tree {
  * new nodes into the tree, spliting the parent if necessary.
  */
 template<typename TreeType>
-void RTreeSplit::SplitLeafNode(TreeType *tree, std::vector<bool>& relevels)
+void RTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 {
   if (tree->Count() <= tree->MaxLeafSize())
     return;
@@ -64,7 +64,10 @@ void RTreeSplit::SplitLeafNode(TreeType *tree, std::vector<bool>& relevels)
   // Remove this node and insert treeOne and treeTwo.
   TreeType* par = tree->Parent();
   size_t index = 0;
-  while (par->children[index] != tree) { ++index; }
+  while (par->children[index] != tree)
+  {
+    ++index;
+  }
 
   par->children[index] = treeOne;
   par->children[par->NumChildren()++] = treeTwo;
@@ -92,7 +95,7 @@ void RTreeSplit::SplitLeafNode(TreeType *tree, std::vector<bool>& relevels)
  * higher up the tree because they were already updated if necessary.
  */
 template<typename TreeType>
-bool RTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
+bool RTreeSplit::SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
 {
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
@@ -124,7 +127,10 @@ bool RTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
   // Remove this node and insert treeOne and treeTwo.
   TreeType* par = tree->Parent();
   size_t index = 0;
-  while (par->children[index] != tree) { ++index; }
+  while (par->children[index] != tree)
+  {
+    ++index;
+  }
 
   assert(index != par->NumChildren());
   par->children[index] = treeOne;
@@ -164,7 +170,7 @@ bool RTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
  * The indices of these points will be stored in iRet and jRet.
  */
 template<typename TreeType>
-void RTreeSplit::GetPointSeeds(const TreeType *tree, int& iRet, int& jRet)
+void RTreeSplit::GetPointSeeds(const TreeType* tree, int& iRet, int& jRet)
 {
   // Here we want to find the pair of points that it is worst to place in the
   // same node.  Because we are just using points, we will simply choose the two
@@ -174,9 +180,9 @@ void RTreeSplit::GetPointSeeds(const TreeType *tree, int& iRet, int& jRet)
   {
     for (size_t j = i + 1; j < tree->Count(); j++)
     {
-      const typename TreeType::ElemType score = arma::prod(arma::abs(
-          tree->Dataset().col(tree->Point(i)) -
-          tree->Dataset().col(tree->Point(j))));
+      const typename TreeType::ElemType score =
+          arma::prod(arma::abs(tree->Dataset().col(tree->Point(i))
+                               - tree->Dataset().col(tree->Point(j))));
 
       if (score > worstPairScore)
       {
@@ -193,7 +199,7 @@ void RTreeSplit::GetPointSeeds(const TreeType *tree, int& iRet, int& jRet)
  * indices of the bounds will be stored in iRet and jRet.
  */
 template<typename TreeType>
-void RTreeSplit::GetBoundSeeds(const TreeType *tree, int& iRet, int& jRet)
+void RTreeSplit::GetBoundSeeds(const TreeType* tree, int& iRet, int& jRet)
 {
   // Convenience typedef.
   typedef typename TreeType::ElemType ElemType;
@@ -270,8 +276,8 @@ void RTreeSplit::AssignPointDestNode(TreeType* oldTree,
   // The below is safe because if end decreases and the right hand side of the
   // second part of the conjunction changes on the same iteration, we added the
   // point to the node with fewer points anyways.
-  while ((end > 0) && (end > oldTree->MinLeafSize() -
-      std::min(numAssignedOne, numAssignedTwo)))
+  while ((end > 0) && (end > oldTree->MinLeafSize()
+                                 - std::min(numAssignedOne, numAssignedTwo)))
   {
     int bestIndex = 0;
     ElemType bestScore = std::numeric_limits<ElemType>::max();
@@ -298,12 +304,16 @@ void RTreeSplit::AssignPointDestNode(TreeType* oldTree,
       for (size_t i = 0; i < oldTree->Bound().Dim(); i++)
       {
         ElemType c = oldTree->Dataset().col(oldTree->Point(index))[i];
-        newVolOne *= treeOne->Bound()[i].Contains(c) ?
-            treeOne->Bound()[i].Width() : (c < treeOne->Bound()[i].Lo() ?
-            (treeOne->Bound()[i].Hi() - c) : (c - treeOne->Bound()[i].Lo()));
-        newVolTwo *= treeTwo->Bound()[i].Contains(c) ?
-            treeTwo->Bound()[i].Width() : (c < treeTwo->Bound()[i].Lo() ?
-            (treeTwo->Bound()[i].Hi() - c) : (c - treeTwo->Bound()[i].Lo()));
+        newVolOne *= treeOne->Bound()[i].Contains(c)
+                         ? treeOne->Bound()[i].Width()
+                         : (c < treeOne->Bound()[i].Lo()
+                                ? (treeOne->Bound()[i].Hi() - c)
+                                : (c - treeOne->Bound()[i].Lo()));
+        newVolTwo *= treeTwo->Bound()[i].Contains(c)
+                         ? treeTwo->Bound()[i].Width()
+                         : (c < treeTwo->Bound()[i].Lo()
+                                ? (treeTwo->Bound()[i].Hi() - c)
+                                : (c - treeTwo->Bound()[i].Lo()));
       }
 
       // Choose the rectangle that requires the lesser increase in volume.
@@ -413,8 +423,9 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
   // In each iteration, we go through all of the nodes and find the one that
   // causes the least increase of volume when added to one of the two new
   // rectangles.  We then add it to that rectangle.
-  while ((end > 0) && (end > oldTree->MinNumChildren() -
-      std::min(numAssignTreeOne, numAssignTreeTwo)))
+  while ((end > 0)
+         && (end > oldTree->MinNumChildren()
+                       - std::min(numAssignTreeOne, numAssignTreeTwo)))
   {
     int bestIndex = 0;
     ElemType bestScore = std::numeric_limits<ElemType>::max();
@@ -440,17 +451,23 @@ void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
         // we add the rectangle at index to the new rectangle.
         const math::RangeType<ElemType>& range =
             oldTree->Child(index).Bound()[i];
-        newVolOne *= treeOne->Bound()[i].Contains(range) ?
-            treeOne->Bound()[i].Width() : (range.Contains(treeOne->Bound()[i]) ?
-            range.Width() : (range.Lo() < treeOne->Bound()[i].Lo() ?
-            (treeOne->Bound()[i].Hi() - range.Lo()) : (range.Hi() -
-            treeOne->Bound()[i].Lo())));
+        newVolOne *=
+            treeOne->Bound()[i].Contains(range)
+                ? treeOne->Bound()[i].Width()
+                : (range.Contains(treeOne->Bound()[i])
+                       ? range.Width()
+                       : (range.Lo() < treeOne->Bound()[i].Lo()
+                              ? (treeOne->Bound()[i].Hi() - range.Lo())
+                              : (range.Hi() - treeOne->Bound()[i].Lo())));
 
-        newVolTwo *= treeTwo->Bound()[i].Contains(range) ?
-            treeTwo->Bound()[i].Width() : (range.Contains(treeTwo->Bound()[i]) ?
-            range.Width() : (range.Lo() < treeTwo->Bound()[i].Lo() ?
-            (treeTwo->Bound()[i].Hi() - range.Lo()) : (range.Hi() -
-            treeTwo->Bound()[i].Lo())));
+        newVolTwo *=
+            treeTwo->Bound()[i].Contains(range)
+                ? treeTwo->Bound()[i].Width()
+                : (range.Contains(treeTwo->Bound()[i])
+                       ? range.Width()
+                       : (range.Lo() < treeTwo->Bound()[i].Lo()
+                              ? (treeTwo->Bound()[i].Hi() - range.Lo())
+                              : (range.Hi() - treeTwo->Bound()[i].Lo())));
       }
 
       // Choose the rectangle that requires the lesser increase in volume.

@@ -41,8 +41,7 @@ struct PreprocessSplitTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(PreprocessSplitMainTest,
-                         PreprocessSplitTestFixture);
+BOOST_FIXTURE_TEST_SUITE(PreprocessSplitMainTest, PreprocessSplitTestFixture);
 
 /**
  * Check that desired output dimensions are received for both input data and
@@ -57,15 +56,15 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitDimensionTest)
   data::Load("vc2_labels.txt", labels);
 
   // Store size of input dataset.
-  int inputSize  = inputData.n_cols;
-  int labelSize  = labels.n_cols;
+  int inputSize = inputData.n_cols;
+  int labelSize = labels.n_cols;
 
   // Input custom data points and labels.
   SetInputParam("input", std::move(inputData));
   SetInputParam("input_labels", std::move(labels));
 
   // Input test_ratio.
-  SetInputParam("test_ratio", (double) 0.1);
+  SetInputParam("test_ratio", (double)0.1);
 
   mlpackMain();
 
@@ -79,7 +78,7 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitDimensionTest)
       CLI::GetParam<arma::Mat<size_t>>("training_labels").n_cols,
       std::ceil(0.9 * labelSize));
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("test_labels").n_cols,
-      std::floor(0.1 * labelSize));
+                      std::floor(0.1 * labelSize));
 }
 
 /**
@@ -93,21 +92,21 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitLabelLessDimensionTest)
   data::Load("vc2.csv", inputData);
 
   // Store size of input dataset.
-  int inputSize  = inputData.n_cols;
+  int inputSize = inputData.n_cols;
 
   // Input custom data points and labels.
   SetInputParam("input", std::move(inputData));
 
   // Input test_ratio.
-  SetInputParam("test_ratio", (double) 0.1);
+  SetInputParam("test_ratio", (double)0.1);
 
   mlpackMain();
 
   // Now check that the output has desired dimensions.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("training").n_cols,
-      std::ceil(0.9 * inputSize));
+                      std::ceil(0.9 * inputSize));
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("test").n_cols,
-      std::floor(0.1 * inputSize));
+                      std::floor(0.1 * inputSize));
 }
 
 /**
@@ -125,7 +124,7 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitTestRatioTest)
   SetInputParam("input", std::move(inputData));
   SetInputParam("input_labels", std::move(labels));
 
-  SetInputParam("test_ratio", (double) -0.2);
+  SetInputParam("test_ratio", (double)-0.2);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -151,7 +150,7 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitZeroTestRatioTest)
   SetInputParam("input", std::move(inputData));
   SetInputParam("input_labels", std::move(labels));
 
-  SetInputParam("test_ratio", (double) 0.0);
+  SetInputParam("test_ratio", (double)0.0);
 
   mlpackMain();
 
@@ -161,8 +160,8 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitZeroTestRatioTest)
 
   BOOST_REQUIRE_EQUAL(
       CLI::GetParam<arma::Mat<size_t>>("training_labels").n_cols, labelSize);
-  BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Mat<size_t>>("test_labels").n_cols, 0);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("test_labels").n_cols,
+                      0);
 }
 
 /**
@@ -184,7 +183,7 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitUnityTestRatioTest)
   SetInputParam("input", std::move(inputData));
   SetInputParam("input_labels", std::move(labels));
 
-  SetInputParam("test_ratio", (double) 1.0);
+  SetInputParam("test_ratio", (double)1.0);
 
   mlpackMain();
 
@@ -195,7 +194,7 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitUnityTestRatioTest)
   BOOST_REQUIRE_EQUAL(
       CLI::GetParam<arma::Mat<size_t>>("training_labels").n_cols, 0);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("test_labels").n_cols,
-      labelSize);
+                      labelSize);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

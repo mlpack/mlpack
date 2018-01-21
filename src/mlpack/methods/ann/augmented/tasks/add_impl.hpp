@@ -26,8 +26,7 @@ AddTask::AddTask(const size_t bitLen) : bitLen(bitLen)
   {
     std::ostringstream oss;
     oss << "AddTask::AddTask(): binary length (" << bitLen << ") "
-        << "is not positive!"
-        << std::endl;
+        << "is not positive!" << std::endl;
     throw std::invalid_argument(oss.str());
   }
 }
@@ -50,16 +49,16 @@ void AddTask::Generate(arma::field<arma::mat>& input,
       mlpack::distribution::DiscreteDistribution d(1);
       // We have two binary numbers with exactly two digits (10 and 11).
       // Increasing length by 1 double the number of valid numbers.
-      d.Probabilities(0) = arma::exp2(
-          arma::linspace(1, bitLen - 1, bitLen - 1));
+      d.Probabilities(0) =
+          arma::exp2(arma::linspace(1, bitLen - 1, bitLen - 1));
 
       sizeA = 2 + d.Random()(0);
       sizeB = 2 + d.Random()(0);
     }
     // Construct sequence of the form
     // (binary number with sizeA bits) + '+' + (binary number with sizeB bits).
-    vecInput(i) = arma::randi<arma::colvec>(
-        sizeA + sizeB + 1, arma::distr_param(0, 1));
+    vecInput(i) =
+        arma::randi<arma::colvec>(sizeA + sizeB + 1, arma::distr_param(0, 1));
     // Insert special value for '+' delimiter.
     vecInput(i).at(sizeA) = 2;
 
@@ -104,12 +103,11 @@ void AddTask::Generate(arma::field<arma::mat>& input,
   Binarize(vecLabels, labels);
   if (input.n_rows != labels.n_rows)
   {
-      std::ostringstream oss;
-      oss << "AddTask::Generate(): sequences after application of "
-          << "Binarize() are not aligned ("
-          << input.n_rows << " and " << labels.n_rows << ")"
-          << std::endl;
-      throw std::logic_error(oss.str());
+    std::ostringstream oss;
+    oss << "AddTask::Generate(): sequences after application of "
+        << "Binarize() are not aligned (" << input.n_rows << " and "
+        << labels.n_rows << ")" << std::endl;
+    throw std::logic_error(oss.str());
   }
   for (size_t i = 0; i < input.n_rows; ++i)
   {
@@ -147,7 +145,6 @@ void AddTask::Binarize(const arma::field<arma::vec>& input,
     output.at(i).reshape(output.at(i).n_elem, 1);
   }
 }
-
 
 } // namespace tasks
 } // namespace augmented

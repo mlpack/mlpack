@@ -29,28 +29,48 @@ using namespace mlpack::math;
 using namespace arma;
 using namespace std;
 
-PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Generator", "This "
-    "utility takes an already-trained HMM, specified as the " +
-    PRINT_PARAM_STRING("model") + " parameter, and generates a random "
-    "observation sequence and hidden state sequence based on its parameters. "
-    "The observation sequence may be saved with the " +
-    PRINT_PARAM_STRING("output") + " output parameter, and the internal state "
-    " sequence may be saved with the " + PRINT_PARAM_STRING("state") + " output"
-    " parameter."
-    "\n\n"
-    "The state to start the sequence in may be specified with the " +
-    PRINT_PARAM_STRING("start_state") + " parameter."
-    "\n\n"
-    "For example, to generate a sequence of length 150 from the HMM " +
-    PRINT_MODEL("hmm") + " and save the observation sequence to " +
-    PRINT_DATASET("observations") + " and the hidden state sequence to " +
-    PRINT_DATASET("states") + ", the following command may be used: "
-    "\n\n" +
-    PRINT_CALL("hmm_generate", "model", "hmm", "length", 150, "output",
-        "observations", "state", "states"));
+PROGRAM_INFO(
+    "Hidden Markov Model (HMM) Sequence Generator",
+    "This "
+    "utility takes an already-trained HMM, specified as the "
+        + PRINT_PARAM_STRING("model")
+        + " parameter, and generates a random "
+          "observation sequence and hidden state sequence based on its "
+          "parameters. "
+          "The observation sequence may be saved with the "
+        + PRINT_PARAM_STRING("output")
+        + " output parameter, and the internal state "
+          " sequence may be saved with the "
+        + PRINT_PARAM_STRING("state")
+        + " output"
+          " parameter."
+          "\n\n"
+          "The state to start the sequence in may be specified with the "
+        + PRINT_PARAM_STRING("start_state")
+        + " parameter."
+          "\n\n"
+          "For example, to generate a sequence of length 150 from the HMM "
+        + PRINT_MODEL("hmm")
+        + " and save the observation sequence to "
+        + PRINT_DATASET("observations")
+        + " and the hidden state sequence to "
+        + PRINT_DATASET("states")
+        + ", the following command may be used: "
+          "\n\n"
+        + PRINT_CALL("hmm_generate",
+                     "model",
+                     "hmm",
+                     "length",
+                     150,
+                     "output",
+                     "observations",
+                     "state",
+                     "states"));
 
-PARAM_MODEL_IN_REQ(HMMModel, "model", "Trained HMM to generate sequences with.",
-    "m");
+PARAM_MODEL_IN_REQ(HMMModel,
+                   "model",
+                   "Trained HMM to generate sequences with.",
+                   "m");
 PARAM_INT_IN_REQ("length", "Length of sequence to generate.", "l");
 
 PARAM_INT_IN("start_state", "Starting state of sequence.", "t", 0);
@@ -69,15 +89,15 @@ struct Generate
     Row<size_t> sequence;
 
     // Load the parameters.
-    const size_t startState = (size_t) CLI::GetParam<int>("start_state");
-    const size_t length = (size_t) CLI::GetParam<int>("length");
+    const size_t startState = (size_t)CLI::GetParam<int>("start_state");
+    const size_t length = (size_t)CLI::GetParam<int>("length");
 
     Log::Info << "Generating sequence of length " << length << "..." << endl;
     if (startState >= hmm.Transition().n_rows)
     {
       Log::Fatal << "Invalid start state (" << startState << "); must be "
-          << "between 0 and number of states (" << hmm.Transition().n_rows
-          << ")!" << endl;
+                 << "between 0 and number of states ("
+                 << hmm.Transition().n_rows << ")!" << endl;
     }
 
     hmm.Generate(length, observations, sequence, startState);
@@ -94,14 +114,16 @@ struct Generate
 
 static void mlpackMain()
 {
-  RequireAtLeastOnePassed({ "output", "state" }, false, "no output will be "
-      "saved");
+  RequireAtLeastOnePassed({"output", "state"},
+                          false,
+                          "no output will be "
+                          "saved");
 
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)
-    RandomSeed((size_t) CLI::GetParam<int>("seed"));
+    RandomSeed((size_t)CLI::GetParam<int>("seed"));
   else
-    RandomSeed((size_t) time(NULL));
+    RandomSeed((size_t)time(NULL));
 
   // Load model, and perform the generation.
   HMMModel hmm;

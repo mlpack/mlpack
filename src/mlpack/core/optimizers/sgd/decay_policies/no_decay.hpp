@@ -27,7 +27,7 @@ class NoDecay
   /**
    * This constructor is called before the first iteration.
    */
-  NoDecay() { }
+  NoDecay() {}
 
   /**
    * This function is called in each iteration after the policy update.

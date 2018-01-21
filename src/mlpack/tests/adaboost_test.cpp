@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != predictedLabels(i))
       countError++;
-  double hammingLoss = (double) countError / labels.n_cols;
+  double hammingLoss = (double)countError / labels.n_cols;
 
   BOOST_REQUIRE_LE(hammingLoss, a.ZtProduct());
 }
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != perceptronPrediction(i))
       countWeakLearnerError++;
-  double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
+  double weakLearnerErrorRate = (double)countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
   size_t iterations = 100;
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != predictedLabels(i))
       countError++;
-  double error = (double) countError / labels.n_cols;
+  double error = (double)countError / labels.n_cols;
 
   BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
 }
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != predictedLabels(i))
       countError++;
-  double hammingLoss = (double) countError / labels.n_cols;
+  double hammingLoss = (double)countError / labels.n_cols;
 
   BOOST_REQUIRE_LE(hammingLoss, a.ZtProduct());
 }
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != perceptronPrediction(i))
       countWeakLearnerError++;
-  double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
+  double weakLearnerErrorRate = (double)countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
   size_t iterations = 50;
@@ -197,7 +197,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != predictedLabels(i))
       countError++;
-  double error = (double) countError / labels.n_cols;
+  double error = (double)countError / labels.n_cols;
 
   BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
 }
@@ -236,7 +236,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != predictedLabels(i))
       countError++;
-  double hammingLoss = (double) countError / labels.n_cols;
+  double hammingLoss = (double)countError / labels.n_cols;
 
   BOOST_REQUIRE_LE(hammingLoss, a.ZtProduct());
 }
@@ -270,7 +270,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != perceptronPrediction(i))
       countWeakLearnerError++;
-  double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
+  double weakLearnerErrorRate = (double)countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
   size_t iterations = 50;
@@ -284,7 +284,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != predictedLabels(i))
       countError++;
-  double error = (double) countError / labels.n_cols;
+  double error = (double)countError / labels.n_cols;
 
   BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
 }
@@ -312,8 +312,8 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   double tolerance = 1e-10;
-  AdaBoost<DecisionStump<>> a(inputData, labels.row(0), numClasses, ds,
-      iterations, tolerance);
+  AdaBoost<DecisionStump<>> a(
+      inputData, labels.row(0), numClasses, ds, iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -322,7 +322,7 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != predictedLabels(i))
       countError++;
-  double hammingLoss = (double) countError / labels.n_cols;
+  double hammingLoss = (double)countError / labels.n_cols;
 
   BOOST_REQUIRE_LE(hammingLoss, a.ZtProduct());
 }
@@ -358,14 +358,14 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != dsPrediction(i))
       countWeakLearnerError++;
-  double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
+  double weakLearnerErrorRate = (double)countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   double tolerance = 1e-10;
 
-  AdaBoost<DecisionStump<>> a(inputData, labels.row(0), numClasses, ds,
-      iterations, tolerance);
+  AdaBoost<DecisionStump<>> a(
+      inputData, labels.row(0), numClasses, ds, iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -374,7 +374,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != predictedLabels(i))
       countError++;
-  double error = (double) countError / labels.n_cols;
+  double error = (double)countError / labels.n_cols;
 
   BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
 }
@@ -405,8 +405,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
   size_t iterations = 50;
   double tolerance = 1e-10;
 
-  AdaBoost<DecisionStump<>> a(inputData, labels.row(0), numClasses, ds,
-      iterations, tolerance);
+  AdaBoost<DecisionStump<>> a(
+      inputData, labels.row(0), numClasses, ds, iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -415,7 +415,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != predictedLabels(i))
       countError++;
-  double hammingLoss = (double) countError / labels.n_cols;
+  double hammingLoss = (double)countError / labels.n_cols;
 
   BOOST_REQUIRE_LE(hammingLoss, a.ZtProduct());
 }
@@ -449,13 +449,13 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
     if (labels(i) != dsPrediction(i))
       countWeakLearnerError++;
 
-  double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
+  double weakLearnerErrorRate = (double)countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   double tolerance = 1e-10;
-  AdaBoost<DecisionStump<>> a(inputData, labels.row(0), numClasses, ds,
-      iterations, tolerance);
+  AdaBoost<DecisionStump<>> a(
+      inputData, labels.row(0), numClasses, ds, iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -464,7 +464,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != predictedLabels(i))
       countError++;
-  double error = (double) countError / labels.n_cols;
+  double error = (double)countError / labels.n_cols;
 
   BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
 }
@@ -494,8 +494,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
   size_t iterations = 50;
   double tolerance = 1e-10;
 
-  AdaBoost<DecisionStump<> > a(inputData, labels.row(0), numClasses, ds,
-      iterations, tolerance);
+  AdaBoost<DecisionStump<>> a(
+      inputData, labels.row(0), numClasses, ds, iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -504,7 +504,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != predictedLabels(i))
       countError++;
-  double hammingLoss = (double) countError / labels.n_cols;
+  double hammingLoss = (double)countError / labels.n_cols;
 
   BOOST_REQUIRE_LE(hammingLoss, a.ZtProduct());
 }
@@ -538,14 +538,14 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != dsPrediction(i))
       countWeakLearnerError++;
-  double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
+  double weakLearnerErrorRate = (double)countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
   size_t iterations = 500;
   double tolerance = 1e-23;
 
-  AdaBoost<DecisionStump<> > a(inputData, labels.row(0), numClasses, ds,
-      iterations, tolerance);
+  AdaBoost<DecisionStump<>> a(
+      inputData, labels.row(0), numClasses, ds, iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -554,7 +554,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
   for (size_t i = 0; i < labels.n_cols; i++)
     if (labels(i) != predictedLabels(i))
       countError++;
-  double error = (double) countError / labels.n_cols;
+  double error = (double)countError / labels.n_cols;
 
   BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
 }
@@ -607,7 +607,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
     if (trueTestLabels(i) != predictedLabels(i))
       localError++;
 
-  double lError = (double) localError / trueTestLabels.n_cols;
+  double lError = (double)localError / trueTestLabels.n_cols;
   BOOST_REQUIRE_LE(lError, 0.30);
 }
 
@@ -647,8 +647,8 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   double tolerance = 1e-10;
-  AdaBoost<DecisionStump<> > a(inputData, labels.row(0), numClasses, ds,
-      iterations, tolerance);
+  AdaBoost<DecisionStump<>> a(
+      inputData, labels.row(0), numClasses, ds, iterations, tolerance);
 
   arma::Row<size_t> predictedLabels(testData.n_cols);
   a.Classify(testData, predictedLabels);
@@ -658,7 +658,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
     if (trueTestLabels(i) != predictedLabels(i))
       localError++;
 
-  double lError = (double) localError / trueTestLabels.n_cols;
+  double lError = (double)localError / trueTestLabels.n_cols;
   BOOST_REQUIRE_LE(lError, 0.30);
 }
 
@@ -706,7 +706,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
   for (size_t i = 0; i < trueTestLabels.n_cols; i++)
     if (trueTestLabels(i) != predictedLabels(i))
       localError++;
-  double lError = (double) localError / labels.n_cols;
+  double lError = (double)localError / labels.n_cols;
   BOOST_REQUIRE_LE(lError, 0.30);
 }
 
@@ -765,7 +765,7 @@ BOOST_AUTO_TEST_CASE(TrainTest)
     if (trueTestLabels(i) != predictedLabels(i))
       localError++;
 
-  double lError = (double) localError / trueTestLabels.n_cols;
+  double lError = (double)localError / trueTestLabels.n_cols;
 
   BOOST_REQUIRE_LE(lError, 0.30);
 }

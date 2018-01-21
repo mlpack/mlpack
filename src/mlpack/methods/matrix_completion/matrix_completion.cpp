@@ -19,8 +19,8 @@ MatrixCompletion::MatrixCompletion(const size_t m,
                                    const size_t n,
                                    const arma::umat& indices,
                                    const arma::vec& values,
-                                   const size_t r) :
-    m(m), n(n), indices(indices), values(values),
+                                   const size_t r)
+  : m(m), n(n), indices(indices), values(values),
     sdp(indices.n_cols, 0, arma::randu<arma::mat>(m + n, r))
 {
   CheckValues();
@@ -31,8 +31,8 @@ MatrixCompletion::MatrixCompletion(const size_t m,
                                    const size_t n,
                                    const arma::umat& indices,
                                    const arma::vec& values,
-                                   const arma::mat& initialPoint) :
-    m(m), n(n), indices(indices), values(values),
+                                   const arma::mat& initialPoint)
+  : m(m), n(n), indices(indices), values(values),
     sdp(indices.n_cols, 0, initialPoint)
 {
   CheckValues();
@@ -42,9 +42,10 @@ MatrixCompletion::MatrixCompletion(const size_t m,
 MatrixCompletion::MatrixCompletion(const size_t m,
                                    const size_t n,
                                    const arma::umat& indices,
-                                   const arma::vec& values) :
-    m(m), n(n), indices(indices), values(values),
-    sdp(indices.n_cols, 0,
+                                   const arma::vec& values)
+  : m(m), n(n), indices(indices), values(values),
+    sdp(indices.n_cols,
+        0,
         arma::randu<arma::mat>(m + n, DefaultRank(m, n, indices.n_cols)))
 {
   CheckValues();
@@ -56,12 +57,13 @@ void MatrixCompletion::CheckValues()
   if (indices.n_rows != 2)
   {
     Log::Fatal << "MatrixCompletion::CheckValues(): matrix of constraint "
-        << "indices does not have 2 rows!" << std::endl;
+               << "indices does not have 2 rows!" << std::endl;
   }
 
   if (indices.n_cols != values.n_elem)
   {
-    Log::Fatal << "MatrixCompletion::CheckValues(): the number of constraint "
+    Log::Fatal
+        << "MatrixCompletion::CheckValues(): the number of constraint "
         << "indices (columns of constraint indices matrix) does not match the "
         << "number of constraint values (length of constraint value vector)!"
         << std::endl;
@@ -71,9 +73,9 @@ void MatrixCompletion::CheckValues()
   {
     if (indices(0, i) >= m || indices(1, i) >= n)
       Log::Fatal << "MatrixCompletion::CheckValues(): indices ("
-          << indices(0, i) << ", " << indices(1, i)
-          << ") are out of bounds for matrix of size " << m << " x n!"
-          << std::endl;
+                 << indices(0, i) << ", " << indices(1, i)
+                 << ") are out of bounds for matrix of size " << m << " x n!"
+                 << std::endl;
   }
 }
 
@@ -98,9 +100,8 @@ void MatrixCompletion::Recover(arma::mat& recovered)
   recovered = recovered(arma::span(0, m - 1), arma::span(m, m + n - 1));
 }
 
-size_t MatrixCompletion::DefaultRank(const size_t m,
-                                     const size_t n,
-                                     const size_t p)
+size_t
+MatrixCompletion::DefaultRank(const size_t m, const size_t n, const size_t p)
 {
   // If r = O(sqrt(p)), then we are guaranteed an exact solution.
   // For more details, see

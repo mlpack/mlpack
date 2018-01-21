@@ -33,9 +33,8 @@ BOOST_AUTO_TEST_CASE(OneClass)
   const size_t inpBucketSize = 6;
 
   mat trainingData;
-  trainingData << 2.4 << 3.8 << 3.8 << endr
-               << 1   << 1   << 2   << endr
-               << 1.3 << 1.9 << 1.3 << endr;
+  trainingData << 2.4 << 3.8 << 3.8 << endr << 1 << 1 << 2 << endr << 1.3 << 1.9
+               << 1.3 << endr;
 
   // No need to normalize labels here.
   Mat<size_t> labelsIn;
@@ -68,17 +67,15 @@ BOOST_AUTO_TEST_CASE(CorrectDimensionChosen)
   // found on page 176 (and a description of the correct splitting dimension is
   // given below that).
   mat trainingData;
-  trainingData << 0  << 0  << 0  << 0  << 0  << 1  << 1  << 1  << 1
-               << 2  << 2  << 2  << 2  << 2  << endr
-               << 70 << 90 << 85 << 95 << 70 << 90 << 78 << 65 << 75
-               << 80 << 70 << 80 << 80 << 96 << endr
-               << 1  << 1  << 0  << 0  << 0  << 1  << 0  << 1  << 0
-               << 1  << 1  << 0  << 0  << 0  << endr;
+  trainingData << 0 << 0 << 0 << 0 << 0 << 1 << 1 << 1 << 1 << 2 << 2 << 2 << 2
+               << 2 << endr << 70 << 90 << 85 << 95 << 70 << 90 << 78 << 65
+               << 75 << 80 << 70 << 80 << 80 << 96 << endr << 1 << 1 << 0 << 0
+               << 0 << 1 << 0 << 1 << 0 << 1 << 1 << 0 << 0 << 0 << endr;
 
   // No need to normalize labels here.
   Mat<size_t> labelsIn;
-  labelsIn << 0 << 1 << 1 << 1 << 0 << 0 << 0 << 0
-           << 0 << 1 << 1 << 0 << 0 << 0;
+  labelsIn << 0 << 1 << 1 << 1 << 0 << 0 << 0 << 0 << 0 << 1 << 1 << 0 << 0
+           << 0;
 
   DecisionStump<> ds(trainingData, labelsIn.row(0), numClasses, inpBucketSize);
 
@@ -158,13 +155,13 @@ BOOST_AUTO_TEST_CASE(PerfectMultiClassSplit)
   const size_t inpBucketSize = 3;
 
   mat trainingData;
-  trainingData << -8 << -7 << -6 << -5 << -4 << -3 << -2 << -1
-               << 0  << 1  << 2  << 3  << 4  << 5  << 6  << 7;
+  trainingData << -8 << -7 << -6 << -5 << -4 << -3 << -2 << -1 << 0 << 1 << 2
+               << 3 << 4 << 5 << 6 << 7;
 
   // No need to normalize labels here.
   Mat<size_t> labelsIn;
-  labelsIn << 0 << 0 << 0 << 0 << 1 << 1 << 1 << 1
-           << 2 << 2 << 2 << 2 << 3 << 3 << 3 << 3;
+  labelsIn << 0 << 0 << 0 << 0 << 1 << 1 << 1 << 1 << 2 << 2 << 2 << 2 << 3 << 3
+           << 3 << 3;
 
   mat testingData;
   testingData << -6.1 << -2.1 << 1.1 << 5.1;
@@ -192,14 +189,13 @@ BOOST_AUTO_TEST_CASE(MultiClassSplit)
   const size_t inpBucketSize = 3;
 
   mat trainingData;
-  trainingData << -7 << -6 << -5 << -4 << -3 << -2 << -1 << 0 << 1
-               << 2  << 3  << 4  << 5  << 6  << 7  << 8  << 9 << 10;
+  trainingData << -7 << -6 << -5 << -4 << -3 << -2 << -1 << 0 << 1 << 2 << 3
+               << 4 << 5 << 6 << 7 << 8 << 9 << 10;
 
   // No need to normalize labels here.
   Mat<size_t> labelsIn;
-  labelsIn << 0 << 0 << 0 << 0 << 1 << 1 << 0 << 0
-           << 1 << 1 << 1 << 2 << 1 << 2 << 2 << 2 << 2 << 2;
-
+  labelsIn << 0 << 0 << 0 << 0 << 1 << 1 << 0 << 0 << 1 << 1 << 1 << 2 << 1 << 2
+           << 2 << 2 << 2 << 2;
 
   mat testingData;
   testingData << -6.1 << -5.9 << -2.1 << -0.7 << 2.5 << 4.7 << 7.2 << 9.1;
@@ -330,14 +326,13 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
 
   // Now train on another dataset and make sure something kind of makes sense.
   mat trainingData;
-  trainingData << -7 << -6 << -5 << -4 << -3 << -2 << -1 << 0 << 1
-               << 2  << 3  << 4  << 5  << 6  << 7  << 8  << 9 << 10;
+  trainingData << -7 << -6 << -5 << -4 << -3 << -2 << -1 << 0 << 1 << 2 << 3
+               << 4 << 5 << 6 << 7 << 8 << 9 << 10;
 
   // No need to normalize labels here.
   Mat<size_t> labelsIn;
-  labelsIn << 0 << 0 << 0 << 0 << 1 << 1 << 0 << 0
-           << 1 << 1 << 1 << 2 << 1 << 2 << 2 << 2 << 2 << 2;
-
+  labelsIn << 0 << 0 << 0 << 0 << 1 << 1 << 0 << 0 << 1 << 1 << 1 << 2 << 1 << 2
+           << 2 << 2 << 2 << 2;
 
   mat testingData;
   testingData << -6.1 << -5.9 << -2.1 << -0.7 << 2.5 << 4.7 << 7.2 << 9.1;
@@ -365,13 +360,13 @@ BOOST_AUTO_TEST_CASE(IntTest)
 {
   // Train on a dataset and make sure something kind of makes sense.
   imat trainingData;
-  trainingData << -7 << -6 << -5 << -4 << -3 << -2 << -1 << 0 << 1
-               << 2  << 3  << 4  << 5  << 6  << 7  << 8  << 9 << 10;
+  trainingData << -7 << -6 << -5 << -4 << -3 << -2 << -1 << 0 << 1 << 2 << 3
+               << 4 << 5 << 6 << 7 << 8 << 9 << 10;
 
   // No need to normalize labels here.
   Mat<size_t> labelsIn;
-  labelsIn << 0 << 0 << 0 << 0 << 1 << 1 << 0 << 0
-           << 1 << 1 << 1 << 2 << 1 << 2 << 2 << 2 << 2 << 2;
+  labelsIn << 0 << 0 << 0 << 0 << 1 << 1 << 0 << 0 << 1 << 1 << 1 << 2 << 1 << 2
+           << 2 << 2 << 2 << 2;
 
   DecisionStump<arma::imat> ds(trainingData, labelsIn.row(0), 4, 3);
 

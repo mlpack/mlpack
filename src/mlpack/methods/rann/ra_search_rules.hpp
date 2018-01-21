@@ -222,10 +222,8 @@ class RASearchRules
    * @param referenceNode Candidate reference node to recurse into.
    * @param oldScore Old score produced by Socre() (or Rescore()).
    */
-  double Rescore(TreeType& queryNode,
-                 TreeType& referenceNode,
-                 const double oldScore);
-
+  double
+  Rescore(TreeType& queryNode, TreeType& referenceNode, const double oldScore);
 
   size_t NumDistComputations() { return numDistComputations; }
   size_t NumEffectiveSamples()
@@ -252,7 +250,8 @@ class RASearchRules
   typedef std::pair<double, size_t> Candidate;
 
   //! Compare two candidates based on the distance.
-  struct CandidateCmp {
+  struct CandidateCmp
+  {
     bool operator()(const Candidate& c1, const Candidate& c2)
     {
       return !SortPolicy::IsBetter(c2.first, c1.first);
@@ -325,8 +324,9 @@ class RASearchRules
                const double distance,
                const double bestDistance);
 
-  static_assert(tree::TreeTraits<TreeType>::UniqueNumDescendants, "TreeType "
-      "must provide a unique number of descendants points.");
+  static_assert(tree::TreeTraits<TreeType>::UniqueNumDescendants,
+                "TreeType "
+                "must provide a unique number of descendants points.");
 }; // class RASearchRules
 
 } // namespace neighbor

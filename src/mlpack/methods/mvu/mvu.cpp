@@ -32,7 +32,7 @@ void MVU::Unfold(const size_t newDim,
 {
   // First we have to choose the output point.  We'll take a linear projection
   // of the data for now (this is probably not a good final solution).
-//  outputData = trans(data.rows(0, newDim - 1));
+  //  outputData = trans(data.rows(0, newDim - 1));
   // Following Nick's idea.
   outputData.randu(data.n_cols, newDim);
 

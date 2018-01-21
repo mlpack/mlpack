@@ -22,8 +22,8 @@ template<typename TreeType, typename MatType>
 TreeType* BuildTree(
     MatType&& dataset,
     std::vector<size_t>& oldFromNew,
-    const typename std::enable_if<
-        tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
+    const typename std::
+        enable_if<tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
   return new TreeType(std::forward<MatType>(dataset), oldFromNew);
 }
@@ -33,8 +33,8 @@ template<typename TreeType, typename MatType>
 TreeType* BuildTree(
     MatType&& dataset,
     const std::vector<size_t>& /* oldFromNew */,
-    const typename std::enable_if<
-        !tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
+    const typename std::
+        enable_if<!tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
   return new TreeType(std::forward<MatType>(dataset));
 }
@@ -43,23 +43,16 @@ TreeType* BuildTree(
  * Takes in a reference to the data set.  Copies the data, builds the tree,
  * and initializes all of the member variables.
  */
-template<
-    typename MetricType,
-    typename MatType,
-    template<typename TreeMetricType,
-             typename TreeStatType,
-             typename TreeMatType> class TreeType>
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 DualTreeBoruvka<MetricType, MatType, TreeType>::DualTreeBoruvka(
-    const MatType& dataset,
-    const bool naive,
-    const MetricType metric) :
-    tree(naive ? NULL : BuildTree<Tree>(dataset, oldFromNew)),
-    data(naive ? dataset : tree->Dataset()),
-    ownTree(!naive),
-    naive(naive),
-    connections(dataset.n_cols),
-    totalDist(0.0),
-    metric(metric)
+    const MatType& dataset, const bool naive, const MetricType metric)
+  : tree(naive ? NULL : BuildTree<Tree>(dataset, oldFromNew)),
+    data(naive ? dataset : tree->Dataset()), ownTree(!naive), naive(naive),
+    connections(dataset.n_cols), totalDist(0.0), metric(metric)
 {
   edges.reserve(data.n_cols - 1); // Set size.
 
@@ -69,22 +62,15 @@ DualTreeBoruvka<MetricType, MatType, TreeType>::DualTreeBoruvka(
   neighborsDistances.fill(DBL_MAX);
 }
 
-template<
-    typename MetricType,
-    typename MatType,
-    template<typename TreeMetricType,
-             typename TreeStatType,
-             typename TreeMatType> class TreeType>
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 DualTreeBoruvka<MetricType, MatType, TreeType>::DualTreeBoruvka(
-    Tree* tree,
-    const MetricType metric) :
-    tree(tree),
-    data(tree->Dataset()),
-    ownTree(false),
-    naive(false),
-    connections(data.n_cols),
-    totalDist(0.0),
-    metric(metric)
+    Tree* tree, const MetricType metric)
+  : tree(tree), data(tree->Dataset()), ownTree(false), naive(false),
+    connections(data.n_cols), totalDist(0.0), metric(metric)
 {
   edges.reserve(data.n_cols - 1); // Fill with EdgePairs.
 
@@ -94,12 +80,11 @@ DualTreeBoruvka<MetricType, MatType, TreeType>::DualTreeBoruvka(
   neighborsDistances.fill(DBL_MAX);
 }
 
-template<
-    typename MetricType,
-    typename MatType,
-    template<typename TreeMetricType,
-             typename TreeStatType,
-             typename TreeMatType> class TreeType>
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 DualTreeBoruvka<MetricType, MatType, TreeType>::~DualTreeBoruvka()
 {
   if (ownTree)
@@ -110,12 +95,11 @@ DualTreeBoruvka<MetricType, MatType, TreeType>::~DualTreeBoruvka()
  * Iteratively find the nearest neighbor of each component until the MST is
  * complete.
  */
-template<
-    typename MetricType,
-    typename MatType,
-    template<typename TreeMetricType,
-             typename TreeStatType,
-             typename TreeMatType> class TreeType>
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::ComputeMST(
     arma::mat& results)
 {
@@ -124,8 +108,12 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::ComputeMST(
   totalDist = 0; // Reset distance.
 
   typedef DTBRules<MetricType, Tree> RuleType;
-  RuleType rules(data, connections, neighborsDistances, neighborsInComponent,
-                 neighborsOutComponent, metric);
+  RuleType rules(data,
+                 connections,
+                 neighborsDistances,
+                 neighborsInComponent,
+                 neighborsOutComponent,
+                 metric);
   while (edges.size() < (data.n_cols - 1))
   {
     if (naive)
@@ -150,7 +138,7 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::ComputeMST(
     {
       Log::Info << rules.BaseCases() << " cumulative base cases." << std::endl;
       Log::Info << rules.Scores() << " cumulative node combinations scored."
-          << std::endl;
+                << std::endl;
     }
   }
 
@@ -164,19 +152,16 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::ComputeMST(
 /**
  * Adds a single edge to the edge list
  */
-template<
-    typename MetricType,
-    typename MatType,
-    template<typename TreeMetricType,
-             typename TreeStatType,
-             typename TreeMatType> class TreeType>
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::AddEdge(
-    const size_t e1,
-    const size_t e2,
-    const double distance)
+    const size_t e1, const size_t e2, const double distance)
 {
   Log::Assert((distance >= 0.0),
-      "DualTreeBoruvka::AddEdge(): distance cannot be negative.");
+              "DualTreeBoruvka::AddEdge(): distance cannot be negative.");
 
   if (e1 < e2)
     edges.push_back(EdgePair(e1, e2, distance));
@@ -187,12 +172,11 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::AddEdge(
 /**
  * Adds all the edges found in one iteration to the list of neighbors.
  */
-template<
-    typename MetricType,
-    typename MatType,
-    template<typename TreeMetricType,
-             typename TreeStatType,
-             typename TreeMatType> class TreeType>
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::AddAllEdges()
 {
   for (size_t i = 0; i < data.n_cols; i++)
@@ -214,12 +198,11 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::AddAllEdges()
 /**
  * Unpermute the edge list (if necessary) and output it to results.
  */
-template<
-    typename MetricType,
-    typename MatType,
-    template<typename TreeMetricType,
-             typename TreeStatType,
-             typename TreeMatType> class TreeType>
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::EmitResults(
     arma::mat& results)
 {
@@ -270,12 +253,11 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::EmitResults(
  * This function resets the values in the nodes of the tree nearest neighbor
  * distance and checks for fully connected nodes.
  */
-template<
-    typename MetricType,
-    typename MatType,
-    template<typename TreeMetricType,
-             typename TreeStatType,
-             typename TreeMatType> class TreeType>
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::CleanupHelper(Tree* tree)
 {
   // Reset the statistic information.
@@ -289,9 +271,9 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::CleanupHelper(Tree* tree)
 
   // Get the component of the first child or point.  Then we will check to see
   // if all other components of children and points are the same.
-  const int component = (tree->NumChildren() != 0) ?
-      tree->Child(0).Stat().ComponentMembership() :
-      connections.Find(tree->Point(0));
+  const int component = (tree->NumChildren() != 0)
+                            ? tree->Child(0).Stat().ComponentMembership()
+                            : connections.Find(tree->Point(0));
 
   // Check components of children.
   for (size_t i = 0; i < tree->NumChildren(); ++i)
@@ -310,12 +292,11 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::CleanupHelper(Tree* tree)
 /**
  * The values stored in the tree must be reset on each iteration.
  */
-template<
-    typename MetricType,
-    typename MatType,
-    template<typename TreeMetricType,
-             typename TreeStatType,
-             typename TreeMatType> class TreeType>
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::Cleanup()
 {
   for (size_t i = 0; i < data.n_cols; i++)

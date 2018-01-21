@@ -30,16 +30,14 @@ template<typename InputType, typename TargetType>
 double CrossEntropyError<InputDataType, OutputDataType>::Forward(
     const InputType&& input, const TargetType&& target)
 {
-  return -arma::accu(target % arma::log(input + eps) +
-                     (1. - target) % arma::log(1. - input + eps));
+  return -arma::accu(target % arma::log(input + eps)
+                     + (1. - target) % arma::log(1. - input + eps));
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType, typename OutputType>
 void CrossEntropyError<InputDataType, OutputDataType>::Backward(
-    const InputType&& input,
-    const TargetType&& target,
-    OutputType&& output)
+    const InputType&& input, const TargetType&& target, OutputType&& output)
 {
   output = (1. - target) / (1. - input + eps) - target / (input + eps);
 }
@@ -47,10 +45,9 @@ void CrossEntropyError<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void CrossEntropyError<InputDataType, OutputDataType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(eps);
+  ar& BOOST_SERIALIZATION_NVP(eps);
 }
 
 } // namespace ann

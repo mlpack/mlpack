@@ -63,8 +63,7 @@ class CVBase
    * @param datasetInfo Type information for each dimension of the dataset.
    * @param numClasses Number of classes in the dataset.
    */
-  CVBase(const data::DatasetInfo& datasetInfo,
-         const size_t numClasses);
+  CVBase(const data::DatasetInfo& datasetInfo, const size_t numClasses);
 
   /**
    * Assert there is the equal number of data points and predictions.
@@ -100,7 +99,7 @@ class CVBase
 
  private:
   static_assert(MIE::IsSupported,
-      "The given MLAlgorithm is not supported by MetaInfoExtractor");
+                "The given MLAlgorithm is not supported by MetaInfoExtractor");
 
   //! A variable for storing a data::DatasetInfo parameter if it is passed.
   const data::DatasetInfo datasetInfo;
@@ -112,14 +111,12 @@ class CVBase
   /**
    * Assert there is an equal number of data points and predictions.
    */
-  static void AssertSizeEquality(const MatType& xs,
-                                 const PredictionsType& ys);
+  static void AssertSizeEquality(const MatType& xs, const PredictionsType& ys);
 
   /**
    * Assert the number of weights is the same as the number of data points.
    */
-  static void AssertWeightsSize(const MatType& xs,
-                                const WeightsType& weights);
+  static void AssertWeightsSize(const MatType& xs, const WeightsType& weights);
 
   /**
    * Construct a trained MLAlgorithm model if MLAlgorithm doesn't take the
@@ -137,7 +134,7 @@ class CVBase
    * numClasses parameter.
    */
   template<typename... MLAlgorithmArgs,
-           bool Enabled = MIE::TakesNumClasses & !MIE::TakesDatasetInfo,
+           bool Enabled = MIE::TakesNumClasses and !MIE::TakesDatasetInfo,
            typename = typename std::enable_if<Enabled>::type,
            typename = void>
   MLAlgorithm TrainModel(const MatType& xs,
@@ -149,7 +146,7 @@ class CVBase
    * numClasses parameter and a data::DatasetInfo parameter.
    */
   template<typename... MLAlgorithmArgs,
-           bool Enabled = MIE::TakesNumClasses & MIE::TakesDatasetInfo,
+           bool Enabled = MIE::TakesNumClasses& MIE::TakesDatasetInfo,
            typename = typename std::enable_if<Enabled>::type,
            typename = void,
            typename = void>
@@ -174,7 +171,7 @@ class CVBase
    * numClasses parameter.
    */
   template<typename... MLAlgorithmArgs,
-           bool Enabled = MIE::TakesNumClasses & !MIE::TakesDatasetInfo,
+           bool Enabled = MIE::TakesNumClasses and !MIE::TakesDatasetInfo,
            typename = typename std::enable_if<Enabled>::type,
            typename = void>
   MLAlgorithm TrainModel(const MatType& xs,
@@ -187,7 +184,7 @@ class CVBase
    * numClasses parameter and a data::DatasetInfo parameter.
    */
   template<typename... MLAlgorithmArgs,
-           bool Enabled = MIE::TakesNumClasses & MIE::TakesDatasetInfo,
+           bool Enabled = MIE::TakesNumClasses& MIE::TakesDatasetInfo,
            typename = typename std::enable_if<Enabled>::type,
            typename = void,
            typename = void>

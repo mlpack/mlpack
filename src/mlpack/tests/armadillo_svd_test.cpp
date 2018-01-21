@@ -53,5 +53,4 @@ BOOST_AUTO_TEST_CASE(ArmadilloSVDLowRankFactorizationTest)
   BOOST_REQUIRE_LT(result, 0.01);
 }
 
-
 BOOST_AUTO_TEST_SUITE_END();

@@ -19,21 +19,21 @@
 #include "arma_config.hpp"
 
 #ifdef ARMA_64BIT_WORD
-  #ifdef MLPACK_ARMA_NO_64BIT_WORD
-    #pragma message "mlpack was compiled without ARMA_64BIT_WORD, but you are \
+#ifdef MLPACK_ARMA_NO_64BIT_WORD
+#pragma message "mlpack was compiled without ARMA_64BIT_WORD, but you are \
 compiling with ARMA_64BIT_WORD.  This will almost certainly cause irreparable \
 disaster.  Either disable ARMA_64BIT_WORD in your application which is using \
 mlpack, or, recompile mlpack against a version of Armadillo which has \
 ARMA_64BIT_WORD enabled."
-  #endif
+#endif
 #else
-  #ifdef MLPACK_ARMA_64BIT_WORD
-    #pragma message "mlpack was compiled with ARMA_64BIT_WORD, but you are \
+#ifdef MLPACK_ARMA_64BIT_WORD
+#pragma message "mlpack was compiled with ARMA_64BIT_WORD, but you are \
 compiling without ARMA_64BIT_WORD.  This will almost certainly cause \
 irreparable disaster.  Either enable ARMA_64BIT_WORD in your application which \
 is using mlpack, or, recompile mlpack against a version of Armadillo which has \
 ARMA_64BIT_WORD disabled."
-  #endif
+#endif
 #endif
 
 #endif

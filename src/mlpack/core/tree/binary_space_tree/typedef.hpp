@@ -31,7 +31,8 @@ namespace tree {
  *
  * @code
  * @article{bentley1975multidimensional,
- *   title={Multidimensional binary search trees used for associative searching},
+ *   title={Multidimensional binary search trees used for associative
+ * searching},
  *   author={Bentley, J.L.},
  *   journal={Communications of the ACM},
  *   volume={18},
@@ -187,8 +188,7 @@ using MeanSplitBallTree = BinarySpaceTree<MetricType,
  *
  * @see @ref trees, BinarySpaceTree, VantagePointTree, VPTree
  */
-template<typename BoundType,
-         typename MatType = arma::mat>
+template<typename BoundType, typename MatType = arma::mat>
 using VPTreeSplit = VantagePointSplit<BoundType, MatType, 100>;
 
 template<typename MetricType, typename StatisticType, typename MatType>
@@ -260,10 +260,10 @@ using MaxRPTree = BinarySpaceTree<MetricType,
  */
 template<typename MetricType, typename StatisticType, typename MatType>
 using RPTree = BinarySpaceTree<MetricType,
-                                  StatisticType,
-                                  MatType,
-                                  bound::HRectBound,
-                                  RPTreeMeanSplit>;
+                               StatisticType,
+                               MatType,
+                               bound::HRectBound,
+                               RPTreeMeanSplit>;
 
 /**
  * The Universal B-tree. When recursively splitting nodes, the class

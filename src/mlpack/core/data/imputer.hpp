@@ -33,16 +33,14 @@ template<typename T, typename MapperType, typename StrategyType>
 class Imputer
 {
  public:
-  Imputer(MapperType mapper, bool columnMajor = true):
-      mapper(std::move(mapper)),
-      columnMajor(columnMajor)
+  Imputer(MapperType mapper, bool columnMajor = true)
+    : mapper(std::move(mapper)), columnMajor(columnMajor)
   {
     // Nothing to initialize here.
   }
 
-  Imputer(MapperType mapper, StrategyType strategy, bool columnMajor = true):
-      strategy(std::move(strategy)),
-      mapper(std::move(mapper)),
+  Imputer(MapperType mapper, StrategyType strategy, bool columnMajor = true)
+    : strategy(std::move(strategy)), mapper(std::move(mapper)),
       columnMajor(columnMajor)
   {
     // Nothing to initialize here.

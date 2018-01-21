@@ -103,8 +103,8 @@ BOOST_AUTO_TEST_CASE(AdamLogisticRegressionTest)
   }
 
   // Shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
-      data.n_cols - 1, data.n_cols));
+  arma::uvec indices = arma::shuffle(
+      arma::linspace<arma::uvec>(0, data.n_cols - 1, data.n_cols));
   arma::mat shuffledData(3, 1000);
   arma::Row<size_t> shuffledResponses(1000);
   for (size_t i = 0; i < data.n_cols; ++i)
@@ -161,8 +161,8 @@ BOOST_AUTO_TEST_CASE(AdaMaxLogisticRegressionTest)
   }
 
   // Shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
-      data.n_cols - 1, data.n_cols));
+  arma::uvec indices = arma::shuffle(
+      arma::linspace<arma::uvec>(0, data.n_cols - 1, data.n_cols));
   arma::mat shuffledData(3, 1000);
   arma::Row<size_t> shuffledResponses(1000);
   for (size_t i = 0; i < data.n_cols; ++i)
@@ -219,8 +219,8 @@ BOOST_AUTO_TEST_CASE(AMSGradLogisticRegressionTest)
   }
 
   // Shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
-      data.n_cols - 1, data.n_cols));
+  arma::uvec indices = arma::shuffle(
+      arma::linspace<arma::uvec>(0, data.n_cols - 1, data.n_cols));
   arma::mat shuffledData(3, 1000);
   arma::Row<size_t> shuffledResponses(1000);
   for (size_t i = 0; i < data.n_cols; ++i)
@@ -276,10 +276,8 @@ BOOST_AUTO_TEST_CASE(SimpleNadamTestFunction)
 BOOST_AUTO_TEST_CASE(NadamLogisticRegressionTest)
 {
   // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"),
-  arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"),
-  arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
   arma::Row<size_t> responses(1000);
@@ -295,8 +293,8 @@ BOOST_AUTO_TEST_CASE(NadamLogisticRegressionTest)
   }
 
   // Shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
-  data.n_cols - 1, data.n_cols));
+  arma::uvec indices = arma::shuffle(
+      arma::linspace<arma::uvec>(0, data.n_cols - 1, data.n_cols));
   arma::mat shuffledData(3, 1000);
   arma::Row<size_t> shuffledResponses(1000);
   for (size_t i = 0; i < data.n_cols; ++i)
@@ -352,10 +350,8 @@ BOOST_AUTO_TEST_CASE(SimpleNadaMaxTestFunction)
 BOOST_AUTO_TEST_CASE(NadaMaxLogisticRegressionTest)
 {
   // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"),
-  arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"),
-  arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
   arma::Row<size_t> responses(1000);
@@ -371,8 +367,8 @@ BOOST_AUTO_TEST_CASE(NadaMaxLogisticRegressionTest)
   }
 
   // Shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
-  data.n_cols - 1, data.n_cols));
+  arma::uvec indices = arma::shuffle(
+      arma::linspace<arma::uvec>(0, data.n_cols - 1, data.n_cols));
   arma::mat shuffledData(3, 1000);
   arma::Row<size_t> shuffledResponses(1000);
   for (size_t i = 0; i < data.n_cols; ++i)

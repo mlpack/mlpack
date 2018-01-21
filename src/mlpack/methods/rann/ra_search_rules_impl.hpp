@@ -19,63 +19,59 @@ namespace mlpack {
 namespace neighbor {
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-RASearchRules<SortPolicy, MetricType, TreeType>::
-RASearchRules(const arma::mat& referenceSet,
-              const arma::mat& querySet,
-              const size_t k,
-              MetricType& metric,
-              const double tau,
-              const double alpha,
-              const bool naive,
-              const bool sampleAtLeaves,
-              const bool firstLeafExact,
-              const size_t singleSampleLimit,
-              const bool sameSet) :
-    referenceSet(referenceSet),
-    querySet(querySet),
-    k(k),
-    metric(metric),
-    sampleAtLeaves(sampleAtLeaves),
-    firstLeafExact(firstLeafExact),
-    singleSampleLimit(singleSampleLimit),
-    sameSet(sameSet)
+RASearchRules<SortPolicy, MetricType, TreeType>::RASearchRules(
+    const arma::mat& referenceSet,
+    const arma::mat& querySet,
+    const size_t k,
+    MetricType& metric,
+    const double tau,
+    const double alpha,
+    const bool naive,
+    const bool sampleAtLeaves,
+    const bool firstLeafExact,
+    const size_t singleSampleLimit,
+    const bool sameSet)
+  : referenceSet(referenceSet), querySet(querySet), k(k), metric(metric),
+    sampleAtLeaves(sampleAtLeaves), firstLeafExact(firstLeafExact),
+    singleSampleLimit(singleSampleLimit), sameSet(sameSet)
 {
   // Validate tau to make sure that the rank approximation is greater than the
   // number of neighbors requested.
 
   // The rank approximation.
   const size_t n = referenceSet.n_cols;
-  const size_t t = (size_t) std::ceil(tau * (double) n / 100.0);
+  const size_t t = (size_t)std::ceil(tau * (double)n / 100.0);
   if (t < k)
   {
     Log::Warn << "Rank-approximation percentile " << tau << " corresponds to "
-        << t << " points, which is less than k (" << k << ").";
+              << t << " points, which is less than k (" << k << ").";
     Log::Fatal << "Cannot return " << k << " approximate nearest neighbors "
-        << "from the nearest " << t << " points.  Increase tau!" << std::endl;
+               << "from the nearest " << t << " points.  Increase tau!"
+               << std::endl;
   }
   else if (t == k)
     Log::Warn << "Rank-approximation percentile " << tau << " corresponds to "
-        << t << " points; because k = " << k << ", this is exact search!"
-        << std::endl;
+              << t << " points; because k = " << k << ", this is exact search!"
+              << std::endl;
 
   Timer::Start("computing_number_of_samples_reqd");
   numSamplesReqd = RAUtil::MinimumSamplesReqd(n, k, tau, alpha);
   Timer::Stop("computing_number_of_samples_reqd");
 
   // Initialize some statistics to be collected during the search.
-  numSamplesMade = arma::zeros<arma::Col<size_t> >(querySet.n_cols);
+  numSamplesMade = arma::zeros<arma::Col<size_t>>(querySet.n_cols);
   numDistComputations = 0;
-  samplingRatio = (double) numSamplesReqd / (double) n;
+  samplingRatio = (double)numSamplesReqd / (double)n;
 
-  Log::Info << "Minimum samples required per query: " << numSamplesReqd <<
-    ", sampling ratio: " << samplingRatio << std::endl;
+  Log::Info << "Minimum samples required per query: " << numSamplesReqd
+            << ", sampling ratio: " << samplingRatio << std::endl;
 
   // Let's build the list of candidate neighbors for each query point.
   // It will be initialized with k candidates: (WorstDistance, size_t() - 1)
   // The list of candidates will be updated when visiting new points with the
   // BaseCase() method.
-  const Candidate def = std::make_pair(SortPolicy::WorstDistance(),
-      size_t() - 1);
+  const Candidate def =
+      std::make_pair(SortPolicy::WorstDistance(), size_t() - 1);
 
   std::vector<Candidate> vect(k, def);
   CandidateList pqueue(CandidateCmp(), std::move(vect));
@@ -92,15 +88,14 @@ RASearchRules(const arma::mat& referenceSet,
     {
       math::ObtainDistinctSamples(0, n, numSamplesReqd, distinctSamples);
       for (size_t j = 0; j < distinctSamples.n_elem; j++)
-        BaseCase(i, (size_t) distinctSamples[j]);
+        BaseCase(i, (size_t)distinctSamples[j]);
     }
   }
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
 void RASearchRules<SortPolicy, MetricType, TreeType>::GetResults(
-    arma::Mat<size_t>& neighbors,
-    arma::mat& distances)
+    arma::Mat<size_t>& neighbors, arma::mat& distances)
 {
   neighbors.set_size(k, querySet.n_cols);
   distances.set_size(k, querySet.n_cols);
@@ -118,10 +113,9 @@ void RASearchRules<SortPolicy, MetricType, TreeType>::GetResults(
 };
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-inline force_inline
-double RASearchRules<SortPolicy, MetricType, TreeType>::BaseCase(
-    const size_t queryIndex,
-    const size_t referenceIndex)
+inline force_inline double
+RASearchRules<SortPolicy, MetricType, TreeType>::BaseCase(
+    const size_t queryIndex, const size_t referenceIndex)
 {
   // If the datasets are the same, then this search is only using one dataset
   // and we should not return identical points.
@@ -141,13 +135,13 @@ double RASearchRules<SortPolicy, MetricType, TreeType>::BaseCase(
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
-    const size_t queryIndex,
-    TreeType& referenceNode)
+inline double
+RASearchRules<SortPolicy, MetricType, TreeType>::Score(const size_t queryIndex,
+                                                       TreeType& referenceNode)
 {
   const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
-  const double distance = SortPolicy::BestPointToNodeDistance(queryPoint,
-      &referenceNode);
+  const double distance =
+      SortPolicy::BestPointToNodeDistance(queryPoint, &referenceNode);
   const double bestDistance = candidates[queryIndex].top().first;
 
   return Score(queryIndex, referenceNode, distance, bestDistance);
@@ -160,8 +154,8 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
     const double baseCaseResult)
 {
   const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
-  const double distance = SortPolicy::BestPointToNodeDistance(queryPoint,
-      &referenceNode, baseCaseResult);
+  const double distance = SortPolicy::BestPointToNodeDistance(
+      queryPoint, &referenceNode, baseCaseResult);
   const double bestDistance = candidates[queryIndex].top().first;
 
   return Score(queryIndex, referenceNode, distance, bestDistance);
@@ -187,10 +181,10 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
     if (numSamplesMade[queryIndex] > 0 || !firstLeafExact)
     {
       // Check if this node can be approximated by sampling.
-      size_t samplesReqd = (size_t) std::ceil(samplingRatio *
-          (double) referenceNode.NumDescendants());
-      samplesReqd = std::min(samplesReqd,
-          numSamplesReqd - numSamplesMade[queryIndex]);
+      size_t samplesReqd = (size_t)std::ceil(
+          samplingRatio * (double)referenceNode.NumDescendants());
+      samplesReqd =
+          std::min(samplesReqd, numSamplesReqd - numSamplesMade[queryIndex]);
 
       if (samplesReqd > singleSampleLimit && !referenceNode.IsLeaf())
       {
@@ -204,8 +198,8 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
           // Then samplesReqd <= singleSampleLimit.
           // Hence, approximate the node by sampling enough number of points.
           arma::uvec distinctSamples;
-          math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
-              samplesReqd, distinctSamples);
+          math::ObtainDistinctSamples(
+              0, referenceNode.NumDescendants(), samplesReqd, distinctSamples);
           for (size_t i = 0; i < distinctSamples.n_elem; i++)
             // The counting of the samples are done in the 'BaseCase' function
             // so no book-keeping is required here.
@@ -220,13 +214,15 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
           {
             // Approximate node by sampling enough number of points.
             arma::uvec distinctSamples;
-            math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
-                samplesReqd, distinctSamples);
+            math::ObtainDistinctSamples(0,
+                                        referenceNode.NumDescendants(),
+                                        samplesReqd,
+                                        distinctSamples);
             for (size_t i = 0; i < distinctSamples.n_elem; i++)
               // The counting of the samples are done in the 'BaseCase' function
               // so no book-keeping is required here.
               BaseCase(queryIndex,
-                  referenceNode.Descendant(distinctSamples[i]));
+                       referenceNode.Descendant(distinctSamples[i]));
 
             // (Leaf) node approximated, so we can prune it.
             return DBL_MAX;
@@ -256,18 +252,16 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
 
     // If enough samples are already made, this step does not change the result
     // of the search.
-    numSamplesMade[queryIndex] += (size_t) std::floor(
-        samplingRatio * (double) referenceNode.NumDescendants());
+    numSamplesMade[queryIndex] += (size_t)std::floor(
+        samplingRatio * (double)referenceNode.NumDescendants());
 
     return DBL_MAX;
   }
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double RASearchRules<SortPolicy, MetricType, TreeType>::
-Rescore(const size_t queryIndex,
-        TreeType& referenceNode,
-        const double oldScore)
+inline double RASearchRules<SortPolicy, MetricType, TreeType>::Rescore(
+    const size_t queryIndex, TreeType& referenceNode, const double oldScore)
 {
   // If we are already pruning, still prune.
   if (oldScore == DBL_MAX)
@@ -290,10 +284,10 @@ Rescore(const size_t queryIndex,
     // leaf.  So no check regarding that is made any more.
 
     // Check if this node can be approximated by sampling.
-    size_t samplesReqd = (size_t) std::ceil(samplingRatio *
-        (double) referenceNode.NumDescendants());
-    samplesReqd = std::min(samplesReqd, numSamplesReqd -
-        numSamplesMade[queryIndex]);
+    size_t samplesReqd = (size_t)std::ceil(
+        samplingRatio * (double)referenceNode.NumDescendants());
+    samplesReqd =
+        std::min(samplesReqd, numSamplesReqd - numSamplesMade[queryIndex]);
 
     if (samplesReqd > singleSampleLimit && !referenceNode.IsLeaf())
     {
@@ -308,8 +302,8 @@ Rescore(const size_t queryIndex,
         // Then, samplesReqd <= singleSampleLimit.  Hence, approximate the node
         // by sampling enough number of points.
         arma::uvec distinctSamples;
-        math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
-            samplesReqd, distinctSamples);
+        math::ObtainDistinctSamples(
+            0, referenceNode.NumDescendants(), samplesReqd, distinctSamples);
         for (size_t i = 0; i < distinctSamples.n_elem; i++)
           // The counting of the samples are done in the 'BaseCase' function so
           // no book-keeping is required here.
@@ -324,8 +318,8 @@ Rescore(const size_t queryIndex,
         {
           // Approximate node by sampling enough points.
           arma::uvec distinctSamples;
-          math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
-              samplesReqd, distinctSamples);
+          math::ObtainDistinctSamples(
+              0, referenceNode.NumDescendants(), samplesReqd, distinctSamples);
           for (size_t i = 0; i < distinctSamples.n_elem; i++)
             // The counting of the samples are done in the 'BaseCase' function
             // so no book-keeping is required here.
@@ -350,23 +344,23 @@ Rescore(const size_t queryIndex,
     // Add 'fake' samples from this node; they are fake because the distances to
     // these samples need not be computed.  If enough samples are already made,
     // this step does not change the result of the search.
-    numSamplesMade[queryIndex] += (size_t) std::floor(samplingRatio *
-        (double) referenceNode.NumDescendants());
+    numSamplesMade[queryIndex] += (size_t)std::floor(
+        samplingRatio * (double)referenceNode.NumDescendants());
 
     return DBL_MAX;
   }
 } // Rescore(point, node, oldScore)
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
-    TreeType& queryNode,
-    TreeType& referenceNode)
+inline double
+RASearchRules<SortPolicy, MetricType, TreeType>::Score(TreeType& queryNode,
+                                                       TreeType& referenceNode)
 {
   // First try to find the distance bound to check if we can prune by distance.
 
   // Calculate the best node-to-node distance.
-  const double distance = SortPolicy::BestNodeToNodeDistance(&queryNode,
-                                                             &referenceNode);
+  const double distance =
+      SortPolicy::BestNodeToNodeDistance(&queryNode, &referenceNode);
 
   double pointBound = DBL_MAX;
   double childBound = DBL_MAX;
@@ -374,8 +368,8 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
 
   for (size_t i = 0; i < queryNode.NumPoints(); i++)
   {
-    const double bound = candidates[queryNode.Point(i)].top().first
-        + maxDescendantDistance;
+    const double bound =
+        candidates[queryNode.Point(i)].top().first + maxDescendantDistance;
     if (bound < pointBound)
       pointBound = bound;
   }
@@ -396,16 +390,14 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
 inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
-      TreeType& queryNode,
-      TreeType& referenceNode,
-      const double baseCaseResult)
+    TreeType& queryNode, TreeType& referenceNode, const double baseCaseResult)
 {
   // First try to find the distance bound to check if we can prune
   // by distance.
 
   // Find the best node-to-node distance.
-  const double distance = SortPolicy::BestNodeToNodeDistance(&queryNode,
-      &referenceNode, baseCaseResult);
+  const double distance = SortPolicy::BestNodeToNodeDistance(
+      &queryNode, &referenceNode, baseCaseResult);
 
   double pointBound = DBL_MAX;
   double childBound = DBL_MAX;
@@ -413,8 +405,8 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
 
   for (size_t i = 0; i < queryNode.NumPoints(); i++)
   {
-    const double bound = candidates[queryNode.Point(i)].top().first
-        + maxDescendantDistance;
+    const double bound =
+        candidates[queryNode.Point(i)].top().first + maxDescendantDistance;
     if (bound < pointBound)
       pointBound = bound;
   }
@@ -461,8 +453,8 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
     // The number of samples made for a node is propagated up from the child
     // nodes if the child nodes have made samples that the parent (which is the
     // current 'queryNode') is not aware of.
-    queryNode.Stat().NumSamplesMade() = std::max(
-        queryNode.Stat().NumSamplesMade(), numSamplesMadeInChildNodes);
+    queryNode.Stat().NumSamplesMade() =
+        std::max(queryNode.Stat().NumSamplesMade(), numSamplesMadeInChildNodes);
   }
 
   // Now check if the node-pair interaction can be pruned.
@@ -480,10 +472,10 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
     if (queryNode.Stat().NumSamplesMade() > 0 || !firstLeafExact)
     {
       // Check if this node can be approximated by sampling.
-      size_t samplesReqd = (size_t) std::ceil(samplingRatio
-          * (double) referenceNode.NumDescendants());
-      samplesReqd = std::min(samplesReqd, numSamplesReqd -
-          queryNode.Stat().NumSamplesMade());
+      size_t samplesReqd = (size_t)std::ceil(
+          samplingRatio * (double)referenceNode.NumDescendants());
+      samplesReqd = std::min(
+          samplesReqd, numSamplesReqd - queryNode.Stat().NumSamplesMade());
 
       if (samplesReqd > singleSampleLimit && !referenceNode.IsLeaf())
       {
@@ -495,9 +487,9 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
         // to the children.  Only update if the parent node has made samples the
         // children have not seen.
         for (size_t i = 0; i < queryNode.NumChildren(); i++)
-          queryNode.Child(i).Stat().NumSamplesMade() = std::max(
-              queryNode.Stat().NumSamplesMade(),
-              queryNode.Child(i).Stat().NumSamplesMade());
+          queryNode.Child(i).Stat().NumSamplesMade() =
+              std::max(queryNode.Stat().NumSamplesMade(),
+                       queryNode.Child(i).Stat().NumSamplesMade());
 
         return distance;
       }
@@ -511,13 +503,15 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
           for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
           {
             const size_t queryIndex = queryNode.Descendant(i);
-            math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
-                samplesReqd, distinctSamples);
+            math::ObtainDistinctSamples(0,
+                                        referenceNode.NumDescendants(),
+                                        samplesReqd,
+                                        distinctSamples);
             for (size_t j = 0; j < distinctSamples.n_elem; j++)
               // The counting of the samples are done in the 'BaseCase' function
               // so no book-keeping is required here.
               BaseCase(queryIndex,
-                  referenceNode.Descendant(distinctSamples[j]));
+                       referenceNode.Descendant(distinctSamples[j]));
           }
 
           // Update the number of samples made for the queryNode and also update
@@ -541,13 +535,15 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
             for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
             {
               const size_t queryIndex = queryNode.Descendant(i);
-              math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
-                  samplesReqd, distinctSamples);
+              math::ObtainDistinctSamples(0,
+                                          referenceNode.NumDescendants(),
+                                          samplesReqd,
+                                          distinctSamples);
               for (size_t j = 0; j < distinctSamples.n_elem; j++)
                 // The counting of the samples are done in the 'BaseCase'
                 // function so no book-keeping is required here.
                 BaseCase(queryIndex,
-                    referenceNode.Descendant(distinctSamples[j]));
+                         referenceNode.Descendant(distinctSamples[j]));
             }
 
             // Update the number of samples made for the queryNode and also
@@ -569,9 +565,9 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
             // Go through all children and propagate the number of
             // samples made to the children.
             for (size_t i = 0; i < queryNode.NumChildren(); i++)
-              queryNode.Child(i).Stat().NumSamplesMade() = std::max(
-                  queryNode.Stat().NumSamplesMade(),
-                  queryNode.Child(i).Stat().NumSamplesMade());
+              queryNode.Child(i).Stat().NumSamplesMade() =
+                  std::max(queryNode.Stat().NumSamplesMade(),
+                           queryNode.Child(i).Stat().NumSamplesMade());
 
             return distance;
           }
@@ -584,9 +580,9 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
       // Go through all children and propagate the number of
       // samples made to the children.
       for (size_t i = 0; i < queryNode.NumChildren(); i++)
-        queryNode.Child(i).Stat().NumSamplesMade() = std::max(
-            queryNode.Stat().NumSamplesMade(),
-            queryNode.Child(i).Stat().NumSamplesMade());
+        queryNode.Child(i).Stat().NumSamplesMade() =
+            std::max(queryNode.Stat().NumSamplesMade(),
+                     queryNode.Child(i).Stat().NumSamplesMade());
 
       return distance;
     }
@@ -600,8 +596,8 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
     // these samples need not be computed.  If enough samples are already made,
     // this step does not change the result of the search since this queryNode
     // will never be descended anymore.
-    queryNode.Stat().NumSamplesMade() += (size_t) std::floor(samplingRatio *
-        (double) referenceNode.NumDescendants());
+    queryNode.Stat().NumSamplesMade() += (size_t)std::floor(
+        samplingRatio * (double)referenceNode.NumDescendants());
 
     // Since we are not going to descend down the query tree for this reference
     // node, there is no point updating the number of samples made for the child
@@ -612,10 +608,8 @@ inline double RASearchRules<SortPolicy, MetricType, TreeType>::Score(
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double RASearchRules<SortPolicy, MetricType, TreeType>::
-Rescore(TreeType& queryNode,
-        TreeType& referenceNode,
-        const double oldScore)
+inline double RASearchRules<SortPolicy, MetricType, TreeType>::Rescore(
+    TreeType& queryNode, TreeType& referenceNode, const double oldScore)
 {
   if (oldScore == DBL_MAX)
     return oldScore;
@@ -627,8 +621,8 @@ Rescore(TreeType& queryNode,
 
   for (size_t i = 0; i < queryNode.NumPoints(); i++)
   {
-    const double bound = candidates[queryNode.Point(i)].top().first
-        + maxDescendantDistance;
+    const double bound =
+        candidates[queryNode.Point(i)].top().first + maxDescendantDistance;
     if (bound < pointBound)
       pointBound = bound;
   }
@@ -666,8 +660,8 @@ Rescore(TreeType& queryNode,
     // The number of samples made for a node is propagated up from the child
     // nodes if the child nodes have made samples that the parent (which is the
     // current 'queryNode') is not aware of.
-    queryNode.Stat().NumSamplesMade() = std::max(
-        queryNode.Stat().NumSamplesMade(), numSamplesMadeInChildNodes);
+    queryNode.Stat().NumSamplesMade() =
+        std::max(queryNode.Stat().NumSamplesMade(), numSamplesMadeInChildNodes);
   }
 
   // Now check if the node-pair interaction can be pruned by sampling.
@@ -675,18 +669,18 @@ Rescore(TreeType& queryNode,
   // If this is better than the best distance we've seen so far, maybe there
   // will be something down this node.  Also check if enough samples are already
   // made for this query.
-  if (SortPolicy::IsBetter(oldScore, bestDistance) &&
-      queryNode.Stat().NumSamplesMade() < numSamplesReqd)
+  if (SortPolicy::IsBetter(oldScore, bestDistance)
+      && queryNode.Stat().NumSamplesMade() < numSamplesReqd)
   {
     // We cannot prune this node, so approximate by sampling.
 
     // Here we assume that since we are re-scoring, the algorithm has already
     // sampled some candidates, and if specified, also traversed to the first
     // leaf.  So no checks regarding that are made any more.
-    size_t samplesReqd = (size_t) std::ceil(
-        samplingRatio * (double) referenceNode.NumDescendants());
-    samplesReqd  = std::min(samplesReqd,
-        numSamplesReqd - queryNode.Stat().NumSamplesMade());
+    size_t samplesReqd = (size_t)std::ceil(
+        samplingRatio * (double)referenceNode.NumDescendants());
+    samplesReqd = std::min(samplesReqd,
+                           numSamplesReqd - queryNode.Stat().NumSamplesMade());
 
     if (samplesReqd > singleSampleLimit && !referenceNode.IsLeaf())
     {
@@ -700,9 +694,9 @@ Rescore(TreeType& queryNode,
       // children.  Only update if the parent node has made samples the children
       // have not seen.
       for (size_t i = 0; i < queryNode.NumChildren(); i++)
-        queryNode.Child(i).Stat().NumSamplesMade() = std::max(
-            queryNode.Stat().NumSamplesMade(),
-            queryNode.Child(i).Stat().NumSamplesMade());
+        queryNode.Child(i).Stat().NumSamplesMade() =
+            std::max(queryNode.Stat().NumSamplesMade(),
+                     queryNode.Child(i).Stat().NumSamplesMade());
 
       return oldScore;
     }
@@ -716,8 +710,8 @@ Rescore(TreeType& queryNode,
         for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
         {
           const size_t queryIndex = queryNode.Descendant(i);
-          math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
-              samplesReqd, distinctSamples);
+          math::ObtainDistinctSamples(
+              0, referenceNode.NumDescendants(), samplesReqd, distinctSamples);
           for (size_t j = 0; j < distinctSamples.n_elem; j++)
             // The counting of the samples are done in the 'BaseCase'
             // function so no book-keeping is required here.
@@ -745,13 +739,15 @@ Rescore(TreeType& queryNode,
           for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
           {
             const size_t queryIndex = queryNode.Descendant(i);
-            math::ObtainDistinctSamples(0, referenceNode.NumDescendants(),
-                samplesReqd, distinctSamples);
+            math::ObtainDistinctSamples(0,
+                                        referenceNode.NumDescendants(),
+                                        samplesReqd,
+                                        distinctSamples);
             for (size_t j = 0; j < distinctSamples.n_elem; j++)
               // The counting of the samples are done in BaseCase() so no
               // book-keeping is required here.
               BaseCase(queryIndex,
-                  referenceNode.Descendant(distinctSamples[j]));
+                       referenceNode.Descendant(distinctSamples[j]));
           }
 
           // Update the number of samples made for the query node and also
@@ -770,9 +766,9 @@ Rescore(TreeType& queryNode,
           // We cannot sample from leaves, so we cannot prune.
           // Propagate the number of samples made down to the children.
           for (size_t i = 0; i < queryNode.NumChildren(); i++)
-            queryNode.Child(i).Stat().NumSamplesMade() = std::max(
-                queryNode.Stat().NumSamplesMade(),
-                queryNode.Child(i).Stat().NumSamplesMade());
+            queryNode.Child(i).Stat().NumSamplesMade() =
+                std::max(queryNode.Stat().NumSamplesMade(),
+                         queryNode.Child(i).Stat().NumSamplesMade());
 
           return oldScore;
         }
@@ -788,8 +784,8 @@ Rescore(TreeType& queryNode,
     // these samples need not be computed.  If enough samples are already made,
     // this step does not change the result of the search since this query node
     // will never be descended anymore.
-    queryNode.Stat().NumSamplesMade() += (size_t) std::floor(samplingRatio *
-        (double) referenceNode.NumDescendants());
+    queryNode.Stat().NumSamplesMade() += (size_t)std::floor(
+        samplingRatio * (double)referenceNode.NumDescendants());
 
     // Since we are not going to descend down the query tree for this reference
     // node, there is no point updating the number of samples made for the child
@@ -806,11 +802,8 @@ Rescore(TreeType& queryNode,
  * @param distance Distance from query point to reference point.
  */
 template<typename SortPolicy, typename MetricType, typename TreeType>
-inline void RASearchRules<SortPolicy, MetricType, TreeType>::
-InsertNeighbor(
-    const size_t queryIndex,
-    const size_t neighbor,
-    const double distance)
+inline void RASearchRules<SortPolicy, MetricType, TreeType>::InsertNeighbor(
+    const size_t queryIndex, const size_t neighbor, const double distance)
 {
   CandidateList& pqueue = candidates[queryIndex];
   Candidate c = std::make_pair(distance, neighbor);

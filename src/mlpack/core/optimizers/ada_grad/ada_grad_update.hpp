@@ -76,9 +76,8 @@ class AdaGradUpdate
    * @param stepSize Step size to be used for the given iteration.
    * @param gradient The gradient matrix.
    */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
+  void
+  Update(arma::mat& iterate, const double stepSize, const arma::mat& gradient)
   {
     squaredGradient += (gradient % gradient);
     iterate -= (stepSize * gradient) / (arma::sqrt(squaredGradient) + epsilon);

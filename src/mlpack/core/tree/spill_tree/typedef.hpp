@@ -112,11 +112,8 @@ using NonOrtSPTree = SpillTree<MetricType,
  * @see @ref trees, SpillTree, MeanSPTree, NonOrtSPTree
  */
 template<typename MetricType, typename StatisticType, typename MatType>
-using NonOrtMeanSPTree = SpillTree<MetricType,
-                                   StatisticType,
-                                   MatType,
-                                   Hyperplane,
-                                   MeanSpaceSplit>;
+using NonOrtMeanSPTree =
+    SpillTree<MetricType, StatisticType, MatType, Hyperplane, MeanSpaceSplit>;
 
 } // namespace tree
 } // namespace mlpack

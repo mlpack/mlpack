@@ -30,7 +30,7 @@ void HMMRegression::Train(const std::vector<arma::mat>& predictors,
 
 void HMMRegression::Train(const std::vector<arma::mat>& predictors,
                           const std::vector<arma::vec>& responses,
-                          const std::vector<arma::Row<size_t> >& stateSeq)
+                          const std::vector<arma::Row<size_t>>& stateSeq)
 {
   std::vector<arma::mat> dataSeq;
   StackData(predictors, responses, dataSeq);
@@ -50,8 +50,8 @@ double HMMRegression::Estimate(const arma::mat& predictors,
 {
   arma::mat dataSeq;
   StackData(predictors, responses, dataSeq);
-  return this->HMM::Estimate(dataSeq, stateProb, forwardProb,
-      backwardProb, scales);
+  return this->HMM::Estimate(
+      dataSeq, stateProb, forwardProb, backwardProb, scales);
 }
 
 /**
@@ -108,8 +108,8 @@ void HMMRegression::Filter(const arma::mat& predictors,
   // Propagate state, predictors ahead
   if (ahead != 0)
   {
-    forwardProb = pow(transition, ahead)*forwardProb;
-    forwardProb = forwardProb.cols(0, forwardProb.n_cols-ahead-1);
+    forwardProb = pow(transition, ahead) * forwardProb;
+    forwardProb = forwardProb.cols(0, forwardProb.n_cols - ahead - 1);
   }
 
   // Compute expected emissions.
@@ -118,8 +118,8 @@ void HMMRegression::Filter(const arma::mat& predictors,
   arma::vec nextSeq;
   for (size_t i = 0; i < emission.size(); i++)
   {
-    emission[i].Predict(predictors.cols(ahead, predictors.n_cols-1), nextSeq);
-    filterSeq = filterSeq + nextSeq%(forwardProb.row(i).t());
+    emission[i].Predict(predictors.cols(ahead, predictors.n_cols - 1), nextSeq);
+    filterSeq = filterSeq + nextSeq % (forwardProb.row(i).t());
   }
 }
 
@@ -141,7 +141,7 @@ void HMMRegression::Smooth(const arma::mat& predictors,
   for (size_t i = 0; i < emission.size(); i++)
   {
     emission[i].Predict(predictors, nextSeq);
-    smoothSeq = smoothSeq + nextSeq%(stateProb.row(i).t());
+    smoothSeq = smoothSeq + nextSeq % (stateProb.row(i).t());
   }
 }
 
@@ -157,7 +157,6 @@ void HMMRegression::Forward(const arma::mat& predictors,
   StackData(predictors, responses, dataSeq);
   this->HMM::Forward(dataSeq, scales, forwardProb);
 }
-
 
 void HMMRegression::Backward(const arma::mat& predictors,
                              const arma::vec& responses,

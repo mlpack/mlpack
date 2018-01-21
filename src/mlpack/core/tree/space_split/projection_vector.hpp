@@ -32,9 +32,7 @@ class AxisParallelProjVector
    *
    * @param dim Dimension to be considered.
    */
-  AxisParallelProjVector(size_t dim = 0) :
-      dim(dim)
-  {};
+  AxisParallelProjVector(size_t dim = 0) : dim(dim){};
 
   /**
    * Project the given point on the projection vector.
@@ -55,8 +53,8 @@ class AxisParallelProjVector
    * @return Range of projected values.
    */
   template<typename MetricType, typename ElemType>
-  math::RangeType<ElemType> Project(
-      const bound::HRectBound<MetricType, ElemType>& bound) const
+  math::RangeType<ElemType>
+  Project(const bound::HRectBound<MetricType, ElemType>& bound) const
   {
     return bound[dim];
   };
@@ -68,8 +66,8 @@ class AxisParallelProjVector
    * @return Range of projected values.
    */
   template<typename MetricType, typename VecType>
-  math::RangeType<typename VecType::elem_type> Project(
-      const bound::BallBound<MetricType, VecType>& bound) const
+  math::RangeType<typename VecType::elem_type>
+  Project(const bound::BallBound<MetricType, VecType>& bound) const
   {
     return bound[dim];
   };
@@ -80,7 +78,7 @@ class AxisParallelProjVector
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(dim);
+    ar& BOOST_SERIALIZATION_NVP(dim);
   };
 };
 
@@ -97,18 +95,14 @@ class ProjVector
   /**
    * Empty Constructor.
    */
-  ProjVector() :
-      projVect()
-  {};
+  ProjVector() : projVect(){};
 
   /**
    * Create the projection vector based on the specified vector.
    *
    * @param vect Vector to be considered.
    */
-  ProjVector(const arma::vec& vect) :
-      projVect(arma::normalise(vect))
-  {};
+  ProjVector(const arma::vec& vect) : projVect(arma::normalise(vect)){};
 
   /**
    * Project the given point on the projection vector.
@@ -129,8 +123,8 @@ class ProjVector
    * @return Range of projected values.
    */
   template<typename MetricType, typename VecType>
-  math::RangeType<typename VecType::elem_type> Project(
-      const bound::BallBound<MetricType, VecType>& bound) const
+  math::RangeType<typename VecType::elem_type>
+  Project(const bound::BallBound<MetricType, VecType>& bound) const
   {
     typedef typename VecType::elem_type ElemType;
     const double center = Project(bound.Center());
@@ -144,7 +138,7 @@ class ProjVector
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(projVect);
+    ar& BOOST_SERIALIZATION_NVP(projVect);
   };
 };
 

@@ -29,10 +29,8 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
 class LogSoftMax
 {
  public:
@@ -61,9 +59,8 @@ class LogSoftMax
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void
+  Backward(const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g);
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }

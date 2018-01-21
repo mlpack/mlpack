@@ -189,10 +189,7 @@ class NearestNeighborSort
    * operation provided by ConvertToScore().  For nearest neighbor search, there
    * is no need for any change.
    */
-  static inline double ConvertToDistance(const double score)
-  {
-    return score;
-  }
+  static inline double ConvertToDistance(const double score) { return score; }
 };
 
 } // namespace neighbor

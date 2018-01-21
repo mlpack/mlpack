@@ -20,8 +20,9 @@ std::string GetPrintableParam(
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
+    const typename boost::
+        disable_if<std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::
+            type* /* junk */)
 {
   std::ostringstream oss;
   oss << boost::any_cast<T>(data.value);
@@ -68,8 +69,9 @@ std::string GetPrintableParam(
 template<typename T>
 std::string GetPrintableParam(
     const util::ParamData& /* data */,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
+    const typename boost::
+        enable_if<std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::
+            type* /* junk */)
 {
   return "matrix/DatatsetInfo tuple";
 }

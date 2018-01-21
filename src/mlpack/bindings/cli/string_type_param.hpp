@@ -2,7 +2,8 @@
  * @file string_type_param.hpp
  * @author Ryan Curtin
  *
- * Given a util::ParamData object, return a string containing the type of the input
+ * Given a util::ParamData object, return a string containing the type of the
+ * input
  * parameter as given on the command-line.
  */
 #ifndef MLPACK_BINDINGS_CLI_STRING_TYPE_PARAM_HPP
@@ -47,7 +48,7 @@ void StringTypeParam(const util::ParamData& /* data */,
                      const void* /* input */,
                      void* output)
 {
-  std::string* outstr = (std::string*) output;
+  std::string* outstr = (std::string*)output;
   *outstr = StringTypeParamImpl<T>();
 }
 
@@ -84,9 +85,7 @@ inline void StringTypeParam<double>(const util::ParamData& /* data */,
 //! Return "string";
 template<>
 inline void StringTypeParam<std::tuple<mlpack::data::DatasetInfo, arma::mat>>(
-    const util::ParamData& /* data */,
-    const void* /* input */,
-    void* output);
+    const util::ParamData& /* data */, const void* /* input */, void* output);
 
 } // namespace cli
 } // namespace bindings

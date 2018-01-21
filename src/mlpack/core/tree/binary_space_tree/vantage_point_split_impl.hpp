@@ -3,7 +3,8 @@
  * @author Mikhail Lozhnikov
  *
  * Implementation of class (VantagePointSplit) to split a vantage point
- * tree according to the median value of the distance to a certain vantage point.
+ * tree according to the median value of the distance to a certain vantage
+ * point.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,9 +21,12 @@ namespace mlpack {
 namespace tree {
 
 template<typename BoundType, typename MatType, size_t MaxNumSamples>
-bool VantagePointSplit<BoundType, MatType, MaxNumSamples>::
-SplitNode(const BoundType& bound, MatType& data, const size_t begin,
-    const size_t count, SplitInfo& splitInfo)
+bool VantagePointSplit<BoundType, MatType, MaxNumSamples>::SplitNode(
+    const BoundType& bound,
+    MatType& data,
+    const size_t begin,
+    const size_t count,
+    SplitInfo& splitInfo)
 {
   ElemType mu = 0;
   size_t vantagePointIndex;
@@ -40,16 +44,20 @@ SplitNode(const BoundType& bound, MatType& data, const size_t begin,
 }
 
 template<typename BoundType, typename MatType, size_t MaxNumSamples>
-void VantagePointSplit<BoundType, MatType, MaxNumSamples>::
-SelectVantagePoint(const MetricType& metric, const MatType& data,
-    const size_t begin, const size_t count, size_t& vantagePoint, ElemType& mu)
+void VantagePointSplit<BoundType, MatType, MaxNumSamples>::SelectVantagePoint(
+    const MetricType& metric,
+    const MatType& data,
+    const size_t begin,
+    const size_t count,
+    size_t& vantagePoint,
+    ElemType& mu)
 {
   arma::uvec vantagePointCandidates;
   arma::Col<ElemType> distances(MaxNumSamples);
 
   // Get no more than max(MaxNumSamples, count) vantage point candidates
-  math::ObtainDistinctSamples(begin, begin + count, MaxNumSamples,
-      vantagePointCandidates);
+  math::ObtainDistinctSamples(
+      begin, begin + count, MaxNumSamples, vantagePointCandidates);
 
   ElemType bestSpread = 0;
 
@@ -66,7 +74,7 @@ SelectVantagePoint(const MetricType& metric, const MatType& data,
 
     for (size_t j = 0; j < samples.n_elem; j++)
       distances[j] = metric.Evaluate(data.col(vantagePointCandidates[i]),
-          data.col(samples[j]));
+                                     data.col(samples[j]));
 
     const ElemType spread = arma::sum(distances % distances) / samples.n_elem;
 
@@ -85,4 +93,4 @@ SelectVantagePoint(const MetricType& metric, const MatType& data,
 } // namespace tree
 } // namespace mlpack
 
-#endif  // MLPACK_CORE_TREE_BINARY_SPACE_TREE_VANTAGE_POINT_SPLIT_IMPL_HPP
+#endif // MLPACK_CORE_TREE_BINARY_SPACE_TREE_VANTAGE_POINT_SPLIT_IMPL_HPP

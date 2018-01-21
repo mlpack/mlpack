@@ -51,8 +51,8 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   {
     if (assignments[i] == maxVarCluster)
     {
-      const double distance = std::pow(metric.Evaluate(data.col(i),
-          newCentroids.col(maxVarCluster)), 2.0);
+      const double distance = std::pow(
+          metric.Evaluate(data.col(i), newCentroids.col(maxVarCluster)), 2.0);
 
       if (distance > maxDistance)
       {
@@ -63,10 +63,12 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   }
 
   // Take that point and add it to the empty cluster.
-  newCentroids.col(maxVarCluster) *= (double(clusterCounts[maxVarCluster]) /
-      double(clusterCounts[maxVarCluster] - 1));
-  newCentroids.col(maxVarCluster) -= (1.0 / (clusterCounts[maxVarCluster] -
-      1.0)) * arma::vec(data.col(furthestPoint));
+  newCentroids.col(maxVarCluster) *=
+      (double(clusterCounts[maxVarCluster])
+       / double(clusterCounts[maxVarCluster] - 1));
+  newCentroids.col(maxVarCluster) -=
+      (1.0 / (clusterCounts[maxVarCluster] - 1.0))
+      * arma::vec(data.col(furthestPoint));
   clusterCounts[maxVarCluster]--;
   clusterCounts[emptyCluster]++;
   newCentroids.col(emptyCluster) = arma::vec(data.col(furthestPoint));
@@ -86,14 +88,15 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   }
   else
   {
-    variances[maxVarCluster] = (1.0 / clusterCounts[maxVarCluster]) *
-        ((clusterCounts[maxVarCluster] + 1) * variances[maxVarCluster] -
-        maxDistance);
+    variances[maxVarCluster] =
+        (1.0 / clusterCounts[maxVarCluster])
+        * ((clusterCounts[maxVarCluster] + 1) * variances[maxVarCluster]
+           - maxDistance);
   }
 
   // Output some debugging information.
-  Log::Debug << "Point " << furthestPoint << " assigned to empty cluster " <<
-      emptyCluster << ".\n";
+  Log::Debug << "Point " << furthestPoint << " assigned to empty cluster "
+             << emptyCluster << ".\n";
 
   return 1; // We only changed one point.
 }
@@ -145,8 +148,8 @@ void MaxVarianceNewCluster::Precalculate(const MatType& data,
     }
 
     assignments[i] = closestCluster;
-    variances[closestCluster] += std::pow(metric.Evaluate(data.col(i),
-        oldCentroids.col(closestCluster)), 2.0);
+    variances[closestCluster] += std::pow(
+        metric.Evaluate(data.col(i), oldCentroids.col(closestCluster)), 2.0);
   }
 
   // Divide by the number of points in the cluster to produce the variance,

@@ -177,14 +177,14 @@ BOOST_AUTO_TEST_CASE(SparsePolynomialFastMKSTest)
     {
       if (std::abs(pk.Evaluate(dataset.col(i), dataset.col(j))) < 1e-10)
       {
-        BOOST_REQUIRE_SMALL(
-            pk.Evaluate(denseset.col(i), denseset.col(j)), 1e-10);
+        BOOST_REQUIRE_SMALL(pk.Evaluate(denseset.col(i), denseset.col(j)),
+                            1e-10);
       }
       else
       {
-        BOOST_REQUIRE_CLOSE(
-            pk.Evaluate(dataset.col(i), dataset.col(j)),
-            pk.Evaluate(denseset.col(i), denseset.col(j)), 1e-5);
+        BOOST_REQUIRE_CLOSE(pk.Evaluate(dataset.col(i), dataset.col(j)),
+                            pk.Evaluate(denseset.col(i), denseset.col(j)),
+                            1e-5);
       }
     }
 
@@ -222,7 +222,7 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
   arma::Mat<size_t> indices;
   arma::mat products;
   BOOST_REQUIRE_THROW(f.Search(queryData, 3, indices, products),
-      std::invalid_argument);
+                      std::invalid_argument);
 }
 
 // Make sure the simplest overload of Train() works.
@@ -326,7 +326,7 @@ BOOST_AUTO_TEST_CASE(FastMKSModelWrongModelTest)
 
   FastMKSModel m(FastMKSModel::LINEAR_KERNEL);
   BOOST_REQUIRE_THROW(m.BuildModel(data, pk, false, false, 2.0),
-      std::invalid_argument);
+                      std::invalid_argument);
 }
 
 // Test the linear kernel mode of the FastMKSModel.

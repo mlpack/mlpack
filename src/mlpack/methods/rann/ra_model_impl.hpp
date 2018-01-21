@@ -32,16 +32,12 @@ void MonoSearchVisitor::operator()(RAType* ra) const
 //! Save the parameters for the rank-approximate search.
 template<typename SortPolicy>
 BiSearchVisitor<SortPolicy>::BiSearchVisitor(const arma::mat& querySet,
-                                 const size_t k,
-                                 arma::Mat<size_t>& neighbors,
-                                 arma::mat& distances,
-                                 const size_t leafSize) :
-    querySet(querySet),
-    k(k),
-    neighbors(neighbors),
-    distances(distances),
-    leafSize(leafSize)
-{};
+                                             const size_t k,
+                                             arma::Mat<size_t>& neighbors,
+                                             arma::mat& distances,
+                                             const size_t leafSize)
+  : querySet(querySet), k(k), neighbors(neighbors), distances(distances),
+    leafSize(leafSize){};
 
 //! Default Bichromatic search on the given RAType instance.
 template<typename SortPolicy>
@@ -82,10 +78,10 @@ void BiSearchVisitor<SortPolicy>::SearchLeaf(RAType* ra) const
   {
     // Build a second tree and search
     Timer::Start("tree_building");
-    Log::Info << "Building query tree...."<< std::endl;
+    Log::Info << "Building query tree...." << std::endl;
     std::vector<size_t> oldFromNewQueries;
-    typename RAType::Tree queryTree(std::move(querySet), oldFromNewQueries,
-        leafSize);
+    typename RAType::Tree queryTree(
+        std::move(querySet), oldFromNewQueries, leafSize);
     Log::Info << "Tree Built." << std::endl;
     Timer::Stop("tree_building");
 
@@ -112,10 +108,8 @@ void BiSearchVisitor<SortPolicy>::SearchLeaf(RAType* ra) const
 //! Save parameters for the Train.
 template<typename SortPolicy>
 TrainVisitor<SortPolicy>::TrainVisitor(arma::mat&& referenceSet,
-                                       const size_t leafSize) :
-    referenceSet(std::move(referenceSet)),
-    leafSize(leafSize)
-{};
+                                       const size_t leafSize)
+  : referenceSet(std::move(referenceSet)), leafSize(leafSize){};
 
 //! Default Train on the given RAType instance.
 template<typename SortPolicy>
@@ -160,9 +154,8 @@ void TrainVisitor<SortPolicy>::TrainLeaf(RAType* ra) const
   else
   {
     std::vector<size_t> oldFromNewReferences;
-    typename RAType::Tree* tree =
-        new typename RAType::Tree(std::move(referenceSet), oldFromNewReferences,
-        leafSize);
+    typename RAType::Tree* tree = new typename RAType::Tree(
+        std::move(referenceSet), oldFromNewReferences, leafSize);
     ra->Train(tree);
 
     // Give the model ownership of the tree and the mappings.
@@ -252,33 +245,26 @@ void DeleteVisitor::operator()(RSType* rs) const
 }
 
 template<typename SortPolicy>
-RAModel<SortPolicy>::RAModel(const TreeTypes treeType, const bool randomBasis) :
-    treeType(treeType),
-    leafSize(20),
-    randomBasis(randomBasis)
+RAModel<SortPolicy>::RAModel(const TreeTypes treeType, const bool randomBasis)
+  : treeType(treeType), leafSize(20), randomBasis(randomBasis)
 {
   // Nothing to do.
 }
 
 // Copy constructor.
 template<typename SortPolicy>
-RAModel<SortPolicy>::RAModel(const RAModel& other) :
-    treeType(other.treeType),
-    leafSize(other.leafSize),
-    randomBasis(other.randomBasis),
-    q(other.q),
-    raSearch(other.raSearch)
+RAModel<SortPolicy>::RAModel(const RAModel& other)
+  : treeType(other.treeType), leafSize(other.leafSize),
+    randomBasis(other.randomBasis), q(other.q), raSearch(other.raSearch)
 {
   // Nothing to do.
 }
 
 // Move constructor.
 template<typename SortPolicy>
-RAModel<SortPolicy>::RAModel(RAModel&& other) :
-    treeType(other.treeType),
-    leafSize(other.leafSize),
-    randomBasis(other.randomBasis),
-    q(std::move(other.q)),
+RAModel<SortPolicy>::RAModel(RAModel&& other)
+  : treeType(other.treeType), leafSize(other.leafSize),
+    randomBasis(other.randomBasis), q(std::move(other.q)),
     raSearch(std::move(other.raSearch))
 {
   // Clear other model.
@@ -336,9 +322,9 @@ template<typename Archive>
 void RAModel<SortPolicy>::serialize(Archive& ar,
                                     const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(treeType);
-  ar & BOOST_SERIALIZATION_NVP(randomBasis);
-  ar & BOOST_SERIALIZATION_NVP(q);
+  ar& BOOST_SERIALIZATION_NVP(treeType);
+  ar& BOOST_SERIALIZATION_NVP(randomBasis);
+  ar& BOOST_SERIALIZATION_NVP(q);
 
   // This should never happen, but just in case, be clean with memory.
   if (Archive::is_loading::value)
@@ -347,7 +333,7 @@ void RAModel<SortPolicy>::serialize(Archive& ar,
   }
 
   // We only need to serialize one of the kRANN objects.
-  ar & BOOST_SERIALIZATION_NVP(raSearch);
+  ar& BOOST_SERIALIZATION_NVP(raSearch);
 }
 
 template<typename SortPolicy>
@@ -509,8 +495,8 @@ void RAModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
       raSearch = new RAType<SortPolicy, tree::KDTree>(naive, singleMode);
       break;
     case COVER_TREE:
-      raSearch = new RAType<SortPolicy, tree::StandardCoverTree>(naive,
-          singleMode);
+      raSearch =
+          new RAType<SortPolicy, tree::StandardCoverTree>(naive, singleMode);
       break;
     case R_TREE:
       raSearch = new RAType<SortPolicy, tree::RTree>(naive, singleMode);
@@ -528,8 +514,7 @@ void RAModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
       raSearch = new RAType<SortPolicy, tree::RPlusTree>(naive, singleMode);
       break;
     case R_PLUS_PLUS_TREE:
-      raSearch = new RAType<SortPolicy, tree::RPlusPlusTree>(naive,
-          singleMode);
+      raSearch = new RAType<SortPolicy, tree::RPlusPlusTree>(naive, singleMode);
       break;
     case UB_TREE:
       raSearch = new RAType<SortPolicy, tree::UBTree>(naive, singleMode);
@@ -568,8 +553,8 @@ void RAModel<SortPolicy>::Search(arma::mat&& querySet,
     Log::Info << "brute-force (naive) rank-approximate search...";
   Log::Info << std::endl;
 
-  BiSearchVisitor<SortPolicy> search(querySet, k, neighbors, distances,
-      leafSize);
+  BiSearchVisitor<SortPolicy> search(
+      querySet, k, neighbors, distances, leafSize);
   boost::apply_visitor(search, raSearch);
 }
 

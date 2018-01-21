@@ -28,21 +28,18 @@ CMAES<SelectionPolicyType>::CMAES(const size_t lambda,
                                   const size_t batchSize,
                                   const size_t maxIterations,
                                   const double tolerance,
-                                  const SelectionPolicyType& selectionPolicy) :
-    lambda(lambda),
-    lowerBound(lowerBound),
-    upperBound(upperBound),
-    batchSize(batchSize),
-    maxIterations(maxIterations),
-    tolerance(tolerance),
+                                  const SelectionPolicyType& selectionPolicy)
+  : lambda(lambda), lowerBound(lowerBound), upperBound(upperBound),
+    batchSize(batchSize), maxIterations(maxIterations), tolerance(tolerance),
     selectionPolicy(selectionPolicy)
-{ /* Nothing to do. */ }
+{ /* Nothing to do. */
+}
 
 //! Optimize the function (minimize).
 template<typename SelectionPolicyType>
 template<typename DecomposableFunctionType>
-double CMAES<SelectionPolicyType>::Optimize(
-    DecomposableFunctionType& function, arma::mat& iterate)
+double CMAES<SelectionPolicyType>::Optimize(DecomposableFunctionType& function,
+                                            arma::mat& iterate)
 {
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
@@ -53,8 +50,8 @@ double CMAES<SelectionPolicyType>::Optimize(
 
   // Parent weights.
   const size_t mu = std::round(lambda / 2);
-  arma::vec w = std::log(mu + 0.5) - arma::log(
-    arma::linspace<arma::vec>(0, mu - 1, mu) + 1.0);
+  arma::vec w = std::log(mu + 0.5)
+                - arma::log(arma::linspace<arma::vec>(0, mu - 1, mu) + 1.0);
   w /= arma::sum(w);
 
   // Number of effective solutions.
@@ -64,26 +61,31 @@ double CMAES<SelectionPolicyType>::Optimize(
   arma::vec sigma(3);
   sigma(0) = 0.3 * (upperBound - lowerBound);
   const double cs = (muEffective + 2) / (iterate.n_elem + muEffective + 5);
-  const double ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
-      (iterate.n_elem + 1)) - 1, 0.0);
-  const double enn = std::sqrt(iterate.n_elem) * (1.0 - 1.0 /
-      (4.0 * iterate.n_elem) + 1.0 / (21 * std::pow(iterate.n_elem, 2)));
+  const double ds =
+      1 + cs
+      + 2 * std::max(std::sqrt((muEffective - 1) / (iterate.n_elem + 1)) - 1,
+                     0.0);
+  const double enn =
+      std::sqrt(iterate.n_elem) * (1.0 - 1.0 / (4.0 * iterate.n_elem)
+                                   + 1.0 / (21 * std::pow(iterate.n_elem, 2)));
 
   // Covariance update parameters.
   // Cumulation for distribution.
-  const double cc = (4 + muEffective / iterate.n_elem) /
-      (4 + iterate.n_elem + 2 * muEffective / iterate.n_elem);
+  const double cc = (4 + muEffective / iterate.n_elem)
+                    / (4 + iterate.n_elem + 2 * muEffective / iterate.n_elem);
   const double h = (1.4 + 2.0 / (iterate.n_elem + 1.0)) * enn;
 
   const double c1 = 2 / (std::pow(iterate.n_elem + 1.3, 2) + muEffective);
   const double alphaMu = 2;
-  const double cmu = std::min(1 - c1, alphaMu * (muEffective - 2 + 1 /
-      muEffective) / (std::pow(iterate.n_elem + 2, 2) +
-      alphaMu * muEffective / 2));
+  const double cmu = std::min(
+      1 - c1,
+      alphaMu * (muEffective - 2 + 1 / muEffective)
+          / (std::pow(iterate.n_elem + 2, 2) + alphaMu * muEffective / 2));
 
   arma::cube mPosition(iterate.n_rows, iterate.n_cols, 3);
-  mPosition.slice(0) = lowerBound + arma::randu(
-      iterate.n_rows, iterate.n_cols) * (upperBound - lowerBound);
+  mPosition.slice(0) =
+      lowerBound
+      + arma::randu(iterate.n_rows, iterate.n_cols) * (upperBound - lowerBound);
 
   arma::mat step = arma::zeros(iterate.n_rows, iterate.n_cols);
 
@@ -92,8 +94,8 @@ double CMAES<SelectionPolicyType>::Optimize(
   for (size_t f = 0; f < numFunctions; f += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
-    currentObjective += function.Evaluate(mPosition.slice(0), f,
-        effectiveBatchSize);
+    currentObjective +=
+        function.Evaluate(mPosition.slice(0), f, effectiveBatchSize);
   }
 
   double overallObjective = currentObjective;
@@ -129,21 +131,21 @@ double CMAES<SelectionPolicyType>::Optimize(
     {
       if (iterate.n_rows > iterate.n_cols)
       {
-        pStep.slice(idx(j)) = covLower *
-            arma::randn(iterate.n_rows, iterate.n_cols);
+        pStep.slice(idx(j)) =
+            covLower * arma::randn(iterate.n_rows, iterate.n_cols);
       }
       else
       {
-        pStep.slice(idx(j)) = arma::randn(iterate.n_rows, iterate.n_cols) *
-            covLower;
+        pStep.slice(idx(j)) =
+            arma::randn(iterate.n_rows, iterate.n_cols) * covLower;
       }
 
-      pPosition.slice(idx(j)) = mPosition.slice(idx0) + sigma(idx0) *
-          pStep.slice(idx(j));
+      pPosition.slice(idx(j)) =
+          mPosition.slice(idx0) + sigma(idx0) * pStep.slice(idx(j));
 
       // Calculate the objective function.
-      pObjective(idx(j)) = selectionPolicy.Select(function, batchSize,
-          pPosition.slice(idx(j)));
+      pObjective(idx(j)) =
+          selectionPolicy.Select(function, batchSize, pPosition.slice(idx(j)));
     }
 
     // Sort population.
@@ -156,8 +158,8 @@ double CMAES<SelectionPolicyType>::Optimize(
     mPosition.slice(idx1) = mPosition.slice(idx0) + sigma(idx0) * step;
 
     // Calculate the objective function.
-    currentObjective = selectionPolicy.Select(function, batchSize,
-          mPosition.slice(idx1));
+    currentObjective =
+        selectionPolicy.Select(function, batchSize, mPosition.slice(idx1));
 
     // Update best parameters.
     if (currentObjective < overallObjective)
@@ -169,35 +171,36 @@ double CMAES<SelectionPolicyType>::Optimize(
     // Update Step Size.
     if (iterate.n_rows > iterate.n_cols)
     {
-      ps.slice(idx1) = (1 - cs) * ps.slice(idx0) + std::sqrt(
-          cs * (2 - cs) * muEffective) * covLower.t() * step;
+      ps.slice(idx1) =
+          (1 - cs) * ps.slice(idx0)
+          + std::sqrt(cs * (2 - cs) * muEffective) * covLower.t() * step;
     }
     else
     {
-      ps.slice(idx1) = (1 - cs) * ps.slice(idx0) + std::sqrt(
-          cs * (2 - cs) * muEffective) * step * covLower.t();
+      ps.slice(idx1) =
+          (1 - cs) * ps.slice(idx0)
+          + std::sqrt(cs * (2 - cs) * muEffective) * step * covLower.t();
     }
 
     const double psNorm = arma::norm(ps.slice(idx1));
-    sigma(idx1) = sigma(idx0) * std::pow(
-        std::exp(cs / ds * psNorm / enn - 1), 0.3);
+    sigma(idx1) =
+        sigma(idx0) * std::pow(std::exp(cs / ds * psNorm / enn - 1), 0.3);
 
     // Update covariance matrix.
     if ((psNorm / sqrt(1 - std::pow(1 - cs, 2 * i))) < h)
     {
-      pc.slice(idx1) = (1 - cc) * pc.slice(idx0) + std::sqrt(cc * (2 - cc) *
-        muEffective) * step;
-
+      pc.slice(idx1) = (1 - cc) * pc.slice(idx0)
+                       + std::sqrt(cc * (2 - cc) * muEffective) * step;
 
       if (iterate.n_rows > iterate.n_cols)
       {
-        C.slice(idx1) = (1 - c1 - cmu) * C.slice(idx0) + c1 *
-          (pc.slice(idx1) * pc.slice(idx1).t());
+        C.slice(idx1) = (1 - c1 - cmu) * C.slice(idx0)
+                        + c1 * (pc.slice(idx1) * pc.slice(idx1).t());
       }
       else
       {
-        C.slice(idx1) = (1 - c1 - cmu) * C.slice(idx0) + c1 *
-          (pc.slice(idx1).t() * pc.slice(idx1));
+        C.slice(idx1) = (1 - c1 - cmu) * C.slice(idx0)
+                        + c1 * (pc.slice(idx1).t() * pc.slice(idx1));
       }
     }
     else
@@ -206,14 +209,15 @@ double CMAES<SelectionPolicyType>::Optimize(
 
       if (iterate.n_rows > iterate.n_cols)
       {
-        C.slice(idx1) = (1 - c1 - cmu) * C.slice(idx0) + c1 * (pc.slice(idx1) *
-            pc.slice(idx1).t() + (cc * (2 - cc)) * C.slice(idx0));
+        C.slice(idx1) = (1 - c1 - cmu) * C.slice(idx0)
+                        + c1 * (pc.slice(idx1) * pc.slice(idx1).t()
+                                + (cc * (2 - cc)) * C.slice(idx0));
       }
       else
       {
-        C.slice(idx1) = (1 - c1 - cmu) * C.slice(idx0) + c1 *
-            (pc.slice(idx1).t() * pc.slice(idx1) + (cc * (2 - cc)) *
-            C.slice(idx0));
+        C.slice(idx1) = (1 - c1 - cmu) * C.slice(idx0)
+                        + c1 * (pc.slice(idx1).t() * pc.slice(idx1)
+                                + (cc * (2 - cc)) * C.slice(idx0));
       }
     }
 
@@ -221,16 +225,18 @@ double CMAES<SelectionPolicyType>::Optimize(
     {
       for (size_t j = 0; j < mu; ++j)
       {
-        C.slice(idx1) = C.slice(idx1) + cmu * w(j) *
-            pStep.slice(idx(j)) * pStep.slice(idx(j)).t();
+        C.slice(idx1) =
+            C.slice(idx1)
+            + cmu * w(j) * pStep.slice(idx(j)) * pStep.slice(idx(j)).t();
       }
     }
     else
     {
       for (size_t j = 0; j < mu; ++j)
       {
-        C.slice(idx1) = C.slice(idx1) + cmu * w(j) *
-            pStep.slice(idx(j)).t() * pStep.slice(idx(j));
+        C.slice(idx1) =
+            C.slice(idx1)
+            + cmu * w(j) * pStep.slice(idx(j)).t() * pStep.slice(idx(j));
       }
     }
 
@@ -244,27 +250,28 @@ double CMAES<SelectionPolicyType>::Optimize(
       }
       else
       {
-        C.slice(idx1) = eigvec.cols(0, negativeEigval(0) - 1) *
-            arma::diagmat(eigval.subvec(0, negativeEigval(0) - 1)) *
-            eigvec.cols(0, negativeEigval(0) - 1).t();
+        C.slice(idx1) = eigvec.cols(0, negativeEigval(0) - 1)
+                        * arma::diagmat(eigval.subvec(0, negativeEigval(0) - 1))
+                        * eigvec.cols(0, negativeEigval(0) - 1).t();
       }
     }
 
     // Output current objective function.
     Log::Info << "CMA-ES: iteration " << i << ", objective " << overallObjective
-        << "." << std::endl;
+              << "." << std::endl;
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
       Log::Warn << "CMA-ES: converged to " << overallObjective << "; "
-          << "terminating with failure.  Try a smaller step size?" << std::endl;
+                << "terminating with failure.  Try a smaller step size?"
+                << std::endl;
       return overallObjective;
     }
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
       Log::Info << "CMA-ES: minimized within tolerance " << tolerance << "; "
-          << "terminating optimization." << std::endl;
+                << "terminating optimization." << std::endl;
       return overallObjective;
     }
 

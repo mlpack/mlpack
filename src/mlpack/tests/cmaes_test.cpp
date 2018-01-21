@@ -73,8 +73,8 @@ void CreateLogisticRegressionTestData(arma::mat& data,
   }
 
   // Shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
-      data.n_cols - 1, data.n_cols));
+  arma::uvec indices = arma::shuffle(
+      arma::linspace<arma::uvec>(0, data.n_cols - 1, data.n_cols));
   shuffledData = arma::mat(3, 1000);
   shuffledResponses = arma::Row<size_t>(1000);
   for (size_t i = 0; i < data.n_cols; ++i)
@@ -107,8 +107,12 @@ BOOST_AUTO_TEST_CASE(CMAESLogisticRegressionTest)
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
 
-  CreateLogisticRegressionTestData(data, testData, shuffledData,
-      responses, testResponses, shuffledResponses);
+  CreateLogisticRegressionTestData(data,
+                                   testData,
+                                   shuffledData,
+                                   responses,
+                                   testResponses,
+                                   shuffledResponses);
 
   CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
   LogisticRegression<> lr(shuffledData, shuffledResponses, cmaes, 0.5);
@@ -130,8 +134,12 @@ BOOST_AUTO_TEST_CASE(ApproxCMAESLogisticRegressionTest)
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
 
-  CreateLogisticRegressionTestData(data, testData, shuffledData,
-      responses, testResponses, shuffledResponses);
+  CreateLogisticRegressionTestData(data,
+                                   testData,
+                                   shuffledData,
+                                   responses,
+                                   testResponses,
+                                   shuffledResponses);
 
   ApproxCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
   LogisticRegression<> lr(shuffledData, shuffledResponses, cmaes, 0.5);

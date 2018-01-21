@@ -39,8 +39,8 @@ class NetworkInitialization
    * @param initializeRule Rule to initialize the given network.
    */
   NetworkInitialization(
-      const InitializationRuleType& initializeRule = InitializationRuleType()) :
-      initializeRule(initializeRule)
+      const InitializationRuleType& initializeRule = InitializationRuleType())
+    : initializeRule(initializeRule)
   {
     // Nothing to do here.
   }
@@ -67,10 +67,10 @@ class NetworkInitialization
       {
         // Initialize the layer with the specified parameter/weight
         // initialization rule.
-        const size_t weight = boost::apply_visitor(weightSizeVisitor,
-            network[i]);
-        arma::mat tmp = arma::mat(parameter.memptr() + offset,
-            weight, 1, false, false);
+        const size_t weight =
+            boost::apply_visitor(weightSizeVisitor, network[i]);
+        arma::mat tmp =
+            arma::mat(parameter.memptr() + offset, weight, 1, false, false);
         initializeRule.Initialize(tmp, tmp.n_elem, 1);
 
         // Increase the parameter/weight offset for the next layer.
@@ -88,8 +88,8 @@ class NetworkInitialization
     // hold various other modules.
     for (size_t i = 0, offset = 0; i < network.size(); ++i)
     {
-      offset += boost::apply_visitor(WeightSetVisitor(std::move(parameter),
-          offset), network[i]);
+      offset += boost::apply_visitor(
+          WeightSetVisitor(std::move(parameter), offset), network[i]);
 
       boost::apply_visitor(resetVisitor, network[i]);
     }

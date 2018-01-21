@@ -32,9 +32,8 @@ class QUICSVDPolicy
    * @param epsilon Error tolerance fraction for calculated subspace.
    * @param delta Cumulative probability for Monte Carlo error lower bound.
    */
-  QUICSVDPolicy(const double epsilon = 0.03, const double delta = 0.1) :
-       epsilon(epsilon),
-       delta(delta)
+  QUICSVDPolicy(const double epsilon = 0.03, const double delta = 0.1)
+    : epsilon(epsilon), delta(delta)
   {
     /* Nothing to do here */
   }
