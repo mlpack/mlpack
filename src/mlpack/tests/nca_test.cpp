@@ -64,8 +64,8 @@ BOOST_AUTO_TEST_CASE(SoftmaxInitialPoint)
 BOOST_AUTO_TEST_CASE(SoftmaxInitialEvaluation)
 {
   // Useful but simple dataset with six points and two classes.
-  arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::mat data = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                   " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
@@ -85,8 +85,8 @@ BOOST_AUTO_TEST_CASE(SoftmaxInitialEvaluation)
 BOOST_AUTO_TEST_CASE(SoftmaxInitialGradient)
 {
   // Useful but simple dataset with six points and two classes.
-  arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::mat data = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                   " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
@@ -111,8 +111,8 @@ BOOST_AUTO_TEST_CASE(SoftmaxInitialGradient)
 BOOST_AUTO_TEST_CASE(SoftmaxOptimalEvaluation)
 {
   // Simple optimal dataset.
-  arma::mat data           = " 500  500 -500 -500;"
-                             "   1    0    1    0 ";
+  arma::mat data = " 500  500 -500 -500;"
+                   "   1    0    1    0 ";
   arma::Row<size_t> labels = "   0    0    1    1 ";
 
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
@@ -130,8 +130,8 @@ BOOST_AUTO_TEST_CASE(SoftmaxOptimalEvaluation)
 BOOST_AUTO_TEST_CASE(SoftmaxOptimalGradient)
 {
   // Simple optimal dataset.
-  arma::mat data           = " 500  500 -500 -500;"
-                             "   1    0    1    0 ";
+  arma::mat data = " 500  500 -500 -500;"
+                   "   1    0    1    0 ";
   arma::Row<size_t> labels = "   0    0    1    1 ";
 
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
@@ -151,8 +151,8 @@ BOOST_AUTO_TEST_CASE(SoftmaxOptimalGradient)
 BOOST_AUTO_TEST_CASE(SoftmaxSeparableObjective)
 {
   // Useful but simple dataset with six points and two classes.
-  arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::mat data = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                   " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
@@ -175,8 +175,8 @@ BOOST_AUTO_TEST_CASE(SoftmaxSeparableObjective)
 BOOST_AUTO_TEST_CASE(OptimalSoftmaxSeparableObjective)
 {
   // Simple optimal dataset.
-  arma::mat data           = " 500  500 -500 -500;"
-                             "   1    0    1    0 ";
+  arma::mat data = " 500  500 -500 -500;"
+                   "   1    0    1    0 ";
   arma::Row<size_t> labels = "   0    0    1    1 ";
 
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
@@ -197,8 +197,8 @@ BOOST_AUTO_TEST_CASE(OptimalSoftmaxSeparableObjective)
 BOOST_AUTO_TEST_CASE(SoftmaxSeparableGradient)
 {
   // Useful but simple dataset with six points and two classes.
-  arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::mat data = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                   " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
@@ -260,8 +260,8 @@ BOOST_AUTO_TEST_CASE(SoftmaxSeparableGradient)
 BOOST_AUTO_TEST_CASE(NCASGDSimpleDataset)
 {
   // Useful but simple dataset with six points and two classes.
-  arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::mat data = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                   " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
   // Huge learning rate because this is so simple.
@@ -294,8 +294,8 @@ BOOST_AUTO_TEST_CASE(NCASGDSimpleDataset)
 BOOST_AUTO_TEST_CASE(NCALBFGSSimpleDataset)
 {
   // Useful but simple dataset with six points and two classes.
-  arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
-                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::mat data = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                   " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
   // Huge learning rate because this is so simple.

@@ -168,7 +168,8 @@ class NeighborSearchRules
   typedef std::pair<double, size_t> Candidate;
 
   //! Compare two candidates based on the distance.
-  struct CandidateCmp {
+  struct CandidateCmp
+  {
     bool operator()(const Candidate& c1, const Candidate& c2)
     {
       return !SortPolicy::IsBetter(c2.first, c1.first);

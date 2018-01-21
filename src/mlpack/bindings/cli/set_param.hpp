@@ -24,8 +24,10 @@ void SetParam(
     const boost::any& value,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0,
+    const typename boost::
+        disable_if<std::is_same<T,
+                                std::tuple<mlpack::data::DatasetInfo,
+                                           arma::mat>>>::type* = 0,
     const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
   // No mapping is needed.
@@ -36,10 +38,9 @@ void SetParam(
  * This overload is called to set a boolean.
  */
 template<typename T>
-void SetParam(
-    util::ParamData& d,
-    const boost::any& /* value */,
-    const typename boost::enable_if<std::is_same<T, bool>>::type* = 0)
+void SetParam(util::ParamData& d,
+              const boost::any& /* value */,
+              const typename boost::enable_if<std::is_same<T, bool>>::type* = 0)
 {
   // Force set to the value of whether or not this was passed.
   d.value = d.wasPassed;
@@ -53,10 +54,10 @@ template<typename T>
 void SetParam(
     util::ParamData& d,
     const boost::any& value,
-    const typename std::enable_if<arma::is_arma_type<T>::value ||
-                                  data::HasSerialize<T>::value ||
-                                  std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const typename std::
+        enable_if<arma::is_arma_type<T>::value || data::HasSerialize<T>::value
+                  || std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>::
+                         value>::type* = 0)
 {
   // We're setting the string filename.
   typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
@@ -75,7 +76,7 @@ void SetParam(
 template<typename T>
 void SetParam(const util::ParamData& d, const void* input, void* /* output */)
 {
-  SetParam<T>(const_cast<util::ParamData&>(d), *((boost::any*) input));
+  SetParam<T>(const_cast<util::ParamData&>(d), *((boost::any*)input));
 }
 
 } // namespace cli

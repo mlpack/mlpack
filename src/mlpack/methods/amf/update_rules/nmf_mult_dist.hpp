@@ -40,7 +40,7 @@ class NMFMultiplicativeDistanceUpdate
 {
  public:
   // Empty constructor required for the UpdateRule template.
-  NMFMultiplicativeDistanceUpdate() { }
+  NMFMultiplicativeDistanceUpdate() {}
 
   /**
    * Initialize the factorization.  These update rules hold no information, so
@@ -67,9 +67,7 @@ class NMFMultiplicativeDistanceUpdate
    * @param H Encoding matrix.
    */
   template<typename MatType>
-  inline static void WUpdate(const MatType& V,
-                             arma::mat& W,
-                             const arma::mat& H)
+  inline static void WUpdate(const MatType& V, arma::mat& W, const arma::mat& H)
   {
     W = (W % (V * H.t())) / (W * H * H.t());
   }
@@ -89,16 +87,16 @@ class NMFMultiplicativeDistanceUpdate
    * @param H Encoding matrix to be updated.
    */
   template<typename MatType>
-  inline static void HUpdate(const MatType& V,
-                             const arma::mat& W,
-                             arma::mat& H)
+  inline static void HUpdate(const MatType& V, const arma::mat& W, arma::mat& H)
   {
     H = (H % (W.t() * V)) / (W.t() * W * H);
   }
 
   //! Serialize the object (in this case, there is nothing to serialize).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const unsigned int /* version */)
+  {
+  }
 };
 
 } // namespace amf

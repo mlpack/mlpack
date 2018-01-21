@@ -27,32 +27,24 @@ DualTreeKMeansRules<MetricType, TreeType>::DualTreeKMeansRules(
     MetricType& metric,
     const std::vector<bool>& prunedPoints,
     const std::vector<size_t>& oldFromNewCentroids,
-    std::vector<bool>& visited) :
-    centroids(centroids),
-    dataset(dataset),
-    assignments(assignments),
-    upperBounds(upperBounds),
-    lowerBounds(lowerBounds),
-    metric(metric),
-    prunedPoints(prunedPoints),
-    oldFromNewCentroids(oldFromNewCentroids),
-    visited(visited),
-    baseCases(0),
-    scores(0),
-    lastQueryIndex(dataset.n_cols),
+    std::vector<bool>& visited)
+  : centroids(centroids), dataset(dataset), assignments(assignments),
+    upperBounds(upperBounds), lowerBounds(lowerBounds), metric(metric),
+    prunedPoints(prunedPoints), oldFromNewCentroids(oldFromNewCentroids),
+    visited(visited), baseCases(0), scores(0), lastQueryIndex(dataset.n_cols),
     lastReferenceIndex(centroids.n_cols)
 {
   // We must set the traversal info last query and reference node pointers to
   // something that is both invalid (i.e. not a tree node) and not NULL.  We'll
   // use the this pointer.
-  traversalInfo.LastQueryNode() = (TreeType*) this;
-  traversalInfo.LastReferenceNode() = (TreeType*) this;
+  traversalInfo.LastQueryNode() = (TreeType*)this;
+  traversalInfo.LastReferenceNode() = (TreeType*)this;
 }
 
 template<typename MetricType, typename TreeType>
-inline force_inline double DualTreeKMeansRules<MetricType, TreeType>::BaseCase(
-    const size_t queryIndex,
-    const size_t referenceIndex)
+inline force_inline double
+DualTreeKMeansRules<MetricType, TreeType>::BaseCase(const size_t queryIndex,
+                                                    const size_t referenceIndex)
 {
   if (prunedPoints[queryIndex])
     return 0.0; // Returning 0 shouldn't be a problem.
@@ -66,15 +58,16 @@ inline force_inline double DualTreeKMeansRules<MetricType, TreeType>::BaseCase(
 
   // Calculate the distance.
   ++baseCases;
-  const double distance = metric.Evaluate(dataset.col(queryIndex),
-                                          centroids.col(referenceIndex));
+  const double distance =
+      metric.Evaluate(dataset.col(queryIndex), centroids.col(referenceIndex));
 
   if (distance < upperBounds[queryIndex])
   {
     lowerBounds[queryIndex] = upperBounds[queryIndex];
     upperBounds[queryIndex] = distance;
-    assignments[queryIndex] = (tree::TreeTraits<TreeType>::RearrangesDataset) ?
-        oldFromNewCentroids[referenceIndex] : referenceIndex;
+    assignments[queryIndex] = (tree::TreeTraits<TreeType>::RearrangesDataset)
+                                  ? oldFromNewCentroids[referenceIndex]
+                                  : referenceIndex;
   }
   else if (distance < lowerBounds[queryIndex])
   {
@@ -90,9 +83,9 @@ inline force_inline double DualTreeKMeansRules<MetricType, TreeType>::BaseCase(
 }
 
 template<typename MetricType, typename TreeType>
-inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
-    const size_t queryIndex,
-    TreeType& /* referenceNode */)
+inline double
+DualTreeKMeansRules<MetricType, TreeType>::Score(const size_t queryIndex,
+                                                 TreeType& /* referenceNode */)
 {
   // If the query point has already been pruned, then don't recurse further.
   if (prunedPoints[queryIndex])
@@ -104,9 +97,9 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
 }
 
 template<typename MetricType, typename TreeType>
-inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
-    TreeType& queryNode,
-    TreeType& referenceNode)
+inline double
+DualTreeKMeansRules<MetricType, TreeType>::Score(TreeType& queryNode,
+                                                 TreeType& referenceNode)
 {
   if (queryNode.Stat().StaticPruned() == true)
     return DBL_MAX;
@@ -220,8 +213,9 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
       if (adjustedScore < queryNode.Stat().LowerBound())
       {
         // If this might affect the lower bound, make it more exact.
-        queryNode.Stat().LowerBound() = std::min(queryNode.Stat().LowerBound(),
-            queryNode.MinDistance(referenceNode));
+        queryNode.Stat().LowerBound() =
+            std::min(queryNode.Stat().LowerBound(),
+                     queryNode.MinDistance(referenceNode));
         ++scores;
       }
 
@@ -266,9 +260,9 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
         // owner, but note that the node is not truly owned unless
         // Stat().Pruned() is centroids.n_cols.
         queryNode.Stat().Owner() =
-            (tree::TreeTraits<TreeType>::RearrangesDataset) ?
-            oldFromNewCentroids[referenceNode.Descendant(0)] :
-            referenceNode.Descendant(0);
+            (tree::TreeTraits<TreeType>::RearrangesDataset)
+                ? oldFromNewCentroids[referenceNode.Descendant(0)]
+                : referenceNode.Descendant(0);
       }
     }
   }
@@ -280,7 +274,6 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
     queryNode.Stat().Pruned() = centroids.n_cols; // Owner() is already set.
     return DBL_MAX;
   }
-
 
   // Set traversal information.
   traversalInfo.LastQueryNode() = &queryNode;
@@ -302,9 +295,7 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Rescore(
 
 template<typename MetricType, typename TreeType>
 inline double DualTreeKMeansRules<MetricType, TreeType>::Rescore(
-    TreeType& queryNode,
-    TreeType& referenceNode,
-    const double oldScore)
+    TreeType& queryNode, TreeType& referenceNode, const double oldScore)
 {
   if (oldScore == DBL_MAX)
     return DBL_MAX; // It's already pruned.

@@ -65,9 +65,8 @@ class PCAType
    * @param transformedData Matrix to store results of PCA in.
    * @param eigVal Vector to put eigenvalues into.
    */
-  void Apply(const arma::mat& data,
-             arma::mat& transformedData,
-             arma::vec& eigVal);
+  void
+  Apply(const arma::mat& data, arma::mat& transformedData, arma::vec& eigVal);
 
   /**
    * Use PCA for dimensionality reduction on the given dataset. This will save
@@ -121,8 +120,8 @@ class PCAType
       // Scaling the data is when we reduce the variance of each dimension
       // to 1. We do this by dividing each dimension by its standard
       // deviation.
-      arma::vec stdDev = arma::stddev(
-          centeredData, 0, 1 /* for each dimension */);
+      arma::vec stdDev =
+          arma::stddev(centeredData, 0, 1 /* for each dimension */);
 
       // If there are any zeroes, make them very small.
       for (size_t i = 0; i < stdDev.n_elem; ++i)

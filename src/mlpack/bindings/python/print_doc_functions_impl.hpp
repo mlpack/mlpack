@@ -52,9 +52,8 @@ std::string PrintInputOptions() { return ""; }
  * something like x=5.
  */
 template<typename T, typename... Args>
-std::string PrintInputOptions(const std::string& paramName,
-                              const T& value,
-                              Args... args)
+std::string
+PrintInputOptions(const std::string& paramName, const T& value, Args... args)
 {
   // See if this is part of the program.
   std::string result = "";
@@ -76,9 +75,10 @@ std::string PrintInputOptions(const std::string& paramName,
   else
   {
     // Unknown parameter!
-    throw std::runtime_error("Unknown parameter '" + paramName + "' " +
-        "encountered while assembling documentation!  Check PROGRAM_INFO() " +
-        "declaration.");
+    throw std::runtime_error(
+        "Unknown parameter '" + paramName + "' "
+        + "encountered while assembling documentation!  Check PROGRAM_INFO() "
+        + "declaration.");
   }
 
   // Continue recursion.
@@ -95,9 +95,8 @@ std::string PrintInputOptions(const std::string& paramName,
 inline std::string PrintOutputOptions() { return ""; }
 
 template<typename T, typename... Args>
-std::string PrintOutputOptions(const std::string& paramName,
-                               const T& value,
-                               Args... args)
+std::string
+PrintOutputOptions(const std::string& paramName, const T& value, Args... args)
 {
   // See if this is part of the program.
   std::string result = "";
@@ -115,9 +114,10 @@ std::string PrintOutputOptions(const std::string& paramName,
   else
   {
     // Unknown parameter!
-    throw std::runtime_error("Unknown parameter '" + paramName + "' " +
-        "encountered while assembling documentation!  Check PROGRAM_INFO() " +
-        "declaration.");
+    throw std::runtime_error(
+        "Unknown parameter '" + paramName + "' "
+        + "encountered while assembling documentation!  Check PROGRAM_INFO() "
+        + "declaration.");
   }
 
   // Continue recursion.
@@ -183,10 +183,7 @@ inline std::string ProgramCall(const std::string& programName)
  * Print any closing call to a program.  For a Python binding this is a closing
  * brace.
  */
-inline std::string ProgramCallClose()
-{
-  return ")";
-}
+inline std::string ProgramCallClose() { return ")"; }
 
 /**
  * Given the parameter name, determine what it would actually be when passed to
@@ -234,9 +231,9 @@ inline bool IgnoreCheck(const std::vector<std::string>& constraints)
   return false;
 }
 
-inline bool IgnoreCheck(
-    const std::vector<std::pair<std::string, bool>>& constraints,
-    const std::string& paramName)
+inline bool
+IgnoreCheck(const std::vector<std::pair<std::string, bool>>& constraints,
+            const std::string& paramName)
 {
   for (size_t i = 0; i < constraints.size(); ++i)
   {

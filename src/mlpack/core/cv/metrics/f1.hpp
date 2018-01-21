@@ -72,8 +72,8 @@ class F1
            typename DataType,
            typename = std::enable_if_t<_AS == Binary>>
   static double Evaluate(MLAlgorithm& model,
-                        const DataType& data,
-                        const arma::Row<size_t>& labels);
+                         const DataType& data,
+                         const arma::Row<size_t>& labels);
 
   /**
    * Run classification and calculate microaveraged F1.
@@ -84,8 +84,8 @@ class F1
            typename = std::enable_if_t<_AS == Micro>,
            typename = void>
   static double Evaluate(MLAlgorithm& model,
-                        const DataType& data,
-                        const arma::Row<size_t>& labels);
+                         const DataType& data,
+                         const arma::Row<size_t>& labels);
 
   /**
    * Run classification and calculate macroaveraged F1.
@@ -97,8 +97,8 @@ class F1
            typename = void,
            typename = void>
   static double Evaluate(MLAlgorithm& model,
-                        const DataType& data,
-                        const arma::Row<size_t>& labels);
+                         const DataType& data,
+                         const arma::Row<size_t>& labels);
 };
 
 } // namespace cv

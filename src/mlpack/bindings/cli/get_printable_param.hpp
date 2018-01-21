@@ -25,8 +25,9 @@ std::string GetPrintableParam(
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0);
+    const typename boost::
+        disable_if<std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::
+            type* = 0);
 
 /**
  * Print a vector option, with spaces between it.
@@ -42,10 +43,10 @@ std::string GetPrintableParam(
 template<typename T>
 std::string GetPrintableParam(
     const util::ParamData& data,
-    const typename std::enable_if<arma::is_arma_type<T>::value ||
-                                  data::HasSerialize<T>::value ||
-                                  std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
+    const typename std::
+        enable_if<arma::is_arma_type<T>::value || data::HasSerialize<T>::value
+                  || std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>::
+                         value>::type* = 0);
 
 /**
  * Print an option into a std::string.  This should print a short, one-line
@@ -57,7 +58,7 @@ void GetPrintableParam(const util::ParamData& data,
                        const void* /* input */,
                        void* output)
 {
-  *((std::string*) output) = GetPrintableParam<T>(data);
+  *((std::string*)output) = GetPrintableParam<T>(data);
 }
 
 } // namespace cli

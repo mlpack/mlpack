@@ -21,13 +21,9 @@ namespace kmeans {
 
 template<typename MetricType, typename MatType>
 PellegMooreKMeans<MetricType, MatType>::PellegMooreKMeans(
-    const MatType& dataset,
-    MetricType& metric) :
-    datasetOrig(dataset),
-    tree(new TreeType(const_cast<MatType&>(datasetOrig))),
-    dataset(tree->Dataset()),
-    metric(metric),
-    distanceCalculations(0)
+    const MatType& dataset, MetricType& metric)
+  : datasetOrig(dataset), tree(new TreeType(const_cast<MatType&>(datasetOrig))),
+    dataset(tree->Dataset()), metric(metric), distanceCalculations(0)
 {
   // Nothing to do.
 }
@@ -41,10 +37,10 @@ PellegMooreKMeans<MetricType, MatType>::~PellegMooreKMeans()
 
 // Run a single iteration.
 template<typename MetricType, typename MatType>
-double PellegMooreKMeans<MetricType, MatType>::Iterate(
-    const arma::mat& centroids,
-    arma::mat& newCentroids,
-    arma::Col<size_t>& counts)
+double
+PellegMooreKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
+                                                arma::mat& newCentroids,
+                                                arma::Col<size_t>& counts)
 {
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
   counts.zeros(centroids.n_cols);
@@ -69,8 +65,8 @@ double PellegMooreKMeans<MetricType, MatType>::Iterate(
     if (counts[c] > 0)
     {
       newCentroids.col(c) /= counts(c);
-      residual += std::pow(metric.Evaluate(centroids.col(c),
-                                           newCentroids.col(c)), 2.0);
+      residual +=
+          std::pow(metric.Evaluate(centroids.col(c), newCentroids.col(c)), 2.0);
     }
   }
   distanceCalculations += centroids.n_cols;

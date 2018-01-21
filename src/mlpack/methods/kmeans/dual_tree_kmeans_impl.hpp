@@ -28,8 +28,8 @@ template<typename TreeType, typename MatType>
 TreeType* BuildTree(
     MatType&& dataset,
     std::vector<size_t>& oldFromNew,
-    const typename std::enable_if<
-        tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
+    const typename std::
+        enable_if<tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
   // This is a hack.  I know this will be BinarySpaceTree, so force a leaf size
   // of two.
@@ -41,8 +41,8 @@ template<typename TreeType, typename MatType>
 TreeType* BuildTree(
     MatType&& dataset,
     const std::vector<size_t>& /* oldFromNew */,
-    const typename std::enable_if<
-        !tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
+    const typename std::
+        enable_if<!tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
 {
   return new TreeType(std::forward<MatType>(dataset));
 }
@@ -53,16 +53,10 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 DualTreeKMeans<MetricType, MatType, TreeType>::DualTreeKMeans(
-    const MatType& dataset,
-    MetricType& metric) :
-    datasetOrig(dataset),
-    tree(new Tree(const_cast<MatType&>(dataset))),
-    dataset(tree->Dataset()),
-    metric(metric),
-    distanceCalculations(0),
-    iteration(0),
-    upperBounds(dataset.n_cols),
-    lowerBounds(dataset.n_cols),
+    const MatType& dataset, MetricType& metric)
+  : datasetOrig(dataset), tree(new Tree(const_cast<MatType&>(dataset))),
+    dataset(tree->Dataset()), metric(metric), distanceCalculations(0),
+    iteration(0), upperBounds(dataset.n_cols), lowerBounds(dataset.n_cols),
     prunedPoints(dataset.n_cols, false), // Fill with false.
     assignments(dataset.n_cols),
     visited(dataset.n_cols, false) // Fill with false.
@@ -107,8 +101,11 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   // Find the nearest neighbors of each of the clusters.  We have to make our
   // own TreeType, which is a little bit abuse, but we know for sure the
   // TreeStatType we have will work.
-  neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType, MatType,
-      NNSTreeType> nns(std::move(*centroidTree));
+  neighbor::NeighborSearch<neighbor::NearestNeighborSort,
+                           MetricType,
+                           MatType,
+                           NNSTreeType>
+      nns(std::move(*centroidTree));
 
   // Reset information in the tree, if we need to.
   if (iteration > 0)
@@ -117,8 +114,9 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
 
     // If the tree maps points, we need an intermediate result matrix.
     arma::mat* interclusterDistancesTemp =
-        (tree::TreeTraits<Tree>::RearrangesDataset) ?
-        new arma::mat(1, centroids.n_elem) : &interclusterDistances;
+        (tree::TreeTraits<Tree>::RearrangesDataset)
+            ? new arma::mat(1, centroids.n_elem)
+            : &interclusterDistances;
 
     arma::Mat<size_t> closestClusters; // We don't actually care about these.
     nns.Search(1, closestClusters, *interclusterDistancesTemp);
@@ -151,12 +149,18 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   // We won't use the KNN class here because we have our own set of rules.
   lastIterationCentroids = centroids;
   typedef DualTreeKMeansRules<MetricType, Tree> RuleType;
-  RuleType rules(nns.ReferenceTree().Dataset(), dataset, assignments,
-      upperBounds, lowerBounds, metric, prunedPoints, oldFromNewCentroids,
-      visited);
+  RuleType rules(nns.ReferenceTree().Dataset(),
+                 dataset,
+                 assignments,
+                 upperBounds,
+                 lowerBounds,
+                 metric,
+                 prunedPoints,
+                 oldFromNewCentroids,
+                 visited);
 
-  typename Tree::template BreadthFirstDualTreeTraverser<RuleType>
-      traverser(rules);
+  typename Tree::template BreadthFirstDualTreeTraverser<RuleType> traverser(
+      rules);
 
   Timer::Start("tree_mod");
   CoalesceTree(*tree);
@@ -188,8 +192,8 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
     else
     {
       newCentroids.col(c) /= counts(c);
-      const double movement = metric.Evaluate(centroids.col(c),
-          newCentroids.col(c));
+      const double movement =
+          metric.Evaluate(centroids.col(c), newCentroids.col(c));
       clusterDistances[c] = movement;
       residual += std::pow(movement, 2.0);
 
@@ -223,9 +227,9 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::UpdateTree(
   node.Stat().StaticPruned() = false;
 
   // Grab information from the parent, if we can.
-  if (node.Parent() != NULL &&
-      node.Parent()->Stat().Pruned() == centroids.n_cols &&
-      node.Parent()->Stat().Owner() < centroids.n_cols)
+  if (node.Parent() != NULL
+      && node.Parent()->Stat().Pruned() == centroids.n_cols
+      && node.Parent()->Stat().Owner() < centroids.n_cols)
   {
     // When taking bounds from the parent, note that the parent has already
     // adjusted the bounds according to the cluster movements, so we need to
@@ -242,59 +246,62 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::UpdateTree(
   double adjustedLowerBound = adjustedParentLowerBound;
 
   // Exhaustive lower bound check. Sigh.
-/*
-  if (!prunedLastIteration)
-  {
-    for (size_t i = 0; i < node.NumDescendants(); ++i)
+  /*
+    if (!prunedLastIteration)
     {
-      double closest = DBL_MAX;
-      double secondClosest = DBL_MAX;
-      arma::vec distances(centroids.n_cols);
-      for (size_t j = 0; j < centroids.n_cols; ++j)
+      for (size_t i = 0; i < node.NumDescendants(); ++i)
       {
-        const double dist = metric.Evaluate(dataset.col(node.Descendant(i)),
-            lastIterationCentroids.col(j));
-        distances(j) = dist;
-
-        if (dist < closest)
+        double closest = DBL_MAX;
+        double secondClosest = DBL_MAX;
+        arma::vec distances(centroids.n_cols);
+        for (size_t j = 0; j < centroids.n_cols; ++j)
         {
-          secondClosest = closest;
-          closest = dist;
-        }
-        else if (dist < secondClosest)
-          secondClosest = dist;
-      }
-      if (closest - 1e-10 > node.Stat().UpperBound())
-      {
-        Log::Warn << distances.t();
-      Log::Fatal << "Point " << node.Descendant(i) << " in " << node.Point(0) <<
-"c" << node.NumDescendants() << " invalidates upper bound " <<
-node.Stat().UpperBound() << " with closest cluster distance " << closest <<
-".\n";
-      }
+          const double dist = metric.Evaluate(dataset.col(node.Descendant(i)),
+              lastIterationCentroids.col(j));
+          distances(j) = dist;
 
-    if (node.NumChildren() == 0)
-    {
-      if (secondClosest + 1e-10 < std::min(lowerBounds[node.Descendant(i)],
-  node.Stat().LowerBound()))
+          if (dist < closest)
+          {
+            secondClosest = closest;
+            closest = dist;
+          }
+          else if (dist < secondClosest)
+            secondClosest = dist;
+        }
+        if (closest - 1e-10 > node.Stat().UpperBound())
+        {
+          Log::Warn << distances.t();
+        Log::Fatal << "Point " << node.Descendant(i) << " in " << node.Point(0)
+  <<
+  "c" << node.NumDescendants() << " invalidates upper bound " <<
+  node.Stat().UpperBound() << " with closest cluster distance " << closest <<
+  ".\n";
+        }
+
+      if (node.NumChildren() == 0)
       {
-      Log::Warn << distances.t();
-      Log::Warn << node;
-      Log::Fatal << "Point " << node.Descendant(i) << " in " << node.Point(0) <<
-"c" << node.NumDescendants() << " invalidates lower bound " <<
-std::min(lowerBounds[node.Descendant(i)], node.Stat().LowerBound()) << " (" <<
-lowerBounds[node.Descendant(i)] << ", " << node.Stat().LowerBound() << ") with "
-      << "second closest cluster distance " << secondClosest << ". cd " <<
-closest << "; pruned " << prunedPoints[node.Descendant(i)] << " visited " <<
-visited[node.Descendant(i)] << ".\n";
+        if (secondClosest + 1e-10 < std::min(lowerBounds[node.Descendant(i)],
+    node.Stat().LowerBound()))
+        {
+        Log::Warn << distances.t();
+        Log::Warn << node;
+        Log::Fatal << "Point " << node.Descendant(i) << " in " << node.Point(0)
+  <<
+  "c" << node.NumDescendants() << " invalidates lower bound " <<
+  std::min(lowerBounds[node.Descendant(i)], node.Stat().LowerBound()) << " (" <<
+  lowerBounds[node.Descendant(i)] << ", " << node.Stat().LowerBound() << ") with
+  "
+        << "second closest cluster distance " << secondClosest << ". cd " <<
+  closest << "; pruned " << prunedPoints[node.Descendant(i)] << " visited " <<
+  visited[node.Descendant(i)] << ".\n";
+        }
       }
     }
-  }
-  }
-*/
+    }
+  */
 
-  if ((node.Stat().Pruned() == centroids.n_cols) &&
-      (node.Stat().Owner() < centroids.n_cols))
+  if ((node.Stat().Pruned() == centroids.n_cols)
+      && (node.Stat().Owner() < centroids.n_cols))
   {
     // Adjust bounds.
     node.Stat().UpperBound() += clusterDistances[node.Stat().Owner()];
@@ -308,8 +315,8 @@ visited[node.Descendant(i)] << ".\n";
 
     // Try to use the inter-cluster distances to produce a better lower bound,
     // if possible.
-    const double interclusterBound = interclusterDistances[node.Stat().Owner()]
-        / 2.0;
+    const double interclusterBound =
+        interclusterDistances[node.Stat().Owner()] / 2.0;
     if (interclusterBound > node.Stat().LowerBound())
     {
       node.Stat().LowerBound() = interclusterBound;
@@ -343,8 +350,12 @@ visited[node.Descendant(i)] << ".\n";
   bool allChildrenPruned = true;
   for (size_t i = 0; i < node.NumChildren(); ++i)
   {
-    UpdateTree(node.Child(i), centroids, unadjustedUpperBound,
-        adjustedUpperBound, unadjustedLowerBound, adjustedLowerBound);
+    UpdateTree(node.Child(i),
+               centroids,
+               unadjustedUpperBound,
+               adjustedUpperBound,
+               unadjustedLowerBound,
+               adjustedLowerBound);
     if (!node.Child(i).Stat().StaticPruned())
       allChildrenPruned = false;
   }
@@ -385,10 +396,11 @@ visited[node.Descendant(i)] << ".\n";
 
       prunedPoints[index] = false;
       const size_t owner = assignments[index];
-      const double lowerBound = std::min(lowerBounds[index] -
-          clusterDistances[centroids.n_cols], node.Stat().LowerBound());
-      const double pruningLowerBound = std::max(lowerBound,
-          interclusterDistances[owner] / 2.0);
+      const double lowerBound =
+          std::min(lowerBounds[index] - clusterDistances[centroids.n_cols],
+                   node.Stat().LowerBound());
+      const double pruningLowerBound =
+          std::max(lowerBound, interclusterDistances[owner] / 2.0);
       if (upperBounds[index] + clusterDistances[owner] < pruningLowerBound)
       {
         prunedPoints[index] = true;
@@ -398,8 +410,8 @@ visited[node.Descendant(i)] << ".\n";
       else
       {
         // Attempt to tighten the bound.
-        upperBounds[index] = metric.Evaluate(dataset.col(index),
-                                             centroids.col(owner));
+        upperBounds[index] =
+            metric.Evaluate(dataset.col(index), centroids.col(owner));
         ++distanceCalculations;
         if (upperBounds[index] < pruningLowerBound)
         {
@@ -412,8 +424,8 @@ visited[node.Descendant(i)] << ".\n";
           // lower level, though.  If that's the case, then we shouldn't
           // invalidate the bounds we've got -- it will happen at the lower
           // level.
-          if (!tree::TreeTraits<Tree>::HasSelfChildren ||
-              node.NumChildren() == 0)
+          if (!tree::TreeTraits<Tree>::HasSelfChildren
+              || node.NumChildren() == 0)
           {
             upperBounds[index] = DBL_MAX;
             lowerBounds[index] = DBL_MAX;
@@ -424,15 +436,15 @@ visited[node.Descendant(i)] << ".\n";
     }
   }
 
-/*
-  if (node.Stat().StaticPruned() && !allChildrenPruned)
-  {
-    Log::Warn << node;
-    for (size_t i = 0; i < node.NumChildren(); ++i)
-      Log::Warn << "child " << i << ":\n" << node.Child(i);
-    Log::Fatal << "Node is statically pruned but not all its children are!\n";
-  }
-*/
+  /*
+    if (node.Stat().StaticPruned() && !allChildrenPruned)
+    {
+      Log::Warn << node;
+      for (size_t i = 0; i < node.NumChildren(); ++i)
+        Log::Warn << "child " << i << ":\n" << node.Child(i);
+      Log::Fatal << "Node is statically pruned but not all its children are!\n";
+    }
+  */
 
   // If all of the children and points are pruned, we may mark this node as
   // pruned.
@@ -483,39 +495,43 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::ExtractCentroids(
     const arma::mat& centroids)
 {
   // Does this node own points?
-  if ((node.Stat().Pruned() == newCentroids.n_cols) ||
-      (node.Stat().StaticPruned() && node.Stat().Owner() < newCentroids.n_cols))
+  if ((node.Stat().Pruned() == newCentroids.n_cols)
+      || (node.Stat().StaticPruned()
+          && node.Stat().Owner() < newCentroids.n_cols))
   {
     const size_t owner = node.Stat().Owner();
     newCentroids.col(owner) += node.Stat().Centroid() * node.NumDescendants();
     newCounts[owner] += node.NumDescendants();
 
     // Perform the sanity check here.
-/*
-    for (size_t i = 0; i < node.NumDescendants(); ++i)
-    {
-      const size_t index = node.Descendant(i);
-      arma::vec trueDistances(centroids.n_cols);
-      for (size_t j = 0; j < centroids.n_cols; ++j)
-      {
-        const double dist = metric.Evaluate(dataset.col(index),
-                                            centroids.col(j));
-        trueDistances[j] = dist;
-      }
+    /*
+        for (size_t i = 0; i < node.NumDescendants(); ++i)
+        {
+          const size_t index = node.Descendant(i);
+          arma::vec trueDistances(centroids.n_cols);
+          for (size_t j = 0; j < centroids.n_cols; ++j)
+          {
+            const double dist = metric.Evaluate(dataset.col(index),
+                                                centroids.col(j));
+            trueDistances[j] = dist;
+          }
 
-      arma::uword minIndex;
-      const double minDist = trueDistances.min(minIndex);
-      if (size_t(minIndex) != owner)
-      {
-        Log::Warn << node;
-        Log::Warn << trueDistances.t();
-        Log::Fatal << "Point " << index << " of node " << node.Point(0) << "c"
-<< node.NumDescendants() << " has true minimum cluster " << minIndex << " with "
-      << "distance " << minDist << " but node is pruned with upper bound " <<
-node.Stat().UpperBound() << " and owner " << node.Stat().Owner() << ".\n";
-      }
-    }
-*/
+          arma::uword minIndex;
+          const double minDist = trueDistances.min(minIndex);
+          if (size_t(minIndex) != owner)
+          {
+            Log::Warn << node;
+            Log::Warn << trueDistances.t();
+            Log::Fatal << "Point " << index << " of node " << node.Point(0) <<
+    "c"
+    << node.NumDescendants() << " has true minimum cluster " << minIndex << "
+    with "
+          << "distance " << minDist << " but node is pruned with upper bound "
+    <<
+    node.Stat().UpperBound() << " and owner " << node.Stat().Owner() << ".\n";
+          }
+        }
+    */
   }
   else
   {
@@ -529,32 +545,35 @@ node.Stat().UpperBound() << " and owner " << node.Stat().Owner() << ".\n";
         newCentroids.col(owner) += dataset.col(node.Point(i));
         ++newCounts[owner];
 
-/*
-        const size_t index = node.Point(i);
-        arma::vec trueDistances(centroids.n_cols);
-        for (size_t j = 0; j < centroids.n_cols; ++j)
-        {
-          const double dist = metric.Evaluate(dataset.col(index),
-                                              centroids.col(j));
-          trueDistances[j] = dist;
-        }
+        /*
+                const size_t index = node.Point(i);
+                arma::vec trueDistances(centroids.n_cols);
+                for (size_t j = 0; j < centroids.n_cols; ++j)
+                {
+                  const double dist = metric.Evaluate(dataset.col(index),
+                                                      centroids.col(j));
+                  trueDistances[j] = dist;
+                }
 
-        arma::uword minIndex;
-        const double minDist = trueDistances.min(minIndex);
-        if (size_t(minIndex) != owner)
-        {
-          Log::Warn << node;
-          Log::Warn << trueDistances.t();
-          Log::Fatal << "Point " << index << " of node " << node.Point(0) << "c"
-  << node.NumDescendants() << " has true minimum cluster " << minIndex << " with "
-        << "distance " << minDist << " but was assigned to cluster " <<
-assignments[node.Point(i)] << " with ub " << upperBounds[node.Point(i)] <<
-" and lb " << lowerBounds[node.Point(i)] << "; pp " <<
-(prunedPoints[node.Point(i)] ? "true" : "false") << ", visited " <<
-(visited[node.Point(i)] ? "true"
-: "false") << ".\n";
-        }
-*/
+                arma::uword minIndex;
+                const double minDist = trueDistances.min(minIndex);
+                if (size_t(minIndex) != owner)
+                {
+                  Log::Warn << node;
+                  Log::Warn << trueDistances.t();
+                  Log::Fatal << "Point " << index << " of node " <<
+        node.Point(0) << "c"
+          << node.NumDescendants() << " has true minimum cluster " << minIndex
+        << " with "
+                << "distance " << minDist << " but was assigned to cluster " <<
+        assignments[node.Point(i)] << " with ub " << upperBounds[node.Point(i)]
+        <<
+        " and lb " << lowerBounds[node.Point(i)] << "; pp " <<
+        (prunedPoints[node.Point(i)] ? "true" : "false") << ", visited " <<
+        (visited[node.Point(i)] ? "true"
+        : "false") << ".\n";
+                }
+        */
       }
     }
 
@@ -570,8 +589,7 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void DualTreeKMeans<MetricType, MatType, TreeType>::CoalesceTree(
-    Tree& node,
-    const size_t child /* Which child are we? */)
+    Tree& node, const size_t child /* Which child are we? */)
 {
   // If all children except one are pruned, we can hide this node.
   if (node.NumChildren() == 0)
@@ -620,7 +638,7 @@ template<typename MetricType,
                   typename TreeMatType> class TreeType>
 void DualTreeKMeans<MetricType, MatType, TreeType>::DecoalesceTree(Tree& node)
 {
-  node.Parent() = (Tree*) node.Stat().TrueParent();
+  node.Parent() = (Tree*)node.Stat().TrueParent();
   RestoreChildren(node);
 
   for (size_t i = 0; i < node.NumChildren(); ++i)
@@ -629,10 +647,10 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::DecoalesceTree(Tree& node)
 
 //! Utility function for hiding children in a non-binary tree.
 template<typename TreeType>
-void HideChild(TreeType& node,
-               const size_t child,
-               const typename std::enable_if_t<
-                   !tree::TreeTraits<TreeType>::BinaryTree>*)
+void HideChild(
+    TreeType& node,
+    const size_t child,
+    const typename std::enable_if_t<!tree::TreeTraits<TreeType>::BinaryTree>*)
 {
   // We're going to assume we have a Children() function open to us.  If we
   // don't, then this won't work, I guess...
@@ -641,10 +659,10 @@ void HideChild(TreeType& node,
 
 //! Utility function for hiding children in a binary tree.
 template<typename TreeType>
-void HideChild(TreeType& node,
-               const size_t child,
-               const typename std::enable_if_t<
-                   tree::TreeTraits<TreeType>::BinaryTree>*)
+void HideChild(
+    TreeType& node,
+    const size_t child,
+    const typename std::enable_if_t<tree::TreeTraits<TreeType>::BinaryTree>*)
 {
   // If we're hiding the left child, then take the right child as the new left
   // child.
@@ -661,26 +679,26 @@ void HideChild(TreeType& node,
 
 //! Utility function for restoring children in a non-binary tree.
 template<typename TreeType>
-void RestoreChildren(TreeType& node,
-                     const typename std::enable_if_t<
-                         !tree::TreeTraits<TreeType>::BinaryTree>*)
+void RestoreChildren(
+    TreeType& node,
+    const typename std::enable_if_t<!tree::TreeTraits<TreeType>::BinaryTree>*)
 {
   node.Children().clear();
   node.Children().resize(node.Stat().NumTrueChildren());
   for (size_t i = 0; i < node.Stat().NumTrueChildren(); ++i)
-    node.Children()[i] = (TreeType*) node.Stat().TrueChild(i);
+    node.Children()[i] = (TreeType*)node.Stat().TrueChild(i);
 }
 
 //! Utility function for restoring children in a binary tree.
 template<typename TreeType>
-void RestoreChildren(TreeType& node,
-                     const typename std::enable_if_t<
-                         tree::TreeTraits<TreeType>::BinaryTree>*)
+void RestoreChildren(
+    TreeType& node,
+    const typename std::enable_if_t<tree::TreeTraits<TreeType>::BinaryTree>*)
 {
   if (node.Stat().NumTrueChildren() > 0)
   {
-    node.ChildPtr(0) = (TreeType*) node.Stat().TrueChild(0);
-    node.ChildPtr(1) = (TreeType*) node.Stat().TrueChild(1);
+    node.ChildPtr(0) = (TreeType*)node.Stat().TrueChild(0);
+    node.ChildPtr(1) = (TreeType*)node.Stat().TrueChild(1);
   }
 }
 

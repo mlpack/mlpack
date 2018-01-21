@@ -51,8 +51,8 @@ BOOST_AUTO_TEST_CASE(QDAFNTrivialTest)
   for (size_t i = 0; i < 5; ++i)
   {
     BOOST_REQUIRE_EQUAL(neighbors[i], 0);
-    const double dist = metric::EuclideanDistance::Evaluate(querySet.col(i),
-        refSet.col(0));
+    const double dist =
+        metric::EuclideanDistance::Evaluate(querySet.col(i), refSet.col(0));
     BOOST_REQUIRE_CLOSE(distances[i], dist, 1e-5);
   }
 }
@@ -155,18 +155,18 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   for (size_t i = 0; i < qdafn.NumProjections(); ++i)
   {
     BOOST_REQUIRE_EQUAL(qdafnXml.CandidateSet(i).n_rows,
-        qdafn.CandidateSet(i).n_rows);
+                        qdafn.CandidateSet(i).n_rows);
     BOOST_REQUIRE_EQUAL(qdafnText.CandidateSet(i).n_rows,
-        qdafn.CandidateSet(i).n_rows);
+                        qdafn.CandidateSet(i).n_rows);
     BOOST_REQUIRE_EQUAL(qdafnBinary.CandidateSet(i).n_rows,
-        qdafn.CandidateSet(i).n_rows);
+                        qdafn.CandidateSet(i).n_rows);
 
     BOOST_REQUIRE_EQUAL(qdafnXml.CandidateSet(i).n_cols,
-        qdafn.CandidateSet(i).n_cols);
+                        qdafn.CandidateSet(i).n_cols);
     BOOST_REQUIRE_EQUAL(qdafnText.CandidateSet(i).n_cols,
-        qdafn.CandidateSet(i).n_cols);
+                        qdafn.CandidateSet(i).n_cols);
     BOOST_REQUIRE_EQUAL(qdafnBinary.CandidateSet(i).n_cols,
-        qdafn.CandidateSet(i).n_cols);
+                        qdafn.CandidateSet(i).n_cols);
 
     for (size_t j = 0; j < qdafn.CandidateSet(i).n_elem; ++j)
     {

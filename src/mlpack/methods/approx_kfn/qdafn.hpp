@@ -51,9 +51,7 @@ class QDAFN
    * @param l Number of projections.
    * @param m Number of elements to store for each projection.
    */
-  QDAFN(const MatType& referenceSet,
-        const size_t l,
-        const size_t m);
+  QDAFN(const MatType& referenceSet, const size_t l, const size_t m);
 
   /**
    * Train the QDAFN model on the given reference set, optionally setting new
@@ -64,9 +62,8 @@ class QDAFN
    * @param l Number of projections.
    * @param m Number of elements to store for each projection.
    */
-  void Train(const MatType& referenceSet,
-             const size_t l = 0,
-             const size_t m = 0);
+  void
+  Train(const MatType& referenceSet, const size_t l = 0, const size_t m = 0);
 
   /**
    * Search for the k furthest neighbors of the given query set.  (The query set

@@ -19,29 +19,26 @@ namespace rl {
 class TrainingConfig
 {
  public:
-  TrainingConfig() : stepLimit(0), gradientLimit(40), doubleQLearning(false)
-  { /* Nothing to do here. */ }
+  TrainingConfig()
+    : stepLimit(0), gradientLimit(40), doubleQLearning(false)
+  { /* Nothing to do here. */}
 
-  TrainingConfig(
-      size_t numWorkers,
-      size_t updateInterval,
-      size_t targetNetworkSyncInterval,
-      size_t stepLimit,
-      size_t explorationSteps,
-      double stepSize,
-      double discount,
-      double gradientLimit,
-      bool doubleQLearning) :
-      numWorkers(numWorkers),
-      updateInterval(updateInterval),
+  TrainingConfig(size_t numWorkers,
+                 size_t updateInterval,
+                 size_t targetNetworkSyncInterval,
+                 size_t stepLimit,
+                 size_t explorationSteps,
+                 double stepSize,
+                 double discount,
+                 double gradientLimit,
+                 bool doubleQLearning)
+    : numWorkers(numWorkers), updateInterval(updateInterval),
       targetNetworkSyncInterval(targetNetworkSyncInterval),
-      stepLimit(stepLimit),
-      explorationSteps(explorationSteps),
-      stepSize(stepSize),
-      discount(discount),
-      gradientLimit(gradientLimit),
+      stepLimit(stepLimit), explorationSteps(explorationSteps),
+      stepSize(stepSize), discount(discount), gradientLimit(gradientLimit),
       doubleQLearning(doubleQLearning)
-  { /* Nothing to do here. */ }
+  { /* Nothing to do here. */
+  }
 
   //! Get the amount of workers.
   size_t NumWorkers() const { return numWorkers; }
@@ -54,8 +51,7 @@ class TrainingConfig
   size_t& UpdateInterval() { return updateInterval; }
 
   //! Get the interval for syncing target network.
-  size_t TargetNetworkSyncInterval() const
-  { return targetNetworkSyncInterval; }
+  size_t TargetNetworkSyncInterval() const { return targetNetworkSyncInterval; }
   //! Modify the interval for syncing target network.
   size_t& TargetNetworkSyncInterval() { return targetNetworkSyncInterval; }
 

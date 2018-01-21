@@ -19,7 +19,7 @@
 namespace mlpack {
 namespace det {
 
-template <typename MatType>
+template<typename MatType>
 void PrintLeafMembership(DTree<MatType, int>* dtree,
                          const MatType& data,
                          const arma::Mat<size_t>& labels,
@@ -43,8 +43,9 @@ void PrintLeafMembership(DTree<MatType, int>* dtree,
   if (leafClassMembershipFile == "")
   {
     Log::Info << "Leaf membership; row represents leaf id, column represents "
-        << "class id; value represents number of points in leaf in class."
-        << std::endl << table;
+              << "class id; value represents number of points in leaf in class."
+              << std::endl
+              << table;
   }
   else
   {
@@ -54,12 +55,12 @@ void PrintLeafMembership(DTree<MatType, int>* dtree,
     {
       outfile << table;
       Log::Info << "Leaf membership printed to '" << leafClassMembershipFile
-          << "'." << std::endl;
+                << "'." << std::endl;
     }
     else
     {
       Log::Warn << "Can't open '" << leafClassMembershipFile << "' to write "
-          << "leaf membership to." << std::endl;
+                << "leaf membership to." << std::endl;
     }
     outfile.close();
   }
@@ -67,7 +68,7 @@ void PrintLeafMembership(DTree<MatType, int>* dtree,
   return;
 }
 
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 void PrintVariableImportance(const DTree<MatType, TagType>* dtree,
                              const std::string viFile)
 {
@@ -92,21 +93,20 @@ void PrintVariableImportance(const DTree<MatType, TagType>* dtree,
     {
       outfile << imps;
       Log::Info << "Variable importance printed to '" << viFile << "'."
-          << std::endl;
+                << std::endl;
     }
     else
     {
       Log::Warn << "Can't open '" << viFile << "' to write variable importance "
-          << "to." << std::endl;
+                << "to." << std::endl;
     }
     outfile.close();
   }
 }
 
-
 // This function trains the optimal decision tree using the given number of
 // folds.
-template <typename MatType, typename TagType>
+template<typename MatType, typename TagType>
 DTree<MatType, TagType>* Trainer(MatType& dataset,
                                  const size_t folds,
                                  const bool useVolumeReg,
@@ -128,12 +128,12 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
 
   // Growing the tree
   double oldAlpha = 0.0;
-  double alpha = dtree->Grow(newDataset, oldFromNew, useVolumeReg, maxLeafSize,
-      minLeafSize);
+  double alpha = dtree->Grow(
+      newDataset, oldFromNew, useVolumeReg, maxLeafSize, minLeafSize);
 
   Timer::Stop("tree_growing");
   Log::Info << dtree->SubtreeLeaves() << " leaf nodes in the tree using full "
-      << "dataset; minimum alpha: " << alpha << "." << std::endl;
+            << "dataset; minimum alpha: " << alpha << "." << std::endl;
 
   if (skipPruning)
     return dtree;
@@ -141,17 +141,17 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   if (folds == dataset.n_cols)
     Log::Info << "Performing leave-one-out cross validation." << std::endl;
   else
-    Log::Info << "Performing " << folds << "-fold cross validation." <<
-      std::endl;
+    Log::Info << "Performing " << folds << "-fold cross validation."
+              << std::endl;
 
   Timer::Start("pruning_sequence");
 
   // Sequentially prune and save the alpha values and the values of c_t^2 * r_t.
-  std::vector<std::pair<double, double> > prunedSequence;
+  std::vector<std::pair<double, double>> prunedSequence;
   while (dtree->SubtreeLeaves() > 1)
   {
     std::pair<double, double> treeSeq(oldAlpha,
-        dtree->SubtreeLeavesLogNegError());
+                                      dtree->SubtreeLeavesLogNegError());
     prunedSequence.push_back(treeSeq);
     oldAlpha = alpha;
     alpha = dtree->PruneAndUpdate(oldAlpha, dataset.n_cols, useVolumeReg);
@@ -171,7 +171,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
 
   Timer::Stop("pruning_sequence");
   Log::Info << prunedSequence.size() << " trees in the sequence; maximum alpha:"
-      << " " << oldAlpha << "." << std::endl;
+            << " " << oldAlpha << "." << std::endl;
 
   const MatType cvData(dataset);
   const size_t testSize = dataset.n_cols / folds;
@@ -180,18 +180,18 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   regularizationConstants.fill(0.0);
 
   Timer::Start("cross_validation");
-  // Go through each fold.  On the Visual Studio compiler, we have to use
-  // intmax_t because size_t is not yet supported by their OpenMP
-  // implementation. omp_size_t is the appropriate type according to the
-  // platform.
-  #pragma omp parallel for default(none) \
-      shared(prunedSequence, regularizationConstants)
-  for (omp_size_t fold = 0; fold < (omp_size_t) folds; fold++)
+// Go through each fold.  On the Visual Studio compiler, we have to use
+// intmax_t because size_t is not yet supported by their OpenMP
+// implementation. omp_size_t is the appropriate type according to the
+// platform.
+#pragma omp parallel for default(none) shared(prunedSequence,                  \
+                                              regularizationConstants)
+  for (omp_size_t fold = 0; fold < (omp_size_t)folds; fold++)
   {
     // Break up data into train and test sets.
     const size_t start = fold * testSize;
-    const size_t end = std::min((size_t) (fold + 1)
-                                * testSize, (size_t) cvData.n_cols);
+    const size_t end =
+        std::min((size_t)(fold + 1) * testSize, (size_t)cvData.n_cols);
 
     MatType test = cvData.cols(start, end - 1);
     MatType train(cvData.n_rows, cvData.n_cols - test.n_cols);
@@ -219,8 +219,7 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
       cvOldFromNew[i] = i;
 
     // Grow the tree.
-    cvDTree.Grow(train, cvOldFromNew, useVolumeReg, maxLeafSize,
-        minLeafSize);
+    cvDTree.Grow(train, cvOldFromNew, useVolumeReg, maxLeafSize, minLeafSize);
 
     // Sequentially prune with all the values of available alphas and adding
     // values for test values.  Don't enter this loop if there are less than two
@@ -228,7 +227,8 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
     arma::vec cvRegularizationConstants(prunedSequence.size());
     cvRegularizationConstants.fill(0.0);
     for (size_t i = 0;
-         i < ((prunedSequence.size() < 2) ? 0 : prunedSequence.size() - 2); ++i)
+         i < ((prunedSequence.size() < 2) ? 0 : prunedSequence.size() - 2);
+         ++i)
     {
       // Compute test values for this state of the tree.
       double cvVal = 0.0;
@@ -239,11 +239,11 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
       }
 
       // Update the cv regularization constant.
-      cvRegularizationConstants[i] += 2.0 * cvVal / (double) cvData.n_cols;
+      cvRegularizationConstants[i] += 2.0 * cvVal / (double)cvData.n_cols;
 
       // Determine the new alpha value and prune accordingly.
-      double cvOldAlpha = 0.5 * (prunedSequence[i + 1].first
-                                 + prunedSequence[i + 2].first);
+      double cvOldAlpha =
+          0.5 * (prunedSequence[i + 1].first + prunedSequence[i + 2].first);
       cvDTree.PruneAndUpdate(cvOldAlpha, train.n_cols, useVolumeReg);
     }
 
@@ -256,10 +256,10 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
     }
 
     if (prunedSequence.size() > 2)
-      cvRegularizationConstants[prunedSequence.size() - 2] += 2.0 * cvVal
-        / (double) cvData.n_cols;
+      cvRegularizationConstants[prunedSequence.size() - 2] +=
+          2.0 * cvVal / (double)cvData.n_cols;
 
-    #pragma omp critical(DTreeCVUpdate)
+#pragma omp critical(DTreeCVUpdate)
     regularizationConstants += cvRegularizationConstants;
   }
   Timer::Stop("cross_validation");
@@ -271,8 +271,8 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   {
     // We can no longer work in the log-space for this because we have no
     // guarantee the quantity will be positive.
-    long double thisError = -std::exp((long double) prunedSequence[i].second) +
-        (long double) regularizationConstants[i];
+    long double thisError = -std::exp((long double)prunedSequence[i].second)
+                            + (long double)regularizationConstants[i];
 
     if (thisError > cvBestError)
     {
@@ -296,11 +296,8 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
 
   // Grow the tree.
   oldAlpha = -DBL_MAX;
-  alpha = dtree->Grow(newDataset,
-                         oldFromNew,
-                         useVolumeReg,
-                         maxLeafSize,
-                         minLeafSize);
+  alpha = dtree->Grow(
+      newDataset, oldFromNew, useVolumeReg, maxLeafSize, minLeafSize);
 
   // Prune with optimal alpha.
   while ((oldAlpha < optimalAlpha) && (dtree->SubtreeLeaves() > 1))
@@ -309,20 +306,20 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
     alpha = dtree->PruneAndUpdate(oldAlpha, newDataset.n_cols, useVolumeReg);
 
     // Some sanity checks.
-    Log::Assert((alpha < std::numeric_limits<double>::max()) ||
-        (dtree->SubtreeLeaves() == 1));
+    Log::Assert((alpha < std::numeric_limits<double>::max())
+                || (dtree->SubtreeLeaves() == 1));
     Log::Assert(alpha > oldAlpha);
   }
 
   Log::Info << dtree->SubtreeLeaves() << " leaf nodes in the optimally "
-      << "pruned tree; optimal alpha: " << oldAlpha << "." << std::endl;
+            << "pruned tree; optimal alpha: " << oldAlpha << "." << std::endl;
 
   return dtree;
 }
 
 template<typename MatType>
-PathCacher::PathCacher(PathCacher::PathFormat fmt, DTree<MatType, int>* dtree) :
-    format(fmt)
+PathCacher::PathCacher(PathCacher::PathFormat fmt, DTree<MatType, int>* dtree)
+  : format(fmt)
 {
   // Here we use TagTree()'s output to determine the
   // number of _nodes_ in the tree.
@@ -341,9 +338,8 @@ void PathCacher::Enter(const DTree<MatType, int>* node,
   int tag = node->BucketTag();
 
   path.push_back(PathType::value_type(parent->Left() == node, tag));
-  pathCache[tag] = PathCacheType::value_type(parent->BucketTag(),
-                                             (node->SubtreeLeaves() > 1) ?
-                                             "" : BuildString());
+  pathCache[tag] = PathCacheType::value_type(
+      parent->BucketTag(), (node->SubtreeLeaves() > 1) ? "" : BuildString());
 }
 
 template<typename MatType>
@@ -376,10 +372,7 @@ std::string PathCacher::BuildString()
   return str;
 }
 
-int PathCacher::ParentOf(int tag) const
-{
-  return pathCache[tag].first;
-}
+int PathCacher::ParentOf(int tag) const { return pathCache[tag].first; }
 
 const std::string& PathCacher::PathFor(int tag) const
 {

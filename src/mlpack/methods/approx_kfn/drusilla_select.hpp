@@ -48,9 +48,7 @@ class DrusillaSelect
    * @param l Number of projections.
    * @param m Number of elements to store for each projection.
    */
-  DrusillaSelect(const MatType& referenceSet,
-                 const size_t l,
-                 const size_t m);
+  DrusillaSelect(const MatType& referenceSet, const size_t l, const size_t m);
 
   /**
    * Construct the DrusillaSelect object with no given reference set.  Be sure
@@ -70,9 +68,8 @@ class DrusillaSelect
    * @param l Number of projections.
    * @param m Number of elements to store for each projection.
    */
-  void Train(const MatType& referenceSet,
-             const size_t l = 0,
-             const size_t m = 0);
+  void
+  Train(const MatType& referenceSet, const size_t l = 0, const size_t m = 0);
 
   /**
    * Search for the k furthest neighbors of the given query set.  (The query set

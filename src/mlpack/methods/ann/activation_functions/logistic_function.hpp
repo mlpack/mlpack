@@ -41,7 +41,7 @@ class LogisticFunction
     if (x < arma::Datum<eT>::log_max)
     {
       if (x > -arma::Datum<eT>::log_max)
-        return 1.0 /  (1.0 + std::exp(-x));
+        return 1.0 / (1.0 + std::exp(-x));
 
       return 0.0;
     }
@@ -67,10 +67,7 @@ class LogisticFunction
    * @param x Input data.
    * @return f'(x)
    */
-  static double Deriv(const double y)
-  {
-    return y * (1.0 - y);
-  }
+  static double Deriv(const double y) { return y * (1.0 - y); }
 
   /**
    * Computes the first derivatives of the logistic function.
@@ -90,10 +87,7 @@ class LogisticFunction
    * @param y Input data.
    * @return f^{-1}(y)
    */
-  static double Inv(const double y)
-  {
-    return arma::trunc_log(y / (1 - y));
-  }
+  static double Inv(const double y) { return arma::trunc_log(y / (1 - y)); }
 
   /**
    * Computes the inverse of the logistic function.

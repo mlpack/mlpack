@@ -20,12 +20,12 @@ namespace bound {
 
 //! Empty Constructor.
 template<typename TMetricType, typename ElemType>
-HollowBallBound<TMetricType, ElemType>::HollowBallBound() :
-    radii(std::numeric_limits<ElemType>::lowest(),
+HollowBallBound<TMetricType, ElemType>::HollowBallBound()
+  : radii(std::numeric_limits<ElemType>::lowest(),
           std::numeric_limits<ElemType>::lowest()),
-    metric(new MetricType()),
-    ownsMetric(true)
-{ /* Nothing to do. */ }
+    metric(new MetricType()), ownsMetric(true)
+{ /* Nothing to do. */
+}
 
 /**
  * Create the hollow ball bound with the specified dimensionality.
@@ -33,15 +33,13 @@ HollowBallBound<TMetricType, ElemType>::HollowBallBound() :
  * @param dimension Dimensionality of ball bound.
  */
 template<typename TMetricType, typename ElemType>
-HollowBallBound<TMetricType, ElemType>::
-HollowBallBound(const size_t dimension) :
-    radii(std::numeric_limits<ElemType>::lowest(),
+HollowBallBound<TMetricType, ElemType>::HollowBallBound(const size_t dimension)
+  : radii(std::numeric_limits<ElemType>::lowest(),
           std::numeric_limits<ElemType>::lowest()),
-    center(dimension),
-    hollowCenter(dimension),
-    metric(new MetricType()),
+    center(dimension), hollowCenter(dimension), metric(new MetricType()),
     ownsMetric(true)
-{ /* Nothing to do. */ }
+{ /* Nothing to do. */
+}
 
 /**
  * Create the hollow ball bound with the specified radii and center.
@@ -52,28 +50,23 @@ HollowBallBound(const size_t dimension) :
  */
 template<typename TMetricType, typename ElemType>
 template<typename VecType>
-HollowBallBound<TMetricType, ElemType>::
-HollowBallBound(const ElemType innerRadius,
-                const ElemType outerRadius,
-                const VecType& center) :
-    radii(innerRadius,
-          outerRadius),
-    center(center),
-    hollowCenter(center),
-    metric(new MetricType()),
-    ownsMetric(true)
-{ /* Nothing to do. */ }
+HollowBallBound<TMetricType, ElemType>::HollowBallBound(
+    const ElemType innerRadius,
+    const ElemType outerRadius,
+    const VecType& center)
+  : radii(innerRadius, outerRadius), center(center), hollowCenter(center),
+    metric(new MetricType()), ownsMetric(true)
+{ /* Nothing to do. */
+}
 
 //! Copy Constructor. To prevent memory leaks.
 template<typename TMetricType, typename ElemType>
 HollowBallBound<TMetricType, ElemType>::HollowBallBound(
-    const HollowBallBound& other) :
-    radii(other.radii),
-    center(other.center),
-    hollowCenter(other.hollowCenter),
-    metric(other.metric),
-    ownsMetric(false)
-{ /* Nothing to do. */ }
+    const HollowBallBound& other)
+  : radii(other.radii), center(other.center), hollowCenter(other.hollowCenter),
+    metric(other.metric), ownsMetric(false)
+{ /* Nothing to do. */
+}
 
 //! For the same reason as the copy constructor: to prevent memory leaks.
 template<typename TMetricType, typename ElemType>
@@ -91,12 +84,9 @@ operator=(const HollowBallBound& other)
 
 //! Move constructor.
 template<typename TMetricType, typename ElemType>
-HollowBallBound<TMetricType, ElemType>::HollowBallBound(
-    HollowBallBound&& other) :
-    radii(other.radii),
-    center(std::move(other.center)),
-    hollowCenter(std::move(other.hollowCenter)),
-    metric(other.metric),
+HollowBallBound<TMetricType, ElemType>::HollowBallBound(HollowBallBound&& other)
+  : radii(other.radii), center(std::move(other.center)),
+    hollowCenter(std::move(other.hollowCenter)), metric(other.metric),
     ownsMetric(other.ownsMetric)
 {
   // Fix the other bound.
@@ -118,8 +108,8 @@ HollowBallBound<TMetricType, ElemType>::~HollowBallBound()
 
 //! Get the range in a certain dimension.
 template<typename TMetricType, typename ElemType>
-math::RangeType<ElemType> HollowBallBound<TMetricType, ElemType>::operator[](
-    const size_t i) const
+math::RangeType<ElemType> HollowBallBound<TMetricType, ElemType>::
+operator[](const size_t i) const
 {
   if (radii.Hi() < 0)
     return math::Range();
@@ -162,28 +152,28 @@ bool HollowBallBound<TMetricType, ElemType>::Contains(
   else
   {
     const ElemType dist = metric->Evaluate(center, other.center);
-    const ElemType hollowCenterDist = metric->Evaluate(hollowCenter,
-        other.center);
-    const ElemType hollowHollowDist = metric->Evaluate(hollowCenter,
-        other.hollowCenter);
+    const ElemType hollowCenterDist =
+        metric->Evaluate(hollowCenter, other.center);
+    const ElemType hollowHollowDist =
+        metric->Evaluate(hollowCenter, other.hollowCenter);
 
     // The outer ball of the second bound does not contain the hole of the first
     // bound.
     bool containOnOneSide = (hollowCenterDist - other.radii.Hi() >= radii.Lo())
-        && (dist + other.radii.Hi() <= radii.Hi());
+                            && (dist + other.radii.Hi() <= radii.Hi());
 
     // The hole of the second bound contains the hole of the first bound.
-    bool containOnEverySide = (hollowHollowDist + radii.Lo() <=
-        other.radii.Lo()) && (dist + other.radii.Hi() <= radii.Hi());
+    bool containOnEverySide =
+        (hollowHollowDist + radii.Lo() <= other.radii.Lo())
+        && (dist + other.radii.Hi() <= radii.Hi());
 
     // The first bound has not got a hole.
-    bool containAsBall = (radii.Lo() == 0) &&
-        (dist + other.radii.Hi() <= radii.Hi());
+    bool containAsBall =
+        (radii.Lo() == 0) && (dist + other.radii.Hi() <= radii.Hi());
 
     return (containOnOneSide || containOnEverySide || containAsBall);
   }
 }
-
 
 /**
  * Calculates minimum bound-to-point squared distance.
@@ -204,8 +194,8 @@ ElemType HollowBallBound<TMetricType, ElemType>::MinDistance(
       return outerDistance; // The outer ball does not contain the point.
 
     // Check if the point is situated in the hole.
-    const ElemType innerDistance = math::ClampNonNegative(radii.Lo() -
-        metric->Evaluate(point, hollowCenter));
+    const ElemType innerDistance = math::ClampNonNegative(
+        radii.Lo() - metric->Evaluate(point, hollowCenter));
 
     return innerDistance;
   }
@@ -216,29 +206,30 @@ ElemType HollowBallBound<TMetricType, ElemType>::MinDistance(
  */
 template<typename TMetricType, typename ElemType>
 ElemType HollowBallBound<TMetricType, ElemType>::MinDistance(
-    const HollowBallBound& other)
-    const
+    const HollowBallBound& other) const
 {
   if (radii.Hi() < 0 || other.radii.Hi() < 0)
     return std::numeric_limits<ElemType>::max();
   else
   {
-    const ElemType outerDistance = metric->Evaluate(center, other.center) -
-        radii.Hi() - other.radii.Hi();
+    const ElemType outerDistance =
+        metric->Evaluate(center, other.center) - radii.Hi() - other.radii.Hi();
     if (outerDistance >= 0)
       return outerDistance; // The outer hollows do not overlap.
 
     // Check if the hole of the second bound contains the outer ball of the
     // first bound.
-    const ElemType innerDistance1 = other.radii.Lo() -
-        metric->Evaluate(center, other.hollowCenter) - radii.Hi();
+    const ElemType innerDistance1 =
+        other.radii.Lo() - metric->Evaluate(center, other.hollowCenter)
+        - radii.Hi();
     if (innerDistance1 >= 0)
       return innerDistance1;
 
     // Check if the hole of the first bound contains the outer ball of the
     // second bound.
-    const ElemType innerDistance2 = math::ClampNonNegative(radii.Lo() -
-        metric->Evaluate(hollowCenter, other.center) - other.radii.Hi());
+    const ElemType innerDistance2 = math::ClampNonNegative(
+        radii.Lo() - metric->Evaluate(hollowCenter, other.center)
+        - other.radii.Hi());
 
     return innerDistance2;
   }
@@ -264,14 +255,13 @@ ElemType HollowBallBound<TMetricType, ElemType>::MaxDistance(
  */
 template<typename TMetricType, typename ElemType>
 ElemType HollowBallBound<TMetricType, ElemType>::MaxDistance(
-  const HollowBallBound& other)
-    const
+    const HollowBallBound& other) const
 {
   if (radii.Hi() < 0)
     return std::numeric_limits<ElemType>::max();
   else
-    return metric->Evaluate(other.center, center) + radii.Hi() +
-        other.radii.Hi();
+    return metric->Evaluate(other.center, center) + radii.Hi()
+           + other.radii.Hi();
 }
 
 /**
@@ -298,8 +288,8 @@ math::RangeType<ElemType> HollowBallBound<TMetricType, ElemType>::RangeDistance(
     else
     {
       // Check if the point is situated in the hole.
-      range.Lo() = math::ClampNonNegative(radii.Lo() -
-          metric->Evaluate(point, hollowCenter));
+      range.Lo() = math::ClampNonNegative(
+          radii.Lo() - metric->Evaluate(point, hollowCenter));
     }
     range.Hi() = dist + radii.Hi();
 
@@ -325,8 +315,9 @@ math::RangeType<ElemType> HollowBallBound<TMetricType, ElemType>::RangeDistance(
       range.Lo() = outerDistance; // The outer balls do not overlap.
     else
     {
-      const ElemType innerDistance1 = other.radii.Lo() -
-          metric->Evaluate(center, other.hollowCenter) - radii.Hi();
+      const ElemType innerDistance1 =
+          other.radii.Lo() - metric->Evaluate(center, other.hollowCenter)
+          - radii.Hi();
       // Check if the outer ball of the first bound is contained in the
       // hole of the second bound.
       if (innerDistance1 >= 0)
@@ -335,8 +326,9 @@ math::RangeType<ElemType> HollowBallBound<TMetricType, ElemType>::RangeDistance(
       {
         // Check if the outer ball of the second bound is contained in the
         // hole of the first bound.
-        range.Lo() = math::ClampNonNegative(radii.Lo() -
-            metric->Evaluate(hollowCenter, other.center) - other.radii.Hi());
+        range.Lo() = math::ClampNonNegative(
+            radii.Lo() - metric->Evaluate(hollowCenter, other.center)
+            - other.radii.Hi());
       }
     }
     range.Hi() = dist + radii.Hi() + other.radii.Hi();
@@ -408,8 +400,8 @@ HollowBallBound<TMetricType, ElemType>::operator|=(const HollowBallBound& other)
   if (radii.Hi() < dist + other.radii.Hi())
     radii.Hi() = dist + other.radii.Hi();
 
-  const ElemType innerDist = math::ClampNonNegative(other.radii.Lo() -
-      metric->Evaluate(hollowCenter, other.hollowCenter));
+  const ElemType innerDist = math::ClampNonNegative(
+      other.radii.Lo() - metric->Evaluate(hollowCenter, other.hollowCenter));
   // Check if the hole of the first bound is not contained in the hole of the
   // second bound.
   if (radii.Lo() > innerDist)
@@ -418,17 +410,15 @@ HollowBallBound<TMetricType, ElemType>::operator|=(const HollowBallBound& other)
   return *this;
 }
 
-
 //! Serialize the BallBound.
 template<typename TMetricType, typename ElemType>
 template<typename Archive>
 void HollowBallBound<TMetricType, ElemType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(radii);
-  ar & BOOST_SERIALIZATION_NVP(center);
-  ar & BOOST_SERIALIZATION_NVP(hollowCenter);
+  ar& BOOST_SERIALIZATION_NVP(radii);
+  ar& BOOST_SERIALIZATION_NVP(center);
+  ar& BOOST_SERIALIZATION_NVP(hollowCenter);
 
   if (Archive::is_loading::value)
   {
@@ -437,8 +427,8 @@ void HollowBallBound<TMetricType, ElemType>::serialize(
       delete metric;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(metric);
-  ar & BOOST_SERIALIZATION_NVP(ownsMetric);
+  ar& BOOST_SERIALIZATION_NVP(metric);
+  ar& BOOST_SERIALIZATION_NVP(ownsMetric);
 }
 
 } // namespace bound

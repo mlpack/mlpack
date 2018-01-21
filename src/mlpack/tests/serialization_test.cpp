@@ -74,7 +74,6 @@ BOOST_AUTO_TEST_CASE(EmptyCubeSerializeTest)
   TestAllArmadilloSerialization(c);
 }
 
-
 /**
  * Can we load and save an Armadillo matrix?
  */
@@ -206,8 +205,10 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTest)
   CheckMatrices(g.Mean(), xmlG.Mean(), textG.Mean(), binaryG.Mean());
 
   // Now, check the covariance.
-  CheckMatrices(g.Covariance(), xmlG.Covariance(), textG.Covariance(),
-      binaryG.Covariance());
+  CheckMatrices(g.Covariance(),
+                xmlG.Covariance(),
+                textG.Covariance(),
+                binaryG.Covariance());
 
   // Lastly, run some observations through and make sure the probability is the
   // same.  This should test anything cached internally.
@@ -226,12 +227,12 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTest)
     }
     else
     {
-      BOOST_REQUIRE_CLOSE(prob, xmlG.Probability(randomObs.unsafe_col(i)),
-          1e-8);
-      BOOST_REQUIRE_CLOSE(prob, textG.Probability(randomObs.unsafe_col(i)),
-          1e-8);
-      BOOST_REQUIRE_CLOSE(prob, binaryG.Probability(randomObs.unsafe_col(i)),
-          1e-8);
+      BOOST_REQUIRE_CLOSE(
+          prob, xmlG.Probability(randomObs.unsafe_col(i)), 1e-8);
+      BOOST_REQUIRE_CLOSE(
+          prob, textG.Probability(randomObs.unsafe_col(i)), 1e-8);
+      BOOST_REQUIRE_CLOSE(
+          prob, binaryG.Probability(randomObs.unsafe_col(i)), 1e-8);
     }
   }
 }
@@ -286,8 +287,10 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTest)
   BOOST_REQUIRE_CLOSE(lr.Lambda(), textLr.Lambda(), 1e-8);
   BOOST_REQUIRE_CLOSE(lr.Lambda(), binaryLr.Lambda(), 1e-8);
 
-  CheckMatrices(lr.Parameters(), xmlLr.Parameters(), textLr.Parameters(),
-      binaryLr.Parameters());
+  CheckMatrices(lr.Parameters(),
+                xmlLr.Parameters(),
+                textLr.Parameters(),
+                binaryLr.Parameters());
 }
 
 BOOST_AUTO_TEST_CASE(RegressionDistributionTest)
@@ -427,15 +430,13 @@ void CheckTrees(TreeType& tree,
   // Make sure that the data matrices are the same.
   if (tree.Parent() == NULL)
   {
-    CheckMatrices(*dataset,
-                  xmlTree.Dataset(),
-                  textTree.Dataset(),
-                  binaryTree.Dataset());
+    CheckMatrices(
+        *dataset, xmlTree.Dataset(), textTree.Dataset(), binaryTree.Dataset());
 
     // Also ensure that the other parents are null too.
-    BOOST_REQUIRE_EQUAL(xmlTree.Parent(), (TreeType*) NULL);
-    BOOST_REQUIRE_EQUAL(textTree.Parent(), (TreeType*) NULL);
-    BOOST_REQUIRE_EQUAL(binaryTree.Parent(), (TreeType*) NULL);
+    BOOST_REQUIRE_EQUAL(xmlTree.Parent(), (TreeType*)NULL);
+    BOOST_REQUIRE_EQUAL(textTree.Parent(), (TreeType*)NULL);
+    BOOST_REQUIRE_EQUAL(binaryTree.Parent(), (TreeType*)NULL);
   }
 
   // Make sure the number of children is the same.
@@ -468,19 +469,22 @@ void CheckTrees(TreeType& tree,
 
   // Check that the furthest descendant distance is the same.
   BOOST_REQUIRE_CLOSE(tree.FurthestDescendantDistance(),
-      xmlTree.FurthestDescendantDistance(), 1e-8);
+                      xmlTree.FurthestDescendantDistance(),
+                      1e-8);
   BOOST_REQUIRE_CLOSE(tree.FurthestDescendantDistance(),
-      textTree.FurthestDescendantDistance(), 1e-8);
+                      textTree.FurthestDescendantDistance(),
+                      1e-8);
   BOOST_REQUIRE_CLOSE(tree.FurthestDescendantDistance(),
-      binaryTree.FurthestDescendantDistance(), 1e-8);
+                      binaryTree.FurthestDescendantDistance(),
+                      1e-8);
 
   // Check that the minimum bound distance is the same.
-  BOOST_REQUIRE_CLOSE(tree.MinimumBoundDistance(),
-      xmlTree.MinimumBoundDistance(), 1e-8);
-  BOOST_REQUIRE_CLOSE(tree.MinimumBoundDistance(),
-      textTree.MinimumBoundDistance(), 1e-8);
-  BOOST_REQUIRE_CLOSE(tree.MinimumBoundDistance(),
-      binaryTree.MinimumBoundDistance(), 1e-8);
+  BOOST_REQUIRE_CLOSE(
+      tree.MinimumBoundDistance(), xmlTree.MinimumBoundDistance(), 1e-8);
+  BOOST_REQUIRE_CLOSE(
+      tree.MinimumBoundDistance(), textTree.MinimumBoundDistance(), 1e-8);
+  BOOST_REQUIRE_CLOSE(
+      tree.MinimumBoundDistance(), binaryTree.MinimumBoundDistance(), 1e-8);
 
   // Recurse into the children.
   for (size_t i = 0; i < tree.NumChildren(); ++i)
@@ -495,8 +499,10 @@ void CheckTrees(TreeType& tree,
     BOOST_REQUIRE_EQUAL(textTree.Child(i).Parent(), &textTree);
     BOOST_REQUIRE_EQUAL(binaryTree.Child(i).Parent(), &binaryTree);
 
-    CheckTrees(tree.Child(i), xmlTree.Child(i), textTree.Child(i),
-        binaryTree.Child(i));
+    CheckTrees(tree.Child(i),
+               xmlTree.Child(i),
+               textTree.Child(i),
+               binaryTree.Child(i));
   }
 }
 
@@ -775,8 +781,8 @@ BOOST_AUTO_TEST_CASE(PerceptronTest)
   SerializeObjectAll(p, pXml, pText, pBinary);
 
   // Now check that things are the same.
-  CheckMatrices(p.Weights(), pXml.Weights(), pText.Weights(),
-      pBinary.Weights());
+  CheckMatrices(
+      p.Weights(), pXml.Weights(), pText.Weights(), pBinary.Weights());
   CheckMatrices(p.Biases(), pXml.Biases(), pText.Biases(), pBinary.Biases());
 
   BOOST_REQUIRE_EQUAL(p.MaxIterations(), pXml.MaxIterations());
@@ -799,8 +805,10 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
 
   SerializeObjectAll(lr, lrXml, lrText, lrBinary);
 
-  CheckMatrices(lr.Parameters(), lrXml.Parameters(), lrText.Parameters(),
-      lrBinary.Parameters());
+  CheckMatrices(lr.Parameters(),
+                lrXml.Parameters(),
+                lrText.Parameters(),
+                lrBinary.Parameters());
 
   BOOST_REQUIRE_CLOSE(lr.Lambda(), lrXml.Lambda(), 1e-5);
   BOOST_REQUIRE_CLOSE(lr.Lambda(), lrText.Lambda(), 1e-5);
@@ -852,14 +860,16 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTest)
 
   SerializeObjectAll(sr, srXml, srText, srBinary);
 
-  CheckMatrices(sr.Parameters(), srXml.Parameters(), srText.Parameters(),
-      srBinary.Parameters());
+  CheckMatrices(sr.Parameters(),
+                srXml.Parameters(),
+                srText.Parameters(),
+                srBinary.Parameters());
 }
 
 BOOST_AUTO_TEST_CASE(DETTest)
 {
   using det::DTree;
-  typedef DTree<arma::mat>   DTreeX;
+  typedef DTree<arma::mat> DTreeX;
 
   // Create a density estimation tree on a random dataset.
   arma::mat dataset = arma::randu<arma::mat>(25, 5000);
@@ -938,11 +948,14 @@ BOOST_AUTO_TEST_CASE(DETTest)
     else
     {
       BOOST_REQUIRE_CLOSE(node->SubtreeLeavesLogNegError(),
-          xmlNode->SubtreeLeavesLogNegError(), 1e-5);
+                          xmlNode->SubtreeLeavesLogNegError(),
+                          1e-5);
       BOOST_REQUIRE_CLOSE(node->SubtreeLeavesLogNegError(),
-          binaryNode->SubtreeLeavesLogNegError(), 1e-5);
+                          binaryNode->SubtreeLeavesLogNegError(),
+                          1e-5);
       BOOST_REQUIRE_CLOSE(node->SubtreeLeavesLogNegError(),
-          textNode->SubtreeLeavesLogNegError(), 1e-5);
+                          textNode->SubtreeLeavesLogNegError(),
+                          1e-5);
     }
 
     BOOST_REQUIRE_EQUAL(node->SubtreeLeaves(), xmlNode->SubtreeLeaves());
@@ -1112,19 +1125,19 @@ BOOST_AUTO_TEST_CASE(NaiveBayesSerializationTest)
   }
 
   BOOST_REQUIRE_EQUAL(nbc.Probabilities().n_elem,
-      xmlNbc.Probabilities().n_elem);
+                      xmlNbc.Probabilities().n_elem);
   BOOST_REQUIRE_EQUAL(nbc.Probabilities().n_elem,
-      textNbc.Probabilities().n_elem);
+                      textNbc.Probabilities().n_elem);
   BOOST_REQUIRE_EQUAL(nbc.Probabilities().n_elem,
-      binaryNbc.Probabilities().n_elem);
+                      binaryNbc.Probabilities().n_elem);
   for (size_t i = 0; i < nbc.Probabilities().n_elem; ++i)
   {
-    BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], xmlNbc.Probabilities()[i],
-        1e-5);
-    BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], textNbc.Probabilities()[i],
-        1e-5);
-    BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], binaryNbc.Probabilities()[i],
-        1e-5);
+    BOOST_REQUIRE_CLOSE(
+        nbc.Probabilities()[i], xmlNbc.Probabilities()[i], 1e-5);
+    BOOST_REQUIRE_CLOSE(
+        nbc.Probabilities()[i], textNbc.Probabilities()[i], 1e-5);
+    BOOST_REQUIRE_CLOSE(
+        nbc.Probabilities()[i], binaryNbc.Probabilities()[i], 1e-5);
   }
 }
 
@@ -1217,31 +1230,39 @@ BOOST_AUTO_TEST_CASE(LSHTest)
   BOOST_REQUIRE_EQUAL(lsh.NumProjections(), binaryLsh.NumProjections());
   for (size_t i = 0; i < lsh.NumProjections(); ++i)
   {
-    CheckMatrices(lsh.Projections().slice(i), xmlLsh.Projections().slice(i),
-        textLsh.Projections().slice(i), binaryLsh.Projections().slice(i));
+    CheckMatrices(lsh.Projections().slice(i),
+                  xmlLsh.Projections().slice(i),
+                  textLsh.Projections().slice(i),
+                  binaryLsh.Projections().slice(i));
   }
 
-  CheckMatrices(lsh.ReferenceSet(), xmlLsh.ReferenceSet(),
-      textLsh.ReferenceSet(), binaryLsh.ReferenceSet());
-  CheckMatrices(lsh.Offsets(), xmlLsh.Offsets(), textLsh.Offsets(),
-      binaryLsh.Offsets());
-  CheckMatrices(lsh.SecondHashWeights(), xmlLsh.SecondHashWeights(),
-      textLsh.SecondHashWeights(), binaryLsh.SecondHashWeights());
+  CheckMatrices(lsh.ReferenceSet(),
+                xmlLsh.ReferenceSet(),
+                textLsh.ReferenceSet(),
+                binaryLsh.ReferenceSet());
+  CheckMatrices(
+      lsh.Offsets(), xmlLsh.Offsets(), textLsh.Offsets(), binaryLsh.Offsets());
+  CheckMatrices(lsh.SecondHashWeights(),
+                xmlLsh.SecondHashWeights(),
+                textLsh.SecondHashWeights(),
+                binaryLsh.SecondHashWeights());
 
   BOOST_REQUIRE_EQUAL(lsh.BucketSize(), xmlLsh.BucketSize());
   BOOST_REQUIRE_EQUAL(lsh.BucketSize(), textLsh.BucketSize());
   BOOST_REQUIRE_EQUAL(lsh.BucketSize(), binaryLsh.BucketSize());
 
   BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
-      xmlLsh.SecondHashTable().size());
+                      xmlLsh.SecondHashTable().size());
   BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
-      textLsh.SecondHashTable().size());
+                      textLsh.SecondHashTable().size());
   BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
-      binaryLsh.SecondHashTable().size());
+                      binaryLsh.SecondHashTable().size());
 
   for (size_t i = 0; i < lsh.SecondHashTable().size(); ++i)
-  CheckMatrices(lsh.SecondHashTable()[i], xmlLsh.SecondHashTable()[i],
-      textLsh.SecondHashTable()[i], binaryLsh.SecondHashTable()[i]);
+    CheckMatrices(lsh.SecondHashTable()[i],
+                  xmlLsh.SecondHashTable()[i],
+                  textLsh.SecondHashTable()[i],
+                  binaryLsh.SecondHashTable()[i]);
 }
 
 // Make sure serialization works for the decision stump.
@@ -1276,8 +1297,10 @@ BOOST_AUTO_TEST_CASE(DecisionStumpTest)
   BOOST_REQUIRE_EQUAL(ds.SplitDimension(), binaryDs.SplitDimension());
 
   CheckMatrices(ds.Split(), xmlDs.Split(), textDs.Split(), binaryDs.Split());
-  CheckMatrices(ds.BinLabels(), xmlDs.BinLabels(), textDs.BinLabels(),
-      binaryDs.BinLabels());
+  CheckMatrices(ds.BinLabels(),
+                xmlDs.BinLabels(),
+                textDs.BinLabels(),
+                binaryDs.BinLabels());
 }
 
 // Make sure serialization works for LARS.
@@ -1599,11 +1622,14 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeAfterSplitTest)
   BOOST_REQUIRE_EQUAL(split.MajorityClass(), binarySplit.MajorityClass());
   BOOST_REQUIRE_EQUAL(split.MajorityClass(), textSplit.MajorityClass());
 
-  BOOST_REQUIRE_EQUAL(split.CalculateDirection(arma::vec("0.3 0.4 1 0.6 0.7")),
+  BOOST_REQUIRE_EQUAL(
+      split.CalculateDirection(arma::vec("0.3 0.4 1 0.6 0.7")),
       xmlSplit.CalculateDirection(arma::vec("0.3 0.4 1 0.6 0.7")));
-  BOOST_REQUIRE_EQUAL(split.CalculateDirection(arma::vec("0.3 0.4 1 0.6 0.7")),
+  BOOST_REQUIRE_EQUAL(
+      split.CalculateDirection(arma::vec("0.3 0.4 1 0.6 0.7")),
       binarySplit.CalculateDirection(arma::vec("0.3 0.4 1 0.6 0.7")));
-  BOOST_REQUIRE_EQUAL(split.CalculateDirection(arma::vec("0.3 0.4 1 0.6 0.7")),
+  BOOST_REQUIRE_EQUAL(
+      split.CalculateDirection(arma::vec("0.3 0.4 1 0.6 0.7")),
       textSplit.CalculateDirection(arma::vec("0.3 0.4 1 0.6 0.7")));
 }
 
@@ -1682,11 +1708,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeTest)
     BOOST_REQUIRE_EQUAL(textTree.Child(i).NumChildren(), 0);
 
     BOOST_REQUIRE_EQUAL(tree.Child(i).SplitDimension(),
-        xmlTree.Child(i).SplitDimension());
+                        xmlTree.Child(i).SplitDimension());
     BOOST_REQUIRE_EQUAL(tree.Child(i).SplitDimension(),
-        textTree.Child(i).SplitDimension());
+                        textTree.Child(i).SplitDimension());
     BOOST_REQUIRE_EQUAL(tree.Child(i).SplitDimension(),
-        binaryTree.Child(i).SplitDimension());
+                        binaryTree.Child(i).SplitDimension());
   }
 }
 

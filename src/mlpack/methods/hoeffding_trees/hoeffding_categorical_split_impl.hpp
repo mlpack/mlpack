@@ -20,9 +20,8 @@ namespace tree {
 
 template<typename FitnessFunction>
 HoeffdingCategoricalSplit<FitnessFunction>::HoeffdingCategoricalSplit(
-    const size_t numCategories,
-    const size_t numClasses) :
-    sufficientStatistics(numClasses, numCategories)
+    const size_t numCategories, const size_t numClasses)
+  : sufficientStatistics(numClasses, numCategories)
 {
   sufficientStatistics.zeros();
 }
@@ -31,8 +30,8 @@ template<typename FitnessFunction>
 HoeffdingCategoricalSplit<FitnessFunction>::HoeffdingCategoricalSplit(
     const size_t numCategories,
     const size_t numClasses,
-    const HoeffdingCategoricalSplit& /* other */) :
-    sufficientStatistics(numClasses, numCategories)
+    const HoeffdingCategoricalSplit& /* other */)
+  : sufficientStatistics(numClasses, numCategories)
 {
   sufficientStatistics.zeros();
 }
@@ -49,8 +48,7 @@ void HoeffdingCategoricalSplit<FitnessFunction>::Train(eT value,
 
 template<typename FitnessFunction>
 void HoeffdingCategoricalSplit<FitnessFunction>::EvaluateFitnessFunction(
-    double& bestFitness,
-    double& secondBestFitness) const
+    double& bestFitness, double& secondBestFitness) const
 {
   bestFitness = FitnessFunction::Evaluate(sufficientStatistics);
   secondBestFitness = 0.0; // We only split one possible way.
@@ -58,8 +56,7 @@ void HoeffdingCategoricalSplit<FitnessFunction>::EvaluateFitnessFunction(
 
 template<typename FitnessFunction>
 void HoeffdingCategoricalSplit<FitnessFunction>::Split(
-    arma::Col<size_t>& childMajorities,
-    SplitInfo& splitInfo)
+    arma::Col<size_t>& childMajorities, SplitInfo& splitInfo)
 {
   // We'll make one child for each category.
   childMajorities.set_size(sufficientStatistics.n_cols);

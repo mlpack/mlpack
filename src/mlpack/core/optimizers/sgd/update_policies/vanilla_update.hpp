@@ -40,19 +40,18 @@ class VanillaUpdate
    * @param cols Number of columns in the gradient matrix.
    */
   void Initialize(const size_t /* rows */, const size_t /* cols */)
-  { /* Do nothing. */ }
+  { /* Do nothing. */}
 
- /**
-  * Update step for SGD.  The function parameters are updated in the negative
-  * direction of the gradient.
-  *
-  * @param iterate Parameters that minimize the function.
-  * @param stepSize Step size to be used for the given iteration.
-  * @param gradient The gradient matrix.
-  */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
+  /**
+   * Update step for SGD.  The function parameters are updated in the negative
+   * direction of the gradient.
+   *
+   * @param iterate Parameters that minimize the function.
+   * @param stepSize Step size to be used for the given iteration.
+   * @param gradient The gradient matrix.
+   */
+  void
+  Update(arma::mat& iterate, const double stepSize, const arma::mat& gradient)
   {
     // Perform the vanilla SGD update.
     iterate -= stepSize * gradient;

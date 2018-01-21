@@ -20,7 +20,7 @@ class RandomDimensionSelect
    * Construct the RandomDimensionSelect object with the given number of
    * dimensions.
    */
-  RandomDimensionSelect(const size_t dimensions) : dimensions(dimensions) { }
+  RandomDimensionSelect(const size_t dimensions) : dimensions(dimensions) {}
 
   /**
    * Get the first dimension to select from.

@@ -31,10 +31,8 @@ template<typename SortPolicy,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-using RAType = RASearch<SortPolicy,
-                        metric::EuclideanDistance,
-                        arma::mat,
-                        TreeType>;
+using RAType =
+    RASearch<SortPolicy, metric::EuclideanDistance, arma::mat, TreeType>;
 
 /**
  * MonoSearchVisitor executes a monochromatic neighbor search on the given
@@ -58,11 +56,8 @@ class MonoSearchVisitor : public boost::static_visitor<void>
   //! Construct the MonoSearchVisitor object with the given parameters.
   MonoSearchVisitor(const size_t k,
                     arma::Mat<size_t>& neighbors,
-                    arma::mat& distances) :
-      k(k),
-      neighbors(neighbors),
-      distances(distances)
-  {};
+                    arma::mat& distances)
+    : k(k), neighbors(neighbors), distances(distances){};
 };
 
 /**
@@ -119,7 +114,7 @@ class BiSearchVisitor : public boost::static_visitor<void>
 
 /**
  * TrainVisitor sets the reference set to a new reference set on the given
- * RAType. We use template specialization to differentiate those trees that 
+ * RAType. We use template specialization to differentiate those trees that
  * accept leafSize as a parameter. In these cases, a reference tree with proper
  * leafSize is built from the referenceSet.
  */
@@ -157,8 +152,7 @@ class TrainVisitor : public boost::static_visitor<void>
 
   //! Construct the TrainVisitor object with the given reference set, leafSize
   //! for BinarySpaceTrees.
-  TrainVisitor(arma::mat&& referenceSet,
-               const size_t leafSize);
+  TrainVisitor(arma::mat&& referenceSet, const size_t leafSize);
 };
 
 /**
@@ -189,7 +183,7 @@ class SampleAtLeavesVisitor : public boost::static_visitor<bool&>
  public:
   //! Return SampleAtLeaves (whether or not sampling is done at leaves).
   template<typename RAType>
-  bool& operator()(RAType *) const;
+  bool& operator()(RAType*) const;
 };
 
 /**
@@ -243,7 +237,8 @@ class DeleteVisitor : public boost::static_visitor<void>
 {
  public:
   //! Delete the RAType Object.
-  template<typename RAType> void operator()(RAType* ra) const;
+  template<typename RAType>
+  void operator()(RAType* ra) const;
 };
 
 /**
@@ -310,7 +305,8 @@ class RAModel
                  RAType<SortPolicy, tree::RPlusTree>*,
                  RAType<SortPolicy, tree::RPlusPlusTree>*,
                  RAType<SortPolicy, tree::UBTree>*,
-                 RAType<SortPolicy, tree::Octree>*> raSearch;
+                 RAType<SortPolicy, tree::Octree>*>
+      raSearch;
 
  public:
   /**
@@ -425,9 +421,8 @@ class RAModel
    * Perform rank-approximate neighbor search, using the reference set as the
    * query set.
    */
-  void Search(const size_t k,
-              arma::Mat<size_t>& neighbors,
-              arma::mat& distances);
+  void
+  Search(const size_t k, arma::Mat<size_t>& neighbors, arma::mat& distances);
 
   //! Get the name of the tree type.
   std::string TreeName() const;

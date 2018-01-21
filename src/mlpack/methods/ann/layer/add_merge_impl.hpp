@@ -25,7 +25,7 @@ AddMerge<InputDataType, OutputDataType>::AddMerge()
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void AddMerge<InputDataType, OutputDataType>::Forward(
     const InputType&& /* input */, OutputType&& output)
@@ -46,7 +46,6 @@ void AddMerge<InputDataType, OutputDataType>::Backward(
   g = gy;
 }
 
-
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void AddMerge<InputDataType, OutputDataType>::serialize(
@@ -55,7 +54,7 @@ void AddMerge<InputDataType, OutputDataType>::serialize(
   if (Archive::is_loading::value)
     network.clear();
 
-  ar & BOOST_SERIALIZATION_NVP(network);
+  ar& BOOST_SERIALIZATION_NVP(network);
 }
 
 } // namespace ann

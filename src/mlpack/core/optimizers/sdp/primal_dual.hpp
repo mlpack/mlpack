@@ -60,10 +60,8 @@ class PrimalDualSolver
    * @param yDense
    * @param Z
    */
-  double Optimize(arma::mat& X,
-                  arma::vec& ySparse,
-                  arma::vec& yDense,
-                  arma::mat& Z);
+  double
+  Optimize(arma::mat& X, arma::vec& ySparse, arma::vec& yDense, arma::mat& Z);
 
   /**
    * Invoke the optimization procedure, and only return the primal variable.

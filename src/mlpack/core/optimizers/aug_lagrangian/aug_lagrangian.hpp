@@ -143,4 +143,3 @@ class AugLagrangian
 #include "aug_lagrangian_impl.hpp"
 
 #endif // MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
-

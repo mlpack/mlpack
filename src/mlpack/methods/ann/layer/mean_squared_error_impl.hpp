@@ -35,9 +35,7 @@ double MeanSquaredError<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType, typename OutputType>
 void MeanSquaredError<InputDataType, OutputDataType>::Backward(
-    const InputType&& input,
-    const TargetType&& target,
-    OutputType&& output)
+    const InputType&& input, const TargetType&& target, OutputType&& output)
 {
   output = (input - target);
 }
@@ -45,8 +43,7 @@ void MeanSquaredError<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MeanSquaredError<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
-    const unsigned int /* version */)
+    Archive& /* ar */, const unsigned int /* version */)
 {
   // Nothing to do here.
 }

@@ -40,9 +40,8 @@ inline std::string ProcessOptions();
  * Print an option for a command-line argument.
  */
 template<typename T, typename... Args>
-std::string ProcessOptions(const std::string& paramName,
-                           const T& value,
-                           Args... args);
+std::string
+ProcessOptions(const std::string& paramName, const T& value, Args... args);
 
 /**
  * Given a program name and arguments for it, print what its invocation would
@@ -65,7 +64,10 @@ inline std::string ParamString(const std::string& paramName);
  * false.
  */
 template<typename T>
-inline bool IgnoreCheck(const T& /* t */) { return false; }
+inline bool IgnoreCheck(const T& /* t */)
+{
+  return false;
+}
 
 } // namespace cli
 } // namespace bindings

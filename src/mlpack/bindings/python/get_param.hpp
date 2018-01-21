@@ -18,11 +18,9 @@ namespace python {
  * special handling is necessary.
  */
 template<typename T>
-void GetParam(const util::ParamData& d,
-              const void* /* input */,
-              void* output)
+void GetParam(const util::ParamData& d, const void* /* input */, void* output)
 {
-  *((T**) output) = const_cast<T*>(boost::any_cast<T>(&d.value));
+  *((T**)output) = const_cast<T*>(boost::any_cast<T>(&d.value));
 }
 
 } // namespace python

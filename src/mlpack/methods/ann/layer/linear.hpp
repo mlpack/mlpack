@@ -29,10 +29,8 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
 class Linear
 {
  public:
@@ -45,7 +43,8 @@ class Linear
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  Linear(const size_t inSize, const size_t outSize);;
+  Linear(const size_t inSize, const size_t outSize);
+  ;
 
   /*
    * Reset the layer parameter.

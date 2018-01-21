@@ -27,12 +27,11 @@ namespace hmm {
 template<typename Distribution>
 HMM<Distribution>::HMM(const size_t states,
                        const Distribution emissions,
-                       const double tolerance) :
-    emission(states, /* default distribution */ emissions),
+                       const double tolerance)
+  : emission(states, /* default distribution */ emissions),
     transition(arma::randu<arma::mat>(states, states)),
-    initial(arma::randu<arma::vec>(states) / (double) states),
-    dimensionality(emissions.Dimensionality()),
-    tolerance(tolerance)
+    initial(arma::randu<arma::vec>(states) / (double)states),
+    dimensionality(emissions.Dimensionality()), tolerance(tolerance)
 {
   // Normalize the transition probabilities and initial state probabilities.
   initial /= arma::accu(initial);
@@ -48,10 +47,8 @@ template<typename Distribution>
 HMM<Distribution>::HMM(const arma::vec& initial,
                        const arma::mat& transition,
                        const std::vector<Distribution>& emission,
-                       const double tolerance) :
-    emission(emission),
-    transition(transition),
-    initial(initial),
+                       const double tolerance)
+  : emission(emission), transition(transition), initial(initial),
     tolerance(tolerance)
 {
   // Set the dimensionality, if we can.
@@ -60,8 +57,8 @@ HMM<Distribution>::HMM(const arma::vec& initial,
   else
   {
     Log::Warn << "HMM::HMM(): no emission distributions given; assuming a "
-        << "dimensionality of 0 and hoping it gets set right later."
-        << std::endl;
+              << "dimensionality of 0 and hoping it gets set right later."
+              << std::endl;
     dimensionality = 0;
   }
 }
@@ -99,14 +96,14 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
 
     if (dataSeq[seq].n_rows != dimensionality)
       Log::Fatal << "HMM::Train(): data sequence " << seq << " has "
-          << "dimensionality " << dataSeq[seq].n_rows << " (expected "
-          << dimensionality << " dimensions)." << std::endl;
+                 << "dimensionality " << dataSeq[seq].n_rows << " (expected "
+                 << dimensionality << " dimensions)." << std::endl;
   }
 
   // These are used later for training of each distribution.  We initialize it
   // all now so we don't have to do any allocation later on.
   std::vector<arma::vec> emissionProb(transition.n_cols,
-      arma::vec(totalLength));
+                                      arma::vec(totalLength));
   arma::mat emissionList(dimensionality, totalLength);
 
   // This should be the Baum-Welch algorithm (EM for HMM estimation). This
@@ -156,9 +153,10 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
             // Estimate of T_ij (probability of transition from state j to state
             // i).  We postpone multiplication of the old T_ij until later.
             for (size_t i = 0; i < transition.n_rows; i++)
-              newTransition(i, j) += forward(j, t) * backward(i, t + 1) *
-                  emission[i].Probability(dataSeq[seq].unsafe_col(t + 1)) /
-                  scales[t + 1];
+              newTransition(i, j) +=
+                  forward(j, t) * backward(i, t + 1)
+                  * emission[i].Probability(dataSeq[seq].unsafe_col(t + 1))
+                  / scales[t + 1];
           }
 
           // Add to list of emission observations, for Distribution::Train().
@@ -188,15 +186,15 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
       if (sum > 0.0)
         transition.col(i) /= sum;
       else
-        transition.col(i).fill(1.0 / (double) transition.n_rows);
+        transition.col(i).fill(1.0 / (double)transition.n_rows);
     }
 
     // Now estimate emission probabilities.
     for (size_t state = 0; state < transition.n_cols; state++)
       emission[state].Train(emissionList, emissionProb[state]);
 
-    Log::Debug << "Iteration " << iter << ": log-likelihood " << loglik
-        << "." << std::endl;
+    Log::Debug << "Iteration " << iter << ": log-likelihood " << loglik << "."
+               << std::endl;
 
     if (std::abs(oldLoglik - loglik) < tolerance)
     {
@@ -214,14 +212,14 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
  */
 template<typename Distribution>
 void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
-                              const std::vector<arma::Row<size_t> >& stateSeq)
+                              const std::vector<arma::Row<size_t>>& stateSeq)
 {
   // Simple error checking.
   if (dataSeq.size() != stateSeq.size())
   {
     Log::Fatal << "HMM::Train(): number of data sequences (" << dataSeq.size()
-        << ") not equal to number of state sequences (" << stateSeq.size()
-        << ")." << std::endl;
+               << ") not equal to number of state sequences ("
+               << stateSeq.size() << ")." << std::endl;
   }
 
   initial.zeros();
@@ -230,24 +228,24 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
   // Estimate the transition and emission matrices directly from the
   // observations.  The emission list holds the time indices for observations
   // from each state.
-  std::vector<std::vector<std::pair<size_t, size_t> > >
-      emissionList(transition.n_cols);
+  std::vector<std::vector<std::pair<size_t, size_t>>> emissionList(
+      transition.n_cols);
   for (size_t seq = 0; seq < dataSeq.size(); seq++)
   {
     // Simple error checking.
     if (dataSeq[seq].n_cols != stateSeq[seq].n_elem)
     {
       Log::Fatal << "HMM::Train(): number of observations ("
-          << dataSeq[seq].n_cols << ") in sequence " << seq
-          << " not equal to number of states (" << stateSeq[seq].n_cols
-          << ") in sequence " << seq << "." << std::endl;
+                 << dataSeq[seq].n_cols << ") in sequence " << seq
+                 << " not equal to number of states (" << stateSeq[seq].n_cols
+                 << ") in sequence " << seq << "." << std::endl;
     }
 
     if (dataSeq[seq].n_rows != dimensionality)
     {
       Log::Fatal << "HMM::Train(): data sequence " << seq << " has "
-          << "dimensionality " << dataSeq[seq].n_rows << " (expected "
-          << dimensionality << " dimensions)." << std::endl;
+                 << "dimensionality " << dataSeq[seq].n_rows << " (expected "
+                 << dimensionality << " dimensions)." << std::endl;
     }
 
     // Loop over each observation in the sequence.  For estimation of the
@@ -297,8 +295,9 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
     else
     {
       Log::Warn << "There are no observations in training data with hidden "
-          << "state " << state << "!  The corresponding emission distribution "
-          << "is likely to be meaningless." << std::endl;
+                << "state " << state
+                << "!  The corresponding emission distribution "
+                << "is likely to be meaningless." << std::endl;
     }
   }
 }
@@ -417,8 +416,8 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
   logStateProb.col(0).zeros();
   for (size_t state = 0; state < transition.n_rows; state++)
   {
-    logStateProb(state, 0) = log(initial[state] *
-        emission[state].Probability(dataSeq.unsafe_col(0)));
+    logStateProb(state, 0) = log(
+        initial[state] * emission[state].Probability(dataSeq.unsafe_col(0)));
     stateSeqBack(state, 0) = state;
   }
 
@@ -432,9 +431,9 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
     for (size_t j = 0; j < transition.n_rows; j++)
     {
       arma::vec prob = logStateProb.col(t - 1) + logTrans.col(j);
-      logStateProb(j, t) = prob.max(index) +
-          log(emission[j].Probability(dataSeq.unsafe_col(t)));
-        stateSeqBack(j, t) = index;
+      logStateProb(j, t) =
+          prob.max(index) + log(emission[j].Probability(dataSeq.unsafe_col(t)));
+      stateSeqBack(j, t) = index;
     }
   }
 
@@ -524,8 +523,8 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
   // behavior, you could append a single starting state to every single data
   // sequence and that should produce results in line with MATLAB.
   for (size_t state = 0; state < transition.n_rows; state++)
-    forwardProb(state, 0) = initial(state) *
-        emission[state].Probability(dataSeq.unsafe_col(0));
+    forwardProb(state, 0) =
+        initial(state) * emission[state].Probability(dataSeq.unsafe_col(0));
 
   // Then normalize the column.
   scales[0] = accu(forwardProb.col(0));
@@ -540,9 +539,9 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
       // The forward probability of state j at time t is the sum over all states
       // of the probability of the previous state transitioning to the current
       // state and emitting the given observation.
-      forwardProb(j, t) = accu(forwardProb.col(t - 1) %
-          trans(transition.row(j))) *
-          emission[j].Probability(dataSeq.unsafe_col(t));
+      forwardProb(j, t) =
+          accu(forwardProb.col(t - 1) % trans(transition.row(j)))
+          * emission[j].Probability(dataSeq.unsafe_col(t));
     }
 
     // Normalize probability.
@@ -574,7 +573,8 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
       // current state multiplied by the probability of each of those states
       // emitting the given observation.
       for (size_t state = 0; state < transition.n_rows; state++)
-        backwardProb(j, t) += transition(state, j) * backwardProb(state, t + 1)
+        backwardProb(j, t) +=
+            transition(state, j) * backwardProb(state, t + 1)
             * emission[state].Probability(dataSeq.unsafe_col(t + 1));
 
       // Normalize by the weights from the forward algorithm.
@@ -589,10 +589,10 @@ template<typename Distribution>
 template<typename Archive>
 void HMM<Distribution>::serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(dimensionality);
-  ar & BOOST_SERIALIZATION_NVP(tolerance);
-  ar & BOOST_SERIALIZATION_NVP(transition);
-  ar & BOOST_SERIALIZATION_NVP(initial);
+  ar& BOOST_SERIALIZATION_NVP(dimensionality);
+  ar& BOOST_SERIALIZATION_NVP(tolerance);
+  ar& BOOST_SERIALIZATION_NVP(transition);
+  ar& BOOST_SERIALIZATION_NVP(initial);
 
   // Now serialize each emission.  If we are loading, we must resize the vector
   // of emissions correctly.
@@ -600,7 +600,7 @@ void HMM<Distribution>::serialize(Archive& ar, const unsigned int /* version */)
     emission.resize(transition.n_rows);
 
   // Load the emissions; generate the correct name for each one.
-    ar & BOOST_SERIALIZATION_NVP(emission);
+  ar& BOOST_SERIALIZATION_NVP(emission);
 }
 
 } // namespace hmm

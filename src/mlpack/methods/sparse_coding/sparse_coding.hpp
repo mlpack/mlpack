@@ -142,15 +142,15 @@ class SparseCoding
    *     optimization step.
    */
   template<typename DictionaryInitializer = DataDependentRandomInitializer>
-  SparseCoding(const arma::mat& data,
-               const size_t atoms,
-               const double lambda1,
-               const double lambda2 = 0,
-               const size_t maxIterations = 0,
-               const double objTolerance = 0.01,
-               const double newtonTolerance = 1e-6,
-               const DictionaryInitializer& initializer =
-                   DictionaryInitializer());
+  SparseCoding(
+      const arma::mat& data,
+      const size_t atoms,
+      const double lambda1,
+      const double lambda2 = 0,
+      const size_t maxIterations = 0,
+      const double objTolerance = 0.01,
+      const double newtonTolerance = 1e-6,
+      const DictionaryInitializer& initializer = DictionaryInitializer());
 
   /**
    * Set the parameters to SparseCoding.  lambda2 defaults to 0.  This
@@ -179,9 +179,9 @@ class SparseCoding
    * Train the sparse coding model on the given dataset.
    */
   template<typename DictionaryInitializer = DataDependentRandomInitializer>
-  void Train(const arma::mat& data,
-             const DictionaryInitializer& initializer =
-                 DictionaryInitializer());
+  void
+  Train(const arma::mat& data,
+        const DictionaryInitializer& initializer = DictionaryInitializer());
 
   /**
    * Sparse code each point in the given dataset via LARS, using the current

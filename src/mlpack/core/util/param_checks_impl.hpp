@@ -13,10 +13,9 @@ namespace mlpack {
 namespace util {
 
 // Check that the arguments are given.
-inline void RequireOnlyOnePassed(
-    const std::vector<std::string>& constraints,
-    const bool fatal,
-    const std::string& errorMessage)
+inline void RequireOnlyOnePassed(const std::vector<std::string>& constraints,
+                                 const bool fatal,
+                                 const std::string& errorMessage)
 {
   if (BINDING_IGNORE_CHECK(constraints))
     return;
@@ -36,15 +35,15 @@ inline void RequireOnlyOnePassed(
     if (constraints.size() == 2)
     {
       stream << "Can only pass one of " << PRINT_PARAM_STRING(constraints[0])
-          << " or " << PRINT_PARAM_STRING(constraints[1]);
+             << " or " << PRINT_PARAM_STRING(constraints[1]);
     }
     else
     {
       stream << "Can only pass one of ";
-      for (size_t i = 0 ; i < constraints.size() - 1; ++i)
+      for (size_t i = 0; i < constraints.size() - 1; ++i)
         stream << PRINT_PARAM_STRING(constraints[i]) << ", ";
       stream << "or "
-          << PRINT_PARAM_STRING(constraints[constraints.size() - 1]);
+             << PRINT_PARAM_STRING(constraints[constraints.size() - 1]);
     }
 
     // Append a custom message.
@@ -65,7 +64,7 @@ inline void RequireOnlyOnePassed(
     else if (constraints.size() == 2)
     {
       stream << "specify one of " << PRINT_PARAM_STRING(constraints[0])
-          << " or " << PRINT_PARAM_STRING(constraints[1]);
+             << " or " << PRINT_PARAM_STRING(constraints[1]);
     }
     else
     {
@@ -73,7 +72,7 @@ inline void RequireOnlyOnePassed(
       for (size_t i = 0; i < constraints.size() - 1; ++i)
         stream << PRINT_PARAM_STRING(constraints[i]) << ", ";
       stream << "or "
-          << PRINT_PARAM_STRING(constraints[constraints.size() - 1]);
+             << PRINT_PARAM_STRING(constraints[constraints.size() - 1]);
     }
 
     // Append a custom message.
@@ -83,10 +82,9 @@ inline void RequireOnlyOnePassed(
   }
 }
 
-inline void RequireAtLeastOnePassed(
-    const std::vector<std::string>& constraints,
-    const bool fatal,
-    const std::string& errorMessage)
+inline void RequireAtLeastOnePassed(const std::vector<std::string>& constraints,
+                                    const bool fatal,
+                                    const std::string& errorMessage)
 {
   if (BINDING_IGNORE_CHECK(constraints))
     return;
@@ -109,8 +107,8 @@ inline void RequireAtLeastOnePassed(
     }
     else if (constraints.size() == 2)
     {
-      stream << "pass either " << PRINT_PARAM_STRING(constraints[0])
-          << " or " << PRINT_PARAM_STRING(constraints[1]) << " or both";
+      stream << "pass either " << PRINT_PARAM_STRING(constraints[0]) << " or "
+             << PRINT_PARAM_STRING(constraints[1]) << " or both";
     }
     else
     {
@@ -118,7 +116,7 @@ inline void RequireAtLeastOnePassed(
       for (size_t i = 0; i < constraints.size() - 1; ++i)
         stream << PRINT_PARAM_STRING(constraints[i]) << ", ";
       stream << "or "
-          << PRINT_PARAM_STRING(constraints[constraints.size() - 1]);
+             << PRINT_PARAM_STRING(constraints[constraints.size() - 1]);
     }
 
     // Append custom error message.
@@ -131,9 +129,9 @@ inline void RequireAtLeastOnePassed(
 
 template<typename T>
 void RequireParamInSet(const std::string& name,
-                            const std::vector<T>& set,
-                            const bool fatal,
-                            const std::string& errorMessage)
+                       const std::vector<T>& set,
+                       const bool fatal,
+                       const std::string& errorMessage)
 {
   if (BINDING_IGNORE_CHECK(name))
     return;
@@ -143,14 +141,14 @@ void RequireParamInSet(const std::string& name,
     // The item was not found in the set.
     util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
     stream << "Invalid value of " << PRINT_PARAM_STRING(name) << " specified ("
-        << PRINT_PARAM_VALUE(CLI::GetParam<T>(name), true) << "); ";
+           << PRINT_PARAM_VALUE(CLI::GetParam<T>(name), true) << "); ";
     if (!errorMessage.empty())
       stream << errorMessage << "; ";
     stream << "must be one of ";
     for (size_t i = 0; i < set.size() - 1; ++i)
       stream << PRINT_PARAM_VALUE(set[i], true) << ", ";
     stream << "or " << PRINT_PARAM_VALUE(set[set.size() - 1], true) << "!"
-        << std::endl;
+           << std::endl;
   }
 }
 
@@ -170,14 +168,14 @@ void RequireParamValue(const std::string& name,
     // The condition failed.
     util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
     stream << "Invalid value of " << PRINT_PARAM_STRING(name) << " specified ("
-        << PRINT_PARAM_VALUE(CLI::GetParam<T>(name), false) << "); "
-        << errorMessage << "!" << std::endl;
+           << PRINT_PARAM_VALUE(CLI::GetParam<T>(name), false) << "); "
+           << errorMessage << "!" << std::endl;
   }
 }
 
-inline void ReportIgnoredParam(
-    const std::vector<std::pair<std::string, bool>>& constraints,
-    const std::string& paramName)
+inline void
+ReportIgnoredParam(const std::vector<std::pair<std::string, bool>>& constraints,
+                   const std::string& paramName)
 {
   if (BINDING_IGNORE_CHECK(paramName))
     return;
@@ -203,26 +201,26 @@ inline void ReportIgnoredParam(
     if (constraints.size() == 1)
     {
       Log::Warn << PRINT_PARAM_STRING(constraints[0].first)
-          << ((constraints[0].second) ? " is " : " is not ")
-          << "specified!" << std::endl;
+                << ((constraints[0].second) ? " is " : " is not ")
+                << "specified!" << std::endl;
     }
     else if (constraints.size() == 2)
     {
       if (constraints[0].second == constraints[1].second)
       {
         Log::Warn << ((constraints[0].second) ? "both " : "neither ")
-            << PRINT_PARAM_STRING(constraints[0].first)
-            << ((constraints[0].second) ? "or " : "nor ")
-            << PRINT_PARAM_STRING(constraints[1].first)
-            << " are specified!" << std::endl;
+                  << PRINT_PARAM_STRING(constraints[0].first)
+                  << ((constraints[0].second) ? "or " : "nor ")
+                  << PRINT_PARAM_STRING(constraints[1].first)
+                  << " are specified!" << std::endl;
       }
       else
       {
         Log::Warn << PRINT_PARAM_STRING(constraints[0].first)
-            << ((constraints[0].second) ? " is " : " is not ")
-            << "specified and "
-            << ((constraints[1].second) ? " is " : " is not ")
-            << "specified!" << std::endl;
+                  << ((constraints[0].second) ? " is " : " is not ")
+                  << "specified and "
+                  << ((constraints[1].second) ? " is " : " is not ")
+                  << "specified!" << std::endl;
       }
     }
     else
@@ -231,9 +229,9 @@ inline void ReportIgnoredParam(
       for (size_t i = 0; i < constraints.size(); ++i)
       {
         Log::Warn << PRINT_PARAM_STRING(constraints[i].first)
-            << ((constraints[i].second) ? " is " : " is not ")
-            << ((i == constraints.size() - 1) ? "specified!"
-                : "specified and ");
+                  << ((constraints[i].second) ? " is " : " is not ")
+                  << ((i == constraints.size() - 1) ? "specified!"
+                                                    : "specified and ");
       }
       Log::Warn << std::endl;
     }
@@ -246,8 +244,8 @@ inline void ReportIgnoredParam(const std::string& paramName,
   // If the argument was passed, we need to print the reason.
   if (CLI::HasParam(paramName))
   {
-    Log::Warn << PRINT_PARAM_STRING(paramName) << " ignored because "
-        << reason << "!" << std::endl;
+    Log::Warn << PRINT_PARAM_STRING(paramName) << " ignored because " << reason
+              << "!" << std::endl;
   }
 }
 

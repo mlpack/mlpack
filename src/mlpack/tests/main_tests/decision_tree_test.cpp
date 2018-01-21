@@ -39,8 +39,7 @@ struct DecisionTreeTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(DecisionTreeMainTest,
-                         DecisionTreeTestFixture);
+BOOST_FIXTURE_TEST_SUITE(DecisionTreeMainTest, DecisionTreeTestFixture);
 
 /**
  * Check that number of output points and
@@ -77,14 +76,14 @@ BOOST_AUTO_TEST_CASE(DecisionTreeOutputDimensionTest)
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
-      testSize);
+                      testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
-      testSize);
+                      testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
-  BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
+                      1);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
 }
 
@@ -104,7 +103,7 @@ BOOST_AUTO_TEST_CASE(DecisionTreeMinimumLeafSizeTest)
   // Initialize an all-ones weight matrix.
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
-  SetInputParam("minimum_leaf_size", (int) -1); // Invalid.
+  SetInputParam("minimum_leaf_size", (int)-1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -160,20 +159,20 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-      std::move(CLI::GetParam<DecisionTreeModel>("output_model")));
+                std::move(CLI::GetParam<DecisionTreeModel>("output_model")));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
-      testSize);
+                      testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
-      testSize);
+                      testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predicitions.
-  BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
+                      1);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
 
   // Check that initial predictions and predictions using saved model are same.

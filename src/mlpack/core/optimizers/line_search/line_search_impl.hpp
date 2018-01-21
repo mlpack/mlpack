@@ -19,9 +19,8 @@ namespace mlpack {
 namespace optimization {
 
 template<typename FunctionType>
-double LineSearch::Optimize(FunctionType& function,
-                            const arma::mat& x1,
-                            arma::mat& x2)
+double
+LineSearch::Optimize(FunctionType& function, const arma::mat& x1, arma::mat& x2)
 {
   // Set up the search line, that is,
   // find the zero of der(gamma) = Derivative(gamma).
@@ -68,20 +67,21 @@ double LineSearch::Optimize(FunctionType& function,
 
     if (std::fabs(derivative) < tolerance)
     {
-      Log::Info << "LineSearchSecant: minimized within tolerance "
-          << tolerance << "; " << "terminating optimization." << std::endl;
+      Log::Info << "LineSearchSecant: minimized within tolerance " << tolerance
+                << "; "
+                << "terminating optimization." << std::endl;
       x2 = (1 - gamma) * x1 + gamma * x2;
       return function.Evaluate(x2);
     }
   }
 
   Log::Info << "LineSearchSecant: maximum iterations (" << maxIterations
-      << ") reached; " << "terminating optimization." << std::endl;
+            << ") reached; "
+            << "terminating optimization." << std::endl;
 
   x2 = (1 - gamma) * x1 + gamma * x2;
   return function.Evaluate(x2);
-}  // Optimize
-
+} // Optimize
 
 //! Derivative of the function along the search line.
 template<typename FunctionType>
@@ -94,7 +94,6 @@ double LineSearch::Derivative(FunctionType& function,
   function.Gradient(x0 + gamma * deltaX, gradient);
   return arma::dot(gradient, deltaX);
 }
-
 
 } // namespace optimization
 } // namespace mlpack

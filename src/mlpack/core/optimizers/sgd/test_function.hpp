@@ -32,7 +32,8 @@ class SGDTestFunction
   SGDTestFunction();
 
   /**
-  * Shuffle the order of function visitation.  This may be called by the optimizer.
+  * Shuffle the order of function visitation.  This may be called by the
+  * optimizer.
   */
   void Shuffle();
 

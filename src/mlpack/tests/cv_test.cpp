@@ -96,30 +96,34 @@ BOOST_AUTO_TEST_CASE(MulticlassClassificationMetricsTest)
 
   double microaveragedPrecision = double(1 + 1 + 3 + 4) / 12;
   BOOST_REQUIRE_CLOSE(Precision<Micro>::Evaluate(nb, data, labels),
-      microaveragedPrecision, 1e-5);
+                      microaveragedPrecision,
+                      1e-5);
 
   double microaveragedRecall = double(1 + 1 + 3 + 4) / 12;
-  BOOST_REQUIRE_CLOSE(Recall<Micro>::Evaluate(nb, data, labels),
-      microaveragedRecall, 1e-5);
+  BOOST_REQUIRE_CLOSE(
+      Recall<Micro>::Evaluate(nb, data, labels), microaveragedRecall, 1e-5);
 
-  double microaveragedF1 = 2 * microaveragedPrecision * microaveragedRecall /
-    (microaveragedPrecision + microaveragedRecall);
-  BOOST_REQUIRE_CLOSE(F1<Micro>::Evaluate(nb, data, labels),
-      microaveragedF1, 1e-5);
+  double microaveragedF1 = 2 * microaveragedPrecision * microaveragedRecall
+                           / (microaveragedPrecision + microaveragedRecall);
+  BOOST_REQUIRE_CLOSE(
+      F1<Micro>::Evaluate(nb, data, labels), microaveragedF1, 1e-5);
 
   double macroaveragedPrecision = (0.5 + 0.5 + 0.75 + 1.0) / 4;
   BOOST_REQUIRE_CLOSE(Precision<Macro>::Evaluate(nb, data, labels),
-      macroaveragedPrecision, 1e-5);
+                      macroaveragedPrecision,
+                      1e-5);
 
   double macroaveragedRecall = (0.5 + 1.0 / 3 + 1.0 + 1.0) / 4;
-  BOOST_REQUIRE_CLOSE(Recall<Macro>::Evaluate(nb, data, labels),
-      macroaveragedRecall, 1e-5);
+  BOOST_REQUIRE_CLOSE(
+      Recall<Macro>::Evaluate(nb, data, labels), macroaveragedRecall, 1e-5);
 
-  double macroaveragedF1 = (2 * 0.5 * 0.5 / (0.5 + 0.5) +
-      2 * 0.5 * (1.0 / 3) / (0.5 + (1.0 / 3)) + 2 * 0.75 * 1.0 / (0.75 + 1.0) +
-      2 * 1.0 * 1.0 / (1.0 + 1.0)) / 4;
-  BOOST_REQUIRE_CLOSE(F1<Macro>::Evaluate(nb, data, labels),
-      macroaveragedF1, 1e-5);
+  double macroaveragedF1 =
+      (2 * 0.5 * 0.5 / (0.5 + 0.5) + 2 * 0.5 * (1.0 / 3) / (0.5 + (1.0 / 3))
+       + 2 * 0.75 * 1.0 / (0.75 + 1.0)
+       + 2 * 1.0 * 1.0 / (1.0 + 1.0))
+      / 4;
+  BOOST_REQUIRE_CLOSE(
+      F1<Macro>::Evaluate(nb, data, labels), macroaveragedF1, 1e-5);
 }
 
 /**
@@ -152,7 +156,7 @@ BOOST_AUTO_TEST_CASE(MSEMatResponsesTest)
   arma::mat trainingResponses("1 2; 3 4");
 
   FFN<MeanSquaredError<>, ConstInitialization> ffn(MeanSquaredError<>(),
-    ConstInitialization(0));
+                                                   ConstInitialization(0));
   ffn.Add<Linear<>>(1, 2);
   ffn.Add<IdentityLayer<>>();
 
@@ -179,7 +183,7 @@ void CheckPredictionsType()
   using Extractor = MetaInfoExtractor<Class, PassedMT, PassedPT>;
   using ActualPT = typename Extractor::PredictionsType;
   static_assert(std::is_same<ExpectedPT, ActualPT>::value,
-      "Should be the same");
+                "Should be the same");
 }
 
 /**
@@ -195,10 +199,14 @@ BOOST_AUTO_TEST_CASE(PredictionsTypeTest)
   CheckPredictionsType<SoftmaxRegression, arma::Row<size_t>>();
   CheckPredictionsType<HoeffdingTree<>, arma::Row<size_t>, arma::mat>();
   CheckPredictionsType<HoeffdingTree<>, arma::Row<size_t>, arma::imat>();
-  CheckPredictionsType<DecisionTree<>, arma::Row<size_t>, arma::mat,
-      arma::Row<size_t>>();
-  CheckPredictionsType<DecisionTree<>, arma::Row<char>, arma::mat,
-      arma::Row<char>>();
+  CheckPredictionsType<DecisionTree<>,
+                       arma::Row<size_t>,
+                       arma::mat,
+                       arma::Row<size_t>>();
+  CheckPredictionsType<DecisionTree<>,
+                       arma::Row<char>,
+                       arma::mat,
+                       arma::Row<char>>();
 }
 
 /**
@@ -208,16 +216,19 @@ BOOST_AUTO_TEST_CASE(PredictionsTypeTest)
 BOOST_AUTO_TEST_CASE(SupportsWeightsTest)
 {
   static_assert(MetaInfoExtractor<LinearRegression>::SupportsWeights,
-      "Value should be true");
+                "Value should be true");
   static_assert(MetaInfoExtractor<DecisionTree<>>::SupportsWeights,
-      "Value should be true");
-  static_assert(MetaInfoExtractor<DecisionTree<>, arma::mat, arma::urowvec,
-      arma::Row<float>>::SupportsWeights, "Value should be true");
+                "Value should be true");
+  static_assert(MetaInfoExtractor<DecisionTree<>,
+                                  arma::mat,
+                                  arma::urowvec,
+                                  arma::Row<float>>::SupportsWeights,
+                "Value should be true");
 
   static_assert(!MetaInfoExtractor<LARS>::SupportsWeights,
-      "Value should be false");
+                "Value should be false");
   static_assert(!MetaInfoExtractor<LogisticRegression<>>::SupportsWeights,
-      "Value should be false");
+                "Value should be false");
 }
 
 template<typename Class,
@@ -230,7 +241,7 @@ void CheckWeightsType()
   using Extractor = MetaInfoExtractor<Class, PassedMT, PassedPT, PassedWT>;
   using ActualWT = typename Extractor::WeightsType;
   static_assert(std::is_same<ExpectedWT, ActualWT>::value,
-      "Should be the same");
+                "Should be the same");
 }
 
 /**
@@ -241,8 +252,11 @@ BOOST_AUTO_TEST_CASE(WeightsTypeTest)
 {
   CheckWeightsType<LinearRegression, arma::rowvec>();
   CheckWeightsType<DecisionTree<>, arma::rowvec>();
-  CheckWeightsType<DecisionTree<>, arma::Row<float>, arma::mat,
-      arma::Row<size_t>, arma::Row<float>>();
+  CheckWeightsType<DecisionTree<>,
+                   arma::Row<float>,
+                   arma::mat,
+                   arma::Row<size_t>,
+                   arma::Row<float>>();
 }
 
 /**
@@ -252,11 +266,11 @@ BOOST_AUTO_TEST_CASE(WeightsTypeTest)
 BOOST_AUTO_TEST_CASE(TakesDatasetInfoTest)
 {
   static_assert(MetaInfoExtractor<DecisionTree<>>::TakesDatasetInfo,
-      "Value should be true");
+                "Value should be true");
   static_assert(!MetaInfoExtractor<LinearRegression>::TakesDatasetInfo,
-      "Value should be false");
+                "Value should be false");
   static_assert(!MetaInfoExtractor<SoftmaxRegression>::TakesDatasetInfo,
-      "Value should be false");
+                "Value should be false");
 }
 
 /**
@@ -266,13 +280,13 @@ BOOST_AUTO_TEST_CASE(TakesDatasetInfoTest)
 BOOST_AUTO_TEST_CASE(TakesNumClassesTest)
 {
   static_assert(MetaInfoExtractor<DecisionTree<>>::TakesNumClasses,
-      "Value should be true");
+                "Value should be true");
   static_assert(MetaInfoExtractor<SoftmaxRegression>::TakesNumClasses,
-      "Value should be true");
+                "Value should be true");
   static_assert(!MetaInfoExtractor<LinearRegression>::TakesNumClasses,
-      "Value should be false");
+                "Value should be false");
   static_assert(!MetaInfoExtractor<LARS>::TakesNumClasses,
-      "Value should be false");
+                "Value should be false");
 }
 
 /**
@@ -283,8 +297,7 @@ BOOST_AUTO_TEST_CASE(SimpleCVAccuracyTest)
 {
   // Using the first half of data for training and the rest for validation.
   // The validation labels are 75% correct.
-  arma::mat data =
-    arma::mat("1 0; 2 0; 1 1; 2 1; 1 0; 2 0; 1 1; 2 1").t();
+  arma::mat data = arma::mat("1 0; 2 0; 1 1; 2 1; 1 0; 2 0; 1 1; 2 1").t();
   arma::Row<size_t> labels("0 0 1 1 0 1 1 1");
 
   SimpleCV<LogisticRegression<>, Accuracy> cv(0.5, data, labels);
@@ -315,18 +328,18 @@ BOOST_AUTO_TEST_CASE(SimpleCVMSETest)
   arma::rowvec allResponces = arma::join_rows(noiseResponses, responses);
 
   arma::rowvec weights = arma::join_rows(arma::zeros(noiseData.n_cols).t(),
-      arma::ones(data.n_cols).t());
+                                         arma::ones(data.n_cols).t());
 
-  SimpleCV<LinearRegression, MSE> weightedCV(0.3, allData, allResponces,
-      weights);
+  SimpleCV<LinearRegression, MSE> weightedCV(
+      0.3, allData, allResponces, weights);
 
   BOOST_REQUIRE_CLOSE(weightedCV.Evaluate(), expectedMSE, 1e-5);
 
   arma::rowvec weights2 = arma::join_rows(arma::zeros(noiseData.n_cols - 1).t(),
-      arma::ones(data.n_cols + 1).t());
+                                          arma::ones(data.n_cols + 1).t());
 
-  SimpleCV<LinearRegression, MSE> weightedCV2(0.3, allData, allResponces,
-      weights2);
+  SimpleCV<LinearRegression, MSE> weightedCV2(
+      0.3, allData, allResponces, weights2);
 
   BOOST_REQUIRE_GT(std::abs(weightedCV2.Evaluate() - expectedMSE), 1e-5);
 }
@@ -362,32 +375,60 @@ BOOST_AUTO_TEST_CASE(SimpleCVWithDTTest)
   size_t minimumLeafSize = 8;
 
   {
-    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
-        trainingData, trainingLabels, numClasses, minimumLeafSize);
-    SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data,
-        arma::join_rows(trainingLabels, predictedLabels), numClasses);
+    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(
+        testData, trainingData, trainingLabels, numClasses, minimumLeafSize);
+    SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(
+        0.5,
+        data,
+        arma::join_rows(trainingLabels, predictedLabels),
+        numClasses);
     BOOST_REQUIRE_CLOSE(cv.Evaluate(minimumLeafSize), 1.0, 1e-5);
   }
   {
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
-        trainingData, datasetInfo, trainingLabels, numClasses, minimumLeafSize);
-    SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data, datasetInfo,
-        arma::join_rows(trainingLabels, predictedLabels), numClasses);
+                                                            trainingData,
+                                                            datasetInfo,
+                                                            trainingLabels,
+                                                            numClasses,
+                                                            minimumLeafSize);
+    SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(
+        0.5,
+        data,
+        datasetInfo,
+        arma::join_rows(trainingLabels, predictedLabels),
+        numClasses);
     BOOST_REQUIRE_CLOSE(cv.Evaluate(minimumLeafSize), 1.0, 1e-5);
   }
   {
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
-        trainingData, trainingLabels, numClasses, weights, minimumLeafSize);
-    SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data,
-        arma::join_rows(trainingLabels, predictedLabels), numClasses, weights);
+                                                            trainingData,
+                                                            trainingLabels,
+                                                            numClasses,
+                                                            weights,
+                                                            minimumLeafSize);
+    SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(
+        0.5,
+        data,
+        arma::join_rows(trainingLabels, predictedLabels),
+        numClasses,
+        weights);
     BOOST_REQUIRE_CLOSE(cv.Evaluate(minimumLeafSize), 1.0, 1e-5);
   }
   {
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
-        trainingData, datasetInfo, trainingLabels, numClasses, weights,
-        minimumLeafSize);
-    SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data, datasetInfo,
-        arma::join_rows(trainingLabels, predictedLabels), numClasses, weights);
+                                                            trainingData,
+                                                            datasetInfo,
+                                                            trainingLabels,
+                                                            numClasses,
+                                                            weights,
+                                                            minimumLeafSize);
+    SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(
+        0.5,
+        data,
+        datasetInfo,
+        arma::join_rows(trainingLabels, predictedLabels),
+        numClasses,
+        weights);
     BOOST_REQUIRE_CLOSE(cv.Evaluate(minimumLeafSize), 1.0, 1e-5);
   }
 }
@@ -450,8 +491,10 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithWeightedLRTest)
   arma::rowvec responses("1 2 30 40");
   arma::rowvec weights("1 1 0 0");
 
-  KFoldCV<LinearRegression, MSE> cv(2, arma::join_rows(data, data),
-      arma::join_rows(responses, responses), arma::join_rows(weights, weights));
+  KFoldCV<LinearRegression, MSE> cv(2,
+                                    arma::join_rows(data, data),
+                                    arma::join_rows(responses, responses),
+                                    arma::join_rows(weights, weights));
   cv.Evaluate();
 
   arma::mat testData("3 4");
@@ -486,38 +529,38 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithDTTest)
   size_t minimumLeafSize = 8;
 
   {
-    KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(2, doubledData,
-        doubledLabels, numClasses);
+    KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(
+        2, doubledData, doubledLabels, numClasses);
     cv.Evaluate(minimumLeafSize);
-    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data, labels,
-        numClasses, minimumLeafSize);
+    arma::Row<size_t> predictedLabels =
+        PredictLabelsWithDT(data, data, labels, numClasses, minimumLeafSize);
     double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
     BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
   }
   {
-    KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(2, doubledData,
-        datasetInfo, doubledLabels, numClasses);
+    KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(
+        2, doubledData, datasetInfo, doubledLabels, numClasses);
     cv.Evaluate(minimumLeafSize);
-    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data,
-        datasetInfo, labels, numClasses, minimumLeafSize);
+    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(
+        data, data, datasetInfo, labels, numClasses, minimumLeafSize);
     double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
     BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
   }
   {
-    KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(2, doubledData,
-        doubledLabels, numClasses, doubledWeights);
+    KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(
+        2, doubledData, doubledLabels, numClasses, doubledWeights);
     cv.Evaluate(minimumLeafSize);
-    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data, labels,
-        numClasses, weights, minimumLeafSize);
+    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(
+        data, data, labels, numClasses, weights, minimumLeafSize);
     double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
     BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
   }
   {
-    KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(2, doubledData,
-        datasetInfo, doubledLabels, numClasses, doubledWeights);
+    KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(
+        2, doubledData, datasetInfo, doubledLabels, numClasses, doubledWeights);
     cv.Evaluate(minimumLeafSize);
-    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data,
-        datasetInfo, labels, numClasses, weights, minimumLeafSize);
+    arma::Row<size_t> predictedLabels = PredictLabelsWithDT(
+        data, data, datasetInfo, labels, numClasses, weights, minimumLeafSize);
     double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
     BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
   }

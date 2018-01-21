@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(PCADimensionTest)
 
   // Random input, new dimensionality of 3.
   SetInputParam("input", std::move(x));
-  SetInputParam("new_dimensionality", (int) 3);
+  SetInputParam("new_dimensionality", (int)3);
 
   mlpackMain();
 
@@ -64,9 +64,9 @@ BOOST_AUTO_TEST_CASE(PCAVarRetainTest)
   arma::mat x = arma::randu<arma::mat>(4, 5);
 
   SetInputParam("input", std::move(x));
-  SetInputParam("var_to_retain", (double) 1.0);
+  SetInputParam("var_to_retain", (double)1.0);
   SetInputParam("scale", true);
-  SetInputParam("new_dimensionality", (int) 3); // Should be ignored.
+  SetInputParam("new_dimensionality", (int)3); // Should be ignored.
 
   mlpackMain();
 
@@ -83,9 +83,9 @@ BOOST_AUTO_TEST_CASE(PCANoVarRetainTest)
   arma::mat x = arma::randu<arma::mat>(5, 5);
 
   SetInputParam("input", std::move(x));
-  SetInputParam("var_to_retain", (double) 0.01);
+  SetInputParam("var_to_retain", (double)0.01);
   SetInputParam("scale", true);
-  SetInputParam("new_dimensionality", (int) 3); // Should be ignored.
+  SetInputParam("new_dimensionality", (int)3); // Should be ignored.
 
   mlpackMain();
 
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(PCATooHighNewDimensionalityTest)
   arma::mat x = arma::randu<arma::mat>(5, 5);
 
   SetInputParam("input", std::move(x));
-  SetInputParam("new_dimensionality", (int) 7); // Invalid.
+  SetInputParam("new_dimensionality", (int)7); // Invalid.
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);

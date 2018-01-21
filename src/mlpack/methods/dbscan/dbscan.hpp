@@ -80,8 +80,7 @@ class DBSCAN
    * @param centroids Matrix in which centroids are stored.
    */
   template<typename MatType>
-  size_t Cluster(const MatType& data,
-                 arma::mat& centroids);
+  size_t Cluster(const MatType& data, arma::mat& centroids);
 
   /**
    * Performs DBSCAN clustering on the data, returning number of clusters
@@ -92,8 +91,7 @@ class DBSCAN
    * @param assignments Vector to store cluster assignments.
    */
   template<typename MatType>
-  size_t Cluster(const MatType& data,
-                 arma::Row<size_t>& assignments);
+  size_t Cluster(const MatType& data, arma::Row<size_t>& assignments);
 
   /**
    * Performs DBSCAN clustering on the data, returning number of clusters,
@@ -129,8 +127,10 @@ class DBSCAN
   PointSelectionPolicy pointSelector;
 
   /**
-   * Performs DBSCAN clustering on the data, returning the number of clusters and
-   * also the list of cluster assignments.  This searches each point iteratively,
+   * Performs DBSCAN clustering on the data, returning the number of clusters
+   * and
+   * also the list of cluster assignments.  This searches each point
+   * iteratively,
    * and can save on RAM usage.  It may be slower than the batch search with a
    * dual-tree algorithm.
    *
@@ -139,12 +139,12 @@ class DBSCAN
    * @param uf UnionFind structure that will be modified.
    */
   template<typename MatType>
-  void PointwiseCluster(const MatType& data,
-                        emst::UnionFind& uf);
+  void PointwiseCluster(const MatType& data, emst::UnionFind& uf);
 
   /**
    * Performs DBSCAN clustering on the data, returning number of clusters
-   * and also the list of cluster assignments.  This can perform search in batch,
+   * and also the list of cluster assignments.  This can perform search in
+   * batch,
    * so it is well suited for dual-tree or naive search.
    *
    * @param data Dataset to cluster.
@@ -152,8 +152,7 @@ class DBSCAN
    * @param uf UnionFind structure that will be modified.
    */
   template<typename MatType>
-  void BatchCluster(const MatType& data,
-                    emst::UnionFind& uf);
+  void BatchCluster(const MatType& data, emst::UnionFind& uf);
 };
 
 } // namespace dbscan

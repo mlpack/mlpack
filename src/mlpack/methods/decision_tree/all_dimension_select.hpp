@@ -20,7 +20,7 @@ class AllDimensionSelect
   /**
    * Construct the AllDimensionSelect object for the given number of dimensions.
    */
-  AllDimensionSelect(const size_t dimensions) : i(0), dimensions(dimensions) { }
+  AllDimensionSelect(const size_t dimensions) : i(0), dimensions(dimensions) {}
 
   /**
    * Get the first dimension to select from.

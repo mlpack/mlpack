@@ -24,8 +24,8 @@ template<typename MatType>
 LogisticRegression<MatType>::LogisticRegression(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
-    const double lambda) :
-    parameters(arma::rowvec(predictors.n_rows + 1, arma::fill::zeros)),
+    const double lambda)
+  : parameters(arma::rowvec(predictors.n_rows + 1, arma::fill::zeros)),
     lambda(lambda)
 {
   Train(predictors, responses);
@@ -36,18 +36,16 @@ LogisticRegression<MatType>::LogisticRegression(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
     const arma::rowvec& initialPoint,
-    const double lambda) :
-    parameters(initialPoint),
-    lambda(lambda)
+    const double lambda)
+  : parameters(initialPoint), lambda(lambda)
 {
   Train(predictors, responses);
 }
 
 template<typename MatType>
-LogisticRegression<MatType>::LogisticRegression(
-    const size_t dimensionality,
-    const double lambda) :
-    parameters(arma::rowvec(dimensionality + 1, arma::fill::zeros)),
+LogisticRegression<MatType>::LogisticRegression(const size_t dimensionality,
+                                                const double lambda)
+  : parameters(arma::rowvec(dimensionality + 1, arma::fill::zeros)),
     lambda(lambda)
 {
   // No training to do here.
@@ -59,8 +57,8 @@ LogisticRegression<MatType>::LogisticRegression(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
     OptimizerType& optimizer,
-    const double lambda) :
-    parameters(arma::rowvec(predictors.n_rows + 1, arma::fill::zeros)),
+    const double lambda)
+  : parameters(arma::rowvec(predictors.n_rows + 1, arma::fill::zeros)),
     lambda(lambda)
 {
   Train(predictors, responses, optimizer);
@@ -77,14 +75,12 @@ void LogisticRegression<MatType>::Train(const MatType& predictors,
 
 template<typename MatType>
 template<typename OptimizerType>
-void LogisticRegression<MatType>::Train(
-    const MatType& predictors,
-    const arma::Row<size_t>& responses,
-    OptimizerType& optimizer)
+void LogisticRegression<MatType>::Train(const MatType& predictors,
+                                        const arma::Row<size_t>& responses,
+                                        OptimizerType& optimizer)
 {
-  LogisticRegressionFunction<MatType> errorFunction(predictors,
-                                                    responses,
-                                                    lambda);
+  LogisticRegressionFunction<MatType> errorFunction(
+      predictors, responses, lambda);
   errorFunction.InitialPoint() = parameters;
 
   Timer::Start("logistic_regression_optimization");
@@ -92,9 +88,8 @@ void LogisticRegression<MatType>::Train(
   Timer::Stop("logistic_regression_optimization");
 
   Log::Info << "LogisticRegression::LogisticRegression(): final objective of "
-      << "trained model is " << out << "." << std::endl;
+            << "trained model is " << out << "." << std::endl;
 }
-
 
 template<typename MatType>
 void LogisticRegression<MatType>::Predict(const MatType& predictors,
@@ -106,13 +101,15 @@ void LogisticRegression<MatType>::Predict(const MatType& predictors,
 
 template<typename MatType>
 template<typename VecType>
-size_t LogisticRegression<MatType>::Classify(const VecType& point,
-                                             const double decisionBoundary)
-    const
+size_t
+LogisticRegression<MatType>::Classify(const VecType& point,
+                                      const double decisionBoundary) const
 {
-  return size_t(1.0 / (1.0 + std::exp(-parameters(0) - arma::dot(point,
-      parameters.tail_cols(parameters.n_elem - 1)))) +
-      (1.0 - decisionBoundary));
+  return size_t(1.0 / (1.0 + std::exp(-parameters(0)
+                                      - arma::dot(point,
+                                                  parameters.tail_cols(
+                                                      parameters.n_elem - 1))))
+                + (1.0 - decisionBoundary));
 }
 
 template<typename MatType>
@@ -122,10 +119,11 @@ void LogisticRegression<MatType>::Classify(const MatType& dataset,
 {
   // Calculate sigmoid function for each point.  The (1.0 - decisionBoundary)
   // term correctly sets an offset so that floor() returns 0 or 1 correctly.
-  labels = arma::conv_to<arma::Row<size_t>>::from((1.0 /
-      (1.0 + arma::exp(-parameters(0) -
-      parameters.tail_cols(parameters.n_elem - 1) * dataset))) +
-      (1.0 - decisionBoundary));
+  labels = arma::conv_to<arma::Row<size_t>>::from(
+      (1.0 / (1.0 + arma::exp(-parameters(0)
+                              - parameters.tail_cols(parameters.n_elem - 1)
+                                    * dataset)))
+      + (1.0 - decisionBoundary));
 }
 
 template<typename MatType>
@@ -135,19 +133,19 @@ void LogisticRegression<MatType>::Classify(const MatType& dataset,
   // Set correct size of output matrix.
   probabilities.set_size(2, dataset.n_cols);
 
-  probabilities.row(1) = 1.0 / (1.0 + arma::exp(-parameters(0) -
-      parameters.tail_cols(parameters.n_elem - 1) * dataset));
+  probabilities.row(1) =
+      1.0 / (1.0 + arma::exp(-parameters(0)
+                             - parameters.tail_cols(parameters.n_elem - 1)
+                                   * dataset));
   probabilities.row(0) = 1.0 - probabilities.row(1);
 }
 
 template<typename MatType>
 double LogisticRegression<MatType>::ComputeError(
-    const MatType& predictors,
-    const arma::Row<size_t>& responses) const
+    const MatType& predictors, const arma::Row<size_t>& responses) const
 {
   // Construct a new error function.
-  LogisticRegressionFunction<> newErrorFunction(predictors, responses,
-      lambda);
+  LogisticRegressionFunction<> newErrorFunction(predictors, responses, lambda);
 
   return newErrorFunction.Evaluate(parameters);
 }
@@ -170,17 +168,16 @@ double LogisticRegression<MatType>::ComputeAccuracy(
       count++;
   }
 
-  return (double) (count * 100) / responses.n_elem;
+  return (double)(count * 100) / responses.n_elem;
 }
 
 template<typename MatType>
 template<typename Archive>
-void LogisticRegression<MatType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+void LogisticRegression<MatType>::serialize(Archive& ar,
+                                            const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(parameters);
-  ar & BOOST_SERIALIZATION_NVP(lambda);
+  ar& BOOST_SERIALIZATION_NVP(parameters);
+  ar& BOOST_SERIALIZATION_NVP(lambda);
 }
 
 } // namespace regression

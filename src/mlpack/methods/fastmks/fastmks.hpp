@@ -53,13 +53,12 @@ namespace fastmks /** Fast max-kernel search. */ {
  * @tparam TreeType Type of tree to run FastMKS with; it must satisfy the
  *     TreeType policy API.
  */
-template<
-    typename KernelType,
-    typename MatType = arma::mat,
-    template<typename TreeMetricType,
-             typename TreeStatType,
-             typename TreeMatType> class TreeType = tree::StandardCoverTree
->
+template<typename KernelType,
+         typename MatType = arma::mat,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType =
+             tree::StandardCoverTree>
 class FastMKS
 {
  public:
@@ -115,8 +114,7 @@ class FastMKS
    * @param single Whether or not to run single-tree search.
    * @param naive Whether or not to run brute-force (naive) search.
    */
-  FastMKS(Tree* referenceTree,
-          const bool singleMode = false);
+  FastMKS(Tree* referenceTree, const bool singleMode = false);
 
   /**
    * Copy the parameters of the given model.
@@ -229,9 +227,7 @@ class FastMKS
    * @param indices Matrix to store resulting indices of max-kernel search in.
    * @param products Matrix to store resulting max-kernel values in.
    */
-  void Search(const size_t k,
-              arma::Mat<size_t>& indices,
-              arma::mat& products);
+  void Search(const size_t k, arma::Mat<size_t>& indices, arma::mat& products);
 
   //! Get the inner-product metric induced by the given kernel.
   const metric::IPMetric<KernelType>& Metric() const { return metric; }
@@ -275,7 +271,8 @@ class FastMKS
   typedef std::pair<double, size_t> Candidate;
 
   //! Compare two candidates based on the value.
-  struct CandidateCmp {
+  struct CandidateCmp
+  {
     bool operator()(const Candidate& c1, const Candidate& c2)
     {
       return c1.first > c2.first;
@@ -283,8 +280,8 @@ class FastMKS
   };
 
   //! Use a priority queue to represent the list of candidate points.
-  typedef std::priority_queue<Candidate, std::vector<Candidate>,
-      CandidateCmp> CandidateList;
+  typedef std::priority_queue<Candidate, std::vector<Candidate>, CandidateCmp>
+      CandidateList;
 };
 
 } // namespace fastmks

@@ -15,47 +15,37 @@ using namespace mlpack::decision_stump;
 using namespace mlpack::perceptron;
 
 //! Create an empty AdaBoost model.
-AdaBoostModel::AdaBoostModel() :
-    weakLearnerType(0),
-    dsBoost(NULL),
-    pBoost(NULL),
-    dimensionality(0)
+AdaBoostModel::AdaBoostModel()
+  : weakLearnerType(0), dsBoost(NULL), pBoost(NULL), dimensionality(0)
 {
   // Nothing to do.
 }
 
 //! Create the AdaBoost model with the given mappings and type.
-AdaBoostModel::AdaBoostModel(
-    const Col<size_t>& mappings,
-    const size_t weakLearnerType) :
-    mappings(mappings),
-    weakLearnerType(weakLearnerType),
-    dsBoost(NULL),
-    pBoost(NULL),
-    dimensionality(0)
+AdaBoostModel::AdaBoostModel(const Col<size_t>& mappings,
+                             const size_t weakLearnerType)
+  : mappings(mappings), weakLearnerType(weakLearnerType), dsBoost(NULL),
+    pBoost(NULL), dimensionality(0)
 {
   // Nothing to do.
 }
 
 //! Copy constructor.
-AdaBoostModel::AdaBoostModel(const AdaBoostModel& other) :
-    mappings(other.mappings),
-    weakLearnerType(other.weakLearnerType),
-    dsBoost(other.dsBoost == NULL ? NULL :
-        new AdaBoost<DecisionStump<>>(*other.dsBoost)),
-    pBoost(other.pBoost == NULL ? NULL :
-        new AdaBoost<Perceptron<>>(*other.pBoost)),
+AdaBoostModel::AdaBoostModel(const AdaBoostModel& other)
+  : mappings(other.mappings), weakLearnerType(other.weakLearnerType),
+    dsBoost(other.dsBoost == NULL ? NULL : new AdaBoost<DecisionStump<>>(
+                                               *other.dsBoost)),
+    pBoost(other.pBoost == NULL ? NULL
+                                : new AdaBoost<Perceptron<>>(*other.pBoost)),
     dimensionality(other.dimensionality)
 {
   // Nothing to do.
 }
 
 //! Move constructor.
-AdaBoostModel::AdaBoostModel(AdaBoostModel&& other) :
-    mappings(std::move(other.mappings)),
-    weakLearnerType(other.weakLearnerType),
-    dsBoost(other.dsBoost),
-    pBoost(other.pBoost),
+AdaBoostModel::AdaBoostModel(AdaBoostModel&& other)
+  : mappings(std::move(other.mappings)), weakLearnerType(other.weakLearnerType),
+    dsBoost(other.dsBoost), pBoost(other.pBoost),
     dimensionality(other.dimensionality)
 {
   other.weakLearnerType = 0;
@@ -71,12 +61,13 @@ AdaBoostModel& AdaBoostModel::operator=(const AdaBoostModel& other)
   weakLearnerType = other.weakLearnerType;
 
   delete dsBoost;
-  dsBoost = (other.dsBoost == NULL) ? NULL :
-      new AdaBoost<DecisionStump<>>(*other.dsBoost);
+  dsBoost = (other.dsBoost == NULL)
+                ? NULL
+                : new AdaBoost<DecisionStump<>>(*other.dsBoost);
 
   delete pBoost;
-  pBoost = (other.pBoost == NULL) ? NULL :
-      new AdaBoost<Perceptron<>>(*other.pBoost);
+  pBoost =
+      (other.pBoost == NULL) ? NULL : new AdaBoost<Perceptron<>>(*other.pBoost);
 
   dimensionality = other.dimensionality;
 
@@ -102,14 +93,14 @@ void AdaBoostModel::Train(const mat& data,
     delete dsBoost;
 
     DecisionStump<> ds(data, labels, max(labels) + 1);
-    dsBoost = new AdaBoost<DecisionStump<>>(data, labels, numClasses, ds,
-        iterations, tolerance);
+    dsBoost = new AdaBoost<DecisionStump<>>(
+        data, labels, numClasses, ds, iterations, tolerance);
   }
   else if (weakLearnerType == WeakLearnerTypes::PERCEPTRON)
   {
     Perceptron<> p(data, labels, max(labels) + 1);
-    pBoost = new AdaBoost<Perceptron<>>(data, labels, numClasses, p, iterations,
-        tolerance);
+    pBoost = new AdaBoost<Perceptron<>>(
+        data, labels, numClasses, p, iterations, tolerance);
   }
 }
 

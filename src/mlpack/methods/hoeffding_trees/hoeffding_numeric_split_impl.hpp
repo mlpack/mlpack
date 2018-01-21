@@ -21,12 +21,10 @@ template<typename FitnessFunction, typename ObservationType>
 HoeffdingNumericSplit<FitnessFunction, ObservationType>::HoeffdingNumericSplit(
     const size_t numClasses,
     const size_t bins,
-    const size_t observationsBeforeBinning) :
-    observations(observationsBeforeBinning - 1),
-    labels(observationsBeforeBinning - 1),
-    bins(bins),
-    observationsBeforeBinning(observationsBeforeBinning),
-    samplesSeen(0),
+    const size_t observationsBeforeBinning)
+  : observations(observationsBeforeBinning - 1),
+    labels(observationsBeforeBinning - 1), bins(bins),
+    observationsBeforeBinning(observationsBeforeBinning), samplesSeen(0),
     sufficientStatistics(arma::zeros<arma::Mat<size_t>>(numClasses, bins))
 {
   observations.zeros();
@@ -35,13 +33,10 @@ HoeffdingNumericSplit<FitnessFunction, ObservationType>::HoeffdingNumericSplit(
 
 template<typename FitnessFunction, typename ObservationType>
 HoeffdingNumericSplit<FitnessFunction, ObservationType>::HoeffdingNumericSplit(
-    const size_t numClasses,
-    const HoeffdingNumericSplit& other) :
-    observations(other.observationsBeforeBinning - 1),
-    labels(other.observationsBeforeBinning - 1),
-    bins(other.bins),
-    observationsBeforeBinning(other.observationsBeforeBinning),
-    samplesSeen(0),
+    const size_t numClasses, const HoeffdingNumericSplit& other)
+  : observations(other.observationsBeforeBinning - 1),
+    labels(other.observationsBeforeBinning - 1), bins(other.bins),
+    observationsBeforeBinning(other.observationsBeforeBinning), samplesSeen(0),
     sufficientStatistics(arma::zeros<arma::Mat<size_t>>(numClasses, bins))
 {
   observations.zeros();
@@ -50,8 +45,7 @@ HoeffdingNumericSplit<FitnessFunction, ObservationType>::HoeffdingNumericSplit(
 
 template<typename FitnessFunction, typename ObservationType>
 void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Train(
-    ObservationType value,
-    const size_t label)
+    ObservationType value, const size_t label)
 {
   if (samplesSeen < observationsBeforeBinning - 1)
   {
@@ -117,8 +111,7 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::
 
 template<typename FitnessFunction, typename ObservationType>
 void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Split(
-    arma::Col<size_t>& childMajorities,
-    SplitInfo& splitInfo) const
+    arma::Col<size_t>& childMajorities, SplitInfo& splitInfo) const
 {
   childMajorities.set_size(sufficientStatistics.n_cols);
   for (size_t i = 0; i < sufficientStatistics.n_cols; ++i)
@@ -133,8 +126,8 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Split(
 }
 
 template<typename FitnessFunction, typename ObservationType>
-size_t HoeffdingNumericSplit<FitnessFunction, ObservationType>::
-    MajorityClass() const
+size_t
+HoeffdingNumericSplit<FitnessFunction, ObservationType>::MajorityClass() const
 {
   // If we haven't yet determined the bins, we must calculate this by hand.
   if (samplesSeen < observationsBeforeBinning)
@@ -162,8 +155,9 @@ size_t HoeffdingNumericSplit<FitnessFunction, ObservationType>::
 }
 
 template<typename FitnessFunction, typename ObservationType>
-double HoeffdingNumericSplit<FitnessFunction, ObservationType>::
-    MajorityProbability() const
+double
+HoeffdingNumericSplit<FitnessFunction, ObservationType>::MajorityProbability()
+    const
 {
   // If we haven't yet determined the bins, we must calculate this by hand.
   if (samplesSeen < observationsBeforeBinning)
@@ -189,18 +183,17 @@ double HoeffdingNumericSplit<FitnessFunction, ObservationType>::
 template<typename FitnessFunction, typename ObservationType>
 template<typename Archive>
 void HoeffdingNumericSplit<FitnessFunction, ObservationType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(samplesSeen);
-  ar & BOOST_SERIALIZATION_NVP(observationsBeforeBinning);
-  ar & BOOST_SERIALIZATION_NVP(bins);
+  ar& BOOST_SERIALIZATION_NVP(samplesSeen);
+  ar& BOOST_SERIALIZATION_NVP(observationsBeforeBinning);
+  ar& BOOST_SERIALIZATION_NVP(bins);
 
   if (samplesSeen >= observationsBeforeBinning)
   {
     // The binning has happened, so we only need to save the resulting bins.
-    ar & BOOST_SERIALIZATION_NVP(splitPoints);
-    ar & BOOST_SERIALIZATION_NVP(sufficientStatistics);
+    ar& BOOST_SERIALIZATION_NVP(splitPoints);
+    ar& BOOST_SERIALIZATION_NVP(sufficientStatistics);
 
     if (Archive::is_loading::value)
     {
@@ -223,9 +216,9 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::serialize(
     size_t numClasses;
     if (Archive::is_saving::value)
       numClasses = sufficientStatistics.n_rows;
-    ar & BOOST_SERIALIZATION_NVP(numClasses);
-    ar & BOOST_SERIALIZATION_NVP(observations);
-    ar & BOOST_SERIALIZATION_NVP(labels);
+    ar& BOOST_SERIALIZATION_NVP(numClasses);
+    ar& BOOST_SERIALIZATION_NVP(observations);
+    ar& BOOST_SERIALIZATION_NVP(labels);
 
     if (Archive::is_loading::value)
     {

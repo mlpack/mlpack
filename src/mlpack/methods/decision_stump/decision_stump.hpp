@@ -167,8 +167,7 @@ class DecisionStump
    *      on which we now train the decision stump.
    */
   template<typename VecType>
-  void TrainOnDim(const VecType& dimension,
-                  const arma::Row<size_t>& labels);
+  void TrainOnDim(const VecType& dimension, const arma::Row<size_t>& labels);
 
   /**
    * After the "split" matrix has been set up, merge ranges with identical class
@@ -203,8 +202,7 @@ class DecisionStump
    *      (otherwise they are ignored).
    */
   template<bool UseWeights, typename VecType, typename WeightVecType>
-  double CalculateEntropy(const VecType& labels,
-                          const WeightVecType& weights);
+  double CalculateEntropy(const VecType& labels, const WeightVecType& weights);
 
   /**
    * Train the decision stump on the given data and labels.

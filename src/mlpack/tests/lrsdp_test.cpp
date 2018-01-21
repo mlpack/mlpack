@@ -56,8 +56,7 @@ void CreateLovaszThetaInitialPoint(const arma::mat& edges,
  * is all that is necessary to set up the problem.  A matrix which will contain
  * initial point coordinates should be given also.
  */
-void SetupLovaszTheta(const arma::mat& edges,
-                      LRSDP<SDP<arma::mat>>& lovasz)
+void SetupLovaszTheta(const arma::mat& edges, LRSDP<SDP<arma::mat>>& lovasz)
 {
   // Get the number of vertices in the problem.
   const size_t vertices = max(max(edges)) + 1;
@@ -126,8 +125,7 @@ BOOST_AUTO_TEST_CASE(Johnson844LovaszThetaSDP)
 /**
  * Create an unweighted graph laplacian from the edges.
  */
-void CreateSparseGraphLaplacian(const arma::mat& edges,
-                                arma::sp_mat& laplacian)
+void CreateSparseGraphLaplacian(const arma::mat& edges, arma::sp_mat& laplacian)
 {
   // Get the number of vertices in the problem.
   const size_t vertices = max(max(edges)) + 1;
@@ -265,14 +263,13 @@ BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
   for (size_t i = 0; i < p; ++i)
   {
     const arma::mat Ai = arma::reshape(A.row(i), n, m);
-    const double measurement =
-        arma::dot(trans(Ai), rrt(blockRows, blockCols));
+    const double measurement = arma::dot(trans(Ai), rrt(blockRows, blockCols));
     BOOST_REQUIRE_CLOSE(measurement, b(i), 0.05);
   }
 
   // check matrix recovery
-  const double err = arma::norm(Xorig - rrt(blockRows, blockCols), "fro") /
-      arma::norm(Xorig, "fro");
+  const double err = arma::norm(Xorig - rrt(blockRows, blockCols), "fro")
+                     / arma::norm(Xorig, "fro");
   BOOST_REQUIRE_SMALL(err, 0.05);
 }
 

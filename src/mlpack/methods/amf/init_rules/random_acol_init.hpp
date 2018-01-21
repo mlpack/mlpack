@@ -45,21 +45,19 @@ class RandomAcolInitialization
 {
  public:
   // Empty constructor required for the InitializeRule template
-  RandomAcolInitialization()
-  { }
+  RandomAcolInitialization() {}
 
   template<typename MatType>
-  inline static void Initialize(const MatType& V,
-                                const size_t r,
-                                arma::mat& W,
-                                arma::mat& H)
+  inline static void
+  Initialize(const MatType& V, const size_t r, arma::mat& W, arma::mat& H)
   {
     const size_t n = V.n_rows;
     const size_t m = V.n_cols;
 
     if (columnsToAverage > m)
     {
-      Log::Warn << "Number of random columns (columnsToAverage) is more than "
+      Log::Warn
+          << "Number of random columns (columnsToAverage) is more than "
           << "the number of columns available in the V matrix; weird results "
           << "may ensue!" << std::endl;
     }
@@ -85,7 +83,9 @@ class RandomAcolInitialization
 
   //! Serialize the object (in this case, there is nothing to serialize).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const unsigned int /* version */)
+  {
+  }
 };
 
 } // namespace amf

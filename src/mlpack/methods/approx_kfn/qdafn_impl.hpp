@@ -35,9 +35,8 @@ QDAFN<MatType>::QDAFN(const size_t l, const size_t m) : l(l), m(m)
 template<typename MatType>
 QDAFN<MatType>::QDAFN(const MatType& referenceSet,
                       const size_t l,
-                      const size_t m) :
-    l(l),
-    m(m)
+                      const size_t m)
+  : l(l), m(m)
 {
   if (l == 0)
     throw std::invalid_argument("QDAFN::QDAFN(): l must be greater than 0!");
@@ -98,7 +97,7 @@ void QDAFN<MatType>::Search(const MatType& querySet,
 {
   if (k > m)
     throw std::invalid_argument("QDAFN::Search(): requested k is greater than "
-        "value of m!");
+                                "value of m!");
 
   neighbors.set_size(k, querySet.n_cols);
   neighbors.fill(size_t() - 1);
@@ -113,8 +112,8 @@ void QDAFN<MatType>::Search(const MatType& querySet,
     std::priority_queue<std::pair<double, size_t>> queue;
     for (size_t i = 0; i < l; ++i)
     {
-      const double val = sValues(0, i) - arma::dot(querySet.col(q),
-          lines.col(i));
+      const double val =
+          sValues(0, i) - arma::dot(querySet.col(q), lines.col(i));
       queue.push(std::make_pair(val, i));
     }
 
@@ -123,10 +122,10 @@ void QDAFN<MatType>::Search(const MatType& querySet,
     arma::Col<size_t> tableLocations = arma::zeros<arma::Col<size_t>>(l);
 
     // Now that the queue is initialized, iterate over m elements.
-    std::vector<std::pair<double, size_t>> v(k, std::make_pair(-1.0,
-        size_t(-1)));
-    std::priority_queue<std::pair<double, size_t>>
-        resultsQueue(std::less<std::pair<double, size_t>>(), std::move(v));
+    std::vector<std::pair<double, size_t>> v(k,
+                                             std::make_pair(-1.0, size_t(-1)));
+    std::priority_queue<std::pair<double, size_t>> resultsQueue(
+        std::less<std::pair<double, size_t>>(), std::move(v));
     for (size_t i = 0; i < m; ++i)
     {
       std::pair<size_t, double> p = queue.top();
@@ -152,8 +151,8 @@ void QDAFN<MatType>::Search(const MatType& querySet,
       if (i < m - 1)
       {
         tableLocations[p.second]++;
-        const double val = p.first - sValues(tableIndex, p.second) +
-            sValues(tableIndex + 1, p.second);
+        const double val = p.first - sValues(tableIndex, p.second)
+                           + sValues(tableIndex + 1, p.second);
 
         queue.push(std::make_pair(val, p.second));
       }
@@ -173,15 +172,15 @@ template<typename MatType>
 template<typename Archive>
 void QDAFN<MatType>::serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(l);
-  ar & BOOST_SERIALIZATION_NVP(m);
-  ar & BOOST_SERIALIZATION_NVP(lines);
-  ar & BOOST_SERIALIZATION_NVP(projections);
-  ar & BOOST_SERIALIZATION_NVP(sIndices);
-  ar & BOOST_SERIALIZATION_NVP(sValues);
+  ar& BOOST_SERIALIZATION_NVP(l);
+  ar& BOOST_SERIALIZATION_NVP(m);
+  ar& BOOST_SERIALIZATION_NVP(lines);
+  ar& BOOST_SERIALIZATION_NVP(projections);
+  ar& BOOST_SERIALIZATION_NVP(sIndices);
+  ar& BOOST_SERIALIZATION_NVP(sValues);
   if (Archive::is_loading::value)
     candidateSet.clear();
-  ar & BOOST_SERIALIZATION_NVP(candidateSet);
+  ar& BOOST_SERIALIZATION_NVP(candidateSet);
 }
 
 } // namespace neighbor

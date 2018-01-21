@@ -30,9 +30,8 @@ template<typename MatType>
 DecisionStump<MatType>::DecisionStump(const MatType& data,
                                       const arma::Row<size_t>& labels,
                                       const size_t numClasses,
-                                      const size_t bucketSize) :
-    numClasses(numClasses),
-    bucketSize(bucketSize)
+                                      const size_t bucketSize)
+  : numClasses(numClasses), bucketSize(bucketSize)
 {
   arma::rowvec weights;
   Train<false>(data, labels, weights);
@@ -42,12 +41,8 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
  * Empty constructor.
  */
 template<typename MatType>
-DecisionStump<MatType>::DecisionStump() :
-    numClasses(1),
-    bucketSize(0),
-    splitDimension(0),
-    split(1),
-    binLabels(1)
+DecisionStump<MatType>::DecisionStump()
+  : numClasses(1), bucketSize(0), splitDimension(0), split(1), binLabels(1)
 {
   split[0] = DBL_MAX;
   binLabels[0] = 0;
@@ -186,9 +181,8 @@ DecisionStump<MatType>::DecisionStump(const DecisionStump<>& other,
                                       const MatType& data,
                                       const arma::Row<size_t>& labels,
                                       const size_t numClasses,
-                                      const arma::rowvec& weights) :
-    numClasses(numClasses),
-    bucketSize(other.bucketSize)
+                                      const arma::rowvec& weights)
+  : numClasses(numClasses), bucketSize(other.bucketSize)
 {
   Train<true>(data, labels, weights);
 }
@@ -203,11 +197,11 @@ void DecisionStump<MatType>::serialize(Archive& ar,
 {
   // This is straightforward; just serialize all of the members of the class.
   // None need special handling.
-  ar & BOOST_SERIALIZATION_NVP(numClasses);
-  ar & BOOST_SERIALIZATION_NVP(bucketSize);
-  ar & BOOST_SERIALIZATION_NVP(splitDimension);
-  ar & BOOST_SERIALIZATION_NVP(split);
-  ar & BOOST_SERIALIZATION_NVP(binLabels);
+  ar& BOOST_SERIALIZATION_NVP(numClasses);
+  ar& BOOST_SERIALIZATION_NVP(bucketSize);
+  ar& BOOST_SERIALIZATION_NVP(splitDimension);
+  ar& BOOST_SERIALIZATION_NVP(split);
+  ar& BOOST_SERIALIZATION_NVP(binLabels);
 }
 
 /**
@@ -220,10 +214,10 @@ void DecisionStump<MatType>::serialize(Archive& ar,
  */
 template<typename MatType>
 template<bool UseWeights, typename VecType>
-double DecisionStump<MatType>::SetupSplitDimension(
-    const VecType& dimension,
-    const arma::Row<size_t>& labels,
-    const arma::rowvec& weights)
+double
+DecisionStump<MatType>::SetupSplitDimension(const VecType& dimension,
+                                            const arma::Row<size_t>& labels,
+                                            const arma::rowvec& weights)
 {
   size_t i, count, begin, end;
   double entropy = 0.0;
@@ -260,10 +254,11 @@ double DecisionStump<MatType>::SetupSplitDimension(
       end = i;
 
       // Use ratioEl to calculate the ratio of elements in this split.
-      const double ratioEl = ((double) (end - begin + 1) / sortedLabels.n_elem);
+      const double ratioEl = ((double)(end - begin + 1) / sortedLabels.n_elem);
 
       entropy += ratioEl * CalculateEntropy<UseWeights>(
-          sortedLabels.subvec(begin, end), sortedWeights.subvec(begin, end));
+                               sortedLabels.subvec(begin, end),
+                               sortedWeights.subvec(begin, end));
       i++;
     }
     else if (sortedLabels(i) != sortedLabels(i + 1))
@@ -287,10 +282,11 @@ double DecisionStump<MatType>::SetupSplitDimension(
         begin = i - count + 1;
         end = i;
       }
-      const double ratioEl = ((double) (end - begin + 1) / sortedLabels.n_elem);
+      const double ratioEl = ((double)(end - begin + 1) / sortedLabels.n_elem);
 
       entropy += ratioEl * CalculateEntropy<UseWeights>(
-          sortedLabels.subvec(begin, end), sortedWeights.subvec(begin, end));
+                               sortedLabels.subvec(begin, end),
+                               sortedWeights.subvec(begin, end));
 
       i = end + 1;
       count = 0;
@@ -460,9 +456,8 @@ int DecisionStump<MatType>::IsDistinct(const VecType& featureRow)
  */
 template<typename MatType>
 template<bool UseWeights, typename VecType, typename WeightVecType>
-double DecisionStump<MatType>::CalculateEntropy(
-    const VecType& labels,
-    const WeightVecType& weights)
+double DecisionStump<MatType>::CalculateEntropy(const VecType& labels,
+                                                const WeightVecType& weights)
 {
   double entropy = 0.0;
   size_t j;
@@ -484,7 +479,7 @@ double DecisionStump<MatType>::CalculateEntropy(
 
     for (j = 0; j < numClasses; j++)
     {
-      const double p1 = ((double) numElem(j) / accWeight);
+      const double p1 = ((double)numElem(j) / accWeight);
 
       // Instead of using log2(), which is C99 and may not exist on some
       // compilers, use std::log(), then use the change-of-base formula to make
@@ -499,7 +494,7 @@ double DecisionStump<MatType>::CalculateEntropy(
 
     for (j = 0; j < numClasses; j++)
     {
-      const double p1 = ((double) numElem(j) / labels.n_elem);
+      const double p1 = ((double)numElem(j) / labels.n_elem);
 
       // Instead of using log2(), which is C99 and may not exist on some
       // compilers, use std::log(), then use the change-of-base formula to make

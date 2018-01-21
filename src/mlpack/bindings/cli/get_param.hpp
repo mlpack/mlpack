@@ -21,12 +21,13 @@ namespace cli {
  * @param d ParamData object to get parameter value from.
  */
 template<typename T>
-T& GetParam(
-    util::ParamData& d,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0)
+T& GetParam(util::ParamData& d,
+            const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
+            const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
+            const typename boost::
+                disable_if<std::is_same<T,
+                                        std::tuple<mlpack::data::DatasetInfo,
+                                                   arma::mat>>>::type* = 0)
 {
   // No mapping is needed, so just cast it directly.
   return *boost::any_cast<T>(&d.value);
@@ -38,9 +39,8 @@ T& GetParam(
  * @param d ParamData object to get parameter value from.
  */
 template<typename T>
-T& GetParam(
-    util::ParamData& d,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+T& GetParam(util::ParamData& d,
+            const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
 {
   // If the matrix is an input matrix, we have to load the matrix.  'value'
   // contains the filename.  It's possible we could load empty matrices many
@@ -69,10 +69,11 @@ T& GetParam(
  * @param d ParamData object to get parameter value from.
  */
 template<typename T>
-T& GetParam(
-    util::ParamData& d,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0)
+T& GetParam(util::ParamData& d,
+            const typename boost::
+                enable_if<std::is_same<T,
+                                       std::tuple<mlpack::data::DatasetInfo,
+                                                  arma::mat>>>::type* = 0)
 {
   // If this is an input parameter, we need to load both the matrix and the
   // dataset info.
@@ -95,10 +96,9 @@ T& GetParam(
  * @param d ParamData object to get parameter value from.
  */
 template<typename T>
-T& GetParam(
-    util::ParamData& d,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+T& GetParam(util::ParamData& d,
+            const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
+            const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
 {
   // If the model is an input model, we have to load it from file.  'value'
   // contains the filename.
@@ -127,7 +127,7 @@ template<typename T>
 void GetParam(const util::ParamData& d, const void* /* input */, void* output)
 {
   // Cast to the correct type.
-  *((T**) output) = &GetParam<T>(const_cast<util::ParamData&>(d));
+  *((T**)output) = &GetParam<T>(const_cast<util::ParamData&>(d));
 }
 
 } // namespace cli

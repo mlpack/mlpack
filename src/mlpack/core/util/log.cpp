@@ -12,7 +12,7 @@
 #include "log.hpp"
 
 #ifdef HAS_BFD_DL
-  #include "backtrace.hpp"
+#include "backtrace.hpp"
 #endif
 
 using namespace mlpack;
@@ -35,6 +35,5 @@ void Log::Assert(bool condition, const std::string& message)
   }
 }
 #else
-void Log::Assert(bool /* condition */, const std::string& /* message */)
-{ }
+void Log::Assert(bool /* condition */, const std::string& /* message */) {}
 #endif

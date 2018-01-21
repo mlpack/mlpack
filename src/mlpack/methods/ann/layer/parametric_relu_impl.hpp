@@ -22,8 +22,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-PReLU<InputDataType, OutputDataType>::PReLU(
-    const double userAlpha) : userAlpha(userAlpha)
+PReLU<InputDataType, OutputDataType>::PReLU(const double userAlpha)
+  : userAlpha(userAlpha)
 {
   alpha.set_size(1, 1);
   alpha(0) = userAlpha;
@@ -38,16 +38,17 @@ void PReLU<InputDataType, OutputDataType>::Reset()
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void PReLU<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+void PReLU<InputDataType, OutputDataType>::Forward(const InputType&& input,
+                                                   OutputType&& output)
 {
   Fn(input, output);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
-void PReLU<InputDataType, OutputDataType>::Backward(
-    const DataType&& input, DataType&& gy, DataType&& g)
+void PReLU<InputDataType, OutputDataType>::Backward(const DataType&& input,
+                                                    DataType&& gy,
+                                                    DataType&& g)
 {
   DataType derivative;
   Deriv(input, derivative);
@@ -56,9 +57,9 @@ void PReLU<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void PReLU<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& error,
-    arma::Mat<eT>&& gradient)
+void PReLU<InputDataType, OutputDataType>::Gradient(const arma::Mat<eT>&& input,
+                                                    arma::Mat<eT>&& error,
+                                                    arma::Mat<eT>&& gradient)
 {
   if (gradient.n_elem == 0)
   {
@@ -72,10 +73,9 @@ void PReLU<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void PReLU<InputDataType, OutputDataType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(alpha);
+  ar& BOOST_SERIALIZATION_NVP(alpha);
 }
 
 } // namespace ann

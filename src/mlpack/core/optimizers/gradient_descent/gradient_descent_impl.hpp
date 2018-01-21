@@ -20,8 +20,7 @@ namespace optimization {
 
 //! Optimize the function (minimize).
 template<typename FunctionType>
-double GradientDescent::Optimize(
-    FunctionType& function, arma::mat& iterate)
+double GradientDescent::Optimize(FunctionType& function, arma::mat& iterate)
 {
   // To keep track of where we are and how things are going.
   double overallObjective = function.Evaluate(iterate);
@@ -33,20 +32,21 @@ double GradientDescent::Optimize(
   {
     // Output current objective function.
     Log::Info << "Gradient Descent: iteration " << i << ", objective "
-        << overallObjective << "." << std::endl;
+              << overallObjective << "." << std::endl;
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
       Log::Warn << "Gradient Descent: converged to " << overallObjective
-          << "; terminating" << " with failure.  Try a smaller step size?"
-          << std::endl;
+                << "; terminating"
+                << " with failure.  Try a smaller step size?" << std::endl;
       return overallObjective;
     }
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
-      Log::Info << "Gradient Descent: minimized within tolerance "
-          << tolerance << "; " << "terminating optimization." << std::endl;
+      Log::Info << "Gradient Descent: minimized within tolerance " << tolerance
+                << "; "
+                << "terminating optimization." << std::endl;
       return overallObjective;
     }
 
@@ -63,7 +63,8 @@ double GradientDescent::Optimize(
   }
 
   Log::Info << "Gradient Descent: maximum iterations (" << maxIterations
-      << ") reached; " << "terminating optimization." << std::endl;
+            << ") reached; "
+            << "terminating optimization." << std::endl;
   return overallObjective;
 }
 
@@ -75,11 +76,11 @@ double GradientDescent::Optimize(
 {
   if (datasetInfo.Dimensionality() != iterate.n_rows)
   {
-      std::ostringstream oss;
-      oss << "GradientDescent::Optimize(): expected information about "
-          << iterate.n_rows << " dimensions in datasetInfo, but found about "
-          << datasetInfo.Dimensionality() << std::endl;
-      throw std::invalid_argument(oss.str());
+    std::ostringstream oss;
+    oss << "GradientDescent::Optimize(): expected information about "
+        << iterate.n_rows << " dimensions in datasetInfo, but found about "
+        << datasetInfo.Dimensionality() << std::endl;
+    throw std::invalid_argument(oss.str());
   }
 
   for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)

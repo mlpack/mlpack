@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerDimensionTest)
   SetInputParam("input_file", (std::string) "preprocess_imputer_test.csv");
   SetInputParam("missing_value", (std::string) "nan");
   SetInputParam("output_file",
-      (std::string) "preprocess_imputer_output_test.csv");
+                (std::string) "preprocess_imputer_output_test.csv");
 
   // Check for mean strategy.
   SetInputParam("strategy", (std::string) "mean");
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerDimensionTest)
 
   // Check for custom strategy.
   SetInputParam("strategy", (std::string) "custom");
-  SetInputParam("custom_value", (double) 75.12);
+  SetInputParam("custom_value", (double)75.12);
 
   mlpackMain();
 
@@ -113,15 +113,15 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerListwiseDimensionTest)
   data::Load("preprocess_imputer_test.csv", inputData);
 
   // Store size of input dataset.
-  size_t inputSize  = inputData.n_cols;
+  size_t inputSize = inputData.n_cols;
   size_t countNaN = 0;
 
   // Count number of unavailable entries in all dimensions.
   for (size_t i = 0; i < inputSize; i++)
   {
-    if (std::to_string(inputData(0, i)) == "nan" ||
-        std::to_string(inputData(1, i)) == "nan" ||
-        std::to_string(inputData(2, i)) == "nan")
+    if (std::to_string(inputData(0, i)) == "nan"
+        || std::to_string(inputData(1, i)) == "nan"
+        || std::to_string(inputData(2, i)) == "nan")
     {
       countNaN++;
     }
@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerListwiseDimensionTest)
   SetInputParam("missing_value", (std::string) "nan");
   SetInputParam("strategy", (std::string) "listwise_deletion");
   SetInputParam("output_file",
-      (std::string) "preprocess_imputer_output_test.csv");
+                (std::string) "preprocess_imputer_output_test.csv");
 
   mlpackMain();
 

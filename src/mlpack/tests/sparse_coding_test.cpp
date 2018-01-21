@@ -103,8 +103,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepElasticNet)
   for (uword i = 0; i < nPoints; ++i)
   {
     vec errCorr =
-      (trans(D) * D + lambda2 * eye(nAtoms, nAtoms)) * Z.unsafe_col(i)
-      - trans(D) * X.unsafe_col(i);
+        (trans(D) * D + lambda2 * eye(nAtoms, nAtoms)) * Z.unsafe_col(i)
+        - trans(D) * X.unsafe_col(i);
 
     SCVerifyCorrectness(Z.unsafe_col(i), errCorr, lambda1);
   }
@@ -153,8 +153,10 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   SparseCoding scXml(50, 0.01), scText(nAtoms, 0.05), scBinary(0, 0.0);
   SerializeObjectAll(sc, scXml, scText, scBinary);
 
-  CheckMatrices(sc.Dictionary(), scXml.Dictionary(), scText.Dictionary(),
-      scBinary.Dictionary());
+  CheckMatrices(sc.Dictionary(),
+                scXml.Dictionary(),
+                scText.Dictionary(),
+                scBinary.Dictionary());
 
   mat xmlCodes, textCodes, binaryCodes;
   scXml.Encode(Y, xmlCodes);
@@ -188,6 +190,5 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   BOOST_REQUIRE_CLOSE(sc.NewtonTolerance(), scText.NewtonTolerance(), 1e-5);
   BOOST_REQUIRE_CLOSE(sc.NewtonTolerance(), scBinary.NewtonTolerance(), 1e-5);
 }
-
 
 BOOST_AUTO_TEST_SUITE_END();

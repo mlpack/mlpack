@@ -151,7 +151,9 @@ class FurthestNeighborSort
    * Return the worst combination of the two distances.
    */
   static inline double CombineWorst(const double a, const double b)
-  { return std::max(a - b, 0.0); }
+  {
+    return std::max(a - b, 0.0);
+  }
 
   /**
    * Return the given value relaxed.

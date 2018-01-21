@@ -41,8 +41,8 @@ inline void MockCategoricalData(arma::mat& d,
   for (size_t i = 0; i < 4000; ++i)
   {
     // One circle every 2000 samples.  Plus some noise.
-    const double magnitude = 2.0 + (double(i) / 200.0) +
-        0.5 * mlpack::math::Random();
+    const double magnitude =
+        2.0 + (double(i) / 200.0) + 0.5 * mlpack::math::Random();
     const double angle = (i % 200) * (2 * M_PI) + mlpack::math::Random();
 
     const double x = magnitude * cos(angle);
@@ -97,8 +97,7 @@ inline void MockCategoricalData(arma::mat& d,
   datasetInfo.MapString<double>("1", 3);
 
   // Now shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0, 3999,
-      4000));
+  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0, 3999, 4000));
   d = arma::mat(4, 4000);
   l = arma::Row<size_t>(4000);
   for (size_t i = 0; i < 4000; ++i)

@@ -91,7 +91,6 @@ class KMeans
          const InitialPartitionPolicy partitioner = InitialPartitionPolicy(),
          const EmptyClusterPolicy emptyClusterAction = EmptyClusterPolicy());
 
-
   /**
    * Perform k-means clustering on the data, returning a list of cluster
    * assignments.  Optionally, the vector of assignments can be set to an
@@ -172,7 +171,9 @@ class KMeans
 
   //! Get the empty cluster policy.
   const EmptyClusterPolicy& EmptyClusterAction() const
-  { return emptyClusterAction; }
+  {
+    return emptyClusterAction;
+  }
   //! Modify the empty cluster policy.
   EmptyClusterPolicy& EmptyClusterAction() { return emptyClusterAction; }
 

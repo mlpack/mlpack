@@ -29,30 +29,26 @@ SnapshotSGDR<UpdatePolicyType>::SnapshotSGDR(
     const bool shuffle,
     const size_t snapshots,
     const bool accumulate,
-    const UpdatePolicyType& updatePolicy) :
-    batchSize(batchSize),
-    accumulate(accumulate),
-    optimizer(OptimizerType(stepSize,
-                            batchSize,
-                            maxIterations,
-                            tolerance,
-                            shuffle,
-                            updatePolicy,
-                            SnapshotEnsembles(
-                                epochRestart,
-                                multFactor,
-                                stepSize,
-                                maxIterations,
-                                snapshots)))
+    const UpdatePolicyType& updatePolicy)
+  : batchSize(batchSize), accumulate(accumulate),
+    optimizer(OptimizerType(
+        stepSize,
+        batchSize,
+        maxIterations,
+        tolerance,
+        shuffle,
+        updatePolicy,
+        SnapshotEnsembles(
+            epochRestart, multFactor, stepSize, maxIterations, snapshots)))
 {
   /* Nothing to do here */
 }
 
 template<typename UpdatePolicyType>
 template<typename DecomposableFunctionType>
-double SnapshotSGDR<UpdatePolicyType>::Optimize(
-    DecomposableFunctionType& function,
-    arma::mat& iterate)
+double
+SnapshotSGDR<UpdatePolicyType>::Optimize(DecomposableFunctionType& function,
+                                         arma::mat& iterate)
 {
   // If a user changed the step size he hasn't update the step size of the
   // cyclical decay instantiation, so we have to do here.
@@ -61,8 +57,8 @@ double SnapshotSGDR<UpdatePolicyType>::Optimize(
     optimizer.DecayPolicy().StepSize() = optimizer.StepSize();
   }
 
-  optimizer.DecayPolicy().EpochBatches() = function.NumFunctions() /
-      double(batchSize);
+  optimizer.DecayPolicy().EpochBatches() =
+      function.NumFunctions() / double(batchSize);
 
   // If a user changed the batch size we have to update the restart fraction
   // of the cyclical decay instantiation.

@@ -36,13 +36,11 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
-    typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>,
-    typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
+         typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>,
+         typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>,
+         typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
 class Convolution
 {
  public:
@@ -177,10 +175,8 @@ class Convolution
    * @param p The size of the padding (width or height).
    * @return The convolution output size.
    */
-  size_t ConvOutSize(const size_t size,
-                     const size_t k,
-                     const size_t s,
-                     const size_t p)
+  size_t
+  ConvOutSize(const size_t size, const size_t k, const size_t s, const size_t p)
   {
     return std::floor(size + p * 2 - k) / s + 1;
   }
@@ -228,14 +224,14 @@ class Convolution
            size_t hPad,
            arma::Mat<eT>& output)
   {
-    if (output.n_rows != input.n_rows + wPad * 2 ||
-        output.n_cols != input.n_cols + hPad * 2)
+    if (output.n_rows != input.n_rows + wPad * 2
+        || output.n_cols != input.n_cols + hPad * 2)
     {
       output = arma::zeros(input.n_rows + wPad * 2, input.n_cols + hPad * 2);
     }
 
-    output.submat(wPad, hPad, wPad + input.n_rows - 1,
-        hPad + input.n_cols - 1) = input;
+    output.submat(
+        wPad, hPad, wPad + input.n_rows - 1, hPad + input.n_cols - 1) = input;
   }
 
   /*
@@ -252,8 +248,8 @@ class Convolution
            size_t hPad,
            arma::Cube<eT>& output)
   {
-    output = arma::zeros(input.n_rows + wPad * 2,
-        input.n_cols + hPad * 2, input.n_slices);
+    output = arma::zeros(
+        input.n_rows + wPad * 2, input.n_cols + hPad * 2, input.n_slices);
 
     for (size_t i = 0; i < input.n_slices; ++i)
     {

@@ -27,17 +27,13 @@ CNE::CNE(const size_t populationSize,
          const double mutationSize,
          const double selectPercent,
          const double tolerance,
-         const double objectiveChange) :
-    populationSize(populationSize),
-    maxGenerations(maxGenerations),
-    mutationProb(mutationProb),
-    mutationSize(mutationSize),
-    selectPercent(selectPercent),
-    tolerance(tolerance),
-    objectiveChange(objectiveChange),
-    numElite(0),
-    elements(0)
-{ /* Nothing to do here. */ }
+         const double objectiveChange)
+  : populationSize(populationSize), maxGenerations(maxGenerations),
+    mutationProb(mutationProb), mutationSize(mutationSize),
+    selectPercent(selectPercent), tolerance(tolerance),
+    objectiveChange(objectiveChange), numElite(0), elements(0)
+{ /* Nothing to do here. */
+}
 
 //! Optimize the function.
 template<typename DecomposableFunctionType>
@@ -47,7 +43,7 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   if (populationSize < 4)
   {
     throw std::logic_error("CNE::Optimize(): population size should be at least"
-        " 4!");
+                           " 4!");
   }
 
   // Find the number of elite canditates from population.
@@ -61,14 +57,14 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   if (numElite < 2)
   {
     throw std::logic_error("CNE::Optimize(): unable to select two parents. "
-        "Increase selection percentage.");
+                           "Increase selection percentage.");
   }
 
   // Terminate if at least two childs are not possible.
   if ((populationSize - numElite) < 2)
   {
     throw std::logic_error("CNE::Optimize(): no space to accomodate even 2 "
-        "children. Increase population size.");
+                           "children. Increase population size.");
   }
 
   // Set the population size and fill random values [0,1].
@@ -81,7 +77,7 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   fitnessValues.set_size(populationSize);
 
   Log::Info << "CNE initialized successfully. Optimization started."
-      << std::endl;
+            << std::endl;
 
   // Find the fitness before optimization using given iterate parameters.
   size_t lastBestFitness = function.Evaluate(iterate);
@@ -92,15 +88,15 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
     // Calculating fitness values of all candidates.
     for (size_t i = 0; i < populationSize; i++)
     {
-       // Select a candidate and insert the parameters in the function.
-       iterate = population.slice(i);
+      // Select a candidate and insert the parameters in the function.
+      iterate = population.slice(i);
 
-       // Find fitness of candidate.
-       fitnessValues[i] = function.Evaluate(iterate);
+      // Find fitness of candidate.
+      fitnessValues[i] = function.Evaluate(iterate);
     }
 
-    Log::Info << "Generation number: " << gen << " best fitness = "
-        << fitnessValues.min() << std::endl;
+    Log::Info << "Generation number: " << gen
+              << " best fitness = " << fitnessValues.min() << std::endl;
 
     // Create next generation of species.
     Reproduce();
@@ -109,7 +105,8 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
     if (tolerance >= fitnessValues.min())
     {
       Log::Info << "CNE::Optimize(): terminating. Given fitness criteria "
-          << tolerance << " > " << fitnessValues.min() << "." << std::endl;
+                << tolerance << " > " << fitnessValues.min() << "."
+                << std::endl;
       break;
     }
 
@@ -117,8 +114,8 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
     if (lastBestFitness - fitnessValues.min() < objectiveChange)
     {
       Log::Info << "CNE::Optimize(): terminating. Fitness history change "
-          << (lastBestFitness - fitnessValues.min())
-          << " < " << objectiveChange << "." << std::endl;
+                << (lastBestFitness - fitnessValues.min()) << " < "
+                << objectiveChange << "." << std::endl;
       break;
     }
 
@@ -210,9 +207,9 @@ void CNE::Mutate()
   // The best candidate is not altered.
   for (size_t i = 1; i < populationSize; i++)
   {
-    population.slice(index(i)) += (arma::randu(
-        population.n_rows, population.n_cols) < mutationProb) %
-        (mutationSize * arma::randn(population.n_rows, population.n_cols));
+    population.slice(index(i)) +=
+        (arma::randu(population.n_rows, population.n_cols) < mutationProb)
+        % (mutationSize * arma::randn(population.n_rows, population.n_cols));
   }
 }
 

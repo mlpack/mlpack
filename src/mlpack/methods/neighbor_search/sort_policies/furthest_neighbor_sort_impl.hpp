@@ -17,9 +17,9 @@ namespace mlpack {
 namespace neighbor {
 
 template<typename TreeType>
-inline double FurthestNeighborSort::BestNodeToNodeDistance(
-    const TreeType* queryNode,
-    const TreeType* referenceNode)
+inline double
+FurthestNeighborSort::BestNodeToNodeDistance(const TreeType* queryNode,
+                                             const TreeType* referenceNode)
 {
   // This is not implemented yet for the general case because the trees do not
   // accept arbitrary distance metrics.
@@ -42,14 +42,14 @@ inline double FurthestNeighborSort::BestNodeToNodeDistance(
     const TreeType* referenceChildNode,
     const double centerToCenterDistance)
 {
-  return queryNode->MaxDistance(*referenceNode, centerToCenterDistance) +
-      referenceChildNode->ParentDistance();
+  return queryNode->MaxDistance(*referenceNode, centerToCenterDistance)
+         + referenceChildNode->ParentDistance();
 }
 
 template<typename VecType, typename TreeType>
-inline double FurthestNeighborSort::BestPointToNodeDistance(
-    const VecType& point,
-    const TreeType* referenceNode)
+inline double
+FurthestNeighborSort::BestPointToNodeDistance(const VecType& point,
+                                              const TreeType* referenceNode)
 {
   // This is not implemented yet for the general case because the trees do not
   // accept arbitrary distance metrics.

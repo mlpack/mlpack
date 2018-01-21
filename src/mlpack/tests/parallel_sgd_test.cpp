@@ -30,7 +30,6 @@ using namespace mlpack::optimization::test;
 
 BOOST_AUTO_TEST_SUITE(ParallelSGDTest);
 
-
 // These tests are only compiled if the user has specified OpenMP to be
 // used.
 #ifdef HAS_OPENMP
@@ -56,7 +55,7 @@ BOOST_AUTO_TEST_CASE(SimpleParallelSGDTest)
   {
     omp_set_num_threads(i);
 
-    size_t batchSize = std::ceil((float) f.NumFunctions() / i);
+    size_t batchSize = std::ceil((float)f.NumFunctions() / i);
 
     ParallelSGD<ConstantStep> s(10000, batchSize, 1e-5, true, decayPolicy);
 
@@ -98,7 +97,7 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
 
     BOOST_REQUIRE_SMALL(result, 1e-8);
     for (size_t j = 0; j < i; ++j)
-      BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 0.01);
+      BOOST_REQUIRE_CLOSE(coordinates[j], (double)1.0, 0.01);
   }
 }
 

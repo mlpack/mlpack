@@ -43,9 +43,10 @@ class UpdateFullCorrection
    * @param tau atom norm constraint.
    * @param stepSize step size used in projected gradient method.
    */
-  UpdateFullCorrection(const double tau, const double stepSize) :
-      tau(tau), stepSize(stepSize)
-  { /* Do nothing. */ }
+  UpdateFullCorrection(const double tau, const double stepSize)
+    : tau(tau), stepSize(stepSize)
+  { /* Do nothing. */
+  }
 
   /**
    * Update rule for FrankWolfe, recalculate the coefficents of of current

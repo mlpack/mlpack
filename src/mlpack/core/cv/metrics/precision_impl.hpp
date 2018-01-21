@@ -45,8 +45,11 @@ double Precision<AS, PC>::Evaluate(MLAlgorithm& model,
 }
 
 template<AverageStrategy AS, size_t PC /* PositiveClass */>
-template<AverageStrategy _AS, typename MLAlgorithm, typename DataType, typename,
-    typename>
+template<AverageStrategy _AS,
+         typename MLAlgorithm,
+         typename DataType,
+         typename,
+         typename>
 double Precision<AS, PC>::Evaluate(MLAlgorithm& model,
                                    const DataType& data,
                                    const arma::Row<size_t>& labels)
@@ -58,8 +61,12 @@ double Precision<AS, PC>::Evaluate(MLAlgorithm& model,
 }
 
 template<AverageStrategy AS, size_t PC /* PositiveClass */>
-template<AverageStrategy _AS, typename MLAlgorithm, typename DataType, typename,
-    typename, typename>
+template<AverageStrategy _AS,
+         typename MLAlgorithm,
+         typename DataType,
+         typename,
+         typename,
+         typename>
 double Precision<AS, PC>::Evaluate(MLAlgorithm& model,
                                    const DataType& data,
                                    const arma::Row<size_t>& labels)

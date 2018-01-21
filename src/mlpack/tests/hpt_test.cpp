@@ -79,21 +79,20 @@ class QuadraticFunction
                     double d,
                     double xMin = 0.0,
                     double yMin = 0.0,
-                    double zMin = 0.0) :
-      a(a), b(b), c(c), d(d), xMin(xMin), yMin(yMin), zMin(zMin) {}
+                    double zMin = 0.0)
+    : a(a), b(b), c(c), d(d), xMin(xMin), yMin(yMin), zMin(zMin)
+  {
+  }
 
   double Evaluate(double x, double y, double z)
   {
-    return a * pow(x - xMin, 2)  + b * pow(y - yMin, 2) + c * pow(z - zMin, 2)
-        + d;
+    return a * pow(x - xMin, 2) + b * pow(y - yMin, 2) + c * pow(z - zMin, 2)
+           + d;
   }
 
   // Declaring and defining it just in order to provide the same interface as
   // other CV classes.
-  MLAlgorithm Model()
-  {
-    return MLAlgorithm();
-  }
+  MLAlgorithm Model() { return MLAlgorithm(); }
 
  private:
   double a, b, c, d, xMin, yMin, zMin;
@@ -133,7 +132,6 @@ BOOST_AUTO_TEST_CASE(CVFunctionGradientTest)
   BOOST_REQUIRE_CLOSE(gradient(1), aproximateYPartialDerivative, 1e-5);
   BOOST_REQUIRE_CLOSE(gradient(2), aproximateZPartialDerivative, 1e-5);
 }
-
 
 void InitProneToOverfittingData(arma::mat& xs,
                                 arma::rowvec& ys,
@@ -186,10 +184,10 @@ void FindLARSBestLambdas(arma::mat& xs,
     }
 }
 
- /**
- * Test grid-search optimization leads to the best parameters from the specified
- * ones.
- */
+/**
+* Test grid-search optimization leads to the best parameters from the specified
+* ones.
+*/
 BOOST_AUTO_TEST_CASE(GridSearchTest)
 {
   arma::mat xs;
@@ -203,13 +201,20 @@ BOOST_AUTO_TEST_CASE(GridSearchTest)
   std::array<double, 4> lambda2Set{{0.0, 0.05, 0.5, 5.0}};
 
   double expectedLambda1, expectedLambda2, expectedObjective;
-  FindLARSBestLambdas(xs, ys, validationSize, transposeData, useCholesky,
-      lambda1Set, lambda2Set, expectedLambda1, expectedLambda2,
-      expectedObjective);
+  FindLARSBestLambdas(xs,
+                      ys,
+                      validationSize,
+                      transposeData,
+                      useCholesky,
+                      lambda1Set,
+                      lambda2Set,
+                      expectedLambda1,
+                      expectedLambda2,
+                      expectedObjective);
 
   SimpleCV<LARS, MSE> cv(validationSize, xs, ys);
-  CVFunction<decltype(cv), LARS, 4, FixedArg<bool, 0>, FixedArg<bool, 1>>
-      cvFun(cv, 0.0, 0.0, {transposeData}, {useCholesky});
+  CVFunction<decltype(cv), LARS, 4, FixedArg<bool, 0>, FixedArg<bool, 1>> cvFun(
+      cv, 0.0, 0.0, {transposeData}, {useCholesky});
 
   IncrementPolicy policy(true);
   DatasetMapper<IncrementPolicy, double> datasetInfo(policy, 2);
@@ -244,15 +249,22 @@ BOOST_AUTO_TEST_CASE(HPTTest)
   arma::vec lambda2Set("0.0 0.05 0.5 5.0");
 
   double expectedLambda1, expectedLambda2, expectedObjective;
-  FindLARSBestLambdas(xs, ys, validationSize, transposeData, useCholesky,
-      lambda1Set, lambda2Set, expectedLambda1, expectedLambda2,
-      expectedObjective);
+  FindLARSBestLambdas(xs,
+                      ys,
+                      validationSize,
+                      transposeData,
+                      useCholesky,
+                      lambda1Set,
+                      lambda2Set,
+                      expectedLambda1,
+                      expectedLambda2,
+                      expectedObjective);
 
   double actualLambda1, actualLambda2;
-  HyperParameterTuner<LARS, MSE, SimpleCV, GridSearch>
-      hpt(validationSize, xs, ys);
-  std::tie(actualLambda1, actualLambda2) = hpt.Optimize(Fixed(transposeData),
-      Fixed(useCholesky), lambda1Set, lambda2Set);
+  HyperParameterTuner<LARS, MSE, SimpleCV, GridSearch> hpt(
+      validationSize, xs, ys);
+  std::tie(actualLambda1, actualLambda2) = hpt.Optimize(
+      Fixed(transposeData), Fixed(useCholesky), lambda1Set, lambda2Set);
 
   BOOST_REQUIRE_CLOSE(expectedObjective, hpt.BestObjective(), 1e-5);
   BOOST_REQUIRE_CLOSE(expectedLambda1, actualLambda1, 1e-5);
@@ -275,7 +287,7 @@ BOOST_AUTO_TEST_CASE(HPTMaximizationTest)
   // Initializing a linearly separable dataset.
   arma::mat xs = arma::linspace<arma::rowvec>(0.0, 10.0, 50);
   arma::Row<size_t> ys = arma::join_rows(arma::zeros<arma::Row<size_t>>(25),
-      arma::ones<arma::Row<size_t>>(25));
+                                         arma::ones<arma::Row<size_t>>(25));
 
   // We will train and validate on the same dataset.
   double validationSize = 0.5;
@@ -287,12 +299,12 @@ BOOST_AUTO_TEST_CASE(HPTMaximizationTest)
   arma::vec lambdas("0 1e12");
 
   // Making sure that the assumption above is true.
-  SimpleCV<LogisticRegression<>, Accuracy>
-      cv(validationSize, doubledXs, doubledYs);
+  SimpleCV<LogisticRegression<>, Accuracy> cv(
+      validationSize, doubledXs, doubledYs);
   BOOST_REQUIRE_GT(cv.Evaluate(0.0), cv.Evaluate(1e12));
 
-  HyperParameterTuner<LogisticRegression<>, Accuracy, SimpleCV>
-      hpt(validationSize, doubledXs, doubledYs);
+  HyperParameterTuner<LogisticRegression<>, Accuracy, SimpleCV> hpt(
+      validationSize, doubledXs, doubledYs);
 
   double actualLambda;
   std::tie(actualLambda) = hpt.Optimize(lambdas);
@@ -320,8 +332,8 @@ BOOST_AUTO_TEST_CASE(HPTGradientDescentTest)
   // We pass LARS just because some ML algorithm should be passed. We pass MSE
   // to tell HyperParameterTuner that the objective function (QuadraticFunction)
   // should be minimized.
-  HyperParameterTuner<LARS, MSE, QuadraticFunction, GradientDescent>
-      hpt(a, b, c, d, xMin, yMin, zMin);
+  HyperParameterTuner<LARS, MSE, QuadraticFunction, GradientDescent> hpt(
+      a, b, c, d, xMin, yMin, zMin);
 
   // Setting GradientDescent to find more close solution to the optimal one.
   hpt.Optimizer().StepSize() = 0.1;

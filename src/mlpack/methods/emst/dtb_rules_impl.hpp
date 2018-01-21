@@ -16,30 +16,26 @@ namespace mlpack {
 namespace emst {
 
 template<typename MetricType, typename TreeType>
-DTBRules<MetricType, TreeType>::
-DTBRules(const arma::mat& dataSet,
-         UnionFind& connections,
-         arma::vec& neighborsDistances,
-         arma::Col<size_t>& neighborsInComponent,
-         arma::Col<size_t>& neighborsOutComponent,
-         MetricType& metric)
-:
-  dataSet(dataSet),
-  connections(connections),
-  neighborsDistances(neighborsDistances),
-  neighborsInComponent(neighborsInComponent),
-  neighborsOutComponent(neighborsOutComponent),
-  metric(metric),
-  baseCases(0),
-  scores(0)
+DTBRules<MetricType, TreeType>::DTBRules(
+    const arma::mat& dataSet,
+    UnionFind& connections,
+    arma::vec& neighborsDistances,
+    arma::Col<size_t>& neighborsInComponent,
+    arma::Col<size_t>& neighborsOutComponent,
+    MetricType& metric)
+  : dataSet(dataSet), connections(connections),
+    neighborsDistances(neighborsDistances),
+    neighborsInComponent(neighborsInComponent),
+    neighborsOutComponent(neighborsOutComponent), metric(metric), baseCases(0),
+    scores(0)
 {
   // Nothing else to do.
 }
 
 template<typename MetricType, typename TreeType>
-inline force_inline
-double DTBRules<MetricType, TreeType>::BaseCase(const size_t queryIndex,
-                                                const size_t referenceIndex)
+inline force_inline double
+DTBRules<MetricType, TreeType>::BaseCase(const size_t queryIndex,
+                                         const size_t referenceIndex)
 {
   // Check if the points are in the same component at this iteration.
   // If not, return the distance between them.  Also, store a better result as
@@ -54,8 +50,8 @@ double DTBRules<MetricType, TreeType>::BaseCase(const size_t queryIndex,
   if (queryComponentIndex != referenceComponentIndex)
   {
     ++baseCases;
-    double distance = metric.Evaluate(dataSet.col(queryIndex),
-                                      dataSet.col(referenceIndex));
+    double distance =
+        metric.Evaluate(dataSet.col(queryIndex), dataSet.col(referenceIndex));
 
     if (distance < neighborsDistances[queryComponentIndex])
     {
@@ -84,8 +80,7 @@ double DTBRules<MetricType, TreeType>::Score(const size_t queryIndex,
   // If the query belongs to the same component as all of the references,
   // then prune.  The cast is to stop a warning about comparing unsigned to
   // signed values.
-  if (queryComponentIndex ==
-      (size_t) referenceNode.Stat().ComponentMembership())
+  if (queryComponentIndex == (size_t)referenceNode.Stat().ComponentMembership())
     return DBL_MAX;
 
   const arma::vec queryPoint = dataSet.unsafe_col(queryIndex);
@@ -93,8 +88,8 @@ double DTBRules<MetricType, TreeType>::Score(const size_t queryIndex,
 
   // If all the points in the reference node are farther than the candidate
   // nearest neighbor for the query's component, we prune.
-  return neighborsDistances[queryComponentIndex] < distance
-      ? DBL_MAX : distance;
+  return neighborsDistances[queryComponentIndex] < distance ? DBL_MAX
+                                                            : distance;
 }
 
 template<typename MetricType, typename TreeType>
@@ -105,7 +100,8 @@ double DTBRules<MetricType, TreeType>::Rescore(const size_t queryIndex,
   // We don't need to check component membership again, because it can't
   // change inside a single iteration.
   return (oldScore > neighborsDistances[connections.Find(queryIndex)])
-      ? DBL_MAX : oldScore;
+             ? DBL_MAX
+             : oldScore;
 }
 
 template<typename MetricType, typename TreeType>
@@ -114,9 +110,9 @@ double DTBRules<MetricType, TreeType>::Score(TreeType& queryNode,
 {
   // If all the queries belong to the same component as all the references
   // then we prune.
-  if ((queryNode.Stat().ComponentMembership() >= 0) &&
-      (queryNode.Stat().ComponentMembership() ==
-           referenceNode.Stat().ComponentMembership()))
+  if ((queryNode.Stat().ComponentMembership() >= 0)
+      && (queryNode.Stat().ComponentMembership()
+          == referenceNode.Stat().ComponentMembership()))
     return DBL_MAX;
 
   ++scores;
@@ -140,8 +136,8 @@ double DTBRules<MetricType, TreeType>::Rescore(TreeType& queryNode,
 // Calculate the bound for a given query node in its current state and update
 // it.
 template<typename MetricType, typename TreeType>
-inline double DTBRules<MetricType, TreeType>::CalculateBound(
-    TreeType& queryNode) const
+inline double
+DTBRules<MetricType, TreeType>::CalculateBound(TreeType& queryNode) const
 {
   double worstPointBound = -DBL_MAX;
   double bestPointBound = DBL_MAX;
@@ -177,8 +173,10 @@ inline double DTBRules<MetricType, TreeType>::CalculateBound(
   const double worstBound = std::max(worstPointBound, worstChildBound);
   const double bestBound = std::min(bestPointBound, bestChildBound);
   // We must check that bestBound != DBL_MAX; otherwise, we risk overflow.
-  const double bestAdjustedBound = (bestBound == DBL_MAX) ? DBL_MAX :
-      bestBound + 2 * queryNode.FurthestDescendantDistance();
+  const double bestAdjustedBound =
+      (bestBound == DBL_MAX)
+          ? DBL_MAX
+          : bestBound + 2 * queryNode.FurthestDescendantDistance();
 
   // Update the relevant quantities in the node.
   queryNode.Stat().MaxNeighborDistance() = worstBound;
@@ -191,7 +189,4 @@ inline double DTBRules<MetricType, TreeType>::CalculateBound(
 } // namespace emst
 } // namespace mlpack
 
-
-
 #endif
-

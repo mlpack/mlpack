@@ -60,12 +60,12 @@ BOOST_AUTO_TEST_CASE(ProjectionTest)
   BOOST_REQUIRE(!h1.Right(arma::vec("-1 1")));
 
   BOOST_REQUIRE_EQUAL(h1.Project(arma::vec("1 0")),
-      h1.Project(arma::vec("0 1")));
+                      h1.Project(arma::vec("0 1")));
   BOOST_REQUIRE(h1.Right(arma::vec("1 0")));
   BOOST_REQUIRE(!h1.Left(arma::vec("1 0")));
 
   BOOST_REQUIRE_EQUAL(h1.Project(arma::vec("-1 -1")),
-      h1.Project(arma::vec("-2 0")));
+                      h1.Project(arma::vec("-2 0")));
   BOOST_REQUIRE(h1.Left(arma::vec("-1 -1")));
   BOOST_REQUIRE(!h1.Right(arma::vec("-1 -1")));
 

@@ -21,8 +21,8 @@ namespace tree {
 template<typename MetricType, typename StatisticType, typename MatType>
 template<typename RuleType>
 Octree<MetricType, StatisticType, MatType>::SingleTreeTraverser<RuleType>::
-    SingleTreeTraverser(RuleType& rule) :
-    rule(rule)
+    SingleTreeTraverser(RuleType& rule)
+  : rule(rule)
 {
   // Nothing to do.
 }

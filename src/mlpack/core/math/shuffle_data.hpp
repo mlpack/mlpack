@@ -28,8 +28,8 @@ void ShuffleData(const MatType& inputPoints,
                  const std::enable_if_t<!arma::is_Cube<MatType>::value>* = 0)
 {
   // Generate ordering.
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
-      inputPoints.n_cols - 1, inputPoints.n_cols));
+  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(
+      0, inputPoints.n_cols - 1, inputPoints.n_cols));
 
   outputPoints = inputPoints.cols(ordering);
   outputLabels = inputLabels.cols(ordering);
@@ -51,14 +51,16 @@ void ShuffleData(const MatType& inputPoints,
                  const std::enable_if_t<!arma::is_Cube<MatType>::value>* = 0)
 {
   // Generate ordering.
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
-      inputPoints.n_cols - 1, inputPoints.n_cols));
+  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(
+      0, inputPoints.n_cols - 1, inputPoints.n_cols));
 
   // Extract coordinate list representation.
   arma::umat locations(2, inputPoints.n_nonzero);
   arma::Col<typename MatType::elem_type> values(
       const_cast<typename MatType::elem_type*>(inputPoints.values),
-      inputPoints.n_nonzero, false, true);
+      inputPoints.n_nonzero,
+      false,
+      true);
   typename MatType::const_iterator it = inputPoints.begin();
   size_t index = 0;
   while (it != inputPoints.end())
@@ -71,8 +73,8 @@ void ShuffleData(const MatType& inputPoints,
 
   if (&inputPoints == &outputPoints || &inputLabels == &outputLabels)
   {
-    MatType newOutputPoints(locations, values, inputPoints.n_rows,
-        inputPoints.n_cols, true);
+    MatType newOutputPoints(
+        locations, values, inputPoints.n_rows, inputPoints.n_cols, true);
     LabelsType newOutputLabels(inputLabels.n_elem);
     newOutputLabels.cols(ordering) = inputLabels;
 
@@ -81,8 +83,8 @@ void ShuffleData(const MatType& inputPoints,
   }
   else
   {
-    outputPoints = MatType(locations, values, inputPoints.n_rows,
-        inputPoints.n_cols, true);
+    outputPoints = MatType(
+        locations, values, inputPoints.n_rows, inputPoints.n_cols, true);
     outputLabels.set_size(inputLabels.n_elem);
     outputLabels.cols(ordering) = inputLabels;
   }
@@ -105,8 +107,8 @@ void ShuffleData(const MatType& inputPoints,
                  const std::enable_if_t<arma::is_Cube<LabelsType>::value>* = 0)
 {
   // Generate ordering.
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
-      inputPoints.n_cols - 1, inputPoints.n_cols));
+  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(
+      0, inputPoints.n_cols - 1, inputPoints.n_cols));
 
   // Properly handle the case where the input and output data are the same
   // object.
@@ -117,16 +119,18 @@ void ShuffleData(const MatType& inputPoints,
   if (&inputLabels == &outputLabels)
     outputLabelsPtr = new LabelsType();
 
-  outputPointsPtr->set_size(inputPoints.n_rows, inputPoints.n_cols,
-      inputPoints.n_slices);
-  outputLabelsPtr->set_size(inputLabels.n_rows, inputLabels.n_cols,
-      inputLabels.n_slices);
+  outputPointsPtr->set_size(
+      inputPoints.n_rows, inputPoints.n_cols, inputPoints.n_slices);
+  outputLabelsPtr->set_size(
+      inputLabels.n_rows, inputLabels.n_cols, inputLabels.n_slices);
   for (size_t i = 0; i < ordering.n_elem; ++i)
   {
-    outputPointsPtr->tube(0, ordering[i], outputPointsPtr->n_rows - 1,
-        ordering[i]) = inputPoints.tube(0, i, inputPoints.n_rows - 1, i);
-    outputLabelsPtr->tube(0, ordering[i], outputLabelsPtr->n_rows - 1,
-        ordering[i]) = inputLabels.tube(0, i, inputLabels.n_rows - 1, i);
+    outputPointsPtr->tube(
+        0, ordering[i], outputPointsPtr->n_rows - 1, ordering[i]) =
+        inputPoints.tube(0, i, inputPoints.n_rows - 1, i);
+    outputLabelsPtr->tube(
+        0, ordering[i], outputLabelsPtr->n_rows - 1, ordering[i]) =
+        inputLabels.tube(0, i, inputLabels.n_rows - 1, i);
   }
 
   // Clean up memory if needed.

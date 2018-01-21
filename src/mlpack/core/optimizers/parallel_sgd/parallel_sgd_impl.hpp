@@ -18,32 +18,28 @@
 namespace mlpack {
 namespace optimization {
 
-template <typename DecayPolicyType>
-ParallelSGD<DecayPolicyType>::ParallelSGD(
-    const size_t maxIterations,
-    const size_t threadShareSize,
-    const double tolerance,
-    const bool shuffle,
-    const DecayPolicyType& decayPolicy) :
-    maxIterations(maxIterations),
-    threadShareSize(threadShareSize),
-    tolerance(tolerance),
-    shuffle(shuffle),
-    decayPolicy(decayPolicy)
-{ /* Nothing to do. */ }
+template<typename DecayPolicyType>
+ParallelSGD<DecayPolicyType>::ParallelSGD(const size_t maxIterations,
+                                          const size_t threadShareSize,
+                                          const double tolerance,
+                                          const bool shuffle,
+                                          const DecayPolicyType& decayPolicy)
+  : maxIterations(maxIterations), threadShareSize(threadShareSize),
+    tolerance(tolerance), shuffle(shuffle), decayPolicy(decayPolicy)
+{ /* Nothing to do. */
+}
 
-template <typename DecayPolicyType>
-template <typename SparseFunctionType>
-double ParallelSGD<DecayPolicyType>::Optimize(
-    SparseFunctionType& function,
-    arma::mat& iterate)
+template<typename DecayPolicyType>
+template<typename SparseFunctionType>
+double ParallelSGD<DecayPolicyType>::Optimize(SparseFunctionType& function,
+                                              arma::mat& iterate)
 {
   double overallObjective = DBL_MAX;
   double lastObjective;
 
   // The order in which the functions will be visited.
-  arma::Col<size_t> visitationOrder = arma::linspace<arma::Col<size_t>>(0,
-      (function.NumFunctions() - 1), function.NumFunctions());
+  arma::Col<size_t> visitationOrder = arma::linspace<arma::Col<size_t>>(
+      0, (function.NumFunctions() - 1), function.NumFunctions());
 
   // Iterate till the objective is within tolerance or the maximum number of
   // allowed iterations is reached. If maxIterations is 0, this will iterate
@@ -57,20 +53,20 @@ double ParallelSGD<DecayPolicyType>::Optimize(
 
     // Output current objective function.
     Log::Info << "Parallel SGD: iteration " << i << ", objective "
-      << overallObjective << "." << std::endl;
+              << overallObjective << "." << std::endl;
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
       Log::Warn << "Parallel SGD: converged to " << overallObjective
-        << "; terminating with failure. Try a smaller step size?"
-        << std::endl;
+                << "; terminating with failure. Try a smaller step size?"
+                << std::endl;
       return overallObjective;
     }
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
       Log::Info << "SGD: minimized within tolerance " << tolerance << "; "
-        << "terminating optimization." << std::endl;
+                << "terminating optimization." << std::endl;
       return overallObjective;
     }
 
@@ -81,22 +77,23 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     if (shuffle)
     {
       // Determine order of visitation.
-      std::shuffle(visitationOrder.begin(), visitationOrder.end(),
-          mlpack::math::randGen);
+      std::shuffle(visitationOrder.begin(),
+                   visitationOrder.end(),
+                   mlpack::math::randGen);
     }
 
-    #pragma omp parallel
+#pragma omp parallel
     {
       // Each processor gets a subset of the instances.
       // Each subset is of size threadShareSize
       size_t threadId = 0;
-      #ifdef HAS_OPENMP
-        threadId = omp_get_thread_num();
-      #endif
+#ifdef HAS_OPENMP
+      threadId = omp_get_thread_num();
+#endif
 
       for (size_t j = threadId * threadShareSize;
-          j < (threadId + 1) * threadShareSize && j < visitationOrder.n_elem;
-          ++j)
+           j < (threadId + 1) * threadShareSize && j < visitationOrder.n_elem;
+           ++j)
       {
         // Each instance affects only some components of the decision variable.
         // So the gradient is sparse.
@@ -111,9 +108,10 @@ double ParallelSGD<DecayPolicyType>::Optimize(
         {
           // Iterate over the non-zero elements.
           for (arma::sp_mat::iterator cur = gradient.begin_col(i);
-              cur != gradient.end_col(i); ++cur)
+               cur != gradient.end_col(i);
+               ++cur)
           {
-            #pragma omp atomic
+#pragma omp atomic
             iterate(cur.row(), i) -= stepSize * (*cur);
           }
         }
@@ -122,7 +120,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
   }
 
   Log::Info << "\n Parallel SGD terminated with objective : "
-    << overallObjective << std::endl;
+            << overallObjective << std::endl;
   return overallObjective;
 }
 

@@ -102,7 +102,10 @@ struct MethodFormDetector<Class, MethodForm, 7>
 } // namespace mlpack
 
 //! Utility struct for checking signatures.
-template<typename U, U> struct SigCheck : std::true_type {};
+template<typename U, U>
+struct SigCheck : std::true_type
+{
+};
 
 /*
  * Constructs a template supporting the SFINAE pattern.
@@ -123,64 +126,66 @@ template<typename U, U> struct SigCheck : std::true_type {};
  * @param FUNC the name of the function to check for. For example: ToString
  */
 #define HAS_MEM_FUNC(FUNC, NAME)                                               \
-template<typename T, typename sig, typename = std::true_type>                  \
-struct NAME : std::false_type {};                                              \
+  template<typename T, typename sig, typename = std::true_type>                \
+  struct NAME : std::false_type                                                \
+  {                                                                            \
+  };                                                                           \
                                                                                \
-template<typename T, typename sig>                                             \
-struct NAME                                                                    \
-<                                                                              \
-  T,                                                                           \
-  sig,                                                                         \
-  std::integral_constant<bool, SigCheck<sig, &T::FUNC>::value>                 \
-> : std::true_type {};
+  template<typename T, typename sig>                                           \
+  struct NAME<T,                                                               \
+              sig,                                                             \
+              std::integral_constant<bool, SigCheck<sig, &T::FUNC>::value>>    \
+      : std::true_type                                                         \
+  {                                                                            \
+  };
 
 /**
  * Base macro for HAS_METHOD_FORM() and HAS_EXACT_METHOD_FORM() macros.
  */
 #define HAS_METHOD_FORM_BASE(METHOD, NAME, MAXN)                               \
-template<typename Class,                                                       \
-         template<typename...> class MF /* MethodForm */,                      \
-         size_t MinN = 0 /* MinNumberOfAdditionalArgs */>                      \
-struct NAME                                                                    \
-{                                                                              \
-  /* Making a short alias for MethodFormDetector */                            \
-  template<typename C, template<typename...> class MethodForm, int N>          \
-  using MFD = mlpack::sfinae::MethodFormDetector<C, MethodForm, N>;            \
-                                                                               \
-  template<size_t N>                                                           \
-  struct WithNAdditionalArgs                                                   \
+  template<typename Class,                                                     \
+           template<typename...> class MF /* MethodForm */,                    \
+           size_t MinN = 0 /* MinNumberOfAdditionalArgs */>                    \
+  struct NAME                                                                  \
   {                                                                            \
-    using yes = char[1];                                                       \
-    using no = char[2];                                                        \
+    /* Making a short alias for MethodFormDetector */                          \
+    template<typename C, template<typename...> class MethodForm, int N>        \
+    using MFD = mlpack::sfinae::MethodFormDetector<C, MethodForm, N>;          \
                                                                                \
-    template<typename T, typename ResultType>                                  \
-    using EnableIfVoid =                                                       \
-        typename std::enable_if<std::is_void<T>::value, ResultType>::type;     \
+    template<size_t N>                                                         \
+    struct WithNAdditionalArgs                                                 \
+    {                                                                          \
+      using yes = char[1];                                                     \
+      using no = char[2];                                                      \
                                                                                \
-    template<typename C>                                                       \
-    static EnableIfVoid<decltype(MFD<C, MF, N>()(&C::METHOD)), yes&> chk(int); \
-    template<typename>                                                         \
-    static no& chk(...);                                                       \
+      template<typename T, typename ResultType>                                \
+      using EnableIfVoid =                                                     \
+          typename std::enable_if<std::is_void<T>::value, ResultType>::type;   \
                                                                                \
-    static const bool value = sizeof(chk<Class>(0)) == sizeof(yes);            \
-  };                                                                           \
+      template<typename C>                                                     \
+      static EnableIfVoid<decltype(MFD<C, MF, N>()(&C::METHOD)), yes&>         \
+      chk(int);                                                                \
+      template<typename>                                                       \
+      static no& chk(...);                                                     \
                                                                                \
-  template<size_t N>                                                           \
-  struct WithGreaterOrEqualNumberOfAdditionalArgs                              \
-  {                                                                            \
-    using type = typename std::conditional<                                    \
-        WithNAdditionalArgs<N>::value,                                         \
-        std::true_type,                                                        \
-        typename std::conditional<                                             \
-            N < MAXN,                                                          \
-            WithGreaterOrEqualNumberOfAdditionalArgs<N + 1>,                   \
-            std::false_type>::type>::type;                                     \
-    static const bool value = type::value;                                     \
-  };                                                                           \
+      static const bool value = sizeof(chk<Class>(0)) == sizeof(yes);          \
+    };                                                                         \
                                                                                \
-  static const bool value =                                                    \
-      WithGreaterOrEqualNumberOfAdditionalArgs<MinN>::value;                   \
-};
+    template<size_t N>                                                         \
+    struct WithGreaterOrEqualNumberOfAdditionalArgs                            \
+    {                                                                          \
+      using type = typename std::conditional < WithNAdditionalArgs<N>::value,  \
+            std::true_type,                                                    \
+            typename std::                                                     \
+                conditional<N<MAXN,                                            \
+                              WithGreaterOrEqualNumberOfAdditionalArgs<N + 1>, \
+                              std::false_type>::type>::type;                   \
+      static const bool value = type::value;                                   \
+    };                                                                         \
+                                                                               \
+    static const bool value =                                                  \
+        WithGreaterOrEqualNumberOfAdditionalArgs<MinN>::value;                 \
+  };
 
 /*
  * A macro that can be used for passing arguments containing commas to other
@@ -219,8 +224,8 @@ struct NAME                                                                    \
  * @param NAME The name of the struct to construct.
  * @param MAXN The maximum number of additional arguments.
  */
-#define HAS_METHOD_FORM(METHOD, NAME) \
-    HAS_METHOD_FORM_BASE(SINGLE_ARG(METHOD), SINGLE_ARG(NAME), 7)
+#define HAS_METHOD_FORM(METHOD, NAME)                                          \
+  HAS_METHOD_FORM_BASE(SINGLE_ARG(METHOD), SINGLE_ARG(NAME), 7)
 
 /**
  * HAS_EXACT_METHOD_FORM generates a template that allows to check at compile
@@ -253,8 +258,8 @@ struct NAME                                                                    \
  * @param NAME The name of the struct to construct.
  * @param MAXN The maximum number of additional arguments.
  */
-#define HAS_EXACT_METHOD_FORM(METHOD, NAME) \
-    HAS_METHOD_FORM_BASE(SINGLE_ARG(METHOD), SINGLE_ARG(NAME), 0)
+#define HAS_EXACT_METHOD_FORM(METHOD, NAME)                                    \
+  HAS_METHOD_FORM_BASE(SINGLE_ARG(METHOD), SINGLE_ARG(NAME), 0)
 
 /**
  * A version of HAS_METHOD_FORM() where the maximum number of extra arguments is

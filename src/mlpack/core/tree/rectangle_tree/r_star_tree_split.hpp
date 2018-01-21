@@ -2,7 +2,8 @@
  * @file r_tree_star_split.hpp
  * @author Andrew Wells
  *
- * Definition of the RStarTreeSplit class, a class that splits the nodes of an R tree, starting
+ * Definition of the RStarTreeSplit class, a class that splits the nodes of an R
+ * tree, starting
  * at a leaf node and moving upwards if necessary.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -31,15 +32,15 @@ class RStarTreeSplit
    * Efficient and Robust Access method for Points and Rectangles."  If
    * necessary, this split will propagate upwards through the tree.
    */
-  template <typename TreeType>
-  static void SplitLeafNode(TreeType *tree, std::vector<bool>& relevels);
+  template<typename TreeType>
+  static void SplitLeafNode(TreeType* tree, std::vector<bool>& relevels);
 
   /**
    * Split a non-leaf node using the "default" algorithm.  If this is a root
    * node, the tree increases in depth.
    */
-  template <typename TreeType>
-  static bool SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels);
+  template<typename TreeType>
+  static bool SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels);
 
   /**
    * Reinsert any points into the tree, if needed.  This returns the number of
@@ -52,16 +53,14 @@ class RStarTreeSplit
    * Given a node, return the best dimension and the best index to split on.
    */
   template<typename TreeType>
-  static void PickLeafSplit(
-      TreeType* tree,
-      size_t& bestAxis,
-      size_t& bestIndex);
+  static void
+  PickLeafSplit(TreeType* tree, size_t& bestAxis, size_t& bestIndex);
 
  private:
   /**
    * Insert a node into another node.
    */
-  template <typename TreeType>
+  template<typename TreeType>
   static void InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode);
 
   /**

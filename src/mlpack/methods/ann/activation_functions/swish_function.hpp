@@ -36,10 +36,7 @@ class SwishFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
-  {
-    return x / (1.0 + std::exp(-x));
-  }
+  static double Fn(const double x) { return x / (1.0 + std::exp(-x)); }
 
   /**
    * Computes the swish function using a matrix as input.
@@ -76,8 +73,8 @@ class SwishFunction
    */
   static double Deriv(const double y)
   {
-    return y / (1 + std::exp(-y)) + (1 - y / (1 + std::exp(-y))) /
-                                             (1 + std::exp(-y));
+    return y / (1 + std::exp(-y))
+           + (1 - y / (1 + std::exp(-y))) / (1 + std::exp(-y));
   }
 
   /**
@@ -89,8 +86,8 @@ class SwishFunction
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& y, OutputVecType& x)
   {
-    x = y / (1 + arma::exp(-y)) + (1 - y / (1 + arma::exp(-y))) /
-                                           (1 + arma::exp(-y));
+    x = y / (1 + arma::exp(-y))
+        + (1 - y / (1 + arma::exp(-y))) / (1 + arma::exp(-y));
   }
 }; // class SwishFunction
 

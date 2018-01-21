@@ -128,7 +128,7 @@ class LovaszThetaSDP
   const arma::mat& GetInitialPoint();
 
   const arma::mat& Edges() const { return edges; }
-  arma::mat&       Edges()       { return edges; }
+  arma::mat& Edges() { return edges; }
 
  private:
   arma::mat edges;

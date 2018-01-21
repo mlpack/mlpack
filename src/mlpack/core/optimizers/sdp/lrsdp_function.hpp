@@ -23,7 +23,7 @@ namespace optimization {
 /**
  * The objective function that LRSDP is trying to optimize.
  */
-template <typename SDPType>
+template<typename SDPType>
 class LRSDPFunction
 {
  public:
@@ -33,8 +33,7 @@ class LRSDPFunction
    * @param sdp
    * @param initialPoint
    */
-  LRSDPFunction(const SDPType& sdp,
-                const arma::mat& initialPoint);
+  LRSDPFunction(const SDPType& sdp, const arma::mat& initialPoint);
 
   /**
    * Construct the LRSDPFunction with the given initial point and number of
@@ -97,23 +96,21 @@ class LRSDPFunction
 };
 
 // Declare specializations in lrsdp_function.cpp.
-template <>
+template<>
 inline double AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_mat>>>::Evaluate(
     const arma::mat& coordinates) const;
 
-template <>
+template<>
 inline double AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>>::Evaluate(
     const arma::mat& coordinates) const;
 
-template <>
+template<>
 inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_mat>>>::Gradient(
-    const arma::mat& coordinates,
-    arma::mat& gradient) const;
+    const arma::mat& coordinates, arma::mat& gradient) const;
 
-template <>
+template<>
 inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>>::Gradient(
-    const arma::mat& coordinates,
-    arma::mat& gradient) const;
+    const arma::mat& coordinates, arma::mat& gradient) const;
 
 } // namespace optimization
 } // namespace mlpack

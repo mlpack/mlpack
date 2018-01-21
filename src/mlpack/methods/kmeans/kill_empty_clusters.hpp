@@ -26,7 +26,7 @@ class KillEmptyClusters
 {
  public:
   //! Default constructor required by EmptyClusterPolicy policy.
-  KillEmptyClusters() { }
+  KillEmptyClusters() {}
 
   /**
    * This function sets an empty cluster found during k-means to all DBL_MAX
@@ -46,14 +46,14 @@ class KillEmptyClusters
    * @return Number of points changed (0).
    */
   template<typename MetricType, typename MatType>
-  static inline force_inline size_t EmptyCluster(
-      const MatType& /* data */,
-      const size_t emptyCluster,
-      const arma::mat& /* oldCentroids */,
-      arma::mat& newCentroids,
-      arma::Col<size_t>& /* clusterCounts */,
-      MetricType& /* metric */,
-      const size_t /* iteration */)
+  static inline force_inline size_t
+  EmptyCluster(const MatType& /* data */,
+               const size_t emptyCluster,
+               const arma::mat& /* oldCentroids */,
+               arma::mat& newCentroids,
+               arma::Col<size_t>& /* clusterCounts */,
+               MetricType& /* metric */,
+               const size_t /* iteration */)
   {
     // Kill the empty cluster.
     newCentroids.col(emptyCluster).fill(DBL_MAX);
@@ -62,7 +62,9 @@ class KillEmptyClusters
 
   //! Serialize the empty cluster policy (nothing to do).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const unsigned int /* version */)
+  {
+  }
 };
 
 } // namespace kmeans

@@ -22,26 +22,22 @@ namespace tasks /* Task utilities for augmented */ {
 
 CopyTask::CopyTask(const size_t maxLength,
                    const size_t nRepeats,
-                   const bool addSeparator) :
-    maxLength(maxLength),
-    nRepeats(nRepeats),
-    addSeparator(addSeparator)
+                   const bool addSeparator)
+  : maxLength(maxLength), nRepeats(nRepeats), addSeparator(addSeparator)
 {
   if (maxLength <= 1)
   {
     std::ostringstream oss;
-    oss << "CopyTask::CopyTask(): maximum sequence length ("
-        << maxLength << ") "
-        << "should be at least 2!"
-        << std::endl;
+    oss << "CopyTask::CopyTask(): maximum sequence length (" << maxLength
+        << ") "
+        << "should be at least 2!" << std::endl;
     throw std::invalid_argument(oss.str());
   }
   if (nRepeats <= 0)
   {
     std::ostringstream oss;
     oss << "CopyTask::CopyTask(): repetition count (" << nRepeats << ") "
-        << "is not positive!"
-        << std::endl;
+        << "is not positive!" << std::endl;
     throw std::invalid_argument(oss.str());
   }
   // Just storing task-specific parameters.
@@ -69,18 +65,17 @@ void CopyTask::Generate(arma::field<arma::mat>& input,
 
       size = 2 + d.Random()(0);
     }
-    arma::colvec vecInput = arma::randi<arma::colvec>(
-      size, arma::distr_param(0, 1));
-    arma::colvec vecLabel = arma::conv_to<arma::colvec>::from(
-      arma::repmat(vecInput, nRepeats, 1));
+    arma::colvec vecInput =
+        arma::randi<arma::colvec>(size, arma::distr_param(0, 1));
+    arma::colvec vecLabel =
+        arma::conv_to<arma::colvec>::from(arma::repmat(vecInput, nRepeats, 1));
     size_t totSize = vecInput.n_elem + addSeparator + vecLabel.n_elem;
     input(i) = arma::zeros(totSize, 2);
-    input(i).col(0).rows(0, vecInput.n_elem - 1) =
-        vecInput;
+    input(i).col(0).rows(0, vecInput.n_elem - 1) = vecInput;
     if (addSeparator)
       input(i).at(vecInput.n_elem, 0) = 0.5;
     input(i).col(1).rows(addSeparator + vecInput.n_elem, totSize - 1) =
-        arma::ones(totSize-vecInput.n_elem - addSeparator);
+        arma::ones(totSize - vecInput.n_elem - addSeparator);
     input(i) = input(i).t();
     input(i).reshape(input(i).n_elem, 1);
     labels(i) = arma::zeros(totSize, 1);
@@ -104,7 +99,6 @@ void CopyTask::Generate(arma::mat& input,
     labels.col(i) = fieldLabels.at(i);
   }
 }
-
 
 } // namespace tasks
 } // namespace augmented

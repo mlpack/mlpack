@@ -21,16 +21,14 @@ namespace mlpack {
 namespace cf {
 
 // Default CF constructor.
-CF::CF(const size_t numUsersForSimilarity,
-       const size_t rank) :
-    numUsersForSimilarity(numUsersForSimilarity),
-    rank(rank)
+CF::CF(const size_t numUsersForSimilarity, const size_t rank)
+  : numUsersForSimilarity(numUsersForSimilarity), rank(rank)
 {
   // Validate neighbourhood size.
   if (numUsersForSimilarity < 1)
   {
     Log::Warn << "CF::CF(): neighbourhood size should be > 0 ("
-        << numUsersForSimilarity << " given). Setting value to 5.\n";
+              << numUsersForSimilarity << " given). Setting value to 5.\n";
     // Set default value of 5.
     this->numUsersForSimilarity = 5;
   }
@@ -43,8 +41,8 @@ void CF::GetRecommendations(const size_t numRecs,
   // users list, and then have the other overload of GetRecommendations() assume
   // that if users is empty, then recommendations should be generated for all
   // users?
-  arma::Col<size_t> users = arma::linspace<arma::Col<size_t> >(0,
-      cleanedData.n_cols - 1, cleanedData.n_cols);
+  arma::Col<size_t> users = arma::linspace<arma::Col<size_t>>(
+      0, cleanedData.n_cols - 1, cleanedData.n_cols);
 
   // Call the main overload for recommendations.
   GetRecommendations(numRecs, recommendations, users);
@@ -113,7 +111,6 @@ void CF::GetRecommendations(const size_t numRecs,
       if (cleanedData(j, users(i)) != 0.0)
         continue; // The user already rated the item.
 
-
       // Is the estimated value better than the worst candidate?
       if (averages[j] > pqueue.top().first)
       {
@@ -134,8 +131,8 @@ void CF::GetRecommendations(const size_t numRecs,
     // warning.
     if (recommendations(numRecs - 1, i) == def.second)
       Log::Warn << "Could not provide " << numRecs << " recommendations "
-          << "for user " << users(i) << " (not enough un-rated items)!"
-          << std::endl;
+                << "for user " << users(i) << " (not enough un-rated items)!"
+                << std::endl;
   }
 }
 
@@ -226,8 +223,8 @@ void CF::Predict(const arma::Mat<size_t>& combinations,
       ++user;
 
     for (size_t j = 0; j < neighborhood.n_rows; ++j)
-      rating += arma::as_scalar(w.row(sortedCombinations(1, i)) *
-          h.col(neighborhood(j, user)));
+      rating += arma::as_scalar(w.row(sortedCombinations(1, i))
+                                * h.col(neighborhood(j, user)));
     rating /= neighborhood.n_rows;
 
     predictions(ordering[i]) = rating;
@@ -243,17 +240,17 @@ void CF::CleanData(const arma::mat& data, arma::sp_mat& cleanedData)
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     // We have to transpose it because items are rows, and users are columns.
-    locations(1, i) = ((arma::uword) data(0, i));
-    locations(0, i) = ((arma::uword) data(1, i));
+    locations(1, i) = ((arma::uword)data(0, i));
+    locations(0, i) = ((arma::uword)data(1, i));
     values(i) = data(2, i);
     if (values(i) == 0)
       Log::Warn << "User rating of 0 ignored for user " << locations(1, i)
-          << ", item " << locations(0, i) << "." << std::endl;
+                << ", item " << locations(0, i) << "." << std::endl;
   }
 
   // Find maximum user and item IDs.
-  const size_t maxItemID = (size_t) max(locations.row(0)) + 1;
-  const size_t maxUserID = (size_t) max(locations.row(1)) + 1;
+  const size_t maxItemID = (size_t)max(locations.row(0)) + 1;
+  const size_t maxUserID = (size_t)max(locations.row(1)) + 1;
 
   // Fill sparse matrix.
   cleanedData = arma::sp_mat(locations, values, maxItemID, maxUserID);

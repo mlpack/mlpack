@@ -43,8 +43,8 @@ class SMORMS3Update
    * @param epsilon Value used to initialise the mean squared gradient
    *        parameter.
    */
-  SMORMS3Update(const double epsilon = 1e-16) : epsilon(epsilon)
-  { /* Do nothing. */ }
+  SMORMS3Update(const double epsilon = 1e-16)
+    : epsilon(epsilon) { /* Do nothing. */}
 
   /**
    * The Initialize method is called by SGD::Optimize method with UpdatePolicy
@@ -68,9 +68,8 @@ class SMORMS3Update
    * @param stepSize Step size to be used for the given iteration.
    * @param gradient The gradient matrix.
    */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
+  void
+  Update(arma::mat& iterate, const double stepSize, const arma::mat& gradient)
   {
     // Update the iterate.
     arma::mat r = 1 / (mem + 1);
@@ -83,7 +82,7 @@ class SMORMS3Update
 
     arma::mat x = (g % g) / (g2 + epsilon);
 
-    x.transform( [stepSize](double &v) { return std::min(v, stepSize); } );
+    x.transform([stepSize](double& v) { return std::min(v, stepSize); });
 
     iterate -= gradient % x / (arma::sqrt(g2) + epsilon);
 

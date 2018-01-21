@@ -31,13 +31,11 @@ namespace kmeans {
  * limited to the case where k is close to the number of points in the dataset,
  * and the number of iterations of the k-means algorithm will be few.
  */
-template<
-    typename MetricType,
-    typename MatType,
-    template<typename TreeMetricType,
-             typename TreeStatType,
-             typename TreeMatType>
-        class TreeType = tree::KDTree>
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType = tree::KDTree>
 class DualTreeKMeans
 {
  public:
@@ -132,31 +130,35 @@ class DualTreeKMeans
 //! Utility function for hiding children.  This actually does something, and is
 //! called if the tree is not a binary tree.
 template<typename TreeType>
-void HideChild(TreeType& node,
-               const size_t child,
-               const typename std::enable_if_t<
-                   !tree::TreeTraits<TreeType>::BinaryTree>* junk = 0);
+void HideChild(
+    TreeType& node,
+    const size_t child,
+    const typename std::enable_if_t<!tree::TreeTraits<TreeType>::BinaryTree>*
+        junk = 0);
 
 //! Utility function for hiding children.  This is called when the tree is a
 //! binary tree, and does nothing, because we don't hide binary children in this
 //! way.
 template<typename TreeType>
-void HideChild(TreeType& node,
-               const size_t child,
-               const typename std::enable_if_t<
-                   tree::TreeTraits<TreeType>::BinaryTree>* junk = 0);
+void HideChild(
+    TreeType& node,
+    const size_t child,
+    const typename std::enable_if_t<tree::TreeTraits<TreeType>::BinaryTree>*
+        junk = 0);
 
 //! Utility function for restoring children to a non-binary tree.
 template<typename TreeType>
-void RestoreChildren(TreeType& node,
-                     const typename std::enable_if_t<!tree::TreeTraits<
-                         TreeType>::BinaryTree>* junk = 0);
+void RestoreChildren(
+    TreeType& node,
+    const typename std::enable_if_t<!tree::TreeTraits<TreeType>::BinaryTree>*
+        junk = 0);
 
 //! Utility function for restoring children to a binary tree.
 template<typename TreeType>
-void RestoreChildren(TreeType& node,
-                     const typename std::enable_if_t<tree::TreeTraits<
-                         TreeType>::BinaryTree>* junk = 0);
+void RestoreChildren(
+    TreeType& node,
+    const typename std::enable_if_t<tree::TreeTraits<TreeType>::BinaryTree>*
+        junk = 0);
 
 //! A template typedef for the DualTreeKMeans algorithm with the default tree
 //! type (a kd-tree).
@@ -166,8 +168,8 @@ using DefaultDualTreeKMeans = DualTreeKMeans<MetricType, MatType>;
 //! A template typedef for the DualTreeKMeans algorithm with the cover tree
 //! type.
 template<typename MetricType, typename MatType>
-using CoverTreeDualTreeKMeans = DualTreeKMeans<MetricType, MatType,
-    tree::StandardCoverTree>;
+using CoverTreeDualTreeKMeans =
+    DualTreeKMeans<MetricType, MatType, tree::StandardCoverTree>;
 
 } // namespace kmeans
 } // namespace mlpack

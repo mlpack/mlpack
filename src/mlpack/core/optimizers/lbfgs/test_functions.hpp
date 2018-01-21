@@ -142,7 +142,7 @@ class GeneralizedRosenbrockFunction
 
  private:
   arma::mat initialPoint;
-  int n; // Dimensionality
+  int n;                             // Dimensionality
   arma::Row<size_t> visitationOrder; // For shuffling.
 };
 

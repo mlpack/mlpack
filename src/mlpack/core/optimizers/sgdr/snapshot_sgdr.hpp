@@ -149,10 +149,7 @@ class SnapshotSGDR
     return optimizer.UpdatePolicy();
   }
   //! Modify the update policy.
-  UpdatePolicyType& UpdatePolicy()
-  {
-    return optimizer.UpdatePolicy();
-  }
+  UpdatePolicyType& UpdatePolicy() { return optimizer.UpdatePolicy(); }
 
  private:
   //! The size of each mini-batch.

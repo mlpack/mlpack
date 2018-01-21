@@ -26,19 +26,17 @@ namespace rl {
  * @tparam UpdaterType The type of the optimizer.
  * @tparam PolicyType The type of the behavior policy.
  */
-template <
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename PolicyType
->
+template<typename EnvironmentType,
+         typename NetworkType,
+         typename UpdaterType,
+         typename PolicyType>
 class OneStepSarsaWorker
 {
  public:
   using StateType = typename EnvironmentType::State;
   using ActionType = typename EnvironmentType::Action;
-  using TransitionType = std::tuple<StateType, ActionType, double, StateType,
-      ActionType>;
+  using TransitionType =
+      std::tuple<StateType, ActionType, double, StateType, ActionType>;
 
   /**
    * Construct one step sarsa worker with the given parameters and
@@ -49,17 +47,15 @@ class OneStepSarsaWorker
    * @param config Hyper-parameters.
    * @param deterministic Whether it should be deterministic.
    */
-  OneStepSarsaWorker(
-      const UpdaterType& updater,
-      const EnvironmentType& environment,
-      const TrainingConfig& config,
-      bool deterministic):
-      updater(updater),
-      environment(environment),
-      config(config),
-      deterministic(deterministic),
-      pending(config.UpdateInterval())
-  { Reset(); }
+  OneStepSarsaWorker(const UpdaterType& updater,
+                     const EnvironmentType& environment,
+                     const TrainingConfig& config,
+                     bool deterministic)
+    : updater(updater), environment(environment), config(config),
+      deterministic(deterministic), pending(config.UpdateInterval())
+  {
+    Reset();
+  }
 
   /**
    * Initialize the worker.
@@ -68,7 +64,7 @@ class OneStepSarsaWorker
   void Initialize(NetworkType& learningNetwork)
   {
     updater.Initialize(learningNetwork.Parameters().n_rows,
-        learningNetwork.Parameters().n_cols);
+                       learningNetwork.Parameters().n_cols);
     // Build local network.
     network = learningNetwork;
   }
@@ -124,7 +120,7 @@ class OneStepSarsaWorker
       return false;
     }
 
-    #pragma omp atomic
+#pragma omp atomic
     totalSteps++;
 
     pending[pendingIndex++] =
@@ -134,23 +130,23 @@ class OneStepSarsaWorker
     {
       // Initialize the gradient storage.
       arma::mat totalGradients(learningNetwork.Parameters().n_rows,
-          learningNetwork.Parameters().n_cols, arma::fill::zeros);
+                               learningNetwork.Parameters().n_cols,
+                               arma::fill::zeros);
       for (size_t i = 0; i < pending.size(); ++i)
       {
-        TransitionType &transition = pending[i];
+        TransitionType& transition = pending[i];
 
         // Compute the target state-action value.
         arma::colvec actionValue;
-        #pragma omp critical
+#pragma omp critical
         {
-          targetNetwork.Predict(
-              std::get<3>(transition).Encode(), actionValue);
+          targetNetwork.Predict(std::get<3>(transition).Encode(), actionValue);
         };
         double targetActionValue = 0;
         if (!(terminal && i == pending.size() - 1))
           targetActionValue = actionValue[std::get<4>(transition)];
-        targetActionValue = std::get<2>(transition) +
-            config.Discount() * targetActionValue;
+        targetActionValue =
+            std::get<2>(transition) + config.Discount() * targetActionValue;
 
         // Compute the training target for current state.
         network.Forward(std::get<0>(transition).Encode(), actionValue);
@@ -165,14 +161,14 @@ class OneStepSarsaWorker
       }
 
       // Clamp the accumulated gradients.
-      totalGradients.transform(
-          [&](double gradient)
-          { return std::min(std::max(gradient, -config.GradientLimit()),
-          config.GradientLimit()); });
+      totalGradients.transform([&](double gradient) {
+        return std::min(std::max(gradient, -config.GradientLimit()),
+                        config.GradientLimit());
+      });
 
       // Perform async update of the global network.
-      updater.Update(learningNetwork.Parameters(),
-          config.StepSize(), totalGradients);
+      updater.Update(
+          learningNetwork.Parameters(), config.StepSize(), totalGradients);
 
       // Sync the local network with the global network.
       network = learningNetwork;
@@ -183,8 +179,10 @@ class OneStepSarsaWorker
     // Update global target network.
     if (totalSteps % config.TargetNetworkSyncInterval() == 0)
     {
-      #pragma omp critical
-      { targetNetwork = learningNetwork; }
+#pragma omp critical
+      {
+        targetNetwork = learningNetwork;
+      }
     }
 
     policy.Anneal();

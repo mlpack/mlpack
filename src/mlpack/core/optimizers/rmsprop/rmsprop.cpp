@@ -23,14 +23,15 @@ RMSProp::RMSProp(const double stepSize,
                  const double epsilon,
                  const size_t maxIterations,
                  const double tolerance,
-                 const bool shuffle) :
-    optimizer(stepSize,
+                 const bool shuffle)
+  : optimizer(stepSize,
               batchSize,
               maxIterations,
               tolerance,
               shuffle,
               RMSPropUpdate(epsilon, alpha))
-{ /* Nothing to do. */ }
+{ /* Nothing to do. */
+}
 
 } // namespace optimization
 } // namespace mlpack

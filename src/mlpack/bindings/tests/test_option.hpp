@@ -53,7 +53,7 @@ class TestOption
    * @param input Whether or not the option is an input option.
    * @param noTranspose If the parameter is a matrix and this is true, then the
    *      matrix will not be transposed on loading.
-   * @param testName Name of the test (used for identifiying which binding test 
+   * @param testName Name of the test (used for identifiying which binding test
    *      this option belongs to)
    */
   TestOption(const N defaultValue,
@@ -122,8 +122,7 @@ class ProgramDoc
    *     program and what it is.  No newline characters are necessary; this is
    *     taken care of by CLI later.
    */
-  ProgramDoc(const std::string& programName,
-             const std::string& documentation);
+  ProgramDoc(const std::string& programName, const std::string& documentation);
 
   //! The name of the program.
   std::string programName;

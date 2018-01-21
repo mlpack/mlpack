@@ -17,13 +17,12 @@
 
 // Require the approximation L to be within a relative error of E respect to the
 // actual value R.
-#define REQUIRE_RELATIVE_ERR(L, R, E) \
-    BOOST_REQUIRE_LE(std::abs((R) - (L)), (E) * std::abs(R))
+#define REQUIRE_RELATIVE_ERR(L, R, E)                                          \
+  BOOST_REQUIRE_LE(std::abs((R) - (L)), (E)*std::abs(R))
 
 // Check the values of two matrices.
-inline void CheckMatrices(const arma::mat& a,
-                          const arma::mat& b,
-                          double tolerance = 1e-5)
+inline void
+CheckMatrices(const arma::mat& a, const arma::mat& b, double tolerance = 1e-5)
 {
   BOOST_REQUIRE_EQUAL(a.n_rows, b.n_rows);
   BOOST_REQUIRE_EQUAL(a.n_cols, b.n_cols);
@@ -49,9 +48,8 @@ inline void CheckMatrices(const arma::Mat<size_t>& a,
 }
 
 // Check the values of two cubes.
-inline void CheckMatrices(const arma::cube& a,
-                          const arma::cube& b,
-                          double tolerance = 1e-5)
+inline void
+CheckMatrices(const arma::cube& a, const arma::cube& b, double tolerance = 1e-5)
 {
   BOOST_REQUIRE_EQUAL(a.n_rows, b.n_rows);
   BOOST_REQUIRE_EQUAL(a.n_cols, b.n_cols);
@@ -71,8 +69,9 @@ inline std::string FilterFileName(const std::string& inputString)
 {
   // Take the last valid 32 characters for the filename.
   std::string fileName;
-  for (auto it = inputString.rbegin(); it != inputString.rend() &&
-      fileName.size() != 32; ++it)
+  for (auto it = inputString.rbegin();
+       it != inputString.rend() && fileName.size() != 32;
+       ++it)
   {
     if (std::isalnum(*it))
       fileName.push_back(*it);

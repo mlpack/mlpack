@@ -54,11 +54,8 @@ class AdaMaxUpdate
    */
   AdaMaxUpdate(const double epsilon = 1e-8,
                const double beta1 = 0.9,
-               const double beta2 = 0.999) :
-    epsilon(epsilon),
-    beta1(beta1),
-    beta2(beta2),
-    iteration(0)
+               const double beta2 = 0.999)
+    : epsilon(epsilon), beta1(beta1), beta2(beta2), iteration(0)
   {
     // Nothing to do.
   }
@@ -83,9 +80,8 @@ class AdaMaxUpdate
    * @param stepSize Step size to be used for the given iteration.
    * @param gradient The gradient matrix.
    */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
+  void
+  Update(arma::mat& iterate, const double stepSize, const arma::mat& gradient)
   {
     // Increment the iteration counter variable.
     ++iteration;

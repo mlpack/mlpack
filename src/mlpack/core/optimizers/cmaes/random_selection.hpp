@@ -48,8 +48,8 @@ class RandomSelection
    */
   template<typename DecomposableFunctionType>
   double Select(DecomposableFunctionType& function,
-                      const size_t batchSize,
-                      const arma::mat& iterate)
+                const size_t batchSize,
+                const arma::mat& iterate)
   {
     // Find the number of functions to use.
     const size_t numFunctions = function.NumFunctions();
@@ -58,8 +58,8 @@ class RandomSelection
     for (size_t f = 0; f < std::floor(numFunctions * fraction); f += batchSize)
     {
       const size_t selection = math::RandInt(0, numFunctions);
-      const size_t effectiveBatchSize = std::min(batchSize,
-          numFunctions - selection);
+      const size_t effectiveBatchSize =
+          std::min(batchSize, numFunctions - selection);
 
       objective += function.Evaluate(iterate, selection, effectiveBatchSize);
     }

@@ -37,7 +37,7 @@ using RSType = RangeSearch<metric::EuclideanDistance, arma::mat, TreeType>;
  * MonoSearchVisitor executes a monochromatic range search on the given
  * RSType. Range Search is performed on the reference set itself, no querySet.
  */
-class MonoSearchVisitor : public  boost::static_visitor<void>
+class MonoSearchVisitor : public boost::static_visitor<void>
 {
  private:
   //! The range to search for.
@@ -55,11 +55,8 @@ class MonoSearchVisitor : public  boost::static_visitor<void>
   //! Construct the MonoSearchVisitor with the given parameters.
   MonoSearchVisitor(const math::Range& range,
                     std::vector<std::vector<size_t>>& neighbors,
-                    std::vector<std::vector<double>>& distances):
-      range(range),
-      neighbors(neighbors),
-      distances(distances)
-  {};
+                    std::vector<std::vector<double>>& distances)
+    : range(range), neighbors(neighbors), distances(distances){};
 };
 
 /**
@@ -156,8 +153,7 @@ class TrainVisitor : public boost::static_visitor<void>
   void operator()(RSTypeT<tree::Octree>* rs) const;
 
   //! Construct the TrainVisitor object with the given reference set, leafSize
-  TrainVisitor(arma::mat&& referenceSet,
-               const size_t leafSize);
+  TrainVisitor(arma::mat&& referenceSet, const size_t leafSize);
 };
 
 /**
@@ -257,7 +253,8 @@ class RSModel
                  RSType<tree::RPTree>*,
                  RSType<tree::MaxRPTree>*,
                  RSType<tree::UBTree>*,
-                 RSType<tree::Octree>*> rSearch;
+                 RSType<tree::Octree>*>
+      rSearch;
 
  public:
   /**

@@ -46,18 +46,15 @@ class VantagePointSplit
     //! An instance of the MetricType class.
     const MetricType* metric;
 
-    SplitInfo() :
-        mu(0),
-        metric(NULL)
-    { }
+    SplitInfo() : mu(0), metric(NULL) {}
 
     template<typename VecType>
-    SplitInfo(const MetricType& metric, const VecType& vantagePoint,
-        ElemType mu) :
-        vantagePoint(vantagePoint),
-        mu(mu),
-        metric(&metric)
-    { }
+    SplitInfo(const MetricType& metric,
+              const VecType& vantagePoint,
+              ElemType mu)
+      : vantagePoint(vantagePoint), mu(mu), metric(&metric)
+    {
+    }
   };
 
   /**
@@ -95,8 +92,8 @@ class VantagePointSplit
                              const size_t count,
                              const SplitInfo& splitInfo)
   {
-    return split::PerformSplit<MatType, VantagePointSplit>(data, begin, count,
-        splitInfo);
+    return split::PerformSplit<MatType, VantagePointSplit>(
+        data, begin, count, splitInfo);
   }
 
   /**
@@ -121,8 +118,8 @@ class VantagePointSplit
                              const SplitInfo& splitInfo,
                              std::vector<size_t>& oldFromNew)
   {
-    return split::PerformSplit<MatType, VantagePointSplit>(data, begin, count,
-        splitInfo, oldFromNew);
+    return split::PerformSplit<MatType, VantagePointSplit>(
+        data, begin, count, splitInfo, oldFromNew);
   }
 
   /**
@@ -135,11 +132,10 @@ class VantagePointSplit
    * @param splitInfo An information about the split.
    */
   template<typename VecType>
-  static bool AssignToLeftNode(const VecType& point,
-                               const SplitInfo& splitInfo)
+  static bool AssignToLeftNode(const VecType& point, const SplitInfo& splitInfo)
   {
-    return (splitInfo.metric->Evaluate(splitInfo.vantagePoint, point) <
-        splitInfo.mu);
+    return (splitInfo.metric->Evaluate(splitInfo.vantagePoint, point)
+            < splitInfo.mu);
   }
 
  private:
@@ -174,4 +170,4 @@ class VantagePointSplit
 // Include implementation.
 #include "vantage_point_split_impl.hpp"
 
-#endif  //  MLPACK_CORE_TREE_BINARY_SPACE_TREE_VANTAGE_POINT_SPLIT_HPP
+#endif //  MLPACK_CORE_TREE_BINARY_SPACE_TREE_VANTAGE_POINT_SPLIT_HPP

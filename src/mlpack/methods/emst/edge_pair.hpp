@@ -42,11 +42,11 @@ class EdgePair
    * Init.  However, this is not necessary for functionality; it is just a way
    * to keep the edge list organized in other code.
    */
-  EdgePair(const size_t lesser, const size_t greater, const double dist) :
-      lesser(lesser), greater(greater), distance(dist)
+  EdgePair(const size_t lesser, const size_t greater, const double dist)
+    : lesser(lesser), greater(greater), distance(dist)
   {
     Log::Assert(lesser != greater,
-        "EdgePair::EdgePair(): indices cannot be equal.");
+                "EdgePair::EdgePair(): indices cannot be equal.");
   }
 
   //! Get the lesser index.

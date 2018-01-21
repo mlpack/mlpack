@@ -26,8 +26,8 @@ inline std::string Extension(const std::string& filename)
     return extension;
 
   extension = filename.substr(ext + 1);
-  std::transform(extension.begin(), extension.end(), extension.begin(),
-      ::tolower);
+  std::transform(
+      extension.begin(), extension.end(), extension.begin(), ::tolower);
 
   return extension;
 }

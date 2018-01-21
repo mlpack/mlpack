@@ -59,8 +59,9 @@ class SVDConvolution
   {
     // Use the naive convolution in case the filter isn't two dimensional or the
     // filter is bigger than the input.
-    if (filter.n_rows > input.n_rows || filter.n_cols > input.n_cols ||
-        filter.n_rows == 1 || filter.n_cols == 1)
+    if (filter.n_rows > input.n_rows || filter.n_cols > input.n_cols
+        || filter.n_rows == 1
+        || filter.n_cols == 1)
     {
       NaiveConvolution<BorderMode>::Convolution(input, filter, output);
     }
@@ -73,8 +74,8 @@ class SVDConvolution
 
       // Rank approximation using the singular values calculated with singular
       // value decomposition of dense filter matrix.
-      const size_t rank = arma::sum(s > (s.n_elem * arma::max(s) *
-          arma::datum::eps));
+      const size_t rank =
+          arma::sum(s > (s.n_elem * arma::max(s) * arma::datum::eps));
 
       // Test for separability based on the rank of the kernel and take
       // advantage of the low rank.
@@ -84,19 +85,19 @@ class SVDConvolution
         NaiveConvolution<BorderMode>::Convolution(input, subFilter, subOutput);
 
         subOutput = subOutput.t();
-        NaiveConvolution<BorderMode>::Convolution(subOutput, U.unsafe_col(0),
-            output);
+        NaiveConvolution<BorderMode>::Convolution(
+            subOutput, U.unsafe_col(0), output);
 
         for (size_t r = 1; r < rank; r++)
         {
           subFilter = V.unsafe_col(r) * s(r);
-          NaiveConvolution<BorderMode>::Convolution(input, subFilter,
-              subOutput);
+          NaiveConvolution<BorderMode>::Convolution(
+              input, subFilter, subOutput);
 
           arma::Mat<eT> temp;
           subOutput = subOutput.t();
-          NaiveConvolution<BorderMode>::Convolution(subOutput, U.unsafe_col(r),
-              temp);
+          NaiveConvolution<BorderMode>::Convolution(
+              subOutput, U.unsafe_col(r), temp);
           output += temp;
         }
 
@@ -124,17 +125,17 @@ class SVDConvolution
                           arma::Cube<eT>& output)
   {
     arma::Mat<eT> convOutput;
-    SVDConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
-        convOutput);
+    SVDConvolution<BorderMode>::Convolution(
+        input.slice(0), filter.slice(0), convOutput);
 
-    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
-        input.n_slices);
+    output =
+        arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols, input.n_slices);
     output.slice(0) = convOutput;
 
     for (size_t i = 1; i < input.n_slices; i++)
     {
-      SVDConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
-          convOutput);
+      SVDConvolution<BorderMode>::Convolution(
+          input.slice(i), filter.slice(i), convOutput);
       output.slice(i) = convOutput;
     }
   }
@@ -157,14 +158,14 @@ class SVDConvolution
     arma::Mat<eT> convOutput;
     SVDConvolution<BorderMode>::Convolution(input, filter.slice(0), convOutput);
 
-    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
-        filter.n_slices);
+    output =
+        arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols, filter.n_slices);
     output.slice(0) = convOutput;
 
     for (size_t i = 1; i < filter.n_slices; i++)
     {
-      SVDConvolution<BorderMode>::Convolution(input, filter.slice(i),
-          convOutput);
+      SVDConvolution<BorderMode>::Convolution(
+          input, filter.slice(i), convOutput);
       output.slice(i) = convOutput;
     }
   }
@@ -187,18 +188,18 @@ class SVDConvolution
     arma::Mat<eT> convOutput;
     SVDConvolution<BorderMode>::Convolution(input.slice(0), filter, convOutput);
 
-    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
-        input.n_slices);
+    output =
+        arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols, input.n_slices);
     output.slice(0) = convOutput;
 
     for (size_t i = 1; i < input.n_slices; i++)
     {
-      SVDConvolution<BorderMode>::Convolution(input.slice(i), filter,
-          convOutput);
+      SVDConvolution<BorderMode>::Convolution(
+          input.slice(i), filter, convOutput);
       output.slice(i) = convOutput;
     }
   }
-};  // class SVDConvolution
+}; // class SVDConvolution
 
 } // namespace ann
 } // namespace mlpack

@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_SUITE(ProximalTest);
  */
 BOOST_AUTO_TEST_CASE(ProjectToL1)
 {
-  int D = 100;  // Dimension of the problem.
+  int D = 100; // Dimension of the problem.
 
   // Norm of L1 ball.
   double tau1 = 1.5;

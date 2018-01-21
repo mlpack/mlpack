@@ -23,7 +23,9 @@
 #include <mlpack/core/data/imputation_methods/custom_imputation.hpp>
 #include <mlpack/core/data/imputation_methods/listwise_deletion.hpp>
 
-PROGRAM_INFO("Impute Data", "This utility takes a dataset and converts user "
+PROGRAM_INFO(
+    "Impute Data",
+    "This utility takes a dataset and converts user "
     "defined missing variable to another to provide more meaningful analysis "
     "\n\n"
     "The program does not modify the original file, but instead makes a "
@@ -40,11 +42,15 @@ PROGRAM_INFO("Impute Data", "This utility takes a dataset and converts user "
 PARAM_STRING_IN_REQ("input_file", "File containing data.", "i");
 PARAM_STRING_OUT("output_file", "File to save output into.", "o");
 PARAM_STRING_IN_REQ("missing_value", "User defined missing value.", "m");
-PARAM_STRING_IN_REQ("strategy", "imputation strategy to be applied. Strategies "
+PARAM_STRING_IN_REQ(
+    "strategy",
+    "imputation strategy to be applied. Strategies "
     "should be one of 'custom', 'mean', 'median', and 'listwise_deletion'.",
     "s");
-PARAM_DOUBLE_IN("custom_value", "User-defined custom imputation value.", "c",
-    0.0);
+PARAM_DOUBLE_IN("custom_value",
+                "User-defined custom imputation value.",
+                "c",
+                0.0);
 PARAM_INT_IN("dimension", "The dimension to apply imputation to.", "d", 0);
 
 using namespace mlpack;
@@ -59,23 +65,28 @@ static void mlpackMain()
   const string outputFile = CLI::GetParam<string>("output_file");
   const string missingValue = CLI::GetParam<string>("missing_value");
   const double customValue = CLI::GetParam<double>("custom_value");
-  const size_t dimension = (size_t) CLI::GetParam<int>("dimension");
+  const size_t dimension = (size_t)CLI::GetParam<int>("dimension");
   string strategy = CLI::GetParam<string>("strategy");
 
-  RequireParamInSet<string>("strategy", { "custom", "mean", "median",
-      "listwise_deletion" }, true, "unknown imputation strategy");
-  RequireAtLeastOnePassed({ "output_file" }, false, "no output will be saved");
+  RequireParamInSet<string>("strategy",
+                            {"custom", "mean", "median", "listwise_deletion"},
+                            true,
+                            "unknown imputation strategy");
+  RequireAtLeastOnePassed({"output_file"}, false, "no output will be saved");
 
   if (!CLI::HasParam("dimension"))
   {
     Log::Warn << "--dimension is not specified; the imputation will be "
-        << "applied to all dimensions."<< endl;
+              << "applied to all dimensions." << endl;
   }
 
   if (strategy != "custom")
     ReportIgnoredParam("custom_value", "not using custom imputation strategy");
   else
-    RequireAtLeastOnePassed({ "custom_value" }, true, "must pass custom "
+    RequireAtLeastOnePassed(
+        {"custom_value"},
+        true,
+        "must pass custom "
         "imputation value when using 'custom' imputation strategy");
 
   arma::mat input;
@@ -96,7 +107,7 @@ static void mlpackMain()
     if (numMappings > 0)
     {
       Log::Info << "Replacing " << numMappings << " values in dimension " << i
-          << "." << endl;
+                << "." << endl;
       dirtyDimensions.push_back(i);
     }
   }
@@ -104,13 +115,16 @@ static void mlpackMain()
   if (dirtyDimensions.size() == 0)
   {
     Log::Warn << "The file does not contain any user-defined missing "
-        << "variables. The program did not perform any imputation." << endl;
+              << "variables. The program did not perform any imputation."
+              << endl;
   }
-  else if (CLI::HasParam("dimension") &&
-      !(std::find(dirtyDimensions.begin(), dirtyDimensions.end(), dimension)
-      != dirtyDimensions.end()))
+  else if (CLI::HasParam("dimension")
+           && !(std::find(
+                    dirtyDimensions.begin(), dirtyDimensions.end(), dimension)
+                != dirtyDimensions.end()))
   {
-    Log::Warn << "The given dimension of the file does not contain any "
+    Log::Warn
+        << "The given dimension of the file does not contain any "
         << "user-defined missing variables. The program did not perform any "
         << "imputation." << endl;
   }
@@ -122,8 +136,8 @@ static void mlpackMain()
       // when --dimension is specified,
       // the program will apply the changes to only the given dimension.
       Log::Info << "Performing '" << strategy << "' imputation strategy "
-          << "to replace '" << missingValue << "' on dimension " << dimension
-          << "." << endl;
+                << "to replace '" << missingValue << "' on dimension "
+                << dimension << "." << endl;
       if (strategy == "mean")
       {
         Imputer<double, MapperType, MeanImputation<double>> imputer(info);
@@ -142,14 +156,14 @@ static void mlpackMain()
       else if (strategy == "custom")
       {
         CustomImputation<double> strat(customValue);
-        Imputer<double, MapperType, CustomImputation<double>> imputer(
-            info, strat);
+        Imputer<double, MapperType, CustomImputation<double>> imputer(info,
+                                                                      strat);
         imputer.Impute(input, missingValue, dimension);
       }
       else
       {
-        Log::Fatal << "'" <<  strategy << "' imputation strategy does not exist"
-            << endl;
+        Log::Fatal << "'" << strategy << "' imputation strategy does not exist"
+                   << endl;
       }
     }
     else
@@ -157,7 +171,8 @@ static void mlpackMain()
       // when --dimension is not specified,
       // the program will apply the changes to all dimensions.
       Log::Info << "Performing '" << strategy << "' imputation strategy "
-          << "to replace '" << missingValue << "' on all dimensions." << endl;
+                << "to replace '" << missingValue << "' on all dimensions."
+                << endl;
 
       if (strategy == "mean")
       {
@@ -180,15 +195,15 @@ static void mlpackMain()
       else if (strategy == "custom")
       {
         CustomImputation<double> strat(customValue);
-        Imputer<double, MapperType, CustomImputation<double>> imputer(
-            info, strat);
+        Imputer<double, MapperType, CustomImputation<double>> imputer(info,
+                                                                      strat);
         for (size_t i : dirtyDimensions)
           imputer.Impute(input, missingValue, i);
       }
       else
       {
-        Log::Fatal << "'" <<  strategy << "' imputation strategy does not "
-            << "exist!" << endl;
+        Log::Fatal << "'" << strategy << "' imputation strategy does not "
+                   << "exist!" << endl;
       }
     }
     Timer::Stop("imputation");

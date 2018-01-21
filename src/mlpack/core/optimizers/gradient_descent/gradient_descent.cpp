@@ -15,14 +15,12 @@
 namespace mlpack {
 namespace optimization {
 
-GradientDescent::GradientDescent(
-    const double stepSize,
-    const size_t maxIterations,
-    const double tolerance) :
-    stepSize(stepSize),
-    maxIterations(maxIterations),
-    tolerance(tolerance)
-{ /* Nothing to do. */ }
+GradientDescent::GradientDescent(const double stepSize,
+                                 const size_t maxIterations,
+                                 const double tolerance)
+  : stepSize(stepSize), maxIterations(maxIterations), tolerance(tolerance)
+{ /* Nothing to do. */
+}
 
 } // namespace optimization
 } // namespace mlpack

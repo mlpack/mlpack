@@ -63,8 +63,8 @@ template<typename MLAlgorithm,
          typename PredictionsType =
              typename MetaInfoExtractor<MLAlgorithm, MatType>::PredictionsType,
          typename WeightsType =
-             typename MetaInfoExtractor<MLAlgorithm, MatType,
-                 PredictionsType>::WeightsType>
+             typename MetaInfoExtractor<MLAlgorithm, MatType, PredictionsType>::
+                 WeightsType>
 class SimpleCV
 {
  public:
@@ -82,9 +82,7 @@ class SimpleCV
    * @tparam PredictionsInType A type that can be converted to PredictionsType.
    */
   template<typename MatInType, typename PredictionsInType>
-  SimpleCV(const double validationSize,
-           MatInType&& xs,
-           PredictionsInType&& ys);
+  SimpleCV(const double validationSize, MatInType&& xs, PredictionsInType&& ys);
 
   /**
    * This constructor can be used for multiclass classification algorithms.
@@ -244,8 +242,7 @@ class SimpleCV
    * Assert data consistency and initialize fields required for running
    * cross-validation.
    */
-  template<typename MatInType,
-           typename PredictionsInType>
+  template<typename MatInType, typename PredictionsInType>
   SimpleCV(Base&& base,
            const double validationSize,
            MatInType&& xs,

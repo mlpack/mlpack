@@ -81,10 +81,7 @@ class SoftsignFunction
    * @param y Input data.
    * @return f'(x)
    */
-  static double Deriv(const double y)
-  {
-    return std::pow(1.0 - std::abs(y), 2);
-  }
+  static double Deriv(const double y) { return std::pow(1.0 - std::abs(y), 2); }
 
   /**
    * Computes the first derivatives of the softsign function.

@@ -26,17 +26,17 @@ namespace tasks /* Task utilities for augmented */ {
  * The parameters are:
  * - maximum sequence length;
  * - binary length of sequence elements.
- * 
+ *
  * Generated datasets are compliant with mlpack format -
  * every dataset element is shaped as a vector of
  * length (binary length) * (sequence length).
- * 
+ *
  * Example of generated dataset (sequence length = 3, binary length = 2):
  * - Input sequences: [1,1,0,0,0,1]
  * (three numbers in the sequence are 11, 00, and 01)
  * - Output sequences: [0,0,0,1,1,1]
  * (00, 01, 11 - reordering of the numbers above in the ascending order)
- * 
+ *
  */
 class SortTask
 {
@@ -64,19 +64,18 @@ class SortTask
    */
   void Generate(arma::field<arma::mat>& input,
                 arma::field<arma::mat>& labels,
-                      const size_t batchSize,
-                      bool fixedLength = false) const;
+                const size_t batchSize,
+                bool fixedLength = false) const;
   /**
    * Generate dataset of a given size and store it in
    * arma::mat object.
-   * 
+   *
    * @param input The variable to store input sequences.
    * @param labels The variable to store output sequences.
    * @param batchSize The dataset size.
    */
-  void Generate(arma::mat& input,
-                arma::mat& labels,
-                const size_t batchSize) const;
+  void
+  Generate(arma::mat& input, arma::mat& labels, const size_t batchSize) const;
 
  private:
   // Maximum length of the sequence.
@@ -95,6 +94,3 @@ class SortTask
 
 #include "sort_impl.hpp"
 #endif
-
-
-

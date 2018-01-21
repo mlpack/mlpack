@@ -39,10 +39,8 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
 class Sequential
 {
  public:
@@ -97,8 +95,11 @@ class Sequential
    *
    * @param args The layer parameter.
    */
-  template <class LayerType, class... Args>
-  void Add(Args... args) { network.push_back(new LayerType(args...)); }
+  template<class LayerType, class... Args>
+  void Add(Args... args)
+  {
+    network.push_back(new LayerType(args...));
+  }
 
   /*
    * Add a new module to the model.

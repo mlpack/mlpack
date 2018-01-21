@@ -28,8 +28,8 @@ class ConstInitialization
   /**
    *  Create the ConstantInitialization object.
    */
-  ConstInitialization(const double initVal) : initVal(initVal)
-  { /* Nothing to do here */ }
+  ConstInitialization(const double initVal)
+    : initVal(initVal) { /* Nothing to do here */}
 
   /**
    * Initialize the elements of the specified weight matrix.

@@ -44,8 +44,8 @@ void Convolution2DMethodTest(const arma::mat input,
   ConvolutionFunction::Convolution(input, filter, convOutput);
 
   // Check the outut dimension.
-  bool b = (convOutput.n_rows == output.n_rows) &&
-      (convOutput.n_cols == output.n_cols);
+  bool b = (convOutput.n_rows == output.n_rows)
+           && (convOutput.n_cols == output.n_cols);
   BOOST_REQUIRE_EQUAL(b, 1);
 
   const double* outputPtr = output.memptr();
@@ -74,9 +74,9 @@ void Convolution3DMethodTest(const arma::cube input,
   ConvolutionFunction::Convolution(input, filter, convOutput);
 
   // Check the outut dimension.
-  bool b = (convOutput.n_rows == output.n_rows) &&
-      (convOutput.n_cols == output.n_cols &&
-      convOutput.n_slices == output.n_slices);
+  bool b = (convOutput.n_rows == output.n_rows)
+           && (convOutput.n_cols == output.n_cols
+               && convOutput.n_slices == output.n_slices);
   BOOST_REQUIRE_EQUAL(b, 1);
 
   const double* outputPtr = output.memptr();
@@ -106,9 +106,9 @@ void ConvolutionMethodBatchTest(const arma::mat input,
   ConvolutionFunction::Convolution(input, filter, convOutput);
 
   // Check the outut dimension.
-  bool b = (convOutput.n_rows == output.n_rows) &&
-      (convOutput.n_cols == output.n_cols &&
-      convOutput.n_slices == output.n_slices);
+  bool b = (convOutput.n_rows == output.n_rows)
+           && (convOutput.n_cols == output.n_cols
+               && convOutput.n_slices == output.n_slices);
   BOOST_REQUIRE_EQUAL(b, 1);
 
   const double* outputPtr = output.memptr();
@@ -125,30 +125,26 @@ BOOST_AUTO_TEST_CASE(ValidConvolution2DTest)
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
-  input << 1 << 2 << 3 << 4 << arma::endr
-        << 4 << 1 << 2 << 3 << arma::endr
-        << 3 << 4 << 1 << 2 << arma::endr
-        << 2 << 3 << 4 << 1;
+  input << 1 << 2 << 3 << 4 << arma::endr << 4 << 1 << 2 << 3 << arma::endr << 3
+        << 4 << 1 << 2 << arma::endr << 2 << 3 << 4 << 1;
 
-  filter << 1 << 0 << -1 << arma::endr
-         << 0 << 1 << 0 << arma::endr
-         << -1 << 0 << 1;
+  filter << 1 << 0 << -1 << arma::endr << 0 << 1 << 0 << arma::endr << -1 << 0
+         << 1;
 
-  output << -3 << -2 << arma::endr
-         << 8 << -3;
+  output << -3 << -2 << arma::endr << 8 << -3;
 
   // Perform the naive convolution approach.
-  Convolution2DMethodTest<NaiveConvolution<ValidConvolution> >(input, filter,
-      output);
+  Convolution2DMethodTest<NaiveConvolution<ValidConvolution>>(
+      input, filter, output);
 
   // Perform the convolution trough fft.
-  Convolution2DMethodTest<FFTConvolution<ValidConvolution> >(input, filter,
-      output);
+  Convolution2DMethodTest<FFTConvolution<ValidConvolution>>(
+      input, filter, output);
 
   // Perform the convolution using singular value decomposition to
   // speeded up the computation.
-  Convolution2DMethodTest<SVDConvolution<ValidConvolution> >(input, filter,
-      output);
+  Convolution2DMethodTest<SVDConvolution<ValidConvolution>>(
+      input, filter, output);
 }
 
 /**
@@ -158,34 +154,29 @@ BOOST_AUTO_TEST_CASE(FullConvolution2DTest)
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
-  input << 1 << 2 << 3 << 4 << arma::endr
-        << 4 << 1 << 2 << 3 << arma::endr
-        << 3 << 4 << 1 << 2 << arma::endr
-        << 2 << 3 << 4 << 1;
+  input << 1 << 2 << 3 << 4 << arma::endr << 4 << 1 << 2 << 3 << arma::endr << 3
+        << 4 << 1 << 2 << arma::endr << 2 << 3 << 4 << 1;
 
-  filter << 1 << 0 << -1 << arma::endr
-         << 1 << 1 << 1 << arma::endr
-         << -1 << 0 << 1;
+  filter << 1 << 0 << -1 << arma::endr << 1 << 1 << 1 << arma::endr << -1 << 0
+         << 1;
 
-  output << 1 << 2 << 2 << 2 << -3 << -4 << arma::endr
-         << 5 << 4 << 4 << 11 << 5 << 1 << arma::endr
-         << 6 << 7 << 3 << 2 << 7 << 5 << arma::endr
-         << 1 << 9 << 12 << 3 << 1 << 4 << arma::endr
-         << -1 << 1 << 11 << 10 << 6 << 3 << arma::endr
-         << -2 << -3 << -2 << 2 << 4 << 1;
+  output << 1 << 2 << 2 << 2 << -3 << -4 << arma::endr << 5 << 4 << 4 << 11 << 5
+         << 1 << arma::endr << 6 << 7 << 3 << 2 << 7 << 5 << arma::endr << 1
+         << 9 << 12 << 3 << 1 << 4 << arma::endr << -1 << 1 << 11 << 10 << 6
+         << 3 << arma::endr << -2 << -3 << -2 << 2 << 4 << 1;
 
   // Perform the naive convolution approach.
-  Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
-      output);
+  Convolution2DMethodTest<NaiveConvolution<FullConvolution>>(
+      input, filter, output);
 
   // Perform the convolution trough fft.
-  Convolution2DMethodTest<FFTConvolution<FullConvolution> >(input, filter,
-      output);
+  Convolution2DMethodTest<FFTConvolution<FullConvolution>>(
+      input, filter, output);
 
   // Perform the convolution using singular value decomposition to
   // speeded up the computation.
-  Convolution2DMethodTest<SVDConvolution<FullConvolution> >(input, filter,
-      output);
+  Convolution2DMethodTest<SVDConvolution<FullConvolution>>(
+      input, filter, output);
 }
 
 /**
@@ -195,17 +186,13 @@ BOOST_AUTO_TEST_CASE(ValidConvolution3DTest)
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
-  input << 1 << 2 << 3 << 4 << arma::endr
-        << 4 << 1 << 2 << 3 << arma::endr
-        << 3 << 4 << 1 << 2 << arma::endr
-        << 2 << 3 << 4 << 1;
+  input << 1 << 2 << 3 << 4 << arma::endr << 4 << 1 << 2 << 3 << arma::endr << 3
+        << 4 << 1 << 2 << arma::endr << 2 << 3 << 4 << 1;
 
-  filter << 1 << 0 << -1 << arma::endr
-         << 0 << 1 << 0 << arma::endr
-         << -1 << 0 << 1;
+  filter << 1 << 0 << -1 << arma::endr << 0 << 1 << 0 << arma::endr << -1 << 0
+         << 1;
 
-  output << -3 << -2 << arma::endr
-         << 8 << -3;
+  output << -3 << -2 << arma::endr << 8 << -3;
 
   arma::cube inputCube(input.n_rows, input.n_cols, 2);
   inputCube.slice(0) = input;
@@ -220,17 +207,17 @@ BOOST_AUTO_TEST_CASE(ValidConvolution3DTest)
   outputCube.slice(1) = output;
 
   // Perform the naive convolution approach.
-  Convolution3DMethodTest<NaiveConvolution<ValidConvolution> >(inputCube,
-      filterCube, outputCube);
+  Convolution3DMethodTest<NaiveConvolution<ValidConvolution>>(
+      inputCube, filterCube, outputCube);
 
   // Perform the convolution trough fft.
-  Convolution3DMethodTest<FFTConvolution<ValidConvolution> >(inputCube,
-      filterCube, outputCube);
+  Convolution3DMethodTest<FFTConvolution<ValidConvolution>>(
+      inputCube, filterCube, outputCube);
 
   // Perform the convolution using using the singular value decomposition to
   // speeded up the computation.
-  Convolution3DMethodTest<SVDConvolution<ValidConvolution> >(inputCube,
-      filterCube, outputCube);
+  Convolution3DMethodTest<SVDConvolution<ValidConvolution>>(
+      inputCube, filterCube, outputCube);
 }
 
 /**
@@ -240,21 +227,16 @@ BOOST_AUTO_TEST_CASE(FullConvolution3DTest)
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
-  input << 1 << 2 << 3 << 4 << arma::endr
-        << 4 << 1 << 2 << 3 << arma::endr
-        << 3 << 4 << 1 << 2 << arma::endr
-        << 2 << 3 << 4 << 1;
+  input << 1 << 2 << 3 << 4 << arma::endr << 4 << 1 << 2 << 3 << arma::endr << 3
+        << 4 << 1 << 2 << arma::endr << 2 << 3 << 4 << 1;
 
-  filter << 1 << 0 << -1 << arma::endr
-         << 1 << 1 << 1 << arma::endr
-         << -1 << 0 << 1;
+  filter << 1 << 0 << -1 << arma::endr << 1 << 1 << 1 << arma::endr << -1 << 0
+         << 1;
 
-  output << 1 << 2 << 2 << 2 << -3 << -4 << arma::endr
-         << 5 << 4 << 4 << 11 << 5 << 1 << arma::endr
-         << 6 << 7 << 3 << 2 << 7 << 5 << arma::endr
-         << 1 << 9 << 12 << 3 << 1 << 4 << arma::endr
-         << -1 << 1 << 11 << 10 << 6 << 3 << arma::endr
-         << -2 << -3 << -2 << 2 << 4 << 1;
+  output << 1 << 2 << 2 << 2 << -3 << -4 << arma::endr << 5 << 4 << 4 << 11 << 5
+         << 1 << arma::endr << 6 << 7 << 3 << 2 << 7 << 5 << arma::endr << 1
+         << 9 << 12 << 3 << 1 << 4 << arma::endr << -1 << 1 << 11 << 10 << 6
+         << 3 << arma::endr << -2 << -3 << -2 << 2 << 4 << 1;
 
   arma::cube inputCube(input.n_rows, input.n_cols, 2);
   inputCube.slice(0) = input;
@@ -269,17 +251,17 @@ BOOST_AUTO_TEST_CASE(FullConvolution3DTest)
   outputCube.slice(1) = output;
 
   // Perform the naive convolution approach.
-  Convolution3DMethodTest<NaiveConvolution<FullConvolution> >(inputCube,
-      filterCube, outputCube);
+  Convolution3DMethodTest<NaiveConvolution<FullConvolution>>(
+      inputCube, filterCube, outputCube);
 
   // Perform the convolution trough fft.
-  Convolution3DMethodTest<FFTConvolution<FullConvolution> >(inputCube,
-      filterCube, outputCube);
+  Convolution3DMethodTest<FFTConvolution<FullConvolution>>(
+      inputCube, filterCube, outputCube);
 
   // Perform the convolution using using the singular value decomposition to
   // speeded up the computation.
-  Convolution3DMethodTest<SVDConvolution<FullConvolution> >(inputCube,
-      filterCube, outputCube);
+  Convolution3DMethodTest<SVDConvolution<FullConvolution>>(
+      inputCube, filterCube, outputCube);
 }
 
 /**
@@ -290,17 +272,13 @@ BOOST_AUTO_TEST_CASE(ValidConvolutionBatchTest)
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
-  input << 1 << 2 << 3 << 4 << arma::endr
-        << 4 << 1 << 2 << 3 << arma::endr
-        << 3 << 4 << 1 << 2 << arma::endr
-        << 2 << 3 << 4 << 1;
+  input << 1 << 2 << 3 << 4 << arma::endr << 4 << 1 << 2 << 3 << arma::endr << 3
+        << 4 << 1 << 2 << arma::endr << 2 << 3 << 4 << 1;
 
-  filter << 1 << 0 << -1 << arma::endr
-         << 0 << 1 << 0 << arma::endr
-         << -1 << 0 << 1;
+  filter << 1 << 0 << -1 << arma::endr << 0 << 1 << 0 << arma::endr << -1 << 0
+         << 1;
 
-  output << -3 << -2 << arma::endr
-         << 8 << -3;
+  output << -3 << -2 << arma::endr << 8 << -3;
 
   arma::cube filterCube(filter.n_rows, filter.n_cols, 2);
   filterCube.slice(0) = filter;
@@ -311,17 +289,17 @@ BOOST_AUTO_TEST_CASE(ValidConvolutionBatchTest)
   outputCube.slice(1) = output;
 
   // Perform the naive convolution approach.
-  ConvolutionMethodBatchTest<NaiveConvolution<ValidConvolution> >(input,
-      filterCube, outputCube);
+  ConvolutionMethodBatchTest<NaiveConvolution<ValidConvolution>>(
+      input, filterCube, outputCube);
 
   // Perform the convolution trough fft.
-  ConvolutionMethodBatchTest<FFTConvolution<ValidConvolution> >(input,
-      filterCube, outputCube);
+  ConvolutionMethodBatchTest<FFTConvolution<ValidConvolution>>(
+      input, filterCube, outputCube);
 
   // Perform the convolution using using the singular value decomposition to
   // speeded up the computation.
-  ConvolutionMethodBatchTest<SVDConvolution<ValidConvolution> >(input,
-      filterCube, outputCube);
+  ConvolutionMethodBatchTest<SVDConvolution<ValidConvolution>>(
+      input, filterCube, outputCube);
 }
 
 /**
@@ -332,21 +310,16 @@ BOOST_AUTO_TEST_CASE(FullConvolutionBatchTest)
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
-  input << 1 << 2 << 3 << 4 << arma::endr
-        << 4 << 1 << 2 << 3 << arma::endr
-        << 3 << 4 << 1 << 2 << arma::endr
-        << 2 << 3 << 4 << 1;
+  input << 1 << 2 << 3 << 4 << arma::endr << 4 << 1 << 2 << 3 << arma::endr << 3
+        << 4 << 1 << 2 << arma::endr << 2 << 3 << 4 << 1;
 
-  filter << 1 << 0 << -1 << arma::endr
-         << 1 << 1 << 1 << arma::endr
-         << -1 << 0 << 1;
+  filter << 1 << 0 << -1 << arma::endr << 1 << 1 << 1 << arma::endr << -1 << 0
+         << 1;
 
-  output << 1 << 2 << 2 << 2 << -3 << -4 << arma::endr
-         << 5 << 4 << 4 << 11 << 5 << 1 << arma::endr
-         << 6 << 7 << 3 << 2 << 7 << 5 << arma::endr
-         << 1 << 9 << 12 << 3 << 1 << 4 << arma::endr
-         << -1 << 1 << 11 << 10 << 6 << 3 << arma::endr
-         << -2 << -3 << -2 << 2 << 4 << 1;
+  output << 1 << 2 << 2 << 2 << -3 << -4 << arma::endr << 5 << 4 << 4 << 11 << 5
+         << 1 << arma::endr << 6 << 7 << 3 << 2 << 7 << 5 << arma::endr << 1
+         << 9 << 12 << 3 << 1 << 4 << arma::endr << -1 << 1 << 11 << 10 << 6
+         << 3 << arma::endr << -2 << -3 << -2 << 2 << 4 << 1;
 
   arma::cube filterCube(filter.n_rows, filter.n_cols, 2);
   filterCube.slice(0) = filter;
@@ -357,17 +330,17 @@ BOOST_AUTO_TEST_CASE(FullConvolutionBatchTest)
   outputCube.slice(1) = output;
 
   // Perform the naive convolution approach.
-  ConvolutionMethodBatchTest<NaiveConvolution<FullConvolution> >(input,
-      filterCube, outputCube);
+  ConvolutionMethodBatchTest<NaiveConvolution<FullConvolution>>(
+      input, filterCube, outputCube);
 
   // Perform the convolution trough fft.
-  ConvolutionMethodBatchTest<FFTConvolution<FullConvolution> >(input,
-      filterCube, outputCube);
+  ConvolutionMethodBatchTest<FFTConvolution<FullConvolution>>(
+      input, filterCube, outputCube);
 
   // Perform the convolution using using the singular value decomposition to
   // speeded up the computation.
-  ConvolutionMethodBatchTest<SVDConvolution<FullConvolution> >(input,
-      filterCube, outputCube);
+  ConvolutionMethodBatchTest<SVDConvolution<FullConvolution>>(
+      input, filterCube, outputCube);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

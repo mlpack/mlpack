@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(LoadCSVTest)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   // Remove the file.
   remove("test_file.csv");
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(LoadTSVTest)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   // Remove the file.
   remove("test_file.csv");
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(LoadTSVExtensionTest)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   // Remove the file.
   remove("test_file.tsv");
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(SaveCSVTest)
   BOOST_REQUIRE_EQUAL(test2.n_cols, 2);
 
   for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test2[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test2[i], (double)(i + 1), 1e-5);
 
   // Remove the file.
   remove("test_file.csv");
@@ -175,7 +175,7 @@ BOOST_AUTO_TEST_CASE(LoadTransposedCSVTest)
   BOOST_REQUIRE_EQUAL(test.n_rows, 4);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   // Remove the file.
   remove("test_file.csv");
@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(LoadColVecCSVTest)
   BOOST_REQUIRE_EQUAL(test.n_rows, 8);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) i, 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)i, 1e-5);
 
   // Remove the file.
   remove("test_file.csv");
@@ -227,7 +227,7 @@ BOOST_AUTO_TEST_CASE(LoadColVecTransposedCSVTest)
   BOOST_REQUIRE_EQUAL(test.n_rows, 9);
 
   for (size_t i = 0; i < 9; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) i, 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)i, 1e-5);
 
   // Remove the file.
   remove("test_file.csv");
@@ -253,11 +253,11 @@ BOOST_AUTO_TEST_CASE(LoadMatinVec)
   Log::Fatal.ignoreInput = true;
   arma::vec coltest;
   BOOST_REQUIRE_THROW(data::Load("test_file.csv", coltest, true),
-      std::runtime_error);
+                      std::runtime_error);
 
   arma::rowvec rowtest;
   BOOST_REQUIRE_THROW(data::Load("test_file.csv", rowtest, true),
-      std::runtime_error);
+                      std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   remove("test_file.csv");
@@ -284,8 +284,8 @@ BOOST_AUTO_TEST_CASE(LoadRowVecCSVTest)
   BOOST_REQUIRE_EQUAL(test.n_cols, 8);
   BOOST_REQUIRE_EQUAL(test.n_rows, 1);
 
-  for (size_t i = 0; i < 8 ; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) i , 1e-5);
+  for (size_t i = 0; i < 8; ++i)
+    BOOST_REQUIRE_CLOSE(test[i], (double)i, 1e-5);
 
   remove("test_file.csv");
 }
@@ -310,7 +310,7 @@ BOOST_AUTO_TEST_CASE(LoadRowVecTransposedCSVTest)
   BOOST_REQUIRE_EQUAL(test.n_cols, 8);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) i, 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)i, 1e-5);
 
   // Remove the file.
   remove("test_file.csv");
@@ -336,7 +336,7 @@ BOOST_AUTO_TEST_CASE(LoadTransposedTSVTest)
   BOOST_REQUIRE_EQUAL(test.n_rows, 4);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   // Remove the file.
   remove("test_file.csv");
@@ -362,7 +362,7 @@ BOOST_AUTO_TEST_CASE(LoadTransposedTSVExtensionTest)
   BOOST_REQUIRE_EQUAL(test.n_rows, 4);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   // Remove the file.
   remove("test_file.tsv");
@@ -388,7 +388,7 @@ BOOST_AUTO_TEST_CASE(LoadNonTransposedCSVTest)
   BOOST_REQUIRE_EQUAL(test.n_rows, 2);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   // Remove the file.
   remove("test_file.csv");
@@ -439,7 +439,7 @@ BOOST_AUTO_TEST_CASE(LoadArmaASCIITest)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   // Remove the file.
   remove("test_file.txt");
@@ -464,7 +464,7 @@ BOOST_AUTO_TEST_CASE(SaveArmaASCIITest)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   // Remove the file.
   remove("test_file.txt");
@@ -490,7 +490,7 @@ BOOST_AUTO_TEST_CASE(LoadRawASCIITest)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   // Remove the file.
   remove("test_file.txt");
@@ -516,7 +516,7 @@ BOOST_AUTO_TEST_CASE(LoadCSVTxtTest)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   // Remove the file.
   remove("test_file.txt");
@@ -534,7 +534,7 @@ BOOST_AUTO_TEST_CASE(LoadArmaBinaryTest)
 
   arma::mat testTrans = trans(test);
   BOOST_REQUIRE(testTrans.quiet_save("test_file.bin", arma::arma_binary)
-      == true);
+                == true);
 
   // Now reload through our interface.
   BOOST_REQUIRE(data::Load("test_file.bin", test) == true);
@@ -543,7 +543,7 @@ BOOST_AUTO_TEST_CASE(LoadArmaBinaryTest)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   // Remove the file.
   remove("test_file.bin");
@@ -567,7 +567,7 @@ BOOST_AUTO_TEST_CASE(SaveArmaBinaryTest)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   // Remove the file.
   remove("test_file.bin");
@@ -585,7 +585,7 @@ BOOST_AUTO_TEST_CASE(LoadRawBinaryTest)
 
   arma::mat testTrans = trans(test);
   BOOST_REQUIRE(testTrans.quiet_save("test_file.bin", arma::raw_binary)
-      == true);
+                == true);
 
   // Now reload through our interface.
   BOOST_REQUIRE(data::Load("test_file.bin", test) == true);
@@ -594,7 +594,7 @@ BOOST_AUTO_TEST_CASE(LoadRawBinaryTest)
   BOOST_REQUIRE_EQUAL(test.n_cols, 8);
 
   for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   // Remove the file.
   remove("test_file.bin");
@@ -612,7 +612,7 @@ BOOST_AUTO_TEST_CASE(LoadPGMBinaryTest)
 
   arma::mat testTrans = trans(test);
   BOOST_REQUIRE(testTrans.quiet_save("test_file.pgm", arma::pgm_binary)
-      == true);
+                == true);
 
   // Now reload through our interface.
   BOOST_REQUIRE(data::Load("test_file.pgm", test) == true);
@@ -621,7 +621,7 @@ BOOST_AUTO_TEST_CASE(LoadPGMBinaryTest)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   // Remove the file.
   remove("test_file.pgm");
@@ -646,7 +646,7 @@ BOOST_AUTO_TEST_CASE(SavePGMBinaryTest)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   // Remove the file.
   remove("test_file.pgm");
@@ -664,13 +664,13 @@ BOOST_AUTO_TEST_CASE(LoadHDF5Test)
                    "4 8;";
   arma::mat testTrans = trans(test);
   BOOST_REQUIRE(testTrans.quiet_save("test_file.h5", arma::hdf5_binary)
-      == true);
+                == true);
   BOOST_REQUIRE(testTrans.quiet_save("test_file.hdf5", arma::hdf5_binary)
-      == true);
+                == true);
   BOOST_REQUIRE(testTrans.quiet_save("test_file.hdf", arma::hdf5_binary)
-      == true);
+                == true);
   BOOST_REQUIRE(testTrans.quiet_save("test_file.he5", arma::hdf5_binary)
-      == true);
+                == true);
 
   // Now reload through our interface.
   BOOST_REQUIRE(data::Load("test_file.h5", test) == true);
@@ -679,7 +679,7 @@ BOOST_AUTO_TEST_CASE(LoadHDF5Test)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   // Make sure the other extensions work too.
   BOOST_REQUIRE(data::Load("test_file.hdf5", test) == true);
@@ -688,7 +688,7 @@ BOOST_AUTO_TEST_CASE(LoadHDF5Test)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   BOOST_REQUIRE(data::Load("test_file.hdf", test) == true);
 
@@ -696,7 +696,7 @@ BOOST_AUTO_TEST_CASE(LoadHDF5Test)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   BOOST_REQUIRE(data::Load("test_file.he5", test) == true);
 
@@ -704,7 +704,7 @@ BOOST_AUTO_TEST_CASE(LoadHDF5Test)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   remove("test_file.h5");
   remove("test_file.hdf");
@@ -733,7 +733,7 @@ BOOST_AUTO_TEST_CASE(SaveHDF5Test)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   // Make sure the other extensions work too.
   BOOST_REQUIRE(data::Load("test_file.hdf5", test) == true);
@@ -742,7 +742,7 @@ BOOST_AUTO_TEST_CASE(SaveHDF5Test)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   BOOST_REQUIRE(data::Load("test_file.hdf", test) == true);
 
@@ -750,7 +750,7 @@ BOOST_AUTO_TEST_CASE(SaveHDF5Test)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   BOOST_REQUIRE(data::Load("test_file.he5", test) == true);
 
@@ -758,7 +758,7 @@ BOOST_AUTO_TEST_CASE(SaveHDF5Test)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(test[i], (double)(i + 1), 1e-5);
 
   remove("test_file.h5");
   remove("test_file.hdf");
@@ -826,13 +826,13 @@ BOOST_AUTO_TEST_CASE(NormalizeLabelTest)
 class TestInner
 {
  public:
-  TestInner(char c, string s) : c(c), s(s) { }
+  TestInner(char c, string s) : c(c), s(s) {}
 
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(c);
-    ar & BOOST_SERIALIZATION_NVP(s);
+    ar& BOOST_SERIALIZATION_NVP(c);
+    ar& BOOST_SERIALIZATION_NVP(s);
   }
 
   // Public members for testing.
@@ -843,15 +843,15 @@ class TestInner
 class Test
 {
  public:
-  Test(int x, int y) : x(x), y(y), ina('a', "hello"), inb('b', "goodbye") { }
+  Test(int x, int y) : x(x), y(y), ina('a', "hello"), inb('b', "goodbye") {}
 
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(x);
-    ar & BOOST_SERIALIZATION_NVP(y);
-    ar & BOOST_SERIALIZATION_NVP(ina);
-    ar & BOOST_SERIALIZATION_NVP(inb);
+    ar& BOOST_SERIALIZATION_NVP(x);
+    ar& BOOST_SERIALIZATION_NVP(y);
+    ar& BOOST_SERIALIZATION_NVP(ina);
+    ar& BOOST_SERIALIZATION_NVP(inb);
   }
 
   // Public members for testing.
@@ -1523,47 +1523,47 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest03)
 
 BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest04)
 {
-    fstream f;
-    f.open("test.csv", fstream::out);
-    f << " 200-DM ,   1  , 1  " << endl;
-    f << "  1 , 1  , 1  " << endl;
-    f << "  1  ,   1  ,  1  " << endl;
-    f << "  1  , 1  , 1  " << endl;
-    f.close();
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << " 200-DM ,   1  , 1  " << endl;
+  f << "  1 , 1  , 1  " << endl;
+  f << "  1  ,   1  ,  1  " << endl;
+  f << "  1  , 1  , 1  " << endl;
+  f.close();
 
-    // Load the test CSV.
-    arma::umat matrix;
-    DatasetInfo info;
-    data::Load("test.csv", matrix, info, true, false); // No transpose.
+  // Load the test CSV.
+  arma::umat matrix;
+  DatasetInfo info;
+  data::Load("test.csv", matrix, info, true, false); // No transpose.
 
-    BOOST_REQUIRE_EQUAL(matrix.n_cols, 3);
-    BOOST_REQUIRE_EQUAL(matrix.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(matrix.n_cols, 3);
+  BOOST_REQUIRE_EQUAL(matrix.n_rows, 4);
 
-    BOOST_REQUIRE(info.Type(0) == Datatype::categorical);
-    BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
-    BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
-    BOOST_REQUIRE(info.Type(3) == Datatype::numeric);
+  BOOST_REQUIRE(info.Type(0) == Datatype::categorical);
+  BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
+  BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
+  BOOST_REQUIRE(info.Type(3) == Datatype::numeric);
 
-    BOOST_REQUIRE_EQUAL(matrix(0, 0), 0);
-    BOOST_REQUIRE_EQUAL(matrix(0, 1), 1);
-    BOOST_REQUIRE_EQUAL(matrix(0, 2), 1);
-    BOOST_REQUIRE_EQUAL(matrix(1, 0), 1);
-    BOOST_REQUIRE_EQUAL(matrix(1, 1), 1);
-    BOOST_REQUIRE_EQUAL(matrix(1, 2), 1);
-    BOOST_REQUIRE_EQUAL(matrix(2, 0), 1);
-    BOOST_REQUIRE_EQUAL(matrix(2, 1), 1);
-    BOOST_REQUIRE_EQUAL(matrix(2, 2), 1);
-    BOOST_REQUIRE_EQUAL(matrix(3, 0), 1);
-    BOOST_REQUIRE_EQUAL(matrix(3, 1), 1);
-    BOOST_REQUIRE_EQUAL(matrix(3, 2), 1);
+  BOOST_REQUIRE_EQUAL(matrix(0, 0), 0);
+  BOOST_REQUIRE_EQUAL(matrix(0, 1), 1);
+  BOOST_REQUIRE_EQUAL(matrix(0, 2), 1);
+  BOOST_REQUIRE_EQUAL(matrix(1, 0), 1);
+  BOOST_REQUIRE_EQUAL(matrix(1, 1), 1);
+  BOOST_REQUIRE_EQUAL(matrix(1, 2), 1);
+  BOOST_REQUIRE_EQUAL(matrix(2, 0), 1);
+  BOOST_REQUIRE_EQUAL(matrix(2, 1), 1);
+  BOOST_REQUIRE_EQUAL(matrix(2, 2), 1);
+  BOOST_REQUIRE_EQUAL(matrix(3, 0), 1);
+  BOOST_REQUIRE_EQUAL(matrix(3, 1), 1);
+  BOOST_REQUIRE_EQUAL(matrix(3, 2), 1);
 
-    BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("200-DM", 1), 0);
-    BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 1), 1);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("200-DM", 1), 0);
+  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 1), 1);
 
-    BOOST_REQUIRE_EQUAL(info.UnmapString(0, 1), "200-DM");
-    BOOST_REQUIRE_EQUAL(info.UnmapString(1, 1), "1");
+  BOOST_REQUIRE_EQUAL(info.UnmapString(0, 1), "200-DM");
+  BOOST_REQUIRE_EQUAL(info.UnmapString(1, 1), "1");
 
-    remove("test.csv");
+  remove("test.csv");
 }
 
 /**
@@ -1798,7 +1798,7 @@ BOOST_AUTO_TEST_CASE(BadDatasetInfoARFFTest)
   DatasetInfo info(6);
 
   BOOST_REQUIRE_THROW(data::LoadARFF("test.arff", dataset, info),
-      std::invalid_argument);
+                      std::invalid_argument);
 
   remove("test.arff");
 }
@@ -1979,7 +1979,7 @@ BOOST_AUTO_TEST_CASE(DatasetMapperNonUniqueTest)
   DatasetMapper<MissingPolicy> dm(1);
 
   // Map a couple of strings; they'll map to quiet_NaN().
-  dm.MapString<double>("0.5", 0); // No mapping created.
+  dm.MapString<double>("0.5", 0);   // No mapping created.
   dm.MapString<double>("hello", 0); // Mapping created.
   dm.MapString<double>("goodbye", 0);
   dm.MapString<double>("cheese", 0);

@@ -77,18 +77,18 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 
   FFN<NegativeLogLikelihood<>, RandomInitialization> model;
 
-  model.Add<Convolution<> >(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
-  model.Add<ReLULayer<> >();
-  model.Add<MaxPooling<> >(8, 8, 2, 2);
-  model.Add<Convolution<> >(8, 12, 2, 2);
-  model.Add<ReLULayer<> >();
-  model.Add<MaxPooling<> >(2, 2, 2, 2);
-  model.Add<Linear<> >(192, 20);
-  model.Add<ReLULayer<> >();
-  model.Add<Linear<> >(20, 10);
-  model.Add<ReLULayer<> >();
-  model.Add<Linear<> >(10, 2);
-  model.Add<LogSoftMax<> >();
+  model.Add<Convolution<>>(1, 8, 5, 5, 1, 1, 0, 0, 28, 28);
+  model.Add<ReLULayer<>>();
+  model.Add<MaxPooling<>>(8, 8, 2, 2);
+  model.Add<Convolution<>>(8, 12, 2, 2);
+  model.Add<ReLULayer<>>();
+  model.Add<MaxPooling<>>(2, 2, 2, 2);
+  model.Add<Linear<>>(192, 20);
+  model.Add<ReLULayer<>>();
+  model.Add<Linear<>>(20, 10);
+  model.Add<ReLULayer<>>();
+  model.Add<Linear<>>(10, 2);
+  model.Add<LogSoftMax<>>();
 
   // Train for only 8 epochs.
   RMSProp opt(0.001, 1, 0.88, 1e-8, 8 * nPoints, -1);
@@ -101,8 +101,10 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 
   for (size_t i = 0; i < predictionTemp.n_cols; ++i)
   {
-    prediction(i) = arma::as_scalar(arma::find(
-          arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+    prediction(i) =
+        arma::as_scalar(arma::find(
+            arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1))
+        + 1;
   }
 
   size_t correct = 0;

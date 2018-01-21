@@ -53,12 +53,12 @@ BOOST_AUTO_TEST_CASE(CNEXORTest)
   for (size_t trial = 0; trial < 6; ++trial)
   {
     // Build a network with 2 input, 2 hidden, and 2 output layers.
-    FFN<NegativeLogLikelihood<> > network;
+    FFN<NegativeLogLikelihood<>> network;
 
-    network.Add<Linear<> >(2, 2);
-    network.Add<SigmoidLayer<> >();
-    network.Add<Linear<> >(2, 2);
-    network.Add<LogSoftMax<> >();
+    network.Add<Linear<>>(2, 2);
+    network.Add<SigmoidLayer<>>();
+    network.Add<Linear<>>(2, 2);
+    network.Add<LogSoftMax<>>();
 
     // CNE object.
     CNE opt(60, 5000, 0.1, 0.02, 0.2, 0.1, -1);
@@ -74,15 +74,15 @@ BOOST_AUTO_TEST_CASE(CNEXORTest)
 
     for (size_t i = 0; i < predictionTemp.n_cols; ++i)
     {
-      prediction(i) = arma::as_scalar(arma::find(
-          arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+      prediction(i) =
+          arma::as_scalar(arma::find(
+              arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1))
+          + 1;
     }
 
     // 1 means 0 and 2 means 1 as the output to XOR.
-    if ((prediction[0] == 1) &&
-        (prediction[1] == 1) &&
-        (prediction[2] == 2) &&
-        (prediction[3] == 2))
+    if ((prediction[0] == 1) && (prediction[1] == 1) && (prediction[2] == 2)
+        && (prediction[3] == 2))
     {
       ++successes;
       break;
@@ -115,8 +115,8 @@ BOOST_AUTO_TEST_CASE(CNELogisticRegressionTest)
   }
 
   // Shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
-      data.n_cols - 1, data.n_cols));
+  arma::uvec indices = arma::shuffle(
+      arma::linspace<arma::uvec>(0, data.n_cols - 1, data.n_cols));
   arma::mat shuffledData(3, 1000);
   arma::Row<size_t> shuffledResponses(1000);
   for (size_t i = 0; i < data.n_cols; ++i)
@@ -176,11 +176,11 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkWithCNETest)
   for (size_t trial = 0; trial < 4; ++trial)
   {
     // Create vanilla network with 4 input, 4 hidden and 3 output nodes.
-    FFN<NegativeLogLikelihood<> > model;
-    model.Add<Linear<> >(trainData.n_rows, 4);
-    model.Add<SigmoidLayer<> >();
-    model.Add<Linear<> >(4, 3);
-    model.Add<LogSoftMax<> >();
+    FFN<NegativeLogLikelihood<>> model;
+    model.Add<Linear<>>(trainData.n_rows, 4);
+    model.Add<SigmoidLayer<>>();
+    model.Add<Linear<>>(4, 3);
+    model.Add<LogSoftMax<>>();
 
     // Creating CNE object.
     // The tolerance and objectiveChange are not taken into consideration.
@@ -194,15 +194,17 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkWithCNETest)
 
     for (size_t i = 0; i < predictionTemp.n_cols; ++i)
     {
-      prediction(i) = arma::as_scalar(arma::find(
-          arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+      prediction(i) =
+          arma::as_scalar(arma::find(
+              arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1))
+          + 1;
     }
 
     size_t error = 0;
     for (size_t i = 0; i < testData.n_cols; i++)
     {
-      if (int(arma::as_scalar(prediction.col(i))) ==
-          int(arma::as_scalar(testLabels.col(i))))
+      if (int(arma::as_scalar(prediction.col(i)))
+          == int(arma::as_scalar(testLabels.col(i))))
       {
         error++;
       }

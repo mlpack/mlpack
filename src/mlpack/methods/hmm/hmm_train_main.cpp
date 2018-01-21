@@ -27,7 +27,9 @@ using namespace mlpack::math;
 using namespace arma;
 using namespace std;
 
-PROGRAM_INFO("Hidden Markov Model (HMM) Training", "This program allows a "
+PROGRAM_INFO(
+    "Hidden Markov Model (HMM) Training",
+    "This program allows a "
     "Hidden Markov Model to be trained on labeled or unlabeled data.  It "
     "support three types of HMMs: discrete HMMs, Gaussian HMMs, or GMM HMMs."
     "\n\n"
@@ -49,24 +51,43 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Training", "This program allows a "
     "--model_file.");
 
 PARAM_STRING_IN_REQ("input_file", "File containing input observations.", "i");
-PARAM_STRING_IN("type", "Type of HMM: discrete | gaussian | gmm.", "t",
-    "gaussian");
+PARAM_STRING_IN("type",
+                "Type of HMM: discrete | gaussian | gmm.",
+                "t",
+                "gaussian");
 
-PARAM_FLAG("batch", "If true, input_file (and if passed, labels_file) are "
+PARAM_FLAG(
+    "batch",
+    "If true, input_file (and if passed, labels_file) are "
     "expected to contain a list of files to use as input observation sequences "
-    "(and label sequences).", "b");
-PARAM_INT_IN("states", "Number of hidden states in HMM (necessary, unless "
-    "model_file is specified).", "n", 0);
-PARAM_INT_IN("gaussians", "Number of gaussians in each GMM (necessary when type"
-    " is 'gmm').", "g", 0);
-PARAM_MODEL_IN(HMMModel, "input_model", "Pre-existing HMM model to initialize "
-    "training with.", "m");
-PARAM_STRING_IN("labels_file", "Optional file of hidden states, used for "
-    "labeled training.", "l", "");
+    "(and label sequences).",
+    "b");
+PARAM_INT_IN("states",
+             "Number of hidden states in HMM (necessary, unless "
+             "model_file is specified).",
+             "n",
+             0);
+PARAM_INT_IN("gaussians",
+             "Number of gaussians in each GMM (necessary when type"
+             " is 'gmm').",
+             "g",
+             0);
+PARAM_MODEL_IN(HMMModel,
+               "input_model",
+               "Pre-existing HMM model to initialize "
+               "training with.",
+               "m");
+PARAM_STRING_IN("labels_file",
+                "Optional file of hidden states, used for "
+                "labeled training.",
+                "l",
+                "");
 PARAM_MODEL_OUT(HMMModel, "output_model", "Output for trained HMM.", "M");
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
-PARAM_DOUBLE_IN("tolerance", "Tolerance of the Baum-Welch algorithm.", "T",
-    1e-5);
+PARAM_DOUBLE_IN("tolerance",
+                "Tolerance of the Baum-Welch algorithm.",
+                "T",
+                1e-5);
 
 // Because we don't know what the type of our HMM is, we need to write a
 // function that can take arbitrary HMM types.
@@ -104,8 +125,8 @@ struct Init
       maxEmissions = arma::max(maxEmissions, maxSeqs);
     }
 
-    hmm = HMM<DiscreteDistribution>(size_t(states),
-        DiscreteDistribution(maxEmissions), tolerance);
+    hmm = HMM<DiscreteDistribution>(
+        size_t(states), DiscreteDistribution(maxEmissions), tolerance);
   }
 
   //! Helper function to create Gaussian HMM.
@@ -123,21 +144,19 @@ struct Init
       if (trainSeq[i].n_rows != dimensionality)
       {
         Log::Fatal << "Observation sequence " << i << " dimensionality ("
-            << trainSeq[i].n_rows << " is incorrect (should be "
-            << dimensionality << ")!" << endl;
+                   << trainSeq[i].n_rows << " is incorrect (should be "
+                   << dimensionality << ")!" << endl;
       }
     }
 
     // Get the model and initialize it.
-    hmm = HMM<GaussianDistribution>(size_t(states),
-        GaussianDistribution(dimensionality), tolerance);
+    hmm = HMM<GaussianDistribution>(
+        size_t(states), GaussianDistribution(dimensionality), tolerance);
   }
 
   //! Helper function to create GMM HMM.
-  static void Create(HMM<GMM>& hmm,
-                     vector<mat>& trainSeq,
-                     size_t states,
-                     double tolerance)
+  static void
+  Create(HMM<GMM>& hmm, vector<mat>& trainSeq, size_t states, double tolerance)
   {
     // Find dimension of the data.
     const size_t dimensionality = trainSeq[0].n_rows;
@@ -146,24 +165,24 @@ struct Init
     if (gaussians == 0)
     {
       Log::Fatal << "Number of gaussians for each GMM must be specified "
-          << "when type = 'gmm'!" << endl;
+                 << "when type = 'gmm'!" << endl;
     }
 
     if (gaussians < 0)
     {
       Log::Fatal << "Invalid number of gaussians (" << gaussians << "); must "
-          << "be greater than or equal to 1." << endl;
+                 << "be greater than or equal to 1." << endl;
     }
 
     // Create HMM object.
-    hmm = HMM<GMM>(size_t(states), GMM(size_t(gaussians), dimensionality),
-        tolerance);
+    hmm = HMM<GMM>(
+        size_t(states), GMM(size_t(gaussians), dimensionality), tolerance);
 
     // Issue a warning if the user didn't give labels.
     if (!CLI::HasParam("labels_file"))
     {
       Log::Warn << "Unlabeled training of GMM HMMs is almost certainly not "
-          << "going to produce good results!" << endl;
+                << "going to produce good results!" << endl;
     }
   }
 
@@ -206,8 +225,7 @@ struct Init
         e[i].Component(g).Mean().randu();
 
         // Generate random covariance.
-        arma::mat r = arma::randu<arma::mat>(dimensionality,
-            dimensionality);
+        arma::mat r = arma::randu<arma::mat>(dimensionality, dimensionality);
         e[i].Component(g).Covariance(r * r.t());
       }
     }
@@ -238,9 +256,10 @@ struct Train
       if (trainSeq[i].n_rows != hmm.Emission()[0].Dimensionality())
       {
         Log::Fatal << "Dimensionality of training sequence " << i << " ("
-            << trainSeq[i].n_rows << ") is not equal to the dimensionality of "
-            << "the HMM (" << hmm.Emission()[0].Dimensionality() << ")!"
-            << endl;
+                   << trainSeq[i].n_rows
+                   << ") is not equal to the dimensionality of "
+                   << "the HMM (" << hmm.Emission()[0].Dimensionality() << ")!"
+                   << endl;
       }
     }
 
@@ -255,14 +274,14 @@ struct Train
 
         if (!f.is_open())
           Log::Fatal << "Could not open '" << labelsFile << "' for reading."
-              << endl;
+                     << endl;
 
         // Now read each line in.
         f.getline(lineBuf, 1024, '\n');
         while (!f.eof())
         {
           Log::Info << "Adding training sequence labels from '" << lineBuf
-              << "'." << endl;
+                    << "'." << endl;
 
           // Now read the matrix.
           Mat<size_t> label;
@@ -281,9 +300,10 @@ struct Train
             if (label[i] >= hmm.Transition().n_cols)
             {
               Log::Fatal << "HMM has " << hmm.Transition().n_cols << " hidden "
-                  << "states, but label on line " << i << " of '" << lineBuf
-                  << "' is " << label[i] << " (should be between 0 and "
-                  << (hmm.Transition().n_cols - 1) << ")!" << endl;
+                         << "states, but label on line " << i << " of '"
+                         << lineBuf << "' is " << label[i]
+                         << " (should be between 0 and "
+                         << (hmm.Transition().n_cols - 1) << ")!" << endl;
             }
           }
 
@@ -310,8 +330,8 @@ struct Train
         if (label.n_elem != trainSeq[labelSeq.size()].n_cols)
         {
           Log::Fatal << "Label sequence " << labelSeq.size() << " does not have"
-              << " the same number of points as observation sequence "
-              << labelSeq.size() << "!" << endl;
+                     << " the same number of points as observation sequence "
+                     << labelSeq.size() << "!" << endl;
         }
 
         // Check all of the labels.
@@ -320,9 +340,10 @@ struct Train
           if (label[i] >= hmm.Transition().n_cols)
           {
             Log::Fatal << "HMM has " << hmm.Transition().n_cols << " hidden "
-                << "states, but label on line " << i << " of '" << labelsFile
-                << "' is " << label[i] << " (should be between 0 and "
-                << (hmm.Transition().n_cols - 1) << ")!" << endl;
+                       << "states, but label on line " << i << " of '"
+                       << labelsFile << "' is " << label[i]
+                       << " (should be between 0 and "
+                       << (hmm.Transition().n_cols - 1) << ")!" << endl;
           }
         }
 
@@ -344,9 +365,9 @@ static void mlpackMain()
 {
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)
-    RandomSeed((size_t) CLI::GetParam<int>("seed"));
+    RandomSeed((size_t)CLI::GetParam<int>("seed"));
   else
-    RandomSeed((size_t) time(NULL));
+    RandomSeed((size_t)time(NULL));
 
   // Validate parameters.
   const string inputFile = CLI::GetParam<string>("input_file");
@@ -358,25 +379,29 @@ static void mlpackMain()
   if (!CLI::HasParam("input_model"))
   {
     // Validate number of states.
-    RequireAtLeastOnePassed({ "states" }, true);
-    RequireAtLeastOnePassed({ "type" }, true);
-    RequireParamValue<int>("states", [](int x) { return x > 0; }, true,
-        "number of states must be positive");
+    RequireAtLeastOnePassed({"states"}, true);
+    RequireAtLeastOnePassed({"type"}, true);
+    RequireParamValue<int>("states",
+                           [](int x) { return x > 0; },
+                           true,
+                           "number of states must be positive");
   }
 
   if (CLI::HasParam("input_model") && CLI::HasParam("tolerance"))
   {
     Log::Info << "Tolerance of existing model in '"
-        << CLI::GetPrintableParam<std::string>("input_model") << "' will be "
-        << "replaced with specified tolerance of " << tolerance << "." << endl;
+              << CLI::GetPrintableParam<std::string>("input_model")
+              << "' will be "
+              << "replaced with specified tolerance of " << tolerance << "."
+              << endl;
   }
 
-  ReportIgnoredParam({{ "input_model", true }}, "type");
+  ReportIgnoredParam({{"input_model", true}}, "type");
 
   if (!CLI::HasParam("input_model"))
   {
-    RequireParamInSet<string>("type", { "discrete", "gaussian", "gmm" }, true,
-        "unknown HMM type");
+    RequireParamInSet<string>(
+        "type", {"discrete", "gaussian", "gmm"}, true, "unknown HMM type");
   }
 
   // Load the input data.
@@ -385,14 +410,13 @@ static void mlpackMain()
   {
     // The input file contains a list of files to read.
     Log::Info << "Reading list of training sequences from '" << inputFile
-        << "'." << endl;
+              << "'." << endl;
 
     fstream f(inputFile.c_str(), ios_base::in);
 
     if (!f.is_open())
     {
-      Log::Fatal << "Could not open '" << inputFile << "' for reading."
-          << endl;
+      Log::Fatal << "Could not open '" << inputFile << "' for reading." << endl;
     }
 
     // Now read each line in.
@@ -400,8 +424,7 @@ static void mlpackMain()
     f.getline(lineBuf, 1024, '\n');
     while (!f.eof())
     {
-      Log::Info << "Adding training sequence from '" << lineBuf << "'."
-          << endl;
+      Log::Info << "Adding training sequence from '" << lineBuf << "'." << endl;
 
       // Now read the matrix.
       trainSeq.push_back(mat());

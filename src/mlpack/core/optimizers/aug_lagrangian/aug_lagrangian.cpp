@@ -17,13 +17,10 @@
 namespace mlpack {
 namespace optimization {
 
-AugLagrangian::AugLagrangian() :
-    lbfgsInternal(),
-    lbfgs(lbfgsInternal)
+AugLagrangian::AugLagrangian() : lbfgsInternal(), lbfgs(lbfgsInternal)
 {
   lbfgs.MaxIterations() = 1000;
 }
 
 } // namespace optimization
 } // namespace mlpack
-

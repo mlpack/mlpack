@@ -44,8 +44,7 @@ BOOST_AUTO_TEST_CASE(NMFDefaultTest)
   mat wh = w * h;
 
   // Make sure reconstruction error is not too high.  5.0% tolerance.
-  BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"),
-      0.05);
+  BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"), 0.05);
 }
 
 /**
@@ -60,13 +59,12 @@ BOOST_AUTO_TEST_CASE(NMFAcolDistTest)
   const size_t r = 12;
 
   SimpleResidueTermination srt(1e-7, 10000);
-  AMF<SimpleResidueTermination, RandomAcolInitialization<> > nmf(srt);
+  AMF<SimpleResidueTermination, RandomAcolInitialization<>> nmf(srt);
   nmf.Apply(v, r, w, h);
 
   mat wh = w * h;
 
-  BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"),
-      0.015);
+  BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"), 0.015);
 }
 
 /**
@@ -84,14 +82,14 @@ BOOST_AUTO_TEST_CASE(NMFRandomDivTest)
   SimpleResidueTermination srt(1e-8, 10000);
   AMF<SimpleResidueTermination,
       RandomInitialization,
-      NMFMultiplicativeDivergenceUpdate> nmf(srt);
+      NMFMultiplicativeDivergenceUpdate>
+      nmf(srt);
   nmf.Apply(v, r, w, h);
 
   mat wh = w * h;
 
   // Make sure reconstruction error is not too high.  1.5% tolerance.
-  BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"),
-      0.015);
+  BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"), 0.015);
 }
 
 /**
@@ -107,8 +105,8 @@ BOOST_AUTO_TEST_CASE(NMFALSTest)
   size_t r = 12;
 
   SimpleResidueTermination srt(1e-12, 50000);
-  AMF<SimpleResidueTermination, RandomAcolInitialization<>, NMFALSUpdate>
-        nmf(srt);
+  AMF<SimpleResidueTermination, RandomAcolInitialization<>, NMFALSUpdate> nmf(
+      srt);
   nmf.Apply(v, r, w, h);
 
   const mat wh = w * h;
@@ -116,8 +114,7 @@ BOOST_AUTO_TEST_CASE(NMFALSTest)
   // Make sure reconstruction error is not too high.  8% tolerance.  It seems
   // like ALS doesn't converge to results that are as good.  It also seems to be
   // particularly sensitive to initial conditions.
-  BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"),
-      0.08);
+  BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"), 0.08);
 }
 
 /**
@@ -169,7 +166,7 @@ BOOST_AUTO_TEST_CASE(SparseNMFAcolDistTest)
 
   // Make sure the results are about equal for the W and H matrices.
   BOOST_REQUIRE_SMALL(arma::norm(vp - dvp, "fro") / arma::norm(vp, "fro"),
-      1e-5);
+                      1e-5);
 }
 
 /**
@@ -205,7 +202,7 @@ BOOST_AUTO_TEST_CASE(SparseNMFALSTest)
 
     SimpleResidueTermination srt(1e-10, 10000);
     AMF<SimpleResidueTermination, GivenInitialization, NMFALSUpdate> nmf(srt,
-        g);
+                                                                         g);
     nmf.Apply(v, r, w, h);
     nmf.Apply(dv, r, dw, dh);
 
@@ -219,7 +216,7 @@ BOOST_AUTO_TEST_CASE(SparseNMFALSTest)
 
   // Make sure the results are about equal for the W and H matrices.
   BOOST_REQUIRE_SMALL(arma::norm(vp - dvp, "fro") / arma::norm(vp, "fro"),
-      1e-5);
+                      1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

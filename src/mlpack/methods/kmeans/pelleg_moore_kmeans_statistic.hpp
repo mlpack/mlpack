@@ -25,7 +25,7 @@ class PellegMooreKMeansStatistic
 {
  public:
   //! Initialize the statistic without a node (this does nothing).
-  PellegMooreKMeansStatistic() { }
+  PellegMooreKMeansStatistic() {}
 
   //! Initialize the statistic for a node; this calculates the centroid and
   //! caches it.
@@ -38,8 +38,8 @@ class PellegMooreKMeansStatistic
     // trees that have self-children or stuff like that.
     for (size_t i = 0; i < node.NumChildren(); ++i)
     {
-      centroid += node.Child(i).NumDescendants() *
-          node.Child(i).Stat().Centroid();
+      centroid +=
+          node.Child(i).NumDescendants() * node.Child(i).Stat().Centroid();
     }
 
     for (size_t i = 0; i < node.NumPoints(); ++i)

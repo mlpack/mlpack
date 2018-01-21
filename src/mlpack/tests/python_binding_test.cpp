@@ -53,8 +53,8 @@ BOOST_AUTO_TEST_CASE(PyOptionTest)
   BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].input, true);
   BOOST_REQUIRE_EQUAL(CLI::Parameters()["test"].cppType, "double");
 
-  PyOption<arma::mat> po2(arma::mat(), "mat", "mat2", "m", "arma::mat", true,
-      true, true);
+  PyOption<arma::mat> po2(
+      arma::mat(), "mat", "mat2", "m", "arma::mat", true, true, true);
 
   // Now check that it's in CLI.
   CLI::RestoreSettings(programName);
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(GetParamDoubleTest)
   d.value = boost::any(x);
 
   double* output = NULL;
-  GetParam<double>(d, (void*) NULL, (void*) &output);
+  GetParam<double>(d, (void*)NULL, (void*)&output);
 
   BOOST_REQUIRE_EQUAL(*output, 5.0);
 }
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(GetParamMatTest)
   d.value = boost::any(m);
 
   arma::mat* output = NULL;
-  GetParam<arma::mat>(d, (void*) NULL, (void*) &output);
+  GetParam<arma::mat>(d, (void*)NULL, (void*)&output);
 
   BOOST_REQUIRE_EQUAL(output->n_rows, 5);
   BOOST_REQUIRE_EQUAL(output->n_cols, 5);

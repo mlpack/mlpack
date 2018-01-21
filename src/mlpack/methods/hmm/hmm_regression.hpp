@@ -87,10 +87,11 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
    *      (Baum-Welch).
    */
   HMMRegression(const size_t states,
-      const distribution::RegressionDistribution emissions,
-      const double tolerance = 1e-5) :
-      HMM<distribution::RegressionDistribution>(states, emissions, tolerance)
-  { /* nothing to do */ }
+                const distribution::RegressionDistribution emissions,
+                const double tolerance = 1e-5)
+    : HMM<distribution::RegressionDistribution>(states, emissions, tolerance)
+  { /* nothing to do */
+  }
 
   /**
    * Create the Hidden Markov Model Regression with the given initial
@@ -116,15 +117,15 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
    * @param tolerance Tolerance for convergence of training algorithm
    *      (Baum-Welch).
    */
-  HMMRegression(const arma::vec& initial,
+  HMMRegression(
+      const arma::vec& initial,
       const arma::mat& transition,
       const std::vector<distribution::RegressionDistribution>& emission,
-      const double tolerance = 1e-5) :
-      HMM<distribution::RegressionDistribution>(initial, transition, emission,
-       tolerance)
-  { /* nothing to do */ }
-
-
+      const double tolerance = 1e-5)
+    : HMM<distribution::RegressionDistribution>(
+          initial, transition, emission, tolerance)
+  { /* nothing to do */
+  }
 
   /**
    * Train the model using the Baum-Welch algorithm, with only the given
@@ -179,7 +180,7 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
    */
   void Train(const std::vector<arma::mat>& predictors,
              const std::vector<arma::vec>& responses,
-             const std::vector<arma::Row<size_t> >& stateSeq);
+             const std::vector<arma::Row<size_t>>& stateSeq);
 
   /**
    * Estimate the probabilities of each hidden state at each time step for each

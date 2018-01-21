@@ -44,8 +44,12 @@ double GridSearch::Optimize(
   for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
     bestParameters(i, 0) = datasetInfo.UnmapString(0, i);
 
-  Optimize(function, bestObjective, bestParameters, currentParameters,
-      datasetInfo, 0);
+  Optimize(function,
+           bestObjective,
+           bestParameters,
+           currentParameters,
+           datasetInfo,
+           0);
 
   return bestObjective;
 }
@@ -64,8 +68,12 @@ void GridSearch::Optimize(
     for (size_t j = 0; j < datasetInfo.NumMappings(i); ++j)
     {
       currentParameters(i) = datasetInfo.UnmapString(j, i);
-      Optimize(function, bestObjective, bestParameters, currentParameters,
-          datasetInfo, i + 1);
+      Optimize(function,
+               bestObjective,
+               bestParameters,
+               currentParameters,
+               datasetInfo,
+               i + 1);
     }
   }
   else

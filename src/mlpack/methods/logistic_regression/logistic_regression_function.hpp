@@ -53,7 +53,8 @@ class LogisticRegressionFunction
   const arma::vec& Responses() const { return responses; }
 
   /**
-  * Shuffle the order of function visitation.  This may be called by the optimizer.
+  * Shuffle the order of function visitation.  This may be called by the
+  * optimizer.
   */
   void Shuffle();
 
@@ -78,7 +79,8 @@ class LogisticRegressionFunction
    * correctly with the given parameters, then Evaluate() will return nan (this
    * is kind of a corner case and should not happen for reasonable models).
    *
-   * The optimum (minimum) of this function is 0.0, and occurs when the points are
+   * The optimum (minimum) of this function is 0.0, and occurs when the points
+   * are
    * classified correctly with very high probability.
    *
    * @param parameters Vector of logistic regression parameters.

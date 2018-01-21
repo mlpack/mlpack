@@ -51,10 +51,7 @@ class RectifierFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
-  {
-    return std::max(0.0, x);
-  }
+  static double Fn(const double x) { return std::max(0.0, x); }
 
   /**
    * Computes the rectifier function using a dense matrix as input.
@@ -65,7 +62,7 @@ class RectifierFunction
   template<typename eT>
   static void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
-    y = arma::max(arma::zeros<arma::Mat<eT> >(x.n_rows, x.n_cols), x);
+    y = arma::max(arma::zeros<arma::Mat<eT>>(x.n_rows, x.n_cols), x);
   }
 
   /**
@@ -88,10 +85,7 @@ class RectifierFunction
    * @param x Input data.
    * @return f'(x)
    */
-  static double Deriv(const double y)
-  {
-    return y > 0;
-  }
+  static double Deriv(const double y) { return y > 0; }
 
   /**
    * Computes the first derivatives of the rectifier function.

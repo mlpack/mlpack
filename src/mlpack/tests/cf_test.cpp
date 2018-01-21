@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserTest)
   size_t numRecsDefault = 5;
 
   // Create dummy query set.
-  arma::Col<size_t> users = arma::zeros<arma::Col<size_t> >(numUsers, 1);
+  arma::Col<size_t> users = arma::zeros<arma::Col<size_t>>(numUsers, 1);
   for (size_t i = 0; i < numUsers; i++)
     users(i) = i;
 
@@ -153,7 +153,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyTest)
   // which requires casting from doubles...
   arma::Col<size_t> users(50);
   for (size_t i = 0; i < 50; ++i)
-    users(i) = (size_t) savedCols(0, i);
+    users(i) = (size_t)savedCols(0, i);
   arma::Mat<size_t> recommendations;
   size_t numRecs = 150;
   c.GetRecommendations(numRecs, recommendations, users);
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyTest)
   size_t failures = 0;
   for (size_t i = 0; i < 50; ++i)
   {
-    size_t targetItem = (size_t) savedCols(1, i);
+    size_t targetItem = (size_t)savedCols(1, i);
     bool found = false;
     // Make sure the target item shows up in the recommendations.
     for (size_t j = 0; j < numRecs; ++j)
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyTest)
       {
         // Make sure we aren't being recommended an item that the user already
         // rated.
-        BOOST_REQUIRE_EQUAL((double) c.CleanedData()(item, user), 0.0);
+        BOOST_REQUIRE_EQUAL((double)c.CleanedData()(item, user), 0.0);
       }
     }
 
@@ -497,7 +497,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   // Check the internals.
   BOOST_REQUIRE_EQUAL(c.NumUsersForSimilarity(), cXml.NumUsersForSimilarity());
   BOOST_REQUIRE_EQUAL(c.NumUsersForSimilarity(),
-      cBinary.NumUsersForSimilarity());
+                      cBinary.NumUsersForSimilarity());
   BOOST_REQUIRE_EQUAL(c.NumUsersForSimilarity(), cText.NumUsersForSimilarity());
 
   BOOST_REQUIRE_EQUAL(c.Rank(), cXml.Rank());
@@ -517,36 +517,35 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
 
   BOOST_REQUIRE_EQUAL(c.CleanedData().n_nonzero, cXml.CleanedData().n_nonzero);
   BOOST_REQUIRE_EQUAL(c.CleanedData().n_nonzero,
-      cBinary.CleanedData().n_nonzero);
+                      cBinary.CleanedData().n_nonzero);
   BOOST_REQUIRE_EQUAL(c.CleanedData().n_nonzero, cText.CleanedData().n_nonzero);
 
   for (size_t i = 0; i <= c.CleanedData().n_cols; ++i)
   {
     BOOST_REQUIRE_EQUAL(c.CleanedData().col_ptrs[i],
-        cXml.CleanedData().col_ptrs[i]);
+                        cXml.CleanedData().col_ptrs[i]);
     BOOST_REQUIRE_EQUAL(c.CleanedData().col_ptrs[i],
-        cBinary.CleanedData().col_ptrs[i]);
+                        cBinary.CleanedData().col_ptrs[i]);
     BOOST_REQUIRE_EQUAL(c.CleanedData().col_ptrs[i],
-        cText.CleanedData().col_ptrs[i]);
+                        cText.CleanedData().col_ptrs[i]);
   }
 
   for (size_t i = 0; i <= c.CleanedData().n_nonzero; ++i)
   {
     BOOST_REQUIRE_EQUAL(c.CleanedData().row_indices[i],
-        cXml.CleanedData().row_indices[i]);
+                        cXml.CleanedData().row_indices[i]);
     BOOST_REQUIRE_EQUAL(c.CleanedData().row_indices[i],
-        cBinary.CleanedData().row_indices[i]);
+                        cBinary.CleanedData().row_indices[i]);
     BOOST_REQUIRE_EQUAL(c.CleanedData().row_indices[i],
-        cText.CleanedData().row_indices[i]);
+                        cText.CleanedData().row_indices[i]);
 
-    BOOST_REQUIRE_CLOSE(c.CleanedData().values[i], cXml.CleanedData().values[i],
-        1e-5);
-    BOOST_REQUIRE_CLOSE(c.CleanedData().values[i],
-        cBinary.CleanedData().values[i], 1e-5);
-    BOOST_REQUIRE_CLOSE(c.CleanedData().values[i],
-        cText.CleanedData().values[i], 1e-5);
+    BOOST_REQUIRE_CLOSE(
+        c.CleanedData().values[i], cXml.CleanedData().values[i], 1e-5);
+    BOOST_REQUIRE_CLOSE(
+        c.CleanedData().values[i], cBinary.CleanedData().values[i], 1e-5);
+    BOOST_REQUIRE_CLOSE(
+        c.CleanedData().values[i], cText.CleanedData().values[i], 1e-5);
   }
 }
-
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -21,12 +21,8 @@ namespace tree {
 template<typename MetricType, typename StatisticType, typename MatType>
 template<typename RuleType>
 Octree<MetricType, StatisticType, MatType>::DualTreeTraverser<RuleType>::
-    DualTreeTraverser(RuleType& rule) :
-    rule(rule),
-    numPrunes(0),
-    numVisited(0),
-    numScores(0),
-    numBaseCases(0)
+    DualTreeTraverser(RuleType& rule)
+  : rule(rule), numPrunes(0), numVisited(0), numScores(0), numBaseCases(0)
 {
   // Nothing to do.
 }
@@ -86,8 +82,8 @@ void Octree<MetricType, StatisticType, MatType>::DualTreeTraverser<RuleType>::
     // We have to recurse down the reference node, so we need to do it in an
     // ordered manner.
     arma::vec scores(referenceNode.NumChildren());
-    std::vector<typename RuleType::TraversalInfoType>
-        tis(referenceNode.NumChildren());
+    std::vector<typename RuleType::TraversalInfoType> tis(
+        referenceNode.NumChildren());
     for (size_t i = 0; i < referenceNode.NumChildren(); ++i)
     {
       rule.TraversalInfo() = traversalInfo;
@@ -116,8 +112,8 @@ void Octree<MetricType, StatisticType, MatType>::DualTreeTraverser<RuleType>::
     // does not matter, so we will do that in sequence.  However we will
     // allocate the arrays for recursion at this level.
     arma::vec scores(referenceNode.NumChildren());
-    std::vector<typename RuleType::TraversalInfoType>
-        tis(referenceNode.NumChildren());
+    std::vector<typename RuleType::TraversalInfoType> tis(
+        referenceNode.NumChildren());
     for (size_t j = 0; j < queryNode.NumChildren(); ++j)
     {
       // Now we have to recurse down the reference node, which we will do in a

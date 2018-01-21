@@ -23,8 +23,9 @@ std::string GetPrintableParam(
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename boost::
+        disable_if<std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::
+            type* = 0)
 {
   std::ostringstream oss;
   oss << boost::any_cast<T>(data.value);
@@ -83,8 +84,9 @@ std::string GetPrintableParam(
 template<typename T>
 std::string GetPrintableParam(
     const util::ParamData& data,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename boost::
+        enable_if<std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::
+            type* = 0)
 {
   // Get the matrix.
   const T& tuple = boost::any_cast<T>(data.value);
@@ -110,7 +112,7 @@ void GetPrintableParam(const util::ParamData& data,
                        const void* /* input */,
                        void* output)
 {
-  *((std::string*) output) = GetPrintableParam<T>(data);
+  *((std::string*)output) = GetPrintableParam<T>(data);
 }
 
 } // namespace python

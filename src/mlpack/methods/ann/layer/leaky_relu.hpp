@@ -37,10 +37,8 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
 class LeakyReLU
 {
  public:
@@ -108,10 +106,7 @@ class LeakyReLU
    * @param x Input data.
    * @return f(x).
    */
-  double Fn(const double x)
-  {
-    return std::max(x, alpha * x);
-  }
+  double Fn(const double x) { return std::max(x, alpha * x); }
 
   /**
    * Computes the Leaky ReLU function using a dense matrix as input.
@@ -131,10 +126,7 @@ class LeakyReLU
    * @param x Input data.
    * @return f'(x)
    */
-  double Deriv(const double x)
-  {
-    return (x >= 0) ? 1 : alpha;
-  }
+  double Deriv(const double x) { return (x >= 0) ? 1 : alpha; }
 
   /**
    * Computes the first derivative of the LeakyReLU function.

@@ -48,40 +48,80 @@ struct TrainFormBase
   static const size_t MinNumberOfAdditionalArgs = 1;
 
   template<typename Class, typename RT, typename... Ts>
-  using Type = RT(Class::*)(SignatureParams..., Ts...);
+  using Type = RT (Class::*)(SignatureParams..., Ts...);
 };
 
 template<typename MT, typename PT>
-struct TrainForm<MT, PT, void, false, false> : public TrainFormBase<PT, void,
-    const MT&, const PT&> {};
+struct TrainForm<MT, PT, void, false, false>
+    : public TrainFormBase<PT, void, const MT&, const PT&>
+{
+};
 
 template<typename MT, typename PT>
-struct TrainForm<MT, PT, void, true, false> : public TrainFormBase<PT, void,
-    const MT&, const data::DatasetInfo&, const PT&> {};
+struct TrainForm<MT, PT, void, true, false>
+    : public TrainFormBase<PT,
+                           void,
+                           const MT&,
+                           const data::DatasetInfo&,
+                           const PT&>
+{
+};
 
 template<typename MT, typename PT, typename WT>
-struct TrainForm<MT, PT, WT, false, false> : public TrainFormBase<PT, WT,
-    const MT&, const PT&, const WT&> {};
+struct TrainForm<MT, PT, WT, false, false>
+    : public TrainFormBase<PT, WT, const MT&, const PT&, const WT&>
+{
+};
 
 template<typename MT, typename PT, typename WT>
-struct TrainForm<MT, PT, WT, true, false> : public TrainFormBase<PT, WT,
-    const MT&, const data::DatasetInfo&, const PT&, const WT&> {};
+struct TrainForm<MT, PT, WT, true, false>
+    : public TrainFormBase<PT,
+                           WT,
+                           const MT&,
+                           const data::DatasetInfo&,
+                           const PT&,
+                           const WT&>
+{
+};
 
 template<typename MT, typename PT>
-struct TrainForm<MT, PT, void, false, true> : public TrainFormBase<PT, void,
-    const MT&, const PT&, const size_t> {};
+struct TrainForm<MT, PT, void, false, true>
+    : public TrainFormBase<PT, void, const MT&, const PT&, const size_t>
+{
+};
 
 template<typename MT, typename PT>
-struct TrainForm<MT, PT, void, true, true> : public TrainFormBase<PT, void,
-    const MT&, const data::DatasetInfo&, const PT&, const size_t> {};
+struct TrainForm<MT, PT, void, true, true>
+    : public TrainFormBase<PT,
+                           void,
+                           const MT&,
+                           const data::DatasetInfo&,
+                           const PT&,
+                           const size_t>
+{
+};
 
 template<typename MT, typename PT, typename WT>
-struct TrainForm<MT, PT, WT, false, true> : public TrainFormBase<PT, WT,
-    const MT&, const PT&, const size_t, const WT&> {};
+struct TrainForm<MT, PT, WT, false, true> : public TrainFormBase<PT,
+                                                                 WT,
+                                                                 const MT&,
+                                                                 const PT&,
+                                                                 const size_t,
+                                                                 const WT&>
+{
+};
 
 template<typename MT, typename PT, typename WT>
-struct TrainForm<MT, PT, WT, true, true> : public TrainFormBase<PT, WT,
-    const MT&, const data::DatasetInfo&, const PT&, const size_t, const WT&> {};
+struct TrainForm<MT, PT, WT, true, true>
+    : public TrainFormBase<PT,
+                           WT,
+                           const MT&,
+                           const data::DatasetInfo&,
+                           const PT&,
+                           const size_t,
+                           const WT&>
+{
+};
 
 /* A struct for indication that a right method form can't be found */
 struct NotFoundMethodForm
@@ -125,11 +165,12 @@ struct SelectMethodForm<MLAlgorithm, HasMethodForm, HMFs...>
     template<typename Form, typename... RemainingForms>
     struct Implementation<Form, RemainingForms...>
     {
-      using Type = typename std::conditional<
-          HasMethodForm<MLAlgorithm, Form::template Type,
-              Form::MinNumberOfAdditionalArgs>::value,
-          Form,
-          typename Implementation<RemainingForms...>::Type>::type;
+      using Type = typename std::
+          conditional<HasMethodForm<MLAlgorithm,
+                                    Form::template Type,
+                                    Form::MinNumberOfAdditionalArgs>::value,
+                      Form,
+                      typename Implementation<RemainingForms...>::Type>::type;
     };
 
    public:
@@ -186,7 +227,7 @@ class MetaInfoExtractor
   HAS_METHOD_FORM(template Train<const MT&>, HasMTrain);
   HAS_METHOD_FORM(SINGLE_ARG(template Train<const MT&, const PT&>), HasMPTrain);
   HAS_METHOD_FORM(SINGLE_ARG(template Train<const MT&, const PT&, const WT&>),
-      HasMPWTrain);
+                  HasMPWTrain);
 
   /* Forms of Train for regression algorithms */
   using TF1 = TrainForm<MT, arma::rowvec, void, false, false>;
@@ -208,14 +249,21 @@ class MetaInfoExtractor
 
   /* A short alias for a type function that selects a right method form */
   template<typename... MethodForms>
-  using Select = typename SelectMethodForm<MLAlgorithm, HasTrain, HasTTrain,
-      HasMTrain, HasMPTrain, HasMPWTrain>::template From<MethodForms...>;
+  using Select =
+      typename SelectMethodForm<MLAlgorithm,
+                                HasTrain,
+                                HasTTrain,
+                                HasMTrain,
+                                HasMPTrain,
+                                HasMPWTrain>::template From<MethodForms...>;
 
   /* An indication whether a method form is selected */
   template<typename... MFs /* MethodForms */>
-  using Selects = typename std::conditional<
-      std::is_same<typename Select<MFs...>::Type, NotFoundMethodForm>::value,
-      std::false_type, std::true_type>::type;
+  using Selects =
+      typename std::conditional<std::is_same<typename Select<MFs...>::Type,
+                                             NotFoundMethodForm>::value,
+                                std::false_type,
+                                std::true_type>::type;
 
  public:
   /**

@@ -25,8 +25,9 @@ std::string GetPrintableParamValue(
     const std::string& input,
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::disable_if<data::HasSerialize<T>>::type*,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type*)
+    const typename boost::
+        disable_if<std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::
+            type*)
 {
   return input;
 }
@@ -66,8 +67,9 @@ template<typename T>
 std::string GetPrintableParamValue(
     const util::ParamData& /* data */,
     const std::string& input,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type*)
+    const typename boost::
+        enable_if<std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::
+            type*)
 {
   return input + ".arff";
 }

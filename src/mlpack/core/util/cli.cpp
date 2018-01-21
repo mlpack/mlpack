@@ -32,10 +32,7 @@ static ProgramDoc emptyProgramDoc = ProgramDoc("", []() { return ""; });
 
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
-CLI::CLI() : didParse(false), doc(&emptyProgramDoc)
-{
-  return;
-}
+CLI::CLI() : didParse(false), doc(&emptyProgramDoc) { return; }
 
 // Private copy constructor; don't want copies floating around.
 CLI::CLI(const CLI& /* other */) : didParse(false), doc(&emptyProgramDoc)
@@ -62,21 +59,21 @@ void CLI::Destroy()
 
 void CLI::Add(ParamData&& data)
 {
-  // Temporarily define color code escape sequences.
-  #ifndef _WIN32
-    #define BASH_RED "\033[0;31m"
-    #define BASH_CLEAR "\033[0m"
-  #else
-    #define BASH_RED ""
-    #define BASH_CLEAR ""
-  #endif
+// Temporarily define color code escape sequences.
+#ifndef _WIN32
+#define BASH_RED "\033[0;31m"
+#define BASH_CLEAR "\033[0m"
+#else
+#define BASH_RED ""
+#define BASH_CLEAR ""
+#endif
 
   // Temporary outstream object for detecting duplicate identifiers.
-  util::PrefixedOutStream outstr(std::cerr,
-        BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
+  util::PrefixedOutStream outstr(
+      std::cerr, BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
 
-  #undef BASH_RED
-  #undef BASH_CLEAR
+#undef BASH_RED
+#undef BASH_CLEAR
 
   // Define identifier and alias maps.
   std::map<std::string, util::ParamData>& parameters =
@@ -125,7 +122,7 @@ bool CLI::HasParam(const std::string& key)
     if (!parameters.count(usedKey))
     {
       Log::Fatal << "Parameter '--" << key << "' does not exist in this "
-          << "program." << std::endl;
+                 << "program." << std::endl;
     }
   }
   const std::string& checkKey = usedKey;
@@ -163,24 +160,18 @@ std::map<std::string, ParamData>& CLI::Parameters()
 }
 
 // Get the parameters that the CLI object knows about.
-std::map<char, std::string>& CLI::Aliases()
-{
-  return GetSingleton().aliases;
-}
+std::map<char, std::string>& CLI::Aliases() { return GetSingleton().aliases; }
 
 // Get the program name as set by PROGRAM_INFO().
-std::string CLI::ProgramName()
-{
-  return GetSingleton().doc->programName;
-}
+std::string CLI::ProgramName() { return GetSingleton().doc->programName; }
 
 // Set a particular parameter as passed.
 void CLI::SetPassed(const std::string& name)
 {
   if (GetSingleton().parameters.count(name) == 0)
   {
-    throw std::invalid_argument("CLI::SetPassed(): parameter " + name +
-        " not known!");
+    throw std::invalid_argument("CLI::SetPassed(): parameter " + name
+                                + " not known!");
   }
 
   // Set passed to true.
@@ -205,7 +196,7 @@ void CLI::RestoreSettings(const std::string& name, const bool fatal)
   if (GetSingleton().storageMap.count(name) == 0 && fatal)
   {
     throw std::invalid_argument("no settings stored under the name '" + name
-        + "'");
+                                + "'");
   }
   else if (GetSingleton().storageMap.count(name) == 0 && !fatal)
   {
@@ -241,8 +232,9 @@ void CLI::ClearSettings()
     {
       persistent[it->first] = it->second; // Save the parameter.
       // Add to the list of types, if it hasn't already been added.
-      if (std::find(persistentTypes.begin(), persistentTypes.end(),
-          it->second.tname) == persistentTypes.end())
+      if (std::find(
+              persistentTypes.begin(), persistentTypes.end(), it->second.tname)
+          == persistentTypes.end())
         persistentTypes.push_back(it->second.tname);
     }
 

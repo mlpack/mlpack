@@ -68,7 +68,8 @@ class KathirvalavakumarSubavathiInitialization
    */
   template<typename eT>
   KathirvalavakumarSubavathiInitialization(const arma::Mat<eT>& data,
-                                           const double s) : s(s)
+                                           const double s)
+    : s(s)
   {
     dataSum = arma::sum(data % data);
   }
@@ -127,7 +128,6 @@ class InitTraits<KathirvalavakumarSubavathiInitialization>
   //! entire network.
   static const bool UseLayer = false;
 };
-
 
 } // namespace ann
 } // namespace mlpack

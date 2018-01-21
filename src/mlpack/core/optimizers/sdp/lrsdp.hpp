@@ -26,7 +26,7 @@ namespace optimization {
  * semidefinite programs (LR-SDP).  This solver uses the augmented Lagrangian
  * optimizer to solve low-rank semidefinite programs.
  */
-template <typename SDPType>
+template<typename SDPType>
 class LRSDP
 {
  public:

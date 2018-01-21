@@ -293,14 +293,20 @@ class CLI
  public:
   //! Map for functions and types.
   //! Use as functionMap["typename"]["functionName"].
-  typedef std::map<std::string, std::map<std::string,
-      void (*)(const util::ParamData&, const void*, void*)>> FunctionMapType;
+  typedef std::
+      map<std::string,
+          std::map<std::string,
+                   void (*)(const util::ParamData&, const void*, void*)>>
+          FunctionMapType;
   FunctionMapType functionMap;
 
  private:
   //! Storage map for parameters.
-  std::map<std::string, std::tuple<std::map<std::string, util::ParamData>,
-      std::map<char, std::string>, FunctionMapType>> storageMap;
+  std::map<std::string,
+           std::tuple<std::map<std::string, util::ParamData>,
+                      std::map<char, std::string>,
+                      FunctionMapType>>
+      storageMap;
 
  private:
   //! The singleton itself.

@@ -27,7 +27,7 @@ class MaxVarianceNewCluster
 {
  public:
   //! Default constructor required by EmptyClusterPolicy.
-  MaxVarianceNewCluster() : iteration(size_t(-1)) { }
+  MaxVarianceNewCluster() : iteration(size_t(-1)) {}
 
   /**
    * Take the point furthest from the centroid of the cluster with maximum

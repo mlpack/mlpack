@@ -40,8 +40,8 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
-  f << "a, 2, 3"  << endl;
-  f << "5, 6, a"  << endl;
+  f << "a, 2, 3" << endl;
+  f << "5, 6, a" << endl;
   f << "8, 9, 10" << endl;
   f.close();
 
@@ -68,9 +68,8 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
 
   // convert missing vals to 99.
   CustomImputation<double> customStrategy(99);
-  Imputer<double,
-          DatasetMapper<MissingPolicy>,
-          CustomImputation<double>> imputer(info, customStrategy);
+  Imputer<double, DatasetMapper<MissingPolicy>, CustomImputation<double>>
+      imputer(info, customStrategy);
   // convert a or nan to 99 for dimension 0.
   imputer.Impute(input, "a", 0);
 
@@ -95,8 +94,8 @@ BOOST_AUTO_TEST_CASE(DatasetMapperImputerTest)
 BOOST_AUTO_TEST_CASE(CustomImputationTest)
 {
   arma::mat columnWiseInput("3.0 0.0 2.0 0.0;"
-                  "5.0 6.0 0.0 6.0;"
-                  "9.0 8.0 4.0 8.0;");
+                            "5.0 6.0 0.0 6.0;"
+                            "9.0 8.0 4.0 8.0;");
   arma::mat rowWiseInput(columnWiseInput);
   double customValue = 99;
   double mappedValue = 0.0;
@@ -104,7 +103,7 @@ BOOST_AUTO_TEST_CASE(CustomImputationTest)
   CustomImputation<double> imputer(customValue);
 
   // column wise
-  imputer.Impute(columnWiseInput, mappedValue, 0/*dimension*/, true);
+  imputer.Impute(columnWiseInput, mappedValue, 0 /*dimension*/, true);
 
   BOOST_REQUIRE_CLOSE(columnWiseInput(0, 0), 3.0, 1e-5);
   BOOST_REQUIRE_CLOSE(columnWiseInput(0, 1), 99.0, 1e-5);
@@ -143,8 +142,8 @@ BOOST_AUTO_TEST_CASE(CustomImputationTest)
 BOOST_AUTO_TEST_CASE(MeanImputationTest)
 {
   arma::mat columnWiseInput("3.0 0.0 2.0 0.0;"
-                  "5.0 6.0 0.0 6.0;"
-                  "9.0 8.0 4.0 8.0;");
+                            "5.0 6.0 0.0 6.0;"
+                            "9.0 8.0 4.0 8.0;");
   arma::mat rowWiseInput(columnWiseInput);
   double mappedValue = 0.0;
 
@@ -190,8 +189,8 @@ BOOST_AUTO_TEST_CASE(MeanImputationTest)
 BOOST_AUTO_TEST_CASE(MedianImputationTest)
 {
   arma::mat columnWiseInput("3.0 0.0 2.0 0.0;"
-                  "5.0 6.0 0.0 6.0;"
-                  "9.0 8.0 4.0 8.0;");
+                            "5.0 6.0 0.0 6.0;"
+                            "9.0 8.0 4.0 8.0;");
   arma::mat rowWiseInput(columnWiseInput);
   double mappedValue = 0.0;
 
@@ -236,8 +235,8 @@ BOOST_AUTO_TEST_CASE(MedianImputationTest)
 BOOST_AUTO_TEST_CASE(ListwiseDeletionTest)
 {
   arma::mat columnWiseInput("3.0 0.0 2.0 0.0;"
-                  "5.0 6.0 0.0 6.0;"
-                  "9.0 8.0 4.0 8.0;");
+                            "5.0 6.0 0.0 6.0;"
+                            "9.0 8.0 4.0 8.0;");
   arma::mat rowWiseInput(columnWiseInput);
   double mappedValue = 0.0;
 

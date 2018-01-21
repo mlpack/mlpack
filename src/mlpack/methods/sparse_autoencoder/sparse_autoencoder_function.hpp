@@ -85,64 +85,34 @@ class SparseAutoencoderFunction
   const arma::mat& GetInitialPoint() const { return initialPoint; }
 
   //! Sets size of the visible layer.
-  void VisibleSize(const size_t visible)
-  {
-    this->visibleSize = visible;
-  }
+  void VisibleSize(const size_t visible) { this->visibleSize = visible; }
 
   //! Gets size of the visible layer.
-  size_t VisibleSize() const
-  {
-    return visibleSize;
-  }
+  size_t VisibleSize() const { return visibleSize; }
 
   //! Sets size of the hidden layer.
-  void HiddenSize(const size_t hidden)
-  {
-    this->hiddenSize = hidden;
-  }
+  void HiddenSize(const size_t hidden) { this->hiddenSize = hidden; }
 
   //! Gets the size of the hidden layer.
-  size_t HiddenSize() const
-  {
-    return hiddenSize;
-  }
+  size_t HiddenSize() const { return hiddenSize; }
 
   //! Sets the L2-regularization parameter.
-  void Lambda(const double l)
-  {
-    this->lambda = l;
-  }
+  void Lambda(const double l) { this->lambda = l; }
 
   //! Gets the L2-regularization parameter.
-  double Lambda() const
-  {
-    return lambda;
-  }
+  double Lambda() const { return lambda; }
 
   //! Sets the KL divergence parameter.
-  void Beta(const double b)
-  {
-    this->beta = b;
-  }
+  void Beta(const double b) { this->beta = b; }
 
   //! Gets the KL divergence parameter.
-  double Beta() const
-  {
-    return beta;
-  }
+  double Beta() const { return beta; }
 
   //! Sets the sparsity parameter.
-  void Rho(const double r)
-  {
-    this->rho = r;
-  }
+  void Rho(const double r) { this->rho = r; }
 
   //! Gets the sparsity parameter.
-  double Rho() const
-  {
-    return rho;
-  }
+  double Rho() const { return rho; }
 
  private:
   //! The matrix of data points.

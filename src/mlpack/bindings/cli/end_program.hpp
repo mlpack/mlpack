@@ -48,13 +48,13 @@ inline void EndProgram()
       // We can handle strings, ints, bools, floats, doubles.
       const util::ParamData& data = it->second;
       std::string boostName;
-      CLI::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
-          NULL, (void*) &boostName);
+      CLI::GetSingleton().functionMap[data.tname]["MapParameterName"](
+          data, NULL, (void*)&boostName);
       Log::Info << "  " << boostName << ": ";
 
       std::string printableParam;
-      CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"](data,
-          NULL, (void*) &printableParam);
+      CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"](
+          data, NULL, (void*)&printableParam);
       Log::Info << printableParam << std::endl;
 
       ++it;

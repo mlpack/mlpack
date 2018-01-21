@@ -43,15 +43,14 @@ void BuildFastMKSModel(FastMKS<KernelType>& f,
 }
 
 //! This is only called when something goes wrong.
-template<typename KernelType,
-         typename FastMKSType>
+template<typename KernelType, typename FastMKSType>
 void BuildFastMKSModel(FastMKSType& /* f */,
                        KernelType& /* k */,
                        const arma::mat& /* referenceData */,
                        const double /* base */)
 {
   throw std::invalid_argument("FastMKSModel::BuildModel(): given kernel type is"
-      " not equal to kernel type of the model!");
+                              " not equal to kernel type of the model!");
 }
 
 template<typename TKernelType>
@@ -128,7 +127,7 @@ void FastMKSModel::BuildModel(const arma::mat& referenceData,
 template<typename Archive>
 void FastMKSModel::serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(kernelType);
+  ar& BOOST_SERIALIZATION_NVP(kernelType);
 
   if (Archive::is_loading::value)
   {
@@ -161,31 +160,31 @@ void FastMKSModel::serialize(Archive& ar, const unsigned int /* version */)
   switch (kernelType)
   {
     case LINEAR_KERNEL:
-      ar & BOOST_SERIALIZATION_NVP(linear);
+      ar& BOOST_SERIALIZATION_NVP(linear);
       break;
 
     case POLYNOMIAL_KERNEL:
-      ar & BOOST_SERIALIZATION_NVP(polynomial);
+      ar& BOOST_SERIALIZATION_NVP(polynomial);
       break;
 
     case COSINE_DISTANCE:
-      ar & BOOST_SERIALIZATION_NVP(cosine);
+      ar& BOOST_SERIALIZATION_NVP(cosine);
       break;
 
     case GAUSSIAN_KERNEL:
-      ar & BOOST_SERIALIZATION_NVP(gaussian);
+      ar& BOOST_SERIALIZATION_NVP(gaussian);
       break;
 
     case EPANECHNIKOV_KERNEL:
-      ar & BOOST_SERIALIZATION_NVP(epan);
+      ar& BOOST_SERIALIZATION_NVP(epan);
       break;
 
     case TRIANGULAR_KERNEL:
-      ar & BOOST_SERIALIZATION_NVP(triangular);
+      ar& BOOST_SERIALIZATION_NVP(triangular);
       break;
 
     case HYPTAN_KERNEL:
-      ar & BOOST_SERIALIZATION_NVP(hyptan);
+      ar& BOOST_SERIALIZATION_NVP(hyptan);
       break;
   }
 }

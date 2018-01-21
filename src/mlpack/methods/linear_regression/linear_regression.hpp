@@ -74,7 +74,7 @@ class LinearRegression
    * called (or make sure the model parameters are set) before calling
    * Predict()!
    */
-  LinearRegression() : lambda(0.0), intercept(true) { }
+  LinearRegression() : lambda(0.0), intercept(true) {}
 
   /**
    * Train the LinearRegression model on the given data.  Careful!  This will
@@ -201,9 +201,9 @@ class LinearRegression
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(parameters);
-    ar & BOOST_SERIALIZATION_NVP(lambda);
-    ar & BOOST_SERIALIZATION_NVP(intercept);
+    ar& BOOST_SERIALIZATION_NVP(parameters);
+    ar& BOOST_SERIALIZATION_NVP(lambda);
+    ar& BOOST_SERIALIZATION_NVP(intercept);
   }
 
  private:

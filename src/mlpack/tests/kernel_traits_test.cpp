@@ -41,24 +41,23 @@ BOOST_AUTO_TEST_CASE(IsNormalizedTest)
 
   // Test each kernel individually.
   // If the type is not a valid kernel, it should be false (default value).
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<int>::IsNormalized, false);
+  BOOST_REQUIRE_EQUAL((bool)KernelTraits<int>::IsNormalized, false);
 
   // Normalized kernels.
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<CosineDistance>::IsNormalized, true);
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<EpanechnikovKernel>::IsNormalized,
-      true);
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<GaussianKernel>::IsNormalized, true);
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<LaplacianKernel>::IsNormalized, true);
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<SphericalKernel>::IsNormalized, true);
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<TriangularKernel>::IsNormalized,
-      true);
+  BOOST_REQUIRE_EQUAL((bool)KernelTraits<CosineDistance>::IsNormalized, true);
+  BOOST_REQUIRE_EQUAL((bool)KernelTraits<EpanechnikovKernel>::IsNormalized,
+                      true);
+  BOOST_REQUIRE_EQUAL((bool)KernelTraits<GaussianKernel>::IsNormalized, true);
+  BOOST_REQUIRE_EQUAL((bool)KernelTraits<LaplacianKernel>::IsNormalized, true);
+  BOOST_REQUIRE_EQUAL((bool)KernelTraits<SphericalKernel>::IsNormalized, true);
+  BOOST_REQUIRE_EQUAL((bool)KernelTraits<TriangularKernel>::IsNormalized, true);
 
   // Unnormalized kernels.
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<LinearKernel>::IsNormalized, false);
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<PolynomialKernel>::IsNormalized,
-      false);
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<PSpectrumStringKernel>::IsNormalized,
-      false);
+  BOOST_REQUIRE_EQUAL((bool)KernelTraits<LinearKernel>::IsNormalized, false);
+  BOOST_REQUIRE_EQUAL((bool)KernelTraits<PolynomialKernel>::IsNormalized,
+                      false);
+  BOOST_REQUIRE_EQUAL((bool)KernelTraits<PSpectrumStringKernel>::IsNormalized,
+                      false);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

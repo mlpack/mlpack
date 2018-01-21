@@ -83,15 +83,15 @@ void PrintClassDefn(
   std::cout << std::endl;
   std::cout << "  def __getstate__(self):" << std::endl;
   std::cout << "    return SerializeOut(self.modelptr, \"" << printedType
-      << "\")" << std::endl;
+            << "\")" << std::endl;
   std::cout << std::endl;
   std::cout << "  def __setstate__(self, state):" << std::endl;
   std::cout << "    SerializeIn(self.modelptr, state, \"" << printedType
-      << "\")" << std::endl;
+            << "\")" << std::endl;
   std::cout << std::endl;
   std::cout << "  def __reduce_ex__(self, version):" << std::endl;
   std::cout << "    return (self.__class__, (), self.__getstate__())"
-      << std::endl;
+            << std::endl;
   std::cout << std::endl;
 }
 

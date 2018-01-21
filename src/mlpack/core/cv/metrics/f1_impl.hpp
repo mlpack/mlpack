@@ -45,13 +45,17 @@ double F1<AS, PC>::Evaluate(MLAlgorithm& model,
   double precision = double(tp) / numberOfPositivePredictions;
   double recall = double(tp) / numberOfPositiveClassInstances;
 
-  return (precision + recall == 0.0) ? 0.0 :
-      2.0 * precision * recall / (precision + recall);
+  return (precision + recall == 0.0)
+             ? 0.0
+             : 2.0 * precision * recall / (precision + recall);
 }
 
 template<AverageStrategy AS, size_t PC /* PositiveClass */>
-template<AverageStrategy _AS, typename MLAlgorithm, typename DataType, typename,
-    typename>
+template<AverageStrategy _AS,
+         typename MLAlgorithm,
+         typename DataType,
+         typename,
+         typename>
 double F1<AS, PC>::Evaluate(MLAlgorithm& model,
                             const DataType& data,
                             const arma::Row<size_t>& labels)
@@ -64,8 +68,12 @@ double F1<AS, PC>::Evaluate(MLAlgorithm& model,
 }
 
 template<AverageStrategy AS, size_t PC /* PositiveClass */>
-template<AverageStrategy _AS, typename MLAlgorithm, typename DataType, typename,
-    typename, typename>
+template<AverageStrategy _AS,
+         typename MLAlgorithm,
+         typename DataType,
+         typename,
+         typename,
+         typename>
 double F1<AS, PC>::Evaluate(MLAlgorithm& model,
                             const DataType& data,
                             const arma::Row<size_t>& labels)
@@ -86,8 +94,9 @@ double F1<AS, PC>::Evaluate(MLAlgorithm& model,
 
     double precision = double(tp) / numberOfPositivePredictions;
     double recall = double(tp) / numberOfClassInstances;
-    f1s(c) = (precision + recall == 0.0) ? 0.0 :
-        2.0 * precision * recall / (precision + recall);
+    f1s(c) = (precision + recall == 0.0)
+                 ? 0.0
+                 : 2.0 * precision * recall / (precision + recall);
   }
 
   return arma::mean(f1s);

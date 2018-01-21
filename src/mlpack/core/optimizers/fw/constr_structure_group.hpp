@@ -48,17 +48,19 @@ namespace optimization {
  *  Author = {Jaggi, Martin},
  *  Booktitle = {ICML (1)},
  *  Pages = {427--435},
- *  Title = {Revisiting Frank-Wolfe: Projection-Free Sparse Convex Optimization.},
+ *  Title = {Revisiting Frank-Wolfe: Projection-Free Sparse Convex
+ * Optimization.},
  *  Year = {2013}}
  * @endcode
  *
- *  For ConstrStrctGroupSolver to work, we need to use template class GroupType, 
+ *  For ConstrStrctGroupSolver to work, we need to use template class GroupType,
  *  which gives functions:
  *
  *    size_t NumGroups();
  *    double DualNorm(const arma::vec& yk, const int group_ind);
  *    ProjectToGroup(const arma::mat& v, const size_t groupId, arma::vec& y);
- *    void OptimalFromGroup(const arma::mat& v, const size_t groupId, arma::mat& s);
+ *    void OptimalFromGroup(const arma::mat& v, const size_t groupId, arma::mat&
+ * s);
  *
  * @tparam GroupType Class that implements functions to map original vectors to
  *                   each group, and to solve linear optimization problem in the
@@ -74,9 +76,10 @@ class ConstrStructGroupSolver
    * @param groupExtractor Class used to project to a group, recovery from a
    *                       group, and compute norm in each group.
    */
-  ConstrStructGroupSolver(GroupType& groupExtractor) :
-    groupExtractor(groupExtractor)
-  { /* Nothing to do */ }
+  ConstrStructGroupSolver(GroupType& groupExtractor)
+    : groupExtractor(groupExtractor)
+  { /* Nothing to do */
+  }
 
   /**
    * Optimizer of structure group ball constrained Problem for FrankWolfe.
@@ -130,12 +133,11 @@ class GroupLpBall
    */
   GroupLpBall(const double p,
               const size_t dimOrig,
-              std::vector<arma::uvec> groupIndicesList):
-    p(p), numGroups(groupIndicesList.size()),
-    dimOrig(dimOrig),
-    groupIndicesList(groupIndicesList),
-    lpBallSolver(p)
-  {/* Nothing to do. */}
+              std::vector<arma::uvec> groupIndicesList)
+    : p(p), numGroups(groupIndicesList.size()), dimOrig(dimOrig),
+      groupIndicesList(groupIndicesList), lpBallSolver(p)
+  { /* Nothing to do. */
+  }
 
   /**
    * Projection to specific group.
@@ -174,7 +176,7 @@ class GroupLpBall
 
     // Recover s to the original dimension.
     arma::uvec& indList = groupIndicesList[groupId - 1];
-    size_t dim = indList.n_elem;  // dimension of the group.
+    size_t dim = indList.n_elem; // dimension of the group.
     s.zeros(dimOrig, 1);
 
     for (size_t i = 0; i < dim; ++i)
@@ -182,9 +184,9 @@ class GroupLpBall
   }
 
   //! Get the number of groups.
-  size_t NumGroups() const {return numGroups;}
+  size_t NumGroups() const { return numGroups; }
   //! Modify the number of groups.
-  size_t& NumGroups() {return numGroups;}
+  size_t& NumGroups() { return numGroups; }
 
   /**
    * Compute the q-norm of yk, 1/p+1/q=1.
@@ -202,8 +204,8 @@ class GroupLpBall
     else if (p > 1.0)
     {
       // p norm, return q-norm
-      double q = 1.0 / (1.0 - 1.0/p);
-      return  arma::norm(yk, q);
+      double q = 1.0 / (1.0 - 1.0 / p);
+      return arma::norm(yk, q);
     }
     else if (p == 1.0)
     {
@@ -235,10 +237,7 @@ class GroupLpBall
   ConstrLpBallSolver lpBallSolver;
 };
 
-
 } // namespace optimization
 } // namespace mlpack
-
-
 
 #endif

@@ -30,7 +30,9 @@ class AllCategoricalSplit
  public:
   // No extra info needed for split.
   template<typename ElemType>
-  class AuxiliarySplitInfo { };
+  class AuxiliarySplitInfo
+  {
+  };
 
   /**
    * Check if we can split a node.  If we can split a node in a way that
@@ -53,16 +55,16 @@ class AllCategoricalSplit
    *      successful split.
    */
   template<bool UseWeights, typename VecType, typename WeightVecType>
-  static double SplitIfBetter(
-      const double bestGain,
-      const VecType& data,
-      const size_t numCategories,
-      const arma::Row<size_t>& labels,
-      const size_t numClasses,
-      const WeightVecType& weights,
-      const size_t minimumLeafSize,
-      arma::Col<typename VecType::elem_type>& classProbabilities,
-      AuxiliarySplitInfo<typename VecType::elem_type>& aux);
+  static double
+  SplitIfBetter(const double bestGain,
+                const VecType& data,
+                const size_t numCategories,
+                const arma::Row<size_t>& labels,
+                const size_t numClasses,
+                const WeightVecType& weights,
+                const size_t minimumLeafSize,
+                arma::Col<typename VecType::elem_type>& classProbabilities,
+                AuxiliarySplitInfo<typename VecType::elem_type>& aux);
 
   /**
    * Return the number of children in the split.
@@ -81,10 +83,10 @@ class AllCategoricalSplit
    * @param aux (Unused) auxiliary information for the split.
    */
   template<typename ElemType>
-  static size_t CalculateDirection(
-      const ElemType& point,
-      const arma::Col<ElemType>& classProbabilities,
-      const AuxiliarySplitInfo<ElemType>& /* aux */);
+  static size_t
+  CalculateDirection(const ElemType& point,
+                     const arma::Col<ElemType>& classProbabilities,
+                     const AuxiliarySplitInfo<ElemType>& /* aux */);
 };
 
 } // namespace tree
@@ -94,4 +96,3 @@ class AllCategoricalSplit
 #include "all_categorical_split_impl.hpp"
 
 #endif
-

@@ -76,8 +76,7 @@ class DatasetMapper
    * @param dimension Index of the dimension of the string.
    */
   template<typename T>
-  T MapString(const InputType& input,
-              const size_t dimension);
+  T MapString(const InputType& input, const size_t dimension);
 
   /**
    * Return the input that corresponds to a given value in a given dimension.
@@ -145,8 +144,8 @@ class DatasetMapper
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(types);
-    ar & BOOST_SERIALIZATION_NVP(maps);
+    ar& BOOST_SERIALIZATION_NVP(types);
+    ar& BOOST_SERIALIZATION_NVP(maps);
   }
 
   //! Return the policy of the mapper.
@@ -162,19 +161,19 @@ class DatasetMapper
   std::vector<Datatype> types;
 
   // Forward mapping type.
-  using ForwardMapType = typename std::unordered_map<InputType, typename
-      PolicyType::MappedType>;
+  using ForwardMapType =
+      typename std::unordered_map<InputType, typename PolicyType::MappedType>;
 
   // Reverse mapping type.  Multiple inputs may map to a single output, hence
   // the need for std::vector.
   using ReverseMapType = std::unordered_map<typename PolicyType::MappedType,
-      std::vector<InputType>>;
+                                            std::vector<InputType>>;
 
   // Mappings from strings to integers.
   // Map entries will only exist for dimensions that are categorical.
   // MapType = map<dimension, pair<bimap<string, MappedType>, numMappings>>
-  using MapType = std::unordered_map<size_t, std::pair<ForwardMapType,
-      ReverseMapType>>;
+  using MapType =
+      std::unordered_map<size_t, std::pair<ForwardMapType, ReverseMapType>>;
 
   //! maps object stores string and numerical pairs.
   MapType maps;

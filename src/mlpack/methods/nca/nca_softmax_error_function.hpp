@@ -74,7 +74,7 @@ class SoftmaxErrorFunction
   /**
    * Evaluate the softmax objective function for the given covariance matrix on
    * the given batch size from a given inital point of the dataset.
-   * This is the separable implementation, where the objective 
+   * This is the separable implementation, where the objective
    * function is decomposed into the sum of many objective
    * functions, and here, only one of those constituent objective functions is
    * returned.
@@ -112,7 +112,7 @@ class SoftmaxErrorFunction
    * @param batchSize Number of points to use for objective function.
    * @param gradient Matrix to store the calculated gradient in.
    */
-  template <typename GradType>
+  template<typename GradType>
   void Gradient(const arma::mat& covariance,
                 const size_t begin,
                 GradType& gradient,

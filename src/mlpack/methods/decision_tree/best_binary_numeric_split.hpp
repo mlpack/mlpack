@@ -29,7 +29,9 @@ class BestBinaryNumericSplit
  public:
   // No extra info needed for split.
   template<typename ElemType>
-  class AuxiliarySplitInfo { };
+  class AuxiliarySplitInfo
+  {
+  };
 
   /**
    * Check if we can split a node.  If we can split a node in a way that
@@ -51,15 +53,15 @@ class BestBinaryNumericSplit
    *      successful split.
    */
   template<bool UseWeights, typename VecType, typename WeightVecType>
-  static double SplitIfBetter(
-      const double bestGain,
-      const VecType& data,
-      const arma::Row<size_t>& labels,
-      const size_t numClasses,
-      const WeightVecType& weights,
-      const size_t minimumLeafSize,
-      arma::Col<typename VecType::elem_type>& classProbabilities,
-      AuxiliarySplitInfo<typename VecType::elem_type>& aux);
+  static double
+  SplitIfBetter(const double bestGain,
+                const VecType& data,
+                const arma::Row<size_t>& labels,
+                const size_t numClasses,
+                const WeightVecType& weights,
+                const size_t minimumLeafSize,
+                arma::Col<typename VecType::elem_type>& classProbabilities,
+                AuxiliarySplitInfo<typename VecType::elem_type>& aux);
 
   /**
    * Returns 2, since the binary split always has two children.
@@ -79,10 +81,10 @@ class BestBinaryNumericSplit
    * @param aux (Unused) auxiliary information for the split.
    */
   template<typename ElemType>
-  static size_t CalculateDirection(
-      const ElemType& point,
-      const arma::Col<ElemType>& classProbabilities,
-      const AuxiliarySplitInfo<ElemType>& /* aux */);
+  static size_t
+  CalculateDirection(const ElemType& point,
+                     const arma::Col<ElemType>& classProbabilities,
+                     const AuxiliarySplitInfo<ElemType>& /* aux */);
 };
 
 } // namespace tree

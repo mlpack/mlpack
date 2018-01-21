@@ -16,7 +16,10 @@ namespace tests {
  * bindings, we do not ignore any checks, so this always returns false.
  */
 template<typename T>
-inline bool IgnoreCheck(const T& /* t */) { return false; }
+inline bool IgnoreCheck(const T& /* t */)
+{
+  return false;
+}
 
 } // namespace tests
 } // namespace bindings

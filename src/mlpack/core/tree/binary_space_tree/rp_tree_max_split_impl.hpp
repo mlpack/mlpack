@@ -32,8 +32,8 @@ bool RPTreeMaxSplit<BoundType, MatType>::SplitNode(const BoundType& /* bound */,
   math::RandVector(splitInfo.direction);
 
   // Get the value according to which we will perform the split.
-  return GetSplitVal(data, begin, count, splitInfo.direction,
-      splitInfo.splitVal);
+  return GetSplitVal(
+      data, begin, count, splitInfo.direction, splitInfo.splitVal);
 }
 
 template<typename BoundType, typename MatType>
@@ -72,8 +72,8 @@ bool RPTreeMaxSplit<BoundType, MatType>::GetSplitVal(
   //   2. The proposed method does not appear to guarantee that a valid split
   //      value will be generated (i.e. it can produce a split value where there
   //      may be no points on the left or the right).
-  splitVal += math::Random((minimum - splitVal) * 0.75,
-      (maximum - splitVal) * 0.75);
+  splitVal +=
+      math::Random((minimum - splitVal) * 0.75, (maximum - splitVal) * 0.75);
 
   if (splitVal == maximum)
     splitVal = minimum;

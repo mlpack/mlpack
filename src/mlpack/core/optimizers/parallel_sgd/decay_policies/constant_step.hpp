@@ -31,7 +31,7 @@ class ConstantStep
    *
    * @param step The intial stepsize to use.
    */
-  ConstantStep(const double step = 0.01) : step(step) { /* Nothing to do */ }
+  ConstantStep(const double step = 0.01) : step(step) { /* Nothing to do */}
 
   /**
    * This function is called in each iteration before the gradient update.
@@ -40,10 +40,8 @@ class ConstantStep
    *    calculated.
    * @return The step size for the current iteration.
    */
-  double StepSize(const size_t /* numEpoch */)
-  {
-    return step;
-  }
+  double StepSize(const size_t /* numEpoch */) { return step; }
+
  private:
   //! The initial stepsize, which remains unchanged
   double step;

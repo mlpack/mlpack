@@ -80,10 +80,8 @@ class RegularizedSVD
    * @param u Item matrix obtained on decomposition.
    * @param v User matrix obtained on decomposition.
    */
-  void Apply(const arma::mat& data,
-             const size_t rank,
-             arma::mat& u,
-             arma::mat& v);
+  void
+  Apply(const arma::mat& data, const size_t rank, arma::mat& u, arma::mat& v);
 
  private:
   //! Number of optimization iterations.
@@ -102,7 +100,7 @@ namespace cf {
 
 //! Factorizer traits of Regularized SVD.
 template<>
-class FactorizerTraits<mlpack::svd::RegularizedSVD<> >
+class FactorizerTraits<mlpack::svd::RegularizedSVD<>>
 {
  public:
   //! Data provided to RegularizedSVD need not be cleaned.

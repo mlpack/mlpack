@@ -18,12 +18,11 @@
 namespace mlpack {
 namespace svd {
 
-template <typename MatType>
+template<typename MatType>
 RegularizedSVDFunction<MatType>::RegularizedSVDFunction(const MatType& data,
                                                         const size_t rank,
-                                                        const double lambda) :
-    data(math::MakeAlias(const_cast<MatType&>(data), false)),
-    rank(rank),
+                                                        const double lambda)
+  : data(math::MakeAlias(const_cast<MatType&>(data), false)), rank(rank),
     lambda(lambda)
 {
   // Number of users and items in the data.
@@ -37,13 +36,13 @@ RegularizedSVDFunction<MatType>::RegularizedSVDFunction(const MatType& data,
 template<typename MatType>
 void RegularizedSVDFunction<MatType>::Shuffle()
 {
-  data = data.cols(arma::shuffle(arma::linspace<arma::uvec>(0, data.n_cols - 1,
-      data.n_cols)));
+  data = data.cols(arma::shuffle(
+      arma::linspace<arma::uvec>(0, data.n_cols - 1, data.n_cols)));
 }
 
-template <typename MatType>
-double RegularizedSVDFunction<MatType>::Evaluate(const arma::mat& parameters)
-const
+template<typename MatType>
+double
+RegularizedSVDFunction<MatType>::Evaluate(const arma::mat& parameters) const
 {
   // The cost for the optimization is as follows:
   //          f(u, v) = sum((rating(i, j) - u(i).t() * v(j))^2)
@@ -62,15 +61,15 @@ const
 
     // Calculate the squared error in the prediction.
     const double rating = data(2, i);
-    double ratingError = rating - arma::dot(parameters.col(user),
-                                            parameters.col(item));
+    double ratingError =
+        rating - arma::dot(parameters.col(user), parameters.col(item));
     double ratingErrorSquared = ratingError * ratingError;
 
     // Calculate the regularization penalty corresponding to the parameters.
     double userVecNorm = arma::norm(parameters.col(user), 2);
     double itemVecNorm = arma::norm(parameters.col(item), 2);
-    double regularizationError = lambda * (userVecNorm * userVecNorm +
-                                           itemVecNorm * itemVecNorm);
+    double regularizationError =
+        lambda * (userVecNorm * userVecNorm + itemVecNorm * itemVecNorm);
 
     cost += (ratingErrorSquared + regularizationError);
   }
@@ -78,7 +77,7 @@ const
   return cost;
 }
 
-template <typename MatType>
+template<typename MatType>
 double RegularizedSVDFunction<MatType>::Evaluate(const arma::mat& parameters,
                                                  const size_t start,
                                                  const size_t batchSize) const
@@ -93,15 +92,15 @@ double RegularizedSVDFunction<MatType>::Evaluate(const arma::mat& parameters,
 
     // Calculate the squared error in the prediction.
     const double rating = data(2, i);
-    double ratingError = rating - arma::dot(parameters.col(user),
-                                            parameters.col(item));
+    double ratingError =
+        rating - arma::dot(parameters.col(user), parameters.col(item));
     double ratingErrorSquared = ratingError * ratingError;
 
     // Calculate the regularization penalty corresponding to the parameters.
     double userVecNorm = arma::norm(parameters.col(user), 2);
     double itemVecNorm = arma::norm(parameters.col(item), 2);
-    double regularizationError = lambda * (userVecNorm * userVecNorm +
-                                           itemVecNorm * itemVecNorm);
+    double regularizationError =
+        lambda * (userVecNorm * userVecNorm + itemVecNorm * itemVecNorm);
 
     objective += (ratingErrorSquared + regularizationError);
   }
@@ -109,7 +108,7 @@ double RegularizedSVDFunction<MatType>::Evaluate(const arma::mat& parameters,
   return objective;
 }
 
-template <typename MatType>
+template<typename MatType>
 void RegularizedSVDFunction<MatType>::Gradient(const arma::mat& parameters,
                                                arma::mat& gradient) const
 {
@@ -132,20 +131,20 @@ void RegularizedSVDFunction<MatType>::Gradient(const arma::mat& parameters,
 
     // Prediction error for the example.
     const double rating = data(2, i);
-    double ratingError = rating - arma::dot(parameters.col(user),
-                                            parameters.col(item));
+    double ratingError =
+        rating - arma::dot(parameters.col(user), parameters.col(item));
 
     // Gradient is non-zero only for the parameter columns corresponding to the
     // example.
-    gradient.col(user) += 2 * (lambda * parameters.col(user) -
-                               ratingError * parameters.col(item));
-    gradient.col(item) += 2 * (lambda * parameters.col(item) -
-                               ratingError * parameters.col(user));
+    gradient.col(user) += 2 * (lambda * parameters.col(user)
+                               - ratingError * parameters.col(item));
+    gradient.col(item) += 2 * (lambda * parameters.col(item)
+                               - ratingError * parameters.col(user));
   }
 }
 
-template <typename MatType>
-template <typename GradType>
+template<typename MatType>
+template<typename GradType>
 void RegularizedSVDFunction<MatType>::Gradient(const arma::mat& parameters,
                                                const size_t start,
                                                GradType& gradient,
@@ -161,15 +160,15 @@ void RegularizedSVDFunction<MatType>::Gradient(const arma::mat& parameters,
 
     // Prediction error for the example.
     const double rating = data(2, i);
-    double ratingError = rating - arma::dot(parameters.col(user),
-                                            parameters.col(item));
+    double ratingError =
+        rating - arma::dot(parameters.col(user), parameters.col(item));
 
     // Gradient is non-zero only for the parameter columns corresponding to the
     // example.
-    gradient.col(user) += 2 * (lambda * parameters.col(user) -
-                               ratingError * parameters.col(item));
-    gradient.col(item) += 2 * (lambda * parameters.col(item) -
-                               ratingError * parameters.col(user));
+    gradient.col(user) += 2 * (lambda * parameters.col(user)
+                               - ratingError * parameters.col(item));
+    gradient.col(item) += 2 * (lambda * parameters.col(item)
+                               - ratingError * parameters.col(user));
   }
 }
 
@@ -180,11 +179,11 @@ void RegularizedSVDFunction<MatType>::Gradient(const arma::mat& parameters,
 namespace mlpack {
 namespace optimization {
 
-template <>
-template <>
-double StandardSGD::Optimize(
-    mlpack::svd::RegularizedSVDFunction<arma::mat>& function,
-    arma::mat& parameters)
+template<>
+template<>
+double
+StandardSGD::Optimize(mlpack::svd::RegularizedSVDFunction<arma::mat>& function,
+                      arma::mat& parameters)
 {
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
@@ -218,17 +217,17 @@ double StandardSGD::Optimize(
 
     // Prediction error for the example.
     const double rating = data(2, currentFunction);
-    double ratingError = rating - arma::dot(parameters.col(user),
-                                            parameters.col(item));
+    double ratingError =
+        rating - arma::dot(parameters.col(user), parameters.col(item));
 
     double lambda = function.Lambda();
 
     // Gradient is non-zero only for the parameter columns corresponding to the
     // example.
-    parameters.col(user) -= stepSize * (lambda * parameters.col(user) -
-                                        ratingError * parameters.col(item));
-    parameters.col(item) -= stepSize * (lambda * parameters.col(item) -
-                                        ratingError * parameters.col(user));
+    parameters.col(user) -= stepSize * (lambda * parameters.col(user)
+                                        - ratingError * parameters.col(item));
+    parameters.col(item) -= stepSize * (lambda * parameters.col(item)
+                                        - ratingError * parameters.col(user));
 
     // Now add that to the overall objective function.
     overallObjective += function.Evaluate(parameters, currentFunction);
@@ -237,9 +236,8 @@ double StandardSGD::Optimize(
   return overallObjective;
 }
 
-
-template <>
-template <>
+template<>
+template<>
 inline double ParallelSGD<ExponentialBackoff>::Optimize(
     mlpack::svd::RegularizedSVDFunction<arma::mat>& function,
     arma::mat& iterate)
@@ -248,8 +246,8 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
   double lastObjective;
 
   // The order in which the functions will be visited.
-  arma::Col<size_t> visitationOrder = arma::linspace<arma::Col<size_t>>(0,
-      (function.NumFunctions() - 1), function.NumFunctions());
+  arma::Col<size_t> visitationOrder = arma::linspace<arma::Col<size_t>>(
+      0, (function.NumFunctions() - 1), function.NumFunctions());
 
   const arma::mat data = function.Dataset();
 
@@ -262,28 +260,28 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
     lastObjective = overallObjective;
     overallObjective = 0;
 
-    #pragma omp parallel for reduction(+:overallObjective)
-    for (omp_size_t j = 0; j < (omp_size_t) function.NumFunctions(); ++j)
+#pragma omp parallel for reduction(+ : overallObjective)
+    for (omp_size_t j = 0; j < (omp_size_t)function.NumFunctions(); ++j)
     {
       overallObjective += function.Evaluate(iterate, j);
     }
 
     // Output current objective function.
     Log::Info << "Parallel SGD: iteration " << i << ", objective "
-      << overallObjective << "." << std::endl;
+              << overallObjective << "." << std::endl;
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
       Log::Warn << "Parallel SGD: converged to " << overallObjective
-        << "; terminating with failure. Try a smaller step size?"
-        << std::endl;
+                << "; terminating with failure. Try a smaller step size?"
+                << std::endl;
       return overallObjective;
     }
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
       Log::Info << "SGD: minimized within tolerance " << tolerance << "; "
-        << "terminating optimization." << std::endl;
+                << "terminating optimization." << std::endl;
       return overallObjective;
     }
 
@@ -291,21 +289,22 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
     double stepSize = decayPolicy.StepSize(i);
 
     if (shuffle) // Determine order of visitation.
-      std::shuffle(visitationOrder.begin(), visitationOrder.end(),
-          mlpack::math::randGen);
+      std::shuffle(visitationOrder.begin(),
+                   visitationOrder.end(),
+                   mlpack::math::randGen);
 
-    #pragma omp parallel
+#pragma omp parallel
     {
       // Each processor gets a subset of the instances.
       // Each subset is of size threadShareSize.
       size_t threadId = 0;
-      #ifdef HAS_OPENMP
-        threadId = omp_get_thread_num();
-      #endif
+#ifdef HAS_OPENMP
+      threadId = omp_get_thread_num();
+#endif
 
       for (size_t j = threadId * threadShareSize;
-          j < (threadId + 1) * threadShareSize && j < visitationOrder.n_elem;
-          ++j)
+           j < (threadId + 1) * threadShareSize && j < visitationOrder.n_elem;
+           ++j)
       {
         const size_t numUsers = function.NumUsers();
 
@@ -315,30 +314,30 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
 
         // Prediction error for the example.
         const double rating = data(2, visitationOrder[j]);
-        double ratingError = rating - arma::dot(iterate.col(user),
-            iterate.col(item));
+        double ratingError =
+            rating - arma::dot(iterate.col(user), iterate.col(item));
 
         double lambda = function.Lambda();
 
-        arma::mat userUpdate = stepSize * (lambda * iterate.col(user) -
-            ratingError * iterate.col(item));
-        arma::mat itemUpdate = stepSize * (lambda * iterate.col(item) -
-            ratingError * iterate.col(user));
+        arma::mat userUpdate = stepSize * (lambda * iterate.col(user)
+                                           - ratingError * iterate.col(item));
+        arma::mat itemUpdate = stepSize * (lambda * iterate.col(item)
+                                           - ratingError * iterate.col(user));
 
         // Gradient is non-zero only for the parameter columns corresponding to
         // the example.
         for (size_t i = 0; i < iterate.n_rows; ++i)
         {
-          #pragma omp atomic
+#pragma omp atomic
           iterate(i, user) -= userUpdate(i);
-          #pragma omp atomic
+#pragma omp atomic
           iterate(i, item) -= itemUpdate(i);
         }
       }
     }
   }
   Log::Info << "\n Parallel SGD terminated with objective : "
-    << overallObjective << std::endl;
+            << overallObjective << std::endl;
 
   return overallObjective;
 }

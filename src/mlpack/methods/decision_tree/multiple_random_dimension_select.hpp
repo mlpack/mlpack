@@ -70,10 +70,7 @@ class MultipleRandomDimensionSelect
   /**
    * Get the next index.
    */
-  size_t Next()
-  {
-    return values[++i];
-  }
+  size_t Next() { return values[++i]; }
 
  private:
   //! The values we select from.

@@ -33,10 +33,7 @@ namespace kpca {
  * files in mlpack/core/kernels/) and it is easy to write your own; see other
  * implementations for examples.
  */
-template <
-  typename KernelType,
-  typename KernelRule = NaiveKernelRule<KernelType>
->
+template<typename KernelType, typename KernelRule = NaiveKernelRule<KernelType>>
 class KernelPCA
 {
  public:
@@ -87,9 +84,8 @@ class KernelPCA
    * @param transformedData Matrix to output results into.
    * @param eigval KPCA eigenvalues will be written to this vector.
    */
-  void Apply(const arma::mat& data,
-             arma::mat& transformedData,
-             arma::vec& eigval);
+  void
+  Apply(const arma::mat& data, arma::mat& transformedData, arma::vec& eigval);
 
   /**
    * Apply dimensionality reduction using Kernel Principal Component Analysis

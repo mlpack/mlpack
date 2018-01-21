@@ -34,7 +34,7 @@ double NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
   {
     size_t currentTarget = target(i) - 1;
     Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
-        "Target class out of range.");
+                "Target class out of range.");
 
     output -= input(currentTarget, i);
   }
@@ -45,16 +45,14 @@ double NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType, typename OutputType>
 void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
-      const InputType&& input,
-      const TargetType&& target,
-      OutputType&& output)
+    const InputType&& input, const TargetType&& target, OutputType&& output)
 {
   output = arma::zeros<OutputType>(input.n_rows, input.n_cols);
   for (size_t i = 0; i < input.n_cols; ++i)
   {
     size_t currentTarget = target(i) - 1;
     Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
-        "Target class out of range.");
+                "Target class out of range.");
 
     output(currentTarget, i) = -1;
   }
@@ -63,8 +61,7 @@ void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void NegativeLogLikelihood<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
-    const unsigned int /* version */)
+    Archive& /* ar */, const unsigned int /* version */)
 {
   // Nothing to do here.
 }

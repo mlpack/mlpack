@@ -53,7 +53,7 @@ class SVDBatchLearning
                    double kw = 0,
                    double kh = 0,
                    double momentum = 0.9)
-        : u(u), kw(kw), kh(kh), momentum(momentum)
+    : u(u), kw(kw), kh(kh), momentum(momentum)
   {
     // empty constructor
   }
@@ -85,9 +85,7 @@ class SVDBatchLearning
    * @param H Encoding matrix.
    */
   template<typename MatType>
-  inline void WUpdate(const MatType& V,
-                      arma::mat& W,
-                      const arma::mat& H)
+  inline void WUpdate(const MatType& V, arma::mat& W, const arma::mat& H)
   {
     size_t n = V.n_rows;
     size_t m = V.n_cols;
@@ -106,8 +104,8 @@ class SVDBatchLearning
       {
         const double val = V(i, j);
         if (val != 0)
-          deltaW.row(i) += (val - arma::dot(W.row(i), H.col(j))) *
-                                            arma::trans(H.col(j));
+          deltaW.row(i) +=
+              (val - arma::dot(W.row(i), H.col(j))) * arma::trans(H.col(j));
       }
       // Add regularization.
       if (kw != 0)
@@ -130,9 +128,7 @@ class SVDBatchLearning
    * @param H Encoding matrix to be updated.
    */
   template<typename MatType>
-  inline void HUpdate(const MatType& V,
-                      const arma::mat& W,
-                      arma::mat& H)
+  inline void HUpdate(const MatType& V, const arma::mat& W, arma::mat& H)
   {
     size_t n = V.n_rows;
     size_t m = V.n_cols;
@@ -168,12 +164,12 @@ class SVDBatchLearning
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(u);
-    ar & BOOST_SERIALIZATION_NVP(kw);
-    ar & BOOST_SERIALIZATION_NVP(kh);
-    ar & BOOST_SERIALIZATION_NVP(momentum);
-    ar & BOOST_SERIALIZATION_NVP(mW);
-    ar & BOOST_SERIALIZATION_NVP(mH);
+    ar& BOOST_SERIALIZATION_NVP(u);
+    ar& BOOST_SERIALIZATION_NVP(kw);
+    ar& BOOST_SERIALIZATION_NVP(kh);
+    ar& BOOST_SERIALIZATION_NVP(momentum);
+    ar& BOOST_SERIALIZATION_NVP(mW);
+    ar& BOOST_SERIALIZATION_NVP(mH);
   }
 
  private:
@@ -215,8 +211,8 @@ inline void SVDBatchLearning::WUpdate<arma::sp_mat>(const arma::sp_mat& V,
   {
     const size_t row = it.row();
     const size_t col = it.col();
-    deltaW.row(it.row()) += (*it - arma::dot(W.row(row), H.col(col))) *
-                                             arma::trans(H.col(col));
+    deltaW.row(it.row()) +=
+        (*it - arma::dot(W.row(row), H.col(col))) * arma::trans(H.col(col));
   }
 
   if (kw != 0)
@@ -243,8 +239,8 @@ inline void SVDBatchLearning::HUpdate<arma::sp_mat>(const arma::sp_mat& V,
   {
     const size_t row = it.row();
     const size_t col = it.col();
-    deltaH.col(col) += (*it - arma::dot(W.row(row), H.col(col))) *
-        W.row(row).t();
+    deltaH.col(col) +=
+        (*it - arma::dot(W.row(row), H.col(col))) * W.row(row).t();
   }
 
   if (kh != 0)

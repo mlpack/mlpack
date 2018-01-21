@@ -35,9 +35,8 @@ class RandomizedBlockKrylovSVDPolicy
    * @param blockSize The block size, must be >= rank (Default: rank + 10).
    */
   RandomizedBlockKrylovSVDPolicy(const size_t maxIterations = 2,
-                                 const size_t blockSize = 0) :
-      maxIterations(maxIterations),
-      blockSize(blockSize)
+                                 const size_t blockSize = 0)
+    : maxIterations(maxIterations), blockSize(blockSize)
   {
     /* Nothing to do here */
   }

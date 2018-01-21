@@ -26,12 +26,11 @@ EMFit<InitialClusteringType, CovarianceConstraintPolicy>::EMFit(
     const size_t maxIterations,
     const double tolerance,
     InitialClusteringType clusterer,
-    CovarianceConstraintPolicy constraint) :
-    maxIterations(maxIterations),
-    tolerance(tolerance),
-    clusterer(clusterer),
+    CovarianceConstraintPolicy constraint)
+  : maxIterations(maxIterations), tolerance(tolerance), clusterer(clusterer),
     constraint(constraint)
-{ /* Nothing to do. */ }
+{ /* Nothing to do. */
+}
 
 template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
 void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
@@ -40,16 +39,16 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
     arma::vec& weights,
     const bool useInitialModel)
 {
-  // Shortcut: if the user is using the DiagonalConstraint, then we will call
-  // out to Armadillo.  But Armadillo uses uword internally as an OpenMP index
-  // type, which crashes Visual Studio, so don't do this on Windows.
-  #ifndef _WIN32
+// Shortcut: if the user is using the DiagonalConstraint, then we will call
+// out to Armadillo.  But Armadillo uses uword internally as an OpenMP index
+// type, which crashes Visual Studio, so don't do this on Windows.
+#ifndef _WIN32
   if (std::is_same<CovarianceConstraintPolicy, DiagonalConstraint>::value)
   {
     ArmadilloGMMWrapper(observations, dists, weights, useInitialModel);
     return;
   }
-  #endif
+#endif
 
   // Only perform initial clustering if the user wanted it.
   if (!useInitialModel)
@@ -57,8 +56,8 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
 
   double l = LogLikelihood(observations, dists, weights);
 
-  Log::Debug << "EMFit::Estimate(): initial clustering log-likelihood: "
-      << l << std::endl;
+  Log::Debug << "EMFit::Estimate(): initial clustering log-likelihood: " << l
+             << std::endl;
 
   double lOld = -DBL_MAX;
   arma::mat condProb(observations.n_cols, dists.size());
@@ -68,7 +67,7 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
   while (std::abs(l - lOld) > tolerance && iteration != maxIterations)
   {
     Log::Info << "EMFit::Estimate(): iteration " << iteration << ", "
-        << "log-likelihood " << l << "." << std::endl;
+              << "log-likelihood " << l << "." << std::endl;
 
     // Calculate the conditional probabilities of choosing a particular
     // Gaussian given the observations and the present theta value.
@@ -104,10 +103,11 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
 
       // Calculate the new value of the covariances using the updated
       // conditional probabilities and the updated means.
-      arma::mat tmp = observations - (dists[i].Mean() *
-          arma::ones<arma::rowvec>(observations.n_cols));
-      arma::mat tmpB = tmp % (arma::ones<arma::vec>(observations.n_rows) *
-          trans(condProb.col(i)));
+      arma::mat tmp =
+          observations
+          - (dists[i].Mean() * arma::ones<arma::rowvec>(observations.n_cols));
+      arma::mat tmpB = tmp % (arma::ones<arma::vec>(observations.n_rows)
+                              * trans(condProb.col(i)));
 
       // Don't update if there's no probability of the Gaussian having points.
       if (probRowSums[i] != 0.0)
@@ -144,8 +144,8 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
 
   double l = LogLikelihood(observations, dists, weights);
 
-  Log::Debug << "EMFit::Estimate(): initial clustering log-likelihood: "
-      << l << std::endl;
+  Log::Debug << "EMFit::Estimate(): initial clustering log-likelihood: " << l
+             << std::endl;
 
   double lOld = -DBL_MAX;
   arma::mat condProb(observations.n_cols, dists.size());
@@ -189,15 +189,16 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
       // model.
       probRowSums[i] = accu(condProb.col(i) % probabilities);
 
-      dists[i].Mean() = (observations * (condProb.col(i) % probabilities)) /
-        probRowSums[i];
+      dists[i].Mean() =
+          (observations * (condProb.col(i) % probabilities)) / probRowSums[i];
 
       // Calculate the new value of the covariances using the updated
       // conditional probabilities and the updated means.
-      arma::mat tmp = observations - (dists[i].Mean() *
-          arma::ones<arma::rowvec>(observations.n_cols));
-      arma::mat tmpB = tmp % (arma::ones<arma::vec>(observations.n_rows) *
-          trans(condProb.col(i) % probabilities));
+      arma::mat tmp =
+          observations
+          - (dists[i].Mean() * arma::ones<arma::rowvec>(observations.n_cols));
+      arma::mat tmpB = tmp % (arma::ones<arma::vec>(observations.n_rows)
+                              * trans(condProb.col(i) % probabilities));
 
       arma::mat cov = (tmp * trans(tmpB)) / probRowSums[i];
 
@@ -221,9 +222,9 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
 
 template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
 void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::
-InitialClustering(const arma::mat& observations,
-                  std::vector<distribution::GaussianDistribution>& dists,
-                  arma::vec& weights)
+    InitialClustering(const arma::mat& observations,
+                      std::vector<distribution::GaussianDistribution>& dists,
+                      arma::vec& weights)
 {
   // Assignments from clustering.
   arma::Row<size_t> assignments;
@@ -239,8 +240,7 @@ InitialClustering(const arma::mat& observations,
   for (size_t i = 0; i < dists.size(); ++i)
   {
     means[i].zeros(dists[i].Mean().n_elem);
-    covs[i].zeros(dists[i].Covariance().n_rows,
-                  dists[i].Covariance().n_cols);
+    covs[i].zeros(dists[i].Covariance().n_rows, dists[i].Covariance().n_cols);
   }
 
   // From the assignments, generate our means, covariances, and weights.
@@ -307,7 +307,7 @@ double EMFit<InitialClusteringType, CovarianceConstraintPolicy>::LogLikelihood(
   {
     if (accu(likelihoods.col(j)) == 0)
       Log::Info << "Likelihood of point " << j << " is 0!  It is probably an "
-          << "outlier." << std::endl;
+                << "outlier." << std::endl;
     logLikelihood += log(accu(likelihoods.col(j)));
   }
 
@@ -317,13 +317,12 @@ double EMFit<InitialClusteringType, CovarianceConstraintPolicy>::LogLikelihood(
 template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
 template<typename Archive>
 void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(maxIterations);
-  ar & BOOST_SERIALIZATION_NVP(tolerance);
-  ar & BOOST_SERIALIZATION_NVP(clusterer);
-  ar & BOOST_SERIALIZATION_NVP(constraint);
+  ar& BOOST_SERIALIZATION_NVP(maxIterations);
+  ar& BOOST_SERIALIZATION_NVP(tolerance);
+  ar& BOOST_SERIALIZATION_NVP(clusterer);
+  ar& BOOST_SERIALIZATION_NVP(constraint);
 }
 
 // Armadillo uses uword internally as an OpenMP index type, which crashes Visual
@@ -331,10 +330,10 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::serialize(
 #ifndef _WIN32
 template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
 void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::
-ArmadilloGMMWrapper(const arma::mat& observations,
-                    std::vector<distribution::GaussianDistribution>& dists,
-                    arma::vec& weights,
-                    const bool useInitialModel)
+    ArmadilloGMMWrapper(const arma::mat& observations,
+                        std::vector<distribution::GaussianDistribution>& dists,
+                        arma::vec& weights,
+                        const bool useInitialModel)
 {
   arma::gmm_diag g;
 
@@ -342,14 +341,14 @@ ArmadilloGMMWrapper(const arma::mat& observations,
   // specified a non-default value.
   if (tolerance != EMFit().Tolerance())
     Log::Warn << "GMM::Train(): tolerance ignored when training GMMs with "
-        << "DiagonalConstraint." << std::endl;
+              << "DiagonalConstraint." << std::endl;
 
   // If the initial clustering is the default k-means, we'll just use
   // Armadillo's implementation.  If mlpack ever changes k-means defaults to use
   // something that is reliably quicker than the Lloyd iteration k-means update,
   // then this code maybe should be revisited.
-  if (!std::is_same<InitialClusteringType, mlpack::kmeans::KMeans<>>::value ||
-      useInitialModel)
+  if (!std::is_same<InitialClusteringType, mlpack::kmeans::KMeans<>>::value
+      || useInitialModel)
   {
     // Use clusterer to get initial values.
     if (!useInitialModel)
@@ -367,15 +366,27 @@ ArmadilloGMMWrapper(const arma::mat& observations,
     g.reset(observations.n_rows, dists.size());
     g.set_params(std::move(means), std::move(covs), weights.t());
 
-    g.learn(observations, dists.size(), arma::eucl_dist, arma::keep_existing, 0,
-        maxIterations, 1e-10, false /* no printing */);
+    g.learn(observations,
+            dists.size(),
+            arma::eucl_dist,
+            arma::keep_existing,
+            0,
+            maxIterations,
+            1e-10,
+            false /* no printing */);
   }
   else
   {
     // Use Armadillo for the initial clustering.  We'll try and match mlpack
     // defaults.
-    g.learn(observations, dists.size(), arma::eucl_dist, arma::static_subset,
-        1000, maxIterations, 1e-10, false /* no printing */);
+    g.learn(observations,
+            dists.size(),
+            arma::eucl_dist,
+            arma::static_subset,
+            1000,
+            maxIterations,
+            1e-10,
+            false /* no printing */);
   }
 
   // Extract means, covariances, and weights.

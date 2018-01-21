@@ -36,16 +36,14 @@ class CartPole
     /**
      * Construct a state instance.
      */
-    State() : data(dimension)
-    { /* Nothing to do here. */ }
+    State() : data(dimension) { /* Nothing to do here. */}
 
     /**
      * Construct a state instance from given data.
      *
      * @param data Data for the position, velocity, angle and angular velocity.
      */
-    State(const arma::colvec& data) : data(data)
-    { /* Nothing to do here */ }
+    State(const arma::colvec& data) : data(data) { /* Nothing to do here */}
 
     //! Modify the internal representation of the state.
     arma::colvec& Data() { return data; }
@@ -112,18 +110,13 @@ class CartPole
            const double forceMag = 10.0,
            const double tau = 0.02,
            const double thetaThresholdRadians = 12 * 2 * 3.1416 / 360,
-           const double xThreshold = 2.4) :
-      gravity(gravity),
-      massCart(massCart),
-      massPole(massPole),
-      totalMass(massCart + massPole),
-      length(length),
-      poleMassLength(massPole * length),
-      forceMag(forceMag),
-      tau(tau),
-      thetaThresholdRadians(thetaThresholdRadians),
-      xThreshold(xThreshold)
-  { /* Nothing to do here */ }
+           const double xThreshold = 2.4)
+    : gravity(gravity), massCart(massCart), massPole(massPole),
+      totalMass(massCart + massPole), length(length),
+      poleMassLength(massPole * length), forceMag(forceMag), tau(tau),
+      thetaThresholdRadians(thetaThresholdRadians), xThreshold(xThreshold)
+  { /* Nothing to do here */
+  }
 
   /**
    * Dynamics of Cart Pole instance. Get reward and next state based on current
@@ -134,18 +127,21 @@ class CartPole
    * @param nextState The next state.
    * @return reward, it's always 1.0.
    */
-  double Sample(const State& state,
-                const Action& action,
-                State& nextState) const
+  double
+  Sample(const State& state, const Action& action, State& nextState) const
   {
     // Calculate acceleration.
     double force = action ? forceMag : -forceMag;
     double cosTheta = std::cos(state.Angle());
     double sinTheta = std::sin(state.Angle());
-    double temp = (force + poleMassLength * state.AngularVelocity() *
-        state.AngularVelocity() * sinTheta) / totalMass;
-    double thetaAcc = (gravity * sinTheta - cosTheta * temp) /
-        (length * (4.0 / 3.0 - massPole * cosTheta * cosTheta / totalMass));
+    double temp =
+        (force
+         + poleMassLength * state.AngularVelocity() * state.AngularVelocity()
+               * sinTheta)
+        / totalMass;
+    double thetaAcc =
+        (gravity * sinTheta - cosTheta * temp)
+        / (length * (4.0 / 3.0 - massPole * cosTheta * cosTheta / totalMass));
     double xAcc = temp - poleMassLength * thetaAcc * cosTheta / totalMass;
 
     // Update states.
@@ -189,8 +185,8 @@ class CartPole
    */
   bool IsTerminal(const State& state) const
   {
-    return std::abs(state.Position()) > xThreshold ||
-        std::abs(state.Angle()) > thetaThresholdRadians;
+    return std::abs(state.Position()) > xThreshold
+           || std::abs(state.Angle()) > thetaThresholdRadians;
   }
 
  private:

@@ -79,8 +79,8 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
   {
     for (size_t j = 0; j < testResProbs.n_rows; ++j)
     {
-      BOOST_REQUIRE_CLOSE(testResProbs(j, i) + 0.0001, calcProbs(j, i) + 0.0001,
-          0.01);
+      BOOST_REQUIRE_CLOSE(
+          testResProbs(j, i) + 0.0001, calcProbs(j, i) + 0.0001, 0.01);
     }
   }
 }
@@ -202,8 +202,8 @@ BOOST_AUTO_TEST_CASE(SeparateTrainTest)
     if (std::abs(nbc.Probabilities()[i]) < 1e-5)
       BOOST_REQUIRE_SMALL(nbcTrain.Probabilities()[i], 1e-5);
     else
-      BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], nbcTrain.Probabilities()[i],
-          1e-5);
+      BOOST_REQUIRE_CLOSE(
+          nbc.Probabilities()[i], nbcTrain.Probabilities()[i], 1e-5);
   }
 }
 
@@ -255,8 +255,8 @@ BOOST_AUTO_TEST_CASE(SeparateTrainIncrementalTest)
     if (std::abs(nbc.Probabilities()[i]) < 1e-5)
       BOOST_REQUIRE_SMALL(nbcTrain.Probabilities()[i], 1e-5);
     else
-      BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], nbcTrain.Probabilities()[i],
-          1e-5);
+      BOOST_REQUIRE_CLOSE(
+          nbc.Probabilities()[i], nbcTrain.Probabilities()[i], 1e-5);
   }
 }
 
@@ -309,8 +309,8 @@ BOOST_AUTO_TEST_CASE(SeparateTrainIndividualIncrementalTest)
     if (std::abs(nbc.Probabilities()[i]) < 1e-5)
       BOOST_REQUIRE_SMALL(nbcTrain.Probabilities()[i], 1e-5);
     else
-      BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], nbcTrain.Probabilities()[i],
-          1e-5);
+      BOOST_REQUIRE_CLOSE(
+          nbc.Probabilities()[i], nbcTrain.Probabilities()[i], 1e-5);
   }
 }
 

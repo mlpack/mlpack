@@ -16,11 +16,12 @@
 // In case it hasn't been included yet.
 #include "sparse_svm_function.hpp"
 
-SparseSVMFunction::SparseSVMFunction(
-    const arma::sp_mat& dataset, const arma::vec& labels) :
-    dataset(dataset),
+SparseSVMFunction::SparseSVMFunction(const arma::sp_mat& dataset,
+                                     const arma::vec& labels)
+  : dataset(dataset),
     labels(math::MakeAlias(const_cast<arma::vec&>(labels), false))
-{ /* Nothing to do */ }
+{ /* Nothing to do */
+}
 
 void SparseSVMFunction::Shuffle()
 {
@@ -42,23 +43,25 @@ double SparseSVMFunction::Evaluate(const arma::mat& parameters,
 {
   // The hinge loss function.
   const size_t lastId = firstId + batchSize - 1;
-  return arma::accu(arma::max(0.0, 1 - labels.subvec(firstId, lastId) %
-      dataset.cols(firstId, lastId) *
-      arma::repmat(parameters, 1, batchSize).t()));
+  return arma::accu(arma::max(
+      0.0,
+      1
+          - labels.subvec(firstId, lastId) % dataset.cols(firstId, lastId)
+                * arma::repmat(parameters, 1, batchSize).t()));
 }
 
-template <typename GradType>
-void SparseSVMFunction::Gradient(
-    const arma::mat& parameters,
-    const size_t firstId,
-    GradType& gradient,
-    const size_t batchSize)
+template<typename GradType>
+void SparseSVMFunction::Gradient(const arma::mat& parameters,
+                                 const size_t firstId,
+                                 GradType& gradient,
+                                 const size_t batchSize)
 {
   // Evaluate the gradient of the hinge loss function.
   const size_t lastId = firstId + batchSize - 1;
-  arma::vec dots = 1 - labels.subvec(firstId, lastId) %
-      dataset.cols(firstId, lastId) *
-      arma::repmat(parameters, 1, batchSize).t();
+  arma::vec dots = 1
+                   - labels.subvec(firstId, lastId)
+                         % dataset.cols(firstId, lastId)
+                         * arma::repmat(parameters, 1, batchSize).t();
   gradient = GradType(parameters.n_rows, 1);
   for (size_t i = 0; i < batchSize; ++i)
   {

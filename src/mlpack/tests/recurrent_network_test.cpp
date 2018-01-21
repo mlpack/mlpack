@@ -41,8 +41,8 @@ void GenerateNoisySines(arma::cube& data,
                         const size_t sequences,
                         const double noise = 0.3)
 {
-  arma::colvec x =  arma::linspace<arma::colvec>(0, points - 1, points) /
-      points * 20.0;
+  arma::colvec x =
+      arma::linspace<arma::colvec>(0, points - 1, points) / points * 20.0;
   arma::colvec y1 = arma::sin(x + arma::as_scalar(arma::randu(1)) * 3.0);
   arma::colvec y2 = arma::sin(x / 2.0 + arma::as_scalar(arma::randu(1)) * 3.0);
 
@@ -51,15 +51,15 @@ void GenerateNoisySines(arma::cube& data,
 
   for (size_t seq = 0; seq < sequences; seq++)
   {
-    arma::vec sequence = arma::randu(points) * noise + y1 +
-        arma::as_scalar(arma::randu(1) - 0.5) * noise;
+    arma::vec sequence = arma::randu(points) * noise + y1
+                         + arma::as_scalar(arma::randu(1) - 0.5) * noise;
     for (size_t i = 0; i < points; ++i)
       data(0, seq, i) = sequence[i];
 
     labels(0, seq) = 1;
 
-    sequence = arma::randu(points) * noise + y2 +
-        arma::as_scalar(arma::randu(1) - 0.5) * noise;
+    sequence = arma::randu(points) * noise + y2
+               + arma::as_scalar(arma::randu(1) - 0.5) * noise;
     for (size_t i = 0; i < points; ++i)
       data(0, sequences + seq, i) = sequence[i];
 
@@ -90,8 +90,10 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
     arma::cube labels = arma::zeros<arma::cube>(1, labelsTemp.n_cols, rho);
     for (size_t i = 0; i < labelsTemp.n_cols; ++i)
     {
-      const int value = arma::as_scalar(arma::find(
-          arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+      const int value =
+          arma::as_scalar(
+              arma::find(arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1))
+          + 1;
       labels.tube(0, i).fill(value);
     }
 
@@ -118,10 +120,10 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
     Recurrent<> recurrent(add, lookup, linear, sigmoidLayer, rho);
 
     RNN<> model(rho);
-    model.Add<IdentityLayer<> >();
+    model.Add<IdentityLayer<>>();
     model.Add(recurrent);
-    model.Add<Linear<> >(4, 10);
-    model.Add<LogSoftMax<> >();
+    model.Add<Linear<>>(4, 10);
+    model.Add<LogSoftMax<>>();
 
     StandardSGD opt(0.1, 1, 500 * input.n_cols, -100);
     model.Train(input, labels, opt);
@@ -132,12 +134,16 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
     size_t error = 0;
     for (size_t i = 0; i < prediction.n_cols; ++i)
     {
-      const int predictionValue = arma::as_scalar(arma::find(
-          arma::max(prediction.slice(rho - 1).col(i)) ==
-          prediction.slice(rho - 1).col(i), 1) + 1);
+      const int predictionValue =
+          arma::as_scalar(arma::find(arma::max(prediction.slice(rho - 1).col(i))
+                                         == prediction.slice(rho - 1).col(i),
+                                     1)
+                          + 1);
 
-      const int targetValue = arma::as_scalar(arma::find(
-          arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+      const int targetValue =
+          arma::as_scalar(
+              arma::find(arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1))
+          + 1;
 
       if (predictionValue == targetValue)
       {
@@ -181,11 +187,12 @@ void GenerateReber(const arma::Mat<char>& transitions, std::string& reber)
   do
   {
     const int grammerIdx = rand() % 2;
-    reber += arma::as_scalar(transitions.submat(idx, grammerIdx, idx,
-        grammerIdx));
+    reber +=
+        arma::as_scalar(transitions.submat(idx, grammerIdx, idx, grammerIdx));
 
-    idx = arma::as_scalar(transitions.submat(idx, grammerIdx + 2, idx,
-        grammerIdx + 2)) - '0';
+    idx = arma::as_scalar(
+              transitions.submat(idx, grammerIdx + 2, idx, grammerIdx + 2))
+          - '0';
   } while (idx != 0);
 }
 
@@ -213,8 +220,8 @@ void GenerateRecursiveReber(const arma::Mat<char>& transitions,
   }
   else
   {
-    GenerateRecursiveReber(transitions, averageRecursion, --maxRecursion,
-        reber, false);
+    GenerateRecursiveReber(
+        transitions, averageRecursion, --maxRecursion, reber, false);
   }
 
   reber = c + reber + c;
@@ -265,17 +272,19 @@ void ReberTranslation(const char symbol, arma::colvec& translation)
  * @param nextReber All reachable next symbols.
  */
 void GenerateNextReber(const arma::Mat<char>& transitions,
-                       const std::string& reber, std::string& nextReber)
+                       const std::string& reber,
+                       std::string& nextReber)
 {
   size_t idx = 0;
 
   for (size_t grammer = 1; grammer < reber.length(); grammer++)
   {
-    const int grammerIdx = arma::as_scalar(arma::find(
-        transitions.row(idx) == reber[grammer], 1, "first"));
+    const int grammerIdx = arma::as_scalar(
+        arma::find(transitions.row(idx) == reber[grammer], 1, "first"));
 
-    idx = arma::as_scalar(transitions.submat(idx, grammerIdx + 2, idx,
-        grammerIdx + 2)) - '0';
+    idx = arma::as_scalar(
+              transitions.submat(idx, grammerIdx + 2, idx, grammerIdx + 2))
+          - '0';
   }
 
   nextReber = arma::as_scalar(transitions.submat(idx, 0, idx, 0));
@@ -377,12 +386,10 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
   // Reber state transition matrix. (The last two columns are the indices to the
   // next path).
   arma::Mat<char> transitions;
-  transitions << 'T' << 'P' << '1' << '2' << arma::endr
-              << 'X' << 'S' << '3' << '1' << arma::endr
-              << 'V' << 'T' << '4' << '2' << arma::endr
-              << 'X' << 'S' << '2' << '5' << arma::endr
-              << 'P' << 'V' << '3' << '5' << arma::endr
-              << 'E' << 'E' << '0' << '0' << arma::endr;
+  transitions << 'T' << 'P' << '1' << '2' << arma::endr << 'X' << 'S' << '3'
+              << '1' << arma::endr << 'V' << 'T' << '4' << '2' << arma::endr
+              << 'X' << 'S' << '2' << '5' << arma::endr << 'P' << 'V' << '3'
+              << '5' << arma::endr << 'E' << 'E' << '0' << '0' << arma::endr;
 
   const size_t trainReberGrammarCount = 700;
   const size_t testReberGrammarCount = 250;
@@ -415,8 +422,8 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
   for (size_t i = 0; i < testReberGrammarCount; i++)
   {
     if (recursive)
-      GenerateRecursiveReber(transitions, averageRecursion, maxRecursion,
-          testReber);
+      GenerateRecursiveReber(
+          transitions, averageRecursion, maxRecursion, testReber);
     else
       GenerateReber(transitions, testReber);
 
@@ -454,11 +461,11 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
     const size_t outputSize = 7;
     const size_t inputSize = 7;
 
-    RNN<MeanSquaredError<> > model(5);
-    model.Add<Linear<> >(inputSize, hiddenSize);
+    RNN<MeanSquaredError<>> model(5);
+    model.Add<Linear<>>(inputSize, hiddenSize);
     model.Add<RecurrentLayerType>(hiddenSize, hiddenSize);
-    model.Add<Linear<> >(hiddenSize, outputSize);
-    model.Add<SigmoidLayer<> >();
+    model.Add<Linear<>>(hiddenSize, outputSize);
+    model.Add<SigmoidLayer<>>();
     MomentumSGD opt(0.06, 50, 2, -50000);
 
     arma::cube inputTemp, labelsTemp;
@@ -469,10 +476,18 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
         // Each sequence may be a different length, so we need to extract them
         // manually.  We will reshape them into a cube with each slice equal to
         // a time step.
-        inputTemp = arma::cube(trainInput.at(0, j).memptr(), inputSize, 1,
-            trainInput.at(0, j).n_elem / inputSize, false, true);
-        labelsTemp = arma::cube(trainLabels.at(0, j).memptr(), inputSize, 1,
-            trainInput.at(0, j).n_elem / inputSize, false, true);
+        inputTemp = arma::cube(trainInput.at(0, j).memptr(),
+                               inputSize,
+                               1,
+                               trainInput.at(0, j).n_elem / inputSize,
+                               false,
+                               true);
+        labelsTemp = arma::cube(trainLabels.at(0, j).memptr(),
+                                inputSize,
+                                1,
+                                trainInput.at(0, j).n_elem / inputSize,
+                                false,
+                                true);
 
         model.Rho() = inputTemp.n_elem / inputSize;
         model.Train(inputTemp, labelsTemp, opt);
@@ -486,8 +501,12 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
     for (size_t i = 0; i < testReberGrammarCount; i++)
     {
       arma::cube prediction;
-      arma::cube input(testInput.at(0, i).memptr(), inputSize, 1,
-          testInput.at(0, i).n_elem / inputSize, false, true);
+      arma::cube input(testInput.at(0, i).memptr(),
+                       inputSize,
+                       1,
+                       testInput.at(0, i).n_elem / inputSize,
+                       false,
+                       true);
 
       model.Rho() = input.n_elem / inputSize;
       model.Predict(input, prediction);
@@ -502,9 +521,10 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
         char predictedSymbol, inputSymbol;
         std::string reberChoices;
 
-        arma::umat output = (prediction.slice(j) == (arma::ones(
-            reberGrammerSize, 1) *
-            arma::as_scalar(arma::max(prediction.slice(j)))));
+        arma::umat output =
+            (prediction.slice(j)
+             == (arma::ones(reberGrammerSize, 1)
+                 * arma::as_scalar(arma::max(prediction.slice(j)))));
 
         ReberReverseTranslation(output, predictedSymbol);
         ReberReverseTranslation(input.slice(j), inputSymbol);
@@ -541,7 +561,7 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
  */
 BOOST_AUTO_TEST_CASE(LSTMReberGrammarTest)
 {
-  ReberGrammarTestNetwork<LSTM<> >(10, false);
+  ReberGrammarTestNetwork<LSTM<>>(10, false);
 }
 
 /**
@@ -549,7 +569,7 @@ BOOST_AUTO_TEST_CASE(LSTMReberGrammarTest)
  */
 BOOST_AUTO_TEST_CASE(FastLSTMReberGrammarTest)
 {
-  ReberGrammarTestNetwork<FastLSTM<> >(8, false);
+  ReberGrammarTestNetwork<FastLSTM<>>(8, false);
 }
 
 /**
@@ -557,7 +577,7 @@ BOOST_AUTO_TEST_CASE(FastLSTMReberGrammarTest)
  */
 BOOST_AUTO_TEST_CASE(GRURecursiveReberGrammarTest)
 {
-  ReberGrammarTestNetwork<GRU<> >(16, true);
+  ReberGrammarTestNetwork<GRU<>>(16, true);
 }
 
 /*
@@ -620,8 +640,8 @@ void GenerateDistractedSequence(arma::mat& input, arma::mat& output)
  * dataset.
  */
 template<typename RecurrentLayerType>
-void DistractedSequenceRecallTestNetwork(
-    const size_t cellSize, const size_t hiddenSize)
+void DistractedSequenceRecallTestNetwork(const size_t cellSize,
+                                         const size_t hiddenSize)
 {
   const size_t trainDistractedSequenceCount = 600;
   const size_t testDistractedSequenceCount = 300;
@@ -667,12 +687,12 @@ void DistractedSequenceRecallTestNetwork(
   size_t offset = 0;
   for (size_t trial = 0; trial < 5; ++trial)
   {
-    RNN<MeanSquaredError<> > model(rho);
-    model.Add<IdentityLayer<> >();
-    model.Add<Linear<> >(inputSize, cellSize);
+    RNN<MeanSquaredError<>> model(rho);
+    model.Add<IdentityLayer<>>();
+    model.Add<Linear<>>(inputSize, cellSize);
     model.Add<RecurrentLayerType>(cellSize, hiddenSize);
-    model.Add<Linear<> >(hiddenSize, outputSize);
-    model.Add<SigmoidLayer<> >();
+    model.Add<Linear<>>(hiddenSize, outputSize);
+    model.Add<SigmoidLayer<>>();
 
     StandardSGD opt(0.1, 50, 2, -50000);
 
@@ -683,10 +703,18 @@ void DistractedSequenceRecallTestNetwork(
     {
       for (size_t j = 0; j < trainDistractedSequenceCount; j++)
       {
-        inputTemp = arma::cube(trainInput.at(0, j).memptr(), inputSize, 1,
-            trainInput.at(0, j).n_elem / inputSize, false, true);
-        labelsTemp = arma::cube(trainLabels.at(0, j).memptr(), outputSize, 1,
-            trainInput.at(0, j).n_elem / outputSize, false, true);
+        inputTemp = arma::cube(trainInput.at(0, j).memptr(),
+                               inputSize,
+                               1,
+                               trainInput.at(0, j).n_elem / inputSize,
+                               false,
+                               true);
+        labelsTemp = arma::cube(trainLabels.at(0, j).memptr(),
+                                outputSize,
+                                1,
+                                trainInput.at(0, j).n_elem / outputSize,
+                                false,
+                                true);
 
         model.Train(inputTemp, labelsTemp, opt);
       }
@@ -699,8 +727,12 @@ void DistractedSequenceRecallTestNetwork(
     for (size_t i = 0; i < testDistractedSequenceCount; i++)
     {
       arma::cube output;
-      arma::cube input(testInput.at(0, i).memptr(), inputSize, 1,
-          testInput.at(0, i).n_elem / inputSize, false, true);
+      arma::cube input(testInput.at(0, i).memptr(),
+                       inputSize,
+                       1,
+                       testInput.at(0, i).n_elem / inputSize,
+                       false,
+                       true);
 
       model.Predict(input, output);
       for (size_t j = 0; j < output.n_slices; ++j)
@@ -710,8 +742,12 @@ void DistractedSequenceRecallTestNetwork(
         output.slice(j) = outputSlice;
       }
 
-      arma::cube label(testLabels.at(0, i).memptr(), outputSize, 1,
-          testLabels.at(0, i).n_elem / outputSize, false, true);
+      arma::cube label(testLabels.at(0, i).memptr(),
+                       outputSize,
+                       1,
+                       testLabels.at(0, i).n_elem / outputSize,
+                       false,
+                       true);
       if (arma::accu(arma::abs(label - output)) != 0)
         error += 1;
     }
@@ -739,7 +775,7 @@ void DistractedSequenceRecallTestNetwork(
  */
 BOOST_AUTO_TEST_CASE(LSTMDistractedSequenceRecallTest)
 {
-  DistractedSequenceRecallTestNetwork<LSTM<> >(4, 8);
+  DistractedSequenceRecallTestNetwork<LSTM<>>(4, 8);
 }
 
 /**
@@ -748,7 +784,7 @@ BOOST_AUTO_TEST_CASE(LSTMDistractedSequenceRecallTest)
  */
 BOOST_AUTO_TEST_CASE(FastLSTMDistractedSequenceRecallTest)
 {
-  DistractedSequenceRecallTestNetwork<FastLSTM<> >(4, 8);
+  DistractedSequenceRecallTestNetwork<FastLSTM<>>(4, 8);
 }
 
 /**
@@ -757,7 +793,7 @@ BOOST_AUTO_TEST_CASE(FastLSTMDistractedSequenceRecallTest)
  */
 BOOST_AUTO_TEST_CASE(GRUDistractedSequenceRecallTest)
 {
-  DistractedSequenceRecallTestNetwork<GRU<> >(4, 8);
+  DistractedSequenceRecallTestNetwork<GRU<>>(4, 8);
 }
 
 /**
@@ -779,7 +815,8 @@ void BatchSizeTest()
   for (size_t i = 0; i < labelsTemp.n_cols; ++i)
   {
     const int value = arma::as_scalar(arma::find(
-        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+                          arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1))
+                      + 1;
     labels.tube(0, i).fill(value);
   }
 
@@ -817,26 +854,17 @@ void BatchSizeTest()
 /**
  * Ensure LSTMs work with larger batch sizes.
  */
-BOOST_AUTO_TEST_CASE(LSTMBatchSizeTest)
-{
-  BatchSizeTest<LSTM<>>();
-}
+BOOST_AUTO_TEST_CASE(LSTMBatchSizeTest) { BatchSizeTest<LSTM<>>(); }
 
 /**
  * Ensure fast LSTMs work with larger batch sizes.
  */
-BOOST_AUTO_TEST_CASE(FastLSTMBatchSizeTest)
-{
-  BatchSizeTest<FastLSTM<>>();
-}
+BOOST_AUTO_TEST_CASE(FastLSTMBatchSizeTest) { BatchSizeTest<FastLSTM<>>(); }
 
 /**
  * Ensure GRUs work with larger batch sizes.
  */
-BOOST_AUTO_TEST_CASE(GRUBatchSizeTest)
-{
-  BatchSizeTest<GRU<>>();
-}
+BOOST_AUTO_TEST_CASE(GRUBatchSizeTest) { BatchSizeTest<GRU<>>(); }
 
 /**
  * Make sure the RNN can be properly serialized.
@@ -855,7 +883,8 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   for (size_t i = 0; i < labelsTemp.n_cols; ++i)
   {
     const int value = arma::as_scalar(arma::find(
-        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+                          arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1))
+                      + 1;
     labels.tube(0, i).fill(value);
   }
 
@@ -882,10 +911,10 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   Recurrent<> recurrent(add, lookup, linear, sigmoidLayer, rho);
 
   RNN<> model(rho);
-  model.Add<IdentityLayer<> >();
+  model.Add<IdentityLayer<>>();
   model.Add(recurrent);
-  model.Add<Linear<> >(4, 10);
-  model.Add<LogSoftMax<> >();
+  model.Add<Linear<>>(4, 10);
+  model.Add<LogSoftMax<>>();
 
   StandardSGD opt(0.1, 1, input.n_cols /* 1 epoch */, -100);
   model.Train(input, labels, opt);

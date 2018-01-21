@@ -10,7 +10,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/line_search/line_search.hpp>
 #include <mlpack/core/optimizers/fw/test_func_fw.hpp>
@@ -44,6 +43,5 @@ BOOST_AUTO_TEST_CASE(FuncFWTest)
   BOOST_REQUIRE_SMALL(x2[1] - 0.2, 1e-10);
   BOOST_REQUIRE_SMALL(x2[2] - 0.3, 1e-10);
 }
-
 
 BOOST_AUTO_TEST_SUITE_END();

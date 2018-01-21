@@ -61,9 +61,8 @@ void Split(const arma::Mat<T>& input,
   trainLabel.set_size(trainSize);
   testLabel.set_size(testSize);
 
-  const arma::Col<size_t> order =
-      arma::shuffle(arma::linspace<arma::Col<size_t>>(0, input.n_cols - 1,
-                                                      input.n_cols));
+  const arma::Col<size_t> order = arma::shuffle(
+      arma::linspace<arma::Col<size_t>>(0, input.n_cols - 1, input.n_cols));
 
   for (size_t i = 0; i != trainSize; ++i)
   {
@@ -110,9 +109,8 @@ void Split(const arma::Mat<T>& input,
   trainData.set_size(input.n_rows, trainSize);
   testData.set_size(input.n_rows, testSize);
 
-  const arma::Col<size_t> order =
-      arma::shuffle(arma::linspace<arma::Col<size_t>>(0, input.n_cols -1,
-                                                      input.n_cols));
+  const arma::Col<size_t> order = arma::shuffle(
+      arma::linspace<arma::Col<size_t>>(0, input.n_cols - 1, input.n_cols));
 
   for (size_t i = 0; i != trainSize; ++i)
   {
@@ -154,8 +152,8 @@ Split(const arma::Mat<T>& input,
   arma::Row<U> trainLabel;
   arma::Row<U> testLabel;
 
-  Split(input, inputLabel, trainData, testData, trainLabel, testLabel,
-      testRatio);
+  Split(
+      input, inputLabel, trainData, testData, trainLabel, testLabel, testRatio);
 
   return std::make_tuple(std::move(trainData),
                          std::move(testData),
@@ -180,16 +178,14 @@ Split(const arma::Mat<T>& input,
  *      and testData (arma::Mat<T>).
  */
 template<typename T>
-std::tuple<arma::Mat<T>, arma::Mat<T>>
-Split(const arma::Mat<T>& input,
-      const double testRatio)
+std::tuple<arma::Mat<T>, arma::Mat<T>> Split(const arma::Mat<T>& input,
+                                             const double testRatio)
 {
   arma::Mat<T> trainData;
   arma::Mat<T> testData;
   Split(input, trainData, testData, testRatio);
 
-  return std::make_tuple(std::move(trainData),
-                         std::move(testData));
+  return std::make_tuple(std::move(trainData), std::move(testData));
 }
 
 } // namespace data

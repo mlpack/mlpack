@@ -35,8 +35,10 @@ class CompleteIncrementalTermination
    * @param tPolicy object of wrapped class.
    */
   CompleteIncrementalTermination(
-      TerminationPolicy tPolicy = TerminationPolicy()) :
-      tPolicy(tPolicy) { }
+      TerminationPolicy tPolicy = TerminationPolicy())
+    : tPolicy(tPolicy)
+  {
+  }
 
   /**
    * Initializes the termination policy before stating the factorization.
@@ -119,4 +121,3 @@ class CompleteIncrementalTermination
 } // namespace mlpack
 
 #endif // MLPACK_METHODS_AMF_COMPLETE_INCREMENTAL_TERMINATION_HPP
-

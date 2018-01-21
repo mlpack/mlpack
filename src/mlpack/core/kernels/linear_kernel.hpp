@@ -36,7 +36,7 @@ class LinearKernel
    * This constructor does nothing; the linear kernel has no parameters to
    * store.
    */
-  LinearKernel() { }
+  LinearKernel() {}
 
   /**
    * Simple evaluation of the dot product.  This evaluation uses Armadillo's
@@ -57,7 +57,9 @@ class LinearKernel
 
   //! Serialize the kernel (it has no members... do nothing).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const unsigned int /* version */)
+  {
+  }
 };
 
 } // namespace kernel

@@ -59,17 +59,14 @@ class SnapshotEnsembles
                     const double multFactor,
                     const double stepSize,
                     const size_t maxIterations,
-                    const size_t snapshots) :
-    epochRestart(epochRestart),
-    multFactor(multFactor),
-    constStepSize(stepSize),
-    nextRestart(epochRestart),
-    batchRestart(0),
-    epoch(0)
+                    const size_t snapshots)
+    : epochRestart(epochRestart), multFactor(multFactor),
+      constStepSize(stepSize), nextRestart(epochRestart), batchRestart(0),
+      epoch(0)
   {
     snapshotEpochs = 0;
-    for (size_t i = 0, er = epochRestart, nr = nextRestart;
-        i < maxIterations; ++i)
+    for (size_t i = 0, er = epochRestart, nr = nextRestart; i < maxIterations;
+         ++i)
     {
       if (i > nr)
       {
@@ -79,8 +76,8 @@ class SnapshotEnsembles
       }
     }
 
-    snapshotEpochs = epochRestart * std::pow(multFactor,
-        snapshotEpochs - snapshots + 1);
+    snapshotEpochs =
+        epochRestart * std::pow(multFactor, snapshotEpochs - snapshots + 1);
   }
 
   /**
@@ -90,16 +87,15 @@ class SnapshotEnsembles
    * @param stepSize Step size to be used for the given iteration.
    * @param gradient The gradient matrix.
    */
-  void Update(arma::mat& iterate,
-              double& stepSize,
-              const arma::mat& /* gradient */)
+  void
+  Update(arma::mat& iterate, double& stepSize, const arma::mat& /* gradient */)
   {
     // Time to adjust the step size.
     if (epoch >= epochRestart)
     {
       // n_t = n_min^i + 0.5(n_max^i - n_min^i)(1 + cos(T_cur/T_i * pi)).
-      stepSize = 0.5 * constStepSize * (1 + cos((batchRestart / epochBatches)
-          * M_PI));
+      stepSize =
+          0.5 * constStepSize * (1 + cos((batchRestart / epochBatches) * M_PI));
 
       // Keep track of the number of batches since the last restart.
       batchRestart++;

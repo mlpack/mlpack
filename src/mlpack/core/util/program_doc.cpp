@@ -30,9 +30,8 @@ using namespace std;
  * @param defaultModule Name of the default module.
  */
 ProgramDoc::ProgramDoc(const std::string& programName,
-                       const std::function<std::string()>& documentation) :
-    programName(programName),
-    documentation(documentation)
+                       const std::function<std::string()>& documentation)
+  : programName(programName), documentation(documentation)
 {
   // Register this with CLI.
   CLI::RegisterProgramDoc(this);

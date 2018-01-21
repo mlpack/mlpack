@@ -32,28 +32,30 @@ template<typename InitialPartitionPolicy>
 struct GivesCentroids
 {
   static const bool value =
-    // Non-static version.
-    GivesCentroidsCheck<InitialPartitionPolicy,
-        void(InitialPartitionPolicy::*)(const arma::mat&,
-                                        const size_t,
-                                        arma::mat&)>::value ||
-    // Static version.
-    GivesCentroidsCheck<InitialPartitionPolicy,
-        void(*)(const arma::mat&, const size_t, arma::mat&)>::value;
+      // Non-static version.
+      GivesCentroidsCheck<InitialPartitionPolicy,
+                          void (InitialPartitionPolicy::*)(const arma::mat&,
+                                                           const size_t,
+                                                           arma::mat&)>::value
+      ||
+      // Static version.
+      GivesCentroidsCheck<InitialPartitionPolicy,
+                          void (*)(const arma::mat&,
+                                   const size_t,
+                                   arma::mat&)>::value;
 };
 
 //! Call the initial partition policy, if it returns assignments.  This returns
 //! 'true' to indicate that assignments were given.
-template<typename MatType,
-         typename InitialPartitionPolicy>
+template<typename MatType, typename InitialPartitionPolicy>
 bool GetInitialAssignmentsOrCentroids(
     InitialPartitionPolicy& ipp,
     const MatType& data,
     const size_t clusters,
     arma::Row<size_t>& assignments,
     arma::mat& /* centroids */,
-    const typename std::enable_if_t<
-        !GivesCentroids<InitialPartitionPolicy>::value>* = 0)
+    const typename std::
+        enable_if_t<!GivesCentroids<InitialPartitionPolicy>::value>* = 0)
 {
   ipp.Cluster(data, clusters, assignments);
 
@@ -62,16 +64,15 @@ bool GetInitialAssignmentsOrCentroids(
 
 //! Call the initial partition policy, if it returns centroids.  This returns
 //! 'false' to indicate that assignments were not given.
-template<typename MatType,
-         typename InitialPartitionPolicy>
+template<typename MatType, typename InitialPartitionPolicy>
 bool GetInitialAssignmentsOrCentroids(
     InitialPartitionPolicy& ipp,
     const MatType& data,
     const size_t clusters,
     arma::Row<size_t>& /* assignments */,
     arma::mat& centroids,
-    const typename std::enable_if_t<
-        GivesCentroids<InitialPartitionPolicy>::value>* = 0)
+    const typename std::
+        enable_if_t<GivesCentroids<InitialPartitionPolicy>::value>* = 0)
 {
   ipp.Cluster(data, clusters, centroids);
 
@@ -86,19 +87,15 @@ template<typename MetricType,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType,
          typename MatType>
-KMeans<
-    MetricType,
-    InitialPartitionPolicy,
-    EmptyClusterPolicy,
-    LloydStepType,
-    MatType>::
-KMeans(const size_t maxIterations,
-       const MetricType metric,
-       const InitialPartitionPolicy partitioner,
-       const EmptyClusterPolicy emptyClusterAction) :
-    maxIterations(maxIterations),
-    metric(metric),
-    partitioner(partitioner),
+KMeans<MetricType,
+       InitialPartitionPolicy,
+       EmptyClusterPolicy,
+       LloydStepType,
+       MatType>::KMeans(const size_t maxIterations,
+                        const MetricType metric,
+                        const InitialPartitionPolicy partitioner,
+                        const EmptyClusterPolicy emptyClusterAction)
+  : maxIterations(maxIterations), metric(metric), partitioner(partitioner),
     emptyClusterAction(emptyClusterAction)
 {
   // Nothing to do.
@@ -115,16 +112,14 @@ template<typename MetricType,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType,
          typename MatType>
-inline void KMeans<
-    MetricType,
-    InitialPartitionPolicy,
-    EmptyClusterPolicy,
-    LloydStepType,
-    MatType>::
-Cluster(const MatType& data,
-        const size_t clusters,
-        arma::Row<size_t>& assignments,
-        const bool initialGuess)
+inline void KMeans<MetricType,
+                   InitialPartitionPolicy,
+                   EmptyClusterPolicy,
+                   LloydStepType,
+                   MatType>::Cluster(const MatType& data,
+                                     const size_t clusters,
+                                     arma::Row<size_t>& assignments,
+                                     const bool initialGuess)
 {
   arma::mat centroids(data.n_rows, clusters);
   Cluster(data, clusters, assignments, centroids, initialGuess);
@@ -139,37 +134,35 @@ template<typename MetricType,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType,
          typename MatType>
-void KMeans<
-    MetricType,
-    InitialPartitionPolicy,
-    EmptyClusterPolicy,
-    LloydStepType,
-    MatType>::
-Cluster(const MatType& data,
-        const size_t clusters,
-        arma::mat& centroids,
-        const bool initialGuess)
+void KMeans<MetricType,
+            InitialPartitionPolicy,
+            EmptyClusterPolicy,
+            LloydStepType,
+            MatType>::Cluster(const MatType& data,
+                              const size_t clusters,
+                              arma::mat& centroids,
+                              const bool initialGuess)
 {
   // Make sure we have more points than clusters.
   if (clusters > data.n_cols)
     Log::Warn << "KMeans::Cluster(): more clusters requested than points given."
-        << std::endl;
+              << std::endl;
   else if (clusters == 0)
     Log::Warn << "KMeans::Cluster(): zero clusters requested.  This probably "
-        << "isn't going to work.  Brace for crash." << std::endl;
+              << "isn't going to work.  Brace for crash." << std::endl;
 
   // Check validity of initial guess.
   if (initialGuess)
   {
     if (centroids.n_cols != clusters)
       Log::Fatal << "KMeans::Cluster(): wrong number of initial cluster "
-        << "centroids (" << centroids.n_cols << ", should be " << clusters
-        << ")!" << std::endl;
+                 << "centroids (" << centroids.n_cols << ", should be "
+                 << clusters << ")!" << std::endl;
 
     if (centroids.n_rows != data.n_rows)
       Log::Fatal << "KMeans::Cluster(): initial cluster centroids have wrong "
-        << " dimensionality (" << centroids.n_rows << ", should be "
-        << data.n_rows << ")!" << std::endl;
+                 << " dimensionality (" << centroids.n_rows << ", should be "
+                 << data.n_rows << ")!" << std::endl;
   }
 
   // Use the partitioner to come up with the partition assignments and calculate
@@ -181,8 +174,8 @@ Cluster(const MatType& data,
     // centroids.  We prefer centroids, but if assignments are returned, then we
     // have to calculate the initial centroids for the first iteration.
     arma::Row<size_t> assignments;
-    bool gotAssignments = GetInitialAssignmentsOrCentroids(partitioner, data,
-        clusters, assignments, centroids);
+    bool gotAssignments = GetInitialAssignmentsOrCentroids(
+        partitioner, data, clusters, assignments, centroids);
     if (gotAssignments)
     {
       // The partitioner gives assignments, so we need to calculate centroids
@@ -228,17 +221,17 @@ Cluster(const MatType& data,
       {
         Log::Info << "Cluster " << i << " is empty.\n";
         if (iteration % 2 == 0)
-          emptyClusterAction.EmptyCluster(data, i, centroids, centroidsOther,
-              counts, metric, iteration);
+          emptyClusterAction.EmptyCluster(
+              data, i, centroids, centroidsOther, counts, metric, iteration);
         else
-          emptyClusterAction.EmptyCluster(data, i, centroidsOther, centroids,
-              counts, metric, iteration);
+          emptyClusterAction.EmptyCluster(
+              data, i, centroidsOther, centroids, counts, metric, iteration);
       }
     }
 
     iteration++;
     Log::Info << "KMeans::Cluster(): iteration " << iteration << ", residual "
-        << cNorm << ".\n";
+              << cNorm << ".\n";
     if (std::isnan(cNorm) || std::isinf(cNorm))
       cNorm = 1e-4; // Keep iterating.
   } while (cNorm > 1e-5 && iteration != maxIterations);
@@ -252,15 +245,15 @@ Cluster(const MatType& data,
   if (iteration != maxIterations)
   {
     Log::Info << "KMeans::Cluster(): converged after " << iteration
-        << " iterations." << std::endl;
+              << " iterations." << std::endl;
   }
   else
   {
     Log::Info << "KMeans::Cluster(): terminated after limit of " << iteration
-        << " iterations." << std::endl;
+              << " iterations." << std::endl;
   }
   Log::Info << lloydStep.DistanceCalculations() << " distance calculations."
-      << std::endl;
+            << std::endl;
 }
 
 /**
@@ -272,26 +265,25 @@ template<typename MetricType,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType,
          typename MatType>
-void KMeans<
-    MetricType,
-    InitialPartitionPolicy,
-    EmptyClusterPolicy,
-    LloydStepType,
-    MatType>::
-Cluster(const MatType& data,
-        const size_t clusters,
-        arma::Row<size_t>& assignments,
-        arma::mat& centroids,
-        const bool initialAssignmentGuess,
-        const bool initialCentroidGuess)
+void KMeans<MetricType,
+            InitialPartitionPolicy,
+            EmptyClusterPolicy,
+            LloydStepType,
+            MatType>::Cluster(const MatType& data,
+                              const size_t clusters,
+                              arma::Row<size_t>& assignments,
+                              arma::mat& centroids,
+                              const bool initialAssignmentGuess,
+                              const bool initialCentroidGuess)
 {
   // Now, the initial assignments.  First determine if they are necessary.
   if (initialAssignmentGuess)
   {
     if (assignments.n_elem != data.n_cols)
       Log::Fatal << "KMeans::Cluster(): initial cluster assignments (length "
-          << assignments.n_elem << ") not the same size as the dataset (size "
-          << data.n_cols << ")!" << std::endl;
+                 << assignments.n_elem
+                 << ") not the same size as the dataset (size " << data.n_cols
+                 << ")!" << std::endl;
 
     // Calculate initial centroids.
     arma::Row<size_t> counts;
@@ -308,14 +300,16 @@ Cluster(const MatType& data,
         centroids.col(i) /= counts[i];
   }
 
-  Cluster(data, clusters, centroids,
-      initialAssignmentGuess || initialCentroidGuess);
+  Cluster(data,
+          clusters,
+          centroids,
+          initialAssignmentGuess || initialCentroidGuess);
 
   // Calculate final assignments in parallel over the entire dataset.
   assignments.set_size(data.n_cols);
 
-  #pragma omp parallel for
-  for (omp_size_t i = 0; i < (omp_size_t) data.n_cols; ++i)
+#pragma omp parallel for
+  for (omp_size_t i = 0; i < (omp_size_t)data.n_cols; ++i)
   {
     // Find the closest centroid to this point.
     double minDistance = std::numeric_limits<double>::infinity();
@@ -349,10 +343,10 @@ void KMeans<MetricType,
             LloydStepType,
             MatType>::serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(maxIterations);
-  ar & BOOST_SERIALIZATION_NVP(metric);
-  ar & BOOST_SERIALIZATION_NVP(partitioner);
-  ar & BOOST_SERIALIZATION_NVP(emptyClusterAction);
+  ar& BOOST_SERIALIZATION_NVP(maxIterations);
+  ar& BOOST_SERIALIZATION_NVP(metric);
+  ar& BOOST_SERIALIZATION_NVP(partitioner);
+  ar& BOOST_SERIALIZATION_NVP(emptyClusterAction);
 }
 
 } // namespace kmeans

@@ -26,7 +26,7 @@ class AllowEmptyClusters
 {
  public:
   //! Default constructor required by EmptyClusterPolicy policy.
-  AllowEmptyClusters() { }
+  AllowEmptyClusters() {}
 
   /**
    * This function allows empty clusters to persist simply by leaving the empty
@@ -46,14 +46,14 @@ class AllowEmptyClusters
    * @return Number of points changed (0).
    */
   template<typename MetricType, typename MatType>
-  static inline force_inline size_t EmptyCluster(
-      const MatType& /* data */,
-      const size_t emptyCluster,
-      const arma::mat& oldCentroids,
-      arma::mat& newCentroids,
-      arma::Col<size_t>& /* clusterCounts */,
-      MetricType& /* metric */,
-      const size_t /* iteration */)
+  static inline force_inline size_t
+  EmptyCluster(const MatType& /* data */,
+               const size_t emptyCluster,
+               const arma::mat& oldCentroids,
+               arma::mat& newCentroids,
+               arma::Col<size_t>& /* clusterCounts */,
+               MetricType& /* metric */,
+               const size_t /* iteration */)
   {
     // Take the last iteration's centroid.
     newCentroids.col(emptyCluster) = oldCentroids.col(emptyCluster);
@@ -62,7 +62,9 @@ class AllowEmptyClusters
 
   //! Serialize the empty cluster policy (nothing to do).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const unsigned int /* version */)
+  {
+  }
 };
 
 } // namespace kmeans

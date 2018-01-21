@@ -61,16 +61,14 @@ class PrefixedOutStream
                     const char* prefix,
                     bool ignoreInput = false,
                     bool fatal = false,
-                    bool backtrace = true) :
-      destination(destination),
-      ignoreInput(ignoreInput),
-      backtrace(backtrace),
+                    bool backtrace = true)
+    : destination(destination), ignoreInput(ignoreInput), backtrace(backtrace),
       prefix(prefix),
       // We want the first call to operator<< to prefix the prefix so we set
       // carriageReturned to true.
-      carriageReturned(true),
-      fatal(fatal)
-    { /* nothing to do */ }
+      carriageReturned(true), fatal(fatal)
+  { /* nothing to do */
+  }
 
   //! Write a bool to the stream.
   PrefixedOutStream& operator<<(bool val);

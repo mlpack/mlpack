@@ -11,9 +11,9 @@
  */
 template<class Factorizer>
 double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
-                         arma::mat& W,
-                         arma::mat& sigma,
-                         arma::mat& H) const
+                                                 arma::mat& W,
+                                                 arma::mat& sigma,
+                                                 arma::mat& H) const
 {
   // get svd factorization
   arma::vec E;
@@ -33,9 +33,9 @@ double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
 
 template<>
 double mlpack::cf::SVDWrapper<DummyClass>::Apply(const arma::mat& V,
-                                     arma::mat& W,
-                                     arma::mat& sigma,
-                                     arma::mat& H) const
+                                                 arma::mat& W,
+                                                 arma::mat& sigma,
+                                                 arma::mat& H) const
 {
   // get svd factorization
   arma::vec E;
@@ -55,15 +55,15 @@ double mlpack::cf::SVDWrapper<DummyClass>::Apply(const arma::mat& V,
 
 template<class Factorizer>
 double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
-                         size_t r,
-                         arma::mat& W,
-                         arma::mat& H) const
+                                                 size_t r,
+                                                 arma::mat& W,
+                                                 arma::mat& H) const
 {
   // check if the given rank is valid
   if (r > V.n_rows || r > V.n_cols)
   {
     Log::Info << "Rank " << r << ", given for decomposition is invalid."
-        << std::endl;
+              << std::endl;
 
     r = (V.n_rows > V.n_cols) ? V.n_cols : V.n_rows;
     Log::Info << "Setting decomposition rank to " << r << std::endl;
@@ -96,15 +96,15 @@ double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
 
 template<>
 double mlpack::cf::SVDWrapper<DummyClass>::Apply(const arma::mat& V,
-                                     size_t r,
-                                     arma::mat& W,
-                                     arma::mat& H) const
+                                                 size_t r,
+                                                 arma::mat& W,
+                                                 arma::mat& H) const
 {
   // check if the given rank is valid
   if (r > V.n_rows || r > V.n_cols)
   {
     Log::Info << "Rank " << r << ", given for decomposition is invalid."
-        << std::endl;
+              << std::endl;
 
     r = (V.n_rows > V.n_cols) ? V.n_cols : V.n_rows;
     Log::Info << "Setting decomposition rank to " << r << std::endl;

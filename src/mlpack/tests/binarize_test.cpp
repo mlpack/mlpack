@@ -25,8 +25,7 @@ BOOST_AUTO_TEST_SUITE(BinarizeTest);
 BOOST_AUTO_TEST_CASE(BinerizeOneDimension)
 {
   mat input;
-  input << 1 << 2 << 3 << endr
-        << 4 << 5 << 6 << endr // this row will be tested
+  input << 1 << 2 << 3 << endr << 4 << 5 << 6 << endr // this row will be tested
         << 7 << 8 << 9;
 
   mat output;
@@ -37,8 +36,8 @@ BOOST_AUTO_TEST_CASE(BinerizeOneDimension)
   BOOST_REQUIRE_CLOSE(output(0, 0), 1, 1e-5); // 1
   BOOST_REQUIRE_CLOSE(output(0, 1), 2, 1e-5); // 2
   BOOST_REQUIRE_CLOSE(output(0, 2), 3, 1e-5); // 3
-  BOOST_REQUIRE_SMALL(output(1, 0), 1e-5); // 4 target
-  BOOST_REQUIRE_SMALL(output(1, 1), 1e-5); // 5 target
+  BOOST_REQUIRE_SMALL(output(1, 0), 1e-5);    // 4 target
+  BOOST_REQUIRE_SMALL(output(1, 1), 1e-5);    // 5 target
   BOOST_REQUIRE_CLOSE(output(1, 2), 1, 1e-5); // 6 target
   BOOST_REQUIRE_CLOSE(output(2, 0), 7, 1e-5); // 7
   BOOST_REQUIRE_CLOSE(output(2, 1), 8, 1e-5); // 8
@@ -48,8 +47,7 @@ BOOST_AUTO_TEST_CASE(BinerizeOneDimension)
 BOOST_AUTO_TEST_CASE(BinerizeAll)
 {
   mat input;
-  input << 1 << 2 << 3 << endr
-        << 4 << 5 << 6 << endr // this row will be tested
+  input << 1 << 2 << 3 << endr << 4 << 5 << 6 << endr // this row will be tested
         << 7 << 8 << 9;
 
   mat output;
@@ -57,11 +55,11 @@ BOOST_AUTO_TEST_CASE(BinerizeAll)
 
   Binarize<double>(input, output, threshold);
 
-  BOOST_REQUIRE_SMALL(output(0, 0), 1e-5); // 1
-  BOOST_REQUIRE_SMALL(output(0, 1), 1e-5); // 2
-  BOOST_REQUIRE_SMALL(output(0, 2), 1e-5); // 3
-  BOOST_REQUIRE_SMALL(output(1, 0), 1e-5); // 4
-  BOOST_REQUIRE_SMALL(output(1, 1), 1e-5); // 5
+  BOOST_REQUIRE_SMALL(output(0, 0), 1e-5);      // 1
+  BOOST_REQUIRE_SMALL(output(0, 1), 1e-5);      // 2
+  BOOST_REQUIRE_SMALL(output(0, 2), 1e-5);      // 3
+  BOOST_REQUIRE_SMALL(output(1, 0), 1e-5);      // 4
+  BOOST_REQUIRE_SMALL(output(1, 1), 1e-5);      // 5
   BOOST_REQUIRE_CLOSE(output(1, 2), 1.0, 1e-5); // 6
   BOOST_REQUIRE_CLOSE(output(2, 0), 1.0, 1e-5); // 7
   BOOST_REQUIRE_CLOSE(output(2, 1), 1.0, 1e-5); // 8

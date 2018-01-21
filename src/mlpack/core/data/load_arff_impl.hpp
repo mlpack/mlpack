@@ -56,8 +56,8 @@ void LoadARFF(const std::string& filename,
 
       // Get the annotation we are looking at.
       std::string annotation(*it);
-      std::transform(annotation.begin(), annotation.end(), annotation.begin(),
-            ::tolower);
+      std::transform(
+          annotation.begin(), annotation.end(), annotation.begin(), ::tolower);
 
       if (annotation == "@relation")
       {
@@ -70,8 +70,8 @@ void LoadARFF(const std::string& filename,
         // We need to mark this dimension with its according type.
         ++it; // Ignore the dimension name.
         std::string dimType = *(++it);
-        std::transform(dimType.begin(), dimType.end(), dimType.begin(),
-            ::tolower);
+        std::transform(
+            dimType.begin(), dimType.end(), dimType.begin(), ::tolower);
 
         if (dimType == "numeric" || dimType == "integer" || dimType == "real")
         {
@@ -93,8 +93,8 @@ void LoadARFF(const std::string& filename,
       }
       else
       {
-        throw std::runtime_error("unknown ARFF annotation '" + (*tok.begin()) +
-            "'");
+        throw std::runtime_error("unknown ARFF annotation '" + (*tok.begin())
+                                 + "'");
       }
     }
   }
@@ -209,7 +209,7 @@ void LoadARFF(const std::string& filename,
             else
               error << "Parse error ";
             error << "at line " << (headerLines + row) << " token " << col
-                << ": \"" << tokenStr << "\".";
+                  << ": \"" << tokenStr << "\".";
             throw std::runtime_error(error.str());
           }
         }

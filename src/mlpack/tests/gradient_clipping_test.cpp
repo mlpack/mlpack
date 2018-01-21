@@ -66,8 +66,8 @@ BOOST_AUTO_TEST_CASE(ClippedMomentumUpdateTest)
   // the gradient from the momentum, which gives 2 * gradient value
   // for the momentum on that step. Adding that to the gradient which
   // was subtracted earlier yiels the 3 * gradient in the following check.
-  BOOST_REQUIRE_SMALL(
-    arma::abs(coordinates - 3 * targetCoordinates).max(), 1e-7);
+  BOOST_REQUIRE_SMALL(arma::abs(coordinates - 3 * targetCoordinates).max(),
+                      1e-7);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

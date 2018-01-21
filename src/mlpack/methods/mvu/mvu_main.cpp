@@ -15,7 +15,9 @@
 #include <mlpack/core/util/cli.hpp>
 #include "mvu.hpp"
 
-PROGRAM_INFO("Maximum Variance Unfolding (MVU)", "This program implements "
+PROGRAM_INFO(
+    "Maximum Variance Unfolding (MVU)",
+    "This program implements "
     "Maximum Variance Unfolding, a nonlinear dimensionality reduction "
     "technique.  The method minimizes dimensionality by unfolding a manifold "
     "such that the distances to the nearest neighbors of each point are held "
@@ -25,8 +27,11 @@ PARAM_MATRIX_IN_REQ("input", "Input dataset.", "i");
 PARAM_INT_IN_REQ("new_dim", "New dimensionality of dataset.", "d");
 
 PARAM_MATRIX_OUT("output", "Matrix to save unfolded dataset to.", "o");
-PARAM_INT_IN("num_neighbors", "Number of nearest neighbors to consider while "
-    "unfolding.", "k", 5);
+PARAM_INT_IN("num_neighbors",
+             "Number of nearest neighbors to consider while "
+             "unfolding.",
+             "k",
+             5);
 
 using namespace mlpack;
 using namespace mlpack::mvu;
@@ -35,7 +40,7 @@ using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   // Read from command line.
   CLI::ParseCommandLine(argc, argv);
@@ -47,7 +52,7 @@ int main(int argc, char **argv)
   if (!CLI::HasParam("output"))
   {
     Log::Warn << "--output_file (-o) is not specified; no results will be "
-        << "saved!" << endl;
+              << "saved!" << endl;
   }
 
   RandomSeed(time(NULL));
@@ -56,19 +61,19 @@ int main(int argc, char **argv)
   mat data = std::move(CLI::GetParam<arma::mat>("input"));
 
   // Verify that the requested dimensionality is valid.
-  if (newDim <= 0 || newDim > (int) data.n_rows)
+  if (newDim <= 0 || newDim > (int)data.n_rows)
   {
     Log::Fatal << "Invalid new dimensionality (" << newDim << ").  Must be "
-      << "between 1 and the input dataset dimensionality (" << data.n_rows
-      << ")." << std::endl;
+               << "between 1 and the input dataset dimensionality ("
+               << data.n_rows << ")." << std::endl;
   }
 
   // Verify that the number of neighbors is valid.
-  if (numNeighbors <= 0 || numNeighbors > (int) data.n_cols)
+  if (numNeighbors <= 0 || numNeighbors > (int)data.n_cols)
   {
     Log::Fatal << "Invalid number of neighbors (" << numNeighbors << ").  Must "
-        << "be between 1 and the number of points in the input dataset ("
-        << data.n_cols << ")." << std::endl;
+               << "be between 1 and the number of points in the input dataset ("
+               << data.n_cols << ")." << std::endl;
   }
 
   // Now run MVU.

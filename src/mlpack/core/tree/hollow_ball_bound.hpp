@@ -138,15 +138,18 @@ class HollowBallBound
    * @param center Vector which the centroid will be written to.
    */
   template<typename VecType>
-  void Center(VecType& center) const { center = this->center; }
+  void Center(VecType& center) const
+  {
+    center = this->center;
+  }
 
   /**
    * Calculates minimum bound-to-point squared distance.
    */
   template<typename VecType>
-  ElemType MinDistance(const VecType& point,
-                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
-      const;
+  ElemType
+  MinDistance(const VecType& point,
+              typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   /**
    * Calculates minimum bound-to-bound squared distance.
@@ -157,9 +160,9 @@ class HollowBallBound
    * Computes maximum distance.
    */
   template<typename VecType>
-  ElemType MaxDistance(const VecType& point,
-                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
-      const;
+  ElemType
+  MaxDistance(const VecType& point,
+              typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   /**
    * Computes maximum distance.
@@ -170,9 +173,9 @@ class HollowBallBound
    * Calculates minimum and maximum bound-to-point distance.
    */
   template<typename VecType>
-  math::RangeType<ElemType> RangeDistance(
-      const VecType& other,
-      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
+  math::RangeType<ElemType>
+  RangeDistance(const VecType& other,
+                typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   /**
    * Calculates minimum and maximum bound-to-bound distance.

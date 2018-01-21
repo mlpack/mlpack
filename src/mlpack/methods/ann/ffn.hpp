@@ -39,10 +39,8 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputLayerType The output layer type used to evaluate the network.
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
  */
-template<
-  typename OutputLayerType = NegativeLogLikelihood<>,
-  typename InitializationRuleType = RandomInitialization
->
+template<typename OutputLayerType = NegativeLogLikelihood<>,
+         typename InitializationRuleType = RandomInitialization>
 class FFN
 {
  public:
@@ -72,7 +70,7 @@ class FFN
   FFN(FFN&&);
 
   //! Copy/move assignment operator.
-  FFN& operator = (FFN);
+  FFN& operator=(FFN);
 
   /**
    * Create the FFN object with the given predictors and responses set (this is
@@ -114,9 +112,8 @@ class FFN
    * @param optimizer Instantiated optimizer used to train the model.
    */
   template<typename OptimizerType>
-  void Train(arma::mat predictors,
-             arma::mat responses,
-             OptimizerType& optimizer);
+  void
+  Train(arma::mat predictors, arma::mat responses, OptimizerType& optimizer);
 
   /**
    * Train the feedforward network on the given input data. By default, the
@@ -160,19 +157,19 @@ class FFN
    */
   double Evaluate(const arma::mat& parameters);
 
-   /**
-   * Evaluate the feedforward network with the given parameters, but using only
-   * one data point. This is useful for optimizers such as SGD, which require a
-   * separable objective function.
-   *
-   * @param parameters Matrix model parameters.
-   * @param begin Index of the starting point to use for objective function
-   *        evaluation.
-   * @param batchSize Number of points to be passed at a time to use for
-   *        objective function evaluation.
-   * @param deterministic Whether or not to train or test the model. Note some
-   *        layer act differently in training or testing mode.
-   */
+  /**
+  * Evaluate the feedforward network with the given parameters, but using only
+  * one data point. This is useful for optimizers such as SGD, which require a
+  * separable objective function.
+  *
+  * @param parameters Matrix model parameters.
+  * @param begin Index of the starting point to use for objective function
+  *        evaluation.
+  * @param batchSize Number of points to be passed at a time to use for
+  *        objective function evaluation.
+  * @param deterministic Whether or not to train or test the model. Note some
+  *        layer act differently in training or testing mode.
+  */
   double Evaluate(const arma::mat& parameters,
                   const size_t begin,
                   const size_t batchSize,
@@ -206,8 +203,11 @@ class FFN
    *
    * @param args The layer parameter.
    */
-  template <class LayerType, class... Args>
-  void Add(Args... args) { network.push_back(new LayerType(args...)); }
+  template<class LayerType, class... Args>
+  void Add(Args... args)
+  {
+    network.push_back(new LayerType(args...));
+  }
 
   /*
    * Add a new module to the model.

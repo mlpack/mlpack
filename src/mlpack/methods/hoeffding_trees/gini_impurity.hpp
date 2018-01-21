@@ -44,7 +44,7 @@ class GiniImpurity
     double impurity = 0.0;
     for (size_t i = 0; i < classCounts.n_elem; ++i)
     {
-      const double f = ((double) classCounts[i] / (double) numElem);
+      const double f = ((double)classCounts[i] / (double)numElem);
       impurity += f * (1.0 - f);
     }
 
@@ -57,12 +57,11 @@ class GiniImpurity
         double splitImpurity = 0.0;
         for (size_t j = 0; j < counts.n_rows; ++j)
         {
-          const double f = ((double) counts(j, i) / (double) splitCounts[i]);
+          const double f = ((double)counts(j, i) / (double)splitCounts[i]);
           splitImpurity += f * (1.0 - f);
         }
 
-        impurity -= ((double) splitCounts[i] / (double) numElem) *
-            splitImpurity;
+        impurity -= ((double)splitCounts[i] / (double)numElem) * splitImpurity;
       }
     }
 

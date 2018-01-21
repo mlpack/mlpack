@@ -87,12 +87,14 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRandomEvaluate)
     {
       arma::mat hiddenLayer, outputLayer, diff;
 
-      hiddenLayer = 1.0 /
-          (1 + arma::exp(-(parameters.submat(0, 0, l1 - 1, l2 - 1) *
-          data.col(j) + parameters.submat(0, l2, l1 - 1, l2))));
-      outputLayer = 1.0 /
-          (1 + arma::exp(-(parameters.submat(l1, 0, l3 - 1, l2 - 1).t()
-          * hiddenLayer + parameters.submat(l3, 0, l3, l2 - 1).t())));
+      hiddenLayer =
+          1.0 / (1 + arma::exp(
+                         -(parameters.submat(0, 0, l1 - 1, l2 - 1) * data.col(j)
+                           + parameters.submat(0, l2, l1 - 1, l2))));
+      outputLayer =
+          1.0 / (1 + arma::exp(-(parameters.submat(l1, 0, l3 - 1, l2 - 1).t()
+                                     * hiddenLayer
+                                 + parameters.submat(l3, 0, l3, l2 - 1).t())));
       diff = outputLayer - data.col(j);
 
       reconstructionError += 0.5 * arma::sum(arma::sum(diff % diff));
@@ -131,17 +133,19 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRegularizationEvaluate)
 
     double wL2SquaredNorm;
 
-    wL2SquaredNorm = arma::accu(parameters.submat(0, 0, l3 - 1, l2 - 1) %
-        parameters.submat(0, 0, l3 - 1, l2 - 1));
+    wL2SquaredNorm = arma::accu(parameters.submat(0, 0, l3 - 1, l2 - 1)
+                                % parameters.submat(0, 0, l3 - 1, l2 - 1));
 
     // Calculate regularization terms.
     const double smallRegTerm = 0.25 * wL2SquaredNorm;
     const double bigRegTerm = 10 * wL2SquaredNorm;
 
     BOOST_REQUIRE_CLOSE(safNoReg.Evaluate(parameters) + smallRegTerm,
-        safSmallReg.Evaluate(parameters), 1e-5);
+                        safSmallReg.Evaluate(parameters),
+                        1e-5);
     BOOST_REQUIRE_CLOSE(safNoReg.Evaluate(parameters) + bigRegTerm,
-        safBigReg.Evaluate(parameters), 1e-5);
+                        safBigReg.Evaluate(parameters),
+                        1e-5);
   }
 }
 
@@ -181,23 +185,28 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionKLDivergenceEvaluate)
     {
       arma::mat hiddenLayer;
 
-      hiddenLayer = 1.0 / (1 +
-          arma::exp(-(parameters.submat(0, 0, l1 - 1, l2 - 1) *
-          data.col(j) + parameters.submat(0, l2, l1 - 1, l2))));
+      hiddenLayer =
+          1.0 / (1 + arma::exp(
+                         -(parameters.submat(0, 0, l1 - 1, l2 - 1) * data.col(j)
+                           + parameters.submat(0, l2, l1 - 1, l2))));
       rhoCap += hiddenLayer;
     }
     rhoCap /= points;
 
     // Calculate divergence terms.
-    const double smallDivTerm = 5 * arma::accu(rho * arma::log(rho / rhoCap) +
-        (1 - rho) * arma::log((1 - rho) / (1 - rhoCap)));
-    const double bigDivTerm = 20 * arma::accu(rho * arma::log(rho / rhoCap) +
-        (1 - rho) * arma::log((1 - rho) / (1 - rhoCap)));
+    const double smallDivTerm =
+        5 * arma::accu(rho * arma::log(rho / rhoCap)
+                       + (1 - rho) * arma::log((1 - rho) / (1 - rhoCap)));
+    const double bigDivTerm =
+        20 * arma::accu(rho * arma::log(rho / rhoCap)
+                        + (1 - rho) * arma::log((1 - rho) / (1 - rhoCap)));
 
     BOOST_REQUIRE_CLOSE(safNoDiv.Evaluate(parameters) + smallDivTerm,
-        safSmallDiv.Evaluate(parameters), 1e-5);
+                        safSmallDiv.Evaluate(parameters),
+                        1e-5);
     BOOST_REQUIRE_CLOSE(safNoDiv.Evaluate(parameters) + bigDivTerm,
-        safBigDiv.Evaluate(parameters), 1e-5);
+                        safBigDiv.Evaluate(parameters),
+                        1e-5);
   }
 }
 

@@ -10,12 +10,12 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef _WIN32
-  #include <sys/time.h>
+#include <sys/time.h>
 #endif
 
 // For Sleep().
 #ifdef _WIN32
-  #include <windows.h>
+#include <windows.h>
 #endif
 
 #include <mlpack/core.hpp>
@@ -36,14 +36,14 @@ BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
   Timer::EnableTiming();
   Timer::Start("test_timer");
 
-  // On Windows (or, at least, in Windows not using VS2010) we cannot use
-  // usleep() because it is not provided.  Instead we will use Sleep() for a
-  // number of milliseconds.
-  #ifdef _WIN32
+// On Windows (or, at least, in Windows not using VS2010) we cannot use
+// usleep() because it is not provided.  Instead we will use Sleep() for a
+// number of milliseconds.
+#ifdef _WIN32
   Sleep(10);
-  #else
+#else
   usleep(10000);
-  #endif
+#endif
 
   Timer::Stop("test_timer");
 
@@ -52,11 +52,11 @@ BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
   // Restart it.
   Timer::Start("test_timer");
 
-  #ifdef _WIN32
+#ifdef _WIN32
   Sleep(10);
-  #else
+#else
   usleep(10000);
-  #endif
+#endif
 
   Timer::Stop("test_timer");
 
@@ -65,11 +65,11 @@ BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
   // Just one more time, for good measure...
   Timer::Start("test_timer");
 
-  #ifdef _WIN32
+#ifdef _WIN32
   Sleep(20);
-  #else
+#else
   usleep(20000);
-  #endif
+#endif
 
   Timer::Stop("test_timer");
 
@@ -105,21 +105,20 @@ BOOST_AUTO_TEST_CASE(MultithreadTimerTest)
   std::thread threads[3];
   for (size_t i = 0; i < 3; ++i)
   {
-    threads[i] = std::thread([]()
-        {
-          Timer::Start("thread_timer");
+    threads[i] = std::thread([]() {
+      Timer::Start("thread_timer");
 
-          #ifdef _WIN32
-          Sleep(20);
-          #else
-          int restarts = 0;
-          // Catch occasional EINTR failures.
-          while (usleep(20000) != 0 && restarts < 3)
-            ++restarts;
-          #endif
+#ifdef _WIN32
+      Sleep(20);
+#else
+      int restarts = 0;
+      // Catch occasional EINTR failures.
+      while (usleep(20000) != 0 && restarts < 3)
+        ++restarts;
+#endif
 
-          Timer::Stop("thread_timer");
-        });
+      Timer::Stop("thread_timer");
+    });
   }
 
   for (size_t i = 0; i < 3; ++i)
@@ -137,11 +136,11 @@ BOOST_AUTO_TEST_CASE(DisabledTimingTest)
   Timer::DisableTiming();
 
   Timer::Start("test_timer");
-  #ifdef _WIN32
+#ifdef _WIN32
   Sleep(20);
-  #else
+#else
   usleep(20000);
-  #endif
+#endif
   Timer::Stop("test_timer");
 
   BOOST_REQUIRE(Timer::Get("test_timer") == std::chrono::microseconds(0));

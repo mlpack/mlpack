@@ -22,10 +22,8 @@ RandomizedSVD::RandomizedSVD(const arma::mat& data,
                              const size_t iteratedPower,
                              const size_t maxIterations,
                              const size_t rank,
-                             const double eps) :
-    iteratedPower(iteratedPower),
-    maxIterations(maxIterations),
-    eps(eps)
+                             const double eps)
+  : iteratedPower(iteratedPower), maxIterations(maxIterations), eps(eps)
 {
   if (rank == 0)
   {
@@ -39,10 +37,8 @@ RandomizedSVD::RandomizedSVD(const arma::mat& data,
 
 RandomizedSVD::RandomizedSVD(const size_t iteratedPower,
                              const size_t maxIterations,
-                             const double eps) :
-    iteratedPower(iteratedPower),
-    maxIterations(maxIterations),
-    eps(eps)
+                             const double eps)
+  : iteratedPower(iteratedPower), maxIterations(maxIterations), eps(eps)
 {
   /* Nothing to do here */
 }
@@ -65,8 +61,8 @@ void RandomizedSVD::Apply(const arma::mat& data,
   if (data.n_cols >= data.n_rows)
   {
     R = arma::randn<arma::mat>(data.n_rows, iteratedPower);
-    Q = (data.t() * R) - arma::repmat(arma::trans(R.t() * rowMean),
-        data.n_cols, 1);
+    Q = (data.t() * R)
+        - arma::repmat(arma::trans(R.t() * rowMean), data.n_cols, 1);
   }
   else
   {
@@ -126,7 +122,7 @@ void RandomizedSVD::Apply(const arma::mat& data,
   }
   else
   {
-    Qdata = (Q.t() * data) - arma::repmat(Q.t() * rowMean, 1,  data.n_cols);
+    Qdata = (Q.t() * data) - arma::repmat(Q.t() * rowMean, 1, data.n_cols);
     arma::svd_econ(u, s, v, Qdata);
     u = Q * u;
   }

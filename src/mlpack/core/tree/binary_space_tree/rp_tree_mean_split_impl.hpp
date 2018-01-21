@@ -19,11 +19,11 @@ namespace mlpack {
 namespace tree {
 
 template<typename BoundType, typename MatType>
-bool RPTreeMeanSplit<BoundType, MatType>::SplitNode(const BoundType&  bound,
-                                                  MatType& data,
-                                                  const size_t begin,
-                                                  const size_t count,
-                                                  SplitInfo& splitInfo)
+bool RPTreeMeanSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
+                                                    MatType& data,
+                                                    const size_t begin,
+                                                    const size_t count,
+                                                    SplitInfo& splitInfo)
 {
   const size_t maxNumSamples = 100;
   const size_t numSamples = std::min(maxNumSamples, count);
@@ -63,17 +63,16 @@ bool RPTreeMeanSplit<BoundType, MatType>::SplitNode(const BoundType&  bound,
 }
 
 template<typename BoundType, typename MatType>
-typename MatType::elem_type RPTreeMeanSplit<BoundType, MatType>::
-GetAveragePointDistance(
-    MatType& data,
-    const arma::uvec& samples)
+typename MatType::elem_type
+RPTreeMeanSplit<BoundType, MatType>::GetAveragePointDistance(
+    MatType& data, const arma::uvec& samples)
 {
   ElemType dist = 0;
 
   for (size_t i = 0; i < samples.n_elem; i++)
     for (size_t j = i + 1; j < samples.n_elem; j++)
       dist += metric::SquaredEuclideanDistance::Evaluate(data.col(samples[i]),
-          data.col(samples[j]));
+                                                         data.col(samples[j]));
 
   dist /= (samples.n_elem * (samples.n_elem - 1) / 2);
 

@@ -20,11 +20,12 @@ template<typename CVType,
          size_t TotalArgs,
          typename... BoundArgs>
 template<size_t BoundArgIndex, size_t ParamIndex>
-struct CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::UseBoundArg<
-    BoundArgIndex, ParamIndex, true>
+struct CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::
+    UseBoundArg<BoundArgIndex, ParamIndex, true>
 {
-  using BoundArgType = typename
-      std::tuple_element<BoundArgIndex, std::tuple<BoundArgs...>>::type;
+  using BoundArgType =
+      typename std::tuple_element<BoundArgIndex,
+                                  std::tuple<BoundArgs...>>::type;
 
   static const bool value = BoundArgType::index == BoundArgIndex + ParamIndex;
 };
@@ -34,8 +35,8 @@ template<typename CVType,
          size_t TotalArgs,
          typename... BoundArgs>
 template<size_t BoundArgIndex, size_t ParamIndex>
-struct CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::UseBoundArg<
-    BoundArgIndex, ParamIndex, false>
+struct CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::
+    UseBoundArg<BoundArgIndex, ParamIndex, false>
 {
   static const bool value = false;
 };
@@ -48,13 +49,12 @@ CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::CVFunction(
     CVType& cv,
     const double relativeDelta,
     const double minDelta,
-    const BoundArgs&... args) :
-    cv(cv),
-    boundArgs(args...),
+    const BoundArgs&... args)
+  : cv(cv), boundArgs(args...),
     bestObjective(std::numeric_limits<double>::max()),
-    relativeDelta(relativeDelta),
-    minDelta(minDelta)
-{ /* Nothing left to do. */ }
+    relativeDelta(relativeDelta), minDelta(minDelta)
+{ /* Nothing left to do. */
+}
 
 template<typename CVType,
          typename MLAlgorithm,
@@ -71,8 +71,7 @@ template<typename CVType,
          size_t TotalArgs,
          typename... BoundArgs>
 void CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::Gradient(
-    const arma::mat& parameters,
-    arma::mat& gradient)
+    const arma::mat& parameters, arma::mat& gradient)
 {
   gradient = arma::mat(arma::size(parameters));
   arma::mat increasedParameters = parameters;
@@ -91,13 +90,9 @@ template<typename CVType,
          typename MLAlgorithm,
          size_t TotalArgs,
          typename... BoundArgs>
-template<size_t BoundArgIndex,
-         size_t ParamIndex,
-         typename... Args,
-         typename>
+template<size_t BoundArgIndex, size_t ParamIndex, typename... Args, typename>
 double CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::Evaluate(
-    const arma::mat& parameters,
-    const Args&... args)
+    const arma::mat& parameters, const Args&... args)
 {
   return PutNextArg<BoundArgIndex, ParamIndex>(parameters, args...);
 }
@@ -112,15 +107,14 @@ template<size_t BoundArgIndex,
          typename,
          typename>
 double CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::Evaluate(
-    const arma::mat& /* parameters */,
-    const Args&... args)
+    const arma::mat& /* parameters */, const Args&... args)
 {
   double objective = cv.Evaluate(args...);
 
   // Change the best model if we have got a better score, or if we probably
   // have not assigned any valid (trained) model yet.
-  if (bestObjective > objective ||
-      bestObjective == std::numeric_limits<double>::max())
+  if (bestObjective > objective
+      || bestObjective == std::numeric_limits<double>::max())
   {
     bestObjective = objective;
     bestModel = std::move(cv.Model());
@@ -133,13 +127,9 @@ template<typename CVType,
          typename MLAlgorithm,
          size_t TotalArgs,
          typename... BoundArgs>
-template<size_t BoundArgIndex,
-         size_t ParamIndex,
-         typename... Args,
-         typename>
+template<size_t BoundArgIndex, size_t ParamIndex, typename... Args, typename>
 double CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::PutNextArg(
-    const arma::mat& parameters,
-    const Args&... args)
+    const arma::mat& parameters, const Args&... args)
 {
   return Evaluate<BoundArgIndex + 1, ParamIndex>(
       parameters, args..., std::get<BoundArgIndex>(boundArgs).value);
@@ -155,8 +145,7 @@ template<size_t BoundArgIndex,
          typename,
          typename>
 double CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::PutNextArg(
-    const arma::mat& parameters,
-    const Args&... args)
+    const arma::mat& parameters, const Args&... args)
 {
   return Evaluate<BoundArgIndex, ParamIndex + 1>(
       parameters, args..., parameters(ParamIndex, 0));

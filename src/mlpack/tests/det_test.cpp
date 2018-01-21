@@ -17,16 +17,16 @@
 // This trick does not work on Windows.  We will have to comment out the tests
 // that depend on it.
 #ifndef _WIN32
-  #define protected public
-  #define private public
+#define protected public
+#define private public
 #endif
 
 #include <mlpack/methods/det/dtree.hpp>
 #include <mlpack/methods/det/dt_utils.hpp>
 
 #ifndef _WIN32
-  #undef protected
-  #undef private
+#undef protected
+#undef private
 #endif
 
 using namespace mlpack;
@@ -43,9 +43,8 @@ BOOST_AUTO_TEST_CASE(TestGetMaxMinVals)
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData << 4 << 5 << 7 << 3 << 5 << arma::endr << 5 << 0 << 1 << 7 << 1
+           << arma::endr << 5 << 6 << 7 << 1 << 8 << arma::endr;
 
   DTree<arma::mat> tree(testData);
 
@@ -65,7 +64,7 @@ BOOST_AUTO_TEST_CASE(TestComputeNodeError)
   DTree<arma::mat> testDTree(maxVals, minVals, 5);
   double trueNodeError = -log(4.0) - log(7.0) - log(7.0);
 
-  BOOST_REQUIRE_CLOSE((double) testDTree.logNegError, trueNodeError, 1e-10);
+  BOOST_REQUIRE_CLOSE((double)testDTree.logNegError, trueNodeError, 1e-10);
 
   testDTree.start = 3;
   testDTree.end = 5;
@@ -96,9 +95,8 @@ BOOST_AUTO_TEST_CASE(TestFindSplit)
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData << 4 << 5 << 7 << 3 << 5 << arma::endr << 5 << 0 << 1 << 7 << 1
+           << arma::endr << 5 << 6 << 7 << 1 << 8 << arma::endr;
 
   DTree<arma::mat> testDTree(testData);
 
@@ -125,9 +123,8 @@ BOOST_AUTO_TEST_CASE(TestSplitData)
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData << 4 << 5 << 7 << 3 << 5 << arma::endr << 5 << 0 << 1 << 7 << 1
+           << arma::endr << 5 << 6 << 7 << 1 << 8 << arma::endr;
 
   DTree<arma::mat> testDTree(testData);
 
@@ -137,8 +134,8 @@ BOOST_AUTO_TEST_CASE(TestSplitData)
   size_t splitDim = 2;
   double trueSplitVal = 5.5;
 
-  size_t splitInd = testDTree.SplitData(
-      testData, splitDim, trueSplitVal, oTest);
+  size_t splitInd =
+      testDTree.SplitData(testData, splitDim, trueSplitVal, oTest);
 
   BOOST_REQUIRE_EQUAL(splitInd, 2); // 2 points on left side.
 
@@ -153,10 +150,9 @@ BOOST_AUTO_TEST_CASE(TestSparseFindSplit)
 {
   arma::mat realData(4, 7);
 
-  realData << .0 << 4 << 5 << 7 << 0 << 5 << 0 << arma::endr
-           << .0 << 5 << 0 << 0 << 1 << 7 << 1 << arma::endr
-           << .0 << 5 << 6 << 7 << 1 << 0 << 8 << arma::endr
-           << -1 << 2 << 5 << 0 << 0 << 0 << 0 << arma::endr;
+  realData << .0 << 4 << 5 << 7 << 0 << 5 << 0 << arma::endr << .0 << 5 << 0
+           << 0 << 1 << 7 << 1 << arma::endr << .0 << 5 << 6 << 7 << 1 << 0 << 8
+           << arma::endr << -1 << 2 << 5 << 0 << 0 << 0 << 0 << arma::endr;
 
   arma::sp_mat testData(realData);
 
@@ -167,10 +163,10 @@ BOOST_AUTO_TEST_CASE(TestSparseFindSplit)
 
   size_t trueDim = 1;
   double trueSplit = .5;
-  double trueLeftError = 2 * log(3.0 / 7.0) -
-      (log(7.0) + log(0.5) + log(8.0) + log(6.0));
-  double trueRightError = 2 * log(4.0 / 7.0) -
-      (log(7.0) + log(6.5) + log(8.0) + log(6.0));
+  double trueLeftError =
+      2 * log(3.0 / 7.0) - (log(7.0) + log(0.5) + log(8.0) + log(6.0));
+  double trueRightError =
+      2 * log(4.0 / 7.0) - (log(7.0) + log(6.5) + log(8.0) + log(6.0));
 
   testDTree.logVolume = log(7.0) + log(7.0) + log(8.0) + log(6.0);
   BOOST_REQUIRE(testDTree.FindSplit(
@@ -187,10 +183,9 @@ BOOST_AUTO_TEST_CASE(TestSparseSplitData)
 {
   arma::mat realData(4, 7);
 
-  realData << .0 << 4 << 5 << 7 << 0 << 5 << 0 << arma::endr
-           << .0 << 5 << 0 << 0 << 1 << 7 << 1 << arma::endr
-           << .0 << 5 << 6 << 7 << 1 << 0 << 8 << arma::endr
-           << -1 << 2 << 5 << 0 << 0 << 0 << 0 << arma::endr;
+  realData << .0 << 4 << 5 << 7 << 0 << 5 << 0 << arma::endr << .0 << 5 << 0
+           << 0 << 1 << 7 << 1 << arma::endr << .0 << 5 << 6 << 7 << 1 << 0 << 8
+           << arma::endr << -1 << 2 << 5 << 0 << 0 << 0 << 0 << arma::endr;
 
   arma::sp_mat testData(realData);
 
@@ -202,8 +197,8 @@ BOOST_AUTO_TEST_CASE(TestSparseSplitData)
   size_t splitDim = 1;
   double trueSplitVal = .5;
 
-  size_t splitInd = testDTree.SplitData(
-      testData, splitDim, trueSplitVal, oTest);
+  size_t splitInd =
+      testDTree.SplitData(testData, splitDim, trueSplitVal, oTest);
 
   BOOST_REQUIRE_EQUAL(splitInd, 3); // 2 points on left side.
 
@@ -224,9 +219,8 @@ BOOST_AUTO_TEST_CASE(TestGrow)
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData << 4 << 5 << 7 << 3 << 5 << arma::endr << 5 << 0 << 1 << 7 << 1
+           << arma::endr << 5 << 6 << 7 << 1 << 8 << arma::endr;
 
   arma::Col<size_t> oTest(5);
   oTest << 0 << 1 << 2 << 3 << 4;
@@ -236,7 +230,7 @@ BOOST_AUTO_TEST_CASE(TestGrow)
   rootError = -log(4.0) - log(7.0) - log(7.0);
 
   lError = 2 * log(2.0 / 5.0) - (log(7.0) + log(4.0) + log(4.5));
-  rError =  2 * log(3.0 / 5.0) - (log(7.0) + log(4.0) + log(2.5));
+  rError = 2 * log(3.0 / 5.0) - (log(7.0) + log(4.0) + log(2.5));
 
   rlError = 2 * log(1.0 / 5.0) - (log(0.5) + log(4.0) + log(2.5));
   rrError = 2 * log(2.0 / 5.0) - (log(6.5) + log(4.0) + log(2.5));
@@ -265,7 +259,7 @@ BOOST_AUTO_TEST_CASE(TestGrow)
   BOOST_REQUIRE(testDTree.Right()->SplitDim() == 1);
   BOOST_REQUIRE_CLOSE(testDTree.Right()->SplitValue(), 0.5, 1e-5);
 
-  // Test node errors for every node (these are private functions).
+// Test node errors for every node (these are private functions).
 #ifndef _WIN32
   BOOST_REQUIRE_CLOSE(testDTree.logNegError, rootError, 1e-10);
   BOOST_REQUIRE_CLOSE(testDTree.Left()->logNegError, lError, 1e-10);
@@ -276,10 +270,12 @@ BOOST_AUTO_TEST_CASE(TestGrow)
 
   // Test alpha.
   double rootAlpha, rAlpha;
-  rootAlpha = std::log(-((std::exp(rootError) - (std::exp(lError) +
-      std::exp(rlError) + std::exp(rrError))) / 2));
-  rAlpha = std::log(-(std::exp(rError) - (std::exp(rlError) +
-      std::exp(rrError))));
+  rootAlpha =
+      std::log(-((std::exp(rootError)
+                  - (std::exp(lError) + std::exp(rlError) + std::exp(rrError)))
+                 / 2));
+  rAlpha =
+      std::log(-(std::exp(rError) - (std::exp(rlError) + std::exp(rrError))));
 
   BOOST_REQUIRE_CLOSE(alpha, min(rootAlpha, rAlpha), 1e-10);
 }
@@ -288,9 +284,8 @@ BOOST_AUTO_TEST_CASE(TestPruneAndUpdate)
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData << 4 << 5 << 7 << 3 << 5 << arma::endr << 5 << 0 << 1 << 7 << 1
+           << arma::endr << 5 << 6 << 7 << 1 << 8 << arma::endr;
 
   arma::Col<size_t> oTest(5);
   oTest << 0 << 1 << 2 << 3 << 4;
@@ -313,9 +308,8 @@ BOOST_AUTO_TEST_CASE(TestComputeValue)
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData << 4 << 5 << 7 << 3 << 5 << arma::endr << 5 << 0 << 1 << 7 << 1
+           << arma::endr << 5 << 6 << 7 << 1 << 8 << arma::endr;
 
   arma::vec q1(3), q2(3), q3(3), q4(3);
 
@@ -353,16 +347,15 @@ BOOST_AUTO_TEST_CASE(TestVariableImportance)
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData << 4 << 5 << 7 << 3 << 5 << arma::endr << 5 << 0 << 1 << 7 << 1
+           << arma::endr << 5 << 6 << 7 << 1 << 8 << arma::endr;
 
   double rootError, lError, rError, rlError, rrError;
 
   rootError = -1.0 * exp(-log(4.0) - log(7.0) - log(7.0));
 
   lError = -1.0 * exp(2 * log(2.0 / 5.0) - (log(7.0) + log(4.0) + log(4.5)));
-  rError =  -1.0 * exp(2 * log(3.0 / 5.0) - (log(7.0) + log(4.0) + log(2.5)));
+  rError = -1.0 * exp(2 * log(3.0 / 5.0) - (log(7.0) + log(4.0) + log(2.5)));
 
   rlError = -1.0 * exp(2 * log(1.0 / 5.0) - (log(0.5) + log(4.0) + log(2.5)));
   rrError = -1.0 * exp(2 * log(2.0 / 5.0) - (log(6.5) + log(4.0) + log(2.5)));
@@ -377,18 +370,17 @@ BOOST_AUTO_TEST_CASE(TestVariableImportance)
 
   testDTree.ComputeVariableImportance(imps);
 
-  BOOST_REQUIRE_CLOSE((double) 0.0, imps[0], 1e-10);
-  BOOST_REQUIRE_CLOSE((double) (rError - (rlError + rrError)), imps[1], 1e-10);
-  BOOST_REQUIRE_CLOSE((double) (rootError - (lError + rError)), imps[2], 1e-10);
+  BOOST_REQUIRE_CLOSE((double)0.0, imps[0], 1e-10);
+  BOOST_REQUIRE_CLOSE((double)(rError - (rlError + rrError)), imps[1], 1e-10);
+  BOOST_REQUIRE_CLOSE((double)(rootError - (lError + rError)), imps[2], 1e-10);
 }
 
 BOOST_AUTO_TEST_CASE(TestSparsePruneAndUpdate)
 {
   arma::mat realData(3, 5);
 
-  realData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  realData << 4 << 5 << 7 << 3 << 5 << arma::endr << 5 << 0 << 1 << 7 << 1
+           << arma::endr << 5 << 6 << 7 << 1 << 8 << arma::endr;
 
   arma::sp_mat testData(realData);
 
@@ -414,9 +406,8 @@ BOOST_AUTO_TEST_CASE(TestSparseComputeValue)
 {
   arma::mat realData(3, 5);
 
-  realData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  realData << 4 << 5 << 7 << 3 << 5 << arma::endr << 5 << 0 << 1 << 7 << 1
+           << arma::endr << 5 << 6 << 7 << 1 << 8 << arma::endr;
 
   arma::vec q1d(3), q2d(3), q3d(3), q4d(3);
 
@@ -505,15 +496,14 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData << 4 << 5 << 7 << 3 << 5 << arma::endr << 5 << 0 << 1 << 7 << 1
+           << arma::endr << 5 << 6 << 7 << 1 << 8 << arma::endr;
 
   // Construct another DTree for testing the children.
   arma::Col<size_t> oTest(5);
   oTest << 0 << 1 << 2 << 3 << 4;
 
-  DTree<arma::mat> *testDTree = new DTree<arma::mat>(testData);
+  DTree<arma::mat>* testDTree = new DTree<arma::mat>(testData);
   testDTree->Grow(testData, oTest, false, 2, 1);
 
   DTree<arma::mat> testDTree2(*testDTree);
@@ -617,15 +607,14 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData << 4 << 5 << 7 << 3 << 5 << arma::endr << 5 << 0 << 1 << 7 << 1
+           << arma::endr << 5 << 6 << 7 << 1 << 8 << arma::endr;
 
   // Construct another DTree for testing the children.
   arma::Col<size_t> oTest(5);
   oTest << 0 << 1 << 2 << 3 << 4;
 
-  DTree<arma::mat> *testDTree = new DTree<arma::mat>(testData);
+  DTree<arma::mat>* testDTree = new DTree<arma::mat>(testData);
   testDTree->Grow(testData, oTest, false, 2, 1);
 
   double maxVals0 = testDTree->MaxVals()[0];
@@ -654,8 +643,8 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
 
   // Check default values of the original tree.
   BOOST_REQUIRE_EQUAL(testDTree->LogNegError(), -DBL_MAX);
-  BOOST_REQUIRE(testDTree->Left() == (DTree<arma::mat>*) NULL);
-  BOOST_REQUIRE(testDTree->Right() == (DTree<arma::mat>*) NULL);
+  BOOST_REQUIRE(testDTree->Left() == (DTree<arma::mat>*)NULL);
+  BOOST_REQUIRE(testDTree->Right() == (DTree<arma::mat>*)NULL);
 
   // Delete the original tree.
   delete testDTree;
@@ -700,15 +689,14 @@ BOOST_AUTO_TEST_CASE(MoveOperatorTest)
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData << 4 << 5 << 7 << 3 << 5 << arma::endr << 5 << 0 << 1 << 7 << 1
+           << arma::endr << 5 << 6 << 7 << 1 << 8 << arma::endr;
 
   // Construct another DTree for testing the children.
   arma::Col<size_t> oTest(5);
   oTest << 0 << 1 << 2 << 3 << 4;
 
-  DTree<arma::mat> *testDTree = new DTree<arma::mat>(testData);
+  DTree<arma::mat>* testDTree = new DTree<arma::mat>(testData);
   testDTree->Grow(testData, oTest, false, 2, 1);
 
   double maxVals0 = testDTree->MaxVals()[0];
@@ -737,8 +725,8 @@ BOOST_AUTO_TEST_CASE(MoveOperatorTest)
 
   // Check default values of the original tree.
   BOOST_REQUIRE_EQUAL(testDTree->LogNegError(), -DBL_MAX);
-  BOOST_REQUIRE(testDTree->Left() == (DTree<arma::mat>*) NULL);
-  BOOST_REQUIRE(testDTree->Right() == (DTree<arma::mat>*) NULL);
+  BOOST_REQUIRE(testDTree->Left() == (DTree<arma::mat>*)NULL);
+  BOOST_REQUIRE(testDTree->Right() == (DTree<arma::mat>*)NULL);
 
   // Delete the original tree.
   delete testDTree;

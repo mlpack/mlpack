@@ -70,7 +70,7 @@ inline void SetParamWithInfo(const std::string& identifier,
       if (dims[i])
       {
         // Map the right number of objects.
-        for (size_t j = 0; j < (size_t) maxs[i]; ++j)
+        for (size_t j = 0; j < (size_t)maxs[i]; ++j)
         {
           std::ostringstream oss;
           oss << j;
@@ -95,26 +95,17 @@ T& GetParamWithInfo(const std::string& paramName)
 /**
  * Turn verbose output on.
  */
-inline void EnableVerbose()
-{
-  Log::Info.ignoreInput = false;
-}
+inline void EnableVerbose() { Log::Info.ignoreInput = false; }
 
 /**
  * Turn verbose output off.
  */
-inline void DisableVerbose()
-{
-  Log::Info.ignoreInput = true;
-}
+inline void DisableVerbose() { Log::Info.ignoreInput = true; }
 
 /**
  * Disable backtraces.
  */
-inline void DisableBacktrace()
-{
-  Log::Fatal.backtrace = false;
-}
+inline void DisableBacktrace() { Log::Fatal.backtrace = false; }
 
 /**
  * Reset the status of all timers.
@@ -128,10 +119,7 @@ inline void ResetTimers()
 /**
  * Enable timing.
  */
-inline void EnableTimers()
-{
-  Timer::EnableTiming();
-}
+inline void EnableTimers() { Timer::EnableTiming(); }
 
 } // namespace util
 } // namespace mlpack

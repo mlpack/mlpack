@@ -40,9 +40,8 @@ class DualTreeKMeansRules
   double Rescore(const size_t queryIndex,
                  TreeType& referenceNode,
                  const double oldScore);
-  double Rescore(TreeType& queryNode,
-                 TreeType& referenceNode,
-                 const double oldScore);
+  double
+  Rescore(TreeType& queryNode, TreeType& referenceNode, const double oldScore);
 
   typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
 

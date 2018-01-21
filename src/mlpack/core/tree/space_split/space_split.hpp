@@ -35,12 +35,11 @@ class SpaceSplit
    * @param midValue Mid value in the chosen projection.
    * @return Flag to determine if it is possible.
    */
-  static bool GetProjVector(
-      const bound::HRectBound<MetricType>& bound,
-      const MatType& data,
-      const arma::Col<size_t>& points,
-      AxisParallelProjVector& projVector,
-      double& midValue);
+  static bool GetProjVector(const bound::HRectBound<MetricType>& bound,
+                            const MatType& data,
+                            const arma::Col<size_t>& points,
+                            AxisParallelProjVector& projVector,
+                            double& midValue);
 
   /**
    * Create a projection vector based on the given set of point. We efficiently
@@ -55,12 +54,11 @@ class SpaceSplit
    * @return Flag to determine if it is possible.
    */
   template<typename BoundType>
-  static bool GetProjVector(
-      const BoundType& bound,
-      const MatType& data,
-      const arma::Col<size_t>& points,
-      ProjVector& projVector,
-      double& midValue);
+  static bool GetProjVector(const BoundType& bound,
+                            const MatType& data,
+                            const arma::Col<size_t>& points,
+                            ProjVector& projVector,
+                            double& midValue);
 };
 
 } // namespace tree

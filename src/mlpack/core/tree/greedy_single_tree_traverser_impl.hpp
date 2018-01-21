@@ -22,15 +22,14 @@ namespace tree {
 
 template<typename TreeType, typename RuleType>
 GreedySingleTreeTraverser<TreeType, RuleType>::GreedySingleTreeTraverser(
-    RuleType& rule) :
-    rule(rule),
-    numPrunes(0)
-{ /* Nothing to do. */ }
+    RuleType& rule)
+  : rule(rule), numPrunes(0)
+{ /* Nothing to do. */
+}
 
 template<typename TreeType, typename RuleType>
 void GreedySingleTreeTraverser<TreeType, RuleType>::Traverse(
-    const size_t queryIndex,
-    TreeType& referenceNode)
+    const size_t queryIndex, TreeType& referenceNode)
 {
   // Run the base case as necessary for all the points in the reference node.
   for (size_t i = 0; i < referenceNode.NumPoints(); ++i)

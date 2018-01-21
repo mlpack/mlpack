@@ -31,8 +31,8 @@ void AddToPO(const std::string& boostName,
              const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
-  desc.add_options()(boostName.c_str(), boost::program_options::value<T>(),
-      descr.c_str());
+  desc.add_options()(
+      boostName.c_str(), boost::program_options::value<T>(), descr.c_str());
 }
 
 /**
@@ -51,7 +51,8 @@ void AddToPO(const std::string& boostName,
              const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
 {
   desc.add_options()(boostName.c_str(),
-      boost::program_options::value<T>()->multitoken(), descr.c_str());
+                     boost::program_options::value<T>()->multitoken(),
+                     descr.c_str());
 }
 
 /**
@@ -80,18 +81,17 @@ void AddToPO(const std::string& boostName,
  * @param output Void pointer to options_description object.
  */
 template<typename T>
-void AddToPO(const util::ParamData& d,
-             const void* /* input */,
-             void* output)
+void AddToPO(const util::ParamData& d, const void* /* input */, void* output)
 {
   // Cast boost::program_options::options_description object.
   boost::program_options::options_description* desc =
-      (boost::program_options::options_description*) output;
+      (boost::program_options::options_description*)output;
 
   // Generate the name to be given to boost::program_options.
   const std::string mappedName = MapParameterName<T>(d.name);
-  std::string boostName = (d.alias != '\0') ? mappedName + "," +
-      std::string(1, d.alias) : mappedName;
+  std::string boostName = (d.alias != '\0')
+                              ? mappedName + "," + std::string(1, d.alias)
+                              : mappedName;
 
   // Note that we have to add the option as type equal to the mapped type, not
   // the true type of the option.

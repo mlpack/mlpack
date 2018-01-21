@@ -51,16 +51,14 @@ BOOST_AUTO_TEST_CASE(UniformMatrixCompletionSDP)
   mc.Recover(recovered);
 
   const double err =
-    arma::norm(Xorig - recovered, "fro") /
-    arma::norm(Xorig, "fro");
+      arma::norm(Xorig - recovered, "fro") / arma::norm(Xorig, "fro");
   BOOST_REQUIRE_SMALL(err, 1e-5);
 
   for (size_t i = 0; i < indices.n_cols; ++i)
   {
-    BOOST_REQUIRE_CLOSE(
-      recovered(indices(0, i), indices(1, i)),
-      Xorig(indices(0, i), indices(1, i)),
-      1e-5);
+    BOOST_REQUIRE_CLOSE(recovered(indices(0, i), indices(1, i)),
+                        Xorig(indices(0, i), indices(1, i)),
+                        1e-5);
   }
 }
 

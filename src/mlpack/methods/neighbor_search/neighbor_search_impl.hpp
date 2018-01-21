@@ -26,9 +26,8 @@ template<typename TreeType, typename MatType>
 TreeType* BuildTree(
     MatType&& dataset,
     std::vector<size_t>& oldFromNew,
-    typename std::enable_if_t<
-        tree::TreeTraits<TreeType>::RearrangesDataset, TreeType
-    >* = 0)
+    typename std::enable_if_t<tree::TreeTraits<TreeType>::RearrangesDataset,
+                              TreeType>* = 0)
 {
   return new TreeType(std::forward<MatType>(dataset), oldFromNew);
 }
@@ -38,9 +37,9 @@ template<typename TreeType, typename MatType>
 TreeType* BuildTree(
     MatType&& dataset,
     const std::vector<size_t>& /* oldFromNew */,
-    const typename std::enable_if_t<
-        !tree::TreeTraits<TreeType>::RearrangesDataset, TreeType
-    >* = 0)
+    const typename std::
+        enable_if_t<!tree::TreeTraits<TreeType>::RearrangesDataset, TreeType>* =
+            0)
 {
   return new TreeType(std::forward<MatType>(dataset));
 }
@@ -54,22 +53,24 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
-NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
-SingleTreeTraversalType>::NeighborSearch(const MatType& referenceSetIn,
-                                         const NeighborSearchMode mode,
-                                         const double epsilon,
-                                         const MetricType metric) :
-    referenceTree(mode == NAIVE_MODE ? NULL :
-        BuildTree<Tree>(referenceSetIn, oldFromNewReferences)),
-    referenceSet(mode == NAIVE_MODE ? &referenceSetIn :
-        &referenceTree->Dataset()),
-    treeOwner(mode != NAIVE_MODE),
-    setOwner(false),
-    searchMode(mode),
-    epsilon(epsilon),
-    metric(metric),
-    baseCases(0),
-    scores(0),
+NeighborSearch<SortPolicy,
+               MetricType,
+               MatType,
+               TreeType,
+               DualTreeTraversalType,
+               SingleTreeTraversalType>::NeighborSearch(const MatType&
+                                                            referenceSetIn,
+                                                        const NeighborSearchMode
+                                                            mode,
+                                                        const double epsilon,
+                                                        const MetricType metric)
+  : referenceTree(mode == NAIVE_MODE
+                      ? NULL
+                      : BuildTree<Tree>(referenceSetIn, oldFromNewReferences)),
+    referenceSet(mode == NAIVE_MODE ? &referenceSetIn
+                                    : &referenceTree->Dataset()),
+    treeOwner(mode != NAIVE_MODE), setOwner(false), searchMode(mode),
+    epsilon(epsilon), metric(metric), baseCases(0), scores(0),
     treeNeedsReset(false)
 {
   if (epsilon < 0)
@@ -85,22 +86,24 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
-NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
-SingleTreeTraversalType>::NeighborSearch(MatType&& referenceSetIn,
-                                         const NeighborSearchMode mode,
-                                         const double epsilon,
-                                         const MetricType metric) :
-    referenceTree(mode == NAIVE_MODE ? NULL :
-        BuildTree<Tree>(std::move(referenceSetIn), oldFromNewReferences)),
-    referenceSet(mode == NAIVE_MODE ?  new MatType(std::move(referenceSetIn)) :
-        &referenceTree->Dataset()),
-    treeOwner(mode != NAIVE_MODE),
-    setOwner(mode == NAIVE_MODE),
-    searchMode(mode),
-    epsilon(epsilon),
-    metric(metric),
-    baseCases(0),
-    scores(0),
+NeighborSearch<SortPolicy,
+               MetricType,
+               MatType,
+               TreeType,
+               DualTreeTraversalType,
+               SingleTreeTraversalType>::NeighborSearch(MatType&&
+                                                            referenceSetIn,
+                                                        const NeighborSearchMode
+                                                            mode,
+                                                        const double epsilon,
+                                                        const MetricType metric)
+  : referenceTree(
+        mode == NAIVE_MODE ? NULL : BuildTree<Tree>(std::move(referenceSetIn),
+                                                    oldFromNewReferences)),
+    referenceSet(mode == NAIVE_MODE ? new MatType(std::move(referenceSetIn))
+                                    : &referenceTree->Dataset()),
+    treeOwner(mode != NAIVE_MODE), setOwner(mode == NAIVE_MODE),
+    searchMode(mode), epsilon(epsilon), metric(metric), baseCases(0), scores(0),
     treeNeedsReset(false)
 {
   if (epsilon < 0)
@@ -116,21 +119,21 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
-NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
-SingleTreeTraversalType>::NeighborSearch(const Tree& referenceTree,
-                                         const NeighborSearchMode mode,
-                                         const double epsilon,
-                                         const MetricType metric) :
-    referenceTree(new Tree(referenceTree)),
-    referenceSet(&this->referenceTree->Dataset()),
-    treeOwner(true),
-    setOwner(false),
-    searchMode(mode),
-    epsilon(epsilon),
-    metric(metric),
-    baseCases(0),
-    scores(0),
-    treeNeedsReset(false)
+NeighborSearch<SortPolicy,
+               MetricType,
+               MatType,
+               TreeType,
+               DualTreeTraversalType,
+               SingleTreeTraversalType>::NeighborSearch(const Tree&
+                                                            referenceTree,
+                                                        const NeighborSearchMode
+                                                            mode,
+                                                        const double epsilon,
+                                                        const MetricType metric)
+  : referenceTree(new Tree(referenceTree)),
+    referenceSet(&this->referenceTree->Dataset()), treeOwner(true),
+    setOwner(false), searchMode(mode), epsilon(epsilon), metric(metric),
+    baseCases(0), scores(0), treeNeedsReset(false)
 {
   if (epsilon < 0)
     throw std::invalid_argument("epsilon must be non-negative");
@@ -145,21 +148,20 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
-NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
-SingleTreeTraversalType>::NeighborSearch(Tree&& referenceTree,
-                                         const NeighborSearchMode mode,
-                                         const double epsilon,
-                                         const MetricType metric) :
-    referenceTree(new Tree(std::move(referenceTree))),
-    referenceSet(&this->referenceTree->Dataset()),
-    treeOwner(true),
-    setOwner(false),
-    searchMode(mode),
-    epsilon(epsilon),
-    metric(metric),
-    baseCases(0),
-    scores(0),
-    treeNeedsReset(false)
+NeighborSearch<SortPolicy,
+               MetricType,
+               MatType,
+               TreeType,
+               DualTreeTraversalType,
+               SingleTreeTraversalType>::NeighborSearch(Tree&& referenceTree,
+                                                        const NeighborSearchMode
+                                                            mode,
+                                                        const double epsilon,
+                                                        const MetricType metric)
+  : referenceTree(new Tree(std::move(referenceTree))),
+    referenceSet(&this->referenceTree->Dataset()), treeOwner(true),
+    setOwner(false), searchMode(mode), epsilon(epsilon), metric(metric),
+    baseCases(0), scores(0), treeNeedsReset(false)
 {
   if (epsilon < 0)
     throw std::invalid_argument("epsilon must be non-negative");
@@ -174,20 +176,18 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
-NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
-SingleTreeTraversalType>::NeighborSearch(const NeighborSearchMode mode,
-                                         const double epsilon,
-                                         const MetricType metric) :
-    referenceTree(NULL),
-    referenceSet(new MatType()), // Empty matrix.
-    treeOwner(false),
-    setOwner(true),
-    searchMode(mode),
-    epsilon(epsilon),
-    metric(metric),
-    baseCases(0),
-    scores(0),
-    treeNeedsReset(false)
+NeighborSearch<SortPolicy,
+               MetricType,
+               MatType,
+               TreeType,
+               DualTreeTraversalType,
+               SingleTreeTraversalType>::NeighborSearch(const NeighborSearchMode
+                                                            mode,
+                                                        const double epsilon,
+                                                        const MetricType metric)
+  : referenceTree(NULL), referenceSet(new MatType()), // Empty matrix.
+    treeOwner(false), setOwner(true), searchMode(mode), epsilon(epsilon),
+    metric(metric), baseCases(0), scores(0), treeNeedsReset(false)
 {
   if (epsilon < 0)
     throw std::invalid_argument("epsilon must be non-negative");
@@ -209,20 +209,20 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
-NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
-SingleTreeTraversalType>::NeighborSearch(const NeighborSearch& other) :
-    oldFromNewReferences(other.oldFromNewReferences),
+NeighborSearch<SortPolicy,
+               MetricType,
+               MatType,
+               TreeType,
+               DualTreeTraversalType,
+               SingleTreeTraversalType>::NeighborSearch(const NeighborSearch&
+                                                            other)
+  : oldFromNewReferences(other.oldFromNewReferences),
     referenceTree(other.referenceTree ? new Tree(*other.referenceTree) : NULL),
-    referenceSet(other.referenceTree ? &referenceTree->Dataset() :
-        new MatType(*other.referenceSet)),
-    treeOwner(other.referenceTree),
-    setOwner(!other.referenceTree),
-    searchMode(other.searchMode),
-    epsilon(other.epsilon),
-    metric(other.metric),
-    baseCases(other.baseCases),
-    scores(other.scores),
-    treeNeedsReset(false)
+    referenceSet(other.referenceTree ? &referenceTree->Dataset()
+                                     : new MatType(*other.referenceSet)),
+    treeOwner(other.referenceTree), setOwner(!other.referenceTree),
+    searchMode(other.searchMode), epsilon(other.epsilon), metric(other.metric),
+    baseCases(other.baseCases), scores(other.scores), treeNeedsReset(false)
 {
   // Nothing else to do.
 }
@@ -236,28 +236,26 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
-NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
-SingleTreeTraversalType>::NeighborSearch(NeighborSearch&& other) :
-    oldFromNewReferences(std::move(other.oldFromNewReferences)),
-    referenceTree(other.referenceTree),
-    referenceSet(other.referenceSet),
-    treeOwner(other.treeOwner),
-    setOwner(other.setOwner),
-    searchMode(other.searchMode),
-    epsilon(other.epsilon),
-    metric(std::move(other.metric)),
-    baseCases(other.baseCases),
-    scores(other.scores),
-    treeNeedsReset(other.treeNeedsReset)
+NeighborSearch<SortPolicy,
+               MetricType,
+               MatType,
+               TreeType,
+               DualTreeTraversalType,
+               SingleTreeTraversalType>::NeighborSearch(NeighborSearch&& other)
+  : oldFromNewReferences(std::move(other.oldFromNewReferences)),
+    referenceTree(other.referenceTree), referenceSet(other.referenceSet),
+    treeOwner(other.treeOwner), setOwner(other.setOwner),
+    searchMode(other.searchMode), epsilon(other.epsilon),
+    metric(std::move(other.metric)), baseCases(other.baseCases),
+    scores(other.scores), treeNeedsReset(other.treeNeedsReset)
 {
   // Clear the other model.
   other.referenceSet = new MatType();
-  other.referenceTree = BuildTree<Tree>(*other.referenceSet,
-      other.oldFromNewReferences);
+  other.referenceTree =
+      BuildTree<Tree>(*other.referenceSet, other.oldFromNewReferences);
   other.treeOwner = true;
   other.setOwner = true;
-  other.searchMode = DUAL_TREE_MODE,
-  other.epsilon = 0.0;
+  other.searchMode = DUAL_TREE_MODE, other.epsilon = 0.0;
   other.baseCases = 0;
   other.scores = 0;
   other.treeNeedsReset = false;
@@ -293,8 +291,8 @@ NeighborSearch<SortPolicy,
 
   oldFromNewReferences = other.oldFromNewReferences;
   referenceTree = other.referenceTree ? new Tree(*other.referenceTree) : NULL;
-  referenceSet = other.referenceTree ? &referenceTree->Dataset() :
-      new MatType(*other.referenceSet);
+  referenceSet = other.referenceTree ? &referenceTree->Dataset()
+                                     : new MatType(*other.referenceSet);
   treeOwner = (other.referenceTree != NULL);
   setOwner = (other.referenceTree == NULL);
   searchMode = other.searchMode;
@@ -347,12 +345,11 @@ NeighborSearch<SortPolicy,
 
   // Reset the other object.
   other.referenceSet = new MatType();
-  other.referenceTree = BuildTree<Tree>(*other.referenceSet,
-      other.oldFromNewReferences);
+  other.referenceTree =
+      BuildTree<Tree>(*other.referenceSet, other.oldFromNewReferences);
   other.treeOwner = true;
   other.setOwner = true;
-  other.searchMode = DUAL_TREE_MODE,
-  other.epsilon = 0.0;
+  other.searchMode = DUAL_TREE_MODE, other.epsilon = 0.0;
   other.baseCases = 0;
   other.scores = 0;
   other.treeNeedsReset = false;
@@ -367,8 +364,12 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
-NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
-SingleTreeTraversalType>::~NeighborSearch()
+NeighborSearch<SortPolicy,
+               MetricType,
+               MatType,
+               TreeType,
+               DualTreeTraversalType,
+               SingleTreeTraversalType>::~NeighborSearch()
 {
   if (treeOwner && referenceTree)
     delete referenceTree;
@@ -384,9 +385,12 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
-void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-DualTreeTraversalType, SingleTreeTraversalType>::Train(
-    const MatType& referenceSet)
+void NeighborSearch<SortPolicy,
+                    MetricType,
+                    MatType,
+                    TreeType,
+                    DualTreeTraversalType,
+                    SingleTreeTraversalType>::Train(const MatType& referenceSet)
 {
   // Clean up the old tree, if we built one.
   if (treeOwner && referenceTree)
@@ -425,8 +429,12 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
-void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-DualTreeTraversalType, SingleTreeTraversalType>::Train(MatType&& referenceSetIn)
+void NeighborSearch<SortPolicy,
+                    MetricType,
+                    MatType,
+                    TreeType,
+                    DualTreeTraversalType,
+                    SingleTreeTraversalType>::Train(MatType&& referenceSetIn)
 {
   // Clean up the old tree, if we built one.
   if (treeOwner && referenceTree)
@@ -438,8 +446,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Train(MatType&& referenceSetIn)
   // We may need to rebuild the tree.
   if (searchMode != NAIVE_MODE)
   {
-    referenceTree = BuildTree<Tree>(std::move(referenceSetIn),
-        oldFromNewReferences);
+    referenceTree =
+        BuildTree<Tree>(std::move(referenceSetIn), oldFromNewReferences);
     treeOwner = true;
   }
   else
@@ -471,13 +479,16 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
-void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-DualTreeTraversalType, SingleTreeTraversalType>::Train(
-    const Tree& referenceTree)
+void NeighborSearch<SortPolicy,
+                    MetricType,
+                    MatType,
+                    TreeType,
+                    DualTreeTraversalType,
+                    SingleTreeTraversalType>::Train(const Tree& referenceTree)
 {
   if (searchMode == NAIVE_MODE)
     throw std::invalid_argument("cannot train on given reference tree when "
-        "naive search (without trees) is desired");
+                                "naive search (without trees) is desired");
 
   if (treeOwner && this->referenceTree)
   {
@@ -502,12 +513,16 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
-void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-DualTreeTraversalType, SingleTreeTraversalType>::Train(Tree&& referenceTree)
+void NeighborSearch<SortPolicy,
+                    MetricType,
+                    MatType,
+                    TreeType,
+                    DualTreeTraversalType,
+                    SingleTreeTraversalType>::Train(Tree&& referenceTree)
 {
   if (searchMode == NAIVE_MODE)
     throw std::invalid_argument("cannot train on given reference tree when "
-        "naive search (without trees) is desired");
+                                "naive search (without trees) is desired");
 
   if (treeOwner && this->referenceTree)
   {
@@ -536,18 +551,22 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
-void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-DualTreeTraversalType, SingleTreeTraversalType>::Search(
-    const MatType& querySet,
-    const size_t k,
-    arma::Mat<size_t>& neighbors,
-    arma::mat& distances)
+void NeighborSearch<SortPolicy,
+                    MetricType,
+                    MatType,
+                    TreeType,
+                    DualTreeTraversalType,
+                    SingleTreeTraversalType>::Search(const MatType& querySet,
+                                                     const size_t k,
+                                                     arma::Mat<size_t>&
+                                                         neighbors,
+                                                     arma::mat& distances)
 {
   if (k > referenceSet->n_cols)
   {
     std::stringstream ss;
     ss << "requested value of k (" << k << ") is greater than the number of "
-        << "points in the reference set (" << referenceSet->n_cols << ")";
+       << "points in the reference set (" << referenceSet->n_cols << ")";
     throw std::invalid_argument(ss.str());
   }
 
@@ -617,9 +636,9 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       baseCases += rules.BaseCases();
 
       Log::Info << rules.Scores() << " node combinations were scored."
-          << std::endl;
+                << std::endl;
       Log::Info << rules.BaseCases() << " base cases were calculated."
-          << std::endl;
+                << std::endl;
 
       rules.GetResults(*neighborPtr, *distancePtr);
       break;
@@ -645,9 +664,9 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       baseCases += rules.BaseCases();
 
       Log::Info << rules.Scores() << " node combinations were scored."
-          << std::endl;
+                << std::endl;
       Log::Info << rules.BaseCases() << " base cases were calculated."
-          << std::endl;
+                << std::endl;
 
       rules.GetResults(*neighborPtr, *distancePtr);
 
@@ -670,9 +689,9 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       baseCases += rules.BaseCases();
 
       Log::Info << rules.Scores() << " node combinations were scored."
-          << std::endl;
+                << std::endl;
       Log::Info << rules.BaseCases() << " base cases were calculated."
-          << std::endl;
+                << std::endl;
 
       rules.GetResults(*neighborPtr, *distancePtr);
       break;
@@ -749,25 +768,30 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
-void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-DualTreeTraversalType, SingleTreeTraversalType>::Search(
-    Tree& queryTree,
-    const size_t k,
-    arma::Mat<size_t>& neighbors,
-    arma::mat& distances,
-    bool sameSet)
+void NeighborSearch<SortPolicy,
+                    MetricType,
+                    MatType,
+                    TreeType,
+                    DualTreeTraversalType,
+                    SingleTreeTraversalType>::Search(Tree& queryTree,
+                                                     const size_t k,
+                                                     arma::Mat<size_t>&
+                                                         neighbors,
+                                                     arma::mat& distances,
+                                                     bool sameSet)
 {
   if (k > referenceSet->n_cols)
   {
     std::stringstream ss;
     ss << "requested value of k (" << k << ") is greater than the number of "
-        << "points in the reference set (" << referenceSet->n_cols << ")";
+       << "points in the reference set (" << referenceSet->n_cols << ")";
     throw std::invalid_argument(ss.str());
   }
 
   // Make sure we are in dual-tree mode.
   if (searchMode != DUAL_TREE_MODE)
-    throw std::invalid_argument("cannot call NeighborSearch::Search() with a "
+    throw std::invalid_argument(
+        "cannot call NeighborSearch::Search() with a "
         "query tree when naive or singleMode are set to true");
 
   Timer::Start("computing_neighbors");
@@ -781,8 +805,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   // We won't need to map query indices, but will we need to map distances?
   arma::Mat<size_t>* neighborPtr = &neighbors;
 
-  if (!oldFromNewReferences.empty() &&
-      tree::TreeTraits<Tree>::RearrangesDataset)
+  if (!oldFromNewReferences.empty()
+      && tree::TreeTraits<Tree>::RearrangesDataset)
     neighborPtr = new arma::Mat<size_t>;
 
   neighborPtr->set_size(k, querySet.n_cols);
@@ -810,8 +834,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   Timer::Stop("computing_neighbors");
 
   // Do we need to map indices?
-  if (!oldFromNewReferences.empty() &&
-      tree::TreeTraits<Tree>::RearrangesDataset)
+  if (!oldFromNewReferences.empty()
+      && tree::TreeTraits<Tree>::RearrangesDataset)
   {
     // We must map reference indices only.
     neighbors.set_size(k, querySet.n_cols);
@@ -834,17 +858,21 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
-void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-DualTreeTraversalType, SingleTreeTraversalType>::Search(
-    const size_t k,
-    arma::Mat<size_t>& neighbors,
-    arma::mat& distances)
+void NeighborSearch<SortPolicy,
+                    MetricType,
+                    MatType,
+                    TreeType,
+                    DualTreeTraversalType,
+                    SingleTreeTraversalType>::Search(const size_t k,
+                                                     arma::Mat<size_t>&
+                                                         neighbors,
+                                                     arma::mat& distances)
 {
   if (k > referenceSet->n_cols)
   {
     std::stringstream ss;
     ss << "requested value of k (" << k << ") is greater than the number of "
-        << "points in the reference set (" << referenceSet->n_cols << ")";
+       << "points in the reference set (" << referenceSet->n_cols << ")";
     throw std::invalid_argument(ss.str());
   }
 
@@ -856,8 +884,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   arma::Mat<size_t>* neighborPtr = &neighbors;
   arma::mat* distancePtr = &distances;
 
-  if (!oldFromNewReferences.empty() &&
-      tree::TreeTraits<Tree>::RearrangesDataset)
+  if (!oldFromNewReferences.empty()
+      && tree::TreeTraits<Tree>::RearrangesDataset)
   {
     // We will always need to rearrange in this case.
     distancePtr = new arma::mat;
@@ -870,8 +898,12 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
 
   // Create the helper object for the traversal.
   typedef NeighborSearchRules<SortPolicy, MetricType, Tree> RuleType;
-  RuleType rules(*referenceSet, *referenceSet, k, metric, epsilon,
-      true /* don't return the same point as nearest neighbor */);
+  RuleType rules(*referenceSet,
+                 *referenceSet,
+                 k,
+                 metric,
+                 epsilon,
+                 true /* don't return the same point as nearest neighbor */);
 
   switch (searchMode)
   {
@@ -898,9 +930,9 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       baseCases += rules.BaseCases();
 
       Log::Info << rules.Scores() << " node combinations were scored."
-          << std::endl;
+                << std::endl;
       Log::Info << rules.BaseCases() << " base cases were calculated."
-          << std::endl;
+                << std::endl;
       break;
     }
     case DUAL_TREE_MODE:
@@ -946,9 +978,9 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       baseCases += rules.BaseCases();
 
       Log::Info << rules.Scores() << " node combinations were scored."
-          << std::endl;
+                << std::endl;
       Log::Info << rules.BaseCases() << " base cases were calculated."
-          << std::endl;
+                << std::endl;
 
       // Next time we perform this search, we'll need to reset the tree.
       treeNeedsReset = true;
@@ -967,9 +999,9 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       baseCases += rules.BaseCases();
 
       Log::Info << rules.Scores() << " node combinations were scored."
-          << std::endl;
+                << std::endl;
       Log::Info << rules.BaseCases() << " base cases were calculated."
-          << std::endl;
+                << std::endl;
       break;
     }
   }
@@ -979,8 +1011,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   Timer::Stop("computing_neighbors");
 
   // Do we need to map the reference indices?
-  if (!oldFromNewReferences.empty() &&
-      tree::TreeTraits<Tree>::RearrangesDataset)
+  if (!oldFromNewReferences.empty()
+      && tree::TreeTraits<Tree>::RearrangesDataset)
   {
     neighbors.set_size(k, referenceSet->n_cols);
     distances.set_size(k, referenceSet->n_cols);
@@ -1011,13 +1043,16 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
-double NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-DualTreeTraversalType, SingleTreeTraversalType>::EffectiveError(
-    arma::mat& foundDistances,
-    arma::mat& realDistances)
+double NeighborSearch<SortPolicy,
+                      MetricType,
+                      MatType,
+                      TreeType,
+                      DualTreeTraversalType,
+                      SingleTreeTraversalType>::
+    EffectiveError(arma::mat& foundDistances, arma::mat& realDistances)
 {
-  if (foundDistances.n_rows != realDistances.n_rows ||
-      foundDistances.n_cols != realDistances.n_cols)
+  if (foundDistances.n_rows != realDistances.n_rows
+      || foundDistances.n_cols != realDistances.n_cols)
     throw std::invalid_argument("matrices provided must have equal size");
 
   double effectiveError = 0;
@@ -1025,11 +1060,11 @@ DualTreeTraversalType, SingleTreeTraversalType>::EffectiveError(
 
   for (size_t i = 0; i < foundDistances.n_elem; i++)
   {
-    if (realDistances(i) != 0 &&
-        foundDistances(i) != SortPolicy::WorstDistance())
+    if (realDistances(i) != 0
+        && foundDistances(i) != SortPolicy::WorstDistance())
     {
-      effectiveError += fabs(foundDistances(i) - realDistances(i)) /
-          realDistances(i);
+      effectiveError +=
+          fabs(foundDistances(i) - realDistances(i)) / realDistances(i);
       numCases++;
     }
   }
@@ -1049,13 +1084,16 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
-double NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-DualTreeTraversalType, SingleTreeTraversalType>::Recall(
-    arma::Mat<size_t>& foundNeighbors,
-    arma::Mat<size_t>& realNeighbors)
+double NeighborSearch<SortPolicy,
+                      MetricType,
+                      MatType,
+                      TreeType,
+                      DualTreeTraversalType,
+                      SingleTreeTraversalType>::
+    Recall(arma::Mat<size_t>& foundNeighbors, arma::Mat<size_t>& realNeighbors)
 {
-  if (foundNeighbors.n_rows != realNeighbors.n_rows ||
-      foundNeighbors.n_cols != realNeighbors.n_cols)
+  if (foundNeighbors.n_rows != realNeighbors.n_rows
+      || foundNeighbors.n_cols != realNeighbors.n_cols)
     throw std::invalid_argument("matrices provided must have equal size");
 
   size_t found = 0;
@@ -1068,7 +1106,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Recall(
           break;
         }
 
-  return ((double) found) / realNeighbors.n_elem;
+  return ((double)found) / realNeighbors.n_elem;
 }
 
 //! Serialize the NeighborSearch model.
@@ -1081,14 +1119,17 @@ template<typename SortPolicy,
          template<typename> class DualTreeTraversalType,
          template<typename> class SingleTreeTraversalType>
 template<typename Archive>
-void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
-DualTreeTraversalType, SingleTreeTraversalType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+void NeighborSearch<SortPolicy,
+                    MetricType,
+                    MatType,
+                    TreeType,
+                    DualTreeTraversalType,
+                    SingleTreeTraversalType>::
+    serialize(Archive& ar, const unsigned int /* version */)
 {
   // Serialize preferences for search.
-  ar & BOOST_SERIALIZATION_NVP(searchMode);
-  ar & BOOST_SERIALIZATION_NVP(treeNeedsReset);
+  ar& BOOST_SERIALIZATION_NVP(searchMode);
+  ar& BOOST_SERIALIZATION_NVP(treeNeedsReset);
 
   // If we are doing naive search, we serialize the dataset.  Otherwise we
   // serialize the tree.
@@ -1103,8 +1144,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
       setOwner = true; // We will own the reference set when we load it.
     }
 
-    ar & BOOST_SERIALIZATION_NVP(referenceSet);
-    ar & BOOST_SERIALIZATION_NVP(metric);
+    ar& BOOST_SERIALIZATION_NVP(referenceSet);
+    ar& BOOST_SERIALIZATION_NVP(metric);
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
     if (Archive::is_loading::value)
@@ -1129,8 +1170,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
       treeOwner = true;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(referenceTree);
-    ar & BOOST_SERIALIZATION_NVP(oldFromNewReferences);
+    ar& BOOST_SERIALIZATION_NVP(referenceTree);
+    ar& BOOST_SERIALIZATION_NVP(oldFromNewReferences);
 
     // If we are loading, set the dataset accordingly and clean up memory if
     // necessary.

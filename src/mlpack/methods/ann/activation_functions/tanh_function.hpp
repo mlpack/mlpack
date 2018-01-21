@@ -35,10 +35,7 @@ class TanhFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
-  {
-    return std::tanh(x);
-  }
+  static double Fn(const double x) { return std::tanh(x); }
 
   /**
    * Computes the tanh function.
@@ -58,10 +55,7 @@ class TanhFunction
    * @param y Input data.
    * @return f'(x)
    */
-  static double Deriv(const double y)
-  {
-    return 1 - std::pow(y, 2);
-  }
+  static double Deriv(const double y) { return 1 - std::pow(y, 2); }
 
   /**
    * Computes the first derivatives of the tanh function.
@@ -81,10 +75,7 @@ class TanhFunction
    * @param y Input data.
    * @return f^{-1}(x)
    */
-  static double Inv(const double y)
-  {
-    return std::atanh(y);
-  }
+  static double Inv(const double y) { return std::atanh(y); }
 
   /**
    * Computes the inverse of the tanh function.

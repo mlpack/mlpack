@@ -16,7 +16,8 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 MultiplyConstant<InputDataType, OutputDataType>::MultiplyConstant(
-    const double scalar) : scalar(scalar)
+    const double scalar)
+  : scalar(scalar)
 {
   // Nothing to do here.
 }
@@ -42,7 +43,7 @@ template<typename Archive>
 void MultiplyConstant<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(scalar);
+  ar& BOOST_SERIALIZATION_NVP(scalar);
 }
 
 } // namespace ann

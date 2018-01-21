@@ -49,8 +49,7 @@ void CompareData(const mat& inputData,
   }
 }
 
-void CheckMatEqual(const mat& inputData,
-                   const mat& compareData)
+void CheckMatEqual(const mat& inputData, const mat& compareData)
 {
   const mat& sortedInput = arma::sort(inputData, "ascend", 1);
   const mat& sortedCompare = arma::sort(compareData, "ascend", 1);
@@ -98,7 +97,7 @@ BOOST_AUTO_TEST_CASE(SplitDataResultMat)
 {
   mat input(2, 10);
   size_t count = 0; // count for putting unique sequential values
-  input.imbue([&count] () { return ++count; });
+  input.imbue([&count]() { return ++count; });
 
   const auto value = Split(input, 0.2);
   BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 8); // train data
@@ -115,8 +114,8 @@ BOOST_AUTO_TEST_CASE(SplitLabeledDataResultMat)
 
   // Set the labels to the column ID, so that CompareData can compare the data
   // after Split is called.
-  const Row<size_t> labels = arma::linspace<Row<size_t>>(0, input.n_cols - 1,
-      input.n_cols);
+  const Row<size_t> labels =
+      arma::linspace<Row<size_t>>(0, input.n_cols - 1, input.n_cols);
 
   const auto value = Split(input, labels, 0.2);
   BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 8);
@@ -139,7 +138,7 @@ BOOST_AUTO_TEST_CASE(SplitDataLargerTest)
 {
   size_t count = 0;
   mat input(10, 497);
-  input.imbue([&count] () { return ++count; });
+  input.imbue([&count]() { return ++count; });
 
   const auto value = Split(input, 0.3);
   BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 497 - size_t(0.3 * 497));
@@ -155,8 +154,8 @@ BOOST_AUTO_TEST_CASE(SplitLabeledDataLargerTest)
   input.randu();
 
   // Set the labels to the column ID.
-  const Row<size_t> labels = arma::linspace<Row<size_t>>(0, input.n_cols - 1,
-      input.n_cols);
+  const Row<size_t> labels =
+      arma::linspace<Row<size_t>>(0, input.n_cols - 1, input.n_cols);
 
   const auto value = Split(input, labels, 0.3);
   BOOST_REQUIRE_EQUAL(std::get<0>(value).n_cols, 497 - size_t(0.3 * 497));

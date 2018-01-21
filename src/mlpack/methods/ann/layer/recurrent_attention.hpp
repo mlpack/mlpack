@@ -48,10 +48,8 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
 class RecurrentAttention
 {
  public:
@@ -114,7 +112,7 @@ class RecurrentAttention
   //! Get the model modules.
   std::vector<LayerTypes>& Model() { return network; }
 
-    //! The value of the deterministic parameter.
+  //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }
@@ -159,19 +157,24 @@ class RecurrentAttention
     // Gradient of the action module.
     if (backwardStep == (rho - 1))
     {
-      boost::apply_visitor(GradientVisitor(std::move(initialInput),
-          std::move(actionError)), actionModule);
+      boost::apply_visitor(
+          GradientVisitor(std::move(initialInput), std::move(actionError)),
+          actionModule);
     }
     else
     {
-      boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, actionModule)), std::move(actionError)),
+      boost::apply_visitor(
+          GradientVisitor(std::move(boost::apply_visitor(outputParameterVisitor,
+                                                         actionModule)),
+                          std::move(actionError)),
           actionModule);
     }
 
     // Gradient of the recurrent module.
-    boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, rnnModule)), std::move(recurrentError)),
+    boost::apply_visitor(
+        GradientVisitor(
+            std::move(boost::apply_visitor(outputParameterVisitor, rnnModule)),
+            std::move(recurrentError)),
         rnnModule);
 
     attentionGradient += intermediateGradient;

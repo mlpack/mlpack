@@ -86,7 +86,7 @@ bool L_BFGS::LineSearch(FunctionType& function,
   if (initialSearchDirectionDotGradient > 0.0)
   {
     Log::Warn << "L-BFGS line search direction is not a descent direction "
-        << "(terminating)!" << std::endl;
+              << "(terminating)!" << std::endl;
     return false;
   }
 
@@ -94,8 +94,8 @@ bool L_BFGS::LineSearch(FunctionType& function,
   double initialFunctionValue = functionValue;
 
   // Unit linear approximation to the decrease in function value.
-  double linearApproxFunctionValueDecrease = armijoConstant *
-      initialSearchDirectionDotGradient;
+  double linearApproxFunctionValueDecrease =
+      armijoConstant * initialSearchDirectionDotGradient;
 
   // The number of iteration in the search.
   size_t numIterations = 0;
@@ -115,8 +115,8 @@ bool L_BFGS::LineSearch(FunctionType& function,
     function.Gradient(newIterateTmp, gradient);
     numIterations++;
 
-    if (functionValue > initialFunctionValue + stepSize *
-        linearApproxFunctionValueDecrease)
+    if (functionValue
+        > initialFunctionValue + stepSize * linearApproxFunctionValueDecrease)
     {
       width = dec;
     }
@@ -125,15 +125,15 @@ bool L_BFGS::LineSearch(FunctionType& function,
       // Check Wolfe's condition.
       double searchDirectionDotGradient = arma::dot(gradient, searchDirection);
 
-      if (searchDirectionDotGradient < wolfe *
-          initialSearchDirectionDotGradient)
+      if (searchDirectionDotGradient
+          < wolfe * initialSearchDirectionDotGradient)
       {
         width = inc;
       }
       else
       {
-        if (searchDirectionDotGradient > -wolfe *
-            initialSearchDirectionDotGradient)
+        if (searchDirectionDotGradient
+            > -wolfe * initialSearchDirectionDotGradient)
         {
           width = dec;
         }
@@ -212,13 +212,14 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
   for (size_t itNum = 0; optimizeUntilConvergence || (itNum != maxIterations);
        ++itNum)
   {
-    Log::Debug << "L-BFGS iteration " << itNum << "; objective " <<
-        function.Evaluate(iterate) << ", gradient norm "
-        << arma::norm(gradient, 2) << ", "
-        << ((prevFunctionValue - functionValue) /
-            std::max(std::max(fabs(prevFunctionValue),
-                              fabs(functionValue)), 1.0))
-        << "." << std::endl;
+    Log::Debug << "L-BFGS iteration " << itNum << "; objective "
+               << function.Evaluate(iterate) << ", gradient norm "
+               << arma::norm(gradient, 2) << ", "
+               << ((prevFunctionValue - functionValue)
+                   / std::max(
+                         std::max(fabs(prevFunctionValue), fabs(functionValue)),
+                         1.0))
+               << "." << std::endl;
 
     prevFunctionValue = functionValue;
 
@@ -229,14 +230,15 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
     if (itNum > 0 && GradientNormTooSmall(gradient))
     {
       Log::Debug << "L-BFGS gradient norm too small (terminating successfully)."
-          << std::endl;
+                 << std::endl;
       break;
     }
 
     // Break if the objective is not a number.
     if (std::isnan(functionValue))
     {
-      Log::Warn << "L-BFGS terminated with objective " << functionValue << "; "
+      Log::Warn
+          << "L-BFGS terminated with objective " << functionValue << "; "
           << "are the objective and gradient functions implemented correctly?"
           << std::endl;
       break;
@@ -254,8 +256,13 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
     oldGradient = gradient;
 
     // Do a line search and take a step.
-    if (!LineSearch(function, functionValue, iterate, gradient, newIterateTmp,
-        minPointIterate, searchDirection))
+    if (!LineSearch(function,
+                    functionValue,
+                    iterate,
+                    gradient,
+                    newIterateTmp,
+                    minPointIterate,
+                    searchDirection))
     {
       Log::Debug << "Line search failed.  Stopping optimization." << std::endl;
       break; // The line search failed; nothing else to try.
@@ -266,18 +273,18 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
     if (accu(iterate != oldIterate) == 0)
     {
       Log::Debug << "L-BFGS step size of 0 (terminating successfully)."
-          << std::endl;
+                 << std::endl;
       break;
     }
 
     // If we can't make progress on the gradient, then we'll also accept
     // a stable function value.
-    const double denom = std::max(
-        std::max(fabs(prevFunctionValue), fabs(functionValue)), 1.0);
+    const double denom =
+        std::max(std::max(fabs(prevFunctionValue), fabs(functionValue)), 1.0);
     if ((prevFunctionValue - functionValue) / denom <= factr)
     {
       Log::Debug << "L-BFGS function value stable (terminating successfully)."
-          << std::endl;
+                 << std::endl;
       break;
     }
 
@@ -292,4 +299,3 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
 } // namespace mlpack
 
 #endif // MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_IMPL_HPP
-

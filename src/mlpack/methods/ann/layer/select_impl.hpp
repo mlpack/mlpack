@@ -19,19 +19,17 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-Select<InputDataType, OutputDataType>::Select(
-    const size_t index,
-    const size_t elements) :
-    index(index),
-    elements(elements)
-  {
-    // Nothing to do here.
-  }
+Select<InputDataType, OutputDataType>::Select(const size_t index,
+                                              const size_t elements)
+  : index(index), elements(elements)
+{
+  // Nothing to do here.
+}
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void Select<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+void Select<InputDataType, OutputDataType>::Forward(const arma::Mat<eT>&& input,
+                                                    arma::Mat<eT>&& output)
 {
   if (elements == 0)
   {
@@ -46,9 +44,7 @@ void Select<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Select<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */,
-    arma::Mat<eT>&& gy,
-    arma::Mat<eT>&& g)
+    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
   if (elements == 0)
   {
@@ -65,8 +61,8 @@ template<typename Archive>
 void Select<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(index);
-  ar & BOOST_SERIALIZATION_NVP(elements);
+  ar& BOOST_SERIALIZATION_NVP(index);
+  ar& BOOST_SERIALIZATION_NVP(elements);
 }
 
 } // namespace ann

@@ -21,9 +21,11 @@ template<typename ObservationType = double>
 class NumericSplitInfo
 {
  public:
-  NumericSplitInfo() { /* Nothing to do. */ }
-  NumericSplitInfo(const arma::Col<ObservationType>& splitPoints) :
-      splitPoints(splitPoints) { /* Nothing to do. */ }
+  NumericSplitInfo() { /* Nothing to do. */}
+  NumericSplitInfo(const arma::Col<ObservationType>& splitPoints)
+    : splitPoints(splitPoints)
+  { /* Nothing to do. */
+  }
 
   template<typename eT>
   size_t CalculateDirection(const eT& value) const
@@ -40,7 +42,7 @@ class NumericSplitInfo
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(splitPoints);
+    ar& BOOST_SERIALIZATION_NVP(splitPoints);
   }
 
  private:

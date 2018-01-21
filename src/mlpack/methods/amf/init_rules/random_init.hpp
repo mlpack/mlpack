@@ -26,7 +26,7 @@ class RandomInitialization
 {
  public:
   // Empty constructor required for the InitializeRule template
-  RandomInitialization() { }
+  RandomInitialization() {}
 
   /**
    * Fill W and H with random uniform noise.
@@ -37,10 +37,8 @@ class RandomInitialization
    * @param H H matrix, to be filled with random noise.
    */
   template<typename MatType>
-  inline static void Initialize(const MatType& V,
-                                const size_t r,
-                                arma::mat& W,
-                                arma::mat& H)
+  inline static void
+  Initialize(const MatType& V, const size_t r, arma::mat& W, arma::mat& H)
   {
     // Simple implementation (left in the header file due to its simplicity).
     const size_t n = V.n_rows;
@@ -53,7 +51,9 @@ class RandomInitialization
 
   //! Serialize the object (in this case, there is nothing to serialize).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const unsigned int /* version */)
+  {
+  }
 };
 
 } // namespace amf

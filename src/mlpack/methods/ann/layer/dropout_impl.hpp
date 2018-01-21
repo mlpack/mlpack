@@ -20,11 +20,9 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-Dropout<InputDataType, OutputDataType>::Dropout(
-    const double ratio, const bool rescale) :
-    ratio(ratio),
-    scale(1.0 / (1.0 - ratio)),
-    deterministic(true),
+Dropout<InputDataType, OutputDataType>::Dropout(const double ratio,
+                                                const bool rescale)
+  : ratio(ratio), scale(1.0 / (1.0 - ratio)), deterministic(true),
     rescale(rescale)
 {
   // Nothing to do here.
@@ -33,8 +31,7 @@ Dropout<InputDataType, OutputDataType>::Dropout(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Dropout<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input,
-    arma::Mat<eT>&& output)
+    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
   // The dropout mask will not be multiplied in the deterministic mode
   // (during testing).
@@ -53,8 +50,8 @@ void Dropout<InputDataType, OutputDataType>::Forward(
   {
     // Scale with input / (1 - ratio) and set values to zero with probability
     // ratio.
-    mask = arma::randu<arma::Mat<eT> >(input.n_rows, input.n_cols);
-    mask.transform( [&](double val) { return (val > ratio); } );
+    mask = arma::randu<arma::Mat<eT>>(input.n_rows, input.n_cols);
+    mask.transform([&](double val) { return (val > ratio); });
     output = input % mask * scale;
   }
 }
@@ -62,9 +59,7 @@ void Dropout<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Dropout<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */,
-    arma::Mat<eT>&& gy,
-    arma::Mat<eT>&& g)
+    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
   g = gy % mask * scale;
 }
@@ -72,11 +67,10 @@ void Dropout<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Dropout<InputDataType, OutputDataType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(ratio);
-  ar & BOOST_SERIALIZATION_NVP(rescale);
+  ar& BOOST_SERIALIZATION_NVP(ratio);
+  ar& BOOST_SERIALIZATION_NVP(rescale);
 
   // Reset scale.
   scale = 1.0 / (1.0 - ratio);

@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(Rank10Test)
         if (normalizedFro != normalizedFro)
           continue;
 
-        normalizedFroAverage += (normalizedFro /  arma::norm(kernel, "fro"));
+        normalizedFroAverage += (normalizedFro / arma::norm(kernel, "fro"));
         break;
       }
     }
@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(GermanTest)
   data::Load("german.csv", dataset, true);
 
   // These are our tolerance bounds.
-  double results[5] = { 32.0, 20.0, 15.0, 12.0, 9.0 };
+  double results[5] = {32.0, 20.0, 15.0, 12.0, 9.0};
 
   // The bandwidth of the kernel is selected to be the half the average
   // distance between each point and the mean of the dataset.  This isn't
@@ -172,7 +172,9 @@ BOOST_AUTO_TEST_CASE(GermanTest)
     double avgError = 0.0;
     for (size_t z = 1; z < 6; ++z)
     {
-      NystroemMethod<GaussianKernel, KMeansSelection<> > nm(dataset, gk,
+      NystroemMethod<GaussianKernel, KMeansSelection<>> nm(
+          dataset,
+          gk,
           size_t((double((trial + 1) * 2) / 100.0) * dataset.n_cols));
       arma::mat g;
       nm.Apply(g);

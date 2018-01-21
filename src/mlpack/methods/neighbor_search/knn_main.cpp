@@ -35,7 +35,8 @@ using namespace mlpack::util;
 typedef NSModel<NearestNeighborSort> KNNModel;
 
 // Information about the program itself.
-PROGRAM_INFO("k-Nearest-Neighbors Search",
+PROGRAM_INFO(
+    "k-Nearest-Neighbors Search",
     "This program will calculate the k-nearest-neighbors of a set of "
     "points using kd-trees or cover trees (cover tree support is experimental "
     "and may be slow). You may specify a separate set of "
@@ -43,32 +44,49 @@ PROGRAM_INFO("k-Nearest-Neighbors Search",
     "used as both the reference and query set."
     "\n\n"
     "For example, the following command will calculate the 5 nearest neighbors "
-    "of each point in " + PRINT_DATASET("input") + " and store the distances "
-    "in " + PRINT_DATASET("distances") + " and the neighbors in " +
-    PRINT_DATASET("neighbors") + ": "
-    "\n\n" +
-    PRINT_CALL("knn", "k", 5, "reference", "input", "neighbors", "neighbors") +
-    "\n\n"
-    "The output files are organized such that row i and column j in the "
-    "neighbors output matrix corresponds to the index of the point in the "
-    "reference set which is the j'th nearest neighbor from the point in the "
-    "query set with index i.  Row j and column i in the distances output matrix"
-    " corresponds to the distance between those two points.");
+    "of each point in "
+        + PRINT_DATASET("input")
+        + " and store the distances "
+          "in "
+        + PRINT_DATASET("distances")
+        + " and the neighbors in "
+        + PRINT_DATASET("neighbors")
+        + ": "
+          "\n\n"
+        + PRINT_CALL(
+              "knn", "k", 5, "reference", "input", "neighbors", "neighbors")
+        + "\n\n"
+          "The output files are organized such that row i and column j in the "
+          "neighbors output matrix corresponds to the index of the point in "
+          "the "
+          "reference set which is the j'th nearest neighbor from the point in "
+          "the "
+          "query set with index i.  Row j and column i in the distances output "
+          "matrix"
+          " corresponds to the distance between those two points.");
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
 PARAM_MATRIX_OUT("distances", "Matrix to output distances into.", "d");
 PARAM_UMATRIX_OUT("neighbors", "Matrix to output neighbors into.", "n");
-PARAM_MATRIX_IN("true_distances", "Matrix of true distances to compute "
+PARAM_MATRIX_IN(
+    "true_distances",
+    "Matrix of true distances to compute "
     "the effective error (average relative error) (it is printed when -v is "
-    "specified).", "D");
-PARAM_UMATRIX_IN("true_neighbors", "Matrix of true neighbors to compute the "
-    "recall (it is printed when -v is specified).", "T");
+    "specified).",
+    "D");
+PARAM_UMATRIX_IN("true_neighbors",
+                 "Matrix of true neighbors to compute the "
+                 "recall (it is printed when -v is specified).",
+                 "T");
 
 // The option exists to load or save models.
 PARAM_MODEL_IN(KNNModel, "input_model", "Pre-trained kNN model.", "m");
-PARAM_MODEL_OUT(KNNModel, "output_model", "If specified, the kNN model will be "
-    "output here.", "M");
+PARAM_MODEL_OUT(KNNModel,
+                "output_model",
+                "If specified, the kNN model will be "
+                "output here.",
+                "M");
 
 // The user may specify a query file of query points and a number of nearest
 // neighbors to search for.
@@ -77,83 +95,106 @@ PARAM_INT_IN("k", "Number of nearest neighbors to find.", "k", 0);
 
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
-PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'vp', 'rp', 'max-rp', "
+PARAM_STRING_IN(
+    "tree_type",
+    "Type of tree to use: 'kd', 'vp', 'rp', 'max-rp', "
     "'ub', 'cover', 'r', 'r-star', 'x', 'ball', 'hilbert-r', 'r-plus', "
-    "'r-plus-plus', 'spill', 'oct'.", "t", "kd");
-PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, vp "
+    "'r-plus-plus', 'spill', 'oct'.",
+    "t",
+    "kd");
+PARAM_INT_IN(
+    "leaf_size",
+    "Leaf size for tree building (used for kd-trees, vp "
     "trees, random projection trees, UB trees, R trees, R* trees, X trees, "
-    "Hilbert R trees, R+ trees, R++ trees, spill trees, and octrees).", "l",
+    "Hilbert R trees, R+ trees, R++ trees, spill trees, and octrees).",
+    "l",
     20);
-PARAM_DOUBLE_IN("tau", "Overlapping size (only valid for spill trees).", "u",
-    0);
-PARAM_DOUBLE_IN("rho", "Balance threshold (only valid for spill trees).", "b",
-    0.7);
+PARAM_DOUBLE_IN("tau",
+                "Overlapping size (only valid for spill trees).",
+                "u",
+                0);
+PARAM_DOUBLE_IN("rho",
+                "Balance threshold (only valid for spill trees).",
+                "b",
+                0.7);
 
-PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
-    "random orthogonal basis.", "R");
+PARAM_FLAG("random_basis",
+           "Before tree-building, project the data onto a "
+           "random orthogonal basis.",
+           "R");
 PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 
 // Search settings.
-PARAM_STRING_IN("algorithm", "Type of neighbor search: 'naive', 'single_tree', "
-    "'dual_tree', 'greedy'.", "a", "dual_tree");
-PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate nearest neighbor "
-    "search with given relative error.", "e", 0);
+PARAM_STRING_IN("algorithm",
+                "Type of neighbor search: 'naive', 'single_tree', "
+                "'dual_tree', 'greedy'.",
+                "a",
+                "dual_tree");
+PARAM_DOUBLE_IN("epsilon",
+                "If specified, will do approximate nearest neighbor "
+                "search with given relative error.",
+                "e",
+                0);
 
 static void mlpackMain()
 {
   if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+    math::RandomSeed((size_t)CLI::GetParam<int>("seed"));
   else
-    math::RandomSeed((size_t) std::time(NULL));
+    math::RandomSeed((size_t)std::time(NULL));
 
   // A user cannot specify both reference data and a model.
-  RequireOnlyOnePassed({ "reference", "input_model" }, true);
+  RequireOnlyOnePassed({"reference", "input_model"}, true);
 
-  ReportIgnoredParam({{ "input_model", true }}, "tree_type");
-  ReportIgnoredParam({{ "input_model", true }}, "random_basis");
-  ReportIgnoredParam({{ "input_model", true }}, "tau");
-  ReportIgnoredParam({{ "input_model", true }}, "rho");
+  ReportIgnoredParam({{"input_model", true}}, "tree_type");
+  ReportIgnoredParam({{"input_model", true}}, "random_basis");
+  ReportIgnoredParam({{"input_model", true}}, "tau");
+  ReportIgnoredParam({{"input_model", true}}, "rho");
   if (CLI::HasParam("input_model") && CLI::HasParam("leaf_size"))
   {
     Log::Warn << PRINT_PARAM_STRING("leaf_size") << " will only be considered"
-        << " for the query tree, because --input_model_file is specified."
-        << endl;
+              << " for the query tree, because --input_model_file is specified."
+              << endl;
   }
 
   // The user should give something to do...
-  RequireAtLeastOnePassed({ "k", "output_model" }, false,
-      "no results will be saved");
+  RequireAtLeastOnePassed(
+      {"k", "output_model"}, false, "no results will be saved");
 
   // If the user specifies k but no output files, they should be warned.
   if (CLI::HasParam("k"))
   {
-    RequireAtLeastOnePassed({ "neighbors", "distances" }, false,
+    RequireAtLeastOnePassed(
+        {"neighbors", "distances"},
+        false,
         "nearest neighbor search results will not be saved");
   }
 
   // If the user specifies output files but no k, they should be warned.
-  ReportIgnoredParam({{ "k", false }}, "neighbors");
-  ReportIgnoredParam({{ "k", false }}, "distances");
-  ReportIgnoredParam({{ "k", false }}, "true_neighbors");
-  ReportIgnoredParam({{ "k", false }}, "true_distances");
-  ReportIgnoredParam({{ "k", false }}, "query");
+  ReportIgnoredParam({{"k", false}}, "neighbors");
+  ReportIgnoredParam({{"k", false}}, "distances");
+  ReportIgnoredParam({{"k", false}}, "true_neighbors");
+  ReportIgnoredParam({{"k", false}}, "true_distances");
+  ReportIgnoredParam({{"k", false}}, "query");
 
   // Sanity check on leaf size.
-  RequireParamValue<int>("leaf_size", [](int x) { return x > 0; },
-      true, "leaf size must be positive");
+  RequireParamValue<int>("leaf_size",
+                         [](int x) { return x > 0; },
+                         true,
+                         "leaf size must be positive");
   const int lsInt = CLI::GetParam<int>("leaf_size");
 
   // Sanity check on tau.
-  RequireParamValue<double>("tau", [](double x) { return x >= 0.0; },
-      true, "tau must be positive");
+  RequireParamValue<double>(
+      "tau", [](double x) { return x >= 0.0; }, true, "tau must be positive");
   const double tau = CLI::GetParam<double>("tau");
-
 
   // Sanity check on rho.
   const double rho = CLI::GetParam<double>("rho");
   RequireParamValue<double>("rho",
-      [](double x) { return x >= 0.0 && x <= 1.0; }, true,
-      "rho must be in the range [0, 1]");
+                            [](double x) { return x >= 0.0 && x <= 1.0; },
+                            true,
+                            "rho must be in the range [0, 1]");
   if (CLI::GetParam<string>("tree_type") != "spill")
   {
     ReportIgnoredParam("tau", "spill trees are not being used");
@@ -162,15 +203,19 @@ static void mlpackMain()
 
   // Sanity check on epsilon.
   const double epsilon = CLI::GetParam<double>("epsilon");
-  RequireParamValue<double>("epsilon", [](double x) { return x >= 0.0; }, true,
-      "epsilon must be positive");
+  RequireParamValue<double>("epsilon",
+                            [](double x) { return x >= 0.0; },
+                            true,
+                            "epsilon must be positive");
 
   // We either have to load the reference data, or we have to load the model.
   KNNModel knn;
 
   const string algorithm = CLI::GetParam<string>("algorithm");
-  RequireParamInSet<string>("algorithm", { "naive", "single_tree", "dual_tree",
-      "greedy" }, true, "unknown neighbor search algorithm");
+  RequireParamInSet<string>("algorithm",
+                            {"naive", "single_tree", "dual_tree", "greedy"},
+                            true,
+                            "unknown neighbor search algorithm");
   NeighborSearchMode searchMode = DUAL_TREE_MODE;
 
   if (algorithm == "naive")
@@ -189,9 +234,24 @@ static void mlpackMain()
     const bool randomBasis = CLI::HasParam("random_basis");
 
     KNNModel::TreeTypes tree = KNNModel::KD_TREE;
-    RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star",
-        "ball", "x", "hilbert-r", "r-plus", "r-plus-plus", "spill", "vp", "rp",
-        "max-rp", "ub", "oct" }, true, "unknown tree type");
+    RequireParamInSet<string>("tree_type",
+                              {"kd",
+                               "cover",
+                               "r",
+                               "r-star",
+                               "ball",
+                               "x",
+                               "hilbert-r",
+                               "r-plus",
+                               "r-plus-plus",
+                               "spill",
+                               "vp",
+                               "rp",
+                               "max-rp",
+                               "ub",
+                               "oct"},
+                              true,
+                              "unknown tree type");
     if (treeType == "kd")
       tree = KNNModel::KD_TREE;
     else if (treeType == "cover")
@@ -232,9 +292,9 @@ static void mlpackMain()
     arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
     Log::Info << "Loaded reference data from '"
-        << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
-        << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
-        << endl;
+              << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
+              << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
+              << endl;
 
     knn.BuildModel(std::move(referenceSet), size_t(lsInt), searchMode, epsilon);
   }
@@ -254,23 +314,23 @@ static void mlpackMain()
       knn.LeafSize() = size_t(lsInt);
 
     Log::Info << "Loaded kNN model from '"
-        << CLI::GetPrintableParam<KNNModel>("input_model") << "' (trained on "
-        << knn.Dataset().n_rows << "x" << knn.Dataset().n_cols << " dataset)."
-        << endl;
+              << CLI::GetPrintableParam<KNNModel>("input_model")
+              << "' (trained on " << knn.Dataset().n_rows << "x"
+              << knn.Dataset().n_cols << " dataset)." << endl;
   }
 
   // Perform search, if desired.
   if (CLI::HasParam("k"))
   {
-    const size_t k = (size_t) CLI::GetParam<int>("k");
+    const size_t k = (size_t)CLI::GetParam<int>("k");
 
     arma::mat queryData;
     if (CLI::HasParam("query"))
     {
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
       Log::Info << "Loaded query data from '"
-          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
-          << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
+                << CLI::GetPrintableParam<arma::mat>("query") << "' ("
+                << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
     // Sanity check on k value: must be greater than 0, must be less than the
@@ -303,37 +363,39 @@ static void mlpackMain()
     if (CLI::HasParam("true_distances"))
     {
       if (knn.TreeType() != KNNModel::SPILL_TREE && knn.Epsilon() == 0)
-        Log::Warn << PRINT_PARAM_STRING("true_distances") << "specified, but "
+        Log::Warn
+            << PRINT_PARAM_STRING("true_distances") << "specified, but "
             << "the search is exact, so there is no need to calculate the "
             << "error!" << endl;
 
       arma::mat trueDistances =
           std::move(CLI::GetParam<arma::mat>("true_distances"));
 
-      if (trueDistances.n_rows != distances.n_rows ||
-          trueDistances.n_cols != distances.n_cols)
+      if (trueDistances.n_rows != distances.n_rows
+          || trueDistances.n_cols != distances.n_cols)
         Log::Fatal << "The true distances file must have the same number of "
-            << "values than the set of distances being queried!" << endl;
+                   << "values than the set of distances being queried!" << endl;
 
-      Log::Info << "Effective error: " << KNN::EffectiveError(distances,
-          trueDistances) << endl;
+      Log::Info << "Effective error: "
+                << KNN::EffectiveError(distances, trueDistances) << endl;
     }
 
     // Calculate the recall, if desired.
     if (CLI::HasParam("true_neighbors"))
     {
       if (knn.TreeType() != KNNModel::SPILL_TREE && knn.Epsilon() == 0)
-        Log::Warn << PRINT_PARAM_STRING("true_neighbors") << " specified, but "
+        Log::Warn
+            << PRINT_PARAM_STRING("true_neighbors") << " specified, but "
             << " the search is exact, so there is no need to calculate the "
             << "recall!" << endl;
 
       arma::Mat<size_t> trueNeighbors =
           std::move(CLI::GetParam<arma::Mat<size_t>>("true_neighbors"));
 
-      if (trueNeighbors.n_rows != neighbors.n_rows ||
-          trueNeighbors.n_cols != neighbors.n_cols)
+      if (trueNeighbors.n_rows != neighbors.n_rows
+          || trueNeighbors.n_cols != neighbors.n_cols)
         Log::Fatal << "The true neighbors file must have the same number of "
-            << "values than the set of neighbors being queried!" << endl;
+                   << "values than the set of neighbors being queried!" << endl;
 
       Log::Info << "Recall: " << KNN::Recall(neighbors, trueNeighbors) << endl;
     }

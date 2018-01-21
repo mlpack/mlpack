@@ -41,42 +41,42 @@ struct IsVector
 // Visual Studio doesn't like this instantiaion pattern (error C2910).
 // template<>
 template<typename eT>
-struct IsVector<arma::Col<eT> >
+struct IsVector<arma::Col<eT>>
 {
   const static bool value = true;
 };
 
 // template<>
 template<typename eT>
-struct IsVector<arma::SpCol<eT> >
+struct IsVector<arma::SpCol<eT>>
 {
   const static bool value = true;
 };
 
 // template<>
 template<typename eT>
-struct IsVector<arma::Row<eT> >
+struct IsVector<arma::Row<eT>>
 {
   const static bool value = true;
 };
 
 // template<>
 template<typename eT>
-struct IsVector<arma::SpRow<eT> >
+struct IsVector<arma::SpRow<eT>>
 {
   const static bool value = true;
 };
 
 // template<>
 template<typename eT>
-struct IsVector<arma::subview_col<eT> >
+struct IsVector<arma::subview_col<eT>>
 {
   const static bool value = true;
 };
 
 // template<>
 template<typename eT>
-struct IsVector<arma::subview_row<eT> >
+struct IsVector<arma::subview_row<eT>>
 {
   const static bool value = true;
 };
@@ -86,7 +86,7 @@ struct IsVector<arma::subview_row<eT> >
 
 // template<>
 template<typename eT>
-struct IsVector<arma::SpSubview<eT> >
+struct IsVector<arma::SpSubview<eT>>
 {
   const static bool value = true;
 };

@@ -29,7 +29,6 @@ using namespace mlpack::optimization;
 
 BOOST_AUTO_TEST_SUITE(FrankWolfeTest);
 
-
 /**
  * Simple test of Orthogonal Matching Pursuit algorithm.
  */
@@ -69,7 +68,7 @@ BOOST_AUTO_TEST_CASE(regularizedOMP)
   int k = 10;
   mat B1 = 0.1 * eye(k, k);
   mat B2 = 100 * randn(k, k);
-  mat A = join_horiz(B1, B2); // The dictionary is input as columns of A.
+  mat A = join_horiz(B1, B2);  // The dictionary is input as columns of A.
   vec b(k, arma::fill::zeros); // Vector to be sparsely approximated.
   b(0) = 1;
   b(1) = 1;
@@ -97,9 +96,7 @@ BOOST_AUTO_TEST_CASE(PruneSupportOMP)
   // The dictionary is input as columns of A.
   int k = 3;
   mat B1;
-  B1 << 1 << 0 << 1 << endr
-     << 0 << 1 << 1 << endr
-     << 0 << 0 << 1 << endr;
+  B1 << 1 << 0 << 1 << endr << 0 << 1 << 1 << endr << 0 << 0 << 1 << endr;
   mat B2 = randu(k, k);
   mat A = join_horiz(B1, B2); // The dictionary is input as columns of A.
   vec b;
@@ -133,15 +130,14 @@ BOOST_AUTO_TEST_CASE(AtomNormConstraint)
   ConstrLpBallSolver linearConstrSolver(1);
   UpdateFullCorrection updateRule(2, 0.2);
 
-  FrankWolfe<ConstrLpBallSolver, UpdateFullCorrection>
-    s(linearConstrSolver, updateRule);
+  FrankWolfe<ConstrLpBallSolver, UpdateFullCorrection> s(linearConstrSolver,
+                                                         updateRule);
 
   vec coordinates = zeros<vec>(k + 3);
   double result = s.Optimize(f, coordinates);
 
   BOOST_REQUIRE_SMALL(result, 1e-10);
 }
-
 
 /**
  * A very simple test of classic Frank-Wolfe algorithm.
@@ -150,12 +146,12 @@ BOOST_AUTO_TEST_CASE(AtomNormConstraint)
 BOOST_AUTO_TEST_CASE(ClassicFW)
 {
   TestFuncFW f;
-  double p = 2;   // Constraint set is unit lp ball.
+  double p = 2; // Constraint set is unit lp ball.
   ConstrLpBallSolver linearConstrSolver(p);
   UpdateClassic updateRule;
 
-  FrankWolfe<ConstrLpBallSolver, UpdateClassic>
-      s(linearConstrSolver, updateRule);
+  FrankWolfe<ConstrLpBallSolver, UpdateClassic> s(linearConstrSolver,
+                                                  updateRule);
 
   vec coordinates = randu<vec>(3);
   double result = s.Optimize(f, coordinates);
@@ -174,12 +170,12 @@ BOOST_AUTO_TEST_CASE(ClassicFW)
 BOOST_AUTO_TEST_CASE(FWLineSearch)
 {
   TestFuncFW f;
-  double p = 2;   // Constraint set is unit lp ball.
+  double p = 2; // Constraint set is unit lp ball.
   ConstrLpBallSolver linearConstrSolver(p);
   UpdateLineSearch updateRule;
 
-  FrankWolfe<ConstrLpBallSolver, UpdateLineSearch>
-      s(linearConstrSolver, updateRule);
+  FrankWolfe<ConstrLpBallSolver, UpdateLineSearch> s(linearConstrSolver,
+                                                     updateRule);
 
   vec coordinates = randu<vec>(3);
   double result = s.Optimize(f, coordinates);

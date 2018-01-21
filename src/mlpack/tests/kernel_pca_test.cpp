@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(CircleTransformationTestNystroem)
 
   // Now we have a dataset; we will use the GaussianKernel to perform KernelPCA
   // using the nytroem method to take it down to one dimension.
-  KernelPCA<GaussianKernel, NystroemKernelRule<GaussianKernel> > p;
+  KernelPCA<GaussianKernel, NystroemKernelRule<GaussianKernel>> p;
   p.Apply(dataset, 1);
 
   // Get the ranges of each "class".  These are all initialized as empty ranges

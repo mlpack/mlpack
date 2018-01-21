@@ -36,8 +36,8 @@ struct ParameterTypeDeducer<true, T>
 template<typename T>
 struct ParameterType
 {
-  typedef typename ParameterTypeDeducer<data::HasSerialize<T>::value, T>::type
-      type;
+  typedef
+      typename ParameterTypeDeducer<data::HasSerialize<T>::value, T>::type type;
 };
 
 /**
@@ -79,7 +79,8 @@ struct ParameterType<arma::Mat<eT>>
  */
 template<typename eT, typename PolicyType>
 struct ParameterType<std::tuple<mlpack::data::DatasetMapper<PolicyType,
-                         std::string>, arma::Mat<eT>>>
+                                                            std::string>,
+                                arma::Mat<eT>>>
 {
   typedef std::string type;
 };

@@ -52,12 +52,10 @@ namespace tree {
  * @tparam NumericSplitType Technique for splitting numeric features.
  * @tparam CategoricalSplitType Technique for splitting categorical features.
  */
-template<typename FitnessFunction = GiniImpurity,
-         template<typename> class NumericSplitType =
-             HoeffdingDoubleNumericSplit,
-         template<typename> class CategoricalSplitType =
-             HoeffdingCategoricalSplit
->
+template<
+    typename FitnessFunction = GiniImpurity,
+    template<typename> class NumericSplitType = HoeffdingDoubleNumericSplit,
+    template<typename> class CategoricalSplitType = HoeffdingCategoricalSplit>
 class HoeffdingTree
 {
  public:
@@ -89,19 +87,20 @@ class HoeffdingTree
    *      will be allowed.
    */
   template<typename MatType>
-  HoeffdingTree(const MatType& data,
-                const data::DatasetInfo& datasetInfo,
-                const arma::Row<size_t>& labels,
-                const size_t numClasses,
-                const bool batchTraining = true,
-                const double successProbability = 0.95,
-                const size_t maxSamples = 0,
-                const size_t checkInterval = 100,
-                const size_t minSamples = 100,
-                const CategoricalSplitType<FitnessFunction>& categoricalSplitIn
-                    = CategoricalSplitType<FitnessFunction>(0, 0),
-                const NumericSplitType<FitnessFunction>& numericSplitIn =
-                    NumericSplitType<FitnessFunction>(0));
+  HoeffdingTree(
+      const MatType& data,
+      const data::DatasetInfo& datasetInfo,
+      const arma::Row<size_t>& labels,
+      const size_t numClasses,
+      const bool batchTraining = true,
+      const double successProbability = 0.95,
+      const size_t maxSamples = 0,
+      const size_t checkInterval = 100,
+      const size_t minSamples = 100,
+      const CategoricalSplitType<FitnessFunction>& categoricalSplitIn =
+          CategoricalSplitType<FitnessFunction>(0, 0),
+      const NumericSplitType<FitnessFunction>& numericSplitIn =
+          NumericSplitType<FitnessFunction>(0));
 
   /**
    * Construct the Hoeffding tree with the given parameters, but training on no
@@ -122,18 +121,19 @@ class HoeffdingTree
    *      numeric and categorical split vectors.  If left NULL, a new one will
    *      be created.
    */
-  HoeffdingTree(const data::DatasetInfo& datasetInfo,
-                const size_t numClasses,
-                const double successProbability = 0.95,
-                const size_t maxSamples = 0,
-                const size_t checkInterval = 100,
-                const size_t minSamples = 100,
-                const CategoricalSplitType<FitnessFunction>& categoricalSplitIn
-                    = CategoricalSplitType<FitnessFunction>(0, 0),
-                const NumericSplitType<FitnessFunction>& numericSplitIn =
-                    NumericSplitType<FitnessFunction>(0),
-                std::unordered_map<size_t, std::pair<size_t, size_t>>*
-                    dimensionMappings = NULL);
+  HoeffdingTree(
+      const data::DatasetInfo& datasetInfo,
+      const size_t numClasses,
+      const double successProbability = 0.95,
+      const size_t maxSamples = 0,
+      const size_t checkInterval = 100,
+      const size_t minSamples = 100,
+      const CategoricalSplitType<FitnessFunction>& categoricalSplitIn =
+          CategoricalSplitType<FitnessFunction>(0, 0),
+      const NumericSplitType<FitnessFunction>& numericSplitIn =
+          NumericSplitType<FitnessFunction>(0),
+      std::unordered_map<size_t, std::pair<size_t, size_t>>* dimensionMappings =
+          NULL);
 
   /**
    * Construct a Hoeffding tree with no data and no information.  Be sure to
@@ -269,8 +269,8 @@ class HoeffdingTree
    *      correct.
    */
   template<typename VecType>
-  void Classify(const VecType& point, size_t& prediction, double& probability)
-      const;
+  void
+  Classify(const VecType& point, size_t& prediction, double& probability) const;
 
   /**
    * Classify the given points, using this node and the entire (sub)tree beneath

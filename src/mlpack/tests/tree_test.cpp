@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundEmptyConstructor)
 {
   HRectBound<EuclideanDistance> b;
 
-  BOOST_REQUIRE_EQUAL((int) b.Dim(), 0);
+  BOOST_REQUIRE_EQUAL((int)b.Dim(), 0);
   BOOST_REQUIRE_EQUAL(b.MinWidth(), 0.0);
 }
 
@@ -544,11 +544,11 @@ BOOST_AUTO_TEST_CASE(HRectBoundOrOperatorBound)
   HRectBound<EuclideanDistance> c(8);
 
   c[0] = Range(-3.0, -1.0); // Entirely less than the other bound.
-  c[1] = Range(0.0, 2.0); // Touching edges.
+  c[1] = Range(0.0, 2.0);   // Touching edges.
   c[2] = Range(-3.0, -1.5); // Partially overlapping.
-  c[3] = Range(4.0, 5.0); // Identical.
-  c[4] = Range(1.0, 5.0); // Entirely enclosing.
-  c[5] = Range(2.0, 2.0); // A single point.
+  c[3] = Range(4.0, 5.0);   // Identical.
+  c[4] = Range(1.0, 5.0);   // Entirely enclosing.
+  c[5] = Range(2.0, 2.0);   // A single point.
   c[6] = Range(1.0, 3.0);
   c[7] = Range(); // Empty set.
 
@@ -660,16 +660,16 @@ BOOST_AUTO_TEST_CASE(TestBallBound)
   b2.Center()[2] = 4;
   b2.Radius() = 0.4;
 
-  BOOST_REQUIRE_CLOSE(b1.MinDistance(b2), 1-0.3-0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(b1.RangeDistance(b2).Hi(), 1+0.3+0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(b1.RangeDistance(b2).Lo(), 1-0.3-0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(b1.RangeDistance(b2).Hi(), 1+0.3+0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(b1.RangeDistance(b2).Lo(), 1-0.3-0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(b1.MinDistance(b2), 1 - 0.3 - 0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(b1.RangeDistance(b2).Hi(), 1 + 0.3 + 0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(b1.RangeDistance(b2).Lo(), 1 - 0.3 - 0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(b1.RangeDistance(b2).Hi(), 1 + 0.3 + 0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(b1.RangeDistance(b2).Lo(), 1 - 0.3 - 0.4, 1e-5);
 
-  BOOST_REQUIRE_CLOSE(b2.MinDistance(b1), 1-0.3-0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(b2.MaxDistance(b1), 1+0.3+0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(b2.RangeDistance(b1).Hi(), 1+0.3+0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(b2.RangeDistance(b1).Lo(), 1-0.3-0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(b2.MinDistance(b1), 1 - 0.3 - 0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(b2.MaxDistance(b1), 1 + 0.3 + 0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(b2.RangeDistance(b1).Hi(), 1 + 0.3 + 0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(b2.RangeDistance(b1).Lo(), 1 - 0.3 - 0.4, 1e-5);
 
   BOOST_REQUIRE(b1.Contains(b1.Center()));
   BOOST_REQUIRE(!b1.Contains(b2.Center()));
@@ -1076,22 +1076,23 @@ BOOST_AUTO_TEST_CASE(CheckParents)
   // Leaf size of 1.
   KDTree<EuclideanDistance, EmptyStatistic, arma::mat> rootNode(dataset, 1);
 
-  BOOST_REQUIRE_EQUAL(rootNode.Parent(),
-      (KDTree<EuclideanDistance, EmptyStatistic, arma::mat>*) NULL);
+  BOOST_REQUIRE_EQUAL(
+      rootNode.Parent(),
+      (KDTree<EuclideanDistance, EmptyStatistic, arma::mat>*)NULL);
   BOOST_REQUIRE_EQUAL(&rootNode, rootNode.Left()->Parent());
   BOOST_REQUIRE_EQUAL(&rootNode, rootNode.Right()->Parent());
   BOOST_REQUIRE_EQUAL(rootNode.Left(), rootNode.Left()->Left()->Parent());
   BOOST_REQUIRE_EQUAL(rootNode.Left(), rootNode.Left()->Right()->Parent());
   BOOST_REQUIRE_EQUAL(rootNode.Left()->Left(),
-      rootNode.Left()->Left()->Left()->Parent());
+                      rootNode.Left()->Left()->Left()->Parent());
   BOOST_REQUIRE_EQUAL(rootNode.Left()->Left(),
-      rootNode.Left()->Left()->Right()->Parent());
+                      rootNode.Left()->Left()->Right()->Parent());
   BOOST_REQUIRE_EQUAL(rootNode.Right(), rootNode.Right()->Left()->Parent());
   BOOST_REQUIRE_EQUAL(rootNode.Right(), rootNode.Right()->Right()->Parent());
   BOOST_REQUIRE_EQUAL(rootNode.Right()->Left(),
-      rootNode.Right()->Left()->Left()->Parent());
+                      rootNode.Right()->Left()->Left()->Parent());
   BOOST_REQUIRE_EQUAL(rootNode.Right()->Left(),
-      rootNode.Right()->Left()->Right()->Parent());
+                      rootNode.Right()->Left()->Right()->Parent());
 }
 
 BOOST_AUTO_TEST_CASE(CheckDataset)
@@ -1109,14 +1110,13 @@ BOOST_AUTO_TEST_CASE(CheckDataset)
   BOOST_REQUIRE_EQUAL(&rootNode.Left()->Right()->Dataset(), rootDataset);
   BOOST_REQUIRE_EQUAL(&rootNode.Right()->Left()->Dataset(), rootDataset);
   BOOST_REQUIRE_EQUAL(&rootNode.Right()->Right()->Dataset(), rootDataset);
-  BOOST_REQUIRE_EQUAL(&rootNode.Left()->Left()->Left()->Dataset(),
-      rootDataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Left()->Left()->Left()->Dataset(), rootDataset);
   BOOST_REQUIRE_EQUAL(&rootNode.Left()->Left()->Right()->Dataset(),
-      rootDataset);
+                      rootDataset);
   BOOST_REQUIRE_EQUAL(&rootNode.Right()->Left()->Left()->Dataset(),
-      rootDataset);
+                      rootDataset);
   BOOST_REQUIRE_EQUAL(&rootNode.Right()->Left()->Right()->Dataset(),
-      rootDataset);
+                      rootDataset);
 }
 
 // Ensure FurthestDescendantDistance() works.
@@ -1163,8 +1163,8 @@ BOOST_AUTO_TEST_CASE(FurthestPointDistanceTest)
       double maxDist = 0.0;
       for (size_t i = 0; i < node->NumPoints(); ++i)
       {
-        const double dist = metric::EuclideanDistance::Evaluate(center,
-            dataset.col(node->Point(i)));
+        const double dist = metric::EuclideanDistance::Evaluate(
+            center, dataset.col(node->Point(i)));
         if (dist > maxDist)
           maxDist = dist;
       }
@@ -1294,7 +1294,7 @@ BOOST_AUTO_TEST_CASE(KdTreeTest)
 {
   typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
 
-  size_t maxRuns = 10; // Ten total tests.
+  size_t maxRuns = 10;           // Ten total tests.
   size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
 
   // We use the default leaf size of 20.
@@ -1363,7 +1363,7 @@ BOOST_AUTO_TEST_CASE(MaxRPTreeTest)
 {
   typedef MaxRPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
 
-  size_t maxRuns = 10; // Ten total tests.
+  size_t maxRuns = 10;           // Ten total tests.
   size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
 
   // We use the default leaf size of 20.
@@ -1407,7 +1407,8 @@ bool CheckHyperplaneSplit(const TreeType& tree)
   typedef typename TreeType::ElemType ElemType;
 
   const typename TreeType::Mat& dataset = tree.Dataset();
-  arma::Mat<typename TreeType::ElemType> mat(dataset.n_rows + 1,
+  arma::Mat<typename TreeType::ElemType> mat(
+      dataset.n_rows + 1,
       tree.Left()->NumDescendants() + tree.Right()->NumDescendants());
 
   // We will try to find a hyperplane that splits the node.
@@ -1426,7 +1427,7 @@ bool CheckHyperplaneSplit(const TreeType& tree)
   for (size_t i = 0; i < tree.Left()->NumDescendants(); i++)
   {
     for (size_t k = 0; k < dataset.n_rows; k++)
-      mat(k, i) = - dataset(k, tree.Left()->Descendant(i));
+      mat(k, i) = -dataset(k, tree.Left()->Descendant(i));
 
     mat(dataset.n_rows, i) = -1;
   }
@@ -1466,7 +1467,7 @@ bool CheckHyperplaneSplit(const TreeType& tree)
     }
 
     // The norm of the direction shouldn't be equal to zero.
-    if (arma::norm(x.rows(0, dataset.n_rows-1)) < 1e-8)
+    if (arma::norm(x.rows(0, dataset.n_rows - 1)) < 1e-8)
     {
       x[math::RandInt(0, dataset.n_rows)] = 1.0;
       success = false;
@@ -1505,7 +1506,7 @@ BOOST_AUTO_TEST_CASE(RPTreeTest)
 {
   typedef RPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
 
-  size_t maxRuns = 10; // Ten total tests.
+  size_t maxRuns = 10;           // Ten total tests.
   size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
 
   // We use the default leaf size of 20.
@@ -1556,22 +1557,23 @@ void CheckRPTreeSplit(const TreeType& tree)
     arma::Col<ElemType> center;
     tree.Left()->Bound().Center(center);
     ElemType maxDist = 0;
-    for (size_t k =0; k < tree.Left()->NumDescendants(); k++)
+    for (size_t k = 0; k < tree.Left()->NumDescendants(); k++)
     {
-      ElemType dist = MetricType::Evaluate(center,
-          tree.Dataset().col(tree.Left()->Descendant(k)));
+      ElemType dist = MetricType::Evaluate(
+          center, tree.Dataset().col(tree.Left()->Descendant(k)));
 
       if (dist > maxDist)
         maxDist = dist;
     }
 
-    for (size_t k =0; k < tree.Right()->NumDescendants(); k++)
+    for (size_t k = 0; k < tree.Right()->NumDescendants(); k++)
     {
-      ElemType dist = MetricType::Evaluate(center,
-          tree.Dataset().col(tree.Right()->Descendant(k)));
+      ElemType dist = MetricType::Evaluate(
+          center, tree.Dataset().col(tree.Right()->Descendant(k)));
 
-      BOOST_REQUIRE_LE(maxDist, dist *
-          (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
+      BOOST_REQUIRE_LE(
+          maxDist,
+          dist * (1.0 + 10.0 * std::numeric_limits<ElemType>::epsilon()));
     }
   }
 
@@ -1619,7 +1621,7 @@ BOOST_AUTO_TEST_CASE(BallTreeTest)
 {
   typedef BallTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
 
-  size_t maxRuns = 10; // Ten total tests.
+  size_t maxRuns = 10;           // Ten total tests.
   size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
 
   // We use the default leaf size of 20.
@@ -1699,7 +1701,7 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
   typedef KDTree<EuclideanDistance, EmptyStatistic, arma::SpMat<double>>
       TreeType;
 
-  size_t maxRuns = 2; // Two total tests.
+  size_t maxRuns = 2;           // Two total tests.
   size_t pointIncrements = 200; // Range is from 200 points to 400.
 
   // We use the default leaf size of 20.
@@ -1827,8 +1829,8 @@ void CheckCovering(const TreeType& node)
   {
     const size_t childPoint = node.Child(i).Point();
 
-    double distance = MetricType::Evaluate(dataset.col(nodePoint),
-        dataset.col(childPoint));
+    double distance =
+        MetricType::Evaluate(dataset.col(nodePoint), dataset.col(childPoint));
 
     BOOST_REQUIRE_LE(distance, maxDistance);
 
@@ -1920,7 +1922,7 @@ BOOST_AUTO_TEST_CASE(CoverTreeConstructionTest)
 
   // Each node must satisfy the covering principle (its children must be less
   // than or equal to a certain distance apart).
-  CheckCovering<TreeType, LMetric<2, true> >(tree);
+  CheckCovering<TreeType, LMetric<2, true>>(tree);
 
   // There's no need to check the separation because that is relaxed in our
   // implementation.
@@ -1952,7 +1954,7 @@ BOOST_AUTO_TEST_CASE(SparseCoverTreeConstructionTest)
 
   // Each node must satisfy the covering principle (its children must be less
   // than or equal to a certain distance apart).
-  CheckCovering<TreeType, LMetric<2, true> >(tree);
+  CheckCovering<TreeType, LMetric<2, true>>(tree);
 
   // There's no need to check the separation invariant because that is relaxed
   // in our implementation.
@@ -1974,7 +1976,7 @@ BOOST_AUTO_TEST_CASE(CoverTreeManualConstructorTest)
   BOOST_REQUIRE_EQUAL(node.Base(), 1.3);
   BOOST_REQUIRE_EQUAL(node.Point(), 3);
   BOOST_REQUIRE_EQUAL(node.Scale(), 2);
-  BOOST_REQUIRE_EQUAL(node.Parent(), (CoverTree<>*) NULL);
+  BOOST_REQUIRE_EQUAL(node.Parent(), (CoverTree<>*)NULL);
   BOOST_REQUIRE_EQUAL(node.ParentDistance(), 1.5);
   BOOST_REQUIRE_EQUAL(node.FurthestDescendantDistance(), 2.75);
 }
@@ -2123,16 +2125,16 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeCopyConstructor)
   // Check the children.
   BOOST_REQUIRE_EQUAL(b.Left()->Begin(), c.Left()->Begin());
   BOOST_REQUIRE_EQUAL(b.Left()->Count(), c.Left()->Count());
-  BOOST_REQUIRE_EQUAL(b.Left()->Left(), (TreeType*) NULL);
+  BOOST_REQUIRE_EQUAL(b.Left()->Left(), (TreeType*)NULL);
   BOOST_REQUIRE_EQUAL(b.Left()->Left(), c.Left()->Left());
-  BOOST_REQUIRE_EQUAL(b.Left()->Right(), (TreeType*) NULL);
+  BOOST_REQUIRE_EQUAL(b.Left()->Right(), (TreeType*)NULL);
   BOOST_REQUIRE_EQUAL(b.Left()->Right(), c.Left()->Right());
 
   BOOST_REQUIRE_EQUAL(b.Right()->Begin(), c.Right()->Begin());
   BOOST_REQUIRE_EQUAL(b.Right()->Count(), c.Right()->Count());
-  BOOST_REQUIRE_EQUAL(b.Right()->Left(), (TreeType*) NULL);
+  BOOST_REQUIRE_EQUAL(b.Right()->Left(), (TreeType*)NULL);
   BOOST_REQUIRE_EQUAL(b.Right()->Left(), c.Right()->Left());
-  BOOST_REQUIRE_EQUAL(b.Right()->Right(), (TreeType*) NULL);
+  BOOST_REQUIRE_EQUAL(b.Right()->Right(), (TreeType*)NULL);
   BOOST_REQUIRE_EQUAL(b.Right()->Right(), c.Right()->Right());
 }
 
@@ -2209,8 +2211,8 @@ void CheckDescendants(TreeType* node)
   // Now check that each descendant is somewhere in the tree.
   for (size_t i = 0; i < node->NumDescendants(); ++i)
   {
-    Log::Debug << "Check for descendant " << node->Descendant(i) << " (i " <<
-        i << ").\n";
+    Log::Debug << "Check for descendant " << node->Descendant(i) << " (i " << i
+               << ").\n";
     BOOST_REQUIRE_EQUAL(FindIndex(node, node->Descendant(i)), true);
   }
 

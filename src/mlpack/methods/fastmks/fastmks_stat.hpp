@@ -28,12 +28,10 @@ class FastMKSStat
   /**
    * Default initialization.
    */
-  FastMKSStat() :
-      bound(-DBL_MAX),
-      selfKernel(0.0),
-      lastKernel(0.0),
-      lastKernelNode(NULL)
-  { }
+  FastMKSStat()
+    : bound(-DBL_MAX), selfKernel(0.0), lastKernel(0.0), lastKernelNode(NULL)
+  {
+  }
 
   /**
    * Initialize this statistic for the given tree node.  The TreeType's metric
@@ -43,10 +41,8 @@ class FastMKSStat
    * @param node Node that this statistic is built for.
    */
   template<typename TreeType>
-  FastMKSStat(const TreeType& node) :
-      bound(-DBL_MAX),
-      lastKernel(0.0),
-      lastKernelNode(NULL)
+  FastMKSStat(const TreeType& node)
+    : bound(-DBL_MAX), lastKernel(0.0), lastKernelNode(NULL)
   {
     // Do we have to calculate the centroid?
     if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
@@ -54,17 +50,17 @@ class FastMKSStat
       // If this type of tree has self-children, then maybe the evaluation is
       // already done.  These statistics are built bottom-up, so the child stat
       // should already be done.
-      if ((tree::TreeTraits<TreeType>::HasSelfChildren) &&
-          (node.NumChildren() > 0) &&
-          (node.Point(0) == node.Child(0).Point(0)))
+      if ((tree::TreeTraits<TreeType>::HasSelfChildren)
+          && (node.NumChildren() > 0)
+          && (node.Point(0) == node.Child(0).Point(0)))
       {
         selfKernel = node.Child(0).Stat().SelfKernel();
       }
       else
       {
-        selfKernel = sqrt(node.Metric().Kernel().Evaluate(
-            node.Dataset().col(node.Point(0)),
-            node.Dataset().col(node.Point(0))));
+        selfKernel = sqrt(
+            node.Metric().Kernel().Evaluate(node.Dataset().col(node.Point(0)),
+                                            node.Dataset().col(node.Point(0))));
       }
     }
     else
@@ -102,8 +98,8 @@ class FastMKSStat
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(bound);
-    ar & BOOST_SERIALIZATION_NVP(selfKernel);
+    ar& BOOST_SERIALIZATION_NVP(bound);
+    ar& BOOST_SERIALIZATION_NVP(selfKernel);
 
     // Void out last kernel information on load.
     if (Archive::is_loading::value)

@@ -116,8 +116,8 @@ BOOST_AUTO_TEST_CASE(KathirvalavakumarSubavathiInitTest)
   arma::mat weights;
   arma::cube weights3d;
 
-  KathirvalavakumarSubavathiInitialization kathirvalavakumarSubavathiInit(
-      data, 1.5);
+  KathirvalavakumarSubavathiInitialization kathirvalavakumarSubavathiInit(data,
+                                                                          1.5);
 
   kathirvalavakumarSubavathiInit.Initialize(weights, 100, 100);
   kathirvalavakumarSubavathiInit.Initialize(weights3d, 100, 100, 2);
@@ -213,10 +213,10 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
 
   FFN<NegativeLogLikelihood<>, RandomInitialization> randomModel(
       std::move(outputLayer), randomInit);
-  randomModel.Add<IdentityLayer<> >();
-  randomModel.Add<Linear<> >(5, 5);
-  randomModel.Add<Linear<> >(5, 2);
-  randomModel.Add<LogSoftMax<> >();
+  randomModel.Add<IdentityLayer<>>();
+  randomModel.Add<Linear<>>(5, 5);
+  randomModel.Add<Linear<>>(5, 2);
+  randomModel.Add<LogSoftMax<>>();
   randomModel.Predict(input, response);
 
   bool b = arma::all(arma::vectorise(randomModel.Parameters()) == 0.5);
@@ -226,22 +226,22 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
   // Create a simple network and use the OrthogonalInitialization rule to
   // initialize the network parameters.
   FFN<NegativeLogLikelihood<>, OrthogonalInitialization> orthogonalModel;
-  orthogonalModel.Add<IdentityLayer<> >();
-  orthogonalModel.Add<Linear<> >(5, 5);
-  orthogonalModel.Add<Linear<> >(5, 2);
-  orthogonalModel.Add<LogSoftMax<> >();
+  orthogonalModel.Add<IdentityLayer<>>();
+  orthogonalModel.Add<Linear<>>(5, 5);
+  orthogonalModel.Add<Linear<>>(5, 2);
+  orthogonalModel.Add<LogSoftMax<>>();
   orthogonalModel.Predict(input, response);
 
   BOOST_REQUIRE_EQUAL(orthogonalModel.Parameters().n_elem, 42);
 
   // Create a simple network and use the ZeroInitialization rule to
   // initialize the network parameters.
-  FFN<NegativeLogLikelihood<>, ConstInitialization>
-    zeroModel(NegativeLogLikelihood<>(), ConstInitialization(0));
-  zeroModel.Add<IdentityLayer<> >();
-  zeroModel.Add<Linear<> >(5, 5);
-  zeroModel.Add<Linear<> >(5, 2);
-  zeroModel.Add<LogSoftMax<> >();
+  FFN<NegativeLogLikelihood<>, ConstInitialization> zeroModel(
+      NegativeLogLikelihood<>(), ConstInitialization(0));
+  zeroModel.Add<IdentityLayer<>>();
+  zeroModel.Add<Linear<>>(5, 5);
+  zeroModel.Add<Linear<>>(5, 2);
+  zeroModel.Add<LogSoftMax<>>();
   zeroModel.Predict(input, response);
 
   BOOST_REQUIRE_EQUAL(arma::accu(zeroModel.Parameters()), 0);
@@ -250,25 +250,25 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
   // Create a simple network and use the
   // KathirvalavakumarSubavathiInitialization rule to initialize the network
   // parameters.
-  KathirvalavakumarSubavathiInitialization kathirvalavakumarSubavathiInit(
-      input, 1.5);
+  KathirvalavakumarSubavathiInitialization kathirvalavakumarSubavathiInit(input,
+                                                                          1.5);
   FFN<NegativeLogLikelihood<>, KathirvalavakumarSubavathiInitialization>
       ksModel(std::move(outputLayer), kathirvalavakumarSubavathiInit);
-  ksModel.Add<IdentityLayer<> >();
-  ksModel.Add<Linear<> >(5, 5);
-  ksModel.Add<Linear<> >(5, 2);
-  ksModel.Add<LogSoftMax<> >();
+  ksModel.Add<IdentityLayer<>>();
+  ksModel.Add<Linear<>>(5, 5);
+  ksModel.Add<Linear<>>(5, 2);
+  ksModel.Add<LogSoftMax<>>();
   ksModel.Predict(input, response);
 
   BOOST_REQUIRE_EQUAL(ksModel.Parameters().n_elem, 42);
 
   // Create a simple network and use the OivsInitialization rule to
   // initialize the network parameters.
-  FFN<NegativeLogLikelihood<>, OivsInitialization<> > oivsModel;
-  oivsModel.Add<IdentityLayer<> >();
-  oivsModel.Add<Linear<> >(5, 5);
-  oivsModel.Add<Linear<> >(5, 2);
-  oivsModel.Add<LogSoftMax<> >();
+  FFN<NegativeLogLikelihood<>, OivsInitialization<>> oivsModel;
+  oivsModel.Add<IdentityLayer<>>();
+  oivsModel.Add<Linear<>>(5, 5);
+  oivsModel.Add<Linear<>>(5, 2);
+  oivsModel.Add<LogSoftMax<>>();
   oivsModel.Predict(input, response);
 
   BOOST_REQUIRE_EQUAL(oivsModel.Parameters().n_elem, 42);
@@ -276,10 +276,10 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
   // Create a simple network and use the GaussianInitialization rule to
   // initialize the network parameters.
   FFN<NegativeLogLikelihood<>, GaussianInitialization> gaussianModel;
-  gaussianModel.Add<IdentityLayer<> >();
-  gaussianModel.Add<Linear<> >(5, 5);
-  gaussianModel.Add<Linear<> >(5, 2);
-  gaussianModel.Add<LogSoftMax<> >();
+  gaussianModel.Add<IdentityLayer<>>();
+  gaussianModel.Add<Linear<>>(5, 5);
+  gaussianModel.Add<Linear<>>(5, 2);
+  gaussianModel.Add<LogSoftMax<>>();
   gaussianModel.Predict(input, response);
 
   BOOST_REQUIRE_EQUAL(gaussianModel.Parameters().n_elem, 42);

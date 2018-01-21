@@ -39,10 +39,9 @@ namespace util {
  *     exception is thrown.
  * @param customErrorMessage Error message to append.
  */
-void RequireOnlyOnePassed(
-    const std::vector<std::string>& constraints,
-    const bool fatal = true,
-    const std::string& customErrorMessage = "");
+void RequireOnlyOnePassed(const std::vector<std::string>& constraints,
+                          const bool fatal = true,
+                          const std::string& customErrorMessage = "");
 
 /**
  * Require that at least one of the given parameters in the constraints set was
@@ -72,10 +71,9 @@ void RequireOnlyOnePassed(
  *     exception is thrown.
  * @param customErrorMessage Error message to append.
  */
-void RequireAtLeastOnePassed(
-    const std::vector<std::string>& constraints,
-    const bool fatal = true,
-    const std::string& customErrorMessage = "");
+void RequireAtLeastOnePassed(const std::vector<std::string>& constraints,
+                             const bool fatal = true,
+                             const std::string& customErrorMessage = "");
 
 /**
  * Require that a given parameter is in a set of allowable parameters.  This is

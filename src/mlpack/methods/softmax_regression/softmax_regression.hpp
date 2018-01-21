@@ -155,8 +155,7 @@ class SoftmaxRegression
    * @param dataset Matrix of data points to be classified.
    * @param probabilities Class probabilities for each point.
    */
-  void Classify(const arma::mat& dataset,
-                arma::mat& probabilities) const;
+  void Classify(const arma::mat& dataset, arma::mat& probabilities) const;
 
   /**
    * Computes accuracy of the learned model given the feature data and the
@@ -205,8 +204,9 @@ class SoftmaxRegression
 
   //! Gets the features size of the training data
   size_t FeatureSize() const
-  { return fitIntercept ? parameters.n_cols - 1 :
-                          parameters.n_cols; }
+  {
+    return fitIntercept ? parameters.n_cols - 1 : parameters.n_cols;
+  }
 
   /**
    * Serialize the SoftmaxRegression model.
@@ -214,10 +214,10 @@ class SoftmaxRegression
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(parameters);
-    ar & BOOST_SERIALIZATION_NVP(numClasses);
-    ar & BOOST_SERIALIZATION_NVP(lambda);
-    ar & BOOST_SERIALIZATION_NVP(fitIntercept);
+    ar& BOOST_SERIALIZATION_NVP(parameters);
+    ar& BOOST_SERIALIZATION_NVP(numClasses);
+    ar& BOOST_SERIALIZATION_NVP(lambda);
+    ar& BOOST_SERIALIZATION_NVP(fitIntercept);
   }
 
  private:

@@ -29,15 +29,16 @@ class RangeSearchStat
   /**
    * Initialize the statistic.
    */
-  RangeSearchStat() : lastDistance(0.0) { }
+  RangeSearchStat() : lastDistance(0.0) {}
 
   /**
    * Initialize the statistic given a tree node that this statistic belongs to.
    * In this case, we ignore the node.
    */
   template<typename TreeType>
-  RangeSearchStat(TreeType& /* node */) :
-      lastDistance(0.0) { }
+  RangeSearchStat(TreeType& /* node */) : lastDistance(0.0)
+  {
+  }
 
   //! Get the last distance evaluation.
   double LastDistance() const { return lastDistance; }
@@ -48,7 +49,7 @@ class RangeSearchStat
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(lastDistance);
+    ar& BOOST_SERIALIZATION_NVP(lastDistance);
   }
 
  private:

@@ -67,15 +67,15 @@ BOOST_AUTO_TEST_CASE(NaiveGuaranteeTest)
 
   // Find the 95%-tile threshold so that 95% of the queries should pass this
   // threshold.
-  size_t threshold = floor(numRounds *
-      (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
+  size_t threshold =
+      floor(numRounds * (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
   size_t numQueriesFail = 0;
   for (size_t i = 0; i < queryData.n_cols; i++)
     if (numSuccessRounds[i] < threshold)
       numQueriesFail++;
 
   Log::Warn << "RANN-RS: RANN guarantee fails on " << numQueriesFail
-      << " queries." << endl;
+            << " queries." << endl;
 
   // assert that at most 5% of the queries fall out of this threshold
   // 5% of 100 queries is 5.
@@ -126,15 +126,15 @@ BOOST_AUTO_TEST_CASE(SingleTreeSearch)
 
   // Find the 95%-tile threshold so that 95% of the queries should pass this
   // threshold.
-  size_t threshold = floor(numRounds *
-      (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
+  size_t threshold =
+      floor(numRounds * (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
   size_t numQueriesFail = 0;
   for (size_t i = 0; i < queryData.n_cols; i++)
     if (numSuccessRounds[i] < threshold)
       numQueriesFail++;
 
   Log::Warn << "RANN-TSS: RANN guarantee fails on " << numQueriesFail
-      << " queries." << endl;
+            << " queries." << endl;
 
   // Assert that at most 5% of the queries fall out of this threshold.
   // 5% of 100 queries is 5.
@@ -171,8 +171,8 @@ BOOST_AUTO_TEST_CASE(DualTreeSearch)
   size_t expectedRankErrorUB = 10;
 
   // Build query tree by hand.
-  typedef KDTree<EuclideanDistance, RAQueryStat<NearestNeighborSort>,
-      arma::mat> TreeType;
+  typedef KDTree<EuclideanDistance, RAQueryStat<NearestNeighborSort>, arma::mat>
+      TreeType;
   std::vector<size_t> oldFromNewQueries;
   TreeType queryTree(queryData, oldFromNewQueries);
 
@@ -195,15 +195,15 @@ BOOST_AUTO_TEST_CASE(DualTreeSearch)
 
   // Find the 95%-tile threshold so that 95% of the queries should pass this
   // threshold.
-  size_t threshold = floor(numRounds *
-      (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
+  size_t threshold =
+      floor(numRounds * (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
   size_t numQueriesFail = 0;
   for (size_t i = 0; i < queryData.n_cols; i++)
     if (numSuccessRounds[i] < threshold)
       numQueriesFail++;
 
   Log::Warn << "RANN-TSD: RANN guarantee fails on " << numQueriesFail
-      << " queries." << endl;
+            << " queries." << endl;
 
   // assert that at most 5% of the queries fall out of this threshold
   // 5% of 100 queries is 5.
@@ -285,8 +285,11 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  typedef RASearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      StandardCoverTree> RACoverTreeSearch;
+  typedef RASearch<NearestNeighborSort,
+                   EuclideanDistance,
+                   arma::mat,
+                   StandardCoverTree>
+      RACoverTreeSearch;
 
   RACoverTreeSearch tssRann(refData, false, true, 1.0, 0.95, false, false, 5);
 
@@ -315,15 +318,15 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
 
   // Find the 95%-tile threshold so that 95% of the queries should pass this
   // threshold.
-  size_t threshold = floor(numRounds *
-      (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
+  size_t threshold =
+      floor(numRounds * (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
   size_t numQueriesFail = 0;
   for (size_t i = 0; i < queryData.n_cols; i++)
     if (numSuccessRounds[i] < threshold)
       numQueriesFail++;
 
   Log::Warn << "RANN-TSS (cover tree): RANN guarantee fails on "
-      << numQueriesFail << " queries." << endl;
+            << numQueriesFail << " queries." << endl;
 
   // Assert that at most 5% of the queries fall out of this threshold.
   // 5% of 100 queries is 5.
@@ -346,10 +349,15 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  typedef StandardCoverTree<EuclideanDistance, RAQueryStat<NearestNeighborSort>,
-      arma::mat> TreeType;
-  typedef RASearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      StandardCoverTree> RACoverTreeSearch;
+  typedef StandardCoverTree<EuclideanDistance,
+                            RAQueryStat<NearestNeighborSort>,
+                            arma::mat>
+      TreeType;
+  typedef RASearch<NearestNeighborSort,
+                   EuclideanDistance,
+                   arma::mat,
+                   StandardCoverTree>
+      RACoverTreeSearch;
 
   TreeType refTree(refData);
   TreeType queryTree(queryData);
@@ -382,15 +390,15 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
 
   // Find the 95%-tile threshold so that 95% of the queries should pass this
   // threshold.
-  size_t threshold = floor(numRounds *
-      (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
+  size_t threshold =
+      floor(numRounds * (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
   size_t numQueriesFail = 0;
   for (size_t i = 0; i < queryData.n_cols; i++)
     if (numSuccessRounds[i] < threshold)
       numQueriesFail++;
 
   Log::Warn << "RANN-TSD (cover tree): RANN guarantee fails on "
-      << numQueriesFail << " queries." << endl;
+            << numQueriesFail << " queries." << endl;
 
   // assert that at most 5% of the queries fall out of this threshold
   // 5% of 100 queries is 5.
@@ -699,8 +707,8 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
 
       // Find the 95%-tile threshold so that 95% of the queries should pass this
       // threshold.
-      size_t threshold = floor(numRounds *
-          (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
+      size_t threshold =
+          floor(numRounds * (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
       size_t numQueriesFail = 0;
       for (size_t k = 0; k < queryData.n_cols; k++)
         if (numSuccessRounds[k] < threshold)

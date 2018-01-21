@@ -58,13 +58,17 @@ void AddRequiredCLIOptions()
 
   // These will register with CLI immediately.
   CLIOption<bool> help(false, "help", "Default help info.", "h", "bool");
-  CLIOption<string> info("", "info", "Get help on a specific module or option.",
-      "", "string");
-  CLIOption<bool> verbose(false, "verbose", "Display information messages and "
-      "the full list of parameters and timers at the end of execution.", "v",
+  CLIOption<string> info(
+      "", "info", "Get help on a specific module or option.", "", "string");
+  CLIOption<bool> verbose(
+      false,
+      "verbose",
+      "Display information messages and "
+      "the full list of parameters and timers at the end of execution.",
+      "v",
       "bool");
-  CLIOption<bool> version(false, "version", "Display the version of mlpack.",
-      "V", "bool");
+  CLIOption<bool> version(
+      false, "version", "Display the version of mlpack.", "V", "bool");
 }
 
 /**
@@ -83,10 +87,9 @@ BOOST_AUTO_TEST_CASE(TestCLIAdd)
   BOOST_REQUIRE(!CLI::HasParam("global/bool"));
 
   // Check that our aliasing works.
-  BOOST_REQUIRE_EQUAL(CLI::HasParam("global/bool"),
-      CLI::HasParam("a"));
+  BOOST_REQUIRE_EQUAL(CLI::HasParam("global/bool"), CLI::HasParam("a"));
   BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("global/bool"),
-      CLI::GetParam<bool>("a"));
+                      CLI::GetParam<bool>("a"));
 }
 
 /**
@@ -119,8 +122,7 @@ BOOST_AUTO_TEST_CASE(TestDuplicateFlag)
   argv[2] = "--test";
 
   // This should not throw an exception.
-  BOOST_REQUIRE_NO_THROW(
-      ParseCommandLine(argc, const_cast<char**>(argv)));
+  BOOST_REQUIRE_NO_THROW(ParseCommandLine(argc, const_cast<char**>(argv)));
 }
 
 /**
@@ -141,7 +143,7 @@ BOOST_AUTO_TEST_CASE(TestDuplicateParam)
   // This should throw an exception.
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(ParseCommandLine(argc, const_cast<char**>(argv)),
-      runtime_error);
+                      runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -221,9 +223,9 @@ BOOST_AUTO_TEST_CASE(TestVectorOption2)
   argv[5] = "--test2_vec";
   argv[6] = "4";
 
-//  Log::Fatal.ignoreInput = true;
+  //  Log::Fatal.ignoreInput = true;
   ParseCommandLine(argc, const_cast<char**>(argv));
-//  Log::Fatal.ignoreInput = false;
+  //  Log::Fatal.ignoreInput = false;
 
   BOOST_REQUIRE(CLI::HasParam("test2_vec"));
 
@@ -815,7 +817,7 @@ BOOST_AUTO_TEST_CASE(RequiredOptionTest)
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(ParseCommandLine(argc, const_cast<char**>(argv)),
-      runtime_error);
+                      runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -831,7 +833,7 @@ BOOST_AUTO_TEST_CASE(UnknownOptionTest)
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(ParseCommandLine(argc, const_cast<char**>(argv)),
-      runtime_error);
+                      runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -865,11 +867,11 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
   // Now check that we can get unmapped parameters.
   BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<arma::mat>("matrix"), "file1.csv");
   BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<arma::mat>("matrix2"),
-      "file2.csv");
+                      "file2.csv");
   BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<GaussianKernel>("kernel"),
-      "kernel.txt");
+                      "kernel.txt");
   BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<GaussianKernel>("kernel2"),
-      "kernel2.txt");
+                      "kernel2.txt");
 
   remove("kernel.txt");
 }
@@ -935,7 +937,7 @@ BOOST_AUTO_TEST_CASE(RequiredModelTest)
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(ParseCommandLine(argc, const_cast<char**>(argv)),
-      runtime_error);
+                      runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -1075,11 +1077,11 @@ BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
   DatasetInfo info(3);
   info.Type(0) = Datatype::categorical;
   info.Type(2) = Datatype::categorical;
-  info.MapString<size_t>("seven", 0); // This will have mapped value 0.
-  info.MapString<size_t>("cheese", 0); // This will have mapped value 1.
-  info.MapString<size_t>("hello", 0); // This will have mapped value 2.
+  info.MapString<size_t>("seven", 0);   // This will have mapped value 0.
+  info.MapString<size_t>("cheese", 0);  // This will have mapped value 1.
+  info.MapString<size_t>("hello", 0);   // This will have mapped value 2.
   info.MapString<size_t>("goodbye", 2); // This will have mapped value 0.
-  info.MapString<size_t>("moo", 2); // This will have mapped value 1.
+  info.MapString<size_t>("moo", 2);     // This will have mapped value 1.
 
   // Now set the dataset info.
   std::get<0>(CLI::GetRawParam<tuple<DatasetInfo, arma::mat>>("tuple")) = info;

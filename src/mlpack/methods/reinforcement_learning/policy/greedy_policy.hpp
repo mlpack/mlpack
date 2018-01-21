@@ -26,7 +26,7 @@ namespace rl {
  *
  * @tparam EnvironmentType The reinforcement learning task.
  */
-template <typename EnvironmentType>
+template<typename EnvironmentType>
 class GreedyPolicy
 {
  public:
@@ -44,11 +44,11 @@ class GreedyPolicy
    */
   GreedyPolicy(const double initialEpsilon,
                const size_t annealInterval,
-               const double minEpsilon) :
-      epsilon(initialEpsilon),
-      minEpsilon(minEpsilon),
+               const double minEpsilon)
+    : epsilon(initialEpsilon), minEpsilon(minEpsilon),
       delta((initialEpsilon - minEpsilon) / annealInterval)
-  { /* Nothing to do here. */ }
+  { /* Nothing to do here. */
+  }
 
   /**
    * Sample an action based on given action values.

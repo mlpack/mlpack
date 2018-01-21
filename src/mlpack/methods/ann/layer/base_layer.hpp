@@ -39,11 +39,9 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    class ActivationFunction = LogisticFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<class ActivationFunction = LogisticFunction,
+         typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
 class BaseLayer
 {
  public:
@@ -78,9 +76,8 @@ class BaseLayer
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g)
+  void
+  Backward(const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
   {
     arma::Mat<eT> derivative;
     ActivationFunction::Deriv(input, derivative);
@@ -127,46 +124,36 @@ class BaseLayer
 /**
  * Standard Sigmoid-Layer using the logistic activation function.
  */
-template <
-    class ActivationFunction = LogisticFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using SigmoidLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+template<class ActivationFunction = LogisticFunction,
+         typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
+using SigmoidLayer =
+    BaseLayer<ActivationFunction, InputDataType, OutputDataType>;
 
 /**
  * Standard Identity-Layer using the identity activation function.
  */
-template <
-    class ActivationFunction = IdentityFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using IdentityLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+template<class ActivationFunction = IdentityFunction,
+         typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
+using IdentityLayer =
+    BaseLayer<ActivationFunction, InputDataType, OutputDataType>;
 
 /**
  * Standard rectified linear unit non-linearity layer.
  */
-template <
-    class ActivationFunction = RectifierFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using ReLULayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+template<class ActivationFunction = RectifierFunction,
+         typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
+using ReLULayer = BaseLayer<ActivationFunction, InputDataType, OutputDataType>;
 
 /**
  * Standard hyperbolic tangent layer.
  */
-template <
-    class ActivationFunction = TanhFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using TanHLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+template<class ActivationFunction = TanhFunction,
+         typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
+using TanHLayer = BaseLayer<ActivationFunction, InputDataType, OutputDataType>;
 
 } // namespace ann
 } // namespace mlpack

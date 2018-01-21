@@ -25,22 +25,19 @@ class XTreeAuxiliaryInformation
 {
  public:
   //! Default constructor
-  XTreeAuxiliaryInformation() :
-    normalNodeMaxNumChildren(0),
-    splitHistory(0)
-  { };
+  XTreeAuxiliaryInformation() : normalNodeMaxNumChildren(0), splitHistory(0){};
 
   /**
    * Construct this with the specified node.
    *
    * @param node The node that stores this auxiliary information.
    */
-  XTreeAuxiliaryInformation(const TreeType* node) :
-      normalNodeMaxNumChildren(node->Parent() ?
-          node->Parent()->AuxiliaryInfo().NormalNodeMaxNumChildren() :
-          node->MaxNumChildren()),
-      splitHistory(node->Bound().Dim())
-  { };
+  XTreeAuxiliaryInformation(const TreeType* node)
+    : normalNodeMaxNumChildren(
+          node->Parent()
+              ? node->Parent()->AuxiliaryInfo().NormalNodeMaxNumChildren()
+              : node->MaxNumChildren()),
+      splitHistory(node->Bound().Dim()){};
 
   /**
    * Create an auxiliary information object by copying from another object.
@@ -53,10 +50,9 @@ class XTreeAuxiliaryInformation
    */
   XTreeAuxiliaryInformation(const XTreeAuxiliaryInformation& other,
                             TreeType* /* tree */ = NULL,
-                            bool /* deepCopy */ = true) :
-      normalNodeMaxNumChildren(other.NormalNodeMaxNumChildren()),
-      splitHistory(other.SplitHistory())
-  { };
+                            bool /* deepCopy */ = true)
+    : normalNodeMaxNumChildren(other.NormalNodeMaxNumChildren()),
+      splitHistory(other.SplitHistory()){};
 
   /**
    * Copy the auxiliary information object.
@@ -76,8 +72,8 @@ class XTreeAuxiliaryInformation
    *
    * @param other The object from which the information will be moved.
    */
-  XTreeAuxiliaryInformation(XTreeAuxiliaryInformation&& other) :
-      normalNodeMaxNumChildren(other.NormalNodeMaxNumChildren()),
+  XTreeAuxiliaryInformation(XTreeAuxiliaryInformation&& other)
+    : normalNodeMaxNumChildren(other.NormalNodeMaxNumChildren()),
       splitHistory(std::move(other.splitHistory))
   {
     other.normalNodeMaxNumChildren = 0;
@@ -126,10 +122,7 @@ class XTreeAuxiliaryInformation
    * @param node The node from which the point is being deleted.
    * @param localIndex The local index of the point being deleted.
    */
-  bool HandlePointDeletion(TreeType* , const size_t)
-  {
-    return false;
-  }
+  bool HandlePointDeletion(TreeType*, const size_t) { return false; }
 
   /**
    * Some tree types require to save some properties at the deletion process.
@@ -140,10 +133,7 @@ class XTreeAuxiliaryInformation
    * @param node The node from which the node is being deleted.
    * @param nodeIndex The local index of the node being deleted.
    */
-  bool HandleNodeRemoval(TreeType* , const size_t)
-  {
-    return false;
-  }
+  bool HandleNodeRemoval(TreeType*, const size_t) { return false; }
 
   /**
    * Some tree types require to propagate the information upward.
@@ -151,16 +141,12 @@ class XTreeAuxiliaryInformation
    * returned, the update will be propagated upward.
    * @param node The node in which the auxiliary information being update.
    */
-  bool UpdateAuxiliaryInfo(TreeType* )
-  {
-    return false;
-  }
+  bool UpdateAuxiliaryInfo(TreeType*) { return false; }
 
   /**
    * Nullify the auxiliary information in order to prevent an invalid free.
    */
-  void NullifyData()
-  { }
+  void NullifyData() {}
 
   /**
    * The X tree requires that the tree records it's "split history".  To make
@@ -177,10 +163,10 @@ class XTreeAuxiliaryInformation
         history[i] = false;
     }
 
-    SplitHistoryStruct(const SplitHistoryStruct& other) :
-        lastDimension(other.lastDimension),
-        history(other.history)
-    { }
+    SplitHistoryStruct(const SplitHistoryStruct& other)
+      : lastDimension(other.lastDimension), history(other.history)
+    {
+    }
 
     SplitHistoryStruct& operator=(const SplitHistoryStruct& other)
     {
@@ -189,9 +175,8 @@ class XTreeAuxiliaryInformation
       return *this;
     }
 
-    SplitHistoryStruct(SplitHistoryStruct&& other) :
-        lastDimension(other.lastDimension),
-        history(std::move(other.history))
+    SplitHistoryStruct(SplitHistoryStruct&& other)
+      : lastDimension(other.lastDimension), history(std::move(other.history))
     {
       other.lastDimension = 0;
     }
@@ -199,13 +184,13 @@ class XTreeAuxiliaryInformation
     template<typename Archive>
     void serialize(Archive& ar, const unsigned int /* version */)
     {
-      ar & BOOST_SERIALIZATION_NVP(lastDimension);
-      ar & BOOST_SERIALIZATION_NVP(history);
+      ar& BOOST_SERIALIZATION_NVP(lastDimension);
+      ar& BOOST_SERIALIZATION_NVP(history);
     }
   } SplitHistoryStruct;
 
  private:
-    //! The max number of child nodes a non-leaf normal node can have.
+  //! The max number of child nodes a non-leaf normal node can have.
   size_t normalNodeMaxNumChildren;
   //! A struct to store the "split history" for X trees.
   SplitHistoryStruct splitHistory;
@@ -226,12 +211,12 @@ class XTreeAuxiliaryInformation
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(normalNodeMaxNumChildren);
-    ar & BOOST_SERIALIZATION_NVP(splitHistory);
+    ar& BOOST_SERIALIZATION_NVP(normalNodeMaxNumChildren);
+    ar& BOOST_SERIALIZATION_NVP(splitHistory);
   }
 };
 
 } // namespace tree
 } // namespace mlpack
 
-#endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_X_TREE_AUXILIARY_INFORMATION_HPP
+#endif //  MLPACK_CORE_TREE_RECTANGLE_TREE_X_TREE_AUXILIARY_INFORMATION_HPP

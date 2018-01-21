@@ -24,7 +24,7 @@ class SampleInitialization
 {
  public:
   //! Empty constructor, required by the InitialPartitionPolicy type definition.
-  SampleInitialization() { }
+  SampleInitialization() {}
 
   /**
    * Initialize the centroids matrix by randomly sampling points from the data
@@ -35,9 +35,8 @@ class SampleInitialization
    * @param centroids Matrix to put initial centroids into.
    */
   template<typename MatType>
-  inline static void Cluster(const MatType& data,
-                             const size_t clusters,
-                             arma::mat& centroids)
+  inline static void
+  Cluster(const MatType& data, const size_t clusters, arma::mat& centroids)
   {
     centroids.set_size(data.n_rows, clusters);
     for (size_t i = 0; i < clusters; ++i)

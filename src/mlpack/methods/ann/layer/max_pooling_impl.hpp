@@ -26,23 +26,13 @@ MaxPooling<InputDataType, OutputDataType>::MaxPooling()
 }
 
 template<typename InputDataType, typename OutputDataType>
-MaxPooling<InputDataType, OutputDataType>::MaxPooling(
-    const size_t kW,
-    const size_t kH,
-    const size_t dW,
-    const size_t dH,
-    const bool floor) :
-    kW(kW),
-    kH(kH),
-    dW(dW),
-    dH(dH),
-    reset(false),
-    floor(floor),
-    offset(0),
-    inputWidth(0),
-    inputHeight(0),
-    outputWidth(0),
-    outputHeight(0),
+MaxPooling<InputDataType, OutputDataType>::MaxPooling(const size_t kW,
+                                                      const size_t kH,
+                                                      const size_t dW,
+                                                      const size_t dH,
+                                                      const bool floor)
+  : kW(kW), kH(kH), dW(dW), dH(dH), reset(false), floor(floor), offset(0),
+    inputWidth(0), inputHeight(0), outputWidth(0), outputHeight(0),
     deterministic(false)
 {
   // Nothing to do here.
@@ -51,26 +41,25 @@ MaxPooling<InputDataType, OutputDataType>::MaxPooling(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MaxPooling<InputDataType, OutputDataType>::Forward(
-  const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
   const size_t slices = input.n_elem / (inputWidth * inputHeight);
   inputTemp = arma::cube(input.memptr(), inputWidth, inputHeight, slices);
 
   if (floor)
   {
-    outputWidth = std::floor((inputWidth - (double) kW) / (double) dW + 1);
-    outputHeight = std::floor((inputHeight - (double) kH) / (double) dH + 1);
+    outputWidth = std::floor((inputWidth - (double)kW) / (double)dW + 1);
+    outputHeight = std::floor((inputHeight - (double)kH) / (double)dH + 1);
     offset = 0;
   }
   else
   {
-    outputWidth = std::ceil((inputWidth - (double) kW) / (double) dW + 1);
-    outputHeight = std::ceil((inputHeight - (double) kH) / (double) dH + 1);
+    outputWidth = std::ceil((inputWidth - (double)kW) / (double)dW + 1);
+    outputHeight = std::ceil((inputHeight - (double)kH) / (double)dH + 1);
     offset = 1;
   }
 
-  outputTemp = arma::zeros<arma::Cube<eT> >(outputWidth, outputHeight,
-      slices);
+  outputTemp = arma::zeros<arma::Cube<eT>>(outputWidth, outputHeight, slices);
 
   if (!deterministic)
   {
@@ -80,8 +69,7 @@ void MaxPooling<InputDataType, OutputDataType>::Forward(
   if (!reset)
   {
     size_t elements = inputWidth * inputHeight;
-    indicesCol = arma::linspace<arma::Col<size_t> >(0, (elements - 1),
-        elements);
+    indicesCol = arma::linspace<arma::Col<size_t>>(0, (elements - 1), elements);
 
     indices = arma::Mat<size_t>(indicesCol.memptr(), inputWidth, inputHeight);
 
@@ -92,13 +80,14 @@ void MaxPooling<InputDataType, OutputDataType>::Forward(
   {
     if (!deterministic)
     {
-      PoolingOperation(inputTemp.slice(s), outputTemp.slice(s),
-        poolingIndices.back().slice(s));
+      PoolingOperation(inputTemp.slice(s),
+                       outputTemp.slice(s),
+                       poolingIndices.back().slice(s));
     }
     else
     {
-      PoolingOperation(inputTemp.slice(s), outputTemp.slice(s),
-          inputTemp.slice(s));
+      PoolingOperation(
+          inputTemp.slice(s), outputTemp.slice(s), inputTemp.slice(s));
     }
   }
 
@@ -114,16 +103,16 @@ template<typename eT>
 void MaxPooling<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  arma::cube mappedError = arma::cube(gy.memptr(), outputWidth,
-      outputHeight, outSize);
+  arma::cube mappedError =
+      arma::cube(gy.memptr(), outputWidth, outputHeight, outSize);
 
-  gTemp = arma::zeros<arma::cube>(inputTemp.n_rows,
-      inputTemp.n_cols, inputTemp.n_slices);
+  gTemp = arma::zeros<arma::cube>(
+      inputTemp.n_rows, inputTemp.n_cols, inputTemp.n_slices);
 
   for (size_t s = 0; s < mappedError.n_slices; s++)
   {
-    Unpooling(mappedError.slice(s), gTemp.slice(s),
-        poolingIndices.back().slice(s));
+    Unpooling(
+        mappedError.slice(s), gTemp.slice(s), poolingIndices.back().slice(s));
   }
 
   poolingIndices.pop_back();
@@ -134,13 +123,12 @@ void MaxPooling<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MaxPooling<InputDataType, OutputDataType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(kW);
-  ar & BOOST_SERIALIZATION_NVP(kH);
-  ar & BOOST_SERIALIZATION_NVP(dW);
-  ar & BOOST_SERIALIZATION_NVP(dH);
+  ar& BOOST_SERIALIZATION_NVP(kW);
+  ar& BOOST_SERIALIZATION_NVP(kH);
+  ar& BOOST_SERIALIZATION_NVP(dW);
+  ar& BOOST_SERIALIZATION_NVP(dH);
 }
 
 } // namespace ann

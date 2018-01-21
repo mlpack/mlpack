@@ -36,11 +36,10 @@ template<typename FitnessFunction = GiniGain,
          typename DimensionSelectionType = AllDimensionSelect,
          typename ElemType = double,
          bool NoRecursion = false>
-class DecisionTree :
-    public NumericSplitType<FitnessFunction>::template
-        AuxiliarySplitInfo<ElemType>,
-    public CategoricalSplitType<FitnessFunction>::template
-        AuxiliarySplitInfo<ElemType>
+class DecisionTree : public NumericSplitType<FitnessFunction>::
+                         template AuxiliarySplitInfo<ElemType>,
+                     public CategoricalSplitType<FitnessFunction>::
+                         template AuxiliarySplitInfo<ElemType>
 {
  public:
   //! Allow access to the numeric split type.
@@ -100,15 +99,15 @@ class DecisionTree :
    * @param minimumLeafSize Minimum number of points in each leaf node.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
-  DecisionTree(MatType&& data,
-               const data::DatasetInfo& datasetInfo,
-               LabelsType&& labels,
-               const size_t numClasses,
-               WeightsType&& weights,
-               const size_t minimumLeafSize = 10,
-               const std::enable_if_t<arma::is_arma_type<
-                   typename std::remove_reference<WeightsType>::type>::value>*
-                    = 0);
+  DecisionTree(
+      MatType&& data,
+      const data::DatasetInfo& datasetInfo,
+      LabelsType&& labels,
+      const size_t numClasses,
+      WeightsType&& weights,
+      const size_t minimumLeafSize = 10,
+      const std::enable_if_t<arma::is_arma_type<
+          typename std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
    * Construct the decision tree on the given data and labels with weights,
@@ -123,15 +122,14 @@ class DecisionTree :
    * @param minimumLeafSize Minimum number of points in each leaf node.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
-  DecisionTree(MatType&& data,
-               LabelsType&& labels,
-               const size_t numClasses,
-               WeightsType&& weights,
-               const size_t minimumLeafSize = 10,
-               const std::enable_if_t<arma::is_arma_type<
-                   typename std::remove_reference<WeightsType>::type>::value>*
-                    = 0);
-
+  DecisionTree(
+      MatType&& data,
+      LabelsType&& labels,
+      const size_t numClasses,
+      WeightsType&& weights,
+      const size_t minimumLeafSize = 10,
+      const std::enable_if_t<arma::is_arma_type<
+          typename std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
    * Construct a decision tree without training it.  It will be a leaf node with
@@ -229,14 +227,15 @@ class DecisionTree :
    * @param minimumLeafSize Minimum number of points in each leaf node.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
-  void Train(MatType&& data,
-             const data::DatasetInfo& datasetInfo,
-             LabelsType&& labels,
-             const size_t numClasses,
-             WeightsType&& weights,
-             const size_t minimumLeafSize = 10,
-             const std::enable_if_t<arma::is_arma_type<typename
-                 std::remove_reference<WeightsType>::type>::value>* = 0);
+  void
+  Train(MatType&& data,
+        const data::DatasetInfo& datasetInfo,
+        LabelsType&& labels,
+        const size_t numClasses,
+        WeightsType&& weights,
+        const size_t minimumLeafSize = 10,
+        const std::enable_if_t<arma::is_arma_type<
+            typename std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
    * Train the decision tree on the given weighted data, assuming that all
@@ -251,13 +250,14 @@ class DecisionTree :
    * @param minimumLeafSize Minimum number of points in each leaf node.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
-  void Train(MatType&& data,
-             LabelsType&& labels,
-             const size_t numClasses,
-             WeightsType&& weights,
-             const size_t minimumLeafSize = 10,
-             const std::enable_if_t<arma::is_arma_type<typename
-                 std::remove_reference<WeightsType>::type>::value>* = 0);
+  void
+  Train(MatType&& data,
+        LabelsType&& labels,
+        const size_t numClasses,
+        WeightsType&& weights,
+        const size_t minimumLeafSize = 10,
+        const std::enable_if_t<arma::is_arma_type<
+            typename std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
    * Classify the given point, using the entire tree.  The predicted label is
@@ -290,8 +290,7 @@ class DecisionTree :
    * @param predictions This will be filled with predictions for each point.
    */
   template<typename MatType>
-  void Classify(const MatType& data,
-                arma::Row<size_t>& predictions) const;
+  void Classify(const MatType& data, arma::Row<size_t>& predictions) const;
 
   /**
    * Classify the given points and also return estimates of the probabilities

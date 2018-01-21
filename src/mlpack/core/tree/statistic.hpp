@@ -24,8 +24,8 @@ namespace tree {
 class EmptyStatistic
 {
  public:
-  EmptyStatistic() { }
-  ~EmptyStatistic() { }
+  EmptyStatistic() {}
+  ~EmptyStatistic() {}
 
   /**
    * This constructor is called when a node is finished being created.  The
@@ -35,14 +35,17 @@ class EmptyStatistic
    * @param node Node which this corresponds to.
    */
   template<typename TreeType>
-  EmptyStatistic(TreeType& /* node */) { }
+  EmptyStatistic(TreeType& /* node */)
+  {
+  }
 
   /**
    * Serialize the statistic (there's nothing to be saved).
    */
   template<typename Archive>
   void serialize(Archive& /* ar */, const unsigned int /* version */)
-  { }
+  {
+  }
 };
 
 } // namespace tree

@@ -16,18 +16,14 @@
 namespace mlpack {
 namespace sparse_coding {
 
-SparseCoding::SparseCoding(
-    const size_t atoms,
-    const double lambda1,
-    const double lambda2,
-    const size_t maxIterations,
-    const double objTolerance,
-    const double newtonTolerance) :
-    atoms(atoms),
-    lambda1(lambda1),
-    lambda2(lambda2),
-    maxIterations(maxIterations),
-    objTolerance(objTolerance),
+SparseCoding::SparseCoding(const size_t atoms,
+                           const double lambda1,
+                           const double lambda2,
+                           const size_t maxIterations,
+                           const double objTolerance,
+                           const double newtonTolerance)
+  : atoms(atoms), lambda1(lambda1), lambda2(lambda2),
+    maxIterations(maxIterations), objTolerance(objTolerance),
     newtonTolerance(newtonTolerance)
 {
   // Nothing to do.
@@ -69,7 +65,7 @@ double SparseCoding::OptimizeDictionary(const arma::mat& data,
   if (adjacencies.n_elem > 0)
   {
     // This gets the column index.  Intentional integer division.
-    size_t curPointInd = (size_t) (adjacencies(0) / atoms);
+    size_t curPointInd = (size_t)(adjacencies(0) / atoms);
 
     size_t nextColIndex = (curPointInd + 1) * atoms;
     for (size_t l = 1; l < adjacencies.n_elem; ++l)
@@ -78,7 +74,7 @@ double SparseCoding::OptimizeDictionary(const arma::mat& data,
       // number accordingly.
       if (adjacencies(l) >= nextColIndex)
       {
-        curPointInd = (size_t) (adjacencies(l) / atoms);
+        curPointInd = (size_t)(adjacencies(l) / atoms);
         nextColIndex = (curPointInd + 1) * atoms;
       }
 
@@ -108,7 +104,7 @@ double SparseCoding::OptimizeDictionary(const arma::mat& data,
   if (nInactiveAtoms > 0)
   {
     Log::Warn << "There are " << nInactiveAtoms
-        << " inactive atoms. They will be re-initialized randomly.\n";
+              << " inactive atoms. They will be re-initialized randomly.\n";
   }
 
   Log::Debug << "Solving Dual via Newton's Method.\n";
@@ -176,9 +172,11 @@ double SparseCoding::OptimizeDictionary(const arma::mat& data,
       // Calculate objective.
       double sumDualVars = arma::sum(dualVars);
       double fOld = -(-trace(trans(codesXT) * matAInvZXT) - sumDualVars);
-      double fNew = -(-trace(trans(codesXT) * solve(codesZT +
-          diagmat(dualVars + alpha * searchDirection), codesXT)) -
-          (sumDualVars + alpha * arma::sum(searchDirection)));
+      double fNew = -(
+          -trace(trans(codesXT)
+                 * solve(codesZT + diagmat(dualVars + alpha * searchDirection),
+                         codesXT))
+          - (sumDualVars + alpha * arma::sum(searchDirection)));
 
       if (fNew <= fOld + alpha * sufficientDecrease)
       {
@@ -194,8 +192,8 @@ double SparseCoding::OptimizeDictionary(const arma::mat& data,
     dualVars += searchDirection;
     normGradient = arma::norm(gradient, 2);
     Log::Debug << "Newton Method iteration " << t << ":" << std::endl;
-    Log::Debug << "  Gradient norm: " << std::scientific << normGradient
-        << "." << std::endl;
+    Log::Debug << "  Gradient norm: " << std::scientific << normGradient << "."
+               << std::endl;
     Log::Debug << "  Improvement: " << std::scientific << improvement << ".\n";
 
     if (normGradient < newtonTolerance)
@@ -209,8 +207,8 @@ double SparseCoding::OptimizeDictionary(const arma::mat& data,
   }
   else
   {
-    arma::mat activeDictionary = trans(solve(codesZT +
-        diagmat(dualVars), codesXT));
+    arma::mat activeDictionary =
+        trans(solve(codesZT + diagmat(dualVars), codesXT));
 
     // Update all atoms.
     size_t currentInactiveIndex = 0;
@@ -219,9 +217,9 @@ double SparseCoding::OptimizeDictionary(const arma::mat& data,
       if (inactiveAtoms[currentInactiveIndex] == i)
       {
         // This atom is inactive.  Reinitialize it randomly.
-        dictionary.col(i) = (data.col(math::RandInt(data.n_cols)) +
-                             data.col(math::RandInt(data.n_cols)) +
-                             data.col(math::RandInt(data.n_cols)));
+        dictionary.col(i) = (data.col(math::RandInt(data.n_cols))
+                             + data.col(math::RandInt(data.n_cols))
+                             + data.col(math::RandInt(data.n_cols)));
 
         dictionary.col(i) /= arma::norm(dictionary.col(i), 2);
 
@@ -248,15 +246,15 @@ void SparseCoding::ProjectDictionary()
     if (atomNorm > 1)
     {
       Log::Info << "Norm of atom " << j << " exceeds 1 (" << std::scientific
-          << atomNorm << ").  Shrinking...\n";
+                << atomNorm << ").  Shrinking...\n";
       dictionary.col(j) /= atomNorm;
     }
   }
 }
 
 // Compute the objective function.
-double SparseCoding::Objective(const arma::mat& data, const arma::mat& codes)
-    const
+double SparseCoding::Objective(const arma::mat& data,
+                               const arma::mat& codes) const
 {
   double l11NormZ = arma::sum(arma::sum(arma::abs(codes)));
   double froNormResidual = arma::norm(data - (dictionary * codes), "fro");
@@ -264,8 +262,9 @@ double SparseCoding::Objective(const arma::mat& data, const arma::mat& codes)
   if (lambda2 > 0)
   {
     double froNormZ = arma::norm(codes, "fro");
-    return 0.5 * (std::pow(froNormResidual, 2.0) + (lambda2 *
-        std::pow(froNormZ, 2.0))) + (lambda1 * l11NormZ);
+    return 0.5 * (std::pow(froNormResidual, 2.0)
+                  + (lambda2 * std::pow(froNormZ, 2.0)))
+           + (lambda1 * l11NormZ);
   }
   else // It can be simpler.
   {

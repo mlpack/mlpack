@@ -26,31 +26,34 @@ template<typename MetricType,
          typename MatType,
          template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitMetricType, typename SplitMatType>
-             class SplitType>
+         class SplitType>
 template<typename RuleType, bool Defeatist>
 SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-SpillDualTreeTraverser<RuleType, Defeatist>::SpillDualTreeTraverser(
-    RuleType& rule) :
-    rule(rule),
-    numPrunes(0),
-    numVisited(0),
-    numScores(0),
-    numBaseCases(0)
-{ /* Nothing to do. */ }
+    SpillDualTreeTraverser<RuleType, Defeatist>::SpillDualTreeTraverser(
+        RuleType& rule)
+  : rule(rule), numPrunes(0), numVisited(0), numScores(0), numBaseCases(0)
+{ /* Nothing to do. */
+}
 
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename HyperplaneMetricType> class HyperplaneType,
          template<typename SplitMetricType, typename SplitMatType>
-             class SplitType>
+         class SplitType>
 template<typename RuleType, bool Defeatist>
 void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
-    SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
-        queryNode,
-    SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
-        referenceNode)
+    SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
+        SpillTree<MetricType,
+                  StatisticType,
+                  MatType,
+                  HyperplaneType,
+                  SplitType>& queryNode,
+        SpillTree<MetricType,
+                  StatisticType,
+                  MatType,
+                  HyperplaneType,
+                  SplitType>& referenceNode)
 {
   // Increment the visit counter.
   ++numVisited;
@@ -81,9 +84,10 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
       numBaseCases += refEnd;
     }
   }
-  else if (((!queryNode.IsLeaf()) && referenceNode.IsLeaf()) ||
-           (queryNode.NumDescendants() > 3 * referenceNode.NumDescendants() &&
-            !queryNode.IsLeaf() && !referenceNode.IsLeaf()))
+  else if (((!queryNode.IsLeaf()) && referenceNode.IsLeaf())
+           || (queryNode.NumDescendants() > 3 * referenceNode.NumDescendants()
+               && !queryNode.IsLeaf()
+               && !referenceNode.IsLeaf()))
   {
     // We have to recurse down the query node.  In this case the recursion order
     // does not matter.
@@ -158,8 +162,8 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
         Traverse(queryNode, *referenceNode.Left());
 
         // Is it still valid to recurse to the right?
-        rightScore = rule.Rescore(queryNode, *referenceNode.Right(),
-            rightScore);
+        rightScore =
+            rule.Rescore(queryNode, *referenceNode.Right(), rightScore);
 
         if (rightScore != DBL_MAX)
         {
@@ -201,8 +205,8 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
           rule.TraversalInfo() = leftInfo;
           Traverse(queryNode, *referenceNode.Left());
 
-          rightScore = rule.Rescore(queryNode, *referenceNode.Right(),
-              rightScore);
+          rightScore =
+              rule.Rescore(queryNode, *referenceNode.Right(), rightScore);
 
           if (rightScore != DBL_MAX)
           {
@@ -271,8 +275,8 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
         Traverse(*queryNode.Left(), *referenceNode.Left());
 
         // Is it still valid to recurse to the right?
-        rightScore = rule.Rescore(*queryNode.Left(), *referenceNode.Right(),
-            rightScore);
+        rightScore =
+            rule.Rescore(*queryNode.Left(), *referenceNode.Right(), rightScore);
 
         if (rightScore != DBL_MAX)
         {
@@ -289,8 +293,8 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
         Traverse(*queryNode.Left(), *referenceNode.Right());
 
         // Is it still valid to recurse to the left?
-        leftScore = rule.Rescore(*queryNode.Left(), *referenceNode.Left(),
-            leftScore);
+        leftScore =
+            rule.Rescore(*queryNode.Left(), *referenceNode.Left(), leftScore);
 
         if (leftScore != DBL_MAX)
         {
@@ -316,8 +320,8 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
           Traverse(*queryNode.Left(), *referenceNode.Left());
 
           // Is it still valid to recurse to the right?
-          rightScore = rule.Rescore(*queryNode.Left(), *referenceNode.Right(),
-              rightScore);
+          rightScore = rule.Rescore(
+              *queryNode.Left(), *referenceNode.Right(), rightScore);
 
           if (rightScore != DBL_MAX)
           {
@@ -349,8 +353,8 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
         Traverse(*queryNode.Right(), *referenceNode.Left());
 
         // Is it still valid to recurse to the right?
-        rightScore = rule.Rescore(*queryNode.Right(), *referenceNode.Right(),
-            rightScore);
+        rightScore = rule.Rescore(
+            *queryNode.Right(), *referenceNode.Right(), rightScore);
 
         if (rightScore != DBL_MAX)
         {
@@ -367,8 +371,8 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
         Traverse(*queryNode.Right(), *referenceNode.Right());
 
         // Is it still valid to recurse to the left?
-        leftScore = rule.Rescore(*queryNode.Right(), *referenceNode.Left(),
-            leftScore);
+        leftScore =
+            rule.Rescore(*queryNode.Right(), *referenceNode.Left(), leftScore);
 
         if (leftScore != DBL_MAX)
         {
@@ -394,8 +398,8 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
           Traverse(*queryNode.Right(), *referenceNode.Left());
 
           // Is it still valid to recurse to the right?
-          rightScore = rule.Rescore(*queryNode.Right(), *referenceNode.Right(),
-              rightScore);
+          rightScore = rule.Rescore(
+              *queryNode.Right(), *referenceNode.Right(), rightScore);
 
           if (rightScore != DBL_MAX)
           {

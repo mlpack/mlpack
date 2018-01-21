@@ -25,33 +25,26 @@ namespace bound {
  * Empty constructor.
  */
 template<typename MetricType, typename ElemType>
-inline CellBound<MetricType, ElemType>::CellBound() :
-    dim(0),
-    bounds(NULL),
-    loBound(arma::Mat<ElemType>()),
-    hiBound(arma::Mat<ElemType>()),
-    numBounds(0),
+inline CellBound<MetricType, ElemType>::CellBound()
+  : dim(0), bounds(NULL), loBound(arma::Mat<ElemType>()),
+    hiBound(arma::Mat<ElemType>()), numBounds(0),
     loAddress(arma::Col<AddressElemType>()),
-    hiAddress(arma::Col<AddressElemType>()),
-    minWidth(0)
-{ /* Nothing to do. */ }
+    hiAddress(arma::Col<AddressElemType>()), minWidth(0)
+{ /* Nothing to do. */
+}
 
 /**
  * Initializes to specified dimensionality with each dimension the empty
  * set.
  */
 template<typename MetricType, typename ElemType>
-inline CellBound<MetricType, ElemType>::CellBound(const size_t dimension) :
-    dim(dimension),
-    bounds(new math::RangeType<ElemType>[dim]),
+inline CellBound<MetricType, ElemType>::CellBound(const size_t dimension)
+  : dim(dimension), bounds(new math::RangeType<ElemType>[dim]),
     loBound(arma::Mat<ElemType>(dim, maxNumBounds)),
-    hiBound(arma::Mat<ElemType>(dim, maxNumBounds)),
-    numBounds(0),
-    loAddress(dim),
-    hiAddress(dim),
-    minWidth(0)
+    hiBound(arma::Mat<ElemType>(dim, maxNumBounds)), numBounds(0),
+    loAddress(dim), hiAddress(dim), minWidth(0)
 {
-  for (size_t k = 0; k < dim ; k++)
+  for (size_t k = 0; k < dim; k++)
   {
     loAddress[k] = std::numeric_limits<AddressElemType>::max();
     hiAddress[k] = 0;
@@ -63,14 +56,10 @@ inline CellBound<MetricType, ElemType>::CellBound(const size_t dimension) :
  */
 template<typename MetricType, typename ElemType>
 inline CellBound<MetricType, ElemType>::CellBound(
-    const CellBound<MetricType, ElemType>& other) :
-    dim(other.Dim()),
-    bounds(new math::RangeType<ElemType>[dim]),
-    loBound(other.loBound),
-    hiBound(other.hiBound),
-    numBounds(other.numBounds),
-    loAddress(other.loAddress),
-    hiAddress(other.hiAddress),
+    const CellBound<MetricType, ElemType>& other)
+  : dim(other.Dim()), bounds(new math::RangeType<ElemType>[dim]),
+    loBound(other.loBound), hiBound(other.hiBound), numBounds(other.numBounds),
+    loAddress(other.loAddress), hiAddress(other.hiAddress),
     minWidth(other.MinWidth())
 {
   // Copy other bounds over.
@@ -82,10 +71,8 @@ inline CellBound<MetricType, ElemType>::CellBound(
  * Same as the copy constructor.
  */
 template<typename MetricType, typename ElemType>
-inline CellBound<
-    MetricType,
-    ElemType>& CellBound<MetricType, ElemType>::operator=(
-    const CellBound<MetricType, ElemType>& other)
+inline CellBound<MetricType, ElemType>& CellBound<MetricType, ElemType>::
+operator=(const CellBound<MetricType, ElemType>& other)
 {
   if (dim != other.Dim())
   {
@@ -115,15 +102,11 @@ inline CellBound<
  */
 template<typename MetricType, typename ElemType>
 inline CellBound<MetricType, ElemType>::CellBound(
-    CellBound<MetricType, ElemType>&& other) :
-    dim(other.dim),
-    bounds(other.bounds),
-    loBound(std::move(other.loBound)),
-    hiBound(std::move(other.hiBound)),
-    numBounds(std::move(other.numBounds)),
+    CellBound<MetricType, ElemType>&& other)
+  : dim(other.dim), bounds(other.bounds), loBound(std::move(other.loBound)),
+    hiBound(std::move(other.hiBound)), numBounds(std::move(other.numBounds)),
     loAddress(std::move(other.loAddress)),
-    hiAddress(std::move(other.hiAddress)),
-    minWidth(other.minWidth)
+    hiAddress(std::move(other.hiAddress)), minWidth(other.minWidth)
 {
   // Fix the other bound.
   other.dim = 0;
@@ -164,8 +147,8 @@ inline void CellBound<MetricType, ElemType>::Clear()
  * @param centroid Vector which the centroid will be written to.
  */
 template<typename MetricType, typename ElemType>
-inline void CellBound<MetricType, ElemType>::Center(
-    arma::Col<ElemType>& center) const
+inline void
+CellBound<MetricType, ElemType>::Center(arma::Col<ElemType>& center) const
 {
   // Set size correctly if necessary.
   if (!(center.n_elem == dim))
@@ -219,7 +202,6 @@ void CellBound<MetricType, ElemType>::AddBound(
   numBounds++;
 }
 
-
 template<typename MetricType, typename ElemType>
 template<typename MatType>
 void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits,
@@ -242,19 +224,19 @@ void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits,
 
     // This hyperrectangle is not contained entirely in the bound.
     // So, the number of hyperrectangles should be increased.
-    if (tmpHiAddress[row] & ((AddressElemType) 1 << bit))
+    if (tmpHiAddress[row] & ((AddressElemType)1 << bit))
       numCorners++;
 
     // We ran out of the limit of hyperrectangles. In that case we enlare
     // the last hyperrectangle.
     if (numCorners >= maxNumBounds / 2)
-      tmpHiAddress[row] |= ((AddressElemType) 1 << bit);
+      tmpHiAddress[row] |= ((AddressElemType)1 << bit);
   }
 
   size_t pos = order * tmpHiAddress.n_elem - 1;
 
   // Find the last hyperrectangle and add it to the bound.
-  for ( ; pos > numEqualBits; pos--)
+  for (; pos > numEqualBits; pos--)
   {
     size_t row = pos / order;
     size_t bit = order - 1 - pos % order;
@@ -263,7 +245,7 @@ void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits,
     // All last bits of tmpLoAddress (after pos) are equal to 0.
     // Thus, tmpHiAddress corresponds to the high corner of the enlarged
     // rectangle and tmpLoAddress corresponds to the lower corner.
-    if (!(tmpHiAddress[row] & ((AddressElemType) 1 << bit)))
+    if (!(tmpHiAddress[row] & ((AddressElemType)1 << bit)))
     {
       addr::AddressToPoint(loCorner, tmpLoAddress);
       addr::AddressToPoint(hiCorner, tmpHiAddress);
@@ -272,7 +254,7 @@ void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits,
       break;
     }
     // Nullify the bit that corresponds to this step.
-    tmpLoAddress[row] &= ~((AddressElemType) 1 << bit);
+    tmpLoAddress[row] &= ~((AddressElemType)1 << bit);
   }
 
   // Add the enlarged rectangle if we have not done that.
@@ -284,28 +266,28 @@ void CellBound<MetricType, ElemType>::InitHighBound(size_t numEqualBits,
     AddBound(loCorner, hiCorner, data);
   }
 
-  for ( ; pos > numEqualBits; pos--)
+  for (; pos > numEqualBits; pos--)
   {
     size_t row = pos / order;
     size_t bit = order - 1 - pos % order;
 
     // The lower bound should correspond to this step.
-    tmpLoAddress[row] &= ~((AddressElemType) 1 << bit);
+    tmpLoAddress[row] &= ~((AddressElemType)1 << bit);
 
-    if (tmpHiAddress[row] & ((AddressElemType) 1 << bit))
+    if (tmpHiAddress[row] & ((AddressElemType)1 << bit))
     {
       // This hyperrectangle is contained entirely in the bound and do not
       // overlap with other hyperrectangles since loAddress is less than
       // tmpLoAddress and tmpHiAddress is less that the lower addresses
       // of hyperrectangles that we have added previously.
-      tmpHiAddress[row] ^= (AddressElemType) 1 << bit;
+      tmpHiAddress[row] ^= (AddressElemType)1 << bit;
       addr::AddressToPoint(loCorner, tmpLoAddress);
       addr::AddressToPoint(hiCorner, tmpHiAddress);
 
       AddBound(loCorner, hiCorner, data);
     }
     // The high bound should correspond to this step.
-    tmpHiAddress[row] |= ((AddressElemType) 1 << bit);
+    tmpHiAddress[row] |= ((AddressElemType)1 << bit);
   }
 }
 
@@ -329,19 +311,19 @@ void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits,
 
     // This hyperrectangle is not contained entirely in the bound.
     // So, the number of hyperrectangles should be increased.
-    if (!(tmpLoAddress[row] & ((AddressElemType) 1 << bit)))
+    if (!(tmpLoAddress[row] & ((AddressElemType)1 << bit)))
       numCorners++;
 
     // We ran out of the limit of hyperrectangles. In that case we enlare
     // the last hyperrectangle.
     if (numCorners >= maxNumBounds - numBounds)
-      tmpLoAddress[row] &= ~((AddressElemType) 1 << bit);
+      tmpLoAddress[row] &= ~((AddressElemType)1 << bit);
   }
 
   size_t pos = order * tmpHiAddress.n_elem - 1;
 
   // Find the last hyperrectangle and add it to the bound.
-  for ( ; pos > numEqualBits; pos--)
+  for (; pos > numEqualBits; pos--)
   {
     size_t row = pos / order;
     size_t bit = order - 1 - pos % order;
@@ -350,7 +332,7 @@ void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits,
     // All last bits of tmpLoAddress (after pos) are equal to 0.
     // Thus, tmpHiAddress corresponds to the high corner of the enlarged
     // rectangle and tmpLoAddress corresponds to the lower corner.
-    if (tmpLoAddress[row] & ((AddressElemType) 1 << bit))
+    if (tmpLoAddress[row] & ((AddressElemType)1 << bit))
     {
       addr::AddressToPoint(loCorner, tmpLoAddress);
       addr::AddressToPoint(hiCorner, tmpHiAddress);
@@ -360,7 +342,7 @@ void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits,
     }
     // Enlarge the hyperrectangle at this step since it is contained
     // entirely in the bound.
-    tmpHiAddress[row] |= ((AddressElemType) 1 << bit);
+    tmpHiAddress[row] |= ((AddressElemType)1 << bit);
   }
 
   // Add the enlarged rectangle if we have not done that.
@@ -372,21 +354,21 @@ void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits,
     AddBound(loCorner, hiCorner, data);
   }
 
-  for ( ; pos > numEqualBits; pos--)
+  for (; pos > numEqualBits; pos--)
   {
     size_t row = pos / order;
     size_t bit = order - 1 - pos % order;
 
     // The high bound should correspond to this step.
-    tmpHiAddress[row] |= ((AddressElemType) 1 << bit);
+    tmpHiAddress[row] |= ((AddressElemType)1 << bit);
 
-    if (!(tmpLoAddress[row] & ((AddressElemType) 1 << bit)))
+    if (!(tmpLoAddress[row] & ((AddressElemType)1 << bit)))
     {
       // This hyperrectangle is contained entirely in the bound and do not
       // overlap with other hyperrectangles since hiAddress is greater than
       // tmpHiAddress and tmpLoAddress is greater that the high addresses
       // of hyperrectangles that we have added previously.
-      tmpLoAddress[row] ^= (AddressElemType) 1 << bit;
+      tmpLoAddress[row] ^= (AddressElemType)1 << bit;
 
       addr::AddressToPoint(loCorner, tmpLoAddress);
       addr::AddressToPoint(hiCorner, tmpHiAddress);
@@ -395,7 +377,7 @@ void CellBound<MetricType, ElemType>::InitLowerBound(size_t numEqualBits,
     }
 
     // The lower bound should correspond to this step.
-    tmpLoAddress[row] &= ~((AddressElemType) 1 << bit);
+    tmpLoAddress[row] &= ~((AddressElemType)1 << bit);
   }
 }
 
@@ -408,7 +390,7 @@ void CellBound<MetricType, ElemType>::UpdateAddressBounds(const MatType& data)
   // Calculate the number of equal leading bits of the lower address and
   // the high address.
   size_t row = 0;
-  for ( ; row < hiAddress.n_elem; row++)
+  for (; row < hiAddress.n_elem; row++)
     if (loAddress[row] != hiAddress[row])
       break;
 
@@ -426,9 +408,9 @@ void CellBound<MetricType, ElemType>::UpdateAddressBounds(const MatType& data)
   }
 
   size_t bit = 0;
-  for ( ; bit < order; bit++)
-    if ((loAddress[row] & ((AddressElemType) 1 << (order - 1 - bit))) !=
-        (hiAddress[row] & ((AddressElemType) 1 << (order - 1 - bit))))
+  for (; bit < order; bit++)
+    if ((loAddress[row] & ((AddressElemType)1 << (order - 1 - bit)))
+        != (hiAddress[row] & ((AddressElemType)1 << (order - 1 - bit))))
       break;
 
   if ((row == hiAddress.n_elem - 1) && (bit == order - 1))
@@ -502,7 +484,7 @@ inline ElemType CellBound<MetricType, ElemType>::MinDistance(
       else
       {
         sum += pow((lower + fabs(lower)) + (higher + fabs(higher)),
-            (ElemType) MetricType::Power);
+                   (ElemType)MetricType::Power);
       }
 
       if (sum >= minSum)
@@ -522,15 +504,15 @@ inline ElemType CellBound<MetricType, ElemType>::MinDistance(
   else if (MetricType::Power == 2)
   {
     if (MetricType::TakeRoot)
-      return (ElemType) std::sqrt(minSum) * 0.5;
+      return (ElemType)std::sqrt(minSum) * 0.5;
     else
       return minSum * 0.25;
   }
   else
   {
     if (MetricType::TakeRoot)
-      return (ElemType) pow((double) minSum,
-          1.0 / (double) MetricType::Power) / 2.0;
+      return (ElemType)pow((double)minSum, 1.0 / (double)MetricType::Power)
+             / 2.0;
     else
       return minSum / pow(2.0, MetricType::Power);
   }
@@ -540,8 +522,8 @@ inline ElemType CellBound<MetricType, ElemType>::MinDistance(
  * Calculates minimum bound-to-bound squared distance.
  */
 template<typename MetricType, typename ElemType>
-ElemType CellBound<MetricType, ElemType>::MinDistance(const CellBound& other)
-    const
+ElemType
+CellBound<MetricType, ElemType>::MinDistance(const CellBound& other) const
 {
   Log::Assert(dim == other.dim);
 
@@ -572,7 +554,7 @@ ElemType CellBound<MetricType, ElemType>::MinDistance(const CellBound& other)
         else
         {
           sum += pow((lower + fabs(lower)) + (higher + fabs(higher)),
-              (ElemType) MetricType::Power);
+                     (ElemType)MetricType::Power);
         }
 
         if (sum >= minSum)
@@ -589,15 +571,15 @@ ElemType CellBound<MetricType, ElemType>::MinDistance(const CellBound& other)
   else if (MetricType::Power == 2)
   {
     if (MetricType::TakeRoot)
-      return (ElemType) std::sqrt(minSum) * 0.5;
+      return (ElemType)std::sqrt(minSum) * 0.5;
     else
       return minSum * 0.25;
   }
   else
   {
     if (MetricType::TakeRoot)
-      return (ElemType) pow((double) minSum,
-          1.0 / (double) MetricType::Power) / 2.0;
+      return (ElemType)pow((double)minSum, 1.0 / (double)MetricType::Power)
+             / 2.0;
     else
       return minSum / pow(2.0, MetricType::Power);
   }
@@ -622,14 +604,14 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
     for (size_t d = 0; d < dim; d++)
     {
       ElemType v = std::max(fabs(point[d] - loBound(d, i)),
-          fabs(hiBound(d, i) - point[d]));
+                            fabs(hiBound(d, i) - point[d]));
 
       if (MetricType::Power == 1)
         sum += v; // v is non-negative.
       else if (MetricType::Power == 2)
         sum += v * v;
       else
-        sum += std::pow(v, (ElemType) MetricType::Power);
+        sum += std::pow(v, (ElemType)MetricType::Power);
     }
 
     if (sum > maxSum)
@@ -642,9 +624,9 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
     if (MetricType::Power == 1)
       return maxSum;
     else if (MetricType::Power == 2)
-      return (ElemType) std::sqrt(maxSum);
+      return (ElemType)std::sqrt(maxSum);
     else
-      return (ElemType) pow((double) maxSum, 1.0 / (double) MetricType::Power);
+      return (ElemType)pow((double)maxSum, 1.0 / (double)MetricType::Power);
   }
   else
     return maxSum;
@@ -654,9 +636,8 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
  * Computes maximum distance.
  */
 template<typename MetricType, typename ElemType>
-inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
-    const CellBound& other)
-    const
+inline ElemType
+CellBound<MetricType, ElemType>::MaxDistance(const CellBound& other) const
 {
   ElemType maxSum = std::numeric_limits<ElemType>::lowest();
 
@@ -670,7 +651,7 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
       for (size_t d = 0; d < dim; d++)
       {
         v = std::max(fabs(other.hiBound(d, j) - loBound(d, i)),
-            fabs(hiBound(d, i) - other.loBound(d, j)));
+                     fabs(hiBound(d, i) - other.loBound(d, j)));
 
         // The compiler should optimize out this if statement entirely.
         if (MetricType::Power == 1)
@@ -678,7 +659,7 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
         else if (MetricType::Power == 2)
           sum += v * v;
         else
-          sum += std::pow(v, (ElemType) MetricType::Power);
+          sum += std::pow(v, (ElemType)MetricType::Power);
       }
 
       if (sum > maxSum)
@@ -691,9 +672,9 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
     if (MetricType::Power == 1)
       return maxSum;
     else if (MetricType::Power == 2)
-      return (ElemType) std::sqrt(maxSum);
+      return (ElemType)std::sqrt(maxSum);
     else
-      return (ElemType) pow((double) maxSum, 1.0 / (double) MetricType::Power);
+      return (ElemType)pow((double)maxSum, 1.0 / (double)MetricType::Power);
   }
   else
     return maxSum;
@@ -704,8 +685,7 @@ inline ElemType CellBound<MetricType, ElemType>::MaxDistance(
  */
 template<typename MetricType, typename ElemType>
 inline math::RangeType<ElemType>
-CellBound<MetricType, ElemType>::RangeDistance(
-    const CellBound& other) const
+CellBound<MetricType, ElemType>::RangeDistance(const CellBound& other) const
 {
   ElemType minLoSum = std::numeric_limits<ElemType>::max();
   ElemType maxHiSum = std::numeric_limits<ElemType>::lowest();
@@ -726,12 +706,12 @@ CellBound<MetricType, ElemType>::RangeDistance(
         // One of v1 or v2 is negative.
         if (v1 >= v2)
         {
-          vHi = -v2; // Make it nonnegative.
+          vHi = -v2;               // Make it nonnegative.
           vLo = (v1 > 0) ? v1 : 0; // Force to be 0 if negative.
         }
         else
         {
-          vHi = -v1; // Make it nonnegative.
+          vHi = -v1;               // Make it nonnegative.
           vLo = (v2 > 0) ? v2 : 0; // Force to be 0 if negative.
         }
 
@@ -748,8 +728,8 @@ CellBound<MetricType, ElemType>::RangeDistance(
         }
         else
         {
-          loSum += std::pow(vLo, (ElemType) MetricType::Power);
-          hiSum += std::pow(vHi, (ElemType) MetricType::Power);
+          loSum += std::pow(vLo, (ElemType)MetricType::Power);
+          hiSum += std::pow(vHi, (ElemType)MetricType::Power);
         }
       }
 
@@ -764,13 +744,13 @@ CellBound<MetricType, ElemType>::RangeDistance(
     if (MetricType::Power == 1)
       return math::RangeType<ElemType>(minLoSum, maxHiSum);
     else if (MetricType::Power == 2)
-      return math::RangeType<ElemType>((ElemType) std::sqrt(minLoSum),
-                                       (ElemType) std::sqrt(maxHiSum));
+      return math::RangeType<ElemType>((ElemType)std::sqrt(minLoSum),
+                                       (ElemType)std::sqrt(maxHiSum));
     else
     {
       return math::RangeType<ElemType>(
-          (ElemType) pow((double) minLoSum, 1.0 / (double) MetricType::Power),
-          (ElemType) pow((double) maxHiSum, 1.0 / (double) MetricType::Power));
+          (ElemType)pow((double)minLoSum, 1.0 / (double)MetricType::Power),
+          (ElemType)pow((double)maxHiSum, 1.0 / (double)MetricType::Power));
     }
   }
   else
@@ -782,8 +762,7 @@ CellBound<MetricType, ElemType>::RangeDistance(
  */
 template<typename MetricType, typename ElemType>
 template<typename VecType>
-inline math::RangeType<ElemType>
-CellBound<MetricType, ElemType>::RangeDistance(
+inline math::RangeType<ElemType> CellBound<MetricType, ElemType>::RangeDistance(
     const VecType& point,
     typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
@@ -834,8 +813,8 @@ CellBound<MetricType, ElemType>::RangeDistance(
       }
       else
       {
-        loSum += std::pow(vLo, (ElemType) MetricType::Power);
-        hiSum += std::pow(vHi, (ElemType) MetricType::Power);
+        loSum += std::pow(vLo, (ElemType)MetricType::Power);
+        hiSum += std::pow(vHi, (ElemType)MetricType::Power);
       }
     }
     if (loSum < minLoSum)
@@ -849,13 +828,13 @@ CellBound<MetricType, ElemType>::RangeDistance(
     if (MetricType::Power == 1)
       return math::RangeType<ElemType>(minLoSum, maxHiSum);
     else if (MetricType::Power == 2)
-      return math::RangeType<ElemType>((ElemType) std::sqrt(minLoSum),
-                                       (ElemType) std::sqrt(maxHiSum));
+      return math::RangeType<ElemType>((ElemType)std::sqrt(minLoSum),
+                                       (ElemType)std::sqrt(maxHiSum));
     else
     {
       return math::RangeType<ElemType>(
-          (ElemType) pow((double) minLoSum, 1.0 / (double) MetricType::Power),
-          (ElemType) pow((double) maxHiSum, 1.0 / (double) MetricType::Power));
+          (ElemType)pow((double)minLoSum, 1.0 / (double)MetricType::Power),
+          (ElemType)pow((double)maxHiSum, 1.0 / (double)MetricType::Power));
     }
   }
   else
@@ -867,8 +846,8 @@ CellBound<MetricType, ElemType>::RangeDistance(
  */
 template<typename MetricType, typename ElemType>
 template<typename MatType>
-inline CellBound<MetricType, ElemType>&
-CellBound<MetricType, ElemType>::operator|=(const MatType& data)
+inline CellBound<MetricType, ElemType>& CellBound<MetricType, ElemType>::
+operator|=(const MatType& data)
 {
   Log::Assert(data.n_rows == dim);
 
@@ -896,8 +875,8 @@ CellBound<MetricType, ElemType>::operator|=(const MatType& data)
  * Expands this region to encompass another bound.
  */
 template<typename MetricType, typename ElemType>
-inline CellBound<MetricType, ElemType>&
-CellBound<MetricType, ElemType>::operator|=(const CellBound& other)
+inline CellBound<MetricType, ElemType>& CellBound<MetricType, ElemType>::
+operator|=(const CellBound& other)
 {
   assert(other.dim == dim);
 
@@ -933,8 +912,8 @@ CellBound<MetricType, ElemType>::operator|=(const CellBound& other)
  */
 template<typename MetricType, typename ElemType>
 template<typename VecType>
-inline bool CellBound<MetricType, ElemType>::Contains(
-    const VecType& point) const
+inline bool
+CellBound<MetricType, ElemType>::Contains(const VecType& point) const
 {
   for (size_t i = 0; i < point.n_elem; i++)
   {
@@ -952,7 +931,6 @@ inline bool CellBound<MetricType, ElemType>::Contains(
   return addr::Contains(address, loAddress, hiAddress);
 }
 
-
 /**
  * Returns the diameter of the hyperrectangle (that is, the longest diagonal).
  */
@@ -961,11 +939,10 @@ inline ElemType CellBound<MetricType, ElemType>::Diameter() const
 {
   ElemType d = 0;
   for (size_t i = 0; i < dim; ++i)
-    d += std::pow(bounds[i].Hi() - bounds[i].Lo(),
-        (ElemType) MetricType::Power);
+    d += std::pow(bounds[i].Hi() - bounds[i].Lo(), (ElemType)MetricType::Power);
 
   if (MetricType::TakeRoot)
-    return (ElemType) std::pow((double) d, 1.0 / (double) MetricType::Power);
+    return (ElemType)std::pow((double)d, 1.0 / (double)MetricType::Power);
   else
     return d;
 }
@@ -974,8 +951,7 @@ inline ElemType CellBound<MetricType, ElemType>::Diameter() const
 template<typename MetricType, typename ElemType>
 template<typename Archive>
 void CellBound<MetricType, ElemType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
   // Allocate memory for the bounds, if necessary.
   if (Archive::is_loading::value)
@@ -986,17 +962,16 @@ void CellBound<MetricType, ElemType>::serialize(
   }
 
   auto boundsArray = boost::serialization::make_array(bounds, dim);
-  ar & BOOST_SERIALIZATION_NVP(boundsArray);
-  ar & BOOST_SERIALIZATION_NVP(minWidth);
-  ar & BOOST_SERIALIZATION_NVP(loBound);
-  ar & BOOST_SERIALIZATION_NVP(hiBound);
-  ar & BOOST_SERIALIZATION_NVP(numBounds);
-  ar & BOOST_SERIALIZATION_NVP(loAddress);
-  ar & BOOST_SERIALIZATION_NVP(hiAddress);
+  ar& BOOST_SERIALIZATION_NVP(boundsArray);
+  ar& BOOST_SERIALIZATION_NVP(minWidth);
+  ar& BOOST_SERIALIZATION_NVP(loBound);
+  ar& BOOST_SERIALIZATION_NVP(hiBound);
+  ar& BOOST_SERIALIZATION_NVP(numBounds);
+  ar& BOOST_SERIALIZATION_NVP(loAddress);
+  ar& BOOST_SERIALIZATION_NVP(hiAddress);
 }
 
 } // namespace bound
 } // namespace mlpack
 
 #endif // MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP
-

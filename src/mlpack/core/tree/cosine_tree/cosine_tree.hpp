@@ -24,7 +24,8 @@ class CosineTree;
 
 // CosineNodeQueue typedef.
 typedef boost::heap::priority_queue<CosineTree*,
-    boost::heap::compare<CompareCosineNode> > CosineNodeQueue;
+                                    boost::heap::compare<CompareCosineNode>>
+    CosineNodeQueue;
 
 class CosineTree
 {
@@ -125,7 +126,8 @@ class CosineTree
    * randomly generated values in the range [0, 1].
    */
   void ColumnSamplesLS(std::vector<size_t>& sampledIndices,
-                       arma::vec& probabilities, size_t numSamples);
+                       arma::vec& probabilities,
+                       size_t numSamples);
 
   /**
    * Sample a point from the Length-Squared distribution of the cosine node. The
@@ -147,7 +149,9 @@ class CosineTree
    * @param start Starting index of the distribution interval to search in.
    * @param end Ending index of the distribution interval to search in.
    */
-  size_t BinarySearch(arma::vec& cDistribution, double value, size_t start,
+  size_t BinarySearch(arma::vec& cDistribution,
+                      double value,
+                      size_t start,
                       size_t end);
 
   /**
@@ -247,7 +251,7 @@ class CompareCosineNode
 {
  public:
   // Comparison function for construction of priority queue.
-  bool operator() (const CosineTree* a, const CosineTree* b) const
+  bool operator()(const CosineTree* a, const CosineTree* b) const
   {
     return a->L2Error() < b->L2Error();
   }

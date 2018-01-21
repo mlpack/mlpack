@@ -20,11 +20,10 @@
 namespace mlpack {
 namespace tree {
 
-template<typename SplitPolicyType,
-         template<typename> class SweepType>
+template<typename SplitPolicyType, template<typename> class SweepType>
 template<typename TreeType>
-void RPlusTreeSplit<SplitPolicyType, SweepType>::
-SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
+void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitLeafNode(
+    TreeType* tree, std::vector<bool>& relevels)
 {
   typedef typename TreeType::ElemType ElemType;
 
@@ -83,7 +82,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
     tree->MaxLeafSize()++;
     tree->points.resize(tree->MaxLeafSize() + 1);
     Log::Warn << "Could not find an acceptable partition."
-        "The size of the node will be increased.";
+                 "The size of the node will be increased.";
     return;
   }
 
@@ -117,11 +116,10 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
   tree->SoftDelete();
 }
 
-template<typename SplitPolicyType,
-         template<typename> class SweepType>
+template<typename SplitPolicyType, template<typename> class SweepType>
 template<typename TreeType>
-bool RPlusTreeSplit<SplitPolicyType, SweepType>::
-SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
+bool RPlusTreeSplit<SplitPolicyType, SweepType>::SplitNonLeafNode(
+    TreeType* tree, std::vector<bool>& relevels)
 {
   typedef typename TreeType::ElemType ElemType;
   // If we are splitting the root node, we need will do things differently so
@@ -144,7 +142,7 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
   ElemType cut = std::numeric_limits<ElemType>::lowest();
 
   // Try to find a partiotion of the node.
-  if ( !PartitionNode(tree, cutAxis, cut))
+  if (!PartitionNode(tree, cutAxis, cut))
     return false;
 
   // If we could not find a suitable partition.
@@ -153,7 +151,7 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
     tree->MaxNumChildren()++;
     tree->children.resize(tree->MaxNumChildren() + 1);
     Log::Warn << "Could not find an acceptable partition."
-        "The size of the node will be increased.";
+                 "The size of the node will be increased.";
     return false;
   }
 
@@ -189,8 +187,7 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
   return false;
 }
 
-template<typename SplitPolicyType,
-         template<typename> class SweepType>
+template<typename SplitPolicyType, template<typename> class SweepType>
 template<typename TreeType>
 void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitLeafNodeAlongPartition(
     TreeType* tree,
@@ -240,8 +237,7 @@ void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitLeafNodeAlongPartition(
   assert(treeOne->Bound()[cutAxis].Hi() < treeTwo->Bound()[cutAxis].Lo());
 }
 
-template<typename SplitPolicyType,
-         template<typename> class SweepType>
+template<typename SplitPolicyType, template<typename> class SweepType>
 template<typename TreeType>
 void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitNonLeafNodeAlongPartition(
     TreeType* tree,
@@ -304,11 +300,10 @@ void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitNonLeafNodeAlongPartition(
   assert(treeTwo->NumChildren() <= treeTwo->MaxNumChildren());
 }
 
-template<typename SplitPolicyType,
-         template<typename> class SweepType>
+template<typename SplitPolicyType, template<typename> class SweepType>
 template<typename TreeType>
-void RPlusTreeSplit<SplitPolicyType, SweepType>::
-AddFakeNodes(const TreeType* tree, TreeType* emptyTree)
+void RPlusTreeSplit<SplitPolicyType, SweepType>::AddFakeNodes(
+    const TreeType* tree, TreeType* emptyTree)
 {
   size_t numDescendantNodes = tree->TreeDepth() - 1;
 
@@ -322,21 +317,21 @@ AddFakeNodes(const TreeType* tree, TreeType* emptyTree)
   }
 }
 
-template<typename SplitPolicyType,
-         template<typename> class SweepType>
+template<typename SplitPolicyType, template<typename> class SweepType>
 template<typename TreeType>
-bool RPlusTreeSplit<SplitPolicyType, SweepType>::
-PartitionNode(const TreeType* node, size_t& minCutAxis,
+bool RPlusTreeSplit<SplitPolicyType, SweepType>::PartitionNode(
+    const TreeType* node,
+    size_t& minCutAxis,
     typename TreeType::ElemType& minCut)
 {
-  if ((node->NumChildren() <= node->MaxNumChildren() && !node->IsLeaf()) ||
-      (node->Count() <= node->MaxLeafSize() && node->IsLeaf()))
+  if ((node->NumChildren() <= node->MaxNumChildren() && !node->IsLeaf())
+      || (node->Count() <= node->MaxLeafSize() && node->IsLeaf()))
     return false; // No partition required.
 
   // Define the type of the sweep cost.
-  typedef typename
-      SweepType<SplitPolicyType>::template SweepCost<TreeType>::type
-      SweepCostType;
+  typedef
+      typename SweepType<SplitPolicyType>::template SweepCost<TreeType>::type
+          SweepCostType;
 
   SweepCostType minCost = std::numeric_limits<SweepCostType>::max();
   minCutAxis = node->Bound().Dim();
@@ -363,11 +358,10 @@ PartitionNode(const TreeType* node, size_t& minCutAxis,
   return true;
 }
 
-template<typename SplitPolicyType,
-         template<typename> class SweepType>
+template<typename SplitPolicyType, template<typename> class SweepType>
 template<typename TreeType>
-void RPlusTreeSplit<SplitPolicyType, SweepType>::
-InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
+void RPlusTreeSplit<SplitPolicyType, SweepType>::InsertNodeIntoTree(
+    TreeType* destTree, TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
   destTree->numDescendants += srcNode->numDescendants;
@@ -377,4 +371,4 @@ InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
 } // namespace tree
 } // namespace mlpack
 
-#endif  //  MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_SPLIT_IMPL_HPP
+#endif //  MLPACK_CORE_TREE_RECTANGLE_TREE_R_PLUS_TREE_SPLIT_IMPL_HPP

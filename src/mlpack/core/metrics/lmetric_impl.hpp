@@ -21,9 +21,8 @@ namespace metric {
 // Unspecialized implementation.  This should almost never be used...
 template<int Power, bool TakeRoot>
 template<typename VecTypeA, typename VecTypeB>
-typename VecTypeA::elem_type LMetric<Power, TakeRoot>::Evaluate(
-    const VecTypeA& a,
-    const VecTypeB& b)
+typename VecTypeA::elem_type
+LMetric<Power, TakeRoot>::Evaluate(const VecTypeA& a, const VecTypeB& b)
 {
   typename VecTypeA::elem_type sum = 0;
   for (size_t i = 0; i < a.n_elem; i++)
@@ -38,18 +37,16 @@ typename VecTypeA::elem_type LMetric<Power, TakeRoot>::Evaluate(
 // L1-metric specializations; the root doesn't matter.
 template<>
 template<typename VecTypeA, typename VecTypeB>
-typename VecTypeA::elem_type LMetric<1, true>::Evaluate(
-    const VecTypeA& a,
-    const VecTypeB& b)
+typename VecTypeA::elem_type LMetric<1, true>::Evaluate(const VecTypeA& a,
+                                                        const VecTypeB& b)
 {
   return arma::accu(abs(a - b));
 }
 
 template<>
 template<typename VecTypeA, typename VecTypeB>
-typename VecTypeA::elem_type LMetric<1, false>::Evaluate(
-    const VecTypeA& a,
-    const VecTypeB& b)
+typename VecTypeA::elem_type LMetric<1, false>::Evaluate(const VecTypeA& a,
+                                                         const VecTypeB& b)
 {
   return arma::accu(abs(a - b));
 }
@@ -57,18 +54,16 @@ typename VecTypeA::elem_type LMetric<1, false>::Evaluate(
 // L2-metric specializations.
 template<>
 template<typename VecTypeA, typename VecTypeB>
-typename VecTypeA::elem_type LMetric<2, true>::Evaluate(
-    const VecTypeA& a,
-    const VecTypeB& b)
+typename VecTypeA::elem_type LMetric<2, true>::Evaluate(const VecTypeA& a,
+                                                        const VecTypeB& b)
 {
   return sqrt(arma::accu(square(a - b)));
 }
 
 template<>
 template<typename VecTypeA, typename VecTypeB>
-typename VecTypeA::elem_type LMetric<2, false>::Evaluate(
-    const VecTypeA& a,
-    const VecTypeB& b)
+typename VecTypeA::elem_type LMetric<2, false>::Evaluate(const VecTypeA& a,
+                                                         const VecTypeB& b)
 {
   return accu(arma::square(a - b));
 }
@@ -76,9 +71,8 @@ typename VecTypeA::elem_type LMetric<2, false>::Evaluate(
 // L3-metric specialization (not very likely to be used, but just in case).
 template<>
 template<typename VecTypeA, typename VecTypeB>
-typename VecTypeA::elem_type LMetric<3, true>::Evaluate(
-    const VecTypeA& a,
-    const VecTypeB& b)
+typename VecTypeA::elem_type LMetric<3, true>::Evaluate(const VecTypeA& a,
+                                                        const VecTypeB& b)
 {
   typename VecTypeA::elem_type sum = 0;
   for (size_t i = 0; i < a.n_elem; i++)
@@ -89,9 +83,8 @@ typename VecTypeA::elem_type LMetric<3, true>::Evaluate(
 
 template<>
 template<typename VecTypeA, typename VecTypeB>
-typename VecTypeA::elem_type LMetric<3, false>::Evaluate(
-    const VecTypeA& a,
-    const VecTypeB& b)
+typename VecTypeA::elem_type LMetric<3, false>::Evaluate(const VecTypeA& a,
+                                                         const VecTypeB& b)
 {
   return arma::accu(arma::pow(arma::abs(a - b), 3.0));
 }
@@ -99,9 +92,8 @@ typename VecTypeA::elem_type LMetric<3, false>::Evaluate(
 // L-infinity (Chebyshev distance) specialization
 template<>
 template<typename VecTypeA, typename VecTypeB>
-typename VecTypeA::elem_type LMetric<INT_MAX, false>::Evaluate(
-    const VecTypeA& a,
-    const VecTypeB& b)
+typename VecTypeA::elem_type
+LMetric<INT_MAX, false>::Evaluate(const VecTypeA& a, const VecTypeB& b)
 {
   return arma::as_scalar(arma::max(arma::abs(a - b)));
 }

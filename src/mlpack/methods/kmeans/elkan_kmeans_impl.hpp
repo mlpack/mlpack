@@ -20,10 +20,8 @@ namespace kmeans {
 
 template<typename MetricType, typename MatType>
 ElkanKMeans<MetricType, MatType>::ElkanKMeans(const MatType& dataset,
-                                              MetricType& metric) :
-    dataset(dataset),
-    metric(metric),
-    distanceCalculations(0)
+                                              MetricType& metric)
+  : dataset(dataset), metric(metric), distanceCalculations(0)
 {
   // Nothing to do here.
 }
@@ -67,8 +65,8 @@ double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
   {
     for (size_t j = i + 1; j < centroids.n_cols; ++j)
     {
-      const double distance = metric.Evaluate(centroids.col(i),
-                                              centroids.col(j));
+      const double distance =
+          metric.Evaluate(centroids.col(i), centroids.col(j));
       distanceCalculations++;
       clusterDistances(i, j) = distance;
       clusterDistances(j, i) = distance;
@@ -129,12 +127,12 @@ double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
         }
 
         // Step 3b: if d(x, c(x)) > l(x, c) or d(x, c(x)) > 0.5 d(c(x), c)...
-        if (dist > lowerBounds(c, i) ||
-            dist > 0.5 * clusterDistances(assignments[i], c))
+        if (dist > lowerBounds(c, i)
+            || dist > 0.5 * clusterDistances(assignments[i], c))
         {
           // Compute d(x, c).  If d(x, c) < d(x, c(x)) then assign c(x) = c.
-          const double pointDist = metric.Evaluate(dataset.col(i),
-                                                   centroids.col(c));
+          const double pointDist =
+              metric.Evaluate(dataset.col(i), centroids.col(c));
           lowerBounds(c, i) = pointDist;
           distanceCalculations++;
           if (pointDist < dist)

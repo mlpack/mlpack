@@ -54,10 +54,8 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
 class ELU
 {
  public:
@@ -155,10 +153,7 @@ class ELU
    * @param x Input data.
    * @return f'(x)
    */
-  double Deriv(const double y)
-  {
-    return (y > 0) ? 1 : (y + alpha);
-  }
+  double Deriv(const double y) { return (y > 0) ? 1 : (y + alpha); }
 
   /**
    * Computes the first derivative of the ELU function.

@@ -33,8 +33,10 @@ namespace data {
 class IncrementPolicy
 {
  public:
-  IncrementPolicy(const bool forceAllMappings = false) :
-      forceAllMappings(forceAllMappings) { }
+  IncrementPolicy(const bool forceAllMappings = false)
+    : forceAllMappings(forceAllMappings)
+  {
+  }
 
   // typedef of MappedType
   using MappedType = size_t;
@@ -112,8 +114,7 @@ class IncrementPolicy
     // If this condition is true, either we have no mapping for the given input
     // or we have no mappings for the given dimension at all.  In either case,
     // we create a mapping.
-    if (maps.count(dimension) == 0 ||
-        maps[dimension].first.count(input) == 0)
+    if (maps.count(dimension) == 0 || maps[dimension].first.count(input) == 0)
     {
       // This input does not exist yet.
       size_t numMappings = maps[dimension].first.size();
@@ -128,8 +129,8 @@ class IncrementPolicy
       // Do we need to create the second map?
       if (maps[dimension].second.count(numMappings) == 0)
       {
-        maps[dimension].second.insert(std::make_pair(numMappings,
-            std::vector<InputType>()));
+        maps[dimension].second.insert(
+            std::make_pair(numMappings, std::vector<InputType>()));
       }
       maps[dimension].second[numMappings].push_back(input);
 

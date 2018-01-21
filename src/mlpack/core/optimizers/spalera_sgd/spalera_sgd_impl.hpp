@@ -29,17 +29,13 @@ SPALeRASGD<DecayPolicyType>::SPALeRASGD(const double stepSize,
                                         const double adaptRate,
                                         const bool shuffle,
                                         const DecayPolicyType& decayPolicy,
-                                        const bool resetPolicy) :
-    stepSize(stepSize),
-    batchSize(batchSize),
-    maxIterations(maxIterations),
-    tolerance(tolerance),
-    lambda(lambda),
-    shuffle(shuffle),
+                                        const bool resetPolicy)
+  : stepSize(stepSize), batchSize(batchSize), maxIterations(maxIterations),
+    tolerance(tolerance), lambda(lambda), shuffle(shuffle),
     updatePolicy(SPALeRAStepsize(alpha, epsilon, adaptRate)),
-    decayPolicy(decayPolicy),
-    resetPolicy(resetPolicy)
-{ /* Nothing to do. */ }
+    decayPolicy(decayPolicy), resetPolicy(resetPolicy)
+{ /* Nothing to do. */
+}
 
 //! Optimize the function (minimize).
 template<typename DecayPolicyType>
@@ -67,14 +63,14 @@ double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
   // Initialize the update policy.
   if (resetPolicy)
   {
-    updatePolicy.Initialize(iterate.n_rows, iterate.n_cols,
-        currentObjective * lambda);
+    updatePolicy.Initialize(
+        iterate.n_rows, iterate.n_cols, currentObjective * lambda);
   }
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  const size_t actualMaxIterations = (maxIterations == 0) ?
-      std::numeric_limits<size_t>::max() : maxIterations;
+  const size_t actualMaxIterations =
+      (maxIterations == 0) ? std::numeric_limits<size_t>::max() : maxIterations;
   for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
   {
     // Is this iteration the start of a sequence?
@@ -82,20 +78,20 @@ double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
     {
       // Output current objective function.
       Log::Info << "SPALeRA SGD: iteration " << i << ", objective "
-          << overallObjective << "." << std::endl;
+                << overallObjective << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
         Log::Warn << "SPALeRA SGD: converged to " << overallObjective
-            << "; terminating with failure.  Try a smaller step size?"
-            << std::endl;
+                  << "; terminating with failure.  Try a smaller step size?"
+                  << std::endl;
         return overallObjective;
       }
 
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
         Log::Info << "SPALeRA SGD: minimized within tolerance " << tolerance
-            << "; terminating optimization." << std::endl;
+                  << "; terminating optimization." << std::endl;
         return overallObjective;
       }
 
@@ -114,24 +110,28 @@ double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
     // - the batch size can't be larger than the number of iterations left
     //       before actualMaxIterations is hit;
     // - the batch size can't be larger than the number of functions left.
-    const size_t effectiveBatchSize = std::min(
-        std::min(batchSize, actualMaxIterations - i),
-        numFunctions - currentFunction);
+    const size_t effectiveBatchSize =
+        std::min(std::min(batchSize, actualMaxIterations - i),
+                 numFunctions - currentFunction);
 
     function.Gradient(iterate, currentFunction, gradient, effectiveBatchSize);
 
     // Use the update policy to take a step.
-    if (!updatePolicy.Update(stepSize, currentObjective, effectiveBatchSize,
-        numFunctions, iterate, gradient))
+    if (!updatePolicy.Update(stepSize,
+                             currentObjective,
+                             effectiveBatchSize,
+                             numFunctions,
+                             iterate,
+                             gradient))
     {
-        Log::Warn << "SPALeRA SGD: converged to " << overallObjective << "; "
-            << "terminating with failure.  Try a smaller step size?"
-            << std::endl;
-        return overallObjective;
+      Log::Warn << "SPALeRA SGD: converged to " << overallObjective << "; "
+                << "terminating with failure.  Try a smaller step size?"
+                << std::endl;
+      return overallObjective;
     }
 
-    currentObjective = function.Evaluate(iterate, currentFunction,
-        effectiveBatchSize);
+    currentObjective =
+        function.Evaluate(iterate, currentFunction, effectiveBatchSize);
 
     // Now update the learning rate if requested by the user.
     decayPolicy.Update(iterate, stepSize, gradient);
@@ -143,7 +143,7 @@ double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
   }
 
   Log::Info << "SPALeRA SGD: maximum iterations (" << maxIterations
-      << ") reached; terminating optimization." << std::endl;
+            << ") reached; terminating optimization." << std::endl;
 
   // Calculate final objective.
   overallObjective = 0;

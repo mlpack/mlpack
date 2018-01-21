@@ -17,22 +17,15 @@ namespace math {
 ColumnsToBlocks::ColumnsToBlocks(const size_t rows,
                                  const size_t cols,
                                  const size_t blockHeight,
-                                 const size_t blockWidth) :
-    blockHeight(blockHeight),
-    blockWidth(blockWidth),
-    bufSize(1),
-    bufValue(-1),
-    minRange(0),
-    maxRange(255),
-    scale(false),
-    rows(rows),
-    cols(cols)
+                                 const size_t blockWidth)
+  : blockHeight(blockHeight), blockWidth(blockWidth), bufSize(1), bufValue(-1),
+    minRange(0), maxRange(255), scale(false), rows(rows), cols(cols)
 {
 }
 
 bool ColumnsToBlocks::IsPerfectSquare(const size_t value) const
 {
-  const size_t root = (size_t) std::round(std::sqrt(value));
+  const size_t root = (size_t)std::round(std::sqrt(value));
   return (value == root * root);
 }
 
@@ -58,14 +51,13 @@ void ColumnsToBlocks::Transform(const arma::mat& maximalInputs,
                              "equal to maximalInputs.n_rows");
   }
 
-  const size_t rowOffset = blockHeight+bufSize;
-  const size_t colOffset = blockWidth+bufSize;
-  output.ones(bufSize + rows * rowOffset,
-              bufSize + cols * colOffset);
+  const size_t rowOffset = blockHeight + bufSize;
+  const size_t colOffset = blockWidth + bufSize;
+  output.ones(bufSize + rows * rowOffset, bufSize + cols * colOffset);
   output *= bufValue;
 
   size_t k = 0;
-  const size_t maxSize = std::min(rows * cols, (size_t) maximalInputs.n_cols);
+  const size_t maxSize = std::min(rows * cols, (size_t)maximalInputs.n_cols);
   for (size_t i = 0; i != rows; ++i)
   {
     for (size_t j = 0; j != cols; ++j)

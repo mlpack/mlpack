@@ -50,7 +50,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   // Loop through all possible split points, choosing the best one.  Also, force
   // a minimum leaf size of 1 (empty children don't make sense).
   double bestFoundGain = bestGain;
-  const size_t minimum = std::max(minimumLeafSize, (size_t) 1);
+  const size_t minimum = std::max(minimumLeafSize, (size_t)1);
   for (size_t index = minimum; index < data.n_elem - (minimum - 1); ++index)
   {
     // Make sure that the value has changed.
@@ -59,28 +59,35 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
 
     // Calculate the gain for the left and right child.  Only use weights if
     // needed.
-    const double leftGain = UseWeights ?
-        FitnessFunction::template Evaluate<true>(sortedLabels.subvec(0,
-            index - 1), numClasses, sortedWeights.subvec(0, index - 1)) :
-        FitnessFunction::template Evaluate<false>(sortedLabels.subvec(0,
-            index - 1), numClasses, sortedWeights /* ignored */);
-    const double rightGain = UseWeights ?
-        FitnessFunction::template Evaluate<true>(sortedLabels.subvec(index,
-            sortedLabels.n_elem - 1), numClasses, sortedWeights.subvec(index,
-            sortedLabels.n_elem - 1)) :
-        FitnessFunction::template Evaluate<false>(sortedLabels.subvec(index,
-            sortedLabels.n_elem - 1), numClasses, sortedWeights /* ignored */);
+    const double leftGain = UseWeights
+                                ? FitnessFunction::template Evaluate<true>(
+                                      sortedLabels.subvec(0, index - 1),
+                                      numClasses,
+                                      sortedWeights.subvec(0, index - 1))
+                                : FitnessFunction::template Evaluate<false>(
+                                      sortedLabels.subvec(0, index - 1),
+                                      numClasses,
+                                      sortedWeights /* ignored */);
+    const double rightGain =
+        UseWeights ? FitnessFunction::template Evaluate<true>(
+                         sortedLabels.subvec(index, sortedLabels.n_elem - 1),
+                         numClasses,
+                         sortedWeights.subvec(index, sortedLabels.n_elem - 1))
+                   : FitnessFunction::template Evaluate<false>(
+                         sortedLabels.subvec(index, sortedLabels.n_elem - 1),
+                         numClasses,
+                         sortedWeights /* ignored */);
 
     double gain;
     if (UseWeights)
     {
       const double leftWeights = arma::accu(sortedWeights.subvec(0, index - 1));
-      const double rightWeights = arma::accu(sortedWeights.subvec(index,
-          sortedWeights.n_elem - 1));
+      const double rightWeights =
+          arma::accu(sortedWeights.subvec(index, sortedWeights.n_elem - 1));
       const double fullWeight = leftWeights + rightWeights;
 
-      gain = (leftWeights / fullWeight) * leftGain +
-          (rightWeights / fullWeight) * rightGain;
+      gain = (leftWeights / fullWeight) * leftGain
+             + (rightWeights / fullWeight) * rightGain;
     }
     else
     {
@@ -100,8 +107,8 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       classProbabilities.set_size(1);
       // The actual split value will be halfway between the value at index - 1
       // and index.
-      classProbabilities[0] = (data[sortedIndices[index - 1]] +
-          data[sortedIndices[index]]) / 2.0;
+      classProbabilities[0] =
+          (data[sortedIndices[index - 1]] + data[sortedIndices[index]]) / 2.0;
       return gain;
     }
     else if (gain > bestFoundGain)
@@ -109,8 +116,8 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       // We still have a better split.
       bestFoundGain = gain;
       classProbabilities.set_size(1);
-      classProbabilities[0] = (data[sortedIndices[index - 1]] +
-          data[sortedIndices[index]]) / 2.0;
+      classProbabilities[0] =
+          (data[sortedIndices[index - 1]] + data[sortedIndices[index]]) / 2.0;
     }
   }
 

@@ -86,8 +86,8 @@ class HoeffdingCategoricalSplit
    * @param secondBestFitness This is always set to 0 (this split only splits
    *      one way).
    */
-  void EvaluateFitnessFunction(double& bestFitness, double& secondBestFitness)
-      const;
+  void EvaluateFitnessFunction(double& bestFitness,
+                               double& secondBestFitness) const;
 
   //! Return the number of children, if the node were to split.
   size_t NumChildren() const { return sufficientStatistics.n_cols; }
@@ -110,7 +110,7 @@ class HoeffdingCategoricalSplit
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(sufficientStatistics);
+    ar& BOOST_SERIALIZATION_NVP(sufficientStatistics);
   }
 
  private:

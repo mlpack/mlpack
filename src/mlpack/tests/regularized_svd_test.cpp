@@ -58,8 +58,8 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionRandomEvaluate)
       const size_t item = data(1, j) + numUsers;
 
       const double rating = data(2, j);
-      const double ratingError = rating - arma::dot(parameters.col(user),
-                                                    parameters.col(item));
+      const double ratingError =
+          rating - arma::dot(parameters.col(user), parameters.col(item));
       const double ratingErrorSquared = ratingError * ratingError;
 
       cost += ratingErrorSquared;
@@ -111,18 +111,20 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionRegularizationEvaluate)
 
       const double userVecNorm = arma::norm(parameters.col(user), 2);
       const double itemVecNorm = arma::norm(parameters.col(item), 2);
-      smallRegTerm += 0.5 * (userVecNorm * userVecNorm +
-                             itemVecNorm * itemVecNorm);
-      bigRegTerm += 20 * (userVecNorm * userVecNorm +
-                          itemVecNorm * itemVecNorm);
+      smallRegTerm +=
+          0.5 * (userVecNorm * userVecNorm + itemVecNorm * itemVecNorm);
+      bigRegTerm +=
+          20 * (userVecNorm * userVecNorm + itemVecNorm * itemVecNorm);
     }
 
     // Cost with regularization should be close to the sum of cost without
     // regularization and the regularization terms.
     BOOST_REQUIRE_CLOSE(rSVDFuncNoReg.Evaluate(parameters) + smallRegTerm,
-        rSVDFuncSmallReg.Evaluate(parameters), 1e-5);
+                        rSVDFuncSmallReg.Evaluate(parameters),
+                        1e-5);
     BOOST_REQUIRE_CLOSE(rSVDFuncNoReg.Evaluate(parameters) + bigRegTerm,
-        rSVDFuncBigReg.Evaluate(parameters), 1e-5);
+                        rSVDFuncBigReg.Evaluate(parameters),
+                        1e-5);
   }
 }
 
@@ -244,8 +246,8 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimize)
   }
 
   // Calculate relative error.
-  const double relativeError = arma::norm(data.row(2) - predictedData, "frob") /
-                               arma::norm(data, "frob");
+  const double relativeError = arma::norm(data.row(2) - predictedData, "frob")
+                               / arma::norm(data, "frob");
 
   // Relative error should be small.
   BOOST_REQUIRE_SMALL(relativeError, 1e-2);
@@ -292,9 +294,12 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimizeHOGWILD)
 
   // Iterate till convergence.
   // The threadShareSize is chosen such that each function gets optimized.
-  ParallelSGD<ConstantStep> optimizer(0,
-      std::ceil((float) rSVDFunc.NumFunctions() / omp_get_max_threads()), 1e-5,
-      true, decayPolicy);
+  ParallelSGD<ConstantStep> optimizer(
+      0,
+      std::ceil((float)rSVDFunc.NumFunctions() / omp_get_max_threads()),
+      1e-5,
+      true,
+      decayPolicy);
 
   // Obtain optimized parameters after training.
   arma::mat optParameters = arma::randu(rank, numUsers + numItems);
@@ -309,8 +314,8 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimizeHOGWILD)
   }
 
   // Calculate relative error.
-  const double relativeError = arma::norm(data.row(2) - predictedData, "frob") /
-                               arma::norm(data, "frob");
+  const double relativeError = arma::norm(data.row(2) - predictedData, "frob")
+                               / arma::norm(data, "frob");
 
   // Relative error should be small.
   BOOST_REQUIRE_SMALL(relativeError, 1e-2);

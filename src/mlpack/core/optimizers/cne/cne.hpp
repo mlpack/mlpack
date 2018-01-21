@@ -59,8 +59,10 @@ namespace optimization {
  * The whole process then repeats for multiple generation until at least one of
  * the termination criteria is met:
  *
- * 1) The final value of the objective function (Not considered if not provided).
- * 2) The maximum number of generation reached (optional but highly recommended).
+ * 1) The final value of the objective function (Not considered if not
+ * provided).
+ * 2) The maximum number of generation reached (optional but highly
+ * recommended).
  * 3) Minimum change in best fitness values between two consecutive generations
  *    should be greater than a threshold value (Not considered if not provided).
  *

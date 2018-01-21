@@ -78,12 +78,12 @@ void BuildVanillaNetwork(MatType& trainData,
   // Cauchy’s Inequality Based on Sensitivity Analysis" paper.
   KathirvalavakumarSubavathiInitialization init(trainData, 4.59);
 
-  FFN<MeanSquaredError<>, KathirvalavakumarSubavathiInitialization>
-      model(MeanSquaredError<>(), init);
+  FFN<MeanSquaredError<>, KathirvalavakumarSubavathiInitialization> model(
+      MeanSquaredError<>(), init);
 
-  model.Add<Linear<> >(trainData.n_rows, hiddenLayerSize);
-  model.Add<LeakyReLU<> >();
-  model.Add<Linear<> >(hiddenLayerSize, outputSize);
+  model.Add<Linear<>>(trainData.n_rows, hiddenLayerSize);
+  model.Add<LeakyReLU<>>();
+  model.Add<Linear<>>(hiddenLayerSize, outputSize);
 
   RMSProp opt(0.01, 1, 0.88, 1e-8, maxEpochs * trainData.n_cols, 1e-18);
 
@@ -125,12 +125,12 @@ void CrossValidation(arma::mat& trainData,
                      double& validationError)
 {
   // Number of datapoints in each subset in K-fold CV.
-  size_t validationDataSize = (int) trainData.n_cols / k;
+  size_t validationDataSize = (int)trainData.n_cols / k;
   trainError = validationError = 0.0;
 
   for (size_t i = 0; i < trainData.n_cols; i = i + validationDataSize)
   {
-    validationDataSize = (int) trainData.n_cols / k;
+    validationDataSize = (int)trainData.n_cols / k;
 
     // The collection of the k-1 subsets to be used in training in a particular
     // iteration.
@@ -151,11 +151,11 @@ void CrossValidation(arma::mat& trainData,
       validationDataSize = trainData.n_cols - i;
     }
 
-    validationTestData = trainData.submat(0, i, trainData.n_rows - 1,
-        i + validationDataSize - 1);
+    validationTestData = trainData.submat(
+        0, i, trainData.n_rows - 1, i + validationDataSize - 1);
 
-    validationTestLabels = trainLabels.submat(0, i, trainLabels.n_rows - 1,
-        i + validationDataSize - 1);
+    validationTestLabels = trainLabels.submat(
+        0, i, trainLabels.n_rows - 1, i + validationDataSize - 1);
 
     validationTrainData = trainData;
     validationTrainData.shed_cols(i, i + validationDataSize - 1);
@@ -165,9 +165,15 @@ void CrossValidation(arma::mat& trainData,
 
     double tError, vError;
 
-    BuildVanillaNetwork(validationTrainData, validationTrainLabels,
-        validationTestData, validationTestLabels, hiddenLayerSize, maxEpochs,
-        validationTrainLabels.n_rows, tError, vError);
+    BuildVanillaNetwork(validationTrainData,
+                        validationTrainLabels,
+                        validationTestData,
+                        validationTestLabels,
+                        hiddenLayerSize,
+                        maxEpochs,
+                        validationTrainLabels.n_rows,
+                        tError,
+                        vError);
 
     trainError += tError;
     validationError += vError;
@@ -206,14 +212,19 @@ void AvgCrossValidation(arma::mat& dataset,
   {
     dataset = arma::shuffle(dataset, 1);
 
-    arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 1 - numLabels,
-        dataset.n_cols - 1);
-    arma::mat trainLabels = dataset.submat(dataset.n_rows - numLabels, 0,
-        dataset.n_rows - 1, dataset.n_cols - 1);
+    arma::mat trainData = dataset.submat(
+        0, 0, dataset.n_rows - 1 - numLabels, dataset.n_cols - 1);
+    arma::mat trainLabels = dataset.submat(
+        dataset.n_rows - numLabels, 0, dataset.n_rows - 1, dataset.n_cols - 1);
 
     double trainError, validationError;
-    CrossValidation(trainData, trainLabels, 10, hiddenLayerSize, maxEpochs,
-        trainError, validationError);
+    CrossValidation(trainData,
+                    trainLabels,
+                    10,
+                    hiddenLayerSize,
+                    maxEpochs,
+                    trainError,
+                    validationError);
 
     avgTrainError += trainError;
     avgValidationError += validationError;
@@ -253,11 +264,11 @@ BOOST_AUTO_TEST_CASE(IrisDataset)
     double avgTrainError, avgValidationError;
 
     // Run the CV for 10 times.
-    AvgCrossValidation(dataset, 1, 10, 3, 15, avgTrainError,
-        avgValidationError);
+    AvgCrossValidation(
+        dataset, 1, 10, 3, 15, avgTrainError, avgValidationError);
 
-    if (avgTrainError <= trainErrorThreshold &&
-        avgValidationError <= validationErrorThreshold)
+    if (avgTrainError <= trainErrorThreshold
+        && avgValidationError <= validationErrorThreshold)
     {
       break;
     }
@@ -314,11 +325,11 @@ BOOST_AUTO_TEST_CASE(NonLinearFunctionApproximation)
     double avgTrainError, avgValidationError;
 
     // Run CV 5 times.
-    AvgCrossValidation(dataset, 3, 5, 10, 10, avgTrainError,
-        avgValidationError);
+    AvgCrossValidation(
+        dataset, 3, 5, 10, 10, avgTrainError, avgValidationError);
 
-    if (avgTrainError <= trainErrorThreshold &&
-        avgValidationError <= validationErrorThreshold)
+    if (avgTrainError <= trainErrorThreshold
+        && avgValidationError <= validationErrorThreshold)
     {
       break;
     }

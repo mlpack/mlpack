@@ -48,8 +48,7 @@ namespace tree {
  * @tparam FitnessFunction Fitness function to use for calculating gain.
  * @tparam ObservationType Type of observations in this dimension.
  */
-template<typename FitnessFunction,
-         typename ObservationType = double>
+template<typename FitnessFunction, typename ObservationType = double>
 class HoeffdingNumericSplit
 {
  public:
@@ -99,8 +98,8 @@ class HoeffdingNumericSplit
    * @param secondBestFitness Value of the fitness function for the second best
    *      possible split (always 0 for this split).
    */
-  void EvaluateFitnessFunction(double& bestFitness, double& secondBestFitness)
-      const;
+  void EvaluateFitnessFunction(double& bestFitness,
+                               double& secondBestFitness) const;
 
   //! Return the number of children if this node splits on this feature.
   size_t NumChildren() const { return bins; }
@@ -144,8 +143,8 @@ class HoeffdingNumericSplit
 
 //! Convenience typedef.
 template<typename FitnessFunction>
-using HoeffdingDoubleNumericSplit = HoeffdingNumericSplit<FitnessFunction,
-    double>;
+using HoeffdingDoubleNumericSplit =
+    HoeffdingNumericSplit<FitnessFunction, double>;
 
 } // namespace tree
 } // namespace mlpack

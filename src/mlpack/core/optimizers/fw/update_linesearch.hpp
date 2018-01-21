@@ -38,10 +38,10 @@ class UpdateLineSearch
    * @param tolerance Tolerance for termination of line search.
    */
   UpdateLineSearch(const size_t maxIterations = 100000,
-                   const double tolerance = 1e-5) :
-      tolerance(tolerance), maxIterations(maxIterations)
-  {/* Do nothing */}
-
+                   const double tolerance = 1e-5)
+    : tolerance(tolerance), maxIterations(maxIterations)
+  { /* Do nothing */
+  }
 
   /**
    * Update rule for FrankWolfe, optimize with line search using secant method.
@@ -81,9 +81,9 @@ class UpdateLineSearch
   }
 
   //! Get the tolerance for termination.
-  double Tolerance() const {return tolerance;}
+  double Tolerance() const { return tolerance; }
   //! Modify the tolerance for termination.
-  double& Tolerance() {return tolerance;}
+  double& Tolerance() { return tolerance; }
 
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return maxIterations; }
@@ -96,7 +96,7 @@ class UpdateLineSearch
 
   //! Max number of iterations.
   size_t maxIterations;
-};  // class UpdateLineSearch
+}; // class UpdateLineSearch
 
 } // namespace optimization
 } // namespace mlpack

@@ -26,12 +26,9 @@ DBSCAN<RangeSearchType, PointSelectionPolicy>::DBSCAN(
     const size_t minPoints,
     const bool batchMode,
     RangeSearchType rangeSearch,
-    PointSelectionPolicy pointSelector) :
-    epsilon(epsilon),
-    minPoints(minPoints),
-    batchMode(batchMode),
-    rangeSearch(rangeSearch),
-    pointSelector(pointSelector)
+    PointSelectionPolicy pointSelector)
+  : epsilon(epsilon), minPoints(minPoints), batchMode(batchMode),
+    rangeSearch(rangeSearch), pointSelector(pointSelector)
 {
   // Nothing to do.
 }
@@ -42,9 +39,9 @@ DBSCAN<RangeSearchType, PointSelectionPolicy>::DBSCAN(
  */
 template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
-size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
-    const MatType& data,
-    arma::mat& centroids)
+size_t
+DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(const MatType& data,
+                                                       arma::mat& centroids)
 {
   // These assignments will be thrown away, but there is no way to avoid
   // calculating them.
@@ -61,9 +58,7 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
 template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
 size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
-    const MatType& data,
-    arma::Row<size_t>& assignments,
-    arma::mat& centroids)
+    const MatType& data, arma::Row<size_t>& assignments, arma::mat& centroids)
 {
   const size_t numClusters = Cluster(data, assignments);
 
@@ -97,8 +92,7 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
 template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
 size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
-    const MatType& data,
-    arma::Row<size_t>& assignments)
+    const MatType& data, arma::Row<size_t>& assignments)
 {
   // Initialize the UnionFind object.
   emst::UnionFind uf(data.n_cols);
@@ -149,8 +143,7 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
 template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
 void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
-    const MatType& data,
-    emst::UnionFind& uf)
+    const MatType& data, emst::UnionFind& uf)
 {
   std::vector<std::vector<size_t>> neighbors;
   std::vector<std::vector<double>> distances;
@@ -161,8 +154,8 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
       Log::Info << "DBSCAN clustering on point " << i << "..." << std::endl;
 
     // Do the range search for only this point.
-    rangeSearch.Search(data.col(i), math::Range(0.0, epsilon), neighbors,
-        distances);
+    rangeSearch.Search(
+        data.col(i), math::Range(0.0, epsilon), neighbors, distances);
 
     // Union to all neighbors.
     for (size_t j = 0; j < neighbors[0].size(); ++j)
@@ -178,8 +171,7 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
 template<typename RangeSearchType, typename PointSelectionPolicy>
 template<typename MatType>
 void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
-    const MatType& data,
-    emst::UnionFind& uf)
+    const MatType& data, emst::UnionFind& uf)
 {
   // For each point, find the points in epsilon-nighborhood and their distances.
   std::vector<std::vector<size_t>> neighbors;

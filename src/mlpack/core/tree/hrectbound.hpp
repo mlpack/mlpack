@@ -55,7 +55,7 @@ class HRectBound
 {
   // It is required that HRectBound have an LMetric as the given MetricType.
   static_assert(meta::IsLMetric<MetricType>::Value == true,
-      "HRectBound can only be used with the LMetric<> metric type.");
+                "HRectBound can only be used with the LMetric<> metric type.");
 
  public:
   /**
@@ -94,7 +94,9 @@ class HRectBound
   math::RangeType<ElemType>& operator[](const size_t i) { return bounds[i]; }
   //! Modify the range for a particular dimension.  No bounds checking.
   const math::RangeType<ElemType>& operator[](const size_t i) const
-  { return bounds[i]; }
+  {
+    return bounds[i];
+  }
 
   //! Get the minimum width of the bound.
   ElemType MinWidth() const { return minWidth; }
@@ -121,9 +123,9 @@ class HRectBound
    * @param point Point to which the minimum distance is requested.
    */
   template<typename VecType>
-  ElemType MinDistance(const VecType& point,
-                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
-      const;
+  ElemType
+  MinDistance(const VecType& point,
+              typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   /**
    * Calculates minimum bound-to-bound distance.
@@ -138,9 +140,9 @@ class HRectBound
    * @param point Point to which the maximum distance is requested.
    */
   template<typename VecType>
-  ElemType MaxDistance(const VecType& point,
-                       typename std::enable_if_t<IsVector<VecType>::value>* = 0)
-      const;
+  ElemType
+  MaxDistance(const VecType& point,
+              typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   /**
    * Computes maximum distance.
@@ -164,9 +166,9 @@ class HRectBound
    *     requested.
    */
   template<typename VecType>
-  math::RangeType<ElemType> RangeDistance(
-      const VecType& point,
-      typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
+  math::RangeType<ElemType>
+  RangeDistance(const VecType& point,
+                typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   /**
    * Expands this region to include new points.

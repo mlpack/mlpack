@@ -37,16 +37,14 @@ class MountainCar
     /**
      * Construct a state instance.
      */
-    State(): data(dimension, arma::fill::zeros)
-    { /* Nothing to do here. */ }
+    State() : data(dimension, arma::fill::zeros) { /* Nothing to do here. */}
 
     /**
      * Construct a state based on the given data.
      *
      * @param data Data for the velocityand position.
      */
-    State(const arma::colvec& data): data(data)
-    { /* Nothing to do here. */ }
+    State(const arma::colvec& data) : data(data) { /* Nothing to do here. */}
 
     //! Modify the internal representation of the state.
     arma::colvec& Data() { return data; }
@@ -96,12 +94,11 @@ class MountainCar
   MountainCar(const double positionMin = -1.2,
               const double positionMax = 0.5,
               const double velocityMin = -0.07,
-              const double velocityMax = 0.07) :
-      positionMin(positionMin),
-      positionMax(positionMax),
-      velocityMin(velocityMin),
-      velocityMax(velocityMax)
-  { /* Nothing to do here */ }
+              const double velocityMax = 0.07)
+    : positionMin(positionMin), positionMax(positionMax),
+      velocityMin(velocityMin), velocityMax(velocityMax)
+  { /* Nothing to do here */
+  }
 
   /**
    * Dynamics of Mountain Car. Get reward and next state based on current state
@@ -112,21 +109,20 @@ class MountainCar
    * @param nextState The next state.
    * @return reward, it's always -1.0.
    */
-  double Sample(const State& state,
-                const Action& action,
-                State& nextState) const
+  double
+  Sample(const State& state, const Action& action, State& nextState) const
   {
     // Calculate acceleration.
     int direction = action - 1;
-    nextState.Velocity() = state.Velocity() + 0.001 * direction - 0.0025 *
-        std::cos(3 * state.Position());
-    nextState.Velocity() = std::min(
-        std::max(nextState.Velocity(), velocityMin), velocityMax);
+    nextState.Velocity() = state.Velocity() + 0.001 * direction
+                           - 0.0025 * std::cos(3 * state.Position());
+    nextState.Velocity() =
+        std::min(std::max(nextState.Velocity(), velocityMin), velocityMax);
 
     // Update states.
     nextState.Position() = state.Position() + nextState.Velocity();
-    nextState.Position() = std::min(
-        std::max(nextState.Position(), positionMin), positionMax);
+    nextState.Position() =
+        std::min(std::max(nextState.Position(), positionMin), positionMax);
 
     if (std::abs(nextState.Position() - positionMin) <= 1e-5)
     {

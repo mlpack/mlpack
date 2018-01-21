@@ -29,7 +29,7 @@ class OrthogonalInitialization
    *
    * @param gain The gain value.
    */
-  OrthogonalInitialization(const double gain = 1.0) : gain(gain) { }
+  OrthogonalInitialization(const double gain = 1.0) : gain(gain) {}
 
   /**
    * Initialize the elements of the specified weight matrix with the orthogonal
@@ -45,7 +45,7 @@ class OrthogonalInitialization
     arma::Mat<eT> V;
     arma::Col<eT> s;
 
-    arma::svd_econ(W, s, V, arma::randu<arma::Mat<eT> >(rows, cols));
+    arma::svd_econ(W, s, V, arma::randu<arma::Mat<eT>>(rows, cols));
     W *= gain;
   }
 
@@ -74,7 +74,6 @@ class OrthogonalInitialization
   //! The number used as gain.
   double gain;
 }; // class OrthogonalInitialization
-
 
 } // namespace ann
 } // namespace mlpack

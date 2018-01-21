@@ -67,7 +67,7 @@ class LMetric
    * Default constructor does nothing, but is required to satisfy the Metric
    * policy.
    */
-  LMetric() { }
+  LMetric() {}
 
   /**
    * Computes the distance between two points.
@@ -85,7 +85,9 @@ class LMetric
 
   //! Serialize the metric (nothing to do).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const unsigned int /* version */)
+  {
+  }
 
   //! The power of the metric.
   static const int Power = TPower;
@@ -115,7 +117,6 @@ typedef LMetric<2, true> EuclideanDistance;
  * The L-infinity distance.
  */
 typedef LMetric<INT_MAX, false> ChebyshevDistance;
-
 
 } // namespace metric
 } // namespace mlpack

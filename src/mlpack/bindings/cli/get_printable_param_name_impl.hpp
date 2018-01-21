@@ -23,8 +23,9 @@ std::string GetPrintableParamName(
     const util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::disable_if<data::HasSerialize<T>>::type*,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type*)
+    const typename boost::
+        disable_if<std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::
+            type*)
 {
   return "--" + data.name;
 }
@@ -61,8 +62,9 @@ std::string GetPrintableParamName(
 template<typename T>
 std::string GetPrintableParamName(
     const util::ParamData& data,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type*)
+    const typename boost::
+        enable_if<std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::
+            type*)
 {
   return "--" + data.name + "_file";
 }

@@ -49,7 +49,6 @@ void VerifyCorrectness(const vec& beta, const vec& errCorr, double lambda)
   }
 }
 
-
 BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestCodingStep)
 {
   double lambda1 = 0.1;
@@ -114,8 +113,8 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestDictionaryStep)
   mat grad = zeros(D.n_rows, D.n_cols);
   for (uword i = 0; i < nPoints; i++)
   {
-    grad += (D - repmat(X.unsafe_col(i), 1, nAtoms)) *
-        diagmat(abs(Z.unsafe_col(i)));
+    grad += (D - repmat(X.unsafe_col(i), 1, nAtoms))
+            * diagmat(abs(Z.unsafe_col(i)));
   }
   grad = lambda * grad + (D * Z - X) * trans(Z);
 
@@ -137,8 +136,10 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   LocalCoordinateCoding lccXml(50, 0.1), lccText(12, 0.0), lccBinary(0, 0.0);
   SerializeObjectAll(lcc, lccXml, lccText, lccBinary);
 
-  CheckMatrices(lcc.Dictionary(), lccXml.Dictionary(), lccText.Dictionary(),
-      lccBinary.Dictionary());
+  CheckMatrices(lcc.Dictionary(),
+                lccXml.Dictionary(),
+                lccText.Dictionary(),
+                lccBinary.Dictionary());
 
   mat xmlCodes, textCodes, binaryCodes;
   lccXml.Encode(Y, xmlCodes);

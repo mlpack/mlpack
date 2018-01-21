@@ -27,7 +27,7 @@ class RandomPartition
 {
  public:
   //! Empty constructor, required by the InitialPartitionPolicy policy.
-  RandomPartition() { }
+  RandomPartition() {}
 
   /**
    * Partition the given dataset into the given number of clusters.  Assignments
@@ -46,13 +46,15 @@ class RandomPartition
                              arma::Row<size_t>& assignments)
   {
     // Implementation is so simple we'll put it here in the header file.
-    assignments = arma::shuffle(arma::linspace<arma::Row<size_t>>(0,
-        (clusters - 1), data.n_cols));
+    assignments = arma::shuffle(
+        arma::linspace<arma::Row<size_t>>(0, (clusters - 1), data.n_cols));
   }
 
   //! Serialize the partitioner (nothing to do).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const unsigned int /* version */)
+  {
+  }
 };
 
 } // namespace kmeans

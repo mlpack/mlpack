@@ -20,24 +20,24 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-ELU<InputDataType, OutputDataType>::ELU(
-    const double alpha) : alpha(alpha)
+ELU<InputDataType, OutputDataType>::ELU(const double alpha) : alpha(alpha)
 {
   // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void ELU<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+void ELU<InputDataType, OutputDataType>::Forward(const InputType&& input,
+                                                 OutputType&& output)
 {
   Fn(input, output);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
-void ELU<InputDataType, OutputDataType>::Backward(
-    const DataType&& input, DataType&& gy, DataType&& g)
+void ELU<InputDataType, OutputDataType>::Backward(const DataType&& input,
+                                                  DataType&& gy,
+                                                  DataType&& g)
 {
   DataType derivative;
   Deriv(input, derivative);
@@ -47,10 +47,9 @@ void ELU<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void ELU<InputDataType, OutputDataType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(alpha);
+  ar& BOOST_SERIALIZATION_NVP(alpha);
 }
 
 } // namespace ann

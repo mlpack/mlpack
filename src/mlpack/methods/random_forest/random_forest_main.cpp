@@ -14,7 +14,8 @@ using namespace mlpack::tree;
 using namespace mlpack::util;
 using namespace std;
 
-PROGRAM_INFO("Random forests",
+PROGRAM_INFO(
+    "Random forests",
     "This program is an implementation of the standard random forest "
     "classification algorithm by Leo Breiman.  A random forest can be "
     "trained and saved for later use, or a random forest may be loaded "
@@ -25,21 +26,32 @@ PROGRAM_INFO("Random forests",
 PARAM_MATRIX_IN("training", "Training dataset.", "t");
 PARAM_UROW_IN("labels", "Labels for training dataset.", "l");
 PARAM_MATRIX_IN("test", "Test dataset to produce predictions for.", "T");
-PARAM_UROW_IN("test_labels", "Test dataset labels, if accuracy calculation is "
-    "desired.", "L");
+PARAM_UROW_IN("test_labels",
+              "Test dataset labels, if accuracy calculation is "
+              "desired.",
+              "L");
 
-PARAM_FLAG("print_training_accuracy", "If set, then the accuracy of the model "
+PARAM_FLAG(
+    "print_training_accuracy",
+    "If set, then the accuracy of the model "
     "on the training set will be predicted (verbose must also be specified).",
     "a");
 
 PARAM_INT_IN("num_trees", "Number of trees in the random forest.", "N", 10);
-PARAM_INT_IN("minimum_leaf_size", "Minimum number of points in each leaf "
-    "node.", "n", 20);
+PARAM_INT_IN("minimum_leaf_size",
+             "Minimum number of points in each leaf "
+             "node.",
+             "n",
+             20);
 
-PARAM_MATRIX_OUT("probabilities", "Predicted class probabilities for each "
-    "point in the test set.", "P");
-PARAM_UROW_OUT("predictions", "Predicted classes for each point in the test "
-    "set.", "p");
+PARAM_MATRIX_OUT("probabilities",
+                 "Predicted class probabilities for each "
+                 "point in the test set.",
+                 "P");
+PARAM_UROW_OUT("predictions",
+               "Predicted classes for each point in the test "
+               "set.",
+               "p");
 
 /**
  * This is the class that we will serialize.  It is a pretty simple wrapper
@@ -53,56 +65,69 @@ class RandomForestModel
   RandomForest<> rf;
 
   // Create the model.
-  RandomForestModel() { /* Nothing to do. */ }
+  RandomForestModel() { /* Nothing to do. */}
 
   // Serialize the model.
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(rf);
+    ar& BOOST_SERIALIZATION_NVP(rf);
   }
 };
 
-PARAM_MODEL_IN(RandomForestModel, "input_model", "Pre-trained random forest to "
-    "use for classification.", "m");
-PARAM_MODEL_OUT(RandomForestModel, "output_model", "Model to save trained "
-    "random forest to.", "M");
+PARAM_MODEL_IN(RandomForestModel,
+               "input_model",
+               "Pre-trained random forest to "
+               "use for classification.",
+               "m");
+PARAM_MODEL_OUT(RandomForestModel,
+                "output_model",
+                "Model to save trained "
+                "random forest to.",
+                "M");
 
 static void mlpackMain()
 {
   // Check for incompatible input parameters.
-  RequireOnlyOnePassed({ "training", "input_model" }, true);
+  RequireOnlyOnePassed({"training", "input_model"}, true);
 
-  ReportIgnoredParam({{ "training", false }}, "print_training_accuracy");
+  ReportIgnoredParam({{"training", false}}, "print_training_accuracy");
 
   if (CLI::HasParam("test"))
   {
-    RequireAtLeastOnePassed({ "probabilities", "predictions" }, "no test output"
-        " will be saved");
+    RequireAtLeastOnePassed({"probabilities", "predictions"},
+                            "no test output"
+                            " will be saved");
   }
 
-  ReportIgnoredParam({{ "test", false }}, "test_labels");
+  ReportIgnoredParam({{"test", false}}, "test_labels");
 
-  RequireAtLeastOnePassed({ "test", "output_model", "print_training_accuracy" },
-      "the trained forest model will not be used or saved");
+  RequireAtLeastOnePassed({"test", "output_model", "print_training_accuracy"},
+                          "the trained forest model will not be used or saved");
 
   if (CLI::HasParam("training"))
   {
-    RequireAtLeastOnePassed({ "labels" }, true, "must pass labels when training"
-        " set given");
+    RequireAtLeastOnePassed({"labels"},
+                            true,
+                            "must pass labels when training"
+                            " set given");
   }
 
-  RequireParamValue<int>("num_trees", [](int x) { return x > 0; }, true,
-      "number of trees in forest must be positive");
+  RequireParamValue<int>("num_trees",
+                         [](int x) { return x > 0; },
+                         true,
+                         "number of trees in forest must be positive");
 
-  ReportIgnoredParam({{ "test", false }}, "predictions");
-  ReportIgnoredParam({{ "test", false }}, "probabilities");
+  ReportIgnoredParam({{"test", false}}, "predictions");
+  ReportIgnoredParam({{"test", false}}, "probabilities");
 
-  RequireParamValue<int>("minimum_leaf_size", [](int x) { return x > 0; }, true,
-      "minimum leaf size must be greater than 0");
+  RequireParamValue<int>("minimum_leaf_size",
+                         [](int x) { return x > 0; },
+                         true,
+                         "minimum leaf size must be greater than 0");
 
-  ReportIgnoredParam({{ "training", false }}, "num_trees");
-  ReportIgnoredParam({{ "training", false }}, "minimum_leaf_size");
+  ReportIgnoredParam({{"training", false}}, "num_trees");
+  ReportIgnoredParam({{"training", false}}, "minimum_leaf_size");
 
   RandomForestModel rfModel;
   if (CLI::HasParam("training"))
@@ -111,12 +136,12 @@ static void mlpackMain()
     arma::mat data = std::move(CLI::GetParam<arma::mat>("training"));
     arma::Row<size_t> labels =
         std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
-    const size_t numTrees = (size_t) CLI::GetParam<int>("num_trees");
+    const size_t numTrees = (size_t)CLI::GetParam<int>("num_trees");
     const size_t minimumLeafSize =
-        (size_t) CLI::GetParam<int>("minimum_leaf_size");
+        (size_t)CLI::GetParam<int>("minimum_leaf_size");
 
     Log::Info << "Training random forest with " << numTrees << " trees..."
-        << endl;
+              << endl;
 
     const size_t numClasses = arma::max(labels) + 1;
 
@@ -132,8 +157,8 @@ static void mlpackMain()
       const size_t correct = arma::accu(predictions == labels);
 
       Log::Info << correct << " of " << labels.n_elem << " correct on training"
-          << " set (" << (double(correct) / double(labels.n_elem) * 100) << ")."
-          << endl;
+                << " set (" << (double(correct) / double(labels.n_elem) * 100)
+                << ")." << endl;
     }
   }
   else
@@ -160,8 +185,9 @@ static void mlpackMain()
       const size_t correct = arma::accu(predictions == testLabels);
 
       Log::Info << correct << " of " << testLabels.n_elem << " correct on test"
-          << " set (" << (double(correct) / double(testLabels.n_elem) * 100)
-          << ")." << endl;
+                << " set ("
+                << (double(correct) / double(testLabels.n_elem) * 100) << ")."
+                << endl;
     }
 
     // Should we save the outputs?

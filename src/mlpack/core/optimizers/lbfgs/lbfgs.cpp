@@ -37,16 +37,11 @@ L_BFGS::L_BFGS(const size_t numBasis,
                const double factr,
                const size_t maxLineSearchTrials,
                const double minStep,
-               const double maxStep) :
-    numBasis(numBasis),
-    maxIterations(maxIterations),
-    armijoConstant(armijoConstant),
-    wolfe(wolfe),
-    minGradientNorm(minGradientNorm),
-    factr(factr),
-    maxLineSearchTrials(maxLineSearchTrials),
-    minStep(minStep),
-    maxStep(maxStep)
+               const double maxStep)
+  : numBasis(numBasis), maxIterations(maxIterations),
+    armijoConstant(armijoConstant), wolfe(wolfe),
+    minGradientNorm(minGradientNorm), factr(factr),
+    maxLineSearchTrials(maxLineSearchTrials), minStep(minStep), maxStep(maxStep)
 {
   // Nothing to do.
 }
@@ -110,8 +105,9 @@ void L_BFGS::SearchDirection(const arma::mat& gradient,
     int translatedPosition = (i + (numBasis - 1)) % numBasis;
     rho[iterationNum - i] = 1.0 / arma::dot(y.slice(translatedPosition),
                                             s.slice(translatedPosition));
-    alpha[iterationNum - i] = rho[iterationNum - i] *
-        arma::dot(s.slice(translatedPosition), searchDirection);
+    alpha[iterationNum - i] =
+        rho[iterationNum - i]
+        * arma::dot(s.slice(translatedPosition), searchDirection);
     searchDirection -= alpha[iterationNum - i] * y.slice(translatedPosition);
   }
 
@@ -120,10 +116,10 @@ void L_BFGS::SearchDirection(const arma::mat& gradient,
   for (size_t i = limit; i < iterationNum; i++)
   {
     int translatedPosition = i % numBasis;
-    double beta = rho[iterationNum - i - 1] *
-        arma::dot(y.slice(translatedPosition), searchDirection);
-    searchDirection += (alpha[iterationNum - i - 1] - beta) *
-        s.slice(translatedPosition);
+    double beta = rho[iterationNum - i - 1]
+                  * arma::dot(y.slice(translatedPosition), searchDirection);
+    searchDirection +=
+        (alpha[iterationNum - i - 1] - beta) * s.slice(translatedPosition);
   }
 
   // Negate the search direction so that it is a descent direction.

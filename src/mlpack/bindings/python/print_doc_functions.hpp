@@ -33,17 +33,15 @@ inline std::string PrintInputOptions();
  * something like x=5.
  */
 template<typename T, typename... Args>
-std::string PrintInputOptions(const std::string& paramName,
-                              const T& value,
-                              Args... args);
+std::string
+PrintInputOptions(const std::string& paramName, const T& value, Args... args);
 
 // Recursion base case.
 inline std::string PrintOutputOptions();
 
 template<typename T, typename... Args>
-std::string PrintOutputOptions(const std::string& paramName,
-                               const T& value,
-                               Args... args);
+std::string
+PrintOutputOptions(const std::string& paramName, const T& value, Args... args);
 
 /**
  * Given a name of a binding and a variable number of arguments (and their
@@ -89,9 +87,9 @@ inline bool IgnoreCheck(const std::vector<std::string>& constraints);
  * so if any constraint parameter or the main parameter are output parameters,
  * this returns true.
  */
-inline bool IgnoreCheck(
-    const std::vector<std::pair<std::string, bool>>& constraints,
-    const std::string& paramName);
+inline bool
+IgnoreCheck(const std::vector<std::pair<std::string, bool>>& constraints,
+            const std::string& paramName);
 
 } // namespace python
 } // namespace bindings

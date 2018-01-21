@@ -47,10 +47,8 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
 class Dropout
 {
  public:
@@ -115,9 +113,9 @@ class Dropout
   }
 
   //! The value of the rescale parameter.
-  bool Rescale() const {return rescale; }
+  bool Rescale() const { return rescale; }
   //! Modify the value of the rescale parameter.
-  bool& Rescale() {return rescale; }
+  bool& Rescale() { return rescale; }
 
   /**
    * Serialize the layer.

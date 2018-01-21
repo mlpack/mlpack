@@ -26,7 +26,7 @@ class GDTestFunction
 {
  public:
   //! Nothing to do for the constructor.
-  GDTestFunction() { }
+  GDTestFunction() {}
 
   //! Get the starting point.
   arma::mat GetInitialPoint() const { return arma::mat("1; 3; 2"); }

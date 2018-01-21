@@ -26,10 +26,8 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
 class MeanPooling
 {
  public:
@@ -137,9 +135,9 @@ class MeanPooling
     {
       for (size_t i = 0, rowidx = 0; i < output.n_rows; ++i, rowidx += dW)
       {
-        arma::mat subInput = input(
-            arma::span(rowidx, rowidx + rStep - 1 - offset),
-            arma::span(colidx, colidx + cStep - 1 - offset));
+        arma::mat subInput =
+            input(arma::span(rowidx, rowidx + rStep - 1 - offset),
+                  arma::span(colidx, colidx + cStep - 1 - offset));
 
         output(i, j) = arma::mean(arma::mean(subInput));
       }
@@ -165,14 +163,14 @@ class MeanPooling
     {
       for (size_t i = 0; i < input.n_rows - rStep; i += rStep)
       {
-        const arma::Mat<eT>& inputArea = input(arma::span(i, i + rStep - 1),
-            arma::span(j, j + cStep - 1));
+        const arma::Mat<eT>& inputArea =
+            input(arma::span(i, i + rStep - 1), arma::span(j, j + cStep - 1));
 
         unpooledError = arma::Mat<eT>(inputArea.n_rows, inputArea.n_cols);
         unpooledError.fill(error(i / rStep, j / cStep) / inputArea.n_elem);
 
         output(arma::span(i, i + rStep - 1 - offset),
-            arma::span(j, j + cStep - 1 - offset)) += unpooledError;
+               arma::span(j, j + cStep - 1 - offset)) += unpooledError;
       }
     }
   }
@@ -240,7 +238,6 @@ class MeanPooling
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 }; // class MeanPooling
-
 
 } // namespace ann
 } // namespace mlpack

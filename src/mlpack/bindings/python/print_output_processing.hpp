@@ -27,8 +27,9 @@ void PrintOutputProcessing(
     const bool onlyOutput,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename boost::
+        disable_if<std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::
+            type* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -39,16 +40,17 @@ void PrintOutputProcessing(
      *
      * result = CLI.GetParam[int]('param_name')
      */
-    std::cout << prefix << "result = " << "CLI.GetParam[" << GetCythonType<T>(d)
-        << "](\"" << d.name << "\")";
+    std::cout << prefix << "result = "
+              << "CLI.GetParam[" << GetCythonType<T>(d) << "](\"" << d.name
+              << "\")";
     if (GetCythonType<T>(d) == "string")
     {
       std::cout << std::endl << prefix << "result = result.decode(\"UTF-8\")";
     }
     else if (GetCythonType<T>(d) == "vector[string]")
     {
-      std::cout << std::endl << prefix
-          << "result = [x.decode(\"UTF-8\") for x in result]";
+      std::cout << std::endl
+                << prefix << "result = [x.decode(\"UTF-8\") for x in result]";
     }
   }
   else
@@ -59,16 +61,16 @@ void PrintOutputProcessing(
      * result['param_name'] = CLI.GetParam[int]('param_name')
      */
     std::cout << prefix << "result['" << d.name << "'] = CLI.GetParam["
-        << GetCythonType<T>(d) << "](\"" << d.name << "\")" << std::endl;
+              << GetCythonType<T>(d) << "](\"" << d.name << "\")" << std::endl;
     if (GetCythonType<T>(d) == "string")
     {
       std::cout << prefix << "result['" << d.name << "'] = result['" << d.name
-          << "'].decode(\"UTF-8\")" << std::endl;
+                << "'].decode(\"UTF-8\")" << std::endl;
     }
     else if (GetCythonType<T>(d) == "vector[string]")
     {
       std::cout << prefix << "result['" << d.name << "'] = [x.decode(\"UTF-8\")"
-          << " for x in result['" << d.name << "']]" << std::endl;
+                << " for x in result['" << d.name << "']]" << std::endl;
     }
   }
 }
@@ -95,8 +97,8 @@ void PrintOutputProcessing(
      * where X indicates the type to convert to.
      */
     std::cout << prefix << "result = arma_numpy." << GetArmaType<T>()
-        << "_to_numpy_" << GetNumpyTypeChar<T>() << "(CLI.GetParam["
-        << GetCythonType<T>(d) << "](\"" << d.name << "\"))" << std::endl;
+              << "_to_numpy_" << GetNumpyTypeChar<T>() << "(CLI.GetParam["
+              << GetCythonType<T>(d) << "](\"" << d.name << "\"))" << std::endl;
   }
   else
   {
@@ -108,10 +110,10 @@ void PrintOutputProcessing(
      *
      * where X indicates the type to convert to.
      */
-    std::cout << prefix << "result['" << d.name
-        << "'] = arma_numpy." << GetArmaType<T>() << "_to_numpy_"
-        << GetNumpyTypeChar<T>() << "(CLI.GetParam[" << GetCythonType<T>(d)
-        << "]('" << d.name << "'))" << std::endl;
+    std::cout << prefix << "result['" << d.name << "'] = arma_numpy."
+              << GetArmaType<T>() << "_to_numpy_" << GetNumpyTypeChar<T>()
+              << "(CLI.GetParam[" << GetCythonType<T>(d) << "]('" << d.name
+              << "'))" << std::endl;
   }
 }
 
@@ -123,8 +125,9 @@ void PrintOutputProcessing(
     const util::ParamData& d,
     const size_t indent,
     const bool onlyOutput,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename boost::
+        enable_if<std::is_same<T, std::tuple<data::DatasetInfo, arma::mat>>>::
+            type* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -138,9 +141,9 @@ void PrintOutputProcessing(
      * result = arma_numpy.mat_to_numpy_X(GetParamWithInfo[mat]('name'))
      */
     std::cout << prefix << "result = arma_numpy.mat_to_numpy_"
-        << GetNumpyTypeChar<arma::mat>()
-        << "(GetParamWithInfo[arma.Mat[double]]('" << d.name << "'))"
-        << std::endl;
+              << GetNumpyTypeChar<arma::mat>()
+              << "(GetParamWithInfo[arma.Mat[double]]('" << d.name << "'))"
+              << std::endl;
   }
   else
   {
@@ -151,9 +154,10 @@ void PrintOutputProcessing(
      *     arma_numpy.mat_to_numpy_X(GetParamWithInfo[mat]('name'))
      */
     std::cout << prefix << "result['" << d.name
-        << "'] = arma_numpy.mat_to_numpy_" << GetNumpyTypeChar<arma::mat>()
-        << "(GetParamWithInfo[arma.Mat[double]]('" << d.name << "'))"
-        << std::endl;
+              << "'] = arma_numpy.mat_to_numpy_"
+              << GetNumpyTypeChar<arma::mat>()
+              << "(GetParamWithInfo[arma.Mat[double]]('" << d.name << "'))"
+              << std::endl;
   }
 }
 
@@ -185,8 +189,8 @@ void PrintOutputProcessing(
      */
     std::cout << prefix << "result = " << strippedType << "Type()" << std::endl;
     std::cout << prefix << "MoveToPtr[" << strippedType << "]((<"
-        << strippedType << "Type?> result).modelptr, CLI.GetParam["
-        << strippedType << "]('" << d.name << "'))" << std::endl;
+              << strippedType << "Type?> result).modelptr, CLI.GetParam["
+              << strippedType << "]('" << d.name << "'))" << std::endl;
   }
   else
   {
@@ -198,11 +202,11 @@ void PrintOutputProcessing(
      *     CLI.GetParam[Model]('name'))
      */
     std::cout << prefix << "result['" << d.name << "'] = " << strippedType
-        << "Type()" << std::endl;
+              << "Type()" << std::endl;
     std::cout << prefix << "MoveToPtr[" << strippedType << "]((<"
-        << strippedType << "Type?>" << " result['" << d.name
-        << "']).modelptr, CLI.GetParam[" << strippedType << "]('"
-        << d.name << "'))" << std::endl;
+              << strippedType << "Type?>"
+              << " result['" << d.name << "']).modelptr, CLI.GetParam["
+              << strippedType << "]('" << d.name << "'))" << std::endl;
   }
 }
 
@@ -225,7 +229,7 @@ void PrintOutputProcessing(const util::ParamData& d,
                            const void* input,
                            void* /* output */)
 {
-  std::tuple<size_t, bool>* tuple = (std::tuple<size_t, bool>*) input;
+  std::tuple<size_t, bool>* tuple = (std::tuple<size_t, bool>*)input;
 
   PrintOutputProcessing<T>(d, std::get<0>(*tuple), std::get<1>(*tuple));
 }

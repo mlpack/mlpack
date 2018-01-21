@@ -27,10 +27,8 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
+template<typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
 class Constant
 {
  public:
@@ -62,9 +60,8 @@ class Constant
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& /* input */,
-                DataType&& /* gy */,
-                DataType&& g);
+  void
+  Backward(const DataType&& /* input */, DataType&& /* gy */, DataType&& g);
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }

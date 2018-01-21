@@ -25,31 +25,24 @@ namespace range {
  * Initialize the RSModel with the given tree type and whether or not a random
  * basis should be used.
  */
-inline RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
-    treeType(treeType),
-    leafSize(0),
-    randomBasis(randomBasis)
+inline RSModel::RSModel(TreeTypes treeType, bool randomBasis)
+  : treeType(treeType), leafSize(0), randomBasis(randomBasis)
 {
   // Nothing to do.
 }
 
 // Copy constructor.
-inline RSModel::RSModel(const RSModel& other) :
-    treeType(other.treeType),
-    leafSize(other.leafSize),
-    randomBasis(other.randomBasis),
-    q(other.q),
-    rSearch(other.rSearch)
+inline RSModel::RSModel(const RSModel& other)
+  : treeType(other.treeType), leafSize(other.leafSize),
+    randomBasis(other.randomBasis), q(other.q), rSearch(other.rSearch)
 {
   // Nothing to do.
 }
 
 // Move constructor.
-inline RSModel::RSModel(RSModel&& other) :
-    treeType(other.treeType),
-    leafSize(other.leafSize),
-    randomBasis(other.randomBasis),
-    q(std::move(other.q)),
+inline RSModel::RSModel(RSModel&& other)
+  : treeType(other.treeType), leafSize(other.leafSize),
+    randomBasis(other.randomBasis), q(std::move(other.q)),
     rSearch(std::move(other.rSearch))
 {
   // Reset other model.
@@ -94,10 +87,7 @@ inline RSModel& RSModel::operator=(RSModel&& other)
 }
 
 // Clean memory, if necessary.
-inline RSModel::~RSModel()
-{
-  boost::apply_visitor(DeleteVisitor(), rSearch);
-}
+inline RSModel::~RSModel() { boost::apply_visitor(DeleteVisitor(), rSearch); }
 
 inline void RSModel::BuildModel(arma::mat&& referenceSet,
                                 const size_t leafSize,
@@ -129,7 +119,7 @@ inline void RSModel::BuildModel(arma::mat&& referenceSet,
   switch (treeType)
   {
     case KD_TREE:
-      rSearch = new RSType<tree::KDTree> (naive, singleMode);
+      rSearch = new RSType<tree::KDTree>(naive, singleMode);
       break;
 
     case COVER_TREE:
@@ -206,7 +196,7 @@ inline void RSModel::Search(arma::mat&& querySet,
     querySet = q * querySet;
 
   Log::Info << "Search for points in the range [" << range.Lo() << ", "
-      << range.Hi() << "] with ";
+            << range.Hi() << "] with ";
   if (!Naive() && !SingleMode())
     Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
   else if (!Naive())
@@ -214,9 +204,7 @@ inline void RSModel::Search(arma::mat&& querySet,
   else
     Log::Info << "brute-force (naive) search..." << std::endl;
 
-
-  BiSearchVisitor search(querySet, range, neighbors, distances,
-      leafSize);
+  BiSearchVisitor search(querySet, range, neighbors, distances, leafSize);
   boost::apply_visitor(search, rSearch);
 }
 
@@ -226,7 +214,7 @@ inline void RSModel::Search(const math::Range& range,
                             std::vector<std::vector<double>>& distances)
 {
   Log::Info << "Search for points in the range [" << range.Lo() << ", "
-      << range.Hi() << "] with ";
+            << range.Hi() << "] with ";
   if (!Naive() && !SingleMode())
     Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
   else if (!Naive())
@@ -296,13 +284,11 @@ BiSearchVisitor::BiSearchVisitor(const arma::mat& querySet,
                                  const math::Range& range,
                                  std::vector<std::vector<size_t>>& neighbors,
                                  std::vector<std::vector<double>>& distances,
-                                 const size_t leafSize):
-    querySet(querySet),
-    range(range),
-    neighbors(neighbors),
-    distances(distances),
-    leafSize(leafSize)
-{}
+                                 const size_t leafSize)
+  : querySet(querySet), range(range), neighbors(neighbors),
+    distances(distances), leafSize(leafSize)
+{
+}
 
 //! Default Bichromatic range search on the given RSType instance.
 template<template<typename TreeMetricType,
@@ -349,8 +335,8 @@ void BiSearchVisitor::SearchLeaf(RSType* rs) const
     Timer::Start("tree_building");
     Log::Info << "Building query tree..." << std::endl;
     std::vector<size_t> oldFromNewQueries;
-    typename RSType::Tree queryTree(std::move(querySet), oldFromNewQueries,
-        leafSize);
+    typename RSType::Tree queryTree(
+        std::move(querySet), oldFromNewQueries, leafSize);
     Log::Info << "Tree built." << std::endl;
     Timer::Stop("tree_building");
 
@@ -372,11 +358,10 @@ void BiSearchVisitor::SearchLeaf(RSType* rs) const
 }
 
 //! Save parameters for Train.
-TrainVisitor::TrainVisitor(arma::mat&& referenceSet,
-                           const size_t leafSize) :
-    referenceSet(std::move(referenceSet)),
-    leafSize(leafSize)
-{}
+TrainVisitor::TrainVisitor(arma::mat&& referenceSet, const size_t leafSize)
+  : referenceSet(std::move(referenceSet)), leafSize(leafSize)
+{
+}
 
 //! Default Train on the given RSType instance.
 template<template<typename TreeMetricType,
@@ -422,9 +407,8 @@ void TrainVisitor::TrainLeaf(RSType* rs) const
   else
   {
     std::vector<size_t> oldFromNewReferences;
-    typename RSType::Tree* tree =
-        new typename RSType::Tree(std::move(referenceSet), oldFromNewReferences,
-        leafSize);
+    typename RSType::Tree* tree = new typename RSType::Tree(
+        std::move(referenceSet), oldFromNewReferences, leafSize);
     rs->Train(tree);
 
     // Give the model ownership of the tree and the mappings.
@@ -472,16 +456,16 @@ bool& NaiveVisitor::operator()(RSType* rs) const
 template<typename Archive>
 void RSModel::serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(treeType);
-  ar & BOOST_SERIALIZATION_NVP(randomBasis);
-  ar & BOOST_SERIALIZATION_NVP(q);
+  ar& BOOST_SERIALIZATION_NVP(treeType);
+  ar& BOOST_SERIALIZATION_NVP(randomBasis);
+  ar& BOOST_SERIALIZATION_NVP(q);
 
   // This should never happen, but just in case...
   if (Archive::is_loading::value)
     boost::apply_visitor(DeleteVisitor(), rSearch);
 
   // We'll only need to serialize one of the model objects, based on the type.
-  ar & BOOST_SERIALIZATION_NVP(rSearch);
+  ar& BOOST_SERIALIZATION_NVP(rSearch);
 }
 
 inline const arma::mat& RSModel::Dataset() const

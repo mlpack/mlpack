@@ -52,7 +52,7 @@ class Proximal
    * @param tau Norm of l0 ball.
    */
   static void ProjectToL0Ball(arma::vec& v, int tau);
-};  // class Proximal
+}; // class Proximal
 
 } // namespace optimization
 } // namespace mlpack

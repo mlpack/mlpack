@@ -15,47 +15,37 @@ using namespace mlpack;
 using namespace mlpack::fastmks;
 using namespace mlpack::kernel;
 
-FastMKSModel::FastMKSModel(const int kernelType) :
-    kernelType(kernelType),
-    linear(NULL),
-    polynomial(NULL),
-    cosine(NULL),
-    gaussian(NULL),
-    epan(NULL),
-    triangular(NULL),
-    hyptan(NULL)
+FastMKSModel::FastMKSModel(const int kernelType)
+  : kernelType(kernelType), linear(NULL), polynomial(NULL), cosine(NULL),
+    gaussian(NULL), epan(NULL), triangular(NULL), hyptan(NULL)
 {
   // Nothing to do.
 }
 
-FastMKSModel::FastMKSModel(const FastMKSModel& other) :
-    kernelType(other.kernelType),
-    linear(other.linear == NULL ? NULL :
-        new FastMKS<LinearKernel>(*other.linear)),
-    polynomial(other.polynomial == NULL ? NULL :
-        new FastMKS<PolynomialKernel>(*other.polynomial)),
-    cosine(other.cosine == NULL ? NULL :
-        new FastMKS<CosineDistance>(*other.cosine)),
-    gaussian(other.gaussian == NULL ? NULL :
-        new FastMKS<GaussianKernel>(*other.gaussian)),
-    epan(other.epan == NULL ? NULL :
-        new FastMKS<EpanechnikovKernel>(*other.epan)),
-    triangular(other.triangular == NULL ? NULL :
-        new FastMKS<TriangularKernel>(*other.triangular)),
-    hyptan(other.hyptan == NULL ? NULL :
-        new FastMKS<HyperbolicTangentKernel>(*other.hyptan))
+FastMKSModel::FastMKSModel(const FastMKSModel& other)
+  : kernelType(other.kernelType),
+    linear(other.linear == NULL ? NULL
+                                : new FastMKS<LinearKernel>(*other.linear)),
+    polynomial(other.polynomial == NULL ? NULL : new FastMKS<PolynomialKernel>(
+                                                     *other.polynomial)),
+    cosine(other.cosine == NULL ? NULL
+                                : new FastMKS<CosineDistance>(*other.cosine)),
+    gaussian(other.gaussian == NULL ? NULL : new FastMKS<GaussianKernel>(
+                                                 *other.gaussian)),
+    epan(other.epan == NULL ? NULL
+                            : new FastMKS<EpanechnikovKernel>(*other.epan)),
+    triangular(other.triangular == NULL ? NULL : new FastMKS<TriangularKernel>(
+                                                     *other.triangular)),
+    hyptan(other.hyptan == NULL ? NULL : new FastMKS<HyperbolicTangentKernel>(
+                                             *other.hyptan))
 {
   // Nothing to do.
 }
 
-FastMKSModel::FastMKSModel(FastMKSModel&& other) :
-    kernelType(other.kernelType),
-    linear(other.linear),
-    polynomial(other.polynomial),
-    cosine(other.cosine),
-    gaussian(other.gaussian),
-    epan(other.epan),
-    triangular(other.triangular),
+FastMKSModel::FastMKSModel(FastMKSModel&& other)
+  : kernelType(other.kernelType), linear(other.linear),
+    polynomial(other.polynomial), cosine(other.cosine),
+    gaussian(other.gaussian), epan(other.epan), triangular(other.triangular),
     hyptan(other.hyptan)
 {
   // Clear other object.

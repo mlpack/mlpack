@@ -28,17 +28,17 @@ class GivenInitialization
 {
  public:
   // Empty constructor required for the InitializeRule template.
-  GivenInitialization() { }
+  GivenInitialization() {}
 
   // Initialize the GivenInitialization object with the given matrices.
-  GivenInitialization(const arma::mat& w, const arma::mat& h) : w(w), h(h) { }
+  GivenInitialization(const arma::mat& w, const arma::mat& h) : w(w), h(h) {}
 
   // Initialize the GivenInitialization object, taking control of the given
   // matrices.
-  GivenInitialization(const arma::mat&& w, const arma::mat&& h) :
-    w(std::move(w)),
-    h(std::move(h))
-  { }
+  GivenInitialization(const arma::mat&& w, const arma::mat&& h)
+    : w(std::move(w)), h(std::move(h))
+  {
+  }
 
   /**
    * Fill W and H with random uniform noise.
@@ -63,8 +63,8 @@ class GivenInitialization
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(w);
-    ar & BOOST_SERIALIZATION_NVP(h);
+    ar& BOOST_SERIALIZATION_NVP(w);
+    ar& BOOST_SERIALIZATION_NVP(h);
   }
 
  private:

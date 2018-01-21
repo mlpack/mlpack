@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_SUITE(ANNLayerTest);
 template<class T>
 void ResetFunction(
     T& layer,
-    typename std::enable_if<HasResetCheck<T, void(T::*)()>::value>::type* = 0)
+    typename std::enable_if<HasResetCheck<T, void (T::*)()>::value>::type* = 0)
 {
   layer.Reset();
 }
@@ -39,7 +39,7 @@ void ResetFunction(
 template<class T>
 void ResetFunction(
     T& /* layer */,
-    typename std::enable_if<!HasResetCheck<T, void(T::*)()>::value>::type* = 0)
+    typename std::enable_if<!HasResetCheck<T, void (T::*)()>::value>::type* = 0)
 {
   /* Nothing to do here */
 }
@@ -48,10 +48,10 @@ void ResetFunction(
 // similarly to before.
 template<typename ModuleType>
 double JacobianTest(ModuleType& module,
-                  arma::mat& input,
-                  const double minValue = -2,
-                  const double maxValue = -1,
-                  const double perturbation = 1e-6)
+                    arma::mat& input,
+                    const double minValue = -2,
+                    const double maxValue = -1,
+                    const double perturbation = 1e-6)
 {
   arma::mat output, outputA, outputB, jacobianA, jacobianB;
 
@@ -67,8 +67,8 @@ double JacobianTest(ModuleType& module,
   jacobianA = arma::zeros(input.n_elem, output.n_elem);
 
   // Share the input paramter matrix.
-  arma::mat sin = arma::mat(input.memptr(), input.n_rows, input.n_cols,
-      false, false);
+  arma::mat sin =
+      arma::mat(input.memptr(), input.n_rows, input.n_cols, false, false);
 
   for (size_t i = 0; i < input.n_elem; ++i)
   {
@@ -88,8 +88,8 @@ double JacobianTest(ModuleType& module,
   arma::mat deriv = arma::zeros(output.n_rows, output.n_cols);
 
   // Share the derivative parameter.
-  arma::mat derivTemp = arma::mat(deriv.memptr(), deriv.n_rows, deriv.n_cols,
-      false, false);
+  arma::mat derivTemp =
+      arma::mat(deriv.memptr(), deriv.n_rows, deriv.n_cols, false, false);
 
   // Initialize the jacobian matrix.
   jacobianB = arma::zeros(input.n_elem, output.n_elem);
@@ -122,11 +122,14 @@ double JacobianPerformanceTest(ModuleType& module,
   module.Backward(std::move(input), std::move(target), std::move(delta));
 
   arma::mat centralDifference = arma::zeros(delta.n_rows, delta.n_cols);
-  arma::mat inputTemp = arma::mat(input.memptr(), input.n_rows, input.n_cols,
-      false, false);
+  arma::mat inputTemp =
+      arma::mat(input.memptr(), input.n_rows, input.n_cols, false, false);
 
   arma::mat centralDifferenceTemp = arma::mat(centralDifference.memptr(),
-      centralDifference.n_rows, centralDifference.n_cols, false, false);
+                                              centralDifference.n_rows,
+                                              centralDifference.n_cols,
+                                              false,
+                                              false);
 
   for (size_t i = 0; i < input.n_elem; ++i)
   {
@@ -173,8 +176,8 @@ double CheckGradient(FunctionType& function, const double eps = 1e-7)
   }
 
   // Estimate error of gradient.
-  return arma::norm(orgGradient - estGradient) /
-      arma::norm(orgGradient + estGradient);
+  return arma::norm(orgGradient - estGradient)
+         / arma::norm(orgGradient + estGradient);
 }
 
 /**
@@ -198,8 +201,8 @@ BOOST_AUTO_TEST_CASE(SimpleAddLayerTest)
   // Test the forward function.
   input = arma::ones(10, 1);
   module.Forward(std::move(input), std::move(output));
-  BOOST_REQUIRE_CLOSE(10 + arma::accu(module.Parameters()),
-      arma::accu(output), 1e-3);
+  BOOST_REQUIRE_CLOSE(
+      10 + arma::accu(module.Parameters()), arma::accu(output), 1e-3);
 
   // Test the backward function.
   module.Backward(std::move(input), std::move(output), std::move(delta));
@@ -240,15 +243,12 @@ BOOST_AUTO_TEST_CASE(GradientAddLayerTest)
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>(
           input, target);
-      model->Add<IdentityLayer<> >();
-      model->Add<Add<> >(10);
-      model->Add<LogSoftMax<> >();
+      model->Add<IdentityLayer<>>();
+      model->Add<Add<>>(10);
+      model->Add<LogSoftMax<>>();
     }
 
-    ~GradientFunction()
-    {
-      delete model;
-    }
+    ~GradientFunction() { delete model; }
 
     double Gradient(arma::mat& gradient) const
     {
@@ -332,14 +332,14 @@ BOOST_AUTO_TEST_CASE(SimpleDropoutLayerTest)
   // Test the Forward function.
   arma::mat output;
   module.Forward(std::move(input), std::move(output));
-  BOOST_REQUIRE_LE(
-      arma::as_scalar(arma::abs(arma::mean(output) - (1 - p))), 0.05);
+  BOOST_REQUIRE_LE(arma::as_scalar(arma::abs(arma::mean(output) - (1 - p))),
+                   0.05);
 
   // Test the Backward function.
   arma::mat delta;
   module.Backward(std::move(input), std::move(input), std::move(delta));
-  BOOST_REQUIRE_LE(
-      arma::as_scalar(arma::abs(arma::mean(delta) - (1 - p))), 0.05);
+  BOOST_REQUIRE_LE(arma::as_scalar(arma::abs(arma::mean(delta) - (1 - p))),
+                   0.05);
 
   // Test the Forward function.
   module.Deterministic() = true;
@@ -363,7 +363,7 @@ BOOST_AUTO_TEST_CASE(DropoutProbabilityTest)
   arma::mat input = arma::ones(1500, 1);
   const size_t iterations = 10;
 
-  double probability[5] = { 0.1, 0.3, 0.4, 0.7, 0.8 };
+  double probability[5] = {0.1, 0.3, 0.4, 0.7, 0.8};
   for (size_t trial = 0; trial < 5; ++trial)
   {
     double nonzeroCount = 0;
@@ -380,8 +380,8 @@ BOOST_AUTO_TEST_CASE(DropoutProbabilityTest)
       arma::uvec nonzero = arma::find(output);
       nonzeroCount += nonzero.n_elem;
     }
-    const double expected = input.n_elem * (1 - probability[trial]) *
-        iterations;
+    const double expected =
+        input.n_elem * (1 - probability[trial]) * iterations;
     const double error = fabs(nonzeroCount - expected) / expected;
 
     BOOST_REQUIRE_LE(error, 0.15);
@@ -416,9 +416,10 @@ BOOST_AUTO_TEST_CASE(SimpleLinearLayerTest)
   // Test the Forward function.
   input = arma::zeros(10, 1);
   module.Forward(std::move(input), std::move(output));
-  BOOST_REQUIRE_CLOSE(arma::accu(
-      module.Parameters().submat(100, 0, module.Parameters().n_elem - 1, 0)),
-      arma::accu(output), 1e-3);
+  BOOST_REQUIRE_CLOSE(arma::accu(module.Parameters().submat(
+                          100, 0, module.Parameters().n_elem - 1, 0)),
+                      arma::accu(output),
+                      1e-3);
 
   // Test the Backward function.
   module.Backward(std::move(input), std::move(input), std::move(delta));
@@ -461,15 +462,12 @@ BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>(
           input, target);
-      model->Add<IdentityLayer<> >();
-      model->Add<Linear<> >(10, 2);
-      model->Add<LogSoftMax<> >();
+      model->Add<IdentityLayer<>>();
+      model->Add<Linear<>>(10, 2);
+      model->Add<LogSoftMax<>>();
     }
 
-    ~GradientFunction()
-    {
-      delete model;
-    }
+    ~GradientFunction() { delete model; }
 
     double Gradient(arma::mat& gradient) const
     {
@@ -544,15 +542,12 @@ BOOST_AUTO_TEST_CASE(GradientLinearNoBiasLayerTest)
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>(
           input, target);
-      model->Add<IdentityLayer<> >();
-      model->Add<LinearNoBias<> >(10, 2);
-      model->Add<LogSoftMax<> >();
+      model->Add<IdentityLayer<>>();
+      model->Add<LinearNoBias<>>(10, 2);
+      model->Add<LogSoftMax<>>();
     }
 
-    ~GradientFunction()
-    {
-      delete model;
-    }
+    ~GradientFunction() { delete model; }
 
     double Gradient(arma::mat& gradient) const
     {
@@ -721,7 +716,7 @@ BOOST_AUTO_TEST_CASE(SimpleAddMergeLayerTest)
     {
       IdentityLayer<> identityLayer;
       identityLayer.Forward(std::move(input),
-          std::move(identityLayer.OutputParameter()));
+                            std::move(identityLayer.OutputParameter()));
 
       module.Add(identityLayer);
     }
@@ -749,22 +744,22 @@ BOOST_AUTO_TEST_CASE(LSTMRrhoTest)
   // Create model with user defined rho parameter.
   RNN<NegativeLogLikelihood<>, RandomInitialization> modelA(
       input, target, rho, false, NegativeLogLikelihood<>(), init);
-  modelA.Add<IdentityLayer<> >();
-  modelA.Add<Linear<> >(1, 10);
+  modelA.Add<IdentityLayer<>>();
+  modelA.Add<Linear<>>(1, 10);
 
   // Use LSTM layer with rho.
-  modelA.Add<LSTM<> >(10, 3, rho);
-  modelA.Add<LogSoftMax<> >();
+  modelA.Add<LSTM<>>(10, 3, rho);
+  modelA.Add<LogSoftMax<>>();
 
   // Create model without user defined rho parameter.
-  RNN<NegativeLogLikelihood<> > modelB(
+  RNN<NegativeLogLikelihood<>> modelB(
       input, target, rho, false, NegativeLogLikelihood<>(), init);
-  modelB.Add<IdentityLayer<> >();
-  modelB.Add<Linear<> >(1, 10);
+  modelB.Add<IdentityLayer<>>();
+  modelB.Add<Linear<>>(1, 10);
 
   // Use LSTM layer with rho = MAXSIZE.
-  modelB.Add<LSTM<> >(10, 3);
-  modelB.Add<LogSoftMax<> >();
+  modelB.Add<LSTM<>>(10, 3);
+  modelB.Add<LogSoftMax<>>();
 
   optimization::StandardSGD opt(0.1, 1, 5, -100, false);
   modelA.Train(input, target, opt);
@@ -787,17 +782,14 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
       target.ones(1, 1, 5);
       const size_t rho = 5;
 
-      model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
-      model->Add<IdentityLayer<> >();
-      model->Add<Linear<> >(1, 10);
-      model->Add<LSTM<> >(10, 3, rho);
-      model->Add<LogSoftMax<> >();
+      model = new RNN<NegativeLogLikelihood<>>(input, target, rho);
+      model->Add<IdentityLayer<>>();
+      model->Add<Linear<>>(1, 10);
+      model->Add<LSTM<>>(10, 3, rho);
+      model->Add<LogSoftMax<>>();
     }
 
-    ~GradientFunction()
-    {
-      delete model;
-    }
+    ~GradientFunction() { delete model; }
 
     double Gradient(arma::mat& gradient) const
     {
@@ -809,7 +801,7 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    RNN<NegativeLogLikelihood<> >* model;
+    RNN<NegativeLogLikelihood<>>* model;
     arma::cube input, target;
   } function;
 
@@ -829,22 +821,22 @@ BOOST_AUTO_TEST_CASE(FastLSTMRrhoTest)
   // Create model with user defined rho parameter.
   RNN<NegativeLogLikelihood<>, RandomInitialization> modelA(
       input, target, rho, false, NegativeLogLikelihood<>(), init);
-  modelA.Add<IdentityLayer<> >();
-  modelA.Add<Linear<> >(1, 10);
+  modelA.Add<IdentityLayer<>>();
+  modelA.Add<Linear<>>(1, 10);
 
   // Use FastLSTM layer with rho.
-  modelA.Add<FastLSTM<> >(10, 3, rho);
-  modelA.Add<LogSoftMax<> >();
+  modelA.Add<FastLSTM<>>(10, 3, rho);
+  modelA.Add<LogSoftMax<>>();
 
   // Create model without user defined rho parameter.
-  RNN<NegativeLogLikelihood<> > modelB(
+  RNN<NegativeLogLikelihood<>> modelB(
       input, target, rho, false, NegativeLogLikelihood<>(), init);
-  modelB.Add<IdentityLayer<> >();
-  modelB.Add<Linear<> >(1, 10);
+  modelB.Add<IdentityLayer<>>();
+  modelB.Add<Linear<>>(1, 10);
 
   // Use FastLSTM layer with rho = MAXSIZE.
-  modelB.Add<FastLSTM<> >(10, 3);
-  modelB.Add<LogSoftMax<> >();
+  modelB.Add<FastLSTM<>>(10, 3);
+  modelB.Add<LogSoftMax<>>();
 
   optimization::StandardSGD opt(0.1, 1, 5, -100, false);
   modelA.Train(input, target, opt);
@@ -867,17 +859,14 @@ BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
       target = arma::ones(1, 1, 5);
       const size_t rho = 5;
 
-      model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
-      model->Add<IdentityLayer<> >();
-      model->Add<Linear<> >(1, 10);
-      model->Add<FastLSTM<> >(10, 3, rho);
-      model->Add<LogSoftMax<> >();
+      model = new RNN<NegativeLogLikelihood<>>(input, target, rho);
+      model->Add<IdentityLayer<>>();
+      model->Add<Linear<>>(1, 10);
+      model->Add<FastLSTM<>>(10, 3, rho);
+      model->Add<LogSoftMax<>>();
     }
 
-    ~GradientFunction()
-    {
-      delete model;
-    }
+    ~GradientFunction() { delete model; }
 
     double Gradient(arma::mat& gradient) const
     {
@@ -889,7 +878,7 @@ BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    RNN<NegativeLogLikelihood<> >* model;
+    RNN<NegativeLogLikelihood<>>* model;
     arma::cube input, target;
   } function;
 
@@ -914,17 +903,14 @@ BOOST_AUTO_TEST_CASE(GradientGRULayerTest)
       target = arma::ones(1, 1, 5);
       const size_t rho = 5;
 
-      model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
-      model->Add<IdentityLayer<> >();
-      model->Add<Linear<> >(1, 10);
-      model->Add<GRU<> >(10, 3, rho);
-      model->Add<LogSoftMax<> >();
+      model = new RNN<NegativeLogLikelihood<>>(input, target, rho);
+      model->Add<IdentityLayer<>>();
+      model->Add<Linear<>>(1, 10);
+      model->Add<GRU<>>(10, 3, rho);
+      model->Add<LogSoftMax<>>();
     }
 
-    ~GradientFunction()
-    {
-      delete model;
-    }
+    ~GradientFunction() { delete model; }
 
     double Gradient(arma::mat& gradient) const
     {
@@ -936,7 +922,7 @@ BOOST_AUTO_TEST_CASE(GradientGRULayerTest)
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    RNN<NegativeLogLikelihood<> >* model;
+    RNN<NegativeLogLikelihood<>>* model;
     arma::cube input, target;
   } function;
 
@@ -951,8 +937,8 @@ BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
   GRU<> gru(3, 3, 5);
 
   // Initialize the weights to all ones.
-  NetworkInitialization<ConstInitialization>
-    networkInit(ConstInitialization(1));
+  NetworkInitialization<ConstInitialization> networkInit(
+      ConstInitialization(1));
   networkInit.Initialize(gru.Model(), gru.Parameters());
 
   // Provide input of all ones.
@@ -966,7 +952,7 @@ BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
   expectedOutput *= -4;
   expectedOutput = arma::exp(expectedOutput);
   expectedOutput = arma::ones(3, 1) / (arma::ones(3, 1) + expectedOutput);
-  expectedOutput = (arma::ones(3, 1)  - expectedOutput) % expectedOutput;
+  expectedOutput = (arma::ones(3, 1) - expectedOutput) % expectedOutput;
 
   // For the first input the output should be equal to the output of
   // gate z_t as the previous output fed to the cell is all zeros.
@@ -1019,13 +1005,15 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
   input = arma::zeros(10, 1);
   module.Forward(std::move(input), std::move(output));
 
-  BOOST_REQUIRE_CLOSE(arma::accu(
-      moduleA.Parameters().submat(100, 0, moduleA.Parameters().n_elem - 1, 0)),
-      arma::accu(output.col(0)), 1e-3);
+  BOOST_REQUIRE_CLOSE(arma::accu(moduleA.Parameters().submat(
+                          100, 0, moduleA.Parameters().n_elem - 1, 0)),
+                      arma::accu(output.col(0)),
+                      1e-3);
 
-  BOOST_REQUIRE_CLOSE(arma::accu(
-      moduleB.Parameters().submat(100, 0, moduleB.Parameters().n_elem - 1, 0)),
-      arma::accu(output.col(1)), 1e-3);
+  BOOST_REQUIRE_CLOSE(arma::accu(moduleB.Parameters().submat(
+                          100, 0, moduleB.Parameters().n_elem - 1, 0)),
+                      arma::accu(output.col(1)),
+                      1e-3);
 
   // Test the Backward function.
   error = arma::zeros(10, 2);
@@ -1048,19 +1036,16 @@ BOOST_AUTO_TEST_CASE(GradientConcatLayerTest)
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>(
           input, target);
-      model->Add<IdentityLayer<> >();
+      model->Add<IdentityLayer<>>();
 
       concat = new Concat<>();
-      concat->Add<Linear<> >(10, 2);
+      concat->Add<Linear<>>(10, 2);
       model->Add(concat);
 
-      model->Add<LogSoftMax<> >();
+      model->Add<LogSoftMax<>>();
     }
 
-    ~GradientFunction()
-    {
-      delete model;
-    }
+    ~GradientFunction() { delete model; }
 
     double Gradient(arma::mat& gradient) const
     {
@@ -1097,8 +1082,8 @@ BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
   module.Forward(std::move(input), std::move(output));
 
   // The Lookup module uses index - 1 for the cols.
-  const double outputSum = arma::accu(module.Parameters().col(0)) +
-      arma::accu(module.Parameters().col(2));
+  const double outputSum = arma::accu(module.Parameters().col(0))
+                           + arma::accu(module.Parameters().col(2));
 
   BOOST_REQUIRE_CLOSE(outputSum, arma::accu(output), 1e-3);
 
@@ -1114,8 +1099,8 @@ BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
   module.Gradient(std::move(input), std::move(error), std::move(gradient));
 
   // The Lookup module uses index - 1 for the cols.
-  const double gradientSum = arma::accu(gradient.col(0)) +
-      arma::accu(gradient.col(2));
+  const double gradientSum =
+      arma::accu(gradient.col(0)) + arma::accu(gradient.col(2));
 
   BOOST_REQUIRE_CLOSE(gradientSum, arma::accu(error), 1e-3);
   BOOST_REQUIRE_CLOSE(arma::accu(gradient), arma::accu(error), 1e-3);
@@ -1132,16 +1117,16 @@ BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
   // Test the Forward function.
   input = arma::mat("0.5; 0.5");
   module.Forward(std::move(input), std::move(output));
-  BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
-    arma::mat("-0.6931; -0.6931") - output)), 1e-3);
+  BOOST_REQUIRE_SMALL(
+      arma::accu(arma::abs(arma::mat("-0.6931; -0.6931") - output)), 1e-3);
 
   // Test the Backward function.
   error = arma::zeros(input.n_rows, input.n_cols);
   // Assume LogSoftmax layer is always associated with NLL output layer.
   error(1, 0) = -1;
   module.Backward(std::move(input), std::move(error), std::move(delta));
-  BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
-      arma::mat("1.6487; 0.6487") - delta)), 1e-3);
+  BOOST_REQUIRE_SMALL(
+      arma::accu(arma::abs(arma::mat("1.6487; 0.6487") - delta)), 1e-3);
 }
 
 /*

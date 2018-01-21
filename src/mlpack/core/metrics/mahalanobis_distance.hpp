@@ -57,7 +57,7 @@ class MahalanobisDistance
    * Initialize the Mahalanobis distance with the empty matrix as covariance.
    * Don't call Evaluate() until you set the covariance with Covariance()!
    */
-  MahalanobisDistance() { }
+  MahalanobisDistance() {}
 
   /**
    * Initialize the Mahalanobis distance with the identity matrix of the given
@@ -65,8 +65,10 @@ class MahalanobisDistance
    *
    * @param dimensionality Dimesnsionality of the covariance matrix.
    */
-  MahalanobisDistance(const size_t dimensionality) :
-      covariance(arma::eye<arma::mat>(dimensionality, dimensionality)) { }
+  MahalanobisDistance(const size_t dimensionality)
+    : covariance(arma::eye<arma::mat>(dimensionality, dimensionality))
+  {
+  }
 
   /**
    * Initialize the Mahalanobis distance with the given covariance matrix.  The
@@ -74,7 +76,7 @@ class MahalanobisDistance
    *
    * @param covariance The covariance matrix to use for this distance.
    */
-  MahalanobisDistance(const arma::mat& covariance) : covariance(covariance) { }
+  MahalanobisDistance(const arma::mat& covariance) : covariance(covariance) {}
 
   /**
    * Evaluate the distance between the two given points using this Mahalanobis

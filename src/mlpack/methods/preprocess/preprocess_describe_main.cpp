@@ -22,7 +22,9 @@ using namespace mlpack::util;
 using namespace std;
 using namespace boost;
 
-PROGRAM_INFO("Descriptive Statistics", "This utility takes a dataset and "
+PROGRAM_INFO(
+    "Descriptive Statistics",
+    "This utility takes a dataset and "
     "prints out the descriptive statistics of the data. Descriptive statistics "
     "is the discipline of quantitatively describing the main features of a "
     "collection of information, or the quantitative description itself. The "
@@ -30,37 +32,62 @@ PROGRAM_INFO("Descriptive Statistics", "This utility takes a dataset and "
     "statistics to the console. The printed result will look like a table."
     "\n\n"
     "Optionally, width and precision of the output can be adjusted by a user "
-    "using the " + PRINT_PARAM_STRING("width") + " and " +
-    PRINT_PARAM_STRING("precision") + " parameters. A user can also select a "
-    "specific dimension to analyze if there are too many dimensions. The " +
-    PRINT_PARAM_STRING("population") + " parameter can be specified when the "
-    "dataset should be considered as a population.  Otherwise, the dataset "
-    "will be considered as a sample."
-    "\n\n"
-    "So, a simple example where we want to print out statistical facts about "
-    "the dataset " + PRINT_DATASET("X") + " using the default settings, we "
-    "could run "
-    "\n\n" +
-    PRINT_CALL("preprocess_describe", "input", "X", "verbose", true) +
-    "\n\n"
-    "If we want to customize the width to 10 and precision to 5 and consider "
-    "the dataset as a population, we could run"
-    "\n\n" +
-    PRINT_CALL("preprocess_describe", "input", "X", "width", 10, "precision", 5,
-        "verbose", true));
+    "using the "
+        + PRINT_PARAM_STRING("width")
+        + " and "
+        + PRINT_PARAM_STRING("precision")
+        + " parameters. A user can also select a "
+          "specific dimension to analyze if there are too many dimensions. The "
+        + PRINT_PARAM_STRING("population")
+        + " parameter can be specified when the "
+          "dataset should be considered as a population.  Otherwise, the "
+          "dataset "
+          "will be considered as a sample."
+          "\n\n"
+          "So, a simple example where we want to print out statistical facts "
+          "about "
+          "the dataset "
+        + PRINT_DATASET("X")
+        + " using the default settings, we "
+          "could run "
+          "\n\n"
+        + PRINT_CALL("preprocess_describe", "input", "X", "verbose", true)
+        + "\n\n"
+          "If we want to customize the width to 10 and precision to 5 and "
+          "consider "
+          "the dataset as a population, we could run"
+          "\n\n"
+        + PRINT_CALL("preprocess_describe",
+                     "input",
+                     "X",
+                     "width",
+                     10,
+                     "precision",
+                     5,
+                     "verbose",
+                     true));
 
 // Define parameters for data.
 PARAM_MATRIX_IN_REQ("input", "Matrix containing data,", "i");
-PARAM_INT_IN("dimension", "Dimension of the data. Use this to specify a "
-    "dimension", "d", 0);
+PARAM_INT_IN("dimension",
+             "Dimension of the data. Use this to specify a "
+             "dimension",
+             "d",
+             0);
 PARAM_INT_IN("precision", "Precision of the output statistics.", "p", 4);
 PARAM_INT_IN("width", "Width of the output table.", "w", 8);
-PARAM_FLAG("population", "If specified, the program will calculate statistics "
+PARAM_FLAG(
+    "population",
+    "If specified, the program will calculate statistics "
     "assuming the dataset is the population. By default, the program will "
-    "assume the dataset as a sample.", "P");
-PARAM_FLAG("row_major", "If specified, the program will calculate statistics "
+    "assume the dataset as a sample.",
+    "P");
+PARAM_FLAG(
+    "row_major",
+    "If specified, the program will calculate statistics "
     "across rows, not across columns.  (Remember that in mlpack, a column "
-    "represents a point, so this option is generally not necessary.)", "r");
+    "represents a point, so this option is generally not necessary.)",
+    "r");
 
 /**
  * Calculates the sum of deviations to the Nth Power.
@@ -70,9 +97,8 @@ PARAM_FLAG("row_major", "If specified, the program will calculate statistics "
  * @param n Degree of power.
  * @return sum of nth power deviations.
  */
-double SumNthPowerDeviations(const arma::rowvec& input,
-                             const double& fMean,
-                             size_t n)
+double
+SumNthPowerDeviations(const arma::rowvec& input, const double& fMean, size_t n)
 {
   return arma::sum(arma::pow(input - fMean, static_cast<double>(n)));
 }
@@ -165,8 +191,8 @@ static void mlpackMain()
   arma::mat& data = CLI::GetParam<arma::mat>("input");
 
   // Generate boost format recipe.
-  const string widthPrecision("%-" + to_string(width) + "." +
-      to_string(precision));
+  const string widthPrecision("%-" + to_string(width) + "."
+                              + to_string(precision));
   const string widthOnly("%-" + to_string(width) + ".");
   string stringFormat = "";
   string numberFormat = "";
@@ -180,13 +206,12 @@ static void mlpackMain()
 
   Timer::Start("statistics");
   // Print the headers.
-  Log::Info << boost::format(stringFormat)
-      % "dim" % "var" % "mean" % "std" % "median" % "min" % "max"
-      % "range" % "skew" % "kurt" % "SE" << endl;
+  Log::Info << boost::format(stringFormat) % "dim" % "var" % "mean" % "std"
+                   % "median" % "min" % "max" % "range" % "skew" % "kurt" % "SE"
+            << endl;
 
   // Lambda function to print out the results.
-  auto PrintStatResults = [&](size_t dim, bool rowMajor)
-  {
+  auto PrintStatResults = [&](size_t dim, bool rowMajor) {
     arma::rowvec feature;
     if (rowMajor)
       feature = arma::conv_to<arma::rowvec>::from(data.col(dim));
@@ -200,19 +225,14 @@ static void mlpackMain()
     const double fStd = arma::stddev(feature, population);
 
     // Print statistics of the given dimension.
-    Log::Info << boost::format(numberFormat)
-        % dim
-        % arma::var(feature, population)
-        % fMean
-        % fStd
-        % arma::median(feature)
-        % fMin
-        % fMax
-        % (fMax - fMin) // range
-        % Skewness(feature, fStd, fMean, population)
-        % Kurtosis(feature, fStd, fMean, population)
-        % StandardError(feature.n_elem, fStd)
-        << endl;
+    Log::Info << boost::format(numberFormat) % dim
+                     % arma::var(feature, population) % fMean % fStd
+                     % arma::median(feature) % fMin % fMax
+                     % (fMax - fMin) // range
+                     % Skewness(feature, fStd, fMean, population)
+                     % Kurtosis(feature, fStd, fMean, population)
+                     % StandardError(feature.n_elem, fStd)
+              << endl;
   };
 
   // If the user specified dimension, describe statistics of the given
@@ -231,4 +251,3 @@ static void mlpackMain()
   }
   Timer::Stop("statistics");
 }
-

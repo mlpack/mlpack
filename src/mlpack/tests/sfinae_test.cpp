@@ -45,23 +45,27 @@ class C
   double M(const arma::mat&, const arma::rowvec&, double);
 };
 
-template<typename Class, typename...T>
-using MForm1 = void(Class::*)(const arma::mat&, const arma::Row<size_t>&, T...);
+template<typename Class, typename... T>
+using MForm1 = void (Class::*)(const arma::mat&,
+                               const arma::Row<size_t>&,
+                               T...);
 
-template<typename Class, typename...T>
-using MForm2 = void(Class::*)(const arma::mat&, const arma::rowvec&, T...);
+template<typename Class, typename... T>
+using MForm2 = void (Class::*)(const arma::mat&, const arma::rowvec&, T...);
 
-template<typename Class, typename...T>
-using MForm3 = void(Class::*)(const arma::mat&, const arma::rowvec&,
-    const arma::rowvec&, T...);
+template<typename Class, typename... T>
+using MForm3 = void (Class::*)(const arma::mat&,
+                               const arma::rowvec&,
+                               const arma::rowvec&,
+                               T...);
 
-template<typename Class, typename RT, typename...T>
-using MForm4 = RT(Class::*)(const arma::mat&, const arma::rowvec&, T...);
+template<typename Class, typename RT, typename... T>
+using MForm4 = RT (Class::*)(const arma::mat&, const arma::rowvec&, T...);
 
 HAS_METHOD_FORM(M, HasM);
 HAS_METHOD_FORM(template M<arma::mat>, HasTemplatedM);
 HAS_METHOD_FORM(SINGLE_ARG(template M<arma::mat, arma::rowvec>),
-    HasVeryTemplatedM);
+                HasVeryTemplatedM);
 
 /*
  * Test at compile time the presence of methods of the specified forms with the
@@ -70,46 +74,46 @@ HAS_METHOD_FORM(SINGLE_ARG(template M<arma::mat, arma::rowvec>),
 BOOST_AUTO_TEST_CASE(HasMethodFormWithNAdditionalArgsTest)
 {
   static_assert(!HasM<A, MForm1>::WithNAdditionalArgs<0>::value,
-      "value should be false");
+                "value should be false");
   static_assert(HasM<A, MForm1>::WithNAdditionalArgs<1>::value,
-      "value should be true");
+                "value should be true");
   static_assert(HasM<A, MForm1>::WithNAdditionalArgs<2>::value,
-      "value should be true");
+                "value should be true");
 
   static_assert(!HasM<B, MForm1>::WithNAdditionalArgs<0>::value,
-      "value should be false");
+                "value should be false");
   static_assert(!HasM<B, MForm1>::WithNAdditionalArgs<1>::value,
-      "value should be false");
+                "value should be false");
   static_assert(!HasM<B, MForm1>::WithNAdditionalArgs<2>::value,
-      "value should be false");
+                "value should be false");
 
   static_assert(!HasM<A, MForm2>::WithNAdditionalArgs<0>::value,
-      "value should be false");
+                "value should be false");
   static_assert(!HasM<A, MForm2>::WithNAdditionalArgs<1>::value,
-      "value should be false");
+                "value should be false");
   static_assert(!HasM<A, MForm2>::WithNAdditionalArgs<2>::value,
-      "value should be false");
+                "value should be false");
 
   static_assert(HasM<B, MForm2>::WithNAdditionalArgs<0>::value,
-      "value should be true");
+                "value should be true");
   static_assert(!HasM<B, MForm2>::WithNAdditionalArgs<1>::value,
-      "value should be false");
+                "value should be false");
   static_assert(!HasM<B, MForm2>::WithNAdditionalArgs<2>::value,
-      "value should be false");
+                "value should be false");
 
   static_assert(!HasTemplatedM<B, MForm2>::WithNAdditionalArgs<0>::value,
-      "value should be false");
+                "value should be false");
   static_assert(HasTemplatedM<B, MForm2>::WithNAdditionalArgs<1>::value,
-      "value should be true");
+                "value should be true");
   static_assert(!HasTemplatedM<B, MForm2>::WithNAdditionalArgs<2>::value,
-      "value should be false");
+                "value should be false");
 
   static_assert(!HasVeryTemplatedM<B, MForm3>::WithNAdditionalArgs<0>::value,
-      "value should be false");
+                "value should be false");
   static_assert(!HasVeryTemplatedM<B, MForm3>::WithNAdditionalArgs<1>::value,
-      "value should be false");
+                "value should be false");
   static_assert(HasVeryTemplatedM<B, MForm3>::WithNAdditionalArgs<2>::value,
-      "value should be true");
+                "value should be true");
 }
 
 /*

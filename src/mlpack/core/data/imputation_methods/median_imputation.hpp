@@ -21,7 +21,7 @@ namespace data {
  * replace missing value with middle or average of middle values
  * @tparam T Type of armadillo matrix
  */
-template <typename T>
+template<typename T>
 class MedianImputation
 {
  public:
@@ -50,8 +50,8 @@ class MedianImputation
     {
       for (size_t i = 0; i < input.n_cols; ++i)
       {
-        if (input(dimension, i) == mappedValue ||
-            std::isnan(input(dimension, i)))
+        if (input(dimension, i) == mappedValue
+            || std::isnan(input(dimension, i)))
         {
           targets.emplace_back(dimension, i);
         }
@@ -65,14 +65,14 @@ class MedianImputation
     {
       for (size_t i = 0; i < input.n_rows; ++i)
       {
-        if (input(i, dimension) == mappedValue ||
-            std::isnan(input(i, dimension)))
+        if (input(i, dimension) == mappedValue
+            || std::isnan(input(i, dimension)))
         {
           targets.emplace_back(i, dimension);
         }
         else
         {
-           elemsToKeep.push_back(input(i, dimension));
+          elemsToKeep.push_back(input(i, dimension));
         }
       }
     }
@@ -82,7 +82,7 @@ class MedianImputation
 
     for (const PairType& target : targets)
     {
-       input(target.first, target.second) = median;
+      input(target.first, target.second) = median;
     }
   }
 }; // class MedianImputation

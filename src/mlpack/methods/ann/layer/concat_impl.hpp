@@ -23,8 +23,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-Concat<InputDataType, OutputDataType>::Concat(
-    const bool model, const bool same) : model(model), same(same)
+Concat<InputDataType, OutputDataType>::Concat(const bool model, const bool same)
+  : model(model), same(same)
 {
   parameters.set_size(0, 0);
 }
@@ -33,36 +33,37 @@ template<typename InputDataType, typename OutputDataType>
 Concat<InputDataType, OutputDataType>::~Concat()
 {
   // Clear memory.
-  std::for_each(network.begin(), network.end(),
-      boost::apply_visitor(deleteVisitor));
+  std::for_each(
+      network.begin(), network.end(), boost::apply_visitor(deleteVisitor));
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void Concat<InputDataType, OutputDataType>::Forward(
-    arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+void Concat<InputDataType, OutputDataType>::Forward(arma::Mat<eT>&& input,
+                                                    arma::Mat<eT>&& output)
 {
   size_t outSize = 0;
 
   for (size_t i = 0; i < network.size(); ++i)
   {
-    boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
-        boost::apply_visitor(outputParameterVisitor, network[i]))),
+    boost::apply_visitor(
+        ForwardVisitor(std::move(input),
+                       std::move(boost::apply_visitor(outputParameterVisitor,
+                                                      network[i]))),
         network[i]);
 
-    if (boost::apply_visitor(
-        outputParameterVisitor, network[i]).n_elem > outSize)
+    if (boost::apply_visitor(outputParameterVisitor, network[i]).n_elem
+        > outSize)
     {
-      outSize = boost::apply_visitor(outputParameterVisitor,
-          network[i]).n_elem;
+      outSize = boost::apply_visitor(outputParameterVisitor, network[i]).n_elem;
     }
   }
 
   output = arma::zeros(outSize, network.size());
   for (size_t i = 0; i < network.size(); ++i)
   {
-    size_t elements = boost::apply_visitor(outputParameterVisitor,
-        network[i]).n_elem;
+    size_t elements =
+        boost::apply_visitor(outputParameterVisitor, network[i]).n_elem;
 
     if (elements < outSize)
     {
@@ -71,8 +72,8 @@ void Concat<InputDataType, OutputDataType>::Forward(
     }
     else
     {
-      output.col(i) = arma::vectorise(boost::apply_visitor(
-        outputParameterVisitor, network[i]));
+      output.col(i) = arma::vectorise(
+          boost::apply_visitor(outputParameterVisitor, network[i]));
     }
   }
 }
@@ -87,8 +88,7 @@ void Concat<InputDataType, OutputDataType>::Backward(
 
   for (size_t i = 0, j = 0; i < network.size(); ++i, j += elements)
   {
-    elements = boost::apply_visitor(outputParameterVisitor,
-        network[i]).n_elem;
+    elements = boost::apply_visitor(outputParameterVisitor, network[i]).n_elem;
 
     arma::mat delta;
     if (gy.n_cols == 1)
@@ -100,9 +100,12 @@ void Concat<InputDataType, OutputDataType>::Backward(
       delta = gy.submat(0, i, elements - 1, i);
     }
 
-    boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, network[i])), std::move(delta), std::move(
-        boost::apply_visitor(deltaVisitor, network[i]))), network[i]);
+    boost::apply_visitor(
+        BackwardVisitor(
+            std::move(boost::apply_visitor(outputParameterVisitor, network[i])),
+            std::move(delta),
+            std::move(boost::apply_visitor(deltaVisitor, network[i]))),
+        network[i]);
 
     if (boost::apply_visitor(deltaVisitor, network[i]).n_elem > outSize)
     {
@@ -130,13 +133,13 @@ void Concat<InputDataType, OutputDataType>::Backward(
       size_t elements = boost::apply_visitor(deltaVisitor, network[i]).n_elem;
       if (elements < outSize)
       {
-        g.submat(0, i, elements - 1, i) = arma::vectorise(
-            boost::apply_visitor(deltaVisitor, network[i]));
+        g.submat(0, i, elements - 1, i) =
+            arma::vectorise(boost::apply_visitor(deltaVisitor, network[i]));
       }
       else
       {
-        g.col(i) = arma::vectorise(
-            boost::apply_visitor(deltaVisitor, network[i]));
+        g.col(i) =
+            arma::vectorise(boost::apply_visitor(deltaVisitor, network[i]));
       }
     }
   }
@@ -151,8 +154,8 @@ void Concat<InputDataType, OutputDataType>::Gradient(
 {
   for (size_t i = 0; i < network.size(); ++i)
   {
-    boost::apply_visitor(GradientVisitor(std::move(input),
-        std::move(error)), network[i]);
+    boost::apply_visitor(GradientVisitor(std::move(input), std::move(error)),
+                         network[i]);
   }
 }
 
@@ -161,8 +164,8 @@ template<typename Archive>
 void Concat<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(model);
-  ar & BOOST_SERIALIZATION_NVP(same);
+  ar& BOOST_SERIALIZATION_NVP(model);
+  ar& BOOST_SERIALIZATION_NVP(same);
 
   // Do we have to load or save a model?
   if (model)
@@ -170,16 +173,15 @@ void Concat<InputDataType, OutputDataType>::serialize(
     // Clear memory first, if needed.
     if (Archive::is_loading::value)
     {
-      std::for_each(network.begin(), network.end(),
-          boost::apply_visitor(deleteVisitor));
+      std::for_each(
+          network.begin(), network.end(), boost::apply_visitor(deleteVisitor));
     }
 
-    ar & BOOST_SERIALIZATION_NVP(network);
+    ar& BOOST_SERIALIZATION_NVP(network);
   }
 }
 
 } // namespace ann
 } // namespace mlpack
-
 
 #endif

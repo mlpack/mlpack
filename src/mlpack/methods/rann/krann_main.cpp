@@ -29,7 +29,8 @@ using namespace mlpack::util;
 typedef RAModel<NearestNeighborSort> RANNModel;
 
 // Information about the program itself.
-PROGRAM_INFO("K-Rank-Approximate-Nearest-Neighbors (kRANN)",
+PROGRAM_INFO(
+    "K-Rank-Approximate-Nearest-Neighbors (kRANN)",
     "This program will calculate the k rank-approximate-nearest-neighbors of a "
     "set of points. You may specify a separate set of reference points and "
     "query points, or just a reference set which will be used as both the "
@@ -62,8 +63,11 @@ PARAM_UMATRIX_OUT("neighbors", "Matrix to output neighbors into.", "n");
 
 // The option exists to load or save models.
 PARAM_MODEL_IN(RANNModel, "input_model", "Pre-trained kNN model.", "m");
-PARAM_MODEL_OUT(RANNModel, "output_model", "If specified, the kNN model will be"
-    " output here.", "M");
+PARAM_MODEL_OUT(RANNModel,
+                "output_model",
+                "If specified, the kNN model will be"
+                " output here.",
+                "M");
 
 // The user may specify a query file of query points and a number of nearest
 // neighbors to search for.
@@ -72,67 +76,91 @@ PARAM_INT_IN("k", "Number of nearest neighbors to find.", "k", 0);
 
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
-PARAM_STRING_IN("tree_type", "Type of tree to use: 'kd', 'ub', 'cover', 'r', "
-    "'x', 'r-star', 'hilbert-r', 'r-plus', 'r-plus-plus', 'oct'.", "t",
-    "kd");
-PARAM_INT_IN("leaf_size", "Leaf size for tree building (used for kd-trees, "
-    "UB trees, R trees, R* trees, X trees, Hilbert R trees, R+ trees, "
-    "R++ trees, and octrees).", "l", 20);
-PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
-    "random orthogonal basis.", "R");
+PARAM_STRING_IN("tree_type",
+                "Type of tree to use: 'kd', 'ub', 'cover', 'r', "
+                "'x', 'r-star', 'hilbert-r', 'r-plus', 'r-plus-plus', 'oct'.",
+                "t",
+                "kd");
+PARAM_INT_IN("leaf_size",
+             "Leaf size for tree building (used for kd-trees, "
+             "UB trees, R trees, R* trees, X trees, Hilbert R trees, R+ trees, "
+             "R++ trees, and octrees).",
+             "l",
+             20);
+PARAM_FLAG("random_basis",
+           "Before tree-building, project the data onto a "
+           "random orthogonal basis.",
+           "R");
 PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 
 // Search options.
-PARAM_DOUBLE_IN("tau", "The allowed rank-error in terms of the percentile of "
-             "the data.", "T", 5);
+PARAM_DOUBLE_IN("tau",
+                "The allowed rank-error in terms of the percentile of "
+                "the data.",
+                "T",
+                5);
 PARAM_DOUBLE_IN("alpha", "The desired success probability.", "a", 0.95);
-PARAM_FLAG("naive", "If true, sampling will be done without using a tree.",
+PARAM_FLAG("naive",
+           "If true, sampling will be done without using a tree.",
            "N");
-PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-           "dual-tree search.", "S");
+PARAM_FLAG("single_mode",
+           "If true, single-tree search is used (as opposed to "
+           "dual-tree search.",
+           "S");
 PARAM_FLAG("sample_at_leaves", "The flag to trigger sampling at leaves.", "L");
-PARAM_FLAG("first_leaf_exact", "The flag to trigger sampling only after "
-           "exactly exploring the first leaf.", "X");
-PARAM_INT_IN("single_sample_limit", "The limit on the maximum number of "
-    "samples (and hence the largest node you can approximate).", "z", 20);
+PARAM_FLAG("first_leaf_exact",
+           "The flag to trigger sampling only after "
+           "exactly exploring the first leaf.",
+           "X");
+PARAM_INT_IN("single_sample_limit",
+             "The limit on the maximum number of "
+             "samples (and hence the largest node you can approximate).",
+             "z",
+             20);
 
 static void mlpackMain()
 {
   if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+    math::RandomSeed((size_t)CLI::GetParam<int>("seed"));
   else
-    math::RandomSeed((size_t) std::time(NULL));
+    math::RandomSeed((size_t)std::time(NULL));
 
   // A user cannot specify both reference data and a model.
-  RequireOnlyOnePassed({ "reference", "input_model" }, true);
+  RequireOnlyOnePassed({"reference", "input_model"}, true);
 
-  ReportIgnoredParam({{ "input_model", true }}, "tree_type");
-  ReportIgnoredParam({{ "input_model", true }}, "leaf_size");
-  ReportIgnoredParam({{ "input_model", true }}, "random_basis");
-  ReportIgnoredParam({{ "input_model", true }}, "naive");
+  ReportIgnoredParam({{"input_model", true}}, "tree_type");
+  ReportIgnoredParam({{"input_model", true}}, "leaf_size");
+  ReportIgnoredParam({{"input_model", true}}, "random_basis");
+  ReportIgnoredParam({{"input_model", true}}, "naive");
 
   // The user should give something to do...
-  RequireAtLeastOnePassed({ "k", "output_model" }, false, "no results will be "
-      "saved");
+  RequireAtLeastOnePassed({"k", "output_model"},
+                          false,
+                          "no results will be "
+                          "saved");
 
   // If the user specifies k but no output files, they should be warned.
   if (CLI::HasParam("k"))
   {
-    RequireAtLeastOnePassed({ "neighbors", "distances" }, false, "no nearest "
-        "neighbor search results will be saved");
+    RequireAtLeastOnePassed({"neighbors", "distances"},
+                            false,
+                            "no nearest "
+                            "neighbor search results will be saved");
   }
 
   // If the user specifies output files but no k, they should be warned.
-  ReportIgnoredParam({{ "k", false }}, "neighbors");
-  ReportIgnoredParam({{ "k", false }}, "distances");
+  ReportIgnoredParam({{"k", false}}, "neighbors");
+  ReportIgnoredParam({{"k", false}}, "distances");
 
   // Naive mode overrides single mode.
-  ReportIgnoredParam({{ "naive", true }}, "single_mode");
+  ReportIgnoredParam({{"naive", true}}, "single_mode");
 
   // Sanity check on leaf size.
   const int lsInt = CLI::GetParam<int>("leaf_size");
-  RequireParamValue<int>("leaf_size", [](int x) { return x > 0; }, true,
-      "leaf size must be greater than 0");
+  RequireParamValue<int>("leaf_size",
+                         [](int x) { return x > 0; },
+                         true,
+                         "leaf size must be greater than 0");
 
   // We either have to load the reference data, or we have to load the model.
   RANNModel rann;
@@ -142,9 +170,19 @@ static void mlpackMain()
   {
     // Get all the parameters.
     const string treeType = CLI::GetParam<string>("tree_type");
-    RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star", "x",
-        "hilbert-r", "r-plus", "r-plus-plus", "ub", "oct" }, true,
-        "unknown tree type");
+    RequireParamInSet<string>("tree_type",
+                              {"kd",
+                               "cover",
+                               "r",
+                               "r-star",
+                               "x",
+                               "hilbert-r",
+                               "r-plus",
+                               "r-plus-plus",
+                               "ub",
+                               "oct"},
+                              true,
+                              "unknown tree type");
     const bool randomBasis = CLI::HasParam("random_basis");
 
     RANNModel::TreeTypes tree = RANNModel::KD_TREE;
@@ -175,9 +213,9 @@ static void mlpackMain()
     arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
     Log::Info << "Using reference data from '"
-        << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
-        << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
-        << endl;
+              << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
+              << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
+              << endl;
 
     rann.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode);
   }
@@ -187,9 +225,9 @@ static void mlpackMain()
     rann = std::move(CLI::GetParam<RANNModel>("input_model"));
 
     Log::Info << "Using rank-approximate kNN model from '"
-        << CLI::GetPrintableParam<RANNModel>("input_model") << "' (trained on "
-        << rann.Dataset().n_rows << "x" << rann.Dataset().n_cols << " dataset)."
-        << endl;
+              << CLI::GetPrintableParam<RANNModel>("input_model")
+              << "' (trained on " << rann.Dataset().n_rows << "x"
+              << rann.Dataset().n_cols << " dataset)." << endl;
 
     // Adjust singleMode and naive if necessary.
     rann.SingleMode() = CLI::HasParam("single_mode");
@@ -210,15 +248,15 @@ static void mlpackMain()
   // Perform search, if desired.
   if (CLI::HasParam("k"))
   {
-    const size_t k = (size_t) CLI::GetParam<int>("k");
+    const size_t k = (size_t)CLI::GetParam<int>("k");
 
     arma::mat queryData;
     if (CLI::HasParam("query"))
     {
       queryData = std::move(CLI::GetParam<arma::mat>("query"));
       Log::Info << "Using query data from '"
-          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
-          << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
+                << CLI::GetPrintableParam<arma::mat>("query") << "' ("
+                << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
     // Sanity check on k value: must be greater than 0, must be less than the

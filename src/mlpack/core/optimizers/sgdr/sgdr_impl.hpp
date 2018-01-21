@@ -19,35 +19,30 @@ namespace mlpack {
 namespace optimization {
 
 template<typename UpdatePolicyType>
-SGDR<UpdatePolicyType>::SGDR(
-    const size_t epochRestart,
-    const double multFactor,
-    const size_t batchSize,
-    const double stepSize,
-    const size_t maxIterations,
-    const double tolerance,
-    const bool shuffle,
-    const UpdatePolicyType& updatePolicy) :
-    batchSize(batchSize),
+SGDR<UpdatePolicyType>::SGDR(const size_t epochRestart,
+                             const double multFactor,
+                             const size_t batchSize,
+                             const double stepSize,
+                             const size_t maxIterations,
+                             const double tolerance,
+                             const bool shuffle,
+                             const UpdatePolicyType& updatePolicy)
+  : batchSize(batchSize),
     optimizer(OptimizerType(stepSize,
                             batchSize,
                             maxIterations,
                             tolerance,
                             shuffle,
                             updatePolicy,
-                            CyclicalDecay(
-                                epochRestart,
-                                multFactor,
-                                stepSize)))
+                            CyclicalDecay(epochRestart, multFactor, stepSize)))
 {
   /* Nothing to do here */
 }
 
 template<typename UpdatePolicyType>
 template<typename DecomposableFunctionType>
-double SGDR<UpdatePolicyType>::Optimize(
-    DecomposableFunctionType& function,
-    arma::mat& iterate)
+double SGDR<UpdatePolicyType>::Optimize(DecomposableFunctionType& function,
+                                        arma::mat& iterate)
 {
   // If a user changed the step size he hasn't update the step size of the
   // cyclical decay instantiation, so we have to do it here.
@@ -56,8 +51,8 @@ double SGDR<UpdatePolicyType>::Optimize(
     optimizer.DecayPolicy().StepSize() = optimizer.StepSize();
   }
 
-  optimizer.DecayPolicy().EpochBatches() = function.NumFunctions() /
-      double(optimizer.BatchSize());
+  optimizer.DecayPolicy().EpochBatches() =
+      function.NumFunctions() / double(optimizer.BatchSize());
 
   // If a user changed the batch size we have to update the restart fraction
   // of the cyclical decay instantiation.

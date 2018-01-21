@@ -47,13 +47,11 @@ namespace rl {
  * @tparam PolicyType Behavior policy of the agent.
  * @tparam ReplayType Experience replay method.
  */
-template <
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename PolicyType,
-  typename ReplayType = RandomReplay<EnvironmentType>
->
+template<typename EnvironmentType,
+         typename NetworkType,
+         typename UpdaterType,
+         typename PolicyType,
+         typename ReplayType = RandomReplay<EnvironmentType>>
 class QLearning
 {
  public:

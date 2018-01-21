@@ -30,8 +30,8 @@ bool MeanSpaceSplit<MetricType, MatType>::SplitSpace(
   typename HyperplaneType::ProjVectorType projVector;
   double midValue;
 
-  if (!SpaceSplit<MetricType, MatType>::GetProjVector(bound, data, points,
-      projVector, midValue))
+  if (!SpaceSplit<MetricType, MatType>::GetProjVector(
+          bound, data, points, projVector, midValue))
     return false;
 
   double splitVal = 0.0;

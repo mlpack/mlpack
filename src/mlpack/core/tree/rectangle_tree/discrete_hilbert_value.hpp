@@ -79,11 +79,11 @@ class DiscreteHilbertValue
    * @param pt2 The second point.
    */
   template<typename VecType1, typename VecType2>
-  static int ComparePoints(
-      const VecType1& pt1,
-      const VecType2& pt2,
-      typename std::enable_if_t<IsVector<VecType1>::value>* = 0,
-      typename std::enable_if_t<IsVector<VecType2>::value>* = 0);
+  static int
+  ComparePoints(const VecType1& pt1,
+                const VecType2& pt2,
+                typename std::enable_if_t<IsVector<VecType1>::value>* = 0,
+                typename std::enable_if_t<IsVector<VecType2>::value>* = 0);
 
   /**
    * Compare two Hilbert values. It returns 1 if the first value is greater than
@@ -143,7 +143,7 @@ class DiscreteHilbertValue
    * @param point The number of the point being inserted.
    */
   template<typename TreeType, typename VecType>
-  size_t InsertPoint(TreeType *node,
+  size_t InsertPoint(TreeType* node,
                      const VecType& pt,
                      typename std::enable_if_t<IsVector<VecType>::value>* = 0);
 
@@ -217,9 +217,9 @@ class DiscreteHilbertValue
    * @param pt The point for which the Hilbert value should be calculated.
    */
   template<typename VecType>
-  static arma::Col<HilbertElemType> CalculateValue(
-      const VecType& pt,
-      typename std::enable_if_t<IsVector<VecType>::value>* = 0);
+  static arma::Col<HilbertElemType>
+  CalculateValue(const VecType& pt,
+                 typename std::enable_if_t<IsVector<VecType>::value>* = 0);
 
   /**
    * Compare two Hilbert values. It returns 1 if the first value is greater than
@@ -239,10 +239,14 @@ class DiscreteHilbertValue
 
   //! Return the Hilbert values.
   const arma::Mat<HilbertElemType>* LocalHilbertValues() const
-  { return localHilbertValues; }
+  {
+    return localHilbertValues;
+  }
   //! Modify the Hilbert values.
   arma::Mat<HilbertElemType>*& LocalHilbertValues()
-  { return localHilbertValues; }
+  {
+    return localHilbertValues;
+  }
 
   //! Return the ownsLocalHilbertValues variable.
   bool OwnsLocalHilbertValues() const { return ownsLocalHilbertValues; }
@@ -251,7 +255,9 @@ class DiscreteHilbertValue
 
   //! Return the cached point (valueToInsert).
   const arma::Col<HilbertElemType>* ValueToInsert() const
-  { return valueToInsert; }
+  {
+    return valueToInsert;
+  }
   //! Modify the cached point (valueToInsert).
   arma::Col<HilbertElemType>* ValueToInsert() { return valueToInsert; }
 
@@ -259,6 +265,7 @@ class DiscreteHilbertValue
   bool OwnsValueToInsert() const { return ownsValueToInsert; }
   //! Modify the ownsValueToInsert variable.
   bool& OwnsValueToInsert() { return ownsValueToInsert; }
+
  private:
   //! The number of bits that we can store.
   static constexpr size_t order = sizeof(HilbertElemType) * CHAR_BIT;

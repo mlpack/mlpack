@@ -21,10 +21,7 @@
 // place of C99's round().
 
 //! Round a number to the nearest integer.
-inline double round(double a)
-{
-  return floor(a + 0.5);
-}
+inline double round(double a) { return floor(a + 0.5); }
 
 #endif
 

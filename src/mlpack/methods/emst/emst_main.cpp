@@ -30,40 +30,66 @@
 
 #include "dtb.hpp"
 
-PROGRAM_INFO("Fast Euclidean Minimum Spanning Tree",
+PROGRAM_INFO(
+    "Fast Euclidean Minimum Spanning Tree",
     "This program can compute the Euclidean minimum spanning tree of a set of "
     "input points using the dual-tree Boruvka algorithm."
     "\n\n"
-    "The set to calculate the minimum spanning tree of is specified with the " +
-    PRINT_PARAM_STRING("input") + " parameter, and the output may be saved with"
-    " the " + PRINT_PARAM_STRING("output") + " output parameter."
-    "\n\n"
-    "The " + PRINT_PARAM_STRING("leaf_size") + " parameter controls the leaf "
-    "size of the kd-tree that is used to calculate the minimum spanning tree, "
-    "and if the " + PRINT_PARAM_STRING("naive") + " option is given, then "
-    "brute-force search is used (this is typically much slower in low "
-    "dimensions).  The leaf size does not affect the results, but it may have "
-    "some effect on the runtime of the algorithm."
-    "\n\n"
-    "For example, the minimum spanning tree of the input dataset " +
-    PRINT_DATASET("data") + " can be calculated with a leaf size of 20 and "
-    "stored as " + PRINT_DATASET("spanning_tree") + " using the following "
-    "command:"
-    "\n\n" +
-    PRINT_CALL("emst", "input", "data", "leaf_size", 20, "output",
-        "spanning_tree") +
-    "\n\n"
-    "The output matrix is a three-dimensional matrix, where each row indicates "
-    "an edge.  The first dimension corresponds to the lesser index of the edge;"
-    " the second dimension corresponds to the greater index of the edge; and "
-    "the third column corresponds to the distance between the two points.");
+    "The set to calculate the minimum spanning tree of is specified with the "
+        + PRINT_PARAM_STRING("input")
+        + " parameter, and the output may be saved with"
+          " the "
+        + PRINT_PARAM_STRING("output")
+        + " output parameter."
+          "\n\n"
+          "The "
+        + PRINT_PARAM_STRING("leaf_size")
+        + " parameter controls the leaf "
+          "size of the kd-tree that is used to calculate the minimum spanning "
+          "tree, "
+          "and if the "
+        + PRINT_PARAM_STRING("naive")
+        + " option is given, then "
+          "brute-force search is used (this is typically much slower in low "
+          "dimensions).  The leaf size does not affect the results, but it may "
+          "have "
+          "some effect on the runtime of the algorithm."
+          "\n\n"
+          "For example, the minimum spanning tree of the input dataset "
+        + PRINT_DATASET("data")
+        + " can be calculated with a leaf size of 20 and "
+          "stored as "
+        + PRINT_DATASET("spanning_tree")
+        + " using the following "
+          "command:"
+          "\n\n"
+        + PRINT_CALL("emst",
+                     "input",
+                     "data",
+                     "leaf_size",
+                     20,
+                     "output",
+                     "spanning_tree")
+        + "\n\n"
+          "The output matrix is a three-dimensional matrix, where each row "
+          "indicates "
+          "an edge.  The first dimension corresponds to the lesser index of "
+          "the edge;"
+          " the second dimension corresponds to the greater index of the edge; "
+          "and "
+          "the third column corresponds to the distance between the two "
+          "points.");
 
 PARAM_MATRIX_IN_REQ("input", "Input data matrix.", "i");
 PARAM_MATRIX_OUT("output", "Output data.  Stored as an edge list.", "o");
 PARAM_FLAG("naive", "Compute the MST using O(n^2) naive algorithm.", "n");
-PARAM_INT_IN("leaf_size", "Leaf size in the kd-tree.  One-element leaves give "
+PARAM_INT_IN(
+    "leaf_size",
+    "Leaf size in the kd-tree.  One-element leaves give "
     "the empirically best performance, but at the cost of greater memory "
-    "requirements.", "l", 1);
+    "requirements.",
+    "l",
+    1);
 
 using namespace mlpack;
 using namespace mlpack::emst;
@@ -74,7 +100,7 @@ using namespace std;
 
 static void mlpackMain()
 {
-  RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
+  RequireAtLeastOnePassed({"output"}, false, "no output will be saved");
 
   arma::mat dataPoints = std::move(CLI::GetParam<arma::mat>("input"));
 
@@ -96,17 +122,19 @@ static void mlpackMain()
     Log::Info << "Building tree.\n";
 
     // Check that the leaf size is reasonable.
-    RequireParamValue<int>("leaf_size", [](int x) { return x > 0; }, true,
-        "leaf size must be greater than or equal to 1");
+    RequireParamValue<int>("leaf_size",
+                           [](int x) { return x > 0; },
+                           true,
+                           "leaf size must be greater than or equal to 1");
 
     // Initialize the tree and get ready to compute the MST.  Compute the tree
     // by hand.
-    const size_t leafSize = (size_t) CLI::GetParam<int>("leaf_size");
+    const size_t leafSize = (size_t)CLI::GetParam<int>("leaf_size");
 
     Timer::Start("tree_building");
     std::vector<size_t> oldFromNew;
-    KDTree<EuclideanDistance, DTBStat, arma::mat> tree(dataPoints, oldFromNew,
-        leafSize);
+    KDTree<EuclideanDistance, DTBStat, arma::mat> tree(
+        dataPoints, oldFromNew, leafSize);
     metric::LMetric<2, true> metric;
     Timer::Stop("tree_building");
 

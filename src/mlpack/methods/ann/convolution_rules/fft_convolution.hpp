@@ -49,8 +49,8 @@ class FFTConvolution
    * @param output Output data that contains the results of the convolution.
    */
   template<typename eT, typename Border = BorderMode>
-  static typename std::enable_if<
-      std::is_same<Border, ValidConvolution>::value, void>::type
+  static typename std::enable_if<std::is_same<Border, ValidConvolution>::value,
+                                 void>::type
   Convolution(const arma::Mat<eT>& input,
               const arma::Mat<eT>& filter,
               arma::Mat<eT>& output)
@@ -64,13 +64,15 @@ class FFTConvolution
     // Pad filter and input to the output shape.
     filterPadded.resize(inputPadded.n_rows, inputPadded.n_cols);
 
-    output = arma::real(ifft2(arma::fft2(inputPadded) % arma::fft2(
-        filterPadded)));
+    output =
+        arma::real(ifft2(arma::fft2(inputPadded) % arma::fft2(filterPadded)));
 
     // Extract the region of interest. We don't need to handle the padLastDim in
     // a special way we just cut it out from the output matrix.
-    output = output.submat(filter.n_rows - 1, filter.n_cols - 1,
-        input.n_rows - 1, input.n_cols - 1);
+    output = output.submat(filter.n_rows - 1,
+                           filter.n_cols - 1,
+                           input.n_rows - 1,
+                           input.n_cols - 1);
   }
 
   /*
@@ -84,8 +86,8 @@ class FFTConvolution
    * @param output Output data that contains the results of the convolution.
    */
   template<typename eT, typename Border = BorderMode>
-  static typename std::enable_if<
-      std::is_same<Border, FullConvolution>::value, void>::type
+  static typename std::enable_if<std::is_same<Border, FullConvolution>::value,
+                                 void>::type
   Convolution(const arma::Mat<eT>& input,
               const arma::Mat<eT>& filter,
               arma::Mat<eT>& output)
@@ -97,27 +99,29 @@ class FFTConvolution
     size_t outputCols = input.n_cols + 2 * (filter.n_cols - 1);
 
     if (padLastDim)
-        outputCols++;
+      outputCols++;
 
     // Pad filter and input to the working output shape.
-    arma::Mat<eT> inputPadded = arma::zeros<arma::Mat<eT> >(outputRows,
-        outputCols);
-    inputPadded.submat(filter.n_rows - 1, filter.n_cols - 1,
-          filter.n_rows - 1 + input.n_rows - 1,
-          filter.n_cols - 1 + input.n_cols - 1) = input;
+    arma::Mat<eT> inputPadded =
+        arma::zeros<arma::Mat<eT>>(outputRows, outputCols);
+    inputPadded.submat(filter.n_rows - 1,
+                       filter.n_cols - 1,
+                       filter.n_rows - 1 + input.n_rows - 1,
+                       filter.n_cols - 1 + input.n_cols - 1) = input;
 
     arma::Mat<eT> filterPadded = filter;
     filterPadded.resize(outputRows, outputCols);
 
     // Perform FFT and IFFT
-    output = arma::real(ifft2(arma::fft2(inputPadded) % arma::fft2(
-        filterPadded)));
+    output =
+        arma::real(ifft2(arma::fft2(inputPadded) % arma::fft2(filterPadded)));
 
     // Extract the region of interest. We don't need to handle the padLastDim
     // parameter in a special way we just cut it out from the output matrix.
-    output = output.submat(filter.n_rows - 1, filter.n_cols - 1,
-        2 * (filter.n_rows - 1) + input.n_rows - 1,
-        2 * (filter.n_cols - 1) + input.n_cols - 1);
+    output = output.submat(filter.n_rows - 1,
+                           filter.n_cols - 1,
+                           2 * (filter.n_rows - 1) + input.n_rows - 1,
+                           2 * (filter.n_cols - 1) + input.n_cols - 1);
   }
 
   /*
@@ -137,17 +141,17 @@ class FFTConvolution
                           arma::Cube<eT>& output)
   {
     arma::Mat<eT> convOutput;
-    FFTConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
-        convOutput);
+    FFTConvolution<BorderMode>::Convolution(
+        input.slice(0), filter.slice(0), convOutput);
 
-    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
-        input.n_slices);
+    output =
+        arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols, input.n_slices);
     output.slice(0) = convOutput;
 
     for (size_t i = 1; i < input.n_slices; i++)
     {
-      FFTConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
-          convOutput);
+      FFTConvolution<BorderMode>::Convolution(
+          input.slice(i), filter.slice(i), convOutput);
       output.slice(i) = convOutput;
     }
   }
@@ -169,17 +173,16 @@ class FFTConvolution
                           arma::Cube<eT>& output)
   {
     arma::Mat<eT> convOutput;
-    FFTConvolution<BorderMode>::Convolution(input, filter.slice(0),
-        convOutput);
+    FFTConvolution<BorderMode>::Convolution(input, filter.slice(0), convOutput);
 
-    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
-        filter.n_slices);
+    output =
+        arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols, filter.n_slices);
     output.slice(0) = convOutput;
 
     for (size_t i = 1; i < filter.n_slices; i++)
     {
-      FFTConvolution<BorderMode>::Convolution(input, filter.slice(i),
-          convOutput);
+      FFTConvolution<BorderMode>::Convolution(
+          input, filter.slice(i), convOutput);
       output.slice(i) = convOutput;
     }
   }
@@ -198,21 +201,20 @@ class FFTConvolution
                           arma::Cube<eT>& output)
   {
     arma::Mat<eT> convOutput;
-    FFTConvolution<BorderMode>::Convolution(input.slice(0), filter,
-        convOutput);
+    FFTConvolution<BorderMode>::Convolution(input.slice(0), filter, convOutput);
 
-    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
-        input.n_slices);
+    output =
+        arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols, input.n_slices);
     output.slice(0) = convOutput;
 
     for (size_t i = 1; i < input.n_slices; i++)
     {
-      FFTConvolution<BorderMode>::Convolution(input.slice(i), filter,
-          convOutput);
+      FFTConvolution<BorderMode>::Convolution(
+          input.slice(i), filter, convOutput);
       output.slice(i) = convOutput;
     }
   }
-};  // class FFTConvolution
+}; // class FFTConvolution
 
 } // namespace ann
 } // namespace mlpack

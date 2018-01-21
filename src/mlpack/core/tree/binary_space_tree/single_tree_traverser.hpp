@@ -26,9 +26,12 @@ template<typename MetricType,
          typename MatType,
          template<typename BoundMetricType, typename...> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
-             class SplitType>
+         class SplitType>
 template<typename RuleType>
-class BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+class BinarySpaceTree<MetricType,
+                      StatisticType,
+                      MatType,
+                      BoundType,
                       SplitType>::SingleTreeTraverser
 {
  public:

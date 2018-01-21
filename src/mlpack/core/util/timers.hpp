@@ -23,14 +23,14 @@
 #include <atomic>
 
 #if defined(_WIN32)
-  // uint64_t isn't defined on every windows.
-  #if !defined(HAVE_UINT64_T)
-    #if SIZEOF_UNSIGNED_LONG == 8
-      typedef unsigned long uint64_t;
-    #else
-      typedef unsigned long long  uint64_t;
-    #endif  // SIZEOF_UNSIGNED_LONG
-  #endif  // HAVE_UINT64_T
+// uint64_t isn't defined on every windows.
+#if !defined(HAVE_UINT64_T)
+#if SIZEOF_UNSIGNED_LONG == 8
+typedef unsigned long uint64_t;
+#else
+typedef unsigned long long uint64_t;
+#endif // SIZEOF_UNSIGNED_LONG
+#endif // HAVE_UINT64_T
 #endif
 
 namespace mlpack {
@@ -98,7 +98,7 @@ class Timers
 {
  public:
   //! Default to disabled.
-  Timers() : enabled(false) { }
+  Timers() : enabled(false) {}
 
   /**
    * Returns a copy of all the timers used via this interface.
@@ -173,8 +173,10 @@ class Timers
   //! A mutex for modifying the timers.
   std::mutex timersMutex;
   //! A map for the starting values of the timers.
-  std::map<std::thread::id, std::map<std::string,
-      std::chrono::high_resolution_clock::time_point>> timerStartTime;
+  std::map<std::thread::id,
+           std::map<std::string,
+                    std::chrono::high_resolution_clock::time_point>>
+      timerStartTime;
 
   //! Whether or not timing is enabled.
   std::atomic<bool> enabled;

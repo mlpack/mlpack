@@ -23,8 +23,10 @@ using namespace mlpack::regression;
 
 BOOST_AUTO_TEST_SUITE(LARSTest);
 
-void GenerateProblem(
-    arma::mat& X, arma::rowvec& y, size_t nPoints, size_t nDims)
+void GenerateProblem(arma::mat& X,
+                     arma::rowvec& y,
+                     size_t nPoints,
+                     size_t nDims)
 {
   X = arma::randn(nDims, nPoints);
   arma::vec beta = arma::randn(nDims, 1);
@@ -73,28 +75,21 @@ void LassoTest(size_t nPoints, size_t nDims, bool elasticNet, bool useCholesky)
     else
       lambda2 = 0;
 
-
     LARS lars(useCholesky, lambda1, lambda2);
     arma::vec betaOpt;
     lars.Train(X, y, betaOpt);
 
-    arma::vec errCorr = (X * trans(X) + lambda2 *
-        arma::eye(nDims, nDims)) * betaOpt - X * y.t();
+    arma::vec errCorr =
+        (X * trans(X) + lambda2 * arma::eye(nDims, nDims)) * betaOpt
+        - X * y.t();
 
     LARSVerifyCorrectness(betaOpt, errCorr, lambda1);
   }
 }
 
-BOOST_AUTO_TEST_CASE(LARSTestLassoCholesky)
-{
-  LassoTest(100, 10, false, true);
-}
+BOOST_AUTO_TEST_CASE(LARSTestLassoCholesky) { LassoTest(100, 10, false, true); }
 
-
-BOOST_AUTO_TEST_CASE(LARSTestLassoGram)
-{
-  LassoTest(100, 10, false, false);
-}
+BOOST_AUTO_TEST_CASE(LARSTestLassoGram) { LassoTest(100, 10, false, false); }
 
 BOOST_AUTO_TEST_CASE(LARSTestElasticNetCholesky)
 {
@@ -153,7 +148,7 @@ BOOST_AUTO_TEST_CASE(NoCholeskySingularityTest)
     arma::vec errCorr = (X * X.t()) * betaOpt - X * y.t();
 
     // #373: this test fails on i386 only sometimes.
-//    LARSVerifyCorrectness(betaOpt, errCorr, lambda1);
+    //    LARSVerifyCorrectness(betaOpt, errCorr, lambda1);
   }
 }
 
@@ -247,8 +242,8 @@ BOOST_AUTO_TEST_CASE(RetrainTest)
   // Now train on new data.
   lars.Train(newX, newY, betaOpt);
 
-  arma::vec errCorr = (newX * trans(newX) + 0.1 *
-        arma::eye(75, 75)) * betaOpt - newX * newY.t();
+  arma::vec errCorr = (newX * trans(newX) + 0.1 * arma::eye(75, 75)) * betaOpt
+                      - newX * newY.t();
 
   LARSVerifyCorrectness(betaOpt, errCorr, 0.1);
 }
@@ -274,8 +269,8 @@ BOOST_AUTO_TEST_CASE(RetrainCholeskyTest)
   // Now train on new data.
   lars.Train(newX, newY, betaOpt);
 
-  arma::vec errCorr = (newX * trans(newX) + 0.1 *
-        arma::eye(75, 75)) * betaOpt - newX * newY.t();
+  arma::vec errCorr = (newX * trans(newX) + 0.1 * arma::eye(75, 75)) * betaOpt
+                      - newX * newY.t();
 
   LARSVerifyCorrectness(betaOpt, errCorr, 0.1);
 }

@@ -41,7 +41,9 @@ class SimpleResidueTermination
    */
   SimpleResidueTermination(const double minResidue = 1e-5,
                            const size_t maxIterations = 10000)
-      : minResidue(minResidue), maxIterations(maxIterations) { }
+    : minResidue(minResidue), maxIterations(maxIterations)
+  {
+  }
 
   /**
    * Initializes the termination policy before stating the factorization.
@@ -117,6 +119,5 @@ class SimpleResidueTermination
 
 } // namespace amf
 } // namespace mlpack
-
 
 #endif // _MLPACK_METHODS_AMF_SIMPLERESIDUETERMINATION_HPP_INCLUDED

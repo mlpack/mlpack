@@ -35,8 +35,7 @@ double MahalanobisDistance<false>::Evaluate(const VecTypeA& a,
  */
 template<>
 template<typename VecTypeA, typename VecTypeB>
-double MahalanobisDistance<true>::Evaluate(const VecTypeA& a,
-                                           const VecTypeB& b)
+double MahalanobisDistance<true>::Evaluate(const VecTypeA& a, const VecTypeB& b)
 {
   // Check if covariance matrix has been initialized.
   if (covariance.n_rows == 0)
@@ -53,7 +52,7 @@ template<typename Archive>
 void MahalanobisDistance<TakeRoot>::serialize(Archive& ar,
                                               const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(covariance);
+  ar& BOOST_SERIALIZATION_NVP(covariance);
 }
 
 } // namespace metric

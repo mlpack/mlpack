@@ -38,8 +38,8 @@ using NSType = NeighborSearch<SortPolicy,
                               arma::mat,
                               TreeType,
                               TreeType<metric::EuclideanDistance,
-                                  NeighborSearchStat<SortPolicy>,
-                                  arma::mat>::template DualTreeTraverser>;
+                                       NeighborSearchStat<SortPolicy>,
+                                       arma::mat>::template DualTreeTraverser>;
 
 /**
  * MonoSearchVisitor executes a monochromatic neighbor search on the given
@@ -63,11 +63,8 @@ class MonoSearchVisitor : public boost::static_visitor<void>
   //! Construct the MonoSearchVisitor object with the given parameters.
   MonoSearchVisitor(const size_t k,
                     arma::Mat<size_t>& neighbors,
-                    arma::mat& distances) :
-      k(k),
-      neighbors(neighbors),
-      distances(distances)
-  {};
+                    arma::mat& distances)
+    : k(k), neighbors(neighbors), distances(distances){};
 };
 
 /**
@@ -209,7 +206,7 @@ class EpsilonVisitor : public boost::static_visitor<double&>
  public:
   //! Return epsilon, the approximation parameter.
   template<typename NSType>
-  double& operator()(NSType *ns) const;
+  double& operator()(NSType* ns) const;
 };
 
 /**
@@ -220,7 +217,7 @@ class ReferenceSetVisitor : public boost::static_visitor<const arma::mat&>
  public:
   //! Return the reference set.
   template<typename NSType>
-  const arma::mat& operator()(NSType *ns) const;
+  const arma::mat& operator()(NSType* ns) const;
 };
 
 /**
@@ -231,7 +228,7 @@ class DeleteVisitor : public boost::static_visitor<void>
  public:
   //! Delete the NSType object.
   template<typename NSType>
-  void operator()(NSType *ns) const;
+  void operator()(NSType* ns) const;
 };
 
 /**
@@ -304,7 +301,8 @@ class NSModel
                  NSType<SortPolicy, tree::MaxRPTree>*,
                  SpillKNN*,
                  NSType<SortPolicy, tree::UBTree>*,
-                 NSType<SortPolicy, tree::Octree>*> nSearch;
+                 NSType<SortPolicy, tree::Octree>*>
+      nSearch;
 
  public:
   /**
@@ -396,9 +394,8 @@ class NSModel
               arma::mat& distances);
 
   //! Perform monochromatic neighbor search.
-  void Search(const size_t k,
-              arma::Mat<size_t>& neighbors,
-              arma::mat& distances);
+  void
+  Search(const size_t k, arma::Mat<size_t>& neighbors, arma::mat& distances);
 
   //! Return a string representation of the current tree type.
   std::string TreeName() const;
@@ -409,7 +406,8 @@ class NSModel
 
 //! Set the serialization version of the NSModel class.
 BOOST_TEMPLATE_CLASS_VERSION(template<typename SortPolicy>,
-    mlpack::neighbor::NSModel<SortPolicy>, 1);
+                             mlpack::neighbor::NSModel<SortPolicy>,
+                             1);
 
 // Include implementation.
 #include "ns_model_impl.hpp"

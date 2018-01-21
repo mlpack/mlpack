@@ -31,8 +31,10 @@ HyperParameterTuner<MLAlgorithm,
                     Optimizer,
                     MatType,
                     PredictionsType,
-                    WeightsType>::HyperParameterTuner(const CVArgs&... args) :
-    cv(args...), relativeDelta(0.01), minDelta(1e-10) {}
+                    WeightsType>::HyperParameterTuner(const CVArgs&... args)
+  : cv(args...), relativeDelta(0.01), minDelta(1e-10)
+{
+}
 
 template<typename MLAlgorithm,
          typename Metric,
@@ -42,20 +44,20 @@ template<typename MLAlgorithm,
          typename PredictionsType,
          typename WeightsType>
 template<typename... Args>
-TupleOfHyperParameters<Args...> HyperParameterTuner<MLAlgorithm,
-                                                    Metric,
-                                                    CV,
-                                                    Optimizer,
-                                                    MatType,
-                                                    PredictionsType,
-                                                    WeightsType>::Optimize(
-    const Args&... args)
+TupleOfHyperParameters<Args...>
+HyperParameterTuner<MLAlgorithm,
+                    Metric,
+                    CV,
+                    Optimizer,
+                    MatType,
+                    PredictionsType,
+                    WeightsType>::Optimize(const Args&... args)
 {
   static const size_t numberOfParametersToOptimize =
       std::tuple_size<TupleOfHyperParameters<Args...>>::value;
   data::IncrementPolicy policy(true);
-  data::DatasetMapper<data::IncrementPolicy, double> datasetInfo(policy,
-      numberOfParametersToOptimize);
+  data::DatasetMapper<data::IncrementPolicy, double> datasetInfo(
+      policy, numberOfParametersToOptimize);
 
   arma::mat bestParameters(numberOfParametersToOptimize, 1);
   const auto argsTuple = std::tie(args...);
@@ -79,19 +81,21 @@ void HyperParameterTuner<MLAlgorithm,
                          Optimizer,
                          MatType,
                          PredictionsType,
-                         WeightsType>::InitAndOptimize(
-    const ArgsTuple& /* args */,
-    arma::mat& bestParams,
-    data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
-    FixedArgs... fixedArgs)
+                         WeightsType>::
+    InitAndOptimize(
+        const ArgsTuple& /* args */,
+        arma::mat& bestParams,
+        data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+        FixedArgs... fixedArgs)
 {
   static const size_t totalArgs = std::tuple_size<ArgsTuple>::value;
 
-  CVFunction<CVType, MLAlgorithm, totalArgs, FixedArgs...>
-      cvFunction(cv, relativeDelta, minDelta, fixedArgs...);
-  bestObjective = Metric::NeedsMinimization?
-      optimizer.Optimize(cvFunction, bestParams, datasetInfo) :
-      -optimizer.Optimize(cvFunction, bestParams, datasetInfo);
+  CVFunction<CVType, MLAlgorithm, totalArgs, FixedArgs...> cvFunction(
+      cv, relativeDelta, minDelta, fixedArgs...);
+  bestObjective =
+      Metric::NeedsMinimization
+          ? optimizer.Optimize(cvFunction, bestParams, datasetInfo)
+          : -optimizer.Optimize(cvFunction, bestParams, datasetInfo);
   bestModel = std::move(cvFunction.BestModel());
 }
 
@@ -109,18 +113,22 @@ void HyperParameterTuner<MLAlgorithm,
                          Optimizer,
                          MatType,
                          PredictionsType,
-                         WeightsType>::InitAndOptimize(
-    const ArgsTuple& args,
-    arma::mat& bestParams,
-    data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
-    FixedArgs... fixedArgs)
+                         WeightsType>::
+    InitAndOptimize(
+        const ArgsTuple& args,
+        arma::mat& bestParams,
+        data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+        FixedArgs... fixedArgs)
 {
   using PreFixedArgT = typename std::remove_reference<
       typename std::tuple_element<I, ArgsTuple>::type>::type;
   using FixedArgT = FixedArg<typename PreFixedArgT::Type, I>;
 
-  InitAndOptimize<I + 1>(args, bestParams, datasetInfo, fixedArgs...,
-       FixedArgT{std::get<I>(args).value});
+  InitAndOptimize<I + 1>(args,
+                         bestParams,
+                         datasetInfo,
+                         fixedArgs...,
+                         FixedArgT{std::get<I>(args).value});
 }
 
 template<typename MLAlgorithm,
@@ -137,11 +145,12 @@ void HyperParameterTuner<MLAlgorithm,
                          Optimizer,
                          MatType,
                          PredictionsType,
-                         WeightsType>::InitAndOptimize(
-    const ArgsTuple& args,
-    arma::mat& bestParams,
-    data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
-    FixedArgs... fixedArgs)
+                         WeightsType>::
+    InitAndOptimize(
+        const ArgsTuple& args,
+        arma::mat& bestParams,
+        data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+        FixedArgs... fixedArgs)
 {
   static const size_t dimension =
       I - std::tuple_size<std::tuple<FixedArgs...>>::value;
@@ -158,19 +167,25 @@ template<typename MLAlgorithm,
          typename MatType,
          typename PredictionsType,
          typename WeightsType>
-template<size_t I, class ArgsTuple, class... FixedArgs, class, class, class,
-    class>
+template<size_t I,
+         class ArgsTuple,
+         class... FixedArgs,
+         class,
+         class,
+         class,
+         class>
 void HyperParameterTuner<MLAlgorithm,
                          Metric,
                          CV,
                          Optimizer,
                          MatType,
                          PredictionsType,
-                         WeightsType>::InitAndOptimize(
-    const ArgsTuple& args,
-    arma::mat& bestParams,
-    data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
-    FixedArgs... fixedArgs)
+                         WeightsType>::
+    InitAndOptimize(
+        const ArgsTuple& args,
+        arma::mat& bestParams,
+        data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+        FixedArgs... fixedArgs)
 {
   static const size_t dimension =
       I - std::tuple_size<std::tuple<FixedArgs...>>::value;
@@ -179,10 +194,10 @@ void HyperParameterTuner<MLAlgorithm,
 
   if (datasetInfo.NumMappings(dimension) == 0)
   {
-      std::ostringstream oss;
-      oss << "HyperParameterTuner::Optimize(): the collection passed as the "
-          << "argument " << I + 1 << " is empty" << std::endl;
-      throw std::invalid_argument(oss.str());
+    std::ostringstream oss;
+    oss << "HyperParameterTuner::Optimize(): the collection passed as the "
+        << "argument " << I + 1 << " is empty" << std::endl;
+    throw std::invalid_argument(oss.str());
   }
 
   InitAndOptimize<I + 1>(args, bestParams, datasetInfo, fixedArgs...);
@@ -196,14 +211,15 @@ template<typename MLAlgorithm,
          typename PredictionsType,
          typename WeightsType>
 template<typename TupleType, size_t I, typename... Args, typename>
-TupleType HyperParameterTuner<MLAlgorithm,
-                           Metric,
-                           CV,
-                           Optimizer,
-                           MatType,
-                           PredictionsType,
-                           WeightsType>::VectorToTuple(
-    const arma::vec& vector, const Args&... args)
+TupleType
+HyperParameterTuner<MLAlgorithm,
+                    Metric,
+                    CV,
+                    Optimizer,
+                    MatType,
+                    PredictionsType,
+                    WeightsType>::VectorToTuple(const arma::vec& vector,
+                                                const Args&... args)
 {
   return VectorToTuple<TupleType, I + 1>(vector, args..., vector(I));
 }
@@ -216,14 +232,15 @@ template<typename MLAlgorithm,
          typename PredictionsType,
          typename WeightsType>
 template<typename TupleType, size_t I, typename... Args, typename, typename>
-TupleType HyperParameterTuner<MLAlgorithm,
-                           Metric,
-                           CV,
-                           Optimizer,
-                           MatType,
-                           PredictionsType,
-                           WeightsType>::VectorToTuple(
-    const arma::vec& /* vector */, const Args&... args)
+TupleType
+HyperParameterTuner<MLAlgorithm,
+                    Metric,
+                    CV,
+                    Optimizer,
+                    MatType,
+                    PredictionsType,
+                    WeightsType>::VectorToTuple(const arma::vec& /* vector */,
+                                                const Args&... args)
 {
   return TupleType(args...);
 }

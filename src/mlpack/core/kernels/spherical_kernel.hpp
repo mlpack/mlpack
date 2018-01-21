@@ -26,10 +26,10 @@ class SphericalKernel
   /**
    * Construct the SphericalKernel with the given bandwidth.
    */
-  SphericalKernel(const double bandwidth = 1.0) :
-    bandwidth(bandwidth),
-    bandwidthSquared(std::pow(bandwidth, 2.0))
-  { /* Nothing to do. */ }
+  SphericalKernel(const double bandwidth = 1.0)
+    : bandwidth(bandwidth), bandwidthSquared(std::pow(bandwidth, 2.0))
+  { /* Nothing to do. */
+  }
 
   /**
    * Evaluate the spherical kernel with the given two vectors.
@@ -43,9 +43,10 @@ class SphericalKernel
   template<typename VecTypeA, typename VecTypeB>
   double Evaluate(const VecTypeA& a, const VecTypeB& b) const
   {
-    return
-        (metric::SquaredEuclideanDistance::Evaluate(a, b) <= bandwidthSquared) ?
-        1.0 : 0.0;
+    return (metric::SquaredEuclideanDistance::Evaluate(a, b)
+            <= bandwidthSquared)
+               ? 1.0
+               : 0.0;
   }
   /**
    * Obtains the convolution integral [integral K(||x-a||)K(||b-x||)dx]
@@ -74,21 +75,24 @@ class SphericalKernel
         return 1.0 / volumeSquared * (2.0 * bandwidth - distance);
         break;
       case 2:
-        return 1.0 / volumeSquared *
-          (2.0 * bandwidth * bandwidth * acos(distance/(2.0 * bandwidth)) -
-          distance / 4.0 * sqrt(4.0*bandwidth*bandwidth-distance*distance));
+        return 1.0 / volumeSquared
+               * (2.0 * bandwidth * bandwidth
+                      * acos(distance / (2.0 * bandwidth))
+                  - distance / 4.0 * sqrt(4.0 * bandwidth * bandwidth
+                                          - distance * distance));
         break;
       default:
         Log::Fatal << "The spherical kernel does not support convolution\
-          integrals above dimension two, yet..." << std::endl;
+          integrals above dimension two, yet..."
+                   << std::endl;
         return -1.0;
         break;
     }
   }
   double Normalizer(size_t dimension) const
   {
-    return pow(bandwidth, (double) dimension) * pow(M_PI, dimension / 2.0) /
-        std::tgamma(dimension / 2.0 + 1.0);
+    return pow(bandwidth, (double)dimension) * pow(M_PI, dimension / 2.0)
+           / std::tgamma(dimension / 2.0 + 1.0);
   }
 
   /**
@@ -96,21 +100,15 @@ class SphericalKernel
    *
    * @param t Argument to kernel.
    */
-  double Evaluate(const double t) const
-  {
-    return (t <= bandwidth) ? 1.0 : 0.0;
-  }
-  double Gradient(double t)
-  {
-    return t == bandwidth ? arma::datum::nan : 0.0;
-  }
+  double Evaluate(const double t) const { return (t <= bandwidth) ? 1.0 : 0.0; }
+  double Gradient(double t) { return t == bandwidth ? arma::datum::nan : 0.0; }
 
   //! Serialize the object.
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(bandwidth);
-    ar & BOOST_SERIALIZATION_NVP(bandwidthSquared);
+    ar& BOOST_SERIALIZATION_NVP(bandwidth);
+    ar& BOOST_SERIALIZATION_NVP(bandwidthSquared);
   }
 
  private:

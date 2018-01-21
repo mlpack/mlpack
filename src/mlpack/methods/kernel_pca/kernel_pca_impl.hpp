@@ -20,57 +20,58 @@
 namespace mlpack {
 namespace kpca {
 
-template <typename KernelType, typename KernelRule>
+template<typename KernelType, typename KernelRule>
 KernelPCA<KernelType, KernelRule>::KernelPCA(const KernelType kernel,
-                                 const bool centerTransformedData) :
-      kernel(kernel),
-      centerTransformedData(centerTransformedData)
-{ }
+                                             const bool centerTransformedData)
+  : kernel(kernel), centerTransformedData(centerTransformedData)
+{
+}
 
 //! Apply Kernel Principal Component Analysis to the provided data set.
-template <typename KernelType, typename KernelRule>
+template<typename KernelType, typename KernelRule>
 void KernelPCA<KernelType, KernelRule>::Apply(const arma::mat& data,
-                                  arma::mat& transformedData,
-                                  arma::vec& eigval,
-                                  arma::mat& eigvec,
-                                  const size_t newDimension)
+                                              arma::mat& transformedData,
+                                              arma::vec& eigval,
+                                              arma::mat& eigvec,
+                                              const size_t newDimension)
 {
-  KernelRule::ApplyKernelMatrix(data, transformedData, eigval,
-                                eigvec, newDimension, kernel);
+  KernelRule::ApplyKernelMatrix(
+      data, transformedData, eigval, eigvec, newDimension, kernel);
 
   // Center the transformed data, if the user asked for it.
   if (centerTransformedData)
   {
     arma::colvec transformedDataMean = arma::mean(transformedData, 1);
-    transformedData = transformedData - (transformedDataMean *
-        arma::ones<arma::rowvec>(transformedData.n_cols));
+    transformedData =
+        transformedData - (transformedDataMean
+                           * arma::ones<arma::rowvec>(transformedData.n_cols));
   }
 }
 
 //! Apply Kernel Principal Component Analysis to the provided data set.
-template <typename KernelType, typename KernelRule>
+template<typename KernelType, typename KernelRule>
 void KernelPCA<KernelType, KernelRule>::Apply(const arma::mat& data,
-                                  arma::mat& transformedData,
-                                  arma::vec& eigval,
-                                  arma::mat& eigvec)
+                                              arma::mat& transformedData,
+                                              arma::vec& eigval,
+                                              arma::mat& eigvec)
 {
   Apply(data, transformedData, eigval, eigvec, data.n_cols);
 }
 
 //! Apply Kernel Principal Component Analysis to the provided data set.
-template <typename KernelType, typename KernelRule>
+template<typename KernelType, typename KernelRule>
 void KernelPCA<KernelType, KernelRule>::Apply(const arma::mat& data,
-                                  arma::mat& transformedData,
-                                  arma::vec& eigVal)
+                                              arma::mat& transformedData,
+                                              arma::vec& eigVal)
 {
   arma::mat coeffs;
   Apply(data, transformedData, eigVal, coeffs, data.n_cols);
 }
 
 //! Use KPCA for dimensionality reduction.
-template <typename KernelType, typename KernelRule>
+template<typename KernelType, typename KernelRule>
 void KernelPCA<KernelType, KernelRule>::Apply(arma::mat& data,
-                                    const size_t newDimension)
+                                              const size_t newDimension)
 {
   arma::mat coeffs;
   arma::vec eigVal;

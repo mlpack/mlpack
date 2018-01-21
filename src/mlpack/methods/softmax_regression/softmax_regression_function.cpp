@@ -20,11 +20,9 @@ SoftmaxRegressionFunction::SoftmaxRegressionFunction(
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const double lambda,
-    const bool fitIntercept) :
-    data(math::MakeAlias(const_cast<arma::mat&>(data), false)),
-    numClasses(numClasses),
-    lambda(lambda),
-    fitIntercept(fitIntercept)
+    const bool fitIntercept)
+  : data(math::MakeAlias(const_cast<arma::mat&>(data), false)),
+    numClasses(numClasses), lambda(lambda), fitIntercept(fitIntercept)
 {
   // Initialize the parameters to suitable values.
   initialPoint = InitializeWeights();
@@ -39,8 +37,8 @@ SoftmaxRegressionFunction::SoftmaxRegressionFunction(
 void SoftmaxRegressionFunction::Shuffle()
 {
   // Determine new ordering.
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
-      data.n_cols - 1, data.n_cols));
+  arma::uvec ordering = arma::shuffle(
+      arma::linspace<arma::uvec>(0, data.n_cols - 1, data.n_cols));
 
   // Re-sort data.
   arma::mat newData = data.cols(ordering);
@@ -54,7 +52,9 @@ void SoftmaxRegressionFunction::Shuffle()
 
   arma::umat newLocations(2, groundTruth.n_nonzero);
   arma::vec values(const_cast<double*>(groundTruth.values),
-      groundTruth.n_nonzero, false, true);
+                   groundTruth.n_nonzero,
+                   false,
+                   true);
   arma::sp_mat::const_iterator it = groundTruth.begin();
   size_t loc = 0;
   while (it != groundTruth.end())
@@ -66,8 +66,8 @@ void SoftmaxRegressionFunction::Shuffle()
     ++loc;
   }
 
-  groundTruth = arma::sp_mat(newLocations, values, groundTruth.n_rows,
-      groundTruth.n_cols);
+  groundTruth = arma::sp_mat(
+      newLocations, values, groundTruth.n_rows, groundTruth.n_cols);
 }
 
 /**
@@ -81,20 +81,17 @@ const arma::mat SoftmaxRegressionFunction::InitializeWeights()
 }
 
 const arma::mat SoftmaxRegressionFunction::InitializeWeights(
-    const size_t featureSize,
-    const size_t numClasses,
-    const bool fitIntercept)
+    const size_t featureSize, const size_t numClasses, const bool fitIntercept)
 {
-    arma::mat parameters;
-    InitializeWeights(parameters, featureSize, numClasses, fitIntercept);
-    return parameters;
+  arma::mat parameters;
+  InitializeWeights(parameters, featureSize, numClasses, fitIntercept);
+  return parameters;
 }
 
-void SoftmaxRegressionFunction::InitializeWeights(
-    arma::mat &weights,
-    const size_t featureSize,
-    const size_t numClasses,
-    const bool fitIntercept)
+void SoftmaxRegressionFunction::InitializeWeights(arma::mat& weights,
+                                                  const size_t featureSize,
+                                                  const size_t numClasses,
+                                                  const bool fitIntercept)
 {
   // Initialize values to 0.005 * r. 'r' is a matrix of random values taken from
   // a Gaussian distribution with mean zero and variance one.
@@ -136,8 +133,8 @@ void SoftmaxRegressionFunction::GetGroundTruthMatrix(
   values.ones(labels.n_elem);
 
   // Calculate the matrix.
-  groundTruth = arma::sp_mat(rowPointers, colPointers, values, numClasses,
-                             labels.n_elem);
+  groundTruth =
+      arma::sp_mat(rowPointers, colPointers, values, numClasses, labels.n_elem);
 }
 
 /**
@@ -160,19 +157,18 @@ void SoftmaxRegressionFunction::GetProbabilitiesMatrix(
     //
     // Since the cost of join may be high due to the copy of original data,
     // split the hypothesis computation to two components.
-    hypothesis = arma::exp(
-        arma::repmat(parameters.col(0), 1, batchSize) +
-        parameters.cols(1, parameters.n_cols - 1) *
-        data.cols(start, start + batchSize - 1));
+    hypothesis = arma::exp(arma::repmat(parameters.col(0), 1, batchSize)
+                           + parameters.cols(1, parameters.n_cols - 1)
+                                 * data.cols(start, start + batchSize - 1));
   }
   else
   {
-    hypothesis = arma::exp(parameters *
-        data.cols(start, start + batchSize - 1));
+    hypothesis =
+        arma::exp(parameters * data.cols(start, start + batchSize - 1));
   }
 
-  probabilities = hypothesis / arma::repmat(arma::sum(hypothesis, 0),
-                                            numClasses, 1);
+  probabilities =
+      hypothesis / arma::repmat(arma::sum(hypothesis, 0), numClasses, 1);
 }
 
 /**
@@ -202,8 +198,8 @@ double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters) const
   // Calculate the log likelihood and regularization terms.
   double logLikelihood, weightDecay, cost;
 
-  logLikelihood = arma::accu(groundTruth % arma::log(probabilities)) /
-                  data.n_cols;
+  logLikelihood =
+      arma::accu(groundTruth % arma::log(probabilities)) / data.n_cols;
   weightDecay = 0.5 * lambda * arma::accu(parameters % parameters);
 
   // The cost is the sum of the negative log likelihood and the regularization
@@ -226,8 +222,9 @@ double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters,
   // Calculate the log likelihood and regularization terms.
   double logLikelihood, weightDecay;
 
-  logLikelihood = arma::accu(groundTruth.cols(start, start + batchSize - 1) %
-      arma::log(probabilities)) / batchSize;
+  logLikelihood = arma::accu(groundTruth.cols(start, start + batchSize - 1)
+                             % arma::log(probabilities))
+                  / batchSize;
   weightDecay = 0.5 * lambda * arma::accu(parameters * parameters);
 
   return -logLikelihood + weightDecay;
@@ -256,16 +253,16 @@ void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
     // the cost of building matrix [1; data].
     arma::mat inner = probabilities - groundTruth;
     gradient.col(0) =
-      inner * arma::ones<arma::mat>(data.n_cols, 1) / data.n_cols +
-      lambda * parameters.col(0);
+        inner * arma::ones<arma::mat>(data.n_cols, 1) / data.n_cols
+        + lambda * parameters.col(0);
     gradient.cols(1, parameters.n_cols - 1) =
-      inner * data.t() / data.n_cols +
-      lambda * parameters.cols(1, parameters.n_cols - 1);
+        inner * data.t() / data.n_cols
+        + lambda * parameters.cols(1, parameters.n_cols - 1);
   }
   else
   {
-    gradient = (probabilities - groundTruth) * data.t() / data.n_cols +
-               lambda * parameters;
+    gradient = (probabilities - groundTruth) * data.t() / data.n_cols
+               + lambda * parameters;
   }
 }
 
@@ -281,20 +278,19 @@ void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
   gradient.set_size(parameters.n_rows, parameters.n_cols);
   if (fitIntercept)
   {
-    arma::mat inner = probabilities - groundTruth.cols(start, start +
-        batchSize - 1);
-    gradient.col(0) =
-        inner * arma::ones<arma::mat>(batchSize, 1) / batchSize +
-        lambda * parameters.col(0);
+    arma::mat inner =
+        probabilities - groundTruth.cols(start, start + batchSize - 1);
+    gradient.col(0) = inner * arma::ones<arma::mat>(batchSize, 1) / batchSize
+                      + lambda * parameters.col(0);
     gradient.cols(1, parameters.n_cols - 1) =
-        inner * data.cols(start, start + batchSize - 1).t() / batchSize +
-        lambda * parameters.cols(1, parameters.n_cols - 1);
+        inner * data.cols(start, start + batchSize - 1).t() / batchSize
+        + lambda * parameters.cols(1, parameters.n_cols - 1);
   }
   else
   {
     gradient = (probabilities - groundTruth.cols(start, start + batchSize - 1))
-        * data.cols(start, start + batchSize - 1).t() / batchSize
-        + lambda * parameters;
+                   * data.cols(start, start + batchSize - 1).t() / batchSize
+               + lambda * parameters;
   }
 }
 
@@ -314,18 +310,18 @@ void SoftmaxRegressionFunction::PartialGradient(const arma::mat& parameters,
     if (j == 0)
     {
       gradient.col(j) =
-          inner * arma::ones<arma::mat>(data.n_cols, 1) / data.n_cols +
-          lambda * parameters.col(0);
+          inner * arma::ones<arma::mat>(data.n_cols, 1) / data.n_cols
+          + lambda * parameters.col(0);
     }
     else
     {
-      gradient.col(j) = inner * data.row(j).t() / data.n_cols + lambda *
-          parameters.col(j);
+      gradient.col(j) =
+          inner * data.row(j).t() / data.n_cols + lambda * parameters.col(j);
     }
   }
   else
   {
-    gradient.col(j) = inner * data.row(j).t() / data.n_cols + lambda *
-        parameters.col(j);
+    gradient.col(j) =
+        inner * data.row(j).t() / data.n_cols + lambda * parameters.col(j);
   }
 }

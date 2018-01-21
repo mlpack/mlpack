@@ -56,8 +56,8 @@ template<typename MLAlgorithm,
          typename PredictionsType =
              typename MetaInfoExtractor<MLAlgorithm, MatType>::PredictionsType,
          typename WeightsType =
-             typename MetaInfoExtractor<MLAlgorithm, MatType,
-                 PredictionsType>::WeightsType>
+             typename MetaInfoExtractor<MLAlgorithm, MatType, PredictionsType>::
+                 WeightsType>
 class KFoldCV
 {
  public:
@@ -70,9 +70,7 @@ class KFoldCV
    * @param ys Predictions (labels for classification algorithms and responses
    *     for regression algorithms) for each data point.
    */
-  KFoldCV(const size_t k,
-          const MatType& xs,
-          const PredictionsType& ys);
+  KFoldCV(const size_t k, const MatType& xs, const PredictionsType& ys);
 
   /**
    * This constructor can be used for multiclass classification algorithms.
@@ -159,7 +157,7 @@ class KFoldCV
    *     ones in the constructor).
    */
   template<typename... MLAlgorithmArgs>
-  double Evaluate(const MLAlgorithmArgs& ...args);
+  double Evaluate(const MLAlgorithmArgs&... args);
 
   //! Access and modify a model from the last run of k-fold cross-validation.
   MLAlgorithm& Model();
@@ -219,19 +217,19 @@ class KFoldCV
   /**
    * Train and run evaluation in the case of non-weighted learning.
    */
-  template<typename...MLAlgorithmArgs,
+  template<typename... MLAlgorithmArgs,
            bool Enabled = !Base::MIE::SupportsWeights,
            typename = typename std::enable_if<Enabled>::type>
-  double TrainAndEvaluate(const MLAlgorithmArgs& ...mlAlgorithmArgs);
+  double TrainAndEvaluate(const MLAlgorithmArgs&... mlAlgorithmArgs);
 
   /**
    * Train and run evaluation in the case of supporting weighted learning.
    */
-  template<typename...MLAlgorithmArgs,
+  template<typename... MLAlgorithmArgs,
            bool Enabled = Base::MIE::SupportsWeights,
            typename = typename std::enable_if<Enabled>::type,
            typename = void>
-  double TrainAndEvaluate(const MLAlgorithmArgs& ...mlAlgorithmArgs);
+  double TrainAndEvaluate(const MLAlgorithmArgs&... mlAlgorithmArgs);
 
   /**
    * Calculate the index of the first column of the ith validation subset.

@@ -19,12 +19,13 @@ namespace amf {
 
 /**
  * This class acts as a wrapper for basic termination policies to be used by
- * SVDIncompleteIncrementalLearning. This class calls the wrapped class functions
+ * SVDIncompleteIncrementalLearning. This class calls the wrapped class
+ * functions
  * after every n calls to main class functions where n is the number of rows.
  *
  * @see AMF, SVDIncompleteIncrementalLearning
  */
-template <class TerminationPolicy>
+template<class TerminationPolicy>
 class IncompleteIncrementalTermination
 {
  public:
@@ -34,8 +35,10 @@ class IncompleteIncrementalTermination
    * @param tPolicy object of wrapped class.
    */
   IncompleteIncrementalTermination(
-      TerminationPolicy tPolicy = TerminationPolicy()) :
-      tPolicy(tPolicy) { }
+      TerminationPolicy tPolicy = TerminationPolicy())
+    : tPolicy(tPolicy)
+  {
+  }
 
   /**
    * Initializes the termination policy before stating the factorization.

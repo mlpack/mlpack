@@ -54,15 +54,12 @@ class CyclicalDecay
    */
   CyclicalDecay(const size_t epochRestart,
                 const double multFactor,
-                const double stepSize) :
-      epochRestart(epochRestart),
-      multFactor(multFactor),
-      constStepSize(stepSize),
-      nextRestart(epochRestart),
-      batchRestart(0),
-      epochBatches(0),
-      epoch(0)
-  { /* Nothing to do here */ }
+                const double stepSize)
+    : epochRestart(epochRestart), multFactor(multFactor),
+      constStepSize(stepSize), nextRestart(epochRestart), batchRestart(0),
+      epochBatches(0), epoch(0)
+  { /* Nothing to do here */
+  }
 
   /**
    * This function is called in each iteration after the policy update.
@@ -79,8 +76,8 @@ class CyclicalDecay
     if (epoch >= epochRestart)
     {
       // n_t = n_min^i + 0.5(n_max^i - n_min^i)(1 + cos(T_cur/T_i * pi)).
-      stepSize = 0.5 * constStepSize * (1 + cos((batchRestart / epochBatches)
-          * M_PI));
+      stepSize =
+          0.5 * constStepSize * (1 + cos((batchRestart / epochBatches) * M_PI));
 
       // Keep track of the number of batches since the last restart.
       batchRestart++;

@@ -45,8 +45,8 @@ class MissingPolicy
    *
    * @param missingSet Set of strings that should be mapped.
    */
-  explicit MissingPolicy(std::set<std::string> missingSet) :
-      missingSet(std::move(missingSet))
+  explicit MissingPolicy(std::set<std::string> missingSet)
+    : missingSet(std::move(missingSet))
   {
     // Nothing to initialize here.
   }
@@ -84,7 +84,8 @@ class MissingPolicy
               MapType& maps,
               std::vector<Datatype>& /* types */)
   {
-    static_assert(std::numeric_limits<T>::has_quiet_NaN == true,
+    static_assert(
+        std::numeric_limits<T>::has_quiet_NaN == true,
         "Cannot use MissingPolicy with types where has_quiet_NaN() is false!");
 
     // If we can load the string then there is no need for mapping.
@@ -96,18 +97,18 @@ class MissingPolicy
     MappedType value = std::numeric_limits<MappedType>::quiet_NaN();
     // But we can't use that for the map, so we need some other thing that will
     // represent quiet_NaN().
-    const MappedType mapValue = std::nexttoward(
-        std::numeric_limits<MappedType>::max(), MappedType(0));
+    const MappedType mapValue =
+        std::nexttoward(std::numeric_limits<MappedType>::max(), MappedType(0));
 
     // If extraction of the value fails, or if it is a value that is supposed to
     // be mapped, then do mapping.
-    if (token.fail() || !token.eof() ||
-        missingSet.find(string) != std::end(missingSet))
+    if (token.fail() || !token.eof()
+        || missingSet.find(string) != std::end(missingSet))
     {
       // Everything is mapped to NaN.  However we must still keep track of
       // everything that we have mapped, so we add it to the maps if needed.
-      if (maps.count(dimension) == 0 ||
-          maps[dimension].first.count(string) == 0)
+      if (maps.count(dimension) == 0
+          || maps[dimension].first.count(string) == 0)
       {
         // This string does not exist yet.
         typedef std::pair<std::string, MappedType> PairType;
@@ -117,8 +118,8 @@ class MissingPolicy
         if (maps[dimension].second.count(mapValue) == 0)
         {
           // Create new element in reverse map.
-          maps[dimension].second.insert(std::make_pair(mapValue,
-              std::vector<std::string>()));
+          maps[dimension].second.insert(
+              std::make_pair(mapValue, std::vector<std::string>()));
         }
         maps[dimension].second[mapValue].push_back(string);
       }
