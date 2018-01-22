@@ -240,10 +240,10 @@ BOOST_AUTO_TEST_CASE(DecisionTreeTrainingVerTest)
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
-  
+
   // Initialize an all-ones weight matrix.
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
-  
+
   // Input training data.
   SetInputParam("training", std::move(inputData));
   SetInputParam("labels", std::move(labels));
@@ -276,7 +276,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
 
   // Initialize an all-ones weight matrix.
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
-  
+
   arma::mat testData;
   if (!data::Load("braziltourism_test.arff", testData, info))
     BOOST_FAIL("Cannot load test dataset braziltourism_test.arff!");
