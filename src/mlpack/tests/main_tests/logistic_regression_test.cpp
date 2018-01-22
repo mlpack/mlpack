@@ -342,7 +342,7 @@ BOOST_AUTO_TEST_CASE(LRNonNegativeStepSizeTest)
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
-  SetInputParam("optimizer", "sgd");
+  SetInputParam("optimizer", std::string ("sgd")) ;
   SetInputParam("step_size", double (-0.01));
 
   Log::Fatal.ignoreInput = true;
