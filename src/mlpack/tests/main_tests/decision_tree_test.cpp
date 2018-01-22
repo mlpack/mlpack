@@ -289,7 +289,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
   SetInputParam("weights", std::move(weights));
 
   // Input test data.
-  SetInputParam("test", (std::make_tuple(info, testData));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   mlpackMain();
 
