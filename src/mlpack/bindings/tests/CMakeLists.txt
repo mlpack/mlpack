@@ -2,6 +2,7 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   test_option.hpp
+  ignore_check.hpp
   get_param.hpp
   get_printable_param.hpp
   get_printable_param_impl.hpp

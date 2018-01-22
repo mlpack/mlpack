@@ -8,6 +8,7 @@ set(SOURCES
   fastmks_model.cpp
   fastmks_rules.hpp
   fastmks_rules_impl.hpp
+  fastmks_stat.hpp
 )
 
 # Add directory name to sources.

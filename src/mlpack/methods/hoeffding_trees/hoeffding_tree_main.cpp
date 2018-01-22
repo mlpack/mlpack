@@ -35,7 +35,11 @@ PROGRAM_INFO("Hoeffding trees",
     "\n\n"
     "The training file and associated labels are specified with the " +
     PRINT_PARAM_STRING("training") + " and " + PRINT_PARAM_STRING("labels") +
-    " parameters, respectively.  The training may be performed in batch mode "
+    " parameters, respectively. Optionally, if " +
+    PRINT_PARAM_STRING("labels") + " is not specified, the labels are assumed "
+    "to be the last dimension of the training dataset."
+    "\n\n"
+    "The training may be performed in batch mode "
     "(like a typical decision tree algorithm) by specifying the " +
     PRINT_PARAM_STRING("batch_mode") + " option, but this may not be the best "
     "option for large datasets."
@@ -123,9 +127,6 @@ static void mlpackMain()
   ReportIgnoredParam({{ "test", false }}, "probabilities");
   ReportIgnoredParam({{ "test", false }}, "predictions");
 
-  if (CLI::HasParam("training"))
-    RequireOnlyOnePassed({ "labels" }, true);
-
   ReportIgnoredParam({{ "training", false }}, "batch_mode");
   ReportIgnoredParam({{ "training", false }}, "passes");
 
@@ -182,7 +183,19 @@ static void mlpackMain()
       Log::Info << datasetInfo.NumMappings(i) << " mappings in dimension "
           << i << "." << endl;
 
-    labels = CLI::GetParam<arma::Row<size_t>>("labels");
+    if (CLI::HasParam("labels"))
+    {
+      labels = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
+    }
+    else
+    {
+      // Extract the labels from the last dimension of training set.
+      Log::Info << "Using the last dimension of training set as labels."
+          << endl;
+      labels = arma::conv_to<arma::Row<size_t>>::from(
+          trainingSet.row(trainingSet.n_rows - 1));
+      trainingSet.shed_row(trainingSet.n_rows - 1);
+    }
 
     // Next, create the model with the right type.  Then build the tree with the
     // appropriate type of instantiated numeric split type.  This is a little
