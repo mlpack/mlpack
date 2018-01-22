@@ -285,7 +285,7 @@ BOOST_AUTO_TEST_CASE(LRTrainWithMoreThanTwoClasses)
 /**
   * Ensuring that max iteration for optimizers is non negative 
  **/ 
-BOOST_AUTO_TEST_CASE(LRMaxIterationNonNegativeTest) 
+BOOST_AUTO_TEST_CASE(LRNonNegativeMaxIterationTest) 
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -298,6 +298,74 @@ BOOST_AUTO_TEST_CASE(LRMaxIterationNonNegativeTest)
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
   SetInputParam("max_iterations", int(-1));
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+}
+
+/**
+  * Ensuring that max_iterations for optimizers is integer value
+ **/
+BOOST_AUTO_TEST_CASE(LRIntegerMaxIterationTest)
+{
+  constexpr int N = 10;
+  constexpr int D = 3;
+
+  arma::mat trainX = arma::randu<arma::mat>(D,N);
+  arma::rowvec trainY;
+
+  trainY << 0 << 1 << 0 << 1 << 0 << 1 << 0 << 1 << 0 << 1 << arma::endr; // 10 responses
+
+  SetInputParam("training", std::move(trainX));
+  SetInputParam("labels", std::move(trainY));
+  SetInputParam("max_iterations", int(0.01));
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+  * Ensuring that step size for optimizer is non negative
+ **/ 
+BOOST_AUTO_TEST_CASE(LRNonNegativeStepSizeTest)
+{
+  constexpr int N = 10;
+  constexpr int D = 2;
+
+  arma::mat trainX = arma::randu<arma::mat>(D,N);
+  arma::rowvec trainY;
+
+  trainY << 0 << 1 << 0 << 1 << 0 << 1 << 0 << 1 << 0 << 1 << arma::endr; // 10 responses
+
+  SetInputParam("training", std::move(trainX));
+  SetInputParam("labels", std::move(trainY));
+  SetInputParam("optimizer", "sgd");
+  SetInputParam("step_size", double (-0.01));
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+  * Ensuring that tolerance is non negative
+ **/
+BOOST_AUTO_TEST_CASE(LRNonNegativeToleranceTest) 
+{
+  constexpr int N = 10;
+  constexpr int D = 3;
+
+  arma::mat trainX = arma::randu<arma::mat>(D,N);
+  arma::rowvec trainY;
+
+  trainY << 1 << 1 << 0 << 1 << 0 << 0 << 0 << 1 << 0 << 1 << arma::endr; // 10 responses
+
+  SetInputParam("training", std::move(trainX));
+  SetInputParam("labels", std::move(trainY));
+  SetInputParam("tolerance", double (-0.01));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
