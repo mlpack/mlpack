@@ -234,7 +234,8 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
 BOOST_AUTO_TEST_CASE(DecisionTreeTrainingVerTest)
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  DatasetInfo info;
+  if (!data::Load("vc2.csv", inputData, info))
     BOOST_FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
@@ -245,7 +246,7 @@ BOOST_AUTO_TEST_CASE(DecisionTreeTrainingVerTest)
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   // Input training data.
-  SetInputParam("training", std::move(inputData));
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
