@@ -121,66 +121,39 @@ using namespace mlpack;
 using namespace mlpack::nca;
 using namespace mlpack::metric;
 using namespace mlpack::optimization;
+using namespace mlpack::util;
 using namespace std;
 
-void mlpackMain()
+static void mlpackMain()
 {
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
-  if (!CLI::HasParam("output"))
-    Log::Warn << "--output_file (-o) not specified; no output will be saved!"
-        << endl;
+  RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
   const string optimizerType = CLI::GetParam<string>("optimizer");
-
-  if ((optimizerType != "sgd") && (optimizerType != "lbfgs"))
-  {
-    Log::Fatal << "Optimizer type '" << optimizerType << "' unknown; must be "
-        << "'sgd' or 'lbfgs'!" << endl;
-  }
+  RequireParamInSet<string>("optimizer", { "sgd", "lbfgs" },
+      true, "unknown optimizer type");
 
   // Warn on unused parameters.
   if (optimizerType == "sgd")
   {
-    if (CLI::HasParam("num_basis"))
-      Log::Warn << "Parameter --num_basis ignored (not using 'lbfgs' "
-          << "optimizer)." << endl;
-
-    if (CLI::HasParam("armijo_constant"))
-      Log::Warn << "Parameter --armijo_constant ignored (not using 'lbfgs' "
-          << "optimizer)." << endl;
-
-    if (CLI::HasParam("wolfe"))
-      Log::Warn << "Parameter --wolfe ignored (not using 'lbfgs' optimizer).\n";
-
-    if (CLI::HasParam("max_line_search_trials"))
-      Log::Warn << "Parameter --max_line_search_trials ignored (not using "
-          << "'lbfgs' optimizer." << endl;
-
-    if (CLI::HasParam("min_step"))
-      Log::Warn << "Parameter --min_step ignored (not using 'lbfgs' optimizer)."
-          << endl;
-
-    if (CLI::HasParam("max_step"))
-      Log::Warn << "Parameter --max_step ignored (not using 'lbfgs' optimizer)."
-          << endl;
+    ReportIgnoredParam("num_basis", "L-BFGS optimizer is not being used");
+    ReportIgnoredParam("armijo_constant", "L-BFGS optimizer is not being used");
+    ReportIgnoredParam("wolfe", "L-BFGS optimizer is not being used");
+    ReportIgnoredParam("max_line_search_trials",
+        "L-BFGS optimizer is not being used");
+    ReportIgnoredParam("min_step", "L-BFGS optimizer is not being used");
+    ReportIgnoredParam("max_step", "L-BFGS optimizer is not being used");
+    ReportIgnoredParam("batch_size", "L-BFGS optimizer is not being used");
   }
   else if (optimizerType == "lbfgs")
   {
-    if (CLI::HasParam("step_size"))
-      Log::Warn << "Parameter --step_size ignored (not using 'sgd' optimizer)."
-          << endl;
-
-    if (CLI::HasParam("linear_scan"))
-      Log::Warn << "Parameter --linear_scan ignored (not using 'sgd' "
-          << "optimizer)." << endl;
-
-    if (CLI::HasParam("batch_size"))
-      Log::Warn << "Parameter --batch_size ignored (not using 'sgd' "
-          << "optimizer)." << endl;
+    ReportIgnoredParam("step_size", "SGD optimizer is not being used");
+    ReportIgnoredParam("linear_scan", "SGD optimizer is not being used");
+    ReportIgnoredParam("batch_size", "SGD optimizer is not being used");
   }
 
   const double stepSize = CLI::GetParam<double>("step_size");

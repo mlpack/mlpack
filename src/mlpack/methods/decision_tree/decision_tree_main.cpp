@@ -17,11 +17,13 @@
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::tree;
+using namespace mlpack::data;
+using namespace mlpack::util;
 
 PROGRAM_INFO("Decision tree",
     "Train and evaluate using a decision tree.  Given a dataset containing "
-    "numeric features and associated labels for each point in the dataset, this"
-    " program can train a decision tree on that data."
+    "numeric or categorical features, and associated labels for each point in "
+    "the dataset, this program can train a decision tree on that data."
     "\n\n"
     "The training file and associated labels are specified with the " +
     PRINT_PARAM_STRING("training") + " and " + PRINT_PARAM_STRING("labels") +
@@ -69,9 +71,10 @@ PROGRAM_INFO("Decision tree",
         "test_labels", "test_labels", "predictions", "predictions"));
 
 // Datasets.
-PARAM_MATRIX_IN("training", "Matrix of training points.", "t");
+PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",
+    "t");
 PARAM_UROW_IN("labels", "Training labels.", "l");
-PARAM_MATRIX_IN("test", "Matrix of test points.", "T");
+PARAM_MATRIX_AND_INFO_IN("test", "Testing dataset (may be categorical).", "T");
 PARAM_MATRIX_IN("weights", "The weight of labels", "w");
 PARAM_UMATRIX_IN("test_labels", "Test point labels, if accuracy calculation "
     "is desired.", "L");
@@ -88,14 +91,14 @@ PARAM_UROW_OUT("predictions", "Class predictions for each test point.", "p");
 
 /**
  * This is the class that we will serialize.  It is a pretty simple wrapper
- * around DecisionTree<>.  In order to support categoricals, it will need to
- * also hold and serialize a DatasetInfo.
+ * around DecisionTree<>.
  */
 class DecisionTreeModel
 {
  public:
   // The tree itself, left public for direct access by this program.
   DecisionTree<> tree;
+  DatasetInfo info;
 
   // Create the model.
   DecisionTreeModel() { /* Nothing to do. */ }
@@ -105,6 +108,7 @@ class DecisionTreeModel
   void serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & BOOST_SERIALIZATION_NVP(tree);
+    ar & BOOST_SERIALIZATION_NVP(info);
   }
 };
 
@@ -114,44 +118,33 @@ PARAM_MODEL_IN(DecisionTreeModel, "input_model", "Pre-trained decision tree, "
 PARAM_MODEL_OUT(DecisionTreeModel, "output_model", "Output for trained decision"
     " tree.", "M");
 
-void mlpackMain()
+// Convenience typedef.
+typedef tuple<DatasetInfo, arma::mat> TupleType;
+
+static void mlpackMain()
 {
   // Check parameters.
-  if (CLI::HasParam("training") && CLI::HasParam("input_model"))
-    Log::Fatal << "Cannot specify both --training_file and --input_model_file!"
-        << endl;
+  RequireOnlyOnePassed({ "training", "input_model" }, true);
+  ReportIgnoredParam({{ "test", false }}, "test_labels");
+  RequireAtLeastOnePassed({ "output_model", "probabilities", "predictions" },
+      false, "no output will be saved");
+  ReportIgnoredParam({{ "training", false }}, "print_training_error");
 
-  if (CLI::HasParam("test_labels") && !CLI::HasParam("test"))
-    Log::Warn << "--test_labels_file ignored because --test_file is not passed."
-        << endl;
+  ReportIgnoredParam({{ "test", false }}, "predictions");
+  ReportIgnoredParam({{ "test", false }}, "predictions");
 
-  if (!CLI::HasParam("output_model") && !CLI::HasParam("probabilities") &&
-      !CLI::HasParam("predictions") && !CLI::HasParam("test_labels"))
-    Log::Warn << "None of --output_model_file, --probabilities_file, or "
-        << "--predictions_file are given, and accuracy is not being calculated;"
-        << " no output will be saved!" << endl;
-
-  if (CLI::HasParam("print_training_error") && !CLI::HasParam("training"))
-    Log::Warn << "--print_training_error ignored because --training_file is not"
-        << " specified." << endl;
-
-  if (!CLI::HasParam("test"))
-  {
-    if (CLI::HasParam("probabilities"))
-      Log::Warn << "--probabilities_file ignored because --test_file is not "
-          << "specified." << endl;
-    if (CLI::HasParam("predictions"))
-      Log::Warn << "--predictions_file ignored because --test_file is not "
-          << "specified." << endl;
-  }
+  RequireParamValue<int>("minimum_leaf_size", [](int x) { return x > 0; }, true,
+      "leaf size must be positive");
 
   // Load the model or build the tree.
   DecisionTreeModel model;
+  arma::mat trainingSet;
+  arma::Row<size_t> labels;
 
   if (CLI::HasParam("training"))
   {
-    arma::mat dataset = std::move(CLI::GetParam<arma::mat>("training"));
-    arma::Row<size_t> labels;
+    model.info = std::move(std::get<0>(CLI::GetParam<TupleType>("training")));
+    trainingSet = std::move(std::get<1>(CLI::GetParam<TupleType>("training")));
     if (CLI::HasParam("labels"))
     {
       labels = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
@@ -162,11 +155,10 @@ void mlpackMain()
       Log::Info << "Using the last dimension of training set as labels."
           << endl;
       labels = arma::conv_to<arma::Row<size_t>>::from(
-          dataset.row(dataset.n_rows - 1));
-      dataset.shed_row(dataset.n_rows - 1);
+          trainingSet.row(trainingSet.n_rows - 1));
+      trainingSet.shed_row(trainingSet.n_rows - 1);
     }
 
-    // Calculate number of classes.
     const size_t numClasses = arma::max(arma::max(labels)) + 1;
 
     // Now build the tree.
@@ -177,12 +169,13 @@ void mlpackMain()
     {
       arma::Row<double> weights =
           std::move(CLI::GetParam<arma::Mat<double>>("weights"));
-      model.tree = DecisionTree<>(dataset, labels, numClasses,
-          weights, minLeafSize);
+      model.tree = DecisionTree<>(trainingSet, model.info, labels,
+          numClasses, weights, minLeafSize);
     }
     else
     {
-      model.tree = DecisionTree<>(dataset, labels, numClasses, minLeafSize);
+      model.tree = DecisionTree<>(trainingSet, model.info, labels,
+          numClasses, minLeafSize);
     }
 
     // Do we need to print training error?
@@ -191,17 +184,17 @@ void mlpackMain()
       arma::Row<size_t> predictions;
       arma::mat probabilities;
 
-      model.tree.Classify(dataset, predictions, probabilities);
+      model.tree.Classify(trainingSet, predictions, probabilities);
 
       size_t correct = 0;
-      for (size_t i = 0; i < dataset.n_cols; ++i)
+      for (size_t i = 0; i < trainingSet.n_cols; ++i)
         if (predictions[i] == labels[i])
           ++correct;
 
       // Print number of correct points.
-      Log::Info << double(correct) / double(dataset.n_cols) * 100 << "%% "
-          << "correct on training set (" << correct << " / " << dataset.n_cols
-          << ")." << endl;
+      Log::Info << double(correct) / double(trainingSet.n_cols) * 100 << "%% "
+          << "correct on training set (" << correct << " / "
+          << trainingSet.n_cols << ")." << endl;
     }
   }
   else
@@ -212,7 +205,8 @@ void mlpackMain()
   // Do we need to get predictions?
   if (CLI::HasParam("test"))
   {
-    arma::mat testPoints = std::move(CLI::GetParam<arma::mat>("test"));
+    std::get<0>(CLI::GetRawParam<TupleType>("test")) = model.info;
+    arma::mat testPoints = std::get<1>(CLI::GetParam<TupleType>("test"));
 
     arma::Row<size_t> predictions;
     arma::mat probabilities;

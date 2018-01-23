@@ -10,6 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
@@ -22,6 +23,7 @@ using namespace mlpack::range;
 using namespace mlpack::dbscan;
 using namespace mlpack::metric;
 using namespace mlpack::tree;
+using namespace mlpack::util;
 using namespace std;
 
 PROGRAM_INFO("DBSCAN clustering",
@@ -60,7 +62,7 @@ PROGRAM_INFO("DBSCAN clustering",
     PRINT_CALL("dbscan", "input", "input", "epsilon", 0.5, "min_size", 5));
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to cluster.", "i");
-PARAM_UMATRIX_OUT("assignments", "Output matrix for assignments of each "
+PARAM_UROW_OUT("assignments", "Output matrix for assignments of each "
     "point.", "a");
 PARAM_MATRIX_OUT("centroids", "Matrix to save output centroids to.", "C");
 
@@ -110,14 +112,16 @@ void RunDBSCAN(RangeSearchType rs = RangeSearchType())
     CLI::GetParam<arma::Row<size_t>>("assignments") = std::move(assignments);
 }
 
-void mlpackMain()
+static void mlpackMain()
 {
-  if (!CLI::HasParam("assignments") && !CLI::HasParam("centroids"))
-    Log::Warn << "Neither --assignments_file nor --centroids_file are "
-        << "specified; no output will be saved!" << endl;
+  RequireAtLeastOnePassed({ "assignments", "centroids" }, false,
+      "no output will be saved");
 
-  if (CLI::HasParam("single_mode") && CLI::HasParam("naive"))
-    Log::Warn << "--single_mode ignored because --naive is specified." << endl;
+  ReportIgnoredParam({{ "naive", true }}, "single_mode");
+
+  RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star", "x",
+      "hilbert-r", "r-plus", "r-plus-plus", "ball" }, true,
+      "unknown tree type");
 
   // Fire off naive search if needed.
   if (CLI::HasParam("naive"))
@@ -145,12 +149,4 @@ void mlpackMain()
     RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, RPlusPlusTree>>();
   else if (treeType == "ball")
     RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, BallTree>>();
-  else
-  {
-    Log::Fatal << "Unknown tree type specified!  Valid choices are 'kd', "
-        << "'cover', 'r', 'r-star', 'x', 'hilbert-r', 'r-plus', 'r-plus-plus',"
-        << " and 'ball'." << endl;
-  }
-
-  CLI::Destroy();
 }

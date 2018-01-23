@@ -121,7 +121,7 @@ PARAM_MODEL_IN(GMM, "input_model", "Initial input GMM model to start training "
     "with.", "m");
 PARAM_MODEL_OUT(GMM, "output_model", "Output for trained GMM model.", "M");
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Check parameters and load data.
   if (CLI::GetParam<int>("seed") != 0)
@@ -129,21 +129,15 @@ void mlpackMain()
   else
     math::RandomSeed((size_t) std::time(NULL));
 
+  RequireParamValue<int>("gaussians", [](int x) { return x > 0; }, true,
+      "number of Gaussians must be positive");
   const int gaussians = CLI::GetParam<int>("gaussians");
-  if (gaussians <= 0)
-  {
-    Log::Fatal << "Invalid number of Gaussians (" << gaussians << "); must "
-        "be greater than or equal to 1." << std::endl;
-  }
 
-  if (CLI::HasParam("diagonal_covariance") &&
-      CLI::HasParam("no_force_positive"))
-    Log::Warn << "--no_force_positive ignored because --diagonal_covariance is "
-        << "specified!" << endl;
+  ReportIgnoredParam({{ "diagonal_covariance", true }}, "no_force_positive");
+  RequireAtLeastOnePassed({ "output_model" }, false, "no model will be saved");
 
-  if (!CLI::HasParam("output_model"))
-    Log::Warn << "--output_model_file is not specified, so no model will be "
-        << "saved!" << endl;
+  RequireParamValue<double>("noise", [](double x) { return x >= 0.0; }, true,
+      "variance of noise must be greater than or equal to 0");
 
   arma::mat dataPoints = std::move(CLI::GetParam<arma::mat>("input"));
 
@@ -166,10 +160,10 @@ void mlpackMain()
     gmm = std::move(CLI::GetParam<GMM>("input_model"));
 
     if (gmm.Dimensionality() != dataPoints.n_rows)
-      Log::Fatal << "Given input data (with --input_file) has dimensionality "
-          << dataPoints.n_rows << ", but the initial model (given with "
-          << "--input_model_file) has dimensionality " << gmm.Dimensionality()
-          << "!" << endl;
+      Log::Fatal << "Given input data (with " << PRINT_PARAM_STRING("input")
+          << ") has dimensionality " << dataPoints.n_rows << ", but the initial"
+          << " model (given with " << PRINT_PARAM_STRING("input_model")
+          << " has dimensionality " << gmm.Dimensionality() << "!" << endl;
   }
 
   // Gather parameters for EMFit object.
@@ -183,16 +177,14 @@ void mlpackMain()
   double likelihood;
   if (CLI::HasParam("refined_start"))
   {
+    RequireParamValue<int>("samplings", [](int x) { return x > 0; }, true,
+        "number of samplings must be positive");
+    RequireParamValue<double>("percentage", [](double x) {
+        return x > 0.0 && x <= 1.0; }, true, "percentage to sample must be "
+        "be greater than 0.0 and less than or equal to 1.0");
+
     const int samplings = CLI::GetParam<int>("samplings");
     const double percentage = CLI::GetParam<double>("percentage");
-
-    if (samplings <= 0)
-      Log::Fatal << "Number of samplings (" << samplings << ") must be greater"
-          << " than 0!" << std::endl;
-
-    if (percentage <= 0.0 || percentage > 1.0)
-      Log::Fatal << "Percentage for sampling (" << percentage << ") must be "
-          << "greater than 0.0 and less than or equal to 1.0!" << std::endl;
 
     typedef KMeans<metric::SquaredEuclideanDistance, RefinedStart> KMeansType;
 

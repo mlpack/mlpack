@@ -17,6 +17,7 @@
 
 using namespace mlpack;
 using namespace mlpack::decision_stump;
+using namespace mlpack::util;
 using namespace std;
 using namespace arma;
 
@@ -102,27 +103,17 @@ PARAM_MODEL_OUT(DSModel, "output_model", "Output decision stump model to save.",
 PARAM_INT_IN("bucket_size", "The minimum number of training points in each "
     "decision stump bucket.", "b", 6);
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Check that the parameters are reasonable.
-  if (CLI::HasParam("training") && CLI::HasParam("input_model"))
-  {
-    Log::Fatal << "Both --training_file and --input_model_file are specified, "
-        << "but a trained model cannot be retrained.  Only one of these options"
-        << " may be specified." << endl;
-  }
+  RequireOnlyOnePassed({ "training", "input_model" }, true);
+  RequireAtLeastOnePassed({ "output_model", "predictions" }, false, "no results"
+      " will be saved");
 
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
-  {
-    Log::Fatal << "Neither --training_file nor --input_model_file are given; "
-        << "one must be specified." << endl;
-  }
+  RequireParamValue<int>("bucket_size", [](int x) { return x > 0; }, true,
+      "bucket size must be positive");
 
-  if (!CLI::HasParam("output_model") && !CLI::HasParam("predictions"))
-  {
-    Log::Warn << "Neither --output_model_file nor --predictions_file are "
-        << "specified; no results will be saved!" << endl;
-  }
+  ReportIgnoredParam({{ "test", false }}, "predictions");
 
   // We must either load a model, or train a new stump.
   DSModel model;

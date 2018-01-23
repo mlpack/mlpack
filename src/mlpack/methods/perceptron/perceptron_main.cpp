@@ -21,6 +21,7 @@
 
 using namespace mlpack;
 using namespace mlpack::perceptron;
+using namespace mlpack::util;
 using namespace std;
 using namespace arma;
 
@@ -117,37 +118,30 @@ PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
 PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
     " test set will be written.", "o");
 
-void mlpackMain()
+static void mlpackMain()
 {
   // First, get all parameters and validate them.
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
 
   // We must either load a model or train a model.
-  if (!CLI::HasParam("input_model") && !CLI::HasParam("training"))
-    Log::Fatal << "Either an input model must be specified with "
-        << "--input_model_file or training data must be given "
-        << "(--training_file)!" << endl;
+  RequireAtLeastOnePassed({ "input_model", "training" }, true);
 
   // If the user isn't going to save the output model or any predictions, we
   // should issue a warning.
-  if (!CLI::HasParam("output_model") && !CLI::HasParam("test"))
-    Log::Warn << "Output will not be saved!  (Neither --test_file nor "
-        << "--output_model_file are specified.)" << endl;
+  RequireAtLeastOnePassed({ "output_model", "output" }, false,
+      "no output will be saved");
+  ReportIgnoredParam({{ "test", true }}, "output");
 
-  if (!CLI::HasParam("test") && CLI::HasParam("output"))
-    Log::Warn << "--output_file will be ignored because --test_file is not "
-        << "specified." << endl;
-
-  if (CLI::HasParam("test") && !CLI::HasParam("output"))
-    Log::Warn << "--output_file not specified, so the predictions for "
-        << "--test_file will not be saved." << endl;
+  // Check parameter validity.
+  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; },
+      true, "maximum number of iterations must be nonnegative");
 
   // Now, load our model, if there is one.
   PerceptronModel p;
   if (CLI::HasParam("input_model"))
   {
-    Log::Info << "Loading saved perceptron from model file '"
-        << CLI::GetPrintableParam<PerceptronModel>("input_model") << "'."
+    Log::Info << "Using saved perceptron from "
+        << CLI::GetPrintableParam<PerceptronModel>("input_model") << "."
         << endl;
 
     p = std::move(CLI::GetParam<PerceptronModel>("input_model"));
@@ -159,10 +153,14 @@ void mlpackMain()
     Log::Info << "Training perceptron on dataset '"
         << CLI::GetPrintableParam<mat>("training");
     if (CLI::HasParam("labels"))
+    {
       Log::Info << "' with labels in '"
           << CLI::GetPrintableParam<Row<size_t>>("labels") << "'";
+    }
     else
+    {
       Log::Info << "'";
+    }
     Log::Info << " for a maximum of " << maxIterations << " iterations."
         << endl;
 

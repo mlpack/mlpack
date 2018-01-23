@@ -36,6 +36,7 @@
 using namespace mlpack;
 using namespace mlpack::kpca;
 using namespace mlpack::kernel;
+using namespace mlpack::util;
 using namespace std;
 using namespace arma;
 
@@ -163,11 +164,9 @@ void RunKPCA(arma::mat& dataset,
   }
 }
 
-void mlpackMain()
+static void mlpackMain()
 {
-  if (!CLI::HasParam("output"))
-    Log::Warn << "--output_file is not specified; no output will be saved!"
-        << endl;
+  RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
   // Load input dataset.
   mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
@@ -187,6 +186,9 @@ void mlpackMain()
   }
 
   // Get the kernel type and make sure it is valid.
+  RequireParamInSet<string>("kernel", { "linear", "gaussian", "polynomial",
+      "hyptan", "laplacian", "epanechnikov", "cosine" }, true,
+      "unknown kernel type");
   const string kernelType = CLI::GetParam<string>("kernel");
 
   const bool centerTransformedData = CLI::HasParam("center");
@@ -246,13 +248,6 @@ void mlpackMain()
     CosineDistance kernel;
     RunKPCA<CosineDistance>(dataset, centerTransformedData, nystroem, newDim,
         sampling, kernel);
-  }
-  else
-  {
-    // Invalid kernel type.
-    Log::Fatal << "Invalid kernel type ('" << kernelType << "'); valid choices "
-        << "are 'linear', 'gaussian', 'polynomial', 'hyptan', 'laplacian', and "
-        << "'cosine'." << endl;
   }
 
   // Save the output dataset.

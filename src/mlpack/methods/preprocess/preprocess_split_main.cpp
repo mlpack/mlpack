@@ -67,10 +67,11 @@ PARAM_DOUBLE_IN("test_ratio", "Ratio of test set; if not set,"
 PARAM_INT_IN("seed", "Random seed (0 for std::time(NULL)).", "s", 0);
 
 using namespace mlpack;
+using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Parse command line options.
   const double testRatio = CLI::GetParam<double>("test_ratio");
@@ -81,50 +82,33 @@ void mlpackMain()
     mlpack::math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
 
   // Make sure the user specified output filenames.
-  if (!CLI::HasParam("training"))
-    Log::Warn << "--training_file (-t) is not specified; no training set will "
-        << "be saved!" << endl;
-  if (!CLI::HasParam("test"))
-    Log::Warn << "--test_file (-T) is not specified; no test set will be saved!"
-        << endl;
+  RequireAtLeastOnePassed({ "training" }, false, "no training set will be "
+      "saved");
+  RequireAtLeastOnePassed({ "test" }, false, "no test set will be saved");
 
   // Check on label parameters.
   if (CLI::HasParam("input_labels"))
   {
-    if (!CLI::HasParam("training_labels"))
-    {
-      Log::Warn << "--training_labels_file (-l) is not specified; no training "
-          << "set labels will be saved!" << endl;
-    }
-    if (!CLI::HasParam("test_labels"))
-    {
-      Log::Warn << "--test_labels_file (-L) is not specified; no test set "
-          << "labels will be saved!" << endl;
-    }
+    RequireAtLeastOnePassed({ "training_labels" }, false, "no training set "
+        "labels will be saved");
+    RequireAtLeastOnePassed({ "test_labels" }, false, "no test set labels will "
+        "be saved");
   }
   else
   {
-    if (CLI::HasParam("training_labels"))
-      Log::Warn << "--training_labels_file ignored because --input_labels is "
-          << "not specified." << endl;
-    if (CLI::HasParam("test_labels"))
-      Log::Warn << "--test_labels_file ignored because --input_labels is not "
-          << "specified." << endl;
+    ReportIgnoredParam({{ "input_labels", true }}, "training_labels");
+    ReportIgnoredParam({{ "input_labels", true }}, "test_labels");
   }
 
   // Check test_ratio.
-  if (CLI::HasParam("test_ratio"))
+  RequireParamValue<double>("test_ratio",
+      [](double x) { return x >= 0.0 && x <= 1.0; }, true,
+      "test ratio must be between 0.0 and 1.0");
+
+  if (!CLI::HasParam("test_ratio")) // If test_ratio is not set, warn the user.
   {
-    if ((testRatio < 0.0) || (testRatio > 1.0))
-    {
-      Log::Fatal << "Invalid parameter for test_ratio; "
-          << "--test_ratio must be between 0.0 and 1.0." << endl;
-    }
-  }
-  else // If test_ratio is not set, warn the user.
-  {
-    Log::Warn << "You did not specify --test_ratio, so it will be automatically"
-        << " set to 0.2." << endl;
+    Log::Warn << "You did not specify " << PRINT_PARAM_STRING("test_ratio")
+        << ", so it will be automatically set to 0.2." << endl;
   }
 
   // Load the data.

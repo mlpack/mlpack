@@ -17,6 +17,7 @@
 
 using namespace mlpack;
 using namespace mlpack::regression;
+using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
@@ -78,73 +79,40 @@ PARAM_MODEL_OUT(LinearRegression, "output_model", "Output LinearRegression "
 PARAM_MATRIX_IN("test", "Matrix containing X' (test regressors).", "T");
 
 // This is the future name of the parameter.
-PARAM_COL_OUT("output_predictions", "If --test_file is specified, this "
+PARAM_ROW_OUT("output_predictions", "If --test_file is specified, this "
     "matrix is where the predicted responses will be saved.", "o");
 
 PARAM_DOUBLE_IN("lambda", "Tikhonov regularization for ridge regression.  If 0,"
     " the method reduces to linear regression.", "l", 0.0);
 
-void mlpackMain()
+static void mlpackMain()
 {
   const double lambda = CLI::GetParam<double>("lambda");
 
-  if (!CLI::HasParam("test") && CLI::HasParam("output_predictions"))
-    Log::Warn << "--output_predictions_file (-o) ignored because --test_file "
-        << "(-T) is not specified." << endl;
+  RequireOnlyOnePassed({ "training", "input_model" }, true);
+
+  ReportIgnoredParam({{ "test", true }}, "output_predictions");
 
   mat regressors;
   rowvec responses;
 
   LinearRegression lr;
-  lr.Lambda() = lambda;
 
-  bool computeModel = false;
-
-  // We want to determine if an input file XOR model file were given.
-  if (!CLI::HasParam("training"))
-  {
-    if (!CLI::HasParam("input_model"))
-      Log::Fatal << "You must specify either --input_file or --model_file."
-          << endl;
-    else // The model file was specified, no problems.
-      computeModel = false;
-  }
-  // The user specified an input file but no model file, no problems.
-  else if (!CLI::HasParam("input_model"))
-    computeModel = true;
-
-  // The user specified both an input file and model file.
-  // This is ambiguous -- which model should we use? A generated one or given
-  // one?  Report error and exit.
-  else
-  {
-    Log::Fatal << "You must specify either --input_file or --input_model_file, "
-        << "not both." << endl;
-  }
-
-  if (CLI::HasParam("test") && !CLI::HasParam("output_predictions"))
-    Log::Warn << "--test_file (-t) specified, but --output_predictions_file "
-        << "(-o) is not; no results will be saved." << endl;
+  const bool computeModel = !CLI::HasParam("input_model");
+  const bool computePrediction = CLI::HasParam("test");
 
   // If they specified a model file, we also need a test file or we
   // have nothing to do.
-  if (!computeModel && !CLI::HasParam("test"))
+  if (!computeModel)
   {
-    Log::Fatal << "When specifying --model_file, you must also specify "
-        << "--test_file." << endl;
+    RequireAtLeastOnePassed({ "test" }, true, "test points must be specified "
+        "when an input model is given");
   }
 
-  if (!computeModel && CLI::HasParam("lambda"))
-  {
-    Log::Warn << "--lambda ignored because no model is being trained." << endl;
-  }
+  ReportIgnoredParam({{ "input_model", true }}, "lambda");
 
-  if (!CLI::HasParam("output_model") &&
-      !CLI::HasParam("output_predictions"))
-  {
-    Log::Warn << "Neither --output_model_file nor --output_predictions_file are"
-        << " specified; no output will be saved!" << endl;
-  }
+  RequireAtLeastOnePassed({ "output_model", "output_predictions" }, false,
+      "no output will be saved");
 
   // An input file was given and we need to generate the model.
   if (computeModel)
@@ -157,6 +125,11 @@ void mlpackMain()
     if (!CLI::HasParam("training_responses"))
     {
       // The initial predictors for y, Nx1.
+      if (regressors.n_rows < 2)
+      {
+        Log::Fatal << "Can't get responses from training data "
+            "since it has less than 2 rows." << endl;
+      }
       responses = regressors.row(regressors.n_rows - 1);
       regressors.shed_row(regressors.n_rows - 1);
     }
@@ -168,30 +141,27 @@ void mlpackMain()
       Timer::Stop("load_responses");
 
       if (responses.n_cols != regressors.n_cols)
-        Log::Fatal << "The responses must have the same number of rows as the "
-            "training file." << endl;
+      {
+        Log::Fatal << "The responses must have the same number of columns "
+            "as the training set." << endl;
+      }
     }
 
     Timer::Start("regression");
-    lr = LinearRegression(regressors, responses);
+    lr = LinearRegression(regressors, responses, lambda);
     Timer::Stop("regression");
-
-    // Save the parameters.
-    if (CLI::HasParam("output_model"))
-      CLI::GetParam<LinearRegression>("output_model") = std::move(lr);
+  }
+  else
+  {
+    // A model file was passed in, so load it.
+    Timer::Start("load_model");
+    lr = std::move(CLI::GetParam<LinearRegression>("input_model"));
+    Timer::Stop("load_model");
   }
 
   // Did we want to predict, too?
-  if (CLI::HasParam("test"))
+  if (computePrediction)
   {
-    // A model file was passed in, so load it.
-    if (!computeModel)
-    {
-      Timer::Start("load_model");
-      lr = std::move(CLI::GetParam<LinearRegression>("input_model"));
-      Timer::Stop("load_model");
-    }
-
     // Load the test file data.
     Timer::Start("load_test_points");
     mat points = std::move(CLI::GetParam<mat>("test"));
@@ -214,6 +184,10 @@ void mlpackMain()
 
     // Save predictions.
     if (CLI::HasParam("output_predictions"))
-      CLI::GetParam<vec>("output_predictions") = std::move(predictions);
+      CLI::GetParam<rowvec>("output_predictions") = std::move(predictions);
   }
+
+  // Save the model if needed.
+  if (CLI::HasParam("output_model"))
+    CLI::GetParam<LinearRegression>("output_model") = std::move(lr);
 }

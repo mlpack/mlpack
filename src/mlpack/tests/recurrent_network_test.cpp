@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_SUITE(RecurrentNetworkTest);
  * @param sequences Number of sequences for each class.
  * @param noise The noise factor that influences the sines.
  */
-void GenerateNoisySines(arma::mat& data,
+void GenerateNoisySines(arma::cube& data,
                         arma::mat& labels,
                         const size_t points,
                         const size_t sequences,
@@ -46,17 +46,23 @@ void GenerateNoisySines(arma::mat& data,
   arma::colvec y1 = arma::sin(x + arma::as_scalar(arma::randu(1)) * 3.0);
   arma::colvec y2 = arma::sin(x / 2.0 + arma::as_scalar(arma::randu(1)) * 3.0);
 
-  data = arma::zeros(points, sequences * 2);
-  labels = arma::zeros(2, sequences * 2);
+  data = arma::zeros(1 /* single dimension */, sequences * 2, points);
+  labels = arma::zeros(2 /* 2 classes */, sequences * 2);
 
   for (size_t seq = 0; seq < sequences; seq++)
   {
-    data.col(seq) = arma::randu(points) * noise + y1 +
+    arma::vec sequence = arma::randu(points) * noise + y1 +
         arma::as_scalar(arma::randu(1) - 0.5) * noise;
+    for (size_t i = 0; i < points; ++i)
+      data(0, seq, i) = sequence[i];
+
     labels(0, seq) = 1;
 
-    data.col(sequences + seq) = arma::randu(points) * noise + y2 +
+    sequence = arma::randu(points) * noise + y2 +
         arma::as_scalar(arma::randu(1) - 0.5) * noise;
+    for (size_t i = 0; i < points; ++i)
+      data(0, sequences + seq, i) = sequence[i];
+
     labels(1, sequences + seq) = 1;
   }
 }
@@ -67,25 +73,26 @@ void GenerateNoisySines(arma::mat& data,
 BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
 {
   // It isn't guaranteed that the recurrent network will converge in the
-  // specified number of iterations using random weights. If this works 1 of 5
+  // specified number of iterations using random weights. If this works 1 of 6
   // times, I'm fine with that. All I want to know is that the network is able
   // to escape from local minima and to solve the task.
   size_t successes = 0;
   const size_t rho = 10;
 
-  for (size_t trial = 0; trial < 5; ++trial)
+  for (size_t trial = 0; trial < 6; ++trial)
   {
     // Generate 12 (2 * 6) noisy sines. A single sine contains rho
     // points/features.
-    arma::mat input, labelsTemp;
+    arma::cube input;
+    arma::mat labelsTemp;
     GenerateNoisySines(input, labelsTemp, rho, 6);
 
-    arma::mat labels = arma::zeros<arma::mat>(rho, labelsTemp.n_cols);
+    arma::cube labels = arma::zeros<arma::cube>(1, labelsTemp.n_cols, rho);
     for (size_t i = 0; i < labelsTemp.n_cols; ++i)
     {
       const int value = arma::as_scalar(arma::find(
           arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
-      labels.col(i).fill(value);
+      labels.tube(0, i).fill(value);
     }
 
     /**
@@ -119,18 +126,15 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
     StandardSGD opt(0.1, 1, 500 * input.n_cols, -100);
     model.Train(input, labels, opt);
 
-    arma::mat prediction;
+    arma::cube prediction;
     model.Predict(input, prediction);
 
     size_t error = 0;
     for (size_t i = 0; i < prediction.n_cols; ++i)
     {
-      arma::mat singlePrediction = prediction.submat((rho - 1) * rho, i,
-          rho * rho - 1, i);
-
       const int predictionValue = arma::as_scalar(arma::find(
-          arma::max(singlePrediction.col(0)) ==
-          singlePrediction.col(0), 1) + 1);
+          arma::max(prediction.slice(rho - 1).col(i)) ==
+          prediction.slice(rho - 1).col(i), 1) + 1);
 
       const int targetValue = arma::as_scalar(arma::find(
           arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
@@ -287,7 +291,8 @@ void GenerateNextReber(const arma::Mat<char>& transitions,
  * @param nextReber All reachable next symbols.
  */
 void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
-                               const std::string& reber, std::string& nextReber)
+                                const std::string& reber,
+                                std::string& nextReber)
 {
   size_t state = 0;
   size_t numPs = 0;
@@ -456,13 +461,18 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
     model.Add<SigmoidLayer<> >();
     MomentumSGD opt(0.06, 50, 2, -50000);
 
-    arma::mat inputTemp, labelsTemp;
-    for (size_t i = 0; i < (iterations + offset); i++)
+    arma::cube inputTemp, labelsTemp;
+    for (size_t iteration = 0; iteration < (iterations + offset); iteration++)
     {
       for (size_t j = 0; j < trainReberGrammarCount; j++)
       {
-        inputTemp = trainInput.at(0, j);
-        labelsTemp = trainLabels.at(0, j);
+        // Each sequence may be a different length, so we need to extract them
+        // manually.  We will reshape them into a cube with each slice equal to
+        // a time step.
+        inputTemp = arma::cube(trainInput.at(0, j).memptr(), inputSize, 1,
+            trainInput.at(0, j).n_elem / inputSize, false, true);
+        labelsTemp = arma::cube(trainLabels.at(0, j).memptr(), inputSize, 1,
+            trainInput.at(0, j).n_elem / inputSize, false, true);
 
         model.Rho() = inputTemp.n_elem / inputSize;
         model.Train(inputTemp, labelsTemp, opt);
@@ -475,8 +485,9 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
     // Ask the network to predict the next Reber grammar in the given sequence.
     for (size_t i = 0; i < testReberGrammarCount; i++)
     {
-      arma::mat prediction;
-      arma::mat input = testInput.at(0, i);
+      arma::cube prediction;
+      arma::cube input(testInput.at(0, i).memptr(), inputSize, 1,
+          testInput.at(0, i).n_elem / inputSize, false, true);
 
       model.Rho() = input.n_elem / inputSize;
       model.Predict(input, prediction);
@@ -491,16 +502,12 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
         char predictedSymbol, inputSymbol;
         std::string reberChoices;
 
-        arma::mat currentPrediction = prediction.submat(j * reberGrammerSize, 0,
-            (j + 1) * reberGrammerSize - 1, 0);
-
-        arma::umat output = (currentPrediction == (arma::ones(
-            currentPrediction.n_rows, currentPrediction.n_cols) *
-            arma::as_scalar(arma::max(currentPrediction))));
+        arma::umat output = (prediction.slice(j) == (arma::ones(
+            reberGrammerSize, 1) *
+            arma::as_scalar(arma::max(prediction.slice(j)))));
 
         ReberReverseTranslation(output, predictedSymbol);
-        ReberReverseTranslation(input.submat(j * reberGrammerSize, 0, (j + 1) *
-            reberGrammerSize - 1, 0), inputSymbol);
+        ReberReverseTranslation(input.slice(j), inputSymbol);
         inputReber += inputSymbol;
 
         if (recursive)
@@ -671,13 +678,15 @@ void DistractedSequenceRecallTestNetwork(
 
     // We increase the number of iterations (training) if the first run didn't
     // pass.
-    arma::mat inputTemp, labelsTemp;
-    for (size_t i = 0; i < (9 + offset); i++)
+    arma::cube inputTemp, labelsTemp;
+    for (size_t iteration = 0; iteration < (9 + offset); iteration++)
     {
       for (size_t j = 0; j < trainDistractedSequenceCount; j++)
       {
-        inputTemp = trainInput.at(0, j);
-        labelsTemp = trainLabels.at(0, j);
+        inputTemp = arma::cube(trainInput.at(0, j).memptr(), inputSize, 1,
+            trainInput.at(0, j).n_elem / inputSize, false, true);
+        labelsTemp = arma::cube(trainLabels.at(0, j).memptr(), outputSize, 1,
+            trainInput.at(0, j).n_elem / outputSize, false, true);
 
         model.Train(inputTemp, labelsTemp, opt);
       }
@@ -689,13 +698,21 @@ void DistractedSequenceRecallTestNetwork(
     // prompts.
     for (size_t i = 0; i < testDistractedSequenceCount; i++)
     {
-      arma::mat output;
-      arma::mat input = testInput.at(0, i);
+      arma::cube output;
+      arma::cube input(testInput.at(0, i).memptr(), inputSize, 1,
+          testInput.at(0, i).n_elem / inputSize, false, true);
 
       model.Predict(input, output);
-      data::Binarize(output, output, 0.5);
+      for (size_t j = 0; j < output.n_slices; ++j)
+      {
+        arma::mat outputSlice = output.slice(j);
+        data::Binarize(outputSlice, outputSlice, 0.5);
+        output.slice(j) = outputSlice;
+      }
 
-      if (arma::accu(arma::abs(testLabels.at(0, i) - output)) != 0)
+      arma::cube label(testLabels.at(0, i).memptr(), outputSize, 1,
+          testLabels.at(0, i).n_elem / outputSize, false, true);
+      if (arma::accu(arma::abs(label - output)) != 0)
         error += 1;
     }
 
@@ -744,6 +761,84 @@ BOOST_AUTO_TEST_CASE(GRUDistractedSequenceRecallTest)
 }
 
 /**
+ * Create a simple recurrent neural network for the noisy sines task, and
+ * require that it produces the exact same network for a few batch sizes.
+ */
+template<typename RecurrentLayerType>
+void BatchSizeTest()
+{
+  const size_t rho = 10;
+
+  // Generate 12 (2 * 6) noisy sines. A single sine contains rho
+  // points/features.
+  arma::cube input;
+  arma::mat labelsTemp;
+  GenerateNoisySines(input, labelsTemp, rho, 6);
+
+  arma::cube labels = arma::zeros<arma::cube>(1, labelsTemp.n_cols, rho);
+  for (size_t i = 0; i < labelsTemp.n_cols; ++i)
+  {
+    const int value = arma::as_scalar(arma::find(
+        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+    labels.tube(0, i).fill(value);
+  }
+
+  RNN<> model(rho);
+  model.Add<Linear<>>(1, 10);
+  model.Add<SigmoidLayer<>>();
+  model.Add<RecurrentLayerType>(10, 10);
+  model.Add<SigmoidLayer<>>();
+  model.Add<Linear<>>(10, 10);
+  model.Add<SigmoidLayer<>>();
+
+  model.Reset();
+  arma::mat initParams = model.Parameters();
+
+  StandardSGD opt(1e-5, 1, 5, -100, false);
+  model.Train(input, labels, opt);
+
+  // This is trained with one point.
+  arma::mat outputParams = model.Parameters();
+
+  model.Reset();
+  model.Parameters() = initParams;
+  opt.BatchSize() = 2;
+  model.Train(input, labels, opt);
+
+  CheckMatrices(outputParams, model.Parameters(), 1);
+
+  model.Parameters() = initParams;
+  opt.BatchSize() = 5;
+  model.Train(input, labels, opt);
+
+  CheckMatrices(outputParams, model.Parameters(), 1);
+}
+
+/**
+ * Ensure LSTMs work with larger batch sizes.
+ */
+BOOST_AUTO_TEST_CASE(LSTMBatchSizeTest)
+{
+  BatchSizeTest<LSTM<>>();
+}
+
+/**
+ * Ensure fast LSTMs work with larger batch sizes.
+ */
+BOOST_AUTO_TEST_CASE(FastLSTMBatchSizeTest)
+{
+  BatchSizeTest<FastLSTM<>>();
+}
+
+/**
+ * Ensure GRUs work with larger batch sizes.
+ */
+BOOST_AUTO_TEST_CASE(GRUBatchSizeTest)
+{
+  BatchSizeTest<GRU<>>();
+}
+
+/**
  * Make sure the RNN can be properly serialized.
  */
 BOOST_AUTO_TEST_CASE(SerializationTest)
@@ -752,15 +847,16 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
 
   // Generate 12 (2 * 6) noisy sines. A single sine contains rho
   // points/features.
-  arma::mat input, labelsTemp;
+  arma::cube input;
+  arma::mat labelsTemp;
   GenerateNoisySines(input, labelsTemp, rho, 6);
 
-  arma::mat labels = arma::zeros<arma::mat>(rho, labelsTemp.n_cols);
+  arma::cube labels = arma::zeros<arma::cube>(1, labelsTemp.n_cols, rho);
   for (size_t i = 0; i < labelsTemp.n_cols; ++i)
   {
     const int value = arma::as_scalar(arma::find(
         arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
-    labels.col(i).fill(value);
+    labels.tube(0, i).fill(value);
   }
 
   /**
@@ -799,7 +895,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   SerializeObjectAll(model, xmlModel, textModel, binaryModel);
 
   // Take predictions, check the output.
-  arma::mat prediction, xmlPrediction, textPrediction, binaryPrediction;
+  arma::cube prediction, xmlPrediction, textPrediction, binaryPrediction;
   model.Predict(input, prediction);
   xmlModel.Predict(input, xmlPrediction);
   textModel.Predict(input, textPrediction);

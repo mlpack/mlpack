@@ -290,6 +290,11 @@ void CheckMatrices(const arma::Mat<size_t>& x,
                    const arma::Mat<size_t>& textX,
                    const arma::Mat<size_t>& binaryX);
 
+void CheckMatrices(const arma::cube& x,
+                   const arma::cube& xmlX,
+                   const arma::cube& textX,
+                   const arma::cube& binaryX);
+
 } // namespace mlpack
 
 #endif

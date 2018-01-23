@@ -22,6 +22,8 @@ using Option = mlpack::bindings::cli::CLIOption<T>;
 } // namespace util
 } // namespace mlpack
 
+static const std::string testName = "";
+
 #include <mlpack/core/util/param.hpp>
 #include <mlpack/bindings/cli/parse_command_line.hpp>
 #include <mlpack/bindings/cli/end_program.hpp>

@@ -69,6 +69,30 @@ inline std::string PrintDataset(const std::string& datasetName);
  */
 inline std::string ParamString(const std::string& paramName);
 
+/**
+ * Print whether or not we should ignore a check on the given parameter.  For
+ * Python bindings, we ignore any checks on output parameters, so if paramName
+ * is an output parameter, this returns true.
+ */
+inline bool IgnoreCheck(const std::string& paramName);
+
+/**
+ * Print whether or not we should ignore a check on the given set of
+ * constraints.  For Python bindings, we ignore any checks on output parameters,
+ * so if any parameter is an output parameter, this returns true.
+ */
+inline bool IgnoreCheck(const std::vector<std::string>& constraints);
+
+/**
+ * Print whether or not we should ignore a check on the given set of
+ * constraints.  For Python bindings, we ignore any checks on output parameters,
+ * so if any constraint parameter or the main parameter are output parameters,
+ * this returns true.
+ */
+inline bool IgnoreCheck(
+    const std::vector<std::pair<std::string, bool>>& constraints,
+    const std::string& paramName);
+
 } // namespace python
 } // namespace bindings
 } // namespace mlpack

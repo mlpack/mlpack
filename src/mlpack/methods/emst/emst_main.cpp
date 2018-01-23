@@ -69,13 +69,12 @@ using namespace mlpack;
 using namespace mlpack::emst;
 using namespace mlpack::tree;
 using namespace mlpack::metric;
+using namespace mlpack::util;
 using namespace std;
 
-void mlpackMain()
+static void mlpackMain()
 {
-  if (!CLI::HasParam("output"))
-    Log::Warn << "--output_file is not specified, so no output will be saved!"
-        << endl;
+  RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
   arma::mat dataPoints = std::move(CLI::GetParam<arma::mat>("input"));
 
@@ -97,11 +96,8 @@ void mlpackMain()
     Log::Info << "Building tree.\n";
 
     // Check that the leaf size is reasonable.
-    if (CLI::GetParam<int>("leaf_size") <= 0)
-    {
-      Log::Fatal << "Invalid leaf size (" << CLI::GetParam<int>("leaf_size")
-          << ")!  Must be greater than or equal to 1." << std::endl;
-    }
+    RequireParamValue<int>("leaf_size", [](int x) { return x > 0; }, true,
+        "leaf size must be greater than or equal to 1");
 
     // Initialize the tree and get ready to compute the MST.  Compute the tree
     // by hand.

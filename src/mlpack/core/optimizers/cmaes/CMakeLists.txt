@@ -1,6 +1,8 @@
 set(SOURCES
-  vanilla_update.hpp
-  momentum_update.hpp
+  cmaes.hpp
+  cmaes_impl.hpp
+  full_selection.hpp
+  random_selection.hpp
 )
 
 set(DIR_SRCS)

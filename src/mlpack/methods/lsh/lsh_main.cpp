@@ -21,6 +21,7 @@
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::neighbor;
+using namespace mlpack::util;
 
 // Information about the program itself.
 PROGRAM_INFO("K-Approximate-Nearest-Neighbor Search with LSH",
@@ -81,45 +82,35 @@ PARAM_INT_IN("bucket_size", "The size of a bucket in the second level hash.",
     "B", 500);
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
-void mlpackMain()
+static void mlpackMain()
 {
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) time(NULL));
 
-  // Get all the parameters.
+  // Get all the parameters after checking them.
+  if (CLI::HasParam("k"))
+  {
+    RequireParamValue<int>("k", [](int x) { return x > 0; }, true,
+        "k must be greater than 0");
+  }
+  RequireParamValue<int>("second_hash_size", [](int x) { return x > 0; }, true,
+      "second hash size must be greater than 0");
+  RequireParamValue<int>("bucket_size", [](int x) { return x > 0; }, true,
+      "bucket size must be greater than 0");
+
   size_t k = CLI::GetParam<int>("k");
   size_t secondHashSize = CLI::GetParam<int>("second_hash_size");
   size_t bucketSize = CLI::GetParam<int>("bucket_size");
 
-  if (CLI::HasParam("input_model") && CLI::HasParam("reference"))
+  RequireOnlyOnePassed({ "input_model", "reference" }, true);
+  RequireAtLeastOnePassed({ "neighbors", "distances", "output_model" }, false,
+      "no results will be saved");
+  if (CLI::HasParam("k"))
   {
-    Log::Fatal << "Cannot specify both --reference_file and --input_model_file!"
-        << " Either create a new model with --reference_file or use an existing"
-        << " model with --input_model_file." << endl;
-  }
-
-  if (!CLI::HasParam("input_model") && !CLI::HasParam("reference"))
-  {
-    Log::Fatal << "Must specify either --input_model_file or --reference_file!"
-        << endl;
-  }
-
-  if (!CLI::HasParam("neighbors") && !CLI::HasParam("distances") &&
-      !CLI::HasParam("output_model"))
-  {
-    Log::Warn << "Neither --neighbors_file, --distances_file, nor "
-        << "--output_model_file are specified; no results will be saved."
-        << endl;
-  }
-
-  if ((CLI::HasParam("query") && !CLI::HasParam("k")) ||
-      (!CLI::HasParam("query") && !CLI::HasParam("reference") &&
-       CLI::HasParam("k")))
-  {
-    Log::Fatal << "Both --query_file or --reference_file and --k must be "
-        << "specified if search is to be done!" << endl;
+    RequireAtLeastOnePassed({ "query", "reference" }, true, "must pass set to "
+        "search");
   }
 
   if (CLI::HasParam("input_model") && CLI::HasParam("k") &&
@@ -130,13 +121,18 @@ void mlpackMain()
         << CLI::GetPrintableParam<LSHSearch<>>("input_model") << "'." << endl;
   }
 
-  if (!CLI::HasParam("k") && CLI::HasParam("neighbors"))
-    Log::Warn << "--neighbors_file ignored because --k is not specified."
-        << endl;
+  ReportIgnoredParam({{ "k", false }}, "neighbors");
+  ReportIgnoredParam({{ "k", false }}, "distances");
 
-  if (!CLI::HasParam("k") && CLI::HasParam("distances"))
-    Log::Warn << "--distances_file ignored because --k is not specified."
-        << endl;
+  ReportIgnoredParam({{ "reference", false }}, "bucket_size");
+  ReportIgnoredParam({{ "reference", false }}, "second_hash_size");
+  ReportIgnoredParam({{ "reference", false }}, "hash_width");
+
+  if (CLI::HasParam("input_model") && !CLI::HasParam("k"))
+  {
+    Log::Warn << PRINT_PARAM_STRING("k") << " not passed; no search will be "
+        << "performed!" << std::endl;
+  }
 
   // These declarations are here so that the matrices don't go out of scope.
   arma::mat referenceData;
@@ -162,14 +158,14 @@ void mlpackMain()
   if (CLI::HasParam("reference"))
   {
     referenceData = std::move(CLI::GetParam<arma::mat>("reference"));
-    Log::Info << "Loaded reference data from '"
+    Log::Info << "Using reference data from '"
         << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
         << referenceData.n_rows << " x " << referenceData.n_cols << ")."
         << endl;
 
     Timer::Start("hash_building");
-    allkann.Train(referenceData, numProj, numTables, hashWidth, secondHashSize,
-        bucketSize);
+    allkann.Train(std::move(referenceData), numProj, numTables, hashWidth,
+        secondHashSize, bucketSize);
     Timer::Stop("hash_building");
   }
   else if (CLI::HasParam("input_model"))
@@ -194,9 +190,9 @@ void mlpackMain()
     {
       allkann.Search(k, neighbors, distances, 0, numProbes);
     }
-  }
 
-  Log::Info << "Neighbors computed." << endl;
+    Log::Info << "Neighbors computed." << endl;
+  }
 
   // Compute recall, if desired.
   if (CLI::HasParam("true_neighbors"))
@@ -204,7 +200,7 @@ void mlpackMain()
     // Load the true neighbors.
     arma::Mat<size_t> trueNeighbors =
         std::move(CLI::GetParam<arma::Mat<size_t>>("true_neighbors"));
-    Log::Info << "Loaded true neighbor indices from '"
+    Log::Info << "Using true neighbor indices from '"
         << CLI::GetPrintableParam<arma::Mat<size_t>>("true_neighbors") << "'."
         << endl;
 
@@ -216,10 +212,13 @@ void mlpackMain()
   }
 
   // Save output, if desired.
-  if (CLI::HasParam("distances"))
-    CLI::GetParam<arma::mat>("distances") = std::move(distances);
-  if (CLI::HasParam("neighbors"))
-    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+  if (CLI::HasParam("k"))
+  {
+    if (CLI::HasParam("distances"))
+      CLI::GetParam<arma::mat>("distances") = std::move(distances);
+    if (CLI::HasParam("neighbors"))
+      CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+  }
   if (CLI::HasParam("output_model"))
     CLI::GetParam<LSHSearch<>>("output_model") = std::move(allkann);
 }

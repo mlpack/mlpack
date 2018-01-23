@@ -19,6 +19,7 @@ set(SOURCES
   normalize_labels_impl.hpp
   save.hpp
   save_impl.hpp
+  serialization_template_version.hpp
   split_data.hpp
   imputer.hpp
   binarize.hpp

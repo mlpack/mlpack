@@ -17,6 +17,7 @@
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::gmm;
+using namespace mlpack::util;
 
 PROGRAM_INFO("GMM Probability Calculator",
     "This program calculates the probability that given points came from a "
@@ -40,11 +41,9 @@ PARAM_MATRIX_IN_REQ("input", "Input matrix to calculate probabilities of.",
 
 PARAM_MATRIX_OUT("output", "Matrix to store calculated probabilities in.", "o");
 
-void mlpackMain()
+static void mlpackMain()
 {
-  if (!CLI::HasParam("output"))
-    Log::Warn << "--output_file (-o) is not specified; no results will be "
-        << "saved!" << endl;
+  RequireAtLeastOnePassed({ "output" }, false, "no results will be saved");
 
   // Get the GMM and the points.
   GMM gmm = std::move(CLI::GetParam<GMM>("input_model"));

@@ -14,7 +14,7 @@
 #include <mlpack/methods/amf/update_rules/svd_batch_learning.hpp>
 #include <mlpack/methods/amf/init_rules/random_init.hpp>
 #include <mlpack/methods/amf/init_rules/average_init.hpp>
-#include <mlpack/methods/amf/termination_policies/validation_RMSE_termination.hpp>
+#include <mlpack/methods/amf/termination_policies/validation_rmse_termination.hpp>
 #include <mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(SVDBatchMomentumTest)
 
   const double momentumRMSE = amf2.Apply(cleanedData, 2, m1, m2);
 
-  BOOST_REQUIRE_LE(momentumRMSE, regularRMSE + 0.05);
+  BOOST_REQUIRE_LE(momentumRMSE, regularRMSE + 0.08);
 }
 
 /**

@@ -64,9 +64,11 @@ struct Loglik
     }
 
     if (dataSeq.n_rows != hmm.Emission()[0].Dimensionality())
+    {
       Log::Fatal << "Dimensionality of sequence (" << dataSeq.n_rows << ") is "
           << "not equal to the dimensionality of the HMM ("
           << hmm.Emission()[0].Dimensionality() << ")!" << endl;
+    }
 
     const double loglik = hmm.LogLikelihood(dataSeq);
 
@@ -74,7 +76,7 @@ struct Loglik
   }
 };
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Load model, and calculate the log-likelihood of the sequence.
   CLI::GetParam<HMMModel>("input_model").PerformAction<Loglik>((void*) NULL);

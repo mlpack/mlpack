@@ -3,6 +3,9 @@ set(SOURCES
   adam_impl.hpp
   adam_update.hpp
   adamax_update.hpp
+  amsgrad_update.hpp
+  nadam_update.hpp
+  nadamax_update.hpp
 )
 
 set(DIR_SRCS)

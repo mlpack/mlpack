@@ -18,6 +18,7 @@
 
 using namespace mlpack;
 using namespace mlpack::data;
+using namespace mlpack::util;
 using namespace std;
 using namespace boost;
 
@@ -62,13 +63,13 @@ PARAM_FLAG("row_major", "If specified, the program will calculate statistics "
     "represents a point, so this option is generally not necessary.)", "r");
 
 /**
-* Calculates the sum of deviations to the Nth Power.
-*
-* @param input Vector that captures a dimension of a dataset.
-* @param rowMean Mean of the given vector.
-* @param n Degree of power.
-* @return sum of nth power deviations.
-*/
+ * Calculates the sum of deviations to the Nth Power.
+ *
+ * @param input Vector that captures a dimension of a dataset.
+ * @param rowMean Mean of the given vector.
+ * @param n Degree of power.
+ * @return sum of nth power deviations.
+ */
 double SumNthPowerDeviations(const arma::rowvec& input,
                              const double& fMean,
                              size_t n)
@@ -152,7 +153,7 @@ double StandardError(const size_t size, const double& fStd)
   return fStd / sqrt(size);
 }
 
-void mlpackMain()
+static void mlpackMain()
 {
   const size_t dimension = static_cast<size_t>(CLI::GetParam<int>("dimension"));
   const size_t precision = static_cast<size_t>(CLI::GetParam<int>("precision"));

@@ -21,6 +21,7 @@
 
 using namespace mlpack;
 using namespace mlpack::naive_bayes;
+using namespace mlpack::util;
 using namespace std;
 using namespace arma;
 
@@ -104,42 +105,17 @@ PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
 PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability"
     " of labels for the test set will be written.", "p");
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Check input parameters.
-  if (CLI::HasParam("training") && CLI::HasParam("input_model"))
-    Log::Fatal << "Cannot specify both --training_file (-t) and "
-        << "--input_model_file (-m)!" << endl;
-
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
-    Log::Fatal << "Neither --training_file (-t) nor --input_model_file (-m) are"
-        << " specified!" << endl;
-
-  if (!CLI::HasParam("training") && CLI::HasParam("labels"))
-    Log::Warn << "--labels_file (-l) ignored because --training_file (-t) is "
-        << "not specified." << endl;
-  if (!CLI::HasParam("training") && CLI::HasParam("incremental_variance"))
-    Log::Warn << "--incremental_variance (-I) ignored because --training_file "
-        << "(-t) is not specified." << endl;
-
-  if (!CLI::HasParam("output") && !CLI::HasParam("output_model") &&
-      !CLI::HasParam("output_probs"))
-    Log::Warn << "Neither --output_file (-o), nor --output_model_file (-M), nor"
-        << " --output_proba_file (-p) specified; no output will be saved!"
-        << endl;
-
-  if (CLI::HasParam("output") && !CLI::HasParam("test"))
-    Log::Warn << "--output_file (-o) ignored because no test file specified "
-        << "with --test_file (-T)." << endl;
-
-  if (!CLI::HasParam("output") && CLI::HasParam("test"))
-    Log::Warn << "--test_file (-T) specified, but classification results will "
-        << "not be saved because --output_file (-o) is not specified." << endl;
-
-  if (!CLI::HasParam("output_probs") && CLI::HasParam("test"))
-    Log::Warn << "--test_file (-T) specified, but predicted probability of "
-        << "labels will not be saved because --output_probs_file (-p) is not "
-        << "specified." << endl;
+  RequireOnlyOnePassed({ "training", "input_model" }, true);
+  ReportIgnoredParam({{ "training", false }}, "labels");
+  ReportIgnoredParam({{ "training", false }}, "incremental_variance");
+  RequireAtLeastOnePassed({ "output", "output_model", "output_probs" }, false,
+      "no output will be saved");
+  ReportIgnoredParam({{ "test", false }}, "output");
+  if (CLI::HasParam("input_model") && !CLI::HasParam("test"))
+    Log::Warn << "No test set given; no task will be performed!" << std::endl;
 
   // Either we have to train a model, or load a model.
   NBCModel model;
@@ -186,9 +162,11 @@ void mlpackMain()
     mat testingData = std::move(CLI::GetParam<mat>("test"));
 
     if (testingData.n_rows != model.nbc.Means().n_rows)
+    {
       Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
           << "must be the same as training data (" << model.nbc.Means().n_rows
           << ")!" << std::endl;
+    }
 
     // Time the running of the Naive Bayes Classifier.
     Row<size_t> predictions;

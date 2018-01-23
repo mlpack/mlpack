@@ -90,7 +90,7 @@ class SDP
   //! constraints).
   const std::vector<arma::sp_mat>& SparseA() const { return sparseA; }
 
-  //! Modify the veector of sparse A matrices (which correspond to the sparse
+  //! Modify the vector of sparse A matrices (which correspond to the sparse
   //! constraints).
   std::vector<arma::sp_mat>& SparseA() { return sparseA; }
 
@@ -98,7 +98,7 @@ class SDP
   //! constraints).
   const std::vector<arma::mat>& DenseA() const { return denseA; }
 
-  //! Modify the veector of dense A matrices (which correspond to the dense
+  //! Modify the vector of dense A matrices (which correspond to the dense
   //! constraints).
   std::vector<arma::mat>& DenseA() { return denseA; }
 

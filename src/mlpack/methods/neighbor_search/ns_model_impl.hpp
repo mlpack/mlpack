@@ -355,31 +355,6 @@ NSModel<SortPolicy>::~NSModel()
   boost::apply_visitor(DeleteVisitor(), nSearch);
 }
 
-/**
- * Non-intrusive serialization for NeighborSearch class. We need this definition
- * because we are going to use the serialize function for boost variant, which
- * will look for a serialize function for its member types.
- */
-template<typename Archive,
-         typename SortPolicy,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType,
-         template<typename RuleType> class TraversalType,
-         template<typename RuleType> class SingleTreeTraversalType>
-void serialize(
-    Archive& ar,
-    NeighborSearch<SortPolicy,
-                   metric::EuclideanDistance,
-                   arma::mat,
-                   TreeType,
-                   TraversalType,
-                   SingleTreeTraversalType>& ns,
-    const unsigned int version)
-{
-  ns.serialize(ar, version);
-}
-
 //! Serialize the kNN model.
 template<typename SortPolicy>
 template<typename Archive>
@@ -401,7 +376,6 @@ void NSModel<SortPolicy>::serialize(Archive& ar, const unsigned int version)
   if (Archive::is_loading::value)
     boost::apply_visitor(DeleteVisitor(), nSearch);
 
-  const std::string& name = NSModelName<SortPolicy>::Name();
   ar & BOOST_SERIALIZATION_NVP(nSearch);
 }
 

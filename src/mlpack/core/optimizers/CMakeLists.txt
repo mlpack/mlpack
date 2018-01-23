@@ -4,6 +4,7 @@ set(DIRS
   ada_grad
   adam
   aug_lagrangian
+  cmaes
   cne
   fw
   gradient_descent
@@ -12,10 +13,13 @@ set(DIRS
   lbfgs
   line_search
   proximal
+  parallel_sgd
   rmsprop
   sa
+  scd
   sdp
   sgd
+  sgdr
   smorms3
   spalera_sgd
 )

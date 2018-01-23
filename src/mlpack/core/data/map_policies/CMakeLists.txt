@@ -3,6 +3,7 @@
 set(SOURCES
   increment_policy.hpp
   missing_policy.hpp
+  datatype.hpp
 )
 
 # Add directory name to sources.
