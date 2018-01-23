@@ -37,5 +37,111 @@ namespace optimization {
  * @endcode
  *
  */
+class SPSAUpdate
+{
+ public:
+  SPSAUpdate(const long long int& n_params,
+         const float& alpha = 0.602,
+  			 const float& gamma = 0.101,
+  			 const float& a = 1e-6,
+  			 const float& c = 0.01,
+  			 const long long int& max_iter = 5000000):
+    alpha(alpha),
+    gamma(gamma),
+    a(a),
+    c(c),
+    A(0.1*a),
+    max_iter(max_iter),
+    p(n_params)
+  {
+  	// Nothing to do.
+  }
+
+  void Initialize()
+  {
+    ak = a/pow((max_iter + 1 + A), alpha);
+    ck = c/pow((max_iter + 1), gamma);
+  }
+
+  template<typename DecomposableFunctionType>
+  void Update(arma::mat& iterate,
+		      DecomposableFunctionType& function)
+  {
+    for(size_t i = 0; i < max_iter; i++)
+    {
+      sp_vector = randi(p, distr_param(-1, 1));
+      arma::vec f_plus = function.Evaluate(iterate + ck*sp_vector);
+      arma::vec f_minus = function.Evaluate(iterate - ck*sp_vector);
+      float gradient = (f_plus - f_minus)/(2*ck*sp_vector);
+
+      iterate -= ak*gradient;
+    }
+  }
+
+  float Alpha() const { return alpha; }
+
+  float& Alpha() { return alpha; }
+
+  float Gamma() const { return gamma; }
+
+  float& Gamma() { return gamma; }
+
+  float Gradient_scaling_parameter(const int& choice) const
+  {
+    if(choice==0)
+    {
+      cout<<"Parameter -> a"<<endl;
+      return a;
+    }
+    else if(choice==1)
+    {
+      cout<<"Parameter -> A"<<endl;
+      return A;
+    }
+    else
+    {
+      cout<<"No such parameter exists..."<<endl;
+      return -1;
+    }
+  }
+
+  float& Gradient_scaling_parameter()
+  {
+    if(choice==0)
+    {
+      cout<<"Parameter -> a"<<endl;
+      return a;
+    }
+    else if(choice==1)
+    {
+      cout<<"Parameter -> A"<<endl;
+      return A;
+    }
+    else
+    {
+      cout<<"No such parameter exists..."<<endl;
+      return -1;
+    }
+  }
+
+  float Noise_variance_parameter() const { return c; }
+
+  float& Noise_variance_parameter() { return c; }
+
+ private:
+  float a;
+  float A;
+  float alpha;
+  float gamma;
+  float c;
+  float ak;
+  float ck;
+  long long int max_iter, p;
+  arma::vec sp_vector;
+
+};
+
+} // namespace optimization
+} // namespace mlpack
 
 #endif
