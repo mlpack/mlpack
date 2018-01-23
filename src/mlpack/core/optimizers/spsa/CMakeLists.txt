@@ -1,7 +1,7 @@
 set(SOURCES
 	spsa.cpp
 	spsa.hpp
-	spsa_impl.hpp
+	spsa_update.hpp
 )
 
 set(DIR_SRCS)

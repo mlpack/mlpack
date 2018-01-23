@@ -1,6 +1,6 @@
 set(DIRS
   ada_delta
-  comp_ada_grad
+  spsa
   ada_grad
   adam
   aug_lagrangian
