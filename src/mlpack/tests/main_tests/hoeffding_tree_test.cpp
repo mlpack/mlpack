@@ -65,26 +65,26 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeOutputDimensionTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training_file", std::move(std::make_tuple(info, inputData)));
-  SetInputParam("labels_file", std::move(labels));
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test_file", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions_file").n_cols, testSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities_file").n_cols,
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
       testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions_file").n_rows, 1);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities_file").n_rows, 3);
+      CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
 }
 
 /**
@@ -109,26 +109,26 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeCategoricalOutputDimensionTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training_file", std::move(std::make_tuple(info, inputData)));
-  SetInputParam("labels_file", std::move(labels));
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test_file", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>
-      ("predictions_file").n_cols, testSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities_file").n_cols,
+      ("predictions").n_cols, testSize);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
       testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions_file").n_rows, 1);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities_file").n_rows, 6);
+      CLI::GetParam<arma::mat>("probabilities").n_rows, 6);
 }
 
 /**
@@ -157,40 +157,40 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training_file", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
 
   // Input test data.
-  SetInputParam("test_file", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions_file").n_cols, testSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities_file").n_cols,
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
       testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions_file").n_rows, 1);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities_file").n_rows, 3);
+      CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training_file"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test_file"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
   arma::Row<size_t> predictions;
   arma::mat probabilities;
-  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions_file"));
-  probabilities = std::move(CLI::GetParam<arma::mat>("probabilities_file"));
+  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+  probabilities = std::move(CLI::GetParam<arma::mat>("probabilities"));
 
   inputData.shed_row(inputData.n_rows - 1);
 
   // Input training data.
-  SetInputParam("training_file", std::move(std::make_tuple(info, inputData)));
-  SetInputParam("test_file", std::move(std::make_tuple(info, testData)));
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
   // Pass Labels.
   SetInputParam("labels", std::move(labels));
 
@@ -198,22 +198,22 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions_file").n_cols, testSize);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities_file").n_cols, testSize);
+      CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions_file").n_rows, 1);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities_file").n_rows, 3);
+      CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
 
   // Check that initial and current predictions are same.
   CheckMatrices(
-      predictions, CLI::GetParam<arma::Row<size_t>>("predictions_file"));
+      predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
   CheckMatrices(
-      probabilities, CLI::GetParam<arma::mat>("probabilities_file"));
+      probabilities, CLI::GetParam<arma::mat>("probabilities"));
 }
 
 /**
@@ -237,51 +237,51 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelReuseTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training_file", std::move(std::make_tuple(info, inputData)));
-  SetInputParam("labels_file", std::move(labels));
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test_file", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
 
   mlpackMain();
 
   arma::Row<size_t> predictions;
   arma::mat probabilities;
-  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions_file"));
-  probabilities = std::move(CLI::GetParam<arma::mat>("probabilities_file"));
+  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+  probabilities = std::move(CLI::GetParam<arma::mat>("probabilities"));
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training_file"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels_file"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test_file"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
   if (!data::Load("vc2_test.csv", testData, info))
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input trained model.
-  SetInputParam("test_file", std::move(std::make_tuple(info, testData)));
-  SetInputParam("input_model_file",
-      std::move(CLI::GetParam<HoeffdingTreeModel>("output_model_file")));
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("input_model",
+      std::move(CLI::GetParam<HoeffdingTreeModel>("output_model")));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions_file").n_cols, testSize);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities_file").n_cols, testSize);
+      CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predicitions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions_file").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities_file").n_rows, 3);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
 
   // Check that initial predictions and predictions using saved model are same.
   CheckMatrices(
-      predictions, CLI::GetParam<arma::Row<size_t>>("predictions_file"));
+      predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
   CheckMatrices(
-      probabilities, CLI::GetParam<arma::mat>("probabilities_file"));
+      probabilities, CLI::GetParam<arma::mat>("probabilities"));
 }
 
 /**
@@ -305,52 +305,52 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelCategoricalReuseTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training_file", std::move(std::make_tuple(info, inputData)));
-  SetInputParam("labels_file", std::move(labels));
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test_file", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
 
   mlpackMain();
 
   arma::Row<size_t> predictions;
   arma::mat probabilities;
-  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions_file"));
-  probabilities = std::move(CLI::GetParam<arma::mat>("probabilities_file"));
+  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+  probabilities = std::move(CLI::GetParam<arma::mat>("probabilities"));
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training_file"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels_file"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test_file"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
   if (!data::Load("braziltourism_test.arff", testData, info))
     BOOST_FAIL("Cannot load test dataset braziltourism_test.arff!");
 
   // Input trained model.
-  SetInputParam("test_file", std::move(std::make_tuple(info, testData)));
-  SetInputParam("input_model_file",
-      std::move(CLI::GetParam<HoeffdingTreeModel>("output_model_file")));
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("input_model",
+      std::move(CLI::GetParam<HoeffdingTreeModel>("output_model")));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions_file").n_cols, testSize);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities_file").n_cols, testSize);
+      CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predicitions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions_file").n_rows, 1);
+      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities_file").n_rows, 6);
+      CLI::GetParam<arma::mat>("probabilities").n_rows, 6);
 
   // Check that initial predictions and predictions using saved model are same.
   CheckMatrices(
-      predictions, CLI::GetParam<arma::Row<size_t>>("predictions_file"));
+      predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
   CheckMatrices(
-      probabilities, CLI::GetParam<arma::mat>("probabilities_file"));
+      probabilities, CLI::GetParam<arma::mat>("probabilities"));
 }
 
 BOOST_AUTO_TEST_SUITE_END();
