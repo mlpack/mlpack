@@ -6,15 +6,15 @@ environment:
       VSVER: Visual Studio 14 2015 Win64
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       VSVER: Visual Studio 15 2017 Win64
-  APPVEYOR_RDP_PASSWORD: 'testing12345Aa!>>'
+#    APPVEYOR_RDP_PASSWORD: 'testing12345Aa!>>'
 
 configuration: Release
 
 os: Visual Studio 2015
 
-init:
-  - ps: reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v UserAuthentication /t REG_DWORD /d 0 /f
-  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+#init:
+#  - ps: reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v UserAuthentication /t REG_DWORD /d 0 /f
+#  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 install:
   - ps: nuget install boost -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
@@ -58,13 +58,12 @@ cache:
   - packages -> **\packages.config
   - armadillo.tar.xz -> appveyor.yaml
 
-# All plans have maximum build job execution time of 60 minutes. But right, now
-# the machine takes 30 minutes to build the code and at least 50 minutes to run
-# all tests.
 test_script:
-#  - ctest -C Release
-  - cd "%APPVEYOR_BUILD_FOLDER%/build/Release/"
-  - mlpack_test.exe
+  # Copy all DLLs into the right place before running the test.
+  - cd "%APPVEYOR_BUILD_FOLDER%/build/"
+  - cp C:\projects\mlpack\boost_libs\*.* .
+  - cp C:\projects\mlpack\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* .
+  - ctest -C Release
 
-on_finish:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+#on_finish:
+#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
