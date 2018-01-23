@@ -1,10 +1,10 @@
-# Define the files we need to compile
-# Anything not in this list will not be compiled into mlpack.
+# Define the files we need to compile.
+# Any file not in this list will not be compiled into mlpack.
 set(SOURCES
-  binary_rbm_policy.hpp
-  binary_rbm_policy_impl.hpp
-  spike_slab_rbm_policy.hpp
-  spike_slab_rbm_policy_impl.hpp
+  rbm.hpp
+  rbm_impl.hpp
+  rbm_policies.hpp
+  spike_slab_rbm_impl.hpp
 )
 
 # Add directory name to sources.

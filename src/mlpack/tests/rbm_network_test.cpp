@@ -1,8 +1,9 @@
 /**
  * @file rbm_network_test.cpp
  * @author Kris Singh
+ * @author Shikhar Jaiswal
  *
- * Tests the rbm Network
+ * Tests the RBM Network
  *
  * digits dataset source:
  * @misc{Lichman:2013 ,
@@ -14,17 +15,15 @@
  * Irvine, School of Information and Computer Sciences" } 
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
+ * terms of the 3-clause BSD license. You should have received a copy of the
+ * 3-clause BSD license along with mlpack. If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-#include <mlpack/methods/ann/rbm/binary_rbm_policy.hpp>
-#include <mlpack/methods/ann/rbm/spike_slab_rbm_policy.hpp>
-#include <mlpack/methods/ann/rbm.hpp>
+#include <mlpack/methods/ann/rbm/rbm.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
@@ -37,10 +36,11 @@ using namespace mlpack::ann;
 using namespace mlpack::optimization;
 using namespace mlpack::regression;
 
-BOOST_AUTO_TEST_SUITE(RbmNetworkTest);
+BOOST_AUTO_TEST_SUITE(RBMNetworkTest);
+
 BOOST_AUTO_TEST_CASE(ClassificationTest)
 {
-  // Normalised dataset
+  // Normalised dataset.
   int hiddenLayerSize = 100;
   size_t batchSize = 10;
   size_t numEpoches = 30;
@@ -68,31 +68,29 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
   XRbm.zeros();
   YRbm.zeros();
 
-  BinaryRBMPolicy<> binary_rbm(trainData.n_rows, hiddenLayerSize);
   GaussianInitialization gaussian(0, 0.1);
-  RBM<GaussianInitialization, BinaryRBMPolicy<>> model(trainData,
-      gaussian, binary_rbm, 1,  1, true, false);
+  RBM<GaussianInitialization> model(trainData,
+      gaussian, trainData.n_rows, hiddenLayerSize, batchSize);
 
   size_t numRBMIterations = trainData.n_cols * numEpoches;
   numRBMIterations /= batchSize;
-
-  MiniBatchSGD msgd(batchSize, 0.06, numRBMIterations, 0, true);
+  optimization::StandardSGD msgd(0.06, batchSize, numRBMIterations, 0, true);
   model.Reset();
-  model.Policy().VisibleBias().ones();
-  model.Policy().HiddenBias().ones();
-  // test the reset function
-  model.Train(trainData, msgd);
+  model.VisibleBias().ones();
+  model.HiddenBias().ones();
+
+  // Test the reset function.
+  model.Train(msgd);
 
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
-    model.Policy().HiddenMean(std::move(trainData.col(i)),
-        std::move(output));
+    model.HiddenMean(std::move(trainData.col(i)), std::move(output));
     XRbm.col(i) = output;
   }
 
   for (size_t i = 0; i < testData.n_cols; i++)
   {
-    model.Policy().HiddenMean(std::move(testData.col(i)),
+    model.HiddenMean(std::move(testData.col(i)),
       std::move(output));
     YRbm.col(i) = output;
   }
@@ -107,14 +105,13 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
 
   double classificationAccuray = regressor.ComputeAccuracy(testData,
    testLabels);
-  std::cout << "Softmax Accuracy = " << classificationAccuray << std::endl;
 
   L_BFGS rbmOptimizer(numBasis, numIterations);
   SoftmaxRegression rbmRegressor(XRbm, trainLabels, numClasses,
         0.001, false, rbmOptimizer);
   double rbmClassificationAccuracy = rbmRegressor.ComputeAccuracy(YRbm,
       testLabels);
-  std::cout << "RBM Accuracy = " << rbmClassificationAccuracy << std::endl;
+
   BOOST_REQUIRE_GE(rbmClassificationAccuracy, classificationAccuray);
 }
 
@@ -164,29 +161,29 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   YRbm.zeros();
   double slabPenalty = 8;
 
-  SpikeSlabRBMPolicy<> ss_rbm(trainData.n_rows, hiddenLayerSize, poolSize,
+  RBM<GaussianInitialization, arma::mat, SpikeSlabRBM> modelssRBM(trainData,
+      gaussian, trainData.n_rows, hiddenLayerSize, batchSize, 1, 1, poolSize,
       slabPenalty, radius);
-  RBM<GaussianInitialization, SpikeSlabRBMPolicy<>> modelssRBM(trainData,
-      gaussian, ss_rbm, 1, 1, true, false);
 
   size_t numRBMIterations = trainData.n_cols * numEpoches;
   numRBMIterations /= batchSize;
 
-  MiniBatchSGD msgd(batchSize, 0.02, numRBMIterations, 0, true);
+  optimization::StandardSGD msgd(0.02, batchSize, numRBMIterations, 0, true);
   modelssRBM.Reset();
-  modelssRBM.Policy().VisiblePenalty().fill(5);
-  modelssRBM.Policy().SpikeBias().fill(1);
-  modelssRBM.Train(trainData, msgd);
+  modelssRBM.VisiblePenalty().fill(5);
+  modelssRBM.SpikeBias().fill(1);
+
+  modelssRBM.Train(msgd);
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
-    modelssRBM.Policy().HiddenMean(std::move(trainData.col(i)),
+    modelssRBM.HiddenMean(std::move(trainData.col(i)),
         std::move(output));
     XRbm.col(i) = output;
   }
 
   for (size_t i = 0; i < testData.n_cols; i++)
   {
-    modelssRBM.Policy().HiddenMean(std::move(testData.col(i)),
+    modelssRBM.HiddenMean(std::move(testData.col(i)),
       std::move(output));
     YRbm.col(i) = output;
   }
@@ -199,7 +196,6 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
         0.001, false, ssRbmOptimizer);
   double ssRbmClassificationAccuracy = ssRbmRegressor.ComputeAccuracy(
       YRbm, testLabels);
-  std::cout << "ssRBM Accuracy = " << ssRbmClassificationAccuracy << std::endl;
 
   BOOST_REQUIRE_GE(ssRbmClassificationAccuracy, 76.18);
 }
@@ -209,13 +205,12 @@ void BuildVanillaNetwork(MatType& trainData,
                          const size_t hiddenLayerSize)
 {
   MatType output;
-  BinaryRBMPolicy<MatType> binary_rbm(trainData.n_rows, hiddenLayerSize);
   GaussianInitialization gaussian(0, 0.1);
-  RBM<GaussianInitialization, BinaryRBMPolicy<MatType>> model(trainData,
-      gaussian, binary_rbm, 1,  true);
+  RBM<GaussianInitialization, MatType, BinaryRBM> model(trainData, gaussian,
+      trainData.n_rows, hiddenLayerSize, 1, 1, 1, 2, 8, 1, true);
 
   model.Reset();
-  // Set the parmaeters from a learned rbm sklearn random state 23
+  // Set the parameters from a learned RBM Sklearn random state 23
   model.Parameters() = MatType(
       "-0.23224054, -0.23000632, -0.25701271, -0.25122418, -0.20716651,"
       "-0.20962217, -0.59922456, -0.60003836, -0.6, -0.625, -0.475;");
@@ -223,21 +218,21 @@ void BuildVanillaNetwork(MatType& trainData,
   // Check free energy
   arma::Mat<float> freeEnergy = MatType(
       "-0.87523715, 0.50615066, 0.46923476, 1.21509084;");
-  arma::vec calcultedFreeEnergy(4);
-  calcultedFreeEnergy.zeros();
+  arma::vec calculatedFreeEnergy(4);
+  calculatedFreeEnergy.zeros();
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
-    calcultedFreeEnergy(i) = model.FreeEnergy(std::move(trainData.col(i)));
+    calculatedFreeEnergy(i) = model.FreeEnergy(std::move(trainData.col(i)));
   }
 
   for (size_t i = 0; i < freeEnergy.n_elem; i++)
-    BOOST_REQUIRE_CLOSE(calcultedFreeEnergy(i), freeEnergy(i), 1e-3);
+    BOOST_REQUIRE_CLOSE(calculatedFreeEnergy(i), freeEnergy(i), 1e-3);
 }
 
 BOOST_AUTO_TEST_CASE(MiscTest)
 {
   /**
-   * Train and evaluate a vanilla network with the specified structure.
+   * Train and evaluate a Vanilla network with the specified structure.
    */
 
   arma::Mat<float> X = arma::Mat<float>("0.0, 0.0, 0.0;"
@@ -247,4 +242,5 @@ BOOST_AUTO_TEST_CASE(MiscTest)
   X = X.t();
   BuildVanillaNetwork<arma::Mat<float>>(X, 2);
 }
+
 BOOST_AUTO_TEST_SUITE_END();

@@ -1331,40 +1331,6 @@ BOOST_AUTO_TEST_CASE(SimpleBilinearInterpolationLayerTest)
       std::move(unzoomedOutput));
   CheckMatrices(unzoomedOutput - expectedOutput,
       arma::zeros(input.n_rows), 1e-12);
-
-/*
- * Simple add module test.
- */
-BOOST_AUTO_TEST_CASE(SimpleBinaryRbmLayerTest)
-{
-  arma::mat output, input, outputModule, inputModule;
-  // Network 1
-  BinaryLayer<> module(2, 4);
-  module.Parameters().ones();
-  module.Reset();
-
-  // Network 2
-  LinearNoBias<> linear(2, 4);
-  Add<> add(4);
-  SigmoidLayer<> sigmoid;
-  linear.Parameters().ones();
-  add.Parameters().ones();
-  linear.Reset();
-
-  // Check reset function
-  BOOST_REQUIRE_EQUAL(module.Bias().size(), 2);
-  BOOST_REQUIRE_EQUAL(arma::accu(module.Bias() - arma::ones(2)), 0);
-
-  // Test the Forward function.
-  input = arma::vec("0.5 0.5");
-  inputModule = arma::vec("0.5 0.5");
-  module.Forward(std::move(inputModule), std::move(outputModule));
-  linear.Forward(std::move(input), std::move(output));
-  add.Forward(std::move(output), std::move(output));
-  sigmoid.Forward(std::move(output), std::move(output));
-
-  for (size_t i = 0; i < output.size(); i++)
-    BOOST_REQUIRE_EQUAL(output(i), outputModule(i));
 }
 
 /**

@@ -14,8 +14,6 @@ set(SOURCES
   batch_norm_impl.hpp
   bilinear_interpolation.hpp
   bilinear_interpolation_impl.hpp
-  binary_rbm.hpp
-  binary_rbm_impl.hpp
   concat.hpp
   concat_impl.hpp
   concat_performance.hpp

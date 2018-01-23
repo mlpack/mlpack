@@ -70,14 +70,6 @@ add_executable(mlpack_test
   loss_functions_test.cpp
   lrsdp_test.cpp
   lsh_test.cpp
-  main_tests/decision_tree_test.cpp
-  main_tests/emst_test.cpp
-  main_tests/linear_regression_test.cpp
-  main_tests/pca_test.cpp
-  main_tests/preprocess_binarize_test.cpp
-  main_tests/preprocess_imputer_test.cpp
-  main_tests/preprocess_split_test.cpp
-  main_tests/test_helper.hpp
   math_test.cpp
   matrix_completion_test.cpp
   maximal_inputs_test.cpp
