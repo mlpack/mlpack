@@ -6,7 +6,7 @@ environment:
       VSVER: Visual Studio 14 2015 Win64
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       VSVER: Visual Studio 15 2017 Win64
-  APPVEYOR_RDP_PASSWORD: 'testing12345'
+  APPVEYOR_RDP_PASSWORD: 'testing12345Aa!>>'
 
 configuration: Release
 
