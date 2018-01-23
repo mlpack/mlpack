@@ -42,10 +42,10 @@ class SPSAUpdate
  public:
   SPSAUpdate(const long long int& n_params,
          const float& alpha = 0.602,
-  			 const float& gamma = 0.101,
-  			 const float& a = 1e-6,
-  			 const float& c = 0.01,
-  			 const long long int& max_iter = 5000000):
+         const float& gamma = 0.101,
+         const float& a = 1e-6,
+         const float& c = 0.01,
+         const long long int& max_iter = 5000000):
     alpha(alpha),
     gamma(gamma),
     a(a),
@@ -54,7 +54,7 @@ class SPSAUpdate
     max_iter(max_iter),
     p(n_params)
   {
-  	// Nothing to do.
+    // Nothing to do.
   }
 
   void Initialize()
@@ -65,9 +65,9 @@ class SPSAUpdate
 
   template<typename DecomposableFunctionType>
   void Update(arma::mat& iterate,
-		      DecomposableFunctionType& function)
+          DecomposableFunctionType& function)
   {
-    for(size_t i = 0; i < max_iter; i++)
+    for (size_t i = 0; i < max_iter; i++)
     {
       sp_vector = randi(p, distr_param(-1, 1));
       arma::vec f_plus = function.Evaluate(iterate + ck*sp_vector);
@@ -88,12 +88,12 @@ class SPSAUpdate
 
   float Gradient_scaling_parameter(const int& choice) const
   {
-    if(choice==0)
+    if (choice == 0)
     {
       cout<<"Parameter -> a"<<endl;
       return a;
     }
-    else if(choice==1)
+    else if(choice == 1)
     {
       cout<<"Parameter -> A"<<endl;
       return A;
@@ -107,12 +107,12 @@ class SPSAUpdate
 
   float& Gradient_scaling_parameter()
   {
-    if(choice==0)
+    if (choice == 0)
     {
       cout<<"Parameter -> a"<<endl;
       return a;
     }
-    else if(choice==1)
+    else if (choice == 1)
     {
       cout<<"Parameter -> A"<<endl;
       return A;
@@ -138,7 +138,6 @@ class SPSAUpdate
   float ck;
   long long int max_iter, p;
   arma::vec sp_vector;
-
 };
 
 } // namespace optimization
