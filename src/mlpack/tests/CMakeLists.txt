@@ -71,6 +71,7 @@ add_executable(mlpack_test
   main_tests/preprocess_binarize_test.cpp
   main_tests/preprocess_imputer_test.cpp
   main_tests/preprocess_split_test.cpp
+  main_tests/perceptron_test.cpp
   main_tests/test_helper.hpp
   math_test.cpp
   matrix_completion_test.cpp
