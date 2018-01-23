@@ -93,7 +93,7 @@ class SPSAUpdate
       cout<<"Parameter -> a"<<endl;
       return a;
     }
-    else if(choice == 1)
+    else if (choice == 1)
     {
       cout<<"Parameter -> A"<<endl;
       return A;
