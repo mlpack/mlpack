@@ -144,6 +144,7 @@ Options are specified with the -D flag.  A list of options allowed:
     PROFILE=(ON/OFF): compile with profiling symbols
     ARMA_EXTRA_DEBUG=(ON/OFF): compile with extra Armadillo debugging symbols
     BOOST_ROOT=(/path/to/boost/): path to root of boost installation
+    BOOST_LIBRARYDIR=(/path/to/dir/containing/boost/): path to directory containing boost libraries
     ARMADILLO_INCLUDE_DIR=(/path/to/armadillo/include/): path to Armadillo headers
     ARMADILLO_LIBRARY=(/path/to/armadillo/libarmadillo.so): Armadillo library
     BUILD_CLI_EXECUTABLES=(ON/OFF): whether or not to build command-line programs
