@@ -89,10 +89,10 @@ class SPSA
   }
 
   float Noise_variance_parameter() const { return optimizer.UpdatePolicy()
-                                                    .Noise_variance_parameter(); }
+                                  .Noise_variance_parameter(); }
 
   float& Noise_variance_parameter() { return optimizer.UpdatePolicy()
-                                               .Noise_variance_parameter(); }
+                                  .Noise_variance_parameter(); }
 
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return optimizer.MaxIterations(); }
