@@ -40,12 +40,12 @@ namespace optimization {
 class SPSAUpdate
 {
  public:
-  SPSAUpdate(const long long int& n_params,
+  SPSAUpdate(const size_t& n_params,
          const float& alpha = 0.602,
          const float& gamma = 0.101,
          const float& a = 1e-6,
          const float& c = 0.01,
-         const long long int& max_iter = 5000000):
+         const size_t& max_iter = 5000000):
     alpha(alpha),
     gamma(gamma),
     a(a),
