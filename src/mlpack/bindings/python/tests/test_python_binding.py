@@ -7,8 +7,10 @@ Test that passing types to Python bindings works successfully.
 import unittest
 import pandas as pd
 import numpy as np
+import copy
 
 from mlpack.test_python_binding import test_python_binding
+from mlpack.matrix_utils import to_matrix_with_info
 
 class TestPythonBinding(unittest.TestCase):
   """
@@ -98,7 +100,7 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 matrix_in=x)
+                                 matrix_in=copy.copy(x))
 
     self.assertEqual(output['matrix_out'].shape[0], 100)
     self.assertEqual(output['matrix_out'].shape[1], 4)
@@ -121,7 +123,7 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 matrix_in=x)
+                                 matrix_in=copy.copy(x))
 
     self.assertEqual(output['matrix_out'].shape[0], 3)
     self.assertEqual(output['matrix_out'].shape[1], 4)
@@ -148,7 +150,7 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 umatrix_in=x)
+                                 umatrix_in=copy.copy(x))
 
     self.assertEqual(output['umatrix_out'].shape[0], 100)
     self.assertEqual(output['umatrix_out'].shape[1], 4)
@@ -171,7 +173,7 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 umatrix_in=x)
+                                 umatrix_in=copy.copy(x))
 
     self.assertEqual(output['umatrix_out'].shape[0], 3)
     self.assertEqual(output['umatrix_out'].shape[1], 4)
@@ -198,7 +200,7 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 col_in=x)
+                                 col_in=copy.copy(x))
 
     self.assertEqual(output['col_out'].shape[0], 100)
     self.assertEqual(output['col_out'].dtype, np.double)
@@ -215,7 +217,7 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 ucol_in=x)
+                                 ucol_in=copy.copy(x))
 
     self.assertEqual(output['ucol_out'].shape[0], 100)
     self.assertEqual(output['ucol_out'].dtype, np.long)
@@ -231,7 +233,7 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 row_in=x)
+                                 row_in=copy.copy(x))
 
     self.assertEqual(output['row_out'].shape[0], 100)
     self.assertEqual(output['row_out'].dtype, np.double)
@@ -248,7 +250,7 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 urow_in=x)
+                                 urow_in=copy.copy(x))
 
     self.assertEqual(output['urow_out'].shape[0], 100)
     self.assertEqual(output['urow_out'].dtype, np.long)
@@ -265,7 +267,7 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 matrix_and_info_in=x)
+                                 matrix_and_info_in=copy.copy(x))
 
     self.assertEqual(output['matrix_and_info_out'].shape[0], 100)
     self.assertEqual(output['matrix_and_info_out'].shape[1], 10)
@@ -281,11 +283,12 @@ class TestPythonBinding(unittest.TestCase):
     x = pd.DataFrame(np.random.rand(10, 4), columns=list('abcd'))
     x['e'] = pd.Series(['a', 'b', 'c', 'd', 'a', 'b', 'e', 'c', 'a', 'b'],
         dtype='category')
+    z, d = to_matrix_with_info(x, np.float64)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 matrix_and_info_in=x)
+                                 matrix_and_info_in=copy.copy(x))
 
     self.assertEqual(output['matrix_and_info_out'].shape[0], 10)
     self.assertEqual(output['matrix_and_info_out'].shape[1], 5)
@@ -294,10 +297,10 @@ class TestPythonBinding(unittest.TestCase):
 
     for i in range(4):
       for j in range(10):
-        self.assertEqual(output['matrix_and_info_out'][j, i], x[cols[i]][j] * 2)
+        self.assertEqual(output['matrix_and_info_out'][j, i], z[j, i] * 2)
 
     for j in range(10):
-      self.assertEqual(output['matrix_and_info_out'][j, 4], x[cols[4]][j])
+      self.assertEqual(output['matrix_and_info_out'][j, 4], z[j, 4] * 2)
 
   def testIntVector(self):
     """

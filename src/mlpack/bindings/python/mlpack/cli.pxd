@@ -37,8 +37,8 @@ cdef extern from "<mlpack/core/util/cli.hpp>" namespace "mlpack" nogil:
 
 cdef extern from "<mlpack/bindings/python/mlpack/cli_util.hpp>" \
     namespace "mlpack::util" nogil:
-  void SetParam[T](string, const T&) nogil except +
-  void SetParamWithInfo[T](string, const T&, const bool*) nogil except +
+  void SetParam[T](string, T&) nogil except +
+  void SetParamWithInfo[T](string, T&, const bool*) nogil except +
   (T&) GetParamWithInfo[T](string) nogil except +
   void EnableVerbose() nogil except +
   void DisableVerbose() nogil except +
