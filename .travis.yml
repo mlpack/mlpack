@@ -13,6 +13,8 @@ before_install:
   # for the idea.
   - sudo systemctl stop apt-daily.service apt-daily.timer
   - sudo systemctl kill --kill-who=all apt-daily.service
+  - systemctl list-unit-files
+  - systemctl status
   - while !(systemctl list-units --all apt-daily.service | grep -q dead); do sleep 1; done
   - ps -ef f && sudo apt-get update -qq
   - ps -ef f && sudo apt-get install -qq libopenblas-dev liblapack-dev g++ libboost-all-dev python3-pip
