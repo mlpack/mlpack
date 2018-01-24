@@ -79,12 +79,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeOutputDimensionTest)
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
       testSize);
 
-  // Check number of output rows equals number of classes in case of
-  // probabilities and 1 for predictions.
+  // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
       CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
+      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
 }
 
 /**
@@ -123,12 +122,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeCategoricalOutputDimensionTest)
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
       testSize);
 
-  // Check number of output rows equals number of classes in case of
-  // probabilities and 1 for predictions.
+  // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
       CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_rows, 6);
+      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
 }
 
 /**
@@ -139,20 +137,21 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
 {
   arma::mat inputData;
   DatasetInfo info;
-  if (!data::Load("tae.csv", inputData, info))
-    BOOST_FAIL("Cannot load train dataset tae.csv!");
+  if (!data::Load("vc2.csv", inputData, info))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
 
-  // Extract the labels.
-  arma::Row<size_t> labels(inputData.n_cols);
-  for (size_t i = 0; i < inputData.n_cols; ++i)
-    labels[i] = inputData(inputData.n_rows - 1, i);
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("tae_test.csv", testData, info))
-    BOOST_FAIL("Cannot load test dataset tae_test.csv!");
+  if (!data::Load("vc2_test.csv", testData, info))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
-  // Remove labels from test dataset.
-  testData.shed_row(testData.n_rows - 1);
+  // Append labels to the training set.
+  inputData.resize(inputData.n_rows+1, inputData.n_cols);
+  for (size_t i = 0; i < inputData.n_cols; ++i)
+    inputData(inputData.n_rows-1, i) = labels[i];
 
   size_t testSize = testData.n_cols;
 
@@ -175,7 +174,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
   BOOST_REQUIRE_EQUAL(
       CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
+      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
 
   // Reset passed parameters.
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
@@ -202,12 +201,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
   BOOST_REQUIRE_EQUAL(
       CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
 
-  // Check number of output rows equals number of classes in case of
-  // probabilities and 1 for predictions.
+  // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
       CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
+      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
 
   // Check that initial and current predictions are same.
   CheckMatrices(
@@ -271,11 +269,10 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelReuseTest)
   BOOST_REQUIRE_EQUAL(
       CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
 
-  // Check number of output rows equals number of classes in case of
-  // probabilities and 1 for predicitions.
+  // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
       CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
 
   // Check that initial predictions and predictions using saved model are same.
   CheckMatrices(
@@ -339,12 +336,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelCategoricalReuseTest)
   BOOST_REQUIRE_EQUAL(
       CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
 
-  // Check number of output rows equals number of classes in case of
-  // probabilities and 1 for predicitions.
+  // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
       CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_rows, 6);
+      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
 
   // Check that initial predictions and predictions using saved model are same.
   CheckMatrices(
