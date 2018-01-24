@@ -15,21 +15,21 @@
 namespace mlpack {
 namespace optimization {
 
-AdaGrad::AdaGrad(const double stepSize = 0.01,
-                 const size_t batchSize = 32,
-                 const float& alpha = 0.602,
-                 const float& gamma = 0.101,
-                 const float& a = 1e-6,
-                 const float& c = 0.01,
-                 const size_t maxIterations = 100000,
-                 const double tolerance = 1e-5,
-                 const bool shuffle = true) :
+SPSA::SPSA(const double stepSize,
+           const size_t batchSize,
+           const float& alpha,
+           const float& gamma,
+           const float& a,
+           const float& c,
+           const size_t& maxIterations,
+           const double& tolerance,
+           const bool& shuffle) :
     optimizer(stepSize,
               batchSize,
               maxIterations,
               tolerance,
               shuffle,
-              AdaGradUpdate(batchSize, alpha, gamma,
+              SPSAUpdate(batchSize, alpha, gamma,
                             a, c, maxIterations))
 { /* Nothing to do. */ }
 

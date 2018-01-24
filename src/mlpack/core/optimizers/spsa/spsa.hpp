@@ -14,7 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
-include "spsa_update.hpp"
+#include "spsa_update.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -48,9 +48,9 @@ class SPSA
        const float& gamma = 0.101,
        const float& a = 1e-6,
        const float& c = 0.01,
-       const size_t maxIterations = 100000,
-       const double tolerance = 1e-5,
-       const bool shuffle = true);
+       const size_t& maxIterations = 100000,
+       const double& tolerance = 1e-5,
+       const bool& shuffle = true);
 
   template<typename DecomposableFunctionType>
   double Optimize(DecomposableFunctionType& function, arma::mat& iterate)
@@ -76,7 +76,7 @@ class SPSA
 
   float& Gamma() { return optimizer.UpdatePolicy().Gamma(); }
 
-  float Gradient_scaling_parameter(const int& choice) const
+  float Gradient_scaling_parameter(const int choice) const
   {
     return optimizer.UpdatePolicy()
           .Gradient_scaling_parameter(choice);

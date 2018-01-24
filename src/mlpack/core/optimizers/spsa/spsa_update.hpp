@@ -69,7 +69,7 @@ class SPSAUpdate
   {
     for (size_t i = 0; i < max_iter; i++)
     {
-      sp_vector = randi(p, distr_param(-1, 1));
+      sp_vector = randi(p, arma::distr_param(-1, 1));
       arma::vec f_plus = function.Evaluate(iterate + ck*sp_vector);
       arma::vec f_minus = function.Evaluate(iterate - ck*sp_vector);
       float gradient = (f_plus - f_minus)/(2*ck*sp_vector);
@@ -90,37 +90,38 @@ class SPSAUpdate
   {
     if (choice == 0)
     {
-      cout<<"Parameter -> a"<<endl;
+      std::cout<<"Parameter -> a"<<std::endl;
       return a;
     }
     else if (choice == 1)
     {
-      cout<<"Parameter -> A"<<endl;
+      std::cout<<"Parameter -> A"<<std::endl;
       return A;
     }
     else
     {
-      cout<<"No such parameter exists..."<<endl;
-      return -1;
+      std::cout<<"No such parameter exists..."<<std::endl;
+      return -1.0;
     }
   }
 
-  float& Gradient_scaling_parameter()
+  float& Gradient_scaling_parameter(const int& choice)
   {
     if (choice == 0)
     {
-      cout<<"Parameter -> a"<<endl;
+      std::cout<<"Parameter -> a"<<std::endl;
       return a;
     }
     else if (choice == 1)
     {
-      cout<<"Parameter -> A"<<endl;
+      std::cout<<"Parameter -> A"<<std::endl;
       return A;
     }
     else
     {
-      cout<<"No such parameter exists..."<<endl;
-      return -1;
+      std::cout<<"No such parameter exists..."<<std::endl;
+      float none = -1;
+      return none;
     }
   }
 
