@@ -11,11 +11,12 @@ before_install:
   # I can't believe this stuff is even enabled on a Travis VM.  Thank you to
   # https://unix.stackexchange.com/questions/315502/how-to-disable-apt-daily-service-on-ubuntu-cloud-vm-image
   # for the idea.
-  - sudo systemctl stop apt-daily.service apt-daily.timer
-  - sudo systemctl kill --kill-who=all apt-daily.service
+  - sudo systemctl stop apt-daily.service apt-daily.timer apt-daily-upgrade.service apt-daily-upgrade.timer
+  - sudo systemctl kill --kill-who=all apt-daily.service apt-daily-upgrade.service
   - systemctl list-unit-files
   - systemctl status
   - while !(systemctl list-units --all apt-daily.service | grep -q dead); do sleep 1; done
+  - while !(systemctl list-units --all apt-daily-upgrade.service | grep -q dead); do sleep 1; done
   - ps -ef f && sudo apt-get update -qq
   - ps -ef f && sudo apt-get install -qq libopenblas-dev liblapack-dev g++ libboost-all-dev python3-pip
   - sudo wget https://launchpadlibrarian.net/260609315/fix-std-vector-load.diff -O /usr/include/fix-std-vector-load.diff
