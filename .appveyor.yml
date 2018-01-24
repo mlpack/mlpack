@@ -60,8 +60,8 @@ cache:
 
 test_script:
   # Copy all DLLs into the right place before running the test.
-  - ps: cp C:\projects\mlpack\boost_libs\*.* "%APPVEYOR_BUILD_FOLDER%/build/"
-  - ps: cp C:\projects\mlpack\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* "%APPVEYOR_BUILD_FOLDER%/build/"
+  - ps: cp C:\projects\mlpack\boost_libs\*.* C:\projects\mlpack\build\
+  - ps: cp C:\projects\mlpack\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* C:\projects\mlpack\build\
   - cd "%APPVEYOR_BUILD_FOLDER%/build/"
   - ctest -C Release
 
