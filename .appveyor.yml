@@ -63,7 +63,7 @@ test_script:
   - ps: cp C:\projects\mlpack\boost_libs\*.* C:\projects\mlpack\build\
   - ps: cp C:\projects\mlpack\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* C:\projects\mlpack\build\
   - cd "%APPVEYOR_BUILD_FOLDER%/build/"
-  - ctest -C Release
+  - ctest -C Release --output-on-failure
 
 #on_finish:
 #  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
