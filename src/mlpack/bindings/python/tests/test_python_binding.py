@@ -96,11 +96,12 @@ class TestPythonBinding(unittest.TestCase):
     and the fifth forgotten.
     """
     x = np.random.rand(100, 5);
+    z = copy.copy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 matrix_in=copy.copy(x))
+                                 matrix_in=z)
 
     self.assertEqual(output['matrix_out'].shape[0], 100)
     self.assertEqual(output['matrix_out'].shape[1], 4)
@@ -119,11 +120,12 @@ class TestPythonBinding(unittest.TestCase):
     x = [[1, 2, 3, 4, 5],
          [6, 7, 8, 9, 10],
          [11, 12, 13, 14, 15]]
+    z = copy.copy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 matrix_in=copy.copy(x))
+                                 matrix_in=z)
 
     self.assertEqual(output['matrix_out'].shape[0], 3)
     self.assertEqual(output['matrix_out'].shape[1], 4)
@@ -146,11 +148,12 @@ class TestPythonBinding(unittest.TestCase):
     Same as testNumpyMatrix() but with an unsigned matrix.
     """
     x = np.random.randint(0, high=500, size=[100, 5])
+    z = copy.copy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 umatrix_in=copy.copy(x))
+                                 umatrix_in=z)
 
     self.assertEqual(output['umatrix_out'].shape[0], 100)
     self.assertEqual(output['umatrix_out'].shape[1], 4)
@@ -169,11 +172,12 @@ class TestPythonBinding(unittest.TestCase):
     x = [[1, 2, 3, 4, 5],
          [6, 7, 8, 9, 10],
          [11, 12, 13, 14, 15]]
+    z = copy.copy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 umatrix_in=copy.copy(x))
+                                 umatrix_in=z)
 
     self.assertEqual(output['umatrix_out'].shape[0], 3)
     self.assertEqual(output['umatrix_out'].shape[1], 4)
@@ -196,11 +200,12 @@ class TestPythonBinding(unittest.TestCase):
     Test a column vector input parameter.
     """
     x = np.random.rand(100)
+    z = copy.copy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 col_in=copy.copy(x))
+                                 col_in=z)
 
     self.assertEqual(output['col_out'].shape[0], 100)
     self.assertEqual(output['col_out'].dtype, np.double)
@@ -213,11 +218,12 @@ class TestPythonBinding(unittest.TestCase):
     Test an unsigned column vector input parameter.
     """
     x = np.random.randint(0, high=500, size=100)
+    z = copy.copy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 ucol_in=copy.copy(x))
+                                 ucol_in=z)
 
     self.assertEqual(output['ucol_out'].shape[0], 100)
     self.assertEqual(output['ucol_out'].dtype, np.long)
@@ -229,11 +235,12 @@ class TestPythonBinding(unittest.TestCase):
     Test a row vector input parameter.
     """
     x = np.random.rand(100)
+    z = copy.copy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 row_in=copy.copy(x))
+                                 row_in=z)
 
     self.assertEqual(output['row_out'].shape[0], 100)
     self.assertEqual(output['row_out'].dtype, np.double)
@@ -246,11 +253,12 @@ class TestPythonBinding(unittest.TestCase):
     Test an unsigned row vector input parameter.
     """
     x = np.random.randint(0, high=500, size=100)
+    z = copy.copy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 urow_in=copy.copy(x))
+                                 urow_in=z)
 
     self.assertEqual(output['urow_out'].shape[0], 100)
     self.assertEqual(output['urow_out'].dtype, np.long)
@@ -263,11 +271,12 @@ class TestPythonBinding(unittest.TestCase):
     Test that we can pass a matrix with all numeric features.
     """
     x = np.random.rand(100, 10)
+    z = copy.copy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 matrix_and_info_in=copy.copy(x))
+                                 matrix_and_info_in=z)
 
     self.assertEqual(output['matrix_and_info_out'].shape[0], 100)
     self.assertEqual(output['matrix_and_info_out'].shape[1], 10)
@@ -283,12 +292,12 @@ class TestPythonBinding(unittest.TestCase):
     x = pd.DataFrame(np.random.rand(10, 4), columns=list('abcd'))
     x['e'] = pd.Series(['a', 'b', 'c', 'd', 'a', 'b', 'e', 'c', 'a', 'b'],
         dtype='category')
-    z, d = to_matrix_with_info(x, np.float64)
+    z = copy.copy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 matrix_and_info_in=copy.copy(x))
+                                 matrix_and_info_in=z)
 
     self.assertEqual(output['matrix_and_info_out'].shape[0], 10)
     self.assertEqual(output['matrix_and_info_out'].shape[1], 5)
@@ -297,10 +306,10 @@ class TestPythonBinding(unittest.TestCase):
 
     for i in range(4):
       for j in range(10):
-        self.assertEqual(output['matrix_and_info_out'][j, i], z[j, i] * 2)
+        self.assertEqual(output['matrix_and_info_out'][j, i], z[cols[i]][j] * 2)
 
     for j in range(10):
-      self.assertEqual(output['matrix_and_info_out'][j, 4], z[j, 4] * 2)
+      self.assertEqual(output['matrix_and_info_out'][j, 4], z[cols[4]][j])
 
   def testIntVector(self):
     """
