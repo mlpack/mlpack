@@ -40,7 +40,7 @@ namespace optimization {
 class SPSAUpdate
 {
  public:
-  SPSAUpdate(const size_t& n_params,
+  SPSAUpdate(const size_t& n_params = 100000,
          const float& alpha = 0.602,
          const float& gamma = 0.101,
          const float& a = 1e-6,
@@ -120,7 +120,7 @@ class SPSAUpdate
     else
     {
       std::cout<<"No such parameter exists..."<<std::endl;
-      float none = -1;
+      static float none = -1;
       return none;
     }
   }
