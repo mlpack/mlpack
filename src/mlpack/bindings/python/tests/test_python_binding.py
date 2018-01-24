@@ -10,7 +10,6 @@ import numpy as np
 import copy
 
 from mlpack.test_python_binding import test_python_binding
-from mlpack.matrix_utils import to_matrix_with_info
 
 class TestPythonBinding(unittest.TestCase):
   """
