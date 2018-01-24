@@ -123,6 +123,7 @@ void PrintInputProcessing(
         << std::endl;
     std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name << "')"
         << std::endl;
+    std::cout << prefix << "  del " << d.name << "_mat";
   }
   else
   {
@@ -135,6 +136,7 @@ void PrintInputProcessing(
         << std::endl;
     std::cout << prefix << "CLI.SetPassed(<const string> '" << d.name << "')"
         << std::endl;
+    std::cout << prefix << "del " << d.name << "_mat";
   }
   std::cout << std::endl;
 }
@@ -250,6 +252,7 @@ void PrintInputProcessing(
         << "bool*> " << d.name << "_dims.data)" << std::endl;
     std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name << "')"
         << std::endl;
+    std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
   }
   else
   {
@@ -264,6 +267,7 @@ void PrintInputProcessing(
         << "bool*> " << d.name << "_dims.data)" << std::endl;
     std::cout << prefix << "CLI.SetPassed(<const string> '" << d.name << "')"
         << std::endl;
+    std::cout << prefix << "del " << d.name << "_mat" << std::endl;
   }
   std::cout << std::endl;
 }

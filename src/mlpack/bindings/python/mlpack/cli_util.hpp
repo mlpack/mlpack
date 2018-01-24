@@ -29,9 +29,9 @@ namespace util {
  * @param value Value to set parameter to.
  */
 template<typename T>
-inline void SetParam(const std::string& identifier, const T& value)
+inline void SetParam(const std::string& identifier, T& value)
 {
-  CLI::GetParam<T>(identifier) = value;
+  CLI::GetParam<T>(identifier) = std::move(value);
 }
 
 /**
@@ -39,19 +39,20 @@ inline void SetParam(const std::string& identifier, const T& value)
  */
 template<typename T>
 inline void SetParamWithInfo(const std::string& identifier,
-                             const T& matrix,
+                             T& matrix,
                              const bool* dims)
 {
   typedef typename std::tuple<data::DatasetInfo, T> TupleType;
   typedef typename T::elem_type eT;
 
   // The true type of the parameter is std::tuple<T, DatasetInfo>.
-  std::get<1>(CLI::GetParam<TupleType>(identifier)) = matrix;
+  const size_t dimensions = matrix.n_rows;
+  std::get<1>(CLI::GetParam<TupleType>(identifier)) = std::move(matrix);
   data::DatasetInfo& di = std::get<0>(CLI::GetParam<TupleType>(identifier));
-  di = data::DatasetInfo(matrix.n_rows);
+  di = data::DatasetInfo(dimensions);
 
   bool hasCategoricals = false;
-  for (size_t i = 0; i < matrix.n_rows; ++i)
+  for (size_t i = 0; i < dimensions; ++i)
   {
     if (dims[i])
     {
@@ -65,7 +66,7 @@ inline void SetParamWithInfo(const std::string& identifier,
   {
     arma::vec maxs = arma::max(matrix, 1);
 
-    for (size_t i = 0; i < matrix.n_rows; ++i)
+    for (size_t i = 0; i < dimensions; ++i)
     {
       if (dims[i])
       {
