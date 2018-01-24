@@ -50,6 +50,8 @@ class SPSAUpdate
     gamma(gamma),
     a(a),
     c(c),
+    ak(0),
+    ck(0),
     A(0.1*a),
     max_iter(max_iter),
     p(n_params)
