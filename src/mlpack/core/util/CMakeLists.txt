@@ -8,8 +8,6 @@ set(SOURCES
   backtrace.cpp
   cli.hpp
   cli.cpp
-  cli_deleter.hpp
-  cli_deleter.cpp
   cli_impl.hpp
   deprecated.hpp
   hyphenate_string.hpp
@@ -28,7 +26,6 @@ set(SOURCES
   program_doc.hpp
   program_doc.cpp
   sfinae_utility.hpp
-  singletons.hpp
   singletons.cpp
   timers.hpp
   timers.cpp
