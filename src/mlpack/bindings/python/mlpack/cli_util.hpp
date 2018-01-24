@@ -64,7 +64,8 @@ inline void SetParamWithInfo(const std::string& identifier,
   // Do we need to find how many categories we have?
   if (hasCategoricals)
   {
-    arma::vec maxs = arma::max(matrix, 1);
+    arma::vec maxs = arma::max(
+        std::get<1>(CLI::GetParam<TupleType>(identifier)), 1);
 
     for (size_t i = 0; i < dimensions; ++i)
     {
