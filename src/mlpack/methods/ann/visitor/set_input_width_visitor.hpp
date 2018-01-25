@@ -47,21 +47,21 @@ class SetInputWidthVisitor : public boost::static_visitor<bool>
   template<typename T>
   typename std::enable_if<
       !HasInputWidth<T, size_t&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+      !HasModelCheck<T>::value, bool>::type
   LayerInputWidth(T* layer) const;
 
   //! Update the input width if the module implements the InputWidth() function.
   template<typename T>
   typename std::enable_if<
       HasInputWidth<T, size_t&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+      !HasModelCheck<T>::value, bool>::type
   LayerInputWidth(T* layer) const;
 
   //! Update the input width if the module implements the Model() function.
   template<typename T>
   typename std::enable_if<
       !HasInputWidth<T, size_t&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+      HasModelCheck<T>::value, bool>::type
   LayerInputWidth(T* layer) const;
 
   //! Update the input width if the module implements the InputWidth() or
@@ -69,7 +69,7 @@ class SetInputWidthVisitor : public boost::static_visitor<bool>
   template<typename T>
   typename std::enable_if<
       HasInputWidth<T, size_t&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+      HasModelCheck<T>::value, bool>::type
   LayerInputWidth(T* layer) const;
 };
 

@@ -47,7 +47,7 @@ class SetInputHeightVisitor : public boost::static_visitor<bool>
   template<typename T>
   typename std::enable_if<
       !HasInputHeight<T, size_t&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+      !HasModelCheck<T>::value, bool>::type
   LayerInputHeight(T* layer) const;
 
   //! Update the input height if the module implements the InputHeight()
@@ -55,14 +55,14 @@ class SetInputHeightVisitor : public boost::static_visitor<bool>
   template<typename T>
   typename std::enable_if<
       HasInputHeight<T, size_t&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+      !HasModelCheck<T>::value, bool>::type
   LayerInputHeight(T* layer) const;
 
   //! Update the input height if the module implements the Model() function.
   template<typename T>
   typename std::enable_if<
       !HasInputHeight<T, size_t&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+      HasModelCheck<T>::value, bool>::type
   LayerInputHeight(T* layer) const;
 
   //! Update the input height if the module implements the InputHeight() or
@@ -70,7 +70,7 @@ class SetInputHeightVisitor : public boost::static_visitor<bool>
   template<typename T>
   typename std::enable_if<
       HasInputHeight<T, size_t&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+      HasModelCheck<T>::value, bool>::type
   LayerInputHeight(T* layer) const;
 };
 

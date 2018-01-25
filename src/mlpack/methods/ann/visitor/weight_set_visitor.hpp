@@ -46,21 +46,21 @@ class WeightSetVisitor : public boost::static_visitor<size_t>
   template<typename T, typename P>
   typename std::enable_if<
       !HasParametersCheck<T, P&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      !HasModelCheck<T>::value, size_t>::type
   LayerSize(T* layer, P&& input) const;
 
   //! Update the parameters if the module implements the Model() function.
   template<typename T, typename P>
   typename std::enable_if<
       !HasParametersCheck<T, P&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      HasModelCheck<T>::value, size_t>::type
   LayerSize(T* layer, P&& input) const;
 
   //! Update the parameters if the module implements the Parameters() function.
   template<typename T, typename P>
   typename std::enable_if<
       HasParametersCheck<T, P&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      !HasModelCheck<T>::value, size_t>::type
   LayerSize(T* layer, P&& input) const;
 
   //! Update the parameters if the module implements the Model() and
@@ -68,7 +68,7 @@ class WeightSetVisitor : public boost::static_visitor<size_t>
   template<typename T, typename P>
   typename std::enable_if<
       HasParametersCheck<T, P&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      HasModelCheck<T>::value, size_t>::type
   LayerSize(T* layer, P&& input) const;
 };
 

@@ -28,7 +28,7 @@ inline size_t OutputWidthVisitor::operator()(LayerType* layer) const
 template<typename T>
 inline typename std::enable_if<
     !HasInputWidth<T, size_t&(T::*)()>::value &&
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+    !HasModelCheck<T>::value, size_t>::type
 OutputWidthVisitor::LayerOutputWidth(T* /* layer */) const
 {
   return 0;
@@ -37,7 +37,7 @@ OutputWidthVisitor::LayerOutputWidth(T* /* layer */) const
 template<typename T>
 inline typename std::enable_if<
     HasInputWidth<T, size_t&(T::*)()>::value &&
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+    !HasModelCheck<T>::value, size_t>::type
 OutputWidthVisitor::LayerOutputWidth(T* layer) const
 {
   return layer->OutputWidth();
@@ -46,7 +46,7 @@ OutputWidthVisitor::LayerOutputWidth(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     !HasInputWidth<T, size_t&(T::*)()>::value &&
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+    HasModelCheck<T>::value, size_t>::type
 OutputWidthVisitor::LayerOutputWidth(T* layer) const
 {
   for (size_t i = 0; i < layer->Model().size(); ++i)
@@ -66,7 +66,7 @@ OutputWidthVisitor::LayerOutputWidth(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     HasInputWidth<T, size_t&(T::*)()>::value &&
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+    HasModelCheck<T>::value, size_t>::type
 OutputWidthVisitor::LayerOutputWidth(T* layer) const
 {
   size_t outputWidth = layer->OutputWidth();
