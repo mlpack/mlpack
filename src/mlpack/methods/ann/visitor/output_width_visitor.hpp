@@ -38,7 +38,7 @@ class OutputWidthVisitor : public boost::static_visitor<size_t>
   template<typename T>
   typename std::enable_if<
       !HasInputWidth<T, size_t&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      !HasModelCheck<T>::value, size_t>::type
   LayerOutputWidth(T* layer) const;
 
   //! Return the output width if the module implements the InputWidth()
@@ -46,14 +46,14 @@ class OutputWidthVisitor : public boost::static_visitor<size_t>
   template<typename T>
   typename std::enable_if<
       HasInputWidth<T, size_t&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      !HasModelCheck<T>::value, size_t>::type
   LayerOutputWidth(T* layer) const;
 
   //! Return the output width if the module implements the Model() function.
   template<typename T>
   typename std::enable_if<
       !HasInputWidth<T, size_t&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      HasModelCheck<T>::value, size_t>::type
   LayerOutputWidth(T* layer) const;
 
   //! Return the output width if the module implements the Model() or
@@ -61,7 +61,7 @@ class OutputWidthVisitor : public boost::static_visitor<size_t>
   template<typename T>
   typename std::enable_if<
       HasInputWidth<T, size_t&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      HasModelCheck<T>::value, size_t>::type
   LayerOutputWidth(T* layer) const;
 };
 

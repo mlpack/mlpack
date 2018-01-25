@@ -44,14 +44,14 @@ class LoadOutputParameterVisitor : public boost::static_visitor<void>
   //! Model() function.
   template<typename T>
   typename std::enable_if<
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+      !HasModelCheck<T>::value, void>::type
   OutputParameter(T* layer) const;
 
   //! Restore the output parameter for a module which implements the Model()
   //! function.
   template<typename T>
   typename std::enable_if<
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+      HasModelCheck<T>::value, void>::type
   OutputParameter(T* layer) const;
 };
 

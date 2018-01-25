@@ -45,7 +45,7 @@ class DeterministicSetVisitor : public boost::static_visitor<void>
   template<typename T>
   typename std::enable_if<
       HasDeterministicCheck<T, bool&(T::*)(void)>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+      HasModelCheck<T>::value, void>::type
   LayerDeterministic(T* layer) const;
 
   //! Set the deterministic parameter if the module implements the
@@ -53,7 +53,7 @@ class DeterministicSetVisitor : public boost::static_visitor<void>
   template<typename T>
   typename std::enable_if<
       !HasDeterministicCheck<T, bool&(T::*)(void)>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+      HasModelCheck<T>::value, void>::type
   LayerDeterministic(T* layer) const;
 
   //! Set the deterministic parameter if the module implements the
@@ -61,7 +61,7 @@ class DeterministicSetVisitor : public boost::static_visitor<void>
   template<typename T>
   typename std::enable_if<
       HasDeterministicCheck<T, bool&(T::*)(void)>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+      !HasModelCheck<T>::value, void>::type
   LayerDeterministic(T* layer) const;
 
   //! Do not set the deterministic parameter if the module doesn't implement the
@@ -69,7 +69,7 @@ class DeterministicSetVisitor : public boost::static_visitor<void>
   template<typename T>
   typename std::enable_if<
       !HasDeterministicCheck<T, bool&(T::*)(void)>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+      !HasModelCheck<T>::value, void>::type
   LayerDeterministic(T* layer) const;
 };
 

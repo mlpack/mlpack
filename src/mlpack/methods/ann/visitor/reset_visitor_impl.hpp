@@ -28,7 +28,7 @@ inline void ResetVisitor::operator()(LayerType* layer) const
 template<typename T>
 inline typename std::enable_if<
     HasResetCheck<T, void(T::*)()>::value &&
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+    !HasModelCheck<T>::value, void>::type
 ResetVisitor::ResetParameter(T* layer) const
 {
   layer->Reset();
@@ -37,7 +37,7 @@ ResetVisitor::ResetParameter(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     !HasResetCheck<T, void(T::*)()>::value &&
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+    HasModelCheck<T>::value, void>::type
 ResetVisitor::ResetParameter(T* layer) const
 {
   for (size_t i = 0; i < layer->Model().size(); ++i)
@@ -49,7 +49,7 @@ ResetVisitor::ResetParameter(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     HasResetCheck<T, void(T::*)()>::value &&
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+    HasModelCheck<T>::value, void>::type
 ResetVisitor::ResetParameter(T* layer) const
 {
   for (size_t i = 0; i < layer->Model().size(); ++i)
@@ -63,7 +63,7 @@ ResetVisitor::ResetParameter(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     !HasResetCheck<T, void(T::*)()>::value &&
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+    !HasModelCheck<T>::value, void>::type
 ResetVisitor::ResetParameter(T* /* layer */) const
 {
   /* Nothing to do here. */
