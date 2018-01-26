@@ -223,7 +223,8 @@ static void mlpackMain()
         << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
         << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
 
-    kfn->BuildModel(std::move(referenceSet), size_t(lsInt), searchMode, epsilon);
+    kfn->BuildModel(std::move(referenceSet), size_t(lsInt), searchMode,
+        epsilon);
   }
   else
   {
