@@ -238,20 +238,21 @@ BOOST_AUTO_TEST_CASE(GetParamModelTest)
   data::Save("kernel.bin", "model", gk);
 
   // Create tuple.
-  gk.Bandwidth(2.0);
-  tuple<GaussianKernel, string> t = make_tuple(gk, filename);
+  tuple<GaussianKernel*, string> t = make_tuple((GaussianKernel*) NULL,
+      filename);
   d.value = boost::any(t);
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
 
-  GaussianKernel* output = NULL;
-  GetParam<GaussianKernel>((const util::ParamData&) d, (void*) NULL,
+  GaussianKernel** output = NULL;
+  GetParam<GaussianKernel*>((const util::ParamData&) d, (void*) NULL,
       (void*) &output);
 
-  BOOST_REQUIRE_EQUAL(output->Bandwidth(), 5.0);
+  BOOST_REQUIRE_EQUAL((*output)->Bandwidth(), 5.0);
 
   remove("kernel.bin");
+  delete *output;
 }
 
 BOOST_AUTO_TEST_CASE(RawParamDoubleTest)
@@ -300,17 +301,17 @@ BOOST_AUTO_TEST_CASE(GetRawParamModelTest)
   kernel::GaussianKernel gk(5.0);
 
   // Create tuple.
-  tuple<GaussianKernel, string> t = make_tuple(gk, filename);
+  tuple<GaussianKernel*, string> t = make_tuple(&gk, filename);
   d.value = boost::any(t);
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
 
-  tuple<GaussianKernel, string>* output = NULL;
-  GetRawParam<tuple<GaussianKernel, string>>((const util::ParamData&) d,
+  tuple<GaussianKernel*, string>* output = NULL;
+  GetRawParam<tuple<GaussianKernel*, string>>((const util::ParamData&) d,
       (void*) NULL, (void*) &output);
 
-  BOOST_REQUIRE_EQUAL(get<0>(*output).Bandwidth(), 5.0);
+  BOOST_REQUIRE_EQUAL(get<0>(*output)->Bandwidth(), 5.0);
 }
 
 BOOST_AUTO_TEST_CASE(GetRawParamDatasetInfoTest)
@@ -403,7 +404,7 @@ BOOST_AUTO_TEST_CASE(OutputParamModelTest)
   // Create value.
   string filename = "kernel.bin";
   GaussianKernel gk(5.0);
-  tuple<GaussianKernel, string> t = make_tuple(gk, filename);
+  tuple<GaussianKernel*, string> t = make_tuple(&gk, filename);
 
   d.value = boost::any(t);
   d.input = false;
@@ -491,7 +492,7 @@ BOOST_AUTO_TEST_CASE(SetParamModelTest)
   // Create initial value.
   string filename = "kernel.bin";
   GaussianKernel gk(2.0);
-  d.value = boost::any(make_tuple(gk, filename));
+  d.value = boost::any(make_tuple(&gk, filename));
 
   // Get a new string.
   string newFilename = "new_kernel.bin";
@@ -501,8 +502,8 @@ BOOST_AUTO_TEST_CASE(SetParamModelTest)
       (void*) NULL);
 
   // Make sure the change went through.
-  tuple<GaussianKernel, string>& t =
-      *boost::any_cast<tuple<GaussianKernel, string>>(&d.value);
+  tuple<GaussianKernel*, string>& t =
+      *boost::any_cast<tuple<GaussianKernel*, string>>(&d.value);
 
   BOOST_REQUIRE_EQUAL(get<1>(t), "new_kernel.bin");
 }

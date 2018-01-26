@@ -135,12 +135,12 @@ BOOST_AUTO_TEST_CASE(LRModelReload)
 
   mlpackMain();
 
-  LinearRegression model = CLI::GetParam<LinearRegression>("output_model");
+  LinearRegression* model = CLI::GetParam<LinearRegression*>("output_model");
   const arma::rowvec testY1 = CLI::GetParam<arma::rowvec>("output_predictions");
 
   ResetSettings();
 
-  SetInputParam("input_model", std::move(model));
+  SetInputParam("input_model", model);
   SetInputParam("test", std::move(testX));
 
   mlpackMain();
@@ -209,7 +209,7 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest2)
 
   mlpackMain();
 
-  LinearRegression model = CLI::GetParam<LinearRegression>("output_model");
+  LinearRegression* model = CLI::GetParam<LinearRegression*>("output_model");
 
   ResetSettings();
 
