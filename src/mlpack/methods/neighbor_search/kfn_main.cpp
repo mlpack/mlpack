@@ -157,7 +157,7 @@ static void mlpackMain()
     epsilon = 1 - percentage;
 
   // We either have to load the reference data, or we have to load the model.
-  NSModel<FurthestNeighborSort> kfn;
+  NSModel<FurthestNeighborSort>* kfn;
 
   const string algorithm = CLI::GetParam<string>("algorithm");
   RequireParamInSet<string>("algorithm", { "naive", "single_tree", "dual_tree",
@@ -175,6 +175,8 @@ static void mlpackMain()
 
   if (CLI::HasParam("reference"))
   {
+    kfn = new KFNModel();
+
     // Get all the parameters.
     RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star",
         "ball", "x", "hilbert-r", "r-plus", "r-plus-plus", "vp", "rp", "max-rp",
@@ -212,8 +214,8 @@ static void mlpackMain()
     else if (treeType == "oct")
       tree = KFNModel::OCTREE;
 
-    kfn.TreeType() = tree;
-    kfn.RandomBasis() = randomBasis;
+    kfn->TreeType() = tree;
+    kfn->RandomBasis() = randomBasis;
 
     arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
@@ -221,27 +223,27 @@ static void mlpackMain()
         << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
         << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
 
-    kfn.BuildModel(std::move(referenceSet), size_t(lsInt), searchMode, epsilon);
+    kfn->BuildModel(std::move(referenceSet), size_t(lsInt), searchMode, epsilon);
   }
   else
   {
     // Load the model from file.
-    kfn = std::move(CLI::GetParam<KFNModel>("input_model"));
+    kfn = CLI::GetParam<KFNModel*>("input_model");
 
     // Adjust search mode.
-    kfn.SearchMode() = searchMode;
-    kfn.Epsilon() = epsilon;
+    kfn->SearchMode() = searchMode;
+    kfn->Epsilon() = epsilon;
 
     // If leaf_size wasn't provided, let's consider the current value in the
     // loaded model.  Else, update it (only considered when building the query
     // tree).
     if (CLI::HasParam("leaf_size"))
-      kfn.LeafSize() = size_t(lsInt);
+      kfn->LeafSize() = size_t(lsInt);
 
     Log::Info << "Using kFN model from '"
-        << CLI::GetPrintableParam<KFNModel>("input_model") << "' (trained on "
-        << kfn.Dataset().n_rows << "x" << kfn.Dataset().n_cols << " dataset)."
-        << endl;
+        << CLI::GetPrintableParam<KFNModel*>("input_model") << "' (trained on "
+        << kfn->Dataset().n_rows << "x" << kfn->Dataset().n_cols
+        << " dataset)." << endl;
   }
 
   // Perform search, if desired.
@@ -261,11 +263,11 @@ static void mlpackMain()
     // Sanity check on k value: must be greater than 0, must be less than the
     // number of reference points.  Since it is unsigned, we only test the upper
     // bound.
-    if (k > kfn.Dataset().n_cols)
+    if (k > kfn->Dataset().n_cols)
     {
       Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less "
           << "than or equal to the number of reference points ("
-          << kfn.Dataset().n_cols << ")." << endl;
+          << kfn->Dataset().n_cols << ")." << endl;
     }
 
     // Now run the search.
@@ -273,21 +275,19 @@ static void mlpackMain()
     arma::mat distances;
 
     if (CLI::HasParam("query"))
-      kfn.Search(std::move(queryData), k, neighbors, distances);
+      kfn->Search(std::move(queryData), k, neighbors, distances);
     else
-      kfn.Search(k, neighbors, distances);
+      kfn->Search(k, neighbors, distances);
     Log::Info << "Search complete." << endl;
 
-    // Save output, if desired.
-    if (CLI::HasParam("neighbors"))
-      CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
-    if (CLI::HasParam("distances"))
-      CLI::GetParam<arma::mat>("distances") = std::move(distances);
+    // Save output.
+    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+    CLI::GetParam<arma::mat>("distances") = std::move(distances);
 
     // Calculate the effective error, if desired.
     if (CLI::HasParam("true_distances"))
     {
-      if (kfn.Epsilon() == 0)
+      if (kfn->Epsilon() == 0)
         Log::Warn << PRINT_PARAM_STRING("true_distances") << " specified, but "
             << "the search is exact, so there is no need to calculate the "
             << "error!" << endl;
@@ -307,7 +307,7 @@ static void mlpackMain()
     // Calculate the recall, if desired.
     if (CLI::HasParam("true_neighbors"))
     {
-      if (kfn.Epsilon() == 0)
+      if (kfn->Epsilon() == 0)
         Log::Warn << PRINT_PARAM_STRING("true_neighbors") << " specified, but "
             << "the search is exact, so there is no need to calculate the "
             << "recall!" << endl;
@@ -324,6 +324,5 @@ static void mlpackMain()
     }
   }
 
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<KFNModel>("output_model") = std::move(kfn);
+  CLI::GetParam<KFNModel*>("output_model") = kfn;
 }

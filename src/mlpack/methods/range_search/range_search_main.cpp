@@ -136,11 +136,13 @@ static void mlpackMain()
       "leaf size must be greater than 0");
 
   // We either have to load the reference data, or we have to load the model.
-  RSModel rs;
+  RSModel* rs;
   const bool naive = CLI::HasParam("naive");
   const bool singleMode = CLI::HasParam("single_mode");
   if (CLI::HasParam("reference"))
   {
+    rs = new RSModel();
+
     // Get all the parameters.
     const string treeType = CLI::GetParam<string>("tree_type");
     RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star",
@@ -178,8 +180,8 @@ static void mlpackMain()
     else if (treeType == "oct")
       tree = RSModel::OCTREE;
 
-    rs.TreeType() = tree;
-    rs.RandomBasis() = randomBasis;
+    rs->TreeType() = tree;
+    rs->RandomBasis() = randomBasis;
 
     arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
@@ -189,22 +191,22 @@ static void mlpackMain()
 
     const size_t leafSize = size_t(lsInt);
 
-    rs.BuildModel(std::move(referenceSet), leafSize, naive, singleMode);
+    rs->BuildModel(std::move(referenceSet), leafSize, naive, singleMode);
   }
   else
   {
     // Load the model from file.
-    rs = std::move(CLI::GetParam<RSModel>("input_model"));
+    rs = CLI::GetParam<RSModel*>("input_model");
 
     Log::Info << "Using range search model from '"
         << CLI::GetPrintableParam<RSModel>("input_model") << "' ("
-        << "trained on " << rs.Dataset().n_rows << "x" << rs.Dataset().n_cols
+        << "trained on " << rs->Dataset().n_rows << "x" << rs->Dataset().n_cols
         << " dataset)." << endl;
 
     // Adjust singleMode and naive if necessary.
-    rs.SingleMode() = CLI::HasParam("single_mode");
-    rs.Naive() = CLI::HasParam("naive");
-    rs.LeafSize() = size_t(lsInt);
+    rs->SingleMode() = CLI::HasParam("single_mode");
+    rs->Naive() = CLI::HasParam("naive");
+    rs->LeafSize() = size_t(lsInt);
   }
 
   // Perform search, if desired.
@@ -235,9 +237,9 @@ static void mlpackMain()
     vector<vector<double>> distances;
 
     if (CLI::HasParam("query"))
-      rs.Search(std::move(queryData), r, neighbors, distances);
+      rs->Search(std::move(queryData), r, neighbors, distances);
     else
-      rs.Search(r, neighbors, distances);
+      rs->Search(r, neighbors, distances);
 
     Log::Info << "Search complete." << endl;
 
@@ -301,7 +303,6 @@ static void mlpackMain()
     }
   }
 
-  // Save the output model, if desired.
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<RSModel>("output_model") = std::move(rs);
+  // Save the output model.
+  CLI::GetParam<RSModel*>("output_model") = rs;
 }

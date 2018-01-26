@@ -153,17 +153,21 @@ static void mlpackMain()
   }
 
   // Initialize GMM.
-  GMM gmm(size_t(gaussians), dataPoints.n_rows);
+  GMM* gmm;
 
   if (CLI::HasParam("input_model"))
   {
-    gmm = std::move(CLI::GetParam<GMM>("input_model"));
+    gmm = CLI::GetParam<GMM*>("input_model");
 
-    if (gmm.Dimensionality() != dataPoints.n_rows)
+    if (gmm->Dimensionality() != dataPoints.n_rows)
       Log::Fatal << "Given input data (with " << PRINT_PARAM_STRING("input")
           << ") has dimensionality " << dataPoints.n_rows << ", but the initial"
           << " model (given with " << PRINT_PARAM_STRING("input_model")
-          << " has dimensionality " << gmm.Dimensionality() << "!" << endl;
+          << " has dimensionality " << gmm->Dimensionality() << "!" << endl;
+  }
+  else
+  {
+    gmm = new GMM(size_t(gaussians), dataPoints.n_rows);
   }
 
   // Gather parameters for EMFit object.
@@ -199,7 +203,7 @@ static void mlpackMain()
       // Compute the parameters of the model using the EM algorithm.
       Timer::Start("em");
       EMFit<KMeansType, DiagonalConstraint> em(maxIterations, tolerance, k);
-      likelihood = gmm.Train(dataPoints, CLI::GetParam<int>("trials"), false,
+      likelihood = gmm->Train(dataPoints, CLI::GetParam<int>("trials"), false,
           em);
       Timer::Stop("em");
     }
@@ -208,7 +212,7 @@ static void mlpackMain()
       // Compute the parameters of the model using the EM algorithm.
       Timer::Start("em");
       EMFit<KMeansType> em(maxIterations, tolerance, k);
-      likelihood = gmm.Train(dataPoints, CLI::GetParam<int>("trials"), false,
+      likelihood = gmm->Train(dataPoints, CLI::GetParam<int>("trials"), false,
           em);
       Timer::Stop("em");
     }
@@ -217,7 +221,7 @@ static void mlpackMain()
       // Compute the parameters of the model using the EM algorithm.
       Timer::Start("em");
       EMFit<KMeansType, NoConstraint> em(maxIterations, tolerance, k);
-      likelihood = gmm.Train(dataPoints, CLI::GetParam<int>("trials"), false,
+      likelihood = gmm->Train(dataPoints, CLI::GetParam<int>("trials"), false,
           em);
       Timer::Stop("em");
     }
@@ -231,7 +235,7 @@ static void mlpackMain()
       // Compute the parameters of the model using the EM algorithm.
       Timer::Start("em");
       EMFit<kmeans::KMeans<>, DiagonalConstraint> em(maxIterations, tolerance);
-      likelihood = gmm.Train(dataPoints, CLI::GetParam<int>("trials"), false,
+      likelihood = gmm->Train(dataPoints, CLI::GetParam<int>("trials"), false,
           em);
       Timer::Stop("em");
     }
@@ -240,7 +244,7 @@ static void mlpackMain()
       // Compute the parameters of the model using the EM algorithm.
       Timer::Start("em");
       EMFit<> em(maxIterations, tolerance);
-      likelihood = gmm.Train(dataPoints, CLI::GetParam<int>("trials"), false,
+      likelihood = gmm->Train(dataPoints, CLI::GetParam<int>("trials"), false,
           em);
       Timer::Stop("em");
     }
@@ -249,7 +253,7 @@ static void mlpackMain()
       // Compute the parameters of the model using the EM algorithm.
       Timer::Start("em");
       EMFit<KMeans<>, NoConstraint> em(maxIterations, tolerance);
-      likelihood = gmm.Train(dataPoints, CLI::GetParam<int>("trials"), false,
+      likelihood = gmm->Train(dataPoints, CLI::GetParam<int>("trials"), false,
           em);
       Timer::Stop("em");
     }
@@ -257,6 +261,5 @@ static void mlpackMain()
 
   Log::Info << "Log-likelihood of estimate: " << likelihood << "." << endl;
 
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<GMM>("output_model") = std::move(gmm);
+  CLI::GetParam<GMM*>("output_model") = gmm;
 }

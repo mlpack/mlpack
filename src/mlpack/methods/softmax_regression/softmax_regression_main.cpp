@@ -113,7 +113,7 @@ void TestClassifyAcc(const size_t numClasses, const Model& model);
 
 // Build the softmax model given the parameters.
 template<typename Model>
-unique_ptr<Model> TrainSoftmax(const size_t maxIterations);
+Model* TrainSoftmax(const size_t maxIterations);
 
 static void mlpackMain()
 {
@@ -141,13 +141,11 @@ static void mlpackMain()
   RequireAtLeastOnePassed({ "output_model", "predictions" }, false, "no results"
       " will be saved");
 
-  using SM = SoftmaxRegression;
-  unique_ptr<SM> sm = TrainSoftmax<SM>(maxIterations);
+  SoftmaxRegression* sm = TrainSoftmax<SoftmaxRegression>(maxIterations);
 
   TestClassifyAcc(sm->NumClasses(), *sm);
 
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<SM>("output_model") = std::move(*sm);
+  CLI::GetParam<SoftmaxRegression*>("output_model") = sm;
 }
 
 size_t CalculateNumberOfClasses(const size_t numClasses,
@@ -230,17 +228,14 @@ void TestClassifyAcc(size_t numClasses, const Model& model)
 }
 
 template<typename Model>
-unique_ptr<Model> TrainSoftmax(const size_t maxIterations)
+Model* TrainSoftmax(const size_t maxIterations)
 {
   using namespace mlpack;
 
-  using SRF = regression::SoftmaxRegressionFunction;
-
-  unique_ptr<Model> sm;
+  Model* sm;
   if (CLI::HasParam("input_model"))
   {
-    sm.reset(new Model(0, 0, false));
-    *sm = std::move(CLI::GetParam<Model>("input_model"));
+    sm = CLI::GetParam<Model*>("input_model");
   }
   else
   {
@@ -259,8 +254,8 @@ unique_ptr<Model> TrainSoftmax(const size_t maxIterations)
 
     const size_t numBasis = 5;
     optimization::L_BFGS optimizer(numBasis, maxIterations);
-    sm.reset(new Model(trainData, trainLabels, numClasses,
-        CLI::GetParam<double>("lambda"), intercept, std::move(optimizer)));
+    sm = new Model(trainData, trainLabels, numClasses,
+        CLI::GetParam<double>("lambda"), intercept, std::move(optimizer));
   }
 
   return sm;
