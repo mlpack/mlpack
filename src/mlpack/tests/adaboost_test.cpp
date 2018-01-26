@@ -44,12 +44,12 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptronIter iterations.
-  int perceptronIter = 400;
+  int perceptronIter = 800;
 
   Perceptron<> p(inputData, labels.row(0), numClasses, perceptronIter);
 
   // Define parameters for AdaBoost.
-  size_t iterations = 100;
+  size_t iterations = 50;
   double tolerance = 1e-10;
   AdaBoost<> a(inputData, labels.row(0), numClasses, p, iterations, tolerance);
 
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptronIter iterations.
-  int perceptronIter = 400;
+  int perceptronIter = 800;
 
   arma::Row<size_t> perceptronPrediction(labels.n_cols);
   Perceptron<> p(inputData, labels.row(0), numClasses, perceptronIter);
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
   double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
 
   // Define parameters for AdaBoost.
-  size_t iterations = 100;
+  size_t iterations = 50;
   double tolerance = 1e-10;
   AdaBoost<> a(inputData, labels.row(0), numClasses, p, iterations, tolerance);
 
