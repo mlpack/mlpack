@@ -54,9 +54,18 @@ std::string DefaultParamImpl(
     const util::ParamData& data,
     const typename boost::enable_if_c<
         arma::is_arma_type<T>::value ||
-        data::HasSerialize<T>::value ||
         std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
                                    arma::mat>>::value>::type* /* junk */ = 0);
+
+/**
+ * Return the default value of a model option (this returns the default
+ * filename, or '' if the default is no file).
+ */
+template<typename T>
+std::string DefaultParamImpl(
+    const util::ParamData& data,
+    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
+    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0);
 
 /**
  * Return the default value of an option.  This is the function that will be
@@ -68,7 +77,7 @@ void DefaultParam(const util::ParamData& data,
                   void* output)
 {
   std::string* outstr = (std::string*) output;
-  *outstr = DefaultParamImpl<T>(data);
+  *outstr = DefaultParamImpl<typename std::remove_pointer<T>::type>(data);
 }
 
 } // namespace cli
