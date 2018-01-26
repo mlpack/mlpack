@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(std::make_tuple(info, testData)));
   SetInputParam("input_model",
-      std::move(CLI::GetParam<DecisionTreeModel>("output_model")));
+      std::move(CLI::GetParam<DecisionTreeModel*>("output_model")));
 
   mlpackMain();
 
@@ -308,7 +308,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(std::make_tuple(info, testData)));
   SetInputParam("input_model",
-      std::move(CLI::GetParam<DecisionTreeModel>("output_model")));
+      std::move(CLI::GetParam<DecisionTreeModel*>("output_model")));
 
   mlpackMain();
 

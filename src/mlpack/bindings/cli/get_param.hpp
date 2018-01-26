@@ -112,7 +112,6 @@ T*& GetParam(
     d.loaded = true;
     std::get<0>(*tuple) = model;
   }
-
   return std::get<0>(*tuple);
 }
 
