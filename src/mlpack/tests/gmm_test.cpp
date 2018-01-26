@@ -761,7 +761,6 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
  */
 BOOST_AUTO_TEST_CASE(DiagonalGMMTrainTest)
 {
-  Log::Warn.ignoreInput = false;
   // We'll have three diagonal-covariance Gaussian distributions from this
   // mixture.
   distribution::GaussianDistribution d1("0.0 1.0 0.0", "1.0 0.0 0.0;"
