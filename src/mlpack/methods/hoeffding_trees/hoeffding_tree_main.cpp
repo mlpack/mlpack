@@ -140,25 +140,25 @@ static void mlpackMain()
       true, "unrecognized numeric split strategy");
 
   // Do we need to load a model or do we already have one?
-  HoeffdingTreeModel model;
+  HoeffdingTreeModel* model;
   DatasetInfo datasetInfo;
   arma::mat trainingSet;
   arma::Row<size_t> labels;
   if (CLI::HasParam("input_model"))
   {
-    model = std::move(CLI::GetParam<HoeffdingTreeModel>("input_model"));
+    model = CLI::GetParam<HoeffdingTreeModel*>("input_model");
   }
   else
   {
     // Initialize a model.
     if (!CLI::HasParam("info_gain") && (numericSplitStrategy == "domingos"))
-      model = HoeffdingTreeModel(HoeffdingTreeModel::GINI_HOEFFDING);
+      model = new HoeffdingTreeModel(HoeffdingTreeModel::GINI_HOEFFDING);
     else if (!CLI::HasParam("info_gain") && (numericSplitStrategy == "binary"))
-      model = HoeffdingTreeModel(HoeffdingTreeModel::GINI_BINARY);
+      model = new HoeffdingTreeModel(HoeffdingTreeModel::GINI_BINARY);
     else if (CLI::HasParam("info_gain") && (numericSplitStrategy == "domingos"))
-      model = HoeffdingTreeModel(HoeffdingTreeModel::INFO_HOEFFDING);
+      model = new HoeffdingTreeModel(HoeffdingTreeModel::INFO_HOEFFDING);
     else if (CLI::HasParam("info_gain") && (numericSplitStrategy == "binary"))
-      model = HoeffdingTreeModel(HoeffdingTreeModel::INFO_BINARY);
+      model = new HoeffdingTreeModel(HoeffdingTreeModel::INFO_BINARY);
   }
 
   // Now, do we need to train?
@@ -207,7 +207,7 @@ static void mlpackMain()
     if (!CLI::HasParam("input_model"))
     {
       // Build the model.
-      model.BuildModel(trainingSet, datasetInfo, labels,
+      model->BuildModel(trainingSet, datasetInfo, labels,
           arma::max(labels) + 1, batchTraining, confidence, maxSamples,
           100, minSamples, bins, observationsBeforeBinning);
       --passes; // This model-building takes one pass.
@@ -219,12 +219,12 @@ static void mlpackMain()
       // We only need to do batch training if we've not already called
       // BuildModel.
       if (CLI::HasParam("input_model"))
-        model.Train(trainingSet, labels, true);
+        model->Train(trainingSet, labels, true);
     }
     else
     {
       for (size_t p = 0; p < passes; ++p)
-        model.Train(trainingSet, labels, false);
+        model->Train(trainingSet, labels, false);
     }
 
     Timer::Stop("tree_training");
@@ -235,7 +235,7 @@ static void mlpackMain()
   {
     // Get training error.
     arma::Row<size_t> predictions;
-    model.Classify(trainingSet, predictions);
+    model->Classify(trainingSet, predictions);
 
     size_t correct = 0;
     for (size_t i = 0; i < labels.n_elem; ++i)
@@ -248,7 +248,7 @@ static void mlpackMain()
   }
 
   // Get the number of nodes in the tree.
-  Log::Info << model.NumNodes() << " nodes in the tree." << endl;
+  Log::Info << model->NumNodes() << " nodes in the tree." << endl;
 
   // The tree is trained or loaded.  Now do any testing if we need.
   if (CLI::HasParam("test"))
@@ -262,7 +262,7 @@ static void mlpackMain()
     arma::rowvec probabilities;
 
     Timer::Start("tree_testing");
-    model.Classify(testSet, predictions, probabilities);
+    model->Classify(testSet, predictions, probabilities);
     Timer::Stop("tree_testing");
 
     if (CLI::HasParam("test_labels"))
@@ -281,14 +281,10 @@ static void mlpackMain()
           100.0 << ")." << endl;
     }
 
-    if (CLI::HasParam("predictions"))
-      CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictions);
-
-    if (CLI::HasParam("probabilities"))
-      CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
+    CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictions);
+    CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
   }
 
   // Check the accuracy on the training set.
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<HoeffdingTreeModel>("output_model") = std::move(model);
+  CLI::GetParam<HoeffdingTreeModel*>("output_model") = model;
 }

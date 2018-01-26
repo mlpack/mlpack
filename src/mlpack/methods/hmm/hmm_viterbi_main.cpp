@@ -77,8 +77,7 @@ struct Viterbi
     hmm.Predict(dataSeq, sequence);
 
     // Save output.
-    if (CLI::HasParam("output"))
-      CLI::GetParam<arma::Mat<size_t>>("output") = std::move(sequence);
+    CLI::GetParam<arma::Mat<size_t>>("output") = std::move(sequence);
   }
 };
 
@@ -86,5 +85,5 @@ static void mlpackMain()
 {
   RequireAtLeastOnePassed({ "output" }, false, "no results will be saved");
 
-  CLI::GetParam<HMMModel>("input_model").PerformAction<Viterbi>((void*) NULL);
+  CLI::GetParam<HMMModel*>("input_model")->PerformAction<Viterbi>((void*) NULL);
 }

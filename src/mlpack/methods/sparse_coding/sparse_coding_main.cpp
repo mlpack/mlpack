@@ -146,9 +146,11 @@ static void mlpackMain()
       "Newton method tolerance must be nonnegative");
 
   // Do we have an existing model?
-  SparseCoding sc(0, 0.0);
+  SparseCoding* sc;
   if (CLI::HasParam("input_model"))
-    sc = std::move(CLI::GetParam<SparseCoding>("input_model"));
+    sc = CLI::GetParam<SparseCoding*>("input_model");
+  else
+    sc = new SparseCoding(0, 0.0);
 
   if (CLI::HasParam("training"))
   {
@@ -162,12 +164,12 @@ static void mlpackMain()
         matX.col(i) /= norm(matX.col(i), 2);
     }
 
-    sc.Lambda1() = CLI::GetParam<double>("lambda1");
-    sc.Lambda2() = CLI::GetParam<double>("lambda2");
-    sc.MaxIterations() = (size_t) CLI::GetParam<int>("max_iterations");
-    sc.Atoms() = (size_t) CLI::GetParam<int>("atoms");
-    sc.ObjTolerance() = CLI::GetParam<double>("objective_tolerance");
-    sc.NewtonTolerance() = CLI::GetParam<double>("newton_tolerance");
+    sc->Lambda1() = CLI::GetParam<double>("lambda1");
+    sc->Lambda2() = CLI::GetParam<double>("lambda2");
+    sc->MaxIterations() = (size_t) CLI::GetParam<int>("max_iterations");
+    sc->Atoms() = (size_t) CLI::GetParam<int>("atoms");
+    sc->ObjTolerance() = CLI::GetParam<double>("objective_tolerance");
+    sc->NewtonTolerance() = CLI::GetParam<double>("newton_tolerance");
 
     // Inform the user if we are overwriting their model.
     if (CLI::HasParam("input_model"))
@@ -175,36 +177,36 @@ static void mlpackMain()
       Log::Info << "Using dictionary from existing model in '"
           << CLI::GetPrintableParam<SparseCoding>("input_model")
           << "' as initial dictionary for training." << endl;
-      sc.Train<NothingInitializer>(matX);
+      sc->Train<NothingInitializer>(matX);
     }
     else if (CLI::HasParam("initial_dictionary"))
     {
       // Load initial dictionary directly into sparse coding object.
-      sc.Dictionary() =
+      sc->Dictionary() =
           std::move(CLI::GetParam<arma::mat>("initial_dictionary"));
 
       // Validate size of initial dictionary.
-      if (sc.Dictionary().n_cols != sc.Atoms())
+      if (sc->Dictionary().n_cols != sc->Atoms())
       {
-        Log::Fatal << "The initial dictionary has " << sc.Dictionary().n_cols
+        Log::Fatal << "The initial dictionary has " << sc->Dictionary().n_cols
             << " atoms, but the number of atoms was specified to be "
-            << sc.Atoms() << "!" << endl;
+            << sc->Atoms() << "!" << endl;
       }
 
-      if (sc.Dictionary().n_rows != matX.n_rows)
+      if (sc->Dictionary().n_rows != matX.n_rows)
       {
-        Log::Fatal << "The initial dictionary has " << sc.Dictionary().n_rows
+        Log::Fatal << "The initial dictionary has " << sc->Dictionary().n_rows
             << " dimensions, but the data has " << matX.n_rows << " dimensions!"
             << endl;
       }
 
       // Run sparse coding.
-      sc.Train<NothingInitializer>(matX);
+      sc->Train<NothingInitializer>(matX);
     }
     else
     {
       // Run sparse coding with the default initialization.
-      sc.Train(matX);
+      sc->Train(matX);
     }
   }
 
@@ -213,9 +215,9 @@ static void mlpackMain()
   {
     mat matY = std::move(CLI::GetParam<arma::mat>("test"));
 
-    if (matY.n_rows != sc.Dictionary().n_rows)
+    if (matY.n_rows != sc->Dictionary().n_rows)
       Log::Fatal << "Model was trained with a dimensionality of "
-          << sc.Dictionary().n_rows << ", but test data '"
+          << sc->Dictionary().n_rows << ", but test data '"
           << CLI::GetPrintableParam<arma::mat>("test") << "' have a "
           << "dimensionality of " << matY.n_rows << "!" << endl;
 
@@ -228,20 +230,15 @@ static void mlpackMain()
     }
 
     mat codes;
-    sc.Encode(matY, codes);
+    sc->Encode(matY, codes);
 
-    if (CLI::HasParam("codes"))
-      CLI::GetParam<arma::mat>("codes") = std::move(codes);
+    CLI::GetParam<arma::mat>("codes") = std::move(codes);
   }
 
-  // Did the user want to save the dictionary?  If so we can move that, but only
-  // if we are not also saving an output model.
-  if (CLI::HasParam("dictionary") && !CLI::HasParam("output_model"))
-    CLI::GetParam<arma::mat>("dictionary") = std::move(sc.Dictionary());
-  else if (CLI::HasParam("dictionary"))
-    CLI::GetParam<arma::mat>("dictionary") = sc.Dictionary();
+  // Did the user want to save the dictionary?  Use an alias for the dictionary.
+  CLI::GetParam<arma::mat>("dictionary") = arma::mat(sc->Dictionary().memptr(),
+      sc->Dictionary().n_rows, sc->Dictionary().n_cols, false, false);
 
-  // Did the user want to save the model?
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<SparseCoding>("output_model") = std::move(sc);
+  // Save the model.
+  CLI::GetParam<SparseCoding*>("output_model") = sc;
 }

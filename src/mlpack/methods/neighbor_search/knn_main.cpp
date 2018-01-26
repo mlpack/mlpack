@@ -166,7 +166,7 @@ static void mlpackMain()
       "epsilon must be positive");
 
   // We either have to load the reference data, or we have to load the model.
-  KNNModel knn;
+  KNNModel* knn;
 
   const string algorithm = CLI::GetParam<string>("algorithm");
   RequireParamInSet<string>("algorithm", { "naive", "single_tree", "dual_tree",
@@ -184,6 +184,8 @@ static void mlpackMain()
 
   if (CLI::HasParam("reference"))
   {
+    knn = new KNNModel();
+
     // Get all the parameters.
     const string treeType = CLI::GetParam<string>("tree_type");
     const bool randomBasis = CLI::HasParam("random_basis");
@@ -223,11 +225,11 @@ static void mlpackMain()
     else if (treeType == "oct")
       tree = KNNModel::OCTREE;
 
-    knn.TreeType() = tree;
-    knn.RandomBasis() = randomBasis;
-    knn.LeafSize() = size_t(lsInt);
-    knn.Tau() = tau;
-    knn.Rho() = rho;
+    knn->TreeType() = tree;
+    knn->RandomBasis() = randomBasis;
+    knn->LeafSize() = size_t(lsInt);
+    knn->Tau() = tau;
+    knn->Rho() = rho;
 
     arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
 
@@ -236,27 +238,27 @@ static void mlpackMain()
         << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
         << endl;
 
-    knn.BuildModel(std::move(referenceSet), size_t(lsInt), searchMode, epsilon);
+    knn->BuildModel(std::move(referenceSet), size_t(lsInt), searchMode, epsilon);
   }
   else
   {
     // Load the model from file.
-    knn = std::move(CLI::GetParam<KNNModel>("input_model"));
+    knn = CLI::GetParam<KNNModel*>("input_model");
 
     // Adjust search mode.
-    knn.SearchMode() = searchMode;
-    knn.Epsilon() = epsilon;
+    knn->SearchMode() = searchMode;
+    knn->Epsilon() = epsilon;
 
     // If leaf_size wasn't provided, let's consider the current value in the
     // loaded model.  Else, update it (only considered when building the query
     // tree).
     if (CLI::HasParam("leaf_size"))
-      knn.LeafSize() = size_t(lsInt);
+      knn->LeafSize() = size_t(lsInt);
 
     Log::Info << "Loaded kNN model from '"
-        << CLI::GetPrintableParam<KNNModel>("input_model") << "' (trained on "
-        << knn.Dataset().n_rows << "x" << knn.Dataset().n_cols << " dataset)."
-        << endl;
+        << CLI::GetPrintableParam<KNNModel*>("input_model") << "' (trained on "
+        << knn->Dataset().n_rows << "x" << knn->Dataset().n_cols
+        << " dataset)." << endl;
   }
 
   // Perform search, if desired.
@@ -276,11 +278,11 @@ static void mlpackMain()
     // Sanity check on k value: must be greater than 0, must be less than the
     // number of reference points.  Since it is unsigned, we only test the upper
     // bound.
-    if (k > knn.Dataset().n_cols)
+    if (k > knn->Dataset().n_cols)
     {
       Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
       Log::Fatal << "than or equal to the number of reference points (";
-      Log::Fatal << knn.Dataset().n_cols << ")." << endl;
+      Log::Fatal << knn->Dataset().n_cols << ")." << endl;
     }
 
     // Now run the search.
@@ -288,21 +290,19 @@ static void mlpackMain()
     arma::mat distances;
 
     if (CLI::HasParam("query"))
-      knn.Search(std::move(queryData), k, neighbors, distances);
+      knn->Search(std::move(queryData), k, neighbors, distances);
     else
-      knn.Search(k, neighbors, distances);
+      knn->Search(k, neighbors, distances);
     Log::Info << "Search complete." << endl;
 
-    // Save output, if desired.
-    if (CLI::HasParam("neighbors"))
-      CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
-    if (CLI::HasParam("distances"))
-      CLI::GetParam<arma::mat>("distances") = std::move(distances);
+    // Save output.
+    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+    CLI::GetParam<arma::mat>("distances") = std::move(distances);
 
     // Calculate the effective error, if desired.
     if (CLI::HasParam("true_distances"))
     {
-      if (knn.TreeType() != KNNModel::SPILL_TREE && knn.Epsilon() == 0)
+      if (knn->TreeType() != KNNModel::SPILL_TREE && knn->Epsilon() == 0)
         Log::Warn << PRINT_PARAM_STRING("true_distances") << "specified, but "
             << "the search is exact, so there is no need to calculate the "
             << "error!" << endl;
@@ -322,7 +322,7 @@ static void mlpackMain()
     // Calculate the recall, if desired.
     if (CLI::HasParam("true_neighbors"))
     {
-      if (knn.TreeType() != KNNModel::SPILL_TREE && knn.Epsilon() == 0)
+      if (knn->TreeType() != KNNModel::SPILL_TREE && knn->Epsilon() == 0)
         Log::Warn << PRINT_PARAM_STRING("true_neighbors") << " specified, but "
             << " the search is exact, so there is no need to calculate the "
             << "recall!" << endl;
@@ -339,6 +339,5 @@ static void mlpackMain()
     }
   }
 
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<KNNModel>("output_model") = std::move(knn);
+  CLI::GetParam<KNNModel*>("output_model") = knn;
 }

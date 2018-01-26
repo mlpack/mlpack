@@ -168,7 +168,7 @@ static void mlpackMain()
   }
   else
   {
-    tree = &CLI::GetParam<DTree<arma::mat>>("input_model");
+    tree = CLI::GetParam<DTree<arma::mat>*>("input_model");
   }
 
   // Compute the density at the provided test points and output the density in
@@ -213,8 +213,7 @@ static void mlpackMain()
     if (!ofs.is_open())
     {
       Log::Warn << "Unable to open file '" << tagFile
-        << "' to save tag membership info."
-        << std::endl;
+          << "' to save tag membership info." << std::endl;
     }
     else if (CLI::HasParam("path_format"))
     {
@@ -231,7 +230,7 @@ static void mlpackMain()
       else
       {
         Log::Warn << "Unknown path format specified: '" << pathFormat
-          << "'. Valid are: lr | lr-id | id-lr. Defaults to 'lr'." << endl;
+            << "'. Valid are: lr | lr-id | id-lr. Defaults to 'lr'." << endl;
         theFormat = PathCacher::FormatLR;
       }
 
@@ -284,10 +283,5 @@ static void mlpackMain()
   }
 
   // Save the model, if desired.
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<DTree<arma::mat>>("output_model") = std::move(*tree);
-
-  // Clean up memory, if we need to.
-  if (!CLI::HasParam("input_model") && !CLI::HasParam("output_model"))
-    delete tree;
+  CLI::GetParam<DTree<arma::mat>*>("output_model") = tree;
 }

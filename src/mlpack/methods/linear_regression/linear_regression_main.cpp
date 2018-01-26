@@ -96,7 +96,7 @@ static void mlpackMain()
   mat regressors;
   rowvec responses;
 
-  LinearRegression lr;
+  LinearRegression* lr;
 
   const bool computeModel = !CLI::HasParam("input_model");
   const bool computePrediction = CLI::HasParam("test");
@@ -148,14 +148,14 @@ static void mlpackMain()
     }
 
     Timer::Start("regression");
-    lr = LinearRegression(regressors, responses, lambda);
+    lr = new LinearRegression(regressors, responses, lambda);
     Timer::Stop("regression");
   }
   else
   {
     // A model file was passed in, so load it.
     Timer::Start("load_model");
-    lr = std::move(CLI::GetParam<LinearRegression>("input_model"));
+    lr = CLI::GetParam<LinearRegression*>("input_model");
     Timer::Stop("load_model");
   }
 
@@ -168,9 +168,9 @@ static void mlpackMain()
     Timer::Stop("load_test_points");
 
     // Ensure that test file data has the right number of features.
-    if ((lr.Parameters().n_elem - 1) != points.n_rows)
+    if ((lr->Parameters().n_elem - 1) != points.n_rows)
     {
-      Log::Fatal << "The model was trained on " << lr.Parameters().n_elem - 1
+      Log::Fatal << "The model was trained on " << lr->Parameters().n_elem - 1
           << "-dimensional data, but the test points in '"
           << CLI::GetPrintableParam<mat>("test") << "' are " << points.n_rows
           << "-dimensional!" << endl;
@@ -179,15 +179,13 @@ static void mlpackMain()
     // Perform the predictions using our model.
     rowvec predictions;
     Timer::Start("prediction");
-    lr.Predict(points, predictions);
+    lr->Predict(points, predictions);
     Timer::Stop("prediction");
 
     // Save predictions.
-    if (CLI::HasParam("output_predictions"))
-      CLI::GetParam<rowvec>("output_predictions") = std::move(predictions);
+    CLI::GetParam<rowvec>("output_predictions") = std::move(predictions);
   }
 
   // Save the model if needed.
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<LinearRegression>("output_model") = std::move(lr);
+  CLI::GetParam<LinearRegression*>("output_model") = lr;
 }
