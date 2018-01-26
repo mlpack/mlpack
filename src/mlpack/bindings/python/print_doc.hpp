@@ -39,7 +39,8 @@ void PrintDoc(const util::ParamData& d,
     oss << d.name << "_ (";
   else
     oss << d.name << " (";
-  oss << GetPythonType<T>(d) << "): " << d.desc;
+  oss << GetPythonType<typename std::remove_pointer<T>::type>(d) << "): "
+      << d.desc;
 
   // Print a default, if possible.
   if (!d.required)

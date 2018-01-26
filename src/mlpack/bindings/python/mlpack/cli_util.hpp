@@ -35,6 +35,21 @@ inline void SetParam(const std::string& identifier, T& value)
 }
 
 /**
+ * Set the parameter to the given value, given that the type is a pointer.
+ *
+ * This function exists to work around both Cython's lack of support for lvalue
+ * references and also its seeming lack of support for template pointer types.
+ *
+ * @param identifier Name of parameter.
+ * @param value Value to set parameter to.
+ */
+template<typename T>
+inline void SetParamPtr(const std::string& identifier, T* value)
+{
+  CLI::GetParam<T*>(identifier) = value;
+}
+
+/**
  * Set the parameter (which is a matrix/DatasetInfo tuple) to the given value.
  */
 template<typename T>
@@ -81,6 +96,16 @@ inline void SetParamWithInfo(const std::string& identifier,
       }
     }
   }
+}
+
+/**
+ * Return a pointer.  This function exists to work around Cython's seeming lack
+ * of support for template pointer types.
+ */
+template<typename T>
+T* GetParamPtr(const std::string& paramName)
+{
+  return CLI::GetParam<T*>(paramName);
 }
 
 /**
