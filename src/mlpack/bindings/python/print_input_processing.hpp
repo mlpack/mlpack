@@ -189,9 +189,9 @@ void PrintInputProcessing(
     std::cout << prefix << "  except TypeError as e:" << std::endl;
     std::cout << prefix << "    if type(" << d.name << ").__name__ == '"
         << strippedType << "Type':" << std::endl;
-    std::cout << prefix << "      SetParamPtr[" << strippedType << "]('" << d.name
-        << "', (<" << strippedType << "Type> " << d.name << ").modelptr)"
-        << std::endl;
+    std::cout << prefix << "      SetParamPtr[" << strippedType << "]('"
+        << d.name << "', (<" << strippedType << "Type> " << d.name
+        << ").modelptr)" << std::endl;
     std::cout << prefix << "    else:" << std::endl;
     std::cout << prefix << "      raise e" << std::endl;
     std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name << "')"

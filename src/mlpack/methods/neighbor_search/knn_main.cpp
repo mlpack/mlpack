@@ -238,7 +238,8 @@ static void mlpackMain()
         << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
         << endl;
 
-    knn->BuildModel(std::move(referenceSet), size_t(lsInt), searchMode, epsilon);
+    knn->BuildModel(std::move(referenceSet), size_t(lsInt), searchMode,
+        epsilon);
   }
   else
   {
