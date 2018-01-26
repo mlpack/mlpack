@@ -95,24 +95,25 @@ T& GetParam(
  * @param d ParamData object to get parameter value from.
  */
 template<typename T>
-T& GetParam(
+T*& GetParam(
     util::ParamData& d,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
 {
   // If the model is an input model, we have to load it from file.  'value'
   // contains the filename.
-  typedef std::tuple<T, std::string> TupleType;
+  typedef std::tuple<T*, std::string> TupleType;
   TupleType* tuple = boost::any_cast<TupleType>(&d.value);
   const std::string& value = std::get<1>(*tuple);
-  T& model = std::get<0>(*tuple);
   if (d.input && !d.loaded)
   {
-    data::Load(value, "model", model, true);
+    T* model = new T();
+    data::Load(value, "model", *model, true);
     d.loaded = true;
+    std::get<0>(*tuple) = model;
   }
 
-  return model;
+  return std::get<0>(*tuple);
 }
 
 /**
@@ -127,7 +128,8 @@ template<typename T>
 void GetParam(const util::ParamData& d, const void* /* input */, void* output)
 {
   // Cast to the correct type.
-  *((T**) output) = &GetParam<T>(const_cast<util::ParamData&>(d));
+  *((T**) output) = &GetParam<typename std::remove_pointer<T>::type>(
+      const_cast<util::ParamData&>(d));
 }
 
 } // namespace cli

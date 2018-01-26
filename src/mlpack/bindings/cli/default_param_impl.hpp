@@ -70,7 +70,6 @@ std::string DefaultParamImpl(
     const util::ParamData& data,
     const typename boost::enable_if_c<
         arma::is_arma_type<T>::value ||
-        data::HasSerialize<T>::value ||
         std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
                                    arma::mat>>::value>::type* /* junk */)
 {
@@ -80,6 +79,24 @@ std::string DefaultParamImpl(
   const std::string& filename = std::get<1>(tuple);
   return "'" + filename + "'";
 }
+
+/**
+ * Return the default value of a model option (this returns the default
+ * filename, or '' if the default is no file).
+ */
+template<typename T>
+std::string DefaultParamImpl(
+    const util::ParamData& data,
+    const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
+    const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
+{
+  // Get the filename and return it, or return an empty string.
+  typedef std::tuple<T*, std::string> TupleType;
+  const TupleType& tuple = *boost::any_cast<TupleType>(&data.value);
+  const std::string& filename = std::get<1>(tuple);
+  return "'" + filename + "'";
+}
+
 
 } // namespace cli
 } // namespace bindings
