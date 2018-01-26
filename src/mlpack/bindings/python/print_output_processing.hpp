@@ -180,13 +180,47 @@ void PrintOutputProcessing(
      * This gives us code like:
      *
      * result = ModelType()
-     * MoveToPtr[Model]((<ModelType?> model).modelptr),
-     *     CLI.GetParam[Model]('name'))
+     * (<ModelType?> result).modelptr = GetParamPtr[Model]('name')
      */
     std::cout << prefix << "result = " << strippedType << "Type()" << std::endl;
-    std::cout << prefix << "MoveToPtr[" << strippedType << "]((<"
-        << strippedType << "Type?> result).modelptr, CLI.GetParam["
-        << strippedType << "]('" << d.name << "'))" << std::endl;
+    std::cout << prefix << "(<" << strippedType << "Type?> result).modelptr = "
+        << "GetParamPtr[" << strippedType << "]('" << d.name << "')"
+        << std::endl;
+
+    /**
+     * But we also have to check to ensure there aren't any input model
+     * parameters of the same type that could have the same model pointer.
+     * So we need to loop through all input parameters that have the same type,
+     * and double-check.
+     */
+    std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+    for (auto it = parameters.begin(); it != parameters.end(); ++it)
+    {
+      // Is it an input parameter of the same type?
+      const util::ParamData& data = it->second;
+      if (data.input && data.cppType == d.cppType && data.required)
+      {
+        std::cout << prefix << "if (<" << strippedType
+            << "Type> result).modelptr" << d.name << " == (<" << strippedType
+            << "Type> " << data.name << ").modelptr:" << std::endl;
+        std::cout << prefix << "  (<" << strippedType
+            << "Type> result).modelptr = <" << strippedType << "*> 0"
+            << std::endl;
+        std::cout << prefix << "  result = " << data.name << std::endl;
+      }
+      else if (data.input && data.cppType == d.cppType)
+      {
+        std::cout << prefix << "if " << data.name << " is not None:"
+            << std::endl;
+        std::cout << prefix << "  if (<" << strippedType
+            << "Type> result).modelptr" << d.name << " == (<" << strippedType
+            << "Type> " << data.name << ").modelptr:" << std::endl;
+        std::cout << prefix << "    (<" << strippedType
+            << "Type> result).modelptr = <" << strippedType << "*> 0"
+            << std::endl;
+        std::cout << prefix << "    result = " << data.name << std::endl;
+      }
+    }
   }
   else
   {
@@ -194,15 +228,50 @@ void PrintOutputProcessing(
      * This gives us code like:
      *
      * result['name'] = ModelType()
-     * MoveToPtr[Model*]((<ModelType?> result['name']).modelptr),
-     *     CLI.GetParam[Model]('name'))
+     * (<ModelType?> result['name']).modelptr = GetParamPtr[Model]('name'))
      */
     std::cout << prefix << "result['" << d.name << "'] = " << strippedType
         << "Type()" << std::endl;
-    std::cout << prefix << "MoveToPtr[" << strippedType << "]((<"
-        << strippedType << "Type?>" << " result['" << d.name
-        << "']).modelptr, CLI.GetParam[" << strippedType << "]('"
-        << d.name << "'))" << std::endl;
+    std::cout << prefix << "(<" << strippedType << "Type?> result['" << d.name
+        << "']).modelptr = GetParamPtr[" << strippedType << "]('" << d.name
+        << "')" << std::endl;
+
+    /**
+     * But we also have to check to ensure there aren't any input model
+     * parameters of the same type that could have the same model pointer.
+     * So we need to loop through all input parameters that have the same type,
+     * and double-check.
+     */
+    std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+    for (auto it = parameters.begin(); it != parameters.end(); ++it)
+    {
+      // Is it an input parameter of the same type?
+      const util::ParamData& data = it->second;
+      if (data.input && data.cppType == d.cppType && data.required)
+      {
+        std::cout << prefix << "if (<" << strippedType << "Type> result['"
+            << d.name << "']).modelptr == (<" << strippedType << "Type> "
+            << data.name << ").modelptr:" << std::endl;
+        std::cout << prefix << "  (<" << strippedType << "Type> result['"
+            << d.name << "']).modelptr = <" << strippedType << "*> 0"
+            << std::endl;
+        std::cout << prefix << "  result['" << d.name << "'] = " << data.name
+            << std::endl;
+      }
+      else if (data.input && data.cppType == d.cppType)
+      {
+        std::cout << prefix << "if " << data.name << " is not None:"
+            << std::endl;
+        std::cout << prefix << "  if (<" << strippedType << "Type> result['"
+            << d.name << "']).modelptr == (<" << strippedType << "Type> "
+            << data.name << ").modelptr:" << std::endl;
+        std::cout << prefix << "    (<" << strippedType << "Type> result['"
+            << d.name << "']).modelptr = <" << strippedType << "*> 0"
+            << std::endl;
+        std::cout << prefix << "    result['" << d.name << "'] = " << data.name
+            << std::endl;
+      }
+    }
   }
 }
 
@@ -227,7 +296,8 @@ void PrintOutputProcessing(const util::ParamData& d,
 {
   std::tuple<size_t, bool>* tuple = (std::tuple<size_t, bool>*) input;
 
-  PrintOutputProcessing<T>(d, std::get<0>(*tuple), std::get<1>(*tuple));
+  PrintOutputProcessing<typename std::remove_pointer<T>::type>(d,
+      std::get<0>(*tuple), std::get<1>(*tuple));
 }
 
 } // namespace python

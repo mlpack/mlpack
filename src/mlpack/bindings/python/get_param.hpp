@@ -22,7 +22,17 @@ void GetParam(const util::ParamData& d,
               const void* /* input */,
               void* output)
 {
-  *((T**) output) = const_cast<T*>(boost::any_cast<T>(&d.value));
+//  typedef typename std::remove_pointer<T>::type TRaw;
+//  if (std::is_pointer<T>::value) // If true, this is a model.
+//  {
+//    std::cout << "get a raw pointer for " << d.name << ": " << boost::any_cast<TRaw*>(d.value) <<
+//"\n";
+//    *((TRaw***) output) = const_cast<TRaw**>(boost::any_cast<TRaw**>(&d.value));
+//  }
+//  else
+  {
+    *((T**) output) = const_cast<T*>(boost::any_cast<T>(&d.value));
+  }
 }
 
 } // namespace python
