@@ -16,6 +16,7 @@ static const std::string testName = "PerceptronModel";
 #include "test_helper.hpp"
 
 #include <boost/test/unit_test.hpp>
+#include "../test_tools.hpp"
 
 using namespace mlpack;
 
@@ -58,14 +59,14 @@ BOOST_AUTO_TEST_CASE(PerceptronWrongDimOfTestData)
 	constexpr int M = 20;
 
 	arma::mat trainX = arma::randu<arma::mat>(D,N);
-	arma::rowvec trainY;
+	arma::Row<size_t> trainY;
 
 	trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << endr; // 10 responses
 
-	arma::mat testX = arma::randu<arma::mat>(D-1,M);  // test data with wrong dimensionality
+	arma::mat testX = arma::randu<arma::mat>(D-3,M);  // test data with wrong dimensionality
 
 	SetInputParam("training", std::move(trainX));
-	SetInputParam("labels", std::move(trainY));
+	// SetInputParam("labels", std::move(trainY));
 	SetInputParam("test", std::move(testX));
 
 	Log::Fatal.ignoreInput = true;
@@ -112,13 +113,13 @@ BOOST_AUTO_TEST_CASE(PerceptronReTrainWithWrongClasses)
  **/
 BOOST_AUTO_TEST_CASE(PerceptronWrongResponseSizeTest) 
 {
-	constexpr int D = 5;
+	constexpr int D = 2;
 	constexpr int N = 10;
 	
 	arma::mat trainX = arma::randu<arma::mat>(D,N);
-	arma::rowvec trainY; // response vector with wrong size
+	arma::Row<size_t> trainY; // response vector with wrong size
 
-	trainY << 0 << 0 << 1 << 0 << 1 << 1 << 1 << 0 << endr; // 8 responses
+	trainY << 0 << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 1 << 0 << endr; // 8 responses
 
 	SetInputParam("training", std::move(trainX));
 	SetInputParam("labels", std::move(trainY));
@@ -149,7 +150,7 @@ BOOST_AUTO_TEST_CASE(PerceptronNoResponsesTest)
  */
 BOOST_AUTO_TEST_CASE(PerceptronNoTrainingDataTest)
 {
-  arma::rowvec trainY;
+  arma::Row<size_t> trainY;
   trainY << 1 << 1 << 0 << 1 << 0 << 0 <<endr;
 
   SetInputParam("labels", std::move(trainY));
@@ -170,7 +171,7 @@ BOOST_AUTO_TEST_CASE(PerceptronModelReload)
   constexpr int M = 15;
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
-  arma::rowvec trainY;
+  arma::Row<size_t> trainY;
 
   trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << endr; // 10 responses
   
@@ -184,7 +185,7 @@ BOOST_AUTO_TEST_CASE(PerceptronModelReload)
   mlpackMain();
 
   PerceptronModel model = CLI::GetParam<PerceptronModel>("output_model");
-  const arma::rowvec testY1 = CLI::GetParam<arma::rowvec>("output");
+  const arma::Row<size_t> testY1 = CLI::GetParam<arma::Row<size_t>>("output");
 
   resetSettings();
 
@@ -194,7 +195,7 @@ BOOST_AUTO_TEST_CASE(PerceptronModelReload)
   //second solution
   mlpackMain();
 
-  const arma::rowvec testY2 = CLI::GetParam<arma::rowvec>("output");
+  const arma::Row<size_t> testY2 = CLI::GetParam<arma::Row<size_t>>("output");
 
   BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(), testY2.begin(), testY2.end());
 }
@@ -209,7 +210,7 @@ BOOST_AUTO_TEST_CASE(PerceptronWrongDimOfTestData2)
   constexpr int M = 15;
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
-  arma::rowvec trainY;
+  arma::Row<size_t> trainY;
 
   trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << endr; // 10 responses
 
@@ -247,12 +248,12 @@ BOOST_AUTO_TEST_CASE(PerceptronResponsesRepresentationTest)
   // The first solution.
   mlpackMain();
 
-  const arma::rowvec testY1 = CLI::GetParam<arma::rowvec>("output");
+  const arma::Row<size_t> testY1 = CLI::GetParam<arma::Row<size_t>>("output");
 
   resetSettings();
 
   arma::mat trainX2({{1.0, 2.0, 3.0},{1.0, 4.0, 9.0}});
-  arma::rowvec trainY2({0,1,1});
+  arma::Row<size_t> trainY2({0,1,1});
 
   SetInputParam("training", std::move(trainX2));
   SetInputParam("labels", std::move(trainY2));
@@ -261,7 +262,7 @@ BOOST_AUTO_TEST_CASE(PerceptronResponsesRepresentationTest)
   // The second solution.
   mlpackMain();
 
-  const arma::rowvec testY2 = CLI::GetParam<arma::rowvec>("output");
+  const arma::Row<size_t> testY2 = CLI::GetParam<arma::Row<size_t>>("output");
 
   BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(), testY2.begin(), testY2.end());
 }
@@ -275,7 +276,7 @@ BOOST_AUTO_TEST_CASE(PerceptronPredictionDimTest)
 	constexpr int D = 3;
 
 	arma::mat trainX = arma::randu<arma::mat>(D,N);
-	arma::rowvec trainY;
+	arma::Row<size_t> trainY;
 
 	trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << endr; // 10 responses
 
@@ -287,7 +288,7 @@ BOOST_AUTO_TEST_CASE(PerceptronPredictionDimTest)
 
 	mlpackMain();
 
-	const arma::rowvec testY = CLI::GetParam<arma::rowvec>("output");
+	const arma::Row<size_t> testY = CLI::GetParam<arma::Row<size_t>>("output");
 
 	BOOST_REQUIRE_EQUAL(testY.n_rows,1);
 	BOOST_REQUIRE_EQUAL(testY.n_cols,N);
@@ -302,7 +303,7 @@ BOOST_AUTO_TEST_CASE(PerceptronNonNegMaxIterationTest)
   constexpr int D = 3;
 
   arma::mat trainX = arma::randu<arma::mat>(D,N);
-  arma::rowvec trainY;
+  arma::Row<size_t> trainY;
 
   trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << endr; // 10 responses
 
