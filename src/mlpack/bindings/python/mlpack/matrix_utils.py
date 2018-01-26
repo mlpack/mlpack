@@ -48,9 +48,9 @@ def to_matrix(x, dtype=np.double):
     raise TypeError("given argument is not array-like")
 
   if (isinstance(x, np.ndarray) and x.dtype == dtype and x.flags.c_contiguous):
-    return x
+    return x, False
   else:
-    return np.array(x, copy=True, dtype=dtype, order='C')
+    return np.array(x, copy=True, dtype=dtype, order='C'), True
 
 def to_matrix_with_info(x, dtype):
   """
@@ -66,7 +66,7 @@ def to_matrix_with_info(x, dtype):
   if isinstance(x, np.ndarray):
     # It is already an ndarray, so the vector of info is all 0s (all numeric).
     d = np.zeros([x.shape[1]], dtype=np.bool)
-    return (x, d)
+    return (x, False, d)
 
   if isinstance(x, pd.DataFrame) or isinstance(x, pd.Series):
     # It's a pandas dataframe.  So we need to see if any of the dtypes are
@@ -79,8 +79,9 @@ def to_matrix_with_info(x, dtype):
        not np.dtype(str) in dtype_array and \
        not np.dtype(unicode) in dtype_array:
         # We can just return the matrix as-is; it's all numeric.
+        t = to_matrix(x)
         d = np.zeros([x.shape[1]], dtype=np.bool)
-        return (to_matrix(x), d)
+        return (t[0], t[1], d)
 
     if np.dtype(str) in dtype_array or np.dtype(unicode) in dtype_array:
       raise TypeError('cannot convert matrices with string types')
@@ -115,7 +116,10 @@ def to_matrix_with_info(x, dtype):
       catColumnIndices = [y.columns.get_loc(i) for i in catColumns]
       d[catColumnIndices] = 1
 
-    return (to_matrix(y.apply(pd.to_numeric)), d)
+    # We'll have to force the second part of the tuple (whether or not to take
+    # ownership) to true.
+    t = to_matrix(y.apply(pd.to_numeric))
+    return (t[0], True, d)
 
   if isinstance(x, list):
     # Get the number of dimensions.
@@ -126,7 +130,18 @@ def to_matrix_with_info(x, dtype):
       dims = len(x)
 
     d = np.zeros([dims])
-    return (np.array(x, dtype=dtype), d)
+    out = np.array(x, dtype=dtype, copy=False) # Try to avoid copy...
+
+    # Since we don't have a great way to check if these are using the same
+    # memory location, we will probe manually (ugh).
+    oldval = x[0]
+    x[0] *= 2
+    alias = False
+    if out[0] == x[0]:
+      alias = True
+      x[0] = oldval
+
+    return (np.array(x, dtype=dtype), not alias, d)
 
   # If we got here, the type is not known.
   raise TypeError("given matrix is not a numpy ndarray or pandas DataFrame or "\
