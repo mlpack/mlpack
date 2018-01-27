@@ -1,5 +1,5 @@
 /**
- * @file barzilai_borwein.hpp
+ * @file barzilai_borwein_decay.hpp
  * @author Marcus Edel
  *
  * Barzilai-Borwein decay policy.
@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_SVRG_BARZILIA_BORWEIN_HPP
-#define MLPACK_CORE_OPTIMIZERS_SVRG_BARZILIA_BORWEIN_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_SVRG_BARZILIA_BORWEIN_DECAY_HPP
+#define MLPACK_CORE_OPTIMIZERS_SVRG_BARZILIA_BORWEIN_DECAY_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -37,7 +37,7 @@ namespace optimization {
  * }
  * @endcode
  */
-class BarzilaiBorwein
+class BarzilaiBorweinDecay
 {
  public:
   /*
@@ -47,7 +47,8 @@ class BarzilaiBorwein
    * @param eps The eps coefficient to avoid division by zero (numerical
    *    stability).
    */
-  BarzilaiBorwein(const double maxStepSize = DBL_MAX, const double eps = 1e-7) :
+  BarzilaiBorweinDecay(const double maxStepSize = DBL_MAX,
+                       const double eps = 1e-7) :
       eps(eps),
       maxStepSize(maxStepSize)
   { /* Nothing to do. */}
@@ -65,9 +66,10 @@ class BarzilaiBorwein
   /**
    * Barzilai-Borwein update step for SVRG.
    *
-   * @param iterate Parameters that minimize the function.
-   * @param fullGradient The computed full gradient.
+   * @param iterate The current function parameter at time t.
+   * @param iterate The last function parameters at time t - 1.
    * @param gradient The current gradient matrix at time t.
+   * @param fullGradient The computed full gradient.
    * @param gradient The old gradient matrix at time t - 1.
    * @param numBatches The number of batches.
    * @param stepSize Step size to be used for the given iteration.
@@ -106,4 +108,4 @@ class BarzilaiBorwein
 } // namespace optimization
 } // namespace mlpack
 
-#endif // MLPACK_CORE_OPTIMIZERS_SVRG_BARZILIA_BORWEIN_HPP
+#endif // MLPACK_CORE_OPTIMIZERS_SVRG_BARZILIA_BORWEIN_DECAY_HPP

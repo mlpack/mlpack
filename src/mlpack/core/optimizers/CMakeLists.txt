@@ -7,11 +7,13 @@ set(DIRS
   fw
   gradient_descent
   grid_search
+  katyusha
   lbfgs
   line_search
   proximal
   rmsprop
   sa
+  sarah
   sdp
   sgd
   smorms3

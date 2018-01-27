@@ -2,7 +2,7 @@ set(SOURCES
   svrg.hpp
   svrg_impl.hpp
   no_decay.hpp
-  barzilai_borwein.hpp
+  barzilai_borwein_decay.hpp
   svrg_update.hpp
 )
 
