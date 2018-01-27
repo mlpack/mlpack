@@ -166,15 +166,14 @@ class SVDBatchLearning
 
   //! Serialize the SVDBatch object.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    using data::CreateNVP;
-    ar & CreateNVP(u, "u");
-    ar & CreateNVP(kw, "kw");
-    ar & CreateNVP(kh, "kh");
-    ar & CreateNVP(momentum, "momentum");
-    ar & CreateNVP(mW, "mW");
-    ar & CreateNVP(mH, "mH");
+    ar & BOOST_SERIALIZATION_NVP(u);
+    ar & BOOST_SERIALIZATION_NVP(kw);
+    ar & BOOST_SERIALIZATION_NVP(kh);
+    ar & BOOST_SERIALIZATION_NVP(momentum);
+    ar & BOOST_SERIALIZATION_NVP(mW);
+    ar & BOOST_SERIALIZATION_NVP(mH);
   }
 
  private:

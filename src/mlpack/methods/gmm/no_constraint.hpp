@@ -30,7 +30,7 @@ class NoConstraint
 
   //! Serialize the object (nothing to do).
   template<typename Archive>
-  static void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  static void serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 } // namespace gmm

@@ -4,9 +4,14 @@
  *
  * Test mlpackMain() of pca_main.cpp.
  */
+#include <string>
+
 #define BINDING_TYPE BINDING_TYPE_TEST
+static const std::string testName = "PrincipalComponentAnalysis";
+
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
+#include "test_helper.hpp"
 #include <mlpack/methods/pca/pca_main.cpp>
 
 #include <boost/test/unit_test.hpp>
@@ -14,41 +19,13 @@
 
 using namespace mlpack;
 
-namespace mlpack {
-namespace bindings {
-namespace tests {
-
-extern std::string programName;
-
-}
-}
-}
-
-// Utility function to set a parameter and mark it as passed, using copy
-// semantics.
-template<typename T>
-void SetInputParam(const std::string& name, const T& value)
-{
-  CLI::GetParam<T>(name) = value;
-  CLI::SetPassed(name);
-}
-
-// Utility function to set a parameter and mark it as passed, using move
-// semantics.
-template<typename T>
-void SetInputParam(const std::string& name, T&& value)
-{
-  CLI::GetParam<T>(name) = std::move(value);
-  CLI::SetPassed(name);
-}
-
 struct PCATestFixture
 {
  public:
   PCATestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(mlpack::bindings::tests::programName);
+    CLI::RestoreSettings(testName);
   }
 
   ~PCATestFixture()

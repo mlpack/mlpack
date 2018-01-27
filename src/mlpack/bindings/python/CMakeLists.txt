@@ -28,7 +28,7 @@ find_python_module(distutils)
 if (NOT PY_DISTUTILS)
   not_found_return("distutils not found; not building Python bindings.")
 endif ()
-find_python_module(Cython)
+find_python_module(Cython 0.24)
 if (NOT PY_CYTHON)
   not_found_return("Cython not found; not building Python bindings.")
 endif ()
@@ -36,7 +36,7 @@ find_python_module(numpy)
 if (NOT PY_NUMPY)
   not_found_return("numpy not found; not building Python bindings.")
 endif ()
-find_python_module(pandas)
+find_python_module(pandas 0.15.0)
 if (NOT PY_PANDAS)
   not_found_return("pandas not found; not building Python bindings.")
 endif ()
@@ -65,6 +65,8 @@ set(BINDING_SOURCES
   py_option.hpp
   strip_type.hpp
   mlpack/arma_util.hpp
+  setup.cfg
+  copy_artifacts.py
 )
 
 # These are all the files we need to compile Cython bindings for mlpack that are
@@ -79,7 +81,8 @@ set(CYTHON_SOURCES
   mlpack/cli_util.hpp
   mlpack/move.hpp
   mlpack/matrix_utils.py
-  setup.cfg
+  mlpack/serialization.hpp
+  mlpack/serialization.pxd
 )
 
 set(TEST_SOURCES
@@ -111,6 +114,14 @@ foreach(cython_file ${CYTHON_SOURCES})
           ${CMAKE_CURRENT_SOURCE_DIR}/${cython_file}
           ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
 endforeach()
+add_custom_command(TARGET python_copy PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} ARGS -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/setup.cfg
+        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
+add_custom_command(TARGET python_copy PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} ARGS -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/copy_artifacts.py
+        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
 
 if (BUILD_TESTS)
   foreach(test_file ${TEST_SOURCES})
@@ -121,10 +132,16 @@ if (BUILD_TESTS)
   endforeach ()
 endif ()
 
+# Install any dependencies via setuptools automatically.
+add_custom_command(TARGET python_copy POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E env NO_BUILD=1 ${PYTHON}
+        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py build
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
+
 # Then do the actual build.
 add_custom_command(TARGET python POST_BUILD
     COMMAND ${PYTHON} ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
-        build_ext --inplace
+        build_ext
     DEPENDS mlpack/arma_numpy.pxd
             mlpack/arma_numpy.pyx
             mlpack/arma.pxd
@@ -136,11 +153,24 @@ add_custom_command(TARGET python POST_BUILD
             mlpack
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
 
+# Copy the built artifacts, so that it is also an in-place build.
+add_custom_command(TARGET python POST_BUILD
+    COMMAND ${PYTHON}
+        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/copy_artifacts.py
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
+
 add_dependencies(python python_copy)
 
+# Configure installation script file.
+execute_process(COMMAND ${PYTHON}
+    "${CMAKE_CURRENT_SOURCE_DIR}/print_python_version.py" "${CMAKE_INSTALL_PREFIX}"
+    OUTPUT_VARIABLE NEW_PYTHONPATH)
+install(CODE "set(ENV{PYTHONPATH} ${NEW_PYTHONPATH})")
+install(CODE "execute_process(COMMAND mkdir -p ${NEW_PYTHONPATH})")
 install(CODE "execute_process(COMMAND ${PYTHON}
-    ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py install
-    --prefix=${CMAKE_INSTALL_PREFIX})")
+    \"${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py\" install
+    --prefix=${CMAKE_INSTALL_PREFIX}
+    WORKING_DIRECTORY \"${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/\")")
 
 # Prepare __init__.py for having all of the convenience imports appended to it.
 file(COPY mlpack/__init__.py DESTINATION
@@ -178,7 +208,7 @@ if (BUILD_PYTHON_BINDINGS)
   # distutils will determine whether or not it *actually* needs to be rebuilt.
   add_custom_target(build_pyx_${name}
       ${PYTHON} ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
-          build_ext --inplace --module=${name}.pyx
+          build_ext --module=${name}.pyx
       DEPENDS generate_pyx_${name}
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/
       COMMENT "Building Cython binding ${name}.so...")
@@ -190,7 +220,7 @@ if (BUILD_PYTHON_BINDINGS)
   # Add the convenience import to __init__.py.  Note that this happens during
   # configuration.
   file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py
-      "from ${name} import ${name}\n")
+      "from .${name} import ${name}\n")
 endif ()
 endmacro ()
 
@@ -201,7 +231,7 @@ if (BUILD_PYTHON_BINDINGS)
           test
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
   set_tests_properties(python_bindings_test
-      PROPERTIES ENVIRONMENT "NO_BUILD=1")
+      PROPERTIES ENVIRONMENT "NO_BUILD=1;LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}:${CMAKE_BINARY_DIR}/lib/")
 endif ()
 
 if (BUILD_TESTS)

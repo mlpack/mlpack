@@ -32,7 +32,7 @@ class DiagonalConstraint
 
   //! Serialize the constraint (which holds nothing, so, nothing to do).
   template<typename Archive>
-  static void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  static void serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 } // namespace gmm

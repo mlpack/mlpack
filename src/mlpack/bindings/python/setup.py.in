@@ -33,7 +33,7 @@ else:
                       np.get_include(), \
                       '${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/'] +
                       '${CYTHON_INCLUDE_DIRECTORIES}'.split(';'),
-                  libraries=['mlpack'],
+                  libraries=['mlpack', 'boost_serialization'],
                   library_dirs=['${CMAKE_BINARY_DIR}/lib/'],
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=('-DBINDING_TYPE=BINDING_TYPE_PYX ' + \
@@ -52,7 +52,7 @@ else:
                       np.get_include(), \
                       '${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/'] +
                       '${CYTHON_INCLUDE_DIRECTORIES}'.split(';'),
-                  libraries=['mlpack'],
+                  libraries=['mlpack', 'boost_serialization'],
                   library_dirs=['${CMAKE_BINARY_DIR}/lib/'],
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=('-DBINDING_TYPE=BINDING_TYPE_PYX ' + \

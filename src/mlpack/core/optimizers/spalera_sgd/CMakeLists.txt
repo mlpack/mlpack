@@ -1,6 +1,7 @@
 set(SOURCES
-  vanilla_update.hpp
-  momentum_update.hpp
+  spalera_sgd.hpp
+  spalera_sgd_impl.hpp
+  spalera_stepsize.hpp
 )
 
 set(DIR_SRCS)

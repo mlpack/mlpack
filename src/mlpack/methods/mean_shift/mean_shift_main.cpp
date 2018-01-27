@@ -19,6 +19,7 @@
 using namespace mlpack;
 using namespace mlpack::meanshift;
 using namespace mlpack::kernel;
+using namespace mlpack::util;
 using namespace std;
 
 // Define parameters for the executable.
@@ -44,7 +45,7 @@ PROGRAM_INFO("Mean Shift Clustering", "This program performs mean shift "
     PRINT_CALL("mean_shift", "input", "data", "centroid", "centroids"));
 
 // Required options.
-PARAM_MATRIX_IN("input", "Input dataset to perform clustering on.", "i");
+PARAM_MATRIX_IN_REQ("input", "Input dataset to perform clustering on.", "i");
 
 // Output options.
 PARAM_FLAG("in_place", "If specified, a column containing the learned cluster "
@@ -65,39 +66,20 @@ PARAM_DOUBLE_IN("radius", "If the distance between two centroids is less than "
     "the given radius, one will be removed.  A radius of 0 or less means an "
     "estimate will be calculated and used for the radius.", "r", 0);
 
-void mlpackMain()
+static void mlpackMain()
 {
-  if (!CLI::HasParam("input"))
-    Log::Fatal << "--input_file must be specified!" << endl;
-
   const double radius = CLI::GetParam<double>("radius");
   const int maxIterations = CLI::GetParam<int>("max_iterations");
 
-  if (maxIterations < 0)
-  {
-    Log::Fatal << "Invalid value for maximum iterations (" << maxIterations <<
-        ")! Must be greater than or equal to 0." << endl;
-  }
+  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
+      "maximum iterations must be greater than or equal to 0");
 
   // Make sure we have an output file if we're not doing the work in-place.
-  if (!CLI::HasParam("in_place") && !CLI::HasParam("output") &&
-      !CLI::HasParam("centroid"))
-  {
-    Log::Warn << "--output_file, --in_place, and --centroid_file are not set; "
-        << "no results will be saved." << endl;
-  }
-
-  if (CLI::HasParam("labels_only") && !CLI::HasParam("output"))
-    Log::Warn << "--labels_only ignored because --output_file is not specified."
-        << endl;
-
-  if (CLI::HasParam("in_place") && CLI::HasParam("output"))
-    Log::Warn << "--output_file ignored because --in_place is specified."
-        << endl;
-
-  if (CLI::HasParam("in_place") && CLI::HasParam("labels_only"))
-    Log::Warn << "--labels_only ignored because --in_place is specified."
-        << endl;
+  RequireAtLeastOnePassed({ "in_place", "output", "centroid" }, false,
+      "no results will be saved");
+  ReportIgnoredParam({{ "output", false }}, "labels_only");
+  ReportIgnoredParam({{ "in_place", true }}, "output");
+  ReportIgnoredParam({{ "in_place", true }}, "labels_only");
 
   arma::mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
   arma::mat centroids;

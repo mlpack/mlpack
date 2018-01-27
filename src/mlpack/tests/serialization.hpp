@@ -185,10 +185,11 @@ void SerializeObject(T& t, T& newT)
   bool success = true;
   try
   {
-    o << data::CreateNVP(t, "t");
+    o << BOOST_SERIALIZATION_NVP(t);
   }
   catch (boost::archive::archive_exception& e)
   {
+    std::cerr << e.what() << std::endl;
     success = false;
   }
   ofs.close();
@@ -200,10 +201,11 @@ void SerializeObject(T& t, T& newT)
 
   try
   {
-    i >> data::CreateNVP(newT, "t");
+    i >> BOOST_SERIALIZATION_NVP(newT);
   }
   catch (boost::archive::archive_exception& e)
   {
+    std::cout << e.what() << "\n";
     success = false;
   }
   ifs.close();
@@ -217,12 +219,12 @@ void SerializeObject(T& t, T& newT)
 template<typename T>
 void SerializeObjectAll(T& t, T& xmlT, T& textT, T& binaryT)
 {
+  SerializeObject<T, boost::archive::xml_iarchive,
+      boost::archive::xml_oarchive>(t, xmlT);
   SerializeObject<T, boost::archive::text_iarchive,
       boost::archive::text_oarchive>(t, textT);
   SerializeObject<T, boost::archive::binary_iarchive,
       boost::archive::binary_oarchive>(t, binaryT);
-  SerializeObject<T, boost::archive::xml_iarchive,
-      boost::archive::xml_oarchive>(t, xmlT);
 }
 
 // Save and load a non-default-constructible mlpack object.
@@ -236,10 +238,11 @@ void SerializePointerObject(T* t, T*& newT)
   bool success = true;
   try
   {
-    o << data::CreateNVP(*t, "t");
+    o << BOOST_SERIALIZATION_NVP(t);
   }
   catch (boost::archive::archive_exception& e)
   {
+    std::cout << e.what() << "\n";
     success = false;
   }
   ofs.close();
@@ -251,10 +254,11 @@ void SerializePointerObject(T* t, T*& newT)
 
   try
   {
-    newT = new T(i);
+    i >> BOOST_SERIALIZATION_NVP(newT);
   }
   catch (std::exception& e)
   {
+    std::cout << e.what() << "\n";
     success = false;
   }
   ifs.close();
@@ -285,6 +289,11 @@ void CheckMatrices(const arma::Mat<size_t>& x,
                    const arma::Mat<size_t>& xmlX,
                    const arma::Mat<size_t>& textX,
                    const arma::Mat<size_t>& binaryX);
+
+void CheckMatrices(const arma::cube& x,
+                   const arma::cube& xmlX,
+                   const arma::cube& textX,
+                   const arma::cube& binaryX);
 
 } // namespace mlpack
 

@@ -21,7 +21,7 @@ struct ParameterTypeDeducer
   typedef T type;
 };
 
-// If we have a Serialize() function, then the type is a string.
+// If we have a serialize() function, then the type is a string.
 template<typename T>
 struct ParameterTypeDeducer<true, T>
 {

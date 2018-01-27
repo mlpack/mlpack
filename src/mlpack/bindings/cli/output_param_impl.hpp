@@ -66,6 +66,7 @@ void OutputParamImpl(
 template<typename T>
 void OutputParamImpl(
     const util::ParamData& data,
+    const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
 {
   // The const cast is necessary here because Serialize() can't ever be marked

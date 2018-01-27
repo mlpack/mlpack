@@ -126,11 +126,9 @@ void FastMKSModel::BuildModel(const arma::mat& referenceData,
 }
 
 template<typename Archive>
-void FastMKSModel::Serialize(Archive& ar, const unsigned int /* version */)
+void FastMKSModel::serialize(Archive& ar, const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
-  ar & CreateNVP(kernelType, "kernelType");
+  ar & BOOST_SERIALIZATION_NVP(kernelType);
 
   if (Archive::is_loading::value)
   {
@@ -163,31 +161,31 @@ void FastMKSModel::Serialize(Archive& ar, const unsigned int /* version */)
   switch (kernelType)
   {
     case LINEAR_KERNEL:
-      ar & CreateNVP(linear, "linear_fastmks");
+      ar & BOOST_SERIALIZATION_NVP(linear);
       break;
 
     case POLYNOMIAL_KERNEL:
-      ar & CreateNVP(polynomial, "polynomial_fastmks");
+      ar & BOOST_SERIALIZATION_NVP(polynomial);
       break;
 
     case COSINE_DISTANCE:
-      ar & CreateNVP(cosine, "cosine_fastmks");
+      ar & BOOST_SERIALIZATION_NVP(cosine);
       break;
 
     case GAUSSIAN_KERNEL:
-      ar & CreateNVP(gaussian, "gaussian_fastmks");
+      ar & BOOST_SERIALIZATION_NVP(gaussian);
       break;
 
     case EPANECHNIKOV_KERNEL:
-      ar & CreateNVP(epan, "epan_fastmks");
+      ar & BOOST_SERIALIZATION_NVP(epan);
       break;
 
     case TRIANGULAR_KERNEL:
-      ar & CreateNVP(triangular, "triangular_fastmks");
+      ar & BOOST_SERIALIZATION_NVP(triangular);
       break;
 
     case HYPTAN_KERNEL:
-      ar & CreateNVP(hyptan, "hyptan_fastmks");
+      ar & BOOST_SERIALIZATION_NVP(hyptan);
       break;
   }
 }

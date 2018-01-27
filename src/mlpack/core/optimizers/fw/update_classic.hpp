@@ -32,8 +32,7 @@ class UpdateClassic
   /**
    * Construct the classic update rule for FrankWolfe algorithm.
    */
-  UpdateClassic()
-  { /* Do nothing. */ }
+  UpdateClassic() { /* Do nothing. */ }
 
   /**
    * Classic update rule for FrankWolfe.
@@ -47,7 +46,7 @@ class UpdateClassic
    * @param numIter current iteration number
    */
   template<typename FunctionType>
-  void Update(FunctionType& function,
+  void Update(FunctionType& /* function */,
               const arma::mat& oldCoords,
               const arma::mat& s,
               arma::mat& newCoords,

@@ -67,9 +67,11 @@ struct Viterbi
 
     // Verify correct dimensionality.
     if (dataSeq.n_rows != hmm.Emission()[0].Dimensionality())
+    {
       Log::Fatal << "Observation dimensionality (" << dataSeq.n_rows << ") "
           << "does not match HMM Gaussian dimensionality ("
           << hmm.Emission()[0].Dimensionality() << ")!" << endl;
+    }
 
     arma::Row<size_t> sequence;
     hmm.Predict(dataSeq, sequence);
@@ -80,11 +82,9 @@ struct Viterbi
   }
 };
 
-void mlpackMain()
+static void mlpackMain()
 {
-  if (!CLI::HasParam("output"))
-    Log::Warn << "--output_file (-o) is not specified; no results will be "
-        << "saved!" << endl;
+  RequireAtLeastOnePassed({ "output" }, false, "no results will be saved");
 
   CLI::GetParam<HMMModel>("input_model").PerformAction<Viterbi>((void*) NULL);
 }

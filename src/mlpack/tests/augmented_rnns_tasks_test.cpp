@@ -217,9 +217,6 @@ class HardCodedAddModel
       Predict(predictors.at(i), labels.at(i));
     }
   }
-
- private:
-  size_t bitLen;
 };
 
 BOOST_AUTO_TEST_SUITE(AugmentedRNNsTasks);

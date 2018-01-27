@@ -67,7 +67,9 @@ class LSHSearch
   /**
    * This function initializes the LSH class. It builds the hash on the
    * reference set with 2-stable distributions. See the individual functions
-   * performing the hashing for details on how the hashing is done.
+   * performing the hashing for details on how the hashing is done.  In order to
+   * avoid copying the reference set, it is suggested to pass that parameter
+   * with std::move().
    *
    * @param referenceSet Set of reference points and the set of queries.
    * @param projections Cube of projection tables. For a cube of size (a, b, c)
@@ -84,7 +86,7 @@ class LSHSearch
    *     value of 0 indicates that there is no limit (so the second hash table
    *     can be arbitrarily large---be careful!).
    */
-  LSHSearch(const arma::mat& referenceSet,
+  LSHSearch(arma::mat referenceSet,
             const arma::cube& projections,
             const double hashWidth = 0.0,
             const size_t secondHashSize = 99901,
@@ -93,7 +95,8 @@ class LSHSearch
   /**
    * This function initializes the LSH class. It builds the hash one the
    * reference set using the provided projections. See the individual functions
-   * performing the hashing for details on how the hashing is done.
+   * performing the hashing for details on how the hashing is done.  In order to
+   * avoid copying the reference set, consider passing the set with std::move().
    *
    * @param referenceSet Set of reference points and the set of queries.
    * @param numProj Number of projections in each hash table (anything between
@@ -111,7 +114,7 @@ class LSHSearch
    *     value of 0 indicates that there is no limit (so the second hash table
    *     can be arbitrarily large---be careful!).
    */
-  LSHSearch(const arma::mat& referenceSet,
+  LSHSearch(arma::mat referenceSet,
             const size_t numProj,
             const size_t numTables,
             const double hashWidth = 0.0,
@@ -153,14 +156,10 @@ class LSHSearch
   LSHSearch& operator=(LSHSearch&& other);
 
   /**
-   * Clean memory.
-   */
-  ~LSHSearch();
-
-  /**
    * Train the LSH model on the given dataset.  If a correctly-sized projection
    * cube is not provided, this means building new hash tables. Otherwise, we
-   * use the projections provided by the user.
+   * use the projections provided by the user.  In order to avoid copying the
+   * reference set, consider passing that parameter with std::move().
    *
    * @param referenceSet Set of reference points and the set of queries.
    * @param numProj Number of projections in each hash table (anything between
@@ -181,7 +180,7 @@ class LSHSearch
    *     we set numProj = a, numTables = c. b is the reference set
    *     dimensionality.
    */
-  void Train(const arma::mat& referenceSet,
+  void Train(arma::mat referenceSet,
              const size_t numProj,
              const size_t numTables,
              const double hashWidth = 0.0,
@@ -259,7 +258,7 @@ class LSHSearch
    * @param ar Archive to serialize to.
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const unsigned int version);
 
   //! Return the number of distance evaluations performed.
   size_t DistanceEvaluations() const { return distanceEvaluations; }
@@ -267,7 +266,7 @@ class LSHSearch
   size_t& DistanceEvaluations() { return distanceEvaluations; }
 
   //! Return the reference dataset.
-  const arma::mat& ReferenceSet() const { return *referenceSet; }
+  const arma::mat& ReferenceSet() const { return referenceSet; }
 
   //! Get the number of projections.
   size_t NumProjections() const { return projections.n_slices; }
@@ -292,7 +291,7 @@ class LSHSearch
   void Projections(const arma::cube& projTables)
   {
     // Simply call Train() with the given projection tables.
-    Train(*referenceSet, numProj, numTables, hashWidth, secondHashSize,
+    Train(referenceSet, numProj, numTables, hashWidth, secondHashSize,
         bucketSize, projTables);
   }
 
@@ -416,9 +415,7 @@ class LSHSearch
   bool PerturbationValid(const std::vector<bool>& A) const;
 
   //! Reference dataset.
-  const arma::mat* referenceSet;
-  //! If true, we own the reference set.
-  bool ownsSet;
+  arma::mat referenceSet;
 
   //! The number of projections.
   size_t numProj;

@@ -23,6 +23,7 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::tree;
 using namespace mlpack::data;
+using namespace mlpack::util;
 
 PROGRAM_INFO("Hoeffding trees",
     "This program implements Hoeffding trees, a form of streaming decision tree"
@@ -34,7 +35,11 @@ PROGRAM_INFO("Hoeffding trees",
     "\n\n"
     "The training file and associated labels are specified with the " +
     PRINT_PARAM_STRING("training") + " and " + PRINT_PARAM_STRING("labels") +
-    " parameters, respectively.  The training may be performed in batch mode "
+    " parameters, respectively. Optionally, if " +
+    PRINT_PARAM_STRING("labels") + " is not specified, the labels are assumed "
+    "to be the last dimension of the training dataset."
+    "\n\n"
+    "The training may be performed in batch mode "
     "(like a typical decision tree algorithm) by specifying the " +
     PRINT_PARAM_STRING("batch_mode") + " option, but this may not be the best "
     "option for large datasets."
@@ -108,46 +113,31 @@ PARAM_INT_IN("observations_before_binning", "If the 'domingos' split strategy "
 // Convenience typedef.
 typedef tuple<DatasetInfo, arma::mat> TupleType;
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Check input parameters for validity.
   const string numericSplitStrategy =
       CLI::GetParam<string>("numeric_split_strategy");
 
-  if ((CLI::HasParam("predictions") || CLI::HasParam("probabilities")) &&
-       !CLI::HasParam("test"))
-    Log::Fatal << "--test_file must be specified if --predictions_file or "
-        << "--probabilities_file is specified." << endl;
+  RequireAtLeastOnePassed({ "training", "input_model" }, true);
 
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
-    Log::Fatal << "One of --training_file or --input_model_file must be "
-        << "specified!" << endl;
+  RequireAtLeastOnePassed({ "output_model", "predictions", "probabilities",
+      "test_labels" }, false, "no output will be given");
 
-  if (CLI::HasParam("training") && !CLI::HasParam("labels"))
-    Log::Fatal << "If --training_file is specified, --labels_file must be "
-        << "specified too!" << endl;
+  ReportIgnoredParam({{ "test", false }}, "probabilities");
+  ReportIgnoredParam({{ "test", false }}, "predictions");
 
-  if (!CLI::HasParam("training") && CLI::HasParam("batch_mode"))
-    Log::Warn << "--batch_mode (-b) ignored; no training set provided." << endl;
+  ReportIgnoredParam({{ "training", false }}, "batch_mode");
+  ReportIgnoredParam({{ "training", false }}, "passes");
 
-  if (CLI::HasParam("passes") && CLI::HasParam("batch_mode"))
-    Log::Warn << "--batch_mode (-b) ignored because --passes was specified."
-        << endl;
-
-  if (CLI::HasParam("test") && !CLI::HasParam("predictions") &&
-      !CLI::HasParam("probabilities") && !CLI::HasParam("test_labels"))
-    Log::Warn << "--test_file (-T) is specified, but none of "
-        << "--predictions_file (-p), --probabilities_file (-P), or "
-        << "--test_labels_file (-L) are specified, so no output will be given!"
-        << endl;
-
-  if ((numericSplitStrategy != "domingos") &&
-      (numericSplitStrategy != "binary"))
+  if (CLI::HasParam("test"))
   {
-    Log::Fatal << "Unrecognized numeric split strategy ("
-        << numericSplitStrategy << ")!  Must be 'domingos' or 'binary'."
-        << endl;
+    RequireAtLeastOnePassed({ "predictions", "probabilities", "test_labels" },
+        false, "no output will be given");
   }
+
+  RequireParamInSet<string>("numeric_split_strategy", { "domingos", "binary" },
+      true, "unrecognized numeric split strategy");
 
   // Do we need to load a model or do we already have one?
   HoeffdingTreeModel model;
@@ -193,7 +183,19 @@ void mlpackMain()
       Log::Info << datasetInfo.NumMappings(i) << " mappings in dimension "
           << i << "." << endl;
 
-    labels = CLI::GetParam<arma::Row<size_t>>("labels");
+    if (CLI::HasParam("labels"))
+    {
+      labels = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
+    }
+    else
+    {
+      // Extract the labels from the last dimension of training set.
+      Log::Info << "Using the last dimension of training set as labels."
+          << endl;
+      labels = arma::conv_to<arma::Row<size_t>>::from(
+          trainingSet.row(trainingSet.n_rows - 1));
+      trainingSet.shed_row(trainingSet.n_rows - 1);
+    }
 
     // Next, create the model with the right type.  Then build the tree with the
     // appropriate type of instantiated numeric split type.  This is a little

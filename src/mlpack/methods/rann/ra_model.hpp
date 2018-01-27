@@ -36,12 +36,6 @@ using RAType = RASearch<SortPolicy,
                         arma::mat,
                         TreeType>;
 
-template<typename SortPolicy>
-struct RAModelName
-{
-  static const std::string Name() { return "rank_approx_search_model"; }
-};
-
 /**
  * MonoSearchVisitor executes a monochromatic neighbor search on the given
  * RAType. We don't make any difference for different instantiation of RAType.
@@ -243,27 +237,6 @@ class ReferenceSetVisitor : public boost::static_visitor<const arma::mat&>
 };
 
 /**
- * Exposes the serialize method of the give RAType instance.
- */
-template<typename Archive>
-class SerializeVisitor : public boost::static_visitor<void>
-{
- private:
-  //! Archive to serialize to.
-  Archive& ar;
-  //! Name of the model to serialize.
-  const std::string& name;
-
- public:
-  //! Serialize the given model.
-  template<typename RAType>
-  void operator()(RAType*& ra) const;
-
-  //! Construct the SerializeVisitor with the given archive and name.
-  SerializeVisitor(Archive& ar, const std::string& name);
-};
-
-/**
  * DeleteVisitor deletes the give RAType Instance.
  */
 class DeleteVisitor : public boost::static_visitor<void>
@@ -379,7 +352,7 @@ class RAModel
 
   //! Serialize the model.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
   //! Expose the dataset.
   const arma::mat& Dataset() const;

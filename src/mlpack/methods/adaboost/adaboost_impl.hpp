@@ -238,13 +238,13 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
  */
 template<typename WeakLearnerType, typename MatType>
 template<typename Archive>
-void AdaBoost<WeakLearnerType, MatType>::Serialize(Archive& ar,
+void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
                                                const unsigned int /* version */)
 {
-  ar & data::CreateNVP(numClasses, "classes");
-  ar & data::CreateNVP(tolerance, "tolerance");
-  ar & data::CreateNVP(ztProduct, "ztProduct");
-  ar & data::CreateNVP(alpha, "alpha");
+  ar & BOOST_SERIALIZATION_NVP(numClasses);
+  ar & BOOST_SERIALIZATION_NVP(tolerance);
+  ar & BOOST_SERIALIZATION_NVP(ztProduct);
+  ar & BOOST_SERIALIZATION_NVP(alpha);
 
   // Now serialize each weak learner.
   if (Archive::is_loading::value)
@@ -252,12 +252,7 @@ void AdaBoost<WeakLearnerType, MatType>::Serialize(Archive& ar,
     wl.clear();
     wl.resize(alpha.size());
   }
-  for (size_t i = 0; i < wl.size(); ++i)
-  {
-    std::ostringstream oss;
-    oss << "weakLearner" << i;
-    ar & data::CreateNVP(wl[i], oss.str());
-  }
+  ar & BOOST_SERIALIZATION_NVP(wl);
 }
 
 } // namespace adaboost

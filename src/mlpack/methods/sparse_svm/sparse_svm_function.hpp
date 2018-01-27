@@ -15,7 +15,8 @@
 
 #include <mlpack/prereqs.hpp>
 
-class SparseSVMFunction{
+class SparseSVMFunction
+{
  public:
   //! Nothing to do for the default constructor.
   SparseSVMFunction() {}

@@ -107,10 +107,10 @@ class SphericalKernel
 
   //! Serialize the object.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(bandwidth, "bandwidth");
-    ar & data::CreateNVP(bandwidthSquared, "bandwidthSquared");
+    ar & BOOST_SERIALIZATION_NVP(bandwidth);
+    ar & BOOST_SERIALIZATION_NVP(bandwidthSquared);
   }
 
  private:

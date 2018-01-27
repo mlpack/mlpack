@@ -21,14 +21,12 @@ namespace neighbor {
 // Construct the object with random tables
 template<typename SortPolicy>
 LSHSearch<SortPolicy>::
-LSHSearch(const arma::mat& referenceSet,
+LSHSearch(arma::mat referenceSet,
           const size_t numProj,
           const size_t numTables,
           const double hashWidthIn,
           const size_t secondHashSize,
           const size_t bucketSize) :
-  referenceSet(NULL), // This will be set in Train().
-  ownsSet(false),
   numProj(numProj),
   numTables(numTables),
   hashWidth(hashWidthIn),
@@ -44,13 +42,11 @@ LSHSearch(const arma::mat& referenceSet,
 // Construct the object with given tables
 template<typename SortPolicy>
 LSHSearch<SortPolicy>::
-LSHSearch(const arma::mat& referenceSet,
+LSHSearch(arma::mat referenceSet,
           const arma::cube& projections,
           const double hashWidthIn,
           const size_t secondHashSize,
           const size_t bucketSize) :
-  referenceSet(NULL), // This will be set in Train().
-  ownsSet(false),
   numProj(projections.n_cols),
   numTables(projections.n_slices),
   hashWidth(hashWidthIn),
@@ -58,16 +54,14 @@ LSHSearch(const arma::mat& referenceSet,
   bucketSize(bucketSize),
   distanceEvaluations(0)
 {
-  // Pass work to training function
-  Train(referenceSet, numProj, numTables, hashWidthIn, secondHashSize,
-      bucketSize, projections);
+  // Pass work to training function.
+  Train(std::move(referenceSet), numProj, numTables, hashWidthIn,
+      secondHashSize, bucketSize, projections);
 }
 
 // Empty constructor.
 template<typename SortPolicy>
 LSHSearch<SortPolicy>::LSHSearch() :
-    referenceSet(new arma::mat()), // Use an empty dataset.
-    ownsSet(true),
     numProj(0),
     numTables(0),
     hashWidth(0),
@@ -80,8 +74,7 @@ LSHSearch<SortPolicy>::LSHSearch() :
 // Copy constructor.
 template<typename SortPolicy>
 LSHSearch<SortPolicy>::LSHSearch(const LSHSearch& other) :
-    referenceSet(new arma::mat(*other.referenceSet)),
-    ownsSet(true),
+    referenceSet(other.referenceSet), // Copy the other set.
     numProj(other.numProj),
     numTables(other.numTables),
     projections(other.projections),
@@ -101,8 +94,7 @@ LSHSearch<SortPolicy>::LSHSearch(const LSHSearch& other) :
 // Move constructor.
 template<typename SortPolicy>
 LSHSearch<SortPolicy>::LSHSearch(LSHSearch&& other) :
-    referenceSet(other.referenceSet),
-    ownsSet(other.ownsSet),
+    referenceSet(std::move(other.referenceSet)),
     numProj(other.numProj),
     numTables(other.numTables),
     projections(std::move(other.projections)),
@@ -117,8 +109,6 @@ LSHSearch<SortPolicy>::LSHSearch(LSHSearch&& other) :
     distanceEvaluations(other.distanceEvaluations)
 {
   // Reset other model to defaults.
-  other.referenceSet = new arma::mat();
-  other.ownsSet = true;
   other.numProj = 0;
   other.numTables = 0;
   other.hashWidth = 0;
@@ -131,11 +121,7 @@ LSHSearch<SortPolicy>::LSHSearch(LSHSearch&& other) :
 template<typename SortPolicy>
 LSHSearch<SortPolicy>& LSHSearch<SortPolicy>::operator=(const LSHSearch& other)
 {
-  if (ownsSet)
-    delete referenceSet;
-
-  referenceSet = new arma::mat(*other.referenceSet);
-  ownsSet = true;
+  referenceSet = other.referenceSet;
   numProj = other.numProj;
   numTables = other.numTables;
   projections = other.projections;
@@ -156,11 +142,7 @@ LSHSearch<SortPolicy>& LSHSearch<SortPolicy>::operator=(const LSHSearch& other)
 template<typename SortPolicy>
 LSHSearch<SortPolicy>& LSHSearch<SortPolicy>::operator=(LSHSearch&& other)
 {
-  if (ownsSet)
-    delete referenceSet;
-
-  referenceSet = other.referenceSet;
-  ownsSet = other.ownsSet;
+  referenceSet = std::move(other.referenceSet);
   numProj = other.numProj;
   numTables = other.numTables;
   projections = std::move(other.projections);
@@ -175,8 +157,6 @@ LSHSearch<SortPolicy>& LSHSearch<SortPolicy>::operator=(LSHSearch&& other)
   distanceEvaluations = other.distanceEvaluations;
 
   // Reset other model to defaults.
-  other.referenceSet = new arma::mat();
-  other.ownsSet = true;
   other.numProj = 0;
   other.numTables = 0;
   other.hashWidth = 0;
@@ -187,17 +167,9 @@ LSHSearch<SortPolicy>& LSHSearch<SortPolicy>::operator=(LSHSearch&& other)
   return *this;
 }
 
-// Destructor.
-template<typename SortPolicy>
-LSHSearch<SortPolicy>::~LSHSearch()
-{
-  if (ownsSet)
-    delete referenceSet;
-}
-
 // Train on a new reference set.
 template<typename SortPolicy>
-void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
+void LSHSearch<SortPolicy>::Train(arma::mat referenceSet,
                                   const size_t numProj,
                                   const size_t numTables,
                                   const double hashWidthIn,
@@ -206,10 +178,7 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
                                   const arma::cube &projection)
 {
   // Set new reference set.
-  if (this->referenceSet && ownsSet)
-    delete this->referenceSet;
-  this->referenceSet = &referenceSet;
-  this->ownsSet = false;
+  this->referenceSet = std::move(referenceSet);
 
   // Set new parameters.
   this->numProj = numProj;
@@ -224,11 +193,12 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
     // Compute a heuristic hash width from the data.
     for (size_t i = 0; i < numSamples; i++)
     {
-      size_t p1 = (size_t) math::RandInt(referenceSet.n_cols);
-      size_t p2 = (size_t) math::RandInt(referenceSet.n_cols);
+      size_t p1 = (size_t) math::RandInt(this->referenceSet.n_cols);
+      size_t p2 = (size_t) math::RandInt(this->referenceSet.n_cols);
 
       hashWidth += std::sqrt(metric::EuclideanDistance::Evaluate(
-          referenceSet.unsafe_col(p1), referenceSet.unsafe_col(p2)));
+          this->referenceSet.unsafe_col(p1),
+          this->referenceSet.unsafe_col(p2)));
     }
 
     hashWidth /= numSamples;
@@ -269,7 +239,7 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
     // 1) is a 2-stable distribution.
 
     // Build numTables random tables arranged in a cube.
-    projections.randn(referenceSet.n_rows, numProj, numTables);
+    projections.randn(this->referenceSet.n_rows, numProj, numTables);
   }
   else if (projection.n_slices == numTables) // Take user-defined tables.
   {
@@ -284,7 +254,7 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
   // We will store the second hash vectors in this matrix; the second hash
   // vector for table i will be held in row i.  We have to use int and not
   // size_t, otherwise negative numbers are cast to 0.
-  arma::Mat<size_t> secondHashVectors(numTables, referenceSet.n_cols);
+  arma::Mat<size_t> secondHashVectors(numTables, this->referenceSet.n_cols);
 
   for (size_t i = 0; i < numTables; i++)
   {
@@ -300,8 +270,8 @@ void LSHSearch<SortPolicy>::Train(const arma::mat& referenceSet,
     // point is obtained as:
     // key = { floor((<proj_i, point> + offset_i) / 'hashWidth') forall i }
     arma::mat offsetMat = arma::repmat(offsets.unsafe_col(i), 1,
-                                       referenceSet.n_cols);
-    arma::mat hashMat = projections.slice(i).t() * (referenceSet);
+                                       this->referenceSet.n_cols);
+    arma::mat hashMat = projections.slice(i).t() * (this->referenceSet);
     hashMat += offsetMat;
     hashMat /= hashWidth;
 
@@ -389,9 +359,9 @@ void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
 {
   // Let's build the list of candidate neighbors for the given query point.
   // It will be initialized with k candidates:
-  // (WorstDistance, referenceSet->n_cols)
+  // (WorstDistance, referenceSet.n_cols)
   const Candidate def = std::make_pair(SortPolicy::WorstDistance(),
-      referenceSet->n_cols);
+      referenceSet.n_cols);
   std::vector<Candidate> vect(k, def);
   CandidateList pqueue(CandidateCmp(), std::move(vect));
 
@@ -403,8 +373,8 @@ void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
       continue;
 
     const double distance = metric::EuclideanDistance::Evaluate(
-        referenceSet->unsafe_col(queryIndex),
-        referenceSet->unsafe_col(referenceIndex));
+        referenceSet.unsafe_col(queryIndex),
+        referenceSet.unsafe_col(referenceIndex));
 
     Candidate c = std::make_pair(distance, referenceIndex);
     // If this distance is better than the worst candidate, let's insert it.
@@ -435,9 +405,9 @@ void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
 {
   // Let's build the list of candidate neighbors for the given query point.
   // It will be initialized with k candidates:
-  // (WorstDistance, referenceSet->n_cols)
+  // (WorstDistance, referenceSet.n_cols)
   const Candidate def = std::make_pair(SortPolicy::WorstDistance(),
-      referenceSet->n_cols);
+      referenceSet.n_cols);
   std::vector<Candidate> vect(k, def);
   CandidateList pqueue(CandidateCmp(), std::move(vect));
 
@@ -446,7 +416,7 @@ void LSHSearch<SortPolicy>::BaseCase(const size_t queryIndex,
     const size_t referenceIndex = referenceIndices[j];
     const double distance = metric::EuclideanDistance::Evaluate(
         querySet.unsafe_col(queryIndex),
-        referenceSet->unsafe_col(referenceIndex));
+        referenceSet.unsafe_col(referenceIndex));
 
     Candidate c = std::make_pair(distance, referenceIndex);
     // If this distance is better than the worst candidate, let's insert it.
@@ -808,13 +778,13 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
   // There are two ways to proceed here:
   // Either allocate a maxNumPoints-size vector, place all candidates, and run
   // unique on the vector to discard duplicates.
-  // Or allocate a referenceSet->n_cols size vector (i.e. number of reference
+  // Or allocate a referenceSet.n_cols size vector (i.e. number of reference
   // points) of zeros, and mark found indices as 1.
   // Option 1 runs faster for small maxNumPoints but worse for larger values, so
   // we choose based on a heuristic.
   const float cutoff = 0.1;
   const float selectivity = static_cast<float>(maxNumPoints) /
-      static_cast<float>(referenceSet->n_cols);
+      static_cast<float>(referenceSet.n_cols);
 
   if (selectivity > cutoff)
   {
@@ -822,7 +792,7 @@ void LSHSearch<SortPolicy>::ReturnIndicesFromTable(
     // should be faster.
     // Reference points hashed in the same bucket as the query are set to >0.
     arma::Col<size_t> refPointsConsidered;
-    refPointsConsidered.zeros(referenceSet->n_cols);
+    refPointsConsidered.zeros(referenceSet.n_cols);
 
     for (size_t i = 0; i < numTablesToSearch; ++i) // for all tables
     {
@@ -888,20 +858,20 @@ void LSHSearch<SortPolicy>::Search(const arma::mat& querySet,
                                    const size_t T)
 {
   // Ensure the dimensionality of the query set is correct.
-  if (querySet.n_rows != referenceSet->n_rows)
+  if (querySet.n_rows != referenceSet.n_rows)
   {
     std::ostringstream oss;
     oss << "LSHSearch::Search(): dimensionality of query set ("
         << querySet.n_rows << ") is not equal to the dimensionality the model "
-        << "was trained on (" << referenceSet->n_rows << ")!" << std::endl;
+        << "was trained on (" << referenceSet.n_rows << ")!" << std::endl;
     throw std::invalid_argument(oss.str());
   }
 
-  if (k > referenceSet->n_cols)
+  if (k > referenceSet.n_cols)
   {
     std::ostringstream oss;
     oss << "LSHSearch::Search(): requested " << k << " approximate nearest "
-        << "neighbors, but reference set has " << referenceSet->n_cols
+        << "neighbors, but reference set has " << referenceSet.n_cols
         << " points!" << std::endl;
     throw std::invalid_argument(oss.str());
   }
@@ -977,8 +947,8 @@ Search(const size_t k,
        size_t T)
 {
   // This is monochromatic search; the query set is the reference set.
-  resultingNeighbors.set_size(k, referenceSet->n_cols);
-  distances.set_size(k, referenceSet->n_cols);
+  resultingNeighbors.set_size(k, referenceSet.n_cols);
+  distances.set_size(k, referenceSet.n_cols);
 
   // If the user requested more than the available number of additional probing
   // bins, set Teffective to maximum T. Maximum T is 2^numProj - 1
@@ -1005,13 +975,13 @@ Search(const size_t k,
       shared(resultingNeighbors, distances) \
       schedule(dynamic)\
       reduction(+:avgIndicesReturned)
-  for (omp_size_t i = 0; i < (omp_size_t) referenceSet->n_cols; ++i)
+  for (omp_size_t i = 0; i < (omp_size_t) referenceSet.n_cols; ++i)
   {
     // Go through every query point.
     // Hash every query into every hash table and eventually into the
     // 'secondHashTable' to obtain the neighbor candidates.
     arma::uvec refIndices;
-    ReturnIndicesFromTable(referenceSet->col(i), refIndices, numTablesToSearch,
+    ReturnIndicesFromTable(referenceSet.col(i), refIndices, numTablesToSearch,
         Teffective);
 
     // An informative book-keeping for the number of neighbor candidates
@@ -1028,7 +998,7 @@ Search(const size_t k,
   Timer::Stop("computing_neighbors");
 
   distanceEvaluations += avgIndicesReturned;
-  avgIndicesReturned /= referenceSet->n_cols;
+  avgIndicesReturned /= referenceSet.n_cols;
   Log::Info << avgIndicesReturned << " distinct indices returned on average." <<
       std::endl;
 }
@@ -1062,22 +1032,12 @@ double LSHSearch<SortPolicy>::ComputeRecall(
 
 template<typename SortPolicy>
 template<typename Archive>
-void LSHSearch<SortPolicy>::Serialize(Archive& ar,
+void LSHSearch<SortPolicy>::serialize(Archive& ar,
                                       const unsigned int version)
 {
-  using data::CreateNVP;
-
-  // If we are loading, we are going to own the reference set.
-  if (Archive::is_loading::value)
-  {
-    if (ownsSet)
-      delete referenceSet;
-    ownsSet = true;
-  }
-  ar & CreateNVP(referenceSet, "referenceSet");
-
-  ar & CreateNVP(numProj, "numProj");
-  ar & CreateNVP(numTables, "numTables");
+  ar & BOOST_SERIALIZATION_NVP(referenceSet);
+  ar & BOOST_SERIALIZATION_NVP(numProj);
+  ar & BOOST_SERIALIZATION_NVP(numTables);
 
   // Delete existing projections, if necessary.
   if (Archive::is_loading::value)
@@ -1088,7 +1048,7 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
   if (version == 0)
   {
     std::vector<arma::mat> tmpProj;
-    ar & CreateNVP(tmpProj, "projections");
+    ar & BOOST_SERIALIZATION_NVP(tmpProj);
 
     projections.set_size(tmpProj[0].n_rows, tmpProj[0].n_cols, tmpProj.size());
     for (size_t i = 0; i < tmpProj.size(); ++i)
@@ -1096,14 +1056,14 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
   }
   else
   {
-    ar & CreateNVP(projections, "projections");
+    ar & BOOST_SERIALIZATION_NVP(projections);
   }
 
-  ar & CreateNVP(offsets, "offsets");
-  ar & CreateNVP(hashWidth, "hashWidth");
-  ar & CreateNVP(secondHashSize, "secondHashSize");
-  ar & CreateNVP(secondHashWeights, "secondHashWeights");
-  ar & CreateNVP(bucketSize, "bucketSize");
+  ar & BOOST_SERIALIZATION_NVP(offsets);
+  ar & BOOST_SERIALIZATION_NVP(hashWidth);
+  ar & BOOST_SERIALIZATION_NVP(secondHashSize);
+  ar & BOOST_SERIALIZATION_NVP(secondHashWeights);
+  ar & BOOST_SERIALIZATION_NVP(bucketSize);
   // needs specific handling for new version
 
   // Backward compatibility: in older versions of LSHSearch, the secondHashTable
@@ -1112,7 +1072,7 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
   if (version == 0)
   {
     arma::Mat<size_t> tmpSecondHashTable;
-    ar & CreateNVP(tmpSecondHashTable, "secondHashTable");
+    ar & BOOST_SERIALIZATION_NVP(tmpSecondHashTable);
 
     // The old secondHashTable was stored in row-major format, so we transpose
     // it.
@@ -1122,11 +1082,11 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
     for (size_t i = 0; i < tmpSecondHashTable.n_cols; ++i)
     {
       // Find length of each column.  We know we are at the end of the list when
-      // the value referenceSet->n_cols is seen.
+      // the value referenceSet.n_cols is seen.
 
       size_t len = 0;
       for (; len < tmpSecondHashTable.n_rows; ++len)
-        if (tmpSecondHashTable(len, i) == referenceSet->n_cols)
+        if (tmpSecondHashTable(len, i) == referenceSet.n_cols)
           break;
 
       // Set the size of the new column correctly.
@@ -1140,7 +1100,7 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
     size_t tables;
     if (Archive::is_saving::value)
       tables = secondHashTable.size();
-    ar & CreateNVP(tables, "numSecondHashTables");
+    ar & BOOST_SERIALIZATION_NVP(tables);
 
     // Set size of second hash table if needed.
     if (Archive::is_loading::value)
@@ -1149,12 +1109,7 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
       secondHashTable.resize(tables);
     }
 
-    for (size_t i = 0; i < secondHashTable.size(); ++i)
-    {
-      std::ostringstream oss;
-      oss << "secondHashTable" << i;
-      ar & CreateNVP(secondHashTable[i], oss.str());
-    }
+    ar & BOOST_SERIALIZATION_NVP(secondHashTable);
   }
 
   // Backward compatibility: old versions of LSHSearch held bucketContentSize
@@ -1166,8 +1121,8 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
     // it.  But we can't do that until we have bucketRowInHashTable, so we also
     // have to load that.
     arma::Col<size_t> tmpBucketContentSize;
-    ar & CreateNVP(tmpBucketContentSize, "bucketContentSize");
-    ar & CreateNVP(bucketRowInHashTable, "bucketRowInHashTable");
+    ar & BOOST_SERIALIZATION_NVP(tmpBucketContentSize);
+    ar & BOOST_SERIALIZATION_NVP(bucketRowInHashTable);
 
     // Compress into a smaller vector by just dropping all of the zeros.
     bucketContentSize.set_size(secondHashTable.size());
@@ -1177,11 +1132,11 @@ void LSHSearch<SortPolicy>::Serialize(Archive& ar,
   }
   else
   {
-    ar & CreateNVP(bucketContentSize, "bucketContentSize");
-    ar & CreateNVP(bucketRowInHashTable, "bucketRowInHashTable");
+    ar & BOOST_SERIALIZATION_NVP(bucketContentSize);
+    ar & BOOST_SERIALIZATION_NVP(bucketRowInHashTable);
   }
 
-  ar & CreateNVP(distanceEvaluations, "distanceEvaluations");
+  ar & BOOST_SERIALIZATION_NVP(distanceEvaluations);
 }
 
 } // namespace neighbor

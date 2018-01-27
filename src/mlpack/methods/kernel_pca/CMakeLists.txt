@@ -5,6 +5,8 @@ set(SOURCES
   kernel_pca_impl.hpp
 )
 
+add_subdirectory(kernel_rules)
+
 # Add directory name to sources.
 set(DIR_SRCS)
 foreach(file ${SOURCES})
@@ -13,8 +15,6 @@ endforeach()
 # Append sources (with directory name) to list of all mlpack sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-add_subdirectory(kernel_rules)
 
 add_cli_executable(kernel_pca)
 add_python_binding(kernel_pca)

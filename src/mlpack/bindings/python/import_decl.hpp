@@ -21,6 +21,7 @@ template<typename T>
 void ImportDecl(
     const util::ParamData& d,
     const size_t indent,
+    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
 {
   // First, we have to parse the type.  If we have something like, e.g.,
@@ -47,7 +48,20 @@ template<typename T>
 void ImportDecl(
     const util::ParamData& /* d */,
     const size_t /* indent */,
+    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0)
+{
+  // Print nothing.
+}
+
+/**
+ * For a matrix type, print nothing.
+ */
+template<typename T>
+void ImportDecl(
+    const util::ParamData& /* d */,
+    const size_t /* indent */,
+    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
 {
   // Print nothing.
 }

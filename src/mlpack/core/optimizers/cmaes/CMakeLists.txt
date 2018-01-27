@@ -1,6 +1,8 @@
 set(SOURCES
-  constant_step.hpp
-  exponential_backoff.hpp
+  cmaes.hpp
+  cmaes_impl.hpp
+  full_selection.hpp
+  random_selection.hpp
 )
 
 set(DIR_SRCS)

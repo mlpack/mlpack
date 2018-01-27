@@ -178,8 +178,6 @@ void Timers::StartTimer(const string& timerName,
   // Don't do anything if we aren't timing.
   if (!enabled)
     return;
-  if (timerName == "total_time")
-    return; // Ignore that timer.
 
   lock_guard<mutex> lock(timersMutex);
 
@@ -209,8 +207,6 @@ void Timers::StopTimer(const string& timerName,
   // Don't do anything if we aren't timing.
   if (!enabled)
     return;
-  if (timerName == "total_time")
-    return; // Ignore that timer.
 
   lock_guard<mutex> lock(timersMutex);
 

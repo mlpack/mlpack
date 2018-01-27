@@ -26,23 +26,28 @@ namespace ann {
 class ResetCellVisitor : public boost::static_visitor<void>
 {
  public:
+  //! Reset the cell using the given size.
+  ResetCellVisitor(const size_t size);
+
   //! Execute the ResetCell() function.
   template<typename LayerType>
   void operator()(LayerType* layer) const;
 
  private:
-  //! Execute the ResetCell() function for a module which implements 
+  size_t size;
+
+  //! Execute the ResetCell() function for a module which implements
   //! the ResetCell() function.
   template<typename T>
   typename std::enable_if<
-      HasResetCellCheck<T, void(T::*)()>::value, void>::type
+      HasResetCellCheck<T, void(T::*)(const size_t)>::value, void>::type
   ResetCell(T* layer) const;
 
   //! Do not execute the Reset() function for a module which doesn't implement
   // the Reset() or Model() function.
   template<typename T>
   typename std::enable_if<
-      !HasResetCellCheck<T, void(T::*)()>::value, void>::type
+      !HasResetCellCheck<T, void(T::*)(const size_t)>::value, void>::type
   ResetCell(T* layer) const;
 };
 

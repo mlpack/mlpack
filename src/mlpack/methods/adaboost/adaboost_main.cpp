@@ -44,6 +44,7 @@ using namespace arma;
 using namespace mlpack::adaboost;
 using namespace mlpack::decision_stump;
 using namespace mlpack::perceptron;
+using namespace mlpack::util;
 
 PROGRAM_INFO("AdaBoost", "This program implements the AdaBoost (or Adaptive "
     "Boosting) algorithm. The variant of AdaBoost implemented here is "
@@ -110,76 +111,39 @@ PARAM_MODEL_IN(AdaBoostModel, "input_model", "Input AdaBoost model.", "m");
 PARAM_MODEL_OUT(AdaBoostModel, "output_model", "Output trained AdaBoost model.",
     "M");
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Check input parameters and issue warnings/errors as necessary.
 
   // The user cannot specify both a training file and an input model file.
-  if (CLI::HasParam("training") && CLI::HasParam("input_model"))
-  {
-    Log::Fatal << "Only one of --training_file or --input_model_file may be "
-        << "specified!" << endl;
-  }
-
-  // The user must specify either a training file or an input model file.
-  if (!CLI::HasParam("training") && !CLI::HasParam("input_model"))
-  {
-    Log::Fatal << "Either --training_file or --input_model_file must be "
-        << "specified!" << endl;
-  }
+  RequireOnlyOnePassed({ "training", "input_model" });
 
   // The weak learner must make sense.
-  if (CLI::GetParam<string>("weak_learner") != "decision_stump" &&
-      CLI::GetParam<string>("weak_learner") != "perceptron")
-  {
-    Log::Fatal << "Unknown weak learner type '"
-        << CLI::GetParam<string>("weak_learner")
-        << "'; must be 'decision_stump' or 'perceptron'." << endl;
-  }
+  RequireParamInSet<std::string>("weak_learner",
+      { "decision_stump", "perceptron" }, true, "unknown weak learner type");
 
   // --labels can't be specified without --training.
-  if (CLI::HasParam("labels") && !CLI::HasParam("training"))
-    Log::Warn << "--labels_file ignored, because --training_file was not "
-        << "passed." << endl;
+  ReportIgnoredParam({{ "training", false }}, "labels");
 
   // Sanity check on iterations.
-  int iterInt = CLI::GetParam<int>("iterations");
-  if (iterInt < 0)
-  {
-    Log::Fatal << "Invalid number of iterations (" << iterInt << ") specified! "
-        << "Must be greater than 0." << endl;
-  }
+  RequireParamValue<int>("iterations", [](int x) { return x > 0; },
+      true, "invalid number of iterations specified");
 
   // If a weak learner is specified with a model, it will be ignored.
-  if (CLI::HasParam("input_model") && CLI::HasParam("weak_learner"))
-  {
-    Log::Warn << "--weak_learner ignored because --input_model_file is "
-        << "specified." << endl;
-  }
+  ReportIgnoredParam({{ "input_model", true }}, "weak_learner");
 
   // Training parameters are ignored if no training file is given.
-  if (CLI::HasParam("tolerance") && !CLI::HasParam("training"))
-  {
-    Log::Warn << "--tolerance ignored, because --training_file was not "
-        << "passed." << endl;
-  }
-  if (CLI::HasParam("iterations") && !CLI::HasParam("training"))
-  {
-    Log::Warn << "--iterations ignored, because --training_file was not "
-        << "passed." << endl;
-  }
+  ReportIgnoredParam({{ "training", false }}, "tolerance");
+  ReportIgnoredParam({{ "training", false }}, "iterations");
 
-  if (!CLI::HasParam("output_model") && !CLI::HasParam("output"))
-  {
-    Log::Warn << "Neither --output_model_file nor --output_file are specified; "
-        << "no results will be saved." << endl;
-  }
+  // If we gave an input model but no test set, issue a warning.
+  if (CLI::HasParam("input_model"))
+    RequireAtLeastOnePassed({ "test" }, false, "no task will be performed");
 
-  if (CLI::HasParam("output") && !CLI::HasParam("test"))
-  {
-    Log::Warn << "--output_file ignored because --test_file is not specified."
-        << endl;
-  }
+  RequireAtLeastOnePassed({ "output_model", "output" }, false,
+      "no results will be saved");
+
+  ReportIgnoredParam({{ "test", false }}, "output");
 
   AdaBoostModel m;
   if (CLI::HasParam("training"))

@@ -231,7 +231,7 @@ class FFN
 
   //! Serialize the model.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
   /**
    * Perform the forward pass of the data in real batch mode.

@@ -214,7 +214,7 @@ class HollowBallBound
 
   //! Serialize the bound.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const unsigned int version);
 };
 
 //! A specialization of BoundTraits for this bound type.

@@ -48,6 +48,24 @@ inline void CheckMatrices(const arma::Mat<size_t>& a,
     BOOST_REQUIRE_EQUAL(a[i], b[i]);
 }
 
+// Check the values of two cubes.
+inline void CheckMatrices(const arma::cube& a,
+                          const arma::cube& b,
+                          double tolerance = 1e-5)
+{
+  BOOST_REQUIRE_EQUAL(a.n_rows, b.n_rows);
+  BOOST_REQUIRE_EQUAL(a.n_cols, b.n_cols);
+  BOOST_REQUIRE_EQUAL(a.n_slices, b.n_slices);
+
+  for (size_t i = 0; i < a.n_elem; ++i)
+  {
+    if (std::abs(a[i]) < tolerance / 2)
+      BOOST_REQUIRE_SMALL(b[i], tolerance / 2);
+    else
+      BOOST_REQUIRE_CLOSE(a[i], b[i], tolerance);
+  }
+}
+
 // Filter typeinfo string to generate unique filenames for serialization tests.
 inline std::string FilterFileName(const std::string& inputString)
 {

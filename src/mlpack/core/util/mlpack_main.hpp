@@ -9,7 +9,9 @@
  * CLI::Destroy() automatically called on exit.
  *
  * This file should *only* be included by a program that is meant to be a
- * command-line program or a binding to another language.
+ * command-line program or a binding to another language.  This file also
+ * includes param_checks.hpp, which contains functions that are used to check
+ * parameter values at runtime.
  */
 #ifndef MLPACK_CORE_UTIL_MLPACK_MAIN_HPP
 #define MLPACK_CORE_UTIL_MLPACK_MAIN_HPP
@@ -29,9 +31,11 @@
 #include <mlpack/bindings/cli/print_doc_functions.hpp>
 
 #define PRINT_PARAM_STRING mlpack::bindings::cli::ParamString
+#define PRINT_PARAM_VALUE mlpack::bindings::cli::PrintValue
 #define PRINT_CALL mlpack::bindings::cli::ProgramCall
 #define PRINT_DATASET mlpack::bindings::cli::PrintDataset
 #define PRINT_MODEL mlpack::bindings::cli::PrintModel
+#define BINDING_IGNORE_CHECK mlpack::bindings::cli::IgnoreCheck
 
 namespace mlpack {
 namespace util {
@@ -42,21 +46,22 @@ using Option = mlpack::bindings::cli::CLIOption<T>;
 }
 }
 
+static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 #include <mlpack/bindings/cli/parse_command_line.hpp>
 #include <mlpack/bindings/cli/end_program.hpp>
 
-void mlpackMain(); // This is typically defined after this include.
+static void mlpackMain(); // This is typically defined after this include.
 
 int main(int argc, char** argv)
 {
-  // A "total_time" timer is run by default for each mlpack program.
-  mlpack::Timer::Start("total_time");
-
   // Parse the command-line options; put them into CLI.
   mlpack::bindings::cli::ParseCommandLine(argc, argv);
   // Enable timing.
   mlpack::Timer::EnableTiming();
+
+  // A "total_time" timer is run by default for each mlpack program.
+  mlpack::Timer::Start("total_time");
 
   mlpackMain();
 
@@ -68,12 +73,15 @@ int main(int argc, char** argv)
 #elif(BINDING_TYPE == BINDING_TYPE_TEST) // This is a unit test.
 
 #include <mlpack/bindings/tests/test_option.hpp>
+#include <mlpack/bindings/tests/ignore_check.hpp>
 
 // These functions will do nothing.
 #define PRINT_PARAM_STRING(A) std::string(" ")
+#define PRINT_PARAM_VALUE(A, B) std::string(" ")
 #define PRINT_DATASET(A) std::string(" ")
 #define PRINT_MODEL(A) std::string(" ")
 #define PRINT_CALL(...) std::string(" ")
+#define BINDING_IGNORE_CHECK mlpack::bindings::tests::IgnoreCheck
 
 namespace mlpack {
 namespace util {
@@ -84,19 +92,13 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 }
 }
 
+// testName symbol should be defined in each binding test file
 #include <mlpack/core/util/param.hpp>
 
 #undef PROGRAM_INFO
 #define PROGRAM_INFO(NAME, DESC) static mlpack::util::ProgramDoc \
     cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, \
-        []() { return DESC; }); \
-    namespace mlpack { \
-    namespace bindings { \
-    namespace tests { \
-    std::string programName = NAME; \
-    } \
-    } \
-    }
+        []() { return DESC; });
 
 #elif(BINDING_TYPE == BINDING_TYPE_PYX) // This is a Python binding.
 
@@ -104,9 +106,11 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 #include <mlpack/bindings/python/print_doc_functions.hpp>
 
 #define PRINT_PARAM_STRING mlpack::bindings::python::ParamString
+#define PRINT_PARAM_VALUE mlpack::bindings::python::PrintValue
 #define PRINT_DATASET mlpack::bindings::python::PrintDataset
 #define PRINT_MODEL mlpack::bindings::python::PrintModel
 #define PRINT_CALL mlpack::bindings::python::ProgramCall
+#define BINDING_IGNORE_CHECK mlpack::bindings::python::IgnoreCheck
 
 namespace mlpack {
 namespace util {
@@ -117,6 +121,7 @@ using Option = mlpack::bindings::python::PyOption<T>;
 }
 }
 
+static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
 #undef PROGRAM_INFO
@@ -142,4 +147,7 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
        "including <mlpack/core/util/mlpack_main.hpp>.";
 
 #endif
+
+#include "param_checks.hpp"
+
 #endif

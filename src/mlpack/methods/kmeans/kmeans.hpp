@@ -178,7 +178,7 @@ class KMeans
 
   //! Serialize the k-means object.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const unsigned int version);
 
  private:
   //! Maximum number of iterations before giving up.

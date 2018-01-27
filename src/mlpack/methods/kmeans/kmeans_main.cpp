@@ -24,6 +24,7 @@
 
 using namespace mlpack;
 using namespace mlpack::kmeans;
+using namespace mlpack::util;
 using namespace std;
 
 // Define parameters for the executable.
@@ -139,7 +140,7 @@ template<typename InitialPartitionPolicy,
          template<class, class> class LloydStepType>
 void RunKMeans(const InitialPartitionPolicy& ipp);
 
-void mlpackMain()
+static void mlpackMain()
 {
   // Initialize random seed.
   if (CLI::GetParam<int>("seed") != 0)
@@ -152,15 +153,13 @@ void mlpackMain()
   // a call to RunKMeans<> and the algorithm is completed.
   if (CLI::HasParam("refined_start"))
   {
+    RequireParamValue<int>("samplings", [](int x) { return x > 0; }, true,
+        "number of samplings must be positive");
     const int samplings = CLI::GetParam<int>("samplings");
+    RequireParamValue<double>("percentage",
+        [](double x) { return x > 0.0 && x <= 1.0; }, true, "percentage to "
+        "sample must be greater than 0.0 and less than or equal to 1.0");
     const double percentage = CLI::GetParam<double>("percentage");
-
-    if (samplings < 0)
-      Log::Fatal << "Number of samplings (" << samplings << ") must be "
-          << "greater than 0!" << endl;
-    if (percentage <= 0.0 || percentage > 1.0)
-      Log::Fatal << "Percentage for sampling (" << percentage << ") must be "
-          << "greater than 0.0 and less than or equal to 1.0!" << endl;
 
     FindEmptyClusterPolicy<RefinedStart>(RefinedStart(samplings, percentage));
   }
@@ -175,11 +174,9 @@ void mlpackMain()
 template<typename InitialPartitionPolicy>
 void FindEmptyClusterPolicy(const InitialPartitionPolicy& ipp)
 {
-  if (CLI::HasParam("allow_empty_clusters") &&
-      CLI::HasParam("kill_empty_clusters"))
-    Log::Fatal << "Only one of --allow_empty_clusters (-e) or "
-        << "--kill_empty_clusters (-E) may be specified!" << endl;
-  else if (CLI::HasParam("allow_empty_clusters"))
+  RequireOnlyOnePassed({ "allow_empty_clusters", "kill_empty_clusters" }, true);
+
+  if (CLI::HasParam("allow_empty_clusters"))
     FindLloydStepType<InitialPartitionPolicy, AllowEmptyClusters>(ipp);
   else if (CLI::HasParam("kill_empty_clusters"))
     FindLloydStepType<InitialPartitionPolicy, KillEmptyClusters>(ipp);
@@ -192,6 +189,10 @@ void FindEmptyClusterPolicy(const InitialPartitionPolicy& ipp)
 template<typename InitialPartitionPolicy, typename EmptyClusterPolicy>
 void FindLloydStepType(const InitialPartitionPolicy& ipp)
 {
+  RequireParamInSet<string>("algorithm", { "elkan", "hamerly", "pelleg-moore",
+      "dualtree", "dualtree-covertree", "naive" }, true, "unknown k-means "
+      "algorithm");
+
   const string algorithm = CLI::GetParam<string>("algorithm");
   if (algorithm == "elkan")
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, ElkanKMeans>(ipp);
@@ -208,10 +209,6 @@ void FindLloydStepType(const InitialPartitionPolicy& ipp)
         CoverTreeDualTreeKMeans>(ipp);
   else if (algorithm == "naive")
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, NaiveKMeans>(ipp);
-  else
-    Log::Fatal << "Unknown algorithm: '" << algorithm << "'.  Supported options"
-        << " are 'naive', 'pelleg-moore', 'elkan', 'hamerly', 'dualtree', and "
-        << "'dualtree-covertree'." << endl;
 }
 
 // Given the template parameters, sanitize/load input and run k-means.
@@ -221,37 +218,30 @@ template<typename InitialPartitionPolicy,
 void RunKMeans(const InitialPartitionPolicy& ipp)
 {
   // Now, do validation of input options.
-  int clusters = CLI::GetParam<int>("clusters");
-  if (clusters < 0)
+  if (!CLI::HasParam("initial_centroids"))
   {
-    Log::Fatal << "Invalid number of clusters requested (" << clusters << ")! "
-        << "Must be greater than or equal to 0." << endl;
+    RequireParamValue<int>("clusters", [](int x) { return x > 0; }, true,
+        "number of clusters must be positive");
   }
-  else if (clusters == 0 && CLI::HasParam("initial_centroids"))
+  else
+  {
+    ReportIgnoredParam({{ "initial_centroids", true }}, "clusters");
+  }
+
+  int clusters = CLI::GetParam<int>("clusters");
+  if (clusters == 0 && CLI::HasParam("initial_centroids"))
   {
     Log::Info << "Detecting number of clusters automatically from input "
         << "centroids." << endl;
   }
-  else if (clusters == 0)
-  {
-    Log::Fatal << "Number of clusters requested is 0, and no initial centroids "
-        << "provided!" << endl;
-  }
 
+  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
+    "maximum iterations must be positive or 0 (for no limit)");
   const int maxIterations = CLI::GetParam<int>("max_iterations");
-  if (maxIterations < 0)
-  {
-    Log::Fatal << "Invalid value for maximum iterations (" << maxIterations <<
-        ")! Must be greater than or equal to 0." << endl;
-  }
 
   // Make sure we have an output file if we're not doing the work in-place.
-  if (!CLI::HasParam("in_place") && !CLI::HasParam("output") &&
-      !CLI::HasParam("centroid"))
-  {
-    Log::Warn << "--output_file, --in_place, and --centroid_file are not set; "
-        << "no results will be saved." << std::endl;
-  }
+  RequireAtLeastOnePassed({ "in_place", "output", "centroid" }, false,
+      "no results will be saved");
 
   // Load our dataset.
   arma::mat dataset = CLI::GetParam<arma::mat>("input");
@@ -265,10 +255,9 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
     if (clusters == 0)
       clusters = centroids.n_cols;
 
-    if (CLI::HasParam("refined_start"))
-      Log::Warn << "Initial centroids are specified, but will be ignored "
-          << "because --refined_start is also specified!" << endl;
-    else
+    ReportIgnoredParam({{ "refined_start", true }}, "initial_centroids");
+
+    if (!CLI::HasParam("refined_start"))
       Log::Info << "Using initial centroid guesses." << endl;
   }
 

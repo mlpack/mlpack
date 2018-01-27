@@ -39,18 +39,37 @@ void PrintOutputProcessing(
      *
      * result = CLI.GetParam[int]('param_name')
      */
-    std::cout << prefix << "result = CLI.GetParam[" << GetCythonType<T>(d)
+    std::cout << prefix << "result = " << "CLI.GetParam[" << GetCythonType<T>(d)
         << "](\"" << d.name << "\")";
+    if (GetCythonType<T>(d) == "string")
+    {
+      std::cout << std::endl << prefix << "result = result.decode(\"UTF-8\")";
+    }
+    else if (GetCythonType<T>(d) == "vector[string]")
+    {
+      std::cout << std::endl << prefix
+          << "result = [x.decode(\"UTF-8\") for x in result]";
+    }
   }
   else
   {
     /**
      * This gives us code like:
      *
-     * result['param_name'] = CLI.CetParam[int]('param_name')
+     * result['param_name'] = CLI.GetParam[int]('param_name')
      */
     std::cout << prefix << "result['" << d.name << "'] = CLI.GetParam["
-        << GetCythonType<T>(d) << "]('" << d.name << "')" << std::endl;
+        << GetCythonType<T>(d) << "](\"" << d.name << "\")" << std::endl;
+    if (GetCythonType<T>(d) == "string")
+    {
+      std::cout << prefix << "result['" << d.name << "'] = result['" << d.name
+          << "'].decode(\"UTF-8\")" << std::endl;
+    }
+    else if (GetCythonType<T>(d) == "vector[string]")
+    {
+      std::cout << prefix << "result['" << d.name << "'] = [x.decode(\"UTF-8\")"
+          << " for x in result['" << d.name << "']]" << std::endl;
+    }
   }
 }
 
@@ -146,6 +165,7 @@ void PrintOutputProcessing(
     const util::ParamData& d,
     const size_t indent,
     const bool onlyOutput,
+    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
 {
   // Get the type names we need to use.

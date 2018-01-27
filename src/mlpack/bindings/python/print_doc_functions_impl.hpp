@@ -218,6 +218,35 @@ inline std::string ParamString(const std::string& paramName, const T& value)
   return oss.str();
 }
 
+inline bool IgnoreCheck(const std::string& paramName)
+{
+  return !CLI::Parameters()[paramName].input;
+}
+
+inline bool IgnoreCheck(const std::vector<std::string>& constraints)
+{
+  for (size_t i = 0; i < constraints.size(); ++i)
+  {
+    if (!CLI::Parameters()[constraints[i]].input)
+      return true;
+  }
+
+  return false;
+}
+
+inline bool IgnoreCheck(
+    const std::vector<std::pair<std::string, bool>>& constraints,
+    const std::string& paramName)
+{
+  for (size_t i = 0; i < constraints.size(); ++i)
+  {
+    if (!CLI::Parameters()[constraints[i].first].input)
+      return true;
+  }
+
+  return !CLI::Parameters()[paramName].input;
+}
+
 } // namespace python
 } // namespace bindings
 } // namespace mlpack

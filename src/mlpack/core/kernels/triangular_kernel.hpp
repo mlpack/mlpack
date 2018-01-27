@@ -93,9 +93,9 @@ class TriangularKernel
 
   //! Serialize the kernel.
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(bandwidth, "bandwidth");
+    ar & BOOST_SERIALIZATION_NVP(bandwidth);
   }
 
  private:

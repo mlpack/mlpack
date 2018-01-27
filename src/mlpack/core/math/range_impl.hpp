@@ -201,10 +201,10 @@ inline bool RangeType<T>::Contains(const RangeType<T>& r) const
 //! Serialize the range.
 template<typename T>
 template<typename Archive>
-void RangeType<T>::Serialize(Archive& ar, const unsigned int /* version */)
+void RangeType<T>::serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(hi, "hi");
-  ar & data::CreateNVP(lo, "lo");
+  ar & BOOST_SERIALIZATION_NVP(hi);
+  ar & BOOST_SERIALIZATION_NVP(lo);
 }
 
 } // namespace math

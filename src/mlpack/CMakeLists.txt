@@ -1,7 +1,10 @@
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/..) # mlpack/mlpack_export.hpp
 
 # Add core.hpp to list of sources.
-set(MLPACK_SRCS ${MLPACK_SRCS} "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp")
+set(MLPACK_SRCS ${MLPACK_SRCS}
+  "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/prereqs.hpp"
+)
 
 ## Recurse into both core/ and methods/.
 set(DIRS
@@ -13,10 +16,6 @@ set(DIRS
 foreach(dir ${DIRS})
     add_subdirectory(${dir})
 endforeach()
-
-if (BUILD_TESTS)
-  add_subdirectory(tests)
-endif ()
 
 # MLPACK_SRCS is set in the subdirectories.  The dependencies (MLPACK_LIBRARIES)
 # are set in the root CMakeLists.txt.
@@ -57,6 +56,13 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_link_libraries(mlpack ${LIBDL_LIBRARIES})
   endif()
 endif()
+
+set_target_properties(mlpack PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "prereqs.hpp")
+cotire(mlpack)
+
+if (BUILD_TESTS)
+  add_subdirectory(tests)
+endif ()
 
 # Collect all header files in the library.
 file(GLOB_RECURSE INCLUDE_H_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)

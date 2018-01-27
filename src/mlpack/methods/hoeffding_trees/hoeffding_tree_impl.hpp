@@ -47,8 +47,8 @@ HoeffdingTree<
     maxSamples((maxSamples == 0) ? size_t(-1) : maxSamples),
     checkInterval(checkInterval),
     minSamples(minSamples),
-    datasetInfo(&datasetInfo),
-    ownsInfo(false),
+    datasetInfo(new data::DatasetInfo(datasetInfo)),
+    ownsInfo(true),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
     categoricalSplit(0),
@@ -103,8 +103,8 @@ HoeffdingTree<
     maxSamples((maxSamples == 0) ? size_t(-1) : maxSamples),
     checkInterval(checkInterval),
     minSamples(minSamples),
-    datasetInfo(&datasetInfo),
-    ownsInfo(false),
+    datasetInfo(new data::DatasetInfo(datasetInfo)),
+    ownsInfo(true),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
     categoricalSplit(0),
@@ -147,6 +147,32 @@ HoeffdingTree<
       }
     }
   }
+}
+
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType>
+HoeffdingTree<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::HoeffdingTree() :
+    dimensionMappings(
+        new std::unordered_map<size_t, std::pair<size_t, size_t>>()),
+    ownsMappings(true),
+    numSamples(0),
+    numClasses(0),
+    maxSamples(size_t(-1)),
+    checkInterval(100),
+    minSamples(100),
+    datasetInfo(new data::DatasetInfo()),
+    ownsInfo(true),
+    successProbability(0.95),
+    splitDimension(size_t(-1)),
+    categoricalSplit(0),
+    numericSplit()
+{
+  // Nothing to do.
 }
 
 // Copy constructor.
@@ -269,6 +295,62 @@ void HoeffdingTree<
     for (size_t i = 0; i < data.n_cols; ++i)
       Train(data.col(i), labels[i]);
   }
+}
+
+//! Train on a set of points.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType>
+template<typename MatType>
+void HoeffdingTree<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::Train(const MatType& data,
+         const data::DatasetInfo& info,
+         const arma::Row<size_t>& labels,
+         const bool batchTraining)
+{
+  // Take over new DatasetInfo.
+  if (ownsInfo)
+    delete datasetInfo;
+  datasetInfo = &info;
+  ownsInfo = false;
+
+  // Generate mappings.
+  if (ownsMappings)
+    delete dimensionMappings;
+
+  const CategoricalSplitType<FitnessFunction> categoricalSplitIn(0, 0);
+  const NumericSplitType<FitnessFunction>& numericSplitIn(0);
+
+  dimensionMappings =
+      new std::unordered_map<size_t, std::pair<size_t, size_t>>();
+  for (size_t i = 0; i < datasetInfo->Dimensionality(); ++i)
+  {
+    if (datasetInfo->Type(i) == data::Datatype::categorical)
+    {
+      categoricalSplits.push_back(CategoricalSplitType<FitnessFunction>(
+          datasetInfo->NumMappings(i), numClasses, categoricalSplitIn));
+      (*dimensionMappings)[i] = std::make_pair(data::Datatype::categorical,
+          categoricalSplits.size() - 1);
+    }
+    else
+    {
+      numericSplits.push_back(NumericSplitType<FitnessFunction>(numClasses,
+          numericSplitIn));
+      (*dimensionMappings)[i] = std::make_pair(data::Datatype::numeric,
+          numericSplits.size() - 1);
+    }
+  }
+
+  // Remove any old children.
+  for (size_t i = 0; i < children.size(); ++i)
+    delete children[i];
+  children.clear();
+
+  // Now train.
+  Train(data, labels, batchTraining);
 }
 
 //! Train on one point.
@@ -692,23 +774,21 @@ void HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
->::Serialize(Archive& ar, const unsigned int /* version */)
+>::serialize(Archive& ar, const unsigned int /* version */)
 {
-  using data::CreateNVP;
-
-  ar & CreateNVP(splitDimension, "splitDimension");
+  ar & BOOST_SERIALIZATION_NVP(splitDimension);
 
   // Clear memory for the mappings if necessary.
   if (Archive::is_loading::value && ownsMappings && dimensionMappings)
     delete dimensionMappings;
 
-  ar & CreateNVP(dimensionMappings, "dimensionMappings");
+  ar & BOOST_SERIALIZATION_NVP(dimensionMappings);
 
   // Special handling for const object.
   data::DatasetInfo* d = NULL;
   if (Archive::is_saving::value)
     d = const_cast<data::DatasetInfo*>(datasetInfo);
-  ar & CreateNVP(d, "datasetInfo");
+  ar & BOOST_SERIALIZATION_NVP(d);
   if (Archive::is_loading::value)
   {
     if (datasetInfo && ownsInfo)
@@ -724,18 +804,18 @@ void HoeffdingTree<
     children.clear();
   }
 
-  ar & CreateNVP(majorityClass, "majorityClass");
-  ar & CreateNVP(majorityProbability, "majorityProbability");
+  ar & BOOST_SERIALIZATION_NVP(majorityClass);
+  ar & BOOST_SERIALIZATION_NVP(majorityProbability);
 
   // Depending on whether or not we have split yet, we may need to save
   // different things.
   if (splitDimension == size_t(-1))
   {
     // We have not yet split.  So we have to serialize the splits.
-    ar & CreateNVP(numSamples, "numSamples");
-    ar & CreateNVP(numClasses, "numClasses");
-    ar & CreateNVP(maxSamples, "maxSamples");
-    ar & CreateNVP(successProbability, "successProbability");
+    ar & BOOST_SERIALIZATION_NVP(numSamples);
+    ar & BOOST_SERIALIZATION_NVP(numClasses);
+    ar & BOOST_SERIALIZATION_NVP(maxSamples);
+    ar & BOOST_SERIALIZATION_NVP(successProbability);
 
     // Serialize the splits, but not if we haven't seen any samples yet (in
     // which case we can just reinitialize).
@@ -766,55 +846,32 @@ void HoeffdingTree<
       return;
 
     // Serialize numeric splits.
-    for (size_t i = 0; i < numericSplits.size(); ++i)
-    {
-      std::ostringstream name;
-      name << "numericSplit" << i;
-      ar & CreateNVP(numericSplits[i], name.str());
-    }
+    ar & BOOST_SERIALIZATION_NVP(numericSplits);
 
     // Serialize categorical splits.
-    for (size_t i = 0; i < categoricalSplits.size(); ++i)
-    {
-      std::ostringstream name;
-      name << "categoricalSplit" << i;
-      ar & CreateNVP(categoricalSplits[i], name.str());
-    }
+    ar & BOOST_SERIALIZATION_NVP(categoricalSplits);
   }
   else
   {
     // We have split, so we only need to save the split and the children.
     if (datasetInfo->Type(splitDimension) == data::Datatype::categorical)
-      ar & CreateNVP(categoricalSplit, "categoricalSplit");
+      ar & BOOST_SERIALIZATION_NVP(categoricalSplit);
     else
-      ar & CreateNVP(numericSplit, "numericSplit");
+      ar & BOOST_SERIALIZATION_NVP(numericSplit);
 
     // Serialize the children, because we have split.
-    size_t numChildren;
-    if (Archive::is_saving::value)
-      numChildren = children.size();
-    ar & CreateNVP(numChildren, "numChildren");
-    if (Archive::is_loading::value) // If needed, allocate space.
-    {
-      children.resize(numChildren, NULL);
-      for (size_t i = 0; i < numChildren; ++i)
-        children[i] = new HoeffdingTree(data::DatasetInfo(0), 0);
-    }
-
-    for (size_t i = 0; i < numChildren; ++i)
-    {
-      std::ostringstream name;
-      name << "child" << i;
-      ar & data::CreateNVP(*children[i], name.str());
-
-      // The child doesn't actually own its own DatasetInfo.  We do.  The same
-      // applies for the dimension mappings.
-      children[i]->ownsInfo = false;
-      children[i]->ownsMappings = false;
-    }
+    ar & BOOST_SERIALIZATION_NVP(children);
 
     if (Archive::is_loading::value)
     {
+      for (size_t i = 0; i < children.size(); ++i)
+      {
+        // The child doesn't actually own its own DatasetInfo.  We do.  The same
+        // applies for the dimension mappings.
+        children[i]->ownsInfo = false;
+        children[i]->ownsMappings = false;
+      }
+
       numericSplits.clear();
       categoricalSplits.clear();
 

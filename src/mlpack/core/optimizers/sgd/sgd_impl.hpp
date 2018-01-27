@@ -14,9 +14,6 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_SGD_SGD_IMPL_HPP
 #define MLPACK_CORE_OPTIMIZERS_SGD_SGD_IMPL_HPP
 
-#include <mlpack/methods/regularized_svd/regularized_svd_function.hpp>
-#include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
-
 // In case it hasn't been included yet.
 #include "sgd.hpp"
 
@@ -105,8 +102,14 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
         function.Shuffle();
     }
 
-    // Find the effective batch size (the last batch may be smaller).
-    const size_t effectiveBatchSize = std::min(batchSize,
+    // Find the effective batch size; we have to take the minimum of three
+    // things:
+    // - the batch size can't be larger than the user-specified batch size;
+    // - the batch size can't be larger than the number of iterations left
+    //       before actualMaxIterations is hit;
+    // - the batch size can't be larger than the number of functions left.
+    const size_t effectiveBatchSize = std::min(
+        std::min(batchSize, actualMaxIterations - i),
         numFunctions - currentFunction);
 
     function.Gradient(iterate, currentFunction, gradient, effectiveBatchSize);

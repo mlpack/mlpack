@@ -102,7 +102,7 @@ void SoftmaxRegression::Classify(const arma::mat& dataset,
   {
     std::ostringstream oss;
     oss << "SoftmaxRegression::Classify(): dataset has " << dataset.n_rows
-        << " dimensions, but model has " << FeatureSize() << "dimensions";
+        << " dimensions, but model has " << FeatureSize() << " dimensions!";
     throw std::invalid_argument(oss.str());
   }
 

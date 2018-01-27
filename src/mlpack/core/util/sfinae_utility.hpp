@@ -43,8 +43,6 @@ template<typename Class,
          size_t AdditionalArgsCount>
 struct MethodFormDetector;
 
-static const size_t MaxMFDAdditionalArgsCount = 7;
-
 template<typename Class, template<typename...> class MethodForm>
 struct MethodFormDetector<Class, MethodForm, 0>
 {
@@ -103,6 +101,9 @@ struct MethodFormDetector<Class, MethodForm, 7>
 } // namespace sfinae
 } // namespace mlpack
 
+//! Utility struct for checking signatures.
+template<typename U, U> struct SigCheck : std::true_type {};
+
 /*
  * Constructs a template supporting the SFINAE pattern.
  *
@@ -122,17 +123,143 @@ struct MethodFormDetector<Class, MethodForm, 7>
  * @param FUNC the name of the function to check for. For example: ToString
  */
 #define HAS_MEM_FUNC(FUNC, NAME)                                               \
+template<typename T, typename sig, typename = std::true_type>                  \
+struct NAME : std::false_type {};                                              \
+                                                                               \
 template<typename T, typename sig>                                             \
-struct NAME {                                                                  \
-  typedef char yes[1];                                                         \
-  typedef char no [2];                                                         \
-  template<typename U, U> struct type_check;                                   \
-  template<typename _1> static yes &chk(type_check<sig, &_1::FUNC> *);         \
-  template<typename   > static no  &chk(...);                                  \
-  static bool const value = sizeof(chk<T>(0)) == sizeof(yes);                  \
+struct NAME                                                                    \
+<                                                                              \
+  T,                                                                           \
+  sig,                                                                         \
+  std::integral_constant<bool, SigCheck<sig, &T::FUNC>::value>                 \
+> : std::true_type {};
+
+/**
+ * Base macro for HAS_METHOD_FORM() and HAS_EXACT_METHOD_FORM() macros.
+ */
+#define HAS_METHOD_FORM_BASE(METHOD, NAME, MAXN)                               \
+template<typename Class,                                                       \
+         template<typename...> class MF /* MethodForm */,                      \
+         size_t MinN = 0 /* MinNumberOfAdditionalArgs */>                      \
+struct NAME                                                                    \
+{                                                                              \
+  /* Making a short alias for MethodFormDetector */                            \
+  template<typename C, template<typename...> class MethodForm, int N>          \
+  using MFD = mlpack::sfinae::MethodFormDetector<C, MethodForm, N>;            \
+                                                                               \
+  template<size_t N>                                                           \
+  struct WithNAdditionalArgs                                                   \
+  {                                                                            \
+    using yes = char[1];                                                       \
+    using no = char[2];                                                        \
+                                                                               \
+    template<typename T, typename ResultType>                                  \
+    using EnableIfVoid =                                                       \
+        typename std::enable_if<std::is_void<T>::value, ResultType>::type;     \
+                                                                               \
+    template<typename C>                                                       \
+    static EnableIfVoid<decltype(MFD<C, MF, N>()(&C::METHOD)), yes&> chk(int); \
+    template<typename>                                                         \
+    static no& chk(...);                                                       \
+                                                                               \
+    static const bool value = sizeof(chk<Class>(0)) == sizeof(yes);            \
+  };                                                                           \
+                                                                               \
+  template<size_t N>                                                           \
+  struct WithGreaterOrEqualNumberOfAdditionalArgs                              \
+  {                                                                            \
+    using type = typename std::conditional<                                    \
+        WithNAdditionalArgs<N>::value,                                         \
+        std::true_type,                                                        \
+        typename std::conditional<                                             \
+            N < MAXN,                                                          \
+            WithGreaterOrEqualNumberOfAdditionalArgs<N + 1>,                   \
+            std::false_type>::type>::type;                                     \
+    static const bool value = type::value;                                     \
+  };                                                                           \
+                                                                               \
+  static const bool value =                                                    \
+      WithGreaterOrEqualNumberOfAdditionalArgs<MinN>::value;                   \
 };
 
 /*
+ * A macro that can be used for passing arguments containing commas to other
+ * macros.
+ */
+#define SINGLE_ARG(...) __VA_ARGS__
+
+/**
+ * HAS_METHOD_FORM generates a template that allows to check at compile time
+ * whether a given class has a method of the requested form. For example, for
+ * the following class
+ *
+ * class A
+ * {
+ *  public:
+ *   ...
+ *   Train(const arma::mat&, const arma::Row<size_t>&, double);
+ *   ...
+ * };
+ *
+ * and the following form of Train methods
+ *
+ * template<typename Class, typename...Ts>
+ * using TrainForm =
+ *     void(Class::*)(const arma::mat&, const arma::Row<size_t>&, Ts...);
+ *
+ * we can check whether the class A has a Train method of the specified form:
+ *
+ * HAS_METHOD_FORM(Train, HasTrain);
+ * static_assert(HasTrain<A, TrainFrom>::value, "value should be true");
+ *
+ * The class generated by this will also return true values if the given class
+ * has a method that also has extra parameters.
+ *
+ * @param METHOD The name of the method to check for.
+ * @param NAME The name of the struct to construct.
+ * @param MAXN The maximum number of additional arguments.
+ */
+#define HAS_METHOD_FORM(METHOD, NAME) \
+    HAS_METHOD_FORM_BASE(SINGLE_ARG(METHOD), SINGLE_ARG(NAME), 7)
+
+/**
+ * HAS_EXACT_METHOD_FORM generates a template that allows to check at compile
+ * time whether a given class has a method of the requested form. For example,
+ * for the following class
+ *
+ * class A
+ * {
+ *  public:
+ *   ...
+ *   Train(const arma::mat&, const arma::Row<size_t>&);
+ *   ...
+ * };
+ *
+ * and the following form of Train methods
+ *
+ * template<typename Class>
+ * using TrainForm =
+ *     void(Class::*)(const arma::mat&, const arma::Row<size_t>&);
+ *
+ * we can check whether the class A has a Train method of the specified form:
+ *
+ * HAS_METHOD_FORM(Train, HasTrain);
+ * static_assert(HasTrain<A, TrainFrom>::value, "value should be true");
+ *
+ * The class generated by this will only return true values if the signature
+ * matches exactly.
+ *
+ * @param METHOD The name of the method to check for.
+ * @param NAME The name of the struct to construct.
+ * @param MAXN The maximum number of additional arguments.
+ */
+#define HAS_EXACT_METHOD_FORM(METHOD, NAME) \
+    HAS_METHOD_FORM_BASE(SINGLE_ARG(METHOD), SINGLE_ARG(NAME), 0)
+
+/**
+ * A version of HAS_METHOD_FORM() where the maximum number of extra arguments is
+ * set to the default of 7.
+ *
  * HAS_METHOD_FORM generates a template that allows to check at compile time
  * whether a given class has a method of the requested form. For example, for
  * the following class
@@ -161,57 +288,5 @@ struct NAME {                                                                  \
  * @param METHOD The name of the method to check for.
  * @param NAME The name of the struct to construct.
  */
-#define HAS_METHOD_FORM(METHOD, NAME)                                          \
-template<typename Class,                                                       \
-         template<typename...> class MF /* MethodForm */,                      \
-         size_t MinN = 0 /* MinNumberOfAdditionalArgs */>                      \
-struct NAME                                                                    \
-{                                                                              \
-  /* Making a short alias for MethodFormDetector */                            \
-  template<typename C, template<typename...> class MethodForm, int N>          \
-  using MFD = mlpack::sfinae::MethodFormDetector<C, MethodForm, N>;            \
-  static const size_t MaxMFDAdditionalArgsCount =                              \
-      mlpack::sfinae::MaxMFDAdditionalArgsCount;                               \
-                                                                               \
-  template<size_t N>                                                           \
-  struct WithNAdditionalArgs                                                   \
-  {                                                                            \
-    using yes = char[1];                                                       \
-    using no = char[2];                                                        \
-                                                                               \
-    template<typename T, typename ResultType>                                  \
-    using EnableIfVoid =                                                       \
-        typename std::enable_if<std::is_void<T>::value, ResultType>::type;     \
-                                                                               \
-    template<typename C>                                                       \
-    static EnableIfVoid<decltype(MFD<C, MF, N>()(&C::METHOD)), yes&> chk(int); \
-    template<typename>                                                         \
-    static no& chk(...);                                                       \
-                                                                               \
-    static const bool value = sizeof(chk<Class>(0)) == sizeof(yes);            \
-  };                                                                           \
-                                                                               \
-  template<size_t N>                                                           \
-  struct WithGreaterOrEqualNumberOfAdditionalArgs                              \
-  {                                                                            \
-    using type = typename std::conditional<                                    \
-        WithNAdditionalArgs<N>::value,                                         \
-        std::true_type,                                                        \
-        typename std::conditional<                                             \
-            N < MaxMFDAdditionalArgsCount,                                     \
-            WithGreaterOrEqualNumberOfAdditionalArgs<N + 1>,                   \
-            std::false_type>::type>::type;                                     \
-    static const bool value = type::value;                                     \
-  };                                                                           \
-                                                                               \
-  static const bool value =                                                    \
-      WithGreaterOrEqualNumberOfAdditionalArgs<MinN>::value;                   \
-};
-
-/*
- * A macro that can be used for passing arguments containing commas to other
- * macros.
- */
-#define SINGLE_ARG(...) __VA_ARGS__
 
 #endif

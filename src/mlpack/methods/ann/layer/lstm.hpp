@@ -2,8 +2,7 @@
  * @file lstm.hpp
  * @author Marcus Edel
  *
- * Definition of the LSTM class, which implements a lstm network
- * layer.
+ * Definition of the LSTM class, which implements a LSTM network layer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -14,15 +13,7 @@
 #define MLPACK_METHODS_ANN_LAYER_LSTM_HPP
 
 #include <mlpack/prereqs.hpp>
-
 #include <limits>
-
-#include "../visitor/delta_visitor.hpp"
-#include "../visitor/output_parameter_visitor.hpp"
-
-#include "layer_types.hpp"
-#include "add_merge.hpp"
-#include "sequential.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -33,6 +24,32 @@ namespace ann /** Artificial Neural Network. */ {
  * This class allows specification of the type of the activation functions used
  * for the gates and cells and also of the type of the function used to
  * initialize and update the peephole weights.
+
+ * The implementation corresponds to the following algorithm:
+ *
+ * @f{eqnarray}{
+ * i &=& sigmoid(W \cdot x + W \cdot h + W \cdot c + b) \\
+ * f &=& sigmoid(W  \cdot x + W \cdot h + W \cdot c + b) \\
+ * z &=& tanh(W \cdot x + W \cdot h + b) \\
+ * c &=& f \cdot c + i \cdot z \\
+ * o &=& sigmoid(W \cdot x + W \cdot h + W \cdot c + b) \\
+ * h &=& o \cdot tanh(c)
+ * @f}
+ *
+ * For more information, see the following.
+ *
+ * @code
+ * @article{Graves2013,
+ *   author  = {Alex Graves and Abdel{-}rahman Mohamed and Geoffrey E. Hinton},
+ *   title   = {Speech Recognition with Deep Recurrent Neural Networks},
+ *   journal = CoRR},
+ *   year    = {2013},
+ *   url     = {http://arxiv.org/abs/1303.5778},
+ * }
+ * @endcode
+ *
+ * \see FastLSTM for a faster LSTM version which combines the calculation of the
+ * input, forget, output gates and hidden state in a single step.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -61,19 +78,14 @@ class LSTM
        const size_t rho = std::numeric_limits<size_t>::max());
 
   /**
-   * Delete the LSTM and the layers it holds.
-   */
-  ~LSTM();
-
-  /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  template<typename InputType, typename OutputType>
+  void Forward(InputType&& input, OutputType&& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -84,10 +96,23 @@ class LSTM
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  template<typename InputType, typename ErrorType, typename GradientType>
+  void Backward(const InputType&& input,
+                ErrorType&& gy,
+                GradientType&& g);
+
+  /*
+   * Reset the layer parameter.
+   */
+  void Reset();
+
+  /*
+   * Resets the cell to accept a new input. This breaks the BPTT chain starts a
+   * new one.
+   *
+   * @param size The current maximum number of steps through time.
+   */
+  void ResetCell(const size_t size);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -96,21 +121,10 @@ class LSTM
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(arma::Mat<eT>&& input,
-                arma::Mat<eT>&& /* error */,
-                arma::Mat<eT>&& /* gradient */);
-
-  /*
-   * Resets the cell to accept a new input.
-   * This breaks the BPTT chain starts a new one.
-   */
-  void ResetCell();
-
-  //! The value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
+  template<typename InputType, typename ErrorType, typename GradientType>
+  void Gradient(InputType&& input,
+                ErrorType&& error,
+                GradientType&& gradient);
 
   //! Get the maximum number of steps to backpropagate through time (BPTT).
   size_t Rho() const { return rho; }
@@ -138,12 +152,9 @@ class LSTM
   OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
+  OutputDataType const& Gradient() const { return grad; }
   //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
-
-  //! Get the model modules.
-  std::vector<LayerTypes>& Model() { return network; }
+  OutputDataType& Gradient() { return grad; }
 
   /**
    * Serialize the layer
@@ -161,51 +172,6 @@ class LSTM
   //! Number of steps to backpropagate through time (BPTT).
   size_t rho;
 
-  //! Current batch size.
-  size_t batchSize;
-
-  //! Locally-stored weight object.
-  OutputDataType weights;
-
-  //! Locally-stored previous output.
-  std::list<arma::mat>::iterator prevOutput;
-
-  //! Locally-stored previous cell state.
-  std::list<arma::mat>::iterator prevCell;
-
-  //! Locally-stored input 2 gate module.
-  LayerTypes input2GateModule;
-
-  //! Locally-stored output 2 gate module.
-  LayerTypes output2GateModule;
-
-  //! Locally-stored input gate module.
-  LayerTypes inputGateModule;
-
-  //! Locally-stored hidden state module.
-  LayerTypes hiddenStateModule;
-
-  //! Locally-stored forget gate module.
-  LayerTypes forgetGateModule;
-
-  //! Locally-stored output gate module.
-  LayerTypes outputGateModule;
-
-  //! Locally-stored cell module.
-  LayerTypes cellModule;
-
-  //! Locally-stored cell activation module.
-  LayerTypes cellActivationModule;
-
-  //! Locally-stored output parameter visitor.
-  OutputParameterVisitor outputParameterVisitor;
-
-  //! Locally-stored delta visitor.
-  DeltaVisitor deltaVisitor;
-
-  //! Locally-stored list of network modules.
-  std::vector<LayerTypes> network;
-
   //! Locally-stored number of forward steps.
   size_t forwardStep;
 
@@ -215,41 +181,138 @@ class LSTM
   //! Locally-stored number of gradient steps.
   size_t gradientStep;
 
-  //! Locally-stored cell parameters.
-  std::list<arma::mat> cellParameter;
+  //! Locally-stored weight object.
+  OutputDataType weights;
 
-  //! Locally-stored output parameters.
-  std::list<arma::mat> outParameter;
+  //! Locally-stored previous output.
+  OutputDataType prevOutput;
 
-  //! Matrix of all zeroes to initialize the output and the cell
-  arma::mat allZeros;
+  //! Locally-stored batch size.
+  size_t batchSize;
 
-  //! Iterator pointed to the last cell output processed by backward
-  std::list<arma::mat>::iterator backIterator;
+  //! Current batch step, alias for batchSize - 1.
+  size_t batchStep;
 
-  //! Iterator pointed to the last output processed by gradient
-  std::list<arma::mat>::iterator gradIterator;
+  //! Current gradient step to keep track of the backpropagate through time
+  //! step.
+  size_t gradientStepIdx;
 
-  //! Locally-stored previous error.
-  arma::mat prevError;
-
-  //! Locally-stored foget gate error.
-  arma::mat forgetGateError;
-
-  //! If true dropout and scaling is disabled, see notes above.
-  bool deterministic;
+  //! Locally-stored cell activation error.
+  OutputDataType cellActivationError;
 
   //! Locally-stored delta object.
   OutputDataType delta;
 
   //! Locally-stored gradient object.
-  OutputDataType gradient;
+  OutputDataType grad;
 
   //! Locally-stored input parameter object.
   InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! Weights between the output and input gate.
+  OutputDataType output2GateInputWeight;
+
+  //! Weights between the input and gate.
+  OutputDataType input2GateInputWeight;
+
+  //! Bias between the input and input gate.
+  OutputDataType input2GateInputBias;
+
+  //! Weights between the cell and input gate.
+  OutputDataType cell2GateInputWeight;
+
+  //! Weights between the output and forget gate.
+  OutputDataType output2GateForgetWeight;
+
+  //! Weights between the input and gate.
+  OutputDataType input2GateForgetWeight;
+
+  //! Bias between the input and gate.
+  OutputDataType input2GateForgetBias;
+
+  //! Bias between the input and gate.
+  OutputDataType cell2GateForgetWeight;
+
+  //! Weights between the output and gate.
+  OutputDataType output2GateOutputWeight;
+
+  //! Weights between the input and gate.
+  OutputDataType input2GateOutputWeight;
+
+  //! Bias between the input and gate.
+  OutputDataType input2GateOutputBias;
+
+  //! Weights between cell and output gate.
+  OutputDataType cell2GateOutputWeight;
+
+  //! Locally-stored input gate parameter.
+  OutputDataType inputGate;
+
+  //! Locally-stored forget gate parameter.
+  OutputDataType forgetGate;
+
+  //! Locally-stored hidden layer parameter.
+  OutputDataType hiddenLayer;
+
+  //! Locally-stored output gate parameter.
+  OutputDataType outputGate;
+
+  //! Locally-stored input gate activation.
+  OutputDataType inputGateActivation;
+
+  //! Locally-stored forget gate activation.
+  OutputDataType forgetGateActivation;
+
+  //! Locally-stored output gate activation.
+  OutputDataType outputGateActivation;
+
+  //! Locally-stored hidden layer activation.
+  OutputDataType hiddenLayerActivation;
+
+  //! Locally-stored input to hidden weight.
+  OutputDataType input2HiddenWeight;
+
+  //! Locally-stored input to hidden bias.
+  OutputDataType input2HiddenBias;
+
+  //! Locally-stored output to hidden weight.
+  OutputDataType output2HiddenWeight;
+
+  //! Locally-stored cell parameter.
+  OutputDataType cell;
+
+  //! Locally-stored cell activation error.
+  OutputDataType cellActivation;
+
+  //! Locally-stored forget gate error.
+  OutputDataType forgetGateError;
+
+  //! Locally-stored output gate error.
+  OutputDataType outputGateError;
+
+  //! Locally-stored previous error.
+  OutputDataType prevError;
+
+  //! Locally-stored output parameters.
+  OutputDataType outParameter;
+
+  //! Locally-stored input cell error parameter.
+  OutputDataType inputCellError;
+
+  //! Locally-stored input gate error.
+  OutputDataType inputGateError;
+
+  //! Locally-stored hidden layer error.
+  OutputDataType hiddenError;
+
+  //! Locally-stored current rho size.
+  size_t rhoSize;
+
+  //! Current backpropagate through time steps.
+  size_t bpttSteps;
 }; // class LSTM
 
 } // namespace ann

@@ -4,17 +4,25 @@ language: cpp
 
 env:
   - CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON=/usr/bin/python"
+  - CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON=/usr/bin/python3"
   - CMAKE_OPTIONS="-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF"
 
 before_install:
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+  # xenial is not stable yet, so we have to manually disable the systemd
+  # automatic updates services.  Ideas adapted from here:
+  # https://unix.stackexchange.com/questions/315502/how-to-disable-apt-daily-service-on-ubuntu-cloud-vm-image
+  - sudo systemctl stop apt-daily.service apt-daily.timer apt-daily-upgrade.service apt-daily-upgrade.timer
+  - sudo systemctl kill --kill-who=all apt-daily.service apt-daily-upgrade.service
+  - while !(systemctl list-units --all apt-daily.service | grep -q dead); do sleep 1; done
+  - while !(systemctl list-units --all apt-daily-upgrade.service | grep -q dead); do sleep 1; done
   - sudo apt-get update -qq
-  - export CC=gcc-4.8
-  - export CXX=g++-4.8
-  - printenv
-  - sudo apt-get install libopenblas-dev && sudo apt-get install liblapack-dev
-  - sudo apt-get install -qq g++-4.8 libboost1.54-all-dev
+  - sudo apt-get install -qq libopenblas-dev liblapack-dev g++ libboost-all-dev python3-pip
+  - sudo wget https://launchpadlibrarian.net/260609315/fix-std-vector-load.diff -O /usr/include/fix-std-vector-load.diff
+  - cd /usr/include && sudo patch -p1 < fix-std-vector-load.diff && sudo rm fix-std-vector-load.diff && cd -
+  # Install both python2 and python3 modules, and the build will decide which to
+  # use.
   - sudo pip install cython setuptools numpy pandas
+  - sudo pip3 install cython setuptools numpy pandas
   - curl http://masterblaster.mlpack.org:5005/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
   - cmake . && make && sudo make install && cd ..
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp

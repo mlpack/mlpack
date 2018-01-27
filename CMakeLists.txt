@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.5)
 project(mlpack C CXX)
 
+include(CMake/cotire.cmake)
+
 # First, define all the compilation options.
 # We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information." OFF)
@@ -36,6 +38,10 @@ if ((${CMAKE_MAJOR_VERSION} LESS 3 OR
     message(FATAL_ERROR "No C++11 compiler available!")
   endif()
   enable_cxx11()
+else()
+  # set required standard to c++11
+  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif ()
 # Otherwise, we may have to set the C++11 mode after the mlpack target is
 # defined.
@@ -88,8 +94,10 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   # Link everything with -lm.
   set(COMPILER_SUPPORT_LIBRARIES ${COMPILER_SUPPORT_LIBRARIES} "m")
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "m")
-  # Use -pthread.
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+  # Use -pthread, but not on OS X.
+  if (NOT APPLE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+  endif ()
 endif()
 
 # Setup build for test coverage
@@ -124,7 +132,7 @@ if(BUILD_WITH_COVERAGE)
 endif()
 
 # For clock_gettime().
-if (UNIX AND NOT APPLE)
+if (UNIX AND NOT APPLE AND NOT HAIKU)
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "rt")
 endif ()
 
@@ -526,11 +534,12 @@ if (PKG_CONFIG_FOUND)
   # So, we have to parse our list of library directories, libraries, and include
   # directories in order to get the correct line to give to pkg-config.
   # Next, adapt the list of include directories.
+  list(REMOVE_DUPLICATES MLPACK_INCLUDE_DIRS)
   foreach (incldir ${MLPACK_INCLUDE_DIRS})
     # Filter out some obviously unnecessary directories.
     if (NOT "${incldir}" STREQUAL "/usr/include")
-      set(MLPACK_INCLUDE_DIRS_STRING "${MLPACK_INCLUDE_DIRS_STRING}
-          -I${incldir}")
+      set(MLPACK_INCLUDE_DIRS_STRING
+          "${MLPACK_INCLUDE_DIRS_STRING} -I${incldir}")
     endif ()
   endforeach ()
   # Add the install directory too.
