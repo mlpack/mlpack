@@ -24,13 +24,16 @@ namespace optimization {
  * For more information, see the following.
  *
  * @code
- * @article{2016arXiv160305953A,
- *   author  = {{Allen-Zhu}, Z.},
- *   title   = {Katyusha: The First Direct Acceleration of Stochastic Gradient
- *              Methods},
- *   journal = {ArXiv e-prints},
- *   url     = {https://arxiv.org/abs/1603.05953}
- *   year    = 2016,
+ * @inproceedings{Allen-Zhu2016,
+ *   author    = {{Allen-Zhu}, Z.},
+ *   title     = {Katyusha: The First Direct Acceleration of Stochastic Gradient
+ *                Methods},
+ *   booktitle = {Proceedings of the 49th Annual ACM SIGACT Symposium on Theory
+ *                of Computing},
+ *   pages     = {1200--1205},
+ *   publisher = {ACM},
+ *   year      = {2017},
+ *   series    = {STOC 2017},
  * }
  * @endcode
  *
@@ -53,8 +56,11 @@ namespace optimization {
  * of points in the dataset, and Evaluate(coordinates, 0) will evaluate the
  * objective function on the first point in the dataset (presumably, the dataset
  * is held internally in the DecomposableFunctionType).
+ *
+ * @tparam proximal Whether the proximal update should be used or not.
  */
-class Katyusha
+template<bool proximal = false>
+class KatyushaType
 {
  public:
   /**
@@ -65,23 +71,24 @@ class Katyusha
    * are processed (i.e., one iteration equals one point; one iteration does not
    * equal one pass over the dataset).
    *
-   * @param stepSize Step size for each iteration.
-   * @param lambda The regularization parameter.
-   * @param tau The momentum parameter.
+   * @param convexity The regularization parameter.
+   * @param lipschitz The Lipschitz constant.
    * @param batchSize Batch size to use for each step.
    * @param maxIterations Maximum number of iterations allowed (0 means no
-   *     limit).
+   *    limit).
+   * @param epochLength The number of inner iterations allowed (0 means
+   *    n / batchSize).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
-   *     function is visited in linear order.
+   *    function is visited in linear order.
    */
-  Katyusha(const double stepSize = 1000,
-           const double lambda = 0.01,
-           const double tau = 0.5,
-           const size_t batchSize = 32,
-           const size_t maxIterations = 100000,
-           const double tolerance = 1e-5,
-           const bool shuffle = true);
+  KatyushaType(const double convexity = 1.0,
+               const double lipschitz = 10.0,
+               const size_t batchSize = 32,
+               const size_t maxIterations = 100000,
+               const size_t epochLength = 0,
+               const double tolerance = 1e-5,
+               const bool shuffle = true);
 
   /**
    * Optimize the given function using Katyusha. The given starting point will
@@ -96,20 +103,15 @@ class Katyusha
   template<typename DecomposableFunctionType>
   double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
 
-  //! Get the step size.
-  double StepSize() const { return stepSize; }
-  //! Modify the step size.
-  double& StepSize() { return stepSize; }
+  //! Get the convexity parameter.
+  double Convexity() const { return convexity; }
+  //! Modify the convexity parameter.
+  double& CtepSize() { return convexity; }
 
-  //! Get the regularization parameter.
-  double Lambda() const { return lambda; }
-  //! Modify the regularization parameter.
-  double& Lambda() { return lambda; }
-
-  //! Get the regularization parameter.
-  double Tau() const { return tau; }
-  //! Modify the regularization parameter.
-  double& Tau() { return tau; }
+  //! Get the lipschitz parameter.
+  double Lipschitz() const { return lipschitz; }
+  //! Modify the lipschitz parameter.
+  double& Lipschitz() { return lipschitz; }
 
   //! Get the batch size.
   size_t BatchSize() const { return batchSize; }
@@ -132,20 +134,20 @@ class Katyusha
   bool& Shuffle() { return shuffle; }
 
  private:
-  //! The step size for each example.
-  double stepSize;
+  //! The convexity regularization term.
+  double convexity;
 
-  //! Regularization parameter.
-  double lambda;
-
-  //! The momentum parameter.
-  double tau;
+  //! The lipschitz constant.
+  double lipschitz;
 
   //! The batch size for processing.
   size_t batchSize;
 
   //! The maximum number of allowed iterations.
   size_t maxIterations;
+
+  //! Epoch length.
+  size_t m;
 
   //! The tolerance for termination.
   double tolerance;
@@ -154,6 +156,10 @@ class Katyusha
   //! iterating.
   bool shuffle;
 };
+
+// Convenience typedefs.
+using Katyusha = KatyushaType<false>;
+using KatyushaProximal = KatyushaType<true>;
 
 } // namespace optimization
 } // namespace mlpack
