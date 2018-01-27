@@ -91,16 +91,37 @@ BOOST_AUTO_TEST_CASE(KatyushaLogisticRegressionTest)
   CreateLogisticRegressionTestData(data, testData, shuffledData,
       responses, testResponses, shuffledResponses);
 
-  const double lambda = 1.0 / (double) data.n_cols;
-  const double L = 1000;
-  const double tau = std::min(0.5,
-      std::sqrt(2.0 * data.n_cols * lambda/ (3 * L)));
-  const double stepSize = 1 / (3 * tau * L);
+  // Now run big-batch SGD with a couple of batch sizes.
+  for (size_t batchSize = 30; batchSize < 45; batchSize += 5)
+  {
+    Katyusha optimizer(1.0, 10.0, batchSize, 100, 0, 1e-10, true);
+    LogisticRegression<> lr(shuffledData, shuffledResponses, optimizer, 0.5);
+
+    // Ensure that the error is close to zero.
+    const double acc = lr.ComputeAccuracy(data, responses);
+    BOOST_REQUIRE_CLOSE(acc, 100.0, 1.5); // 1.5% error tolerance.
+
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses);
+    BOOST_REQUIRE_CLOSE(testAcc, 100.0, 1.5); // 1.5% error tolerance.
+  }
+}
+
+/**
+ * Run Proximal Katyusha on logistic regression and make sure the results are
+ * acceptable.
+ */
+BOOST_AUTO_TEST_CASE(KatyushaProximalLogisticRegressionTest)
+{
+  arma::mat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+  CreateLogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
 
   // Now run big-batch SGD with a couple of batch sizes.
   for (size_t batchSize = 30; batchSize < 45; batchSize += 5)
   {
-    Katyusha optimizer(stepSize, lambda, tau, batchSize, 30000, 1e-10, true);
+    KatyushaProximal optimizer(1.0, 10.0, batchSize, 100, 0, 1e-10, true);
     LogisticRegression<> lr(shuffledData, shuffledResponses, optimizer, 0.5);
 
     // Ensure that the error is close to zero.
