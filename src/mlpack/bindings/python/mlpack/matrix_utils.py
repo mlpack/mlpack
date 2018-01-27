@@ -37,7 +37,7 @@ try:
 except:
   buffer = memoryview
 
-def to_matrix(x, dtype=np.double):
+def to_matrix(x, dtype=np.double, copy=False):
   """
   Given some array-like X, return a numpy ndarray of the same type.
   """
@@ -48,11 +48,14 @@ def to_matrix(x, dtype=np.double):
     raise TypeError("given argument is not array-like")
 
   if (isinstance(x, np.ndarray) and x.dtype == dtype and x.flags.c_contiguous):
-    return x, False
+    if copy: # Copy the matrix if required.
+      return x.copy("C"), True
+    else:
+      return x, False
   else:
     return np.array(x, copy=True, dtype=dtype, order='C'), True
 
-def to_matrix_with_info(x, dtype):
+def to_matrix_with_info(x, dtype, copy=False):
   """
   Given some array-like X (which should be either a numpy ndarray or a pandas
   DataFrame, convert into a numpy matrix of the given dtype.
@@ -66,7 +69,12 @@ def to_matrix_with_info(x, dtype):
   if isinstance(x, np.ndarray):
     # It is already an ndarray, so the vector of info is all 0s (all numeric).
     d = np.zeros([x.shape[1]], dtype=np.bool)
-    return (x, False, d)
+
+    # Copy the matrix if needed.
+    if copy:
+      return (x.copy(order="C"), True, d)
+    else:
+      return (x, False, d)
 
   if isinstance(x, pd.DataFrame) or isinstance(x, pd.Series):
     # It's a pandas dataframe.  So we need to see if any of the dtypes are
@@ -79,7 +87,7 @@ def to_matrix_with_info(x, dtype):
        not np.dtype(str) in dtype_array and \
        not np.dtype(unicode) in dtype_array:
         # We can just return the matrix as-is; it's all numeric.
-        t = to_matrix(x)
+        t = to_matrix(x, copy)
         d = np.zeros([x.shape[1]], dtype=np.bool)
         return (t[0], t[1], d)
 
@@ -130,7 +138,7 @@ def to_matrix_with_info(x, dtype):
       dims = len(x)
 
     d = np.zeros([dims])
-    out = np.array(x, dtype=dtype, copy=False) # Try to avoid copy...
+    out = np.array(x, dtype=dtype, copy=copy) # Try to avoid copy...
 
     # Since we don't have a great way to check if these are using the same
     # memory location, we will probe manually (ugh).

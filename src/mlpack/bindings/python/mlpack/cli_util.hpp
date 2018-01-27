@@ -42,11 +42,14 @@ inline void SetParam(const std::string& identifier, T& value)
  *
  * @param identifier Name of parameter.
  * @param value Value to set parameter to.
+ * @param copy Whether or not the object should be copied.
  */
 template<typename T>
-inline void SetParamPtr(const std::string& identifier, T* value)
+inline void SetParamPtr(const std::string& identifier,
+                        T* value,
+                        const bool copy)
 {
-  CLI::GetParam<T*>(identifier) = value;
+  CLI::GetParam<T*>(identifier) = copy ? new T(*value) : value;
 }
 
 /**

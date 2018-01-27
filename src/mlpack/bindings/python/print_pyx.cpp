@@ -177,7 +177,14 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "  DisableVerbose()" << endl;
 
   // Restore the parameters.
-  cout << "  CLI.RestoreSettings(\"" << programInfo.programName << "\")";
+  cout << "  CLI.RestoreSettings(\"" << programInfo.programName << "\")"
+      << endl;
+
+  // Determine whether or not we need to copy parameters.
+  cout << "  if copy_all_inputs:" << endl;
+  cout << "    SetParam[bool](<const string> 'copy_all_inputs', "
+      << "copy_all_inputs)" << endl;
+  cout << "    CLI.SetPassed(<const string> 'copy_all_inputs')" << endl;
 
   // Do any input processing.
   for (size_t i = 0; i < inputOptions.size(); ++i)

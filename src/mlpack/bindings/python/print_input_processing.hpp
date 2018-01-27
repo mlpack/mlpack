@@ -31,6 +31,11 @@ void PrintInputProcessing(
     const typename boost::disable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
 {
+  // The copy_all_inputs parameter must be handled first, and so is outside the
+  // scope of this code.
+  if (d.name == "copy_all_inputs")
+    return;
+
   const std::string prefix(indent, ' ');
 
   std::string def = "None";
@@ -117,8 +122,8 @@ void PrintInputProcessing(
     std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
 
     std::cout << prefix << "  " << d.name << "_tuple = to_matrix(" << d.name
-        << ", dtype=" << GetNumpyType<typename T::elem_type>() << ")"
-        << std::endl;
+        << ", dtype=" << GetNumpyType<typename T::elem_type>() << ", "
+        << "copy=CLI.HasParam('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "  " << d.name << "_mat = arma_numpy.numpy_to_"
         << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
         << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
@@ -132,8 +137,8 @@ void PrintInputProcessing(
   else
   {
     std::cout << prefix << d.name << "_tuple = to_matrix(" << d.name
-        << ", dtype=" << GetNumpyType<typename T::elem_type>() << ")"
-        << std::endl;
+        << ", dtype=" << GetNumpyType<typename T::elem_type>() << ", "
+        << "copy=CLI.HasParam('copy_all_inputs'))" << std::endl;
     std::cout << prefix << d.name << "_mat = arma_numpy.numpy_to_"
         << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
         << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
@@ -169,10 +174,12 @@ void PrintInputProcessing(
    * # Detect if the parameter was passed; set if so.
    * if param_name is not None:
    *   try:
-   *     SetParamPtr[Model]('param_name', (<ModelType?> param_name).modelptr)
+   *     SetParamPtr[Model]('param_name', (<ModelType?> param_name).modelptr,
+   *         CLI.HasParam('copy_all_inputs'))
    *   except TypeError as e:
    *     if type(param_name).__name__ == "ModelType":
-   *       SetParamPtr[Model]('param_name', (<ModelType> param_name).modelptr)
+   *       SetParamPtr[Model]('param_name', (<ModelType> param_name).modelptr,
+   *           CLI.HasParam('copy_all_inputs'))  TODO
    *     else:
    *       raise e
    *   CLI.SetPassed(<const string> 'param_name')
@@ -184,14 +191,14 @@ void PrintInputProcessing(
     std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
     std::cout << prefix << "  try:" << std::endl;
     std::cout << prefix << "    SetParamPtr[" << strippedType << "]('" << d.name
-        << "', (<" << strippedType << "Type?> " << d.name << ").modelptr)"
-        << std::endl;
+        << "', (<" << strippedType << "Type?> " << d.name << ").modelptr, "
+        << "CLI.HasParam('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "  except TypeError as e:" << std::endl;
     std::cout << prefix << "    if type(" << d.name << ").__name__ == '"
         << strippedType << "Type':" << std::endl;
     std::cout << prefix << "      SetParamPtr[" << strippedType << "]('"
         << d.name << "', (<" << strippedType << "Type> " << d.name
-        << ").modelptr)" << std::endl;
+        << ").modelptr, CLI.HasParam('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "    else:" << std::endl;
     std::cout << prefix << "      raise e" << std::endl;
     std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name << "')"
@@ -201,14 +208,14 @@ void PrintInputProcessing(
   {
     std::cout << prefix << "try:" << std::endl;
     std::cout << prefix << "  SetParamPtr[" << strippedType << "]('" << d.name
-        << "', (<" << strippedType << "Type?> " << d.name << ").modelptr)"
-        << std::endl;
+        << "', (<" << strippedType << "Type?> " << d.name << ").modelptr, "
+        << "CLI.HasParam('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "except TypeError as e:" << std::endl;
     std::cout << prefix << "  if type(" << d.name << ").__name__ == '"
         << strippedType << "Type':" << std::endl;
     std::cout << prefix << "    SetParamPtr[" << strippedType << "]('" << d.name
-        << "', (<" << strippedType << "Type> " << d.name << ").modelptr)"
-        << std::endl;
+        << "', (<" << strippedType << "Type> " << d.name << ").modelptr, "
+        << "CLI.HasParam('copy_all_inputs'))" << std::endl;
     std::cout << prefix << "  else:" << std::endl;
     std::cout << prefix << "    raise e" << std::endl;
     std::cout << prefix << "CLI.SetPassed(<const string> '" << d.name << "')"
@@ -246,7 +253,8 @@ void PrintInputProcessing(
   {
     std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
     std::cout << prefix << "  " << d.name << "_tuple = to_matrix_with_info("
-        << d.name << ", dtype=np.double)" << std::endl;
+        << d.name << ", dtype=np.double, copy=CLI.HasParam('copy_all_inputs'))"
+        << std::endl;
     std::cout << prefix << "  " << d.name << "_mat = arma_numpy.numpy_to_mat_d("
         << d.name << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
     std::cout << prefix << "  " << d.name << "_dims = " << d.name << "_tuple[2]"
@@ -261,7 +269,8 @@ void PrintInputProcessing(
   else
   {
     std::cout << prefix << d.name << "_tuple = to_matrix_with_info(" << d.name
-        << ", dtype=np.double)" << std::endl;
+        << ", dtype=np.double, copy=CLI.HasParam('copy_all_inputs'))"
+        << std::endl;
     std::cout << prefix << d.name << "_mat = arma_numpy.numpy_to_mat_d("
         << d.name << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
     std::cout << prefix << d.name << "_dims = " << d.name << "_tuple[2]"
