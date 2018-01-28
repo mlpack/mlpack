@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(SAHRALogisticRegressionTest)
   // Now run big-batch SGD with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
   {
-    SARAH optimizer(0.001, batchSize, 15000, 1e-5, true);
+    SARAH optimizer(0.001, batchSize, 200, 0, 1e-5, true);
     LogisticRegression<> lr(shuffledData, shuffledResponses, optimizer, 0.5);
 
     // Ensure that the error is close to zero.
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(SAHRAPlusLogisticRegressionTest)
   // Now run big-batch SGD with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
   {
-    SARAH_Plus optimizer(0.001, batchSize, 15000, 1e-5, true);
+    SARAH_Plus optimizer(0.001, batchSize, 200, 0, 1e-5, true);
     LogisticRegression<> lr(shuffledData, shuffledResponses, optimizer, 0.5);
 
     // Ensure that the error is close to zero.

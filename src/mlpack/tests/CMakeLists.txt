@@ -105,6 +105,7 @@ add_executable(mlpack_test
   rl_components_test.cpp
   rmsprop_test.cpp
   sa_test.cpp
+  sarah_test.cpp
   scd_test.cpp
   sdp_primal_dual_test.cpp
   serialization.cpp
