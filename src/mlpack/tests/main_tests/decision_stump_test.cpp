@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(DecisionStumpModelReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                std::move(CLI::GetParam<DSModel>("output_model")));
+                std::move(CLI::GetParam<DSModel*>("output_model")));
 
   mlpackMain();
 
@@ -213,6 +213,8 @@ BOOST_AUTO_TEST_CASE(DecisionStumpModelReuseTest)
   // Check that initial predictions and final predicitons matrix
   // using saved model are same.
   CheckMatrices(predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
+
+  delete CLI::GetParam<DSModel*>("output_model");
 }
 
 /**
@@ -249,11 +251,13 @@ BOOST_AUTO_TEST_CASE(DecisionStumpTrainingVerTest)
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                std::move(CLI::GetParam<DSModel>("output_model")));
+                std::move(CLI::GetParam<DSModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
+
+  delete CLI::GetParam<DSModel*>("output_model");
 }
 
 BOOST_AUTO_TEST_SUITE_END();
