@@ -55,9 +55,6 @@ double KatyushaType<proximal>::Optimize(
   if (numFunctions % batchSize != 0)
     ++numBatches; // Capture last few.
 
-  double lipschitz = 10.0;
-  double convexity = 1.0;
-
   const double tau1 = std::min(0.5,
       std::sqrt(batchSize * convexity / (3.0 * lipschitz)));
   const double tau2 = 0.5;
