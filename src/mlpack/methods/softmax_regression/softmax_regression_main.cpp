@@ -136,6 +136,9 @@ static void mlpackMain()
       "maximum number of iterations must be greater than or equal to 0");
   RequireParamValue<double>("lambda", [](double x) { return x >= 0.0; }, true,
       "lambda penalty parameter must be greater than or equal to 0");
+  RequireParamValue<int>("number_of_classes", [](int x) { return x >= 0; },
+                         true, "number of classes must be greater than or "
+                         "equal to 0 (equal to 0 in case of unspecified.)");
 
   // Make sure we have an output file of some sort.
   RequireAtLeastOnePassed({ "output_model", "predictions" }, false, "no results"

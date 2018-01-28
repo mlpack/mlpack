@@ -18,7 +18,6 @@
 #include "log.hpp"
 #include "hyphenate_string.hpp"
 
-#include "cli_deleter.hpp" // To make sure we can delete the singleton.
 #include "version.hpp"
 
 #include <mlpack/core/data/load.hpp>
@@ -45,20 +44,6 @@ CLI::CLI(const CLI& /* other */) : didParse(false), doc(&emptyProgramDoc)
 
 // Private copy operator; don't want copies floating around.
 CLI& CLI::operator=(const CLI& /* other */) { return *this; }
-
-/**
- * Destroy the CLI object.  This resets the pointer to the singleton, so in case
- * someone tries to access it after destruction, a new one will be made (the
- * program will not fail).
- */
-void CLI::Destroy()
-{
-  if (singleton != NULL)
-  {
-    delete singleton;
-    singleton = NULL; // Reset pointer.
-  }
-}
 
 void CLI::Add(ParamData&& data)
 {
@@ -136,10 +121,8 @@ bool CLI::HasParam(const std::string& key)
 // Returns the sole instance of this class.
 CLI& CLI::GetSingleton()
 {
-  if (singleton == NULL)
-    singleton = new CLI();
-
-  return *singleton;
+  static CLI singleton;
+  return singleton;
 }
 
 /**

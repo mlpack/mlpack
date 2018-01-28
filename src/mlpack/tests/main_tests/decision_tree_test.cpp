@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
   SetInputParam("weights", std::move(weights));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   mlpackMain();
 
@@ -203,9 +203,6 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
   CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
   CLI::GetSingleton().Parameters()["weights"].wasPassed = false;
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
-
-  if (!data::Load("vc2_test.csv", testData, info))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input trained model.
   SetInputParam("test", std::move(std::make_tuple(info, testData)));
@@ -229,6 +226,39 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
   // Check that initial predictions and predictions using saved model are same.
   CheckMatrices(predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
   CheckMatrices(probabilities, CLI::GetParam<arma::mat>("probabilities"));
+}
+
+/**
+ * Make sure only one of training data or pre-trained model is passed.
+ */
+BOOST_AUTO_TEST_CASE(DecisionTreeTrainingVerTest)
+{
+  arma::mat inputData;
+  DatasetInfo info;
+  if (!data::Load("vc2.csv", inputData, info))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  // Initialize an all-ones weight matrix.
+  arma::mat weights(1, labels.n_cols, arma::fill::ones);
+
+  // Input training data.
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("weights", std::move(weights));
+
+  mlpackMain();
+
+  // Input pre-trained model.
+  SetInputParam("input_model",
+                std::move(CLI::GetParam<DecisionTreeModel>("output_model")));
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -260,7 +290,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
   SetInputParam("weights", std::move(weights));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   mlpackMain();
 
@@ -274,9 +304,6 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
   CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
   CLI::GetSingleton().Parameters()["weights"].wasPassed = false;
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
-
-  if (!data::Load("braziltourism_test.arff", testData, info))
-    BOOST_FAIL("Cannot load test dataset braziltourism_test.arff!");
 
   // Input trained model.
   SetInputParam("test", std::move(std::make_tuple(info, testData)));
