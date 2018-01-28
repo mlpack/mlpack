@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionModelReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                std::move(CLI::GetParam<SoftmaxRegression>("output_model")));
+                CLI::GetParam<SoftmaxRegression*>("output_model"));
 
   mlpackMain();
 
@@ -165,6 +165,8 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionModelReuseTest)
   // Check that initial predictions and final predicitons matrix
   // using saved model are same.
   CheckMatrices(predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
+
+  delete CLI::GetParam<SoftmaxRegression*>("output_model");
 }
 
 /**

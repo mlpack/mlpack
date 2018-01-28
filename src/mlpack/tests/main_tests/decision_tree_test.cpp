@@ -254,7 +254,7 @@ BOOST_AUTO_TEST_CASE(DecisionTreeTrainingVerTest)
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                std::move(CLI::GetParam<DecisionTreeModel>("output_model")));
+                std::move(CLI::GetParam<DecisionTreeModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);

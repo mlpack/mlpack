@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(RandomForestModelReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                std::move(CLI::GetParam<RandomForestModel>("output_model")));
+                CLI::GetParam<RandomForestModel*>("output_model"));
 
   mlpackMain();
 
@@ -143,6 +143,8 @@ BOOST_AUTO_TEST_CASE(RandomForestModelReuseTest)
   // Check that initial predictions and predictions using saved model are same.
   CheckMatrices(predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
   CheckMatrices(probabilities, CLI::GetParam<arma::mat>("probabilities"));
+
+  delete CLI::GetParam<RandomForestModel*>("output_model");
 }
 
 /**
@@ -206,11 +208,13 @@ BOOST_AUTO_TEST_CASE(RandomForestTrainingVerTest)
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                std::move(CLI::GetParam<RandomForestModel>("output_model")));
+                CLI::GetParam<RandomForestModel*>("output_model"));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
+
+  delete CLI::GetParam<RandomForestModel*>("output_model");
 }
 
 /**
@@ -236,7 +240,7 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
 
   // Calculate training accuracy.
   arma::Row<size_t> predictions;
-  CLI::GetParam<RandomForestModel>("output_model").rf.Classify(inputData,
+  CLI::GetParam<RandomForestModel*>("output_model")->rf.Classify(inputData,
        predictions);
 
   size_t correct = arma::accu(predictions == labels);
@@ -252,7 +256,7 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
   mlpackMain();
 
   // Calculate training accuracy.
-  CLI::GetParam<RandomForestModel>("output_model").rf.Classify(inputData,
+  CLI::GetParam<RandomForestModel*>("output_model")->rf.Classify(inputData,
        predictions);
 
   correct = arma::accu(predictions == labels);
@@ -275,6 +279,8 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
   double accuracy1 = (double(correct) / double(labels.n_elem) * 100);
 
   BOOST_REQUIRE(accuracy1 > accuracy10 && accuracy10 > accuracy20);
+
+  delete CLI::GetParam<RandomForestModel*>("output_model");
 }
 
 /**
@@ -308,8 +314,9 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
 
   // Calculate training accuracy.
   arma::Row<size_t> predictions;
-  CLI::GetParam<RandomForestModel>("output_model").rf.Classify(testData,
+  CLI::GetParam<RandomForestModel*>("output_model")->rf.Classify(testData,
        predictions);
+  delete CLI::GetParam<RandomForestModel*>("output_model");
 
   size_t correct = arma::accu(predictions == testLabels);
   double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
@@ -324,8 +331,9 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
   mlpackMain();
 
   // Calculate training accuracy.
-  CLI::GetParam<RandomForestModel>("output_model").rf.Classify(testData,
+  CLI::GetParam<RandomForestModel*>("output_model")->rf.Classify(testData,
        predictions);
+  delete CLI::GetParam<RandomForestModel*>("output_model");
 
   correct = arma::accu(predictions == testLabels);
   double accuracy5 = (double(correct) / double(testLabels.n_elem) * 100);
@@ -340,8 +348,9 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
   mlpackMain();
 
   // Calculate training accuracy.
-  CLI::GetParam<RandomForestModel>("output_model").rf.Classify(testData,
+  CLI::GetParam<RandomForestModel*>("output_model")->rf.Classify(testData,
        predictions);
+  delete CLI::GetParam<RandomForestModel*>("output_model");
 
   correct = arma::accu(predictions == testLabels);
   double accuracy10 = (double(correct) / double(testLabels.n_elem) * 100);

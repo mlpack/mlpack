@@ -208,7 +208,7 @@ BOOST_AUTO_TEST_CASE(NBCModelReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                std::move(CLI::GetParam<NBCModel>("output_model")));
+                std::move(CLI::GetParam<NBCModel*>("output_model")));
 
   mlpackMain();
 
@@ -226,6 +226,8 @@ BOOST_AUTO_TEST_CASE(NBCModelReuseTest)
   // matrix using saved model are same.
   CheckMatrices(output, CLI::GetParam<arma::Row<size_t>>("output"));
   CheckMatrices(output_probs, CLI::GetParam<arma::mat>("output_probs"));
+
+  delete CLI::GetParam<NBCModel*>("output_model");
 }
 
 /**
@@ -244,11 +246,13 @@ BOOST_AUTO_TEST_CASE(NBCTrainingVerTest)
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                std::move(CLI::GetParam<NBCModel>("output_model")));
+                std::move(CLI::GetParam<NBCModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
+
+  delete CLI::GetParam<NBCModel*>("output_model");
 }
 
 /**
