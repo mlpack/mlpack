@@ -23,7 +23,7 @@ class TestToMatrix(unittest.TestCase):
     """
     d = pd.DataFrame(np.random.randn(100, 4), columns=list('abcd'))
 
-    m = to_matrix(d)
+    m, _ = to_matrix(d)
 
     self.assertTrue(isinstance(m, np.ndarray))
     self.assertEqual(m.shape[0], 100)
@@ -40,7 +40,7 @@ class TestToMatrix(unittest.TestCase):
     """
     d = pd.DataFrame({'a': range(5)})
 
-    m = to_matrix(d)
+    m, _ = to_matrix(d)
 
     self.assertTrue(isinstance(m, np.ndarray))
     self.assertEqual(m.shape[0], 5)
@@ -58,7 +58,7 @@ class TestToMatrix(unittest.TestCase):
     self.assertEqual(d['a'].dtype, int)
     self.assertEqual(d['b'].dtype, np.dtype(np.double))
 
-    m = to_matrix(d)
+    m, _ = to_matrix(d)
 
     self.assertTrue(isinstance(m, np.ndarray))
     self.assertEqual(m.dtype, np.dtype(np.double))
@@ -79,7 +79,7 @@ class TestToMatrix(unittest.TestCase):
          [0.07, 0.08, 0.09],
          [0.10, 0.11, 0.12]]
 
-    m = to_matrix(a)
+    m, _ = to_matrix(a)
 
     self.assertTrue(isinstance(m, np.ndarray))
     self.assertEqual(m.dtype, np.dtype(np.double))
@@ -100,7 +100,7 @@ class TestToMatrix(unittest.TestCase):
          [0.07, 0.08, 9],
          [0.10, 0.11, 12]]
 
-    m = to_matrix(a)
+    m, _ = to_matrix(a)
 
     self.assertTrue(isinstance(m, np.ndarray))
     self.assertEqual(m.dtype, np.dtype(np.double))
@@ -116,7 +116,7 @@ class TestToMatrix(unittest.TestCase):
     Make sure we can convert a numpy matrix without copying anything.
     """
     m1 = np.random.randn(100, 5)
-    m2 = to_matrix(m1)
+    m2, _ = to_matrix(m1)
 
     self.assertTrue(isinstance(m2, np.ndarray))
     self.assertEqual(m2.dtype, np.dtype(np.double))
@@ -144,7 +144,7 @@ class TestToMatrixWithInfo(unittest.TestCase):
     """
     d = pd.DataFrame(np.random.randn(100, 4), columns=list('abcd'))
 
-    m, dims = to_matrix_with_info(d, np.double)
+    m, _, dims = to_matrix_with_info(d, np.double)
 
     self.assertTrue(isinstance(m, np.ndarray))
     self.assertEqual(m.shape[0], 100)
@@ -167,7 +167,7 @@ class TestToMatrixWithInfo(unittest.TestCase):
     """
     d = pd.DataFrame({'a': range(5)})
 
-    m, dims = to_matrix_with_info(d, np.double)
+    m, _, dims = to_matrix_with_info(d, np.double)
 
     self.assertTrue(isinstance(m, np.ndarray))
     self.assertEqual(m.shape[0], 5)
@@ -188,7 +188,7 @@ class TestToMatrixWithInfo(unittest.TestCase):
     self.assertEqual(d['a'].dtype, int)
     self.assertEqual(d['b'].dtype, np.dtype(np.double))
 
-    m, dims = to_matrix_with_info(d, np.double)
+    m, _, dims = to_matrix_with_info(d, np.double)
 
     self.assertTrue(isinstance(m, np.ndarray))
     self.assertEqual(m.dtype, np.dtype(np.double))
@@ -213,7 +213,7 @@ class TestToMatrixWithInfo(unittest.TestCase):
          [0.07, 0.08, 0.09],
          [0.10, 0.11, 0.12]]
 
-    m, dims = to_matrix_with_info(a, np.double)
+    m, _, dims = to_matrix_with_info(a, np.double)
 
     self.assertTrue(isinstance(m, np.ndarray))
     self.assertEqual(m.dtype, np.dtype(np.double))
@@ -239,7 +239,7 @@ class TestToMatrixWithInfo(unittest.TestCase):
          [0.07, 0.08, 9],
          [0.10, 0.11, 12]]
 
-    m, dims = to_matrix_with_info(a, np.double)
+    m, _, dims = to_matrix_with_info(a, np.double)
 
     self.assertTrue(isinstance(m, np.ndarray))
     self.assertEqual(m.dtype, np.dtype(np.double))
@@ -260,7 +260,7 @@ class TestToMatrixWithInfo(unittest.TestCase):
     Make sure we can convert a numpy matrix without copying anything.
     """
     m1 = np.random.randn(100, 5)
-    m2, dims = to_matrix_with_info(m1, np.double)
+    m2, _, dims = to_matrix_with_info(m1, np.double)
 
     self.assertTrue(isinstance(m2, np.ndarray))
     self.assertEqual(m2.dtype, np.dtype(np.double))
@@ -284,7 +284,7 @@ class TestToMatrixWithInfo(unittest.TestCase):
     d = pd.DataFrame({"A": ["a", "b", "c", "a"] })
     d["A"] = d["A"].astype('category') # Convert to categorical.
 
-    m, dims = to_matrix_with_info(d, np.double)
+    m, _, dims = to_matrix_with_info(d, np.double)
 
     self.assertTrue(isinstance(m, np.ndarray))
     self.assertEqual(m.dtype, np.dtype(np.double))

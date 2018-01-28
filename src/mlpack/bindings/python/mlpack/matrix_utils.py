@@ -87,7 +87,7 @@ def to_matrix_with_info(x, dtype, copy=False):
        not np.dtype(str) in dtype_array and \
        not np.dtype(unicode) in dtype_array:
         # We can just return the matrix as-is; it's all numeric.
-        t = to_matrix(x, copy)
+        t = to_matrix(x, dtype=dtype, copy=copy)
         d = np.zeros([x.shape[1]], dtype=np.bool)
         return (t[0], t[1], d)
 
@@ -126,7 +126,7 @@ def to_matrix_with_info(x, dtype, copy=False):
 
     # We'll have to force the second part of the tuple (whether or not to take
     # ownership) to true.
-    t = to_matrix(y.apply(pd.to_numeric))
+    t = to_matrix(y.apply(pd.to_numeric), dtype=dtype)
     return (t[0], True, d)
 
   if isinstance(x, list):
@@ -149,7 +149,7 @@ def to_matrix_with_info(x, dtype, copy=False):
       alias = True
       x[0] = oldval
 
-    return (np.array(x, dtype=dtype), not alias, d)
+    return (out, not alias, d)
 
   # If we got here, the type is not known.
   raise TypeError("given matrix is not a numpy ndarray or pandas DataFrame or "\
