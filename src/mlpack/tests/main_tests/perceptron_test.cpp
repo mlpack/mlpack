@@ -317,7 +317,6 @@ BOOST_AUTO_TEST_CASE(PerceptronNonNegMaxIterationTest)
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
-
 }
-
 BOOST_AUTO_TEST_SUITE_END();
+
