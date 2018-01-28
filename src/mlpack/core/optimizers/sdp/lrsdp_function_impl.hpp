@@ -47,8 +47,8 @@ LRSDPFunction<SDPType>::LRSDPFunction(const size_t numSparseConstraints,
 template <typename SDPType>
 double LRSDPFunction<SDPType>::Evaluate(const arma::mat& coordinates) const
 {
-  const arma::mat rrt = coordinates * trans(coordinates);
-  return accu(SDP().C() % rrt);
+  // For computation optimization we will be taking CR first.
+  return trace((trans(coordinates) * SDP().C()) * coordinates);
 }
 
 template <typename SDPType>
@@ -64,11 +64,13 @@ double LRSDPFunction<SDPType>::EvaluateConstraint(
     const size_t index,
     const arma::mat& coordinates) const
 {
-  const arma::mat rrt = coordinates * trans(coordinates);
+  // For computation optimization we will be taking AR first.
   if (index < SDP().NumSparseConstraints())
-    return accu(SDP().SparseA()[index] % rrt) - SDP().SparseB()[index];
+    return trace((trans(coordinates) * SDP().SparseA()[index]) * coordinates)
+               - SDP().SparseB()[index];
   const size_t index1 = index - SDP().NumSparseConstraints();
-  return accu(SDP().DenseA()[index1] % rrt) - SDP().DenseB()[index1];
+  return trace((trans(coordinates) * SDP().DenseA()[index1]) * coordinates)
+                 - SDP().DenseB()[index1];
 }
 
 template <typename SDPType>
@@ -96,6 +98,9 @@ UpdateObjective(double& objective,
   for (size_t i = 0; i < ais.size(); ++i)
   {
     // Take the trace subtracted by the b_i.
+    // Here taking AR first is not recommended as we are already
+    // using pre-computed RR^T. Taking AR first will result in increase
+    // in number of computations.
     const double constraint = accu(ais[i] % rrt) - bis[i];
     objective -= (lambda[lambdaOffset + i] * constraint);
     objective += (sigma / 2.) * constraint * constraint;
@@ -116,6 +121,9 @@ UpdateGradient(arma::mat& s,
 {
   for (size_t i = 0; i < ais.size(); ++i)
   {
+    // Here taking AR first is not recommended as we are already
+    // using pre-computed RR^T. Taking AR first will result in increase
+    // in number of computations.
     const double constraint = accu(ais[i] % rrt) - bis[i];
     const double y = lambda[lambdaOffset + i] - sigma * constraint;
     s -= y * ais[i];
@@ -137,13 +145,18 @@ EvaluateImpl(const LRSDPFunction<SDPType>& function,
   // Let's start with the objective: Tr(C * (R R^T)).
   // Simple, possibly slow solution-- see below for optimization opportunity
   //
-  // TODO: Note that Tr(C^T * (R R^T)) = Tr( (CR)^T * R ), so
+  // Note that Tr(C^T * (R R^T)) = Tr( (CR)^T * R ), so
   // multiplying C*R first, and then taking the trace dot should be more memory
   // efficient
   //
   // Similarly for the constraints, taking A*R first should be more efficient
+  //
+  // For computation optimization we will be taking CR first.
   const arma::mat rrt = coordinates * trans(coordinates);
-  double objective = accu(function.SDP().C() % rrt);
+
+  // Optimized objective function.
+  double objective = trace((trans(coordinates) * function.SDP().C())
+                         * coordinates);
 
   // Now each constraint.
   UpdateObjective(objective, rrt, function.SDP().SparseA(),
