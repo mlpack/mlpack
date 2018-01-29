@@ -32,6 +32,7 @@ struct LRTestFixture
   ~LRTestFixture()
   {
     // Clear the settings.
+    bindings::tests::CleanMemory();
     CLI::ClearSettings();
   }
 };
@@ -66,6 +67,7 @@ BOOST_AUTO_TEST_CASE(LRDifferentLambdas)
   mlpackMain();
   const double testY1 = CLI::GetParam<arma::rowvec>("output_predictions")(0);
 
+  bindings::tests::CleanMemory();
   ResetSettings();
 
   SetInputParam("training", std::move(trainX));
@@ -100,6 +102,7 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentation)
   mlpackMain();
   const double testY1 = CLI::GetParam<arma::rowvec>("output_predictions")(0);
 
+  bindings::tests::CleanMemory();
   ResetSettings();
 
   arma::mat trainX2({1.0, 2.0, 3.0});

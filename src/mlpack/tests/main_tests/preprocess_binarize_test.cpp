@@ -35,6 +35,7 @@ struct PreprocessBinarizeTestFixture
   ~PreprocessBinarizeTestFixture()
   {
     // Clear the settings.
+    bindings::tests::CleanMemory();
     CLI::ClearSettings();
   }
 };

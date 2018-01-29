@@ -74,6 +74,7 @@ int main(int argc, char** argv)
 
 #include <mlpack/bindings/tests/test_option.hpp>
 #include <mlpack/bindings/tests/ignore_check.hpp>
+#include <mlpack/bindings/tests/clean_memory.hpp>
 
 // These functions will do nothing.
 #define PRINT_PARAM_STRING(A) std::string(" ")
