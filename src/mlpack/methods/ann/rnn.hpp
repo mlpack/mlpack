@@ -36,13 +36,14 @@ namespace ann /** Artificial Neural Network. */ {
  */
 template<
   typename OutputLayerType = NegativeLogLikelihood<>,
-  typename InitializationRuleType = RandomInitialization
+  typename InitializationRuleType = RandomInitialization,
+  typename... CustomLayers
 >
 class RNN
 {
  public:
   //! Convenience typedef for the internal model construction.
-  using NetworkType = RNN<OutputLayerType, InitializationRuleType>;
+  using NetworkType = RNN<OutputLayerType, InitializationRuleType, CustomLayers...>;
 
   /**
    * Create the RNN object with the given predictors and responses set (this is
@@ -206,7 +207,7 @@ class RNN
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes layer) { network.push_back(layer); }
+  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
@@ -309,7 +310,7 @@ class RNN
   bool single;
 
   //! Locally-stored model modules.
-  std::vector<LayerTypes> network;
+  std::vector<LayerTypes<CustomLayers...> > network;
 
   //! The matrix of data points (predictors).
   arma::mat predictors;

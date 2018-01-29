@@ -38,10 +38,13 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @tparam OutputLayerType The output layer type used to evaluate the network.
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
+ * @tparam CustomLayers Any set of custom layers that could be a part of the
+ *         feed forward network.
  */
 template<
   typename OutputLayerType = NegativeLogLikelihood<>,
-  typename InitializationRuleType = RandomInitialization
+  typename InitializationRuleType = RandomInitialization,
+  typename... CustomLayers
 >
 class FFN
 {
@@ -214,7 +217,7 @@ class FFN
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes layer) { network.push_back(layer); }
+  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
@@ -324,7 +327,7 @@ class FFN
   bool reset;
 
   //! Locally-stored model modules.
-  std::vector<LayerTypes> network;
+  std::vector<LayerTypes<CustomLayers...> > network;
 
   //! The matrix of data points (predictors).
   arma::mat predictors;
@@ -381,7 +384,7 @@ class FFN
   arma::mat gradient;
 
   //! Locally-stored copy visitor
-  CopyVisitor copyVisitor;
+  CopyVisitor<CustomLayers...> copyVisitor;
 }; // class FFN
 
 } // namespace ann

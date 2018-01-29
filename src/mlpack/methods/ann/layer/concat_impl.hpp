@@ -22,24 +22,27 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-Concat<InputDataType, OutputDataType>::Concat(
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+Concat<InputDataType, OutputDataType, CustomLayers...>::Concat(
     const bool model, const bool same) : model(model), same(same)
 {
   parameters.set_size(0, 0);
 }
 
-template<typename InputDataType, typename OutputDataType>
-Concat<InputDataType, OutputDataType>::~Concat()
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+Concat<InputDataType, OutputDataType, CustomLayers...>::~Concat()
 {
   // Clear memory.
   std::for_each(network.begin(), network.end(),
       boost::apply_visitor(deleteVisitor));
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 template<typename eT>
-void Concat<InputDataType, OutputDataType>::Forward(
+void Concat<InputDataType, OutputDataType, CustomLayers...>::Forward(
     arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
   size_t outSize = 0;
@@ -77,9 +80,10 @@ void Concat<InputDataType, OutputDataType>::Forward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 template<typename eT>
-void Concat<InputDataType, OutputDataType>::Backward(
+void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
   size_t outSize = 0;
@@ -142,9 +146,10 @@ void Concat<InputDataType, OutputDataType>::Backward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 template<typename eT>
-void Concat<InputDataType, OutputDataType>::Gradient(
+void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
     arma::Mat<eT>&& input,
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& /* gradient */)
@@ -156,9 +161,10 @@ void Concat<InputDataType, OutputDataType>::Gradient(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 template<typename Archive>
-void Concat<InputDataType, OutputDataType>::serialize(
+void Concat<InputDataType, OutputDataType, CustomLayers...>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(model);

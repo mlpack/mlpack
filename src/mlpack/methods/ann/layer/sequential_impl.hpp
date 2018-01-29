@@ -25,28 +25,31 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template <typename InputDataType, typename OutputDataType>
-Sequential<InputDataType, OutputDataType>::Sequential(
+template <typename InputDataType, typename OutputDataType,
+          typename... CustomLayers>
+Sequential<InputDataType, OutputDataType, CustomLayers...>::Sequential(
     const bool model) : model(model), reset(false)
 {
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType>
-Sequential<InputDataType, OutputDataType>::~Sequential()
+template <typename InputDataType, typename OutputDataType,
+          typename... CustomLayers>
+Sequential<InputDataType, OutputDataType, CustomLayers...>::~Sequential()
 {
   if (!model)
   {
-    for (LayerTypes& layer : network)
+    for (LayerTypes<CustomLayers...>& layer : network)
     {
       boost::apply_visitor(deleteVisitor, layer);
     }
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 template<typename eT>
-void Sequential<InputDataType, OutputDataType>::Forward(
+void Sequential<InputDataType, OutputDataType, CustomLayers...>::Forward(
     arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
@@ -106,9 +109,10 @@ if (!reset)
   output = boost::apply_visitor(outputParameterVisitor, network.back());
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 template<typename eT>
-void Sequential<InputDataType, OutputDataType>::Backward(
+void Sequential<InputDataType, OutputDataType, CustomLayers...>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
@@ -128,9 +132,10 @@ void Sequential<InputDataType, OutputDataType>::Backward(
   g = boost::apply_visitor(deltaVisitor, network.front());
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 template<typename eT>
-void Sequential<InputDataType, OutputDataType>::Gradient(
+void Sequential<InputDataType, OutputDataType, CustomLayers...>::Gradient(
     arma::Mat<eT>&& input,
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& /* gradient */)
@@ -146,15 +151,16 @@ void Sequential<InputDataType, OutputDataType>::Gradient(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 template<typename Archive>
-void Sequential<InputDataType, OutputDataType>::serialize(
+void Sequential<InputDataType, OutputDataType, CustomLayers...>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   // If loading, delete the old layers.
   if (Archive::is_loading::value)
   {
-    for (LayerTypes& layer : network)
+    for (LayerTypes<CustomLayers...>& layer : network)
       boost::apply_visitor(deleteVisitor, layer);
   }
 

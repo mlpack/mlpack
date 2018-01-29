@@ -41,7 +41,8 @@ namespace ann /** Artificial Neural Network. */ {
  */
 template <
     typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename OutputDataType = arma::mat,
+    typename... CustomLayers
 >
 class Sequential
 {
@@ -105,10 +106,10 @@ class Sequential
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes layer) { network.push_back(layer); }
+  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
 
   //! Return the model modules.
-  std::vector<LayerTypes>& Model()
+  std::vector<LayerTypes<CustomLayers...> >& Model()
   {
     if (model)
     {
@@ -156,7 +157,7 @@ class Sequential
   bool reset;
 
   //! Locally-stored network modules.
-  std::vector<LayerTypes> network;
+  std::vector<LayerTypes<CustomLayers...> > network;
 
   //! Locally-stored model parameters.
   arma::mat parameters;
@@ -171,7 +172,7 @@ class Sequential
   DeleteVisitor deleteVisitor;
 
   //! Locally-stored empty list of modules.
-  std::vector<LayerTypes> empty;
+  std::vector<LayerTypes<CustomLayers...> > empty;
 
   //! Locally-stored delta object.
   arma::mat delta;

@@ -29,7 +29,7 @@ namespace ann /** Artificial Neural Network. */ {
  * This class is used to initialize the network with the given initialization
  * rule.
  */
-template<typename InitializationRuleType>
+template<typename InitializationRuleType, typename... CustomLayers>
 class NetworkInitialization
 {
  public:
@@ -52,7 +52,8 @@ class NetworkInitialization
    * @param network Network that should be initialized.
    * @param parameter The network parameter.
    */
-  void Initialize(const std::vector<LayerTypes>& network, arma::mat& parameter)
+  void Initialize(const std::vector<LayerTypes<CustomLayers...> >& network,
+                  arma::mat& parameter)
   {
     // Determine the number of parameter/weights of the given network.
     size_t weights = 0;
