@@ -59,7 +59,7 @@ class WithFunctionModelB
  public:
   double Model(int a)
   {
-    return 0;
+    return (double) a;
   }
 };
 
@@ -67,6 +67,11 @@ class WithOutFunctionModel
 {
  public:
   size_t Model;
+};
+
+class WithInheritedModelA : public WithFunctionModelA
+{
+  //Nothing here.
 };
 
 template<typename Class, typename...T>
@@ -169,6 +174,7 @@ BOOST_AUTO_TEST_CASE(HasMethodNameTest)
                 "value should be false");
   static_assert(HasModel<WithFunctionModelA>::value, "value should be true");
   static_assert(HasModel<WithFunctionModelB>::value, "value should be true");
+  static_assert(HasModel<WithInheritedModelA>::value, "value should be true");
 }
 
 BOOST_AUTO_TEST_SUITE_END();

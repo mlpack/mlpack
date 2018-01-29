@@ -112,7 +112,7 @@ class RecurrentAttention
                 arma::Mat<eT>&& /* gradient */);
 
   //! Get the model modules.
-  std::vector<LayerTypes>& Model() { return network; }
+  std::vector<LayerTypes<>>& Model() { return network; }
 
     //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
@@ -181,10 +181,10 @@ class RecurrentAttention
   size_t outSize;
 
   //! Locally-stored start module.
-  LayerTypes rnnModule;
+  LayerTypes<> rnnModule;
 
   //! Locally-stored input module.
-  LayerTypes actionModule;
+  LayerTypes<> actionModule;
 
   //! Number of steps to backpropagate through time (BPTT).
   size_t rho;
@@ -202,7 +202,7 @@ class RecurrentAttention
   OutputDataType parameters;
 
   //! Locally-stored model modules.
-  std::vector<LayerTypes> network;
+  std::vector<LayerTypes<>> network;
 
   //! Locally-stored weight size visitor.
   WeightSizeVisitor weightSizeVisitor;

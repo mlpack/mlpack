@@ -43,8 +43,6 @@
 namespace mlpack {
 namespace ann {
 
-template<typename InputDataType, typename OutputDataType> class AddMerge;
-template<typename InputDataType, typename OutputDataType> class Concat;
 template<typename InputDataType, typename OutputDataType> class DropConnect;
 template<typename InputDataType, typename OutputDataType> class Glimpse;
 template<typename InputDataType, typename OutputDataType> class Linear;
@@ -52,9 +50,31 @@ template<typename InputDataType, typename OutputDataType> class LinearNoBias;
 template<typename InputDataType, typename OutputDataType> class LSTM;
 template<typename InputDataType, typename OutputDataType> class GRU;
 template<typename InputDataType, typename OutputDataType> class FastLSTM;
-template<typename InputDataType, typename OutputDataType> class Recurrent;
-template<typename InputDataType, typename OutputDataType> class Sequential;
 template<typename InputDataType, typename OutputDataType> class VRClassReward;
+
+template<typename InputDataType,
+         typename OutputDataType,
+         typename... CustomLayers
+>
+class AddMerge;
+
+template<typename InputDataType,
+         typename OutputDataType,
+         typename... CustomLayers
+>
+class Sequential;
+
+template<typename InputDataType,
+         typename OutputDataType,
+         typename... CustomLayers
+>
+class Recurrent;
+
+template<typename InputDataType,
+         typename OutputDataType,
+         typename... CustomLayers
+>
+class Concat;
 
 template<
     typename OutputLayerType,
@@ -78,6 +98,7 @@ template<
 >
 class RecurrentAttention;
 
+template <typename... CustomLayers>
 using LayerTypes = boost::variant<
     Add<arma::mat, arma::mat>*,
     AddMerge<arma::mat, arma::mat>*,
@@ -118,7 +139,8 @@ using LayerTypes = boost::variant<
     ReinforceNormal<arma::mat, arma::mat>*,
     Select<arma::mat, arma::mat>*,
     Sequential<arma::mat, arma::mat>*,
-    VRClassReward<arma::mat, arma::mat>*
+    VRClassReward<arma::mat, arma::mat>*,
+    CustomLayers*...
 >;
 
 } // namespace ann
