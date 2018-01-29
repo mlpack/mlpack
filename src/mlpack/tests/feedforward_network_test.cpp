@@ -618,7 +618,6 @@ BOOST_AUTO_TEST_CASE(CustomLayerTest)
   arma::mat predictionTemp;
   model.Predict(testData, predictionTemp);
   arma::mat prediction = arma::zeros<arma::mat>(1, predictionTemp.n_cols);
-
 }
 
 BOOST_AUTO_TEST_SUITE_END();

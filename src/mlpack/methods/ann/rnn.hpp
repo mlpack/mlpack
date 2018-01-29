@@ -43,7 +43,9 @@ class RNN
 {
  public:
   //! Convenience typedef for the internal model construction.
-  using NetworkType = RNN<OutputLayerType, InitializationRuleType, CustomLayers...>;
+  using NetworkType = RNN<OutputLayerType,
+                          InitializationRuleType,
+                          CustomLayers...>;
 
   /**
    * Create the RNN object with the given predictors and responses set (this is
