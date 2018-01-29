@@ -18,6 +18,8 @@
 #include <mlpack/core/util/cli.hpp>
 #include "get_printable_param.hpp"
 #include "get_param.hpp"
+#include "get_allocated_memory.hpp"
+#include "delete_allocated_memory.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -90,6 +92,10 @@ class TestOption
     CLI::GetSingleton().functionMap[tname]["GetPrintableParam"] =
         &GetPrintableParam<N>;
     CLI::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
+    CLI::GetSingleton().functionMap[tname]["GetAllocatedMemory"] =
+        &GetAllocatedMemory<N>;
+    CLI::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
+        &DeleteAllocatedMemory<N>;
 
     CLI::Add(std::move(data));
 
