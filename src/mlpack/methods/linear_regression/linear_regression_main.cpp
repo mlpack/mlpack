@@ -170,8 +170,13 @@ static void mlpackMain()
     // Ensure that test file data has the right number of features.
     if ((lr->Parameters().n_elem - 1) != points.n_rows)
     {
-      Log::Fatal << "The model was trained on " << lr->Parameters().n_elem - 1
-          << "-dimensional data, but the test points in '"
+      // If we built the model, nothing will free it so we have to...
+      const size_t dimensions = lr->Parameters().n_elem - 1;
+      if (computeModel)
+        delete lr;
+
+      Log::Fatal << "The model was trained on " << dimensions << "-dimensional "
+          << "data, but the test points in '"
           << CLI::GetPrintableParam<mat>("test") << "' are " << points.n_rows
           << "-dimensional!" << endl;
     }
