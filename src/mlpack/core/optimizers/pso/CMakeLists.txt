@@ -1,6 +1,7 @@
 set(SOURCES
   pso.hpp
   pso_impl.hpp
+  inertia_weight.hpp
 )
 
 set(DIR_SRCS)
