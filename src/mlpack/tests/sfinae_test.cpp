@@ -71,7 +71,7 @@ class WithOutFunctionModel
 
 class WithInheritedModelA : public WithFunctionModelA
 {
-  //Nothing here.
+  // Nothing here.
 };
 
 template<typename Class, typename...T>
