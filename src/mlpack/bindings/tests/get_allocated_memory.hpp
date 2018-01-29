@@ -50,7 +50,7 @@ void GetAllocatedMemory(const util::ParamData& d,
       GetAllocatedMemory<typename std::remove_pointer<T>::type>(d);
 }
 
-} // namespace cli
+} // namespace tests
 } // namespace bindings
 } // namespace mlpack
 
