@@ -131,6 +131,7 @@ add_executable(mlpack_test
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
+  pso_test.cpp
 )
 
 # Link dependencies of test executable.

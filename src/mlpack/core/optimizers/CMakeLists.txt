@@ -21,6 +21,7 @@ set(DIRS
   sgdr
   smorms3
   spalera_sgd
+  pso
 )
 
 foreach(dir ${DIRS})
