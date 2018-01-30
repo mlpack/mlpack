@@ -1,27 +1,27 @@
 # mlpack test executable.
 add_executable(mlpack_test
   activation_functions_test.cpp
-  adaboost_test.cpp
-  adam_test.cpp
   ada_delta_test.cpp
   ada_grad_test.cpp
+  adaboost_test.cpp
+  adam_test.cpp
   akfn_test.cpp
   aknn_test.cpp
   ann_layer_test.cpp
-  armadillo_svd_test.cpp
   arma_extend_test.cpp
+  armadillo_svd_test.cpp
   async_learning_test.cpp
   aug_lagrangian_test.cpp
   augmented_rnns_tasks_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
   cf_test.cpp
+  cli_binding_test.cpp
   cli_test.cpp
   cmaes_test.cpp
-  cli_binding_test.cpp
   cne_test.cpp
-  convolutional_network_test.cpp
   convolution_test.cpp
+  convolutional_network_test.cpp
   cosine_tree_test.cpp
   cv_test.cpp
   dbscan_test.cpp
@@ -55,12 +55,12 @@ add_executable(mlpack_test
   lars_test.cpp
   lbfgs_test.cpp
   lin_alg_test.cpp
-  linear_regression_test.cpp
   line_search_test.cpp
+  linear_regression_test.cpp
   load_save_test.cpp
   local_coordinate_coding_test.cpp
-  logistic_regression_test.cpp
   log_test.cpp
+  logistic_regression_test.cpp
   lrsdp_test.cpp
   lsh_test.cpp
   math_test.cpp
@@ -79,9 +79,9 @@ add_executable(mlpack_test
   parallel_sgd_test.cpp
   pca_test.cpp
   perceptron_test.cpp
-  python_binding_test.cpp
   prefixedoutstream_test.cpp
   proximal_test.cpp
+  python_binding_test.cpp
   q_learning_test.cpp
   qdafn_test.cpp
   quic_svd_test.cpp
@@ -98,12 +98,12 @@ add_executable(mlpack_test
   sa_test.cpp
   scd_test.cpp
   sdp_primal_dual_test.cpp
-  serialization.hpp
   serialization.cpp
+  serialization.hpp
   serialization_test.cpp
-  sgdr_test.cpp
-  sgd_test.cpp
   sfinae_test.cpp
+  sgd_test.cpp
+  sgdr_test.cpp
   smorms3_test.cpp
   snapshot_ensembles.cpp
   softmax_regression_test.cpp
@@ -116,6 +116,7 @@ add_executable(mlpack_test
   svd_batch_test.cpp
   svd_incremental_test.cpp
   termination_policy_test.cpp
+  test_tools.hpp
   timer_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
@@ -125,11 +126,16 @@ add_executable(mlpack_test
   main_tests/test_helper.hpp
   main_tests/emst_test.cpp
   main_tests/decision_tree_test.cpp
+  main_tests/decision_stump_test.cpp
   main_tests/linear_regression_test.cpp
+  main_tests/nbc_test.cpp
   main_tests/pca_test.cpp
+  main_tests/perceptron_test.cpp
   main_tests/preprocess_binarize_test.cpp
   main_tests/preprocess_imputer_test.cpp
   main_tests/preprocess_split_test.cpp
+  main_tests/random_forest_test.cpp
+  main_tests/softmax_regression_test.cpp
 )
 
 # Link dependencies of test executable.

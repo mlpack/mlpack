@@ -76,6 +76,13 @@ class RNN
    * If you want to pass in a parameter and discard the original parameter
    * object, be sure to use std::move to avoid unnecessary copy.
    *
+   * The format of the data should be as follows:
+   *  - each slice should correspond to a time step
+   *  - each column should correspond to a data point
+   *  - each row should correspond to a dimension
+   * So, e.g., predictors(i, j, k) is the i'th dimension of the j'th data point
+   * at time slice k.
+   *
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
@@ -84,8 +91,8 @@ class RNN
    * @param initializeRule Optional instantiated InitializationRule object
    *        for initializing the network parameter.
    */
-  RNN(arma::mat predictors,
-      arma::mat responses,
+  RNN(arma::cube predictors,
+      arma::cube responses,
       const size_t rho,
       const bool single = false,
       OutputLayerType outputLayer = OutputLayerType(),
@@ -105,14 +112,21 @@ class RNN
    * If you want to pass in a parameter and discard the original parameter
    * object, be sure to use std::move to avoid unnecessary copy.
    *
+   * The format of the data should be as follows:
+   *  - each slice should correspond to a time step
+   *  - each column should correspond to a data point
+   *  - each row should correspond to a dimension
+   * So, e.g., predictors(i, j, k) is the i'th dimension of the j'th data point
+   * at time slice k.
+   *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
    */
   template<typename OptimizerType>
-  void Train(arma::mat predictors,
-             arma::mat responses,
+  void Train(arma::cube predictors,
+             arma::cube responses,
              OptimizerType& optimizer);
 
   /**
@@ -127,12 +141,19 @@ class RNN
    * If you want to pass in a parameter and discard the original parameter
    * object, be sure to use std::move to avoid unnecessary copy.
    *
+   * The format of the data should be as follows:
+   *  - each slice should correspond to a time step
+   *  - each column should correspond to a data point
+   *  - each row should correspond to a dimension
+   * So, e.g., predictors(i, j, k) is the i'th dimension of the j'th data point
+   * at time slice k.
+   *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    */
   template<typename OptimizerType = mlpack::optimization::StandardSGD>
-  void Train(arma::mat predictors, arma::mat responses);
+  void Train(arma::cube predictors, arma::cube responses);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -142,10 +163,20 @@ class RNN
    * If you want to pass in a parameter and discard the original parameter
    * object, be sure to use std::move to avoid unnecessary copy.
    *
+   * The format of the data should be as follows:
+   *  - each slice should correspond to a time step
+   *  - each column should correspond to a data point
+   *  - each row should correspond to a dimension
+   * So, e.g., predictors(i, j, k) is the i'th dimension of the j'th data point
+   * at time slice k.  The responses will be in the same format.
+   *
    * @param predictors Input predictors.
    * @param results Matrix to put output predictions of responses into.
+   * @param batchSize Number of points to predict at once.
    */
-  void Predict(arma::mat predictors, arma::mat& results);
+  void Predict(arma::cube predictors,
+               arma::cube& results,
+               const size_t batchSize = 256);
 
   /**
    * Evaluate the recurrent neural network with the given parameters. This
@@ -188,24 +219,24 @@ class RNN
    */
   void Shuffle();
 
-  /*
-   * Add a new module to the model.
+  /**
+   * Add a new layer to the model.
    *
-   * @param layer The Layer to be added to the model.
+   * @param layer The layer to be added to the model.
    */
   template<typename LayerType>
   void Add(const LayerType& layer) { network.push_back(new LayerType(layer)); }
 
-  /*
-   * Add a new module to the model.
+  /**
+   * Add a new layer to the model.
    *
-   * @param args The layer parameter.
+   * @param args The parameters to be passed to the layer constructor.
    */
   template <class LayerType, class... Args>
   void Add(Args... args) { network.push_back(new LayerType(args...)); }
 
-  /*
-   * Add a new module to the model.
+  /**
+   * Add a new layer to the model.
    *
    * @param layer The Layer to be added to the model.
    */
@@ -239,6 +270,7 @@ class RNN
   //! Serialize the model.
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
+
  private:
   // Helper functions.
   /**
@@ -266,14 +298,6 @@ class RNN
    */
   template<typename InputType>
   void Gradient(InputType&& input);
-
-  /*
-   * Predict the response of the given input sequence.
-   *
-   * @param predictors Input predictors.
-   * @param results Vector to put output prediction of a response into.
-   */
-  void SinglePredict(const arma::mat& predictors, arma::mat& results);
 
   /**
    * Reset the module status by setting the current deterministic parameter
@@ -315,10 +339,10 @@ class RNN
   std::vector<LayerTypes<CustomLayers...> > network;
 
   //! The matrix of data points (predictors).
-  arma::mat predictors;
+  arma::cube predictors;
 
   //! The matrix of responses to the input data points.
-  arma::mat responses;
+  arma::cube responses;
 
   //! Matrix of (trained) parameters.
   arma::mat parameter;

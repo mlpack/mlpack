@@ -7,6 +7,8 @@ set(SOURCES
 #  pca_nomain.cpp
 )
 
+add_subdirectory(decomposition_policies)
+
 # Add directory name to sources.
 set(DIR_SRCS)
 foreach(file ${SOURCES})
@@ -15,8 +17,6 @@ endforeach()
 # Append sources (with directory name) to list of all mlpack sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-add_subdirectory(decomposition_policies)
 
 add_cli_executable(pca)
 add_python_binding(pca)

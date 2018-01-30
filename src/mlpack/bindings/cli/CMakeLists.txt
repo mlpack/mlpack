@@ -23,6 +23,7 @@ set(SOURCES
   print_doc_functions_impl.hpp
   print_help.hpp
   print_help.cpp
+  set_param.hpp
   string_type_param.hpp
   string_type_param_impl.hpp
 )

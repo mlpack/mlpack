@@ -1,4 +1,7 @@
 set(SOURCES
+  descent_policies/cyclic_descent.hpp
+  descent_policies/greedy_descent.hpp
+  descent_policies/random_descent.hpp
   scd.hpp
   scd_impl.hpp
 )

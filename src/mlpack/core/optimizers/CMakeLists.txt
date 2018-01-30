@@ -12,10 +12,13 @@ set(DIRS
   lbfgs
   line_search
   proximal
+  parallel_sgd
   rmsprop
   sa
+  scd
   sdp
   sgd
+  sgdr
   smorms3
   spalera_sgd
 )
