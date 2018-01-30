@@ -162,7 +162,7 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
-    arma::cube predictors, arma::cube& results, const size_t batchSize)
+         arma::cube predictors, arma::cube& results, const size_t batchSize)
 {
   ResetCells();
 
