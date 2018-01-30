@@ -306,8 +306,6 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffLambdaTest)
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
 
-  size_t testSize = testData.n_cols;
-
   // Input training data.
   SetInputParam("training", inputData);
   SetInputParam("labels", labels);
@@ -372,8 +370,6 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffMaxItrTest)
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
 
-  size_t testSize = testData.n_cols;
-
   // Input training data.
   SetInputParam("training", inputData);
   SetInputParam("labels", labels);
@@ -437,8 +433,6 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffInterceptTest)
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
-
-  size_t testSize = testData.n_cols;
 
   // Input training data.
   SetInputParam("training", inputData);
