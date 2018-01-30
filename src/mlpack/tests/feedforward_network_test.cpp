@@ -606,12 +606,11 @@ BOOST_AUTO_TEST_CASE(CustomLayerTest)
   }
 
   FFN<NegativeLogLikelihood<>, RandomInitialization, CustomLayer<> > model;
-  model.Add<Linear<> >(trainData.n_rows, 10);
+  model.Add<Linear<> >(trainData.n_rows, 8);
   model.Add<CustomLayer<> >();
-  model.Add<Linear<> >(10, 2);
+  model.Add<Linear<> >(8, 3);
   model.Add<LogSoftMax<> >();
 
-  // RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
   RMSProp opt(0.01, 32, 0.88, 1e-8, 10 * trainData.n_cols, -1);
   model.Train(trainData, trainLabels, opt);
 
