@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(SVRGLogisticRegressionTest)
   // Now run big-batch SGD with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
   {
-    SVRG optimizer(0.001, batchSize, 15000, 1e-3, true);
+    SVRG optimizer(0.001, batchSize, 250, 0, 1e-3, true);
     LogisticRegression<> lr(shuffledData, shuffledResponses, optimizer, 0.5);
 
     // Ensure that the error is close to zero.
@@ -120,8 +120,8 @@ BOOST_AUTO_TEST_CASE(SVRGBBLogisticRegressionTest)
   // Now run big-batch SGD with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
   {
-    SVRG_BB optimizer(0.001, batchSize, 1500, 1e-5, true,
-        SVRGUpdate(), BarzilaiBorwein(0.1));
+    SVRG_BB optimizer(0.001, batchSize, 250, 0, 1e-5, true,
+        SVRGUpdate(), BarzilaiBorweinDecay(0.1));
     LogisticRegression<> lr(shuffledData, shuffledResponses, optimizer, 0.5);
 
     // Ensure that the error is close to zero.

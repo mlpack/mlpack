@@ -23,6 +23,7 @@ SVRGType<UpdatePolicyType, DecayPolicyType>::SVRGType(
     const double stepSize,
     const size_t batchSize,
     const size_t maxIterations,
+    const size_t innerIterations,
     const double tolerance,
     const bool shuffle,
     const UpdatePolicyType& updatePolicy,
@@ -31,6 +32,7 @@ SVRGType<UpdatePolicyType, DecayPolicyType>::SVRGType(
     stepSize(stepSize),
     batchSize(batchSize),
     maxIterations(maxIterations),
+    innerIterations(innerIterations),
     tolerance(tolerance),
     shuffle(shuffle),
     updatePolicy(updatePolicy),
@@ -49,16 +51,12 @@ double SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
   const size_t numFunctions = function.NumFunctions();
 
   // To keep track of where we are and how things are going.
-  size_t currentFunction = 0;
   double overallObjective = 0;
   double lastObjective = DBL_MAX;
 
-  // Calculate the first objective function.
-  for (size_t i = 0; i < numFunctions; i += batchSize)
-  {
-    const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
-  }
+  // Set epoch length to n / b if the user asked for.
+  if (innerIterations == 0)
+    innerIterations = numFunctions;
 
   // Initialize the update policy.
   if (resetPolicy)
@@ -66,7 +64,6 @@ double SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  arma::mat fullGradient(iterate.n_rows, iterate.n_cols);
   arma::mat gradient0(iterate.n_rows, iterate.n_cols);
   arma::mat iterate0;
 
@@ -77,41 +74,36 @@ double SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
 
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
-  for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
+  for (size_t i = 0; i < actualMaxIterations; ++i)
   {
-    // Is this iteration the start of a sequence?
-    if ((currentFunction % numFunctions) == 0)
+    // Calculate the objective function.
+    overallObjective = 0;
+    for (size_t f = 0; f < numFunctions; f += batchSize)
     {
-      // Output current objective function.
-      Log::Info << "SVRG: iteration " << i << ", objective " << overallObjective
-          << "." << std::endl;
-
-      if (std::isnan(overallObjective) || std::isinf(overallObjective))
-      {
-        Log::Warn << "SVRG: converged to " << overallObjective
-            << "; terminating  with failure.  Try a smaller step size?"
-            << std::endl;
-        return overallObjective;
-      }
-
-      if (std::abs(lastObjective - overallObjective) < tolerance)
-      {
-        Log::Info << "SVRG: minimized within tolerance " << tolerance << "; "
-            << "terminating optimization." << std::endl;
-        return overallObjective;
-      }
-
-      // Reset the counter variables.
-      lastObjective = overallObjective;
-      overallObjective = 0;
-      currentFunction = 0;
-
-      if (shuffle) // Determine order of visitation.
-        function.Shuffle();
+      const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
+      overallObjective += function.Evaluate(iterate, f, effectiveBatchSize);
     }
+
+    if (std::isnan(overallObjective) || std::isinf(overallObjective))
+    {
+      Log::Warn << "Katyusha: converged to " << overallObjective
+          << "; terminating  with failure.  Try a smaller step size?"
+          << std::endl;
+      return overallObjective;
+    }
+
+    if (std::abs(lastObjective - overallObjective) < tolerance)
+    {
+      Log::Info << "Katyusha: minimized within tolerance " << tolerance
+          << "; terminating optimization." << std::endl;
+      return overallObjective;
+    }
+
+    lastObjective = overallObjective;
 
     // Compute the full gradient.
     size_t effectiveBatchSize = std::min(batchSize, numFunctions);
+    arma::mat fullGradient(iterate.n_rows, iterate.n_cols);
     function.Gradient(iterate, 0, fullGradient, effectiveBatchSize);
     for (size_t f = effectiveBatchSize; f < numFunctions;
         /* incrementing done manually */)
@@ -126,38 +118,43 @@ double SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
     }
     fullGradient /= (double) numFunctions;
 
-    // Update the learning rate if requested by the user.
-    decayPolicy.Update(iterate, iterate0, gradient, fullGradient, numBatches,
-        stepSize);
-
     // Store current parameter for the calculation of the variance reduced
     // gradient.
     iterate0 = iterate;
 
-    for (size_t f = 0; f < numFunctions; /* incrementing done manually */)
+    for (size_t f = 0, currentFunction = 0; f < innerIterations;
+        /* incrementing done manually */)
     {
+      // Is this iteration the start of a sequence?
+      if ((currentFunction % numFunctions) == 0)
+      {
+        currentFunction = 0;
+
+        // Determine order of visitation.
+        if (shuffle)
+          function.Shuffle();
+      }
+
       // Find the effective batch size (the last batch may be smaller).
-      effectiveBatchSize = std::min(batchSize, numFunctions - f);
+      effectiveBatchSize = std::min(batchSize, numFunctions - currentFunction);
 
       // Calculate variance reduced gradient.
-      function.Gradient(iterate, f, gradient, effectiveBatchSize);
-      function.Gradient(iterate0, f, gradient0, effectiveBatchSize);
+      function.Gradient(iterate, currentFunction, gradient,
+          effectiveBatchSize);
+      function.Gradient(iterate0, currentFunction, gradient0,
+          effectiveBatchSize);
 
       // Use the update policy to take a step.
       updatePolicy.Update(iterate, fullGradient, gradient, gradient0,
           effectiveBatchSize, stepSize);
 
+      currentFunction += effectiveBatchSize;
       f += effectiveBatchSize;
     }
 
-    // Find the effective batch size (the last batch may be smaller).
-    effectiveBatchSize = std::min(batchSize, numFunctions - currentFunction);
-
-    overallObjective += function.Evaluate(iterate, currentFunction,
-        effectiveBatchSize);
-
-    i += effectiveBatchSize;
-    currentFunction += effectiveBatchSize;
+    // Update the learning rate if requested by the user.
+    decayPolicy.Update(iterate, iterate0, gradient, fullGradient, numBatches,
+        stepSize);
   }
 
   Log::Info << "SVRG: maximum iterations (" << maxIterations << ") reached; "

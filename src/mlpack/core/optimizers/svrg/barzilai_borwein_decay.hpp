@@ -91,7 +91,7 @@ class BarzilaiBorweinDecay
       stepSize = std::min(stepSize, maxStepSize);
     }
 
-    fullGradient0 = fullGradient;
+    fullGradient0 = std::move(fullGradient);
   }
 
  private:

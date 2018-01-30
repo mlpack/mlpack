@@ -16,7 +16,7 @@
 
 #include "svrg_update.hpp"
 #include "no_decay.hpp"
-#include "barzilai_borwein.hpp"
+#include "barzilai_borwein_decay.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -113,6 +113,8 @@ class SVRGType
    * @param batchSize Batch size to use for each step.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
+   * @param innerIterations The number of inner iterations allowed (0 means
+   *    n / batchSize).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *     function is visited in linear order.
@@ -124,7 +126,8 @@ class SVRGType
    */
   SVRGType(const double stepSize = 0.01,
            const size_t batchSize = 32,
-           const size_t maxIterations = 100000,
+           const size_t maxIterations = 1000,
+           const size_t innerIterations = 0,
            const double tolerance = 1e-5,
            const bool shuffle = true,
            const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
@@ -158,6 +161,11 @@ class SVRGType
   size_t MaxIterations() const { return maxIterations; }
   //! Modify the maximum number of iterations (0 indicates no limit).
   size_t& MaxIterations() { return maxIterations; }
+
+  //! Get the maximum number of iterations (0 indicates default n / b).
+  size_t InnerIterations() const { return innerIterations; }
+  //! Modify the maximum number of iterations (0 indicates default n / b).
+  size_t& InnerIterations() { return innerIterations; }
 
   //! Get the tolerance for termination.
   double Tolerance() const { return tolerance; }
@@ -196,6 +204,9 @@ class SVRGType
   //! The maximum number of allowed iterations.
   size_t maxIterations;
 
+  //! The maximum number of allowed inner iterations per epoch.
+  size_t innerIterations;
+
   //! The tolerance for termination.
   double tolerance;
 
@@ -224,7 +235,7 @@ using SVRG = SVRGType<SVRGUpdate, NoDecay>;
 /**
  * Stochastic variance reduced gradient with Barzilai-Borwein.
  */
-using SVRG_BB = SVRGType<SVRGUpdate, BarzilaiBorwein>;
+using SVRG_BB = SVRGType<SVRGUpdate, BarzilaiBorweinDecay>;
 
 } // namespace optimization
 } // namespace mlpack
