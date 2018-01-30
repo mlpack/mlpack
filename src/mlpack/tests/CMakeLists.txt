@@ -125,6 +125,7 @@ add_executable(mlpack_test
   split_data_test.cpp
   svd_batch_test.cpp
   svd_incremental_test.cpp
+  svrg_test.cpp
   termination_policy_test.cpp
   test_tools.hpp
   timer_test.cpp
