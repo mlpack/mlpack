@@ -141,9 +141,15 @@ static void mlpackMain()
   const double tolerance = CLI::GetParam<double>("tolerance");
   const double stepSize = CLI::GetParam<double>("step_size");
   const size_t batchSize = (size_t) CLI::GetParam<int>("batch_size");
+
+  // Checking that max iterations is non negative
+  if(CLI::GetParam<int>("max_iterations") <= 0) {
+    Log::Fatal << "Max Iterations (" << CLI::GetParam<int>("max_iterations") << ") cannot be negative" << endl;
+  }
+
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
   const double decisionBoundary = CLI::GetParam<double>("decision_boundary");
-
+ 
   // One of training and input_model must be specified.
   RequireAtLeastOnePassed({ "training", "input_model" }, true);
 
@@ -228,6 +234,11 @@ static void mlpackMain()
   }
   else if (CLI::HasParam("training"))
   {
+
+    if(regressors.n_rows<2) {
+      Log::Fatal << "Can't get responses from training data "
+            "since it has less than 2 rows." << endl;
+    }
     // The initial predictors for y, Nx1.
     responses = arma::conv_to<arma::Row<size_t>>::from(
         regressors.row(regressors.n_rows - 1));
@@ -271,6 +282,12 @@ static void mlpackMain()
   if (CLI::HasParam("test"))
   {
     testSet = std::move(CLI::GetParam<arma::mat>("test"));
+
+    // checking the dimensionality of the test data
+    if(testSet.n_rows != model.Parameters().n_cols-1) {
+      Log::Fatal << "Test data dimensionality (" << testSet.n_rows << ") must " 
+          << "be the same as the dimensionality of the Training Data (" << model.Parameters().n_cols-1 << ")!" << endl;
+    }
 
     // We must perform predictions on the test set.  Training (and the
     // optimizer) are irrelevant here; we'll pass in the model we have.
