@@ -331,7 +331,7 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
   // Now calculate maximum probabilities for each point.
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    arma::uword maxIndex;
+    arma::uword maxIndex = 0;
     logLikelihoods.unsafe_col(i).max(maxIndex);
     predictions[i] = maxIndex;
   }
