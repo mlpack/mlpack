@@ -520,23 +520,11 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffMaxItrTest)
 
   // Check that initial outputs and final outputs
   // using two models model are different.
-  for (size_t i = 0; i < dictionary.n_elem; ++i)
-  {
-    if(dictionary[i]!=0 && CLI::GetParam<arma::mat>("dictionary")[i]!=0)
-    {
-      BOOST_REQUIRE_NE(dictionary[i],
-          CLI::GetParam<arma::mat>("dictionary")[i]);
-    }
-  }
+  BOOST_REQUIRE_LT(arma::accu(dictionary ==
+      CLI::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
 
-  for (size_t i = 0; i < codes.n_elem; ++i)
-  {
-    if(codes[i]!=0 && CLI::GetParam<arma::mat>("codes")[i]!=0)
-    {
-      BOOST_REQUIRE_NE(codes[i],
-          CLI::GetParam<arma::mat>("codes")[i]);
-    }
-  }
+  BOOST_REQUIRE_LT(arma::accu(codes ==
+      CLI::GetParam<arma::mat>("codes")), codes.n_elem);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
