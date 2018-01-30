@@ -8,6 +8,11 @@ set(SOURCES
   training_config.hpp
 )
 
+add_subdirectory(environment)
+add_subdirectory(policy)
+add_subdirectory(replay)
+add_subdirectory(worker)
+
 # Add directory name to sources.
 set(DIR_SRCS)
 foreach(file ${SOURCES})
@@ -16,7 +21,3 @@ endforeach()
 # Append sources (with directory name) to list of all mlpack sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-add_subdirectory(environment)
-add_subdirectory(estimator)
-add_subdirectory(policy)

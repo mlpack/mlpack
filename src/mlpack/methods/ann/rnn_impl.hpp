@@ -54,8 +54,8 @@ RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::RNN(
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::RNN(
-    arma::mat predictors,
-    arma::mat responses,
+    arma::cube predictors,
+    arma::cube responses,
     const size_t rho,
     const bool single,
     OutputLayerType outputLayer,
@@ -91,8 +91,8 @@ template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename OptimizerType>
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
-    arma::mat predictors,
-    arma::mat responses,
+    arma::cube predictors,
+    arma::cube responses,
     OptimizerType& optimizer)
 {
   numFunctions = responses.n_cols;
@@ -132,7 +132,8 @@ template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename OptimizerType>
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
-    arma::mat predictors, arma::mat responses)
+    arma::cube predictors,
+    arma::cube responses)
 {
   numFunctions = responses.n_cols;
 
@@ -161,7 +162,7 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
-    arma::mat predictors, arma::mat& results)
+    arma::cube predictors, arma::cube& results, const size_t batchSize)
 {
   ResetCells();
 
@@ -176,32 +177,21 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     ResetDeterministic();
   }
 
-  results = arma::zeros<arma::mat>(outputSize * rho, predictors.n_cols);
-  arma::mat resultsTemp = results.col(0);
-
-  for (size_t i = 0; i < predictors.n_cols; i++)
+  results = arma::zeros<arma::cube>(outputSize, predictors.n_cols, rho);
+  // Process in accordance with the given batch size.
+  for (size_t begin = 0; begin < predictors.n_cols; begin += batchSize)
   {
-    SinglePredict(
-        arma::mat(predictors.colptr(i), predictors.n_rows, 1, false, true),
-        resultsTemp);
+    const size_t effectiveBatchSize = std::min(batchSize,
+        size_t(predictors.n_cols - begin));
+    for (size_t seqNum = 0; seqNum < rho; ++seqNum)
+    {
+      Forward(std::move(arma::mat(predictors.slice(seqNum).colptr(begin),
+          predictors.n_rows, effectiveBatchSize, false, true)));
 
-    results.col(i) = resultsTemp;
-  }
-}
-
-template<typename OutputLayerType, typename InitializationRuleType,
-         typename... CustomLayers>
-void RNN<OutputLayerType, InitializationRuleType,
-         CustomLayers...>::SinglePredict(
-    const arma::mat& predictors, arma::mat& results)
-{
-  for (size_t seqNum = 0; seqNum < rho; ++seqNum)
-  {
-    Forward(std::move(predictors.rows(seqNum * inputSize,
-        (seqNum + 1) * inputSize - 1)));
-
-    results.rows(seqNum * outputSize, (seqNum + 1) * outputSize - 1) =
-        boost::apply_visitor(outputParameterVisitor, network.back());
+      results.slice(seqNum).submat(0, begin, results.n_rows - 1, begin +
+          effectiveBatchSize - 1) = boost::apply_visitor(outputParameterVisitor,
+          network.back());
+    }
   }
 }
 
@@ -226,12 +216,12 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
 
   if (!inputSize)
   {
-    inputSize = predictors.n_rows / rho;
-    targetSize = responses.n_rows / rho;
+    inputSize = predictors.n_rows;
+    targetSize = responses.n_rows;
   }
   else if (targetSize == 0)
   {
-    targetSize = responses.n_rows / rho;
+    targetSize = responses.n_rows;
   }
 
   ResetCells();
@@ -240,8 +230,12 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
 
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
-    Forward(std::move(predictors.submat(seqNum * inputSize, begin,
-        (seqNum + 1) * inputSize - 1, begin + batchSize - 1)));
+    // Wrap a matrix around our data to avoid a copy.
+    arma::mat stepData(predictors.slice(seqNum).colptr(begin),
+        predictors.n_rows, batchSize, false, true);
+    Forward(std::move(stepData));
+    arma::mat respData(responses.slice(seqNum).colptr(begin),
+        responses.n_rows, batchSize, false, true);
 
     if (!deterministic)
     {
@@ -254,8 +248,8 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
 
     performance += outputLayer.Forward(std::move(boost::apply_visitor(
         outputParameterVisitor, network.back())),
-        std::move(responses.submat(seqNum * targetSize, begin,
-        (seqNum + 1) * targetSize - 1, begin + batchSize - 1)));
+        std::move(arma::mat(responses.slice(seqNum).colptr(begin),
+            responses.n_rows, batchSize, false, true)));
   }
 
   if (outputSize == 0)
@@ -319,14 +313,15 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
     {
       outputLayer.Backward(std::move(boost::apply_visitor(
           outputParameterVisitor, network.back())),
-          std::move(responses.submat((rho - seqNum - 1) * targetSize, begin,
-          (rho - seqNum) * targetSize - 1, begin + batchSize - 1)),
+          std::move(arma::mat(responses.slice(rho - seqNum - 1).colptr(begin),
+              responses.n_rows, batchSize, false, true)),
           std::move(error));
     }
 
     Backward();
-    Gradient(std::move(predictors.submat((rho - seqNum - 1) * inputSize, begin,
-        (rho - seqNum) * inputSize - 1, begin + batchSize - 1)));
+    Gradient(std::move(
+        arma::mat(predictors.slice(rho - seqNum - 1).colptr(begin),
+            predictors.n_rows, batchSize, false, true)));
     gradient += currentGradient;
   }
 }
@@ -335,7 +330,11 @@ template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Shuffle()
 {
-  math::ShuffleData(predictors, responses, predictors, responses);
+  arma::cube newPredictors, newResponses;
+  math::ShuffleData(predictors, responses, newPredictors, newResponses);
+
+  predictors = std::move(newPredictors);
+  responses = std::move(newResponses);
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
