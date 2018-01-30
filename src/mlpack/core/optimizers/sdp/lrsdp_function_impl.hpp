@@ -47,7 +47,7 @@ LRSDPFunction<SDPType>::LRSDPFunction(const size_t numSparseConstraints,
 template <typename SDPType>
 double LRSDPFunction<SDPType>::Evaluate(const arma::mat& coordinates) const
 {
-  // For computation optimization we will be taking CR first.
+  // For computation optimization we will be taking R^T * C first.
   return trace((trans(coordinates) * SDP().C()) * coordinates);
 }
 
@@ -64,7 +64,7 @@ double LRSDPFunction<SDPType>::EvaluateConstraint(
     const size_t index,
     const arma::mat& coordinates) const
 {
-  // For computation optimization we will be taking AR first.
+  // For computation optimization we will be taking R^T * A first.
   if (index < SDP().NumSparseConstraints())
     return trace((trans(coordinates) * SDP().SparseA()[index]) * coordinates)
                - SDP().SparseB()[index];
@@ -98,8 +98,8 @@ UpdateObjective(double& objective,
   for (size_t i = 0; i < ais.size(); ++i)
   {
     // Take the trace subtracted by the b_i.
-    // Here taking AR first is not recommended as we are already
-    // using pre-computed RR^T. Taking AR first will result in increase
+    // Here taking R^T * A first is not recommended as we are already
+    // using pre-computed R * R^T. Taking R^T * A first will result in increase
     // in number of computations.
     const double constraint = accu(ais[i] % rrt) - bis[i];
     objective -= (lambda[lambdaOffset + i] * constraint);
@@ -121,8 +121,8 @@ UpdateGradient(arma::mat& s,
 {
   for (size_t i = 0; i < ais.size(); ++i)
   {
-    // Here taking AR first is not recommended as we are already
-    // using pre-computed RR^T. Taking AR first will result in increase
+    // Here taking R^T * A first is not recommended as we are already
+    // using pre-computed R * R^T. Taking R^T * A first will result in increase
     // in number of computations.
     const double constraint = accu(ais[i] % rrt) - bis[i];
     const double y = lambda[lambdaOffset + i] - sigma * constraint;
@@ -146,12 +146,14 @@ EvaluateImpl(const LRSDPFunction<SDPType>& function,
   // Simple, possibly slow solution-- see below for optimization opportunity
   //
   // Note that Tr(C^T * (R R^T)) = Tr( (CR)^T * R ), so
-  // multiplying C*R first, and then taking the trace dot should be more memory
-  // efficient
+  // multiplying C * R first, and then taking the trace dot should be more
+  // memory efficient.
   //
-  // Similarly for the constraints, taking A*R first should be more efficient
+  // Similarly for the constraints, taking R^T * A first should be
+  // more efficient.
   //
-  // For computation optimization we will be taking CR first.
+  // For computation optimization we will be taking R^T * C first.
+  // Objective function = Tr((R^T * C) * R)
   const arma::mat rrt = coordinates * trans(coordinates);
 
   // Optimized objective function.
