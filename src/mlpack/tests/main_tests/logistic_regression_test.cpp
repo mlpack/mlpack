@@ -49,10 +49,10 @@ BOOST_FIXTURE_TEST_SUITE(LogisticRegressionMainTest, LogisticRegressionTestFixtu
  **/
 BOOST_AUTO_TEST_CASE(LRNoTrainingData) 
 {
-  arma::rowvec trainY;
+  arma::Row<size_t> trainY;
   trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << arma::endr; // 10 responses
   
-  SetInputParam("training_responses", std::move(trainY));
+  SetInputParam("labels", std::move(trainY));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -86,17 +86,17 @@ BOOST_AUTO_TEST_CASE(LRPridictionSizeCheck)
   constexpr int M = 15;
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
-  arma::rowvec trainY;
+  arma::Row<size_t> trainY;
   trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << arma::endr; // 10 responses
   arma::mat testX = arma::randu<arma::mat>(D, M);
 
   SetInputParam("training", std::move(trainX));
-  SetInputParam("training_responses", std::move(trainY));
+  SetInputParam("labels", std::move(trainY));
   SetInputParam("test", std::move(testX));
 
   mlpackMain();
 
-  const arma::rowvec testY = CLI::GetParam<arma::rowvec>("output_predictions");
+  const arma::Row<size_t> testY = CLI::GetParam<arma::Row<size_t>>("output");
 
   BOOST_REQUIRE_EQUAL(testY.n_rows, 1);
   BOOST_REQUIRE_EQUAL(testY.n_cols, M);
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(LRWrongResponseSizeTest)
   constexpr int N = 10;
   
   arma::mat trainX = arma::randu<arma::mat>(D,N);
-  arma::rowvec trainY; // response vector with wrong size
+  arma::Row<size_t> trainY; // response vector with wrong size
 
   trainY << 0 << 0 << 1 << 0 << 1 << 1 << 1 << 0 << arma::endr; // 8 responses - incorrect size
 
@@ -138,14 +138,14 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentationTest)
   // The first solution.
   mlpackMain();
 
-  const arma::rowvec testY1 = CLI::GetParam<arma::rowvec>("output");
+  const arma::Row<size_t> testY1 = CLI::GetParam<arma::Row<size_t>>("output");
 
   //reset the settings
   CLI::ClearSettings();
   CLI::RestoreSettings(testName);
 
   arma::mat trainX2({{1.0, 2.0, 3.0},{1.0, 4.0, 9.0}});
-  arma::rowvec trainY2({0,1,1});
+  arma::Row<size_t> trainY2({0,1,1});
 
   SetInputParam("training", std::move(trainX2));
   SetInputParam("labels", std::move(trainY2));
@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentationTest)
   // The second solution.
   mlpackMain();
 
-  const arma::rowvec testY2 = CLI::GetParam<arma::rowvec>("output");
+  const arma::Row<size_t> testY2 = CLI::GetParam<arma::Row<size_t>>("output");
 
   BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(), testY2.begin(), testY2.end());
 }
@@ -170,11 +170,11 @@ BOOST_AUTO_TEST_CASE(LRModelReload)
   constexpr int M = 15;
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
-  arma::rowvec trainY;
+  arma::Row<size_t> trainY;
 
   trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << arma::endr; // 10 responses
   
-  arma::mat testX = arma::randu<arma::mat>(D, M);
+  arma::mat testX = arma::randu<arma::mat>(D, M); 
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
@@ -184,7 +184,7 @@ BOOST_AUTO_TEST_CASE(LRModelReload)
   mlpackMain();
 
   LogisticRegression<> model = CLI::GetParam<LogisticRegression<>>("output_model");
-  const arma::rowvec testY1 = CLI::GetParam<arma::rowvec>("output");
+  const arma::Row<size_t> testY1 = CLI::GetParam<arma::Row<size_t>>("output");
 
   //reset the settings
   CLI::ClearSettings();
@@ -196,7 +196,7 @@ BOOST_AUTO_TEST_CASE(LRModelReload)
   //second solution
   mlpackMain();
 
-  const arma::rowvec testY2 = CLI::GetParam<arma::rowvec>("output");
+  const arma::Row<size_t> testY2 = CLI::GetParam<arma::Row<size_t>>("output");
 
   BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(), testY2.begin(), testY2.end());
 }
@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfTestData)
   constexpr int D = 4;
 
   arma::mat trainX = arma::randu<arma::mat>(D,N);
-  arma::rowvec trainY;
+  arma::Row<size_t> trainY;
 
   trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << arma::endr; // 10 responses
 
@@ -236,7 +236,7 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfTestData2)
   constexpr int M = 15;
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
-  arma::rowvec trainY;
+  arma::Row<size_t> trainY;
 
   trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << arma::endr; // 10 responses
 
@@ -270,7 +270,7 @@ BOOST_AUTO_TEST_CASE(LRTrainWithMoreThanTwoClasses)
   constexpr int D = 2;
 
   arma::mat trainX = arma::randu<arma::mat>(D,N);
-  arma::rowvec trainY;
+  arma::Row<size_t> trainY;
 
   trainY << 0 << 1 << 0 << 1 << 2 << 1 << 3 << 1 << arma::endr; // 8 responses containing more than two classes
 
@@ -291,7 +291,7 @@ BOOST_AUTO_TEST_CASE(LRNonNegativeMaxIterationTest)
   constexpr int D = 3;
 
   arma::mat trainX = arma::randu<arma::mat>(D,N);
-  arma::rowvec trainY;
+  arma::Row<size_t> trainY;
 
   trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << arma::endr; // 10 responses
 
@@ -314,7 +314,7 @@ BOOST_AUTO_TEST_CASE(LRIntegerMaxIterationTest)
   constexpr int D = 3;
 
   arma::mat trainX = arma::randu<arma::mat>(D,N);
-  arma::rowvec trainY;
+  arma::Row<size_t> trainY;
 
   trainY << 0 << 1 << 0 << 1 << 0 << 1 << 0 << 1 << 0 << 1 << arma::endr; // 10 responses
 
@@ -336,7 +336,7 @@ BOOST_AUTO_TEST_CASE(LRNonNegativeStepSizeTest)
   constexpr int D = 2;
 
   arma::mat trainX = arma::randu<arma::mat>(D,N);
-  arma::rowvec trainY;
+  arma::Row<size_t> trainY;
 
   trainY << 0 << 1 << 0 << 1 << 0 << 1 << 0 << 1 << 0 << 1 << arma::endr; // 10 responses
 
@@ -359,7 +359,7 @@ BOOST_AUTO_TEST_CASE(LRNonNegativeToleranceTest)
   constexpr int D = 3;
 
   arma::mat trainX = arma::randu<arma::mat>(D,N);
-  arma::rowvec trainY;
+  arma::Row<size_t> trainY;
 
   trainY << 1 << 1 << 0 << 1 << 0 << 0 << 0 << 1 << 0 << 1 << arma::endr; // 10 responses
 
