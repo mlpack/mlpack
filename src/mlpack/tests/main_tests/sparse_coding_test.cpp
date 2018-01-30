@@ -111,9 +111,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingNormalizationTest)
 
   mlpackMain();
 
-  mat initialDictionary;
-  initialDictionary = std::move(CLI::GetParam<arma::mat>
-                                    ("dictionary"));
+  mat initialDictionary =
+    std::move(CLI::GetParam<arma::mat>("dictionary"));
 
   // Train for normalization set to true.
 
@@ -128,10 +127,10 @@ BOOST_AUTO_TEST_CASE(SparseCodingNormalizationTest)
   mlpackMain();
 
   // Store outputs.
-  arma::mat dictionary;
-  arma::mat codes;
-  dictionary = std::move(CLI::GetParam<arma::mat>("dictionary"));
-  codes = std::move(CLI::GetParam<arma::mat>("codes"));
+  arma::mat dictionary =
+    std::move(CLI::GetParam<arma::mat>("dictionary"));
+  arma::mat codes =
+    std::move(CLI::GetParam<arma::mat>("codes"));
 
   // Train for normalization set to false.
 
@@ -273,9 +272,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingModelVerTest)
 
   mlpackMain();
 
-  mat initialDictionary;
-  initialDictionary = std::move(CLI::GetParam<arma::mat>
-                                    ("dictionary"));
+  mat initialDictionary =
+    std::move(CLI::GetParam<arma::mat>("dictionary"));
 
   // Input trained model and initial_dictionary.
   SetInputParam("input_model",
@@ -307,9 +305,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingAtomsVerTest)
 
   mlpackMain();
 
-  mat initialDictionary;
-  initialDictionary = std::move(CLI::GetParam<arma::mat>
-                                    ("dictionary"));
+  mat initialDictionary =
+    std::move(CLI::GetParam<arma::mat>("dictionary"));
 
   // Input data and initial_dictionary.
   SetInputParam("training", std::move(inputData));
@@ -343,9 +340,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingRowsVerTest)
 
   mlpackMain();
 
-  mat initialDictionary;
-  initialDictionary = std::move(CLI::GetParam<arma::mat>
-                                    ("dictionary"));
+  mat initialDictionary =
+    std::move(CLI::GetParam<arma::mat>("dictionary"));
 
   // Trim inputData.
   inputData.shed_rows(100, 400);
@@ -424,10 +420,10 @@ BOOST_AUTO_TEST_CASE(SparseCodingModelReuseTest)
   mlpackMain();
 
   // Store outputs.
-  arma::mat dictionary;
-  arma::mat codes;
-  dictionary = std::move(CLI::GetParam<arma::mat>("dictionary"));
-  codes = std::move(CLI::GetParam<arma::mat>("codes"));
+  arma::mat dictionary =
+    std::move(CLI::GetParam<arma::mat>("dictionary"));
+  arma::mat codes =
+    std::move(CLI::GetParam<arma::mat>("codes"));
 
   // Reset passed parameters.
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
@@ -460,6 +456,87 @@ BOOST_AUTO_TEST_CASE(SparseCodingModelReuseTest)
   // using two models model are same.
   CheckMatrices(dictionary, CLI::GetParam<arma::mat>("dictionary"));
   CheckMatrices(codes, CLI::GetParam<arma::mat>("codes"));
+}
+
+/**
+ * Ensure that for different value of max iterations
+ * outputs are different.
+ */
+BOOST_AUTO_TEST_CASE(SparseCodingDiffMaxItrTest)
+{
+  mat inputData;
+  inputData.load("mnist_first250_training_4s_and_9s.arm");
+
+  // Shuffle input dataset.
+  inputData = shuffle(inputData);
+
+  // Generate test dataset.
+  mat testData;
+  testData = inputData.cols(450, 499);
+
+  // Generate train dataset.
+  inputData.shed_cols(450, 499);
+
+  // Generate initial dictionary.
+  SetInputParam("training", inputData);
+  SetInputParam("atoms", (int) 30);
+  SetInputParam("max_iterations", (int) 1);
+  SetInputParam("normalize", (bool) true);
+
+  mlpackMain();
+
+  mat initialDictionary =
+    std::move(CLI::GetParam<arma::mat>("dictionary"));
+
+  // Train for max_iterations equals to 2.
+
+  // Input data.
+  SetInputParam("training", inputData);
+  SetInputParam("atoms", (int) 30);
+  SetInputParam("initial_dictionary", initialDictionary);
+  SetInputParam("max_iterations", (int) 2);
+  SetInputParam("normalize", (bool) true);
+  SetInputParam("test", testData);
+
+  mlpackMain();
+
+  // Store outputs.
+  arma::mat dictionary =
+    std::move(CLI::GetParam<arma::mat>("dictionary"));
+  arma::mat codes =
+    std::move(CLI::GetParam<arma::mat>("codes"));
+
+  // Train for max_iterations equals to 100.
+
+  // Input data.
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("atoms", (int) 30);
+  SetInputParam("initial_dictionary", std::move(initialDictionary));
+  SetInputParam("max_iterations", (int) 100);
+  SetInputParam("normalize", (bool) true);
+  SetInputParam("test", std::move(testData));
+
+  mlpackMain();
+
+  // Check that initial outputs and final outputs
+  // using two models model are different.
+  for (size_t i = 0; i < dictionary.n_elem; ++i)
+  {
+    if(dictionary[i]!=0 && CLI::GetParam<arma::mat>("dictionary")[i]!=0)
+    {
+      BOOST_REQUIRE_NE(dictionary[i],
+          CLI::GetParam<arma::mat>("dictionary")[i]);
+    }
+  }
+
+  for (size_t i = 0; i < codes.n_elem; ++i)
+  {
+    if(codes[i]!=0 && CLI::GetParam<arma::mat>("codes")[i]!=0)
+    {
+      BOOST_REQUIRE_NE(codes[i],
+          CLI::GetParam<arma::mat>("codes")[i]);
+    }
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();
