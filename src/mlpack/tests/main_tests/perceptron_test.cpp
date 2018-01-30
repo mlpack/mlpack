@@ -307,11 +307,8 @@ BOOST_AUTO_TEST_CASE(PerceptronNonNegMaxIterationTest)
 
   trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << endr; // 10 responses
 
-  arma::mat testX =  arma::randu<arma::mat>(D,N);
-
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
-  SetInputParam("test", std::move(testX));
   SetInputParam("max_iterations", int (-1));
 
   Log::Fatal.ignoreInput = true;
