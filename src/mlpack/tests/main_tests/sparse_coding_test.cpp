@@ -464,35 +464,22 @@ BOOST_AUTO_TEST_CASE(SparseCodingModelReuseTest)
  */
 BOOST_AUTO_TEST_CASE(SparseCodingDiffMaxItrTest)
 {
-  mat inputData;
-  inputData.load("mnist_first250_training_4s_and_9s.arm");
+  arma::mat inputData;
+  if (!data::Load("iris_train.csv", inputData))
+    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
 
-  // Shuffle input dataset.
-  inputData = shuffle(inputData);
+  // Load test dataset.
+  arma::mat testData;
+  if (!data::Load("iris_test.csv", testData))
+    BOOST_FAIL("Cannot load test dataset testSet.csv!");
 
-  // Generate test dataset.
-  mat testData;
-  testData = inputData.cols(450, 499);
-
-  // Generate train dataset.
-  inputData.shed_cols(450, 499);
-
-  // Generate initial dictionary.
-  SetInputParam("training", inputData);
-  SetInputParam("atoms", (int) 30);
-  SetInputParam("max_iterations", (int) 1);
-  SetInputParam("normalize", (bool) true);
-
-  mlpackMain();
-
-  mat initialDictionary =
-    std::move(CLI::GetParam<arma::mat>("dictionary"));
+  mat initialDictionary = inputData.cols(0, 1);
 
   // Train for max_iterations equals to 2.
 
   // Input data.
   SetInputParam("training", inputData);
-  SetInputParam("atoms", (int) 30);
+  SetInputParam("atoms", (int) 2);
   SetInputParam("initial_dictionary", initialDictionary);
   SetInputParam("max_iterations", (int) 2);
   SetInputParam("normalize", (bool) true);
@@ -510,10 +497,277 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffMaxItrTest)
 
   // Input data.
   SetInputParam("training", std::move(inputData));
-  SetInputParam("atoms", (int) 30);
+  SetInputParam("atoms", (int) 2);
   SetInputParam("initial_dictionary", std::move(initialDictionary));
   SetInputParam("max_iterations", (int) 100);
   SetInputParam("normalize", (bool) true);
+  SetInputParam("test", std::move(testData));
+
+  mlpackMain();
+
+  // Check that initial outputs and final outputs
+  // using two models model are different.
+  BOOST_REQUIRE_LT(arma::accu(dictionary ==
+      CLI::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
+
+  BOOST_REQUIRE_LT(arma::accu(codes ==
+      CLI::GetParam<arma::mat>("codes")), codes.n_elem);
+}
+
+/**
+ * Ensure that for different value of objective_tolerance
+ * outputs are different.
+ */
+BOOST_AUTO_TEST_CASE(SparseCodingDiffObjToleranceTest)
+{
+  arma::mat inputData;
+  if (!data::Load("iris_train.csv", inputData))
+    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+
+  // Load test dataset.
+  arma::mat testData;
+  if (!data::Load("iris_test.csv", testData))
+    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+
+  mat initialDictionary = inputData.cols(0, 1);
+
+  // Train for default objective_tolerance.
+
+  // Input data.
+  SetInputParam("training", inputData);
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("initial_dictionary", initialDictionary);
+  SetInputParam("test", testData);
+
+  mlpackMain();
+
+  // Store outputs.
+  arma::mat dictionary =
+    std::move(CLI::GetParam<arma::mat>("dictionary"));
+  arma::mat codes =
+    std::move(CLI::GetParam<arma::mat>("codes"));
+
+  // Train for objective_tolerance equals to 10000.0.
+
+  // Input data.
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("initial_dictionary", std::move(initialDictionary));
+  SetInputParam("objective_tolerance", (double) 10000.0);
+  SetInputParam("test", std::move(testData));
+
+  mlpackMain();
+
+  // Check that initial outputs and final outputs
+  // using two models model are different.
+  BOOST_REQUIRE_LT(arma::accu(dictionary ==
+      CLI::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
+
+  BOOST_REQUIRE_LT(arma::accu(codes ==
+      CLI::GetParam<arma::mat>("codes")), codes.n_elem);
+}
+
+/**
+ * Ensure that for different value of newton_tolerance
+ * outputs are different.
+ */
+BOOST_AUTO_TEST_CASE(SparseCodingDiffNewtonToleranceTest)
+{
+  arma::mat inputData;
+  if (!data::Load("iris_train.csv", inputData))
+    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+
+  // Load test dataset.
+  arma::mat testData;
+  if (!data::Load("iris_test.csv", testData))
+    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+
+  mat initialDictionary = inputData.cols(0, 1);
+
+  // Train for default newton_tolerance.
+
+  // Input data.
+  SetInputParam("training", inputData);
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("initial_dictionary", initialDictionary);
+  SetInputParam("test", testData);
+
+  mlpackMain();
+
+  // Store outputs.
+  arma::mat dictionary =
+    std::move(CLI::GetParam<arma::mat>("dictionary"));
+  arma::mat codes =
+    std::move(CLI::GetParam<arma::mat>("codes"));
+
+  // Train for newton_tolerance equals to 10000.0.
+
+  // Input data.
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("initial_dictionary", std::move(initialDictionary));
+  SetInputParam("newton_tolerance", (double) 10000.0);
+  SetInputParam("test", std::move(testData));
+
+  mlpackMain();
+
+  // Check that initial outputs and final outputs
+  // using two models model are different.
+  BOOST_REQUIRE_LT(arma::accu(dictionary ==
+      CLI::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
+
+  BOOST_REQUIRE_LT(arma::accu(codes ==
+      CLI::GetParam<arma::mat>("codes")), codes.n_elem);
+}
+
+/**
+ * Ensure that for different value of lambda1
+ * outputs are different.
+ */
+BOOST_AUTO_TEST_CASE(SparseCodingDiffL1Test)
+{
+  arma::mat inputData;
+  if (!data::Load("iris_train.csv", inputData))
+    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+
+  // Load test dataset.
+  arma::mat testData;
+  if (!data::Load("iris_test.csv", testData))
+    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+
+  mat initialDictionary = inputData.cols(0, 1);
+
+  // Train for default lambda1.
+
+  // Input data.
+  SetInputParam("training", inputData);
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("initial_dictionary", initialDictionary);
+  SetInputParam("test", testData);
+
+  mlpackMain();
+
+  // Store outputs.
+  arma::mat dictionary =
+    std::move(CLI::GetParam<arma::mat>("dictionary"));
+  arma::mat codes =
+    std::move(CLI::GetParam<arma::mat>("codes"));
+
+  // Train for lambda1 equals to 10000.0.
+
+  // Input data.
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("initial_dictionary", std::move(initialDictionary));
+  SetInputParam("lambda1", (double) 10000.0);
+  SetInputParam("test", std::move(testData));
+
+  mlpackMain();
+
+  // Check that initial outputs and final outputs
+  // using two models model are different.
+  BOOST_REQUIRE_LT(arma::accu(dictionary ==
+      CLI::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
+
+  BOOST_REQUIRE_LT(arma::accu(codes ==
+      CLI::GetParam<arma::mat>("codes")), codes.n_elem);
+}
+
+/**
+ * Ensure that for different value of lambda2
+ * outputs are different.
+ */
+BOOST_AUTO_TEST_CASE(SparseCodingDiffL2Test)
+{
+  arma::mat inputData;
+  if (!data::Load("iris_train.csv", inputData))
+    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+
+  // Load test dataset.
+  arma::mat testData;
+  if (!data::Load("iris_test.csv", testData))
+    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+
+  mat initialDictionary = inputData.cols(0, 1);
+
+  // Train for default lambda2.
+
+  // Input data.
+  SetInputParam("training", inputData);
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("initial_dictionary", initialDictionary);
+  SetInputParam("test", testData);
+
+  mlpackMain();
+
+  // Store outputs.
+  arma::mat dictionary =
+    std::move(CLI::GetParam<arma::mat>("dictionary"));
+  arma::mat codes =
+    std::move(CLI::GetParam<arma::mat>("codes"));
+
+  // Train for lambda2 equals to 10000.0.
+
+  // Input data.
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("initial_dictionary", std::move(initialDictionary));
+  SetInputParam("lambda2", (double) 10000.0);
+  SetInputParam("test", std::move(testData));
+
+  mlpackMain();
+
+  // Check that initial outputs and final outputs
+  // using two models model are different.
+  BOOST_REQUIRE_LT(arma::accu(dictionary ==
+      CLI::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
+
+  BOOST_REQUIRE_LT(arma::accu(codes ==
+      CLI::GetParam<arma::mat>("codes")), codes.n_elem);
+}
+
+/**
+ * Ensure that for different value of lambda1 & lambda2
+ * outputs are different.
+ */
+BOOST_AUTO_TEST_CASE(SparseCodingDiffL1L2Test)
+{
+  arma::mat inputData;
+  if (!data::Load("iris_train.csv", inputData))
+    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+
+  // Load test dataset.
+  arma::mat testData;
+  if (!data::Load("iris_test.csv", testData))
+    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+
+  mat initialDictionary = inputData.cols(0, 1);
+
+  // Train for default lambda2 & lambda1 equal to 10000.0.
+
+  // Input data.
+  SetInputParam("training", inputData);
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("lambda1", (double) 10000.0);
+  SetInputParam("initial_dictionary", initialDictionary);
+  SetInputParam("test", testData);
+
+  mlpackMain();
+
+  // Store outputs.
+  arma::mat dictionary =
+    std::move(CLI::GetParam<arma::mat>("dictionary"));
+  arma::mat codes =
+    std::move(CLI::GetParam<arma::mat>("codes"));
+
+  // Train for lambda1 EQUALS 0.0 & lambda2 equals to 10000.0.
+
+  // Input data.
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("initial_dictionary", std::move(initialDictionary));
+  SetInputParam("lambda1", (double) 0.0);
+  SetInputParam("lambda2", (double) 10000.0);
   SetInputParam("test", std::move(testData));
 
   mlpackMain();
