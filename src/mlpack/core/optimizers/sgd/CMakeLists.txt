@@ -5,8 +5,6 @@ set(SOURCES
   update_policies/vanilla_update.hpp
   sgd.hpp
   sgd_impl.hpp
-  test_function.hpp
-  test_function.cpp
 )
 
 set(DIR_SRCS)

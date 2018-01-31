@@ -14,7 +14,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/core/optimizers/ada_delta/ada_delta.hpp>
-#include <mlpack/core/optimizers/sgd/test_function.hpp>
+#include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
 #include <boost/test/unit_test.hpp>

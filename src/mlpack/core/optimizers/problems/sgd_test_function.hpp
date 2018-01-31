@@ -1,5 +1,5 @@
 /**
- * @file test_function.hpp
+ * @file sgd_test_function.hpp
  * @author Ryan Curtin
  *
  * Very simple test function for SGD.
@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_SGD_TEST_FUNCTION_HPP
-#define MLPACK_CORE_OPTIMIZERS_SGD_TEST_FUNCTION_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_PROBLEMS_SGD_TEST_FUNCTION_HPP
+#define MLPACK_CORE_OPTIMIZERS_PROBLEMS_SGD_TEST_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -45,7 +45,7 @@ class SGDTestFunction
   //! Evaluate a function.
   double Evaluate(const arma::mat& coordinates, const size_t i) const;
 
-  //! Evaluate a function for a particular batch-size
+  //! Evaluate a function for a particular batch-size.
   double Evaluate(const arma::mat& coordinates,
                   const size_t begin,
                   const size_t batchSize) const;

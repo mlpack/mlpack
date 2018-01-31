@@ -12,7 +12,9 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/sa/sa.hpp>
 #include <mlpack/core/optimizers/sa/exponential_schedule.hpp>
-#include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
+#include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
+#include <mlpack/core/optimizers/problems/rosenbrock_function.hpp>
+#include <mlpack/core/optimizers/problems/rastrigin_function.hpp>
 
 #include <mlpack/core/metrics/ip_metric.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
@@ -30,6 +32,7 @@ using namespace mlpack::metric;
 
 BOOST_AUTO_TEST_SUITE(SATest);
 
+// The Generalized-Rosenbrock function is a simple function to optimize.
 BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
 {
   size_t dim = 10;
@@ -74,36 +77,9 @@ BOOST_AUTO_TEST_CASE(RosenbrockTest)
 }
 
 /**
- * The Rastrigrin function, a (not very) simple nonconvex function.  It is
- * defined by
- *
- *   f(x) = 10n + \sum_{i = 1}^{n} (x_i^2 - 10 cos(2 \pi x_i)).
- *
- * It has very many local minima, so finding the true global minimum is
- * difficult.  The function is two-dimensional, and has minimum 0 where
- * x = [0 0].  We are only using it for simulated annealing, so there is no need
- * to implement the gradient.
+ * The Rastrigrin function, a (not very) simple nonconvex function. It has very
+ * many local minima, so finding the true global minimum is difficult.
  */
-class RastrigrinFunction
-{
- public:
-  double Evaluate(const arma::mat& coordinates) const
-  {
-    double objective = 20; // 10 * n, n = 2.
-    objective += std::pow(coordinates[0], 2.0) -
-        10 * std::cos(2 * M_PI * coordinates[0]);
-    objective += std::pow(coordinates[1], 2.0) -
-        10 * std::cos(2 * M_PI * coordinates[1]);
-
-    return objective;
-  }
-
-  arma::mat GetInitialPoint() const
-  {
-    return arma::mat("-3 -3");
-  }
-};
-
 BOOST_AUTO_TEST_CASE(RastrigrinFunctionTest)
 {
   // Simulated annealing isn't guaranteed to converge (except in very specific
@@ -113,9 +89,10 @@ BOOST_AUTO_TEST_CASE(RastrigrinFunctionTest)
 
   for (size_t trial = 0; trial < 4; ++trial)
   {
-    RastrigrinFunction f;
+    RastriginFunction f(2);
     ExponentialSchedule schedule;
     // The convergence is very sensitive to the choices of maxMove and initMove.
+    // SA<> sa(schedule, 2000000, 100, 50, 1000, 1e-12, 2, 2.0, 0.5, 0.1);
     SA<> sa(schedule, 2000000, 100, 50, 1000, 1e-12, 2, 2.0, 0.5, 0.1);
     arma::mat coordinates = f.GetInitialPoint();
 
