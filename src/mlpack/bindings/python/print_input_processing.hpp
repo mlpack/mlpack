@@ -31,8 +31,8 @@ void PrintInputProcessing(
     const typename boost::disable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
 {
-  // The copy_all_inputs parameter must be handled first, and so is outside the
-  // scope of this code.
+  // The copy_all_inputs parameter must be handled first, and therefore is
+  // outside the scope of this code.
   if (d.name == "copy_all_inputs")
     return;
 
@@ -179,7 +179,7 @@ void PrintInputProcessing(
    *   except TypeError as e:
    *     if type(param_name).__name__ == "ModelType":
    *       SetParamPtr[Model]('param_name', (<ModelType> param_name).modelptr,
-   *           CLI.HasParam('copy_all_inputs'))  TODO
+   *           CLI.HasParam('copy_all_inputs'))
    *     else:
    *       raise e
    *   CLI.SetPassed(<const string> 'param_name')
