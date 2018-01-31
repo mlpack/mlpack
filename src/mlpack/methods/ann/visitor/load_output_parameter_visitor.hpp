@@ -15,7 +15,6 @@
 #define MLPACK_METHODS_ANN_VISITOR_LOAD_OUTPUT_PARAMETER_VISITOR_HPP
 
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
 
 #include <boost/variant.hpp>
 
