@@ -14,6 +14,7 @@
 #define MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/optimizers/function.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -149,17 +150,6 @@ class L_BFGS
   double minStep;
   //! Maximum step of the line search.
   double maxStep;
-
-  /**
-   * Evaluate the function at the given iterate point and store the result if it
-   * is a new minimum.
-   *
-   * @return The value of the function.
-   */
-  template<typename FunctionType>
-  double Evaluate(FunctionType& function,
-                  const arma::mat& iterate,
-                  std::pair<arma::mat, double>& minPointIterate);
 
   /**
    * Calculate the scaling factor, gamma, which is used to scale the Hessian

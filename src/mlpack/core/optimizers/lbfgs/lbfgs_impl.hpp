@@ -17,30 +17,6 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * Evaluate the function at the given iterate point and store the result if
- * it is a new minimum.
- *
- * @return The value of the function
- */
-template<typename FunctionType>
-double L_BFGS::Evaluate(FunctionType& function,
-                        const arma::mat& iterate,
-                        std::pair<arma::mat, double>& minPointIterate)
-{
-  // Evaluate the function and keep track of the minimum function
-  // value encountered during the optimization.
-  const double functionValue = function.Evaluate(iterate);
-
-  if (functionValue < minPointIterate.second)
-  {
-    minPointIterate.first = iterate;
-    minPointIterate.second = functionValue;
-  }
-
-  return functionValue;
-}
-
-/**
  * Check to make sure that the norm of the gradient is not smaller than 1e-10.
  * Currently that value is not configurable.
  *
@@ -111,8 +87,12 @@ bool L_BFGS::LineSearch(FunctionType& function,
     // point.
     newIterateTmp = iterate;
     newIterateTmp += stepSize * searchDirection;
-    functionValue = Evaluate(function, newIterateTmp, minPointIterate);
-    function.Gradient(newIterateTmp, gradient);
+    functionValue = function.EvaluateWithGradient(newIterateTmp, gradient);
+    if (functionValue < minPointIterate.second)
+    {
+      minPointIterate.first = iterate;
+      minPointIterate.second = functionValue;
+    }
     numIterations++;
 
     if (functionValue > initialFunctionValue + stepSize *
@@ -173,6 +153,11 @@ bool L_BFGS::LineSearch(FunctionType& function,
 template<typename FunctionType>
 double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
 {
+  // Use the Function<> wrapper to ensure the function has all of the functions
+  // that we need.
+  typedef Function<FunctionType> FullFunctionType;
+  FullFunctionType& f = static_cast<FullFunctionType&>(function);
+
   // Ensure that the cubes holding past iterations' information are the right
   // size.  Also set the current best point value to the maximum.
   const size_t rows = iterate.n_rows;
@@ -191,10 +176,6 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
   // Whether to optimize until convergence.
   bool optimizeUntilConvergence = (maxIterations == 0);
 
-  // The initial function value.
-  double functionValue = Evaluate(function, iterate, minPointIterate);
-  double prevFunctionValue = functionValue;
-
   // The gradient: the current and the old.
   arma::mat gradient;
   arma::mat oldGradient;
@@ -205,15 +186,21 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
   arma::mat searchDirection;
   searchDirection.zeros(iterate.n_rows, iterate.n_cols);
 
-  // The initial gradient value.
-  function.Gradient(iterate, gradient);
+  // The initial function value and gradient.
+  double functionValue = f.EvaluateWithGradient(iterate, gradient);
+  double prevFunctionValue = functionValue;
+  if (functionValue < minPointIterate.second)
+  {
+    minPointIterate.first = iterate;
+    minPointIterate.second = functionValue;
+  }
 
   // The main optimization loop.
   for (size_t itNum = 0; optimizeUntilConvergence || (itNum != maxIterations);
        ++itNum)
   {
     Log::Debug << "L-BFGS iteration " << itNum << "; objective " <<
-        function.Evaluate(iterate) << ", gradient norm "
+        f.Evaluate(iterate) << ", gradient norm "
         << arma::norm(gradient, 2) << ", "
         << ((prevFunctionValue - functionValue) /
             std::max(std::max(fabs(prevFunctionValue),
@@ -254,7 +241,7 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
     oldGradient = gradient;
 
     // Do a line search and take a step.
-    if (!LineSearch(function, functionValue, iterate, gradient, newIterateTmp,
+    if (!LineSearch(f, functionValue, iterate, gradient, newIterateTmp,
         minPointIterate, searchDirection))
     {
       Log::Debug << "Line search failed.  Stopping optimization." << std::endl;
@@ -285,7 +272,7 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
     UpdateBasisSet(itNum, iterate, oldIterate, gradient, oldGradient, s, y);
   } // End of the optimization loop.
 
-  return function.Evaluate(iterate);
+  return f.Evaluate(iterate);
 }
 
 } // namespace optimization
