@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_ANN_VISITOR_RESET_VISITOR_HPP
 
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
 
 #include <boost/variant.hpp>
 
