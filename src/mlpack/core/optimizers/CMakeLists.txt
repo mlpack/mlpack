@@ -28,7 +28,6 @@ foreach(dir ${DIRS})
 endforeach()
 
 set(SOURCES
-  add_evaluate_with_gradient.hpp
   function.hpp
 )
 
