@@ -99,6 +99,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostModelReuseTest)
   output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
   SetInputParam("test", std::move(testData));
@@ -243,6 +244,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostWeakLearnerIgnoredTest)
 
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
   CLI::GetSingleton().Parameters()["weak_learner"].wasPassed = false;
 
   // Default value is Decision Stump
