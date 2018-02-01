@@ -21,7 +21,7 @@
 
 using namespace mlpack;
 using namespace mlpack::optimization;
-using namespace mlpack::optimization::aux; // For some SFINAE checks.
+using namespace mlpack::optimization::traits; // For some SFINAE checks.
 using namespace mlpack::regression;
 
 /**
@@ -39,6 +39,13 @@ class EvaluateTestFunction
   {
     return arma::accu(coordinates);
   }
+
+  double Evaluate(const arma::mat& coordinates,
+                  const size_t begin,
+                  const size_t batchSize)
+  {
+    return arma::accu(coordinates) + begin + batchSize;
+  }
 };
 
 /**
@@ -48,6 +55,14 @@ class GradientTestFunction
 {
  public:
   void Gradient(const arma::mat& coordinates, arma::mat& gradient)
+  {
+    gradient.ones(coordinates.n_rows, coordinates.n_cols);
+  }
+
+  void Gradient(const arma::mat& coordinates,
+                const size_t /* begin */,
+                arma::mat& gradient,
+                const size_t /* batchSize */)
   {
     gradient.ones(coordinates.n_rows, coordinates.n_cols);
   }
@@ -64,7 +79,22 @@ class EvaluateGradientTestFunction
     return arma::accu(coordinates);
   }
 
+  double Evaluate(const arma::mat& coordinates,
+                  const size_t /* begin */,
+                  const size_t /* batchSize */)
+  {
+    return arma::accu(coordinates);
+  }
+
   void Gradient(const arma::mat& coordinates, arma::mat& gradient)
+  {
+    gradient.ones(coordinates.n_rows, coordinates.n_cols);
+  }
+
+  void Gradient(const arma::mat& coordinates,
+                const size_t /* begin */,
+                arma::mat& gradient,
+                const size_t /* batchSize */)
   {
     gradient.ones(coordinates.n_rows, coordinates.n_cols);
   }
@@ -77,6 +107,15 @@ class EvaluateWithGradientTestFunction
 {
  public:
   double EvaluateWithGradient(const arma::mat& coordinates, arma::mat& gradient)
+  {
+    gradient.ones(coordinates.n_rows, coordinates.n_cols);
+    return arma::accu(coordinates);
+  }
+
+  double EvaluateWithGradient(const arma::mat& coordinates,
+                              const size_t /* begin */,
+                              arma::mat& gradient,
+                              const size_t /* batchSize */)
   {
     gradient.ones(coordinates.n_rows, coordinates.n_cols);
     return arma::accu(coordinates);
@@ -94,12 +133,36 @@ class EvaluateAndWithGradientTestFunction
     return arma::accu(coordinates);
   }
 
+  double Evaluate(const arma::mat& coordinates,
+                  const size_t begin,
+                  const size_t batchSize)
+  {
+    return arma::accu(coordinates) + batchSize + begin;
+  }
+
   void Gradient(const arma::mat& coordinates, arma::mat& gradient)
   {
     gradient.ones(coordinates.n_rows, coordinates.n_cols);
   }
 
+  void Gradient(const arma::mat& coordinates,
+                const size_t /* begin */,
+                arma::mat& gradient,
+                const size_t /* batchSize */)
+  {
+    gradient.ones(coordinates.n_rows, coordinates.n_cols);
+  }
+
   double EvaluateWithGradient(const arma::mat& coordinates, arma::mat& gradient)
+  {
+    gradient.ones(coordinates.n_rows, coordinates.n_cols);
+    return arma::accu(coordinates);
+  }
+
+  double EvaluateWithGradient(const arma::mat& coordinates,
+                              const size_t /* begin */,
+                              arma::mat& gradient,
+                              const size_t /* batchSize */)
   {
     gradient.ones(coordinates.n_rows, coordinates.n_cols);
     return arma::accu(coordinates);
@@ -234,7 +297,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionEvaluateWithGradientTest)
                            GradientConstForm>::value;
   const bool hasEvaluateWithGradient =
       HasEvaluateWithGradient<Function<LogisticRegressionFunction<>>,
-                              EvaluateWithGradientForm>::value;
+                              EvaluateWithGradientConstForm>::value;
 
   BOOST_REQUIRE_EQUAL(hasEvaluate, true);
   BOOST_REQUIRE_EQUAL(hasGradient, true);
@@ -252,6 +315,127 @@ BOOST_AUTO_TEST_CASE(SDPTest)
   const bool hasEvaluateWithGradient =
       HasEvaluateWithGradient<Function<FunctionType>,
                               EvaluateWithGradientConstForm>::value;
+
+  BOOST_REQUIRE_EQUAL(hasEvaluate, true);
+  BOOST_REQUIRE_EQUAL(hasGradient, true);
+  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, true);
+}
+
+/**
+ * Make sure that an empty class doesn't have any methods added to it.
+ */
+BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWithGradientEmptyTest)
+{
+  const bool hasEvaluate = HasEvaluate<Function<EmptyTestFunction>,
+                                       DecomposableEvaluateForm>::value;
+  const bool hasGradient = HasGradient<Function<EmptyTestFunction>,
+                                       DecomposableGradientForm>::value;
+  const bool hasEvaluateWithGradient =
+      HasEvaluateWithGradient<Function<EmptyTestFunction>,
+                              DecomposableEvaluateWithGradientForm>::value;
+
+  BOOST_REQUIRE_EQUAL(hasEvaluate, false);
+  BOOST_REQUIRE_EQUAL(hasGradient, false);
+  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, false);
+}
+
+/**
+ * Make sure we don't add any functions if we only have Evaluate().
+ */
+BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWithGradientEvaluateOnlyTest)
+{
+  const bool hasEvaluate = HasEvaluate<Function<EvaluateTestFunction>,
+                                       DecomposableEvaluateForm>::value;
+  const bool hasGradient = HasGradient<Function<EvaluateTestFunction>,
+                                       DecomposableGradientForm>::value;
+  const bool hasEvaluateWithGradient =
+      HasEvaluateWithGradient<Function<EvaluateTestFunction>,
+                              DecomposableEvaluateWithGradientForm>::value;
+
+  BOOST_REQUIRE_EQUAL(hasEvaluate, true);
+  BOOST_REQUIRE_EQUAL(hasGradient, false);
+  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, false);
+}
+
+/**
+ * Make sure we don't add any functions if we only have Gradient().
+ */
+BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWithGradientGradientOnlyTest)
+{
+  const bool hasEvaluate = HasEvaluate<Function<GradientTestFunction>,
+                                       DecomposableEvaluateForm>::value;
+  const bool hasGradient = HasGradient<Function<GradientTestFunction>,
+                                       DecomposableGradientForm>::value;
+  const bool hasEvaluateWithGradient =
+      HasEvaluateWithGradient<Function<GradientTestFunction>,
+                              DecomposableEvaluateWithGradientForm>::value;
+
+  BOOST_REQUIRE_EQUAL(hasEvaluate, false);
+  BOOST_REQUIRE_EQUAL(hasGradient, true);
+  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, false);
+}
+
+/**
+ * Make sure we add EvaluateWithGradient() when we have both Evaluate() and
+ * Gradient().
+ */
+BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWithGradientBothTest)
+{
+  const bool hasEvaluate =
+      HasEvaluate<Function<EvaluateGradientTestFunction>,
+                           DecomposableEvaluateForm>::value;
+  const bool hasGradient =
+      HasGradient<Function<EvaluateGradientTestFunction>,
+                           DecomposableGradientForm>::value;
+  const bool hasEvaluateWithGradient =
+      HasEvaluateWithGradient<Function<EvaluateGradientTestFunction>,
+                              DecomposableEvaluateWithGradientForm>::value;
+
+  BOOST_REQUIRE_EQUAL(hasEvaluate, true);
+  BOOST_REQUIRE_EQUAL(hasGradient, true);
+  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, true);
+}
+
+/**
+ * Make sure we add Evaluate() and Gradient() when we have only
+ * EvaluateWithGradient().
+ */
+BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWGradientEvaluateWithGradientTest)
+{
+  const bool hasEvaluate =
+      HasEvaluate<Function<EvaluateWithGradientTestFunction>,
+                           DecomposableEvaluateForm>::value;
+  const bool hasGradient =
+      HasGradient<Function<EvaluateWithGradientTestFunction>,
+                           DecomposableGradientForm>::value;
+  const bool hasEvaluateWithGradient =
+      HasEvaluateWithGradient<Function<EvaluateWithGradientTestFunction>,
+                              DecomposableEvaluateWithGradientForm>::value;
+
+  Function<EvaluateWithGradientTestFunction> f;
+  arma::mat coordinates(10, 10, arma::fill::ones);
+  arma::mat gradient;
+  f.Gradient(coordinates, 0, gradient, 5);
+
+  BOOST_REQUIRE_EQUAL(hasEvaluate, true);
+  BOOST_REQUIRE_EQUAL(hasGradient, true);
+  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, true);
+}
+
+/**
+ * Make sure we add no methods when we already have all three.
+ */
+BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWithGradientAllThreeTest)
+{
+  const bool hasEvaluate =
+      HasEvaluate<Function<EvaluateAndWithGradientTestFunction>,
+                           DecomposableEvaluateForm>::value;
+  const bool hasGradient =
+      HasGradient<Function<EvaluateAndWithGradientTestFunction>,
+                           DecomposableGradientForm>::value;
+  const bool hasEvaluateWithGradient =
+      HasEvaluateWithGradient<Function<EvaluateAndWithGradientTestFunction>,
+                              DecomposableEvaluateWithGradientForm>::value;
 
   BOOST_REQUIRE_EQUAL(hasEvaluate, true);
   BOOST_REQUIRE_EQUAL(hasGradient, true);
