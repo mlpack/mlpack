@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostModelReuseTest)
 
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
- 
+
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model", std::move(model));
 
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostWithoutLabelTest)
 
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
- 
+
   trainData.shed_row(trainData.n_rows - 1);
 
   // Now train Adaboost with labels provided.
@@ -248,7 +248,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostWeakLearnerIgnoredTest)
 
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
- 
+
   // Default value is Decision Stump
   SetInputParam("input_model", std::move(model));
   SetInputParam("weak_learner", std::string("perceptron"));
