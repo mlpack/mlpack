@@ -241,16 +241,17 @@ BOOST_AUTO_TEST_CASE(AdaBoostWeakLearnerIgnoredTest)
 
   mlpackMain();
 
-  arma::Row<size_t> output;
-  output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
-
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["weak_learner"].wasPassed = false;
 
   // Default value is Decision Stump
   SetInputParam("input_model",
                 std::move(CLI::GetParam<AdaBoostModel>("output_model")));
+  SetInputParam("test", std::move(testData));
   SetInputParam("weak_learner", std::string("perceptron"));
+
+  mlpackMain();
 
   const string weakLearner = CLI::GetParam<string>("weak_learner");
   if (weakLearner == "perceptron")
