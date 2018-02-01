@@ -97,14 +97,13 @@ BOOST_AUTO_TEST_CASE(AdaBoostModelReuseTest)
 
   arma::Row<size_t> output;
   output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
-  AdaBoost model = CLI::GetParam<AdaBoost>("output_model");
 
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
   SetInputParam("test", std::move(testData));
-  SetInputParam("input_model", std::move(model));
-
+  SetInputParam("input_model",
+                std::move(CLI::GetParam<AdaBoostModel>("output_model")));
 
   mlpackMain();
 
@@ -158,6 +157,9 @@ BOOST_AUTO_TEST_CASE(AdaBoostWithoutLabelTest)
   SetInputParam("test", testData);
 
   mlpackMain();
+
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
   arma::Row<size_t> output;
   output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
@@ -243,7 +245,6 @@ BOOST_AUTO_TEST_CASE(AdaBoostWeakLearnerIgnoredTest)
   mlpackMain();
 
   arma::Row<size_t> output;
-  AdaBoost model = CLI::GetParam<AdaBoost>("output_model");
   output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
