@@ -72,7 +72,8 @@ BOOST_AUTO_TEST_CASE(AdaBoostOutputDimensionTest)
   mlpackMain();
 
   // Check that number of predicted labels is equal to the input test points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_cols, testSize);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_cols, 
+                      testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_rows, 1);
 }
 
@@ -106,7 +107,8 @@ BOOST_AUTO_TEST_CASE(AdaBoostModelReuseTest)
   ResetSetting();
 
   SetInputParam("test", std::move(testData));
-  SetInputParam("input_model", std::move(CLI::GetParam<AdaBoostModel>("output_model")));
+  SetInputParam("input_model",
+                std::move(CLI::GetParam<AdaBoostModel>("output_model")));
 
   mlpackMain();
 
@@ -192,7 +194,8 @@ BOOST_AUTO_TEST_CASE(AdaBoostTrainingDataOrModelTest)
 
   mlpackMain();
 
-  SetInputParam("input_model", std::move(CLI::GetParam<AdaBoostModel>("output_model")));
+  SetInputParam("input_model",
+                std::move(CLI::GetParam<AdaBoostModel>("output_model")));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -248,7 +251,8 @@ BOOST_AUTO_TEST_CASE(AdaBoostWeakLearnerIgnoredTest)
   ResetSetting();
 
   // Default value is Decision Stump
-  SetInputParam("input_model", std::move(CLI::GetParam<AdaBoostModel>("output_model")));
+  SetInputParam("input_model",
+                std::move(CLI::GetParam<AdaBoostModel>("output_model")));
   SetInputParam("weak_learner", std::string("perceptron"));
 
   const string weakLearner = CLI::GetParam<string>("weak_learner");
