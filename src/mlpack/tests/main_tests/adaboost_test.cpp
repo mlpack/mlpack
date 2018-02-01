@@ -103,12 +103,13 @@ BOOST_AUTO_TEST_CASE(AdaBoostModelReuseTest)
 
   arma::Row<size_t> output;
   output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
+  AdaBoost model = CLI::GetParam<AdaBoost>("output_model");
 
   ResetSetting();
 
   SetInputParam("test", std::move(testData));
-  SetInputParam("input_model",
-                std::move(CLI::GetParam<AdaBoostModel>("output_model")));
+  SetInputParam("input_model", std::move(model));
+
 
   mlpackMain();
 
@@ -163,12 +164,12 @@ BOOST_AUTO_TEST_CASE(AdaBoostWithoutLabelTest)
 
   mlpackMain();
 
+  arma::Row<size_t> output;
+  output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
+
   ResetSetting();
 
   trainData.shed_row(trainData.n_rows - 1);
-
-  arma::Row<size_t> output;
-  output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
   // Now train Adaboost with labels provided.
   SetInputParam("training", std::move(trainData));
@@ -246,13 +247,13 @@ BOOST_AUTO_TEST_CASE(AdaBoostWeakLearnerIgnoredTest)
   mlpackMain();
 
   arma::Row<size_t> output;
+  AdaBoost model = CLI::GetParam<AdaBoost>("output_model");
   output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
   ResetSetting();
 
   // Default value is Decision Stump
-  SetInputParam("input_model",
-                std::move(CLI::GetParam<AdaBoostModel>("output_model")));
+  SetInputParam("input_model", std::move(model));
   SetInputParam("weak_learner", std::string("perceptron"));
 
   const string weakLearner = CLI::GetParam<string>("weak_learner");
