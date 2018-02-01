@@ -248,7 +248,8 @@ BOOST_AUTO_TEST_CASE(AdaBoostWeakLearnerIgnoredTest)
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Default value is Decision Stump
-  SetInputParam("input_model", std::move(model));
+  SetInputParam("input_model",
+                std::move(CLI::GetParam<AdaBoostModel>("output_model")));
   SetInputParam("weak_learner", std::string("perceptron"));
 
   const string weakLearner = CLI::GetParam<string>("weak_learner");
