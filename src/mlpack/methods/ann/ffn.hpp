@@ -176,7 +176,26 @@ class FFN
   double Evaluate(const arma::mat& parameters,
                   const size_t begin,
                   const size_t batchSize,
-                  const bool deterministic = true);
+                  const bool deterministic);
+
+   /**
+   * Evaluate the feedforward network with the given parameters, but using only
+   * one data point. This is useful for optimizers such as SGD, which require a
+   * separable objective function.  This just calls the overload of Evaluate()
+   * with deterministic = true.
+   *
+   * @param parameters Matrix model parameters.
+   * @param begin Index of the starting point to use for objective function
+   *        evaluation.
+   * @param batchSize Number of points to be passed at a time to use for
+   *        objective function evaluation.
+   */
+  double Evaluate(const arma::mat& parameters,
+                  const size_t begin,
+                  const size_t batchSize)
+  {
+    return Evaluate(parameters, begin, batchSize, true);
+  }
 
   /**
    * Evaluate the gradient of the feedforward network with the given parameters,
