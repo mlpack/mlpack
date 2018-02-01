@@ -35,12 +35,6 @@ struct AdaBoostTestFixture
   }
 };
 
-void ResetSetting()
-{
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
-}
-
 BOOST_FIXTURE_TEST_SUITE(AdaBoostMainTest, AdaBoostTestFixture);
 
 /**
@@ -105,8 +99,9 @@ BOOST_AUTO_TEST_CASE(AdaBoostModelReuseTest)
   output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
   AdaBoost model = CLI::GetParam<AdaBoost>("output_model");
 
-  ResetSetting();
-
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+ 
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model", std::move(model));
 
@@ -167,8 +162,9 @@ BOOST_AUTO_TEST_CASE(AdaBoostWithoutLabelTest)
   arma::Row<size_t> output;
   output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
-  ResetSetting();
-
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+ 
   trainData.shed_row(trainData.n_rows - 1);
 
   // Now train Adaboost with labels provided.
@@ -250,8 +246,9 @@ BOOST_AUTO_TEST_CASE(AdaBoostWeakLearnerIgnoredTest)
   AdaBoost model = CLI::GetParam<AdaBoost>("output_model");
   output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
-  ResetSetting();
-
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+ 
   // Default value is Decision Stump
   SetInputParam("input_model", std::move(model));
   SetInputParam("weak_learner", std::string("perceptron"));
