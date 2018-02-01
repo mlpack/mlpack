@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostModelReuseTest)
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(labels));
 
-  SetInputParam("test", std::move(testData));
+  SetInputParam("test", testData);
 
   mlpackMain();
 
@@ -238,7 +238,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostWeakLearnerIgnoredTest)
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(labels));
 
-  SetInputParam("test", std::move(testData));
+  SetInputParam("test", testData);
 
   mlpackMain();
 
