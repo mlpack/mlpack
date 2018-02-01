@@ -164,9 +164,6 @@ BOOST_AUTO_TEST_CASE(AdaBoostWithoutLabelTest)
   arma::Row<size_t> output;
   output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
-
   trainData.shed_row(trainData.n_rows - 1);
 
   // Now train Adaboost with labels provided.
