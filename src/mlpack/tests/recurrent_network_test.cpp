@@ -19,6 +19,7 @@
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 #include "serialization.hpp"
+#include "custom_layer.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -367,7 +368,8 @@ void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
 /**
  * Train the specified network and the construct a Reber grammar dataset.
  */
-template<typename RecurrentLayerType>
+template<typename RecurrentLayerType,
+         typename OutputLayerType = SigmoidLayer<>, typename... Args>
 void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
                              const bool recursive = false,
                              const size_t averageRecursion = 3,
@@ -454,11 +456,11 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
     const size_t outputSize = 7;
     const size_t inputSize = 7;
 
-    RNN<MeanSquaredError<> > model(5);
-    model.Add<Linear<> >(inputSize, hiddenSize);
-    model.Add<RecurrentLayerType>(hiddenSize, hiddenSize);
-    model.Add<Linear<> >(hiddenSize, outputSize);
-    model.Add<SigmoidLayer<> >();
+    RNN<MeanSquaredError<>, RandomInitialization, Args...> model(5);
+    model.template Add<Linear<> >(inputSize, hiddenSize);
+    model.template Add<RecurrentLayerType>(hiddenSize, hiddenSize);
+    model.template Add<Linear<> >(hiddenSize, outputSize);
+    model.template Add<OutputLayerType>();
     MomentumSGD opt(0.06, 50, 2, -50000);
 
     arma::cube inputTemp, labelsTemp;
@@ -558,6 +560,15 @@ BOOST_AUTO_TEST_CASE(FastLSTMReberGrammarTest)
 BOOST_AUTO_TEST_CASE(GRURecursiveReberGrammarTest)
 {
   ReberGrammarTestNetwork<GRU<> >(16, true);
+}
+
+/**
+ * Train the specified network, with a custom layer on an embedded Reber
+ * grammar dataset
+ */
+BOOST_AUTO_TEST_CASE(CustomLayerLSTMReberGrammarTest)
+{
+  ReberGrammarTestNetwork<LSTM<>, CustomLayer<>, CustomLayer<> >(10, false);
 }
 
 /*

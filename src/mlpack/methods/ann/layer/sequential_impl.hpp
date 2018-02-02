@@ -28,7 +28,7 @@ namespace ann /** Artificial Neural Network. */ {
 template <typename InputDataType, typename OutputDataType,
           typename... CustomLayers>
 Sequential<InputDataType, OutputDataType, CustomLayers...>::Sequential(
-    const bool model) : model(model), reset(false)
+    const bool model) : model(model), reset(false), width(0), height(0)
 {
   // Nothing to do here.
 }
