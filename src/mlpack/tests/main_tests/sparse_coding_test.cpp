@@ -43,19 +43,28 @@ struct SparseCodingTestFixture
 BOOST_FIXTURE_TEST_SUITE(SparseCodingMainTest, SparseCodingTestFixture);
 
 /**
+ * Helper function to load datasets.
+ */
+void LoadData(arma::mat& inputData, arma::mat& testData)
+{
+  // Load train dataset.
+  if (!data::Load("iris_train.csv", inputData))
+    BOOST_FAIL("Cannot load train dataset iris_train.csv!");
+
+  // Load test dataset.
+  if (!data::Load("iris_test.csv", testData))
+    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+}
+
+/**
  * Make sure that output points in dictionary equals number of
  * atoms passed and codes have desired dimension.
  */
 BOOST_AUTO_TEST_CASE(SparseCodingOutputDimensionTest)
 {
   arma::mat inputData;
-  if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset iris_train.csv!");
-
-  // Load test dataset.
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+  LoadData(inputData, testData);
 
   mat initialDictionary = inputData.cols(0, 1);
 
@@ -89,13 +98,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingOutputDimensionTest)
 BOOST_AUTO_TEST_CASE(SparseCodingNormalizationTest)
 {
   arma::mat inputData;
-  if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset iris_train!");
-
-  // Load test dataset.
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+  LoadData(inputData, testData);
 
   mat initialDictionary = inputData.cols(0, 1);
 
@@ -246,13 +250,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingReqAtomsTest)
 BOOST_AUTO_TEST_CASE(SparseCodingModelVerTest)
 {
   arma::mat inputData;
-  if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset iris_train.csv!");
-
-  // Load test dataset.
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+  LoadData(inputData, testData);
 
   mat initialDictionary = inputData.cols(0, 1);
 
@@ -273,13 +272,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingModelVerTest)
 BOOST_AUTO_TEST_CASE(SparseCodingAtomsVerTest)
 {
   arma::mat inputData;
-  if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset iris_train.csv!");
-
-  // Load test dataset.
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+  LoadData(inputData, testData);
 
   mat initialDictionary = inputData.cols(0, 1); // 2 points.
 
@@ -301,13 +295,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingAtomsVerTest)
 BOOST_AUTO_TEST_CASE(SparseCodingRowsVerTest)
 {
   arma::mat inputData;
-  if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset iris_train.csv!");
-
-  // Load test dataset.
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+  LoadData(inputData, testData);
 
   mat initialDictionary = inputData.cols(0, 1);
 
@@ -333,13 +322,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingRowsVerTest)
 BOOST_AUTO_TEST_CASE(SparseCodingDataDimensionalityTest)
 {
   arma::mat inputData;
-  if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset iris_train.csv!");
-
-  // Load test dataset.
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+  LoadData(inputData, testData);
 
   mat initialDictionary = inputData.cols(0, 1);
 
@@ -363,13 +347,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingDataDimensionalityTest)
 BOOST_AUTO_TEST_CASE(SparseCodingModelReuseTest)
 {
   arma::mat inputData;
-  if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset iris_train.csv!");
-
-  // Load test dataset.
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+  LoadData(inputData, testData);
 
   // Input data.
   SetInputParam("training", inputData);
@@ -427,13 +406,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingModelReuseTest)
 BOOST_AUTO_TEST_CASE(SparseCodingDiffMaxItrTest)
 {
   arma::mat inputData;
-  if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset iris_train.csv!");
-
-  // Load test dataset.
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+  LoadData(inputData, testData);
 
   mat initialDictionary = inputData.cols(0, 1);
 
@@ -483,13 +457,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffMaxItrTest)
 BOOST_AUTO_TEST_CASE(SparseCodingDiffObjToleranceTest)
 {
   arma::mat inputData;
-  if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset iris_train.csv!");
-
-  // Load test dataset.
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+  LoadData(inputData, testData);
 
   mat initialDictionary = inputData.cols(0, 1);
 
@@ -536,13 +505,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffObjToleranceTest)
 BOOST_AUTO_TEST_CASE(SparseCodingDiffNewtonToleranceTest)
 {
   arma::mat inputData;
-  if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset iris_train.csv!");
-
-  // Load test dataset.
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+  LoadData(inputData, testData);
 
   mat initialDictionary = inputData.cols(0, 1);
 
@@ -589,13 +553,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffNewtonToleranceTest)
 BOOST_AUTO_TEST_CASE(SparseCodingDiffL1Test)
 {
   arma::mat inputData;
-  if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset iris_train.csv!");
-
-  // Load test dataset.
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+  LoadData(inputData, testData);
 
   mat initialDictionary = inputData.cols(0, 1);
 
@@ -642,13 +601,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffL1Test)
 BOOST_AUTO_TEST_CASE(SparseCodingDiffL2Test)
 {
   arma::mat inputData;
-  if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset iris_train.csv!");
-
-  // Load test dataset.
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+  LoadData(inputData, testData);
 
   mat initialDictionary = inputData.cols(0, 1);
 
@@ -695,13 +649,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffL2Test)
 BOOST_AUTO_TEST_CASE(SparseCodingDiffL1L2Test)
 {
   arma::mat inputData;
-  if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset iris_train.csv!");
-
-  // Load test dataset.
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+  LoadData(inputData, testData);
 
   mat initialDictionary = inputData.cols(0, 1);
 
