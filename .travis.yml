@@ -7,6 +7,10 @@ env:
   - CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON=/usr/bin/python3"
   - CMAKE_OPTIONS="-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF"
 
+cache:
+  directories:
+    - $HOME/.cache/pip
+
 before_install:
   - sudo rm -vf /etc/apt/sources.list.d/*riak*
   - sudo apt-get update -qq
