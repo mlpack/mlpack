@@ -187,18 +187,23 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
   searchDirection.zeros(iterate.n_rows, iterate.n_cols);
 
   // The initial function value and gradient.
-  double functionValue = f.EvaluateWithGradient(iterate, gradient);
+  Timer::Start("lbfgs_initial_value");
+//  double functionValue = f.EvaluateWithGradient(iterate, gradient);
+  double functionValue = f.Evaluate(iterate);
+  f.Gradient(iterate, gradient);
   double prevFunctionValue = functionValue;
   if (functionValue < minPointIterate.second)
   {
     minPointIterate.first = iterate;
     minPointIterate.second = functionValue;
   }
+  Timer::Stop("lbfgs_initial_value");
 
   // The main optimization loop.
   for (size_t itNum = 0; optimizeUntilConvergence || (itNum != maxIterations);
        ++itNum)
   {
+#ifdef DEBUG
     Log::Debug << "L-BFGS iteration " << itNum << "; objective " <<
         f.Evaluate(iterate) << ", gradient norm "
         << arma::norm(gradient, 2) << ", "
@@ -206,6 +211,7 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
             std::max(std::max(fabs(prevFunctionValue),
                               fabs(functionValue)), 1.0))
         << "." << std::endl;
+#endif
 
     prevFunctionValue = functionValue;
 
@@ -241,12 +247,14 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
     oldGradient = gradient;
 
     // Do a line search and take a step.
+    Timer::Start("line_search");
     if (!LineSearch(f, functionValue, iterate, gradient, newIterateTmp,
         minPointIterate, searchDirection))
     {
       Log::Debug << "Line search failed.  Stopping optimization." << std::endl;
       break; // The line search failed; nothing else to try.
     }
+    Timer::Stop("line_search");
 
     // It is possible that the difference between the two coordinates is zero.
     // In this case we terminate successfully.

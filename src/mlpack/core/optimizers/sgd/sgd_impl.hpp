@@ -117,13 +117,13 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
         std::min(batchSize, actualMaxIterations - i),
         numFunctions - currentFunction);
 
-    f.Gradient(iterate, currentFunction, gradient, effectiveBatchSize);
+    // Technically we are computing the objective before we take the step, but
+    // for many FunctionTypes it may be much quicker to do it like this.
+    overallObjective += f.EvaluateWithGradient(iterate, currentFunction,
+        gradient, effectiveBatchSize);
 
     // Use the update policy to take a step.
     updatePolicy.Update(iterate, stepSize, gradient);
-
-    overallObjective += f.Evaluate(iterate, currentFunction,
-        effectiveBatchSize);
 
     // Now update the learning rate if requested by the user.
     decayPolicy.Update(iterate, stepSize, gradient);

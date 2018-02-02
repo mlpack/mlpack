@@ -104,7 +104,7 @@ double LogisticRegressionFunction<MatType>::Evaluate(
   // Calculate vectors of sigmoids.  The intercept term is parameters(0, 0) and
   // does not need to be multiplied by any of the predictors.
   const arma::rowvec exponents = parameters(0, 0) +
-    parameters.tail_cols(parameters.n_elem - 1) * predictors;
+      parameters.tail_cols(parameters.n_elem - 1) * predictors;
   const arma::rowvec sigmoid = 1.0 / (1.0 + arma::exp(-exponents));
 
   // Assemble full objective function.  Often the objective function and the
@@ -204,9 +204,9 @@ void LogisticRegressionFunction<MatType>::Gradient(
   gradient.set_size(parameters.n_rows, parameters.n_cols);
   gradient[0] = -arma::accu(responses.subvec(begin, begin + batchSize - 1) -
       sigmoids);
-  gradient.tail_cols(parameters.n_elem - 1) =
-      arma::sum((responses.subvec(begin, begin + batchSize - 1) - sigmoids) *
-      -predictors.cols(begin, begin + batchSize - 1).t(), 0) + regularization;
+  gradient.tail_cols(parameters.n_elem - 1) = (sigmoids -
+responses.subvec(begin, begin + batchSize - 1)) *
+      predictors.cols(begin, begin + batchSize - 1).t() + regularization;
 }
 
 /**
@@ -233,6 +233,94 @@ void LogisticRegressionFunction<MatType>::PartialGradient(
     gradient[j] = arma::dot(-predictors.row(j - 1), diffs) + lambda *
       parameters(0, j);
   }
+}
+
+template<typename MatType>
+template<typename GradType>
+double LogisticRegressionFunction<MatType>::EvaluateWithGradient(
+    const arma::mat& parameters,
+    GradType& gradient) const
+{
+  Timer::Start("evaluate_with_gradient");
+  // Regularization term.
+  arma::mat regularization;
+  regularization = lambda * parameters.tail_cols(parameters.n_elem - 1);
+
+  const double objectiveRegularization = lambda / 2.0 *
+      arma::dot(parameters.tail_cols(parameters.n_elem - 1),
+                parameters.tail_cols(parameters.n_elem - 1));
+
+  const arma::rowvec exponents = parameters(0, 0) +
+      parameters.tail_cols(parameters.n_elem - 1) *
+      predictors;
+  // Calculating the sigmoid function values.
+  const arma::rowvec sigmoids = 1.0 / (1.0 + arma::exp(-exponents));
+
+  gradient.set_size(arma::size(parameters));
+  gradient[0] = -arma::accu(responses - sigmoids);
+  gradient.tail_cols(parameters.n_elem - 1) = (sigmoids - responses) *
+      predictors.t() + regularization;
+
+  // Now compute the objective function using the sigmoids.
+  double result = 0.0;
+  for (size_t i = 0; i < sigmoids.n_elem; ++i)
+  {
+    if (responses[i] == 1)
+      result += log(sigmoids[i]);
+    else
+      result += log(1.0 - sigmoids[i]);
+  }
+  Timer::Stop("evaluate_with_gradient");
+
+  // Invert the result, because it's a minimization.
+  return -result + objectiveRegularization;
+}
+
+template<typename MatType>
+template<typename GradType>
+double LogisticRegressionFunction<MatType>::EvaluateWithGradient(
+    const arma::mat& parameters,
+    const size_t begin,
+    GradType& gradient,
+    const size_t batchSize) const
+{
+  Timer::Start("evaluate_with_gradient");
+  // Regularization term.
+  arma::mat regularization;
+  regularization = lambda * parameters.tail_cols(parameters.n_elem - 1)
+      / predictors.n_cols * batchSize;
+
+  const double objectiveRegularization = lambda *
+      (batchSize / (2.0 * predictors.n_cols)) *
+      arma::dot(parameters.tail_cols(parameters.n_elem - 1),
+                parameters.tail_cols(parameters.n_elem - 1));
+
+  const arma::rowvec exponents = parameters(0, 0) +
+      parameters.tail_cols(parameters.n_elem - 1) *
+      predictors.cols(begin, begin + batchSize - 1);
+  // Calculating the sigmoid function values.
+  const arma::rowvec sigmoids = 1.0 / (1.0 + arma::exp(-exponents));
+
+  gradient.set_size(parameters.n_rows, parameters.n_cols);
+  gradient[0] = -arma::accu(responses.subvec(begin, begin + batchSize - 1) -
+      sigmoids);
+  gradient.tail_cols(parameters.n_elem - 1) = (sigmoids -
+responses.subvec(begin, begin + batchSize - 1)) *
+      predictors.cols(begin, begin + batchSize - 1).t() + regularization;
+
+  // Now compute the objective function using the sigmoids.
+  double result = 0.0;
+  for (size_t i = 0; i < batchSize; ++i)
+  {
+    if (responses[i + begin] == 1)
+      result += log(sigmoids[i]);
+    else
+      result += log(1.0 - sigmoids[i]);
+  }
+  Timer::Stop("evaluate_with_gradient");
+
+  // Invert the result, because it's a minimization.
+  return -result + objectiveRegularization;
 }
 
 } // namespace regression
