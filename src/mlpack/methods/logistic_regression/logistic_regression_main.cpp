@@ -141,12 +141,6 @@ static void mlpackMain()
   const double tolerance = CLI::GetParam<double>("tolerance");
   const double stepSize = CLI::GetParam<double>("step_size");
   const size_t batchSize = (size_t) CLI::GetParam<int>("batch_size");
-
-  // Checking that max iterations is non negative
-  if(CLI::GetParam<int>("max_iterations") <= 0) {
-    Log::Fatal << "Max Iterations (" << CLI::GetParam<int>("max_iterations") << ") cannot be negative" << endl;
-  }
-
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
   const double decisionBoundary = CLI::GetParam<double>("decision_boundary");
  
@@ -166,6 +160,14 @@ static void mlpackMain()
 
   ReportIgnoredParam({{ "test", false }}, "output");
   ReportIgnoredParam({{ "test", false }}, "output_probabilities");
+
+  // Max Iterations needs to be positive.
+  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; },
+      true, "max_iterations must be positive or zero");
+
+  // Batch Size needs to be greater than zero.
+  RequireParamValue<int>("batch_size", [](int x) { return x > 0; },
+      true, "batch_size must be greater than zero");
 
   // Tolerance needs to be positive.
   RequireParamValue<double>("tolerance", [](double x) { return x >= 0.0; },
@@ -234,7 +236,7 @@ static void mlpackMain()
   }
   else if (CLI::HasParam("training"))
   {
-
+    // Checking the size of training data if no labels are passed 
     if(regressors.n_rows<2) {
       Log::Fatal << "Can't get responses from training data "
             "since it has less than 2 rows." << endl;
