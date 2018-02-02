@@ -20,7 +20,7 @@
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 #include "serialization.hpp"
-#include "customlayer.hpp"
+#include "custom_layer.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
