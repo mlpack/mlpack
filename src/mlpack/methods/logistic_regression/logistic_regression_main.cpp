@@ -237,7 +237,7 @@ static void mlpackMain()
   else if (CLI::HasParam("training"))
   {
     // Checking the size of training data if no labels are passed 
-    if(regressors.n_rows<2) {
+    if (regressors.n_rows<2) {
       Log::Fatal << "Can't get responses from training data "
             "since it has less than 2 rows." << endl;
     }
