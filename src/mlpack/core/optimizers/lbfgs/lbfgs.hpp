@@ -164,14 +164,6 @@ class L_BFGS
                              const arma::cube& y);
 
   /**
-   * Check to make sure that the norm of the gradient is not smaller than 1e-5.
-   * Currently that value is not configurable.
-   *
-   * @return (norm < minGradientNorm).
-   */
-  bool GradientNormTooSmall(const arma::mat& gradient);
-
-  /**
    * Perform a back-tracking line search along the search direction to
    * calculate a step size satisfying the Wolfe conditions.  The parameter
    * iterate will be modified if the method is successful.

@@ -17,19 +17,6 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * Check to make sure that the norm of the gradient is not smaller than 1e-10.
- * Currently that value is not configurable.
- *
- * @return (norm < minGradientNorm)
- */
-inline bool L_BFGS::GradientNormTooSmall(const arma::mat& gradient)
-{
-  const double norm = arma::norm(gradient, 2);
-
-  return (norm < minGradientNorm);
-}
-
-/**
  * Perform a back-tracking line search along the search direction to calculate a
  * step size satisfying the Wolfe conditions.
  *
@@ -205,7 +192,7 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
     //
     // But don't do this on the first iteration to ensure we always take at
     // least one descent step.
-    if (itNum > 0 && GradientNormTooSmall(gradient))
+    if (itNum > 0 && (arma::norm(gradient, 2) < minGradientNorm))
     {
       Log::Debug << "L-BFGS gradient norm too small (terminating successfully)."
           << std::endl;
