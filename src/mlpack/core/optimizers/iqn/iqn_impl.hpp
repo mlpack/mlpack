@@ -118,7 +118,7 @@ double IQN::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
             iterateVec;
       }
 
-      f+= effectiveBatchSize;
+      f += effectiveBatchSize;
     }
 
     overallObjective = 0;
