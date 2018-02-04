@@ -47,7 +47,6 @@ bool L_BFGS::LineSearch(FunctionType& function,
                         arma::mat& iterate,
                         arma::mat& gradient,
                         arma::mat& newIterateTmp,
-                        std::pair<arma::mat, double>& minPointIterate,
                         const arma::mat& searchDirection)
 {
   // Default first step size of 1.0.
@@ -80,6 +79,8 @@ bool L_BFGS::LineSearch(FunctionType& function,
   const double inc = 2.1;
   const double dec = 0.5;
   double width = 0;
+  double bestStepSize = 1.0;
+  double bestObjective = std::numeric_limits<double>::max();
 
   while (true)
   {
@@ -88,10 +89,10 @@ bool L_BFGS::LineSearch(FunctionType& function,
     newIterateTmp = iterate;
     newIterateTmp += stepSize * searchDirection;
     functionValue = function.EvaluateWithGradient(newIterateTmp, gradient);
-    if (functionValue < minPointIterate.second)
+    if (functionValue < bestObjective)
     {
-      minPointIterate.first = iterate;
-      minPointIterate.second = functionValue;
+      bestStepSize = stepSize;
+      bestObjective = functionValue;
     }
     numIterations++;
 
@@ -137,7 +138,7 @@ bool L_BFGS::LineSearch(FunctionType& function,
   }
 
   // Move to the new iterate.
-  iterate = newIterateTmp;
+  iterate += bestStepSize * searchDirection;
   return true;
 }
 
@@ -166,8 +167,6 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
   arma::mat newIterateTmp(rows, cols);
   arma::cube s(rows, cols, numBasis);
   arma::cube y(rows, cols, numBasis);
-  std::pair<arma::mat, double> minPointIterate;
-  minPointIterate.second = std::numeric_limits<double>::max();
 
   // The old iterate to be saved.
   arma::mat oldIterate;
@@ -177,37 +176,24 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
   bool optimizeUntilConvergence = (maxIterations == 0);
 
   // The gradient: the current and the old.
-  arma::mat gradient;
-  arma::mat oldGradient;
-  gradient.zeros(iterate.n_rows, iterate.n_cols);
-  oldGradient.zeros(iterate.n_rows, iterate.n_cols);
+  arma::mat gradient(iterate.n_rows, iterate.n_cols, arma::fill::zeros);
+  arma::mat oldGradient(iterate.n_rows, iterate.n_cols, arma::fill::zeros);
 
   // The search direction.
-  arma::mat searchDirection;
-  searchDirection.zeros(iterate.n_rows, iterate.n_cols);
+  arma::mat searchDirection(iterate.n_rows, iterate.n_cols, arma::fill::zeros);
 
   // The initial function value and gradient.
-  Timer::Start("lbfgs_initial_value");
-//  double functionValue = f.EvaluateWithGradient(iterate, gradient);
-  double functionValue = f.Evaluate(iterate);
-  f.Gradient(iterate, gradient);
+  double functionValue = f.EvaluateWithGradient(iterate, gradient);
   double prevFunctionValue = functionValue;
-  if (functionValue < minPointIterate.second)
-  {
-    minPointIterate.first = iterate;
-    minPointIterate.second = functionValue;
-  }
-  Timer::Stop("lbfgs_initial_value");
 
   // The main optimization loop.
   for (size_t itNum = 0; optimizeUntilConvergence || (itNum != maxIterations);
        ++itNum)
   {
 #ifdef DEBUG
-    Log::Debug << "L-BFGS iteration " << itNum << "; objective " <<
-        f.Evaluate(iterate) << ", gradient norm "
-        << arma::norm(gradient, 2) << ", "
-        << ((prevFunctionValue - functionValue) /
+    Log::Debug << "L-BFGS iteration " << itNum << "; objective "
+        << functionValue << ", gradient norm " << arma::norm(gradient, 2)
+        << ", " << ((prevFunctionValue - functionValue) /
             std::max(std::max(fabs(prevFunctionValue),
                               fabs(functionValue)), 1.0))
         << "." << std::endl;
@@ -249,7 +235,7 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
     // Do a line search and take a step.
     Timer::Start("line_search");
     if (!LineSearch(f, functionValue, iterate, gradient, newIterateTmp,
-        minPointIterate, searchDirection))
+        searchDirection))
     {
       Log::Debug << "Line search failed.  Stopping optimization." << std::endl;
       break; // The line search failed; nothing else to try.
@@ -280,7 +266,7 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
     UpdateBasisSet(itNum, iterate, oldIterate, gradient, oldGradient, s, y);
   } // End of the optimization loop.
 
-  return f.Evaluate(iterate);
+  return functionValue;
 }
 
 } // namespace optimization

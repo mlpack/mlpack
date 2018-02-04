@@ -190,7 +190,6 @@ class L_BFGS
                   arma::mat& iterate,
                   arma::mat& gradient,
                   arma::mat& newIterateTmp,
-                  std::pair<arma::mat, double>& minPointIterate,
                   const arma::mat& searchDirection);
 
   /**
