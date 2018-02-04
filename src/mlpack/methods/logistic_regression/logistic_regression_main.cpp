@@ -286,7 +286,7 @@ static void mlpackMain()
     testSet = std::move(CLI::GetParam<arma::mat>("test"));
 
     // checking the dimensionality of the test data
-    if(testSet.n_rows != model.Parameters().n_cols-1) {
+    if (testSet.n_rows != model.Parameters().n_cols-1) {
       Log::Fatal << "Test data dimensionality (" << testSet.n_rows << ") must " 
           << "be the same as the dimensionality of the Training Data (" << model.Parameters().n_cols-1 << ")!" << endl;
     }
