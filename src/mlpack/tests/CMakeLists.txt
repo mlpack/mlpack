@@ -113,6 +113,7 @@ add_executable(mlpack_test
   sparse_coding_test.cpp
   spill_tree_test.cpp
   split_data_test.cpp
+  spsa_test.cpp
   svd_batch_test.cpp
   svd_incremental_test.cpp
   termination_policy_test.cpp
