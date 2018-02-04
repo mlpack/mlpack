@@ -40,27 +40,23 @@ namespace optimization {
 class SPSAUpdate
 {
  public:
-  SPSAUpdate(const size_t& n_params = 100000,
-         const float& alpha = 0.602,
-         const float& gamma = 0.101,
-         const float& a = 1e-6,
-         const float& c = 0.01,
-         const size_t& max_iter = 5000000):
+  SPSAUpdate(const float& alpha,
+       const float& gamma,
+       const float& a,
+       const float& c,
+       const size_t& maxIterations):
     alpha(alpha),
     gamma(gamma),
     a(a),
     c(c),
-    ak(0),
-    ck(0),
-    A(0.1*a),
-    max_iter(max_iter),
-    p(n_params)
+    max_iter(maxIterations)
   {
-    // Nothing to do.
+    Initialize();
   }
 
   void Initialize()
   {
+    A = 0.1*a;
     ak = a/pow((max_iter + 1 + A), alpha);
     ck = c/pow((max_iter + 1), gamma);
   }
@@ -69,12 +65,14 @@ class SPSAUpdate
   void Update(arma::mat& iterate,
           DecomposableFunctionType& function)
   {
+    const int s = iterate.n_elem;
+
     for (size_t i = 0; i < max_iter; i++)
     {
-      sp_vector = randi(p, arma::distr_param(-1, 1));
-      arma::vec f_plus = function.Evaluate(iterate + ck*sp_vector);
-      arma::vec f_minus = function.Evaluate(iterate - ck*sp_vector);
-      float gradient = (f_plus - f_minus)/(2*ck*sp_vector);
+      sp_vector = arma::conv_to<arma::vec>::from(randi(s, arma::distr_param(-1, 1)));
+      arma::vec f_plus = function.Evaluate(iterate + ck*sp_vector, s);
+      arma::vec f_minus = function.Evaluate(iterate - ck*sp_vector, s);
+      arma::mat gradient = ((f_plus - f_minus)/2)*ck*sp_vector.i();
 
       iterate -= ak*gradient;
     }
@@ -87,6 +85,11 @@ class SPSAUpdate
   float Gamma() const { return gamma; }
 
   float& Gamma() { return gamma; }
+
+  //! Get the maximum number of iterations (0 indicates no limit).
+  size_t MaxIterations() const { return max_iter; }
+  //! Modify the maximum number of iterations (0 indicates no limit).
+  size_t& MaxIterations() { return max_iter; }
 
   float Gradient_scaling_parameter(const int& choice) const
   {
@@ -139,7 +142,7 @@ class SPSAUpdate
   float c;
   float ak;
   float ck;
-  long long int max_iter, p;
+  size_t max_iter;
   arma::vec sp_vector;
 };
 
