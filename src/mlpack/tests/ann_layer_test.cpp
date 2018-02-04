@@ -1144,6 +1144,66 @@ BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
       arma::mat("1.6487; 0.6487") - delta)), 1e-3);
 }
 
+/**
+ * Simple test for the Sigmoid Cross Entropy Layer.
+ */
+BOOST_AUTO_TEST_CASE(SimpleSigmoidCrossEntropyLayerTest)
+{
+  arma::mat input1, input2, input3, output, target1,
+            target2, target3, expectedOutput;
+  SigmoidCrossEntropyError<> module;
+
+  // Test the Forward function on a user generator input and compare it against
+  // the manually calculated result.
+  input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
+  target1 = arma::zeros(1, 8);
+  double error1 = module.Forward(std::move(input1), std::move(target1));
+  double expected = 0.97407699;
+  // Value computed using tensorflow.
+  BOOST_REQUIRE_SMALL(error1 / input1.n_elem - expected, 1e-7);
+
+  input2 = arma::mat("1 2 3 4 5");
+  target2 = arma::mat("0 0 1 0 1");
+  double error2 = module.Forward(std::move(input2), std::move(target2));
+  expected = 1.5027283;
+  BOOST_REQUIRE_SMALL(error2 / input2.n_elem - expected, 1e-6);
+
+  input3 = arma::mat("0 -1 -1 0 -1 0 0 -1");
+  target3 = arma::mat("0 -1 -1 0 -1 0 0 -1");
+  double error3 = module.Forward(std::move(input3), std::move(target3));
+  expected = 0.00320443;
+  BOOST_REQUIRE_SMALL(error3 / input3.n_elem - expected, 1e-6);
+
+  // Test the Backward function.
+  module.Backward(std::move(input1), std::move(target1), std::move(output));
+  expected = 0.62245929;
+  for (size_t i = 0; i < output.n_elem; i++)
+    BOOST_REQUIRE_SMALL(output(i) - expected, 1e-5);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input1.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
+
+  expectedOutput = arma::mat(
+      "0.7310586 0.88079709 -0.04742587 0.98201376 -0.00669285");
+  module.Backward(std::move(input2), std::move(target2), std::move(output));
+  for (size_t i = 0; i < output.n_elem; i++)
+    BOOST_REQUIRE_SMALL(output(i) - expectedOutput(i), 1e-5);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
+
+  module.Backward(std::move(input3), std::move(target3), std::move(output));
+  expectedOutput = arma::mat("0.5 1.2689414");
+  for (size_t i = 0; i < 8; ++i)
+  {
+    double el = output.at(0, i);
+    if (std::abs(input3.at(i) - 0.0) < 1e-5)
+      BOOST_REQUIRE_SMALL(el - expectedOutput[0], 2e-6);
+    else
+      BOOST_REQUIRE_SMALL(el - expectedOutput[1], 2e-6);
+  }
+  BOOST_REQUIRE_EQUAL(output.n_rows, input3.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input3.n_cols);
+}
+
 /*
  * Simple test for the cross-entropy error performance function.
  */

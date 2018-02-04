@@ -12,7 +12,10 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
-#include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
+
+#include <mlpack/core/optimizers/problems/rosenbrock_function.hpp>
+#include <mlpack/core/optimizers/problems/rosenbrock_wood_function.hpp>
+#include <mlpack/core/optimizers/problems/colville_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -38,6 +41,23 @@ BOOST_AUTO_TEST_CASE(RosenbrockFunctionTest)
   double finalValue = f.Evaluate(coords);
 
   BOOST_REQUIRE_SMALL(finalValue, 1e-5);
+  BOOST_REQUIRE_CLOSE(coords[0], 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(coords[1], 1.0, 1e-5);
+}
+
+/**
+ * Tests the L-BFGS optimizer using the Colville Function.
+ */
+BOOST_AUTO_TEST_CASE(ColvilleFunctionTest)
+{
+  ColvilleFunction f;
+  L_BFGS lbfgs;
+  lbfgs.MaxIterations() = 10000;
+
+  arma::vec coords = f.GetInitialPoint();
+  if (!lbfgs.Optimize(f, coords))
+    BOOST_FAIL("L-BFGS optimization reported failure.");
+
   BOOST_REQUIRE_CLOSE(coords[0], 1.0, 1e-5);
   BOOST_REQUIRE_CLOSE(coords[1], 1.0, 1e-5);
 }
