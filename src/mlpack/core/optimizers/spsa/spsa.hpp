@@ -42,76 +42,53 @@ namespace optimization {
 class SPSA
 {
  public:
-  SPSA(const double stepSize = 0.01,
-       const size_t batchSize = 32,
-       const float& alpha = 0.602,
+  SPSA(const float& alpha = 0.602,
        const float& gamma = 0.101,
        const float& a = 1e-6,
        const float& c = 0.01,
-       const size_t& maxIterations = 100000,
-       const double& tolerance = 1e-5,
-       const bool& shuffle = true);
-
-  template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function, arma::mat& iterate)
+       const size_t& maxIterations = 100000)
   {
-    return optimizer.Optimize(function, iterate);
+    spsaUpdate = new SPSAUpdate(alpha, gamma, a, c,
+                      maxIterations);
   }
 
-  //! Get the step size.
-  double StepSize() const { return optimizer.StepSize(); }
-  //! Modify the step size.
-  double& StepSize() { return optimizer.StepSize(); }
-
-  //! Get the batch size.
-  size_t BatchSize() const { return optimizer.BatchSize(); }
-  //! Modify the batch size.
-  size_t& BatchSize() { return optimizer.BatchSize(); }
-
-  float Alpha() const { return optimizer.UpdatePolicy().Alpha(); }
-
-  float& Alpha() { return optimizer.UpdatePolicy().Alpha(); }
-
-  float Gamma() const { return optimizer.UpdatePolicy().Gamma(); }
-
-  float& Gamma() { return optimizer.UpdatePolicy().Gamma(); }
-
-  float Gradient_scaling_parameter(const int choice) const
+  template<typename DecomposableFunctionType>
+  void Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   {
-    return optimizer.UpdatePolicy()
-          .Gradient_scaling_parameter(choice);
+    spsaUpdate->Update(iterate, function);
+  }
+
+  float Alpha() const { return spsaUpdate->Alpha(); }
+
+  float& Alpha() { return spsaUpdate->Alpha(); }
+
+  float Gamma() const { return spsaUpdate->Gamma(); }
+
+  float& Gamma() { return spsaUpdate->Gamma(); }
+
+  //! Get the maximum number of iterations (0 indicates no limit).
+  size_t MaxIterations() const { return spsaUpdate->MaxIterations(); }
+  //! Modify the maximum number of iterations (0 indicates no limit).
+  size_t& MaxIterations() { return spsaUpdate->MaxIterations(); }
+
+  float Gradient_scaling_parameter(const int& choice) const
+  {
+    return spsaUpdate->Gradient_scaling_parameter(choice);
   }
 
   float& Gradient_scaling_parameter(const int& choice)
   {
-    return optimizer.UpdatePolicy()
-          .Gradient_scaling_parameter(choice);
+    return spsaUpdate->Gradient_scaling_parameter(choice);
   }
 
-  float Noise_variance_parameter() const { return optimizer.UpdatePolicy()
-                                  .Noise_variance_parameter(); }
+  float Noise_variance_parameter() const {
+           return spsaUpdate->Noise_variance_parameter(); }
 
-  float& Noise_variance_parameter() { return optimizer.UpdatePolicy()
-                                  .Noise_variance_parameter(); }
-
-  //! Get the maximum number of iterations (0 indicates no limit).
-  size_t MaxIterations() const { return optimizer.MaxIterations(); }
-  //! Modify the maximum number of iterations (0 indicates no limit).
-  size_t& MaxIterations() { return optimizer.MaxIterations(); }
-
-  //! Get the tolerance for termination.
-  double Tolerance() const { return optimizer.Tolerance(); }
-  //! Modify the tolerance for termination.
-  double& Tolerance() { return optimizer.Tolerance(); }
-
-  //! Get whether or not the individual functions are shuffled.
-  bool Shuffle() const { return optimizer.Shuffle(); }
-  //! Modify whether or not the individual functions are shuffled.
-  bool& Shuffle() { return optimizer.Shuffle(); }
-
+  float& Noise_variance_parameter() {
+           return spsaUpdate->Noise_variance_parameter(); }
  private:
-  //! The Stochastic Gradient Descent object with AdaGrad policy.
-  SGD<SPSAUpdate> optimizer;
+  //! The SPSA Descent object pointer.
+  SPSAUpdate *spsaUpdate;
 };
 
 } // namespace optimization
