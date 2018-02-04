@@ -242,6 +242,7 @@ static void mlpackMain()
       Log::Fatal << "Can't get responses from training data "
             "since it has less than 2 rows." << endl;
     }
+    
     // The initial predictors for y, Nx1.
     responses = arma::conv_to<arma::Row<size_t>>::from(
         regressors.row(regressors.n_rows - 1));
