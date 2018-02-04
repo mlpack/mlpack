@@ -365,11 +365,12 @@ void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
   }
 }
 
+
+
 /**
  * Train the specified network and the construct a Reber grammar dataset.
  */
-template<typename RecurrentLayerType,
-         typename OutputLayerType = SigmoidLayer<>, typename... Args>
+template<typename RecurrentLayerType>
 void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
                              const bool recursive = false,
                              const size_t averageRecursion = 3,
@@ -456,11 +457,11 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
     const size_t outputSize = 7;
     const size_t inputSize = 7;
 
-    RNN<MeanSquaredError<>, RandomInitialization, Args...> model(5);
-    model.template Add<Linear<> >(inputSize, hiddenSize);
-    model.template Add<RecurrentLayerType>(hiddenSize, hiddenSize);
-    model.template Add<Linear<> >(hiddenSize, outputSize);
-    model.template Add<OutputLayerType>();
+    RNN<MeanSquaredError<> > model(5);
+    model.Add<Linear<> >(inputSize, hiddenSize);
+    model.Add<RecurrentLayerType>(hiddenSize, hiddenSize);
+    model.Add<Linear<> >(hiddenSize, outputSize);
+    model.Add<SigmoidLayer<> >();
     MomentumSGD opt(0.06, 50, 2, -50000);
 
     arma::cube inputTemp, labelsTemp;
@@ -560,15 +561,6 @@ BOOST_AUTO_TEST_CASE(FastLSTMReberGrammarTest)
 BOOST_AUTO_TEST_CASE(GRURecursiveReberGrammarTest)
 {
   ReberGrammarTestNetwork<GRU<> >(16, true);
-}
-
-/**
- * Train the specified network, with a custom layer on an embedded Reber
- * grammar dataset
- */
-BOOST_AUTO_TEST_CASE(CustomLayerLSTMReberGrammarTest)
-{
-  ReberGrammarTestNetwork<LSTM<>, CustomLayer<>, CustomLayer<> >(10, false);
 }
 
 /*
@@ -913,6 +905,185 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   binaryModel.Predict(input, binaryPrediction);
 
   CheckMatrices(prediction, xmlPrediction, textPrediction, binaryPrediction);
+}
+
+/**
+ * Test RNN with a custom layer.
+ */
+void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
+                                   const bool recursive = false,
+                                   const size_t averageRecursion = 3,
+                                   const size_t maxRecursion = 5,
+                                   const size_t iterations = 10)
+{
+  // Reber state transition matrix. (The last two columns are the indices to the
+  // next path).
+  arma::Mat<char> transitions;
+  transitions << 'T' << 'P' << '1' << '2' << arma::endr
+              << 'X' << 'S' << '3' << '1' << arma::endr
+              << 'V' << 'T' << '4' << '2' << arma::endr
+              << 'X' << 'S' << '2' << '5' << arma::endr
+              << 'P' << 'V' << '3' << '5' << arma::endr
+              << 'E' << 'E' << '0' << '0' << arma::endr;
+
+  const size_t trainReberGrammarCount = 700;
+  const size_t testReberGrammarCount = 250;
+
+  std::string trainReber, testReber;
+  arma::field<arma::mat> trainInput(1, trainReberGrammarCount);
+  arma::field<arma::mat> trainLabels(1, trainReberGrammarCount);
+  arma::field<arma::mat> testInput(1, testReberGrammarCount);
+  arma::colvec translation;
+
+  // Generate the training data.
+  for (size_t i = 0; i < trainReberGrammarCount; i++)
+  {
+    if (recursive)
+      GenerateRecursiveReber(transitions, 3, 5, trainReber);
+    else
+      GenerateReber(transitions, trainReber);
+
+    for (size_t j = 0; j < trainReber.length() - 1; j++)
+    {
+      ReberTranslation(trainReber[j], translation);
+      trainInput(0, i) = arma::join_cols(trainInput(0, i), translation);
+
+      ReberTranslation(trainReber[j + 1], translation);
+      trainLabels(0, i) = arma::join_cols(trainLabels(0, i), translation);
+    }
+  }
+
+  // Generate the test data.
+  for (size_t i = 0; i < testReberGrammarCount; i++)
+  {
+    if (recursive)
+      GenerateRecursiveReber(transitions, averageRecursion, maxRecursion,
+          testReber);
+    else
+      GenerateReber(transitions, testReber);
+
+    for (size_t j = 0; j < testReber.length() - 1; j++)
+    {
+      ReberTranslation(testReber[j], translation);
+      testInput(0, i) = arma::join_cols(testInput(0, i), translation);
+    }
+  }
+
+  /*
+   * Construct a network with 7 input units, layerSize hidden units and 7 output
+   * units. The hidden layer is connected to itself. The network structure looks
+   * like:
+   *
+   *  Input         Hidden        Output
+   * Layer(7)  Layer(layerSize)   Layer(7)
+   * +-----+       +-----+       +-----+
+   * |     |       |     |       |     |
+   * |     +------>|     +------>|     |
+   * |     |    ..>|     |       |     |
+   * +-----+    .  +--+--+       +-- ---+
+   *            .     .
+   *            .     .
+   *            .......
+   */
+  // It isn't guaranteed that the recurrent network will converge in the
+  // specified number of iterations using random weights. If this works 1 of 5
+  // times, I'm fine with that. All I want to know is that the network is able
+  // to escape from local minima and to solve the task.
+  size_t successes = 0;
+  size_t offset = 0;
+  for (size_t trial = 0; trial < 5; ++trial)
+  {
+    const size_t outputSize = 7;
+    const size_t inputSize = 7;
+
+    RNN<MeanSquaredError<>, RandomInitialization, CustomLayer<> > model(5);
+    model.Add<Linear<> >(inputSize, hiddenSize);
+    model.Add<GRU<> >(hiddenSize, hiddenSize);
+    model.Add<Linear<> >(hiddenSize, outputSize);
+    model.Add<CustomLayer<> >();
+    MomentumSGD opt(0.06, 50, 2, -50000);
+
+    arma::cube inputTemp, labelsTemp;
+    for (size_t iteration = 0; iteration < (iterations + offset); iteration++)
+    {
+      for (size_t j = 0; j < trainReberGrammarCount; j++)
+      {
+        // Each sequence may be a different length, so we need to extract them
+        // manually.  We will reshape them into a cube with each slice equal to
+        // a time step.
+        inputTemp = arma::cube(trainInput.at(0, j).memptr(), inputSize, 1,
+            trainInput.at(0, j).n_elem / inputSize, false, true);
+        labelsTemp = arma::cube(trainLabels.at(0, j).memptr(), inputSize, 1,
+            trainInput.at(0, j).n_elem / inputSize, false, true);
+
+        model.Rho() = inputTemp.n_elem / inputSize;
+        model.Train(inputTemp, labelsTemp, opt);
+        opt.ResetPolicy() = false;
+      }
+    }
+
+    double error = 0;
+
+    // Ask the network to predict the next Reber grammar in the given sequence.
+    for (size_t i = 0; i < testReberGrammarCount; i++)
+    {
+      arma::cube prediction;
+      arma::cube input(testInput.at(0, i).memptr(), inputSize, 1,
+          testInput.at(0, i).n_elem / inputSize, false, true);
+
+      model.Rho() = input.n_elem / inputSize;
+      model.Predict(input, prediction);
+
+      const size_t reberGrammerSize = 7;
+      std::string inputReber = "";
+
+      size_t reberError = 0;
+
+      for (size_t j = 0; j < (prediction.n_elem / reberGrammerSize); j++)
+      {
+        char predictedSymbol, inputSymbol;
+        std::string reberChoices;
+
+        arma::umat output = (prediction.slice(j) == (arma::ones(
+            reberGrammerSize, 1) *
+            arma::as_scalar(arma::max(prediction.slice(j)))));
+
+        ReberReverseTranslation(output, predictedSymbol);
+        ReberReverseTranslation(input.slice(j), inputSymbol);
+        inputReber += inputSymbol;
+
+        if (recursive)
+          GenerateNextRecursiveReber(transitions, inputReber, reberChoices);
+        else
+          GenerateNextReber(transitions, inputReber, reberChoices);
+
+        if (reberChoices.find(predictedSymbol) != std::string::npos)
+          reberError++;
+      }
+
+      if (reberError != (prediction.n_elem / reberGrammerSize))
+        error += 1;
+    }
+
+    error /= testReberGrammarCount;
+    if (error <= 0.3)
+    {
+      ++successes;
+      break;
+    }
+
+    offset += 3;
+  }
+
+  BOOST_REQUIRE_GE(successes, 1);
+}
+
+/**
+ * Train the specified networks on an embedded Reber grammar dataset.
+ */
+BOOST_AUTO_TEST_CASE(CustomRecursiveReberGrammarTest)
+{
+  ReberGrammarTestCustomNetwork(16, true);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
