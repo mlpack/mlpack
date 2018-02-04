@@ -29,6 +29,8 @@ set(SOURCES
   sgd_test_function.cpp
   sphere_function.hpp
   sphere_function.cpp
+  spsa_test_function.hpp
+  spsa_test_function.cpp
   styblinski_tang_function.hpp
   styblinski_tang_function.cpp
   wood_function.hpp
