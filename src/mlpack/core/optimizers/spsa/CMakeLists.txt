@@ -1,5 +1,4 @@
 set(SOURCES
-	spsa.cpp
 	spsa.hpp
 	spsa_update.hpp
 )
