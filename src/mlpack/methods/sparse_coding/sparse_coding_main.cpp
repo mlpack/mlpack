@@ -188,14 +188,21 @@ static void mlpackMain()
       // Validate size of initial dictionary.
       if (sc->Dictionary().n_cols != sc->Atoms())
       {
-        Log::Fatal << "The initial dictionary has " << sc->Dictionary().n_cols
+        const size_t dictAtoms = sc->Dictionary().n_cols;
+        const size_t atoms = sc->Atoms();
+        if (!CLI::HasParam("input_model"))
+          delete sc;
+        Log::Fatal << "The initial dictionary has " << dictAtoms
             << " atoms, but the number of atoms was specified to be "
-            << sc->Atoms() << "!" << endl;
+            << atoms << "!" << endl;
       }
 
       if (sc->Dictionary().n_rows != matX.n_rows)
       {
-        Log::Fatal << "The initial dictionary has " << sc->Dictionary().n_rows
+        const size_t dim = sc->Dictionary().n_rows;
+        if (!CLI::HasParam("input_model"))
+          delete sc;
+        Log::Fatal << "The initial dictionary has " << dim
             << " dimensions, but the data has " << matX.n_rows << " dimensions!"
             << endl;
       }
@@ -216,10 +223,15 @@ static void mlpackMain()
     mat matY = std::move(CLI::GetParam<arma::mat>("test"));
 
     if (matY.n_rows != sc->Dictionary().n_rows)
+    {
+      const size_t dim = sc->Dictionary().n_rows;
+      if (!CLI::HasParam("input_model"))
+        delete sc;
       Log::Fatal << "Model was trained with a dimensionality of "
-          << sc->Dictionary().n_rows << ", but test data '"
+          << dim << ", but test data '"
           << CLI::GetPrintableParam<arma::mat>("test") << "' have a "
           << "dimensionality of " << matY.n_rows << "!" << endl;
+    }
 
     // Normalize each point if the user asked for it.
     if (CLI::HasParam("normalize"))
