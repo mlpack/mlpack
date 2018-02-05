@@ -250,7 +250,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffWeakLearnerOutputTest)
   arma::Row<size_t> outputPerceptron;
   outputPerceptron = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
-  for (size_t i = 0; i < output.n_elem; ++i)
+  for (size_t i = 0; i < output.n_rows; ++i)
     if (output[i] != outputPerceptron[i])
     {
       BOOST_REQUIRE_NE(output[i], outputPerceptron[i]);
