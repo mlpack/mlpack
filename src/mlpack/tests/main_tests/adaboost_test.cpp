@@ -277,7 +277,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
   if (!data::Load("vc2_test_labels.txt", testLabels))
     BOOST_FAIL("Unable to load labels for vc2__test_labels.txt");
 
-  //Iterations = 1
+  // Iterations = 1
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weak_learner", std::string("perceptron"));
@@ -293,7 +293,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
   size_t correct = arma::accu(output == testLabels);
   double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
 
-  //Iterations = 10
+  // Iterations = 10
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weak_learner", std::string("perceptron"));
@@ -309,7 +309,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
   correct = arma::accu(output == testLabels);
   double accuracy10 = (double(correct) / double(testLabels.n_elem) * 100);
 
-  //Iterations = 100
+  // Iterations = 100
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weak_learner", std::string("perceptron"));
@@ -349,7 +349,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffTolTest)
   if (!data::Load("vc2_test_labels.txt", testLabels))
     BOOST_FAIL("Unable to load labels for vc2__test_labels.txt");
 
-  //tolerance = 1e-5
+  // tolerance = 1e-5
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("tolerance", (double) 1e-5);
@@ -364,7 +364,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffTolTest)
   size_t correct = arma::accu(output == testLabels);
   double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
 
-  //Iterations = 0.1
+  // tolerance = 0.1
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("tolerance", (double) 0.1);
@@ -379,7 +379,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffTolTest)
   correct = arma::accu(output == testLabels);
   double accuracy2 = (double(correct) / double(testLabels.n_elem) * 100);
 
-  //tolerance = 0.5
+  // tolerance = 0.5
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("tolerance", (double) 0.5);
