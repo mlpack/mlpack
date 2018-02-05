@@ -267,7 +267,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffWeakLearnerOutputTest)
   {
     if (output[i] != outputPerceptron[i])
     {
-      int flag = 1;
+      flag = 1;
       break;
     }
   }
