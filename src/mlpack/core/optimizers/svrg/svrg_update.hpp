@@ -42,7 +42,7 @@ class SVRGUpdate
    * @param iterate Parameters that minimize the function.
    * @param fullGradient The computed full gradient.
    * @param gradient The current gradient matrix at time t.
-   * @param gradient The old gradient matrix at time t - 1.
+   * @param gradient0 The old gradient matrix at time t - 1.
    * @param batchSize Batch size to be used for the given iteration.
    * @param stepSize Step size to be used for the given iteration.
    */

@@ -164,8 +164,6 @@ double KatyushaType<proximal>::Optimize(
       // size.
       if (proximal)
       {
-        // y = iterate + 1.0 / (3.0 * lipschitz) * (z - z0);
-
         y = iterate + 1.0 / (3.0 * lipschitz) * (zNew - z);
       }
       else

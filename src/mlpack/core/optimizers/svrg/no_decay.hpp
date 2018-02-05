@@ -36,9 +36,9 @@ class NoDecay
    * direction of the gradient.
    *
    * @param iterate Parameters that minimize the function.
-   * @param fullGradient The computed full gradient.
+   * @param iterate0 The last function parameters at time t - 1.
    * @param gradient The current gradient matrix at time t.
-   * @param gradient The old gradient matrix at time t - 1.
+   * @param fullGradient The computed full gradient.
    * @param stepSize Step size to be used for the given iteration.
    */
   void Update(const arma::mat& /* iterate */,

@@ -67,10 +67,9 @@ class BarzilaiBorweinDecay
    * Barzilai-Borwein update step for SVRG.
    *
    * @param iterate The current function parameter at time t.
-   * @param iterate The last function parameters at time t - 1.
+   * @param iterate0 The last function parameters at time t - 1.
    * @param gradient The current gradient matrix at time t.
    * @param fullGradient The computed full gradient.
-   * @param gradient The old gradient matrix at time t - 1.
    * @param numBatches The number of batches.
    * @param stepSize Step size to be used for the given iteration.
    */
