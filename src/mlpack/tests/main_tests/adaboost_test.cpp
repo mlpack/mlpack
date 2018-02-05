@@ -202,7 +202,6 @@ BOOST_AUTO_TEST_CASE(AdaBoostTrainingDataOrModelTest)
 /**
  * Weak learner should be either Decision Stump or Perceptron.
  */
-
 BOOST_AUTO_TEST_CASE(AdaBoostWeakLearnerTest)
 {
   arma::mat trainData;
@@ -218,10 +217,9 @@ BOOST_AUTO_TEST_CASE(AdaBoostWeakLearnerTest)
 }
 
 /**
- * Weak learner should be ignored if it is
- * specified with an input model file.
+ * Different Weak learner should give different outputs.
  */
-BOOST_AUTO_TEST_CASE(AdaBoostWeakLearnerIgnoredTest)
+BOOST_AUTO_TEST_CASE(AdaBoostDiffWeakLearnerOutputTest)
 {
   arma::mat trainData;
   if (!data::Load("vc2.csv", trainData))
@@ -242,26 +240,160 @@ BOOST_AUTO_TEST_CASE(AdaBoostWeakLearnerIgnoredTest)
 
   mlpackMain();
 
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
+  arma::Row<size_t> output;
+  output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
+
   CLI::GetSingleton().Parameters()["weak_learner"].wasPassed = false;
 
-  // Default value is Decision Stump
-  SetInputParam("input_model",
-                std::move(CLI::GetParam<AdaBoostModel>("output_model")));
-  SetInputParam("test", std::move(testData));
   SetInputParam("weak_learner", std::string("perceptron"));
 
   mlpackMain();
 
-  const string weakLearner = CLI::GetParam<string>("weak_learner");
-  if (weakLearner == "perceptron")
-  {
-  Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
-  }
+  arma::Row<size_t> outputPerceptron;
+  outputPerceptron = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
+
+  CheckMatrices(output, outputPerceptron);
+}
+
+/**
+ * Accuracy increases as Number of Iterations increases.
+ * (Or converges and remains same)
+ */
+BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
+{
+  arma::mat trainData;
+  if (!data::Load("vc2.csv", trainData))
+    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Unable to load label dataset vc2_labels.txt!");
+
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData))
+    BOOST_FAIL("Unable to load test dataset vc2.csv!");
+
+  arma::Row<size_t> testLabels;
+  if (!data::Load("vc2_test_labels.txt", testLabels))
+    BOOST_FAIL("Unable to load labels for vc2__test_labels.txt");
+
+  //Iterations = 1
+  SetInputParam("training", std::move(trainData));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("weak_learner", std::string("perceptron"));
+  SetInputParam("iterations", (int) 1);
+
+  mlpackMain();
+
+  // Calculate accuracy.
+  arma::Row<size_t> output;
+  CLI::GetParam<AdaBoostModel>("output_model").Classify(testData,
+       output);
+
+  size_t correct = arma::accu(output == testLabels);
+  double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
+
+  //Iterations = 10
+  SetInputParam("training", std::move(trainData));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("weak_learner", std::string("perceptron"));
+  SetInputParam("iterations", (int) 10);
+
+  mlpackMain();
+
+  // Calculate accuracy.
+  CLI::GetParam<AdaBoostModel>("output_model").Classify(testData,
+       output);
+
+
+  correct = arma::accu(output == testLabels);
+  double accuracy10 = (double(correct) / double(testLabels.n_elem) * 100);
+
+  //Iterations = 100
+  SetInputParam("training", std::move(trainData));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("weak_learner", std::string("perceptron"));
+  SetInputParam("iterations", (int) 100);
+
+  mlpackMain();
+
+  // Calculate accuracy.
+  CLI::GetParam<AdaBoostModel>("output_model").Classify(testData,
+       output);
+
+  correct = arma::accu(output == testLabels);
+  double accuracy100 = (double(correct) / double(testLabels.n_elem) * 100);
+
+  BOOST_REQUIRE(accuracy100 >= accuracy10 && accuracy10 >= accuracy1);
+}
+
+/**
+ * Accuracy increases as tolerance decreases.
+ * (Execution Time also increases)
+ */
+BOOST_AUTO_TEST_CASE(AdaBoostDiffTolTest)
+{
+  arma::mat trainData;
+  if (!data::Load("vc2.csv", trainData))
+    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Unable to load label dataset vc2_labels.txt!");
+
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData))
+    BOOST_FAIL("Unable to load test dataset vc2.csv!");
+
+  arma::Row<size_t> testLabels;
+  if (!data::Load("vc2_test_labels.txt", testLabels))
+    BOOST_FAIL("Unable to load labels for vc2__test_labels.txt");
+
+  //tolerance = 1e-5
+  SetInputParam("training", std::move(trainData));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("tolerance", (double) 1e-5);
+
+  mlpackMain();
+
+  // Calculate accuracy.
+  arma::Row<size_t> output;
+  CLI::GetParam<AdaBoostModel>("output_model").Classify(testData,
+       output);
+
+  size_t correct = arma::accu(output == testLabels);
+  double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
+
+  //Iterations = 0.1
+  SetInputParam("training", std::move(trainData));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("tolerance", (double) 0.1);
+
+  mlpackMain();
+
+  // Calculate accuracy.
+  CLI::GetParam<AdaBoostModel>("output_model").Classify(testData,
+       output);
+
+
+  correct = arma::accu(output == testLabels);
+  double accuracy2 = (double(correct) / double(testLabels.n_elem) * 100);
+
+  //tolerance = 0.5
+  SetInputParam("training", std::move(trainData));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("tolerance", (double) 0.5);
+
+  mlpackMain();
+
+  // Calculate accuracy.
+  CLI::GetParam<AdaBoostModel>("output_model").Classify(testData,
+       output);
+
+  correct = arma::accu(output == testLabels);
+  double accuracy3 = (double(correct) / double(testLabels.n_elem) * 100);
+
+  BOOST_REQUIRE(accuracy1 >= accuracy2 && accuracy2 >= accuracy3);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
