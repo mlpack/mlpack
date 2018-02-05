@@ -16,12 +16,11 @@ using namespace mlpack;
 using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;
 
-arma::vec SPSATestFunction::Evaluate(const arma::mat& coordinates, const int& size)
-    const
+arma::vec SPSATestFunction::Evaluate(const arma::mat& coordinates,
+                                     const int& size) const
 {
-
   arma::vec ans = arma::zeros<arma::vec>(size);
-  for(size_t i = 0; i < size; i++)
+  for (size_t i = 0; i < size; i++)
   switch ((int)coordinates[i])
   {
     case 0:

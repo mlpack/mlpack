@@ -69,7 +69,8 @@ class SPSAUpdate
 
     for (size_t i = 0; i < max_iter; i++)
     {
-      sp_vector = arma::conv_to<arma::vec>::from(randi(s, arma::distr_param(-1, 1)));
+      sp_vector = arma::conv_to<arma::vec>::from(
+                  randi(s, arma::distr_param(-1, 1)));
       arma::vec f_plus = function.Evaluate(iterate + ck*sp_vector, s);
       arma::vec f_minus = function.Evaluate(iterate - ck*sp_vector, s);
       arma::mat gradient = ((f_plus - f_minus)/2)*ck*sp_vector.i();
