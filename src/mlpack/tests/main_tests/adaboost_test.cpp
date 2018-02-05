@@ -233,7 +233,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffWeakLearnerOutputTest)
   if (!data::Load("vc2_test.csv", testData))
     BOOST_FAIL("Unable to load test dataset vc2.csv!");
 
-  SetInputParam("training", std::move(trainData));
+  SetInputParam("training", trainData);
   SetInputParam("labels", std::move(labels));
 
   SetInputParam("test", testData);
@@ -251,11 +251,13 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffWeakLearnerOutputTest)
   outputPerceptron = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
   for (size_t i = 0; i < output.n_rows; ++i)
+  {
     if (output[i] != outputPerceptron[i])
     {
       BOOST_REQUIRE_NE(output[i], outputPerceptron[i]);
       break;
     }
+  }
 }
 
 /**
@@ -281,8 +283,8 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
     BOOST_FAIL("Unable to load labels for vc2__test_labels.txt");
 
   // Iterations = 1
-  SetInputParam("training", std::move(trainData));
-  SetInputParam("labels", std::move(labels));
+  SetInputParam("training", trainData);
+  SetInputParam("labels", labels);
   SetInputParam("weak_learner", std::string("perceptron"));
   SetInputParam("iterations", (int) 1);
 
@@ -297,8 +299,8 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
   double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
 
   // Iterations = 10
-  SetInputParam("training", std::move(trainData));
-  SetInputParam("labels", std::move(labels));
+  SetInputParam("training", trainData);
+  SetInputParam("labels", labels);
   SetInputParam("weak_learner", std::string("perceptron"));
   SetInputParam("iterations", (int) 10);
 
@@ -313,8 +315,8 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
   double accuracy10 = (double(correct) / double(testLabels.n_elem) * 100);
 
   // Iterations = 100
-  SetInputParam("training", std::move(trainData));
-  SetInputParam("labels", std::move(labels));
+  SetInputParam("training", trainData);
+  SetInputParam("labels", labels);
   SetInputParam("weak_learner", std::string("perceptron"));
   SetInputParam("iterations", (int) 100);
 
@@ -354,8 +356,8 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffTolTest)
     BOOST_FAIL("Unable to load labels for vc2__test_labels.txt");
 
   // tolerance = 0.001
-  SetInputParam("training", std::move(trainData));
-  SetInputParam("labels", std::move(labels));
+  SetInputParam("training", trainData);
+  SetInputParam("labels", labels);
   SetInputParam("tolerance", (double) 0.001);
 
   mlpackMain();
@@ -369,8 +371,8 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffTolTest)
   double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
 
   // tolerance = 0.01
-  SetInputParam("training", std::move(trainData));
-  SetInputParam("labels", std::move(labels));
+  SetInputParam("training", trainData);
+  SetInputParam("labels", labels);
   SetInputParam("tolerance", (double) 0.01);
 
   mlpackMain();
@@ -383,8 +385,8 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffTolTest)
   double accuracy2 = (double(correct) / double(testLabels.n_elem) * 100);
 
   // tolerance = 0.1
-  SetInputParam("training", std::move(trainData));
-  SetInputParam("labels", std::move(labels));
+  SetInputParam("training", trainData);
+  SetInputParam("labels", labels);
   SetInputParam("tolerance", (double) 0.1);
 
   mlpackMain();
