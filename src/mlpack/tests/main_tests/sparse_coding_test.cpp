@@ -36,6 +36,7 @@ struct SparseCodingTestFixture
   ~SparseCodingTestFixture()
   {
     // Clear the settings.
+    bindings::tests::CleanMemory();
     CLI::ClearSettings();
   }
 };
@@ -116,14 +117,14 @@ BOOST_AUTO_TEST_CASE(SparseCodingNormalizationTest)
   mlpackMain();
 
   // Store outputs.
-  arma::mat dictionary =
-    std::move(CLI::GetParam<arma::mat>("dictionary"));
+  arma::mat dictionary = CLI::GetParam<arma::mat>("dictionary");
   arma::mat codes =
-    std::move(CLI::GetParam<arma::mat>("codes"));
+      std::move(CLI::GetParam<arma::mat>("codes"));
 
   // Train for normalization set to false.
 
   // Reset passed parameters.
+  bindings::tests::CleanMemory();
   CLI::GetSingleton().Parameters()["normalize"].wasPassed = false;
 
   // Normalize train dataset.
@@ -174,6 +175,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingBoundsTest)
   // Test for L2 value.
 
   // Input training data.
+  bindings::tests::CleanMemory();
   SetInputParam("training", inputData);
   SetInputParam("atoms", (int) 10);
   SetInputParam("lambda2", (double) -1.0);
@@ -185,6 +187,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingBoundsTest)
   // Test for max_iterations.
 
   // Input training data.
+  bindings::tests::CleanMemory();
   SetInputParam("training", inputData);
   SetInputParam("atoms", (int) 10);
   SetInputParam("max_iterations", (int) -1.0);
@@ -196,6 +199,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingBoundsTest)
   // Test for objective_tolerance.
 
   // Input training data.
+  bindings::tests::CleanMemory();
   SetInputParam("training", inputData);
   SetInputParam("atoms", (int) 10);
   SetInputParam("objective_tolerance", (double) -1.0);
@@ -207,6 +211,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingBoundsTest)
   // Test for newton_tolerance.
 
   // Input training data.
+  bindings::tests::CleanMemory();
   SetInputParam("training", inputData);
   SetInputParam("atoms", (int) 10);
   SetInputParam("newton_tolerance", (double) -1.0);
@@ -254,10 +259,10 @@ BOOST_AUTO_TEST_CASE(SparseCodingModelVerTest)
   LoadData(inputData, testData);
 
   mat initialDictionary = inputData.cols(0, 1);
+  SparseCoding* c = new SparseCoding();
 
   // Input trained model and initial_dictionary.
-  SetInputParam("input_model",
-                std::move(CLI::GetParam<SparseCoding>("output_model")));
+  SetInputParam("input_model", c);
   SetInputParam("initial_dictionary", std::move(initialDictionary));
 
   Log::Fatal.ignoreInput = true;
@@ -361,9 +366,9 @@ BOOST_AUTO_TEST_CASE(SparseCodingModelReuseTest)
 
   // Store outputs.
   arma::mat dictionary =
-    std::move(CLI::GetParam<arma::mat>("dictionary"));
+      std::move(CLI::GetParam<arma::mat>("dictionary"));
   arma::mat codes =
-    std::move(CLI::GetParam<arma::mat>("codes"));
+      std::move(CLI::GetParam<arma::mat>("codes"));
 
   // Reset passed parameters.
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
@@ -372,8 +377,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingModelReuseTest)
 
   // Input data.
   SetInputParam("max_iterations", (int) 100);
-  SetInputParam("input_model",
-                std::move(CLI::GetParam<SparseCoding>("output_model")));
+  SetInputParam("input_model", CLI::GetParam<SparseCoding*>("output_model"));
   SetInputParam("normalize", (bool) true);
   SetInputParam("test", std::move(testData));
 
@@ -424,14 +428,14 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffMaxItrTest)
   mlpackMain();
 
   // Store outputs.
-  arma::mat dictionary =
-    std::move(CLI::GetParam<arma::mat>("dictionary"));
+  arma::mat dictionary = CLI::GetParam<arma::mat>("dictionary");
   arma::mat codes =
-    std::move(CLI::GetParam<arma::mat>("codes"));
+      std::move(CLI::GetParam<arma::mat>("codes"));
 
   // Train for max_iterations equals to 100.
 
   // Input data.
+  bindings::tests::CleanMemory();
   SetInputParam("training", std::move(inputData));
   SetInputParam("atoms", (int) 2);
   SetInputParam("initial_dictionary", std::move(initialDictionary));
@@ -473,14 +477,14 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffObjToleranceTest)
   mlpackMain();
 
   // Store outputs.
-  arma::mat dictionary =
-    std::move(CLI::GetParam<arma::mat>("dictionary"));
+  arma::mat dictionary = CLI::GetParam<arma::mat>("dictionary");
   arma::mat codes =
-    std::move(CLI::GetParam<arma::mat>("codes"));
+      std::move(CLI::GetParam<arma::mat>("codes"));
 
   // Train for objective_tolerance equals to 10000.0.
 
   // Input data.
+  bindings::tests::CleanMemory();
   SetInputParam("training", std::move(inputData));
   SetInputParam("atoms", (int) 2);
   SetInputParam("initial_dictionary", std::move(initialDictionary));
@@ -521,14 +525,14 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffNewtonToleranceTest)
   mlpackMain();
 
   // Store outputs.
-  arma::mat dictionary =
-    std::move(CLI::GetParam<arma::mat>("dictionary"));
+  arma::mat dictionary = CLI::GetParam<arma::mat>("dictionary");
   arma::mat codes =
-    std::move(CLI::GetParam<arma::mat>("codes"));
+      std::move(CLI::GetParam<arma::mat>("codes"));
 
   // Train for newton_tolerance equals to 10000.0.
 
   // Input data.
+  bindings::tests::CleanMemory();
   SetInputParam("training", std::move(inputData));
   SetInputParam("atoms", (int) 2);
   SetInputParam("initial_dictionary", std::move(initialDictionary));
@@ -569,14 +573,14 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffL1Test)
   mlpackMain();
 
   // Store outputs.
-  arma::mat dictionary =
-    std::move(CLI::GetParam<arma::mat>("dictionary"));
+  arma::mat dictionary = CLI::GetParam<arma::mat>("dictionary");
   arma::mat codes =
-    std::move(CLI::GetParam<arma::mat>("codes"));
+      std::move(CLI::GetParam<arma::mat>("codes"));
 
   // Train for lambda1 equals to 10000.0.
 
   // Input data.
+  bindings::tests::CleanMemory();
   SetInputParam("training", std::move(inputData));
   SetInputParam("atoms", (int) 2);
   SetInputParam("initial_dictionary", std::move(initialDictionary));
@@ -617,14 +621,14 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffL2Test)
   mlpackMain();
 
   // Store outputs.
-  arma::mat dictionary =
-    std::move(CLI::GetParam<arma::mat>("dictionary"));
+  arma::mat dictionary = CLI::GetParam<arma::mat>("dictionary");
   arma::mat codes =
-    std::move(CLI::GetParam<arma::mat>("codes"));
+      std::move(CLI::GetParam<arma::mat>("codes"));
 
   // Train for lambda2 equals to 10000.0.
 
   // Input data.
+  bindings::tests::CleanMemory();
   SetInputParam("training", std::move(inputData));
   SetInputParam("atoms", (int) 2);
   SetInputParam("initial_dictionary", std::move(initialDictionary));
@@ -666,14 +670,14 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffL1L2Test)
   mlpackMain();
 
   // Store outputs.
-  arma::mat dictionary =
-    std::move(CLI::GetParam<arma::mat>("dictionary"));
+  arma::mat dictionary = CLI::GetParam<arma::mat>("dictionary");
   arma::mat codes =
-    std::move(CLI::GetParam<arma::mat>("codes"));
+      std::move(CLI::GetParam<arma::mat>("codes"));
 
   // Train for lambda1 EQUALS 0.0 & lambda2 equals to 10000.0.
 
   // Input data.
+  bindings::tests::CleanMemory();
   SetInputParam("training", std::move(inputData));
   SetInputParam("atoms", (int) 2);
   SetInputParam("initial_dictionary", std::move(initialDictionary));
