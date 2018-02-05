@@ -31,6 +31,7 @@ struct AdaBoostTestFixture
   ~AdaBoostTestFixture()
   {
     // Clear the settings.
+    bindings::tests::CleanMemory();
     CLI::ClearSettings();
   }
 };
@@ -104,7 +105,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostModelReuseTest)
 
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                std::move(CLI::GetParam<AdaBoostModel>("output_model")));
+                CLI::GetParam<AdaBoostModel*>("output_model"));
 
   mlpackMain();
 
@@ -165,6 +166,8 @@ BOOST_AUTO_TEST_CASE(AdaBoostWithoutLabelTest)
   arma::Row<size_t> output;
   output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
+  bindings::tests::CleanMemory();
+
   trainData.shed_row(trainData.n_rows - 1);
 
   // Now train Adaboost with labels provided.
@@ -192,7 +195,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostTrainingDataOrModelTest)
   mlpackMain();
 
   SetInputParam("input_model",
-                std::move(CLI::GetParam<AdaBoostModel>("output_model")));
+                CLI::GetParam<AdaBoostModel*>("output_model"));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -234,7 +237,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffWeakLearnerOutputTest)
     BOOST_FAIL("Unable to load test dataset vc2.csv!");
 
   SetInputParam("training", trainData);
-  SetInputParam("labels", std::move(labels));
+  SetInputParam("labels", labels);
 
   SetInputParam("test", testData);
 
@@ -242,6 +245,8 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffWeakLearnerOutputTest)
 
   arma::Row<size_t> output;
   output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
+
+  bindings::tests::CleanMemory();
 
   SetInputParam("weak_learner", std::string("perceptron"));
 
@@ -292,11 +297,13 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
 
   // Calculate accuracy.
   arma::Row<size_t> output;
-  CLI::GetParam<AdaBoostModel>("output_model").Classify(testData,
+  CLI::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
        output);
 
   size_t correct = arma::accu(output == testLabels);
   double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
+
+  bindings::tests::CleanMemory();
 
   // Iterations = 10
   SetInputParam("training", trainData);
@@ -307,12 +314,13 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
   mlpackMain();
 
   // Calculate accuracy.
-  CLI::GetParam<AdaBoostModel>("output_model").Classify(testData,
+  CLI::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
        output);
-
 
   correct = arma::accu(output == testLabels);
   double accuracy10 = (double(correct) / double(testLabels.n_elem) * 100);
+
+  bindings::tests::CleanMemory();
 
   // Iterations = 100
   SetInputParam("training", trainData);
@@ -323,7 +331,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
   mlpackMain();
 
   // Calculate accuracy.
-  CLI::GetParam<AdaBoostModel>("output_model").Classify(testData,
+  CLI::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
        output);
 
   correct = arma::accu(output == testLabels);
@@ -364,11 +372,13 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffTolTest)
 
   // Calculate accuracy.
   arma::Row<size_t> output;
-  CLI::GetParam<AdaBoostModel>("output_model").Classify(testData,
+  CLI::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
        output);
 
   size_t correct = arma::accu(output == testLabels);
   double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
+
+  bindings::tests::CleanMemory();
 
   // tolerance = 0.01
   SetInputParam("training", trainData);
@@ -378,11 +388,13 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffTolTest)
   mlpackMain();
 
   // Calculate accuracy.
-  CLI::GetParam<AdaBoostModel>("output_model").Classify(testData,
+  CLI::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
        output);
 
   correct = arma::accu(output == testLabels);
   double accuracy2 = (double(correct) / double(testLabels.n_elem) * 100);
+
+  bindings::tests::CleanMemory();
 
   // tolerance = 0.1
   SetInputParam("training", trainData);
@@ -392,7 +404,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffTolTest)
   mlpackMain();
 
   // Calculate accuracy.
-  CLI::GetParam<AdaBoostModel>("output_model").Classify(testData,
+  CLI::GetParam<AdaBoostModel*>("output_model")->Classify(testData,
        output);
 
   correct = arma::accu(output == testLabels);
