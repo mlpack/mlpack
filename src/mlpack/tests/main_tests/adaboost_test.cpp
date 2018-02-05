@@ -273,7 +273,6 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffWeakLearnerOutputTest)
   }
   BOOST_REQUIRE_EQUAL(flag, 1);
 }
-}
 
 /**
  * Accuracy increases as Number of Iterations increases.
