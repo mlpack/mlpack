@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "gradient_descent.hpp"
 
+#include <mlpack/core/optimizers/function.hpp>
+
 namespace mlpack {
 namespace optimization {
 
