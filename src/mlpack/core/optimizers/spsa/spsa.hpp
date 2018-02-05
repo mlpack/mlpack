@@ -52,6 +52,11 @@ class SPSA
                       maxIterations);
   }
 
+  ~SPSA()
+  {
+    delete spsaUpdate;
+  }
+
   template<typename DecomposableFunctionType>
   void Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   {
