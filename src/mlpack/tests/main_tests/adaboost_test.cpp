@@ -238,7 +238,6 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffWeakLearnerOutputTest)
 
   SetInputParam("training", trainData);
   SetInputParam("labels", labels);
-
   SetInputParam("test", testData);
 
   mlpackMain();
@@ -248,6 +247,13 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffWeakLearnerOutputTest)
 
   bindings::tests::CleanMemory();
 
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+
+  SetInputParam("training", trainData);
+  SetInputParam("labels", labels);
+  SetInputParam("test", testData);
   SetInputParam("weak_learner", std::string("perceptron"));
 
   mlpackMain();
@@ -257,11 +263,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffWeakLearnerOutputTest)
 
   for (size_t i = 0; i < output.n_elem; ++i)
   {
-    if (output[i] != outputPerceptron[i])
-    {
       BOOST_REQUIRE_NE(output[i], outputPerceptron[i]);
-      break;
-    }
   }
 }
 
