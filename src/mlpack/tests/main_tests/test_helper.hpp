@@ -9,6 +9,10 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef MLPACK_TESTS_MAIN_TESTS_TEST_HELPER_HPP
+#define MLPACK_TESTS_MAIN_TESTS_TEST_HELPER_HPP
+
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace util {
@@ -31,3 +35,5 @@ void SetInputParam(const std::string& name, T&& value)
 
 } // namespace util
 } // namespace mlpack
+
+#endif

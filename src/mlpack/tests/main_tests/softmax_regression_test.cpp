@@ -35,6 +35,7 @@ struct SoftmaxRegressionTestFixture
   ~SoftmaxRegressionTestFixture()
   {
     // Clear the settings.
+    bindings::tests::CleanMemory();
     CLI::ClearSettings();
   }
 };
@@ -150,7 +151,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionModelReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                std::move(CLI::GetParam<SoftmaxRegression>("output_model")));
+                CLI::GetParam<SoftmaxRegression*>("output_model"));
 
   mlpackMain();
 
@@ -273,7 +274,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainingVerTest)
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                std::move(CLI::GetParam<SoftmaxRegression>("output_model")));
+                CLI::GetParam<SoftmaxRegression*>("output_model"));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -318,7 +319,9 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffLambdaTest)
 
   // Store output parameters.
   arma::mat modelParam;
-  modelParam = CLI::GetParam<SoftmaxRegression>("output_model").Parameters();
+  modelParam = CLI::GetParam<SoftmaxRegression*>("output_model")->Parameters();
+
+  bindings::tests::CleanMemory();
 
   // Reset passed parameters.
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
@@ -340,13 +343,13 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffLambdaTest)
   for (size_t i = 0; i < modelParam.n_elem; ++i)
   {
     BOOST_REQUIRE_NE(modelParam[i],
-        CLI::GetParam<SoftmaxRegression>("output_model").Parameters()[i]);
+        CLI::GetParam<SoftmaxRegression*>("output_model")->Parameters()[i]);
   }
 }
 
 /**
- * Check that output object parameters are different
- * for different numbers of max_iterations.
+ * Check that output object parameters are different for different numbers of
+ * max_iterations.
  */
 BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffMaxItrTest)
 {
@@ -382,7 +385,9 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffMaxItrTest)
 
   // Store output parameters.
   arma::mat modelParam;
-  modelParam = CLI::GetParam<SoftmaxRegression>("output_model").Parameters();
+  modelParam = CLI::GetParam<SoftmaxRegression*>("output_model")->Parameters();
+
+  bindings::tests::CleanMemory();
 
   // Reset passed parameters.
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
@@ -404,7 +409,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffMaxItrTest)
   for (size_t i = 0; i < modelParam.n_elem; ++i)
   {
     BOOST_REQUIRE_NE(modelParam[i],
-        CLI::GetParam<SoftmaxRegression>("output_model").Parameters()[i]);
+        CLI::GetParam<SoftmaxRegression*>("output_model")->Parameters()[i]);
   }
 }
 
@@ -446,7 +451,9 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffInterceptTest)
 
   // Store output parameters.
   arma::mat modelParam;
-  modelParam = CLI::GetParam<SoftmaxRegression>("output_model").Parameters();
+  modelParam = CLI::GetParam<SoftmaxRegression*>("output_model")->Parameters();
+
+  bindings::tests::CleanMemory();
 
   // Reset passed parameters.
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
@@ -466,7 +473,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionDiffInterceptTest)
   // Check that initial parameters has 1 more parameter than
   // final parameters matrix.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<SoftmaxRegression>("output_model").Parameters().n_cols,
+      CLI::GetParam<SoftmaxRegression*>("output_model")->Parameters().n_cols,
       modelParam.n_cols + 1);
 }
 

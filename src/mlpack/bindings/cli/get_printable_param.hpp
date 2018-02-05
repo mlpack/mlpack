@@ -37,15 +37,23 @@ std::string GetPrintableParam(
     const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0);
 
 /**
- * Print a matrix option (this just prints the filename).
+ * Print a matrix/tuple option (this just prints the filename).
  */
 template<typename T>
 std::string GetPrintableParam(
     const util::ParamData& data,
     const typename std::enable_if<arma::is_arma_type<T>::value ||
-                                  data::HasSerialize<T>::value ||
                                   std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
+
+/**
+ * Print a model option (this just prints the filename).
+ */
+template<typename T>
+std::string GetPrintableParam(
+    const util::ParamData& data,
+    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
+    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0);
 
 /**
  * Print an option into a std::string.  This should print a short, one-line
@@ -57,7 +65,8 @@ void GetPrintableParam(const util::ParamData& data,
                        const void* /* input */,
                        void* output)
 {
-  *((std::string*) output) = GetPrintableParam<T>(data);
+  *((std::string*) output) =
+      GetPrintableParam<typename std::remove_pointer<T>::type>(data);
 }
 
 } // namespace cli

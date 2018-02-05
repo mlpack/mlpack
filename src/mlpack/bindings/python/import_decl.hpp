@@ -79,7 +79,7 @@ void ImportDecl(const util::ParamData& d,
                 const void* indent,
                 void* /* output */)
 {
-  ImportDecl<T>(d, *((size_t*) indent));
+  ImportDecl<typename std::remove_pointer<T>::type>(d, *((size_t*) indent));
 }
 
 } // namespace python
