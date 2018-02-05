@@ -271,7 +271,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffWeakLearnerOutputTest)
       break;
     }
   }
-  BOOST_REQUIRE_EQUAL(flag, 1)
+  BOOST_REQUIRE_EQUAL(flag, 1);
 }
 }
 
