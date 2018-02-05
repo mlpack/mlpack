@@ -243,8 +243,6 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffWeakLearnerOutputTest)
   arma::Row<size_t> output;
   output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
-  CLI::GetSingleton().Parameters()["weak_learner"].wasPassed = false;
-
   SetInputParam("weak_learner", std::string("perceptron"));
 
   mlpackMain();
@@ -252,7 +250,12 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffWeakLearnerOutputTest)
   arma::Row<size_t> outputPerceptron;
   outputPerceptron = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
-  CheckMatrices(output, outputPerceptron);
+  for (size_t i = 0; i < output.n_elem; ++i)
+    if(output[i] != outputPerceptron[i])
+    {
+      BOOST_REQUIRE_NE(output[i], outputPerceptron[i]);
+      break;
+    }
 }
 
 /**
@@ -324,7 +327,8 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
   correct = arma::accu(output == testLabels);
   double accuracy100 = (double(correct) / double(testLabels.n_elem) * 100);
 
-  BOOST_REQUIRE(accuracy100 >= accuracy10 && accuracy10 >= accuracy1);
+  BOOST_REQUIRE_LE(accuracy1, accuracy10);
+  BOOST_REQUIRE_LE(accuracy10, accuracy100);
 }
 
 /**
@@ -349,10 +353,10 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffTolTest)
   if (!data::Load("vc2_test_labels.txt", testLabels))
     BOOST_FAIL("Unable to load labels for vc2__test_labels.txt");
 
-  // tolerance = 1e-5
+  // tolerance = 0.001
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(labels));
-  SetInputParam("tolerance", (double) 1e-5);
+  SetInputParam("tolerance", (double) 0.001);
 
   mlpackMain();
 
@@ -363,6 +367,20 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffTolTest)
 
   size_t correct = arma::accu(output == testLabels);
   double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
+
+  // tolerance = 0.01
+  SetInputParam("training", std::move(trainData));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("tolerance", (double) 0.01);
+
+  mlpackMain();
+
+  // Calculate accuracy.
+  CLI::GetParam<AdaBoostModel>("output_model").Classify(testData,
+       output);
+
+  correct = arma::accu(output == testLabels);
+  double accuracy2 = (double(correct) / double(testLabels.n_elem) * 100);
 
   // tolerance = 0.1
   SetInputParam("training", std::move(trainData));
@@ -375,25 +393,11 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffTolTest)
   CLI::GetParam<AdaBoostModel>("output_model").Classify(testData,
        output);
 
-
-  correct = arma::accu(output == testLabels);
-  double accuracy2 = (double(correct) / double(testLabels.n_elem) * 100);
-
-  // tolerance = 0.5
-  SetInputParam("training", std::move(trainData));
-  SetInputParam("labels", std::move(labels));
-  SetInputParam("tolerance", (double) 0.5);
-
-  mlpackMain();
-
-  // Calculate accuracy.
-  CLI::GetParam<AdaBoostModel>("output_model").Classify(testData,
-       output);
-
   correct = arma::accu(output == testLabels);
   double accuracy3 = (double(correct) / double(testLabels.n_elem) * 100);
 
-  BOOST_REQUIRE(accuracy1 >= accuracy2 && accuracy2 >= accuracy3);
+  BOOST_REQUIRE_LE(accuracy1, accuracy2);
+  BOOST_REQUIRE_LE(accuracy2, accuracy3);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
