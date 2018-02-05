@@ -1,5 +1,6 @@
 /**
  * @file inertia_weight.hpp
+ * @author Adeel Ahmad
  *
  * PSO with inertia weight.
  *
@@ -23,19 +24,35 @@ class InertiaWeight
 {
  public:
   /**
-   * Update the particles' velocity and position.
+   * Implement the PSO with inertia weight. In this variant, the inertia weight
+   * is used to calibrate the influence of the previous particle's velocity.
+   * The velocity update is given by the following equation:
+   * \f[
+   * v_{i}(t + 1) = \omega * v_{i}(t) + c1 * rand() * (x_{pbest_{i}}
+   * - x_{i}) + c2 * rand() * (x_{gBest_{i}} - x_{i})
+   * \f]
    *
-   * @tparam DecomposableFunctionType Type of the function to be evaluated.
-   * @param function Function to optimize.
-   * @param batchSize Batch size to use for each step.
-   * @param iterate starting point.
+   * @param particlePosition Position of the particles.
+   * @param particleVelocity Velocity of the particles.
+   * @param bestParticlePosition Best position of the particles.
+   * @param bestSwarmPosition Best position of the swarm.
+   * @param interiaWeight Inertia weight of the particles (omega).
+   * @param cognitiveAcceleration Cognitive acceleration of the particles.
+   * @param socialAcceleration Social acceleration of the particles.
    */
-  template<typename DecomposableFunctionType>
-  double UpdateParameters(DecomposableFunctionType& function,
-                      const size_t batchSize,
-                      const arma::mat& iterate)
+  double Update(const double particlePosition,
+                      const double particleVelocity,
+                      const double bestParticlePosition,
+                      const double bestSwarmPosition,
+                      const double interiaWeight,
+                      const double cognitiveAcceleration,
+                      const double socialAcceleration)
+
   {
-    // TODO: Implement!
+    return interiaWeight * particleVelocity + cognitiveAcceleration *
+        math::Random() * (bestParticlePosition - particlePosition) +
+        socialAcceleration * math::Random() *
+        (bestSwarmPosition - particlePosition);
   }
 };
 

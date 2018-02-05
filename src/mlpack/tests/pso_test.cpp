@@ -1,5 +1,6 @@
 /**
  * @file pso_test.cpp
+ * @author Adeel Ahmad
  *
  * Test file for PSO.
  *
@@ -10,10 +11,27 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/pso/pso.hpp>
+#include <mlpack/core/optimizers/pso/test_function.hpp>
+
+#include <boost/test/unit_test.hpp>
 
 using namespace arma;
+using namespace mlpack;
 using namespace mlpack::optimization;
 
-int main() {
-    PSO<> optimizer();
+BOOST_AUTO_TEST_SUITE(PSOTest);
+
+/**
+ * Simple test for minimizing the Rosenbrock function.
+ */
+BOOST_AUTO_TEST_CASE(RosenbrockTest)
+{
+  PSO<> optimizer;
+  PSOTestFunction f;
+
+  vec coordinates = arma::mat("6; -45.6; 6.2");
+
+  double result = optimizer.Optimize(f, coordinates);
+
+  BOOST_REQUIRE_SMALL(result, 1e-5);
 }

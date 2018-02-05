@@ -1,5 +1,6 @@
 /**
  * @file pso.hpp
+ * @author Adeel Ahmad
  *
  * Definition of the Particle Swarm Optimizer as proposed
  * by J. Kennedy et al. in "Particle swarm optimization".
@@ -64,10 +65,8 @@ class PSO
    * and parameters.
    *
    * @param lambda The population size (0 is the default size).
-   * @param particlePosition Position of the particles.
-   * @param particleVelocity Velocity of the particles.
-   * @param bestParticlePosition Best position of the particles.
-   * @param bestSwarmPosition Best position of the swarm.
+   * @param dimension Dimension of the search space i.e. number
+   *     of components in a particle.
    * @param interiaWeight Inertia weight of the particles (omega).
    * @param cognitiveAcceleration Cognitive acceleration of the particles.
    * @param socialAcceleration Social acceleration of the particles.
@@ -78,14 +77,11 @@ class PSO
    *     objective.
    */
   PSO(const size_t lambda = 0,
-        const arma::mat particlePosition = 0,
-        const arma::mat particleVelocity = 0,
-        const arma::mat bestParticlePosition = 0,
-        const double bestSwarmPosition = 0,
+        const size_t dimension = 10,
         const double interiaWeight = 0.9,
         const double cognitiveAcceleration = 0.5,
         const double socialAcceleration = 0.3,
-        const size_t maxIterations = 1000,
+        const size_t maxIterations = 200,
         const double tolerance = 1e-5,
         const VelocityVectorType& velocityType = VelocityVectorType());
 
@@ -106,6 +102,11 @@ class PSO
   size_t PopulationSize() const { return lambda; }
   //! Modify the step size.
   size_t& PopulationSize() { return lambda; }
+
+  //! Get the dimension of the search space.
+  size_t Dimension() const { return dimension; }
+  //! Modify the dimension of the search space.
+  size_t& Dimension() { return dimension; }
 
   //! Get the intertia weight of particles.
   double InteriaWeight() const { return interiaWeight; }
@@ -141,6 +142,9 @@ class PSO
   //! Population size.
   size_t lambda;
 
+  //! Dimension of the search space i.e. number of components in a particle.
+  size_t dimension;
+
   //! Position of the particles.
   arma::mat particlePosition;
 
@@ -151,7 +155,7 @@ class PSO
   arma::mat bestParticlePosition;
 
   //! Best position of the swarm.
-  double bestSwarmPosition;
+  arma::mat bestSwarmPosition;
 
   //! Inertia weight of the particles (omega).
   double interiaWeight;
