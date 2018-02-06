@@ -365,17 +365,28 @@ void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
   }
 }
 
-
-
 /**
- * Train the specified network and the construct a Reber grammar dataset.
+ * @brief Creates the reber grammar data for tests. 
+ * 
+ * @param trainInput The train data
+ * @param trainLabels The train labels
+ * @param testInput The test input
+ * @param recursive whether recursive Reber
+ * @param trainReberGrammarCount The number of training set
+ * @param testReberGrammarCount The number of test set
+ * @param averageRecursion Average recursion
+ * @param maxRecursion Max recursion
+ * @return arma::Mat<char> The Reber state translation to be used.
  */
-template<typename RecurrentLayerType>
-void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
-                             const bool recursive = false,
-                             const size_t averageRecursion = 3,
-                             const size_t maxRecursion = 5,
-                             const size_t iterations = 10)
+arma::Mat<char> GenerateReberGrammarData(
+                              arma::field<arma::mat>& trainInput,
+                              arma::field<arma::mat>& trainLabels,
+                              arma::field<arma::mat>& testInput,
+                              bool recursive = false,
+                              const size_t trainReberGrammarCount = 700,
+                              const size_t testReberGrammarCount = 250,
+                              const size_t averageRecursion = 3,
+                              const size_t maxRecursion = 5)
 {
   // Reber state transition matrix. (The last two columns are the indices to the
   // next path).
@@ -387,13 +398,9 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
               << 'P' << 'V' << '3' << '5' << arma::endr
               << 'E' << 'E' << '0' << '0' << arma::endr;
 
-  const size_t trainReberGrammarCount = 700;
-  const size_t testReberGrammarCount = 250;
 
   std::string trainReber, testReber;
-  arma::field<arma::mat> trainInput(1, trainReberGrammarCount);
-  arma::field<arma::mat> trainLabels(1, trainReberGrammarCount);
-  arma::field<arma::mat> testInput(1, testReberGrammarCount);
+
   arma::colvec translation;
 
   // Generate the training data.
@@ -429,6 +436,36 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
       testInput(0, i) = arma::join_cols(testInput(0, i), translation);
     }
   }
+
+  return transitions;
+}
+
+/**
+ * Train the specified network and the construct a Reber grammar dataset.
+ */
+template<typename RecurrentLayerType>
+void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
+                             const bool recursive = false,
+                             const size_t averageRecursion = 3,
+                             const size_t maxRecursion = 5,
+                             const size_t iterations = 10)
+{
+  const size_t trainReberGrammarCount = 700;
+  const size_t testReberGrammarCount = 250;
+
+  arma::field<arma::mat> trainInput(1, trainReberGrammarCount);
+  arma::field<arma::mat> trainLabels(1, trainReberGrammarCount);
+  arma::field<arma::mat> testInput(1, testReberGrammarCount);
+
+  arma::Mat<char> transitions =
+                  GenerateReberGrammarData(trainInput,
+                                           trainLabels,
+                                           testInput,
+                                           recursive,
+                                           trainReberGrammarCount,
+                                           testReberGrammarCount,
+                                           averageRecursion,
+                                           maxRecursion);
 
   /*
    * Construct a network with 7 input units, layerSize hidden units and 7 output
@@ -912,62 +949,23 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
  */
 void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
                                    const bool recursive = false,
-                                   const size_t averageRecursion = 3,
-                                   const size_t maxRecursion = 5,
                                    const size_t iterations = 10)
 {
-  // Reber state transition matrix. (The last two columns are the indices to the
-  // next path).
-  arma::Mat<char> transitions;
-  transitions << 'T' << 'P' << '1' << '2' << arma::endr
-              << 'X' << 'S' << '3' << '1' << arma::endr
-              << 'V' << 'T' << '4' << '2' << arma::endr
-              << 'X' << 'S' << '2' << '5' << arma::endr
-              << 'P' << 'V' << '3' << '5' << arma::endr
-              << 'E' << 'E' << '0' << '0' << arma::endr;
 
   const size_t trainReberGrammarCount = 700;
   const size_t testReberGrammarCount = 250;
 
-  std::string trainReber, testReber;
   arma::field<arma::mat> trainInput(1, trainReberGrammarCount);
   arma::field<arma::mat> trainLabels(1, trainReberGrammarCount);
   arma::field<arma::mat> testInput(1, testReberGrammarCount);
-  arma::colvec translation;
 
-  // Generate the training data.
-  for (size_t i = 0; i < trainReberGrammarCount; i++)
-  {
-    if (recursive)
-      GenerateRecursiveReber(transitions, 3, 5, trainReber);
-    else
-      GenerateReber(transitions, trainReber);
-
-    for (size_t j = 0; j < trainReber.length() - 1; j++)
-    {
-      ReberTranslation(trainReber[j], translation);
-      trainInput(0, i) = arma::join_cols(trainInput(0, i), translation);
-
-      ReberTranslation(trainReber[j + 1], translation);
-      trainLabels(0, i) = arma::join_cols(trainLabels(0, i), translation);
-    }
-  }
-
-  // Generate the test data.
-  for (size_t i = 0; i < testReberGrammarCount; i++)
-  {
-    if (recursive)
-      GenerateRecursiveReber(transitions, averageRecursion, maxRecursion,
-          testReber);
-    else
-      GenerateReber(transitions, testReber);
-
-    for (size_t j = 0; j < testReber.length() - 1; j++)
-    {
-      ReberTranslation(testReber[j], translation);
-      testInput(0, i) = arma::join_cols(testInput(0, i), translation);
-    }
-  }
+  arma::Mat<char> transitions =
+                  GenerateReberGrammarData(trainInput,
+                                           trainLabels,
+                                           testInput,
+                                           recursive,
+                                           trainReberGrammarCount,
+                                           testReberGrammarCount);
 
   /*
    * Construct a network with 7 input units, layerSize hidden units and 7 output
