@@ -1,8 +1,8 @@
 /**
- * @file sgd_test_function.hpp
- * @author Ryan Curtin
+ * @file spsa_test_function.hpp
+ * @author N Rajiv Vaidyanathan
  *
- * Very simple test function for SGD.
+ * Very simple test function for SPSA.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

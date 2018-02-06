@@ -1,9 +1,8 @@
 /**
- * @file sgd_test_function.cpp
- * @author Ryan Curtin
+ * @file spsa_test_function.cpp
+ * @author N Rajiv Vaidyanathan
  *
- * Implementation of very simple test function for stochastic gradient descent
- * (SGD).
+ * Implementation of very simple test function for SPSA.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
