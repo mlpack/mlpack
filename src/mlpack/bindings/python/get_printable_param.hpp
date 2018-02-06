@@ -73,7 +73,7 @@ std::string GetPrintableParam(
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
 {
   std::ostringstream oss;
-  oss << data.cppType << " model";
+  oss << data.cppType << " model at " << boost::any_cast<T*>(data.value);
   return oss.str();
 }
 
@@ -110,7 +110,8 @@ void GetPrintableParam(const util::ParamData& data,
                        const void* /* input */,
                        void* output)
 {
-  *((std::string*) output) = GetPrintableParam<T>(data);
+  *((std::string*) output) =
+      GetPrintableParam<typename std::remove_pointer<T>::type>(data);
 }
 
 } // namespace python

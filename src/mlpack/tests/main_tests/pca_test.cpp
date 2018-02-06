@@ -31,6 +31,7 @@ struct PCATestFixture
   ~PCATestFixture()
   {
     // Clear the settings.
+    bindings::tests::CleanMemory();
     CLI::ClearSettings();
   }
 };

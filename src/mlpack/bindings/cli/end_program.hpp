@@ -67,6 +67,37 @@ inline void EndProgram()
       CLI::GetSingleton().timer.PrintTimer(it2.first);
     }
   }
+
+  // Lastly clean up any memory.  If we are holding any pointers, then we "own"
+  // them.  But we may hold the same pointer twice, so we have to be careful to
+  // not delete it multiple times.
+  std::unordered_map<void*, const util::ParamData*> memoryAddresses;
+  it = parameters.begin();
+  while (it != parameters.end())
+  {
+    const util::ParamData& data = it->second;
+
+    void* result;
+    CLI::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
+        NULL, (void*) &result);
+    if (result != NULL && memoryAddresses.count(result) == 0)
+      memoryAddresses[result] = &data;
+
+    ++it;
+  }
+
+  // Now we have all the unique addresses that need to be deleted.
+  std::unordered_map<void*, const util::ParamData*>::const_iterator it2;
+  it2 = memoryAddresses.begin();
+  while (it2 != memoryAddresses.end())
+  {
+    const util::ParamData& data = *(it2->second);
+
+    CLI::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
+        NULL, NULL);
+
+    ++it2;
+  }
 }
 
 } // namespace cli

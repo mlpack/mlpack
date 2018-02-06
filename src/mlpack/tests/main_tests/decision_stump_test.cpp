@@ -35,6 +35,7 @@ struct DecisionStumpTestFixture
   ~DecisionStumpTestFixture()
   {
     // Clear the settings.
+    bindings::tests::CleanMemory();
     CLI::ClearSettings();
   }
 };
@@ -136,6 +137,9 @@ BOOST_AUTO_TEST_CASE(DecisionStumpLabelsLessDimensionTest)
   arma::Row<size_t> predictions;
   predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
 
+  // Delete the previous model.
+  bindings::tests::CleanMemory();
+
   // Now train DS with labels provided.
 
   // Delete last row of inputData.
@@ -198,7 +202,7 @@ BOOST_AUTO_TEST_CASE(DecisionStumpModelReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                std::move(CLI::GetParam<DSModel>("output_model")));
+                std::move(CLI::GetParam<DSModel*>("output_model")));
 
   mlpackMain();
 
@@ -249,7 +253,7 @@ BOOST_AUTO_TEST_CASE(DecisionStumpTrainingVerTest)
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                std::move(CLI::GetParam<DSModel>("output_model")));
+                std::move(CLI::GetParam<DSModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);

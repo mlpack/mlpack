@@ -79,5 +79,5 @@ struct Loglik
 static void mlpackMain()
 {
   // Load model, and calculate the log-likelihood of the sequence.
-  CLI::GetParam<HMMModel>("input_model").PerformAction<Loglik>((void*) NULL);
+  CLI::GetParam<HMMModel*>("input_model")->PerformAction<Loglik>((void*) NULL);
 }

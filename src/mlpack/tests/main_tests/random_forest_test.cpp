@@ -35,6 +35,7 @@ struct RandomForestTestFixture
   ~RandomForestTestFixture()
   {
     // Clear the settings.
+    bindings::tests::CleanMemory();
     CLI::ClearSettings();
   }
 };
@@ -124,7 +125,7 @@ BOOST_AUTO_TEST_CASE(RandomForestModelReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                std::move(CLI::GetParam<RandomForestModel>("output_model")));
+                CLI::GetParam<RandomForestModel*>("output_model"));
 
   mlpackMain();
 
@@ -206,7 +207,7 @@ BOOST_AUTO_TEST_CASE(RandomForestTrainingVerTest)
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                std::move(CLI::GetParam<RandomForestModel>("output_model")));
+                CLI::GetParam<RandomForestModel*>("output_model"));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -218,7 +219,7 @@ BOOST_AUTO_TEST_CASE(RandomForestTrainingVerTest)
  */
 BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
 {
-  // Train for minimium leaf size 20.
+  // Train for minimum leaf size 20.
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Cannot load train dataset vc2.csv!");
@@ -236,13 +237,15 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
 
   // Calculate training accuracy.
   arma::Row<size_t> predictions;
-  CLI::GetParam<RandomForestModel>("output_model").rf.Classify(inputData,
+  CLI::GetParam<RandomForestModel*>("output_model")->rf.Classify(inputData,
        predictions);
 
   size_t correct = arma::accu(predictions == labels);
   double accuracy20 = (double(correct) / double(labels.n_elem) * 100);
 
-  // Train for minimium leaf size 10.
+  bindings::tests::CleanMemory();
+
+  // Train for minimum leaf size 10.
 
   // Input training data.
   SetInputParam("training", inputData);
@@ -252,13 +255,15 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
   mlpackMain();
 
   // Calculate training accuracy.
-  CLI::GetParam<RandomForestModel>("output_model").rf.Classify(inputData,
+  CLI::GetParam<RandomForestModel*>("output_model")->rf.Classify(inputData,
        predictions);
 
   correct = arma::accu(predictions == labels);
   double accuracy10 = (double(correct) / double(labels.n_elem) * 100);
 
-  // Train for minimium leaf size 1.
+  bindings::tests::CleanMemory();
+
+  // Train for minimum leaf size 1.
 
   // Input training data.
   SetInputParam("training", inputData);
@@ -268,7 +273,7 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
   mlpackMain();
 
   // Calculate training accuracy.
-  CLI::GetParam<RandomForestModel>("output_model").rf.Classify(inputData,
+  CLI::GetParam<RandomForestModel*>("output_model")->rf.Classify(inputData,
        predictions);
 
   correct = arma::accu(predictions == labels);
@@ -308,8 +313,9 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
 
   // Calculate training accuracy.
   arma::Row<size_t> predictions;
-  CLI::GetParam<RandomForestModel>("output_model").rf.Classify(testData,
+  CLI::GetParam<RandomForestModel*>("output_model")->rf.Classify(testData,
        predictions);
+  bindings::tests::CleanMemory();
 
   size_t correct = arma::accu(predictions == testLabels);
   double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
@@ -324,8 +330,9 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
   mlpackMain();
 
   // Calculate training accuracy.
-  CLI::GetParam<RandomForestModel>("output_model").rf.Classify(testData,
+  CLI::GetParam<RandomForestModel*>("output_model")->rf.Classify(testData,
        predictions);
+  bindings::tests::CleanMemory();
 
   correct = arma::accu(predictions == testLabels);
   double accuracy5 = (double(correct) / double(testLabels.n_elem) * 100);
@@ -340,7 +347,7 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
   mlpackMain();
 
   // Calculate training accuracy.
-  CLI::GetParam<RandomForestModel>("output_model").rf.Classify(testData,
+  CLI::GetParam<RandomForestModel*>("output_model")->rf.Classify(testData,
        predictions);
 
   correct = arma::accu(predictions == testLabels);
