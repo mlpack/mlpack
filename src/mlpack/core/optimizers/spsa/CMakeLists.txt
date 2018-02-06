@@ -1,6 +1,5 @@
 set(SOURCES
 	spsa.hpp
-	spsa_update.hpp
 )
 
 set(DIR_SRCS)
