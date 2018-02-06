@@ -20,7 +20,7 @@
 namespace mlpack {
 namespace ann {
   /**
-   * Standard hyperbolic tangent layer.
+   * Standard Sigmoid layer.
    */
   template <
       class ActivationFunction = LogisticFunction,
