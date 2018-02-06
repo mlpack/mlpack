@@ -87,6 +87,7 @@ Copyright:
   Copyright 2017, Manish Kumar <manish887kr@gmail.com>
   Copyright 2017, Haritha Sreedharan Nair <haritha1313@gmail.com>
   Copyright 2017&2018, Sourabh Varshney <sourabhvarshney111@gmail.com>
+  Copyright 2018, Nikhil Goel <nikhilgoel199797@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.
