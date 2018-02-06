@@ -951,7 +951,6 @@ void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
                                    const bool recursive = false,
                                    const size_t iterations = 10)
 {
-
   const size_t trainReberGrammarCount = 700;
   const size_t testReberGrammarCount = 250;
 
