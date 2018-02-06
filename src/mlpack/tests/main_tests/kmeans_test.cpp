@@ -82,7 +82,7 @@ BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
 
 
 /**
- * Checking that number of percentage is between 0 and 1 when --refined_start is specified
+ * Checking that percentage is between 0 and 1 when --refined_start is specified
  */
     BOOST_AUTO_TEST_CASE(RefinedStartPercentageTest)
     {
@@ -104,7 +104,7 @@ BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
 
 
 /**
- * Checking that number of percentage is non-negative when --refined_start is specified
+ * Checking percentage is non-negative when --refined_start is specified
  */
     BOOST_AUTO_TEST_CASE(NonNegativePercentageTest)
     {
