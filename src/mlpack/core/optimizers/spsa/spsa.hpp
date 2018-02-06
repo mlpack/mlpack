@@ -14,7 +14,6 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
-//#include "spsa_update.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -42,13 +41,20 @@ namespace optimization {
 class SPSA
 {
  public:
+  // Control the amount of gradient update.
   float a;
   float A;
+
+  // Non-negative co-efficients controlling the optimizer.
   float alpha;
   float gamma;
   float c;
+
+  // Gain sequences.
   float ak;
   float ck;
+
+  // Specifies the maximum number of iterations.
   size_t max_iter;
   arma::vec sp_vector;
   SPSA(const float& alpha = 0.602,
@@ -63,19 +69,12 @@ class SPSA
     A(0.1*a),
     max_iter(maxIterations)
   {
-/*    spsaUpdate = new SPSAUpdate(alpha, gamma, a, c,
-                      maxIterations);*/
+    // Nothing to do.
   }
-
-/*  ~SPSA()
-  {
-    delete spsaUpdate;
-  }*/
 
   template<typename DecomposableFunctionType>
   void Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   {
-    //spsaUpdate->Update(iterate, function);
     const int s = iterate.n_elem;
 
     for (size_t i = 0; i < max_iter; i++)
@@ -91,10 +90,6 @@ class SPSA
       iterate -= ak*gradient;
     }
   }
-
-// private:
-  //! The SPSA Descent object pointer.
-  //SPSAUpdate *spsaUpdate;
 };
 
 } // namespace optimization
