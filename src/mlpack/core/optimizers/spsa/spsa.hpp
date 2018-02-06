@@ -63,34 +63,6 @@ class SPSA
     spsaUpdate->Update(iterate, function);
   }
 
-  float Alpha() const { return spsaUpdate->Alpha(); }
-
-  float& Alpha() { return spsaUpdate->Alpha(); }
-
-  float Gamma() const { return spsaUpdate->Gamma(); }
-
-  float& Gamma() { return spsaUpdate->Gamma(); }
-
-  //! Get the maximum number of iterations (0 indicates no limit).
-  size_t MaxIterations() const { return spsaUpdate->MaxIterations(); }
-  //! Modify the maximum number of iterations (0 indicates no limit).
-  size_t& MaxIterations() { return spsaUpdate->MaxIterations(); }
-
-  float Gradient_scaling_parameter(const int& choice) const
-  {
-    return spsaUpdate->Gradient_scaling_parameter(choice);
-  }
-
-  float& Gradient_scaling_parameter(const int& choice)
-  {
-    return spsaUpdate->Gradient_scaling_parameter(choice);
-  }
-
-  float Noise_variance_parameter() const {
-           return spsaUpdate->Noise_variance_parameter(); }
-
-  float& Noise_variance_parameter() {
-           return spsaUpdate->Noise_variance_parameter(); }
  private:
   //! The SPSA Descent object pointer.
   SPSAUpdate *spsaUpdate;

@@ -79,62 +79,6 @@ class SPSAUpdate
     }
   }
 
-  float Alpha() const { return alpha; }
-
-  float& Alpha() { return alpha; }
-
-  float Gamma() const { return gamma; }
-
-  float& Gamma() { return gamma; }
-
-  //! Get the maximum number of iterations (0 indicates no limit).
-  size_t MaxIterations() const { return max_iter; }
-  //! Modify the maximum number of iterations (0 indicates no limit).
-  size_t& MaxIterations() { return max_iter; }
-
-  float Gradient_scaling_parameter(const int& choice) const
-  {
-    if (choice == 0)
-    {
-      std::cout<<"Parameter -> a"<<std::endl;
-      return a;
-    }
-    else if (choice == 1)
-    {
-      std::cout<<"Parameter -> A"<<std::endl;
-      return A;
-    }
-    else
-    {
-      std::cout<<"No such parameter exists..."<<std::endl;
-      return -1.0;
-    }
-  }
-
-  float& Gradient_scaling_parameter(const int& choice)
-  {
-    if (choice == 0)
-    {
-      std::cout<<"Parameter -> a"<<std::endl;
-      return a;
-    }
-    else if (choice == 1)
-    {
-      std::cout<<"Parameter -> A"<<std::endl;
-      return A;
-    }
-    else
-    {
-      std::cout<<"No such parameter exists..."<<std::endl;
-      static float none = -1;
-      return none;
-    }
-  }
-
-  float Noise_variance_parameter() const { return c; }
-
-  float& Noise_variance_parameter() { return c; }
-
  private:
   float a;
   float A;
