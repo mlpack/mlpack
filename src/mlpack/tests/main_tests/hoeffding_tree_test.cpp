@@ -36,6 +36,7 @@ struct HoeffdingTreeTestFixture
   ~HoeffdingTreeTestFixture()
   {
     // Clear the settings.
+    bindings::tests::CleanMemory();
     CLI::ClearSettings();
   }
 };
@@ -185,6 +186,8 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
   predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
   probabilities = std::move(CLI::GetParam<arma::mat>("probabilities"));
 
+  bindings::tests::CleanMemory();
+
   inputData.shed_row(inputData.n_rows - 1);
 
   // Input training data.
@@ -259,7 +262,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(std::make_tuple(info, testData)));
   SetInputParam("input_model",
-      std::move(CLI::GetParam<HoeffdingTreeModel>("output_model")));
+      CLI::GetParam<HoeffdingTreeModel*>("output_model"));
 
   mlpackMain();
 
@@ -310,15 +313,15 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelCategoricalReuseTest)
 
   mlpackMain();
 
-  arma::Row<size_t> predictions;
-  arma::mat probabilities;
-  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
-  probabilities = std::move(CLI::GetParam<arma::mat>("probabilities"));
-
   // Reset passed parameters.
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
   CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+
+  arma::Row<size_t> predictions;
+  arma::mat probabilities;
+  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+  probabilities = std::move(CLI::GetParam<arma::mat>("probabilities"));
 
   if (!data::Load("braziltourism_test.arff", testData, info))
     BOOST_FAIL("Cannot load test dataset braziltourism_test.arff!");
@@ -326,7 +329,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelCategoricalReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(std::make_tuple(info, testData)));
   SetInputParam("input_model",
-      std::move(CLI::GetParam<HoeffdingTreeModel>("output_model")));
+      CLI::GetParam<HoeffdingTreeModel*>("output_model"));
 
   mlpackMain();
 
@@ -347,6 +350,321 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelCategoricalReuseTest)
       predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
   CheckMatrices(
       probabilities, CLI::GetParam<arma::mat>("probabilities"));
+}
+
+/**
+ * Ensure that small min_samples creates larger model.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingMinSamplesTest)
+{
+  arma::mat inputData;
+  DatasetInfo info;
+  int nodes;
+  if (!data::Load("vc2.csv", inputData, info))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData, info))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  // Input training data.
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
+
+  // Input test data.
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+
+  SetInputParam("min_samples", 10);
+  SetInputParam("confidence", 0.25);
+
+  mlpackMain();
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["min_samples"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["confidence"].wasPassed = false;
+
+  nodes = (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes();
+
+  bindings::tests::CleanMemory();
+
+  if (!data::Load("vc2.csv", inputData, info))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  if (!data::Load("vc2_test.csv", testData, info))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  // Input training data.
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
+
+  // Input test data.
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+
+  SetInputParam("min_samples", 2000);
+  SetInputParam("confidence", 0.25);
+
+  mlpackMain();
+  
+  // Check that small min_samples creates larger model.
+  BOOST_REQUIRE_LT(
+      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(),
+      nodes);
+}
+
+/**
+ * Ensure that large max_samples creates smaller model.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingMaxSamplesTest)
+{
+  arma::mat inputData;
+  DatasetInfo info;
+  int nodes;
+  if (!data::Load("vc2.csv", inputData, info))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData, info))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  // Input training data.
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
+
+  // Input test data.
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+
+  SetInputParam("max_samples", 50000);
+  SetInputParam("confidence", 0.95);
+
+  mlpackMain();
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["max_samples"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["confidence"].wasPassed = false;
+
+  nodes = (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes();
+
+  bindings::tests::CleanMemory();
+
+  if (!data::Load("vc2.csv", inputData, info))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  if (!data::Load("vc2_test.csv", testData, info))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  // Input training data.
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
+
+  // Input test data.
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+
+  SetInputParam("max_samples", 5);
+  SetInputParam("confidence", 0.95);
+
+  mlpackMain();
+
+  // Check that large max_samples creates smaller model.
+  BOOST_REQUIRE_LT(nodes,
+      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
+}
+
+/**
+ * Ensure that small confidence value creates larger model.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingConfidenceTest)
+{
+  arma::mat inputData;
+  DatasetInfo info;
+  int nodes;
+  if (!data::Load("vc2.csv", inputData, info))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData, info))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  // Input training data.
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
+
+  // Input test data.
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+
+  SetInputParam("confidence", 0.95);
+
+  mlpackMain();
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["confidence"].wasPassed = false;
+
+  // Model with high confidence.
+  nodes = (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes();
+
+  bindings::tests::CleanMemory();
+
+  if (!data::Load("vc2.csv", inputData, info))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  if (!data::Load("vc2_test.csv", testData, info))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  // Input training data.
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
+
+  // Input test data.
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+
+  // Model with low confidence.
+  SetInputParam("confidence", 0.25);
+
+  mlpackMain();
+  // Check that higher confidence creates smaller tree.
+  BOOST_REQUIRE_LT(nodes,
+      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
+}
+
+/**
+ * Ensure that large number of passes creates larger model.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingPassesTest)
+{
+  arma::mat inputData;
+  DatasetInfo info;
+  int nodes;
+  if (!data::Load("vc2.csv", inputData, info))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData, info))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  // Input training data.
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
+
+  // Input test data.
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+
+  SetInputParam("passes", 1);
+
+  mlpackMain();
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["passes"].wasPassed = false;
+
+  // Model with smaller number of passes.
+  nodes = (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes();
+
+  bindings::tests::CleanMemory();
+
+  if (!data::Load("vc2.csv", inputData, info))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  if (!data::Load("vc2_test.csv", testData, info))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  // Input training data.
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
+
+  // Input test data.
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+
+  // Model with larger number of passes.
+  SetInputParam("passes", 100);
+
+  mlpackMain();
+
+  // Check that model with larger number of passes has greater number of nodes.
+  BOOST_REQUIRE_LT(nodes,
+      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
+}
+
+/**
+ * Ensure that the model doesn't split if observations before binning
+ * is greater than total number of samples passed.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingBinningTest)
+{
+  arma::mat inputData;
+  arma::mat modData;
+  arma::Row<size_t> modLabels;
+  DatasetInfo info;
+  if (!data::Load("vc2.csv", inputData, info))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData, info))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  modData = inputData.cols(0, 49);
+  modLabels = labels.cols(0, 49);
+
+  // Input training data.
+  SetInputParam("training", std::move(std::make_tuple(info, modData)));
+  SetInputParam("labels", std::move(modLabels));
+
+  // Input test data.
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+
+  SetInputParam("numeric_split_strategy", (string) "domingos");
+  SetInputParam("min_samples", 10);
+
+  // Set parameter to a value greater than number of samples.
+  SetInputParam("observations_before_binning", 100);
+  SetInputParam("confidence", 0.25);
+
+  mlpackMain();
+  
+  // Check that no splitting has happened.
+  BOOST_REQUIRE_EQUAL(
+      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(), 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
