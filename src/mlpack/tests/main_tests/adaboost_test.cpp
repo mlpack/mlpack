@@ -42,7 +42,6 @@ BOOST_FIXTURE_TEST_SUITE(AdaBoostMainTest, AdaBoostTestFixture);
  * Check that number of output labels and number of input
  * points are equal.
  */
-
 BOOST_AUTO_TEST_CASE(AdaBoostOutputDimensionTest)
 {
   arma::mat trainData;
