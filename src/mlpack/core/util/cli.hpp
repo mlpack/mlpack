@@ -25,7 +25,6 @@
 
 #include "timers.hpp"
 #include "program_doc.hpp"
-#include "cli_deleter.hpp" // To make sure we can delete the singleton.
 #include "version.hpp"
 
 #include "param_data.hpp"
@@ -203,13 +202,6 @@ class CLI
   static std::string GetPrintableParam(const std::string& identifier);
 
   /**
-   * Destroy the CLI object.  This resets the pointer to the singleton, so in
-   * case someone tries to access it after destruction, a new one will be made
-   * (the program will not fail).
-   */
-  static void Destroy();
-
-  /**
    * Get the raw value of the parameter before any processing that GetParam()
    * might normally do.  So, e.g., for command-line programs, this does not
    * perform any data loading or manipulation like GetParam() does.  So if you
@@ -302,15 +294,10 @@ class CLI
   std::map<std::string, std::tuple<std::map<std::string, util::ParamData>,
       std::map<char, std::string>, FunctionMapType>> storageMap;
 
- private:
-  //! The singleton itself.
-  static CLI* singleton;
-
-  //! True, if CLI was used to parse command line options.
  public:
+  //! True, if CLI was used to parse command line options.
   bool didParse;
 
- public:
   //! Holds the name of the program for --version.  This is the true program
   //! name (argv[0]) not what is given in ProgramDoc.
   std::string programName;
@@ -321,7 +308,6 @@ class CLI
   //! So that Timer::Start() and Timer::Stop() can access the timer variable.
   friend class Timer;
 
- public:
   //! Pointer to the ProgramDoc object.
   util::ProgramDoc* doc;
 

@@ -120,9 +120,11 @@ static void mlpackMain()
   ReportIgnoredParam({{ "training", false }}, "tolerance");
 
   // Do we have an existing model?
-  LocalCoordinateCoding lcc(0, 0.0);
+  LocalCoordinateCoding* lcc;
   if (CLI::HasParam("input_model"))
-    lcc = std::move(CLI::GetParam<LocalCoordinateCoding>("input_model"));
+    lcc = CLI::GetParam<LocalCoordinateCoding*>("input_model");
+  else
+    lcc = new LocalCoordinateCoding(0, 0.0);
 
   if (CLI::HasParam("training"))
   {
@@ -136,10 +138,10 @@ static void mlpackMain()
         matX.col(i) /= norm(matX.col(i), 2);
     }
 
-    lcc.Lambda() = CLI::GetParam<double>("lambda");
-    lcc.Atoms() = (size_t) CLI::GetParam<int>("atoms");
-    lcc.MaxIterations() = (size_t) CLI::GetParam<int>("max_iterations");
-    lcc.Tolerance() = CLI::GetParam<double>("tolerance");
+    lcc->Lambda() = CLI::GetParam<double>("lambda");
+    lcc->Atoms() = (size_t) CLI::GetParam<int>("atoms");
+    lcc->MaxIterations() = (size_t) CLI::GetParam<int>("max_iterations");
+    lcc->Tolerance() = CLI::GetParam<double>("tolerance");
 
     // Inform the user if we are overwriting their model.
     if (CLI::HasParam("input_model"))
@@ -147,35 +149,35 @@ static void mlpackMain()
       Log::Info << "Using dictionary from existing model in '"
           << CLI::GetPrintableParam<string>("input_model") << "' as initial "
           << "dictionary for training." << endl;
-      lcc.Train<NothingInitializer>(matX);
+      lcc->Train<NothingInitializer>(matX);
     }
     else if (CLI::HasParam("initial_dictionary"))
     {
       // Load initial dictionary directly into LCC object.
-      lcc.Dictionary() = std::move(CLI::GetParam<mat>("initial_dictionary"));
+      lcc->Dictionary() = std::move(CLI::GetParam<mat>("initial_dictionary"));
 
       // Validate the size of the initial dictionary.
-      if (lcc.Dictionary().n_cols != lcc.Atoms())
+      if (lcc->Dictionary().n_cols != lcc->Atoms())
       {
-        Log::Fatal << "The initial dictionary has " << lcc.Dictionary().n_cols
+        Log::Fatal << "The initial dictionary has " << lcc->Dictionary().n_cols
             << " atoms, but the number of atoms was specified to be "
-            << lcc.Atoms() << "!" << endl;
+            << lcc->Atoms() << "!" << endl;
       }
 
-      if (lcc.Dictionary().n_rows != matX.n_rows)
+      if (lcc->Dictionary().n_rows != matX.n_rows)
       {
-        Log::Fatal << "The initial dictionary has " << lcc.Dictionary().n_rows
+        Log::Fatal << "The initial dictionary has " << lcc->Dictionary().n_rows
             << " dimensions, but the data has " << matX.n_rows << " dimensions!"
             << endl;
       }
 
       // Train the model.
-      lcc.Train<NothingInitializer>(matX);
+      lcc->Train<NothingInitializer>(matX);
     }
     else
     {
       // Run with the default initialization.
-      lcc.Train(matX);
+      lcc->Train(matX);
     }
   }
 
@@ -184,9 +186,9 @@ static void mlpackMain()
   {
     mat matY = std::move(CLI::GetParam<mat>("test"));
 
-    if (matY.n_rows != lcc.Dictionary().n_rows)
+    if (matY.n_rows != lcc->Dictionary().n_rows)
       Log::Fatal << "Model was trained with a dimensionality of "
-          << lcc.Dictionary().n_rows << ", but data in test file "
+          << lcc->Dictionary().n_rows << ", but data in test file "
           << CLI::GetPrintableParam<mat>("test") << " has a dimensionality of "
           << matY.n_rows << "!" << endl;
 
@@ -199,17 +201,12 @@ static void mlpackMain()
     }
 
     mat codes;
-    lcc.Encode(matY, codes);
+    lcc->Encode(matY, codes);
 
-    if (CLI::HasParam("codes"))
-      CLI::GetParam<mat>("codes") = std::move(codes);
+    CLI::GetParam<mat>("codes") = std::move(codes);
   }
 
-  // Did the user want to save the dictionary?
-  if (CLI::HasParam("dictionary"))
-    CLI::GetParam<mat>("dictionary") = std::move(lcc.Dictionary());
-
-  // Did the user want to save the model?
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<LocalCoordinateCoding>("output_model") = std::move(lcc);
+  // Save the dictionary and the model.
+  CLI::GetParam<mat>("dictionary") = lcc->Dictionary();
+  CLI::GetParam<LocalCoordinateCoding*>("output_model") = lcc;
 }

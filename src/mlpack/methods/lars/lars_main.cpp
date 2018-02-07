@@ -120,11 +120,12 @@ static void mlpackMain()
       "no results will be saved");
   ReportIgnoredParam({{ "test", true }}, "output_predictions");
 
-  // Initialize the object.
-  LARS lars(useCholesky, lambda1, lambda2);
-
+  LARS* lars;
   if (CLI::HasParam("input"))
   {
+    // Initialize the object.
+    lars = new LARS(useCholesky, lambda1, lambda2);
+
     // Load covariates.  We can avoid LARS transposing our data by choosing to
     // not transpose this data (that's why we used PARAM_TMATRIX_IN).
     mat matX = std::move(CLI::GetParam<arma::mat>("input"));
@@ -146,11 +147,11 @@ static void mlpackMain()
 
     vec beta;
     arma::rowvec y = std::move(matY);
-    lars.Train(matX, y, beta, false /* do not transpose */);
+    lars->Train(matX, y, beta, false /* do not transpose */);
   }
   else // We must have --input_model_file.
   {
-    lars = std::move(CLI::GetParam<LARS>("input_model"));
+    lars = CLI::GetParam<LARS*>("input_model");
   }
 
   if (CLI::HasParam("test"))
@@ -162,19 +163,17 @@ static void mlpackMain()
 
     // Make sure the dimensionality is right.  We haven't transposed, so, we
     // check n_cols not n_rows.
-    if (testPoints.n_cols != lars.BetaPath().back().n_elem)
+    if (testPoints.n_cols != lars->BetaPath().back().n_elem)
       Log::Fatal << "Dimensionality of test set (" << testPoints.n_cols << ") "
           << "is not equal to the dimensionality of the model ("
-          << lars.BetaPath().back().n_elem << ")!" << endl;
+          << lars->BetaPath().back().n_elem << ")!" << endl;
 
     arma::rowvec predictions;
-    lars.Predict(testPoints.t(), predictions, false);
+    lars->Predict(testPoints.t(), predictions, false);
 
     // Save test predictions (one per line).
-    if (CLI::HasParam("output_predictions"))
-      CLI::GetParam<arma::mat>("output_predictions") = predictions.t();
+    CLI::GetParam<arma::mat>("output_predictions") = predictions.t();
   }
 
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<LARS>("output_model") = std::move(lars);
+  CLI::GetParam<LARS*>("output_model") = lars;
 }

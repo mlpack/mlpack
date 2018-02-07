@@ -115,7 +115,7 @@ PARAM_INT_IN("recommendations", "Number of recommendations to generate for each"
 
 PARAM_INT_IN("seed", "Set the random seed (0 uses std::time(NULL)).", "s", 0);
 
-void ComputeRecommendations(CF& cf,
+void ComputeRecommendations(CF* cf,
                             const size_t numRecs,
                             arma::Mat<size_t>& recommendations)
 {
@@ -132,16 +132,16 @@ void ComputeRecommendations(CF& cf,
 
     Log::Info << "Generating recommendations for " << users.n_elem << " users."
         << endl;
-    cf.GetRecommendations(numRecs, recommendations, users.row(0).t());
+    cf->GetRecommendations(numRecs, recommendations, users.row(0).t());
   }
   else
   {
     Log::Info << "Generating recommendations for all users." << endl;
-    cf.GetRecommendations(numRecs, recommendations);
+    cf->GetRecommendations(numRecs, recommendations);
   }
 }
 
-void ComputeRMSE(CF& cf)
+void ComputeRMSE(CF* cf)
 {
   // Now, compute each test point.
   arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
@@ -156,7 +156,7 @@ void ComputeRMSE(CF& cf)
 
   // Now compute the RMSE.
   arma::vec predictions;
-  cf.Predict(combinations, predictions);
+  cf->Predict(combinations, predictions);
 
   // Compute the root of the sum of the squared errors, divide by the number of
   // points to get the RMSE.  It turns out this is just the L2-norm divided by
@@ -168,7 +168,7 @@ void ComputeRMSE(CF& cf)
   Log::Info << "RMSE is " << rmse << "." << endl;
 }
 
-void PerformAction(CF& c)
+void PerformAction(CF* c)
 {
   if (CLI::HasParam("query") || CLI::HasParam("all_user_recommendations"))
   {
@@ -180,15 +180,13 @@ void PerformAction(CF& c)
     ComputeRecommendations(c, numRecs, recommendations);
 
     // Save the output.
-    if (CLI::HasParam("output"))
-      CLI::GetParam<arma::Mat<size_t>>("output") = recommendations;
+    CLI::GetParam<arma::Mat<size_t>>("output") = recommendations;
   }
 
   if (CLI::HasParam("test"))
     ComputeRMSE(c);
 
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<CF>("output_model") = std::move(c);
+  CLI::GetParam<CF*>("output_model") = c;
 }
 
 template<typename Factorizer>
@@ -198,7 +196,7 @@ void PerformAction(Factorizer&& factorizer,
 {
   // Parameters for generating the CF object.
   const size_t neighborhood = (size_t) CLI::GetParam<int>("neighborhood");
-  CF c(dataset, factorizer, neighborhood, rank);
+  CF* c = new CF(dataset, factorizer, neighborhood, rank);
 
   PerformAction(c);
 }
@@ -323,7 +321,7 @@ static void mlpackMain()
   else
   {
     // Load an input model.
-    CF c = std::move(CLI::GetParam<CF>("input_model"));
+    CF* c = std::move(CLI::GetParam<CF*>("input_model"));
 
     PerformAction(c);
   }

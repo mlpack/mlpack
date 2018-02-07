@@ -866,9 +866,9 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
   BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<arma::mat>("matrix"), "file1.csv");
   BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<arma::mat>("matrix2"),
       "file2.csv");
-  BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<GaussianKernel>("kernel"),
+  BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<GaussianKernel*>("kernel"),
       "kernel.txt");
-  BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<GaussianKernel>("kernel2"),
+  BOOST_REQUIRE_EQUAL(CLI::GetPrintableParam<GaussianKernel*>("kernel2"),
       "kernel2.txt");
 
   remove("kernel.txt");
@@ -894,9 +894,9 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   ParseCommandLine(argc, const_cast<char**>(argv));
 
   // Create the kernel we'll save.
-  GaussianKernel gk(0.5);
+  GaussianKernel* gk = new GaussianKernel(0.5);
 
-  CLI::GetParam<GaussianKernel>("kernel") = move(gk);
+  CLI::GetParam<GaussianKernel*>("kernel") = gk;
 
   // Save it.
   EndProgram();
@@ -910,9 +910,12 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   ParseCommandLine(argc, const_cast<char**>(argv));
 
   // Load the kernel from file.
-  GaussianKernel gk2 = move(CLI::GetParam<GaussianKernel>("kernel"));
+  GaussianKernel* gk2 = CLI::GetParam<GaussianKernel*>("kernel");
 
-  BOOST_REQUIRE_CLOSE(gk2.Bandwidth(), 0.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk2->Bandwidth(), 0.5, 1e-5);
+
+  // Clean up the memory...
+  delete gk2;
 
   // Now remove the file we made.
   remove("kernel.txt");

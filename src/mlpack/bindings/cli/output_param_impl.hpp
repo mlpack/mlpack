@@ -55,10 +55,10 @@ void OutputParamImpl(
 
   if (output.n_elem > 0 && filename != "")
   {
-      if (arma::is_Row<T>::value || arma::is_Col<T>::value)
-        data::Save(filename, output, false);
-      else
-        data::Save(filename, output, false, !data.noTranspose);
+    if (arma::is_Row<T>::value || arma::is_Col<T>::value)
+      data::Save(filename, output, false);
+    else
+      data::Save(filename, output, false, !data.noTranspose);
   }
 }
 
@@ -72,14 +72,14 @@ void OutputParamImpl(
   // The const cast is necessary here because Serialize() can't ever be marked
   // const.  In this case we can assume it though, since we will be saving and
   // not loading.
-  typedef std::tuple<T, std::string> TupleType;
-  T& output = const_cast<T&>(std::get<0>(*boost::any_cast<TupleType>(
+  typedef std::tuple<T*, std::string> TupleType;
+  T*& output = const_cast<T*&>(std::get<0>(*boost::any_cast<TupleType>(
       &data.value)));
   const std::string& filename =
       std::get<1>(*boost::any_cast<TupleType>(&data.value));
 
   if (filename != "")
-    data::Save(filename, "model", output);
+    data::Save(filename, "model", *output);
 }
 
 //! Output a mapped dataset.

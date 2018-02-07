@@ -148,7 +148,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
   size_t j, i = 0;
   bool converged = false;
   size_t tempLabel;
-  arma::uword maxIndexRow, maxIndexCol;
+  arma::uword maxIndexRow = 0, maxIndexCol = 0;
   arma::mat tempLabelMat;
 
   LearnPolicy LP;
