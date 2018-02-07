@@ -414,7 +414,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingMinSamplesTest)
   SetInputParam("confidence", 0.25);
 
   mlpackMain();
-  
+
   // Check that small min_samples creates larger model.
   BOOST_REQUIRE_LT(
       (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(),
@@ -661,7 +661,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingBinningTest)
   SetInputParam("confidence", 0.25);
 
   mlpackMain();
-  
+
   // Check that no splitting has happened.
   BOOST_REQUIRE_EQUAL(
       (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(), 1);
