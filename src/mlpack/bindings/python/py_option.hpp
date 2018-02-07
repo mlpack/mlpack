@@ -69,7 +69,8 @@ class PyOption
     data.value = boost::any(defaultValue);
 
     // Restore the parameters for this program.
-    CLI::RestoreSettings(programName, false);
+    if (identifier != "verbose" && identifier != "copy_all_inputs")
+      CLI::RestoreSettings(programName, false);
 
     // Set the function pointers that we'll need.  All of these function
     // pointers will be used by both the program that generates the pyx, and
@@ -94,7 +95,8 @@ class PyOption
     // import more than one .so that uses CLI, so we have to keep the options
     // separate.  programName is a global variable from mlpack_main.hpp.
     CLI::Add(std::move(data));
-    CLI::StoreSettings(programName);
+    if (identifier != "verbose" && identifier != "copy_all_inputs")
+      CLI::StoreSettings(programName);
     CLI::ClearSettings();
   }
 };
