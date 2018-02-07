@@ -623,6 +623,115 @@ BOOST_AUTO_TEST_CASE(HoeffdingPassesTest)
 }
 
 /**
+ * Ensure that the root node has 2 children when splitting strategy is binary.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingBinarySplittingStrategyTest)
+{
+  arma::mat inputData;
+  DatasetInfo info;
+  if (!data::Load("vc2.csv", inputData, info))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData, info))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  // Input training data.
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
+
+  // Input test data.
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+
+  SetInputParam("numeric_split_strategy", (string) "binary");
+  SetInputParam("max_samples", 50);
+
+  SetInputParam("confidence", 0.25);
+
+  mlpackMain();
+
+  // Check that number of children is 2.
+  BOOST_REQUIRE_EQUAL(
+      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes()-1, 2);
+}
+
+/**
+ * Ensure that the number of children varies with varying 'bins' in domingos.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingDomingosSplittingStrategyTest)
+{
+  arma::mat inputData;
+  DatasetInfo info;
+  int nodes;
+  if (!data::Load("vc2.csv", inputData, info))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData, info))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  // Input training data.
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
+
+  // Input test data.
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+
+  SetInputParam("numeric_split_strategy", (string) "domingos");
+  SetInputParam("max_samples", 50);
+  SetInputParam("bins", 20);
+
+  mlpackMain();
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["max_samples"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["numeric_split_strategy"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["bins"].wasPassed = false;
+
+  // Initial model.
+  nodes = (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes();
+
+  bindings::tests::CleanMemory();
+
+  if (!data::Load("vc2.csv", inputData, info))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  if (!data::Load("vc2_test.csv", testData, info))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  // Input training data.
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
+
+  // Input test data.
+  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+
+  SetInputParam("numeric_split_strategy", (string) "domingos");
+  SetInputParam("max_samples", 50);
+  SetInputParam("bins", 10);
+
+  mlpackMain();
+
+  // Check that both models have different number of nodes.
+  BOOST_CHECK_PREDICATE(std::not_equal_to<int>(),
+      ((CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes())(nodes));
+}
+
+/**
  * Ensure that the model doesn't split if observations before binning
  * is greater than total number of samples passed.
  */
