@@ -35,17 +35,13 @@ inline bool IsNaNInf(T& val, const std::string& token)
     {
       if (std::numeric_limits<T>::has_infinity)
       {
-        if (!neg)
-          val = std::numeric_limits<T>::infinity();
-        else
-          val = -std::numeric_limits<T>::infinity();
+        val = (!neg) ? std::numeric_limits<T>::infinity() :
+            -std::numeric_limits<T>::infinity();
       }
       else
       {
-        if (!neg)
-          val = std::numeric_limits<T>::max();
-        else
-          val = -std::numeric_limits<T>::max();
+        val = (!neg) ? std::numeric_limits<T>::max() :
+            -std::numeric_limits<T>::max();
       }
 
       return true;
