@@ -10,6 +10,7 @@ env:
 cache:
   directories:
     - $HOME/.cache/pip
+    - root/.cache/pip
 
 before_install:
   - sudo rm -vf /etc/apt/sources.list.d/*riak*
