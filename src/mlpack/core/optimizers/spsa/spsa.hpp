@@ -81,8 +81,8 @@ class SPSA
     {
       sp_vector = arma::conv_to<arma::vec>::from(
                   randi(s, arma::distr_param(-1, 1)));
-      ak = a/pow((max_iter + 1 + A), alpha);
-      ck = c/pow((max_iter + 1), gamma);
+      ak = a/std::pow((max_iter + 1 + A), alpha);
+      ck = c/std::pow((max_iter + 1), gamma);
       arma::vec f_plus = function.Evaluate(iterate + ck*sp_vector, s);
       arma::vec f_minus = function.Evaluate(iterate - ck*sp_vector, s);
       arma::mat gradient = ((f_plus - f_minus)/2)*ck*sp_vector.i();
