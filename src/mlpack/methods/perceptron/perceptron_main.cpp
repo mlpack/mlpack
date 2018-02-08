@@ -178,8 +178,9 @@ static void mlpackMain()
     {
       labelsIn = std::move(CLI::GetParam<Row<size_t>>("labels"));
 
-      //Checking the size of the responses and training data
-      if(labelsIn.n_cols != trainingData.n_cols) {
+      // Checking the size of the responses and training data
+      if (labelsIn.n_cols != trainingData.n_cols) 
+      {
         Log::Fatal << "The responses must have the same number of columns "
             "as the training set." << endl;
       }
@@ -189,8 +190,8 @@ static void mlpackMain()
       // Checking the size of training data if no labels are passed 
       if (trainingData.n_rows < 2)
       {
-         Log::Fatal << "Can't get responses from training data "
-             "since it has less than 2 rows." << endl;
+        Log::Fatal << "Can't get responses from training data "
+            "since it has less than 2 rows." << endl;
       }
 
       // Use the last row of the training data as the labels.
