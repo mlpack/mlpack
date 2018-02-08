@@ -72,9 +72,9 @@ HAS_MEM_FUNC(Parameters, HasParametersCheck);
 // can use with SFINAE to catch when a type has a Add() function.
 HAS_MEM_FUNC(Add, HasAddCheck);
 
-// This gives us a HasModelCheck<T, U> type (where U is a function pointer) we
-// can use with SFINAE to catch when a type has a Model() function.
-HAS_MEM_FUNC(Model, HasModelCheck);
+// This gives us a HasModelCheck<T> type we can use with SFINAE to catch when
+// a type has a function named Model.
+HAS_ANY_METHOD_FORM(Model, HasModelCheck);
 
 // This gives us a HasLocationCheck<T, U> type (where U is a function pointer)
 // we can use with SFINAE to catch when a type has a Location() function.

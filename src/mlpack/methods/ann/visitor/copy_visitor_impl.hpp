@@ -18,8 +18,10 @@
 namespace mlpack {
 namespace ann {
 
+template <typename... CustomLayers>
 template <typename LayerType>
-inline LayerTypes CopyVisitor::operator()(LayerType* layer) const
+inline LayerTypes<CustomLayers...>
+CopyVisitor<CustomLayers...>::operator()(LayerType* layer) const
 {
   return new LayerType(*layer);
 }

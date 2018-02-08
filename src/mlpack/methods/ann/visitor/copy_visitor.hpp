@@ -22,11 +22,12 @@ namespace ann {
  * This visitor is to support copy constructor for neural network module.
  * We want a layer-wise copy rather than simple duplicate the pointer.
  */
-class CopyVisitor : public boost::static_visitor<LayerTypes>
+template <typename... CustomLayers>
+class CopyVisitor : public boost::static_visitor<LayerTypes<CustomLayers...> >
 {
  public:
   template <typename LayerType>
-  LayerTypes operator()(LayerType*) const;
+  LayerTypes<CustomLayers...> operator()(LayerType*) const;
 };
 
 } // namespace ann

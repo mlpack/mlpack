@@ -15,7 +15,8 @@ using namespace mlpack;
 using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;
 
-BukinFunction::BukinFunction() { /* Nothing to do here */ }
+BukinFunction::BukinFunction(const double epsilon) : epsilon(epsilon)
+{ /* Nothing to do here */ }
 
 void BukinFunction::Shuffle() { /* Nothing to do here */ }
 
@@ -48,7 +49,7 @@ void BukinFunction::Gradient(const arma::mat& coordinates,
   const double x2 = coordinates(1);
 
   gradient.set_size(2, 1);
-  gradient(0) = (0.01 * (x1 + 10)) / std::abs(x1 + 10) -
+  gradient(0) = (0.01 * (x1 + 10.0)) / (std::abs(x1 + 10.0) + epsilon) -
       (x1 * (x2 - 0.01 * std::pow(x1, 2))) / std::pow(std::abs(x2 - 0.01 *
       std::pow(x1, 2)), 1.5);
   gradient(1) = (50 * (x2 - 0.01 * std::pow(x1, 2))) /

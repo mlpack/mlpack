@@ -33,7 +33,7 @@ inline void LoadOutputParameterVisitor::operator()(LayerType* layer) const
 
 template<typename T>
 inline typename std::enable_if<
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+    !HasModelCheck<T>::value, void>::type
 LoadOutputParameterVisitor::OutputParameter(T* layer) const
 {
   layer->OutputParameter() = parameter.back();
@@ -42,7 +42,7 @@ LoadOutputParameterVisitor::OutputParameter(T* layer) const
 
 template<typename T>
 inline typename std::enable_if<
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+    HasModelCheck<T>::value, void>::type
 LoadOutputParameterVisitor::OutputParameter(T* layer) const
 {
   for (size_t i = 0; i < layer->Model().size(); ++i)

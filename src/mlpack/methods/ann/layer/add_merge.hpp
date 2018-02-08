@@ -32,10 +32,12 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
+ * @tparam CustomLayers Additional custom layers that can be added.
  */
 template<
     typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename OutputDataType = arma::mat,
+    typename... CustomLayers
 >
 class AddMerge
 {
@@ -72,7 +74,7 @@ class AddMerge
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes layer) { network.push_back(layer); }
+  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
 
   /*
    * Add a new module to the model.
@@ -112,7 +114,7 @@ class AddMerge
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  std::vector<LayerTypes> network;
+  std::vector<LayerTypes<CustomLayers...> > network;
 
   //! Locally-stored delete visitor module object.
   DeleteVisitor deleteVisitor;

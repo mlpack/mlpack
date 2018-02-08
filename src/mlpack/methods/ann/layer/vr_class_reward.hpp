@@ -101,7 +101,7 @@ class VRClassReward
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes layer) { network.push_back(layer); }
+  void Add(LayerTypes<> layer) { network.push_back(layer); }
 
   /**
    * Serialize the layer
@@ -132,7 +132,7 @@ class VRClassReward
   bool deterministic;
 
   //! Locally-stored network modules.
-  std::vector<LayerTypes> network;
+  std::vector<LayerTypes<> > network;
 }; // class VRClassReward
 
 } // namespace ann
