@@ -36,16 +36,19 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
   // Use type_info name to get unique file name for serialization test files.
   std::string fileName = FilterFileName(typeid(IArchiveType).name());
   std::ofstream ofs(fileName, std::ios::binary);
-  OArchiveType o(ofs);
-
   bool success = true;
-  try
+
   {
-    o << BOOST_SERIALIZATION_NVP(x);
-  }
-  catch (boost::archive::archive_exception& e)
-  {
-    success = false;
+    OArchiveType o(ofs);
+
+    try
+    {
+      o << BOOST_SERIALIZATION_NVP(x);
+    }
+    catch (boost::archive::archive_exception& e)
+    {
+      success = false;
+    }
   }
 
   BOOST_REQUIRE_EQUAL(success, true);
@@ -55,16 +58,20 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
   arma::Cube<CubeType> orig(x);
   success = true;
   std::ifstream ifs(fileName, std::ios::binary);
-  IArchiveType i(ifs);
 
-  try
   {
-    i >> BOOST_SERIALIZATION_NVP(x);
+    IArchiveType i(ifs);
+
+    try
+    {
+      i >> BOOST_SERIALIZATION_NVP(x);
+    }
+    catch (boost::archive::archive_exception& e)
+    {
+      success = false;
+    }
   }
-  catch (boost::archive::archive_exception& e)
-  {
-    success = false;
-  }
+  ifs.close();
 
   remove(fileName.c_str());
 
@@ -115,16 +122,19 @@ void TestArmadilloSerialization(MatType& x)
   // First save it.
   std::string fileName = FilterFileName(typeid(IArchiveType).name());
   std::ofstream ofs(fileName, std::ios::binary);
-  OArchiveType o(ofs);
-
   bool success = true;
-  try
+
   {
-    o << BOOST_SERIALIZATION_NVP(x);
-  }
-  catch (boost::archive::archive_exception& e)
-  {
-    success = false;
+    OArchiveType o(ofs);
+
+    try
+    {
+      o << BOOST_SERIALIZATION_NVP(x);
+    }
+    catch (boost::archive::archive_exception& e)
+    {
+      success = false;
+    }
   }
 
   BOOST_REQUIRE_EQUAL(success, true);
@@ -134,16 +144,20 @@ void TestArmadilloSerialization(MatType& x)
   MatType orig(x);
   success = true;
   std::ifstream ifs(fileName, std::ios::binary);
-  IArchiveType i(ifs);
 
-  try
   {
-    i >> BOOST_SERIALIZATION_NVP(x);
+    IArchiveType i(ifs);
+
+    try
+    {
+      i >> BOOST_SERIALIZATION_NVP(x);
+    }
+    catch (boost::archive::archive_exception& e)
+    {
+      success = false;
+    }
   }
-  catch (boost::archive::archive_exception& e)
-  {
-    success = false;
-  }
+  ifs.close();
 
   remove(fileName.c_str());
 
@@ -180,37 +194,43 @@ void SerializeObject(T& t, T& newT)
 {
   std::string fileName = FilterFileName(typeid(T).name());
   std::ofstream ofs(fileName, std::ios::binary);
-  OArchiveType o(ofs);
-
   bool success = true;
-  try
+
   {
-    o << BOOST_SERIALIZATION_NVP(t);
-  }
-  catch (boost::archive::archive_exception& e)
-  {
-    std::cerr << e.what() << std::endl;
-    success = false;
+    OArchiveType o(ofs);
+
+    try
+    {
+      o << BOOST_SERIALIZATION_NVP(t);
+    }
+    catch (boost::archive::archive_exception& e)
+    {
+      std::cerr << e.what() << std::endl;
+      success = false;
+    }
   }
   ofs.close();
 
   BOOST_REQUIRE_EQUAL(success, true);
 
   std::ifstream ifs(fileName, std::ios::binary);
-  IArchiveType i(ifs);
 
-  try
   {
-    i >> BOOST_SERIALIZATION_NVP(newT);
-  }
-  catch (boost::archive::archive_exception& e)
-  {
-    std::cout << e.what() << "\n";
-    success = false;
+    IArchiveType i(ifs);
+
+    try
+    {
+      i >> BOOST_SERIALIZATION_NVP(newT);
+    }
+    catch (boost::archive::archive_exception& e)
+    {
+      std::cout << e.what() << "\n";
+      success = false;
+    }
   }
   ifs.close();
 
-  remove(fileName.c_str());
+//  remove(fileName.c_str());
 
   BOOST_REQUIRE_EQUAL(success, true);
 }
@@ -233,33 +253,38 @@ void SerializePointerObject(T* t, T*& newT)
 {
   std::string fileName = FilterFileName(typeid(T).name());
   std::ofstream ofs(fileName, std::ios::binary);
-  OArchiveType o(ofs);
-
   bool success = true;
-  try
+
   {
-    o << BOOST_SERIALIZATION_NVP(t);
-  }
-  catch (boost::archive::archive_exception& e)
-  {
-    std::cout << e.what() << "\n";
-    success = false;
+    OArchiveType o(ofs);
+    try
+    {
+      o << BOOST_SERIALIZATION_NVP(t);
+    }
+    catch (boost::archive::archive_exception& e)
+    {
+      std::cout << e.what() << "\n";
+      success = false;
+    }
   }
   ofs.close();
 
   BOOST_REQUIRE_EQUAL(success, true);
 
   std::ifstream ifs(fileName, std::ios::binary);
-  IArchiveType i(ifs);
 
-  try
   {
-    i >> BOOST_SERIALIZATION_NVP(newT);
-  }
-  catch (std::exception& e)
-  {
-    std::cout << e.what() << "\n";
-    success = false;
+    IArchiveType i(ifs);
+
+    try
+    {
+      i >> BOOST_SERIALIZATION_NVP(newT);
+    }
+    catch (std::exception& e)
+    {
+      std::cout << e.what() << "\n";
+      success = false;
+    }
   }
   ifs.close();
 
