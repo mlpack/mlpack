@@ -24,6 +24,7 @@ namespace ann {
 /**
  * AddVisitor exposes the Add() method of the given module.
  */
+template <typename... CustomLayers>
 class AddVisitor : public boost::static_visitor<void>
 {
  public:
@@ -37,18 +38,18 @@ class AddVisitor : public boost::static_visitor<void>
 
  private:
   //! The layer that should be added.
-  LayerTypes newLayer;
+  LayerTypes<CustomLayers...> newLayer;
 
   //! Only add the layer if the module implements the Add() function.
   template<typename T>
   typename std::enable_if<
-      HasAddCheck<T, void(T::*)(LayerTypes)>::value, void>::type
+      HasAddCheck<T, void(T::*)(LayerTypes<CustomLayers...>)>::value, void>::type
   LayerAdd(T* layer) const;
 
   //! Do not add the layer if the module doesn't implement the Add() function.
   template<typename T>
   typename std::enable_if<
-      !HasAddCheck<T, void(T::*)(LayerTypes)>::value, void>::type
+      !HasAddCheck<T, void(T::*)(LayerTypes<CustomLayers...>)>::value, void>::type
   LayerAdd(T* layer) const;
 };
 

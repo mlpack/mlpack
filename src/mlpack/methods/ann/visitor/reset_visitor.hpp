@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_ANN_VISITOR_RESET_VISITOR_HPP
 
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
 
 #include <boost/variant.hpp>
 
@@ -37,7 +36,7 @@ class ResetVisitor : public boost::static_visitor<void>
   template<typename T>
   typename std::enable_if<
       HasResetCheck<T, void(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+      !HasModelCheck<T>::value, void>::type
   ResetParameter(T* layer) const;
 
   //! Execute the Reset() function for a module which implements the Model()
@@ -45,7 +44,7 @@ class ResetVisitor : public boost::static_visitor<void>
   template<typename T>
   typename std::enable_if<
       !HasResetCheck<T, void(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+      HasModelCheck<T>::value, void>::type
   ResetParameter(T* layer) const;
 
   //! Execute the Reset() function for a module which implements the Reset()
@@ -53,7 +52,7 @@ class ResetVisitor : public boost::static_visitor<void>
   template<typename T>
   typename std::enable_if<
       HasResetCheck<T, void(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+      HasModelCheck<T>::value, void>::type
   ResetParameter(T* layer) const;
 
   //! Do not execute the Reset() function for a module which doesn't implement
@@ -61,7 +60,7 @@ class ResetVisitor : public boost::static_visitor<void>
   template<typename T>
   typename std::enable_if<
       !HasResetCheck<T, void(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+      !HasModelCheck<T>::value, void>::type
   ResetParameter(T* layer) const;
 };
 

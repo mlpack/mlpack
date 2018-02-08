@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_ANN_VISITOR_GRADIENT_SET_VISITOR_HPP
 
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
 
 #include <boost/variant.hpp>
 
@@ -45,14 +44,14 @@ class GradientSetVisitor : public boost::static_visitor<size_t>
   template<typename T>
   typename std::enable_if<
       HasGradientCheck<T, arma::mat&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      !HasModelCheck<T>::value, size_t>::type
   LayerGradients(T* layer, arma::mat& input) const;
 
   //! Update the gradient if the module implements the Model() function.
   template<typename T>
   typename std::enable_if<
       !HasGradientCheck<T, arma::mat&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      HasModelCheck<T>::value, size_t>::type
   LayerGradients(T* layer, arma::mat& input) const;
 
   //! Update the gradient if the module implements the Gradient() and Model()
@@ -60,7 +59,7 @@ class GradientSetVisitor : public boost::static_visitor<size_t>
   template<typename T>
   typename std::enable_if<
       HasGradientCheck<T, arma::mat&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      HasModelCheck<T>::value, size_t>::type
   LayerGradients(T* layer, arma::mat& input) const;
 
   //! Do not update the gradient parameter if the module doesn't implement the
@@ -68,7 +67,7 @@ class GradientSetVisitor : public boost::static_visitor<size_t>
   template<typename T, typename P>
   typename std::enable_if<
       !HasGradientCheck<T, P&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      !HasModelCheck<T>::value, size_t>::type
   LayerGradients(T* layer, P& input) const;
 };
 

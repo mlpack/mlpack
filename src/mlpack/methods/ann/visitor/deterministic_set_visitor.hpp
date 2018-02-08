@@ -15,7 +15,6 @@
 #define MLPACK_METHODS_ANN_VISITOR_DETERMINISTIC_SET_VISITOR_HPP
 
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
 
 #include <boost/variant.hpp>
 
@@ -45,7 +44,7 @@ class DeterministicSetVisitor : public boost::static_visitor<void>
   template<typename T>
   typename std::enable_if<
       HasDeterministicCheck<T, bool&(T::*)(void)>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+      HasModelCheck<T>::value, void>::type
   LayerDeterministic(T* layer) const;
 
   //! Set the deterministic parameter if the module implements the
@@ -53,7 +52,7 @@ class DeterministicSetVisitor : public boost::static_visitor<void>
   template<typename T>
   typename std::enable_if<
       !HasDeterministicCheck<T, bool&(T::*)(void)>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+      HasModelCheck<T>::value, void>::type
   LayerDeterministic(T* layer) const;
 
   //! Set the deterministic parameter if the module implements the
@@ -61,7 +60,7 @@ class DeterministicSetVisitor : public boost::static_visitor<void>
   template<typename T>
   typename std::enable_if<
       HasDeterministicCheck<T, bool&(T::*)(void)>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+      !HasModelCheck<T>::value, void>::type
   LayerDeterministic(T* layer) const;
 
   //! Do not set the deterministic parameter if the module doesn't implement the
@@ -69,7 +68,7 @@ class DeterministicSetVisitor : public boost::static_visitor<void>
   template<typename T>
   typename std::enable_if<
       !HasDeterministicCheck<T, bool&(T::*)(void)>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+      !HasModelCheck<T>::value, void>::type
   LayerDeterministic(T* layer) const;
 };
 
