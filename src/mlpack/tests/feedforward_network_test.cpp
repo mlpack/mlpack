@@ -611,7 +611,7 @@ BOOST_AUTO_TEST_CASE(CustomLayerTest)
   model.Add<Linear<> >(8, 3);
   model.Add<LogSoftMax<> >();
 
-  RMSProp opt(0.01, 32, 0.88, 1e-8, 10 * trainData.n_cols, -1);
+  RMSProp opt(0.01, 32, 0.88, 1e-8, 15, -1);
   model.Train(trainData, trainLabels, opt);
 
   arma::mat predictionTemp;
