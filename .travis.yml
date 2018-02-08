@@ -17,9 +17,9 @@ before_install:
   - sudo apt-get install -qq libopenblas-dev liblapack-dev g++ libboost-all-dev python3-pip
   # Install both python2 and python3 modules, and the build will decide which to
   # use.
-  - sudo pip install cython setuptools numpy pandas
-  - sudo pip3 install --upgrade --ignore-installed setuptools
-  - sudo pip3 install cython numpy pandas
+  - pip install cython setuptools numpy pandas
+  - pip3 install --upgrade --ignore-installed setuptools
+  - pip3 install cython numpy pandas
   - curl http://masterblaster.mlpack.org:5005/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
   - cmake . && make && sudo make install && cd ..
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
