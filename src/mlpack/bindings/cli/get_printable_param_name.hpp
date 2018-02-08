@@ -64,7 +64,8 @@ void GetPrintableParamName(
     const void* /* input */,
     void* output)
 {
-  *((std::string*) output) = GetPrintableParamName<T>(d);
+  *((std::string*) output) =
+      GetPrintableParamName<typename std::remove_pointer<T>::type>(d);
 }
 
 } // namespace cli

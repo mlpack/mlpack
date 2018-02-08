@@ -74,6 +74,7 @@ int main(int argc, char** argv)
 
 #include <mlpack/bindings/tests/test_option.hpp>
 #include <mlpack/bindings/tests/ignore_check.hpp>
+#include <mlpack/bindings/tests/clean_memory.hpp>
 
 // These functions will do nothing.
 #define PRINT_PARAM_STRING(A) std::string(" ")
@@ -138,6 +139,10 @@ static const std::string testName = "";
 
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
+PARAM_FLAG("copy_all_inputs", "If specified, all input parameters will be deep"
+    " copied before the method is run.  This is useful for debugging problems "
+    "where the input parameters are being modified by the algorithm, but can "
+    "slow down the code.", "");
 
 // Nothing else needs to be defined---the binding will use mlpackMain() as-is.
 

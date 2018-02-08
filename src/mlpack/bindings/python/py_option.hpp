@@ -58,8 +58,8 @@ class PyOption
     data.required = required;
     data.input = input;
     data.loaded = false;
-    // Only "verbose" will be persistent.
-    if (identifier == "verbose")
+    // Only "verbose" and "copy_all_inputs" will be persistent.
+    if (identifier == "verbose" || identifier == "copy_all_inputs")
       data.persistent = true;
     else
       data.persistent = false;

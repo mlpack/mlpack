@@ -118,9 +118,10 @@ static void mlpackMain()
     Log::Warn << "No test set given; no task will be performed!" << std::endl;
 
   // Either we have to train a model, or load a model.
-  NBCModel model;
+  NBCModel* model;
   if (CLI::HasParam("training"))
   {
+    model = new NBCModel();
     mat trainingData = std::move(CLI::GetParam<mat>("training"));
 
     Row<size_t> labels;
@@ -130,7 +131,7 @@ static void mlpackMain()
     {
       // Load labels.
       Row<size_t> rawLabels = std::move(CLI::GetParam<Row<size_t>>("labels"));
-      data::NormalizeLabels(rawLabels, labels, model.mappings);
+      data::NormalizeLabels(rawLabels, labels, model->mappings);
     }
     else
     {
@@ -138,7 +139,7 @@ static void mlpackMain()
       Log::Info << "Using last dimension of training data as training labels."
           << endl;
       data::NormalizeLabels(trainingData.row(trainingData.n_rows - 1), labels,
-          model.mappings);
+          model->mappings);
       // Remove the label row.
       trainingData.shed_row(trainingData.n_rows - 1);
     }
@@ -146,14 +147,14 @@ static void mlpackMain()
     const bool incrementalVariance = CLI::HasParam("incremental_variance");
 
     Timer::Start("nbc_training");
-    model.nbc = NaiveBayesClassifier<>(trainingData, labels,
-        model.mappings.n_elem, incrementalVariance);
+    model->nbc = NaiveBayesClassifier<>(trainingData, labels,
+        model->mappings.n_elem, incrementalVariance);
     Timer::Stop("nbc_training");
   }
   else
   {
     // Load the model from file.
-    model = std::move(CLI::GetParam<NBCModel>("input_model"));
+    model = CLI::GetParam<NBCModel*>("input_model");
   }
 
   // Do we need to do testing?
@@ -161,10 +162,10 @@ static void mlpackMain()
   {
     mat testingData = std::move(CLI::GetParam<mat>("test"));
 
-    if (testingData.n_rows != model.nbc.Means().n_rows)
+    if (testingData.n_rows != model->nbc.Means().n_rows)
     {
       Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
-          << "must be the same as training data (" << model.nbc.Means().n_rows
+          << "must be the same as training data (" << model->nbc.Means().n_rows
           << ")!" << std::endl;
     }
 
@@ -172,23 +173,21 @@ static void mlpackMain()
     Row<size_t> predictions;
     mat probabilities;
     Timer::Start("nbc_testing");
-    model.nbc.Classify(testingData, predictions, probabilities);
+    model->nbc.Classify(testingData, predictions, probabilities);
     Timer::Stop("nbc_testing");
 
     if (CLI::HasParam("output"))
     {
       // Un-normalize labels to prepare output.
       Row<size_t> rawResults;
-      data::RevertLabels(predictions, model.mappings, rawResults);
+      data::RevertLabels(predictions, model->mappings, rawResults);
 
       // Output results.
       CLI::GetParam<Row<size_t>>("output") = std::move(rawResults);
     }
 
-    if (CLI::HasParam("output_probs"))
-      CLI::GetParam<mat>("output_probs") = probabilities;
+    CLI::GetParam<mat>("output_probs") = probabilities;
   }
 
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<NBCModel>("output_model") = std::move(model);
+  CLI::GetParam<NBCModel*>("output_model") = model;
 }

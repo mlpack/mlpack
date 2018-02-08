@@ -238,20 +238,21 @@ BOOST_AUTO_TEST_CASE(GetParamModelTest)
   data::Save("kernel.bin", "model", gk);
 
   // Create tuple.
-  gk.Bandwidth(2.0);
-  tuple<GaussianKernel, string> t = make_tuple(gk, filename);
+  tuple<GaussianKernel*, string> t = make_tuple((GaussianKernel*) NULL,
+      filename);
   d.value = boost::any(t);
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
 
-  GaussianKernel* output = NULL;
-  GetParam<GaussianKernel>((const util::ParamData&) d, (void*) NULL,
+  GaussianKernel** output = NULL;
+  GetParam<GaussianKernel*>((const util::ParamData&) d, (void*) NULL,
       (void*) &output);
 
-  BOOST_REQUIRE_EQUAL(output->Bandwidth(), 5.0);
+  BOOST_REQUIRE_EQUAL((*output)->Bandwidth(), 5.0);
 
   remove("kernel.bin");
+  delete *output;
 }
 
 BOOST_AUTO_TEST_CASE(RawParamDoubleTest)
@@ -300,17 +301,17 @@ BOOST_AUTO_TEST_CASE(GetRawParamModelTest)
   kernel::GaussianKernel gk(5.0);
 
   // Create tuple.
-  tuple<GaussianKernel, string> t = make_tuple(gk, filename);
+  tuple<GaussianKernel*, string> t = make_tuple(&gk, filename);
   d.value = boost::any(t);
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
 
-  tuple<GaussianKernel, string>* output = NULL;
-  GetRawParam<tuple<GaussianKernel, string>>((const util::ParamData&) d,
+  tuple<GaussianKernel*, string>* output = NULL;
+  GetRawParam<tuple<GaussianKernel*, string>>((const util::ParamData&) d,
       (void*) NULL, (void*) &output);
 
-  BOOST_REQUIRE_EQUAL(get<0>(*output).Bandwidth(), 5.0);
+  BOOST_REQUIRE_EQUAL(get<0>(*output)->Bandwidth(), 5.0);
 }
 
 BOOST_AUTO_TEST_CASE(GetRawParamDatasetInfoTest)
@@ -403,7 +404,7 @@ BOOST_AUTO_TEST_CASE(OutputParamModelTest)
   // Create value.
   string filename = "kernel.bin";
   GaussianKernel gk(5.0);
-  tuple<GaussianKernel, string> t = make_tuple(gk, filename);
+  tuple<GaussianKernel*, string> t = make_tuple(&gk, filename);
 
   d.value = boost::any(t);
   d.input = false;
@@ -491,7 +492,7 @@ BOOST_AUTO_TEST_CASE(SetParamModelTest)
   // Create initial value.
   string filename = "kernel.bin";
   GaussianKernel gk(2.0);
-  d.value = boost::any(make_tuple(gk, filename));
+  d.value = boost::any(make_tuple(&gk, filename));
 
   // Get a new string.
   string newFilename = "new_kernel.bin";
@@ -501,8 +502,8 @@ BOOST_AUTO_TEST_CASE(SetParamModelTest)
       (void*) NULL);
 
   // Make sure the change went through.
-  tuple<GaussianKernel, string>& t =
-      *boost::any_cast<tuple<GaussianKernel, string>>(&d.value);
+  tuple<GaussianKernel*, string>& t =
+      *boost::any_cast<tuple<GaussianKernel*, string>>(&d.value);
 
   BOOST_REQUIRE_EQUAL(get<1>(t), "new_kernel.bin");
 }
@@ -535,6 +536,99 @@ BOOST_AUTO_TEST_CASE(SetParamDatasetInfoMatTest)
       *boost::any_cast<tuple<tuple<DatasetInfo, arma::mat>, string>>(&d.value);
 
   BOOST_REQUIRE_EQUAL(get<1>(t3), "new_filename.csv");
+}
+
+// Test that GetAllocatedMemory() will properly return NULL for a non-model
+// type.
+BOOST_AUTO_TEST_CASE(GetAllocatedMemoryNonModelTest)
+{
+  util::ParamData d;
+
+  bool b = true;
+  d.value = boost::any(b);
+  d.input = true;
+
+  void* result = (void*) 1; // Invalid pointer, should be overwritten.
+
+  GetAllocatedMemory<bool>((const util::ParamData&) d,
+      (const void*) NULL, (void*) &result);
+
+  BOOST_REQUIRE_EQUAL(result, (void*) NULL);
+
+  // Also test with a matrix type.
+  arma::mat test(10, 10, arma::fill::ones);
+  string filename = "test.csv";
+  tuple<arma::mat, string> t = make_tuple(test, filename);
+  d.value = boost::any(t);
+
+  result = (void*) 1;
+
+  GetAllocatedMemory<arma::mat>((const util::ParamData&) d,
+      (const void*) NULL, (void*) &result);
+
+  BOOST_REQUIRE_EQUAL(result, (void*) NULL);
+}
+
+// Test that GetAllocatedMemory() will properly return pointers for a
+// serializable model type.
+BOOST_AUTO_TEST_CASE(GetAllocatedMemoryModelTest)
+{
+  util::ParamData d;
+
+  GaussianKernel g(2.0);
+  string filename = "hello.bin";
+  tuple<GaussianKernel*, string> t = make_tuple(&g, filename);
+  d.value = boost::any(t);
+  d.input = true;
+
+  void* result = NULL;
+
+  GetAllocatedMemory<GaussianKernel*>((const util::ParamData&) d,
+      (const void*) NULL, (void*) &result);
+
+  BOOST_REQUIRE_EQUAL(&g, (GaussianKernel*) result);
+}
+
+// Test that calling DeleteAllocatedMemory() on non-model types does not delete
+// pointers.
+BOOST_AUTO_TEST_CASE(DeleteAllocatedMemoryNonModelTest)
+{
+  util::ParamData d;
+
+  bool b = true;
+  d.value = boost::any(b);
+  d.input = true;
+
+  DeleteAllocatedMemory<bool>((const util::ParamData&) d,
+      (const void*) NULL, (void*) NULL);
+
+  arma::mat test(10, 10, arma::fill::ones);
+  string filename = "test.csv";
+  tuple<arma::mat, string> t = make_tuple(test, filename);
+  d.value = boost::any(t);
+
+  DeleteAllocatedMemory<arma::mat>((const util::ParamData&) d,
+      (const void*) NULL, (void*) NULL);
+}
+
+// Test that DeleteAllocatedMemory() will properly delete pointers for a
+// serializable model type.
+BOOST_AUTO_TEST_CASE(DeleteAllocatedMemoryModelTest)
+{
+  // This test will just delete it, and we'll hope that it worked and that
+  // valgrind won't throw any issues (so really we can't *quite* test this in
+  // the context of the boost unit test framework).
+  util::ParamData d;
+
+  GaussianKernel* g = new GaussianKernel(2.0);
+  string filename = "hello.bin";
+  tuple<GaussianKernel*, string> t = make_tuple(g, filename);
+
+  d.value = boost::any(t);
+  d.input = false;
+
+  DeleteAllocatedMemory<GaussianKernel*>((const util::ParamData&) d,
+      (const void*) NULL, (void*) NULL);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -95,7 +95,7 @@ void DrusillaSelect<MatType>::Train(
   for (size_t i = 0; i < l; ++i)
   {
     // Pick best index.
-    arma::uword maxIndex;
+    arma::uword maxIndex = 0;
     norms.max(maxIndex);
 
     arma::vec line(refCopy.col(maxIndex) / arma::norm(refCopy.col(maxIndex)));

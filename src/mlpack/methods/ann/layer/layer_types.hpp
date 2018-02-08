@@ -33,6 +33,7 @@
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
+#include <mlpack/methods/ann/layer/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
 
 // Convolution modules.
@@ -137,6 +138,7 @@ using LayerTypes = boost::variant<
     Recurrent<arma::mat, arma::mat>*,
     RecurrentAttention<arma::mat, arma::mat>*,
     ReinforceNormal<arma::mat, arma::mat>*,
+    SigmoidCrossEntropyError<arma::mat, arma::mat>*,
     Select<arma::mat, arma::mat>*,
     Sequential<arma::mat, arma::mat>*,
     VRClassReward<arma::mat, arma::mat>*,

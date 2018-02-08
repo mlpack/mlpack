@@ -137,13 +137,14 @@ static void mlpackMain()
       "leaf size must be positive");
 
   // Load the model or build the tree.
-  DecisionTreeModel model;
+  DecisionTreeModel* model;
   arma::mat trainingSet;
   arma::Row<size_t> labels;
 
   if (CLI::HasParam("training"))
   {
-    model.info = std::move(std::get<0>(CLI::GetParam<TupleType>("training")));
+    model = new DecisionTreeModel();
+    model->info = std::move(std::get<0>(CLI::GetParam<TupleType>("training")));
     trainingSet = std::move(std::get<1>(CLI::GetParam<TupleType>("training")));
     if (CLI::HasParam("labels"))
     {
@@ -169,12 +170,12 @@ static void mlpackMain()
     {
       arma::Row<double> weights =
           std::move(CLI::GetParam<arma::Mat<double>>("weights"));
-      model.tree = DecisionTree<>(trainingSet, model.info, labels,
+      model->tree = DecisionTree<>(trainingSet, model->info, labels,
           numClasses, weights, minLeafSize);
     }
     else
     {
-      model.tree = DecisionTree<>(trainingSet, model.info, labels,
+      model->tree = DecisionTree<>(trainingSet, model->info, labels,
           numClasses, minLeafSize);
     }
 
@@ -184,7 +185,7 @@ static void mlpackMain()
       arma::Row<size_t> predictions;
       arma::mat probabilities;
 
-      model.tree.Classify(trainingSet, predictions, probabilities);
+      model->tree.Classify(trainingSet, predictions, probabilities);
 
       size_t correct = 0;
       for (size_t i = 0; i < trainingSet.n_cols; ++i)
@@ -199,19 +200,19 @@ static void mlpackMain()
   }
   else
   {
-    model = std::move(CLI::GetParam<DecisionTreeModel>("input_model"));
+    model = CLI::GetParam<DecisionTreeModel*>("input_model");
   }
 
   // Do we need to get predictions?
   if (CLI::HasParam("test"))
   {
-    std::get<0>(CLI::GetRawParam<TupleType>("test")) = model.info;
+    std::get<0>(CLI::GetRawParam<TupleType>("test")) = model->info;
     arma::mat testPoints = std::get<1>(CLI::GetParam<TupleType>("test"));
 
     arma::Row<size_t> predictions;
     arma::mat probabilities;
 
-    model.tree.Classify(testPoints, predictions, probabilities);
+    model->tree.Classify(testPoints, predictions, probabilities);
 
     // Do we need to calculate accuracy?
     if (CLI::HasParam("test_labels"))
@@ -231,13 +232,10 @@ static void mlpackMain()
     }
 
     // Do we need to save outputs?
-    if (CLI::HasParam("predictions"))
-      CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictions);
-    if (CLI::HasParam("probabilities"))
-      CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
+    CLI::GetParam<arma::Row<size_t>>("predictions") = predictions;
+    CLI::GetParam<arma::mat>("probabilities") = probabilities;
   }
 
   // Do we need to save the model?
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<DecisionTreeModel>("output_model") = std::move(model);
+  CLI::GetParam<DecisionTreeModel*>("output_model") = model;
 }

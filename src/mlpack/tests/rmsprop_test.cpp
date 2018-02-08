@@ -12,7 +12,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
-#include <mlpack/core/optimizers/sgd/test_function.hpp>
+#include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
 
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 

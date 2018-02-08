@@ -55,15 +55,14 @@ static void mlpackMain()
   RequireParamValue<int>("samples", [](int x) { return x > 0; }, true,
       "number of samples must be greater than 0");
 
-  GMM gmm = std::move(CLI::GetParam<GMM>("input_model"));
+  GMM* gmm = CLI::GetParam<GMM*>("input_model");
 
   size_t length = (size_t) CLI::GetParam<int>("samples");
   Log::Info << "Generating " << length << " samples..." << endl;
-  arma::mat samples(gmm.Dimensionality(), length);
+  arma::mat samples(gmm->Dimensionality(), length);
   for (size_t i = 0; i < length; ++i)
-    samples.col(i) = gmm.Random();
+    samples.col(i) = gmm->Random();
 
   // Save, if the user asked for it.
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(samples);
+  CLI::GetParam<arma::mat>("output") = std::move(samples);
 }

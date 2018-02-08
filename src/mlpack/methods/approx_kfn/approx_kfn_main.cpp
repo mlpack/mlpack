@@ -190,11 +190,12 @@ static void mlpackMain()
   }
 
   // Do the building of a model, if necessary.
-  ApproxKFNModel m;
+  ApproxKFNModel* m;
   arma::mat referenceSet; // This may be used at query time.
   if (CLI::HasParam("reference"))
   {
     referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
+    m = new ApproxKFNModel();
 
     const size_t numTables = (size_t) CLI::GetParam<int>("num_tables");
     const size_t numProjections =
@@ -205,16 +206,16 @@ static void mlpackMain()
     {
       Timer::Start("drusilla_select_construct");
       Log::Info << "Building DrusillaSelect model..." << endl;
-      m.type = 0;
-      m.ds = DrusillaSelect<>(referenceSet, numTables, numProjections);
+      m->type = 0;
+      m->ds = DrusillaSelect<>(referenceSet, numTables, numProjections);
       Timer::Stop("drusilla_select_construct");
     }
     else
     {
       Timer::Start("qdafn_construct");
       Log::Info << "Building QDAFN model..." << endl;
-      m.type = 1;
-      m.qdafn = QDAFN<>(referenceSet, numTables, numProjections);
+      m->type = 1;
+      m->qdafn = QDAFN<>(referenceSet, numTables, numProjections);
       Timer::Stop("qdafn_construct");
     }
     Log::Info << "Model built." << endl;
@@ -222,7 +223,7 @@ static void mlpackMain()
   else
   {
     // We must load the model from what was passed.
-    m = std::move(CLI::GetParam<ApproxKFNModel>("input_model"));
+    m = CLI::GetParam<ApproxKFNModel*>("input_model");
   }
 
   // Now, do we need to do any queries?
@@ -238,12 +239,12 @@ static void mlpackMain()
     if (CLI::HasParam("query"))
       querySet = std::move(CLI::GetParam<arma::mat>("query"));
 
-    if (m.type == 0)
+    if (m->type == 0)
     {
       Timer::Start("drusilla_select_search");
       Log::Info << "Searching for " << k << " furthest neighbors with "
           << "DrusillaSelect..." << endl;
-      m.ds.Search(set, k, neighbors, distances);
+      m->ds.Search(set, k, neighbors, distances);
       Timer::Stop("drusilla_select_search");
     }
     else
@@ -251,7 +252,7 @@ static void mlpackMain()
       Timer::Start("qdafn_search");
       Log::Info << "Searching for " << k << " furthest neighbors with "
           << "QDAFN..." << endl;
-      m.qdafn.Search(set, k, neighbors, distances);
+      m->qdafn.Search(set, k, neighbors, distances);
       Timer::Stop("qdafn_search");
     }
     Log::Info << "Search complete." << endl;
@@ -288,13 +289,9 @@ static void mlpackMain()
     }
 
     // Save results, if desired.
-    if (CLI::HasParam("neighbors"))
-      CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
-    if (CLI::HasParam("distances"))
-      CLI::GetParam<arma::mat>("distances") = std::move(distances);
+    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+    CLI::GetParam<arma::mat>("distances") = std::move(distances);
   }
 
-  // Should we save the model?
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<ApproxKFNModel>("output_model") = std::move(m);
+  CLI::GetParam<ApproxKFNModel*>("output_model") = m;
 }

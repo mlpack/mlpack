@@ -39,7 +39,27 @@ void PrintDoc(const util::ParamData& d,
     oss << d.name << "_ (";
   else
     oss << d.name << " (";
-  oss << GetPythonType<T>(d) << "): " << d.desc;
+  oss << GetPythonType<typename std::remove_pointer<T>::type>(d) << "): "
+      << d.desc;
+
+  // Print a default, if possible.
+  if (!d.required)
+  {
+    if (d.cppType == "std::string")
+    {
+      oss << "  Default value '" << boost::any_cast<std::string>(d.value)
+          << "'.";
+    }
+    else if (d.cppType == "double")
+    {
+      oss << "  Default value " << boost::any_cast<double>(d.value) << ".";
+    }
+    else if (d.cppType == "int")
+    {
+      oss << "  Default value " << boost::any_cast<int>(d.value) << ".";
+    }
+  }
+
   std::cout << util::HyphenateString(oss.str(), indent + 4);
 }
 
