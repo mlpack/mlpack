@@ -11,7 +11,8 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/spsa/spsa.hpp>
-#include <mlpack/core/optimizers/problems/spsa_test_function.hpp>
+#include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
+#include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -26,17 +27,37 @@ BOOST_AUTO_TEST_SUITE(SPSATest);
 
 BOOST_AUTO_TEST_CASE(SimpleSPSATestFunction)
 {
-  SPSATestFunction f;
+  SGDTestFunction f;
 
   SPSA optimiser(0.602, 0.101, 1e-6,
                  0.01, 100000);
 
   arma::mat coordinates = f.GetInitialPoint();
-  optimiser.Optimize(f, coordinates);
+  double result = optimiser.Optimize(f, coordinates);
 
+  BOOST_REQUIRE_CLOSE(result, -1.0, 0.05);
   BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
   BOOST_REQUIRE_SMALL(coordinates[1], 1e-7);
   BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
+}
+
+BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
+{
+  // Loop over several variants.
+  for (size_t i = 10; i < 50; i += 5)
+  {
+    // Create the generalized Rosenbrock function.
+    GeneralizedRosenbrockFunction f(i);
+
+    StandardSGD s(0.001, 1, 0, 1e-15, true);
+
+    arma::mat coordinates = f.GetInitialPoint();
+    double result = s.Optimize(f, coordinates);
+
+    BOOST_REQUIRE_SMALL(result, 1e-10);
+    for (size_t j = 0; j < i; ++j)
+      BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 1e-3);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();
