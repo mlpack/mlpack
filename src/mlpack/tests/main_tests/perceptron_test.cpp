@@ -41,9 +41,11 @@ struct PerceptronTestFixture
 };
 
 // reset the parameters
-void resetSettings() {
+void resetSettings() 
+{
+  bindings::tests::CleanMemory();
   CLI::ClearSettings();
-    CLI::RestoreSettings(testName);
+  CLI::RestoreSettings(testName);
 }
 
 BOOST_FIXTURE_TEST_SUITE(PerceptronMainTest,
@@ -144,9 +146,7 @@ BOOST_AUTO_TEST_CASE(PerceptronLabelsLessDimensionTest)
   arma::Row<size_t> output;
   output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
-  bindings::tests::CleanMemory();
-
-  // Now train perceptron with labels provided.
+  // Now train pereptron with labels provided.
 
   // Input training data.
   SetInputParam("training", std::move(inputData));
@@ -239,96 +239,109 @@ BOOST_AUTO_TEST_CASE(PerceptronMaxItrTest)
 }
 
 /**
-  * Ensuring that re-training of an existing model with different of classes is checked
+  * Ensuring that re-training of an existing model
+  * with different of classes is checked
  **/
 BOOST_AUTO_TEST_CASE(PerceptronReTrainWithWrongClasses)
 {
-  arma::mat trainX1; 
+  arma::mat trainX1;
   arma::Row<size_t> labelsX1;
 
   // loading a train data set with 3 classes
-  if(!data::Load("vc2.csv",trainX1)) {
+  if (!data::Load("vc2.csv", trainX1))
+  {
     BOOST_FAIL("Could not load the train data (vc2.csv)");
   }
 
   // loading the corresponding labels to the dataset
-  if(!data::Load("vc2_labels.txt", labelsX1)) {
+  if (!data::Load("vc2_labels.txt", labelsX1))
+  {
     BOOST_FAIL("Could not load the train data (vc2_labels.csv)");
   }
 
   SetInputParam("training", std::move(trainX1)); // train data
-  SetInputParam("labels", std::move(labelsX1)); // labels for the train data
+  // labels for the train data
+  SetInputParam("labels", std::move(labelsX1));
 
   //training model using first training dataset
   mlpackMain();
 
   // get the output model obtained after training
-  PerceptronModel model = std::move(CLI::GetParam<PerceptronModel>("output_model"));
+  PerceptronModel* model =
+      CLI::GetParam<PerceptronModel*>("output_model");
 
-  resetSettings();
+  // reset the data passed
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
 
-  arma::mat trainX2;
+  // creating training data with five classes
+  constexpr int D = 3;
+  constexpr int N = 10;
+  arma::mat trainX2 = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> labelsX2;
 
-  // loading a train dataset with 5 classes
-  if(!data::Load("train_data_5_classes.csv",trainX2)) {
-    BOOST_FAIL("Could not load the train data train_data_5_classes.csv");
-  }
+  // 10 responses
+  labelsX2 << 0 << 1 << 4 << 1 << 2 << 1 << 0 << 3 << 3 << 0 << endr;
 
-  SetInputParam("training",std::move(trainX2)); //last column of trainX2 contains the class labels
-  SetInputParam("input_model",std::move(model));
+  //last column of trainX2 contains the class labels
+  SetInputParam("training", std::move(trainX2));
+  SetInputParam("input_model", model);
 
-  // re-training an existing model of 3 classes with training data of 5 classes. Should give runtime error
+  // re-training an existing model of 3 classes 
+  // with training data of 5 classes. Should give runtime error
   Log::Fatal.ignoreInput=true;
-  BOOST_REQUIRE_THROW(mlpackMain(),std::runtime_error);
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput=false;
 }
 
 /**
   * Checking for dimensionality of the test data set
  **/
-BOOST_AUTO_TEST_CASE(PerceptronWrongDimOfTestData) 
+BOOST_AUTO_TEST_CASE(PerceptronWrongDimOfTestData)
 {
   constexpr int N = 10;
   constexpr int D = 4;
   constexpr int M = 20;
 
-  arma::mat trainX = arma::randu<arma::mat>(D,N);
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
   arma::Row<size_t> trainY;
 
-  trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << endr; // 10 responses
+  // 10 responses
+  trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << endr;
 
-  arma::mat testX = arma::randu<arma::mat>(D-3,M);  // test data with wrong dimensionality
+  // test data with wrong dimensionality
+  arma::mat testX = arma::randu<arma::mat>(D-3, M);
 
   SetInputParam("training", std::move(trainX));
-  // SetInputParam("labels", std::move(trainY));
+  SetInputParam("labels", std::move(trainY));
   SetInputParam("test", std::move(testX));
 
   // test data set with wrong dimensionality. Should give runtime error
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
-
 }
 
 /**
   * Ensuring that the response size is checked
  **/
-BOOST_AUTO_TEST_CASE(PerceptronWrongResponseSizeTest) 
+BOOST_AUTO_TEST_CASE(PerceptronWrongResponseSizeTest)
 {
   constexpr int D = 2;
   constexpr int N = 10;
-  
-  arma::mat trainX = arma::randu<arma::mat>(D,N);
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
   arma::Row<size_t> trainY; // response vector with wrong size
 
-  trainY << 0 << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 1 << 0 << endr; // 8 responses
+  // 8 responses
+  trainY << 0 << 0 << 1 << 0 << 1 << 1 << 1 << 0 << endr; 
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
 
-  // labels for training data have wrong size. Should give runtime error 
+  // labels for training data have wrong size. Should give runtime error
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(),std::runtime_error);
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -349,7 +362,6 @@ BOOST_AUTO_TEST_CASE(PerceptronNoResponsesTest)
   Log::Fatal.ignoreInput = false;
 }
 
-
 /**
  * Ensuring that absence of training data is checked.
  */
@@ -366,7 +378,6 @@ BOOST_AUTO_TEST_CASE(PerceptronNoTrainingDataTest)
   Log::Fatal.ignoreInput = false;
 }
 
-
 /**
  * Ensuring that test data dimensionality is checked when model is loaded.
  */
@@ -379,7 +390,8 @@ BOOST_AUTO_TEST_CASE(PerceptronWrongDimOfTestData2)
   arma::mat trainX = arma::randu<arma::mat>(D, N);
   arma::Row<size_t> trainY;
 
-  trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << endr; // 10 responses
+  // 10 responses
+  trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << endr;
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
@@ -388,15 +400,19 @@ BOOST_AUTO_TEST_CASE(PerceptronWrongDimOfTestData2)
   mlpackMain();
 
   // get the output model obtained after the training
-  PerceptronModel model = std::move(CLI::GetParam<PerceptronModel>("output_model"));
+  PerceptronModel* model =
+      CLI::GetParam<PerceptronModel*>("output_model");
 
-  resetSettings();
+  // reset the data passed
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
 
-  arma::mat testX = arma::randu<arma::mat>(D - 1, M); // test data with Wrong dimensionality.
-  SetInputParam("input_model", std::move(model));
+  // test data with Wrong dimensionality.
+  arma::mat testX = arma::randu<arma::mat>(D - 1, M);
+  SetInputParam("input_model", model);
   SetInputParam("test", std::move(testX));
 
-  // wrong dimensionality of test data. Should give runtime error. 
+  // wrong dimensionality of test data. Should give runtime error.
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
