@@ -727,8 +727,8 @@ BOOST_AUTO_TEST_CASE(HoeffdingDomingosSplittingStrategyTest)
   mlpackMain();
 
   // Check that both models have different number of nodes.
-  BOOST_CHECK_PREDICATE(std::not_equal_to<int>(),
-    ((CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes())(nodes));
+  BOOST_CHECK_NE(
+      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(), nodes);
 }
 
 /**
