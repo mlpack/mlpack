@@ -85,8 +85,7 @@ class SPSA
       ck = c/std::pow((max_iter + 1), gamma);
       arma::vec f_plus = function.Evaluate(iterate + ck*sp_vector, s);
       arma::vec f_minus = function.Evaluate(iterate - ck*sp_vector, s);
-      arma::mat gradient = ((f_plus - f_minus)/2)*ck*sp_vector.i();
-
+      arma::mat gradient = (f_plus - f_minus) % (1 / (2 * ck * sp_vector));
       iterate -= ak*gradient;
     }
   }
