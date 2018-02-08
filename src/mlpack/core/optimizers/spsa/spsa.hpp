@@ -73,7 +73,7 @@ class SPSA
   }
 
   template<typename DecomposableFunctionType>
-  void Optimize(DecomposableFunctionType& function, arma::mat& iterate)
+  double Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   {
     const int s = iterate.n_elem;
 
@@ -83,11 +83,15 @@ class SPSA
                   randi(s, arma::distr_param(-1, 1)));
       ak = a/std::pow((max_iter + 1 + A), alpha);
       ck = c/std::pow((max_iter + 1), gamma);
-      arma::vec f_plus = function.Evaluate(iterate + ck*sp_vector, s);
-      arma::vec f_minus = function.Evaluate(iterate - ck*sp_vector, s);
-      arma::mat gradient = (f_plus - f_minus) % (1 / (2 * ck * sp_vector));
+      iterate += ck * sp_vector;
+      double f_plus = function.Evaluate(iterate + ck*sp_vector, 0, s);
+      iterate -= ck * sp_vector;
+      double f_minus = function.Evaluate(iterate - ck*sp_vector, 0, s);
+      arma::mat gradient = (f_plus - f_minus) * (1 / (2 * ck * sp_vector));
       iterate -= ak*gradient;
     }
+
+    return function.Evaluate(iterate, 0, s);
   }
 };
 
