@@ -1,5 +1,5 @@
 /**
- * @file test_function.cpp
+ * @file sgd_test_function.cpp
  * @author Ryan Curtin
  *
  * Implementation of very simple test function for stochastic gradient descent
@@ -10,7 +10,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include "test_function.hpp"
+#include "sgd_test_function.hpp"
 
 using namespace mlpack;
 using namespace mlpack::optimization;

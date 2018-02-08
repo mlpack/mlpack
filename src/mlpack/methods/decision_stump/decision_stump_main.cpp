@@ -116,9 +116,10 @@ static void mlpackMain()
   ReportIgnoredParam({{ "test", false }}, "predictions");
 
   // We must either load a model, or train a new stump.
-  DSModel model;
+  DSModel* model;
   if (CLI::HasParam("training"))
   {
+    model = new DSModel();
     mat trainingData = std::move(CLI::GetParam<mat>("training"));
 
     // Load labels, if necessary.
@@ -140,18 +141,18 @@ static void mlpackMain()
 
     // Normalize the labels.
     Row<size_t> labels;
-    data::NormalizeLabels(labelsIn, labels, model.mappings);
+    data::NormalizeLabels(labelsIn, labels, model->mappings);
 
     const size_t bucketSize = CLI::GetParam<int>("bucket_size");
     const size_t classes = labels.max() + 1;
 
     Timer::Start("training");
-    model.stump.Train(trainingData, labels, classes, bucketSize);
+    model->stump.Train(trainingData, labels, classes, bucketSize);
     Timer::Stop("training");
   }
   else
   {
-    model = std::move(CLI::GetParam<DSModel>("input_model"));
+    model = CLI::GetParam<DSModel*>("input_model");
   }
 
   // Now, do we need to do any testing?
@@ -160,21 +161,21 @@ static void mlpackMain()
     // Load the test file.
     mat testingData = std::move(CLI::GetParam<arma::mat>("test"));
 
-    if (testingData.n_rows <= model.stump.SplitDimension())
+    if (testingData.n_rows <= model->stump.SplitDimension())
       Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
           << "is too low; the trained stump requires at least "
-          << model.stump.SplitDimension() << " dimensions!" << endl;
+          << model->stump.SplitDimension() << " dimensions!" << endl;
 
     Row<size_t> predictedLabels(testingData.n_cols);
     Timer::Start("testing");
-    model.stump.Classify(testingData, predictedLabels);
+    model->stump.Classify(testingData, predictedLabels);
     Timer::Stop("testing");
 
     // Denormalize predicted labels, if we want to save them.
     if (CLI::HasParam("predictions"))
     {
       Row<size_t> actualLabels;
-      data::RevertLabels(predictedLabels, model.mappings, actualLabels);
+      data::RevertLabels(predictedLabels, model->mappings, actualLabels);
 
       // Save the predicted labels as output.
       CLI::GetParam<Row<size_t>>("predictions") = std::move(actualLabels);
@@ -182,6 +183,5 @@ static void mlpackMain()
   }
 
   // Save the model, if desired.
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<DSModel>("output_model") = std::move(model);
+  CLI::GetParam<DSModel*>("output_model") = model;
 }

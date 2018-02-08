@@ -111,10 +111,11 @@ static void mlpackMain()
   // Naive mode overrides single mode.
   ReportIgnoredParam({{ "naive", true }}, "single");
 
-  FastMKSModel model;
+  FastMKSModel* model;
   arma::mat referenceData;
   if (CLI::HasParam("reference"))
   {
+    model = new FastMKSModel();
     referenceData = std::move(CLI::GetParam<arma::mat>("reference"));
 
     Log::Info << "Loaded reference data (" << referenceData.n_rows << " x "
@@ -137,55 +138,55 @@ static void mlpackMain()
     if (kernelType == "linear")
     {
       LinearKernel lk;
-      model.KernelType() = FastMKSModel::LINEAR_KERNEL;
-      model.BuildModel(referenceData, lk, single, naive, base);
+      model->KernelType() = FastMKSModel::LINEAR_KERNEL;
+      model->BuildModel(referenceData, lk, single, naive, base);
     }
     else if (kernelType == "polynomial")
     {
       PolynomialKernel pk(degree, offset);
-      model.KernelType() = FastMKSModel::POLYNOMIAL_KERNEL;
-      model.BuildModel(referenceData, pk, single, naive, base);
+      model->KernelType() = FastMKSModel::POLYNOMIAL_KERNEL;
+      model->BuildModel(referenceData, pk, single, naive, base);
     }
     else if (kernelType == "cosine")
     {
       CosineDistance cd;
-      model.KernelType() = FastMKSModel::COSINE_DISTANCE;
-      model.BuildModel(referenceData, cd, single, naive, base);
+      model->KernelType() = FastMKSModel::COSINE_DISTANCE;
+      model->BuildModel(referenceData, cd, single, naive, base);
     }
     else if (kernelType == "gaussian")
     {
       GaussianKernel gk(bandwidth);
-      model.KernelType() = FastMKSModel::GAUSSIAN_KERNEL;
-      model.BuildModel(referenceData, gk, single, naive, base);
+      model->KernelType() = FastMKSModel::GAUSSIAN_KERNEL;
+      model->BuildModel(referenceData, gk, single, naive, base);
     }
     else if (kernelType == "epanechnikov")
     {
       EpanechnikovKernel ek(bandwidth);
-      model.KernelType() = FastMKSModel::EPANECHNIKOV_KERNEL;
-      model.BuildModel(referenceData, ek, single, naive, base);
+      model->KernelType() = FastMKSModel::EPANECHNIKOV_KERNEL;
+      model->BuildModel(referenceData, ek, single, naive, base);
     }
     else if (kernelType == "triangular")
     {
       TriangularKernel tk(bandwidth);
-      model.KernelType() = FastMKSModel::TRIANGULAR_KERNEL;
-      model.BuildModel(referenceData, tk, single, naive, base);
+      model->KernelType() = FastMKSModel::TRIANGULAR_KERNEL;
+      model->BuildModel(referenceData, tk, single, naive, base);
     }
     else if (kernelType == "hyptan")
     {
       HyperbolicTangentKernel htk(scale, offset);
-      model.KernelType() = FastMKSModel::HYPTAN_KERNEL;
-      model.BuildModel(referenceData, htk, single, naive, base);
+      model->KernelType() = FastMKSModel::HYPTAN_KERNEL;
+      model->BuildModel(referenceData, htk, single, naive, base);
     }
   }
   else
   {
     // Load model from file, then do whatever is necessary.
-    model = std::move(CLI::GetParam<FastMKSModel>("input_model"));
+    model = CLI::GetParam<FastMKSModel*>("input_model");
   }
 
   // Set search preferences.
-  model.Naive() = CLI::HasParam("naive");
-  model.SingleMode() = CLI::HasParam("single");
+  model->Naive() = CLI::HasParam("naive");
+  model->SingleMode() = CLI::HasParam("single");
 
   // Should we do search?
   if (CLI::HasParam("k"))
@@ -202,23 +203,19 @@ static void mlpackMain()
       Log::Info << "Loaded query data (" << queryData.n_rows << " x "
           << queryData.n_cols << ")." << endl;
 
-      model.Search(queryData, (size_t) CLI::GetParam<int>("k"), indices,
+      model->Search(queryData, (size_t) CLI::GetParam<int>("k"), indices,
           kernels, base);
     }
     else
     {
-      model.Search((size_t) CLI::GetParam<int>("k"), indices, kernels);
+      model->Search((size_t) CLI::GetParam<int>("k"), indices, kernels);
     }
 
-    // Save output, if we were asked to.
-    if (CLI::HasParam("kernels"))
-      CLI::GetParam<arma::mat>("kernels") = std::move(kernels);
-
-    if (CLI::HasParam("indices"))
-      CLI::GetParam<arma::Mat<size_t>>("indices") = std::move(indices);
+    // Save output.
+    CLI::GetParam<arma::mat>("kernels") = std::move(kernels);
+    CLI::GetParam<arma::Mat<size_t>>("indices") = std::move(indices);
   }
 
-  // Save the model, if requested.
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<FastMKSModel>("output_model") = std::move(model);
+  // Save the model.
+  CLI::GetParam<FastMKSModel*>("output_model") = model;
 }

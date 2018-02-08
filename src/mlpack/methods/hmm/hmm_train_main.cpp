@@ -436,21 +436,21 @@ static void mlpackMain()
     typeId = HMMType::GaussianMixtureModelHMM;
 
   // If we have a model file, we can autodetect the type.
-  HMMModel hmm(typeId);
+  HMMModel* hmm;
   if (CLI::HasParam("input_model"))
   {
-    hmm = std::move(CLI::GetParam<HMMModel>("input_model"));
+    hmm = CLI::GetParam<HMMModel*>("input_model");
   }
   else
   {
     // We need to initialize the model.
-    hmm.PerformAction<Init, vector<mat>>(&trainSeq);
+    hmm = new HMMModel(typeId);
+    hmm->PerformAction<Init, vector<mat>>(&trainSeq);
   }
 
   // Train the model.
-  hmm.PerformAction<Train, vector<mat>>(&trainSeq);
+  hmm->PerformAction<Train, vector<mat>>(&trainSeq);
 
   // If necessary, save the output.
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<HMMModel>("output_model") = std::move(hmm);
+  CLI::GetParam<HMMModel*>("output_model") = hmm;
 }

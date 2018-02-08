@@ -72,7 +72,8 @@ void GetPrintableParam(const util::ParamData& data,
                        const void* /* input */,
                        void* output)
 {
-  *((std::string*) output) = GetPrintableParam<T>(data);
+  *((std::string*) output) =
+      GetPrintableParam<typename std::remove_pointer<T>::type>(data);
 }
 
 } // namespace tests

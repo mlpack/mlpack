@@ -115,7 +115,7 @@ class ConstrLpBallSolver
       else
         s = arma::abs(v);
 
-      arma::uword k;
+      arma::uword k = 0;
       s.max(k);  // k is the linear index of the largest element.
       s.zeros();
       s(k) = - mlpack::math::Sign(v(k));

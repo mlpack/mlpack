@@ -68,7 +68,8 @@ void GetPrintableParamValue(
     const void* input,
     void* output)
 {
-  *((std::string*) output) = GetPrintableParamValue<T>(d,
+  *((std::string*) output) =
+      GetPrintableParamValue<typename std::remove_pointer<T>::type>(d,
       *((std::string*) input));
 }
 

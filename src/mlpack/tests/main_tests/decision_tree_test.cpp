@@ -36,6 +36,7 @@ struct DecisionTreeTestFixture
   ~DecisionTreeTestFixture()
   {
     // Clear the settings.
+    bindings::tests::CleanMemory();
     CLI::ClearSettings();
   }
 };
@@ -207,7 +208,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(std::make_tuple(info, testData)));
   SetInputParam("input_model",
-      std::move(CLI::GetParam<DecisionTreeModel>("output_model")));
+      std::move(CLI::GetParam<DecisionTreeModel*>("output_model")));
 
   mlpackMain();
 
@@ -254,7 +255,7 @@ BOOST_AUTO_TEST_CASE(DecisionTreeTrainingVerTest)
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                std::move(CLI::GetParam<DecisionTreeModel>("output_model")));
+                std::move(CLI::GetParam<DecisionTreeModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -308,7 +309,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(std::make_tuple(info, testData)));
   SetInputParam("input_model",
-      std::move(CLI::GetParam<DecisionTreeModel>("output_model")));
+      std::move(CLI::GetParam<DecisionTreeModel*>("output_model")));
 
   mlpackMain();
 

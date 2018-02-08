@@ -70,7 +70,7 @@ void OutputParam(const util::ParamData& data,
                  const void* /* input */,
                  void* /* output */)
 {
-  OutputParamImpl<T>(data);
+  OutputParamImpl<typename std::remove_pointer<T>::type>(data);
 }
 
 } // namespace cli

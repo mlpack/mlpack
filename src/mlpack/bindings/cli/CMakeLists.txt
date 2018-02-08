@@ -5,7 +5,9 @@ set(SOURCES
   cli_option.hpp
   default_param.hpp
   default_param_impl.hpp
+  delete_allocated_memory.hpp
   end_program.hpp
+  get_allocated_memory.hpp
   get_param.hpp
   get_raw_param.hpp
   get_printable_param.hpp

@@ -1058,9 +1058,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
   // There are no uses of required models, so that is not an option to this
   // macro (it would be easy to add).
   #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
-      static mlpack::util::Option<TYPE> \
+      static mlpack::util::Option<TYPE*> \
       JOIN(cli_option_dummy_model_, __COUNTER__) \
-      (TYPE(), ID, DESC, ALIAS, #TYPE, REQ, IN, false, testName);
+      (nullptr, ID, DESC, ALIAS, #TYPE, REQ, IN, false, testName);
 #else
   // We have to do some really bizarre stuff since __COUNTER__ isn't defined. I
   // don't think we can absolutely guarantee success, but it should be "good
@@ -1113,9 +1113,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
       !TRANS, testName);
 
   #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
-      static mlpack::util::Option<TYPE> \
+      static mlpack::util::Option<TYPE*> \
       JOIN(JOIN(cli_option_dummy_object_model_, __LINE__), opt) \
-      (TYPE(), ID, DESC, ALIAS, #TYPE, REQ, IN, false, \
+      (nullptr, ID, DESC, ALIAS, #TYPE, REQ, IN, false, \
       testName);
 #endif
 

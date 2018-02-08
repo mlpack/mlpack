@@ -145,10 +145,11 @@ static void mlpackMain()
 
   ReportIgnoredParam({{ "test", false }}, "output");
 
-  AdaBoostModel m;
+  AdaBoostModel* m;
   if (CLI::HasParam("training"))
   {
     mat trainingData = std::move(CLI::GetParam<arma::mat>("training"));
+    m = new AdaBoostModel();
 
     // Load labels.
     arma::Row<size_t> labelsIn;
@@ -172,28 +173,28 @@ static void mlpackMain()
     Row<size_t> labels;
 
     // Normalize the labels.
-    data::NormalizeLabels(labelsIn, labels, m.Mappings());
+    data::NormalizeLabels(labelsIn, labels, m->Mappings());
 
     // Get other training parameters.
     const double tolerance = CLI::GetParam<double>("tolerance");
     const size_t iterations = (size_t) CLI::GetParam<int>("iterations");
     const string weakLearner = CLI::GetParam<string>("weak_learner");
     if (weakLearner == "decision_stump")
-      m.WeakLearnerType() = AdaBoostModel::WeakLearnerTypes::DECISION_STUMP;
+      m->WeakLearnerType() = AdaBoostModel::WeakLearnerTypes::DECISION_STUMP;
     else if (weakLearner == "perceptron")
-      m.WeakLearnerType() = AdaBoostModel::WeakLearnerTypes::PERCEPTRON;
+      m->WeakLearnerType() = AdaBoostModel::WeakLearnerTypes::PERCEPTRON;
 
-    const size_t numClasses = m.Mappings().n_elem;
+    const size_t numClasses = m->Mappings().n_elem;
     Log::Info << numClasses << " classes in dataset." << endl;
 
     Timer::Start("adaboost_training");
-    m.Train(trainingData, labels, numClasses, iterations, tolerance);
+    m->Train(trainingData, labels, numClasses, iterations, tolerance);
     Timer::Stop("adaboost_training");
   }
   else
   {
     // We have a specified input model.
-    m = std::move(CLI::GetParam<AdaBoostModel>("input_model"));
+    m = CLI::GetParam<AdaBoostModel*>("input_model");
   }
 
   // Perform classification, if desired.
@@ -201,24 +202,21 @@ static void mlpackMain()
   {
     mat testingData = std::move(CLI::GetParam<arma::mat>("test"));
 
-    if (testingData.n_rows != m.Dimensionality())
+    if (testingData.n_rows != m->Dimensionality())
       Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
           << "must be the same as the model dimensionality ("
-          << m.Dimensionality() << ")!" << endl;
+          << m->Dimensionality() << ")!" << endl;
 
     Row<size_t> predictedLabels(testingData.n_cols);
     Timer::Start("adaboost_classification");
-    m.Classify(testingData, predictedLabels);
+    m->Classify(testingData, predictedLabels);
     Timer::Stop("adaboost_classification");
 
     Row<size_t> results;
-    data::RevertLabels(predictedLabels, m.Mappings(), results);
+    data::RevertLabels(predictedLabels, m->Mappings(), results);
 
-    if (CLI::HasParam("output"))
-      CLI::GetParam<arma::Row<size_t>>("output") = std::move(results);
+    CLI::GetParam<arma::Row<size_t>>("output") = std::move(results);
   }
 
-  // Should we save the model, too?
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<AdaBoostModel>("output_model") = std::move(m);
+  CLI::GetParam<AdaBoostModel*>("output_model") = m;
 }

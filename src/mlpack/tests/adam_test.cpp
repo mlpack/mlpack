@@ -15,7 +15,15 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/core/optimizers/adam/adam.hpp>
-#include <mlpack/core/optimizers/sgd/test_function.hpp>
+
+#include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
+#include <mlpack/core/optimizers/problems/colville_function.hpp>
+#include <mlpack/core/optimizers/problems/booth_function.hpp>
+#include <mlpack/core/optimizers/problems/sphere_function.hpp>
+#include <mlpack/core/optimizers/problems/styblinski_tang_function.hpp>
+#include <mlpack/core/optimizers/problems/mc_cormick_function.hpp>
+#include <mlpack/core/optimizers/problems/matyas_function.hpp>
+#include <mlpack/core/optimizers/problems/easom_function.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -31,6 +39,99 @@ using namespace mlpack::regression;
 using namespace mlpack;
 
 BOOST_AUTO_TEST_SUITE(AdamTest);
+
+
+/**
+ * Test the Adam optimizer on the Sphere function.
+ */
+BOOST_AUTO_TEST_CASE(AdamSphereFunctionTest)
+{
+  SphereFunction f(2);
+  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
+
+  arma::mat coordinates = f.GetInitialPoint();
+  optimizer.Optimize(f, coordinates);
+
+  BOOST_REQUIRE_SMALL(coordinates[0], 0.1);
+  BOOST_REQUIRE_SMALL(coordinates[1], 0.1);
+}
+
+/**
+ * Test the Adam optimizer on the Wood function.
+ */
+BOOST_AUTO_TEST_CASE(AdamStyblinskiTangFunctionTest)
+{
+  StyblinskiTangFunction f(2);
+  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
+
+  arma::mat coordinates = f.GetInitialPoint();
+  optimizer.Optimize(f, coordinates);
+
+  BOOST_REQUIRE_CLOSE(coordinates[0], -2.9, 1.0); // 1% error tolerance.
+  BOOST_REQUIRE_CLOSE(coordinates[1], -2.9, 1.0); // 1% error tolerance.
+}
+
+/**
+ * Test the Adam optimizer on the McCormick function.
+ */
+BOOST_AUTO_TEST_CASE(AdamMcCormickFunctionTest)
+{
+  McCormickFunction f;
+  Adam optimizer(0.5, 1, 0.7, 0.999, 1e-8, 500000, 1e-5, false);
+
+  arma::mat coordinates = f.GetInitialPoint();
+  optimizer.Optimize(f, coordinates);
+
+  BOOST_REQUIRE_CLOSE(coordinates[0], -0.547, 3.0); // 3% error tolerance.
+  BOOST_REQUIRE_CLOSE(coordinates[1], -1.547, 3.0); // 3% error tolerance.
+}
+
+/**
+ * Test the Adam optimizer on the Matyas function.
+ */
+BOOST_AUTO_TEST_CASE(AdamMatyasFunctionTest)
+{
+  MatyasFunction f;
+  Adam optimizer(0.5, 1, 0.7, 0.999, 1e-8, 500000, 1e-5, false);
+
+  arma::mat coordinates = f.GetInitialPoint();
+  optimizer.Optimize(f, coordinates);
+
+  // 3% error tolerance.
+  BOOST_REQUIRE_CLOSE(std::trunc(100.0 * coordinates[0]) / 100.0, 0.0, 3.0);
+  BOOST_REQUIRE_CLOSE(std::trunc(100.0 * coordinates[1]) / 100.0, 0.0, 3.0);
+}
+
+/**
+ * Test the Adam optimizer on the Easom function.
+ */
+BOOST_AUTO_TEST_CASE(AdamEasomFunctionTest)
+{
+  EasomFunction f;
+  Adam optimizer(0.2, 1, 0.7, 0.999, 1e-8, 500000, 1e-5, false);
+
+  arma::mat coordinates = arma::mat("2.9; 2.9");
+  optimizer.Optimize(f, coordinates);
+
+  // 5% error tolerance.
+  BOOST_REQUIRE_CLOSE(std::trunc(100.0 * coordinates[0]) / 100.0, 3.14, 3.0);
+  BOOST_REQUIRE_CLOSE(std::trunc(100.0 * coordinates[1]) / 100.0, 3.14, 3.0);
+}
+
+/**
+ * Test the Adam optimizer on the Booth function.
+ */
+BOOST_AUTO_TEST_CASE(AdamBoothFunctionTest)
+{
+  BoothFunction f;
+  Adam optimizer(1e-1, 1, 0.7, 0.999, 1e-8, 500000, 1e-9, true);
+
+  arma::mat coordinates = f.GetInitialPoint();
+  optimizer.Optimize(f, coordinates);
+
+  BOOST_REQUIRE_CLOSE(coordinates[0], 1.0, 0.2);
+  BOOST_REQUIRE_CLOSE(coordinates[1], 3.0, 0.2);
+}
 
 /**
  * Tests the Adam optimizer using a simple test function.

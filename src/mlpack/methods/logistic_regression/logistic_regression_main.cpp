@@ -214,16 +214,18 @@ static void mlpackMain()
     regressors = std::move(CLI::GetParam<arma::mat>("training"));
 
   // Load the model, if necessary.
-  LogisticRegression<> model(0, 0); // Empty model.
+  LogisticRegression<>* model;
   if (CLI::HasParam("input_model"))
-    model = std::move(CLI::GetParam<LogisticRegression<>>("input_model"));
+    model = CLI::GetParam<LogisticRegression<>*>("input_model");
   else
   {
+    model = new LogisticRegression<>(0, 0);
+
     // Set the size of the parameters vector, if necessary.
     if (!CLI::HasParam("labels"))
-      model.Parameters() = arma::zeros<arma::rowvec>(regressors.n_rows);
+      model->Parameters() = arma::zeros<arma::rowvec>(regressors.n_rows);
     else
-      model.Parameters() = arma::zeros<arma::rowvec>(regressors.n_rows + 1);
+      model->Parameters() = arma::zeros<arma::rowvec>(regressors.n_rows + 1);
   }
 
   // Check if the responses are in a separate file.
@@ -257,7 +259,7 @@ static void mlpackMain()
   // Now, do the training.
   if (CLI::HasParam("training"))
   {
-    model.Lambda() = lambda;
+    model->Lambda() = lambda;
 
     if (optimizerType == "sgd")
     {
@@ -269,7 +271,7 @@ static void mlpackMain()
       Log::Info << "Training model with SGD optimizer." << endl;
 
       // This will train the model.
-      model.Train(regressors, responses, sgdOpt);
+      model->Train(regressors, responses, sgdOpt);
     }
     else if (optimizerType == "lbfgs")
     {
@@ -279,7 +281,7 @@ static void mlpackMain()
       Log::Info << "Training model with L-BFGS optimizer." << endl;
 
       // This will train the model.
-      model.Train(regressors, responses, lbfgsOpt);
+      model->Train(regressors, responses, lbfgsOpt);
     }
   }
 
@@ -300,7 +302,7 @@ static void mlpackMain()
     {
       Log::Info << "Predicting classes of points in '"
           << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
-      model.Classify(testSet, predictions, decisionBoundary);
+      model->Classify(testSet, predictions, decisionBoundary);
 
       CLI::GetParam<arma::Row<size_t>>("output") = std::move(predictions);
     }
@@ -310,13 +312,12 @@ static void mlpackMain()
       Log::Info << "Calculating class probabilities of points in '"
           << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
       arma::mat probabilities;
-      model.Classify(testSet, probabilities);
+      model->Classify(testSet, probabilities);
 
       CLI::GetParam<arma::mat>("output_probabilities") =
           std::move(probabilities);
     }
   }
 
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<LogisticRegression<>>("output_model") = std::move(model);
+  CLI::GetParam<LogisticRegression<>*>("output_model") = model;
 }

@@ -89,13 +89,15 @@ void AddToPO(const util::ParamData& d,
       (boost::program_options::options_description*) output;
 
   // Generate the name to be given to boost::program_options.
-  const std::string mappedName = MapParameterName<T>(d.name);
+  const std::string mappedName =
+      MapParameterName<typename std::remove_pointer<T>::type>(d.name);
   std::string boostName = (d.alias != '\0') ? mappedName + "," +
       std::string(1, d.alias) : mappedName;
 
   // Note that we have to add the option as type equal to the mapped type, not
   // the true type of the option.
-  AddToPO<typename ParameterType<T>::type>(boostName, d.desc, *desc);
+  AddToPO<typename ParameterType<typename std::remove_pointer<T>::type>::type>(
+      boostName, d.desc, *desc);
 }
 
 } // namespace cli

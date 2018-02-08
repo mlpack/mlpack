@@ -11,7 +11,8 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/gradient_descent/gradient_descent.hpp>
-#include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
+
+#include <mlpack/core/optimizers/problems/rosenbrock_function.hpp>
 #include <mlpack/core/optimizers/gradient_descent/test_function.hpp>
 
 #include <boost/test/unit_test.hpp>

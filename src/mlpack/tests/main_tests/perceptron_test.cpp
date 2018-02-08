@@ -35,6 +35,7 @@ struct PerceptronTestFixture
   ~PerceptronTestFixture()
   {
     // Clear the settings.
+    bindings::tests::CleanMemory();
     CLI::ClearSettings();
   }
 };
@@ -143,7 +144,9 @@ BOOST_AUTO_TEST_CASE(PerceptronLabelsLessDimensionTest)
   arma::Row<size_t> output;
   output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
-  // Now train pereptron with labels provided.
+  bindings::tests::CleanMemory();
+
+  // Now train perceptron with labels provided.
 
   // Input training data.
   SetInputParam("training", std::move(inputData));
@@ -201,7 +204,7 @@ BOOST_AUTO_TEST_CASE(PerceptronModelReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                std::move(CLI::GetParam<PerceptronModel>("output_model")));
+                CLI::GetParam<PerceptronModel*>("output_model"));
 
   mlpackMain();
 
