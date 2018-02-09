@@ -88,12 +88,24 @@ class LRSDPFunction
   //! Modify the SDP object representing the problem.
   SDPType& SDP() { return sdp; }
 
+  //! Get R*R^T matrix.
+  const arma::mat& RRT() const { return rrt; }
+
+  /**
+   * Update R*R^T matrix. Note caching R*R^T provide computation
+   * optimization by reducing redundant R*R^T calculations.
+   */
+  void UpdateRRT(const arma::mat& newrrt) const;
+
  private:
   //! SDP object representing the problem
   SDPType sdp;
 
   //! Initial point.
   arma::mat initialPoint;
+
+  //! R*R^T matrix.
+  arma::mat rrt;
 };
 
 // Declare specializations in lrsdp_function.cpp.
