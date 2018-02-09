@@ -14,6 +14,7 @@ cache:
 
 before_install:
   - mkdir -p $HOME/test/cache
+  - sudo mkdir -p /root/.cache/pip/
   - sudo cp -R $HOME/test/cache/ /root/.cache/pip/
   - ls $HOME/test/cache/
   - sudo mv $HOME/test/cache
