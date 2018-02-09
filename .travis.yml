@@ -27,7 +27,7 @@ before_install:
   - sudo -H pip3 install cython
   - sudo -H pip3 install numpy
   - sudo -H pip3 install pandas
-  - curl http://masterblaster.mlpack.org:5005/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
+  - curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
   - cmake . && make && sudo make install && cd ..
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
   - sudo cp -R /root/.cache/pip/ $HOME/test/cache/
