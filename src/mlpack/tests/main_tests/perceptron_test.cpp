@@ -40,14 +40,6 @@ struct PerceptronTestFixture
   }
 };
 
-// reset the parameters
-void resetSettings()
-{
-  bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
-}
-
 BOOST_FIXTURE_TEST_SUITE(PerceptronMainTest,
                          PerceptronTestFixture);
 
@@ -146,7 +138,9 @@ BOOST_AUTO_TEST_CASE(PerceptronLabelsLessDimensionTest)
   arma::Row<size_t> output;
   output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
-  // Now train pereptron with labels provided.
+  bindings::tests::CleanMemory();
+
+  // Now train perceptron with labels provided.
 
   // Input training data.
   SetInputParam("training", std::move(inputData));
@@ -419,5 +413,3 @@ BOOST_AUTO_TEST_CASE(PerceptronWrongDimOfTestData2)
 }
 
 BOOST_AUTO_TEST_SUITE_END();
-
-
