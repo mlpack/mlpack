@@ -238,7 +238,7 @@ static void mlpackMain()
   }
   else if (CLI::HasParam("training"))
   {
-    // Checking the size of training data if no labels are passed
+    // Checking the size of training data if no labels are passed.
     if (regressors.n_rows < 2)
     {
       Log::Fatal << "Can't get responses from training data "
@@ -289,7 +289,7 @@ static void mlpackMain()
   {
     testSet = std::move(CLI::GetParam<arma::mat>("test"));
 
-    // checking the dimensionality of the test data
+    // Checking the dimensionality of the test data.
     if (testSet.n_rows != model->Parameters().n_cols - 1)
     {
       Log::Fatal << "Test data dimensionality (" << testSet.n_rows << ") must "
