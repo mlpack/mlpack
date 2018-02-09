@@ -621,8 +621,8 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
   // ensures that decision boundary has some effect on the output
   // arma::all function checks that each element of the vector is equal to zero
   BOOST_REQUIRE_MESSAGE(arma::all(output1 == 0),
-                        "Parameter(Decision Boudary) has
-                        no effect on the output");
+                        "Parameter(Decision Boudary) has"
+                        "no effect on the output");
 
   // reset the settings
   bindings::tests::CleanMemory();
@@ -644,8 +644,8 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
   // ensures that decision boundary has som effect on the output
   // arma::all function checks that each element of the vector is equal to one
   BOOST_REQUIRE_MESSAGE(arma::all(output2 == 1),
-                        "Parameter(Decision Boudary) has
-                        no effect on the output");
+                        "Parameter(Decision Boudary) has"
+                        "no effect on the output");
 }
 
 BOOST_AUTO_TEST_SUITE_END();
