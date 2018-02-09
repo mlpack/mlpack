@@ -41,7 +41,7 @@ struct PerceptronTestFixture
 };
 
 // reset the parameters
-void resetSettings() 
+void resetSettings()
 {
   bindings::tests::CleanMemory();
   CLI::ClearSettings();
@@ -263,7 +263,7 @@ BOOST_AUTO_TEST_CASE(PerceptronReTrainWithWrongClasses)
   // labels for the train data
   SetInputParam("labels", std::move(labelsX1));
 
-  //training model using first training dataset
+  // training model using first training dataset
   mlpackMain();
 
   // get the output model obtained after training
@@ -283,15 +283,15 @@ BOOST_AUTO_TEST_CASE(PerceptronReTrainWithWrongClasses)
   // 10 responses
   labelsX2 << 0 << 1 << 4 << 1 << 2 << 1 << 0 << 3 << 3 << 0 << endr;
 
-  //last column of trainX2 contains the class labels
+  // last column of trainX2 contains the class labels
   SetInputParam("training", std::move(trainX2));
   SetInputParam("input_model", model);
 
-  // re-training an existing model of 3 classes 
+  // re-training an existing model of 3 classes
   // with training data of 5 classes. Should give runtime error
-  Log::Fatal.ignoreInput=true;
+  Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
-  Log::Fatal.ignoreInput=false;
+  Log::Fatal.ignoreInput = false;
 }
 
 /**
@@ -334,7 +334,7 @@ BOOST_AUTO_TEST_CASE(PerceptronWrongResponseSizeTest)
   arma::Row<size_t> trainY; // response vector with wrong size
 
   // 8 responses
-  trainY << 0 << 0 << 1 << 0 << 1 << 1 << 1 << 0 << endr; 
+  trainY << 0 << 0 << 1 << 0 << 1 << 1 << 1 << 0 << endr;
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));

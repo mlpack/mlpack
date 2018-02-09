@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(LRPridictionSizeCheck)
   arma::mat trainX = arma::randu<arma::mat>(D, N);
   arma::Row<size_t> trainY;
   // 10 responses
-  trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << arma::endr; 
+  trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << arma::endr;
   arma::mat testX = arma::randu<arma::mat>(D, M);
 
   SetInputParam("training", std::move(trainX));
@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE(LRWrongResponseSizeTest)
   arma::Row<size_t> trainY; // response vector with wrong size
 
   // 8 responses - incorrect size
-  trainY << 0 << 0 << 1 << 0 << 1 << 1 << 1 << 0 << arma::endr; 
+  trainY << 0 << 0 << 1 << 0 << 1 << 1 << 1 << 0 << arma::endr;
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentationTest)
   mlpackMain();
 
   // get the output
-  const arma::Row<size_t> testY1 = 
+  const arma::Row<size_t> testY1 =
       std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
   // reset the settings
@@ -319,7 +319,7 @@ BOOST_AUTO_TEST_CASE(LRTrainWithMoreThanTwoClasses)
 /**
   * Ensuring that max iteration for optimizers is non negative 
  **/ 
-BOOST_AUTO_TEST_CASE(LRNonNegativeMaxIterationTest) 
+BOOST_AUTO_TEST_CASE(LRNonNegativeMaxIterationTest)
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -332,7 +332,7 @@ BOOST_AUTO_TEST_CASE(LRNonNegativeMaxIterationTest)
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
-  SetInputParam("max_iterations", int (-1));
+  SetInputParam("max_iterations", int(-1));
 
   // Maximum iterations is negative. Should a runtime error
   Log::Fatal.ignoreInput = true;
@@ -356,8 +356,8 @@ BOOST_AUTO_TEST_CASE(LRNonNegativeStepSizeTest)
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
-  SetInputParam("optimizer", std::string ("sgd"));
-  SetInputParam("step_size", double (-0.01));
+  SetInputParam("optimizer", std::string("sgd"));
+  SetInputParam("step_size", double(-0.01));
 
   // step size for optimizer is negative. Should throw a runtime error
   Log::Fatal.ignoreInput = true;
@@ -381,7 +381,7 @@ BOOST_AUTO_TEST_CASE(LRNonNegativeToleranceTest)
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
-  SetInputParam("tolerance", double (-0.01));
+  SetInputParam("tolerance", double(-0.01));
 
   // tolerance is negative. Should throw a runtime error
   Log::Fatal.ignoreInput = true;
@@ -405,7 +405,7 @@ BOOST_AUTO_TEST_CASE(LRMaxIterationsChangeTest)
 
   SetInputParam("training", trainX);
   SetInputParam("labels", trainY);
-  SetInputParam("max_iterations", int (1));
+  SetInputParam("max_iterations", int(1));
 
   // first solution
   mlpackMain();
@@ -422,7 +422,7 @@ BOOST_AUTO_TEST_CASE(LRMaxIterationsChangeTest)
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
-  SetInputParam("max_iterations", int (100));
+  SetInputParam("max_iterations", int(100));
 
   // second solution
   mlpackMain();
@@ -431,7 +431,7 @@ BOOST_AUTO_TEST_CASE(LRMaxIterationsChangeTest)
   const arma::rowvec &parameters2 =
       CLI::GetParam<LogisticRegression<>*>("output_model")->Parameters();
 
-  // Check that the parameters (parameters1 and parameters2) are not equal 
+  // Check that the parameters (parameters1 and parameters2) are not equal
   // which ensures Max Iteration changes the output model
   // arma::all function checks that each element of the vector is equal to zero
   BOOST_REQUIRE_MESSAGE(!arma::all((parameters1-parameters2) == 0),
@@ -454,13 +454,13 @@ BOOST_AUTO_TEST_CASE(LRLambdaChangeTest)
 
   SetInputParam("training", trainX);
   SetInputParam("labels", trainY);
-  SetInputParam("lambda", double (0));
+  SetInputParam("lambda", double(0));
 
   // first solution
   mlpackMain();
 
   // get the parameters of the output model obtained after first training
-  const arma::rowvec parameters1 = 
+  const arma::rowvec parameters1 =
       std::move(CLI::GetParam<LogisticRegression<>*>("output_model")
                 ->Parameters());
 
@@ -471,7 +471,7 @@ BOOST_AUTO_TEST_CASE(LRLambdaChangeTest)
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
-  SetInputParam("lambda", double (1000));
+  SetInputParam("lambda", double(1000));
 
   // second solution
   mlpackMain();
@@ -504,7 +504,7 @@ BOOST_AUTO_TEST_CASE(LRStepSizeChangeTest)
   SetInputParam("training", trainX);
   SetInputParam("labels", trainY);
   SetInputParam("optimizer", std::string("sgd"));
-  SetInputParam("step_size", double (0.02));
+  SetInputParam("step_size", double(0.02));
 
   // first solution
   mlpackMain();
@@ -522,19 +522,19 @@ BOOST_AUTO_TEST_CASE(LRStepSizeChangeTest)
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
   SetInputParam("optimizer", std::string("sgd"));
-  SetInputParam("step_size", double (1.02));
+  SetInputParam("step_size", double(1.02));
 
   // second solution
   mlpackMain();
 
   // get the parameters of the output model obtained after second training
   const arma::rowvec &parameters2 =
-      CLI::GetParam<LogisticRegression<>*>("output_model")->Parameters();  
+      CLI::GetParam<LogisticRegression<>*>("output_model")->Parameters();
 
   // Check that the parameters (parameters1 and parameters2) are not equal
   // which ensures Step Size changes the output model
   // arma::all function checks that each element of the vector is equal to zero
-  BOOST_REQUIRE_MESSAGE(!arma::all((parameters1-parameters2) == 0), 
+  BOOST_REQUIRE_MESSAGE(!arma::all((parameters1-parameters2) == 0),
                         "Parameter(Step Size) has no effect on the output");
 }
 
@@ -555,9 +555,9 @@ BOOST_AUTO_TEST_CASE(LROptimizerChangeTest)
   SetInputParam("training", trainX);
   SetInputParam("labels", trainY);
   SetInputParam("optimizer", std::string("lbfgs"));
-  SetInputParam("max_iterations", int (1000));
+  SetInputParam("max_iterations", int(1000));
 
-   // first solution
+  // first solution
   mlpackMain();
 
   // get the parameters of the output model obtained after first training
@@ -569,24 +569,24 @@ BOOST_AUTO_TEST_CASE(LROptimizerChangeTest)
   bindings::tests::CleanMemory();
   CLI::ClearSettings();
   CLI::RestoreSettings(testName);
-  
+
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
   SetInputParam("optimizer", std::string("sgd"));
-  SetInputParam("max_iterations", int (1000));
+  SetInputParam("max_iterations", int(1000));
 
   // second solution
   mlpackMain();
 
   // get the parameters of the output model obtained after second training
-  const arma::rowvec &parameters2 = 
-      CLI::GetParam<LogisticRegression<>*>("output_model")->Parameters();  
+  const arma::rowvec &parameters2 =
+      CLI::GetParam<LogisticRegression<>*>("output_model")->Parameters();
 
   // Check that the parameters (parameters1 and parameters2) are not equal which
   // ensures that different optimizer converge to different results
   // arma::all function checks that each element of the vector is equal to zero
   BOOST_REQUIRE_MESSAGE(!arma::all((parameters1-parameters2) == 0),
-                        "Parameter(Step Size) has no effect on the output"); 
+                        "Parameter(Step Size) has no effect on the output");
 }
 
 /**
@@ -602,13 +602,13 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
   arma::Row<size_t> trainY;
 
   // 10 responses
-  trainY << 1 << 0 << 0 << 1 << 0 << 1 << 0 << 1 << 0 << 1 << arma::endr;    
+  trainY << 1 << 0 << 0 << 1 << 0 << 1 << 0 << 1 << 0 << 1 << arma::endr;
 
   arma::mat testX = arma::randu<arma::mat>(D, M);
 
   SetInputParam("training", trainX);
   SetInputParam("labels", trainY);
-  SetInputParam("decision_boundary", double (1));
+  SetInputParam("decision_boundary", double(1));
   SetInputParam("test", testX);
 
   // first solution
@@ -621,7 +621,8 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
   // ensures that decision boundary has some effect on the output
   // arma::all function checks that each element of the vector is equal to zero
   BOOST_REQUIRE_MESSAGE(arma::all(output1 == 0),
-                        "Parameter(Decision Boudary) has no effect on the output");
+                        "Parameter(Decision Boudary) has
+                        no effect on the output");
 
   // reset the settings
   bindings::tests::CleanMemory();
@@ -630,7 +631,7 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
 
   SetInputParam("training", trainX);
   SetInputParam("labels", trainY);
-  SetInputParam("decision_boundary", double (0));
+  SetInputParam("decision_boundary", double(0));
   SetInputParam("test", testX);
 
   // second solution
@@ -642,8 +643,8 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
   // Check that the parameters (parameters1 and parameters2) are not equal which
   // ensures that decision boundary has som effect on the output
   // arma::all function checks that each element of the vector is equal to one
-  BOOST_REQUIRE_MESSAGE(arma::all(output2 == 1), 
-                        "Parameter(Decision Boudary) has no effect on the output");
+  BOOST_REQUIRE_MESSAGE(arma::all(output2 == 1),
+                        "Parameter(Decision Boudary) has
+                        no effect on the output");
 }
-
 BOOST_AUTO_TEST_SUITE_END();
