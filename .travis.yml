@@ -10,7 +10,7 @@ env:
 cache:
   directories:
     - $HOME/.cache/pip
-    - root/.cache/pip
+    - /root/.cache/pip
 
 before_install:
   - sudo rm -vf /etc/apt/sources.list.d/*riak*
@@ -18,6 +18,8 @@ before_install:
   - sudo apt-get install -qq libopenblas-dev liblapack-dev g++ libboost-all-dev python3-pip
   # Install both python2 and python3 modules, and the build will decide which to
   # use.
+  - sudo ls $HOME/.cache/pip
+  - sudo ls /root/.cache/pip
   - sudo -H pip install cython setuptools numpy pandas
   - sudo -H pip3 install --upgrade --ignore-installed setuptools
   - sudo -H pip3 install cython
