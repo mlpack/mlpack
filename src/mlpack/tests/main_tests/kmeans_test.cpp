@@ -149,6 +149,30 @@ BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
 
 
 /**
+ * Checking that that size and dimensionality of prediction is correct when --labels_only is specified
+ */
+    BOOST_AUTO_TEST_CASE(KmClusteringSizeCheckLabelOnly)
+    {
+        constexpr int N = 10;
+        constexpr int D = 4;
+        int C = 2;
+
+        arma::mat InputData = arma::randu<arma::mat>(N, D);
+        SetInputParam("input", std::move(InputData));
+        SetInputParam("clusters", std::move(C));
+        SetInputParam("labels_only", true);
+
+
+        mlpackMain();
+
+        BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, N);
+        BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 1);
+        BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_rows, C);
+        BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_cols, D);
+    }
+
+
+/**
  * Checking that that size and dimensionality of Final Input File is correct when flag --in_place is specified
  */
     BOOST_AUTO_TEST_CASE(KmClusteringResultSizeCheck)
