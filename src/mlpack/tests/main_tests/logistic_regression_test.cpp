@@ -647,4 +647,5 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
                         "Parameter(Decision Boudary) has
                         no effect on the output");
 }
+
 BOOST_AUTO_TEST_SUITE_END();
