@@ -15,7 +15,8 @@ cache:
 before_install:
   - mkdir -p $HOME/test/cache
   - sudo mkdir -p /root/.cache/pip/
-  - sudo cp -R $HOME/test/cache/ /root/.cache/pip/
+  - sudo cp -R $HOME/test/cache/ /root/.cache/
+  - sudo ls /root/.cache/
   - ls $HOME/test/cache/
   - sudo rm -vf /etc/apt/sources.list.d/*riak*
   - sudo apt-get update -qq
