@@ -126,7 +126,7 @@ BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
 
 
 /**
- * Checking that that size and dimensionality of prediction is correct.
+ * Checking that size and dimensionality of prediction is correct.
  */
     BOOST_AUTO_TEST_CASE(KmClusteringSizeCheck)
     {
@@ -149,7 +149,7 @@ BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
 
 
 /**
- * Checking that that size and dimensionality of prediction is correct when --labels_only is specified
+ * Checking that size and dimensionality of prediction is correct when --labels_only is specified
  */
     BOOST_AUTO_TEST_CASE(KmClusteringSizeCheckLabelOnly)
     {
@@ -169,6 +169,73 @@ BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
         BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 1);
         BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_rows, C);
         BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_cols, D);
+    }
+
+
+/**
+ * Checking that predictions are not same when --allow_empty_clusters or kill_empty_clusters are specified
+ */
+    BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
+    {
+        constexpr int N = 100;
+        constexpr int D = 4;
+        int C = 95;
+        int iterations = 100;
+        arma::mat InputData = arma::randu<arma::mat>(N, D);
+        arma::mat InitialCentroids=arma::ones(C, D);
+
+        SetInputParam("input", std::move(InputData));
+        SetInputParam("clusters", std::move(C));
+        SetInputParam("labels_only", true);
+        SetInputParam("initial_centroids", std::move(InitialCentroids));
+        SetInputParam("max_iterations", std::move(iterations));
+
+        mlpackMain();
+
+        arma::mat NormalOutput;
+        NormalOutput = std::move(CLI::GetParam<arma::mat>("output"));
+
+        ResetKmSettings();
+
+        SetInputParam("input", std::move(InputData));
+        SetInputParam("clusters", std::move(C));
+        SetInputParam("labels_only", true);
+        SetInputParam("initial_centroids", std::move(InitialCentroids));
+        SetInputParam("allow_empty_clusters", true);
+        SetInputParam("max_iterations", std::move(iterations));
+
+        mlpackMain();
+
+        arma::mat AllowEmptyOutput;
+        AllowEmptyOutput = std::move(CLI::GetParam<arma::mat>("output"));
+
+        ResetKmSettings();
+
+        SetInputParam("input", std::move(InputData));
+        SetInputParam("clusters", std::move(C));
+        SetInputParam("labels_only", true);
+        SetInputParam("initial_centroids", std::move(InitialCentroids));
+        SetInputParam("kill_empty_clusters", true);
+        SetInputParam("max_iterations", std::move(iterations));
+
+        mlpackMain();
+
+        arma::mat KillEmptyOutput;
+        KillEmptyOutput = std::move(CLI::GetParam<arma::mat>("output"));
+
+        ResetKmSettings();
+
+        //Checking that the results are not identical
+
+        for (int j = 0; j <N ; ++j)
+        {
+            BOOST_CHECK_NE(NormalOutput(j), AllowEmptyOutput(j));
+        }
+        for (int j = 0; j <N ; ++j)
+        {
+            BOOST_CHECK_NE(KillEmptyOutput(j), AllowEmptyOutput(j));
+        }
+
     }
 
 
