@@ -94,10 +94,14 @@ void LRSDPFunction<SDPType>::GradientConstraint(
       << "for arbitrary optimizers!" << std::endl;
 }
 
+//! Utility function for updating R*R^T matrix.
+//! Note: Caching R*R^T provide computation optimization by reducing
+//! redundant R*R^T calculations.
 template <typename SDPType>
-void LRSDPFunction<SDPType>::UpdateRRT(const arma::mat& newrrt) const
+void UpdateRRT(LRSDPFunction<SDPType>& function,
+               const arma::mat& newrrt)
 {
-  *(arma::mat*)(&rrt) = newrrt;
+  function.RRT() = newrrt;
 }
 
 //! Utility function for calculating part of the objective when AugLagrangian is
@@ -149,7 +153,7 @@ UpdateGradient(arma::mat& s,
 
 template <typename SDPType>
 static inline double
-EvaluateImpl(const LRSDPFunction<SDPType>& function,
+EvaluateImpl(LRSDPFunction<SDPType>& function,
              const arma::mat& coordinates,
              const arma::vec& lambda,
              const double sigma)
@@ -177,7 +181,7 @@ EvaluateImpl(const LRSDPFunction<SDPType>& function,
   // Note that we can only use this optimization in case of L-BFGS optimizer
   // or any other optimizer which calls Evaluate() before Gradient()
   // with same coordinates matrix.
-  function.UpdateRRT(rrt);
+  UpdateRRT(function, rrt);
 
   // Optimized objective function.
   double objective = trace((trans(coordinates) * function.SDP().C())

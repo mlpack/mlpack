@@ -91,11 +91,8 @@ class LRSDPFunction
   //! Get R*R^T matrix.
   const arma::mat& RRT() const { return rrt; }
 
-  /**
-   * Update R*R^T matrix. Note caching R*R^T provide computation
-   * optimization by reducing redundant R*R^T calculations.
-   */
-  void UpdateRRT(const arma::mat& newrrt) const;
+  //! Modify R*R^T matrix.
+  arma::mat& RRT()  { return rrt; }
 
  private:
   //! SDP object representing the problem
