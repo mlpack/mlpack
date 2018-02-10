@@ -40,12 +40,19 @@ class GreedySingleTreeTraverser
   //! Get the number of prunes.
   size_t NumPrunes() const { return numPrunes; }
 
+  //! Set value of k.
+  void K(size_t K) { k = K; }
+
  private:
   //! Reference to the rules with which the tree will be traversed.
   RuleType& rule;
 
   //! The number of nodes which have been pruned during traversal.
   size_t numPrunes;
+
+  //! The number of results required. For example number of nearest
+  //! neighbours in case of knn.
+  size_t k;
 };
 
 } // namespace tree
