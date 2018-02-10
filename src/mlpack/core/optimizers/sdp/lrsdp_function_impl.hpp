@@ -54,7 +54,8 @@ template <typename SDPType>
 double LRSDPFunction<SDPType>::Evaluate(const arma::mat& coordinates) const
 {
   // Note: We don't require to update the R*R^T matrix here as the current
-  // is used by AugLagrangian, which do not update the coordinate matrix.
+  // function is only used by AugLagrangian, which do not update the coordinates
+  // matrix.
   return accu(SDP().C() % rrt);
 }
 
@@ -72,7 +73,8 @@ double LRSDPFunction<SDPType>::EvaluateConstraint(
     const arma::mat& coordinates) const
 {
   // Note: We don't require to update the R*R^T matrix here as the current
-  // is used by AugLagrangian, which do not update the coordinate matrix.
+  // function is only used by AugLagrangian, which do not update the coordinates
+  // matrix.
 
   // Using cached R*R^T gives better optimization for sparse matrices.
   if (index < SDP().NumSparseConstraints())
@@ -95,8 +97,9 @@ void LRSDPFunction<SDPType>::GradientConstraint(
 }
 
 //! Utility function for updating R*R^T matrix.
-//! Note: Caching R*R^T provide computation optimization by reducing
-//! redundant R*R^T calculations.
+//! Note: Caching R*R^T provide significant computation optimization
+//! by reducing redundant R*R^T calculations in case of functions are not used
+//! updating coordinates matrix, hence leaving R*R^T unchanged.
 template <typename SDPType>
 void UpdateRRT(LRSDPFunction<SDPType>& function,
                const arma::mat& newrrt)
@@ -175,12 +178,19 @@ EvaluateImpl(LRSDPFunction<SDPType>& function,
   //
   // For computation optimization we will be taking R^T * C first.
   // Objective function = Tr((R^T * C) * R)
+
+  // Calculate R*R^T for updating cache.
   const arma::mat rrt = coordinates * trans(coordinates);
 
   // Update R*R^T matrix.
   // Note that we can only use this optimization in case of L-BFGS optimizer
-  // or any other optimizer which calls Evaluate() before Gradient()
-  // with same coordinates matrix.
+  // or any other similar optimizer which calls Evaluate() before Gradient()
+  // with same coordinates matrix and uses only Evaluate() to update
+  // coordinates matrix.
+
+  // Note: In case optimizer also uses Gradient() for updating coordinates
+  // matrix than the same line of code can be used to update R*R^T through
+  // Gradient().
   UpdateRRT(function, rrt);
 
   // Optimized objective function.
@@ -210,6 +220,8 @@ GradientImpl(const LRSDPFunction<SDPType>& function,
   //   with
   // S' = C - sum_{i = 1}^{m} y'_i A_i
   // y'_i = y_i - sigma * (Trace(A_i * (R R^T)) - b_i)
+
+  // Directly reterive R*R^T from cache.
   const arma::mat rrt = function.RRT();
   arma::mat s(function.SDP().C());
 

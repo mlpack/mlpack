@@ -101,7 +101,7 @@ class LRSDPFunction
   //! Initial point.
   arma::mat initialPoint;
 
-  //! R*R^T matrix.
+  //! Cache R*R^T matrix.
   arma::mat rrt;
 };
 
