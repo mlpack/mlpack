@@ -1,5 +1,5 @@
 set(SOURCES
-	sarah.hpp
+  sarah.hpp
   sarah_impl.hpp
   sarah_plus_update.hpp
   sarah_update.hpp

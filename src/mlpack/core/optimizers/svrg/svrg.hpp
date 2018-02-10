@@ -114,7 +114,8 @@ class SVRGType
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
    * @param innerIterations The number of inner iterations allowed (0 means
-   *    n / batchSize).
+   *    n / batchSize). Note that the full gradient is only calculated in
+   *    the outer iteration.
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *     function is visited in linear order.

@@ -86,7 +86,7 @@ double SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
-      Log::Warn << "Katyusha: converged to " << overallObjective
+      Log::Warn << "SVRG: converged to " << overallObjective
           << "; terminating  with failure.  Try a smaller step size?"
           << std::endl;
       return overallObjective;
@@ -94,7 +94,7 @@ double SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
-      Log::Info << "Katyusha: minimized within tolerance " << tolerance
+      Log::Info << "SVRG: minimized within tolerance " << tolerance
           << "; terminating optimization." << std::endl;
       return overallObjective;
     }

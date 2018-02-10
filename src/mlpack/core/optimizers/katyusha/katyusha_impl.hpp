@@ -18,8 +18,8 @@
 namespace mlpack {
 namespace optimization {
 
-template<bool proximal>
-KatyushaType<proximal>::KatyushaType(
+template<bool Proximal>
+KatyushaType<Proximal>::KatyushaType(
     const double convexity,
     const double lipschitz,
     const size_t batchSize,
@@ -37,9 +37,9 @@ KatyushaType<proximal>::KatyushaType(
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-template<bool proximal>
+template<bool Proximal>
 template<typename DecomposableFunctionType>
-double KatyushaType<proximal>::Optimize(
+double KatyushaType<Proximal>::Optimize(
     DecomposableFunctionType& function,
     arma::mat& iterate)
 {
@@ -66,7 +66,7 @@ double KatyushaType<proximal>::Optimize(
   double normalizer = 1;
   for (size_t i = 0; i < numBatches; i++)
   {
-      normalizer = r * (normalizer + 1.0);
+    normalizer = r * (normalizer + 1.0);
   }
   normalizer = 1.0 / normalizer;
 
@@ -156,15 +156,23 @@ double KatyushaType<proximal>::Optimize(
       function.Gradient(iterate0, currentFunction, gradient0,
           effectiveBatchSize);
 
+      // By the minimality definition of z_{k + 1}, we have that:
+      // z_{k+1} − z_k + \alpha * \sigma_{k+1} + \alpha g = 0.
       arma::mat zNew = z - alpha * (fullGradient + (gradient - gradient0) /
           (double) batchSize);
 
       // Proximal update, choose between Option I and Option II. Shift relative
       // to the Lipschitz constant or take a constant step using the given step
       // size.
-      if (proximal)
+      if (Proximal)
       {
-        y = iterate + 1.0 / (3.0 * lipschitz) * (zNew - z);
+        // yk = x0 − 1 / (3L) * \delta1, k = 1
+        // yk = x0 − 1 / (3L) * \delta2 - ((1 - tau) / (3L)) + tau * alpha)
+        // * \delta1, k = 2
+        // yk = x0 − 1 / (3L) * \delta3 - ((1 - tau) / (3L)) + tau * alpha)
+        // * \delta2 - ((1-tau)^2 / (3L) + (1 - (1 - tau)^2) * alpha) * \delta1,
+        // k = 3.
+        y = iterate + 1.0 / (3.0 * lipschitz) * w;
       }
       else
       {
