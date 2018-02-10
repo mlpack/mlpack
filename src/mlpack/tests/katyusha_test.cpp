@@ -12,73 +12,14 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/katyusha/katyusha.hpp>
 
-#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
-
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
+#include "test_function_tools.hpp"
 
-using namespace std;
-using namespace arma;
 using namespace mlpack;
 using namespace mlpack::optimization;
 
-using namespace mlpack::distribution;
-using namespace mlpack::regression;
-
 BOOST_AUTO_TEST_SUITE(KatyushaTest);
-
-/**
- * Create the data for the logistic regression test case.
- */
-void CreateLogisticRegressionTestData(arma::mat& data,
-                                      arma::mat& testData,
-                                      arma::mat& shuffledData,
-                                      arma::Row<size_t>& responses,
-                                      arma::Row<size_t>& testResponses,
-                                      arma::Row<size_t>& shuffledResponses)
-{
-  // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
-
-  data = arma::mat(3, 1000);
-  responses = arma::Row<size_t>(1000);
-  for (size_t i = 0; i < 500; ++i)
-  {
-    data.col(i) = g1.Random();
-    responses[i] = 0;
-  }
-  for (size_t i = 500; i < 1000; ++i)
-  {
-    data.col(i) = g2.Random();
-    responses[i] = 1;
-  }
-
-  // Shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
-      data.n_cols - 1, data.n_cols));
-  shuffledData = arma::mat(3, 1000);
-  shuffledResponses = arma::Row<size_t>(1000);
-  for (size_t i = 0; i < data.n_cols; ++i)
-  {
-    shuffledData.col(i) = data.col(indices[i]);
-    shuffledResponses[i] = responses[indices[i]];
-  }
-
-  // Create a test set.
-  testData = arma::mat(3, 1000);
-  testResponses = arma::Row<size_t>(1000);
-  for (size_t i = 0; i < 500; ++i)
-  {
-    testData.col(i) = g1.Random();
-    testResponses[i] = 0;
-  }
-  for (size_t i = 500; i < 1000; ++i)
-  {
-    testData.col(i) = g2.Random();
-    testResponses[i] = 1;
-  }
-}
 
 /**
  * Run Katyusha on logistic regression and make sure the results are acceptable.
@@ -88,7 +29,7 @@ BOOST_AUTO_TEST_CASE(KatyushaLogisticRegressionTest)
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
 
-  CreateLogisticRegressionTestData(data, testData, shuffledData,
+  LogisticRegressionTestData(data, testData, shuffledData,
       responses, testResponses, shuffledResponses);
 
   // Now run big-batch SGD with a couple of batch sizes.
@@ -115,7 +56,7 @@ BOOST_AUTO_TEST_CASE(KatyushaProximalLogisticRegressionTest)
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
 
-  CreateLogisticRegressionTestData(data, testData, shuffledData,
+  LogisticRegressionTestData(data, testData, shuffledData,
       responses, testResponses, shuffledResponses);
 
   // Now run big-batch SGD with a couple of batch sizes.
