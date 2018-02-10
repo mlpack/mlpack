@@ -1283,9 +1283,9 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorLayerTest)
 }
 
 /*
- * Simple test for the Resize layer
+ * Simple test for the BilinearInterpolation layer
  */
-BOOST_AUTO_TEST_CASE(SimpleResizeLayerTest)
+BOOST_AUTO_TEST_CASE(SimpleBilinearInterpolationLayerTest)
 {
   arma::mat input, output, unzoomedOutput, expectedOutput;
   size_t inRowSize = 10;
@@ -1293,7 +1293,7 @@ BOOST_AUTO_TEST_CASE(SimpleResizeLayerTest)
   size_t outRowSize = 20;
   size_t outColSize = 20;
   size_t depth = 3;
-  input.zeros(inRowSize * inColSize *  depth, 1);
+  input.zeros(inRowSize * inColSize * depth, 1);
   for (size_t d = 0; d < depth; d++)
     for (size_t i = 0; i < inRowSize; i++)
       for (size_t j = 0; j < inColSize; j++)
@@ -1313,13 +1313,11 @@ BOOST_AUTO_TEST_CASE(SimpleResizeLayerTest)
             1 * j / (double)outColSize + 1 * d / (double)depth;
       }
 
-  BiLinearFunction interpolation(inRowSize, inColSize, outRowSize, outColSize,
-      depth);
-  Resize<> layer(interpolation);
+  BilinearInterpolation<> layer(inRowSize, inColSize, outRowSize, outColSize,
+                                depth);
 
   layer.Forward(std::move(input), std::move(output));
   CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-12);
-
 
   layer.Backward(std::move(output), std::move(output),
         std::move(unzoomedOutput));

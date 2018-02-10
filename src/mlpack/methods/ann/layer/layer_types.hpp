@@ -17,6 +17,7 @@
 // Layer modules.
 #include <mlpack/methods/ann/layer/add.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
+#include <mlpack/methods/ann/layer/bilinear_interpolation.hpp>
 #include <mlpack/methods/ann/layer/constant.hpp>
 #include <mlpack/methods/ann/layer/cross_entropy_error.hpp>
 #include <mlpack/methods/ann/layer/dropout.hpp>
@@ -33,10 +34,8 @@
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
-#include <mlpack/methods/ann/layer/resize.hpp>
 #include <mlpack/methods/ann/layer/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
-#include <mlpack/methods/ann/layer/resize.hpp>
 
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
@@ -109,6 +108,7 @@ using LayerTypes = boost::variant<
     BaseLayer<IdentityFunction, arma::mat, arma::mat>*,
     BaseLayer<TanhFunction, arma::mat, arma::mat>*,
     BaseLayer<RectifierFunction, arma::mat, arma::mat>*,
+    BilinearInterpolation<arma::mat, arma::mat>*,
     Concat<arma::mat, arma::mat>*,
     ConcatPerformance<NegativeLogLikelihood<arma::mat, arma::mat>,
                       arma::mat, arma::mat>*,
@@ -140,7 +140,6 @@ using LayerTypes = boost::variant<
     Recurrent<arma::mat, arma::mat>*,
     RecurrentAttention<arma::mat, arma::mat>*,
     ReinforceNormal<arma::mat, arma::mat>*,
-    Resize<BiLinearFunction, arma::mat, arma::mat>*,
     SigmoidCrossEntropyError<arma::mat, arma::mat>*,
     Select<arma::mat, arma::mat>*,
     Sequential<arma::mat, arma::mat>*,
