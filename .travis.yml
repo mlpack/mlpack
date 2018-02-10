@@ -32,6 +32,7 @@ before_install:
   - cmake . && make && sudo make install && cd ..
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
   - sudo cp -R /root/.cache/pip/ $HOME/test/cache/
+  - sudo chmod -R 777 $HOME/test/cache/
 
 install:
   - mkdir build && cd build && cmake $CMAKE_OPTIONS .. && make -j2
