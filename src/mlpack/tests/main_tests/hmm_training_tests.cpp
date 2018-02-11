@@ -46,7 +46,7 @@ BOOST_FIXTURE_TEST_SUITE(HMMTrainMainTest, HMMTrainMainTestFixture);
 inline void fileExists(std::string fileName)
 {
   ifstream ifp(fileName);
-  if(!ifp.good())
+  if (!ifp.good())
     BOOST_FAIL("Bad stream " + fileName);
   ifp.close();
 }
@@ -87,7 +87,8 @@ BOOST_AUTO_TEST_CASE(HMMTrainToleranceNonNegative)
   Log::Fatal.ignoreInput = false;
 }
 
-// Make sure an error is thrown if type is something other than "discrete", "gaussian" or "gmm"
+// Make sure an error is thrown if type is something other than
+// "discrete", "gaussian" or "gmm"
 BOOST_AUTO_TEST_CASE(HMMTrainTypeTest)
 {
   std::string inputFileName = "hmm_train_obs.csv";
@@ -131,13 +132,14 @@ BOOST_AUTO_TEST_CASE(HMMTrainReuseModelTest)
   std::string hmmType = "discrete";
   int states = 3;
 
-  // First make sure that the size of the training seq, and training labels is same
+  fileExists(inputObsFileName);
+  fileExists(inputLabFileName);
+  // Make sure that the size of the 
+  // training seq, and training labels is same
   arma::mat trainObs, trainLab;
   data::Load(inputObsFileName, trainObs);
   data::Load(inputLabFileName, trainLab);
   BOOST_REQUIRE_EQUAL(trainObs.n_rows, trainLab.n_rows);
-  // Also require that all observation have same dimensions
-  // pass for now
   
   SetInputParam("input_file", std::move(inputObsFileName));
   SetInputParam("labels_file", std::move(inputLabFileName));
@@ -183,7 +185,7 @@ BOOST_AUTO_TEST_CASE(HMMTrainBatchModeTest)
 
   SetInputParam("states", states);
   SetInputParam("type", std::move(hmmType));
-  SetInputParam("batch", (bool)true);
+  SetInputParam("batch", (bool) true);
 
   mlpackMain();
 
@@ -195,7 +197,7 @@ BOOST_AUTO_TEST_CASE(HMMTrainBatchModeTest)
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
-  // Now a mismatch etween #observation files and #label files
+  // Now a mismatch between #observation files and #label files
   observationsFileName = "corrupt-observations-2.txt";
   SetInputParam("input_file", std::move(observationsFileName));
 
