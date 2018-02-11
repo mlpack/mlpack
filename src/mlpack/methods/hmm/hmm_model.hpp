@@ -115,6 +115,39 @@ class HMMModel
     return *this;
   }
 
+  bool ApproximatelyEqual(const HMMModel& other, double tolerance) const
+  {
+    bool typeEqual = (type == other.type);
+    bool hmmEqual = false;
+    bool emissionEqual = true;
+    if (typeEqual)
+    {
+      if (type == HMMType::DiscreteHMM)
+      {
+        hmmEqual = discreteHMM->ApproximatelyEqual(*(other.discreteHMM), tolerance); // (*discreteHMM == *(other.discreteHMM));
+        std::vector<distribution::DiscreteDistribution> emission = discreteHMM->Emission();
+        std::vector<distribution::DiscreteDistribution> otherEmission = other.discreteHMM->Emission();
+        if (emission.size() == otherEmission.size())
+        {
+          for(size_t i=0; i<emission.size(); i++)
+          {
+            if (emission[i].Dimensionality() != otherEmission[i].Dimensionality())
+              emissionEqual = false;
+            for(size_t dim=0; dim<emission[i].Dimensionality(); dim++)
+              emissionEqual = emissionEqual && approx_equal(emission[i].Probabilities(dim), otherEmission[i].Probabilities(dim), "absdiff", tolerance);
+          }
+        }
+        else
+          emissionEqual = false;
+      }
+      if (type == HMMType::GaussianHMM)
+        hmmEqual = gaussianHMM->ApproximatelyEqual(*(other.gaussianHMM), tolerance); // (*gaussianHMM == *(other.gaussianHMM));
+      if (type == HMMType::GaussianMixtureModelHMM)
+        hmmEqual = gmmHMM->ApproximatelyEqual(*(other.gmmHMM), tolerance); // (*gmmHMM == *(other.gmmHMM));
+    }
+    return typeEqual && hmmEqual && emissionEqual;
+  }
+
   //! Clean memory.
   ~HMMModel()
   {
