@@ -328,7 +328,8 @@ class HMM
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int version);
 
-  bool ApproximatelyEqual(const HMM<Distribution>& other, double tolerance)const;
+  bool ApproximatelyEqual(const HMM<Distribution>& other, 
+                          double tolerance) const;
 
  protected:
   // Helper functions.

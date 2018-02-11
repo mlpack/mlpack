@@ -124,26 +124,35 @@ class HMMModel
     {
       if (type == HMMType::DiscreteHMM)
       {
-        hmmEqual = discreteHMM->ApproximatelyEqual(*(other.discreteHMM), tolerance); // (*discreteHMM == *(other.discreteHMM));
-        std::vector<distribution::DiscreteDistribution> emission = discreteHMM->Emission();
-        std::vector<distribution::DiscreteDistribution> otherEmission = other.discreteHMM->Emission();
+        hmmEqual = discreteHMM->ApproximatelyEqual(*(other.discreteHMM),
+            tolerance);
+        std::vector<distribution::DiscreteDistribution> emission =
+          discreteHMM->Emission();
+        std::vector<distribution::DiscreteDistribution> otherEmission =
+          other.discreteHMM->Emission();
         if (emission.size() == otherEmission.size())
         {
-          for(size_t i=0; i<emission.size(); i++)
+          for(size_t i = 0; i < emission.size(); i++)
           {
-            if (emission[i].Dimensionality() != otherEmission[i].Dimensionality())
+            if (emission[i].Dimensionality() !=
+                otherEmission[i].Dimensionality())
               emissionEqual = false;
-            for(size_t dim=0; dim<emission[i].Dimensionality(); dim++)
-              emissionEqual = emissionEqual && approx_equal(emission[i].Probabilities(dim), otherEmission[i].Probabilities(dim), "absdiff", tolerance);
+            for (size_t dim = 0; dim < emission[i].Dimensionality(); dim++)
+              emissionEqual = emissionEqual && approx_equal(
+                  emission[i].Probabilities(dim),
+                  otherEmission[i].Probabilities(dim),
+                  "absdiff",
+                  tolerance);
           }
         }
         else
           emissionEqual = false;
       }
       if (type == HMMType::GaussianHMM)
-        hmmEqual = gaussianHMM->ApproximatelyEqual(*(other.gaussianHMM), tolerance); // (*gaussianHMM == *(other.gaussianHMM));
+        hmmEqual = gaussianHMM->ApproximatelyEqual(*(other.gaussianHMM),
+            tolerance);
       if (type == HMMType::GaussianMixtureModelHMM)
-        hmmEqual = gmmHMM->ApproximatelyEqual(*(other.gmmHMM), tolerance); // (*gmmHMM == *(other.gmmHMM));
+        hmmEqual = gmmHMM->ApproximatelyEqual(*(other.gmmHMM), tolerance);
     }
     return typeEqual && hmmEqual && emissionEqual;
   }
