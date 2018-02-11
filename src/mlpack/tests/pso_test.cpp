@@ -12,6 +12,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/pso/pso.hpp>
 #include <mlpack/core/optimizers/pso/test_function.hpp>
+#include <mlpack/core/optimizers/problems/rosenbrock_function.cpp>
 
 #include <boost/test/unit_test.hpp>
 
@@ -28,6 +29,21 @@ BOOST_AUTO_TEST_CASE(SimpleTest)
 {
   PSO optimizer;
   PSOTestFunction f;
+
+  vec coordinates = arma::mat("6; -45.6; 6.2");
+
+  double result = optimizer.Optimize(f, coordinates);
+
+  BOOST_REQUIRE_SMALL(result, 1e-5);
+}
+
+/**
+ * Test for minimizing the Rosenbrock function.
+ */
+BOOST_AUTO_TEST_CASE(RosenbrockTest)
+{
+  PSO optimizer;
+  RosenbrockFunction f;
 
   vec coordinates = arma::mat("6; -45.6; 6.2");
 
