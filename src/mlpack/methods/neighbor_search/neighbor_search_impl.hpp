@@ -662,8 +662,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       // Create the traverser.
       tree::GreedySingleTreeTraverser<Tree, RuleType> traverser(rules);
 
-      // Set the value of K.
-      traverser.K(k);
+      // Set the value of minBaseCases.
+      traverser.MinBaseCases(k);
 
       // Now have it traverse for each point.
       for (size_t i = 0; i < querySet.n_cols; ++i)
@@ -962,8 +962,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       // Create the traverser.
       tree::GreedySingleTreeTraverser<Tree, RuleType> traverser(rules);
 
-      // Set the value of K.
-      traverser.K(k);
+      // Set the value of minBaseCases.
+      traverser.MinBaseCases(k);
 
       // Now have it traverse for each point.
       for (size_t i = 0; i < referenceSet->n_cols; ++i)

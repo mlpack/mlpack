@@ -40,8 +40,8 @@ class GreedySingleTreeTraverser
   //! Get the number of prunes.
   size_t NumPrunes() const { return numPrunes; }
 
-  //! Set value of k.
-  void K(size_t K) { k = K; }
+  //! Set value of minBaseCases.
+  void MinBaseCases(size_t baseCases) { minBaseCases = baseCases; }
 
  private:
   //! Reference to the rules with which the tree will be traversed.
@@ -50,9 +50,9 @@ class GreedySingleTreeTraverser
   //! The number of nodes which have been pruned during traversal.
   size_t numPrunes;
 
-  //! The number of results required. For example number of nearest
-  //! neighbours in case of knn.
-  size_t k;
+  //! The number of base cases required. For example the number of nearest
+  //! neighbours(k) in case of knn.
+  size_t minBaseCases;
 };
 
 } // namespace tree
