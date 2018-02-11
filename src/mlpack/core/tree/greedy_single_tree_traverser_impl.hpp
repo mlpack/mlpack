@@ -61,7 +61,8 @@ void GreedySingleTreeTraverser<TreeType, RuleType>::Traverse(
     }
     else
     {
-      for (size_t i = 0; i < referenceNode.NumDescendants(); ++i)
+      // Run the base case over first minBaseCases number of descendants.
+      for (size_t i = 0; i <= minBaseCases; ++i)
         rule.BaseCase(queryIndex, referenceNode.Descendant(i));
     }
   }
