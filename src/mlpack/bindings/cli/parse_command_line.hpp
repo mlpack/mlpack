@@ -52,7 +52,7 @@ void ParseCommandLine(int argc, char** argv)
     boostNameMap[boostName] = d.name;
   }
 
-  // TODO: we have to mark somehow that we parsed.
+  // Mark that we did parsing.
   CLI::GetSingleton().didParse = true;
 
   // Parse the command line, then place the values in the right place.

@@ -46,16 +46,15 @@ static void mlpackMain()
   RequireAtLeastOnePassed({ "output" }, false, "no results will be saved");
 
   // Get the GMM and the points.
-  GMM gmm = std::move(CLI::GetParam<GMM>("input_model"));
+  GMM* gmm = CLI::GetParam<GMM*>("input_model");
 
   arma::mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
 
   // Now calculate the probabilities.
   arma::rowvec probabilities(dataset.n_cols);
   for (size_t i = 0; i < dataset.n_cols; ++i)
-    probabilities[i] = gmm.Probability(dataset.unsafe_col(i));
+    probabilities[i] = gmm->Probability(dataset.unsafe_col(i));
 
   // And save the result.
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(probabilities);
+  CLI::GetParam<arma::mat>("output") = std::move(probabilities);
 }

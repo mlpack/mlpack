@@ -36,7 +36,7 @@ inline bool SetInputHeightVisitor::operator()(LayerType* layer) const
 template<typename T>
 inline typename std::enable_if<
     !HasInputHeight<T, size_t&(T::*)()>::value &&
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+    !HasModelCheck<T>::value, bool>::type
 SetInputHeightVisitor::LayerInputHeight(T* /* layer */) const
 {
   return false;
@@ -45,7 +45,7 @@ SetInputHeightVisitor::LayerInputHeight(T* /* layer */) const
 template<typename T>
 inline typename std::enable_if<
     HasInputHeight<T, size_t&(T::*)()>::value &&
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+    !HasModelCheck<T>::value, bool>::type
 SetInputHeightVisitor::LayerInputHeight(T* layer) const
 {
   if (layer->InputHeight() == 0 || reset)
@@ -59,7 +59,7 @@ SetInputHeightVisitor::LayerInputHeight(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     !HasInputHeight<T, size_t&(T::*)()>::value &&
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+    HasModelCheck<T>::value, bool>::type
 SetInputHeightVisitor::LayerInputHeight(T* layer) const
 {
   for (size_t i = 0; i < layer->Model().size(); ++i)
@@ -74,7 +74,7 @@ SetInputHeightVisitor::LayerInputHeight(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     HasInputHeight<T, size_t&(T::*)()>::value &&
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+    HasModelCheck<T>::value, bool>::type
 SetInputHeightVisitor::LayerInputHeight(T* layer) const
 {
   if (layer->InputHeight() == 0  || reset)

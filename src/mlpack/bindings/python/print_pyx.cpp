@@ -71,10 +71,10 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "cimport arma" << endl;
   cout << "cimport arma_numpy" << endl;
   cout << "from cli cimport CLI" << endl;
-  cout << "from cli cimport SetParam, SetParamWithInfo" << endl;
+  cout << "from cli cimport SetParam, SetParamPtr, SetParamWithInfo, "
+      << "GetParamPtr" << endl;
   cout << "from cli cimport EnableVerbose, DisableVerbose, DisableBacktrace, "
       << "ResetTimers, EnableTimers" << endl;
-  cout << "from cli cimport MoveFromPtr, MoveToPtr" << endl;
   cout << "from matrix_utils import to_matrix, to_matrix_with_info" << endl;
   cout << "from serialization cimport SerializeIn, SerializeOut" << endl;
   cout << endl;
@@ -177,7 +177,14 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "  DisableVerbose()" << endl;
 
   // Restore the parameters.
-  cout << "  CLI.RestoreSettings(\"" << programInfo.programName << "\")";
+  cout << "  CLI.RestoreSettings(\"" << programInfo.programName << "\")"
+      << endl;
+
+  // Determine whether or not we need to copy parameters.
+  cout << "  if copy_all_inputs:" << endl;
+  cout << "    SetParam[bool](<const string> 'copy_all_inputs', "
+      << "copy_all_inputs)" << endl;
+  cout << "    CLI.SetPassed(<const string> 'copy_all_inputs')" << endl;
 
   // Do any input processing.
   for (size_t i = 0; i < inputOptions.size(); ++i)

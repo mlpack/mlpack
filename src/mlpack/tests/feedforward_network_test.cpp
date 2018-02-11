@@ -20,6 +20,7 @@
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 #include "serialization.hpp"
+#include "custom_layer.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -565,6 +566,57 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
 
   CheckMatrices(predictions, xmlPredictions, textPredictions,
       binaryPredictions);
+}
+
+/**
+ * Test if the custom layers work. The target is to see if the code compiles
+ * when the Train and Prediction are called.
+ */
+BOOST_AUTO_TEST_CASE(CustomLayerTest)
+{
+  // Load the dataset.
+  arma::mat dataset;
+  data::Load("thyroid_train.csv", dataset, true);
+
+  arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
+      dataset.n_cols - 1);
+
+  arma::mat trainLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
+      dataset.n_rows - 1, dataset.n_cols - 1);
+  arma::mat trainLabels = arma::zeros<arma::mat>(1, trainLabelsTemp.n_cols);
+  for (size_t i = 0; i < trainLabelsTemp.n_cols; ++i)
+  {
+    trainLabels(i) = arma::as_scalar(arma::find(
+        arma::max(trainLabelsTemp.col(i)) == trainLabelsTemp.col(i), 1)) + 1;
+  }
+
+  data::Load("thyroid_test.csv", dataset, true);
+
+  arma::mat testData = dataset.submat(0, 0, dataset.n_rows - 4,
+      dataset.n_cols - 1);
+
+  arma::mat testLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
+      dataset.n_rows - 1, dataset.n_cols - 1);
+
+  arma::mat testLabels = arma::zeros<arma::mat>(1, testLabelsTemp.n_cols);
+  for (size_t i = 0; i < testLabels.n_cols; ++i)
+  {
+    testLabels(i) = arma::as_scalar(arma::find(
+        arma::max(testLabelsTemp.col(i)) == testLabelsTemp.col(i), 1)) + 1;
+  }
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization, CustomLayer<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<CustomLayer<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
+
+  RMSProp opt(0.01, 32, 0.88, 1e-8, 15, -1);
+  model.Train(trainData, trainLabels, opt);
+
+  arma::mat predictionTemp;
+  model.Predict(testData, predictionTemp);
+  arma::mat prediction = arma::zeros<arma::mat>(1, predictionTemp.n_cols);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

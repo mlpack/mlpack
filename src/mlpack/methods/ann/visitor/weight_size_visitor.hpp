@@ -15,7 +15,6 @@
 #define MLPACK_METHODS_ANN_VISITOR_WEIGHT_SIZE_VISITOR_HPP
 
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
 
 #include <boost/variant.hpp>
 
@@ -38,7 +37,7 @@ class WeightSizeVisitor : public boost::static_visitor<size_t>
   template<typename T, typename P>
   typename std::enable_if<
       !HasParametersCheck<T, P&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      !HasModelCheck<T>::value, size_t>::type
   LayerSize(T* layer, P& output) const;
 
   //! Return the number of parameters if the module implements the Model()
@@ -46,7 +45,7 @@ class WeightSizeVisitor : public boost::static_visitor<size_t>
   template<typename T, typename P>
   typename std::enable_if<
       !HasParametersCheck<T, P&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      HasModelCheck<T>::value, size_t>::type
   LayerSize(T* layer, P& output) const;
 
   //! Return the number of parameters if the module implements the Parameters()
@@ -54,7 +53,7 @@ class WeightSizeVisitor : public boost::static_visitor<size_t>
   template<typename T, typename P>
   typename std::enable_if<
       HasParametersCheck<T, P&(T::*)()>::value &&
-      !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      !HasModelCheck<T>::value, size_t>::type
   LayerSize(T* layer, P& output) const;
 
   //! Return the accumulated number of parameters if the module implements the
@@ -62,7 +61,7 @@ class WeightSizeVisitor : public boost::static_visitor<size_t>
   template<typename T, typename P>
   typename std::enable_if<
       HasParametersCheck<T, P&(T::*)()>::value &&
-      HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, size_t>::type
+      HasModelCheck<T>::value, size_t>::type
   LayerSize(T* layer, P& output) const;
 };
 

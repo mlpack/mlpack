@@ -2,7 +2,7 @@
  * @file binarize_test.cpp
  * @author Keon Kim
  *
- * Test the Binarzie method.
+ * Test the Binarize method.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

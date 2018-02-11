@@ -33,7 +33,7 @@ inline void RewardSetVisitor::operator()(LayerType* layer) const
 template<typename T>
 inline typename std::enable_if<
     HasRewardCheck<T, double&(T::*)()>::value &&
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+    HasModelCheck<T>::value, void>::type
 RewardSetVisitor::LayerReward(T* layer) const
 {
   layer->Reward() = reward;
@@ -48,7 +48,7 @@ RewardSetVisitor::LayerReward(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     !HasRewardCheck<T, double&(T::*)()>::value &&
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+    HasModelCheck<T>::value, void>::type
 RewardSetVisitor::LayerReward(T* layer) const
 {
   for (size_t i = 0; i < layer->Model().size(); ++i)
@@ -61,7 +61,7 @@ RewardSetVisitor::LayerReward(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     HasRewardCheck<T, double&(T::*)()>::value &&
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+    !HasModelCheck<T>::value, void>::type
 RewardSetVisitor::LayerReward(T* layer) const
 {
   layer->Reward() = reward;
@@ -70,7 +70,7 @@ RewardSetVisitor::LayerReward(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     !HasRewardCheck<T, double&(T::*)()>::value &&
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, void>::type
+    !HasModelCheck<T>::value, void>::type
 RewardSetVisitor::LayerReward(T* /* input */) const
 {
   /* Nothing to do here. */
