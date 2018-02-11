@@ -22,11 +22,11 @@ using namespace mlpack::optimization;
 BOOST_AUTO_TEST_SUITE(PSOTest);
 
 /**
- * Simple test for minimizing the Rosenbrock function.
+ * Simple test case for PSO.
  */
-BOOST_AUTO_TEST_CASE(RosenbrockTest)
+BOOST_AUTO_TEST_CASE(SimpleTest)
 {
-  PSO<> optimizer;
+  PSO optimizer;
   PSOTestFunction f;
 
   vec coordinates = arma::mat("6; -45.6; 6.2");

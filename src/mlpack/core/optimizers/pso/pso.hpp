@@ -57,7 +57,7 @@ namespace optimization {
  * evaluation step.
  */
 template<typename VelocityVectorType = InertiaWeight>
-class PSO
+class PSOType
 {
  public:
   /**
@@ -73,14 +73,14 @@ class PSO
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate the algorithm.
-   * @param selectionPolicy Instantiated selection policy used to calculate the
+   * @param velocityType Velocity update policy used to calculate the
    *     objective.
    */
-  PSO(const size_t lambda = 0,
+  PSOType(const size_t lambda = 0,
         const size_t dimension = 10,
-        const double interiaWeight = 0.9,
-        const double cognitiveAcceleration = 0.5,
-        const double socialAcceleration = 0.3,
+        const double interiaWeight = 0.5,
+        const double cognitiveAcceleration = 1,
+        const double socialAcceleration = 2,
         const size_t maxIterations = 200,
         const double tolerance = 1e-5,
         const VelocityVectorType& velocityType = VelocityVectorType());
@@ -178,6 +178,9 @@ class PSO
   //! The velocity update policy used.
   VelocityVectorType velocityType;
 };
+
+// Define an alias to PSOType.
+using PSO = PSOType<InertiaWeight>;
 
 } // namespace optimization
 } // namespace mlpack

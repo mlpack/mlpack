@@ -40,19 +40,22 @@ class InertiaWeight
    * @param cognitiveAcceleration Cognitive acceleration of the particles.
    * @param socialAcceleration Social acceleration of the particles.
    */
-  double Update(const double particlePosition,
-                      const double particleVelocity,
-                      const double bestParticlePosition,
-                      const double bestSwarmPosition,
-                      const double interiaWeight,
-                      const double cognitiveAcceleration,
-                      const double socialAcceleration)
-
+  void Update(const arma::mat& particlePosition,
+                      arma::mat& particleVelocity,
+                      const arma::mat& bestParticlePosition,
+                      const arma::mat& bestSwarmPosition,
+                      const double& interiaWeight,
+                      const double& cognitiveAcceleration,
+                      const double& socialAcceleration,
+                      const double& dimension)
   {
-    return interiaWeight * particleVelocity + cognitiveAcceleration *
-        math::Random() * (bestParticlePosition - particlePosition) +
-        socialAcceleration * math::Random() *
-        (bestSwarmPosition - particlePosition);
+    for (int i = 0; i < dimension; ++i)
+    {
+      particleVelocity[i] = interiaWeight * particleVelocity[i] +
+        cognitiveAcceleration * math::Random() * (bestParticlePosition[i] -
+        particlePosition[i]) + socialAcceleration * math::Random() *
+        (bestSwarmPosition[i] - particlePosition[i]);
+    }
   }
 };
 

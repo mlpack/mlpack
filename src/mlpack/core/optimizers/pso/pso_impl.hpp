@@ -20,7 +20,7 @@ namespace mlpack {
 namespace optimization {
 
 template<typename VelocityVectorType>
-PSO<VelocityVectorType>::PSO(const size_t lambda,
+PSOType<VelocityVectorType>::PSOType(const size_t lambda,
                                   const size_t dimension,
                                   const double interiaWeight,
                                   const double cognitiveAcceleration,
@@ -33,6 +33,7 @@ PSO<VelocityVectorType>::PSO(const size_t lambda,
     interiaWeight(interiaWeight),
     cognitiveAcceleration(cognitiveAcceleration),
     socialAcceleration(socialAcceleration),
+    maxIterations(maxIterations),
     tolerance(tolerance),
     velocityType(velocityType)
 { /* Nothing to do. */ }
@@ -40,60 +41,63 @@ PSO<VelocityVectorType>::PSO(const size_t lambda,
 //! Optimize the function (minimize).
 template<typename VelocityVectorType>
 template<typename DecomposableFunctionType>
-double PSO<VelocityVectorType>::Optimize(
+double PSOType<VelocityVectorType>::Optimize(
     DecomposableFunctionType& function, arma::mat& iterate)
 {
-  // Initialize the particle position and velocity. Following a
-  // heuristic the swarm size is set to 2 * dimension.
+  // Randomly initialize the particle position and velocity.
+  // Following a heuristic, the swarm size is set to 2 * dimension.
   lambda = 2 * dimension;
-  particlePosition.randu(lambda, dimension);
-  particleVelocity.randu(lambda, dimension);
-  bestParticlePosition.randu(lambda, dimension);
-  bestSwarmPosition.randu(lambda, dimension);
+  particlePosition.randu(dimension);
+  particleVelocity.randu(dimension);
+  bestParticlePosition = particlePosition;
+  bestSwarmPosition = particlePosition;
 
-  // Calculate the first objective function.
-  double currentObjective = function.Evaluate(iterate);
+  // Convenient variables to check if there's an improvement.
+  double currentObjective;
+  double lastObjectiveIndividual = DBL_MAX;
+  double lastObjectiveGlobal = DBL_MAX;
 
-  double overallObjective = currentObjective;
-  double lastObjective = DBL_MAX;
-
-  // Update the position and velocity for each particle.
+  // Start iterating.
   for (size_t i = 0; i < maxIterations; ++i)
   {
-    for (size_t j = 0; j < lambda; ++j)
+    for (size_t k = 0; k < dimension; ++k)
     {
-      for (size_t k = 0; k < dimension; ++k)
+      // Calculate the objective function.
+      currentObjective = function.Evaluate(particlePosition);
+
+      // Check if the current position is an individual best.
+      if (currentObjective < lastObjectiveIndividual)
       {
-        // Update velocity.
-        particleVelocity(j, k) = velocityType.Update(particlePosition(j, k),
-          particleVelocity(j, k), bestParticlePosition(j, k),
-          bestSwarmPosition(j, k), interiaWeight,
-          cognitiveAcceleration, socialAcceleration);
-
-        // Update position.
-        particlePosition(j, k) += particleVelocity(j, k);
-
-        // Evaluate the objective function.
-        currentObjective = function.Evaluate(particleVelocity);
-
-        // Update best parameters.
-        if (currentObjective < overallObjective)
-        {
-          overallObjective = currentObjective;
-        }
-
-        // Compare objective with tolerance.
-        if (std::abs(lastObjective - overallObjective) < tolerance)
-        {
-          Log::Info << "PSO: minimized within tolerance " << tolerance << "; "
-              << "terminating optimization." << std::endl;
-          return overallObjective;
-        }
+        bestParticlePosition = particlePosition;
+        lastObjectiveIndividual = currentObjective;
       }
     }
-    lastObjective = currentObjective;
+
+    // Check if the current position is a global best.
+    if (lastObjectiveIndividual < lastObjectiveGlobal)
+    {
+      bestSwarmPosition = particlePosition;
+      lastObjectiveGlobal = lastObjectiveIndividual;
+    }
+
+    // Update velocity for each particle.
+    velocityType.Update(particlePosition,
+      particleVelocity, bestParticlePosition,
+      bestSwarmPosition, interiaWeight,
+      cognitiveAcceleration, socialAcceleration, dimension);
+
+    // Update position for each particle.
+    particlePosition = particleVelocity;
+
+    // Compare current objective with tolerance.
+    if (currentObjective < tolerance)
+    {
+      Log::Info << "PSO: minimized within tolerance " << tolerance << "; "
+          << "terminating optimization." << std::endl;
+      return currentObjective;
+    }
   }
-  return overallObjective;
+  return lastObjectiveGlobal;
 }
 
 } // namespace optimization
