@@ -76,10 +76,13 @@ static void mlpackMain()
   // Parse command line options.
   const double testRatio = CLI::GetParam<double>("test_ratio");
 
-  if (CLI::GetParam<int>("seed") == 0)
-    mlpack::math::RandomSeed(std::time(NULL));
-  else
-    mlpack::math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+#if(BINDING_TYPE != BINDING_TYPE_TEST) // This is a unit test
+
+      if ((CLI::GetParam<int>("seed") == 0))
+          mlpack::math::RandomSeed(std::time(NULL));
+      else
+          mlpack::math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+#endif
 
   // Make sure the user specified output filenames.
   RequireAtLeastOnePassed({ "training" }, false, "no training set will be "
