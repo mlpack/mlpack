@@ -146,6 +146,11 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
   typedef Function<FunctionType> FullFunctionType;
   FullFunctionType& f = static_cast<FullFunctionType&>(function);
 
+  static_assert(mlpack::static_checks::CheckEvaluate<FullFunctionType>::value,
+      "The FunctionType does not have a correct definition of Evaluate.");
+  static_assert(mlpack::static_checks::CheckGradient<FullFunctionType>::value,
+      "The FunctionType does not have a correct definition of Gradient.");
+
   // Ensure that the cubes holding past iterations' information are the right
   // size.  Also set the current best point value to the maximum.
   const size_t rows = iterate.n_rows;

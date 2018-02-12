@@ -49,6 +49,9 @@ template<typename FunctionType>
 double SA<CoolingScheduleType>::Optimize(FunctionType& function,
                                          arma::mat& iterate)
 {
+  static_assert(mlpack::static_checks::CheckEvaluate<FunctionType>::value,
+      "The FunctionType does not have a correct definition of Evaluate.");
+
   const size_t rows = iterate.n_rows;
   const size_t cols = iterate.n_cols;
 

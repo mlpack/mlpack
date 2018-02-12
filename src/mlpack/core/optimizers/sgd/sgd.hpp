@@ -18,6 +18,7 @@
 #include "update_policies/vanilla_update.hpp"
 #include "update_policies/momentum_update.hpp"
 #include "decay_policies/no_decay.hpp"
+#include <mlpack/core/util/functiontype_method_forms.hpp>
 
 namespace mlpack {
 namespace optimization {
