@@ -60,7 +60,8 @@ class KillEmptyClusters
       {
           newCentroids.shed_col(emptyCluster);
           return 0; // No points were changed.
-      } else return 0;
+      }
+      else return 0;
   }
 
   //! Serialize the empty cluster policy (nothing to do).

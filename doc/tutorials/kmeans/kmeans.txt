@@ -136,6 +136,10 @@ when you save your clusters, even empty clusters will still have centroids.
 The centroids of the empty cluster will be the same as what they were on the
 last iteration when the cluster was not empty.
 
+@code
+$ mlpack_kmeans -c 5 -i dataset.csv -v -e -o assignments.csv -C centroids.csv
+@endcode
+
 @subsection cli_ex3_kmtut Killing empty clusters
 
 If you would like to kill empty clusters , instead of reinitializing
@@ -144,7 +148,7 @@ when you save your clusters, all the empty clusters will be removed and the
 final result may contain less than specified number of clusters.
 
 @code
-$ mlpack_kmeans -c 5 -i dataset.csv -v -o assignments.csv -C centroids.csv
+$ mlpack_kmeans -c 5 -i dataset.csv -v -E -o assignments.csv -C centroids.csv
 @endcode
 
 @subsection cli_ex4_kmtut Limiting the maximum number of iterations
