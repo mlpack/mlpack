@@ -20,13 +20,10 @@ template<typename NeighborSearch,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType >
-HDBSCAN<NeighborSearch,
-        MetricType,
-        TreeType>::
-HDBSCAN(const size_t minPoints,
-        bool allowSingleCluster) :
-        minPoints(minPoints),
-        allowSingleCluster(allowSingleCluster)
+HDBSCAN<NeighborSearch, MetricType, TreeType>::HDBSCAN(const size_t minPoints,
+    bool allowSingleCluster) :
+    minPoints(minPoints),
+    allowSingleCluster(allowSingleCluster)
 {
   // Nothing to do.
 }
@@ -59,11 +56,9 @@ template<typename NeighborSearch,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType >
 template<typename MatType>
-void HDBSCAN<NeighborSearch,
-    MetricType,
-    TreeType>::
-Cluster(const MatType& data,
-        arma::Row<size_t>& assignments)
+void HDBSCAN<NeighborSearch, MetricType, TreeType>::Cluster(
+    const MatType& data,
+    arma::Row<size_t>& assignments)
 {
   // genearting a matrix with the values of dcore
   arma::Mat<size_t> neighbors;
@@ -178,11 +173,9 @@ template<typename NeighborSearch,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType >
 template<typename MatType>
-void HDBSCAN<NeighborSearch,
-             MetricType,
-             TreeType>::
-SingleLinkageTreeClustering(const MatType& inputMST,
-                          MatType& singleLinkageTree)
+void HDBSCAN<NeighborSearch, MetricType, TreeType>::
+  SingleLinkageTreeClustering(const MatType& inputMST,
+    MatType& singleLinkageTree)
 {
   singleLinkageTree.set_size(4, inputMST.n_cols);
   size_t no = inputMST.n_cols + 1;
@@ -215,12 +208,11 @@ template<typename NeighborSearch,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType >
 template<typename MatType>
-void HDBSCAN<NeighborSearch,
-             MetricType,
-             TreeType>::
-SingleLinkageTreeToModifiedBFS(const MatType& singleLinkageTree,
-                 std::vector<size_t>& bfs,
-                 size_t rootOfBFS)
+void HDBSCAN<NeighborSearch, MetricType, TreeType>::
+  SingleLinkageTreeToModifiedBFS(
+    const MatType& singleLinkageTree,
+    std::vector<size_t>& bfs,
+    size_t rootOfBFS)
 {
   // size_t numPoints = singleLinkageTree.n_rows + 1;
   size_t numPoints = singleLinkageTree.n_cols + 1;
@@ -281,12 +273,10 @@ template<typename NeighborSearch,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType >
 template<typename MatType>
-void HDBSCAN<NeighborSearch,
-             MetricType,
-             TreeType>::
-CondenseTree(const MatType& singleLinkageTree,
-           MatType& result,
-           size_t minClusterSize )
+void HDBSCAN<NeighborSearch, MetricType, TreeType>::
+  CondenseTree(const MatType& singleLinkageTree,
+    MatType& result,
+    size_t minClusterSize )
 {
   std::vector<size_t> bfs;
   // Keeps track of number of elments in result matrix
@@ -440,11 +430,9 @@ template<typename NeighborSearch,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType >
 template<typename MatType>
-void HDBSCAN<NeighborSearch,
-             MetricType,
-             TreeType>::
-GetStabilities(const MatType& condensedTree,
-             std::map<size_t, double>& result)
+void HDBSCAN<NeighborSearch, MetricType, TreeType>::
+  GetStabilities(const MatType& condensedTree,
+    std::map<size_t, double>& result)
 {
   size_t largestChild = arma::max(condensedTree.row(1));
   size_t smallestCluster = arma::min(condensedTree.row(0));
@@ -522,12 +510,10 @@ template<typename NeighborSearch,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType >
 template<typename MatType>
-void HDBSCAN<NeighborSearch,
-             MetricType,
-             TreeType>::
-GetBfsFromClusteredTree(MatType& clusteredTree,
-                      size_t rootNode,
-                      std::vector<size_t>& resultBFS)
+void HDBSCAN<NeighborSearch, MetricType, TreeType>::
+  GetBfsFromClusteredTree(MatType& clusteredTree,
+    size_t rootNode,
+    std::vector<size_t>& resultBFS)
 {
   std::queue<size_t> q;
 
@@ -576,12 +562,10 @@ template<typename NeighborSearch,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType >
 template<typename MatType>
-void HDBSCAN<NeighborSearch,
-             MetricType,
-             TreeType>::
-GetLabels(const MatType& condensedTree,
-        std::vector<size_t> clusters,
-        arma::Mat<size_t>& result)
+void HDBSCAN<NeighborSearch, MetricType, TreeType>::
+  GetLabels(const MatType& condensedTree,
+    std::vector<size_t> clusters,
+    arma::Mat<size_t>& result)
 {
   // Label all the clusters which can be root
   sort(clusters.begin(), clusters.end());
@@ -629,8 +613,8 @@ GetLabels(const MatType& condensedTree,
     for (size_t i = 0; i < rootCluster; i++)
       result[i] = SIZE_MAX;
 
-    double eps = std::numeric_limits<double>::epsilon();
-    double eps_error = pow(condensedTree.n_cols, 2) * eps;
+    // double eps = std::numeric_limits<double>::epsilon();
+    // double eps_error = pow(condensedTree.n_cols, 2) * eps;
     // consider all edges in condensed tree
     // whose child is a single point (not cluster)
     // check if their lambda has value
@@ -640,7 +624,7 @@ GetLabels(const MatType& condensedTree,
       if (currentPoint >= rootCluster)  continue;
       parentOfCurrentPoint = unionTree.Find(currentPoint);
       if (parentOfCurrentPoint == rootCluster &&
-        condensedTree(2, i) + eps_error >= lambdaRootCluster)
+        condensedTree(2, i) >= lambdaRootCluster)
         result[currentPoint] = 0;
     }
 
@@ -672,11 +656,9 @@ template<typename NeighborSearch,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType >
 template<typename MatType>
-void HDBSCAN<NeighborSearch,
-             MetricType,
-             TreeType>::
-GetClusters(MatType& condensedTree,
-          arma::Mat<size_t>& result)
+void HDBSCAN<NeighborSearch, MetricType, TreeType>::
+  GetClusters(MatType& condensedTree,
+    arma::Mat<size_t>& result)
 {
   std::map<size_t, double> stabilities;
   GetStabilities(condensedTree, stabilities);

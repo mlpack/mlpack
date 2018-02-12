@@ -16,6 +16,32 @@ using namespace mlpack::distribution;
 
 BOOST_AUTO_TEST_SUITE(HDBSCANTest);
 
+BOOST_AUTO_TEST_CASE(multipleClusterTest)
+{
+  // Generate 5000 points on 0.1 radius circle.
+  arma::mat points(2, 5000);
+  double pi = 3.14156;
+  double theeta;
+  for (size_t i = 0; i < 5000; i++)
+  {
+    theeta = (double)i/5000.0;
+    points(0, i) = 0.001 * (i / 1000 + 1) * sin(2*pi*theeta);
+    points(1, i) = 0.001 * (i / 1000 + 1) * cos(2*pi*theeta);
+  }
+
+  HDBSCAN<> h1(5, true);
+  arma::Row<size_t> assignments;
+  h1.Cluster(points, assignments);
+
+  // Some points in the circle will get classified as noise
+  for (size_t i = 0; i < 5; i++)
+  {
+    for (size_t j = 1; j < 1000; j++)
+      BOOST_REQUIRE_EQUAL(assignments(i * 1000 + j),
+       assignments(i * 1000));
+  }
+}
+
 BOOST_AUTO_TEST_CASE(singleClusterTest)
 {
   // Generate 5000 points on 0.1 radius circle.
@@ -25,8 +51,8 @@ BOOST_AUTO_TEST_CASE(singleClusterTest)
   for (size_t i = 0; i < 5000; i++)
   {
     theeta = (double)i/5000.0;
-    points(0, i) = 0.1*sin(2*pi*theeta);
-    points(1, i) = 0.1*cos(2*pi*theeta);
+    points(0, i) = 100 * sin(2*pi*theeta);
+    points(1, i) = 100 * cos(2*pi*theeta);
   }
 
   HDBSCAN<> h1(5, true);
@@ -34,9 +60,9 @@ BOOST_AUTO_TEST_CASE(singleClusterTest)
   h1.Cluster(points, assignments);
 
   // Some points in the circle will get classified as noise
-  for (size_t i = 0; i < assignments.n_cols; i++)
+  for (size_t i = 0; i < 5000; i++)
   {
-    BOOST_REQUIRE((assignments(i) == 0));
+    BOOST_REQUIRE((assignments(i) == 0) || (assignments(i) == SIZE_MAX));
   }
 }
 
@@ -57,12 +83,12 @@ BOOST_AUTO_TEST_CASE(noiseTest)
   points(0, points.n_cols-1) = 100;
   points(1, points.n_cols-1) = 100;
 
-  HDBSCAN<> h1(5, true);
+  HDBSCAN<> h1(5);
   arma::Row<size_t> assignments;
   h1.Cluster(points, assignments);
 
   // The last point must be noise,
-  BOOST_REQUIRE(assignments(assignments.n_cols-1) == SIZE_MAX);
+  BOOST_REQUIRE_EQUAL(assignments(assignments.n_cols-1), SIZE_MAX);
 }
 
 /**

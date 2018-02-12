@@ -29,6 +29,14 @@
 namespace mlpack {
 namespace hdbscan {
 
+/**
+ * Performs HDBSCAN clusteringon on the given data.
+ *
+ * @tparam NeighborSearch Algorithm to find n nearest neighbors.
+ * @tparam MetricType Metric type to be used with algorithm.
+ * @tparam TreeType Type of tree to use.  This should follow the TreeType policy
+ *      API.
+ */
 template<typename NeighborSearch = neighbor::NeighborSearch
                                              <neighbor::NearestNeighborSort,
                                              metric::EuclideanDistance>,
@@ -43,6 +51,8 @@ class HDBSCAN
    * Construct the HDBSCAN object with the given parameters.
    *
    * @param minPoints The number of points present in a cluster.
+   * @param allowSingleCluster This parameter specifies if it is 
+   *  allowed to have only one cluster in entire dataset.                
    */
   HDBSCAN(const size_t minPoints = 10,
           bool allowSingleCluster = false);
@@ -51,7 +61,7 @@ class HDBSCAN
    * Performs HDBSCAN clustering on the data,
    * returning the list of cluster assignments.
    * The assigned clusters have values from 0 onwards. The noise points  
-   * are labelled as (total nuber of points + 1)
+   * are labelled as SIZE_MAX
    *
    * @param MatType Type of matrix (arma::mat or arma::sp_mat).
    * @param data Dataset to cluster.
@@ -66,7 +76,7 @@ class HDBSCAN
   // specifies the number of points in clusters now).
   size_t minPoints;
 
-  //! Single cluster is allowed (or not)
+  //! Allow to have only one cluster.
   bool allowSingleCluster;
 
   //! Instantiated neighbor search.
