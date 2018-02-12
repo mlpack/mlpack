@@ -44,11 +44,11 @@ HAS_METHOD_FORM(Evaluate, HasDecomposableEvaluate);
 
 template <typename Class, typename...Ts>
 using DecomposableEvaluateFormConst = double(Class::*)(const arma::mat&, const
-    size_t) const;
+    size_t, const size_t) const;
 
 template <typename Class, typename...Ts>
 using DecomposableEvaluateFormNonConst = double(Class::*)(const arma::mat&,
-    const size_t);
+    const size_t, const size_t);
 
 template<typename FunctionType>
 struct CheckDecomposableEvaluate
@@ -63,11 +63,11 @@ HAS_METHOD_FORM(Gradient, HasDecomposableGradient);
 
 template <typename Class, typename...Ts>
 using DecomposableGradientFormConst = void(Class::*)(const arma::mat&, const
-    size_t, arma::mat&) const;
+    size_t, arma::mat&, const size_t) const;
 
 template <typename Class, typename...Ts>
 using DecomposableGradientFormNonConst = void(Class::*)(const arma::mat&, const
-    size_t, arma::mat&);
+    size_t, arma::mat&, const size_t);
 
 template <typename FunctionType>
 struct CheckDecomposableGradient
@@ -170,11 +170,11 @@ HAS_METHOD_FORM(Gradient, HasSparseGradient);
 
 template <typename Class, typename...Ts>
 using SparseGradientFormConst = void(Class::*)(const arma::mat&, size_t,
-    arma::sp_mat&) const;
+    arma::sp_mat&, const size_t) const;
 
 template <typename Class, typename...Ts>
 using SparseGradientFormNonConst = void(Class::*)(const arma::mat&, size_t,
-    arma::sp_mat&);
+    arma::sp_mat&, const size_t);
 
 template <typename FunctionType>
 struct CheckSparseGradient

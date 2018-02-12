@@ -136,7 +136,8 @@ class GeneralizedRosenbrockFunction
 
   void Gradient(const arma::mat& coordinates,
                 const size_t i,
-                arma::sp_mat& gradient) const;
+                arma::sp_mat& gradient,
+                const size_t batchSize = 1) const;
 
   const arma::mat& GetInitialPoint() const;
 

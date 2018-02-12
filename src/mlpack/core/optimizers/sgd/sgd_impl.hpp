@@ -49,7 +49,7 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     DecomposableFunctionType& function,
     arma::mat& iterate)
 {
-  typedef typename Function<DecomposableFunctionType> FullFunctionType;
+  typedef Function<DecomposableFunctionType> FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   static_assert(
@@ -93,19 +93,19 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     if ((currentFunction % numFunctions) == 0)
     {
       // Output current objective function.
-      Log::Info << "SGD: iteration " << i << ", objective " << overallObjective
+      std::cout << "SGD: iteration " << i << ", objective " << overallObjective
           << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
-        Log::Warn << "SGD: converged to " << overallObjective << "; terminating"
+        std::cout << "SGD: converged to " << overallObjective << "; terminating"
             << " with failure.  Try a smaller step size?" << std::endl;
         return overallObjective;
       }
 
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
-        Log::Info << "SGD: minimized within tolerance " << tolerance << "; "
+        std::cout << "SGD: minimized within tolerance " << tolerance << "; "
             << "terminating optimization." << std::endl;
         return overallObjective;
       }
@@ -144,7 +144,7 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     currentFunction += effectiveBatchSize;
   }
 
-  Log::Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
+  std::cout << "SGD: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
 
   // Calculate final objective.

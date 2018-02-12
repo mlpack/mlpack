@@ -28,9 +28,9 @@ class A
  public:
   size_t NumFunctions() const;
   size_t NumFeatures() const;
-  double Evaluate(const arma::mat&, const size_t) const;
-  void Gradient(const arma::mat&, const size_t, arma::mat&) const;
-  void Gradient(const arma::mat&, const size_t, arma::sp_mat&) const;
+  double Evaluate(const arma::mat&, const size_t, const size_t) const;
+  void Gradient(const arma::mat&, const size_t, arma::mat&, const size_t) const;
+  void Gradient(const arma::mat&, const size_t, arma::sp_mat&, const size_t) const;
   void PartialGradient(const arma::mat&, const size_t, arma::sp_mat&) const;
 };
 
@@ -39,9 +39,9 @@ class B
  public:
   size_t NumFunctions();
   size_t NumFeatures();
-  double Evaluate(const arma::mat&, const size_t);
-  void Gradient(const arma::mat&, const size_t, arma::mat&);
-  void Gradient(const arma::mat&, const size_t, arma::sp_mat&);
+  double Evaluate(const arma::mat&, const size_t, const size_t);
+  void Gradient(const arma::mat&, const size_t, arma::mat&, const size_t);
+  void Gradient(const arma::mat&, const size_t, arma::sp_mat&, const size_t);
   void PartialGradient(const arma::mat&, const size_t, arma::sp_mat&);
 };
 
