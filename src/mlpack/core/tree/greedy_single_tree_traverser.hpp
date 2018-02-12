@@ -41,7 +41,10 @@ class GreedySingleTreeTraverser
   size_t NumPrunes() const { return numPrunes; }
 
   //! Set value of minBaseCases.
-  void MinBaseCases(size_t baseCases) { minBaseCases = baseCases; }
+  size_t& MinBaseCases() { return minBaseCases; }
+
+  //! Get value of minBaseCases.
+  size_t MinBaseCases() const { return minBaseCases; }
 
  private:
   //! Reference to the rules with which the tree will be traversed.
