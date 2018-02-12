@@ -72,13 +72,6 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   double overallObjective = 0;
   double lastObjective = DBL_MAX;
 
-  // Calculate the first objective function.
-  for (size_t i = 0; i < numFunctions; i += batchSize)
-  {
-    const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
-  }
-
   // Initialize the update policy.
   if (resetPolicy)
     updatePolicy.Initialize(iterate.n_rows, iterate.n_cols);
@@ -90,22 +83,22 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
   {
     // Is this iteration the start of a sequence?
-    if ((currentFunction % numFunctions) == 0)
+    if ((currentFunction % numFunctions) == 0 && i > 0)
     {
       // Output current objective function.
-      std::cout << "SGD: iteration " << i << ", objective " << overallObjective
+      Log::Info << "SGD: iteration " << i << ", objective " << overallObjective
           << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
-        std::cout << "SGD: converged to " << overallObjective << "; terminating"
+        Log::Warn << "SGD: converged to " << overallObjective << "; terminating"
             << " with failure.  Try a smaller step size?" << std::endl;
         return overallObjective;
       }
 
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
-        std::cout << "SGD: minimized within tolerance " << tolerance << "; "
+        Log::Info << "SGD: minimized within tolerance " << tolerance << "; "
             << "terminating optimization." << std::endl;
         return overallObjective;
       }
@@ -144,7 +137,7 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     currentFunction += effectiveBatchSize;
   }
 
-  std::cout << "SGD: maximum iterations (" << maxIterations << ") reached; "
+  Log::Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
 
   // Calculate final objective.
