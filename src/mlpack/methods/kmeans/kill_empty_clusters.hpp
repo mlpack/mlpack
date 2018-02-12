@@ -55,9 +55,12 @@ class KillEmptyClusters
       MetricType& /* metric */,
       const size_t /* iteration */)
   {
-    // Kill the empty cluster.
-    newCentroids.col(emptyCluster).fill(DBL_MAX);
-    return 0; // No points were changed.
+    // Remove the empty cluster.
+      if (emptyCluster < newCentroids.n_cols)
+      {
+          newCentroids.shed_col(emptyCluster);
+          return 0; // No points were changed.
+      } else return 0;
   }
 
   //! Serialize the empty cluster policy (nothing to do).
