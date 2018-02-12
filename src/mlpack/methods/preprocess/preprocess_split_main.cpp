@@ -76,7 +76,7 @@ static void mlpackMain()
   // Parse command line options.
   const double testRatio = CLI::GetParam<double>("test_ratio");
 
-#if(BINDING_TYPE != BINDING_TYPE_TEST) // This is a unit test
+#if(BINDING_TYPE != BINDING_TYPE_TEST) // This is a not unit test
 
       if ((CLI::GetParam<int>("seed") == 0))
           mlpack::math::RandomSeed(std::time(NULL));
