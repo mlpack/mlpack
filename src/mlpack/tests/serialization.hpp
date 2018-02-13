@@ -230,7 +230,7 @@ void SerializeObject(T& t, T& newT)
   }
   ifs.close();
 
-//  remove(fileName.c_str());
+  remove(fileName.c_str());
 
   BOOST_REQUIRE_EQUAL(success, true);
 }
