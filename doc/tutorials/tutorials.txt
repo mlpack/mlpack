@@ -39,6 +39,7 @@ progress to complex, extensible uses.
  - \ref cftutorial
  - \ref akfntutorial
  - \ref cnetutorial
+ - \ref optimizertutorial
 
 @section policy_tut Policy Class Documentation
 

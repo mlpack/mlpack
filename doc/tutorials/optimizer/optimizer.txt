@@ -1,0 +1,251 @@
+/*!
+
+@file optimizer.txt
+@author Marcus Edel (https://kurg.org)
+@brief Tutorial for how to implement a new Optimizer in mlpack.
+
+@page optimizertutorial Optimizer implementation tutorial
+
+@section intro_optimizertut Introduction
+
+The field of optimization is vast and complex. In optimization problems, we have
+to find solutions which are optimal or near-optimal with respect to some goals.
+Usually, we are not able to solve problems in one step, but we follow some
+process which guides us through problem-solving. \c mlpack implements multiple
+strategies for optimizing different objective functions and provides different
+strategies for selecting and customizing the appropriate optimization algorithm.
+This tutorial discusses how to use each of the techniques that \c mlpack
+implements.
+
+@section optimizer_optimizertut Optimizer
+
+\ref mlpack::optimization::AdaDelta "AdaDelta" - \ref
+ mlpack::optimization::AdaGrad "AdaGrad" - \ref mlpack::optimization::AdamType
+ "Adam" - \ref mlpack::optimization::AdaGrad "AdaGrad" - \ref
+ mlpack::optimization::AdamType "Adam" - \ref mlpack::optimization::AdamType
+ "AdaMax" - \ref mlpack::optimization::AdamType "AMSGrad" - \ref
+mlpack::optimization::AdamType "Nadam" - \ref mlpack::optimization::CNE "CNE" -
+ \ref mlpack::optimization::IQN "IQN" - \ref mlpack::optimization::L_BFGS
+ "L_BFGS" - \ref mlpack::optimization::RMSProp "RMSProp" - \ref
+ mlpack::optimization::SMORMS3 "SMORMS3" - \ref mlpack::optimization::SPALeRASGD
+ "SPALeRASGD" - \ref mlpack::optimization::SVRGType "SVRG" - \ref
+ mlpack::optimization::SVRGType "SVRG (Barzilai-Borwein)" - \ref
+ mlpack::optimization::SARAHType "SARAH" - \ref mlpack::optimization::SARAHType
+ "SARAH+" - \ref mlpack::optimization::KatyushaType "Katyusha" \ref
+ mlpack::optimization::CMAES "CMAES"
+
+@subsection function_type_api_tut FunctionType API
+
+In order to facilitate consistent implementations, we have defined a \c
+FunctionType API that describes all the methods that an objective function may
+implement. \c mlpack offers a few variations of this API to cover different
+function characteristics.
+
+Any \c FunctionType requires the implementation of an \c Evaluate() method.
+The interface used for that can be one of the following two methods:
+
+@code
+// For non-separable objectives.
+double Evaluate(const arma::mat& parameters);
+
+// For separable objectives.
+double Evaluate(const arma::mat& parameters,
+                const size_t start,
+                const size_t batchSize);
+@endcode
+
+Both of these methods calculate the objective given the parameters matrix \c
+parameters. The second overload is for separable functions, and should calculate
+the partial objective starting at the separable function indexed by start and
+calculate \c batchSize partial objectives and return the sum. Functions
+implementing the first overload are used by optimizers like the \ref
+GradientDescent optimizer; functions implementing the second are used by SGD-
+like optimizers.
+
+In addition, any differentiable function must implement some \c Gradient()
+method.
+
+@code
+// For non-separable differentiable sparse and non-sparse functions.
+template<typename GradType>
+void Gradient(const arma::mat& parameters, GradType& gradient);
+
+// For separable differentiable sparse and non-sparse functions.
+template<typename GradType>
+void Gradient(const arma::mat& parameters,
+              const size_t start,
+              GradType& gradient,
+              const size_t batchSize);
+@endcode
+
+Both of these methods should calculate the gradient and place the results into
+the matrix object \c gradient that is passed as an argument. Note that the
+method accepts a template parameter \c GradType, which may be \c arma::mat
+(dense Armadillo matrix) or \c arma::sp_mat (sparse Armadillo matrix).  This
+allows support for both sparse-supporting and non-sparse-supporting optimizers.
+
+If the objective function is partially differentiable, we could implement the
+following method:
+
+@code
+// For partially differentiable sparse and non-sparse functions.
+template<typename GradType>
+void PartialGradient(const arma::mat& parameters, const size_t j, GradType& gradient);
+@endcode
+
+The function should calculate the gradient of the parameters \c parameters with
+respect to the parameter \c j and store the results (either sparse or dense) in
+the \c gradient matrix object.
+
+In addition, a separable partially differentiable functions must implement
+the \c NumFunctions() and or \c NumFeatures() functions, respectively:
+
+@code
+// For separable functions: return the number of parts the optimization problem
+// can be decomposed into.
+size_t NumFunctions();
+
+// For partially differentiable functions: return the number of partial derivatives.
+size_t NumFeatures();
+@endcode
+
+Finally, \c separable functions must implement the method \c Shuffle() function,
+which shuffles the ordering of the functions
+
+@code
+// Shuffel the ordering of the function.
+void Shuffel();
+@endcode
+
+
+@subsection optimizer_type_api_tut Optimizer API
+
+An optimizer must implement only the method:
+
+@code
+template<typename FunctionType>
+double Optimize(FunctionType& function, arma::mat& parameters);
+@endcode
+
+The \c Optimize() method optimize the given function \c function, and stores
+the best set of parameters in the matrix \c parameters and returns the best
+objective value.
+
+@subsection cpp_ex1_optimizer_tut Simple Function and Optimizer example
+
+The example below constructs a simple function, where each dimension has a
+parabola with a distinct minimum. Note, in this example we maintain an ordering
+with the vector \c order; in other situations, such as training neural networks,
+we could simply shuffle the columns of the data matrix in \c Shuffle().
+
+@code
+class ObjectiveFunction
+{
+ public:
+  // A separable function consisting of four quadratics.
+  ObjectiveFunction()
+  {
+    in = arma::vec("20 12 15 100");
+    bi = arma::vec("-4 -2 -3 -8");
+  }
+
+  size_t NumFunctions() { return 4; }
+  void Shuffle() { ord = arma::shuffle(arma::uvec("0 1 2 3")); }
+
+  double Evaluate(const arma::mat& para, const size_t s, const size_t bs)
+  {
+    double cost = 0;
+    for (size_t i = s; i < s + bs; i++)
+      cost += para(ord[i]) * para(ord[i]) + bi(ord[i]) * para(ord[i]) + in(ord[i]);
+    return cost;
+  }
+
+  void Gradient(const arma::mat& para, const size_t s, arma::mat& g, const size_t bs)
+  {
+    g.zeros(para.n_rows, para.n_cols);
+    for (size_t i = s; i < s + bs; i++)
+      g(ord[i]) += (1.0 / bs) * 2 * para(ord[i]) + bi(ord[i]);
+  }
+
+ private:
+  // Intercepts.
+  arma::vec in;
+
+  // Coefficient.
+  arma::vec bi;
+
+  // Function order.
+  arma::uvec ord;
+};
+@endcode
+
+For the optimization of the defined \c ObjectiveFunction and other \c mlpack
+objective functions, we must implement only an Optimize() method, and a
+constructor to set some parameters. The code is given below.
+
+@code
+class SimpleOptimizer
+{
+ public:
+  SimpleOptimizer(const size_t bs = 1, const double lr = 0.02) : bs(bs), lr(lr) { }
+
+  template<typename FunctionType>
+  double Optimize(FunctionType& function, arma::mat& parameter)
+  {
+    arma::mat gradient;
+    for (size_t i = 0; i < 5000; i += bs)
+    {
+      if (i % function.NumFunctions() == 0)
+      {
+        function.Shuffle();
+      }
+
+      function.Gradient(parameter, i % function.NumFunctions(), gradient, bs);
+      parameter -= lr * gradient;
+    }
+
+    return function.Evaluate(parameter, 0, function.NumFunctions());
+  }
+ private:
+  //! Locally stored batch size.
+  size_t bs;
+
+  //! Locally stored learning rate.
+  double lr;
+};
+@endcode
+
+Note for the sake of simplicity we omitted checks on the batch size (\c bs).
+This optimizer assumes that \c function.NumFunctions() is a multiple of the
+batch size, we also omitted other typical parts of real implementations, a more
+detailed example may be found in the \ref mlpack::optimization "complete API
+ documentation". Still, \c SimpleOptimizer works with any mlpack objective
+function which implements \C Evaluate that can compute a partial objective
+function, and \c Gradient that can compute a part of the gradient starting with
+a separable function.
+
+Finding the minimum of \c ObjectiveFunction or any other \c mlpack function can
+be done as shown below.
+
+@code
+ObjectiveFunction function;
+arma::mat parameter("0 0 0 0;");
+
+SimpleOptimizer optimizer;
+double objective = optimizer.Optimize(function, parameter);
+
+std::cout << "Objective: " << objective << std::endl;
+std::cout << "Optimized function parameter: " << parameter << std::endl;
+@endcode
+
+The final value of the objective function should be close to the optimal value,
+which is the sum of values at the vertices of the parabolas.
+
+@section further_doc_optimizer_tut Further documentation
+
+Further documentation for each \c Optimizer may be found in the \ref
+mlpack::optimization "complete API documentation".  In addition, more
+information on the testing functions may be found in its \ref
+mlpack::optimization "complete API documentation".
+
+*/
