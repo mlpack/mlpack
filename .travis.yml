@@ -11,9 +11,10 @@ before_install:
   # xenial is not stable yet, so we have to manually disable the systemd
   # automatic updates services.  Ideas adapted from here:
   # https://unix.stackexchange.com/questions/315502/how-to-disable-apt-daily-service-on-ubuntu-cloud-vm-image
-  - sudo systemctl stop apt-daily.service apt-daily.timer
-  - sudo systemctl kill --kill-who=all apt-daily.service apt-daily-upgrade.service
-  - while !(systemctl list-units --all apt-daily.service | grep -q dead); do sleep 1; done
+  - sudo systemctl stop apt-daily.timer
+  - sudo systemctl stop apt-daily.service
+  - sudo systemctl kill --kill-who=all apt-daily.service
+  - while !(systemctl list-units --all apt-daily.service | fgrep -q dead) do sleep 1; done
   - sudo apt-get update -qq
   - sudo apt-get install -qq libopenblas-dev liblapack-dev g++ libboost-all-dev python3-pip
   - sudo wget https://launchpadlibrarian.net/260609315/fix-std-vector-load.diff -O /usr/include/fix-std-vector-load.diff
