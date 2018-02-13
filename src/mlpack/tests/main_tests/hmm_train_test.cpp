@@ -43,7 +43,7 @@ struct HMMTrainMainTestFixture
 
 BOOST_FIXTURE_TEST_SUITE(HMMTrainMainTest, HMMTrainMainTestFixture);
 
-inline void fileExists(std::string fileName)
+inline void FileExists(std::string fileName)
 {
   ifstream ifp(fileName);
   if (!ifp.good())
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(HMMTrainStatesTest)
   int states = -3;  // Invalid!
   std::string hmmType = "discrete";
 
-  fileExists(inputFileName);
+  FileExists(inputFileName);
   SetInputParam("input_file", std::move(inputFileName));
   SetInputParam("states", states);
   SetInputParam("type", std::move(hmmType));
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(HMMTrainToleranceNonNegative)
   std::string hmmType = "gaussian";
   double tol = - 100;  // Invalid
 
-  fileExists(inputFileName);
+  FileExists(inputFileName);
   SetInputParam("input_file", std::move(inputFileName));
   SetInputParam("states", states);
   SetInputParam("type", std::move(hmmType));
@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(HMMTrainTypeTest)
   int states = 3;
   std::string hmmType = "some-not-supported-possibly-non-type";
 
-  fileExists(inputFileName);
+  FileExists(inputFileName);
   SetInputParam("input_file", std::move(inputFileName));
   SetInputParam("states", states);
   SetInputParam("type", std::move(hmmType));
@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(HMMTrainGaussianTest)
   std::string hmmType = "gmm";
   int gaussians = -2;
 
-  fileExists(inputFileName);
+  FileExists(inputFileName);
   SetInputParam("input_file", std::move(inputFileName));
   SetInputParam("states", states);
   SetInputParam("type", std::move(hmmType));
@@ -132,8 +132,8 @@ BOOST_AUTO_TEST_CASE(HMMTrainReuseModelTest)
   std::string hmmType = "discrete";
   int states = 3;
 
-  fileExists(inputObsFileName);
-  fileExists(inputLabFileName);
+  FileExists(inputObsFileName);
+  FileExists(inputLabFileName);
   // Make sure that the size of the 
   // training seq, and training labels is same
   arma::mat trainObs, trainLab;
