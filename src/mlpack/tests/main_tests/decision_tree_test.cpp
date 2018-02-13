@@ -69,12 +69,12 @@ BOOST_AUTO_TEST_CASE(DecisionTreeOutputDimensionTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   mlpackMain();
 
@@ -116,12 +116,12 @@ BOOST_AUTO_TEST_CASE(DecisionTreeCategoricalOutputDimensionTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   mlpackMain();
 
@@ -185,7 +185,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Input trained model.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
   SetInputParam("input_model",
       std::move(CLI::GetParam<DecisionTreeModel*>("output_model")));
 
@@ -247,7 +247,7 @@ BOOST_AUTO_TEST_CASE(DecisionTreeTrainingVerTest)
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
@@ -286,7 +286,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
@@ -307,7 +307,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Input trained model.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
   SetInputParam("input_model",
       std::move(CLI::GetParam<DecisionTreeModel*>("output_model")));
 
