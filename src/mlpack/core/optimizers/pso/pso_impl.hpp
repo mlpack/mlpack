@@ -25,6 +25,10 @@ PSOType<VelocityVectorType>::PSOType(const size_t lambda,
                                   const double interiaWeight,
                                   const double cognitiveAcceleration,
                                   const double socialAcceleration,
+                                  const double velocityLowerBound,
+                                  const double velocityUpperBound,
+                                  const double postionLowerBound,
+                                  const double postionUpperBound,
                                   const size_t maxIterations,
                                   const double tolerance,
                                   const VelocityVectorType& velocityType) :
@@ -33,6 +37,10 @@ PSOType<VelocityVectorType>::PSOType(const size_t lambda,
     interiaWeight(interiaWeight),
     cognitiveAcceleration(cognitiveAcceleration),
     socialAcceleration(socialAcceleration),
+    velocityLowerBound(velocityLowerBound),
+    velocityUpperBound(velocityUpperBound),
+    postionLowerBound(postionLowerBound),
+    postionUpperBound(postionUpperBound),
     maxIterations(maxIterations),
     tolerance(tolerance),
     velocityType(velocityType)
@@ -87,7 +95,30 @@ double PSOType<VelocityVectorType>::Optimize(
       cognitiveAcceleration, socialAcceleration, dimension);
 
     // Update position for each particle.
-    particlePosition = particleVelocity;
+    particlePosition = particlePosition + particleVelocity;
+
+    // Enforce boundary conditions for particle positions
+    // and velocities.
+    for (int k = 0; k < dimension; ++k)
+    {
+      if (particleVelocity[k] < velocityLowerBound)
+      {
+        particleVelocity[k] = velocityLowerBound;
+      }
+      if (particleVelocity[k] > velocityUpperBound)
+      {
+        particleVelocity[k] = velocityUpperBound;
+      }
+
+      if (particlePosition[k] < postionLowerBound)
+      {
+        particlePosition[k] = postionLowerBound;
+      }
+      if (particlePosition[k] > postionUpperBound)
+      {
+        particlePosition[k] = postionUpperBound;
+      }
+    }
 
     // Compare current objective with tolerance.
     if (currentObjective < tolerance)
