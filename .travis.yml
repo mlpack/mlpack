@@ -1,6 +1,7 @@
 sudo: required
 dist: xenial
 language: cpp
+filter_secrets: false
 
 env:
   - CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON=/usr/bin/python"
