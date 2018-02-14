@@ -12,7 +12,6 @@ option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
-option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
 option(BUILD_SHARED_LIBS
     "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 option(BUILD_WITH_COVERAGE
@@ -23,6 +22,16 @@ option(FORCE_CXX11
     "Don't check that the compiler supports C++11, just assume it.  Make sure to specify any necessary flag to enable C++11 as part of CXXFLAGS."
     OFF)
 enable_testing()
+
+# Python can not be binged with mlpack-master on windows yet
+# Set BUILD_PYTHON_BINDINGS to OFF when the platform are windows
+if(WIN32)
+  option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
+  MESSAGE("BUILD_PYTHON_BINDINGS?" ${BUILD_PYTHON_BINDINGS})
+else()
+  option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
+  MESSAGE("BUILD_PYTHON_BINDINGS?" ${BUILD_PYTHON_BINDINGS})
+endif()
 
 # Ensure that we have a C++11 compiler.  In newer versions of CMake, this is
 # done with target_compile_features() when the mlpack library target is added in
