@@ -36,8 +36,8 @@ template<typename FunctionType>
 struct CheckNumFunctions
 {
   const static bool value =
-    HasNumFunctions<FunctionType, NumFunctionsFormConst>::value ||
-    HasNumFunctions<FunctionType, NumFunctionsFormNonConst>::value;
+      HasNumFunctions<FunctionType, NumFunctionsFormConst>::value ||
+      HasNumFunctions<FunctionType, NumFunctionsFormNonConst>::value;
 };
 
 HAS_METHOD_FORM(Evaluate, HasDecomposableEvaluate);

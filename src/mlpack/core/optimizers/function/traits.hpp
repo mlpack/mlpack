@@ -15,6 +15,7 @@ namespace mlpack {
 namespace optimization {
 namespace traits {
 
+HAS_EXACT_METHOD_FORM(NumFunctions, HasNumFunctions);
 HAS_EXACT_METHOD_FORM(Evaluate, HasEvaluate);
 HAS_EXACT_METHOD_FORM(Gradient, HasGradient);
 HAS_EXACT_METHOD_FORM(EvaluateWithGradient, HasEvaluateWithGradient);

@@ -111,7 +111,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
         arma::sp_mat gradient;
 
         // Evaluate the sparse gradient.
-        function.Gradient(iterate, visitationOrder[j], gradient);
+        function.Gradient(iterate, visitationOrder[j], gradient, 1);
 
         // Update the decision variable with non-zero components of the
         // gradient.
