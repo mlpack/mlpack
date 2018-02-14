@@ -123,13 +123,20 @@ static void mlpackMain()
       "hilbert-r", "r-plus", "r-plus-plus", "ball" }, true,
       "unknown tree type");
 
+  // Value of epsilon should be positive.
+  RequireParamValue<double>("epsilon", [](double x) { return x > 0; },
+      true, "invalid value of epsilon specified");
+
+  // Value of min_size can't be negative.
+  RequireParamValue<int>("min_size", [](int y) { return y >= 0; },
+      true, "invalid value of min_size specified");
+
   // Fire off naive search if needed.
   if (CLI::HasParam("naive"))
   {
     RangeSearch<> rs(true);
     RunDBSCAN(rs);
-  }
-
+  } else {
   const string treeType = CLI::GetParam<string>("tree_type");
   if (treeType == "kd")
     RunDBSCAN<RangeSearch<>>();
@@ -149,4 +156,5 @@ static void mlpackMain()
     RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, RPlusPlusTree>>();
   else if (treeType == "ball")
     RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, BallTree>>();
+  }
 }
