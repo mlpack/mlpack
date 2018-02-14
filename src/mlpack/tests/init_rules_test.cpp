@@ -23,6 +23,7 @@
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
+#include <mlpack/methods/ann/init_rules/variance_scaling_init.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -188,6 +189,56 @@ BOOST_AUTO_TEST_CASE(GaussianInitTest)
 
   t.Initialize(weights, rows, cols);
   t.Initialize(weights3d, rows, cols, slices);
+
+  BOOST_REQUIRE_EQUAL(weights.n_rows, rows);
+  BOOST_REQUIRE_EQUAL(weights.n_cols, cols);
+
+  BOOST_REQUIRE_EQUAL(weights3d.n_rows, rows);
+  BOOST_REQUIRE_EQUAL(weights3d.n_cols, cols);
+  BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
+}
+
+/**
+ * Simple test of the VarianceScalingNormalInit class.
+ */
+BOOST_AUTO_TEST_CASE(VarianceScalingNormalInitTest)
+{
+  const size_t rows = 7;
+  const size_t cols = 8;
+  const size_t slices = 2;
+
+  arma::mat weights;
+  arma::cube weights3d;
+
+  VarianceScalingNormalInit<> vsn;
+
+  vsn.Initialize(weights, rows, cols);
+  vsn.Initialize(weights3d, rows, cols, slices);
+
+  BOOST_REQUIRE_EQUAL(weights.n_rows, rows);
+  BOOST_REQUIRE_EQUAL(weights.n_cols, cols);
+
+  BOOST_REQUIRE_EQUAL(weights3d.n_rows, rows);
+  BOOST_REQUIRE_EQUAL(weights3d.n_cols, cols);
+  BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
+}
+
+/**
+ * Simple test of the VarianceScalingUniformInit class.
+ */
+BOOST_AUTO_TEST_CASE(VarianceScalingUniformInitTest)
+{
+  const size_t rows = 7;
+  const size_t cols = 8;
+  const size_t slices = 2;
+
+  arma::mat weights;
+  arma::cube weights3d;
+
+  VarianceScalingUniformInit<> vsu;
+
+  vsu.Initialize(weights, rows, cols);
+  vsu.Initialize(weights3d, rows, cols, slices);
 
   BOOST_REQUIRE_EQUAL(weights.n_rows, rows);
   BOOST_REQUIRE_EQUAL(weights.n_cols, cols);
