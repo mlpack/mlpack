@@ -386,13 +386,15 @@ BOOST_AUTO_TEST_CASE(HMMTrainRetrainTest3)
   type = "gaussian";
 
   SetInputParam("input_file", std::move(inputObsFile2));
-  // Provide a labels file with more states than initially specified
   SetInputParam("labels_file", std::move(inputLabFile2));
   SetInputParam("type", std::move(type));
   SetInputParam("input_model", CLI::GetParam<HMMModel*>("output_model"));
 
-  CLI::GetSingleton().Parameters()["type"].wasPassed = false;
   CLI::GetSingleton().Parameters()["states"].wasPassed = false;
+
+  mlpackMain();
+  // Note that when emission type is changed -- like in this test, a warning
+  // is printed stating that the new type is being ignored (no error is raised)
 
   HMMModel h2 = *(CLI::GetParam<HMMModel*>("output_model"));
 
