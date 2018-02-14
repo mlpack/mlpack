@@ -169,6 +169,40 @@ class EvaluateAndWithGradientTestFunction
   }
 };
 
+/**
+ * Utility class with const Evaluate() and non-const Gradient().
+ */
+class EvaluateAndNonConstGradientTestFunction
+{
+ public:
+  double Evaluate(const arma::mat& coordinates) const
+  {
+    return arma::accu(coordinates);
+  }
+
+  void Gradient(const arma::mat& coordinates, arma::mat& gradient)
+  {
+    gradient.ones(coordinates.n_rows, coordinates.n_cols);
+  }
+};
+
+/**
+ * Utility class with const Evaluate() and non-const Gradient().
+ */
+class EvaluateAndStaticGradientTestFunction
+{
+ public:
+  double Evaluate(const arma::mat& coordinates) const
+  {
+    return arma::accu(coordinates);
+  }
+
+  static void Gradient(const arma::mat& coordinates, arma::mat& gradient)
+  {
+    gradient.ones(coordinates.n_rows, coordinates.n_cols);
+  }
+};
+
 BOOST_AUTO_TEST_SUITE(FunctionTest);
 
 /**
@@ -429,13 +463,55 @@ BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWithGradientAllThreeTest)
 {
   const bool hasEvaluate =
       HasEvaluate<Function<EvaluateAndWithGradientTestFunction>,
-                           DecomposableEvaluateForm>::value;
+                  DecomposableEvaluateForm>::value;
   const bool hasGradient =
       HasGradient<Function<EvaluateAndWithGradientTestFunction>,
                            DecomposableGradientForm>::value;
   const bool hasEvaluateWithGradient =
       HasEvaluateWithGradient<Function<EvaluateAndWithGradientTestFunction>,
                               DecomposableEvaluateWithGradientForm>::value;
+
+  BOOST_REQUIRE_EQUAL(hasEvaluate, true);
+  BOOST_REQUIRE_EQUAL(hasGradient, true);
+  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, true);
+}
+
+/**
+ * Make sure we can properly create EvaluateWithGradient() even when one of the
+ * functions is non-const.
+ */
+BOOST_AUTO_TEST_CASE(AddEvaluateWithGradientMixedTypesTest)
+{
+  const bool hasEvaluate =
+      HasEvaluate<Function<EvaluateAndNonConstGradientTestFunction>,
+                  EvaluateConstForm>::value;
+  const bool hasGradient =
+      HasGradient<Function<EvaluateAndNonConstGradientTestFunction>,
+                  GradientForm>::value;
+  const bool hasEvaluateWithGradient =
+      HasEvaluateWithGradient<Function<EvaluateAndNonConstGradientTestFunction>,
+                              EvaluateWithGradientForm>::value;
+
+  BOOST_REQUIRE_EQUAL(hasEvaluate, true);
+  BOOST_REQUIRE_EQUAL(hasGradient, true);
+  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, true);
+}
+
+/**
+ * Make sure we can properly create EvaluateWithGradient() even when one of the
+ * functions is static.
+ */
+BOOST_AUTO_TEST_CASE(AddEvaluateWithGradientMixedTypesStaticTest)
+{
+  const bool hasEvaluate =
+      HasEvaluate<Function<EvaluateAndStaticGradientTestFunction>,
+                  EvaluateConstForm>::value;
+  const bool hasGradient =
+      HasGradient<Function<EvaluateAndStaticGradientTestFunction>,
+                  GradientStaticForm>::value;
+  const bool hasEvaluateWithGradient =
+      HasEvaluateWithGradient<Function<EvaluateAndStaticGradientTestFunction>,
+                              EvaluateWithGradientConstForm>::value;
 
   BOOST_REQUIRE_EQUAL(hasEvaluate, true);
   BOOST_REQUIRE_EQUAL(hasGradient, true);
