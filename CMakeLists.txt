@@ -27,10 +27,9 @@ enable_testing()
 # Set BUILD_PYTHON_BINDINGS to OFF when the platform are windows
 if(WIN32)
   option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
-  MESSAGE("BUILD_PYTHON_BINDINGS?" ${BUILD_PYTHON_BINDINGS})
+  message(WARNING "By default Python bindings are not compiled for Windows because they are not known to work.  Set BUILD_PYTHON_BINDINGS to ON if you want them built.")
 else()
   option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
-  MESSAGE("BUILD_PYTHON_BINDINGS?" ${BUILD_PYTHON_BINDINGS})
 endif()
 
 # Ensure that we have a C++11 compiler.  In newer versions of CMake, this is
