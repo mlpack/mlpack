@@ -110,11 +110,11 @@ size_t NumFeatures();
 @endcode
 
 Finally, \c separable functions must implement the method \c Shuffle() function,
-which shuffles the ordering of the functions
+which shuffles the ordering of the functions:
 
 @code
-// Shuffel the ordering of the function.
-void Shuffel();
+// Shuffle the ordering of the function.
+void Shuffle();
 @endcode
 
 
@@ -127,7 +127,7 @@ template<typename FunctionType>
 double Optimize(FunctionType& function, arma::mat& parameters);
 @endcode
 
-The \c Optimize() method optimize the given function \c function, and stores
+The \c Optimize() method optimizes the given function \c function, and stores
 the best set of parameters in the matrix \c parameters and returns the best
 objective value.
 
