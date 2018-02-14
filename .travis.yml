@@ -11,6 +11,7 @@ before_install:
   # xenial is not stable yet, so we have to manually disable the systemd
   # automatic updates services.  Ideas adapted from here:
   # https://unix.stackexchange.com/questions/315502/how-to-disable-apt-daily-service-on-ubuntu-cloud-vm-image
+  - sleep 10
   - sudo systemctl list-unit-files apt* --all
   - sudo systemctl stop apt*
   - sudo systemctl disable apt-daily.timer
