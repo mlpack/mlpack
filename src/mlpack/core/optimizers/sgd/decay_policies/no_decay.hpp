@@ -44,7 +44,7 @@ class NoDecay
   }
 
   /**
-   * This function is called in each iteration after the Update step for SVRG.
+   * This function is called in each iteration after the SVRG update step.
    *
    * @param iterate Parameters that minimize the function.
    * @param iterate0 The last function parameters at time t - 1.
