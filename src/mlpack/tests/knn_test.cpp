@@ -1434,4 +1434,36 @@ BOOST_AUTO_TEST_CASE(MoveOperatorNaiveTest)
   CheckMatrices(distances, distances2);
 }
 
+/**
+ * Check that no garbage value is returned when greedy tree traversal
+ * is performed over kd-tree.
+ */
+BOOST_AUTO_TEST_CASE(GreedyTreeSearch)
+{
+  // Initalize dataset.
+  arma::mat dataset = arma::randu<arma::mat>(3, 100);
+
+  KDTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
+      arma::mat> tree(dataset);
+
+  NeighborSearch<NearestNeighborSort, LMetric<2>, arma::mat, KDTree>
+      greedyTreeSearch(std::move(tree), GREEDY_SINGLE_TREE_MODE);
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+
+  // Search for 5 nearest neighbours.
+  greedyTreeSearch.Search(5, neighbors, distances);
+
+  // Check that all neighbour values are between 0 and 100 as only 100 points
+  // are present in dataset, hence in total we would be having 500 values.
+  BOOST_REQUIRE_EQUAL(arma::accu(neighbors >= 0 && neighbors <100),
+                      500);
+
+  // Check that all distances values are between 0 and 1.0 as arma::randu
+  // generates a uniform distribution in [0, 1].
+  BOOST_REQUIRE_EQUAL(arma::accu(distances >= 0 && distances <= 1.0),
+                      500);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
