@@ -233,16 +233,26 @@ static void mlpackMain()
   {
     responses = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
     if (responses.n_cols != regressors.n_cols)
+    {
+      // Clean memory if needed.
+      if (!CLI::HasParam("input_model"))
+        delete model;
+
       Log::Fatal << "The labels must have the same number of points as the "
           << "training dataset." << endl;
+    }
   }
   else if (CLI::HasParam("training"))
   {
     // Checking the size of training data if no labels are passed.
     if (regressors.n_rows < 2)
     {
-      Log::Fatal << "Can't get responses from training data "
-            "since it has less than 2 rows." << endl;
+      // Clean memory if needed.
+      if (!CLI::HasParam("input_model"))
+        delete model;
+
+      Log::Fatal << "Can't get responses from training data since it has less "
+          << "than 2 rows." << endl;
     }
 
     // The initial predictors for y, Nx1.
@@ -253,8 +263,14 @@ static void mlpackMain()
 
   // Verify the labels.
   if (CLI::HasParam("training") && max(responses) > 1)
+  {
+    // Clean memory if needed.
+    if (!CLI::HasParam("input_model"))
+      delete model;
+
     Log::Fatal << "The labels must be either 0 or 1, not " << max(responses)
         << "!" << endl;
+  }
 
   // Now, do the training.
   if (CLI::HasParam("training"))
@@ -292,9 +308,14 @@ static void mlpackMain()
     // Checking the dimensionality of the test data.
     if (testSet.n_rows != model->Parameters().n_cols - 1)
     {
+      // Clean memory if needed.
+      const size_t trainingDimensionality = model->Parameters().n_cols - 1;
+      if (!CLI::HasParam("input_model"))
+        delete model;
+
       Log::Fatal << "Test data dimensionality (" << testSet.n_rows << ") must "
-          << "be the same as the dimensionality of the Training Data ("
-          << model->Parameters().n_cols-1 << ")!" << endl;
+          << "be the same as the dimensionality of the training data ("
+          << trainingDimensionality << ")!" << endl;
     }
 
     // We must perform predictions on the test set.  Training (and the
