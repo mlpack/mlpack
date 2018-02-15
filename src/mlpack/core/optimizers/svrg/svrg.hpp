@@ -13,9 +13,9 @@
 #define MLPACK_CORE_OPTIMIZERS_SVRG_SVRG_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/optimizers/sgd/decay_policies/no_decay.hpp>
 
 #include "svrg_update.hpp"
-#include "no_decay.hpp"
 #include "barzilai_borwein_decay.hpp"
 
 namespace mlpack {
