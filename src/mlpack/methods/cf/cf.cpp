@@ -78,10 +78,13 @@ void CF::GetRecommendations(const size_t numRecs,
   arma::Mat<size_t> neighborhood;
 
   // Calculate the neighborhood of the queried users.
+  // A queried user should be excluded from its list of neighbors,
+  // so numUsersForSimliarity + 1 neighbors will be selected, and then
+  // the queried user, which is the neareat neighbor, will be ignored. 
   // This should be a templatized option.
   neighbor::KNN a(stretchedH);
   arma::mat resultingDistances; // Temporary storage.
-  a.Search(query, numUsersForSimilarity, neighborhood, resultingDistances);
+  a.Search(query, numUsersForSimilarity + 1, neighborhood, resultingDistances);
 
   // Generate recommendations for each query user by finding the maximum numRecs
   // elements in the averages matrix.
@@ -94,9 +97,10 @@ void CF::GetRecommendations(const size_t numRecs,
     arma::vec averages;
     averages.zeros(cleanedData.n_rows);
 
-    for (size_t j = 0; j < neighborhood.n_rows; ++j)
+    // Ignore the first row of neighborhood (nearest neighbors), which are the queried users.
+    for (size_t j = 1; j < neighborhood.n_rows; ++j)
       averages += w * h.col(neighborhood(j, i));
-    averages /= neighborhood.n_rows;
+    averages /= neighborhood.n_rows - 1;
 
     // Let's build the list of candidate recomendations for the given user.
     // Default candidate: the smallest possible value and invalid item number.
@@ -165,17 +169,21 @@ double CF::Predict(const size_t user, const size_t item) const
   arma::Mat<size_t> neighborhood;
 
   // Calculate the neighborhood of the queried users.
+  // A queried user should be excluded from its list of neighbors,
+  // so numUsersForSimliarity + 1 neighbors will be selected, and then
+  // the queired user, which is the neareat neighbor, will be ignored. 
   // This should be a templatized option.
   neighbor::KNN a(stretchedH, neighbor::SINGLE_TREE_MODE);
   arma::mat resultingDistances; // Temporary storage.
 
-  a.Search(query, numUsersForSimilarity, neighborhood, resultingDistances);
+  a.Search(query, numUsersForSimilarity + 1, neighborhood, resultingDistances);
 
   double rating = 0; // We'll take the average of neighborhood values.
 
-  for (size_t j = 0; j < neighborhood.n_rows; ++j)
+  // Ignore the first row of neighborhood (nearest neighbors), which are the queried users.
+  for (size_t j = 1; j < neighborhood.n_rows; ++j)
     rating += arma::as_scalar(w.row(item) * h.col(neighborhood(j, 0)));
-  rating /= neighborhood.n_rows;
+  rating /= neighborhood.n_rows - 1;
 
   return rating;
 }
@@ -205,11 +213,14 @@ void CF::Predict(const arma::Mat<size_t>& combinations,
     queries.col(i) = stretchedH.col(users[i]);
 
   // Now calculate the neighborhood of these users.
+  // A queried user should be excluded from its list of neighbors,
+  // so numUsersForSimliarity + 1 neighbors will be selected, and then
+  // the queired user, which is the neareat neighbor, will be ignored. 
   neighbor::KNN a(stretchedH);
   arma::mat distances;
   arma::Mat<size_t> neighborhood;
 
-  a.Search(queries, numUsersForSimilarity, neighborhood, distances);
+  a.Search(queries, numUsersForSimilarity + 1, neighborhood, distances);
 
   // Now that we have the neighborhoods we need, calculate the predictions.
   predictions.set_size(combinations.n_cols);
@@ -225,10 +236,11 @@ void CF::Predict(const arma::Mat<size_t>& combinations,
     while (users[user] < sortedCombinations(0, i))
       ++user;
 
-    for (size_t j = 0; j < neighborhood.n_rows; ++j)
+    // Ignore the first row of neighborhood (nearest neighbors), which are the queried users.
+    for (size_t j = 1; j < neighborhood.n_rows; ++j)
       rating += arma::as_scalar(w.row(sortedCombinations(1, i)) *
           h.col(neighborhood(j, user)));
-    rating /= neighborhood.n_rows;
+    rating /= neighborhood.n_rows - 1;
 
     predictions(ordering[i]) = rating;
   }
