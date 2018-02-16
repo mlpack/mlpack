@@ -13,6 +13,7 @@
 #define MLPACK_CORE_OPTIMIZERS_GRID_SEARCH_GRID_SEARCH_IMPL_HPP
 
 #include <limits>
+#include <mlpack/core/optimizers/function.hpp>
 
 namespace mlpack {
 namespace optimization {

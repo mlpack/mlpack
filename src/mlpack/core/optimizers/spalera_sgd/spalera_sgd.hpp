@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/spalera_sgd/spalera_stepsize.hpp>
 #include <mlpack/core/optimizers/sgd/decay_policies/no_decay.hpp>
-#include <mlpack/core/util/functiontype_method_forms.hpp>
 
 namespace mlpack {
 namespace optimization {

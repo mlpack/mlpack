@@ -297,7 +297,7 @@ inline void CheckSparseFunctionTypeAPI()
       "the SparseFunctionType API; see the optimizer tutorial for more "
       "details.");
 
-  static_assert(CheckEvaluate<FunctionType>::value,
+  static_assert(CheckDecomposableEvaluate<FunctionType>::value,
       "The FunctionType does not have a correct definition of Evaluate(). "
       "Please check that the FunctionType fully satisfies the requirements of "
       "the SparseFunctionType API; see the optimizer tutorial for more "
@@ -398,7 +398,6 @@ inline void CheckNonDifferentiableDecomposableFunctionTypeAPI()
       "the NonDifferentiableDecomposableFunctionType API; see the optimizer "
       "tutorial for more details.");
 }
-
 
 } // namespace traits
 } // namespace optimization

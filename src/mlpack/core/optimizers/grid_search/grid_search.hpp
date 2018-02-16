@@ -13,7 +13,6 @@
 #define MLPACK_CORE_OPTIMIZERS_GRID_SEARCH_GRID_SEARCH_HPP
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/functiontype_method_forms.hpp>
 
 namespace mlpack {
 namespace optimization {

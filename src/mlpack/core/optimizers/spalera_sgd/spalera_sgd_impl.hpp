@@ -52,6 +52,8 @@ double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
   typedef Function<DecomposableFunctionType> FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
+  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType>();
+
   // Find the number of functions to use.
   const size_t numFunctions = f.NumFunctions();
 

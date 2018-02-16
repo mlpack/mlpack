@@ -47,7 +47,8 @@ double CMAES<SelectionPolicyType>::Optimize(
     DecomposableFunctionType& function, arma::mat& iterate)
 {
   // Make sure that we have the methods that we need.  Long name...
-  traits::CheckNonDifferentiableDecomposableFunctionTypeAPI<DecomposableFunctionType>();
+  traits::CheckNonDifferentiableDecomposableFunctionTypeAPI<
+      DecomposableFunctionType>();
 
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();

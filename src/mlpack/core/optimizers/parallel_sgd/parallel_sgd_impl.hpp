@@ -40,18 +40,15 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     SparseFunctionType& function,
     arma::mat& iterate)
 {
-  typedef Function<SparseFunctionType> FullFunctionType;
-  FullFunctionType& f = static_cast<FullFunctionType&>(function);
-
   // Check that we have all the functions that we need.
-  traits::CheckSparseFunctionTypeAPI<FullFunctionType>();
+  traits::CheckSparseFunctionTypeAPI<SparseFunctionType>();
 
   double overallObjective = DBL_MAX;
   double lastObjective;
 
   // The order in which the functions will be visited.
   arma::Col<size_t> visitationOrder = arma::linspace<arma::Col<size_t>>(0,
-      (f.NumFunctions() - 1), f.NumFunctions());
+      (function.NumFunctions() - 1), function.NumFunctions());
 
   // Iterate till the objective is within tolerance or the maximum number of
   // allowed iterations is reached. If maxIterations is 0, this will iterate
@@ -61,7 +58,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     // Calculate the overall objective.
     lastObjective = overallObjective;
 
-    overallObjective = f.Evaluate(iterate);
+    overallObjective = function.Evaluate(iterate);
 
     // Output current objective function.
     Log::Info << "Parallel SGD: iteration " << i << ", objective "
@@ -111,7 +108,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
         arma::sp_mat gradient;
 
         // Evaluate the sparse gradient.
-        f.Gradient(iterate, visitationOrder[j], gradient, 1);
+        function.Gradient(iterate, visitationOrder[j], gradient, 1);
 
         // Update the decision variable with non-zero components of the
         // gradient.

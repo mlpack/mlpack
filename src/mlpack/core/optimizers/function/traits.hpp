@@ -203,11 +203,11 @@ using SparseGradientStaticForm = void(*)(
     const arma::mat&, const size_t, arma::sp_mat&, const size_t);
 
 //! This is the form of a non-const NumFeatures() method.
-template <typename Class, typename...Ts>
-using NumFeaturesForm = size_t(Class::*)();
+template<typename FunctionType>
+using NumFeaturesForm = size_t(FunctionType::*)();
 
 //! This is the form of a const NumFeatures() method.
-template <typename FunctionType>
+template<typename FunctionType>
 using NumFeaturesConstForm = size_t(FunctionType::*)() const;
 
 //! This is the form of a static NumFeatures() method.

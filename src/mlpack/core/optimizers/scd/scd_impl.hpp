@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "scd.hpp"
 
+#include <mlpack/core/optimizers/function.hpp>
+
 namespace mlpack {
 namespace optimization {
 
@@ -39,7 +41,7 @@ double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
                                         arma::mat& iterate)
 {
   // Make sure we have the methods that we need.
-  traits::CheckResolvableFunctionTypeAPI<FunctionType>();
+  traits::CheckResolvableFunctionTypeAPI<ResolvableFunctionType>();
 
   double overallObjective = 0;
   double lastObjective = DBL_MAX;
