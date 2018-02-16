@@ -50,5 +50,6 @@ types.
  - \ref metrics
  - \ref kernels
  - \ref trees
+ - \ref optimizertutorial
 
 */

@@ -85,7 +85,8 @@ class DBSCAN
 
   /**
    * Performs DBSCAN clustering on the data, returning number of clusters
-   * and also the list of cluster assignments.
+   * and also the list of cluster assignments.  If assignments[i] == SIZE_MAX,
+   * then the point is considered "noise".
    *
    * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
    * @param data Dataset to cluster.
@@ -98,8 +99,7 @@ class DBSCAN
   /**
    * Performs DBSCAN clustering on the data, returning number of clusters,
    * the centroid of each cluster and also the list of cluster assignments.
-   * If assignments[i] == assignments.n_elem - 1, then the point is considered
-   * "noise".
+   * If assignments[i] == SIZE_MAX, then the point is considered "noise".
    *
    * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
    * @param data Dataset to cluster.
