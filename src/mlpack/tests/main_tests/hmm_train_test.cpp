@@ -88,7 +88,21 @@ inline void ApproximatelyEqual(HMMModel& h1,
         h2.DiscreteHMM()->Transition(),
         tolerance
         );
-    // TODO: Check if emission dists are equal
+
+    // Check if emission dists are equal
+    std::vector<distribution::DiscreteDistribution> d1 =
+        h1.DiscreteHMM()->Emission();
+    std::vector<distribution::DiscreteDistribution> d2 =
+        h2.DiscreteHMM()->Emission();
+
+    BOOST_REQUIRE_EQUAL(d1.size(), d2.size());
+
+    size_t states = d1.size();
+    for (size_t i = 0; i < states; i++)
+      for (size_t j = 0; j < d1[i].Dimensionality(); j++)
+        CheckMatrices(d1[i].Probabilities(j),
+            d2[i].Probabilities(j),
+            tolerance);
   }
   else if (hmmType == GaussianHMM)
   {
@@ -102,7 +116,29 @@ inline void ApproximatelyEqual(HMMModel& h1,
         h2.GaussianHMM()->Initial(),
         tolerance
         );
-    // TODO: Check if emission dists are equal
+    // Check if emission dists are equal
+    // No easy way to do this, but here's how we'll go:
+    // 1. Sample a number (for now, 100) of points from a uniform random dist
+    // 2. Evaluate and compare Probability() of both dists at each of the points
+    std::vector<distribution::GaussianDistribution> d1 =
+        h1.GaussianHMM()->Emission();
+    std::vector<distribution::GaussianDistribution> d2 =
+        h2.GaussianHMM()->Emission();
+
+    BOOST_REQUIRE_EQUAL(d1.size(), d2.size());
+
+    size_t states = d1.size();
+    for (size_t i=0; i < states; i++)
+    {
+      size_t nPoints = 100;
+      for (size_t j=0; j < nPoints; j++)
+      {
+        arma::vec obs = randu<arma::vec>(h1.GaussianHMM()->Dimensionality());
+        double p1 = d1[i].Probability(obs);
+        double p2 = d2[i].Probability(obs);
+        BOOST_REQUIRE_SMALL(std::abs(p1 - p2), tolerance);
+      }
+    }
   }
   else if (hmmType == GaussianMixtureModelHMM)
   {
@@ -116,7 +152,25 @@ inline void ApproximatelyEqual(HMMModel& h1,
         h2.GMMHMM()->Initial(),
         tolerance
         );
-    // TODO: Check if emission dists are equal
+    // Check if emission dists are equal
+    // Similar to checking if two Gaussian emissions are equal
+    std::vector<gmm::GMM> d1 = h1.GMMHMM()->Emission();
+    std::vector<gmm::GMM> d2 = h2.GMMHMM()->Emission();
+
+    BOOST_REQUIRE_EQUAL(d1.size(), d2.size());
+
+    size_t states = d1.size();
+    for (size_t i=0; i < states; i++)
+    {
+      size_t nPoints = 100;
+      for (size_t j=0; j < nPoints; j++)
+      {
+        arma::vec obs = randu<arma::vec>(h1.GMMHMM()->Dimensionality());
+        double p1 = d1[i].Probability(obs);
+        double p2 = d2[i].Probability(obs);
+        BOOST_REQUIRE_SMALL(std::abs(p1 - p2), tolerance);
+      }
+    }
   }
 }
 
@@ -194,7 +248,7 @@ BOOST_AUTO_TEST_CASE(HMMTrainGaussianTest)
 }
 
 // Make sure that model reuse is possible and work properly
-BOOST_AUTO_TEST_CASE(HMMTrainReuseModelTest)
+BOOST_AUTO_TEST_CASE(HMMTrainReuseDiscreteModelTest)
 {
   std::string inputObsFileName = "hmm_train_obs.csv";
   std::string inputLabFileName = "hmm_train_lab.csv";
@@ -212,6 +266,43 @@ BOOST_AUTO_TEST_CASE(HMMTrainReuseModelTest)
   
   SetInputParam("input_file", std::move(inputObsFileName));
   SetInputParam("labels_file", std::move(inputLabFileName));
+  SetInputParam("type", std::move(hmmType));
+  SetInputParam("states", states);
+
+  mlpackMain();
+
+  HMMModel h1 = *(CLI::GetParam<HMMModel*>("output_model"));
+
+  SetInputParam("input_model", CLI::GetParam<HMMModel*>("output_model"));
+
+  CLI::GetSingleton().Parameters()["type"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["states"].wasPassed = false;
+
+  mlpackMain();
+
+  HMMModel h2 = *(CLI::GetParam<HMMModel*>("output_model"));
+
+  ApproximatelyEqual(h1, h2, 1e-01);
+  ApproximatelyEqual(h1, h2, 1e-02);
+  ApproximatelyEqual(h1, h2, 1e-03);
+  ApproximatelyEqual(h1, h2, 1e-04);
+  ApproximatelyEqual(h1, h2, 1e-05);
+}
+
+// Make sure that model reuse is possible and work properly
+BOOST_AUTO_TEST_CASE(HMMTrainReuseGaussianModelTest)
+{
+  std::string inputObsFileName = "hmm_train_obs.csv";
+  std::string hmmType = "gaussian";
+  int states = 3;
+
+  FileExists(inputObsFileName);
+  // Make sure that the size of the
+  // training seq, and training labels is same
+  arma::mat trainObs;
+  data::Load(inputObsFileName, trainObs);
+
+  SetInputParam("input_file", std::move(inputObsFileName));
   SetInputParam("type", std::move(hmmType));
   SetInputParam("states", states);
 
