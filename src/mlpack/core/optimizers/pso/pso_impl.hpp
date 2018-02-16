@@ -99,7 +99,7 @@ double PSOType<VelocityVectorType>::Optimize(
 
     // Enforce boundary conditions for particle positions
     // and velocities.
-    for (int k = 0; k < dimension; ++k)
+    for (size_t k = 0; k < dimension; ++k)
     {
       if (particleVelocity[k] < velocityLowerBound)
       {
