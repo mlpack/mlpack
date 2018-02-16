@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(ConstRowColIteratorTest)
   mat::const_row_col_iterator it;
   // Make sure ++ operator, operator* and comparison operators work fine.
   size_t count = 0;
-  for (it = X.begin_row_col(); it != X.end_row_col(); it++)
+  for (it = X.begin_row_col(); it != X.end_row_col(); ++it)
   {
     // Check iterator value.
     BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
@@ -79,14 +79,14 @@ BOOST_AUTO_TEST_CASE(ConstRowColIteratorTest)
     BOOST_REQUIRE_EQUAL(it.row(), count % 5);
     BOOST_REQUIRE_EQUAL(it.col(), count / 5);
 
-    count++;
+    ++count;
   }
   BOOST_REQUIRE_EQUAL(count, 25);
   it = X.end_row_col();
   do
   {
-    it--;
-    count--;
+    --it;
+    --count;
 
     // Check iterator value.
     BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(RowColIteratorTest)
   mat::row_col_iterator it;
   // Make sure ++ operator, operator* and comparison operators work fine.
   size_t count = 0;
-  for (it = X.begin_row_col(); it != X.end_row_col(); it++)
+  for (it = X.begin_row_col(); it != X.end_row_col(); ++it)
   {
     // Check iterator value.
     BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
@@ -125,14 +125,14 @@ BOOST_AUTO_TEST_CASE(RowColIteratorTest)
     BOOST_REQUIRE_EQUAL(it.row(), count % 5);
     BOOST_REQUIRE_EQUAL(it.col(), count / 5);
 
-    count++;
+    ++count;
   }
   BOOST_REQUIRE_EQUAL(count, 25);
   it = X.end_row_col();
   do
   {
-    it--;
-    count--;
+    --it;
+    --count;
 
     // Check iterator value.
     BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
@@ -155,14 +155,14 @@ BOOST_AUTO_TEST_CASE(MatRowColIteratorDecrementOperatorTest)
   mat::row_col_iterator it1 = test.begin_row_col();
   mat::row_col_iterator it2 = it1;
 
-  // check that postfix-- does not decrement the position when position is
-  // pointing to the begining
-  it2--;
+  // Check that postfix-- does not decrement the position when position is
+  // pointing to the beginning.
+  (void) it2--;
   BOOST_REQUIRE_EQUAL(it1.row(), it2.row());
   BOOST_REQUIRE_EQUAL(it1.col(), it2.col());
 
-  // check that prefix-- does not decrement the position when position is
-  // pointing to the begining
+  // Check that prefix-- does not decrement the position when position is
+  // pointing to the beginning.
   --it2;
   BOOST_REQUIRE_EQUAL(it1.row(), it2.row());
   BOOST_REQUIRE_EQUAL(it1.col(), it2.col());
@@ -187,7 +187,7 @@ BOOST_AUTO_TEST_CASE(ConstSpRowColIteratorTest)
   sp_mat::const_row_col_iterator it;
   // Make sure ++ operator, operator* and comparison operators work fine.
   size_t count = 1;
-  for (it = X.begin_row_col(); it != X.end_row_col(); it++)
+  for (it = X.begin_row_col(); it != X.end_row_col(); ++it)
   {
     // Check iterator value.
     BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
@@ -196,14 +196,14 @@ BOOST_AUTO_TEST_CASE(ConstSpRowColIteratorTest)
     BOOST_REQUIRE_EQUAL(it.row(), count % 5);
     BOOST_REQUIRE_EQUAL(it.col(), count / 5);
 
-    count++;
+    ++count;
   }
   BOOST_REQUIRE_EQUAL(count, 25);
   it = X.end_row_col();
   do
   {
-    it--;
-    count--;
+    --it;
+    --count;
 
     // Check iterator value.
     BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
@@ -232,7 +232,7 @@ BOOST_AUTO_TEST_CASE(SpRowColIteratorTest)
   sp_mat::row_col_iterator it;
   // Make sure ++ operator, operator* and comparison operators work fine.
   size_t count = 1;
-  for (it = X.begin_row_col(); it != X.end_row_col(); it++)
+  for (it = X.begin_row_col(); it != X.end_row_col(); ++it)
   {
     // Check iterator value.
     BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
@@ -241,14 +241,14 @@ BOOST_AUTO_TEST_CASE(SpRowColIteratorTest)
     BOOST_REQUIRE_EQUAL(it.row(), count % 5);
     BOOST_REQUIRE_EQUAL(it.col(), count / 5);
 
-    count++;
+    ++count;
   }
   BOOST_REQUIRE_EQUAL(count, 25);
   it = X.end_row_col();
   do
   {
-    it--;
-    count--;
+    --it;
+    --count;
 
     // Check iterator value.
     BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
