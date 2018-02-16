@@ -20,6 +20,7 @@ class Function;
 } // namespace mlpack
 
 #include "function/traits.hpp"
+#include "function/static_checks.hpp"
 #include "function/add_evaluate.hpp"
 #include "function/add_gradient.hpp"
 #include "function/add_evaluate_with_gradient.hpp"

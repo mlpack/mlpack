@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "parallel_sgd.hpp"
 
+#include <mlpack/core/optimizers/function.hpp>
+
 namespace mlpack {
 namespace optimization {
 
@@ -38,20 +40,18 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     SparseFunctionType& function,
     arma::mat& iterate)
 {
-  static_assert(static_checks::CheckNumFunctions<SparseFunctionType>::value,
-      "The FunctionType does not have a correct definition of NumFunctions.");
-  static_assert(static_checks::CheckEvaluate<SparseFunctionType>::value,
-      "The FunctionType does not have a correct definition of Evaluate.");
-  static_assert(static_checks::CheckSparseGradient<SparseFunctionType>::value,
-      "The FunctionType does not have a correct definition of a sparse"
-      " Gradient function.");
+  typedef Function<SparseFunctionType> FullFunctionType;
+  FullFunctionType& f = static_cast<FullFunctionType&>(function);
+
+  // Check that we have all the functions that we need.
+  traits::CheckSparseFunctionTypeAPI<FullFunctionType>();
 
   double overallObjective = DBL_MAX;
   double lastObjective;
 
   // The order in which the functions will be visited.
   arma::Col<size_t> visitationOrder = arma::linspace<arma::Col<size_t>>(0,
-      (function.NumFunctions() - 1), function.NumFunctions());
+      (f.NumFunctions() - 1), f.NumFunctions());
 
   // Iterate till the objective is within tolerance or the maximum number of
   // allowed iterations is reached. If maxIterations is 0, this will iterate
@@ -61,7 +61,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     // Calculate the overall objective.
     lastObjective = overallObjective;
 
-    overallObjective = function.Evaluate(iterate);
+    overallObjective = f.Evaluate(iterate);
 
     // Output current objective function.
     Log::Info << "Parallel SGD: iteration " << i << ", objective "
@@ -111,7 +111,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
         arma::sp_mat gradient;
 
         // Evaluate the sparse gradient.
-        function.Gradient(iterate, visitationOrder[j], gradient, 1);
+        f.Gradient(iterate, visitationOrder[j], gradient, 1);
 
         // Update the decision variable with non-zero components of the
         // gradient.

@@ -59,8 +59,8 @@ void GridSearch::Optimize(
     data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
     size_t i)
 {
-  static_assert(mlpack::static_checks::CheckEvaluate<FunctionType>::value,
-      "The FunctionType does not have a correct definition of Evaluate.");
+  // Make sure we have the methods that we need.
+  traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType>();
 
   if (i < datasetInfo.Dimensionality())
   {

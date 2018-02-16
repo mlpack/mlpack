@@ -29,10 +29,8 @@ double GradientDescent::Optimize(
   typedef Function<FunctionType> FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
-  static_assert(mlpack::static_checks::CheckEvaluate<FullFunctionType>::value,
-      "The FunctionType does not have a correct definition of Evaluate.");
-  static_assert(mlpack::static_checks::CheckGradient<FullFunctionType>::value,
-      "The FunctionType does not have a correct definition of Gradient.");
+  // Make sure we have the methods that we need.
+  traits::CheckFunctionTypeAPI<FullFunctionType>();
 
   // To keep track of where we are and how things are going.
   double overallObjective = std::numeric_limits<double>::max();

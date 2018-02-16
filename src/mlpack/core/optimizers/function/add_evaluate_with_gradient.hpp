@@ -14,59 +14,6 @@
 
 namespace mlpack {
 namespace optimization {
-namespace traits {
-
-template<typename ClassType,
-         template<typename, template<typename...> class, size_t> class CheckerA,
-         template<typename...> class SignatureA,
-         template<typename...> class ConstSignatureA,
-         template<typename...> class StaticSignatureA,
-         template<typename, template<typename...> class, size_t> class CheckerB,
-         template<typename...> class SignatureB,
-         template<typename...> class ConstSignatureB,
-         template<typename...> class StaticSignatureB>
-struct HasNonConstSignatures
-{
-  const static bool HasAnyFormA =
-      CheckerA<ClassType, SignatureA, 0>::value ||
-      CheckerA<ClassType, ConstSignatureA, 0>::value ||
-      CheckerA<ClassType, StaticSignatureA, 0>::value;
-  const static bool HasAnyFormB =
-      CheckerB<ClassType, SignatureB, 0>::value ||
-      CheckerB<ClassType, ConstSignatureB, 0>::value ||
-      CheckerB<ClassType, StaticSignatureB, 0>::value;
-
-  const static bool HasEitherNonConstForm =
-      CheckerA<ClassType, SignatureA, 0>::value ||
-      CheckerB<ClassType, SignatureB, 0>::value;
-
-  const static bool value = HasEitherNonConstForm && HasAnyFormA && HasAnyFormB;
-};
-
-template<typename ClassType,
-         template<typename, template<typename...> class, size_t> class CheckerA,
-         template<typename...> class ConstSignatureA,
-         template<typename...> class StaticSignatureA,
-         template<typename, template<typename...> class, size_t> class CheckerB,
-         template<typename...> class ConstSignatureB,
-         template<typename...> class StaticSignatureB>
-struct HasConstSignatures
-{
-  const static bool HasAnyFormA =
-      CheckerA<ClassType, ConstSignatureA, 0>::value ||
-      CheckerA<ClassType, StaticSignatureA, 0>::value;
-  const static bool HasAnyFormB =
-      CheckerB<ClassType, ConstSignatureB, 0>::value ||
-      CheckerB<ClassType, StaticSignatureB, 0>::value;
-
-  const static bool HasEitherConstForm =
-      CheckerA<ClassType, ConstSignatureA, 0>::value ||
-      CheckerB<ClassType, ConstSignatureB, 0>::value;
-
-  const static bool value = HasEitherConstForm && HasAnyFormA && HasAnyFormB;
-};
-
-}
 
 /**
  * The AddEvaluateWithGradient mixin class will provide an
@@ -74,14 +21,20 @@ struct HasConstSignatures
  * and Gradient(), or it will provide nothing otherwise.
  */
 template<typename FunctionType,
+         // Check if there is at least one non-const Evaluate() or Gradient().
          bool HasEvaluateGradient = traits::HasNonConstSignatures<
-             FunctionType, traits::HasEvaluate, traits::EvaluateForm,
-            traits::EvaluateConstForm, traits::EvaluateStaticForm, traits::HasGradient,
-traits::GradientForm, traits::GradientConstForm,
-traits::GradientStaticForm>::value,
-         bool HasEvaluateWithGradient =
-             traits::HasEvaluateWithGradient<FunctionType,
-                 traits::EvaluateWithGradientForm>::value>
+             FunctionType,
+             traits::HasEvaluate,
+             traits::EvaluateForm,
+             traits::EvaluateConstForm,
+             traits::EvaluateStaticForm,
+             traits::HasGradient,
+             traits::GradientForm,
+             traits::GradientConstForm,
+             traits::GradientStaticForm>::value,
+         bool HasEvaluateWithGradient = traits::HasEvaluateWithGradient<
+             FunctionType,
+             traits::EvaluateWithGradientForm>::value>
 class AddEvaluateWithGradient
 {
  public:
@@ -137,13 +90,18 @@ class AddEvaluateWithGradient<FunctionType, true, false>
  * Evaluate() const and Gradient() const, or it will provide nothing otherwise.
  */
 template<typename FunctionType,
-         bool HasEvaluateGradient = traits::HasConstSignatures<FunctionType,
-            traits::HasEvaluate, traits::EvaluateConstForm,
-traits::EvaluateStaticForm, traits::HasGradient, traits::GradientConstForm,
-traits::GradientStaticForm>::value,
-         bool HasEvaluateWithGradient =
-             traits::HasEvaluateWithGradient<FunctionType,
-                 traits::EvaluateWithGradientConstForm>::value>
+         // Check if there is at least one const Evaluate() or Gradient().
+         bool HasEvaluateGradient = traits::HasConstSignatures<
+             FunctionType,
+             traits::HasEvaluate,
+             traits::EvaluateConstForm,
+             traits::EvaluateStaticForm,
+             traits::HasGradient,
+             traits::GradientConstForm,
+             traits::GradientStaticForm>::value,
+         bool HasEvaluateWithGradient = traits::HasEvaluateWithGradient<
+             FunctionType,
+             traits::EvaluateWithGradientConstForm>::value>
 class AddEvaluateWithGradientConst
 {
  public:
@@ -196,9 +154,10 @@ class AddEvaluateWithGradientConst<FunctionType, true, false>
 };
 
 /**
- * The AddEvaluateWithGradient mixin class will provide an
- * EvaluateWithGradient() const method if the given FunctionType has both
- * Evaluate() const and Gradient() const, or it will provide nothing otherwise.
+ * The AddEvaluateWithGradientStatic mixin class will provide a
+ * static EvaluateWithGradient() method if the given FunctionType has both
+ * static Evaluate() and static Gradient(), or it will provide nothing
+ * otherwise.
  */
 template<typename FunctionType,
          bool HasEvaluateGradient =

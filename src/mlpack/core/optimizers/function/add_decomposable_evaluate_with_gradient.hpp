@@ -19,11 +19,17 @@ namespace optimization {
  * decomposable Gradient() method exists, or nothing otherwise.
  */
 template<typename FunctionType,
-         bool HasDecomposableEvaluateGradient =
-             traits::HasEvaluate<FunctionType,
-                 traits::DecomposableEvaluateForm>::value &&
-             traits::HasGradient<FunctionType,
-                 traits::DecomposableGradientForm>::value,
+         // Check if there is at least one non-const Evaluate() or Gradient().
+         bool HasDecomposableEvaluateGradient = traits::HasNonConstSignatures<
+             FunctionType,
+             traits::HasEvaluate,
+             traits::DecomposableEvaluateForm,
+             traits::DecomposableEvaluateConstForm,
+             traits::DecomposableEvaluateStaticForm,
+             traits::HasGradient,
+             traits::DecomposableGradientForm,
+             traits::DecomposableGradientConstForm,
+             traits::DecomposableGradientStaticForm>::value,
          bool HasDecomposableEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
                  traits::DecomposableEvaluateWithGradientForm>::value>
@@ -96,11 +102,15 @@ class AddDecomposableEvaluateWithGradient<FunctionType, true, false>
  * otherwise.
  */
 template<typename FunctionType,
-         bool HasDecomposableEvaluateGradient =
-             traits::HasEvaluate<FunctionType,
-                 traits::DecomposableEvaluateConstForm>::value &&
-             traits::HasGradient<FunctionType,
-                 traits::DecomposableGradientConstForm>::value,
+         // Check if there is at least one const Evaluate() or Gradient().
+         bool HasDecomposableEvaluateGradient = traits::HasConstSignatures<
+             FunctionType,
+             traits::HasEvaluate,
+             traits::DecomposableEvaluateConstForm,
+             traits::DecomposableEvaluateStaticForm,
+             traits::HasGradient,
+             traits::DecomposableGradientConstForm,
+             traits::DecomposableGradientStaticForm>::value,
          bool HasDecomposableEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
                  traits::DecomposableEvaluateWithGradientConstForm>::value>

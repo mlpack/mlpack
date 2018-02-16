@@ -12,9 +12,7 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_LINE_SEARCH_LINE_SEARCH_HPP
 #define MLPACK_CORE_OPTIMIZERS_LINE_SEARCH_LINE_SEARCH_HPP
 
-
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/functiontype_method_forms.hpp>
 
 namespace mlpack {
 namespace optimization {

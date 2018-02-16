@@ -52,17 +52,8 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   typedef Function<DecomposableFunctionType> FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
-  static_assert(
-      static_checks::CheckNumFunctions<FullFunctionType>::value,
-      "The FunctionType does not have a correct definition of NumFunctions.");
-  static_assert(static_checks::CheckDecomposableEvaluate<
-      FullFunctionType>::value,
-      "The FunctionType does not have a correct definition of a decomposable"
-      " Evaluate function.");
-  static_assert(static_checks::CheckDecomposableGradient<
-      FullFunctionType>::value,
-      "The FunctionType does not have a correct definition of a decomposable"
-      " Gradient function.");
+  // Make sure we have all the methods that we need.
+  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType>();
 
   // Find the number of functions to use.
   const size_t numFunctions = f.NumFunctions();

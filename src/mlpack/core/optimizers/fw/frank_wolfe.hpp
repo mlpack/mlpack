@@ -12,9 +12,7 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_FW_FRANK_WOLFE_HPP
 #define MLPACK_CORE_OPTIMIZERS_FW_FRANK_WOLFE_HPP
 
-
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/functiontype_method_forms.hpp>
 #include "update_span.hpp"
 #include "constr_lpball.hpp"
 

@@ -15,7 +15,6 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/function.hpp>
-#include <mlpack/core/util/functiontype_method_forms.hpp>
 
 namespace mlpack {
 namespace optimization {

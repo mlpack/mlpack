@@ -38,14 +38,8 @@ template <typename ResolvableFunctionType>
 double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
                                         arma::mat& iterate)
 {
-  static_assert(static_checks::CheckNumFeatures<ResolvableFunctionType>::value,
-      "The FunctionType does not have a correct definition of NumFeatures.");
-  static_assert(static_checks::CheckEvaluate<ResolvableFunctionType>::value,
-      "The FunctionType does not have a correct definition of Evaluate.");
-  static_assert(static_checks::CheckPartialGradient<
-      ResolvableFunctionType>::value,
-      "The FunctionType does not have a correct definition of a partial"
-      " Gradient function.");
+  // Make sure we have the methods that we need.
+  traits::CheckResolvableFunctionTypeAPI<FunctionType>();
 
   double overallObjective = 0;
   double lastObjective = DBL_MAX;
