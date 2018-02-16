@@ -61,3 +61,25 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
 }
 
 BOOST_AUTO_TEST_SUITE_END();
+
+/*int main()
+{
+  SGDTestFunction f;
+  
+  SPSA optimiser(0.602, 0.101, 1e-6, 0.01, 100000);
+
+  arma::mat coordinates = f.GetInitialPoint();
+  cout << "Initial coordinates: (";
+  for (size_t i = 0; i < 3; i++)
+  {
+    cout << coordinates[i];
+    if(i!=2)
+      cout<<", ";
+  }
+  cout << ")" << endl;
+
+  double result = optimiser.Optimize(f, coordinates);
+  cout << "Result: " << result << endl;
+
+  return 0;
+}*/

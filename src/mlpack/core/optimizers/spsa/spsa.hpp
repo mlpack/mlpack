@@ -55,13 +55,13 @@ class SPSA
   float ck;
 
   // Specifies the maximum number of iterations.
-  size_t max_iter;
+  long long int max_iter;
   arma::vec sp_vector;
   SPSA(const float& alpha = 0.602,
        const float& gamma = 0.101,
        const float& a = 1e-6,
        const float& c = 0.01,
-       const size_t& maxIterations = 100000):
+       const long long int& maxIterations = 100000):
     alpha(alpha),
     gamma(gamma),
     a(a),
@@ -76,18 +76,26 @@ class SPSA
   double Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   {
     const int s = iterate.n_elem;
+    const double epsilon = 1e-8;
 
-    for (size_t i = 0; i < max_iter; i++)
-    {
+    for (long long int i = 0; i < max_iter; i++)
+    {      
       sp_vector = arma::conv_to<arma::vec>::from(
-                  randi(s, arma::distr_param(-1, 1)));
+                  randi(s, arma::distr_param(0, 1)))*2 - 1;
+      
       ak = a/std::pow((max_iter + 1 + A), alpha);
       ck = c/std::pow((max_iter + 1), gamma);
-      iterate += ck * sp_vector;
+      
+      iterate += ck * sp_vector;      
       double f_plus = function.Evaluate(iterate, 0, s);
+      
       iterate -= 2 * ck * sp_vector;
       double f_minus = function.Evaluate(iterate, 0, s);
+      iterate += ck * sp_vector;
+      
       arma::mat gradient = (f_plus - f_minus) * (1 / (2 * ck * sp_vector));
+      arma::mat temp = (1 / (2 * ck * sp_vector));
+      
       iterate -= ak*gradient;
     }
 
