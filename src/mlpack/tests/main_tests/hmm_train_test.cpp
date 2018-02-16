@@ -51,68 +51,73 @@ inline void FileExists(std::string fileName)
   ifp.close();
 }
 
-inline bool ApproximatelyEqual(HMMModel& h1,
+inline void CheckMatricesDiffer(arma::mat& a, arma::mat& b, double tolerance)
+{
+  bool dimsEqual = (a.n_rows == b.n_rows)
+    && (a.n_cols == b.n_cols)
+    && (a.n_elem == b.n_elem);
+  bool valsEqual = true;
+  if (dimsEqual)
+  {
+    for (size_t i=0; i<a.n_elem; i++)
+    {
+      if (std::abs(a[i]) < tolerance / 2)
+        valsEqual = valsEqual && (std::abs(b[i]) < tolerance / 2);
+      else
+        valsEqual = valsEqual && (std::abs(a[i] - b[i]) < tolerance);
+    }
+  }
+  BOOST_REQUIRE(!(dimsEqual && valsEqual));
+}
+
+inline void ApproximatelyEqual(HMMModel& h1,
                                HMMModel& h2,
                                double tolerance)
 {
-  if (h1.Type() != h2.Type())
-    return false;
+  BOOST_REQUIRE(h1.Type() == h2.Type());
   HMMType  hmmType = h1.Type();
-  bool transitionEqual = false;
-  bool emissionEqual = false;
-  bool initialEqual = false;
   if (hmmType ==  DiscreteHMM)
   {
-    transitionEqual = approx_equal(
+    CheckMatrices(
         h1.DiscreteHMM()->Transition(),
         h2.DiscreteHMM()->Transition(),
-        "absdiff",
         tolerance
         );
-    initialEqual = approx_equal(
+    CheckMatrices(
         h1.DiscreteHMM()->Transition(),
         h2.DiscreteHMM()->Transition(),
-        "absdiff",
         tolerance
         );
-    // TODO
-    emissionEqual = true;
+    // TODO: Check if emission dists are equal
   }
   else if (hmmType == GaussianHMM)
   {
-    transitionEqual = approx_equal(
+    CheckMatrices(
         h1.GaussianHMM()->Transition(),
         h2.GaussianHMM()->Transition(),
-        "absdiff",
         tolerance
         );
-    initialEqual = approx_equal(
+    CheckMatrices(
         h1.GaussianHMM()->Initial(),
         h2.GaussianHMM()->Initial(),
-        "absdiff",
         tolerance
         );
-    // TODO
-    emissionEqual = true;
+    // TODO: Check if emission dists are equal
   }
   else if (hmmType == GaussianMixtureModelHMM)
   {
-    transitionEqual = approx_equal(
+    CheckMatrices(
         h1.GMMHMM()->Transition(),
         h2.GMMHMM()->Transition(),
-        "absdiff",
         tolerance
         );
-    initialEqual = approx_equal(
+    CheckMatrices(
         h1.GMMHMM()->Initial(),
         h2.GMMHMM()->Initial(),
-        "absdiff",
         tolerance
         );
-    // TODO
-    emissionEqual = true;
+    // TODO: Check if emission dists are equal
   }
-  return emissionEqual && transitionEqual && initialEqual;
 }
 
 // Make sure that the number of states cannot be negative
@@ -223,11 +228,11 @@ BOOST_AUTO_TEST_CASE(HMMTrainReuseModelTest)
 
   HMMModel h2 = *(CLI::GetParam<HMMModel*>("output_model"));
 
-  BOOST_REQUIRE(ApproximatelyEqual(h1, h2, 1e-01));
-  BOOST_REQUIRE(ApproximatelyEqual(h1, h2, 1e-02));
-  BOOST_REQUIRE(ApproximatelyEqual(h1, h2, 1e-03));
-  BOOST_REQUIRE(ApproximatelyEqual(h1, h2, 1e-04));
-  BOOST_REQUIRE(ApproximatelyEqual(h1, h2, 1e-05));
+  ApproximatelyEqual(h1, h2, 1e-01);
+  ApproximatelyEqual(h1, h2, 1e-02);
+  ApproximatelyEqual(h1, h2, 1e-03);
+  ApproximatelyEqual(h1, h2, 1e-04);
+  ApproximatelyEqual(h1, h2, 1e-05);
 }
 
 BOOST_AUTO_TEST_CASE(HMMTrainNoLabelsReuseModelTest)
@@ -256,11 +261,11 @@ BOOST_AUTO_TEST_CASE(HMMTrainNoLabelsReuseModelTest)
 
   HMMModel h2 = *(CLI::GetParam<HMMModel*>("output_model"));
 
-  BOOST_REQUIRE(ApproximatelyEqual(h1, h2, 1e-01));
-  BOOST_REQUIRE(ApproximatelyEqual(h1, h2, 1e-02));
-  BOOST_REQUIRE(ApproximatelyEqual(h1, h2, 1e-03));
-  BOOST_REQUIRE(ApproximatelyEqual(h1, h2, 1e-04));
-  BOOST_REQUIRE(ApproximatelyEqual(h1, h2, 1e-05));
+  ApproximatelyEqual(h1, h2, 1e-01);
+  ApproximatelyEqual(h1, h2, 1e-02);
+  ApproximatelyEqual(h1, h2, 1e-03);
+  ApproximatelyEqual(h1, h2, 1e-04);
+  ApproximatelyEqual(h1, h2, 1e-05);
 }
 
 // Test batch mode
@@ -330,7 +335,10 @@ BOOST_AUTO_TEST_CASE(HMMTrainRetrainTest1)
 
   HMMModel h2 = *(CLI::GetParam<HMMModel*>("output_model"));
 
-  BOOST_REQUIRE(!ApproximatelyEqual(h1, h2, 1e-04));
+  BOOST_REQUIRE(h1.Type() == h2.Type());
+  // Since we know that type of HMMs is discrete
+  CheckMatricesDiffer(h1.DiscreteHMM()->Transition(),
+      h2.DiscreteHMM()->Transition(), 1e-04);
 }
 
 // Attempt to retrain but increase states the second time round
