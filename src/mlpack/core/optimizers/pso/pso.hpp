@@ -69,10 +69,6 @@ class PSOType
    * @param interiaWeight Inertia weight of the particles (omega).
    * @param cognitiveAcceleration Cognitive acceleration of the particles.
    * @param socialAcceleration Social acceleration of the particles.
-   * @param velocityLowerBound Lower bound for particle velocities.
-   * @param velocityUpperBound Upper bound for particle velocities.
-   * @param postionLowerBound Lower bound for particle positions.
-   * @param postionUpperBound Upper bound for particle positions.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate the algorithm.
@@ -83,10 +79,6 @@ class PSOType
         const double interiaWeight = 0.9,
         const double cognitiveAcceleration = 0.5,
         const double socialAcceleration = 0.3,
-        const double velocityLowerBound = -1e-10,
-        const double velocityUpperBound = 1e-10,
-        const double postionLowerBound = -1e2,
-        const double postionUpperBound = 1e2,
         const size_t maxIterations = 200,
         const double tolerance = 1e-5,
         const VelocityVectorType& velocityType = VelocityVectorType());
@@ -163,18 +155,6 @@ class PSOType
 
   //! Social acceleration of the particles.
   double socialAcceleration;
-
-  //! Lower bound for particle velocities.
-  double velocityLowerBound;
-
-  //! Upper bound for particle velocities.
-  double velocityUpperBound;
-
-  //! Lower bound for particle positions.
-  double postionLowerBound;
-
-  //! Upper bound for particle positions.
-  double postionUpperBound;
 
   //! The batch size for processing.
   size_t batchSize;
