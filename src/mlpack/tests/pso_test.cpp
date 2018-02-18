@@ -30,9 +30,10 @@ BOOST_AUTO_TEST_CASE(SimpleTest)
   PSO optimizer;
   PSOTestFunction f;
 
-  vec coordinates = arma::mat("6; -45.6; 6.2");
+  arma::mat iterate;
+  iterate << 0.5828 << 0.0654 << 0.8817;
 
-  double result = optimizer.Optimize(f, coordinates);
+  double result = optimizer.Optimize(f, iterate);
 
   BOOST_REQUIRE_SMALL(result, 1e-5);
 }
@@ -45,9 +46,11 @@ BOOST_AUTO_TEST_CASE(RosenbrockTest)
   PSO optimizer;
   RosenbrockFunction f;
 
-  vec coordinates = arma::mat("6; -45.6; 6.2");
+  arma::mat iterate;
+  iterate << 0.5828 << 0.0654 << 0.8817 << 0.3461 << arma::endr
+          << 0.2351 << 0.0034 << 0.1641 << 0.7621;
 
-  double result = optimizer.Optimize(f, coordinates);
+  double result = optimizer.Optimize(f, iterate);
 
   BOOST_REQUIRE_SMALL(result, 1e-5);
 }

@@ -40,21 +40,27 @@ class InertiaWeight
    * @param cognitiveAcceleration Cognitive acceleration of the particles.
    * @param socialAcceleration Social acceleration of the particles.
    */
-  void Update(const arma::mat& particlePosition,
-                      arma::mat& particleVelocity,
-                      const arma::mat& bestParticlePosition,
-                      const arma::mat& bestSwarmPosition,
-                      const double& interiaWeight,
-                      const double& cognitiveAcceleration,
-                      const double& socialAcceleration,
-                      const double& dimension)
+  void Update(const arma::cube& particlePosition,
+                    arma::cube& particleVelocity,
+                    const arma::mat& bestParticlePosition,
+                    const arma::mat& bestSwarmPosition,
+                    const double& interiaWeight,
+                    const double& cognitiveAcceleration,
+                    const double& socialAcceleration,
+                    const double& dimension)
   {
-    for (int i = 0; i < dimension; ++i)
+    for (size_t i = 0; i < dimension; ++i)
     {
-      particleVelocity[i] = interiaWeight * particleVelocity[i] +
-        cognitiveAcceleration * math::Random() * (bestParticlePosition[i] -
-        particlePosition[i]) + socialAcceleration * math::Random() *
-        (bestSwarmPosition[i] - particlePosition[i]);
+      for (size_t j = 0; j < particlePosition.slice(0).n_rows; ++j)
+      {
+        for (size_t k = 0; k < particlePosition.slice(0).n_cols; ++k)
+        {
+          particleVelocity.slice(i)[j, k] = interiaWeight * particleVelocity.slice(i)[j, k] +
+            cognitiveAcceleration * math::Random() * (bestParticlePosition[i] -
+            particlePosition.slice(i)[j, k]) + socialAcceleration * math::Random() *
+            (bestSwarmPosition[i] - particlePosition.slice(i)[j, k]);
+        }
+      }
     }
   }
 };

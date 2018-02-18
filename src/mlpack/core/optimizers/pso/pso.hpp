@@ -64,9 +64,8 @@ class PSOType
    * Construct the particle swarm optimizer with the given function
    * and parameters.
    *
-   * @param lambda The population size (0 is the default size).
    * @param dimension Dimension of the search space i.e. number
-   *     of components in a particle.
+   *     of particles.
    * @param interiaWeight Inertia weight of the particles (omega).
    * @param cognitiveAcceleration Cognitive acceleration of the particles.
    * @param socialAcceleration Social acceleration of the particles.
@@ -80,13 +79,12 @@ class PSOType
    * @param velocityType Velocity update policy used to calculate the
    *     objective.
    */
-  PSOType(const size_t lambda = 0,
-        const size_t dimension = 10,
-        const double interiaWeight = 0.5,
-        const double cognitiveAcceleration = 1,
-        const double socialAcceleration = 2,
-        const double velocityLowerBound = -1e-3,
-        const double velocityUpperBound = 1e-3,
+  PSOType(const size_t dimension = 10,
+        const double interiaWeight = 0.9,
+        const double cognitiveAcceleration = 0.5,
+        const double socialAcceleration = 0.3,
+        const double velocityLowerBound = -1e-10,
+        const double velocityUpperBound = 1e-10,
         const double postionLowerBound = -1e2,
         const double postionUpperBound = 1e2,
         const size_t maxIterations = 200,
@@ -100,21 +98,16 @@ class PSOType
    *
    * @tparam DecomposableFunctionType Type of the function to be optimized.
    * @param function Function to optimize.
-   * @param iterate Starting point (will be modified).
+   * @param iterate Starting point for the particles (will be modified).
    * @return Objective value of the final point.
    */
   template<typename DecomposableFunctionType>
   double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
 
-  //! Get the step size.
-  size_t PopulationSize() const { return lambda; }
-  //! Modify the step size.
-  size_t& PopulationSize() { return lambda; }
-
   //! Get the dimension of the search space.
-  size_t Dimension() const { return dimension; }
+  size_t PopulationSize() const { return dimension; }
   //! Modify the dimension of the search space.
-  size_t& Dimension() { return dimension; }
+  size_t& PopulationSize() { return dimension; }
 
   //! Get the intertia weight of particles.
   double InteriaWeight() const { return interiaWeight; }
@@ -147,17 +140,14 @@ class PSOType
   VelocityVectorType& VelocityType() { return velocityType; }
 
  private:
-  //! Population size.
-  size_t lambda;
-
-  //! Dimension of the search space i.e. number of components in a particle.
+  //! Dimension of the search space i.e. number of particles.
   size_t dimension;
 
   //! Position of the particles.
-  arma::mat particlePosition;
+  arma::cube particlePosition;
 
   //! Velocity of the particles.
-  arma::mat particleVelocity;
+  arma::cube particleVelocity;
 
   //! Best position of the particles.
   arma::mat bestParticlePosition;

@@ -20,8 +20,7 @@ namespace mlpack {
 namespace optimization {
 
 template<typename VelocityVectorType>
-PSOType<VelocityVectorType>::PSOType(const size_t lambda,
-                                  const size_t dimension,
+PSOType<VelocityVectorType>::PSOType(const size_t dimension,
                                   const double interiaWeight,
                                   const double cognitiveAcceleration,
                                   const double socialAcceleration,
@@ -32,7 +31,6 @@ PSOType<VelocityVectorType>::PSOType(const size_t lambda,
                                   const size_t maxIterations,
                                   const double tolerance,
                                   const VelocityVectorType& velocityType) :
-    lambda(lambda),
     dimension(dimension),
     interiaWeight(interiaWeight),
     cognitiveAcceleration(cognitiveAcceleration),
@@ -52,13 +50,22 @@ template<typename DecomposableFunctionType>
 double PSOType<VelocityVectorType>::Optimize(
     DecomposableFunctionType& function, arma::mat& iterate)
 {
-  // Randomly initialize the particle position and velocity.
-  // Following a heuristic, the swarm size is set to 2 * dimension.
-  lambda = 2 * dimension;
-  particlePosition.randu(dimension);
-  particleVelocity.randu(dimension);
-  bestParticlePosition = particlePosition;
-  bestSwarmPosition = particlePosition;
+  arma::arma_rng::set_seed_random();
+  // Set size for particle position and velocity.
+  particlePosition.set_size(iterate.n_rows, iterate.n_cols, dimension);
+  particleVelocity.set_size(iterate.n_rows, iterate.n_cols, dimension);
+
+  // Initialize particle positions and velocities with the given points.
+  for (size_t i = 0; i < dimension; ++i)
+  {
+    particlePosition.slice(i) = iterate;
+    particleVelocity.slice(i) = iterate;
+  }
+
+  // Best particle and swarm position values are initialized
+  // from the first particle.
+  bestParticlePosition = particlePosition.slice(0);
+  bestSwarmPosition = particlePosition.slice(0);
 
   // Convenient variables to check if there's an improvement.
   double currentObjective;
@@ -71,12 +78,12 @@ double PSOType<VelocityVectorType>::Optimize(
     for (size_t k = 0; k < dimension; ++k)
     {
       // Calculate the objective function.
-      currentObjective = function.Evaluate(particlePosition);
+      currentObjective = function.Evaluate(particlePosition.slice(k));
 
       // Check if the current position is an individual best.
       if (currentObjective < lastObjectiveIndividual)
       {
-        bestParticlePosition = particlePosition;
+        bestParticlePosition = particlePosition.slice(k);
         lastObjectiveIndividual = currentObjective;
       }
     }
@@ -84,14 +91,13 @@ double PSOType<VelocityVectorType>::Optimize(
     // Check if the current position is a global best.
     if (lastObjectiveIndividual < lastObjectiveGlobal)
     {
-      bestSwarmPosition = particlePosition;
+      bestSwarmPosition = bestParticlePosition;
       lastObjectiveGlobal = lastObjectiveIndividual;
     }
 
     // Update velocity for each particle.
-    velocityType.Update(particlePosition,
-      particleVelocity, bestParticlePosition,
-      bestSwarmPosition, interiaWeight,
+    velocityType.Update(particlePosition, particleVelocity,
+      bestParticlePosition, bestSwarmPosition, interiaWeight,
       cognitiveAcceleration, socialAcceleration, dimension);
 
     // Update position for each particle.
