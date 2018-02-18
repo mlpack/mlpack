@@ -222,4 +222,65 @@ BOOST_AUTO_TEST_CASE(SparseNMFALSTest)
       1e-5);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+/**
+ * Check if all elements in W and H are non-negative.
+ * Default Case.
+ * Random Acol initilization and distance minimization update.
+ */
+BOOST_AUTO_TEST_CASE(NonNegNMFDefaultTest)
+{
+  mat w = randu<mat>(20, 12);
+  mat h = randu<mat>(12, 20);
+  mat v = w * h;
+  const size_t r = 12;
+
+  AMF<> nmf;
+  nmf.Apply(v, r, w, h);
+
+  BOOST_REQUIRE(arma::all(vectorise(std::move(w)) >= 0)
+              && arma::all(vectorise(std::move(h)) >= 0));
+}
+
+/**
+ * Check if all elements in W and H are non-negative.
+ * Random initialization divergence minimization update.
+ */
+BOOST_AUTO_TEST_CASE(NonNegNMFRandomDivTest)
+{
+  mat w = randu<mat>(20, 12);
+  mat h = randu<mat>(12, 20);
+  mat v = w * h;
+  const size_t r = 12;
+
+  // Custom tighter tolerance.
+  SimpleResidueTermination srt(1e-8, 10000);
+  AMF<SimpleResidueTermination,
+      RandomInitialization,
+      NMFMultiplicativeDivergenceUpdate> nmf(srt);
+  nmf.Apply(v, r, w, h);
+
+  BOOST_REQUIRE(arma::all(vectorise(std::move(w)) >= 0)
+              && arma::all(vectorise(std::move(h)) >= 0));
+}
+
+/**
+ * Check if all elements in W and H are non-negative.
+ * Random initialization, alternating least squares update.
+ */
+BOOST_AUTO_TEST_CASE(NonNegNMFALSTest)
+{
+  mat w = randu<mat>(20, 12);
+  mat h = randu<mat>(12, 20);
+  mat v = w * h;
+  const size_t r = 12;
+
+  SimpleResidueTermination srt(1e-12, 50000);
+  AMF<SimpleResidueTermination, RandomAcolInitialization<>, NMFALSUpdate>
+        nmf(srt);
+  nmf.Apply(v, r, w, h);
+
+  BOOST_REQUIRE(arma::all(vectorise(std::move(w)) >= 0)
+              && arma::all(vectorise(std::move(h)) >= 0));
+}
+
+BOOST_AUTO_TEST_SUITE_END()
