@@ -132,6 +132,7 @@ add_executable(mlpack_test
   main_tests/adaboost_test.cpp
   main_tests/decision_tree_test.cpp
   main_tests/decision_stump_test.cpp
+  main_tests/knn_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/logistic_regression_test.cpp
   main_tests/nbc_test.cpp
