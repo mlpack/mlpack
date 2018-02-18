@@ -24,5 +24,13 @@
   #include <boost/serialization/unordered_map.hpp>
 #endif
 
+#if BOOST_VERSION <= 105800
+  #include "mlpack/core/boost_backport/collections_load_imp.hpp"
+  #include "mlpack/core/boost_backport/collections_save_imp.hpp"
+  #include "mlpack/core/boost_backport/vector.hpp"
+#else
+  #include <boost/serialization/vector.hpp>
+#endif
+
 #endif // MLPACK_CORE_BOOST_BACKPORT_SERIALIZATION_HPP
 
