@@ -215,12 +215,43 @@ BOOST_AUTO_TEST_CASE(VarianceScalingNormalInitTest)
   vsn.Initialize(weights, rows, cols);
   vsn.Initialize(weights3d, rows, cols, slices);
 
+
+  // Check that size of initialized weights is equal to the input weights size
+
   BOOST_REQUIRE_EQUAL(weights.n_rows, rows);
   BOOST_REQUIRE_EQUAL(weights.n_cols, cols);
 
   BOOST_REQUIRE_EQUAL(weights3d.n_rows, rows);
   BOOST_REQUIRE_EQUAL(weights3d.n_cols, cols);
   BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
+
+  // Manually create and initialize weight matrices with same dimensions and
+  // using the same initialization rule (Varaince Scaled Normal)
+
+  double variance = (1 / ( ( rows + cols ) / 2 ) );
+
+  arma::mat vsnWeights = arma::randn<arma::mat>(rows, cols);
+  arma::cube vsnWeights3d = arma::randn<arma::cube>(rows, cols, slices);
+
+  // Scale the weights from N(0,1) to N(0,variance) manually
+
+  vsnWeights *= sqrt(variance);
+  
+  vsnWeights3d *= sqrt(variance);
+  
+  // Check the values of initialized weights are close enough to manually 
+  // initialized weights for the matrix and cube
+
+  for (size_t i = 0; i < rows; i++)
+    for (size_t j = 0; j < cols; j++)
+      BOOST_REQUIRE_SMALL(weights.at(i, j) - vsnWeights.at(i, j), 1e-3);
+
+  for (size_t k = 0; k < slices; k++)
+    for (size_t i = 0; i < rows; i++)
+      for (size_t j = 0; j < cols; j++)
+        BOOST_REQUIRE_SMALL(weights3d.slice(k).at(i, j) - 
+        					vsnWeights3d.slice(k).at(i, j), 1e-3);
+
 }
 
 /**
@@ -240,12 +271,44 @@ BOOST_AUTO_TEST_CASE(VarianceScalingUniformInitTest)
   vsu.Initialize(weights, rows, cols);
   vsu.Initialize(weights3d, rows, cols, slices);
 
+  // Check that size of initialized weights is equal to the input weights size
+
   BOOST_REQUIRE_EQUAL(weights.n_rows, rows);
   BOOST_REQUIRE_EQUAL(weights.n_cols, cols);
 
   BOOST_REQUIRE_EQUAL(weights3d.n_rows, rows);
   BOOST_REQUIRE_EQUAL(weights3d.n_cols, cols);
   BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
+
+  // Manually create and initialize weight matrices with same dimensions and
+  // using the same initialization rule (Varaince Scaled Uniform)
+
+  double limit = sqrt(3 / ( ( rows + cols ) / 2 ) );
+
+  arma::mat vsuWeights = arma::randu<arma::mat>(rows, cols);
+  arma::cube vsuWeights3d = arma::randu<arma::cube>(rows, cols, slices);
+
+  // Scale the weights from U[0,1] to U[-limit,limit] manually
+
+  vsuWeights *= (2 * limit);
+  vsuWeights -= (limit);
+
+  vsuWeights3d *= (2 * limit);
+  vsuWeights3d -= (limit);
+
+  // Check the values of initialized weights are close enough to manually 
+  // initialized weights for the matrix and cube
+
+  for (size_t i = 0; i < rows; i++)
+    for (size_t j = 0; j < cols; j++)
+      BOOST_REQUIRE_SMALL(weights.at(i, j) - vsuWeights.at(i, j), 1e-3);
+
+  for (size_t k = 0; k < slices; k++)
+    for (size_t i = 0; i < rows; i++)
+      for (size_t j = 0; j < cols; j++)
+        BOOST_REQUIRE_SMALL(weights3d.slice(k).at(i, j) - 
+        					vsuWeights3d.slice(k).at(i, j), 1e-3);
+
 }
 
 /**
@@ -334,6 +397,28 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
   gaussianModel.Predict(input, response);
 
   BOOST_REQUIRE_EQUAL(gaussianModel.Parameters().n_elem, 42);
+
+  // Create a simple network and use the Normal Variance Scaling rule to
+  // initialize the network parameters.
+  FFN<NegativeLogLikelihood<>, VarianceScalingNormalInit<> > vsnModel;
+  vsnModel.Add<IdentityLayer<> >();
+  vsnModel.Add<Linear<> >(5, 5);
+  vsnModel.Add<Linear<> >(5, 2);
+  vsnModel.Add<LogSoftMax<> >();
+  vsnModel.Predict(input, response);
+
+  BOOST_REQUIRE_EQUAL(vsnModel.Parameters().n_elem, 42);
+
+  // Create a simple network and use the Uniform Variance Scaling rule to
+  // initialize the network parameters.
+  FFN<NegativeLogLikelihood<>, VarianceScalingUniformInit<> > vsuModel;
+  vsuModel.Add<IdentityLayer<> >();
+  vsuModel.Add<Linear<> >(5, 5);
+  vsuModel.Add<Linear<> >(5, 2);
+  vsuModel.Add<LogSoftMax<> >();
+  vsuModel.Predict(input, response);
+
+  BOOST_REQUIRE_EQUAL(vsuModel.Parameters().n_elem, 42);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
