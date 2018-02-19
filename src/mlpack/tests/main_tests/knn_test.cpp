@@ -139,10 +139,9 @@ BOOST_AUTO_TEST_CASE(KNNRefModelTest)
 
   mlpackMain();
 
-  KNNModel* model = std::move(CLI::GetParam<KNNModel*>("output_model"));
-
-  // Input saved model.
-  SetInputParam("input_model", model);
+  // Input pre-trained model.
+  SetInputParam("input_model", 
+      std::move(CLI::GetParam<KNNModel*>("output_model")));
   
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -197,14 +196,13 @@ BOOST_AUTO_TEST_CASE(KNNModelReuseTest)
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
 
-  KNNModel* model = std::move(CLI::GetParam<KNNModel*>("output_model"));
-  
   // Reset passed parameters. 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["query"].wasPassed = false;
 
   // Input saved model, keep query and k unchanged.
-  SetInputParam("input_model", model);
+  SetInputParam("input_model", 
+      std::move(CLI::GetParam<KNNModel*>("output_model")));
   if (!data::Load("rann_test_r_3_900.csv", queryData))
     BOOST_FAIL("Cannot load labels for rann_test_r_3_900.csv");
   SetInputParam("query", std::move(queryData));
