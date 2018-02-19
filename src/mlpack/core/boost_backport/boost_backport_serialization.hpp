@@ -6,6 +6,7 @@
  * following boost functionality here:
  *
  *  * unordered_set serialization support (added in boost 1.56.0)
+ *  * vector serialization (changed after boost 1.58.0)
  *
  * If the detected boost version is greater than 1.58.0, we include the normal
  * serialization functions (not the backported ones).  For all older versions we
@@ -25,6 +26,14 @@
 #endif
 
 #if BOOST_VERSION <= 105800
+  /**
+   * Boost versions 1.58.0 and earlier have a different vector serialization
+   * behaivor as compared to later versions. Notably, loading a
+   * std::vector<arma::mat> does not clear the vector before the load
+   * in v1.58 and earlier; while in the later versions, the vector is cleared
+   * before loading. This causes some tests related to serialization to fail
+   * with versions 1.58. This backport solves the issue.
+   */
   #include "mlpack/core/boost_backport/collections_load_imp.hpp"
   #include "mlpack/core/boost_backport/collections_save_imp.hpp"
   #include "mlpack/core/boost_backport/vector.hpp"
