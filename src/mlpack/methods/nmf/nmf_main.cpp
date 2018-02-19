@@ -95,6 +95,8 @@ static void mlpackMain()
       "the rank of the factorization must be greater than 0");
   RequireParamInSet<string>("update_rules", { "multdist", "multdiv", "als" },
       true, "unknown update rules");
+  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; },
+      true, "max_iterations must be non-negative");
 
   RequireAtLeastOnePassed({ "h", "w" }, false, "no output will be saved");
 
