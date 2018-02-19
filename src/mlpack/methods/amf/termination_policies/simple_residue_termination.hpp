@@ -82,7 +82,9 @@ class SimpleResidueTermination
     Log::Info << "Iteration " << iteration << "; residue " << residue << ".\n";
 
     // Check if termination criterion is met.
-    return (residue < minResidue || iteration > maxIterations);
+    // If maxIterations == 0, there is no iteration limit.
+    return (residue < minResidue || 
+      ((maxIterations != 0) && (iteration > maxIterations)));
   }
 
   //! Get current value of residue
