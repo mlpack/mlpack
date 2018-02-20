@@ -36,6 +36,9 @@
 #include <mlpack/methods/ann/layer/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
 
+// Initializations.
+#include <mlpack/methods/ann/init_rules/random_init.hpp>
+
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
@@ -52,6 +55,15 @@ template<typename InputDataType, typename OutputDataType> class LSTM;
 template<typename InputDataType, typename OutputDataType> class GRU;
 template<typename InputDataType, typename OutputDataType> class FastLSTM;
 template<typename InputDataType, typename OutputDataType> class VRClassReward;
+template<typename InputDataType, typename OutputDataType> class MemoryHead;
+template<typename InputDataType, typename OutputDataType>
+class NeuralTuringMachine;
+
+template<
+  typename OutputLayerType,
+  typename InitializationRuleType
+>
+class FFN;
 
 template<typename InputDataType,
          typename OutputDataType,
@@ -107,6 +119,7 @@ using LayerTypes = boost::variant<
     BaseLayer<IdentityFunction, arma::mat, arma::mat>*,
     BaseLayer<TanhFunction, arma::mat, arma::mat>*,
     BaseLayer<RectifierFunction, arma::mat, arma::mat>*,
+    BaseLayer<SoftplusFunction, arma::mat, arma::mat>*,
     Concat<arma::mat, arma::mat>*,
     ConcatPerformance<NegativeLogLikelihood<arma::mat, arma::mat>,
                       arma::mat, arma::mat>*,
@@ -118,6 +131,7 @@ using LayerTypes = boost::variant<
     DropConnect<arma::mat, arma::mat>*,
     Dropout<arma::mat, arma::mat>*,
     ELU<arma::mat, arma::mat>*,
+    FFN<NegativeLogLikelihood<>, RandomInitialization>*,
     Glimpse<arma::mat, arma::mat>*,
     HardTanH<arma::mat, arma::mat>*,
     Join<arma::mat, arma::mat>*,
@@ -129,11 +143,13 @@ using LayerTypes = boost::variant<
     LSTM<arma::mat, arma::mat>*,
     GRU<arma::mat, arma::mat>*,
     FastLSTM<arma::mat, arma::mat>*,
+    MemoryHead<arma::mat, arma::mat>*,
     MaxPooling<arma::mat, arma::mat>*,
     MeanPooling<arma::mat, arma::mat>*,
     MeanSquaredError<arma::mat, arma::mat>*,
     MultiplyConstant<arma::mat, arma::mat>*,
     NegativeLogLikelihood<arma::mat, arma::mat>*,
+    NeuralTuringMachine<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
     Recurrent<arma::mat, arma::mat>*,
     RecurrentAttention<arma::mat, arma::mat>*,

@@ -167,7 +167,7 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Backward(
 
   Backward();
   ResetGradients(gradients);
-  Gradient(std::move(currentInput));
+  UpdateGradient(std::move(currentInput));
 
   return res;
 }
@@ -245,6 +245,7 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+template<typename eT>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
     const arma::mat& parameters,
     const size_t begin,
@@ -272,7 +273,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
 
   Backward();
   ResetGradients(gradient);
-  Gradient(std::move(predictors.cols(begin, begin + batchSize - 1)));
+  UpdateGradient(std::move(predictors.cols(begin, begin + batchSize - 1)));
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
@@ -393,10 +394,11 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Backward()
   }
 }
 
+<<<<<<< HEAD
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 void FFN<OutputLayerType, InitializationRuleType,
-         CustomLayers...>::Gradient(arma::mat&& input)
+         CustomLayers...>::UpdateGradient(arma::mat&& input)
 {
   boost::apply_visitor(GradientVisitor(std::move(input), std::move(
       boost::apply_visitor(deltaVisitor, network[1]))), network.front());
@@ -539,6 +541,78 @@ FFN<OutputLayerType, InitializationRuleType,
   Swap(network);
   return *this;
 };
+
+template<typename OutputLayerType, typename InitializationRuleType>
+template<typename eT>
+void FFN<OutputLayerType, InitializationRuleType>::Forward(
+    arma::Mat<eT>&& input,
+    arma::Mat<eT>&& output)
+{
+  boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
+      boost::apply_visitor(outputParameterVisitor, network.front()))),
+      network.front());
+
+  for (size_t i = 1; i < network.size(); ++i)
+  {
+    boost::apply_visitor(ForwardVisitor(std::move(boost::apply_visitor(
+        outputParameterVisitor, network[i - 1])), std::move(
+        boost::apply_visitor(outputParameterVisitor, network[i]))), network[i]);
+  }
+
+  output = boost::apply_visitor(outputParameterVisitor, network.back());
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
+template<typename eT>
+void FFN<OutputLayerType, InitializationRuleType>::Backward(
+    const arma::Mat<eT>&& /* input */,
+    arma::Mat<eT>&& gy,
+    arma::Mat<eT>&& g)
+{
+  boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
+      outputParameterVisitor, network.back())), std::move(gy),
+      std::move(boost::apply_visitor(deltaVisitor, network.back()))),
+      network.back());
+
+  for (int i = network.size() - 2; i > 0; i--)
+  {
+    boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
+        outputParameterVisitor, network[i])),
+        std::move(boost::apply_visitor(deltaVisitor, network[i + 1])),
+        std::move(boost::apply_visitor(deltaVisitor, network[i]))),
+        network[i]);
+  }
+
+  boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
+      outputParameterVisitor, network.front())),
+      std::move(boost::apply_visitor(deltaVisitor, network[1])),
+      std::move(g)),
+      network.front());
+}
+
+template<typename OutputLayerType, typename InitializationRuleType>
+template<typename eT>
+void FFN<OutputLayerType, InitializationRuleType>::Gradient(
+    arma::Mat<eT>&& input,
+    arma::Mat<eT>&& error,
+    arma::Mat<eT>&& /* gradient */)
+{
+  boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
+      outputParameterVisitor, network[network.size() - 2])),
+      std::move(error)), network.back());
+
+  for (size_t i = network.size() - 2; i > 0; i--)
+  {
+    boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
+        outputParameterVisitor, network[i - 1])),
+        std::move(boost::apply_visitor(deltaVisitor, network[i + 1]))),
+        network[i]);
+  }
+
+  boost::apply_visitor(GradientVisitor(std::move(input),
+      std::move(boost::apply_visitor(deltaVisitor, network[1]))),
+      network.front());
+}
 
 } // namespace ann
 } // namespace mlpack

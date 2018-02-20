@@ -23,10 +23,13 @@
 #include "lstm.hpp"
 #include "gru.hpp"
 #include "fast_lstm.hpp"
+#include "memory_head.hpp"
+#include "neural_turing_machine.hpp"
 #include "recurrent.hpp"
 #include "recurrent_attention.hpp"
 #include "sequential.hpp"
 #include "concat.hpp"
 #include "vr_class_reward.hpp"
+#include "../ffn.hpp"
 
 #endif

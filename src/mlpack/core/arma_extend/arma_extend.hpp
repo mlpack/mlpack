@@ -62,6 +62,14 @@ namespace arma {
   #include "glue_ccov_meat.hpp"
   #include "fn_ccov.hpp"
 
+  // shift(...)
+#if ARMA_VERSION_MAJOR < 7 || \
+    (ARMA_VERSION_MAJOR == 6 && ARMA_VERSION_MINOR < 600)
+  #include "op_shift_bones.hpp"
+  #include "op_shift_meat.hpp"
+  #include "fn_shift.hpp"
+#endif
+
   // inplace_reshape()
   #include "fn_inplace_reshape.hpp"
 };
