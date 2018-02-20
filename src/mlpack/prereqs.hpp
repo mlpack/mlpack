@@ -72,6 +72,10 @@ using enable_if_t = typename enable_if<B, T>::type;
 // defined, but we still need to define it (as nothing) so that the mlpack
 // serialization shim compiles.
 #include <boost/serialization/serialization.hpp>
+// We are not including boost/serialization/vector.hpp here. It is included in
+// mlpack/core/boost_backport/boost_backport_serialization.hpp because of
+// different behaviors of vector serialization in different versions of boost.
+// #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
 // boost_backport.hpp handles the version and backporting of serialization (and
 // other) features.

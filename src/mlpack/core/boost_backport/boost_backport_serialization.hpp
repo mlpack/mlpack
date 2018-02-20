@@ -25,7 +25,7 @@
   #include <boost/serialization/unordered_map.hpp>
 #endif
 
-#if BOOST_VERSION <= 105800
+#if BOOST_VERSION == 105800
   /**
    * Boost versions 1.58.0 and earlier have a different vector serialization
    * behaivor as compared to later versions. Notably, loading a
@@ -34,6 +34,12 @@
    * before loading. This causes some tests related to serialization to fail
    * with versions 1.58. This backport solves the issue.
    */
+  #ifdef BOOST_SERIALIZATION_VECTOR_HPP
+  #pragma message "Detected Boost version is 1.58. Including\
+  boost/serialization/vector.hpp before mlpack/core.hpp can cause problems. It\
+  should only be necessary to include mlpack/core.hpp and not\
+  boost/serialization/vector.hpp."
+  #endif
   #include "mlpack/core/boost_backport/collections_load_imp.hpp"
   #include "mlpack/core/boost_backport/collections_save_imp.hpp"
   #include "mlpack/core/boost_backport/vector.hpp"
