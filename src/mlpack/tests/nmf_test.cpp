@@ -237,8 +237,8 @@ BOOST_AUTO_TEST_CASE(NonNegNMFDefaultTest)
   AMF<> nmf;
   nmf.Apply(v, r, w, h);
 
-  BOOST_REQUIRE(arma::all(vectorise(std::move(w)) >= 0)
-              && arma::all(vectorise(std::move(h)) >= 0));
+  BOOST_REQUIRE(arma::all(vectorise(w) >= 0)
+      && arma::all(vectorise(h) >= 0));
 }
 
 /**
@@ -259,8 +259,8 @@ BOOST_AUTO_TEST_CASE(NonNegNMFRandomDivTest)
       NMFMultiplicativeDivergenceUpdate> nmf(srt);
   nmf.Apply(v, r, w, h);
 
-  BOOST_REQUIRE(arma::all(vectorise(std::move(w)) >= 0)
-              && arma::all(vectorise(std::move(h)) >= 0));
+  BOOST_REQUIRE(arma::all(vectorise(w) >= 0)
+      && arma::all(vectorise(h) >= 0));
 }
 
 /**
@@ -275,12 +275,13 @@ BOOST_AUTO_TEST_CASE(NonNegNMFALSTest)
   const size_t r = 12;
 
   SimpleResidueTermination srt(1e-12, 50000);
-  AMF<SimpleResidueTermination, RandomAcolInitialization<>, NMFALSUpdate>
-        nmf(srt);
+  AMF<SimpleResidueTermination,
+      RandomAcolInitialization<>,
+      NMFALSUpdate> nmf(srt);
   nmf.Apply(v, r, w, h);
 
-  BOOST_REQUIRE(arma::all(vectorise(std::move(w)) >= 0)
-              && arma::all(vectorise(std::move(h)) >= 0));
+  BOOST_REQUIRE(arma::all(vectorise(w) >= 0)
+      && arma::all(vectorise(h) >= 0));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
