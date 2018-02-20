@@ -127,8 +127,8 @@ static void mlpackMain()
   RequireParamValue<double>("epsilon", [](double x) { return x > 0; },
       true, "invalid value of epsilon specified");
 
-  // Value of min_size can't be negative.
-  RequireParamValue<int>("min_size", [](int y) { return y >= 0; },
+  // Value of min_size should be positive.
+  RequireParamValue<int>("min_size", [](int y) { return y > 0; },
       true, "invalid value of min_size specified");
 
   // Fire off naive search if needed.
