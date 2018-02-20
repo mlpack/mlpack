@@ -91,6 +91,7 @@ Copyright:
   Copyright 2018, Nikhil Goel <nikhilgoel199797@gmail.com>
   Copyright 2018, Shikhar Jaiswal <jaiswalshikhar87@gmail.com>
   Copyright 2018, B Kartheek Reddy <bkartheekreddy@gmail.com>
+  Copyright 2018, Wenhao Huang <wenhao.huang.work@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.
