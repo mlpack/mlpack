@@ -276,14 +276,22 @@ static void mlpackMain()
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
-    // Sanity check on k value: must be greater than 0, must be less than the
-    // number of reference points.  Since it is unsigned, we only test the upper
-    // bound.
+    // Sanity check on k value: must be greater than 0, must be less than or
+    // equal to the number of reference points.  Since it is unsigned, 
+    // we only test the upper bound.
     if (k > knn->Dataset().n_cols)
     {
-      Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
-      Log::Fatal << "than or equal to the number of reference points (";
-      Log::Fatal << knn->Dataset().n_cols << ")." << endl;
+      Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less "
+          << "than or equal to the number of reference points ("
+          << knn->Dataset().n_cols << ")." << endl;
+    }
+    // Sanity check on k value: must not be equal to the number of reference points
+    // when query data has not been provided.
+    if (!CLI::HasParam("query") && k == knn->Dataset().n_cols)
+    {
+      Log::Fatal << "Invalid k: " << k << "; must not be equal to the number of "
+          << "reference points (" << knn->Dataset().n_cols << ") "
+          << "if query data has not been provided." << endl;
     }
 
     // Now run the search.
