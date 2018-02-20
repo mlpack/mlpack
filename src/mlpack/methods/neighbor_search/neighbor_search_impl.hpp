@@ -550,14 +550,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
         << "points in the reference set (" << referenceSet->n_cols << ")";
     throw std::invalid_argument(ss.str());
   }
-  if (k == referenceSet->n_cols)
-  {
-    std::stringstream ss;
-    ss << "requested value of k (" << k << ") is equal to the number of "
-        << "points in the reference set (" << referenceSet->n_cols << ") and " 
-        << "no query set has been provided.";
-    throw std::invalid_argument(ss.str());
-  }
 
   Timer::Start("computing_neighbors");
 
@@ -856,6 +848,14 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     std::stringstream ss;
     ss << "requested value of k (" << k << ") is greater than the number of "
         << "points in the reference set (" << referenceSet->n_cols << ")";
+    throw std::invalid_argument(ss.str());
+  }
+  if (k == referenceSet->n_cols)
+  {
+    std::stringstream ss;
+    ss << "requested value of k (" << k << ") is equal to the number of "
+        << "points in the reference set (" << referenceSet->n_cols << ") and " 
+        << "no query set has been provided.";
     throw std::invalid_argument(ss.str());
   }
 
