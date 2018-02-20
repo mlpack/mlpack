@@ -909,8 +909,8 @@ BOOST_AUTO_TEST_CASE(GradientFFNLayerTest)
   {
     GradientFunction()
     {
-      input = arma::randu(5, 1);
-      target = arma::mat("1; 1; 1; 1; 1");
+      input = arma::randu(1, 1, 5);
+      target = arma::ones(1, 1, 5);
       const size_t rho = 5;
 
       FFN<>* ffn = new FFN<>();
@@ -921,7 +921,7 @@ BOOST_AUTO_TEST_CASE(GradientFFNLayerTest)
       model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(1, 10);
-      model->Add((LayerTypes)ffn);
+      model->Add((LayerTypes<>)ffn);
       model->Add<LogSoftMax<> >();
     }
 
@@ -933,16 +933,16 @@ BOOST_AUTO_TEST_CASE(GradientFFNLayerTest)
     double Gradient(arma::mat& gradient) const
     {
       arma::mat output;
-
-      double error = model->Evaluate(model->Parameters(), 0);
-      model->Gradient(model->Parameters(), 0, gradient);
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
     }
 
     arma::mat& Parameters() { return model->Parameters(); }
 
     RNN<NegativeLogLikelihood<> >* model;
 
-    arma::mat input, target;
+    arma::cube input, target;
   } function;
 
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
@@ -1001,8 +1001,8 @@ BOOST_AUTO_TEST_CASE(GradientNTMTest)
   {
     GradientFunction()
     {
-      input = arma::randu(5, 1);
-      target = arma::mat("1; 1; 1; 1; 1;");
+      input = arma::randu(1, 1, 5);
+      target = arma::ones(1, 1, 5);
       const size_t rho = 5;
 
       size_t numMem = 6;
@@ -1030,15 +1030,15 @@ BOOST_AUTO_TEST_CASE(GradientNTMTest)
     double Gradient(arma::mat& gradient) const
     {
       arma::mat output;
-      double error = model->Evaluate(model->Parameters(), 0);
-      model->Gradient(model->Parameters(), 0, gradient);
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
     }
 
     arma::mat& Parameters() { return model->Parameters(); }
 
     RNN<NegativeLogLikelihood<> >* model;
-    arma::mat input, target;
+    arma::cube input, target;
   } function;
 
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);

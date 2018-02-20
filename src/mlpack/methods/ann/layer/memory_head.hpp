@@ -47,6 +47,9 @@ template <
 class MemoryHead
 {
  public:
+ //! Create the MemoryHead object.
+  MemoryHead();
+
   /**
    * Create the Memory Head layer object using the specified parameters.
    *
@@ -113,7 +116,7 @@ class MemoryHead
    * Resets the cell to accept a new input.
    * This breaks the BPTT chain starts a new one.
    */
-  void ResetCell();
+  void ResetCell(const size_t size);
 
   //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
@@ -146,7 +149,7 @@ class MemoryHead
   OutputDataType& Gradient() { return gradient; }
 
   //! Get the model modules.
-  std::vector<LayerTypes>& Model() { return network; }
+  std::vector<LayerTypes<>>& Model() { return network; }
 
   /**
    * Serialize the layer
@@ -251,11 +254,17 @@ class MemoryHead
   //! Store the delta received with BPTT.
   arma::vec prevDW;
 
+  //! Dummy memoryHistory for deafult construction.
+  std::list<arma::mat> dummyMemoryHistory;
+
   //! Access to the memory history.
   const std::list<arma::mat>& memoryHistory;
 
   //! Backward memory history iterator.
   std::list<arma::mat>::const_iterator bMemoryHistory;
+
+  //! Dummy dMem for default construction.
+  arma::mat dummyDMem;
 
   //! Reference to memory gradient.
   arma::mat& dMem;
@@ -264,10 +273,10 @@ class MemoryHead
   OutputDataType weights;
 
   //! Locally-stored input 2 gate module.
-  LayerTypes inputLinear;
+  LayerTypes<> inputLinear;
 
   //! Locally-stored output 2 gate module.
-  LayerTypes kTNonLinear;
+  LayerTypes<> kTNonLinear;
 
   //! Locally-stored input gate module.
   SoftplusFunction bTNonLinear;
@@ -288,7 +297,7 @@ class MemoryHead
   DeleteVisitor deleteVisitor;
 
   //! Locally-stored list of network modules.
-  std::vector<LayerTypes> network;
+  std::vector<LayerTypes<>> network;
 
   //! If true dropout and scaling is disabled, see notes above.
   bool deterministic;

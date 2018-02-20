@@ -247,7 +247,7 @@ template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename eT>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
-    const arma::mat& parameters,
+    const arma::Mat<eT>& parameters,
     const size_t begin,
     arma::mat& gradient,
     const size_t batchSize)
@@ -394,7 +394,6 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Backward()
   }
 }
 
-<<<<<<< HEAD
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 void FFN<OutputLayerType, InitializationRuleType,
@@ -542,9 +541,10 @@ FFN<OutputLayerType, InitializationRuleType,
   return *this;
 };
 
-template<typename OutputLayerType, typename InitializationRuleType>
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
 template<typename eT>
-void FFN<OutputLayerType, InitializationRuleType>::Forward(
+void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Forward(
     arma::Mat<eT>&& input,
     arma::Mat<eT>&& output)
 {
@@ -562,9 +562,10 @@ void FFN<OutputLayerType, InitializationRuleType>::Forward(
   output = boost::apply_visitor(outputParameterVisitor, network.back());
 }
 
-template<typename OutputLayerType, typename InitializationRuleType>
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
 template<typename eT>
-void FFN<OutputLayerType, InitializationRuleType>::Backward(
+void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Backward(
     const arma::Mat<eT>&& /* input */,
     arma::Mat<eT>&& gy,
     arma::Mat<eT>&& g)
@@ -590,9 +591,10 @@ void FFN<OutputLayerType, InitializationRuleType>::Backward(
       network.front());
 }
 
-template<typename OutputLayerType, typename InitializationRuleType>
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
 template<typename eT>
-void FFN<OutputLayerType, InitializationRuleType>::Gradient(
+void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
     arma::Mat<eT>&& input,
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& /* gradient */)

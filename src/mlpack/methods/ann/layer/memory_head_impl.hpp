@@ -25,6 +25,14 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template <typename InputDataType, typename OutputDataType>
+MemoryHead<InputDataType, OutputDataType>::MemoryHead() :
+    memoryHistory(dummyMemoryHistory),
+    dMem(dummyDMem)
+{
+
+}
+
+template <typename InputDataType, typename OutputDataType>
 MemoryHead<InputDataType, OutputDataType>::MemoryHead(
     const size_t inSize,
     const size_t outSize,
@@ -408,7 +416,7 @@ void MemoryHead<InputDataType, OutputDataType>::Gradient(
 }
 
 template<typename InputDataType, typename OutputDataType>
-void MemoryHead<InputDataType, OutputDataType>::ResetCell()
+void MemoryHead<InputDataType, OutputDataType>::ResetCell(const size_t /*size*/)
 {
   prevWeights.clear();
 

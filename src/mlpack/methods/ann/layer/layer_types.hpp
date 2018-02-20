@@ -59,9 +59,9 @@ template<typename InputDataType, typename OutputDataType> class MemoryHead;
 template<typename InputDataType, typename OutputDataType>
 class NeuralTuringMachine;
 
-template<
-  typename OutputLayerType,
-  typename InitializationRuleType
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename... CustomLayers
 >
 class FFN;
 

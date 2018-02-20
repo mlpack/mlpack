@@ -23,13 +23,19 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template <typename InputDataType, typename OutputDataType>
+NeuralTuringMachine<InputDataType, OutputDataType>::NeuralTuringMachine()
+{
+
+}
+
+template <typename InputDataType, typename OutputDataType>
 NeuralTuringMachine<InputDataType, OutputDataType>::NeuralTuringMachine(
     const size_t inSize,
     const size_t outSize,
     const size_t numMem,
     const size_t memSize,
     const size_t shiftSize,
-    LayerTypes controller) :
+    LayerTypes<> controller) :
     inSize(inSize),
     outSize(outSize),
     numMem(numMem),
@@ -344,7 +350,7 @@ void NeuralTuringMachine<InputDataType, OutputDataType>::Gradient(
 }
 
 template<typename InputDataType, typename OutputDataType>
-void NeuralTuringMachine<InputDataType, OutputDataType>::ResetCell()
+void NeuralTuringMachine<InputDataType, OutputDataType>::ResetCell(const size_t)
 {
   memoryHistory.clear();
 

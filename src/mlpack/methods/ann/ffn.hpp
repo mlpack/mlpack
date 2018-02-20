@@ -194,7 +194,7 @@ class FFN
    *        function gradient evaluation.
    */
   template<typename eT>
-  void Gradient(const arma::mat& parameters,
+  void Gradient(const arma::Mat<eT>& parameters,
                 const size_t begin,
                 arma::mat& gradient,
                 const size_t batchSize);
@@ -324,7 +324,7 @@ class FFN
   arma::mat& Delta() { return delta; }
 
   //! Get the model modules.
-  std::vector<LayerTypes>& Model() { return network; }
+  std::vector<LayerTypes<>>& Model() { return network; }
 
  private:
   // Helper functions.

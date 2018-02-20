@@ -379,13 +379,15 @@ void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
  * @param maxRecursion Max recursion
  * @return arma::Mat<char> The Reber state translation to be used.
  */
-template<typename RecurrentLayerType>
-void ReberGrammarTestNetwork(const RecurrentLayerType& recurrentLayer,
-                             size_t hiddenSize = 4,
-                             bool recursive = false,
-                             size_t averageRecursion = 3,
-                             size_t maxRecursion = 5
-                             )
+arma::Mat<char> GenerateReberGrammarData(
+                              arma::field<arma::mat>& trainInput,
+                              arma::field<arma::mat>& trainLabels,
+                              arma::field<arma::mat>& testInput,
+                              bool recursive = false,
+                              const size_t trainReberGrammarCount = 700,
+                              const size_t testReberGrammarCount = 250,
+                              const size_t averageRecursion = 3,
+                              const size_t maxRecursion = 5)
 {
   // Reber state transition matrix. (The last two columns are the indices to the
   // next path).
@@ -442,8 +444,9 @@ void ReberGrammarTestNetwork(const RecurrentLayerType& recurrentLayer,
 /**
  * Train the specified network and the construct a Reber grammar dataset.
  */
-template<typename RecurrentLayerType>
-void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
+template<typename FunctionType>
+void ReberGrammarTestNetwork(const FunctionType& addRecurrentLayer,
+                             const size_t hiddenSize = 4,
                              const bool recursive = false,
                              const size_t averageRecursion = 3,
                              const size_t maxRecursion = 5,
@@ -495,7 +498,7 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
 
     RNN<MeanSquaredError<> > model(5);
     model.Add<Linear<> >(inputSize, hiddenSize);
-    recurrentLayer(model);
+    addRecurrentLayer(model);
     model.Add<Linear<> >(hiddenSize, outputSize);
     model.Add<SigmoidLayer<> >();
     MomentumSGD opt(0.06, 50, 2, -50000);
@@ -573,29 +576,6 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
   }
 
   BOOST_REQUIRE_GE(successes, 1);
-}
-
-/**
- * Train the specified networks on an embedded Reber grammar dataset.
- */
-BOOST_AUTO_TEST_CASE(NTMReberGrammarTest)
-{
-  size_t hiddenSize = 4;
-  size_t numMem = 3;
-  size_t memSize = 5;
-  size_t shiftSize = 1;
-
-  auto fun = [&](RNN<MeanSquaredError<> >& model)
-  {
-    FFN<>* controller = new FFN<>();
-    controller->Add(new Linear<>(hiddenSize + memSize, hiddenSize));
-    controller->Add(new GRU<>(hiddenSize, hiddenSize));
-
-    model.Add<NeuralTuringMachine<> >(hiddenSize, hiddenSize, numMem, memSize,
-        shiftSize, controller);
-  };
-
-  ReberGrammarTestNetwork(fun, hiddenSize, false);
 }
 
 /**

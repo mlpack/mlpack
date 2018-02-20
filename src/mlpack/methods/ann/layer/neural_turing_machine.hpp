@@ -58,6 +58,10 @@ template <
 class NeuralTuringMachine
 {
  public:
+ //! Create the NeuralTuringMachine object.
+  NeuralTuringMachine();
+
+
   /**
    * Create the Neural Turing Machine layer object using the specified
    * parameters.
@@ -74,7 +78,7 @@ class NeuralTuringMachine
                       const size_t numMem,
                       const size_t memSize,
                       const size_t shiftSize,
-                      LayerTypes controller);
+                      LayerTypes<> controller);
 
   /**
    * Delete the NeuralTuringMachine and the layers it holds.
@@ -121,7 +125,7 @@ class NeuralTuringMachine
    * Resets the cell to accept a new input.
    * This breaks the BPTT chain starts a new one.
    */
-  void ResetCell();
+  void ResetCell(const size_t size);
 
   //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
@@ -154,7 +158,7 @@ class NeuralTuringMachine
   OutputDataType& Gradient() { return gradient; }
 
   //! Get the model modules.
-  std::vector<LayerTypes>& Model() { return network; }
+  std::vector<LayerTypes<>>& Model() { return network; }
 
   /**
    * Serialize the layer
@@ -179,7 +183,7 @@ class NeuralTuringMachine
   size_t shiftSize;
 
   //! Memory read head.
-  LayerTypes readHead;
+  LayerTypes<> readHead;
 
   //! Locally stored read head error.
   arma::mat dReadHead;
@@ -188,22 +192,22 @@ class NeuralTuringMachine
   arma::mat dWriteHead;
 
   //! Linear layer to generate erase and add vectors.
-  LayerTypes inputToLinear;
+  LayerTypes<> inputToLinear;
 
   //! Non linearity for Add operation.
-  LayerTypes addGate;
+  LayerTypes<> addGate;
 
   //! Non linearity for Erase operation.
-  LayerTypes eraseGate;
+  LayerTypes<> eraseGate;
 
   //! Memory head to generate write weights.
-  LayerTypes writeHead;
+  LayerTypes<> writeHead;
 
   //! Locally stored error for linear layer.
   arma::mat linearError;
 
   //! Controller.
-  LayerTypes controller;
+  LayerTypes<> controller;
 
   //! Locally stored memory content error.
   arma::mat dMem;
@@ -239,7 +243,7 @@ class NeuralTuringMachine
   DeleteVisitor deleteVisitor;
 
   //! Locally-stored list of network modules.
-  std::vector<LayerTypes> network;
+  std::vector<LayerTypes<>> network;
 
   //! Locally-stored number of forward steps.
   size_t forwardStep;
