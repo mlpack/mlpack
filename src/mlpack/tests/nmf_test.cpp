@@ -237,8 +237,8 @@ BOOST_AUTO_TEST_CASE(NonNegNMFDefaultTest)
   AMF<> nmf;
   nmf.Apply(v, r, w, h);
 
-  BOOST_REQUIRE(arma::all(vectorise(w) >= 0)
-      && arma::all(vectorise(h) >= 0));
+  BOOST_REQUIRE(arma::all(arma::vectorise(w) >= 0)
+      && arma::all(arma::vectorise(h) >= 0));
 }
 
 /**
@@ -259,8 +259,8 @@ BOOST_AUTO_TEST_CASE(NonNegNMFRandomDivTest)
       NMFMultiplicativeDivergenceUpdate> nmf(srt);
   nmf.Apply(v, r, w, h);
 
-  BOOST_REQUIRE(arma::all(vectorise(w) >= 0)
-      && arma::all(vectorise(h) >= 0));
+  BOOST_REQUIRE(arma::all(arma::vectorise(w) >= 0)
+      && arma::all(arma::vectorise(h) >= 0));
 }
 
 /**
@@ -280,8 +280,8 @@ BOOST_AUTO_TEST_CASE(NonNegNMFALSTest)
       NMFALSUpdate> nmf(srt);
   nmf.Apply(v, r, w, h);
 
-  BOOST_REQUIRE(arma::all(vectorise(w) >= 0)
-      && arma::all(vectorise(h) >= 0));
+  BOOST_REQUIRE(arma::all(arma::vectorise(w) >= 0)
+      && arma::all(arma::vectorise(h) >= 0));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
