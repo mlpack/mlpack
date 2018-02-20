@@ -116,10 +116,7 @@ inline void ApproximatelyEqual(HMMModel& h1,
         h2.GaussianHMM()->Initial(),
         tolerance
         );
-    // Check if emission dists are equal
-    // No easy way to do this, but here's how we'll go:
-    // 1. Sample a number (for now, 100) of points from a uniform random dist
-    // 2. Evaluate and compare Probability() of both dists at each of the points
+    // Check if emission dists are equal by comparing the mean and coviariance
     std::vector<distribution::GaussianDistribution> d1 =
         h1.GaussianHMM()->Emission();
     std::vector<distribution::GaussianDistribution> d2 =
@@ -130,14 +127,8 @@ inline void ApproximatelyEqual(HMMModel& h1,
     size_t states = d1.size();
     for (size_t i=0; i < states; i++)
     {
-      size_t nPoints = 100;
-      for (size_t j=0; j < nPoints; j++)
-      {
-        arma::vec obs = randu<arma::vec>(h1.GaussianHMM()->Dimensionality());
-        double p1 = d1[i].Probability(obs);
-        double p2 = d2[i].Probability(obs);
-        BOOST_REQUIRE_SMALL(std::abs(p1 - p2), tolerance);
-      }
+      CheckMatrices(d1[i].Mean(), d2[i].Mean(), tolerance);
+      CheckMatrices(d1[i].Covariance(), d2[i].Covariance(), tolerance);
     }
   }
   else if (hmmType == GaussianMixtureModelHMM)
@@ -153,7 +144,6 @@ inline void ApproximatelyEqual(HMMModel& h1,
         tolerance
         );
     // Check if emission dists are equal
-    // Similar to checking if two Gaussian emissions are equal
     std::vector<gmm::GMM> d1 = h1.GMMHMM()->Emission();
     std::vector<gmm::GMM> d2 = h2.GMMHMM()->Emission();
 
@@ -162,14 +152,18 @@ inline void ApproximatelyEqual(HMMModel& h1,
     size_t states = d1.size();
     for (size_t i=0; i < states; i++)
     {
-      size_t nPoints = 100;
-      for (size_t j=0; j < nPoints; j++)
+      BOOST_REQUIRE_EQUAL(d1[i].Gaussians(), d2[i].Gaussians());
+      size_t gaussians = d1[i].Gaussians();
+      for (size_t j=0; j<gaussians; j++)
       {
-        arma::vec obs = randu<arma::vec>(h1.GMMHMM()->Dimensionality());
-        double p1 = d1[i].Probability(obs);
-        double p2 = d2[i].Probability(obs);
-        BOOST_REQUIRE_SMALL(std::abs(p1 - p2), tolerance);
+        CheckMatrices(d1[i].Component(j).Mean(),
+            d2[i].Component(j).Mean(),
+            tolerance);
+        CheckMatrices(d1[i].Component(j).Covariance(),
+            d2[i].Component(j).Covariance(),
+            tolerance);
       }
+      CheckMatrices(d1[i].Weights(), d2[i].Weights(), tolerance);
     }
   }
 }
