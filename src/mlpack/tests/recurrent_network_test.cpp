@@ -448,6 +448,7 @@ template<typename FunctionType>
 void ReberGrammarTestNetwork(const FunctionType& addRecurrentLayer,
                              const size_t hiddenSize = 4,
                              const bool recursive = false,
+                             const double learningRate = 0.06,
                              const size_t averageRecursion = 3,
                              const size_t maxRecursion = 5,
                              const size_t iterations = 10)
@@ -501,7 +502,8 @@ void ReberGrammarTestNetwork(const FunctionType& addRecurrentLayer,
     addRecurrentLayer(model);
     model.Add<Linear<> >(hiddenSize, outputSize);
     model.Add<SigmoidLayer<> >();
-    MomentumSGD opt(0.06, 50, 2, -50000);
+
+    MomentumSGD opt(learningRate, 50, 2, -50000);
 
     arma::cube inputTemp, labelsTemp;
     for (size_t iteration = 0; iteration < (iterations + offset); iteration++)
@@ -583,7 +585,7 @@ void ReberGrammarTestNetwork(const FunctionType& addRecurrentLayer,
  */
 BOOST_AUTO_TEST_CASE(NTMRecursiveReberGrammarTest)
 {
-  size_t hiddenSize = 20;
+  size_t hiddenSize = 30;
   size_t numMem = 3;
   size_t memSize = 5;
   size_t shiftSize = 1;
@@ -598,7 +600,30 @@ BOOST_AUTO_TEST_CASE(NTMRecursiveReberGrammarTest)
         shiftSize, controller);
   };
 
-  ReberGrammarTestNetwork(fun, hiddenSize, true);
+  ReberGrammarTestNetwork(fun, hiddenSize, true, 0.001);
+}
+
+/**
+ * Train the specified networks on a Reber grammar dataset.
+ */
+BOOST_AUTO_TEST_CASE(NTMReberGrammarTest)
+{
+  size_t hiddenSize = 4;
+  size_t numMem = 3;
+  size_t memSize = 5;
+  size_t shiftSize = 1;
+
+  auto fun = [&](RNN<MeanSquaredError<> >& model)
+  {
+    FFN<>* controller = new FFN<>();
+    controller->Add(new Linear<>(hiddenSize + memSize, hiddenSize));
+    controller->Add(new GRU<>(hiddenSize, hiddenSize));
+
+    model.Add<NeuralTuringMachine<> >(hiddenSize, hiddenSize, numMem, memSize,
+        shiftSize, controller);
+  };
+
+  ReberGrammarTestNetwork(fun, hiddenSize, false);
 }
 
 /**
