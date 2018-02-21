@@ -83,8 +83,7 @@ class SimpleResidueTermination
 
     // Check if termination criterion is met.
     // If maxIterations == 0, there is no iteration limit.
-    return (residue < minResidue || 
-        (maxIterations != 0 && iteration >= maxIterations));
+    return (residue < minResidue || iteration == maxIterations)
   }
 
   //! Get current value of residue
