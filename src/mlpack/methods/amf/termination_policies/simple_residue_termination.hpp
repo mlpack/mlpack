@@ -53,7 +53,7 @@ class SimpleResidueTermination
   {
     // Initialize the things we keep track of.
     residue = DBL_MAX;
-    iteration = 1;
+    iteration = 0;
     nm = V.n_rows * V.n_cols;
     // Remove history.
     normOld = 0;
@@ -84,7 +84,7 @@ class SimpleResidueTermination
     // Check if termination criterion is met.
     // If maxIterations == 0, there is no iteration limit.
     return (residue < minResidue || 
-        (maxIterations != 0 && iteration > maxIterations));
+        (maxIterations != 0 && iteration >= maxIterations));
   }
 
   //! Get current value of residue
