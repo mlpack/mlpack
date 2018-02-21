@@ -52,11 +52,9 @@ BOOST_AUTO_TEST_CASE(KFNEqualDimensionTest)
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
-  /* 
-   * Now we specify an invalid dimension(2) for the query data.
-   * Note that the number of points in query and reference matrices
-   * are allowed to be different
-   */
+  // Now we specify an invalid dimension(2) for the query data.
+  // Note that the number of points in query and reference matrices
+  // are allowed to be different 
   arma::mat queryData;
   queryData.randu(2, 90); // 90 points in 2 dimensions.
 
@@ -256,7 +254,9 @@ BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
     CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
   }
   
-  // Check if all the neighbors and distances matrices are equal.
+  // The looped matrices check fails.
+  // The following individual check passes with greedy outputs
+  // out.
   // for (int i = 0; i < nof_algorithms - 1; i++)
   // {
   //   CheckMatrices(neighbors[i], neighbors[i + 1]);
