@@ -10,20 +10,29 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+
 #include <mlpack/core/optimizers/pso/pso.hpp>
 #include <mlpack/core/optimizers/pso/test_function.hpp>
-#include <mlpack/core/optimizers/problems/rosenbrock_function.cpp>
-#include <mlpack/core/optimizers/problems/matyas_function.cpp>
-#include <mlpack/core/optimizers/problems/booth_function.cpp>
+
 #include <mlpack/core/optimizers/problems/wood_function.cpp>
-#include <mlpack/core/optimizers/problems/mc_cormick_function.cpp>
+#include <mlpack/core/optimizers/problems/booth_function.cpp>
+#include <mlpack/core/optimizers/problems/easom_function.cpp>
+#include <mlpack/core/optimizers/problems/bukin_function.cpp>
+#include <mlpack/core/optimizers/problems/matyas_function.cpp>
+#include <mlpack/core/optimizers/problems/colville_function.cpp>
+#include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
 #include <mlpack/core/optimizers/problems/eggholder_function.cpp>
+#include <mlpack/core/optimizers/problems/rosenbrock_function.cpp>
+#include <mlpack/core/optimizers/problems/mc_cormick_function.cpp>
+
+#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
 #include <boost/test/unit_test.hpp>
 
-using namespace arma;
 using namespace mlpack;
 using namespace mlpack::optimization;
+using namespace mlpack::distribution;
+using namespace mlpack::regression;
 
 BOOST_AUTO_TEST_SUITE(PSOTest);
 
@@ -108,7 +117,7 @@ BOOST_AUTO_TEST_CASE(McCormickTest)
 
   double result = optimizer.Optimize(f, iterate);
 
-  BOOST_TEST(result == -1.9133, boost::test_tools::tolerance(1e-3));
+  BOOST_REQUIRE_CLOSE(result, -1.9133, 1e-2);
 }
 
 /**
@@ -124,7 +133,113 @@ BOOST_AUTO_TEST_CASE(EggholderFunctionTest)
 
   double result = optimizer.Optimize(f, iterate);
 
-  BOOST_TEST(result == -959.6407, boost::test_tools::tolerance(1e-3));
+  BOOST_REQUIRE_CLOSE(result, -959.6407, 1e-5);
+}
+
+/**
+ * Test for the Easom function.
+ */
+BOOST_AUTO_TEST_CASE(EasomFunctionTest)
+{
+  PSO optimizer;
+  EasomFunction f;
+
+  arma::mat iterate;
+  iterate << 3.14 << 3.14;
+
+  double result = optimizer.Optimize(f, iterate);
+
+  BOOST_REQUIRE_CLOSE(result, -1, 1e-3);
+}
+
+/**
+ * Test for the Colville function.
+ */
+BOOST_AUTO_TEST_CASE(ColvilleFunctionTest)
+{
+  PSO optimizer;
+  ColvilleFunction f;
+
+  arma::mat iterate;
+  iterate << 1 << 1 << 1 << 1;
+
+  double result = optimizer.Optimize(f, iterate);
+
+  BOOST_REQUIRE_CLOSE(result, 0, 1e-4);
+}
+
+/**
+ * Test for the Bukin function.
+ */
+BOOST_AUTO_TEST_CASE(BukinFunctionTest)
+{
+  PSO optimizer;
+  BukinFunction f;
+
+  arma::mat iterate;
+  iterate << -10 << 1;
+
+  double result = optimizer.Optimize(f, iterate);
+
+  BOOST_REQUIRE_CLOSE(result, 0, 1e-4);
+}
+
+/**
+ * Run PSO on logistic regression and make sure the results are acceptable.
+ */
+BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
+{
+  // Generate a two-Gaussian dataset.
+  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+
+  arma::mat data(3, 1000);
+  arma::Row<size_t> responses(1000);
+  for (size_t i = 0; i < 500; ++i)
+  {
+    data.col(i) = g1.Random();
+    responses[i] = 0;
+  }
+  for (size_t i = 500; i < 1000; ++i)
+  {
+    data.col(i) = g2.Random();
+    responses[i] = 1;
+  }
+
+  // Shuffle the dataset.
+  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
+      data.n_cols - 1, data.n_cols));
+  arma::mat shuffledData(3, 1000);
+  arma::Row<size_t> shuffledResponses(1000);
+  for (size_t i = 0; i < data.n_cols; ++i)
+  {
+    shuffledData.col(i) = data.col(indices[i]);
+    shuffledResponses[i] = responses[indices[i]];
+  }
+
+  // Create a test set.
+  arma::mat testData(3, 1000);
+  arma::Row<size_t> testResponses(1000);
+  for (size_t i = 0; i < 500; ++i)
+  {
+    testData.col(i) = g1.Random();
+    testResponses[i] = 0;
+  }
+  for (size_t i = 500; i < 1000; ++i)
+  {
+    testData.col(i) = g2.Random();
+    testResponses[i] = 1;
+  }
+
+  PSO optimizer;
+  LogisticRegression<> lr(shuffledData, shuffledResponses, optimizer, 0.5);
+
+  // Ensure that the error is close to zero.
+  const double acc = lr.ComputeAccuracy(data, responses);
+  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+
+  const double testAcc = lr.ComputeAccuracy(testData, testResponses);
+  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
 }
 
 BOOST_AUTO_TEST_SUITE_END();
