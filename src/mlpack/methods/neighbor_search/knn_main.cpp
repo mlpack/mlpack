@@ -289,7 +289,7 @@ static void mlpackMain()
     // when query data has not been provided.
     if (!CLI::HasParam("query") && k == knn->Dataset().n_cols)
     {
-      Log::Fatal << "Invalid k: " << k << "; must not be equal to the number of "
+      Log::Fatal << "Invalid k: " << k << "; must be less than the number of "
           << "reference points (" << knn->Dataset().n_cols << ") "
           << "if query data has not been provided." << endl;
     }
