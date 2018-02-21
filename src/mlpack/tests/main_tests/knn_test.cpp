@@ -50,19 +50,20 @@ BOOST_FIXTURE_TEST_SUITE(KNNMainTest, KNNTestFixture);
 BOOST_AUTO_TEST_CASE(KNNEqualDimensionTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 10); // 10 points in 3 dimensions.
+  referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
-  /* Now we specify an invalid dimension(2) for the query data.
+  /* 
+   * Now we specify an invalid dimension(2) for the query data.
    * Note that the number of points in query and reference matrices
    * are allowed to be different
    */
   arma::mat queryData;
-  queryData.randu(2, 10);
+  queryData.randu(2, 90); // 90 points in 2 dimensions.
 
-  // Random input, some k <= number of reference points 
+  // Random input, some k <= number of reference points. 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("query", std::move(queryData));
-  SetInputParam("k", (int) 4);
+  SetInputParam("k", (int) 10);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -76,11 +77,11 @@ BOOST_AUTO_TEST_CASE(KNNEqualDimensionTest)
 BOOST_AUTO_TEST_CASE(KNNInvalidKTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 10); // 10 points in 3 dimensions.
+  referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
-  // Random input, some k > number of reference points
+  // Random input, some k > number of reference points.
   SetInputParam("reference", std::move(referenceData));
-  SetInputParam("k", (int) 11);
+  SetInputParam("k", (int) 101);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -94,15 +95,15 @@ BOOST_AUTO_TEST_CASE(KNNInvalidKTest)
 BOOST_AUTO_TEST_CASE(KNNInvalidKQueryDataTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 10); // 10 points in 3 dimensions.
+  referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
   arma::mat queryData;
-  queryData.randu(3, 10); // 10 points in 3 dimensions.
+  queryData.randu(3, 90); // 90 points in 3 dimensions.
 
-  // Random input, some k > number of reference points
+  // Random input, some k > number of reference points.
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("query", std::move(queryData));
-  SetInputParam("k", (int) 11);
+  SetInputParam("k", (int) 101);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -115,7 +116,7 @@ BOOST_AUTO_TEST_CASE(KNNInvalidKQueryDataTest)
 BOOST_AUTO_TEST_CASE(KNNLeafSizeTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 10); // 10 points in 3 dimensions.
+  referenceData.randu(3, 100); // 100 points in 3 dimensions.
   
   // Random input, negative leaf size.
   SetInputParam("reference", std::move(referenceData));
@@ -132,10 +133,11 @@ BOOST_AUTO_TEST_CASE(KNNLeafSizeTest)
 BOOST_AUTO_TEST_CASE(KNNRefModelTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 10); // 10 points in 3 dimensions.
+  referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
+  // Random input, some k <= number of reference points.
   SetInputParam("reference", std::move(referenceData));
-  SetInputParam("k", (int) 4);
+  SetInputParam("k", (int) 10);
 
   mlpackMain();
 
@@ -155,21 +157,21 @@ BOOST_AUTO_TEST_CASE(KNNRefModelTest)
 BOOST_AUTO_TEST_CASE(KNNOutputDimensionTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 10); // 10 points in 3 dimensions.
+  referenceData.randu(3, 100); // 100 points in 3 dimensions.
   
-  // Random input, k = 3.
+  // Random input, some k <= number of reference points.
   SetInputParam("reference", std::move(referenceData));
-  SetInputParam("k", (int) 3);
+  SetInputParam("k", (int) 10);
   
   mlpackMain();
 
-  // Check the neighbors matrix has 3 points for each input point.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_rows, 3);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_cols, 10);
+  // Check the neighbors matrix has 4 points for each input point.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_rows, 10);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_cols, 100);
 
-  // Check the distances matrix has 3 points for each input point.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("distances").n_rows, 3);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("distances").n_cols, 10);
+  // Check the distances matrix has 4 points for each input point.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("distances").n_rows, 10);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("distances").n_cols, 100);
 }
 
 /**
@@ -178,16 +180,15 @@ BOOST_AUTO_TEST_CASE(KNNOutputDimensionTest)
 BOOST_AUTO_TEST_CASE(KNNModelReuseTest)
 {
   arma::mat referenceData;
-  if (!data::Load("test_data_3_1000.csv", referenceData))
-    BOOST_FAIL("Cannot load labels for test_data_3_1000.csv");
+  referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
   arma::mat queryData;
-  if (!data::Load("rann_test_r_3_900.csv", queryData))
-    BOOST_FAIL("Cannot load labels for rann_test_r_3_900.csv");
+  queryData.randu(3, 90); // 90 points in 3 dimensions.
 
+  // Random input, some k <= number of reference points.
   SetInputParam("reference", std::move(referenceData));
-  SetInputParam("query", std::move(queryData));
-  SetInputParam("k", (int) 4);
+  SetInputParam("query", queryData);
+  SetInputParam("k", (int) 10);
 
   mlpackMain();
 
@@ -195,23 +196,78 @@ BOOST_AUTO_TEST_CASE(KNNModelReuseTest)
   arma::mat distances;
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
-
+  
   // Reset passed parameters. 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["query"].wasPassed = false;
 
-  // Input saved model, keep query and k unchanged.
+  // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("input_model", 
       std::move(CLI::GetParam<KNNModel*>("output_model")));
-  if (!data::Load("rann_test_r_3_900.csv", queryData))
-    BOOST_FAIL("Cannot load labels for rann_test_r_3_900.csv");
-  SetInputParam("query", std::move(queryData));
+  SetInputParam("query", queryData);
   
   mlpackMain();
 
-  // Check that initial output matrices and the output matrices using saved model are equal.
+  // Check that initial output matrices and the output matrices using 
+  // saved model are equal.
   CheckMatrices(neighbors, CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   CheckMatrices(distances, CLI::GetParam<arma::mat>("distances"));
+}
+
+/*
+ * Ensure that different search algorithms give same result.
+ */
+BOOST_AUTO_TEST_CASE(KNNAllAlgorithmsTest)
+{ 
+  string algorithms[] = {"dual_tree", "naive", "single_tree", "greedy"};
+  int nof_algorithms = sizeof(algorithms)/sizeof(algorithms[0]);
+
+   
+  // Neighbors and distances given by the above algorithms will be stored 
+  // in the following arrays in the order:
+  // dual_tree, naive, single_tree, greedy. 
+  arma::Mat<size_t> neighbors[nof_algorithms]; 
+  arma::mat distances[nof_algorithms];
+
+  arma::mat referenceData;
+  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+
+  arma::mat queryData;
+  queryData.randu(3, 90); // 90 points in 3 dimensions.
+
+  // Keep some k <= number of reference points same over all.
+  SetInputParam("k", (int) 10);
+
+  // Looping over all the algorithms and storing their outputs.
+  for (int i = 0; i < nof_algorithms; i++) 
+  {
+    // Same random inputs, different algorithms.
+    SetInputParam("reference", referenceData);
+    SetInputParam("query", queryData);
+    SetInputParam("algorithm", algorithms[i]);
+
+    mlpackMain();
+
+    neighbors[i] = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+    distances[i] = std::move(CLI::GetParam<arma::mat>("distances"));
+
+    CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+    CLI::GetSingleton().Parameters()["query"].wasPassed = false;
+    CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
+  }
+  
+  // Check if all the neighbors and distances matrices are equal.
+  // for (int i = 0; i < nof_algorithms - 1; i++)
+  // {
+  //   CheckMatrices(neighbors[i], neighbors[i + 1]);
+  //   CheckMatrices(distances[i], distances[i + 1]);
+  // }
+  CheckMatrices(neighbors[0], neighbors[1]);
+  CheckMatrices(neighbors[1], neighbors[2]);
+  //CheckMatrices(neighbors[2], neighbors[3]);
+  CheckMatrices(distances[0], distances[1]);
+  CheckMatrices(distances[1], distances[2]);
+  //CheckMatrices(distances[2], distances[3]);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
