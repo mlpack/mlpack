@@ -117,7 +117,7 @@ double LogisticRegressionFunction<MatType>::Evaluate(
       (2 * arma::conv_to<arma::rowvec>::from(responses) - 1.0)));
 
   // Invert the result, because it's a minimization.
-  return -result + regularization;
+  return regularization - result;
 }
 
 /**
