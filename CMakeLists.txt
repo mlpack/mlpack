@@ -64,6 +64,11 @@ endif()
 # specific.  This list is a subset of MLPACK_LIBRARIES.
 set(COMPILER_SUPPORT_LIBRARIES "")
 
+# If we are using MSVC, we need /bigobj.
+if (MSVC)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+endif ()
+
 # If using clang, we have to link against libc++ depending on the
 # OS (at least on some systems). Further, gcc sometimes optimizes calls to
 # math.h functions, making -lm unnecessary with gcc, but it may still be
@@ -142,8 +147,6 @@ if(DEBUG)
     add_definitions(-DDEBUG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -O0")
-  else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
   endif()
 
   # mlpack uses it's own mlpack::backtrace class based on Binary File Descriptor
@@ -277,6 +280,7 @@ set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.66.0" "1.66"
   "1.65.1" "1.65.0" "1.65"
   "1.64.1" "1.64.0" "1.64"
   "1.63.1" "1.63.0" "1.63"

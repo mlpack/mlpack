@@ -44,8 +44,12 @@ namespace test {
 class BukinFunction
 {
  public:
-  //! Initialize the BukinFunction.
-  BukinFunction();
+  /*
+   * Initialize the BukinFunction.
+   *
+   * @param epsilon Coefficient to avoid division by zero (numerical stability).
+   */
+  BukinFunction(const double epsilon = 1e-8);
 
   /**
   * Shuffle the order of function visitation. This may be called by the
@@ -57,7 +61,7 @@ class BukinFunction
   size_t NumFunctions() const { return 1; }
 
   //! Get the starting point.
-  arma::mat GetInitialPoint() const { return arma::mat("-10; 2.0"); }
+  arma::mat GetInitialPoint() const { return arma::mat("-10; -2.0"); }
 
   /*
    * Evaluate a function for a particular batch-size.
@@ -97,6 +101,15 @@ class BukinFunction
    * @param gradient The function gradient.
    */
   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
+
+  //! Get the value used for numerical stability.
+  double Epsilon() const { return epsilon; }
+  //! Modify the value used for numerical stability.
+  double& Epsilon() { return epsilon; }
+
+ private:
+  //! The value used for numerical stability.
+  double epsilon;
 };
 
 } // namespace test

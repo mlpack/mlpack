@@ -36,7 +36,7 @@ inline bool SetInputWidthVisitor::operator()(LayerType* layer) const
 template<typename T>
 inline typename std::enable_if<
     !HasInputWidth<T, size_t&(T::*)()>::value &&
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+    !HasModelCheck<T>::value, bool>::type
 SetInputWidthVisitor::LayerInputWidth(T* /* layer */) const
 {
   return false;
@@ -45,7 +45,7 @@ SetInputWidthVisitor::LayerInputWidth(T* /* layer */) const
 template<typename T>
 inline typename std::enable_if<
     HasInputWidth<T, size_t&(T::*)()>::value &&
-    !HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+    !HasModelCheck<T>::value, bool>::type
 SetInputWidthVisitor::LayerInputWidth(T* layer) const
 {
   if (layer->InputWidth() == 0 || reset)
@@ -59,7 +59,7 @@ SetInputWidthVisitor::LayerInputWidth(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     !HasInputWidth<T, size_t&(T::*)()>::value &&
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+    HasModelCheck<T>::value, bool>::type
 SetInputWidthVisitor::LayerInputWidth(T* layer) const
 {
   for (size_t i = 0; i < layer->Model().size(); ++i)
@@ -74,7 +74,7 @@ SetInputWidthVisitor::LayerInputWidth(T* layer) const
 template<typename T>
 inline typename std::enable_if<
     HasInputWidth<T, size_t&(T::*)()>::value &&
-    HasModelCheck<T, std::vector<LayerTypes>&(T::*)()>::value, bool>::type
+    HasModelCheck<T>::value, bool>::type
 SetInputWidthVisitor::LayerInputWidth(T* layer) const
 {
   if (layer->InputWidth() == 0 || reset)

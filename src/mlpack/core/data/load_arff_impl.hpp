@@ -16,6 +16,7 @@
 #include "load_arff.hpp"
 
 #include <boost/algorithm/string/trim.hpp>
+#include "is_naninf.hpp"
 
 namespace mlpack {
 namespace data {
@@ -197,7 +198,7 @@ void LoadARFF(const std::string& filename,
         if (token.fail())
         {
           // Check for NaN or inf.
-          if (!arma::diskio::convert_naninf(val, token.str()))
+          if (!IsNaNInf(val, token.str()))
           {
             // Okay, it's not NaN or inf.  If it's '?', we issue a specific
             // error, otherwise we issue a general error.

@@ -19,15 +19,17 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-AddMerge<InputDataType, OutputDataType>::AddMerge()
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge()
 {
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType>
+template <typename InputDataType, typename OutputDataType,
+          typename... CustomLayers>
 template<typename InputType, typename OutputType>
-void AddMerge<InputDataType, OutputDataType>::Forward(
+void AddMerge<InputDataType, OutputDataType, CustomLayers...>::Forward(
     const InputType&& /* input */, OutputType&& output)
 {
   output = boost::apply_visitor(outputParameterVisitor, network.front());
@@ -38,18 +40,20 @@ void AddMerge<InputDataType, OutputDataType>::Forward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 template<typename eT>
-void AddMerge<InputDataType, OutputDataType>::Backward(
+void AddMerge<InputDataType, OutputDataType, CustomLayers...>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
   g = gy;
 }
 
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 template<typename Archive>
-void AddMerge<InputDataType, OutputDataType>::serialize(
+void AddMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   if (Archive::is_loading::value)

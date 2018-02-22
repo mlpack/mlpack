@@ -19,31 +19,35 @@ namespace mlpack {
 namespace ann {
 
 //! AddVisitor visitor class.
+template<typename... CustomLayers>
 template<typename T>
-inline AddVisitor::AddVisitor(T newLayer) :
+inline AddVisitor<CustomLayers...>::AddVisitor(T newLayer) :
     newLayer(std::move(newLayer))
 {
   /* Nothing to do here. */
 }
 
+template<typename... CustomLayers>
 template<typename LayerType>
-inline void AddVisitor::operator()(LayerType* layer) const
+inline void AddVisitor<CustomLayers...>::operator()(LayerType* layer) const
 {
   LayerAdd<LayerType>(layer);
 }
 
+template<typename... CustomLayers>
 template<typename T>
 inline typename std::enable_if<
-    HasAddCheck<T, void(T::*)(LayerTypes)>::value, void>::type
-AddVisitor::LayerAdd(T* layer) const
+    HasAddCheck<T, void(T::*)(LayerTypes<CustomLayers...>)>::value, void>::type
+AddVisitor<CustomLayers...>::LayerAdd(T* layer) const
 {
   layer->Add(newLayer);
 }
 
+template<typename... CustomLayers>
 template<typename T>
 inline typename std::enable_if<
-    !HasAddCheck<T, void(T::*)(LayerTypes)>::value, void>::type
-AddVisitor::LayerAdd(T* /* layer */) const
+    !HasAddCheck<T, void(T::*)(LayerTypes<CustomLayers...>)>::value, void>::type
+AddVisitor<CustomLayers...>::LayerAdd(T* /* layer */) const
 {
   /* Nothing to do here. */
 }
