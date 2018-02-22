@@ -148,7 +148,7 @@ double LogisticRegressionFunction<MatType>::Evaluate(
       (2 * respD - 1.0)));
 
   // Invert the result, because it's a minimization.
-  return -result + regularization;
+  return regularization - result;
 }
 
 //! Evaluate the gradient of the logistic regression objective function.
@@ -254,7 +254,7 @@ double LogisticRegressionFunction<MatType>::EvaluateWithGradient(
       (2 * arma::conv_to<arma::rowvec>::from(responses) - 1.0)));
 
   // Invert the result, because it's a minimization.
-  return -result + objectiveRegularization;
+  return objectiveRegularization - result;
 }
 
 template<typename MatType>
@@ -294,7 +294,7 @@ double LogisticRegressionFunction<MatType>::EvaluateWithGradient(
       (2 * respD - 1.0)));
 
   // Invert the result, because it's a minimization.
-  return -result + objectiveRegularization;
+  return objectiveRegularization - result;
 }
 
 } // namespace regression
