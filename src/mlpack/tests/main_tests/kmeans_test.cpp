@@ -51,9 +51,9 @@ BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
         constexpr int N = 10;
         constexpr int D = 4;
 
-        arma::mat InputData = arma::randu<arma::mat>(N, D);
+        arma::mat inputData = arma::randu<arma::mat>(N, D);
 
-        SetInputParam("input", std::move(InputData));
+        SetInputParam("input", std::move(inputData));
         SetInputParam("clusters", (int) -1); // Invalid
 
         Log::Fatal.ignoreInput = true;
@@ -70,9 +70,9 @@ BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
         constexpr int N = 10;
         constexpr int D = 4;
 
-        arma::mat InputData = arma::randu<arma::mat>(N, D);
+        arma::mat inputData = arma::randu<arma::mat>(N, D);
 
-        SetInputParam("input", std::move(InputData));
+        SetInputParam("input", std::move(inputData));
         SetInputParam("clusters", (int) 11); // Invalid
 
         Log::Fatal.ignoreInput = true;
@@ -90,9 +90,9 @@ BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
         constexpr int D = 4;
         int C = 2;
         double P = 2.0;
-        arma::mat InputData = arma::randu<arma::mat>(N, D);
+        arma::mat inputData = arma::randu<arma::mat>(N, D);
 
-        SetInputParam("input", std::move(InputData));
+        SetInputParam("input", std::move(inputData));
         SetInputParam("refined_start", true);
         SetInputParam("clusters", std::move(C));
         SetInputParam("percentage", std::move(P));     // Invalid
@@ -112,9 +112,9 @@ BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
         constexpr int D = 4;
         int C = 2;
         double P = -1.0;
-        arma::mat InputData = arma::randu<arma::mat>(N, D);
+        arma::mat inputData = arma::randu<arma::mat>(N, D);
 
-        SetInputParam("input", std::move(InputData));
+        SetInputParam("input", std::move(inputData));
         SetInputParam("refined_start", true);
         SetInputParam("clusters", std::move(C));
         SetInputParam("percentage", std::move(P));     // Invalid
@@ -134,8 +134,8 @@ BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
         constexpr int D = 4;
         int C = 2;
 
-        arma::mat InputData = arma::randu<arma::mat>(N, D);
-        SetInputParam("input", std::move(InputData));
+        arma::mat inputData = arma::randu<arma::mat>(N, D);
+        SetInputParam("input", std::move(inputData));
         SetInputParam("clusters", std::move(C));
 
 
@@ -157,8 +157,8 @@ BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
         constexpr int D = 4;
         int C = 2;
 
-        arma::mat InputData = arma::randu<arma::mat>(N, D);
-        SetInputParam("input", std::move(InputData));
+        arma::mat inputData = arma::randu<arma::mat>(N, D);
+        SetInputParam("input", std::move(inputData));
         SetInputParam("clusters", std::move(C));
         SetInputParam("labels_only", true);
 
@@ -181,47 +181,47 @@ BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
         constexpr int D = 4;
         int C = 95;
         int iterations = 100;
-        arma::mat InputData = arma::randu<arma::mat>(N, D);
-        arma::mat InitialCentroids=arma::ones(C, D);
+        arma::mat inputData = arma::randu<arma::mat>(N, D);
+        arma::mat initialCentroids=arma::ones(C, D);
 
-        SetInputParam("input", std::move(InputData));
+        SetInputParam("input", std::move(inputData));
         SetInputParam("clusters", std::move(C));
         SetInputParam("labels_only", true);
-        SetInputParam("initial_centroids", std::move(InitialCentroids));
+        SetInputParam("initial_centroids", std::move(initialCentroids));
         SetInputParam("max_iterations", std::move(iterations));
 
         mlpackMain();
 
-        arma::mat NormalOutput;
-        NormalOutput = std::move(CLI::GetParam<arma::mat>("output"));
+        arma::mat normalOutput;
+        normalOutput = std::move(CLI::GetParam<arma::mat>("output"));
 
         ResetKmSettings();
 
-        SetInputParam("input", std::move(InputData));
+        SetInputParam("input", std::move(inputData));
         SetInputParam("clusters", std::move(C));
         SetInputParam("labels_only", true);
-        SetInputParam("initial_centroids", std::move(InitialCentroids));
+        SetInputParam("initial_centroids", std::move(initialCentroids));
         SetInputParam("allow_empty_clusters", true);
         SetInputParam("max_iterations", std::move(iterations));
 
         mlpackMain();
 
-        arma::mat AllowEmptyOutput;
-        AllowEmptyOutput = std::move(CLI::GetParam<arma::mat>("output"));
+        arma::mat allowEmptyOutput;
+        allowEmptyOutput = std::move(CLI::GetParam<arma::mat>("output"));
 
         ResetKmSettings();
 
-        SetInputParam("input", std::move(InputData));
+        SetInputParam("input", std::move(inputData));
         SetInputParam("clusters", std::move(C));
         SetInputParam("labels_only", true);
-        SetInputParam("initial_centroids", std::move(InitialCentroids));
+        SetInputParam("initial_centroids", std::move(initialCentroids));
         SetInputParam("kill_empty_clusters", true);
         SetInputParam("max_iterations", std::move(iterations));
 
         mlpackMain();
 
-        arma::mat KillEmptyOutput;
-        KillEmptyOutput = std::move(CLI::GetParam<arma::mat>("output"));
+        arma::mat killEmptyOutput;
+        killEmptyOutput = std::move(CLI::GetParam<arma::mat>("output"));
 
         ResetKmSettings();
 
@@ -229,11 +229,11 @@ BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
 
         for (int j = 0; j <N ; ++j)
         {
-            BOOST_CHECK_NE(NormalOutput(j), AllowEmptyOutput(j));
+            BOOST_CHECK_NE(normalOutput(j), allowEmptyOutput(j));
         }
         for (int j = 0; j <N ; ++j)
         {
-            BOOST_CHECK_NE(KillEmptyOutput(j), AllowEmptyOutput(j));
+            BOOST_CHECK_NE(killEmptyOutput(j), allowEmptyOutput(j));
         }
 
     }
@@ -248,16 +248,16 @@ BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
         constexpr int D = 4;
         int C = 2;
 
-        arma::mat InputData = arma::randu<arma::mat>(N, D);
-        SetInputParam("input", std::move(InputData));
+        arma::mat inputData = arma::randu<arma::mat>(N, D);
+        SetInputParam("input", std::move(inputData));
         SetInputParam("clusters", std::move(C));
         SetInputParam("in_place", true);
 
 
         mlpackMain();
 
-        BOOST_REQUIRE_EQUAL(InputData.n_cols, D+1);
-        BOOST_REQUIRE_EQUAL(InputData.n_rows, N);
+        BOOST_REQUIRE_EQUAL(inputData.n_cols, D+1);
+        BOOST_REQUIRE_EQUAL(inputData.n_rows, N);
     }
 
 
@@ -302,74 +302,74 @@ BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
         constexpr int D = 4;
         int C = 5;
         std::string algo = "naive";
-        arma::mat InputData = arma::randu<arma::mat>(N, D);
+        arma::mat inputData = arma::randu<arma::mat>(N, D);
 
-        SetInputParam("input", std::move(InputData));
+        SetInputParam("input", std::move(inputData));
         SetInputParam("clusters", std::move(C));
         SetInputParam("algorithm", std::move(algo));
 
         mlpackMain();
 
-        arma::mat NaiveOutput;
-        NaiveOutput = std::move(CLI::GetParam<arma::mat>("output"));
+        arma::mat naiveOutput;
+        naiveOutput = std::move(CLI::GetParam<arma::mat>("output"));
 
         ResetKmSettings();
 
         algo = "elkan";
 
-        SetInputParam("input", std::move(InputData));
+        SetInputParam("input", std::move(inputData));
         SetInputParam("clusters", std::move(C));
         SetInputParam("algorithm", std::move(algo));
 
         mlpackMain();
 
-        arma::mat ElkanOutput;
-        ElkanOutput = std::move(CLI::GetParam<arma::mat>("output"));
+        arma::mat elkanOutput;
+        elkanOutput = std::move(CLI::GetParam<arma::mat>("output"));
 
         ResetKmSettings();
 
         algo = "hamerly";
 
-        SetInputParam("input", std::move(InputData));
+        SetInputParam("input", std::move(inputData));
         SetInputParam("clusters", std::move(C));
         SetInputParam("algorithm", std::move(algo));
 
         mlpackMain();
 
-        arma::mat HamerlyOutput;
-        HamerlyOutput = std::move(CLI::GetParam<arma::mat>("output"));
+        arma::mat hamerlyOutput;
+        hamerlyOutput = std::move(CLI::GetParam<arma::mat>("output"));
 
         ResetKmSettings();
 
         algo = "dualtree";
 
-        SetInputParam("input", std::move(InputData));
+        SetInputParam("input", std::move(inputData));
         SetInputParam("clusters", std::move(C));
         SetInputParam("algorithm", std::move(algo));
 
         mlpackMain();
 
-        arma::mat DualTreeOutput;
-        DualTreeOutput = std::move(CLI::GetParam<arma::mat>("output"));
+        arma::mat dualTreeOutput;
+        dualTreeOutput = std::move(CLI::GetParam<arma::mat>("output"));
 
         ResetKmSettings();
 
         algo = "dualtree-covertree";
 
-        SetInputParam("input", std::move(InputData));
+        SetInputParam("input", std::move(inputData));
         SetInputParam("clusters", std::move(C));
         SetInputParam("algorithm", std::move(algo));
 
         mlpackMain();
 
-        arma::mat DualCoverTreeOutput;
-        DualCoverTreeOutput = std::move(CLI::GetParam<arma::mat>("output"));
+        arma::mat dualCoverTreeOutput;
+        dualCoverTreeOutput = std::move(CLI::GetParam<arma::mat>("output"));
 
         // Check That all the algorithms yield the same clusters
-        CheckMatrices(NaiveOutput, ElkanOutput);
-        CheckMatrices(ElkanOutput, HamerlyOutput);
-        CheckMatrices(HamerlyOutput, DualTreeOutput);
-        CheckMatrices(DualTreeOutput, DualCoverTreeOutput);
+        CheckMatrices(naiveOutput, elkanOutput);
+        CheckMatrices(elkanOutput, hamerlyOutput);
+        CheckMatrices(hamerlyOutput, dualTreeOutput);
+        CheckMatrices(dualTreeOutput, dualCoverTreeOutput);
     }
 
 
