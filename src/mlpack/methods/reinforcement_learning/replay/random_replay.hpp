@@ -124,7 +124,35 @@ class RandomReplay
     sampledNextStates = nextStates.cols(sampledIndices);
     isTerminal = this->isTerminal.elem(sampledIndices);
   }
+  /**
+   * Sample some experiences for policy gradient.
+   * Unlike usual methods this shares advantage for gradient ascent.
+   * Reference : https://karpathy.github.io/2016/05/31/rl/
+   *
+   * @param sampledStates Sampled encoded states.
+   * @param sampledActions Sampled actions.
+   * @param sampledAdvantage Sampled advantage.
+   * @param isTerminal Indicate whether corresponding next state is terminal
+   *        state.
+   */
+  void PolicySample(arma::mat& sampledStates,
+              arma::icolvec& sampledActions,
+              arma::colvec& sampledAdvantage,              
+              arma::icolvec& isTerminal) //check
+  {
+    size_t upperBound = full ? capacity : position;
+    arma::uvec sampledIndices = arma::randi<arma::uvec>(
+        batchSize, arma::distr_param(0, upperBound - 1));
 
+    sampledStates = states.cols(sampledIndices);
+    sampledActions = actions.elem(sampledIndices);
+    sampledAdvantage = rewards.elem(sampledIndices);
+    isTerminal = this->isTerminal.elem(sampledIndices);
+    // Making advantage zero mean
+    // Division by standard deviation to get advantage
+    sampledAdvantage = (sampledAdvantage - sampledAdvantage.mean());
+    sampledAdvantage = sampledAdvantage / sampledAdvantage.stddev();
+  }
   /**
    * Get the number of transitions in the memory.
    *
