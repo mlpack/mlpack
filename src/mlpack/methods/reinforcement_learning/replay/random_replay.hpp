@@ -150,8 +150,8 @@ class RandomReplay
     isTerminal = this->isTerminal.elem(sampledIndices);
     // Making advantage zero mean
     // Division by standard deviation to get advantage
-    sampledAdvantage = (sampledAdvantage - sampledAdvantage.mean());
-    sampledAdvantage = sampledAdvantage / sampledAdvantage.stddev();
+    sampledAdvantage = (sampledAdvantage - arma::mean(sampledAdvantage));
+    sampledAdvantage = sampledAdvantage / arma::stddev(sampledAdvantage);
   }
   /**
    * Get the number of transitions in the memory.
