@@ -169,7 +169,7 @@ static void mlpackMain()
         secondHashSize, bucketSize);
     Timer::Stop("hash_building");
   }
-  else if (CLI::HasParam("input_model"))
+  else // We must have an input model.
   {
     allkann = CLI::GetParam<LSHSearch<>*>("input_model");
   }

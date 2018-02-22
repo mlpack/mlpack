@@ -169,7 +169,7 @@ inline void SVDIncompleteIncrementalLearning::WUpdate<arma::sp_mat>(
   arma::mat deltaW(V.n_rows, W.n_cols);
   deltaW.zeros();
   for (arma::sp_mat::const_iterator it = V.begin_col(currentUserIndex);
-      it != V.end_col(currentUserIndex); it++)
+      it != V.end_col(currentUserIndex); ++it)
   {
     double val = *it;
     size_t i = it.row();
@@ -189,7 +189,7 @@ inline void SVDIncompleteIncrementalLearning::HUpdate<arma::sp_mat>(
   deltaH.zeros();
 
   for (arma::sp_mat::const_iterator it = V.begin_col(currentUserIndex);
-      it != V.end_col(currentUserIndex); it++)
+      it != V.end_col(currentUserIndex); ++it)
   {
     double val = *it;
     size_t i = it.row();

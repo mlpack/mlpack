@@ -42,6 +42,25 @@ class NoDecay
   {
     // Nothing to do here.
   }
+
+  /**
+   * This function is called in each iteration after the SVRG update step.
+   *
+   * @param iterate Parameters that minimize the function.
+   * @param iterate0 The last function parameters at time t - 1.
+   * @param gradient The current gradient matrix at time t.
+   * @param fullGradient The computed full gradient.
+   * @param stepSize Step size to be used for the given iteration.
+   */
+  void Update(const arma::mat& /* iterate */,
+              const arma::mat& /*iterate0 */,
+              const arma::mat& /* gradient */,
+              const arma::mat& /* fullGradient */,
+              const size_t /* numBatches */,
+              double& /* stepSize */)
+  {
+    // Nothing to do here.
+  }
 };
 
 } // namespace optimization

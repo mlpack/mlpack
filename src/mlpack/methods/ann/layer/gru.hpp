@@ -156,7 +156,7 @@ class GRU
   OutputDataType& Gradient() { return gradient; }
 
   //! Get the model modules.
-  std::vector<LayerTypes>& Model() { return network; }
+  std::vector<LayerTypes<> >& Model() { return network; }
 
   /**
    * Serialize the layer
@@ -181,22 +181,22 @@ class GRU
   OutputDataType weights;
 
   //! Locally-stored input 2 gate module.
-  LayerTypes input2GateModule;
+  LayerTypes<> input2GateModule;
 
   //! Locally-stored output 2 gate module.
-  LayerTypes output2GateModule;
+  LayerTypes<> output2GateModule;
 
   //! Locally-stored output hidden state 2 gate module.
-  LayerTypes outputHidden2GateModule;
+  LayerTypes<> outputHidden2GateModule;
 
   //! Locally-stored input gate module.
-  LayerTypes inputGateModule;
+  LayerTypes<> inputGateModule;
 
   //! Locally-stored hidden state module.
-  LayerTypes hiddenStateModule;
+  LayerTypes<> hiddenStateModule;
 
   //! Locally-stored forget gate module.
-  LayerTypes forgetGateModule;
+  LayerTypes<> forgetGateModule;
 
   //! Locally-stored output parameter visitor.
   OutputParameterVisitor outputParameterVisitor;
@@ -208,7 +208,7 @@ class GRU
   DeleteVisitor deleteVisitor;
 
   //! Locally-stored list of network modules.
-  std::vector<LayerTypes> network;
+  std::vector<LayerTypes<> > network;
 
   //! Locally-stored number of forward steps.
   size_t forwardStep;
