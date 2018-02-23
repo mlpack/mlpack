@@ -136,7 +136,7 @@ BOOST_AUTO_TEST_CASE(AllowEmptyClusterTest)
 }
 
 /**
- * Make sure kill empty cluster policy removes the empty cluster
+ * Make sure kill empty cluster policy removes the empty cluster.
  */
 BOOST_AUTO_TEST_CASE(KillEmptyClusterTest)
 {
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(KillEmptyClusterTest)
     BOOST_REQUIRE_EQUAL(counts[i], countsOld[i]);
 
   // Make sure that counts contain one less element than old counts.
-  BOOST_REQUIRE_GT(countsOld.n_elem,counts.n_elem);
+  BOOST_REQUIRE_GT(countsOld.n_elem, counts.n_elem);
 }
 
 /**
