@@ -80,6 +80,7 @@ add_executable(mlpack_test
   parallel_sgd_test.cpp
   pca_test.cpp
   perceptron_test.cpp
+  policygrad_test.cpp
   prefixedoutstream_test.cpp
   proximal_test.cpp
   python_binding_test.cpp

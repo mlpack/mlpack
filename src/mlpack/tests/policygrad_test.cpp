@@ -1,7 +1,7 @@
 /**
  * @file policygrad_test.hpp
  * @author Rohan Raj
- *
+ * 
  * Test for Policy Gradient Method implementation
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
