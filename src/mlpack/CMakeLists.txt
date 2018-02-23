@@ -4,7 +4,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/..) # mlpack/mlpack_export.hpp
 set(MLPACK_SRCS ${MLPACK_SRCS}
   "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/prereqs.hpp"
-)
+        methods/ann/init_rules/glorot_init.hpp)
 
 ## Recurse into both core/ and methods/.
 set(DIRS
