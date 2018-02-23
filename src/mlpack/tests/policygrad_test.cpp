@@ -1,8 +1,8 @@
 /**
- * @file q_learning_test.hpp
- * @author Shangtong Zhang
+ * @file policygrad_test.hpp
+ * @author Rohan Raj
  *
- * Test for Q-Learning implementation
+ * Test for Policy Gradient Method implementation
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -33,7 +33,7 @@ using namespace mlpack::rl;
 
 BOOST_AUTO_TEST_SUITE(PolicyGradTest);
 
-//! Test DQN in Cart Pole task.
+//! Test Policy Gradient in Cart Pole task.
 BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
 {
   // Set up the network.
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
   config.ExplorationSteps() = 100;
   config.StepLimit() = 200;
 
-  // Set up DQN agent.
+  // Set up Policy Gradient agent.
   PolicyGradient<CartPole, decltype(model), AdamUpdate, decltype(policy)>
       agent(std::move(config), std::move(model), std::move(policy),
           std::move(replayMethod));
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
 
     if (episodes > 1000)
     {
-      Log::Debug << "Cart Pole with PolicyGradient failed." << std::endl;
+      Log::Debug << "Cart Pole with Policy Gradient method failed." << std::endl;
       converged = false;
       break;
     }
