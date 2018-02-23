@@ -22,6 +22,7 @@
 #include <mlpack/core/optimizers/adam/adam_update.hpp>
 #include <mlpack/core/optimizers/rmsprop/rmsprop_update.hpp>
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
+// #include <mlpack/methods/logistic_regression/logistic_regression_function_impl.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -37,7 +38,7 @@ BOOST_AUTO_TEST_SUITE(PolicyGradTest);
 BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
 {
   // Set up the network.
-  FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
+  FFN<NegativeLogLikelihood<>, GaussianInitialization> model(NegativeLogLikelihood<>(),
       GaussianInitialization(0, 0.001));
   model.Add<Linear<>>(4, 128);
   model.Add<ReLULayer<>>();

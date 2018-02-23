@@ -13,6 +13,7 @@
 
 #ifndef MLPACK_METHODS_RL_POLICY_GRADIENT_LEARNING_IMPL_HPP
 #define MLPACK_METHODS_RL_POLICY_GRADIENT_LEARNING_IMPL_HPP
+#include <mlpack/methods/logistic_regression/logistic_regression_function_impl.hpp>
 
 #include "policygrad.hpp"
 namespace mlpack{
@@ -107,7 +108,9 @@ double PolicyGradient<
   Presently I have considered Cartpole. Hence I am using 2 action space.
   How ever to make the program more generic, one should add the action space as variable to the agent.
   */
-  arma::Mat<size_t> target(2,sampledStates.n_cols)  ; // 2 is the action size
+  arma::mat target;
+  learningNetwork.Forward(sampledStates, target);
+  // arma::Mat<size_t> target(2,sampledStates.n_cols)  ; // 2 is the action size
   target.zeros(); 
   for (size_t i = 0; i < sampledStates.n_cols; ++i)
   {
