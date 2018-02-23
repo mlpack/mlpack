@@ -1,3 +1,16 @@
+/**
+ * @file policygrad_impl.hpp
+ * @author Rohan Raj
+ *
+ * Definition of the PolicyGradient class, which implements policy gradient network in Mlpack.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+
+
 #ifndef MLPACK_METHODS_RL_POLICY_GRADIENT_LEARNING_IMPL_HPP
 #define MLPACK_METHODS_RL_POLICY_GRADIENT_LEARNING_IMPL_HPP
 
@@ -85,8 +98,17 @@ double PolicyGradient<
   replayMethod.PolicySample(sampledStates, sampledActions, advantage, isTerminal); //rohan
   // Compute action value for next state with target network.
 
+  /***One way to get number of action is by making a variable capturing the number of action
+  Another way is to use the predict funtion to get the size of the last layer.
+
+  First way will make the program generic for any number of action space.
+  Second way is easy. But it is unnecessarily increase the computation.
+
+  Presently I have considered Cartpole. Hence I am using 2 action space.
+  How ever to make the program more generic, one should add the action space as variable to the agent.
+  */
   arma::Mat<size_t> target(2,sampledStates.n_cols)  ; // 2 is the action size
-  target.zeros(); // ACTION SIZE
+  target.zeros(); 
   for (size_t i = 0; i < sampledStates.n_cols; ++i)
   {
   	target(sampledActions[i], i) = advantage[i]; // learning from advantage
