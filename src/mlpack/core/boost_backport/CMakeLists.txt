@@ -14,6 +14,9 @@ set(SOURCES
   unordered_collections_load_imp.hpp
   unordered_collections_save_imp.hpp
   unordered_map.hpp
+  vector.hpp
+  collections_load_imp.hpp
+  collections_save_imp.hpp
 )
 
 # add directory name to sources
