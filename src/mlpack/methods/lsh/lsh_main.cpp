@@ -154,9 +154,10 @@ static void mlpackMain()
     Log::Info << "Using LSH with " << numProj << " projections (K) and " <<
         numTables << " tables (L) with hash width(r): " << hashWidth << endl;
 
-  LSHSearch<> allkann;
+  LSHSearch<>* allkann;
   if (CLI::HasParam("reference"))
   {
+    allkann = new LSHSearch<>();
     referenceData = std::move(CLI::GetParam<arma::mat>("reference"));
     Log::Info << "Using reference data from '"
         << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
@@ -164,13 +165,13 @@ static void mlpackMain()
         << endl;
 
     Timer::Start("hash_building");
-    allkann.Train(std::move(referenceData), numProj, numTables, hashWidth,
+    allkann->Train(std::move(referenceData), numProj, numTables, hashWidth,
         secondHashSize, bucketSize);
     Timer::Stop("hash_building");
   }
-  else if (CLI::HasParam("input_model"))
+  else // We must have an input model.
   {
-    allkann = std::move(CLI::GetParam<LSHSearch<>>("input_model"));
+    allkann = CLI::GetParam<LSHSearch<>*>("input_model");
   }
 
   if (CLI::HasParam("k"))
@@ -184,11 +185,11 @@ static void mlpackMain()
           << CLI::GetPrintableParam<arma::mat>("query") << "' ("
           << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
 
-      allkann.Search(queryData, k, neighbors, distances, 0, numProbes);
+      allkann->Search(queryData, k, neighbors, distances, 0, numProbes);
     }
     else
     {
-      allkann.Search(k, neighbors, distances, 0, numProbes);
+      allkann->Search(k, neighbors, distances, 0, numProbes);
     }
 
     Log::Info << "Neighbors computed." << endl;
@@ -205,20 +206,17 @@ static void mlpackMain()
         << endl;
 
     // Compute recall and print it.
-    double recallPercentage = 100 * allkann.ComputeRecall(neighbors,
+    double recallPercentage = 100 * allkann->ComputeRecall(neighbors,
         trueNeighbors);
 
     Log::Info << "Recall: " << recallPercentage << endl;
   }
 
-  // Save output, if desired.
+  // Save output, if we did a search..
   if (CLI::HasParam("k"))
   {
-    if (CLI::HasParam("distances"))
-      CLI::GetParam<arma::mat>("distances") = std::move(distances);
-    if (CLI::HasParam("neighbors"))
-      CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+    CLI::GetParam<arma::mat>("distances") = std::move(distances);
+    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
   }
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<LSHSearch<>>("output_model") = std::move(allkann);
+  CLI::GetParam<LSHSearch<>*>("output_model") = allkann;
 }

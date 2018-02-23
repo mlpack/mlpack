@@ -35,6 +35,7 @@ struct NBCTestFixture
   ~NBCTestFixture()
   {
     // Clear the settings.
+    bindings::tests::CleanMemory();
     CLI::ClearSettings();
   }
 };
@@ -142,6 +143,8 @@ BOOST_AUTO_TEST_CASE(NBCLabelsLessDimensionTest)
   output = std::move(CLI::GetParam<arma::Row<size_t>>("output"));
   output_probs = std::move(CLI::GetParam<arma::mat>("output_probs"));
 
+  bindings::tests::CleanMemory();
+
   // Now train NBC with labels provided.
 
   inputData.shed_row(inputData.n_rows - 1);
@@ -208,7 +211,7 @@ BOOST_AUTO_TEST_CASE(NBCModelReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                std::move(CLI::GetParam<NBCModel>("output_model")));
+                std::move(CLI::GetParam<NBCModel*>("output_model")));
 
   mlpackMain();
 
@@ -244,7 +247,7 @@ BOOST_AUTO_TEST_CASE(NBCTrainingVerTest)
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                std::move(CLI::GetParam<NBCModel>("output_model")));
+                std::move(CLI::GetParam<NBCModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -289,6 +292,8 @@ BOOST_AUTO_TEST_CASE(NBCIncrementalVarianceTest)
   // Check output have only single row.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("output").n_rows, 1);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_probs").n_rows, 2);
+
+  bindings::tests::CleanMemory();
 
   // Reset data passed.
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;

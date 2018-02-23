@@ -21,6 +21,9 @@ cdef extern from "<mlpack/core/util/cli.hpp>" namespace "mlpack" nogil:
     (T&) GetParam[T](string) nogil except +
 
     @staticmethod
+    bool HasParam(string) nogil except +
+
+    @staticmethod
     void SetPassed(string) nogil except +
 
     @staticmethod
@@ -37,16 +40,13 @@ cdef extern from "<mlpack/core/util/cli.hpp>" namespace "mlpack" nogil:
 
 cdef extern from "<mlpack/bindings/python/mlpack/cli_util.hpp>" \
     namespace "mlpack::util" nogil:
-  void SetParam[T](string, const T&) nogil except +
-  void SetParamWithInfo[T](string, const T&, const bool*) nogil except +
+  void SetParam[T](string, T&) nogil except +
+  void SetParamPtr[T](string, T*, bool) nogil except +
+  void SetParamWithInfo[T](string, T&, const bool*) nogil except +
+  (T*) GetParamPtr[T](string) nogil except +
   (T&) GetParamWithInfo[T](string) nogil except +
   void EnableVerbose() nogil except +
   void DisableVerbose() nogil except +
   void DisableBacktrace() nogil except +
   void ResetTimers() nogil except +
   void EnableTimers() nogil except +
-
-cdef extern from "<mlpack/bindings/python/mlpack/move.hpp>" \
-    namespace "mlpack::util" nogil:
-  void MoveFromPtr[T](T&, T*) nogil except +
-  void MoveToPtr[T](T*, T&) nogil except +

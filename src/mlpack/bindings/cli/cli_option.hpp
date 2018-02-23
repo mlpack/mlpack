@@ -28,6 +28,8 @@
 #include "set_param.hpp"
 #include "get_printable_param_name.hpp"
 #include "get_printable_param_value.hpp"
+#include "get_allocated_memory.hpp"
+#include "delete_allocated_memory.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -88,19 +90,21 @@ class CLIOption
     data.cppType = cppName;
 
     // Apply default value.
-    if (std::is_same<N, typename ParameterType<N>::type>::value)
+    if (std::is_same<typename std::remove_pointer<N>::type,
+                     typename ParameterType<typename
+                         std::remove_pointer<N>::type>::type>::value)
     {
       data.value = boost::any(defaultValue);
     }
     else
     {
-      typename ParameterType<N>::type tmp;
-      data.value = boost::any(std::tuple<N, typename ParameterType<N>::type>(
-          defaultValue, tmp));
+      typename ParameterType<typename std::remove_pointer<N>::type>::type tmp;
+      data.value = boost::any(std::tuple<N, decltype(tmp)>(defaultValue, tmp));
     }
 
     const std::string tname = data.tname;
-    const std::string boostName = MapParameterName<N>(identifier);
+    const std::string boostName = MapParameterName<
+        typename std::remove_pointer<N>::type>(identifier);
     std::string progOptId = (alias[0] != '\0') ? boostName + ","
         + std::string(1, alias[0]) : boostName;
 
@@ -152,6 +156,10 @@ class CLIOption
         &GetPrintableParamName<N>;
     CLI::GetSingleton().functionMap[tname]["GetPrintableParamValue"] =
         &GetPrintableParamValue<N>;
+    CLI::GetSingleton().functionMap[tname]["GetAllocatedMemory"] =
+        &GetAllocatedMemory<N>;
+    CLI::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
+        &DeleteAllocatedMemory<N>;
   }
 };
 

@@ -172,13 +172,13 @@ static void mlpackMain()
   // If we got a request to build a model, then build it.
   if (CLI::HasParam("build_model"))
   {
-    CLI::GetParam<GaussianKernel>("model_out") = GaussianKernel(10.0);
+    CLI::GetParam<GaussianKernel*>("model_out") = new GaussianKernel(10.0);
   }
 
   // If we got an input model, double the bandwidth and output that.
   if (CLI::HasParam("model_in"))
   {
     CLI::GetParam<double>("model_bw_out") =
-        CLI::GetParam<GaussianKernel>("model_in").Bandwidth() * 2.0;
+        CLI::GetParam<GaussianKernel*>("model_in")->Bandwidth() * 2.0;
   }
 }

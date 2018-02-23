@@ -113,7 +113,7 @@ inline std::string GetCythonType(
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
 {
-  return d.cppType;
+  return d.cppType + "*";
 }
 
 } // namespace python

@@ -104,9 +104,11 @@ static void mlpackMain()
   ReportIgnoredParam({{ "training", false }}, "num_trees");
   ReportIgnoredParam({{ "training", false }}, "minimum_leaf_size");
 
-  RandomForestModel rfModel;
+  RandomForestModel* rfModel;
   if (CLI::HasParam("training"))
   {
+    rfModel = new RandomForestModel();
+
     // Train the model on the given input data.
     arma::mat data = std::move(CLI::GetParam<arma::mat>("training"));
     arma::Row<size_t> labels =
@@ -121,13 +123,13 @@ static void mlpackMain()
     const size_t numClasses = arma::max(labels) + 1;
 
     // Train the model.
-    rfModel.rf.Train(data, labels, numClasses, numTrees, minimumLeafSize);
+    rfModel->rf.Train(data, labels, numClasses, numTrees, minimumLeafSize);
 
     // Did we want training accuracy?
     if (CLI::HasParam("print_training_accuracy"))
     {
       arma::Row<size_t> predictions;
-      rfModel.rf.Classify(data, predictions);
+      rfModel->rf.Classify(data, predictions);
 
       const size_t correct = arma::accu(predictions == labels);
 
@@ -139,7 +141,7 @@ static void mlpackMain()
   else
   {
     // Then we must be loading a model.
-    rfModel = std::move(CLI::GetParam<RandomForestModel>("input_model"));
+    rfModel = CLI::GetParam<RandomForestModel*>("input_model");
   }
 
   if (CLI::HasParam("test"))
@@ -149,7 +151,7 @@ static void mlpackMain()
     // Get predictions and probabilities.
     arma::Row<size_t> predictions;
     arma::mat probabilities;
-    rfModel.rf.Classify(testData, predictions, probabilities);
+    rfModel->rf.Classify(testData, predictions, probabilities);
 
     // Did we want to calculate test accuracy?
     if (CLI::HasParam("test_labels"))
@@ -164,14 +166,11 @@ static void mlpackMain()
           << ")." << endl;
     }
 
-    // Should we save the outputs?
-    if (CLI::HasParam("probabilities"))
-      CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
-    if (CLI::HasParam("predictions"))
-      CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictions);
+    // Save the outputs.
+    CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
+    CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictions);
   }
 
-  // Did the user want to save the output model?
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<RandomForestModel>("output_model") = std::move(rfModel);
+  // Save the output model.
+  CLI::GetParam<RandomForestModel*>("output_model") = rfModel;
 }

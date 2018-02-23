@@ -108,7 +108,7 @@ void PrintClassDefn(const util::ParamData& d,
                     const void* /* input */,
                     void* /* output */)
 {
-  PrintClassDefn<T>(d);
+  PrintClassDefn<typename std::remove_pointer<T>::type>(d);
 }
 
 } // namespace python

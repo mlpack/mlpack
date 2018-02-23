@@ -1,5 +1,5 @@
 sudo: required
-dist: xenial
+dist: trusty
 language: cpp
 filter_secrets: false
 
@@ -25,8 +25,10 @@ before_install:
   - cd /usr/include && sudo patch -p1 < fix-std-vector-load.diff && sudo rm fix-std-vector-load.diff && cd -
   # Install both python2 and python3 modules, and the build will decide which to
   # use.
-  - sudo pip install cython setuptools numpy pandas
-  - sudo pip3 install cython setuptools numpy pandas
+  - sudo pip install cython numpy pandas
+  - sudo pip install --upgrade --ignore-installed setuptools
+  - sudo pip3 install cython numpy pandas
+  - sudo pip3 install --upgrade --ignore-installed setuptools
   - curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
   - cmake . && make && sudo make install && cd ..
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp

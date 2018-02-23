@@ -37,6 +37,7 @@ struct PreprocessImputerTestFixture
   ~PreprocessImputerTestFixture()
   {
     // Clear the settings.
+    bindings::tests::CleanMemory();
     CLI::ClearSettings();
   }
 };

@@ -38,7 +38,8 @@ namespace ann /** Artificial Neural Network. */ {
  */
 template <
     typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename OutputDataType = arma::mat,
+    typename... CustomLayers
 >
 class Recurrent
 {
@@ -105,7 +106,7 @@ class Recurrent
                 arma::Mat<eT>&& /* gradient */);
 
   //! Get the model modules.
-  std::vector<LayerTypes>& Model() { return network; }
+  std::vector<LayerTypes<CustomLayers...> >& Model() { return network; }
 
     //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
@@ -145,16 +146,16 @@ class Recurrent
 
  private:
   //! Locally-stored start module.
-  LayerTypes startModule;
+  LayerTypes<CustomLayers...> startModule;
 
   //! Locally-stored input module.
-  LayerTypes inputModule;
+  LayerTypes<CustomLayers...> inputModule;
 
   //! Locally-stored feedback module.
-  LayerTypes feedbackModule;
+  LayerTypes<CustomLayers...> feedbackModule;
 
   //! Locally-stored transfer module.
-  LayerTypes transferModule;
+  LayerTypes<CustomLayers...> transferModule;
 
   //! Number of steps to backpropagate through time (BPTT).
   size_t rho;
@@ -175,16 +176,16 @@ class Recurrent
   OutputDataType parameters;
 
   //! Locally-stored initial module.
-  LayerTypes initialModule;
+  LayerTypes<CustomLayers...> initialModule;
 
   //! Locally-stored recurrent module.
-  LayerTypes recurrentModule;
+  LayerTypes<CustomLayers...> recurrentModule;
 
   //! Locally-stored model modules.
-  std::vector<LayerTypes> network;
+  std::vector<LayerTypes<CustomLayers...> > network;
 
   //! Locally-stored merge module.
-  LayerTypes mergeModule;
+  LayerTypes<CustomLayers...> mergeModule;
 
   //! Locally-stored weight size visitor.
   WeightSizeVisitor weightSizeVisitor;

@@ -137,14 +137,18 @@ static void mlpackMain()
       true, "maximum number of iterations must be nonnegative");
 
   // Now, load our model, if there is one.
-  PerceptronModel p;
+  PerceptronModel* p;
   if (CLI::HasParam("input_model"))
   {
     Log::Info << "Using saved perceptron from "
-        << CLI::GetPrintableParam<PerceptronModel>("input_model") << "."
+        << CLI::GetPrintableParam<PerceptronModel*>("input_model") << "."
         << endl;
 
-    p = std::move(CLI::GetParam<PerceptronModel>("input_model"));
+    p = CLI::GetParam<PerceptronModel*>("input_model");
+  }
+  else
+  {
+    p = new PerceptronModel();
   }
 
   // Next, load the training data and labels (if they have been given).
@@ -173,9 +177,31 @@ static void mlpackMain()
     if (CLI::HasParam("labels"))
     {
       labelsIn = std::move(CLI::GetParam<Row<size_t>>("labels"));
+
+      // Checking the size of the responses and training data.
+      if (labelsIn.n_cols != trainingData.n_cols)
+      {
+        // Clean memory if needed.
+        if (!CLI::HasParam("input_model"))
+          delete p;
+
+        Log::Fatal << "The responses must have the same number of columns "
+            "as the training set." << endl;
+      }
     }
     else
     {
+      // Checking the size of training data if no labels are passed.
+      if (trainingData.n_rows < 2)
+      {
+        // Clean memory if needed.
+        if (!CLI::HasParam("input_model"))
+          delete p;
+
+        Log::Fatal << "Can't get responses from training data "
+            "since it has less than 2 rows." << endl;
+      }
+
       // Use the last row of the training data as the labels.
       Log::Info << "Using the last dimension of training set as labels."
           << endl;
@@ -186,8 +212,8 @@ static void mlpackMain()
 
     // Normalize the labels.
     Row<size_t> labels;
-    data::NormalizeLabels(labelsIn, labels, p.Map());
-    const size_t numClasses = p.Map().n_elem;
+    data::NormalizeLabels(labelsIn, labels, p->Map());
+    const size_t numClasses = p->Map().n_elem;
 
     // Now, if we haven't already created a perceptron, do it.  Otherwise, make
     // sure the dimensions are right, then continue training.
@@ -195,35 +221,35 @@ static void mlpackMain()
     {
       // Create and train the classifier.
       Timer::Start("training");
-      p.P() = Perceptron<>(trainingData, labels, numClasses, maxIterations);
+      p->P() = Perceptron<>(trainingData, labels, numClasses, maxIterations);
       Timer::Stop("training");
     }
     else
     {
       // Check dimensionality.
-      if (p.P().Weights().n_rows != trainingData.n_rows)
+      if (p->P().Weights().n_rows != trainingData.n_rows)
       {
         Log::Fatal << "Perceptron from '"
-            << CLI::GetPrintableParam<PerceptronModel>("input_model")
-            << "' is built on data with " << p.P().Weights().n_rows
+            << CLI::GetPrintableParam<PerceptronModel*>("input_model")
+            << "' is built on data with " << p->P().Weights().n_rows
             << " dimensions, but data in '"
             << CLI::GetPrintableParam<arma::mat>("training") << "' has "
             << trainingData.n_rows << "dimensions!" << endl;
       }
 
       // Check the number of labels.
-      if (numClasses > p.P().Weights().n_cols)
+      if (numClasses > p->P().Weights().n_cols)
       {
         Log::Fatal << "Perceptron from '"
-            << CLI::GetPrintableParam<PerceptronModel>("input_model") << "' "
-            << "has " << p.P().Weights().n_cols << " classes, but the training "
-            << "data has " << numClasses + 1 << " classes!" << endl;
+            << CLI::GetPrintableParam<PerceptronModel*>("input_model") << "' "
+            << "has " << p->P().Weights().n_cols << " classes, but the training"
+            << " data has " << numClasses + 1 << " classes!" << endl;
       }
 
       // Now train.
       Timer::Start("training");
-      p.P().MaxIterations() = maxIterations;
-      p.P().Train(trainingData, labels.t(), numClasses);
+      p->P().MaxIterations() = maxIterations;
+      p->P().Train(trainingData, labels.t(), numClasses);
       Timer::Stop("training");
     }
   }
@@ -235,29 +261,33 @@ static void mlpackMain()
         << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
     mat testData = std::move(CLI::GetParam<arma::mat>("test"));
 
-    if (testData.n_rows != p.P().Weights().n_rows)
+    if (testData.n_rows != p->P().Weights().n_rows)
     {
+      // Clean memory if needed.
+      const size_t perceptronDimensionality = p->P().Weights().n_rows;
+      if (!CLI::HasParam("input_model"))
+        delete p;
+
       Log::Fatal << "Test data dimensionality (" << testData.n_rows << ") must "
           << "be the same as the dimensionality of the perceptron ("
-          << p.P().Weights().n_rows << ")!" << endl;
+          << perceptronDimensionality << ")!" << endl;
     }
 
     // Time the running of the perceptron classifier.
     Row<size_t> predictedLabels(testData.n_cols);
     Timer::Start("testing");
-    p.P().Classify(testData, predictedLabels);
+    p->P().Classify(testData, predictedLabels);
     Timer::Stop("testing");
 
     // Un-normalize labels to prepare output.
     Row<size_t> results;
-    data::RevertLabels(predictedLabels, p.Map(), results);
+    data::RevertLabels(predictedLabels, p->Map(), results);
 
     // Save the predicted labels.
     if (CLI::HasParam("output"))
       CLI::GetParam<arma::Row<size_t>>("output") = std::move(results);
   }
 
-  // Lastly, do we need to save the output model?
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<PerceptronModel>("output_model") = std::move(p);
+  // Lastly, save the output model.
+  CLI::GetParam<PerceptronModel*>("output_model") = p;
 }

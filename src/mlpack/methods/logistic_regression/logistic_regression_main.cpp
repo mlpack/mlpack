@@ -161,6 +161,14 @@ static void mlpackMain()
   ReportIgnoredParam({{ "test", false }}, "output");
   ReportIgnoredParam({{ "test", false }}, "output_probabilities");
 
+  // Max Iterations needs to be positive.
+  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; },
+      true, "max_iterations must be positive or zero");
+
+  // Batch Size needs to be greater than zero.
+  RequireParamValue<int>("batch_size", [](int x) { return x > 0; },
+      true, "batch_size must be greater than zero");
+
   // Tolerance needs to be positive.
   RequireParamValue<double>("tolerance", [](double x) { return x >= 0.0; },
       true, "tolerance must be positive or zero");
@@ -206,16 +214,18 @@ static void mlpackMain()
     regressors = std::move(CLI::GetParam<arma::mat>("training"));
 
   // Load the model, if necessary.
-  LogisticRegression<> model(0, 0); // Empty model.
+  LogisticRegression<>* model;
   if (CLI::HasParam("input_model"))
-    model = std::move(CLI::GetParam<LogisticRegression<>>("input_model"));
+    model = CLI::GetParam<LogisticRegression<>*>("input_model");
   else
   {
+    model = new LogisticRegression<>(0, 0);
+
     // Set the size of the parameters vector, if necessary.
     if (!CLI::HasParam("labels"))
-      model.Parameters() = arma::zeros<arma::rowvec>(regressors.n_rows);
+      model->Parameters() = arma::zeros<arma::rowvec>(regressors.n_rows);
     else
-      model.Parameters() = arma::zeros<arma::rowvec>(regressors.n_rows + 1);
+      model->Parameters() = arma::zeros<arma::rowvec>(regressors.n_rows + 1);
   }
 
   // Check if the responses are in a separate file.
@@ -223,11 +233,28 @@ static void mlpackMain()
   {
     responses = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
     if (responses.n_cols != regressors.n_cols)
+    {
+      // Clean memory if needed.
+      if (!CLI::HasParam("input_model"))
+        delete model;
+
       Log::Fatal << "The labels must have the same number of points as the "
           << "training dataset." << endl;
+    }
   }
   else if (CLI::HasParam("training"))
   {
+    // Checking the size of training data if no labels are passed.
+    if (regressors.n_rows < 2)
+    {
+      // Clean memory if needed.
+      if (!CLI::HasParam("input_model"))
+        delete model;
+
+      Log::Fatal << "Can't get responses from training data since it has less "
+          << "than 2 rows." << endl;
+    }
+
     // The initial predictors for y, Nx1.
     responses = arma::conv_to<arma::Row<size_t>>::from(
         regressors.row(regressors.n_rows - 1));
@@ -236,13 +263,19 @@ static void mlpackMain()
 
   // Verify the labels.
   if (CLI::HasParam("training") && max(responses) > 1)
+  {
+    // Clean memory if needed.
+    if (!CLI::HasParam("input_model"))
+      delete model;
+
     Log::Fatal << "The labels must be either 0 or 1, not " << max(responses)
         << "!" << endl;
+  }
 
   // Now, do the training.
   if (CLI::HasParam("training"))
   {
-    model.Lambda() = lambda;
+    model->Lambda() = lambda;
 
     if (optimizerType == "sgd")
     {
@@ -254,7 +287,7 @@ static void mlpackMain()
       Log::Info << "Training model with SGD optimizer." << endl;
 
       // This will train the model.
-      model.Train(regressors, responses, sgdOpt);
+      model->Train(regressors, responses, sgdOpt);
     }
     else if (optimizerType == "lbfgs")
     {
@@ -264,7 +297,7 @@ static void mlpackMain()
       Log::Info << "Training model with L-BFGS optimizer." << endl;
 
       // This will train the model.
-      model.Train(regressors, responses, lbfgsOpt);
+      model->Train(regressors, responses, lbfgsOpt);
     }
   }
 
@@ -272,13 +305,26 @@ static void mlpackMain()
   {
     testSet = std::move(CLI::GetParam<arma::mat>("test"));
 
+    // Checking the dimensionality of the test data.
+    if (testSet.n_rows != model->Parameters().n_cols - 1)
+    {
+      // Clean memory if needed.
+      const size_t trainingDimensionality = model->Parameters().n_cols - 1;
+      if (!CLI::HasParam("input_model"))
+        delete model;
+
+      Log::Fatal << "Test data dimensionality (" << testSet.n_rows << ") must "
+          << "be the same as the dimensionality of the training data ("
+          << trainingDimensionality << ")!" << endl;
+    }
+
     // We must perform predictions on the test set.  Training (and the
     // optimizer) are irrelevant here; we'll pass in the model we have.
     if (CLI::HasParam("output"))
     {
       Log::Info << "Predicting classes of points in '"
           << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
-      model.Classify(testSet, predictions, decisionBoundary);
+      model->Classify(testSet, predictions, decisionBoundary);
 
       CLI::GetParam<arma::Row<size_t>>("output") = std::move(predictions);
     }
@@ -288,13 +334,12 @@ static void mlpackMain()
       Log::Info << "Calculating class probabilities of points in '"
           << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
       arma::mat probabilities;
-      model.Classify(testSet, probabilities);
+      model->Classify(testSet, probabilities);
 
       CLI::GetParam<arma::mat>("output_probabilities") =
           std::move(probabilities);
     }
   }
 
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<LogisticRegression<>>("output_model") = std::move(model);
+  CLI::GetParam<LogisticRegression<>*>("output_model") = model;
 }

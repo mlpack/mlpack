@@ -61,7 +61,8 @@ void MapParameterName(const util::ParamData& d,
 {
   // Store the mapped name in the output pointer, which is actually a string
   // pointer.
-  *((std::string*) output) = MapParameterName<T>(d.name);
+  *((std::string*) output) =
+      MapParameterName<typename std::remove_pointer<T>::type>(d.name);
 }
 
 } // namespace cli

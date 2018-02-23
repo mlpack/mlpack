@@ -54,12 +54,28 @@ void SetParam(
     util::ParamData& d,
     const boost::any& value,
     const typename std::enable_if<arma::is_arma_type<T>::value ||
-                                  data::HasSerialize<T>::value ||
                                   std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   // We're setting the string filename.
   typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
+  TupleType& tuple = *boost::any_cast<TupleType>(&d.value);
+  std::get<1>(tuple) = boost::any_cast<std::string>(value);
+}
+
+/**
+ * Set a serializable object.  This sets the filename referring to the
+ * parameter.
+ */
+template<typename T>
+void SetParam(
+    util::ParamData& d,
+    const boost::any& value,
+    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
+    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+{
+  // We're setting the string filename.
+  typedef std::tuple<T*, typename ParameterType<T>::type> TupleType;
   TupleType& tuple = *boost::any_cast<TupleType>(&d.value);
   std::get<1>(tuple) = boost::any_cast<std::string>(value);
 }
@@ -75,7 +91,8 @@ void SetParam(
 template<typename T>
 void SetParam(const util::ParamData& d, const void* input, void* /* output */)
 {
-  SetParam<T>(const_cast<util::ParamData&>(d), *((boost::any*) input));
+  SetParam<typename std::remove_pointer<T>::type>(
+      const_cast<util::ParamData&>(d), *((boost::any*) input));
 }
 
 } // namespace cli
