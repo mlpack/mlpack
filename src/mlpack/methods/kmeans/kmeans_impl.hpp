@@ -146,7 +146,7 @@ void KMeans<
     LloydStepType,
     MatType>::
 Cluster(const MatType& data,
-        const size_t clusters,
+        size_t clusters,
         arma::mat& centroids,
         const bool initialGuess)
 {
@@ -222,7 +222,7 @@ Cluster(const MatType& data,
 
     // If we are not allowing empty clusters, then check that all of our
     // clusters have points.
-    for (size_t i = 0; i < clusters; i++)
+    for (size_t i = 0; i < counts.n_elem; i++)
     {
       if (counts[i] == 0)
       {
