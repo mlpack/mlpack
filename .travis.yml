@@ -1,7 +1,6 @@
 sudo: required
 dist: trusty
 language: cpp
-filter_secrets: false
 
 env:
   - CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON=/usr/bin/python"
@@ -9,16 +8,6 @@ env:
   - CMAKE_OPTIONS="-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF"
 
 before_install:
-  # xenial is not stable yet, so we have to manually disable the systemd
-  # automatic updates services.  Ideas adapted from here:
-  # https://unix.stackexchange.com/questions/315502/how-to-disable-apt-daily-service-on-ubuntu-cloud-vm-image
-  - sudo systemctl list-unit-files apt* --all
-  - sudo systemctl stop apt*
-  - sudo systemctl disable apt-daily.timer
-  - sudo systemctl disable apt-daily-upgrade.timer
-  - sudo systemctl mask apt-daily.timer
-  - sudo systemctl mask apt-daily-upgrade.timer
-  - sudo systemctl list-unit-files apt* --all
   - sudo apt-get update -qq
   - sudo apt-get install -qq libopenblas-dev liblapack-dev g++ libboost-all-dev python3-pip
   - sudo wget https://launchpadlibrarian.net/260609315/fix-std-vector-load.diff -O /usr/include/fix-std-vector-load.diff
