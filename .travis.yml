@@ -10,8 +10,6 @@ env:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq libopenblas-dev liblapack-dev g++ libboost-all-dev python3-pip
-  - sudo wget https://launchpadlibrarian.net/260609315/fix-std-vector-load.diff -O /usr/include/fix-std-vector-load.diff
-  - cd /usr/include && sudo patch -p1 < fix-std-vector-load.diff && sudo rm fix-std-vector-load.diff && cd -
   # Install both python2 and python3 modules, and the build will decide which to
   # use.
   - sudo pip install cython numpy pandas
