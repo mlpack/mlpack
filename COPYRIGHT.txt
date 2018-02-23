@@ -92,6 +92,7 @@ Copyright:
   Copyright 2018, Shikhar Jaiswal <jaiswalshikhar87@gmail.com>
   Copyright 2018, B Kartheek Reddy <bkartheekreddy@gmail.com>
   Copyright 2018, Atharva Khandait <akhandait45@gmail.com>
+  Copyright 2018, Wenhao Huang <wenhao.huang.work@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.
