@@ -10,11 +10,11 @@
  *
  * @code
  * @inproceedings{pmlr-v9-glorot10a,
- * title = {Understanding the difficulty of training deep feedforward neural networks},
- * author = {Xavier Glorot and Yoshua Bengio},
- * booktitle = {Proceedings of the Thirteenth International Conference on Artificial
+ * title={Understanding the difficulty of training deep feedforward neural networks},
+ * author={Xavier Glorot and Yoshua Bengio},
+ * booktitle={Proceedings of the Thirteenth International Conference on Artificial
  *              Intelligence and Statistics},
- * year = {2010}
+ * year={2010}
  * }
  * @endcode
  *
@@ -86,7 +86,8 @@ class GlorotInitialization
      * @param cols Number of columns.
      * @param slice Numbers of slices.
      */
-    void Initialize(arma::cube & W,
+    template<typename eT>
+    void Initialize(arma::Cube<eT>& W,
                     const size_t rows,
                     const size_t cols,
                     const size_t slices)
