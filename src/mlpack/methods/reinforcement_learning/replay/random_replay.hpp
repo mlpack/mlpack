@@ -1,6 +1,6 @@
 /**
  * @file random_replay.hpp
- * @author Shangtong Zhang
+ * @author Shangtong Zhang and Rohan Raj
  *
  * This file is an implementation of random experience replay.
  *
@@ -148,10 +148,13 @@ class RandomReplay
     sampledActions = actions.elem(sampledIndices);
     sampledAdvantage = rewards.elem(sampledIndices);
     isTerminal = this->isTerminal.elem(sampledIndices);
-    // Making advantage zero mean
-    // Division by standard deviation to get advantage
-    sampledAdvantage = (sampledAdvantage - arma::mean(sampledAdvantage));
-    sampledAdvantage = sampledAdvantage / arma::stddev(sampledAdvantage);
+    /*Advantage checks whether a particular action is good or not
+    * Hence we need to check if it is better than the moving average of
+    * the provious action. To do so we need to check how good it is from the 
+    * average of the rewards recieved.
+    */
+    sampledAdvantage = (sampledAdvantage - arma::mean(rewards));
+    sampledAdvantage = sampledAdvantage / arma::stddev(rewards);
   }
   /**
    * Get the number of transitions in the memory.
