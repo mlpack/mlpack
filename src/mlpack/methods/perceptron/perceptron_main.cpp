@@ -177,9 +177,31 @@ static void mlpackMain()
     if (CLI::HasParam("labels"))
     {
       labelsIn = std::move(CLI::GetParam<Row<size_t>>("labels"));
+
+      // Checking the size of the responses and training data.
+      if (labelsIn.n_cols != trainingData.n_cols)
+      {
+        // Clean memory if needed.
+        if (!CLI::HasParam("input_model"))
+          delete p;
+
+        Log::Fatal << "The responses must have the same number of columns "
+            "as the training set." << endl;
+      }
     }
     else
     {
+      // Checking the size of training data if no labels are passed.
+      if (trainingData.n_rows < 2)
+      {
+        // Clean memory if needed.
+        if (!CLI::HasParam("input_model"))
+          delete p;
+
+        Log::Fatal << "Can't get responses from training data "
+            "since it has less than 2 rows." << endl;
+      }
+
       // Use the last row of the training data as the labels.
       Log::Info << "Using the last dimension of training set as labels."
           << endl;
@@ -241,9 +263,14 @@ static void mlpackMain()
 
     if (testData.n_rows != p->P().Weights().n_rows)
     {
+      // Clean memory if needed.
+      const size_t perceptronDimensionality = p->P().Weights().n_rows;
+      if (!CLI::HasParam("input_model"))
+        delete p;
+
       Log::Fatal << "Test data dimensionality (" << testData.n_rows << ") must "
           << "be the same as the dimensionality of the perceptron ("
-          << p->P().Weights().n_rows << ")!" << endl;
+          << perceptronDimensionality << ")!" << endl;
     }
 
     // Time the running of the perceptron classifier.

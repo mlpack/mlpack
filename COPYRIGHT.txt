@@ -89,6 +89,10 @@ Copyright:
   Copyright 2017&2018, Sourabh Varshney <sourabhvarshney111@gmail.com>
   Copyright 2018, Projyal Dev <projyal@gmail.com>
   Copyright 2018, Nikhil Goel <nikhilgoel199797@gmail.com>
+  Copyright 2018, Shikhar Jaiswal <jaiswalshikhar87@gmail.com>
+  Copyright 2018, B Kartheek Reddy <bkartheekreddy@gmail.com>
+  Copyright 2018, Atharva Khandait <akhandait45@gmail.com>
+  Copyright 2018, Wenhao Huang <wenhao.huang.work@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.

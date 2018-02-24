@@ -7,6 +7,14 @@ of complexity.  If you compile from the command-line, be sure that your compiler
 is in C++11 mode.  With gcc and clang, this can be accomplished by adding the
 @c -std=c++11 option.
 
+@note
+The command-line programs like @c knn_main.cpp and @c
+logistic_regression_main.cpp from the directory @c src/mlpack/methods/ cannot be
+compiled easily by hand (the same is true for the individual tests in @c
+src/mlpack/tests/); instead, those should be compiled with CMake.  However, any
+program that uses mlpack (and is not a part of the library itself) can be
+compiled easily with g++ or clang from the command line.
+
 @section covariance Covariance Computation
 
 A simple program to compute the covariance of a data matrix ("data.csv"),

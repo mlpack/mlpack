@@ -203,7 +203,8 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
                       arma::mat& W,
                       const arma::mat& H)
   {
-    if (!isStart) (*it)++;
+    if (!isStart)
+        ++(*it);
     else isStart = false;
 
     if (*it == V.end())
@@ -234,12 +235,10 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
    * @param W Basis matrix.
    * @param H Encoding matrix to be updated.
    */
-  inline void HUpdate(const arma::sp_mat& V,
+  inline void HUpdate(const arma::sp_mat& /* V */,
                       const arma::mat& W,
                       arma::mat& H)
   {
-    (void)V;
-
     arma::mat deltaH(H.n_rows, 1);
     deltaH.zeros();
 

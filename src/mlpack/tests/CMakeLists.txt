@@ -43,6 +43,7 @@ add_executable(mlpack_test
   hyperplane_test.cpp
   imputation_test.cpp
   init_rules_test.cpp
+  katyusha_test.cpp
   iqn_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
@@ -96,6 +97,7 @@ add_executable(mlpack_test
   rl_components_test.cpp
   rmsprop_test.cpp
   sa_test.cpp
+  sarah_test.cpp
   scd_test.cpp
   sdp_primal_dual_test.cpp
   serialization.cpp
@@ -115,7 +117,9 @@ add_executable(mlpack_test
   split_data_test.cpp
   svd_batch_test.cpp
   svd_incremental_test.cpp
+  svrg_test.cpp
   termination_policy_test.cpp
+  test_function_tools.hpp
   test_tools.hpp
   timer_test.cpp
   tree_test.cpp
@@ -129,6 +133,7 @@ add_executable(mlpack_test
   main_tests/decision_tree_test.cpp
   main_tests/decision_stump_test.cpp
   main_tests/linear_regression_test.cpp
+  main_tests/logistic_regression_test.cpp
   main_tests/nbc_test.cpp
   main_tests/pca_test.cpp
   main_tests/perceptron_test.cpp
@@ -139,6 +144,7 @@ add_executable(mlpack_test
   main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
   main_tests/hmm_training_tests.cpp
+  main_tests/hoeffding_tree_test.cpp
 )
 
 # Link dependencies of test executable.
