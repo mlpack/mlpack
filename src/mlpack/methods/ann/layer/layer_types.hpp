@@ -16,6 +16,7 @@
 
 // Layer modules.
 #include <mlpack/methods/ann/layer/add.hpp>
+#include <mlpack/methods/ann/layer/advantage_loss.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 #include <mlpack/methods/ann/layer/constant.hpp>
 #include <mlpack/methods/ann/layer/cross_entropy_error.hpp>
@@ -103,6 +104,7 @@ template <typename... CustomLayers>
 using LayerTypes = boost::variant<
     Add<arma::mat, arma::mat>*,
     AddMerge<arma::mat, arma::mat>*,
+    AdvantageError<arma::mat, arma::mat>*,
     BaseLayer<LogisticFunction, arma::mat, arma::mat>*,
     BaseLayer<IdentityFunction, arma::mat, arma::mat>*,
     BaseLayer<TanhFunction, arma::mat, arma::mat>*,
