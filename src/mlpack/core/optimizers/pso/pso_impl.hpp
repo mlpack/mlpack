@@ -40,9 +40,8 @@ PSOType<VelocityVectorType>::PSOType(const size_t dimension,
 template<typename VelocityVectorType>
 template<typename DecomposableFunctionType>
 double PSOType<VelocityVectorType>::Optimize(
-    DecomposableFunctionType& function, arma::mat& iterate)
+    const DecomposableFunctionType& function, const arma::mat& iterate)
 {
-  arma::arma_rng::set_seed_random();
   // Set size for particle position and velocity.
   particlePosition.set_size(iterate.n_rows, iterate.n_cols, dimension);
   particleVelocity.set_size(iterate.n_rows, iterate.n_cols, dimension);

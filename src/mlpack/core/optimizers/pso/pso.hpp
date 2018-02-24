@@ -94,7 +94,7 @@ class PSOType
    * @return Objective value of the final point.
    */
   template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
+  double Optimize(const DecomposableFunctionType& function, const arma::mat& iterate);
 
   //! Get the dimension of the search space.
   size_t PopulationSize() const { return dimension; }

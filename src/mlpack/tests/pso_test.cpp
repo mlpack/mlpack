@@ -95,13 +95,11 @@ BOOST_AUTO_TEST_CASE(BoothFunctionTest)
   BoothFunction f;
 
   arma::mat iterate;
-
-  iterate << 0.5828 << 0.0654 << 0.8817 << 0.3461 << arma::endr
-          << 0.2351 << 0.0034 << 0.1641 << 0.7621;
+  iterate << 1 << 3;
 
   double result = optimizer.Optimize(f, iterate);
 
-  BOOST_REQUIRE_SMALL(result, 1e-3);
+  BOOST_REQUIRE_CLOSE(result, 0, 1e-3);
 }
 
 /**
@@ -185,10 +183,13 @@ BOOST_AUTO_TEST_CASE(BukinFunctionTest)
 }
 
 /**
- * Run PSO on logistic regression and make sure the results are acceptable.
+ * Test for logistic regression.
  */
 BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
 {
+  // Set the random seed.
+  math::RandomSeed(std::time(NULL));
+
   // Generate a two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
   GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
@@ -231,7 +232,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
     testResponses[i] = 1;
   }
 
-  PSO optimizer;
+  PSO optimizer(30, 0.9, 0.5, 0.3, 10000, 1e-3);
   LogisticRegression<> lr(shuffledData, shuffledResponses, optimizer, 0.5);
 
   // Ensure that the error is close to zero.
