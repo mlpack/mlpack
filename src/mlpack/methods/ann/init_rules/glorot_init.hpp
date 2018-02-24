@@ -10,10 +10,11 @@
  *
  * @code
  * @inproceedings{pmlr-v9-glorot10a,
- * title = 	 {Understanding the difficulty of training deep feedforward neural networks},
- * author = 	 {Xavier Glorot and Yoshua Bengio},
- * booktitle = 	 {Proceedings of the Thirteenth International Conference on Artificial Intelligence and Statistics},
- * year = 	 {2010}
+ * title = {Understanding the difficulty of training deep feedforward neural networks},
+ * author = {Xavier Glorot and Yoshua Bengio},
+ * booktitle = {Proceedings of the Thirteenth International Conference on Artificial
+ *              Intelligence and Statistics},
+ * year = {2010}
  * }
  * @endcode
  *
@@ -45,60 +46,62 @@ namespace mlpack {
  * number of neurons in the ingoing layer
  */
 
-        class GlorotInitialization
+class GlorotInitialization
+{
+  public:
+    /**
+     * Initialize
+     */
+    GlorotInitialization() :
+    {
+        // Nothing to do here.
+    }
+
+    /**
+     * Initialize the elements weight matrix.
+     *
+     * @param W Weight matrix to initialize.
+     * @param rows Number of rows.
+     * @param cols Number of columns.
+     */
+    template<typename eT>
+    void Initialize(arma::Mat<eT>& W,
+                    const size_t rows,
+                    const size_t cols)
+    {
+        double_t a = sqrt(6)/sqrt(rows + cols); // limit of uniform distribution
+
+        if (W.is_empty())
         {
-        public:
-            /**
-             * Initialize
-             */
-            GlorotInitialization() :
-            {
-                // Nothing to do here.
-            }
+            W = arma::mat(rows, cols);
+        }
+        W.imbue( [&]() { return arma::as_scalar(Random(-a, a)); } );
+    }
 
-            /**
-             * Initialize the elements weight matrix.
-             *
-             * @param W Weight matrix to initialize.
-             * @param rows Number of rows.
-             * @param cols Number of columns.
-             */
-            void Initialize(arma::mat& W,
-                            const size_t rows,
-                            const size_t cols)
-            {
-                double_t a = -sqrt(6)/sqrt(rows + cols); // lower limit of uniform distribution
-                double_t b = sqrt(6)/sqrt(rows + cols);  // upper limit of uniform distribution
+    /**
+     * Initialize the elements of the specified weight 3rd order tensor with glorot initialization method
+     *
+     * @param W Weight matrix to initialize.
+     * @param rows Number of rows.
+     * @param cols Number of columns.
+     * @param slice Numbers of slices.
+     */
+    void Initialize(arma::cube & W,
+                    const size_t rows,
+                    const size_t cols,
+                    const size_t slices)
+    {
+        if(W.is_empty())
+        {
+            W = arma::cube(rows, cols, slices);
+        }
+        for (size_t i = 0; i < slices; i++)
+            Initialize(W.slice(i), rows, cols);
+    }
 
-                if (W.is_empty())
-                {
-                    W = arma::mat(rows, cols);
-                }
-                W.imbue( [&]() { return arma::as_scalar(Random(a, b)); } );
-            }
+  }; // class GlorotInitialization
 
-            /**
-             * Initialize the elements of the specified weight 3rd order tensor with glorot initialization method
-             *
-             * @param W Weight matrix to initialize.
-             * @param rows Number of rows.
-             * @param cols Number of columns.
-             * @param slice Numbers of slices.
-             */
-            void Initialize(arma::cube & W,
-                            const size_t rows,
-                            const size_t cols,
-                            const size_t slices)
-            {
-                W = arma::cube(rows, cols, slices);
-
-                for (size_t i = 0; i < slices; i++)
-                    Initialize(W.slice(i), rows, cols);
-            }
-
-        }; // class GlorotInitialization
-
-    } // namespace ann
+} // namespace ann
 } // namespace mlpack
 
 #endif
