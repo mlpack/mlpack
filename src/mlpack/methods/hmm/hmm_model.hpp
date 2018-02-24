@@ -206,6 +206,31 @@ class HMMModel
     else if (type == HMMType::GaussianMixtureModelHMM)
       ar & BOOST_SERIALIZATION_NVP(gmmHMM);
   }
+
+  // Accessor method for type of HMM
+  HMMType Type() { return type; }
+
+  /**
+   * Accessor methods for discreteHMM, gaussianHMM and gmmHMM.
+   * Note that an instatiation of this class will only contain one type of HMM
+   * (as indicated by the "type" instance variable) - the other two pointers
+   * will be NULL.
+   *
+   * For instance, if the HMMModel object holds a discrete HMM, then:
+   * type         --> DiscreteHMM
+   * gaussianHMM  --> NULL
+   * gmmHMM       --> NULL
+   * discreteHMM  --> HMM<DiscreteDistribution> object
+   * and hence, calls to GMMHMM() and GaussianHMM() will return NULL. Only the
+   * call to DiscreteHMM() will return a non NULL pointer.
+   *
+   * Hence, in practice, a user should be careful to first check the type of HMM
+   * (by calling the Type() accessor) and then perform subsequent actions, to
+   * avoid running into NullPointerExceptions.
+   */
+  HMM<distribution::DiscreteDistribution>* DiscreteHMM() { return discreteHMM; }
+  HMM<distribution::GaussianDistribution>* GaussianHMM() { return gaussianHMM; }
+  HMM<gmm::GMM>* GMMHMM() { return gmmHMM; }
 };
 
 } // namespace hmm
