@@ -105,8 +105,10 @@ double PolicyGradient<
   First way will make the program generic for any number of action space.
   Second way is easy. But it is unnecessarily increase the computation.
 
-  Presently I have considered Cartpole. Hence I am using 2 action space.
-  How ever to make the program more generic, one should add the action space as variable to the agent.
+  I am currently taking inputs from feed forward network and putting it to zero.
+  This way I am meeting my aim of using advantage.
+
+  I have also defined advantage loss in mlpack/methods/ann/layers for implementation.
   */
   arma::mat target;
   learningNetwork.Forward(sampledStates, target);
