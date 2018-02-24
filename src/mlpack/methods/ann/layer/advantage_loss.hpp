@@ -97,6 +97,6 @@ class AdvantageError
 } // namespace mlpack
 
 // Include implementation.
-#include "mean_squared_error_impl.hpp"
+#include "advantage_loss_impl.hpp"
 
 #endif

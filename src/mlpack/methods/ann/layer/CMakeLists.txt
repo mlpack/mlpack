@@ -5,6 +5,8 @@ set(SOURCES
   add_impl.hpp
   add_merge.hpp
   add_merge_impl.hpp
+  advantage_loss.hpp
+  advantage_loss_impl.hpp
   base_layer.hpp
   concat.hpp
   concat_impl.hpp
