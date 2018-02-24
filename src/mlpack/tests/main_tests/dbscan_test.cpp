@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(DBSCANMinSizeTest)
 }
 
 /**
- * Number of clusters should be less than the input number of points
+ * Check that no point is labelled as noise point
  * when min_size is equal to 1.
  */
 BOOST_AUTO_TEST_CASE(DBSCANClusterNumberTest)
