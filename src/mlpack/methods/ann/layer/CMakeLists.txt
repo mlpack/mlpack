@@ -69,6 +69,8 @@ set(SOURCES
   sigmoid_cross_entropy_error_impl.hpp
   select.hpp
   select_impl.hpp
+  selu.hpp
+  selu_impl.hpp
   sequential.hpp
   sequential_impl.hpp
   vr_class_reward.hpp
