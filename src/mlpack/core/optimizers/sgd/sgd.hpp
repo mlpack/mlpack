@@ -3,6 +3,7 @@
  * @author Ryan Curtin
  * @author Arun Reddy
  * @author Abhinav Moudgil
+ * @author Sourabh Varshney
  *
  * Stochastic Gradient Descent (SGD).
  *
@@ -17,6 +18,7 @@
 #include <mlpack/prereqs.hpp>
 #include "update_policies/vanilla_update.hpp"
 #include "update_policies/momentum_update.hpp"
+#include "update_policies/nesterov_momentum_update.hpp"
 #include "decay_policies/no_decay.hpp"
 
 namespace mlpack {
@@ -201,6 +203,8 @@ class SGD
 using StandardSGD = SGD<VanillaUpdate>;
 
 using MomentumSGD = SGD<MomentumUpdate>;
+
+using NesterovSGD = SGD<NesterovMomentumUpdate>;
 
 } // namespace optimization
 } // namespace mlpack
