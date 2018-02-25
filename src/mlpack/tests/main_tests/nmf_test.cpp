@@ -43,6 +43,13 @@ struct NMFTestFixture
   }
 };
 
+static void ResetSettings()
+{
+  bindings::tests::CleanMemory();
+  CLI::ClearSettings();
+  CLI::RestoreSettings(testName);
+}
+
 BOOST_FIXTURE_TEST_SUITE(NMFMainTest, NMFTestFixture);
 
 /**
@@ -129,7 +136,7 @@ BOOST_AUTO_TEST_CASE(NMFAlsShapeTest)
 /**
  * Ensure the rank is positive.
  */
-BOOST_AUTO_TEST_CASE(NMFRankTest)
+BOOST_AUTO_TEST_CASE(NMFRankBoundTest)
 {
   mat v = randu<mat>(10, 10);
   int r;
@@ -156,7 +163,7 @@ BOOST_AUTO_TEST_CASE(NMFRankTest)
 /**
  * Ensure the max_iterations is non-negative.
  */
-BOOST_AUTO_TEST_CASE(NMFMaxIterartionTest)
+BOOST_AUTO_TEST_CASE(NMFMaxIterartionBoundTest)
 {
   mat v = randu<mat>(10, 10);
   int r = 5;
@@ -188,6 +195,100 @@ BOOST_AUTO_TEST_CASE(NMFUpdateRuleTest)
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Ensure min_residue is used, by testing that 
+ * min_resude makes a difference to the program.  
+ */
+BOOST_AUTO_TEST_CASE(NMFMinResidueTest)
+{
+  mat v = arma::randu(10, 10);
+  mat initial_w = arma::randu(10, 5);
+  mat initial_h = arma::randu(5, 10);
+  int r = 5;
+
+  // Set a larger min_residue.
+  SetInputParam("min_residue", double(1));
+  SetInputParam("input", v);
+  SetInputParam("rank", r);
+  SetInputParam("initial_w", initial_w);
+  SetInputParam("initial_h", initial_h);
+  
+  mlpackMain();
+
+  const mat w1 = CLI::GetParam<mat>("w");
+  const mat h1 = CLI::GetParam<mat>("h");
+
+
+  ResetSettings();
+
+
+  // Set a smaller min_residue.
+  SetInputParam("min_residue", double(1e-3));
+  SetInputParam("input", v);
+  SetInputParam("rank", r);
+  SetInputParam("initial_w", initial_w);
+  SetInputParam("initial_h", initial_h);
+
+  mlpackMain();
+
+  const mat w2 = CLI::GetParam<mat>("w");
+  const mat h2 = CLI::GetParam<mat>("h");
+
+
+  // The resulting matrices should be different.
+  BOOST_REQUIRE(!arma::approx_equal(w1, w2, "absdiff", 1e-5)
+      || !arma::approx_equal(h1, h2, "absdiff", 1e-5));
+}
+
+/**
+ * Ensure max_iterations is used, by testing that 
+ * max_iterations makes a difference to the program.  
+ */
+BOOST_AUTO_TEST_CASE(NMFMaxIterationTest)
+{
+  mat v = arma::randu(10, 10);
+  mat initial_w = arma::randu(10, 5);
+  mat initial_h = arma::randu(5, 10);
+  int r = 5;
+
+  // Set a larger max_iterations.
+  SetInputParam("max_iterations", int(100));
+  // Remove the influence of min_residue.
+  SetInputParam("min_residue", double(0));
+  SetInputParam("input", v);
+  SetInputParam("rank", r);
+  SetInputParam("initial_w", initial_w);
+  SetInputParam("initial_h", initial_h);
+  
+  mlpackMain();
+
+  const mat w1 = CLI::GetParam<mat>("w");
+  const mat h1 = CLI::GetParam<mat>("h");
+
+
+  ResetSettings();
+
+
+  // Set a smaller max_iterations.
+  SetInputParam("max_iterations", int(5));
+  // Remove the influence of min_residue.
+  SetInputParam("min_residue", double(0));
+  SetInputParam("input", v);
+  SetInputParam("rank", r);
+  SetInputParam("initial_w", initial_w);
+  SetInputParam("initial_h", initial_h);
+
+  mlpackMain();
+
+  const mat w2 = CLI::GetParam<mat>("w");
+  const mat h2 = CLI::GetParam<mat>("h");
+
+
+  // The resulting matrices should be different.
+  BOOST_REQUIRE(!arma::approx_equal(w1, w2, "absdiff", 1e-5)
+      || !arma::approx_equal(h1, h2, "absdiff", 1e-5));
 }
 
 BOOST_AUTO_TEST_SUITE_END();
