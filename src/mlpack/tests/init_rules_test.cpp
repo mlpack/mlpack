@@ -225,33 +225,27 @@ BOOST_AUTO_TEST_CASE(VarianceScalingNormalInitTest)
   BOOST_REQUIRE_EQUAL(weights3d.n_cols, cols);
   BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
 
-  // Manually create and initialize weight matrices with same dimensions and
-  // using the same initialization rule (Varaince Scaled Normal)
+  // Check that the initialized values lie in the required range
 
   double variance = (1 / ( ( rows + cols ) / 2 ) );
-
-  arma::mat vsnWeights = arma::randn<arma::mat>(rows, cols);
-  arma::cube vsnWeights3d = arma::randn<arma::cube>(rows, cols, slices);
-
-  // Scale the weights from N(0,1) to N(0,variance) manually
-
-  vsnWeights *= sqrt(variance);
-  
-  vsnWeights3d *= sqrt(variance);
-  
-  // Check the values of initialized weights are close enough to manually 
-  // initialized weights for the matrix and cube
+  double stddev = sqrt(variance);
 
   for (size_t i = 0; i < rows; i++)
     for (size_t j = 0; j < cols; j++)
-      BOOST_REQUIRE_SMALL(weights.at(i, j) - vsnWeights.at(i, j), 1e-3);
+    {
+      BOOST_REQUIRE_GE(weights.at(i, j), - 3*stddev);
+  	  BOOST_REQUIRE_LE(weights.at(i, j), 3*stddev);
+  	}
 
   for (size_t k = 0; k < slices; k++)
     for (size_t i = 0; i < rows; i++)
       for (size_t j = 0; j < cols; j++)
-        BOOST_REQUIRE_SMALL(weights3d.slice(k).at(i, j) - 
-        					vsnWeights3d.slice(k).at(i, j), 1e-3);
+      {
+        BOOST_REQUIRE_GE(weights3d.slice(k).at(i, j), - 3*stddev);
+    	BOOST_REQUIRE_LE(weights3d.slice(k).at(i, j), 3*stddev);
+      }
 
+  
 }
 
 /**
@@ -280,34 +274,24 @@ BOOST_AUTO_TEST_CASE(VarianceScalingUniformInitTest)
   BOOST_REQUIRE_EQUAL(weights3d.n_cols, cols);
   BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
 
-  // Manually create and initialize weight matrices with same dimensions and
-  // using the same initialization rule (Varaince Scaled Uniform)
+  // Check that the initialized values lie in the required range
 
   double limit = sqrt(3 / ( ( rows + cols ) / 2 ) );
-
-  arma::mat vsuWeights = arma::randu<arma::mat>(rows, cols);
-  arma::cube vsuWeights3d = arma::randu<arma::cube>(rows, cols, slices);
-
-  // Scale the weights from U[0,1] to U[-limit,limit] manually
-
-  vsuWeights *= (2 * limit);
-  vsuWeights -= (limit);
-
-  vsuWeights3d *= (2 * limit);
-  vsuWeights3d -= (limit);
-
-  // Check the values of initialized weights are close enough to manually 
-  // initialized weights for the matrix and cube
-
+  
   for (size_t i = 0; i < rows; i++)
     for (size_t j = 0; j < cols; j++)
-      BOOST_REQUIRE_SMALL(weights.at(i, j) - vsuWeights.at(i, j), 1e-3);
+    {
+      BOOST_REQUIRE_GE(weights.at(i, j), -limit);
+  	  BOOST_REQUIRE_LE(weights.at(i, j), limit);
+  	}
 
   for (size_t k = 0; k < slices; k++)
     for (size_t i = 0; i < rows; i++)
       for (size_t j = 0; j < cols; j++)
-        BOOST_REQUIRE_SMALL(weights3d.slice(k).at(i, j) - 
-        					vsuWeights3d.slice(k).at(i, j), 1e-3);
+      {
+        BOOST_REQUIRE_GE(weights3d.slice(k).at(i, j), -limit);
+    	BOOST_REQUIRE_LE(weights3d.slice(k).at(i, j), limit);
+      }
 
 }
 
