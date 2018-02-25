@@ -609,18 +609,6 @@ void HMM<Distribution>::serialize(Archive& ar, const unsigned int /* version */)
     ar & BOOST_SERIALIZATION_NVP(emission);
 }
 
-template<typename Distribution>
-bool HMM<Distribution>::ApproximatelyEqual(const HMM<Distribution>& other,
-                                           double tolerance) const
-{
-  bool dimensionalityEqual = (dimensionality == other.dimensionality);
-  bool transitionEqual = approx_equal(transition, other.transition,
-      "absdiff", tolerance);
-  bool initialEqual = approx_equal(initial, other.initial, 
-      "absdiff", tolerance);
-  return dimensionalityEqual && transitionEqual && initialEqual;
-}
-
 } // namespace hmm
 } // namespace mlpack
 
