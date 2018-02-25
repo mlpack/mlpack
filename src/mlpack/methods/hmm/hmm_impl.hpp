@@ -169,6 +169,12 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
       }
     }
 
+    if (std::abs(oldLoglik - loglik) < tolerance)
+    {
+      Log::Debug << "Converged after " << iter << " iterations." << std::endl;
+      break;
+    }
+
     // Normalize the new initial probabilities.
     if (dataSeq.size() > 1)
       initial = newInitial / dataSeq.size();
