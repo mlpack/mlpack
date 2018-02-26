@@ -26,7 +26,7 @@ class NesterovMomentumUpdate
   /*
   */
   NesterovMomentumUpdate(const double beta1 = 0.99 ,
-              		 const double scheduleDecay = 4e-3) :
+              		     const double scheduleDecay = 4e-3) :
       beta1(beta1),
       scheduleDecay(scheduleDecay),
       iteration(0)
@@ -62,8 +62,33 @@ class NesterovMomentumUpdate
               const double stepSize,
               const arma::mat& gradient)
   {
-	
+	double beta1T = beta1 * (1 - (0.5 *
+        std::pow(0.96, (iteration - 1) * scheduleDecay)));
+
+    double beta1T1 = beta1 * (1 - (0.5 *
+        std::pow(0.96, iteration * scheduleDecay)));
+
+	iterate = iterate + (beta1T * beta1T1 * velocity) - ((1 + beta1T1) * stepSize * gradient);
+    
+	velocity = beta1T * velocity - stepSize * gradient;
   }
+
+  //! Get the smoothing parameter.
+  double Beta1() const { return beta1; }
+  //! Modify the smoothing parameter.
+  double& Beta1() { return beta1; }
+
+  //! Get the decay parameter for decay coefficients
+  double ScheduleDecay() const { return scheduleDecay; }
+  //! Modify the decay parameter for decay coefficients
+  double& ScheduleDecay() { return scheduleDecay; }
+
+ private:
+  // The smoothing parameter.
+  double beta1;
+
+  // The velocity matrix.
+  arma::mat velocity;
 
 };
 
