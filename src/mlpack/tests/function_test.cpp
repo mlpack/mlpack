@@ -526,7 +526,8 @@ class A
   size_t NumFeatures() const;
   double Evaluate(const arma::mat&, const size_t, const size_t) const;
   void Gradient(const arma::mat&, const size_t, arma::mat&, const size_t) const;
-  void Gradient(const arma::mat&, const size_t, arma::sp_mat&, const size_t) const;
+  void Gradient(const arma::mat&, const size_t, arma::sp_mat&, const size_t)
+      const;
   void PartialGradient(const arma::mat&, const size_t, arma::sp_mat&) const;
 };
 

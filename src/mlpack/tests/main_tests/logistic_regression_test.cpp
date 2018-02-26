@@ -71,7 +71,8 @@ BOOST_AUTO_TEST_CASE(LRNoResponses)
   arma::mat trainX = arma::randu<arma::mat>(D, N);
   SetInputParam("training", std::move(trainX));
 
-  // Labels to the training data is not provided. It should throw a runtime error.
+  // Labels to the training data is not provided. It should throw a runtime
+  // error.
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
@@ -309,7 +310,8 @@ BOOST_AUTO_TEST_CASE(LRTrainWithMoreThanTwoClasses)
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
 
-  // Training data contains more than two classes. It should throw a runtime error.
+  // Training data contains more than two classes. It should throw a runtime
+  // error.
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;

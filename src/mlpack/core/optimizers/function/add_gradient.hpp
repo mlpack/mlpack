@@ -41,7 +41,8 @@ class AddGradient<FunctionType, HasEvaluateWithGradient, true>
   // Reflect the existing Gradient().
   void Gradient(const arma::mat& coordinates, arma::mat& gradient)
   {
-    static_cast<FunctionType*>(static_cast<Function<FunctionType>*>(this))->Gradient(coordinates, gradient);
+    static_cast<FunctionType*>(static_cast<Function<FunctionType>*>(
+        this))->Gradient(coordinates, gradient);
   }
 };
 

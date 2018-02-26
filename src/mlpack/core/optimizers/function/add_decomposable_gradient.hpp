@@ -164,7 +164,9 @@ class AddDecomposableGradientStatic
 {
  public:
   // Provide a dummy overload so the name 'Gradient' exists for this object.
-  static void Gradient(traits::UnconstructableType&, const size_t, const size_t);
+  static void Gradient(traits::UnconstructableType&,
+                       const size_t,
+                       const size_t);
 };
 
 /**

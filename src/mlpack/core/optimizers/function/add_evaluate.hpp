@@ -41,7 +41,8 @@ class AddEvaluate<FunctionType, HasEvaluateWithGradient, true>
   // Reflect the existing Evaluate().
   double Evaluate(const arma::mat& coordinates)
   {
-    return static_cast<FunctionType*>(static_cast<Function<FunctionType>*>(this))->Evaluate(coordinates);
+    return static_cast<FunctionType*>(static_cast<Function<FunctionType>*>(
+        this))->Evaluate(coordinates);
   }
 };
 
