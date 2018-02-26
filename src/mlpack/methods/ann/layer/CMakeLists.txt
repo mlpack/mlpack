@@ -28,6 +28,8 @@ set(SOURCES
   elu_impl.hpp
   fast_lstm.hpp
   fast_lstm_impl.hpp
+  flexible_relu.hpp
+  flexible_relu_impl.hpp
   glimpse.hpp
   glimpse_impl.hpp
   gru.hpp
