@@ -31,7 +31,7 @@ class Embedding
      *
      * @param vocabSize Size of
      * @param dimensionSize
-     * @param pretrained
+     * @param pretrain
      */
     Embedding(const size_t vocabSize,
               const size_t dimensionSize,
@@ -126,10 +126,10 @@ class Embedding
     bool pretrain;
 
     //! Locally-stored vocabSize parameter
-    bool vocabSize;
+    size_t vocabSize;
 
     //! Locally-stored dimensionSize parameter
-    bool dimensionSize;
+    size_t dimensionSize;
 
     //! Locally-stored gradient object.
     OutputDataType gradient;

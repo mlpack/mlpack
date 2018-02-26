@@ -31,7 +31,7 @@ Embedding<InputDataType, OutputDataType>::Embedding(
   const bool pretrain) :
   vocabSize(vocabSize),
   dimensionSize(dimensionSize),
-  pretrain(false)
+  pretrain(pretrain)
 {
   // Nothing to do here.
 }
@@ -49,13 +49,10 @@ void Embedding<InputDataType, OutputDataType>::Forward(
 {
 
   // Apply embeddingMatrix multiplication to the input and store the results.
-  for (arma::uword j = 0; j < output.n_cols; ++j)
+  for (arma::uword j = 0; j < input.n_cols; ++j)
   {
-    for (arma::uword i = 0; i < output.n_rows; ++i)
-    {
-      arma::rowvec wordRepresentation = embeddingMatrix.row(input(i,j));
-      output(i, j) = wordRepresentation;
-    }
+    arma::rowvec wordRepresentation = embeddingMatrix.row(input(0,j));
+    output(arma::span(j,j),arma::span::all) = wordRepresentation;
   }
 
 }
