@@ -72,7 +72,7 @@ inline void CheckMatricesDiffer(arma::mat& a, arma::mat& b, double tolerance)
 
 inline void ApproximatelyEqual(HMMModel& h1,
                                HMMModel& h2,
-                               double tolerance=1.0)
+                               double tolerance = 1.0)
 {
   BOOST_REQUIRE(h1.Type() == h2.Type());
   HMMType  hmmType = h1.Type();
@@ -81,13 +81,11 @@ inline void ApproximatelyEqual(HMMModel& h1,
     CheckMatrices(
         h1.DiscreteHMM()->Transition()*100,
         h2.DiscreteHMM()->Transition()*100,
-        tolerance
-        );
+        tolerance);
     CheckMatrices(
         h1.DiscreteHMM()->Transition()*100,
         h2.DiscreteHMM()->Transition()*100,
-        tolerance
-        );
+        tolerance);
 
     // Check if emission dists are equal
     std::vector<distribution::DiscreteDistribution> d1 =
@@ -109,13 +107,11 @@ inline void ApproximatelyEqual(HMMModel& h1,
     CheckMatrices(
         h1.GaussianHMM()->Transition()*100,
         h2.GaussianHMM()->Transition()*100,
-        tolerance
-        );
+        tolerance);
     CheckMatrices(
         h1.GaussianHMM()->Initial()*100,
         h2.GaussianHMM()->Initial()*100,
-        tolerance
-        );
+        tolerance);
     // Check if emission dists are equal by comparing the mean and coviariance
     std::vector<distribution::GaussianDistribution> d1 =
         h1.GaussianHMM()->Emission();
@@ -136,13 +132,11 @@ inline void ApproximatelyEqual(HMMModel& h1,
     CheckMatrices(
         h1.GMMHMM()->Transition()*100,
         h2.GMMHMM()->Transition()*100,
-        tolerance
-        );
+        tolerance);
     CheckMatrices(
         h1.GMMHMM()->Initial()*100,
         h2.GMMHMM()->Initial()*100,
-        tolerance
-        );
+        tolerance);
     // Check if emission dists are equal
     std::vector<gmm::GMM> d1 = h1.GMMHMM()->Emission();
     std::vector<gmm::GMM> d2 = h2.GMMHMM()->Emission();
@@ -251,13 +245,13 @@ BOOST_AUTO_TEST_CASE(HMMTrainReuseDiscreteModelTest)
 
   FileExists(inputObsFileName);
   FileExists(inputLabFileName);
-  // Make sure that the size of the 
+  // Make sure that the size of the
   // training seq, and training labels is same
   arma::mat trainObs, trainLab;
   data::Load(inputObsFileName, trainObs);
   data::Load(inputLabFileName, trainLab);
   BOOST_REQUIRE_EQUAL(trainObs.n_rows, trainLab.n_rows);
-  
+
   SetInputParam("input_file", std::move(inputObsFileName));
   SetInputParam("labels_file", std::move(inputLabFileName));
   SetInputParam("type", std::move(hmmType));

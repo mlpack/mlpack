@@ -184,7 +184,7 @@ class HMMModel
    *
    * Hence, in practice, a user should be careful to first check the type of HMM
    * (by calling the Type() accessor) and then perform subsequent actions, to
-   * avoid running into NullPointerExceptions.
+   * avoid null pointer dereferences.
    */
   HMM<distribution::DiscreteDistribution>* DiscreteHMM() { return discreteHMM; }
   HMM<distribution::GaussianDistribution>* GaussianHMM() { return gaussianHMM; }
