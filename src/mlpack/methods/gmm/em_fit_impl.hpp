@@ -383,7 +383,7 @@ ArmadilloGMMWrapper(const arma::mat& observations,
   for (size_t i = 0; i < dists.size(); ++i)
   {
     dists[i].Mean() = g.means.col(i);
-    dists[i].Covariance(std::move(arma::diagmat(g.dcovs.col(i))));
+    dists[i].Covariance(arma::diagmat(g.dcovs.col(i)));
   }
 }
 #endif

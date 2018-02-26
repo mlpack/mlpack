@@ -69,4 +69,5 @@ setup(name='mlpack',
       cmdclass={ 'build_ext': build_ext },
       ext_modules = modules,
       setup_requires=['cython', 'pytest-runner'],
-      tests_require=['pytest'])
+      tests_require=['pytest'],
+      zip_safe = False)

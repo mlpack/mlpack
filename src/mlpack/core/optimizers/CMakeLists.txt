@@ -8,6 +8,7 @@ set(DIRS
   fw
   gradient_descent
   grid_search
+  katyusha
   iqn
   lbfgs
   line_search
@@ -16,11 +17,13 @@ set(DIRS
   parallel_sgd
   rmsprop
   sa
+  sarah
   scd
   sdp
   sgd
   sgdr
   smorms3
+  svrg
   spalera_sgd
 )
 
