@@ -395,9 +395,9 @@ BOOST_AUTO_TEST_CASE(DBSCANSingleTreeTest)
 /**
  * Check that the assignment of cluster is same if
  * single tree is used for search.
-**/
- BOOST_AUTO_TEST_CASE(DBSCANNaiveSearchTest)
- {
+ */
+BOOST_AUTO_TEST_CASE(DBSCANNaiveSearchTest)
+{
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
    BOOST_FAIL("Unable to load dataset iris.csv!");
@@ -419,9 +419,9 @@ BOOST_AUTO_TEST_CASE(DBSCANSingleTreeTest)
   mlpackMain();
 
   arma::Row<size_t> naiveOutput;
-   naiveOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+  naiveOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
 
   CheckMatrices(output, naiveOutput);
-} 
+}
 
 BOOST_AUTO_TEST_SUITE_END();
