@@ -1282,4 +1282,25 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorLayerTest)
   BOOST_REQUIRE_EQUAL(output.n_elem, 1);
 }
 
+/**
+* Simple Embedding module test.
+*/
+BOOST_AUTO_TEST_CASE(SimpleEmbeddingLayerTest)
+{
+  arma::mat output, input, delta;
+  Embedding<> module(2, 5, false);
+  module.Reset();
+  module.Parameters().randu();
+
+  // Test the Forward function.
+  input = arma::zeros(1, 5);
+  module.Forward(std::move(input), std::move(output));
+  BOOST_REQUIRE_CLOSE(5 * arma::accu(
+    module.Parameters().submat(0, 0, 0, 5)), arma::accu(output), 1e-3);
+
+  // Test the Backward function.
+  module.Backward(std::move(input), std::move(input), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

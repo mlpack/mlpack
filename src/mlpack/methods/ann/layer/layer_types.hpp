@@ -21,6 +21,7 @@
 #include <mlpack/methods/ann/layer/cross_entropy_error.hpp>
 #include <mlpack/methods/ann/layer/dropout.hpp>
 #include <mlpack/methods/ann/layer/elu.hpp>
+#include <mlpack/methods/ann/layer/embedding.hpp>
 #include <mlpack/methods/ann/layer/hard_tanh.hpp>
 #include <mlpack/methods/ann/layer/join.hpp>
 #include <mlpack/methods/ann/layer/leaky_relu.hpp>
@@ -45,6 +46,7 @@ namespace mlpack {
 namespace ann {
 
 template<typename InputDataType, typename OutputDataType> class DropConnect;
+template<typename InputDataType, typename OutputDataType> class Embedding;
 template<typename InputDataType, typename OutputDataType> class Glimpse;
 template<typename InputDataType, typename OutputDataType> class Linear;
 template<typename InputDataType, typename OutputDataType> class LinearNoBias;
@@ -118,6 +120,7 @@ using LayerTypes = boost::variant<
     DropConnect<arma::mat, arma::mat>*,
     Dropout<arma::mat, arma::mat>*,
     ELU<arma::mat, arma::mat>*,
+    Embedding<arma::mat, arma::mat>*,
     Glimpse<arma::mat, arma::mat>*,
     HardTanH<arma::mat, arma::mat>*,
     Join<arma::mat, arma::mat>*,
