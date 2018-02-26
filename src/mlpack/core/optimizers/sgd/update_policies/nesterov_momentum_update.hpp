@@ -17,14 +17,37 @@
 namespace mlpack {
 namespace optimization {
 
-/*
+/**
+ * Nesterov Momentum update policy for Stochastic Gradient Descent (SGD).
+ *
+ * Learning with SGD can be slow. Applying Standard momentum can accelerate
+ * the rate of convergence. Nesterov Momentum application can accelerate the
+ * rate of convergence to O(1/k^2).
+ * 
+ * @code
+ * @techreport{Nesterov1983,
+ *   title       = {A Method Of Solving A Convex Programming Problem With 
+ * 					Convergence Rate O(1/K^2)},
+ *   author      = {Yuri Nesterov},
+ *   institution = {Soviet Math. Dokl.},
+ *   volume      = {27},
+ *   year        = {1983},
+ *   url         = {http://www.cis.pku.edu.cn/faculty/vision/zlin/1983-A%20
+					Method%20of%20Solving%20a%20Convex%20Programming%20Problem
+					%20with%20Convergence%20Rate%20O(k%5E(-2))_Nesterov.pdf}
+ * }
+ * @endcode
  */
 
 class NesterovMomentumUpdate
 {
  public:
-  /*
-  */
+  /**
+   * Construct the Nesterov Momentum update policy with the given parameters.
+   *
+   * @param beta1 The second moment coefficient.
+   * @param scheduleDecay The decay parameter for decay coefficients
+   */
   NesterovMomentumUpdate(const double beta1 = 0.99 ,
               		     const double scheduleDecay = 4e-3) :
       beta1(beta1),
@@ -70,12 +93,12 @@ class NesterovMomentumUpdate
 
 	iterate = iterate + (beta1T * beta1T1 * velocity) - ((1 + beta1T1) * stepSize * gradient);
     
-	velocity = beta1T * velocity - stepSize * gradient;
+	velocity = beta1T * velocity - stepSize * gradient;pd
   }
 
-  //! Get the smoothing parameter.
+  //! Get the second moment coefficient.
   double Beta1() const { return beta1; }
-  //! Modify the smoothing parameter.
+  //! Modify the second moment coefficient.
   double& Beta1() { return beta1; }
 
   //! Get the decay parameter for decay coefficients
@@ -84,7 +107,7 @@ class NesterovMomentumUpdate
   double& ScheduleDecay() { return scheduleDecay; }
 
  private:
-  // The smoothing parameter.
+  // The second moment coefficient.
   double beta1;
 
   // The velocity matrix.
