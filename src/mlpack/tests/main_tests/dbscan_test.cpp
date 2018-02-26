@@ -220,6 +220,8 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
   if (!data::Load("iris.csv", inputData))
     BOOST_FAIL("Unable to load dataset iris.csv!");
 
+  // Tree type = kd tree.
+
   SetInputParam("input", inputData);
   SetInputParam("tree_type", std::string("kd"));
 
@@ -232,6 +234,8 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
 
   CLI::GetSingleton().Parameters()["input"].wasPassed = false;
   CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+
+  // Tree Type = r tree.
 
   SetInputParam("input", inputData);
   SetInputParam("tree_type", std::string("r"));
@@ -246,6 +250,8 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
   CLI::GetSingleton().Parameters()["input"].wasPassed = false;
   CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
 
+  // Tree type = r-star tree.
+
   SetInputParam("input", inputData);
   SetInputParam("tree_type", std::string("r-star"));
 
@@ -258,6 +264,8 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
 
   CLI::GetSingleton().Parameters()["input"].wasPassed = false;
   CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+
+  // Tree Type = x tree.
 
   SetInputParam("input", inputData);
   SetInputParam("tree_type", std::string("x"));
@@ -272,6 +280,8 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
   CLI::GetSingleton().Parameters()["input"].wasPassed = false;
   CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
 
+  // Tree Type = hilbert-r tree.
+
   SetInputParam("input", inputData);
   SetInputParam("tree_type", std::string("hilbert-r"));
 
@@ -284,6 +294,8 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
 
   CLI::GetSingleton().Parameters()["input"].wasPassed = false;
   CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+
+  // Tree Type = r-plus tree.
 
   SetInputParam("input", inputData);
   SetInputParam("tree_type", std::string("r-plus"));
@@ -298,6 +310,8 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
   CLI::GetSingleton().Parameters()["input"].wasPassed = false;
   CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
 
+  // Tree Type = r-plus-plus tree.
+
   SetInputParam("input", inputData);
   SetInputParam("tree_type", std::string("r-plus-plus"));
 
@@ -311,6 +325,8 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
   CLI::GetSingleton().Parameters()["input"].wasPassed = false;
   CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
 
+  // Tree Type = cover tree.
+
   SetInputParam("input", inputData);
   SetInputParam("tree_type", std::string("cover"));
 
@@ -323,6 +339,8 @@ BOOST_AUTO_TEST_CASE(DBSCANDiffTreeTypeTest)
 
   CLI::GetSingleton().Parameters()["input"].wasPassed = false;
   CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
+
+  // Tree Type = ball tree.
 
   SetInputParam("input", inputData);
   SetInputParam("tree_type", std::string("ball"));
