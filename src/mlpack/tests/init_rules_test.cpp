@@ -200,6 +200,10 @@ BOOST_AUTO_TEST_CASE(GaussianInitTest)
 
 /**
  * Simple test of the VarianceScalingNormalInit class.
+ * The test checks if the size of initialized weight matrices is correct.
+ * Further it checks the size of initialized weight cubes is correct.
+ * It also checks whether the values initialized make sense by verifying if
+ * values lie within 3 standard deviations of the mean of normal distribution.
  */
 BOOST_AUTO_TEST_CASE(VarianceScalingNormalInitTest)
 {
@@ -233,16 +237,16 @@ BOOST_AUTO_TEST_CASE(VarianceScalingNormalInitTest)
   for (size_t i = 0; i < rows; i++)
     for (size_t j = 0; j < cols; j++)
     {
-      BOOST_REQUIRE_GE(weights.at(i, j), - 3*stddev);
-  	  BOOST_REQUIRE_LE(weights.at(i, j), 3*stddev);
-  	}
+      BOOST_REQUIRE_GE(weights.at(i, j), - 3 * stddev);
+      BOOST_REQUIRE_LE(weights.at(i, j), 3 * stddev);
+    }
 
   for (size_t k = 0; k < slices; k++)
     for (size_t i = 0; i < rows; i++)
       for (size_t j = 0; j < cols; j++)
       {
-        BOOST_REQUIRE_GE(weights3d.slice(k).at(i, j), - 3*stddev);
-    	BOOST_REQUIRE_LE(weights3d.slice(k).at(i, j), 3*stddev);
+        BOOST_REQUIRE_GE(weights3d.slice(k).at(i, j), - 3 * stddev);
+        BOOST_REQUIRE_LE(weights3d.slice(k).at(i, j), 3 * stddev);
       }
 
   
@@ -250,6 +254,10 @@ BOOST_AUTO_TEST_CASE(VarianceScalingNormalInitTest)
 
 /**
  * Simple test of the VarianceScalingUniformInit class.
+ * The test checks if the size of initialized weight matrices is correct.
+ * Further it checks the size of initialized weight cubes is correct.
+ * It also checks whether the values initialized make sense by verifying if
+ * values lie within the limits of the uniform initialization.
  */
 BOOST_AUTO_TEST_CASE(VarianceScalingUniformInitTest)
 {
@@ -282,15 +290,15 @@ BOOST_AUTO_TEST_CASE(VarianceScalingUniformInitTest)
     for (size_t j = 0; j < cols; j++)
     {
       BOOST_REQUIRE_GE(weights.at(i, j), -limit);
-  	  BOOST_REQUIRE_LE(weights.at(i, j), limit);
-  	}
+      BOOST_REQUIRE_LE(weights.at(i, j), limit);
+    }
 
   for (size_t k = 0; k < slices; k++)
     for (size_t i = 0; i < rows; i++)
       for (size_t j = 0; j < cols; j++)
       {
         BOOST_REQUIRE_GE(weights3d.slice(k).at(i, j), -limit);
-    	BOOST_REQUIRE_LE(weights3d.slice(k).at(i, j), limit);
+        BOOST_REQUIRE_LE(weights3d.slice(k).at(i, j), limit);
       }
 
 }
