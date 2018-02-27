@@ -204,16 +204,16 @@ BOOST_AUTO_TEST_CASE(NMFUpdateRuleTest)
 BOOST_AUTO_TEST_CASE(NMFMinResidueTest)
 {
   mat v = arma::randu(10, 10);
-  mat initial_w = arma::randu(10, 5);
-  mat initial_h = arma::randu(5, 10);
+  mat initialW = arma::randu(10, 5);
+  mat initialH = arma::randu(5, 10);
   int r = 5;
 
   // Set a larger min_residue.
   SetInputParam("min_residue", double(1));
   SetInputParam("input", v);
   SetInputParam("rank", r);
-  SetInputParam("initial_w", initial_w);
-  SetInputParam("initial_h", initial_h);
+  SetInputParam("initial_w", initialW);
+  SetInputParam("initial_h", initialH);
   
   mlpackMain();
 
@@ -228,8 +228,8 @@ BOOST_AUTO_TEST_CASE(NMFMinResidueTest)
   SetInputParam("min_residue", double(1e-3));
   SetInputParam("input", v);
   SetInputParam("rank", r);
-  SetInputParam("initial_w", initial_w);
-  SetInputParam("initial_h", initial_h);
+  SetInputParam("initial_w", initialW);
+  SetInputParam("initial_h", initialH);
 
   mlpackMain();
 
@@ -249,8 +249,8 @@ BOOST_AUTO_TEST_CASE(NMFMinResidueTest)
 BOOST_AUTO_TEST_CASE(NMFMaxIterationTest)
 {
   mat v = arma::randu(10, 10);
-  mat initial_w = arma::randu(10, 5);
-  mat initial_h = arma::randu(5, 10);
+  mat initialW = arma::randu(10, 5);
+  mat initialH = arma::randu(5, 10);
   int r = 5;
 
   // Set a larger max_iterations.
@@ -259,8 +259,8 @@ BOOST_AUTO_TEST_CASE(NMFMaxIterationTest)
   SetInputParam("min_residue", double(0));
   SetInputParam("input", v);
   SetInputParam("rank", r);
-  SetInputParam("initial_w", initial_w);
-  SetInputParam("initial_h", initial_h);
+  SetInputParam("initial_w", initialW);
+  SetInputParam("initial_h", initialH);
   
   mlpackMain();
 
@@ -277,8 +277,8 @@ BOOST_AUTO_TEST_CASE(NMFMaxIterationTest)
   SetInputParam("min_residue", double(0));
   SetInputParam("input", v);
   SetInputParam("rank", r);
-  SetInputParam("initial_w", initial_w);
-  SetInputParam("initial_h", initial_h);
+  SetInputParam("initial_w", initialW);
+  SetInputParam("initial_h", initialH);
 
   mlpackMain();
 
