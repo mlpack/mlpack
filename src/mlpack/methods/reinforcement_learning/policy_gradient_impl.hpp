@@ -79,6 +79,7 @@ public:
       episode.push_back(std::make_tuple(state, action, reward, nextState));
       // If we have reached a terminal state, end episode.
       if(terminal) break;
+      state = nextState;
     }
   
     int episode_length = episode.size();
