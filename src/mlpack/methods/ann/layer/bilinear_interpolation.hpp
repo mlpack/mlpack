@@ -48,14 +48,13 @@ class BilinearInterpolation
    * @param inColSize Number of input columns.
    * @param outRowSize Number of output rows.
    * @param outColSize Number of output columns.
-   * @param depth Number of slices of input.
+   * @param depth Number of input slices.
    */
-  BilinearInterpolation(
-      const size_t inRowSize,
-      const size_t inColSize,
-      const size_t outRowSize,
-      const size_t outColSize,
-      const size_t depth = 1);
+  BilinearInterpolation(const size_t inRowSize,
+                        const size_t inColSize,
+                        const size_t outRowSize,
+                        const size_t outColSize,
+                        const size_t depth);
 
   /**
    * Forward pass through the layer. The layer interpolates
@@ -71,7 +70,7 @@ class BilinearInterpolation
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards through f. Using the results from the feed
    * forward pass. Since the layer does not have any learn-able parameters,
-   * we just have down-sample the gradient to make its size compatible with
+   * we just have to down-sample the gradient to make its size compatible with
    * the input size.
    *
    * @param input The input matrix.

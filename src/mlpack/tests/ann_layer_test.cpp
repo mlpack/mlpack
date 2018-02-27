@@ -1287,41 +1287,34 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorLayerTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleBilinearInterpolationLayerTest)
 {
+  // Tested output against tensorflow.image.resize_bilinear()
   arma::mat input, output, unzoomedOutput, expectedOutput;
-  size_t inRowSize = 10;
-  size_t inColSize = 10;
-  size_t outRowSize = 20;
-  size_t outColSize = 20;
-  size_t depth = 3;
+  size_t inRowSize = 2;
+  size_t inColSize = 2;
+  size_t outRowSize = 5;
+  size_t outColSize = 5;
+  size_t depth = 1;
   input.zeros(inRowSize * inColSize * depth, 1);
-  for (size_t d = 0; d < depth; d++)
-    for (size_t i = 0; i < inRowSize; i++)
-      for (size_t j = 0; j < inColSize; j++)
-      {
-        size_t ptr = d * inRowSize * inColSize + j * inColSize + i;
-        input[ptr] =  1 * (double)i / inRowSize +
-            1 * double(j) / inColSize + 1 * double(d) / depth;
-      }
-
-  expectedOutput.set_size(outRowSize * outColSize * depth, 1);
-  for (size_t d = 0; d < depth; d++)
-    for (size_t i = 0; i < outRowSize; i++)
-      for (size_t j = 0; j < outColSize; j++)
-      {
-        size_t ptr = d * outRowSize * outColSize + j * outColSize + i;
-        expectedOutput[ptr] = 1 * i / (double)outRowSize +
-            1 * j / (double)outColSize + 1 * d / (double)depth;
-      }
-
+  input[0] = 1.0;
+  input[1] = input[2] = 2.0;
+  input[3] = 3.0;
   BilinearInterpolation<> layer(inRowSize, inColSize, outRowSize, outColSize,
-                                depth);
-
+      depth);
+  expectedOutput = arma::mat("1.0000 1.4000 1.8000 2.0000 2.0000 \
+      1.4000 1.8000 2.2000 2.4000 2.4000 \
+      1.8000 2.2000 2.6000 2.8000 2.8000 \
+      2.0000 2.4000 2.8000 3.0000 3.0000 \
+      2.0000 2.4000 2.8000 3.0000 3.0000");
+  expectedOutput.reshape(25, 1);
   layer.Forward(std::move(input), std::move(output));
   CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-12);
 
+  expectedOutput = arma::mat("1.0000 1.9000 1.9000 2.8000");
+  expectedOutput.reshape(4, 1);
   layer.Backward(std::move(output), std::move(output),
-        std::move(unzoomedOutput));
-  CheckMatrices(unzoomedOutput - input, arma::zeros(input.n_rows), 1e-12);
+      std::move(unzoomedOutput));
+  CheckMatrices(unzoomedOutput - expectedOutput,
+      arma::zeros(input.n_rows), 1e-12);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

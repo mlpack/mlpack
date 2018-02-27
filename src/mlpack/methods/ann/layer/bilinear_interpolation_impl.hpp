@@ -55,16 +55,18 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
 {
   if (output.is_empty())
     output.set_size(outRowSize * outColSize * depth, 1);
+  else
+  {
+    assert(output.n_rows == outRowSize * outColSize * depth);
+    assert(output.n_cols == 1);
+  }
 
-  assert(input.n_rows == inRowSize * inColSize * depth);
-  assert(input.n_cols == 1);
-  assert(output.n_rows == outRowSize * outColSize * depth);
-  assert(output.n_cols == 1);
   assert(inRowSize >= 2);
   assert(inColSize >= 2);
 
   arma::cube inputAsCube(input.memptr(), inRowSize, inColSize, depth);
-  arma::cube outputAsCube(output.memptr(), outRowSize, outColSize, depth, false, true);
+  arma::cube outputAsCube(output.memptr(), outRowSize, outColSize, depth,
+                          false, true);
 
   double scaleRow = (double) inRowSize / (double) outRowSize;
   double scaleCol = (double) inColSize / (double) outColSize;
@@ -75,15 +77,21 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
     size_t rOrigin = (size_t) std::floor(i * scaleRow);
     if (rOrigin > inRowSize - 2)
       rOrigin = inRowSize - 2;
+
+    // Scaled distance of the interpolated point from the topmost row.
     double deltaR = i * scaleRow - rOrigin;
+    if (deltaR > 1)
+      deltaR = 1.0;
     for (size_t j = 0; j < outColSize; j++)
     {
+      // Scaled distance of the interpolated point from the leftmost column.
       size_t cOrigin = (size_t) std::floor(j * scaleCol);
-
       if (cOrigin > inColSize - 2)
         cOrigin = inColSize - 2;
 
       double deltaC = j * scaleCol - cOrigin;
+      if (deltaC > 1)
+        deltaC = 1.0;
       coeffs[0] = (1 - deltaR) * (1 - deltaC);
       coeffs[1] = deltaR * (1 - deltaC);
       coeffs[2] = (1 - deltaR) * deltaC;
@@ -92,7 +100,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
       for (size_t k = 0; k < depth; k++)
       {
         outputAsCube(i, j, k) = arma::accu(inputAsCube.slice(k).submat(
-                rOrigin, cOrigin, rOrigin + 1, cOrigin + 1) % coeffs);
+            rOrigin, cOrigin, rOrigin + 1, cOrigin + 1) % coeffs);
       }
     }
   }
@@ -107,14 +115,18 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
 {
   if (output.is_empty())
     output.set_size(inRowSize * inColSize * depth, 1);
+  else
+  {
+    assert(output.n_rows == inRowSize * inColSize * depth);
+    assert(output.n_cols == 1);
+  }
 
-  assert(output.n_rows == inRowSize * inColSize * depth);
-  assert(output.n_cols == 1);
   assert(outRowSize >= 2);
   assert(outColSize >= 2);
 
   arma::cube gradientAsCube(gradient.memptr(), outRowSize, outColSize, depth);
-  arma::cube outputAsCube(output.memptr(), inRowSize, inColSize, depth, false, true);
+  arma::cube outputAsCube(output.memptr(), inRowSize, inColSize, depth, false,
+                          true);
 
   if (gradient.n_elem == output.n_elem)
   {
