@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE(DecisionTreeMinimumLeafSizeTest)
 
   // Initialize an all-ones weight matrix.
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
- 
+
   // Input training data.
   SetInputParam("training", std::move(std::make_tuple(info, inputData)));
   SetInputParam("labels", std::move(labels));
