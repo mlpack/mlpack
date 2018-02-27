@@ -47,7 +47,6 @@ template<typename ModeType = FanAvg>
 class VarianceScalingNormalInit
 {
  public:
-
   // Empty Constructor
   // Scaling factor is the amount by which variance will be scaled.
   VarianceScalingNormalInit(const size_t scalingFactor = 1):
