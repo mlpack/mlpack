@@ -23,7 +23,7 @@
 #include "gaussian_init.hpp"
 #include "random_init.hpp"
 
- 
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -48,15 +48,15 @@ class VarianceScalingNormalInit
 {
  public:
 
-  //Empty Constructor
-  //Scaling factor is the amount by which variance will be scaled.
+  // Empty Constructor
+  // Scaling factor is the amount by which variance will be scaled.
   VarianceScalingNormalInit(const size_t scalingFactor = 1):
   scalingFactor(scalingFactor)
   {}
 
   template<typename eT, typename Mode = ModeType>
-  void Initialize(arma::Mat<eT>& W, 
-    const size_t rows, 
+  void Initialize(arma::Mat<eT>& W,
+    const size_t rows,
     const size_t cols,
     typename std::enable_if_t<std::is_same<Mode, FanIn>::value>* = 0)
   {
@@ -66,8 +66,8 @@ class VarianceScalingNormalInit
   }
 
   template<typename eT, typename Mode = ModeType>
-  void Initialize(arma::Mat<eT>& W, 
-    const size_t rows, 
+  void Initialize(arma::Mat<eT>& W,
+    const size_t rows,
     const size_t cols,
     typename std::enable_if_t<std::is_same<Mode, FanOut>::value>* = 0)
   {
@@ -77,8 +77,8 @@ class VarianceScalingNormalInit
   }
 
   template<typename eT, typename Mode = ModeType>
-  void Initialize(arma::Mat<eT>& W, 
-    const size_t rows, 
+  void Initialize(arma::Mat<eT>& W,
+    const size_t rows,
     const size_t cols,
     typename std::enable_if_t<std::is_same<Mode, FanAvg>::value>* = 0)
   {
@@ -108,9 +108,8 @@ class VarianceScalingNormalInit
       Initialize(W.slice(i), rows, cols);
   }
 
-private:
+ private:
   const size_t scalingFactor;
-
 }; // class VarianceScalingNormalInit
 
 
@@ -126,16 +125,15 @@ template<typename ModeType = FanAvg>
 class VarianceScalingUniformInit
 {
  public:
-
-  //Empty Constructor
-  //Scaling factor is the amount by which bound will be scaled.
+  // Empty Constructor
+  // Scaling factor is the amount by which bound will be scaled.
   VarianceScalingUniformInit(const size_t scalingFactor = 1):
   scalingFactor(scalingFactor)
   {}
 
   template<typename eT, typename Mode = ModeType>
-  void Initialize(arma::Mat<eT>& W, 
-    const size_t rows, 
+  void Initialize(arma::Mat<eT>& W,
+    const size_t rows,
     const size_t cols,
     typename std::enable_if_t<std::is_same<Mode, FanIn>::value>* = 0)
   {
@@ -145,8 +143,8 @@ class VarianceScalingUniformInit
   }
 
   template<typename eT, typename Mode = ModeType>
-  void Initialize(arma::Mat<eT>& W, 
-    const size_t rows, 
+  void Initialize(arma::Mat<eT>& W,
+    const size_t rows,
     const size_t cols,
     typename std::enable_if_t<std::is_same<Mode, FanOut>::value>* = 0)
   {
@@ -156,8 +154,8 @@ class VarianceScalingUniformInit
   }
 
   template<typename eT, typename Mode = ModeType>
-  void Initialize(arma::Mat<eT>& W, 
-    const size_t rows, 
+  void Initialize(arma::Mat<eT>& W,
+    const size_t rows,
     const size_t cols,
     typename std::enable_if_t<std::is_same<Mode, FanAvg>::value>* = 0)
   {
@@ -187,9 +185,8 @@ class VarianceScalingUniformInit
       Initialize(W.slice(i), rows, cols);
   }
 
-private:
+ private:
   const size_t scalingFactor;
-
 }; // class VarianceScalingUniformInit
 
 

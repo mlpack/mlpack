@@ -231,7 +231,7 @@ BOOST_AUTO_TEST_CASE(VarianceScalingNormalInitTest)
 
   // Check that the initialized values lie in the required range
 
-  double variance = (1.0 / ( ( rows + cols ) / 2.0 ) );
+  double variance = (1.0 / ((rows + cols) / 2.0));
   double stddev = sqrt(variance);
 
   for (size_t i = 0; i < rows; i++)
@@ -248,8 +248,6 @@ BOOST_AUTO_TEST_CASE(VarianceScalingNormalInitTest)
         BOOST_REQUIRE_GE(weights3d.slice(k).at(i, j), - 3 * stddev);
         BOOST_REQUIRE_LE(weights3d.slice(k).at(i, j), 3 * stddev);
       }
-
-  
 }
 
 /**
@@ -284,8 +282,8 @@ BOOST_AUTO_TEST_CASE(VarianceScalingUniformInitTest)
 
   // Check that the initialized values lie in the required range
 
-  double limit = sqrt(3.0 / ( ( rows + cols ) / 2.0 ) );
-  
+  double limit = sqrt(3.0 / ((rows + cols) / 2.0));
+
   for (size_t i = 0; i < rows; i++)
     for (size_t j = 0; j < cols; j++)
     {
@@ -300,7 +298,6 @@ BOOST_AUTO_TEST_CASE(VarianceScalingUniformInitTest)
         BOOST_REQUIRE_GE(weights3d.slice(k).at(i, j), -limit);
         BOOST_REQUIRE_LE(weights3d.slice(k).at(i, j), limit);
       }
-
 }
 
 /**
