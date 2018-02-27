@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(NesterovMomentumSGDSpeedUpTestFunction)
   SGDTestFunction f;
   NesterovMomentumUpdate nesterovMomentumUpdate(0.99, 4e-3);
   NesterovMomentumSGD s(0.0003, 1, 2500000, 1e-9, true,
-			nesterovMomentumUpdate);
+                        nesterovMomentumUpdate);
 
   arma::mat coordinates = f.GetInitialPoint();
   double result = s.Optimize(f, coordinates);
