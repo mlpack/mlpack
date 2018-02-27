@@ -16,6 +16,7 @@
 #include "concat_performance.hpp"
 #include "convolution.hpp"
 #include "dropconnect.hpp"
+#include "embedding.hpp"
 #include "glimpse.hpp"
 #include "layer_types.hpp"
 #include "linear.hpp"
