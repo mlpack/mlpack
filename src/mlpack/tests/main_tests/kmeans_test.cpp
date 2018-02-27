@@ -236,34 +236,6 @@ BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
 
 }
 
-
-/**
- * Checking that that size and dimensionality of Final Input File is correct when flag --in_place is specified
- */
-BOOST_AUTO_TEST_CASE(KmClusteringResultSizeCheck)
-{
-    int C = 2;
-
-  arma::mat inputData;
-  if (!data::Load("/home/prabhat/mlpack/src/mlpack/tests/data/vc2.csv", inputData))
-    BOOST_FAIL("Unable to load train dataset vc2.csv!");
-
-  size_t row = inputData.n_rows;
-  size_t col = inputData.n_cols;
-
-  SetInputParam("input", inputData);
-  SetInputParam("clusters", std::move(C));
-  SetInputParam("in_place", true);
-  SetInputParam("allow_empty_clusters", false);
-
-  mlpackMain();
-  arma::mat processedInput = CLI::GetParam<arma::mat>("input");
-
-  BOOST_REQUIRE_EQUAL(processedInput.n_cols, col);
-  BOOST_REQUIRE_EQUAL(processedInput.n_rows, row+1);
-}
-
-
 /**
  * Ensuring that absence of Input is checked.
  */
@@ -294,6 +266,7 @@ BOOST_AUTO_TEST_CASE(KmClustersNotDefined)
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
+
 /**
  * Checking that all the algorithms yield same results
  */
