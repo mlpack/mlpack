@@ -110,7 +110,7 @@ double IQN::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
         g += (1.0 / numBatches) * (gradient - y.slice(it));
 
         // Update the function information tables.
-        Q.slice(it) = stochasticHessian;
+        Q.slice(it) = std::move(stochasticHessian);
         y.slice(it) = gradient;
         t.slice(it) = iterateVec;
 
@@ -118,7 +118,7 @@ double IQN::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
             iterateVec;
       }
 
-      f+= effectiveBatchSize;
+      f += effectiveBatchSize;
     }
 
     overallObjective = 0;
