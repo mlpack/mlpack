@@ -49,7 +49,7 @@ class NesterovMomentumUpdate
    * @param scheduleDecay The decay parameter for decay coefficients
    */
   NesterovMomentumUpdate(const double beta1 = 0.99 ,
-              		     const double scheduleDecay = 4e-3) :
+              		 const double scheduleDecay = 4e-3) :
       beta1(beta1),
       scheduleDecay(scheduleDecay),
       iteration(0)
@@ -93,7 +93,7 @@ class NesterovMomentumUpdate
 
 	iterate = iterate + (beta1T * beta1T1 * velocity) - ((1 + beta1T1) * stepSize * gradient);
     
-	velocity = beta1T * velocity - stepSize * gradient;pd
+	velocity = beta1T * velocity - stepSize * gradient;
   }
 
   //! Get the second moment coefficient.

@@ -204,7 +204,7 @@ using StandardSGD = SGD<VanillaUpdate>;
 
 using MomentumSGD = SGD<MomentumUpdate>;
 
-using NesterovSGD = SGD<NesterovMomentumUpdate>;
+using NesterovMomentumSGD = SGD<NesterovMomentumUpdate>;
 
 } // namespace optimization
 } // namespace mlpack
