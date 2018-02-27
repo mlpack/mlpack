@@ -123,8 +123,7 @@ static void mlpackMain()
       // Initialization with given W, H matrices.
       GivenInitialization ginit = GivenInitialization(
           std::move(CLI::GetParam<arma::mat>("initial_w")),
-          std::move(CLI::GetParam<arma::mat>("initial_h"))
-          );
+          std::move(CLI::GetParam<arma::mat>("initial_h")));
       AMF<SimpleResidueTermination,
           GivenInitialization> amf(srt, ginit);
       amf.Apply(V, r, W, H);
@@ -146,8 +145,7 @@ static void mlpackMain()
       // Initialization with given W, H matrices.
       GivenInitialization ginit = GivenInitialization(
           std::move(CLI::GetParam<arma::mat>("initial_w")),
-          std::move(CLI::GetParam<arma::mat>("initial_h"))
-          );
+          std::move(CLI::GetParam<arma::mat>("initial_h")));
       AMF<SimpleResidueTermination,
           GivenInitialization,
           NMFMultiplicativeDivergenceUpdate> amf(srt, ginit);
@@ -172,8 +170,7 @@ static void mlpackMain()
       // Initialization with given W, H matrices.
       GivenInitialization ginit = GivenInitialization(
           std::move(CLI::GetParam<arma::mat>("initial_w")),
-          std::move(CLI::GetParam<arma::mat>("initial_h"))
-          );
+          std::move(CLI::GetParam<arma::mat>("initial_h")));
       AMF<SimpleResidueTermination,
           GivenInitialization,
           NMFALSUpdate> amf(srt, ginit);

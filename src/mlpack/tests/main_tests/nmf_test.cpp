@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(NMFMultdistShapeTest)
 {
   mat v = randu<mat>(10, 10);
   int r = 5;
-  
+
   SetInputParam("update_rules", std::string("multdist"));
   SetInputParam("input", std::move(v));
   SetInputParam("rank", r);
@@ -145,11 +145,10 @@ BOOST_AUTO_TEST_CASE(NMFRankBoundTest)
   r = -1;
   SetInputParam("input", std::move(v));
   SetInputParam("rank", r);
- 
+
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
-
 
   // Rank should not be 0.
   r = 0;
@@ -214,15 +213,13 @@ BOOST_AUTO_TEST_CASE(NMFMinResidueTest)
   SetInputParam("rank", r);
   SetInputParam("initial_w", initialW);
   SetInputParam("initial_h", initialH);
-  
+
   mlpackMain();
 
   const mat w1 = CLI::GetParam<mat>("w");
   const mat h1 = CLI::GetParam<mat>("h");
 
-
   ResetSettings();
-
 
   // Set a smaller min_residue.
   SetInputParam("min_residue", double(1e-3));
@@ -235,7 +232,6 @@ BOOST_AUTO_TEST_CASE(NMFMinResidueTest)
 
   const mat w2 = CLI::GetParam<mat>("w");
   const mat h2 = CLI::GetParam<mat>("h");
-
 
   // The resulting matrices should be different.
   BOOST_REQUIRE(!arma::approx_equal(w1, w2, "absdiff", 1e-5)
@@ -261,15 +257,13 @@ BOOST_AUTO_TEST_CASE(NMFMaxIterationTest)
   SetInputParam("rank", r);
   SetInputParam("initial_w", initialW);
   SetInputParam("initial_h", initialH);
-  
+
   mlpackMain();
 
   const mat w1 = CLI::GetParam<mat>("w");
   const mat h1 = CLI::GetParam<mat>("h");
 
-
   ResetSettings();
-
 
   // Set a smaller max_iterations.
   SetInputParam("max_iterations", int(5));
@@ -284,7 +278,6 @@ BOOST_AUTO_TEST_CASE(NMFMaxIterationTest)
 
   const mat w2 = CLI::GetParam<mat>("w");
   const mat h2 = CLI::GetParam<mat>("h");
-
 
   // The resulting matrices should be different.
   BOOST_REQUIRE(!arma::approx_equal(w1, w2, "absdiff", 1e-5)
