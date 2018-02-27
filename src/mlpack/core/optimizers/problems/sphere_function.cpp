@@ -22,7 +22,7 @@ SphereFunction::SphereFunction(const size_t n) :
 {
   initialPoint.set_size(n, 1);
 
-  for (size_t i = 0; i < n; ++i) // Set to [-3.12 3.33 -3.12 3.33...].
+  for (size_t i = 0; i < n; ++i) // Set to [-5 5 -5 5 -5 5...].
   {
     if (i % 2 == 1)
       initialPoint(i) = 5;

@@ -58,8 +58,8 @@ class KillEmptyClusters
   // Remove the empty cluster.
   if (emptyCluster < newCentroids.n_cols)
   {
-      newCentroids.shed_col(emptyCluster);
-      clusterCounts.shed_row(emptyCluster);
+    newCentroids.shed_col(emptyCluster);
+    clusterCounts.shed_row(emptyCluster);
   }
   return 0; // cluster removed
 }
