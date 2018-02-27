@@ -49,7 +49,7 @@ BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
 BOOST_AUTO_TEST_CASE(NonNegativeClustersTest)
 {
   arma::mat inputData;
-  if (!data::Load("/home/prabhat/mlpack/src/mlpack/tests/data/vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
   SetInputParam("input", std::move(inputData));
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(RefinedStartPercentageTest)
   int C = 2;
   double P = 2.0;
   arma::mat inputData;
-  if (!data::Load("/home/prabhat/mlpack/src/mlpack/tests/data/vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
   SetInputParam("input", std::move(inputData));
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(NonNegativePercentageTest)
   int C = 2;
   double P = -1.0;
   arma::mat inputData;
-  if (!data::Load("/home/prabhat/mlpack/src/mlpack/tests/data/vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
   SetInputParam("input", std::move(inputData));
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE(NonNegativePercentageTest)
 {
   int C = 2;
   arma::mat inputData;
-  if (!data::Load("/home/prabhat/mlpack/src/mlpack/tests/data/vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
   size_t col = inputData.n_cols;
@@ -147,9 +147,7 @@ BOOST_AUTO_TEST_CASE(NonNegativePercentageTest)
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, col);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_rows, row);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_cols, C);
-
 }
-
 
 /**
  * Checking that size and dimensionality of prediction is correct when --labels_only is specified
@@ -159,7 +157,7 @@ BOOST_AUTO_TEST_CASE(KmClusteringSizeCheckLabelOnly)
   int C = 2;
 
   arma::mat inputData;
-  if (!data::Load("/home/prabhat/mlpack/src/mlpack/tests/data/vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData))
       BOOST_FAIL("Unable to load train dataset vc2.csv!");
   size_t col = inputData.n_cols;
   size_t row = inputData.n_rows;
@@ -188,7 +186,7 @@ BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
   int iterations = 100;
 
   arma::mat inputData;
-  if (!data::Load("/home/prabhat/mlpack/src/mlpack/tests/data/vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData))
       BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
 
@@ -233,7 +231,6 @@ BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
 
   BOOST_REQUIRE_GT(arma::accu(killEmptyOutput != allowEmptyOutput), 1);
   BOOST_REQUIRE_GT(arma::accu(normalOutput != allowEmptyOutput), 1);
-
 }
 
 /**
@@ -256,7 +253,7 @@ BOOST_AUTO_TEST_CASE(KmNoInputData)
 BOOST_AUTO_TEST_CASE(KmClustersNotDefined)
 {
   arma::mat inputData;
-  if (!data::Load("/home/prabhat/mlpack/src/mlpack/tests/data/vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData))
       BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
   SetInputParam("input", std::move(inputData));
@@ -274,7 +271,7 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
 {
   int C = 5;
   arma::mat inputData;
-  if (!data::Load("/home/prabhat/mlpack/src/mlpack/tests/data/vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData))
       BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
   std::string algo = "naive";
