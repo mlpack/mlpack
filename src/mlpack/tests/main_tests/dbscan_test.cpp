@@ -400,7 +400,7 @@ BOOST_AUTO_TEST_CASE(DBSCANNaiveSearchTest)
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-   BOOST_FAIL("Unable to load dataset iris.csv!");
+    BOOST_FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("input", inputData);
 
