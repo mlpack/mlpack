@@ -52,7 +52,7 @@ class GlorotInitialization
     /**
      * Initialize
      */
-    GlorotInitialization() :
+    GlorotInitialization(const bool uniform = true) : uniform(uniform)
     {
         // Nothing to do here.
     }
@@ -69,13 +69,20 @@ class GlorotInitialization
                     const size_t rows,
                     const size_t cols)
     {
-        double_t a = sqrt(6)/sqrt(rows + cols); // limit of uniform distribution
+       double_t a = sqrt(6)/sqrt(rows + cols); // limit of  distribution
 
-        if (W.is_empty())
-        {
-            W = arma::mat(rows, cols);
-        }
+      if (W.is_empty())
+      {
+        W = arma::mat(rows, cols);
+      }
+
+      if(uniform)
         W.imbue( [&]() { return arma::as_scalar(Random(-a, a)); } );
+      else
+      {
+        double_t var = 2/(rows + cols);
+        W.imbue([&]() { return arma::as_scalar(RandNormal(0.0, var)); });
+      }
     }
 
     /**
@@ -100,7 +107,12 @@ class GlorotInitialization
             Initialize(W.slice(i), rows, cols);
     }
 
-  }; // class GlorotInitialization
+  private:
+  //! Mode used i.e. Uniform or Normal
+  bool uniform;
+
+
+}; // class GlorotInitialization
 
 } // namespace ann
 } // namespace mlpack
