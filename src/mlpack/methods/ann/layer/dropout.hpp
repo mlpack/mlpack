@@ -3,7 +3,7 @@
  * @author Marcus Edel
  *
  * Definition of the Dropout class, which implements a regularizer that
- * randomly sets units to zero. Preventing units from co-adapting.
+ * randomly sets units to zero preventing units from co-adapting.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -16,14 +16,13 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
+    namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The dropout layer is a regularizer that randomly with probability ratio
+ * The dropout layer is a regularizer that randomly with probability 'ratio'
  * sets input values to zero and scales the remaining elements by factor 1 /
- * (1 - ratio). If rescale is true the input is scaled with 1 / (1-p) when
- * deterministic is false. In the deterministic mode (during testing), the layer
- * just scales the output.
+ * (1 - ratio) rather than during test time so as to keep the expected sum same.
+ * In the deterministic mode (during testing), there is no change in the input.
  *
  * Note: During training you should set deterministic to false and during
  * testing you should set deterministic to true.
@@ -47,111 +46,104 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class Dropout
-{
- public:
-  /**
-   * Create the Dropout object using the specified ratio and rescale
-   * parameter.
-   *
-   * @param ratio The probability of setting a value to zero.
-   * @param rescale If true the input is rescaled when deterministic is False.
-   */
-  Dropout(const double ratio = 0.5, const bool rescale = true);
+        template<
+                typename InputDataType = arma::mat,
+                typename OutputDataType = arma::mat
+        >
+        class Dropout {
+        public:
+            /**
+             * Create the Dropout object using the specified ratio parameter.
+             *
+             * @param ratio The probability of setting a value to zero.
+             */
+            Dropout(const double ratio = 0.5);
 
-  /**
-   * Ordinary feed forward pass of the dropout layer.
-   *
-   * @param input Input data used for evaluating the specified function.
-   * @param output Resulting output activation.
-   */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+            /**
+             * Ordinary feed forward pass of the dropout layer.
+             *
+             * @param input Input data used for evaluating the specified function.
+             * @param output Resulting output activation.
+             */
+            template<typename eT>
+            void Forward(const arma::Mat<eT> &&input, arma::Mat<eT> &&output);
 
-  /**
-   * Ordinary feed backward pass of the dropout layer.
-   *
-   * @param input The propagated input activation.
-   * @param gy The backpropagated error.
-   * @param g The calculated gradient.
-   */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+            /**
+             * Ordinary feed backward pass of the dropout layer.
+             *
+             * @param input The propagated input activation.
+             * @param gy The backpropagated error.
+             * @param g The calculated gradient.
+             */
+            template<typename eT>
+            void Backward(const arma::Mat<eT> && /* input */,
+                          arma::Mat<eT> &&gy,
+                          arma::Mat<eT> &&g);
 
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
+            //! Get the input parameter.
+            InputDataType const &InputParameter() const { return inputParameter; }
 
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+            //! Modify the input parameter.
+            InputDataType &InputParameter() { return inputParameter; }
 
-  //! Get the detla.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+            //! Get the output parameter.
+            OutputDataType const &OutputParameter() const { return outputParameter; }
 
-  //! The value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
+            //! Modify the output parameter.
+            OutputDataType &OutputParameter() { return outputParameter; }
 
-  //! The probability of setting a value to zero.
-  double Ratio() const { return ratio; }
+            //! Get the detla.
+            OutputDataType const &Delta() const { return delta; }
 
-  //! Modify the probability of setting a value to zero.
-  void Ratio(const double r)
-  {
-    ratio = r;
-    scale = 1.0 / (1.0 - ratio);
-  }
+            //! Modify the delta.
+            OutputDataType &Delta() { return delta; }
 
-  //! The value of the rescale parameter.
-  bool Rescale() const {return rescale; }
-  //! Modify the value of the rescale parameter.
-  bool& Rescale() {return rescale; }
+            //! The value of the deterministic parameter.
+            bool Deterministic() const { return deterministic; }
 
-  /**
-   * Serialize the layer.
-   */
-  template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+            //! Modify the value of the deterministic parameter.
+            bool &Deterministic() { return deterministic; }
 
- private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
+            //! The probability of setting a value to zero.
+            double Ratio() const { return ratio; }
 
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
+            //! Modify the probability of setting a value to zero.
+            void Ratio(const double r) {
+                ratio = r;
+                scale = 1.0 / (1.0 - ratio);
+            }
 
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+            /**
+             * Serialize the layer.
+             */
+            template<typename Archive>
+            void serialize(Archive &ar, const unsigned int /* version */);
 
-  //! Locally-stored mast object.
-  OutputDataType mask;
+        private:
+            //! Locally-stored delta object.
+            OutputDataType delta;
 
-  //! The probability of setting a value to zero.
-  double ratio;
+            //! Locally-stored input parameter object.
+            InputDataType inputParameter;
 
-  //! The scale fraction.
-  double scale;
+            //! Locally-stored output parameter object.
+            OutputDataType outputParameter;
 
-  //! If true dropout and scaling is disabled, see notes above.
-  bool deterministic;
+            //! Locally-stored mast object.
+            OutputDataType mask;
 
-  //! If true the input is rescaled when deterministic is False.
-  bool rescale;
-}; // class Dropout
+            //! The probability of setting a value to zero.
+            double ratio;
 
-} // namespace ann
+            //! The scale fraction.
+            double scale;
+
+            //! If true dropout and scaling is disabled, see notes above.
+            bool deterministic;
+
+        }; // class Dropout
+
+    } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
