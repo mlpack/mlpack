@@ -248,6 +248,35 @@ BOOST_AUTO_TEST_CASE(KmNoInputData)
 }
 
 /**
+ * Checking that that size and dimensionality of Final Input File is correct
+ * when flag --in_place is specified
+ */
+BOOST_AUTO_TEST_CASE(KmClusteringResultSizeCheck)
+{
+  int C = 2;
+
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
+      BOOST_FAIL("Unable to load train dataset vc2.csv!");
+
+  size_t row = inputData.n_rows;
+  size_t col = inputData.n_cols;
+
+  SetInputParam("input", inputData);
+  SetInputParam("clusters", std::move(C));
+  SetInputParam("in_place", true);
+  SetInputParam("allow_empty_clusters", false);
+
+  mlpackMain();
+  arma::mat processedInput = CLI::GetParam<arma::mat>("output");
+  // here input is actually accessed through output
+  // due to a little trick in kmeans_main
+
+  BOOST_REQUIRE_EQUAL(processedInput.n_cols, col);
+  BOOST_REQUIRE_EQUAL(processedInput.n_rows, row+1);
+}
+
+/**
  * Ensuring that absence of Number of Clusters is checked.
  */
 BOOST_AUTO_TEST_CASE(KmClustersNotDefined)
@@ -284,7 +313,9 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   mlpackMain();
 
   arma::mat naiveOutput;
+  arma::mat naiveCentroid;
   naiveOutput = std::move(CLI::GetParam<arma::mat>("output"));
+  naiveCentroid = std::move(CLI::GetParam<arma::mat>("centroid"));
 
   ResetKmSettings();
 
@@ -298,7 +329,9 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   mlpackMain();
 
   arma::mat elkanOutput;
+  arma::mat elkanCentroid;
   elkanOutput = std::move(CLI::GetParam<arma::mat>("output"));
+  elkanCentroid = std::move(CLI::GetParam<arma::mat>("centroid"));
 
   ResetKmSettings();
 
@@ -312,7 +345,9 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   mlpackMain();
 
   arma::mat hamerlyOutput;
+  arma::mat hamerlyCentroid;
   hamerlyOutput = std::move(CLI::GetParam<arma::mat>("output"));
+  hamerlyCentroid = std::move(CLI::GetParam<arma::mat>("centroid"));
 
   ResetKmSettings();
 
@@ -326,7 +361,9 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   mlpackMain();
 
   arma::mat dualTreeOutput;
+  arma::mat dualTreeCentroid;
   dualTreeOutput = std::move(CLI::GetParam<arma::mat>("output"));
+  dualTreeCentroid = std::move(CLI::GetParam<arma::mat>("centroid"));
 
   ResetKmSettings();
 
@@ -340,13 +377,20 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   mlpackMain();
 
   arma::mat dualCoverTreeOutput;
+  arma::mat dualCoverTreeCentroid;
   dualCoverTreeOutput = std::move(CLI::GetParam<arma::mat>("output"));
+  dualCoverTreeCentroid = std::move(CLI::GetParam<arma::mat>("centroid"));
 
   // Check That all the algorithms yield the same clusters
   CheckMatrices(naiveOutput, elkanOutput);
   CheckMatrices(elkanOutput, hamerlyOutput);
   CheckMatrices(hamerlyOutput, dualTreeOutput);
   CheckMatrices(dualTreeOutput, dualCoverTreeOutput);
+
+  CheckMatrices(naiveCentroid, elkanCentroid);
+  CheckMatrices(elkanCentroid, hamerlyCentroid);
+  CheckMatrices(hamerlyCentroid, dualTreeCentroid);
+  CheckMatrices(dualTreeCentroid, dualCoverTreeCentroid);
 }
 
 
