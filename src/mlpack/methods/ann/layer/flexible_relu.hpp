@@ -60,7 +60,7 @@ template <
 >
 class FlexibleReLU
 {
-public:
+ public:
   /**
    *
    * Create the FlexibleReLU object using the specified parameters.
@@ -120,69 +120,70 @@ public:
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version*/);
 
-private:
+ private:
   /**
    * Computes the FlexibleReLU function
    *
    * @param x Input data.
    * @return f(x).
    */
- doubel Fn(const double x)
- {
- 	return (std::max(x,0) + alpha);
- }
+  double Fn(const double x)
+  {
+ 	  return (std::max(x,0) + alpha);
+  }
 
- /**
+  /**
    * Computes the FlexibleReLU function using a dense matrix as input.
    *
    * @param x Input data.
    * @param y The resulting output activation.
    */
- template<typename eT>
- void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
- {
- 	y = arma::max(arma::zeros<arma::Mat<eT> >(x.n_rows, x.n_cols), x)+alpha;
- }
+  template<typename eT>
+  void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
+  {
+ 	  y = arma::max(arma::zeros<arma::Mat<eT> >(x.n_rows, x.n_cols), x)+alpha;
+  }
  
- /**
-  * Computes the first derivative of the LeakyReLU function.
-  *
-  * @param x Input data.
-  * @return f'(x)
-  */
- double Deriv(const double x)
- {
-   return x > 0;
- }
+  /**
+   * Computes the first derivative of the LeakyReLU function.
+   *
+   * @param x Input data.
+   * @return f'(x)
+   */
+  double Deriv(const double x)
+  {
+    return x > 0;
+  }
 
- /**
+  /**
    * Computes the first derivative of the FlexibleReLU function.
    *
    * @param y Input activations.
    * @param The resulting dreivatives
    */
- template<typename InputType, typename, OutputType>
- void Deriv(const InputParameter& x, OutputType& y)
- {
- 	y = x
+  
+  template<typename InputType, typename, OutputType>
+  void Deriv(const InputParameter& x, OutputType& y)
+  {
+ 	  y = x
 
- 	for (size_t i = 0; i < x.n_elem; i++)
-	{
-	  y(i) = Deriv(x(i));
-	}
- }
+ 	  for (size_t i = 0; i < x.n_elem; i++)
+	  {
+	    y(i) = Deriv(x(i));
+	  }
+  }
 
- //! Locally-stored delta object.
- OutputDataType delta;
+  //! Locally-stored delta object.
+  OutputDataType delta;
 
- //! Locally-stored input parameter object.
- InputDataType inputParameter;
+  //! Locally-stored input parameter object.
+  InputDataType inputParameter;
 
- //! Locally-stored output parameter object.
- OutputDataType outputParameter;
+  //! Locally-stored output parameter object.
+  OutputDataType outputParameter;
 
- //! Parameter controlling the range of the rectifier function
- double alpha;
+  //! Parameter controlling the range of the rectifier function
+  double alpha;
 }; // class FlexibleReLU
 
 } // namespace ann
