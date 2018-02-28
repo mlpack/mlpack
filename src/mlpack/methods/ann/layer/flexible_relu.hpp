@@ -55,8 +55,8 @@ namespace ann /**Artificial Neural Network*/ {
 
 
 template <
-	     typename InputDataType = arma::mat,
-	     typename OutputDataType = arma::mat
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
 >
 class FlexibleReLU
 {
@@ -129,7 +129,7 @@ class FlexibleReLU
    */
   double Fn(const double x)
   {
- 	  return (std::max(x,0) + alpha);
+    return (std::max(x,0) + alpha);
   }
 
   /**
@@ -141,7 +141,7 @@ class FlexibleReLU
   template<typename eT>
   void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
- 	  y = arma::max(arma::zeros<arma::Mat<eT> >(x.n_rows, x.n_cols), x)+alpha;
+    y = arma::max(arma::zeros<arma::Mat<eT> >(x.n_rows, x.n_cols), x)+alpha;
   }
  
   /**
@@ -165,12 +165,12 @@ class FlexibleReLU
   template<typename InputType, typename, OutputType>
   void Deriv(const InputParameter& x, OutputType& y)
   {
- 	  y = x
+    y = x
 
- 	  for (size_t i = 0; i < x.n_elem; i++)
-	  {
-	    y(i) = Deriv(x(i));
-	  }
+    for (size_t i = 0; i < x.n_elem; i++)
+    {
+      y(i) = Deriv(x(i));
+    }
   }
 
   //! Locally-stored delta object.
