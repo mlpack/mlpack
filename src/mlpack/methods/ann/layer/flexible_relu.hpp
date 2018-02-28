@@ -129,7 +129,7 @@ class FlexibleReLU
    */
   double Fn(const double x)
   {
-    return (std::max(x,0) + alpha);
+    return (std::max(x, 0 * x) + alpha);
   }
 
   /**
@@ -162,10 +162,10 @@ class FlexibleReLU
    * @param The resulting dreivatives
    */
   
-  template<typename InputType, typename, OutputType>
-  void Deriv(const InputParameter& x, OutputType& y)
+  template<typename InputType, typename OutputType>
+  void Deriv(const InputType& x, OutputType& y)
   {
-    y = x
+    y = x;
 
     for (size_t i = 0; i < x.n_elem; i++)
     {
