@@ -27,14 +27,11 @@ namespace optimization {
  * @code
  * @techreport{Nesterov1983,
  *   title       = {A Method Of Solving A Convex Programming Problem With 
- * 					Convergence Rate O(1/K^2)},
+ *                  Convergence Rate O(1/K^2)},
  *   author      = {Yuri Nesterov},
  *   institution = {Soviet Math. Dokl.},
  *   volume      = {27},
  *   year        = {1983},
- *   url         = {http://www.cis.pku.edu.cn/faculty/vision/zlin/1983-A%20
-					Method%20of%20Solving%20a%20Convex%20Programming%20Problem
-					%20with%20Convergence%20Rate%20O(k%5E(-2))_Nesterov.pdf}
  * }
  * @endcode
  */
