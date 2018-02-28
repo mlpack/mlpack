@@ -25,7 +25,7 @@ template<typename InputDataType, typename OutputDataType>
 FlexibleReLU<InputDataType, OutputDataType>::FlexibleReLU(
     const double alpha) : aplha(alpha)
 {
-	//Nothing to do here.
+  //Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -41,9 +41,9 @@ template<typename DataType>
 void FlexibleReLU<InputDataType, OutputDataType>::Backward(
     const DataType&& input, DataType&& gy, DataType&& g)
 {
-    DataType derivative;
-    Deriv(input, derivative);
-    g = gy % derivative;
+  DataType derivative;
+  Deriv(input, derivative);
+  g = gy % derivative;
 }
 
 template<typename InputDataType, typename OutputDataType>
