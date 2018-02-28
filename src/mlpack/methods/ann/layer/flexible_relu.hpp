@@ -152,7 +152,7 @@ class FlexibleReLU
    */
   double Deriv(const double x)
   {
-    return x > 0;
+    return x > 0? 1 : 0;
   }
 
   /**
