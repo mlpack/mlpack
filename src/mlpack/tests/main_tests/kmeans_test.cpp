@@ -309,6 +309,7 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("clusters", C);
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("allow_empty_clusters", false);
+  SetInputParam("labels_only", true);
   SetInputParam("seed", 1);
 
   mlpackMain();
@@ -326,6 +327,7 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("clusters", C);
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("allow_empty_clusters", false);
+  SetInputParam("labels_only", true);
   SetInputParam("seed", 1);
 
   mlpackMain();
@@ -343,6 +345,7 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("clusters", C);
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("allow_empty_clusters", false);
+  SetInputParam("labels_only", true);
   SetInputParam("seed", 1);
 
   mlpackMain();
@@ -360,6 +363,7 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("clusters", C);
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("allow_empty_clusters", false);
+  SetInputParam("labels_only", true);
   SetInputParam("seed", 1);
 
   mlpackMain();
@@ -377,6 +381,7 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("clusters", std::move(C));
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("allow_empty_clusters", false);
+  SetInputParam("labels_only", true);
   SetInputParam("seed", 1);
 
   mlpackMain();
