@@ -23,6 +23,7 @@
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
+#include <mlpack/methods/ann/init_rules/he_init.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -196,6 +197,32 @@ BOOST_AUTO_TEST_CASE(GaussianInitTest)
   BOOST_REQUIRE_EQUAL(weights3d.n_cols, cols);
   BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
 }
+
+/**
+* Simple test of the HeInitialization class.
+*/
+BOOST_AUTO_TEST_CASE(HeInitTest)
+{
+  const size_t rows = 4;
+  const size_t cols = 4;
+  const size_t slices = 2;
+
+  arma::mat weights;
+  arma::cube weights3d;
+
+  HeInitialization initialization;
+
+  initialization.Initialize(weights, rows, cols);
+  initialization.Initialize(weights3d, rows, cols, slices);
+
+  BOOST_REQUIRE_EQUAL(weights.n_rows, rows);
+  BOOST_REQUIRE_EQUAL(weights.n_cols, cols);
+
+  BOOST_REQUIRE_EQUAL(weights3d.n_rows, rows);
+  BOOST_REQUIRE_EQUAL(weights3d.n_cols, cols);
+  BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
+}
+
 
 /**
  * Simple test of the NetworkInitialization class, we test it with every
