@@ -191,9 +191,9 @@ BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
 
 
   SetInputParam("input", inputData);
-  SetInputParam("clusters", std::move(C));
+  SetInputParam("clusters", C);
   SetInputParam("labels_only", true);
-  SetInputParam("max_iterations", std::move(iterations));
+  SetInputParam("max_iterations", iterations);
   SetInputParam("allow_empty_clusters", false);
 
   mlpackMain();
@@ -204,10 +204,10 @@ BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
   ResetKmSettings();
 
   SetInputParam("input", inputData);
-  SetInputParam("clusters", std::move(C));
+  SetInputParam("clusters", C);
   SetInputParam("labels_only", true);
   SetInputParam("allow_empty_clusters", true);
-  SetInputParam("max_iterations", std::move(iterations));
+  SetInputParam("max_iterations", iterations);
 
   mlpackMain();
 
