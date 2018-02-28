@@ -81,7 +81,7 @@ class GlorotInitialization
         W.imbue( [&]() { return arma::as_scalar(Random(-a, a)); } );
       else
       {
-        double_t var = 2/(rows + cols);
+        double_t var = (double)(2)/(rows + cols);
         W.imbue([&]() { return arma::as_scalar(RandNormal(0.0, var)); });
       }
     }
