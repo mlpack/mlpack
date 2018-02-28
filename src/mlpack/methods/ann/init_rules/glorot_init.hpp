@@ -32,7 +32,7 @@
 using namespace mlpack::math;
 
 namespace mlpack {
-    namespace ann /** Artificial Neural Network. */ {
+namespace ann /** Artificial Neural Network. */ {
 
 /**
  * This class is used to initialize the weight matrix with the Glorot Initialization
@@ -48,7 +48,7 @@ namespace mlpack {
 
 class GlorotInitialization
 {
-  public:
+ public:
     /**
      * Initialize
      */
@@ -76,7 +76,7 @@ class GlorotInitialization
         W = arma::mat(rows, cols);
       }
 
-      if(uniform)
+      if (uniform)
         W.imbue( [&]() { return arma::as_scalar(Random(-a, a)); } );
       else
       {
@@ -99,7 +99,7 @@ class GlorotInitialization
                     const size_t cols,
                     const size_t slices)
     {
-        if(W.is_empty())
+        if (W.is_empty())
         {
             W = arma::cube(rows, cols, slices);
         }
@@ -107,11 +107,9 @@ class GlorotInitialization
             Initialize(W.slice(i), rows, cols);
     }
 
-  private:
+ private:
   //! Mode used i.e. Uniform or Normal
   bool uniform;
-
-
 }; // class GlorotInitialization
 
 } // namespace ann
