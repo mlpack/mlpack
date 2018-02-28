@@ -25,7 +25,7 @@ template<typename InputDataType, typename OutputDataType>
 FlexibleReLU<InputDataType, OutputDataType>::FlexibleReLU(
     const double alpha) : alpha(alpha)
 {
-  //Nothing to do here.
+  // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -55,7 +55,7 @@ void FlexibleReLU<InputDataType, OutputDataType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(alpha);
 }
 
-} // napespace ann
+} // namespace ann
 } // namespace mlpack
 
 #endif

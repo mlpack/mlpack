@@ -96,22 +96,22 @@ class FlexibleReLU
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
-  //!Modify the input parameter.
+  //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
-  //!Get the output parameter.
+  //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
-  //Modify the output parameter.
+  //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
-  //!Get the delta.
+  //! Get the delta.
   OutputDataType const& Delta() const { return delta; }
-  //!Modify the delta.
+  //! Modify the delta.
   OutputDataType& Delta() { return delta;}
-  
-  //!Get the parameter controlling the range of the relu function.
+
+  //! Get the parameter controlling the range of the relu function.
   double const& Alpha() const { return alpha; }
-  //!Modify the parameter controlling the range of the relu function.
+  //! Modify the parameter controlling the range of the relu function.
   double& Alpha() { return alpha; }
 
   /**
@@ -143,7 +143,7 @@ class FlexibleReLU
   {
     y = arma::max(arma::zeros<arma::Mat<eT> >(x.n_rows, x.n_cols), x)+alpha;
   }
- 
+
   /**
    * Computes the first derivative of the LeakyReLU function.
    *
@@ -161,7 +161,7 @@ class FlexibleReLU
    * @param y Input activations.
    * @param The resulting dreivatives
    */
-  
+
   template<typename InputType, typename OutputType>
   void Deriv(const InputType& x, OutputType& y)
   {
