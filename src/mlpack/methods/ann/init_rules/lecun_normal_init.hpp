@@ -36,70 +36,69 @@
 using namespace mlpack::math;
 
 namespace mlpack {
-    namespace ann /** Artificial Neural Network. */ {
+namespace ann /** Artificial Neural Network. */ {
 
 /**
- * This class is used to initialize weight matrix with the Lecun Normalization
- * initialization rule.
- */
-        class LecunNormalInitialization
+* This class is used to initialize weight matrix with the Lecun Normalization
+* initialization rule.
+*/
+class LecunNormalInitialization
+{
+ public:
+    /**
+     * Initialize the LecunNormalInitialization object.
+     *
+     */
+    LecunNormalInitialization()
+    {
+        // Nothing to do here.
+    }
+
+    /**
+     * Initialize the elements of the weight matrix with the Lecun
+     * Normal initialization rule.
+     *
+     * @param W Weight matrix to initialize.
+     * @param rows Number of rows.
+     * @param cols Number of columns.
+     */
+    void Initialize(arma::mat& W,
+                    const size_t rows,
+                    const size_t cols)
+    {
+        double_t variance = 1 / rows;
+
+        if (W.is_empty())
         {
-        public:
-            /**
-             * Initialize the LecunNormalInitialization object.
-             *
-             */
-            LecunNormalInitialization()
-            {
-                // Nothing to do here.
-            }
+            W = arma::mat(rows, cols);
+        }
 
-            /**
-             * Initialize the elements of the weight matrix with the Lecun
-             * Normal initialization rule.
-             *
-             * @param W Weight matrix to initialize.
-             * @param rows Number of rows.
-             * @param cols Number of columns.
-             */
-            void Initialize(arma::mat& W,
-                            const size_t rows,
-                            const size_t cols)
-            {
-                double_t variance = 1 / rows;
+        W.imbue( [&]() { return arma::as_scalar(RandNormal(0, variance)); } );
+    }
 
-                if (W.is_empty())
-                {
-                    W = arma::mat(rows, cols);
-                }
+    /**
+     * Initialize the elements of the specified weight 3rd order tensor
+     * with Lecun Normal initialization rule.
+     *
+     * @param W Weight matrix to initialize.
+     * @param rows Number of rows.
+     * @param cols Number of columns.
+     * @param slice Numbers of slices.
+     */
+    void Initialize(arma::cube & W,
+                    const size_t rows,
+                    const size_t cols,
+                    const size_t slices)
+    {
+        W = arma::cube(rows, cols, slices);
 
-                W.imbue( [&]() { return arma::as_scalar(RandNormal(0, variance)); } );
-            }
+        for (size_t i = 0; i < slices; i++) {
+            Initialize(W.slice(i), rows, cols);
+        }
+    }
+}; // class LecunNormalInitialization
 
-            /**
-             * Initialize the elements of the specified weight 3rd order tensor
-             * with Lecun Normal initialization rule.
-             *
-             * @param W Weight matrix to initialize.
-             * @param rows Number of rows.
-             * @param cols Number of columns.
-             * @param slice Numbers of slices.
-             */
-            void Initialize(arma::cube & W,
-                            const size_t rows,
-                            const size_t cols,
-                            const size_t slices)
-            {
-                W = arma::cube(rows, cols, slices);
-
-                for (size_t i = 0; i < slices; i++) {
-                    Initialize(W.slice(i), rows, cols);
-                }
-            }
-
-        }; // class LecunNormalInitialization
-
-    } // namespace ann
+} // namespace ann
 } // namespace mlpack
 
 #endif
