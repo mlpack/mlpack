@@ -44,6 +44,7 @@ namespace ann /** Artificial Neural Network. */ {
  * @f}
  * Where n_{i+1} is the number of neurons in the outgoing layer, n_i represents the
  * number of neurons in the ingoing layer
+ * Here Normal Distribution may also be used if needed
  */
 
 class GlorotInitialization
@@ -54,7 +55,7 @@ class GlorotInitialization
      */
     GlorotInitialization(const bool uniform = true) : uniform(uniform)
     {
-        // Nothing to do here.
+      // Nothing to do here.
     }
 
     /**
