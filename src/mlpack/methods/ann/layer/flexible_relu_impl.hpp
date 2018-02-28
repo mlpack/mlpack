@@ -23,7 +23,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 FlexibleReLU<InputDataType, OutputDataType>::FlexibleReLU(
-	const double alpha) : aplha(alpha)
+    const double alpha) : aplha(alpha)
 {
 	//Nothing to do here.
 }
@@ -31,7 +31,7 @@ FlexibleReLU<InputDataType, OutputDataType>::FlexibleReLU(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void FlexibleReLU<InputDataType, OutputDataType>::Forward(
-        const InputType&& input, OutputType&& output)
+    const InputType&& input, OutputType&& output)
 {
   Fn(input, output);
 }
@@ -39,18 +39,18 @@ void FlexibleReLU<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
 void FlexibleReLU<InputDataType, OutputDataType>::Backward(
-	const DataType&& input, DataType&& gy, DataType&& g)
+    const DataType&& input, DataType&& gy, DataType&& g)
 {
-	DataType derivative;
-	Deriv(input, derivative);
-	g = gy % derivative;
+    DataType derivative;
+    Deriv(input, derivative);
+    g = gy % derivative;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void FlexibleReLU<InputDataType, OutputDataType>::serialize(
-	Archive& ar,
-	const unsigned int /* version*/)
+    Archive& ar,
+    const unsigned int /* version*/)
 {
   ar & BOOST_SERIALIZATION_NVP(alpha);
 }
