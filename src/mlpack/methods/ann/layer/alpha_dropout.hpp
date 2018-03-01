@@ -37,12 +37,12 @@ namespace mlpack {
  *
  * @code
  * @article{Klambauer2017,
-+ *   author  = {Gunter Klambauer and Thomas Unterthiner and
-+ *              Andreas Mayr},
-+ *   title   = {Self-Normalizing Neural Networks},
-+ *   journal = {Advances in Neural Information Processing Systems},
-+ *   year    = {2017}
-+ * }
+ *   author  = {Gunter Klambauer and Thomas Unterthiner and
+ *              Andreas Mayr},
+ *   title   = {Self-Normalizing Neural Networks},
+ *   journal = {Advances in Neural Information Processing Systems},
+ *   year    = {2017}
+ * }
  * }
  * @endcode
  *
@@ -114,6 +114,12 @@ namespace mlpack {
 
             //! Value to be added to a*x for affine transformation.
             double B() const { return b; }
+
+            //! Value of alpha_dash.
+            double Alpha_Dash() const {return alpha_dash; }
+
+            //! Get the mask.
+            OutputDataType const& Mask() const {return mask;}
 
             //! Modify the probability of setting a value to alpha_dash.  As
             //! 'a' and 'b' depend on 'ratio', modify them as well.

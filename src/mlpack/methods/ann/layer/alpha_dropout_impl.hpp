@@ -48,10 +48,9 @@ namespace mlpack {
                 // transformation so as to keep mean and variance of outputs to their
                 // original values.
 
-
                 mask = arma::randu< arma::Mat<eT> >(input.n_rows, input.n_cols);
                 mask.transform( [&](double val) { return (val > ratio); } );
-                output = input % mask + alpha_dash % (1 - mask);
+                output = input % mask + alpha_dash * (1 - mask);
 
                 output = (output * a) + b;
             }
@@ -74,8 +73,11 @@ namespace mlpack {
                 const unsigned int /* version */)
         {
             ar & BOOST_SERIALIZATION_NVP(ratio);
-            ar & BOOST_SERIALIZATION_NVP(a);
-            ar & BOOST_SERIALIZATION_NVP(b);
+
+            //reset values of a and b
+            a = pow((1 - ratio) * (1 + ratio * pow(alpha_dash, 2)), -0.5);
+
+            b = -a * alpha_dash * ratio;
         }
 
     } // namespace ann
