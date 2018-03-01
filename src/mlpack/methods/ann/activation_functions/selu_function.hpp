@@ -63,7 +63,6 @@ namespace ann /** Artificial Neural Network. */ {
 class SELUFunction
 {
  public:
-
     /**
      * Computes the SELU activation function.
      *
@@ -150,14 +149,12 @@ class SELUFunction
 
 
  private:
-
     // The following default constant values are for input whose mean is 0 and
     // variance is 1, i.e. input is normalized.
 
     constexpr static double alpha = 1.6732632423543774;
 
     constexpr static double lambda = 1.0507009873554802;
-
 }; // class SELUFunction
 
 } // namespace ann

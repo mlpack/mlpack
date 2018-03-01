@@ -374,7 +374,6 @@ BOOST_AUTO_TEST_CASE(SELUFunctionDerivativeTest)
      arma::as_scalar(arma::abs(arma::mean(output) -
                        SELUFunction::Lambda()*(SELUFunction::Alpha()-1))),
                        10e-6);
-
 }
 
 /**
