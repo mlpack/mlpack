@@ -94,6 +94,9 @@ class HMMModel
   //! Copy assignment operator.
   HMMModel& operator=(const HMMModel& other)
   {
+    if (this == &other)
+      return *this;
+
     delete discreteHMM;
     delete gaussianHMM;
     delete gmmHMM;
