@@ -79,7 +79,6 @@ arma::mat meanShiftData("  0.0   0.0;" // Class 1.
  * Ensure that the output has 1 extra row for the labels and
  * check the number of points for output remain the same.
  * Also ensure that the centroid points output has same number of rows.
- * .
  */
 BOOST_AUTO_TEST_CASE(MeanShiftOutputDimensionTest)
 {
@@ -94,6 +93,24 @@ BOOST_AUTO_TEST_CASE(MeanShiftOutputDimensionTest)
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 30);
 
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_cols, 2);
+}
+
+/**
+ * Ensure that if we ask for labels_only, output has 1 column and
+ * same number of rows for each point's label.
+ */
+BOOST_AUTO_TEST_CASE(MeanShiftLabelOutputDimensionTest)
+{
+  // Input random data points.
+  SetInputParam("input", meanShiftData);
+  SetInputParam("labels_only", true);
+
+  mlpackMain();
+
+  // Now check that the output has 1 extra row for labels.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 2 + 1);
+  // Check number of output points are the same.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 30);
 }
 
 /**
