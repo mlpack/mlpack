@@ -7,6 +7,18 @@
  * "FReLU: Flexible Rectified Linear Units for Improving Convolutional 
  *  Neural Networks", 2018
  *
+ * For more information, read the following paper:
+ *
+ * @code
+ * @article{
+ *  author  = {Suo Qiu, Xiangmin Xu and Bolun Cai},
+ *  title   = {FReLU: Flexible Rectified Linear Units for Improving
+ *             Convolutional Neural Networks}
+ *  journal = {arxiv preprint},
+ *  year    = {2018}
+ * }
+ * @endcode
+ *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
