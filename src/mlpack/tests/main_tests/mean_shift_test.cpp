@@ -76,13 +76,30 @@ arma::mat meanShiftData("  0.0   0.0;" // Class 1.
                      " -9.8   5.1;");
 
 /**
+ * Ensure that the output has 1 row for the labels and
+ * check the number of points remain the same.
+ */
+BOOST_AUTO_TEST_CASE(MeanShiftOutputDimensionTest)
+{
+  // Input random data points.
+  SetInputParam("input", meanShiftData);
+
+  mlpackMain();
+
+  // Now check that the output has 1 extra row for labels.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 2 + 1);
+  // Check number of output points are the same.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 30);
+}
+
+/**
  * Ensure that we can't specify an invalid max number of iterations.
  */
 BOOST_AUTO_TEST_CASE(MeanShiftInvalidMaxNumberOfIterations)
 {
   // Input random data points.
   SetInputParam("input", meanShiftData);
-  SetInputParam("max_iterations", -1);
+  SetInputParam("max_iterations", (int) -1);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
