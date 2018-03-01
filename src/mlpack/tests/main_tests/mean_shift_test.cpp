@@ -16,8 +16,8 @@ static const std::string testName = "Mean Shift";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
 #include <mlpack/methods/mean_shift/mean_shift_main.cpp>
+#include "test_helper.hpp"
 
 #include <boost/test/unit_test.hpp>
 #include "../test_tools.hpp"
@@ -43,74 +43,45 @@ struct MeanShiftTestFixture
 
 BOOST_FIXTURE_TEST_SUITE(MeanShiftMainTest, MeanShiftTestFixture);
 
-// Generate dataset; written transposed because it's easier to read.
-arma::mat meanShiftData("  0.0   0.0;" // Class 1.
-                     "  0.3   0.4;"
-                     "  0.1   0.0;"
-                     "  0.1   0.3;"
-                     " -0.2  -0.2;"
-                     " -0.1   0.3;"
-                     " -0.4   0.1;"
-                     "  0.2  -0.1;"
-                     "  0.3   0.0;"
-                     " -0.3  -0.3;"
-                     "  0.1  -0.1;"
-                     "  0.2  -0.3;"
-                     " -0.3   0.2;"
-                     " 10.0  10.0;" // Class 2.
-                     " 10.1   9.9;"
-                     "  9.9  10.0;"
-                     " 10.2   9.7;"
-                     " 10.2   9.8;"
-                     "  9.7  10.3;"
-                     "  9.9  10.1;"
-                     "-10.0   5.0;" // Class 3.
-                     " -9.8   5.1;"
-                     " -9.9   4.9;"
-                     "-10.0   4.9;"
-                     "-10.2   5.2;"
-                     "-10.1   5.1;"
-                     "-10.3   5.3;"
-                     "-10.0   4.8;"
-                     " -9.6   5.0;"
-                     " -9.8   5.1;");
-
 /**
  * Ensure that the output has 1 extra row for the labels and
  * check the number of points for output remain the same.
- * Also ensure that the centroid points output has same number of rows.
  */
 BOOST_AUTO_TEST_CASE(MeanShiftOutputDimensionTest)
 {
+  arma::mat x;
+  x.randu(3,100); // 100 points in 3 dimension
+
   // Input random data points.
-  SetInputParam("input", meanShiftData);
+  SetInputParam("input", std::move(x));
 
   mlpackMain();
 
   // Now check that the output has 1 extra row for labels.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 2 + 1);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 3 + 1);
   // Check number of output points are the same.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 30);
-
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_cols, 2);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 100);
 }
 
 /**
  * Ensure that if we ask for labels_only, output has 1 column and
  * same number of rows for each point's label.
  */
-BOOST_AUTO_TEST_CASE(MeanShiftLabelOutputDimensionTest)
+BOOST_AUTO_TEST_CASE(MeanShiftLabelOnlyOutputDimensionTest)
 {
+  arma::mat x;
+  x.randu(3,100); // 100 points in 3 dimension
+
   // Input random data points.
-  SetInputParam("input", meanShiftData);
+  SetInputParam("input", std::move(x));
   SetInputParam("labels_only", true);
 
   mlpackMain();
 
-  // Now check that the output has 1 extra row for labels.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 2 + 1);
   // Check number of output points are the same.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 30);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 100);
+  // Check that there is only 1 column containing all the labels.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 1);
 }
 
 /**
@@ -118,8 +89,12 @@ BOOST_AUTO_TEST_CASE(MeanShiftLabelOutputDimensionTest)
  */
 BOOST_AUTO_TEST_CASE(MeanShiftInvalidMaxNumberOfIterations)
 {
+  arma::mat x;
+  x.randu(3,100); // 100 points in 3 dimension
+
   // Input random data points.
-  SetInputParam("input", meanShiftData);
+  SetInputParam("input", x);
+  // Input invalid max number of iterations.
   SetInputParam("max_iterations", (int) -1);
 
   Log::Fatal.ignoreInput = true;
