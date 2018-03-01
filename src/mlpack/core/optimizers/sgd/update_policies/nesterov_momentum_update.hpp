@@ -42,14 +42,8 @@ class NesterovMomentumUpdate
   /**
    * Construct the Nesterov Momentum update policy with the given parameters.
    *
-   * @param beta1 The second moment coefficient.
-   * @param scheduleDecay The decay parameter for decay coefficients
    */
-  NesterovMomentumUpdate(const double beta1 = 0.99 ,
-                         const double scheduleDecay = 4e-3) :
-      beta1(beta1),
-      scheduleDecay(scheduleDecay),
-      iteration(0)
+  NesterovMomentumUpdate() : iteration(0)
   {
     // Nothing to do.
   }
@@ -82,37 +76,18 @@ class NesterovMomentumUpdate
               const double stepSize,
               const arma::mat& gradient)
   {
-    double beta1T = beta1 * (1 - (0.5 *
-        std::pow(0.96, (iteration - 1) * scheduleDecay)));
+    iteration++;
 
-    double beta1T1 = beta1 * (1 - (0.5 *
-        std::pow(0.96, iteration * scheduleDecay)));
+    double momentum = 1 - (3 / (iteration + 5));
 
-    iterate = iterate + (beta1T * beta1T1 * velocity) - ((1 + beta1T1)
-        * stepSize * gradient);
+    velocity = momentum * velocity - stepSize * gradient;
 
-    velocity = beta1T * velocity - stepSize * gradient;
+    iterate += velocity;
   }
 
-  //! Get the second moment coefficient.
-  double Beta1() const { return beta1; }
-  //! Modify the second moment coefficient.
-  double& Beta1() { return beta1; }
-
-  //! Get the decay parameter for decay coefficients
-  double ScheduleDecay() const { return scheduleDecay; }
-  //! Modify the decay parameter for decay coefficients
-  double& ScheduleDecay() { return scheduleDecay; }
-
  private:
-  // The second moment coefficient.
-  double beta1;
-
   // The velocity matrix.
   arma::mat velocity;
-
-  // The decay parameter for decay coefficients.
-  double scheduleDecay;
 
   // The number of iterations.
   double iteration;
