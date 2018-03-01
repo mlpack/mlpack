@@ -76,8 +76,10 @@ arma::mat meanShiftData("  0.0   0.0;" // Class 1.
                      " -9.8   5.1;");
 
 /**
- * Ensure that the output has 1 row for the labels and
- * check the number of points remain the same.
+ * Ensure that the output has 1 extra row for the labels and
+ * check the number of points for output remain the same.
+ * Also ensure that the centroid points output has same number of rows.
+ * .
  */
 BOOST_AUTO_TEST_CASE(MeanShiftOutputDimensionTest)
 {
@@ -90,6 +92,8 @@ BOOST_AUTO_TEST_CASE(MeanShiftOutputDimensionTest)
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 2 + 1);
   // Check number of output points are the same.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 30);
+
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_cols, 2);
 }
 
 /**
