@@ -15,7 +15,7 @@
 #include <mlpack/prereqs.hpp>
 
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
-#include <mlpack/methods/ann/convolution_rules/naive__atrous_convolution.hpp>
+#include <mlpack/methods/ann/convolution_rules/naive_atrous_convolution.hpp>
 
 // Not including fft and svd convolution as of now
 
@@ -37,9 +37,9 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename ForwardConvolutionRule = NaiveConvolution<FullConvolution>,
-    typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>,
-    typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>,
+    typename ForwardConvolutionRule = NaiveAtrousConvolution<FullConvolution>,
+    typename BackwardConvolutionRule = NaiveAtrousConvolution<FullConvolution>,
+    typename GradientConvolutionRule = NaiveAtrousConvolution<ValidConvolution>,
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >

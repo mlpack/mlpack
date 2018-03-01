@@ -25,13 +25,13 @@ template<
     typename InputDataType,
     typename OutputDataType
 >
-Convolution<
+AtrousConvolution<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::Convolution()
+>::AtrousConvolution()
 {
   // Nothing to do here.
 }
@@ -43,13 +43,13 @@ template<
     typename InputDataType,
     typename OutputDataType
 >
-Convolution<
+AtrousConvolution<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::Convolution(
+>::AtrousConvolution(
     const size_t inSize,
     const size_t outSize,
     const size_t kW,
@@ -85,7 +85,7 @@ template<
     typename InputDataType,
     typename OutputDataType
 >
-void Convolution<
+void AtrousConvolution<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -107,7 +107,7 @@ template<
     typename OutputDataType
 >
 template<typename eT>
-void Convolution<
+void AtrousConvolution<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -164,7 +164,7 @@ template<
     typename OutputDataType
 >
 template<typename eT>
-void Convolution<
+void AtrousConvolution<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -214,7 +214,7 @@ template<
     typename OutputDataType
 >
 template<typename eT>
-void Convolution<
+void AtrousConvolution<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -304,7 +304,7 @@ template<
     typename OutputDataType
 >
 template<typename Archive>
-void Convolution<
+void AtrousConvolution<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
