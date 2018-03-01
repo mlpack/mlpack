@@ -51,14 +51,18 @@ class KillEmptyClusters
       const size_t emptyCluster,
       const arma::mat& /* oldCentroids */,
       arma::mat& newCentroids,
-      arma::Col<size_t>& /* clusterCounts */,
+      arma::Col<size_t>& clusterCounts,
       MetricType& /* metric */,
       const size_t /* iteration */)
+{
+  // Remove the empty cluster.
+  if (emptyCluster < newCentroids.n_cols)
   {
-    // Kill the empty cluster.
-    newCentroids.col(emptyCluster).fill(DBL_MAX);
-    return 0; // No points were changed.
+    newCentroids.shed_col(emptyCluster);
+    clusterCounts.shed_row(emptyCluster);
   }
+  return 0; // cluster removed
+}
 
   //! Serialize the empty cluster policy (nothing to do).
   template<typename Archive>

@@ -23,6 +23,7 @@
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include <mlpack/methods/kmeans/kill_empty_clusters.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
@@ -132,6 +133,41 @@ BOOST_AUTO_TEST_CASE(AllowEmptyClusterTest)
   // Make sure no counts were changed.
   for (size_t i = 0; i < 3; i++)
     BOOST_REQUIRE_EQUAL(counts[i], countsOld[i]);
+}
+
+/**
+ * Make sure kill empty cluster policy removes the empty cluster.
+ */
+BOOST_AUTO_TEST_CASE(KillEmptyClusterTest)
+{
+  arma::Row<size_t> assignments;
+  assignments.randu(30);
+  arma::Row<size_t> assignmentsOld = assignments;
+
+  arma::mat centroids;
+  centroids.randu(30, 3); // This doesn't matter.
+
+  arma::Col<size_t> counts(3);
+  counts[0] = accu(assignments == 0);
+  counts[1] = accu(assignments == 1);
+  counts[2] = 0;
+  arma::Col<size_t> countsOld = counts;
+
+  // Make sure the method modify the specified point.
+  metric::LMetric<2, true> metric;
+  BOOST_REQUIRE_EQUAL(KillEmptyClusters::EmptyCluster(kMeansData, 2, centroids,
+                                                       centroids, counts, metric, 0), 0);
+
+  // Make sure no assignments were changed.
+  for (size_t i = 0; i < assignments.n_elem; i++)
+    BOOST_REQUIRE_EQUAL(assignments[i], assignmentsOld[i]);
+
+  // Make sure no counts were changed for clusters that are not empty.
+  for (size_t i = 0; i < 2; i++)
+    BOOST_REQUIRE_EQUAL(counts[i], countsOld[i]);
+
+  // Make sure that counts contain one less element than old counts.
+  BOOST_REQUIRE_GT(countsOld.n_elem, counts.n_elem);
 }
 
 /**
