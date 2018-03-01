@@ -303,6 +303,7 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   if (!data::Load("vc2.csv", inputData))
       BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
+  arma::mat initCentroid = arma::randu<arma::mat>(inputData.n_rows, C);
   std::string algo = "naive";
 
   SetInputParam("input", inputData);
@@ -310,7 +311,7 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("allow_empty_clusters", false);
   SetInputParam("labels_only", true);
-  SetInputParam("seed", 1);
+  SetInputParam("initial_centroids", initCentroid);
 
   mlpackMain();
 
@@ -328,7 +329,7 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("allow_empty_clusters", false);
   SetInputParam("labels_only", true);
-  SetInputParam("seed", 1);
+  SetInputParam("initial_centroids", initCentroid);
 
   mlpackMain();
 
@@ -346,7 +347,7 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("allow_empty_clusters", false);
   SetInputParam("labels_only", true);
-  SetInputParam("seed", 1);
+  SetInputParam("initial_centroids", initCentroid);
 
   mlpackMain();
 
@@ -364,7 +365,7 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("allow_empty_clusters", false);
   SetInputParam("labels_only", true);
-  SetInputParam("seed", 1);
+  SetInputParam("initial_centroids", initCentroid);
 
   mlpackMain();
 
@@ -382,7 +383,7 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("allow_empty_clusters", false);
   SetInputParam("labels_only", true);
-  SetInputParam("seed", 1);
+  SetInputParam("initial_centroids", std::move(initCentroid));
 
   mlpackMain();
 
