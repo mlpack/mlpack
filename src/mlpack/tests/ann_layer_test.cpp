@@ -403,6 +403,99 @@ BOOST_AUTO_TEST_CASE(NoDropoutTest)
   BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(input));
 }
 
+/*
+ * Perform test to check whether mean and variance remain nearly same
+ * after alpha_dropout.
+ */
+
+BOOST_AUTO_TEST_CASE(SimpleAlphaDropoutLayerTest)
+{
+  // Initialize the probability of setting a value to alpha_dash.
+  const double p = .2;
+
+  // Initialize the input parameter having a mean nearabout 0
+  // and variance nearabout 1.
+
+  arma::mat input = arma::randn<arma::mat>(1000,1);
+
+  Alpha_Dropout<> module(p);
+  module.Deterministic() = false;
+
+  // Test the Forward function when training phase.
+  arma::mat output;
+  module.Forward(std::move(input), std::move(output));
+  // Check whether mean remains nearly same.
+  BOOST_REQUIRE_LE(
+     arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))), 0.1);
+  // Check whether variance remains nearly same
+  BOOST_REQUIRE_LE(
+     arma::as_scalar(arma::abs(arma::var(input) - arma::var(output))), 0.1);
+
+  // Test the Backward function when training phase.
+  arma::mat delta;
+  module.Backward(std::move(input), std::move(input), std::move(delta));
+  BOOST_REQUIRE_LE(
+          arma::as_scalar(arma::abs(arma::mean(delta) - 0)), 0.05);
+
+  // Test the Forward function when testing phase.
+  module.Deterministic() = true;
+  module.Forward(std::move(input), std::move(output));
+  BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(output));
+}
+
+/**
+ * Perform alpha_dropout x times using ones as input, sum the number of ones
+ * and validate that the layer is producing approximately the correct number
+ * of ones.
+ */
+BOOST_AUTO_TEST_CASE(AlphaDropoutProbabilityTest)
+{
+    arma::mat input = arma::ones(1500, 1);
+    const size_t iterations = 10;
+
+    double probability[5] = { 0.1, 0.3, 0.4, 0.7, 0.8 };
+    for (size_t trial = 0; trial < 5; ++trial)
+    {
+        double nonzeroCount = 0;
+        for (size_t i = 0; i < iterations; ++i)
+        {
+            Alpha_Dropout<> module(probability[trial]);
+            module.Deterministic() = false;
+
+            arma::mat output;
+            module.Forward(std::move(input), std::move(output));
+
+            // Return a column vector containing the indices of elements of X
+            // that are not alpha_dash, we just need the number of
+            // non_alpha_dash values.
+            arma::uvec non_alpha_dash = arma::find(module.Mask());
+            nonzeroCount += non_alpha_dash.n_elem;
+        }
+
+        const double expected = input.n_elem * (1-probability[trial]) *
+                                iterations;
+
+        const double error = fabs(nonzeroCount - expected) / expected;
+
+        BOOST_REQUIRE_LE(error, 0.15);
+    }
+}
+
+/*
+* Perform alpha_dropout with probability 1 - p where p = 0, means no alpha_dropout.
+*/
+BOOST_AUTO_TEST_CASE(NoAlphaDropoutTest)
+{
+    arma::mat input = arma::ones(1500, 1);
+    Alpha_Dropout<> module(0);
+    module.Deterministic() = false;
+
+    arma::mat output;
+    module.Forward(std::move(input), std::move(output));
+
+    BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(input));
+}
+
 /**
  * Simple linear module test.
  */
