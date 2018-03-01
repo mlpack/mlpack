@@ -24,6 +24,13 @@ option(FORCE_CXX11
     OFF)
 enable_testing()
 
+# Currently Python bindings aren't supported on windows
+# Set BUILD_PYTHON_BINDINGS to OFF when the platform are windows
+if(WIN32)
+  option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
+  message(WARNING "By default Python bindings are not compiled for Windows because they are not known to work.  Set BUILD_PYTHON_BINDINGS to ON if you want them built.")
+endif()
+
 # Ensure that we have a C++11 compiler.  In newer versions of CMake, this is
 # done with target_compile_features() when the mlpack library target is added in
 # src/mlpack/CMakeLists.txt.
