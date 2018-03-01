@@ -41,7 +41,7 @@
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
-
+#include <mlpack/methods/ann/convolution_rules/naive_atrous_convolution.hpp>
 namespace mlpack {
 namespace ann {
 
@@ -106,6 +106,15 @@ template<
 class TransposedConvolution;
 
 template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+class AtrousConvolution;
+
+template<
     typename InputDataType,
     typename OutputDataType
 >
@@ -121,6 +130,9 @@ template <typename... CustomLayers>
 using LayerTypes = boost::variant<
     Add<arma::mat, arma::mat>*,
     AddMerge<arma::mat, arma::mat>*,
+    AtrousConvolution<NaiveConvolution<ValidConvolution>,
+                      NaiveConvolution<FullConvolution>,
+                      NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
     BaseLayer<LogisticFunction, arma::mat, arma::mat>*,
     BaseLayer<IdentityFunction, arma::mat, arma::mat>*,
     BaseLayer<TanhFunction, arma::mat, arma::mat>*,

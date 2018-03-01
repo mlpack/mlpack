@@ -156,8 +156,143 @@ void Convolution<
   outputHeight = outputTemp.n_cols;
 }
 
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+template<typename eT>
+void Convolution<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputDataType,
+    OutputDataType
+>::Backward(
+    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+{
+  arma::cube mappedError = arma::cube(gy.memptr(),
+        outputWidth, outputHeight, outSize);
+  gTemp = arma::zeros<arma::Cube<eT> >(inputTemp.n_rows,
+      inputTemp.n_cols, inputTemp.n_slices);
+
+  for (size_t outMap = 0, outMapIdx = 0; outMap < outSize; outMap++)
+  {
+    for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
+    {
+      arma::Mat<eT> rotatedFilter;
+      Rotate180(weight.slice(outMapIdx), rotatedFilter);
+
+      arma::Mat<eT> output;
+      BackwardConvolutionRule::Convolution(mappedError.slice(outMap),
+          rotatedFilter, output, dW, dH, dilation);
+      if (padW != 0 || padH != 0)
+      {
+        gTemp.slice(inMap) += output.submat(rotatedFilter.n_rows / 2,
+            rotatedFilter.n_cols / 2,
+            rotatedFilter.n_rows / 2 + gTemp.n_rows - 1,
+            rotatedFilter.n_cols / 2 + gTemp.n_cols - 1);
+        // Not complete. To be modified
+      }
+      else
+      {
+        gTemp.slice(inMap) += output;
+      }
+    }
+  }
+
+  g = arma::mat(gTemp.memptr(), gTemp.n_elem, 1);
 }
 
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+template<typename eT>
+void Convolution<
+    ForwardConvolutionRule,
+    BackwardConvolutionRule,
+    GradientConvolutionRule,
+    InputDataType,
+    OutputDataType
+>::Gradient(
+    const arma::Mat<eT>&& /* input */,
+    arma::Mat<eT>&& error,
+    arma::Mat<eT>&& gradient)
+{
+  arma::cube mappedError;
+  if (padW != 0 && padH != 0)
+  {
+    mappedError = arma::cube(error.memptr(), outputWidth / padW,
+        outputHeight / padH, outSize);
+    // To be modified.
+  }
+  else
+  {
+    mappedError = arma::cube(error.memptr(), outputWidth,
+        outputHeight, outSize);
+  }
+
+  gradientTemp = arma::zeros<arma::Cube<eT> >(weight.n_rows, weight.n_cols,
+      weight.n_slices);
+
+  for (size_t outMap = 0, outMapIdx = 0; outMap < outSize; outMap++)
+  {
+    for (size_t inMap = 0, s = outMap; inMap < inSize; inMap++, outMapIdx++,
+        s += outSize)
+    {
+      arma::Cube<eT> inputSlices;
+      if (padW != 0 || padH != 0)
+      {
+        inputSlices = inputPaddedTemp.slices(inMap, inMap);
+      }
+      else
+      {
+        inputSlices = inputTemp.slices(inMap, inMap);
+      }
+
+      arma::Cube<eT> deltaSlices = mappedError.slices(outMap, outMap);
+
+      arma::Cube<eT> output;
+      GradientConvolutionRule::Convolution(inputSlices, deltaSlices,
+          output, dW, dH, dilation);
+
+      if ((padW != 0 || padH != 0) &&
+          (gradientTemp.n_rows < output.n_rows &&
+          gradientTemp.n_cols < output.n_cols))
+      {
+        for (size_t i = 0; i < output.n_slices; i++)
+        {
+          arma::mat subOutput = output.slice(i);
+
+          gradientTemp.slice(s) += subOutput.submat(subOutput.n_rows / 2,
+              subOutput.n_cols / 2,
+              subOutput.n_rows / 2 + gradientTemp.n_rows - 1,
+              subOutput.n_cols / 2 + gradientTemp.n_cols - 1);
+        }
+      }
+      else
+      {
+        for (size_t i = 0; i < output.n_slices; i++)
+        {
+          gradientTemp.slice(s) += output.slice(i);
+        }
+      }
+    }
+
+    gradient.submat(weight.n_elem + outMap, 0,
+        weight.n_elem + outMap, 0) = arma::accu(mappedError.slices(
+        outMap, outMap));
+  }
+
+  gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::Mat<eT>(
+      gradientTemp.memptr(), gradientTemp.n_elem, 1, false, false);
+}
 
 
 
