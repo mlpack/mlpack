@@ -12,7 +12,7 @@
 #include <string>
 
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "Mean Shift";
+static const std::string testName = "MeanShift";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
@@ -40,6 +40,13 @@ struct MeanShiftTestFixture
     CLI::ClearSettings();
   }
 };
+
+static void ResetSettings()
+{
+  bindings::tests::CleanMemory();
+  CLI::ClearSettings();
+  CLI::RestoreSettings(testName);
+}
 
 BOOST_FIXTURE_TEST_SUITE(MeanShiftMainTest, MeanShiftTestFixture);
 
@@ -85,9 +92,40 @@ BOOST_AUTO_TEST_CASE(MeanShiftLabelOnlyOutputDimensionTest)
 }
 
 /**
+ * Ensure that radius is used by testing that the radius
+ * makes a difference in the program.
+ */
+BOOST_AUTO_TEST_CASE(MeanShiftRadiusTest)
+{
+  arma::mat x;
+  x.randu(3,100); // 100 points in 3 dimension
+
+  // Input random data points.
+  SetInputParam("input", x);
+  // Set a radius.
+  SetInputParam("radius", (double) 0.1);
+
+  mlpackMain();
+
+  const int numCentroids1 = CLI::GetParam<arma::mat>("centroid").n_cols;
+
+  ResetSettings();
+
+  SetInputParam("input", std::move(x));                                                                                                                                                         
+  // Set a larger radius.
+  SetInputParam("radius", (double) 1.0);
+
+  mlpackMain();
+
+  const int numCentroids2 = CLI::GetParam<arma::mat>("centroid").n_cols;
+  // Resulting number of centroids should be different.
+  BOOST_REQUIRE_NE(numCentroids1, numCentroids2);
+}
+
+/**
  * Ensure that we can't specify an invalid max number of iterations.
  */
-BOOST_AUTO_TEST_CASE(MeanShiftInvalidMaxNumberOfIterations)
+BOOST_AUTO_TEST_CASE(MeanShiftInvalidMaxNumberOfIterationsTest)
 {
   arma::mat x;
   x.randu(3,100); // 100 points in 3 dimension
