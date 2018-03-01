@@ -29,8 +29,6 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
 
-using namespace mlpack::math;
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -61,11 +59,14 @@ class HeInitialization
                     const size_t rows,
                     const size_t cols)
     {
-        double_t variance = 2 / rows;
+        // He initialization rule says to initialize weights with random
+        // values taken from a gaussian distribution with mean = 0 and
+        // standard deviation = sqrt(2/rows), i.e. variance = (2/rows).
+        double_t variance =  2.0 / rows;
 
         if (W.is_empty())
         {
-            W = arma::mat(rows, cols);
+            W.set_size(rows, cols);
         }
 
         W.imbue( [&]() { return arma::as_scalar(RandNormal(0, variance)); } );
@@ -85,7 +86,10 @@ class HeInitialization
                     const size_t cols,
                     const size_t slices)
     {
-        W = arma::cube(rows, cols, slices);
+        if (W.is_empty())
+        {
+            W.set_size(rows, cols, slices);
+        }
 
         for (size_t i = 0; i < slices; i++) {
             Initialize(W.slice(i), rows, cols);
