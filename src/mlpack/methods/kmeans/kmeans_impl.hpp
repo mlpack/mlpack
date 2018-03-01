@@ -146,7 +146,7 @@ void KMeans<
     LloydStepType,
     MatType>::
 Cluster(const MatType& data,
-        size_t clusters,
+        const size_t clusters,
         arma::mat& centroids,
         const bool initialGuess)
 {

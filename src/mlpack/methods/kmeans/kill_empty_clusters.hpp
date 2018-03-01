@@ -46,7 +46,7 @@ class KillEmptyClusters
    * @return Number of points changed (0).
    */
   template<typename MetricType, typename MatType>
-  static inline force_inline size_t EmptyCluster(
+  static inline force_inline void EmptyCluster(
       const MatType& /* data */,
       const size_t emptyCluster,
       const arma::mat& /* oldCentroids */,
@@ -61,7 +61,6 @@ class KillEmptyClusters
     newCentroids.shed_col(emptyCluster);
     clusterCounts.shed_row(emptyCluster);
   }
-  return 0; // cluster removed
 }
 
   //! Serialize the empty cluster policy (nothing to do).
