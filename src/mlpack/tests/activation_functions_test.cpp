@@ -20,6 +20,7 @@
 #include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/selu_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -323,6 +324,57 @@ void CheckPReLUGradientCorrect(const arma::colvec input,
   BOOST_REQUIRE_EQUAL(gradient.n_rows, 1);
   BOOST_REQUIRE_EQUAL(gradient.n_cols, 1);
   BOOST_REQUIRE_CLOSE(gradient(0), target(0), 1e-3);
+}
+
+/*
+ * Simple SELU activation test to check whether the mean and variance remain
+ * invariant after passing through the function.
+ *
+ * NOTE: the input must be normalized.
+ */
+
+BOOST_AUTO_TEST_CASE(SELUFunctionTest)
+{
+  arma::mat input = arma::randn<arma::mat>(1000, 1);
+
+  arma::mat output;
+
+  SELUFunction::Fn(input, output);
+
+  BOOST_REQUIRE_LE(
+     arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))), 0.01);
+
+  BOOST_REQUIRE_LE(
+     arma::as_scalar(arma::abs(arma::var(input) - arma::var(output))), 0.01);
+}
+
+/*
+ * Simple SELU derivative test to check whether the derivatives
+ * produced by the activation function are correct.
+ *
+ */
+
+BOOST_AUTO_TEST_CASE(SELUFunctionDerivativeTest)
+{
+  arma::mat input = arma::ones<arma::mat>(1000, 1);
+
+  arma::mat output;
+
+  SELUFunction::Deriv(input, output);
+
+  BOOST_REQUIRE_LE(
+     arma::as_scalar(arma::abs(arma::mean(output) - SELUFunction::Lambda())),
+     10e-6);
+
+  input.fill(-1);
+
+  SELUFunction::Deriv(input, output);
+
+  BOOST_REQUIRE_LE(
+     arma::as_scalar(arma::abs(arma::mean(output) -
+                       SELUFunction::Lambda()*(SELUFunction::Alpha()-1))),
+                       10e-6);
+
 }
 
 /**
