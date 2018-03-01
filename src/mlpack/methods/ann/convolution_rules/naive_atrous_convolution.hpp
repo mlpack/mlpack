@@ -54,8 +54,9 @@ class NaiveAtrousConvolution
               const size_t dH = 1,
               const size_t dilation = 0)
     {
-      output = arma::zeros<arma::Mat<eT> >((input.n_rows - ((filter.n_rows-1)*dilation + filter.n_rows) + 1) /
-      	 dW, (input.n_cols - ((filter.n_cols-1)*dilation + filter.n_cols)+1) / dH);
+      output = arma::zeros<arma::Mat<eT> >(
+        (input.n_rows - ((filter.n_rows-1)*dilation + filter.n_rows) +1) / dW
+      , (input.n_cols - ((filter.n_cols-1)*dilation + filter.n_cols)+1) / dH);
 
 
 
@@ -68,8 +69,10 @@ class NaiveAtrousConvolution
           const eT* kernelPtr = filter.memptr();
           for (size_t kj = 0; kj < filter.n_cols; kj++)
           {
-            const eT* inputPtr = input.colptr(kj + j * dW + kj*(dilation+1)) + i * dH;
-            for ( size_t ki = 0; ki < filter.n_rows; ki+=(dilation+1), ++kernelPtr, ++inputPtr)
+            const eT* inputPtr = input.colptr(
+                kj + j * dW + kj*(dilation+1)) + i * dH;
+            for ( size_t ki = 0; ki < filter.n_rows; ki+=(dilation+1),
+                ++kernelPtr, ++inputPtr)
               *outputPtr += *kernelPtr * (*inputPtr);
           }
         }
@@ -97,8 +100,10 @@ class NaiveAtrousConvolution
               const size_t dH = 1,
               const size_t dilation = 0)
   {
-    const size_t outputRows = (input.n_rows + 2 * ((filter.n_rows - 1)*dilation + filter.n_rows - 1)) * dW;
-    const size_t outputCols = (input.n_cols + 2 * ((filter.n_cols - 1)*dilation + filter.n_cols - 1)) * dH;
+    const size_t outputRows = (input.n_rows +
+        2 * ((filter.n_rows - 1)*dilation + filter.n_rows - 1)) * dW;
+    const size_t outputCols = (input.n_cols +
+        2 * ((filter.n_cols - 1)*dilation + filter.n_cols - 1)) * dH;
 
     // Pad filter and input to the working output shape.
     arma::Mat<eT> inputPadded = arma::zeros<arma::Mat<eT> >(outputRows,
@@ -106,7 +111,8 @@ class NaiveAtrousConvolution
     inputPadded.submat((filter.n_rows - 1)*dilation + filter.n_rows - 1,
         (filter.n_cols - 1)*dilation + filter.n_cols - 1,
         (filter.n_rows - 1)*dilation + filter.n_rows - 1 + input.n_rows - 1,
-        (filter.n_cols - 1)*dilation + filter.n_cols - 1 + input.n_cols - 1) = input;
+        (filter.n_cols - 1)*dilation + filter.n_cols - 1 + input.n_cols - 1
+          ) = input;
 
     NaiveAtrousConvolution<ValidConvolution>::Convolution(inputPadded, filter,
         output, 1, 1, dilation);
@@ -131,8 +137,8 @@ class NaiveAtrousConvolution
                           const size_t dilation = 0)
   {
     arma::Mat<eT> convOutput;
-    NaiveAtrousConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
-        convOutput, dW, dH, dilation);
+    NaiveAtrousConvolution<BorderMode>::Convolution(input.slice(0),
+        filter.slice(0), convOutput, dW, dH, dilation);
 
     output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
         input.n_slices);
@@ -140,8 +146,8 @@ class NaiveAtrousConvolution
 
     for (size_t i = 1; i < input.n_slices; i++)
     {
-      NaiveAtrousConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
-          output.slice(i), dW, dH, dilation);
+      NaiveAtrousConvolution<BorderMode>::Convolution(input.slice(i),
+          filter.slice(i), output.slice(i), dW, dH, dilation);
     }
   }
 
