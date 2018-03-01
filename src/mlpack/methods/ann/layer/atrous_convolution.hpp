@@ -192,7 +192,7 @@ class AtrousConvolution
                       const size_t p,
                       const size_t d)
   {
-    return std::floor(size + p * 2 - (k + d*(k - 1)))/s + 1; 
+    return std::floor(size + p * 2 - (k + d*(k - 1)))/s + 1;
   }
 
   /*
