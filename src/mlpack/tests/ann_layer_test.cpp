@@ -416,7 +416,7 @@ BOOST_AUTO_TEST_CASE(SimpleAlphaDropoutLayerTest)
   // Initialize the input parameter having a mean nearabout 0
   // and variance nearabout 1.
 
-  arma::mat input = arma::randn<arma::mat>(1000,1);
+  arma::mat input = arma::randn<arma::mat>(1000, 1);
 
   Alpha_Dropout<> module(p);
   module.Deterministic() = false;
