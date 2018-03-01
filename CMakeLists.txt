@@ -26,7 +26,7 @@ enable_testing()
 
 # Currently Python bindings aren't known to build successfully on Windows, so
 # set BUILD_PYTHON_BINDINGS to OFF when the platform is Windows.
-if(WIN32)
+if (WIN32)
   option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
   message(WARNING "By default Python bindings are not compiled for Windows "
       "because they are not known to work.  Set BUILD_PYTHON_BINDINGS to ON if "
