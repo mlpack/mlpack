@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(MeanShiftInvalidMaxNumberOfIterations)
   x.randu(3,100); // 100 points in 3 dimension
 
   // Input random data points.
-  SetInputParam("input", x);
+  SetInputParam("input", std::move(x));
   // Input invalid max number of iterations.
   SetInputParam("max_iterations", (int) -1);
 
