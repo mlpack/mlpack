@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_ANN_LAYER_LAYER_HPP
 
 #include "add_merge.hpp"
+#include "atrous_convolution.hpp"
 #include "concat_performance.hpp"
 #include "convolution.hpp"
 #include "dropconnect.hpp"

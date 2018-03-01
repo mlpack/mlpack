@@ -15,7 +15,7 @@
 #include <mlpack/prereqs.hpp>
 
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
-#include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
+#include <mlpack/methods/ann/convolution_rules/naive__atrous_convolution.hpp>
 
 // Not including fft and svd convolution as of now
 
@@ -43,7 +43,6 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-
 class AtrousConvolution
 {
  public:
