@@ -62,7 +62,7 @@ class HeInitialization
         // He initialization rule says to initialize weights with random
         // values taken from a gaussian distribution with mean = 0 and
         // standard deviation = sqrt(2/rows), i.e. variance = (2/rows).
-        double_t variance =  2.0 / rows;
+        double_t variance =  2.0 / ((double) rows);
 
         if (W.is_empty())
         {

@@ -67,7 +67,7 @@ class LecunNormalInitialization
         // He initialization rule says to initialize weights with random
         // values taken from a gaussian distribution with mean = 0 and
         // standard deviation = sqrt(1/rows), i.e. variance = (1/rows).
-        double_t variance = 1.0 / rows;
+        double_t variance = 1.0 / ((double) rows);
 
         if (W.is_empty())
         {
