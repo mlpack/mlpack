@@ -31,7 +31,7 @@ namespace ann /** Artificial Neural Network. */ {
  * ValidConvolution).
  */
 template<typename BorderMode = FullConvolution>
-class NativeConvolution
+class NaiveAtrousConvolution
 {
  public:
    /*
@@ -69,9 +69,8 @@ class NativeConvolution
           for (size_t kj = 0; kj < filter.n_cols; kj++)
           {
             const eT* inputPtr = input.colptr(kj + j * dW + kj*(dilation+1)) + i * dH;
-            for ( size_t ki = 0; ki < filter.n_rows; ++kernelPtr, ++inputPtr)
+            for ( size_t ki = 0; ki < filter.n_rows; ki+=(dilation+1), ++kernelPtr, ++inputPtr)
               *outputPtr += *kernelPtr * (*inputPtr);
-              ki+=dilation+1;
           }
         }
       }
@@ -109,7 +108,7 @@ class NativeConvolution
         (filter.n_rows - 1)*dilation + filter.n_rows - 1 + input.n_rows - 1,
         (filter.n_cols - 1)*dilation + filter.n_cols - 1 + input.n_cols - 1) = input;
 
-    NaiveConvolution<ValidConvolution>::Convolution(inputPadded, filter,
+    NaiveAtrousConvolution<ValidConvolution>::Convolution(inputPadded, filter,
         output, 1, 1, dilation);
   }
 
@@ -132,7 +131,7 @@ class NativeConvolution
                           const size_t dilation = 0)
   {
     arma::Mat<eT> convOutput;
-    NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
+    NaiveAtrousConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
         convOutput, dW, dH, dilation);
 
     output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
@@ -141,7 +140,7 @@ class NativeConvolution
 
     for (size_t i = 1; i < input.n_slices; i++)
     {
-      NaiveConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
+      NaiveAtrousConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
           output.slice(i), dW, dH, dilation);
     }
   }
@@ -166,7 +165,7 @@ class NativeConvolution
                           const size_t dilation = 0)
   {
     arma::Mat<eT> convOutput;
-    NaiveConvolution<BorderMode>::Convolution(input, filter.slice(0),
+    NaiveAtrousConvolution<BorderMode>::Convolution(input, filter.slice(0),
         convOutput, dW, dH, dilation);
 
     output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
@@ -175,7 +174,7 @@ class NativeConvolution
 
     for (size_t i = 1; i < filter.n_slices; i++)
     {
-      NaiveConvolution<BorderMode>::Convolution(input, filter.slice(i),
+      NaiveAtrousConvolution<BorderMode>::Convolution(input, filter.slice(i),
           output.slice(i), dW, dH, dilation);
     }
   }
@@ -200,7 +199,7 @@ class NativeConvolution
                           const size_t dilation = 0)
   {
     arma::Mat<eT> convOutput;
-    NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter,
+    NaiveAtrousConvolution<BorderMode>::Convolution(input.slice(0), filter,
         convOutput, dW, dH, dilation);
 
     output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
@@ -209,11 +208,11 @@ class NativeConvolution
 
     for (size_t i = 1; i < input.n_slices; i++)
     {
-      NaiveConvolution<BorderMode>::Convolution(input.slice(i), filter,
+      NaiveAtrousConvolution<BorderMode>::Convolution(input.slice(i), filter,
           output.slice(i), dW, dH, dilation);
     }
   }
-};  // class NaiveConvolution
+};  // class NaiveAtrousConvolution
 
 } // namespace ann
 } // namespace mlpack
