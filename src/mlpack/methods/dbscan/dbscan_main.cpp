@@ -123,30 +123,40 @@ static void mlpackMain()
       "hilbert-r", "r-plus", "r-plus-plus", "ball" }, true,
       "unknown tree type");
 
+  // Value of epsilon should be positive.
+  RequireParamValue<double>("epsilon", [](double x) { return x > 0; },
+      true, "invalid value of epsilon specified");
+
+  // Value of min_size should be positive.
+  RequireParamValue<int>("min_size", [](int y) { return y > 0; },
+      true, "invalid value of min_size specified");
+
   // Fire off naive search if needed.
   if (CLI::HasParam("naive"))
   {
     RangeSearch<> rs(true);
     RunDBSCAN(rs);
   }
-
-  const string treeType = CLI::GetParam<string>("tree_type");
-  if (treeType == "kd")
-    RunDBSCAN<RangeSearch<>>();
-  else if (treeType == "cover")
-    RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>>();
-  else if (treeType == "r")
-    RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, RTree>>();
-  else if (treeType == "r-star")
-    RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, RStarTree>>();
-  else if (treeType == "x")
-    RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, XTree>>();
-  else if (treeType == "hilbert-r")
-    RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, HilbertRTree>>();
-  else if (treeType == "r-plus")
-    RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, RPlusTree>>();
-  else if (treeType == "r-plus-plus")
-    RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, RPlusPlusTree>>();
-  else if (treeType == "ball")
-    RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, BallTree>>();
+  else
+  {
+    const string treeType = CLI::GetParam<string>("tree_type");
+    if (treeType == "kd")
+      RunDBSCAN<RangeSearch<>>();
+    else if (treeType == "cover")
+      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>>();
+    else if (treeType == "r")
+      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, RTree>>();
+    else if (treeType == "r-star")
+      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, RStarTree>>();
+    else if (treeType == "x")
+      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, XTree>>();
+    else if (treeType == "hilbert-r")
+      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, HilbertRTree>>();
+    else if (treeType == "r-plus")
+      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, RPlusTree>>();
+    else if (treeType == "r-plus-plus")
+      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, RPlusPlusTree>>();
+    else if (treeType == "ball")
+      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, BallTree>>();
+  }
 }

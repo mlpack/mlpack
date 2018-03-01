@@ -39,9 +39,13 @@ extern MLPACK_EXPORT std::normal_distribution<> randNormalDist;
  */
 inline void RandomSeed(const size_t seed)
 {
-  randGen.seed((uint32_t) seed);
-  srand((unsigned int) seed);
-  arma::arma_rng::set_seed(seed);
+  #if (BINDING_TYPE != BINDING_TYPE_TEST)
+    randGen.seed((uint32_t) seed);
+    srand((unsigned int) seed);
+    arma::arma_rng::set_seed(seed);
+  #else
+    (void) seed;
+  #endif
 }
 
 /**
