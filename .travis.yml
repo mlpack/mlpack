@@ -21,6 +21,7 @@ before_install:
   - sudo pip install --upgrade --ignore-installed setuptools
   - sudo pip3 install --upgrade --ignore-installed setuptools
   - curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
+  - export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH
   - export CC=clang
   - export CXX=clang++
   - cmake . && make && sudo make install && cd ..
