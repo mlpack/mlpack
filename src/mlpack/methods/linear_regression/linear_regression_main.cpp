@@ -184,7 +184,7 @@ static void mlpackMain()
     // Perform the predictions using our model.
     rowvec predictions;
     Timer::Start("prediction");
-    lr->Predict(points, predictions);
+    lr->Predict(&points, std::move(predictions));
     Timer::Stop("prediction");
 
     // Save predictions.

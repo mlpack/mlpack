@@ -131,8 +131,8 @@ class LinearRegression
    * @param points the data points to calculate with.
    * @param predictions y, will contain calculated values on completion.
    */
-  mlpack_deprecated void Predict(const arma::mat& points,
-                                 arma::vec& predictions) const;
+  mlpack_deprecated void Predict(arma::mat&& points,
+                                 arma::vec predictions) const;
 
   /**
    * Calculate y_i for each data point in points.
@@ -140,7 +140,7 @@ class LinearRegression
    * @param points the data points to calculate with.
    * @param predictions y, will contain calculated values on completion.
    */
-  void Predict(const arma::mat& points, arma::rowvec& predictions) const;
+  void Predict(arma::mat&& points, arma::rowvec predictions) const;
 
   /**
    * Calculate the L2 squared error on the given predictors and responses using

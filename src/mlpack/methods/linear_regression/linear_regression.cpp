@@ -122,7 +122,10 @@ void LinearRegression::Train(const arma::mat& predictors,
   }
 }
 
-void LinearRegression::Predict(const arma::mat& points, arma::vec& predictions)
+// - Since predictions need modification we will directly pass using std::move
+// - Also since points need to be read-only, we will send it using mat&& instead of mat& (to reduce copy overhead)
+
+void LinearRegression::Predict(arma::mat&& points, arma::vec predictions)
     const
 {
   arma::rowvec rowPredictions;
@@ -130,8 +133,8 @@ void LinearRegression::Predict(const arma::mat& points, arma::vec& predictions)
   predictions = arma::trans(rowPredictions);
 }
 
-void LinearRegression::Predict(const arma::mat& points,
-    arma::rowvec& predictions) const
+void LinearRegression::Predict(arma::mat&& points,
+    arma::rowvec predictions) const
 {
   if (intercept)
   {
