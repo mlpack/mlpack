@@ -83,6 +83,22 @@ BOOST_AUTO_TEST_CASE(KFNInvalidKTest)
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["k"].wasPassed = false;
+
+  // SetInputParam("reference", referenceData);
+  // SetInputParam("k", (int) 0); // Invalid.
+  
+  // BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+
+  // CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  // CLI::GetSingleton().Parameters()["k"].wasPassed = false;
+
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("k", (int) -1); // Invalid.
+  
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -193,11 +209,27 @@ BOOST_AUTO_TEST_CASE(KFNInvalidEpsilonTest)
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
   // Random input, some k <= number of reference points.
-  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 10);
   SetInputParam("epsilon", (double) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["epsilon"].wasPassed = false;
+
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("epsilon", (double) 2); // Invalid.
+  
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["epsilon"].wasPassed = false;
+
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("epsilon", (double) 1); // Invalid.
+  
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
@@ -249,10 +281,14 @@ BOOST_AUTO_TEST_CASE(KFNModelReuseTest)
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
   
+  //bindings::tests::CleanMemory();
+
   // Reset passed parameters. 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["query"].wasPassed = false;
-
+  
+  
+  
   // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("input_model", 
       std::move(CLI::GetParam<KFNModel*>("output_model")));
@@ -268,17 +304,18 @@ BOOST_AUTO_TEST_CASE(KFNModelReuseTest)
 
 /*
  * Ensure that different search algorithms give same result.
+ * We do not consider greedy because it is an approximate algorithm.
  */
 BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
 { 
-  string algorithms[] = {"dual_tree", "naive", "single_tree", "greedy"};
-  int nof_algorithms = sizeof(algorithms)/sizeof(algorithms[0]);
+  string algorithms[] = {"dual_tree", "naive", "single_tree"};
+  int nofalgorithms = sizeof(algorithms) / sizeof(algorithms[0]);
 
   // Neighbors and distances given by the above algorithms will be stored 
   // in the following arrays in the order:
-  // dual_tree, naive, single_tree, greedy. 
-  arma::Mat<size_t> neighbors[nof_algorithms]; 
-  arma::mat distances[nof_algorithms];
+  // dual_tree, naive, single_tree.
+  arma::Mat<size_t> neighbors[nofalgorithms]; 
+  arma::mat distances[nofalgorithms];
 
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -290,7 +327,7 @@ BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
   SetInputParam("k", (int) 10);
 
   // Looping over all the algorithms and storing their outputs.
-  for (int i = 0; i < nof_algorithms; i++) 
+  for (int i = 0; i < nofalgorithms; i++) 
   {
     // Same random inputs, different algorithms.
     SetInputParam("reference", referenceData);
@@ -302,25 +339,19 @@ BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
     neighbors[i] = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
     distances[i] = std::move(CLI::GetParam<arma::mat>("distances"));
 
+    // Reset passed parameters.
     CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
     CLI::GetSingleton().Parameters()["query"].wasPassed = false;
     CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
   }
   
-  // The looped matrices check fails.
-  // The following individual check passes with greedy outputs
-  // out.
-  // for (int i = 0; i < nof_algorithms - 1; i++)
-  // {
-  //   CheckMatrices(neighbors[i], neighbors[i + 1]);
-  //   CheckMatrices(distances[i], distances[i + 1]);
-  // }
-  CheckMatrices(neighbors[0], neighbors[1]);
-  CheckMatrices(neighbors[1], neighbors[2]);
-  //CheckMatrices(neighbors[2], neighbors[3]);
-  CheckMatrices(distances[0], distances[1]);
-  CheckMatrices(distances[1], distances[2]);
-  //CheckMatrices(distances[2], distances[3]);
+  // Check if all the output matrices of the different algorithms
+  // are equal.
+  for (int i = 0; i < nofalgorithms - 1; i++)
+  {
+    CheckMatrices(neighbors[i], neighbors[i + 1]);
+    CheckMatrices(distances[i], distances[i + 1]);
+  }
 }
 
 /*
@@ -328,15 +359,16 @@ BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
  */
 BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
 { 
-  string tree_types[] = {"kd", "vp", "rp", "max-rp", "ub", "cover", "r",
+  string treetypes[] = {"kd", "vp", "rp", "max-rp", "ub", "cover", "r",
       "r-star", "x", "ball", "hilbert-r", "r-plus", "r-plus-plus", "oct"};
-  int nof_tree_types = sizeof(tree_types)/sizeof(tree_types[0]);
+  int noftreetypes = sizeof(treetypes) / sizeof(treetypes[0]);
 
   // Neighbors and distances given by using the above tree types will  
   // be stored in the following arrays in the order:
-  // dual_tree, naive, single_tree, greedy. 
-  arma::Mat<size_t> neighbors[nof_tree_types]; 
-  arma::mat distances[nof_tree_types];
+  // kd, vp, rp, max-rp, ub, cover, r, r-star, x, ball, hilbert-r, r-plus,
+  // r-plus-plus, oct.
+  arma::Mat<size_t> neighbors[noftreetypes]; 
+  arma::mat distances[noftreetypes];
 
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -348,12 +380,12 @@ BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
   SetInputParam("k", (int) 10);
 
   // Looping over all the algorithms and storing their outputs.
-  for (int i = 0; i < nof_tree_types; i++) 
+  for (int i = 0; i < noftreetypes; i++) 
   {
     // Same random inputs, different algorithms.
     SetInputParam("reference", referenceData);
     SetInputParam("query", queryData);
-    SetInputParam("tree_type", tree_types[i]);
+    SetInputParam("tree_type", treetypes[i]);
 
     mlpackMain();
 
@@ -368,7 +400,7 @@ BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
   
   // Check if the output matrices given by using the different
   // tree types are equal.
-  for (int i = 0; i < nof_tree_types - 1; i++)
+  for (int i = 0; i < noftreetypes - 1; i++)
   {
     CheckMatrices(neighbors[i], neighbors[i + 1]);
     CheckMatrices(distances[i], distances[i + 1]);

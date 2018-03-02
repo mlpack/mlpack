@@ -142,7 +142,7 @@ static void mlpackMain()
 
   // Sanity check on epsilon.
   double epsilon = CLI::GetParam<double>("epsilon");
-  RequireParamValue<double>("epsilon", [](double x) { return x >= 0.0; }, true,
+  RequireParamValue<double>("epsilon", [](double x) { return x >= 0.0 && x < 1; }, true,
       "epsilon must be positive");
 
   // Sanity check on percentage.
