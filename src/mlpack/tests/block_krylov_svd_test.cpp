@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_SUITE(BlockKrylovSVDTest);
 
 using namespace mlpack;
 
-// Generate a low rank matrix with bell-shaped singular values.
+// Generate a low rank matrix with bell-shaped singular values. 
 void CreateNoisyLowRankMatrix(arma::mat& data,
                               const size_t rows,
                               const size_t cols,
