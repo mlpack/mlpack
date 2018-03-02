@@ -33,9 +33,13 @@ void RegularizedSVD<OptimizerType>::Apply(const arma::mat& data,
                                           arma::mat& u,
                                           arma::mat& v)
 {
+  // batchSize is 1 in our implementation of Regularized SVD.
+  // batchSize other than 1 has not been supported yet.
+  int batchSize = 1;
+
   // Make the optimizer object using a RegularizedSVDFunction object.
   RegularizedSVDFunction<arma::mat> rSVDFunc(data, rank, lambda);
-  mlpack::optimization::StandardSGD optimizer(alpha, iterations * data.n_cols);
+  mlpack::optimization::StandardSGD optimizer(alpha, batchSize, iterations * data.n_cols);
 
   // Get optimized parameters.
   arma::mat parameters = rSVDFunc.GetInitialPoint();
