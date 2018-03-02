@@ -164,7 +164,7 @@ class VarianceScalingUniformInit
       const size_t cols,
       typename std::enable_if_t<std::is_same<Mode, FanAvg>::value>* = 0)
   {
-    double limit = sqrt(6 * scalingFactor / 
+    double limit = sqrt(6 * scalingFactor /
         ((double) (rows) + (double) (cols)));
     RandomInitialization init(-limit, limit);
     init.Initialize(W, rows, cols);
