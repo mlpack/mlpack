@@ -234,8 +234,8 @@ BOOST_AUTO_TEST_CASE(NMFMinResidueTest)
   const mat h2 = CLI::GetParam<mat>("h");
 
   // The resulting matrices should be different.
-  BOOST_REQUIRE(!arma::approx_equal(w1, w2, "absdiff", 1e-5)
-      || !arma::approx_equal(h1, h2, "absdiff", 1e-5));
+  BOOST_REQUIRE_GT(arma::norm(w1 - w2), 1e-5);
+  BOOST_REQUIRE_GT(arma::norm(h1 - h2), 1e-5);
 }
 
 /**
@@ -280,8 +280,8 @@ BOOST_AUTO_TEST_CASE(NMFMaxIterationTest)
   const mat h2 = CLI::GetParam<mat>("h");
 
   // The resulting matrices should be different.
-  BOOST_REQUIRE(!arma::approx_equal(w1, w2, "absdiff", 1e-5)
-      || !arma::approx_equal(h1, h2, "absdiff", 1e-5));
+  BOOST_REQUIRE_GT(arma::norm(w1 - w2), 1e-5);
+  BOOST_REQUIRE_GT(arma::norm(h1 - h2), 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
