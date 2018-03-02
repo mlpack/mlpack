@@ -98,11 +98,12 @@ BOOST_AUTO_TEST_CASE(MeanShiftLabelOnlyOutputDimensionTest)
 BOOST_AUTO_TEST_CASE(MeanShiftRadiusTest)
 {
   arma::mat x;
-  x.randu(3,100); // 100 points in 3 dimension
+  if (!data::Load("iris_test.csv", x))
+    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
 
   // Input random data points.
   SetInputParam("input", x);
-  // Set a radius.
+  // Set a small radius.
   SetInputParam("radius", (double) 0.1);
 
   mlpackMain();
@@ -123,9 +124,41 @@ BOOST_AUTO_TEST_CASE(MeanShiftRadiusTest)
 }
 
 /**
+ * Ensure that max_iterations is used by testing that the
+ * max_iteration makes a difference in the program.
+ */
+BOOST_AUTO_TEST_CASE(MeanShiftMaxIterationsTest)
+{
+  arma::mat x;
+  if (!data::Load("iris_test.csv", x))
+    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+
+  // Input random data points.
+  SetInputParam("input", x);
+  // Set a small max_iterations.
+  SetInputParam("max_iterations", (int) 4);
+
+  mlpackMain();
+
+  const int numCentroids1 = CLI::GetParam<arma::mat>("centroid").n_cols;
+
+  ResetSettings();
+
+  SetInputParam("input", std::move(x));                                                                                                                                                         
+  // Set a larger max_iterations.
+  SetInputParam("max_iterations", (int) 20);
+
+  mlpackMain();
+
+  const int numCentroids2 = CLI::GetParam<arma::mat>("centroid").n_cols;
+  // Resulting number of centroids should be different.
+  BOOST_REQUIRE_NE(numCentroids1, numCentroids2);
+}
+
+/**
  * Ensure that we can't specify an invalid max number of iterations.
  */
-BOOST_AUTO_TEST_CASE(MeanShiftInvalidMaxNumberOfIterationsTest)
+BOOST_AUTO_TEST_CASE(MeanShiftInvalidMaxIterationsTest)
 {
   arma::mat x;
   x.randu(3,100); // 100 points in 3 dimension
