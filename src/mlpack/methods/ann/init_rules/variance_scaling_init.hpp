@@ -54,10 +54,11 @@ class VarianceScalingNormalInit
   {}
 
   template<typename eT, typename Mode = ModeType>
-  void Initialize(arma::Mat<eT>& W,
-    const size_t rows,
-    const size_t cols,
-    typename std::enable_if_t<std::is_same<Mode, FanIn>::value>* = 0)
+  void Initialize(
+      arma::Mat<eT>& W,
+      const size_t rows,
+      const size_t cols,
+      typename std::enable_if_t<std::is_same<Mode, FanIn>::value>* = 0)
   {
     double var = (scalingFactor / (double) (rows));
     GaussianInitialization init(0, var);
@@ -65,10 +66,11 @@ class VarianceScalingNormalInit
   }
 
   template<typename eT, typename Mode = ModeType>
-  void Initialize(arma::Mat<eT>& W,
-    const size_t rows,
-    const size_t cols,
-    typename std::enable_if_t<std::is_same<Mode, FanOut>::value>* = 0)
+  void Initialize(
+      arma::Mat<eT>& W,
+      const size_t rows,
+      const size_t cols,
+      typename std::enable_if_t<std::is_same<Mode, FanOut>::value>* = 0)
   {
     double var = (scalingFactor / (double) (cols));
     GaussianInitialization init(0, var);
@@ -76,12 +78,13 @@ class VarianceScalingNormalInit
   }
 
   template<typename eT, typename Mode = ModeType>
-  void Initialize(arma::Mat<eT>& W,
-    const size_t rows,
-    const size_t cols,
-    typename std::enable_if_t<std::is_same<Mode, FanAvg>::value>* = 0)
+  void Initialize(
+      arma::Mat<eT>& W,
+      const size_t rows,
+      const size_t cols,
+      typename std::enable_if_t<std::is_same<Mode, FanAvg>::value>* = 0)
   {
-    double var = (2*scalingFactor / ((double) (rows) + (double) (cols)));
+    double var = (2 * scalingFactor / ((double) (rows) + (double) (cols)));
     GaussianInitialization init(0, var);
     init.Initialize(W, rows, cols);
   }
@@ -131,34 +134,38 @@ class VarianceScalingUniformInit
   {}
 
   template<typename eT, typename Mode = ModeType>
-  void Initialize(arma::Mat<eT>& W,
-    const size_t rows,
-    const size_t cols,
-    typename std::enable_if_t<std::is_same<Mode, FanIn>::value>* = 0)
+  void Initialize(
+      arma::Mat<eT>& W,
+      const size_t rows,
+      const size_t cols,
+      typename std::enable_if_t<std::is_same<Mode, FanIn>::value>* = 0)
   {
-    double limit = sqrt(3*scalingFactor / (double) (rows));
+    double limit = sqrt(3 * scalingFactor / (double) (rows));
     RandomInitialization init(-limit, limit);
     init.Initialize(W, rows, cols);
   }
 
   template<typename eT, typename Mode = ModeType>
-  void Initialize(arma::Mat<eT>& W,
-    const size_t rows,
-    const size_t cols,
-    typename std::enable_if_t<std::is_same<Mode, FanOut>::value>* = 0)
+  void Initialize(
+      arma::Mat<eT>& W,
+      const size_t rows,
+      const size_t cols,
+      typename std::enable_if_t<std::is_same<Mode, FanOut>::value>* = 0)
   {
-    double limit = sqrt(3*scalingFactor / (double) (cols));
+    double limit = sqrt(3 * scalingFactor / (double) (cols));
     RandomInitialization init(-limit, limit);
     init.Initialize(W, rows, cols);
   }
 
   template<typename eT, typename Mode = ModeType>
-  void Initialize(arma::Mat<eT>& W,
-    const size_t rows,
-    const size_t cols,
-    typename std::enable_if_t<std::is_same<Mode, FanAvg>::value>* = 0)
+  void Initialize(
+      arma::Mat<eT>& W,
+      const size_t rows,
+      const size_t cols,
+      typename std::enable_if_t<std::is_same<Mode, FanAvg>::value>* = 0)
   {
-    double limit = sqrt(6*scalingFactor / ((double) (rows) + (double) (cols)));
+    double limit = sqrt(6 * scalingFactor / 
+        ((double) (rows) + (double) (cols)));
     RandomInitialization init(-limit, limit);
     init.Initialize(W, rows, cols);
   }
