@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(QDAFNUniformSet)
   arma::Mat<size_t> trueNeighbors;
   arma::mat trueDistances;
 
-  kfn.Search(1000, trueNeighbors, trueDistances);
+  kfn.Search(999, trueNeighbors, trueDistances);
 
   arma::Mat<size_t> qdafnNeighbors;
   arma::mat qdafnDistances;
@@ -86,11 +86,11 @@ BOOST_AUTO_TEST_CASE(QDAFNUniformSet)
   BOOST_REQUIRE_EQUAL(qdafnDistances.n_cols, 1000);
 
   size_t successes = 0;
-  for (size_t i = 0; i < 1000; ++i)
+  for (size_t i = 0; i < 999; ++i)
   {
     // Find the true neighbor.
-    size_t trueIndex = 1000;
-    for (size_t j = 0; j < 1000; ++j)
+    size_t trueIndex = 999;
+    for (size_t j = 0; j < 999; ++j)
     {
       if (trueNeighbors(j, i) == qdafnNeighbors(0, i))
       {
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(QDAFNUniformSet)
       }
     }
 
-    BOOST_REQUIRE_NE(trueIndex, 1000);
+    BOOST_REQUIRE_NE(trueIndex, 999);
     if (0.9 * trueDistances(0, i) <= qdafnDistances(0, i))
       ++successes;
   }
