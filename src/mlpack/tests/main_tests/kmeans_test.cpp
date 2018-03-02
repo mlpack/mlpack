@@ -22,23 +22,23 @@ using namespace mlpack;
 struct KmTestFixture
 {
  public:
-    KmTestFixture()
-    {
-        // Cache in the options for this program.
-        CLI::RestoreSettings(testName);
-    }
+  KmTestFixture()
+  {
+      // Cache in the options for this program.
+      CLI::RestoreSettings(testName);
+  }
 
-    ~KmTestFixture()
-    {
-        // Clear the settings.
-        CLI::ClearSettings();
-    }
+  ~KmTestFixture()
+  {
+      // Clear the settings.
+      CLI::ClearSettings();
+  }
 };
 
 void ResetKmSettings()
 {
-    CLI::ClearSettings();
-    CLI::RestoreSettings(testName);
+  CLI::ClearSettings();
+  CLI::RestoreSettings(testName);
 }
 
 BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(PointsLessThanClustersTest)
 */
 BOOST_AUTO_TEST_CASE(RefinedStartPercentageTest)
 {
-  int C = 2;
+  int c = 2;
   double P = 2.0;
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(RefinedStartPercentageTest)
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("refined_start", true);
-  SetInputParam("clusters", std::move(C));
+  SetInputParam("clusters", c);
   SetInputParam("percentage", std::move(P));     // Invalid
 
   Log::Fatal.ignoreInput = true;
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(RefinedStartPercentageTest)
  */
 BOOST_AUTO_TEST_CASE(NonNegativePercentageTest)
 {
-  int C = 2;
+  int c = 2;
   double P = -1.0;
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
@@ -115,8 +115,8 @@ BOOST_AUTO_TEST_CASE(NonNegativePercentageTest)
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("refined_start", true);
-  SetInputParam("clusters", std::move(C));
-  SetInputParam("percentage", std::move(P));     // Invalid
+  SetInputParam("clusters", c);
+  SetInputParam("percentage", P);     // Invalid
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -127,9 +127,9 @@ BOOST_AUTO_TEST_CASE(NonNegativePercentageTest)
 /**
  * Checking that size and dimensionality of prediction is correct.
  */
-    BOOST_AUTO_TEST_CASE(KmClusteringSizeCheck)
+BOOST_AUTO_TEST_CASE(KmClusteringSizeCheck)
 {
-  int C = 2;
+  int c = 2;
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Unable to load train dataset vc2.csv!");
@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE(NonNegativePercentageTest)
   size_t row = inputData.n_rows;
 
   SetInputParam("input", std::move(inputData));
-  SetInputParam("clusters", std::move(C));
+  SetInputParam("clusters", c);
   SetInputParam("allow_empty_clusters", false);
 
   mlpackMain();
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(NonNegativePercentageTest)
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, row+1);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, col);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_rows, row);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_cols, C);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_cols, c);
 }
 
 /**
@@ -154,26 +154,25 @@ BOOST_AUTO_TEST_CASE(NonNegativePercentageTest)
  */
 BOOST_AUTO_TEST_CASE(KmClusteringSizeCheckLabelOnly)
 {
-  int C = 2;
+  int c = 2;
 
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-      BOOST_FAIL("Unable to load train dataset vc2.csv!");
+    BOOST_FAIL("Unable to load train dataset vc2.csv!");
   size_t col = inputData.n_cols;
   size_t row = inputData.n_rows;
 
   SetInputParam("input", std::move(inputData));
-  SetInputParam("clusters", std::move(C));
+  SetInputParam("clusters", c);
   SetInputParam("labels_only", true);
   SetInputParam("allow_empty_clusters", false);
-
 
   mlpackMain();
 
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 1);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, col);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_rows, row);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_cols, C);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_cols, c);
 }
 
 
@@ -182,19 +181,20 @@ BOOST_AUTO_TEST_CASE(KmClusteringSizeCheckLabelOnly)
  */
 BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
 {
-  int C = 400;
+  int c = 400;
   int iterations = 100;
 
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-      BOOST_FAIL("Unable to load train dataset vc2.csv!");
-
+    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+  arma::mat initCentroid = arma::randu<arma::mat>(inputData.n_rows, c);
 
   SetInputParam("input", inputData);
-  SetInputParam("clusters", C);
+  SetInputParam("clusters", c);
   SetInputParam("labels_only", true);
   SetInputParam("max_iterations", iterations);
   SetInputParam("allow_empty_clusters", false);
+  SetInputParam("initial_centroids", initCentroid);
 
   mlpackMain();
 
@@ -204,10 +204,11 @@ BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
   ResetKmSettings();
 
   SetInputParam("input", inputData);
-  SetInputParam("clusters", C);
+  SetInputParam("clusters", c);
   SetInputParam("labels_only", true);
   SetInputParam("allow_empty_clusters", true);
   SetInputParam("max_iterations", iterations);
+  SetInputParam("initial_centroids", initCentroid);
 
   mlpackMain();
 
@@ -217,7 +218,7 @@ BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
   ResetKmSettings();
 
   SetInputParam("input", inputData);
-  SetInputParam("clusters", std::move(C));
+  SetInputParam("clusters", c);
   SetInputParam("labels_only", true);
   SetInputParam("kill_empty_clusters", true);
   SetInputParam("max_iterations", std::move(iterations));
@@ -238,9 +239,9 @@ BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
  */
 BOOST_AUTO_TEST_CASE(KmNoInputData)
 {
-  int C = 2;
+  int c = 2;
 
-  SetInputParam("clusters", std::move(C));
+  SetInputParam("clusters", c);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -253,17 +254,17 @@ BOOST_AUTO_TEST_CASE(KmNoInputData)
  */
 BOOST_AUTO_TEST_CASE(KmClusteringResultSizeCheck)
 {
-  int C = 2;
+  int c = 2;
 
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-      BOOST_FAIL("Unable to load train dataset vc2.csv!");
+    BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
   size_t row = inputData.n_rows;
   size_t col = inputData.n_cols;
 
   SetInputParam("input", inputData);
-  SetInputParam("clusters", std::move(C));
+  SetInputParam("clusters", c);
   SetInputParam("in_place", true);
   SetInputParam("allow_empty_clusters", false);
 
@@ -283,7 +284,7 @@ BOOST_AUTO_TEST_CASE(KmClustersNotDefined)
 {
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-      BOOST_FAIL("Unable to load train dataset vc2.csv!");
+    BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("allow_empty_clusters", false);
@@ -298,16 +299,16 @@ BOOST_AUTO_TEST_CASE(KmClustersNotDefined)
  */
 BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
 {
-  int C = 5;
+  int c = 5;
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-      BOOST_FAIL("Unable to load train dataset vc2.csv!");
+    BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
-  arma::mat initCentroid = arma::randu<arma::mat>(inputData.n_rows, C);
+  arma::mat initCentroid = arma::randu<arma::mat>(inputData.n_rows, c);
   std::string algo = "naive";
 
   SetInputParam("input", inputData);
-  SetInputParam("clusters", C);
+  SetInputParam("clusters", c);
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("allow_empty_clusters", false);
   SetInputParam("labels_only", true);
@@ -325,7 +326,7 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   algo = "elkan";
 
   SetInputParam("input", inputData);
-  SetInputParam("clusters", C);
+  SetInputParam("clusters", c);
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("allow_empty_clusters", false);
   SetInputParam("labels_only", true);
@@ -343,7 +344,7 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   algo = "hamerly";
 
   SetInputParam("input", inputData);
-  SetInputParam("clusters", C);
+  SetInputParam("clusters", c);
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("allow_empty_clusters", false);
   SetInputParam("labels_only", true);
@@ -361,7 +362,7 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   algo = "dualtree";
 
   SetInputParam("input", inputData);
-  SetInputParam("clusters", C);
+  SetInputParam("clusters", c);
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("allow_empty_clusters", false);
   SetInputParam("labels_only", true);
@@ -379,7 +380,7 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   algo = "dualtree-covertree";
 
   SetInputParam("input", std::move(inputData));
-  SetInputParam("clusters", std::move(C));
+  SetInputParam("clusters", c);
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("allow_empty_clusters", false);
   SetInputParam("labels_only", true);
