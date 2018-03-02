@@ -54,27 +54,39 @@ struct Viterbi
   template<typename HMMType>
   static void Apply(HMMType& hmm, void* /* extraInfo */)
   {
+    std::cout << __func__ << ": In PerformAction<Viterbi>" << std::endl;
     // Load observations.
     mat dataSeq = std::move(CLI::GetParam<arma::mat>("input"));
+    std::cout << __func__ << ": Data read:" << std::endl << dataSeq << std::endl;
 
     // See if transposing the data could make it the right dimensionality.
+    std::cout << __func__ << ": dataSeq.n_cols = " << dataSeq.n_cols << std::endl;
+    std::cout << __func__ << ": hmm.Emission()[0].Dimensionality() = " << hmm.Emission()[0].Dimensionality() << std::endl;
     if ((dataSeq.n_cols == 1) && (hmm.Emission()[0].Dimensionality() == 1))
     {
       Log::Info << "Data sequence appears to be transposed; correcting."
           << endl;
+      std::cout << "Data sequence appears to be transposed; correcting."
+          << endl;
       dataSeq = dataSeq.t();
     }
+    std::cout << __func__ << ": Corrected dataSeq orientation!" << std::endl;
 
     // Verify correct dimensionality.
+    std::cout << __func__ << ": dataSeq.n_rows = " << dataSeq.n_rows << std::endl;
+    std::cout << __func__ << ": hmm.Emission()[0].Dimensionality() = " << hmm.Emission()[0].Dimensionality() << std::endl;
     if (dataSeq.n_rows != hmm.Emission()[0].Dimensionality())
     {
       Log::Fatal << "Observation dimensionality (" << dataSeq.n_rows << ") "
           << "does not match HMM Gaussian dimensionality ("
           << hmm.Emission()[0].Dimensionality() << ")!" << endl;
     }
+    std::cout << __func__ << ": Verified correct dimensionality!" << std::endl;
 
     arma::Row<size_t> sequence;
+    std::cout << __func__ << ": Calling hmm.Predict()" << std::endl;
     hmm.Predict(dataSeq, sequence);
+    std::cout << __func__ << ": Predicted state sequence:" << std::endl << sequence << std::endl;
 
     // Save output.
     CLI::GetParam<arma::Mat<size_t>>("output") = std::move(sequence);
@@ -85,5 +97,6 @@ static void mlpackMain()
 {
   RequireAtLeastOnePassed({ "output" }, false, "no results will be saved");
 
+  std::cout << __func__ << ": calling PerformAction<Viterbi>" << std::endl;
   CLI::GetParam<HMMModel*>("input_model")->PerformAction<Viterbi>((void*) NULL);
 }
