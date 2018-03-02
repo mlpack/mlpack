@@ -1,6 +1,7 @@
 sudo: required
 dist: trusty
 language: cpp
+cache: ccache
 
 env:
   - CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON=/usr/bin/python"
