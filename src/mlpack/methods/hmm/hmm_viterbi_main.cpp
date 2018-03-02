@@ -61,6 +61,7 @@ struct Viterbi
 
     // See if transposing the data could make it the right dimensionality.
     std::cout << __func__ << ": dataSeq.n_cols = " << dataSeq.n_cols << std::endl;
+    std::cout << __func__ << ": hmm.Emission.size() = " << hmm.Emission().size() << std::endl;
     std::cout << __func__ << ": hmm.Emission()[0].Dimensionality() = " << hmm.Emission()[0].Dimensionality() << std::endl;
     if ((dataSeq.n_cols == 1) && (hmm.Emission()[0].Dimensionality() == 1))
     {
@@ -86,10 +87,10 @@ struct Viterbi
     arma::Row<size_t> sequence;
     std::cout << __func__ << ": Calling hmm.Predict()" << std::endl;
     hmm.Predict(dataSeq, sequence);
-    std::cout << __func__ << ": Predicted state sequence:" << std::endl << sequence << std::endl;
 
     // Save output.
     CLI::GetParam<arma::Mat<size_t>>("output") = std::move(sequence);
+    std::cout << __func__ << ": Predicted state sequence:" << std::endl << CLI::GetParam<arma::Mat<size_t>>("output") << std::endl;
   }
 };
 

@@ -40,6 +40,80 @@ struct HMMViterbiTestFixture
 
 BOOST_FIXTURE_TEST_SUITE(HMMViterbiMainTest, HMMViterbiTestFixture);
 
+struct Init
+{
+  template<typename HMMType>
+  static void Apply(HMMType& hmm, vector<mat>* trainSeq)
+  {
+    const size_t states = 2;
+
+    // Create the initialized-to-zero model.
+    Create(hmm, *trainSeq, states);
+
+    // Initializing the emission distribution depends on the distribution.
+    // Therefore we have to use the helper functions.
+    RandomInitialize(hmm.Emission());
+  }
+
+  //! Helper function to create discrete HMM.
+  static void Create(HMM<DiscreteDistribution>& hmm,
+                     vector<mat>& trainSeq,
+                     size_t states,
+                     double tolerance=1e-05)
+  {
+    // Maximum observation is necessary so we know how to train the discrete
+    // distribution.
+    arma::Col<size_t> maxEmissions(trainSeq[0].n_rows);
+    maxEmissions.zeros();
+    for (vector<mat>::iterator it = trainSeq.begin(); it != trainSeq.end();
+         ++it)
+    {
+      arma::Col<size_t> maxSeqs =
+          arma::conv_to<arma::Col<size_t>>::from(arma::max(*it, 1)) + 1;
+      maxEmissions = arma::max(maxEmissions, maxSeqs);
+    }
+
+    hmm = HMM<DiscreteDistribution>(size_t(states),
+        DiscreteDistribution(maxEmissions), tolerance);
+  }
+
+  static void Create(HMM<GaussianDistribution>& hmm,
+                     vector<mat>& trainSeq,
+                     size_t states,
+                     double tolerance=1e-05)
+  {
+    // Not implemented
+  }
+
+  static void Create(HMM<GMM>& hmm,
+                     vector<mat>& trainSeq,
+                     size_t states,
+                     double tolerance=1e-05)
+  {
+    // Not implemented
+  }
+
+  //! Helper function for discrete emission distributions.
+  static void RandomInitialize(vector<DiscreteDistribution>& e)
+  {
+    for (size_t i = 0; i < e.size(); ++i)
+    {
+      e[i].Probabilities().randu();
+      e[i].Probabilities() /= arma::accu(e[i].Probabilities());
+    }
+  }
+
+  static void RandomInitialize(vector<GaussianDistribution>& e)
+  {
+    // Not implemented
+  }
+
+  static void RandomInitialize(vector<GMM>& e)
+  {
+    // Not implemented
+  }
+};
+
 struct Train
 {
   template<typename HMMType>
@@ -50,21 +124,24 @@ struct Train
   }
 };
 
-BOOST_AUTO_TEST_CASE(HMMViterbiCheckDimenstionsTest)
+BOOST_AUTO_TEST_CASE(HMMViterbiCheckDimensionsTest)
 {
   // Train an HMM
-  HMMModel h;
+  HMMModel * h = new HMMModel(DiscreteHMM);
+  // Load data
   arma::mat inp;
-  data::Load("obs-1.csv", inp);
+  data::Load("obs1.csv", inp);
   std::cout << "Loaded data:" << std::endl << inp << std::endl;
   std::vector<arma::mat> trainSeq = {inp};
+  // Init
+  h->PerformAction<Init, std::vector<arma::mat>>(&trainSeq);
+  // Train
+  h->PerformAction<Train, std::vector<arma::mat>>(&trainSeq);
 
-  // Train the HMM
-  h.PerformAction<Train, std::vector<arma::mat> >(&trainSeq);
   std::cout << __func__ << ": Training complete!" << std::endl;
 
   // Set the params for the hmm_viterbi invocation
-  SetInputParam("input_model", &h);
+  SetInputParam("input_model", h);
   SetInputParam("input", inp);
   std::cout << __func__ << ": Set input params!" << std::endl;
 
