@@ -262,7 +262,7 @@ static void mlpackMain()
     }
 
     // Sanity check on k value: must be greater than 0, must be less than or
-    // equal to the number of reference points.  Since it is unsigned, 
+    // equal to the number of reference points.  Since it is unsigned,
     // we only test the upper bound.
     if (k > kfn->Dataset().n_cols)
     {
@@ -270,8 +270,9 @@ static void mlpackMain()
           << "than or equal to the number of reference points ("
           << kfn->Dataset().n_cols << ")." << endl;
     }
-    // Sanity check on k value: must not be equal to the number of reference points
-    // when query data has not been provided.
+
+    // Sanity check on k value: must not be equal to the number of reference
+    // points when query data has not been provided.
     if (!CLI::HasParam("query") && k == kfn->Dataset().n_cols)
     {
       Log::Fatal << "Invalid k: " << k << "; must be less than the number of "

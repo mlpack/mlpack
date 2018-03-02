@@ -854,7 +854,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   {
     std::stringstream ss;
     ss << "Requested value of k (" << k << ") is equal to the number of "
-        << "points in the reference set (" << referenceSet->n_cols << ") and " 
+        << "points in the reference set (" << referenceSet->n_cols << ") and "
         << "no query set has been provided.";
     throw std::invalid_argument(ss.str());
   }
