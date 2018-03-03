@@ -280,11 +280,11 @@ BOOST_AUTO_TEST_CASE(KNNOutputDimensionTest)
   
   mlpackMain();
 
-  // Check the neighbors matrix has 4 points for each input point.
+  // Check the neighbors matrix has 10 points for each input point.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_rows, 10);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_cols, 100);
 
-  // Check the distances matrix has 4 points for each input point.
+  // Check the distances matrix has 10 points for each input point.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("distances").n_rows, 10);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("distances").n_cols, 100);
 }
@@ -361,10 +361,46 @@ BOOST_AUTO_TEST_CASE(KNNDifferentTauTest)
   SetInputParam("tau", (double) 0.5);
 
   mlpackMain();
-  arma::Mat<size_t> neighbors1 = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  arma::Mat<size_t> neighbors1 = 
+      std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
 
   //BOOST_REQUIRE(arma::all((neighbors - neighbors1)== 0));
   //BOOST_REQUIRE(arma::all((neighbors-neighbors1) == 0));
+}
+
+/*
+ * that the program runs successfully when we pass true_neighbors
+ * and/or true_distances and fails when those matrices have the wrong shape.
+ */
+BOOST_AUTO_TEST_CASE(KNNTrueNeighborDistanceTest)
+{
+  arma::mat referenceData;
+  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+  
+  // Random input, some k <= number of reference points.
+  SetInputParam("reference", referenceData);
+  SetInputParam("k", (int) 10);
+
+  mlpackMain();
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+  neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(CLI::GetParam<arma::mat>("distances"));
+
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+
+  SetInputParam("reference", referenceData);
+  SetInputParam("true_neighbors", neighbors);
+  SetInputParam("epsilon", (double) 0.5);
+
+  // std::cout << (int) neighbors.n_rows << endl;
+  // std::cout << (int) neighbors.n_cols << endl;
+  // mlpackMain();
+  // neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  // std::cout << (int) neighbors.n_rows << endl;
+  // std::cout << (int) neighbors.n_cols << endl;
+  //BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 }
 
 /*
@@ -461,7 +497,7 @@ BOOST_AUTO_TEST_CASE(KNNAllTreeTypesTest)
     // Reset passed parameters.
     CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
     CLI::GetSingleton().Parameters()["query"].wasPassed = false;
-    CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
+    CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
   }
   
   // Check if the output matrices given by using the different
