@@ -107,7 +107,6 @@ class GlorotInitialization
     for (size_t i = 0; i < slices; i++)
       Initialize(W.slice(i), rows, cols);
   }
-
 }; // class GlorotInitialization
 
 } // namespace ann
