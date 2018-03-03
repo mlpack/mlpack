@@ -287,25 +287,46 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
 }
 
 /**
- * Simple test of the GlorotInitialization class.
+ * Simple test of the GlorotInitialization class for uniform distribution
  */
-  BOOST_AUTO_TEST_CASE(GlorotInitTest)
-  {
-    arma::mat weights;
-    arma::cube weights3d;
+BOOST_AUTO_TEST_CASE(GlorotInitUniformTest)
+{
+  arma::mat weights;
+  arma::cube weights3d;
 
-    GlorotInitialization glorotInit;
+  GlorotInitialization<> glorotInit;
 
-    glorotInit.Initialize(weights, 100, 100);
-    glorotInit.Initialize(weights3d, 100, 100, 2);
+  glorotInit.Initialize(weights, 100, 100);
+  glorotInit.Initialize(weights3d, 100, 100, 2);
 
-    BOOST_REQUIRE_EQUAL(weights.n_rows, 100);
-    BOOST_REQUIRE_EQUAL(weights.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(weights.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights.n_cols, 100);
 
-    BOOST_REQUIRE_EQUAL(weights3d.n_rows, 100);
-    BOOST_REQUIRE_EQUAL(weights3d.n_cols, 100);
-    BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
-  }
+  BOOST_REQUIRE_EQUAL(weights3d.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
+}
+
+/**
+ * Simple test of the GlorotInitialization class for normal distribution
+ */
+BOOST_AUTO_TEST_CASE(GlorotInitNormalTest)
+{
+  arma::mat weights;
+  arma::cube weights3d;
+
+  GlorotInitialization<> glorotInit(true);
+
+  glorotInit.Initialize(weights, 100, 100);
+  glorotInit.Initialize(weights3d, 100, 100, 2);
+
+  BOOST_REQUIRE_EQUAL(weights.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights.n_cols, 100);
+
+  BOOST_REQUIRE_EQUAL(weights3d.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
+}
 
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -46,67 +46,67 @@ namespace ann /** Artificial Neural Network. */ {
  * number of neurons in the ingoing layer
  * Here Normal Distribution may also be used if needed
  */
-
+template<typename Distribution = bool>
 class GlorotInitialization
 {
  public:
-    /**
-     * Initialize
-     */
-    GlorotInitialization(const bool uniform = true) : uniform(uniform)
+  /**
+   * Initialize
+   */
+  GlorotInitialization(const Distribution& uniform = Distribution()) : uniform(uniform)
+  {
+    // Nothing to do here.
+  }
+
+  /**
+   * Initialize the elements weight matrix.
+   *
+   * @param W Weight matrix to initialize.
+   * @param rows Number of rows.
+   * @param cols Number of columns.
+   */
+  template<typename eT>
+  void Initialize(arma::Mat<eT>& W,
+                  const size_t rows,
+                  const size_t cols)
+  {
+     double_t a = sqrt(6)/sqrt(rows + cols); // limit of  distribution
+
+    if (W.is_empty())
     {
-      // Nothing to do here.
+      W = arma::mat(rows, cols);
     }
 
-    /**
-     * Initialize the elements weight matrix.
-     *
-     * @param W Weight matrix to initialize.
-     * @param rows Number of rows.
-     * @param cols Number of columns.
-     */
-    template<typename eT>
-    void Initialize(arma::Mat<eT>& W,
-                    const size_t rows,
-                    const size_t cols)
+    if (!uniform)
+      W.imbue( [&]() { return arma::as_scalar(Random(-a, a)); } );
+    else
     {
-       double_t a = sqrt(6)/sqrt(rows + cols); // limit of  distribution
-
-      if (W.is_empty())
-      {
-        W = arma::mat(rows, cols);
-      }
-
-      if (uniform)
-        W.imbue( [&]() { return arma::as_scalar(Random(-a, a)); } );
-      else
-      {
-        double_t var = (double)(2)/(rows + cols);
-        W.imbue([&]() { return arma::as_scalar(RandNormal(0.0, var)); });
-      }
+      double_t var = (double)(2)/(rows + cols);
+      W.imbue([&]() { return arma::as_scalar(RandNormal(0.0, var)); });
     }
+  }
 
-    /**
-     * Initialize the elements of the specified weight 3rd order tensor with glorot initialization method
-     *
-     * @param W Weight matrix to initialize.
-     * @param rows Number of rows.
-     * @param cols Number of columns.
-     * @param slice Numbers of slices.
-     */
-    template<typename eT>
-    void Initialize(arma::Cube<eT>& W,
-                    const size_t rows,
-                    const size_t cols,
-                    const size_t slices)
+  /**
+   * Initialize the elements of the specified weight 3rd order tensor with glorot initialization method
+   *
+   * @param W Weight matrix to initialize.
+   * @param rows Number of rows.
+   * @param cols Number of columns.
+   * @param slice Numbers of slices.
+   */
+  template<typename eT>
+  void Initialize(arma::Cube<eT>& W,
+                  const size_t rows,
+                  const size_t cols,
+                  const size_t slices)
+  {
+    if (W.is_empty())
     {
-        if (W.is_empty())
-        {
-            W = arma::cube(rows, cols, slices);
-        }
-        for (size_t i = 0; i < slices; i++)
-            Initialize(W.slice(i), rows, cols);
+      W = arma::cube(rows, cols, slices);
     }
+    for (size_t i = 0; i < slices; i++)
+      Initialize(W.slice(i), rows, cols);
+  }
 
  private:
   //! Mode used i.e. Uniform or Normal
