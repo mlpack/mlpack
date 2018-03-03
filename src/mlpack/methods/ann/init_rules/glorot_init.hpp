@@ -53,7 +53,8 @@ class GlorotInitialization
   /**
    * Initialize
    */
-  GlorotInitialization(const Distribution& uniform = Distribution()) : uniform(uniform)
+  GlorotInitialization(const Distribution& uniform = Distribution()) :
+    uniform(uniform)
   {
     // Nothing to do here.
   }
