@@ -57,7 +57,7 @@ BOOST_FIXTURE_TEST_SUITE(MeanShiftMainTest, MeanShiftTestFixture);
 BOOST_AUTO_TEST_CASE(MeanShiftOutputDimensionTest)
 {
   arma::mat x;
-  x.randu(3,100); // 100 points in 3 dimension
+  x.randu(3, 100); // 100 points in 3 dimension
 
   // Input random data points.
   SetInputParam("input", std::move(x));
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(MeanShiftOutputDimensionTest)
 BOOST_AUTO_TEST_CASE(MeanShiftLabelOnlyOutputDimensionTest)
 {
   arma::mat x;
-  x.randu(3,100); // 100 points in 3 dimension
+  x.randu(3, 100); // 100 points in 3 dimension
 
   // Input random data points.
   SetInputParam("input", std::move(x));
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE(MeanShiftRadiusTest)
 
   ResetSettings();
 
-  SetInputParam("input", std::move(x));                                                                                                                                                         
+  SetInputParam("input", std::move(x));
   // Set a larger radius.
   SetInputParam("radius", (double) 1.0);
 
@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE(MeanShiftMaxIterationsTest)
 
   ResetSettings();
 
-  SetInputParam("input", std::move(x));                                                                                                                                                         
+  SetInputParam("input", std::move(x));
   // Set a larger max_iterations.
   SetInputParam("max_iterations", (int) 20);
 
@@ -161,7 +161,7 @@ BOOST_AUTO_TEST_CASE(MeanShiftMaxIterationsTest)
 BOOST_AUTO_TEST_CASE(MeanShiftInvalidMaxIterationsTest)
 {
   arma::mat x;
-  x.randu(3,100); // 100 points in 3 dimension
+  x.randu(3, 100); // 100 points in 3 dimension
 
   // Input random data points.
   SetInputParam("input", std::move(x));
