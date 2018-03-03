@@ -186,7 +186,7 @@ class AtrousConvolution
    * @param d The dilation size.
    * @return The convolution output size.
    */
-  size_t ConvOutSize( const size_t size,
+  size_t ConvOutSize (const size_t size,
                       const size_t k,
                       const size_t s,
                       const size_t p,

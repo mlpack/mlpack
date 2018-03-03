@@ -111,8 +111,8 @@ class NaiveAtrousConvolution
     inputPadded.submat((filter.n_rows - 1)*dilation + filter.n_rows - 1,
         (filter.n_cols - 1)*dilation + filter.n_cols - 1,
         (filter.n_rows - 1)*dilation + filter.n_rows - 1 + input.n_rows - 1,
-        (filter.n_cols - 1)*dilation + filter.n_cols - 1 + input.n_cols - 1
-          ) = input;
+        (filter.n_cols - 1)*dilation + filter.n_cols - 1 + input.n_cols - 1)
+        = input;
 
     NaiveAtrousConvolution<ValidConvolution>::Convolution(inputPadded, filter,
         output, 1, 1, dilation);
