@@ -71,8 +71,8 @@ BOOST_AUTO_TEST_CASE(MeanShiftOutputDimensionTest)
 }
 
 /**
- * Ensure that if we ask for labels_only, output has 1 column and
- * same number of rows for each point's label.
+ * Ensure that if we ask for labels_only, output has 1 row and
+ * same number of columns for each point's label.
  */
 BOOST_AUTO_TEST_CASE(MeanShiftLabelOnlyOutputDimensionTest)
 {
@@ -85,10 +85,10 @@ BOOST_AUTO_TEST_CASE(MeanShiftLabelOnlyOutputDimensionTest)
 
   mlpackMain();
 
+  // Check that there is only 1 row containing all the labels.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 1);
   // Check number of output points are the same.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 100);
-  // Check that there is only 1 column containing all the labels.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 1);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 100);
 }
 
 /**

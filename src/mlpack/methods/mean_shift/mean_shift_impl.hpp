@@ -265,7 +265,7 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
   arma::mat neighborDistances;
   arma::Mat<size_t> resultingNeighbors;
   neighborSearcher.Search(data, 1, resultingNeighbors, neighborDistances);
-  assignments = resultingNeighbors.t();
+  assignments = resultingNeighbors;
 }
 
 } // namespace meanshift
