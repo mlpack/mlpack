@@ -70,6 +70,8 @@ struct Generate
 
     // Load the parameters.
     const size_t startState = (size_t) CLI::GetParam<int>("start_state");
+    if (CLI::GetParam<int>("length") < 0)
+      Log::Fatal << "Length must be >= 0" << std::endl;
     const size_t length = (size_t) CLI::GetParam<int>("length");
 
     Log::Info << "Generating sequence of length " << length << "..." << endl;
@@ -104,7 +106,7 @@ static void mlpackMain()
     RandomSeed((size_t) time(NULL));
 
   // Load model, and perform the generation.
-  HMMModel hmm;
-  hmm = std::move(CLI::GetParam<HMMModel>("model"));
-  hmm.PerformAction<Generate, void>(NULL); // No extra data required.
+  HMMModel* hmm;
+  hmm = std::move(CLI::GetParam<HMMModel*>("model"));
+  hmm->PerformAction<Generate, void>(NULL); // No extra data required.
 }
