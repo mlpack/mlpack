@@ -231,7 +231,11 @@ BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
 
   ResetKmSettings();
 
-  BOOST_REQUIRE_GT(arma::accu(killEmptyOutput != allowEmptyOutput), 1);
+  if (killEmptyOutput.n_elem == allowEmptyOutput.n_elem)
+  {
+    BOOST_REQUIRE_GT(arma::accu(killEmptyOutput != allowEmptyOutput), 1);
+    BOOST_REQUIRE_GT(arma::accu(killEmptyOutput != normalOutput), 1);
+  }
   BOOST_REQUIRE_GT(arma::accu(normalOutput != allowEmptyOutput), 1);
 }
 
