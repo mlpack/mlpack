@@ -158,7 +158,12 @@ BOOST_AUTO_TEST_CASE(HMMGenerateCheckDimensionsTest)
 
   mlpackMain();
 
-  arma::mat stateSeq = CLI::GetParam<arma::mat>("output");
+  arma::mat obsSeq = CLI::GetParam<arma::mat>("output");
+  BOOST_REQUIRE(obsSeq.n_cols == (size_t)length);
+  BOOST_REQUIRE(obsSeq.n_rows == (size_t)1);
+  BOOST_REQUIRE(obsSeq.n_elem == (size_t)length);
+
+  arma::Mat<size_t> stateSeq = CLI::GetParam<arma::Mat<size_t>>("state");
   BOOST_REQUIRE(stateSeq.n_cols == (size_t)length);
   BOOST_REQUIRE(stateSeq.n_rows == (size_t)1);
   BOOST_REQUIRE(stateSeq.n_elem == (size_t)length);
@@ -181,6 +186,30 @@ BOOST_AUTO_TEST_CASE(HMMGenerateLengthPositiveTest)
   int length = -3; // Invalid
   SetInputParam("model", h);
   SetInputParam("length", length);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+BOOST_AUTO_TEST_CASE(HMMGenerateValidStartStateTest)
+{
+  // Train an HMM
+  HMMModel * h = new HMMModel(DiscreteHMM);
+  // Load data
+  arma::mat inp;
+  data::Load("obs1.csv", inp);
+  std::vector<arma::mat> trainSeq = {inp};
+  // Init
+  h->PerformAction<Init, std::vector<arma::mat>>(&trainSeq);
+  // Train
+  h->PerformAction<Train, std::vector<arma::mat>>(&trainSeq);
+
+  int length = 3;
+  int startState = 2; // Invalid
+  SetInputParam("model", h);
+  SetInputParam("length", length);
+  SetInputParam("start_state", startState);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
