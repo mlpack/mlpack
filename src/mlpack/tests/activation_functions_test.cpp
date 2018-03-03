@@ -390,7 +390,7 @@ BOOST_AUTO_TEST_CASE(SELUFunctionDerivativeTest)
 {
   arma::mat input = arma::ones<arma::mat>(1000, 1);
 
-  arma::mat error = arma::ones<arma::colvec>(input.n_elem,1);
+  arma::mat error = arma::ones<arma::mat>(input.n_elem, 1);
 
   arma::mat derivatives;
 
@@ -409,7 +409,7 @@ BOOST_AUTO_TEST_CASE(SELUFunctionDerivativeTest)
 
   selu.Backward(std::move(input), std::move(error), std::move(derivatives));
 
-  BOOST_REQUIRE_LE( arma::as_scalar(arma::abs(arma::mean(derivatives) -
+  BOOST_REQUIRE_LE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
                     selu.Lambda()*(selu.Alpha()-1))), 10e-5);
 }
 
