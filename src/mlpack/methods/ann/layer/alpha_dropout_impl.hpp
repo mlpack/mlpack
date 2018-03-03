@@ -23,17 +23,17 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-Alpha_Dropout<InputDataType, OutputDataType>::Alpha_Dropout(
+alphaDropout<InputDataType, OutputDataType>::alphaDropout(
         const double ratio) :
         ratio(ratio),
         deterministic(true)
 {
-    // Nothing to do here.
+    Ratio(ratio);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void Alpha_Dropout<InputDataType, OutputDataType>::Forward(
+void alphaDropout<InputDataType, OutputDataType>::Forward(
         const arma::Mat<eT>&& input,
         arma::Mat<eT>&& output)
 {
@@ -51,15 +51,13 @@ void Alpha_Dropout<InputDataType, OutputDataType>::Forward(
 
         mask = arma::randu< arma::Mat<eT> >(input.n_rows, input.n_cols);
         mask.transform( [&](double val) { return (val > ratio); } );
-        output = input % mask + alpha_dash * (1 - mask);
-
-        output = (output * a) + b;
+        output = (input % mask + alpha_dash * (1 - mask)) * a + b;
     }
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void Alpha_Dropout<InputDataType, OutputDataType>::Backward(
+void alphaDropout<InputDataType, OutputDataType>::Backward(
         const arma::Mat<eT>&& /* input */,
         arma::Mat<eT>&& gy,
         arma::Mat<eT>&& g)
@@ -69,16 +67,13 @@ void Alpha_Dropout<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void Alpha_Dropout<InputDataType, OutputDataType>::serialize(
+void alphaDropout<InputDataType, OutputDataType>::serialize(
         Archive& ar,
         const unsigned int /* version */)
 {
     ar & BOOST_SERIALIZATION_NVP(ratio);
-
-    // Reset values of a and b
-    a = pow((1 - ratio) * (1 + ratio * pow(alpha_dash, 2)), -0.5);
-
-    b = -a * alpha_dash * ratio;
+    ar & BOOST_SERIALIZATION_NVP(a);
+    ar & BOOST_SERIALIZATION_NVP(b);
 }
 
 } // namespace ann

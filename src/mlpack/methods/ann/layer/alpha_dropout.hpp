@@ -55,7 +55,7 @@ template <
         typename InputDataType = arma::mat,
         typename OutputDataType = arma::mat
 >
-class Alpha_Dropout
+class alphaDropout
 {
  public:
     /**
@@ -63,7 +63,7 @@ class Alpha_Dropout
      *
      * @param ratio The probability of setting a value to alpha_dash.
      */
-    Alpha_Dropout(const double ratio = 0.5);
+    alphaDropout(const double ratio = 0.5);
 
     /**
      * Ordinary feed forward pass of the alpha_dropout layer.
@@ -166,10 +166,10 @@ class Alpha_Dropout
     double alpha_dash = -alpha*lambda;
 
     //! Value to be multiplied with x for affine transformation.
-    double a = pow((1 - ratio) * (1 + ratio * pow(alpha_dash, 2)), -0.5);
+    double a;
 
     //! Value to be added to a*x for affine transformation.
-    double b = -a * alpha_dash * ratio;
+    double b;
 }; // class Alpha_Dropout
 
 } // namespace ann

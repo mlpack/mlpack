@@ -418,7 +418,7 @@ BOOST_AUTO_TEST_CASE(SimpleAlphaDropoutLayerTest)
 
   arma::mat input = arma::randn<arma::mat>(1000, 1);
 
-  Alpha_Dropout<> module(p);
+  alphaDropout<> module(p);
   module.Deterministic() = false;
 
   // Test the Forward function when training phase.
@@ -459,7 +459,7 @@ BOOST_AUTO_TEST_CASE(AlphaDropoutProbabilityTest)
         double nonzeroCount = 0;
         for (size_t i = 0; i < iterations; ++i)
         {
-            Alpha_Dropout<> module(probability[trial]);
+            alphaDropout<> module(probability[trial]);
             module.Deterministic() = false;
 
             arma::mat output;
@@ -487,7 +487,7 @@ BOOST_AUTO_TEST_CASE(AlphaDropoutProbabilityTest)
 BOOST_AUTO_TEST_CASE(NoAlphaDropoutTest)
 {
     arma::mat input = arma::ones(1500, 1);
-    Alpha_Dropout<> module(0);
+    alphaDropout<> module(0);
     module.Deterministic() = false;
 
     arma::mat output;

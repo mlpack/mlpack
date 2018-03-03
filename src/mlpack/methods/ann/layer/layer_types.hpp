@@ -118,7 +118,7 @@ using LayerTypes = boost::variant<
     CrossEntropyError<arma::mat, arma::mat>*,
     DropConnect<arma::mat, arma::mat>*,
     Dropout<arma::mat, arma::mat>*,
-    Alpha_Dropout<arma::mat, arma::mat>*,
+    alphaDropout<arma::mat, arma::mat>*,
     ELU<arma::mat, arma::mat>*,
     Glimpse<arma::mat, arma::mat>*,
     HardTanH<arma::mat, arma::mat>*,
