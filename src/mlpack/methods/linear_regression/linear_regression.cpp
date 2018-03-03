@@ -122,7 +122,10 @@ void LinearRegression::Train(const arma::mat& predictors,
   }
 }
 
-void LinearRegression::Predict(const arma::mat& points, arma::vec& predictions)
+
+// arma::mat points would reduce overhead in cases when Predict method is called without const requirement.
+
+void LinearRegression::Predict(arma::mat points, arma::vec& predictions)
     const
 {
   arma::rowvec rowPredictions;
@@ -130,7 +133,7 @@ void LinearRegression::Predict(const arma::mat& points, arma::vec& predictions)
   predictions = arma::trans(rowPredictions);
 }
 
-void LinearRegression::Predict(const arma::mat& points,
+void LinearRegression::Predict(arma::mat points,
     arma::rowvec& predictions) const
 {
   if (intercept)
