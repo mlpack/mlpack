@@ -198,6 +198,9 @@ class ELU
   //! Modify the non zero gradient.
   double& Alpha() { return alpha; }
 
+  //! Get the lambda parameter.
+  double const& Lambda() const { return lambda; }
+
   /**
    * Serialize the layer.
    */

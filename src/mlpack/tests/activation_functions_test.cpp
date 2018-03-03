@@ -347,10 +347,10 @@ BOOST_AUTO_TEST_CASE(SELUFunctionNormalizedTest)
   selu.Forward(std::move(input), output);
 
   BOOST_REQUIRE_LE(
-     arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))), 0.1);
+      arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))), 0.1);
 
   BOOST_REQUIRE_LE(
-     arma::as_scalar(arma::abs(arma::var(input) - arma::var(output))), 0.1);
+      arma::as_scalar(arma::abs(arma::var(input) - arma::var(output))), 0.1);
 }
 
 /*
@@ -374,10 +374,10 @@ BOOST_AUTO_TEST_CASE(SELUFunctionUnnormalizedTest)
   selu.Forward(std::move(input), output);
 
   BOOST_REQUIRE_GE(
-          arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))), 0.1);
+      arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))), 0.1);
 
   BOOST_REQUIRE_GE(
-          arma::as_scalar(arma::abs(arma::var(input) - arma::var(output))), 0.1);
+      arma::as_scalar(arma::abs(arma::var(input) - arma::var(output))), 0.1);
 }
 
 /*
@@ -402,17 +402,15 @@ BOOST_AUTO_TEST_CASE(SELUFunctionDerivativeTest)
   selu.Backward(std::move(input), std::move(error), std::move(derivatives));
 
   BOOST_REQUIRE_LE(
-     arma::as_scalar(arma::abs(arma::mean(derivatives) - SELUFunction::Lambda())),
-     10e-5);
+      arma::as_scalar(arma::abs(arma::mean(derivatives) - selu.Lambda())),
+      10e-5);
 
   input.fill(-1);
 
   selu.Backward(std::move(input), std::move(error), std::move(derivatives));
 
-  BOOST_REQUIRE_LE(
-     arma::as_scalar(arma::abs(arma::mean(derivatives) -
-                       SELUFunction::Lambda()*(SELUFunction::Alpha()-1))),
-                       10e-5);
+  BOOST_REQUIRE_LE( arma::as_scalar(arma::abs(arma::mean(derivatives) -
+                    selu.Lambda()*(selu.Alpha()-1))), 10e-5);
 }
 
 /**
