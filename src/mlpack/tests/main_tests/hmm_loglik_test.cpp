@@ -59,7 +59,7 @@ struct Init
   static void Create(HMM<DiscreteDistribution>& hmm,
                      vector<mat>& trainSeq,
                      size_t states,
-                     double tolerance=1e-05)
+                     double tolerance = 1e-05)
   {
     // Maximum observation is necessary so we know how to train the discrete
     // distribution.
@@ -80,7 +80,7 @@ struct Init
   static void Create(HMM<GaussianDistribution>& hmm,
                      vector<mat>& trainSeq,
                      size_t states,
-                     double tolerance=1e-05)
+                     double tolerance = 1e-05)
   {
     // Not implemented
     // Prevent unused args warning
@@ -93,7 +93,7 @@ struct Init
   static void Create(HMM<GMM>& hmm,
                      vector<mat>& trainSeq,
                      size_t states,
-                     double tolerance=1e-05)
+                     double tolerance = 1e-05)
   {
     // Not implemented
     // Prevent unused args warning
