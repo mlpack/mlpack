@@ -83,6 +83,11 @@ struct Init
                      double tolerance=1e-05)
   {
     // Not implemented
+    // Prevent unused parameter warning
+    (void)hmm;
+    (void)trainSeq;
+    (void)states;
+    (void)tolerance;
   }
 
   static void Create(HMM<GMM>& hmm,
@@ -91,6 +96,11 @@ struct Init
                      double tolerance=1e-05)
   {
     // Not implemented
+    // Prevent unused parameter warning
+    (void)hmm;
+    (void)trainSeq;
+    (void)states;
+    (void)tolerance;
   }
 
   //! Helper function for discrete emission distributions.
@@ -106,11 +116,15 @@ struct Init
   static void RandomInitialize(vector<GaussianDistribution>& e)
   {
     // Not implemented
+    // Prevent unused parameter warning
+    (void)e;
   }
 
   static void RandomInitialize(vector<GMM>& e)
   {
     // Not implemented
+    // Prevent unused parameter warning
+    (void)e;
   }
 };
 
@@ -131,22 +145,17 @@ BOOST_AUTO_TEST_CASE(HMMViterbiCheckDimensionsTest)
   // Load data
   arma::mat inp;
   data::Load("obs1.csv", inp);
-  std::cout << "Loaded data:" << std::endl << inp << std::endl;
   std::vector<arma::mat> trainSeq = {inp};
   // Init
   h->PerformAction<Init, std::vector<arma::mat>>(&trainSeq);
   // Train
   h->PerformAction<Train, std::vector<arma::mat>>(&trainSeq);
 
-  std::cout << __func__ << ": Training complete!" << std::endl;
-
   // Set the params for the hmm_viterbi invocation
   SetInputParam("input_model", h);
   SetInputParam("input", inp);
-  std::cout << __func__ << ": Set input params!" << std::endl;
 
   mlpackMain();
-  std::cout << __func__ << ": HMMViterbiMain() complete!" << std::endl;
 
   arma::Mat<size_t> out = CLI::GetParam<arma::Mat<size_t> >("output");
   BOOST_REQUIRE(out.n_rows == inp.n_rows);
