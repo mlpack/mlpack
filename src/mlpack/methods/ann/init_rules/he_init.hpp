@@ -10,7 +10,8 @@
  *
  * @code
  * @article{He2015DelvingDI,
- * title={Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification},
+ * title={Delving Deep into Rectifiers: Surpassing Human-Level Performance
+ * on ImageNet Classification},
  * author={Kaiming He and Xiangyu Zhang and Shaoqing Ren and Jian Sun},
  * journal={2015 IEEE International Conference on Computer Vision (ICCV)},
  * year={2015},
@@ -42,7 +43,8 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @code
  * @article{He2015DelvingDI,
- * title={Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification},
+ * title={Delving Deep into Rectifiers: Surpassing Human-Level Performance
+ * on ImageNet Classification},
  * author={Kaiming He and Xiangyu Zhang and Shaoqing Ren and Jian Sun},
  * journal={2015 IEEE International Conference on Computer Vision (ICCV)},
  * year={2015},
@@ -53,65 +55,65 @@ namespace ann /** Artificial Neural Network. */ {
 class HeInitialization
 {
  public:
-    /**
-     * Initialize the HeInitialization object.
-     *
-     */
-    HeInitialization()
+  /**
+   * Initialize the HeInitialization object.
+   *
+   */
+  HeInitialization()
+  {
+    // Nothing to do here.
+  }
+
+  /**
+   * Initialize the elements of the weight matrix with the He initialization
+   * rule.
+   *
+   * @param W Weight matrix to initialize.
+   * @param rows Number of rows.
+   * @param cols Number of columns.
+   */
+  void Initialize(arma::mat& W,
+                  const size_t rows,
+                  const size_t cols)
+  {
+    // He initialization rule says to initialize weights with random
+    // values taken from a gaussian distribution with mean = 0 and
+    // standard deviation = sqrt(2/rows), i.e. variance = (2/rows).
+    double variance =  2.0 / ((double) rows);
+
+    if (W.is_empty())
     {
-        // Nothing to do here.
+      W.set_size(rows, cols);
     }
 
-    /**
-     * Initialize the elements of the weight matrix with the He initialization
-     * rule.
-     *
-     * @param W Weight matrix to initialize.
-     * @param rows Number of rows.
-     * @param cols Number of columns.
-     */
-    void Initialize(arma::mat& W,
-                    const size_t rows,
-                    const size_t cols)
+    // Multipling a random variable X with variance V(X) by some factor c,
+    // then the variance V(cX) = (c^2)* V(X).
+    W.imbue( [&]() { return sqrt(variance) * arma::randn();} );
+  }
+
+  /**
+   * Initialize the elements of the specified weight 3rd order tensor
+   * with He initialization rule.
+   *
+   * @param W Weight matrix to initialize.
+   * @param rows Number of rows.
+   * @param cols Number of columns.
+   * @param slice Numbers of slices.
+   */
+  void Initialize(arma::cube & W,
+                  const size_t rows,
+                  const size_t cols,
+                  const size_t slices)
+  {
+    if (W.is_empty())
     {
-        // He initialization rule says to initialize weights with random
-        // values taken from a gaussian distribution with mean = 0 and
-        // standard deviation = sqrt(2/rows), i.e. variance = (2/rows).
-        double variance =  2.0 / ((double) rows);
-
-        if (W.is_empty())
-        {
-            W.set_size(rows, cols);
-        }
-
-        // Multipling a random variable X with variance V(X) by some factor c,
-        // then the variance V(cX) = (c^2)* V(X).
-        W.imbue( [&]() { return sqrt(variance) * arma::randn();} );
+      W.set_size(rows, cols, slices);
     }
 
-    /**
-     * Initialize the elements of the specified weight 3rd order tensor
-     * with He initialization rule.
-     *
-     * @param W Weight matrix to initialize.
-     * @param rows Number of rows.
-     * @param cols Number of columns.
-     * @param slice Numbers of slices.
-     */
-    void Initialize(arma::cube & W,
-                    const size_t rows,
-                    const size_t cols,
-                    const size_t slices)
-    {
-        if (W.is_empty())
-        {
-            W.set_size(rows, cols, slices);
-        }
-
-        for (size_t i = 0; i < slices; i++) {
-            Initialize(W.slice(i), rows, cols);
-        }
+    for (size_t i = 0; i < slices; i++) {
+      Initialize(W.slice(i), rows, cols);
     }
+  }
 }; // class HeInitialization
 
 } // namespace ann
