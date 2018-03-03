@@ -18,6 +18,7 @@
 #include "worker/one_step_q_learning_worker.hpp"
 #include "worker/one_step_sarsa_worker.hpp"
 #include "worker/n_step_q_learning_worker.hpp"
+#include "worker/actor_critic_worker.hpp"
 #include "training_config.hpp"
 
 namespace mlpack {
@@ -131,54 +132,6 @@ class AsyncLearning
 };
 
 /**
- * Forward declaration of OneStepQLearningWorker.
- *
- * @tparam EnvironmentType The type of the reinforcement learning task.
- * @tparam NetworkType The type of the network model.
- * @tparam UpdaterType The type of the optimizer.
- * @tparam PolicyType The type of the behavior policy.
- */
-template <
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename PolicyType
->
-class OneStepQLearningWorker;
-
-/**
- * Forward declaration of OneStepSarsaWorker.
- *
- * @tparam EnvironmentType The type of the reinforcement learning task.
- * @tparam NetworkType The type of the network model.
- * @tparam UpdaterType The type of the optimizer.
- * @tparam PolicyType The type of the behavior policy.
- */
-template <
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename PolicyType
->
-class OneStepSarsaWorker;
-
-/**
- * Forward declaration of NStepQLearningWorker.
- *
- * @tparam EnvironmentType The type of the reinforcement learning task.
- * @tparam NetworkType The type of the network model.
- * @tparam UpdaterType The type of the optimizer.
- * @tparam PolicyType The type of the behavior policy.
- */
-template <
-  typename EnvironmentType,
-  typename NetworkType,
-  typename UpdaterType,
-  typename PolicyType
->
-class NStepQLearningWorker;
-
-/**
  * Convenient typedef for async one step q-learning.
  *
  * @tparam EnvironmentType The type of the reinforcement learning task.
@@ -229,6 +182,24 @@ template <
   typename PolicyType
 >
 using NStepQLearning = AsyncLearning<NStepQLearningWorker<EnvironmentType,
+    NetworkType, UpdaterType, PolicyType>, EnvironmentType, NetworkType,
+    UpdaterType, PolicyType>;
+
+/**
+ * Convenient typedef for async advantage actor critic.
+ *
+ * @tparam EnvironmentType The type of the reinforcement learning task.
+ * @tparam NetworkType The type of the network model.
+ * @tparam UpdaterType The type of the optimizer.
+ * @tparam PolicyType The type of the behavior policy.
+ */
+template <
+  typename EnvironmentType,
+  typename NetworkType,
+  typename UpdaterType,
+  typename PolicyType
+>
+using ActorCritic = AsyncLearning<ActorCriticWorker<EnvironmentType,
     NetworkType, UpdaterType, PolicyType>, EnvironmentType, NetworkType,
     UpdaterType, PolicyType>;
 

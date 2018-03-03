@@ -16,6 +16,7 @@
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
 #include <mlpack/methods/reinforcement_learning/replay/random_replay.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
+#include <mlpack/methods/ann/layer/policy.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -120,6 +121,22 @@ BOOST_AUTO_TEST_CASE(GreedyPolicyTest)
   arma::colvec actionValue = arma::randn<arma::colvec>(CartPole::Action::size);
   CartPole::Action action = policy.Sample(actionValue);
   BOOST_REQUIRE_CLOSE(actionValue[action], actionValue.max(), 1e-5);
+}
+
+/**
+ * Whether the policy gradient layer works as expected.
+ */
+BOOST_AUTO_TEST_CASE(PolicyLayerTest)
+{
+  ann::Policy<> layer(0.1);
+  arma::mat input = arma::vec("1.0 3.0 9.0");
+  arma::mat advantage = arma::vec("0.0 2.0 0.0");
+  arma::mat prob(3, 1);
+  arma::mat gradient(3, 1);
+  layer.Forward(std::move(input), std::move(prob));
+  layer.Backward(std::move(prob), std::move(advantage), std::move(gradient));
+  arma::mat trueGradient = arma::vec("0.0004020111 -1.99653516  1.99613315");
+  CheckMatrices(gradient, trueGradient);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

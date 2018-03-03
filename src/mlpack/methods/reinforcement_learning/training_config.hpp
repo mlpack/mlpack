@@ -35,6 +35,8 @@ class TrainingConfig
       size_t stepLimit,
       size_t explorationSteps,
       double stepSize,
+      double actorStepSize,
+      double criticStepSize,
       double discount,
       double gradientLimit,
       bool doubleQLearning) :
@@ -44,6 +46,8 @@ class TrainingConfig
       stepLimit(stepLimit),
       explorationSteps(explorationSteps),
       stepSize(stepSize),
+      actorStepSize(actorStepSize),
+      criticStepSize(criticStepSize),
       discount(discount),
       gradientLimit(gradientLimit),
       doubleQLearning(doubleQLearning)
@@ -82,6 +86,16 @@ class TrainingConfig
   double StepSize() const { return stepSize; }
   //! Modify the step size of the optimizer.
   double& StepSize() { return stepSize; }
+
+  //! Get the step size of the optimizer of the actor network.
+  double ActorStepSize() const { return actorStepSize; }
+  //! Modify the step size of the optimizer of the actor network.
+  double& ActorStepSize() { return actorStepSize; }
+
+  //! Get the step size of the optimizer of the critic network.
+  double CriticStepSize() const { return criticStepSize; }
+  //! Modify the step size of the optimizer of the critic network.
+  double& CriticStepSize() { return criticStepSize; }
 
   //! Get the discount rate for future reward.
   double Discount() const { return discount; }
@@ -137,6 +151,18 @@ class TrainingConfig
    * This is valid for both async RL agent and q-learning agent.
    */
   double stepSize;
+
+  /**
+   * Locally-stored step size of the optimizer of the actor network.
+   * This is valid only for actor critic methods.
+   */
+  double actorStepSize;
+
+  /**
+   * Locally-stored step size of the optimizer of the critic netowrk.
+   * This is valid only for actor critic methods.
+   */
+  double criticStepSize;
 
   /**
    * Locally-stored discount rate for future reward.

@@ -227,8 +227,11 @@ class FFN
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameter; }
 
+  //! Wheter the network is initialized or not.
+  bool Initialized() { return reset; }
+
   /**
-   * Reset the module infomration (weights/parameters).
+   * Reset the module information (weights/parameters).
    */
   void ResetParameters();
 
