@@ -39,6 +39,23 @@ namespace ann /** Artificial Neural Network. */ {
 /**
 * This class is used to initialize weight matrix with the Lecun Normalization
 * initialization rule.
+ *
+ * For more information, the following papers can be referred to:
+ *
+ * @code
+ * @inproceedings{conf/nips/KlambauerUMH17,
+ * title = {Self-Normalizing Neural Networks.},
+ * author = {Klambauer, Günter and Unterthiner, Thomas and Mayr, Andreas and Hochreiter, Sepp},
+ * pages = {972-981},
+ * year = 2017}
+ *
+ * @inproceedings{LeCun:1998:EB:645754.668382,
+ * title = {Efficient BackProp},
+ * author = {LeCun, Yann and Bottou, L{\'e}on and Orr, Genevieve B. and M\"{u}ller, Klaus-Robert},
+ * year = {1998},
+ * pages = {9--50}}
+ * @endcode
+ *
 */
 class LecunNormalInitialization
 {
@@ -67,14 +84,16 @@ class LecunNormalInitialization
         // He initialization rule says to initialize weights with random
         // values taken from a gaussian distribution with mean = 0 and
         // standard deviation = sqrt(1/rows), i.e. variance = (1/rows).
-        double_t variance = 1.0 / ((double) rows);
+        double variance = 1.0 / ((double) rows);
 
         if (W.is_empty())
         {
             W.set_size(rows, cols);
         }
 
-        W.imbue( [&]() { return arma::as_scalar(RandNormal(0, variance)); } );
+        // Multipling a random variable X with variance V(X) by some factor c,
+        // then the variance V(cX) = (c^2)* V(X).
+        W.imbue( [&]() { return sqrt(variance) * arma::randn();} );
     }
 
     /**
