@@ -317,8 +317,7 @@ BOOST_AUTO_TEST_CASE(JacobianConstantLayerTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleDropoutLayerTest)
 {
-  // Initialize the probability of setting a value to zero and the scale
-  // parameter.
+  // Initialize the probability of setting a value to zero.
   const double p = 0.2;
 
   // Initialize the input parameter.

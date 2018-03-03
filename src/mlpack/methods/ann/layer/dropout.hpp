@@ -53,98 +53,94 @@ template<
         >
 class Dropout {
  public:
-    /**
-     * Create the Dropout object using the specified ratio parameter.
-     *
-     * @param ratio The probability of setting a value to zero.
-     */
-    Dropout(const double ratio = 0.5);
+  /**
+   * Create the Dropout object using the specified ratio parameter.
+   *
+   * @param ratio The probability of setting a value to zero.
+   */
+  Dropout(const double ratio = 0.5);
 
-    /**
-     * Ordinary feed forward pass of the dropout layer.
-     *
-     * @param input Input data used for evaluating the specified function.
-     * @param output Resulting output activation.
-     */
-    template<typename eT>
-    void Forward(const arma::Mat<eT> &&input, arma::Mat<eT> &&output);
+  /**
+   * Ordinary feed forward pass of the dropout layer.
+   *
+   * @param input Input data used for evaluating the specified function.
+   * @param output Resulting output activation.
+   */
+  template<typename eT>
+  void Forward(const arma::Mat<eT> &&input, arma::Mat<eT> &&output);
 
-    /**
-     * Ordinary feed backward pass of the dropout layer.
-     *
-     * @param input The propagated input activation.
-     * @param gy The backpropagated error.
-     * @param g The calculated gradient.
-     */
-    template<typename eT>
-    void Backward(const arma::Mat<eT> && /* input */,
-                  arma::Mat<eT> &&gy,
-                  arma::Mat<eT> &&g);
+  /**
+   * Ordinary feed backward pass of the dropout layer.
+   *
+   * @param input The propagated input activation.
+   * @param gy The backpropagated error.
+   * @param g The calculated gradient.
+   */
+  template<typename eT>
+  void Backward(const arma::Mat<eT> && /* input */,
+                arma::Mat<eT> &&gy,
+                arma::Mat<eT> &&g);
 
-    //! Get the input parameter.
-    InputDataType const &InputParameter() const {
-        return inputParameter;
-    }
+  //! Get the input parameter.
+  InputDataType const &InputParameter() const { return inputParameter;  }
 
-    //! Modify the input parameter.
-    InputDataType &InputParameter() { return inputParameter; }
+  //! Modify the input parameter.
+  InputDataType &InputParameter() { return inputParameter; }
 
-    //! Get the output parameter.
-    OutputDataType const &OutputParameter() const {
-        return outputParameter;
-    }
+  //! Get the output parameter.
+  OutputDataType const &OutputParameter() const { return outputParameter; }
 
-    //! Modify the output parameter.
-    OutputDataType &OutputParameter() { return outputParameter; }
+  //! Modify the output parameter.
+  OutputDataType &OutputParameter() { return outputParameter; }
 
-    //! Get the detla.
-    OutputDataType const &Delta() const { return delta; }
+  //! Get the detla.
+  OutputDataType const &Delta() const { return delta; }
 
-    //! Modify the delta.
-    OutputDataType &Delta() { return delta; }
+  //! Modify the delta.
+  OutputDataType &Delta() { return delta; }
 
-    //! The value of the deterministic parameter.
-    bool Deterministic() const { return deterministic; }
+  //! The value of the deterministic parameter.
+  bool Deterministic() const { return deterministic; }
 
-    //! Modify the value of the deterministic parameter.
-    bool &Deterministic() { return deterministic; }
+  //! Modify the value of the deterministic parameter.
+  bool &Deterministic() { return deterministic; }
 
-    //! The probability of setting a value to zero.
-    double Ratio() const { return ratio; }
+  //! The probability of setting a value to zero.
+  double Ratio() const { return ratio; }
 
-    //! Modify the probability of setting a value to zero.
-    void Ratio(const double r) {
-        ratio = r;
-        scale = 1.0 / (1.0 - ratio);
-    }
+  //! Modify the probability of setting a value to zero.
+  void Ratio(const double r) {
+    ratio = r;
+    scale = 1.0 / (1.0 - ratio);
+  }
 
-    /**
-     * Serialize the layer.
-     */
-    template<typename Archive>
-    void serialize(Archive &ar, const unsigned int /* version */);
+  /**
+   * Serialize the layer.
+   */
+  template<typename Archive>
+  void serialize(Archive &ar, const unsigned int /* version */);
 
  private:
-            //! Locally-stored delta object.
-            OutputDataType delta;
+  //! Locally-stored delta object.
+  OutputDataType delta;
 
-            //! Locally-stored input parameter object.
-            InputDataType inputParameter;
+  //! Locally-stored input parameter object.
+  InputDataType inputParameter;
 
-            //! Locally-stored output parameter object.
-            OutputDataType outputParameter;
+  //! Locally-stored output parameter object.
+  OutputDataType outputParameter;
 
-            //! Locally-stored mast object.
-            OutputDataType mask;
+  //! Locally-stored mast object.
+  OutputDataType mask;
 
-            //! The probability of setting a value to zero.
-            double ratio;
+  //! The probability of setting a value to zero.
+  double ratio;
 
-            //! The scale fraction.
-            double scale;
+  //! The scale fraction.
+  double scale;
 
-            //! If true dropout and scaling is disabled, see notes above.
-            bool deterministic;
+  //! If true dropout and scaling is disabled, see notes above.
+  bool deterministic;
 }; // class Dropout
 
 } // namespace ann
