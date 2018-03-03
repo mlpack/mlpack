@@ -20,7 +20,6 @@
 #include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
-#include <mlpack/methods/ann/activation_functions/selu_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
