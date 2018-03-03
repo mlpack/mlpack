@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(CFMaxIterationsBoundTest)
   data::Load("GroupLensSmall.csv", dataset);
 
   // max_iterations should not be negative.
-  SetInputParam("max_iterations", double(-1));
+  SetInputParam("max_iterations", int(-1));
   SetInputParam("training", std::move(dataset));
 
   Log::Fatal.ignoreInput = true;
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(CFMaxIterationsBoundTest)
   Log::Fatal.ignoreInput = false;
 
   // max_iterations should not be zero.
-  SetInputParam("max_iterations", double(0));
+  SetInputParam("max_iterations", int(0));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -152,19 +152,9 @@ BOOST_AUTO_TEST_CASE(CFNeighborhoodBoundTest)
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
 
-  SetInputParam("training", std::move(dataset));
-  SetInputParam("max_iterations", int(5));
-
-  mlpackMain();
-
-  // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["max_iterations"].wasPassed = false;
-
   // neighborhood should not be zero.
   SetInputParam("neighborhood", int(0));
-  SetInputParam("input_model",
-      std::move(CLI::GetParam<CF*>("output_model")));
+  SetInputParam("training", std::move(dataset));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -180,7 +170,7 @@ BOOST_AUTO_TEST_CASE(CFNeighborhoodBoundTest)
 
 /**
  * Ensure algorithm is one of { "NMF", "BatchSVD",
- * "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD" }
+ * "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD" }.
  */
 BOOST_AUTO_TEST_CASE(CFAlgorithmBoundTest)
 {
@@ -196,24 +186,224 @@ BOOST_AUTO_TEST_CASE(CFAlgorithmBoundTest)
   Log::Fatal.ignoreInput = false;
 }
 
+/**
+ * Ensure saved NMF model can be reused again.
+ */
+BOOST_AUTO_TEST_CASE(CFNMFModelReuseTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
 
+  SetInputParam("training", std::move(dataset));
+  SetInputParam("max_iterations", int(100));
+  SetInputParam("algorithm", std::string("NMF"));
 
+  mlpackMain();
 
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["max_iterations"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
 
+  // Reuse the model to get recommendations.
+  int recommendations = 3;
+  const int querySize = 7;
+  Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
 
+  SetInputParam("query", std::move(query));
+  SetInputParam("recommendations", recommendations);
+  SetInputParam("input_model",
+      std::move(CLI::GetParam<CF*>("output_model")));
 
+  mlpackMain();
 
+  const Mat<size_t>& output = CLI::GetParam<Mat<size_t>>("output");
 
+  BOOST_REQUIRE_EQUAL(output.n_rows, recommendations);
+  BOOST_REQUIRE_EQUAL(output.n_cols, querySize);
+}
 
+/**
+ * Ensure saved BatchSVD model can be reused again.
+ */
+BOOST_AUTO_TEST_CASE(CFBatchSVDModelReuseTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
 
+  SetInputParam("training", std::move(dataset));
+  SetInputParam("max_iterations", int(100));
+  SetInputParam("algorithm", std::string("BatchSVD"));
 
+  mlpackMain();
 
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["max_iterations"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
 
+  // Reuse the model to get recommendations.
+  int recommendations = 3;
+  const int querySize = 7;
+  Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
 
+  SetInputParam("query", std::move(query));
+  SetInputParam("recommendations", recommendations);
+  SetInputParam("input_model",
+      std::move(CLI::GetParam<CF*>("output_model")));
 
+  mlpackMain();
 
+  const Mat<size_t>& output = CLI::GetParam<Mat<size_t>>("output");
 
+  BOOST_REQUIRE_EQUAL(output.n_rows, recommendations);
+  BOOST_REQUIRE_EQUAL(output.n_cols, querySize);
+}
 
+/**
+ * Ensure saved SVDIncompleteIncremental model can be reused again.
+ */
+BOOST_AUTO_TEST_CASE(CFSVDIncompleteIncModelReuseTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
 
+  SetInputParam("training", std::move(dataset));
+  SetInputParam("max_iterations", int(100));
+  SetInputParam("algorithm", std::string("SVDIncompleteIncremental"));
+
+  mlpackMain();
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["max_iterations"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
+
+  // Reuse the model to get recommendations.
+  int recommendations = 3;
+  const int querySize = 7;
+  Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
+
+  SetInputParam("query", std::move(query));
+  SetInputParam("recommendations", recommendations);
+  SetInputParam("input_model",
+      std::move(CLI::GetParam<CF*>("output_model")));
+
+  mlpackMain();
+
+  const Mat<size_t>& output = CLI::GetParam<Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output.n_rows, recommendations);
+  BOOST_REQUIRE_EQUAL(output.n_cols, querySize);
+}
+
+/**
+ * Ensure saved SVDCompleteIncremental model can be reused again.
+ */
+BOOST_AUTO_TEST_CASE(CFSVDCompleteIncModelReuseTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
+
+  SetInputParam("training", std::move(dataset));
+  SetInputParam("max_iterations", int(100));
+  SetInputParam("algorithm", std::string("SVDCompleteIncremental"));
+
+  mlpackMain();
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["max_iterations"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
+
+  // Reuse the model to get recommendations.
+  int recommendations = 3;
+  const int querySize = 7;
+  Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
+
+  SetInputParam("query", std::move(query));
+  SetInputParam("recommendations", recommendations);
+  SetInputParam("input_model",
+      std::move(CLI::GetParam<CF*>("output_model")));
+
+  mlpackMain();
+
+  const Mat<size_t>& output = CLI::GetParam<Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output.n_rows, recommendations);
+  BOOST_REQUIRE_EQUAL(output.n_cols, querySize);
+}
+
+/**
+ * Ensure saved RegSVD model can be reused again.
+ */
+BOOST_AUTO_TEST_CASE(CFRegSVDModelReuseTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
+
+  SetInputParam("training", std::move(dataset));
+  SetInputParam("max_iterations", int(100));
+  SetInputParam("algorithm", std::string("RegSVD"));
+
+  mlpackMain();
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["max_iterations"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
+
+  // Reuse the model to get recommendations.
+  int recommendations = 3;
+  const int querySize = 7;
+  Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
+
+  SetInputParam("query", std::move(query));
+  SetInputParam("recommendations", recommendations);
+  SetInputParam("input_model",
+      std::move(CLI::GetParam<CF*>("output_model")));
+
+  mlpackMain();
+
+  const Mat<size_t>& output = CLI::GetParam<Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output.n_rows, recommendations);
+  BOOST_REQUIRE_EQUAL(output.n_cols, querySize);
+}
+
+/**
+ * Ensure output of all_user_recommendations has correct size.
+ */
+BOOST_AUTO_TEST_CASE(CFAllUserRecommendationsTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
+  const size_t userNum = max(dataset.row(0)) + 1;
+
+  SetInputParam("training", std::move(dataset));
+  SetInputParam("max_iterations", int(100));
+  SetInputParam("algorithm", std::string("NMF"));
+
+  mlpackMain();
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["max_iterations"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
+
+  // Get output.
+  int recommendations = 3;
+
+  SetInputParam("all_user_recommendations", true);
+  SetInputParam("recommendations", recommendations);
+  SetInputParam("input_model",
+      std::move(CLI::GetParam<CF*>("output_model")));
+
+  mlpackMain();
+
+  const Mat<size_t>& output = CLI::GetParam<Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output.n_cols, userNum);
+}
 
 BOOST_AUTO_TEST_SUITE_END();
