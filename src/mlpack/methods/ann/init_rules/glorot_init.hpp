@@ -46,15 +46,14 @@ namespace ann /** Artificial Neural Network. */ {
  * number of neurons in the ingoing layer
  * Here Normal Distribution may also be used if needed
  */
-template<typename Distribution = bool>
+template<bool uniform = true>
 class GlorotInitialization
 {
  public:
   /**
    * Initialize
    */
-  GlorotInitialization(const Distribution& uniform = Distribution()) :
-    uniform(uniform)
+  GlorotInitialization()
   {
     // Nothing to do here.
   }
@@ -78,7 +77,7 @@ class GlorotInitialization
       W = arma::mat(rows, cols);
     }
 
-    if (!uniform)
+    if (uniform)
       W.imbue( [&]() { return arma::as_scalar(Random(-a, a)); } );
     else
     {
@@ -109,9 +108,6 @@ class GlorotInitialization
       Initialize(W.slice(i), rows, cols);
   }
 
- private:
-  //! Mode used i.e. Uniform or Normal
-  bool uniform;
 }; // class GlorotInitialization
 
 } // namespace ann

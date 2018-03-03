@@ -294,7 +294,7 @@ BOOST_AUTO_TEST_CASE(GlorotInitUniformTest)
   arma::mat weights;
   arma::cube weights3d;
 
-  GlorotInitialization<> glorotInit;
+  GlorotInitialization<true> glorotInit;
 
   glorotInit.Initialize(weights, 100, 100);
   glorotInit.Initialize(weights3d, 100, 100, 2);
@@ -315,7 +315,7 @@ BOOST_AUTO_TEST_CASE(GlorotInitNormalTest)
   arma::mat weights;
   arma::cube weights3d;
 
-  GlorotInitialization<> glorotInit(true);
+  GlorotInitialization<false> glorotInit;
 
   glorotInit.Initialize(weights, 100, 100);
   glorotInit.Initialize(weights3d, 100, 100, 2);
