@@ -148,6 +148,7 @@ add_executable(mlpack_test
   main_tests/hmm_viterbi_test.cpp
   main_tests/hmm_train_test.cpp
   main_tests/hmm_loglik_test.cpp
+  main_tests/hmm_generate_test.cpp
 )
 
 # Link dependencies of test executable.
