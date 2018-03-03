@@ -312,7 +312,7 @@ BOOST_AUTO_TEST_CASE(KNNModelReuseTest)
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
   
-  // bindings::tests::CleanMemory(); throws memory access violation
+  bindings::tests::CleanMemory(); 
   
   // Reset passed parameters. 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;

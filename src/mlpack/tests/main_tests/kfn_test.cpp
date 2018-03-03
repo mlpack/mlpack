@@ -281,7 +281,7 @@ BOOST_AUTO_TEST_CASE(KFNModelReuseTest)
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
   
-  //bindings::tests::CleanMemory();
+  bindings::tests::CleanMemory();
 
   // Reset passed parameters. 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
