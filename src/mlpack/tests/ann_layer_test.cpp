@@ -450,35 +450,34 @@ BOOST_AUTO_TEST_CASE(SimpleAlphaDropoutLayerTest)
  */
 BOOST_AUTO_TEST_CASE(AlphaDropoutProbabilityTest)
 {
-    arma::mat input = arma::ones(1500, 1);
-    const size_t iterations = 10;
+  arma::mat input = arma::ones(1500, 1);
+  const size_t iterations = 10;
 
-    double probability[5] = { 0.1, 0.3, 0.4, 0.7, 0.8 };
-    for (size_t trial = 0; trial < 5; ++trial)
+  double probability[5] = { 0.1, 0.3, 0.4, 0.7, 0.8 };
+  for (size_t trial = 0; trial < 5; ++trial)
+  {
+    double nonzeroCount = 0;
+    for (size_t i = 0; i < iterations; ++i)
     {
-        double nonzeroCount = 0;
-        for (size_t i = 0; i < iterations; ++i)
-        {
-            alphaDropout<> module(probability[trial]);
-            module.Deterministic() = false;
+      alphaDropout<> module(probability[trial]);
+      module.Deterministic() = false;
 
-            arma::mat output;
-            module.Forward(std::move(input), std::move(output));
+      arma::mat output;
+      module.Forward(std::move(input), std::move(output));
 
-            // Return a column vector containing the indices of elements of X
-            // that are not alpha_dash, we just need the number of
-            // non_alpha_dash values.
-            arma::uvec non_alpha_dash = arma::find(module.Mask());
-            nonzeroCount += non_alpha_dash.n_elem;
-        }
-
-        const double expected = input.n_elem * (1-probability[trial]) *
-                                iterations;
-
-        const double error = fabs(nonzeroCount - expected) / expected;
-
-        BOOST_REQUIRE_LE(error, 0.15);
+      // Return a column vector containing the indices of elements of X
+      // that are not alpha_dash, we just need the number of
+      // non_alpha_dash values.
+      arma::uvec non_alpha_dash = arma::find(module.Mask());
+      nonzeroCount += non_alpha_dash.n_elem;
     }
+
+    const double expected = input.n_elem * (1-probability[trial]) * iterations;
+
+    const double error = fabs(nonzeroCount - expected) / expected;
+
+    BOOST_REQUIRE_LE(error, 0.15);
+  }
 }
 
 /*
@@ -486,14 +485,14 @@ BOOST_AUTO_TEST_CASE(AlphaDropoutProbabilityTest)
 */
 BOOST_AUTO_TEST_CASE(NoAlphaDropoutTest)
 {
-    arma::mat input = arma::ones(1500, 1);
-    alphaDropout<> module(0);
-    module.Deterministic() = false;
+  arma::mat input = arma::ones(1500, 1);
+  alphaDropout<> module(0);
+  module.Deterministic() = false;
 
-    arma::mat output;
-    module.Forward(std::move(input), std::move(output));
+  arma::mat output;
+  module.Forward(std::move(input), std::move(output));
 
-    BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(input));
+  BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(input));
 }
 
 /**
