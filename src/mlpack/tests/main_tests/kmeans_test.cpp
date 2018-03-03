@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
   mlpackMain();
 
   arma::mat normalOutput;
-  normalOutput = std::move(CLI::GetParam<arma::mat>("output"));
+  normalOutput = std::move(CLI::GetParam<arma::mat>("centroid"));
 
   ResetKmSettings();
 
@@ -213,7 +213,7 @@ BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
   mlpackMain();
 
   arma::mat allowEmptyOutput;
-  allowEmptyOutput = std::move(CLI::GetParam<arma::mat>("output"));
+  allowEmptyOutput = std::move(CLI::GetParam<arma::mat>("centroid"));
 
   ResetKmSettings();
 
@@ -221,12 +221,13 @@ BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
   SetInputParam("clusters", c);
   SetInputParam("labels_only", true);
   SetInputParam("kill_empty_clusters", true);
-  SetInputParam("max_iterations", std::move(iterations));
+  SetInputParam("max_iterations", iterations);
+  SetInputParam("initial_centroids", initCentroid);
 
   mlpackMain();
 
   arma::mat killEmptyOutput;
-  killEmptyOutput = std::move(CLI::GetParam<arma::mat>("output"));
+  killEmptyOutput = std::move(CLI::GetParam<arma::mat>("centroid"));
 
   ResetKmSettings();
 
