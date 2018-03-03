@@ -49,11 +49,37 @@ class GivenInitialization
    * @param H H matrix, to be filled with random noise.
    */
   template<typename MatType>
-  inline void Initialize(const MatType& /* V */,
-                         const size_t /* r */,
+  inline void Initialize(const MatType& V,
+                         const size_t r,
                          arma::mat& W,
                          arma::mat& H)
   {
+    // Make sure the initial W, H matrices have correct size.
+    if (w.n_rows != V.n_rows)
+    {
+      Log::Fatal << "The number of rows in given W (" <<  w.n_rows
+          << ") doesn't equal the number of rows in V (" << V.n_rows
+          << ") !" << std::endl;
+    }
+    if (w.n_cols != r)
+    {
+      Log::Fatal << "The number of columns in given W (" <<  w.n_cols
+          << ") doesn't equal the rank of factorization (" << r
+          << ") !" << std::endl;
+    }
+    if (h.n_cols != V.n_cols)
+    {
+      Log::Fatal << "The number of columns in given H (" <<  h.n_cols
+          << ") doesn't equal the number of columns in V (" << V.n_cols
+          << ") !" << std::endl;
+    }
+    if (h.n_rows != r)
+    {
+      Log::Fatal << "The number of rows in given H (" <<  h.n_rows
+          << ") doesn't equal the rank of factorization (" << r
+          << ") !"<< std::endl;
+    }
+
     // Initialize to the given matrices.
     W = w;
     H = h;

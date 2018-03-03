@@ -136,6 +136,7 @@ add_executable(mlpack_test
   main_tests/linear_regression_test.cpp
   main_tests/logistic_regression_test.cpp
   main_tests/nbc_test.cpp
+  main_tests/nmf_test.cpp
   main_tests/pca_test.cpp
   main_tests/perceptron_test.cpp
   main_tests/preprocess_binarize_test.cpp
