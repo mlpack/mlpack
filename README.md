@@ -5,7 +5,7 @@
 
 <h5 align="center">
   <a href="http://mlpack.org">Home</a> |
-  <a href="http://www.mlpack.org/docs/mlpack-git/doxygen.php">Documentation</a> |
+  <a href="http://www.mlpack.org/docs/mlpack-git/doxygen/index.html">Documentation</a> |
   <a href="http://www.mlpack.org/involved.html">Community</a> |
   <a href="http://www.mlpack.org/help.html">Help</a> |
   <a href="http://webchat.freenode.net/?channels=mlpack">IRC Chat</a>
@@ -50,9 +50,9 @@ mlpack is, how to install it, how to run it, and where to find more
 documentation. The website should be consulted for further information:
 
   - [mlpack homepage](http://www.mlpack.org/)
-  - [Tutorials](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=tutorials.html)
+  - [Tutorials](http://www.mlpack.org/docs/mlpack-git/doxygen/tutorials.html)
   - [Development Site (Github)](http://www.github.com/mlpack/mlpack/)
-  - [API documentation](http://www.mlpack.org/docs/mlpack-git/doxygen.php)
+  - [API documentation](http://www.mlpack.org/docs/mlpack-git/doxygen/index.html)
 
 ### 2. Citation details
 
@@ -106,7 +106,7 @@ with the following command:
 
 There are some other useful pages to consult in addition to this section:
 
-  - [Building mlpack From Source](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=build.html)
+  - [Building mlpack From Source](http://www.mlpack.org/docs/mlpack-git/doxygen/build.html)
   - [Building mlpack Under Windows](https://github.com/mlpack/mlpack/wiki/WindowsBuild)
 
 mlpack uses CMake as a build system and allows several flexible build
@@ -273,9 +273,9 @@ documentation locally.  Alternately, up-to-date documentation is available for
 older versions of mlpack:
 
   - [mlpack homepage](http://www.mlpack.org/)
-  - [Tutorials](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=tutorials.html)
+  - [Tutorials](http://www.mlpack.org/docs/mlpack-git/doxygen/tutorials.html)
   - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
-  - [API documentation](http://www.mlpack.org/docs/mlpack-git/doxygen.php)
+  - [API documentation](http://www.mlpack.org/docs/mlpack-git/doxygen/index.html)
 
 ### 8. Bug reporting
 

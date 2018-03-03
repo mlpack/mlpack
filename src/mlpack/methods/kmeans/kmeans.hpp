@@ -124,7 +124,7 @@ class KMeans
    *      initial cluster centroids.
    */
   void Cluster(const MatType& data,
-               const size_t clusters,
+               size_t clusters,
                arma::mat& centroids,
                const bool initialGuess = false);
 
