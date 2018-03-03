@@ -379,6 +379,9 @@ static void mlpackMain()
         "unknown HMM type");
   }
 
+  RequireParamValue<double>("tolerance", [](double x) { return x >= 0; }, true,
+      "tolerance must be non-negative");
+
   // Load the input data.
   vector<mat> trainSeq;
   if (batch)

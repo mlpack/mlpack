@@ -145,6 +145,7 @@ add_executable(mlpack_test
   main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
   main_tests/hoeffding_tree_test.cpp
+  main_tests/hmm_train_test.cpp
 )
 
 # Link dependencies of test executable.
