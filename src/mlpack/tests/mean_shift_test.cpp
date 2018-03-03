@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(MeanShiftSimpleTest)
 {
   MeanShift<> meanShift;
 
-  arma::Col<size_t> assignments;
+  arma::Row<size_t> assignments;
   arma::mat centroids;
   meanShift.Cluster((arma::mat) trans(meanShiftData), assignments, centroids);
 
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE(GaussianClustering)
   // Now that the dataset is generated, run mean shift.  Pre-set radius.
   MeanShift<> meanShift(2.9);
 
-  arma::Col<size_t> assignments;
+  arma::Row<size_t> assignments;
   arma::mat centroids;
   meanShift.Cluster(dataset, assignments, centroids);
 
