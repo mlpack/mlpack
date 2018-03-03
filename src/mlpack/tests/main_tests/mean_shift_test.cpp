@@ -92,6 +92,33 @@ BOOST_AUTO_TEST_CASE(MeanShiftLabelOnlyOutputDimensionTest)
 }
 
 /**
+ * Ensure that the updated input file has 1 extra row for the labels 
+ * and check the number of points remain the same if the --in_place
+ * flag is set.
+ */
+BOOST_AUTO_TEST_CASE(MeanShiftInPlaceTest)
+{
+  arma::mat x;
+  if (!data::Load("iris_test.csv", x))
+    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+
+  // Get initial number of rows and columns in file.
+  int numRows = x.n_rows;
+  int numCols = x.n_cols;
+
+  // Input random data points.
+  SetInputParam("input", std::move(x));
+  SetInputParam("in_place", true);
+
+  mlpackMain();
+
+  // Now check that the output has 1 extra row for labels.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, numRows + 1);
+  // Check number of output points are the same.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, numCols);
+}
+
+/**
  * Ensure that radius is used by testing that the radius
  * makes a difference in the program.
  */
@@ -112,6 +139,7 @@ BOOST_AUTO_TEST_CASE(MeanShiftRadiusTest)
 
   ResetSettings();
 
+  // Input same random data points.
   SetInputParam("input", std::move(x));
   // Set a larger radius.
   SetInputParam("radius", (double) 1.0);
@@ -144,6 +172,7 @@ BOOST_AUTO_TEST_CASE(MeanShiftMaxIterationsTest)
 
   ResetSettings();
 
+  // Input same random data points.
   SetInputParam("input", std::move(x));
   // Set a larger max_iterations.
   SetInputParam("max_iterations", (int) 20);
