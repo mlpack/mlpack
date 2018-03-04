@@ -101,12 +101,12 @@ class KLDivergence
 
   //! Boolean variable for taking mean or not.
   bool takeMean;
-};// class KLDivergence
+}; // class KLDivergence
 
 } // namespace ann
 } // namespace mlpack
 
-//include implementation
+// include implementation
 #include "KLDivergence_impl.hpp"
 
 #endif
