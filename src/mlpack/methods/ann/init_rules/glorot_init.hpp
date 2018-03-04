@@ -27,7 +27,8 @@
 #define MLPACK_METHODS_ANN_INIT_RULES_GLOROT_INIT_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/math/random.hpp>
+#include "random_init.hpp"
+#include "gaussian_init.hpp"
 
 using namespace mlpack::math;
 
@@ -46,7 +47,7 @@ namespace ann /** Artificial Neural Network. */ {
  * number of neurons in the ingoing layer
  * Here Normal Distribution may also be used if needed
  */
-template<bool uniform = true>
+template<bool Uniform = true>
 class GlorotInitialization
 {
  public:
@@ -70,19 +71,23 @@ class GlorotInitialization
                   const size_t rows,
                   const size_t cols)
   {
-     double_t a = sqrt(6)/sqrt(rows + cols); // limit of  distribution
 
     if (W.is_empty())
     {
       W = arma::mat(rows, cols);
     }
 
-    if (uniform)
-      W.imbue( [&]() { return arma::as_scalar(Random(-a, a)); } );
+    if (Uniform)
+    {
+      double_t a = sqrt(6)/sqrt(rows + cols); // limit of  distribution
+      RandomInitialization randomInit(-a, a);
+      randomInit.Initialize(W, rows, cols);
+    }
     else
     {
       double_t var = (double)(2)/(rows + cols);
-      W.imbue([&]() { return arma::as_scalar(RandNormal(0.0, var)); });
+      GaussianInitialization normalInit(0.0, var);
+      normalInit.Initialize(W, rows, cols);
     }
   }
 
@@ -109,6 +114,12 @@ class GlorotInitialization
   }
 }; // class GlorotInitialization
 
+// Convenience typedefs.
+
+/**
+ * XavierInitilization is the popular name for this method.
+ */
+using XavierInitialization = GlorotInitialization<false>
 } // namespace ann
 } // namespace mlpack
 
