@@ -48,13 +48,13 @@ namespace ann /** Artificial Neural Network. */ {
  * Here Normal Distribution may also be used if needed
  */
 template<bool Uniform = true>
-class GlorotInitialization
+class GlorotInitializationType
 {
  public:
   /**
    * Initialize
    */
-  GlorotInitialization()
+  GlorotInitializationType()
   {
     // Nothing to do here.
   }
@@ -111,15 +111,15 @@ class GlorotInitialization
     for (size_t i = 0; i < slices; i++)
       Initialize(W.slice(i), rows, cols);
   }
-}; // class GlorotInitialization
+}; // class GlorotInitializationType
 
 // Convenience typedefs.
 
 /**
  * XavierInitilization is the popular name for this method.
  */
-using XavierInitialization = GlorotInitialization<true>;
-using GlorotInitialization = GlorotInitialization<false>;
+using XavierInitialization = GlorotInitializationType<true>;
+using GlorotInitialization = GlorotInitializationType<false>;
 } // namespace ann
 } // namespace mlpack
 
