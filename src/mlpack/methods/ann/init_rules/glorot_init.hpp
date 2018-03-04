@@ -118,7 +118,8 @@ class GlorotInitialization
 /**
  * XavierInitilization is the popular name for this method.
  */
-using XavierInitialization = GlorotInitialization<false>
+using XavierInitialization = GlorotInitialization<true>;
+using GlorotInitialization = GlorotInitialization<false>;
 } // namespace ann
 } // namespace mlpack
 
