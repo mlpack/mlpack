@@ -10,7 +10,7 @@ env:
 before_install:
   # boost serialization issue with clang 5; for more information
   # http://lists.llvm.org/pipermail/cfe-dev/2017-September/055571.html
-  - sudo add-apt-repository ppa:tigerite/mint-xorg-update
+  - sudo add-apt-repository -y ppa:tigerite/mint-xorg-update
   # For the python bindings we need cython >= 0.24.
   - sudo add-apt-repository -y ppa:imcode/s3ql-trusty-backport
   # For the python bindings we need pandas >= 0.15.0.
