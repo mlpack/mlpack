@@ -74,7 +74,7 @@ class ConstrictionFactor
                     const double& dimension)
   {
     double phi = cognitiveAcceleration + socialAcceleration;
-    k = 2 / std::abs(2 - phi - std::sqrt(std::pow(phi, 2) - 4 * phi));
+    constrictionFactor = 2 / std::abs(2 - phi - std::sqrt(std::pow(phi, 2) - 4 * phi));
 
     for (size_t i = 0; i < dimension; ++i)
     {
@@ -82,7 +82,7 @@ class ConstrictionFactor
       {
         for (size_t k = 0; k < particlePosition.slice(0).n_cols; ++k)
         {
-          particleVelocity.slice(i)[j, k] = k * (interiaWeight *
+          particleVelocity.slice(i)[j, k] = constrictionFactor * (interiaWeight *
             particleVelocity.slice(i)[j, k] + cognitiveAcceleration *
             math::Random() * (bestParticlePosition[i] - particlePosition
             .slice(i)[j, k]) + socialAcceleration * math::Random() *
@@ -94,7 +94,7 @@ class ConstrictionFactor
 
   private:
     // The constriction factor.
-    double k;
+    double constrictionFactor;
 };
 
 } // namespace optimization
