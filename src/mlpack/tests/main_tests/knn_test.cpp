@@ -312,7 +312,7 @@ BOOST_AUTO_TEST_CASE(KNNModelReuseTest)
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
   
-  bindings::tests::CleanMemory(); 
+  //bindings::tests::CleanMemory(); 
   
   // Reset passed parameters. 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
@@ -332,20 +332,20 @@ BOOST_AUTO_TEST_CASE(KNNModelReuseTest)
 }
 
 /*
- * Ensure that changing the value of tau gives us different greedy 
+ * Ensure that changing the value of tau gives us different
  * spill tree results.
  */
-
 BOOST_AUTO_TEST_CASE(KNNDifferentTauTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+  referenceData.randu(3, 1000); // 100 points in 3 dimensions.
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 10);
-  SetInputParam("tree_type", (string)"spill");
+  SetInputParam("tree_type", (string) "spill");
   SetInputParam("tau", (double) 0.2);
+  SetInputParam("algorithm", (string) "greedy");
 
   mlpackMain();
 
@@ -356,16 +356,53 @@ BOOST_AUTO_TEST_CASE(KNNDifferentTauTest)
 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["tau"].wasPassed = false;
-
+  
   SetInputParam("reference", std::move(referenceData));
-  SetInputParam("tau", (double) 0.5);
+  SetInputParam("tau", (double) 0.8);
 
   mlpackMain();
-  arma::Mat<size_t> neighbors1 = 
-      std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
 
-  //BOOST_REQUIRE(arma::all((neighbors - neighbors1)== 0));
-  //BOOST_REQUIRE(arma::all((neighbors-neighbors1) == 0));
+  CheckMatricesNotEqual(neighbors,
+      CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  CheckMatricesNotEqual(distances,
+      CLI::GetParam<arma::mat>("distances"));
+}
+
+/*
+ * Ensure that changing the value of rho gives us different
+ * spill tree results.
+ */
+BOOST_AUTO_TEST_CASE(KNNDifferentRhoTest)
+{
+  arma::mat referenceData;
+  referenceData.randu(3, 1000); // 100 points in 3 dimensions.
+
+  // Random input, some k <= number of reference points.
+  SetInputParam("reference", referenceData);
+  SetInputParam("k", (int) 10);
+  SetInputParam("tree_type", (string) "spill");
+  SetInputParam("rho", (double) 0.2);
+  SetInputParam("algorithm", (string) "greedy");
+
+  mlpackMain();
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+  neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(CLI::GetParam<arma::mat>("distances"));
+
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["rho"].wasPassed = false;
+  
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("rho", (double) 0.8);
+
+  mlpackMain();
+
+  CheckMatricesNotEqual(neighbors,
+      CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  CheckMatricesNotEqual(distances,
+      CLI::GetParam<arma::mat>("distances"));
 }
 
 /*
