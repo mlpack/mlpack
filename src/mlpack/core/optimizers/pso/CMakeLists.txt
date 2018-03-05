@@ -2,6 +2,7 @@ set(SOURCES
   pso.hpp
   pso_impl.hpp
   inertia_weight.hpp
+  constriction_factor.hpp
   test_function.hpp
 )
 

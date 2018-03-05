@@ -16,6 +16,7 @@
 #include <mlpack/prereqs.hpp>
 
 #include "inertia_weight.hpp"
+#include "constriction_factor.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -171,6 +172,7 @@ class PSOType
 
 // Define an alias to PSOType.
 using PSO = PSOType<InertiaWeight>;
+using ConstrictionPSO = PSOType<ConstrictionFactor>;
 
 } // namespace optimization
 } // namespace mlpack

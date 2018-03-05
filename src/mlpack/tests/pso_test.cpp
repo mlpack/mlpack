@@ -232,7 +232,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
     testResponses[i] = 1;
   }
 
-  PSO optimizer(30, 0.9, 0.5, 0.3, 10000, 1e-3);
+  ConstrictionPSO optimizer(30, 0.9, 2.05, 2.05, 10000, 1e-3);
   LogisticRegression<> lr(shuffledData, shuffledResponses, optimizer, 0.5);
 
   // Ensure that the error is close to zero.
