@@ -53,9 +53,7 @@ double PSOType<VelocityVectorType>::Optimize(
     particleVelocity.slice(i) = iterate;
   }
 
-  // Best particle and swarm position values are initialized
-  // from the first particle.
-  bestParticlePosition = particlePosition.slice(0);
+  // Best swarm position is initialized from the first particle.
   bestSwarmPosition = particlePosition.slice(0);
 
   // Convenient variables to check if there's an improvement.
@@ -74,7 +72,7 @@ double PSOType<VelocityVectorType>::Optimize(
       // Check if the current position is an individual best.
       if (currentObjective < lastObjectiveIndividual)
       {
-        bestParticlePosition = particlePosition.slice(k);
+        iterate = particlePosition.slice(k);
         lastObjectiveIndividual = currentObjective;
       }
     }
@@ -82,13 +80,13 @@ double PSOType<VelocityVectorType>::Optimize(
     // Check if the current position is a global best.
     if (lastObjectiveIndividual < lastObjectiveGlobal)
     {
-      bestSwarmPosition = bestParticlePosition;
+      bestSwarmPosition = iterate;
       lastObjectiveGlobal = lastObjectiveIndividual;
     }
 
     // Update velocity for each particle.
     velocityType.Update(particlePosition, particleVelocity,
-      bestParticlePosition, bestSwarmPosition, interiaWeight,
+      iterate, bestSwarmPosition, interiaWeight,
       cognitiveAcceleration, socialAcceleration, dimension);
 
     // Update position for each particle.

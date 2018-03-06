@@ -142,9 +142,6 @@ class PSOType
   //! Velocity of the particles.
   arma::cube particleVelocity;
 
-  //! Best position of the particles.
-  arma::mat bestParticlePosition;
-
   //! Best position of the swarm.
   arma::mat bestSwarmPosition;
 
