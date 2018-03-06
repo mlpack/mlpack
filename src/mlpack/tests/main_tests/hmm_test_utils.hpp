@@ -1,3 +1,16 @@
+/**
+ * @file hmm_test_utils.hpp
+ * @author Daivik Nema
+ *
+ * Structs for initializing and training HMMs (either of Discrete, Gaussian or
+ * GMM HMMs). These structs are passed as template parameters to the
+ * PerformAction function of an HMMModel object.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #ifndef MLPACK_TESTS_MAIN_TESTS_HMM_TEST_UTILS_HPP
 #define MLPACK_TESTS_MAIN_TESTS_HMM_TEST_UTILS_HPP
 
@@ -46,12 +59,23 @@ struct Init
                      size_t states,
                      double tolerance = 1e-05)
   {
-    // Not implemented
-    // Prevent unused parameter warning
-    (void)hmm;
-    (void)trainSeq;
-    (void)states;
-    (void)tolerance;
+    // Find dimension of the data.
+    const size_t dimensionality = trainSeq[0].n_rows;
+
+    // Verify dimensionality of data.
+    for (size_t i = 0; i < trainSeq.size(); ++i)
+    {
+      if (trainSeq[i].n_rows != dimensionality)
+      {
+        Log::Fatal << "Observation sequence " << i << " dimensionality ("
+            << trainSeq[i].n_rows << " is incorrect (should be "
+            << dimensionality << ")!" << endl;
+      }
+    }
+
+    // Get the model and initialize it.
+    hmm = HMM<GaussianDistribution>(size_t(states),
+        GaussianDistribution(dimensionality), tolerance);
   }
 
   static void Create(HMM<GMM>& hmm,
@@ -59,12 +83,25 @@ struct Init
                      size_t states,
                      double tolerance = 1e-05)
   {
-    // Not implemented
-    // Prevent unused parameter warning
-    (void)hmm;
-    (void)trainSeq;
-    (void)states;
-    (void)tolerance;
+    // Find dimension of the data.
+    const size_t dimensionality = trainSeq[0].n_rows;
+    const int gaussians = 2;
+
+    if (gaussians == 0)
+    {
+      Log::Fatal << "Number of gaussians for each GMM must be specified "
+          << "when type = 'gmm'!" << endl;
+    }
+
+    if (gaussians < 0)
+    {
+      Log::Fatal << "Invalid number of gaussians (" << gaussians << "); must "
+          << "be greater than or equal to 1." << endl;
+    }
+
+    // Create HMM object.
+    hmm = HMM<GMM>(size_t(states), GMM(size_t(gaussians), dimensionality),
+        tolerance);
   }
 
   //! Helper function for discrete emission distributions.
@@ -79,16 +116,36 @@ struct Init
 
   static void RandomInitialize(vector<GaussianDistribution>& e)
   {
-    // Not implemented
-    // Prevent unused parameter warning
-    (void)e;
+    for (size_t i = 0; i < e.size(); ++i)
+    {
+      const size_t dimensionality = e[i].Mean().n_rows;
+      e[i].Mean().randu();
+      // Generate random covariance.
+      arma::mat r = arma::randu<arma::mat>(dimensionality, dimensionality);
+      e[i].Covariance(r * r.t());
+    }
   }
 
   static void RandomInitialize(vector<GMM>& e)
   {
-    // Not implemented
-    // Prevent unused parameter warning
-    (void)e;
+    for (size_t i = 0; i < e.size(); ++i)
+    {
+      // Random weights.
+      e[i].Weights().randu();
+      e[i].Weights() /= arma::accu(e[i].Weights());
+
+      // Random means and covariances.
+      for (int g = 0; g < CLI::GetParam<int>("gaussians"); ++g)
+      {
+        const size_t dimensionality = e[i].Component(g).Mean().n_rows;
+        e[i].Component(g).Mean().randu();
+
+        // Generate random covariance.
+        arma::mat r = arma::randu<arma::mat>(dimensionality,
+            dimensionality);
+        e[i].Component(g).Covariance(r * r.t());
+      }
+    }
   }
 };
 
