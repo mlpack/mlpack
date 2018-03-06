@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(NonNegativeClustersTest)
 
 
 /**
- * Checking that number of Clusters is less than number of points to be clustered
+ * Checking that initial centroids are provided if clusters are to be auto detected
  */
 BOOST_AUTO_TEST_CASE(PointsLessThanClustersTest)
 {
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(PointsLessThanClustersTest)
   arma::mat inputData = arma::randu<arma::mat>(N, D);
 
   SetInputParam("input", std::move(inputData));
-  SetInputParam("clusters", (int) 11); // Invalid
+  SetInputParam("clusters", (int) 0); // Invalid
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -139,7 +139,6 @@ BOOST_AUTO_TEST_CASE(KmClusteringSizeCheck)
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("clusters", c);
-  SetInputParam("allow_empty_clusters", false);
 
   mlpackMain();
 
@@ -165,7 +164,6 @@ BOOST_AUTO_TEST_CASE(KmClusteringSizeCheckLabelOnly)
   SetInputParam("input", std::move(inputData));
   SetInputParam("clusters", c);
   SetInputParam("labels_only", true);
-  SetInputParam("allow_empty_clusters", false);
 
   mlpackMain();
 
@@ -185,15 +183,14 @@ BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
   int iterations = 100;
 
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+  if (!data::Load("test_data_3_1000.csv", inputData))
+    BOOST_FAIL("Unable to load train dataset test_data_3_1000.csv!");
   arma::mat initCentroid = arma::randu<arma::mat>(inputData.n_rows, c);
 
   SetInputParam("input", inputData);
   SetInputParam("clusters", c);
   SetInputParam("labels_only", true);
   SetInputParam("max_iterations", iterations);
-  SetInputParam("allow_empty_clusters", false);
   SetInputParam("initial_centroids", initCentroid);
 
   mlpackMain();
@@ -271,7 +268,6 @@ BOOST_AUTO_TEST_CASE(KmClusteringResultSizeCheck)
   SetInputParam("input", inputData);
   SetInputParam("clusters", c);
   SetInputParam("in_place", true);
-  SetInputParam("allow_empty_clusters", false);
 
   mlpackMain();
   arma::mat processedInput = CLI::GetParam<arma::mat>("output");
@@ -292,7 +288,6 @@ BOOST_AUTO_TEST_CASE(KmClustersNotDefined)
     BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
   SetInputParam("input", std::move(inputData));
-  SetInputParam("allow_empty_clusters", false);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -315,9 +310,9 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("input", inputData);
   SetInputParam("clusters", c);
   SetInputParam("algorithm", std::move(algo));
-  SetInputParam("allow_empty_clusters", false);
   SetInputParam("labels_only", true);
   SetInputParam("initial_centroids", initCentroid);
+  SetInputParam("allow_empty_clusters", false);
 
   mlpackMain();
 
@@ -333,9 +328,9 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("input", inputData);
   SetInputParam("clusters", c);
   SetInputParam("algorithm", std::move(algo));
-  SetInputParam("allow_empty_clusters", false);
   SetInputParam("labels_only", true);
   SetInputParam("initial_centroids", initCentroid);
+  SetInputParam("allow_empty_clusters", false);
 
   mlpackMain();
 
@@ -351,9 +346,9 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("input", inputData);
   SetInputParam("clusters", c);
   SetInputParam("algorithm", std::move(algo));
-  SetInputParam("allow_empty_clusters", false);
   SetInputParam("labels_only", true);
   SetInputParam("initial_centroids", initCentroid);
+  SetInputParam("allow_empty_clusters", false);
 
   mlpackMain();
 
@@ -369,9 +364,9 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("input", inputData);
   SetInputParam("clusters", c);
   SetInputParam("algorithm", std::move(algo));
-  SetInputParam("allow_empty_clusters", false);
   SetInputParam("labels_only", true);
   SetInputParam("initial_centroids", initCentroid);
+  SetInputParam("allow_empty_clusters", false);
 
   mlpackMain();
 
@@ -387,9 +382,9 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("input", std::move(inputData));
   SetInputParam("clusters", c);
   SetInputParam("algorithm", std::move(algo));
-  SetInputParam("allow_empty_clusters", false);
   SetInputParam("labels_only", true);
   SetInputParam("initial_centroids", std::move(initCentroid));
+  SetInputParam("allow_empty_clusters", false);
 
   mlpackMain();
 
