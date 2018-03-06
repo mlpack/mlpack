@@ -62,9 +62,9 @@ BOOST_AUTO_TEST_CASE(HMMViterbiCheckDimensionsTest)
   mlpackMain();
 
   arma::Mat<size_t> out = CLI::GetParam<arma::Mat<size_t> >("output");
-  BOOST_REQUIRE(out.n_rows == inp.n_rows);
-  BOOST_REQUIRE(out.n_cols == inp.n_cols);
-  BOOST_REQUIRE(out.n_elem == inp.n_elem);
+
+  BOOST_REQUIRE_EQUAL(out.n_rows, 1);
+  BOOST_REQUIRE_EQUAL(out.n_cols, inp.n_cols);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
