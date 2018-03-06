@@ -112,7 +112,7 @@ void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W,
   randomInit.Initialize(W, rows, cols);
 }
 
-template<typename eT,bool Uniform = true>
+template<typename eT, bool Uniform = true>
 void GlorotInitializationType<Uniform>::Initialize(arma::Cube<eT>& W,
                 const size_t rows,
                 const size_t cols,
