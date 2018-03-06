@@ -12,8 +12,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_RL_POLICY_GRADIENT_LEARNING_IMPL_HPP
-#define MLPACK_METHODS_RL_POLICY_GRADIENT_LEARNING_IMPL_HPP
+#ifndef MLPACK_METHODS_RL_GENERALISED_ADVANTAGE_LEARNING_IMPL_HPP
+#define MLPACK_METHODS_RL_GENERALISED_ADVANTAGE_LEARNING_IMPL_HPP
 
 #include "gae.hpp"
 namespace mlpack{
@@ -96,19 +96,19 @@ double Advantage<
   arma::icolvec sampledActions;
   arma::colvec advantage;
   arma::icolvec isTerminal;
-  replayMethod.PolicySample(sampledStates, sampledActions, advantage, isTerminal); //rohan
+  replayMethod.PolicySample(sampledStates, sampledActions, advantage, isTerminal); 
   // Compute action value for next state with target network.
 
   /***One way to get number of action is by making a variable capturing the number of action
-  Another way is to use the predict funtion to get the size of the last layer.
-
-  First way will make the program generic for any number of action space.
-  Second way is easy. But it is unnecessarily increase the computation.
-
-  I am currently taking inputs from feed forward network and putting it to zero.
-  This way I am meeting my aim of using advantage.
-
-  I have also defined advantage loss in mlpack/methods/ann/layers for implementation.
+  * Another way is to use the predict funtion to get the size of the last layer.
+  * 
+  * First way will make the program generic for any number of action space.
+  * Second way is easy. But it is unnecessarily increase the computation.
+  *
+  * I am currently taking inputs from feed forward network and putting it to zero.
+  * This way I am meeting my aim of using advantage.
+  *
+  * I have also defined policygradient loss in mlpack/methods/ann/layers for implementation.
   */
   arma::mat target;
   learningNetwork.Forward(sampledStates, target);

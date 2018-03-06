@@ -12,8 +12,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_RL_POLICY_GRADIENT_LEARNING_HPP
-#define MLPACK_METHODS_RL_POLICY_GRADIENT_LEARNING_HPP
+#ifndef MLPACK_METHODS_RL_GENERALISED_ADVANTAGE_LEARNING_HPP
+#define MLPACK_METHODS_RL_GENERALISED_ADVANTAGE_LEARNING_HPP
 
 #include <mlpack/prereqs.hpp>
 
