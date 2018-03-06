@@ -33,7 +33,7 @@ DecisionTree<FitnessFunction,
                                         LabelsType&& labels,
                                         const size_t numClasses,
                                         const size_t minimumLeafSize,
-                                        const double minimumGainSplit)
+                                        const double minimumGainSplit = 1e-7)
 {
   using TrueMatType = typename std::decay<MatType>::type;
   using TrueLabelsType = typename std::decay<LabelsType>::type;
@@ -65,7 +65,7 @@ DecisionTree<FitnessFunction,
                                         LabelsType&& labels,
                                         const size_t numClasses,
                                         const size_t minimumLeafSize,
-                                        const double minimumGainSplit)
+                                        const double minimumGainSplit = 1e-7)
 {
   using TrueMatType = typename std::decay<MatType>::type;
   using TrueLabelsType = typename std::decay<LabelsType>::type;
@@ -99,7 +99,7 @@ DecisionTree<FitnessFunction,
                                         const size_t numClasses,
                                         WeightsType&& weights,
                                         const size_t minimumLeafSize,
-                                        const double minimumGainSplit,
+                                        const double minimumGainSplit = 1e-7,
                                         const std::enable_if_t<
                                             arma::is_arma_type<
                                             typename std::remove_reference<
@@ -137,7 +137,7 @@ DecisionTree<FitnessFunction,
                                         const size_t numClasses,
                                         WeightsType&& weights,
                                         const size_t minimumLeafSize,
-                                        const double minimumGainSplit,
+                                        const double minimumGainSplit = 1e-7,
                                         const std::enable_if_t<
                                             arma::is_arma_type<
                                             typename std::remove_reference<
@@ -350,7 +350,7 @@ void DecisionTree<FitnessFunction,
                                       LabelsType&& labels,
                                       const size_t numClasses,
                                       const size_t minimumLeafSize,
-                                      const double minimumGainSplit)
+                                      const double minimumGainSplit = 1e-7)
 {
   // Sanity check on data.
   if (data.n_cols != labels.n_elem)
@@ -392,7 +392,7 @@ void DecisionTree<FitnessFunction,
                                       LabelsType&& labels,
                                       const size_t numClasses,
                                       const size_t minimumLeafSize,
-                                      const double minimumGainSplit)
+                                      const double minimumGainSplit = 1e-7)
 {
   // Sanity check on data.
   if (data.n_cols != labels.n_elem)
@@ -436,7 +436,7 @@ void DecisionTree<FitnessFunction,
                                       const size_t numClasses,
                                       WeightsType&& weights,
                                       const size_t minimumLeafSize,
-                                      const double minimumGainSplit,
+                                      const double minimumGainSplit = 1e-7,
                                       const std::enable_if_t<arma::is_arma_type<
                                           typename std::remove_reference<
                                           WeightsType>::type>::value>*)
@@ -483,7 +483,7 @@ void DecisionTree<FitnessFunction,
                                       const size_t numClasses,
                                       WeightsType&& weights,
                                       const size_t minimumLeafSize,
-                                      const double minimumGainSplit,
+                                      const double minimumGainSplit = 1e-7,
                                       const std::enable_if_t<arma::is_arma_type<
                                           typename std::remove_reference<
                                           WeightsType>::type>::value>*)
@@ -533,7 +533,7 @@ void DecisionTree<FitnessFunction,
                                       const size_t numClasses,
                                       arma::rowvec& weights,
                                       const size_t minimumLeafSize,
-                                      const double minimumGainSplit)
+                                      const double minimumGainSplit = 1e-7)
 {
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
@@ -697,7 +697,7 @@ void DecisionTree<FitnessFunction,
                                       const size_t numClasses,
                                       arma::rowvec& weights,
                                       const size_t minimumLeafSize,
-                                      const double minimumGainSplit)
+                                      const double minimumGainSplit = 1e-7)
 {
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
