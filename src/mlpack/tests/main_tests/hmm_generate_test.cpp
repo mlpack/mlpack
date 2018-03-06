@@ -159,14 +159,14 @@ BOOST_AUTO_TEST_CASE(HMMGenerateCheckDimensionsTest)
   mlpackMain();
 
   arma::mat obsSeq = CLI::GetParam<arma::mat>("output");
-  BOOST_REQUIRE(obsSeq.n_cols == (size_t)length);
-  BOOST_REQUIRE(obsSeq.n_rows == (size_t)1);
-  BOOST_REQUIRE(obsSeq.n_elem == (size_t)length);
+  BOOST_REQUIRE_EQUAL(obsSeq.n_cols, (size_t)length);
+  BOOST_REQUIRE_EQUAL(obsSeq.n_rows, (size_t)1);
+  BOOST_REQUIRE_EQUAL(obsSeq.n_elem, (size_t)length);
 
   arma::Mat<size_t> stateSeq = CLI::GetParam<arma::Mat<size_t>>("state");
-  BOOST_REQUIRE(stateSeq.n_cols == (size_t)length);
-  BOOST_REQUIRE(stateSeq.n_rows == (size_t)1);
-  BOOST_REQUIRE(stateSeq.n_elem == (size_t)length);
+  BOOST_REQUIRE_EQUAL(stateSeq.n_cols, (size_t)length);
+  BOOST_REQUIRE_EQUAL(stateSeq.n_rows, (size_t)1);
+  BOOST_REQUIRE_EQUAL(stateSeq.n_elem, (size_t)length);
 }
 
 BOOST_AUTO_TEST_CASE(HMMGenerateLengthPositiveTest)
