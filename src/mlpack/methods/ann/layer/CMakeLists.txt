@@ -5,8 +5,6 @@ set(SOURCES
   add_impl.hpp
   add_merge.hpp
   add_merge_impl.hpp
-  advantage_loss.hpp
-  advantage_loss_impl.hpp
   base_layer.hpp
   concat.hpp
   concat_impl.hpp
@@ -61,6 +59,8 @@ set(SOURCES
   negative_log_likelihood_impl.hpp
   parametric_relu.hpp
   parametric_relu_impl.hpp
+  policygradient.hpp
+  policygradient_impl.hpp
   recurrent.hpp
   recurrent_impl.hpp
   recurrent_attention.hpp

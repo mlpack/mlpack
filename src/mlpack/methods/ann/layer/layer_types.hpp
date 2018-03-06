@@ -16,7 +16,6 @@
 
 // Layer modules.
 #include <mlpack/methods/ann/layer/add.hpp>
-#include <mlpack/methods/ann/layer/advantage_loss.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 #include <mlpack/methods/ann/layer/constant.hpp>
 #include <mlpack/methods/ann/layer/cross_entropy_error.hpp>
@@ -33,6 +32,7 @@
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
+#include <mlpack/methods/ann/layer/policygradient.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
 #include <mlpack/methods/ann/layer/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
@@ -104,7 +104,6 @@ template <typename... CustomLayers>
 using LayerTypes = boost::variant<
     Add<arma::mat, arma::mat>*,
     AddMerge<arma::mat, arma::mat>*,
-    AdvantageError<arma::mat, arma::mat>*,
     BaseLayer<LogisticFunction, arma::mat, arma::mat>*,
     BaseLayer<IdentityFunction, arma::mat, arma::mat>*,
     BaseLayer<TanhFunction, arma::mat, arma::mat>*,
@@ -137,6 +136,7 @@ using LayerTypes = boost::variant<
     MultiplyConstant<arma::mat, arma::mat>*,
     NegativeLogLikelihood<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
+    PolicyGradient<arma::mat, arma::mat>*,
     Recurrent<arma::mat, arma::mat>*,
     RecurrentAttention<arma::mat, arma::mat>*,
     ReinforceNormal<arma::mat, arma::mat>*,
