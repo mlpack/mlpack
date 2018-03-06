@@ -96,7 +96,7 @@ double Advantage<
   arma::icolvec sampledActions;
   arma::colvec advantage;
   arma::icolvec isTerminal;
-  replayMethod.PolicySample(sampledStates, sampledActions, advantage, 
+  replayMethod.PolicySample(sampledStates, sampledActions, advantage,
     isTerminal);
   // Compute action value for next state with target network.
 
@@ -114,7 +114,7 @@ double Advantage<
   arma::mat target;
   learningNetwork.Forward(sampledStates, target);
   // arma::Mat<size_t> target(2,sampledStates.n_cols)  ; // 2 is the action size
-  target.zeros(); 
+  target.zeros();
   for (size_t i = 0; i < sampledStates.n_cols; ++i)
   {
     target(sampledActions[i], i) = advantage[i]; // learning from advantage
@@ -180,3 +180,4 @@ double Advantage<
 } // namespace mlpack
 
 #endif
+

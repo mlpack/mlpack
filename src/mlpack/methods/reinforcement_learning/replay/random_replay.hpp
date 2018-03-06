@@ -137,8 +137,8 @@ class RandomReplay
    */
   void PolicySample(arma::mat& sampledStates,
               arma::icolvec& sampledActions,
-              arma::colvec& sampledAdvantage,              
-              arma::icolvec& isTerminal) //check
+              arma::colvec& sampledAdvantage,
+              arma::icolvec& isTerminal)
   {
     size_t upperBound = full ? capacity : position;
     arma::uvec sampledIndices = arma::randi<arma::uvec>(
