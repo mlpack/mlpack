@@ -234,6 +234,40 @@ BOOST_AUTO_TEST_CASE(KFNInvalidEpsilonTest)
   Log::Fatal.ignoreInput = false;
 }
 
+/*
+ * Check that we can't pass an invalid value of percentage.
+ */
+BOOST_AUTO_TEST_CASE(KFNInvalidPercentageTest)
+{
+  arma::mat referenceData;
+  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+
+  // Random input, some k <= number of reference points.
+  SetInputParam("reference", referenceData);
+  SetInputParam("k", (int) 10);
+  SetInputParam("percentage", (double) -1); // Invalid.
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["percentage"].wasPassed = false;
+
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("percentage", (double) 0); // Invalid.
+  
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["epsilon"].wasPassed = false;
+
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("percentage", (double) 2); // Invalid.
+  
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
 /**
  * Make sure that dimensions of the neighbors and distances
  * matrices are correct given a value of k.  
@@ -281,14 +315,12 @@ BOOST_AUTO_TEST_CASE(KFNModelReuseTest)
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
   
-  bindings::tests::CleanMemory();
+  // bindings::tests::CleanMemory();
 
   // Reset passed parameters. 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["query"].wasPassed = false;
-  
-  
-  
+   
   // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("input_model", 
       std::move(CLI::GetParam<KFNModel*>("output_model")));
@@ -300,6 +332,168 @@ BOOST_AUTO_TEST_CASE(KFNModelReuseTest)
   // saved model are equal.
   CheckMatrices(neighbors, CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   CheckMatrices(distances, CLI::GetParam<arma::mat>("distances"));
+}
+
+/*
+ * Ensure that changing the value of epslion gives us different
+ * approximate KFN results.
+ */
+BOOST_AUTO_TEST_CASE(KFNDifferentEpsilonTest)
+{ 
+  arma::mat referenceData;
+  referenceData.randu(3, 1000); // 1000 points in 3 dimensions.
+
+  // Random input, some k <= number of reference points.
+  SetInputParam("reference", referenceData);
+  SetInputParam("k", (int) 10);
+  SetInputParam("epsilon", (double) 0.2);
+
+  mlpackMain();
+  
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+  neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(CLI::GetParam<arma::mat>("distances"));
+
+  bindings::tests::CleanMemory(); 
+
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["epsilon"].wasPassed = false;
+   
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("epsilon", (double) 0.8);
+
+  mlpackMain();
+
+  CheckMatricesNotEqual(neighbors,
+      CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  CheckMatricesNotEqual(distances,
+      CLI::GetParam<arma::mat>("distances"));
+}
+
+/*
+ * Ensure that changing the value of percentage gives us different
+ * approximate KFN results.
+ */
+BOOST_AUTO_TEST_CASE(KFNDifferentPercentageTest)
+{ 
+  arma::mat referenceData;
+  referenceData.randu(3, 1000); // 1000 points in 3 dimensions.
+
+  // Random input, some k <= number of reference points.
+  SetInputParam("reference", referenceData);
+  SetInputParam("k", (int) 10);
+  SetInputParam("percentage", (double) 0.2);
+
+  mlpackMain();
+  
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+  neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(CLI::GetParam<arma::mat>("distances"));
+
+  bindings::tests::CleanMemory(); 
+
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["percentage"].wasPassed = false;
+   
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("percentage", (double) 0.8);
+
+  mlpackMain();
+
+  CheckMatricesNotEqual(neighbors,
+      CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  CheckMatricesNotEqual(distances,
+      CLI::GetParam<arma::mat>("distances"));
+}
+
+/*
+ * Ensure that we get different results on running twice in greedy
+ * search mode when random_basis is specified.
+ */
+BOOST_AUTO_TEST_CASE(KFNRandomBasisTest)
+{ 
+  arma::mat referenceData;
+  referenceData.randu(3, 1000); // 1000 points in 3 dimensions.
+
+  // Random input, some k <= number of reference points.
+  SetInputParam("reference", referenceData);
+  SetInputParam("k", (int) 10);
+  SetInputParam("algorithm", (string) "greedy");
+  SetInputParam("random_basis", true);
+
+  mlpackMain();
+  
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+  neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(CLI::GetParam<arma::mat>("distances"));
+
+  bindings::tests::CleanMemory(); 
+
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+   
+  SetInputParam("reference", std::move(referenceData));
+
+  mlpackMain();
+
+  CheckMatricesNotEqual(neighbors,
+      CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  CheckMatricesNotEqual(distances,
+      CLI::GetParam<arma::mat>("distances"));
+}
+
+/*
+ * Ensure that the program runs successfully when we pass true_neighbors
+ * and/or true_distances and fails when those matrices have the wrong shape.
+ */
+BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
+{
+  arma::mat referenceData;
+  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+  
+  // Random input, some k <= number of reference points.
+  SetInputParam("reference", referenceData);
+  SetInputParam("k", (int) 10);
+
+  mlpackMain();
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+  neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(CLI::GetParam<arma::mat>("distances"));
+
+  bindings::tests::CleanMemory(); 
+
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+ 
+  SetInputParam("reference", referenceData);
+  SetInputParam("true_neighbors", neighbors);
+  SetInputParam("true_distances", distances);
+  SetInputParam("epsilon", (double) 0.5);
+
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+
+  // True output matrices have incorrect shape.
+  arma::Mat<size_t> dummy_neighbors;
+  arma::mat dummy_distances;
+  dummy_neighbors.randu(20, 100); 
+  dummy_distances.randu(20, 100);
+
+  bindings::tests::CleanMemory();
+
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["true_neighbors"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["true_distances"].wasPassed = false;
+
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("true_neighbors", std::move(dummy_neighbors));
+  SetInputParam("true_distances", std::move(dummy_distances));
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 }
 
 /*

@@ -143,7 +143,7 @@ static void mlpackMain()
   // Sanity check on epsilon.
   double epsilon = CLI::GetParam<double>("epsilon");
   RequireParamValue<double>("epsilon", [](double x) { return x >= 0.0 && x < 1; }, true,
-      "epsilon must be positive");
+      "epsilon must be in the range [0, 1).");
 
   // Sanity check on percentage.
   const double percentage = CLI::GetParam<double>("percentage");
@@ -261,23 +261,14 @@ static void mlpackMain()
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
-    // Sanity check on k value: must be greater than 0, must be less than or
-    // equal to the number of reference points.  Since it is unsigned,
-    // we only test the upper bound.
+    // Sanity check on k value: must be greater than 0, must be less than the
+    // number of reference points.  Since it is unsigned, we only test the upper
+    // bound.
     if (k > kfn->Dataset().n_cols)
     {
       Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less "
           << "than or equal to the number of reference points ("
           << kfn->Dataset().n_cols << ")." << endl;
-    }
-
-    // Sanity check on k value: must not be equal to the number of reference
-    // points when query data has not been provided.
-    if (!CLI::HasParam("query") && k == kfn->Dataset().n_cols)
-    {
-      Log::Fatal << "Invalid k: " << k << "; must be less than the number of "
-          << "reference points (" << kfn->Dataset().n_cols << ") "
-          << "if query data has not been provided." << endl;
     }
 
     // Now run the search.
@@ -291,8 +282,8 @@ static void mlpackMain()
     Log::Info << "Search complete." << endl;
 
     // Save output.
-    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
-    CLI::GetParam<arma::mat>("distances") = std::move(distances);
+    CLI::GetParam<arma::Mat<size_t>>("neighbors") = neighbors;
+    CLI::GetParam<arma::mat>("distances") = distances;
 
     // Calculate the effective error, if desired.
     if (CLI::HasParam("true_distances"))
