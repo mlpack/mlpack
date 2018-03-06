@@ -83,8 +83,8 @@ PARAM_UMATRIX_IN("test_labels", "Test point labels, if accuracy calculation "
 // Training parameters.
 PARAM_INT_IN("minimum_leaf_size", "Minimum number of points in a leaf.", "n",
     20);
-PARAM_INT_IN("minimum_gain_split", "Minimum gain for node splitting.", "n",
-    1e-3);
+PARAM_INT_IN("minimum_gain_split", "Minimum gain for node splitting.", "g",
+    1e-7);
 PARAM_FLAG("print_training_error", "Print the training error.", "e");
 
 // Output parameters.
