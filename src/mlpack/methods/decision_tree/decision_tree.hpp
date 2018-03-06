@@ -61,13 +61,15 @@ class DecisionTree :
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum Gain for the node to split.
    */
   template<typename MatType, typename LabelsType>
   DecisionTree(MatType&& data,
                const data::DatasetInfo& datasetInfo,
                LabelsType&& labels,
                const size_t numClasses,
-               const size_t minimumLeafSize = 10);
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7);
 
   /**
    * Construct the decision tree on the given data and labels, assuming that the
@@ -79,12 +81,14 @@ class DecisionTree :
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum Gain for the node to split.
    */
   template<typename MatType, typename LabelsType>
   DecisionTree(MatType&& data,
                LabelsType&& labels,
                const size_t numClasses,
-               const size_t minimumLeafSize = 10);
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7);
 
   /**
    * Construct the decision tree on the given data and labels with weights,
@@ -98,6 +102,7 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param weights The weight list of given label.
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum Gain for the node to split.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
   DecisionTree(MatType&& data,
@@ -106,6 +111,7 @@ class DecisionTree :
                const size_t numClasses,
                WeightsType&& weights,
                const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7,
                const std::enable_if_t<arma::is_arma_type<
                    typename std::remove_reference<WeightsType>::type>::value>*
                     = 0);
@@ -121,6 +127,7 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param weights The Weight list of given labels.
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum Gain for the node to split.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
   DecisionTree(MatType&& data,
@@ -128,6 +135,7 @@ class DecisionTree :
                const size_t numClasses,
                WeightsType&& weights,
                const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7,
                const std::enable_if_t<arma::is_arma_type<
                    typename std::remove_reference<WeightsType>::type>::value>*
                     = 0);
@@ -188,13 +196,15 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum Gain for the node to split.
    */
   template<typename MatType, typename LabelsType>
   void Train(MatType&& data,
              const data::DatasetInfo& datasetInfo,
              LabelsType&& labels,
              const size_t numClasses,
-             const size_t minimumLeafSize = 10);
+             const size_t minimumLeafSize = 10,
+             const double minimumGainSplit = 1e-7);
 
   /**
    * Train the decision tree on the given data, assuming that all dimensions are
@@ -207,12 +217,14 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum Gain for the node to split.
    */
   template<typename MatType, typename LabelsType>
   void Train(MatType&& data,
              LabelsType&& labels,
              const size_t numClasses,
-             const size_t minimumLeafSize = 10);
+             const size_t minimumLeafSize = 10,
+             const double minimumGainSplit = 1e-7);
 
   /**
    * Train the decision tree on the given weighted data.  This will overwrite
@@ -227,6 +239,7 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum Gain for the node to split.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
   void Train(MatType&& data,
@@ -235,6 +248,7 @@ class DecisionTree :
              const size_t numClasses,
              WeightsType&& weights,
              const size_t minimumLeafSize = 10,
+             const double minimumGainSplit = 1e-7,
              const std::enable_if_t<arma::is_arma_type<typename
                  std::remove_reference<WeightsType>::type>::value>* = 0);
 
@@ -249,6 +263,7 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum Gain for the node to split.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
   void Train(MatType&& data,
@@ -256,6 +271,7 @@ class DecisionTree :
              const size_t numClasses,
              WeightsType&& weights,
              const size_t minimumLeafSize = 10,
+             const double minimumGainSplit = 1e-7,
              const std::enable_if_t<arma::is_arma_type<typename
                  std::remove_reference<WeightsType>::type>::value>* = 0);
 
@@ -383,6 +399,7 @@ class DecisionTree :
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum Gain for the node to split.
    */
   template<bool UseWeights, typename MatType>
   void Train(MatType& data,
@@ -392,7 +409,8 @@ class DecisionTree :
              arma::Row<size_t>& labels,
              const size_t numClasses,
              arma::rowvec& weights,
-             const size_t minimumLeafSize = 10);
+             const size_t minimumLeafSize = 10,
+             const double minimumGainSplit = 1e-7);
 
   /**
    * Corresponding to the public Train() method, this method is designed for
@@ -406,6 +424,7 @@ class DecisionTree :
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum Gain for the node to split.
    */
   template<bool UseWeights, typename MatType>
   void Train(MatType& data,
@@ -414,7 +433,8 @@ class DecisionTree :
              arma::Row<size_t>& labels,
              const size_t numClasses,
              arma::rowvec& weights,
-             const size_t minimumLeafSize = 10);
+             const size_t minimumLeafSize = 10,
+             const double minimumGainSplit = 1e-7);
 };
 
 /**

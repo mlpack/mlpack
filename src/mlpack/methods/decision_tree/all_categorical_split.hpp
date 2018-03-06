@@ -62,7 +62,8 @@ class AllCategoricalSplit
       const WeightVecType& weights,
       const size_t minimumLeafSize,
       arma::Col<typename VecType::elem_type>& classProbabilities,
-      AuxiliarySplitInfo<typename VecType::elem_type>& aux);
+      AuxiliarySplitInfo<typename VecType::elem_type>& aux,
+      const double minimumGainSplit);
 
   /**
    * Return the number of children in the split.
