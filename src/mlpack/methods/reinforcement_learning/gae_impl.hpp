@@ -1,8 +1,10 @@
 /**
- * @file policygrad_impl.hpp
+ * @file gae.hpp
  * @author Rohan Raj
  *
- * Definition of the PolicyGradient class, which implements policy gradient network in Mlpack.
+ * Implementation of the Generalised Advantage Estimation method using policy gradient.
+ * John Schulman, Philipp Moritz, Sergey Levine, Michael I. Jordan and Pieter Abbeel
+ * HIGH-DIMENSIONAL CONTINUOUS CONTROL USING GENERALIZED ADVANTAGE ESTIMATION, ICLR 2016
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -10,12 +12,10 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-
 #ifndef MLPACK_METHODS_RL_POLICY_GRADIENT_LEARNING_IMPL_HPP
 #define MLPACK_METHODS_RL_POLICY_GRADIENT_LEARNING_IMPL_HPP
-#include <mlpack/methods/logistic_regression/logistic_regression_function_impl.hpp>
 
-#include "policygrad.hpp"
+#include "gae.hpp"
 namespace mlpack{
 namespace rl{
 // define the main implementation code
@@ -26,12 +26,12 @@ template <
   typename PolicyType,
   typename ReplayType
 >
-PolicyGradient<EnvironmentType,
+Advantage<EnvironmentType,
   NetworkType,
   UpdaterType,
   PolicyType,
   ReplayType
->::PolicyGradient(TrainingConfig config,
+>::Advantage(TrainingConfig config,
              NetworkType network,
              PolicyType policy,
              ReplayType replayMethod,
@@ -60,7 +60,7 @@ template <
   typename BehaviorPolicyType,
   typename ReplayType
 >
-double PolicyGradient<
+double Advantage<
   EnvironmentType,
   NetworkType,
   UpdaterType,
@@ -133,7 +133,7 @@ template <
   typename BehaviorPolicyType,
   typename ReplayType
 >
-double PolicyGradient<
+double Advantage<
   EnvironmentType,
   NetworkType,
   UpdaterType,
