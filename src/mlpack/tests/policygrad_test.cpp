@@ -31,13 +31,13 @@ using namespace mlpack::ann;
 using namespace mlpack::optimization;
 using namespace mlpack::rl;
 
-BOOST_AUTO_TEST_SUITE(PolicyGradTest);
+BOOST_AUTO_TEST_SUITE(AdvantageTest);
 
 //! Test Policy Gradient in Cart Pole task.
 BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
 {
   // Set up the network.
-  FFN<AdvantageError<>, GaussianInitialization> model(AdvantageError<>(),
+  FFN<PolicyGradient<>, GaussianInitialization> model(PolicyGradient<>(),
       GaussianInitialization(0, 0.001));
   model.Add<Linear<>>(4, 128);
   model.Add<ReLULayer<>>();
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
   config.StepLimit() = 200;
 
   // Set up Policy Gradient agent.
-  PolicyGradient<CartPole, decltype(model), AdamUpdate, decltype(policy)>
+  Advantage<CartPole, decltype(model), AdamUpdate, decltype(policy)>
       agent(std::move(config), std::move(model), std::move(policy),
           std::move(replayMethod));
 
@@ -72,7 +72,8 @@ BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
 
     if (episodes > 10000)
     {
-      Log::Debug << "Cart Pole with Policy Gradient method failed." << std::endl;
+      Log::Debug << "Cart Pole with Policy Gradient method failed."
+        << std::endl;
       converged = false;
       break;
     }
