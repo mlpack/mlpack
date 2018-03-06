@@ -96,7 +96,7 @@ double Advantage<
   arma::icolvec sampledActions;
   arma::colvec advantage;
   arma::icolvec isTerminal;
-  replayMethod.PolicySample(sampledStates, sampledActions, advantage, isTerminal); 
+  replayMethod.PolicySample(sampledStates, sampledActions, advantage, isTerminal);
   // Compute action value for next state with target network.
 
   /***One way to get number of action is by making a variable capturing the number of action
