@@ -31,7 +31,7 @@ template<typename InputType, typename TargetType>
 double PolicyGradient<InputDataType, OutputDataType>::Forward(
     const InputType&& input, const TargetType&& target)
 {
-  return (-1*arma::mean(arma::mean(arma::log(input) % target)));
+  return (-1*arma::mean(arma::accu(arma::log(input) % target)));
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -42,9 +42,15 @@ void PolicyGradient<InputDataType, OutputDataType>::Backward(
     OutputType&& output)
 {
   /**
-  I am trying to compute backwards by multiplying p(i) - 1 * advantage of that action
-  Since the advantage value of action not taken is 0, they wont create any errors. 
-  The dot product will output 0 where advantage is 0.
+  * I am trying to compute backwards by (multiplying p(i) - 1)*advantage
+  * of that action . The actions not taken do not contriute to
+  * the gradient.
+  * Since the advantage value of action not taken is 0, they wont create 
+  * any errors. The dot product will output 0 where advantage is 0.
+  *
+  * In policy gradient only the action taken does the changes in
+  * the policy estimator. The target defined here is 1*advanatage
+  * as defined by the user.  
   */
   output = (input - 1) % target;
 }
