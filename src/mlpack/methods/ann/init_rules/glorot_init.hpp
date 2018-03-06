@@ -9,12 +9,12 @@
  * For more information, see the following paper.
  *
  * @code
- * @inproceedings{pmlr-v9-glorot10a,
- * title={Understanding the difficulty of training deep feedforward neural networks},
- * author={Xavier Glorot and Yoshua Bengio},
- * booktitle={Proceedings of the Thirteenth International Conference on Artificial
- *              Intelligence and Statistics},
- * year={2010}
+ * @inproceedings {pmlr-v9-glorot10a,
+ *  title       = {Understanding the difficulty of training deep feedforward neural networks},
+ *  author      = {Xavier Glorot and Yoshua Bengio},
+ *  booktitle   = {Proceedings of the Thirteenth International Conference on Artificial
+ *                 Intelligence and Statistics},
+ *  year        = {2010}
  * }
  * @endcode
  *
@@ -69,26 +69,7 @@ class GlorotInitializationType
   template<typename eT>
   void Initialize(arma::Mat<eT>& W,
                   const size_t rows,
-                  const size_t cols)
-  {
-    if (W.is_empty())
-    {
-      W = arma::mat(rows, cols);
-    }
-
-    if (Uniform)
-    {
-      double_t a = sqrt(6)/sqrt(rows + cols); // limit of  distribution
-      RandomInitialization randomInit(-a, a);
-      randomInit.Initialize(W, rows, cols);
-    }
-    else
-    {
-      double_t var = (double)(2)/(rows + cols);
-      GaussianInitialization normalInit(0.0, var);
-      normalInit.Initialize(W, rows, cols);
-    }
-  }
+                  const size_t cols);
 
   /**
    * Initialize the elements of the specified weight 3rd order tensor with glorot initialization method
@@ -102,16 +83,48 @@ class GlorotInitializationType
   void Initialize(arma::Cube<eT>& W,
                   const size_t rows,
                   const size_t cols,
-                  const size_t slices)
-  {
-    if (W.is_empty())
-    {
-      W = arma::cube(rows, cols, slices);
-    }
-    for (size_t i = 0; i < slices; i++)
-      Initialize(W.slice(i), rows, cols);
-  }
+                  const size_t slices);
 }; // class GlorotInitializationType
+
+template<typename eT>
+void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W,
+     const size_t rows,
+     const size_t cols)
+{
+  if (W.is_empty())
+  W = arma::mat(rows, cols);
+
+  double_t var = (double)(2)/(rows + cols);
+  GaussianInitialization normalInit(0.0, var);
+  normalInit.Initialize(W, rows, cols);
+}
+
+template<typename eT>
+void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W,
+     const size_t rows,
+     const size_t cols)
+{
+  if (W.is_empty())
+  W = arma::mat(rows, cols);
+
+  double_t a = sqrt(6) / sqrt(rows + cols); // limit of  distribution
+  RandomInitialization randomInit(-a, a);
+  randomInit.Initialize(W, rows, cols);
+}
+
+template<typename eT,bool Uniform = true>
+void GlorotInitializationType<Uniform>::Initialize(arma::Cube<eT>& W,
+                const size_t rows,
+                const size_t cols,
+                const size_t slices)
+{
+  if (W.is_empty())
+  {
+    W = arma::cube(rows, cols, slices);
+  }
+  for (size_t i = 0; i < slices; i++)
+    Initialize(W.slice(i), rows, cols);
+}
 
 // Convenience typedefs.
 
