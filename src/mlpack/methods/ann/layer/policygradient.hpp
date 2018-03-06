@@ -2,8 +2,6 @@
  * @file advantage_loss.hpp
  * @author Rohan Raj
  *
- * Definition of the Advantage error performance function.
- *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -18,11 +16,6 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The Advantage error performance function measures the network's
- * performance on the basis of advantages.
- *
- * Reference : https://karpathy.github.io/2016/05/31/rl/
- * 
  * @tparam ActivationFunction Activation function used for the embedding layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -33,16 +26,16 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class AdvantageError
+class PolicyGradient
 {
  public:
   /**
-   * Create the AdvantageError object.
+   * Create the PolicyGradient object.
    */
-  AdvantageError();
+  PolicyGradient();
 
   /*
-   * Computes the Advantageerror function.
+   * Computes the PolicyGradient function.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
@@ -91,12 +84,12 @@ class AdvantageError
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class AdvantageError
+}; // class PolicyGradient
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "advantage_loss_impl.hpp"
+#include "policygradient_impl.hpp"
 
 #endif

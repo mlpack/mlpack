@@ -2,7 +2,9 @@
  * @file Advantage_error_impl.hpp
  * @author Rohan Raj
  *
- * Implementation of the Advantage error performance function.
+ * Implementation of the Generalised Advantage Estimation method using policy gradient.
+ * John Schulman, Philipp Moritz, Sergey Levine, Michael I. Jordan and Pieter Abbeel
+ * HIGH-DIMENSIONAL CONTINUOUS CONTROL USING GENERALIZED ADVANTAGE ESTIMATION, ICLR 2016
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -13,41 +15,28 @@
 #define MLPACK_METHODS_ANN_LAYER_ADVANTAGE_ERROR_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "advantage_loss.hpp"
+#include "policygradient.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-AdvantageError<InputDataType, OutputDataType>::AdvantageError()
+PolicyGradient<InputDataType, OutputDataType>::PolicyGradient()
 {
   // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType>
-double AdvantageError<InputDataType, OutputDataType>::Forward(
+double PolicyGradient<InputDataType, OutputDataType>::Forward(
     const InputType&& input, const TargetType&& target)
 {
-  /*
-  The loss function is mean of log(probability) * target
-  The target captures the advantage of taking the action.
-  The -1 is multiplied to take negative of mean.
-
-  Reference : https://karpathy.github.io/2016/05/31/rl/
-
-  % does element wise multiplication
-  Refer : https://stackoverflow.com/questions/26790229/element-wise-vector-or-matrix-multiplication-in-armadillo-c
-  
-  arma::log does element wise logarithm
-  Refer : http://arma.sourceforge.net:80/docs.html#misc_fns
- */
   return (-1*arma::mean(arma::mean(arma::log(input) % target)));
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename TargetType, typename OutputType>
-void AdvantageError<InputDataType, OutputDataType>::Backward(
+void PolicyGradient<InputDataType, OutputDataType>::Backward(
     const InputType&& input,
     const TargetType&& target,
     OutputType&& output)
@@ -62,7 +51,7 @@ void AdvantageError<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void AdvantageError<InputDataType, OutputDataType>::serialize(
+void PolicyGradient<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
     const unsigned int /* version */)
 {
