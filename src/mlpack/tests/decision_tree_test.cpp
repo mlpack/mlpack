@@ -288,10 +288,10 @@ BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitSimpleSplitTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
   const double gain = BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, labels, 2, weights, 3, classProbabilities, aux);
+      bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities, aux);
   const double weightedGain =
       BestBinaryNumericSplit<GiniGain>::SplitIfBetter<true>(bestGain, values,
-      labels, 2, weights, 3, classProbabilities, aux);
+      labels, 2, weights, 3, 1e-7, classProbabilities, aux);
 
   // Make sure that a split was made.
   BOOST_REQUIRE_GT(gain, bestGain);
@@ -325,11 +325,11 @@ BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitMinSamplesTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
   const double gain = BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, labels, 2, weights, 8, classProbabilities, aux);
+      bestGain, values, labels, 2, weights, 8, 1e-7, classProbabilities, aux);
   // This should make no difference because it won't split at all.
   const double weightedGain =
       BestBinaryNumericSplit<GiniGain>::SplitIfBetter<true>(bestGain, values,
-      labels, 2, weights, 8, classProbabilities, aux);
+      labels, 2, weights, 8, 1e-7, classProbabilities, aux);
 
   // Make sure that no split was made.
   BOOST_REQUIRE_EQUAL(gain, bestGain);
@@ -360,7 +360,7 @@ BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitNoGainTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
   const double gain = BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, labels, 2, weights, 10, classProbabilities, aux);
+      bestGain, values, labels, 2, weights, 10, 1e-7, classProbabilities, aux);
 
   // Make sure there was no split.
   BOOST_REQUIRE_EQUAL(gain, bestGain);
@@ -384,10 +384,10 @@ BOOST_AUTO_TEST_CASE(AllCategoricalSplitSimpleSplitTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
   const double gain = AllCategoricalSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, 4, labels, 3, weights, 3, classProbabilities, aux);
+      bestGain, values, 4, labels, 3, weights, 3, 1e-7, classProbabilities, aux);
   const double weightedGain =
       AllCategoricalSplit<GiniGain>::SplitIfBetter<true>(bestGain, values, 4,
-      labels, 3, weights, 3, classProbabilities, aux);
+      labels, 3, weights, 3, 1e-7, classProbabilities, aux);
 
   // Make sure that a split was made.
   BOOST_REQUIRE_GT(gain, bestGain);
@@ -419,7 +419,7 @@ BOOST_AUTO_TEST_CASE(AllCategoricalSplitMinSamplesTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
   const double gain = AllCategoricalSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, 4, labels, 3, weights, 4, classProbabilities, aux);
+      bestGain, values, 4, labels, 3, weights, 4, 1e-7, classProbabilities, aux);
 
   // Make sure it's not split.
   BOOST_REQUIRE_EQUAL(gain, bestGain);
@@ -451,10 +451,10 @@ BOOST_AUTO_TEST_CASE(AllCategoricalSplitNoGainTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
   const double gain = AllCategoricalSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, 10, labels, 3, weights, 10, classProbabilities, aux);
+      bestGain, values, 10, labels, 3, weights, 10, 1e-7, classProbabilities, aux);
   const double weightedGain =
       AllCategoricalSplit<GiniGain>::SplitIfBetter<true>(bestGain, values, 10,
-      labels, 3, weights, 10, classProbabilities, aux);
+      labels, 3, weights, 10, 1e-7, classProbabilities, aux);
 
   // Make sure that there was no split.
   BOOST_REQUIRE_EQUAL(gain, bestGain);
@@ -539,7 +539,7 @@ BOOST_AUTO_TEST_CASE(PerfectTrainingSet)
 }
 
 /**
- * onstruct the decision tree with weighted labels
+ * Construct the decision tree with weighted labels
  */
 BOOST_AUTO_TEST_CASE(PerfectTrainingSetWithWeight)
 {
@@ -1080,6 +1080,47 @@ BOOST_AUTO_TEST_CASE(ConstDataTest)
   DecisionTree<> dt3(constData, constLabels, numClasses, constWeights);
   DecisionTree<> dt4(constData, datasetInfo, constLabels, numClasses,
       constWeights);
+}
+
+/**
+ * Construct the decision tree with splitting only if gain is more than
+ * threshold.
+ */
+BOOST_AUTO_TEST_CASE(RegularisedDecisionTree)
+{
+  // Completely random dataset with no structure.
+  arma::mat dataset(10, 1000, arma::fill::randu);
+  arma::Row<size_t> labels(1000);
+  for (size_t i = 0; i < 1000; ++i)
+    labels[i] = i % 3; // 3 classes.
+  arma::rowvec weights(labels.n_elem);
+  weights.ones();
+
+  // Minimum leaf size of 1.
+  DecisionTree<> d(dataset, labels, 3, weights, 1, 1e-7);
+
+  // Minimum leaf size of 1 and Minimum gain split of 0.01.
+  DecisionTree<> dRegularised(dataset, labels, 3, weights, 1, 0.01);
+
+  size_t count = 0;
+  // This part of code is dupliacte with no weighted one.
+  for (size_t i = 0; i < 1000; ++i)
+  {
+    size_t prediction, predictionsregularised;
+    arma::vec probabilities, probabilitiesRegularised;
+
+    d.Classify(dataset.col(i), prediction, probabilities);
+    dRegularised.Classify(dataset.col(i), predictionsregularised,
+                          probabilitiesRegularised);
+
+    if(prediction != predictionsregularised)
+      count++;
+
+    BOOST_REQUIRE_EQUAL(probabilities.n_elem, 3);
+    BOOST_REQUIRE_EQUAL(probabilitiesRegularised.n_elem, 3);
+  }
+
+  BOOST_REQUIRE_GT(count, 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

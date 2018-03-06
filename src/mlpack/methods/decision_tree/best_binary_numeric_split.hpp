@@ -58,9 +58,9 @@ class BestBinaryNumericSplit
       const size_t numClasses,
       const WeightVecType& weights,
       const size_t minimumLeafSize,
+      const double minimumGainSplit,
       arma::Col<typename VecType::elem_type>& classProbabilities,
-      AuxiliarySplitInfo<typename VecType::elem_type>& aux,
-      const double minimumGainSplit);
+      AuxiliarySplitInfo<typename VecType::elem_type>& aux);
 
   /**
    * Returns 2, since the binary split always has two children.

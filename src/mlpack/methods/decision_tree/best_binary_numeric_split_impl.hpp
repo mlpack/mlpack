@@ -24,9 +24,9 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const size_t numClasses,
     const WeightVecType& weights,
     const size_t minimumLeafSize,
+    const double minimumGainSplit,
     arma::Col<typename VecType::elem_type>& classProbabilities,
-    AuxiliarySplitInfo<typename VecType::elem_type>& /* aux */,
-    const double minimumGainSplit)
+    AuxiliarySplitInfo<typename VecType::elem_type>& /* aux */)
 {
   // First sanity check: if we don't have enough points, we can't split.
   if (data.n_elem < (minimumLeafSize * 2))

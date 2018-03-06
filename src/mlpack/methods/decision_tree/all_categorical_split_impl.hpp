@@ -25,9 +25,9 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const size_t numClasses,
     const WeightVecType& weights,
     const size_t minimumLeafSize,
+    const double minimumGainSplit,
     arma::Col<typename VecType::elem_type>& classProbabilities,
-    AuxiliarySplitInfo<typename VecType::elem_type>& /* aux */,
-    const double minimumGainSplit)
+    AuxiliarySplitInfo<typename VecType::elem_type>& /* aux */)
 {
   // Count the number of elements in each potential child.
   const double epsilon = 1e-7; // Tolerance for floating-point errors.

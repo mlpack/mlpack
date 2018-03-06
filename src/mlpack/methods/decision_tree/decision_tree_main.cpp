@@ -139,6 +139,9 @@ static void mlpackMain()
   RequireParamValue<int>("minimum_leaf_size", [](int x) { return x > 0; }, true,
       "leaf size must be positive");
 
+  RequireParamValue<int>("minimum_gain_split", [](int x) { return x > 0 && x < 1; }, true,
+                         "leaf size must be a fraction in range [0,1]");
+
   // Load the model or build the tree.
   DecisionTreeModel* model;
   arma::mat trainingSet;
