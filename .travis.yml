@@ -25,8 +25,8 @@ before_install:
   - sudo pip3 install --upgrade --ignore-installed setuptools
   - curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
   - export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH
-  - export CC=clang
-  - export CXX=clang++
+  - export CC=clang-4.0
+  - export CXX=clang++-4.0
   - cmake . && make && sudo make install && cd ..
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
 
