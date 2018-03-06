@@ -109,13 +109,53 @@ BOOST_AUTO_TEST_CASE(HMMGenerateGMMHMMCheckDimensionsTest)
   // Train an HMM
   HMMModel * h = new HMMModel(GaussianMixtureModelHMM);
   // Load data
-  arma::mat inp;
-  data::Load("obs1.csv", inp);
-  std::vector<arma::mat> trainSeq = {inp};
+  std::vector<GMM> gmms(2, GMM(2, 2));
+  gmms[0].Weights() = arma::vec("0.3 0.7");
+
+  // N([2.25 3.10], [1.00 0.20; 0.20 0.89])
+  gmms[0].Component(0) = GaussianDistribution("4.25 3.10",
+                                              "1.00 0.20; 0.20 0.89");
+
+  // N([4.10 1.01], [1.00 0.00; 0.00 1.01])
+  gmms[0].Component(1) = GaussianDistribution("7.10 5.01",
+                                              "1.00 0.00; 0.00 1.01");
+
+  gmms[1].Weights() = arma::vec("0.20 0.80");
+
+  gmms[1].Component(0) = GaussianDistribution("-3.00 -6.12",
+                                              "1.00 0.00; 0.00 1.00");
+
+  gmms[1].Component(1) = GaussianDistribution("-4.25 -2.12",
+                                              "1.50 0.60; 0.60 1.20");
+
+  // Transition matrix.
+  arma::mat transMat("0.40 0.60;"
+                     "0.60 0.40");
+
+  // Make a sequence of observations.
+  std::vector<arma::mat> observations(5, arma::mat(2, 50));
+  std::vector<arma::Row<size_t> > states(5, arma::Row<size_t>(50));
+  for (size_t obs = 0; obs < 5; obs++)
+  {
+    states[obs][0] = 0;
+    observations[obs].col(0) = gmms[0].Random();
+
+    for (size_t i = 1; i < 50; i++)
+    {
+      double randValue = (double) rand() / (double) RAND_MAX;
+
+      if (randValue <= transMat(0, states[obs][i - 1]))
+        states[obs][i] = 0;
+      else
+        states[obs][i] = 1;
+
+      observations[obs].col(i) = gmms[states[obs][i]].Random();
+    }
+  }
   // Init
-  h->PerformAction<Init, std::vector<arma::mat>>(&trainSeq);
+  h->PerformAction<Init, std::vector<arma::mat>>(&observations);
   // Train
-  h->PerformAction<Train, std::vector<arma::mat>>(&trainSeq);
+  h->PerformAction<Train, std::vector<arma::mat>>(&observations);
 
   // Set the params for the hmm_generate invocation
   int length = 3;
@@ -126,8 +166,8 @@ BOOST_AUTO_TEST_CASE(HMMGenerateGMMHMMCheckDimensionsTest)
 
   arma::mat obsSeq = CLI::GetParam<arma::mat>("output");
   BOOST_REQUIRE_EQUAL(obsSeq.n_cols, (size_t)length);
-  BOOST_REQUIRE_EQUAL(obsSeq.n_rows, (size_t)1);
-  BOOST_REQUIRE_EQUAL(obsSeq.n_elem, (size_t)length);
+  BOOST_REQUIRE_EQUAL(obsSeq.n_rows, (size_t)2);
+  BOOST_REQUIRE_EQUAL(obsSeq.n_elem, (size_t)(length*2));
 
   arma::Mat<size_t> stateSeq = CLI::GetParam<arma::Mat<size_t>>("state");
   BOOST_REQUIRE_EQUAL(stateSeq.n_cols, (size_t)length);
