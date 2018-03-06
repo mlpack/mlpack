@@ -135,7 +135,7 @@ struct Init
       e[i].Weights() /= arma::accu(e[i].Weights());
 
       // Random means and covariances.
-      for (int g = 0; g < CLI::GetParam<int>("gaussians"); ++g)
+      for (int g = 0; g < 2; ++g)
       {
         const size_t dimensionality = e[i].Component(g).Mean().n_rows;
         e[i].Component(g).Mean().randu();
