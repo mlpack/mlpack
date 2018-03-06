@@ -176,7 +176,8 @@ void FindEmptyClusterPolicy(const InitialPartitionPolicy& ipp)
 {
   if (CLI::HasParam("allow_empty_clusters") ||
       CLI::HasParam("kill_empty_clusters"))
-    RequireOnlyOnePassed({ "allow_empty_clusters", "kill_empty_clusters" }, true);
+    RequireOnlyOnePassed({ "allow_empty_clusters", "kill_empty_clusters" },
+                         true);
 
   if (CLI::HasParam("allow_empty_clusters"))
     FindLloydStepType<InitialPartitionPolicy, AllowEmptyClusters>(ipp);
