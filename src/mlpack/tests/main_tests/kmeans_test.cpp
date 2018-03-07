@@ -391,24 +391,22 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   dualCoverTreeCentroid = std::move(CLI::GetParam<arma::mat>("centroid"));
 
   for (size_t i = 0; i < inputData.n_cols; ++i)
-    BOOST_REQUIRE_EQUAL(naiveOutput(0,i), elkanOutput(0,i));
+    BOOST_REQUIRE_EQUAL(naiveOutput(0, i), elkanOutput(0, i));
   for (size_t i = 0; i < inputData.n_cols; ++i)
-    BOOST_REQUIRE_EQUAL(naiveOutput(0,i), hamerlyOutput(0,i));
+    BOOST_REQUIRE_EQUAL(naiveOutput(0, i), hamerlyOutput(0, i));
   for (size_t i = 0; i < inputData.n_cols; ++i)
-    BOOST_REQUIRE_EQUAL(naiveOutput(0,i), dualTreeOutput(0,i));
+    BOOST_REQUIRE_EQUAL(naiveOutput(0, i), dualTreeOutput(0, i));
   for (size_t i = 0; i < inputData.n_cols; ++i)
-    BOOST_REQUIRE_EQUAL(naiveOutput(0,i), dualCoverTreeOutput(0,i));
+    BOOST_REQUIRE_EQUAL(naiveOutput(0, i), dualCoverTreeOutput(0, i));
 
   for (size_t i = 0; i < initCentroid.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(naiveCentroid(0,i), elkanCentroid(0,i), 1e-5);
+    BOOST_REQUIRE_CLOSE(naiveCentroid(0, i), elkanCentroid(0, i), 1e-5);
   for (size_t i = 0; i < initCentroid.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(naiveCentroid(0,i), hamerlyCentroid(0,i), 1e-5);
+    BOOST_REQUIRE_CLOSE(naiveCentroid(0, i), hamerlyCentroid(0, i), 1e-5);
   for (size_t i = 0; i < initCentroid.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(naiveCentroid(0,i), dualTreeCentroid(0,i), 1e-5);
+    BOOST_REQUIRE_CLOSE(naiveCentroid(0, i), dualTreeCentroid(0, i), 1e-5);
   for (size_t i = 0; i < initCentroid.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(naiveCentroid(0,i), dualCoverTreeCentroid(0,i), 1e-5);
-
+    BOOST_REQUIRE_CLOSE(naiveCentroid(0, i), dualCoverTreeCentroid(0, i), 1e-5);
 }
-
 
 BOOST_AUTO_TEST_SUITE_END();
