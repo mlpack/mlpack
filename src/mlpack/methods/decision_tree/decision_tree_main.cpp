@@ -39,8 +39,9 @@ PROGRAM_INFO("Decision tree",
     "may not be specified when the " + PRINT_PARAM_STRING("training") + " "
     "parameter is specified.  The " + PRINT_PARAM_STRING("minimum_leaf_size") +
     " parameter specifies the minimum number of training points that must fall"
-    " into each leaf for it to be split.  The " + PRINT_PARAM_STRING("minimum_gain_split") +
-    " parameter specifies the minimum gain that is needed for the node to split. If " +
+    " into each leaf for it to be split.  The " +
+    PRINT_PARAM_STRING("minimum_gain_split") + " parameter specifies "
+    "the minimum gain that is needed for the node to split. If " +
     PRINT_PARAM_STRING("print_training_error") + " is specified, the training "
     "error will be printed."
     "\n\n"
@@ -59,8 +60,8 @@ PROGRAM_INFO("Decision tree",
     "call"
     "\n\n" +
     PRINT_CALL("decision_tree", "training", "data", "labels", "labels",
-        "output_model", "tree", "minimum_leaf_size", 20, "minimum_gain_split", 1e-3,
-        "print_training_error", true) +
+        "output_model", "tree", "minimum_leaf_size", 20, "minimum_gain_split",
+        1e-3, "print_training_error", true) +
     "\n\n"
     "Then, to use that model to classify points in " +
     PRINT_DATASET("test_set") + " and print the test error given the "
@@ -139,8 +140,9 @@ static void mlpackMain()
   RequireParamValue<int>("minimum_leaf_size", [](int x) { return x > 0; }, true,
       "leaf size must be positive");
 
-  RequireParamValue<int>("minimum_gain_split", [](int x) { return x > 0 && x < 1; }, true,
-                         "leaf size must be a fraction in range [0,1]");
+  RequireParamValue<int>("minimum_gain_split", [](double x)
+                         { return x > 0.0 && x < 1.0; }, true,
+                         "gain split must be a fraction in range [0,1]");
 
   // Load the model or build the tree.
   DecisionTreeModel* model;
@@ -170,7 +172,8 @@ static void mlpackMain()
 
     // Now build the tree.
     const size_t minLeafSize = (size_t) CLI::GetParam<int>("minimum_leaf_size");
-    const size_t minimumGainSplit = (size_t) CLI::GetParam<int>("minimum_gain_split");
+    const size_t minimumGainSplit =
+                              (size_t) CLI::GetParam<int>("minimum_gain_split");
 
     // Create decision tree with weighted labels.
     if (CLI::HasParam("weights"))

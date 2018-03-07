@@ -384,7 +384,8 @@ BOOST_AUTO_TEST_CASE(AllCategoricalSplitSimpleSplitTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
   const double gain = AllCategoricalSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, 4, labels, 3, weights, 3, 1e-7, classProbabilities, aux);
+      bestGain, values, 4, labels, 3, weights, 3, 1e-7, classProbabilities,
+      aux);
   const double weightedGain =
       AllCategoricalSplit<GiniGain>::SplitIfBetter<true>(bestGain, values, 4,
       labels, 3, weights, 3, 1e-7, classProbabilities, aux);
@@ -419,7 +420,8 @@ BOOST_AUTO_TEST_CASE(AllCategoricalSplitMinSamplesTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
   const double gain = AllCategoricalSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, 4, labels, 3, weights, 4, 1e-7, classProbabilities, aux);
+      bestGain, values, 4, labels, 3, weights, 4, 1e-7, classProbabilities,
+      aux);
 
   // Make sure it's not split.
   BOOST_REQUIRE_EQUAL(gain, bestGain);
@@ -451,7 +453,8 @@ BOOST_AUTO_TEST_CASE(AllCategoricalSplitNoGainTest)
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
   const double gain = AllCategoricalSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, 10, labels, 3, weights, 10, 1e-7, classProbabilities, aux);
+      bestGain, values, 10, labels, 3, weights, 10, 1e-7, classProbabilities,
+      aux);
   const double weightedGain =
       AllCategoricalSplit<GiniGain>::SplitIfBetter<true>(bestGain, values, 10,
       labels, 3, weights, 10, 1e-7, classProbabilities, aux);
@@ -1113,7 +1116,7 @@ BOOST_AUTO_TEST_CASE(RegularisedDecisionTree)
     dRegularised.Classify(dataset.col(i), predictionsregularised,
                           probabilitiesRegularised);
 
-    if(prediction != predictionsregularised)
+    if (prediction != predictionsregularised)
       count++;
 
     BOOST_REQUIRE_EQUAL(probabilities.n_elem, 3);
