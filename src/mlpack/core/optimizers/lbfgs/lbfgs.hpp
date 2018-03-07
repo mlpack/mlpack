@@ -14,6 +14,7 @@
 #define MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/optimizers/function.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -151,17 +152,6 @@ class L_BFGS
   double maxStep;
 
   /**
-   * Evaluate the function at the given iterate point and store the result if it
-   * is a new minimum.
-   *
-   * @return The value of the function.
-   */
-  template<typename FunctionType>
-  double Evaluate(FunctionType& function,
-                  const arma::mat& iterate,
-                  std::pair<arma::mat, double>& minPointIterate);
-
-  /**
    * Calculate the scaling factor, gamma, which is used to scale the Hessian
    * approximation matrix.  See method M3 in Section 4 of Liu and Nocedal
    * (1989).
@@ -172,14 +162,6 @@ class L_BFGS
                              const arma::mat& gradient,
                              const arma::cube& s,
                              const arma::cube& y);
-
-  /**
-   * Check to make sure that the norm of the gradient is not smaller than 1e-5.
-   * Currently that value is not configurable.
-   *
-   * @return (norm < minGradientNorm).
-   */
-  bool GradientNormTooSmall(const arma::mat& gradient);
 
   /**
    * Perform a back-tracking line search along the search direction to
@@ -200,7 +182,6 @@ class L_BFGS
                   arma::mat& iterate,
                   arma::mat& gradient,
                   arma::mat& newIterateTmp,
-                  std::pair<arma::mat, double>& minPointIterate,
                   const arma::mat& searchDirection);
 
   /**

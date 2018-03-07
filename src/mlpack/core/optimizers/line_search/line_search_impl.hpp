@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "line_search.hpp"
 
+#include <mlpack/core/optimizers/function.hpp>
+
 namespace mlpack {
 namespace optimization {
 
@@ -23,25 +25,33 @@ double LineSearch::Optimize(FunctionType& function,
                             const arma::mat& x1,
                             arma::mat& x2)
 {
+  typedef Function<FunctionType> FullFunctionType;
+  FullFunctionType& f = static_cast<FullFunctionType&>(function);
+
+  // Check that we have all the functions we will need.
+  traits::CheckFunctionTypeAPI<FullFunctionType>();
+
   // Set up the search line, that is,
   // find the zero of der(gamma) = Derivative(gamma).
   arma::mat deltaX = x2 - x1;
   double gamma = 0;
-  double derivative = Derivative(function, x1, deltaX, 0);
-  double derivativeNew = Derivative(function, x1, deltaX, 1);
+  double derivative = Derivative(f, x1, deltaX, 0);
+  double derivativeNew = Derivative(f, x1, deltaX, 1);
   double secant = derivativeNew - derivative;
 
   if (derivative >= 0.0) // Optimal solution at left endpoint.
   {
     x2 = x1;
-    return function.Evaluate(x1);
+    return f.Evaluate(x1);
   }
-  else if (derivativeNew <= 0.0) // Optimal solution at righ endpoint.
-    return function.Evaluate(x2);
+  else if (derivativeNew <= 0.0) // Optimal solution at right endpoint.
+  {
+    return f.Evaluate(x2);
+  }
   else if (secant < tolerance) // function too flat, just take left endpoint.
   {
     x2 = x1;
-    return function.Evaluate(x1);
+    return f.Evaluate(x1);
   }
 
   // Line search by Secant Method.
@@ -71,7 +81,7 @@ double LineSearch::Optimize(FunctionType& function,
       Log::Info << "LineSearchSecant: minimized within tolerance "
           << tolerance << "; " << "terminating optimization." << std::endl;
       x2 = (1 - gamma) * x1 + gamma * x2;
-      return function.Evaluate(x2);
+      return f.Evaluate(x2);
     }
   }
 
@@ -79,7 +89,7 @@ double LineSearch::Optimize(FunctionType& function,
       << ") reached; " << "terminating optimization." << std::endl;
 
   x2 = (1 - gamma) * x1 + gamma * x2;
-  return function.Evaluate(x2);
+  return f.Evaluate(x2);
 }  // Optimize
 
 
