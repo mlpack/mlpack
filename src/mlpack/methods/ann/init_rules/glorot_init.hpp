@@ -86,8 +86,9 @@ class GlorotInitializationType
                   const size_t slices);
 }; // class GlorotInitializationType
 
+template <>
 template<typename eT>
-void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W,
+inline void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W,
      const size_t rows,
      const size_t cols)
 {
@@ -99,8 +100,9 @@ void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W,
   normalInit.Initialize(W, rows, cols);
 }
 
+template <>
 template<typename eT>
-void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W,
+inline void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W,
      const size_t rows,
      const size_t cols)
 {
@@ -112,8 +114,9 @@ void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W,
   randomInit.Initialize(W, rows, cols);
 }
 
-template<typename eT, bool Uniform = true>
-void GlorotInitializationType<Uniform>::Initialize(arma::Cube<eT>& W,
+template <bool Uniform>
+template<typename eT>
+inline void GlorotInitializationType<Uniform>::Initialize(arma::Cube<eT>& W,
                 const size_t rows,
                 const size_t cols,
                 const size_t slices)
