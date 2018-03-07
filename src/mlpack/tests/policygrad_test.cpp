@@ -15,7 +15,7 @@
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/reinforcement_learning/policygrad.hpp>
+#include <mlpack/methods/reinforcement_learning/gae.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
