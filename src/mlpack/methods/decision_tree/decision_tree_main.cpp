@@ -84,7 +84,7 @@ PARAM_UMATRIX_IN("test_labels", "Test point labels, if accuracy calculation "
 // Training parameters.
 PARAM_INT_IN("minimum_leaf_size", "Minimum number of points in a leaf.", "n",
     20);
-PARAM_INT_IN("minimum_gain_split", "Minimum gain for node splitting.", "g",
+PARAM_DOUBLE_IN("minimum_gain_split", "Minimum gain for node splitting.", "g",
     1e-7);
 PARAM_FLAG("print_training_error", "Print the training error.", "e");
 
@@ -140,8 +140,8 @@ static void mlpackMain()
   RequireParamValue<int>("minimum_leaf_size", [](int x) { return x > 0; }, true,
       "leaf size must be positive");
 
-  RequireParamValue<int>("minimum_gain_split", [](double x)
-                         { return x > 0.0 && x < 1.0; }, true,
+  RequireParamValue<double>("minimum_gain_split", [](double x)
+                         { return (x > 0.0 && x < 1.0); }, true,
                          "gain split must be a fraction in range [0,1]");
 
   // Load the model or build the tree.
@@ -172,8 +172,8 @@ static void mlpackMain()
 
     // Now build the tree.
     const size_t minLeafSize = (size_t) CLI::GetParam<int>("minimum_leaf_size");
-    const size_t minimumGainSplit =
-                              (size_t) CLI::GetParam<int>("minimum_gain_split");
+    const double minimumGainSplit =
+                           (double) CLI::GetParam<double>("minimum_gain_split");
 
     // Create decision tree with weighted labels.
     if (CLI::HasParam("weights"))
