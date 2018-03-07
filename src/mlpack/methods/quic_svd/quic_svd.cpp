@@ -20,7 +20,7 @@ namespace svd {
 
 QUIC_SVD::QUIC_SVD(const arma::mat& dataset) : dataset(dataset)
 {
-  //Nothing to do
+  // Nothing to do
 }
 
 void QUIC_SVD::Apply(const arma::mat& dataset,
