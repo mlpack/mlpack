@@ -300,9 +300,11 @@ BOOST_AUTO_TEST_CASE(KmClustersNotDefined)
 BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
 {
   int c = 5;
-  arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+  arma::mat inputData(10, 1000);
+  inputData.randu();
+
+  arma::mat initCentroids(10, 5);
+  initCentroids.randu();
 
   arma::mat initCentroid = arma::randu<arma::mat>(inputData.n_rows, c);
   std::string algo = "naive";
@@ -312,7 +314,6 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("labels_only", true);
   SetInputParam("initial_centroids", initCentroid);
-  SetInputParam("allow_empty_clusters", false);
 
   mlpackMain();
 
@@ -330,7 +331,6 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("labels_only", true);
   SetInputParam("initial_centroids", initCentroid);
-  SetInputParam("allow_empty_clusters", false);
 
   mlpackMain();
 
@@ -348,7 +348,6 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("labels_only", true);
   SetInputParam("initial_centroids", initCentroid);
-  SetInputParam("allow_empty_clusters", false);
 
   mlpackMain();
 
@@ -366,7 +365,6 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("labels_only", true);
   SetInputParam("initial_centroids", initCentroid);
-  SetInputParam("allow_empty_clusters", false);
 
   mlpackMain();
 
@@ -384,7 +382,6 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   SetInputParam("algorithm", std::move(algo));
   SetInputParam("labels_only", true);
   SetInputParam("initial_centroids", std::move(initCentroid));
-  SetInputParam("allow_empty_clusters", false);
 
   mlpackMain();
 
@@ -393,16 +390,24 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   dualCoverTreeOutput = std::move(CLI::GetParam<arma::mat>("output"));
   dualCoverTreeCentroid = std::move(CLI::GetParam<arma::mat>("centroid"));
 
-  // Check That all the algorithms yield the same clusters
-  CheckMatrices(naiveOutput, elkanOutput);
-  CheckMatrices(elkanOutput, hamerlyOutput);
-  CheckMatrices(hamerlyOutput, dualTreeOutput);
-  CheckMatrices(dualTreeOutput, dualCoverTreeOutput);
+  for (size_t i = 0; i < inputData.n_cols; ++i)
+    BOOST_REQUIRE_EQUAL(naiveOutput(0,i), elkanOutput(0,i));
+  for (size_t i = 0; i < inputData.n_cols; ++i)
+    BOOST_REQUIRE_EQUAL(naiveOutput(0,i), hamerlyOutput(0,i));
+  for (size_t i = 0; i < inputData.n_cols; ++i)
+    BOOST_REQUIRE_EQUAL(naiveOutput(0,i), dualTreeOutput(0,i));
+  for (size_t i = 0; i < inputData.n_cols; ++i)
+    BOOST_REQUIRE_EQUAL(naiveOutput(0,i), dualCoverTreeOutput(0,i));
 
-  CheckMatrices(naiveCentroid, elkanCentroid);
-  CheckMatrices(elkanCentroid, hamerlyCentroid);
-  CheckMatrices(hamerlyCentroid, dualTreeCentroid);
-  CheckMatrices(dualTreeCentroid, dualCoverTreeCentroid);
+  for (size_t i = 0; i < initCentroid.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(naiveCentroid(0,i), elkanCentroid(0,i), 1e-5);
+  for (size_t i = 0; i < initCentroid.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(naiveCentroid(0,i), hamerlyCentroid(0,i), 1e-5);
+  for (size_t i = 0; i < initCentroid.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(naiveCentroid(0,i), dualTreeCentroid(0,i), 1e-5);
+  for (size_t i = 0; i < initCentroid.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(naiveCentroid(0,i), dualCoverTreeCentroid(0,i), 1e-5);
+
 }
 
 
