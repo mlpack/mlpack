@@ -36,7 +36,8 @@ BOOST_AUTO_TEST_CASE(QUICSVDReconstructionError)
   {
     // Obtain the SVD using default parameters.
     arma::mat u, v, sigma;
-    svd::QUIC_SVD quicsvd(dataset, u, v, sigma);
+    svd::QUIC_SVD quicsvd(dataset);
+    quicsvd.Apply(dataset, u, sigma, v);
 
     // Reconstruct the matrix using the SVD.
     arma::mat reconstruct;
@@ -73,7 +74,8 @@ BOOST_AUTO_TEST_CASE(QUICSVDSingularValueError)
 
   // Obtain the SVD using default parameters.
   arma::svd_econ(U1, s1, V1, data);
-  svd::QUIC_SVD quicsvd(data, U1, V1, s2);
+  svd::QUIC_SVD quicsvd(data);
+  quicsvd.Apply(data, U1, s2, V1);
 
   s3 = arma::diagvec(s2);
   s1 = s1.subvec(0, s3.n_elem - 1);
@@ -89,7 +91,8 @@ BOOST_AUTO_TEST_CASE(QUICSVDSameDimensionTest)
 
   // Obtain the SVD using default parameters.
   arma::mat u, v, sigma;
-  svd::QUIC_SVD quicsvd(dataset, u, v, sigma);
+  svd::QUIC_SVD quicsvd(dataset);
+  quicsvd.Apply(dataset, u, sigma, v);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
