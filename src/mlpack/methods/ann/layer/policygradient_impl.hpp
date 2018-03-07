@@ -11,8 +11,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_ADVANTAGE_ERROR_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_ADVANTAGE_ERROR_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_POLICY_GRADIENT_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_POLICY_GRADIENT_IMPL_HPP
 
 // In case it hasn't yet been included.
 #include "policygradient.hpp"

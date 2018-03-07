@@ -1,5 +1,5 @@
 /**
- * @file advantage_loss.hpp
+ * @file policygradient.hpp
  * @author Rohan Raj
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -7,8 +7,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_ADVANTAGE_ERROR_HPP
-#define MLPACK_METHODS_ANN_LAYER_ADVANTAGE_ERROR_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_POLICY_GRADIENT_HPP
+#define MLPACK_METHODS_ANN_LAYER_POLICY_GRADIENT_HPP
 
 #include <mlpack/prereqs.hpp>
 
