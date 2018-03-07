@@ -50,7 +50,6 @@ Advantage<EnvironmentType,
     learningNetwork.ResetParameters();
   this->updater.Initialize(learningNetwork.Parameters().n_rows,
       learningNetwork.Parameters().n_cols);
-  targetNetwork = learningNetwork;
 }
 
 template <
@@ -164,10 +163,6 @@ double Advantage<
       continue;
 
     totalSteps++;
-
-    // Update target network
-    if (totalSteps % config.TargetNetworkSyncInterval() == 0)
-      targetNetwork = learningNetwork;
 
     if (totalSteps > config.ExplorationSteps())
       policy.Anneal();
