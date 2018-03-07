@@ -22,7 +22,7 @@
 namespace mlpack {
 namespace cf {
 
-// Apply QuicSVD factorizer.
+// Apply the factorizer when coordinate lists are used.
 template<typename FactorizerType>
 void ApplyFactorizer(FactorizerType& factorizer,
                      const arma::mat& data,
@@ -38,7 +38,7 @@ void ApplyFactorizer(FactorizerType& factorizer,
   factorizer.Apply(data, rank, w, h);
 }
 
-// Apply the factorizer when coordinate lists are used.
+// Apply QuicSVD factorizer.
 template<typename FactorizerType>
 void ApplyFactorizer(FactorizerType& factorizer,
                      const arma::mat& data,
