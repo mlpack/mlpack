@@ -43,6 +43,7 @@ struct FactorizerTraits
    * Otherwise, it is modified into a form suitable for factorization.
    */
   static const bool UsesCoordinateList = false;
+  static const bool UsesQuicSVD = false;
 };
 
 /**

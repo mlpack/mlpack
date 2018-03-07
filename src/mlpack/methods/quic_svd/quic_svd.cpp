@@ -18,13 +18,17 @@ using namespace mlpack::tree;
 namespace mlpack {
 namespace svd {
 
-QUIC_SVD::QUIC_SVD(const arma::mat& dataset,
+QUIC_SVD::QUIC_SVD(const arma::mat& dataset) : dataset(dataset)
+{
+  //Nothing to do
+}
+
+void QUIC_SVD::Apply(const arma::mat& dataset,
                    arma::mat& u,
-                   arma::mat& v,
                    arma::mat& sigma,
+                   arma::mat& v,
                    const double epsilon,
-                   const double delta) :
-    dataset(dataset)
+                   const double delta)
 {
   // Since columns are sample in the implementation, the matrix is transposed if
   // necessary for maximum speedup.

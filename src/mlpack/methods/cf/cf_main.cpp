@@ -15,6 +15,7 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/amf/amf.hpp>
 #include <mlpack/methods/regularized_svd/regularized_svd.hpp>
+#include <mlpack/methods/quic_svd/quic_svd.hpp>
 #include <mlpack/methods/amf/termination_policies/max_iteration_termination.hpp>
 #include "cf.hpp"
 
@@ -56,6 +57,7 @@ PROGRAM_INFO("Collaborative Filtering", "This program performs collaborative "
     "algorithms can be specified via the " + PRINT_PARAM_STRING("algorithm") +
     " parameter: "
     "\n"
+    "'QuicSVD' -- Quic SVD decomposition\n"
     "'RegSVD' -- Regularized SVD using a SGD optimizer\n"
     "'NMF' -- Non-negative matrix factorization with alternating least squares "
     "update rules\n"
@@ -240,6 +242,11 @@ void AssembleFactorizerType(const std::string& algorithm,
       Log::Fatal << PRINT_PARAM_STRING("iteration_only_termination") << " not "
           << "supported with 'RegSVD' algorithm!" << endl;
     }
+    else if (algorithm == "QuicSVD")
+    {
+      Log::Fatal << PRINT_PARAM_STRING("iteration_only_termination") << " not "
+          << "supported with 'QuicSVD' algorithm!" << endl;
+    }
   }
   else
   {
@@ -269,6 +276,10 @@ void AssembleFactorizerType(const std::string& algorithm,
     {
       PerformAction(RegularizedSVD<>(maxIterations), dataset, rank);
     }
+    else if (algorithm == "QuicSVD")
+    {
+      PerformAction(QUIC_SVD(dataset), dataset, rank);
+    }
   }
 }
 
@@ -292,8 +303,8 @@ static void mlpackMain()
     ReportIgnoredParam("output", "no recommendations requested");
 
   RequireParamInSet<string>("algorithm", { "NMF", "BatchSVD",
-      "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD" }, true,
-      "unknown algorithm");
+      "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD",
+      "QuicSVD" }, true, "unknown algorithm");
 
   ReportIgnoredParam({{ "iteration_only_termination", true }}, "min_residue");
 

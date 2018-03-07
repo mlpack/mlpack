@@ -14,6 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/tree/cosine_tree/cosine_tree.hpp>
+#include <mlpack/methods/cf/cf.hpp>
 
 namespace mlpack {
 namespace svd {
@@ -53,10 +54,12 @@ namespace svd {
 class QUIC_SVD
 {
  public:
+  QUIC_SVD(const arma::mat& dataset);
+
   /**
-   * Constructor which implements the QUIC-SVD algorithm. The function calls the
+   * Function which implements the QUIC-SVD algorithm. The function calls the
    * CosineTree constructor to create a subspace basis, where the original
-   * matrix's projection has minimum reconstruction error. The constructor then
+   * matrix's projection has minimum reconstruction error. The function then
    * uses the ExtractSVD() function to calculate the SVD of the original dataset
    * in that subspace.
    *
@@ -67,10 +70,10 @@ class QUIC_SVD
    * @param epsilon Error tolerance fraction for calculated subspace.
    * @param delta Cumulative probability for Monte Carlo error lower bound.
    */
-  QUIC_SVD(const arma::mat& dataset,
+  void Apply(const arma::mat& dataset,
            arma::mat& u,
-           arma::mat& v,
            arma::mat& sigma,
+           arma::mat& v,
            const double epsilon = 0.03,
            const double delta = 0.1);
 
@@ -92,6 +95,22 @@ class QUIC_SVD
 };
 
 } // namespace svd
+} // namespace mlpack
+
+namespace mlpack {
+namespace cf {
+
+//! Factorizer traits of Quic SVD.
+template<>
+class FactorizerTraits<mlpack::svd::QUIC_SVD>
+{
+ public:
+  //! Data provided to QuicSVD need not be cleaned.
+  static const bool UsesCoordinateList = true;
+  static const bool UsesQuicSVD = true;
+};
+
+} // namespace cf
 } // namespace mlpack
 
 #endif

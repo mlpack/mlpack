@@ -107,6 +107,7 @@ class FactorizerTraits<mlpack::svd::RegularizedSVD<> >
  public:
   //! Data provided to RegularizedSVD need not be cleaned.
   static const bool UsesCoordinateList = true;
+  static const bool UsesQuicSVD = false;
 };
 
 } // namespace cf
