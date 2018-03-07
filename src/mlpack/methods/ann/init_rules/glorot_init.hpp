@@ -40,8 +40,8 @@ namespace ann /** Artificial Neural Network. */ {
  * method. The method is defined by
  *
  * @f{eqnarray*}{
- * \Var[w_i] &=& \frac{2}{n_i + n_{i+1}} \\
- * w_i ~ \U{-\frac{\sqrt(6)}{\sqrt(n_i + n_{i+1})}, \frac{\sqrt(6)}{\sqrt(n_i + n_{i+1})}}
+ * \f$\Var[w_i] &=& \frac{2}{n_i + n_{i+1}} \\\f$
+ * \f$w_i ~ \U{-\frac{\sqrt(6)}{\sqrt(n_i + n_{i+1})}, \frac{\sqrt(6)}{\sqrt(n_i + n_{i+1})}\f$}
  * @f}
  * Where n_{i+1} is the number of neurons in the outgoing layer, n_i represents the
  * number of neurons in the ingoing layer
@@ -89,8 +89,8 @@ class GlorotInitializationType
 template <>
 template<typename eT>
 inline void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W,
-     const size_t rows,
-     const size_t cols)
+                                                       const size_t rows,
+                                                       const size_t cols)
 {
   if (W.is_empty())
   W = arma::mat(rows, cols);
@@ -103,8 +103,8 @@ inline void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W,
 template <>
 template<typename eT>
 inline void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W,
-     const size_t rows,
-     const size_t cols)
+                                                       const size_t rows,
+                                                       const size_t cols)
 {
   if (W.is_empty())
   W = arma::mat(rows, cols);
@@ -117,9 +117,9 @@ inline void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W,
 template <bool Uniform>
 template<typename eT>
 inline void GlorotInitializationType<Uniform>::Initialize(arma::Cube<eT>& W,
-                const size_t rows,
-                const size_t cols,
-                const size_t slices)
+                                                          const size_t rows,
+                                                          const size_t cols,
+                                                          const size_t slices)
 {
   if (W.is_empty())
   {
@@ -135,7 +135,9 @@ inline void GlorotInitializationType<Uniform>::Initialize(arma::Cube<eT>& W,
  * XavierInitilization is the popular name for this method.
  */
 using XavierInitialization = GlorotInitializationType<true>;
+// Uses uniform distribution
 using GlorotInitialization = GlorotInitializationType<false>;
+// Uses normal distribution
 } // namespace ann
 } // namespace mlpack
 
