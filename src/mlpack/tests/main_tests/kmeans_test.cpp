@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(NonNegativeClustersTest)
 /**
  * Checking that initial centroids are provided if clusters are to be auto detected
  */
-BOOST_AUTO_TEST_CASE(PointsLessThanClustersTest)
+BOOST_AUTO_TEST_CASE(AutoDetectClusterTest)
 {
   constexpr int N = 10;
   constexpr int D = 4;
