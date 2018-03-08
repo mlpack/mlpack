@@ -12,6 +12,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+
 #include <mlpack/core.hpp>
 
 #include <mlpack/core/optimizers/adam/adam.hpp>
@@ -513,7 +514,7 @@ BOOST_AUTO_TEST_CASE(NadaMaxLogisticRegressionTest)
 BOOST_AUTO_TEST_CASE(SimpleAdamirrorTestFunction)
 {
   SGDTestFunction f;
-  Adamirror optimizer(1e-3, 1, 0.9, 0.99, 1e-8);
+  Adamirror optimizer(1e-2, 1, 0.9, 0.99, 1e-8);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
