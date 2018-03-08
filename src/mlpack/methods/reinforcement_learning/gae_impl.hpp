@@ -112,7 +112,9 @@ double Advantage<
   */
   arma::mat target;
   learningNetwork.Forward(sampledStates, target);
-  // arma::Mat<size_t> target(2,sampledStates.n_cols)  ; // 2 is the action size
+  /* turning the target to zero to place advantage value
+   * in place of it
+   */
   target.zeros();
   for (size_t i = 0; i < sampledStates.n_cols; ++i)
   {
@@ -163,9 +165,6 @@ double Advantage<
       continue;
 
     totalSteps++;
-
-    if (totalSteps > config.ExplorationSteps())
-      policy.Anneal();
   }
 
   return totalReturn;

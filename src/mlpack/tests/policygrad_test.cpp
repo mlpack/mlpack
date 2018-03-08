@@ -18,6 +18,7 @@
 #include <mlpack/methods/reinforcement_learning/gae.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
+#include <mlpack/methods/reinforcement_learning/policy/vanilla_policy_gradient_policy.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 #include <mlpack/core/optimizers/adam/adam_update.hpp>
 #include <mlpack/core/optimizers/rmsprop/rmsprop_update.hpp>
@@ -47,7 +48,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
   model.Add<LogSoftMax<> >();
 
   // Set up the policy and replay method.
-  GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
+  VanillaPolicyGradient<CartPole> policy(0.1,1000,0.1);
   RandomReplay<CartPole> replayMethod(10, 10000);
 
   TrainingConfig config;
@@ -84,7 +85,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
      */
     Log::Debug << "Average return: " << averageReturn.mean()
         << " Episode return: " << episodeReturn << std::endl;
-    if (averageReturn.mean() > 25)
+    if (averageReturn.mean() > 30)
     {
       agent.Deterministic() = true;
       arma::running_stat<double> testReturn;

@@ -74,9 +74,6 @@ class Advantage
   //! Locally-stored learning network.
   NetworkType learningNetwork;
 
-  //! Locally-stored target network.
-  NetworkType targetNetwork;
-
   //! Locally-stored updater.
   UpdaterType updater;
 
