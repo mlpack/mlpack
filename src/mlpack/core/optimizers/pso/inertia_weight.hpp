@@ -41,13 +41,13 @@ class InertiaWeight
    * @param socialAcceleration Social acceleration of the particles.
    */
   void Update(const arma::cube& particlePosition,
-                    arma::cube& particleVelocity,
-                    const arma::mat& bestParticlePosition,
-                    const arma::mat& bestSwarmPosition,
-                    const double& interiaWeight,
-                    const double& cognitiveAcceleration,
-                    const double& socialAcceleration,
-                    const double& dimension)
+              arma::cube& particleVelocity,
+              const arma::mat& bestParticlePosition,
+              const arma::mat& bestSwarmPosition,
+              const double& interiaWeight,
+              const double& cognitiveAcceleration,
+              const double& socialAcceleration,
+              const double& dimension)
   {
     for (size_t i = 0; i < dimension; ++i)
     {

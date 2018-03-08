@@ -20,13 +20,14 @@ namespace mlpack {
 namespace optimization {
 
 template<typename VelocityVectorType>
-PSOType<VelocityVectorType>::PSOType(const size_t dimension,
-                                  const double interiaWeight,
-                                  const double cognitiveAcceleration,
-                                  const double socialAcceleration,
-                                  const size_t maxIterations,
-                                  const double tolerance,
-                                  const VelocityVectorType& velocityType) :
+PSOType<VelocityVectorType>::
+PSOType(const size_t dimension,
+        const double interiaWeight,
+        const double cognitiveAcceleration,
+        const double socialAcceleration,
+        const size_t maxIterations,
+        const double tolerance,
+        const VelocityVectorType& velocityType) :
     dimension(dimension),
     interiaWeight(interiaWeight),
     cognitiveAcceleration(cognitiveAcceleration),

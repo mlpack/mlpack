@@ -65,16 +65,17 @@ class ConstrictionFactor
    * @param socialAcceleration Social acceleration of the particles.
    */
   void Update(const arma::cube& particlePosition,
-                    arma::cube& particleVelocity,
-                    const arma::mat& bestParticlePosition,
-                    const arma::mat& bestSwarmPosition,
-                    const double& interiaWeight,
-                    const double& cognitiveAcceleration,
-                    const double& socialAcceleration,
-                    const double& dimension)
+              arma::cube& particleVelocity,
+              const arma::mat& bestParticlePosition,
+              const arma::mat& bestSwarmPosition,
+              const double& interiaWeight,
+              const double& cognitiveAcceleration,
+              const double& socialAcceleration,
+              const double& dimension)
   {
     double phi = cognitiveAcceleration + socialAcceleration;
-    constrictionFactor = 2 / std::abs(2 - phi - std::sqrt(std::pow(phi, 2) - 4 * phi));
+    constrictionFactor = 2 / std::abs(2 - phi - std::sqrt(
+      std::pow(phi, 2) - 4 * phi));
 
     for (size_t i = 0; i < dimension; ++i)
     {
@@ -86,9 +87,9 @@ class ConstrictionFactor
     }
   }
 
-  private:
-    // The constriction factor.
-    double constrictionFactor;
+ private:
+  //! The constriction factor.
+  double constrictionFactor;
 };
 
 } // namespace optimization
