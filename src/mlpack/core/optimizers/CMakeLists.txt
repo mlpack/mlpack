@@ -17,6 +17,7 @@ set(DIRS
   parallel_sgd
   rmsprop
   sa
+  saga
   sarah
   scd
   sdp
