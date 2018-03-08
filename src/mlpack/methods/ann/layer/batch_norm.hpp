@@ -1,5 +1,5 @@
 /**
- * @file batchnorm.hpp
+ * @file batch_norm.hpp
  * @author Praveen Ch
  * @author Manthan-R-Sheth
  *
