@@ -1,8 +1,9 @@
 /**
  * @file batchnorm.hpp
  * @author Praveen Ch
+ * @author Manthan-R-Sheth
  *
- * Definition of the Batch Normalisation layer class as proposed by Ioffe et.al
+ * Definition of the Batch Normalisation layer class
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -15,19 +16,17 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "layer_types.hpp"
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the Batch Normalisation layer class. The layer tranforms
+ * Declaration of the Batch Normalisation layer class. The layer tranforms
  * the input data into zero mean and unit variance and then scales and shifts
- * the data by parameters, gamma and beta respectively. These parameters are 
+ * the data by parameters, gamma and beta respectively. These parameters are
  * learnt by the network.
  *
  * If deterministic is false (training), the mean and variance over the batch is
- * calculated and the data is normalized. If it is set to true (testing) then 
+ * calculated and the data is normalized. If it is set to true (testing) then
  * the mean and variance accrued over the training set is used.
  *
  * For more information, refer to the following paper,
@@ -36,14 +35,14 @@ namespace ann /** Artificial Neural Network. */ {
  * @article{DBLP:journals/corr/IoffeS15,
  *   author    = {Sergey Ioffe and
  *                Christian Szegedy},
- *   title     = {Batch Normalization: Accelerating Deep Network Training by 
+ *   title     = {Batch Normalization: Accelerating Deep Network Training by
  *                Reducing Internal Covariate Shift},
  *   journal   = {CoRR},
  *   volume    = {abs/1502.03167}
  * }
  *
  * @endcode
- * 
+ *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
@@ -51,18 +50,21 @@ namespace ann /** Artificial Neural Network. */ {
  */
 
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+  typename InputDataType = arma::mat,
+  typename OutputDataType = arma::mat
 >
 class BatchNorm
 {
  public:
-   /**
-   * Create the BatchNorm layer object for a specified number of input units.
-   *
-   * @param size The number of input units.
-   * @param eps The epsilon added to variance to ensure numerical stability.
-   */
+  //! Create the BatchNorm object.
+  BatchNorm();
+
+  /**
+  * Create the BatchNorm layer object for a specified number of input units.
+  *
+  * @param size The number of input units.
+  * @param eps The epsilon added to variance to ensure numerical stability.
+  */
   BatchNorm(const size_t size, const double eps = 0.001);
 
   /**
@@ -141,12 +143,11 @@ class BatchNorm
   //! Get the variance over the training data.
   OutputDataType TrainingVariance() { return stats.var(1); }
 
-
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored number of input units.
@@ -161,7 +162,7 @@ class BatchNorm
   //! Locally-stored shift parameter.
   OutputDataType beta;
 
-  //! Locally-stored weight object.
+  //! Locally-stored parameters.
   OutputDataType weights;
 
   /**
@@ -196,6 +197,6 @@ class BatchNorm
 } // namespace mlpack
 
 // Include the implementation.
-#include "batchnorm_impl.hpp"
+#include "batch_norm_impl.hpp"
 
 #endif

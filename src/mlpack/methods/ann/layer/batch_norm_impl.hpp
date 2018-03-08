@@ -1,9 +1,10 @@
 /**
  * @file batchnorm_impl.hpp
  * @author Praveen Ch
+ * @author Manthan-R-Sheth
  *
  * Implementation of the Batch Normalization Layer.
- * 
+ *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -14,14 +15,20 @@
 #define MLPACK_METHODS_ANN_LAYER_BATCHNORM_IMPL_HPP
 
 // In case it is not included.
-#include "batchnorm.hpp"
+#include "batch_norm.hpp"
 
 namespace mlpack {
 namespace ann { /** Artificial Neural Network. */
 
+template<typename InputDataType, typename OutputDataType>
+BatchNorm<InputDataType, OutputDataType>::BatchNorm()
+{
+  // Nothing to do here.
+}
+
 template <typename InputDataType, typename OutputDataType>
 BatchNorm<InputDataType, OutputDataType>::BatchNorm(
-    const size_t size, const double eps) : size(size), eps(eps)
+  const size_t size, const double eps) : size(size), eps(eps)
 {
   weights.set_size(size + size, 1);
 }
@@ -41,7 +48,7 @@ void BatchNorm<InputDataType, OutputDataType>::Reset()
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void BatchNorm<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+  const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
   output.reshape(input.n_rows, input.n_cols);
 
@@ -50,84 +57,69 @@ void BatchNorm<InputDataType, OutputDataType>::Forward(
   if (deterministic)
   {
     mean = stats.mean();
-    variance = stats.var(1);    
+    variance = stats.var(1);
   }
   else
   {
     mean = arma::mean(input, 1);
     variance = arma::var(input, 1, 1);
-    
+
     for (size_t i = 0; i < output.n_cols; i++)
     {
       stats(input.col(i));
     }
   }
 
-    for (size_t i = 0; i < output.n_rows; i++)
-    {
-      output.row(i) = input.row(i) - arma::as_scalar(mean.row(i));
-      output.row(i) /= (arma::as_scalar(arma::sqrt(variance.row(i) + eps)));
-      output.row(i) *= arma::as_scalar(gamma.row(i));
-      output.row(i) += arma::as_scalar(beta.row(i));
-    }
-  }
+  output = input.each_col() - mean;
+  output.each_col() %= gamma/arma::sqrt(variance+eps);
+  output.each_col() += beta;
+}
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void BatchNorm<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+  const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
   size_t n = input.n_cols;
 
   g.reshape(input.n_rows, input.n_cols);
 
-  for (size_t i = 0; i < input.n_rows; ++i)
-  {
-    mean = arma::mean(input.row(i), 1);
-    variance = arma::var(input.row(i), 1, 1);
+  mean = arma::mean(input, 1);
+  variance = arma::var(input, 1, 1);
 
-    g.row(i) = -(input.row(i) - arma::as_scalar(mean));
-    g.row(i) *= arma::as_scalar(arma::sum(gy.row(i) % 
-        (input.row(i) - arma::as_scalar(mean)), 1));
-    g.row(i) /= (arma::as_scalar(variance + eps));
-    g.row(i) += (n * gy.row(i) - arma::as_scalar(arma::sum(gy.row(i),1)));
-    g.row(i) *= (1.0 / n) * arma::as_scalar(gamma.row(i));
-    g.row(i) /= (arma::as_scalar(arma::sqrt(variance + eps)));
-
-  }
-
+  arma::mat m = arma::sum(gy % (input.each_col() - mean), 1);
+  g = arma::repmat(m, 1, input.n_cols) % -(input.each_col() - mean);
+  g.each_col() %= 1.0/(variance + eps);
+  g += (n * gy - arma::repmat((arma::sum(gy, 1)), 1, input.n_cols));
+  g.each_col() %= ((1.0 / n) * gamma);
+  g.each_col() %= (1.0/arma::sqrt(variance + eps));
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void BatchNorm<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>&& input,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& gradient)
+  const arma::Mat<eT>&& input,
+  arma::Mat<eT>&& error,
+  arma::Mat<eT>&& gradient)
 {
   arma::mat normalized(input.n_rows, input.n_cols);
   gradient.reshape(size + size, 1);
-  
-  for (size_t i = 0; i < normalized.n_rows; i++)
-  {
-    normalized.row(i) = input.row(i) - arma::as_scalar(arma::mean(input.row(i), 1));
-    normalized.row(i) /= 
-        arma::as_scalar(arma::sqrt(arma::var(input.row(i), 1, 1) + eps));
-  }
+
+  normalized = input.each_col() - arma::mean(input, 1)
+                                  / arma::sqrt(arma::var(input, 1, 1) + eps);
 
   gradient.submat(0, 0, gamma.n_elem - 1, 0) = arma::sum(normalized % error, 1);
-  gradient.submat(gamma.n_elem, 0, gradient.n_elem - 1, 0) = arma::sum(error, 1);
+  gradient.submat(gamma.n_elem, 0, gradient.n_elem - 1, 0) =
+                                                          arma::sum(error, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void BatchNorm<InputDataType, OutputDataType>::Serialize(
-    Archive& ar, const unsigned int /* version */)
+void BatchNorm<InputDataType, OutputDataType>::serialize(
+  Archive& ar, const unsigned int /* version */)
 {
-  ar & data::CreateNVP(gamma, "gamma");
-  ar & data::CreateNVP(beta, "beta");
-  ar & data::CreateNVP(stats.mean(), "trainingMean");
-  ar & data::CreateNVP(stats.var(1), "trainingVariance");
+  ar & BOOST_SERIALIZATION_NVP(gamma);
+  ar & BOOST_SERIALIZATION_NVP(beta);
 }
 
 } // namespace ann

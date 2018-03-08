@@ -8,8 +8,8 @@ set(SOURCES
   base_layer.hpp
   bilinear_interpolation.hpp
   bilinear_interpolation_impl.hpp
-  batchnorm.hpp
-  batchnorm_impl.hpp
+  batch_norm.hpp
+  batch_norm_impl.hpp
   concat.hpp
   concat_impl.hpp
   concat_performance.hpp
