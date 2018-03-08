@@ -51,16 +51,10 @@ class InertiaWeight
   {
     for (size_t i = 0; i < dimension; ++i)
     {
-      for (size_t j = 0; j < particlePosition.slice(0).n_rows; ++j)
-      {
-        for (size_t k = 0; k < particlePosition.slice(0).n_cols; ++k)
-        {
-          particleVelocity.slice(i)[j, k] = interiaWeight * particleVelocity.slice(i)[j, k] +
-            cognitiveAcceleration * math::Random() * (bestParticlePosition[i] -
-            particlePosition.slice(i)[j, k]) + socialAcceleration * math::Random() *
-            (bestSwarmPosition[i] - particlePosition.slice(i)[j, k]);
-        }
-      }
+      particleVelocity.slice(i) = interiaWeight * particleVelocity.slice(i) +
+        cognitiveAcceleration * math::Random() * (bestParticlePosition[i] -
+        particlePosition.slice(i)) + socialAcceleration * math::Random() *
+        (bestSwarmPosition[i] - particlePosition.slice(i));
     }
   }
 };
