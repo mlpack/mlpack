@@ -29,6 +29,9 @@ LRSDPFunction<SDPType>::LRSDPFunction(const SDPType& sdp,
     Log::Warn << "LRSDPFunction::LRSDPFunction(): solution matrix will have "
         << "more columns than rows.  It may be more efficient to find the "
         << "transposed solution." << std::endl;
+
+  // Initialize R*R^T matrix.
+  rrt = initialPoint * trans(initialPoint);
 }
 
 template <typename SDPType>
@@ -42,12 +45,17 @@ LRSDPFunction<SDPType>::LRSDPFunction(const size_t numSparseConstraints,
     Log::Warn << "LRSDPFunction::LRSDPFunction(): solution matrix will have "
         << "more columns than rows.  It may be more efficient to find the "
         << "transposed solution." << std::endl;
+
+  // Initialize R*R^T matrix.
+  rrt = initialPoint * trans(initialPoint);
 }
 
 template <typename SDPType>
 double LRSDPFunction<SDPType>::Evaluate(const arma::mat& coordinates) const
 {
-  const arma::mat rrt = coordinates * trans(coordinates);
+  // Note: We don't require to update the R*R^T matrix here as the current
+  // function is only used by AugLagrangian, which do not update the coordinates
+  // matrix.
   return accu(SDP().C() % rrt);
 }
 
@@ -64,11 +72,18 @@ double LRSDPFunction<SDPType>::EvaluateConstraint(
     const size_t index,
     const arma::mat& coordinates) const
 {
-  const arma::mat rrt = coordinates * trans(coordinates);
+  // Note: We don't require to update the R*R^T matrix here as the current
+  // function is only used by AugLagrangian, which do not update the coordinates
+  // matrix.
+
+  // Using cached R*R^T gives better optimization for sparse matrices.
   if (index < SDP().NumSparseConstraints())
     return accu(SDP().SparseA()[index] % rrt) - SDP().SparseB()[index];
   const size_t index1 = index - SDP().NumSparseConstraints();
-  return accu(SDP().DenseA()[index1] % rrt) - SDP().DenseB()[index1];
+
+  // For computation optimization we will be taking R^T * A first.
+  return trace((trans(coordinates) * SDP().DenseA()[index1]) * coordinates)
+                 - SDP().DenseB()[index1];
 }
 
 template <typename SDPType>
@@ -79,6 +94,17 @@ void LRSDPFunction<SDPType>::GradientConstraint(
 {
   Log::Fatal << "LRSDPFunction::GradientConstraint() not implemented "
       << "for arbitrary optimizers!" << std::endl;
+}
+
+//! Utility function for updating R*R^T matrix.
+//! Note: Caching R*R^T provide significant computation optimization
+//! by reducing redundant R*R^T calculations in case of functions are not used
+//! updating coordinates matrix, hence leaving R*R^T unchanged.
+template <typename SDPType>
+void UpdateRRT(LRSDPFunction<SDPType>& function,
+               const arma::mat& newrrt)
+{
+  function.RRT() = newrrt;
 }
 
 //! Utility function for calculating part of the objective when AugLagrangian is
@@ -96,6 +122,9 @@ UpdateObjective(double& objective,
   for (size_t i = 0; i < ais.size(); ++i)
   {
     // Take the trace subtracted by the b_i.
+    // Here taking R^T * A first is not recommended as we are already
+    // using pre-computed R * R^T. Taking R^T * A first will result in increase
+    // in number of computations.
     const double constraint = accu(ais[i] % rrt) - bis[i];
     objective -= (lambda[lambdaOffset + i] * constraint);
     objective += (sigma / 2.) * constraint * constraint;
@@ -116,6 +145,9 @@ UpdateGradient(arma::mat& s,
 {
   for (size_t i = 0; i < ais.size(); ++i)
   {
+    // Here taking R^T * A first is not recommended as we are already
+    // using pre-computed R * R^T. Taking R^T * A first will result in increase
+    // in number of computations.
     const double constraint = accu(ais[i] % rrt) - bis[i];
     const double y = lambda[lambdaOffset + i] - sigma * constraint;
     s -= y * ais[i];
@@ -124,7 +156,7 @@ UpdateGradient(arma::mat& s,
 
 template <typename SDPType>
 static inline double
-EvaluateImpl(const LRSDPFunction<SDPType>& function,
+EvaluateImpl(LRSDPFunction<SDPType>& function,
              const arma::mat& coordinates,
              const arma::vec& lambda,
              const double sigma)
@@ -137,13 +169,33 @@ EvaluateImpl(const LRSDPFunction<SDPType>& function,
   // Let's start with the objective: Tr(C * (R R^T)).
   // Simple, possibly slow solution-- see below for optimization opportunity
   //
-  // TODO: Note that Tr(C^T * (R R^T)) = Tr( (CR)^T * R ), so
-  // multiplying C*R first, and then taking the trace dot should be more memory
-  // efficient
+  // Note that Tr(C^T * (R R^T)) = Tr( (CR)^T * R ), so
+  // multiplying C * R first, and then taking the trace dot should be more
+  // memory efficient.
   //
-  // Similarly for the constraints, taking A*R first should be more efficient
+  // Similarly for the constraints, taking R^T * A first should be
+  // more efficient.
+  //
+  // For computation optimization we will be taking R^T * C first.
+  // Objective function = Tr((R^T * C) * R)
+
+  // Calculate R*R^T for updating cache.
   const arma::mat rrt = coordinates * trans(coordinates);
-  double objective = accu(function.SDP().C() % rrt);
+
+  // Update R*R^T matrix.
+  // Note that we can only use this optimization in case of L-BFGS optimizer
+  // or any other similar optimizer which calls Evaluate() before Gradient()
+  // with same coordinates matrix and uses only Evaluate() to update
+  // coordinates matrix.
+
+  // Note: In case optimizer also uses Gradient() for updating coordinates
+  // matrix than the same line of code can be used to update R*R^T through
+  // Gradient().
+  UpdateRRT(function, rrt);
+
+  // Optimized objective function.
+  double objective = trace((trans(coordinates) * function.SDP().C())
+                         * coordinates);
 
   // Now each constraint.
   UpdateObjective(objective, rrt, function.SDP().SparseA(),
@@ -168,7 +220,9 @@ GradientImpl(const LRSDPFunction<SDPType>& function,
   //   with
   // S' = C - sum_{i = 1}^{m} y'_i A_i
   // y'_i = y_i - sigma * (Trace(A_i * (R R^T)) - b_i)
-  const arma::mat rrt = coordinates * trans(coordinates);
+
+  // Directly reterive R*R^T from cache.
+  const arma::mat rrt = function.RRT();
   arma::mat s(function.SDP().C());
 
   UpdateGradient(

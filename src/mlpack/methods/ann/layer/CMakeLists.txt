@@ -6,6 +6,8 @@ set(SOURCES
   add_merge.hpp
   add_merge_impl.hpp
   base_layer.hpp
+  bilinear_interpolation.hpp
+  bilinear_interpolation_impl.hpp
   concat.hpp
   concat_impl.hpp
   concat_performance.hpp
