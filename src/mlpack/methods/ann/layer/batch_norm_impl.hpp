@@ -21,20 +21,20 @@ namespace mlpack {
 namespace ann { /** Artificial Neural Network. */
 
 template<typename InputDataType, typename OutputDataType>
-BatchNorm<InputDataType, OutputDataType>::BatchNorm():
-  size(10),
-  eps(1e-7),
-  deterministic(false)
+BatchNorm<InputDataType, OutputDataType>::BatchNorm() :
+    size(10),
+    eps(1e-7),
+    deterministic(false)
 {
   // Nothing to do here.
 }
 
 template <typename InputDataType, typename OutputDataType>
 BatchNorm<InputDataType, OutputDataType>::BatchNorm(
-  const size_t size, const double eps):
-  size(size),
-  eps(eps),
-  deterministic(false)
+    const size_t size, const double eps) :
+    size(size),
+    eps(eps),
+    deterministic(false)
 {
   weights.set_size(size + size, 1);
 }
@@ -101,9 +101,9 @@ void BatchNorm<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void BatchNorm<InputDataType, OutputDataType>::Gradient(
-  const arma::Mat<eT>&& input,
-  arma::Mat<eT>&& error,
-  arma::Mat<eT>&& gradient)
+    const arma::Mat<eT>&& input,
+    arma::Mat<eT>&& error,
+    arma::Mat<eT>&& gradient)
 {
   arma::mat normalized(input.n_rows, input.n_cols);
   gradient.reshape(size + size, 1);
@@ -119,7 +119,7 @@ void BatchNorm<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void BatchNorm<InputDataType, OutputDataType>::serialize(
-  Archive& ar, const unsigned int /* version */)
+    Archive& ar, const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(gamma);
   ar & BOOST_SERIALIZATION_NVP(beta);
