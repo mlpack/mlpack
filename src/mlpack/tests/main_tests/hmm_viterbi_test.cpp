@@ -44,16 +44,16 @@ BOOST_FIXTURE_TEST_SUITE(HMMViterbiMainTest, HMMViterbiTestFixture);
 
 BOOST_AUTO_TEST_CASE(HMMViterbiDiscreteHMMCheckDimensionsTest)
 {
-  // Train an HMM
+// Train an HMM
   HMMModel * h = new HMMModel(DiscreteHMM);
   // Load data
   arma::mat inp;
   data::Load("obs1.csv", inp);
   std::vector<arma::mat> trainSeq = {inp};
   // Init
-  h->PerformAction<Init, std::vector<arma::mat>>(&trainSeq);
+  h->PerformAction<InitHMMModel, std::vector<arma::mat>>(&trainSeq);
   // Train
-  h->PerformAction<Train, std::vector<arma::mat>>(&trainSeq);
+  h->PerformAction<TrainHMMModel, std::vector<arma::mat>>(&trainSeq);
 
   // Set the params for the hmm_viterbi invocation
   SetInputParam("input_model", h);
@@ -76,9 +76,9 @@ BOOST_AUTO_TEST_CASE(HMMViterbiGaussianHMMCheckDimensionsTest)
   data::Load("obs1.csv", inp);
   std::vector<arma::mat> trainSeq = {inp};
   // Init
-  h->PerformAction<Init, std::vector<arma::mat>>(&trainSeq);
+  h->PerformAction<InitHMMModel, std::vector<arma::mat>>(&trainSeq);
   // Train
-  h->PerformAction<Train, std::vector<arma::mat>>(&trainSeq);
+  h->PerformAction<TrainHMMModel, std::vector<arma::mat>>(&trainSeq);
 
   // Set the params for the hmm_viterbi invocation
   SetInputParam("input_model", h);
@@ -141,9 +141,9 @@ BOOST_AUTO_TEST_CASE(HMMViterbiGMMHMMCheckDimensionsTest)
     }
   }
   // Init
-  h->PerformAction<Init, std::vector<arma::mat>>(&observations);
+  h->PerformAction<InitHMMModel, std::vector<arma::mat>>(&observations);
   // Train
-  h->PerformAction<Train, std::vector<arma::mat>>(&observations);
+  h->PerformAction<TrainHMMModel, std::vector<arma::mat>>(&observations);
 
   // Set the params for the hmm_viterbi invocation
   SetInputParam("input_model", h);

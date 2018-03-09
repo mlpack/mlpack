@@ -17,7 +17,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/hmm/hmm.hpp>
 
-struct Init
+struct InitHMMModel
 {
   template<typename HMMType>
   static void Apply(HMMType& hmm, vector<mat>* trainSeq)
@@ -149,7 +149,7 @@ struct Init
   }
 };
 
-struct Train
+struct TrainHMMModel
 {
   template<typename HMMType>
   static void Apply(HMMType& hmm, vector<arma::mat>* trainSeq)

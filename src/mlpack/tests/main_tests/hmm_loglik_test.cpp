@@ -51,9 +51,9 @@ BOOST_AUTO_TEST_CASE(HMMLoglikOutputNegativeTest)
   data::Load("obs1.csv", inp);
   std::vector<arma::mat> trainSeq = {inp};
   // Init HMMModel
-  h->PerformAction<Init, std::vector<arma::mat>>(&trainSeq);
+  h->PerformAction<InitHMMModel, std::vector<arma::mat>>(&trainSeq);
   // Train HMMModel
-  h->PerformAction<Train, std::vector<arma::mat>>(&trainSeq);
+  h->PerformAction<TrainHMMModel, std::vector<arma::mat>>(&trainSeq);
 
 
   // Set the params for the hmm_loglik invocation

@@ -51,9 +51,9 @@ BOOST_AUTO_TEST_CASE(HMMGenerateDiscreteHMMCheckDimensionsTest)
   data::Load("obs1.csv", inp);
   std::vector<arma::mat> trainSeq = {inp};
   // Init
-  h->PerformAction<Init, std::vector<arma::mat>>(&trainSeq);
+  h->PerformAction<InitHMMModel, std::vector<arma::mat>>(&trainSeq);
   // Train
-  h->PerformAction<Train, std::vector<arma::mat>>(&trainSeq);
+  h->PerformAction<TrainHMMModel, std::vector<arma::mat>>(&trainSeq);
 
   // Set the params for the hmm_generate invocation
   int length = 3;
@@ -82,9 +82,9 @@ BOOST_AUTO_TEST_CASE(HMMGenerateGaussianHMMCheckDimensionsTest)
   data::Load("obs1.csv", inp);
   std::vector<arma::mat> trainSeq = {inp};
   // Init
-  h->PerformAction<Init, std::vector<arma::mat>>(&trainSeq);
+  h->PerformAction<InitHMMModel, std::vector<arma::mat>>(&trainSeq);
   // Train
-  h->PerformAction<Train, std::vector<arma::mat>>(&trainSeq);
+  h->PerformAction<TrainHMMModel, std::vector<arma::mat>>(&trainSeq);
 
   // Set the params for the hmm_generate invocation
   int length = 3;
@@ -153,9 +153,9 @@ BOOST_AUTO_TEST_CASE(HMMGenerateGMMHMMCheckDimensionsTest)
     }
   }
   // Init
-  h->PerformAction<Init, std::vector<arma::mat>>(&observations);
+  h->PerformAction<InitHMMModel, std::vector<arma::mat>>(&observations);
   // Train
-  h->PerformAction<Train, std::vector<arma::mat>>(&observations);
+  h->PerformAction<TrainHMMModel, std::vector<arma::mat>>(&observations);
 
   // Set the params for the hmm_generate invocation
   int length = 3;
@@ -184,9 +184,9 @@ BOOST_AUTO_TEST_CASE(HMMGenerateLengthPositiveTest)
   data::Load("obs1.csv", inp);
   std::vector<arma::mat> trainSeq = {inp};
   // Init
-  h->PerformAction<Init, std::vector<arma::mat>>(&trainSeq);
+  h->PerformAction<InitHMMModel, std::vector<arma::mat>>(&trainSeq);
   // Train
-  h->PerformAction<Train, std::vector<arma::mat>>(&trainSeq);
+  h->PerformAction<TrainHMMModel, std::vector<arma::mat>>(&trainSeq);
 
   // Set the params for the hmm_generate invocation
   int length = -3; // Invalid
@@ -207,9 +207,9 @@ BOOST_AUTO_TEST_CASE(HMMGenerateValidStartStateTest)
   data::Load("obs1.csv", inp);
   std::vector<arma::mat> trainSeq = {inp};
   // Init
-  h->PerformAction<Init, std::vector<arma::mat>>(&trainSeq);
+  h->PerformAction<InitHMMModel, std::vector<arma::mat>>(&trainSeq);
   // Train
-  h->PerformAction<Train, std::vector<arma::mat>>(&trainSeq);
+  h->PerformAction<TrainHMMModel, std::vector<arma::mat>>(&trainSeq);
 
   int length = 3;
   int startState = 2; // Invalid
