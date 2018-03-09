@@ -66,6 +66,7 @@ set(DIRS
   sparse_autoencoder
   sparse_coding
   sparse_svm
+  kde
 )
 
 foreach(dir ${DIRS})
