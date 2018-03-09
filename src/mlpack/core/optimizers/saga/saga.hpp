@@ -20,7 +20,7 @@
 #include "saga_update.hpp"
 
 namespace mlpack {
-  namespace optimization {
+namespace optimization {
 
 /**
  * SAGA is a technique for minimizing a function
@@ -94,132 +94,132 @@ namespace mlpack {
  *     process to adjust the step size. By default the step size isn't going to
  *     be adjusted (i.e. NoDecay is used).
  */
-    template<typename UpdatePolicyType = SAGAUpdate,
-        typename DecayPolicyType = NoDecay>
-    class SAGAType
-    {
-    public:
-      /**
-       * Construct the SAGA optimizer with the given function and parameters.  The
-       * defaults here are not necessarily good for the given problem, so it is
-       * suggested that the values used be tailored to the task at hand.  The
-       * maximum number of iterations refers to the maximum number of points that
-       * are processed (i.e., one iteration equals one point; one iteration does not
-       * equal one pass over the dataset).
-       *
-       * @param stepSize Step size for each iteration.
-       * @param batchSize Batch size to use for each step.
-       * @param maxIterations Maximum number of iterations allowed (0 means no
-       *     limit).
-       * @param tolerance Maximum absolute tolerance to terminate algorithm.
-       * @param shuffle If true, the function order is shuffled; otherwise, each
-       *     function is visited in linear order.
-       * @param updatePolicy Instantiated update policy used to adjust the given
-       *     parameters.
-       * @param decayPolicy Instantiated decay policy used to adjust the step size.
-       * @param resetPolicy Flag that determines whether update policy parameters
-       *     are reset before every Optimize call.
-       */
-      SAGAType(const double stepSize = 0.01,
-               const size_t batchSize = 32,
-               const size_t maxIterations = 1000,
-               const double tolerance = 1e-5,
-               const bool shuffle = true,
-               const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
-               const DecayPolicyType& decayPolicy = DecayPolicyType(),
-               const bool resetPolicy = true);
+template<typename UpdatePolicyType = SAGAUpdate,
+    typename DecayPolicyType = NoDecay>
+class SAGAType
+{
+ public:
+  /**
+   * Construct the SAGA optimizer with the given function and parameters.  The
+   * defaults here are not necessarily good for the given problem, so it is
+   * suggested that the values used be tailored to the task at hand.  The
+   * maximum number of iterations refers to the maximum number of points that
+   * are processed (i.e., one iteration equals one point; one iteration does not
+   * equal one pass over the dataset).
+   *
+   * @param stepSize Step size for each iteration.
+   * @param batchSize Batch size to use for each step.
+   * @param maxIterations Maximum number of iterations allowed (0 means no
+   *     limit).
+   * @param tolerance Maximum absolute tolerance to terminate algorithm.
+   * @param shuffle If true, the function order is shuffled; otherwise, each
+   *     function is visited in linear order.
+   * @param updatePolicy Instantiated update policy used to adjust the given
+   *     parameters.
+   * @param decayPolicy Instantiated decay policy used to adjust the step size.
+   * @param resetPolicy Flag that determines whether update policy parameters
+   *     are reset before every Optimize call.
+   */
+  SAGAType(const double stepSize = 0.01,
+           const size_t batchSize = 32,
+           const size_t maxIterations = 1000,
+           const double tolerance = 1e-5,
+           const bool shuffle = true,
+           const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
+           const DecayPolicyType& decayPolicy = DecayPolicyType(),
+           const bool resetPolicy = true);
 
-      /**
-       * Optimize the given function using SAGA. The given starting point will be
-       * modified to store the finishing point of the algorithm, and the final
-       * objective value is returned.
-       *
-       * @tparam DecomposableFunctionType Type of the function to be optimized.
-       * @param function Function to optimize.
-       * @param iterate Starting point (will be modified).
-       * @return Objective value of the final point.
-       */
-      template<typename DecomposableFunctionType>
-      double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
+  /**
+   * Optimize the given function using SAGA. The given starting point will be
+   * modified to store the finishing point of the algorithm, and the final
+   * objective value is returned.
+   *
+   * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @param function Function to optimize.
+   * @param iterate Starting point (will be modified).
+   * @return Objective value of the final point.
+   */
+  template<typename DecomposableFunctionType>
+  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
 
-      //! Get the step size.
-      double StepSize() const { return stepSize; }
-      //! Modify the step size.
-      double& StepSize() { return stepSize; }
+  //! Get the step size.
+  double StepSize() const { return stepSize; }
+  //! Modify the step size.
+  double& StepSize() { return stepSize; }
 
-      //! Get the batch size.
-      size_t BatchSize() const { return batchSize; }
-      //! Modify the batch size.
-      size_t& BatchSize() { return batchSize; }
+  //! Get the batch size.
+  size_t BatchSize() const { return batchSize; }
+  //! Modify the batch size.
+  size_t& BatchSize() { return batchSize; }
 
-      //! Get the maximum number of iterations (0 indicates no limit).
-      size_t MaxIterations() const { return maxIterations; }
-      //! Modify the maximum number of iterations (0 indicates no limit).
-      size_t& MaxIterations() { return maxIterations; }
+  //! Get the maximum number of iterations (0 indicates no limit).
+  size_t MaxIterations() const { return maxIterations; }
+  //! Modify the maximum number of iterations (0 indicates no limit).
+  size_t& MaxIterations() { return maxIterations; }
 
-      //! Get the tolerance for termination.
-      double Tolerance() const { return tolerance; }
-      //! Modify the tolerance for termination.
-      double& Tolerance() { return tolerance; }
+  //! Get the tolerance for termination.
+  double Tolerance() const { return tolerance; }
+  //! Modify the tolerance for termination.
+  double& Tolerance() { return tolerance; }
 
-      //! Get whether or not the individual functions are shuffled.
-      bool Shuffle() const { return shuffle; }
-      //! Modify whether or not the individual functions are shuffled.
-      bool& Shuffle() { return shuffle; }
+  //! Get whether or not the individual functions are shuffled.
+  bool Shuffle() const { return shuffle; }
+  //! Modify whether or not the individual functions are shuffled.
+  bool& Shuffle() { return shuffle; }
 
-      //! Get whether or not the update policy parameters
-      //! are reset before Optimize call.
-      bool ResetPolicy() const { return resetPolicy; }
-      //! Modify whether or not the update policy parameters
-      //! are reset before Optimize call.
-      bool& ResetPolicy() { return resetPolicy; }
+  //! Get whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool ResetPolicy() const { return resetPolicy; }
+  //! Modify whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool& ResetPolicy() { return resetPolicy; }
 
-      //! Get the update policy.
-      const UpdatePolicyType& UpdatePolicy() const { return updatePolicy; }
-      //! Modify the update policy.
-      UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
+  //! Get the update policy.
+  const UpdatePolicyType& UpdatePolicy() const { return updatePolicy; }
+  //! Modify the update policy.
+  UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
 
-      //! Get the step size decay policy.
-      const DecayPolicyType& DecayPolicy() const { return decayPolicy; }
-      //! Modify the step size decay policy.
-      DecayPolicyType& DecayPolicy() { return decayPolicy; }
+  //! Get the step size decay policy.
+  const DecayPolicyType& DecayPolicy() const { return decayPolicy; }
+  //! Modify the step size decay policy.
+  DecayPolicyType& DecayPolicy() { return decayPolicy; }
 
-    private:
-      //! The step size for each example.
-      double stepSize;
+ private:
+  //! The step size for each example.
+  double stepSize;
 
-      //! The batch size for processing.
-      size_t batchSize;
+  //! The batch size for processing.
+  size_t batchSize;
 
-      //! The maximum number of allowed iterations.
-      size_t maxIterations;
+  //! The maximum number of allowed iterations.
+  size_t maxIterations;
 
-      //! The tolerance for termination.
-      double tolerance;
+  //! The tolerance for termination.
+  double tolerance;
 
-      //! Controls whether or not the individual functions are shuffled when
-      //! iterating.
-      bool shuffle;
+  //! Controls whether or not the individual functions are shuffled when
+  //! iterating.
+  bool shuffle;
 
-      //! The update policy used to update the parameters in each iteration.
-      UpdatePolicyType updatePolicy;
+  //! The update policy used to update the parameters in each iteration.
+  UpdatePolicyType updatePolicy;
 
-      //! The decay policy used to update the step size.
-      DecayPolicyType decayPolicy;
+  //! The decay policy used to update the step size.
+  DecayPolicyType decayPolicy;
 
-      //! Flag indicating whether update policy
-      //! should be reset before running optimization.
-      bool resetPolicy;
-    };
+  //! Flag indicating whether update policy
+  //! should be reset before running optimization.
+  bool resetPolicy;
+};
 
 // Convenience typedefs.
 
 /**
- * Standard stochastic variance reduced gradient.
- */
-    using SAGA = SAGAType<SAGAUpdate, NoDecay>;
+* Standard stochastic variance reduced gradient.
+*/
+using SAGA = SAGAType<SAGAUpdate, NoDecay>;
 
-  } // namespace optimization
+} // namespace optimization
 } // namespace mlpack
 
 // Include implementation.

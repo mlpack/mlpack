@@ -15,49 +15,49 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-  namespace optimization {
+namespace optimization {
 
 /**
  * Vanilla update policy for SAGA.
  * The following update scheme is used to update SGD in every iteration:
  */
-    class SAGAUpdate
-    {
-    public:
-      /**
-       * The Initialize method is called by SAGA Optimizer method before the start
-       * of the iteration update process. The vanilla update doesn't initialize
-       * anything.
-       *
-       * @param rows Number of rows in the gradient matrix.
-       * @param cols Number of columns in the gradient matrix.
-       */
-      void Initialize(const size_t /* rows */, const size_t /* cols */)
-      { /* Do nothing. */ }
+class SAGAUpdate
+{
+public:
+  /**
+   * The Initialize method is called by SAGA Optimizer method before the start
+   * of the iteration update process. The vanilla update doesn't initialize
+   * anything.
+   *
+   * @param rows Number of rows in the gradient matrix.
+   * @param cols Number of columns in the gradient matrix.
+   */
+  void Initialize(const size_t /* rows */, const size_t /* cols */)
+  { /* Do nothing. */ }
 
-      /**
-       * Update step for SAGA. The function parameters are updated in the negative
-       * direction of the gradient.
-       *
-       * @param iterate Parameters that minimize the function.
-       * @param avgGradient The computed average gradient of all functions.
-       * @param gradient The current gradient matrix at time t.
-       * @param gradient0 The old gradient matrix at time t - 1.
-       * @param batchSize Batch size to be used for the given iteration.
-       * @param stepSize Step size to be used for the given iteration.
-       */
-      void Update(arma::mat& iterate,
-                  const arma::mat& avgGradient,
-                  const arma::mat& gradient,
-                  const arma::mat& gradient0,
-                  const double stepSize)
-      {
-        // Perform the vanilla SAGA update.
-        iterate -= stepSize * (avgGradient + (gradient - gradient0));
-      }
-    };
+  /**
+   * Update step for SAGA. The function parameters are updated in the negative
+   * direction of the gradient.
+   *
+   * @param iterate Parameters that minimize the function.
+   * @param avgGradient The computed average gradient of all functions.
+   * @param gradient The current gradient matrix at time t.
+   * @param gradient0 The old gradient matrix at time t - 1.
+   * @param batchSize Batch size to be used for the given iteration.
+   * @param stepSize Step size to be used for the given iteration.
+   */
+  void Update(arma::mat& iterate,
+              const arma::mat& avgGradient,
+              const arma::mat& gradient,
+              const arma::mat& gradient0,
+              const double stepSize)
+  {
+    // Perform the vanilla SAGA update.
+    iterate -= stepSize * (avgGradient + (gradient - gradient0));
+  }
+};
 
-  } // namespace optimization
+} // namespace optimization
 } // namespace mlpack
 
 #endif
