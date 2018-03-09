@@ -183,7 +183,7 @@ CalculateCentroid(const MatType& data,
 template<bool UseKernel, typename KernelType, typename MatType>
 inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
     const MatType& data,
-    arma::Col<size_t>& assignments,
+    arma::Row<size_t>& assignments,
     arma::mat& centroids,
     bool useSeeds)
 {
@@ -265,7 +265,7 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
   arma::mat neighborDistances;
   arma::Mat<size_t> resultingNeighbors;
   neighborSearcher.Search(data, 1, resultingNeighbors, neighborDistances);
-  assignments = resultingNeighbors.t();
+  assignments = resultingNeighbors;
 }
 
 } // namespace meanshift
