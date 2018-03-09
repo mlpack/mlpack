@@ -509,12 +509,12 @@ BOOST_AUTO_TEST_CASE(NadaMaxLogisticRegressionTest)
 }
 
 /**
- * Tests the Adamirror optimizer using a simple test function.
+ * Tests the OptimisticAdam optimizer using a simple test function.
  */
-BOOST_AUTO_TEST_CASE(SimpleAdamirrorTestFunction)
+BOOST_AUTO_TEST_CASE(SimpleOptimisticAdamTestFunction)
 {
   SGDTestFunction f;
-  Adamirror optimizer(1e-2, 1, 0.9, 0.99, 1e-8);
+  OptimisticAdam optimizer(1e-2, 1, 0.9, 0.99, 1e-8);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
@@ -525,9 +525,9 @@ BOOST_AUTO_TEST_CASE(SimpleAdamirrorTestFunction)
 }
 
 /**
- * Run Adamirror on logistic regression and make sure the results are acceptable.
+ * Run OptimisticAdam on logistic regression and make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(AdamirrorLogisticRegressionTest)
+BOOST_AUTO_TEST_CASE(OptimisticAdamLogisticRegressionTest)
 {
   // Generate a two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"),
@@ -573,8 +573,8 @@ BOOST_AUTO_TEST_CASE(AdamirrorLogisticRegressionTest)
     testResponses[i] = 1;
   }
 
-  Adamirror adamirror;
-  LogisticRegression<> lr(shuffledData, shuffledResponses, adamirror, 0.5);
+  OptimisticAdam optimisticAdam;
+  LogisticRegression<> lr(shuffledData, shuffledResponses, optimisticAdam, 0.5);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);

@@ -1,8 +1,8 @@
 /**
- * @file adamirror_update.hpp
+ * @file optimisticadam_update.hpp
  * @author Moksh Jain
  *
- * Adamirror optimizer. Optimistic Adam is an an algorithm which uses
+ * OptmisticAdam optimizer. Optimistic Adam is an an algorithm which uses
  * Optimistic Mirror Descent with the Adam optimizer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_ADAM_ADAMIRROR_UPDATE_HPP
-#define MLPACK_CORE_OPTIMIZERS_ADAM_ADAMIRROR_UPDATE_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_ADAM_OPTIMISTICADAM_UPDATE_HPP
+#define MLPACK_CORE_OPTIMIZERS_ADAM_OPTIMISTICADAM_UPDATE_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -19,7 +19,7 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * Adamirror is an optimizer which uses Optmistic Mirror Descent with
+ * OptimisticAdam is an optimizer which uses Optmistic Mirror Descent with
  * the Adam Optimizer.
  *
  * For more information, see the following.
@@ -34,20 +34,20 @@ namespace optimization {
  * }
  * @endcode
  */
-class AdamirrorUpdate
+class OptimisticAdamUpdate
 {
  public:
   /**
-   * Construct the Adamirror update policy with the given parameters.
+   * Construct the OptimisticAdam update policy with the given parameters.
    *
    * @param epsilon The epsilon value used to initialise the squared gradient
    *        parameter.
    * @param beta1 The smoothing parameter.
    * @param beta2 The second moment coefficient.
    */
-  AdamirrorUpdate(const double epsilon = 1e-8,
-             const double beta1 = 0.9,
-             const double beta2 = 0.999) :
+  OptimisticAdamUpdate(const double epsilon = 1e-8,
+                  const double beta1 = 0.9,
+                  const double beta2 = 0.999) :
     epsilon(epsilon),
     beta1(beta1),
     beta2(beta2),
@@ -71,7 +71,7 @@ class AdamirrorUpdate
   }
 
   /**
-   * Update step for Adamirror.
+   * Update step for OptimisticAdam.
    *
    * @param iterate Parameters that minimize the function.
    * @param stepSize Step size to be used for the given iteration.
@@ -98,7 +98,7 @@ class AdamirrorUpdate
 
     iterate -= (2 * stepSize * update - stepSize * g);
 
-    g = update;
+    g = std::move(update);
   }
 
   //! Get the value used to initialise the squared gradient parameter.
