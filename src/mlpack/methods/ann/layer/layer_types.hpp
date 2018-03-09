@@ -47,9 +47,7 @@ namespace mlpack {
 namespace ann {
 
 
-template<typename InputDataType, typename OutputDataType> class AddMerge;
 template<typename InputDataType, typename OutputDataType> class BatchNorm;
-template<typename InputDataType, typename OutputDataType> class Concat;
 template<typename InputDataType, typename OutputDataType> class DropConnect;
 template<typename InputDataType, typename OutputDataType> class Glimpse;
 template<typename InputDataType, typename OutputDataType> class Linear;
