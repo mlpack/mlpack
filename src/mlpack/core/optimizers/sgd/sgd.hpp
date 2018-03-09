@@ -107,7 +107,7 @@ class SGD
    * @param resetPolicy Flag that determines whether update policy parameters
    *                    are reset before every Optimize call.
    */
-  SGD(const double stepSize = 0.01,
+  SGD(const double stepSize = 0.001,
       const size_t batchSize = 32,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,

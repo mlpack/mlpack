@@ -43,7 +43,9 @@ class NesterovMomentumUpdate
    * Construct the Nesterov Momentum update policy with the given parameters.
    *
    */
-  NesterovMomentumUpdate() : iteration(0)
+  NesterovMomentumUpdate(const double maxMomentum = 0.999) :
+      iteration(0),
+      maxMomentum(maxMomentum)
   {
     // Nothing to do.
   }
@@ -78,12 +80,18 @@ class NesterovMomentumUpdate
   {
     iteration++;
 
-    double momentum = 1 - (3 / (iteration + 5));
+    double momentumT = std::min((1 - std::pow(2,(- 1 - ((log(floor(iteration
+        / 250)) +1) / log(2))))) , maxMomentum);
 
-    velocity = momentum * velocity - stepSize * gradient;
+    velocity = momentumT * velocity - stepSize * gradient;
 
     iterate += velocity;
   }
+
+  //! Get the value used to initialise the maximum momentum coefficient.
+  double MaxMomentum() const { return maxMomentum; }
+  //! Modify the value used to initialise the maximum momentum coefficient.
+  double& MaxMomentum() { return maxMomentum; }
 
  private:
   // The velocity matrix.
@@ -91,6 +99,9 @@ class NesterovMomentumUpdate
 
   // The number of iterations.
   double iteration;
+
+  // Maximum momentum coefficient
+  double maxMomentum;
 };
 
 } // namespace optimization
