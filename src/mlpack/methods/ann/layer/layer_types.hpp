@@ -12,10 +12,6 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_LAYER_TYPES_HPP
 #define MLPACK_METHODS_ANN_LAYER_LAYER_TYPES_HPP
 
-// Increase boost:variant size
-#define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
-#define BOOST_MPL_LIMIT_LIST_SIZE 50
-
 #include <boost/variant.hpp>
 
 // Layer modules.
