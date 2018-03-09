@@ -1353,7 +1353,7 @@ BOOST_AUTO_TEST_CASE(BatchNormTest)
   model.Backward(std::move(input), std::move(gy), std::move(output));
   result << -0.0780 << 0.1376 << -0.0596 << arma::endr
          << 0.0602 << -0.1317 << 0.0715 << arma::endr
-         << 0.0835 << -0.1493 << 0.0658  << arma::endr;
+         << 0.0835 << -0.1493 << 0.0658 << arma::endr;
 
   CheckMatrices(output, result, 1e-1);
   result.clear();
