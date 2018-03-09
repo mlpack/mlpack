@@ -293,7 +293,7 @@ static void mlpackMain()
       Log::Fatal << "Invalid k: " << k << "; must be less than the number of "
           << "reference points (" << knn->Dataset().n_cols << ") "
           << "if query data has not been provided." << endl;
-      }
+    }
 
     // Now run the search.
     arma::Mat<size_t> neighbors;

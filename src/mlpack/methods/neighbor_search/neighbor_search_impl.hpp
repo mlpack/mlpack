@@ -543,7 +543,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   if (k > referenceSet->n_cols)
   {
     std::stringstream ss;
-    ss << "requested value of k (" << k << ") is greater than the number of "
+    ss << "Requested value of k (" << k << ") is greater than the number of "
         << "points in the reference set (" << referenceSet->n_cols << ")";
     throw std::invalid_argument(ss.str());
   }
@@ -760,7 +760,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   if (k > referenceSet->n_cols)
   {
     std::stringstream ss;
-    ss << "requested value of k (" << k << ") is greater than the number of "
+    ss << "Requested value of k (" << k << ") is greater than the number of "
         << "points in the reference set (" << referenceSet->n_cols << ")";
     throw std::invalid_argument(ss.str());
   }
@@ -843,7 +843,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   if (k > referenceSet->n_cols)
   {
     std::stringstream ss;
-    ss << "requested value of k (" << k << ") is greater than the number of "
+    ss << "Requested value of k (" << k << ") is greater than the number of "
         << "points in the reference set (" << referenceSet->n_cols << ")";
     throw std::invalid_argument(ss.str());
   }
