@@ -220,9 +220,7 @@ BOOST_AUTO_TEST_CASE(DecisionRegularisationTest)
   // Input test data.
   SetInputParam("test", dataset);
 
-  Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
+  mlpackMain();
   pred = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
 
   // Input training data.
@@ -235,9 +233,7 @@ BOOST_AUTO_TEST_CASE(DecisionRegularisationTest)
   // Input test data.
   SetInputParam("test", std::move(dataset));
 
-  Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
+  mlpackMain();
   predRegularised = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
 
   size_t count = 0;
