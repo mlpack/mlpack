@@ -85,7 +85,6 @@ template<typename eT>
 void BatchNorm<InputDataType, OutputDataType>::Backward(
   const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-
   g.reshape(input.n_rows, input.n_cols);
 
   mean = arma::mean(input, 1);
