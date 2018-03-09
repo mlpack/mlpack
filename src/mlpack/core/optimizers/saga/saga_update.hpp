@@ -23,7 +23,7 @@ namespace optimization {
  */
 class SAGAUpdate
 {
-public:
+ public:
   /**
    * The Initialize method is called by SAGA Optimizer method before the start
    * of the iteration update process. The vanilla update doesn't initialize
