@@ -505,7 +505,7 @@ BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
 BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
 {
   string algorithms[] = {"dual_tree", "naive", "single_tree"};
-  const int nofalgorithms = sizeof(algorithms) / sizeof(algorithms[0]);
+  constexpr int nofalgorithms = sizeof(algorithms) / sizeof(algorithms[0]);
 
   // Neighbors and distances given by the above algorithms will be stored
   // in the following arrays in the order:
@@ -557,7 +557,7 @@ BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
 {
   string treetypes[] = {"kd", "vp", "rp", "max-rp", "ub", "cover", "r",
       "r-star", "x", "ball", "hilbert-r", "r-plus", "r-plus-plus", "oct"};
-  const int noftreetypes = sizeof(treetypes) / sizeof(treetypes[0]);
+  constexpr int noftreetypes = sizeof(treetypes) / sizeof(treetypes[0]);
 
   // Neighbors and distances given by using the above tree types will
   // be stored in the following arrays in the order:
