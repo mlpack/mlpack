@@ -245,10 +245,8 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
   // Make sure we have an output file if we're not doing the work in-place.
   RequireAtLeastOnePassed({ "in_place", "output", "centroid" }, false,
       "no results will be saved");
-  if (!CLI::HasParam("input"))
-    Log::Fatal << "Must specify input"<< endl;
-  // Load our dataset.
-  arma::mat dataset = CLI::GetParam<arma::mat>("input");
+
+  arma::mat dataset = CLI::GetParam<arma::mat>("input");  // Load our dataset.
   arma::mat centroids;
 
   const bool initialCentroidGuess = CLI::HasParam("initial_centroids");

@@ -237,20 +237,6 @@ BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
 }
 
 /**
- * Ensuring that absence of Input is checked.
- */
-BOOST_AUTO_TEST_CASE(KmNoInputData)
-{
-  int c = 2;
-
-  SetInputParam("clusters", c);
-
-  Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
-}
-
-/**
  * Checking that that size and dimensionality of Final Input File is correct
  * when flag --in_place is specified
  */
