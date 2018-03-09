@@ -483,7 +483,7 @@ BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
   dummy_neighbors.randu(20, 100);
   dummy_distances.randu(20, 100);
 
-  bindings::tests::CleanMemory();
+  // bindings::tests::CleanMemory();
 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["true_neighbors"].wasPassed = false;
@@ -505,7 +505,7 @@ BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
 BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
 {
   string algorithms[] = {"dual_tree", "naive", "single_tree"};
-  int nofalgorithms = sizeof(algorithms) / sizeof(algorithms[0]);
+  const int nofalgorithms = sizeof(algorithms) / sizeof(algorithms[0]);
 
   // Neighbors and distances given by the above algorithms will be stored
   // in the following arrays in the order:
@@ -557,7 +557,7 @@ BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
 {
   string treetypes[] = {"kd", "vp", "rp", "max-rp", "ub", "cover", "r",
       "r-star", "x", "ball", "hilbert-r", "r-plus", "r-plus-plus", "oct"};
-  int noftreetypes = sizeof(treetypes) / sizeof(treetypes[0]);
+  const int noftreetypes = sizeof(treetypes) / sizeof(treetypes[0]);
 
   // Neighbors and distances given by using the above tree types will
   // be stored in the following arrays in the order:

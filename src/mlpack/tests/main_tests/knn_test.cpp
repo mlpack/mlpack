@@ -333,7 +333,7 @@ BOOST_AUTO_TEST_CASE(KNNModelReuseTest)
 }
 
 /*
- * Ensure that changing the value of tau gives us different
+ * Ensure that changing the value of tau gives us different greedy
  * spill tree results.
  */
 BOOST_AUTO_TEST_CASE(KNNDifferentTauTest)
@@ -372,7 +372,7 @@ BOOST_AUTO_TEST_CASE(KNNDifferentTauTest)
 }
 
 /*
- * Ensure that changing the value of rho gives us different
+ * Ensure that changing the value of rho gives us different greedy
  * spill tree results.
  */
 BOOST_AUTO_TEST_CASE(KNNDifferentRhoTest)
@@ -384,9 +384,9 @@ BOOST_AUTO_TEST_CASE(KNNDifferentRhoTest)
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 10);
   SetInputParam("tree_type", (string) "spill");
+  SetInputParam("tau", (double) 0.3);
   SetInputParam("rho", (double) 0.2);
   SetInputParam("algorithm", (string) "greedy");
-  SetInputParam("tau", (double) 0.5);
 
   mlpackMain();
 
@@ -402,7 +402,6 @@ BOOST_AUTO_TEST_CASE(KNNDifferentRhoTest)
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("rho", (double) 0.8);
-  SetInputParam("tau", (double) 0.5);
 
   mlpackMain();
 
@@ -522,7 +521,7 @@ BOOST_AUTO_TEST_CASE(KNNTrueNeighborDistanceTest)
   dummy_neighbors.randu(20, 100);
   dummy_distances.randu(20, 100);
 
-  bindings::tests::CleanMemory();
+  // bindings::tests::CleanMemory();
 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["true_neighbors"].wasPassed = false;
