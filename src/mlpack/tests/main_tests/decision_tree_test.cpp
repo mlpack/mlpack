@@ -197,6 +197,61 @@ BOOST_AUTO_TEST_CASE(DecisionMinimumGainSplitTest)
 }
 
 /**
+ * Make sure minimum gain split produces regularised tree.
+ */
+BOOST_AUTO_TEST_CASE(DecisionRegularisationTest)
+{
+  // Completely random dataset with no structure.
+  arma::mat dataset(10, 1000, arma::fill::randu);
+  arma::mat pred, predRegularised;
+  arma::Row<size_t> labels(1000);
+  for (size_t i = 0; i < 1000; ++i)
+    labels[i] = i % 3; // 3 classes.
+  arma::rowvec weights(labels.n_elem);
+  weights.ones();
+
+  // Input training data.
+  SetInputParam("training", dataset);
+  SetInputParam("labels", labels);
+  SetInputParam("weights", weights);
+
+  SetInputParam("minimum_gain_split", 1e-7);
+
+  // Input test data.
+  SetInputParam("test", dataset);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+  pred = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+
+  // Input training data.
+  SetInputParam("training", dataset);
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("weights", std::move(weights));
+
+  SetInputParam("minimum_gain_split", 0.01);
+
+  // Input test data.
+  SetInputParam("test", std::move(dataset));
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+  predRegularised = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+
+  size_t count = 0;
+  // This part of code is dupliacte with no weighted one.
+  for (size_t i = 0; i < 1000; ++i)
+  {
+    if (pred[i] != predRegularised[i])
+      count++;
+  }
+
+  BOOST_REQUIRE_GT(count, 0);
+}
+
+/**
  * Ensure that saved model can be used again.
  */
 BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
