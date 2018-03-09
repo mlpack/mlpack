@@ -2,7 +2,7 @@
  * @file saga_update.hpp
  * @author Prabhat Sharma
  *
- * Vanilla update for stochastic variance reduced gradient (SVRG).
+ * Vanilla update for SAGA.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -18,14 +18,14 @@ namespace mlpack {
   namespace optimization {
 
 /**
- * Vanilla update policy for Stochastic variance reduced gradient (SVRG).
+ * Vanilla update policy for SAGA.
  * The following update scheme is used to update SGD in every iteration:
  */
     class SAGAUpdate
     {
     public:
       /**
-       * The Initialize method is called by SVRG Optimizer method before the start
+       * The Initialize method is called by SAGA Optimizer method before the start
        * of the iteration update process. The vanilla update doesn't initialize
        * anything.
        *
@@ -36,11 +36,11 @@ namespace mlpack {
       { /* Do nothing. */ }
 
       /**
-       * Update step for SVRG. The function parameters are updated in the negative
+       * Update step for SAGA. The function parameters are updated in the negative
        * direction of the gradient.
        *
        * @param iterate Parameters that minimize the function.
-       * @param fullGradient The computed full gradient.
+       * @param avgGradient The computed average gradient of all functions.
        * @param gradient The current gradient matrix at time t.
        * @param gradient0 The old gradient matrix at time t - 1.
        * @param batchSize Batch size to be used for the given iteration.
@@ -52,7 +52,7 @@ namespace mlpack {
                   const arma::mat& gradient0,
                   const double stepSize)
       {
-        // Perform the vanilla SVRG update.
+        // Perform the vanilla SAGA update.
         iterate -= stepSize * (avgGradient + (gradient - gradient0));
       }
     };

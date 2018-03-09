@@ -97,6 +97,7 @@ add_executable(mlpack_test
   rl_components_test.cpp
   rmsprop_test.cpp
   sa_test.cpp
+  saga_test.cpp
   sarah_test.cpp
   scd_test.cpp
   sdp_primal_dual_test.cpp
@@ -147,7 +148,7 @@ add_executable(mlpack_test
   main_tests/sparse_coding_test.cpp
   main_tests/hoeffding_tree_test.cpp
   main_tests/hmm_train_test.cpp
-        saga_test.cpp)
+  )
 
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test

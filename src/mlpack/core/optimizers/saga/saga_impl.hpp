@@ -2,7 +2,8 @@
  * @file saga_impl.hpp
  * @author Prabhat Sharma
  *
- * Implementation of stochastic variance reduced gradient (SVRG).
+ * Implementation of SAGA: A Fast Incremental Gradient Method With
+ * Support for Non-Strongly Convex Composite Objectives.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -96,7 +97,7 @@ namespace mlpack {
 
         lastObjective = overallObjective;
 
-        // Compute the full gradient.
+        // initializa the gradients.
         size_t effectiveBatchSize = std::min(batchSize, numFunctions);
         arma::cube tableOfGradients(iterate.n_rows, iterate.n_cols, numBatches);
         arma::mat avgGradient(iterate.n_rows, iterate.n_cols);
@@ -148,7 +149,7 @@ namespace mlpack {
           }
 
 
-          // Calculate variance reduced gradient.
+          // Calculate the gradient of a random function.
           function.Gradient(iterate, currentFunction, gradient,
                             effectiveBatchSize);
           gradient0 = tableOfGradients.slice(b) ;

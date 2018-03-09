@@ -30,9 +30,9 @@ namespace mlpack {
  * f(A) = \sum_{i = 0}^{n} f_i(A)
  * \f]
  *
- * and our task is to minimize \f$ A \f$.  Stochastic Variance Reduced Gradient
- * iterates over each function \f$ f_i(A) \f$, based on the specified update
- * policy. By default vanilla update policy is used. The SVRG class supports
+ * and our task is to minimize \f$ A \f$. SAGA iterates over each function
+ * \f$ f_i(A) \f$, based on the specified update
+ * policy. By default vanilla update policy is used. The SAGA class supports
  * either scanning through each of the \f$ n \f$
  * functions \f$ f_i(A)\f$ linearly, or in a random sequence.  The algorithm
  * continues until \f$ j\f$ reaches the maximum number of iterations---or when a
@@ -49,10 +49,10 @@ namespace mlpack {
  *
  * This class is useful for data-dependent functions whose objective function
  * can be expressed as a sum of objective functions operating on an individual
- * point.  Then, SVRG considers the gradient of the objective function operating
+ * point.  Then, SAGA considers the gradient of the objective function operating
  * on an individual point in its update of \f$ A \f$.
  *
- * For SVRG to work, a DecomposableFunctionType template parameter is required.
+ * For SAGA to work, a DecomposableFunctionType template parameter is required.
  * This class must implement the following function:
  *
  *   size_t NumFunctions();
@@ -75,22 +75,19 @@ namespace mlpack {
  * For more information, please refer to:
  *
  * @code
- * @inproceedings{Johnson2013,
- *   author    = {Johnson, Rie and Zhang, Tong},
- *   title     = {Accelerating Stochastic Gradient Descent Using Predictive
- *                Variance Reduction},
- *   booktitle = {Proceedings of the 26th International Conference on Neural
- *                Information Processing Systems - Volume 1},
- *   series    = {NIPS'13},
- *   year      = {2013},
- *   location  = {Lake Tahoe, Nevada},
- *   pages     = {315--323},
- *   numpages  = {9},
- *   publisher = {Curran Associates Inc.},
+ *@incollection{NIPS2014_5258,
+ * title     = {SAGA: A Fast Incremental Gradient Method With Support for Non-Strongly Convex Composite Objectives},
+ * author    = {Defazio, Aaron and Bach, Francis and Lacoste-Julien, Simon},
+ * booktitle = {Advances in Neural Information Processing Systems 27},
+ * editor    = {Z. Ghahramani and M. Welling and C. Cortes and N. D. Lawrence and K. Q. Weinberger},
+ * year      = {2014},
+ * publisher = {Curran Associates, Inc.},
+ * url       = {http://papers.nips.cc/paper/5258-saga-a-fast-incremental-gradient-method-with-support-for-non
+ *              -strongly-convex-composite-objectives.pdf}
  * }
  * @endcode
  *
- * @tparam UpdatePolicyType update policy used by SVRG during the iterative
+ * @tparam UpdatePolicyType update policy used by SAGA during the iterative
  *     update process. By default vanilla update policy
  *     (see mlpack::optimization::VanillaUpdate) is used.
  * @tparam DecayPolicyType Decay policy used during the iterative update
@@ -114,9 +111,6 @@ namespace mlpack {
        * @param batchSize Batch size to use for each step.
        * @param maxIterations Maximum number of iterations allowed (0 means no
        *     limit).
-       * @param innerIterations The number of inner iterations allowed (0 means
-       *    n / batchSize). Note that the full gradient is only calculated in
-       *    the outer iteration.
        * @param tolerance Maximum absolute tolerance to terminate algorithm.
        * @param shuffle If true, the function order is shuffled; otherwise, each
        *     function is visited in linear order.
