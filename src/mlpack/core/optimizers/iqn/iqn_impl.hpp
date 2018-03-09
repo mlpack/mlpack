@@ -17,6 +17,8 @@
 // In case it hasn't been included yet.
 #include "iqn.hpp"
 
+#include <mlpack/core/optimizers/function.hpp>
+
 namespace mlpack {
 namespace optimization {
 
@@ -34,6 +36,8 @@ IQN::IQN(const double stepSize,
 template<typename DecomposableFunctionType>
 double IQN::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
 {
+  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType>();
+
   // Find the number of functions.
   const size_t numFunctions = function.NumFunctions();
   size_t numBatches = numFunctions / batchSize;
@@ -118,7 +122,7 @@ double IQN::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
             iterateVec;
       }
 
-      f+= effectiveBatchSize;
+      f += effectiveBatchSize;
     }
 
     overallObjective = 0;

@@ -17,6 +17,7 @@
 // Layer modules.
 #include <mlpack/methods/ann/layer/add.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
+#include <mlpack/methods/ann/layer/bilinear_interpolation.hpp>
 #include <mlpack/methods/ann/layer/constant.hpp>
 #include <mlpack/methods/ann/layer/cross_entropy_error.hpp>
 #include <mlpack/methods/ann/layer/dropout.hpp>
@@ -107,6 +108,7 @@ using LayerTypes = boost::variant<
     BaseLayer<IdentityFunction, arma::mat, arma::mat>*,
     BaseLayer<TanhFunction, arma::mat, arma::mat>*,
     BaseLayer<RectifierFunction, arma::mat, arma::mat>*,
+    BilinearInterpolation<arma::mat, arma::mat>*,
     Concat<arma::mat, arma::mat>*,
     ConcatPerformance<NegativeLogLikelihood<arma::mat, arma::mat>,
                       arma::mat, arma::mat>*,

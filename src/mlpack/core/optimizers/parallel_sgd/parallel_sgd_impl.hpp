@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "parallel_sgd.hpp"
 
+#include <mlpack/core/optimizers/function.hpp>
+
 namespace mlpack {
 namespace optimization {
 
@@ -38,6 +40,9 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     SparseFunctionType& function,
     arma::mat& iterate)
 {
+  // Check that we have all the functions that we need.
+  traits::CheckSparseFunctionTypeAPI<SparseFunctionType>();
+
   double overallObjective = DBL_MAX;
   double lastObjective;
 
@@ -103,7 +108,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
         arma::sp_mat gradient;
 
         // Evaluate the sparse gradient.
-        function.Gradient(iterate, visitationOrder[j], gradient);
+        function.Gradient(iterate, visitationOrder[j], gradient, 1);
 
         // Update the decision variable with non-zero components of the
         // gradient.
