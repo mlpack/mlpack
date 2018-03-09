@@ -21,18 +21,23 @@ namespace mlpack {
 namespace ann { /** Artificial Neural Network. */
 
 template<typename InputDataType, typename OutputDataType>
-BatchNorm<InputDataType, OutputDataType>::BatchNorm()
+BatchNorm<InputDataType, OutputDataType>::BatchNorm():
+  size(10),
+  eps(1e-7),
+  deterministic(false)
 {
   // Nothing to do here.
 }
 
 template <typename InputDataType, typename OutputDataType>
 BatchNorm<InputDataType, OutputDataType>::BatchNorm(
-  const size_t size, const double eps) : size(size), eps(eps)
+  const size_t size, const double eps):
+  size(size),
+  eps(eps),
+  deterministic(false)
 {
   weights.set_size(size + size, 1);
 }
-
 
 template<typename InputDataType, typename OutputDataType>
 void BatchNorm<InputDataType, OutputDataType>::Reset()
@@ -48,7 +53,7 @@ void BatchNorm<InputDataType, OutputDataType>::Reset()
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void BatchNorm<InputDataType, OutputDataType>::Forward(
-  const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
   output.reshape(input.n_rows, input.n_cols);
 
@@ -71,7 +76,7 @@ void BatchNorm<InputDataType, OutputDataType>::Forward(
   }
 
   output = input.each_col() - mean;
-  output.each_col() %= gamma/arma::sqrt(variance+eps);
+  output.each_col() %= gamma / arma::sqrt(variance+eps);
   output.each_col() += beta;
 }
 
@@ -80,7 +85,6 @@ template<typename eT>
 void BatchNorm<InputDataType, OutputDataType>::Backward(
   const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  size_t n = input.n_cols;
 
   g.reshape(input.n_rows, input.n_cols);
 
@@ -89,10 +93,10 @@ void BatchNorm<InputDataType, OutputDataType>::Backward(
 
   arma::mat m = arma::sum(gy % (input.each_col() - mean), 1);
   g = arma::repmat(m, 1, input.n_cols) % -(input.each_col() - mean);
-  g.each_col() %= 1.0/(variance + eps);
-  g += (n * gy - arma::repmat((arma::sum(gy, 1)), 1, input.n_cols));
-  g.each_col() %= ((1.0 / n) * gamma);
-  g.each_col() %= (1.0/arma::sqrt(variance + eps));
+  g.each_col() %= 1.0 / (variance + eps);
+  g += (input.n_cols * gy - arma::repmat((arma::sum(gy, 1)), 1, input.n_cols));
+  g.each_col() %= ((1.0 / input.n_cols) * gamma);
+  g.each_col() %= (1.0 / arma::sqrt(variance + eps));
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -106,11 +110,11 @@ void BatchNorm<InputDataType, OutputDataType>::Gradient(
   gradient.reshape(size + size, 1);
 
   normalized = input.each_col() - arma::mean(input, 1)
-                                  / arma::sqrt(arma::var(input, 1, 1) + eps);
+    / arma::sqrt(arma::var(input, 1, 1) + eps);
 
   gradient.submat(0, 0, gamma.n_elem - 1, 0) = arma::sum(normalized % error, 1);
   gradient.submat(gamma.n_elem, 0, gradient.n_elem - 1, 0) =
-                                                          arma::sum(error, 1);
+    arma::sum(error, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>

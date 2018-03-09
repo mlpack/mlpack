@@ -1330,9 +1330,7 @@ BOOST_AUTO_TEST_CASE(BatchNormTest)
         << 4.9 << 3.0 << 1.4 << arma::endr
         << 4.7 << 3.2 << 1.3 << arma::endr;
 
-  size_t numUnits = input.n_rows;
-
-  BatchNorm<> model(numUnits);
+  BatchNorm<> model(input.n_rows);
   model.Reset();
 
   // Non-Deteministic Forward Pass Test.
@@ -1414,7 +1412,7 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormLayerTest)
       target.ones(1, 256);
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>(
-        input, target);
+          input, target);
       model->Add<IdentityLayer<> >();
       model->Add<BatchNorm<> >(10);
       model->Add<Linear<> >(10, 2);
