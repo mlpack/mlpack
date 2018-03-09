@@ -142,8 +142,9 @@ static void mlpackMain()
 
   // Sanity check on epsilon.
   double epsilon = CLI::GetParam<double>("epsilon");
-  RequireParamValue<double>("epsilon", [](double x) { return x >= 0.0 && x < 1; }, true,
-      "epsilon must be in the range [0, 1).");
+  RequireParamValue<double>("epsilon", [](double x)
+      { return x >= 0.0 && x < 1; }, true,
+          "epsilon must be in the range [0, 1).");
 
   // Sanity check on percentage.
   const double percentage = CLI::GetParam<double>("percentage");
@@ -270,7 +271,7 @@ static void mlpackMain()
           << "than or equal to the number of reference points ("
           << kfn->Dataset().n_cols << ")." << endl;
     }
-    
+
     // Sanity check on k value: must not be equal to the number of reference
     // points when query data has not been provided.
     if (!CLI::HasParam("query") && k == kfn->Dataset().n_cols)

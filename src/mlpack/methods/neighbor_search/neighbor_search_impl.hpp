@@ -285,9 +285,6 @@ NeighborSearch<SortPolicy,
                DualTreeTraversalType,
                SingleTreeTraversalType>::operator=(const NeighborSearch& other)
 {
-  if (&other == this)
-    return *this; // Nothing to do.
-
   // Clean memory first.
   if (treeOwner && referenceTree)
     delete referenceTree;
@@ -330,9 +327,6 @@ NeighborSearch<SortPolicy,
                DualTreeTraversalType,
                SingleTreeTraversalType>::operator=(NeighborSearch&& other)
 {
-  if (&other == this)
-    return *this; // Nothing to do.
-
   // Clean memory first.
   if (treeOwner && referenceTree)
     delete referenceTree;
@@ -401,23 +395,25 @@ DualTreeTraversalType, SingleTreeTraversalType>::Train(
     delete referenceTree;
   }
 
-  // Delete the old reference set, if we owned it.
-  if (setOwner && this->referenceSet)
-    delete this->referenceSet;
-
   // We may need to rebuild the tree.
   if (searchMode != NAIVE_MODE)
   {
     referenceTree = BuildTree<Tree>(referenceSet, oldFromNewReferences);
     treeOwner = true;
-    this->referenceSet = &referenceTree->Dataset();
   }
   else
   {
     treeOwner = false;
-    this->referenceSet = &referenceSet;
   }
 
+  // Delete the old reference set, if we owned it.
+  if (setOwner && this->referenceSet)
+    delete this->referenceSet;
+
+  if (searchMode != NAIVE_MODE)
+    this->referenceSet = &referenceTree->Dataset();
+  else
+    this->referenceSet = &referenceSet;
   setOwner = false; // We don't own the set in either case.
 }
 
@@ -439,22 +435,29 @@ DualTreeTraversalType, SingleTreeTraversalType>::Train(MatType&& referenceSetIn)
     delete referenceTree;
   }
 
-  // Delete the old reference set, if we owned it.
-  if (setOwner && referenceSet)
-    delete referenceSet;
-
   // We may need to rebuild the tree.
   if (searchMode != NAIVE_MODE)
   {
     referenceTree = BuildTree<Tree>(std::move(referenceSetIn),
         oldFromNewReferences);
     treeOwner = true;
+  }
+  else
+  {
+    treeOwner = false;
+  }
+
+  // Delete the old reference set, if we owned it.
+  if (setOwner && referenceSet)
+    delete referenceSet;
+
+  if (searchMode != NAIVE_MODE)
+  {
     referenceSet = &referenceTree->Dataset();
     setOwner = false;
   }
   else
   {
-    treeOwner = false;
     referenceSet = new MatType(std::move(referenceSetIn));
     setOwner = true;
   }
@@ -543,7 +546,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   if (k > referenceSet->n_cols)
   {
     std::stringstream ss;
-    ss << "Requested value of k (" << k << ") is greater than the number of "
+    ss << "requested value of k (" << k << ") is greater than the number of "
         << "points in the reference set (" << referenceSet->n_cols << ")";
     throw std::invalid_argument(ss.str());
   }
@@ -760,7 +763,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   if (k > referenceSet->n_cols)
   {
     std::stringstream ss;
-    ss << "Requested value of k (" << k << ") is greater than the number of "
+    ss << "requested value of k (" << k << ") is greater than the number of "
         << "points in the reference set (" << referenceSet->n_cols << ")";
     throw std::invalid_argument(ss.str());
   }
@@ -843,16 +846,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
   if (k > referenceSet->n_cols)
   {
     std::stringstream ss;
-    ss << "Requested value of k (" << k << ") is greater than the number of "
+    ss << "requested value of k (" << k << ") is greater than the number of "
         << "points in the reference set (" << referenceSet->n_cols << ")";
-    throw std::invalid_argument(ss.str());
-  }
-  if (k == referenceSet->n_cols)
-  {
-    std::stringstream ss;
-    ss << "Requested value of k (" << k << ") is equal to the number of "
-        << "points in the reference set (" << referenceSet->n_cols << ") and "
-        << "no query set has been provided.";
     throw std::invalid_argument(ss.str());
   }
 

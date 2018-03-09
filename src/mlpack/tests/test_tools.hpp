@@ -90,7 +90,7 @@ inline void CheckMatricesNotEqual(const arma::mat& a,
         break;
       }
     }
-  }  
+  }
   else
     areDifferent = true;
 
@@ -148,7 +148,7 @@ inline void CheckMatricesNotEqual(const arma::cube& a,
         break;
       }
     }
-  }  
+  }
   else
     areDifferent = true;
 

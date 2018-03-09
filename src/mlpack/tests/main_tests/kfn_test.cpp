@@ -54,11 +54,11 @@ BOOST_AUTO_TEST_CASE(KFNEqualDimensionTest)
 
   // Now we specify an invalid dimension(2) for the query data.
   // Note that the number of points in query and reference matrices
-  // are allowed to be different 
+  // are allowed to be different
   arma::mat queryData;
   queryData.randu(2, 90); // 90 points in 2 dimensions.
 
-  // Random input, some k <= number of reference points. 
+  // Random input, some k <= number of reference points.
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("query", std::move(queryData));
   SetInputParam("k", (int) 10);
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(KFNEqualDimensionTest)
 
 /*
  * Check that we can't specify an invalid k when only reference
- * matrix is given. 
+ * matrix is given.
  */
 BOOST_AUTO_TEST_CASE(KFNInvalidKTest)
 {
@@ -83,13 +83,13 @@ BOOST_AUTO_TEST_CASE(KFNInvalidKTest)
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
-  
+
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["k"].wasPassed = false;
 
   // SetInputParam("reference", referenceData);
   // SetInputParam("k", (int) 0); // Invalid.
-  
+
   // BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
   // CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
@@ -97,14 +97,14 @@ BOOST_AUTO_TEST_CASE(KFNInvalidKTest)
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) -1); // Invalid.
-  
+
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
  * Check that we can't specify an invalid k when both reference
- * and query matrices are given. 
+ * and query matrices are given.
  */
 BOOST_AUTO_TEST_CASE(KFNInvalidKQueryDataTest)
 {
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE(KFNLeafSizeTest)
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
-  
+
   // Random input, negative leaf size.
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("leaf_size", (int) -1); // Invalid.
@@ -156,9 +156,9 @@ BOOST_AUTO_TEST_CASE(KFNRefModelTest)
   mlpackMain();
 
   // Input pre-trained model.
-  SetInputParam("input_model", 
+  SetInputParam("input_model",
       std::move(CLI::GetParam<KFNModel*>("output_model")));
-  
+
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
@@ -215,21 +215,21 @@ BOOST_AUTO_TEST_CASE(KFNInvalidEpsilonTest)
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
-  
+
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["epsilon"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("epsilon", (double) 2); // Invalid.
-  
+
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
-  
+
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["epsilon"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("epsilon", (double) 1); // Invalid.
-  
+
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
@@ -249,43 +249,45 @@ BOOST_AUTO_TEST_CASE(KFNInvalidPercentageTest)
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
-  
+
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["percentage"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("percentage", (double) 0); // Invalid.
-  
+
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
-  
+
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["epsilon"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("percentage", (double) 2); // Invalid.
-  
+
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Make sure that dimensions of the neighbors and distances
- * matrices are correct given a value of k.  
+ * matrices are correct given a value of k.
  */
 BOOST_AUTO_TEST_CASE(KFNOutputDimensionTest)
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
-  
+
   // Random input, some k <= number of reference points.
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 10);
-  
+
   mlpackMain();
 
   // Check the neighbors matrix has 4 points for each input point.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_rows, 10);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_cols, 100);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>
+      ("neighbors").n_rows, 10);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>
+      ("neighbors").n_cols, 100);
 
   // Check the distances matrix has 4 points for each input point.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("distances").n_rows, 10);
@@ -314,21 +316,21 @@ BOOST_AUTO_TEST_CASE(KFNModelReuseTest)
   arma::mat distances;
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
-  
+
   // bindings::tests::CleanMemory();
 
-  // Reset passed parameters. 
+  // Reset passed parameters.
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["query"].wasPassed = false;
-   
+
   // Input saved model, pass the same query and keep k unchanged.
-  SetInputParam("input_model", 
+  SetInputParam("input_model",
       std::move(CLI::GetParam<KFNModel*>("output_model")));
   SetInputParam("query", queryData);
-  
+
   mlpackMain();
 
-  // Check that initial output matrices and the output matrices using 
+  // Check that initial output matrices and the output matrices using
   // saved model are equal.
   CheckMatrices(neighbors, CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   CheckMatrices(distances, CLI::GetParam<arma::mat>("distances"));
@@ -339,7 +341,7 @@ BOOST_AUTO_TEST_CASE(KFNModelReuseTest)
  * approximate KFN results.
  */
 BOOST_AUTO_TEST_CASE(KFNDifferentEpsilonTest)
-{ 
+{
   arma::mat referenceData;
   referenceData.randu(3, 1000); // 1000 points in 3 dimensions.
 
@@ -349,17 +351,17 @@ BOOST_AUTO_TEST_CASE(KFNDifferentEpsilonTest)
   SetInputParam("epsilon", (double) 0.2);
 
   mlpackMain();
-  
+
   arma::Mat<size_t> neighbors;
   arma::mat distances;
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
 
-  bindings::tests::CleanMemory(); 
+  bindings::tests::CleanMemory();
 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["epsilon"].wasPassed = false;
-   
+
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("epsilon", (double) 0.8);
 
@@ -376,7 +378,7 @@ BOOST_AUTO_TEST_CASE(KFNDifferentEpsilonTest)
  * approximate KFN results.
  */
 BOOST_AUTO_TEST_CASE(KFNDifferentPercentageTest)
-{ 
+{
   arma::mat referenceData;
   referenceData.randu(3, 1000); // 1000 points in 3 dimensions.
 
@@ -386,17 +388,17 @@ BOOST_AUTO_TEST_CASE(KFNDifferentPercentageTest)
   SetInputParam("percentage", (double) 0.2);
 
   mlpackMain();
-  
+
   arma::Mat<size_t> neighbors;
   arma::mat distances;
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
 
-  bindings::tests::CleanMemory(); 
+  bindings::tests::CleanMemory();
 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["percentage"].wasPassed = false;
-   
+
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("percentage", (double) 0.8);
 
@@ -413,7 +415,7 @@ BOOST_AUTO_TEST_CASE(KFNDifferentPercentageTest)
  * search mode when random_basis is specified.
  */
 BOOST_AUTO_TEST_CASE(KFNRandomBasisTest)
-{ 
+{
   arma::mat referenceData;
   referenceData.randu(3, 1000); // 1000 points in 3 dimensions.
 
@@ -421,19 +423,19 @@ BOOST_AUTO_TEST_CASE(KFNRandomBasisTest)
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 10);
   SetInputParam("algorithm", (string) "greedy");
-  SetInputParam("random_basis", true);
+  CLI::SetPassed("random_basis");
 
   mlpackMain();
-  
+
   arma::Mat<size_t> neighbors;
   arma::mat distances;
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
 
-  bindings::tests::CleanMemory(); 
+  bindings::tests::CleanMemory();
 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-   
+
   SetInputParam("reference", std::move(referenceData));
 
   mlpackMain();
@@ -452,7 +454,7 @@ BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
-  
+
   // Random input, some k <= number of reference points.
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 10);
@@ -464,10 +466,10 @@ BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
 
-  bindings::tests::CleanMemory(); 
+  bindings::tests::CleanMemory();
 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
- 
+
   SetInputParam("reference", referenceData);
   SetInputParam("true_neighbors", neighbors);
   SetInputParam("true_distances", distances);
@@ -478,7 +480,7 @@ BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
   // True output matrices have incorrect shape.
   arma::Mat<size_t> dummy_neighbors;
   arma::mat dummy_distances;
-  dummy_neighbors.randu(20, 100); 
+  dummy_neighbors.randu(20, 100);
   dummy_distances.randu(20, 100);
 
   bindings::tests::CleanMemory();
@@ -501,14 +503,14 @@ BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
  * We do not consider greedy because it is an approximate algorithm.
  */
 BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
-{ 
+{
   string algorithms[] = {"dual_tree", "naive", "single_tree"};
   int nofalgorithms = sizeof(algorithms) / sizeof(algorithms[0]);
 
-  // Neighbors and distances given by the above algorithms will be stored 
+  // Neighbors and distances given by the above algorithms will be stored
   // in the following arrays in the order:
   // dual_tree, naive, single_tree.
-  arma::Mat<size_t> neighbors[nofalgorithms]; 
+  arma::Mat<size_t> neighbors[nofalgorithms];
   arma::mat distances[nofalgorithms];
 
   arma::mat referenceData;
@@ -521,7 +523,7 @@ BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
   SetInputParam("k", (int) 10);
 
   // Looping over all the algorithms and storing their outputs.
-  for (int i = 0; i < nofalgorithms; i++) 
+  for (int i = 0; i < nofalgorithms; i++)
   {
     // Same random inputs, different algorithms.
     SetInputParam("reference", referenceData);
@@ -538,7 +540,7 @@ BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
     CLI::GetSingleton().Parameters()["query"].wasPassed = false;
     CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
   }
-  
+
   // Check if all the output matrices of the different algorithms
   // are equal.
   for (int i = 0; i < nofalgorithms - 1; i++)
@@ -552,16 +554,16 @@ BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
  * Ensure that different tree types give same result.
  */
 BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
-{ 
+{
   string treetypes[] = {"kd", "vp", "rp", "max-rp", "ub", "cover", "r",
       "r-star", "x", "ball", "hilbert-r", "r-plus", "r-plus-plus", "oct"};
   int noftreetypes = sizeof(treetypes) / sizeof(treetypes[0]);
 
-  // Neighbors and distances given by using the above tree types will  
+  // Neighbors and distances given by using the above tree types will
   // be stored in the following arrays in the order:
   // kd, vp, rp, max-rp, ub, cover, r, r-star, x, ball, hilbert-r, r-plus,
   // r-plus-plus, oct.
-  arma::Mat<size_t> neighbors[noftreetypes]; 
+  arma::Mat<size_t> neighbors[noftreetypes];
   arma::mat distances[noftreetypes];
 
   arma::mat referenceData;
@@ -574,7 +576,7 @@ BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
   SetInputParam("k", (int) 10);
 
   // Looping over all the algorithms and storing their outputs.
-  for (int i = 0; i < noftreetypes; i++) 
+  for (int i = 0; i < noftreetypes; i++)
   {
     // Same random inputs, different algorithms.
     SetInputParam("reference", referenceData);
@@ -591,7 +593,7 @@ BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
     CLI::GetSingleton().Parameters()["query"].wasPassed = false;
     CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
   }
-  
+
   // Check if the output matrices given by using the different
   // tree types are equal.
   for (int i = 0; i < noftreetypes - 1; i++)
