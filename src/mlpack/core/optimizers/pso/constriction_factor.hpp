@@ -73,17 +73,24 @@ class ConstrictionFactor
               const double& socialAcceleration,
               const double& dimension)
   {
+    // Calculate the constriction factor.
     double phi = cognitiveAcceleration + socialAcceleration;
     constrictionFactor = 2 / std::abs(2 - phi - std::sqrt(
       std::pow(phi, 2) - 4 * phi));
 
+    // Generate uniform random numbers for velocity updation.
+    arma::mat r1(particlePosition.n_rows, particlePosition.n_cols,
+      arma::fill::randu);
+    arma::mat r2(particlePosition.n_rows, particlePosition.n_cols,
+      arma::fill::randu);
+
     for (size_t i = 0; i < dimension; ++i)
     {
       particleVelocity.slice(i) = constrictionFactor * (interiaWeight *
-        particleVelocity.slice(i) + cognitiveAcceleration *
-        math::Random() * (bestParticlePosition[i] - particlePosition
-        .slice(i)) + socialAcceleration * math::Random() *
-        (bestSwarmPosition[i] - particlePosition.slice(i)));
+        particleVelocity.slice(i) + cognitiveAcceleration * r1 %
+        (bestParticlePosition[i] - particlePosition.slice(i)) +
+        socialAcceleration * r2 % (bestSwarmPosition[i] -
+        particlePosition.slice(i)));
     }
   }
 

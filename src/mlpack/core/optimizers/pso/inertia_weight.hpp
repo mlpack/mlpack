@@ -49,11 +49,17 @@ class InertiaWeight
               const double& socialAcceleration,
               const double& dimension)
   {
+    // Generate uniform random numbers for velocity updation.
+    arma::mat r1(particlePosition.n_rows, particlePosition.n_cols,
+      arma::fill::randu);
+    arma::mat r2(particlePosition.n_rows, particlePosition.n_cols,
+      arma::fill::randu);
+
     for (size_t i = 0; i < dimension; ++i)
     {
       particleVelocity.slice(i) = interiaWeight * particleVelocity.slice(i) +
-        cognitiveAcceleration * math::Random() * (bestParticlePosition[i] -
-        particlePosition.slice(i)) + socialAcceleration * math::Random() *
+        cognitiveAcceleration * r1 % (bestParticlePosition[i] -
+        particlePosition.slice(i)) + socialAcceleration * r2 %
         (bestSwarmPosition[i] - particlePosition.slice(i));
     }
   }
