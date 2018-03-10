@@ -51,8 +51,37 @@ void ApplyFactorizer(FactorizerType& factorizer,
                          && FactorizerTraits<
                          FactorizerType>::UsesQuicSVD>* = 0)
 {
-  arma::mat sigma;
+ // Check if the given rank is valid.
+  size_t r;
+  if (rank > data.n_rows || rank > data.n_cols)
+  {
+    Log::Info << "Rank " << rank << ", given for decomposition is invalid."
+        << std::endl;
+
+    r = (data.n_rows > data.n_cols) ? data.n_cols : data.n_rows;
+    Log::Info << "Setting decomposition rank to " << rank << std::endl;
+  }
+  else
+  {
+    r = rank;
+  }
+
+  // Get svd factorization.
+  arma::vec sigma;
   factorizer.Apply(data, w, sigma, h);
+
+  // Remove the part of w and h depending upon the value of rank.
+  w = w.submat(0, 0, w.n_rows - 1, r - 1);
+  h = h.submat(0, 0, h.n_cols - 1, r - 1);
+
+  // Take only required eigenvalues.
+  sigma = sigma.subvec(0, r - 1);
+
+  // Eigenvalue matrix is multiplied to w.
+  w = w * arma::diagmat(sigma);
+
+  // Take transpose of the matrix h as required by CF module.
+  h = arma::trans(h);
 }
 
 // Apply the factorizer when coordinate lists are not used.
