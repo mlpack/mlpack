@@ -80,7 +80,7 @@ class NesterovMomentumUpdate
   {
     iteration++;
 
-    double momentumT = 0.9;
+    double momentumT = 0.5;
 
     velocity = momentumT * velocity - stepSize * gradient;
 
