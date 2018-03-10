@@ -80,8 +80,7 @@ class NesterovMomentumUpdate
   {
     iteration++;
 
-    double momentumT = std::min((1 - std::pow(2 , (- 1 - ((log(floor(iteration
-        / 250)) +1) / log(2))))) , maxMomentum);
+    double momentumT = 0.9;
 
     velocity = momentumT * velocity - stepSize * gradient;
 
