@@ -203,7 +203,6 @@ BOOST_AUTO_TEST_CASE(DecisionRegularisationTest)
 {
   // Completely random dataset with no structure.
   arma::mat dataset(10, 1000, arma::fill::randu);
-  arma::mat pred, predRegularised;
   arma::Row<size_t> labels(1000);
   for (size_t i = 0; i < 1000; ++i)
     labels[i] = i % 3; // 3 classes.
@@ -219,7 +218,7 @@ BOOST_AUTO_TEST_CASE(DecisionRegularisationTest)
 
   // Input test data.
   SetInputParam("test", dataset);
-
+  arma::Row<size_t> pred;
   mlpackMain();
   pred = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
 
@@ -232,7 +231,7 @@ BOOST_AUTO_TEST_CASE(DecisionRegularisationTest)
 
   // Input test data.
   SetInputParam("test", std::move(dataset));
-
+  arma::Row<size_t> predRegularised;
   mlpackMain();
   predRegularised = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
 
