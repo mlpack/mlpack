@@ -4,7 +4,8 @@
  *
  * Structs for initializing and training HMMs (either of Discrete, Gaussian or
  * GMM HMMs). These structs are passed as template parameters to the
- * PerformAction function of an HMMModel object.
+ * PerformAction function of an HMMModel object. These structs have been adapted
+ * from the structs in mlpack/methods/hmm/hmm_train_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -154,7 +155,7 @@ struct TrainHMMModel
   template<typename HMMType>
   static void Apply(HMMType& hmm, vector<arma::mat>* trainSeq)
   {
-    // For now, perform unsupervised (Baum-Welch) training
+    // For now, perform unsupervised (Baum-Welch) training.
     hmm.Train(*trainSeq);
   }
 };

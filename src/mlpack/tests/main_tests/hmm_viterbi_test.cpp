@@ -44,59 +44,69 @@ BOOST_FIXTURE_TEST_SUITE(HMMViterbiMainTest, HMMViterbiTestFixture);
 
 BOOST_AUTO_TEST_CASE(HMMViterbiDiscreteHMMCheckDimensionsTest)
 {
-// Train an HMM
-  HMMModel* h = new HMMModel(DiscreteHMM);
-  // Load data
+  // Load data to train a discrete HMM model with.
   arma::mat inp;
   data::Load("obs1.csv", inp);
   std::vector<arma::mat> trainSeq = {inp};
-  // Init
+
+  // Initialize and train a discrete HMM model.
+  HMMModel* h = new HMMModel(DiscreteHMM);
   h->PerformAction<InitHMMModel, std::vector<arma::mat>>(&trainSeq);
-  // Train
   h->PerformAction<TrainHMMModel, std::vector<arma::mat>>(&trainSeq);
 
-  // Set the params for the hmm_viterbi invocation
+  // Now that we have a trained HMM model, we can use it to predict the state
+  // sequence for a given observation sequence - using the Viterbi algorithm.
+  // Load the input model to be used for inference and the sequence over which
+  // inference is to be performed.
   SetInputParam("input_model", h);
   SetInputParam("input", inp);
 
+  // Call to hmm_viterbi_main.
   mlpackMain();
 
+  // Get the output of viterbi inference.
   arma::Mat<size_t> out = CLI::GetParam<arma::Mat<size_t> >("output");
 
+  // Output sequence length must be the same as input sequence length and
+  // there should only be one row (since states are single dimensional values).
   BOOST_REQUIRE_EQUAL(out.n_rows, 1);
   BOOST_REQUIRE_EQUAL(out.n_cols, inp.n_cols);
 }
 
 BOOST_AUTO_TEST_CASE(HMMViterbiGaussianHMMCheckDimensionsTest)
 {
-  // Train an HMM
-  HMMModel* h = new HMMModel(GaussianHMM);
-  // Load data
+  // Load data to train a gaussian HMM model with.
   arma::mat inp;
   data::Load("obs1.csv", inp);
   std::vector<arma::mat> trainSeq = {inp};
-  // Init
+
+  // Initialize and train a gaussian HMM model.
+  HMMModel* h = new HMMModel(GaussianHMM);
   h->PerformAction<InitHMMModel, std::vector<arma::mat>>(&trainSeq);
-  // Train
   h->PerformAction<TrainHMMModel, std::vector<arma::mat>>(&trainSeq);
 
-  // Set the params for the hmm_viterbi invocation
+  // Now that we have a trained HMM model, we can use it to predict the state
+  // sequence for a given observation sequence - using the Viterbi algorithm.
+  // Load the input model to be used for inference and the sequence over which
+  // inference is to be performed.
   SetInputParam("input_model", h);
   SetInputParam("input", inp);
 
+  // Call to hmm_viterbi_main.
   mlpackMain();
 
+  // Get the output of viterbi inference.
   arma::Mat<size_t> out = CLI::GetParam<arma::Mat<size_t> >("output");
 
+  // Output sequence length must be the same as input sequence length and
+  // there should only be one row (since states are single dimensional values).
   BOOST_REQUIRE_EQUAL(out.n_rows, 1);
   BOOST_REQUIRE_EQUAL(out.n_cols, inp.n_cols);
 }
 
 BOOST_AUTO_TEST_CASE(HMMViterbiGMMHMMCheckDimensionsTest)
 {
-  // Train an HMM
-  HMMModel* h = new HMMModel(GaussianMixtureModelHMM);
-  // Load data
+  // Load data to train a Gaussian Mixture Model HMM model with.
   std::vector<GMM> gmms(2, GMM(2, 2));
   gmms[0].Weights() = arma::vec("0.3 0.7");
 
@@ -140,19 +150,27 @@ BOOST_AUTO_TEST_CASE(HMMViterbiGMMHMMCheckDimensionsTest)
       observations[obs].col(i) = gmms[states[obs][i]].Random();
     }
   }
-  // Init
+
+  // Initialize and train a GMM HMM model.
+  HMMModel* h = new HMMModel(GaussianMixtureModelHMM);
   h->PerformAction<InitHMMModel, std::vector<arma::mat>>(&observations);
-  // Train
   h->PerformAction<TrainHMMModel, std::vector<arma::mat>>(&observations);
 
-  // Set the params for the hmm_viterbi invocation
+  // Now that we have a trained HMM model, we can use it to predict the state
+  // sequence for a given observation sequence - using the Viterbi algorithm.
+  // Load the input model to be used for inference and the sequence over which
+  // inference is to be performed.
   SetInputParam("input_model", h);
   SetInputParam("input", observations[0]);
 
+  // Call to hmm_viterbi_main.
   mlpackMain();
 
+  // Get the output of viterbi inference.
   arma::Mat<size_t> out = CLI::GetParam<arma::Mat<size_t> >("output");
 
+  // Output sequence length must be the same as input sequence length and
+  // there should only be one row (since states are single dimensional values).
   BOOST_REQUIRE_EQUAL(out.n_rows, 1);
   BOOST_REQUIRE_EQUAL(out.n_cols, observations[0].n_cols);
 }

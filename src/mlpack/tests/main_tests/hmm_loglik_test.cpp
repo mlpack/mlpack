@@ -44,15 +44,14 @@ BOOST_FIXTURE_TEST_SUITE(HMMLoglikMainTest, HMMLoglikTestFixture);
 
 BOOST_AUTO_TEST_CASE(HMMLoglikOutputNegativeTest)
 {
-  // Create an HMMModel
-  HMMModel* h = new HMMModel(DiscreteHMM);
-  // Load data
+  // Load data to train a discrete HMM model with.
   arma::mat inp;
   data::Load("obs1.csv", inp);
   std::vector<arma::mat> trainSeq = {inp};
-  // Init HMMModel
+
+  // Initialize and train an HMM model.
+  HMMModel* h = new HMMModel(DiscreteHMM);
   h->PerformAction<InitHMMModel, std::vector<arma::mat>>(&trainSeq);
-  // Train HMMModel
   h->PerformAction<TrainHMMModel, std::vector<arma::mat>>(&trainSeq);
 
 
@@ -63,6 +62,8 @@ BOOST_AUTO_TEST_CASE(HMMLoglikOutputNegativeTest)
   mlpackMain();
 
   double loglik = CLI::GetParam<double>("log_likelihood");
+
+  // Since the log of a probability <= 0 ...
   BOOST_REQUIRE(loglik <= 0);
 }
 
