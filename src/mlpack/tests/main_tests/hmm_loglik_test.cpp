@@ -45,7 +45,7 @@ BOOST_FIXTURE_TEST_SUITE(HMMLoglikMainTest, HMMLoglikTestFixture);
 BOOST_AUTO_TEST_CASE(HMMLoglikOutputNegativeTest)
 {
   // Create an HMMModel
-  HMMModel * h = new HMMModel(DiscreteHMM);
+  HMMModel* h = new HMMModel(DiscreteHMM);
   // Load data
   arma::mat inp;
   data::Load("obs1.csv", inp);

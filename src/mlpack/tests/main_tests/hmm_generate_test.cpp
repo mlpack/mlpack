@@ -45,7 +45,7 @@ BOOST_FIXTURE_TEST_SUITE(HMMGenerateMainTest, HMMGenerateTestFixture);
 BOOST_AUTO_TEST_CASE(HMMGenerateDiscreteHMMCheckDimensionsTest)
 {
   // Train an HMM
-  HMMModel * h = new HMMModel(DiscreteHMM);
+  HMMModel* h = new HMMModel(DiscreteHMM);
   // Load data
   arma::mat inp;
   data::Load("obs1.csv", inp);
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(HMMGenerateDiscreteHMMCheckDimensionsTest)
 BOOST_AUTO_TEST_CASE(HMMGenerateGaussianHMMCheckDimensionsTest)
 {
   // Train an HMM
-  HMMModel * h = new HMMModel(GaussianHMM);
+  HMMModel* h = new HMMModel(GaussianHMM);
   // Load data
   arma::mat inp;
   data::Load("obs1.csv", inp);
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(HMMGenerateGaussianHMMCheckDimensionsTest)
 BOOST_AUTO_TEST_CASE(HMMGenerateGMMHMMCheckDimensionsTest)
 {
   // Train an HMM
-  HMMModel * h = new HMMModel(GaussianMixtureModelHMM);
+  HMMModel* h = new HMMModel(GaussianMixtureModelHMM);
   // Load data
   std::vector<GMM> gmms(2, GMM(2, 2));
   gmms[0].Weights() = arma::vec("0.3 0.7");
@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(HMMGenerateGMMHMMCheckDimensionsTest)
 BOOST_AUTO_TEST_CASE(HMMGenerateLengthPositiveTest)
 {
   // Train an HMM
-  HMMModel * h = new HMMModel(DiscreteHMM);
+  HMMModel* h = new HMMModel(DiscreteHMM);
   // Load data
   arma::mat inp;
   data::Load("obs1.csv", inp);
@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(HMMGenerateLengthPositiveTest)
 BOOST_AUTO_TEST_CASE(HMMGenerateValidStartStateTest)
 {
   // Train an HMM
-  HMMModel * h = new HMMModel(DiscreteHMM);
+  HMMModel* h = new HMMModel(DiscreteHMM);
   // Load data
   arma::mat inp;
   data::Load("obs1.csv", inp);

@@ -45,7 +45,7 @@ BOOST_FIXTURE_TEST_SUITE(HMMViterbiMainTest, HMMViterbiTestFixture);
 BOOST_AUTO_TEST_CASE(HMMViterbiDiscreteHMMCheckDimensionsTest)
 {
 // Train an HMM
-  HMMModel * h = new HMMModel(DiscreteHMM);
+  HMMModel* h = new HMMModel(DiscreteHMM);
   // Load data
   arma::mat inp;
   data::Load("obs1.csv", inp);
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(HMMViterbiDiscreteHMMCheckDimensionsTest)
 BOOST_AUTO_TEST_CASE(HMMViterbiGaussianHMMCheckDimensionsTest)
 {
   // Train an HMM
-  HMMModel * h = new HMMModel(GaussianHMM);
+  HMMModel* h = new HMMModel(GaussianHMM);
   // Load data
   arma::mat inp;
   data::Load("obs1.csv", inp);
@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(HMMViterbiGaussianHMMCheckDimensionsTest)
 BOOST_AUTO_TEST_CASE(HMMViterbiGMMHMMCheckDimensionsTest)
 {
   // Train an HMM
-  HMMModel * h = new HMMModel(GaussianMixtureModelHMM);
+  HMMModel* h = new HMMModel(GaussianMixtureModelHMM);
   // Load data
   std::vector<GMM> gmms(2, GMM(2, 2));
   gmms[0].Weights() = arma::vec("0.3 0.7");
