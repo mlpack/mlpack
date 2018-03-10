@@ -51,7 +51,7 @@ void ApplyFactorizer(FactorizerType& factorizer,
                          && FactorizerTraits<
                          FactorizerType>::UsesQuicSVD>* = 0)
 {
- // Check if the given rank is valid.
+  // Check if the given rank is valid.
   size_t r;
   if (rank > data.n_rows || rank > data.n_cols)
   {
