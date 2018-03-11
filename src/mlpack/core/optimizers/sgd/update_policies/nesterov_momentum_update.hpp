@@ -43,9 +43,9 @@ class NesterovMomentumUpdate
    * Construct the Nesterov Momentum update policy with the given parameters.
    *
    */
-  NesterovMomentumUpdate(const double maxMomentum = 0.999) :
+  NesterovMomentumUpdate(const double momentum = 0.5) :
       iteration(0),
-      maxMomentum(maxMomentum)
+      momentum(momentum)
   {
     // Nothing to do.
   }
@@ -78,29 +78,22 @@ class NesterovMomentumUpdate
               const double stepSize,
               const arma::mat& gradient)
   {
-    iteration++;
+    velocity = momentum * velocity - stepSize * gradient;
 
-    double momentumT = 0.5;
-
-    velocity = momentumT * velocity - stepSize * gradient;
-
-    iterate += velocity;
+    iterate += momentum * velocity - stepSize * gradient;
   }
 
-  //! Get the value used to initialise the maximum momentum coefficient.
-  double MaxMomentum() const { return maxMomentum; }
-  //! Modify the value used to initialise the maximum momentum coefficient.
-  double& MaxMomentum() { return maxMomentum; }
+  //! Get the value used to initialise the momentum coefficient.
+  double Momentum() const { return momentum; }
+  //! Modify the value used to initialise the momentum coefficient.
+  double& Momentum() { return momentum; }
 
  private:
   // The velocity matrix.
   arma::mat velocity;
 
-  // The number of iterations.
-  double iteration;
-
-  // Maximum momentum coefficient
-  double maxMomentum;
+  // Momentum coefficient
+  double momentum;
 };
 
 } // namespace optimization
