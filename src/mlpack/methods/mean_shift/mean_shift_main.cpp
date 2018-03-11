@@ -83,7 +83,7 @@ static void mlpackMain()
 
   arma::mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
   arma::mat centroids;
-  arma::Col<size_t> assignments;
+  arma::Row<size_t> assignments;
 
   MeanShift<> meanShift(radius, maxIterations);
 

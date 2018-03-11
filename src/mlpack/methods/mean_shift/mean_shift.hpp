@@ -31,7 +31,7 @@ namespace meanshift /** Mean shift clustering. */ {
  *
  * @code
  * extern arma::mat data; // Dataset we want to run mean shift on.
- * arma::Col<size_t> assignments; // Cluster assignments.
+ * arma::Row<size_t> assignments; // Cluster assignments.
  * arma::mat centroids; // Cluster centroids.
  *
  * MeanShift<> meanShift();
@@ -82,7 +82,7 @@ class MeanShift
    * @param centroids Matrix in which centroids are stored.
    */
   void Cluster(const MatType& data,
-               arma::Col<size_t>& assignments,
+               arma::Row<size_t>& assignments,
                arma::mat& centroids,
                bool useSeeds = true);
 
