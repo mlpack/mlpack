@@ -505,13 +505,7 @@ BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
 BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
 {
   string algorithms[] = {"dual_tree", "naive", "single_tree"};
-  constexpr int nofalgorithms = sizeof(algorithms) / sizeof(algorithms[0]);
-
-  // Neighbors and distances given by the above algorithms will be stored
-  // in the following arrays in the order:
-  // dual_tree, naive, single_tree.
-  arma::Mat<size_t> neighbors[nofalgorithms];
-  arma::mat distances[nofalgorithms];
+  const int nofalgorithms = 3;
 
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -521,6 +515,12 @@ BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
 
   // Keep some k <= number of reference points same over all.
   SetInputParam("k", (int) 10);
+
+  arma::Mat<size_t> neighbors_compare;
+  arma::mat distances_compare;
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
 
   // Looping over all the algorithms and storing their outputs.
   for (int i = 0; i < nofalgorithms; i++)
@@ -532,21 +532,24 @@ BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
 
     mlpackMain();
 
-    neighbors[i] = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
-    distances[i] = std::move(CLI::GetParam<arma::mat>("distances"));
+    if (i == 0)
+    {
+      neighbors_compare = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+      distances_compare = std::move(CLI::GetParam<arma::mat>("distances"));
+    }
+    else
+    {
+      neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+      distances = std::move(CLI::GetParam<arma::mat>("distances"));
+
+      CheckMatrices(neighbors_compare, neighbors);
+      CheckMatrices(distances_compare, distances);
+    }
 
     // Reset passed parameters.
     CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
     CLI::GetSingleton().Parameters()["query"].wasPassed = false;
     CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
-  }
-
-  // Check if all the output matrices of the different algorithms
-  // are equal.
-  for (int i = 0; i < nofalgorithms - 1; i++)
-  {
-    CheckMatrices(neighbors[i], neighbors[i + 1]);
-    CheckMatrices(distances[i], distances[i + 1]);
   }
 }
 
@@ -556,15 +559,9 @@ BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
 BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
 {
   string treetypes[] = {"kd", "vp", "rp", "max-rp", "ub", "cover", "r",
-      "r-star", "x", "ball", "hilbert-r", "r-plus", "r-plus-plus", "oct"};
-  constexpr int noftreetypes = sizeof(treetypes) / sizeof(treetypes[0]);
-
-  // Neighbors and distances given by using the above tree types will
-  // be stored in the following arrays in the order:
-  // kd, vp, rp, max-rp, ub, cover, r, r-star, x, ball, hilbert-r, r-plus,
-  // r-plus-plus, oct.
-  arma::Mat<size_t> neighbors[noftreetypes];
-  arma::mat distances[noftreetypes];
+      "r-star", "x", "ball", "hilbert-r", "r-plus", "r-plus-plus",
+      "oct"};
+  const int noftreetypes = 14;
 
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -574,6 +571,12 @@ BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
 
   // Keep some k <= number of reference points same over all.
   SetInputParam("k", (int) 10);
+
+  arma::Mat<size_t> neighbors_compare;
+  arma::mat distances_compare;
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
 
   // Looping over all the algorithms and storing their outputs.
   for (int i = 0; i < noftreetypes; i++)
@@ -585,21 +588,24 @@ BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
 
     mlpackMain();
 
-    neighbors[i] = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
-    distances[i] = std::move(CLI::GetParam<arma::mat>("distances"));
+    if (i == 0)
+    {
+      neighbors_compare = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+      distances_compare = std::move(CLI::GetParam<arma::mat>("distances"));
+    }
+    else
+    {
+      neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+      distances = std::move(CLI::GetParam<arma::mat>("distances"));
+
+      CheckMatrices(neighbors_compare, neighbors);
+      CheckMatrices(distances_compare, distances);
+    }
 
     // Reset passed parameters.
     CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
     CLI::GetSingleton().Parameters()["query"].wasPassed = false;
-    CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
-  }
-
-  // Check if the output matrices given by using the different
-  // tree types are equal.
-  for (int i = 0; i < noftreetypes - 1; i++)
-  {
-    CheckMatrices(neighbors[i], neighbors[i + 1]);
-    CheckMatrices(distances[i], distances[i + 1]);
+    CLI::GetSingleton().Parameters()["tree_type"].wasPassed = false;
   }
 }
 
