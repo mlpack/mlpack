@@ -215,7 +215,7 @@ class SAGAType
 // Convenience typedefs.
 
 /**
-* Standard stochastic variance reduced gradient.
+* SAGA: A Fast Incremental Gradient Method.
 */
 using SAGA = SAGAType<SAGAUpdate, NoDecay>;
 

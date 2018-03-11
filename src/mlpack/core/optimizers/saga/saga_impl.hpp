@@ -96,7 +96,7 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
 
     lastObjective = overallObjective;
 
-    // initializa the gradients.
+    // initialize the gradients.
     size_t effectiveBatchSize = std::min(batchSize, numFunctions);
     arma::cube tableOfGradients(iterate.n_rows, iterate.n_cols, numBatches);
     arma::mat avgGradient(iterate.n_rows, iterate.n_cols);
