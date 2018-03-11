@@ -211,7 +211,7 @@ void AssembleFactorizerType(const std::string& algorithm,
   // Setting minResidue to a negative number leads to algorithm terminating
   // only when the maximum number of iterations is reached.
   const double minResidue = maxIterationTermination ? double(-1) :
-    CLI::GetParam<double>("min_residue");
+      CLI::GetParam<double>("min_residue");
   SimpleResidueTermination srt(minResidue, maxIterations);
   if (algorithm == "NMF")
   {
