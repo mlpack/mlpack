@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
      */
     Log::Debug << "Average return: " << averageReturn.mean()
         << " Episode return: " << episodeReturn << std::endl;
-    if (averageReturn.mean() > 30)
+    if (averageReturn.mean() > 25)
     {
       agent.Deterministic() = true;
       arma::running_stat<double> testReturn;
