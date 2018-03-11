@@ -251,10 +251,11 @@ static void mlpackMain()
   // Either load from a model, or train a model.
   if (CLI::HasParam("training"))
   {
+    // Train a model.
     // Validate Parameteres.
     RequireParamInSet<string>("algorithm", { "NMF", "BatchSVD",
-      "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD" }, true,
-      "unknown algorithm");
+        "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD" }, true,
+        "unknown algorithm");
     RequireAtLeastOnePassed({ "output_model" }, false,
         "trained model will not be saved");
     ReportIgnoredParam({{ "iteration_only_termination", true }}, "min_residue");
@@ -287,6 +288,7 @@ static void mlpackMain()
   }
   else
   {
+    // Load from a model.
     // Validate Parameteres.
     RequireAtLeastOnePassed({ "query", "all_user_recommendations", 
         "test" }, true);
