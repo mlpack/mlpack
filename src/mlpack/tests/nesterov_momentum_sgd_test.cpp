@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_SUITE(NesterovMomentumSGDTest);
 BOOST_AUTO_TEST_CASE(NesterovMomentumSGDSpeedUpTestFunction)
 {
   SGDTestFunction f;
-  NesterovMomentumUpdate nesterovMomentumUpdate(0.7);
+  NesterovMomentumUpdate nesterovMomentumUpdate(0.9);
   NesterovMomentumSGD s(0.0003, 1, 2500000, 1e-9, true,
                         nesterovMomentumUpdate);
 
@@ -66,8 +66,8 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
   {
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
-    NesterovMomentumUpdate nesterovMomentumUpdate(0.4);
-    NesterovMomentumSGD s(0.0008, 1, 0, 1e-15, true, nesterovMomentumUpdate);
+    NesterovMomentumUpdate nesterovMomentumUpdate(0.9);
+    NesterovMomentumSGD s(0.0001, 1, 0, 1e-15, true, nesterovMomentumUpdate);
 
     arma::mat coordinates = f.GetInitialPoint();
     double result = s.Optimize(f, coordinates);
