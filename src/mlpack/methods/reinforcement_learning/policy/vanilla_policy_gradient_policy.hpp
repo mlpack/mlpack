@@ -64,27 +64,6 @@ class VanillaPolicyGradient
     return static_cast<ActionType>(
         arma::as_scalar(arma::find(actionValue == actionValue.max(), 1)));
   }
-
-  /**
-   * Exploration probability will anneal at each step.
-   */
-  void Anneal()
-  { /* Nothing to do here. */ };
-
-  /**
-   * @return Current possibility to explore.
-   */
-  const double& Epsilon() const { return epsilon; }
-
- private:
-  //! Locally-stored probability to explore.
-  double epsilon;
-
-  //! Locally-stored lower bound for epsilon.
-  double minEpsilon;
-
-  //! Locally-stored stride for epsilon to anneal.
-  double delta;
 };
 
 } // namespace rl
