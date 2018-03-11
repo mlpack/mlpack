@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
   model.Add<LogSoftMax<> >();
 
   // Set up the policy and replay method.
-  VanillaPolicyGradient<CartPole> policy(0.1,1000,0.1);
+  VanillaPolicyGradient<CartPole> policy;
   RandomReplay<CartPole> replayMethod(10, 10000);
 
   TrainingConfig config;

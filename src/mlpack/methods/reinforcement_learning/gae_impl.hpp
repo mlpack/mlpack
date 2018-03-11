@@ -40,7 +40,7 @@ Advantage<EnvironmentType,
     config(std::move(config)),
     learningNetwork(std::move(network)),
     updater(std::move(updater)),
-    policy(std::move(policy)),
+	policy(std::move(policy)),
     replayMethod(std::move(replayMethod)),
     environment(std::move(environment)),
     totalSteps(0),
@@ -56,14 +56,14 @@ template <
   typename EnvironmentType,
   typename NetworkType,
   typename UpdaterType,
-  typename BehaviorPolicyType,
+  typename PolicyType,
   typename ReplayType
 >
 double Advantage<
   EnvironmentType,
   NetworkType,
   UpdaterType,
-  BehaviorPolicyType,
+  PolicyType,
   ReplayType
 >::Step()
 {

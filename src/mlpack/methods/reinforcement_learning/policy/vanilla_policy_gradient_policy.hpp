@@ -42,12 +42,7 @@ class VanillaPolicyGradient
    *        will anneal.
    * @param minEpsilon Epsilon will never be less than this value.
    */
-  VanillaPolicyGradient(const double initialEpsilon =math::Random(),
-               const size_t annealInterval = 100,
-               const double minEpsilon = math::Random()) :
-      epsilon(initialEpsilon),
-      minEpsilon(minEpsilon),
-      delta((initialEpsilon - minEpsilon) / annealInterval)
+  VanillaPolicyGradient()
   { /* Nothing to do here. */ }
 
   /**
