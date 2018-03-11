@@ -49,6 +49,19 @@ inline void RandomSeed(const size_t seed)
 }
 
 /**
+ * Set the random seed to a predefined seed.
+ */
+#if (BINDING_TYPE == BINDING_TYPE_TEST)
+inline void SetFixedRandomSeed()
+{
+  const size_t seed = 54321;
+  randGen.seed((uint32_t) seed);
+  srand((unsigned int) seed);
+  arma::arma_rng::set_seed(seed);
+}
+#endif
+
+/**
  * Generates a uniform random number between 0 and 1.
  */
 inline double Random()
