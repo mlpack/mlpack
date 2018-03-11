@@ -17,7 +17,7 @@ static const std::string testName = "LocalCoordinate";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/methods/sparse_coding/sparse_coding_main.cpp>
+#include <mlpack/methods/local_coordinate_coding/local_coordinate_coding_main.cpp>
 #include "test_helper.hpp"
 
 #include <boost/test/unit_test.hpp>
