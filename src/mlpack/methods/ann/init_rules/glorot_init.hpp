@@ -6,18 +6,6 @@
  * initialization rule initialize the weights to maintain activation variances
  * and back-propagated gradients variance as one moves up or down the network.
  *
- * For more information, see the following paper.
- *
- * @code
- * @inproceedings {pmlr-v9-glorot10a,
- *  title       = {Understanding the difficulty of training deep feedforward neural networks},
- *  author      = {Xavier Glorot and Yoshua Bengio},
- *  booktitle   = {Proceedings of the Thirteenth International Conference on Artificial
- *                 Intelligence and Statistics},
- *  year        = {2010}
- * }
- * @endcode
- *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -46,6 +34,19 @@ namespace ann /** Artificial Neural Network. */ {
  * Where n_{i+1} is the number of neurons in the outgoing layer, n_i represents the
  * number of neurons in the ingoing layer
  * Here Normal Distribution may also be used if needed
+ *
+ * For more information, see the following paper.
+ *
+ * @code
+ * @inproceedings {pmlr-v9-glorot10a,
+ *  title       = {Understanding the difficulty of training deep feedforward neural networks},
+ *  author      = {Xavier Glorot and Yoshua Bengio},
+ *  booktitle   = {Proceedings of the Thirteenth International Conference on Artificial
+ *                 Intelligence and Statistics},
+ *  year        = {2010}
+ * }
+ * @endcode
+ *
  */
 template<bool Uniform = true>
 class GlorotInitializationType
