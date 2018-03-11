@@ -44,7 +44,6 @@ class NesterovMomentumUpdate
    *
    */
   NesterovMomentumUpdate(const double momentum = 0.5) :
-      iteration(0),
       momentum(momentum)
   {
     // Nothing to do.
