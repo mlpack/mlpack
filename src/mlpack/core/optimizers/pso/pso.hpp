@@ -55,7 +55,7 @@ namespace optimization {
  * in the DecomposableFunctionType).
  *
  * @tparam SelectionPolicy The velocty / position update strategy used for the
- * evaluation step.
+ *     evaluation step.
  */
 template<typename VelocityVectorType = InertiaWeight>
 class PSOType
@@ -153,9 +153,6 @@ class PSOType
 
   //! Social acceleration of the particles.
   double socialAcceleration;
-
-  //! The batch size for processing.
-  size_t batchSize;
 
   //! The maximum number of allowed iterations.
   size_t maxIterations;
