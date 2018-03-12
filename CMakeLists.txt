@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.5)
+cmake_minimum_required(VERSION 2.8.10)
 project(mlpack C CXX)
 
 include(CMake/cotire.cmake)
@@ -62,6 +62,13 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 # Only GCC-like compilers support -Wextra, and other compilers give tons of
 # output for -Wall, so only -Wall and -Wextra on GCC.
 if(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  # Ensure that we can't compile with clang 3.4, since this causes strange
+  # issues.
+  if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 3.5)
+    message(FATAL_ERROR "mlpack does not build correctly with clang < 3.5.  "
+        "Please upgrade your compiler and reconfigure mlpack.")
+  endif ()
+
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -ftemplate-depth=1000")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 endif()
