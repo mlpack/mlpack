@@ -50,7 +50,7 @@ class LogisticRegressionFunction
   //! Return the matrix of predictors.
   const MatType& Predictors() const { return predictors; }
   //! Return the vector of responses.
-  const arma::vec& Responses() const { return responses; }
+  const arma::Row<size_t>& Responses() const { return responses; }
 
   /**
   * Shuffle the order of function visitation.  This may be called by the optimizer.
