@@ -1049,6 +1049,88 @@ void DecisionTree<FitnessFunction,
   dimensionTypeOrMajorityClass = (size_t) maxIndex;
 }
 
+//! Return the pruned tree based on the provided validation set.
+template<typename FitnessFunction,
+  template<typename> class NumericSplitType,
+  template<typename> class CategoricalSplitType,
+  typename DimensionSelectionType,
+  typename ElemType,
+  bool NoRecursion>
+template<typename MatType, typename LabelsType>
+void DecisionTree<FitnessFunction,
+  NumericSplitType,
+  CategoricalSplitType,
+  DimensionSelectionType,
+  ElemType,
+  NoRecursion>::Prune(DecisionTree* root,
+                      MatType& validData,
+                      LabelsType& validLabels,
+                      double& bestScore)
+{
+  for (size_t i = 0; i < children.size(); ++i)
+  {
+    DecisionTree* node = children[i];
+    if(node->children.size() == 0)
+    {
+      std::vector<DecisionTree*> childrenbacktrack = children;
+      size_t dimensionTypeOrMajorityClassbacktrack = dimensionTypeOrMajorityClass;
+      arma::vec classProbabilitiesbacktrack = classProbabilities;
+
+      // Pruning the node's child and making the present node as leaf.
+      children.clear();
+      dimensionTypeOrMajorityClass = node->dimensionTypeOrMajorityClass;
+      classProbabilities = node->classProbabilities;
+      double newScore = ValidateScore(root, validData, validLabels);
+
+      //Pruning the tree if the pruned tree gives better accuracy.
+      if (newScore > bestScore)
+      {
+        bestScore = newScore;
+        return;
+      }
+      else
+      {
+        //backtracking in case accuracy is not increased.
+        children = childrenbacktrack;
+        dimensionTypeOrMajorityClass = dimensionTypeOrMajorityClassbacktrack;
+        classProbabilities = classProbabilitiesbacktrack;
+      }
+    }
+    else
+    {
+      node->Prune(root, validData, validLabels, bestScore);
+    }
+  }
+}
+
+//! Validate on ValidationSet and return accuracy score.
+template<typename FitnessFunction,
+  template<typename> class NumericSplitType,
+  template<typename> class CategoricalSplitType,
+  typename DimensionSelectionType,
+  typename ElemType,
+  bool NoRecursion>
+template<typename MatType, typename LabelsType>
+double DecisionTree<FitnessFunction,
+  NumericSplitType,
+  CategoricalSplitType,
+  DimensionSelectionType,
+  ElemType,
+  NoRecursion>::ValidateScore(DecisionTree* root,
+                              MatType& validData,
+                              LabelsType& validLabels) const
+{
+  LabelsType predictions;
+  root->Classify(validData, predictions);
+  size_t correctClassification = 0;
+  for (size_t i = 0; i < validLabels.n_elem; ++i)
+  {
+    if(validLabels[i] == predictions[i])
+      correctClassification++;
+  }
+  return (correctClassification/validLabels.n_elem);
+}
+
 } // namespace tree
 } // namespace mlpack
 

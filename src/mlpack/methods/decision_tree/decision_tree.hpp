@@ -354,6 +354,17 @@ class DecisionTree :
    */
   size_t NumClasses() const;
 
+  template<typename MatType, typename LabelsType>
+  void Prune(DecisionTree* root,
+             MatType& validData,
+             LabelsType& validLabels,
+             double& bestScore);
+
+  template<typename MatType, typename LabelsType>
+  double ValidateScore(DecisionTree* root,
+                       MatType& validData,
+                       LabelsType& validLabels) const;
+
  private:
   //! The vector of children.
   std::vector<DecisionTree*> children;
