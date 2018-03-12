@@ -2,8 +2,8 @@
  * @file optimisticadam_update.hpp
  * @author Moksh Jain
  *
- * OptmisticAdam optimizer. Optimistic Adam is an an algorithm which uses
- * Optimistic Mirror Descent with the Adam optimizer.
+ * OptmisticAdam optimizer. Implements Optimistic Adam, an algorithm which 
+ * uses Optimistic Mirror Descent with the Adam optimizer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,8 +19,11 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * OptimisticAdam is an optimizer which uses Optmistic Mirror Descent with
- * the Adam Optimizer.
+ * OptimisticAdam is an optimizer which implements the Optimistic Adam 
+ * algorithm which uses Optmistic Mirror Descent with the Adam Optimizer.
+ * It addresses the problem of limit cycling while training GANs. It uses
+ * OMD to achieve faster regret rates in solving the zero sum game of 
+ * training a GAN.
  *
  * For more information, see the following.
  *
@@ -30,7 +33,7 @@ namespace optimization {
  *              Haoyang Zeng},
  *   title   = {Training GANs with Optimism},
  *   year    = {2017},
- *   url     = {https://openreview.net/forum?id=SJJySbbAZ}
+ *   url     = {https://arxiv.org/abs/1711.00141}
  * }
  * @endcode
  */
@@ -40,7 +43,7 @@ class OptimisticAdamUpdate
   /**
    * Construct the OptimisticAdam update policy with the given parameters.
    *
-   * @param epsilon The epsilon value used to initialise the squared gradient
+   * @param epsilon The epsilon value used to initialize the squared gradient
    *        parameter.
    * @param beta1 The smoothing parameter.
    * @param beta2 The second moment coefficient.
@@ -101,9 +104,9 @@ class OptimisticAdamUpdate
     g = std::move(update);
   }
 
-  //! Get the value used to initialise the squared gradient parameter.
+  //! Get the value used to initialize the squared gradient parameter.
   double Epsilon() const { return epsilon; }
-  //! Modify the value used to initialise the squared gradient parameter.
+  //! Modify the value used to initialize the squared gradient parameter.
   double& Epsilon() { return epsilon; }
 
   //! Get the smoothing parameter.
@@ -117,7 +120,7 @@ class OptimisticAdamUpdate
   double& Beta2() { return beta2; }
 
  private:
-  // The epsilon value used to initialise the squared gradient parameter.
+  // The epsilon value used to initialize the squared gradient parameter.
   double epsilon;
 
   // The smoothing parameter.
@@ -131,7 +134,7 @@ class OptimisticAdamUpdate
 
   // The exponential moving average of squared gradient values.
   arma::mat v;
-  // The previous update
+  // The previous update.
   arma::mat g;
 
   // The number of iterations.
