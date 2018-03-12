@@ -23,7 +23,8 @@ namespace optimization {
  * algorithm which uses Optmistic Mirror Descent with the Adam Optimizer.
  * It addresses the problem of limit cycling while training GANs. It uses
  * OMD to achieve faster regret rates in solving the zero sum game of 
- * training a GAN.
+ * training a GAN. It consistently achieves a smaller KL divergnce with 
+ * respect to the true underlying data distribution.
  *
  * For more information, see the following.
  *
