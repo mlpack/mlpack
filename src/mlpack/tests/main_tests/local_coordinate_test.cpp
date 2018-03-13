@@ -358,7 +358,8 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateModelReuseTest)
 
   // Input data.
   SetInputParam("max_iterations", (int) 100);
-  SetInputParam("input_model", CLI::GetParam<LocalCoordinateCoding*>("output_model"));
+  SetInputParam("input_model",
+                CLI::GetParam<LocalCoordinateCoding*>("output_model"));
   SetInputParam("normalize", (bool) true);
   SetInputParam("test", std::move(testData));
 
