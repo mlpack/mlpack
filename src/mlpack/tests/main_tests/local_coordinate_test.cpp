@@ -231,14 +231,14 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateReqAtomsTest)
  * Ensure only one of input_model or initial_dictionary
  * is specified.
  */
-/*BOOST_AUTO_TEST_CASE(LocalCoordinateModelVerTest)
+BOOST_AUTO_TEST_CASE(LocalCoordinateModelVerTest)
 {
   arma::mat inputData;
   arma::mat testData;
   LoadData(inputData, testData);
 
   mat initialDictionary = inputData.cols(0, 1);
-  LocalCoordinate* c = new LocalCoordinate();
+  LocalCoordinateCoding* c = new LocalCoordinateCoding();
 
   // Input trained model and initial_dictionary.
   SetInputParam("input_model", c);
@@ -248,7 +248,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateReqAtomsTest)
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
-*/
+
 
 /**
  * Ensure that specified number of atoms and initial_dictionary
@@ -328,6 +328,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateDataDimensionalityTest)
 
 /**
  * Check that saved model can be reused again.
+*/
 
 BOOST_AUTO_TEST_CASE(LocalCoordinateModelReuseTest)
 {
@@ -357,7 +358,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateModelReuseTest)
 
   // Input data.
   SetInputParam("max_iterations", (int) 100);
-  SetInputParam("input_model", CLI::GetParam<LocalCoordinate*>("output_model"));
+  SetInputParam("input_model", CLI::GetParam<LocalCoordinateCoding*>("output_model"));
   SetInputParam("normalize", (bool) true);
   SetInputParam("test", std::move(testData));
 
@@ -382,7 +383,6 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateModelReuseTest)
   CheckMatrices(dictionary, CLI::GetParam<arma::mat>("dictionary"));
   CheckMatrices(codes, CLI::GetParam<arma::mat>("codes"));
 }
-*/
 
 /**
  * Ensure that for different value of max iterations
