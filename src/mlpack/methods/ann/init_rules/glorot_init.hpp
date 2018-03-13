@@ -96,7 +96,7 @@ inline void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W,
   if (W.is_empty())
   W = arma::mat(rows, cols);
 
-  double_t var = (double)(2)/(rows + cols);
+  double var = 2.0/double(rows + cols);
   GaussianInitialization normalInit(0.0, var);
   normalInit.Initialize(W, rows, cols);
 }
@@ -110,7 +110,7 @@ inline void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W,
   if (W.is_empty())
   W = arma::mat(rows, cols);
 
-  double_t a = sqrt(6) / sqrt(rows + cols); // limit of  distribution
+  double a = sqrt(6) / sqrt(rows + cols); // limit of  distribution
   RandomInitialization randomInit(-a, a);
   randomInit.Initialize(W, rows, cols);
 }
