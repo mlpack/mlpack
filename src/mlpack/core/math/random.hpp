@@ -54,7 +54,7 @@ inline void RandomSeed(const size_t seed)
 #if (BINDING_TYPE == BINDING_TYPE_TEST)
 inline void SetFixedRandomSeed()
 {
-  const size_t seed = 54321;
+  const static size_t seed = rand();
   randGen.seed((uint32_t) seed);
   srand((unsigned int) seed);
   arma::arma_rng::set_seed(seed);
