@@ -260,6 +260,18 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
     }
   }
 
+  // If no centroid has converged due to too little iterations, take 1 random
+  // centroid calculated.
+  if (centroids.empty()) 
+  {
+    if (maxIterations == 0)
+    {
+      centroids.insert_cols(centroids.n_cols, data.col(0));
+    } else {
+      centroids.insert_cols(centroids.n_cols, allCentroids.col(0));
+    }
+  }
+
   // Assign centroids to each point.
   neighbor::KNN neighborSearcher(centroids);
   arma::mat neighborDistances;
