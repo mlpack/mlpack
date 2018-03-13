@@ -231,7 +231,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateReqAtomsTest)
  * Ensure only one of input_model or initial_dictionary
  * is specified.
  */
-BOOST_AUTO_TEST_CASE(LocalCoordinateModelVerTest)
+/*BOOST_AUTO_TEST_CASE(LocalCoordinateModelVerTest)
 {
   arma::mat inputData;
   arma::mat testData;
@@ -248,6 +248,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateModelVerTest)
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
+*/
 
 /**
  * Ensure that specified number of atoms and initial_dictionary
