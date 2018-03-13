@@ -302,8 +302,8 @@ void GenerateNoisySines(arma::mat& data,
 }
 @endcode
 
-For further examples on the ann usage of the ann classes, see [mlpack
-models](https://github.com/mlpack/models)
+For further examples on the usage of the ann classes, see [mlpack
+models](https://github.com/mlpack/models).
 
 @section layer_api_anntut Layer API
 
