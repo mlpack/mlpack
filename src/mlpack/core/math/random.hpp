@@ -49,7 +49,7 @@ inline void RandomSeed(const size_t seed)
 }
 
 /**
- * Set the random seed to a predefined seed.
+ * Set the random seed to a fixed number.
  */
 #if (BINDING_TYPE == BINDING_TYPE_TEST)
 inline void SetFixedRandomSeed()
