@@ -199,7 +199,6 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateBoundsTest)
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
- 
   // Test for atoms.
 
   // Input training data.
