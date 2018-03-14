@@ -217,42 +217,7 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Train(
-    const MatType& referenceSet)
-{
-  // Clean up the old tree, if we built one.
-  if (treeOwner && referenceTree)
-    delete referenceTree;
-
-  // Rebuild the tree, if necessary.
-  if (!naive)
-  {
-    referenceTree = BuildTree<Tree>(const_cast<MatType&>(referenceSet),
-        oldFromNewReferences);
-    treeOwner = true;
-  }
-  else
-  {
-    treeOwner = false;
-  }
-
-  // Delete the old reference set, if we owned it.
-  if (setOwner && this->referenceSet)
-    delete this->referenceSet;
-
-  if (!naive)
-    this->referenceSet = &referenceTree->Dataset();
-  else
-    this->referenceSet = &referenceSet;
-  setOwner = false;
-}
-
-template<typename MetricType,
-         typename MatType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-void RangeSearch<MetricType, MatType, TreeType>::Train(
-    MatType&& referenceSet)
+    MatType referenceSet)
 {
   // Clean up the old tree, if we built one.
   if (treeOwner && referenceTree)

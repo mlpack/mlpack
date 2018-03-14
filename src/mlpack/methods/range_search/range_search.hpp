@@ -143,19 +143,11 @@ class RangeSearch
    * the mlpack abstractions, even though calling this "training" is maybe a bit
    * of a stretch.
    *
-   * @param referenceSet New set of reference data.
-   */
-  void Train(const MatType& referenceSet);
-
-  /**
-   * Set the reference set to a new reference set, taking ownership of the set.
-   * A tree is built if necessary.  This method is called 'Train()' in order to
-   * match the rest of the mlpack abstractions, even though calling this
-   * "training" is maybe a bit of a stretch.
+   * Use std::move to pass in the reference set if an additional copy is not needed.
    *
    * @param referenceSet New set of reference data.
    */
-  void Train(MatType&& referenceSet);
+  void Train(MatType referenceSet);
 
   /**
    * Set the reference tree to a new reference tree.
