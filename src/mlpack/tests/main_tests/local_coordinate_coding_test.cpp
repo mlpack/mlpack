@@ -1,5 +1,5 @@
 /**
- * @file local_coordinate_test.cpp
+ * @file local_coordinate_coding_test.cpp
  * @author Neel Kelkar
  *
  * Test mlpackMain() of local_coordinate_coding_main.cpp.
@@ -13,7 +13,7 @@
 #include <string>
 
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "LocalCoordinate";
+static const std::string testName = "LocalCoordinateCoding";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
