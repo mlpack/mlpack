@@ -81,8 +81,8 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
     // Find the effective batch size (the last batch may be smaller).
     effectiveBatchSize = std::min(batchSize, numFunctions - f);
 
-    function.Gradient(iterate, f, tableOfGradients.slice(b), effectiveBatchSize);
-    //tableOfGradients.slice(b) = gradient;
+    function.Gradient(iterate, f, tableOfGradients.slice(b),
+                      effectiveBatchSize);
 
     f += effectiveBatchSize;
     avgGradient += tableOfGradients.slice(b);
