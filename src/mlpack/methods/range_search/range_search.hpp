@@ -125,7 +125,7 @@ class RangeSearch
 
   /**
    * Copy the given RangeSearch model.
-   * Use std::move to pass in the model if an additional copy is not needed.
+   * Use std::move to pass in the model if the old copy is no longer needed.
    *
    * @param other RangeSearch model to copy.
    */
@@ -143,7 +143,8 @@ class RangeSearch
    * the mlpack abstractions, even though calling this "training" is maybe a bit
    * of a stretch.
    *
-   * Use std::move to pass in the reference set if an additional copy is not needed.
+   * Use std::move to pass in the reference set if an the old copy is no longer
+   * needed.
    *
    * @param referenceSet New set of reference data.
    */
