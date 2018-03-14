@@ -69,6 +69,27 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
 
   const size_t actualMaxIterations = (maxIterations == 0) ?
                std::numeric_limits<size_t>::max() : maxIterations;
+
+  // initialize the gradients.
+  size_t effectiveBatchSize = std::min(batchSize, numFunctions);
+  arma::cube tableOfGradients(iterate.n_rows, iterate.n_cols, numBatches);
+  arma::mat avgGradient(iterate.n_rows, iterate.n_cols);
+
+  for (size_t f = 0, b=0; f < numFunctions;
+    /* incrementing done manually */)
+  {
+    // Find the effective batch size (the last batch may be smaller).
+    effectiveBatchSize = std::min(batchSize, numFunctions - f);
+
+    function.Gradient(iterate, f, tableOfGradients.slice(b), effectiveBatchSize);
+    //tableOfGradients.slice(b) = gradient;
+
+    f += effectiveBatchSize;
+    avgGradient += tableOfGradients.slice(b);
+    b++;
+  }
+  avgGradient /= (double) numBatches;
+
   for (size_t i = 0; i < actualMaxIterations; ++i)
   {
     // Calculate the objective function.
@@ -96,26 +117,6 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
 
     lastObjective = overallObjective;
 
-    // initialize the gradients.
-    size_t effectiveBatchSize = std::min(batchSize, numFunctions);
-    arma::cube tableOfGradients(iterate.n_rows, iterate.n_cols, numBatches);
-    arma::mat avgGradient(iterate.n_rows, iterate.n_cols);
-
-    for (size_t f = 0, b=0; f < numFunctions;
-      /* incrementing done manually */)
-    {
-      // Find the effective batch size (the last batch may be smaller).
-      effectiveBatchSize = std::min(batchSize, numFunctions - f);
-
-      function.Gradient(iterate, f, gradient, effectiveBatchSize);
-      tableOfGradients.slice(b) = gradient;
-
-      f += effectiveBatchSize;
-      avgGradient += gradient;
-      b++;
-    }
-    avgGradient /= (double) numBatches;
-
     // Store current parameter for the calculation of the variance reduced
     // gradient.
     iterate0 = iterate;
@@ -135,17 +136,8 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
 
       b = math::RandInt(0, numBatches); // Random batch selected
       // Find the effective batch size (the last batch may be smaller).
-      if (b == numBatches-1)
-      {
-        effectiveBatchSize = numFunctions - b*batchSize;
-        currentFunction = b*batchSize;
-      }
-      else
-      {
-        effectiveBatchSize = batchSize;
-        currentFunction = b*effectiveBatchSize;
-      }
-
+      currentFunction = b*batchSize;
+      effectiveBatchSize = std::min(batchSize, numFunctions - currentFunction);
 
       // Calculate the gradient of a random function.
       function.Gradient(iterate, currentFunction, gradient,
@@ -157,6 +149,9 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
                           stepSize);
       // update average
       avgGradient += (gradient-tableOfGradients.slice(b))/numBatches;
+
+      // update table of gradients
+      tableOfGradients.slice(b) = gradient;
 
       f += effectiveBatchSize;
     }

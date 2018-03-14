@@ -24,7 +24,7 @@ namespace optimization {
 
 /**
  * SAGA is a technique for minimizing a function
- * which can be expressed as a sum of other functions.  That is, suppose we have
+ * which can be expressed as a sum of other functions.That is, suppose we have
  *
  * \f[
  * f(A) = \sum_{i = 0}^{n} f_i(A)
@@ -34,8 +34,8 @@ namespace optimization {
  * \f$ f_i(A) \f$, based on the specified update
  * policy. By default vanilla update policy is used. The SAGA class supports
  * either scanning through each of the \f$ n \f$
- * functions \f$ f_i(A)\f$ linearly, or in a random sequence.  The algorithm
- * continues until \f$ j\f$ reaches the maximum number of iterations---or when a
+ * functions \f$ f_i(A)\f$ linearly, or in a random sequence. The algorithm
+ * continues until \f$ j\f$ reaches the maximum number of iterations--or when a
  * full sequence of updates through each of the \f$ n \f$ functions \f$ f_i(A)
  * \f$ produces an improvement within a certain tolerance \f$ \epsilon \f$.
  * That is,
@@ -76,13 +76,16 @@ namespace optimization {
  *
  * @code
  *@incollection{NIPS2014_5258,
- * title     = {SAGA: A Fast Incremental Gradient Method With Support for Non-Strongly Convex Composite Objectives},
+ * title     = {SAGA: A Fast Incremental Gradient Method With
+ *              Support for Non-Strongly Convex Composite Objectives},
  * author    = {Defazio, Aaron and Bach, Francis and Lacoste-Julien, Simon},
  * booktitle = {Advances in Neural Information Processing Systems 27},
- * editor    = {Z. Ghahramani and M. Welling and C. Cortes and N. D. Lawrence and K. Q. Weinberger},
+ * editor    = {Z. Ghahramani and M. Welling and C. Cortes and N. D.
+ *              Lawrence and K. Q. Weinberger},
  * year      = {2014},
  * publisher = {Curran Associates, Inc.},
- * url       = {http://papers.nips.cc/paper/5258-saga-a-fast-incremental-gradient-method-with-support-for-non
+ * url       = {http://papers.nips.cc/paper/5258-saga-a-fast-incremental-
+ *              gradient-method-with-support-for-non
  *              -strongly-convex-composite-objectives.pdf}
  * }
  * @endcode
@@ -95,7 +98,7 @@ namespace optimization {
  *     be adjusted (i.e. NoDecay is used).
  */
 template<typename UpdatePolicyType = SAGAUpdate,
-    typename DecayPolicyType = NoDecay>
+typename DecayPolicyType = NoDecay>
 class SAGAType
 {
  public:
