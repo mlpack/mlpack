@@ -76,7 +76,7 @@ void BatchNorm<InputDataType, OutputDataType>::Forward(
   }
 
   output = input.each_col() - mean;
-  output.each_col() %= gamma / arma::sqrt(variance+eps);
+  output.each_col() %= gamma / arma::sqrt(variance + eps);
   output.each_col() += beta;
 }
 
@@ -85,15 +85,14 @@ template<typename eT>
 void BatchNorm<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  g.reshape(input.n_rows, input.n_cols);
-
   mean = arma::mean(input, 1);
   variance = arma::var(input, 1, 1);
 
   arma::mat m = arma::sum(gy % (input.each_col() - mean), 1);
-  g = arma::repmat(m, 1, input.n_cols) % -(input.each_col() - mean);
+  g = arma::repmat(m, 1, input.n_cols) % (-input.each_col() + mean);
   g.each_col() %= 1.0 / (variance + eps);
-  g += (input.n_cols * gy - arma::repmat((arma::sum(gy, 1)), 1, input.n_cols));
+  g += (gy.each_col() - arma::sum(gy, 1));
+  g += (input.n_cols - 1) * gy;
   g.each_col() %= ((1.0 / input.n_cols) * gamma);
   g.each_col() %= (1.0 / arma::sqrt(variance + eps));
 }
@@ -105,10 +104,9 @@ void BatchNorm<InputDataType, OutputDataType>::Gradient(
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
-  arma::mat normalized(input.n_rows, input.n_cols);
-  gradient.reshape(size + size, 1);
+  gradient.set_size(size + size, 1);
 
-  normalized = input.each_col() - arma::mean(input, 1)
+  arma::mat normalized = input.each_col() - arma::mean(input, 1)
     / arma::sqrt(arma::var(input, 1, 1) + eps);
 
   gradient.submat(0, 0, gamma.n_elem - 1, 0) = arma::sum(normalized % error, 1);
