@@ -88,7 +88,7 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
     avgGradient += tableOfGradients.slice(b);
     b++;
   }
-  avgGradient /= (double) numBatches;
+  avgGradient /= (double) numBatches; // average gradient
 
   for (size_t i = 0; i < actualMaxIterations; ++i)
   {
