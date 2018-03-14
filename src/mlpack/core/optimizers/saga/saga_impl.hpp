@@ -124,7 +124,6 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
     for (size_t f = 0, b=0, currentFunction = 0; f < numFunctions;
       /* incrementing done manually */)
     {
-
       b = math::RandInt(0, numBatches); // Random batch selected
       // Find the effective batch size (the last batch may be smaller).
       currentFunction = b*batchSize;
