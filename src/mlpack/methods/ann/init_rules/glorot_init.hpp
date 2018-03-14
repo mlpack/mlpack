@@ -24,26 +24,29 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * This class is used to initialize the weight matrix with the Glorot Initialization
- * method. The method is defined by
+ * This class is used to initialize the weight matrix with the Glorot
+ * Initialization method. The method is defined by
  *
  * @f{eqnarray*}{
- * \f$\Var[w_i] &=& \frac{2}{n_i + n_{i+1}} \\\f$
- * \f$w_i ~ \U{-\frac{\sqrt(6)}{\sqrt(n_i + n_{i+1})}, \frac{\sqrt(6)}{\sqrt(n_i + n_{i+1})}\f$}
+ * \mathrm{Var}[w_i] &=& \frac{2}{n_i + n_{i+1}} \\
+ * w_i \sim \mathrm{U}[-\frac{\sqrt{6}}{\sqrt{n_i + n_{i+1}}},
+ * \frac{\sqrt{6}}{\sqrt{n_i + n_{i+1}}}]
  * @f}
- * Where n_{i+1} is the number of neurons in the outgoing layer, n_i represents the
- * number of neurons in the ingoing layer
- * Here Normal Distribution may also be used if needed
+ *
+ * where @f$ n_{i+1} @f$ is the number of neurons in the outgoing layer, @f$ n_i
+ * @f$ represents the number of neurons in the ingoing layer. Here Normal
+ * Distribution may also be used if needed
  *
  * For more information, see the following paper.
  *
  * @code
  * @inproceedings {pmlr-v9-glorot10a,
- *  title       = {Understanding the difficulty of training deep feedforward neural networks},
- *  author      = {Xavier Glorot and Yoshua Bengio},
- *  booktitle   = {Proceedings of the Thirteenth International Conference on Artificial
- *                 Intelligence and Statistics},
- *  year        = {2010}
+ *  title     = {Understanding the difficulty of training
+ *               deep feedforward neural networks},
+ *  author    = {Xavier Glorot and Yoshua Bengio},
+ *  booktitle = {Proceedings of the Thirteenth International Conference
+ *               on Artificial Intelligence and Statistics},
+ *  year      = {2010}
  * }
  * @endcode
  *
@@ -53,7 +56,7 @@ class GlorotInitializationType
 {
  public:
   /**
-   * Initialize
+   * Initialize the Glorot initialization object.
    */
   GlorotInitializationType()
   {
@@ -61,7 +64,7 @@ class GlorotInitializationType
   }
 
   /**
-   * Initialize the elements weight matrix.
+   * Initialize the elements weight matrix with glorot initialization method.
    *
    * @param W Weight matrix to initialize.
    * @param rows Number of rows.
@@ -73,7 +76,8 @@ class GlorotInitializationType
                   const size_t cols);
 
   /**
-   * Initialize the elements of the specified weight 3rd order tensor with glorot initialization method
+   * Initialize the elements of the specified weight 3rd order tensor with
+   * glorot initialization method.
    *
    * @param W Weight matrix to initialize.
    * @param rows Number of rows.
@@ -110,7 +114,8 @@ inline void GlorotInitializationType<true>::Initialize(arma::Mat<eT>& W,
   if (W.is_empty())
   W = arma::mat(rows, cols);
 
-  double a = sqrt(6) / sqrt(rows + cols); // limit of  distribution
+  // Limit of distribution.
+  double a = sqrt(6) / sqrt(rows + cols);
   RandomInitialization randomInit(-a, a);
   randomInit.Initialize(W, rows, cols);
 }
@@ -136,7 +141,10 @@ inline void GlorotInitializationType<Uniform>::Initialize(arma::Cube<eT>& W,
  * XavierInitilization is the popular name for this method.
  */
 using XavierInitialization = GlorotInitializationType<true>;
-// Uses uniform distribution
+
+/**
+ * GlorotInitialization uses uniform distribution.
+ */
 using GlorotInitialization = GlorotInitializationType<false>;
 // Uses normal distribution
 } // namespace ann

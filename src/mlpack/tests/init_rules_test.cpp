@@ -287,7 +287,7 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
 }
 
 /**
- * Simple test of the GlorotInitialization class for uniform distribution
+ * Simple test of the GlorotInitialization class for uniform distribution.
  */
 BOOST_AUTO_TEST_CASE(GlorotInitUniformTest)
 {
@@ -308,7 +308,7 @@ BOOST_AUTO_TEST_CASE(GlorotInitUniformTest)
 }
 
 /**
- * Simple test of the GlorotInitialization class for normal distribution
+ * Simple test of the GlorotInitialization class for normal distribution.
  */
 BOOST_AUTO_TEST_CASE(GlorotInitNormalTest)
 {
