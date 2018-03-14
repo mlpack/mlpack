@@ -28,6 +28,9 @@ using namespace mlpack::optimization::test;
 
 BOOST_AUTO_TEST_SUITE(NesterovMomentumSGDTest);
 
+/*
+* Tests the Nesterov Momentum SGD update policy.
+*/
 BOOST_AUTO_TEST_CASE(NesterovMomentumSGDSpeedUpTestFunction)
 {
   SGDTestFunction f;
@@ -42,23 +45,11 @@ BOOST_AUTO_TEST_CASE(NesterovMomentumSGDSpeedUpTestFunction)
   BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
   BOOST_REQUIRE_SMALL(coordinates[1], 1e-7);
   BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
-
-  // Compare with SGD with vanilla update.
-  SGDTestFunction f1;
-  StandardSGD s1(0.0003, 1, 2500000, 1e-9, true);
-
-  arma::mat coordinates1 = f.GetInitialPoint();
-  double result1 = s1.Optimize(f1, coordinates1);
-
-  // Result doesn't converge in 2500000 iterations.
-  BOOST_REQUIRE_GT(result1 + 1.0, 0.05);
-  BOOST_REQUIRE_GE(coordinates1[0], 1e-3);
-  BOOST_REQUIRE_SMALL(coordinates1[1], 1e-7);
-  BOOST_REQUIRE_SMALL(coordinates1[2], 1e-7);
-
-  BOOST_REQUIRE_LE(result, result1);
 }
 
+/*
+* Tests the Nesterov Momentum SGD with Generalized Rosenbrock Test.
+*/
 BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
 {
   // Loop over several variants.

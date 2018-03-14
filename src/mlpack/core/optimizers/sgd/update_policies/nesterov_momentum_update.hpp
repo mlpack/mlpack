@@ -35,7 +35,6 @@ namespace optimization {
  * }
  * @endcode
  */
-
 class NesterovMomentumUpdate
 {
  public:
@@ -91,7 +90,7 @@ class NesterovMomentumUpdate
   // The velocity matrix.
   arma::mat velocity;
 
-  // Momentum coefficient
+  // The Momentum coefficient.
   double momentum;
 };
 
