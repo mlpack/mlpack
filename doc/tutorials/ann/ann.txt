@@ -308,9 +308,9 @@ models](https://github.com/mlpack/models).
 @section layer_api_anntut Layer API
 
 In order to facilitate consistent implementations, we have defined a LayerType
-API that describes all the methods that a Layer may implement. mlpack offers a
-few variations of this API, each designed to cover some of the model
-characteristics mentioned in the previous section. Any Layer requires the
+API that describes all the methods that a \c layer may implement. mlpack offers
+a few variations of this API, each designed to cover some of the model
+characteristics mentioned in the previous section. Any \c layer requires the
 implementation of a \c Forward() method. The interface looks like:
 
 @code
@@ -319,9 +319,10 @@ void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
 @endcode
 
 The method should calculate the output of the layer given the input matrix and
-store the result in the given output matrix. Next, any Layer must implement the
-Backward() method, which uses certain computations obtained during forward and
-should calculate the function f(x) by propagating x backward trough f:
+store the result in the given output matrix. Next, any \c layer must implement
+the Backward() method, which uses certain computations obtained during the
+forward pass and should calculate the function f(x) by propagating x backward
+through f:
 
 @code
 template<typename eT>
@@ -348,7 +349,7 @@ the gradient matrix object \c gradient that is passed as an argument.
 Note that each method accepts a template parameter InputType, OutputType
 or GradientType, which may be arma::mat (dense Armadillo matrix) or arma::sp_mat
 (sparse Armadillo matrix). This allows support for both sparse-supporting and
-non-sparse-supporting Layer without explicitly passing the type.
+non-sparse-supporting \c layer without explicitly passing the type.
 
 In addition, each layer must implement the Parameters(), InputParameter(),
 OutputParameter(), Delta() methods, differentiable layer should also provide
@@ -363,9 +364,9 @@ Below is an example that shows each function with some additional boilerplate
 code.
 
 @note
-Note this is not an actual layer but instead an example that exists to
-show and document all the functions that mlpack layer must implement.  For a
-better overview of the various layers, see \ref mlpack::ann. Also be aware that the
+Note this is not an actual layer but instead an example that exists to show and
+document all the functions that mlpack layer must implement.  For a better
+overview of the various layers, see \ref mlpack::ann. Also be aware that the
 implementations of each of the methods in this example are entirely fake and do
 not work; this example exists for its API, not its implementation.
 
@@ -443,7 +444,7 @@ void Gradient(const InputType&& input,
 The three functions \c Forward(), \c Backward() and \c Gradient() (which is
 needed for a differentiable layer) contain the main logic of the layer. The
 following functions are just to access and manipulate the different layer
-parameter.
+parameters.
 
 @code
 OutputDataType& Parameters() { return weights; }
