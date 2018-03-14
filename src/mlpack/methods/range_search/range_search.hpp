@@ -51,9 +51,9 @@ class RangeSearch
    * naive mode or single-tree mode. Additionally, an instantiated metric can be
    * given, for cases where the distance metric holds data.
    *
-   * This method will copy the matrices to internal copies, which are rearranged
-   * during tree-building.  You can avoid this extra copy by pre-constructing
-   * the trees and passing them using a different constructor.
+   * This method will move the matrices to internal copies, which are rearranged
+   * during tree-building.  You can avoid creating an extra copy by
+   * pre-constructing the trees and passing them in using std::move.
    *
    * @param referenceSet Reference dataset.
    * @param naive Whether the computation should be done in O(n^2) naive mode.
@@ -61,31 +61,7 @@ class RangeSearch
    *      opposed to dual-tree computation).
    * @param metric Instantiated distance metric.
    */
-  RangeSearch(const MatType& referenceSet,
-              const bool naive = false,
-              const bool singleMode = false,
-              const MetricType metric = MetricType());
-
-  /**
-   * Initialize the RangeSearch object with the given reference dataset (this is
-   * the dataset which is searched), taking ownership of the matrix.
-   * Optionally, perform the computation in naive mode or single-tree mode.
-   * Additionally, an instantiated metric can be given, for cases where the
-   * distance metric holds data.
-   *
-   * This method will not copy the data matrix, but will take ownership of it,
-   * and depending on the type of tree used, may rearrange the points.  If you
-   * would rather a copy be made, consider using the constructor that takes a
-   * const reference to the data instead.
-   *
-   * @param referenceSet Set of reference points.
-   * @param naive If true, brute force naive search will be used (as opposed to
-   *      dual-tree search).  This overrides singleMode (if it is set to true).
-   * @param singleMode If true, single-tree search will be used (as opposed to
-   *      dual-tree search).
-   * @param metric An optional instance of the MetricType class.
-   */
-  RangeSearch(MatType&& referenceSet,
+  RangeSearch(MatType referenceSet,
               const bool naive = false,
               const bool singleMode = false,
               const MetricType metric = MetricType());

@@ -48,32 +48,7 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
-    const MatType& referenceSetIn,
-    const bool naive,
-    const bool singleMode,
-    const MetricType metric) :
-    referenceTree(naive ? NULL : BuildTree<Tree>(referenceSetIn,
-        oldFromNewReferences)),
-    referenceSet(naive ? &referenceSetIn : &referenceTree->Dataset()),
-    treeOwner(!naive), // If in naive mode, we are not building any trees.
-    setOwner(false),
-    naive(naive),
-    singleMode(!naive && singleMode), // Naive overrides single mode.
-    metric(metric),
-    baseCases(0),
-    scores(0)
-{
-  // Nothing to do.
-}
-
-// Move constructor.
-template<typename MetricType,
-         typename MatType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
-    MatType&& referenceSet,
+    MatType referenceSet,
     const bool naive,
     const bool singleMode,
     const MetricType metric) :
