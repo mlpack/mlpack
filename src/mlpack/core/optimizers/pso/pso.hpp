@@ -43,16 +43,10 @@ namespace optimization {
  *
  * For PSO to work, the class must implement the following function:
  *
- *   size_t NumFunctions();
- *   double Evaluate(const arma::mat& coordinates, const size_t i);
+ *   double Evaluate(const arma::mat& coordinates);
  *
- * NumFunctions() should return the number of functions (\f$n\f$), and in the
- * other two functions, the parameter i refers to which individual function is
- * being evaluated.  So, for the case of a data-dependent function, such as NCA
- * (see mlpack::nca::NCA), NumFunctions() should return the number of points in
- * the dataset, and Evaluate(coordinates, 0) will evaluate the objective function
- * on the first point in the dataset (presumably, the dataset is held internally
- * in the DecomposableFunctionType).
+ * Evaluate(coordinates) will evaluate the objective function using
+ * coordinates as the dataset.
  *
  * @tparam SelectionPolicy The velocty / position update strategy used for the
  *     evaluation step.

@@ -66,6 +66,9 @@ double PSOType<VelocityVectorType>::Optimize(
   double lastObjectiveIndividual = DBL_MAX;
   double lastObjectiveGlobal = DBL_MAX;
 
+  // Variable to keep record of best index for particlePosition.
+  size_t bestPositionIndex;
+
   // Start iterating.
   for (size_t i = 0; i < maxIterations; ++i)
   {
@@ -77,7 +80,7 @@ double PSOType<VelocityVectorType>::Optimize(
       // Check if the current position is an individual best.
       if (currentObjective < lastObjectiveIndividual)
       {
-        iterate = particlePosition.slice(k);
+        bestPositionIndex = k;
         lastObjectiveIndividual = currentObjective;
       }
     }
@@ -85,6 +88,7 @@ double PSOType<VelocityVectorType>::Optimize(
     // Check if the current position is a global best.
     if (lastObjectiveIndividual < lastObjectiveGlobal)
     {
+      iterate = particlePosition.slice(bestPositionIndex);
       bestSwarmPosition = iterate;
       lastObjectiveGlobal = lastObjectiveIndividual;
     }
