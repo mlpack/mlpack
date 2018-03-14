@@ -124,6 +124,12 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
     for (size_t f = 0, b=0, currentFunction = 0; f < numFunctions;
       /* incrementing done manually */)
     {
+
+      b = math::RandInt(0, numBatches); // Random batch selected
+      // Find the effective batch size (the last batch may be smaller).
+      currentFunction = b*batchSize;
+      effectiveBatchSize = std::min(batchSize, numFunctions - currentFunction);
+
       // Is this iteration the start of a sequence?
       if ((currentFunction % numFunctions) == 0)
       {
@@ -133,11 +139,6 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
         if (shuffle)
           function.Shuffle();
       }
-
-      b = math::RandInt(0, numBatches); // Random batch selected
-      // Find the effective batch size (the last batch may be smaller).
-      currentFunction = b*batchSize;
-      effectiveBatchSize = std::min(batchSize, numFunctions - currentFunction);
 
       // Calculate the gradient of a random function.
       function.Gradient(iterate, currentFunction, gradient,
