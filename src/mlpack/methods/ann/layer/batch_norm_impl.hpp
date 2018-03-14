@@ -89,8 +89,8 @@ void BatchNorm<InputDataType, OutputDataType>::Backward(
   variance = arma::var(input, 1, 1);
 
   arma::mat m = arma::sum(gy % (input.each_col() - mean), 1);
-  g = arma::repmat(m, 1, input.n_cols) % (mean - input.each_col());
-  g.each_col() %= 1.0 / (variance + eps);
+  g = (mean - input.each_col());
+  g.each_col() %= m;
   g += (gy.each_col() - arma::sum(gy, 1));
   g += (input.n_cols - 1) * gy;
   g.each_col() %= ((1.0 / input.n_cols) * gamma);
