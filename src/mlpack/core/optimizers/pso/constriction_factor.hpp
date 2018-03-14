@@ -24,6 +24,23 @@ class ConstrictionFactor
 {
  public:
   /**
+   * Initialize the constant values required for updating velocity.
+   * In this case, the constriction factor is computed.
+   *
+   * @param cognitiveAcceleration Cognitive acceleration of the particles.
+   * @param socialAcceleration Social acceleration of the particles.
+   */
+  void Initialize(const double& cognitiveAcceleration,
+                  const double& socialAcceleration)
+  {
+    double phi = cognitiveAcceleration + socialAcceleration;
+
+    // Calculate the constriction factor.
+    constrictionFactor = 2 / std::abs(2 - phi - std::sqrt(
+      std::pow(phi, 2) - 4 * phi));
+  }
+
+  /**
    * Implement the PSO with constriction factor. In this variant, the
    * constriction factor \f$ k \f$ is included to the veloctiy formula.
    * It is calculated using the acceleration constants \f$ c1 \f$ and
@@ -73,11 +90,6 @@ class ConstrictionFactor
               const double& socialAcceleration,
               const double& dimension)
   {
-    // Calculate the constriction factor.
-    double phi = cognitiveAcceleration + socialAcceleration;
-    constrictionFactor = 2 / std::abs(2 - phi - std::sqrt(
-      std::pow(phi, 2) - 4 * phi));
-
     // Generate uniform random numbers for velocity updation.
     arma::mat r1(particlePosition.n_rows, particlePosition.n_cols,
       arma::fill::randu);

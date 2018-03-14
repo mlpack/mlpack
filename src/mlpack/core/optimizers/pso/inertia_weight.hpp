@@ -24,6 +24,18 @@ class InertiaWeight
 {
  public:
   /**
+   * Initialize the constant values required for updating velocity.
+   * In this case, no operation is required.
+   *
+   * @param cognitiveAcceleration Cognitive acceleration of the particles.
+   * @param socialAcceleration Social acceleration of the particles.
+   */
+  void Initialize(const double& /* cognitiveAcceleration */,
+                  const double& /* socialAcceleration */)
+  { /* Nothing to do. */ }
+
+  /**
+   *
    * Implement the PSO with inertia weight. In this variant, the inertia weight
    * is used to calibrate the influence of the previous particle's velocity.
    * The velocity update is given by the following equation:

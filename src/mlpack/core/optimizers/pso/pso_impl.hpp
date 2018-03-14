@@ -54,6 +54,10 @@ double PSOType<VelocityVectorType>::Optimize(
     particleVelocity.slice(i) = iterate;
   }
 
+  // Initialize velocityType. In case of ConstrictionPSO,
+  // the constriction factor is computed.
+  velocityType.Initialize(cognitiveAcceleration, socialAcceleration);
+
   // Best swarm position is initialized from the first particle.
   bestSwarmPosition = particlePosition.slice(0);
 

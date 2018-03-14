@@ -77,12 +77,12 @@ class PSOType
    *     objective.
    */
   PSOType(const size_t dimension = 10,
-        const double interiaWeight = 0.9,
-        const double cognitiveAcceleration = 0.5,
-        const double socialAcceleration = 0.3,
-        const size_t maxIterations = 200,
-        const double tolerance = 1e-5,
-        const VelocityVectorType& velocityType = VelocityVectorType());
+          const double interiaWeight = 0.9,
+          const double cognitiveAcceleration = 0.5,
+          const double socialAcceleration = 0.3,
+          const size_t maxIterations = 200,
+          const double tolerance = 1e-5,
+          const VelocityVectorType& velocityType = VelocityVectorType());
 
   /**
    * Optimize the given function using PSO. The given starting point will be
