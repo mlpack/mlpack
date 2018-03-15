@@ -278,6 +278,10 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
     }
     assignments.zeros();
   }
+  else if (centroids.n_cols == 1)
+  {
+    assignments.zeros();
+  }
   else
   {
     // Assign centroids to each point.
