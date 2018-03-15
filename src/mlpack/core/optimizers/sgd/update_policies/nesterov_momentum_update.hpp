@@ -59,14 +59,14 @@ class NesterovMomentumUpdate
    */
   void Initialize(const size_t rows, const size_t cols)
   {
-    // Initialize am empty velocity matrix.
+    // Initialize an empty velocity matrix.
     velocity = arma::zeros<arma::mat>(rows, cols);
   }
 
   /**
    * Update step for SGD.  The momentum term makes the convergence faster on the
-   * way as momentum term increases for dimensions pointing in the same and
-   * reduces updates for dimensions whose gradients change directions.
+   * way as momentum term increases for dimensions pointing in the same direction
+   * and reduces updates for dimensions whose gradients change directions.
    *
    * @param iterate Parameters that minimize the function.
    * @param stepSize Step size to be used for the given iteration.
@@ -81,9 +81,9 @@ class NesterovMomentumUpdate
     iterate += momentum * velocity - stepSize * gradient;
   }
 
-  //! Get the value used to initialise the momentum coefficient.
+  //! Get the value used to initialize the momentum coefficient.
   double Momentum() const { return momentum; }
-  //! Modify the value used to initialise the momentum coefficient.
+  //! Modify the value used to initialize the momentum coefficient.
   double& Momentum() { return momentum; }
 
  private:
