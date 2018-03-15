@@ -33,33 +33,33 @@ inline RSModel::RSModel(TreeTypes treeType, bool randomBasis) :
   // Nothing to do.
 }
 
+// Copy constructor.
+inline RSModel::RSModel(const RSModel& other) :
+    treeType(other.treeType),
+    leafSize(other.leafSize),
+    randomBasis(other.randomBasis),
+    q(other.q),
+    rSearch(other.rSearch)
+{
+  // Nothing to do.
+}
+
 // Move constructor.
-inline RSModel::RSModel(RSModel other) :
+inline RSModel::RSModel(RSModel&& other) :
     treeType(other.treeType),
     leafSize(other.leafSize),
     randomBasis(other.randomBasis),
     q(std::move(other.q)),
     rSearch(std::move(other.rSearch))
 {
-  // Nothing to do.
+  // Reset other model.
+  other.treeType = TreeTypes::KD_TREE;
+  other.leafSize = 0;
+  other.randomBasis = false;
+  other.rSearch = decltype(other.rSearch)();
 }
 
-// Copy operator.
-inline RSModel& RSModel::operator=(const RSModel& other)
-{
-  boost::apply_visitor(DeleteVisitor(), rSearch);
-
-  treeType = other.treeType;
-  leafSize = other.leafSize;
-  randomBasis = other.randomBasis;
-  q = other.q;
-  rSearch = other.rSearch;
-
-  return *this;
-}
-
-// Move operator.
-inline RSModel& RSModel::operator=(RSModel&& other)
+inline RSModel& RSModel::operator=(RSModel other)
 {
   boost::apply_visitor(DeleteVisitor(), rSearch);
 
@@ -68,12 +68,6 @@ inline RSModel& RSModel::operator=(RSModel&& other)
   randomBasis = other.randomBasis;
   q = std::move(other.q);
   rSearch = std::move(other.rSearch);
-
-  // Reset other model.
-  other.treeType = TreeTypes::KD_TREE;
-  other.leafSize = 0;
-  other.randomBasis = false;
-  other.rSearch = decltype(other.rSearch)();
 
   return *this;
 }
