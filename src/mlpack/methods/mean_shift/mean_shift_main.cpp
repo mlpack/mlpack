@@ -53,6 +53,9 @@ PARAM_FLAG("in_place", "If specified, a column containing the learned cluster "
     "--output_file is overridden.  (Do not use with Python.)", "P");
 PARAM_FLAG("labels_only", "If specified, only the output labels will be "
     "written to the file specified by --output_file.", "l");
+PARAM_FLAG("force_convergence", "If specified, the mean shift algorithm will "
+  "continue running regardless of max_iterations until the clusters converge."
+  ,"f");
 PARAM_MATRIX_OUT("output", "Matrix to write output labels or labeled data to.",
     "o");
 PARAM_MATRIX_OUT("centroid", "If specified, the centroids of each cluster will "
