@@ -265,6 +265,10 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
   // forcing convergence, take 1 random centroid calculated.
   if (centroids.empty()) 
   {
+    Log::Warn << "No clusters converge, setting 1 random centroid calculated."
+    << std::endl << "Try a larger max_iterations or pass force_convergence flag."
+    << std::endl;
+
     if (maxIterations == 0)
     {
       centroids.insert_cols(centroids.n_cols, data.col(0));
