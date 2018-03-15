@@ -217,8 +217,8 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
   {
     // Initial centroid is the seed itself.
     allCentroids.col(i) = pSeeds->unsafe_col(i);
-    for (size_t completedIterations = 0; completedIterations < maxIterations;
-         completedIterations++)
+    for (size_t completedIterations = 0; completedIterations < maxIterations
+      || forceConvergence; completedIterations++)
     {
       // Store new centroid in this.
       arma::colvec newCentroid = arma::zeros<arma::colvec>(pSeeds->n_rows);
@@ -261,8 +261,8 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
     }
   }
 
-  // If no centroid has converged due to too little iterations, take 1 random
-  // centroid calculated.
+  // If no centroid has converged due to too little iterations and without
+  // forcing convergence, take 1 random centroid calculated.
   if (centroids.empty()) 
   {
     if (maxIterations == 0)
