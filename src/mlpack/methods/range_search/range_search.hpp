@@ -51,8 +51,8 @@ class RangeSearch
    * naive mode or single-tree mode. Additionally, an instantiated metric can be
    * given, for cases where the distance metric holds data.
    *
-   * This method will move the matrices to internal copies, which are rearranged
-   * during tree-building.  You can avoid creating an extra copy by
+   * This method will move the matrices to internal copies, which are
+   * rearranged during tree-building.  You can avoid creating an extra copy by
    * pre-constructing the trees and passing them in using std::move.
    *
    * @param referenceSet Reference dataset.
@@ -140,10 +140,10 @@ class RangeSearch
   /**
    * Set the reference set to a new reference set, and build a tree if
    * necessary.  This method is called 'Train()' in order to match the rest of
-   * the mlpack abstractions, even though calling this "training" is maybe a bit
-   * of a stretch.
+   * the mlpack abstractions, even though calling this "training" is maybe a
+   * bit of a stretch.
    *
-   * Use std::move to pass in the reference set if an the old copy is no longer
+   * Use std::move to pass in the reference set if the old copy is no longer
    * needed.
    *
    * @param referenceSet New set of reference data.
