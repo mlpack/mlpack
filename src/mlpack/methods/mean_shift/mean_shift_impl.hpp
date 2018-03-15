@@ -185,6 +185,7 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
     const MatType& data,
     arma::Row<size_t>& assignments,
     arma::mat& centroids,
+    bool forceConvergence,
     bool useSeeds)
 {
   if (radius <= 0)

@@ -92,7 +92,7 @@ static void mlpackMain()
 
   Timer::Start("clustering");
   Log::Info << "Performing mean shift clustering..." << endl;
-  meanShift.Cluster(dataset, assignments, centroids);
+  meanShift.Cluster(dataset, assignments, centroids, CLI::HasParam("force_convergence"));
   Timer::Stop("clustering");
 
   Log::Info << "Found " << centroids.n_cols << " centroids." << endl;

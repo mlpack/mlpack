@@ -84,6 +84,7 @@ class MeanShift
   void Cluster(const MatType& data,
                arma::Row<size_t>& assignments,
                arma::mat& centroids,
+               bool forceConvergence = true,
                bool useSeeds = true);
 
   //! Get the maximum number of iterations.
