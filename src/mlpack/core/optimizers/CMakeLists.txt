@@ -15,6 +15,7 @@ set(DIRS
   problems
   proximal
   parallel_sgd
+  pso
   rmsprop
   sa
   sarah

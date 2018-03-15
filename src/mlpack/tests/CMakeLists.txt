@@ -83,6 +83,7 @@ add_executable(mlpack_test
   perceptron_test.cpp
   prefixedoutstream_test.cpp
   proximal_test.cpp
+  pso_test.cpp
   python_binding_test.cpp
   q_learning_test.cpp
   qdafn_test.cpp
