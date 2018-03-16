@@ -77,6 +77,10 @@ BOOST_AUTO_TEST_CASE(SVRGBBLogisticRegressionTest)
   }
 }
 
+/**
+ * Run SVRG on Generalized Rosenbrock Function and make sure the
+ * results are acceptable.
+ */
 BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
 {
   // Loop over several variants.

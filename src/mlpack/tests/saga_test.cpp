@@ -48,6 +48,10 @@ BOOST_AUTO_TEST_CASE(SAGALogisticRegressionTest)
   }
 }
 
+/**
+ * Run SAGA on Generalized Rosenbrock Function and make sure the
+ * results are acceptable.
+ */
 BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
 {
   // Loop over several variants.
