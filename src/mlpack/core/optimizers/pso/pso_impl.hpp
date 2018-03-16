@@ -2,7 +2,7 @@
  * @file pso_impl.hpp
  * @author Chintan Soni
  *
- * Implementation of the lbest particle swarm optimization algorithm.
+ * Implementation of the particle swarm optimization algorithm.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -37,36 +37,62 @@ double PSOType<VelocityUpdatePolicy>::Optimize(FunctionType& function, arma::mat
   // Set a random seed for the random number generator.
   arma::arma_rng::set_seed_random();
 
-  // Randomly initialize the particle positions and velocities.
+  // Randomly initialize the particle positions.
   particlePositions.randu(iterate.n_rows, iterate.n_cols, numParticles);
+  assert(particlePositions.n_rows == iterate.n_rows);
+
+  //Randomly initialize particle velocities.
   particleVelocities.randu(iterate.n_rows, iterate.n_cols, numParticles);
+  assert(particleVelocities.n_rows == iterate.n_rows);
+
+  // Initialize current fitness values to infinity.
+  particleFitnesses.set_size(numParticles);
+  particleFitnesses.fill(std::numeric_limits<double>::max());
+  assert(particleFitnesses.n_elem == numParticles);
 
   // Copy to personal best values for first iteration.
   particleBestPositions = particlePositions;
   // Initialize personal best fitness values to infinity.
+  particleBestFitnesses.set_size(numParticles);
   particleBestFitnesses.fill(std::numeric_limits<double>::max());
 
-  // Initialize local best indices to self indices of particles.
-  size_t index = 0;
-  localBestIndices.set_size(numParticles);
-  localBestIndices.imbue([&]() { return index++; });
-
   // Initialize the update policy.
-  velocityUpdatePolicy.Initialize(2.05, 2.05);
+  velocityUpdatePolicy.Initialize(
+    exploitationFactor, explorationFactor, numParticles, iterate);
 
-  velocityUpdatePolicy.Update(numParticles,
-                              exploitationFactor,
-                              explorationFactor,
-                              particlePositions,
-                              particleVelocities,
-                              particleBestPositions,
-                              particleBestFitnesses,
-                              localBestIndices);
+  for(size_t i = 0; i < maxIterations; i++)
+  {
+    // Calculate fitness and evaluate personal best.
+    for(size_t j = 0; j < numParticles; j++)
+    {
+      // Calculate fitness value.
+      particleFitnesses(j) = f.Evaluate(particlePositions.slice(j));
+      // Compare and copy fitness and position to particle best.
+      if(particleFitnesses(j) < particleBestFitnesses(j))
+      {
+        particleBestFitnesses(j) = particleFitnesses(j);
+        particleBestPositions.slice(j) = particlePositions.slice(j);
+      }
+    }
 
-  std::cout << "OPTIMIZER CALLED" << std::endl;
-  std::cout << "CHANGES MADE" << std::endl;
-  return 0.0;
-  // return overallObjective;
+    // Evaluate local best and update velocity.
+    velocityUpdatePolicy.Update(
+        particlePositions,
+        particleVelocities,
+        particleFitnesses,
+        particleBestPositions,
+        particleBestFitnesses);
+
+    // In-place update of particle positions.
+    particlePositions += particleVelocities;
+  }
+
+  // Find best particle.
+  arma::uword bestParticle = index_min(particleBestFitnesses);
+  double bestFitness = particleBestFitnesses(bestParticle);
+  iterate = particleBestPositions.slice(bestParticle);
+
+  return bestFitness;
 }
 
 } // namespace optimization

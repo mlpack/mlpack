@@ -2,7 +2,7 @@
  * @file pso.hpp
  * @author Chintan Soni
  *
- * Particle swarm optimization using the lbest approach.
+ * Particle swarm optimization.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -21,6 +21,8 @@ namespace mlpack {
 namespace optimization {
 
 /**
+ * EXTREMELY DETAILED DESCRIPTION OF THE WORKING OF PSO.
+ *
  * Gradient Descent is a technique to minimize a function. To find a local
  * minimum of a function using gradient descent, one takes steps proportional
  * to the negative of the gradient of the function at the current point,
@@ -74,9 +76,11 @@ class PSOType
           maxIterations(maxIterations),
           exploitationFactor(exploitationFactor),
           explorationFactor(explorationFactor),
-          velocityUpdatePolicy(velocityUpdatePolicy) { /*Nothing to do */ }
+          velocityUpdatePolicy(velocityUpdatePolicy) { /* Nothing to do */ }
 
   /**
+   * ADD PSO OPTIMIZATION DESCRIPTION.
+   *
    * Optimize the given function using gradient descent.  The given starting
    * point will be modified to store the finishing point of the algorithm, and
    * the final objective value is returned.
@@ -108,12 +112,12 @@ private:
   arma::cube particlePositions;
   //! Particle velocities.
   arma::cube particleVelocities;
+  //! Particle fitness values.
+  arma::vec particleFitnesses;
   //! Best fitness attained by particle so far.
   arma::vec particleBestFitnesses;
   //! Position corresponding to the best fitness of particle.
   arma::cube particleBestPositions;
-  //! Index of the best neighbour.
-  arma::vec localBestIndices;
   //! Velocity update policy used.
   VelocityUpdatePolicy velocityUpdatePolicy;
 };

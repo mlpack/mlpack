@@ -1,9 +1,7 @@
 /**
  * @file lbest_update.hpp
  *
- * Adam optimizer. Adam is an an algorithm for first-order gradient-based
- * optimization of stochastic objective functions, based on adaptive estimates
- * of lower-order moments.
+ * ADD LBEST DESCRIPTION HERE.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -21,11 +19,11 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * Adam is an optimizer that computes individual adaptive learning rates for
- * different parameters from estimates of first and second moments of the
- * gradients as given in the section 7 of the following paper.
+ * ADD SLIGHTLY MORE DETAILED DESCRIPTION HERE.
  *
  * For more information, see the following.
+ *
+ * REPLACE THIS REFERENCE TO A RELEVANT ONE.
  *
  * @code
  * @article{Kingma2014,
@@ -41,6 +39,8 @@ class LBestUpdate
 {
  public:
   /**
+   * REPLACE WITH RELEVANT DATA.
+   *
    * Construct the velocity update policy with the given parameters.
    *
    * @param epsilon The epsilon value used to initialise the squared gradient
@@ -48,52 +48,99 @@ class LBestUpdate
    * @param beta1 The smoothing parameter.
    * @param beta2 The second moment coefficient.
    */
-  LBestUpdate()
-  {
-    std::cout << "OBJECT CONSTRUCTED" << std::endl;
-    // Nothing to do.
-  }
+  LBestUpdate() { /* Nothing to do */ }
 
   /**
    * The Initialize method is called by PSO Optimizer method before the start of
-   * the iteration update process.
+   * the iteration process.
    *
    * @param exploitationFactor Influence of personal best achieved.
    * @param explorationFactor Influence of neighbouring particles.
    */
-  void Initialize(const double& explorationFactor,
-                  const double& exploitationFactor)
+  void Initialize(const double& exploitationFactor,
+                  const double& explorationFactor,
+                  const size_t& numParticles,
+                  const arma::mat& iterate)
   {
-    double phi = explorationFactor + exploitationFactor;
-    double phiSquared = phi * phi;
+    // Set number of particles.
+    n = numParticles;
+    // Set c1 = exploitationFactor and c2 = explorationFactor.
+    c1 = exploitationFactor;
+    c2 = explorationFactor;
 
-    chi = 2 / std::abs(2 - phi - std::sqrt(phiSquared - 4 * phi));
-    std::cout << "CHI: " << chi << std::endl;
+    // Calculate the constriction factor
+    double phi = c1 + c2;
+    assert(phi > 4.0);
+    chi = 2 / std::abs(2 - phi - std::sqrt((phi - 4) * phi));
+
+    // Initialize local best indices to self indices of particles.
+    size_t index = 0;
+    localBestIndices.set_size(n);
+    localBestIndices.imbue([&]() { return index++; });
+
+    // Set sizes r1 and r2.
+    r1.set_size(iterate.n_rows, iterate.n_cols);
+    r2.set_size(iterate.n_rows, iterate.n_cols);
   }
 
   /**
-   * Update step for Adam.
+   * Update step for LBestPSO.
+   *
+   * ADD DESCRIPTIONS OF RELEVANT PARAMETERS HERE.
    *
    * @param iterate Parameters that minimize the function.
    * @param stepSize Step size to be used for the given iteration.
    * @param gradient The gradient matrix.
    */
-  void Update(const size_t& numParticles,
-              const double& exploitationFactor,
-              const double& explorationFactor,
-              const arma::cube& particlePositions,
+  void Update(const arma::cube& particlePositions,
               arma::cube& particleVelocities,
+              const arma::vec& particleFitnesses,
               const arma::cube& particleBestPositions,
-              const arma::vec& particleBestFitnesses,
-              arma::vec& localBestIndices)
+              const arma::vec& particleBestFitnesses)
   {
-    std::cout << "UPDATE CALLED: " << numParticles << std::endl;
-    // Content
+    // Velocity update logic.
+    for(size_t i = 0; i < n; i++)
+    {
+      localBestIndices(i) =
+        particleBestFitnesses(left(i)) < particleBestFitnesses(i) ?
+        left(i) : i;
+      localBestIndices(i) =
+        particleBestFitnesses(right(i)) < particleBestFitnesses(i) ?
+        right(i) : i;
+    }
+
+    for(size_t i = 0; i < n; i++)
+    {
+      // Generate random numbers for current particle.
+      r1.randu();
+      r2.randu();
+      particleVelocities.slice(i) = chi * ( particleVelocities.slice(i) +
+        c1 * r1 %
+          (particleBestPositions.slice(i) - particlePositions.slice(i)) +
+        c2 * r2 %
+          (particleBestPositions.slice(localBestIndices(i)) - particlePositions.slice(i))
+      );
+    }
   }
 
  private:
+  //! Number of particles.
+  size_t n;
+  //! Exploitation factor.
+  double c1;
+  //! Exploration factor.
+  double c2;
   //! Constriction factor chi.
   double chi;
+  //! Vectors of random numbers.
+  arma::mat r1;
+  arma::mat r2;
+  //! Indices of each particle's best neighbour.
+  arma::vec localBestIndices;
+
+  // Helper functions for calculating neighbours.
+  inline const size_t left(const size_t index) { return (index + n - 1) % n; }
+  inline const size_t right(const size_t index) { return (index + 1) % n; }
 };
 
 } // namespace optimization
