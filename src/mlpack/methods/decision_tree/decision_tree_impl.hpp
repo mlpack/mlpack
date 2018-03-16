@@ -32,7 +32,8 @@ DecisionTree<FitnessFunction,
                                         const data::DatasetInfo& datasetInfo,
                                         LabelsType&& labels,
                                         const size_t numClasses,
-                                        const size_t minimumLeafSize)
+                                        const size_t minimumLeafSize,
+                                        const double minimumGainSplit)
 {
   using TrueMatType = typename std::decay<MatType>::type;
   using TrueLabelsType = typename std::decay<LabelsType>::type;
@@ -44,7 +45,7 @@ DecisionTree<FitnessFunction,
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
   Train<false>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
-      weights, minimumLeafSize);
+      weights, minimumLeafSize, minimumGainSplit);
 }
 
 //! Construct and train.
@@ -63,7 +64,8 @@ DecisionTree<FitnessFunction,
              NoRecursion>::DecisionTree(MatType&& data,
                                         LabelsType&& labels,
                                         const size_t numClasses,
-                                        const size_t minimumLeafSize)
+                                        const size_t minimumLeafSize,
+                                        const double minimumGainSplit)
 {
   using TrueMatType = typename std::decay<MatType>::type;
   using TrueLabelsType = typename std::decay<LabelsType>::type;
@@ -75,7 +77,7 @@ DecisionTree<FitnessFunction,
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
   Train<false>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, weights,
-      minimumLeafSize);
+      minimumLeafSize, minimumGainSplit);
 }
 
 //! Construct and train with weights.
@@ -97,6 +99,7 @@ DecisionTree<FitnessFunction,
                                         const size_t numClasses,
                                         WeightsType&& weights,
                                         const size_t minimumLeafSize,
+                                        const double minimumGainSplit,
                                         const std::enable_if_t<
                                             arma::is_arma_type<
                                             typename std::remove_reference<
@@ -113,7 +116,7 @@ DecisionTree<FitnessFunction,
 
   // Pass off work to the weighted Train() method.
   Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
-      tmpWeights, minimumLeafSize);
+      tmpWeights, minimumLeafSize, minimumGainSplit);
 }
 
 //! Construct and train with weights.
@@ -134,6 +137,7 @@ DecisionTree<FitnessFunction,
                                         const size_t numClasses,
                                         WeightsType&& weights,
                                         const size_t minimumLeafSize,
+                                        const double minimumGainSplit,
                                         const std::enable_if_t<
                                             arma::is_arma_type<
                                             typename std::remove_reference<
@@ -150,7 +154,7 @@ DecisionTree<FitnessFunction,
 
   // Pass off work to the weighted Train() method.
   Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, tmpWeights,
-      minimumLeafSize);
+      minimumLeafSize, minimumGainSplit);
 }
 
 //! Construct, don't train.
@@ -345,7 +349,8 @@ void DecisionTree<FitnessFunction,
                                       const data::DatasetInfo& datasetInfo,
                                       LabelsType&& labels,
                                       const size_t numClasses,
-                                      const size_t minimumLeafSize)
+                                      const size_t minimumLeafSize,
+                                      const double minimumGainSplit)
 {
   // Sanity check on data.
   if (data.n_cols != labels.n_elem)
@@ -367,7 +372,7 @@ void DecisionTree<FitnessFunction,
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
   Train<false>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
-      weights, minimumLeafSize);
+      weights, minimumLeafSize, minimumGainSplit);
 }
 
 //! Train on the given data, assuming all dimensions are numeric.
@@ -386,7 +391,8 @@ void DecisionTree<FitnessFunction,
                   NoRecursion>::Train(MatType&& data,
                                       LabelsType&& labels,
                                       const size_t numClasses,
-                                      const size_t minimumLeafSize)
+                                      const size_t minimumLeafSize,
+                                      const double minimumGainSplit)
 {
   // Sanity check on data.
   if (data.n_cols != labels.n_elem)
@@ -430,6 +436,7 @@ void DecisionTree<FitnessFunction,
                                       const size_t numClasses,
                                       WeightsType&& weights,
                                       const size_t minimumLeafSize,
+                                      const double minimumGainSplit,
                                       const std::enable_if_t<arma::is_arma_type<
                                           typename std::remove_reference<
                                           WeightsType>::type>::value>*)
@@ -455,7 +462,7 @@ void DecisionTree<FitnessFunction,
 
   // Pass off work to the Train() method.
   Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
-      tmpWeights, minimumLeafSize);
+      tmpWeights, minimumLeafSize, minimumGainSplit);
 }
 
 //! Train on the given weighted data.
@@ -476,6 +483,7 @@ void DecisionTree<FitnessFunction,
                                       const size_t numClasses,
                                       WeightsType&& weights,
                                       const size_t minimumLeafSize,
+                                      const double minimumGainSplit,
                                       const std::enable_if_t<arma::is_arma_type<
                                           typename std::remove_reference<
                                           WeightsType>::type>::value>*)
@@ -501,7 +509,7 @@ void DecisionTree<FitnessFunction,
 
   // Pass off work to the Train() method.
   Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, tmpWeights,
-      minimumLeafSize);
+      minimumLeafSize, minimumGainSplit);
 }
 
 //! Train on the given data.
@@ -524,7 +532,8 @@ void DecisionTree<FitnessFunction,
                                       arma::Row<size_t>& labels,
                                       const size_t numClasses,
                                       arma::rowvec& weights,
-                                      const size_t minimumLeafSize)
+                                      const size_t minimumLeafSize,
+                                      const double minimumGainSplit)
 {
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
@@ -533,7 +542,7 @@ void DecisionTree<FitnessFunction,
 
   // Look through the list of dimensions and obtain the gain of the best split.
   // We'll cache the best numeric and categorical split auxiliary information in
-  // numericAux and categoricalAux (and clear them later if we make not split),
+  // numericAux and categoricalAux (and clear them later if we make no split),
   // and use classProbabilities as auxiliary information.  Later we'll overwrite
   // classProbabilities to the empirical class probabilities if we do not split.
   double bestGain = FitnessFunction::template Evaluate<UseWeights>(
@@ -555,6 +564,7 @@ void DecisionTree<FitnessFunction,
           numClasses,
           UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
           minimumLeafSize,
+          minimumGainSplit,
           classProbabilities,
           *this);
     }
@@ -566,6 +576,7 @@ void DecisionTree<FitnessFunction,
           numClasses,
           UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
           minimumLeafSize,
+          minimumGainSplit,
           classProbabilities,
           *this);
     }
@@ -641,13 +652,13 @@ void DecisionTree<FitnessFunction,
       {
         child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, datasetInfo, labels, numClasses,
-            weights, currentCol - currentChildBegin);
+            weights, currentCol - currentChildBegin, minimumGainSplit);
       }
       else
       {
         child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, datasetInfo, labels, numClasses,
-            weights, minimumLeafSize);
+            weights, minimumLeafSize, minimumGainSplit);
       }
       children.push_back(child);
     }
@@ -685,7 +696,8 @@ void DecisionTree<FitnessFunction,
                                       arma::Row<size_t>& labels,
                                       const size_t numClasses,
                                       arma::rowvec& weights,
-                                      const size_t minimumLeafSize)
+                                      const size_t minimumLeafSize,
+                                      const double minimumGainSplit)
 {
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
@@ -716,6 +728,7 @@ void DecisionTree<FitnessFunction,
                                       weights.cols(begin, begin + count - 1) :
                                       weights,
                                   minimumLeafSize,
+                                  minimumGainSplit,
                                   classProbabilities,
                                   *this);
 
@@ -776,13 +789,13 @@ void DecisionTree<FitnessFunction,
       {
         child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, labels, numClasses, weights,
-            currentCol - currentChildBegin);
+            currentCol - currentChildBegin, minimumGainSplit);
       }
       else
       {
         child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, labels, numClasses, weights,
-            minimumLeafSize);
+            minimumLeafSize, minimumGainSplit);
       }
       children.push_back(child);
     }
