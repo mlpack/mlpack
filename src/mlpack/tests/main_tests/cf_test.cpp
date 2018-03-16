@@ -195,7 +195,7 @@ BOOST_AUTO_TEST_CASE(CFNMFModelReuseTest)
   data::Load("GroupLensSmall.csv", dataset);
 
   SetInputParam("training", std::move(dataset));
-  SetInputParam("max_iterations", int(100));
+  SetInputParam("max_iterations", int(10));
   SetInputParam("algorithm", std::string("NMF"));
 
   mlpackMain();
@@ -232,7 +232,7 @@ BOOST_AUTO_TEST_CASE(CFBatchSVDModelReuseTest)
   data::Load("GroupLensSmall.csv", dataset);
 
   SetInputParam("training", std::move(dataset));
-  SetInputParam("max_iterations", int(100));
+  SetInputParam("max_iterations", int(10));
   SetInputParam("algorithm", std::string("BatchSVD"));
 
   mlpackMain();
@@ -269,7 +269,7 @@ BOOST_AUTO_TEST_CASE(CFSVDIncompleteIncModelReuseTest)
   data::Load("GroupLensSmall.csv", dataset);
 
   SetInputParam("training", std::move(dataset));
-  SetInputParam("max_iterations", int(100));
+  SetInputParam("max_iterations", int(10));
   SetInputParam("algorithm", std::string("SVDIncompleteIncremental"));
 
   mlpackMain();
@@ -306,7 +306,7 @@ BOOST_AUTO_TEST_CASE(CFSVDCompleteIncModelReuseTest)
   data::Load("GroupLensSmall.csv", dataset);
 
   SetInputParam("training", std::move(dataset));
-  SetInputParam("max_iterations", int(100));
+  SetInputParam("max_iterations", int(10));
   SetInputParam("algorithm", std::string("SVDCompleteIncremental"));
 
   mlpackMain();
@@ -343,7 +343,7 @@ BOOST_AUTO_TEST_CASE(CFRegSVDModelReuseTest)
   data::Load("GroupLensSmall.csv", dataset);
 
   SetInputParam("training", std::move(dataset));
-  SetInputParam("max_iterations", int(100));
+  SetInputParam("max_iterations", int(10));
   SetInputParam("algorithm", std::string("RegSVD"));
 
   mlpackMain();
@@ -381,7 +381,7 @@ BOOST_AUTO_TEST_CASE(CFAllUserRecommendationsTest)
   const size_t userNum = max(dataset.row(0)) + 1;
 
   SetInputParam("training", std::move(dataset));
-  SetInputParam("max_iterations", int(100));
+  SetInputParam("max_iterations", int(10));
   SetInputParam("algorithm", std::string("NMF"));
 
   mlpackMain();
@@ -404,6 +404,27 @@ BOOST_AUTO_TEST_CASE(CFAllUserRecommendationsTest)
   const Mat<size_t>& output = CLI::GetParam<Mat<size_t>>("output");
 
   BOOST_REQUIRE_EQUAL(output.n_cols, userNum);
+}
+
+/**
+ * Test that rank is used.
+ */
+BOOST_AUTO_TEST_CASE(CFRankTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
+  int rank = 7; 
+
+  SetInputParam("training", std::move(dataset));
+  SetInputParam("rank", rank);
+  SetInputParam("max_iterations", int(10));
+  SetInputParam("algorithm", std::string("NMF"));
+
+  mlpackMain();
+
+  const CF* outputModel = CLI::GetParam<CF*>("output_model");
+
+  BOOST_REQUIRE_EQUAL(outputModel->Rank(), rank);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
