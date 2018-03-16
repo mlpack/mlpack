@@ -1,8 +1,8 @@
 set(SOURCES
-        saga.hpp
-        saga_impl.hpp
-        saga_update.hpp
-        )
+  saga.hpp
+  saga_impl.hpp
+  saga_update.hpp
+)
 
 set(DIR_SRCS)
 foreach(file ${SOURCES})

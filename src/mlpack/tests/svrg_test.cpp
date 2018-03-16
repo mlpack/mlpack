@@ -11,6 +11,8 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/svrg/svrg.hpp>
+#include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
+#include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -18,6 +20,7 @@
 
 using namespace mlpack;
 using namespace mlpack::optimization;
+using namespace mlpack::optimization::test;
 
 BOOST_AUTO_TEST_SUITE(SVRGTest);
 
@@ -71,6 +74,25 @@ BOOST_AUTO_TEST_CASE(SVRGBBLogisticRegressionTest)
 
     const double testAcc = lr.ComputeAccuracy(testData, testResponses);
     BOOST_REQUIRE_CLOSE(testAcc, 100.0, 1.5); // 1.5% error tolerance.
+  }
+}
+
+BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
+{
+  // Loop over several variants.
+  for (size_t i = 10; i < 50; i += 5)
+  {
+    // Create the generalized Rosenbrock function.
+    GeneralizedRosenbrockFunction f(i);
+
+    SVRG optimizer(0.001, 1, 0, 0, 1e-15, true);
+
+    arma::mat coordinates = f.GetInitialPoint();
+    double result = optimizer.Optimize(f, coordinates);
+
+    BOOST_REQUIRE_SMALL(result, 1e-10);
+    for (size_t j = 0; j < i; ++j)
+      BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 1e-3);
   }
 }
 

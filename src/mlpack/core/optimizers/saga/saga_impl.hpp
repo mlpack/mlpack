@@ -75,7 +75,7 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
   arma::cube tableOfGradients(iterate.n_rows, iterate.n_cols, numBatches);
   arma::mat avgGradient(iterate.n_rows, iterate.n_cols);
 
-  for (size_t f = 0, b=0; f < numFunctions;
+  for (size_t f = 0, b = 0; f < numFunctions;
     /* incrementing done manually */)
   {
     // Find the effective batch size (the last batch may be smaller).
@@ -88,7 +88,7 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
     avgGradient += tableOfGradients.slice(b);
     b++;
   }
-  avgGradient /= (double) numBatches; // average gradient
+  avgGradient /= (double) numBatches; // Calculate average gradient
 
   for (size_t i = 0; i < actualMaxIterations; ++i)
   {
@@ -124,9 +124,9 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
     for (size_t f = 0, b=0, currentFunction = 0; f < numFunctions;
       /* incrementing done manually */)
     {
-      b = math::RandInt(0, numBatches); // Random batch selected
+      b = math::RandInt(0, numBatches); // Select a random batch
       // Find the effective batch size (the last batch may be smaller).
-      currentFunction = b*batchSize;
+      currentFunction = b * batchSize;
       effectiveBatchSize = std::min(batchSize, numFunctions - currentFunction);
 
       // Is this iteration the start of a sequence?
@@ -147,10 +147,10 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
       // Use the update policy to take a step.
       updatePolicy.Update(iterate, avgGradient, gradient, gradient0,
                           stepSize);
-      // update average
+      // update the average gradient
       avgGradient += (gradient-tableOfGradients.slice(b))/numBatches;
 
-      // update table of gradients
+      // update the table of gradients
       tableOfGradients.slice(b) = gradient;
 
       f += effectiveBatchSize;
