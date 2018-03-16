@@ -909,6 +909,7 @@ RectangleTree() :
     parent(NULL),
     begin(0),
     count(0),
+    numDescendants(0),
     maxLeafSize(0),
     minLeafSize(0),
     parentDistance(0.0),
@@ -959,7 +960,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
           root = root->Parent();
         }
         if (stillShrinking)
-          stillShrinking = root->ShrinkBoundForBound(bound);
+          root->ShrinkBoundForBound(bound);
 
         root = parent;
         while (root != NULL)
@@ -977,7 +978,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
           root = root->Parent();
         }
         if (stillShrinking)
-          stillShrinking = root->AuxiliaryInfo().UpdateAuxiliaryInfo(root);
+          root->AuxiliaryInfo().UpdateAuxiliaryInfo(root);
 
        // Reinsert the points at the root node.
         for (size_t j = 0; j < count; j++)
@@ -1020,7 +1021,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
             root = root->Parent();
           }
           if (stillShrinking)
-            stillShrinking = root->ShrinkBoundForBound(bound);
+            root->ShrinkBoundForBound(bound);
 
           root = parent;
           while (root != NULL)
@@ -1038,7 +1039,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
             root = root->Parent();
           }
           if (stillShrinking)
-            stillShrinking = root->AuxiliaryInfo().UpdateAuxiliaryInfo(root);
+            root->AuxiliaryInfo().UpdateAuxiliaryInfo(root);
 
           // Reinsert the nodes at the root node.
           for (size_t i = 0; i < numChildren; i++)

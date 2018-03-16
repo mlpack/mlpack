@@ -1560,7 +1560,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree() :
     furthestDescendantDistance(0.0),
     localMetric(false),
     localDataset(false),
-    metric(NULL)
+    metric(NULL),
+    distanceComps(0)
 {
   // Nothing to do.
 }
