@@ -207,35 +207,71 @@ void AssembleFactorizerType(const std::string& algorithm,
                             const size_t rank)
 {
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
-  
-  // Setting minResidue to a negative number leads to algorithm terminating
-  // only when the maximum number of iterations is reached.
-  const double minResidue = maxIterationTermination ? double(-1) :
-      CLI::GetParam<double>("min_residue");
-  SimpleResidueTermination srt(minResidue, maxIterations);
-  if (algorithm == "NMF")
+  if (maxIterationTermination)
   {
-    PerformAction(NMFALSFactorizer(srt), dataset, rank);
+    // Force termination when maximum number of iterations reached.
+    MaxIterationTermination mit(maxIterations);
+    if (algorithm == "NMF")
+    {
+      typedef AMF<MaxIterationTermination, RandomInitialization, NMFALSUpdate>
+          FactorizerType;
+      PerformAction(FactorizerType(mit), dataset, rank);
+    }
+    else if (algorithm == "BatchSVD")
+    {
+      typedef AMF<MaxIterationTermination, RandomInitialization,
+          SVDBatchLearning> FactorizerType;
+      PerformAction(FactorizerType(mit), dataset, rank);
+    }
+    else if (algorithm == "SVDIncompleteIncremental")
+    {
+      typedef AMF<MaxIterationTermination, RandomInitialization,
+          SVDIncompleteIncrementalLearning> FactorizerType;
+      PerformAction(FactorizerType(mit), dataset, rank);
+    }
+    else if (algorithm == "SVDCompleteIncremental")
+    {
+      typedef AMF<MaxIterationTermination, RandomInitialization,
+          SVDCompleteIncrementalLearning<arma::sp_mat>> FactorizerType;
+      PerformAction(FactorizerType(mit), dataset, rank);
+    }
+    else if (algorithm == "RegSVD")
+    {
+      ReportIgnoredParam("min_residue", "Regularized SVD terminates only "
+          "when max_iterations is reached");
+      PerformAction(RegularizedSVD<>(maxIterations), dataset, rank);
+    }
   }
-  else if (algorithm == "BatchSVD")
+  else
   {
-    PerformAction(SVDBatchFactorizer<>(srt), dataset, rank);
-  }
-  else if (algorithm == "SVDIncompleteIncremental")
-  {
-    PerformAction(SVDIncompleteIncrementalFactorizer<arma::sp_mat>(srt),
-        dataset, rank);
-  }
-  else if (algorithm == "SVDCompleteIncremental")
-  {
-    PerformAction(SVDCompleteIncrementalFactorizer<arma::sp_mat>(srt),
-        dataset, rank);
-  }
-  else if (algorithm == "RegSVD")
-  {
-    ReportIgnoredParam("min_residue", "Regularized SVD terminates only "
-        "when max_iterations is reached");
-    PerformAction(RegularizedSVD<>(maxIterations), dataset, rank);
+    // Use default termination (SimpleResidueTermination), but set the maximum
+    // number of iterations.
+    const double minResidue = CLI::GetParam<double>("min_residue");
+    SimpleResidueTermination srt(minResidue, maxIterations);
+    if (algorithm == "NMF")
+    {
+      PerformAction(NMFALSFactorizer(srt), dataset, rank);
+    }
+    else if (algorithm == "BatchSVD")
+    {
+      PerformAction(SVDBatchFactorizer<>(srt), dataset, rank);
+    }
+    else if (algorithm == "SVDIncompleteIncremental")
+    {
+      PerformAction(SVDIncompleteIncrementalFactorizer<arma::sp_mat>(srt),
+          dataset, rank);
+    }
+    else if (algorithm == "SVDCompleteIncremental")
+    {
+      PerformAction(SVDCompleteIncrementalFactorizer<arma::sp_mat>(srt),
+          dataset, rank);
+    }
+    else if (algorithm == "RegSVD")
+    {
+      ReportIgnoredParam("min_residue", "Regularized SVD terminates only "
+          "when max_iterations is reached");
+      PerformAction(RegularizedSVD<>(maxIterations), dataset, rank);
+    }
   }
 }
 
