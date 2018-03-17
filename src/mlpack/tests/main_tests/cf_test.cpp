@@ -413,7 +413,7 @@ BOOST_AUTO_TEST_CASE(CFRankTest)
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
-  int rank = 7; 
+  int rank = 7;
 
   SetInputParam("training", std::move(dataset));
   SetInputParam("rank", rank);

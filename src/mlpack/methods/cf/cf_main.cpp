@@ -299,8 +299,8 @@ static void mlpackMain()
         "rank must be non-negative");
     RequireParamValue<int>("neighborhood", [](int x) { return x > 0; }, true,
         "neighborhood must be positive");
-    RequireParamValue<double>("min_residue", [](double x) {return x >= 0; }, true,
-        "min_residue must be non-negative");
+    RequireParamValue<double>("min_residue", [](double x) { return x >= 0; },
+        true, "min_residue must be non-negative");
     RequireParamValue<int>("max_iterations", [](int x) { return x > 0; }, true,
         "max_iterations must be positive");
 
@@ -326,7 +326,7 @@ static void mlpackMain()
   {
     // Load from a model.
     // Validate Parameteres.
-    RequireAtLeastOnePassed({ "query", "all_user_recommendations", 
+    RequireAtLeastOnePassed({ "query", "all_user_recommendations",
         "test" }, true);
     if (CLI::HasParam("query") || CLI::HasParam("all_user_recommendations"))
     {
