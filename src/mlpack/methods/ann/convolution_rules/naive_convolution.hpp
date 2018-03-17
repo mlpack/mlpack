@@ -39,7 +39,7 @@ class NaiveConvolution
    * Perform a convolution (valid mode).
    *
    * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the conolution.
+   * @param filter Filter used to perform the convolution.
    * @param output Output data that contains the results of the convolution.
    * @param dW Stride of filter application in the x direction.
    * @param dH Stride of filter application in the y direction.
@@ -79,7 +79,7 @@ class NaiveConvolution
    * Perform a convolution (full mode).
    *
    * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the conolution.
+   * @param filter Filter used to perform the convolution.
    * @param output Output data that contains the results of the convolution.
    * @param dW Stride of filter application in the x direction.
    * @param dH Stride of filter application in the y direction.
@@ -111,7 +111,7 @@ class NaiveConvolution
    * Perform a convolution using 3rd order tensors.
    *
    * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the conolution.
+   * @param filter Filter used to perform the convolution.
    * @param output Output data that contains the results of the convolution.
    * @param dW Stride of filter application in the x direction.
    * @param dH Stride of filter application in the y direction.
@@ -143,7 +143,7 @@ class NaiveConvolution
    * as filter and output.
    *
    * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the conolution.
+   * @param filter Filter used to perform the convolution.
    * @param output Output data that contains the results of the convolution.
    * @param dW Stride of filter application in the x direction.
    * @param dH Stride of filter application in the y direction.
@@ -175,7 +175,7 @@ class NaiveConvolution
    * dense matrix as filter.
    *
    * @param input Input used to perform the convolution.
-   * @param filter Filter used to perform the conolution.
+   * @param filter Filter used to perform the convolution.
    * @param output Output data that contains the results of the convolution.
    * @param dW Stride of filter application in the x direction.
    * @param dH Stride of filter application in the y direction.
