@@ -25,15 +25,17 @@ using namespace mlpack::optimization::test;
 
 BOOST_AUTO_TEST_SUITE(PSOTest);
 
-BOOST_AUTO_TEST_CASE(SimplePSOTest)
+BOOST_AUTO_TEST_CASE(RosenbrockTest)
 {
   RosenbrockFunction f;
-  PSO s;
+  LBestPSO s;
 
   arma::vec coordinates = f.GetInitialPoint();
   double result = s.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_SMALL(result, 1e-4);
+  BOOST_REQUIRE_SMALL(result, 1e-10);
+  for (size_t j = 0; j < 2; ++j)
+    BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 1e-3);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

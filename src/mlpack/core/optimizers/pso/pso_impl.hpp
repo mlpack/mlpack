@@ -22,7 +22,8 @@ namespace optimization {
 //! Optimize the function (minimize).
 template<typename VelocityUpdatePolicy>
 template<typename FunctionType>
-double PSOType<VelocityUpdatePolicy>::Optimize(FunctionType& function, arma::mat& iterate)
+double PSOType<VelocityUpdatePolicy>::Optimize(
+  FunctionType& function, arma::mat& iterate)
 {
   // The following cast and checks are added for the sake of extending the PSO
   // algorithm with Gradient Descent and creating a hybrid optimizer.
@@ -60,7 +61,14 @@ double PSOType<VelocityUpdatePolicy>::Optimize(FunctionType& function, arma::mat
   velocityUpdatePolicy.Initialize(
     exploitationFactor, explorationFactor, numParticles, iterate);
 
-  for(size_t i = 0; i < maxIterations; i++)
+  // Calculate the number of iterations for which PSO is to be run.
+  size_t psoIterations = enableGradientDescent ?
+    maxIterations * psoIterationsRatio : maxIterations;
+
+  // Calculate the number of iterations for which GD is to be run.
+  size_t gdIterations = maxIterations - psoIterations;
+
+  for(size_t i = 0; i < psoIterations; i++)
   {
     // Calculate fitness and evaluate personal best.
     for(size_t j = 0; j < numParticles; j++)
@@ -91,6 +99,16 @@ double PSOType<VelocityUpdatePolicy>::Optimize(FunctionType& function, arma::mat
   arma::uword bestParticle = index_min(particleBestFitnesses);
   double bestFitness = particleBestFitnesses(bestParticle);
   iterate = particleBestPositions.slice(bestParticle);
+
+  // Check if gradient descent is enabled.
+  if(enableGradientDescent)
+  {
+    // Perform the actual gradient descent.
+    for(size_t i = 0; i < gdIterations; i++)
+    {
+      // Not implemented yet.
+    }
+  }
 
   return bestFitness;
 }
