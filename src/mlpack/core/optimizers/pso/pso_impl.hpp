@@ -96,7 +96,7 @@ double PSOType<VelocityUpdatePolicy>::Optimize(
   }
 
   // Find best particle.
-  arma::uword bestParticle = index_min(particleBestFitnesses);
+  arma::uword bestParticle = arma::index_min(particleBestFitnesses);
   double bestFitness = particleBestFitnesses(bestParticle);
   iterate = particleBestPositions.slice(bestParticle);
 
