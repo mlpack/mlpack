@@ -23,39 +23,22 @@ namespace optimization {
  *
  * For more information, see the following.
  *
- * REPLACE THIS REFERENCE TO A RELEVANT ONE.
+ * REFERENCE TO A RELEVANT ARTICLE.
  *
- * @code
- * @article{Kingma2014,
- *   author  = {Diederik P. Kingma and Jimmy Ba},
- *   title   = {Adam: {A} Method for Stochastic Optimization},
- *   journal = {CoRR},
- *   year    = {2014},
- *   url     = {http://arxiv.org/abs/1412.6980}
- * }
- * @endcode
  */
 class LBestUpdate
 {
  public:
   /**
-   * REPLACE WITH RELEVANT DATA.
-   *
-   * Construct the velocity update policy with the given parameters.
-   *
-   * @param epsilon The epsilon value used to initialise the squared gradient
-   *        parameter.
-   * @param beta1 The smoothing parameter.
-   * @param beta2 The second moment coefficient.
-   */
-  LBestUpdate() { /* Nothing to do */ }
-
-  /**
    * The Initialize method is called by PSO Optimizer method before the start of
-   * the iteration process.
+   * the iteration process. It calculates the value of the constriction
+   * coefficent, initializes the local best indices of each particle to itself,
+   * and sets the shape of the r1 and r2 vectors.
    *
    * @param exploitationFactor Influence of personal best achieved.
    * @param explorationFactor Influence of neighbouring particles.
+   * @param numParticles The number of particles in the swarm.
+   * @param iterate The user input, used for shaping intermediate vectors.
    */
   void Initialize(const double& exploitationFactor,
                   const double& explorationFactor,
@@ -71,7 +54,7 @@ class LBestUpdate
     // Calculate the constriction factor
     double phi = c1 + c2;
     assert(phi > 4.0);
-    chi = 2 / std::abs(2 - phi - std::sqrt((phi - 4) * phi));
+    chi = 2.0 / std::abs(2.0 - phi - std::sqrt((phi - 4.0) * phi));
 
     // Initialize local best indices to self indices of particles.
     size_t index = 0;
@@ -88,9 +71,11 @@ class LBestUpdate
    *
    * ADD DESCRIPTIONS OF RELEVANT PARAMETERS HERE.
    *
-   * @param iterate Parameters that minimize the function.
-   * @param stepSize Step size to be used for the given iteration.
-   * @param gradient The gradient matrix.
+   * @param particlePositions The current coordinates of particles.
+   * @param particleVelocities The current velocities (will be modified).
+   * @param particleFitnesses The current fitness values or particles.
+   * @param particleBestPositions The personal best coordinates of particles.
+   * @param particleBestFitnesses The personal best fitness values of particles.
    */
   void Update(const arma::cube& particlePositions,
               arma::cube& particleVelocities,
@@ -118,8 +103,8 @@ class LBestUpdate
         c1 * r1 %
           (particleBestPositions.slice(i) - particlePositions.slice(i)) +
         c2 * r2 %
-          (particleBestPositions.slice(localBestIndices(i)) - particlePositions.slice(i))
-      );
+          (particleBestPositions.slice(localBestIndices(i)) -
+            particlePositions.slice(i)));
     }
   }
 
