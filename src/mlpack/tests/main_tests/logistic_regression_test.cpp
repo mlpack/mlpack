@@ -616,14 +616,7 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
   mlpackMain();
 
   // Get the output after first training.
-  const arma::Row<size_t> &output1 = CLI::GetParam<arma::Row<size_t>>("output");
-
-  // Check that the parameters (parameters1 and parameters2) are not equal which
-  // ensures that decision boundary has some effect on the output.
-  // arma::all function checks that each element of the vector is equal to zero.
-  BOOST_REQUIRE_MESSAGE(arma::all(output1 == 0),
-                        "Parameter(Decision Boudary) has"
-                        "no effect on the output");
+  const arma::Row<size_t> output1 = CLI::GetParam<arma::Row<size_t>>("output");
 
   // Reset the settings.
   bindings::tests::CleanMemory();
@@ -641,12 +634,8 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
   // Get the output after second training.
   const arma::Row<size_t> &output2 = CLI::GetParam<arma::Row<size_t>>("output");
 
-  // Check that the parameters (parameters1 and parameters2) are not equal which
-  // ensures that decision boundary has som effect on the output.
-  // arma::all function checks that each element of the vector is equal to one.
-  BOOST_REQUIRE_MESSAGE(arma::all(output2 == 1),
-                        "Parameter(Decision Boudary) has"
-                        "no effect on the output");
+  // Check that the output changed when the decision boundary moved.
+  BOOST_REQUIRE_GT(arma::accu(output1 != output2), 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
