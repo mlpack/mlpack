@@ -89,7 +89,7 @@ class PSOType
   //! Modify value of numParticles.
   size_t& NumParticles() { return numParticles; }
 
-private:
+ private:
   //! Number of particles in the swarm.
   size_t numParticles;
   //! Maximum number of iterations for which the optimizer will run.

@@ -84,7 +84,7 @@ class LBestUpdate
               const arma::vec& particleBestFitnesses)
   {
     // Velocity update logic.
-    for(size_t i = 0; i < n; i++)
+    for (size_t i = 0; i < n; i++)
     {
       localBestIndices(i) =
         particleBestFitnesses(left(i)) < particleBestFitnesses(i) ?
@@ -94,12 +94,12 @@ class LBestUpdate
         right(i) : i;
     }
 
-    for(size_t i = 0; i < n; i++)
+    for (size_t i = 0; i < n; i++)
     {
       // Generate random numbers for current particle.
       r1.randu();
       r2.randu();
-      particleVelocities.slice(i) = chi * ( particleVelocities.slice(i) +
+      particleVelocities.slice(i) = chi * (particleVelocities.slice(i) +
         c1 * r1 %
           (particleBestPositions.slice(i) - particlePositions.slice(i)) +
         c2 * r2 %

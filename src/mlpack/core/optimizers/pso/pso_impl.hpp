@@ -42,7 +42,7 @@ double PSOType<VelocityUpdatePolicy>::Optimize(
   particlePositions.randu(iterate.n_rows, iterate.n_cols, numParticles);
   assert(particlePositions.n_rows == iterate.n_rows);
 
-  //Randomly initialize particle velocities.
+  // Randomly initialize particle velocities.
   particleVelocities.randu(iterate.n_rows, iterate.n_cols, numParticles);
   assert(particleVelocities.n_rows == iterate.n_rows);
 
@@ -68,15 +68,15 @@ double PSOType<VelocityUpdatePolicy>::Optimize(
   // Calculate the number of iterations for which GD is to be run.
   size_t gdIterations = maxIterations - psoIterations;
 
-  for(size_t i = 0; i < psoIterations; i++)
+  for (size_t i = 0; i < psoIterations; i++)
   {
     // Calculate fitness and evaluate personal best.
-    for(size_t j = 0; j < numParticles; j++)
+    for (size_t j = 0; j < numParticles; j++)
     {
       // Calculate fitness value.
       particleFitnesses(j) = f.Evaluate(particlePositions.slice(j));
       // Compare and copy fitness and position to particle best.
-      if(particleFitnesses(j) < particleBestFitnesses(j))
+      if (particleFitnesses(j) < particleBestFitnesses(j))
       {
         particleBestFitnesses(j) = particleFitnesses(j);
         particleBestPositions.slice(j) = particlePositions.slice(j);
@@ -101,10 +101,10 @@ double PSOType<VelocityUpdatePolicy>::Optimize(
   iterate = particleBestPositions.slice(bestParticle);
 
   // Check if gradient descent is enabled.
-  if(enableGradientDescent)
+  if (enableGradientDescent)
   {
     // Perform the actual gradient descent.
-    for(size_t i = 0; i < gdIterations; i++)
+    for (size_t i = 0; i < gdIterations; i++)
     {
       // Not implemented yet.
     }
