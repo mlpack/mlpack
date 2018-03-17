@@ -96,8 +96,18 @@ double PSOType<VelocityUpdatePolicy>::Optimize(
   }
 
   // Find best particle.
-  arma::uword bestParticle = arma::index_min(particleBestFitnesses);
+  size_t bestParticle = 0;
   double bestFitness = particleBestFitnesses(bestParticle);
+  for (size_t i = 1; i < numParticles; i++)
+  {
+    if (particleBestFitnesses(i) < bestFitness)
+    {
+      bestParticle = i;
+      bestFitness = particleBestFitnesses(bestParticle);
+    }
+  }
+
+  // Copy results back.
   iterate = particleBestPositions.slice(bestParticle);
 
   // Check if gradient descent is enabled.
