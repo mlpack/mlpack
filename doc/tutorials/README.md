@@ -1,7 +1,7 @@
 
 ## Tutorials
 
-Tutorials for mlpack can be found [here : mlpack tutorials](http://www.mlpack.org/tutorials.html).
+Tutorials for mlpack can be found [here : mlpack tutorials](http://www.mlpack.org/docs/mlpack-git/doxygen/tutorials.html).
 
 
 ### General mlpack tutorials
