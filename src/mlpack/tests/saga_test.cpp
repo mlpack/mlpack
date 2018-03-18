@@ -55,8 +55,9 @@ BOOST_AUTO_TEST_CASE(SAGALogisticRegressionTest)
 BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
 {
   // Loop over several variants.
-  for (size_t i = 10; i < 20; i += 5)
+  for (size_t i = 5; i < 20; i += 2)
   {
+    mlpack::math::RandomSeed(std::time(NULL));
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
 
