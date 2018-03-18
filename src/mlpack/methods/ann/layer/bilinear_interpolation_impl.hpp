@@ -53,6 +53,7 @@ template<typename eT>
 void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
+  //std::cout << "Enter Bilinear Forward" << std::endl;
   if (output.is_empty())
     output.set_size(outRowSize * outColSize * depth, 1);
   else
@@ -104,6 +105,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
       }
     }
   }
+  //std::cout << "Exit Bilinear Forward" << std::endl;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -113,6 +115,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
     arma::Mat<eT>&& gradient,
     arma::Mat<eT>&& output)
 {
+  //std::cout << "Enter Bilinear Backward" << std::endl;
   if (output.is_empty())
     output.set_size(inRowSize * inColSize * depth, 1);
   else
@@ -165,6 +168,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
       }
     }
   }
+  //std::cout << "Exit Bilinear Backward" << std::endl;
 }
 
 template<typename InputDataType, typename OutputDataType>

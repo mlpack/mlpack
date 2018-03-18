@@ -1,6 +1,7 @@
 /**
  * @file gan.hpp
- * @author Kris Singh and Shikhar Jaiswal
+ * @author Kris Singh
+ * @author Shikhar Jaiswal
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license. You should have received a copy of the
@@ -65,7 +66,8 @@ class GAN
    * @param parameters The parameters of the network.
    * @param i Index of the current input.
    */
-  double Evaluate(const arma::mat& parameters, const size_t i);
+  double Evaluate(const arma::mat& parameters, const size_t i,
+      const size_t batchSize);
 
   /**
    * Gradient function for GAN.
@@ -77,7 +79,13 @@ class GAN
    * @param gradient Variable to store the present gradient.
    */
   void Gradient(const arma::mat& parameters, const size_t i,
-      arma::mat& gradient);
+      arma::mat& gradient, const size_t batchSize);
+
+  /**
+   * Shuffle the order of function visitation. This may be called by the
+   * optimizer.
+   */
+  void Shuffle();
 
   /**
    * This function does a forward pass through the GAN network.
