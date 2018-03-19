@@ -78,16 +78,16 @@ class EpisodeMemory
     states.col(position) = state.Encode();
     actions(position) = action;
     // Adding discounted rewards.
-    for( size_t count = 0; count<position; count++ )
+    for ( size_t count = 0; count<position; count++ )
     {
-      rewards(count) = rewards(count) + reward*pow(lambda,position-count);  
+      rewards(count) = rewards(count) + reward*pow( lambda, position-count );
     }
     rewards(position) = reward;
     nextStates.col(position) = nextState.Encode();
     isTerminal(position) = isEnd;
     position++;
     if (position == capacity || isEnd)
-    { 
+    {
       // capacity will try to end episode after a number of steps
       isTerminal(position-1) = true;
       full = true;

@@ -93,7 +93,7 @@ double Advantage<
   // Sample from previous experience.
   if (environment.IsTerminal(nextState) || steps == config.StepLimit())
   {
-	  arma::mat sampledStates;
+      arma::mat sampledStates;
       arma::icolvec sampledActions;
       arma::colvec advantage;
       arma::icolvec isTerminal;
@@ -112,7 +112,7 @@ double Advantage<
 	  *
 	  * I have also defined policygradient loss in mlpack/methods/ann/layers for implementation.
 	  */
-	  arma::mat target;
+      arma::mat target;
       learningNetwork.Forward(sampledStates, target);
       /* turning the target to zero to place advantage value
        * in place of it
@@ -126,7 +126,8 @@ double Advantage<
       // Learn form experience. Experience in form of advantage.
       arma::mat gradients;
       learningNetwork.Backward(target, gradients);
-      updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
+      updater.Update(learningNetwork.Parameters(), 
+      	config.StepSize(), gradients);
   }
   state = nextState;
   return reward;
