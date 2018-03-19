@@ -126,8 +126,8 @@ double Advantage<
       // Learn form experience. Experience in form of advantage.
       arma::mat gradients;
       learningNetwork.Backward(target, gradients);
-      updater.Update(learningNetwork.Parameters(), 
-      	config.StepSize(), gradients);
+      updater.Update(learningNetwork.Parameters(),
+        config.StepSize(), gradients);
   }
   state = nextState;
   return reward;

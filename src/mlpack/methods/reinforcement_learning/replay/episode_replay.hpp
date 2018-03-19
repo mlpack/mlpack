@@ -80,7 +80,7 @@ class EpisodeMemory
     // Adding discounted rewards.
     for ( size_t count = 0; count<position; count++ )
     {
-      rewards(count) = rewards(count) + reward*pow( lambda, position-count );
+      rewards(count) = rewards(count) + reward*pow(lambda, position-count);
     }
     rewards(position) = reward;
     nextStates.col(position) = nextState.Encode();
