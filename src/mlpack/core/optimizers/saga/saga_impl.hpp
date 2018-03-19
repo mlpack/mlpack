@@ -147,10 +147,10 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
       // Use the update policy to take a step.
       updatePolicy.Update(iterate, avgGradient, gradient, gradient0,
                           stepSize);
-      // update the average gradient
+      // Update the average gradient.
       avgGradient += (gradient-tableOfGradients.slice(b))/numBatches;
 
-      // update the table of gradients
+      // Update the table of gradients.
       tableOfGradients.slice(b) = gradient;
 
       f += effectiveBatchSize;
