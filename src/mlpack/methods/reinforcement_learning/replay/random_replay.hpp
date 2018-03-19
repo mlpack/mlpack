@@ -12,6 +12,7 @@
 #ifndef MLPACK_METHODS_RL_REPLAY_RANDOM_REPLAY_HPP
 #define MLPACK_METHODS_RL_REPLAY_RANDOM_REPLAY_HPP
 
+#include <math.h>
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
@@ -67,7 +68,8 @@ class RandomReplay
       rewards(capacity),
       nextStates(dimension, capacity),
       isTerminal(capacity),
-      full(false)
+      full(false),
+      steps(0)
   { /* Nothing to do here. */ }
 
   /**
@@ -84,6 +86,7 @@ class RandomReplay
              double reward,
              const StateType& nextState,
              bool isEnd)
+
   {
     states.col(position) = state.Encode();
     actions(position) = action;
@@ -98,6 +101,30 @@ class RandomReplay
     }
   }
 
+  void StoreEpisode(const StateType& state,
+             ActionType action,
+             double reward,
+             const StateType& nextState,
+             bool isEnd,
+             double lambda=0.99)
+
+  {
+    states.col(position) = state.Encode();
+    actions(position) = action;
+    rewards = rewards + reward*pow(lambda,steps);
+    rewards(position) = reward;
+    nextStates.col(position) = nextState.Encode();
+    isTerminal(position) = isEnd;
+    position++;
+    steps++;
+    if (position == capacity || isEnd)
+    { 
+      isTerminal(position-1)=true; // capacity will try to end episode after a number of steps
+      steps = 0;
+      full = true;
+      position = 0;
+    }
+  }
   /**
    * Sample some experiences.
    *
@@ -135,26 +162,31 @@ class RandomReplay
    * @param isTerminal Indicate whether corresponding next state is terminal
    *        state.
    */
-  void PolicySample(arma::mat& sampledStates,
+  void EpisodeReplay(arma::mat& sampledStates,
               arma::icolvec& sampledActions,
               arma::colvec& sampledAdvantage,
               arma::icolvec& isTerminal)
   {
-    size_t upperBound = full ? capacity : position;
-    arma::uvec sampledIndices = arma::randi<arma::uvec>(
-        batchSize, arma::distr_param(0, upperBound - 1));
+    // size_t upperBound = full ? capacity : position;
+    // arma::uvec sampledIndices = arma::randi<arma::uvec>(
+    //     batchSize, arma::distr_param(0, upperBound - 1));
 
-    sampledStates = states.cols(sampledIndices);
-    sampledActions = actions.elem(sampledIndices);
-    sampledAdvantage = rewards.elem(sampledIndices);
-    isTerminal = this->isTerminal.elem(sampledIndices);
+    // sampledStates = states.cols(sampledIndices);
+    // sampledActions = actions.elem(sampledIndices);
+    // sampledAdvantage = rewards.elem(sampledIndices);
+    // isTerminal = this->isTerminal.elem(sampledIndices);
+    sampledStates = states;
+    sampledActions = actions;
+    sampledAdvantage = rewards;
+    isTerminal = this->isTerminal;
     /*Advantage checks whether a particular action is good or not
     * Hence we need to check if it is better than the moving average of
     * the provious action. To do so we need to check how good it is from the 
     * average of the rewards recieved.
     */
-    sampledAdvantage = (sampledAdvantage - arma::mean(rewards));
-    sampledAdvantage = sampledAdvantage / arma::stddev(rewards);
+    // mean= (mean*totalstepsvisited + sampledAdvantage(0))/(++totalstepsvisited);
+    // sampledAdvantage = (sampledAdvantage - mean);
+    // sampledAdvantage = sampledAdvantage / arma::stddev(rewards);
   }
   /**
    * Get the number of transitions in the memory.
@@ -167,6 +199,8 @@ class RandomReplay
   }
 
  private:
+  
+  
   //! Locally-stored number of examples of each sample.
   size_t batchSize;
 
@@ -193,6 +227,11 @@ class RandomReplay
 
   //! Locally-stored indicator that whether the memory is full or not
   bool full;
+
+  // size_t totalstepsvisited;
+
+  size_t steps;
+
 };
 
 } // namespace rl
