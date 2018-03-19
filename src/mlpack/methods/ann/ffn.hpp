@@ -53,8 +53,7 @@ class FFN
   using NetworkType = FFN<OutputLayerType, InitializationRuleType>;
 
   /**
-   * Create the FFN object with the given predictors and responses set (this is
-   * the set that is used to train the network).
+   * Create the FFN object.
    * Optionally, specify which initialize rule and performance function should
    * be used.
    *
@@ -76,26 +75,6 @@ class FFN
 
   //! Copy/move assignment operator.
   FFN& operator = (FFN);
-
-  /**
-   * Create the FFN object with the given predictors and responses set (this is
-   * the set that is used to train the network).
-   * Optionally, specify which initialize rule and performance function should
-   * be used.
-   *
-   * If you want to pass in a parameter and discard the original parameter
-   * object, be sure to use std::move to avoid unnecessary copy.
-   *
-   * @param predictors Input training variables.
-   * @param responses Outputs results from input training variables.
-   * @param outputLayer Output layer used to evaluate the network.
-   * @param initializeRule Optional instantiated InitializationRule object
-   *        for initializing the network parameter.
-   */
-  FFN(arma::mat predictors,
-      arma::mat responses,
-      OutputLayerType outputLayer = OutputLayerType(),
-      InitializationRuleType initializeRule = InitializationRuleType());
 
   //! Destructor to release allocated memory.
   ~FFN();

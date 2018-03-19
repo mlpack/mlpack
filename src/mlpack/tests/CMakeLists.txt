@@ -75,6 +75,7 @@ add_executable(mlpack_test
   momentum_sgd_test.cpp
   nbc_test.cpp
   nca_test.cpp
+  nesterov_momentum_sgd_test.cpp
   nmf_test.cpp
   nystroem_method_test.cpp
   octree_test.cpp
