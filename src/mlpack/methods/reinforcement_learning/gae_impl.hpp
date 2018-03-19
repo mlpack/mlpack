@@ -81,7 +81,7 @@ double Advantage<
 
   // Store the transition for replay.
   replayMethod.StoreEpisode(state, action, reward,
-      nextState, environment.IsTerminal(state), 0.99);
+      nextState, environment.IsTerminal(state), config.Discount());
 
   // Update current state.
 

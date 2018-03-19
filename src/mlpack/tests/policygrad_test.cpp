@@ -56,6 +56,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
   config.TargetNetworkSyncInterval() = 100;
   config.ExplorationSteps() = 100;
   config.EpisodeLimit() = 4000;
+  config.Discount() = 0.99;
 
   // Set up Policy Gradient agent.
   Advantage<CartPole, decltype(model), AdamUpdate, decltype(policy)>
