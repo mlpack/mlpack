@@ -46,25 +46,6 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
-FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
-    arma::mat predictors,
-    arma::mat responses,
-    OutputLayerType outputLayer,
-    InitializationRuleType initializeRule) :
-    outputLayer(std::move(outputLayer)),
-    initializeRule(std::move(initializeRule)),
-    width(0),
-    height(0),
-    reset(false),
-    predictors(std::move(predictors)),
-    responses(std::move(responses)),
-    deterministic(true)
-{
-  numFunctions = this->responses.n_cols;
-}
-
-template<typename OutputLayerType, typename InitializationRuleType,
-         typename... CustomLayers>
 FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::~FFN()
 {
   std::for_each(network.begin(), network.end(),

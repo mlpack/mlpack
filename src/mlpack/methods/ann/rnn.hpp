@@ -48,8 +48,7 @@ class RNN
                           CustomLayers...>;
 
   /**
-   * Create the RNN object with the given predictors and responses set (this is
-   * the set that is used to train the network).
+   * Create the RNN object.
    * Optionally, specify which initialize rule and performance function should
    * be used.
    *
@@ -63,37 +62,6 @@ class RNN
    *        for initializing the network parameter.
    */
   RNN(const size_t rho,
-      const bool single = false,
-      OutputLayerType outputLayer = OutputLayerType(),
-      InitializationRuleType initializeRule = InitializationRuleType());
-
-  /**
-   * Create the RNN object with the given predictors and responses set (this is
-   * the set that is used to train the network).
-   * Optionally, specify which initialize rule and performance function should
-   * be used.
-   *
-   * If you want to pass in a parameter and discard the original parameter
-   * object, be sure to use std::move to avoid unnecessary copy.
-   *
-   * The format of the data should be as follows:
-   *  - each slice should correspond to a time step
-   *  - each column should correspond to a data point
-   *  - each row should correspond to a dimension
-   * So, e.g., predictors(i, j, k) is the i'th dimension of the j'th data point
-   * at time slice k.
-   *
-   * @param predictors Input training variables.
-   * @param responses Outputs results from input training variables.
-   * @param rho Maximum number of steps to backpropagate through time (BPTT).
-   * @param single Predict only the last element of the input sequence.
-   * @param outputLayer Output layer used to evaluate the network.
-   * @param initializeRule Optional instantiated InitializationRule object
-   *        for initializing the network parameter.
-   */
-  RNN(arma::cube predictors,
-      arma::cube responses,
-      const size_t rho,
       const bool single = false,
       OutputLayerType outputLayer = OutputLayerType(),
       InitializationRuleType initializeRule = InitializationRuleType());
