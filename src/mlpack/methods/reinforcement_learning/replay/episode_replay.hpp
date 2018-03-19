@@ -98,18 +98,19 @@ class EpisodeMemory
   /**
    * @param sampledStates Sampled encoded states.
    * @param sampledActions Sampled actions.
-   * @param sampledAdvantage Sampled advantage.
+   * @param sampledReturn Sampled return.
    * @param isTerminal Indicate whether corresponding next state is terminal
    *        state.
+   *
    */
   void EpisodeReplay(arma::mat& sampledStates,
               arma::icolvec& sampledActions,
-              arma::colvec& sampledAdvantage,
+              arma::colvec& sampledReturn,
               arma::icolvec& isTerminal)
   {
     sampledStates = states;
     sampledActions = actions;
-    sampledAdvantage = rewards;
+    sampledReturn = rewards;
     isTerminal = this->isTerminal;
   }
   /**
