@@ -49,18 +49,18 @@ BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
 
   // Set up the policy and replay method.
   VanillaPolicyGradient<CartPole> policy;
-  RandomReplay<CartPole> replayMethod(10, 10000);
+  EpisodeMemory<CartPole> replay(200);
 
   TrainingConfig config;
   config.StepSize() = 0.01;
   config.TargetNetworkSyncInterval() = 100;
   config.ExplorationSteps() = 100;
-  config.StepLimit() = 200;
+  config.EpisodeLimit() = 4000;
 
   // Set up Policy Gradient agent.
   Advantage<CartPole, decltype(model), AdamUpdate, decltype(policy)>
       agent(std::move(config), std::move(model), std::move(policy),
-          std::move(replayMethod));
+          std::move(replay));
 
   arma::running_stat<double> averageReturn;
   size_t episodes = 0;
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
     averageReturn(episodeReturn);
     episodes += 1;
 
-    if (episodes > 10000)
+    if (episodes > config.EpisodeLimit())
     {
       Log::Debug << "Cart Pole with Policy Gradient method failed."
         << std::endl;
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
      */
     Log::Debug << "Average return: " << averageReturn.mean()
         << " Episode return: " << episodeReturn << std::endl;
-    if (averageReturn.mean() > 25)
+    if (averageReturn.mean() > 30)
     {
       agent.Deterministic() = true;
       arma::running_stat<double> testReturn;
@@ -97,6 +97,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
       break;
     }
   }
+  // converged = true;
   BOOST_REQUIRE(converged);
 }
 BOOST_AUTO_TEST_SUITE_END();
