@@ -72,13 +72,13 @@ class EpisodeMemory
              double reward,
              const StateType& nextState,
              bool isEnd,
-             double lambda=0.99)
+             double lambda = 0.99)
 
   {
     states.col(position) = state.Encode();
     actions(position) = action;
     // Adding discounted rewards.
-    for(size_t count=0;count<position;count++)
+    for( size_t count = 0; count<position; count++ )
     {
       rewards(count) = rewards(count) + reward*pow(lambda,position-count);  
     }
@@ -89,7 +89,7 @@ class EpisodeMemory
     if (position == capacity || isEnd)
     { 
       // capacity will try to end episode after a number of steps
-      isTerminal(position-1)=true; 
+      isTerminal(position-1) = true;
       full = true;
       position = 0;
     }
@@ -122,8 +122,7 @@ class EpisodeMemory
     return full ? capacity : position;
   }
 
- private: 
-
+ private:
   //! Locally-stored total memory limit.
   size_t capacity;
 
@@ -148,7 +147,6 @@ class EpisodeMemory
 
   //! Locally-stored indicator that whether the memory is full or not
   bool full;
-
 };
 
 } // namespace rl

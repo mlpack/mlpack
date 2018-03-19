@@ -81,10 +81,9 @@ double Advantage<
 
   // Store the transition for replay.
   replayMethod.StoreEpisode(state, action, reward,
-      nextState, environment.IsTerminal(state),0.99);
+      nextState, environment.IsTerminal(state), 0.99);
 
   // Update current state.
-  
 
   if (deterministic || totalSteps < config.ExplorationSteps())
     return reward;
@@ -92,15 +91,15 @@ double Advantage<
   // Start experience replay.
 
   // Sample from previous experience.
-  if (environment.IsTerminal(nextState) || steps==config.StepLimit())
+  if (environment.IsTerminal(nextState) || steps == config.StepLimit())
   {
 	  arma::mat sampledStates;
-	  arma::icolvec sampledActions;
-	  arma::colvec advantage;
-	  arma::icolvec isTerminal;
-	  replayMethod.EpisodeReplay(sampledStates, sampledActions, advantage,
-	    isTerminal);
-	  // Compute action value for next state with target network.
+      arma::icolvec sampledActions;
+      arma::colvec advantage;
+      arma::icolvec isTerminal;
+      replayMethod.EpisodeReplay(sampledStates, sampledActions, advantage,
+      isTerminal);
+      // Compute action value for next state with target network.
 
 	  /***One way to get number of action is by making a variable capturing the number of action
 	  * Another way is to use the predict funtion to get the size of the last layer.
@@ -114,20 +113,20 @@ double Advantage<
 	  * I have also defined policygradient loss in mlpack/methods/ann/layers for implementation.
 	  */
 	  arma::mat target;
-	  learningNetwork.Forward(sampledStates, target);
-	  /* turning the target to zero to place advantage value
-	   * in place of it
-	   */
-	  target.zeros();
-	  for (size_t i = 0; i < sampledStates.n_cols; ++i)
-	  {
-	    target(sampledActions[i], i) = advantage[i]; // learning from advantage
-	  }
+      learningNetwork.Forward(sampledStates, target);
+      /* turning the target to zero to place advantage value
+       * in place of it
+       */
+      target.zeros();
+      for (size_t i = 0; i < sampledStates.n_cols; ++i)
+      {
+        target(sampledActions[i], i) = advantage[i]; // learning from advantage
+      }
 
-	  // Learn form experience. Experience in form of advantage.
-	  arma::mat gradients;
-	  learningNetwork.Backward(target, gradients);
-	  updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
+      // Learn form experience. Experience in form of advantage.
+      arma::mat gradients;
+      learningNetwork.Backward(target, gradients);
+      updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
   }
   state = nextState;
   return reward;

@@ -69,7 +69,6 @@ class Advantage
   const bool& Deterministic() const { return deterministic; }
 
  private:
-
   //! Locally-stored hyper-parameters.
   TrainingConfig config;
 
