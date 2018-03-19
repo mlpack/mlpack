@@ -445,7 +445,7 @@ BOOST_AUTO_TEST_CASE(CFMinResidueTest)
 
   mlpack::math::FixedRandomSeed();
   mlpackMain();
-  
+
   outputModel =  CLI::GetParam<CF*>("output_model");
   const mat w1 = outputModel->W();
   const mat h1 = outputModel->H();
@@ -457,7 +457,7 @@ BOOST_AUTO_TEST_CASE(CFMinResidueTest)
   SetInputParam("training", std::move(dataset));
   // Remove the influence of max_iterations.
   SetInputParam("max_iterations", int(1e4));
-  
+
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
@@ -486,18 +486,18 @@ BOOST_AUTO_TEST_CASE(CFIterationOnlyTerminationTest)
 
   mlpack::math::FixedRandomSeed();
   mlpackMain();
-  
+
   outputModel =  CLI::GetParam<CF*>("output_model");
   const mat w1 = outputModel->W();
   const mat h1 = outputModel->H();
 
   ResetSettings();
 
-  // Do not set iteration_only_termination. 
+  // Do not set iteration_only_termination.
   SetInputParam("training", std::move(dataset));
   SetInputParam("max_iterations", int(100));
   SetInputParam("min_residue", double(1e9));
-  
+
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
@@ -525,7 +525,7 @@ BOOST_AUTO_TEST_CASE(CFMaxIterationsTest)
 
   mlpack::math::FixedRandomSeed();
   mlpackMain();
-  
+
   outputModel =  CLI::GetParam<CF*>("output_model");
   const mat w1 = outputModel->W();
   const mat h1 = outputModel->H();
