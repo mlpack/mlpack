@@ -96,7 +96,7 @@ class ColvilleFunction
    * @param coordinates The function coordinates.
    * @param gradient The function gradient.
    */
-  void Gradient(const arma::mat& coordinates, arma::mat& gradient);
+  void Gradient(const arma::mat& coordinates, arma::mat& gradient) const;
 };
 
 } // namespace test

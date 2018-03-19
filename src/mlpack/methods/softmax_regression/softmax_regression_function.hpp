@@ -122,7 +122,7 @@ class SoftmaxRegressionFunction
    */
   double Evaluate(const arma::mat& parameters,
                   const size_t start,
-                  const size_t batchSize = 1);
+                  const size_t batchSize = 1) const;
 
   /**
    * Evaluates the gradient values of the objective function given the current
@@ -149,7 +149,7 @@ class SoftmaxRegressionFunction
   void Gradient(const arma::mat& parameters,
                 const size_t start,
                 arma::mat& gradient,
-                const size_t batchSize = 1);
+                const size_t batchSize = 1) const;
 
   /**
    * Evaluates the gradient values of the objective function given the current

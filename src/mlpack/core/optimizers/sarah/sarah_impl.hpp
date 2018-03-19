@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "sarah.hpp"
 
+#include <mlpack/core/optimizers/function.hpp>
+
 namespace mlpack {
 namespace optimization {
 
@@ -42,6 +44,8 @@ template<typename DecomposableFunctionType>
 double SARAHType<UpdatePolicyType>::Optimize(
     DecomposableFunctionType& function, arma::mat& iterate)
 {
+  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType>();
+
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
 

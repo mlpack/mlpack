@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "spalera_sgd.hpp"
 
+#include <mlpack/core/optimizers/function.hpp>
+
 namespace mlpack {
 namespace optimization {
 
@@ -47,8 +49,13 @@ template<typename DecomposableFunctionType>
 double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
                                              arma::mat& iterate)
 {
+  typedef Function<DecomposableFunctionType> FullFunctionType;
+  FullFunctionType& f(static_cast<FullFunctionType&>(function));
+
+  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType>();
+
   // Find the number of functions to use.
-  const size_t numFunctions = function.NumFunctions();
+  const size_t numFunctions = f.NumFunctions();
 
   // To keep track of where we are and how things are going.
   size_t currentFunction = 0;
@@ -59,7 +66,7 @@ double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
   for (size_t i = 0; i < numFunctions; i += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
+    overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
   }
 
   double currentObjective = overallObjective / numFunctions;
@@ -105,9 +112,10 @@ double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
       currentFunction = 0;
 
       if (shuffle) // Determine order of visitation.
-        function.Shuffle();
+        f.Shuffle();
     }
 
+    // Calculate gradient and objective.
     // Find the effective batch size; we have to take the minimum of three
     // things:
     // - the batch size can't be larger than the user-specified batch size;
@@ -118,20 +126,18 @@ double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
         std::min(batchSize, actualMaxIterations - i),
         numFunctions - currentFunction);
 
-    function.Gradient(iterate, currentFunction, gradient, effectiveBatchSize);
+    currentObjective = f.EvaluateWithGradient(iterate, currentFunction,
+        gradient, effectiveBatchSize);
 
     // Use the update policy to take a step.
     if (!updatePolicy.Update(stepSize, currentObjective, effectiveBatchSize,
         numFunctions, iterate, gradient))
     {
-        Log::Warn << "SPALeRA SGD: converged to " << overallObjective << "; "
-            << "terminating with failure.  Try a smaller step size?"
-            << std::endl;
-        return overallObjective;
+      Log::Warn << "SPALeRA SGD: converged to " << overallObjective << "; "
+          << "terminating with failure.  Try a smaller step size?"
+          << std::endl;
+      return overallObjective;
     }
-
-    currentObjective = function.Evaluate(iterate, currentFunction,
-        effectiveBatchSize);
 
     // Now update the learning rate if requested by the user.
     decayPolicy.Update(iterate, stepSize, gradient);
@@ -150,7 +156,7 @@ double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
   for (size_t i = 0; i < numFunctions; i += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
+    overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
   }
 
   return overallObjective;
