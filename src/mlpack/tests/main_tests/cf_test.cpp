@@ -18,6 +18,7 @@ static const std::string testName = "CollaborativeFiltering";
 #include <mlpack/core.hpp>
 #include <mlpack/methods/cf/cf_main.cpp>
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/math/random.hpp>
 #include "test_helper.hpp"
 
 #include <boost/test/unit_test.hpp>
@@ -425,6 +426,126 @@ BOOST_AUTO_TEST_CASE(CFRankTest)
   const CF* outputModel = CLI::GetParam<CF*>("output_model");
 
   BOOST_REQUIRE_EQUAL(outputModel->Rank(), rank);
+}
+
+/**
+ * Test that min_residue is used.
+ */
+BOOST_AUTO_TEST_CASE(CFMinResidueTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
+  const CF* outputModel;
+
+  // Set a larger min_residue.
+  SetInputParam("min_residue", double(100));
+  SetInputParam("training", dataset);
+  // Remove the influence of max_iterations.
+  SetInputParam("max_iterations", int(1e4));
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+  
+  outputModel =  CLI::GetParam<CF*>("output_model");
+  const mat w1 = outputModel->W();
+  const mat h1 = outputModel->H();
+
+  ResetSettings();
+
+  // Set a smaller min_residue.
+  SetInputParam("min_residue", double(0.1));
+  SetInputParam("training", std::move(dataset));
+  // Remove the influence of max_iterations.
+  SetInputParam("max_iterations", int(1e4));
+  
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  outputModel = CLI::GetParam<CF*>("output_model");
+  const mat w2 = outputModel->W();
+  const mat h2 = outputModel->H();
+
+  // The resulting matrices should be different.
+  BOOST_REQUIRE(arma::norm(w1 - w2) > 1e-5 || arma::norm(h1 - h2) > 1e-5);
+}
+
+/**
+ * Test that itertaion_only_termination is used.
+ */
+BOOST_AUTO_TEST_CASE(CFIterationOnlyTerminationTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
+  const CF* outputModel;
+
+  // Set iteration_only_termination.
+  SetInputParam("iteration_only_termination", true);
+  SetInputParam("training", dataset);
+  SetInputParam("max_iterations", int(100));
+  SetInputParam("min_residue", double(1e9));
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+  
+  outputModel =  CLI::GetParam<CF*>("output_model");
+  const mat w1 = outputModel->W();
+  const mat h1 = outputModel->H();
+
+  ResetSettings();
+
+  // Do not set iteration_only_termination. 
+  SetInputParam("training", std::move(dataset));
+  SetInputParam("max_iterations", int(100));
+  SetInputParam("min_residue", double(1e9));
+  
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  outputModel = CLI::GetParam<CF*>("output_model");
+  const mat w2 = outputModel->W();
+  const mat h2 = outputModel->H();
+
+  // The resulting matrices should be different.
+  BOOST_REQUIRE(arma::norm(w1 - w2) > 1e-5 || arma::norm(h1 - h2) > 1e-5);
+}
+
+/**
+ * Test that max_iterations is used.
+ */
+BOOST_AUTO_TEST_CASE(CFMaxIterationsTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
+  const CF* outputModel;
+
+  // Set a larger max_iterations.
+  SetInputParam("max_iterations", int(100));
+  SetInputParam("training", dataset);
+  SetInputParam("iteration_only_termination", true);
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+  
+  outputModel =  CLI::GetParam<CF*>("output_model");
+  const mat w1 = outputModel->W();
+  const mat h1 = outputModel->H();
+
+  ResetSettings();
+
+  // Set a smaller max_iterations.
+  SetInputParam("max_iterations", int(5));
+  SetInputParam("training", std::move(dataset));
+  SetInputParam("iteration_only_termination", true);
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  outputModel = CLI::GetParam<CF*>("output_model");
+  const mat w2 = outputModel->W();
+  const mat h2 = outputModel->H();
+
+  // The resulting matrices should be different.
+  BOOST_REQUIRE(arma::norm(w1 - w2) > 1e-5 || arma::norm(h1 - h2) > 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
