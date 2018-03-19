@@ -18,6 +18,7 @@
 #include <mlpack/prereqs.hpp>
 
 #include "replay/random_replay.hpp"
+#include "replay/episode_replay.hpp"
 #include "training_config.hpp"
 
 namespace mlpack {
@@ -27,7 +28,7 @@ template <
   typename NetworkType,
   typename UpdaterType,
   typename PolicyType,
-  typename ReplayType = RandomReplay<EnvironmentType>
+  typename ReplayType = EpisodeMemory<EnvironmentType>
 >
 class Advantage
 {
@@ -68,6 +69,7 @@ class Advantage
   const bool& Deterministic() const { return deterministic; }
 
  private:
+
   //! Locally-stored hyper-parameters.
   TrainingConfig config;
 
@@ -94,6 +96,8 @@ class Advantage
 
   //! Locally-stored flag indicating training mode or test mode.
   bool deterministic;
+
+  size_t steps;
 };
 
 } // namespace rl

@@ -44,7 +44,8 @@ Advantage<EnvironmentType,
     replayMethod(std::move(replayMethod)),
     environment(std::move(environment)),
     totalSteps(0),
-    deterministic(false)
+    deterministic(false),
+    steps(0)
 {
   if (learningNetwork.Parameters().is_empty())
     learningNetwork.ResetParameters();
@@ -79,11 +80,11 @@ double Advantage<
   double reward = environment.Sample(state, action, nextState);
 
   // Store the transition for replay.
-  replayMethod.Store(state, action, reward,
-      nextState, environment.IsTerminal(nextState));
+  replayMethod.StoreEpisode(state, action, reward,
+      nextState, environment.IsTerminal(state),0.99);
 
   // Update current state.
-  state = nextState;
+  
 
   if (deterministic || totalSteps < config.ExplorationSteps())
     return reward;
@@ -91,41 +92,44 @@ double Advantage<
   // Start experience replay.
 
   // Sample from previous experience.
-  arma::mat sampledStates;
-  arma::icolvec sampledActions;
-  arma::colvec advantage;
-  arma::icolvec isTerminal;
-  replayMethod.PolicySample(sampledStates, sampledActions, advantage,
-    isTerminal);
-  // Compute action value for next state with target network.
-
-  /***One way to get number of action is by making a variable capturing the number of action
-  * Another way is to use the predict funtion to get the size of the last layer.
-  * 
-  * First way will make the program generic for any number of action space.
-  * Second way is easy. But it is unnecessarily increase the computation.
-  *
-  * I am currently taking inputs from feed forward network and putting it to zero.
-  * This way I am meeting my aim of using advantage.
-  *
-  * I have also defined policygradient loss in mlpack/methods/ann/layers for implementation.
-  */
-  arma::mat target;
-  learningNetwork.Forward(sampledStates, target);
-  /* turning the target to zero to place advantage value
-   * in place of it
-   */
-  target.zeros();
-  for (size_t i = 0; i < sampledStates.n_cols; ++i)
+  if (environment.IsTerminal(nextState) || steps==config.StepLimit())
   {
-    target(sampledActions[i], i) = advantage[i]; // learning from advantage
+	  arma::mat sampledStates;
+	  arma::icolvec sampledActions;
+	  arma::colvec advantage;
+	  arma::icolvec isTerminal;
+	  replayMethod.EpisodeReplay(sampledStates, sampledActions, advantage,
+	    isTerminal);
+	  // Compute action value for next state with target network.
+
+	  /***One way to get number of action is by making a variable capturing the number of action
+	  * Another way is to use the predict funtion to get the size of the last layer.
+	  * 
+	  * First way will make the program generic for any number of action space.
+	  * Second way is easy. But it is unnecessarily increase the computation.
+	  *
+	  * I am currently taking inputs from feed forward network and putting it to zero.
+	  * This way I am meeting my aim of using advantage.
+	  *
+	  * I have also defined policygradient loss in mlpack/methods/ann/layers for implementation.
+	  */
+	  arma::mat target;
+	  learningNetwork.Forward(sampledStates, target);
+	  /* turning the target to zero to place advantage value
+	   * in place of it
+	   */
+	  target.zeros();
+	  for (size_t i = 0; i < sampledStates.n_cols; ++i)
+	  {
+	    target(sampledActions[i], i) = advantage[i]; // learning from advantage
+	  }
+
+	  // Learn form experience. Experience in form of advantage.
+	  arma::mat gradients;
+	  learningNetwork.Backward(target, gradients);
+	  updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
   }
-
-  // Learn form experience. Experience in form of advantage.
-  arma::mat gradients;
-  learningNetwork.Backward(target, gradients);
-  updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
-
+  state = nextState;
   return reward;
 }
 template <
@@ -147,7 +151,7 @@ double Advantage<
   state = environment.InitialSample();
 
   // Track the steps in this episode.
-  size_t steps = 0;
+  steps = 0;
 
   // Track the return of this episode.
   double totalReturn = 0.0;
@@ -155,7 +159,7 @@ double Advantage<
   // Running until get to the terminal state.
   while (!environment.IsTerminal(state))
   {
-    if (config.StepLimit() && steps >= config.StepLimit())
+    if (config.StepLimit() && steps > config.StepLimit())
       break;
 
     totalReturn += Step();
@@ -174,4 +178,3 @@ double Advantage<
 } // namespace mlpack
 
 #endif
-
