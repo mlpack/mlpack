@@ -37,7 +37,7 @@ class PSOType
  public:
   /**
    * Construct the particle swarm optimizer with the given function and
-   * parameters.  The defaults here are not necessarily good for the given
+   * parameters. The defaults here are not necessarily good for the given
    * problem, so it is suggested that the values used be tailored to the task
    * at hand.
    *
@@ -52,7 +52,7 @@ class PSOType
    */
   PSOType(
     const size_t numParticles = 16,
-    const size_t maxIterations = 100000,
+    const size_t maxIterations = 2000,
     const double exploitationFactor = 2.05,
     const double explorationFactor = 2.05,
     const bool enableGradientDescent = false,

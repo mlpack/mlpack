@@ -35,27 +35,56 @@ double PSOType<VelocityUpdatePolicy>::Optimize(
   // Make sure we have the methods that we need.
   traits::CheckFunctionTypeAPI<FullFunctionType>();
 
-  // Set a random seed for the random number generator.
-  arma::arma_rng::set_seed_random();
-
   // Randomly initialize the particle positions.
   particlePositions.randu(iterate.n_rows, iterate.n_cols, numParticles);
-  assert(particlePositions.n_rows == iterate.n_rows);
 
   // Randomly initialize particle velocities.
   particleVelocities.randu(iterate.n_rows, iterate.n_cols, numParticles);
-  assert(particleVelocities.n_rows == iterate.n_rows);
 
   // Initialize current fitness values to infinity.
   particleFitnesses.set_size(numParticles);
   particleFitnesses.fill(std::numeric_limits<double>::max());
-  assert(particleFitnesses.n_elem == numParticles);
 
   // Copy to personal best values for first iteration.
   particleBestPositions = particlePositions;
   // Initialize personal best fitness values to infinity.
   particleBestFitnesses.set_size(numParticles);
   particleBestFitnesses.fill(std::numeric_limits<double>::max());
+
+  // User provided weights replacement performed here.
+  for (size_t i = 0; i < numParticles; i++)
+  {
+    // Calculate fitness value.
+    particleFitnesses(i) = f.Evaluate(particlePositions.slice(i));
+    // Compare and copy fitness and position to particle best.
+    if (particleFitnesses(i) < particleBestFitnesses(i))
+    {
+      particleBestFitnesses(i) = particleFitnesses(i);
+      particleBestPositions.slice(i) = particlePositions.slice(i);
+    }
+  }
+
+  // Find the worst particle.
+  size_t worstParticle = 0;
+  double worstFitness = particleBestFitnesses(worstParticle);
+  for (size_t i = 1; i < numParticles; i++)
+  {
+    if (particleBestFitnesses(i) < worstFitness)
+    {
+      worstParticle = i;
+      worstFitness = particleBestFitnesses(worstParticle);
+    }
+  }
+
+  // Replace worst particle with iterate if iterate is better.
+  double iterateFitness = f.Evaluate(iterate);
+  if(iterateFitness < worstFitness)
+  {
+    particleBestFitnesses(worstParticle) = iterateFitness;
+    particlePositions.slice(worstParticle) = iterate;
+    particleBestPositions.slice(worstParticle) = iterate;
+    std::cout << "Particle replaced at index: " << worstParticle << std::endl;
+  }
 
   // Initialize the update policy.
   velocityUpdatePolicy.Initialize(
@@ -68,6 +97,7 @@ double PSOType<VelocityUpdatePolicy>::Optimize(
   // Calculate the number of iterations for which GD is to be run.
   size_t gdIterations = maxIterations - psoIterations;
 
+  // Run PSO.
   for (size_t i = 0; i < psoIterations; i++)
   {
     // Calculate fitness and evaluate personal best.
@@ -116,7 +146,7 @@ double PSOType<VelocityUpdatePolicy>::Optimize(
     // Perform the actual gradient descent.
     for (size_t i = 0; i < gdIterations; i++)
     {
-      // Not implemented yet.
+      // Evaluate function value and gradient at coordinates.
     }
   }
 
