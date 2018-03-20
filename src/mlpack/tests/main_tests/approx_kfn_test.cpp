@@ -51,7 +51,8 @@ BOOST_AUTO_TEST_CASE(ApproxKFNRefModelTest)
   SetInputParam("k", (int) 10);
 
   // Input pre-trained model.
-  SetInputParam("input_model", std::move(CLI::GetParam<ApproxKFNModel*>("output_model")));
+  SetInputParam("input_model", std::move(CLI::GetParam<ApproxKFNModel*>
+    ("output_model")));
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
@@ -64,10 +65,10 @@ BOOST_AUTO_TEST_CASE(ApproxKFNInvalidKTest)
 {
   arma::mat referenceData;
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
-  
+
   SetInputParam("reference", std::move(referenceData));
   // Random input, k > reference points.
-  SetInputParam("k", (int) 81); //Invalid
+  SetInputParam("k", (int) 81); // Invalid.
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::invalid_argument);
@@ -75,7 +76,8 @@ BOOST_AUTO_TEST_CASE(ApproxKFNInvalidKTest)
 }
 
 /**
- * Make sure that the dimensions of neighbors and distances is correct given a value of k.
+ * Make sure that the dimensions of neighbors and distances is correct given a
+   value of k.
  */
 BOOST_AUTO_TEST_CASE(ApproxKFNOutputDimensionTest)
 {
@@ -104,9 +106,142 @@ BOOST_AUTO_TEST_CASE(ApproxKFNInvalidAlgorithmTest)
 {
   arma::mat referenceData;
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
-  
+
   SetInputParam("reference", std::move(referenceData));
-  SetInputParam("algorithm", (string) "any_algo"); //Invalid
+  SetInputParam("algorithm", (string) "any_algo"); // Invalid.
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Check that we can't specify num_projections as zero.
+ */
+BOOST_AUTO_TEST_CASE(ApproxKFNZeroNumProjTest)
+{
+  arma::mat referenceData;
+  referenceData.randu(2, 80); // 80 points in 2 dimensions.
+
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("k", (int) 10);
+  SetInputParam("num_projections", (int) 0);//Invalid
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Check that we can't specify num_projections as negative.
+ */
+BOOST_AUTO_TEST_CASE(ApproxKFNNegativeNumProjTest)
+{
+  arma::mat referenceData;
+  referenceData.randu(2, 80); // 80 points in 2 dimensions.
+
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("k", (int) 10);
+  SetInputParam("num_projections", (int) -5); // Invalid.
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Check that we can't specify num_tables as zero.
+ */
+BOOST_AUTO_TEST_CASE(ApproxKFNZeroNumTablesTest)
+{
+  arma::mat referenceData;
+  referenceData.randu(2, 80); // 80 points in 2 dimensions.
+
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("k", (int) 10);
+  SetInputParam("num_tables", (int) 0); // Invalid.
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Check that we can't specify num_tables as negative.
+ */
+BOOST_AUTO_TEST_CASE(ApproxKFNNegativeNumTablesTest)
+{
+  arma::mat referenceData;
+  referenceData.randu(2, 80); // 80 points in 2 dimensions.
+ 
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("k", (int) 10);
+  SetInputParam("num_tables", (int) -5); // Invalid.
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Ensuring that a saved model can be loaded and used again correctly.
+ */
+BOOST_AUTO_TEST_CASE(ApproxKFNModelReuseTest)
+{
+  arma::mat referenceData;
+  referenceData.randu(2, 80); // 80 points in 2 dimensions.
+
+  arma::mat queryData;
+  queryData.randu(2, 40); // 40 points in 2 dimensions.
+
+  // Random input, some k <= number of reference points.
+  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("query", queryData);
+  SetInputParam("k", (int) 10);
+
+  mlpackMain();
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+  neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(CLI::GetParam<arma::mat>("distances"));
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["query"].wasPassed = false;
+
+  // Input saved model, pass the same query and keep k unchanged.
+  SetInputParam("input_model",
+      std::move(CLI::GetParam<ApproxKFNModel*>("output_model")));
+  SetInputParam("query", queryData);
+
+  mlpackMain();
+
+  // Check that initial output matrices and the output matrices using
+  // saved model are equal.
+  CheckMatrices(neighbors, CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  CheckMatrices(distances, CLI::GetParam<arma::mat>("distances"));
+}
+
+/**
+ * Make sure that the dimensions of the exact distances matrix are correct.
+ */
+BOOST_AUTO_TEST_CASE(ApproxKFNExactDistDimensionTest)
+{
+  arma::mat referenceData;
+  referenceData.randu(2, 80); // 80 points in 2 dimensions.
+
+  SetInputParam("reference", std::move(referenceData));
+  // Random input, any k <= reference points.
+  SetInputParam("k", (int) 10);
+  SetInputParam("calculate_error", (bool) true);
+
+  // Random matrix specifying exact distances of each point to its k neighbors.
+  // Note that the values in the matrix do not matter as we are only concernec
+  // with the dimensions of the matrix passed.
+  arma::mat exactDistances;
+  exactDistances.randu(9, 90); // Wrong size (should be (10, 80)).
+  SetInputParam("exact_distances", std::move(exactDistances));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
