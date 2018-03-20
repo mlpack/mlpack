@@ -116,7 +116,8 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
     Linear<> lookup(1, 4);
     SigmoidLayer<> sigmoidLayer;
     Linear<> linear(4, 4);
-    Recurrent<>* recurrent = new Recurrent<>(add, lookup, linear, sigmoidLayer, rho);
+    Recurrent<>* recurrent = new Recurrent<>(
+        add, lookup, linear, sigmoidLayer, rho);
 
     RNN<> model(rho);
     model.Add<IdentityLayer<> >();
