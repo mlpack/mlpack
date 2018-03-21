@@ -23,7 +23,7 @@ namespace ann { /** Artificial Neural Network. */
 template<typename InputDataType, typename OutputDataType>
 BatchNorm<InputDataType, OutputDataType>::BatchNorm() :
     size(10),
-    eps(1e-7),
+    eps(1e-8),
     deterministic(false)
 {
   // Nothing to do here.
@@ -55,29 +55,34 @@ template<typename eT>
 void BatchNorm<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  output.reshape(input.n_rows, input.n_cols);
-
   // Mean and variance over the entire training set will be used to compute
   // the forward pass when deterministic is set to true.
   if (deterministic)
   {
     mean = stats.mean();
     variance = stats.var(1);
+
+    output = input.each_col() - mean;
+    output.each_col() %= gamma / arma::sqrt(variance + eps);
+    output.each_col() += beta;
   }
   else
   {
     mean = arma::mean(input, 1);
     variance = arma::var(input, 1, 1);
 
-    for (size_t i = 0; i < output.n_cols; i++)
-    {
+    for (size_t i = 0; i < input.n_cols; i++)
       stats(input.col(i));
-    }
-  }
 
-  output = input.each_col() - mean;
-  output.each_col() %= gamma / arma::sqrt(variance + eps);
-  output.each_col() += beta;
+    output = input.each_col() - mean;
+    output.each_col() /= arma::sqrt(variance + eps);
+
+    // Reused in the backward and gradient step.
+    normalized = output;
+
+    output.each_col() %= gamma;
+    output.each_col() += beta;
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -85,34 +90,29 @@ template<typename eT>
 void BatchNorm<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  mean = arma::mean(input, 1);
-  variance = arma::var(input, 1, 1);
+  const arma::mat inputMean = input.each_col() - mean;
+  const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
+  const arma::mat norm = gy.each_col() % gamma;
+  const arma::mat var = arma::sum(norm % inputMean, 1) %
+      arma::pow(stdInv, 3.0) * 0.5;
 
-  arma::mat m = arma::sum(gy % (input.each_col() - mean), 1);
-  g = (mean - input.each_col());
-  g.each_col() %= m;
-  g.each_col() %= 1.0/(variance + eps);
-  g += (gy.each_col() - arma::sum(gy, 1));
-  g += (input.n_cols - 1) * gy;
-  g.each_col() %= ((1.0 / input.n_cols) * gamma);
-  g.each_col() %= (1.0 / arma::sqrt(variance + eps));
+  g = (norm.each_col() % stdInv) + (inputMean.each_col() %
+      var * 2 / input.n_cols);
+  g.each_col() += arma::sum(norm.each_col() % -stdInv, 1) + var %
+      arma::mean(-2 * inputMean, 1) / input.n_cols;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void BatchNorm<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>&& input,
+    const arma::Mat<eT>&& /* input */,
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
   gradient.set_size(size + size, 1);
-
-  arma::mat normalized = input.each_col() - arma::mean(input, 1)
-    / arma::sqrt(arma::var(input, 1, 1) + eps);
-
   gradient.submat(0, 0, gamma.n_elem - 1, 0) = arma::sum(normalized % error, 1);
   gradient.submat(gamma.n_elem, 0, gradient.n_elem - 1, 0) =
-    arma::sum(error, 1);
+      arma::sum(error, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
