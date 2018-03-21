@@ -92,16 +92,7 @@ template<typename OptimizerType>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::mat predictors, arma::mat responses)
 {
-  numFunctions = responses.n_cols;
-
-  this->predictors = std::move(predictors);
-  this->responses = std::move(responses);
-
-  this->deterministic = true;
-  ResetDeterministic();
-
-  if (!reset)
-    ResetParameters();
+  ResetData(std::move(predictors), std::move(responses))
 
   OptimizerType optimizer;
 
