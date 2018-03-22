@@ -57,34 +57,43 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
 {
   // It isn't gauranteed that SAGA will converge
   // on every variant of Rosenbrock function. I am
-  // fine if it just converges on atleast one variant
-  // of Rosenbrock function.All I want to know is that
-  // SAGA is able to escape from the local minima and
-  // converge effectively.
+  // fine if it just converges on atleast one batch of
+  // variants of Rosenbrock function.All I want to know
+  // is that SAGA is able to escape from the local minima
+  // and converge effectively.
   size_t success = 0;
   size_t indicator = 0;
+  size_t batch_success = 0;
   // Loop over several variants.
-  for (size_t i = 5; i < 50; i += 5)
+  for (size_t iteration = 0; iteration < 40 ; iteration+=5)
   {
-    indicator = 0; // Initialize in every iteration
-    // Create the generalized Rosenbrock function.
-    GeneralizedRosenbrockFunction f(i);
-
-    SAGA optimizer(0.0001, 1, 0, 1e-15, false);
-
-    arma::mat coordinates = f.GetInitialPoint();
-    double result = optimizer.Optimize(f, coordinates);
-
-    for (size_t j = 0; j < i; ++j)
-      if (abs(coordinates[j] - 1.0) < 1e-3)
-        indicator++;
-    if (result< 1e-10 && indicator == i)
+    success = 0;
+    for (size_t i = 50 - iteration; i > 0; i -=5)
     {
-      success++;
+      indicator = 0; // Initialize in every iteration
+      // Create the generalized Rosenbrock function.
+      GeneralizedRosenbrockFunction f(i);
+
+      SAGA optimizer(0.0001, 1, 0, 1e-15, false);
+
+      arma::mat coordinates = f.GetInitialPoint();
+      double result = optimizer.Optimize(f, coordinates);
+
+      for (size_t j = 0; j < i; ++j)
+        if (abs(coordinates[j] - 1.0) < 1e-3)
+          indicator++;
+      if (result< 1e-10 && indicator == i)
+      {
+        success++;
+      }
+    }
+    if (success == (50 - iteration)/5)
+    {
+      batch_success++;
       break;
     }
   }
-  BOOST_REQUIRE_GE(success, 1);
+  BOOST_REQUIRE_GE(batch_success, 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
