@@ -151,13 +151,39 @@ class Acrobat
     */
    double Sample(const State& state,
                  const Action& action,
-                 State& nextState) const
+                 State& nextState)
           {
-          	double torque = action - 1;
-            // nextState = rk4(state,action);
+            rk4(state,action,nextState);
+            double pie = PIE;
+
+            // double theta1 = ;
+            nextState.Theta1() = wrap(nextState.Theta1(),-pie,pie);
+
+            // double theta2 = nextState.Theta2();
+            nextState.Theta2() = wrap(nextState.Theta2(),-pie,pie);
+            nextState.AngularVelocity1() = bound(nextState.AngularVelocity1(),
+            	                                 -max_vel1 , max_vel1);
+            nextState.AngularVelocity2() = bound(nextState.AngularVelocity2(),
+            	                                 -max_vel2 , max_vel2);
             return -1;
           }; // Sample
-   arma::colvec dsdt(const State& state,
+  double Sample(const State& state, const Action& action)
+          {
+            State nextState;
+            return Sample(state, action, nextState);
+          }
+  State InitialSample() const
+          {
+            return State((arma::randu<arma::colvec>(4) - 0.5) / 10.0);
+          }
+  bool IsTerminal(const State& state) const
+          {
+          	double theta1 = state.Theta1();
+          	double theta2 = state.Theta2();
+            return bool ((-cos(theta1)-cos(theta1+theta2)) > 1.0);
+          }
+  
+  arma::colvec dsdt(arma::colvec state,
    	           const int torque)
    	      {
             double m1 = link_mass1;
@@ -170,10 +196,14 @@ class Acrobat
             double I2 = link_moi;
             double g = gravity;
             int a = torque;
-            double theta1 = state.Theta1();
-            double theta2 = state.Theta2();
-            double dtheta1 = state.AngularVelocity1();
-            double dtheta2 = state.AngularVelocity2();
+            // double theta1 = state.Theta1();
+            // double theta2 = state.Theta2();
+            // double dtheta1 = state.AngularVelocity1();
+            // double dtheta2 = state.AngularVelocity2();
+            double theta1 = state[0];
+            double theta2 = state[1];
+            double dtheta1 = state[2];
+            double dtheta2 = state[3];
             double d1 = m1 * pow(lc1,2) + m2 * 
                        (pow(l1,2) + pow(lc2,2) + 2 * l1 * lc2 * cos(theta2)) 
                         + I1 + I2 ;
@@ -198,17 +228,48 @@ class Acrobat
    	* @param max maximum range of wrap
    	*/      
    double wrap(double value,
-               double min,
-               double max)
+               double minimum,
+               double maximum)
           {
-          	double diff = max - min;
-          	if (value>max) value = value - diff;
-          	else if (value<min) value = value + diff;
+          	double diff = maximum - minimum;
+          	if (value>maximum) value = value - diff;
+          	else if (value<minimum) value = value + diff;
           	return value;
           }; 
-   double  bound()
-          { };
-   // double 
+   double  bound(double value,
+   	             double minimum,
+   	             double maximum)
+          {
+          	return std::min(std::max(value,minimum),maximum);
+          };
+   /**
+    *
+    * 
+    */       
+   void rk4(const State& state_,
+            const Action& Action,
+            State& nextState)
+         { 
+           /*
+            * Torque is action number - 1.
+            * {0,1,2} -> {-1,0,1} 
+            */
+           int action = Action - 1;
+           arma::colvec state = {state_.Theta1(),state_.Theta2(),
+                                 state_.AngularVelocity1(),
+                                 state_.AngularVelocity2()};
+           arma::colvec k1 = dsdt(state,action);
+           arma::colvec k2 = dsdt(state + dt*k1/2,action);
+           arma::colvec k3 = dsdt(state + dt*k2/2,action);
+           arma::colvec k4 = dsdt(state + dt*k3,action);
+           arma::colvec nextstate = state + dt*(k1 + 2*k2 + 2*k3 + k4)/6;
+           
+           nextState.Theta1() = nextstate[0];
+           nextState.Theta2() = nextstate[1];
+           nextState.AngularVelocity1() = nextstate[2];
+           nextState.AngularVelocity2() = nextstate[3];
+
+         };
  private:
    //! Locally-stored gravity.
    double gravity;
