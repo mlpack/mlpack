@@ -64,12 +64,13 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
   size_t success = 0;
   size_t indicator = 0;
   size_t batch_success = 0;
-  // Loop over several variants.
+  // Loop over several batches.
   for (size_t iteration = 0; iteration < 40 ; iteration+=5)
   {
     success = 0;
     for (size_t i = 50 - iteration; i > 0; i -=5)
     {
+      // Loop over different variants
       indicator = 0; // Initialize in every iteration
       // Create the generalized Rosenbrock function.
       GeneralizedRosenbrockFunction f(i);
