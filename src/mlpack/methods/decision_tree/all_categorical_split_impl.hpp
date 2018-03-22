@@ -25,6 +25,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const size_t numClasses,
     const WeightVecType& weights,
     const size_t minimumLeafSize,
+    const double minimumGainSplit,
     arma::Col<typename VecType::elem_type>& classProbabilities,
     AuxiliarySplitInfo<typename VecType::elem_type>& /* aux */)
 {
@@ -96,7 +97,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     overallGain += childPct * childGain;
   }
 
-  if (overallGain > bestGain + epsilon)
+  if (overallGain > bestGain + minimumGainSplit + epsilon)
   {
     // This is better, so set up the class probabilities vector and return.
     classProbabilities.set_size(1);

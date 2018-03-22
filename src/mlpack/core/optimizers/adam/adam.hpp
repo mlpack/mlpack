@@ -30,6 +30,7 @@
 #include "amsgrad_update.hpp"
 #include "nadam_update.hpp"
 #include "nadamax_update.hpp"
+#include "optimisticadam_update.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -185,6 +186,8 @@ using AMSGrad = AdamType<AMSGradUpdate>;
 using Nadam = AdamType<NadamUpdate>;
 
 using NadaMax = AdamType<NadaMaxUpdate>;
+
+using OptimisticAdam = AdamType<OptimisticAdamUpdate>;
 
 } // namespace optimization
 } // namespace mlpack
