@@ -367,7 +367,7 @@ static void mlpackMain()
   if (CLI::HasParam("input_model") && CLI::HasParam("tolerance"))
   {
     Log::Info << "Tolerance of existing model in '"
-        << CLI::GetPrintableParam<std::string>("input_model") << "' will be "
+        << CLI::GetPrintableParam<HMMModel*>("input_model") << "' will be "
         << "replaced with specified tolerance of " << tolerance << "." << endl;
   }
 

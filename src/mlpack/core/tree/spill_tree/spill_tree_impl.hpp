@@ -756,9 +756,12 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
       delete right;
     if (!parent && localDataset)
       delete dataset;
+
+    parent = NULL;
+    left = NULL;
+    right = NULL;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(parent);
   ar & BOOST_SERIALIZATION_NVP(count);
   ar & BOOST_SERIALIZATION_NVP(pointsIndex);
   ar & BOOST_SERIALIZATION_NVP(overlappingNode);
@@ -770,12 +773,34 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   ar & BOOST_SERIALIZATION_NVP(furthestDescendantDistance);
   ar & BOOST_SERIALIZATION_NVP(dataset);
 
-  if (Archive::is_loading::value && parent == NULL)
+  if (Archive::is_loading::value)
     localDataset = true;
 
   // Save children last; otherwise boost::serialization gets confused.
-  ar & BOOST_SERIALIZATION_NVP(left);
-  ar & BOOST_SERIALIZATION_NVP(right);
+  bool hasLeft = (left != NULL);
+  bool hasRight = (right != NULL);
+
+  ar & BOOST_SERIALIZATION_NVP(hasLeft);
+  ar & BOOST_SERIALIZATION_NVP(hasRight);
+
+  if (hasLeft)
+    ar & BOOST_SERIALIZATION_NVP(left);
+  if (hasRight)
+    ar & BOOST_SERIALIZATION_NVP(right);
+
+  if (Archive::is_loading::value)
+  {
+    if (left)
+    {
+      left->parent = this;
+      left->localDataset = false;
+    }
+    if (right)
+    {
+      right->parent = this;
+      right->localDataset = false;
+    }
+  }
 }
 
 } // namespace tree
