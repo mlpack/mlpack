@@ -3,7 +3,7 @@
  * @author Praveen Ch
  * @author Manthan-R-Sheth
  *
- * Definition of the Batch Normalisation layer class
+ * Definition of the Batch Normalization layer class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,7 +20,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Declaration of the Batch Normalisation layer class. The layer tranforms
+ * Declaration of the Batch Normalization layer class. The layer tranforms
  * the input data into zero mean and unit variance and then scales and shifts
  * the data by parameters, gamma and beta respectively. These parameters are
  * learnt by the network.
@@ -32,15 +32,17 @@ namespace ann /** Artificial Neural Network. */ {
  * For more information, refer to the following paper,
  *
  * @code
- * @article{DBLP:journals/corr/IoffeS15,
+ * @article{Ioffe15,
  *   author    = {Sergey Ioffe and
  *                Christian Szegedy},
  *   title     = {Batch Normalization: Accelerating Deep Network Training by
  *                Reducing Internal Covariate Shift},
  *   journal   = {CoRR},
- *   volume    = {abs/1502.03167}
+ *   volume    = {abs/1502.03167},
+ *   year      = {2015},
+ *   url       = {http://arxiv.org/abs/1502.03167},
+ *   eprint    = {1502.03167},
  * }
- *
  * @endcode
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -48,7 +50,6 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-
 template <
   typename InputDataType = arma::mat,
   typename OutputDataType = arma::mat
@@ -65,7 +66,7 @@ class BatchNorm
   * @param size The number of input units.
   * @param eps The epsilon added to variance to ensure numerical stability.
   */
-  BatchNorm(const size_t size, const double eps = 0.001);
+  BatchNorm(const size_t size, const double eps = 1e-8);
 
   /**
    * Reset the layer parameters
@@ -191,6 +192,9 @@ class BatchNorm
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! Locally-stored normalized input.
+  OutputDataType normalized;
 }; // class BatchNorm
 
 } // namespace ann

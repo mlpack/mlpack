@@ -1344,32 +1344,6 @@ BOOST_AUTO_TEST_CASE(BatchNormTest)
   CheckMatrices(output, result, 1e-1);
   result.clear();
 
-  // Backward Pass Test.
-  arma::mat gy;
-  gy << 0.8402 << 0.9116 << 0.2778 << arma::endr
-     << 0.3944 << 0.1976 << 0.5540 << arma::endr
-     << 0.7831 << 0.3352 << 0.4774 << arma::endr;
-
-  model.Backward(std::move(input), std::move(gy), std::move(output));
-  result << -0.0780 << 0.1376 << -0.0596 << arma::endr
-         << 0.0602 << -0.1317 << 0.0715 << arma::endr
-         << 0.0835 << -0.1493 << 0.0658 << arma::endr;
-
-  CheckMatrices(output, result, 1e-1);
-  result.clear();
-
-  // Gradient Test.
-  model.Gradient(std::move(input), std::move(gy), std::move(output));
-  result << 3.4003 << arma::endr
-         << 0.8183 << arma::endr
-         << 1.8574 << arma::endr
-         << 2.0296 << arma::endr
-         << 1.1460 << arma::endr
-         << 1.5957 << arma::endr;
-
-  CheckMatrices(output, result, 1e-1);
-  result.clear();
-
   // Deterministic Forward Pass test.
   output = model.TrainingMean();
   result << 3.33333333 << arma::endr
@@ -1438,7 +1412,7 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormLayerTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-3);
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
