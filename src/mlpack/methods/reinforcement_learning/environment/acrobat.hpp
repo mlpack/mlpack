@@ -13,11 +13,8 @@
 
 #ifndef MLPACK_METHODS_RL_ENVIRONMENT_ACROBAT_HPP
 #define MLPACK_METHODS_RL_ENVIRONMENT_ACROBAT_HPP
-#define PIE 3.14159265358979323846
 
-#include <math.h>
-#include <random>
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
 namespace mlpack{
 namespace rl{
@@ -119,8 +116,8 @@ class Acrobat
           const double link_com1 = 0.5,
           const double link_com2 = 0.5,
           const double link_moi = 1.0,
-          const double max_vel1 = 4*PIE,
-          const double max_vel2 = 9*PIE,
+          const double max_vel1 = 4*M_PI,
+          const double max_vel2 = 9*M_PI,
           const double dt = 0.2) :
       gravity(gravity),
       link_length1(link_length1),
@@ -149,15 +146,13 @@ class Acrobat
                  const Action& action,
                  State& nextState)
   {
-    rk4(state, action, nextState);
-    double pie = PIE;
+    Rk4(state, action, nextState);
+    nextState.Theta1() = Wrap(nextState.Theta1(), -M_PI, M_PI);
 
-    nextState.Theta1() = wrap(nextState.Theta1(), -pie, pie);
-
-    nextState.Theta2() = wrap(nextState.Theta2(), -pie, pie);
-    nextState.AngularVelocity1() = bound(nextState.AngularVelocity1(),
+    nextState.Theta2() = Wrap(nextState.Theta2(), -M_PI, M_PI);
+    nextState.AngularVelocity1() = Bound(nextState.AngularVelocity1(),
                                              -max_vel1 , max_vel1);
-    nextState.AngularVelocity2() = bound(nextState.AngularVelocity2(),
+    nextState.AngularVelocity2() = Bound(nextState.AngularVelocity2(),
                                              -max_vel2 , max_vel2);
     return -1;
   };
@@ -176,15 +171,14 @@ class Acrobat
    */        
   bool IsTerminal(const State& state) const
   {
-    double theta1 = state.Theta1();
-    double theta2 = state.Theta2();
-    return bool ((-cos(theta1)-cos(theta1+theta2)) > 1.0);
+    return bool (-cos(state.Theta1())-cos(state.Theta1()
+      + state.Theta2()) > 1.0);
   }
   /**
    * @param state Current State
    * @param torque Torque Applied 
    */
-  arma::colvec dsdt(arma::colvec state,
+  arma::colvec Dsdt(arma::colvec state,
                const double torque)
   {
     double m1 = link_mass1;
@@ -205,11 +199,11 @@ class Acrobat
               (pow(l1, 2) + pow(lc2, 2) + 2 * l1 * lc2 * cos(theta2))
                + I1 + I2;
     double d2 = m2 * (pow(lc2, 2) + l1 * lc2 * cos(theta2)) + I2;
-    double phi2 = m2 * lc2 * g * cos(theta1 + theta2 - PIE / 2.);
+    double phi2 = m2 * lc2 * g * cos(theta1 + theta2 - M_PI / 2.);
 
     double phi1 = - m2 * l1 * lc2 * pow(dtheta2, 2) * sin(theta2)
       - 2 * m2 * l1 * lc2 * dtheta2 * dtheta1 * sin(theta2)
-      + (m1 * lc1 + m2 * l1) * g * cos(theta1 - PIE / 2)
+      + (m1 * lc1 + m2 * l1) * g * cos(theta1 - M_PI / 2)
       + phi2;
 
     double ddtheta2 = (a + d2 / d1 * phi1 - m2 * l1 * lc2 * pow(dtheta1, 2) *
@@ -224,7 +218,7 @@ class Acrobat
    * @param minimum minimum range of wrap
    * @param maximum maximum range of wrap
    */      
-  double wrap(double value,
+  double Wrap(double value,
               double minimum,
               double maximum)
   {
@@ -238,26 +232,38 @@ class Acrobat
     * @param minimum minimum range of bound
     * @param maximum maximum range of bound
     */     
-  double  bound(double value,
+  double  Bound(double value,
                 double minimum,
                 double maximum)
   {
     return std::min(std::max(value, minimum), maximum);
   };
+
   /**
-    * @param state_ Current State
-    * @param Action Action Taken
-    * @param nextState nextState 
-    */
+   * @param Action action taken
+   * 0 : negative torque
+   * 1 : zero torque
+   * 2 : positive torque
+   */
   double Torque(const Action& Action)
   {
     // Add noise to the Torque
     std::default_random_engine generator;
     std::uniform_real_distribution<double> distribution(-0.1, +0.1);
+    /*
+    * Torque is action number - 1.
+    * {0,1,2} -> {-1,0,1} 
+    */
     double torque = double(Action - 1) + distribution(generator);
     return torque;
   }
-  void rk4(const State& state_,
+
+  /**
+    * @param state_ Current State
+    * @param Action Action Taken
+    * @param nextState nextState 
+    */
+  void Rk4(const State& state_,
            const Action& Action,
            State& nextState)
   {
@@ -269,10 +275,10 @@ class Acrobat
     arma::colvec state = {state_.Theta1(), state_.Theta2(),
                           state_.AngularVelocity1(),
                           state_.AngularVelocity2()};
-    arma::colvec k1 = dsdt(state, torque);
-    arma::colvec k2 = dsdt(state + dt*k1/2, torque);
-    arma::colvec k3 = dsdt(state + dt*k2/2, torque);
-    arma::colvec k4 = dsdt(state + dt*k3, torque);
+    arma::colvec k1 = Dsdt(state, torque);
+    arma::colvec k2 = Dsdt(state + dt*k1/2, torque);
+    arma::colvec k3 = Dsdt(state + dt*k2/2, torque);
+    arma::colvec k4 = Dsdt(state + dt*k3, torque);
     arma::colvec nextstate = state + dt*(k1 + 2*k2 + 2*k3 + k4)/6;
     nextState.Theta1() = nextstate[0];
     nextState.Theta2() = nextstate[1];
