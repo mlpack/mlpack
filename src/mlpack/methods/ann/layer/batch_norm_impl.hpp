@@ -96,7 +96,6 @@ template<typename eT>
 void BatchNorm<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-
   const arma::mat inputMean = input.each_col() - mean;
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
