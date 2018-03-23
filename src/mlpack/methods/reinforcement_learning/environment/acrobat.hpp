@@ -16,6 +16,7 @@
 #define PIE 3.14159265358979323846
 
 #include <math.h>
+#include <random>
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack{
@@ -186,7 +187,7 @@ class Acrobat
    * @param torque Torque Applied 
    */
   arma::colvec dsdt(arma::colvec state,
-   	           const int torque)
+   	           const double torque)
    	      {
             double m1 = link_mass1;
             double m2 = link_mass2;
@@ -197,7 +198,7 @@ class Acrobat
             double I1 = link_moi;
             double I2 = link_moi;
             double g = gravity;
-            int a = torque;
+            double a = torque;
             double theta1 = state[0];
             double theta2 = state[1];
             double dtheta1 = state[2];
@@ -249,7 +250,15 @@ class Acrobat
     * @param state_ Current State
     * @param Action Action Taken
     * @param nextState nextState 
-    */       
+    */
+   double Torque(const Action& Action)
+         {
+          // Add noise to the Torque
+          std::default_random_engine generator;
+          std::uniform_real_distribution<double> distribution(-0.1,+0.1);
+          double torque = double(Action - 1) + distribution(generator);
+          return torque;
+         }
    void rk4(const State& state_,
             const Action& Action,
             State& nextState)
@@ -258,14 +267,14 @@ class Acrobat
             * Torque is action number - 1.
             * {0,1,2} -> {-1,0,1} 
             */
-           int action = Action - 1;
+           double torque = Torque(Action);
            arma::colvec state = {state_.Theta1(),state_.Theta2(),
                                  state_.AngularVelocity1(),
                                  state_.AngularVelocity2()};
-           arma::colvec k1 = dsdt(state,action);
-           arma::colvec k2 = dsdt(state + dt*k1/2,action);
-           arma::colvec k3 = dsdt(state + dt*k2/2,action);
-           arma::colvec k4 = dsdt(state + dt*k3,action);
+           arma::colvec k1 = dsdt(state,torque);
+           arma::colvec k2 = dsdt(state + dt*k1/2,torque);
+           arma::colvec k3 = dsdt(state + dt*k2/2,torque);
+           arma::colvec k4 = dsdt(state + dt*k3,torque);
            arma::colvec nextstate = state + dt*(k1 + 2*k2 + 2*k3 + k4)/6;
            
            nextState.Theta1() = nextstate[0];
