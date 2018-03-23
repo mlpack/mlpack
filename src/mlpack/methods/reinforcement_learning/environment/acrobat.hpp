@@ -149,12 +149,12 @@ class Acrobat
                  const Action& action,
                  State& nextState)
   {
-    rk4(state,action,nextState);
+    rk4(state, action, nextState);
     double pie = PIE;
 
-    nextState.Theta1() = wrap(nextState.Theta1(),-pie,pie);
+    nextState.Theta1() = wrap(nextState.Theta1(), -pie, pie);
 
-    nextState.Theta2() = wrap(nextState.Theta2(),-pie,pie);
+    nextState.Theta2() = wrap(nextState.Theta2(), -pie, pie);
     nextState.AngularVelocity1() = bound(nextState.AngularVelocity1(),
                                              -max_vel1 , max_vel1);
     nextState.AngularVelocity2() = bound(nextState.AngularVelocity2(),
@@ -201,19 +201,19 @@ class Acrobat
     double theta2 = state[1];
     double dtheta1 = state[2];
     double dtheta2 = state[3];
-    double d1 = m1 * pow(lc1,2) + m2 * 
+    double d1 = m1 * pow(lc1, 2) + m2 * 
               (pow(l1,2) + pow(lc2,2) + 2 * l1 * lc2 * cos(theta2)) 
-               + I1 + I2 ;
-    double d2 = m2 * (pow(lc2,2) + l1 * lc2 * cos(theta2)) + I2;
+               + I1 + I2;
+    double d2 = m2 * (pow(lc2, 2) + l1 * lc2 * cos(theta2)) + I2;
     double phi2 = m2 * lc2 * g * cos(theta1 + theta2 - PIE / 2.);
 
-    double phi1 = - m2 * l1 * lc2 * pow(dtheta2,2) * sin(theta2)
+    double phi1 = - m2 * l1 * lc2 * pow(dtheta2, 2) * sin(theta2)
       - 2 * m2 * l1 * lc2 * dtheta2 * dtheta1 * sin(theta2)
       + (m1 * lc1 + m2 * l1) * g * cos(theta1 - PIE / 2)
       + phi2;
 
-    double ddtheta2 = (a + d2 / d1 * phi1 - m2 * l1 * lc2 * pow(dtheta1,2) * 
-     sin(theta2) - phi2) / (m2 * pow(lc2,2) + I2 - pow(d2,2) / d1);
+    double ddtheta2 = (a + d2 / d1 * phi1 - m2 * l1 * lc2 * pow(dtheta1,2) *
+     sin(theta2) - phi2) / (m2 * pow(lc2, 2) + I2 - pow(d2, 2) / d1);
 
     double ddtheta1 = -(d2 * ddtheta2 + phi1) / d1;
     arma::colvec returnValues = {dtheta1, dtheta2, ddtheta1, ddtheta2};
@@ -242,7 +242,7 @@ class Acrobat
                 double minimum,
                 double maximum)
   {
-    return std::min(std::max(value,minimum),maximum);
+    return std::min(std::max(value, minimum), maximum);
   };
   /**
     * @param state_ Current State
@@ -260,19 +260,19 @@ class Acrobat
   void rk4(const State& state_,
            const Action& Action,
            State& nextState)
-  { 
+  {
   /*
    * Torque is action number - 1.
    * {0,1,2} -> {-1,0,1} 
    */
     double torque = Torque(Action);
-    arma::colvec state = {state_.Theta1(),state_.Theta2(),
+    arma::colvec state = {state_.Theta1(), state_.Theta2(),
                           state_.AngularVelocity1(),
                           state_.AngularVelocity2()};
-    arma::colvec k1 = dsdt(state,torque);
-    arma::colvec k2 = dsdt(state + dt*k1/2,torque);
-    arma::colvec k3 = dsdt(state + dt*k2/2,torque);
-    arma::colvec k4 = dsdt(state + dt*k3,torque);
+    arma::colvec k1 = dsdt(state, torque);
+    arma::colvec k2 = dsdt(state + dt*k1/2, torque);
+    arma::colvec k3 = dsdt(state + dt*k2/2, torque);
+    arma::colvec k4 = dsdt(state + dt*k3, torque);
     arma::colvec nextstate = state + dt*(k1 + 2*k2 + 2*k3 + k4)/6;
     nextState.Theta1() = nextstate[0];
     nextState.Theta2() = nextstate[1];
@@ -311,8 +311,7 @@ class Acrobat
   double max_vel2;
 
   //! Locally-stored dt for RK4 method
-  double dt;      
-
+  double dt;
 }; // class Acrobat
 } // namespace rl
 } // namespace mlpack
