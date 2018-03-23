@@ -111,7 +111,7 @@ class Acrobat
    * @param max_vel1 max angular velocity of link1.
    * @param max_vel2 max angular velocity of link2.
    */
-   Acrobat(const double gravity = 9.81,
+  Acrobat(const double gravity = 9.81,
    	       const double link_length1 = 1.0,
            const double link_length2 = 1.0,
            const double link_mass1 = 1.0,
@@ -122,19 +122,19 @@ class Acrobat
            const double max_vel1 = 4*PIE,
            const double max_vel2 = 9*PIE,
            const double dt = 0.2) :
-    gravity(gravity),
-    link_length1(link_length1),
-    link_length2(link_length2),
-    link_mass1(link_mass1),
-    link_mass2(link_mass2),
-    link_com1(link_com1),
-    link_com2(link_com2),
-    link_moi(link_moi),
-    max_vel1(max_vel1),
-    max_vel2(max_vel2),
-    dt(dt)
-    { /* Nothing to do here */ }
-   /**
+      gravity(gravity),
+      link_length1(link_length1),
+      link_length2(link_length2),
+      link_mass1(link_mass1),
+      link_mass2(link_mass2),
+      link_com1(link_com1),
+      link_com2(link_com2),
+      link_moi(link_moi),
+      max_vel1(max_vel1),
+      max_vel2(max_vel2),
+      dt(dt)
+  { /* Nothing to do here */ }
+  /**
     * Dynamics of the Acrobat System.
     * To get reward and next state based on current
     * state and current action .
@@ -145,175 +145,173 @@ class Acrobat
     * return reward -1
     * Always return -1 reward
     */
-   double Sample(const State& state,
+  double Sample(const State& state,
                  const Action& action,
                  State& nextState)
-    {
-     rk4(state,action,nextState);
-     double pie = PIE;
+  {
+    rk4(state,action,nextState);
+    double pie = PIE;
 
-     nextState.Theta1() = wrap(nextState.Theta1(),-pie,pie);
+    nextState.Theta1() = wrap(nextState.Theta1(),-pie,pie);
 
-     nextState.Theta2() = wrap(nextState.Theta2(),-pie,pie);
-     nextState.AngularVelocity1() = bound(nextState.AngularVelocity1(),
-            	                                 -max_vel1 , max_vel1);
-     nextState.AngularVelocity2() = bound(nextState.AngularVelocity2(),
-            	                                 -max_vel2 , max_vel2);
-     return -1;
-    };
-   double Sample(const State& state, const Action& action)
-    {
-     State nextState;
-     return Sample(state, action, nextState);
-    }
-   State InitialSample() const
-    {
-     return State((arma::randu<arma::colvec>(4) - 0.5) / 5.0);
-    }
+    nextState.Theta2() = wrap(nextState.Theta2(),-pie,pie);
+    nextState.AngularVelocity1() = bound(nextState.AngularVelocity1(),
+          	                                 -max_vel1 , max_vel1);
+    nextState.AngularVelocity2() = bound(nextState.AngularVelocity2(),
+          	                                 -max_vel2 , max_vel2);
+    return -1;
+  };
+  double Sample(const State& state, const Action& action)
+  {
+    State nextState;
+    return Sample(state, action, nextState);
+  }
+  State InitialSample() const
+  {
+    return State((arma::randu<arma::colvec>(4) - 0.5) / 5.0);
+  }
   /**
    *
    * @param state The current State
    */        
   bool IsTerminal(const State& state) const
-    {
-     double theta1 = state.Theta1();
-     double theta2 = state.Theta2();
-     return bool ((-cos(theta1)-cos(theta1+theta2)) > 1.0);
-    }
+  {
+    double theta1 = state.Theta1();
+    double theta2 = state.Theta2();
+    return bool ((-cos(theta1)-cos(theta1+theta2)) > 1.0);
+  }
   /**
    * @param state Current State
    * @param torque Torque Applied 
    */
-   arma::colvec dsdt(arma::colvec state,
+  arma::colvec dsdt(arma::colvec state,
    	           const double torque)
-    {
-     double m1 = link_mass1;
-     double m2 = link_mass2;
-     double l1 = link_length1;
-     double l2 = link_length2;
-     double lc1 = link_com1;
-     double lc2 = link_com2;
-     double I1 = link_moi;
-     double I2 = link_moi;
-     double g = gravity;
-     double a = torque;
-     double theta1 = state[0];
-     double theta2 = state[1];
-     double dtheta1 = state[2];
-     double dtheta2 = state[3];
-     double d1 = m1 * pow(lc1,2) + m2 * 
-               (pow(l1,2) + pow(lc2,2) + 2 * l1 * lc2 * cos(theta2)) 
-                + I1 + I2 ;
-     double d2 = m2 * (pow(lc2,2) + l1 * lc2 * cos(theta2)) + I2;
-     double phi2 = m2 * lc2 * g * cos(theta1 + theta2 - PIE / 2.);
-    
-     double phi1 = - m2 * l1 * lc2 * pow(dtheta2,2) * sin(theta2)
-       - 2 * m2 * l1 * lc2 * dtheta2 * dtheta1 * sin(theta2)
-       + (m1 * lc1 + m2 * l1) * g * cos(theta1 - PIE / 2)
-       + phi2;
-    
-     double ddtheta2 = (a + d2 / d1 * phi1 - m2 * l1 * lc2 * pow(dtheta1,2) * 
-    	sin(theta2) - phi2) / (m2 * pow(lc2,2) + I2 - pow(d2,2) / d1);
+  {
+    double m1 = link_mass1;
+    double m2 = link_mass2;
+    double l1 = link_length1;
+    double l2 = link_length2;
+    double lc1 = link_com1;
+    double lc2 = link_com2;
+    double I1 = link_moi;
+    double I2 = link_moi;
+    double g = gravity;
+    double a = torque;
+    double theta1 = state[0];
+    double theta2 = state[1];
+    double dtheta1 = state[2];
+    double dtheta2 = state[3];
+    double d1 = m1 * pow(lc1,2) + m2 * 
+              (pow(l1,2) + pow(lc2,2) + 2 * l1 * lc2 * cos(theta2)) 
+               + I1 + I2 ;
+    double d2 = m2 * (pow(lc2,2) + l1 * lc2 * cos(theta2)) + I2;
+    double phi2 = m2 * lc2 * g * cos(theta1 + theta2 - PIE / 2.);
 
-     double ddtheta1 = -(d2 * ddtheta2 + phi1) / d1;
-     arma::colvec returnValues = {dtheta1, dtheta2, ddtheta1, ddtheta2};
-     return returnValues;
-   	};
-   /**
+    double phi1 = - m2 * l1 * lc2 * pow(dtheta2,2) * sin(theta2)
+      - 2 * m2 * l1 * lc2 * dtheta2 * dtheta1 * sin(theta2)
+      + (m1 * lc1 + m2 * l1) * g * cos(theta1 - PIE / 2)
+      + phi2;
+
+    double ddtheta2 = (a + d2 / d1 * phi1 - m2 * l1 * lc2 * pow(dtheta1,2) * 
+     sin(theta2) - phi2) / (m2 * pow(lc2,2) + I2 - pow(d2,2) / d1);
+
+    double ddtheta1 = -(d2 * ddtheta2 + phi1) / d1;
+    arma::colvec returnValues = {dtheta1, dtheta2, ddtheta1, ddtheta2};
+    return returnValues;
+  };
+  /**
    * @param value scalar value to wrap
    * @param minimum minimum range of wrap
    * @param maximum maximum range of wrap
    */      
-   double wrap(double value,
-               double minimum,
-               double maximum)
-          {
-          	double diff = maximum - minimum;
-          	if (value>maximum) value = value - diff;
-          	else if (value<minimum) value = value + diff;
-          	return value;
-          };
-    /**
-     * @param value scalar value to bound
-     * @param minimum minimum range of bound
-     * @param maximum maximum range of bound
-     */     
-   double  bound(double value,
-   	             double minimum,
-   	             double maximum)
-          {
-          	return std::min(std::max(value,minimum),maximum);
-          };
-   /**
+  double wrap(double value,
+              double minimum,
+              double maximum)
+  {
+    double diff = maximum - minimum;
+    if (value>maximum) value = value - diff;
+    else if (value<minimum) value = value + diff;
+    return value;
+  };
+  /**
+    * @param value scalar value to bound
+    * @param minimum minimum range of bound
+    * @param maximum maximum range of bound
+    */     
+  double  bound(double value,
+   	            double minimum,
+   	            double maximum)
+  {
+    return std::min(std::max(value,minimum),maximum);
+  };
+  /**
     * @param state_ Current State
     * @param Action Action Taken
     * @param nextState nextState 
     */
-   double Torque(const Action& Action)
-         {
-          // Add noise to the Torque
-          std::default_random_engine generator;
-          std::uniform_real_distribution<double> distribution(-0.1,+0.1);
-          double torque = double(Action - 1) + distribution(generator);
-          return torque;
-         }
-   void rk4(const State& state_,
-            const Action& Action,
-            State& nextState)
-         { 
-           /*
-            * Torque is action number - 1.
-            * {0,1,2} -> {-1,0,1} 
-            */
-           double torque = Torque(Action);
-           arma::colvec state = {state_.Theta1(),state_.Theta2(),
-                                 state_.AngularVelocity1(),
-                                 state_.AngularVelocity2()};
-           arma::colvec k1 = dsdt(state,torque);
-           arma::colvec k2 = dsdt(state + dt*k1/2,torque);
-           arma::colvec k3 = dsdt(state + dt*k2/2,torque);
-           arma::colvec k4 = dsdt(state + dt*k3,torque);
-           arma::colvec nextstate = state + dt*(k1 + 2*k2 + 2*k3 + k4)/6;
-           
-           nextState.Theta1() = nextstate[0];
-           nextState.Theta2() = nextstate[1];
-           nextState.AngularVelocity1() = nextstate[2];
-           nextState.AngularVelocity2() = nextstate[3];
-
-         };
+  double Torque(const Action& Action)
+  {
+    // Add noise to the Torque
+    std::default_random_engine generator;
+    std::uniform_real_distribution<double> distribution(-0.1,+0.1);
+    double torque = double(Action - 1) + distribution(generator);
+    return torque;
+  }
+  void rk4(const State& state_,
+           const Action& Action,
+           State& nextState)
+  { 
+  /*
+   * Torque is action number - 1.
+   * {0,1,2} -> {-1,0,1} 
+   */
+    double torque = Torque(Action);
+    arma::colvec state = {state_.Theta1(),state_.Theta2(),
+                          state_.AngularVelocity1(),
+                          state_.AngularVelocity2()};
+    arma::colvec k1 = dsdt(state,torque);
+    arma::colvec k2 = dsdt(state + dt*k1/2,torque);
+    arma::colvec k3 = dsdt(state + dt*k2/2,torque);
+    arma::colvec k4 = dsdt(state + dt*k3,torque);
+    arma::colvec nextstate = state + dt*(k1 + 2*k2 + 2*k3 + k4)/6;
+    nextState.Theta1() = nextstate[0];
+    nextState.Theta2() = nextstate[1];
+    nextState.AngularVelocity1() = nextstate[2];
+    nextState.AngularVelocity2() = nextstate[3];
+  };
  private:
-   //! Locally-stored gravity.
-   double gravity;
+  //! Locally-stored gravity.
+  double gravity;
 
-   //! Locally-stored length of link 1.
-   double link_length1;
+  //! Locally-stored length of link 1.
+  double link_length1;
 
-   //! Locally-stored length of link 2.
-   double link_length2;
+  //! Locally-stored length of link 2.
+  double link_length2;
 
-   //! Locally-stored mass of link 1.
-   double link_mass1;
-   
-   //! Locally-stored mass of link 2.
-   double link_mass2;
+  //! Locally-stored mass of link 1.
+  double link_mass1;
 
-   //! Locally-stored position of link 1.
-   double link_com1;
+  //! Locally-stored mass of link 2.
+  double link_mass2;
 
-   //! Locally-stored position of link 2.
-   double link_com2;
+  //! Locally-stored position of link 1.
+  double link_com1;
 
-   //! Locally-stored moment of intertia value.
-   double link_moi;
+  //! Locally-stored position of link 2.
+  double link_com2;
 
-   //! Locally-stored max angular velocity of link1.
-   double max_vel1;
+  //! Locally-stored moment of intertia value.
+  double link_moi;
 
-   //! Locally-stored max angular velocity of link2.
-   double max_vel2;
+  //! Locally-stored max angular velocity of link1.
+  double max_vel1;
 
-   //! Locally-stored dt for RK4 method
-   double dt;      
+  //! Locally-stored max angular velocity of link2.
+  double max_vel2;
+
+  //! Locally-stored dt for RK4 method
+  double dt;      
 
 }; // class Acrobat
 } // namespace rl
