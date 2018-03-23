@@ -202,7 +202,7 @@ class Acrobat
     double dtheta1 = state[2];
     double dtheta2 = state[3];
     double d1 = m1 * pow(lc1, 2) + m2 *
-              (pow(l1,2) + pow(lc2,2) + 2 * l1 * lc2 * cos(theta2))
+              (pow(l1, 2) + pow(lc2, 2) + 2 * l1 * lc2 * cos(theta2))
                + I1 + I2;
     double d2 = m2 * (pow(lc2, 2) + l1 * lc2 * cos(theta2)) + I2;
     double phi2 = m2 * lc2 * g * cos(theta1 + theta2 - PIE / 2.);
