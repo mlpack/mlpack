@@ -414,7 +414,7 @@ void DecisionTree<FitnessFunction,
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
   Train<false>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, weights,
-      minimumLeafSize);
+      minimumLeafSize, minimumGainSplit);
 }
 
 //! Train on the given weighted data.
