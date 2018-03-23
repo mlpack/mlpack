@@ -115,15 +115,15 @@ class AddMerge
   OutputDataType& Delta() { return delta; }
 
   //! Return the model modules.
-  // std::vector<LayerTypes<CustomLayers...> >& Model()
-  // {
-  //   if (model)
-  //   {
-  //     return network;
-  //   }
+  std::vector<LayerTypes<CustomLayers...> >& Model()
+  {
+    if (model)
+    {
+      return network;
+    }
 
-  //   return empty;
-  // }
+    return empty;
+  }
 
   /**
    * Serialize the layer.
@@ -134,6 +134,9 @@ class AddMerge
  private:
   //! Parameter which indicates if the modules should be exposed.
   bool model;
+
+  //! We need this to know whether we should delete the layer in the destructor.
+  bool ownsLayer;
 
   //! Locally-stored network modules.
   std::vector<LayerTypes<CustomLayers...> > network;

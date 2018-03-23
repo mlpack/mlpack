@@ -240,7 +240,7 @@ class RNN
   /*
    * Add a new module to the model.
    *
-   * @param layer The Layer to be added to the model.
+   * @param args The layer parameter.
    */
   template <class LayerType, class... Args>
   void Add(Args... args) { network.push_back(new LayerType(args...)); }
@@ -248,7 +248,7 @@ class RNN
   /*
    * Add a new module to the model.
    *
-   * @param args The parameters to be passed to the layer constructor.
+   * @param layer The Layer to be added to the model.
    */
   void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
 
