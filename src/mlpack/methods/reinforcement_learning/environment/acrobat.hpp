@@ -201,8 +201,8 @@ class Acrobat
     double theta2 = state[1];
     double dtheta1 = state[2];
     double dtheta2 = state[3];
-    double d1 = m1 * pow(lc1, 2) + m2 * 
-              (pow(l1,2) + pow(lc2,2) + 2 * l1 * lc2 * cos(theta2)) 
+    double d1 = m1 * pow(lc1, 2) + m2 *
+              (pow(l1,2) + pow(lc2,2) + 2 * l1 * lc2 * cos(theta2))
                + I1 + I2;
     double d2 = m2 * (pow(lc2, 2) + l1 * lc2 * cos(theta2)) + I2;
     double phi2 = m2 * lc2 * g * cos(theta1 + theta2 - PIE / 2.);
@@ -212,7 +212,7 @@ class Acrobat
       + (m1 * lc1 + m2 * l1) * g * cos(theta1 - PIE / 2)
       + phi2;
 
-    double ddtheta2 = (a + d2 / d1 * phi1 - m2 * l1 * lc2 * pow(dtheta1,2) *
+    double ddtheta2 = (a + d2 / d1 * phi1 - m2 * l1 * lc2 * pow(dtheta1, 2) *
      sin(theta2) - phi2) / (m2 * pow(lc2, 2) + I2 - pow(d2, 2) / d1);
 
     double ddtheta1 = -(d2 * ddtheta2 + phi1) / d1;
@@ -229,8 +229,8 @@ class Acrobat
               double maximum)
   {
     double diff = maximum - minimum;
-    if (value>maximum) value = value - diff;
-    else if (value<minimum) value = value + diff;
+    if (value > maximum) value = value - diff;
+    else if (value < minimum) value = value + diff;
     return value;
   };
   /**
@@ -253,7 +253,7 @@ class Acrobat
   {
     // Add noise to the Torque
     std::default_random_engine generator;
-    std::uniform_real_distribution<double> distribution(-0.1,+0.1);
+    std::uniform_real_distribution<double> distribution(-0.1, +0.1);
     double torque = double(Action - 1) + distribution(generator);
     return torque;
   }
