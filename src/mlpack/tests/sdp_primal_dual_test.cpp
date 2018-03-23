@@ -24,7 +24,7 @@ using namespace mlpack::neighbor;
 class UndirectedGraph
 {
  public:
-  UndirectedGraph() {}
+  UndirectedGraph() : numVertices(0) { }
 
   size_t NumVertices() const { return numVertices; }
   size_t NumEdges() const { return edges.n_cols; }
