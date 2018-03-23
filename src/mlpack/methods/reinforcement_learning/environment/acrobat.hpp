@@ -84,18 +84,18 @@ class Acrobat
 
    private :
     arma::colvec data;
-  }; // state 
+  };
   /* 
    * Implementation of action for cartpole
    */
   enum Action
-   {
-   	negativeTorque,
-   	zeroTorque,
-   	positiveTorque,
-   	// Track the size of the action space.
-   	size
-   };
+  {
+    negativeTorque,
+    zeroTorque,
+    positiveTorque,
+    // Track the size of the action space.
+    size
+  };
 
    /**
    * Construct a Cart Pole instance using the given constants.
@@ -112,16 +112,16 @@ class Acrobat
    * @param max_vel2 max angular velocity of link2.
    */
   Acrobat(const double gravity = 9.81,
-   	       const double link_length1 = 1.0,
-           const double link_length2 = 1.0,
-           const double link_mass1 = 1.0,
-           const double link_mass2 = 1.0,
-           const double link_com1 = 0.5,
-           const double link_com2 = 0.5,
-           const double link_moi = 1.0,
-           const double max_vel1 = 4*PIE,
-           const double max_vel2 = 9*PIE,
-           const double dt = 0.2) :
+          const double link_length1 = 1.0,
+          const double link_length2 = 1.0,
+          const double link_mass1 = 1.0,
+          const double link_mass2 = 1.0,
+          const double link_com1 = 0.5,
+          const double link_com2 = 0.5,
+          const double link_moi = 1.0,
+          const double max_vel1 = 4*PIE,
+          const double max_vel2 = 9*PIE,
+          const double dt = 0.2) :
       gravity(gravity),
       link_length1(link_length1),
       link_length2(link_length2),
@@ -156,9 +156,9 @@ class Acrobat
 
     nextState.Theta2() = wrap(nextState.Theta2(),-pie,pie);
     nextState.AngularVelocity1() = bound(nextState.AngularVelocity1(),
-          	                                 -max_vel1 , max_vel1);
+                                             -max_vel1 , max_vel1);
     nextState.AngularVelocity2() = bound(nextState.AngularVelocity2(),
-          	                                 -max_vel2 , max_vel2);
+                                             -max_vel2 , max_vel2);
     return -1;
   };
   double Sample(const State& state, const Action& action)
@@ -185,7 +185,7 @@ class Acrobat
    * @param torque Torque Applied 
    */
   arma::colvec dsdt(arma::colvec state,
-   	           const double torque)
+               const double torque)
   {
     double m1 = link_mass1;
     double m2 = link_mass2;
@@ -239,8 +239,8 @@ class Acrobat
     * @param maximum maximum range of bound
     */     
   double  bound(double value,
-   	            double minimum,
-   	            double maximum)
+                double minimum,
+                double maximum)
   {
     return std::min(std::max(value,minimum),maximum);
   };
