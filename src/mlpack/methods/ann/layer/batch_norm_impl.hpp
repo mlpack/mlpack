@@ -59,9 +59,13 @@ void BatchNorm<InputDataType, OutputDataType>::Forward(
   // the forward pass when deterministic is set to true.
   if (deterministic)
   {
+    // Mini--batch mean using the stats object.
     mean = stats.mean();
+
+    // Mini--batch variance using the stats object.
     variance = stats.var(1);
 
+    // Normalize the input and scale and shift the output.
     output = input.each_col() - mean;
     output.each_col() %= gamma / arma::sqrt(variance + eps);
     output.each_col() += beta;
@@ -74,12 +78,14 @@ void BatchNorm<InputDataType, OutputDataType>::Forward(
     for (size_t i = 0; i < input.n_cols; i++)
       stats(input.col(i));
 
+    // Normalize the input.
     output = input.each_col() - mean;
     output.each_col() /= arma::sqrt(variance + eps);
 
     // Reused in the backward and gradient step.
     normalized = output;
 
+    // Scale and shift the output.
     output.each_col() %= gamma;
     output.each_col() += beta;
   }
@@ -90,14 +96,24 @@ template<typename eT>
 void BatchNorm<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
+
   const arma::mat inputMean = input.each_col() - mean;
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
-  const arma::mat norm = gy.each_col() % gamma;
-  const arma::mat var = arma::sum(norm % inputMean, 1) %
-      arma::pow(stdInv, 3.0) * 0.5;
 
+  // Step 1: dl / dxhat *
+  const arma::mat norm = gy.each_col() % gamma;
+
+  // Step 2: sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
+  const arma::mat var = arma::sum(norm % inputMean, 1) %
+      arma::pow(stdInv, 3.0) * -0.5;
+
+  // Step 4: dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
+  // dl / dmu * 1 / m.
   g = (norm.each_col() % stdInv) + (inputMean.each_col() %
       var * 2 / input.n_cols);
+
+  // Step 3: sum (dl / dxhat * -1 / stdInv) + variance *
+  // (sum -2 * (x - mu)) / m.
   g.each_col() += arma::sum(norm.each_col() % -stdInv, 1) + var %
       arma::mean(-2 * inputMean, 1) / input.n_cols;
 }
@@ -110,7 +126,11 @@ void BatchNorm<InputDataType, OutputDataType>::Gradient(
     arma::Mat<eT>&& gradient)
 {
   gradient.set_size(size + size, 1);
+
+  // Step 5: dl / dy * xhat.
   gradient.submat(0, 0, gamma.n_elem - 1, 0) = arma::sum(normalized % error, 1);
+
+  // Step 6: dl / dy.
   gradient.submat(gamma.n_elem, 0, gradient.n_elem - 1, 0) =
       arma::sum(error, 1);
 }
