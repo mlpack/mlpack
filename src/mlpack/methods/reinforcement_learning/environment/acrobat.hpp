@@ -249,13 +249,11 @@ class Acrobat
   double Torque(const Action& Action)
   {
     // Add noise to the Torque
-    std::default_random_engine generator;
-    std::uniform_real_distribution<double> distribution(-0.1, +0.1);
     /*
     * Torque is action number - 1.
     * {0,1,2} -> {-1,0,1} 
     */
-    double torque = double(Action - 1) + distribution(generator);
+    double torque = double(Action - 1) + Random(-0.1, 0.1);
     return torque;
   }
 
