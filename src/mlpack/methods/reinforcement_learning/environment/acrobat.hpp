@@ -80,6 +80,7 @@ class Acrobat
     static constexpr size_t dimension = 4;
 
    private :
+    //! Locally-Stored (theta1, theta2, angular velocity 1, angular velocity2)
     arma::colvec data;
   };
   /* 
@@ -98,37 +99,37 @@ class Acrobat
    * Construct a Cart Pole instance using the given constants.
    *
    * @param gravity gravity
-   * @param link_length1 length of link 1.
-   * @param link_length2 length of link 2.
-   * @param link_mass1 mass of link 1.
-   * @param link_mass2 mass of link 2.
-   * @param link_com1 position of the center of mass of link 1.
-   * @param link_com2 position of the center of mass of link 2.
-   * @param link_moi moments of inertia for both link.
-   * @param max_vel1 max angular velocity of link1.
-   * @param max_vel2 max angular velocity of link2.
+   * @param linkLength1 length of link 1.
+   * @param linkLength2 length of link 2.
+   * @param linkMass1 mass of link 1.
+   * @param linkMass2 mass of link 2.
+   * @param linkCom1 position of the center of mass of link 1.
+   * @param linkCom2 position of the center of mass of link 2.
+   * @param linkMoi moments of inertia for both link.
+   * @param maxVel1 max angular velocity of link1.
+   * @param maxVel2 max angular velocity of link2.
    */
   Acrobat(const double gravity = 9.81,
-          const double link_length1 = 1.0,
-          const double link_length2 = 1.0,
-          const double link_mass1 = 1.0,
-          const double link_mass2 = 1.0,
-          const double link_com1 = 0.5,
-          const double link_com2 = 0.5,
-          const double link_moi = 1.0,
-          const double max_vel1 = 4*M_PI,
-          const double max_vel2 = 9*M_PI,
+          const double linkLength1 = 1.0,
+          const double linkLength2 = 1.0,
+          const double linkMass1 = 1.0,
+          const double linkMass2 = 1.0,
+          const double linkCom1 = 0.5,
+          const double linkCom2 = 0.5,
+          const double linkMoi = 1.0,
+          const double maxVel1 = 4*M_PI,
+          const double maxVel2 = 9*M_PI,
           const double dt = 0.2) :
       gravity(gravity),
-      link_length1(link_length1),
-      link_length2(link_length2),
-      link_mass1(link_mass1),
-      link_mass2(link_mass2),
-      link_com1(link_com1),
-      link_com2(link_com2),
-      link_moi(link_moi),
-      max_vel1(max_vel1),
-      max_vel2(max_vel2),
+      linkLength1(linkLength1),
+      linkLength2(linkLength2),
+      linkMass1(linkMass1),
+      linkMass2(linkMass2),
+      linkCom1(linkCom1),
+      linkCom2(linkCom2),
+      linkMoi(linkMoi),
+      maxVel1(maxVel1),
+      maxVel2(maxVel2),
       dt(dt)
   { /* Nothing to do here */ }
   /**
@@ -151,9 +152,9 @@ class Acrobat
 
     nextState.Theta2() = Wrap(nextState.Theta2(), -M_PI, M_PI);
     nextState.AngularVelocity1() = Bound(nextState.AngularVelocity1(),
-                                             -max_vel1 , max_vel1);
+                                             -maxVel1 , maxVel1);
     nextState.AngularVelocity2() = Bound(nextState.AngularVelocity2(),
-                                             -max_vel2 , max_vel2);
+                                             -maxVel2 , maxVel2);
     return -1;
   };
   double Sample(const State& state, const Action& action)
@@ -181,14 +182,14 @@ class Acrobat
   arma::colvec Dsdt(arma::colvec state,
                const double torque)
   {
-    double m1 = link_mass1;
-    double m2 = link_mass2;
-    double l1 = link_length1;
-    double l2 = link_length2;
-    double lc1 = link_com1;
-    double lc2 = link_com2;
-    double I1 = link_moi;
-    double I2 = link_moi;
+    double m1 = linkMass1;
+    double m2 = linkMass2;
+    double l1 = linkLength1;
+    double l2 = linkLength2;
+    double lc1 = linkCom1;
+    double lc2 = linkCom2;
+    double I1 = linkMoi;
+    double I2 = linkMoi;
     double g = gravity;
     double a = torque;
     double theta1 = state[0];
@@ -290,31 +291,31 @@ class Acrobat
   double gravity;
 
   //! Locally-stored length of link 1.
-  double link_length1;
+  double linkLength1;
 
   //! Locally-stored length of link 2.
-  double link_length2;
+  double linkLength2;
 
   //! Locally-stored mass of link 1.
-  double link_mass1;
+  double linkMass1;
 
   //! Locally-stored mass of link 2.
-  double link_mass2;
+  double linkMass2;
 
   //! Locally-stored position of link 1.
-  double link_com1;
+  double linkCom1;
 
   //! Locally-stored position of link 2.
-  double link_com2;
+  double linkCom2;
 
   //! Locally-stored moment of intertia value.
-  double link_moi;
+  double linkMoi;
 
   //! Locally-stored max angular velocity of link1.
-  double max_vel1;
+  double maxVel1;
 
   //! Locally-stored max angular velocity of link2.
-  double max_vel2;
+  double maxVel2;
 
   //! Locally-stored dt for RK4 method
   double dt;
