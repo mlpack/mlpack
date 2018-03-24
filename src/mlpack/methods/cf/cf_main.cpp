@@ -282,30 +282,48 @@ static void mlpackMain()
   else
     math::RandomSeed(CLI::GetParam<int>("seed"));
 
+  // Validate parameters.
   RequireOnlyOnePassed({ "training", "input_model" }, true);
+
+  // Check that nothing stupid is happening.
+  if (CLI::HasParam("query") || CLI::HasParam("all_user_recommendations"))
+    RequireOnlyOnePassed({ "query", "all_user_recommendations" }, true);
+
+  RequireAtLeastOnePassed({ "output", "output_model" }, false,
+      "no output will be saved");
+  if (!CLI::HasParam("query") && !CLI::HasParam("all_user_recommendations"))
+    ReportIgnoredParam("output", "no recommendations requested");
+
+  RequireParamInSet<string>("algorithm", { "NMF", "BatchSVD",
+      "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD" }, true,
+      "unknown algorithm");
+
+  ReportIgnoredParam({{ "iteration_only_termination", true }}, "min_residue");
+
+  RequireParamValue<int>("recommendations", [](int x) { return x > 0; }, true,
+        "recommendations must be positive");
 
   // Either load from a model, or train a model.
   if (CLI::HasParam("training"))
   {
     // Train a model.
-    // Validate Parameteres.
-    RequireParamInSet<string>("algorithm", { "NMF", "BatchSVD",
-        "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD" }, true,
-        "unknown algorithm");
-    RequireAtLeastOnePassed({ "output_model" }, false,
-        "trained model will not be saved");
+    // Validate Parameters.
     ReportIgnoredParam({{ "iteration_only_termination", true }}, "min_residue");
     RequireParamValue<int>("rank", [](int x) { return x >= 0; }, true,
         "rank must be non-negative");
-    RequireParamValue<int>("neighborhood", [](int x) { return x > 0; }, true,
-        "neighborhood must be positive");
     RequireParamValue<double>("min_residue", [](double x) { return x >= 0; },
         true, "min_residue must be non-negative");
-    RequireParamValue<int>("max_iterations", [](int x) { return x > 0; }, true,
-        "max_iterations must be positive");
+    RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
+        "max_iterations must be non-negative");
+    RequireParamValue<int>("neighborhood", [](int x) { return x > 0; }, true,
+        "neighborhood must be positive");
 
     // Read from the input file.
     arma::mat dataset = std::move(CLI::GetParam<arma::mat>("training"));
+
+    RequireParamValue<int>("neighborhood",
+        [&dataset](int x) { return x <= max(dataset.row(0)) + 1; }, true,
+        "neighborbood must be less than or equal to the number of users");
 
     // Recommendation matrix.
     arma::Mat<size_t> recommendations;
@@ -328,17 +346,6 @@ static void mlpackMain()
     // Validate Parameteres.
     RequireAtLeastOnePassed({ "query", "all_user_recommendations",
         "test" }, true);
-    if (CLI::HasParam("query") || CLI::HasParam("all_user_recommendations"))
-    {
-      RequireOnlyOnePassed({ "query", "all_user_recommendations"}, true);
-      RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
-    }
-    else
-    {
-      ReportIgnoredParam("output", "no recommendations requested");
-    }
-    RequireParamValue<int>("recommendations", [](int x) { return x > 0; }, true,
-        "recommendations must be positive");
 
     // Load an input model.
     CF* c = std::move(CLI::GetParam<CF*>("input_model"));
