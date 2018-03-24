@@ -200,7 +200,7 @@ double StandardSGD::Optimize(
   const arma::mat data = function.Dataset();
 
   // Now iterate!
-  for (size_t i = 0; i != maxIterations; i++, currentFunction++)
+  for (size_t i = 1; i != maxIterations; i++, currentFunction++)
   {
     // Is this iteration the start of a sequence?
     if ((currentFunction % numFunctions) == 0)
