@@ -218,11 +218,11 @@ BOOST_AUTO_TEST_CASE(AcrobatWithDQN)
 
     /**
      *
-     * I am using a thresold of -245.0 . While testing it my previous code 
+     * I am using a thresold of -350.0 . While testing it my previous code 
      * on Q learning https://github.com/luffy1996/rl-using-mlpack/blob/master/qlearning.cpp
-     * I witnessed that -245.0 is average return after 300 episodes.
+     * I witnessed that -350.0 is average return after 80 episodes.
      * https://drive.google.com/open?id=1QzZP5egUWhcSJr_byceihU8rIF5sSqdU
-     * Hence I am using -245.0 to test convergence.
+     * Hence I am using -350.0 to test convergence.
      * 
      */
     Log::Debug << "Average return: " << averageReturn.mean()
