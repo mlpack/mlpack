@@ -1,6 +1,6 @@
 /**
  * @file q_learning_test.hpp
- * @author Shangtong Zhang
+ * @author Shangtong Zhang and Rohan Raj
  *
  * Test for Q-Learning implementation
  *
@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
   BOOST_REQUIRE(converged);
 }
 
-//! Test DQN in Cart Pole task.
+//! Test DQN in Acrobat task.
 BOOST_AUTO_TEST_CASE(AcrobatWithDQN)
 {
   // Set up the network.
