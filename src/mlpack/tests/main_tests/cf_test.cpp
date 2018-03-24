@@ -209,7 +209,7 @@ BOOST_AUTO_TEST_CASE(CFModelReuseTest)
     // Reuse the model to get recommendations.
     int recommendations = 3;
     const int querySize = 7;
-    Mat<size_t> query = 
+    Mat<size_t> query =
         arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
 
     SetInputParam("query", std::move(query));
