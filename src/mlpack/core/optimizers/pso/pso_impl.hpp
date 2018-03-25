@@ -78,7 +78,7 @@ double PSOType<VelocityUpdatePolicy>::Optimize(
 
   // Replace worst particle with iterate if iterate is better.
   double iterateFitness = f.Evaluate(iterate);
-  if(iterateFitness < worstFitness)
+  if (iterateFitness < worstFitness)
   {
     particleBestFitnesses(worstParticle) = iterateFitness;
     particlePositions.slice(worstParticle) = iterate;
