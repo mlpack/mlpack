@@ -38,7 +38,7 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
     width(0),
     height(0),
     reset(false),
-    numFunctions(0),
+    numFunctions(1),
     deterministic(true)
 {
   /* Nothing to do here */
