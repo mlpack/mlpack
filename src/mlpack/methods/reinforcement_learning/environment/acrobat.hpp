@@ -246,14 +246,14 @@ class Acrobat
    * 1 : zero torque
    * 2 : positive torque
    */
-  double Torque(const Action& Action)
+  double Torque(const Action& action)
   {
     // Add noise to the Torque
     /*
     * Torque is action number - 1.
     * {0,1,2} -> {-1,0,1} 
     */
-    double torque = double(Action - 1) + Random(-0.1, 0.1);
+    double torque = double(action - 1) + Random(-0.1, 0.1);
     return torque;
   }
 
@@ -263,14 +263,14 @@ class Acrobat
     * @param nextState nextState 
     */
   void Rk4(const State& state_,
-           const Action& Action,
+           const Action& action,
            State& nextState)
   {
   /*
    * Torque is action number - 1.
    * {0,1,2} -> {-1,0,1} 
    */
-    double torque = Torque(Action);
+    double torque = Torque(action);
     arma::colvec state = {state_.Theta1(), state_.Theta2(),
                           state_.AngularVelocity1(),
                           state_.AngularVelocity2()};
