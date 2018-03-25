@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(PSORastriginTest)
 BOOST_AUTO_TEST_CASE(PSORosenbrockTest)
 {
   RosenbrockFunction f;
-  LBestPSO s;
+  LBestPSO s(16, 2500);
 
   arma::vec coordinates = f.GetInitialPoint();
   double result = s.Optimize(f, coordinates);
