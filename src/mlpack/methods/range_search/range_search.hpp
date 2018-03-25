@@ -298,8 +298,6 @@ class RangeSearch
 
   //! If true, this object is responsible for deleting the trees.
   bool treeOwner;
-  //! If true, we own the reference set.
-  bool setOwner;
 
   //! If true, O(n^2) naive computation is used.
   bool naive;
