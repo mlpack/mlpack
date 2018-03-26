@@ -1,6 +1,6 @@
 /*! @page build Building mlpack From Source
 
-@section buildintro Introduction
+@section build_buildintro Introduction
 
 This document discusses how to build mlpack from source.  However, mlpack is in
 the repositories of many Linux distributions and so it may be easier to use the
@@ -25,7 +25,7 @@ href="https://keon.io/mlpack/mlpack-on-windows/">Keon's excellent tutorial</a>.
 Download latest mlpack build from here:
 <a href="http://www.mlpack.org/files/mlpack-2.2.5.tar.gz">mlpack-2.2.5</a>
 
-@section builddir Creating Build Directory
+@section build_builddir Creating Build Directory
 
 Once the mlpack source is unpacked, you should create a build directory.
 
@@ -37,7 +37,7 @@ $ mkdir build
 The directory can have any name, not just 'build', but 'build' is sufficient
 enough.
 
-@section dep Dependencies of mlpack
+@section build_dep Dependencies of mlpack
 
 mlpack depends on the following libraries, which need to be installed on the
 system and have headers present:
@@ -60,7 +60,7 @@ On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
   armadillo-devel binutils-devel
 @endcode
 
-@section config Configuring CMake
+@section build_config Configuring CMake
 
 Running CMake is the equivalent to running `./configure` with autotools.  If you
 are working with the svn trunk version of mlpack and run CMake with no options,
@@ -100,7 +100,7 @@ The full list of options mlpack allows:
 Each option can be specified to CMake with the '-D' flag.  Other tools can also
 be used to configure CMake, but those are not documented here.
 
-@section build Building mlpack
+@section build_build Building mlpack
 
 Once CMake is configured, building the library is as simple as typing 'make'.
 This will build all library components as well as 'mlpack_test'.
