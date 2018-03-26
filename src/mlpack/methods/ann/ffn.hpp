@@ -225,6 +225,16 @@ class FFN
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameter; }
 
+  //! Get the matrix of responses to the input data points.
+   const arma::mat& Responses() const { return responses; }
+  //! Modify the matrix of responses to the input data points.
+  arma::mat& Responses() { return responses; }
+
+  //! Get the matrix of data points (predictors).
+   const arma::mat& Predictors() const { return predictors; }
+  //! Modify the matrix of data points (predictors).
+  arma::mat& Predictors() { return predictors; }
+
   /**
    * Reset the module infomration (weights/parameters).
    */

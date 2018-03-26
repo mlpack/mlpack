@@ -45,7 +45,7 @@ RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::RNN(
     targetSize(0),
     reset(false),
     single(single),
-    numFunctions(1),
+    numFunctions(0),
     deterministic(true)
 {
   /* Nothing to do here */

@@ -241,6 +241,16 @@ class RNN
   //! Modify the maximum length of backpropagation through time.
   size_t& Rho() { return rho; }
 
+  //! Get the matrix of responses to the input data points.
+   const arma::cube& Responses() const { return responses; }
+  //! Modify the matrix of responses to the input data points.
+  arma::cube& Responses() { return responses; }
+
+  //! Get the matrix of data points (predictors).
+   const arma::cube& Predictors() const { return predictors; }
+  //! Modify the matrix of data points (predictors).
+  arma::cube& Predictors() { return predictors; }
+
   /**
    * Reset the state of the network.  This ensures that all internally-held
    * gradients are set to 0, all memory cells are reset, and the parameters
