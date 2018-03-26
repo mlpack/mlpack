@@ -188,8 +188,8 @@ BOOST_AUTO_TEST_CASE(SVDBatchNegativeElementTest)
 
   arma::mat result = m1 * m2;
 
-  // 5% tolerance on the norm.
-  BOOST_REQUIRE_CLOSE(arma::norm(test, "fro"), arma::norm(result, "fro"), 5.0);
+  // 6.5% tolerance on the norm.
+  BOOST_REQUIRE_CLOSE(arma::norm(test, "fro"), arma::norm(result, "fro"), 6.5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
