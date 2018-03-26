@@ -1462,7 +1462,8 @@ BOOST_AUTO_TEST_CASE(GreedyTreeSearch)
 
   // Check that all distances values are between 0.0 and 1.0 as arma::randu
   // generates a uniform distribution in [0, 1].
-  BOOST_REQUIRE_EQUAL(arma::accu(distances < 0.0 || distances > 1.0), 0);
+  BOOST_REQUIRE_EQUAL(arma::accu(distances < 0.0 || distances > std::sqrt(3.0)),
+      0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
