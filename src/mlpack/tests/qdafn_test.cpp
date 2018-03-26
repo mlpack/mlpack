@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(QDAFNUniformSet)
       ++successes;
   }
 
-  BOOST_REQUIRE_GE(successes, 700);
+  BOOST_REQUIRE_GE(successes, 695);
 }
 
 /**

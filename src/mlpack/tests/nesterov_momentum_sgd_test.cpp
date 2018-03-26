@@ -42,9 +42,9 @@ BOOST_AUTO_TEST_CASE(NesterovMomentumSGDSpeedUpTestFunction)
   double result = s.Optimize(f, coordinates);
 
   BOOST_REQUIRE_CLOSE(result, -1.0, 0.20);
-  BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
-  BOOST_REQUIRE_SMALL(coordinates[1], 1e-7);
-  BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
+  BOOST_REQUIRE_SMALL(coordinates[0], 2e-3);
+  BOOST_REQUIRE_SMALL(coordinates[1], 1e-6);
+  BOOST_REQUIRE_SMALL(coordinates[2], 1e-6);
 }
 
 /*
