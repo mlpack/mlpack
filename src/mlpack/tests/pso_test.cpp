@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_SUITE(PSOTest);
 BOOST_AUTO_TEST_CASE(PSORastriginTest)
 {
   RastriginFunction f(4);
-  LBestPSO s;
+  LBestPSO s(16, 2500);
 
   arma::vec coordinates = f.GetInitialPoint();
   double result = s.Optimize(f, coordinates);
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(PSORosenbrockTest)
 BOOST_AUTO_TEST_CASE(PSOSphereTest)
 {
   SphereFunction f(4);
-  LBestPSO s;
+  LBestPSO s(16, 2500);
 
   arma::vec coordinates = f.GetInitialPoint();
   double result = s.Optimize(f, coordinates);
