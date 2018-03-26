@@ -116,7 +116,8 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
     Linear<> lookup(1, 4);
     SigmoidLayer<> sigmoidLayer;
     Linear<> linear(4, 4);
-    Recurrent<> recurrent(add, lookup, linear, sigmoidLayer, rho);
+    Recurrent<>* recurrent = new Recurrent<>(
+        add, lookup, linear, sigmoidLayer, rho);
 
     RNN<> model(rho);
     model.Add<IdentityLayer<> >();
@@ -366,8 +367,8 @@ void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
 }
 
 /**
- * @brief Creates the reber grammar data for tests. 
- * 
+ * @brief Creates the reber grammar data for tests.
+ *
  * @param trainInput The train data
  * @param trainLabels The train labels
  * @param testInput The test input
@@ -919,7 +920,8 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   Linear<> lookup(1, 4);
   SigmoidLayer<> sigmoidLayer;
   Linear<> linear(4, 4);
-  Recurrent<> recurrent(add, lookup, linear, sigmoidLayer, rho);
+  Recurrent<>* recurrent = new Recurrent<>(add, lookup, linear,
+      sigmoidLayer, rho);
 
   RNN<> model(rho);
   model.Add<IdentityLayer<> >();
