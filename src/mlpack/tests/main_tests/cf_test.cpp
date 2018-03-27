@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE(CFRecommendationsBoundTest)
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
 
-  // Re
+  // recommendations should not be zero.
   SetInputParam("recommendations", int(0));
   SetInputParam("all_user_recommendations", true);
   SetInputParam("training", std::move(dataset));
