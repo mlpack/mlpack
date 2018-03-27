@@ -93,7 +93,8 @@ PARAM_MATRIX_IN("test", "Test set to calculate RMSE on.", "T");
 
 // Offer the user the option to set the maximum number of iterations, and
 // terminate only based on the number of iterations.
-PARAM_INT_IN("max_iterations", "Maximum number of iterations.", "N", 1000);
+PARAM_INT_IN("max_iterations", "Maximum number of iterations. If set to zero, "
+    "there is no limit on the number of iterations.", "N", 1000);
 PARAM_FLAG("iteration_only_termination", "Terminate only when the maximum "
     "number of iterations is reached.", "I");
 PARAM_DOUBLE_IN("min_residue", "Residue required to terminate the factorization"
