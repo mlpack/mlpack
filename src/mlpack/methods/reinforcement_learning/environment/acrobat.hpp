@@ -138,26 +138,31 @@ class Acrobat
     * state and current action .
     * 
     * @param state The current State
-    * @param action The action taken
+    * @param action_ The action taken
     * @param nextState The next state
     * return reward -1
     * Always return -1 reward
     */
   double Sample(const State& state,
                  const Action& action,
-                 State& nextState)
+                 State& nextState) const
   {
-    Rk4(state, action, nextState);
-    nextState.Theta1() = Wrap(nextState.Theta1(), -M_PI, M_PI);
+    arma::colvec state_ = {state.Theta1(), state.Theta2(),
+                          state.AngularVelocity1(),
+                          state.AngularVelocity2()};
+    double torque = Torque(action);
+    arma::colvec nextstate = Rk4(state_, torque);
 
-    nextState.Theta2() = Wrap(nextState.Theta2(), -M_PI, M_PI);
-    nextState.AngularVelocity1() = Bound(nextState.AngularVelocity1(),
+    nextState.Theta1() = Wrap(nextstate[0], -M_PI, M_PI);
+
+    nextState.Theta2() = Wrap(nextstate[1], -M_PI, M_PI);
+    nextState.AngularVelocity1() = Bound(nextstate[2],
                                              -maxVel1 , maxVel1);
-    nextState.AngularVelocity2() = Bound(nextState.AngularVelocity2(),
+    nextState.AngularVelocity2() = Bound(nextstate[3],
                                              -maxVel2 , maxVel2);
     return -1;
   };
-  double Sample(const State& state, const Action& action)
+  double Sample(const State& state, const Action& action) const
   {
     State nextState;
     return Sample(state, action, nextState);
@@ -180,7 +185,7 @@ class Acrobat
    * @param torque Torque Applied 
    */
   arma::colvec Dsdt(arma::colvec state,
-               const double torque)
+               const double torque) const
   {
     double m1 = linkMass1;
     double m2 = linkMass2;
@@ -221,7 +226,7 @@ class Acrobat
    */      
   double Wrap(double value,
               double minimum,
-              double maximum)
+              double maximum) const
   {
     double diff = maximum - minimum;
     if (value > maximum) value = value - diff;
@@ -235,7 +240,7 @@ class Acrobat
     */     
   double  Bound(double value,
                 double minimum,
-                double maximum)
+                double maximum) const
   {
     return std::min(std::max(value, minimum), maximum);
   };
@@ -246,14 +251,14 @@ class Acrobat
    * 1 : zero torque
    * 2 : positive torque
    */
-  double Torque(const Action& action)
+  double Torque(const Action& action) const
   {
     // Add noise to the Torque
     /*
     * Torque is action number - 1.
     * {0,1,2} -> {-1,0,1} 
     */
-    double torque = double(action - 1) + Random(-0.1, 0.1);
+    double torque = double(action - 1) + mlpack::math::Random(-0.1, 0.1);
     return torque;
   }
 
@@ -262,27 +267,15 @@ class Acrobat
     * @param Action Action Taken
     * @param nextState nextState 
     */
-  void Rk4(const State& state_,
-           const Action& action,
-           State& nextState)
+  arma::colvec Rk4(const arma::colvec state,
+           const double torque) const
   {
-  /*
-   * Torque is action number - 1.
-   * {0,1,2} -> {-1,0,1} 
-   */
-    double torque = Torque(action);
-    arma::colvec state = {state_.Theta1(), state_.Theta2(),
-                          state_.AngularVelocity1(),
-                          state_.AngularVelocity2()};
     arma::colvec k1 = Dsdt(state, torque);
     arma::colvec k2 = Dsdt(state + dt*k1/2, torque);
     arma::colvec k3 = Dsdt(state + dt*k2/2, torque);
     arma::colvec k4 = Dsdt(state + dt*k3, torque);
-    arma::colvec nextstate = state + dt*(k1 + 2*k2 + 2*k3 + k4)/6;
-    nextState.Theta1() = nextstate[0];
-    nextState.Theta2() = nextstate[1];
-    nextState.AngularVelocity1() = nextstate[2];
-    nextState.AngularVelocity2() = nextstate[3];
+    arma::colvec nextState = state + dt*(k1 + 2*k2 + 2*k3 + k4)/6;
+    return nextState;
   };
  private:
   //! Locally-stored gravity.
