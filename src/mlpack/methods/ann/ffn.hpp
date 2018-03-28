@@ -54,6 +54,7 @@ class FFN
 
   /**
    * Create the FFN object.
+   *
    * Optionally, specify which initialize rule and performance function should
    * be used.
    *

@@ -49,6 +49,7 @@ class RNN
 
   /**
    * Create the RNN object.
+   *
    * Optionally, specify which initialize rule and performance function should
    * be used.
    *
