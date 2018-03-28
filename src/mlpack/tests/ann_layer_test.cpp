@@ -240,10 +240,8 @@ BOOST_AUTO_TEST_CASE(GradientAddLayerTest)
       target = arma::mat("1");
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-      arma::mat& temp = model->Predictors();
-      arma::mat& temp1 = model->Responses();
-      temp = input;
-      temp1 = target;
+      model->Predictors() = input;
+      model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<Add<> >(10);
       model->Add<LogSoftMax<> >();
@@ -464,10 +462,8 @@ BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
       target = arma::mat("1");
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-      arma::mat& temp = model->Predictors();
-      arma::mat& temp1 = model->Responses();
-      temp = input;
-      temp1 = target;
+      model->Predictors() = input;
+      model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(10, 2);
       model->Add<LogSoftMax<> >();
@@ -550,10 +546,8 @@ BOOST_AUTO_TEST_CASE(GradientLinearNoBiasLayerTest)
       target = arma::mat("1");
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-      arma::mat& temp = model->Predictors();
-      arma::mat& temp1 = model->Responses();
-      temp = input;
-      temp1 = target;
+      model->Predictors() = input;
+      model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<LinearNoBias<> >(10, 2);
       model->Add<LogSoftMax<> >();
@@ -798,10 +792,8 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
       const size_t rho = 5;
 
       model = new RNN<NegativeLogLikelihood<> >(rho);
-      arma::cube& temp = model->Predictors();
-      arma::cube& temp1 = model->Responses();
-      temp = input;
-      temp1 = target;
+      model->Predictors() = input;
+      model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(1, 10);
       model->Add<LSTM<> >(10, 3, rho);
@@ -882,10 +874,8 @@ BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
       const size_t rho = 5;
 
       model = new RNN<NegativeLogLikelihood<> >(rho);
-      arma::cube& temp = model->Predictors();
-      arma::cube& temp1 = model->Responses();
-      temp = input;
-      temp1 = target;
+      model->Predictors() = input;
+      model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(1, 10);
       model->Add<FastLSTM<> >(10, 3, rho);
@@ -933,10 +923,8 @@ BOOST_AUTO_TEST_CASE(GradientGRULayerTest)
       const size_t rho = 5;
 
       model = new RNN<NegativeLogLikelihood<> >(rho);
-      arma::cube& temp = model->Predictors();
-      arma::cube& temp1 = model->Responses();
-      temp = input;
-      temp1 = target;
+      model->Predictors() = input;
+      model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(1, 10);
       model->Add<GRU<> >(10, 3, rho);
@@ -1069,10 +1057,8 @@ BOOST_AUTO_TEST_CASE(GradientConcatLayerTest)
       target = arma::mat("1");
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-      arma::mat& temp = model->Predictors();
-      arma::mat& temp1 = model->Responses();
-      temp = input;
-      temp1 = target;
+      model->Predictors() = input;
+      model->Responses() = target;
       model->Add<IdentityLayer<> >();
 
       concat = new Concat<>();
@@ -1436,10 +1422,8 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormLayerTest)
       target.ones(1, 256);
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-      arma::mat& temp = model->Predictors();
-      arma::mat& temp1 = model->Responses();
-      temp = input;
-      temp1 = target;
+      model->Predictors() = input;
+      model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<BatchNorm<> >(10);
       model->Add<Linear<> >(10, 2);
