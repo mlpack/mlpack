@@ -61,6 +61,7 @@ PARAM_FLAG("population", "If specified, the program will calculate statistics "
 PARAM_FLAG("row_major", "If specified, the program will calculate statistics "
     "across rows, not across columns.  (Remember that in mlpack, a column "
     "represents a point, so this option is generally not necessary.)", "r");
+PARAM_MATRIX_OUT("output", "matrix to save output to", "o");
 
 /**
  * Calculates the sum of deviations to the Nth Power.
@@ -164,6 +165,24 @@ static void mlpackMain()
   // Load the data.
   arma::mat& data = CLI::GetParam<arma::mat>("input");
 
+  const size_t dimensions = rowMajor ? data.n_cols : data.n_rows;
+  RequireParamValue<int>("dimension", [](int x) { return x >= 0; }, true,
+      "dimension must be nonnegative");
+  std::ostringstream error;
+  error << "dimension must be less than the number of dimensions "
+      << "of the input data (" << dimensions << ")";
+  RequireParamValue<int>("dimension",
+      [dimensions](int x) { return size_t(x) < dimensions; }, true, error.str());
+
+  RequireParamValue<int>("precision", [](int x) { return x >= 0; }, true,
+      "precision must be nonnegative");
+  
+  RequireParamValue<int>("width", [](int x) { return x >= 0; }, true,
+      "width must be nonnegative");
+
+  // Create a mat to store the output in.
+  arma::mat outputMat(dimensions, 11);
+
   // Generate boost format recipe.
   const string widthPrecision("%-" + to_string(width) + "." +
       to_string(precision));
@@ -185,7 +204,7 @@ static void mlpackMain()
       % "range" % "skew" % "kurt" % "SE" << endl;
 
   // Lambda function to print out the results.
-  auto PrintStatResults = [&](size_t dim, bool rowMajor)
+  auto PrintStatResults = [&](size_t dim, bool rowMajor, arma::mat& outputMat)
   {
     arma::rowvec feature;
     if (rowMajor)
@@ -213,21 +232,39 @@ static void mlpackMain()
         % Kurtosis(feature, fStd, fMean, population)
         % StandardError(feature.n_elem, fStd)
         << endl;
+
+    // Store the output in the output arma::mat.
+    outputMat.row(dim) = arma::vec({
+        (double)dim,
+        arma::var(feature, population),
+        fMean,
+        fStd,
+        arma::median(feature),
+        fMin,
+        fMax,
+        (fMax - fMin),
+        Skewness(feature, fStd, fMean, population),
+        Kurtosis(feature, fStd, fMean, population),
+        StandardError(feature.n_elem, fStd)
+    });
   };
 
   // If the user specified dimension, describe statistics of the given
   // dimension. If a dimension is not specified, describe all dimensions.
   if (CLI::HasParam("dimension"))
   {
-    PrintStatResults(dimension, rowMajor);
+    PrintStatResults(dimension, rowMajor, outputMat);
+    if (CLI::HasParam("output"))
+      CLI::GetParam<arma::mat>("output") = outputMat.row(dimension);
   }
   else
   {
-    const size_t dimensions = rowMajor ? data.n_cols : data.n_rows;
     for (size_t i = 0; i < dimensions; ++i)
     {
-      PrintStatResults(i, rowMajor);
+      PrintStatResults(i, rowMajor, outputMat);
     }
+    if (CLI::HasParam("output"))
+      CLI::GetParam<arma::mat>("output") = outputMat;
   }
   Timer::Stop("statistics");
 }
