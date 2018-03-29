@@ -231,7 +231,7 @@ BOOST_AUTO_TEST_CASE(AcrobatWithDQN)
        */
       Log::Debug << "Average return: " << averageReturn.mean()
           << " Episode return: " << episodeReturn << std::endl;
-      if (averageReturn.mean() > -390.00)
+      if (averageReturn.mean() > -350.00)
       {
         agent.Deterministic() = true;
         arma::running_stat<double> testReturn;
