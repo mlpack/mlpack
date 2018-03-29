@@ -354,12 +354,33 @@ class DecisionTree :
    */
   size_t NumClasses() const;
 
-  template<typename MatType, typename LabelsType>
+  /**
+   * Prune the already built decision tree by making tree nodes as leaf nodes
+   * if the score on the validation set increases.
+   *
+   * @param root pointer to the root node of the tree for score calculation.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param weights Weights of all the labels
+   * @param validData Validation dataset.
+   * @param validLabels labels for validation points.
+   * @param bestScore best score of pruning on validation set.
+   */
+  template<typename MatType, typename LabelsType, typename WeightsType, bool UseWeights>
   void Prune(DecisionTree* root,
+             LabelsType& labels,
+             const size_t numClasses,
+             WeightsType&& weights,
              MatType& validData,
              LabelsType& validLabels,
              double& bestScore);
-
+  /*
+   * Utility function for validating the score on the tree whose root is given.
+   *
+   * @param root pointer to the root node of the tree for score calculation.
+   * @param validData Validation dataset.
+   * @param validLabels labels for validation points.
+   */
   template<typename MatType, typename LabelsType>
   double ValidateScore(DecisionTree* root,
                        MatType& validData,
@@ -381,6 +402,12 @@ class DecisionTree :
    * probabilities.
    */
   arma::vec classProbabilities;
+
+  // this stores the starting point in the dataset that belongs to this node.
+  size_t beginIndex;
+
+  // this stores the count of the data points stored in this node.
+  size_t countInNode;
 
   //! Note that this class will also hold the members of the NumericSplit and
   //! CategoricalSplit AuxiliarySplitInfo classes, since it inherits from them.

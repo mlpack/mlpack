@@ -539,7 +539,8 @@ void DecisionTree<FitnessFunction,
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];
   children.clear();
-
+  beginIndex = begin;
+  countInNode = count;
   // Look through the list of dimensions and obtain the gain of the best split.
   // We'll cache the best numeric and categorical split auxiliary information in
   // numericAux and categoricalAux (and clear them later if we make no split),
@@ -703,7 +704,8 @@ void DecisionTree<FitnessFunction,
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];
   children.clear();
-
+  beginIndex = begin;
+  countInNode = count;
   // We won't be using these members, so reset them.
   CategoricalAuxiliarySplitInfo::operator=(CategoricalAuxiliarySplitInfo());
 
@@ -1056,13 +1058,16 @@ template<typename FitnessFunction,
   typename DimensionSelectionType,
   typename ElemType,
   bool NoRecursion>
-template<typename MatType, typename LabelsType>
+template<typename MatType, typename LabelsType, typename WeightsType, bool UseWeights>
 void DecisionTree<FitnessFunction,
   NumericSplitType,
   CategoricalSplitType,
   DimensionSelectionType,
   ElemType,
   NoRecursion>::Prune(DecisionTree* root,
+                      LabelsType& labels,
+                      const size_t numClasses,
+                      WeightsType&& weights,
                       MatType& validData,
                       LabelsType& validLabels,
                       double& bestScore)
@@ -1077,10 +1082,16 @@ void DecisionTree<FitnessFunction,
           dimensionTypeOrMajorityClass;
       arma::vec classProbabilitiesbacktrack = classProbabilities;
 
+      // Calculate class probabilities of present node because its child is
+      // a leaf.
+      CalculateClassProbabilities<UseWeights>(
+        labels.subvec(beginIndex, beginIndex + countInNode - 1),
+        numClasses,
+        UseWeights ? weights.subvec(beginIndex, beginIndex + countInNode - 1)
+                   : weights);
+
       // Pruning the node's child and making the present node as leaf.
       children.clear();
-      dimensionTypeOrMajorityClass = node->dimensionTypeOrMajorityClass;
-      classProbabilities = node->classProbabilities;
       double newScore = ValidateScore(root, validData, validLabels);
 
       // Pruning the tree if the pruned tree gives better accuracy.
@@ -1099,7 +1110,8 @@ void DecisionTree<FitnessFunction,
     }
     else
     {
-      node->Prune(root, validData, validLabels, bestScore);
+      node->Prune(root, labels, numClasses, weights, validData, validLabels,
+        bestScore);
     }
   }
 }
