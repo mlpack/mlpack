@@ -1,6 +1,6 @@
 /*!
 @file ann.txt
-@author Marcus Edel (kurg.org)
+@author Marcus Edel (https://kurg.org)
 @brief Tutorial for how to use the neural network code in mlpack.
 
 @page anntutorial Neural Network tutorial

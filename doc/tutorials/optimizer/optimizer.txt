@@ -31,7 +31,7 @@ mlpack::optimization::AdamType "Nadam" - \ref mlpack::optimization::CNE "CNE" -
  "SPALeRASGD" - \ref mlpack::optimization::SVRGType "SVRG" - \ref
  mlpack::optimization::SVRGType "SVRG (Barzilai-Borwein)" - \ref
  mlpack::optimization::SARAHType "SARAH" - \ref mlpack::optimization::SARAHType
- "SARAH+" - \ref mlpack::optimization::KatyushaType "Katyusha" \ref
+ "SARAH+" - \ref mlpack::optimization::KatyushaType "Katyusha" - \ref
  mlpack::optimization::CMAES "CMAES"
 
 @subsection function_type_api_tut FunctionType API
