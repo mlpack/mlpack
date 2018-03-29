@@ -282,6 +282,7 @@ BOOST_AUTO_TEST_CASE(CFMinResidueTest)
   // Remove the influence of max_iterations.
   SetInputParam("max_iterations", int(1e4));
 
+  // The execution of CF algorithm depends on initial random seed.
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
@@ -297,6 +298,7 @@ BOOST_AUTO_TEST_CASE(CFMinResidueTest)
   // Remove the influence of max_iterations.
   SetInputParam("max_iterations", int(1e4));
 
+  // The execution of CF algorithm depends on initial random seed.
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
@@ -323,6 +325,7 @@ BOOST_AUTO_TEST_CASE(CFIterationOnlyTerminationTest)
   SetInputParam("max_iterations", int(100));
   SetInputParam("min_residue", double(1e9));
 
+  // The execution of CF algorithm depends on initial random seed.
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
@@ -337,6 +340,7 @@ BOOST_AUTO_TEST_CASE(CFIterationOnlyTerminationTest)
   SetInputParam("max_iterations", int(100));
   SetInputParam("min_residue", double(1e9));
 
+  // The execution of CF algorithm depends on initial random seed.
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
@@ -362,6 +366,7 @@ BOOST_AUTO_TEST_CASE(CFMaxIterationsTest)
   SetInputParam("training", dataset);
   SetInputParam("iteration_only_termination", true);
 
+  // The execution of CF algorithm depends on initial random seed.
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
@@ -376,6 +381,7 @@ BOOST_AUTO_TEST_CASE(CFMaxIterationsTest)
   SetInputParam("training", std::move(dataset));
   SetInputParam("iteration_only_termination", true);
 
+  // The execution of CF algorithm depends on initial random seed.
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
@@ -403,6 +409,7 @@ BOOST_AUTO_TEST_CASE(CFNeighborhoodTest)
   SetInputParam("max_iterations", int(10));
   SetInputParam("query", query);
 
+  // The execution of CF algorithm depends on initial random seed.
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
@@ -416,6 +423,7 @@ BOOST_AUTO_TEST_CASE(CFNeighborhoodTest)
   SetInputParam("max_iterations", int(10));
   SetInputParam("query", std::move(query));
 
+  // The execution of CF algorithm depends on initial random seed.
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
