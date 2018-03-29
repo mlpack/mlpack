@@ -246,7 +246,7 @@ static void mlpackMain()
         Skewness(feature, fStd, fMean, population),
         Kurtosis(feature, fStd, fMean, population),
         StandardError(feature.n_elem, fStd)
-    });
+    }).t();
   };
 
   // If the user specified dimension, describe statistics of the given

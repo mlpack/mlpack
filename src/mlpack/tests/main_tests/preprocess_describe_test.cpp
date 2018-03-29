@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(PreprocessDescribePopulationSampleTest)
   bool equal = true;
   for (size_t i=0; i < sampleOutput.n_elem; i++)
   {
-    if (sampleOutput[i] != populationOutput(i))
+    if (sampleOutput[i] != populationOutput[i])
     {
       equal = false;
       break;
