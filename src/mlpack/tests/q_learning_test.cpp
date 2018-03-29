@@ -203,41 +203,47 @@ BOOST_AUTO_TEST_CASE(AcrobatWithDQN)
   arma::running_stat<double> averageReturn;
   size_t episodes = 0;
   bool converged = true;
-  while (true)
+  //! Checking Convergence for 50 different trials
+  for (int i=0; i<50; i++)
   {
-    double episodeReturn = agent.Episode();
-    averageReturn(episodeReturn);
-    episodes += 1;
-
-    if (episodes > 1000)
+    while (true)
     {
-      Log::Debug << "Acrobat with DQN failed." << std::endl;
-      converged = false;
-      break;
-    }
+      double episodeReturn = agent.Episode();
+      averageReturn(episodeReturn);
+      episodes += 1;
 
-    /**
-     *
-     * I am using a thresold of -350.0 . While testing it my previous code 
-     * on Q learning https://github.com/luffy1996/rl-using-mlpack/blob/master/qlearning.cpp
-     * I witnessed that -350.0 is average return after 80 episodes.
-     * https://drive.google.com/open?id=1QzZP5egUWhcSJr_byceihU8rIF5sSqdU
-     * Hence I am using -350.0 to test convergence.
-     * 
-     */
-    Log::Debug << "Average return: " << averageReturn.mean()
-        << " Episode return: " << episodeReturn << std::endl;
-    if (averageReturn.mean() > -350.00)
-    {
-      agent.Deterministic() = true;
-      arma::running_stat<double> testReturn;
-      for (size_t i = 0; i < 20; ++i)
-        testReturn(agent.Episode());
+      if (episodes > 1000)
+      {
+        Log::Debug << "Acrobat with DQN failed." << std::endl;
+        converged = false;
+        break;
+      }
 
-      Log::Debug << "Average return in deterministic test: "
-          << testReturn.mean() << std::endl;
-      break;
+      /**
+       *
+       * I am using a thresold of -350.0 . While testing it my previous code 
+       * on Q learning https://github.com/luffy1996/rl-using-mlpack/blob/master/qlearning.cpp
+       * I witnessed that -350.0 is average return after 80 episodes.
+       * https://drive.google.com/open?id=1QzZP5egUWhcSJr_byceihU8rIF5sSqdU
+       * Hence I am using -350.0 to test convergence.
+       * 
+       */
+      Log::Debug << "Average return: " << averageReturn.mean()
+          << " Episode return: " << episodeReturn << std::endl;
+      if (averageReturn.mean() > -350.00)
+      {
+        agent.Deterministic() = true;
+        arma::running_stat<double> testReturn;
+        for (size_t i = 0; i < 20; ++i)
+          testReturn(agent.Episode());
+
+        Log::Debug << "Average return in deterministic test: "
+            << testReturn.mean() << std::endl;
+        break;
+      }
     }
+    if (converged==false)
+      break;
   }
   BOOST_REQUIRE(converged);
 }
