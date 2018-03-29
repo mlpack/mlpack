@@ -72,6 +72,7 @@ For Python bindings, the following packages are required:
  - cython >= 0.24
  - numpy
  - pandas >= 0.15.0
+ - pytest-runner
 
 In Ubuntu and Debian, you can get all of these dependencies through apt:
 
