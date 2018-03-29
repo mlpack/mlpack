@@ -24,11 +24,15 @@ most standard machine learning texts!
 Major implications of this are for linear algebra.  For instance, the covariance
 of a matrix is typically
 
-@f$ C = X^T X @f$
+@f[
+C = X^T X
+@f]
 
 but for a column-wise matrix, it is
 
-@f$ C = X X^T @f$
+@f[
+C = X X^T
+@f]
 
 and this is very important to keep in mind!  If your mlpack code is not working,
 this may be a factor in why.
@@ -63,7 +67,8 @@ $ cat data.csv
 @endcode
 
 is actually loaded with 5 rows and 13 columns, not 13 rows and 5 columns like
-the CSV is written.
+the CSV is written.  More information on mlpack's loading functionality can be
+found in \ref formatdoc.
 
 This is important to remember!
 

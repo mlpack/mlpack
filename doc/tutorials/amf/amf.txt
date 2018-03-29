@@ -2,9 +2,9 @@
 
 @file amf.txt
 @author Sumedh Ghaisas
-@brief Tutorial for how to use the AMF class.
+@brief Tutorial for how to use the AMF class
 
-@page amftutorial Alternating Matrix Factorization tutorial.
+@page amftutorial Alternating Matrix Factorization tutorial
 
 @section intro_amftut Introduction
 
@@ -60,51 +60,57 @@ which returns the status of convergence.
 bool IsConverged(arma::mat& W, arma::mat& H)
 @endcode
 
-list of all the termination policies
+Below is a list of all the termination policies that mlpack contains.
 
  - \ref mlpack::amf::SimpleResidueTermination
  - \ref mlpack::amf::SimpleToleranceTermination
  - \ref mlpack::amf::ValidationRMSETermination
 
-In SimpleResidueTermination, termination decision depends on two factors, value
+In \c SimpleResidueTermination, termination decision depends on two factors, value
 of residue and number of iteration. If the current value of residue drops below
 the threshold or the number of iterations goes beyond the threshold, positive
 termination signal is passed to AMF.
 
-In SimpleToleranceTermination, termination criterion is met when increase in
-residue value drops below the given tolerance. To accommodate spikes, certain
+In \c SimpleToleranceTermination, termination criterion is met when the increase
+in residue value drops below the given tolerance. To accommodate spikes, certain
 number of successive residue drops are accepted. Secondary termination criterion
 terminates algorithm when iteration count goes beyond the threshold.
 
-ValidationRMSETermination divids the data into 2 sets, training set and
+\c ValidationRMSETermination divides the data into 2 sets, training set and
 validation set. Entries of validation set are nullifed in the input matrix.
 Termination criterion is met when increase in validation set RMSe value drops
 below the given tolerance. To accommodate spikes certain number of successive
 validation RMSE drops are accepted. This upper imit on successive drops can be
-adjusted with reverseStepCount. Secondary termination criterion terminates
-algorithm when iteration count goes above the threshold. Though this termination
-policy is better measure of convergence than the above 2 termination policies,
-it may cause a overhead in performance.
+adjusted with \c reverseStepCount. A secondary termination criterion terminates
+the algorithm when the iteration count goes above the threshold. Though this
+termination policy is better measure of convergence than the above 2 termination
+policies, it may cause a decrease in performance since it is computationally
+expensive.
 
-On the other hand \ref mlpack::amf::CompleteIncrementalTermination
+On the other hand, \ref mlpack::amf::CompleteIncrementalTermination
 "CompleteIncrementalTermination" and \ref mlpack::amf::IncompleteIncrementalTermination
-are just wrapper classes for other termination policies. These policies are used
-when AMF is applied with \ref mlpack::amf::SVDCompleteIncrementalLearning
-"SVDCompleteIncrementalLearning" and \ref mlpack::amf::SVDIncompleteIncrementalLearning
-"SVDIncompleteIncrementalLearning" respectively.
+"IncompleteIncrementalTermination" are just wrapper classes for other
+termination policies. These policies are used when AMF is applied with
+\ref mlpack::amf::SVDCompleteIncrementalLearning
+"SVDCompleteIncrementalLearning" and
+\ref mlpack::amf::SVDIncompleteIncrementalLearning
+"SVDIncompleteIncrementalLearning", respectively.
 
 @subsection init_rule_amftut Using different initialization policies
 
-The AMF class comes with 2 initialization policies
+mlpack currently has 2 initialization policies implemented for AMF:
+
  - \ref mlpack::amf::RandomInitialization "RandomInitialization"
  - \ref mlpack::amf::RandomAcolInitialization "RandomAcolInitialization"
 
-RandomInitialization initializes matrices W and H with random uniform distribution
-while RandomAcolInitialization initializes the W matrix by averaging p randomly
-chosen columns of V.  In case of RandomAcolInitialization, p is a template parameter.
+\c RandomInitialization initializes matrices W and H with random uniform
+distribution while \c RandomAcolInitialization initializes the W matrix by
+averaging p randomly chosen columns of V.  In the case of
+\c RandomAcolInitialization, p is a template parameter.
 
 To implement their own initialization policy, users need to define the following
 function in their class.
+
 @code
 template<typename MatType>
 inline static void Initialize(const MatType& V,
@@ -115,7 +121,8 @@ inline static void Initialize(const MatType& V,
 
 @subsection update_rule_amftut Using different update rules
 
-AMF supports following update rules
+mlpack implements the following update rules for the AMF class:
+
  - \ref mlpack::amf::NMFALSUpdate "AMFALSUpdate"
  - \ref mlpack::amf::NMFMultiplicativeDistanceUpdate "NMFMultiplicativeDistanceUpdate"
  - \ref mlpack::amf::NMFMultiplicativeDivergenceUpdate "NMFMultiplicativeDivergenceUpdate"
@@ -123,26 +130,26 @@ AMF supports following update rules
  - \ref mlpack::amf::SVDIncompleteIncrementalLearning "SVDIncompleteIncrementalLearning"
  - \ref mlpack::amf::SVDCompleteIncrementalLearning "SVDCompleteIncrementalLearning"
 
-Non-Negative Matrix factorization can be achieved with NMFALSUpdate,
-NMFMultiplicativeDivergenceUpdate or NMFMultiplicativeDivergenceUpdate.
-NMFALSUpdate implements simple Alternating Least Square optimization while
-the other rules implement algorithms given in paper 'Algorithms for Non-negative
-Matrix Factorization'.
+Non-Negative Matrix factorization can be achieved with \c NMFALSUpdate,
+\c NMFMultiplicativeDivergenceUpdate or \c NMFMultiplicativeDivergenceUpdate.
+\c NMFALSUpdate implements a simple Alternating Least Squares optimization while
+the other rules implement algorithms given in the paper 'Algorithms for
+Non-negative Matrix Factorization'.
 
-The remaining update rules perform Singular Value Decomposition of matrix V.
-This SVD factorization is optimized for the use by Collaborative Filtering. This
-use of SVD factorizers for Collaborative Filtering is described in the paper
-'A Guide to singular Value Decomposition' by Chih-Chao Ma. For further details
-about the algorithms refer to the respective class documentation.
+The remaining update rules perform the singular value decomposition of the matrix V.
+This SVD factorization is optimized for use by mlpack's collaborative filtering
+code (\ref cftutorial). This use of SVD factorizers for collaborative filtering
+is described in the paper 'A Guide to Singular Value Decomposition for
+Collaborative Filtering' by Chih-Chao Ma. For further details about the
+algorithms refer to the respective class documentation.
 
 @subsection nmf_amftut Using Non-Negative Matrix Factorization with AMF
 
 The use of AMF for Non-Negative Matrix factorization is simple. The AMF module
 defines \ref mlpack::amf::NMFALSFactorizer "NMFALSFactorizer" which can be used
-directly without knowing the internal structure of AMF. For example -
+directly without knowing the internal structure of AMF. For example:
 
 @code
-#include <iostream>
 #include <mlpack/core.hpp>
 #include <mlpack/methods/amf/amf.hpp>
 
@@ -156,28 +163,26 @@ int main()
   mat W, H;
   mat V = randu<mat>(100, 100);
   double residue = nmf.Apply(V, W, H);
-  return 1;
 }
 @endcode
 
-NMFALSFactorizer uses SimpleResidueTermination which is most preferred with
-Non-Negative Matrix factorizers. Initialization of W and H in NMFALSFactorizer
-is random. The Apply function returns the residue obtained by comparing the
-constructed matrix W * H with the original matrix V.
+\c NMFALSFactorizer uses \c SimpleResidueTermination, which is most preferred
+with Non-Negative Matrix factorizers.  The initialization of W and H in
+\c NMFALSFactorizer is random. The \c Apply() function returns the residue
+obtained by comparing the constructed matrix W * H with the original matrix V.
 
 @subsection svd_amftut Using Singular Value Decomposition with AMF
 
-AMF implementation supports following SVD factorizers
- - \ref mlpack::amf::SVDBatchFactorizer "SVDBatchFactorizer"
- - \ref mlpack::amf::SparseSVDBatchFactorizer "SparseSVDBatchFactorizer"
- - \ref mlpack::amf::SVDIncompleteIncrementalFactorizer "SVDIncompleteIncrementalFactorizer"
- - \ref mlpack::amf::SparseSVDIncompleteIncrementalFactorizer "SparseSVDIncompleteIncrementalFactorizer"
- - \ref mlpack::amf::SVDCompleteIncrementalFactorizer "SVDCompleteIncrementalFactorizer"
- - \ref mlpack::amf::SparseSVDCompleteIncrementalFactorizer "SparseSVDCompleteIncrementalFactorizer"
+mlpack has the following SVD factorizers implemented for AMF:
 
-The sparse version of factorizers can be used with Armadillo's sparse matrix
-support. These  specialized implementations boost runtime performance when the
-matrix to be factorized is relatively sparse.
+ - \ref mlpack::amf::SVDBatchFactorizer "SVDBatchFactorizer"
+ - \ref mlpack::amf::SVDIncompleteIncrementalFactorizer "SVDIncompleteIncrementalFactorizer"
+ - \ref mlpack::amf::SVDCompleteIncrementalFactorizer "SVDCompleteIncrementalFactorizer"
+
+Each of these factorizers takes a template parameter \c MatType, which specifies
+the type of the matrix V (dense or sparse---these have types \c arma::mat and
+\c arma::sp_mat, respectively).  When the matrix to be factorized is relatively
+sparse, specifying \c MatType \c = \c arma::sp_mat can provide a runtime boost.
 
 @code
 #include <mlpack/core.hpp>
@@ -192,7 +197,7 @@ int main()
   sp_mat V = randu<sp_mat>(100,100);
   mat W, H;
 
-  SparseSVDBatchFactorizer svd;
+  SVDBatchFactorizer<sp_mat> svd;
   double residue = svd.Apply(V, W, H);
 }
 @endcode

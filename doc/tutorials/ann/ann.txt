@@ -13,9 +13,9 @@ converging in local minima, choosing the best model structure, choosing the best
 optimizers, and so forth. mlpack implements many of these building blocks,
 making it very easy to create different neural networks in a modular way.
 
-mlpack currently implements two easy-to-use forms of neural networks: \c Feed-
-Forward \c Networks (this includes convolutional neural networks) and \c
-Recurrent \c Neural \c Networks.
+mlpack currently implements two easy-to-use forms of neural networks:
+\b Feed-Forward \b Networks (this includes convolutional neural networks) and
+\b Recurrent \b Neural \b Networks.
 
 @section toc_anntut Table of Contents
 
@@ -51,7 +51,7 @@ Below is some basic guidance on what should be used. Note that the question of
 guidance below is just that---guidance---and may not be right for a particular
 problem.
 
- - \c Feed-forward Networks allow signals or inputs to travel one way only.
+ - \b Feed-forward \b Networks allow signals or inputs to travel one way only.
    There is no feedback within the network; for instance, the output of any
    layer does only affect the upcoming layer. That makes Feed-Forward Networks
    straightforward and very effective. They are extensively used in pattern
@@ -59,7 +59,7 @@ problem.
    set of input and one or more output variables.
 
 
- - \c Recurrent Networks allow signals or inputs to travel in both directions by
+ - \b Recurrent \b Networks allow signals or inputs to travel in both directions by
    introducing loops in the network. Computations derived from earlier inputs are
    fed back into the network, which gives the recurrent network some kind of
    memory. RNNs are currently being used for all kinds of sequential tasks; for

@@ -657,8 +657,8 @@ and must accept two template parameters of its own:
 
 The \c LloydStepType policy also mandates three functions:
 
- - a constructor: \c "LloydStepType(const MatType& dataset, MetricType&
-   metric);"
+ - a constructor: <tt>LloydStepType(const MatType& dataset, MetricType&
+   metric);</tt>
  - an \c Iterate() function:
 
 @code
