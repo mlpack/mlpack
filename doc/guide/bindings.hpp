@@ -816,8 +816,8 @@ the CLI::GetParam<T>() source to see how this might be used.
 The CLI singleton expects the following functions to be defined in the function
 map for each type:
 
- - @c "GetParam" -- return a pointer to the parameter in @c output.
- - @c "GetPrintableParam" -- return a pointer to a string description of the
+ - @c GetParam -- return a pointer to the parameter in @c output.
+ - @c GetPrintableParam -- return a pointer to a string description of the
        parameter in @c output.
 
 If these functions are properly defined, then the CLI module will work
@@ -836,11 +836,11 @@ The code for the command-line bindings is found in @c src/mlpack/bindings/cli.
 
 @subsection bindings_cli_mlpack_main mlpackMain() definition
 
-Any command-line program must be compiled with the @c MLPACK_BINDING_TYPE macro
-set to the value @c cli.  This is handled by the CMake macro
+Any command-line program must be compiled with the @c BINDING_TYPE macro
+set to the value @c BINDING_TYPE_CLI.  This is handled by the CMake macro
 @c add_cli_executable().
 
-When @c MLPACK_BINDING_TYPE is set to @c cli, the following is set in
+When @c BINDING_TYPE is set to @c BINDING_TYPE_CLI, the following is set in
 @c src/mlpack/core/util/mlpack_main.hpp, which must be included by every mlpack
 binding:
 
@@ -1064,9 +1064,10 @@ guidance for how to make new bindings that will be applicable to each language.
 In general, the first thing to handle will be how matrices are passed back and
 forth between the target language.  Typically this might mean getting the memory
 address of an input matrix and wrapping an @c arma::mat object around that
-memory address.  This can be handled in the @c "GetParam" function that is part
+memory address.  This can be handled in the @c GetParam() function that is part
 of the CLI singleton function map; see @c get_param.hpp for both the CLI and
-Python bindings for an example.
+Python bindings for an example (in @c src/mlpack/bindings/cli/ and
+@c src/mlpack/bindings/python/).
 
 Serialization of models is also a tricky consideration; in some languages you
 will be able to pass a pointer to the model itself.  This is generally

@@ -345,7 +345,7 @@ you would set the parameters for a LinearRegression instance.
 @code
 arma::vec parameters; // Your model.
 
-LinearRegression lr(); // Create a new LinearRegression instance or reuse one.
+LinearRegression lr; // Create a new LinearRegression instance or reuse one.
 lr.Parameters() = parameters; // Set the model.
 @endcode
 
