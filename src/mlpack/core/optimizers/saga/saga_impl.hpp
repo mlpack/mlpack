@@ -125,19 +125,10 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
       /* incrementing done manually */)
     {
       b = math::RandInt(0, numBatches); // Select a random batch
+
       // Find the effective batch size (the last batch may be smaller).
       currentFunction = b * batchSize;
       effectiveBatchSize = std::min(batchSize, numFunctions - currentFunction);
-
-      // Is this iteration the start of a sequence?
-      if ((currentFunction % numFunctions) == 0)
-      {
-        currentFunction = 0;
-
-        // Determine order of visitation.
-        if (shuffle)
-          function.Shuffle();
-      }
 
       // Calculate the gradient of a random function.
       function.Gradient(iterate, currentFunction, gradient,
@@ -146,7 +137,7 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
 
       // Use the update policy to take a step.
       updatePolicy.Update(iterate, avgGradient, gradient, gradient0,
-                          stepSize);
+                          stepSize, numBatches);
       // Update the average gradient.
       avgGradient += (gradient-tableOfGradients.slice(b))/numBatches;
 
@@ -155,6 +146,10 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
 
       f += effectiveBatchSize;
     }
+
+    // Determine order of visitation.
+    if (shuffle)
+      function.Shuffle();
 
     // Update the learning rate if requested by the user.
     decayPolicy.Update(iterate, iterate0, gradient, avgGradient, numBatches,

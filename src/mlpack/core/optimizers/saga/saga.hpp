@@ -18,6 +18,7 @@
 #include <mlpack/core/math/random.hpp>
 
 #include "saga_update.hpp"
+#include "sag_update.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -221,6 +222,7 @@ class SAGAType
 * SAGA: A Fast Incremental Gradient Method.
 */
 using SAGA = SAGAType<SAGAUpdate, NoDecay>;
+using SAG = SAGAType<SAGUpdate, NoDecay>;
 
 } // namespace optimization
 } // namespace mlpack

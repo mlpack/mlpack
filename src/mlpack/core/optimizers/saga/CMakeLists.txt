@@ -2,6 +2,7 @@ set(SOURCES
   saga.hpp
   saga_impl.hpp
   saga_update.hpp
+  sag_update.hpp
 )
 
 set(DIR_SRCS)

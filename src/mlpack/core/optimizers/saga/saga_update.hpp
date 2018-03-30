@@ -19,7 +19,7 @@ namespace optimization {
 
 /**
  * Vanilla update policy for SAGA.
- * The following update scheme is used to update SGD in every iteration:
+ * The following update scheme is used to update SAGA in every iteration:
  */
 class SAGAUpdate
 {
@@ -43,14 +43,15 @@ class SAGAUpdate
    * @param avgGradient The computed average gradient of all functions.
    * @param gradient The current gradient matrix at time t.
    * @param gradient0 The old gradient matrix at time t - 1.
-   * @param batchSize Batch size to be used for the given iteration.
    * @param stepSize Step size to be used for the given iteration.
+   * @param batches Total number of batches present.
    */
   void Update(arma::mat& iterate,
               const arma::mat& avgGradient,
               const arma::mat& gradient,
               const arma::mat& gradient0,
-              const double stepSize)
+              const double stepSize,
+              const size_t batches)
   {
     // Perform the vanilla SAGA update.
     iterate -= stepSize * (avgGradient + (gradient - gradient0));
