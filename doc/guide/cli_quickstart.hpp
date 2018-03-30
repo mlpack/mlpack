@@ -108,28 +108,17 @@ Lots of other commands are available with different functionality.  Below is a
 list of all the mlpack functionality offered through the command-line, split
 into some categories.
 
- - Classification techniques: @c mlpack_adaboost, @c mlpack_decision_stump, @c
-   mlpack_decision_tree, @c mlpack_hmm_train, @c mlpack_hmm_generate, @c
-mlpack_hmm_loglik, @c mlpack_hmm_viterbi, @c mlpack_hoeffding_tree, @c
-mlpack_logistic_regression, @c mlpack_nbc, @c mlpack_perceptron, @c
-mlpack_random_forest, @c mlpack_softmax_regression, @c mlpack_cf
+ - Classification techniques: <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_adaboost.html">mlpack_adaboost</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_decision_stump.html">mlpack_decision_stump</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_decision_tree.html">mlpack_decision_tree</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_hmm_train.html">mlpack_hmm_train</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_hmm_generate.html">mlpack_hmm_generate</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_hmm_loglik.html">mlpack_hmm_loglik</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_hmm_viterbi.html">mlpack_hmm_viterbi</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_hoeffding_tree.html">mlpack_hoeffding_tree</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_logistic_regression.html">mlpack_logistic_regression</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_nbc.html">mlpack_nbc</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_perceptron.html">mlpack_perceptron</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_random_forest.html">mlpack_random_forest</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_softmax_regression.html">mlpack_softmax_regression</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_cf.html">mlpack_cf</a></tt>
 
- - Distance-based problems: @c mlpack_approx_kfn, @c mlpack_emst, @c
-   mlpack_fastmks, @c mlpack_kfn, @c mlpack_knn, @c mlpack_krann, @c mlpack_lsh,
-@c mlpack_det, @c mlpack_range_search
+ - Distance-based problems: <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_approx_kfn.html">mlpack_approx_kfn</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_emst.html">mlpack_emst</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_fastmks.html">mlpack_fastmks</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_kfn.html">mlpack_kfn</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_knn.html">mlpack_knn</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_krann.html">mlpack_krann</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_lsh.html">mlpack_lsh</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_det.html">mlpack_det</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_range_search.html">mlpack_range_search</a></tt>
 
- - Clustering: @c mlpack_kmeans, @c mlpack_mean_shift, @c mlpack_gmm_train, @c
-   mlpack_gmm_generate, @c mlpack_gmm_probability, @c mlpack_dbscan
+ - Clustering: <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_kmeans.html">mlpack_kmeans</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_mean_shift.html">mlpack_mean_shift</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_gmm_train.html">mlpack_gmm_train</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_gmm_generate.html">mlpack_gmm_generate</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_gmm_probability.html">mlpack_gmm_probability</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_dbscan.html">mlpack_dbscan</a></tt>
 
- - Transformations: @c mlpack_pca, @c mlpack_radical, @c
-   mlpack_local_coordinate_coding, @c mlpack_sparse_coding, @c mlpack_nca, @c
-mlpack_kernel_pca
+ - Transformations: <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_pca.html">mlpack_pca</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_radical.html">mlpack_radical</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_local_coordinate_coding.html">mlpack_local_coordinate_coding</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_sparse_coding.html">mlpack_sparse_coding</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_nca.html">mlpack_nca</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_kernel_pca.html">mlpack_kernel_pca</a></tt>
 
- - Regression: @c mlpack_linear_regression, @c mlpack_lars
+ - Regression: <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_linear_regression.html">mlpack_linear_regression</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_lars.html">mlpack_lars</a></tt>
 
- - Preprocessing/other: @c mlpack_preprocess_binarize, @c
-   mlpack_preprocess_split, @c mlpack_preprocess_describe, @c
-   mlpack_preprocess_imputer, @c mlpack_nmf
+ - Preprocessing/other: <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_preprocess_binarize.html">mlpack_preprocess_binarize</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_preprocess_split.html">mlpack_preprocess_split</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_preprocess_describe.html">mlpack_preprocess_describe</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_preprocess_imputer.html">mlpack_preprocess_imputer</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/man/mlpack_nmf.html">mlpack_nmf</a></tt>
 
 For more information on what mlpack does, see http://www.mlpack.org/about.html.
 Next, let's go through another example for providing movie recommendations with
@@ -211,7 +200,7 @@ easily plug into a data science production workflow for the command line.  A
 great thing to do next would be to look at more documentation for the mlpack
 command-line programs:
 
- - <a href="http://www.mlpack.org/docs/mlpack-2.2.5/man.html">mlpack
+ - <a href="http://www.mlpack.org/docs/mlpack-git/man.html">mlpack
    command-line program documentation</a>
 
 Also, mlpack is much more flexible from C++ and allows much greater
@@ -219,13 +208,13 @@ functionality.  So, more complicated tasks are possible if you are willing to
 write C++.  To get started learning about mlpack in C++, the following resources
 might be helpful:
 
- - <a href="http://www.mlpack.org/docs/mlpack-2.2.5/doxygen/tutorials.html">mlpack
+ - <a href="http://www.mlpack.org/docs/mlpack-git/doxygen/tutorials.html">mlpack
    C++ tutorials</a>
- - <a href="http://www.mlpack.org/docs/mlpack-2.2.5/doxygen/build.html">mlpack
+ - <a href="http://www.mlpack.org/docs/mlpack-git/doxygen/build.html">mlpack
    build and installation guide</a>
- - <a href="http://www.mlpack.org/docs/mlpack-2.2.5/doxygen/sample.html">Simple
+ - <a href="http://www.mlpack.org/docs/mlpack-git/doxygen/sample.html">Simple
    sample C++ mlpack programs</a>
- - <a href="http://www.mlpack.org/docs/mlpack-2.2.5/doxygen/index.html">mlpack
+ - <a href="http://www.mlpack.org/docs/mlpack-git/doxygen/index.html">mlpack
    Doxygen documentation homepage</a>
 
  */
