@@ -17,15 +17,15 @@ This quickstart guide is also available for @ref cli_quickstart "the command-lin
 
 Installing the mlpack bindings for Python is straightforward.  First we have to
 install the dependencies (the code below is for Ubuntu), then we can build and
-install mlpack.
+install mlpack.  You can copy-paste the commands into your shell.
 
-@code
-$ sudo apt-get install libboost-all-dev g++ cmake libarmadillo-dev python-pip wget
-$ sudo pip install cython setuptools distutils numpy pandas
-$ wget http://www.mlpack.org/files/mlpack-3.0.0.tar.gz
-$ tar -xvzpf mlpack-3.0.0.tar.gz
-$ mkdir -p mlpack-3.0.0/build/ && cd mlpack-3.0.0/build/
-$ cmake ../ && make -j4 && sudo make install
+@code{.sh}
+sudo apt-get install libboost-all-dev g++ cmake libarmadillo-dev python-pip wget
+sudo pip install cython setuptools distutils numpy pandas
+wget http://www.mlpack.org/files/mlpack-3.0.0.tar.gz
+tar -xvzpf mlpack-3.0.0.tar.gz
+mkdir -p mlpack-3.0.0/build/ && cd mlpack-3.0.0/build/
+cmake ../ && make -j4 && sudo make install
 @endcode
 
 @section python_quickstart_example Simple mlpack quickstart example
@@ -38,7 +38,7 @@ print the accuracy of the random forest on the test dataset.
 
 You can copy-paste this code directly into Python to run it.
 
-@code
+@code{.py}
 import mlpack
 import pandas as pd
 import numpy as np
@@ -113,13 +113,13 @@ mlpack.
 @section python_quickstart_movierecs Using mlpack for movie recommendations
 
 In this example, we'll train a collaborative filtering model using mlpack's
-@c cf() method.  We'll train this on the MovieLens dataset from
+<tt><a href="http://www.mlpack.org/docs/mlpack-git/python/cf.html">cf()</a></tt> method.  We'll train this on the MovieLens dataset from
 https://grouplens.org/datasets/movielens/, and then we'll use the model that we
 train to give recommendations.
 
 You can copy-paste this code directly into Python to run it.
 
-@code
+@code{.py}
 import mlpack
 import pandas as pd
 import numpy as np
@@ -159,7 +159,7 @@ for i in range(10):
 Here is some example output, showing that user 1 seems to have good taste in
 movies:
 
-@code
+@code{.unparsed}
 Recommendations for user 1:
   0: Casablanca (1942)
   1: Pan's Labyrinth (Laberinto del fauno, El) (2006)

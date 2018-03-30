@@ -19,21 +19,21 @@ package manager.
 
 For instance, for Ubuntu or Debian the command is simply
 
-@code
-$ sudo apt-get install mlpack-bin
+@code{.sh}
+sudo apt-get install mlpack-bin
 @endcode
 
 On Fedora or Red Hat:
 
-@code
-$ sudo dnf install mlpack
+@code{.sh}
+sudo dnf install mlpack
 @endcode
 
 If you use a different distribution, mlpack may be packaged under a different
 name.  And if it is not packaged, you can use a Docker image from Dockerhub:
 
-@code
-$ docker run -it mlpack/mlpack /bin/bash
+@code{.sh}
+docker run -it mlpack/mlpack /bin/bash
 @endcode
 
 This Docker image has mlpack already built and installed.
@@ -50,7 +50,7 @@ finally we'll print the accuracy of the random forest on the test dataset.
 
 You can copy-paste this code directly into your shell to run it.
 
-@code
+@code{.sh}
 # Get the dataset and unpack it.
 wget http://www.mlpack.org/datasets/covertype-small.data.csv.gz
 wget http://www.mlpack.org/datasets/covertype-small.labels.csv.gz
@@ -94,7 +94,7 @@ the test dataset (80%+).  The file @c predictions.csv could also be used by
 other tools; for instance, we can easily calculate the number of points that
 were predicted incorrectly:
 
-@code
+@code{.sh}
 $ diff -U 0 predictions.csv covertype-test.labels.csv | grep '^@@' | wc -l
 @endcode
 
@@ -144,7 +144,7 @@ train to give recommendations.
 
 You can copy-paste this code directly into the command line to run it.
 
-@code
+@code{.sh}
 wget http://www.mlpack.org/datasets/ml-20m/ratings-only.csv.gz
 wget http://www.mlpack.org/datasets/ml-20m/movies.csv.gz
 gunzip ratings-only.csv.gz
@@ -190,7 +190,7 @@ done
 Here is some example output, showing that user 1 seems to have good taste in
 movies:
 
-@code
+@code{.unparsed}
 Recommendations for user 1:
 Casablanca (1942)
 Pan's Labyrinth (Laberinto del fauno, El) (2006)
