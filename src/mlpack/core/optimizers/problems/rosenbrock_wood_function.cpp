@@ -58,7 +58,7 @@ void RosenbrockWoodFunction::Gradient(const arma::mat& coordinates,
 }
 
 void RosenbrockWoodFunction::Gradient(const arma::mat& coordinates,
-                                      arma::mat& gradient)
+                                      arma::mat& gradient) const
 {
   Gradient(coordinates, 0, gradient, 1);
 }

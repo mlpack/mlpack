@@ -78,6 +78,36 @@ void RequireAtLeastOnePassed(
     const std::string& customErrorMessage = "");
 
 /**
+ * Require that either none or all of the given parameters in the constraints
+ * set were passed to the CLI object; otherwise, issue a warning or fatal error,
+ * optionally with the given custom error message.
+ *
+ * This uses the correct binding type name for each parameter (i.e.
+ * '--parameter' for CLI bindings, 'parameter' for Python bindings).
+ *
+ * If you use a custom error message, be aware that the given output will be
+ * similar to, for example:
+ *
+ * @code
+ * Must pass none or all of '--codes_file (-c)', '--dictionary_file (-d)', and
+ * '--output_model_file (-M)'; <custom error message>!
+ * @endcode
+ *
+ * so when you write your custom error message, be sure that the sentence makes
+ * sense.  The custom error message should not have a capitalized first
+ * character and no ending punctuation (a '!' will be added by this function).
+ *
+ * @param constraints Set of parameters of which none or all should be passed.
+ * @param fatal If true, output goes to Log::Fatal instead of Log::Warn and an
+ *     exception is thrown.
+ * @param customErrorMessage Error message to append.
+ */
+void RequireNoneOrAllPassed(
+    const std::vector<std::string>& constraints,
+    const bool fatal = true,
+    const std::string& customErrorMessage = "");
+
+/**
  * Require that a given parameter is in a set of allowable parameters.  This is
  * probably most useful with T = std::string.  If fatal is true, then an
  * exception is thrown.  An error message is not optional and must be specified.

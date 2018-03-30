@@ -71,8 +71,24 @@ void PCADimensionalityReduction(
            "6 7 3 1 8");
 
   // Now run PCA to reduce the dimensionality.
-  PCAType<DecompositionPolicy> p(scaleData, decomposition);
-  const double varRetained = p.Apply(data, 2); // Reduce to 2 dimensions.
+  size_t trial = 0;
+  bool success = false;
+  double varRetained = 0.0;
+  while (trial < 3 && !success)
+  {
+    // In some cases the LU decomposition may fail.
+    try
+    {
+      PCAType<DecompositionPolicy> p(scaleData, decomposition);
+      varRetained = p.Apply(data, 2); // Reduce to 2 dimensions.
+      success = true;
+    }
+    catch (std::logic_error&) { }
+
+    ++trial;
+  }
+
+  BOOST_REQUIRE_EQUAL(success, true);
 
   // Compare with correct results.
   mat correct("-1.53781086 -3.51358020 -0.16139887 -1.87706634  7.08985628;"

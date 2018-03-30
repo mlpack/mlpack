@@ -367,7 +367,7 @@ static void mlpackMain()
   if (CLI::HasParam("input_model") && CLI::HasParam("tolerance"))
   {
     Log::Info << "Tolerance of existing model in '"
-        << CLI::GetPrintableParam<std::string>("input_model") << "' will be "
+        << CLI::GetPrintableParam<HMMModel*>("input_model") << "' will be "
         << "replaced with specified tolerance of " << tolerance << "." << endl;
   }
 
@@ -378,6 +378,9 @@ static void mlpackMain()
     RequireParamInSet<string>("type", { "discrete", "gaussian", "gmm" }, true,
         "unknown HMM type");
   }
+
+  RequireParamValue<double>("tolerance", [](double x) { return x >= 0; }, true,
+      "tolerance must be non-negative");
 
   // Load the input data.
   vector<mat> trainSeq;

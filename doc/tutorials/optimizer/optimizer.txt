@@ -31,7 +31,7 @@ mlpack::optimization::AdamType "Nadam" - \ref mlpack::optimization::CNE "CNE" -
  "SPALeRASGD" - \ref mlpack::optimization::SVRGType "SVRG" - \ref
  mlpack::optimization::SVRGType "SVRG (Barzilai-Borwein)" - \ref
  mlpack::optimization::SARAHType "SARAH" - \ref mlpack::optimization::SARAHType
- "SARAH+" - \ref mlpack::optimization::KatyushaType "Katyusha" \ref
+ "SARAH+" - \ref mlpack::optimization::KatyushaType "Katyusha" - \ref
  mlpack::optimization::CMAES "CMAES"
 
 @subsection function_type_api_tut FunctionType API
@@ -39,38 +39,197 @@ mlpack::optimization::AdamType "Nadam" - \ref mlpack::optimization::CNE "CNE" -
 In order to facilitate consistent implementations, we have defined a \c
 FunctionType API that describes all the methods that an objective function may
 implement. \c mlpack offers a few variations of this API to cover different
-function characteristics.
+function characteristics.  This leads to several different APIs for different
+function types:
 
-Any \c FunctionType requires the implementation of an \c Evaluate() method.
-The interface used for that can be one of the following two methods:
+ - @ref optimizer_functiontype "FunctionType": a normal, differentiable
+   objective function.
+ - @ref optimizer_decomposablefunctiontype "DecomposableFunctionType": a
+   differentiable objective function that can be decomposed into the sum of many
+   objective functions (for SGD-like optimizers).
+ - @ref optimizer_sparsefunctiontype "SparseFunctionType": a decomposable,
+   differentiable objective function with a sparse gradient.
+ - @ref optimizer_nondifferentiablefunctiontype "NonDifferentiableFunctionType":
+   a non-differentiable objective function that can only be evaluated.
+ - @ref optimizer_constrainedfunctiontype "ConstrainedFunctionType": an
+   objective function with constraints on the allowable inputs.
+ - @ref optimizer_nondifferentiabledecomposablefunctiontype
+   "NonDifferentiableDecomposableFunctionType": a decomposable
+   non-differentiable objective function that can only be evaluated.
+ - @ref optimizer_resolvablefunctiontype "ResolvableFunctionType": a
+   differentiable objective function where calculating the gradient with respect
+   to only one parameter is possible.
+
+Each of these types of objective functions require slightly different methods to
+be implemented.  In some cases, methods will be automatically deduced by the
+optimizers using template metaprogramming and this allows the user to not need
+to implement every method for a given type of objective function.  Each type
+described above is detailed in the following sections.
+
+@subsubsection optimizer_functiontype The FunctionType API
+
+A function satisfying the \c FunctionType API is a general differentiable
+objective function.  It must implement an \c Evaluate() and a \c Gradient()
+method.  The interface used for that can be the following two methods:
 
 @code
-// For non-separable objectives.
+// For non-separable objectives.  This should return the objective value for the
+// given parameters.
 double Evaluate(const arma::mat& parameters);
 
-// For separable objectives.
+// For non-separable differentiable objectives.  This should store the gradient
+// for the given parameters in the 'gradient' matrix.
+void Gradient(const arma::mat& parameters, arma::mat& gradient);
+@endcode
+
+However, there are some objective functions (like logistic regression) for which
+it is computationally convenient to calculate both the objective and the
+gradient at the same time.  Therefore, optionally, the following function can be
+implemented:
+
+@code
+// For non-separable differentiable objectives.  This should store the gradient
+// fro the given parameters in the 'gradient' matrix and return the objective
+// value.
+double EvaluateWithGradient(const arma::mat& parameters, arma::mat& gradient);
+@endcode
+
+It is not a problem to implement all three of these methods, but it is not
+obligatory to.  \c EvaluateWithGradient() will automatically be inferred if it
+is not written from the \c Evaluate() and \c Gradient() functions; similarly,
+the \c Evaluate() and \c Gradient() functions will be inferred from
+\c EvaluateWithGradient() if they are not available.  However, any automatically
+inferred method may be slightly slower.
+
+The following optimizers use the \c FunctionType API:
+
+ - @ref mlpack::optimization::LineSearch "LineSearch"
+ - @ref mlpack::optimization::FrankWolfe "FrankWolfe"
+ - @ref mlpack::optimization::GradientDescent "GradientDescent"
+ - @ref mlpack::optimization::L_BFGS "L-BFGS"
+
+@subsubsection optimizer_decomposablefunctiontype The DecomposableFunctionType API
+
+A function satisfying the \c DecomposableFunctionType API is a
+differentiable objective function that can be decomposed into a number of
+separable objective functions.  Examples of these types of objective functions
+include those that are a sum of loss on individual data points; so, common
+machine learning tasks like logistic regression or training a neural network can
+be expressed as optimizing a decomposable objective function.
+
+Any function implementing the \c DecomposableFunctionAPI must implement the
+following four methods:
+
+@code
+// For decomposable functions: return the number of parts the optimization
+// problem can be decomposed into.
+size_t NumFunctions();
+
+// For decomposable objectives.  This should calculate the partial objective
+// starting at the decomposable function indexed by 'start' and calculate
+// 'batchSize' partial objectives and return the sum.
 double Evaluate(const arma::mat& parameters,
                 const size_t start,
                 const size_t batchSize);
+
+// For separable differentiable objective functions.  This should calculate the
+// gradient starting at the decomposable function indexed by 'start' and
+// calculate 'batchSize' decomposable gradients and store the sum in the
+// 'gradient' matrix.
+void Gradient(const arma::mat& parameters,
+              const size_t start,
+              arma::mat& gradient,
+              const size_t batchSize);
+
+// Shuffle the ordering of the functions.
+void Shuffle();
 @endcode
 
-Both of these methods calculate the objective given the parameters matrix \c
-parameters. The second overload is for separable functions, and should calculate
-the partial objective starting at the separable function indexed by start and
-calculate \c batchSize partial objectives and return the sum. Functions
-implementing the first overload are used by optimizers like the \ref
-GradientDescent optimizer; functions implementing the second are used by SGD-
-like optimizers.
+Note that the decomposable objective functions should support batch
+computation---this can allow significant speedups.  The \c Shuffle() method
+shuffles the ordering of the functions.  For some optimizers, randomness is an
+important component, so it is important that it is possible to shuffle the
+ordering of the decomposable functions.
 
-In addition, any differentiable function must implement some \c Gradient()
-method.
+As with the regular \c FunctionType API, it is optional to implement an
+\c EvaluateWithGradient() method in place of, or in addition to, the
+\c Evaluate() and \c Gradient() methods.  The interface used for that should be
+the following:
 
 @code
-// For non-separable differentiable sparse and non-sparse functions.
-template<typename GradType>
-void Gradient(const arma::mat& parameters, GradType& gradient);
+// For decomposable objectives.  This should calculate the partial objective
+// starting at the decomposable function indexed by 'start' and calculate
+// 'batchSize' partial objectives and return the sum.  This should also
+// calculate the gradient starting at the decomposable function indexed by
+// 'start' and calculate 'batchSize' decomposable gradients and store the sum in
+// the 'gradient' matrix.
+double EvaluateWithGradient(const arma::mat& parameters,
+                            const size_t start,
+                            arma::mat& gradient,
+                            const size_t batchSize);
+@endcode
 
-// For separable differentiable sparse and non-sparse functions.
+The following mlpack optimizers require functions implementing the
+\c DecomposableFunctionType API:
+
+  - @ref mlpack::optimization::StandardSGD "StandardSGD"
+  - @ref mlpack::optimization::MomentumSGD "MomentumSGD"
+  - @ref mlpack::optimization::AdaDelta "AdaDelta"
+  - @ref mlpack::optimization::AdaGrad "AdaGrad"
+  - @ref mlpack::optimization::Adam "Adam"
+  - @ref mlpack::optimization::AdaMax "AdaMax"
+  - @ref mlpack::optimization::AMSGrad "AMSGrad"
+  - @ref mlpack::optimization::Nadam "Nadam"
+  - @ref mlpack::optimization::NadaMax "NadaMax"
+  - @ref mlpack::optimization::IQN "IQN"
+  - @ref mlpack::optimization::Katyusha "Katyusha"
+  - @ref mlpack::optimization::KatyushaProximal "KatyushaProximal"
+  - @ref mlpack::optimization::RMSProp "RMSProp"
+  - @ref mlpack::optimization::SARAH "SARAH"
+  - @ref mlpack::optimization::SARAH_Plus "SARAH+"
+  - @ref mlpack::optimization::SGDR "SGDR"
+  - @ref mlpack::optimization::SMORMS3 "SMORMS3"
+  - @ref mlpack::optimization::SPALeRASGD "SPALeRA SGD"
+  - @ref mlpack::optimization::SVRG "SVRG"
+  - @ref mlpack::optimization::SVRG_BB "SVRG-BB"
+
+@subsubsection optimizer_sparsefunctiontype The SparseFunctionType API
+
+A function satisfying the \c SparseFunctionType API is a decomposable
+differentiable objective function with the condition that a single individual
+gradient is sparse.  The API is slightly different but similar to the
+\c DecomposableFunctionType API; the following methods are necessary:
+
+@code
+// For decomposable functions: return the number of parts the optimization
+// problem can be decomposed into.
+size_t NumFunctions();
+
+// For decomposable objectives.  This should calculate the partial objective
+// starting at the decomposable function indexed by 'start' and calculate
+// 'batchSize' partial objectives and return the sum.
+double Evaluate(const arma::mat& parameters,
+                const size_t start,
+                const size_t batchSize);
+
+// For separable differentiable objective functions.  This should calculate the
+// gradient starting at the decomposable function indexed by 'start' and
+// calculate 'batchSize' decomposable gradients and store the sum in the
+// 'gradient' matrix, which is a sparse matrix.
+void Gradient(const arma::mat& parameters,
+              const size_t start,
+              arma::sp_mat& gradient,
+              const size_t batchSize);
+@endcode
+
+The \c Shuffle() method is not needed for the \c SparseFunctionType API.
+
+Note that it is possible to write a \c Gradient() method that accepts a template
+parameter \c GradType, which may be \c arma::mat (dense Armadillo matrix) or
+\c arma::sp_mat (sparse Armadillo matrix).  This allows support for both the
+\c DecomposableFunctionType API and the \c SparseFunctionType API, as below:
+
+@code
 template<typename GradType>
 void Gradient(const arma::mat& parameters,
               const size_t start,
@@ -78,45 +237,118 @@ void Gradient(const arma::mat& parameters,
               const size_t batchSize);
 @endcode
 
-Both of these methods should calculate the gradient and place the results into
-the matrix object \c gradient that is passed as an argument. Note that the
-method accepts a template parameter \c GradType, which may be \c arma::mat
-(dense Armadillo matrix) or \c arma::sp_mat (sparse Armadillo matrix).  This
-allows support for both sparse-supporting and non-sparse-supporting optimizers.
+The following mlpack optimizers require an objective function satisfying the
+\c SparseFunctionType API:
 
-If the objective function is partially differentiable, we could implement the
-following method:
+  - @ref mlpack::optimization::ParallelSGD "ParallelSGD"
+
+@subsubsection optimizer_nondifferentiablefunctiontype The NonDifferentiableFunctionType API
+
+A function satisfying the \c NonDifferentiableFunctionType API is a general
+non-differentiable objective function.  Only an \c Evaluate() method must be
+implemented, with the following signature:
 
 @code
-// For partially differentiable sparse and non-sparse functions.
-template<typename GradType>
-void PartialGradient(const arma::mat& parameters, const size_t j, GradType& gradient);
+// For non-separable objectives.  This should return the objective value for the
+// given parameters.
+double Evaluate(const arma::mat& parameters);
 @endcode
 
-The function should calculate the gradient of the parameters \c parameters with
-respect to the parameter \c j and store the results (either sparse or dense) in
-the \c gradient matrix object.
+The following mlpack optimizers require an objective function satisfying the
+\c NonDifferentiableFunctionType API:
 
-In addition, a separable partially differentiable functions must implement
-the \c NumFunctions() and or \c NumFeatures() functions, respectively:
+  - @ref mlpack::optimization::SA "Simulated Annealing"
+
+@subsubsection optimizer_constrainedfunctiontype The ConstrainedFunctionType API
+
+A function satisfying the \c ConstrainedFunctionType API is a general
+differentiable objective function that has differentiable constraints for the
+parameters.  This API is more complex than the others and requires five methods
+to be implemented:
 
 @code
-// For separable functions: return the number of parts the optimization problem
-// can be decomposed into.
+// For non-separable objectives.  This should return the objective value for the
+// given parameters.
+double Evaluate(const arma::mat& parameters);
+
+// For non-separable differentiable objectives.  This should store the gradient
+// for the given parameters in the 'gradient' matrix.
+void Gradient(const arma::mat& parameters, arma::mat& gradient);
+
+// Return the number of constraints.
+size_t NumConstraints();
+
+// Evaluate the constraint with the given index.
+double EvaluateConstraint(const size_t index, const arma::mat& parameters);
+
+// Store the gradient of the constraint with the given index in the 'gradient'
+// matrix.
+void GradientConstraint(const size_t index,
+                        const arma::mat& parameters,
+                        arma::mat& gradient);
+@endcode
+
+The following mlpack optimizers require a \c ConstrainedFunctionType:
+
+  - @ref mlpack::optimization::AugLagrangian "AugLagrangian"
+
+@subsubsection optimizer_nondifferentiabledecomposablefunctiontype The NonDifferentiableDecomposableFunctionType API
+
+A function satisfying the \c NonDifferentiableDecomposableFunctionType API is a
+decomposable non-differentiable objective function.  Only an \c Evaluate() and a
+\c NumFunctions() method must be implemented, with the following signatures:
+
+@code
+// For decomposable functions: return the number of parts the optimization
+// problem can be decomposed into.
 size_t NumFunctions();
 
-// For partially differentiable functions: return the number of partial derivatives.
-size_t NumFeatures();
+// For decomposable objectives.  This should calculate the partial objective
+// starting at the decomposable function indexed by 'start' and calculate
+// 'batchSize' partial objectives and return the sum.
+double Evaluate(const arma::mat& parameters,
+                const size_t start,
+                const size_t batchSize);
 @endcode
 
-Finally, \c separable functions must implement the method \c Shuffle() function,
-which shuffles the ordering of the functions:
+The following mlpack optimizers require a \c
+NonDifferentiableDecomposableFunctionType:
+
+  - @ref mlpack::optimization::ApproxCMAES "ApproxCMAES"
+  - @ref mlpack::optimization::CMAES<> "CMAES"
+  - @ref mlpack::optimization::CNE "CNE"
+
+@endcode
+
+@subsubsection optimizer_resolvablefunctiontype The ResolvableFunctionType API
+
+A function satisfying the \c ResolvableFunctionType API is a partially
+differentiable objective function.  For this API, three methods must be
+implemented, with the following signatures:
 
 @code
-// Shuffle the ordering of the function.
-void Shuffle();
+// For partially differentiable functions: return the number of partial
+// derivatives.
+size_t NumFeatures();
+
+// For non-separable objectives.  This should return the objective value for the
+// given parameters.
+double Evaluate(const arma::mat& parameters);
+
+// For partially differentiable sparse and non-sparse functions.  Store the
+// given partial gradient for the parameter index 'j' in the 'gradient' matrix.
+template<typename GradType>
+void PartialGradient(const arma::mat& parameters,
+                     const size_t j,
+                     GradType& gradient);
 @endcode
 
+It is not required to templatize so that both sparse and dense gradients can be
+used, but it can be helpful.
+
+The following mlpack optimizers require a \c ResolvableFunctionType:
+
+ - @ref mlpack::optimization::SCD<> "SCD"
 
 @subsection optimizer_type_api_tut Optimizer API
 
@@ -130,6 +362,17 @@ double Optimize(FunctionType& function, arma::mat& parameters);
 The \c Optimize() method optimizes the given function \c function, and stores
 the best set of parameters in the matrix \c parameters and returns the best
 objective value.
+
+If the optimizer requires a given API from above, the following functions from
+\c src/mlpack/optimizers/function/static_checks.hpp can be helpful:
+
+ - mlpack::optimization::traits::CheckFunctionTypeAPI()
+ - mlpack::optimization::traits::CheckDecomposableFunctionTypeAPI()
+ - mlpack::optimization::traits::CheckSparseFunctionTypeAPI()
+ - mlpack::optimization::traits::CheckNonDifferentiableFunctionTypeAPI()
+ - mlpack::optimization::traits::CheckConstrainedFunctionTypeAPI()
+ - mlpack::optimization::traits::CheckNonDifferentiableDecomposableFunctionTypeAPI()
+ - mlpack::optimization::traits::CheckResolvableFunctionTypeAPI()
 
 @subsection cpp_ex1_optimizer_tut Simple Function and Optimizer example
 

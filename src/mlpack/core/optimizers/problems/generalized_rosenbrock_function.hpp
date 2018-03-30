@@ -107,7 +107,8 @@ class GeneralizedRosenbrockFunction
    */
   void Gradient(const arma::mat& coordinates,
                 const size_t begin,
-                arma::sp_mat& gradient) const;
+                arma::sp_mat& gradient,
+                const size_t count) const;
 
   /*
    * Evaluate the gradient of a function with the given coordinates.

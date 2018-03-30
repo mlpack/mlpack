@@ -60,6 +60,17 @@ These methods are described in the following papers:
 }
 @endcode
 
+@code
+@article{curtin2018exploiting,
+  title={Exploiting the structure of furthest neighbor search for fast
+      approximate results},
+  author={Curtin, Ryan R., and Echauz, Javier, and Gardner, Andrew B.},
+  journal={Information Systems},
+  year={2018},
+  publisher={Elsevier}
+}
+@endcode
+
 The problem of furthest neighbor search is simple, and is the opposite of the
 much-more-studied nearest neighbor search problem.  Given a set of reference
 points \f$R\f$ (the set in which we are searching), and a set of query points

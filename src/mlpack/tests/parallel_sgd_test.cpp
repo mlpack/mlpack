@@ -15,7 +15,7 @@
 #include <mlpack/core/optimizers/parallel_sgd/sparse_test_function.hpp>
 #include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
 
-// We need some thorough testing
+// We need some thorough testing.
 #define private public
 #include <mlpack/core/optimizers/parallel_sgd/parallel_sgd.hpp>
 #undef private

@@ -61,7 +61,7 @@ void ColvilleFunction::Gradient(const arma::mat& coordinates,
 }
 
 void ColvilleFunction::Gradient(const arma::mat& coordinates,
-                                arma::mat& gradient)
+                                arma::mat& gradient) const
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }

@@ -23,6 +23,7 @@
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
+#include <mlpack/methods/ann/init_rules/glorot_init.hpp>
 #include <mlpack/methods/ann/init_rules/he_init.hpp>
 #include <mlpack/methods/ann/init_rules/lecun_normal_init.hpp>
 
@@ -336,5 +337,48 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
 
   BOOST_REQUIRE_EQUAL(gaussianModel.Parameters().n_elem, 42);
 }
+
+/**
+ * Simple test of the GlorotInitialization class for uniform distribution.
+ */
+BOOST_AUTO_TEST_CASE(GlorotInitUniformTest)
+{
+  arma::mat weights;
+  arma::cube weights3d;
+
+  XavierInitialization glorotInit;
+
+  glorotInit.Initialize(weights, 100, 100);
+  glorotInit.Initialize(weights3d, 100, 100, 2);
+
+  BOOST_REQUIRE_EQUAL(weights.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights.n_cols, 100);
+
+  BOOST_REQUIRE_EQUAL(weights3d.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
+}
+
+/**
+ * Simple test of the GlorotInitialization class for normal distribution.
+ */
+BOOST_AUTO_TEST_CASE(GlorotInitNormalTest)
+{
+  arma::mat weights;
+  arma::cube weights3d;
+
+  GlorotInitialization glorotInit;
+
+  glorotInit.Initialize(weights, 100, 100);
+  glorotInit.Initialize(weights3d, 100, 100, 2);
+
+  BOOST_REQUIRE_EQUAL(weights.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights.n_cols, 100);
+
+  BOOST_REQUIRE_EQUAL(weights3d.n_rows, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
+}
+
 
 BOOST_AUTO_TEST_SUITE_END();

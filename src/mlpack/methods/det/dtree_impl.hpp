@@ -1016,10 +1016,21 @@ void DTree<MatType, TagType>::serialize(Archive& ar,
       delete left;
     if (right)
       delete right;
+
+    left = NULL;
+    right = NULL;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(left);
-  ar & BOOST_SERIALIZATION_NVP(right);
+  bool hasLeft = (left != NULL);
+  bool hasRight = (right != NULL);
+
+  ar & BOOST_SERIALIZATION_NVP(hasLeft);
+  ar & BOOST_SERIALIZATION_NVP(hasRight);
+
+  if (hasLeft)
+    ar & BOOST_SERIALIZATION_NVP(left);
+  if (hasRight)
+    ar & BOOST_SERIALIZATION_NVP(right);
 
   if (root)
   {
