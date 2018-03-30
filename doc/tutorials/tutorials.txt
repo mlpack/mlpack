@@ -18,9 +18,6 @@ start.
  - \ref iodoc
  - \ref timer
  - \ref sample
- - \ref cv
- - \ref hpt
- - \ref bindings
 
 @section method_tut Method-specific Tutorials
 
@@ -38,8 +35,18 @@ progress to complex, extensible uses.
  - \ref amftutorial
  - \ref cftutorial
  - \ref akfntutorial
- - \ref cnetutorial
  - \ref anntutorial
+
+@section adv_tut Advanced Tutorials
+
+These tutorials discuss some of the more advanced functionality contained in
+mlpack.
+
+ - \ref optimizertutorial
+ - \ref cnetutorial
+ - \ref bindings
+ - \ref cv
+ - \ref hpt
 
 @section policy_tut Policy Class Documentation
 
@@ -51,6 +58,5 @@ types.
  - \ref metrics
  - \ref kernels
  - \ref trees
- - \ref optimizertutorial
 
 */

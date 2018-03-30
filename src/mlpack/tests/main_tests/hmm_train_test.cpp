@@ -295,6 +295,7 @@ BOOST_AUTO_TEST_CASE(HMMTrainReuseGaussianModelTest)
   HMMModel h1 = *(CLI::GetParam<HMMModel*>("output_model"));
 
   SetInputParam("input_model", CLI::GetParam<HMMModel*>("output_model"));
+  SetInputParam("tolerance", 1e10);
 
   CLI::GetSingleton().Parameters()["type"].wasPassed = false;
   CLI::GetSingleton().Parameters()["states"].wasPassed = false;

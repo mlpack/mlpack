@@ -31,9 +31,23 @@ Recurrent<InputDataType, OutputDataType, CustomLayers...>::Recurrent() :
     forwardStep(0),
     backwardStep(0),
     gradientStep(0),
-    deterministic(false)
+    deterministic(false),
+    ownsLayer(false)
 {
   // Nothing to do.
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+Recurrent<InputDataType, OutputDataType, CustomLayers...>::~Recurrent()
+{
+  if (ownsLayer)
+  {
+    boost::apply_visitor(DeleteVisitor(), recurrentModule);
+    boost::apply_visitor(DeleteVisitor(), initialModule);
+    boost::apply_visitor(DeleteVisitor(), startModule);
+    network.clear();
+  }
 }
 
 template <typename InputDataType, typename OutputDataType,
@@ -58,10 +72,11 @@ Recurrent<InputDataType, OutputDataType, CustomLayers...>::Recurrent(
     forwardStep(0),
     backwardStep(0),
     gradientStep(0),
-    deterministic(false)
+    deterministic(false),
+    ownsLayer(true)
 {
   initialModule = new Sequential<>();
-  mergeModule = new AddMerge<>();
+  mergeModule = new AddMerge<>(false);
   recurrentModule = new Sequential<>(false);
 
   boost::apply_visitor(AddVisitor<CustomLayers...>(inputModule),
@@ -229,15 +244,9 @@ void Recurrent<InputDataType, OutputDataType, CustomLayers...>::serialize(
   if (Archive::is_loading::value)
   {
     // Clear old things, if needed.
-    boost::apply_visitor(DeleteVisitor(), initialModule);
-    boost::apply_visitor(DeleteVisitor(), mergeModule);
     boost::apply_visitor(DeleteVisitor(), recurrentModule);
-
+    boost::apply_visitor(DeleteVisitor(), initialModule);
     boost::apply_visitor(DeleteVisitor(), startModule);
-    boost::apply_visitor(DeleteVisitor(), inputModule);
-    boost::apply_visitor(DeleteVisitor(), feedbackModule);
-    boost::apply_visitor(DeleteVisitor(), transferModule);
-
     network.clear();
   }
 
@@ -246,12 +255,13 @@ void Recurrent<InputDataType, OutputDataType, CustomLayers...>::serialize(
   ar & BOOST_SERIALIZATION_NVP(feedbackModule);
   ar & BOOST_SERIALIZATION_NVP(transferModule);
   ar & BOOST_SERIALIZATION_NVP(rho);
+  ar & BOOST_SERIALIZATION_NVP(ownsLayer);
 
   // Set up the network.
   if (Archive::is_loading::value)
   {
     initialModule = new Sequential<>();
-    mergeModule = new AddMerge<>();
+    mergeModule = new AddMerge<>(false);
     recurrentModule = new Sequential<>(false);
 
     boost::apply_visitor(AddVisitor<CustomLayers...>(inputModule),

@@ -80,18 +80,29 @@ BOOST_AUTO_TEST_CASE(NMFRandomDivTest)
   mat v = w * h;
   size_t r = 12;
 
-  // Custom tighter tolerance.
-  SimpleResidueTermination srt(1e-8, 10000);
-  AMF<SimpleResidueTermination,
-      RandomInitialization,
-      NMFMultiplicativeDivergenceUpdate> nmf(srt);
-  nmf.Apply(v, r, w, h);
+  const size_t trials = 3;
+  bool success = false;
 
-  mat wh = w * h;
+  for (size_t trial = 0; trial < trials; ++trial)
+  {
+    // Custom tighter tolerance.
+    SimpleResidueTermination srt(1e-8, 10000);
+    AMF<SimpleResidueTermination,
+        RandomInitialization,
+        NMFMultiplicativeDivergenceUpdate> nmf(srt);
+    nmf.Apply(v, r, w, h);
 
-  // Make sure reconstruction error is not too high.  1.5% tolerance.
-  BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"),
-      0.015);
+    mat wh = w * h;
+
+    // Make sure reconstruction error is not too high.  1.5% tolerance.
+    if ((arma::norm(v - wh, "fro") / arma::norm(v, "fro")) < 0.015)
+    {
+      success = true;
+      break;
+    }
+  }
+
+  BOOST_REQUIRE_EQUAL(success, true);
 }
 
 /**
