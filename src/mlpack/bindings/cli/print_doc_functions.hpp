@@ -5,6 +5,11 @@
  * This will generate a string representing what a user should type to invoke a
  * given option.  For the command-line bindings, this will generate strings like
  * '--param_name=x' or '--param_name'.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_BINDINGS_CLI_PRINT_DOC_FUNCTIONS_HPP
 #define MLPACK_BINDINGS_CLI_PRINT_DOC_FUNCTIONS_HPP
