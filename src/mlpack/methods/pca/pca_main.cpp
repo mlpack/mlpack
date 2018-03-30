@@ -33,23 +33,23 @@ PROGRAM_INFO("Principal Components Analysis", "This program performs principal "
     "reduction by ignoring the principal components with the smallest "
     "eigenvalues."
     "\n\n"
-    "To specify the dataset to perform PCA on, the " + PRINT_DATASET("input") +
-    " parameter may be used.  A desired new dimensionality may be specified "
+    "Use the " + PRINT_PARAM_STRING("input") + " parameter to specify the "
+    "dataset to perform PCA on.  A desired new dimensionality can be specified "
     "with the " + PRINT_PARAM_STRING("new_dimensionality") + " parameter, or "
-    "the desired variance to retain may be specified with the " +
+    "the desired variance to retain can be specified with the " +
     PRINT_PARAM_STRING("var_to_retain") + " parameter.  If desired, the "
-    "dataset may be scaled before running PCA with the " +
+    "dataset can be scaled before running PCA with the " +
     PRINT_PARAM_STRING("scale") + " parameter."
     "\n\n"
-    "Multiple different decomposition techniques may be used.  The method to "
-    "use may be specified with the " +
+    "Multiple different decomposition techniques can be used.  The method to "
+    "use can be specified with the " +
     PRINT_PARAM_STRING("decomposition_method") + " parameter, and it may take "
     "the values 'exact', 'randomized', or 'quic'."
     "\n\n"
     "For example, to reduce the dimensionality of the matrix " +
     PRINT_DATASET("data") + " to 5 dimensions using randomized SVD for the "
     "decomposition, storing the output matrix to " +
-    PRINT_DATASET("data_mod") + ", the following command may be used:"
+    PRINT_DATASET("data_mod") + ", the following command can be used:"
     "\n\n" +
     PRINT_CALL("pca", "input", "data", "new_dimensionality", 5,
         "decomposition_method", "randomized", "output", "data_mod"));
