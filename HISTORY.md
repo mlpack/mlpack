@@ -1,5 +1,5 @@
-### mlpack ?.?.?
-###### ????-??-??
+### mlpack 3.0.0
+###### 2018-03-30
   * Speed and memory improvements for DBSCAN.  --single_mode can now be used for
     situations where previously RAM usage was too high.
 
@@ -7,6 +7,21 @@
 
   * Add automatically generated Python bindings.  These have the same interface
     as the command-line programs.
+
+  * Add deep learning infrastructure in src/mlpack/methods/ann/.
+
+  * Add optimizers: AdaGrad, CMAES, CNE, FrankeWolfe, GradientDescent,
+    GridSearch, IQN, Katyusha, LineSearch, ParallelSGD, SARAH, SCD, SGDR,
+    SMORMS3, SPALeRA, SVRG.
+
+  * Add hyperparameter tuning infrastructure and cross-validation infrastructure
+    in src/mlpack/core/cv/ and src/mlpack/core/hpt/.
+
+  * Fix bug in mean shift.
+
+  * Add random forests (see src/mlpack/methods/random_forest).
+
+  * Numerous other bugfixes and testing improvements.
 
 ### mlpack 2.2.5
 ###### 2017-08-25
