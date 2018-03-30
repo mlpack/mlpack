@@ -1,6 +1,7 @@
 /**
  * @file flexible_relu.hpp
  * @author Aarush Gupta
+ * @author Manthan-R-Sheth
  *
  * Definition of FlexibleReLU layer as described by
  * Suo Qiu, Xiangmin Xu and Bolun Cai in
@@ -15,6 +16,7 @@
  *  title   = {FReLU: Flexible Rectified Linear Units for Improving
  *             Convolutional Neural Networks}
  *  journal = {arxiv preprint},
+ *  URL     = {https://arxiv.org/pdf/1706.08098.pdf},
  *  year    = {2018}
  * }
  * @endcode
