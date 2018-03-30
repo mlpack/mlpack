@@ -270,7 +270,7 @@ static void mlpackMain()
         // Calculate exact distances.  We are guaranteed the reference set is
         // available.
         Log::Info << "Calculating exact distances..." << endl;
-        AllkFN kfn(referenceSet);
+        KFN kfn(referenceSet);
         arma::Mat<size_t> exactNeighbors;
         kfn.Search(set, 1, exactNeighbors, exactDistances);
         Log::Info << "Calculation complete." << endl;
