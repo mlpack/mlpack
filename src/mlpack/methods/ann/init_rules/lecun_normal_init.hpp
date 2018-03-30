@@ -1,27 +1,9 @@
 /**
  * @file lecun_normal_init.hpp
- * @author Dakshit Agrawal
+ * @author Dakshit Agrawal and Prabhat Sharma
  *
  * Intialization rule given by Lecun et. al. for neural networks and
  * also mentioned in Self Normalizing Networks.
- *
- * For more information, the following papers can be referred to:
- *
- * @code
- * @inproceedings{conf/nips/KlambauerUMH17,
- * title = {Self-Normalizing Neural Networks.},
- * author = {Klambauer, Günter and Unterthiner, Thomas
- * and Mayr, Andreas and Hochreiter, Sepp},
- * pages = {972-981},
- * year = 2017}
- *
- * @inproceedings{LeCun:1998:EB:645754.668382,
- * title = {Efficient BackProp},
- * author = {LeCun, Yann and Bottou, L{\'e}on and Orr, Genevieve B.
- * and M\"{u}ller, Klaus-Robert},
- * year = {1998},
- * pages = {9--50}}
- * @endcode
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -88,7 +70,7 @@ class LecunNormalInitialization
     // He initialization rule says to initialize weights with random
     // values taken from a gaussian distribution with mean = 0 and
     // standard deviation = sqrt(1/rows), i.e. variance = (1/rows).
-    double variance = 1.0 / ((double) rows);
+    const double variance = 1.0 / ((double) rows);
 
     if (W.is_empty())
     {
@@ -97,7 +79,7 @@ class LecunNormalInitialization
 
     // Multipling a random variable X with variance V(X) by some factor c,
     // then the variance V(cX) = (c^2)* V(X).
-    W.imbue( [&]() { return sqrt(variance) * arma::randn();} );
+    W.imbue( [&]() { return sqrt(variance) * arma::randn(); } );
   }
 
   /**
@@ -115,13 +97,10 @@ class LecunNormalInitialization
                   const size_t slices)
   {
     if (W.is_empty())
-    {
       W.set_size(rows, cols, slices);
-    }
 
-    for (size_t i = 0; i < slices; i++) {
+    for (size_t i = 0; i < slices; i++)
       Initialize(W.slice(i), rows, cols);
-    }
   }
 }; // class LecunNormalInitialization
 

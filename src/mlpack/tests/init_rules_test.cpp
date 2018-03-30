@@ -249,7 +249,6 @@ BOOST_AUTO_TEST_CASE(LecunNormalInitTest)
   BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
 }
 
-
 /**
  * Simple test of the NetworkInitialization class, we test it with every
  * implemented initialization rule and make sure the output is reasonable.

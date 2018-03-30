@@ -1,22 +1,10 @@
 /**
  * @file he_init.hpp
- * @author Dakshit Agrawal
+ * @authors Dakshit Agrawal and Prabhat Sharma
  *
  * Intialization rule given by He et. al. for neural networks. The He
  * initialization initializes weights of the neural network to better
  * suit the rectified activation units.
- *
- * For more information, the following paper can be referred to:
- *
- * @code
- * @article{He2015DelvingDI,
- * title={Delving Deep into Rectifiers: Surpassing Human-Level Performance
- * on ImageNet Classification},
- * author={Kaiming He and Xiangyu Zhang and Shaoqing Ren and Jian Sun},
- * journal={2015 IEEE International Conference on Computer Vision (ICCV)},
- * year={2015},
- * pages={1026-1034}}
- * @endcode
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -79,7 +67,7 @@ class HeInitialization
     // He initialization rule says to initialize weights with random
     // values taken from a gaussian distribution with mean = 0 and
     // standard deviation = sqrt(2/rows), i.e. variance = (2/rows).
-    double variance =  2.0 / ((double) rows);
+    const double variance = 2.0 / (double)rows;
 
     if (W.is_empty())
     {
@@ -88,7 +76,7 @@ class HeInitialization
 
     // Multipling a random variable X with variance V(X) by some factor c,
     // then the variance V(cX) = (c^2)* V(X).
-    W.imbue( [&]() { return sqrt(variance) * arma::randn();} );
+    W.imbue( [&]() { return sqrt(variance) * arma::randn(); } );
   }
 
   /**
@@ -106,13 +94,10 @@ class HeInitialization
                   const size_t slices)
   {
     if (W.is_empty())
-    {
       W.set_size(rows, cols, slices);
-    }
 
-    for (size_t i = 0; i < slices; i++) {
+    for (size_t i = 0; i < slices; i++)
       Initialize(W.slice(i), rows, cols);
-    }
   }
 }; // class HeInitialization
 
