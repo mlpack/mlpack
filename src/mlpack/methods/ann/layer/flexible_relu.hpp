@@ -121,57 +121,6 @@ class FlexibleReLU
   void serialize(Archive& ar, const unsigned int /* version*/);
 
  private:
-  /**
-   * Computes the FlexibleReLU function
-   *
-   * @param x Input data.
-   * @return f(x).
-   */
-  double Fn(const double x)
-  {
-    return (std::max(x, 0 * x) + alpha);
-  }
-
-  /**
-   * Computes the FlexibleReLU function using a dense matrix as input.
-   *
-   * @param x Input data.
-   * @param y The resulting output activation.
-   */
-  template<typename eT>
-  void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
-  {
-    y = arma::max(arma::zeros<arma::Mat<eT> >(x.n_rows, x.n_cols), x)+alpha;
-  }
-
-  /**
-   * Computes the first derivative of the LeakyReLU function.
-   *
-   * @param x Input data.
-   * @return f'(x)
-   */
-  double Deriv(const double x)
-  {
-    return x > 0? 1 : 0;
-  }
-
-  /**
-   * Computes the first derivative of the FlexibleReLU function.
-   *
-   * @param y Input activations.
-   * @param The resulting dreivatives
-   */
-
-  template<typename InputType, typename OutputType>
-  void Deriv(const InputType& x, OutputType& y)
-  {
-    y = x;
-
-    for (size_t i = 0; i < x.n_elem; i++)
-    {
-      y(i) = Deriv(x(i));
-    }
-  }
 
   //! Locally-stored delta object.
   OutputDataType delta;

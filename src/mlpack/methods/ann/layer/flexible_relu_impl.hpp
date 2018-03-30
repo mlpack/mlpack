@@ -45,7 +45,8 @@ template<typename InputType, typename OutputType>
 void FlexibleReLU<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
-  Fn(input, output);
+  output = arma::max(arma::zeros<InputType>(input.n_rows, input.n_cols), input)
+    + alpha;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -54,7 +55,15 @@ void FlexibleReLU<InputDataType, OutputDataType>::Backward(
     const DataType&& input, DataType&& gy, DataType&& g)
 {
   DataType derivative;
-  Deriv(input, derivative);
+
+  //! Compute the first derivative of FlexibleReLU function.
+  derivative = input;
+
+  for (size_t i = 0; i < input.n_elem; i++)
+  {
+    derivative(i) = input(i) > 0? 1 : 0;
+  }
+
   g = gy % derivative;
 }
 
