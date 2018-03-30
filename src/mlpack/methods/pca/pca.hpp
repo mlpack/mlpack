@@ -27,8 +27,7 @@ namespace pca {
  * common, widely-used technique that is often used for either dimensionality
  * reduction or transforming data into a better basis.  Further information on
  * PCA can be found in almost any statistics or machine learning textbook, and
- * all over the internet. Note this class will be changed to have the name PCA
- * in mlpack 3.0.0
+ * all over the internet.
  */
 template<typename DecompositionPolicy = ExactSVDPolicy>
 class PCA
