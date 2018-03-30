@@ -3,10 +3,7 @@
  * @author Ryan Curtin
  *
  * This file, based on the value of the macro BINDING_TYPE, will define the
- * macro MLPACK_CLI_MAIN() accordingly.  If BINDING_TYPE is not set, then the
- * behavior will be that MLPACK_CLI_MAIN() is equivalent to int main(int argc,
- * char** argv) with CLI::ParseCommandLine() automatically called on entry and
- * CLI::Destroy() automatically called on exit.
+ * macros necessary to compile an mlpack binding for the target language.
  *
  * This file should *only* be included by a program that is meant to be a
  * command-line program or a binding to another language.  This file also
