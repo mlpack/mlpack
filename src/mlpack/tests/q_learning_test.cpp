@@ -175,6 +175,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
 BOOST_AUTO_TEST_CASE(AcrobatWithDQN)
 {
   bool converged = true;
+  //! Checking Convergence for 50 different trials
   for (int i=0; i<50; i++)
   {
     // Set up the network.
@@ -204,7 +205,6 @@ BOOST_AUTO_TEST_CASE(AcrobatWithDQN)
             std::move(replayMethod));
 
     size_t episodes = 0;
-    //! Checking Convergence for 50 different trials
 
     arma::running_stat<double> averageReturn;
     while (true)
@@ -221,17 +221,11 @@ BOOST_AUTO_TEST_CASE(AcrobatWithDQN)
       }
 
       /**
-       *
-       * I am using a thresold of -350.0 . While testing it my previous code 
-       * on Q learning https://github.com/luffy1996/rl-using-mlpack/blob/master/qlearning.cpp
-       * I witnessed that -350.0 is average return after 80 episodes.
-       * https://drive.google.com/open?id=1QzZP5egUWhcSJr_byceihU8rIF5sSqdU
-       * Hence I am using -350.0 to test convergence.
-       * 
+       * I am using a thresold of -395 to check convegence in 50 trails.
        */
       Log::Debug << "Average return: " << averageReturn.mean()
           << " Episode return: " << episodeReturn << std::endl;
-      if (averageReturn.mean() > -350.00)
+      if (averageReturn.mean() > -395.00)
       {
         agent.Deterministic() = true;
         arma::running_stat<double> testReturn;
