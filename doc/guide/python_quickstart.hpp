@@ -1,9 +1,10 @@
 /**
  * @file python_quickstart.hpp
  * @author Ryan Curtin
- * @brief Quickstart documentation for mlpack usage from Python
 
 @page python_quickstart mlpack in Python quickstart guide
+
+@section python_quickstart_intro Introduction
 
 This page describes how you can quickly get started using mlpack from Python and
 gives a few examples of usage, and pointers to deeper documentation.

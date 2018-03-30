@@ -1,9 +1,10 @@
 /**
  * @file cli_quickstart.hpp
  * @author Ryan Curtin
- * @brief Quickstart documentation for mlpack usage from the command line
 
 @page cli_quickstart mlpack command-line quickstart guide
+
+@section cli_quickstart_intro Introduction
 
 This page describes how you can quickly get started using mlpack from the
 command-line and gives a few examples of usage, and pointers to deeper
