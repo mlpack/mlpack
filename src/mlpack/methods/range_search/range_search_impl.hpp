@@ -256,8 +256,6 @@ void RangeSearch<MetricType, MatType, TreeType>::Train(
 
   if (treeOwner && referenceTree)
     delete this->referenceTree;
-  if (naive && referenceSet)
-    delete this->referenceSet;
 
   this->referenceTree = referenceTree;
   this->referenceSet = &referenceTree->Dataset();
@@ -647,7 +645,7 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
   {
     if (Archive::is_loading::value)
     {
-      if (naive && referenceSet)
+      if (referenceSet)
         delete referenceSet;
     }
 
@@ -684,9 +682,6 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
     // necessary.
     if (Archive::is_loading::value)
     {
-      if (naive && referenceSet)
-        delete referenceSet;
-
       referenceSet = &referenceTree->Dataset();
       metric = referenceTree->Metric(); // Get the metric from the tree.
     }
