@@ -343,8 +343,7 @@ static void mlpackMain()
   }
   else
   {
-    // Load from a model.
-    // Validate Parameteres.
+    // Load from a model after validating parameters.
     RequireAtLeastOnePassed({ "query", "all_user_recommendations",
         "test" }, true);
 
