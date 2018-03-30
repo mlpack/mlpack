@@ -10,6 +10,9 @@
 
   * Add deep learning infrastructure in src/mlpack/methods/ann/.
 
+  * Add reinforcement learning infrastructure in
+    src/mlpack/methods/reinforcement_learning/.
+
   * Add optimizers: AdaGrad, CMAES, CNE, FrankeWolfe, GradientDescent,
     GridSearch, IQN, Katyusha, LineSearch, ParallelSGD, SARAH, SCD, SGDR,
     SMORMS3, SPALeRA, SVRG.
@@ -22,6 +25,8 @@
   * Add random forests (see src/mlpack/methods/random_forest).
 
   * Numerous other bugfixes and testing improvements.
+
+  * Add randomized Krylov SVD and Block Krylov SVD.
 
 ### mlpack 2.2.5
 ###### 2017-08-25
