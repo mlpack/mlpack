@@ -93,7 +93,8 @@ PARAM_MATRIX_IN("test", "Test set to calculate RMSE on.", "T");
 
 // Offer the user the option to set the maximum number of iterations, and
 // terminate only based on the number of iterations.
-PARAM_INT_IN("max_iterations", "Maximum number of iterations.", "N", 1000);
+PARAM_INT_IN("max_iterations", "Maximum number of iterations. If set to zero, "
+    "there is no limit on the number of iterations.", "N", 1000);
 PARAM_FLAG("iteration_only_termination", "Terminate only when the maximum "
     "number of iterations is reached.", "I");
 PARAM_DOUBLE_IN("min_residue", "Residue required to terminate the factorization"
@@ -237,8 +238,9 @@ void AssembleFactorizerType(const std::string& algorithm,
     }
     else if (algorithm == "RegSVD")
     {
-      Log::Fatal << PRINT_PARAM_STRING("iteration_only_termination") << " not "
-          << "supported with 'RegSVD' algorithm!" << endl;
+      ReportIgnoredParam("min_residue", "Regularized SVD terminates only "
+          "when max_iterations is reached");
+      PerformAction(RegularizedSVD<>(maxIterations), dataset, rank);
     }
   }
   else
@@ -267,6 +269,8 @@ void AssembleFactorizerType(const std::string& algorithm,
     }
     else if (algorithm == "RegSVD")
     {
+      ReportIgnoredParam("min_residue", "Regularized SVD terminates only "
+          "when max_iterations is reached");
       PerformAction(RegularizedSVD<>(maxIterations), dataset, rank);
     }
   }
@@ -288,7 +292,7 @@ static void mlpackMain()
 
   RequireAtLeastOnePassed({ "output", "output_model" }, false,
       "no output will be saved");
-  if (CLI::HasParam("query") || CLI::HasParam("all_user_recommendations"))
+  if (!CLI::HasParam("query") && !CLI::HasParam("all_user_recommendations"))
     ReportIgnoredParam("output", "no recommendations requested");
 
   RequireParamInSet<string>("algorithm", { "NMF", "BatchSVD",
@@ -297,11 +301,30 @@ static void mlpackMain()
 
   ReportIgnoredParam({{ "iteration_only_termination", true }}, "min_residue");
 
+  RequireParamValue<int>("recommendations", [](int x) { return x > 0; }, true,
+        "recommendations must be positive");
+
   // Either load from a model, or train a model.
   if (CLI::HasParam("training"))
   {
+    // Train a model.
+    // Validate Parameters.
+    ReportIgnoredParam({{ "iteration_only_termination", true }}, "min_residue");
+    RequireParamValue<int>("rank", [](int x) { return x >= 0; }, true,
+        "rank must be non-negative");
+    RequireParamValue<double>("min_residue", [](double x) { return x >= 0; },
+        true, "min_residue must be non-negative");
+    RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
+        "max_iterations must be non-negative");
+    RequireParamValue<int>("neighborhood", [](int x) { return x > 0; }, true,
+        "neighborhood must be positive");
+
     // Read from the input file.
     arma::mat dataset = std::move(CLI::GetParam<arma::mat>("training"));
+
+    RequireParamValue<int>("neighborhood",
+        [&dataset](int x) { return x <= max(dataset.row(0)) + 1; }, true,
+        "neighborbood must be less than or equal to the number of users");
 
     // Recommendation matrix.
     arma::Mat<size_t> recommendations;
@@ -320,6 +343,11 @@ static void mlpackMain()
   }
   else
   {
+    // Load from a model.
+    // Validate Parameteres.
+    RequireAtLeastOnePassed({ "query", "all_user_recommendations",
+        "test" }, true);
+
     // Load an input model.
     CF* c = std::move(CLI::GetParam<CF*>("input_model"));
 
