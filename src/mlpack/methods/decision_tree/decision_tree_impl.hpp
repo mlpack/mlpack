@@ -1094,7 +1094,6 @@ void DecisionTree<FitnessFunction,
       // Pruning the node's child and making the present node as leaf.
       children.clear();
       double newScore = ValidateScore(root, validData, validLabels);
-
       // Pruning the tree if the pruned tree gives better accuracy.
       if (newScore > bestScore)
       {
@@ -1136,7 +1135,7 @@ double DecisionTree<FitnessFunction,
 {
   arma::Row<size_t> predictions;
   root->Classify(validData, predictions);
-  size_t correctClassification = 0;
+  double correctClassification = 0.0;
   for (size_t i = 0; i < validLabels.n_elem; ++i)
   {
     if (validLabels[i] == predictions[i])

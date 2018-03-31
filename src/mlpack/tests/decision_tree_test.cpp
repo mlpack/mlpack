@@ -1171,7 +1171,7 @@ BOOST_AUTO_TEST_CASE(PostPruneDecisionTree)
   predictions.zeros();
   wd.Prune<true>(root, labels, 3, weights, testData, trueTestLabels, bestScore);
 
-  BOOST_REQUIRE_GE(bestScore, wdcorrect);
+  BOOST_REQUIRE_GT(bestScore, wdcorrect);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
