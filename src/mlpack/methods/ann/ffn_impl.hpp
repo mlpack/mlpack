@@ -46,25 +46,6 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
-FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
-    arma::mat predictors,
-    arma::mat responses,
-    OutputLayerType outputLayer,
-    InitializationRuleType initializeRule) :
-    outputLayer(std::move(outputLayer)),
-    initializeRule(std::move(initializeRule)),
-    width(0),
-    height(0),
-    reset(false),
-    predictors(std::move(predictors)),
-    responses(std::move(responses)),
-    deterministic(true)
-{
-  numFunctions = this->responses.n_cols;
-}
-
-template<typename OutputLayerType, typename InitializationRuleType,
-         typename... CustomLayers>
 FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::~FFN()
 {
   std::for_each(network.begin(), network.end(),
@@ -111,16 +92,7 @@ template<typename OptimizerType>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::mat predictors, arma::mat responses)
 {
-  numFunctions = responses.n_cols;
-
-  this->predictors = std::move(predictors);
-  this->responses = std::move(responses);
-
-  this->deterministic = true;
-  ResetDeterministic();
-
-  if (!reset)
-    ResetParameters();
+  ResetData(std::move(predictors), std::move(responses));
 
   OptimizerType optimizer;
 
