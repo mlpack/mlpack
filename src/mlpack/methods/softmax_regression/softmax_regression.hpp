@@ -99,20 +99,6 @@ class SoftmaxRegression
                     OptimizerType optimizer = OptimizerType());
 
   /**
-   * Predict the class labels for the provided feature points. The function
-   * calculates the probabilities for every class, given a data point. It then
-   * chooses the class which has the highest probability among all.
-   *
-   * This method is deprecated and will be removed in mlpack 3.0.0. You should
-   * use Classify() instead.
-   *
-   * @param testData Matrix of data points for which predictions are to be made.
-   * @param predictions Vector to store the predictions in.
-   */
-  mlpack_deprecated void Predict(const arma::mat& testData,
-                                 arma::Row<size_t>& predictions) const;
-
-  /**
    * Classify the given points, returning the predicted labels for each point.
    * The function calculates the probabilities for every class, given a data
    * point. It then chooses the class which has the highest probability among

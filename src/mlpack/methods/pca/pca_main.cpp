@@ -77,7 +77,7 @@ void RunPCA(arma::mat& dataset,
             const bool scale,
             const double varToRetain)
 {
-  PCAType<DecompositionPolicy> p(scale);
+  PCA<DecompositionPolicy> p(scale);
 
   Log::Info << "Performing PCA on dataset..." << endl;
   double varRetained;

@@ -4,6 +4,11 @@
  *
  * Make an alias of a matrix.  For sparse matrices, unfortunately no alias can
  * be made and a copy must be incurred.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_MATH_MAKE_ALIAS_HPP
 #define MLPACK_CORE_MATH_MAKE_ALIAS_HPP

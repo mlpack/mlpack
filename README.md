@@ -1,6 +1,7 @@
 <h2 align="center">
-  <a href="http://mlpack.org"><img src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="background-color:rgba(0,0,0,0);" height=230 alt="mlpack: a scalable C++ machine learning library"></a>
-  <br>a scalable C++ machine learning library<br>
+  <a href="http://mlpack.org"><img
+src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="background-color:rgba(0,0,0,0);" height=230 alt="mlpack: a fast, flexible machine learning library"></a>
+  <br>a fast, flexible machine learning library<br>
 </h2>
 
 <h5 align="center">
@@ -25,11 +26,12 @@
   </em>
 </p>
 
-**mlpack** is an intuitive, fast, scalable C++ machine learning library, meant to be
-a machine learning analog to LAPACK. It aims to implement a wide array of
-machine learning methods and functions as a "swiss army knife" for machine
-learning researchers.  In addition to its powerful C++ interface, mlpack also
-provides command-line programs and Python bindings.
+**mlpack** is an intuitive, fast, and flexible C++ machine learning library with
+bindings to other languages.  It is meant to be a machine learning analog to
+LAPACK, and aims to implement a wide array of machine learning methods and
+functions as a "swiss army knife" for machine learning researchers.  In addition
+to its powerful C++ interface, mlpack also provides command-line programs and
+Python bindings.
 
 ### 0. Contents
 
