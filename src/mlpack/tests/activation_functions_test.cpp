@@ -332,25 +332,21 @@ void CheckPReLUGradientCorrect(const arma::colvec input,
  * invariant after passing normalized inputs through the function.
  *
  */
-
 BOOST_AUTO_TEST_CASE(SELUFunctionNormalizedTest)
 {
   arma::mat input = arma::randn<arma::mat>(1000, 1);
 
   arma::mat output;
 
-  // Using alias to specify that SELU activation function has been called.
-  using SELU = ELU<arma::mat, arma::mat>;
-
   SELU selu;
 
   selu.Forward(std::move(input), output);
 
-  BOOST_REQUIRE_LE(
-      arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))), 0.1);
+  BOOST_REQUIRE_LE(arma::as_scalar(arma::abs(arma::mean(input) -
+      arma::mean(output))), 0.1);
 
-  BOOST_REQUIRE_LE(
-      arma::as_scalar(arma::abs(arma::var(input) - arma::var(output))), 0.1);
+  BOOST_REQUIRE_LE(arma::as_scalar(arma::abs(arma::var(input) -
+      arma::var(output))), 0.1);
 }
 
 /*
@@ -362,22 +358,19 @@ BOOST_AUTO_TEST_CASE(SELUFunctionNormalizedTest)
 BOOST_AUTO_TEST_CASE(SELUFunctionUnnormalizedTest)
 {
   const arma::colvec input("5.96402758 0.9966824 0.99975321 1 \
-                                         7.76159416 -0.76159416 0.96402758 8");
+                            7.76159416 -0.76159416 0.96402758 8");
 
   arma::mat output;
-
-  // Using alias to specify that SELU activation function has been called.
-  using SELU = ELU<arma::mat, arma::mat>;
 
   SELU selu;
 
   selu.Forward(std::move(input), output);
 
-  BOOST_REQUIRE_GE(
-      arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))), 0.1);
+  BOOST_REQUIRE_GE(arma::as_scalar(arma::abs(arma::mean(input) -
+      arma::mean(output))), 0.1);
 
-  BOOST_REQUIRE_GE(
-      arma::as_scalar(arma::abs(arma::var(input) - arma::var(output))), 0.1);
+  BOOST_REQUIRE_GE(arma::as_scalar(arma::abs(arma::var(input) -
+      arma::var(output))), 0.1);
 }
 
 /*
@@ -385,7 +378,6 @@ BOOST_AUTO_TEST_CASE(SELUFunctionUnnormalizedTest)
  * produced by the activation function are correct.
  *
  */
-
 BOOST_AUTO_TEST_CASE(SELUFunctionDerivativeTest)
 {
   arma::mat input = arma::ones<arma::mat>(1000, 1);
@@ -394,23 +386,19 @@ BOOST_AUTO_TEST_CASE(SELUFunctionDerivativeTest)
 
   arma::mat derivatives;
 
-  // Using alias to specify that SELU activation function has been called.
-  using SELU = ELU<arma::mat, arma::mat>;
-
   SELU selu;
 
   selu.Backward(std::move(input), std::move(error), std::move(derivatives));
 
-  BOOST_REQUIRE_LE(
-      arma::as_scalar(arma::abs(arma::mean(derivatives) - selu.Lambda())),
-      10e-5);
+  BOOST_REQUIRE_LE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
+      selu.Lambda())), 10e-5);
 
   input.fill(-1);
 
   selu.Backward(std::move(input), std::move(error), std::move(derivatives));
 
   BOOST_REQUIRE_LE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
-                    selu.Lambda()*(selu.Alpha()-1))), 10e-5);
+      selu.Lambda()*(selu.Alpha()-1))), 10e-5);
 }
 
 /**

@@ -104,7 +104,6 @@ namespace ann /** Artificial Neural Network. */ {
  * \right.
  * @f}
  *
- *
  * For more information, see the following paper.
  *
  * @code
@@ -118,9 +117,8 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * NOTE:
- * Make sure to use SELU activation function with normalized inputs and
- * weights initialized with Lecun Normal Initialization.
+ * @note Make sure to use SELU activation function with normalized inputs and
+ *       weights initialized with Lecun Normal Initialization.
  *
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -149,13 +147,10 @@ class ELU
    * gradient for negative inputs can be adjusted by specifying the ELU
    * hyperparameter alpha (alpha > 0).
    *
-   * NOTE: Use this constructor for ELU activation function.
-   *
+   * @note Use this constructor for ELU activation function.
    * @param alpha Scale parameter for the negative factor.
    */
-
   ELU(const double alpha);
-
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -216,7 +211,8 @@ class ELU
    */
   double Fn(const double x)
   {
-    if (x < DBL_MAX) {
+    if (x < DBL_MAX)
+    {
       return (x > 0) ? lambda * x : lambda * alpha * (std::exp(x) - 1);
     }
     return 1.0;
@@ -287,6 +283,7 @@ class ELU
   //! inputs.
   double lambda;
 }; // class ELU
+using SELU = ELU<arma::mat, arma::mat>;
 
 } // namespace ann
 } // namespace mlpack
