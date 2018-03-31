@@ -1193,9 +1193,6 @@ BOOST_AUTO_TEST_CASE(ValidScoreTest)
   // Build decision tree.
   DecisionTree<> wd(inputData, labels, 3, weights, 1, 1e-7);
 
-  // Get the predicted test labels.
-  arma::Row<size_t> predictions;
-
   DecisionTree<>* root = &wd;
   double validationScore = wd.ValidateScore(root, inputData, labels);
 
