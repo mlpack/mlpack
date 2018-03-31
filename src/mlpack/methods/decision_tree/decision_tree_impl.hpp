@@ -1058,7 +1058,8 @@ template<typename FitnessFunction,
   typename DimensionSelectionType,
   typename ElemType,
   bool NoRecursion>
-template<bool UseWeights, typename MatType, typename LabelsType, typename WeightsType>
+template<bool UseWeights, typename MatType, typename LabelsType,
+    typename WeightsType>
 void DecisionTree<FitnessFunction,
   NumericSplitType,
   CategoricalSplitType,
@@ -1078,7 +1079,7 @@ void DecisionTree<FitnessFunction,
     if (node->children.size() == 0)
     {
       std::vector<DecisionTree*> childrenbacktrack = children;
-      size_t dimensionTypeOrMajorityClassbacktrack = 
+      size_t dimensionTypeOrMajorityClassbacktrack =
           dimensionTypeOrMajorityClass;
       arma::vec classProbabilitiesbacktrack = classProbabilities;
 
@@ -1110,8 +1111,8 @@ void DecisionTree<FitnessFunction,
     }
     else
     {
-      node->Prune<true>(root, labels, numClasses, weights, validData, validLabels,
-        bestScore);
+      node->Prune<true>(root, labels, numClasses, weights, validData,
+          validLabels, bestScore);
     }
   }
 }

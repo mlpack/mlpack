@@ -366,7 +366,8 @@ class DecisionTree :
    * @param validLabels labels for validation points.
    * @param bestScore best score of pruning on validation set.
    */
-  template<bool UseWeights, typename MatType, typename LabelsType, typename WeightsType>
+  template<bool UseWeights, typename MatType, typename LabelsType,
+      typename WeightsType>
   void Prune(DecisionTree* root,
              LabelsType&& labels,
              const size_t numClasses,
