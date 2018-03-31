@@ -213,7 +213,7 @@ BOOST_AUTO_TEST_CASE(AcrobatWithDQN)
       averageReturn(episodeReturn);
       episodes += 1;
 
-      if (episodes > 10000)
+      if (episodes > 1000)
       {
         Log::Debug << "Acrobat with DQN failed." << std::endl;
         converged = false;
@@ -237,7 +237,7 @@ BOOST_AUTO_TEST_CASE(AcrobatWithDQN)
         break;
       }
     }
-    if (converged==false)
+    if (converged == false)
       break;
   }
   BOOST_REQUIRE(converged);
