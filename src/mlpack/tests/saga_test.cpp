@@ -41,8 +41,9 @@ BOOST_AUTO_TEST_CASE(SphereFunctionSAGATest)
     double result = optimizer.Optimize(f, coordinates);
 
     BOOST_REQUIRE_SMALL(result, 0.1);
-    //for (size_t j = 0; j < i; ++j)
-      //BOOST_REQUIRE_SMALL(coordinates[j], (double) 0.001);
+
+    for (size_t j = 0; j < i; ++j)
+      BOOST_REQUIRE_SMALL(coordinates[j], (double) 0.01);
   }
 }
 
@@ -64,8 +65,8 @@ BOOST_AUTO_TEST_CASE(SphereFunctionSAGTest)
     double result = optimizer.Optimize(f, coordinates);
 
     BOOST_REQUIRE_SMALL(result, 0.1);
-    //for (size_t j = 0; j < i; ++j)
-      //BOOST_REQUIRE_SMALL(coordinates[j], (double) 0.001);
+    for (size_t j = 0; j < i; ++j)
+      BOOST_REQUIRE_SMALL(coordinates[j], (double) 0.01);
   }
 }
 
