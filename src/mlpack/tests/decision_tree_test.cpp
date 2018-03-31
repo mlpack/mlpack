@@ -1150,7 +1150,7 @@ BOOST_AUTO_TEST_CASE(PostPruneDecisionTree)
   if (!data::Load("vc2_test.csv", testData))
     BOOST_FAIL("Cannot load test dataset vc2_test.csv!");
 
-  arma::Mat<size_t> trueTestLabels;
+  arma::Row<size_t> trueTestLabels;
   if (!data::Load("vc2_test_labels.txt", trueTestLabels))
     BOOST_FAIL("Cannot load labels for vc2_test_labels.txt");
 
@@ -1169,7 +1169,7 @@ BOOST_AUTO_TEST_CASE(PostPruneDecisionTree)
   double bestScore = 0.0;
   //Reset the predictions
   predictions.zeros();
-  wd.Prune(root, labels, 3, weights, testData, trueTestLabels, bestScore);
+  wd.Prune<true>(root, labels, 3, weights, testData, trueTestLabels, bestScore);
 
   BOOST_REQUIRE_GE(bestScore, wdcorrect);
 

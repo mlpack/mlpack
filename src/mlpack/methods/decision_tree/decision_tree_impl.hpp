@@ -1058,18 +1058,18 @@ template<typename FitnessFunction,
   typename DimensionSelectionType,
   typename ElemType,
   bool NoRecursion>
-template<typename MatType, typename LabelsType, typename WeightsType, bool UseWeights>
+template<bool UseWeights, typename MatType, typename LabelsType, typename WeightsType>
 void DecisionTree<FitnessFunction,
   NumericSplitType,
   CategoricalSplitType,
   DimensionSelectionType,
   ElemType,
   NoRecursion>::Prune(DecisionTree* root,
-                      LabelsType& labels,
+                      LabelsType&& labels,
                       const size_t numClasses,
                       WeightsType&& weights,
-                      MatType& validData,
-                      LabelsType& validLabels,
+                      MatType&& validData,
+                      LabelsType&& validLabels,
                       double& bestScore)
 {
   for (size_t i = 0; i < children.size(); ++i)
@@ -1110,7 +1110,7 @@ void DecisionTree<FitnessFunction,
     }
     else
     {
-      node->Prune(root, labels, numClasses, weights, validData, validLabels,
+      node->Prune<true>(root, labels, numClasses, weights, validData, validLabels,
         bestScore);
     }
   }
@@ -1130,10 +1130,10 @@ double DecisionTree<FitnessFunction,
   DimensionSelectionType,
   ElemType,
   NoRecursion>::ValidateScore(DecisionTree* root,
-                              MatType& validData,
-                              LabelsType& validLabels) const
+                              MatType&& validData,
+                              LabelsType&& validLabels) const
 {
-  LabelsType predictions;
+  arma::Row<size_t> predictions;
   root->Classify(validData, predictions);
   size_t correctClassification = 0;
   for (size_t i = 0; i < validLabels.n_elem; ++i)

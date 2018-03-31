@@ -366,13 +366,13 @@ class DecisionTree :
    * @param validLabels labels for validation points.
    * @param bestScore best score of pruning on validation set.
    */
-  template<typename MatType, typename LabelsType, typename WeightsType, bool UseWeights>
+  template<bool UseWeights, typename MatType, typename LabelsType, typename WeightsType>
   void Prune(DecisionTree* root,
-             LabelsType& labels,
+             LabelsType&& labels,
              const size_t numClasses,
              WeightsType&& weights,
-             MatType& validData,
-             LabelsType& validLabels,
+             MatType&& validData,
+             LabelsType&& validLabels,
              double& bestScore);
   /*
    * Utility function for validating the score on the tree whose root is given.
@@ -383,8 +383,8 @@ class DecisionTree :
    */
   template<typename MatType, typename LabelsType>
   double ValidateScore(DecisionTree* root,
-                       MatType& validData,
-                       LabelsType& validLabels) const;
+                       MatType&& validData,
+                       LabelsType&& validLabels) const;
 
  private:
   //! The vector of children.
