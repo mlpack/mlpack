@@ -1174,4 +1174,32 @@ BOOST_AUTO_TEST_CASE(PostPruneDecisionTree)
   BOOST_REQUIRE_GT(bestScore, wdcorrect);
 }
 
+/**
+ * Test the ValidateScore() function
+ */
+BOOST_AUTO_TEST_CASE(ValidScoreTest)
+{
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  // Initialize an all-ones weight matrix.
+  arma::rowvec weights(labels.n_cols, arma::fill::ones);
+
+  // Build decision tree.
+  DecisionTree<> wd(inputData, labels, 3, weights, 1, 1e-7);
+
+  // Get the predicted test labels.
+  arma::Row<size_t> predictions;
+
+  DecisionTree<>* root = &wd;
+  double validationScore = wd.ValidateScore(root, inputData, labels);
+
+  BOOST_REQUIRE_EQUAL(validationScore, 1.0);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
