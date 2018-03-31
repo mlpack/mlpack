@@ -40,7 +40,7 @@ BOOST_FIXTURE_TEST_SUITE(PreprocessDescribeMainTest,
 
 BOOST_AUTO_TEST_CASE(PreprocessDescribeDimensionInRangeCheck)
 {
-  // We will use the dataset trainSet.csv - which is already present in the data/
+  // We will use the dataset trainSet.csv - which is already present in the data
   // directory. The dataset has 1000 rows and 24 columns. Invalid dimensions are
   // -1, -2 .. and so on
   // 1000, 1001 .. and so on

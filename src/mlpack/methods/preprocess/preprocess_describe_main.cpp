@@ -172,11 +172,13 @@ static void mlpackMain()
   error << "dimension must be less than the number of dimensions "
       << "of the input data (" << dimensions << ")";
   RequireParamValue<int>("dimension",
-      [dimensions](int x) { return size_t(x) < dimensions; }, true, error.str());
+      [dimensions](int x) { return size_t(x) < dimensions; },
+      true,
+      error.str());
 
   RequireParamValue<int>("precision", [](int x) { return x >= 0; }, true,
       "precision must be nonnegative");
-  
+
   RequireParamValue<int>("width", [](int x) { return x >= 0; }, true,
       "width must be nonnegative");
 
