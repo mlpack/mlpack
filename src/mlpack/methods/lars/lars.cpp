@@ -44,45 +44,6 @@ LARS::LARS(const bool useCholesky,
 { /* Nothing left to do */ }
 
 LARS::LARS(const arma::mat& data,
-           const arma::vec& responses,
-           const bool transposeData,
-           const bool useCholesky,
-           const double lambda1,
-           const double lambda2,
-           const double tolerance) :
-    matGram(&matGramInternal),
-    useCholesky(useCholesky),
-    lasso((lambda1 != 0)),
-    lambda1(lambda1),
-    elasticNet((lambda1 != 0) && (lambda2 != 0)),
-    lambda2(lambda2),
-    tolerance(tolerance)
-{
-  arma::rowvec rowResponses = responses.t();
-  Train(data, rowResponses, transposeData);
-}
-
-LARS::LARS(const arma::mat& data,
-           const arma::vec& responses,
-           const bool transposeData,
-           const bool useCholesky,
-           const arma::mat& gramMatrix,
-           const double lambda1,
-           const double lambda2,
-           const double tolerance) :
-    matGram(&gramMatrix),
-    useCholesky(useCholesky),
-    lasso((lambda1 != 0)),
-    lambda1(lambda1),
-    elasticNet((lambda1 != 0) && (lambda2 != 0)),
-    lambda2(lambda2),
-    tolerance(tolerance)
-{
-  arma::rowvec rowResponses = responses.t();
-  Train(data, rowResponses, transposeData);
-}
-
-LARS::LARS(const arma::mat& data,
            const arma::rowvec& responses,
            const bool transposeData,
            const bool useCholesky,
@@ -105,24 +66,6 @@ LARS::LARS(const arma::mat& data,
     LARS(useCholesky, gramMatrix, lambda1, lambda2, tolerance)
 {
   Train(data, responses, transposeData);
-}
-
-void LARS::Train(const arma::mat& matX,
-                 const arma::vec& y,
-                 arma::vec& beta,
-                 const bool transposeData)
-{
-  arma::rowvec rowY = y.t();
-  Train(matX, rowY, beta, transposeData);
-}
-
-void LARS::Train(const arma::mat& data,
-                 const arma::vec& responses,
-                 const bool transposeData)
-{
-  arma::rowvec rowResponses = responses.t();
-  arma::vec beta;
-  Train(data, rowResponses, beta, transposeData);
 }
 
 void LARS::Train(const arma::mat& matX,
@@ -426,15 +369,6 @@ void LARS::Train(const arma::mat& data,
 {
   arma::vec beta;
   Train(data, responses, beta, transposeData);
-}
-
-void LARS::Predict(const arma::mat& points,
-                   arma::vec& predictions,
-                   const bool rowMajor) const
-{
-  arma::rowvec rowPredictions;
-  Predict(points, rowPredictions, rowMajor);
-  predictions = rowPredictions.t();
 }
 
 void LARS::Predict(const arma::mat& points,

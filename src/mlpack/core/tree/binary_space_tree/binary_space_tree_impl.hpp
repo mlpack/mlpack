@@ -953,20 +953,39 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
       delete right;
     if (!parent)
       delete dataset;
+
+    parent = NULL;
+    left = NULL;
+    right = NULL;
   }
 
   ar & BOOST_SERIALIZATION_NVP(begin);
   ar & BOOST_SERIALIZATION_NVP(count);
   ar & BOOST_SERIALIZATION_NVP(bound);
   ar & BOOST_SERIALIZATION_NVP(stat);
-  ar & BOOST_SERIALIZATION_NVP(parent);
+
   ar & BOOST_SERIALIZATION_NVP(parentDistance);
   ar & BOOST_SERIALIZATION_NVP(furthestDescendantDistance);
   ar & BOOST_SERIALIZATION_NVP(dataset);
 
   // Save children last; otherwise boost::serialization gets confused.
-  ar & BOOST_SERIALIZATION_NVP(left);
-  ar & BOOST_SERIALIZATION_NVP(right);
+  bool hasLeft = (left != NULL);
+  bool hasRight = (right != NULL);
+
+  ar & BOOST_SERIALIZATION_NVP(hasLeft);
+  ar & BOOST_SERIALIZATION_NVP(hasRight);
+  if (hasLeft)
+    ar & BOOST_SERIALIZATION_NVP(left);
+  if (hasRight)
+    ar & BOOST_SERIALIZATION_NVP(right);
+
+  if (Archive::is_loading::value)
+  {
+    if (left)
+      left->parent = this;
+    if (right)
+      right->parent = this;
+  }
 }
 
 } // namespace tree

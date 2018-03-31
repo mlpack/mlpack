@@ -50,7 +50,7 @@ class LogisticRegressionFunction
   //! Return the matrix of predictors.
   const MatType& Predictors() const { return predictors; }
   //! Return the vector of responses.
-  const arma::vec& Responses() const { return responses; }
+  const arma::Row<size_t>& Responses() const { return responses; }
 
   /**
   * Shuffle the order of function visitation.  This may be called by the optimizer.
@@ -133,6 +133,20 @@ class LogisticRegressionFunction
   void PartialGradient(const arma::mat& parameters,
                        const size_t j,
                        arma::sp_mat& gradient) const;
+
+  /**
+   * Evaluate the objective function and gradient of the logistic regression
+   * log-likelihood function simultaneously with the given parameters.
+   */
+  template<typename GradType>
+  double EvaluateWithGradient(const arma::mat& parameters,
+                              GradType& gradient) const;
+
+  template<typename GradType>
+  double EvaluateWithGradient(const arma::mat& parameters,
+                              const size_t begin,
+                              GradType& gradient,
+                              const size_t batchSize = 1) const;
 
   //! Return the initial point for the optimization.
   const arma::mat& GetInitialPoint() const { return initialPoint; }

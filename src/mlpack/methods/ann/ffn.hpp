@@ -53,8 +53,8 @@ class FFN
   using NetworkType = FFN<OutputLayerType, InitializationRuleType>;
 
   /**
-   * Create the FFN object with the given predictors and responses set (this is
-   * the set that is used to train the network).
+   * Create the FFN object.
+   *
    * Optionally, specify which initialize rule and performance function should
    * be used.
    *
@@ -76,26 +76,6 @@ class FFN
 
   //! Copy/move assignment operator.
   FFN& operator = (FFN);
-
-  /**
-   * Create the FFN object with the given predictors and responses set (this is
-   * the set that is used to train the network).
-   * Optionally, specify which initialize rule and performance function should
-   * be used.
-   *
-   * If you want to pass in a parameter and discard the original parameter
-   * object, be sure to use std::move to avoid unnecessary copy.
-   *
-   * @param predictors Input training variables.
-   * @param responses Outputs results from input training variables.
-   * @param outputLayer Output layer used to evaluate the network.
-   * @param initializeRule Optional instantiated InitializationRule object
-   *        for initializing the network parameter.
-   */
-  FFN(arma::mat predictors,
-      arma::mat responses,
-      OutputLayerType outputLayer = OutputLayerType(),
-      InitializationRuleType initializeRule = InitializationRuleType());
 
   //! Destructor to release allocated memory.
   ~FFN();
@@ -179,7 +159,26 @@ class FFN
   double Evaluate(const arma::mat& parameters,
                   const size_t begin,
                   const size_t batchSize,
-                  const bool deterministic = true);
+                  const bool deterministic);
+
+   /**
+   * Evaluate the feedforward network with the given parameters, but using only
+   * one data point. This is useful for optimizers such as SGD, which require a
+   * separable objective function.  This just calls the overload of Evaluate()
+   * with deterministic = true.
+   *
+   * @param parameters Matrix model parameters.
+   * @param begin Index of the starting point to use for objective function
+   *        evaluation.
+   * @param batchSize Number of points to be passed at a time to use for
+   *        objective function evaluation.
+   */
+  double Evaluate(const arma::mat& parameters,
+                  const size_t begin,
+                  const size_t batchSize)
+  {
+    return Evaluate(parameters, begin, batchSize, true);
+  }
 
   /**
    * Evaluate the gradient of the feedforward network with the given parameters,
@@ -226,6 +225,16 @@ class FFN
   const arma::mat& Parameters() const { return parameter; }
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameter; }
+
+  //! Get the matrix of responses to the input data points.
+  const arma::mat& Responses() const { return responses; }
+  //! Modify the matrix of responses to the input data points.
+  arma::mat& Responses() { return responses; }
+
+  //! Get the matrix of data points (predictors).
+  const arma::mat& Predictors() const { return predictors; }
+  //! Modify the matrix of data points (predictors).
+  arma::mat& Predictors() { return predictors; }
 
   /**
    * Reset the module infomration (weights/parameters).

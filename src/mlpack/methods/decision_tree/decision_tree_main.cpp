@@ -39,7 +39,9 @@ PROGRAM_INFO("Decision tree",
     "may not be specified when the " + PRINT_PARAM_STRING("training") + " "
     "parameter is specified.  The " + PRINT_PARAM_STRING("minimum_leaf_size") +
     " parameter specifies the minimum number of training points that must fall"
-    " into each leaf for it to be split.  If " +
+    " into each leaf for it to be split.  The " +
+    PRINT_PARAM_STRING("minimum_gain_split") + " parameter specifies "
+    "the minimum gain that is needed for the node to split. If " +
     PRINT_PARAM_STRING("print_training_error") + " is specified, the training "
     "error will be printed."
     "\n\n"
@@ -58,8 +60,8 @@ PROGRAM_INFO("Decision tree",
     "call"
     "\n\n" +
     PRINT_CALL("decision_tree", "training", "data", "labels", "labels",
-        "output_model", "tree", "minimum_leaf_size", 20,
-        "print_training_error", true) +
+        "output_model", "tree", "minimum_leaf_size", 20, "minimum_gain_split",
+        1e-3, "print_training_error", true) +
     "\n\n"
     "Then, to use that model to classify points in " +
     PRINT_DATASET("test_set") + " and print the test error given the "
@@ -82,6 +84,8 @@ PARAM_UMATRIX_IN("test_labels", "Test point labels, if accuracy calculation "
 // Training parameters.
 PARAM_INT_IN("minimum_leaf_size", "Minimum number of points in a leaf.", "n",
     20);
+PARAM_DOUBLE_IN("minimum_gain_split", "Minimum gain for node splitting.", "g",
+    1e-7);
 PARAM_FLAG("print_training_error", "Print the training error.", "e");
 
 // Output parameters.
@@ -136,6 +140,10 @@ static void mlpackMain()
   RequireParamValue<int>("minimum_leaf_size", [](int x) { return x > 0; }, true,
       "leaf size must be positive");
 
+  RequireParamValue<double>("minimum_gain_split", [](double x)
+                         { return (x > 0.0 && x < 1.0); }, true,
+                         "gain split must be a fraction in range [0,1]");
+
   // Load the model or build the tree.
   DecisionTreeModel* model;
   arma::mat trainingSet;
@@ -164,6 +172,8 @@ static void mlpackMain()
 
     // Now build the tree.
     const size_t minLeafSize = (size_t) CLI::GetParam<int>("minimum_leaf_size");
+    const double minimumGainSplit =
+                           (double) CLI::GetParam<double>("minimum_gain_split");
 
     // Create decision tree with weighted labels.
     if (CLI::HasParam("weights"))
@@ -171,12 +181,12 @@ static void mlpackMain()
       arma::Row<double> weights =
           std::move(CLI::GetParam<arma::Mat<double>>("weights"));
       model->tree = DecisionTree<>(trainingSet, model->info, labels,
-          numClasses, weights, minLeafSize);
+          numClasses, weights, minLeafSize, minimumGainSplit);
     }
     else
     {
       model->tree = DecisionTree<>(trainingSet, model->info, labels,
-          numClasses, minLeafSize);
+          numClasses, minLeafSize, minimumGainSplit);
     }
 
     // Do we need to print training error?

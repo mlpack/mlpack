@@ -31,11 +31,13 @@ namespace meanshift /** Mean shift clustering. */ {
  *
  * @code
  * extern arma::mat data; // Dataset we want to run mean shift on.
- * arma::Col<size_t> assignments; // Cluster assignments.
+ * arma::Row<size_t> assignments; // Cluster assignments.
  * arma::mat centroids; // Cluster centroids.
+ * bool forceConvergence = true; // Flag whether to force each centroid seed
+ * to converge regardless of maxIterations.
  *
  * MeanShift<> meanShift();
- * meanShift.Cluster(dataset, assignments, centroids);
+ * meanShift.Cluster(dataset, assignments, centroids, forceConvergence);
  * @endcode
  *
  * @tparam UseKernel Use kernel or mean to calculate new centroid.
@@ -80,10 +82,13 @@ class MeanShift
    * @param data Dataset to cluster.
    * @param assignments Vector to store cluster assignments in.
    * @param centroids Matrix in which centroids are stored.
+   * @param forceConvergence Flag whether to force each centroid seed to
+   * converge regardless of maxIterations.
    */
   void Cluster(const MatType& data,
-               arma::Col<size_t>& assignments,
+               arma::Row<size_t>& assignments,
                arma::mat& centroids,
+               bool forceConvergence = true,
                bool useSeeds = true);
 
   //! Get the maximum number of iterations.

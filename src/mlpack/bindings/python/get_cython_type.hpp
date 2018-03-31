@@ -4,6 +4,11 @@
  *
  * Template metaprogramming to return the string representation of the Cython
  * type for a given Cython binding parameter.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_BINDINGS_PYTHON_GET_CYTHON_TYPE_HPP
 #define MLPACK_BINDINGS_PYTHON_GET_CYTHON_TYPE_HPP

@@ -45,8 +45,8 @@ target_link_libraries(mlpack
 
 set_target_properties(mlpack
   PROPERTIES
-  VERSION 2.0
-  SOVERSION 2
+  VERSION 3.0
+  SOVERSION 3
 )
 
 # Backtrace for Linux need those libs.

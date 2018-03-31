@@ -15,6 +15,7 @@
 #define MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP
 
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <mlpack/core/optimizers/function.hpp>
 #include "aug_lagrangian_function.hpp"
 
 namespace mlpack {
@@ -62,6 +63,8 @@ bool AugLagrangian::Optimize(
     arma::mat& coordinates,
     const size_t maxIterations)
 {
+  traits::CheckConstrainedFunctionTypeAPI<LagrangianFunctionType>();
+
   LagrangianFunctionType& function = augfunc.Function();
 
   // Ensure that we update lambda immediately.

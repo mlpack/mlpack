@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(DrusillaSelectExhaustiveExactTest)
 
   ds.Search(dataset, 5, neighbors, distances);
 
-  AllkFN kfn(dataset);
+  KFN kfn(dataset);
   kfn.Search(dataset, 5, neighborsTrue, distancesTrue);
 
   BOOST_REQUIRE_EQUAL(neighborsTrue.n_cols, neighbors.n_cols);

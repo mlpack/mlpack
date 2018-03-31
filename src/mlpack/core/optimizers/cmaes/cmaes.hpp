@@ -166,7 +166,7 @@ class CMAES
 /**
  * Convenient typedef for CMAES approximation.
  */
-template <typename SelectionPolicyType = RandomSelection>
+template<typename SelectionPolicyType = RandomSelection>
 using ApproxCMAES = CMAES<SelectionPolicyType>;
 
 } // namespace optimization

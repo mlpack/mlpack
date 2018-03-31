@@ -13,6 +13,7 @@
 #define MLPACK_CORE_OPTIMIZERS_GRID_SEARCH_GRID_SEARCH_IMPL_HPP
 
 #include <limits>
+#include <mlpack/core/optimizers/function.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -59,6 +60,9 @@ void GridSearch::Optimize(
     data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
     size_t i)
 {
+  // Make sure we have the methods that we need.
+  traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType>();
+
   if (i < datasetInfo.Dimensionality())
   {
     for (size_t j = 0; j < datasetInfo.NumMappings(i); ++j)
