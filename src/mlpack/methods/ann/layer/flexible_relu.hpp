@@ -8,19 +8,6 @@
  * "FReLU: Flexible Rectified Linear Units for Improving Convolutional
  *   Neural Networks", 2018
  *
- * For more information, read the following paper:
- *
- * @code
- * @article{
- *  author  = {Suo Qiu, Xiangmin Xu and Bolun Cai},
- *  title   = {FReLU: Flexible Rectified Linear Units for Improving
- *             Convolutional Neural Networks}
- *  journal = {arxiv preprint},
- *  URL     = {https://arxiv.org/pdf/1706.08098.pdf},
- *  year    = {2018}
- * }
- * @endcode
- *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -47,15 +34,25 @@ namespace ann /**Artificial Neural Network*/ {
  * \right
  *@f}
  *
- *@tparam InputDataType Type of the input data ( arma::colvec, arma::mar,
- *        arma::sp_mat or arma::cube)
+ * For more information, read the following paper:
  *
+ * @code
+ * @article{Qiu2018,
+ *  author  = {Suo Qiu, Xiangmin Xu and Bolun Cai},
+ *  title   = {FReLU: Flexible Rectified Linear Units for Improving
+ *             Convolutional Neural Networks}
+ *  journal = {arxiv preprint},
+ *  URL     = {https://arxiv.org/abs/1706.08098},
+ *  year    = {2018}
+ * }
+ * @endcode
+ *
+ *@tparam InputDataType Type of the input data (arma::colvec, arma::mar,
+ *        arma::sp_mat or arma::cube)
  *@tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *        arma::sp_mat or arma::cube)
  *
  */
-
-
 template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
