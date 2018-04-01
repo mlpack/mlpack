@@ -15,6 +15,9 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 #include <mlpack/core/data/binarize.hpp>
+#include <cmath>
+#include <random>
+#include <chrono>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -1083,6 +1086,143 @@ void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
 BOOST_AUTO_TEST_CASE(CustomRecursiveReberGrammarTest)
 {
   ReberGrammarTestCustomNetwork(16, true);
+}
+
+/**
+ * @brief Generates noisy sine wave.
+ *
+ * @param data    The data points as output
+ * @param labels  The expected values as output
+ * @param rho     The size of the sequence of each data point
+ * @param outputSteps How many output steps to consider
+ * @param dataPoints  The number of input data points. The actual generated data
+ * points may be more than this to adjust to the outputSteps. But at the minimum
+ * these many data points will be generated.
+ * @param gain    The gain on the amplitude
+ * @param freq    The frquency of the sine wave
+ * @param phase   The phase shift if any
+ * @param noisePercent  The percent noise to induce
+ * @param numCycles  How many full size wave cycles required. All the data
+ * points will be fit into these cycles.
+ * @param normalize Whether to normalise the data. This may be required for some
+ * layers like LSTM. Default is true.
+ */
+void GenerateNoisySinRNN(arma::cube& data, arma::cube& labels, size_t rho,
+                         size_t outputSteps = 1, const int dataPoints = 100,
+                         const double gain = 1.0, const int freq = 10,
+                         const double phase = 0, const int noisePercent = 20,
+                         const double numCycles = 6.0,
+                         const bool   normalize = true)
+{
+  int points = dataPoints;
+  int r = dataPoints % rho;
+  if (r == 0)
+  {
+    points += outputSteps;
+  }
+  else
+  {
+    points += rho - r + outputSteps;
+  }
+  arma::colvec    x(points);
+  int             i = 0;
+  double          interval = numCycles / freq / points;
+  std::mt19937_64 rng;
+  // initialize the random number generator with time-dependent seed
+  uint64_t timeSeed =
+      std::chrono::high_resolution_clock::now().time_since_epoch().count();
+  std::seed_seq ss{uint32_t(timeSeed & 0xffffffff), uint32_t(timeSeed >> 32)};
+  rng.seed(ss);
+  // initialize a uniform distribution between 0 and 1
+  std::uniform_real_distribution< double > unif(0, 1);
+  x.for_each([&i, gain, freq, phase, noisePercent, interval, &rng,
+              &unif](arma::colvec::elem_type& val) {
+    double t = interval * (i++);
+    val = gain * ::sin(2 * M_PI * freq * t + phase) +
+          (noisePercent * gain / 100 * unif(rng));
+  });
+
+  arma::colvec y = x;
+  if (normalize)
+    y = arma::normalise(x);
+  y.save("rawsin.csv", arma::csv_ascii);
+
+  // Now break this into columns of rho size slices.
+  size_t n_columns = y.n_elem / rho;
+  data = arma::cube(1, n_columns, rho);
+  labels = arma::cube(outputSteps, n_columns, 1);
+  for (int i = 0; i < n_columns; ++i)
+  {
+    data.tube(0, i) = y.rows(i * rho, i * rho + rho - 1);
+    labels.subcube(0, i, 0, outputSteps - 1, i, 0) =
+        y.rows(i * rho + rho, i * rho + rho + outputSteps - 1);
+  }
+}
+
+/**
+ * @brief RNNSineTest Test a simple RNN using noisy sine. Use single output
+ *        for multiple inputs.
+ * @param hiddenUnits No of units in the hiddenlayer.
+ * @param rho The input sequence length.
+ * @param numEpochs The number of epochs to run.
+ * @return The mean squared error of the prediction.
+ */
+double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
+{
+  RNN<MeanSquaredError<> > net(rho, true);
+  net.Add<LinearNoBias<> >(1, hiddenUnits);
+  net.Add<LSTM<> >(hiddenUnits, 1);
+
+  /*
+   * stepSize = 0.05, batchSize = 100, alpha = 0.9, epsilon = 1e-5,
+   * maxiterations = 4000, tolerance = 1e-5
+   *
+   */
+  RMSProp opt(0.05, 100, 0.9, 1e-08, 50000, 1e-5);
+
+  // Generate data
+  arma::cube data;
+  arma::cube labels;
+  GenerateNoisySinRNN(data, labels, rho, 1, 20000, 1.0, 200, 0.0, 45, 20);
+
+  // Break into training and test sets. Simply split along columns.
+  size_t     trainCols = data.n_cols * 0.8; // Take 20% out for testing.
+  size_t     testCols = data.n_cols - trainCols;
+  arma::cube testData =
+      data.subcube(0, data.n_cols - testCols, 0, data.n_rows - 1,
+                   data.n_cols - 1, data.n_slices - 1);
+  arma::cube testLabels =
+      labels.subcube(0, labels.n_cols - testCols, 0, labels.n_rows - 1,
+                     labels.n_cols - 1, labels.n_slices - 1);
+
+  for (int i = 0; i < numEpochs; ++i)
+  {
+    net.Train(data.subcube(0, 0, 0, data.n_rows - 1, trainCols - 1,
+                           data.n_slices - 1),
+              labels.subcube(0, 0, 0, labels.n_rows - 1, trainCols - 1,
+                             labels.n_slices - 1),
+              opt);
+  }
+  // Well now it should be trained. Do the test here.
+  arma::cube prediction;
+  net.Predict(testData, prediction);
+
+  // Take slice rho only.
+  arma::mat actualPred = prediction.slice(rho - 1);
+  // actualPred.print( "Prediction:" );
+  // testLabels.print( "Actual" );
+  double error =
+      arma::mean(arma::mean(arma::square(actualPred - testLabels.slice(0))));
+  return error;
+}
+
+/**
+ * Test RNN using multiple timestep input and single output.
+ */
+BOOST_AUTO_TEST_CASE(MultiTimestepTest)
+{
+  double err = RNNSineTest(112, 10, 10);
+  BOOST_REQUIRE_LE(err, 1e-02);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
