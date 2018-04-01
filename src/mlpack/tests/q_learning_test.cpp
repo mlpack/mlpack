@@ -174,71 +174,65 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
 //! Test DQN in Acrobat task.
 BOOST_AUTO_TEST_CASE(AcrobatWithDQN)
 {
-  bool converged = true;
-  //! Checking Convergence for 50 different trials
-  for (int i=0; i<50; i++)
-  {
+  
     // Set up the network.
-    FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
-        GaussianInitialization(0, 0.001));
-    model.Add<Linear<>>(4, 64);
-    model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(64, 32);
-    model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(32, 3);
+  FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
+      GaussianInitialization(0, 0.001));
+  model.Add<Linear<>>(4, 64);
+  model.Add<ReLULayer<>>();
+  model.Add<Linear<>>(64, 32);
+  model.Add<ReLULayer<>>();
+  model.Add<Linear<>>(32, 3);
 
-    // Set up the policy and replay method.
-    GreedyPolicy<Acrobat> policy(1.0, 1000, 0.1);
-    RandomReplay<Acrobat> replayMethod(20, 10000);
+  // Set up the policy and replay method.
+  GreedyPolicy<Acrobat> policy(1.0, 1000, 0.1);
+  RandomReplay<Acrobat> replayMethod(20, 10000);
 
-    TrainingConfig config;
-    config.StepSize() = 0.01;
-    config.Discount() = 0.99;
-    config.TargetNetworkSyncInterval() = 100;
-    config.ExplorationSteps() = 100;
-    config.DoubleQLearning() = false;
-    config.StepLimit() = 400;
+  TrainingConfig config;
+  config.StepSize() = 0.01;
+  config.Discount() = 0.99;
+  config.TargetNetworkSyncInterval() = 100;
+  config.ExplorationSteps() = 100;
+  config.DoubleQLearning() = false;
+  config.StepLimit() = 400;
 
-    // Set up DQN agent.
-    QLearning<Acrobat, decltype(model), AdamUpdate, decltype(policy)>
-        agent(std::move(config), std::move(model), std::move(policy),
-            std::move(replayMethod));
+  // Set up DQN agent.
+  QLearning<Acrobat, decltype(model), AdamUpdate, decltype(policy)>
+      agent(std::move(config), std::move(model), std::move(policy),
+          std::move(replayMethod));
 
-    size_t episodes = 0;
+  arma::running_stat<double> averageReturn;
+  size_t episodes = 0;
+  bool converged = true;
+  while (true)
+  {
+    double episodeReturn = agent.Episode();
+    averageReturn(episodeReturn);
+    episodes += 1;
 
-    arma::running_stat<double> averageReturn;
-    while (true)
+    if (episodes > 1000)
     {
-      double episodeReturn = agent.Episode();
-      averageReturn(episodeReturn);
-      episodes += 1;
-
-      if (episodes > 1000)
-      {
-        Log::Debug << "Acrobat with DQN failed." << std::endl;
-        converged = false;
-        break;
-      }
-
-      /**
-       * I am using a thresold of -395 to check convegence in 50 trails.
-       */
-      Log::Debug << "Average return: " << averageReturn.mean()
-          << " Episode return: " << episodeReturn << std::endl;
-      if (averageReturn.mean() > -395.00)
-      {
-        agent.Deterministic() = true;
-        arma::running_stat<double> testReturn;
-        for (size_t i = 0; i < 20; ++i)
-          testReturn(agent.Episode());
-
-        Log::Debug << "Average return in deterministic test: "
-            << testReturn.mean() << std::endl;
-        break;
-      }
-    }
-    if (converged == false)
+      Log::Debug << "Acrobat with DQN failed." << std::endl;
+      converged = false;
       break;
+    }
+
+    /**
+     * I am using a thresold of -380 to check convegence.
+     */
+    Log::Debug << "Average return: " << averageReturn.mean()
+        << " Episode return: " << episodeReturn << std::endl;
+    if (averageReturn.mean() > -380.00)
+    {
+      agent.Deterministic() = true;
+      arma::running_stat<double> testReturn;
+      for (size_t i = 0; i < 20; ++i)
+        testReturn(agent.Episode());
+
+      Log::Debug << "Average return in deterministic test: "
+          << testReturn.mean() << std::endl;
+      break;
+    }
   }
   BOOST_REQUIRE(converged);
 }
