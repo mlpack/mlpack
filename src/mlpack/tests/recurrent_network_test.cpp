@@ -15,6 +15,7 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 #include <mlpack/core/data/binarize.hpp>
+#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <cmath>
 #include <random>
 #include <chrono>
