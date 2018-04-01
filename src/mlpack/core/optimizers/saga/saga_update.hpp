@@ -51,7 +51,7 @@ class SAGAUpdate
               const arma::mat& gradient,
               const arma::mat& gradient0,
               const double stepSize,
-              const size_t batches)
+              const size_t /* batches */)
   {
     // Perform the vanilla SAGA update.
     iterate -= stepSize * (avgGradient + (gradient - gradient0));

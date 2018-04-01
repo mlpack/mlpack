@@ -54,7 +54,7 @@ class SAGUpdate
               const size_t batches)
   {
     // Perform the vanilla SAG update.
-    iterate -= stepSize * (avgGradient + (gradient - gradient0)/batches);
+    iterate -= stepSize * (avgGradient + (gradient - gradient0) / batches);
   }
 };
 
