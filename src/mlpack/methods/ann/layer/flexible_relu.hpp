@@ -120,7 +120,6 @@ class FlexibleReLU
   void serialize(Archive& ar, const unsigned int /* version*/);
 
  private:
-
   //! Locally-stored delta object.
   OutputDataType delta;
 
