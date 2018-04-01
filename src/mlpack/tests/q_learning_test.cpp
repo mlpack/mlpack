@@ -174,7 +174,6 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
 //! Test DQN in Acrobat task.
 BOOST_AUTO_TEST_CASE(AcrobatWithDQN)
 {
-  
     // Set up the network.
   FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
       GaussianInitialization(0, 0.001));
