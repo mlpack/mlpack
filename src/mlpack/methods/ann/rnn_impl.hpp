@@ -53,32 +53,6 @@ RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::RNN(
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
-RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::RNN(
-    arma::cube predictors,
-    arma::cube responses,
-    const size_t rho,
-    const bool single,
-    OutputLayerType outputLayer,
-    InitializationRuleType initializeRule) :
-    rho(rho),
-    outputLayer(std::move(outputLayer)),
-    initializeRule(std::move(initializeRule)),
-    inputSize(0),
-    outputSize(0),
-    targetSize(0),
-    reset(false),
-    single(single),
-    predictors(std::move(predictors)),
-    responses(std::move(responses)),
-    numFunctions(0),
-    deterministic(true)
-{
-  numFunctions = this->responses.n_cols;
-  ResetDeterministic();
-}
-
-template<typename OutputLayerType, typename InitializationRuleType,
-         typename... CustomLayers>
 RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::~RNN()
 {
   for (LayerTypes<CustomLayers...>& layer : network)

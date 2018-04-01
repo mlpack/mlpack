@@ -51,7 +51,8 @@ LRSDPFunction<SDPType>::LRSDPFunction(const size_t numSparseConstraints,
 }
 
 template <typename SDPType>
-double LRSDPFunction<SDPType>::Evaluate(const arma::mat& coordinates) const
+double LRSDPFunction<SDPType>::Evaluate(const arma::mat& /* coordinates */)
+                                        const
 {
   // Note: We don't require to update the R*R^T matrix here as the current
   // function is only used by AugLagrangian, which do not update the coordinates

@@ -1,6 +1,7 @@
 /**
  * @file ann_layer_test.cpp
  * @author Marcus Edel
+ * @author Praveen Ch
  *
  * Tests the ann layer modules.
  *
@@ -238,8 +239,9 @@ BOOST_AUTO_TEST_CASE(GradientAddLayerTest)
       input = arma::randu(10, 1);
       target = arma::mat("1");
 
-      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>(
-          input, target);
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<Add<> >(10);
       model->Add<LogSoftMax<> >();
@@ -459,8 +461,9 @@ BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
       input = arma::randu(10, 1);
       target = arma::mat("1");
 
-      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>(
-          input, target);
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(10, 2);
       model->Add<LogSoftMax<> >();
@@ -542,8 +545,9 @@ BOOST_AUTO_TEST_CASE(GradientLinearNoBiasLayerTest)
       input = arma::randu(10, 1);
       target = arma::mat("1");
 
-      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>(
-          input, target);
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<LinearNoBias<> >(10, 2);
       model->Add<LogSoftMax<> >();
@@ -748,7 +752,7 @@ BOOST_AUTO_TEST_CASE(LSTMRrhoTest)
 
   // Create model with user defined rho parameter.
   RNN<NegativeLogLikelihood<>, RandomInitialization> modelA(
-      input, target, rho, false, NegativeLogLikelihood<>(), init);
+      rho, false, NegativeLogLikelihood<>(), init);
   modelA.Add<IdentityLayer<> >();
   modelA.Add<Linear<> >(1, 10);
 
@@ -758,7 +762,7 @@ BOOST_AUTO_TEST_CASE(LSTMRrhoTest)
 
   // Create model without user defined rho parameter.
   RNN<NegativeLogLikelihood<> > modelB(
-      input, target, rho, false, NegativeLogLikelihood<>(), init);
+      rho, false, NegativeLogLikelihood<>(), init);
   modelB.Add<IdentityLayer<> >();
   modelB.Add<Linear<> >(1, 10);
 
@@ -787,7 +791,9 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
       target.ones(1, 1, 5);
       const size_t rho = 5;
 
-      model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
+      model = new RNN<NegativeLogLikelihood<> >(rho);
+      model->Predictors() = input;
+      model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(1, 10);
       model->Add<LSTM<> >(10, 3, rho);
@@ -828,7 +834,7 @@ BOOST_AUTO_TEST_CASE(FastLSTMRrhoTest)
 
   // Create model with user defined rho parameter.
   RNN<NegativeLogLikelihood<>, RandomInitialization> modelA(
-      input, target, rho, false, NegativeLogLikelihood<>(), init);
+      rho, false, NegativeLogLikelihood<>(), init);
   modelA.Add<IdentityLayer<> >();
   modelA.Add<Linear<> >(1, 10);
 
@@ -838,7 +844,7 @@ BOOST_AUTO_TEST_CASE(FastLSTMRrhoTest)
 
   // Create model without user defined rho parameter.
   RNN<NegativeLogLikelihood<> > modelB(
-      input, target, rho, false, NegativeLogLikelihood<>(), init);
+      rho, false, NegativeLogLikelihood<>(), init);
   modelB.Add<IdentityLayer<> >();
   modelB.Add<Linear<> >(1, 10);
 
@@ -867,7 +873,9 @@ BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
       target = arma::ones(1, 1, 5);
       const size_t rho = 5;
 
-      model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
+      model = new RNN<NegativeLogLikelihood<> >(rho);
+      model->Predictors() = input;
+      model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(1, 10);
       model->Add<FastLSTM<> >(10, 3, rho);
@@ -914,7 +922,9 @@ BOOST_AUTO_TEST_CASE(GradientGRULayerTest)
       target = arma::ones(1, 1, 5);
       const size_t rho = 5;
 
-      model = new RNN<NegativeLogLikelihood<> >(input, target, rho);
+      model = new RNN<NegativeLogLikelihood<> >(rho);
+      model->Predictors() = input;
+      model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(1, 10);
       model->Add<GRU<> >(10, 3, rho);
@@ -1046,8 +1056,9 @@ BOOST_AUTO_TEST_CASE(GradientConcatLayerTest)
       input = arma::randu(10, 1);
       target = arma::mat("1");
 
-      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>(
-          input, target);
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
       model->Add<IdentityLayer<> >();
 
       concat = new Concat<>();
@@ -1315,6 +1326,104 @@ BOOST_AUTO_TEST_CASE(SimpleBilinearInterpolationLayerTest)
       std::move(unzoomedOutput));
   CheckMatrices(unzoomedOutput - expectedOutput,
       arma::zeros(input.n_rows), 1e-12);
+}
+
+/**
+ * Tests the BatchNorm Layer, compares the layers parameters with
+ * the values from another implementation.
+ * Link to the implementation - http://cthorey.github.io./backpropagation/
+ */
+BOOST_AUTO_TEST_CASE(BatchNormTest)
+{
+  arma::mat input, output;
+  input << 5.1 << 3.5 << 1.4 << arma::endr
+        << 4.9 << 3.0 << 1.4 << arma::endr
+        << 4.7 << 3.2 << 1.3 << arma::endr;
+
+  BatchNorm<> model(input.n_rows);
+  model.Reset();
+
+  // Non-Deteministic Forward Pass Test.
+  model.Deterministic() = false;
+  model.Forward(std::move(input), std::move(output));
+  arma::mat result;
+  result << 1.1658 << 0.1100 << -1.2758 << arma::endr
+         << 1.2579 << -0.0699 << -1.1880 << arma::endr
+         << 1.1737 << 0.0958 << -1.2695 << arma::endr;
+
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
+
+  // Deterministic Forward Pass test.
+  output = model.TrainingMean();
+  result << 3.33333333 << arma::endr
+         << 3.1 << arma::endr
+         << 3.06666666 << arma::endr;
+
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
+
+  output = model.TrainingVariance();
+  result << 2.2956 << arma::endr
+         << 2.0467 << arma::endr
+         << 1.9356 << arma::endr;
+
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
+
+  model.Deterministic() = true;
+  model.Forward(std::move(input), std::move(output));
+
+  result << 1.1658 << 0.1100 << -1.2757 << arma::endr
+         << 1.2579 << -0.0699 << -1.1880 << arma::endr
+         << 1.1737 << 0.0958 << -1.2695 << arma::endr;
+
+  CheckMatrices(output, result, 1e-1);
+}
+
+/**
+ * BatchNorm layer numerically gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientBatchNormLayerTest)
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randn(10, 256);
+      arma::mat target;
+      target.ones(1, 256);
+
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<BatchNorm<> >(10);
+      model->Add<Linear<> >(10, 2);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0, 256, false);
+      model->Gradient(model->Parameters(), 0, gradient, 256);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -75,6 +75,7 @@ add_executable(mlpack_test
   momentum_sgd_test.cpp
   nbc_test.cpp
   nca_test.cpp
+  nesterov_momentum_sgd_test.cpp
   nmf_test.cpp
   nystroem_method_test.cpp
   octree_test.cpp
@@ -132,6 +133,7 @@ add_executable(mlpack_test
   main_tests/test_helper.hpp
   main_tests/emst_test.cpp
   main_tests/adaboost_test.cpp
+  main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
   main_tests/decision_tree_test.cpp
   main_tests/decision_stump_test.cpp

@@ -27,11 +27,10 @@ namespace pca {
  * common, widely-used technique that is often used for either dimensionality
  * reduction or transforming data into a better basis.  Further information on
  * PCA can be found in almost any statistics or machine learning textbook, and
- * all over the internet. Note this class will be changed to have the name PCA
- * in mlpack 3.0.0
+ * all over the internet.
  */
 template<typename DecompositionPolicy = ExactSVDPolicy>
-class PCAType
+class PCA
 {
  public:
   /**
@@ -40,8 +39,8 @@ class PCAType
    *
    * @param scaleData Whether or not to scale the data.
    */
-  PCAType(const bool scaleData = false,
-          const DecompositionPolicy& decomposition = DecompositionPolicy());
+  PCA(const bool scaleData = false,
+      const DecompositionPolicy& decomposition = DecompositionPolicy());
 
   /**
    * Apply Principal Component Analysis to the provided data set. It is safe
@@ -140,9 +139,6 @@ class PCAType
   //! Decomposition method used to perform principal components analysis.
   DecompositionPolicy decomposition;
 }; // class PCA
-
-//! 3.0.0 TODO: break reverse-compatibility by changing PCAType to PCA.
-typedef PCAType<ExactSVDPolicy> PCA;
 
 } // namespace pca
 } // namespace mlpack

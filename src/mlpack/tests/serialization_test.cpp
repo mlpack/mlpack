@@ -1130,7 +1130,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesSerializationTest)
 
 BOOST_AUTO_TEST_CASE(RASearchTest)
 {
-  using neighbor::AllkRANN;
+  using neighbor::KRANN;
   using neighbor::KNN;
   arma::mat dataset = arma::randu<arma::mat>(5, 200);
   arma::mat otherDataset = arma::randu<arma::mat>(5, 100);
@@ -1138,11 +1138,11 @@ BOOST_AUTO_TEST_CASE(RASearchTest)
   // Find nearest neighbors in the top 10, with accuracy 0.95.  So 95% of the
   // results we get (at least) should fall into the top 10 of the true nearest
   // neighbors.
-  AllkRANN allkrann(dataset, false, false, 5, 0.95);
+  KRANN allkrann(dataset, false, false, 5, 0.95);
 
-  AllkRANN krannXml(otherDataset, false, false);
-  AllkRANN krannText(otherDataset, true, false);
-  AllkRANN krannBinary(otherDataset, true, true);
+  KRANN krannXml(otherDataset, false, false);
+  KRANN krannText(otherDataset, true, false);
+  KRANN krannBinary(otherDataset, true, true);
 
   SerializeObjectAll(allkrann, krannXml, krannText, krannBinary);
 

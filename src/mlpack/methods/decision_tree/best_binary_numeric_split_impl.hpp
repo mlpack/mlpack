@@ -24,6 +24,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const size_t numClasses,
     const WeightVecType& weights,
     const size_t minimumLeafSize,
+    const double minimumGainSplit,
     arma::Col<typename VecType::elem_type>& classProbabilities,
     AuxiliarySplitInfo<typename VecType::elem_type>& /* aux */)
 {
@@ -104,7 +105,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
           data[sortedIndices[index]]) / 2.0;
       return gain;
     }
-    else if (gain > bestFoundGain)
+    else if (gain > bestFoundGain + minimumGainSplit)
     {
       // We still have a better split.
       bestFoundGain = gain;

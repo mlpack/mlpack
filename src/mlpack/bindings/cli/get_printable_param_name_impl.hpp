@@ -4,6 +4,11 @@
  *
  * Return the parameter name that the user would specify on the command line,
  * with different behavior for different parameter types.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_BINDINGS_CLI_GET_PRINTABLE_PARAM_NAME_IMPL_HPP
 #define MLPACK_BINDINGS_CLI_GET_PRINTABLE_PARAM_NAME_IMPL_HPP

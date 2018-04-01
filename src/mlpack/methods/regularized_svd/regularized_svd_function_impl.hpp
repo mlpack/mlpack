@@ -205,6 +205,10 @@ double StandardSGD::Optimize(
     // Is this iteration the start of a sequence?
     if ((currentFunction % numFunctions) == 0)
     {
+      const size_t epoch = i / numFunctions + 1;
+      Log::Info << "Epoch " << epoch << "; " << "objective "
+          << overallObjective << "." << std::endl;
+
       // Reset the counter variables.
       overallObjective = 0;
       currentFunction = 0;
