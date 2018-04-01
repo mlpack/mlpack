@@ -38,6 +38,10 @@ double PSOType<VelocityUpdatePolicy>::Optimize(
   // Randomly initialize the particle positions.
   particlePositions.randu(iterate.n_rows, iterate.n_cols, numParticles);
 
+  // Scale position values according to user input.
+  particlePositions *= (upperBound - lowerBound);
+  particlePositions += lowerBound;
+
   // Randomly initialize particle velocities.
   particleVelocities.randu(iterate.n_rows, iterate.n_cols, numParticles);
 
@@ -117,7 +121,6 @@ double PSOType<VelocityUpdatePolicy>::Optimize(
     velocityUpdatePolicy.Update(
         particlePositions,
         particleVelocities,
-        particleFitnesses,
         particleBestPositions,
         particleBestFitnesses);
 

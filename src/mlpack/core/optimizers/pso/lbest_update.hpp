@@ -79,7 +79,6 @@ class LBestUpdate
    */
   void Update(const arma::cube& particlePositions,
               arma::cube& particleVelocities,
-              const arma::vec& particleFitnesses,
               const arma::cube& particleBestPositions,
               const arma::vec& particleBestFitnesses)
   {

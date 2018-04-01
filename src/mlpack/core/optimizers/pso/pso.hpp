@@ -55,6 +55,8 @@ class PSOType
     const size_t maxIterations = 2000,
     const double exploitationFactor = 2.05,
     const double explorationFactor = 2.05,
+    const double lowerBound = 0.0,
+    const double upperBound = 1.0,
     const bool enableGradientDescent = false,
     const double psoIterationsRatio = 1.0,
     const double stepSize = 1e-3,
@@ -63,6 +65,8 @@ class PSOType
     maxIterations(maxIterations),
     exploitationFactor(exploitationFactor),
     explorationFactor(explorationFactor),
+    lowerBound(lowerBound),
+    upperBound(upperBound),
     enableGradientDescent(enableGradientDescent),
     psoIterationsRatio(psoIterationsRatio),
     stepSize(stepSize),
@@ -98,6 +102,10 @@ class PSOType
   double exploitationFactor;
   //! Exploration factor for lbest version.
   double explorationFactor;
+  //! Lower bound for initialization.
+  double lowerBound;
+  //! Upper bound for initialization.
+  double upperBound;
   //! Decide whether to use gradiene descent or not.
   bool enableGradientDescent;
   //! Ratio of maxIterations for which PSO will be run.
