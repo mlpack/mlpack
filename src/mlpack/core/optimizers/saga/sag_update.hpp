@@ -2,7 +2,9 @@
  * @file sag_update.hpp
  * @authors Prabhat Sharma and Marcus Edel
  *
- * Vanilla update for SAG.
+ * Vanilla update for SAG, a stochastic gradient method for
+ * optimizing the sum of a finite set of smooth functions, where
+ * the sum is strongly convex.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -18,7 +20,21 @@ namespace mlpack {
 namespace optimization {
 
 /**
-* Vanilla update policy for SAG.
+* Vanilla update policy for SAG, a stochastic gradient method for
+* optimizing the sum of a finite set of smooth functions, where
+* the sum is strongly convex.
+* For more information, please refer to:
+*
+* @code
+* @article{schmidt2017minimizing,
+* title     = {Minimizing finite sums with the stochastic average gradient},
+* author    = {Schmidt, Mark and Le Roux, Nicolas and Bach, Francis},
+* journal   = {Mathematical Programming},
+* year      = {2017},
+* publisher = {Springer}
+* }
+* @endcode
+*
 * The following update scheme is used to update SAG in every iteration:
 */
 class SAGUpdate
