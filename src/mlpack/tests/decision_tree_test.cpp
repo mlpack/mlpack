@@ -1167,7 +1167,7 @@ BOOST_AUTO_TEST_CASE(PostPruneDecisionTree)
 
   DecisionTree<>* root = &wd;
   double bestScore = wdcorrect;
-  //Reset the predictions
+  // Reset the predictions
   predictions.zeros();
   wd.Prune<true>(root, labels, 3, weights, testData, trueTestLabels, bestScore);
 
@@ -1197,6 +1197,29 @@ BOOST_AUTO_TEST_CASE(ValidScoreTest)
   double validationScore = wd.ValidateScore(root, inputData, labels);
 
   BOOST_REQUIRE_EQUAL(validationScore, 1.0);
+}
+
+/**
+ * Test that root node gets the correct index and count.
+ */
+BOOST_AUTO_TEST_CASE(BeginIndexandCountTest)
+{
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  // Initialize an all-ones weight matrix.
+  arma::rowvec weights(labels.n_cols, arma::fill::ones);
+
+  // Build decision tree.
+  DecisionTree<> wd(inputData, labels, 3, weights, 1, 1e-7);
+
+  BOOST_REQUIRE_EQUAL(wd.beginIndex, 0);
+  BOOST_REQUIRE_EQUAL(wd.countInNode, inputData.n_cols);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
