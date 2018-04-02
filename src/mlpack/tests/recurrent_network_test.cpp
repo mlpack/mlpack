@@ -1146,7 +1146,6 @@ void GenerateNoisySinRNN(arma::cube& data, arma::cube& labels, size_t rho,
   arma::colvec y = x;
   if (normalize)
     y = arma::normalise(x);
-  y.save("rawsin.csv", arma::csv_ascii);
 
   // Now break this into columns of rho size slices.
   size_t n_columns = y.n_elem / rho;
