@@ -18,8 +18,6 @@
 #define MLPACK_METHODS_ANN_LAYER_ALPHA_DROPOUT_HPP
 
 #include <mlpack/prereqs.hpp>
-#define alpha 1.6732632423543772848170429916717
-#define lambda 1.0507009873554804934193349852946
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -151,6 +149,12 @@ class AlphaDropout
 
   //! If true dropout and scaling is disabled, see notes above.
   bool deterministic;
+
+  //! Value of alpha for normalized inputs (taken from SELU)
+  const double alpha = 1.6732632423543772848170429916717;
+
+  //! Value of lambda for normalized inputs (taken from SELU)
+  const double lambda = 1.0507009873554804934193349852946;
 
   //! The low variance value of SELU activation function.
   double alphaDash;
