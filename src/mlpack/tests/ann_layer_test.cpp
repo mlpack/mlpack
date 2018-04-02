@@ -471,7 +471,7 @@ BOOST_AUTO_TEST_CASE(AlphaDropoutProbabilityTest)
       // that are not alphaDash, we just need the number of
       // nonAlphaDash values.
       arma::uvec nonAlphaDash = arma::find(module.Mask());
-      nonzeroCount += nonAlphDash.n_elem;
+      nonzeroCount += nonAlphaDash.n_elem;
     }
 
     const double expected = input.n_elem * (1-probability[trial]) * iterations;
