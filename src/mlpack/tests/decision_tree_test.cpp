@@ -1200,9 +1200,9 @@ BOOST_AUTO_TEST_CASE(ValidScoreTest)
 }
 
 /**
- * Test that root node gets the correct index and count.
+ * Test that root node gets the correct index.
  */
-BOOST_AUTO_TEST_CASE(BeginIndexandCountTest)
+BOOST_AUTO_TEST_CASE(BeginIndexTest)
 {
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
@@ -1219,6 +1219,27 @@ BOOST_AUTO_TEST_CASE(BeginIndexandCountTest)
   DecisionTree<> wd(inputData, labels, 3, weights, 1, 1e-7);
 
   BOOST_REQUIRE_EQUAL(wd.beginIndex, 0);
+}
+
+/**
+ * Test that root node gets the correct count.
+ */
+BOOST_AUTO_TEST_CASE(CountTest)
+{
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  // Initialize an all-ones weight matrix.
+  arma::rowvec weights(labels.n_cols, arma::fill::ones);
+
+  // Build decision tree.
+  DecisionTree<> wd(inputData, labels, 3, weights, 1, 1e-7);
+
   BOOST_REQUIRE_EQUAL(wd.countInNode, inputData.n_cols);
 }
 
