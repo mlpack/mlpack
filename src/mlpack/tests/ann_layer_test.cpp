@@ -412,7 +412,7 @@ BOOST_AUTO_TEST_CASE(NoDropoutTest)
 
 BOOST_AUTO_TEST_CASE(SimpleAlphaDropoutLayerTest)
 {
-  // Initialize the probability of setting a value to alpha_dash.
+  // Initialize the probability of setting a value to alphaDash.
   const double p = .2;
 
   // Initialize the input parameter having a mean nearabout 0
@@ -420,7 +420,7 @@ BOOST_AUTO_TEST_CASE(SimpleAlphaDropoutLayerTest)
 
   arma::mat input = arma::randn<arma::mat>(1000, 1);
 
-  alphaDropout<> module(p);
+  AlphaDropout<> module(p);
   module.Deterministic() = false;
 
   // Test the Forward function when training phase.
@@ -461,17 +461,17 @@ BOOST_AUTO_TEST_CASE(AlphaDropoutProbabilityTest)
     double nonzeroCount = 0;
     for (size_t i = 0; i < iterations; ++i)
     {
-      alphaDropout<> module(probability[trial]);
+      AlphaDropout<> module(probability[trial]);
       module.Deterministic() = false;
 
       arma::mat output;
       module.Forward(std::move(input), std::move(output));
 
       // Return a column vector containing the indices of elements of X
-      // that are not alpha_dash, we just need the number of
-      // non_alpha_dash values.
-      arma::uvec non_alpha_dash = arma::find(module.Mask());
-      nonzeroCount += non_alpha_dash.n_elem;
+      // that are not alphaDash, we just need the number of
+      // nonAlphaDash values.
+      arma::uvec nonAlphaDash = arma::find(module.Mask());
+      nonzeroCount += nonAlphDash.n_elem;
     }
 
     const double expected = input.n_elem * (1-probability[trial]) * iterations;
@@ -488,7 +488,7 @@ BOOST_AUTO_TEST_CASE(AlphaDropoutProbabilityTest)
 BOOST_AUTO_TEST_CASE(NoAlphaDropoutTest)
 {
   arma::mat input = arma::ones(1500, 1);
-  alphaDropout<> module(0);
+  AlphaDropout<> module(0);
   module.Deterministic() = false;
 
   arma::mat output;

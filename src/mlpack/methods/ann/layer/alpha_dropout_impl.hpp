@@ -23,17 +23,18 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-alphaDropout<InputDataType, OutputDataType>::alphaDropout(
+AlphaDropout<InputDataType, OutputDataType>::AlphaDropout(
     const double ratio) :
     ratio(ratio),
-    deterministic(true)
+    deterministic(false)
 {
+  alphaDash = - alpha * lambda;
   Ratio(ratio);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void alphaDropout<InputDataType, OutputDataType>::Forward(
+void AlphaDropout<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input,
     arma::Mat<eT>&& output)
 {
@@ -45,19 +46,19 @@ void alphaDropout<InputDataType, OutputDataType>::Forward(
   }
   else
   {
-    // Set values to alpha_dash with probability ratio.  Then apply affine
+    // Set values to alphaDash with probability ratio.  Then apply affine
     // transformation so as to keep mean and variance of outputs to their
     // original values.
 
     mask = arma::randu< arma::Mat<eT> >(input.n_rows, input.n_cols);
     mask.transform( [&](double val) { return (val > ratio); } );
-    output = (input % mask + alpha_dash * (1 - mask)) * a + b;
+    output = (input % mask + alphaDash * (1 - mask)) * a + b;
   }
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void alphaDropout<InputDataType, OutputDataType>::Backward(
+void AlphaDropout<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& /* input */,
     arma::Mat<eT>&& gy,
     arma::Mat<eT>&& g)
@@ -67,7 +68,7 @@ void alphaDropout<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void alphaDropout<InputDataType, OutputDataType>::serialize(
+void AlphaDropout<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
