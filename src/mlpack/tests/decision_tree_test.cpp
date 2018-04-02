@@ -1218,7 +1218,7 @@ BOOST_AUTO_TEST_CASE(BeginIndexTest)
   // Build decision tree.
   DecisionTree<> wd(inputData, labels, 3, weights, 1, 1e-7);
 
-  BOOST_REQUIRE_EQUAL(wd.beginIndex, 0);
+  BOOST_REQUIRE_EQUAL(wd.BeginIndex(), 0);
 }
 
 /**
@@ -1240,7 +1240,7 @@ BOOST_AUTO_TEST_CASE(CountTest)
   // Build decision tree.
   DecisionTree<> wd(inputData, labels, 3, weights, 1, 1e-7);
 
-  BOOST_REQUIRE_EQUAL(wd.countInNode, inputData.n_cols);
+  BOOST_REQUIRE_EQUAL(wd.CountInNode(), inputData.n_cols);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

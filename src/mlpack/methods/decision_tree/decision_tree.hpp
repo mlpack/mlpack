@@ -339,6 +339,11 @@ class DecisionTree :
   //! Modify the child of the given index (be careful!).
   DecisionTree& Child(const size_t i) { return *children[i]; }
 
+  //! Get the begin index of current node.
+  size_t BeginIndex() const { return beginIndex; }
+
+  //! Get the count of data points of current node.
+  size_t CountInNode() const { return countInNode; }
   /**
    * Given a point and that this node is not a leaf, calculate the index of the
    * child node this point would go towards.  This method is primarily used by
