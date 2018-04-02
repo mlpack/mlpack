@@ -5,6 +5,8 @@ set(SOURCES
   add_impl.hpp
   add_merge.hpp
   add_merge_impl.hpp
+  alpha_dropout.hpp
+  alpha_dropout_impl.hpp
   base_layer.hpp
   bilinear_interpolation.hpp
   bilinear_interpolation_impl.hpp
