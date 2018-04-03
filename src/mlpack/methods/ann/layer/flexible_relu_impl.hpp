@@ -43,10 +43,7 @@ template<typename InputType, typename OutputType>
 void FlexibleReLU<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
-  int i = -1;
-  output = arma::zeros<InputType>(input.n_rows, input.n_cols);
-  output.transform([input, &i, this](double val) { ++i;
-      return (std::max(input(i), 0.0) + alpha(0)); } );
+  output = arma::clamp(input, 0.0, DBL_MAX) + alpha(0);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -56,11 +53,8 @@ void FlexibleReLU<InputDataType, OutputDataType>::Backward(
 {
   DataType derivative;
   //! Compute the first derivative of FlexibleReLU function.
-  derivative.set_size(input.n_rows, input.n_cols);
-  int i = -1;
-  derivative.transform([input, &i](double val) { ++i;
-    return (input(i) > 0? 1 : 0); } );
-
+  derivative = arma::sign(input);
+  derivative.elem(arma::find(derivative < 0.0)) += 1;
   g = gy % derivative;
 }
 
@@ -74,9 +68,8 @@ void FlexibleReLU<InputDataType, OutputDataType>::Gradient(
   {
     gradient = arma::zeros<arma::Mat<eT>>(1, 1);
   }
-
-  arma::mat zeros = arma::zeros<arma::Mat<eT>>(input.n_rows, input.n_cols);
-  gradient(0) = arma::accu(error % arma::min(zeros, input)) / input.n_cols;
+  gradient(0) = arma::accu(error % arma::clamp(input, -DBL_MAX, 0.0))
+      / input.n_cols;
 }
 
 
