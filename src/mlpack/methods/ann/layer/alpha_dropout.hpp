@@ -152,10 +152,10 @@ class AlphaDropout
   bool deterministic;
 
   //! Value of alpha for normalized inputs (taken from SELU)
-  constexpr double alpha = 1.6732632423543772848170429916717;
+  static constexpr double alpha = 1.6732632423543772848170429916717;
 
   //! Value of lambda for normalized inputs (taken from SELU)
-  constexpr double lambda = 1.0507009873554804934193349852946;
+  static constexpr double lambda = 1.0507009873554804934193349852946;
 
   //! The low variance value of SELU activation function.
   double alphaDash;
