@@ -45,7 +45,7 @@ void FlexibleReLU<InputDataType, OutputDataType>::Forward(
 {
   int i = -1;
   output = arma::zeros<InputType>(input.n_rows, input.n_cols);
-  output.transform([input, &i, alpha](double val) { ++i;
+  output.transform([input, &i, this](double val) { ++i;
       return (std::max(input(i), 0.0) + alpha(0)); } );
 }
 

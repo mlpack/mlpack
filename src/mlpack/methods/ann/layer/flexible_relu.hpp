@@ -157,7 +157,7 @@ class FlexibleReLU
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! Leakyness Parameter object.
+  //! Parameter object.
   OutputDataType alpha;
 
   //! Locally-stored gradient object.
