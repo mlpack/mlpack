@@ -12,13 +12,11 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 #include <mlpack/core/data/binarize.hpp>
-#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
-#include <cmath>
-#include <random>
-#include <chrono>
+#include <mlpack/core/math/random.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -28,6 +26,7 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace mlpack::optimization;
+using namespace mlpack::math;
 
 BOOST_AUTO_TEST_SUITE(RecurrentNetworkTest);
 
@@ -1090,15 +1089,16 @@ BOOST_AUTO_TEST_CASE(CustomRecursiveReberGrammarTest)
 }
 
 /**
- * @brief Generates noisy sine wave.
+ * @brief Generates noisy sine wave and outputs the data and the labels that
+ * can be used directly for training and testing with RNN.
  *
  * @param data    The data points as output
  * @param labels  The expected values as output
  * @param rho     The size of the sequence of each data point
- * @param outputSteps How many output steps to consider
- * @param dataPoints  The number of input data points. The actual generated data
- * points may be more than this to adjust to the outputSteps. But at the minimum
- * these many data points will be generated.
+ * @param outputSteps How many output steps to consider for every rho inputs
+ * @param dataPoints  The number of generated data points. The actual generated
+ * data points may be more than this to adjust to the outputSteps.
+ * But at the minimum these many data points will be generated.
  * @param gain    The gain on the amplitude
  * @param freq    The frquency of the sine wave
  * @param phase   The phase shift if any
@@ -1128,19 +1128,13 @@ void GenerateNoisySinRNN(arma::cube& data, arma::cube& labels, size_t rho,
   arma::colvec    x(points);
   int             i = 0;
   double          interval = numCycles / freq / points;
-  std::mt19937_64 rng;
-  // initialize the random number generator with time-dependent seed
-  uint64_t timeSeed =
-      std::chrono::high_resolution_clock::now().time_since_epoch().count();
-  std::seed_seq ss{uint32_t(timeSeed & 0xffffffff), uint32_t(timeSeed >> 32)};
-  rng.seed(ss);
-  // initialize a uniform distribution between 0 and 1
-  std::uniform_real_distribution< double > unif(0, 1);
-  x.for_each([&i, gain, freq, phase, noisePercent, interval, &rng,
-              &unif](arma::colvec::elem_type& val) {
+
+  RandomSeed(20);
+  x.for_each([&i, gain, freq, phase, noisePercent, interval]
+             (arma::colvec::elem_type& val) {
     double t = interval * (i++);
     val = gain * ::sin(2 * M_PI * freq * t + phase) +
-          (noisePercent * gain / 100 * unif(rng));
+          (noisePercent * gain / 100 * Random(0.0, 0.1));
   });
 
   arma::colvec y = x;

@@ -213,8 +213,6 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
     {
       respSeq = seqNum;
     }
-    arma::mat respData(responses.slice(respSeq).colptr(begin),
-        responses.n_rows, batchSize, false, true);
 
     if (!deterministic)
     {
