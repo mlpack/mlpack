@@ -65,11 +65,17 @@ class FlexibleReLU
    * Create the FlexibleReLU object using the specified parameters.
    * The non zero parameter can be adjusted by specifying the parameter
    * alpha which controls the range of the relu function. ( Default alpha = 0)
-   * This parameter is trainable. 
+   * This parameter is trainable.
+   *
    *@param alpha Parameter for adjusting the range of the relu function.
    *
    */
-  FlexibleReLU(const double alpha = 0);
+  FlexibleReLU(const double userAlpha = 0);
+
+  /*
+   * Reset the layer parameter.
+   */
+  void Reset();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -93,6 +99,23 @@ class FlexibleReLU
   template<typename DataType>
   void Backward(const DataType&& input, DataType&& gy, DataType&& g);
 
+  /**
+   * Calculate the gradient using the output delta and the input activation.
+   *
+   * @param input The input parameter used for calculating the gradient.
+   * @param error The calculated error.
+   * @param gradient The calculated gradient.
+   */
+  template<typename eT>
+  void Gradient(const arma::Mat<eT>&& input,
+                arma::Mat<eT>&& error,
+                arma::Mat<eT>&& gradient);
+
+  //! Get the parameters.
+  OutputDataType const& Parameters() const { return alpha; }
+  //! Modify the parameters.
+  OutputDataType& Parameters() { return alpha; }
+
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
@@ -107,6 +130,11 @@ class FlexibleReLU
   OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta;}
+
+  //! Get the gradient.
+  OutputDataType const& Gradient() const { return gradient; }
+  //! Modify the gradient.
+  OutputDataType& Gradient() { return gradient; }
 
   //! Get the parameter controlling the range of the relu function.
   double const& Alpha() const { return alpha; }
@@ -129,8 +157,14 @@ class FlexibleReLU
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
+  //! Leakyness Parameter object.
+  OutputDataType alpha;
+
+  //! Locally-stored gradient object.
+  OutputDataType gradient;
+
   //! Parameter controlling the range of the rectifier function
-  double alpha;
+  double userAlpha;
 }; // class FlexibleReLU
 
 } // namespace ann

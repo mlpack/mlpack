@@ -18,15 +18,24 @@
 #define MLPACK_METHODS_ANN_LAYER_FLEXIBLERELU_IMPL_HPP
 
 #include "flexible_relu.hpp"
+#include<algorithm>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 FlexibleReLU<InputDataType, OutputDataType>::FlexibleReLU(
-    const double alpha) : alpha(alpha)
+    const double userAlpha) : userAlpha(userAlpha)
 {
-  // Nothing to do here.
+  alpha.set_size(1, 1);
+  alpha(0) = userAlpha;
+}
+
+template<typename InputDataType, typename OutputDataType>
+void FlexibleReLU<InputDataType, OutputDataType>::Reset()
+{
+  //! Set value of alpha to the one given by user.
+  alpha(0) = userAlpha;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -34,8 +43,11 @@ template<typename InputType, typename OutputType>
 void FlexibleReLU<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
-  output = arma::max(arma::zeros<InputType>(input.n_rows, input.n_cols), input)
-    + alpha;
+  int i = -1;
+  output = arma::zeros<InputType>(input.n_rows, input.n_cols);
+  output.transform( [input, &i](double val) { ++i;
+      return (std::max(input(i), 0.0) + alpha); } );
+
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -44,17 +56,30 @@ void FlexibleReLU<InputDataType, OutputDataType>::Backward(
     const DataType&& input, DataType&& gy, DataType&& g)
 {
   DataType derivative;
-
   //! Compute the first derivative of FlexibleReLU function.
-  derivative = input;
-
-  for (size_t i = 0; i < input.n_elem; i++)
-  {
-    derivative(i) = input(i) > 0? 1 : 0;
-  }
+  derivative.set_size(input.n_rows, input.n_cols);
+  int i = -1;
+  derivative.transform( [input, &i](double val) { ++i;
+    return (input(i) > 0? 1 : 0); } );
 
   g = gy % derivative;
 }
+
+template<typename InputDataType, typename OutputDataType>
+template<typename eT>
+void FlexibleReLU<InputDataType, OutputDataType>::Gradient(
+  const arma::Mat<eT>&& input, arma::Mat<eT>&& error,
+  arma::Mat<eT>&& gradient)
+{
+  if (gradient.n_elem == 0)
+  {
+    gradient = arma::zeros<arma::Mat<eT>>(1, 1);
+  }
+
+  arma::mat zeros = arma::zeros<arma::Mat<eT>>(input.n_rows, input.n_cols);
+  gradient(0) = arma::accu(error % arma::min(zeros, input)) / input.n_cols;
+}
+
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
