@@ -218,7 +218,7 @@ double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters) const
  */
 double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters,
                                            const size_t start,
-                                           const size_t batchSize)
+                                           const size_t batchSize) const
 {
   arma::mat probabilities;
   GetProbabilitiesMatrix(parameters, probabilities, start, batchSize);
@@ -272,7 +272,7 @@ void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
 void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
                                          const size_t start,
                                          arma::mat& gradient,
-                                         const size_t batchSize)
+                                         const size_t batchSize) const
 {
   arma::mat probabilities;
   GetProbabilitiesMatrix(parameters, probabilities, start, batchSize);

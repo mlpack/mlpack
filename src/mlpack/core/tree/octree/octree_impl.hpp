@@ -642,6 +642,8 @@ void Octree<MetricType, StatisticType, MatType>::serialize(
 
     if (!parent)
       delete dataset;
+
+    parent = NULL;
   }
 
   ar & BOOST_SERIALIZATION_NVP(begin);
@@ -651,11 +653,15 @@ void Octree<MetricType, StatisticType, MatType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(parentDistance);
   ar & BOOST_SERIALIZATION_NVP(furthestDescendantDistance);
   ar & BOOST_SERIALIZATION_NVP(metric);
-
-  ar & BOOST_SERIALIZATION_NVP(parent);
   ar & BOOST_SERIALIZATION_NVP(dataset);
 
   ar & BOOST_SERIALIZATION_NVP(children);
+
+  if (Archive::is_loading::value)
+  {
+    for (size_t i = 0; i < children.size(); ++i)
+      children[i]->parent = this;
+  }
 }
 
 //! Split the node.

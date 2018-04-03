@@ -1560,7 +1560,8 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree() :
     furthestDescendantDistance(0.0),
     localMetric(false),
     localDataset(false),
-    metric(NULL)
+    metric(NULL),
+    distanceComps(0)
 {
   // Nothing to do.
 }
@@ -1590,6 +1591,8 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
       delete metric;
     if (localDataset && dataset)
       delete dataset;
+
+    parent = NULL;
   }
 
   ar & BOOST_SERIALIZATION_NVP(dataset);
@@ -1599,12 +1602,13 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
   ar & BOOST_SERIALIZATION_NVP(stat);
   ar & BOOST_SERIALIZATION_NVP(numDescendants);
 
-  ar & BOOST_SERIALIZATION_NVP(parent);
+  bool hasParent = (parent != NULL);
+  ar & BOOST_SERIALIZATION_NVP(hasParent);
   ar & BOOST_SERIALIZATION_NVP(parentDistance);
   ar & BOOST_SERIALIZATION_NVP(furthestDescendantDistance);
   ar & BOOST_SERIALIZATION_NVP(metric);
 
-  if (Archive::is_loading::value && parent == NULL)
+  if (Archive::is_loading::value && !hasParent)
   {
     localMetric = true;
     localDataset = true;

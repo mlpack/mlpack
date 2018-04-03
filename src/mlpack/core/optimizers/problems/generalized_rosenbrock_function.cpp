@@ -103,13 +103,17 @@ void GeneralizedRosenbrockFunction::Gradient(const arma::mat& coordinates,
 
 void GeneralizedRosenbrockFunction::Gradient(const arma::mat& coordinates,
                                              const size_t begin,
-                                             arma::sp_mat& gradient) const
+                                             arma::sp_mat& gradient,
+                                             const size_t batchSize) const
 {
   gradient.set_size(n);
 
-  const size_t p = visitationOrder[begin];
+  for (size_t j = begin; j < begin + batchSize; ++j)
+  {
+    const size_t p = visitationOrder[j];
 
-  gradient[p] = 400 * (std::pow(coordinates[p], 3) - coordinates[p] *
-      coordinates[p + 1]) + 2 * (coordinates[p] - 1);
-  gradient[p + 1] = 200 * (coordinates[p + 1] - std::pow(coordinates[p], 2));
+    gradient[p] = 400 * (std::pow(coordinates[p], 3) - coordinates[p] *
+        coordinates[p + 1]) + 2 * (coordinates[p] - 1);
+    gradient[p + 1] = 200 * (coordinates[p + 1] - std::pow(coordinates[p], 2));
+  }
 }
