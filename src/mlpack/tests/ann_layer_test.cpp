@@ -647,8 +647,9 @@ BOOST_AUTO_TEST_CASE(GradientFlexibleReLULayerTest)
       input = arma::randn(10, 1);
       target = arma::mat("1");
 
-      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>(
-        input, target);
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
       model->Add<Linear<> >(10, 2);
       model->Add<FlexibleReLU<> >(0.05);
       model->Add<LogSoftMax<> >();
