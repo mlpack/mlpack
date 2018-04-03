@@ -24,11 +24,12 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 AlphaDropout<InputDataType, OutputDataType>::AlphaDropout(
-    const double ratio) :
+    const double ratio,
+    double alphaDash) :
     ratio(ratio),
+    alphaDash(alphaDash),
     deterministic(false)
 {
-  alphaDash = - alpha * lambda;
   Ratio(ratio);
 }
 

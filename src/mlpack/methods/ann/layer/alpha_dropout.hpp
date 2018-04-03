@@ -55,8 +55,9 @@ class AlphaDropout
    * Create the Alpha_Dropout object using the specified ratio.
    *
    * @param ratio The probability of setting a value to alphaDash.
+   * @param alphaDash The initial value for alphaDash.
    */
-  AlphaDropout(const double ratio = 0.5);
+  AlphaDropout(const double ratio = 0.5, double alphaDash = -alpha * lambda);
 
   /**
    * Ordinary feed forward pass of the alpha_dropout layer.
@@ -151,10 +152,10 @@ class AlphaDropout
   bool deterministic;
 
   //! Value of alpha for normalized inputs (taken from SELU)
-  const double alpha = 1.6732632423543772848170429916717;
+  constexpr double alpha = 1.6732632423543772848170429916717;
 
   //! Value of lambda for normalized inputs (taken from SELU)
-  const double lambda = 1.0507009873554804934193349852946;
+  constexpr double lambda = 1.0507009873554804934193349852946;
 
   //! The low variance value of SELU activation function.
   double alphaDash;
