@@ -1,6 +1,7 @@
 /**
  * @file q_learning_test.hpp
- * @author Shangtong Zhang and Rohan Raj
+ * @author Shangtong Zhang
+ * @author Rohan Raj
  *
  * Test for Q-Learning implementation
  *

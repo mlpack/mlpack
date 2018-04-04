@@ -44,7 +44,7 @@ class Acrobat
     * Construct a state instance from given data.
     *
     * @param data Data for the acrobat.
-    * Consists of sin() and cos() for two rotational joint and angular velocity.
+    * Consists of angle and angular velocity for two rotational joint and angular velocity.
     * 
     */
     State(const arma::colvec& data): data(data)
@@ -84,7 +84,7 @@ class Acrobat
     arma::colvec data;
   };
   /* 
-   * Implementation of action for cartpole
+   * Implementation of action for Acrobat
    */
   enum Action
   {
@@ -96,7 +96,7 @@ class Acrobat
   };
 
    /**
-   * Construct a Cart Pole instance using the given constants.
+   * Construct a Acrobat instance using the given constants.
    *
    * @param gravity gravity
    * @param linkLength1 length of link 1.
@@ -138,9 +138,9 @@ class Acrobat
     * state and current action .
     * 
     * @param state The current State
-    * @param action_ The action taken
+    * @param action The action taken
     * @param nextState The next state
-    * return reward -1
+    *
     * Always return -1 reward
     */
   double Sample(const State& state,
@@ -258,14 +258,12 @@ class Acrobat
     * Torque is action number - 1.
     * {0,1,2} -> {-1,0,1} 
     */
-    double torque = double(action - 1) + mlpack::math::Random(-0.1, 0.1);
-    return torque;
+    return double(action - 1) + mlpack::math::Random(-0.1, 0.1);
   }
 
   /**
-    * @param state_ Current State
-    * @param Action Action Taken
-    * @param nextState nextState 
+    * @param state Current State
+    * @param torque Torque
     */
   arma::colvec Rk4(const arma::colvec state,
            const double torque) const
