@@ -30,11 +30,10 @@ BOOST_AUTO_TEST_SUITE(SPSATest);
 
 BOOST_AUTO_TEST_CASE(SimpleSPSATestFunction)
 {
-  SGDTestFunction f;
-
   for (size_t i = 10; i <= 50; i++)
   {
 	  SphereFunction h(i);
+	  GeneralizedRosenbrockFunction f(i);
 
 	  SPSA optimiser(0.602, 0.101, 1e-6,
 	                 0.01, 100000);
