@@ -55,9 +55,10 @@ class AlphaDropout
    * Create the Alpha_Dropout object using the specified ratio.
    *
    * @param ratio The probability of setting a value to alphaDash.
-   * @param alphaDash The initial value for alphaDash.
+   * @param alphaDash The dropout scaling parameter.
    */
-  AlphaDropout(const double ratio = 0.5, double alphaDash = -alpha * lambda);
+  AlphaDropout(const double ratio = 0.5,
+               const double alphaDash = -alpha * lambda);
 
   /**
    * Ordinary feed forward pass of the alpha_dropout layer.
