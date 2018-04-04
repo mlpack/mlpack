@@ -1204,8 +1204,6 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
 
   // Take slice rho only.
   arma::mat actualPred = prediction.slice(rho - 1);
-  // actualPred.print( "Prediction:" );
-  // testLabels.print( "Actual" );
   double error =
       arma::mean(arma::mean(arma::square(actualPred - testLabels.slice(0))));
   return error;
