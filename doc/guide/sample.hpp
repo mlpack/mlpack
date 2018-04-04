@@ -4,8 +4,17 @@
 
 On this page, several simple mlpack examples are contained, in increasing order
 of complexity.  If you compile from the command-line, be sure that your compiler
-is in C++11 mode.  With gcc and clang, this can be accomplished by adding the
-@c -std=c++11 option.
+is in C++11 mode.  With modern gcc and clang, this should already be the
+default.
+
+@note
+The command-line programs like @c knn_main.cpp and @c
+logistic_regression_main.cpp from the directory @c src/mlpack/methods/ cannot be
+compiled easily by hand (the same is true for the individual tests in @c
+src/mlpack/tests/); instead, those should be compiled with CMake, by running,
+e.g., @c make @c mlpack_knn or @c make @c mlpack_test; see @ref build.  However,
+any program that uses mlpack (and is not a part of the library itself) can be
+compiled easily with g++ or clang from the command line.
 
 @section covariance Covariance Computation
 
@@ -79,7 +88,8 @@ int main()
 
 @section other Other examples
 
-For more complex examples, it is useful to refer to the main executables:
+For more complex examples, it is useful to refer to the main executables, found
+in @c src/mlpack/methods/.  A few are listed below.
 
  - methods/neighbor_search/knn_main.cpp
  - methods/neighbor_search/kfn_main.cpp

@@ -1,11 +1,12 @@
 <h2 align="center">
-  <a href="http://mlpack.org"><img src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="background-color:rgba(0,0,0,0);" height=230 alt="mlpack: a scalable C++ machine learning library"></a>
-  <br>a scalable C++ machine learning library<br>
+  <a href="http://mlpack.org"><img
+src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="background-color:rgba(0,0,0,0);" height=230 alt="mlpack: a fast, flexible machine learning library"></a>
+  <br>a fast, flexible machine learning library<br>
 </h2>
 
 <h5 align="center">
   <a href="http://mlpack.org">Home</a> |
-  <a href="http://www.mlpack.org/docs/mlpack-git/doxygen.php">Documentation</a> |
+  <a href="http://www.mlpack.org/docs/mlpack-git/doxygen/index.html">Documentation</a> |
   <a href="http://www.mlpack.org/involved.html">Community</a> |
   <a href="http://www.mlpack.org/help.html">Help</a> |
   <a href="http://webchat.freenode.net/?channels=mlpack">IRC Chat</a>
@@ -21,15 +22,16 @@
 <p align="center">
   <em>
     Download:
-    <a href="http://www.mlpack.org/files/mlpack-2.2.5.tar.gz">current stable version (2.2.5)</a>
+    <a href="http://www.mlpack.org/files/mlpack-3.0.0.tar.gz">current stable version (3.0.0)</a>
   </em>
 </p>
 
-**mlpack** is an intuitive, fast, scalable C++ machine learning library, meant to be
-a machine learning analog to LAPACK. It aims to implement a wide array of
-machine learning methods and functions as a "swiss army knife" for machine
-learning researchers.  In addition to its powerful C++ interface, mlpack also
-provides command-line programs and Python bindings.
+**mlpack** is an intuitive, fast, and flexible C++ machine learning library with
+bindings to other languages.  It is meant to be a machine learning analog to
+LAPACK, and aims to implement a wide array of machine learning methods and
+functions as a "swiss army knife" for machine learning researchers.  In addition
+to its powerful C++ interface, mlpack also provides command-line programs and
+Python bindings.
 
 ### 0. Contents
 
@@ -50,9 +52,9 @@ mlpack is, how to install it, how to run it, and where to find more
 documentation. The website should be consulted for further information:
 
   - [mlpack homepage](http://www.mlpack.org/)
-  - [Tutorials](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=tutorials.html)
+  - [Tutorials](http://www.mlpack.org/docs/mlpack-git/doxygen/tutorials.html)
   - [Development Site (Github)](http://www.github.com/mlpack/mlpack/)
-  - [API documentation](http://www.mlpack.org/docs/mlpack-git/doxygen.php)
+  - [API documentation](http://www.mlpack.org/docs/mlpack-git/doxygen/index.html)
 
 ### 2. Citation details
 
@@ -106,7 +108,7 @@ with the following command:
 
 There are some other useful pages to consult in addition to this section:
 
-  - [Building mlpack From Source](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=build.html)
+  - [Building mlpack From Source](http://www.mlpack.org/docs/mlpack-git/doxygen/build.html)
   - [Building mlpack Under Windows](https://github.com/mlpack/mlpack/wiki/WindowsBuild)
 
 mlpack uses CMake as a build system and allows several flexible build
@@ -273,9 +275,9 @@ documentation locally.  Alternately, up-to-date documentation is available for
 older versions of mlpack:
 
   - [mlpack homepage](http://www.mlpack.org/)
-  - [Tutorials](http://www.mlpack.org/docs/mlpack-git/doxygen.php?doc=tutorials.html)
+  - [Tutorials](http://www.mlpack.org/docs/mlpack-git/doxygen/tutorials.html)
   - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
-  - [API documentation](http://www.mlpack.org/docs/mlpack-git/doxygen.php)
+  - [API documentation](http://www.mlpack.org/docs/mlpack-git/doxygen/index.html)
 
 ### 8. Bug reporting
 

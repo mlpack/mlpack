@@ -65,14 +65,17 @@ using enable_if_t = typename enable_if<B, T>::type;
 #undef BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
 #undef BOOST_MPL_LIMIT_LIST_SIZE
 #define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
-#define BOOST_MPL_LIMIT_LIST_SIZE 40
+#define BOOST_MPL_LIMIT_LIST_SIZE 50
 
 // We'll need the necessary boost::serialization features, as well as what we
 // use with mlpack.  In Boost 1.59 and newer, the BOOST_PFTO code is no longer
 // defined, but we still need to define it (as nothing) so that the mlpack
 // serialization shim compiles.
 #include <boost/serialization/serialization.hpp>
-#include <boost/serialization/vector.hpp>
+// We are not including boost/serialization/vector.hpp here. It is included in
+// mlpack/core/boost_backport/boost_backport_serialization.hpp because of
+// different behaviors of vector serialization in different versions of boost.
+// #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
 // boost_backport.hpp handles the version and backporting of serialization (and
 // other) features.

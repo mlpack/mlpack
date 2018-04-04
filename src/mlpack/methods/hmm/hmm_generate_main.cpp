@@ -68,6 +68,11 @@ struct Generate
     mat observations;
     Row<size_t> sequence;
 
+    RequireParamValue<int>("start_state", [](int x) { return x >= 0; }, true,
+        "Invalid start state");
+    RequireParamValue<int>("length", [](int x) { return x >= 0; }, true,
+        "Length must be >= 0");
+
     // Load the parameters.
     const size_t startState = (size_t) CLI::GetParam<int>("start_state");
     const size_t length = (size_t) CLI::GetParam<int>("length");
@@ -104,7 +109,7 @@ static void mlpackMain()
     RandomSeed((size_t) time(NULL));
 
   // Load model, and perform the generation.
-  HMMModel hmm;
-  hmm = std::move(CLI::GetParam<HMMModel>("model"));
-  hmm.PerformAction<Generate, void>(NULL); // No extra data required.
+  HMMModel* hmm;
+  hmm = std::move(CLI::GetParam<HMMModel*>("model"));
+  hmm->PerformAction<Generate, void>(NULL); // No extra data required.
 }

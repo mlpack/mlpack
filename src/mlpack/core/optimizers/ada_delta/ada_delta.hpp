@@ -94,7 +94,8 @@ class AdaDelta
   /**
    * Optimize the given function using AdaDelta. The given starting point will
    * be modified to store the finishing point of the algorithm, and the final
-   * objective value is returned.
+   * objective value is returned. The DecomposableFunctionType is checked for
+   * API consistency at compile time.
    *
    * @tparam DecomposableFunctionType Type of the function to optimize.
    * @param function Function to optimize.
