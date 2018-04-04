@@ -32,16 +32,16 @@ Dropout<InputDataType, OutputDataType>::Dropout(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Dropout<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT> &&input,
-    arma::Mat<eT> &&output)
+    const arma::Mat<eT>&& input,
+    arma::Mat<eT>&& output)
 {
   // The dropout mask will not be multiplied in the deterministic mode
   // (during testing).
   if (deterministic) {
     output = input;
   } else {
-    // Scale with input / (1 - ratio) and set values to zero
-    // with probability 'ratio'.
+    // Scale with input / (1 - ratio) and set values to zero with probability
+    // 'ratio'.
 
     mask = arma::randu<arma::Mat<eT> >(input.n_rows, input.n_cols);
     mask.transform([&](double val) { return (val > ratio); });
@@ -52,9 +52,9 @@ void Dropout<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Dropout<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT> && /* input */,
-    arma::Mat<eT> &&gy,
-    arma::Mat<eT> &&g)
+    const arma::Mat<eT>&& /* input */,
+    arma::Mat<eT>&& gy,
+    arma::Mat<eT>&& g)
 {
   g = gy % mask * scale;
 }
@@ -62,7 +62,7 @@ void Dropout<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Dropout<InputDataType, OutputDataType>::serialize(
-    Archive &ar,
+    Archive& ar,
     const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(ratio);
