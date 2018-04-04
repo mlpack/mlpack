@@ -1108,10 +1108,15 @@ BOOST_AUTO_TEST_CASE(CustomRecursiveReberGrammarTest)
  * @param normalize Whether to normalise the data. This may be required for some
  * layers like LSTM. Default is true.
  */
-void GenerateNoisySinRNN(arma::cube& data, arma::cube& labels, size_t rho,
-                         size_t outputSteps = 1, const int dataPoints = 100,
-                         const double gain = 1.0, const int freq = 10,
-                         const double phase = 0, const int noisePercent = 20,
+void GenerateNoisySinRNN(arma::cube& data,
+                         arma::cube& labels,
+                         size_t rho,
+                         size_t outputSteps = 1,
+                         const int dataPoints = 100,
+                         const double gain = 1.0,
+                         const int freq = 10,
+                         const double phase = 0,
+                         const int noisePercent = 20,
                          const double numCycles = 6.0,
                          const bool   normalize = true)
 {
@@ -1125,11 +1130,12 @@ void GenerateNoisySinRNN(arma::cube& data, arma::cube& labels, size_t rho,
   {
     points += rho - r + outputSteps;
   }
-  arma::colvec    x(points);
-  int             i = 0;
-  double          interval = numCycles / freq / points;
-
-  RandomSeed(20);
+  arma::colvec x(points);
+  int i = 0;
+  double interval = numCycles / freq / points;
+  uint64_t timeSeed =
+      std::chrono::high_resolution_clock::now().time_since_epoch().count();
+  RandomSeed(timeSeed);
   x.for_each([&i, gain, freq, phase, noisePercent, interval]
              (arma::colvec::elem_type& val) {
     double t = interval * (i++);
@@ -1145,7 +1151,7 @@ void GenerateNoisySinRNN(arma::cube& data, arma::cube& labels, size_t rho,
   size_t n_columns = y.n_elem / rho;
   data = arma::cube(1, n_columns, rho);
   labels = arma::cube(outputSteps, n_columns, 1);
-  for (int i = 0; i < n_columns; ++i)
+  for (size_t i = 0; i < n_columns; ++i)
   {
     data.tube(0, i) = y.rows(i * rho, i * rho + rho - 1);
     labels.subcube(0, i, 0, outputSteps - 1, i, 0) =
@@ -1167,11 +1173,6 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
   net.Add<LinearNoBias<> >(1, hiddenUnits);
   net.Add<LSTM<> >(hiddenUnits, 1);
 
-  /*
-   * stepSize = 0.05, batchSize = 100, alpha = 0.9, epsilon = 1e-5,
-   * maxiterations = 4000, tolerance = 1e-5
-   *
-   */
   RMSProp opt(0.05, 100, 0.9, 1e-08, 50000, 1e-5);
 
   // Generate data
@@ -1180,8 +1181,8 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
   GenerateNoisySinRNN(data, labels, rho, 1, 20000, 1.0, 200, 0.0, 45, 20);
 
   // Break into training and test sets. Simply split along columns.
-  size_t     trainCols = data.n_cols * 0.8; // Take 20% out for testing.
-  size_t     testCols = data.n_cols - trainCols;
+  size_t trainCols = data.n_cols * 0.8; // Take 20% out for testing.
+  size_t testCols = data.n_cols - trainCols;
   arma::cube testData =
       data.subcube(0, data.n_cols - testCols, 0, data.n_rows - 1,
                    data.n_cols - 1, data.n_slices - 1);
@@ -1189,7 +1190,7 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
       labels.subcube(0, labels.n_cols - testCols, 0, labels.n_rows - 1,
                      labels.n_cols - 1, labels.n_slices - 1);
 
-  for (int i = 0; i < numEpochs; ++i)
+  for (size_t i = 0; i < numEpochs; ++i)
   {
     net.Train(data.subcube(0, 0, 0, data.n_rows - 1, trainCols - 1,
                            data.n_slices - 1),

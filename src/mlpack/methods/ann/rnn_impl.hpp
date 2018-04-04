@@ -201,7 +201,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
   ResetCells();
 
   double performance = 0;
-  size_t respSeq = 0;
+  size_t responseSeq = 0;
 
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
@@ -211,7 +211,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
     Forward(std::move(stepData));
     if (!single)
     {
-      respSeq = seqNum;
+      responseSeq = seqNum;
     }
 
     if (!deterministic)
@@ -225,7 +225,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
 
     performance += outputLayer.Forward(std::move(boost::apply_visitor(
         outputParameterVisitor, network.back())),
-        std::move(arma::mat(responses.slice(respSeq).colptr(begin),
+        std::move(arma::mat(responses.slice(responseSeq).colptr(begin),
             responses.n_rows, batchSize, false, true)));
   }
 
