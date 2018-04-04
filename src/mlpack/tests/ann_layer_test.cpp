@@ -319,10 +319,8 @@ BOOST_AUTO_TEST_CASE(JacobianConstantLayerTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleDropoutLayerTest)
 {
-  // Initialize the probability of setting a value to zero and the scale
-  // parameter.
+  // Initialize the probability of setting a value to zero.
   const double p = 0.2;
-  const double scale = 1.0 / (1.0 - p);
 
   // Initialize the input parameter.
   arma::mat input(1000, 1);
@@ -345,14 +343,8 @@ BOOST_AUTO_TEST_CASE(SimpleDropoutLayerTest)
 
   // Test the Forward function.
   module.Deterministic() = true;
-  module.Rescale() = false;
   module.Forward(std::move(input), std::move(output));
   BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(output));
-
-  // Test the Forward function.
-  module.Rescale() = true;
-  module.Forward(std::move(input), std::move(output));
-  BOOST_REQUIRE_CLOSE(arma::accu(input) * scale, arma::accu(output), 1e-3);
 }
 
 /**
