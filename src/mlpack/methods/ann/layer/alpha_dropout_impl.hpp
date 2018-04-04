@@ -74,6 +74,7 @@ void AlphaDropout<InputDataType, OutputDataType>::serialize(
     const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(ratio);
+  ar & BOOST_SERIALIZATION_NVP(alphaDash);
   ar & BOOST_SERIALIZATION_NVP(a);
   ar & BOOST_SERIALIZATION_NVP(b);
 }
