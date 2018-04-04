@@ -59,15 +59,15 @@ class SPSA
   arma::vec sp_vector;
   SPSA(const float& alpha = 0.602,
        const float& gamma = 0.101,
-       const float& a = 1e-6,
-       const float& c = 0.01,
+       const float& a = 0.16,
+       const float& c = 0.3,
        const long long int& maxIterations = 100000):
     alpha(alpha),
     gamma(gamma),
     a(a),
     c(c),
-    A(0.1*a),
-    max_iter(maxIterations)
+    max_iter(maxIterations),
+    A(0.001*max_iter)
   {
     // Nothing to do.
   }
@@ -77,26 +77,31 @@ class SPSA
   {
     const int s = iterate.n_elem;
     const double epsilon = 1e-8;
+    arma::mat gradient = arma::zeros(iterate.n_rows, iterate.n_cols);
 
     for (long long int i = 0; i < max_iter; i++)
-    {      
-      sp_vector = arma::conv_to<arma::vec>::from(
-                  randi(s, arma::distr_param(0, 1)))*2 - 1;
+    {
+      ak = a/std::pow((i + 1 + A), alpha);
+      ck = c/std::pow((i + 1), gamma);
       
-      ak = a/std::pow((max_iter + 1 + A), alpha);
-      ck = c/std::pow((max_iter + 1), gamma);
+      gradient.zeros();
+      for(size_t b = 0; b < 10; b++)
+      {
+        sp_vector = arma::conv_to<arma::vec>::from(
+                    randi(s, arma::distr_param(0, 1)))*2 - 1;
+
+        iterate += ck * sp_vector;
+        double f_plus = function.Evaluate(iterate, 0, s);
       
-      iterate += ck * sp_vector;      
-      double f_plus = function.Evaluate(iterate, 0, s);
+        iterate -= 2 * ck * sp_vector;
+        double f_minus = function.Evaluate(iterate, 0, s);
+        iterate += ck * sp_vector;
       
-      iterate -= 2 * ck * sp_vector;
-      double f_minus = function.Evaluate(iterate, 0, s);
-      iterate += ck * sp_vector;
-      
-      arma::mat gradient = (f_plus - f_minus) * (1 / (2 * ck * sp_vector));
-      arma::mat temp = (1 / (2 * ck * sp_vector));
-      
-      iterate -= ak*gradient;
+        gradient += (f_plus - f_minus) * (1 / (2 * ck * sp_vector));
+      }
+
+        gradient /= 10;
+        iterate -= ak*gradient;
     }
 
     return function.Evaluate(iterate, 0, s);

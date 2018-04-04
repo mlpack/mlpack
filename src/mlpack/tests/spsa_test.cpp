@@ -13,6 +13,8 @@
 #include <mlpack/core/optimizers/spsa/spsa.hpp>
 #include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
 #include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
+#include <mlpack/core/optimizers/problems/sphere_function.hpp>
+#include <mlpack/methods/logistic_regression/logistic_regression_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -22,6 +24,7 @@ using namespace arma;
 using namespace mlpack;
 using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;
+using namespace mlpack::regression;
 
 BOOST_AUTO_TEST_SUITE(SPSATest);
 
@@ -29,57 +32,20 @@ BOOST_AUTO_TEST_CASE(SimpleSPSATestFunction)
 {
   SGDTestFunction f;
 
-  SPSA optimiser(0.602, 0.101, 1e-6,
-                 0.01, 100000);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  double result = optimiser.Optimize(f, coordinates);
-
-  BOOST_REQUIRE_CLOSE(result, -1.0, 0.05);
-  BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
-  BOOST_REQUIRE_SMALL(coordinates[1], 1e-7);
-  BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
-}
-
-BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
-{
-  // Loop over several variants.
-  for (size_t i = 10; i < 50; i += 5)
+  for (size_t i = 10; i <= 50; i++)
   {
-    // Create the generalized Rosenbrock function.
-    GeneralizedRosenbrockFunction f(i);
+	  SphereFunction h(i);
 
-    StandardSGD s(0.001, 1, 0, 1e-15, true);
+	  SPSA optimiser(0.602, 0.101, 1e-6,
+	                 0.01, 100000);
 
-    arma::mat coordinates = f.GetInitialPoint();
-    double result = s.Optimize(f, coordinates);
+	  arma::mat coordinates = f.GetInitialPoint();
+	  double result = optimiser.Optimize(h, coordinates);
 
-    BOOST_REQUIRE_SMALL(result, 1e-10);
-    for (size_t j = 0; j < i; ++j)
-      BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 1e-3);
+	  BOOST_REQUIRE_CLOSE(result, -1.0, 0.05);
+	  BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
+	  BOOST_REQUIRE_SMALL(coordinates[1], 1e-7);
+	  BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
   }
 }
-
 BOOST_AUTO_TEST_SUITE_END();
-
-/*int main()
-{
-  SGDTestFunction f;
-  
-  SPSA optimiser(0.602, 0.101, 1e-6, 0.01, 100000);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  cout << "Initial coordinates: (";
-  for (size_t i = 0; i < 3; i++)
-  {
-    cout << coordinates[i];
-    if(i!=2)
-      cout<<", ";
-  }
-  cout << ")" << endl;
-
-  double result = optimiser.Optimize(f, coordinates);
-  cout << "Result: " << result << endl;
-
-  return 0;
-}*/
