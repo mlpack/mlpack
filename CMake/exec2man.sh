@@ -75,6 +75,6 @@ synopsis="$name [-h] [-v] $reqoptions $options";
   sed 's/  / /g' | \
   awk '/NAME/,/REQUIRED OPTIONS/ { print; } /ADDITIONAL INFORMATION/,0 { print; } /REQUIRED OPTIONS/,/ADDITIONAL INFORMATION/ { if (!/REQUIRED_OPTIONS/ && !/OPTIONS/ && !/ADDITIONAL INFORMATION/) { if (/ --/) { printf "\n" } sub(/^[ ]*/, ""); sub(/ [ ]*/, " "); printf "%s ", $0; } else { if (!/REQUIRED OPTIONS/ && !/ADDITIONAL INFORMATION/) { print "\n"$0; } } }' | \
   sed 's/  ADDITIONAL INFORMATION/\n\nADDITIONAL INFORMATION/' | \
-  txt2man -P mlpack -t "$name" -d 1 | \
+  txt2man -t "$name" -s 1 -r "MLPACK Utilities" -v "User Commands" | \
   sed "s/^'/\\\\(aq/" > "$output"
 
