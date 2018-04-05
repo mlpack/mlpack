@@ -42,9 +42,9 @@ BOOST_AUTO_TEST_CASE(SimpleSPSATestFunction)
 	  double result = optimiser.Optimize(h, coordinates);
 
 	  BOOST_REQUIRE_CLOSE(result, 12, 5);
-	  BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
-	  BOOST_REQUIRE_SMALL(coordinates[1], 1e-7);
-	  BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
+	  BOOST_REQUIRE_SMALL(coordinates[0], 1);
+	  BOOST_REQUIRE_SMALL(coordinates[1], 1);
+	  BOOST_REQUIRE_SMALL(coordinates[2], 1);
   }
 }
 BOOST_AUTO_TEST_SUITE_END();
