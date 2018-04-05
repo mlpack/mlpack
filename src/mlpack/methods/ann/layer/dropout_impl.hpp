@@ -37,12 +37,14 @@ void Dropout<InputDataType, OutputDataType>::Forward(
 {
   // The dropout mask will not be multiplied in the deterministic mode
   // (during testing).
-  if (deterministic) {
+  if (deterministic)
+  {
     output = input;
-  } else {
+  }
+  else
+  {
     // Scale with input / (1 - ratio) and set values to zero with probability
     // 'ratio'.
-
     mask = arma::randu<arma::Mat<eT> >(input.n_rows, input.n_cols);
     mask.transform([&](double val) { return (val > ratio); });
     output = input % mask * scale;

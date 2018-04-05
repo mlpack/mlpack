@@ -48,7 +48,7 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat>
+         typename OutputDataType = arma::mat>
 class Dropout
 {
  public:
