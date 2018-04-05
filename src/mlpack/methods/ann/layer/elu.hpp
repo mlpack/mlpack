@@ -6,35 +6,9 @@
  * Definition of the ELU activation function as descibed by Djork-Arne Clevert,
  * Thomas Unterthiner and Sepp Hochreiter.
  *
- * For more information, read the following paper:
- *
- * @code
- * @article{Clevert2015,
- *   author  = {Djork{-}Arn{\'{e}} Clevert and Thomas Unterthiner and
- *              Sepp Hochreiter},
- *   title   = {Fast and Accurate Deep Network Learning by Exponential Linear
- *              Units (ELUs)},
- *   journal = {CoRR},
- *   year    = {2015}
- * }
- * @endcode
- *
  * Definition of the SELU function as introduced by
  * Klambauer et. al. in Self Neural Networks.  The SELU activation
  * function keeps the mean and variance of the input invariant.
- *
- * For more information, see the following paper.
- *
- * @code
- * @article{Klambauer2017,
- *   author  = {Gunter Klambauer and Thomas Unterthiner and
- *              Andreas Mayr},
- *   title   = {Self-Normalizing Neural Networks},
- *   journal = {Advances in Neural Information Processing Systems},
- *   year    = {2017}
- * }
- * }
- * @endcode
  *
  * In short, SELU = lambda * ELU, with 'alpha' and 'lambda' fixed for
  * normalized inputs.
@@ -56,6 +30,21 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
+ * @note Make sure to use SELU activation function with normalized inputs and
+ *       weights initialized with Lecun Normal Initialization.
+ *
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ */
+template <
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+class ELU
+{
+  /**
  * The ELU activation function, defined by
  *
  * @f{eqnarray*}{
@@ -104,7 +93,7 @@ namespace ann /** Artificial Neural Network. */ {
  * \right.
  * @f}
  *
- * For more information, see the following paper.
+ * For more information, read the following paper:
  *
  * @code
  * @article{Klambauer2017,
@@ -114,24 +103,8 @@ namespace ann /** Artificial Neural Network. */ {
  *   journal = {Advances in Neural Information Processing Systems},
  *   year    = {2017}
  * }
- * }
  * @endcode
- *
- * @note Make sure to use SELU activation function with normalized inputs and
- *       weights initialized with Lecun Normal Initialization.
- *
- *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class ELU
-{
  public:
   /**
    * Create the ELU object.
@@ -139,9 +112,7 @@ class ELU
    * NOTE: Use this constructor for SELU activation function.
    *
    */
-
   ELU();
-
   /**
    * Create the ELU object using the specified parameter. The non zero
    * gradient for negative inputs can be adjusted by specifying the ELU

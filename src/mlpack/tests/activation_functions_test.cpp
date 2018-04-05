@@ -330,7 +330,6 @@ void CheckPReLUGradientCorrect(const arma::colvec input,
 /*
  * Simple SELU activation test to check whether the mean and variance remain
  * invariant after passing normalized inputs through the function.
- *
  */
 BOOST_AUTO_TEST_CASE(SELUFunctionNormalizedTest)
 {
@@ -352,9 +351,7 @@ BOOST_AUTO_TEST_CASE(SELUFunctionNormalizedTest)
 /*
  * Simple SELU activation test to check whether the mean and variance
  * vary significantly after passing unnormalized inputs through the function.
- *
  */
-
 BOOST_AUTO_TEST_CASE(SELUFunctionUnnormalizedTest)
 {
   const arma::colvec input("5.96402758 0.9966824 0.99975321 1 \
