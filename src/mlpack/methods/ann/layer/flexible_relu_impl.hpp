@@ -68,7 +68,7 @@ void FlexibleReLU<InputDataType, OutputDataType>::Gradient(
   {
     gradient = arma::zeros<arma::Mat<eT>>(1, 1);
   }
-  gradient(0) = 1.0;
+  gradient(0) = arma::accu(error) / input.n_cols;
 }
 
 
