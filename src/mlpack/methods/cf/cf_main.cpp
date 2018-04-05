@@ -15,6 +15,7 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/amf/amf.hpp>
 #include <mlpack/methods/regularized_svd/regularized_svd.hpp>
+#include <mlpack/methods/randomized_svd/randomized_svd.hpp>
 #include <mlpack/methods/amf/termination_policies/max_iteration_termination.hpp>
 #include "cf.hpp"
 
@@ -57,6 +58,7 @@ PROGRAM_INFO("Collaborative Filtering", "This program performs collaborative "
     " parameter: "
     "\n"
     " - 'RegSVD' -- Regularized SVD using a SGD optimizer\n"
+    " - 'RandSVD' -- Randomized SVD for factorization\n"
     " - 'NMF' -- Non-negative matrix factorization with alternating least "
     "squares update rules\n"
     " - 'BatchSVD' -- SVD batch learning\n"
@@ -242,6 +244,12 @@ void AssembleFactorizerType(const std::string& algorithm,
           "when max_iterations is reached");
       PerformAction(RegularizedSVD<>(maxIterations), dataset, rank);
     }
+    else if (algorithm == "RandSVD")
+    {
+      ReportIgnoredParam("min_residue", "Randomized SVD terminates only "
+          "when max_iterations is reached");
+      PerformAction(RandomizedSVD((rank + 2), maxIterations), dataset, rank);
+    }
   }
   else
   {
@@ -273,6 +281,12 @@ void AssembleFactorizerType(const std::string& algorithm,
           "when max_iterations is reached");
       PerformAction(RegularizedSVD<>(maxIterations), dataset, rank);
     }
+    else if (algorithm == "RandSVD")
+    {
+      ReportIgnoredParam("min_residue", "Randomized SVD terminates only "
+          "when max_iterations is reached");
+      PerformAction(RandomizedSVD((rank + 2), maxIterations), dataset, rank);
+    }
   }
 }
 
@@ -295,7 +309,7 @@ static void mlpackMain()
   if (!CLI::HasParam("query") && !CLI::HasParam("all_user_recommendations"))
     ReportIgnoredParam("output", "no recommendations requested");
 
-  RequireParamInSet<string>("algorithm", { "NMF", "BatchSVD",
+  RequireParamInSet<string>("algorithm", { "NMF", "BatchSVD", "RandSVD",
       "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD" }, true,
       "unknown algorithm");
 

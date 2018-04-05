@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_RANDOMIZED_SVD_RANDOMIZED_SVD_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/methods/cf/cf.hpp>
 
 namespace mlpack {
 namespace svd {
@@ -105,6 +106,22 @@ class RandomizedSVD
                 const double eps = 1e-7);
 
   /**
+   * Apply Principal Component Analysis to the provided sparse matrix data
+   * set using the randomized SVD.
+   *
+   * @param data Sparse data matrix.
+   * @param u First unitary matrix.
+   * @param v Second unitary matrix.
+   * @param sigma Diagonal matrix of singular values.
+   * @param rank Rank of the approximation.
+   */
+  void Apply(const arma::sp_mat& data,
+             arma::mat& u,
+             arma::vec& s,
+             arma::mat& v,
+             const size_t rank);
+
+  /**
    * Apply Principal Component Analysis to the provided data set using the
    * randomized SVD.
    *
@@ -147,6 +164,22 @@ class RandomizedSVD
 };
 
 } // namespace svd
+} // namespace mlpack
+
+namespace mlpack {
+namespace cf {
+
+//! Factorizer traits of Regularized SVD.
+template<>
+class FactorizerTraits<mlpack::svd::RandomizedSVD>
+{
+ public:
+  //! Data provided to RandomizedSVD has to be cleaned.
+  static const bool UsesCoordinateList = false;
+  static const bool UsesRandomizedSVD = true;
+};
+
+} // namespace cf
 } // namespace mlpack
 
 #endif

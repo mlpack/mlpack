@@ -45,9 +45,34 @@ void ApplyFactorizer(FactorizerType& factorizer,
                      arma::mat& w,
                      arma::mat& h,
                      const typename std::enable_if_t<!FactorizerTraits<
-                         FactorizerType>::UsesCoordinateList>* = 0)
+                         FactorizerType>::UsesCoordinateList
+                         && !FactorizerTraits<
+                         FactorizerType>::UsesRandomizedSVD>* = 0)
 {
   factorizer.Apply(cleanedData, rank, w, h);
+}
+
+// Apply the factorizer for randomized SVD.
+template<typename FactorizerType>
+void ApplyFactorizer(FactorizerType& factorizer,
+                     const arma::mat& /* data */,
+                     const arma::sp_mat& cleanedData,
+                     const size_t rank,
+                     arma::mat& w,
+                     arma::mat& h,
+                     const typename std::enable_if_t<!FactorizerTraits<
+                         FactorizerType>::UsesCoordinateList
+                         && FactorizerTraits<
+                         FactorizerType>::UsesRandomizedSVD>* = 0)
+{
+  arma::vec sigma;
+  factorizer.Apply(cleanedData, w, sigma, h, rank);
+
+  // Sigma matrix is multiplied to w.
+  w = w * sigma;
+
+  // Take transpose of the matrix h as required by CF module.
+  h = arma::trans(h);
 }
 
 /**
