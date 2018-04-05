@@ -1,6 +1,7 @@
 /**
  * @file lecun_normal_init.hpp
- * @author Dakshit Agrawal and Prabhat Sharma
+ * @author Dakshit Agrawal
+ * @author Prabhat Sharma
  *
  * Intialization rule given by Lecun et. al. for neural networks and
  * also mentioned in Self Normalizing Networks.
@@ -28,18 +29,18 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @code
  * @inproceedings{conf/nips/KlambauerUMH17,
- * title = {Self-Normalizing Neural Networks.},
+ * title  = {Self-Normalizing Neural Networks.},
  * author = {Klambauer, Günter and Unterthiner, Thomas
- * and Mayr, Andreas and Hochreiter, Sepp},
- * pages = {972-981},
- * year = 2017}
+ *           and Mayr, Andreas and Hochreiter, Sepp},
+ * pages  = {972-981},
+ * year   = 2017}
  *
  * @inproceedings{LeCun:1998:EB:645754.668382,
- * title = {Efficient BackProp},
+ * title  = {Efficient BackProp},
  * author = {LeCun, Yann and Bottou, L{\'e}on and Orr, Genevieve B.
- * and M\"{u}ller, Klaus-Robert},
- * year = {1998},
- * pages = {9--50}}
+ *          and M\"{u}ller, Klaus-Robert},
+ * year   = {1998},
+ * pages  = {9--50}}
  * @endcode
  *
 */
@@ -69,7 +70,7 @@ class LecunNormalInitialization
   {
     // He initialization rule says to initialize weights with random
     // values taken from a gaussian distribution with mean = 0 and
-    // standard deviation = sqrt(1/rows), i.e. variance = (1/rows).
+    // standard deviation = sqrt(1 / rows), i.e. variance = (1 / rows).
     const double variance = 1.0 / ((double) rows);
 
     if (W.is_empty())
@@ -78,7 +79,7 @@ class LecunNormalInitialization
     }
 
     // Multipling a random variable X with variance V(X) by some factor c,
-    // then the variance V(cX) = (c^2)* V(X).
+    // then the variance V(cX) = (c ^ 2) * V(X).
     W.imbue( [&]() { return sqrt(variance) * arma::randn(); } );
   }
 
