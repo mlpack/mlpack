@@ -23,8 +23,10 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The alpha - dropout layer is a regularizer that randomly with probability 'ratio'
- * sets input values to alphaDash.
+ * The alpha - dropout layer is a regularizer that randomly with probability
+ * 'ratio' sets input values to alphaDash. The alpha - dropout layer is mostly
+ * used for SELU activation function where successive layers don't have same
+ * mean and variance.
  *
  * For more information, see the following.
  *
@@ -44,10 +46,8 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-        typename InputDataType = arma::mat,
-        typename OutputDataType = arma::mat
->
+template <typename InputDataType = arma::mat,
+          typename OutputDataType = arma::mat>
 class AlphaDropout
 {
  public:
