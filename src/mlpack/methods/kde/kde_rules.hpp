@@ -19,32 +19,31 @@
 namespace mlpack {
 namespace kde {
 
-template<typename MetricType, typename KernelType,typename TreeType>
+template<typename MetricType, typename KernelType, typename TreeType>
 class KDERules
 {
  public:
-  
   KDERules(const arma::mat& referenceSet,
            const arma::mat& querySet,
            arma::vec& densities,
            const double error,
            MetricType& metric,
            const KernelType& kernel);
-  
+
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
-  //SingleTree
+  // SingleTree
   double Score(const size_t queryIndex, TreeType& referenceNode);
 
-  //SingleTree
+  // SingleTree
   double Rescore(const size_t queryIndex,
                  TreeType& referenceNode,
                  const double oldScore) const;
-  
-  //DoubleTree
+
+  // DoubleTree
   double Score(TreeType& queryNode, TreeType& referenceNode);
 
-  //DoubleTree
+  // DoubleTree
   double Rescore(TreeType& queryNode,
                  TreeType& referenceNode,
                  const double oldScore) const;
@@ -57,7 +56,7 @@ class KDERules
 
   //! Get the number of base cases.
   size_t BaseCases() const { return baseCases; }
-  
+
   //! Get the number of scores.
   size_t Scores() const { return scores; }
 
@@ -70,9 +69,9 @@ class KDERules
 
   //! Density values
   arma::vec& densities;
-  
+
   const double error;
-  
+
   //! The instantiated metric.
   MetricType& metric;
 
@@ -83,12 +82,12 @@ class KDERules
 
   //! The last reference index.
   size_t lastReferenceIndex;
-  
+
   TraversalInfoType traversalInfo;
 
   //! The number of base cases.
   size_t baseCases;
-  
+
   //! The number of scores.
   size_t scores;
 };

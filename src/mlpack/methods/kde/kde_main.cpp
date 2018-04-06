@@ -54,7 +54,7 @@ static void mlpackMain()
   double error = CLI::GetParam<double>("error");
   double bandwidth = CLI::GetParam<double>("bandwidth");
   int leafSize = CLI::GetParam<int>("leaf-size");
-  
+
   arma::vec estimations = arma::vec(reference.n_cols, arma::fill::zeros);
   kde::KDE<mlpack::metric::EuclideanDistance,
            arma::mat,
@@ -63,7 +63,7 @@ static void mlpackMain()
     model = kde::KDE<>(reference, error, bandwidth, leafSize);
 
   model.Evaluate(query, estimations);
-  //Just for testing purposes.
+  // Just for testing purposes.
   std::cout.precision(40);
   estimations.raw_print(std::cout);
 }

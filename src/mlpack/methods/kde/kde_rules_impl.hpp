@@ -42,7 +42,7 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
 }
 
 //! The base case.
-template<typename MetricType, typename KernelType,typename TreeType>
+template<typename MetricType, typename KernelType, typename TreeType>
 inline force_inline
 double KDERules<MetricType, KernelType, TreeType>::BaseCase(
     const size_t queryIndex,
@@ -51,7 +51,6 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
   double distance = metric.Evaluate(querySet.col(queryIndex),
                                     referenceSet.col(referenceIndex));
   densities(queryIndex) += kernel.Evaluate(distance);
-  
   ++baseCases;
   lastQueryIndex = queryIndex;
   lastReferenceIndex = referenceIndex;
@@ -59,7 +58,7 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
 }
 
 //! Single-tree scoring function.
-template<typename MetricType, typename KernelType,typename TreeType>
+template<typename MetricType, typename KernelType, typename TreeType>
 double KDERules<MetricType, KernelType, TreeType>::
 Score(const size_t /* queryIndex */, TreeType& /* referenceNode */)
 {
@@ -79,7 +78,7 @@ double KDERules<MetricType, KernelType, TreeType>::Rescore(
 }
 
 //! Double-tree scoring function.
-template<typename MetricType, typename KernelType,typename TreeType>
+template<typename MetricType, typename KernelType, typename TreeType>
 double KDERules<MetricType, KernelType, TreeType>::
 Score(TreeType& queryNode, TreeType& referenceNode)
 {
@@ -89,14 +88,13 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
   if (bound <= (error / referenceSet.n_cols))
   {
-    //std::cout << referenceNode.Point(0) << "\n";
     arma::vec center = arma::vec();
     referenceNode.Center(center);
     for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
     {
-      densities(queryNode.Point(i)) +=
+      densities(queryNode.Descendant(i)) +=
         referenceNode.NumDescendants() *
-        kernel.Evaluate(metric.Evaluate(querySet.col(queryNode.Point(i)),
+        kernel.Evaluate(metric.Evaluate(querySet.col(queryNode.Descendant(i)),
                                         center));
     }
     score = DBL_MAX;
@@ -114,7 +112,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 }
 
 //! Double-tree
-template<typename MetricType, typename KernelType,typename TreeType>
+template<typename MetricType, typename KernelType, typename TreeType>
 double KDERules<MetricType, KernelType, TreeType>::
 Rescore(TreeType& /*queryNode*/,
         TreeType& /*referenceNode*/,
