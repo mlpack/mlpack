@@ -63,7 +63,14 @@ static void mlpackMain()
     model = kde::KDE<>(reference, error, bandwidth, leafSize);
 
   model.Evaluate(query, estimations);
-  // Just for testing purposes.
-  std::cout.precision(40);
-  estimations.raw_print(std::cout);
+  // Output estimations to file if defined.
+  if (CLI::HasParam("output"))
+  {
+    CLI::GetParam<arma::mat>("output") = std::move(estimations);
+  }
+  else
+  {
+    std::cout.precision(40);
+    estimations.raw_print(std::cout);
+  }
 }

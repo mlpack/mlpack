@@ -59,7 +59,7 @@ void KDE<MetricType, MatType, KernelType, TreeType>::
 Evaluate(const MatType& query, arma::vec& estimations)
 {
   Tree* queryTree = new Tree(query, leafSize);
-  MetricType metric = MetricType();  
+  MetricType metric = MetricType();
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
   RuleType rules = RuleType(this->referenceSet,
                             query,
@@ -79,7 +79,7 @@ Evaluate(const MatType& query, arma::vec& estimations)
   traverser.Traverse(*queryTree, *referenceTree);
   estimations /= referenceSet.n_cols;
   delete queryTree;
-  
+
   // Brute force
   /*arma::vec result = arma::vec(query.n_cols);
   result = arma::zeros<arma::vec>(query.n_cols);
