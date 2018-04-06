@@ -11,15 +11,35 @@
 # No warranties...
 #
 # @author Ryan Curtin
-name="$1"
+
+set -e
+
+if [ $# != 2 ]; then
+    echo "Generates man page from the help text of an mlpack utility program."
+    echo "Usage: $0 mlpack_executable generated-man-page.1"
+    exit 1
+fi
+
+exec="$1"
+name="$(basename "$exec")"
 output="$2"
 
+if [ "$name" = "$exec" ]; then
+    # if no directory prefix with explict ./ to avoid path search
+    exec="./$exec"
+fi
+
+if [ ! -x "$exec" ]; then
+   echo "error: cannot find executable file $exec"
+   exit 1
+fi
+
 # Get the version.
-version=`./"$name" --version | sed 's/^.* \([^ ]*\)\.$/\1/'`
+version=$("$exec" --version | sed 's/^.* \([^ ]*\)\.$/\1/')
 
 # Generate the synopsis.
 # First, required options.
-reqoptions=`./"$name" -h | \
+reqoptions="$("$exec" --help | \
   awk '/Required input options:/,/Optional input options:/' | \
   grep '^  --' | \
   sed 's/^  --/--/' | \
@@ -30,10 +50,10 @@ reqoptions=`./"$name" -h | \
   sed 's/\(^--[A-Za-z0-9_-]* \[[A-Za-z0-9]*\]\) [^[].*/\1/' | \
   tr '\n' ' ' | \
   sed 's/\[//g' | \
-  sed 's/\]//g'`
+  sed 's/\]//g')"
 
 # Then, regular options.
-options=`./"$name" -h | \
+options="$("$exec" -h | \
   awk '/Optional input options:/,/For further information,/' | \
   grep '^  --' | \
   sed 's/^  --/--/' | \
@@ -51,12 +71,12 @@ options=`./"$name" -h | \
   sed 's/\(-[A-Za-z0-9]\)\( [^a-z]\)/\[\1\]\2/g' | \
   sed 's/\(--[A-Za-z0-9_-]*\)\( [^a-z]\)/\[\1\]\2/g' | \
   sed 's/\(-[A-Za-z0-9] [a-z]*\) /\[\1\] /g' | \
-  sed 's/\(--[A-Za-z0-9_-]* [a-z]*\) /\[\1\] /g'`
+  sed 's/\(--[A-Za-z0-9_-]* [a-z]*\) /\[\1\] /g')"
 
 synopsis="$name $reqoptions $options [-h -v]";
 
 # Preview the whole thing first.
-#./$name -h | \
+#"$exec" -h | \
 #  awk -v syn="$synopsis" \
 #      '{ if (NR == 1) print "NAME\n '$name' - "tolower($0)"\nSYNOPSIS\n "syn" \nDESCRIPTION\n" ; else print } ' | \
 #  sed '/^[^ ]/ y/qwertyuiopasdfghjklzxcvbnm:/QWERTYUIOPASDFGHJKLZXCVBNM /' | \
@@ -68,7 +88,7 @@ synopsis="$name $reqoptions $options [-h -v]";
 # helps avoid 'man' warnings).
 # The sed line at the end removes accidental macros from the output, replacing
 # single-quotes at the beginning of a line with the troff escape code \(aq.
-./"$name" -h | \
+"$exec" -h | \
   sed 's/^For further information/Additional Information\n\n For further information/' | \
   sed 's/^consult the documentation/ consult the documentation/' | \
   sed 's/^distribution of mlpack./ distribution of mlpack./' | \
