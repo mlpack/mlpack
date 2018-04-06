@@ -35,8 +35,8 @@ BOOST_AUTO_TEST_CASE(SimpleSPSATestFunction)
 	  SphereFunction h(i);
 	  GeneralizedRosenbrockFunction f(i);
 
-	  SPSA optimiser(0.602, 0.101, 1e-6,
-	                 0.01, 100000);
+	  SPSA optimiser(0.1, 0.102, 0.16,
+	                 0.3, 100000);
 
 	  arma::mat coordinates = f.GetInitialPoint();
 	  double result = optimiser.Optimize(h, coordinates);
