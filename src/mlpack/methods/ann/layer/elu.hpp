@@ -254,6 +254,7 @@ class ELU
   //! inputs.
   double lambda;
 }; // class ELU
+// Template alias for SELU using ELU class
 using SELU = ELU<arma::mat, arma::mat>;
 
 } // namespace ann

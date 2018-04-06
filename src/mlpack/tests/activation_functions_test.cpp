@@ -388,14 +388,14 @@ BOOST_AUTO_TEST_CASE(SELUFunctionDerivativeTest)
   selu.Backward(std::move(input), std::move(error), std::move(derivatives));
 
   BOOST_REQUIRE_LE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
-      selu.Lambda())), 10e-5);
+      selu.Lambda())), 10e-4);
 
   input.fill(-1);
 
   selu.Backward(std::move(input), std::move(error), std::move(derivatives));
 
   BOOST_REQUIRE_LE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
-      selu.Lambda()*(selu.Alpha()-1))), 10e-5);
+      selu.Lambda() * (selu.Alpha() - 1))), 10e-4);
 }
 
 /**
