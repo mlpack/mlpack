@@ -95,15 +95,6 @@ void LogisticRegression<MatType>::Train(
       << "trained model is " << out << "." << std::endl;
 }
 
-
-template<typename MatType>
-void LogisticRegression<MatType>::Predict(const MatType& predictors,
-                                          arma::Row<size_t>& responses,
-                                          const double decisionBoundary) const
-{
-  Classify(predictors, responses, decisionBoundary);
-}
-
 template<typename MatType>
 template<typename VecType>
 size_t LogisticRegression<MatType>::Classify(const VecType& point,

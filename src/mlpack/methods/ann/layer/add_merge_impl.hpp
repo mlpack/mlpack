@@ -21,9 +21,21 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
-AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge()
+AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge(
+    const bool model) : model(model), ownsLayer(!model)
 {
   // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+AddMerge<InputDataType, OutputDataType, CustomLayers...>::~AddMerge()
+{
+  if (ownsLayer)
+  {
+    std::for_each(network.begin(), network.end(),
+        boost::apply_visitor(deleteVisitor));
+  }
 }
 
 template <typename InputDataType, typename OutputDataType,
@@ -48,7 +60,6 @@ void AddMerge<InputDataType, OutputDataType, CustomLayers...>::Backward(
 {
   g = gy;
 }
-
 
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
