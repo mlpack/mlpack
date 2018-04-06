@@ -14,6 +14,9 @@
 name="$1"
 output="$2"
 
+# Get the version.
+version=`./"$name" --version | sed 's/^.* \([^ ]*\)\.$/\1/'`
+
 # Generate the synopsis.
 # First, required options.
 reqoptions=`./"$name" -h | \
@@ -75,6 +78,6 @@ synopsis="$name $reqoptions $options [-h -v]";
   sed 's/  / /g' | \
   awk '/NAME/,/.*OPTIONS/ { if (!/.*OPTIONS/) { print; } } /ADDITIONAL INFORMATION/,0 { print; } /.*OPTIONS/,/ADDITIONAL INFORMATION/ { if (!/REQUIRED INPUT OPTIONS/ && !/OPTIONAL INPUT OPTIONS/ && !/OPTIONAL OUTPUT OPTIONS/ && !/ADDITIONAL INFORMATION/) { if (/ --/) { printf "\n" } sub(/^[ ]*/, ""); sub(/ [ ]*/, " "); printf "%s ", $0; } else { if (!/ADDITIONAL INFORMATION/) { print "\n"$0; } } }' | \
   sed 's/  ADDITIONAL INFORMATION/\n\nADDITIONAL INFORMATION/' | \
-  txt2man -t "$name" -s 1 -r "MLPACK Utilities" -v "User Commands" | \
+  txt2man -t "$name" -s 1 -r "mlpack-$version" -v "User Commands" | \
   sed "s/^'/\\\\(aq/" > "$output"
 
