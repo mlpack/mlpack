@@ -1171,14 +1171,15 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
 {
   RNN<MeanSquaredError<> > net(rho, true);
   net.Add<LinearNoBias<> >(1, hiddenUnits);
-  net.Add<LSTM<> >(hiddenUnits, 1);
+  net.Add<LSTM<> >(hiddenUnits, hiddenUnits);
+  net.Add<LinearNoBias<> >(hiddenUnits, 1);
 
-  RMSProp opt(0.05, 100, 0.9, 1e-08, 50000, 1e-5);
+  RMSProp opt(0.005, 100, 0.9, 1e-08, 50000, 1e-5);
 
   // Generate data
   arma::cube data;
   arma::cube labels;
-  GenerateNoisySinRNN(data, labels, rho, 1, 20000, 1.0, 200, 0.0, 45, 20);
+  GenerateNoisySinRNN(data, labels, rho, 1, 2000, 20.0, 200, 0.0, 45, 20);
 
   // Break into training and test sets. Simply split along columns.
   size_t trainCols = data.n_cols * 0.8; // Take 20% out for testing.
@@ -1202,10 +1203,15 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
   arma::cube prediction;
   net.Predict(testData, prediction);
 
-  // Take slice rho only.
-  arma::mat actualPred = prediction.slice(rho - 1);
-  double error =
-      arma::mean(arma::mean(arma::square(actualPred - testLabels.slice(0))));
+  // The prediction must really follow the test data. So convert both the test
+  // data and the pediction to vectors and compare the two.
+  arma::colvec testVector = arma::vectorise(testData);
+  arma::colvec predVector = arma::vectorise(prediction);
+  //Adjust the vectors for comparison, as the prediction is one step ahead.
+  testVector = testVector.rows(1, testVector.n_rows - 1);
+  predVector = predVector.rows(0, predVector.n_rows - 2);
+  double error = std::sqrt(arma::sum(arma::square(testVector - predVector))) /
+                 testVector.n_rows;
   return error;
 }
 
@@ -1214,7 +1220,7 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
  */
 BOOST_AUTO_TEST_CASE(MultiTimestepTest)
 {
-  double err = RNNSineTest(112, 10, 10);
+  double err = RNNSineTest(4, 10, 20);
   BOOST_REQUIRE_LE(err, 1e-02);
 }
 
