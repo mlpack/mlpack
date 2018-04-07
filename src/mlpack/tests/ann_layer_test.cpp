@@ -708,6 +708,25 @@ BOOST_AUTO_TEST_CASE(JacobianLeakyReLULayerTest)
 }
 
 /**
+ * Jacobian FlexibleReLU module test.
+ */
+BOOST_AUTO_TEST_CASE(JacobianFlexibleReLULayerTest)
+{
+  for (size_t i = 0; i < 5; i++)
+  {
+    const size_t inputElements = math::RandInt(2, 1000);
+
+    arma::mat input;
+    input.set_size(inputElements, 1);
+
+    FlexibleReLU<> module;
+
+    double error = JacobianTest(module, input);
+    BOOST_REQUIRE_LE(error, 1e-5);
+  }
+}
+
+/**
  * Jacobian MultiplyConstant module test.
  */
 BOOST_AUTO_TEST_CASE(JacobianMultiplyConstantLayerTest)
