@@ -24,6 +24,7 @@
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/init_rules/glorot_init.hpp>
+#include <mlpack/methods/ann/init_rules/variance_scaling_init.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
