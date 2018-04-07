@@ -6,6 +6,14 @@
 
 @page tutorials Tutorials
 
+@section quickstart_tut Quickstart Tutorials
+
+These tutorials give very quick "getting started" examples that you can use to
+get started with mlpack in different languages.
+
+  - \ref python_quickstart
+  - \ref cli_quickstart
+
 @section introd_tut Introductory Tutorials
 
 These tutorials introduce the basic concepts of working with mlpack, aimed at
@@ -18,9 +26,6 @@ start.
  - \ref iodoc
  - \ref timer
  - \ref sample
- - \ref cv
- - \ref hpt
- - \ref bindings
 
 @section method_tut Method-specific Tutorials
 
@@ -38,7 +43,18 @@ progress to complex, extensible uses.
  - \ref amftutorial
  - \ref cftutorial
  - \ref akfntutorial
+ - \ref anntutorial
+
+@section adv_tut Advanced Tutorials
+
+These tutorials discuss some of the more advanced functionality contained in
+mlpack.
+
+ - \ref optimizertutorial
  - \ref cnetutorial
+ - \ref bindings
+ - \ref cv
+ - \ref hpt
 
 @section policy_tut Policy Class Documentation
 

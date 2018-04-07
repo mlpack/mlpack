@@ -43,10 +43,18 @@ class SparseTestFunction
   arma::mat GetInitialPoint() const { return arma::mat("0 0 0 0;"); }
 
   //! Evaluate a function.
-  double Evaluate(const arma::mat& coordinates, const size_t i) const
+  double Evaluate(const arma::mat& coordinates,
+                  const size_t i,
+                  const size_t batchSize = 1) const
   {
-    return coordinates[i] * coordinates[i] + bi[i] * coordinates[i] +
-      intercepts[i];
+    double result = 0.0;
+    for (size_t j = i; j < i + batchSize; ++j)
+    {
+      result += coordinates[j] * coordinates[j] + bi[j] * coordinates[j] +
+          intercepts[j];
+    }
+
+    return result;
   }
 
   //! Evaluate all the functions.
@@ -65,10 +73,12 @@ class SparseTestFunction
   //! Evaluate the gradient of a function.
   void Gradient(const arma::mat& coordinates,
                 const size_t i,
-                arma::sp_mat& gradient) const
+                arma::sp_mat& gradient,
+                const size_t batchSize = 1) const
   {
     gradient.zeros(arma::size(coordinates));
-    gradient[i] = 2 * coordinates[i] + bi[i];
+    for (size_t j = i; j < i + batchSize; ++j)
+      gradient[j] = 2 * coordinates[j] + bi[j];
   }
 
   //! Evaluate the gradient of a feature function.

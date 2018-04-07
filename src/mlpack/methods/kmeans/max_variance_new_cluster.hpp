@@ -46,13 +46,13 @@ class MaxVarianceNewCluster
    * @return Number of points changed.
    */
   template<typename MetricType, typename MatType>
-  size_t EmptyCluster(const MatType& data,
-                      const size_t emptyCluster,
-                      const arma::mat& oldCentroids,
-                      arma::mat& newCentroids,
-                      arma::Col<size_t>& clusterCounts,
-                      MetricType& metric,
-                      const size_t iteration);
+  void EmptyCluster(const MatType& data,
+                    const size_t emptyCluster,
+                    const arma::mat& oldCentroids,
+                    arma::mat& newCentroids,
+                    arma::Col<size_t>& clusterCounts,
+                    MetricType& metric,
+                    const size_t iteration);
 
   //! Serialize the object.
   template<typename Archive>

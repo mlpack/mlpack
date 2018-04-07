@@ -183,8 +183,9 @@ CalculateCentroid(const MatType& data,
 template<bool UseKernel, typename KernelType, typename MatType>
 inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
     const MatType& data,
-    arma::Col<size_t>& assignments,
+    arma::Row<size_t>& assignments,
     arma::mat& centroids,
+    bool forceConvergence,
     bool useSeeds)
 {
   if (radius <= 0)
@@ -216,8 +217,8 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
   {
     // Initial centroid is the seed itself.
     allCentroids.col(i) = pSeeds->unsafe_col(i);
-    for (size_t completedIterations = 0; completedIterations < maxIterations;
-         completedIterations++)
+    for (size_t completedIterations = 0; completedIterations < maxIterations
+      || forceConvergence; completedIterations++)
     {
       // Store new centroid in this.
       arma::colvec newCentroid = arma::zeros<arma::colvec>(pSeeds->n_rows);
@@ -260,12 +261,36 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
     }
   }
 
-  // Assign centroids to each point.
-  neighbor::KNN neighborSearcher(centroids);
-  arma::mat neighborDistances;
-  arma::Mat<size_t> resultingNeighbors;
-  neighborSearcher.Search(data, 1, resultingNeighbors, neighborDistances);
-  assignments = resultingNeighbors.t();
+  // If no centroid has converged due to too little iterations and without
+  // forcing convergence, take 1 random centroid calculated.
+  if (centroids.empty())
+  {
+    Log::Warn << "No clusters converge, setting 1 random centroid calculated. "
+    "Try a larger max_iterations or pass force_convergence flag." << std::endl;
+
+    if (maxIterations == 0)
+    {
+      centroids.insert_cols(centroids.n_cols, data.col(0));
+    }
+    else
+    {
+      centroids.insert_cols(centroids.n_cols, allCentroids.col(0));
+    }
+    assignments.zeros();
+  }
+  else if (centroids.n_cols == 1)
+  {
+    assignments.zeros();
+  }
+  else
+  {
+    // Assign centroids to each point.
+    neighbor::KNN neighborSearcher(centroids);
+    arma::mat neighborDistances;
+    arma::Mat<size_t> resultingNeighbors;
+    neighborSearcher.Search(data, 1, resultingNeighbors, neighborDistances);
+    assignments = resultingNeighbors;
+  }
 }
 
 } // namespace meanshift

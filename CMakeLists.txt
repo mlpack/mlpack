@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.5)
+cmake_minimum_required(VERSION 2.8.10)
 project(mlpack C CXX)
 
 include(CMake/cotire.cmake)
@@ -20,9 +20,15 @@ option(BUILD_WITH_COVERAGE
 option(MATHJAX
     "Use MathJax for HTML Doxygen output (disabled by default)." OFF)
 option(FORCE_CXX11
-    "Don't check that the compiler supports C++11, just assume it.  Make sure to specify any necessary flag to enable C++11 as part of CXXFLAGS."
-    OFF)
+    "Don't check that the compiler supports C++11, just assume it.  Make sure to specify any necessary flag to enable C++11 as part of CXXFLAGS." OFF)
 enable_testing()
+
+# Currently Python bindings aren't known to build successfully on Windows, so
+# set BUILD_PYTHON_BINDINGS to OFF when the platform is Windows.
+if (WIN32)
+  option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
+  message(WARNING "By default Python bindings are not compiled for Windows because they are not known to work.  Set BUILD_PYTHON_BINDINGS to ON if you want them built.")
+endif()
 
 # Ensure that we have a C++11 compiler.  In newer versions of CMake, this is
 # done with target_compile_features() when the mlpack library target is added in
@@ -56,6 +62,13 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 # Only GCC-like compilers support -Wextra, and other compilers give tons of
 # output for -Wall, so only -Wall and -Wextra on GCC.
 if(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  # Ensure that we can't compile with clang 3.4, since this causes strange
+  # issues.
+  if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 3.5)
+    message(FATAL_ERROR "mlpack does not build correctly with clang < 3.5.  "
+        "Please upgrade your compiler and reconfigure mlpack.")
+  endif ()
+
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -ftemplate-depth=1000")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 endif()
@@ -280,6 +293,7 @@ set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.66.0" "1.66"
   "1.65.1" "1.65.0" "1.65"
   "1.64.1" "1.64.0" "1.64"
   "1.63.1" "1.63.0" "1.63"

@@ -19,7 +19,13 @@ namespace rl {
 class TrainingConfig
 {
  public:
-  TrainingConfig() : stepLimit(0), gradientLimit(40), doubleQLearning(false)
+  TrainingConfig() :
+      numWorkers(1),
+      updateInterval(1),
+      stepLimit(0),
+      explorationSteps(1),
+      gradientLimit(40),
+      doubleQLearning(false)
   { /* Nothing to do here. */ }
 
   TrainingConfig(

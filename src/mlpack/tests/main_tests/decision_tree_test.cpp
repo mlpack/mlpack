@@ -69,12 +69,12 @@ BOOST_AUTO_TEST_CASE(DecisionTreeOutputDimensionTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   mlpackMain();
 
@@ -116,12 +116,12 @@ BOOST_AUTO_TEST_CASE(DecisionTreeCategoricalOutputDimensionTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   mlpackMain();
 
@@ -144,21 +144,110 @@ BOOST_AUTO_TEST_CASE(DecisionTreeCategoricalOutputDimensionTest)
 BOOST_AUTO_TEST_CASE(DecisionTreeMinimumLeafSizeTest)
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+  DatasetInfo info;
+  if (!data::Load("braziltourism.arff", inputData, info))
+    BOOST_FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+  if (!data::Load("braziltourism_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for braziltourism_labels.txt");
 
   // Initialize an all-ones weight matrix.
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
+
+  // Input training data.
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("weights", std::move(weights));
 
   SetInputParam("minimum_leaf_size", (int) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Make sure minimum gain split is always a fraction in range [0,1].
+ */
+BOOST_AUTO_TEST_CASE(DecisionMinimumGainSplitTest)
+{
+  arma::mat inputData;
+  DatasetInfo info;
+  if (!data::Load("braziltourism.arff", inputData, info))
+    BOOST_FAIL("Cannot load train dataset braziltourism.arff!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("braziltourism_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for braziltourism_labels.txt");
+
+  // Initialize an all-ones weight matrix.
+  arma::mat weights(1, labels.n_cols, arma::fill::ones);
+
+  // Input training data.
+  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("weights", std::move(weights));
+
+  SetInputParam("minimum_gain_split", 1.5); // Invalid.
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Make sure minimum gain split produces regularised tree.
+ */
+BOOST_AUTO_TEST_CASE(DecisionRegularisationTest)
+{
+  arma::mat inputData;
+  DatasetInfo info;
+  if (!data::Load("braziltourism.arff", inputData, info))
+    BOOST_FAIL("Cannot load train dataset braziltourism.arff!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("braziltourism_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for braziltourism_labels.txt");
+
+  // Initialize an all-ones weight matrix.
+  arma::mat weights(1, labels.n_cols, arma::fill::ones);
+
+  // Input training data.
+  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("labels", labels);
+  SetInputParam("weights", weights);
+
+  SetInputParam("minimum_gain_split", 1e-7);
+
+  // Input test data.
+  SetInputParam("test", std::make_tuple(info, inputData));
+  arma::Row<size_t> pred;
+  mlpackMain();
+  pred = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+
+  // Input training data.
+  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("weights", std::move(weights));
+
+  SetInputParam("minimum_gain_split", 0.01);
+
+  // Input test data.
+  SetInputParam("test", std::move(std::make_tuple(info, inputData)));
+  arma::Row<size_t> predRegularised;
+  mlpackMain();
+  predRegularised = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+
+  size_t count = 0;
+  // This part of code is dupliacte with no weighted one.
+  for (size_t i = 0; i < 1000; ++i)
+  {
+    if (pred[i] != predRegularised[i])
+      count++;
+  }
+
+  BOOST_REQUIRE_GT(count, 0);
 }
 
 /**
@@ -185,7 +274,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
@@ -206,7 +295,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelReuseTest)
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Input trained model.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
   SetInputParam("input_model",
       std::move(CLI::GetParam<DecisionTreeModel*>("output_model")));
 
@@ -247,7 +336,7 @@ BOOST_AUTO_TEST_CASE(DecisionTreeTrainingVerTest)
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
@@ -286,7 +375,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
@@ -307,7 +396,7 @@ BOOST_AUTO_TEST_CASE(DecisionModelCategoricalReuseTest)
   CLI::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Input trained model.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
   SetInputParam("input_model",
       std::move(CLI::GetParam<DecisionTreeModel*>("output_model")));
 

@@ -13,45 +13,13 @@
 #ifndef MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_IMPL_HPP
 #define MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_IMPL_HPP
 
+// In case it hasn't been included yet.
+#include "lbfgs.hpp"
+
+#include <mlpack/core/optimizers/function.hpp>
+
 namespace mlpack {
 namespace optimization {
-
-/**
- * Evaluate the function at the given iterate point and store the result if
- * it is a new minimum.
- *
- * @return The value of the function
- */
-template<typename FunctionType>
-double L_BFGS::Evaluate(FunctionType& function,
-                        const arma::mat& iterate,
-                        std::pair<arma::mat, double>& minPointIterate)
-{
-  // Evaluate the function and keep track of the minimum function
-  // value encountered during the optimization.
-  const double functionValue = function.Evaluate(iterate);
-
-  if (functionValue < minPointIterate.second)
-  {
-    minPointIterate.first = iterate;
-    minPointIterate.second = functionValue;
-  }
-
-  return functionValue;
-}
-
-/**
- * Check to make sure that the norm of the gradient is not smaller than 1e-10.
- * Currently that value is not configurable.
- *
- * @return (norm < minGradientNorm)
- */
-inline bool L_BFGS::GradientNormTooSmall(const arma::mat& gradient)
-{
-  const double norm = arma::norm(gradient, 2);
-
-  return (norm < minGradientNorm);
-}
 
 /**
  * Perform a back-tracking line search along the search direction to calculate a
@@ -71,7 +39,6 @@ bool L_BFGS::LineSearch(FunctionType& function,
                         arma::mat& iterate,
                         arma::mat& gradient,
                         arma::mat& newIterateTmp,
-                        std::pair<arma::mat, double>& minPointIterate,
                         const arma::mat& searchDirection)
 {
   // Default first step size of 1.0.
@@ -104,6 +71,8 @@ bool L_BFGS::LineSearch(FunctionType& function,
   const double inc = 2.1;
   const double dec = 0.5;
   double width = 0;
+  double bestStepSize = 1.0;
+  double bestObjective = std::numeric_limits<double>::max();
 
   while (true)
   {
@@ -111,8 +80,12 @@ bool L_BFGS::LineSearch(FunctionType& function,
     // point.
     newIterateTmp = iterate;
     newIterateTmp += stepSize * searchDirection;
-    functionValue = Evaluate(function, newIterateTmp, minPointIterate);
-    function.Gradient(newIterateTmp, gradient);
+    functionValue = function.EvaluateWithGradient(newIterateTmp, gradient);
+    if (functionValue < bestObjective)
+    {
+      bestStepSize = stepSize;
+      bestObjective = functionValue;
+    }
     numIterations++;
 
     if (functionValue > initialFunctionValue + stepSize *
@@ -157,7 +130,7 @@ bool L_BFGS::LineSearch(FunctionType& function,
   }
 
   // Move to the new iterate.
-  iterate = newIterateTmp;
+  iterate += bestStepSize * searchDirection;
   return true;
 }
 
@@ -173,6 +146,14 @@ bool L_BFGS::LineSearch(FunctionType& function,
 template<typename FunctionType>
 double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
 {
+  // Use the Function<> wrapper to ensure the function has all of the functions
+  // that we need.
+  typedef Function<FunctionType> FullFunctionType;
+  FullFunctionType& f = static_cast<FullFunctionType&>(function);
+
+  // Check that we have all the functions we will need.
+  traits::CheckFunctionTypeAPI<FullFunctionType>();
+
   // Ensure that the cubes holding past iterations' information are the right
   // size.  Also set the current best point value to the maximum.
   const size_t rows = iterate.n_rows;
@@ -181,8 +162,6 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
   arma::mat newIterateTmp(rows, cols);
   arma::cube s(rows, cols, numBasis);
   arma::cube y(rows, cols, numBasis);
-  std::pair<arma::mat, double> minPointIterate;
-  minPointIterate.second = std::numeric_limits<double>::max();
 
   // The old iterate to be saved.
   arma::mat oldIterate;
@@ -191,34 +170,29 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
   // Whether to optimize until convergence.
   bool optimizeUntilConvergence = (maxIterations == 0);
 
-  // The initial function value.
-  double functionValue = Evaluate(function, iterate, minPointIterate);
-  double prevFunctionValue = functionValue;
-
   // The gradient: the current and the old.
-  arma::mat gradient;
-  arma::mat oldGradient;
-  gradient.zeros(iterate.n_rows, iterate.n_cols);
-  oldGradient.zeros(iterate.n_rows, iterate.n_cols);
+  arma::mat gradient(iterate.n_rows, iterate.n_cols, arma::fill::zeros);
+  arma::mat oldGradient(iterate.n_rows, iterate.n_cols, arma::fill::zeros);
 
   // The search direction.
-  arma::mat searchDirection;
-  searchDirection.zeros(iterate.n_rows, iterate.n_cols);
+  arma::mat searchDirection(iterate.n_rows, iterate.n_cols, arma::fill::zeros);
 
-  // The initial gradient value.
-  function.Gradient(iterate, gradient);
+  // The initial function value and gradient.
+  double functionValue = f.EvaluateWithGradient(iterate, gradient);
+  double prevFunctionValue = functionValue;
 
   // The main optimization loop.
   for (size_t itNum = 0; optimizeUntilConvergence || (itNum != maxIterations);
        ++itNum)
   {
-    Log::Debug << "L-BFGS iteration " << itNum << "; objective " <<
-        function.Evaluate(iterate) << ", gradient norm "
-        << arma::norm(gradient, 2) << ", "
-        << ((prevFunctionValue - functionValue) /
+#ifdef DEBUG
+    Log::Debug << "L-BFGS iteration " << itNum << "; objective "
+        << functionValue << ", gradient norm " << arma::norm(gradient, 2)
+        << ", " << ((prevFunctionValue - functionValue) /
             std::max(std::max(fabs(prevFunctionValue),
                               fabs(functionValue)), 1.0))
         << "." << std::endl;
+#endif
 
     prevFunctionValue = functionValue;
 
@@ -226,7 +200,7 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
     //
     // But don't do this on the first iteration to ensure we always take at
     // least one descent step.
-    if (itNum > 0 && GradientNormTooSmall(gradient))
+    if (itNum > 0 && (arma::norm(gradient, 2) < minGradientNorm))
     {
       Log::Debug << "L-BFGS gradient norm too small (terminating successfully)."
           << std::endl;
@@ -254,12 +228,14 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
     oldGradient = gradient;
 
     // Do a line search and take a step.
-    if (!LineSearch(function, functionValue, iterate, gradient, newIterateTmp,
-        minPointIterate, searchDirection))
+    Timer::Start("line_search");
+    if (!LineSearch(f, functionValue, iterate, gradient, newIterateTmp,
+        searchDirection))
     {
       Log::Debug << "Line search failed.  Stopping optimization." << std::endl;
       break; // The line search failed; nothing else to try.
     }
+    Timer::Stop("line_search");
 
     // It is possible that the difference between the two coordinates is zero.
     // In this case we terminate successfully.
@@ -285,7 +261,7 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
     UpdateBasisSet(itNum, iterate, oldIterate, gradient, oldGradient, s, y);
   } // End of the optimization loop.
 
-  return function.Evaluate(iterate);
+  return functionValue;
 }
 
 } // namespace optimization

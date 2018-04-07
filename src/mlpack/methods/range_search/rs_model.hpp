@@ -287,16 +287,11 @@ class RSModel
   /**
    * Copy the given RSModel.
    *
+   * Use std::move to pass in the model if the old copy is no longer needed.
+   *
    * @param other RSModel to copy.
    */
-  RSModel& operator=(const RSModel& other);
-
-  /**
-   * Take ownership of the given RSModel.
-   *
-   * @param other RSModel to take ownership of.
-   */
-  RSModel& operator=(RSModel&& other);
+  RSModel& operator=(RSModel other);
 
   /**
    * Clean memory, if necessary.

@@ -174,7 +174,10 @@ static void mlpackMain()
 template<typename InitialPartitionPolicy>
 void FindEmptyClusterPolicy(const InitialPartitionPolicy& ipp)
 {
-  RequireOnlyOnePassed({ "allow_empty_clusters", "kill_empty_clusters" }, true);
+  if (CLI::HasParam("allow_empty_clusters") ||
+      CLI::HasParam("kill_empty_clusters"))
+    RequireOnlyOnePassed({ "allow_empty_clusters", "kill_empty_clusters" },
+                         true);
 
   if (CLI::HasParam("allow_empty_clusters"))
     FindLloydStepType<InitialPartitionPolicy, AllowEmptyClusters>(ipp);
@@ -243,8 +246,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
   RequireAtLeastOnePassed({ "in_place", "output", "centroid" }, false,
       "no results will be saved");
 
-  // Load our dataset.
-  arma::mat dataset = CLI::GetParam<arma::mat>("input");
+  arma::mat dataset = CLI::GetParam<arma::mat>("input");  // Load our dataset.
   arma::mat centroids;
 
   const bool initialCentroidGuess = CLI::HasParam("initial_centroids");

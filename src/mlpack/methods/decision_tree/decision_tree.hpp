@@ -52,45 +52,49 @@ class DecisionTree :
 
   /**
    * Construct the decision tree on the given data and labels, where the data
-   * can be both numeric and categorical.  Setting minimumLeafSize too small may
-   * cause the tree to overfit, but setting it too large may cause it to
-   * underfit.
+   * can be both numeric and categorical. Setting minimumLeafSize and
+   * minimumGainSplit too small may cause the tree to overfit, but setting them
+   * too large may cause it to underfit.
    *
    * @param data Dataset to train on.
    * @param datasetInfo Type information for each dimension of the dataset.
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType>
   DecisionTree(MatType&& data,
                const data::DatasetInfo& datasetInfo,
                LabelsType&& labels,
                const size_t numClasses,
-               const size_t minimumLeafSize = 10);
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7);
 
   /**
    * Construct the decision tree on the given data and labels, assuming that the
-   * data is all of the numeric type.  Setting minimumLeafSize too small may
-   * cause the tree to overfit, but setting it too large may cause it to
-   * underfit.
+   * data is all of the numeric type.  Setting minimumLeafSize and
+   * minimumGainSplit too small may cause the tree to overfit, but setting them
+   * too large may cause it to underfit.
    *
    * @param data Dataset to train on.
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType>
   DecisionTree(MatType&& data,
                LabelsType&& labels,
                const size_t numClasses,
-               const size_t minimumLeafSize = 10);
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7);
 
   /**
    * Construct the decision tree on the given data and labels with weights,
-   * where the data can be both numeric and categorical.  Setting
-   * minimumLeafSize too small may cause the tree to overfit, but setting it too
-   * large may cause it to underfit.
+   * where the data can be both numeric and categorical. Setting minimumLeafSize
+   * and minimumGainSplit too small may cause the tree to overfit, but setting
+   * them too large may cause it to underfit.
    *
    * @param data Dataset to train on.
    * @param datasetInfo Type information for each dimension of the dataset.
@@ -98,6 +102,7 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param weights The weight list of given label.
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
   DecisionTree(MatType&& data,
@@ -106,21 +111,23 @@ class DecisionTree :
                const size_t numClasses,
                WeightsType&& weights,
                const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7,
                const std::enable_if_t<arma::is_arma_type<
                    typename std::remove_reference<WeightsType>::type>::value>*
                     = 0);
 
   /**
    * Construct the decision tree on the given data and labels with weights,
-   * assuming that the data is all of the numeric type.  Setting minimumLeafSize
-   * too small may cause the tree to overfit, but setting it too large may cause
-   * it to underfit.
+   * assuming that the data is all of the numeric type. Setting minimumLeafSize
+   * and minimumGainSplit too small may cause the tree to overfit, but setting
+   * them too large may cause it to underfit.
    *
    * @param data Dataset to train on.
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
    * @param weights The Weight list of given labels.
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
   DecisionTree(MatType&& data,
@@ -128,6 +135,7 @@ class DecisionTree :
                const size_t numClasses,
                WeightsType&& weights,
                const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7,
                const std::enable_if_t<arma::is_arma_type<
                    typename std::remove_reference<WeightsType>::type>::value>*
                     = 0);
@@ -179,8 +187,9 @@ class DecisionTree :
   /**
    * Train the decision tree on the given data.  This will overwrite the
    * existing model.  The data may have numeric and categorical types, specified
-   * by the datasetInfo parameter.  Setting minimumLeafSize too small may cause
-   * the tree to overfit, but setting it too large may cause it to underfit.
+   * by the datasetInfo parameter.  Setting minimumLeafSize and
+   * minimumGainSplit too small may cause the tree to overfit, but setting them
+   * too large may cause it to underfit.
    *
    * @param data Dataset to train on.
    * @param datasetInfo Type information for each dimension.
@@ -188,38 +197,42 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType>
   void Train(MatType&& data,
              const data::DatasetInfo& datasetInfo,
              LabelsType&& labels,
              const size_t numClasses,
-             const size_t minimumLeafSize = 10);
+             const size_t minimumLeafSize = 10,
+             const double minimumGainSplit = 1e-7);
 
   /**
    * Train the decision tree on the given data, assuming that all dimensions are
-   * numeric.  This will overwrite the given model.  Setting minimumLeafSize too
-   * small may cause the tree to overfit, but setting it too large may cause it
-   * to underfit.
+   * numeric.  This will overwrite the given model. Setting minimumLeafSize and
+   * minimumGainSplit too small may cause the tree to overfit, but setting them
+   * too large may cause it to underfit.
    *
    * @param data Dataset to train on.
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType>
   void Train(MatType&& data,
              LabelsType&& labels,
              const size_t numClasses,
-             const size_t minimumLeafSize = 10);
+             const size_t minimumLeafSize = 10,
+             const double minimumGainSplit = 1e-7);
 
   /**
    * Train the decision tree on the given weighted data.  This will overwrite
    * the existing model.  The data may have numeric and categorical types,
-   * specified by the datasetInfo parameter.  Setting minimumLeafSize too small
-   * may cause the tree to overfit, but setting it too large may cause it to
-   * underfit.
+   * specified by the datasetInfo parameter.  Setting minimumLeafSize and
+   * minimumGainSplit too small may cause the tree to overfit, but setting them
+   * too large may cause it to underfit.
    *
    * @param data Dataset to train on.
    * @param datasetInfo Type information for each dimension.
@@ -227,6 +240,7 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
   void Train(MatType&& data,
@@ -235,20 +249,22 @@ class DecisionTree :
              const size_t numClasses,
              WeightsType&& weights,
              const size_t minimumLeafSize = 10,
+             const double minimumGainSplit = 1e-7,
              const std::enable_if_t<arma::is_arma_type<typename
                  std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
    * Train the decision tree on the given weighted data, assuming that all
-   * dimensions are numeric.  This will overwrite the given model.  Setting
-   * minimumLeafSize too small may cause the tree to overfit, but setting it too
-   * large may cause it to underfit.
+   * dimensions are numeric.  This will overwrite the given model. Setting
+   * minimumLeafSize and minimumGainSplit too small may cause the tree to
+   * overfit, but setting them too large may cause it to underfit.
    *
    * @param data Dataset to train on.
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
   void Train(MatType&& data,
@@ -256,6 +272,7 @@ class DecisionTree :
              const size_t numClasses,
              WeightsType&& weights,
              const size_t minimumLeafSize = 10,
+             const double minimumGainSplit = 1e-7,
              const std::enable_if_t<arma::is_arma_type<typename
                  std::remove_reference<WeightsType>::type>::value>* = 0);
 
@@ -383,6 +400,7 @@ class DecisionTree :
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<bool UseWeights, typename MatType>
   void Train(MatType& data,
@@ -392,7 +410,8 @@ class DecisionTree :
              arma::Row<size_t>& labels,
              const size_t numClasses,
              arma::rowvec& weights,
-             const size_t minimumLeafSize = 10);
+             const size_t minimumLeafSize = 10,
+             const double minimumGainSplit = 1e-7);
 
   /**
    * Corresponding to the public Train() method, this method is designed for
@@ -406,6 +425,7 @@ class DecisionTree :
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<bool UseWeights, typename MatType>
   void Train(MatType& data,
@@ -414,7 +434,8 @@ class DecisionTree :
              arma::Row<size_t>& labels,
              const size_t numClasses,
              arma::rowvec& weights,
-             const size_t minimumLeafSize = 10);
+             const size_t minimumLeafSize = 10,
+             const double minimumGainSplit = 1e-7);
 };
 
 /**

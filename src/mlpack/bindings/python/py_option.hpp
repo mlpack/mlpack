@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * The Python option type.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_BINDINGS_PYTHON_PY_OPTION_HPP
 #define MLPACK_BINDINGS_PYTHON_PY_OPTION_HPP
@@ -69,7 +74,8 @@ class PyOption
     data.value = boost::any(defaultValue);
 
     // Restore the parameters for this program.
-    CLI::RestoreSettings(programName, false);
+    if (identifier != "verbose" && identifier != "copy_all_inputs")
+      CLI::RestoreSettings(programName, false);
 
     // Set the function pointers that we'll need.  All of these function
     // pointers will be used by both the program that generates the pyx, and
@@ -94,7 +100,8 @@ class PyOption
     // import more than one .so that uses CLI, so we have to keep the options
     // separate.  programName is a global variable from mlpack_main.hpp.
     CLI::Add(std::move(data));
-    CLI::StoreSettings(programName);
+    if (identifier != "verbose" && identifier != "copy_all_inputs")
+      CLI::StoreSettings(programName);
     CLI::ClearSettings();
   }
 };

@@ -22,13 +22,13 @@ namespace kmeans {
  * Take action about an empty cluster.
  */
 template<typename MetricType, typename MatType>
-size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
-                                           const size_t emptyCluster,
-                                           const arma::mat& oldCentroids,
-                                           arma::mat& newCentroids,
-                                           arma::Col<size_t>& clusterCounts,
-                                           MetricType& metric,
-                                           const size_t iteration)
+void MaxVarianceNewCluster::EmptyCluster(const MatType& data,
+                                         const size_t emptyCluster,
+                                         const arma::mat& oldCentroids,
+                                         arma::mat& newCentroids,
+                                         arma::Col<size_t>& clusterCounts,
+                                         MetricType& metric,
+                                         const size_t iteration)
 {
   // If necessary, calculate the variances and assignments.
   if (iteration != this->iteration || assignments.n_elem != data.n_cols)
@@ -42,7 +42,7 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   // If the cluster with maximum variance has variance of 0, then we can't
   // continue.  All the points are the same.
   if (variances[maxVarCluster] == 0.0)
-    return 0;
+    return;
 
   // Now, inside this cluster, find the point which is furthest away.
   size_t furthestPoint = data.n_cols;
@@ -94,8 +94,6 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   // Output some debugging information.
   Log::Debug << "Point " << furthestPoint << " assigned to empty cluster " <<
       emptyCluster << ".\n";
-
-  return 1; // We only changed one point.
 }
 
 //! Serialize the object.

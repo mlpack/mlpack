@@ -10,7 +10,7 @@ set(SOURCES
   oivs_init.hpp
   orthogonal_init.hpp
   random_init.hpp
-  variance_scaling_init.hpp
+  glorot_init.hpp
 )
 
 # Add directory name to sources.

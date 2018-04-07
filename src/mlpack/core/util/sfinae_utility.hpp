@@ -16,6 +16,7 @@
 #define MLPACK_CORE_SFINAE_UTILITY
 
 #include <type_traits>
+#include <cstring>
 
 namespace mlpack {
 namespace sfinae {
@@ -203,10 +204,10 @@ struct NAME                                                                  \
   static typename                                                            \
   std::enable_if<std::is_member_function_pointer<decltype(&Q::FUNC)>::value, \
                  int>::type                                                  \
-  f(int t) { return 1;}                                                      \
+  f(int) { return 1;}                                                      \
                                                                              \
   template <typename Q = T>                                                  \
-  static char f(char t) { return 0; }                                        \
+  static char f(char) { return 0; }                                        \
                                                                              \
   static const bool value = sizeof(f<T>(0)) != sizeof(char);                 \
 };
