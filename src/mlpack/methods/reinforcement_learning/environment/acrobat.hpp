@@ -145,6 +145,7 @@ class Acrobat
                 const Action& action,
                 State& nextState) const
   {
+    //! Make a vector to estimate nextstate.
     arma::colvec state_ = {state.Theta1(), state.Theta2(),
                           state.AngularVelocity1(),
                           state.AngularVelocity2()};
@@ -154,23 +155,43 @@ class Acrobat
     nextState.Theta1() = Wrap(nextstate[0], -M_PI, M_PI);
 
     nextState.Theta2() = Wrap(nextstate[1], -M_PI, M_PI);
+    //! The value of angular velocity is bounded in min and max value.
     nextState.AngularVelocity1() = std::min(std::max(nextstate[2], -maxVel1),
                                   maxVel1);
     nextState.AngularVelocity2() = std::min(std::max(nextstate[3], -maxVel2),
                                   maxVel2);
     return -1;
   };
+  /**
+   * Dynamics of the Acrobat System.
+   * To get reward and next state based on current
+   * state and current action .
+   * This function calls the Sample function to 
+   * estimate the next state return reward
+   * for taking a particular action. 
+   *
+   * @param state The current State
+   * @param action The action taken
+   * @param nextState The next state
+   */
   double Sample(const State& state, const Action& action) const
   {
     State nextState;
     return Sample(state, action, nextState);
   }
+  /**
+   * This function does random initialization of 
+   * state space.
+   *
+   */
   State InitialSample() const
   {
     return State((arma::randu<arma::colvec>(4) - 0.5) / 5.0);
   }
   /**
-   *
+   * This function checks if the acrobat has reached the 
+   * terminal state.
+   * 
    * @param state The current State
    */        
   bool IsTerminal(const State& state) const
@@ -179,6 +200,9 @@ class Acrobat
         state.Theta2()) > 1.0);
   }
   /**
+   * This is the ordinary differential equations required for
+   * estimation of nextState through RK4 method.
+   *  
    * @param state Current State
    * @param torque Torque Applied 
    */
@@ -219,6 +243,12 @@ class Acrobat
     return values;
   };
   /**
+   * Wrap funtion is required to truncate the angle value
+   * from - 180 to 180 .
+   *
+   * This function will make sure that value will always
+   * be between minimum to maximum
+   *
    * @param value scalar value to wrap
    * @param minimum minimum range of wrap
    * @param maximum maximum range of wrap
@@ -233,7 +263,11 @@ class Acrobat
     return value;
   };
   /**
+   * This function calculates the torque for a
+   * particular action.
+   *
    * @param Action action taken
+   *
    * 0 : negative torque
    * 1 : zero torque
    * 2 : positive torque
@@ -249,6 +283,12 @@ class Acrobat
   }
 
   /**
+   * 
+   * This function calls the RK4 iterative method to estimate the next state
+   * based on given ordinary differential equation.
+   *
+   * The ODE is defined as Dsdt() method in the program.
+   * 
    * @param state Current State
    * @param torque Torque applied
    */
