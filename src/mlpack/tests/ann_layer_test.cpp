@@ -644,13 +644,15 @@ BOOST_AUTO_TEST_CASE(GradientFlexibleReLULayerTest)
   {
     GradientFunction()
     {
-      input = arma::randu(10, 1);
+      input = arma::randu(2, 1);
       target = arma::mat("1");
 
-      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model = new FFN<NegativeLogLikelihood<>, RandomInitialization>(
+        NegativeLogLikelihood<>(), RandomInitialization(0.1, 0.5));
+
       model->Predictors() = input;
       model->Responses() = target;
-      model->Add<Linear<> >(10, 2);
+      model->Add<LinearNoBias<> >(2, 5);
       model->Add<FlexibleReLU<> >(0.05);
       model->Add<LogSoftMax<> >();
     }
@@ -670,7 +672,7 @@ BOOST_AUTO_TEST_CASE(GradientFlexibleReLULayerTest)
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    FFN<NegativeLogLikelihood<>, RandomInitialization>* model;
     arma::mat input, target;
   } function;
 
