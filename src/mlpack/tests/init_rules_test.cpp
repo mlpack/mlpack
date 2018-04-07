@@ -234,20 +234,15 @@ BOOST_AUTO_TEST_CASE(VarianceScalingNormalInitTest)
   double variance = (1.0 / ((rows + cols) / 2.0));
   double stddev = sqrt(variance);
 
-  for (size_t i = 0; i < rows; i++)
-    for (size_t j = 0; j < cols; j++)
-    {
-      BOOST_REQUIRE_GE(weights.at(i, j), - 3 * stddev);
-      BOOST_REQUIRE_LE(weights.at(i, j), 3 * stddev);
-    }
+  bool ge = arma::all(arma::vectorise(weights) >= (-3 * stddev));
+  bool le = arma::all(arma::vectorise(weights) <= (3 * stddev));
+  BOOST_REQUIRE_EQUAL(ge, 1);
+  BOOST_REQUIRE_EQUAL(le, 1);
 
-  for (size_t k = 0; k < slices; k++)
-    for (size_t i = 0; i < rows; i++)
-      for (size_t j = 0; j < cols; j++)
-      {
-        BOOST_REQUIRE_GE(weights3d.slice(k).at(i, j), - 3 * stddev);
-        BOOST_REQUIRE_LE(weights3d.slice(k).at(i, j), 3 * stddev);
-      }
+  bool ge3d = arma::all(arma::vectorise(weights3d) >= (-3 * stddev));
+  bool le3d = arma::all(arma::vectorise(weights3d) <= (3 * stddev));
+  BOOST_REQUIRE_EQUAL(ge3d, 1);
+  BOOST_REQUIRE_EQUAL(le3d, 1);
 }
 
 /**
@@ -284,20 +279,15 @@ BOOST_AUTO_TEST_CASE(VarianceScalingUniformInitTest)
 
   double limit = sqrt(3.0 / ((rows + cols) / 2.0));
 
-  for (size_t i = 0; i < rows; i++)
-    for (size_t j = 0; j < cols; j++)
-    {
-      BOOST_REQUIRE_GE(weights.at(i, j), -limit);
-      BOOST_REQUIRE_LE(weights.at(i, j), limit);
-    }
+  bool ge = arma::all(arma::vectorise(weights) >= -limit);
+  bool le = arma::all(arma::vectorise(weights) <= limit);
+  BOOST_REQUIRE_EQUAL(ge, 1);
+  BOOST_REQUIRE_EQUAL(le, 1);
 
-  for (size_t k = 0; k < slices; k++)
-    for (size_t i = 0; i < rows; i++)
-      for (size_t j = 0; j < cols; j++)
-      {
-        BOOST_REQUIRE_GE(weights3d.slice(k).at(i, j), -limit);
-        BOOST_REQUIRE_LE(weights3d.slice(k).at(i, j), limit);
-      }
+  bool ge3d = arma::all(arma::vectorise(weights3d) >= -limit);
+  bool le3d = arma::all(arma::vectorise(weights3d) <= limit);
+  BOOST_REQUIRE_EQUAL(ge3d, 1);
+  BOOST_REQUIRE_EQUAL(le3d, 1);
 }
 
 /**
