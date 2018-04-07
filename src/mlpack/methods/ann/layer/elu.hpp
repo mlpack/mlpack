@@ -30,21 +30,6 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * @note Make sure to use SELU activation function with normalized inputs and
- *       weights initialized with Lecun Normal Initialization.
- *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class ELU
-{
-  /**
  * The ELU activation function, defined by
  *
  * @f{eqnarray*}{
@@ -104,15 +89,29 @@ class ELU
  *   year    = {2017}
  * }
  * @endcode
+ *
+ * @note Make sure to use SELU activation function with normalized inputs and
+ *       weights initialized with Lecun Normal Initialization.
+ *
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
+template <
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+class ELU
+{
  public:
   /**
    * Create the ELU object.
    *
    * NOTE: Use this constructor for SELU activation function.
-   *
    */
   ELU();
+
   /**
    * Create the ELU object using the specified parameter. The non zero
    * gradient for negative inputs can be adjusted by specifying the ELU
@@ -122,6 +121,7 @@ class ELU
    * @param alpha Scale parameter for the negative factor.
    */
   ELU(const double alpha);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -186,6 +186,7 @@ class ELU
     {
       return (x > 0) ? lambda * x : lambda * alpha * (std::exp(x) - 1);
     }
+
     return 1.0;
   }
 
@@ -223,7 +224,6 @@ class ELU
    * @param y Input activations.
    * @param x The resulting derivatives.
    */
-
   template<typename InputType, typename OutputType>
   void Deriv(const InputType& x, OutputType& y)
   {
@@ -254,7 +254,8 @@ class ELU
   //! inputs.
   double lambda;
 }; // class ELU
-// Template alias for SELU using ELU class
+
+// Template alias for SELU using ELU class.
 using SELU = ELU<arma::mat, arma::mat>;
 
 } // namespace ann

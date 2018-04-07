@@ -37,8 +37,8 @@ ELU<InputDataType, OutputDataType>::ELU() :
 // This constructor is called for ELU activation function.  The value of lambda
 // is fixed and equal to 1.  'alpha' is a hyperparameter.
 template<typename InputDataType, typename OutputDataType>
-ELU<InputDataType, OutputDataType>::ELU(
-    const double alpha) : alpha(alpha), lambda(1)
+ELU<InputDataType, OutputDataType>::ELU(const double alpha) :
+    alpha(alpha), lambda(1)
 {
   // Nothing to do here.
 }

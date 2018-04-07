@@ -407,17 +407,15 @@ BOOST_AUTO_TEST_CASE(NoDropoutTest)
 
 /*
  * Perform test to check whether mean and variance remain nearly same
- * after alpha_dropout.
+ * after AlphaDropout.
  */
-
 BOOST_AUTO_TEST_CASE(SimpleAlphaDropoutLayerTest)
 {
   // Initialize the probability of setting a value to alphaDash.
-  const double p = .2;
+  const double p = 0.2;
 
   // Initialize the input parameter having a mean nearabout 0
   // and variance nearabout 1.
-
   arma::mat input = arma::randn<arma::mat>(1000, 1);
 
   AlphaDropout<> module(p);
@@ -428,16 +426,17 @@ BOOST_AUTO_TEST_CASE(SimpleAlphaDropoutLayerTest)
   module.Forward(std::move(input), std::move(output));
   // Check whether mean remains nearly same.
   BOOST_REQUIRE_LE(
-     arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))), 0.1);
-  // Check whether variance remains nearly same
+      arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))), 0.1);
+
+  // Check whether variance remains nearly same.
   BOOST_REQUIRE_LE(
-     arma::as_scalar(arma::abs(arma::var(input) - arma::var(output))), 0.1);
+      arma::as_scalar(arma::abs(arma::var(input) - arma::var(output))), 0.1);
 
   // Test the Backward function when training phase.
   arma::mat delta;
   module.Backward(std::move(input), std::move(input), std::move(delta));
   BOOST_REQUIRE_LE(
-          arma::as_scalar(arma::abs(arma::mean(delta) - 0)), 0.05);
+      arma::as_scalar(arma::abs(arma::mean(delta) - 0)), 0.05);
 
   // Test the Forward function when testing phase.
   module.Deterministic() = true;
@@ -446,7 +445,7 @@ BOOST_AUTO_TEST_CASE(SimpleAlphaDropoutLayerTest)
 }
 
 /**
- * Perform alpha_dropout x times using ones as input, sum the number of ones
+ * Perform AlphaDropout x times using ones as input, sum the number of ones
  * and validate that the layer is producing approximately the correct number
  * of ones.
  */
@@ -482,9 +481,10 @@ BOOST_AUTO_TEST_CASE(AlphaDropoutProbabilityTest)
   }
 }
 
-/*
-* Perform alpha_dropout with probability 1 - p where p = 0, means no alpha_dropout.
-*/
+/**
+ * Perform AlphaDropout with probability 1 - p where p = 0,
+ * means no AlphaDropout.
+ */
 BOOST_AUTO_TEST_CASE(NoAlphaDropoutTest)
 {
   arma::mat input = arma::ones(1500, 1);

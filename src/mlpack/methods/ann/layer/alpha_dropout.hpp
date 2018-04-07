@@ -7,7 +7,6 @@
  * makes an affine transformation so as to keep the mean and variance of
  * outputs at their original values.
  *
- *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -77,10 +76,9 @@ class AlphaDropout
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(
-      const arma::Mat<eT>&& /* input */,
-      arma::Mat<eT>&& gy,
-      arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>&& /* input */,
+                arma::Mat<eT>&& gy,
+                arma::Mat<eT>&& g);
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
@@ -117,7 +115,7 @@ class AlphaDropout
   //! Get the mask.
   OutputDataType const& Mask() const {return mask;}
 
-  //! Modify the probability of setting a value to alphaDash.  As
+  //! Modify the probability of setting a value to alphaDash. As
   //! 'a' and 'b' depend on 'ratio', modify them as well.
   void Ratio(const double r)
   {
@@ -125,7 +123,6 @@ class AlphaDropout
     a = pow((1 - ratio) * (1 + ratio * pow(alphaDash, 2)), -0.5);
     b = -a * alphaDash * ratio;
   }
-
 
   /**
    * Serialize the layer.
@@ -146,20 +143,20 @@ class AlphaDropout
   //! Locally-stored mast object.
   OutputDataType mask;
 
-  //! The probability of setting a value to aplha_dash.
+  //! The probability of setting a value to aplhaDash.
   double ratio;
+
+  //! The low variance value of SELU activation function.
+  double alphaDash;
 
   //! If true dropout and scaling is disabled, see notes above.
   bool deterministic;
 
-  //! Value of alpha for normalized inputs (taken from SELU)
+  //! Value of alpha for normalized inputs (taken from SELU).
   static constexpr double alpha = 1.6732632423543772848170429916717;
 
-  //! Value of lambda for normalized inputs (taken from SELU)
+  //! Value of lambda for normalized inputs (taken from SELU).
   static constexpr double lambda = 1.0507009873554804934193349852946;
-
-  //! The low variance value of SELU activation function.
-  double alphaDash;
 
   //! Value to be multiplied with x for affine transformation.
   double a;
@@ -173,6 +170,5 @@ class AlphaDropout
 
 // Include implementation.
 #include "alpha_dropout_impl.hpp"
-
 
 #endif
