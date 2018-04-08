@@ -1,6 +1,7 @@
 /**
  * @file he_init.hpp
- * @authors Dakshit Agrawal and Prabhat Sharma
+ * @author Dakshit Agrawal
+ * @author Prabhat Sharma
  *
  * Intialization rule given by He et. al. for neural networks. The He
  * initialization initializes weights of the neural network to better
@@ -31,12 +32,12 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @code
  * @article{He2015DelvingDI,
- * title={Delving Deep into Rectifiers: Surpassing Human-Level Performance
- * on ImageNet Classification},
- * author={Kaiming He and Xiangyu Zhang and Shaoqing Ren and Jian Sun},
- * journal={2015 IEEE International Conference on Computer Vision (ICCV)},
- * year={2015},
- * pages={1026-1034}}
+ * title   = {Delving Deep into Rectifiers: Surpassing Human-Level Performance
+ *            on ImageNet Classification},
+ * author  = {Kaiming He and Xiangyu Zhang and Shaoqing Ren and Jian Sun},
+ * journal = {2015 IEEE International Conference on Computer Vision (ICCV)},
+ * year    = {2015},
+ * pages   = {1026-1034}}
  * @endcode
  *
  */
