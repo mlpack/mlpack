@@ -24,6 +24,7 @@
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/init_rules/glorot_init.hpp>
+#include <mlpack/methods/ann/init_rules/variance_scaling_init.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -199,6 +200,98 @@ BOOST_AUTO_TEST_CASE(GaussianInitTest)
 }
 
 /**
+ * Simple test of the VarianceScalingNormalInit class.
+ * The test checks if the size of initialized weight matrices is correct.
+ * Further it checks the size of initialized weight cubes is correct.
+ * It also checks whether the values initialized make sense by verifying if
+ * values lie within 3 standard deviations of the mean of normal distribution.
+ */
+BOOST_AUTO_TEST_CASE(VarianceScalingNormalInitTest)
+{
+  const size_t rows = 7;
+  const size_t cols = 8;
+  const size_t slices = 2;
+
+  arma::mat weights;
+  arma::cube weights3d;
+
+  VarianceScalingNormalInit<> vsn;
+
+  vsn.Initialize(weights, rows, cols);
+  vsn.Initialize(weights3d, rows, cols, slices);
+
+
+  // Check that size of initialized weights is equal to the input weights size
+
+  BOOST_REQUIRE_EQUAL(weights.n_rows, rows);
+  BOOST_REQUIRE_EQUAL(weights.n_cols, cols);
+
+  BOOST_REQUIRE_EQUAL(weights3d.n_rows, rows);
+  BOOST_REQUIRE_EQUAL(weights3d.n_cols, cols);
+  BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
+
+  // Check that the initialized values lie in the required range
+
+  double variance = (1.0 / ((rows + cols) / 2.0));
+  double stddev = sqrt(variance);
+
+  bool ge = arma::all(arma::vectorise(weights) >= (-3 * stddev));
+  bool le = arma::all(arma::vectorise(weights) <= (3 * stddev));
+  BOOST_REQUIRE_EQUAL(ge, 1);
+  BOOST_REQUIRE_EQUAL(le, 1);
+
+  bool ge3d = arma::all(arma::vectorise(weights3d) >= (-3 * stddev));
+  bool le3d = arma::all(arma::vectorise(weights3d) <= (3 * stddev));
+  BOOST_REQUIRE_EQUAL(ge3d, 1);
+  BOOST_REQUIRE_EQUAL(le3d, 1);
+}
+
+/**
+ * Simple test of the VarianceScalingUniformInit class.
+ * The test checks if the size of initialized weight matrices is correct.
+ * Further it checks the size of initialized weight cubes is correct.
+ * It also checks whether the values initialized make sense by verifying if
+ * values lie within the limits of the uniform initialization.
+ */
+BOOST_AUTO_TEST_CASE(VarianceScalingUniformInitTest)
+{
+  const size_t rows = 7;
+  const size_t cols = 8;
+  const size_t slices = 2;
+
+  arma::mat weights;
+  arma::cube weights3d;
+
+  VarianceScalingUniformInit<> vsu;
+
+  vsu.Initialize(weights, rows, cols);
+  vsu.Initialize(weights3d, rows, cols, slices);
+
+  // Check that size of initialized weights is equal to the input weights size
+
+  BOOST_REQUIRE_EQUAL(weights.n_rows, rows);
+  BOOST_REQUIRE_EQUAL(weights.n_cols, cols);
+
+  BOOST_REQUIRE_EQUAL(weights3d.n_rows, rows);
+  BOOST_REQUIRE_EQUAL(weights3d.n_cols, cols);
+  BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
+
+  // Check that the initialized values lie in the required range
+
+  double limit = sqrt(3.0 / ((rows + cols) / 2.0));
+
+  bool ge = arma::all(arma::vectorise(weights) >= -limit);
+  bool le = arma::all(arma::vectorise(weights) <= limit);
+  BOOST_REQUIRE_EQUAL(ge, 1);
+  BOOST_REQUIRE_EQUAL(le, 1);
+
+  bool ge3d = arma::all(arma::vectorise(weights3d) >= -limit);
+  bool le3d = arma::all(arma::vectorise(weights3d) <= limit);
+  BOOST_REQUIRE_EQUAL(ge3d, 1);
+  BOOST_REQUIRE_EQUAL(le3d, 1);
+}
+
+/**
  * Simple test of the NetworkInitialization class, we test it with every
  * implemented initialization rule and make sure the output is reasonable.
  */
@@ -284,6 +377,28 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
   gaussianModel.Predict(input, response);
 
   BOOST_REQUIRE_EQUAL(gaussianModel.Parameters().n_elem, 42);
+
+  // Create a simple network and use the Normal Variance Scaling rule to
+  // initialize the network parameters.
+  FFN<NegativeLogLikelihood<>, VarianceScalingNormalInit<> > vsnModel;
+  vsnModel.Add<IdentityLayer<> >();
+  vsnModel.Add<Linear<> >(5, 5);
+  vsnModel.Add<Linear<> >(5, 2);
+  vsnModel.Add<LogSoftMax<> >();
+  vsnModel.Predict(input, response);
+
+  BOOST_REQUIRE_EQUAL(vsnModel.Parameters().n_elem, 42);
+
+  // Create a simple network and use the Uniform Variance Scaling rule to
+  // initialize the network parameters.
+  FFN<NegativeLogLikelihood<>, VarianceScalingUniformInit<> > vsuModel;
+  vsuModel.Add<IdentityLayer<> >();
+  vsuModel.Add<Linear<> >(5, 5);
+  vsuModel.Add<Linear<> >(5, 2);
+  vsuModel.Add<LogSoftMax<> >();
+  vsuModel.Predict(input, response);
+
+  BOOST_REQUIRE_EQUAL(vsuModel.Parameters().n_elem, 42);
 }
 
 /**
