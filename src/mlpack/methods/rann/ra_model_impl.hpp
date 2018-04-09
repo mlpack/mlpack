@@ -96,7 +96,7 @@ void BiSearchVisitor<SortPolicy>::SearchLeaf(RAType* ra) const
     // Unmap the query points.
     distances.set_size(distancesOut.n_rows, distancesOut.n_cols);
     neighbors.set_size(neighborsOut.n_rows, neighborsOut.n_cols);
-    for (size_t i = 0; i < neighborsOut.n_cols; ++i)
+    for (size_t i = 0; i < oldFromNewQueries.size(); ++i)
     {
       neighbors.col(oldFromNewQueries[i]) = neighborsOut.col(i);
       distances.col(oldFromNewQueries[i]) = distancesOut.col(i);
