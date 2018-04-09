@@ -1,6 +1,7 @@
 /**
  * @file sag_update.hpp
- * @authors Prabhat Sharma and Marcus Edel
+ * @author Prabhat Sharma
+ * @author Marcus Edel
  *
  * Vanilla update for SAG, a stochastic gradient method for
  * optimizing the sum of a finite set of smooth functions, where
