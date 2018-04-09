@@ -82,25 +82,21 @@ class Dropout
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter;  }
-
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
-
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the detla.
   OutputDataType const& Delta() const { return delta; }
-
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
   //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
-
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
