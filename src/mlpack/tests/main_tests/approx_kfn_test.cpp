@@ -205,14 +205,15 @@ BOOST_AUTO_TEST_CASE(ApproxKFNModelReuseTest)
   arma::mat distances;
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
-
+  ApproxKFNModel* model = new ApproxKFNModel();
+  model = CLI::GetParam<ApproxKFNModel*>("output_model");
+  
   // Reset passed parameters.
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["query"].wasPassed = false;
 
   // Input saved model, pass the same query and keep k unchanged.
-  SetInputParam("input_model",
-      std::move(CLI::GetParam<ApproxKFNModel*>("output_model")));
+  SetInputParam("input_model", std::move(model));
   SetInputParam("query", queryData);
 
   mlpackMain();
@@ -221,6 +222,107 @@ BOOST_AUTO_TEST_CASE(ApproxKFNModelReuseTest)
   // saved model are equal.
   CheckMatrices(neighbors, CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   CheckMatrices(distances, CLI::GetParam<arma::mat>("distances"));
+}
+
+/**
+ * Ensuring that num_tables has some effects on output.
+ */
+BOOST_AUTO_TEST_CASE(ApproxKFNNumTablesChangeTest)
+{
+  arma::mat referenceData;
+  referenceData.randu(2, 80); // 80 points in 2 dimensions.
+  
+  // First setting.
+  SetInputParam("reference", std::move(referenceData));
+  // Random input, k <= reference points.
+  SetInputParam("k", (int) 5); 
+  // Random input, num_tables > 0.
+  SetInputParam("num_tables", (int) 1);
+
+  SetInputParam("num_projections", (int) 10);
+
+  // First solution.
+  mlpackMain();
+
+  // Get the distances matrix after first training.
+  arma::mat FirstOutputDistances =
+      std::move(CLI::GetParam<arma::mat>("distances"));
+           
+  // Reset the settings.
+  bindings::tests::CleanMemory();
+  CLI::ClearSettings();
+  CLI::RestoreSettings(testName);
+
+  // Second setting.
+  referenceData.randu(2, 80); // 80 points in 2 dimensions.
+  SetInputParam("reference", std::move(referenceData));
+  // Same input as first setting, k <= reference points.
+  SetInputParam("k", (int) 5);
+  // Random input, num_tables > 0.
+  SetInputParam("num_tables", (int) 4);
+
+  SetInputParam("num_projections", (int) 10);
+  // Second solution.
+  mlpackMain();
+
+  // Get the distances matrix after second training.
+  arma::mat SecondOutputDistances =
+      std::move(CLI::GetParam<arma::mat>("distances"));
+
+  // Check that the size of distance matrices (FirstOutputDistances and
+  // SecondOutputDistances) are not equal which ensures num_tables changes 
+  // the output model.
+  CheckMatricesNotEqual(FirstOutputDistances, SecondOutputDistances);
+}
+
+/**
+ * Ensuring that num_projections has some effects on output.
+ */
+BOOST_AUTO_TEST_CASE(ApproxKFNNumProjectionsChangeTest)
+{
+  arma::mat referenceData;
+  referenceData.randu(2, 80); // 80 points in 2 dimensions.
+  
+  // First setting.
+  SetInputParam("reference", std::move(referenceData));
+  // Random input, k <= reference points.
+  SetInputParam("k", (int) 5); 
+  // Random input, num_tables > 0.
+  SetInputParam("num_projections", (int) 4);
+  SetInputParam("num_tables", (int) 3);
+
+  // First solution.
+  mlpackMain();
+
+  // Get the distances matrix after first training.
+  arma::mat FirstOutputDistances =
+      std::move(CLI::GetParam<arma::mat>("distances"));
+           
+  // Reset the settings.
+  bindings::tests::CleanMemory();
+  CLI::ClearSettings();
+  CLI::RestoreSettings(testName);
+
+  // Second setting.
+  referenceData.randu(2, 80); // 80 points in 2 dimensions.
+  SetInputParam("reference", std::move(referenceData));
+  // Same input as first setting, k <= reference points.
+  SetInputParam("k", (int) 5);
+  // Random input, num_tables > 0.
+  SetInputParam("num_projections", (int) 6);
+  SetInputParam("num_tables", (int) 3);
+
+  // Second solution.
+  mlpackMain();
+
+  // Get the distances matrix after second training.
+  arma::mat SecondOutputDistances =
+      std::move(CLI::GetParam<arma::mat>("distances"));
+
+  // Check that the size of distance matrices (FirstOutputDistances and
+  // SecondOutputDistances) are not equal which ensures num_tables changes 
+  // the output model.
+  CheckMatricesNotEqual(FirstOutputDistances, SecondOutputDistances);
 }
 
 /**
@@ -246,6 +348,54 @@ BOOST_AUTO_TEST_CASE(ApproxKFNExactDistDimensionTest)
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Make sure that the two strategie (Drusilla Select and QDAFN) output different
+   results.
+ */
+BOOST_AUTO_TEST_CASE(ApproxKFNDifferentAlgoTest)
+{
+  arma::mat referenceData;
+  referenceData.randu(6, 100); // 100 points in 6 dimensions.
+
+  SetInputParam("reference", std::move(referenceData));
+  // Random input, any k <= reference points.
+  SetInputParam("k", (int) 10);
+  SetInputParam("algorithm", (string) "ds");
+  
+  // First solution.
+  mlpackMain();
+
+  // Get the distances and neighbors matrix after first training.
+  arma::mat FirstOutputDistances =
+      std::move(CLI::GetParam<arma::mat>("distances"));
+  arma::Mat<size_t> FirstOutputNeighbors =
+    std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+           
+  // Reset the settings.
+  bindings::tests::CleanMemory();
+  CLI::ClearSettings();
+  CLI::RestoreSettings(testName);
+
+  // Second solution.
+  SetInputParam("reference", std::move(referenceData));
+  // Random input, any k <= reference points.
+  SetInputParam("k", (int) 10);
+  SetInputParam("algorithm", (string) "qdafn");
+
+  // Get the distances and neighbors matrix after second training.
+  arma::mat SecondOutputDistances =
+      std::move(CLI::GetParam<arma::mat>("distances"));
+  arma::Mat<size_t> SecondOutputNeighbors =
+      std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+  
+  // Check that the distance matrices (FirstOutputDistances and
+  // SecondOutputDistances) and neighbor matrices (FirstOutputNeighbors and
+  // SecondOutputNeighbors) are not equal. This ensures that the two strategies
+  // result in different outputs.
+  CheckMatricesNotEqual(FirstOutputDistances, SecondOutputDistances);
+  CheckMatricesNotEqual(FirstOutputNeighbors, SecondOutputNeighbors);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
