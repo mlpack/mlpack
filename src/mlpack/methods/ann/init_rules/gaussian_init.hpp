@@ -35,7 +35,7 @@ class GaussianInitialization
    * @param variance Variance of the gaussian.
    */
   GaussianInitialization(const double mean = 0, const double variance = 1) :
-      mean(mean), variance(variance)
+      mean(mean), variance(variance), stddev(sqrt(variance))
   {
     // Nothing to do here.
   }
@@ -49,13 +49,26 @@ class GaussianInitialization
    */
   void Initialize(arma::mat& W,
                   const size_t rows,
-                  const size_t cols)
+                  const size_t cols,
+                  bool truncated = false)
   {
     if (W.is_empty())
     {
       W = arma::mat(rows, cols);
     }
-    W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
+    W.imbue(
+        [&]()
+        {
+          if (!truncated)
+            return arma::as_scalar(RandNormal(mean, variance));
+          else
+          {
+            double candidate = 3.0*stddev;
+            while (std::abs(candidate - mean) > 2.0*stddev)
+              candidate = arma::as_scalar(RandNormal(mean, variance));
+            return candidate;
+          }
+        });
   }
 
   /**
@@ -69,12 +82,13 @@ class GaussianInitialization
   void Initialize(arma::cube & W,
                   const size_t rows,
                   const size_t cols,
-                  const size_t slices)
+                  const size_t slices,
+                  bool truncated = false)
   {
     W = arma::cube(rows, cols, slices);
 
     for (size_t i = 0; i < slices; i++)
-      Initialize(W.slice(i), rows, cols);
+      Initialize(W.slice(i), rows, cols, truncated);
   }
 
  private:
@@ -83,6 +97,9 @@ class GaussianInitialization
 
   //! Variance of the gaussian.
   double variance;
+
+  //! Standard deviation of the gaussian.
+  double stddev;
 }; // class GaussianInitialization
 
 } // namespace ann
