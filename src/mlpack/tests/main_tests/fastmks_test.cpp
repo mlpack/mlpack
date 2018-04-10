@@ -511,10 +511,11 @@ BOOST_AUTO_TEST_CASE(FMKSKernelTest)
   BOOST_REQUIRE_GT(arma::accu(cosineKernel != gaussianKernel), 1);
   BOOST_REQUIRE_GT(arma::accu(gaussianKernel != epaneKernel), 1);
   BOOST_REQUIRE_GT(arma::accu(epaneKernel != hyptanKernel), 1);
-}*/
+}
 /** Ensure that offset affects the final result of polynomial
  * and hyptan kernel
  */
+/*
 BOOST_AUTO_TEST_CASE(FMKSOffsetTest)
 {
   arma::mat referenceData;
@@ -575,10 +576,11 @@ BOOST_AUTO_TEST_CASE(FMKSOffsetTest)
   newhyptanKernel = std::move(CLI::GetParam<arma::mat>("kernels"));
 
   BOOST_REQUIRE_GT(arma::accu(hyptanKernel != newhyptanKernel), 1);
-}
+}*/
 
 /** Ensure that degree affects the final result of polynomial kernel
  */
+/*
 BOOST_AUTO_TEST_CASE(FMKSDegreeTest)
 {
   arma::mat referenceData;
@@ -609,10 +611,11 @@ BOOST_AUTO_TEST_CASE(FMKSDegreeTest)
   newpolyKernel = std::move(CLI::GetParam<arma::mat>("kernels"));
 
   BOOST_REQUIRE_GT(arma::accu(polyKernel != newpolyKernel), 1);
-}
+}*/
 
 /** Ensure that scale affects the final result of hyptan kernel
  */
+/*
 BOOST_AUTO_TEST_CASE(FMKSScaleTest)
 {
   arma::mat referenceData;
@@ -643,11 +646,12 @@ BOOST_AUTO_TEST_CASE(FMKSScaleTest)
   newhyptanKernel = std::move(CLI::GetParam<arma::mat>("kernels"));
 
   BOOST_REQUIRE_GT(arma::accu(hyptanKernel != newhyptanKernel), 1);
-}
+}*/
 
 /** Ensure that bandwidth affects the final result of Gaussian, Epanechnikov,
  *  and triangular kernel
  */
+ /*
 BOOST_AUTO_TEST_CASE(FMKSBandwidthTest)
 {
   arma::mat referenceData;
@@ -740,5 +744,5 @@ BOOST_AUTO_TEST_CASE(FMKSBandwidthTest)
 	newtriKernel = std::move(CLI::GetParam<arma::mat>("kernels"));
 
 	BOOST_REQUIRE_GT(arma::accu(triKernel != newtriKernel), 1);
-}
+}*/
 BOOST_AUTO_TEST_SUITE_END();
