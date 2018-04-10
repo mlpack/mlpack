@@ -16,6 +16,8 @@
 // In case it hasn't been included yet.
 #include "saga.hpp"
 
+#include <mlpack/core/optimizers/function.hpp>
+
 namespace mlpack {
 namespace optimization {
 
@@ -43,15 +45,23 @@ SAGAType<UpdatePolicyType, DecayPolicyType>::SAGAType(
 template<typename UpdatePolicyType, typename DecayPolicyType>
 template<typename DecomposableFunctionType>
 double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
-    DecomposableFunctionType& function,
+    DecomposableFunctionType& function_,
     arma::mat& iterate)
 {
+  typedef Function<DecomposableFunctionType> FullFunctionType;
+  FullFunctionType& function(static_cast<FullFunctionType&>(function_));
+
+  // Make sure we have all the methods that we need.
+  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType>();
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
 
   // To keep track of where we are and how things are going.
   double overallObjective = 0;
   double lastObjective = DBL_MAX;
+  size_t currentFunction = 0;
+  size_t batch = 0;
+  size_t batchStart = 0;
 
   // Initialize the update policy.
   if (resetPolicy)
@@ -59,13 +69,12 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  arma::mat gradient0(iterate.n_rows, iterate.n_cols);
   arma::mat iterate0;
 
   // Find the number of batches.
   size_t numBatches = numFunctions / batchSize;
   if (numFunctions % batchSize != 0)
-    ++numBatches; // Capture last few.
+    ++numBatches; // Capture last batch.
 
   const size_t actualMaxIterations = (maxIterations == 0) ?
                std::numeric_limits<size_t>::max() : maxIterations;
@@ -90,67 +99,72 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
   }
   avgGradient /= (double) numBatches; // Calculate average gradient
 
-  for (size_t i = 0; i < actualMaxIterations; ++i)
+  for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
   {
-    // Calculate the objective function.
-    overallObjective = 0;
-    for (size_t f = 0; f < numFunctions; f += batchSize)
+    // Is this iteration the start of a sequence?
+    if ((currentFunction % numFunctions) == 0)
     {
-      const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
-      overallObjective += function.Evaluate(iterate, f, effectiveBatchSize);
-    }
 
-    if (std::isnan(overallObjective) || std::isinf(overallObjective))
-    {
-      Log::Warn << "SAGA: converged to " << overallObjective
-                << "; terminating  with failure.  Try a smaller step size?"
-                << std::endl;
-      return overallObjective;
-    }
+      if (std::isnan(overallObjective) || std::isinf(overallObjective))
+      {
+        Log::Warn << "SAGA: converged to " << overallObjective
+                  << "; terminating  with failure.  Try a smaller step size?"
+                  << std::endl;
+        return overallObjective;
+      }
 
-    if (std::abs(lastObjective - overallObjective) < tolerance)
-    {
-      Log::Info << "SAGA: minimized within tolerance " << tolerance
-                << "; terminating optimization." << std::endl;
-      return overallObjective;
-    }
+      if (std::abs(lastObjective - overallObjective) < tolerance)
+      {
+        Log::Info << "SAGA: minimized within tolerance " << tolerance
+                  << "; terminating optimization." << std::endl;
+        return overallObjective;
+      }
 
-    lastObjective = overallObjective;
+      // Reset the counter variables.
+      lastObjective = overallObjective;
+      overallObjective = 0;
+      currentFunction = 0;
+
+      if (shuffle) // Determine order of visitation.
+        function.Shuffle();
+    }
 
     // Store current parameter for the calculation of the variance reduced
     // gradient.
     iterate0 = iterate;
 
-    for (size_t f = 0, b=0, currentFunction = 0; f < numFunctions;
-      /* incrementing done manually */)
-    {
-      b = math::RandInt(0, numBatches); // Select a random batch
+    batch = math::RandInt(0, numBatches); // Select a random batch
 
-      // Find the effective batch size (the last batch may be smaller).
-      currentFunction = b * batchSize;
-      effectiveBatchSize = std::min(batchSize, numFunctions - currentFunction);
+    // Find the effective batch size; we have to take the minimum of three
+    // things:
+    // - the batch size can't be larger than the user-specified batch size;
+    // - the batch size can't be larger than the number of iterations left
+    //       before actualMaxIterations is hit;
+    // - the batch size can't be larger than the number of functions left.
+    effectiveBatchSize = std::min(
+      std::min(batchSize, actualMaxIterations - i),
+      numFunctions - currentFunction);
 
-      // Calculate the gradient of a random function.
-      function.Gradient(iterate, currentFunction, gradient,
-                        effectiveBatchSize);
-      gradient0 = tableOfGradients.slice(b);
+    batchStart = batch * batchSize;
 
-      // Use the update policy to take a step.
-      updatePolicy.Update(iterate, avgGradient, gradient, gradient0,
-                          stepSize, numBatches);
-      // Update the average gradient.
-      avgGradient += (gradient-tableOfGradients.slice(b))/numBatches;
+    // Calculate the gradient of a random function.
+    function.Gradient(iterate, batchStart, gradient,
+                      effectiveBatchSize);
 
-      // Update the table of gradients.
-      tableOfGradients.slice(b) = gradient;
+    // Use the update policy to take a step.
+    updatePolicy.Update(iterate, avgGradient, gradient,
+                        tableOfGradients.slice(batch),
+                        stepSize, numBatches);
+    // Update the average gradient.
+    avgGradient += (gradient-tableOfGradients.slice(batch))/numBatches;
 
-      f += effectiveBatchSize;
-    }
+    // Update the table of gradients.
+    tableOfGradients.slice(batch) = gradient;
 
-    // Determine order of visitation.
-    if (shuffle)
-      function.Shuffle();
-
+    overallObjective += function.Evaluate(iterate, currentFunction,
+                                          effectiveBatchSize);
+    currentFunction += effectiveBatchSize;
+    i += effectiveBatchSize;
     // Update the learning rate if requested by the user.
     decayPolicy.Update(iterate, iterate0, gradient, avgGradient, numBatches,
                        stepSize);
