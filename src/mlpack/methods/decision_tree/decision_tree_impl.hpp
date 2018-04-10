@@ -539,8 +539,6 @@ void DecisionTree<FitnessFunction,
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];
   children.clear();
-  beginIndex = begin;
-  countInNode = count;
   // Look through the list of dimensions and obtain the gain of the best split.
   // We'll cache the best numeric and categorical split auxiliary information in
   // numericAux and categoricalAux (and clear them later if we make no split),
@@ -704,8 +702,6 @@ void DecisionTree<FitnessFunction,
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];
   children.clear();
-  beginIndex = begin;
-  countInNode = count;
   // We won't be using these members, so reset them.
   CategoricalAuxiliarySplitInfo::operator=(CategoricalAuxiliarySplitInfo());
 
@@ -1092,8 +1088,6 @@ void DecisionTree<FitnessFunction,
 
       // Calculate class probabilities of present node because its children are
       // all leaves.
-
-      // TODO calculate majority class
       for (size_t j = 0; j < children.size(); ++j)
       {
         for (size_t k = 0; k < numClasses; ++k)

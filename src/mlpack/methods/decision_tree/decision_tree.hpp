@@ -339,11 +339,8 @@ class DecisionTree :
   //! Modify the child of the given index (be careful!).
   DecisionTree& Child(const size_t i) { return *children[i]; }
 
-  //! Get the begin index of current node.
-  size_t BeginIndex() const { return beginIndex; }
-
-  //! Get the count of data points of current node.
-  size_t CountInNode() const { return countInNode; }
+  //! Get class probabilities
+  arma::vec getClassProbabilities() const { return classProbabilities; }
   /**
    * Given a point and that this node is not a leaf, calculate the index of the
    * child node this point would go towards.  This method is primarily used by
@@ -408,12 +405,6 @@ class DecisionTree :
    * probabilities.
    */
   arma::vec classProbabilities;
-
-  // this stores the starting point in the dataset that belongs to this node.
-  size_t beginIndex;
-
-  // this stores the count of the data points stored in this node.
-  size_t countInNode;
 
   //! Note that this class will also hold the members of the NumericSplit and
   //! CategoricalSplit AuxiliarySplitInfo classes, since it inherits from them.
