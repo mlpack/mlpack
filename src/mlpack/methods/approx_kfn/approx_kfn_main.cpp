@@ -273,7 +273,6 @@ static void mlpackMain()
           "distances matrix must be equal to the number of columns in "
           "reference set.");
         exactDistances = std::move(CLI::GetParam<arma::mat>("exact_distances"));
-
       }
       else
       {
