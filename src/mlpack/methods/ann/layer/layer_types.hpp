@@ -16,6 +16,7 @@
 
 // Layer modules.
 #include <mlpack/methods/ann/layer/add.hpp>
+#include <mlpack/methods/ann/layer/alpha_dropout.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 #include <mlpack/methods/ann/layer/batch_norm.hpp>
 #include <mlpack/methods/ann/layer/bilinear_interpolation.hpp>
@@ -123,6 +124,7 @@ using LayerTypes = boost::variant<
     CrossEntropyError<arma::mat, arma::mat>*,
     DropConnect<arma::mat, arma::mat>*,
     Dropout<arma::mat, arma::mat>*,
+    AlphaDropout<arma::mat, arma::mat>*,
     ELU<arma::mat, arma::mat>*,
     Glimpse<arma::mat, arma::mat>*,
     HardTanH<arma::mat, arma::mat>*,
