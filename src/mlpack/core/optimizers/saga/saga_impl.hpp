@@ -104,7 +104,6 @@ double SAGAType<UpdatePolicyType, DecayPolicyType>::Optimize(
     // Is this iteration the start of a sequence?
     if ((currentFunction % numFunctions) == 0)
     {
-
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
         Log::Warn << "SAGA: converged to " << overallObjective
