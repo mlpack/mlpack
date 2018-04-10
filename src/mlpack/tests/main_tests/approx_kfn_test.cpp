@@ -342,7 +342,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNExactDistDimensionTest)
   // Note that the values in the matrix do not matter as we are only concernec
   // with the dimensions of the matrix passed.
   arma::mat exactDistances;
-  exactDistances.randu(9, 90); // Wrong size (should be (10, 80)).
+  exactDistances.randu(9, 90); // Wrong size (should be (1, 80)).
   SetInputParam("exact_distances", std::move(exactDistances));
 
   Log::Fatal.ignoreInput = true;
