@@ -53,8 +53,7 @@ void FlexibleReLU<InputDataType, OutputDataType>::Backward(
 {
   DataType derivative;
   //! Compute the first derivative of FlexibleReLU function.
-  derivative = arma::sign(input);
-  derivative.elem(arma::find(derivative < 0.0)) += 1;
+  derivative = arma::clamp(arma::sign(input), 0.0, 1.0);
   g = gy % derivative;
 }
 
