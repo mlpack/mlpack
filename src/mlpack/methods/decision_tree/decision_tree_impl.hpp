@@ -1045,7 +1045,7 @@ void DecisionTree<FitnessFunction,
   }
 
   // Now normalize into probabilities.
-  classProbabilities /= UseWeights ? sumWeights : labels.n_elem;
+  // classProbabilities /= UseWeights ? sumWeights : labels.n_elem;
   arma::uword maxIndex = 0;
   classProbabilities.max(maxIndex);
   dimensionTypeOrMajorityClass = (size_t) maxIndex;
@@ -1078,18 +1078,27 @@ void DecisionTree<FitnessFunction,
     DecisionTree* node = children[i];
     if (node->children.size() == 0)
     {
+      for (size_t j = 0; j < children.size(); ++j)
+      {
+        if (children[i]->children.size() != 0)
+        {
+          return;
+        }
+      }
       std::vector<DecisionTree*> childrenbacktrack = children;
       size_t dimensionTypeOrMajorityClassbacktrack =
           dimensionTypeOrMajorityClass;
       arma::vec classProbabilitiesbacktrack = classProbabilities;
 
-      // Calculate class probabilities of present node because its child is
-      // a leaf.
-      CalculateClassProbabilities<UseWeights>(
-        labels.subvec(beginIndex, beginIndex + countInNode - 1),
-        numClasses,
-        UseWeights ? weights.subvec(beginIndex, beginIndex + countInNode - 1)
-                   : weights);
+      // Calculate class probabilities of present node because its children are
+      // all leaves.
+
+      // TODO calculate majority class
+      for (size_t j = 0; j < children.size(); ++j)
+      {
+        for (size_t k = 0; k < numClasses; ++k)
+          classProbabilities[k] += children[j]->getClassProbabilities()[k];
+      }
 
       // Pruning the node's child and making the present node as leaf.
       children.clear();
