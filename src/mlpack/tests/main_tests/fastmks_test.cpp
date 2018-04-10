@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(FMKSInvalidKTest)
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::invalid_argument);
-	Log::Fatal.ignoreInput = false;
+  Log::Fatal.ignoreInput = false;
 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["k"].wasPassed = false;
@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(FMKSInvalidKTest)
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) -1); // Invalid.
 
-	Log::Fatal.ignoreInput = true;
+  Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::bad_alloc);
   Log::Fatal.ignoreInput = false;
 }
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE(FMKSInvalidKernelTest)
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
-	string kernelName = "dummy";
+  string kernelName = "dummy";
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", std::move(referenceData));
