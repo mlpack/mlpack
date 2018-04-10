@@ -1,6 +1,7 @@
 /**
  * @file async_learning_test.hpp
  * @author Shangtong Zhang
+ * @author Rohan Raj
  *
  * Test for async deep RL methods.
  *
