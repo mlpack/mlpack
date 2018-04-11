@@ -83,20 +83,20 @@ class SPSA
     {
       ak = a/std::pow((i + 1 + A), alpha);
       ck = c/std::pow((i + 1), gamma);
-      
+
       gradient.zeros();
-      for(size_t b = 0; b < 10; b++)
+      for (size_t b = 0; b < 10; b++)
       {
         sp_vector = arma::conv_to<arma::vec>::from(
                     randi(s, arma::distr_param(0, 1)))*2 - 1;
 
         iterate += ck * sp_vector;
         double f_plus = function.Evaluate(iterate, 0, s);
-      
+
         iterate -= 2 * ck * sp_vector;
         double f_minus = function.Evaluate(iterate, 0, s);
         iterate += ck * sp_vector;
-      
+
         gradient += (f_plus - f_minus) * (1 / (2 * ck * sp_vector));
       }
 
