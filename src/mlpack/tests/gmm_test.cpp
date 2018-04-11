@@ -202,10 +202,10 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
     CheckMatrices(gmm.Component(sortTry[i]).Mean(), means[sortRef[i]], 1e-3);
     // Check the covariance.
     CheckMatrices(gmm.Component(sortTry[i]).Covariance(), covars[sortRef[i]],
-                  0.05);
+                  0.15);
     // Check the weight.
     BOOST_REQUIRE_CLOSE(gmm.Weights()[sortTry[i]], weights[sortRef[i]],
-        0.001);
+        0.005);
   }
 }
 

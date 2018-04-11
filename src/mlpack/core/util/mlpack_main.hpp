@@ -3,15 +3,17 @@
  * @author Ryan Curtin
  *
  * This file, based on the value of the macro BINDING_TYPE, will define the
- * macro MLPACK_CLI_MAIN() accordingly.  If BINDING_TYPE is not set, then the
- * behavior will be that MLPACK_CLI_MAIN() is equivalent to int main(int argc,
- * char** argv) with CLI::ParseCommandLine() automatically called on entry and
- * CLI::Destroy() automatically called on exit.
+ * macros necessary to compile an mlpack binding for the target language.
  *
  * This file should *only* be included by a program that is meant to be a
  * command-line program or a binding to another language.  This file also
  * includes param_checks.hpp, which contains functions that are used to check
  * parameter values at runtime.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_UTIL_MLPACK_MAIN_HPP
 #define MLPACK_CORE_UTIL_MLPACK_MAIN_HPP

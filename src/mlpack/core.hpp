@@ -1,8 +1,8 @@
 ﻿/**
  * @file core.hpp
  *
- * Include all of the base components required to write MLPACK methods, and the
- * main MLPACK Doxygen documentation.
+ * Include all of the base components required to write mlpack methods, and the
+ * main mlpack Doxygen documentation.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -17,11 +17,11 @@
  *
  * @section intro_sec Introduction
  *
- * mlpack is an intuitive, fast, scalable C++ machine learning library, meant to
- * be a machine learning analog to LAPACK.  It aims to implement a wide array of
- * machine learning methods and function as a "swiss army knife" for machine
- * learning researchers.  The mlpack development website can be found at
- * http://mlpack.org.
+ * mlpack is an intuitive, fast, and flexible C++ machine learning library with
+ * bindings to other languages.  It is meant to be a machine learning analog to
+ * LAPACK, and aims to implement a wide array of machine learning methods and
+ * function as a "swiss army knife" for machine learning researchers.  The
+ * mlpack development website can be found at http://mlpack.org.
  *
  * mlpack uses the Armadillo C++ matrix library (http://arma.sourceforge.net)
  * for general matrix, vector, and linear algebra support.  mlpack also uses the
@@ -239,6 +239,8 @@
  *   - Roberto Hueso <robertohueso96@gmail.com>
  *   - Prabhat Sharma <prabhatsharma7298@gmail.com>
  *   - Tan Jun An <yamidarkxxx@gmail.com>
+ *   - Moksh Jain <mokshjn00@gmail.com>
+ *   - Manthan-R-Sheth <manthanrsheth96@gmail.com>
  */
 
 // First, include all of the prerequisites.

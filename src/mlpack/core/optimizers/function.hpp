@@ -4,6 +4,11 @@
  *
  * The Function class is a wrapper class for any objective function that
  * provides any of the functions that an optimizer might use.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_OPTIMIZERS_FUNCTION_HPP
 #define MLPACK_CORE_OPTIMIZERS_FUNCTION_HPP

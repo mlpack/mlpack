@@ -29,21 +29,6 @@ class LinearRegression
   /**
    * Creates the model.
    *
-   * @param predictors X, matrix of data points to create B with.
-   * @param responses y, the measured data for each point in X.
-   * @param lambda Regularization constant for ridge regression.
-   * @param intercept Whether or not to include an intercept term.
-   * @param weights Observation weights (for boosting).
-   */
-  mlpack_deprecated LinearRegression(const arma::mat& predictors,
-                                     const arma::vec& responses,
-                                     const double lambda = 0,
-                                     const bool intercept = true,
-                                     const arma::vec& weights = arma::vec());
-
-  /**
-   * Creates the model.
-   *
    * @param predictors X, matrix of data points.
    * @param responses y, the measured data for each point in X.
    * @param lambda Regularization constant for ridge regression.
@@ -75,23 +60,6 @@ class LinearRegression
    * Predict()!
    */
   LinearRegression() : lambda(0.0), intercept(true) { }
-
-  /**
-   * Train the LinearRegression model on the given data.  Careful!  This will
-   * completely ignore and overwrite the existing model.  This particular
-   * implementation does not have an incremental training algorithm.  To set the
-   * regularization parameter lambda, call Lambda() or set a different value in
-   * the constructor.
-   *
-   * @param predictors X, the matrix of data points to train the model on.
-   * @param responses y, the vector of responses to each data point.
-   * @param intercept Whether or not to fit an intercept term.
-   * @param weights Observation weights (for boosting).
-   */
-  mlpack_deprecated void Train(const arma::mat& predictors,
-                               const arma::vec& responses,
-                               const bool intercept = true,
-                               const arma::vec& weights = arma::vec());
 
   /**
    * Train the LinearRegression model on the given data. Careful! This will
@@ -131,36 +99,7 @@ class LinearRegression
    * @param points the data points to calculate with.
    * @param predictions y, will contain calculated values on completion.
    */
-  mlpack_deprecated void Predict(const arma::mat& points,
-                                 arma::vec& predictions) const;
-
-  /**
-   * Calculate y_i for each data point in points.
-   *
-   * @param points the data points to calculate with.
-   * @param predictions y, will contain calculated values on completion.
-   */
   void Predict(const arma::mat& points, arma::rowvec& predictions) const;
-
-  /**
-   * Calculate the L2 squared error on the given predictors and responses using
-   * this linear regression model.  This calculation returns
-   *
-   * \f[
-   * (1 / n) * \| y - X B \|^2_2
-   * \f]
-   *
-   * where \f$ y \f$ is the responses vector, \f$ X \f$ is the matrix of
-   * predictors, and \f$ B \f$ is the parameters of the trained linear
-   * regression model.
-   *
-   * As this number decreases to 0, the linear regression fit is better.
-   *
-   * @param points Matrix of predictors (X).
-   * @param responses Vector of responses (y).
-   */
-  mlpack_deprecated double ComputeError(const arma::mat& points,
-                                        const arma::vec& responses) const;
 
   /**
    * Calculate the L2 squared error on the given predictors and responses using

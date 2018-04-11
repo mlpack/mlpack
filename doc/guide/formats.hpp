@@ -1,4 +1,4 @@
-/*! @page formatdoc File formats in mlpack
+/*! @page formatdoc File formats and loading data in mlpack
 
 @section formatintro Introduction
 
@@ -6,6 +6,51 @@ mlpack supports a wide variety of data and model formats for use in both its
 command-line programs and in C++ programs using mlpack via the
 mlpack::data::Load() function.  This tutorial discusses the formats that are
 supported and how to use them.
+
+@section formatsimple Simple examples to load data in C++
+
+The example code snippets below load data from different formats into an
+Armadillo matrix object (\c arma::mat) or model when using C++.
+
+@code
+using namespace mlpack;
+
+arma::mat matrix1;
+data::Load("dataset.csv", matrix1);
+@endcode
+
+@code
+using namespace mlpack;
+
+arma::mat matrix2;
+data::Load("dataset.bin", matrix2);
+@endcode
+
+@code
+using namespace mlpack;
+
+arma::mat matrix3;
+data::Load("dataset.h5", matrix3);
+@endcode
+
+@code
+using namespace mlpack;
+
+// ARFF loading is a little different, since sometimes mapping has to be done
+// for string types.
+arma::mat matrix4;
+data::DatasetInfo datasetInfo;
+data::Load("dataset.arff", matrix4, datasetInfo);
+
+// The datasetInfo object now holds information about each dimension.
+@endcode
+
+@code
+using namespace mlpack;
+
+regression::LogisticRegression lr;
+data::Load("model.bin", "logistic_regression_model", lr);
+@endcode
 
 @section formattypes Supported dataset types
 
@@ -28,12 +73,12 @@ mlpack supports the following file types:
  - PGM, denoted by .pgm
  - PPM, denoted by .ppm
  - Armadillo binary, denoted by .bin
- - Raw binary, denoted by .bin \b "(note: this will be loaded as"
-   \b "one-dimensional data, which is likely not what is desired.)"
- - HDF5, denoted by .hdf, .hdf5, .h5, or .he5 (<b>note: HDF5 must be enabled"
+ - Raw binary, denoted by .bin <b>(note: this will be loaded as
+   one-dimensional data, which is likely not what is desired.)</b>
+ - HDF5, denoted by .hdf, .hdf5, .h5, or .he5 (<b>note: HDF5 must be enabled
    in the Armadillo configuration</b>)
- - ARFF, denoted by .arff (<b>note: this is not supported by all mlpack"
-   command-line programs </b>; see \ref formatcat )
+ - ARFF, denoted by .arff (<b>note: this is not supported by all mlpack
+   command-line programs </b>; see \ref formatcat)
 
 Datasets that are loaded by mlpack should be stored with <b>one row for
 one point</b> and <b>one column for one dimension</b>.  Therefore, a dataset
@@ -46,8 +91,8 @@ would be stored in a csv file as:
 5, -5
 \endcode
 
-As noted earlier, the format is automatically detected at load time.  Therefore,
-a dataset can be loaded in many ways:
+As noted earlier, for command-line programs, the format is automatically
+detected at load time.  Therefore, a dataset can be loaded in many ways:
 
 \code
 $ mlpack_logistic_regression -t dataset.csv -v
@@ -75,7 +120,7 @@ functions.
 
 Matrices in mlpack are column-major, meaning that each column should correspond
 to a point in the dataset and each row should correspond to a dimension; for
-more information, see \ref matrices .  This is at odds with how the data is
+more information, see \ref matrices.  This is at odds with how the data is
 stored in files; therefore, a transposition is required during load and save.
 The mlpack::data::Load() and mlpack::data::Save() functions do this
 automatically (unless otherwise specified), which is why they are preferred over
@@ -274,7 +319,7 @@ through the \c --input_model_file (\c -m) and \c --output_model_file (\c -M)
 options; for more information, see the documentation for each program
 (accessible by passing \c --help as a parameter).
 
-@section formatmodels Loading and saving models in C++
+@section formatmodelscpp Loading and saving models in C++
 
 mlpack uses the \c boost::serialization library internally to perform loading
 and saving of models, and provides convenience overloads of mlpack::data::Load()
@@ -284,29 +329,22 @@ To be serializable, a class must implement the method
 
 \code
 template<typename Archive>
-void Serialize(Archive& ar, const unsigned int version);
+void serialize(Archive& ar, const unsigned int version);
 \endcode
 
 \note
 For more information on this method and how it works, see the
-boost::serialization documentation at http://www.boost.org/libs/serialization/doc/
-.  Note that mlpack uses a \c Serialize()
-method and not a \c serialize() method, and also mlpack uses the
-mlpack::data::CreateNVP() method instead of \c BOOST_SERIALIZATION_NVP() ; this
-is for coherence with the mlpack style guidelines, and is done via a
-particularly complex bit of template metaprogramming in
-src/mlpack/core/data/serialization_shim.hpp (read that file if you want your
-head to hurt!).
+boost::serialization documentation at
+http://www.boost.org/libs/serialization/doc/.
 
 \note
-Examples of Serialize() methods can be found in most classes; one fairly
-straightforward example is found \ref mlpack::math::Range::Serialize()
-"in the mlpack::math::Range class".  A more complex example is found \ref
-mlpack::tree::BinarySpaceTree::Serialize()
-"in the mlpack::tree::BinarySpaceTree class".
+Examples of serialize() methods can be found in most classes; one fairly
+straightforward example is found \ref mlpack::math::Range::serialize()
+"in the mlpack::math::Range class".  A more complex example is found
+\ref mlpack::tree::BinarySpaceTree::serialize() "in the mlpack::tree::BinarySpaceTree class".
 
 Using the mlpack::data::Load() and mlpack::data::Save() classes is easy if the
-type being saved has a \c Serialize() method implemented: simply call either
+type being saved has a \c serialize() method implemented: simply call either
 function with a filename, a name for the object to save, and the object itself.
 The example below, for instance, creates an mlpack::math::Range object and saves
 it as range.txt.  Then, that range is loaded from file into another

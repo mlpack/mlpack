@@ -37,9 +37,9 @@ BOOST_AUTO_TEST_CASE(MomentumSGDSpeedUpTestFunction)
   double result = s.Optimize(f, coordinates);
 
   BOOST_REQUIRE_CLOSE(result, -1.0, 0.15);
-  BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
-  BOOST_REQUIRE_SMALL(coordinates[1], 1e-7);
-  BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
+  BOOST_REQUIRE_SMALL(coordinates[0], 0.015);
+  BOOST_REQUIRE_SMALL(coordinates[1], 1e-6);
+  BOOST_REQUIRE_SMALL(coordinates[2], 1e-6);
 
   // Compare with SGD with vanilla update.
   SGDTestFunction f1;
@@ -50,9 +50,9 @@ BOOST_AUTO_TEST_CASE(MomentumSGDSpeedUpTestFunction)
 
   // Result doesn't converge in 2500000 iterations.
   BOOST_REQUIRE_GT(result1 + 1.0, 0.05);
-  BOOST_REQUIRE_GE(coordinates1[0], 1e-3);
-  BOOST_REQUIRE_SMALL(coordinates1[1], 1e-7);
-  BOOST_REQUIRE_SMALL(coordinates1[2], 1e-7);
+  BOOST_REQUIRE_GE(coordinates1[0], 0.015);
+  BOOST_REQUIRE_SMALL(coordinates1[1], 1e-6);
+  BOOST_REQUIRE_SMALL(coordinates1[2], 1e-6);
 
   BOOST_REQUIRE_LE(result, result1);
 }

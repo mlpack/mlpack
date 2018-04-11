@@ -25,13 +25,13 @@ PROGRAM_INFO("Approximate furthest neighbor search",
     "This program implements two strategies for furthest neighbor search. "
     "These strategies are:"
     "\n\n"
-    " - The 'qdafn' algorithm from 'Approximate Furthest Neighbor in High "
-    "Dimensions' by R. Pagh, F. Silvestri, J. Sivertsen, and M. Skala, in "
+    " - The 'qdafn' algorithm from \"Approximate Furthest Neighbor in High "
+    "Dimensions\" by R. Pagh, F. Silvestri, J. Sivertsen, and M. Skala, in "
     "Similarity Search and Applications 2015 (SISAP)."
     "\n"
-    " - The 'DrusillaSelect' algorithm from 'Fast approximate furthest "
-    "neighbors with data-dependent candidate selection, by R.R. Curtin and A.B."
-    " Gardner, in Similarity Search and Applications 2016 (SISAP)."
+    " - The 'DrusillaSelect' algorithm from \"Fast approximate furthest "
+    "neighbors with data-dependent candidate selection\", by R.R. Curtin and "
+    "A.B. Gardner, in Similarity Search and Applications 2016 (SISAP)."
     "\n\n"
     "These two strategies give approximate results for the furthest neighbor "
     "search problem and can be used as fast replacements for other furthest "
@@ -279,7 +279,7 @@ static void mlpackMain()
         // Calculate exact distances.  We are guaranteed the reference set is
         // available.
         Log::Info << "Calculating exact distances..." << endl;
-        AllkFN kfn(referenceSet);
+        KFN kfn(referenceSet);
         arma::Mat<size_t> exactNeighbors;
         kfn.Search(set, 1, exactNeighbors, exactDistances);
         Log::Info << "Calculation complete." << endl;
