@@ -700,6 +700,70 @@ BOOST_AUTO_TEST_CASE(JacobianLeakyReLULayerTest)
 }
 
 /**
+ * Jacobian FlexibleReLU module test.
+ */
+BOOST_AUTO_TEST_CASE(JacobianFlexibleReLULayerTest)
+{
+  for (size_t i = 0; i < 5; i++)
+  {
+    const size_t inputElements = math::RandInt(2, 1000);
+
+    arma::mat input;
+    input.set_size(inputElements, 1);
+
+    FlexibleReLU<> module;
+
+    double error = JacobianTest(module, input);
+    BOOST_REQUIRE_LE(error, 1e-5);
+  }
+}
+
+/**
+ * Flexible ReLU layer numerically gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientFlexibleReLULayerTest)
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(2, 1);
+      target = arma::mat("1");
+
+      model = new FFN<NegativeLogLikelihood<>, RandomInitialization>(
+        NegativeLogLikelihood<>(), RandomInitialization(0.1, 0.5));
+
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<LinearNoBias<> >(2, 5);
+      model->Add<FlexibleReLU<> >(0.05);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, RandomInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
  * Jacobian MultiplyConstant module test.
  */
 BOOST_AUTO_TEST_CASE(JacobianMultiplyConstantLayerTest)
