@@ -6,7 +6,7 @@
  * Definition of FlexibleReLU layer as described by
  * Suo Qiu, Xiangmin Xu and Bolun Cai in
  * "FReLU: Flexible Rectified Linear Units for Improving Convolutional
- *   Neural Networks", 2018
+ * Neural Networks", 2018
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -22,7 +22,7 @@ namespace mlpack {
 namespace ann /**Artificial Neural Network*/ {
 
 /**
- *The FlexibleReLU activation function, defined by
+ * The FlexibleReLU activation function, defined by
  *
  * @f{eqnarray*}{
  * f(x) &=& \max(0,x)+alpha \\
@@ -32,7 +32,7 @@ namespace ann /**Artificial Neural Network*/ {
  * 	   0 & : x \le 0
  * 	 \end{array}
  * \right
- *@f}
+ * @f}
  *
  * For more information, read the following paper:
  *
@@ -47,11 +47,10 @@ namespace ann /**Artificial Neural Network*/ {
  * }
  * @endcode
  *
- *@tparam InputDataType Type of the input data (arma::colvec, arma::mar,
- *        arma::sp_mat or arma::cube)
- *@tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *        arma::sp_mat or arma::cube)
- *
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mar,
+ *         arma::sp_mat or arma::cube)
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube)
  */
 template <
     typename InputDataType = arma::mat,
@@ -64,15 +63,15 @@ class FlexibleReLU
    *
    * Create the FlexibleReLU object using the specified parameters.
    * The non zero parameter can be adjusted by specifying the parameter
-   * alpha which controls the range of the relu function. ( Default alpha = 0)
+   * alpha which controls the range of the relu function. (Default alpha = 0)
    * This parameter is trainable.
    *
-   *@param alpha Parameter for adjusting the range of the relu function.
+   * @param alpha Parameter for adjusting the range of the relu function.
    *
    */
-  FlexibleReLU(const double userAlpha = 0);
+  FlexibleReLU(const double alpha = 0);
 
-  /*
+  /**
    * Reset the layer parameter.
    */
   void Reset();

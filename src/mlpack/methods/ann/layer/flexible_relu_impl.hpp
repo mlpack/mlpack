@@ -5,9 +5,9 @@
  *
  * Implementation of FlexibleReLU layer as described by
  * Suo Qiu, Xiangmin Xu and Bolun Cai in
- * "FReLU: Flexible Rectified Linear Units for Improving Convolutional 
+ * "FReLU: Flexible Rectified Linear Units for Improving Convolutional
  *  Neural Networks", 2018
- *  
+ *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -25,10 +25,10 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 FlexibleReLU<InputDataType, OutputDataType>::FlexibleReLU(
-    const double userAlpha) : userAlpha(userAlpha)
+    const double alpha) : userAlpha(alpha)
 {
-  alpha.set_size(1, 1);
-  alpha(0) = userAlpha;
+  this->alpha.set_size(1, 1);
+  this->alpha(0) = userAlpha;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -51,22 +51,22 @@ template<typename DataType>
 void FlexibleReLU<InputDataType, OutputDataType>::Backward(
     const DataType&& input, DataType&& gy, DataType&& g)
 {
-  DataType derivative;
   //! Compute the first derivative of FlexibleReLU function.
-  derivative = arma::clamp(arma::sign(input), 0.0, 1.0);
-  g = gy % derivative;
+  g = gy % arma::clamp(arma::sign(input), 0.0, 1.0);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void FlexibleReLU<InputDataType, OutputDataType>::Gradient(
-  const arma::Mat<eT>&& input, arma::Mat<eT>&& error,
-  arma::Mat<eT>&& gradient)
+    const arma::Mat<eT>&& input,
+    arma::Mat<eT>&& error,
+    arma::Mat<eT>&& gradient)
 {
   if (gradient.n_elem == 0)
   {
     gradient.set_size(1, 1);
   }
+
   gradient(0) = arma::accu(error) / input.n_cols;
 }
 
