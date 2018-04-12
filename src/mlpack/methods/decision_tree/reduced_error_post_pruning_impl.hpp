@@ -13,6 +13,8 @@
 #ifndef MLPACK_REDUCED_ERROR_POST_PRUNING_IMPL_HPP
 #define MLPACK_REDUCED_ERROR_POST_PRUNING_IMPL_HPP
 
+#include "reduced_error_post_pruning.hpp"
+
 namespace mlpack {
 namespace tree {
 
