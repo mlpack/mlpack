@@ -18,7 +18,15 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * Update policy for Stochastic Gradient Ascent (SGA).
+ * Update policy for Gradient Ascent.
+ * @article{Kingma2014,
+ *   author  = {R.S. Sutton, David McAllester, Satinder Singh, Yishay Mansour},
+ *   title   = {Policy Gradient Methods for Reinforcement Learning with 
+                Function Approximation },
+ *   journal = {NIPS},
+ *   year    = {2000},
+ *   url     = {https://goo.gl/UwfMnd}
+ * }
 */
 class SgaUpdate
 {
