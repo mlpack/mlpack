@@ -18,6 +18,7 @@
 namespace mlpack {
 namespace tree {
 
+template<typename DecisionTree>
 template<bool UseWeights, typename MatType, typename LabelsType,
   typename WeightsType>
 void ReducedErrorPostPruning::Prune(
@@ -86,6 +87,7 @@ void ReducedErrorPostPruning::Prune(
   }
 }
 
+template<typename DecisionTree>
 template<typename MatType, typename LabelsType>
 double ReducedErrorPostPruning::ValidateScore(DecisionTree* root,
                                               MatType&& validData,

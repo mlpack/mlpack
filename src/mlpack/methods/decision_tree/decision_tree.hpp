@@ -18,7 +18,6 @@
 #include "best_binary_numeric_split.hpp"
 #include "all_categorical_split.hpp"
 #include "all_dimension_select.hpp"
-#include "reduced_error_post_pruning.hpp"
 #include <type_traits>
 
 namespace mlpack {
@@ -49,6 +48,8 @@ class DecisionTree :
   typedef NumericSplitType<FitnessFunction> NumericSplit;
   //! Allow access to the categorical split type.
   typedef CategoricalSplitType<FitnessFunction> CategoricalSplit;
+  //! Allow access to the pruning method type.
+  typedef PruningMethod<DecisionTree> PostPruningMethod;
   //! Allow access to the dimension selection type.
   typedef DimensionSelectionType DimensionSelection;
 
@@ -394,7 +395,7 @@ class DecisionTree :
              MatType&& validData,
              LabelsType&& validLabels,
              double& bestScore);
- private:
+  private:
   //! The vector of children.
   std::vector<DecisionTree*> children;
   //! The dimension this node splits on.
@@ -484,13 +485,12 @@ class DecisionTree :
 template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
-         template<typename> class PruningMethod = ReducedErrorPostPruning,
          typename DimensionSelectType = AllDimensionSelect,
          typename ElemType = double>
 using DecisionStump = DecisionTree<FitnessFunction,
                                    NumericSplitType,
                                    CategoricalSplitType,
-                                   PruningMethod,
+
                                    DimensionSelectType,
                                    ElemType,
                                    false>;
