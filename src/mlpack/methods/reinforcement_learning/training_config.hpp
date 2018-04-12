@@ -161,3 +161,4 @@ class TrainingConfig
 } // namespace mlpack
 
 #endif
+
