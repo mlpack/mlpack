@@ -25,8 +25,7 @@ class TrainingConfig
       stepLimit(0),
       explorationSteps(1),
       gradientLimit(40),
-      doubleQLearning(false),
-      episodeLimit(0)
+      doubleQLearning(false)
   { /* Nothing to do here. */ }
 
   TrainingConfig(
@@ -38,8 +37,7 @@ class TrainingConfig
       double stepSize,
       double discount,
       double gradientLimit,
-      bool doubleQLearning,
-      double episodeLimit) :
+      bool doubleQLearning) :
       numWorkers(numWorkers),
       updateInterval(updateInterval),
       targetNetworkSyncInterval(targetNetworkSyncInterval),
@@ -48,8 +46,7 @@ class TrainingConfig
       stepSize(stepSize),
       discount(discount),
       gradientLimit(gradientLimit),
-      doubleQLearning(doubleQLearning),
-      episodeLimit(episodeLimit)
+      doubleQLearning(doubleQLearning)
   { /* Nothing to do here. */ }
 
   //! Get the amount of workers.
@@ -76,9 +73,6 @@ class TrainingConfig
    */
   size_t& StepLimit() { return stepLimit; }
 
-  size_t EpisodeLimit() const { return episodeLimit; }
-
-  size_t& EpisodeLimit() { return episodeLimit; }
   //! Get the exploration steps.
   size_t ExplorationSteps() const { return explorationSteps; }
   //! Modify the exploration steps.
@@ -161,12 +155,6 @@ class TrainingConfig
    * This is valid only for q-learning agent.
    */
   bool doubleQLearning;
-
-  /**
-   * Locally-stored indicator for double q-learning.
-   * This is valid for policy gradient gae agent.
-   */
-  size_t episodeLimit;
 };
 
 } // namespace rl

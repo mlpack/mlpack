@@ -15,13 +15,11 @@
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/reinforcement_learning/gae.hpp>
+#include <mlpack/methods/reinforcement_learning/policy_gradient.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
-#include <mlpack/methods/reinforcement_learning/policy/vanilla_policy_gradient_policy.hpp>
-#include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
-#include <mlpack/core/optimizers/adam/adam_update.hpp>
-#include <mlpack/core/optimizers/rmsprop/rmsprop_update.hpp>
+#include <mlpack/methods/reinforcement_learning/policy/stochiastic_policy.hpp>
+#include <mlpack/core/optimizers/sga/sga_update.hpp>
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -32,13 +30,13 @@ using namespace mlpack::ann;
 using namespace mlpack::optimization;
 using namespace mlpack::rl;
 
-BOOST_AUTO_TEST_SUITE(AdvantageTest);
+BOOST_AUTO_TEST_SUITE(PolicyGradientTest);
 
 //! Test Policy Gradient in Cart Pole task.
-BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
+BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGradient)
 {
   // Set up the network.
-  FFN<PolicyGradient<>, GaussianInitialization> model(PolicyGradient<>(),
+  FFN<NegativeLogLikelihood<>, GaussianInitialization> model(NegativeLogLikelihood<>(),
       GaussianInitialization(0, 0.001));
   model.Add<Linear<>>(4, 128);
   model.Add<ReLULayer<>>();
@@ -48,20 +46,16 @@ BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
   model.Add<LogSoftMax<> >();
 
   // Set up the policy and replay method.
-  VanillaPolicyGradient<CartPole> policy;
-  EpisodeMemory<CartPole> replay(200);
+  StochiasticPolicy<CartPole> policy;
 
   TrainingConfig config;
   config.StepSize() = 0.01;
-  config.TargetNetworkSyncInterval() = 100;
-  config.ExplorationSteps() = 100;
-  config.EpisodeLimit() = 4000;
   config.Discount() = 0.99;
+  config.StepLimit() = 300;  
 
   // Set up Policy Gradient agent.
-  Advantage<CartPole, decltype(model), AdamUpdate, decltype(policy)>
-      agent(std::move(config), std::move(model), std::move(policy),
-          std::move(replay));
+  PolicyGradient<CartPole, decltype(model), SgaUpdate, decltype(policy)>
+      agent(std::move(config), std::move(model), std::move(policy));
 
   arma::running_stat<double> averageReturn;
   size_t episodes = 0;
@@ -72,7 +66,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGrad)
     averageReturn(episodeReturn);
     episodes += 1;
 
-    if (episodes > config.EpisodeLimit())
+    if (episodes > 1000)
     {
       Log::Debug << "Cart Pole with Policy Gradient method failed."
         << std::endl;
