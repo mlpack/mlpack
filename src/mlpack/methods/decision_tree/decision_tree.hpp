@@ -18,6 +18,7 @@
 #include "best_binary_numeric_split.hpp"
 #include "all_categorical_split.hpp"
 #include "all_dimension_select.hpp"
+#include "reduced_error_post_pruning.hpp"
 #include <type_traits>
 
 namespace mlpack {
@@ -33,6 +34,7 @@ namespace tree {
 template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
+         template<typename> class PruningMethod = ReducedErrorPostPruning,
          typename DimensionSelectionType = AllDimensionSelect,
          typename ElemType = double,
          bool NoRecursion = false>
@@ -341,6 +343,21 @@ class DecisionTree :
 
   //! Get class probabilities
   arma::vec getClassProbabilities() const { return classProbabilities; }
+  //! Modify the class probabilities.
+  arma::vec setClassProbabilities() { return classProbabilities; }
+
+  //! Get children of curent node
+  std::vector<DecisionTree*> getChildren() const { return children; }
+  //! Modify the children.
+  std::vector<DecisionTree*> setChildren() { return children; }
+
+  //! Get dimensionTypeOrMajorityClass
+  size_t getDimensionTypeOrMajorityClass() const
+  { return dimensionTypeOrMajorityClass; }
+  //! Modify dimensionTypeOrMajorityClass
+  size_t& setDimensionTypeOrMajorityClass() const
+  { return dimensionTypeOrMajorityClass; }
+
   /**
    * Given a point and that this node is not a leaf, calculate the index of the
    * child node this point would go towards.  This method is primarily used by
@@ -377,19 +394,7 @@ class DecisionTree :
              MatType&& validData,
              LabelsType&& validLabels,
              double& bestScore);
-  /*
-   * Utility function for validating the score on the tree whose root is given.
-   *
-   * @param root pointer to the root node of the tree for score calculation.
-   * @param validData Validation dataset.
-   * @param validLabels labels for validation points.
-   */
-  template<typename MatType, typename LabelsType>
-  double ValidateScore(DecisionTree* root,
-                       MatType&& validData,
-                       LabelsType&& validLabels) const;
-
- private:
+  private:
   //! The vector of children.
   std::vector<DecisionTree*> children;
   //! The dimension this node splits on.
@@ -479,11 +484,13 @@ class DecisionTree :
 template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
+         template<typename> class PruningMethod = ReducedErrorPostPruning,
          typename DimensionSelectType = AllDimensionSelect,
          typename ElemType = double>
 using DecisionStump = DecisionTree<FitnessFunction,
                                    NumericSplitType,
                                    CategoricalSplitType,
+                                   PruningMethod,
                                    DimensionSelectType,
                                    ElemType,
                                    false>;

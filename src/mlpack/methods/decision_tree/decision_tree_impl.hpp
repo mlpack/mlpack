@@ -19,6 +19,7 @@ namespace tree {
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
@@ -26,6 +27,7 @@ template<typename MatType, typename LabelsType>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
+             PruningMethod,
              DimensionSelectionType,
              ElemType,
              NoRecursion>::DecisionTree(MatType&& data,
@@ -52,6 +54,7 @@ DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
@@ -59,6 +62,7 @@ template<typename MatType, typename LabelsType>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
+             PruningMethod,
              DimensionSelectionType,
              ElemType,
              NoRecursion>::DecisionTree(MatType&& data,
@@ -84,6 +88,7 @@ DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
@@ -91,6 +96,7 @@ template<typename MatType, typename LabelsType, typename WeightsType>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
+             PruningMethod,
              DimensionSelectionType,
              ElemType,
              NoRecursion>::DecisionTree(MatType&& data,
@@ -123,6 +129,7 @@ DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
@@ -130,6 +137,7 @@ template<typename MatType, typename LabelsType, typename WeightsType>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
+             PruningMethod,
              DimensionSelectionType,
              ElemType,
              NoRecursion>::DecisionTree(MatType&& data,
@@ -161,12 +169,14 @@ DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
+             PruningMethod,
              DimensionSelectionType,
              ElemType,
              NoRecursion>::DecisionTree(const size_t numClasses) :
@@ -182,12 +192,14 @@ DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
+             PruningMethod,
              DimensionSelectionType,
              ElemType,
              NoRecursion>::DecisionTree(const DecisionTree& other) :
@@ -206,12 +218,14 @@ DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
+             PruningMethod,
              DimensionSelectionType,
              ElemType,
              NoRecursion>::DecisionTree(DecisionTree&& other) :
@@ -230,18 +244,21 @@ DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
+             PruningMethod,
              DimensionSelectionType,
              ElemType,
              NoRecursion>&
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
+             PruningMethod,
              DimensionSelectionType,
              ElemType,
              NoRecursion>::operator=(const DecisionTree& other)
@@ -274,18 +291,21 @@ DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
+             PruningMethod,
              DimensionSelectionType,
              ElemType,
              NoRecursion>&
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
+             PruningMethod,
              DimensionSelectionType,
              ElemType,
              NoRecursion>::operator=(DecisionTree&& other)
@@ -318,12 +338,14 @@ DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
+             PruningMethod,
              DimensionSelectionType,
              ElemType,
              NoRecursion>::~DecisionTree()
@@ -336,6 +358,7 @@ DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
@@ -343,6 +366,7 @@ template<typename MatType, typename LabelsType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
+                  PruningMethod,
                   DimensionSelectionType,
                   ElemType,
                   NoRecursion>::Train(MatType&& data,
@@ -379,6 +403,7 @@ void DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
@@ -386,6 +411,7 @@ template<typename MatType, typename LabelsType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
+                  PruningMethod,
                   DimensionSelectionType,
                   ElemType,
                   NoRecursion>::Train(MatType&& data,
@@ -421,6 +447,7 @@ void DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
@@ -428,6 +455,7 @@ template<typename MatType, typename LabelsType, typename WeightsType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
+                  PruningMethod,
                   DimensionSelectionType,
                   ElemType,
                   NoRecursion>::Train(MatType&& data,
@@ -469,6 +497,7 @@ void DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
@@ -476,6 +505,7 @@ template<typename MatType, typename LabelsType, typename WeightsType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
+                  PruningMethod,
                   DimensionSelectionType,
                   ElemType,
                   NoRecursion>::Train(MatType&& data,
@@ -516,6 +546,7 @@ void DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
@@ -523,6 +554,7 @@ template<bool UseWeights, typename MatType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
+                  PruningMethod,
                   DimensionSelectionType,
                   ElemType,
                   NoRecursion>::Train(MatType& data,
@@ -680,6 +712,7 @@ void DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
@@ -687,6 +720,7 @@ template<bool UseWeights, typename MatType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
+                  PruningMethod,
                   DimensionSelectionType,
                   ElemType,
                   NoRecursion>::Train(MatType& data,
@@ -815,6 +849,7 @@ void DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
@@ -822,6 +857,7 @@ template<typename VecType>
 size_t DecisionTree<FitnessFunction,
                     NumericSplitType,
                     CategoricalSplitType,
+                    PruningMethod,
                     DimensionSelectionType,
                     ElemType,
                     NoRecursion>::Classify(const VecType& point) const
@@ -839,6 +875,7 @@ size_t DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
@@ -846,6 +883,7 @@ template<typename VecType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
+                  PruningMethod,
                   DimensionSelectionType,
                   ElemType,
                   NoRecursion>::Classify(const VecType& point,
@@ -867,6 +905,7 @@ void DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
@@ -874,6 +913,7 @@ template<typename MatType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
+                  PruningMethod,
                   DimensionSelectionType,
                   ElemType,
                   NoRecursion>::Classify(const MatType& data,
@@ -895,6 +935,7 @@ void DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
@@ -902,6 +943,7 @@ template<typename MatType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
+                  PruningMethod,
                   DimensionSelectionType,
                   ElemType,
                   NoRecursion>::Classify(const MatType& data,
@@ -934,6 +976,7 @@ void DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
@@ -941,6 +984,7 @@ template<typename Archive>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
+                  PruningMethod,
                   DimensionSelectionType,
                   ElemType,
                   NoRecursion>::serialize(Archive& ar,
@@ -966,6 +1010,7 @@ void DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
@@ -973,6 +1018,7 @@ template<typename VecType>
 size_t DecisionTree<FitnessFunction,
                     NumericSplitType,
                     CategoricalSplitType,
+                    PruningMethod,
                     DimensionSelectionType,
                     ElemType,
                     NoRecursion>::CalculateDirection(const VecType& point) const
@@ -990,12 +1036,14 @@ size_t DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
 size_t DecisionTree<FitnessFunction,
                     NumericSplitType,
                     CategoricalSplitType,
+                    PruningMethod,
                     DimensionSelectionType,
                     ElemType,
                     NoRecursion>::NumClasses() const
@@ -1011,6 +1059,7 @@ size_t DecisionTree<FitnessFunction,
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
          typename DimensionSelectionType,
          typename ElemType,
          bool NoRecursion>
@@ -1018,6 +1067,7 @@ template<bool UseWeights, typename RowType, typename WeightsRowType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
+                  PruningMethod,
                   DimensionSelectionType,
                   ElemType,
                   NoRecursion>::CalculateClassProbabilities(
@@ -1049,102 +1099,30 @@ void DecisionTree<FitnessFunction,
 
 //! Return the pruned tree based on the provided validation set.
 template<typename FitnessFunction,
-  template<typename> class NumericSplitType,
-  template<typename> class CategoricalSplitType,
-  typename DimensionSelectionType,
-  typename ElemType,
-  bool NoRecursion>
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         template<typename> class PruningMethod,
+         typename DimensionSelectionType,
+         typename ElemType,
+         bool NoRecursion>
 template<bool UseWeights, typename MatType, typename LabelsType,
     typename WeightsType>
 void DecisionTree<FitnessFunction,
-  NumericSplitType,
-  CategoricalSplitType,
-  DimensionSelectionType,
-  ElemType,
-  NoRecursion>::Prune(DecisionTree* root,
-                      LabelsType&& labels,
-                      const size_t numClasses,
-                      WeightsType&& weights,
-                      MatType&& validData,
-                      LabelsType&& validLabels,
-                      double& bestScore)
+                  NumericSplitType,
+                  CategoricalSplitType,
+                  PruningMethod,
+                  DimensionSelectionType,
+                  ElemType,
+                  NoRecursion>::Prune(DecisionTree* root,
+                                      LabelsType&& labels,
+                                      const size_t numClasses,
+                                      WeightsType&& weights,
+                                      MatType&& validData,
+                                      LabelsType&& validLabels,
+                                      double& bestScore)
 {
-  for (size_t i = 0; i < children.size(); ++i)
-  {
-    DecisionTree* node = children[i];
-    if (node->children.size() == 0)
-    {
-      for (size_t j = 0; j < children.size(); ++j)
-      {
-        if (children[i]->children.size() != 0)
-        {
-          return;
-        }
-      }
-      std::vector<DecisionTree*> childrenbacktrack = children;
-      size_t dimensionTypeOrMajorityClassbacktrack =
-          dimensionTypeOrMajorityClass;
-      arma::vec classProbabilitiesbacktrack = classProbabilities;
-
-      // Calculate class probabilities of present node because its children are
-      // all leaves.
-      for (size_t j = 0; j < children.size(); ++j)
-      {
-        for (size_t k = 0; k < numClasses; ++k)
-          classProbabilities[k] += children[j]->getClassProbabilities()[k];
-      }
-
-      // Pruning the node's child and making the present node as leaf.
-      children.clear();
-      double newScore = ValidateScore(root, validData, validLabels);
-      // Pruning the tree if the pruned tree gives better accuracy.
-      if (newScore > bestScore)
-      {
-        bestScore = newScore;
-        return;
-      }
-      else
-      {
-        // backtracking in case accuracy is not increased.
-        children = childrenbacktrack;
-        dimensionTypeOrMajorityClass = dimensionTypeOrMajorityClassbacktrack;
-        classProbabilities = classProbabilitiesbacktrack;
-      }
-    }
-    else
-    {
-      node->Prune<true>(root, labels, numClasses, weights, validData,
-          validLabels, bestScore);
-    }
-  }
-}
-
-//! Validate on ValidationSet and return accuracy score.
-template<typename FitnessFunction,
-  template<typename> class NumericSplitType,
-  template<typename> class CategoricalSplitType,
-  typename DimensionSelectionType,
-  typename ElemType,
-  bool NoRecursion>
-template<typename MatType, typename LabelsType>
-double DecisionTree<FitnessFunction,
-  NumericSplitType,
-  CategoricalSplitType,
-  DimensionSelectionType,
-  ElemType,
-  NoRecursion>::ValidateScore(DecisionTree* root,
-                              MatType&& validData,
-                              LabelsType&& validLabels) const
-{
-  arma::Row<size_t> predictions;
-  root->Classify(validData, predictions);
-  double correctClassification = 0.0;
-  for (size_t i = 0; i < validLabels.n_elem; ++i)
-  {
-    if (validLabels[i] == predictions[i])
-      correctClassification++;
-  }
-  return (correctClassification/validLabels.n_elem);
+  PruningMethod::Prune<UseWeights>(root, root, labels, numClasses, weights,
+    validData, validLabels, bestScore);
 }
 
 } // namespace tree
