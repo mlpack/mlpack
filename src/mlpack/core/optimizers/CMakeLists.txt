@@ -20,6 +20,7 @@ set(DIRS
   sarah
   scd
   sdp
+  sga
   sgd
   sgdr
   smorms3
