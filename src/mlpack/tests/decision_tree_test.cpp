@@ -15,6 +15,7 @@
 #include <mlpack/methods/decision_tree/gini_gain.hpp>
 #include <mlpack/methods/decision_tree/random_dimension_select.hpp>
 #include <mlpack/methods/decision_tree/multiple_random_dimension_select.hpp>
+#include <mlpack/methods/decision_tree/reduced_error_post_pruning.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -749,7 +750,8 @@ BOOST_AUTO_TEST_CASE(DecisionStumpTest)
 
   // Build a decision stump.
   DecisionTree<GiniGain, BestBinaryNumericSplit, AllCategoricalSplit,
-      AllDimensionSelect, double, true> stump(dataset, labels, 3, 1);
+      ReducedErrorPostPruning, AllDimensionSelect, double, true>
+      stump(dataset, labels, 3, 1);
 
   // Check that it has children.
   BOOST_REQUIRE_EQUAL(stump.NumChildren(), 2);
