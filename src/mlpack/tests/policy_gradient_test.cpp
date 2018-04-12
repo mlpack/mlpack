@@ -36,8 +36,8 @@ BOOST_AUTO_TEST_SUITE(PolicyGradientTest);
 BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGradient)
 {
   // Set up the network.
-  FFN<NegativeLogLikelihood<>, GaussianInitialization> model(NegativeLogLikelihood<>(),
-      GaussianInitialization(0, 0.001));
+  FFN<NegativeLogLikelihood<>, GaussianInitialization> model(
+      NegativeLogLikelihood<>(),GaussianInitialization(0, 0.001));
   model.Add<Linear<>>(4, 128);
   model.Add<ReLULayer<>>();
   model.Add<Linear<>>(128, 128);
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGradient)
   TrainingConfig config;
   config.StepSize() = 0.01;
   config.Discount() = 0.99;
-  config.StepLimit() = 300;  
+  config.StepLimit() = 300;
 
   // Set up Policy Gradient agent.
   PolicyGradient<CartPole, decltype(model), SgaUpdate, decltype(policy)>

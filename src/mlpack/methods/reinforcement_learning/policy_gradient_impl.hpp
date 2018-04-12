@@ -110,7 +110,7 @@ double PolicyGradient<
 
   // Track the return of this episode.
   totalReturn = 0.0;
-  
+
   // Reset the return status
   returns.reset();
 

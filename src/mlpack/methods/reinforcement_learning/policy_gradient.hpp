@@ -34,11 +34,11 @@ class PolicyGradient
   //! Convenient typedef for action.
   using ActionType = typename EnvironmentType::Action;
 
-  PolicyGradient( TrainingConfig config,
-                  NetworkType network,
-                  PolicyType policy,
-                  UpdaterType updater = UpdaterType(),
-                  EnvironmentType environment = EnvironmentType());
+  PolicyGradient(TrainingConfig config,
+                 NetworkType network,
+                 PolicyType policy,
+                 UpdaterType updater = UpdaterType(),
+                 EnvironmentType environment = EnvironmentType());
   // check parameters
   /**
    * Execute a step in an episode.
