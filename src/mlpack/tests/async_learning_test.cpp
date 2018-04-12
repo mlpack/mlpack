@@ -1,7 +1,6 @@
 /**
  * @file async_learning_test.hpp
  * @author Shangtong Zhang
- * @author Rohan Raj
  *
  * Test for async deep RL methods.
  *
@@ -36,7 +35,7 @@ BOOST_AUTO_TEST_SUITE(AsyncLearningTest);
 BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
 {
   /**
-   * This is for the Travis CI server, in your own machine you shuold use more
+   * This is for the Travis CI server, in your own machine you should use more
    * threads.
    */
   #ifdef HAS_OPENMP
