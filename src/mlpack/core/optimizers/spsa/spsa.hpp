@@ -57,20 +57,22 @@ class SPSA
   // Specifies the maximum number of iterations.
   long long int max_iter;
   arma::vec sp_vector;
+
   SPSA(const float& alpha = 0.602,
        const float& gamma = 0.101,
        const float& a = 0.16,
        const float& c = 0.3,
        const long long int& maxIterations = 100000):
+    a(a),
+    A(0.001*max_iter),
     alpha(alpha),
     gamma(gamma),
-    a(a),
     c(c),
-    max_iter(maxIterations),
+    ak(0),
+    ck(0),
+    max_iter(maxIterations)
   {
-    ak = 0;
-    ck = 0;
-    A = 0.001*max_iter;
+    // Nothing to do.
   }
 
   template<typename DecomposableFunctionType>
