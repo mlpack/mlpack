@@ -25,7 +25,7 @@ namespace tree {
  */
 class ReducedErrorPostPruning
 {
-  public:
+ public:
   /**
    * Prune the already built decision tree by making tree nodes as leaf nodes
    * if the score on the validation set increases.
@@ -68,4 +68,4 @@ class ReducedErrorPostPruning
 // Include implementation.
 #include "reduced_error_post_pruning_impl.hpp"
 
-#endif //MLPACK_REDUCED_ERROR_POST_PRUNING_HPP
+#endif // MLPACK_REDUCED_ERROR_POST_PRUNING_HPP

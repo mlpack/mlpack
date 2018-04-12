@@ -56,7 +56,8 @@ void ReducedErrorPostPruning::Prune(
       for (size_t j = 0; j < numOfChildren; ++j)
       {
         for (size_t k = 0; k < numClasses; ++k)
-          classProbabilitiesNew[k] += childrenbacktrack[j]->getClassProbabilities()[k];
+          classProbabilitiesNew[k] +=
+            childrenbacktrack[j]->getClassProbabilities()[k];
       }
 
       // Pruning the node's child and making the present node as leaf.
@@ -104,4 +105,4 @@ double ReducedErrorPostPruning::ValidateScore(DecisionTree* root,
 } // namespace tree
 } // namespace mlpack
 
-#endif //MLPACK_REDUCED_ERROR_POST_PRUNING_IMPL_HPP
+#endif // MLPACK_REDUCED_ERROR_POST_PRUNING_IMPL_HPP

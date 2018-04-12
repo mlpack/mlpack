@@ -394,7 +394,7 @@ class DecisionTree :
              MatType&& validData,
              LabelsType&& validLabels,
              double& bestScore);
-  private:
+ private:
   //! The vector of children.
   std::vector<DecisionTree*> children;
   //! The dimension this node splits on.
