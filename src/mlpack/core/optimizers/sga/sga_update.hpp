@@ -25,7 +25,7 @@ namespace optimization {
                 Function Approximation },
  *   journal = {NIPS},
  *   year    = {2000},
- *   url     = {https://goo.gl/UwfMnd}
+ *   url     = {https://goo.gl/2Gtmqu}
  * }
 */
 class SgaUpdate
