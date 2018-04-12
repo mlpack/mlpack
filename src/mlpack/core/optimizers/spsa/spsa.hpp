@@ -41,6 +41,10 @@ namespace optimization {
 class SPSA
 {
  public:
+  // Specifies the maximum number of iterations.
+  long long int max_iter;
+  arma::vec sp_vector;
+
   // Control the amount of gradient update.
   float a;
   float A;
@@ -54,23 +58,19 @@ class SPSA
   float ak;
   float ck;
 
-  // Specifies the maximum number of iterations.
-  long long int max_iter;
-  arma::vec sp_vector;
-
   SPSA(const float& alpha = 0.602,
        const float& gamma = 0.101,
        const float& a = 0.16,
        const float& c = 0.3,
        const long long int& maxIterations = 100000):
+    max_iter(maxIterations),
     a(a),
     A(0.001*max_iter),
     alpha(alpha),
     gamma(gamma),
     c(c),
     ak(0),
-    ck(0),
-    max_iter(maxIterations)
+    ck(0)
   {
     // Nothing to do.
   }
