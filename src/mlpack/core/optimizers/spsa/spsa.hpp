@@ -67,9 +67,10 @@ class SPSA
     a(a),
     c(c),
     max_iter(maxIterations),
-    A(0.001*max_iter)
   {
-    // Nothing to do.
+    ak = 0;
+    ck = 0;
+    A = 0.001*max_iter;
   }
 
   template<typename DecomposableFunctionType>
