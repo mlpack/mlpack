@@ -435,8 +435,10 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
     bool useMinOverlapSplit = false;
     if (tiedOnOverlap)
     {
-      if (overlapBestAreaAxis/areaBestAreaAxis < MAX_OVERLAP)
+      if (overlapBestAreaAxis / areaBestAreaAxis < MAX_OVERLAP)
       {
+        tree->numDescendants = 0;
+        tree->bound.Clear();
         for (size_t i = 0; i < numChildren; i++)
         {
           if (i < bestAreaIndexOnBestAxis + tree->MinNumChildren())
@@ -450,7 +452,7 @@ bool XTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
     }
     else
     {
-      if (overlapBestOverlapAxis/areaBestOverlapAxis < MAX_OVERLAP)
+      if (overlapBestOverlapAxis / areaBestOverlapAxis < MAX_OVERLAP)
       {
         tree->numDescendants = 0;
         tree->bound.Clear();

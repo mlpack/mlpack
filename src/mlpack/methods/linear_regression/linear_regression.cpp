@@ -17,14 +17,6 @@ using namespace mlpack;
 using namespace mlpack::regression;
 
 LinearRegression::LinearRegression(const arma::mat& predictors,
-                                   const arma::vec& responses,
-                                   const double lambda,
-                                   const bool intercept,
-                                   const arma::vec& weights) :
-    LinearRegression(predictors, responses.t(), weights.t(), lambda, intercept)
-{}
-
-LinearRegression::LinearRegression(const arma::mat& predictors,
                                    const arma::rowvec& responses,
                                    const double lambda,
                                    const bool intercept) :
@@ -40,14 +32,6 @@ LinearRegression::LinearRegression(const arma::mat& predictors,
     intercept(intercept)
 {
   Train(predictors, responses, weights, intercept);
-}
-
-void LinearRegression::Train(const arma::mat& predictors,
-                             const arma::vec& responses,
-                             const bool intercept,
-                             const arma::vec& weights)
-{
-  Train(predictors, responses.t(), weights.t(), intercept);
 }
 
 void LinearRegression::Train(const arma::mat& predictors,
@@ -122,14 +106,6 @@ void LinearRegression::Train(const arma::mat& predictors,
   }
 }
 
-void LinearRegression::Predict(const arma::mat& points, arma::vec& predictions)
-    const
-{
-  arma::rowvec rowPredictions;
-  Predict(points, rowPredictions);
-  predictions = arma::trans(rowPredictions);
-}
-
 void LinearRegression::Predict(const arma::mat& points,
     arma::rowvec& predictions) const
 {
@@ -152,14 +128,6 @@ void LinearRegression::Predict(const arma::mat& points,
     Log::Assert(points.n_rows == parameters.n_rows);
     predictions = arma::trans(parameters) * points;
   }
-}
-
-//! Compute the L2 squared error on the given predictors and responses.
-double LinearRegression::ComputeError(const arma::mat& predictors,
-                                      const arma::vec& responses) const
-{
-  arma::rowvec rowResponses = responses.t();
-  return ComputeError(predictors, rowResponses);
 }
 
 double LinearRegression::ComputeError(const arma::mat& predictors,

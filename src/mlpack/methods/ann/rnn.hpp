@@ -48,8 +48,8 @@ class RNN
                           CustomLayers...>;
 
   /**
-   * Create the RNN object with the given predictors and responses set (this is
-   * the set that is used to train the network).
+   * Create the RNN object.
+   *
    * Optionally, specify which initialize rule and performance function should
    * be used.
    *
@@ -63,37 +63,6 @@ class RNN
    *        for initializing the network parameter.
    */
   RNN(const size_t rho,
-      const bool single = false,
-      OutputLayerType outputLayer = OutputLayerType(),
-      InitializationRuleType initializeRule = InitializationRuleType());
-
-  /**
-   * Create the RNN object with the given predictors and responses set (this is
-   * the set that is used to train the network).
-   * Optionally, specify which initialize rule and performance function should
-   * be used.
-   *
-   * If you want to pass in a parameter and discard the original parameter
-   * object, be sure to use std::move to avoid unnecessary copy.
-   *
-   * The format of the data should be as follows:
-   *  - each slice should correspond to a time step
-   *  - each column should correspond to a data point
-   *  - each row should correspond to a dimension
-   * So, e.g., predictors(i, j, k) is the i'th dimension of the j'th data point
-   * at time slice k.
-   *
-   * @param predictors Input training variables.
-   * @param responses Outputs results from input training variables.
-   * @param rho Maximum number of steps to backpropagate through time (BPTT).
-   * @param single Predict only the last element of the input sequence.
-   * @param outputLayer Output layer used to evaluate the network.
-   * @param initializeRule Optional instantiated InitializationRule object
-   *        for initializing the network parameter.
-   */
-  RNN(arma::cube predictors,
-      arma::cube responses,
-      const size_t rho,
       const bool single = false,
       OutputLayerType outputLayer = OutputLayerType(),
       InitializationRuleType initializeRule = InitializationRuleType());
@@ -193,7 +162,25 @@ class RNN
   double Evaluate(const arma::mat& parameters,
                   const size_t begin,
                   const size_t batchSize,
-                  const bool deterministic = true);
+                  const bool deterministic);
+
+  /**
+   * Evaluate the recurrent neural network with the given parameters. This
+   * function is usually called by the optimizer to train the model.  This just
+   * calls the other overload of Evaluate() with deterministic = true.
+   *
+   * @param parameters Matrix model parameters.
+   * @param begin Index of the starting point to use for objective function
+   *        evaluation.
+   * @param batchSize Number of points to be passed at a time to use for
+   *        objective function evaluation.
+   */
+  double Evaluate(const arma::mat& parameters,
+                  const size_t begin,
+                  const size_t batchSize)
+  {
+    return Evaluate(parameters, begin, batchSize, true);
+  }
 
   /**
    * Evaluate the gradient of the recurrent neural network with the given
@@ -219,24 +206,16 @@ class RNN
    */
   void Shuffle();
 
-  /**
-   * Add a new layer to the model.
+  /*
+   * Add a new module to the model.
    *
-   * @param layer The layer to be added to the model.
-   */
-  template<typename LayerType>
-  void Add(const LayerType& layer) { network.push_back(new LayerType(layer)); }
-
-  /**
-   * Add a new layer to the model.
-   *
-   * @param args The parameters to be passed to the layer constructor.
+   * @param args The layer parameter.
    */
   template <class LayerType, class... Args>
   void Add(Args... args) { network.push_back(new LayerType(args...)); }
 
-  /**
-   * Add a new layer to the model.
+  /*
+   * Add a new module to the model.
    *
    * @param layer The Layer to be added to the model.
    */
@@ -254,6 +233,16 @@ class RNN
   const size_t& Rho() const { return rho; }
   //! Modify the maximum length of backpropagation through time.
   size_t& Rho() { return rho; }
+
+  //! Get the matrix of responses to the input data points.
+  const arma::cube& Responses() const { return responses; }
+  //! Modify the matrix of responses to the input data points.
+  arma::cube& Responses() { return responses; }
+
+  //! Get the matrix of data points (predictors).
+  const arma::cube& Predictors() const { return predictors; }
+  //! Modify the matrix of data points (predictors).
+  arma::cube& Predictors() { return predictors; }
 
   /**
    * Reset the state of the network.  This ensures that all internally-held

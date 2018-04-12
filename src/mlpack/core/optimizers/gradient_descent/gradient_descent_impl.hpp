@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "gradient_descent.hpp"
 
+#include <mlpack/core/optimizers/function.hpp>
+
 namespace mlpack {
 namespace optimization {
 
@@ -23,14 +25,23 @@ template<typename FunctionType>
 double GradientDescent::Optimize(
     FunctionType& function, arma::mat& iterate)
 {
+  // Use the Function<> wrapper type to provide additional functionality.
+  typedef Function<FunctionType> FullFunctionType;
+  FullFunctionType& f(static_cast<FullFunctionType&>(function));
+
+  // Make sure we have the methods that we need.
+  traits::CheckFunctionTypeAPI<FullFunctionType>();
+
   // To keep track of where we are and how things are going.
-  double overallObjective = function.Evaluate(iterate);
-  double lastObjective = DBL_MAX;
+  double overallObjective = std::numeric_limits<double>::max();
+  double lastObjective = std::numeric_limits<double>::max();
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
   for (size_t i = 1; i != maxIterations; ++i)
   {
+    overallObjective = f.EvaluateWithGradient(iterate, gradient);
+
     // Output current objective function.
     Log::Info << "Gradient Descent: iteration " << i << ", objective "
         << overallObjective << "." << std::endl;
@@ -53,13 +64,8 @@ double GradientDescent::Optimize(
     // Reset the counter variables.
     lastObjective = overallObjective;
 
-    function.Gradient(iterate, gradient);
-
     // And update the iterate.
     iterate -= stepSize * gradient;
-
-    // Now add that to the overall objective function.
-    overallObjective = function.Evaluate(iterate);
   }
 
   Log::Info << "Gradient Descent: maximum iterations (" << maxIterations

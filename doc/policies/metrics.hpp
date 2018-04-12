@@ -108,6 +108,6 @@ policy:
  - mlpack::metric::ChebyshevDistance
  - mlpack::metric::MahalanobisDistance
  - mlpack::metric::LMetric (for arbitrary L-metrics)
- - mlpack::metric::IPMetric (requires a \ref kernels KernelType parameter)
+ - mlpack::metric::IPMetric (requires a \ref kernels "KernelType" parameter)
 
 */

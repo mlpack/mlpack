@@ -5,7 +5,13 @@ set(SOURCES
   add_impl.hpp
   add_merge.hpp
   add_merge_impl.hpp
+  alpha_dropout.hpp
+  alpha_dropout_impl.hpp
   base_layer.hpp
+  bilinear_interpolation.hpp
+  bilinear_interpolation_impl.hpp
+  batch_norm.hpp
+  batch_norm_impl.hpp
   concat.hpp
   concat_impl.hpp
   concat_performance.hpp
@@ -24,6 +30,8 @@ set(SOURCES
   elu_impl.hpp
   fast_lstm.hpp
   fast_lstm_impl.hpp
+  flexible_relu.hpp
+  flexible_relu_impl.hpp
   glimpse.hpp
   glimpse_impl.hpp
   gru.hpp

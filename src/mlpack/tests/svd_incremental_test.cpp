@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(SVDIncompleteIncrementalRegularizationTest)
   mat m3, m4;
   double regularizedRMSE = amf2.Apply(cleanedData2, 2, m3, m4);
 
-  BOOST_REQUIRE_LT(regularizedRMSE, regularRMSE + 0.075);
+  BOOST_REQUIRE_LT(regularizedRMSE, regularRMSE + 0.105);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

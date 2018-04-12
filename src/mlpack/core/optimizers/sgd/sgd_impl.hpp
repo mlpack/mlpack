@@ -17,6 +17,8 @@
 // In case it hasn't been included yet.
 #include "sgd.hpp"
 
+#include <mlpack/core/optimizers/function.hpp>
+
 namespace mlpack {
 namespace optimization {
 
@@ -47,20 +49,19 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     DecomposableFunctionType& function,
     arma::mat& iterate)
 {
+  typedef Function<DecomposableFunctionType> FullFunctionType;
+  FullFunctionType& f(static_cast<FullFunctionType&>(function));
+
+  // Make sure we have all the methods that we need.
+  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType>();
+
   // Find the number of functions to use.
-  const size_t numFunctions = function.NumFunctions();
+  const size_t numFunctions = f.NumFunctions();
 
   // To keep track of where we are and how things are going.
   size_t currentFunction = 0;
   double overallObjective = 0;
   double lastObjective = DBL_MAX;
-
-  // Calculate the first objective function.
-  for (size_t i = 0; i < numFunctions; i += batchSize)
-  {
-    const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
-  }
 
   // Initialize the update policy.
   if (resetPolicy)
@@ -73,7 +74,7 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
   {
     // Is this iteration the start of a sequence?
-    if ((currentFunction % numFunctions) == 0)
+    if ((currentFunction % numFunctions) == 0 && i > 0)
     {
       // Output current objective function.
       Log::Info << "SGD: iteration " << i << ", objective " << overallObjective
@@ -99,7 +100,7 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
       currentFunction = 0;
 
       if (shuffle) // Determine order of visitation.
-        function.Shuffle();
+        f.Shuffle();
     }
 
     // Find the effective batch size; we have to take the minimum of three
@@ -112,13 +113,13 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
         std::min(batchSize, actualMaxIterations - i),
         numFunctions - currentFunction);
 
-    function.Gradient(iterate, currentFunction, gradient, effectiveBatchSize);
+    // Technically we are computing the objective before we take the step, but
+    // for many FunctionTypes it may be much quicker to do it like this.
+    overallObjective += f.EvaluateWithGradient(iterate, currentFunction,
+        gradient, effectiveBatchSize);
 
     // Use the update policy to take a step.
     updatePolicy.Update(iterate, stepSize, gradient);
-
-    overallObjective += function.Evaluate(iterate, currentFunction,
-        effectiveBatchSize);
 
     // Now update the learning rate if requested by the user.
     decayPolicy.Update(iterate, stepSize, gradient);
@@ -135,7 +136,7 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   for (size_t i = 0; i < numFunctions; i += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
+    overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
   }
   return overallObjective;
 }

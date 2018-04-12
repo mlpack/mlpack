@@ -13,6 +13,7 @@
 #define MLPACK_CORE_OPTIMIZERS_SA_SA_IMPL_HPP
 
 #include <mlpack/core/dists/laplace_distribution.hpp>
+#include <mlpack/core/optimizers/function.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -49,6 +50,9 @@ template<typename FunctionType>
 double SA<CoolingScheduleType>::Optimize(FunctionType& function,
                                          arma::mat& iterate)
 {
+  // Make sure we have the methods that we need.
+  traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType>();
+
   const size_t rows = iterate.n_rows;
   const size_t cols = iterate.n_cols;
 

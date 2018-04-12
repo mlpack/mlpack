@@ -3,6 +3,11 @@
  * @author Ryan Curtin
  *
  * Utility function implementation for checking arguments, and so forth.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_UTIL_PARAM_CHECKS_IMPL_HPP
 #define MLPACK_CORE_UTIL_PARAM_CHECKS_IMPL_HPP
@@ -118,6 +123,48 @@ inline void RequireAtLeastOnePassed(
       for (size_t i = 0; i < constraints.size() - 1; ++i)
         stream << PRINT_PARAM_STRING(constraints[i]) << ", ";
       stream << "or "
+          << PRINT_PARAM_STRING(constraints[constraints.size() - 1]);
+    }
+
+    // Append custom error message.
+    if (!errorMessage.empty())
+      stream << "; " << errorMessage << "!" << std::endl;
+    else
+      stream << "!" << std::endl;
+  }
+}
+
+inline void RequireNoneOrAllPassed(
+    const std::vector<std::string>& constraints,
+    const bool fatal,
+    const std::string& errorMessage)
+{
+  if (BINDING_IGNORE_CHECK(constraints))
+    return;
+
+  size_t set = 0;
+  for (size_t i = 0; i < constraints.size(); ++i)
+  {
+    if (CLI::HasParam(constraints[i]))
+      ++set;
+  }
+
+  if (set != 0 && set < constraints.size())
+  {
+    util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
+    stream << (fatal ? "Must " : "Should ");
+    if (constraints.size() == 2)
+    {
+      stream << "pass none or both of " << PRINT_PARAM_STRING(constraints[0])
+          << " and " << PRINT_PARAM_STRING(constraints[1]);
+    }
+    else
+    {
+      // constraints.size() > 2.
+      stream << "pass none or all of ";
+      for (size_t i = 0; i < constraints.size() - 1; ++i)
+        stream << PRINT_PARAM_STRING(constraints[i]) << ", ";
+      stream << "and "
           << PRINT_PARAM_STRING(constraints[constraints.size() - 1]);
     }
 
