@@ -30,14 +30,12 @@
 #include <mlpack/methods/ann/layer/flexible_relu.hpp>
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
 #include <mlpack/methods/ann/layer/lookup.hpp>
-#include <mlpack/methods/ann/layer/mean_squared_error.hpp>
 #include <mlpack/methods/ann/layer/multiply_constant.hpp>
 #include <mlpack/methods/ann/layer/negative_log_likelihood.hpp>
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
-#include <mlpack/methods/ann/layer/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
 
 // Convolution modules.
@@ -141,14 +139,12 @@ using LayerTypes = boost::variant<
     FastLSTM<arma::mat, arma::mat>*,
     MaxPooling<arma::mat, arma::mat>*,
     MeanPooling<arma::mat, arma::mat>*,
-    MeanSquaredError<arma::mat, arma::mat>*,
     MultiplyConstant<arma::mat, arma::mat>*,
     NegativeLogLikelihood<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
     Recurrent<arma::mat, arma::mat>*,
     RecurrentAttention<arma::mat, arma::mat>*,
     ReinforceNormal<arma::mat, arma::mat>*,
-    SigmoidCrossEntropyError<arma::mat, arma::mat>*,
     Select<arma::mat, arma::mat>*,
     Sequential<arma::mat, arma::mat>*,
     VRClassReward<arma::mat, arma::mat>*,

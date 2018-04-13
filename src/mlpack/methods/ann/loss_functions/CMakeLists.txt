@@ -3,6 +3,10 @@
 set(SOURCES
   KLDivergence.hpp
   KLDivergence_impl.hpp
+  mean_squared_error.hpp
+  mean_squared_error_impl.hpp
+  sigmoid_cross_entropy_error.hpp
+  sigmoid_cross_entropy_error_impl.hpp
 )
 
 # Add directory name to sources.
