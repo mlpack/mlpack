@@ -11,8 +11,6 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/spsa/spsa.hpp>
-#include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
-#include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
 #include <mlpack/core/optimizers/problems/sphere_function.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression_function.hpp>
 
@@ -28,23 +26,26 @@ using namespace mlpack::regression;
 
 BOOST_AUTO_TEST_SUITE(SPSATest);
 
+/**
+ * Tests the SPSA optimizer using the Sphere Function.
+ */
 BOOST_AUTO_TEST_CASE(SimpleSPSATestFunction)
 {
   for (size_t i = 10; i <= 50; i++)
   {
-      SphereFunction h(i);
-      GeneralizedRosenbrockFunction f(i);
+    SphereFunction h(i);
 
-      SPSA optimiser(0.1, 0.102, 0.16,
-                     0.3, 100000);
+    SPSA optimiser(0.1, 0.102, 0.16,
+                   0.3, 100000);
 
-      arma::mat coordinates = f.GetInitialPoint();
-      double result = optimiser.Optimize(h, coordinates);
+    arma::mat coordinates = h.GetInitialPoint();
+    double result = optimiser.Optimize(h, coordinates);
 
-      BOOST_REQUIRE_CLOSE(result, 2e-33, 10000);
-      BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
-      BOOST_REQUIRE_SMALL(coordinates[1], 1e-7);
-      BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
+    BOOST_REQUIRE_CLOSE(result, 2e-33, 10000);
+    BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
+    BOOST_REQUIRE_SMALL(coordinates[1], 1e-7);
+    BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
   }
 }
+
 BOOST_AUTO_TEST_SUITE_END();

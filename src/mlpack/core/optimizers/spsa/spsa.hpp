@@ -42,30 +42,30 @@ class SPSA
 {
  public:
   // Specifies the maximum number of iterations.
-  long long int max_iter;
-  arma::vec sp_vector;
+  size_t maxIter;
+  arma::vec spVector;
 
   // Control the amount of gradient update.
-  float a;
-  float A;
+  double a;
+  double A;
 
   // Non-negative co-efficients controlling the optimizer.
-  float alpha;
-  float gamma;
-  float c;
+  double alpha;
+  double gamma;
+  double c;
 
   // Gain sequences.
-  float ak;
-  float ck;
+  double ak;
+  double ck;
 
-  SPSA(const float& alpha = 0.602,
-       const float& gamma = 0.101,
-       const float& a = 0.16,
-       const float& c = 0.3,
-       const long long int& maxIterations = 100000):
-    max_iter(maxIterations),
+  SPSA(const double& alpha = 0.602,
+       const double& gamma = 0.101,
+       const double& a = 0.16,
+       const double& c = 0.3,
+       const size_t& maxIterations = 100000):
+    maxIter(maxIterations),
     a(a),
-    A(0.001*max_iter),
+    A(0.001*maxIter),
     alpha(alpha),
     gamma(gamma),
     c(c),
@@ -78,11 +78,9 @@ class SPSA
   template<typename DecomposableFunctionType>
   double Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   {
-    const int s = iterate.n_elem;
-    const double epsilon = 1e-8;
     arma::mat gradient = arma::zeros(iterate.n_rows, iterate.n_cols);
 
-    for (long long int i = 0; i < max_iter; i++)
+    for (size_t i = 0; i < maxIter; i++)
     {
       ak = a/std::pow((i + 1 + A), alpha);
       ck = c/std::pow((i + 1), gamma);
@@ -90,25 +88,32 @@ class SPSA
       gradient.zeros();
       for (size_t b = 0; b < 10; b++)
       {
-        sp_vector = arma::conv_to<arma::vec>::from(
-                    randi(s, arma::distr_param(0, 1)))*2 - 1;
+        spVector = arma::conv_to<arma::vec>::from(
+                    randi(iterate.n_elem, arma::distr_param(0, 1))) * 2 - 1;
 
-        iterate += ck * sp_vector;
-        double f_plus = function.Evaluate(iterate, 0, s);
+        iterate += ck * spVector;
+        double f_plus = function.Evaluate(iterate, 0, iterate.n_elem);
 
-        iterate -= 2 * ck * sp_vector;
-        double f_minus = function.Evaluate(iterate, 0, s);
-        iterate += ck * sp_vector;
+        iterate -= 2 * ck * spVector;
+        double f_minus = function.Evaluate(iterate, 0, iterate.n_elem);
+        iterate += ck * spVector;
 
-        gradient += (f_plus - f_minus) * (1 / (2 * ck * sp_vector));
+        gradient += (f_plus - f_minus) * (1 / (2 * ck * spVector));
       }
 
         gradient /= 10;
         iterate -= ak*gradient;
     }
 
-    return function.Evaluate(iterate, 0, s);
+    return function.Evaluate(iterate, 0, iterate.n_elem);
   }
+
+  const double& Alpha() const { return alpha; }
+
+  const double& Gamma() const { return gamma; }
+
+  const double& C() const { return c; }
+
 };
 
 } // namespace optimization
