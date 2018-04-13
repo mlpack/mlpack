@@ -60,7 +60,7 @@ class ReducedErrorPostPruning
   template<typename MatType, typename LabelsType>
   static double ValidateScore(DecisionTree* root,
                        MatType&& validData,
-                       LabelsType&& validLabels) const;
+                       LabelsType&& validLabels);
 };
 
 } // namespace tree

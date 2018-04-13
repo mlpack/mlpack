@@ -21,7 +21,7 @@ namespace tree {
 template<typename DecisionTree>
 template<bool UseWeights, typename MatType, typename LabelsType,
   typename WeightsType>
-void ReducedErrorPostPruning::Prune(
+void ReducedErrorPostPruning<DecisionTree>::Prune(
     DecisionTree* root,
     DecisionTree* currentNode,
     LabelsType&& labels,
@@ -89,9 +89,9 @@ void ReducedErrorPostPruning::Prune(
 
 template<typename DecisionTree>
 template<typename MatType, typename LabelsType>
-double ReducedErrorPostPruning::ValidateScore(DecisionTree* root,
+double ReducedErrorPostPruning<DecisionTree>::ValidateScore(DecisionTree* root,
                                               MatType&& validData,
-                                              LabelsType&& validLabels) const
+                                              LabelsType&& validLabels)
 {
   arma::Row<size_t> predictions;
   root->Classify(validData, predictions);
