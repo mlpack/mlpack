@@ -42,7 +42,7 @@ class StochiasticPolicy
   ActionType Sample(const arma::colvec& actionValue, bool deterministic = false)
   {
   size_t actionLength = static_cast<size_t>(ActionType::size);
-  ActionType action;
+  ActionType action = static_cast<ActionType>(math::RandInt(ActionType::size));
   double probability = 0.0;
   double randomProbability = math::Random(0.0, 1.0);
   if (!deterministic)

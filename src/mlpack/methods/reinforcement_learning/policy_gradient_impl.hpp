@@ -2,7 +2,6 @@
  * @file policy_gradient_impl.hpp
  * @author Rohan Raj
  *
- *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -106,7 +105,7 @@ double PolicyGradient<
 {
   // Get the initial state from environment.
   state = environment.InitialSample();
-  
+
   // Calculate total steps in a episode
   steps = 0;
 
