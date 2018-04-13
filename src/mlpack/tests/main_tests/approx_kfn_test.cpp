@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNZeroNumProjTest)
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 10);
-  SetInputParam("num_projections", (int) 0);//Invalid
+  SetInputParam("num_projections", (int) 0); // Invalid.
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNegativeNumTablesTest)
 {
   arma::mat referenceData;
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
- 
+
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 10);
   SetInputParam("num_tables", (int) -5); // Invalid.
@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNModelReuseTest)
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
   ApproxKFNModel* model = CLI::GetParam<ApproxKFNModel*>("output_model");
-  
+
   // Reset passed parameters.
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["query"].wasPassed = false;
@@ -230,14 +230,12 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNumTablesChangeTest)
 {
   arma::mat referenceData;
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
-  
-  // First setting.
+
   SetInputParam("reference", std::move(referenceData));
   // Random input, k <= reference points.
-  SetInputParam("k", (int) 5); 
+  SetInputParam("k", (int) 5);
   // Random input, num_tables > 0.
   SetInputParam("num_tables", (int) 1);
-
   SetInputParam("num_projections", (int) 10);
 
   // First solution.
@@ -269,7 +267,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNumTablesChangeTest)
       std::move(CLI::GetParam<arma::mat>("distances"));
 
   // Check that the size of distance matrices (FirstOutputDistances and
-  // SecondOutputDistances) are not equal which ensures num_tables changes 
+  // SecondOutputDistances) are not equal which ensures num_tables changes
   // the output model.
   CheckMatricesNotEqual(FirstOutputDistances, SecondOutputDistances);
 }
@@ -285,11 +283,10 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNumProjectionsChangeTest)
   // First setting.
   SetInputParam("reference", std::move(referenceData));
   // Random input, k <= reference points.
-  SetInputParam("k", (int) 5); 
+  SetInputParam("k", (int) 5);
   // Random input, num_tables > 0.
   SetInputParam("num_projections", (int) 4);
   SetInputParam("num_tables", (int) 3);
-
   // First solution.
   mlpackMain();
 
@@ -301,7 +298,6 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNumProjectionsChangeTest)
   bindings::tests::CleanMemory();
   CLI::ClearSettings();
   CLI::RestoreSettings(testName);
-
   // Second setting.
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
   SetInputParam("reference", std::move(referenceData));
@@ -319,13 +315,13 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNumProjectionsChangeTest)
       std::move(CLI::GetParam<arma::mat>("distances"));
 
   // Check that the size of distance matrices (FirstOutputDistances and
-  // SecondOutputDistances) are not equal which ensures num_tables changes 
+  // SecondOutputDistances) are not equal which ensures num_tables changes
   // the output model.
   CheckMatricesNotEqual(FirstOutputDistances, SecondOutputDistances);
 }
 
 /**
- * Make sure that the dimensions of the exact distances matrix are correct.
+* Make sure that the dimensions of the exact distances matrix are correct.
  */
 BOOST_AUTO_TEST_CASE(ApproxKFNExactDistDimensionTest)
 {
@@ -368,7 +364,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNDifferentAlgoTest)
 
   // Get the distances and neighbors matrix after first training.
   arma::mat FirstOutputDistances =
-      std::move(CLI::GetParam<arma::mat>("distances"));
+  std::move(CLI::GetParam<arma::mat>("distances"));
   arma::Mat<size_t> FirstOutputNeighbors =
     std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
            
@@ -388,7 +384,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNDifferentAlgoTest)
       std::move(CLI::GetParam<arma::mat>("distances"));
   arma::Mat<size_t> SecondOutputNeighbors =
       std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
-  
+
   // Check that the distance matrices (FirstOutputDistances and
   // SecondOutputDistances) and neighbor matrices (FirstOutputNeighbors and
   // SecondOutputNeighbors) are not equal. This ensures that the two strategies
