@@ -1090,23 +1090,23 @@ BOOST_AUTO_TEST_CASE(CustomRecursiveReberGrammarTest)
 
 /**
  * @brief Generates noisy sine wave and outputs the data and the labels that
- * can be used directly for training and testing with RNN.
+ *        can be used directly for training and testing with RNN.
  *
- * @param data    The data points as output
- * @param labels  The expected values as output
- * @param rho     The size of the sequence of each data point
+ * @param data The data points as output
+ * @param labels The expected values as output
+ * @param rho The size of the sequence of each data point
  * @param outputSteps How many output steps to consider for every rho inputs
  * @param dataPoints  The number of generated data points. The actual generated
- * data points may be more than this to adjust to the outputSteps.
- * But at the minimum these many data points will be generated.
- * @param gain    The gain on the amplitude
- * @param freq    The frquency of the sine wave
- * @param phase   The phase shift if any
- * @param noisePercent  The percent noise to induce
- * @param numCycles  How many full size wave cycles required. All the data
- * points will be fit into these cycles.
+ *        data points may be more than this to adjust to the outputSteps. But at
+ *        the minimum these many data points will be generated.
+ * @param gain The gain on the amplitude
+ * @param freq The frquency of the sine wave
+ * @param phase The phase shift if any
+ * @param noisePercent The percent noise to induce
+ * @param numCycles How many full size wave cycles required. All the data
+ *        points will be fit into these cycles.
  * @param normalize Whether to normalise the data. This may be required for some
- * layers like LSTM. Default is true.
+ *        layers like LSTM. Default is true.
  */
 void GenerateNoisySinRNN(arma::cube& data,
                          arma::cube& labels,
@@ -1118,7 +1118,7 @@ void GenerateNoisySinRNN(arma::cube& data,
                          const double phase = 0,
                          const int noisePercent = 20,
                          const double numCycles = 6.0,
-                         const bool   normalize = true)
+                         const bool normalize = true)
 {
   int points = dataPoints;
   int r = dataPoints % rho;
@@ -1133,9 +1133,6 @@ void GenerateNoisySinRNN(arma::cube& data,
   arma::colvec x(points);
   int i = 0;
   double interval = numCycles / freq / points;
-  uint64_t timeSeed =
-      std::chrono::high_resolution_clock::now().time_since_epoch().count();
-  RandomSeed(timeSeed);
   x.for_each([&i, gain, freq, phase, noisePercent, interval]
              (arma::colvec::elem_type& val) {
     double t = interval * (i++);
@@ -1148,10 +1145,10 @@ void GenerateNoisySinRNN(arma::cube& data,
     y = arma::normalise(x);
 
   // Now break this into columns of rho size slices.
-  size_t n_columns = y.n_elem / rho;
-  data = arma::cube(1, n_columns, rho);
-  labels = arma::cube(outputSteps, n_columns, 1);
-  for (size_t i = 0; i < n_columns; ++i)
+  size_t numColumns = y.n_elem / rho;
+  data = arma::cube(1, numColumns, rho);
+  labels = arma::cube(outputSteps, numColumns, 1);
+  for (size_t i = 0; i < numColumns; ++i)
   {
     data.tube(0, i) = y.rows(i * rho, i * rho + rho - 1);
     labels.subcube(0, i, 0, outputSteps - 1, i, 0) =
