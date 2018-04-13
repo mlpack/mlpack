@@ -205,8 +205,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNModelReuseTest)
   arma::mat distances;
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
-  ApproxKFNModel* model = new ApproxKFNModel();
-  model = CLI::GetParam<ApproxKFNModel*>("output_model");
+  ApproxKFNModel* model = CLI::GetParam<ApproxKFNModel*>("output_model");
   
   // Reset passed parameters.
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
