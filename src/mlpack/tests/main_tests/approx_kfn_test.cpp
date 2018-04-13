@@ -244,7 +244,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNumTablesChangeTest)
   // Get the distances matrix after first training.
   arma::mat FirstOutputDistances =
       std::move(CLI::GetParam<arma::mat>("distances"));
-           
+
   // Reset the settings.
   bindings::tests::CleanMemory();
   CLI::ClearSettings();
@@ -279,7 +279,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNumProjectionsChangeTest)
 {
   arma::mat referenceData;
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
-  
+
   // First setting.
   SetInputParam("reference", std::move(referenceData));
   // Random input, k <= reference points.
@@ -293,7 +293,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNumProjectionsChangeTest)
   // Get the distances matrix after first training.
   arma::mat FirstOutputDistances =
       std::move(CLI::GetParam<arma::mat>("distances"));
-           
+
   // Reset the settings.
   bindings::tests::CleanMemory();
   CLI::ClearSettings();
@@ -358,7 +358,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNDifferentAlgoTest)
   // Random input, any k <= reference points.
   SetInputParam("k", (int) 10);
   SetInputParam("algorithm", (string) "ds");
-  
+
   // First solution.
   mlpackMain();
 
@@ -367,7 +367,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNDifferentAlgoTest)
   std::move(CLI::GetParam<arma::mat>("distances"));
   arma::Mat<size_t> FirstOutputNeighbors =
     std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
-           
+
   // Reset the settings.
   bindings::tests::CleanMemory();
   CLI::ClearSettings();
