@@ -102,6 +102,58 @@ class GaussianInitialization
   double stddev;
 }; // class GaussianInitialization
 
+/**
+ * This class initializes a given weight matrix with values sampled from a
+ * Gaussian Distribution of given mean and variance. It ensures that none of
+ * the sampled values are more than two standard deviations away from the mean.
+ */
+class TruncatedGaussianInitialization
+{
+ public:
+  /**
+   * Initialize the gaussian with given mean and variance.
+   *
+   * @param mean Mean of the gaussian.
+   * @param variance Variance of the gaussian.
+   */
+  TruncatedGaussianInitialization(const double mean = 0,
+                                  const double variance = 1.0) :
+     g(new GaussianInitialization(mean, variance))
+  {
+    // Nothing to do here.
+  }
+
+  /**
+   * Initialize the elements weight matrix using a Gaussian distribution.
+   *
+   * @param W Weight matrix to initialize.
+   * @param rows Number of rows.
+   * @param cols Number of columns.
+   */
+  void Initialize(arma::mat& W,
+                  const size_t rows,
+                  const size_t cols)
+  {
+    g->Initialize(W, rows, cols, true);
+  }
+
+  void Initialize(arma::cube& W,
+                  const size_t rows,
+                  const size_t cols,
+                  const size_t slices)
+  {
+    g->Initialize(W, rows, cols, slices, true);
+  }
+
+  ~TruncatedGaussianInitialization()
+  {
+    delete g;
+  }
+
+ private:
+  GaussianInitialization* g;
+};
+
 } // namespace ann
 } // namespace mlpack
 
