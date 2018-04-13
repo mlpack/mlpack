@@ -13,8 +13,6 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "replay/random_replay.hpp"
-#include "replay/episode_replay.hpp"
 #include "training_config.hpp"
 
 namespace mlpack {
@@ -94,7 +92,7 @@ class PolicyGradient
   double advantage;
 
   // Track the steps in this episode.
-  size_t steps = 0;
+  size_t steps;
 
   //! Locally-stored to keep status of return
   arma::running_stat<double> returns;

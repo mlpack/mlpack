@@ -106,6 +106,8 @@ double PolicyGradient<
 {
   // Get the initial state from environment.
   state = environment.InitialSample();
+  
+  // Calculate total steps in a episode
   steps = 0;
 
   // Track the return of this episode.

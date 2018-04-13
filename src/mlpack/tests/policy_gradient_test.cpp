@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGradient)
 {
   // Set up the network.
   FFN<NegativeLogLikelihood<>, GaussianInitialization> model(
-      NegativeLogLikelihood<>(),GaussianInitialization(0, 0.001));
+      NegativeLogLikelihood<>(), GaussianInitialization(0, 0.001));
   model.Add<Linear<>>(4, 128);
   model.Add<ReLULayer<>>();
   model.Add<Linear<>>(128, 128);
@@ -49,8 +49,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithPolicyGradient)
   StochiasticPolicy<CartPole> policy;
 
   TrainingConfig config;
-  config.StepSize() = 0.01;
-  config.Discount() = 0.99;
+  config.StepSize() = 0.001;
   config.StepLimit() = 300;
 
   // Set up Policy Gradient agent.
