@@ -51,7 +51,7 @@ class KDE
 
   double bandwidth;
 
-  int leafSize;
+  const int leafSize;
 };
 
 } // namespace kde

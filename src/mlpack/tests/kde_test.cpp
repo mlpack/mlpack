@@ -42,8 +42,8 @@ BOOST_AUTO_TEST_CASE(KDESimpleTest)
   arma::inplace_trans(reference);
   arma::inplace_trans(query);
   arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
-  arma::vec estimations_result = {0.07008107430791211955867225924521335400641,
-                                  0.0001001563617562331180753723569587521069479,
+  arma::vec estimations_result = {0.08323668699564207296148765635734889656305,
+                                  0.00167470061366603324010116082831700623501,
                                   0.07658867126520703394465527935608406551182,
                                   0.01028120384800740999553525512055784929544};
   KDE<EuclideanDistance,

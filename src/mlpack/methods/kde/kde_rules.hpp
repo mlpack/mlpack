@@ -27,6 +27,7 @@ class KDERules
            const arma::mat& querySet,
            arma::vec& densities,
            const double error,
+           const std::vector<size_t>& oldFromNewQueries,
            MetricType& metric,
            const KernelType& kernel);
 
@@ -67,10 +68,13 @@ class KDERules
   //! The query set.
   const arma::mat& querySet;
 
-  //! Density values
+  //! Density values.
   arma::vec& densities;
 
   const double error;
+
+  //! New query dataset order.
+  const std::vector<size_t>& oldFromNewQueries;
 
   //! The instantiated metric.
   MetricType& metric;

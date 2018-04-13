@@ -25,12 +25,14 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     const arma::mat& querySet,
     arma::vec& densities,
     const double error,
+    const std::vector<size_t>& oldFromNewQueries,
     MetricType& metric,
     const KernelType& kernel) :
     referenceSet(referenceSet),
     querySet(querySet),
     densities(densities),
     error(error),
+    oldFromNewQueries(oldFromNewQueries),
     metric(metric),
     kernel(kernel),
     lastQueryIndex(querySet.n_cols),
@@ -50,7 +52,7 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
 {
   double distance = metric.Evaluate(querySet.col(queryIndex),
                                     referenceSet.col(referenceIndex));
-  densities(queryIndex) += kernel.Evaluate(distance);
+  densities(oldFromNewQueries.at(queryIndex)) += kernel.Evaluate(distance);
   ++baseCases;
   lastQueryIndex = queryIndex;
   lastReferenceIndex = referenceIndex;
@@ -86,16 +88,17 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   bound = kernel.Evaluate(queryNode.MinDistance(referenceNode)) -
           kernel.Evaluate(queryNode.MaxDistance(referenceNode));
 
-  if (bound <= (error / referenceSet.n_cols))
+  if (bound <= error / referenceSet.n_cols)
   {
-    arma::vec center = arma::vec();
-    referenceNode.Center(center);
+    arma::vec queryCenter, referenceCenter;
+    referenceNode.Center(referenceCenter);
+    queryNode.Center(queryCenter);
+    const double kernelValue = kernel.Evaluate(metric.Evaluate(referenceCenter,
+                                                               queryCenter));
     for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
     {
-      densities(queryNode.Descendant(i)) +=
-        referenceNode.NumDescendants() *
-        kernel.Evaluate(metric.Evaluate(querySet.col(queryNode.Descendant(i)),
-                                        center));
+      densities(oldFromNewQueries.at(queryNode.Descendant(i))) +=
+        referenceNode.NumDescendants() * kernelValue;
     }
     score = DBL_MAX;
   }

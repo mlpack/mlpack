@@ -28,13 +28,13 @@ KDE(const MatType& referenceSet,
     const double error,
     const double bandwidth,
     const size_t leafSize) :
-    referenceSet(referenceSet)
+    referenceSet(referenceSet),
+    leafSize(leafSize)
 {
   this->referenceTree = new Tree(referenceSet, leafSize);
   this->kernel = new KernelType(bandwidth);
   this->error = error;
   this->bandwidth = bandwidth;
-  this->leafSize = leafSize;
 }
 
 template<typename MetricType,
@@ -58,13 +58,17 @@ template<typename MetricType,
 void KDE<MetricType, MatType, KernelType, TreeType>::
 Evaluate(const MatType& query, arma::vec& estimations)
 {
-  Tree* queryTree = new Tree(query, leafSize);
+  std::vector<size_t>* oldFromNewQueries;
+  Tree* queryTree;
+  oldFromNewQueries = new std::vector<size_t>(query.n_cols);
+  queryTree = new Tree(query, *oldFromNewQueries, leafSize);
   MetricType metric = MetricType();
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
-  RuleType rules = RuleType(this->referenceSet,
-                            query,
+  RuleType rules = RuleType(this->referenceTree->Dataset(),
+                            queryTree->Dataset(),
                             estimations,
                             error,
+                            *oldFromNewQueries,
                             metric,
                             *kernel);
   // SingleTreeTraverser
@@ -78,6 +82,7 @@ Evaluate(const MatType& query, arma::vec& estimations)
   typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
   traverser.Traverse(*queryTree, *referenceTree);
   estimations /= referenceSet.n_cols;
+  delete oldFromNewQueries;
   delete queryTree;
 
   // Brute force
