@@ -23,13 +23,14 @@ template<typename FitnessFunction = GiniGain,
          typename DimensionSelectionType = MultipleRandomDimensionSelect<>,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
+         template<typename> class PruningMethod = ReducedErrorPostPruning,
          typename ElemType = double>
 class RandomForest
 {
  public:
   //! Allow access to the underlying decision tree type.
   typedef DecisionTree<FitnessFunction, NumericSplitType, CategoricalSplitType,
-      DimensionSelectionType, ElemType> DecisionTreeType;
+      PruningMethod, DimensionSelectionType, ElemType> DecisionTreeType;
 
   /**
    * Construct the random forest without any training or specifying the number
