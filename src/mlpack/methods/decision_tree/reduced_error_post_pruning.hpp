@@ -22,6 +22,8 @@ namespace tree {
 /**
  * The ReducedErrorPostPruning is a pruning mechanism for post tree pruning for
  * improving generalisation.
+ *
+ * @tparam DecisionTree Decision Tree for pruning upon.
  */
 template<typename DecisionTree>
 class ReducedErrorPostPruning

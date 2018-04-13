@@ -1121,8 +1121,8 @@ void DecisionTree<FitnessFunction,
                                       LabelsType&& validLabels,
                                       double& bestScore)
 {
-  PostPruningMethod::Prune<UseWeights>(root, root, labels, numClasses, weights,
-    validData, validLabels, bestScore);
+  PostPruningMethod::template Prune<UseWeights>(root, root, labels, numClasses,
+    weights, validData, validLabels, bestScore);
 }
 
 } // namespace tree
