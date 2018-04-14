@@ -80,6 +80,53 @@ PARAM_STRING_IN("update_rules", "Update rules for each iteration; ( multdist | "
 PARAM_MATRIX_IN("initial_w", "Initial W matrix.", "p");
 PARAM_MATRIX_IN("initial_h", "Initial H matrix.", "q");
 
+template<typename UpdateRuleType>
+void ApplyFactorization(const arma::mat& V,
+                        const size_t r,
+                        arma::mat& W,
+                        arma::mat& H)
+{
+  const size_t maxIterations = CLI::GetParam<int>("max_iterations");
+  const double minResidue = CLI::GetParam<double>("min_residue");
+
+  SimpleResidueTermination srt(minResidue, maxIterations);
+  if (CLI::HasParam("initial_w") && CLI::HasParam("initial_h"))
+  {
+    GivenInitialization ginit = GivenInitialization(
+        std::move(CLI::GetParam<arma::mat>("initial_w")),
+        std::move(CLI::GetParam<arma::mat>("initial_h")));
+    AMF<SimpleResidueTermination,
+        GivenInitialization,
+        UpdateRuleType> amf(srt, ginit);
+    amf.Apply(V, r, W, H);
+  }
+  else if (CLI::HasParam("initial_w"))
+  {
+    GivenInitialization ginit = GivenInitialization(
+        'W', std::move(CLI::GetParam<arma::mat>("initial_w")));
+    AMF<SimpleResidueTermination,
+        GivenInitialization,
+        UpdateRuleType> amf(srt, ginit);
+    amf.Apply(V, r, W, H);
+  }
+  else if (CLI::HasParam("initial_h"))
+  {
+    GivenInitialization ginit = GivenInitialization(
+        'H', std::move(CLI::GetParam<arma::mat>("initial_h")));
+    AMF<SimpleResidueTermination,
+        GivenInitialization,
+        UpdateRuleType> amf(srt, ginit);
+    amf.Apply(V, r, W, H);
+  }
+  else
+  {
+    AMF<SimpleResidueTermination,
+        RandomInitialization,
+        UpdateRuleType> amf(srt);
+    amf.Apply(V, r, W, H);
+  }
+}
+
 static void mlpackMain()
 {
   // Initialize random seed.
@@ -90,8 +137,6 @@ static void mlpackMain()
 
   // Gather parameters.
   const size_t r = CLI::GetParam<int>("rank");
-  const size_t maxIterations = CLI::GetParam<int>("max_iterations");
-  const double minResidue = CLI::GetParam<double>("min_residue");
   const string updateRules = CLI::GetParam<string>("update_rules");
 
   // Validate parameters.
@@ -103,7 +148,6 @@ static void mlpackMain()
       true, "max_iterations must be non-negative");
 
   RequireAtLeastOnePassed({ "h", "w" }, false, "no output will be saved");
-  RequireNoneOrAllPassed({"initial_w", "initial_h"}, true);
 
   // Load input dataset.
   arma::mat V = std::move(CLI::GetParam<arma::mat>("input"));
@@ -117,72 +161,21 @@ static void mlpackMain()
     Log::Info << "Performing NMF with multiplicative distance-based update "
         << "rules." << std::endl;
 
-    SimpleResidueTermination srt(minResidue, maxIterations);
-    if (CLI::HasParam("initial_w"))
-    {
-      // Initialization with given W, H matrices.
-      GivenInitialization ginit = GivenInitialization(
-          std::move(CLI::GetParam<arma::mat>("initial_w")),
-          std::move(CLI::GetParam<arma::mat>("initial_h")));
-      AMF<SimpleResidueTermination,
-          GivenInitialization> amf(srt, ginit);
-      amf.Apply(V, r, W, H);
-    }
-    else
-    {
-      AMF<> amf(srt);
-      amf.Apply(V, r, W, H);
-    }
+    ApplyFactorization<NMFMultiplicativeDistanceUpdate>(V, r, W, H);
   }
   else if (updateRules == "multdiv")
   {
     Log::Info << "Performing NMF with multiplicative divergence-based update "
         << "rules." << std::endl;
 
-    SimpleResidueTermination srt(minResidue, maxIterations);
-    if (CLI::HasParam("initial_w"))
-    {
-      // Initialization with given W, H matrices.
-      GivenInitialization ginit = GivenInitialization(
-          std::move(CLI::GetParam<arma::mat>("initial_w")),
-          std::move(CLI::GetParam<arma::mat>("initial_h")));
-      AMF<SimpleResidueTermination,
-          GivenInitialization,
-          NMFMultiplicativeDivergenceUpdate> amf(srt, ginit);
-      amf.Apply(V, r, W, H);
-    }
-    else
-    {
-      AMF<SimpleResidueTermination,
-        RandomInitialization,
-        NMFMultiplicativeDivergenceUpdate> amf(srt);
-      amf.Apply(V, r, W, H);
-    }
+    ApplyFactorization<NMFMultiplicativeDivergenceUpdate>(V, r, W, H);
   }
   else if (updateRules == "als")
   {
     Log::Info << "Performing NMF with alternating least squared update rules."
         << std::endl;
 
-    SimpleResidueTermination srt(minResidue, maxIterations);
-    if (CLI::HasParam("initial_w"))
-    {
-      // Initialization with given W, H matrices.
-      GivenInitialization ginit = GivenInitialization(
-          std::move(CLI::GetParam<arma::mat>("initial_w")),
-          std::move(CLI::GetParam<arma::mat>("initial_h")));
-      AMF<SimpleResidueTermination,
-          GivenInitialization,
-          NMFALSUpdate> amf(srt, ginit);
-      amf.Apply(V, r, W, H);
-    }
-    else
-    {
-      AMF<SimpleResidueTermination,
-        RandomInitialization,
-        NMFALSUpdate> amf(srt);
-      amf.Apply(V, r, W, H);
-    }
+    ApplyFactorization<NMFALSUpdate>(V, r, W, H);
   }
 
   // Save results.
