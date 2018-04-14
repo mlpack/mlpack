@@ -34,12 +34,12 @@ void ReducedErrorPostPruning<DecisionTree>::Prune(
   size_t numOfChildren = currentNode->NumChildren();
   for (size_t i = 0; i < numOfChildren; ++i)
   {
-    DecisionTree* node = currentNode->Child(i);
+    DecisionTree* node = &currentNode->Child(i);
     if (node->NumChildren() == 0)
     {
       for (size_t j = 0; j < numOfChildren; ++j)
       {
-        DecisionTree* siblingNode = currentNode->Child(j);
+        DecisionTree* siblingNode = &currentNode->Child(j);
         if (siblingNode->NumChildren() != 0)
         {
           return;
