@@ -357,7 +357,7 @@ class DecisionTree :
   size_t getDimensionTypeOrMajorityClass() const
   { return dimensionTypeOrMajorityClass; }
   //! Modify dimensionTypeOrMajorityClass
-  size_t& setDimensionTypeOrMajorityClass() const
+  size_t& setDimensionTypeOrMajorityClass() 
   { return dimensionTypeOrMajorityClass; }
 
   /**
