@@ -41,10 +41,24 @@ Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
   weights.set_size(outSize * inSize + outSize, 1);
 }
 
+template <typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
+    const size_t layerSize,
+    RegularizerType regularizer) :
+    inSize(0),
+    outSize(layerSize),
+    regularizer(regularizer)
+{
+  // Nothing to do here.
+}
+
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 void Linear<InputDataType, OutputDataType, RegularizerType>::Reset()
 {
+  weights.set_size(outSize * inSize + outSize, 1);
+
   weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
   bias = arma::mat(weights.memptr() + weight.n_elem,
       outSize, 1, false, false);

@@ -22,6 +22,7 @@
 #include "visitor/gradient_visitor.hpp"
 #include "visitor/set_input_height_visitor.hpp"
 #include "visitor/set_input_width_visitor.hpp"
+#include "visitor/set_input_size_visitor.hpp"
 
 #include <boost/serialization/variant.hpp>
 
@@ -35,6 +36,7 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
     OutputLayerType outputLayer, InitializationRuleType initializeRule) :
     outputLayer(std::move(outputLayer)),
     initializeRule(std::move(initializeRule)),
+    size(0),
     width(0),
     height(0),
     reset(false),
@@ -64,7 +66,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::ResetData(
   ResetDeterministic();
 
   if (!reset)
-    ResetParameters();
+    SetInputSize();
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
@@ -123,6 +125,9 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Forward(
     deterministic = true;
     ResetDeterministic();
   }
+
+  if (!reset)
+    SetInputSize();
 
   currentInput = std::move(inputs);
   Forward(std::move(currentInput));
@@ -404,6 +409,31 @@ void FFN<OutputLayerType, InitializationRuleType,
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 void FFN<OutputLayerType, InitializationRuleType,
+         CustomLayers...>::SetInputSize()
+{
+  if (boost::apply_visitor(outputSizeVisitor, network.front()) != 0)
+  {
+    size = boost::apply_visitor(outputSizeVisitor, network.front());
+  }
+
+  for (size_t i = 1; i < network.size(); ++i)
+  {
+    // Set the input size.
+    boost::apply_visitor(SetInputSizeVisitor(size), network[i]);
+
+    // Get the output size.
+    if (boost::apply_visitor(outputSizeVisitor, network[i]) != 0)
+    {
+      size = boost::apply_visitor(outputSizeVisitor, network[i]);
+    }
+  }
+
+  ResetParameters();
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+void FFN<OutputLayerType, InitializationRuleType,
          CustomLayers...>::Forward(arma::mat&& input)
 {
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
@@ -503,6 +533,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     Archive& ar, const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_NVP(parameter);
+  ar & BOOST_SERIALIZATION_NVP(size);
   ar & BOOST_SERIALIZATION_NVP(width);
   ar & BOOST_SERIALIZATION_NVP(height);
   ar & BOOST_SERIALIZATION_NVP(currentInput);
@@ -553,6 +584,7 @@ void FFN<OutputLayerType, InitializationRuleType,
 {
   std::swap(outputLayer, network.outputLayer);
   std::swap(initializeRule, network.initializeRule);
+  std::swap(size, network.size);
   std::swap(width, network.width);
   std::swap(height, network.height);
   std::swap(reset, network.reset);
@@ -576,6 +608,7 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
     const FFN& network):
     outputLayer(network.outputLayer),
     initializeRule(network.initializeRule),
+    size(network.size),
     width(network.width),
     height(network.height),
     reset(network.reset),
@@ -605,6 +638,7 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
     FFN&& network):
     outputLayer(std::move(network.outputLayer)),
     initializeRule(std::move(network.initializeRule)),
+    size(network.size),
     width(network.width),
     height(network.height),
     reset(network.reset),

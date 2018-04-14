@@ -178,7 +178,7 @@ class Convolution
 
   //! Get the input width.
   const size_t& InputWidth() const { return inputWidth; }
-  //! Modify input the width.
+  //! Modify the input width.
   size_t& InputWidth() { return inputWidth; }
 
   //! Get the input height.

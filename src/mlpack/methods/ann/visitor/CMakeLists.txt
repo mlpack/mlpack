@@ -33,6 +33,8 @@ set(SOURCES
   output_height_visitor_impl.hpp
   output_parameter_visitor.hpp
   output_parameter_visitor_impl.hpp
+  output_size_visitor.hpp
+  output_size_visitor_impl.hpp
   output_width_visitor.hpp
   output_width_visitor_impl.hpp
   parameters_set_visitor.hpp
@@ -51,6 +53,8 @@ set(SOURCES
   save_output_parameter_visitor_impl.hpp
   set_input_height_visitor.hpp
   set_input_height_visitor_impl.hpp
+  set_input_size_visitor.hpp
+  set_input_size_visitor_impl.hpp
   set_input_width_visitor.hpp
   set_input_width_visitor_impl.hpp
   weight_set_visitor.hpp

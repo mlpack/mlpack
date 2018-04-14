@@ -19,6 +19,7 @@
 #include "visitor/delta_visitor.hpp"
 #include "visitor/output_height_visitor.hpp"
 #include "visitor/output_parameter_visitor.hpp"
+#include "visitor/output_size_visitor.hpp"
 #include "visitor/output_width_visitor.hpp"
 #include "visitor/reset_visitor.hpp"
 #include "visitor/weight_size_visitor.hpp"
@@ -355,6 +356,12 @@ class FFN
   void Forward(arma::mat&& input);
 
   /**
+   * Set the input sizes of the layers in the network and initializes their
+   * weights.
+   */
+  void SetInputSize();
+
+  /**
    * Prepare the network for the given data.
    * This function won't actually trigger training process.
    *
@@ -399,6 +406,9 @@ class FFN
   //! Instantiated InitializationRule object for initializing the network
   //! parameter.
   InitializationRuleType initializeRule;
+
+  //! The input size.
+  size_t size;
 
   //! The input width.
   size_t width;
@@ -447,6 +457,9 @@ class FFN
 
   //! Locally-stored loss visitor
   LossVisitor lossVisitor;
+
+  //! Locally-stored output size visitor.
+  OutputSizeVisitor outputSizeVisitor;
 
   //! Locally-stored reset visitor.
   ResetVisitor resetVisitor;
