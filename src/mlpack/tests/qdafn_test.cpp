@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(QDAFNUniformSet)
   QDAFN<> qdafn(uniformSet, 10, 30);
 
   // Get the actual neighbors.
-  AllkFN kfn(uniformSet);
+  KFN kfn(uniformSet);
   arma::Mat<size_t> trueNeighbors;
   arma::mat trueDistances;
 
@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(QDAFNUniformSet)
       ++successes;
   }
 
-  BOOST_REQUIRE_GE(successes, 700);
+  BOOST_REQUIRE_GE(successes, 695);
 }
 
 /**

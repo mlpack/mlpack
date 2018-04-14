@@ -4,6 +4,11 @@
  *
  * Adds a decomposable EvaluateWithGradient() function if both a decomposable
  * Evaluate() and a decomposable Gradient() function exist.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_OPTIMIZERS_FUNCTION_ADD_DECOMPOSABLE_EVALUATE_W_GRADIENT_HPP
 #define MLPACK_CORE_OPTIMIZERS_FUNCTION_ADD_DECOMPOSABLE_EVALUATE_W_GRADIENT_HPP

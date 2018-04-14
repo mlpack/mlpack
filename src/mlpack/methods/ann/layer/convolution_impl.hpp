@@ -171,8 +171,8 @@ void Convolution<
 >::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  arma::cube mappedError = arma::cube(gy.memptr(),
-        outputWidth, outputHeight, outSize);
+  arma::cube mappedError(gy.memptr(), outputWidth, outputHeight, outSize,
+      false, false);
   gTemp = arma::zeros<arma::Cube<eT> >(inputTemp.n_rows,
       inputTemp.n_cols, inputTemp.n_slices);
 
@@ -265,12 +265,10 @@ void Convolution<
       {
         for (size_t i = 0; i < output.n_slices; i++)
         {
-          arma::mat subOutput = output.slice(i);
-
-          gradientTemp.slice(s) += subOutput.submat(subOutput.n_rows / 2,
-              subOutput.n_cols / 2,
-              subOutput.n_rows / 2 + gradientTemp.n_rows - 1,
-              subOutput.n_cols / 2 + gradientTemp.n_cols - 1);
+          gradientTemp.slice(s) += output.slice(i).submat(output.n_rows / 2,
+              output.n_cols / 2,
+              output.n_rows / 2 + gradientTemp.n_rows - 1,
+              output.n_cols / 2 + gradientTemp.n_cols - 1);
         }
       }
       else

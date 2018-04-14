@@ -40,9 +40,7 @@ Sequential<InputDataType, OutputDataType, CustomLayers...>::~Sequential()
   if (!model)
   {
     for (LayerTypes<CustomLayers...>& layer : network)
-    {
       boost::apply_visitor(deleteVisitor, layer);
-    }
   }
 }
 

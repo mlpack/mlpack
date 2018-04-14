@@ -4,6 +4,11 @@
  *
  * Given a matrix type, return the letter we should append to get the right
  * arma_numpy method call.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_BINDINGS_PYTHON_GET_NUMPY_TYPE_CHAR_HPP
 #define MLPACK_BINDINGS_PYTHON_GET_NUMPY_TYPE_CHAR_HPP
