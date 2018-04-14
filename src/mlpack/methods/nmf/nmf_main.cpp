@@ -92,6 +92,7 @@ void ApplyFactorization(const arma::mat& V,
   SimpleResidueTermination srt(minResidue, maxIterations);
   if (CLI::HasParam("initial_w") && CLI::HasParam("initial_h"))
   {
+    // Initialize W and H with given matrices.
     GivenInitialization ginit = GivenInitialization(
         std::move(CLI::GetParam<arma::mat>("initial_w")),
         std::move(CLI::GetParam<arma::mat>("initial_h")));
@@ -102,6 +103,7 @@ void ApplyFactorization(const arma::mat& V,
   }
   else if (CLI::HasParam("initial_w"))
   {
+    // Initialize W with the given matrix, and H with random noise.
     GivenInitialization ginit = GivenInitialization(
         'W', std::move(CLI::GetParam<arma::mat>("initial_w")));
     AMF<SimpleResidueTermination,
@@ -111,6 +113,7 @@ void ApplyFactorization(const arma::mat& V,
   }
   else if (CLI::HasParam("initial_h"))
   {
+    // Initialize H with the given matrix, and W with random noise.
     GivenInitialization ginit = GivenInitialization(
         'H', std::move(CLI::GetParam<arma::mat>("initial_h")));
     AMF<SimpleResidueTermination,
@@ -120,6 +123,7 @@ void ApplyFactorization(const arma::mat& V,
   }
   else
   {
+    // Use random initialization.
     AMF<SimpleResidueTermination,
         RandomInitialization,
         UpdateRuleType> amf(srt);
