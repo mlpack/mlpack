@@ -3,7 +3,7 @@
  * @author Ryan Curtin
  *
  * Initialization rule for alternating matrix factorization (AMF). This simple
- * initialization is performed by assigning a given matrix to W and H.
+ * initialization is performed by assigning a given matrix to W and/or H.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,10 +19,12 @@ namespace mlpack {
 namespace amf {
 
 /**
- * This initialization rule for AMF simply fills the W and H matrices with the
- * matrices given to the constructor of this object.  Note that this object does
- * not use std::move() during the Initialize() method, so it can be reused for
- * multiple AMF objects, but will incur copies of the W and H matrices.
+ * This initialization rule for AMF simply fills the W and/or H matrices with
+ * the matrices given to the constructor of this object. If only one initial
+ * matrix is given, the other matrix will be initialized with random noise.
+ * Note that this object does not use std::move() during the Initialize()
+ * method, so it can be reused for multiple AMF objects, but will incur copies
+ * of the W and H matrices.
  */
 class GivenInitialization
 {
