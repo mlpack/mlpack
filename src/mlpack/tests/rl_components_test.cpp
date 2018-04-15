@@ -14,7 +14,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/continous_mountain_car.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
 #include <mlpack/methods/reinforcement_learning/replay/random_replay.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
@@ -27,15 +27,15 @@ using namespace mlpack::rl;
 
 BOOST_AUTO_TEST_SUITE(RLComponentsTest)
 /**
- * Constructs a Continous MountainCar instance and check if the main rountine 
- *  works as it should be.
+ * Constructs a Continuous MountainCar instance and check if the main rountine 
+ * works as it should be.
  */
-BOOST_AUTO_TEST_CASE(SimpleContinousMountainCarTest)
+BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTest)
 {
-  const ContinousMountainCar task = ContinousMountainCar();
+  const ContinuousMountainCar task = ContinuousMountainCar();
 
-  ContinousMountainCar::State state = task.InitialSample();
-  ContinousMountainCar::Action action;
+  ContinuousMountainCar::State state = task.InitialSample();
+  ContinuousMountainCar::Action action;
   action.force[0] = math::Random(-1.0, 1.0);
   double reward = task.Sample(state, action);
   // Maximum reward possible is 100.

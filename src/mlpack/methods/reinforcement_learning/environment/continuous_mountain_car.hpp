@@ -1,5 +1,5 @@
 /**
- * @file continous_mountain_car.hpp
+ * @file continuous_mountain_car.hpp
  * @author Rohan Raj
  *
  * This file is an implementation of Continous Mountain Car task:
@@ -13,8 +13,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_RL_ENVIRONMENT_CONTINOUS_MOUNTAIN_CAR_HPP
-#define MLPACK_METHODS_RL_ENVIRONMENT_CONTINOUS_MOUNTAIN_CAR_HPP
+#ifndef MLPACK_METHODS_RL_ENVIRONMENT_CONTINUOUS_MOUNTAIN_CAR_HPP
+#define MLPACK_METHODS_RL_ENVIRONMENT_CONTINUOUS_MOUNTAIN_CAR_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -22,13 +22,13 @@ namespace mlpack {
 namespace rl {
 
 /**
- * Implementation of Mountain Car task.
+ * Implementation of Continuous Mountain Car task.
  */
-class ContinousMountainCar
+class ContinuousMountainCar
 {
  public:
   /**
-   * Implementation of state of Mountain Car. Each state is a
+   * Implementation of state of Continuous Mountain Car. Each state is a
    * (velocity, position) vector.
    */
   class State
@@ -73,7 +73,7 @@ class ContinousMountainCar
   };
 
   /**
-   * Implementation of action of Mountain Car.
+   * Implementation of action of Continuous Mountain Car.
    */
   struct Action
   {
@@ -83,17 +83,17 @@ class ContinousMountainCar
   };
 
   /**
-   * Construct a Mountain Car instance using the given constant.
+   * Construct a Continuous Mountain Car instance using the given constant.
    *
    * @param positionMin Minimum legal position.
    * @param positionMax Maximum legal position.
    * @param velocityMin Minimum legal velocity.
    * @param velocityMax Maximum legal velocity.
    */
-  ContinousMountainCar(const double positionMin = -1.2,
-                       const double positionMax = 0.5,
-                       const double velocityMin = -0.07,
-                       const double velocityMax = 0.07) :
+  ContinuousMountainCar(const double positionMin = -1.2,
+                        const double positionMax = 0.5,
+                        const double velocityMin = -0.07,
+                        const double velocityMax = 0.07) :
       positionMin(positionMin),
       positionMax(positionMax),
       velocityMin(velocityMin),
@@ -101,8 +101,8 @@ class ContinousMountainCar
   { /* Nothing to do here */ }
 
   /**
-   * Dynamics of Mountain Car. Get reward and next state based on current state
-   * and current action.
+   * Dynamics of Continuous Mountain Car. Get reward and next state based 
+   * on current state and current action.
    *
    * @param state The current state.
    * @param action The current action.
@@ -136,7 +136,7 @@ class ContinousMountainCar
   }
 
   /**
-   * Dynamics of Mountain Car. Get reward based on current state and current
+   * Dynamics of Continuous Mountain Car. Get reward based on current state and current
    * action.
    *
    * @param state The current state.
