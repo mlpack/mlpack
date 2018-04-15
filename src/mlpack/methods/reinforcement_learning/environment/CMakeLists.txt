@@ -3,6 +3,7 @@
 set(SOURCES
   mountain_car.hpp
   cart_pole.hpp
+  continous_mountain_car.hpp
 )
 
 # Add directory name to sources.
