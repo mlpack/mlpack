@@ -77,7 +77,7 @@ class ContinousMountainCar
    */
   struct Action
   {
-    double force;
+    double force[1];
     // Storing degree of freedom
     const int size = 1;
   };
@@ -90,10 +90,10 @@ class ContinousMountainCar
    * @param velocityMin Minimum legal velocity.
    * @param velocityMax Maximum legal velocity.
    */
-  MountainCar(const double positionMin = -1.2,
-              const double positionMax = 0.5,
-              const double velocityMin = -0.07,
-              const double velocityMax = 0.07) :
+  ContinousMountainCar(const double positionMin = -1.2,
+                       const double positionMax = 0.5,
+                       const double velocityMin = -0.07,
+                       const double velocityMax = 0.07) :
       positionMin(positionMin),
       positionMax(positionMax),
       velocityMin(velocityMin),
@@ -114,7 +114,7 @@ class ContinousMountainCar
                 State& nextState) const
   {
     // Calculate acceleration.
-    double force = std::min(std::max(action.force, -1.0), 1.0);
+    double force = std::min(std::max(action.force[0], -1.0), 1.0);
     nextState.Velocity() = state.Velocity() + 0.001 * force - 0.0025 *
         std::cos(3 * state.Position());
     nextState.Velocity() = std::min(
@@ -130,9 +130,9 @@ class ContinousMountainCar
       nextState.Velocity() = 0.0;
     }
     // If it is terminal state, reward is 100.0
-    if IsTerminal(nextState)
+    if (IsTerminal(nextState))
       return 100.0;
-    return -pow(action.force,2)*0.1    
+    return -pow(action.force[0], 2)*0.1;
   }
 
   /**

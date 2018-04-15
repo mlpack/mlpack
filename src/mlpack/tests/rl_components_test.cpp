@@ -1,6 +1,7 @@
 /**
  * @file rl_environment_test.hpp
  * @author Shangtong Zhang
+ * @author Rohan Raj
  *
  * Basic test for the components of reinforcement learning algorithms.
  *
@@ -13,6 +14,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/continous_mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
 #include <mlpack/methods/reinforcement_learning/replay/random_replay.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
@@ -24,6 +26,25 @@ using namespace mlpack;
 using namespace mlpack::rl;
 
 BOOST_AUTO_TEST_SUITE(RLComponentsTest)
+  
+/**
+ * Constructs a MountainCar instance and check if the main rountine works as
+ * it should be.
+ */
+BOOST_AUTO_TEST_CASE(SimpleContinousMountainCarTest)
+{
+  const ContinousMountainCar task = ContinousMountainCar();
+
+  ContinousMountainCar::State state = task.InitialSample();
+  ContinousMountainCar::Action action;
+  action.force[0] = math::Random(-1.0, 1.0);
+  double reward = task.Sample(state, action);
+  // Maximum reward possible is 100.
+  BOOST_REQUIRE(reward <= 100.0);
+  BOOST_REQUIRE(!task.IsTerminal(state));
+  BOOST_REQUIRE_EQUAL(1, action.size);
+}
+
 
 /**
  * Constructs a MountainCar instance and check if the main rountine works as
