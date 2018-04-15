@@ -108,7 +108,7 @@ class OneStepSarsaWorker
     episodeReturn += reward;
     steps++;
 
-    terminal = terminal || steps >= config.StepLimit();
+    terminal = (terminal || steps >= config.StepLimit());
     if (deterministic)
     {
       if (terminal)
