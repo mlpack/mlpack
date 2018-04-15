@@ -26,10 +26,9 @@ using namespace mlpack;
 using namespace mlpack::rl;
 
 BOOST_AUTO_TEST_SUITE(RLComponentsTest)
-  
 /**
- * Constructs a MountainCar instance and check if the main rountine works as
- * it should be.
+ * Constructs a Continous MountainCar instance and check if the main rountine 
+ *  works as it should be.
  */
 BOOST_AUTO_TEST_CASE(SimpleContinousMountainCarTest)
 {
