@@ -319,10 +319,8 @@ BOOST_AUTO_TEST_CASE(JacobianConstantLayerTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleDropoutLayerTest)
 {
-  // Initialize the probability of setting a value to zero and the scale
-  // parameter.
+  // Initialize the probability of setting a value to zero.
   const double p = 0.2;
-  const double scale = 1.0 / (1.0 - p);
 
   // Initialize the input parameter.
   arma::mat input(1000, 1);
@@ -345,14 +343,8 @@ BOOST_AUTO_TEST_CASE(SimpleDropoutLayerTest)
 
   // Test the Forward function.
   module.Deterministic() = true;
-  module.Rescale() = false;
   module.Forward(std::move(input), std::move(output));
   BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(output));
-
-  // Test the Forward function.
-  module.Rescale() = true;
-  module.Forward(std::move(input), std::move(output));
-  BOOST_REQUIRE_CLOSE(arma::accu(input) * scale, arma::accu(output), 1e-3);
 }
 
 /**
@@ -397,6 +389,98 @@ BOOST_AUTO_TEST_CASE(NoDropoutTest)
 {
   arma::mat input = arma::ones(1500, 1);
   Dropout<> module(0);
+  module.Deterministic() = false;
+
+  arma::mat output;
+  module.Forward(std::move(input), std::move(output));
+
+  BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(input));
+}
+
+/*
+ * Perform test to check whether mean and variance remain nearly same
+ * after AlphaDropout.
+ */
+BOOST_AUTO_TEST_CASE(SimpleAlphaDropoutLayerTest)
+{
+  // Initialize the probability of setting a value to alphaDash.
+  const double p = 0.2;
+
+  // Initialize the input parameter having a mean nearabout 0
+  // and variance nearabout 1.
+  arma::mat input = arma::randn<arma::mat>(1000, 1);
+
+  AlphaDropout<> module(p);
+  module.Deterministic() = false;
+
+  // Test the Forward function when training phase.
+  arma::mat output;
+  module.Forward(std::move(input), std::move(output));
+  // Check whether mean remains nearly same.
+  BOOST_REQUIRE_LE(
+      arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))), 0.1);
+
+  // Check whether variance remains nearly same.
+  BOOST_REQUIRE_LE(
+      arma::as_scalar(arma::abs(arma::var(input) - arma::var(output))), 0.1);
+
+  // Test the Backward function when training phase.
+  arma::mat delta;
+  module.Backward(std::move(input), std::move(input), std::move(delta));
+  BOOST_REQUIRE_LE(
+      arma::as_scalar(arma::abs(arma::mean(delta) - 0)), 0.05);
+
+  // Test the Forward function when testing phase.
+  module.Deterministic() = true;
+  module.Forward(std::move(input), std::move(output));
+  BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(output));
+}
+
+/**
+ * Perform AlphaDropout x times using ones as input, sum the number of ones
+ * and validate that the layer is producing approximately the correct number
+ * of ones.
+ */
+BOOST_AUTO_TEST_CASE(AlphaDropoutProbabilityTest)
+{
+  arma::mat input = arma::ones(1500, 1);
+  const size_t iterations = 10;
+
+  double probability[5] = { 0.1, 0.3, 0.4, 0.7, 0.8 };
+  for (size_t trial = 0; trial < 5; ++trial)
+  {
+    double nonzeroCount = 0;
+    for (size_t i = 0; i < iterations; ++i)
+    {
+      AlphaDropout<> module(probability[trial]);
+      module.Deterministic() = false;
+
+      arma::mat output;
+      module.Forward(std::move(input), std::move(output));
+
+      // Return a column vector containing the indices of elements of X
+      // that are not alphaDash, we just need the number of
+      // nonAlphaDash values.
+      arma::uvec nonAlphaDash = arma::find(module.Mask());
+      nonzeroCount += nonAlphaDash.n_elem;
+    }
+
+    const double expected = input.n_elem * (1-probability[trial]) * iterations;
+
+    const double error = fabs(nonzeroCount - expected) / expected;
+
+    BOOST_REQUIRE_LE(error, 0.15);
+  }
+}
+
+/**
+ * Perform AlphaDropout with probability 1 - p where p = 0,
+ * means no AlphaDropout.
+ */
+BOOST_AUTO_TEST_CASE(NoAlphaDropoutTest)
+{
+  arma::mat input = arma::ones(1500, 1);
+  AlphaDropout<> module(0);
   module.Deterministic() = false;
 
   arma::mat output;
@@ -613,6 +697,70 @@ BOOST_AUTO_TEST_CASE(JacobianLeakyReLULayerTest)
     double error = JacobianTest(module, input);
     BOOST_REQUIRE_LE(error, 1e-5);
   }
+}
+
+/**
+ * Jacobian FlexibleReLU module test.
+ */
+BOOST_AUTO_TEST_CASE(JacobianFlexibleReLULayerTest)
+{
+  for (size_t i = 0; i < 5; i++)
+  {
+    const size_t inputElements = math::RandInt(2, 1000);
+
+    arma::mat input;
+    input.set_size(inputElements, 1);
+
+    FlexibleReLU<> module;
+
+    double error = JacobianTest(module, input);
+    BOOST_REQUIRE_LE(error, 1e-5);
+  }
+}
+
+/**
+ * Flexible ReLU layer numerically gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientFlexibleReLULayerTest)
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(2, 1);
+      target = arma::mat("1");
+
+      model = new FFN<NegativeLogLikelihood<>, RandomInitialization>(
+          NegativeLogLikelihood<>(), RandomInitialization(0.1, 0.5));
+
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<LinearNoBias<> >(2, 5);
+      model->Add<FlexibleReLU<> >(0.05);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, RandomInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 /**

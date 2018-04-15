@@ -28,6 +28,13 @@ mkdir -p mlpack-3.0.0/build/ && cd mlpack-3.0.0/build/
 cmake ../ && make -j4 && sudo make install
 @endcode
 
+You can also use the mlpack Docker image on Dockerhub, which has all of the
+Python bindings pre-installed:
+
+@code
+docker run -it mlpack/mlpack /bin/bash
+@endcode
+
 @section python_quickstart_example Simple mlpack quickstart example
 
 As a really simple example of how to use mlpack from Python, let's do some
