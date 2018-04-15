@@ -199,8 +199,10 @@ BOOST_AUTO_TEST_CASE(GaussianInitTest)
 }
 
 /**
- * Simple test of the GaussianInitialization class with truncated flag set.
- * Generated random values must lie within two standard deviations of the mean.
+ * Simple test of the TruncatedGaussianInitialization class.
+ * Generated random values are sampled from a Gaussian distribution of given
+ * mean and variance. Random values must lie within two standard deviations
+ * of the mean.
  */
 BOOST_AUTO_TEST_CASE(TruncatedGaussianInitTest)
 {
@@ -211,10 +213,10 @@ BOOST_AUTO_TEST_CASE(TruncatedGaussianInitTest)
   arma::mat weights;
   arma::cube weights3d;
 
-  GaussianInitialization t(0, 0.2);
+  TruncatedGaussianInitialization t(0, 0.2);
 
-  t.Initialize(weights, rows, cols, true);
-  t.Initialize(weights3d, rows, cols, slices, true);
+  t.Initialize(weights, rows, cols);
+  t.Initialize(weights3d, rows, cols, slices);
 
   BOOST_REQUIRE_EQUAL(weights.n_rows, rows);
   BOOST_REQUIRE_EQUAL(weights.n_cols, cols);
@@ -317,6 +319,17 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
   gaussianModel.Predict(input, response);
 
   BOOST_REQUIRE_EQUAL(gaussianModel.Parameters().n_elem, 42);
+
+  // Create a simple network and use the TruncatedGaussianInitialization rule to
+  // initialize the network parameters.
+  FFN<NegativeLogLikelihood<>, TruncatedGaussianInitialization> truncatedModel;
+  truncatedModel.Add<IdentityLayer<> >();
+  truncatedModel.Add<Linear<> >(5, 5);
+  truncatedModel.Add<Linear<> >(5, 2);
+  truncatedModel.Add<LogSoftMax<> >();
+  truncatedModel.Predict(input, response);
+
+  BOOST_REQUIRE_EQUAL(truncatedModel.Parameters().n_elem, 42);
 }
 
 /**

@@ -118,7 +118,7 @@ class TruncatedGaussianInitialization
    */
   TruncatedGaussianInitialization(const double mean = 0,
                                   const double variance = 1.0) :
-     g(new GaussianInitialization(mean, variance))
+     g(GaussianInitialization(mean, variance))
   {
     // Nothing to do here.
   }
@@ -134,7 +134,7 @@ class TruncatedGaussianInitialization
                   const size_t rows,
                   const size_t cols)
   {
-    g->Initialize(W, rows, cols, true);
+    g.Initialize(W, rows, cols, true);
   }
 
   void Initialize(arma::cube& W,
@@ -142,16 +142,11 @@ class TruncatedGaussianInitialization
                   const size_t cols,
                   const size_t slices)
   {
-    g->Initialize(W, rows, cols, slices, true);
-  }
-
-  ~TruncatedGaussianInitialization()
-  {
-    delete g;
+    g.Initialize(W, rows, cols, slices, true);
   }
 
  private:
-  GaussianInitialization* g;
+  GaussianInitialization g;
 };
 
 } // namespace ann
