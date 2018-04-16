@@ -16,7 +16,7 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/reinforcement_learning/async_learning.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
-#include <mlpack/core/optimizers/adam/adam_update.hpp>
+#include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/aggregated_policy.hpp>
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_SUITE(AsyncLearningTest);
 BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
 {
   /**
-   * This is for the Travis CI server, in your own machine you shuold use more
+   * This is for the Travis CI server, in your own machine you should use more
    * threads.
    */
   #ifdef HAS_OPENMP
