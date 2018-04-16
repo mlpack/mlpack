@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(NCAExplicitImplicitLabelsTest)
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 2);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 2);
 
-  //Reset Settings
+  // Reset Settings
   CLI::ClearSettings();
   CLI::RestoreSettings(testName);
 
@@ -88,10 +88,10 @@ BOOST_AUTO_TEST_CASE(NCAExplicitImplicitLabelsTest)
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 3);
 }
 
-// /**
-// * Ensure that when we pass optimizer of type lbfgs, we also get the desired
-// * shape of output.
-// */
+/**
+* Ensure that when we pass optimizer of type lbfgs, we also get the desired
+* shape of output.
+*/
 BOOST_AUTO_TEST_CASE(NCALBFGSTest)
 {
   arma::mat x;
@@ -179,7 +179,6 @@ BOOST_AUTO_TEST_CASE(NCADiffferentStepSizeTest)
                               " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels2 = " 0    0    0    1    1    1   ";
 
-
   // Set parameters using the same input but with a larger step size.
   SetInputParam("input", std::move(y));
   SetInputParam("labels", std::move(labels2));
@@ -228,14 +227,15 @@ BOOST_AUTO_TEST_CASE(NCADiffNumBasisTest)
 
   mlpackMain();
 
+  // Check that the output matrices are different.
   BOOST_REQUIRE_EQUAL(arma::approx_equal(
       CLI::GetParam<arma::mat>("output"), output, "absdiff", 0), false);
 }
 
-// /**
-// * Ensure that using a different value of max_iteration
-// * results in a different output matrix
-// */
+/**
+* Ensure that using a different value of max_iteration
+* results in a different output matrix
+*/
 BOOST_AUTO_TEST_CASE(NCADiffferentMaxIterationTest)
 {
   // Random dataset.
