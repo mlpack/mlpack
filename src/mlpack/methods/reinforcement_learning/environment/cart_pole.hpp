@@ -154,7 +154,21 @@ class CartPole
     nextState.Angle() = state.Angle() + tau * state.AngularVelocity();
     nextState.AngularVelocity() = state.AngularVelocity() + tau * thetaAcc;
 
-    return 1.0;
+    /**
+     * It is important to note that if the cartpole is falling down, it should
+     * not get any reward.
+     *
+     * If done is false, it means that the cartpole hasn't fallen down. In 
+     * this situation the agent should be given a positive reward. 
+     */
+    bool done = IsTerminal(state);
+    if (!done)
+      return 1.0;
+    /**
+     * When done is true, it means that the cartpole has fallen down.
+     * For this case the reward is 0.
+     */
+    return 0.0;
   }
 
   /**
