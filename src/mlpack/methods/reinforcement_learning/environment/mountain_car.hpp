@@ -132,7 +132,18 @@ class MountainCar
     {
       nextState.Velocity() = 0.0;
     }
-
+    bool done = IsTerminal(state);
+    /**
+     * If done is true , it means that car has reached its goal.
+     * To make sure that the agent learns this, we will give some
+     * positive reward to the agent. I am giving +1.0 to make sure
+     * that the agent learns this.
+     *
+     * If the agent doesn't reach the terminal state, then we will
+     * give a -1.0 reward to penalize the agent to take that step.
+     */
+    if (done)
+      return 1.0;
     return -1.0;
   }
 
