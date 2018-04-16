@@ -1,19 +1,21 @@
 /**
  * @file lbest_update.hpp
+ * @author Chintan Soni
  *
- * ADD LBEST DESCRIPTION HERE.
+ * The local best version of PSO in which particles communicate with only two
+ * neighbours each, thus forming a ring topology amongst them. This approach
+ * allows PSO to converge at the global minimum, but takes significantly more
+ * iterations to do so.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_PSO_LBEST_UPDATE_HPP
-#define MLPACK_CORE_OPTIMIZERS_PSO_LBEST_UPDATE_HPP
+#ifndef MLPACK_CORE_OPTIMIZERS_PSO_UPDATE_POLICIES_LBEST_UPDATE_HPP
+#define MLPACK_CORE_OPTIMIZERS_PSO_UPDATE_POLICIES_LBEST_UPDATE_HPP
 
 #include <mlpack/prereqs.hpp>
-
-#include <iostream>
 
 namespace mlpack {
 namespace optimization {
@@ -67,9 +69,9 @@ class LBestUpdate
   }
 
   /**
-   * Update step for LBestPSO.
-   *
-   * ADD DESCRIPTIONS OF RELEVANT PARAMETERS HERE.
+   * Update step for LBestPSO. Compares personal best of each particle with that
+   * of its neighbours, and sets the best of the 3 as the lobal best. This
+   * particle is then used for calculating the velocity for the update step.
    *
    * @param particlePositions The current coordinates of particles.
    * @param particleVelocities The current velocities (will be modified).
@@ -99,11 +101,11 @@ class LBestUpdate
       r1.randu();
       r2.randu();
       particleVelocities.slice(i) = chi * (particleVelocities.slice(i) +
-        c1 * r1 %
-          (particleBestPositions.slice(i) - particlePositions.slice(i)) +
-        c2 * r2 %
-          (particleBestPositions.slice(localBestIndices(i)) -
-            particlePositions.slice(i)));
+          c1 * r1 %
+              (particleBestPositions.slice(i) - particlePositions.slice(i)) +
+          c2 * r2 %
+              (particleBestPositions.slice(localBestIndices(i)) -
+                  particlePositions.slice(i)));
     }
   }
 
@@ -123,8 +125,8 @@ class LBestUpdate
   arma::vec localBestIndices;
 
   // Helper functions for calculating neighbours.
-  inline const size_t left(const size_t index) { return (index + n - 1) % n; }
-  inline const size_t right(const size_t index) { return (index + 1) % n; }
+  inline size_t left(const size_t index) { return (index + n - 1) % n; }
+  inline size_t right(const size_t index) { return (index + 1) % n; }
 };
 
 } // namespace optimization

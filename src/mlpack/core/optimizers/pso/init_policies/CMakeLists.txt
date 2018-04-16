@@ -1,12 +1,8 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  pso.hpp
-  pso_impl.hpp
+  default_init.hpp
 )
-
-add_subdirectory(init_policies)
-add_subdirectory(update_policies)
 
 # Add directory name to sources.
 set(DIR_SRCS)

@@ -14,7 +14,8 @@
 
 #include <mlpack/core.hpp>
 
-#include "lbest_update.hpp"
+#include "update_policies/lbest_update.hpp"
+#include "init_policies/default_init.hpp"
 #include <iostream>
 
 namespace mlpack {
@@ -31,7 +32,8 @@ namespace optimization {
  *   void Gradient(const arma::mat& coordinates,
  *                 arma::mat& gradient);
  */
-template<typename VelocityUpdatePolicy = LBestUpdate>
+template<typename VelocityUpdatePolicy = LBestUpdate,
+         typename InitPolicy = DefaultInit>
 class PSOType
 {
  public:
@@ -52,25 +54,23 @@ class PSOType
    */
   PSOType(
     const size_t numParticles = 16,
-    const size_t maxIterations = 2000,
+    const size_t maxIterations = 3000,
     const double exploitationFactor = 2.05,
     const double explorationFactor = 2.05,
-    const double lowerBound = 0.0,
-    const double upperBound = 1.0,
     const bool enableGradientDescent = false,
     const double psoIterationsRatio = 1.0,
     const double stepSize = 1e-3,
-    const VelocityUpdatePolicy& velocityUpdatePolicy = VelocityUpdatePolicy()) :
+    const VelocityUpdatePolicy& velocityUpdatePolicy = VelocityUpdatePolicy(),
+    const InitPolicy& initPolicy = InitPolicy()) :
     numParticles(numParticles),
     maxIterations(maxIterations),
     exploitationFactor(exploitationFactor),
     explorationFactor(explorationFactor),
-    lowerBound(lowerBound),
-    upperBound(upperBound),
     enableGradientDescent(enableGradientDescent),
     psoIterationsRatio(psoIterationsRatio),
     stepSize(stepSize),
-    velocityUpdatePolicy(velocityUpdatePolicy) { /* Nothing to do */ }
+    velocityUpdatePolicy(velocityUpdatePolicy),
+    initPolicy(initPolicy) { /* Nothing to do */ }
 
   /**
    * ADD PSO OPTIMIZATION DESCRIPTION.
@@ -81,7 +81,7 @@ class PSOType
    *
    * @tparam FunctionType Type of the function to optimize.
    * @param function Function to optimize.
-   * @param iterate Starting point (will be modified).
+   * @param iterate Initial point (will be modified).
    * @return Objective value of the final point.
    */
   template<typename FunctionType>
@@ -93,6 +93,42 @@ class PSOType
   //! Modify value of numParticles.
   size_t& NumParticles() { return numParticles; }
 
+  //! Retrieve value of maxIterations.
+  size_t MaxIterations() const { return maxIterations; }
+
+  //! Modify value of maxIterations.
+  size_t& MaxIterations() { return maxIterations; }
+
+  //! Retrieve value of exploitationFactor.
+  double ExploitationFactor() const { return exploitationFactor; }
+
+  //! Modify value of exploitationFactor.
+  double& ExploitationFactor() { return exploitationFactor; }
+
+  //! Retrieve value of explorationFactor.
+  double ExplorationFactor() const { return explorationFactor; }
+
+  //! Modify value of explorationFactor.
+  double& ExplorationFactor() { return explorationFactor; }
+
+  //! Retrieve value of enableGradientDescent.
+  bool EnableGradientDescent() const { return enableGradientDescent; }
+
+  //! Modify value of enableGradientDescent.
+  bool& EnableGradientDescent() { return enableGradientDescent; }
+
+  //! Retrieve value of psoIterationsRatio.
+  double PsoIterationsRatio() const { return psoIterationsRatio; }
+
+  //! Modify value of psoIterationsRatio.
+  double& PsoIterationsRatio() { return psoIterationsRatio; }
+
+  //! Retrieve value of stepSize.
+  double StepSize() const { return stepSize; }
+
+  //! Modify value of stepSize.
+  double& StepSize() { return stepSize; }
+
  private:
   //! Number of particles in the swarm.
   size_t numParticles;
@@ -102,10 +138,6 @@ class PSOType
   double exploitationFactor;
   //! Exploration factor for lbest version.
   double explorationFactor;
-  //! Lower bound for initialization.
-  double lowerBound;
-  //! Upper bound for initialization.
-  double upperBound;
   //! Decide whether to use gradiene descent or not.
   bool enableGradientDescent;
   //! Ratio of maxIterations for which PSO will be run.
@@ -124,6 +156,8 @@ class PSOType
   arma::cube particleBestPositions;
   //! Velocity update policy used.
   VelocityUpdatePolicy velocityUpdatePolicy;
+  //! Particle initialization policy used.
+  InitPolicy initPolicy;
 };
 
 using LBestPSO = PSOType<LBestUpdate>;

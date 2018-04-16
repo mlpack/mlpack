@@ -20,9 +20,10 @@ namespace mlpack {
 namespace optimization {
 
 //! Optimize the function (minimize).
-template<typename VelocityUpdatePolicy>
+template<typename VelocityUpdatePolicy,
+         typename InitPolicy>
 template<typename FunctionType>
-double PSOType<VelocityUpdatePolicy>::Optimize(
+double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
   FunctionType& function, arma::mat& iterate)
 {
   // The following cast and checks are added for the sake of extending the PSO
@@ -35,25 +36,19 @@ double PSOType<VelocityUpdatePolicy>::Optimize(
   // Make sure we have the methods that we need.
   traits::CheckFunctionTypeAPI<FullFunctionType>();
 
-  // Randomly initialize the particle positions.
-  particlePositions.randu(iterate.n_rows, iterate.n_cols, numParticles);
+  // Initialize particles using the init policy.
+  initPolicy.InitializeParticles(
+      iterate,
+      numParticles,
+      particlePositions,
+      particleVelocities,
+      particleFitnesses,
+      particleBestPositions,
+      particleBestFitnesses);
 
-  // Scale position values according to user input.
-  particlePositions *= (upperBound - lowerBound);
-  particlePositions += lowerBound;
-
-  // Randomly initialize particle velocities.
-  particleVelocities.randu(iterate.n_rows, iterate.n_cols, numParticles);
-
-  // Initialize current fitness values to infinity.
-  particleFitnesses.set_size(numParticles);
-  particleFitnesses.fill(std::numeric_limits<double>::max());
-
-  // Copy to personal best values for first iteration.
-  particleBestPositions = particlePositions;
-  // Initialize personal best fitness values to infinity.
-  particleBestFitnesses.set_size(numParticles);
-  particleBestFitnesses.fill(std::numeric_limits<double>::max());
+  // Initialize the update policy.
+  velocityUpdatePolicy.Initialize(
+      exploitationFactor, explorationFactor, numParticles, iterate);
 
   // User provided weights replacement performed here.
   for (size_t i = 0; i < numParticles; i++)
@@ -87,12 +82,7 @@ double PSOType<VelocityUpdatePolicy>::Optimize(
     particleBestFitnesses(worstParticle) = iterateFitness;
     particlePositions.slice(worstParticle) = iterate;
     particleBestPositions.slice(worstParticle) = iterate;
-    std::cout << "Particle replaced at index: " << worstParticle << std::endl;
   }
-
-  // Initialize the update policy.
-  velocityUpdatePolicy.Initialize(
-    exploitationFactor, explorationFactor, numParticles, iterate);
 
   // Calculate the number of iterations for which PSO is to be run.
   size_t psoIterations = enableGradientDescent ?
