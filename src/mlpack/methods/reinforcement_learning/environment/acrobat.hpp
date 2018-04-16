@@ -163,11 +163,11 @@ class Acrobat
     /**
      * If the acrobat reaches a terminal state, it should be given a positive
      * reward. This will ensure that the agent learns the goal of the game.
-     * I am using a +10.0 as a reward for the terminal state.
+     * I am using a +100.0 as a reward for the terminal state.
      */
     bool done = IsTerminal(nextState);
     if (done)
-      return 10.0;
+      return 100.0;
     return -1;
   };
   /**
