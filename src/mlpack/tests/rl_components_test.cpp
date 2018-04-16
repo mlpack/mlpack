@@ -27,6 +27,7 @@ using namespace mlpack;
 using namespace mlpack::rl;
 
 BOOST_AUTO_TEST_SUITE(RLComponentsTest)
+
 /**
  * Constructs a Continuous MountainCar instance and check if the main rountine 
  * works as it should be.
@@ -37,14 +38,13 @@ BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTest)
 
   ContinuousMountainCar::State state = task.InitialSample();
   ContinuousMountainCar::Action action;
-  action.force[0] = math::Random(-1.0, 1.0);
+  action.action[0] = math::Random(-1.0, 1.0);
   double reward = task.Sample(state, action);
   // Maximum reward possible is 100.
   BOOST_REQUIRE(reward <= 100.0);
   BOOST_REQUIRE(!task.IsTerminal(state));
   BOOST_REQUIRE_EQUAL(1, action.size);
 }
-
 
 /**
  * Constructs a Acrobat instance and check if the main rountine works as
