@@ -161,7 +161,7 @@ class CartPole
      * If done is false, it means that the cartpole hasn't fallen down. In 
      * this situation the agent should be given a positive reward. 
      */
-    bool done = IsTerminal(state);
+    bool done = IsTerminal(nextState);
     if (!done)
       return 1.0;
     /**

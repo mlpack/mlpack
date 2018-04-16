@@ -132,7 +132,7 @@ class MountainCar
     {
       nextState.Velocity() = 0.0;
     }
-    bool done = IsTerminal(state);
+    bool done = IsTerminal(nextState);
     /**
      * If done is true , it means that car has reached its goal.
      * To make sure that the agent learns this, we will give some
