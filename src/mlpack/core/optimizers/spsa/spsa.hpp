@@ -113,7 +113,6 @@ class SPSA
   const double& Gamma() const { return gamma; }
 
   const double& C() const { return c; }
-
 };
 
 } // namespace optimization

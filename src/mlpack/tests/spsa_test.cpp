@@ -41,7 +41,13 @@ BOOST_AUTO_TEST_CASE(SimpleSPSATestFunction)
     arma::mat coordinates = h.GetInitialPoint();
     double result = optimiser.Optimize(h, coordinates);
 
-    BOOST_REQUIRE_CLOSE(result, 2e-33, 10000);
+    if (i <= 30)
+      BOOST_REQUIRE_CLOSE(result, 0.0, 10000);
+    else if (i <= 34 || i == 36 || i == 39)
+      BOOST_REQUIRE_CLOSE(result, 8e-33, 10000);
+    else
+      BOOST_REQUIRE_CLOSE(result, 3e-32, 100000);
+
     BOOST_REQUIRE_SMALL(coordinates[0], 1e-3);
     BOOST_REQUIRE_SMALL(coordinates[1], 1e-7);
     BOOST_REQUIRE_SMALL(coordinates[2], 1e-7);
