@@ -17,59 +17,58 @@
 
 namespace mlpack{
 namespace rl{
+
 /**
- * Implementation of Acrobat game
- * Acrobot is a 2-link pendulum with only the second joint actuated
- * Intitially, both links point downwards. The goal is to swing the
- * end-effector at a height at least the length of one link above the base.
- * Both links can swing freely and can pass by each other, i.e., they don't
- * collide when they have the same angle.
+ * Implementation of Acrobat game. Acrobot is a 2-link pendulum with only the
+ * second joint actuated. Intitially, both links point downwards. The goal is
+ * to swing the end-effector at a height at least the length of one link above
+ * the base. Both links can swing freely and can pass by each other, i.e.,
+ * they don't collide when they have the same angle.
  */
 class Acrobat
 {
  public:
    /*
-    * Implementation of Acrobat State
-    * Each State is a tuple vector.
-    * (theta1, thetha2, angular velocity 1, angular velocity 2)
-    */    
+    * Implementation of Acrobat State. Each State is a tuple vector
+    * (theta1, thetha2, angular velocity 1, angular velocity 2).
+    */
   class State
   {
-   public :
+   public:
     /**
      * Construct a state instance.
      */
-    State(): data(dimension)
-    { /* nothing to do here */ }
+    State(): data(dimension) { /* nothing to do here */ }
+
     /**
      * Construct a state instance from given data.
      *
      * @param data Data for the theta and angular velocity of two links.
      */
-    State(const arma::colvec& data): data(data)
+    State(const arma::colvec& data) : data(data)
     { /* nothing to do here */ }
 
-    //! Modify the state representation
-    arma::colvec& Data() {return data;}
+    //! Modify the state representation.
+    arma::colvec& Data() { return data; }
 
-    //! Get value of theta1
-    double Theta1() const {return data[0];}
-    //! Modify value of theta1
-    double& Theta1() {return data[0];}
+    //! Get value of theta (one).
+    double Theta1() const { return data[0]; }
+    //! Modify value of theta (one).
+    double& Theta1() { return data[0]; }
 
-    //! Get value of theta2
-    double Theta2() const {return data[1];}
-    //! Modify value of theta2
-    double& Theta2() {return data[1];}
+    //! Get value of theta (two).
+    double Theta2() const { return data[1]; }
+    //! Modify value of theta (two).
+    double& Theta2() { return data[1]; }
 
-    //! Get value of Angular velocity 1
+    //! Get value of Angular velocity (one).
     double AngularVelocity1() const { return data[2]; }
-    //! Modify the angular velocity 1.
+    //! Modify the angular velocity (one).
     double& AngularVelocity1() { return data[2]; }
 
-    //! Get value of Angular velocity 2
+    //! Get value of Angular velocity (two).
     double AngularVelocity2() const { return data[3]; }
-    //! Modify the angular velocity 2.
+    //! Modify the angular velocity (two).
     double& AngularVelocity2() { return data[3]; }
 
     //! Encode the state to a column vector.
@@ -78,11 +77,12 @@ class Acrobat
     //! Dimension of the encoded state.
     static constexpr size_t dimension = 4;
 
-   private :
-    //! Locally-Stored (theta1, theta2, angular velocity 1, angular velocity2)
+   private:
+    //! Locally-Stored (theta1, theta2, angular velocity 1, angular velocity2).
     arma::colvec data;
   };
-  /* 
+
+  /*
    * Implementation of action for Acrobat
    */
   enum Action
@@ -90,6 +90,7 @@ class Acrobat
     negativeTorque,
     zeroTorque,
     positiveTorque,
+
     // Track the size of the action space.
     size
   };
@@ -97,16 +98,17 @@ class Acrobat
    /**
     * Construct a Acrobat instance using the given constants.
     *
-    * @param gravity gravity
-    * @param linkLength1 length of link 1.
-    * @param linkLength2 length of link 2.
-    * @param linkMass1 mass of link 1.
-    * @param linkMass2 mass of link 2.
-    * @param linkCom1 position of the center of mass of link 1.
-    * @param linkCom2 position of the center of mass of link 2.
-    * @param linkMoi moments of inertia for both link.
-    * @param maxVel1 max angular velocity of link1.
-    * @param maxVel2 max angular velocity of link2.
+    * @param gravity The gravity parameter.
+    * @param linkLength1 The length of link 1.
+    * @param linkLength2 The length of link 2.
+    * @param linkMass1 The mass of link 1.
+    * @param linkMass2 The mass of link 2.
+    * @param linkCom1 The position of the center of mass of link 1.
+    * @param linkCom2 The position of the center of mass of link 2.
+    * @param linkMoi The moments of inertia for both link.
+    * @param maxVel1 The max angular velocity of link1.
+    * @param maxVel2 The max angular velocity of link2.
+    * @param dt The differential value.
     */
   Acrobat(const double gravity = 9.81,
           const double linkLength1 = 1.0,
@@ -116,8 +118,8 @@ class Acrobat
           const double linkCom1 = 0.5,
           const double linkCom2 = 0.5,
           const double linkMoi = 1.0,
-          const double maxVel1 = 4*M_PI,
-          const double maxVel2 = 9*M_PI,
+          const double maxVel1 = 4 * M_PI,
+          const double maxVel2 = 9 * M_PI,
           const double dt = 0.2) :
       gravity(gravity),
       linkLength1(linkLength1),
@@ -131,178 +133,176 @@ class Acrobat
       maxVel2(maxVel2),
       dt(dt)
   { /* Nothing to do here */ }
+
   /**
-   * Dynamics of the Acrobat System.
-   * To get reward and next state based on current
-   * state and current action .
-   * Always return -1 reward
+   * Dynamics of the Acrobat System. To get reward and next state based on
+   * current state and current action. Always return -1 reward.
    *
-   * @param state The current State
-   * @param action The action taken
-   * @param nextState The next state
+   * @param state The current State.
+   * @param action The action taken.
+   * @param nextState The next state.
+   * @return reward, it's always -1.0.
    */
   double Sample(const State& state,
                 const Action& action,
                 State& nextState) const
   {
-    //! Make a vector to estimate nextstate.
-    arma::colvec state_ = {state.Theta1(), state.Theta2(),
-                          state.AngularVelocity1(),
-                          state.AngularVelocity2()};
-    double torque = Torque(action);
-    arma::colvec nextstate = Rk4(state_, torque);
+    // Make a vector to estimate nextstate.
+    arma::colvec currentState = {state.Theta1(), state.Theta2(),
+        state.AngularVelocity1(), state.AngularVelocity2()};
 
-    nextState.Theta1() = Wrap(nextstate[0], -M_PI, M_PI);
+    arma::colvec currentNextState = Rk4(currentState, Torque(action));
 
-    nextState.Theta2() = Wrap(nextstate[1], -M_PI, M_PI);
+    nextState.Theta1() = Wrap(currentNextState[0], -M_PI, M_PI);
+
+    nextState.Theta2() = Wrap(currentNextState[1], -M_PI, M_PI);
     //! The value of angular velocity is bounded in min and max value.
-    nextState.AngularVelocity1() = std::min(std::max(nextstate[2], -maxVel1),
-                                  maxVel1);
-    nextState.AngularVelocity2() = std::min(std::max(nextstate[3], -maxVel2),
-                                  maxVel2);
-    return -1;
+    nextState.AngularVelocity1() = std::min(
+        std::max(currentNextState[2], -maxVel1), maxVel1);
+    nextState.AngularVelocity2() = std::min(
+        std::max(currentNextState[3], -maxVel2), maxVel2);
+
+    return -1.0;
   };
+
   /**
-   * Dynamics of the Acrobat System.
-   * To get reward and next state based on current
-   * state and current action .
-   * This function calls the Sample function to 
-   * estimate the next state return reward
-   * for taking a particular action. 
+   * Dynamics of the Acrobat System. To get reward and next state based on
+   * current state and current action. This function calls the Sample function
+   * to estimate the next state return reward for taking a particular action.
    *
-   * @param state The current State
-   * @param action The action taken
-   * @param nextState The next state
+   * @param state The current State.
+   * @param action The action taken.
+   * @param nextState The next state.
    */
   double Sample(const State& state, const Action& action) const
   {
     State nextState;
     return Sample(state, action, nextState);
   }
+
   /**
-   * This function does random initialization of 
-   * state space.
-   *
+   * This function does random initialization of state space.
    */
   State InitialSample() const
   {
     return State((arma::randu<arma::colvec>(4) - 0.5) / 5.0);
   }
+
   /**
-   * This function checks if the acrobat has reached the 
-   * terminal state.
-   * 
-   * @param state The current State
-   */        
+   * This function checks if the acrobat has reached the terminal state.
+   *
+   * @param state The current State.
+   */
   bool IsTerminal(const State& state) const
   {
-    return bool (-cos(state.Theta1())-cos(state.Theta1() +
+    return bool (-std::cos(state.Theta1())-std::cos(state.Theta1() +
         state.Theta2()) > 1.0);
   }
+
   /**
-   * This is the ordinary differential equations required for
-   * estimation of nextState through RK4 method.
-   *  
-   * @param state Current State
-   * @param torque Torque Applied 
+   * This is the ordinary differential equations required for estimation of
+   * nextState through RK4 method.
+   *
+   * @param state Current State.
+   * @param torque The torque Applied.
    */
-  arma::colvec Dsdt(arma::colvec state,
-                    const double torque) const
+  arma::colvec Dsdt(arma::colvec state, const double torque) const
   {
-    double m1 = linkMass1;
-    double m2 = linkMass2;
-    double l1 = linkLength1;
-    double lc1 = linkCom1;
-    double lc2 = linkCom2;
-    double I1 = linkMoi;
-    double I2 = linkMoi;
-    double g = gravity;
-    double a = torque;
+    const double m1 = linkMass1;
+    const double m2 = linkMass2;
+    const double l1 = linkLength1;
+    const double lc1 = linkCom1;
+    const double lc2 = linkCom2;
+    const double I1 = linkMoi;
+    const double I2 = linkMoi;
+    const double g = gravity;
+    const double a = torque;
+    const double theta1 = state[0];
+    const double theta2 = state[1];
+
     arma::colvec values(4);
-    double theta1 = state[0];
-    double theta2 = state[1];
     values[0] = state[2];
     values[1] = state[3];
 
-    double d1 = m1 * pow(lc1, 2) + m2 *
-               (pow(l1, 2) + pow(lc2, 2) + 2 * l1 * lc2 * cos(theta2))
-               + I1 + I2;
-    double d2 = m2 * (pow(lc2, 2) + l1 * lc2 * cos(theta2)) + I2;
+    const double d1 = m1 * std::pow(lc1, 2) + m2 * (std::pow(l1, 2) +
+        std::pow(lc2, 2) + 2 * l1 * lc2 * std::cos(theta2)) + I1 + I2;
 
-    double phi2 = m2 * lc2 * g * cos(theta1 + theta2 - M_PI / 2.);
+    const double d2 = m2 * (std::pow(lc2, 2) + l1 * lc2 * std::cos(theta2)) + I2;
 
-    double phi1 = - m2 * l1 * lc2 * pow(values[1], 2) * sin(theta2)
-                 - 2 * m2 * l1 * lc2 * values[1] * values[0] *
-                 sin(theta2) + (m1 * lc1 +  m2 * l1) * g *
-                 cos(theta1 - M_PI / 2) + phi2;
+    const double phi2 = m2 * lc2 * g * std::cos(theta1 + theta2 - M_PI / 2.);
 
-    values[3] = (a + d2 / d1 * phi1 - m2 * l1 * lc2 * pow(values[0], 2) *
-               sin(theta2) - phi2) / (m2 * pow(lc2, 2) + I2 - pow(d2, 2) / d1);
+    const double phi1 = - m2 * l1 * lc2 * std::pow(values[1], 2) *
+        std::sin(theta2) - 2 * m2 * l1 * lc2 * values[1] * values[0] *
+        std::sin(theta2) + (m1 * lc1 +  m2 * l1) * g *
+        std::cos(theta1 - M_PI / 2) + phi2;
+
+    values[3] = (a + d2 / d1 * phi1 - m2 * l1 * lc2 * std::pow(values[0], 2) *
+        std::sin(theta2) - phi2) / (m2 * std::pow(lc2, 2) + I2 -
+        std::pow(d2, 2) / d1);
 
     values[2] = -(d2 * values[3] + phi1) / d1;
+
     return values;
   };
+
   /**
-   * Wrap funtion is required to truncate the angle value
-   * from - 180 to 180 .
+   * Wrap funtion is required to truncate the angle value from -180 to 180.
+   * This function will make sure that value will always be between minimum
+   * to maximum.
    *
-   * This function will make sure that value will always
-   * be between minimum to maximum
-   *
-   * @param value scalar value to wrap
-   * @param minimum minimum range of wrap
-   * @param maximum maximum range of wrap
-   */      
+   * @param value Scalar value to wrap.
+   * @param minimum Minimum range of wrap.
+   * @param maximum Maximum range of wrap.
+   */
   double Wrap(double value,
-              double minimum,
-              double maximum) const
+              const double minimum,
+              const double maximum) const
   {
-    double diff = maximum - minimum;
-    if (value > maximum) value = value - diff;
-    else if (value < minimum) value = value + diff;
+    const double diff = maximum - minimum;
+
+    if (value > maximum)
+    {
+      value = value - diff;
+    }
+    else if (value < minimum)
+    {
+      value = value + diff;
+    }
+
     return value;
   };
+
   /**
-   * This function calculates the torque for a
-   * particular action.
+   * This function calculates the torque for a particular action.
+   * 0 : negative torque, 1 : zero torque, 2 : positive torque.
    *
-   * @param Action action taken
-   *
-   * 0 : negative torque
-   * 1 : zero torque
-   * 2 : positive torque
+   * @param Action action taken.
    */
   double Torque(const Action& action) const
   {
-    // Add noise to the Torque
-    /**
-     * Torque is action number - 1.
-     * {0,1,2} -> {-1,0,1} 
-     */
+    // Add noise to the Torque Torque is action number - 1. {0,1,2} -> {-1,0,1}.
     return double(action - 1) + mlpack::math::Random(-0.1, 0.1);
   }
 
   /**
-   * 
+   *
    * This function calls the RK4 iterative method to estimate the next state
    * based on given ordinary differential equation.
    *
-   * The ODE is defined as Dsdt() method in the program.
-   * 
-   * @param state Current State
-   * @param torque Torque applied
+   * @param state The current State.
+   * @param torque The torque applied.
    */
-  arma::colvec Rk4(
-           const arma::colvec state,
-           const double torque) const
+  arma::colvec Rk4(const arma::colvec state, const double torque) const
   {
     arma::colvec k1 = Dsdt(state, torque);
-    arma::colvec k2 = Dsdt(state + dt*k1/2, torque);
-    arma::colvec k3 = Dsdt(state + dt*k2/2, torque);
-    arma::colvec k4 = Dsdt(state + dt*k3, torque);
-    arma::colvec nextState = state + dt*(k1 + 2*k2 + 2*k3 + k4)/6;
+    arma::colvec k2 = Dsdt(state + dt * k1 / 2, torque);
+    arma::colvec k3 = Dsdt(state + dt * k2 / 2, torque);
+    arma::colvec k4 = Dsdt(state + dt * k3, torque);
+    arma::colvec nextState = state + dt * (k1 + 2 * k2 + 2 * k3 + k4) / 6;
+
     return nextState;
   };
+
  private:
   //! Locally-stored gravity.
   double gravity;
@@ -334,9 +334,10 @@ class Acrobat
   //! Locally-stored max angular velocity of link2.
   double maxVel2;
 
-  //! Locally-stored dt for RK4 method
+  //! Locally-stored dt for RK4 method.
   double dt;
 }; // class Acrobat
+
 } // namespace rl
 } // namespace mlpack
 
