@@ -31,13 +31,14 @@ namespace ann /** Artificial Neural Network. */ {
  * For more information, the following paper can be referred to:
  *
  * @code
- * @article{He2015DelvingDI,
+ * @article{Delving2015,
  *   title   = {Delving Deep into Rectifiers: Surpassing Human-Level Performance
  *              on ImageNet Classification},
  *   author  = {Kaiming He and Xiangyu Zhang and Shaoqing Ren and Jian Sun},
  *   journal = {2015 IEEE International Conference on Computer Vision (ICCV)},
  *   year    = {2015},
- *   pages   = {1026-1034}}
+ *   pages   = {1026-1034}
+ * }
  * @endcode
  *
  */
@@ -46,7 +47,6 @@ class HeInitialization
  public:
   /**
    * Initialize the HeInitialization object.
-   *
    */
   HeInitialization()
   {
@@ -61,9 +61,7 @@ class HeInitialization
    * @param rows Number of rows.
    * @param cols Number of columns.
    */
-  void Initialize(arma::mat& W,
-                  const size_t rows,
-                  const size_t cols)
+  void Initialize(arma::mat& W, const size_t rows, const size_t cols)
   {
     // He initialization rule says to initialize weights with random
     // values taken from a gaussian distribution with mean = 0 and
@@ -76,7 +74,7 @@ class HeInitialization
     }
 
     // Multipling a random variable X with variance V(X) by some factor c,
-    // then the variance V(cX) = (c^2)* V(X).
+    // then the variance V(cX) = (c^2) * V(X).
     W.imbue( [&]() { return sqrt(variance) * arma::randn(); } );
   }
 

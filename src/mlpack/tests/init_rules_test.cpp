@@ -331,8 +331,8 @@ BOOST_AUTO_TEST_CASE(GlorotInitNormalTest)
 }
 
 /**
-* Simple test of the HeInitialization class.
-*/
+ * Simple test of the HeInitialization class.
+ */
 BOOST_AUTO_TEST_CASE(HeInitTest)
 {
   const size_t rows = 4;
@@ -356,8 +356,8 @@ BOOST_AUTO_TEST_CASE(HeInitTest)
 }
 
 /**
-* Simple test of the LecunNormalInitialization class.
-*/
+ * Simple test of the LecunNormalInitialization class.
+ */
 BOOST_AUTO_TEST_CASE(LecunNormalInitTest)
 {
   const size_t rows = 4;

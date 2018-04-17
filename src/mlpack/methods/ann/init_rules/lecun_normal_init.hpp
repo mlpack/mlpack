@@ -28,19 +28,21 @@ namespace ann /** Artificial Neural Network. */ {
  * For more information, the following papers can be referred to:
  *
  * @code
- * @inproceedings{conf/nips/KlambauerUMH17,
- * title  = {Self-Normalizing Neural Networks.},
- * author = {Klambauer, Günter and Unterthiner, Thomas
- *           and Mayr, Andreas and Hochreiter, Sepp},
- * pages  = {972-981},
- * year   = 2017}
+ * @inproceedings{Klambauer2017,
+ *   itle  = {Self-Normalizing Neural Networks.},
+ *   author = {Klambauer, Günter and Unterthiner, Thomas
+ *             and Mayr, Andreas and Hochreiter, Sepp},
+ *   pages  = {972-981},
+ *   year   = {2017}
+ * }
  *
- * @inproceedings{LeCun:1998:EB:645754.668382,
- * title  = {Efficient BackProp},
- * author = {LeCun, Yann and Bottou, L{\'e}on and Orr, Genevieve B.
- *          and M\"{u}ller, Klaus-Robert},
- * year   = {1998},
- * pages  = {9--50}}
+ * @inproceedings{LeCun1998,
+ *   title  = {Efficient BackProp},
+ *   author = {LeCun, Yann and Bottou, L{\'e}on and Orr, Genevieve B.
+ *             and M\"{u}ller, Klaus-Robert},
+ *   year   = {1998},
+ *   pages  = {9--50}
+ * }
  * @endcode
  *
 */
@@ -49,7 +51,6 @@ class LecunNormalInitialization
  public:
   /**
    * Initialize the LecunNormalInitialization object.
-   *
    */
   LecunNormalInitialization()
   {
