@@ -36,7 +36,8 @@ class TruncatedGaussianInitialization
    * @param mean Mean of the gaussian.
    * @param variance Variance of the gaussian.
    */
-  TruncatedGaussianInitialization(const double mean = 0, const double variance = 1) :
+  TruncatedGaussianInitialization(const double mean = 0,
+                                  const double variance = 1) :
       mean(mean), variance(variance), stddev(sqrt(variance))
   {
     // Nothing to do here.
