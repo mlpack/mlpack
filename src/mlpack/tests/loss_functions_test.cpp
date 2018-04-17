@@ -17,6 +17,7 @@
 #include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
