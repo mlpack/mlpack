@@ -227,7 +227,7 @@ class Acrobat
     const double d1 = m1 * std::pow(lc1, 2) + m2 * (std::pow(l1, 2) +
         std::pow(lc2, 2) + 2 * l1 * lc2 * std::cos(theta2)) + I1 + I2;
 
-    const double d2 = m2 * (std::pow(lc2, 2) + l1 * lc2 * std::cos(theta2)) + 
+    const double d2 = m2 * (std::pow(lc2, 2) + l1 * lc2 * std::cos(theta2)) +
         I2;
 
     const double phi2 = m2 * lc2 * g * std::cos(theta1 + theta2 - M_PI / 2.);
