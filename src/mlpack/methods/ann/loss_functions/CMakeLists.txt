@@ -1,6 +1,8 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  cross_entropy_error.hpp
+  cross_entropy_error_impl.hpp
   KLDivergence.hpp
   KLDivergence_impl.hpp
   mean_squared_error.hpp
