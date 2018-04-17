@@ -83,7 +83,7 @@ class TruncatedGaussianInitialization
     W = arma::cube(rows, cols, slices);
 
     for (size_t i = 0; i < slices; i++)
-      Initialize(W.slice(i), rows, cols, truncated);
+      Initialize(W.slice(i), rows, cols);
   }
 
  private:
