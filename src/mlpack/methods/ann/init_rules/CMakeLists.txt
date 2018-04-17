@@ -3,6 +3,7 @@
 set(SOURCES
   const_init.hpp
   gaussian_init.hpp
+  glorot_init.hpp
   init_rules_traits.hpp
   kathirvalavakumar_subavathi_init.hpp
   network_init.hpp
@@ -10,7 +11,7 @@ set(SOURCES
   oivs_init.hpp
   orthogonal_init.hpp
   random_init.hpp
-  glorot_init.hpp
+  truncated_gaussian_init.hpp
 )
 
 # Add directory name to sources.

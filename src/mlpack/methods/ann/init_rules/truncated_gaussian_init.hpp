@@ -11,8 +11,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_INIT_RULES_GAUSSIAN_INIT_HPP
-#define MLPACK_METHODS_ANN_INIT_RULES_GAUSSIAN_INIT_HPP
+#ifndef MLPACK_METHODS_ANN_INIT_RULES_TRUNCATED_GAUSSIAN_INIT_HPP
+#define MLPACK_METHODS_ANN_INIT_RULES_TRUNCATED_GAUSSIAN_INIT_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
@@ -23,9 +23,11 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * This class is used to initialize weigth matrix with a gaussian.
+ * This class initializes a given weight matrix with values sampled from a
+ * Gaussian Distribution of given mean and variance. It ensures that none of
+ * the sampled values are more than two standard deviations away from the mean.
  */
-class GaussianInitialization
+class TruncatedGaussianInitialization
 {
  public:
   /**
@@ -34,8 +36,8 @@ class GaussianInitialization
    * @param mean Mean of the gaussian.
    * @param variance Variance of the gaussian.
    */
-  GaussianInitialization(const double mean = 0, const double variance = 1) :
-      mean(mean), variance(variance)
+  TruncatedGaussianInitialization(const double mean = 0, const double variance = 1) :
+      mean(mean), variance(variance), stddev(sqrt(variance))
   {
     // Nothing to do here.
   }
@@ -55,7 +57,14 @@ class GaussianInitialization
     {
       W = arma::mat(rows, cols);
     }
-    W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
+    W.imbue(
+        [&]()
+        {
+          double candidate = 3.0*stddev;
+          while (std::abs(candidate - mean) > 2.0*stddev)
+            candidate = arma::as_scalar(RandNormal(mean, variance));
+          return candidate;
+        });
   }
 
   /**
@@ -74,7 +83,7 @@ class GaussianInitialization
     W = arma::cube(rows, cols, slices);
 
     for (size_t i = 0; i < slices; i++)
-      Initialize(W.slice(i), rows, cols);
+      Initialize(W.slice(i), rows, cols, truncated);
   }
 
  private:
@@ -83,7 +92,10 @@ class GaussianInitialization
 
   //! Variance of the gaussian.
   double variance;
-}; // class GaussianInitialization
+
+  //! Standard deviation of the gaussian.
+  double stddev;
+}; // class TruncatedGaussianInitialization
 
 } // namespace ann
 } // namespace mlpack
