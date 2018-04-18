@@ -22,6 +22,17 @@ namespace ann /** Artificial Neural Network. */ {
  * The Kullback–Leibler divergence is often used for continuous
  * distributions(direct regression).
  *
+ * For more information, see the following paper.
+ *
+ * @code
+ * article{1177729694,
+ *   title={On Information and Sufficiency},
+ *   author={S. Kullback, R.A. Leibler},
+ *   url = {https://projecteuclid.org/euclid.aoms/1177729694},
+ *   journal = {The Annals of Mathematical Statistics},
+ *   year={1951}
+ * }
+ * @endcode
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
