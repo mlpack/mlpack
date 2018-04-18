@@ -2,7 +2,7 @@
  * @file KLDivergence_impl.hpp
  * @author Dakshit Agrawal
  *
- * Implementation of the KL Divergence error function.
+ * Implementation of the Kullback–Leibler Divergence error function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -31,17 +31,15 @@ template<typename InputType, typename TargetType>
 double KLDivergence<InputDataType, OutputDataType>::Forward(
     const InputType&& input, const TargetType&& target)
 {
-  // Input and Target should be of same size.
-  double loss;
-
-  if (takeMean) {
-    loss = arma::as_scalar(arma::mean(
-            arma::mean(input % (arma::log(input) - arma::log(target)))));
-  } else {
-    loss = arma::accu(input % (arma::log(input) - arma::log(target)));
+  if (takeMean)
+  {
+    return arma::as_scalar(arma::mean(
+        arma::mean(input % (arma::log(input) - arma::log(target)))));
   }
-
-  return loss;
+  else
+  {
+    return arma::accu(input % (arma::log(input) - arma::log(target)));
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -51,9 +49,12 @@ void KLDivergence<InputDataType, OutputDataType>::Backward(
     const TargetType&& target,
     OutputType&& output)
 {
-  if (takeMean) {
+  if (takeMean)
+  {
     output = arma::mean(arma::mean(arma::log(input) - arma::log(target) + 1));
-  } else {
+  }
+  else
+  {
     output = arma::accu(arma::log(input) - arma::log(target) + 1);
   }
 }

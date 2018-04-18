@@ -2,7 +2,7 @@
  * @file KLDivergence.hpp
  * @author Dakshit Agrawal
  *
- * Definition of the KL Divergence error function.
+ * Definition of the Kullback–Leibler Divergence error function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,9 +19,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The KL divergence error function measures the network's
- * performance according to the KL Divergence between input and
- * target distributions.
+ * The Kullback–Leibler divergence is often used for continuous
+ * distributions(direct regression).
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -36,14 +35,15 @@ class KLDivergence
 {
  public:
   /**
-   * Create the KLDivergence object with the specified parameters.
+   * Create the Kullback–Leibler Divergence object with the specified
+   * parameters.
    *
    * @param takeMean Boolean variable to specify whether to take mean or not.
    */
   KLDivergence(const bool takeMean = false);
 
   /**
-   * Computes the KL divergence error function.
+   * Computes the Kullback–Leibler divergence error function.
    *
    * @param input Input data used for evaluating the specified function.
    * @param target Target data to compare with.
