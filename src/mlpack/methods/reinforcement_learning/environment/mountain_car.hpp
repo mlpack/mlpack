@@ -200,7 +200,7 @@ class MountainCar
   double velocityMax;
 
   //! Locally-stored done reward.
-  double doneReward;  
+  double doneReward;
 };
 
 } // namespace rl

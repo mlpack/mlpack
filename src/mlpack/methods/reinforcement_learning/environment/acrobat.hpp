@@ -348,7 +348,7 @@ class Acrobat
   double dt;
 
   //! Locally-stored done reward.
-  double doneReward; 
+  double doneReward;
 }; // class Acrobat
 
 } // namespace rl

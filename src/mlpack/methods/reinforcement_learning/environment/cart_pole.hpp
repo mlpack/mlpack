@@ -238,7 +238,7 @@ class CartPole
   double xThreshold;
 
   //! Locally-stored done reward.
-  double doneReward;  
+  double doneReward;
 };
 
 } // namespace rl
