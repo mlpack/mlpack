@@ -37,13 +37,13 @@ class ContinuousMountainCar
     /**
      * Construct a state instance.
      */
-    State(): data(dimension, arma::fill::zeros)
+    State() : data(dimension, arma::fill::zeros)
     { /* Nothing to do here. */ }
 
     /**
      * Construct a state based on the given data.
      *
-     * @param data Data for the velocityand position.
+     * @param data Data for the velocity and position.
      */
     State(const arma::colvec& data): data(data)
     { /* Nothing to do here. */ }
@@ -74,6 +74,11 @@ class ContinuousMountainCar
 
   /**
    * Implementation of action of Continuous Mountain Car.
+   * In Continuous mountain car gain, the action represents the
+   * force to be applied. This value is bounded in range -1.0 to 1.0.
+   * Unlike the simple mountain car environment, where action space has a
+   * discrete value, continuous mountain car has continous action space
+   * value. 
    */
   struct Action
   {
@@ -159,7 +164,7 @@ class ContinuousMountainCar
   {
     State state;
     state.Velocity() = 0.0;
-    state.Position() = arma::as_scalar(arma::randu(1)) * 0.2 - 0.6;
+    state.Position() = math::Random(-0.6, -0.4);
     return state;
   }
 
