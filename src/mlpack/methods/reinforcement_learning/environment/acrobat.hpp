@@ -120,7 +120,8 @@ class Acrobat
           const double linkMoi = 1.0,
           const double maxVel1 = 4 * M_PI,
           const double maxVel2 = 9 * M_PI,
-          const double dt = 0.2) :
+          const double dt = 0.2,
+          const double doneReward = 100.0) :
       gravity(gravity),
       linkLength1(linkLength1),
       linkLength2(linkLength2),
@@ -131,7 +132,8 @@ class Acrobat
       linkMoi(linkMoi),
       maxVel1(maxVel1),
       maxVel2(maxVel2),
-      dt(dt)
+      dt(dt),
+      doneReward(doneReward)
   { /* Nothing to do here */ }
 
   /**
@@ -165,11 +167,10 @@ class Acrobat
     /**
      * If the acrobat reaches a terminal state, it should be given a positive
      * reward. This will ensure that the agent learns the goal of the game.
-     * I am using a +100.0 as a reward for the terminal state.
      */
     bool done = IsTerminal(nextState);
     if (done)
-      return 100.0;
+      return doneReward;
     return -1;
   };
 
@@ -345,6 +346,9 @@ class Acrobat
 
   //! Locally-stored dt for RK4 method.
   double dt;
+
+  //! Locally-stored done reward.
+  double doneReward; 
 }; // class Acrobat
 
 } // namespace rl

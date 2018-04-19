@@ -96,11 +96,13 @@ class MountainCar
   MountainCar(const double positionMin = -1.2,
               const double positionMax = 0.5,
               const double velocityMin = -0.07,
-              const double velocityMax = 0.07) :
+              const double velocityMax = 0.07,
+              const double doneReward = 100.0) :
       positionMin(positionMin),
       positionMax(positionMax),
       velocityMin(velocityMin),
-      velocityMax(velocityMax)
+      velocityMax(velocityMax),
+      doneReward(doneReward)
   { /* Nothing to do here */ }
 
   /**
@@ -136,14 +138,12 @@ class MountainCar
     /**
      * If done is true , it means that car has reached its goal.
      * To make sure that the agent learns this, we will give some
-     * positive reward to the agent. I am giving +100.0 to make sure
-     * that the agent learns this.
-     *
-     * If the agent doesn't reach the terminal state, then we will
-     * give a -1.0 reward to penalize the agent to take that step.
+     * positive reward to the agent. If the agent doesn't reach the
+     * terminal state, then we will give a -1.0 reward to penalize 
+     * the agent to take that step.
      */
     if (done)
-      return 100.0;
+      return doneReward;
     return -1.0;
   }
 
@@ -198,6 +198,9 @@ class MountainCar
 
   //! Locally-stored maximum legal velocity.
   double velocityMax;
+
+  //! Locally-stored done reward.
+  double doneReward;  
 };
 
 } // namespace rl
