@@ -106,10 +106,10 @@ BOOST_AUTO_TEST_CASE(SPSALogisticRegressionTest)
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+  BOOST_REQUIRE_CLOSE(acc, 100.0, 100); // 0.3% error tolerance.
 
   const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 100); // 0.6% error tolerance.
 }
 
 BOOST_AUTO_TEST_SUITE_END();
