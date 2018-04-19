@@ -3,6 +3,7 @@
 set(SOURCES
   mountain_car.hpp
   cart_pole.hpp
+  acrobat.hpp
 )
 
 # Add directory name to sources.
