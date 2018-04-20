@@ -201,6 +201,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
   ResetCells();
 
   double performance = 0;
+  size_t responseSeq = 0;
 
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
@@ -208,8 +209,10 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
     arma::mat stepData(predictors.slice(seqNum).colptr(begin),
         predictors.n_rows, batchSize, false, true);
     Forward(std::move(stepData));
-    arma::mat respData(responses.slice(seqNum).colptr(begin),
-        responses.n_rows, batchSize, false, true);
+    if (!single)
+    {
+      responseSeq = seqNum;
+    }
 
     if (!deterministic)
     {
@@ -222,7 +225,7 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
 
     performance += outputLayer.Forward(std::move(boost::apply_visitor(
         outputParameterVisitor, network.back())),
-        std::move(arma::mat(responses.slice(seqNum).colptr(begin),
+        std::move(arma::mat(responses.slice(responseSeq).colptr(begin),
             responses.n_rows, batchSize, false, true)));
   }
 
@@ -282,6 +285,14 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
     if (single && seqNum > 0)
     {
       error.zeros();
+    }
+    else if (single && seqNum == 0)
+    {
+      outputLayer.Backward(std::move(boost::apply_visitor(
+          outputParameterVisitor, network.back())),
+              std::move(arma::mat(responses.slice(0).colptr(begin),
+                  responses.n_rows, batchSize, false, true)),
+          std::move(error));
     }
     else
     {
