@@ -29,8 +29,8 @@ struct PreFixedArg;
  * The implementation avoids data copying. If the passed argument is an l-value
  * reference, we store it as a const l-value rerefence inside the returned
  * PreFixedArg object. If the passed argument is an r-value reference,
- * ligth-weight coping (by taking possesion of the r-value) will be made during
- * the initialization of the returned PreFixedArg object.
+ * light-weight copying (by taking possession of the r-value) will be made
+ * during the initialization of the returned PreFixedArg object.
  */
 template<typename T>
 PreFixedArg<T> Fixed(T&& value)
