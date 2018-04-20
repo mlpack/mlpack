@@ -47,5 +47,30 @@ RandomizedSVD::RandomizedSVD(const size_t iteratedPower,
   /* Nothing to do here */
 }
 
+
+void RandomizedSVD::Apply(const arma::sp_mat& data,
+                          arma::mat& u,
+                          arma::vec& s,
+                          arma::mat& v,
+                          const size_t rank)
+{
+  // Center the data into a temporary matrix for sparse matrix.
+  arma::sp_mat rowMean = arma::sum(data, 1) / data.n_cols;
+
+  Apply(data, u, s, v, rank, rowMean);
+}
+
+void RandomizedSVD::Apply(const arma::mat& data,
+                          arma::mat& u,
+                          arma::vec& s,
+                          arma::mat& v,
+                          const size_t rank)
+{
+  // Center the data into a temporary matrix.
+  arma::mat rowMean = arma::sum(data, 1) / data.n_cols + eps;
+
+  Apply(data, u, s, v, rank, rowMean);
+}
+
 } // namespace svd
 } // namespace mlpack

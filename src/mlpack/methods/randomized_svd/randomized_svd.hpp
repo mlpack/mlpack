@@ -105,6 +105,38 @@ class RandomizedSVD
                 const size_t maxIterations = 2,
                 const double eps = 1e-7);
 
+/**
+   * Center the data to apply Principal Component Analysis on given sparse
+   * matrix dataset using randomized SVD.
+   *
+   * @param data Sparse data matrix.
+   * @param u First unitary matrix.
+   * @param v Second unitary matrix.
+   * @param sigma Diagonal matrix of singular values.
+   * @param rank Rank of the approximation.
+   */
+  void Apply(const arma::sp_mat& data,
+             arma::mat& u,
+             arma::vec& s,
+             arma::mat& v,
+             const size_t rank);
+
+/**
+   * Center the data to apply Principal Component Analysis on given matrix
+   * dataset using randomized SVD.
+   *
+   * @param data Data matrix.
+   * @param u First unitary matrix.
+   * @param v Second unitary matrix.
+   * @param sigma Diagonal matrix of singular values.
+   * @param rank Rank of the approximation.
+   */
+  void Apply(const arma::mat& data,
+             arma::mat& u,
+             arma::vec& s,
+             arma::mat& v,
+             const size_t rank);
+
   /**
    * Apply Principal Component Analysis to the provided matrix data set
    * using the randomized SVD.
@@ -114,19 +146,18 @@ class RandomizedSVD
    * @param v Second unitary matrix.
    * @param sigma Diagonal matrix of singular values.
    * @param rank Rank of the approximation.
+   * @param rowMean Centered mean value matrix.
    */
   template<typename mat_type>
   void Apply(mat_type const& data,
              arma::mat& u,
              arma::vec& s,
              arma::mat& v,
-             const size_t rank)
+             const size_t rank,
+             mat_type rowMean)
   {
     if (iteratedPower == 0)
       iteratedPower = rank + 2;
-
-    // Center the data into a temporary matrix.
-    mat_type rowMean = arma::sum(data, 1) / data.n_cols;
 
     arma::mat R, Q, Qdata;
 

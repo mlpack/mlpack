@@ -69,7 +69,7 @@ void ApplyFactorizer(FactorizerType& factorizer,
   factorizer.Apply(cleanedData, w, sigma, h, rank);
 
   // Sigma matrix is multiplied to w.
-  w = w * sigma;
+  w = w * arma::diagmat(sigma);
 
   // Take transpose of the matrix h as required by CF module.
   h = arma::trans(h);
