@@ -1122,6 +1122,7 @@ void GenerateNoisySinRNN(arma::cube& data,
 {
   int points = dataPoints;
   int r = dataPoints % rho;
+
   if (r == 0)
   {
     points += outputSteps;
@@ -1130,14 +1131,16 @@ void GenerateNoisySinRNN(arma::cube& data,
   {
     points += rho - r + outputSteps;
   }
+
   arma::colvec x(points);
   int i = 0;
   double interval = numCycles / freq / points;
+
   x.for_each([&i, gain, freq, phase, noisePercent, interval]
-             (arma::colvec::elem_type& val) {
+    (arma::colvec::elem_type& val) {
     double t = interval * (i++);
     val = gain * ::sin(2 * M_PI * freq * t + phase) +
-          (noisePercent * gain / 100 * Random(0.0, 0.1));
+        (noisePercent * gain / 100 * Random(0.0, 0.1));
   });
 
   arma::colvec y = x;
@@ -1148,6 +1151,7 @@ void GenerateNoisySinRNN(arma::cube& data,
   size_t numColumns = y.n_elem / rho;
   data = arma::cube(1, numColumns, rho);
   labels = arma::cube(outputSteps, numColumns, 1);
+
   for (size_t i = 0; i < numColumns; ++i)
   {
     data.tube(0, i) = y.rows(i * rho, i * rho + rho - 1);
@@ -1181,20 +1185,16 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
   // Break into training and test sets. Simply split along columns.
   size_t trainCols = data.n_cols * 0.8; // Take 20% out for testing.
   size_t testCols = data.n_cols - trainCols;
-  arma::cube testData =
-      data.subcube(0, data.n_cols - testCols, 0, data.n_rows - 1,
-                   data.n_cols - 1, data.n_slices - 1);
-  arma::cube testLabels =
-      labels.subcube(0, labels.n_cols - testCols, 0, labels.n_rows - 1,
-                     labels.n_cols - 1, labels.n_slices - 1);
+  arma::cube testData = data.subcube(0, data.n_cols - testCols, 0,
+      data.n_rows - 1, data.n_cols - 1, data.n_slices - 1);
+  arma::cube testLabels = labels.subcube(0, labels.n_cols - testCols, 0,
+      labels.n_rows - 1, labels.n_cols - 1, labels.n_slices - 1);
 
   for (size_t i = 0; i < numEpochs; ++i)
   {
     net.Train(data.subcube(0, 0, 0, data.n_rows - 1, trainCols - 1,
-                           data.n_slices - 1),
-              labels.subcube(0, 0, 0, labels.n_rows - 1, trainCols - 1,
-                             labels.n_slices - 1),
-              opt);
+        data.n_slices - 1), labels.subcube(0, 0, 0, labels.n_rows - 1,
+        trainCols - 1, labels.n_slices - 1), opt);
   }
   // Well now it should be trained. Do the test here.
   arma::cube prediction;
@@ -1204,11 +1204,13 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
   // data and the pediction to vectors and compare the two.
   arma::colvec testVector = arma::vectorise(testData);
   arma::colvec predVector = arma::vectorise(prediction);
+
   // Adjust the vectors for comparison, as the prediction is one step ahead.
   testVector = testVector.rows(1, testVector.n_rows - 1);
   predVector = predVector.rows(0, predVector.n_rows - 2);
   double error = std::sqrt(arma::sum(arma::square(testVector - predVector))) /
-                 testVector.n_rows;
+      testVector.n_rows;
+
   return error;
 }
 

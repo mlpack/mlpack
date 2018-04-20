@@ -290,23 +290,21 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
     {
       outputLayer.Backward(std::move(boost::apply_visitor(
           outputParameterVisitor, network.back())),
-              std::move(arma::mat(responses.slice(0).colptr(begin),
-                  responses.n_rows, batchSize, false, true)),
-          std::move(error));
+          std::move(arma::mat(responses.slice(0).colptr(begin),
+          responses.n_rows, batchSize, false, true)), std::move(error));
     }
     else
     {
       outputLayer.Backward(std::move(boost::apply_visitor(
           outputParameterVisitor, network.back())),
           std::move(arma::mat(responses.slice(rho - seqNum - 1).colptr(begin),
-              responses.n_rows, batchSize, false, true)),
-          std::move(error));
+          responses.n_rows, batchSize, false, true)), std::move(error));
     }
 
     Backward();
     Gradient(std::move(
         arma::mat(predictors.slice(rho - seqNum - 1).colptr(begin),
-            predictors.n_rows, batchSize, false, true)));
+        predictors.n_rows, batchSize, false, true)));
     gradient += currentGradient;
   }
 }
