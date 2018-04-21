@@ -53,10 +53,10 @@ BOOST_FIXTURE_TEST_SUITE(NCAMainTest, NCATestFixture);
 */
 BOOST_AUTO_TEST_CASE(NCAExplicitImplicitLabelsTest)
 {
+  // Random dataset.
   arma::mat x;
-  x.randu(3, 100);
+  x.randu(3, 6);
 
-  // Input random data points.
   SetInputParam("input", std::move(x));
 
   mlpackMain();
@@ -66,26 +66,24 @@ BOOST_AUTO_TEST_CASE(NCAExplicitImplicitLabelsTest)
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 2);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 2);
 
-  // Reset Settings
+  // Reset Settings.
   CLI::ClearSettings();
   CLI::RestoreSettings(testName);
 
   // Now check that when labels are explicitely given, the last column
-  // is not treated as labels.
-  arma::mat y;
-  y.randu(3, 100);
-  arma::Row<size_t> labels;
-  labels.zeros(3);
+  // of input is not treated as labels.
+  arma::mat y              = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  // Random dataset and labels.
   SetInputParam("input", std::move(y));
   SetInputParam("labels", std::move(labels));
 
   mlpackMain();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 3);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 3);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 2);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 2);
 }
 
 /**
@@ -112,6 +110,30 @@ BOOST_AUTO_TEST_CASE(NCALBFGSTest)
 }
 
 /**
+* Ensure that if labels are of a different size than required
+* by the input, an error occurs.
+*/
+BOOST_AUTO_TEST_CASE(NCALabelSizeTest)
+{
+  // Random dataset.
+  const int D = 30;
+  const int N = 50;
+
+  // Input labels of wrong size.
+  arma::mat x = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> labels;
+  labels << 0 << 0 << 1 << 0 << 1 << 1 << 1 << 0 << arma::endr;
+
+  SetInputParam("input", std::move(x));
+  SetInputParam("labels", std::move(labels));
+
+  // Check that an error is thrown.
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::logic_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
 * Ensure that setting normalize as true results in a
 * different output matrix then when set to false.
 */
@@ -125,7 +147,7 @@ BOOST_AUTO_TEST_CASE(NCANormalizationTest)
   // Set parameters and set normalize to true.
   SetInputParam("input", std::move(x));
   SetInputParam("labels", std::move(labels));
-  SetInputParam("normalize", (bool) true);
+  SetInputParam("normalize", true);
 
   mlpackMain();
 
@@ -142,13 +164,12 @@ BOOST_AUTO_TEST_CASE(NCANormalizationTest)
   // Use the same input but set normalize to false.
   SetInputParam("input", std::move(y));
   SetInputParam("labels", std::move(labels2));
-  SetInputParam("normalize", (bool) false);
+  SetInputParam("normalize", false);
 
   mlpackMain();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_EQUAL(arma::approx_equal(
-      CLI::GetParam<arma::mat>("output"), output, "absdiff", 0), false);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
 }
 
 /**
@@ -170,11 +191,11 @@ BOOST_AUTO_TEST_CASE(NCADiffferentStepSizeTest)
 
   arma::mat output = CLI::GetParam<arma::mat>("output");
 
-  // Reset settings
+  // Reset settings.
   CLI::ClearSettings();
   CLI::RestoreSettings(testName);
 
-  // Same dataset
+  // Same dataset.
   arma::mat y               = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                               " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels2 = " 0    0    0    1    1    1   ";
@@ -187,49 +208,161 @@ BOOST_AUTO_TEST_CASE(NCADiffferentStepSizeTest)
   mlpackMain();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_EQUAL(arma::approx_equal(
-      CLI::GetParam<arma::mat>("output"), output, "absdiff", 0), false);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+}
+
+/**
+* Ensure that output is different when the tolerance is different.
+*/
+BOOST_AUTO_TEST_CASE(NCADiffferentToleranceTest)
+{
+  // Random dataset.
+  arma::mat x;
+  x.randu(3, 600);
+
+  arma::mat y = x;
+
+  // Set parameters with a small tolerance.
+  SetInputParam("input", std::move(x));
+  SetInputParam("optimizer", std::string("lbfgs"));
+  SetInputParam("max_iterations", (int) 0);
+  SetInputParam("tolerance", (double) 0.00005);
+
+  mlpackMain();
+
+  arma::mat output = CLI::GetParam<arma::mat>("output");
+
+  // Reset settings.
+  CLI::ClearSettings();
+  CLI::RestoreSettings(testName);
+
+  // Set parameters using the same input but with a larger tolerance.
+  SetInputParam("input", std::move(y));
+  SetInputParam("optimizer", std::string("lbfgs"));
+  SetInputParam("max_iterations", (int) 0);
+  SetInputParam("tolerance", (double) 0.003);
+
+  mlpackMain();
+
+  // Check that the output matrices are different.
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+}
+
+/**
+* Ensure that output is different when batch_size is different.
+*/
+BOOST_AUTO_TEST_CASE(NCADiffferentBatchSizeTest)
+{
+  // Simple dataset with 6 points and two classes.
+  arma::mat x              = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+
+  // Set parameters with a small bath_size.
+  SetInputParam("input", std::move(x));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("optimizer", std::string("sgd"));
+  SetInputParam("batch_size", (int) 25);
+
+  mlpackMain();
+
+  arma::mat output = CLI::GetParam<arma::mat>("output");
+
+  // Reset settings.
+  CLI::ClearSettings();
+  CLI::RestoreSettings(testName);
+
+  // Same dataset.
+  arma::mat y               = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels2 = " 0    0    0    1    1    1   ";
+
+  // Set parameters using the same input but with a larger batch_size.
+  SetInputParam("input", std::move(y));
+  SetInputParam("labels", std::move(labels2));
+  SetInputParam("optimizer", std::string("sgd"));
+  SetInputParam("batch_size", (int) 50);
+
+  mlpackMain();
+
+  // Check that the output matrices are different.
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+}
+
+/**
+* Ensure that output is different when setting linear_scan to false.
+*/
+BOOST_AUTO_TEST_CASE(NCALinearScanTest)
+{
+  // Simple dataset with 6 points and two classes.
+  arma::mat x               = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+
+  // Set parameters with a small bath_size.
+  SetInputParam("input", std::move(x));
+  SetInputParam("labels", labels);
+  SetInputParam("optimizer", std::string("sgd"));
+
+  mlpackMain();
+
+  arma::mat output = CLI::GetParam<arma::mat>("output");
+
+  // Reset settings.
+  CLI::ClearSettings();
+  CLI::RestoreSettings(testName);
+
+  // Input same dataset.
+  arma::mat y               = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels2 = " 0    0    0    1    1    1   ";
+
+  // Set parameters using the same input but set linear_scan flag to false
+  SetInputParam("input", std::move(y));
+  SetInputParam("labels", labels2);
+  SetInputParam("optimizer", std::string("sgd"));
+  SetInputParam("linear_scan", false);
+
+  mlpackMain();
+
+  // Check that the output matrices are different.
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
 }
 
 /**
 * Ensure that different value of NumBasis results in a
 * different output matrix.
 */
-BOOST_AUTO_TEST_CASE(NCADiffNumBasisTest)
+BOOST_AUTO_TEST_CASE(NCADifferentNumBasisTest)
 {
-  // Simple dataset with 6 points and two classes.
+  // Simple dataset.
   arma::mat x;
-  x.randu(3, 100);
-  arma::Row<size_t> labels;
-  labels.zeros(3);
+  x.randu(3, 600);
 
   arma::mat y = x;
-  arma::Row<size_t>  labels2 = labels;
 
-  // Set parameters and use a small num_basis
+  // Set parameters and use a small num_basis.
   SetInputParam("input", std::move(x));
-  SetInputParam("labels", std::move(labels));
   SetInputParam("optimizer",  std::string("lbfgs"));
-  SetInputParam("num_basis", (int) 20);
+  SetInputParam("num_basis", (int) 50);
 
   mlpackMain();
 
   arma::mat output = CLI::GetParam<arma::mat>("output");
 
-  // Reset Settings
+  // Reset Settings.
   CLI::ClearSettings();
   CLI::RestoreSettings(testName);
 
+  // Set parameters with a larger num_basis
   SetInputParam("input", std::move(y));
-  SetInputParam("labels", std::move(labels2));
   SetInputParam("optimizer",  std::string("lbfgs"));
   SetInputParam("num_basis", (int) 10);
 
   mlpackMain();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_EQUAL(arma::approx_equal(
-      CLI::GetParam<arma::mat>("output"), output, "absdiff", 0), false);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
 }
 
 /**
@@ -253,7 +386,7 @@ BOOST_AUTO_TEST_CASE(NCADiffferentMaxIterationTest)
 
   arma::mat output = CLI::GetParam<arma::mat>("output");
 
-  // Reset settings
+  // Reset settings.
   CLI::ClearSettings();
   CLI::RestoreSettings(testName);
 
@@ -265,8 +398,7 @@ BOOST_AUTO_TEST_CASE(NCADiffferentMaxIterationTest)
   mlpackMain();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_EQUAL(arma::approx_equal(
-      CLI::GetParam<arma::mat>("output"), output, "absdiff", 0), false);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
