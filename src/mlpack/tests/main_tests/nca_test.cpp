@@ -110,6 +110,30 @@ BOOST_AUTO_TEST_CASE(NCALBFGSTest)
 }
 
 /**
+* Ensure that if labels are of a different size than required
+* by the input, an error occurs.
+*/
+BOOST_AUTO_TEST_CASE(NCALabelSizeTest)
+{
+  // Random dataset.
+  const int D = 30;
+  const int N = 50;
+
+  // Input labels of wrong size.
+  arma::mat x = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> labels;
+  labels << 0 << 0 << 1 << 0 << 1 << 1 << 1 << 0 << arma::endr;
+
+  SetInputParam("input", std::move(x));
+  SetInputParam("labels", std::move(labels));
+
+  // Check that an error is thrown.
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::logic_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
 * Ensure that setting normalize as true results in a
 * different output matrix then when set to false.
 */
