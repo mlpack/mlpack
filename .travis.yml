@@ -8,19 +8,25 @@ env:
   - CMAKE_OPTIONS="-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF"
 
 before_install:
+  # boost serialization issue with clang 5; for more information
+  # http://lists.llvm.org/pipermail/cfe-dev/2017-September/055571.html
+  - sudo add-apt-repository -y ppa:samuel-bachmann/boost
   # For the python bindings we need cython >= 0.24.
   - sudo add-apt-repository -y ppa:imcode/s3ql-trusty-backport
   # For the python bindings we need pandas >= 0.15.0.
   - wget -O- http://neuro.debian.net/lists/trusty.us-ca.full | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list
   - sudo apt-key adv --recv-keys --keyserver hkp://ha.pool.sks-keyservers.net 0xA5D32F012649A5A9
   - sudo apt-get update -qq
-  - sudo apt-get install -qq libopenblas-dev liblapack-dev g++ libboost-all-dev python3-pip cython3 python3-numpy python3-pandas
+  - sudo apt-get install -qq libopenblas-dev liblapack-dev libboost1.55-all-dev python3-pip cython3 python3-numpy python3-pandas
   # Install both python2 and python3 modules, and the build will decide which to
   # use.
   - sudo pip install cython numpy pandas
   - sudo pip install --upgrade --ignore-installed setuptools
   - sudo pip3 install --upgrade --ignore-installed setuptools
   - curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
+  - export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH
+  - export CC=clang-4.0
+  - export CXX=clang++-4.0
   - cmake . && make && sudo make install && cd ..
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
 
