@@ -265,10 +265,10 @@ static void mlpackMain()
       {
         // Check the exact distances matrix has the right dimensions.
         RequireParamValue<arma::mat>("exact_distances",
-          [&](arma::mat exactDists){ return (exactDists.n_rows == k); }, true,
+          [&](const arma::mat& exactDists){ return (exactDists.n_rows == k); }, true,
           "the number of rows in exact distances matrix must be equal to k.");
         RequireParamValue<arma::mat>("exact_distances",
-          [&](arma::mat exactDists){ return (exactDists.n_cols ==
+          [&](const arma::mat& exactDists){ return (exactDists.n_cols ==
           referenceSet.n_cols); }, true, "the number of columns in exact "
           "distances matrix must be equal to the number of columns in "
           "reference set.");
