@@ -50,9 +50,10 @@ BOOST_AUTO_TEST_CASE(ApproxKFNRefModelTest)
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 10);
 
+  ApproxKFNModel m;
+  SetInputParam("input_model", &m);
+
   // Input pre-trained model.
-  SetInputParam("input_model", std::move(CLI::GetParam<ApproxKFNModel*>
-    ("output_model")));
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
@@ -77,7 +78,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNInvalidKTest)
 
 /**
  * Make sure that the dimensions of neighbors and distances is correct given a
-   value of k.
+ * value of k.
  */
 BOOST_AUTO_TEST_CASE(ApproxKFNOutputDimensionTest)
 {
@@ -242,7 +243,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNumTablesChangeTest)
   mlpackMain();
 
   // Get the distances matrix after first training.
-  arma::mat FirstOutputDistances =
+  arma::mat firstOutputDistances =
       std::move(CLI::GetParam<arma::mat>("distances"));
 
   // Reset the settings.
@@ -263,13 +264,13 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNumTablesChangeTest)
   mlpackMain();
 
   // Get the distances matrix after second training.
-  arma::mat SecondOutputDistances =
+  arma::mat secondOutputDistances =
       std::move(CLI::GetParam<arma::mat>("distances"));
 
   // Check that the size of distance matrices (FirstOutputDistances and
   // SecondOutputDistances) are not equal which ensures num_tables changes
   // the output model.
-  CheckMatricesNotEqual(FirstOutputDistances, SecondOutputDistances);
+  CheckMatricesNotEqual(firstOutputDistances, secondOutputDistances);
 }
 
 /**
@@ -291,7 +292,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNumProjectionsChangeTest)
   mlpackMain();
 
   // Get the distances matrix after first training.
-  arma::mat FirstOutputDistances =
+  arma::mat firstOutputDistances =
       std::move(CLI::GetParam<arma::mat>("distances"));
 
   // Reset the settings.
@@ -311,17 +312,17 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNumProjectionsChangeTest)
   mlpackMain();
 
   // Get the distances matrix after second training.
-  arma::mat SecondOutputDistances =
+  arma::mat secondOutputDistances =
       std::move(CLI::GetParam<arma::mat>("distances"));
 
   // Check that the size of distance matrices (FirstOutputDistances and
   // SecondOutputDistances) are not equal which ensures num_tables changes
   // the output model.
-  CheckMatricesNotEqual(FirstOutputDistances, SecondOutputDistances);
+  CheckMatricesNotEqual(firstOutputDistances, secondOutputDistances);
 }
 
 /**
-* Make sure that the dimensions of the exact distances matrix are correct.
+ * Make sure that the dimensions of the exact distances matrix are correct.
  */
 BOOST_AUTO_TEST_CASE(ApproxKFNExactDistDimensionTest)
 {
@@ -347,7 +348,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNExactDistDimensionTest)
 
 /**
  * Make sure that the two strategie (Drusilla Select and QDAFN) output different
-   results.
+ * results.
  */
 BOOST_AUTO_TEST_CASE(ApproxKFNDifferentAlgoTest)
 {
@@ -363,9 +364,9 @@ BOOST_AUTO_TEST_CASE(ApproxKFNDifferentAlgoTest)
   mlpackMain();
 
   // Get the distances and neighbors matrix after first training.
-  arma::mat FirstOutputDistances =
+  arma::mat firstOutputDistances =
   std::move(CLI::GetParam<arma::mat>("distances"));
-  arma::Mat<size_t> FirstOutputNeighbors =
+  arma::Mat<size_t> firstOutputNeighbors =
     std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
 
   // Reset the settings.
@@ -380,17 +381,17 @@ BOOST_AUTO_TEST_CASE(ApproxKFNDifferentAlgoTest)
   SetInputParam("algorithm", (string) "qdafn");
 
   // Get the distances and neighbors matrix after second training.
-  arma::mat SecondOutputDistances =
+  arma::mat secondOutputDistances =
       std::move(CLI::GetParam<arma::mat>("distances"));
-  arma::Mat<size_t> SecondOutputNeighbors =
+  arma::Mat<size_t> secondOutputNeighbors =
       std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
 
-  // Check that the distance matrices (FirstOutputDistances and
-  // SecondOutputDistances) and neighbor matrices (FirstOutputNeighbors and
-  // SecondOutputNeighbors) are not equal. This ensures that the two strategies
+  // Check that the distance matrices (firstOutputDistances and
+  // secondOutputDistances) and neighbor matrices (firstOutputNeighbors and
+  // secondOutputNeighbors) are not equal. This ensures that the two strategies
   // result in different outputs.
-  CheckMatricesNotEqual(FirstOutputDistances, SecondOutputDistances);
-  CheckMatricesNotEqual(FirstOutputNeighbors, SecondOutputNeighbors);
+  CheckMatricesNotEqual(firstOutputDistances, secondOutputDistances);
+  CheckMatricesNotEqual(firstOutputNeighbors, secondOutputNeighbors);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
