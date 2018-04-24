@@ -121,7 +121,7 @@ class Acrobat
           const double maxVel1 = 4 * M_PI,
           const double maxVel2 = 9 * M_PI,
           const double dt = 0.2,
-          const double doneReward = 100.0) :
+          const double doneReward = 0) :
       gravity(gravity),
       linkLength1(linkLength1),
       linkLength2(linkLength2),
