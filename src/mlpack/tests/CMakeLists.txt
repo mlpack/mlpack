@@ -75,7 +75,6 @@ add_executable(mlpack_test
   momentum_sgd_test.cpp
   nbc_test.cpp
   nca_test.cpp
-  nesterov_momentum_sgd_test.cpp
   nmf_test.cpp
   nystroem_method_test.cpp
   octree_test.cpp
@@ -98,6 +97,7 @@ add_executable(mlpack_test
   regularized_svd_test.cpp
   rl_components_test.cpp
   rmsprop_test.cpp
+  robust_svd_test.cpp
   sa_test.cpp
   sarah_test.cpp
   scd_test.cpp
@@ -132,13 +132,11 @@ add_executable(mlpack_test
   main_tests/test_helper.hpp
   main_tests/emst_test.cpp
   main_tests/adaboost_test.cpp
-  main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
   main_tests/decision_tree_test.cpp
   main_tests/decision_stump_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/logistic_regression_test.cpp
-  main_tests/mean_shift_test.cpp
   main_tests/nbc_test.cpp
   main_tests/nmf_test.cpp
   main_tests/pca_test.cpp
@@ -149,13 +147,8 @@ add_executable(mlpack_test
   main_tests/random_forest_test.cpp
   main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
-  main_tests/kmeans_test.cpp
   main_tests/hoeffding_tree_test.cpp
-  main_tests/hmm_viterbi_test.cpp
   main_tests/hmm_train_test.cpp
-  main_tests/hmm_loglik_test.cpp
-  main_tests/hmm_generate_test.cpp
-  main_tests/hmm_test_utils.hpp
 )
 
 # Link dependencies of test executable.

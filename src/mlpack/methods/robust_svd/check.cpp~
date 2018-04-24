@@ -1,0 +1,11 @@
+#include <armadillo>
+#include <iostream>
+using namespace std;
+
+int main()
+{
+  arma::vec A(5);
+  arma::vec S = arma::zeros(arma::size(A));
+  cout<<arma::diagmat(S)<<endl;
+return 0;
+}

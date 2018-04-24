@@ -245,15 +245,6 @@ BOOST_AUTO_TEST_CASE(RandomizedPCADimensionalityReductionTest)
 }
 
 /**
- * Test that dimensionality reduction with randomized-svd PCA works the same way
- * MATLAB does (which should be correct!).
- */
-BOOST_AUTO_TEST_CASE(RobustPCADimensionalityReductionTest)
-{
-  PCADimensionalityReduction<RobustSVDPolicy>();
-}
-
-/**
  * Test that dimensionality reduction with QUIC-SVD PCA works the same way
  * as the Exact-SVD PCA method.
  */

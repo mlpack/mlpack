@@ -10,6 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+
+
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
@@ -19,37 +21,39 @@
 #include <mlpack/methods/pca/decomposition_policies/quic_svd_method.hpp>
 #include <mlpack/methods/pca/decomposition_policies/randomized_svd_method.hpp>
 #include <mlpack/methods/pca/decomposition_policies/randomized_block_krylov_method.hpp>
+#include <mlpack/methods/pca/decomposition_policies/robust_svd_method.hpp>
 
 using namespace mlpack;
 using namespace mlpack::pca;
 using namespace mlpack::util;
-using namespace std;
+
+
 
 // Document program.
 PROGRAM_INFO("Principal Components Analysis", "This program performs principal "
     "components analysis on the given dataset using the exact, randomized, "
-    "randomized block Krylov, or QUIC SVD method. It will transform the data "
+    "randomized block Krylov, QUIC or Robust SVD method. It will transform the data "
     "onto its principal components, optionally performing dimensionality "
     "reduction by ignoring the principal components with the smallest "
     "eigenvalues."
     "\n\n"
-    "Use the " + PRINT_PARAM_STRING("input") + " parameter to specify the "
-    "dataset to perform PCA on.  A desired new dimensionality can be specified "
+    "To specify the dataset to perform PCA on, the " + PRINT_DATASET("input") +
+    " parameter may be used.  A desired new dimensionality may be specified "
     "with the " + PRINT_PARAM_STRING("new_dimensionality") + " parameter, or "
-    "the desired variance to retain can be specified with the " +
+    "the desired variance to retain may be specified with the " +
     PRINT_PARAM_STRING("var_to_retain") + " parameter.  If desired, the "
-    "dataset can be scaled before running PCA with the " +
+    "dataset may be scaled before running PCA with the " +
     PRINT_PARAM_STRING("scale") + " parameter."
     "\n\n"
-    "Multiple different decomposition techniques can be used.  The method to "
-    "use can be specified with the " +
+    "Multiple different decomposition techniques may be used.  The method to "
+    "use may be specified with the " +
     PRINT_PARAM_STRING("decomposition_method") + " parameter, and it may take "
     "the values 'exact', 'randomized', or 'quic'."
     "\n\n"
     "For example, to reduce the dimensionality of the matrix " +
     PRINT_DATASET("data") + " to 5 dimensions using randomized SVD for the "
     "decomposition, storing the output matrix to " +
-    PRINT_DATASET("data_mod") + ", the following command can be used:"
+    PRINT_DATASET("data_mod") + ", the following command may be used:"
     "\n\n" +
     PRINT_CALL("pca", "input", "data", "new_dimensionality", 5,
         "decomposition_method", "randomized", "output", "data_mod"));
@@ -66,7 +70,7 @@ PARAM_FLAG("scale", "If set, the data will be scaled before running PCA, such "
     "that the variance of each feature is 1.", "s");
 
 PARAM_STRING_IN("decomposition_method", "Method used for the principal "
-    "components analysis: 'exact', 'randomized', 'randomized-block-krylov', "
+    "components analysis: 'exact', 'randomized', 'randomized-block-krylov','robust', "
     "'quic'.", "c", "exact");
 
 
@@ -77,9 +81,9 @@ void RunPCA(arma::mat& dataset,
             const bool scale,
             const double varToRetain)
 {
-  PCA<DecompositionPolicy> p(scale);
+  PCAType<DecompositionPolicy> p(scale);
 
-  Log::Info << "Performing PCA on dataset..." << endl;
+  Log::Info << "Performing PCA on dataset.." << endl;
   double varRetained;
 
   if (CLI::HasParam("var_to_retain"))
@@ -101,6 +105,7 @@ void RunPCA(arma::mat& dataset,
 
 static void mlpackMain()
 {
+  Log::Info << "here" << endl;
   // Load input dataset.
   arma::mat& dataset = CLI::GetParam<arma::mat>("input");
 
@@ -109,7 +114,7 @@ static void mlpackMain()
 
   // Check decomposition method validity.
   RequireParamInSet<string>("decomposition_method", { "exact", "randomized",
-      "randomized-block-krylov", "quic" }, true,
+      "randomized-block-krylov", "quic" , "robust"}, true,
       "unknown decomposition method");
 
   // Find out what dimension we want.
@@ -152,7 +157,11 @@ static void mlpackMain()
   {
     RunPCA<QUICSVDPolicy>(dataset, newDimension, scale, varToRetain);
   }
-
+  else if (decompositionMethod == "robust")
+  {
+    
+    RunPCA<RobustSVDPolicy>(dataset, newDimension, scale, varToRetain);
+  }
   // Now save the results.
   if (CLI::HasParam("output"))
     CLI::GetParam<arma::mat>("output") = std::move(dataset);
