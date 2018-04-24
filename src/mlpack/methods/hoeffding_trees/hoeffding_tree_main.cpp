@@ -159,6 +159,10 @@ static void mlpackMain()
       model = new HoeffdingTreeModel(HoeffdingTreeModel::INFO_HOEFFDING);
     else if (CLI::HasParam("info_gain") && (numericSplitStrategy == "binary"))
       model = new HoeffdingTreeModel(HoeffdingTreeModel::INFO_BINARY);
+    else {
+      Log::Fatal << "model is not initialized" << std::endl;
+      return;
+    }
   }
 
   // Now, do we need to train?
