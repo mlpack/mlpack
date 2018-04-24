@@ -97,7 +97,7 @@ class MountainCar
               const double positionMax = 0.5,
               const double velocityMin = -0.07,
               const double velocityMax = 0.07,
-              const double doneReward = 100.0) :
+              const double doneReward = 0) :
       positionMin(positionMin),
       positionMax(positionMax),
       velocityMin(velocityMin),
