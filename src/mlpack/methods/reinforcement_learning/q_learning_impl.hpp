@@ -155,7 +155,7 @@ double QLearning<
       target(sampledActions[i], i) = sampledRewards[i];
     else
       target(sampledActions[i], i) = sampledRewards[i] + config.Discount() *
-          (isTerminal[i] ? 0.0 : nextActionValues(bestActions[i], i));
+          nextActionValues(bestActions[i], i);
   }
 
   // Learn form experience.
