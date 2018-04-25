@@ -58,7 +58,7 @@ def to_matrix(x, dtype=np.double, copy=False):
 def to_matrix_with_info(x, dtype, copy=False):
   """
   Given some array-like X (which should be either a numpy ndarray or a pandas
-  DataFrame, convert into a numpy matrix of the given dtype.
+  DataFrame), convert it into a numpy matrix of the given dtype.
   """
   # Make sure it's array-like at all.
   if not hasattr(x, '__len__') and \
