@@ -50,8 +50,9 @@ BOOST_AUTO_TEST_CASE(ApproxKFNRefModelTest)
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 10);
 
-  ApproxKFNModel m;
-  SetInputParam("input_model", &m);
+  // The memory will be cleaned by CleanMemory().
+  ApproxKFNModel* m = new ApproxKFNModel();
+  SetInputParam("input_model", m);
 
   // Input pre-trained model.
   Log::Fatal.ignoreInput = true;
@@ -206,14 +207,17 @@ BOOST_AUTO_TEST_CASE(ApproxKFNModelReuseTest)
   arma::mat distances;
   neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(CLI::GetParam<arma::mat>("distances"));
-  ApproxKFNModel* model = CLI::GetParam<ApproxKFNModel*>("output_model");
+  ApproxKFNModel* model =
+      new ApproxKFNModel(*CLI::GetParam<ApproxKFNModel*>("output_model"));
+
+  bindings::tests::CleanMemory();
 
   // Reset passed parameters.
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["query"].wasPassed = false;
 
   // Input saved model, pass the same query and keep k unchanged.
-  SetInputParam("input_model", std::move(model));
+  SetInputParam("input_model", model);
   SetInputParam("query", queryData);
 
   mlpackMain();
