@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNInvalidKTest)
   SetInputParam("k", (int) 81); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::invalid_argument);
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
