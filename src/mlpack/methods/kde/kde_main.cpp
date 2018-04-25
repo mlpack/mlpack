@@ -49,13 +49,13 @@ PARAM_MATRIX_OUT("output", "Matrix to store output estimations.",
 
 static void mlpackMain()
 {
-  arma::mat reference = CLI::GetParam<arma::mat>("reference");
-  arma::mat query = CLI::GetParam<arma::mat>("query");
+  arma::mat reference = std::move(CLI::GetParam<arma::mat>("reference"));
+  arma::mat query = std::move(CLI::GetParam<arma::mat>("query"));
   double error = CLI::GetParam<double>("error");
   double bandwidth = CLI::GetParam<double>("bandwidth");
   int leafSize = CLI::GetParam<int>("leaf_size");
 
-  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec estimations = std::move(arma::vec(query.n_cols, arma::fill::zeros));
   kde::KDE<mlpack::metric::EuclideanDistance,
            arma::mat,
            kernel::GaussianKernel,
