@@ -50,10 +50,10 @@ BOOST_AUTO_TEST_CASE(KDESimpleTest)
       arma::mat,
       GaussianKernel,
       KDTree>
-    kde = KDE<>(reference, 1e-8, 0.8, 2);
+    kde = KDE<>(reference, 1e-8, 0.8);
   kde.Evaluate(query, estimations);
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_EQUAL(estimations[i], estimations_result[i]);
+    BOOST_REQUIRE_CLOSE(estimations[i], estimations_result[i], 1e-8);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

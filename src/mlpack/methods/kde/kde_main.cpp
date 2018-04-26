@@ -60,7 +60,7 @@ static void mlpackMain()
            arma::mat,
            kernel::GaussianKernel,
            tree::KDTree>
-    model = kde::KDE<>(reference, error, bandwidth, leafSize);
+    model = kde::KDE<>(reference, error, bandwidth);
 
   model.Evaluate(query, estimations);
   // Output estimations to file if defined.

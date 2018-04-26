@@ -33,8 +33,7 @@ class KDE
 
   KDE(const MatType& referenceSet,
       const double error = 1e-8,
-      const double bandwidth = 1.0,
-      const size_t leafSize = 2);
+      const double bandwidth = 1.0);
 
   ~KDE();
 
@@ -48,8 +47,6 @@ class KDE
   Tree* referenceTree;
 
   double error;
-
-  const int leafSize;
 };
 
 } // namespace kde

@@ -26,12 +26,10 @@ template<typename MetricType,
 KDE<MetricType, MatType, KernelType, TreeType>::
 KDE(const MatType& referenceSet,
     const double error,
-    const double bandwidth,
-    const size_t leafSize) :
-    referenceSet(referenceSet),
-    leafSize(leafSize)
+    const double bandwidth) :
+    referenceSet(referenceSet)
 {
-  this->referenceTree = new Tree(referenceSet, leafSize);
+  this->referenceTree = new Tree(referenceSet);
   this->kernel = new KernelType(bandwidth);
   this->error = error;
 }
@@ -60,7 +58,7 @@ Evaluate(const MatType& query, arma::vec& estimations)
   std::vector<size_t>* oldFromNewQueries;
   Tree* queryTree;
   oldFromNewQueries = new std::vector<size_t>(query.n_cols);
-  queryTree = new Tree(query, *oldFromNewQueries, leafSize);
+  queryTree = new Tree(query, *oldFromNewQueries);
   MetricType metric = MetricType();
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
   RuleType rules = RuleType(this->referenceTree->Dataset(),
