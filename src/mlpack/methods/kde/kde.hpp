@@ -49,8 +49,6 @@ class KDE
 
   double error;
 
-  double bandwidth;
-
   const int leafSize;
 };
 

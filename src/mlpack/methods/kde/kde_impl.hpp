@@ -34,7 +34,6 @@ KDE(const MatType& referenceSet,
   this->referenceTree = new Tree(referenceSet, leafSize);
   this->kernel = new KernelType(bandwidth);
   this->error = error;
-  this->bandwidth = bandwidth;
 }
 
 template<typename MetricType,
