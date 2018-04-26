@@ -241,6 +241,7 @@
  *   - Tan Jun An <yamidarkxxx@gmail.com>
  *   - Moksh Jain <mokshjn00@gmail.com>
  *   - Manthan-R-Sheth <manthanrsheth96@gmail.com>
+ *   - Thanasis Mattas <mattasa@auth.gr>
  */
 
 // First, include all of the prerequisites.

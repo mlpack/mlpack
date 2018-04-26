@@ -98,6 +98,7 @@ Copyright:
   Copyright 2018, Tan Jun An <yamidarkxxx@gmail.com>
   Copyright 2018, Moksh Jain <mokshjn00@gmail.com>
   Copyright 2018, Manthan-R-Sheth <manthanrsheth96@gmail.com>
+  Copyright 2018, Thanasis Mattas <mattasa@auth.gr>
 
 License: BSD-3-clause
   All rights reserved.
