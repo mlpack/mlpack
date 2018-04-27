@@ -624,8 +624,6 @@ static inline SDP<arma::sp_mat> ConstructMvuSDP(const arma::mat& origData,
     {
       // The set is used to filter duplicate neighbor pair.
       // Then the linear indenpence of the constraints can be satisfied.
-      // Note: we declare the number of sparse matrices is numNeighbors * numPoints,
-      // but now we may not use all of them.
       size_t x = i, y = neighbors(j, i);
       if (x > y)
       {
@@ -685,7 +683,7 @@ BOOST_AUTO_TEST_CASE(SmallMvuSdp)
   }
 
   auto sdp = ConstructMvuSDP(origData, 5);
-  // now plz check that the linear indenpence of the constraints has been satisfied.
+  // now plz check if the constraints is linearly independent.
   BOOST_REQUIRE_EQUAL(sdp.HasLinearlyIndependentConstraints(), true);
 
   PrimalDualSolver<SDP<arma::sp_mat>> solver(sdp);
