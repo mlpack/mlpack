@@ -189,6 +189,16 @@ static void mlpackMain()
         "the reference set must be passed");
   }
 
+  if (CLI::HasParam("k") && CLI::HasParam("reference") &&
+      ((size_t) CLI::GetParam<int>("k")) >
+          CLI::GetParam<arma::mat>("reference").n_cols)
+  {
+    Log::Fatal << "Number of neighbors to search for ("
+        << CLI::GetParam<int>("k") << ") must be less than the number of "
+        << "reference points ("
+        << CLI::GetParam<arma::mat>("reference").n_cols << ")." << std::endl;
+  }
+
   // Do the building of a model, if necessary.
   ApproxKFNModel* m;
   arma::mat referenceSet; // This may be used at query time.
@@ -263,7 +273,24 @@ static void mlpackMain()
       arma::mat exactDistances;
       if (CLI::HasParam("exact_distances"))
       {
+        // Check the exact distances matrix has the right dimensions.
         exactDistances = std::move(CLI::GetParam<arma::mat>("exact_distances"));
+
+        if (exactDistances.n_rows != k)
+        {
+          delete m;
+          Log::Fatal << "The number of rows in the exact distances matrix ("
+              << exactDistances.n_rows << " must be equal to k (" << k << ")."
+              << std::endl;
+        }
+        else if (exactDistances.n_cols != referenceSet.n_cols)
+        {
+          delete m;
+          Log::Fatal << "The number of columns in the exact distances matrix ("
+              << exactDistances.n_cols << ") must be equal to the number of "
+              << "columns in the reference set (" << referenceSet.n_cols << ")."
+              << std::endl;
+        }
       }
       else
       {
