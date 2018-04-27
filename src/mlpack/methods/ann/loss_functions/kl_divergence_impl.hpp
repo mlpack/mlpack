@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_ANN_LOSS_FUNCTION_KL_DIVERGENCE_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "KLDivergence.hpp"
+#include "kl_divergence.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

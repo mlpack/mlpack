@@ -118,6 +118,6 @@ class KLDivergence
 } // namespace mlpack
 
 // include implementation
-#include "KLDivergence_impl.hpp"
+#include "kl_divergence_impl.hpp"
 
 #endif
