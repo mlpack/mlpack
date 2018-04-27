@@ -3,8 +3,8 @@
 set(SOURCES
   cross_entropy_error.hpp
   cross_entropy_error_impl.hpp
-  KLDivergence.hpp
-  KLDivergence_impl.hpp
+  kl_divergence.hpp
+  kl_divergence_impl.hpp
   mean_squared_error.hpp
   mean_squared_error_impl.hpp
   sigmoid_cross_entropy_error.hpp

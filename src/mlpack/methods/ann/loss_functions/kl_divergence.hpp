@@ -1,5 +1,5 @@
 /**
- * @file KLDivergence.hpp
+ * @file kl_divergence.hpp
  * @author Dakshit Agrawal
  *
  * Definition of the Kullback–Leibler Divergence error function.
@@ -10,8 +10,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTION_KLDIVERGENCE_HPP
-#define MLPACK_METHODS_ANN_LOSS_FUNCTION_KLDIVERGENCE_HPP
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTION_KL_DIVERGENCE_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTION_KL_DIVERGENCE_HPP
 
 #include <mlpack/prereqs.hpp>
 
