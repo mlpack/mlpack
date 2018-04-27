@@ -21,8 +21,8 @@ namespace amf {
 /**
  * This initialization rule for AMF simply fills the W and/or H matrices with
  * the matrices given to the constructor of this object. If only one initial
- * matrix is given, the other matrix will be initialized with random noise.
- * Note that this object does not use std::move() during the Initialize()
+ * matrix is given, the other matrix will be initialized with random uniform 
+ * noise. Note that this object does not use std::move() during Initialize()
  * method, so it can be reused for multiple AMF objects, but will incur copies
  * of the W and H matrices.
  */
@@ -46,7 +46,7 @@ class GivenInitialization
   { }
 
   // Initialize either H or W with the given matrix. The other matrix will
-  // be initialized with random noise in Initialize().
+  // be initialized with random uniform noise in Initialize().
   GivenInitialization(const char whichMatrix, const arma::mat& m)
   {
     if (whichMatrix == 'W' || whichMatrix == 'w')
@@ -69,7 +69,7 @@ class GivenInitialization
   }
 
   // Initialize either H or W, taking control of the given matrix. The other
-  // matrix will be initialized with random noise in Initialize().
+  // matrix will be initialized with random uniform noise in Initialize().
   GivenInitialization(const char whichMatrix, const arma::mat&& m)
   {
     if (whichMatrix == 'W' || whichMatrix == 'w')
