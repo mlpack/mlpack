@@ -14,7 +14,6 @@
 #include <mlpack/core/optimizers/sdp/primal_dual.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
-//#include <set>
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
@@ -559,7 +558,7 @@ BOOST_AUTO_TEST_CASE(CorrelationCoeffToySdp)
   BOOST_REQUIRE_CLOSE(obj, 2 * (-0.978), 1e-3);
 }
 
- /**
+/**
  * Maximum variance unfolding (MVU) SDP to learn the unrolled gram matrix. For
  * the SDP formulation, see:
  *
@@ -576,9 +575,9 @@ BOOST_AUTO_TEST_CASE(CorrelationCoeffToySdp)
  * @param origData origDim x numPoints
  * @param numNeighbors
  */
- static inline SDP<arma::sp_mat> ConstructMvuSDP(const arma::mat& origData,
-                                                size_t numNeighbors)
- {
+static inline SDP<arma::sp_mat> ConstructMvuSDP(const arma::mat& origData,
+                                              size_t numNeighbors)
+{
   const size_t numPoints = origData.n_cols;
 
   assert(numNeighbors <= numPoints);
@@ -587,25 +586,30 @@ BOOST_AUTO_TEST_CASE(CorrelationCoeffToySdp)
   arma::mat distances;
   KNN knn(origData);
   knn.Search(numNeighbors, neighbors, distances);
+
   // how to construct the matrices A, b, and C? Plz refer to the above paper.
   std::set<std::pair<int, int>> neighbors_set;
   for (size_t i = 0; i < neighbors.n_cols; ++i)
   {
-     for (size_t j = 0; j < numNeighbors; ++j)
-     {
-       size_t x = i, y = neighbors(j, i);
-       if (x > y) {
-           x = neighbors(j, i);
-           y = i;
-       }
-       if (neighbors_set.find(std::make_pair(x, y)) != neighbors_set.end()) {
-           continue;
-       }
-       neighbors_set.insert(std::make_pair(x, y));
-     }
+    for (size_t j = 0; j < numNeighbors; ++j)
+    {
+      size_t x = i, y = neighbors(j, i);
+      if (x > y)
+      {
+        x = neighbors(j, i);
+        y = i;
+      }
+
+      if (neighbors_set.find(std::make_pair(x, y)) != neighbors_set.end())
+      {
+        continue;
+      }
+
+      neighbors_set.insert(std::make_pair(x, y));
+    }
   }
 
-//  SDP<arma::sp_mat> sdp(numPoints, numNeighbors * numPoints, 1);
+  // SDP<arma::sp_mat> sdp(numPoints, numNeighbors * numPoints, 1);
   SDP<arma::sp_mat> sdp(numPoints, neighbors_set.size(), 1);
   sdp.C().eye(numPoints, numPoints);
   sdp.C() *= -1;
@@ -628,14 +632,15 @@ BOOST_AUTO_TEST_CASE(CorrelationCoeffToySdp)
         x = neighbors(j, i);
         y = i;
       }
-      if (neighbors_set.find(std::make_pair(x, y)) != neighbors_set.end()) {
+      if (neighbors_set.find(std::make_pair(x, y)) != neighbors_set.end())
+      {
         continue;
       }
       neighbors_set.insert(std::make_pair(x, y));
 
       // This is the index of the constraint.
       const size_t index = _index;
-        _index++;
+      _index++;
       arma::sp_mat& aRef = sdp.SparseA()[index];
       aRef.zeros(numPoints, numPoints);
 
@@ -657,16 +662,16 @@ BOOST_AUTO_TEST_CASE(CorrelationCoeffToySdp)
   }
 
   return sdp;
- }
+}
 
- /**
+/**
  * Maximum variance unfolding
  *
  * Test doesn't work, because the constraint matrices are not linearly
  * independent.
  */
- BOOST_AUTO_TEST_CASE(SmallMvuSdp)
- {
+BOOST_AUTO_TEST_CASE(SmallMvuSdp)
+{
   const size_t n = 20;
 
   arma::mat origData(3, n);
@@ -689,7 +694,7 @@ BOOST_AUTO_TEST_CASE(CorrelationCoeffToySdp)
   const auto p = solver.Optimize(X, ysparse, ydense, Z);
   bool success = CheckKKT(sdp, X, ysparse, ydense, Z);
   BOOST_REQUIRE_EQUAL(success, true);
-//  BOOST_REQUIRE(p.first);
- }
+  // BOOST_REQUIRE(p.first);
+}
 
 BOOST_AUTO_TEST_SUITE_END();
