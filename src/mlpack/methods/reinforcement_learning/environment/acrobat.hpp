@@ -120,7 +120,8 @@ class Acrobat
           const double linkMoi = 1.0,
           const double maxVel1 = 4 * M_PI,
           const double maxVel2 = 9 * M_PI,
-          const double dt = 0.2) :
+          const double dt = 0.2,
+          const double doneReward = 0) :
       gravity(gravity),
       linkLength1(linkLength1),
       linkLength2(linkLength2),
@@ -131,7 +132,8 @@ class Acrobat
       linkMoi(linkMoi),
       maxVel1(maxVel1),
       maxVel2(maxVel2),
-      dt(dt)
+      dt(dt),
+      doneReward(doneReward)
   { /* Nothing to do here */ }
 
   /**
@@ -157,12 +159,19 @@ class Acrobat
 
     nextState.Theta2() = Wrap(currentNextState[1], -M_PI, M_PI);
     //! The value of angular velocity is bounded in min and max value.
+
     nextState.AngularVelocity1() = std::min(
         std::max(currentNextState[2], -maxVel1), maxVel1);
     nextState.AngularVelocity2() = std::min(
         std::max(currentNextState[3], -maxVel2), maxVel2);
-
-    return -1.0;
+    /**
+     * If the acrobat reaches a terminal state, it should be given a positive
+     * reward. This will ensure that the agent learns the goal of the game.
+     */
+    bool done = IsTerminal(nextState);
+    if (done)
+      return doneReward;
+    return -1;
   };
 
   /**
@@ -337,6 +346,9 @@ class Acrobat
 
   //! Locally-stored dt for RK4 method.
   double dt;
+
+  //! Locally-stored done reward.
+  double doneReward;
 }; // class Acrobat
 
 } // namespace rl
