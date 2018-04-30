@@ -1,16 +1,17 @@
 /**
- * @file sigmoid_cross_entropy_error.hpp
- * @author Kris Singh and Shikhar Jaiswal
+ * @file kl_divergence.hpp
+ * @author Dakshit Agrawal
  *
- * Definition of the cross-entropy with logit performance function.
+ * Definition of the Kullback–Leibler Divergence error function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_SIGMOID_CROSS_ENTROPY_ERROR_HPP
-#define MLPACK_METHODS_ANN_LAYER_SIGMOID_CROSS_ENTROPY_ERROR_HPP
+
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTION_KL_DIVERGENCE_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTION_KL_DIVERGENCE_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -18,53 +19,49 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The SigmoidCrossEntropyError performance function measures the network's
- * performance according to the cross-entropy function between the input and
- * target distributions. This function calculates the cross entropy
- * given the real values instead of providing the sigmoid activations.
- * The function uses this equivalent formulation:
- * \f$max(x, 0) - x * z + \log(1 +  e^{-|x|})\f$
- * where x = input and z = target.
+ * The Kullback–Leibler divergence is often used for continuous
+ * distributions(direct regression).
  *
  * For more information, see the following paper.
  *
  * @code
- * @article{1702.05659,
- *   title={On Loss Functions for Deep Neural Networks in Classification},
- *   author={Katarzyna Janocha, Wojciech Marian Czarnecki},
- *   url = {http://arxiv.org/abs/1702.05659},
- *   journal = {CoRR},
- *   eprint={arXiv:1702.05659},
- *   year={2017}
+ * article{1177729694,
+ *   title={On Information and Sufficiency},
+ *   author={S. Kullback, R.A. Leibler},
+ *   url = {https://projecteuclid.org/euclid.aoms/1177729694},
+ *   journal = {The Annals of Mathematical Statistics},
+ *   year={1951}
  * }
  * @endcode
- *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+        typename InputDataType = arma::mat,
+        typename OutputDataType = arma::mat
 >
-class SigmoidCrossEntropyError
+class KLDivergence
 {
  public:
   /**
-   * Create the SigmoidCrossEntropyError object.
+   * Create the Kullback–Leibler Divergence object with the specified
+   * parameters.
+   *
+   * @param takeMean Boolean variable to specify whether to take mean or not.
    */
-  SigmoidCrossEntropyError();
+  KLDivergence(const bool takeMean = false);
 
-  /*
-   * Computes the Sigmoid CrossEntropy Error functions.
+  /**
+   * Computes the Kullback–Leibler divergence error function.
    *
    * @param input Input data used for evaluating the specified function.
-   * @param output Resulting output activation.
+   * @param target Target data to compare with.
    */
-  template<typename eT>
-  inline double Forward(const arma::Mat<eT>&& input,
-                        const arma::Mat<eT>&& target);
+  template<typename InputType, typename TargetType>
+  double Forward(const InputType&& input, const TargetType&& target);
+
   /**
    * Ordinary feed backward pass of a neural network.
    *
@@ -72,10 +69,10 @@ class SigmoidCrossEntropyError
    * @param target The target vector.
    * @param output The calculated error.
    */
-  template<typename eT>
-  inline void Backward(const arma::Mat<eT>&& input,
-                       const arma::Mat<eT>&& target,
-                       arma::Mat<eT>&& output);
+  template<typename InputType, typename TargetType, typename OutputType>
+  void Backward(const InputType&& input,
+                const TargetType&& target,
+                OutputType&& output);
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
@@ -92,8 +89,13 @@ class SigmoidCrossEntropyError
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get the value of takeMean.
+  bool TakeMean() const { return takeMean; }
+  //! Modify the value of takeMean.
+  bool& TakeMean() { return takeMean; }
+
   /**
-   * Serialize the layer.
+   * Serialize the loss function
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -107,12 +109,15 @@ class SigmoidCrossEntropyError
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class SigmoidCrossEntropy
+
+  //! Boolean variable for taking mean or not.
+  bool takeMean;
+}; // class KLDivergence
 
 } // namespace ann
 } // namespace mlpack
 
-// Include implementation.
-#include "sigmoid_cross_entropy_error_impl.hpp"
+// include implementation
+#include "kl_divergence_impl.hpp"
 
 #endif
