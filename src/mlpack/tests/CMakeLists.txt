@@ -38,6 +38,7 @@ add_executable(mlpack_test
   gmm_test.cpp
   gradient_clipping_test.cpp
   gradient_descent_test.cpp
+  hdbscan_test.cpp
   hmm_test.cpp
   hoeffding_tree_test.cpp
   hpt_test.cpp
