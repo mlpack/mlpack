@@ -19,8 +19,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-CrossEntropyError<InputDataType, OutputDataType>::CrossEntropyError(double eps)
-  : eps(eps)
+CrossEntropyError<InputDataType, OutputDataType>::CrossEntropyError(
+    const double eps) : eps(eps)
 {
   // Nothing to do here.
 }
@@ -31,7 +31,7 @@ double CrossEntropyError<InputDataType, OutputDataType>::Forward(
     const InputType&& input, const TargetType&& target)
 {
   return -arma::accu(target % arma::log(input + eps) +
-                     (1. - target) % arma::log(1. - input + eps));
+      (1. - target) % arma::log(1. - input + eps));
 }
 
 template<typename InputDataType, typename OutputDataType>

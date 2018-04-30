@@ -10,7 +10,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #include <mlpack/methods/ann/loss_functions/kl_divergence.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
@@ -43,7 +42,6 @@ BOOST_AUTO_TEST_CASE(SimpleKLDivergenceTest)
 /**
  * Test to check KL Divergence loss function when we take mean.
  */
-
 BOOST_AUTO_TEST_CASE(KLDivergenceMeanTest)
 {
   arma::mat input, target, output;
@@ -65,7 +63,6 @@ BOOST_AUTO_TEST_CASE(KLDivergenceMeanTest)
 /**
  * Test to check KL Divergence loss function when we do not take mean.
  */
-
 BOOST_AUTO_TEST_CASE(KLDivergenceNoMeanTest)
 {
   arma::mat input, target, output;

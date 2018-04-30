@@ -40,7 +40,7 @@ class CrossEntropyError
    * @param eps The minimum value used for computing logarithms
    *            and denominators in a numerically stable way.
    */
-  CrossEntropyError(double eps = 1e-10);
+  CrossEntropyError(const double eps = 1e-10);
 
   /*
    * Computes the cross-entropy function.

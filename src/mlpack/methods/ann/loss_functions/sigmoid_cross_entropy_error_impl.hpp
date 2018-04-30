@@ -1,6 +1,7 @@
 /**
  * @file sigmoid_cross_entropy_error_impl.hpp
- * @author Kris Singh and Shikhar Jaiswal
+ * @author Kris Singh
+ * @author Shikhar Jaiswal
  *
  * Implementation of the sigmoid cross entropy error performance function.
  *
@@ -37,6 +38,7 @@ inline double SigmoidCrossEntropyError<InputDataType, OutputDataType>::Forward(
     maximum += std::max(input[i], 0.0) +
         std::log(1 + std::exp(-std::abs(input[i])));
   }
+
   return maximum - arma::accu(input % target);
 }
 
