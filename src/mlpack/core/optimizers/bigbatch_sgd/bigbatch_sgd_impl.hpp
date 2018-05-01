@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "bigbatch_sgd.hpp"
 
+#include <mlpack/core/optimizers/function.hpp>
+
 namespace mlpack {
 namespace optimization {
 
@@ -41,8 +43,15 @@ template<typename DecomposableFunctionType>
 double BigBatchSGD<UpdatePolicyType>::Optimize(
     DecomposableFunctionType& function, arma::mat& iterate)
 {
+  typedef Function<DecomposableFunctionType> FullFunctionType;
+  FullFunctionType& f(static_cast<FullFunctionType&>(function));
+
+  // Make sure we have all the methods that we need.
+  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType>();
+
+
   // Find the number of functions to use.
-  const size_t numFunctions = function.NumFunctions();
+  const size_t numFunctions = f.NumFunctions();
 
   // To keep track of where we are and how things are going.
   size_t currentFunction = 0;
@@ -53,7 +62,7 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
 
   // Calculate the first objective function.
   for (size_t i = 0; i < numFunctions; ++i)
-    overallObjective += function.Evaluate(iterate, i);
+    overallObjective += f.Evaluate(iterate, i);
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
@@ -90,7 +99,7 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
       currentFunction = 0;
 
       if (shuffle) // Determine order of visitation.
-        function.Shuffle();
+        f.Shuffle();
     }
 
     // Find the effective batch size; we have to take the minimum of three
@@ -107,12 +116,12 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
     double vB = 0;
 
     // Compute the stochastic gradient estimation.
-    function.Gradient(iterate, currentFunction, gradient, 1);
+    f.Gradient(iterate, currentFunction, gradient, 1);
 
     delta1 = gradient;
     for (size_t j = 1; j < effectiveBatchSize; ++j, ++k)
     {
-      function.Gradient(iterate, currentFunction + j, functionGradient, 1);
+      f.Gradient(iterate, currentFunction + j, functionGradient, 1);
       delta0 = delta1 + (functionGradient - delta1) / k;
 
       // Compute sample variance.
@@ -146,7 +155,7 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
             - 1) < numFunctions ? currentFunction + batchSize - 1 : 0;
         for (size_t j = 0; j < batchOffset; ++j, ++k)
         {
-          function.Gradient(iterate, batchStart + j, functionGradient, 1);
+          f.Gradient(iterate, batchStart + j, functionGradient, 1);
           delta0 = delta1 + (functionGradient - delta1) / (k + 1);
 
           // Compute sample variance.
@@ -167,13 +176,13 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
       }
     }
 
-    updatePolicy.Update(function, stepSize, iterate, gradient, gB, vB,
+    updatePolicy.Update(f, stepSize, iterate, gradient, gB, vB,
         currentFunction, batchSize, effectiveBatchSize, reset);
 
     // Update the iterate.
     iterate -= stepSize * gradient;
 
-    overallObjective += function.Evaluate(iterate, currentFunction,
+    overallObjective += f.Evaluate(iterate, currentFunction,
         effectiveBatchSize);
 
     i += effectiveBatchSize;
@@ -188,7 +197,7 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
   for (size_t i = 0; i < numFunctions; i += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
+    overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
   }
   return overallObjective;
 }
