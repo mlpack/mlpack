@@ -60,10 +60,6 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
   bool reset = false;
   arma::mat delta0, delta1;
 
-  // Calculate the first objective function.
-  for (size_t i = 0; i < numFunctions; ++i)
-    overallObjective += f.Evaluate(iterate, i);
-
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
   arma::mat functionGradient(iterate.n_rows, iterate.n_cols);
@@ -72,7 +68,7 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
   for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
   {
     // Is this iteration the start of a sequence?
-    if ((currentFunction % numFunctions) == 0)
+    if ((currentFunction % numFunctions) == 0 && i > 0)
     {
       // Output current objective function.
       Log::Info << "Big-batch SGD: iteration " << i << ", objective "
