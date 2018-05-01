@@ -73,6 +73,8 @@ set(SOURCES
   select_impl.hpp
   sequential.hpp
   sequential_impl.hpp
+  transposed_convolution.hpp
+  transposed_convolution_impl.hpp
   vr_class_reward.hpp
   vr_class_reward_impl.hpp
 )

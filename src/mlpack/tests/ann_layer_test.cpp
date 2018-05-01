@@ -1438,4 +1438,49 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormLayerTest)
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
+/**
+ * Transposed Convolution layer numerically gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientTransposedConvolutionLayerTest)
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input << 1 << 2 << 3 << 4 << 5 << arma::endr
+            << 6 << 7 << 8 << 9 << 10 << arma::endr
+            << 11 << 12 << 13 << 14 << 15 << arma::endr
+            << 16 << 17 << 18 << 19 << 20 ;
+      target = arma::mat("1");
+
+      model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<TransposedConvolution<> >(1, 1, 3, 3, 1, 1, 2, 2, 5, 5);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, RandomInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

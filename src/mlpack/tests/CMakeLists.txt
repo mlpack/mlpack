@@ -126,6 +126,7 @@ add_executable(mlpack_test
   test_function_tools.hpp
   test_tools.hpp
   timer_test.cpp
+  transposed_convolutional_network_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
   ub_tree_test.cpp
