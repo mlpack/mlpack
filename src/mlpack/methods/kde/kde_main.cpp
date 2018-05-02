@@ -38,7 +38,6 @@ PARAM_STRING_IN("tree", "Tree to use for the estimation"
     "('kd-tree', 'ball-tree).", "t", "kd-tree");
 PARAM_STRING_IN("metric", "Metric to use for the estimation"
     "('euclidean').", "m", "euclidean");
-PARAM_INT_IN("leaf_size", "Leaf size to use for the tree", "l", 2);
 PARAM_DOUBLE_IN("error", "Relative error tolerance for the result" , "e", 1e-8);
 PARAM_FLAG("breadth_first", "Use breadth-first traversal instead of depth"
            "first.", "w");
@@ -53,15 +52,15 @@ static void mlpackMain()
   arma::mat query = std::move(CLI::GetParam<arma::mat>("query"));
   double error = CLI::GetParam<double>("error");
   double bandwidth = CLI::GetParam<double>("bandwidth");
-  int leafSize = CLI::GetParam<int>("leaf_size");
+  bool breadthFirst = CLI::GetParam<bool>("breadth_first");
 
   arma::vec estimations = std::move(arma::vec(query.n_cols, arma::fill::zeros));
   kde::KDE<mlpack::metric::EuclideanDistance,
            arma::mat,
            kernel::GaussianKernel,
            tree::KDTree>
-    model = kde::KDE<>(reference, error, bandwidth);
-
+    model(bandwidth, 0.0, error, breadthFirst);
+  model.Train(reference);
   model.Evaluate(query, estimations);
   // Output estimations to file if defined.
   if (CLI::HasParam("output"))

@@ -31,22 +31,35 @@ class KDE
  public:
   typedef TreeType<MetricType, tree::EmptyStatistic, MatType> Tree;
 
-  KDE(const MatType& referenceSet,
-      const double error = 1e-8,
-      const double bandwidth = 1.0);
+  KDE(const double bandwidth = 1.0,
+      const double relError = 1e-5,
+      const double absError = 0,
+      const bool breadthFirst = false);
 
   ~KDE();
 
-  void Evaluate(const MatType& query, arma::vec& estimations);
+  void Train(const MatType& referenceSet);
+
+  void Train(const Tree& referenceTree);
+
+  void Evaluate(const MatType& querySet, arma::vec& estimations);
+
+  void Evaluate(const Tree& queryTree, arma::vec& estimations);
 
  private:
-  const MatType& referenceSet;
-
   KernelType* kernel;
 
   Tree* referenceTree;
 
-  double error;
+  double relError;
+
+  double absError;
+
+  bool breadthFirst;
+
+  bool ownsReferenceTree;
+
+  bool trained;
 };
 
 } // namespace kde

@@ -24,14 +24,17 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 KDE<MetricType, MatType, KernelType, TreeType>::
-KDE(const MatType& referenceSet,
-    const double error,
-    const double bandwidth) :
-    referenceSet(referenceSet)
+KDE(const double bandwidth,
+    const double relError,
+    const double absError,
+    const bool breadthFirst)
 {
-  this->referenceTree = new Tree(referenceSet);
   this->kernel = new KernelType(bandwidth);
-  this->error = error;
+  this->relError = relError;
+  this->absError = absError;
+  this->breadthFirst = breadthFirst;
+  this->ownsReferenceTree = false;
+  this->trained = false;
 }
 
 template<typename MetricType,
@@ -42,7 +45,8 @@ template<typename MetricType,
                   typename TreeMatType> class TreeType>
 KDE<MetricType, MatType, KernelType, TreeType>::~KDE()
 {
-  delete this->referenceTree;
+  if (ownsReferenceTree)
+    delete this->referenceTree;
   delete this->kernel;
 }
 
@@ -53,39 +57,72 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void KDE<MetricType, MatType, KernelType, TreeType>::
-Evaluate(const MatType& query, arma::vec& estimations)
+Train(const MatType& referenceSet)
 {
+  this->ownsReferenceTree = true;
+  this->referenceTree = new Tree(referenceSet);
+  this->trained = true;
+}
+
+template<typename MetricType,
+         typename MatType,
+         typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void KDE<MetricType, MatType, KernelType, TreeType>::
+Train(const Tree& referenceTree)
+{
+  if (this->ownsReferenceTree == true)
+    delete this->referenceTree;
+  this->ownsReferenceTree = false;
+  this->referenceTree = referenceTree;
+  this->trained = true;
+}
+
+template<typename MetricType,
+         typename MatType,
+         typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void KDE<MetricType, MatType, KernelType, TreeType>::
+Evaluate(const MatType& querySet, arma::vec& estimations)
+{
+  // TODO Manage trees that don't rearrange datasets
   std::vector<size_t>* oldFromNewQueries;
   Tree* queryTree;
-  oldFromNewQueries = new std::vector<size_t>(query.n_cols);
-  queryTree = new Tree(query, *oldFromNewQueries);
+  oldFromNewQueries = new std::vector<size_t>(querySet.n_cols);
+  queryTree = new Tree(querySet, *oldFromNewQueries);
   MetricType metric = MetricType();
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
   RuleType rules = RuleType(this->referenceTree->Dataset(),
                             queryTree->Dataset(),
                             estimations,
-                            error,
+                            relError,
+                            absError,
                             *oldFromNewQueries,
                             metric,
                             *kernel);
+  // DualTreeTraverser
+  typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
+  traverser.Traverse(*queryTree, *referenceTree);
+  estimations /= referenceTree->Dataset().n_cols;
+  delete oldFromNewQueries;
+  delete queryTree;
+
+  // Ideas for the future...
   // SingleTreeTraverser
   /*
   typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
   for(size_t i = 0; i < query.n_cols; ++i)
     traverser.Traverse(i, *referenceTree);
   */
-
-  // DualTreeTraverser
-  typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
-  traverser.Traverse(*queryTree, *referenceTree);
-  estimations /= referenceSet.n_cols;
-  delete oldFromNewQueries;
-  delete queryTree;
-
   // Brute force
-  /*arma::vec result = arma::vec(query.n_cols);
+  /*
+  arma::vec result = arma::vec(query.n_cols);
   result = arma::zeros<arma::vec>(query.n_cols);
-  
+
   for(size_t i = 0; i < query.n_cols; ++i)
   {
     arma::vec density = arma::zeros<arma::vec>(referenceSet.n_cols);
@@ -100,8 +137,39 @@ Evaluate(const MatType& query, arma::vec& estimations)
     //this->kernel.Normalizer(query.n_rows);
     //result(i) = (1/referenceSet.n_cols)*(accumulated);
   }
-  return result;*/
+  return result;
+  */
 }
 
+// TODO Implement
+/*
+template<typename MetricType,
+         typename MatType,
+         typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void KDE<MetricType, MatType, KernelType, TreeType>::
+Evaluate(const Tree& queryTree, arma::vec& estimations)
+{
+  std::vector<size_t>* oldFromNewQueries;
+  //Tree* queryTree;
+  oldFromNewQueries = new std::vector<size_t>(querySet.n_cols);
+  queryTree = new Tree(querySet, *oldFromNewQueries);
+  MetricType metric = MetricType();
+  typedef KDERules<MetricType, KernelType, Tree> RuleType;
+  RuleType rules = RuleType(this->referenceTree->Dataset(),
+                            queryTree->Dataset(),
+                            estimations,
+                            relError,
+                            absError,
+                            *oldFromNewQueries,
+                            metric,
+                            *kernel);
+  // DualTreeTraverser
+  typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
+  traverser.Traverse(*queryTree, *referenceTree);
+  estimations /= referenceTree->Dataset().n_cols;}
+  */
 } // namespace kde
 } // namespace mlpack

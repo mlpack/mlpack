@@ -26,7 +26,8 @@ class KDERules
   KDERules(const arma::mat& referenceSet,
            const arma::mat& querySet,
            arma::vec& densities,
-           const double error,
+           const double relError,
+           const double absError,
            const std::vector<size_t>& oldFromNewQueries,
            MetricType& metric,
            const KernelType& kernel);
@@ -71,7 +72,9 @@ class KDERules
   //! Density values.
   arma::vec& densities;
 
-  const double error;
+  const double absError;
+
+  const double relError;
 
   //! New query dataset order.
   const std::vector<size_t>& oldFromNewQueries;
