@@ -157,7 +157,7 @@ static void mlpackMain()
       model = new HoeffdingTreeModel(HoeffdingTreeModel::GINI_BINARY);
     else if (CLI::HasParam("info_gain") && (numericSplitStrategy == "domingos"))
       model = new HoeffdingTreeModel(HoeffdingTreeModel::INFO_HOEFFDING);
-    else if (CLI::HasParam("info_gain") && (numericSplitStrategy == "binary"))
+    else
       model = new HoeffdingTreeModel(HoeffdingTreeModel::INFO_BINARY);
   }
 

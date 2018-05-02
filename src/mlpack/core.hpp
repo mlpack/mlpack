@@ -244,6 +244,7 @@
  *   - Namrata Mukhija <namratamukhija@gmail.com>
  *   - Rohan Raj <rajrohan1108@gmail.com>
  *   - Conrad Sanderson
+ *   - Thanasis Mattas <mattasa@auth.gr>
  */
 
 // First, include all of the prerequisites.

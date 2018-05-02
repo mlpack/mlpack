@@ -112,7 +112,8 @@ class CartPole
            const double forceMag = 10.0,
            const double tau = 0.02,
            const double thetaThresholdRadians = 12 * 2 * 3.1416 / 360,
-           const double xThreshold = 2.4) :
+           const double xThreshold = 2.4,
+           const double doneReward = 0.0) :
       gravity(gravity),
       massCart(massCart),
       massPole(massPole),
@@ -122,7 +123,8 @@ class CartPole
       forceMag(forceMag),
       tau(tau),
       thetaThresholdRadians(thetaThresholdRadians),
-      xThreshold(xThreshold)
+      xThreshold(xThreshold),
+      doneReward(doneReward)
   { /* Nothing to do here */ }
 
   /**
@@ -154,6 +156,17 @@ class CartPole
     nextState.Angle() = state.Angle() + tau * state.AngularVelocity();
     nextState.AngularVelocity() = state.AngularVelocity() + tau * thetaAcc;
 
+    /**
+     * It is important to note that if the cartpole is falling down, it should
+     * be penalized.
+     */
+    bool done = IsTerminal(nextState);
+    if (done)
+      return doneReward;
+    /**
+     * When done is false, it means that the cartpole has fallen down.
+     * For this case the reward is 1.0.
+     */
     return 1.0;
   }
 
@@ -223,6 +236,9 @@ class CartPole
 
   //! Locally-stored maximum position.
   double xThreshold;
+
+  //! Locally-stored done reward.
+  double doneReward;
 };
 
 } // namespace rl

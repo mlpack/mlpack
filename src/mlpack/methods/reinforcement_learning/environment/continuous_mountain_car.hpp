@@ -1,9 +1,9 @@
 /**
- * @file mountain_car.hpp
- * @author Shangtong Zhang
+ * @file continuous_mountain_car.hpp
+ * @author Rohan Raj
  *
- * This file is an implementation of Mountain Car task:
- * https://gym.openai.com/envs/MountainCar-v0
+ * This file is an implementation of Continous Mountain Car task:
+ * https://gym.openai.com/envs/MountainCarContinuous-v0/
  *
  * TODO: provide an option to use dynamics directly from OpenAI gym.
  *
@@ -13,8 +13,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_RL_ENVIRONMENT_MOUNTAIN_CAR_HPP
-#define MLPACK_METHODS_RL_ENVIRONMENT_MOUNTAIN_CAR_HPP
+#ifndef MLPACK_METHODS_RL_ENVIRONMENT_CONTINUOUS_MOUNTAIN_CAR_HPP
+#define MLPACK_METHODS_RL_ENVIRONMENT_CONTINUOUS_MOUNTAIN_CAR_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -22,13 +22,13 @@ namespace mlpack {
 namespace rl {
 
 /**
- * Implementation of Mountain Car task.
+ * Implementation of Continuous Mountain Car task.
  */
-class MountainCar
+class ContinuousMountainCar
 {
  public:
   /**
-   * Implementation of state of Mountain Car. Each state is a
+   * Implementation of state of Continuous Mountain Car. Each state is a
    * (velocity, position) vector.
    */
   class State
@@ -37,13 +37,13 @@ class MountainCar
     /**
      * Construct a state instance.
      */
-    State(): data(dimension, arma::fill::zeros)
+    State() : data(dimension, arma::fill::zeros)
     { /* Nothing to do here. */ }
 
     /**
      * Construct a state based on the given data.
      *
-     * @param data Data for the velocityand position.
+     * @param data Data for the velocity and position.
      */
     State(const arma::colvec& data): data(data)
     { /* Nothing to do here. */ }
@@ -73,41 +73,41 @@ class MountainCar
   };
 
   /**
-   * Implementation of action of Mountain Car.
+   * Implementation of action of Continuous Mountain Car.
+   * In Continuous mountain car gain, the action represents the
+   * force to be applied. This value is bounded in range -1.0 to 1.0.
+   * Unlike the simple mountain car environment, where action space has a
+   * discrete value, continuous mountain car has continous action space
+   * value. 
    */
-  enum Action
+  struct Action
   {
-    backward,
-    stop,
-    forward,
-
-    //! Track the size of the action space.
-    size
+    double action[1];
+    // Storing degree of freedom
+    const int size = 1;
   };
 
   /**
-   * Construct a Mountain Car instance using the given constant.
+   * Construct a Continuous Mountain Car instance using the given constant.
    *
    * @param positionMin Minimum legal position.
    * @param positionMax Maximum legal position.
    * @param velocityMin Minimum legal velocity.
    * @param velocityMax Maximum legal velocity.
    */
-  MountainCar(const double positionMin = -1.2,
-              const double positionMax = 0.5,
-              const double velocityMin = -0.07,
-              const double velocityMax = 0.07,
-              const double doneReward = 0) :
+  ContinuousMountainCar(const double positionMin = -1.2,
+                        const double positionMax = 0.5,
+                        const double velocityMin = -0.07,
+                        const double velocityMax = 0.07) :
       positionMin(positionMin),
       positionMax(positionMax),
       velocityMin(velocityMin),
-      velocityMax(velocityMax),
-      doneReward(doneReward)
+      velocityMax(velocityMax)
   { /* Nothing to do here */ }
 
   /**
-   * Dynamics of Mountain Car. Get reward and next state based on current state
-   * and current action.
+   * Dynamics of Continuous Mountain Car. Get reward and next state based 
+   * on current state and current action.
    *
    * @param state The current state.
    * @param action The current action.
@@ -119,8 +119,8 @@ class MountainCar
                 State& nextState) const
   {
     // Calculate acceleration.
-    int direction = action - 1;
-    nextState.Velocity() = state.Velocity() + 0.001 * direction - 0.0025 *
+    double force = std::min(std::max(action.action[0], -1.0), 1.0);
+    nextState.Velocity() = state.Velocity() + 0.001 * force - 0.0025 *
         std::cos(3 * state.Position());
     nextState.Velocity() = std::min(
         std::max(nextState.Velocity(), velocityMin), velocityMax);
@@ -130,25 +130,18 @@ class MountainCar
     nextState.Position() = std::min(
         std::max(nextState.Position(), positionMin), positionMax);
 
-    if (std::abs(nextState.Position() - positionMin) <= 1e-5)
+    if (nextState.Position() == positionMin && nextState.Velocity() < 0)
     {
       nextState.Velocity() = 0.0;
     }
-    bool done = IsTerminal(nextState);
-    /**
-     * If done is true , it means that car has reached its goal.
-     * To make sure that the agent learns this, we will give some
-     * positive reward to the agent. If the agent doesn't reach the
-     * terminal state, then we will give a -1.0 reward to penalize 
-     * the agent to take that step.
-     */
-    if (done)
-      return doneReward;
-    return -1.0;
+    // If it is a terminal state, reward is 100.0
+    if (IsTerminal(nextState))
+      return 100.0;
+    return -pow(action.action[0], 2)*0.1;
   }
 
   /**
-   * Dynamics of Mountain Car. Get reward based on current state and current
+   * Dynamics of Continuous Mountain Car. Get reward based on current state and current
    * action.
    *
    * @param state The current state.
@@ -171,7 +164,7 @@ class MountainCar
   {
     State state;
     state.Velocity() = 0.0;
-    state.Position() = arma::as_scalar(arma::randu(1)) * 0.2 - 0.6;
+    state.Position() = math::Random(-0.6, -0.4);
     return state;
   }
 
@@ -183,7 +176,7 @@ class MountainCar
    */
   bool IsTerminal(const State& state) const
   {
-    return std::abs(state.Position() - positionMax) <= 1e-5;
+    return bool(state.Position() == positionMax);
   }
 
  private:
@@ -198,9 +191,6 @@ class MountainCar
 
   //! Locally-stored maximum legal velocity.
   double velocityMax;
-
-  //! Locally-stored done reward.
-  double doneReward;
 };
 
 } // namespace rl

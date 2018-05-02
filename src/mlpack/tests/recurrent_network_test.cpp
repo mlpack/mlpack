@@ -14,6 +14,7 @@
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 #include <mlpack/core/data/binarize.hpp>
 #include <mlpack/core/math/random.hpp>
