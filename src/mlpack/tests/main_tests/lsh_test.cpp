@@ -57,7 +57,8 @@ BOOST_AUTO_TEST_CASE(LSHOutputDimensionTest)
 
   // Check the neighbors matrix has 6 points for each of the 100 input points.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_rows, 6);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_cols, 100);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_cols,
+                      100);
 
   // Check the distances matrix has 6 points for each of the 100 input points.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("distances").n_rows, 6);
@@ -84,7 +85,7 @@ BOOST_AUTO_TEST_CASE(LSHParamValidityTest)
 
   bindings::tests::CleanMemory();
 
-  // Test for bucket_size.
+  // Test for second_hash_size.
 
   SetInputParam("reference", reference);
   SetInputParam("k", (int) 6);
@@ -135,6 +136,7 @@ BOOST_AUTO_TEST_CASE(LSHDiffTablesTest)
   SetInputParam("reference", reference);
   SetInputParam("k", (int) 6);
 
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   arma::Mat<size_t> neighbors = CLI::GetParam<arma::Mat<size_t>>("neighbors");
@@ -148,6 +150,7 @@ BOOST_AUTO_TEST_CASE(LSHDiffTablesTest)
   SetInputParam("k", (int) 6);
   SetInputParam("tables", (int) 40);
 
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Check that initial outputs and final outputs using two models are
@@ -168,6 +171,7 @@ BOOST_AUTO_TEST_CASE(LSHDiffProjectionsTest)
   SetInputParam("reference", reference);
   SetInputParam("k", (int) 6);
 
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   arma::Mat<size_t> neighbors = CLI::GetParam<arma::Mat<size_t>>("neighbors");
@@ -181,6 +185,7 @@ BOOST_AUTO_TEST_CASE(LSHDiffProjectionsTest)
   SetInputParam("k", (int) 6);
   SetInputParam("projections", (int) 30);
 
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Check that initial outputs and final outputs using two models are
@@ -201,6 +206,7 @@ BOOST_AUTO_TEST_CASE(LSHDiffHashWidthTest)
   SetInputParam("reference", reference);
   SetInputParam("k", (int) 6);
 
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   arma::Mat<size_t> neighbors = CLI::GetParam<arma::Mat<size_t>>("neighbors");
@@ -214,6 +220,7 @@ BOOST_AUTO_TEST_CASE(LSHDiffHashWidthTest)
   SetInputParam("k", (int) 6);
   SetInputParam("hash_width", (double) 0.5);
 
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Check that initial outputs and final outputs using two models are
@@ -230,8 +237,10 @@ BOOST_AUTO_TEST_CASE(LSHDiffHashWidthTest)
 BOOST_AUTO_TEST_CASE(LSHDiffNumProbesTest)
 {
   arma::mat reference = arma::randu<arma::mat>(5, 100);
+  arma::mat query = arma::randu<arma::mat>(5, 40);
 
-  SetInputParam("reference", reference);
+  SetInputParam("reference", std::move(reference));
+  SetInputParam("query", query);
   SetInputParam("k", (int) 6);
 
   mlpackMain();
@@ -239,12 +248,12 @@ BOOST_AUTO_TEST_CASE(LSHDiffNumProbesTest)
   arma::Mat<size_t> neighbors = CLI::GetParam<arma::Mat<size_t>>("neighbors");
   arma::mat distances = CLI::GetParam<arma::mat>("distances");
 
-  bindings::tests::CleanMemory();
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
 
   // Train model using num_probes equals to 5.
 
-  SetInputParam("reference", std::move(reference));
-  SetInputParam("k", (int) 6);
+  SetInputParam("input_model", CLI::GetParam<LSHSearch<>*>("output_model"));
+  SetInputParam("query", std::move(query));
   SetInputParam("num_probes", (int) 5);
 
   mlpackMain();
@@ -267,6 +276,7 @@ BOOST_AUTO_TEST_CASE(LSHDiffSecondHashSizeTest)
   SetInputParam("reference", reference);
   SetInputParam("k", (int) 6);
 
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   arma::Mat<size_t> neighbors = CLI::GetParam<arma::Mat<size_t>>("neighbors");
@@ -280,6 +290,7 @@ BOOST_AUTO_TEST_CASE(LSHDiffSecondHashSizeTest)
   SetInputParam("k", (int) 6);
   SetInputParam("second_hash_size", (int) 5000);
 
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Check that initial outputs and final outputs using two models are
@@ -300,6 +311,7 @@ BOOST_AUTO_TEST_CASE(LSHDiffBucketSizeTest)
   SetInputParam("reference", reference);
   SetInputParam("k", (int) 6);
 
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   arma::Mat<size_t> neighbors = CLI::GetParam<arma::Mat<size_t>>("neighbors");
@@ -311,8 +323,9 @@ BOOST_AUTO_TEST_CASE(LSHDiffBucketSizeTest)
 
   SetInputParam("reference", std::move(reference));
   SetInputParam("k", (int) 6);
-  SetInputParam("bucket_size", (int) 1000);
+  SetInputParam("bucket_size", (int) 1);
 
+  mlpack::math::FixedRandomSeed();
   mlpackMain();
 
   // Check that initial outputs and final outputs using the two models are
@@ -344,7 +357,6 @@ BOOST_AUTO_TEST_CASE(LSHModelReuseTest)
 
   SetInputParam("input_model", CLI::GetParam<LSHSearch<>*>("output_model"));
   SetInputParam("query", std::move(query));
-  SetInputParam("k", (int) 6);
 
   mlpackMain();
 
@@ -352,6 +364,25 @@ BOOST_AUTO_TEST_CASE(LSHModelReuseTest)
   // same.
   CheckMatrices(neighbors, CLI::GetParam<arma::Mat<size_t>>("neighbors"));
   CheckMatrices(distances, CLI::GetParam<arma::mat>("distances"));
+}
+
+/**
+ * Make sure true_neighbors have valid dimensions.
+ */
+BOOST_AUTO_TEST_CASE(LSHModelTrueNighborsDimTest)
+{
+  arma::mat reference = arma::randu<arma::mat>(5, 100);
+
+  // Initalize trueNeighbors with invalid dimensions.
+  arma::Mat<size_t> trueNeighbors = arma::randu<arma::Mat<size_t>>(7, 100);
+
+  SetInputParam("reference", std::move(reference));
+  SetInputParam("true_neighbors", std::move(trueNeighbors));
+  SetInputParam("k", (int) 6);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 }
 
 BOOST_AUTO_TEST_SUITE_END();

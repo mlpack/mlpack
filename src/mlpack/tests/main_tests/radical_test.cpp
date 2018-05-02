@@ -55,12 +55,12 @@ BOOST_AUTO_TEST_CASE(RadicalOutputDimensionTest)
   mlpackMain();
 
   // Check dimension of Y matrix.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_ic").n_rows,5);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_ic").n_cols,3);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_ic").n_rows, 5);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_ic").n_cols, 3);
 
   // Check dimension of W matrix.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_unmixing").n_rows,5);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_unmixing").n_cols,5);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_unmixing").n_rows, 5);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_unmixing").n_cols, 5);
 }
 
 /**
