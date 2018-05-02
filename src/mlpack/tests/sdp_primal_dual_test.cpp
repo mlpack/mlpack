@@ -588,7 +588,7 @@ static inline SDP<arma::sp_mat> ConstructMvuSDP(const arma::mat& origData,
   knn.Search(numNeighbors, neighbors, distances);
 
   // how to construct the matrices A, b, and C? Plz refer to the above paper.
-  std::set<std::pair<int, int>> neighbors_set;
+  std::set<std::pair<int, int>> neighborsSet;
   for (size_t i = 0; i < neighbors.n_cols; ++i)
   {
     for (size_t j = 0; j < numNeighbors; ++j)
@@ -600,23 +600,23 @@ static inline SDP<arma::sp_mat> ConstructMvuSDP(const arma::mat& origData,
         y = i;
       }
 
-      if (neighbors_set.find(std::make_pair(x, y)) != neighbors_set.end())
+      if (neighborsSet.find(std::make_pair(x, y)) != neighborsSet.end())
       {
         continue;
       }
 
-      neighbors_set.insert(std::make_pair(x, y));
+      neighborsSet.insert(std::make_pair(x, y));
     }
   }
 
-  // SDP<arma::sp_mat> sdp(numPoints, numNeighbors * numPoints, 1);
-  SDP<arma::sp_mat> sdp(numPoints, neighbors_set.size(), 1);
+  SDP<arma::sp_mat> sdp(numPoints, neighborsSet.size(), 1);
   sdp.C().eye(numPoints, numPoints);
   sdp.C() *= -1;
   sdp.DenseA()[0].ones(numPoints, numPoints);
   sdp.DenseB()[0] = 0;
-  neighbors_set.clear();
-  size_t _index = 0;
+
+  neighborsSet.clear();
+  size_t index = 0;
 
   for (size_t i = 0; i < neighbors.n_cols; ++i)
   {
@@ -630,15 +630,13 @@ static inline SDP<arma::sp_mat> ConstructMvuSDP(const arma::mat& origData,
         x = neighbors(j, i);
         y = i;
       }
-      if (neighbors_set.find(std::make_pair(x, y)) != neighbors_set.end())
+      if (neighborsSet.find(std::make_pair(x, y)) != neighborsSet.end())
       {
         continue;
       }
-      neighbors_set.insert(std::make_pair(x, y));
+      neighborsSet.insert(std::make_pair(x, y));
 
       // This is the index of the constraint.
-      const size_t index = _index;
-      _index++;
       arma::sp_mat& aRef = sdp.SparseA()[index];
       aRef.zeros(numPoints, numPoints);
 
@@ -656,6 +654,8 @@ static inline SDP<arma::sp_mat> ConstructMvuSDP(const arma::mat& origData,
 
       // The constraint b_ij is the distance between these two points.
       sdp.SparseB()[index] = distances(j, i);
+
+      index += 1;
     }
   }
 
@@ -665,8 +665,11 @@ static inline SDP<arma::sp_mat> ConstructMvuSDP(const arma::mat& origData,
 /**
  * Maximum variance unfolding
  *
- * Test doesn't work, because the constraint matrices are not linearly
- * independent.
+ * Test sometimes doesn't work, though the linear independence
+ * of constraints has been satisfied. It is the problem of SDP solver.
+ *
+ * For this case, the number of samples, i.e. the variable n, is set to 20,
+ * and the numNeighbors to 5, it is works (converges).
  */
 BOOST_AUTO_TEST_CASE(SmallMvuSdp)
 {
@@ -684,6 +687,7 @@ BOOST_AUTO_TEST_CASE(SmallMvuSdp)
 
   auto sdp = ConstructMvuSDP(origData, 5);
   // now plz check if the constraints is linearly independent.
+  // Note that the constraints of MVU are always linear independence
   BOOST_REQUIRE_EQUAL(sdp.HasLinearlyIndependentConstraints(), true);
 
   PrimalDualSolver<SDP<arma::sp_mat>> solver(sdp);
