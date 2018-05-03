@@ -96,8 +96,16 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   if (bound <= absError / referenceSet.n_cols)
   {
     arma::vec queryCenter, referenceCenter;
-    referenceNode.Center(referenceCenter);
-    queryNode.Center(queryCenter);
+    if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+    {
+      queryCenter = queryNode.Dataset().col(queryNode.Point(0));
+      referenceCenter = referenceNode.Dataset().col(referenceNode.Point(0));
+    }
+    else
+    {
+      referenceNode.Center(referenceCenter);
+      queryNode.Center(queryCenter);
+    }
     const double kernelValue = kernel.Evaluate(metric.Evaluate(referenceCenter,
                                                                queryCenter));
     for (size_t i = 0; i < queryNode.NumDescendants(); ++i)

@@ -89,11 +89,21 @@ template<typename MetricType,
 void KDE<MetricType, MatType, KernelType, TreeType>::
 Evaluate(const MatType& querySet, arma::vec& estimations)
 {
-  // TODO Manage trees that don't rearrange datasets
   std::vector<size_t>* oldFromNewQueries;
   Tree* queryTree;
-  oldFromNewQueries = new std::vector<size_t>(querySet.n_cols);
-  queryTree = new Tree(querySet, *oldFromNewQueries);
+  // Check whether Tree has a constructor that allows to handle rearrangements
+  // of the dataset or not on compile time.
+  if constexpr(std::is_constructible<Tree,
+               const MatType&,
+               std::vector<size_t>&>::value)
+  {
+    oldFromNewQueries = new std::vector<size_t>(querySet.n_cols);
+    queryTree = new Tree(querySet, *oldFromNewQueries);
+  }
+  else
+  {
+    queryTree = new Tree(querySet);
+  }
   MetricType metric = MetricType();
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
   RuleType rules = RuleType(this->referenceTree->Dataset(),
@@ -108,7 +118,11 @@ Evaluate(const MatType& querySet, arma::vec& estimations)
   typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
   traverser.Traverse(*queryTree, *referenceTree);
   estimations /= referenceTree->Dataset().n_cols;
-  delete oldFromNewQueries;
+  //TODO Handle better oldFromNewQueries when not used
+  if constexpr(std::is_constructible<Tree,
+               const MatType&,
+               std::vector<size_t>&>::value)
+    delete oldFromNewQueries;
   delete queryTree;
 
   // Ideas for the future...
