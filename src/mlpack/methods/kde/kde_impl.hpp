@@ -17,6 +17,28 @@
 namespace mlpack {
 namespace kde {
 
+//! Construct tree that rearranges the dataset
+template<typename TreeType, typename MatType>
+TreeType* BuildTree(
+    MatType&& dataset,
+    std::vector<size_t>& oldFromNew,
+    const typename std::enable_if<
+        tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
+{
+  return new TreeType(std::forward<MatType>(dataset), oldFromNew);
+}
+
+//! Construct tree that doesn't rearrange the dataset
+template<typename TreeType, typename MatType>
+TreeType* BuildTree(
+    MatType&& dataset,
+    const std::vector<size_t>& /* oldFromNew */,
+    const typename std::enable_if<
+        !tree::TreeTraits<TreeType>::RearrangesDataset>::type* = 0)
+{
+  return new TreeType(std::forward<MatType>(dataset));
+}
+
 template<typename MetricType,
          typename MatType,
          typename KernelType,
@@ -91,19 +113,10 @@ Evaluate(const MatType& querySet, arma::vec& estimations)
 {
   std::vector<size_t>* oldFromNewQueries;
   Tree* queryTree;
-  // Check whether Tree has a constructor that allows to handle rearrangements
-  // of the dataset or not on compile time.
-  if constexpr(std::is_constructible<Tree,
-               const MatType&,
-               std::vector<size_t>&>::value)
-  {
+  // If the tree rearranges the dataset, the new mapping is needed
+  if (tree::TreeTraits<Tree>::RearrangesDataset)
     oldFromNewQueries = new std::vector<size_t>(querySet.n_cols);
-    queryTree = new Tree(querySet, *oldFromNewQueries);
-  }
-  else
-  {
-    queryTree = new Tree(querySet);
-  }
+  queryTree = BuildTree<Tree>(querySet, *oldFromNewQueries);
   MetricType metric = MetricType();
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
   RuleType rules = RuleType(this->referenceTree->Dataset(),
@@ -118,10 +131,7 @@ Evaluate(const MatType& querySet, arma::vec& estimations)
   typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
   traverser.Traverse(*queryTree, *referenceTree);
   estimations /= referenceTree->Dataset().n_cols;
-  //TODO Handle better oldFromNewQueries when not used
-  if constexpr(std::is_constructible<Tree,
-               const MatType&,
-               std::vector<size_t>&>::value)
+  if (tree::TreeTraits<Tree>::RearrangesDataset)
     delete oldFromNewQueries;
   delete queryTree;
 
