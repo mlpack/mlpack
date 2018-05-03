@@ -114,4 +114,113 @@ BOOST_AUTO_TEST_CASE(RadicalBoundsTest)
   Log::Fatal.ignoreInput = false;
 }
 
+/**
+ * Check the learning process by using different values of noise_std_dev
+ * parameter.
+ */
+BOOST_AUTO_TEST_CASE(RadicalDiffNoiseStdDevTest)
+{
+  arma::mat input = arma::randu<arma::mat>(5, 3);
+
+  SetInputParam("input", input);
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  arma::mat Y = CLI::GetParam<arma::mat>("output_ic");
+
+  bindings::tests::CleanMemory();
+
+  SetInputParam("input", std::move(input));
+  SetInputParam("noise_std_dev", (double) 0.01);
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  // Check that initial output and final output using two models are different.
+  BOOST_REQUIRE_LT(arma::accu(Y ==
+      CLI::GetParam<arma::mat>("output_ic")), Y.n_elem);
+}
+
+/**
+ * Check the learning process by using different values of replicates parameter.
+ */
+BOOST_AUTO_TEST_CASE(RadicalDiffReplicatesTest)
+{
+  arma::mat input = arma::randu<arma::mat>(5, 3);
+
+  SetInputParam("input", input);
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  arma::mat Y = CLI::GetParam<arma::mat>("output_ic");
+
+  bindings::tests::CleanMemory();
+
+  SetInputParam("input", std::move(input));
+  SetInputParam("replicates", (int) 10);
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  // Check that initial output and final output using two models are different.
+  BOOST_REQUIRE_LT(arma::accu(Y ==
+      CLI::GetParam<arma::mat>("output_ic")), Y.n_elem);
+}
+
+/**
+ * Check the learning process by using different values of angles parameter.
+ */
+BOOST_AUTO_TEST_CASE(RadicalDiffAnglesTest)
+{
+  arma::mat input = arma::randu<arma::mat>(5, 3);
+
+  SetInputParam("input", input);
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  arma::mat Y = CLI::GetParam<arma::mat>("output_ic");
+
+  bindings::tests::CleanMemory();
+
+  SetInputParam("input", std::move(input));
+  SetInputParam("angles", (int) 20);
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  // Check that initial output and final output using two models are different.
+  BOOST_REQUIRE_LT(arma::accu(Y ==
+      CLI::GetParam<arma::mat>("output_ic")), Y.n_elem);
+}
+
+/**
+ * Check the learning process by using different values of sweeps parameter.
+ */
+BOOST_AUTO_TEST_CASE(RadicalDiffSweepsTest)
+{
+  arma::mat input = arma::randu<arma::mat>(5, 3);
+
+  SetInputParam("input", input);
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  arma::mat Y = CLI::GetParam<arma::mat>("output_ic");
+
+  bindings::tests::CleanMemory();
+
+  SetInputParam("input", std::move(input));
+  SetInputParam("sweeps", (int) 2);
+
+  mlpack::math::FixedRandomSeed();
+  mlpackMain();
+
+  // Check that initial output and final output using two models are different.
+  BOOST_REQUIRE_LT(arma::accu(Y ==
+      CLI::GetParam<arma::mat>("output_ic")), Y.n_elem);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
