@@ -587,8 +587,15 @@ static inline SDP<arma::sp_mat> ConstructMvuSDP(const arma::mat& origData,
   KNN knn(origData);
   knn.Search(numNeighbors, neighbors, distances);
 
-  // how to construct the matrices A, b, and C? Plz refer to the above paper.
-  std::set<std::pair<int, int>> neighborsSet;
+  typedef std::tuple<size_t, size_t, double_t> neighborTupleType;
+//  auto comp = [](const neighborTupleType& t1,
+//                 const neighborTupleType& t2)
+//  {
+//    return std::get<0>(t1) != std::get<0>(t2) or
+//            std::get<1>(t1) != std::get<1>(t2);
+//  };
+//  auto neighborsSet = std::set<neighborTupleType, decltype(comp)>(comp);
+  std::set<neighborTupleType > neighborsSet;
   for (size_t i = 0; i < neighbors.n_cols; ++i)
   {
     for (size_t j = 0; j < numNeighbors; ++j)
@@ -599,66 +606,44 @@ static inline SDP<arma::sp_mat> ConstructMvuSDP(const arma::mat& origData,
         x = neighbors(j, i);
         y = i;
       }
-
-      if (neighborsSet.find(std::make_pair(x, y)) != neighborsSet.end())
-      {
-        continue;
-      }
-
-      neighborsSet.insert(std::make_pair(x, y));
+      neighborsSet.insert(std::make_tuple(x, y, distances(j, i)));
     }
   }
-
+  // how to construct the matrices A, b, and C? Plz refer to the above paper.
   SDP<arma::sp_mat> sdp(numPoints, neighborsSet.size(), 1);
   sdp.C().eye(numPoints, numPoints);
   sdp.C() *= -1;
   sdp.DenseA()[0].ones(numPoints, numPoints);
   sdp.DenseB()[0] = 0;
 
-  neighborsSet.clear();
   size_t index = 0;
 
-  for (size_t i = 0; i < neighbors.n_cols; ++i)
+  for (auto it = neighborsSet.begin(); it != neighborsSet.end(); it++)
   {
-    for (size_t j = 0; j < numNeighbors; ++j)
-    {
-      // The set is used to filter duplicate neighbor pair.
-      // Then the linear indenpence of the constraints can be satisfied.
-      size_t x = i, y = neighbors(j, i);
-      if (x > y)
-      {
-        x = neighbors(j, i);
-        y = i;
-      }
-      if (neighborsSet.find(std::make_pair(x, y)) != neighborsSet.end())
-      {
-        continue;
-      }
-      neighborsSet.insert(std::make_pair(x, y));
+    size_t x = std::get<0>(*it);
+    size_t y = std::get<1>(*it);
+    double_t d = std::get<2>(*it);
 
-      // This is the index of the constraint.
-      arma::sp_mat& aRef = sdp.SparseA()[index];
-      aRef.zeros(numPoints, numPoints);
+    arma::sp_mat& aRef = sdp.SparseA()[index];
+    aRef.zeros(numPoints, numPoints);
 
-      // A_ij(i, i) = 1.
-      aRef(i, i) = 1;
+    // A_ij(i, i) = 1.
+    aRef(x, x) = 1;
 
-      // A_ij(i, j) = -1.
-      aRef(i, neighbors(j, i)) = -1;
+    // A_ij(i, j) = -1.
+    aRef(x, y) = -1;
 
-      // A_ij(j, i) = -1.
-      aRef(neighbors(j, i), i) = -1;
+    // A_ij(j, i) = -1.
+    aRef(y, x) = -1;
 
-      // A_ij(j, j) = 1.
-      aRef(neighbors(j, i), neighbors(j, i)) = 1;
+    // A_ij(j, j) = 1.
+    aRef(y, y) = 1;
 
-      // The constraint b_ij is the distance between these two points.
-      sdp.SparseB()[index] = distances(j, i);
+    // The constraint b_ij is the distance between these two points.
+    sdp.SparseB()[index] = d;
 
-      index += 1;
-    }
+    index += 1;
   }
-
   return sdp;
 }
 
@@ -676,7 +661,7 @@ BOOST_AUTO_TEST_CASE(SmallMvuSdp)
   const size_t n = 20;
 
   arma::mat origData(3, n);
-
+  mlpack::math::RandomSeed((size_t) std::time(NULL));
   // sample n random points on 3-dim unit sphere
   GaussianDistribution gauss(3);
   for (size_t i = 0; i < n; i++)
@@ -693,7 +678,7 @@ BOOST_AUTO_TEST_CASE(SmallMvuSdp)
   PrimalDualSolver<SDP<arma::sp_mat>> solver(sdp);
   arma::mat X, Z;
   arma::vec ysparse, ydense;
-  const auto p = solver.Optimize(X, ysparse, ydense, Z);
+  solver.Optimize(X, ysparse, ydense, Z);
   bool success = CheckKKT(sdp, X, ysparse, ydense, Z);
   BOOST_REQUIRE_EQUAL(success, true);
   // BOOST_REQUIRE(p.first);
