@@ -36,6 +36,8 @@ class KDE
       const double absError = 0,
       const bool breadthFirst = false);
 
+  KDE(const KDE& other);
+
   ~KDE();
 
   void Train(const MatType& referenceSet);

@@ -70,6 +70,30 @@ template<typename MetricType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
+KDE<MetricType, MatType, KernelType, TreeType>::
+KDE(const KDE& other) :
+    kernel(new KernelType(other.kernel)),
+    relError(other.relError),
+    absError(other.absError),
+    breadthFirst(other.breadthFirst),
+    ownsReferenceTree(other.ownsReferenceTree),
+    trained(other.trained)
+{
+  if (trained)
+  {
+    if (ownsReferenceTree)
+      referenceTree = new Tree(other.referenceTree);
+    else
+      referenceTree = other.referenceTree;
+  }
+}
+
+template<typename MetricType,
+         typename MatType,
+         typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 KDE<MetricType, MatType, KernelType, TreeType>::~KDE()
 {
   if (ownsReferenceTree)
