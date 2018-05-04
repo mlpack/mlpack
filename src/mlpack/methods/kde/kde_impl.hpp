@@ -111,12 +111,8 @@ template<typename MetricType,
 void KDE<MetricType, MatType, KernelType, TreeType>::
 Evaluate(const MatType& querySet, arma::vec& estimations)
 {
-  std::vector<size_t>* oldFromNewQueries;
-  Tree* queryTree;
-  // If the tree rearranges the dataset, the new mapping is needed
-  if (tree::TreeTraits<Tree>::RearrangesDataset)
-    oldFromNewQueries = new std::vector<size_t>(querySet.n_cols);
-  queryTree = BuildTree<Tree>(querySet, *oldFromNewQueries);
+  std::vector<size_t> oldFromNewQueries;
+  Tree* queryTree = BuildTree<Tree>(querySet, oldFromNewQueries);
   MetricType metric = MetricType();
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
   RuleType rules = RuleType(this->referenceTree->Dataset(),
@@ -124,15 +120,13 @@ Evaluate(const MatType& querySet, arma::vec& estimations)
                             estimations,
                             relError,
                             absError,
-                            *oldFromNewQueries,
+                            oldFromNewQueries,
                             metric,
                             *kernel);
   // DualTreeTraverser
   typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
   traverser.Traverse(*queryTree, *referenceTree);
   estimations /= referenceTree->Dataset().n_cols;
-  if (tree::TreeTraits<Tree>::RearrangesDataset)
-    delete oldFromNewQueries;
   delete queryTree;
 
   // Ideas for the future...
