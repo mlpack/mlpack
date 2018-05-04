@@ -70,8 +70,7 @@ template<typename MetricType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-KDE<MetricType, MatType, KernelType, TreeType>::
-KDE(const KDE& other) :
+KDE<MetricType, MatType, KernelType, TreeType>::KDE(const KDE& other) :
     kernel(new KernelType(other.kernel)),
     relError(other.relError),
     absError(other.absError),
@@ -86,6 +85,32 @@ KDE(const KDE& other) :
     else
       referenceTree = other.referenceTree;
   }
+}
+
+template<typename MetricType,
+         typename MatType,
+         typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+KDE<MetricType, MatType, KernelType, TreeType>&
+KDE<MetricType, MatType, KernelType, TreeType>::operator=(KDE other)
+{
+  // Clean memory
+  if (ownsReferenceTree)
+    delete referenceTree;
+  delete kernel;
+
+  // Move
+  this->kernel = std::move(other.kernel);
+  this->referenceTree = std::move(other.referenceTree);
+  this->relError = other.relError;
+  this->absError = other.absError;
+  this->breadthFirst = other.breadthFirst;
+  this->ownsReferenceTree = other.ownsReferenceTree;
+  this->trained = other.trained;
+
+  return *this;
 }
 
 template<typename MetricType,

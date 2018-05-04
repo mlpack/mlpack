@@ -38,6 +38,8 @@ class KDE
 
   KDE(const KDE& other);
 
+  KDE& operator=(KDE other);
+
   ~KDE();
 
   void Train(const MatType& referenceSet);
