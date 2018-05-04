@@ -32,20 +32,21 @@ class KDERules
            MetricType& metric,
            const KernelType& kernel);
 
+  //! Base Case
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
-  // SingleTree
+  //! SingleTree Rescore
   double Score(const size_t queryIndex, TreeType& referenceNode);
 
-  // SingleTree
+  //! SingleTree Score
   double Rescore(const size_t queryIndex,
                  TreeType& referenceNode,
                  const double oldScore) const;
 
-  // DoubleTree
+  //! DoubleTree Score
   double Score(TreeType& queryNode, TreeType& referenceNode);
 
-  // DoubleTree
+  //! DoubleTree Rescore
   double Rescore(TreeType& queryNode,
                  TreeType& referenceNode,
                  const double oldScore) const;
@@ -72,16 +73,19 @@ class KDERules
   //! Density values.
   arma::vec& densities;
 
+  //! Absolute error tolerance.
   const double absError;
 
+  //! Relatve error tolerance.
   const double relError;
 
   //! New query dataset order.
   const std::vector<size_t>& oldFromNewQueries;
 
-  //! The instantiated metric.
+  //! Instantiated metric.
   MetricType& metric;
 
+  //! Instantiated kernel
   const KernelType& kernel;
 
   //! The last query index.

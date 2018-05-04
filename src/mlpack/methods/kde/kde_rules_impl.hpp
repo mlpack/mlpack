@@ -89,11 +89,12 @@ template<typename MetricType, typename KernelType, typename TreeType>
 double KDERules<MetricType, KernelType, TreeType>::
 Score(TreeType& queryNode, TreeType& referenceNode)
 {
-  double score, bound;
-  bound = kernel.Evaluate(queryNode.MinDistance(referenceNode)) -
-          kernel.Evaluate(queryNode.MaxDistance(referenceNode));
+  const double maxKernel = kernel.Evaluate(queryNode.MinDistance(referenceNode));
+  const double minKernel = kernel.Evaluate(queryNode.MaxDistance(referenceNode));
+  const double bound = maxKernel - minKernel;
+  double score;
 
-  if (bound <= absError / referenceSet.n_cols)
+  if (bound <= (absError + relError * minKernel) / referenceSet.n_cols)
   {
     arma::vec queryCenter, referenceCenter;
     if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)

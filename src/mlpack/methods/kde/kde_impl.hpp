@@ -49,14 +49,19 @@ KDE<MetricType, MatType, KernelType, TreeType>::
 KDE(const double bandwidth,
     const double relError,
     const double absError,
-    const bool breadthFirst)
+    const bool breadthFirst) :
+    kernel(new KernelType(bandwidth)),
+    relError(relError),
+    absError(absError),
+    breadthFirst(breadthFirst),
+    ownsReferenceTree(false),
+    trained(false)
 {
-  this->kernel = new KernelType(bandwidth);
-  this->relError = relError;
-  this->absError = absError;
-  this->breadthFirst = breadthFirst;
-  this->ownsReferenceTree = false;
-  this->trained = false;
+  if (relError > 0 && absError > 0)
+    Log::Warn << "Absolute and relative error tolerances will be sumed up"
+              << std::endl;
+  if (relError < 0 || absError < 0)
+    Log::Fatal << "Error tolerance can't be less than 0" << std::endl;
 }
 
 template<typename MetricType,
