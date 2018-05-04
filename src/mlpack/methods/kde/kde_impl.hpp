@@ -98,12 +98,12 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void KDE<MetricType, MatType, KernelType, TreeType>::
-Train(const Tree& referenceTree)
+Train(Tree& referenceTree)
 {
   if (this->ownsReferenceTree == true)
     delete this->referenceTree;
   this->ownsReferenceTree = false;
-  this->referenceTree = referenceTree;
+  this->referenceTree = &referenceTree;
   this->trained = true;
 }
 
@@ -120,7 +120,7 @@ Evaluate(const MatType& querySet, arma::vec& estimations)
   Tree* queryTree = BuildTree<Tree>(querySet, oldFromNewQueries);
   MetricType metric = MetricType();
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
-  RuleType rules = RuleType(this->referenceTree->Dataset(),
+  RuleType rules = RuleType(referenceTree->Dataset(),
                             queryTree->Dataset(),
                             estimations,
                             relError,
@@ -164,8 +164,6 @@ Evaluate(const MatType& querySet, arma::vec& estimations)
   */
 }
 
-// TODO Implement
-/*
 template<typename MetricType,
          typename MatType,
          typename KernelType,
@@ -173,26 +171,25 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void KDE<MetricType, MatType, KernelType, TreeType>::
-Evaluate(const Tree& queryTree, arma::vec& estimations)
+Evaluate(Tree& queryTree,
+         const std::vector<size_t>& oldFromNewQueries,
+         arma::vec& estimations)
 {
-  std::vector<size_t>* oldFromNewQueries;
-  //Tree* queryTree;
-  oldFromNewQueries = new std::vector<size_t>(querySet.n_cols);
-  queryTree = new Tree(querySet, *oldFromNewQueries);
   MetricType metric = MetricType();
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
-  RuleType rules = RuleType(this->referenceTree->Dataset(),
-                            queryTree->Dataset(),
+  RuleType rules = RuleType(referenceTree->Dataset(),
+                            queryTree.Dataset(),
                             estimations,
                             relError,
                             absError,
-                            *oldFromNewQueries,
+                            oldFromNewQueries,
                             metric,
                             *kernel);
   // DualTreeTraverser
   typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
-  traverser.Traverse(*queryTree, *referenceTree);
-  estimations /= referenceTree->Dataset().n_cols;}
-  */
+  traverser.Traverse(queryTree, *referenceTree);
+  estimations /= referenceTree->Dataset().n_cols;
+}
+
 } // namespace kde
 } // namespace mlpack

@@ -40,11 +40,13 @@ class KDE
 
   void Train(const MatType& referenceSet);
 
-  void Train(const Tree& referenceTree);
+  void Train(Tree& referenceTree);
 
   void Evaluate(const MatType& querySet, arma::vec& estimations);
 
-  void Evaluate(const Tree& queryTree, arma::vec& estimations);
+  void Evaluate(Tree& queryTree,
+                const std::vector<size_t>& oldFromNewQueries,
+                arma::vec& estimations);
 
  private:
   KernelType* kernel;

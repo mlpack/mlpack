@@ -58,4 +58,42 @@ BOOST_AUTO_TEST_CASE(KDESimpleTest)
     BOOST_REQUIRE_CLOSE(estimations[i], estimations_result[i], 1e-8);
 }
 
+/**
+ * Test Train(Tree...) and Evaluate(Tree...)
+ */
+BOOST_AUTO_TEST_CASE(KDETreeAsArguments)
+{
+  // Transposed reference and query sets because it's easier to read.
+  arma::mat reference = { {-1.0, -1.0},
+                          {-2.0, -1.0},
+                          {-3.0, -2.0},
+                          { 1.0,  1.0},
+                          { 2.0,  1.0},
+                          { 3.0,  2.0} };
+  arma::mat query = { { 0.0,  0.5},
+                      { 0.4, -3.0},
+                      { 0.0,  0.0},
+                      {-2.1,  1.0} };
+  arma::inplace_trans(reference);
+  arma::inplace_trans(query);
+  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec estimations_result = {0.08323668699564207296148765635734889656305,
+                                  0.00167470061366603324010116082831700623501,
+                                  0.07658867126520703394465527935608406551182,
+                                  0.01028120384800740999553525512055784929544};
+  typedef KDTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
+  std::vector<size_t> oldFromNewQueries;
+  Tree queryTree = Tree(query, oldFromNewQueries, 2);
+  Tree referenceTree = Tree(reference, 2);
+  KDE<EuclideanDistance,
+      arma::mat,
+      GaussianKernel,
+      KDTree>
+  kde(0.8, 0.0, 1e-8, false);
+  kde.Train(referenceTree);
+  kde.Evaluate(queryTree, oldFromNewQueries, estimations);
+  for (size_t i = 0; i < query.n_cols; ++i)
+    BOOST_REQUIRE_CLOSE(estimations[i], estimations_result[i], 1e-8);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

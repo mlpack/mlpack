@@ -89,8 +89,10 @@ template<typename MetricType, typename KernelType, typename TreeType>
 double KDERules<MetricType, KernelType, TreeType>::
 Score(TreeType& queryNode, TreeType& referenceNode)
 {
-  const double maxKernel = kernel.Evaluate(queryNode.MinDistance(referenceNode));
-  const double minKernel = kernel.Evaluate(queryNode.MaxDistance(referenceNode));
+  const double maxKernel =
+    kernel.Evaluate(queryNode.MinDistance(referenceNode));
+  const double minKernel =
+    kernel.Evaluate(queryNode.MaxDistance(referenceNode));
   const double bound = maxKernel - minKernel;
   double score;
 
