@@ -48,6 +48,36 @@ class KDE
                 const std::vector<size_t>& oldFromNewQueries,
                 arma::vec& estimations);
 
+  const KernelType& Kernel() const { return kernel; }
+
+  KernelType& Kernel() { return kernel; }
+
+  const Tree& ReferenceTree() const { return referenceTree; }
+
+  //! Get relative error tolerance.
+  double RelativeError() const { return relError; }
+
+  //! Modify relative error tolerance.
+  void RelativeError(const double newError);
+
+  //! Get absolute error tolerance.
+  double AbsoluteError() const { return absError; }
+
+  //! Modify absolute error tolerance.
+  void AbsoluteError(const double newError);
+
+  //! Get whether breadth-first traversal is being used.
+  bool BreadthFirst() const { return breadthFirst; }
+
+  //! Modify whether breadth-first traversal is being used.
+  bool& BreadthFirst() { return breadthFirst; }
+
+  //! Check if reference tree is owned by the KDE model.
+  bool OwnsReferenceTree() const { return ownsReferenceTree; }
+
+  //! Check if KDE model is trained or not.
+  bool IsTrained() const { return trained; }
+
  private:
   KernelType* kernel;
 

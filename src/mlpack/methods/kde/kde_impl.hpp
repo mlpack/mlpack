@@ -191,5 +191,37 @@ Evaluate(Tree& queryTree,
   estimations /= referenceTree->Dataset().n_cols;
 }
 
+template<typename MetricType,
+         typename MatType,
+         typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void KDE<MetricType, MatType, KernelType, TreeType>::
+RelativeError(const double newError)
+{
+  if (newError < 0 || newError > 1)
+    Log::Fatal << "Relative error tolerance must be a value between 0 and 1"
+               << std::endl;
+  else
+    this->relError = newError;
+}
+
+template<typename MetricType,
+         typename MatType,
+         typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void KDE<MetricType, MatType, KernelType, TreeType>::
+AbsoluteError(const double newError)
+{
+  if (newError < 0)
+    Log::Fatal << "Absolute error tolerance must be a value greater or equal "
+               << "to 0" << std::endl;
+  else
+    this->absError = newError;
+}
+
 } // namespace kde
 } // namespace mlpack
