@@ -38,6 +38,8 @@ class KDE
 
   KDE(const KDE& other);
 
+  KDE(KDE&& other);
+
   KDE& operator=(KDE other);
 
   ~KDE();

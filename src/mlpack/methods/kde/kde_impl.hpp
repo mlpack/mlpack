@@ -93,6 +93,27 @@ template<typename MetricType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
+KDE<MetricType, MatType, KernelType, TreeType>::KDE(KDE&& other) :
+    kernel(other.kernel),
+    referenceTree(other.referenceTree),
+    relError(other.relError),
+    absError(other.absError),
+    breadthFirst(other.breadthFirst),
+    ownsReferenceTree(other.ownsReferenceTree),
+    trained(other.trained)
+{
+  other.kernel = new KernelType();
+  other.referenceTree = nullptr;
+  other.ownsReferenceTree = false;
+  other.trained = false;
+}
+
+template<typename MetricType,
+         typename MatType,
+         typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 KDE<MetricType, MatType, KernelType, TreeType>&
 KDE<MetricType, MatType, KernelType, TreeType>::operator=(KDE other)
 {
