@@ -86,9 +86,12 @@ On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 
 @code
 # dnf install boost-devel boost-test boost-program-options boost-math
-  armadillo-devel binutils-devel python3-Cython python3-setuptools
-  python3-numpy python3-pandas
+  armadillo-devel binutils-devel python2-Cython python2-setuptools
+  python2-numpy python2-pandas
 @endcode
+
+(It's also possible to use python3 packages from the package manager---mlpack
+will work with either.)
 
 @section build_config Configuring CMake
 
