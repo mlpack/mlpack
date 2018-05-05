@@ -1,7 +1,7 @@
 /**
  * @file transposed_convolution.hpp
- * @author Marcus Edel
  * @author Shikhar Jaiswal
+ * @author Marcus Edel
  *
  * Definition of the Transposed Convolution module class.
  *
@@ -62,7 +62,7 @@ class TransposedConvolution
    * @param dH Stride of filter application in the y direction.
    * @param padW Padding width of the input.
    * @param padH Padding height of the input.
-   * @param inputWidth The widht of the input data.
+   * @param inputWidth The width of the input data.
    * @param inputHeight The height of the input data.
    */
   TransposedConvolution(const size_t inSize,
@@ -183,8 +183,8 @@ class TransposedConvolution
                                const size_t s,
                                const size_t p)
   {
-    return ((std::floor(size + 2 * p - k) / s) * s) + (2 * k) - (2 * p) - 1
-           + ((((size + 2 * p - k) % s) + s) % s);
+    size_t out = std::floor(size - k + 2 * p) / s;
+    return out * s + 2 * (k - p) - 1 + ((((size + 2 * p - k) % s) + s) % s);
   }
 
   /*
@@ -259,7 +259,7 @@ class TransposedConvolution
 
     for (size_t i = 0; i < input.n_slices; ++i)
     {
-      Pad<double>(input.slice(i), wPad, hPad, output.slice(i));
+      Pad<eT>(input.slice(i), wPad, hPad, output.slice(i));
     }
   }
 

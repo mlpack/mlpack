@@ -1439,6 +1439,133 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormLayerTest)
 }
 
 /**
+ * Simple Transposed Convolution layer test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
+{
+  arma::mat output, input, delta;
+
+  TransposedConvolution<> module1(1, 1, 3, 3, 1, 1, 0, 0, 4, 4);
+  // Test the Forward function.
+  input = arma::linspace<arma::colvec>(0, 15, 16);
+  module1.Parameters() = arma::mat(9, 1, arma::fill::zeros);
+  module1.Parameters()(0) = 1.0;
+  module1.Parameters()(8) = 2.0;
+  module1.Reset();
+  module1.Forward(std::move(input), std::move(output));
+  // Value calculated using tensorflow.nn.conv2d_transpose()
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 360.0);
+
+  // Test the Backward function.
+  module1.Backward(std::move(input), std::move(output), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 720);
+
+  TransposedConvolution<> module2(1, 1, 4, 4, 1, 1, 2, 2, 5, 5);
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 24, 25);
+  module2.Parameters() = arma::mat(16, 1, arma::fill::zeros);
+  module2.Parameters()(0) = 1.0;
+  module2.Parameters()(3) = 1.0;
+  module2.Parameters()(6) = 1.0;
+  module2.Parameters()(9) = 1.0;
+  module2.Parameters()(12) = 1.0;
+  module2.Parameters()(15) = 2.0;
+  module2.Reset();
+  module2.Forward(std::move(input), std::move(output));
+  // Value calculated using tensorflow.nn.conv2d_transpose()
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 2100.0);
+
+  // Test the backward function.
+  module2.Backward(std::move(input), std::move(output), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 7740);
+
+  TransposedConvolution<> module3(1, 1, 3, 3, 1, 1, 1, 1, 5, 5);
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 24, 25);
+  module3.Parameters() = arma::mat(9, 1, arma::fill::zeros);
+  module3.Parameters()(1) = 2.0;
+  module3.Parameters()(2) = 4.0;
+  module3.Parameters()(3) = 3.0;
+  module3.Parameters()(8) = 1.0;
+  module3.Reset();
+  module3.Forward(std::move(input), std::move(output));
+  // Value calculated using tensorflow.nn.conv2d_transpose()
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 3000.0);
+
+  // Test the backward function.
+  module3.Backward(std::move(input), std::move(output), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 21480);
+
+  TransposedConvolution<> module4(1, 1, 3, 3, 1, 1, 2, 2, 5, 5);
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 24, 25);
+  module4.Parameters() = arma::mat(9, 1, arma::fill::zeros);
+  module4.Parameters()(2) = 2.0;
+  module4.Parameters()(4) = 4.0;
+  module4.Parameters()(6) = 6.0;
+  module4.Parameters()(8) = 8.0;
+  module4.Reset();
+  module4.Forward(std::move(input), std::move(output));
+  // Value calculated using tensorflow.nn.conv2d_transpose()
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 6000.0);
+
+  // Test the backward function.
+  module4.Backward(std::move(input), std::move(output), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 86208);
+
+  TransposedConvolution<> module5(1, 1, 3, 3, 2, 2, 0, 0, 5, 5);
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 24, 25);
+  module5.Parameters() = arma::mat(9, 1, arma::fill::zeros);
+  module5.Parameters()(2) = 8.0;
+  module5.Parameters()(4) = 6.0;
+  module5.Parameters()(6) = 4.0;
+  module5.Parameters()(8) = 2.0;
+  module5.Reset();
+  module5.Forward(std::move(input), std::move(output));
+  // Value calculated using tensorflow.nn.conv2d_transpose()
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 6000.0);
+
+  // Test the backward function.
+  module5.Backward(std::move(input), std::move(output), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 83808);
+
+  TransposedConvolution<> module6(1, 1, 3, 3, 2, 2, 1, 1, 5, 5);
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 24, 25);
+  module6.Parameters() = arma::mat(9, 1, arma::fill::zeros);
+  module6.Parameters()(0) = 8.0;
+  module6.Parameters()(3) = 6.0;
+  module6.Parameters()(6) = 2.0;
+  module6.Parameters()(8) = 4.0;
+  module6.Reset();
+  module6.Forward(std::move(input), std::move(output));
+  // Value calculated using tensorflow.nn.conv2d_transpose()
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 6000.0);
+
+  // Test the backward function.
+  module6.Backward(std::move(input), std::move(output), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 87264);
+
+  TransposedConvolution<> module7(1, 1, 3, 3, 2, 2, 1, 1, 6, 6);
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 35, 36);
+  module7.Parameters() = arma::mat(9, 1, arma::fill::zeros);
+  module7.Parameters()(0) = 8.0;
+  module7.Parameters()(2) = 6.0;
+  module7.Parameters()(4) = 2.0;
+  module7.Parameters()(8) = 4.0;
+  module7.Reset();
+  module7.Forward(std::move(input), std::move(output));
+  // Value calculated using tensorflow.nn.conv2d_transpose()
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 12600.0);
+
+  // Test the backward function.
+  module7.Backward(std::move(input), std::move(output), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 185500);
+}
+
+/**
  * Transposed Convolution layer numerically gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientTransposedConvolutionLayerTest)
@@ -1448,16 +1575,13 @@ BOOST_AUTO_TEST_CASE(GradientTransposedConvolutionLayerTest)
   {
     GradientFunction()
     {
-      input << 1 << 2 << 3 << 4 << 5 << arma::endr
-            << 6 << 7 << 8 << 9 << 10 << arma::endr
-            << 11 << 12 << 13 << 14 << 15 << arma::endr
-            << 16 << 17 << 18 << 19 << 20 ;
+      input = arma::linspace<arma::colvec>(0, 35, 36);
       target = arma::mat("1");
 
       model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
-      model->Add<TransposedConvolution<> >(1, 1, 3, 3, 1, 1, 2, 2, 5, 5);
+      model->Add<TransposedConvolution<> >(1, 1, 3, 3, 2, 2, 1, 1, 6, 6);
       model->Add<LogSoftMax<> >();
     }
 

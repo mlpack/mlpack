@@ -1,7 +1,7 @@
 /**
  * @file transposed_convolution_impl.hpp
- * @author Marcus Edel
  * @author Shikhar Jaiswal
+ * @author Marcus Edel
  *
  * Implementation of the Transposed Convolution module class.
  *
@@ -116,32 +116,21 @@ void TransposedConvolution<
 {
   inputTemp = arma::cube(input.memptr(), inputWidth, inputHeight, inSize);
 
-  if (padW != 0 || padH != 0)
-  {
-    Pad(inputTemp, padW, padH, inputPaddedTemp);
-  }
+  outputWidth = TransposedConvOutSize(inputWidth, kW, dW, padW);
+  outputHeight = TransposedConvOutSize(inputHeight, kH, dH, padH);
 
-  size_t wConv = TransposedConvOutSize(inputWidth, kW, dW, padW);
-  size_t hConv = TransposedConvOutSize(inputHeight, kH, dH, padH);
-
-  outputTemp = arma::zeros<arma::Cube<eT> >(wConv, hConv, outSize);
+  outputTemp = arma::zeros<arma::Cube<eT> >(outputWidth, outputHeight,
+      outSize);
 
   for (size_t outMap = 0, outMapIdx = 0; outMap < outSize; outMap++)
   {
     for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
     {
-      arma::Mat<eT> convOutput;
+      arma::Mat<eT> convOutput, rotatedFilter;
+      Rotate180(weight.slice(outMapIdx), rotatedFilter);
 
-      if (padW != 0 || padH != 0)
-      {
-        BackwardConvolutionRule::Convolution(inputPaddedTemp.slice(inMap),
-            weight.slice(outMapIdx), convOutput, dW, dH);
-      }
-      else
-      {
-        BackwardConvolutionRule::Convolution(inputTemp.slice(inMap),
-            weight.slice(outMapIdx), convOutput, dW, dH);
-      }
+      BackwardConvolutionRule::Convolution(inputTemp.slice(inMap),
+          rotatedFilter, convOutput, 1, 1);
 
       outputTemp.slice(outMap) += convOutput;
     }
@@ -149,15 +138,8 @@ void TransposedConvolution<
     outputTemp.slice(outMap) += bias(outMap);
   }
 
-  output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem, 1);
-
-  outputWidth = outputTemp.n_rows;
-  outputHeight = outputTemp.n_cols;
-
-  std::cout << "Forward" << std::endl;
-  std::cout << "WConv: " << wConv << std::endl << "HConv: " << hConv << std::endl;
-  std::cout << "Output Width: " << outputWidth << std::endl << "Output Height: " << outputHeight << std::endl;
-  std::cout << "Output:" << std::endl << output << std::endl;
+  outputTemp.reshape(outputTemp.n_elem, 1, 1);
+  output = std::move(outputTemp.slice(0));
 }
 
 template<
@@ -186,32 +168,17 @@ void TransposedConvolution<
   {
     for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
     {
-      arma::Mat<eT> rotatedFilter;
-      Rotate180(weight.slice(outMapIdx), rotatedFilter);
-
       arma::Mat<eT> output;
-      ForwardConvolutionRule::Convolution(mappedError.slice(outMap),
-          rotatedFilter, output, dW, dH);
 
-      if (padW != 0 || padH != 0)
-      {
-        gTemp.slice(inMap) += output.submat(rotatedFilter.n_rows / 2,
-            rotatedFilter.n_cols / 2,
-            rotatedFilter.n_rows / 2 + gTemp.n_rows - 1,
-            rotatedFilter.n_cols / 2 + gTemp.n_cols - 1);
-      }
-      else
-      {
-        gTemp.slice(inMap) += output;
-      }
+      ForwardConvolutionRule::Convolution(mappedError.slice(outMap),
+          weight.slice(outMapIdx), output, 1, 1);
+
+      gTemp.slice(inMap) += output;
     }
   }
 
-  g = arma::mat(gTemp.memptr(), gTemp.n_elem, 1);
-
-  std::cout << "Backward" << std::endl;
-  std::cout << "MappedError:" << std::endl << mappedError << std::endl;
-  std::cout << "g:" << std::endl << g << std::endl;
+  gTemp.reshape(gTemp.n_elem, 1, 1);
+  g = std::move(gTemp.slice(0));
 }
 
 template<
@@ -233,17 +200,8 @@ void TransposedConvolution<
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
-  arma::cube mappedError;
-  if (padW != 0 && padH != 0)
-  {
-    mappedError = arma::cube(error.memptr(), outputWidth / padW,
-        outputHeight / padH, outSize);
-  }
-  else
-  {
-    mappedError = arma::cube(error.memptr(), outputWidth,
-        outputHeight, outSize);
-  }
+  arma::cube mappedError(error.memptr(), outputWidth,
+      outputHeight, outSize, false, false);
 
   gradientTemp = arma::zeros<arma::Cube<eT> >(weight.n_rows, weight.n_cols,
       weight.n_slices);
@@ -253,40 +211,16 @@ void TransposedConvolution<
     for (size_t inMap = 0, s = outMap; inMap < inSize; inMap++, outMapIdx++,
         s += outSize)
     {
-      arma::Cube<eT> inputSlices;
-      if (padW != 0 || padH != 0)
-      {
-        inputSlices = inputPaddedTemp.slices(inMap, inMap);
-      }
-      else
-      {
-        inputSlices = inputTemp.slices(inMap, inMap);
-      }
-
+      arma::Cube<eT> inputSlices, output;
+      inputSlices = inputTemp.slices(inMap, inMap);
       arma::Cube<eT> deltaSlices = mappedError.slices(outMap, outMap);
 
-      arma::Cube<eT> output;
-      GradientConvolutionRule::Convolution(inputSlices, deltaSlices,
-          output, dW, dH);
+      GradientConvolutionRule::Convolution(deltaSlices, inputSlices,
+          output, 1, 1);
 
-      if ((padW != 0 || padH != 0) &&
-          (gradientTemp.n_rows < output.n_rows &&
-          gradientTemp.n_cols < output.n_cols))
+      for (size_t i = 0; i < output.n_slices; i++)
       {
-        for (size_t i = 0; i < output.n_slices; i++)
-        {
-          gradientTemp.slice(s) += output.slice(i).submat(output.n_rows / 2,
-              output.n_cols / 2,
-              output.n_rows / 2 + gradientTemp.n_rows - 1,
-              output.n_cols / 2 + gradientTemp.n_cols - 1);
-        }
-      }
-      else
-      {
-        for (size_t i = 0; i < output.n_slices; i++)
-        {
-          gradientTemp.slice(s) += output.slice(i);
-        }
+        gradientTemp.slice(s) += output.slice(i);
       }
     }
 
@@ -295,13 +229,9 @@ void TransposedConvolution<
         outMap, outMap));
   }
 
-  gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::Mat<eT>(
-      gradientTemp.memptr(), gradientTemp.n_elem, 1, false, false);
-
-  std::cout << "Gradient" << std::endl;
-  std::cout << "MappedError:" << std::endl << mappedError << std::endl;
-  std::cout << "Gradient:" << std::endl << gradient << std::endl;
-  std::cout << "GradientTemp" << std::endl << gradientTemp << std::endl;
+  gradientTemp.reshape(gradientTemp.n_elem, 1, 1);
+  gradient.submat(0, 0, weight.n_elem - 1, 0) = std::move(
+      gradientTemp.slice(0));
 }
 
 template<

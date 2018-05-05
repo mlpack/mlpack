@@ -148,10 +148,11 @@ void Convolution<
     outputTemp.slice(outMap) += bias(outMap);
   }
 
-  output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem, 1);
-
   outputWidth = outputTemp.n_rows;
   outputHeight = outputTemp.n_cols;
+
+  outputTemp.reshape(outputTemp.n_elem, 1, 1);
+  output = std::move(outputTemp.slice(0));
 }
 
 template<
@@ -201,7 +202,8 @@ void Convolution<
     }
   }
 
-  g = arma::mat(gTemp.memptr(), gTemp.n_elem, 1);
+  gTemp.reshape(gTemp.n_elem, 1, 1);
+  g = std::move(gTemp.slice(0));
 }
 
 template<
@@ -285,8 +287,9 @@ void Convolution<
         outMap, outMap));
   }
 
-  gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::Mat<eT>(
-      gradientTemp.memptr(), gradientTemp.n_elem, 1, false, false);
+  gradientTemp.reshape(gradientTemp.n_elem, 1, 1);
+  gradient.submat(0, 0, weight.n_elem - 1, 0) = std::move(
+      gradientTemp.slice(0));
 }
 
 template<
