@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE(DETModelValidityTest)
 /**
  * Check learning process using different min_leaf_size.
  */
-BOOST_AUTO_TEST_CASE(LSHDiffMinLeafTest)
+BOOST_AUTO_TEST_CASE(DETDiffMinLeafTest)
 {
   arma::mat trainingData;
   if (!data::Load("iris.csv", trainingData))
@@ -249,7 +249,7 @@ BOOST_AUTO_TEST_CASE(LSHDiffMinLeafTest)
 /**
  * Check learning process using different max_leaf_size.
  */
-BOOST_AUTO_TEST_CASE(LSHDiffMaxLeafTest)
+BOOST_AUTO_TEST_CASE(DETDiffMaxLeafTest)
 {
   arma::mat trainingData;
   if (!data::Load("iris.csv", trainingData))
@@ -293,7 +293,7 @@ BOOST_AUTO_TEST_CASE(LSHDiffMaxLeafTest)
 /**
  * Check learning process using different number of folds.
  */
-BOOST_AUTO_TEST_CASE(LSHDiffFoldsTest)
+BOOST_AUTO_TEST_CASE(DETDiffFoldsTest)
 {
   arma::mat trainingData;
   if (!data::Load("iris.csv", trainingData))
@@ -337,7 +337,7 @@ BOOST_AUTO_TEST_CASE(LSHDiffFoldsTest)
 /**
  * Check learning process by bypassing pruning step.
  */
-BOOST_AUTO_TEST_CASE(LSHSkipPruningTest)
+BOOST_AUTO_TEST_CASE(DETSkipPruningTest)
 {
   arma::mat trainingData;
   if (!data::Load("iris.csv", trainingData))
