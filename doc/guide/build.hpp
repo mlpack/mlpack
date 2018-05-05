@@ -79,7 +79,7 @@ In Ubuntu and Debian, you can get all of these dependencies through apt:
 @code
 # apt-get install libboost-math-dev libboost-program-options-dev
   libboost-test-dev libboost-serialization-dev libarmadillo-dev binutils-dev
-  python-pandas python-numpy python-cython python-setuptools
+  python-pandas python-numpy cython python-setuptools
 @endcode
 
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
