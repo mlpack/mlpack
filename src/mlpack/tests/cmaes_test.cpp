@@ -104,21 +104,30 @@ void CreateLogisticRegressionTestData(arma::mat& data,
  */
 BOOST_AUTO_TEST_CASE(CMAESLogisticRegressionTest)
 {
-  arma::mat data, testData, shuffledData;
-  arma::Row<size_t> responses, testResponses, shuffledResponses;
+  const size_t trials = 3;
+  bool success = false;
+  for (size_t trial = 0; trial < trials; ++trial)
+  {
+    arma::mat data, testData, shuffledData;
+    arma::Row<size_t> responses, testResponses, shuffledResponses;
 
-  CreateLogisticRegressionTestData(data, testData, shuffledData,
-      responses, testResponses, shuffledResponses);
+    CreateLogisticRegressionTestData(data, testData, shuffledData,
+        responses, testResponses, shuffledResponses);
 
-  CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegression<> lr(shuffledData, shuffledResponses, cmaes, 0.5);
+    CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
+    LogisticRegression<> lr(shuffledData, shuffledResponses, cmaes, 0.5);
 
-  // Ensure that the error is close to zero.
-  const double acc = lr.ComputeAccuracy(data, responses);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+    // Ensure that the error is close to zero.
+    const double acc = lr.ComputeAccuracy(data, responses);
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses);
+    if (acc >= 99.7 && testAcc >= 99.4)
+    {
+      success = true;
+      break;
+    }
+  }
 
-  const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+  BOOST_REQUIRE_EQUAL(success, true);
 }
 
 /**
@@ -127,21 +136,30 @@ BOOST_AUTO_TEST_CASE(CMAESLogisticRegressionTest)
  */
 BOOST_AUTO_TEST_CASE(ApproxCMAESLogisticRegressionTest)
 {
-  arma::mat data, testData, shuffledData;
-  arma::Row<size_t> responses, testResponses, shuffledResponses;
+  const size_t trials = 3;
+  bool success = false;
+  for (size_t trial = 0; trial < trials; ++trial)
+  {
+    arma::mat data, testData, shuffledData;
+    arma::Row<size_t> responses, testResponses, shuffledResponses;
 
-  CreateLogisticRegressionTestData(data, testData, shuffledData,
-      responses, testResponses, shuffledResponses);
+    CreateLogisticRegressionTestData(data, testData, shuffledData,
+        responses, testResponses, shuffledResponses);
 
-  ApproxCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegression<> lr(shuffledData, shuffledResponses, cmaes, 0.5);
+    ApproxCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
+    LogisticRegression<> lr(shuffledData, shuffledResponses, cmaes, 0.5);
 
-  // Ensure that the error is close to zero.
-  const double acc = lr.ComputeAccuracy(data, responses);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+    // Ensure that the error is close to zero.
+    const double acc = lr.ComputeAccuracy(data, responses);
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses);
+    if (acc >= 99.7 && testAcc >= 99.4)
+    {
+      success = true;
+      break;
+    }
+  }
 
-  const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+  BOOST_REQUIRE_EQUAL(success, true);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
