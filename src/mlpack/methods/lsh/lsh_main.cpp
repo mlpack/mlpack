@@ -204,8 +204,10 @@ static void mlpackMain()
 
     if (trueNeighbors.n_rows != neighbors.n_rows ||
         trueNeighbors.n_cols != neighbors.n_cols)
+    {
         Log::Fatal << "The true neighbors file must have the same number of "
             << "values as the set of neighbors being queried!" << endl;
+    }
 
     Log::Info << "Using true neighbor indices from '"
         << CLI::GetPrintableParam<arma::Mat<size_t>>("true_neighbors") << "'."

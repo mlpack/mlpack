@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(DETOutputDimensionTest)
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    BOOST_FAIL("Unable to load dataset iris_test.csv!");
 
   // Input data.
   SetInputParam("training", trainingData);
@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE(DETModelReuseTest)
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    BOOST_FAIL("Unable to load dataset iris_test.csv!");
 
   // Input data.
   SetInputParam("training", std::move(trainingData));
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(DETViDimensionTest)
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    BOOST_FAIL("Unable to load dataset iris_test.csv!");
 
   size_t testRows = testData.n_rows;
 
@@ -213,7 +213,7 @@ BOOST_AUTO_TEST_CASE(DETDiffMinLeafTest)
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    BOOST_FAIL("Unable to load dataset iris_test.csv!");
 
   // Input data.
   SetInputParam("training", trainingData);
@@ -257,7 +257,7 @@ BOOST_AUTO_TEST_CASE(DETDiffMaxLeafTest)
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    BOOST_FAIL("Unable to load dataset iris_test.csv!");
 
   // Input data.
   SetInputParam("training", trainingData);
@@ -301,7 +301,7 @@ BOOST_AUTO_TEST_CASE(DETDiffFoldsTest)
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    BOOST_FAIL("Unable to load dataset iris_test.csv!");
 
   // Input data.
   SetInputParam("training", trainingData);
@@ -345,7 +345,7 @@ BOOST_AUTO_TEST_CASE(DETSkipPruningTest)
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    BOOST_FAIL("Unable to load dataset iris_test.csv!");
 
   // Input data.
   SetInputParam("training", trainingData);
