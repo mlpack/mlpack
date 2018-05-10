@@ -87,6 +87,8 @@ class KDE
  private:
   KernelType* kernel;
 
+  MetricType* metric;
+
   Tree* referenceTree;
 
   double relError;
@@ -94,6 +96,10 @@ class KDE
   double absError;
 
   bool breadthFirst;
+
+  bool ownsKernel;
+
+  bool ownsMetric;
 
   bool ownsReferenceTree;
 

@@ -51,9 +51,12 @@ KDE(const double bandwidth,
     const double absError,
     const bool breadthFirst) :
     kernel(new KernelType(bandwidth)),
+    metric(new MetricType()),
     relError(relError),
     absError(absError),
     breadthFirst(breadthFirst),
+    ownsKernel(false),
+    ownsMetric(false),
     ownsReferenceTree(false),
     trained(false)
 {
@@ -72,9 +75,12 @@ template<typename MetricType,
                   typename TreeMatType> class TreeType>
 KDE<MetricType, MatType, KernelType, TreeType>::KDE(const KDE& other) :
     kernel(new KernelType(other.kernel)),
+    metric(new MetricType(other.metric)),
     relError(other.relError),
     absError(other.absError),
     breadthFirst(other.breadthFirst),
+    ownsKernel(other.ownsKernel),
+    ownsMetric(other.ownsMetric),
     ownsReferenceTree(other.ownsReferenceTree),
     trained(other.trained)
 {
@@ -95,14 +101,18 @@ template<typename MetricType,
                   typename TreeMatType> class TreeType>
 KDE<MetricType, MatType, KernelType, TreeType>::KDE(KDE&& other) :
     kernel(other.kernel),
+    metric(other.metric),
     referenceTree(other.referenceTree),
     relError(other.relError),
     absError(other.absError),
     breadthFirst(other.breadthFirst),
+    ownsKernel(other.ownsKernel),
+    ownsMetric(other.ownsMetric),
     ownsReferenceTree(other.ownsReferenceTree),
     trained(other.trained)
 {
   other.kernel = new KernelType();
+  other.metric = new MetricType();
   other.referenceTree = nullptr;
   other.ownsReferenceTree = false;
   other.trained = false;
@@ -118,16 +128,22 @@ KDE<MetricType, MatType, KernelType, TreeType>&
 KDE<MetricType, MatType, KernelType, TreeType>::operator=(KDE other)
 {
   // Clean memory
+  if (ownsKernel)
+    delete kernel;
+  if (ownsMetric)
+    delete metric;
   if (ownsReferenceTree)
     delete referenceTree;
-  delete kernel;
 
   // Move
   this->kernel = std::move(other.kernel);
+  this->metric = std::move(other.metric);
   this->referenceTree = std::move(other.referenceTree);
   this->relError = other.relError;
   this->absError = other.absError;
   this->breadthFirst = other.breadthFirst;
+  this->ownsKernel = other.ownsKernel;
+  this->ownsMetric = other.ownsMetric;
   this->ownsReferenceTree = other.ownsReferenceTree;
   this->trained = other.trained;
 
@@ -142,9 +158,12 @@ template<typename MetricType,
                   typename TreeMatType> class TreeType>
 KDE<MetricType, MatType, KernelType, TreeType>::~KDE()
 {
+  if (ownsKernel)
+    delete kernel;
+  if (ownsMetric)
+    delete metric;
   if (ownsReferenceTree)
-    delete this->referenceTree;
-  delete this->kernel;
+    delete referenceTree;
 }
 
 template<typename MetricType,
@@ -188,7 +207,6 @@ Evaluate(const MatType& querySet, arma::vec& estimations)
 {
   std::vector<size_t> oldFromNewQueries;
   Tree* queryTree = BuildTree<Tree>(querySet, oldFromNewQueries);
-  MetricType metric = MetricType();
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
   RuleType rules = RuleType(referenceTree->Dataset(),
                             queryTree->Dataset(),
@@ -196,7 +214,7 @@ Evaluate(const MatType& querySet, arma::vec& estimations)
                             relError,
                             absError,
                             oldFromNewQueries,
-                            metric,
+                            *metric,
                             *kernel);
   // DualTreeTraverser
   typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
@@ -245,7 +263,6 @@ Evaluate(Tree& queryTree,
          const std::vector<size_t>& oldFromNewQueries,
          arma::vec& estimations)
 {
-  MetricType metric = MetricType();
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
   RuleType rules = RuleType(referenceTree->Dataset(),
                             queryTree.Dataset(),
@@ -253,7 +270,7 @@ Evaluate(Tree& queryTree,
                             relError,
                             absError,
                             oldFromNewQueries,
-                            metric,
+                            *metric,
                             *kernel);
   // DualTreeTraverser
   typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
