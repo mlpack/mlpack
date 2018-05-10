@@ -1396,7 +1396,7 @@ BOOST_AUTO_TEST_CASE(BatchNormTest)
 /**
  * BatchNorm layer numerically gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientBatchNormLayerTest)
+BOOST_AUTO_TEST_CASE(GradientBatchNormTest)
 {
   // Add function gradient instantiation.
   struct GradientFunction
@@ -1717,6 +1717,85 @@ BOOST_AUTO_TEST_CASE(GradientAtrousConvolutionLayerTest)
   } function;
 
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-3);
+}
+
+/**
+ * Tests the LayerNorm layer.
+ */
+BOOST_AUTO_TEST_CASE(LayerNormTest)
+{
+  arma::mat input, output;
+  input << 5.1 << 3.5 << arma::endr
+        << 4.9 << 3.0 << arma::endr
+        << 4.7 << 3.2 << arma::endr;
+
+  LayerNorm<> model(input.n_cols);
+  model.Reset();
+
+  model.Forward(std::move(input), std::move(output));
+  arma::mat result;
+  result << 1.2247 << 1.2978 << arma::endr
+         << 0 << -1.1355 << arma::endr
+         << -1.2247 << -0.1622 << arma::endr;
+
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
+
+  output = model.Mean();
+  result << 4.9000 << 3.2333 << arma::endr;
+
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
+
+  output = model.Variance();
+  result << 0.0267 << 0.0422 << arma::endr;
+
+  CheckMatrices(output, result, 1e-1);
+}
+
+/**
+ * LayerNorm layer numerically gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientLayerNormTest)
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randn(10, 256);
+      arma::mat target;
+      target.ones(1, 256);
+
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<LayerNorm<> >(256);
+      model->Add<Linear<> >(10, 2);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0, 256, false);
+      model->Gradient(model->Parameters(), 0, gradient, 256);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

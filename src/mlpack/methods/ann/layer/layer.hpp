@@ -19,6 +19,7 @@
 #include "convolution.hpp"
 #include "dropconnect.hpp"
 #include "glimpse.hpp"
+#include "layer_norm.hpp"
 #include "layer_types.hpp"
 #include "linear.hpp"
 #include "linear_no_bias.hpp"
