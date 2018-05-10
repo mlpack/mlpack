@@ -28,7 +28,7 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     const double absError,
     const std::vector<size_t>& oldFromNewQueries,
     MetricType& metric,
-    const KernelType& kernel) :
+    KernelType& kernel) :
     referenceSet(referenceSet),
     querySet(querySet),
     densities(densities),

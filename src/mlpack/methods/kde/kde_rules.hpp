@@ -30,7 +30,7 @@ class KDERules
            const double absError,
            const std::vector<size_t>& oldFromNewQueries,
            MetricType& metric,
-           const KernelType& kernel);
+           KernelType& kernel);
 
   //! Base Case
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
@@ -86,7 +86,7 @@ class KDERules
   MetricType& metric;
 
   //! Instantiated kernel
-  const KernelType& kernel;
+  KernelType& kernel;
 
   //! The last query index.
   size_t lastQueryIndex;
