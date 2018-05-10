@@ -13,11 +13,20 @@ This quickstart guide is also available for @ref cli_quickstart "the command-lin
 
 @section python_quickstart_install Installing mlpack
 
-(This section will be simplified when mlpack is available in PyPI or conda.)
+Installing the mlpack bindings for Python is straightforward.  It's easy to use
+conda or pip to do this:
 
-Installing the mlpack bindings for Python is straightforward.  First we have to
-install the dependencies (the code below is for Ubuntu), then we can build and
-install mlpack.  You can copy-paste the commands into your shell.
+@code{.sh}
+pip install mlpack/mlpack3
+@endcode
+
+@code{.sh}
+conda install -c mlpack mlpack
+@endcode
+
+Otherwise, we can build the Python bindings from scratch, as follows.  First we
+have to install the dependencies (the code below is for Ubuntu), then we can
+build and install mlpack.  You can copy-paste the commands into your shell.
 
 @code{.sh}
 sudo apt-get install libboost-all-dev g++ cmake libarmadillo-dev python-pip wget
