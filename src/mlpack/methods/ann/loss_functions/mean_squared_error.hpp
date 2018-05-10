@@ -1,16 +1,16 @@
 /**
- * @file cross_entropy_error.hpp
- * @author Konstantin Sidorov
+ * @file mean_squared_error.hpp
+ * @author Marcus Edel
  *
- * Definition of the cross-entropy performance function.
+ * Definition of the mean squared error performance function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_CROSS_ENTROPY_ERROR_HPP
-#define MLPACK_METHODS_ANN_LAYER_CROSS_ENTROPY_ERROR_HPP
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTION_MEAN_SQUARED_ERROR_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTION_MEAN_SQUARED_ERROR_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -18,10 +18,10 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The cross-entropy performance function measures the network's
- * performance according to the cross-entropy
- * between the input and target distributions.
+ * The mean squared error performance function measures the network's
+ * performance according to the mean of squared errors.
  *
+ * @tparam ActivationFunction Activation function used for the embedding layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
@@ -31,19 +31,16 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class CrossEntropyError
+class MeanSquaredError
 {
  public:
   /**
-   * Create the CrossEntropyError object.
-   *
-   * @param eps The minimum value used for computing logarithms
-   *            and denominators in a numerically stable way.
+   * Create the MeanSquaredError object.
    */
-  CrossEntropyError(double eps = 1e-10);
+  MeanSquaredError();
 
   /*
-   * Computes the cross-entropy function.
+   * Computes the mean squared error function.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
@@ -77,13 +74,8 @@ class CrossEntropyError
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the epsilon.
-  double Eps() const { return eps; }
-  //! Modify the epsilon.
-  double& Eps() { return eps; }
-
   /**
-   * Serialize the layer.
+   * Serialize the layer
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -97,15 +89,12 @@ class CrossEntropyError
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-
-  //! The minimum value used for computing logarithms and denominators
-  double eps;
-}; // class CrossEntropyError
+}; // class MeanSquaredError
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "cross_entropy_error_impl.hpp"
+#include "mean_squared_error_impl.hpp"
 
 #endif

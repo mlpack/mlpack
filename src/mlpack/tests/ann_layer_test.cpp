@@ -14,6 +14,8 @@
 
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
+#include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
@@ -319,10 +321,8 @@ BOOST_AUTO_TEST_CASE(JacobianConstantLayerTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleDropoutLayerTest)
 {
-  // Initialize the probability of setting a value to zero and the scale
-  // parameter.
+  // Initialize the probability of setting a value to zero.
   const double p = 0.2;
-  const double scale = 1.0 / (1.0 - p);
 
   // Initialize the input parameter.
   arma::mat input(1000, 1);
@@ -345,14 +345,8 @@ BOOST_AUTO_TEST_CASE(SimpleDropoutLayerTest)
 
   // Test the Forward function.
   module.Deterministic() = true;
-  module.Rescale() = false;
   module.Forward(std::move(input), std::move(output));
   BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(output));
-
-  // Test the Forward function.
-  module.Rescale() = true;
-  module.Forward(std::move(input), std::move(output));
-  BOOST_REQUIRE_CLOSE(arma::accu(input) * scale, arma::accu(output), 1e-3);
 }
 
 /**
@@ -397,6 +391,98 @@ BOOST_AUTO_TEST_CASE(NoDropoutTest)
 {
   arma::mat input = arma::ones(1500, 1);
   Dropout<> module(0);
+  module.Deterministic() = false;
+
+  arma::mat output;
+  module.Forward(std::move(input), std::move(output));
+
+  BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(input));
+}
+
+/*
+ * Perform test to check whether mean and variance remain nearly same
+ * after AlphaDropout.
+ */
+BOOST_AUTO_TEST_CASE(SimpleAlphaDropoutLayerTest)
+{
+  // Initialize the probability of setting a value to alphaDash.
+  const double p = 0.2;
+
+  // Initialize the input parameter having a mean nearabout 0
+  // and variance nearabout 1.
+  arma::mat input = arma::randn<arma::mat>(1000, 1);
+
+  AlphaDropout<> module(p);
+  module.Deterministic() = false;
+
+  // Test the Forward function when training phase.
+  arma::mat output;
+  module.Forward(std::move(input), std::move(output));
+  // Check whether mean remains nearly same.
+  BOOST_REQUIRE_LE(
+      arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))), 0.1);
+
+  // Check whether variance remains nearly same.
+  BOOST_REQUIRE_LE(
+      arma::as_scalar(arma::abs(arma::var(input) - arma::var(output))), 0.1);
+
+  // Test the Backward function when training phase.
+  arma::mat delta;
+  module.Backward(std::move(input), std::move(input), std::move(delta));
+  BOOST_REQUIRE_LE(
+      arma::as_scalar(arma::abs(arma::mean(delta) - 0)), 0.05);
+
+  // Test the Forward function when testing phase.
+  module.Deterministic() = true;
+  module.Forward(std::move(input), std::move(output));
+  BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(output));
+}
+
+/**
+ * Perform AlphaDropout x times using ones as input, sum the number of ones
+ * and validate that the layer is producing approximately the correct number
+ * of ones.
+ */
+BOOST_AUTO_TEST_CASE(AlphaDropoutProbabilityTest)
+{
+  arma::mat input = arma::ones(1500, 1);
+  const size_t iterations = 10;
+
+  double probability[5] = { 0.1, 0.3, 0.4, 0.7, 0.8 };
+  for (size_t trial = 0; trial < 5; ++trial)
+  {
+    double nonzeroCount = 0;
+    for (size_t i = 0; i < iterations; ++i)
+    {
+      AlphaDropout<> module(probability[trial]);
+      module.Deterministic() = false;
+
+      arma::mat output;
+      module.Forward(std::move(input), std::move(output));
+
+      // Return a column vector containing the indices of elements of X
+      // that are not alphaDash, we just need the number of
+      // nonAlphaDash values.
+      arma::uvec nonAlphaDash = arma::find(module.Mask());
+      nonzeroCount += nonAlphaDash.n_elem;
+    }
+
+    const double expected = input.n_elem * (1-probability[trial]) * iterations;
+
+    const double error = fabs(nonzeroCount - expected) / expected;
+
+    BOOST_REQUIRE_LE(error, 0.15);
+  }
+}
+
+/**
+ * Perform AlphaDropout with probability 1 - p where p = 0,
+ * means no AlphaDropout.
+ */
+BOOST_AUTO_TEST_CASE(NoAlphaDropoutTest)
+{
+  arma::mat input = arma::ones(1500, 1);
+  AlphaDropout<> module(0);
   module.Deterministic() = false;
 
   arma::mat output;
@@ -613,6 +699,70 @@ BOOST_AUTO_TEST_CASE(JacobianLeakyReLULayerTest)
     double error = JacobianTest(module, input);
     BOOST_REQUIRE_LE(error, 1e-5);
   }
+}
+
+/**
+ * Jacobian FlexibleReLU module test.
+ */
+BOOST_AUTO_TEST_CASE(JacobianFlexibleReLULayerTest)
+{
+  for (size_t i = 0; i < 5; i++)
+  {
+    const size_t inputElements = math::RandInt(2, 1000);
+
+    arma::mat input;
+    input.set_size(inputElements, 1);
+
+    FlexibleReLU<> module;
+
+    double error = JacobianTest(module, input);
+    BOOST_REQUIRE_LE(error, 1e-5);
+  }
+}
+
+/**
+ * Flexible ReLU layer numerically gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientFlexibleReLULayerTest)
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(2, 1);
+      target = arma::mat("1");
+
+      model = new FFN<NegativeLogLikelihood<>, RandomInitialization>(
+          NegativeLogLikelihood<>(), RandomInitialization(0.1, 0.5));
+
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<LinearNoBias<> >(2, 5);
+      model->Add<FlexibleReLU<> >(0.05);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, RandomInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 /**
@@ -1153,144 +1303,6 @@ BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
   module.Backward(std::move(input), std::move(error), std::move(delta));
   BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
       arma::mat("1.6487; 0.6487") - delta)), 1e-3);
-}
-
-/**
- * Simple test for the Sigmoid Cross Entropy Layer.
- */
-BOOST_AUTO_TEST_CASE(SimpleSigmoidCrossEntropyLayerTest)
-{
-  arma::mat input1, input2, input3, output, target1,
-            target2, target3, expectedOutput;
-  SigmoidCrossEntropyError<> module;
-
-  // Test the Forward function on a user generator input and compare it against
-  // the manually calculated result.
-  input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
-  target1 = arma::zeros(1, 8);
-  double error1 = module.Forward(std::move(input1), std::move(target1));
-  double expected = 0.97407699;
-  // Value computed using tensorflow.
-  BOOST_REQUIRE_SMALL(error1 / input1.n_elem - expected, 1e-7);
-
-  input2 = arma::mat("1 2 3 4 5");
-  target2 = arma::mat("0 0 1 0 1");
-  double error2 = module.Forward(std::move(input2), std::move(target2));
-  expected = 1.5027283;
-  BOOST_REQUIRE_SMALL(error2 / input2.n_elem - expected, 1e-6);
-
-  input3 = arma::mat("0 -1 -1 0 -1 0 0 -1");
-  target3 = arma::mat("0 -1 -1 0 -1 0 0 -1");
-  double error3 = module.Forward(std::move(input3), std::move(target3));
-  expected = 0.00320443;
-  BOOST_REQUIRE_SMALL(error3 / input3.n_elem - expected, 1e-6);
-
-  // Test the Backward function.
-  module.Backward(std::move(input1), std::move(target1), std::move(output));
-  expected = 0.62245929;
-  for (size_t i = 0; i < output.n_elem; i++)
-    BOOST_REQUIRE_SMALL(output(i) - expected, 1e-5);
-  BOOST_REQUIRE_EQUAL(output.n_rows, input1.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
-
-  expectedOutput = arma::mat(
-      "0.7310586 0.88079709 -0.04742587 0.98201376 -0.00669285");
-  module.Backward(std::move(input2), std::move(target2), std::move(output));
-  for (size_t i = 0; i < output.n_elem; i++)
-    BOOST_REQUIRE_SMALL(output(i) - expectedOutput(i), 1e-5);
-  BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
-
-  module.Backward(std::move(input3), std::move(target3), std::move(output));
-  expectedOutput = arma::mat("0.5 1.2689414");
-  for (size_t i = 0; i < 8; ++i)
-  {
-    double el = output.at(0, i);
-    if (std::abs(input3.at(i) - 0.0) < 1e-5)
-      BOOST_REQUIRE_SMALL(el - expectedOutput[0], 2e-6);
-    else
-      BOOST_REQUIRE_SMALL(el - expectedOutput[1], 2e-6);
-  }
-  BOOST_REQUIRE_EQUAL(output.n_rows, input3.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input3.n_cols);
-}
-
-/*
- * Simple test for the cross-entropy error performance function.
- */
-BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorLayerTest)
-{
-  arma::mat input1, input2, output, target1, target2;
-  CrossEntropyError<> module(1e-6);
-
-  // Test the Forward function on a user generator input and compare it against
-  // the manually calculated result.
-  input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
-  target1 = arma::zeros(1, 8);
-  double error1 = module.Forward(std::move(input1), std::move(target1));
-  BOOST_REQUIRE_SMALL(error1 - 8 * std::log(2), 2e-5);
-
-  input2 = arma::mat("0 1 1 0 1 0 0 1");
-  target2 = arma::mat("0 1 1 0 1 0 0 1");
-  double error2 = module.Forward(std::move(input2), std::move(target2));
-  BOOST_REQUIRE_SMALL(error2, 1e-5);
-
-  // Test the Backward function.
-  module.Backward(std::move(input1), std::move(target1), std::move(output));
-  for (double el : output)
-  {
-    // For the 0.5 constant vector we should get 1 / (1 - 0.5) = 2 everywhere.
-    BOOST_REQUIRE_SMALL(el - 2, 5e-6);
-  }
-  BOOST_REQUIRE_EQUAL(output.n_rows, input1.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
-
-  module.Backward(std::move(input2), std::move(target2), std::move(output));
-  for (size_t i = 0; i < 8; ++i)
-  {
-    double el = output.at(0, i);
-    if (input2.at(i) == 0)
-      BOOST_REQUIRE_SMALL(el - 1, 2e-6);
-    else
-      BOOST_REQUIRE_SMALL(el + 1, 2e-6);
-  }
-  BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
-}
-
-/*
- * Simple test for the mean squared error performance function.
- */
-BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorLayerTest)
-{
-  arma::mat input, output, target;
-  MeanSquaredError<> module;
-
-  // Test the Forward function on a user generator input and compare it against
-  // the manually calculated result.
-  input = arma::mat("1.0 0.0 1.0 0.0 -1.0 0.0 -1.0 0.0");
-  target = arma::zeros(1, 8);
-  double error = module.Forward(std::move(input), std::move(target));
-  BOOST_REQUIRE_EQUAL(error, 0.5);
-
-  // Test the Backward function.
-  module.Backward(std::move(input), std::move(target), std::move(output));
-  // We subtract a zero vector, so the output should be equal with the input.
-  CheckMatrices(input, output);
-  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
-
-  // Test the error function on a single input.
-  input = arma::mat("2");
-  target = arma::mat("3");
-  error = module.Forward(std::move(input), std::move(target));
-  BOOST_REQUIRE_EQUAL(error, 1.0);
-
-  // Test the Backward function on a single input.
-  module.Backward(std::move(input), std::move(target), std::move(output));
-  // Test whether the output is negative.
-  BOOST_REQUIRE_EQUAL(arma::accu(output), -1);
-  BOOST_REQUIRE_EQUAL(output.n_elem, 1);
 }
 
 /*

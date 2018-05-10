@@ -103,7 +103,7 @@ class LeakyReLU
 
  private:
   /**
-   * Computes the LeakReLU function
+   * Computes the LeakyReLU function
    *
    * @param x Input data.
    * @return f(x).
@@ -114,7 +114,7 @@ class LeakyReLU
   }
 
   /**
-   * Computes the Leaky ReLU function using a dense matrix as input.
+   * Computes the LeakyReLU function using a dense matrix as input.
    *
    * @param x Input data.
    * @param y The resulting output activation.

@@ -1,6 +1,7 @@
 /**
  * @file sigmoid_cross_entropy_error.hpp
- * @author Kris Singh and Shikhar Jaiswal
+ * @author Kris Singh
+ * @author Shikhar Jaiswal
  *
  * Definition of the cross-entropy with logit performance function.
  *
@@ -9,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_SIGMOID_CROSS_ENTROPY_ERROR_HPP
-#define MLPACK_METHODS_ANN_LAYER_SIGMOID_CROSS_ENTROPY_ERROR_HPP
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTION_SIGMOID_CROSS_ENTROPY_ERROR_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTION_SIGMOID_CROSS_ENTROPY_ERROR_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -29,13 +30,13 @@ namespace ann /** Artificial Neural Network. */ {
  * For more information, see the following paper.
  *
  * @code
- * @article{1702.05659,
- *   title={On Loss Functions for Deep Neural Networks in Classification},
- *   author={Katarzyna Janocha, Wojciech Marian Czarnecki},
- *   url = {http://arxiv.org/abs/1702.05659},
+ * @article{Janocha2017
+ *   title   = {On Loss Functions for Deep Neural Networks in Classification},
+ *   author  = {Katarzyna Janocha, Wojciech Marian Czarnecki},
+ *   url     = {http://arxiv.org/abs/1702.05659},
  *   journal = {CoRR},
- *   eprint={arXiv:1702.05659},
- *   year={2017}
+ *   eprint  = {arXiv:1702.05659},
+ *   year    = {2017}
  * }
  * @endcode
  *

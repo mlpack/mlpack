@@ -5,6 +5,8 @@ set(SOURCES
   add_impl.hpp
   add_merge.hpp
   add_merge_impl.hpp
+  alpha_dropout.hpp
+  alpha_dropout_impl.hpp
   base_layer.hpp
   bilinear_interpolation.hpp
   bilinear_interpolation_impl.hpp
@@ -18,8 +20,6 @@ set(SOURCES
   constant_impl.hpp
   convolution.hpp
   convolution_impl.hpp
-  cross_entropy_error.hpp
-  cross_entropy_error_impl.hpp
   dropconnect.hpp
   dropconnect_impl.hpp
   dropout.hpp
@@ -28,6 +28,8 @@ set(SOURCES
   elu_impl.hpp
   fast_lstm.hpp
   fast_lstm_impl.hpp
+  flexible_relu.hpp
+  flexible_relu_impl.hpp
   glimpse.hpp
   glimpse_impl.hpp
   gru.hpp
@@ -55,8 +57,6 @@ set(SOURCES
   max_pooling_impl.hpp
   mean_pooling.hpp
   mean_pooling_impl.hpp
-  mean_squared_error.hpp
-  mean_squared_error_impl.hpp
   multiply_constant.hpp
   multiply_constant_impl.hpp
   negative_log_likelihood.hpp
@@ -69,8 +69,6 @@ set(SOURCES
   recurrent_attention_impl.hpp
   reinforce_normal.hpp
   reinforce_normal_impl.hpp
-  sigmoid_cross_entropy_error.hpp
-  sigmoid_cross_entropy_error_impl.hpp
   select.hpp
   select_impl.hpp
   sequential.hpp

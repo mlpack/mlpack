@@ -10,7 +10,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #ifndef MLPACK_METHODS_ANN_LAYER_BATCHNORM_HPP
 #define MLPACK_METHODS_ANN_LAYER_BATCHNORM_HPP
 

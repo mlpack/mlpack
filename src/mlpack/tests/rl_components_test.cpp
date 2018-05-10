@@ -1,6 +1,7 @@
 /**
  * @file rl_environment_test.hpp
  * @author Shangtong Zhang
+ * @author Rohan Raj
  *
  * Basic test for the components of reinforcement learning algorithms.
  *
@@ -13,7 +14,9 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/acrobat.hpp>
 #include <mlpack/methods/reinforcement_learning/replay/random_replay.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 
@@ -24,6 +27,41 @@ using namespace mlpack;
 using namespace mlpack::rl;
 
 BOOST_AUTO_TEST_SUITE(RLComponentsTest)
+
+/**
+ * Constructs a Continuous MountainCar instance and check if the main rountine 
+ * works as it should be.
+ */
+BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTest)
+{
+  const ContinuousMountainCar task = ContinuousMountainCar();
+
+  ContinuousMountainCar::State state = task.InitialSample();
+  ContinuousMountainCar::Action action;
+  action.action[0] = math::Random(-1.0, 1.0);
+  double reward = task.Sample(state, action);
+  // Maximum reward possible is 100.
+  BOOST_REQUIRE(reward <= 100.0);
+  BOOST_REQUIRE(!task.IsTerminal(state));
+  BOOST_REQUIRE_EQUAL(1, action.size);
+}
+
+/**
+ * Constructs a Acrobat instance and check if the main rountine works as
+ * it should be.
+ */
+BOOST_AUTO_TEST_CASE(SimpleAcrobatTest)
+{
+  const Acrobat task = Acrobat();
+
+  Acrobat::State state = task.InitialSample();
+  Acrobat::Action action = Acrobat::Action::negativeTorque;
+  double reward = task.Sample(state, action);
+
+  BOOST_REQUIRE_EQUAL(reward, -1.0);
+  BOOST_REQUIRE(!task.IsTerminal(state));
+  BOOST_REQUIRE_EQUAL(3, Acrobat::Action::size);
+}
 
 /**
  * Constructs a MountainCar instance and check if the main rountine works as

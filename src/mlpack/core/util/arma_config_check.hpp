@@ -36,4 +36,29 @@ ARMA_64BIT_WORD disabled."
   #endif
 #endif
 
+// Check if OpenMP was enabled when mlpack was built.  This only matters for
+// Armadillo 8.300.1 and newer.
+#if (ARMA_VERSION_MAJOR > 8) || \
+    ((ARMA_VERSION_MAJOR == 8) && (ARMA_VERSION_MINOR > 300)) || \
+    ((ARMA_VERSION_MAJOR == 8) && (ARMA_VERSION_MINOR == 300) && \
+     (ARMA_VERSION_PATCH >= 1))
+  #ifdef ARMA_USE_OPENMP
+    #ifdef MLPACK_ARMA_DONT_USE_OPENMP
+      #pragma message "mlpack was compiled without OpenMP support, but you are \
+compiling with OpenMP support (either -fopenmp or another option).  This will \
+almost certainly cause irreparable disaster.  Either compile your application \
+*without* OpenMP support (i.e. remove -fopenmp or another flag), or, recompile \
+mlpack with OpenMP support."
+    #endif
+  #else
+    #ifdef MLPACK_ARMA_USE_OPENMP
+      #pragma message "mlpack was compiled with OpenMP support, but you are \
+compiling without OpenMP support.  This will almost certainly cause \
+irreparable disaster.  Either enable OpenMP support in your application (e.g., \
+add -fopenmp to your compiler command line), or, recompile mlpack *without* \
+OpenMP support."
+    #endif
+  #endif
+#endif
+
 #endif

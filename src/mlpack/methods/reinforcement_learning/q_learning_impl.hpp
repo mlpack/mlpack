@@ -144,10 +144,18 @@ double QLearning<
   // Compute the update target.
   arma::mat target;
   learningNetwork.Forward(sampledStates, target);
+  /**
+   * If the agent is at a terminal state, then we don't need to add the
+   * discounted reward. At terminal state, the agent wont perform any
+   * action.
+   */
   for (size_t i = 0; i < sampledNextStates.n_cols; ++i)
   {
-    target(sampledActions[i], i) = sampledRewards[i] + config.Discount() *
-        (isTerminal[i] ? 0.0 : nextActionValues(bestActions[i], i));
+    if (isTerminal[i])
+      target(sampledActions[i], i) = sampledRewards[i];
+    else
+      target(sampledActions[i], i) = sampledRewards[i] + config.Discount() *
+          nextActionValues(bestActions[i], i);
   }
 
   // Learn form experience.
