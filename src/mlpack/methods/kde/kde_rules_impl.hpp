@@ -101,8 +101,8 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     arma::vec queryCenter, referenceCenter;
     if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
     {
-      queryCenter = queryNode.Dataset().col(queryNode.Point(0));
-      referenceCenter = referenceNode.Dataset().col(referenceNode.Point(0));
+      queryCenter = querySet.unsafe_col(queryNode.Point(0));
+      referenceCenter = referenceSet.unsafe_col(referenceNode.Point(0));
     }
     else
     {
