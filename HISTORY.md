@@ -1,3 +1,29 @@
+### mlpack 3.0.1
+###### 2018-05-10
+  * Fix intermittently failing tests (#1387).
+
+  * Add big-batch SGD (BBSGD) optimizer in
+    src/mlpack/core/optimizers/bigbatch_sgd/ (#1131).
+
+  * Fix simple compiler warnings (#1380, #1373).
+
+  * Simplify NeighborSearch constructor and Train() overloads (#1378).
+
+  * Add warning for OpenMP setting differences (#1358/#1382).  When mlpack is
+    compiled with OpenMP but another application is not (or vice versa), a
+    compilation warning will now be issued.
+
+  * Restructured loss functions in src/mlpack/methods/ann/ (#1365).
+
+  * Add environments for reinforcement learning tests (#1368, #1370, #1329).
+
+  * Allow single outputs for multiple timestep inputs for recurrent neural
+    networks (#1348).
+
+  * Add He and LeCun normal initializations for neural networks (#1342).
+    Neural networks: add He and LeCun normal initializations (#1342), add FReLU
+    and SELU activation functions (#1346, #1341), add alpha-dropout (#1349).
+
 ### mlpack 3.0.0
 ###### 2018-03-30
   * Speed and memory improvements for DBSCAN.  --single_mode can now be used for
