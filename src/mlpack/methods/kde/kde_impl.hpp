@@ -55,8 +55,8 @@ KDE(const double bandwidth,
     relError(relError),
     absError(absError),
     breadthFirst(breadthFirst),
-    ownsKernel(false),
-    ownsMetric(false),
+    ownsKernel(true),
+    ownsMetric(true),
     ownsReferenceTree(false),
     trained(false)
 {
