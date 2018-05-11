@@ -116,7 +116,7 @@ class Pendulum
     // Get current state
     double theta = state.Theta();
     double angular_velocity = state.AngularVelocity();
-    
+
     // Define required variables
     double gravity = 10.0;
     double mass = 1.0;
@@ -127,15 +127,15 @@ class Pendulum
         std::max(action.action[0], -maxTorque), maxTorque);
 
     // Calculate costs
-    double costs = pow(AngleNormalize(theta),2) + 0.1 * pow(angular_velocity,2)
-        + 0.001 * pow(torque,2);
+    double costs = pow(AngleNormalize(theta), 2) + 0.1 *
+        pow(angular_velocity, 2) + 0.001 * pow(torque, 2);
 
     // Calculate new state values
     double new_angular_velocity = angular_velocity + (-3.0 * gravity / (2 *
-        length) * std::sin(theta + M_PI) + 3.0 / (pow(mass * length,2) * 
+        length) * std::sin(theta + M_PI) + 3.0 / (pow(mass * length, 2) *
         torque) * dt;
     double new_theta = theta + new_angular_velocity * dt;
-    
+
     // Set values for next state
     nextState.Theta() = new_theta;
     nextState.AngularVelocity() = std::min(std::max(new_angular_velocity,
