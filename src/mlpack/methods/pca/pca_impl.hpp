@@ -115,8 +115,9 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data,
 
   decomposition.Apply(data, centeredData, data, eigVal, eigvec, newDimension);
 
-  if (newDimension < eigvec.n_rows)
-    // Drop unnecessary rows.
+
+  // Drop unnecessary rows.
+  if (newDimension < eigvec.n_rows && newDimension < data.n_rows)
     data.shed_rows(newDimension, data.n_rows - 1);
 
   // The svd method returns only non-zero eigenvalues so we have to calculate
@@ -126,7 +127,7 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data,
   Timer::Stop("pca");
 
   // Calculate the total amount of variance retained.
-  return (sum(eigVal.subvec(0, eigDim)) / sum(eigVal));
+  return sum(eigVal.subvec(0, eigDim)) / sum(eigVal);
 }
 
 /**
