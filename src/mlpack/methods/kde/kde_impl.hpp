@@ -245,9 +245,19 @@ Evaluate(const MatType& querySet, arma::vec& estimations)
                             oldFromNewQueries,
                             *metric,
                             *kernel);
-  // DualTreeTraverser
-  typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
-  traverser.Traverse(*queryTree, *referenceTree);
+  if (breadthFirst)
+  {
+    // DualTreeTraverser Breadth-First
+    typename Tree::template BreadthFirstDualTreeTraverser<RuleType>
+      traverser(rules);
+    traverser.Traverse(*queryTree, *referenceTree);
+  }
+  else
+  {
+    // DualTreeTraverser Depth-First
+    typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
+    traverser.Traverse(*queryTree, *referenceTree);
+  }
   estimations /= referenceTree->Dataset().n_cols;
   delete queryTree;
 
@@ -301,9 +311,19 @@ Evaluate(Tree& queryTree,
                             oldFromNewQueries,
                             *metric,
                             *kernel);
-  // DualTreeTraverser
-  typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
-  traverser.Traverse(queryTree, *referenceTree);
+  if (breadthFirst)
+  {
+    // DualTreeTraverser Breadth-First
+    typename Tree::template BreadthFirstDualTreeTraverser<RuleType>
+      traverser(rules);
+    traverser.Traverse(queryTree, *referenceTree);
+  }
+  else
+  {
+    // DualTreeTraverser Depth-First
+    typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
+    traverser.Traverse(queryTree, *referenceTree);
+  }
   estimations /= referenceTree->Dataset().n_cols;
 }
 
