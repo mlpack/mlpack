@@ -72,8 +72,6 @@ void PCADimensionalityReduction(
            "5 2 8 4 8;"
            "6 7 3 1 8");
 
-  std::cout << "data: \n" << data << std::endl;
-
   // Now run PCA to reduce the dimensionality.
   size_t trial = 0;
   bool success = false;
@@ -93,10 +91,6 @@ void PCADimensionalityReduction(
   }
 
   BOOST_REQUIRE_EQUAL(success, true);
-
-  std::cout << "reduced data: \n" << data << std::endl;
-
-  // exit(0);
 
   // Compare with correct results.
   mat correct("-1.53781086 -3.51358020 -0.16139887 -1.87706634  7.08985628;"
