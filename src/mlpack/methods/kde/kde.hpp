@@ -36,6 +36,12 @@ class KDE
       const double absError = 0,
       const bool breadthFirst = false);
 
+  KDE(MetricType& metric = MetricType(),
+      KernelType& kernel = KernelType(),
+      const double relError = 1e-5,
+      const double absError = 0,
+      const bool breadthFirst = false);
+
   KDE(const KDE& other);
 
   KDE(KDE&& other);

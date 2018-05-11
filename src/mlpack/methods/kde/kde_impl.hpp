@@ -73,6 +73,35 @@ template<typename MetricType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
+KDE<MetricType, MatType, KernelType, TreeType>::
+KDE(MetricType& metric,
+    KernelType& kernel,
+    const double relError,
+    const double absError,
+    const bool breadthFirst) :
+    kernel(kernel),
+    metric(metric),
+    relError(relError),
+    absError(absError),
+    breadthFirst(breadthFirst),
+    ownsKernel(false),
+    ownsMetric(false),
+    ownsReferenceTree(false),
+    trained(false)
+{
+  if (relError > 0 && absError > 0)
+    Log::Warn << "Absolute and relative error tolerances will be sumed up"
+              << std::endl;
+  if (relError < 0 || absError < 0)
+    Log::Fatal << "Error tolerance can't be less than 0" << std::endl;
+}
+
+template<typename MetricType,
+         typename MatType,
+         typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 KDE<MetricType, MatType, KernelType, TreeType>::KDE(const KDE& other) :
     kernel(new KernelType(other.kernel)),
     metric(new MetricType(other.metric)),
