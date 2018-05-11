@@ -141,7 +141,12 @@ class StochasticPolicyType
   class PCAFunction
   {
    public:
-
+    /**
+     * Construct The principal component analysis (PCA) function with the
+     * given data.
+     *
+     * @param data Data matrix.
+     */
     PCAFunction(const arma::mat& data) : data(data), pl(0)
     {
       visitationOrder = arma::linspace<arma::Row<size_t> >(0,
@@ -199,7 +204,7 @@ class StochasticPolicyType
       }
     }
 
-  private:
+   private:
     //! Data matrix..
     arma::mat data;
 

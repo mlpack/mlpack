@@ -216,7 +216,6 @@ BOOST_AUTO_TEST_CASE(ArmaComparisonRandomizedPCATest)
 BOOST_AUTO_TEST_CASE(ArmaComparisonStochasticSGDPCATest)
 {
   ArmaComparisonPCA<StochasticSGDPolicy >();
-
 }
 
 /**
