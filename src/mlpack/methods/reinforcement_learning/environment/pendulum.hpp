@@ -83,6 +83,8 @@ class Pendulum
   struct Action
   {
     double action[1];
+    // Storing degree of freedom
+    const int size = 1;
   };
 
   /**
@@ -132,7 +134,7 @@ class Pendulum
 
     // Calculate new state values
     double new_angular_velocity = angular_velocity + (-3.0 * gravity / (2 *
-        length) * std::sin(theta + M_PI) + 3.0 / (pow(mass * length, 2) *
+        length) * std::sin(theta + M_PI) + 3.0 / (pow(mass * length, 2)) *
         torque) * dt;
     double new_theta = theta + new_angular_velocity * dt;
 
@@ -179,7 +181,7 @@ class Pendulum
   double AngleNormalize(double theta) const
   {
     // Scale angle within [-pi, pi)
-    return double((theta + M_PI) % (2 * M_PI) - M_PI);
+    return double(fmod(theta + M_PI, 2 * M_PI) - M_PI);
   }
 
  private:
