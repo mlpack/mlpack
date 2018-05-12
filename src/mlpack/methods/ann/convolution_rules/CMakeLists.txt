@@ -3,7 +3,6 @@
 set(SOURCES
   border_modes.hpp
   naive_convolution.hpp
-  naive_atrous_convolution.hpp
   fft_convolution.hpp
   svd_convolution.hpp
 )

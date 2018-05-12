@@ -1,8 +1,9 @@
 /**
  * @file atrous_convolution.hpp
  * @author Aarush Gupta
+ * @author Shikhar Jaiswal
  *
- * Definition of the Atrous Convolution module class.
+ * Definition of the Atrous Convolution class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -15,9 +16,9 @@
 #include <mlpack/prereqs.hpp>
 
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
-#include <mlpack/methods/ann/convolution_rules/naive_atrous_convolution.hpp>
-
-// Not including fft and svd convolution as of now
+#include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
+#include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
+#include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
 
 #include "layer_types.hpp"
 
@@ -26,7 +27,10 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Implementation of the Atrous Convolution class. The Atrous Convolution
- * class represents a single layer of a neural network.
+ * class represents a single layer of a neural network. Atrous (or Dilated)
+ * Convolutions are just simple convolutions applied to input with the defined,
+ * spaces included between the kernel cells, in order to capture a larger
+ * field of reception, without having to increase dicrete kernel sizes.
  *
  * @tparam ForwardConvolutionRule Atrous Convolution to perform forward process.
  * @tparam BackwardConvolutionRule Atrous Convolution to perform backward process.
@@ -37,9 +41,9 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename ForwardConvolutionRule = NaiveAtrousConvolution<FullConvolution>,
-    typename BackwardConvolutionRule = NaiveAtrousConvolution<FullConvolution>,
-    typename GradientConvolutionRule = NaiveAtrousConvolution<ValidConvolution>,
+    typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
+    typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>,
+    typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>,
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
@@ -64,7 +68,8 @@ class AtrousConvolution
    * @param padH Padding height of the input.
    * @param inputWidth The widht of the input data.
    * @param inputHeight The height of the input data.
-   * @param dilation The amount of space between the cells of the filters.
+   * @param dilationW The space between the cells of filters in x direction.
+   * @param dilationH The space between the cells of filters in y direction.
    */
   AtrousConvolution(const size_t inSize,
                     const size_t outSize,
@@ -76,7 +81,8 @@ class AtrousConvolution
                     const size_t padH = 0,
                     const size_t inputWidth = 0,
                     const size_t inputHeight = 0,
-                    const size_t dilation = 0);
+                    const size_t dilationW = 1,
+                    const size_t dilationH = 1);
 
   /*
    * Set the weight and bias term.
@@ -164,11 +170,6 @@ class AtrousConvolution
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
-  //! Get the dilation.
-  size_t const& Dilation() const { return dilation; }
-  //! Modify the dilation.
-  size_t& Dilation() { return dilation; }
-
   /**
    * Serialize the layer
    */
@@ -186,13 +187,13 @@ class AtrousConvolution
    * @param d The dilation size.
    * @return The convolution output size.
    */
-  size_t ConvOutSize (const size_t size,
+  size_t ConvOutSize(const size_t size,
                       const size_t k,
                       const size_t s,
                       const size_t p,
                       const size_t d)
   {
-    return std::floor(size + p * 2 - (k + d*(k - 1)))/s + 1;
+    return std::floor(size + p * 2 - d * (k - 1) - 1) / s + 1;
   }
 
   /*
@@ -316,8 +317,11 @@ class AtrousConvolution
   //! Locally-stored output height.
   size_t outputHeight;
 
-  //! Locally-stored dilation factor
-  size_t dilation;
+  //! Locally-stored width dilation factor.
+  size_t dilationW;
+
+  //! Locally-stored height dilation factor.
+  size_t dilationH;
 
   //! Locally-stored transformed output parameter.
   arma::cube outputTemp;
@@ -346,8 +350,6 @@ class AtrousConvolution
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 }; // class AtrousConvolution
-
-
 
 } // namespace ann
 } // namespace mlpack

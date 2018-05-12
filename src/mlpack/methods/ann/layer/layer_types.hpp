@@ -41,7 +41,7 @@
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
-#include <mlpack/methods/ann/convolution_rules/naive_atrous_convolution.hpp>
+
 namespace mlpack {
 namespace ann {
 

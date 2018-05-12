@@ -43,6 +43,8 @@ class NaiveConvolution
    * @param output Output data that contains the results of the convolution.
    * @param dW Stride of filter application in the x direction.
    * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
    */
   template<typename eT, typename Border = BorderMode>
   static typename std::enable_if<
@@ -51,10 +53,13 @@ class NaiveConvolution
               const arma::Mat<eT>& filter,
               arma::Mat<eT>& output,
               const size_t dW = 1,
-              const size_t dH = 1)
+              const size_t dH = 1,
+              const size_t dilationW = 1,
+              const size_t dilationH = 1)
   {
-    output = arma::zeros<arma::Mat<eT> >((input.n_rows - filter.n_rows + 1) /
-        dW, (input.n_cols - filter.n_cols + 1) / dH);
+    output = arma::zeros<arma::Mat<eT> >(
+        (input.n_rows - (filter.n_rows - 1) * dilationW - 1) / dW + 1,
+        (input.n_cols - (filter.n_cols - 1) * dilationH -  1) / dH + 1);
 
     // It seems to be about 3.5 times faster to use pointers instead of
     // filter(ki, kj) * input(leftInput + ki, topInput + kj) and output(i, j).
@@ -67,8 +72,9 @@ class NaiveConvolution
         const eT* kernelPtr = filter.memptr();
         for (size_t kj = 0; kj < filter.n_cols; ++kj)
         {
-          const eT* inputPtr = input.colptr(kj + j * dW) + i * dH;
-          for (size_t ki = 0; ki < filter.n_rows; ++ki, ++kernelPtr, ++inputPtr)
+          const eT* inputPtr = input.colptr(kj * dilationW + j * dW) + i * dH;
+          for (size_t ki = 0; ki < filter.n_rows; ++ki, ++kernelPtr,
+              inputPtr += dilationH)
             *outputPtr += *kernelPtr * (*inputPtr);
         }
       }
@@ -83,6 +89,8 @@ class NaiveConvolution
    * @param output Output data that contains the results of the convolution.
    * @param dW Stride of filter application in the x direction.
    * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
    */
   template<typename eT, typename Border = BorderMode>
   static typename std::enable_if<
@@ -91,20 +99,41 @@ class NaiveConvolution
               const arma::Mat<eT>& filter,
               arma::Mat<eT>& output,
               const size_t dW = 1,
-              const size_t dH = 1)
+              const size_t dH = 1,
+              const size_t dilationW = 1,
+              const size_t dilationH = 1)
   {
-    const size_t outputRows = (input.n_rows + 2 * (filter.n_rows - 1)) * dW;
-    const size_t outputCols = (input.n_cols + 2 * (filter.n_cols - 1)) * dH;
+    size_t outputRows = (input.n_rows - 1) * dW + 2 * (filter.n_rows - 1)
+        * dilationW + 1;
+    size_t outputCols = (input.n_cols - 1) * dH + 2 * (filter.n_cols - 1)
+        * dilationH + 1;
+
+    for (size_t i = 0; i < dW; i++)
+    {
+      if (((((i + outputRows - 2 * (filter.n_rows - 1) * dilationW - 1) % dW)
+          + dW) % dW) == i){
+        outputRows += i;
+        break;
+      }
+    }
+    for (size_t i = 0; i < dH; i++)
+    {
+      if (((((i + outputCols - 2 * (filter.n_cols - 1) * dilationH - 1) % dH)
+          + dH) % dH) == i){
+        outputCols += i;
+        break;
+      }
+    }
 
     // Pad filter and input to the working output shape.
     arma::Mat<eT> inputPadded = arma::zeros<arma::Mat<eT> >(outputRows,
         outputCols);
-    inputPadded.submat(filter.n_rows - 1, filter.n_cols - 1,
-        filter.n_rows - 1 + input.n_rows - 1,
-        filter.n_cols - 1 + input.n_cols - 1) = input;
+    inputPadded.submat((filter.n_rows - 1) * dilationW, (filter.n_cols - 1)
+        * dilationH, (filter.n_rows - 1) * dilationW + input.n_rows - 1,
+        (filter.n_cols - 1) * dilationH + input.n_cols - 1) = input;
 
     NaiveConvolution<ValidConvolution>::Convolution(inputPadded, filter,
-        output, 1, 1);
+        output, 1, 1, dilationW, dilationH);
   }
 
   /*
@@ -115,17 +144,21 @@ class NaiveConvolution
    * @param output Output data that contains the results of the convolution.
    * @param dW Stride of filter application in the x direction.
    * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
    */
   template<typename eT>
   static void Convolution(const arma::Cube<eT>& input,
                           const arma::Cube<eT>& filter,
                           arma::Cube<eT>& output,
                           const size_t dW = 1,
-                          const size_t dH = 1)
+                          const size_t dH = 1,
+                          const size_t dilationW = 1,
+                          const size_t dilationH = 1)
   {
     arma::Mat<eT> convOutput;
     NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
-        convOutput, dW, dH);
+        convOutput, dW, dH, dilationW, dilationH);
 
     output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
         input.n_slices);
@@ -134,7 +167,7 @@ class NaiveConvolution
     for (size_t i = 1; i < input.n_slices; i++)
     {
       NaiveConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
-          output.slice(i), dW, dH);
+          output.slice(i), dW, dH, dilationW, dilationH);
     }
   }
 
@@ -147,17 +180,21 @@ class NaiveConvolution
    * @param output Output data that contains the results of the convolution.
    * @param dW Stride of filter application in the x direction.
    * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
    */
   template<typename eT>
   static void Convolution(const arma::Mat<eT>& input,
                           const arma::Cube<eT>& filter,
                           arma::Cube<eT>& output,
                           const size_t dW = 1,
-                          const size_t dH = 1)
+                          const size_t dH = 1,
+                          const size_t dilationW = 1,
+                          const size_t dilationH = 1)
   {
     arma::Mat<eT> convOutput;
     NaiveConvolution<BorderMode>::Convolution(input, filter.slice(0),
-        convOutput, dW, dH);
+        convOutput, dW, dH, dilationW, dilationH);
 
     output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
         filter.n_slices);
@@ -166,7 +203,7 @@ class NaiveConvolution
     for (size_t i = 1; i < filter.n_slices; i++)
     {
       NaiveConvolution<BorderMode>::Convolution(input, filter.slice(i),
-          output.slice(i), dW, dH);
+          output.slice(i), dW, dH, dilationW, dilationH);
     }
   }
 
@@ -179,17 +216,21 @@ class NaiveConvolution
    * @param output Output data that contains the results of the convolution.
    * @param dW Stride of filter application in the x direction.
    * @param dH Stride of filter application in the y direction.
+   * @param dilationW The dilation factor in x direction.
+   * @param dilationH The dilation factor in y direction.
    */
   template<typename eT>
   static void Convolution(const arma::Cube<eT>& input,
                           const arma::Mat<eT>& filter,
                           arma::Cube<eT>& output,
                           const size_t dW = 1,
-                          const size_t dH = 1)
+                          const size_t dH = 1,
+                          const size_t dilationW = 1,
+                          const size_t dilationH = 1)
   {
     arma::Mat<eT> convOutput;
     NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter,
-        convOutput, dW, dH);
+        convOutput, dW, dH, dilationW, dilationH);
 
     output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
         input.n_slices);
@@ -198,7 +239,7 @@ class NaiveConvolution
     for (size_t i = 1; i < input.n_slices; i++)
     {
       NaiveConvolution<BorderMode>::Convolution(input.slice(i), filter,
-          output.slice(i), dW, dH);
+          output.slice(i), dW, dH, dilationW, dilationH);
     }
   }
 };  // class NaiveConvolution

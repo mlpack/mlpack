@@ -1,6 +1,7 @@
 /**
  * @file atrous_convolution_impl.hpp
  * @author Aarush Gupta
+ * @author Shikhar Jaiswal
  *
  * Implementation of the Atrous Convolution module class.
  *
@@ -60,7 +61,8 @@ AtrousConvolution<
     const size_t padH,
     const size_t inputWidth,
     const size_t inputHeight,
-    const size_t dilation) :
+    const size_t dilationW,
+    const size_t dilationH) :
     inSize(inSize),
     outSize(outSize),
     kW(kW),
@@ -73,7 +75,8 @@ AtrousConvolution<
     inputHeight(inputHeight),
     outputWidth(0),
     outputHeight(0),
-    dilation(dilation)
+    dilationW(dilationW),
+    dilationH(dilationH)
 {
   weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
 }
@@ -122,35 +125,34 @@ void AtrousConvolution<
     Pad(inputTemp, padW, padH, inputPaddedTemp);
   }
 
-  size_t wConv = ConvOutSize(inputWidth, kW, dW, padW, dilation);
-  size_t hConv = ConvOutSize(inputHeight, kH, dH, padH, dilation);
+  size_t wConv = ConvOutSize(inputWidth, kW, dW, padW, dilationW);
+  size_t hConv = ConvOutSize(inputHeight, kH, dH, padH, dilationH);
 
-  outputTemp = arma::zeros<arma::Cube<eT> >(wConv, hConv, outSize);
+  output.set_size(wConv * hConv * outSize, 1);
+  outputTemp = arma::Cube<eT>(output.memptr(), wConv, hConv, outSize,
+      false, false);
+  outputTemp.zeros();
 
   for (size_t outMap = 0, outMapIdx = 0; outMap < outSize; outMap++)
   {
     for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
     {
       arma::Mat<eT> convOutput;
-
       if (padW != 0 || padH != 0)
       {
         ForwardConvolutionRule::Convolution(inputPaddedTemp.slice(inMap),
-            weight.slice(outMapIdx), convOutput, dW, dH, dilation);
+            weight.slice(outMapIdx), convOutput, dW, dH, dilationW, dilationH);
       }
       else
       {
         ForwardConvolutionRule::Convolution(inputTemp.slice(inMap),
-            weight.slice(outMapIdx), convOutput, dW, dH, dilation);
+            weight.slice(outMapIdx), convOutput, dW, dH, dilationW, dilationH);
       }
-
       outputTemp.slice(outMap) += convOutput;
     }
 
     outputTemp.slice(outMap) += bias(outMap);
   }
-
-  output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem, 1);
 
   outputWidth = outputTemp.n_rows;
   outputHeight = outputTemp.n_cols;
@@ -173,28 +175,30 @@ void AtrousConvolution<
 >::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  arma::cube mappedError = arma::cube(gy.memptr(),
-        outputWidth, outputHeight, outSize);
-  gTemp = arma::zeros<arma::Cube<eT> >(inputTemp.n_rows,
-      inputTemp.n_cols, inputTemp.n_slices);
+  arma::cube mappedError(gy.memptr(), outputWidth, outputHeight, outSize,
+      false, false);
+
+  g.set_size(inputTemp.n_rows * inputTemp.n_cols * inputTemp.n_slices, 1);
+  gTemp = arma::Cube<eT>(g.memptr(), inputTemp.n_rows,
+      inputTemp.n_cols, inputTemp.n_slices, false, false);
+  gTemp.zeros();
 
   for (size_t outMap = 0, outMapIdx = 0; outMap < outSize; outMap++)
   {
     for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
     {
-      arma::Mat<eT> rotatedFilter;
+      arma::Mat<eT> output, rotatedFilter;
       Rotate180(weight.slice(outMapIdx), rotatedFilter);
 
-      arma::Mat<eT> output;
       BackwardConvolutionRule::Convolution(mappedError.slice(outMap),
-          rotatedFilter, output, dW, dH, dilation);
+          rotatedFilter, output, dW, dH, dilationW, dilationH);
+
       if (padW != 0 || padH != 0)
       {
         gTemp.slice(inMap) += output.submat(rotatedFilter.n_rows / 2,
             rotatedFilter.n_cols / 2,
             rotatedFilter.n_rows / 2 + gTemp.n_rows - 1,
             rotatedFilter.n_cols / 2 + gTemp.n_cols - 1);
-        // Not complete. To be modified
       }
       else
       {
@@ -202,8 +206,6 @@ void AtrousConvolution<
       }
     }
   }
-
-  g = arma::mat(gTemp.memptr(), gTemp.n_elem, 1);
 }
 
 template<
@@ -230,7 +232,6 @@ void AtrousConvolution<
   {
     mappedError = arma::cube(error.memptr(), outputWidth / padW,
         outputHeight / padH, outSize);
-    // To be modified.
   }
   else
   {
@@ -238,8 +239,10 @@ void AtrousConvolution<
         outputHeight, outSize);
   }
 
-  gradientTemp = arma::zeros<arma::Cube<eT> >(weight.n_rows, weight.n_cols,
-      weight.n_slices);
+  gradient.set_size(weights.n_elem, 1);
+  gradientTemp = arma::Cube<eT>(gradient.memptr(), weight.n_rows, weight.n_cols,
+      weight.n_slices, false, false);
+  gradientTemp.zeros();
 
   for (size_t outMap = 0, outMapIdx = 0; outMap < outSize; outMap++)
   {
@@ -258,43 +261,53 @@ void AtrousConvolution<
 
       arma::Cube<eT> deltaSlices = mappedError.slices(outMap, outMap);
 
-      arma::Cube<eT> output;
+      arma::Cube<eT> output, reducedOutput;
       GradientConvolutionRule::Convolution(inputSlices, deltaSlices,
-          output, dW, dH, dilation);
+          output, dW, dH, 1, 1);
+      arma::Mat<eT> reducedMat;
+      reducedOutput = arma::zeros<arma::Cube<eT> >(kW, kH, output.n_slices);
+
+      for (size_t j = 0; j < output.n_slices; j++)
+      {
+        reducedMat = output.slice(j);
+        if (dilationH > 1)
+        {
+          for (size_t i = 1; i < reducedMat.n_cols; i++){
+            reducedMat.shed_cols(i, i + dilationH - 2);
+          }
+        }
+        if (dilationW > 1)
+        {
+          for (size_t i = 1; i < reducedMat.n_rows; i++){
+            reducedMat.shed_rows(i, i + dilationW - 2);
+          }
+        }
+        reducedOutput.slice(j) = reducedMat;
+      }
 
       if ((padW != 0 || padH != 0) &&
-          (gradientTemp.n_rows < output.n_rows &&
-          gradientTemp.n_cols < output.n_cols))
+          (gradientTemp.n_rows < reducedOutput.n_rows &&
+          gradientTemp.n_cols < reducedOutput.n_cols))
       {
-        for (size_t i = 0; i < output.n_slices; i++)
+        for (size_t i = 0; i < reducedOutput.n_slices; i++)
         {
-          arma::mat subOutput = output.slice(i);
-
-          gradientTemp.slice(s) += subOutput.submat(subOutput.n_rows / 2,
-              subOutput.n_cols / 2,
-              subOutput.n_rows / 2 + gradientTemp.n_rows - 1,
-              subOutput.n_cols / 2 + gradientTemp.n_cols - 1);
+          gradientTemp.slice(s) += reducedOutput.slice(i).submat(
+              reducedOutput.n_rows / 2, reducedOutput.n_cols / 2,
+              reducedOutput.n_rows / 2 + gradientTemp.n_rows - 1,
+              reducedOutput.n_cols / 2 + gradientTemp.n_cols - 1);
         }
       }
       else
       {
-        for (size_t i = 0; i < output.n_slices; i++)
-        {
-          gradientTemp.slice(s) += output.slice(i);
-        }
+        for (size_t i = 0; i < reducedOutput.n_slices; i++)
+          gradientTemp.slice(s) += reducedOutput.slice(i);
       }
     }
 
-    gradient.submat(weight.n_elem + outMap, 0,
-        weight.n_elem + outMap, 0) = arma::accu(mappedError.slices(
-        outMap, outMap));
+    gradient.submat(weight.n_elem + outMap, 0, weight.n_elem + outMap, 0) =
+        arma::accu(mappedError.slices(outMap, outMap));
   }
-
-  gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::Mat<eT>(
-      gradientTemp.memptr(), gradientTemp.n_elem, 1, false, false);
 }
-
-
 
 template<
     typename ForwardConvolutionRule,
@@ -325,7 +338,8 @@ void AtrousConvolution<
   ar & BOOST_SERIALIZATION_NVP(inputHeight);
   ar & BOOST_SERIALIZATION_NVP(outputWidth);
   ar & BOOST_SERIALIZATION_NVP(outputHeight);
-  ar & BOOST_SERIALIZATION_NVP(dilation);
+  ar & BOOST_SERIALIZATION_NVP(dilationW);
+  ar & BOOST_SERIALIZATION_NVP(dilationH);
 
   if (Archive::is_loading::value)
     weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
