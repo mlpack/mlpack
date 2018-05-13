@@ -1,16 +1,17 @@
 /**
- * @file convolution.hpp
+ * @file transposed_convolution.hpp
+ * @author Shikhar Jaiswal
  * @author Marcus Edel
  *
- * Definition of the Convolution module class.
+ * Definition of the Transposed Convolution module class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_CONVOLUTION_HPP
-#define MLPACK_METHODS_ANN_LAYER_CONVOLUTION_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_TRANSPOSED_CONVOLUTION_HPP
+#define MLPACK_METHODS_ANN_LAYER_TRANSPOSED_CONVOLUTION_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -25,8 +26,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the Convolution class. The Convolution class represents a
- * single layer of a neural network.
+ * Implementation of the Transposed Convolution class. The Transposed 
+ * Convolution class represents a single layer of a neural network.
  *
  * @tparam ForwardConvolutionRule Convolution to perform forward process.
  * @tparam BackwardConvolutionRule Convolution to perform backward process.
@@ -43,14 +44,14 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class Convolution
+class TransposedConvolution
 {
  public:
-  //! Create the Convolution object.
-  Convolution();
+  //! Create the Transposed Convolution object.
+  TransposedConvolution();
 
   /**
-   * Create the Convolution object using the specified number of input maps,
+   * Create the Transposed Convolution object using the specified number of input maps,
    * output maps, filter size, stride and padding parameter.
    *
    * @param inSize The number of input maps.
@@ -64,16 +65,16 @@ class Convolution
    * @param inputWidth The width of the input data.
    * @param inputHeight The height of the input data.
    */
-  Convolution(const size_t inSize,
-              const size_t outSize,
-              const size_t kW,
-              const size_t kH,
-              const size_t dW = 1,
-              const size_t dH = 1,
-              const size_t padW = 0,
-              const size_t padH = 0,
-              const size_t inputWidth = 0,
-              const size_t inputHeight = 0);
+  TransposedConvolution(const size_t inSize,
+                        const size_t outSize,
+                        const size_t kW,
+                        const size_t kH,
+                        const size_t dW = 1,
+                        const size_t dH = 1,
+                        const size_t padW = 0,
+                        const size_t padH = 0,
+                        const size_t inputWidth = 0,
+                        const size_t inputHeight = 0);
 
   /*
    * Set the weight and bias term.
@@ -169,20 +170,21 @@ class Convolution
 
  private:
   /*
-   * Return the convolution output size.
+   * Return the transposed convolution output size.
    *
    * @param size The size of the input (row or column).
    * @param k The size of the filter (width or height).
    * @param s The stride size (x or y direction).
    * @param p The size of the padding (width or height).
-   * @return The convolution output size.
+   * @return The transposed convolution output size.
    */
-  size_t ConvOutSize(const size_t size,
-                     const size_t k,
-                     const size_t s,
-                     const size_t p)
+  size_t TransposedConvOutSize(const size_t size,
+                               const size_t k,
+                               const size_t s,
+                               const size_t p)
   {
-    return std::floor(size + p * 2 - k) / s + 1;
+    size_t out = std::floor(size - k + 2 * p) / s;
+    return out * s + 2 * (k - p) - 1 + ((((size + 2 * p - k) % s) + s) % s);
   }
 
   /*
@@ -332,12 +334,12 @@ class Convolution
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class Convolution
+}; // class TransposedConvolution
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "convolution_impl.hpp"
+#include "transposed_convolution_impl.hpp"
 
 #endif

@@ -97,6 +97,15 @@ template<
 class Convolution;
 
 template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+class TransposedConvolution;
+
+template<
     typename InputDataType,
     typename OutputDataType
 >
@@ -119,6 +128,9 @@ using LayerTypes = boost::variant<
     Convolution<NaiveConvolution<ValidConvolution>,
                 NaiveConvolution<FullConvolution>,
                 NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
+    TransposedConvolution<NaiveConvolution<ValidConvolution>,
+            NaiveConvolution<FullConvolution>,
+            NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
     DropConnect<arma::mat, arma::mat>*,
     Dropout<arma::mat, arma::mat>*,
     AlphaDropout<arma::mat, arma::mat>*,
