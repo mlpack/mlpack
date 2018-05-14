@@ -1448,7 +1448,7 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   TransposedConvolution<> module1(1, 1, 3, 3, 1, 1, 0, 0, 4, 4);
   // Test the Forward function.
   input = arma::linspace<arma::colvec>(0, 15, 16);
-  module1.Parameters() = arma::mat(9, 1, arma::fill::zeros);
+  module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module1.Parameters()(0) = 1.0;
   module1.Parameters()(8) = 2.0;
   module1.Reset();
@@ -1463,7 +1463,7 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   TransposedConvolution<> module2(1, 1, 4, 4, 1, 1, 2, 2, 5, 5);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module2.Parameters() = arma::mat(16, 1, arma::fill::zeros);
+  module2.Parameters() = arma::mat(16 + 1, 1, arma::fill::zeros);
   module2.Parameters()(0) = 1.0;
   module2.Parameters()(3) = 1.0;
   module2.Parameters()(6) = 1.0;
@@ -1482,7 +1482,7 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   TransposedConvolution<> module3(1, 1, 3, 3, 1, 1, 1, 1, 5, 5);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module3.Parameters() = arma::mat(9, 1, arma::fill::zeros);
+  module3.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module3.Parameters()(1) = 2.0;
   module3.Parameters()(2) = 4.0;
   module3.Parameters()(3) = 3.0;
@@ -1499,7 +1499,7 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   TransposedConvolution<> module4(1, 1, 3, 3, 1, 1, 2, 2, 5, 5);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module4.Parameters() = arma::mat(9, 1, arma::fill::zeros);
+  module4.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module4.Parameters()(2) = 2.0;
   module4.Parameters()(4) = 4.0;
   module4.Parameters()(6) = 6.0;
@@ -1516,7 +1516,7 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   TransposedConvolution<> module5(1, 1, 3, 3, 2, 2, 0, 0, 5, 5);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module5.Parameters() = arma::mat(9, 1, arma::fill::zeros);
+  module5.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module5.Parameters()(2) = 8.0;
   module5.Parameters()(4) = 6.0;
   module5.Parameters()(6) = 4.0;
@@ -1533,7 +1533,7 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   TransposedConvolution<> module6(1, 1, 3, 3, 2, 2, 1, 1, 5, 5);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module6.Parameters() = arma::mat(9, 1, arma::fill::zeros);
+  module6.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module6.Parameters()(0) = 8.0;
   module6.Parameters()(3) = 6.0;
   module6.Parameters()(6) = 2.0;
@@ -1550,7 +1550,7 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   TransposedConvolution<> module7(1, 1, 3, 3, 2, 2, 1, 1, 6, 6);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 35, 36);
-  module7.Parameters() = arma::mat(9, 1, arma::fill::zeros);
+  module7.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module7.Parameters()(0) = 8.0;
   module7.Parameters()(2) = 6.0;
   module7.Parameters()(4) = 2.0;
@@ -1604,7 +1604,7 @@ BOOST_AUTO_TEST_CASE(GradientTransposedConvolutionLayerTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-3);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

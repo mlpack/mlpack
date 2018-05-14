@@ -123,7 +123,10 @@ void Convolution<
   size_t wConv = ConvOutSize(inputWidth, kW, dW, padW);
   size_t hConv = ConvOutSize(inputHeight, kH, dH, padH);
 
-  outputTemp = arma::zeros<arma::Cube<eT> >(wConv, hConv, outSize);
+  output.set_size(wConv * hConv * outSize, 1);
+  outputTemp = arma::Cube<eT>(output.memptr(), wConv, hConv, outSize,
+      false, false);
+  outputTemp.zeros();
 
   for (size_t outMap = 0, outMapIdx = 0; outMap < outSize; outMap++)
   {
@@ -150,9 +153,6 @@ void Convolution<
 
   outputWidth = outputTemp.n_rows;
   outputHeight = outputTemp.n_cols;
-
-  outputTemp.reshape(outputTemp.n_elem, 1, 1);
-  output = std::move(outputTemp.slice(0));
 }
 
 template<
@@ -174,8 +174,11 @@ void Convolution<
 {
   arma::cube mappedError(gy.memptr(), outputWidth, outputHeight, outSize,
       false, false);
-  gTemp = arma::zeros<arma::Cube<eT> >(inputTemp.n_rows,
-      inputTemp.n_cols, inputTemp.n_slices);
+
+  g.set_size(inputTemp.n_rows * inputTemp.n_cols * inputTemp.n_slices, 1);
+  gTemp = arma::Cube<eT>(g.memptr(), inputTemp.n_rows,
+      inputTemp.n_cols, inputTemp.n_slices, false, false);
+  gTemp.zeros();
 
   for (size_t outMap = 0, outMapIdx = 0; outMap < outSize; outMap++)
   {
@@ -201,9 +204,6 @@ void Convolution<
       }
     }
   }
-
-  gTemp.reshape(gTemp.n_elem, 1, 1);
-  g = std::move(gTemp.slice(0));
 }
 
 template<
@@ -237,8 +237,10 @@ void Convolution<
         outputHeight, outSize);
   }
 
-  gradientTemp = arma::zeros<arma::Cube<eT> >(weight.n_rows, weight.n_cols,
-      weight.n_slices);
+  gradient.set_size(weights.n_elem, 1);
+  gradientTemp = arma::Cube<eT>(gradient.memptr(), weight.n_rows, weight.n_cols,
+      weight.n_slices, false, false);
+  gradientTemp.zeros();
 
   for (size_t outMap = 0, outMapIdx = 0; outMap < outSize; outMap++)
   {
@@ -276,20 +278,13 @@ void Convolution<
       else
       {
         for (size_t i = 0; i < output.n_slices; i++)
-        {
           gradientTemp.slice(s) += output.slice(i);
-        }
       }
     }
 
-    gradient.submat(weight.n_elem + outMap, 0,
-        weight.n_elem + outMap, 0) = arma::accu(mappedError.slices(
-        outMap, outMap));
+    gradient.submat(weight.n_elem + outMap, 0, weight.n_elem + outMap, 0) =
+        arma::accu(mappedError.slices(outMap, outMap));
   }
-
-  gradientTemp.reshape(gradientTemp.n_elem, 1, 1);
-  gradient.submat(0, 0, weight.n_elem - 1, 0) = std::move(
-      gradientTemp.slice(0));
 }
 
 template<
