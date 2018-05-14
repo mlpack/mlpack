@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(SimplePendulumTest)
   // The reward is always negative. Check if not lower than lowest possible.
   BOOST_REQUIRE(reward >= -(pow(M_PI, 2) + 6.404));
 
-  // The state is simply the torque. Check if dimension is 1.
+  // The action is simply the torque. Check if dimension is 1.
   BOOST_REQUIRE_EQUAL(1, action.size);
 }
 
