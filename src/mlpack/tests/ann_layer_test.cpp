@@ -1607,4 +1607,35 @@ BOOST_AUTO_TEST_CASE(GradientTransposedConvolutionLayerTest)
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
+/**
+ * Simple multiply merge module test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleMultiplyMergeLayerTest)
+{
+  arma::mat output, input, delta;
+  input = arma::ones(10, 1);
+
+  for (size_t i = 0; i < 5; ++i)
+  {
+    MultiplyMerge<> module;
+    const size_t numMergeModules = math::RandInt(2, 10);
+    for (size_t m = 0; m < numMergeModules; ++m)
+    {
+      IdentityLayer<> identityLayer;
+      identityLayer.Forward(std::move(input),
+          std::move(identityLayer.OutputParameter()));
+
+      module.Add(identityLayer);
+    }
+
+    // Test the Forward function.
+    module.Forward(std::move(input), std::move(output));
+    BOOST_REQUIRE_EQUAL(10, arma::accu(output));
+
+    // Test the Backward function.
+    module.Backward(std::move(input), std::move(output), std::move(delta));
+    BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(delta));
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END();
