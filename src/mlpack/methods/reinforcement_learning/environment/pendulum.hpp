@@ -120,9 +120,9 @@ class Pendulum
     double angularVelocity = state.AngularVelocity();
 
     // Define constants which specify our pendulum.
-    const gravity = 10.0;
-    const mass = 1.0;
-    const length = 1.0;
+    const double gravity = 10.0;
+    const double mass = 1.0;
+    const double length = 1.0;
 
     // Get action and clip the values between max and min limits.
     double torque = std::min(
