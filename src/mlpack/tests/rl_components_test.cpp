@@ -42,10 +42,10 @@ BOOST_AUTO_TEST_CASE(SimplePendulumTest)
   action.action[0] = math::Random(-2.0, 2.0);
   double reward = task.Sample(state, action);
 
-  // The reward is always negative. Check if not lower than lowest possible
+  // The reward is always negative. Check if not lower than lowest possible.
   BOOST_REQUIRE(reward >= -(pow(M_PI, 2) + 6.404));
 
-  // The reward is simply the torque. Check if dimension is 1
+  // The state is simply the torque. Check if dimension is 1.
   BOOST_REQUIRE_EQUAL(1, action.size);
 }
 

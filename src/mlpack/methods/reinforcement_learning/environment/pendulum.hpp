@@ -115,34 +115,33 @@ class Pendulum
                 const Action& action,
                 State& nextState) const
   {
-    // Get current state
+    // Get current state.
     double theta = state.Theta();
-    double angular_velocity = state.AngularVelocity();
+    double angularVelocity = state.AngularVelocity();
 
-    // Define required variables
-    double gravity = 10.0;
-    double mass = 1.0;
-    double length = 1.0;
+    // Define constants which specify our pendulum.
+    const gravity = 10.0;
+    const mass = 1.0;
+    const length = 1.0;
 
-    // Get action and clip the values
+    // Get action and clip the values between max and min limits.
     double torque = std::min(
         std::max(action.action[0], -maxTorque), maxTorque);
 
-    // Calculate costs
+    // Calculate costs of taking this action in the current state.
     double costs = pow(AngleNormalize(theta), 2) + 0.1 *
-        pow(angular_velocity, 2) + 0.001 * pow(torque, 2);
+        pow(angularVelocity, 2) + 0.001 * pow(torque, 2);
 
-    // Calculate new state values
-    double new_angular_velocity = angular_velocity + (-3.0 * gravity / (2 *
-        length) * std::sin(theta + M_PI) + 3.0 / (pow(mass * length, 2)) *
+    // Calculate new state values and assign to the next state.
+    double newAngularVelocity = angularVelocity + (-3.0 * gravity / (2 *
+        length) * std::sin(theta + M_PI) + 3.0 / pow(mass * length, 2) *
         torque) * dt;
-    double new_theta = theta + new_angular_velocity * dt;
-
-    // Set values for next state
-    nextState.Theta() = new_theta;
-    nextState.AngularVelocity() = std::min(std::max(new_angular_velocity,
+    nextState.AngularVelocity() = std::min(std::max(newAngularVelocity,
         -maxAngularVelocity), maxAngularVelocity);
+    nextState.Theta() = theta + newAngularVelocity * dt;
 
+    // Return the reward of taking the action in current state.
+    // The reward is simply the negative of cost incurred for the action.
     return -costs;
   }
 
@@ -180,7 +179,7 @@ class Pendulum
    */
   double AngleNormalize(double theta) const
   {
-    // Scale angle within [-pi, pi)
+    // Scale angle within [-pi, pi).
     return double(fmod(theta + M_PI, 2 * M_PI) - M_PI);
   }
 
