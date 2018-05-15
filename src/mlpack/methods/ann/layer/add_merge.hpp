@@ -45,7 +45,7 @@ class AddMerge
   /**
    * Create the AddMerge object using the specified parameters.
    *
-   * @param model Expose the all network modules.
+   * @param model Expose all the network modules.
    */
   AddMerge(const bool model = false);
 
