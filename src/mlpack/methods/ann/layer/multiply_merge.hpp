@@ -45,7 +45,7 @@ class MultiplyMerge
   /**
    * Create the MultiplyMerge object using the specified parameters.
    *
-   * @param model Expose the all network modules.
+   * @param model Expose all the network modules.
    */
   MultiplyMerge(const bool model = false);
 

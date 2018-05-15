@@ -111,6 +111,12 @@ template<
 >
 class RecurrentAttention;
 
+template<typename InputDataType,
+         typename OutputDataType,
+         typename... CustomLayers
+>
+class MultiplyMerge;
+
 template <typename... CustomLayers>
 using LayerTypes = boost::variant<
     Add<arma::mat, arma::mat>*,
@@ -150,6 +156,7 @@ using LayerTypes = boost::variant<
     MaxPooling<arma::mat, arma::mat>*,
     MeanPooling<arma::mat, arma::mat>*,
     MultiplyConstant<arma::mat, arma::mat>*,
+    MultiplyMerge<arma::mat, arma::mat>*,
     NegativeLogLikelihood<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
     Recurrent<arma::mat, arma::mat>*,
