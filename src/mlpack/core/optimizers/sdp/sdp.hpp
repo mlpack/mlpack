@@ -43,10 +43,11 @@ class SDP
 
   /**
    * Initialize this SDP to an empty state.  To add constraints, you will have
-   * to modify the constraints via the SparseA(), DenseA(), SparseB(), DenseB(),
-   * and C() functions.  For the sake of speed, there is no error checking, so
-   * if you specify an invalid SDP, whatever solver you use will gladly try to
-   * solve it!  (And it will probably crash horribly.)
+   * to modify the constraints via the SparseA(), SparseInequalityA(),
+   * DenseA(), DenseInequalityA(), SparseB(), DenseB(), and C() functions.
+   * For the sake of speed, there is no error checking, so if you specify an
+   * invalid SDP, whatever solver you use will gladly try to solve it!
+   * (And it will probably crash horribly.)
    */
   SDP();
 
@@ -60,11 +61,17 @@ class SDP
    *
    * @param n Number of rows (and columns) in the objective matrix C.
    * @param numSparseConstraints Number of sparse constraints.
+   * @param numSparseInequalityConstraints Number of sparse inequality
+   * constraints.
    * @param numDenseConstraints Number of dense constraints.
+   * @param numDenseInequalityConstraints Number of dense inequality
+   * constraints.
    */
   SDP(const size_t n,
       const size_t numSparseConstraints,
-      const size_t numDenseConstraints);
+      const size_t numSparseInequalityConstraints,
+      const size_t numDenseConstraints,
+      const size_t numDenseInequalityConstraints);
 
   //! Return number of rows and columns in the objective matrix C.
   size_t N() const { return c.n_rows; }
@@ -94,6 +101,14 @@ class SDP
   //! constraints).
   std::vector<arma::sp_mat>& SparseA() { return sparseA; }
 
+  //! Return the vector of sparse A matrices (which correspond to the sparse
+  //! inequality constraints).
+  const std::vector<arma::sp_mat>& SparseInequalityA() const { return sparseInequalityA; }
+
+  //! Modify the vector of sparse A matrices (which correspond to the sparse
+  //! inequality constraints).
+  std::vector<arma::sp_mat>& SparseInequalityA() { return sparseInequalityA; }
+
   //! Return the vector of dense A matrices (which correspond to the dense
   //! constraints).
   const std::vector<arma::mat>& DenseA() const { return denseA; }
@@ -101,6 +116,14 @@ class SDP
   //! Modify the vector of dense A matrices (which correspond to the dense
   //! constraints).
   std::vector<arma::mat>& DenseA() { return denseA; }
+
+  //! Return the vector of dense A matrices (which correspond to the dense
+  //! inequalityconstraints).
+  const std::vector<arma::mat>& DenseInequalityA() const { return denseInequalityA; }
+
+  //! Modify the vector of dense A matrices (which correspond to the dense
+  //! inequalityconstraints).
+  std::vector<arma::mat>& DenseInequalityA() { return denseInequalityA; }
 
   //! Return the vector of sparse B values.
   const arma::vec& SparseB() const { return sparseB; }
@@ -125,11 +148,15 @@ class SDP
 
   //! A_i for each sparse constraint.
   std::vector<arma::sp_mat> sparseA;
+  //! A_i for each sparse inequality constraint.
+  std::vector<arma::sp_mat> sparseInequalityA;
   //! b_i for each sparse constraint.
   arma::vec sparseB;
 
   //! A_i for each dense constraint.
   std::vector<arma::mat> denseA;
+  //! A_i for each dense inequality constraint.
+  std::vector<arma::mat> denseInequalityA;
   //! b_i for each dense constraint.
   arma::vec denseB;
 };

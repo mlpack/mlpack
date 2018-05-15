@@ -21,7 +21,7 @@ MatrixCompletion::MatrixCompletion(const size_t m,
                                    const arma::vec& values,
                                    const size_t r) :
     m(m), n(n), indices(indices), values(values),
-    sdp(indices.n_cols, 0, arma::randu<arma::mat>(m + n, r))
+    sdp(indices.n_cols, 0, 0, 0, arma::randu<arma::mat>(m + n, r))
 {
   CheckValues();
   InitSDP();
@@ -33,7 +33,7 @@ MatrixCompletion::MatrixCompletion(const size_t m,
                                    const arma::vec& values,
                                    const arma::mat& initialPoint) :
     m(m), n(n), indices(indices), values(values),
-    sdp(indices.n_cols, 0, initialPoint)
+    sdp(indices.n_cols, 0, 0, 0, initialPoint)
 {
   CheckValues();
   InitSDP();
@@ -44,7 +44,7 @@ MatrixCompletion::MatrixCompletion(const size_t m,
                                    const arma::umat& indices,
                                    const arma::vec& values) :
     m(m), n(n), indices(indices), values(values),
-    sdp(indices.n_cols, 0,
+    sdp(indices.n_cols, 0, 0, 0,
         arma::randu<arma::mat>(m + n, DefaultRank(m, n, indices.n_cols)))
 {
   CheckValues();

@@ -35,10 +35,17 @@ LRSDPFunction<SDPType>::LRSDPFunction(const SDPType& sdp,
 }
 
 template <typename SDPType>
-LRSDPFunction<SDPType>::LRSDPFunction(const size_t numSparseConstraints,
-                                      const size_t numDenseConstraints,
-                                      const arma::mat& initialPoint):
-    sdp(initialPoint.n_rows, numSparseConstraints, numDenseConstraints),
+LRSDPFunction<SDPType>::LRSDPFunction(
+                            const size_t numSparseConstraints,
+                            const size_t numSparseInequalityConstraints,
+                            const size_t numDenseConstraints,
+                            const size_t numDenseInequalityConstraints,
+                            const arma::mat& initialPoint):
+    sdp(initialPoint.n_rows,
+        numSparseInequalityConstraints,
+        numSparseConstraints,
+        numDenseConstraints,
+        numDenseInequalityConstraints),
     initialPoint(initialPoint)
 {
   if (initialPoint.n_rows < initialPoint.n_cols)
@@ -78,13 +85,33 @@ double LRSDPFunction<SDPType>::EvaluateConstraint(
   // matrix.
 
   // Using cached R*R^T gives better optimization for sparse matrices.
-  if (index < SDP().NumSparseConstraints())
-    return accu(SDP().SparseA()[index] % rrt) - SDP().SparseB()[index];
-  const size_t index1 = index - SDP().NumSparseConstraints();
 
-  // For computation optimization we will be taking R^T * A first.
-  return trace((trans(coordinates) * SDP().DenseA()[index1]) * coordinates)
-                 - SDP().DenseB()[index1];
+  // Computation for sparse constraints.
+  if (index < SDP().SparseA().size())
+    return accu(SDP().SparseA()[index] % rrt) - SDP().SparseB()[index];
+
+  // Computation for inequality sparse constraints.
+  const size_t index1 = index - SDP().SparseA().size();
+
+  if (index < SDP().NumSparseConstraints())
+  {
+    double eval = arma::accu(SDP().SparseInequalityA()[index1] % rrt) -
+        SDP().SparseB()[index];
+    return eval >= 0 ? 0 : -eval;
+  }
+
+  // Computation for dense constraints.
+  const size_t index2 = index1 - SDP().SparseInequalityA().size();
+
+  if (index < SDP().DenseA().size())
+    return accu(SDP().DenseA()[index2] % rrt) - SDP().DenseB()[index2];
+
+  // Computation for inequality dense constraints.
+  const size_t index3 = index2 - SDP().DenseA().size();
+
+  double eval = arma::accu(SDP().DenseInequalityA()[index3] % rrt) -
+      SDP().DenseB()[index2];
+  return eval >= 0 ? 0 : -eval;
 }
 
 template <typename SDPType>
