@@ -129,12 +129,12 @@ class Pendulum
         std::max(action.action[0], -maxTorque), maxTorque);
 
     // Calculate costs of taking this action in the current state.
-    double costs = pow(AngleNormalize(theta), 2) + 0.1 *
-        pow(angularVelocity, 2) + 0.001 * pow(torque, 2);
+    double costs = std::pow(AngleNormalize(theta), 2) + 0.1 *
+        std::pow(angularVelocity, 2) + 0.001 * std::pow(torque, 2);
 
     // Calculate new state values and assign to the next state.
     double newAngularVelocity = angularVelocity + (-3.0 * gravity / (2 *
-        length) * std::sin(theta + M_PI) + 3.0 / pow(mass * length, 2) *
+        length) * std::sin(theta + M_PI) + 3.0 / std::pow(mass * length, 2) *
         torque) * dt;
     nextState.AngularVelocity() = std::min(std::max(newAngularVelocity,
         -maxAngularVelocity), maxAngularVelocity);

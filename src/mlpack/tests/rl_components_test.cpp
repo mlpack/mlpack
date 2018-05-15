@@ -30,7 +30,7 @@ using namespace mlpack::rl;
 BOOST_AUTO_TEST_SUITE(RLComponentsTest)
 
 /**
- * Constructs a Pendulum instance and check if the main rountine works as it
+ * Constructs a Pendulum instance and check if the main routine works as it
  * should be working.
  */
 BOOST_AUTO_TEST_CASE(SimplePendulumTest)
