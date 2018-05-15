@@ -96,13 +96,17 @@ class ContinuousMountainCar
    * @param velocityMax Maximum legal velocity.
    */
   ContinuousMountainCar(const double positionMin = -1.2,
-                        const double positionMax = 0.5,
+                        const double positionMax = 0.6,
+                        const double positionGoal = 0.45,
                         const double velocityMin = -0.07,
-                        const double velocityMax = 0.07) :
+                        const double velocityMax = 0.07,
+                        const double power = 0.0015) :
       positionMin(positionMin),
       positionMax(positionMax),
+      positionGoal(positionGoal),
       velocityMin(velocityMin),
-      velocityMax(velocityMax)
+      velocityMax(velocityMax),
+      power(power)
   { /* Nothing to do here */ }
 
   /**
@@ -120,24 +124,25 @@ class ContinuousMountainCar
   {
     // Calculate acceleration.
     double force = std::min(std::max(action.action[0], -1.0), 1.0);
-    nextState.Velocity() = state.Velocity() + 0.001 * force - 0.0025 *
+
+    // Update states.
+    nextState.Velocity() = state.Velocity() + force * power - 0.0025 *
         std::cos(3 * state.Position());
     nextState.Velocity() = std::min(
         std::max(nextState.Velocity(), velocityMin), velocityMax);
-
-    // Update states.
     nextState.Position() = state.Position() + nextState.Velocity();
     nextState.Position() = std::min(
         std::max(nextState.Position(), positionMin), positionMax);
-
     if (nextState.Position() == positionMin && nextState.Velocity() < 0)
-    {
       nextState.Velocity() = 0.0;
-    }
-    // If it is a terminal state, reward is 100.0
+
+    // Calculate reward
+    double reward = 0.0;
+    // If it is a terminal state, add a reward of 100.0
     if (IsTerminal(nextState))
-      return 100.0;
-    return -pow(action.action[0], 2)*0.1;
+      reward = 100.0;
+    reward -= std::pow(action.action[0], 2) * 0.1; 
+    return reward;
   }
 
   /**
@@ -176,7 +181,7 @@ class ContinuousMountainCar
    */
   bool IsTerminal(const State& state) const
   {
-    return bool(state.Position() == positionMax);
+    return bool(state.Position() >= positionGoal);
   }
 
  private:
@@ -186,11 +191,17 @@ class ContinuousMountainCar
   //! Locally-stored maximum legal position.
   double positionMax;
 
+  //! Locally-stored goal position.
+  double positionGoal;
+
   //! Locally-stored minimum legal velocity.
   double velocityMin;
 
   //! Locally-stored maximum legal velocity.
   double velocityMax;
+
+  //! Locally-stored power.
+  double power;
 };
 
 } // namespace rl
