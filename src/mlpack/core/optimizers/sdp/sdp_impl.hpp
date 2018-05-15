@@ -43,11 +43,11 @@ SDP<ObjectiveMatrixType>::SDP(const size_t n,
 {
   for (size_t i = 0; i < numSparseConstraints; i++)
     sparseA[i].zeros(n, n);
-  for (size_t i = 0; i < numSparseConstraints; i++)
+  for (size_t i = 0; i < numSparseInequalityConstraints; i++)
     sparseInequalityA[i].zeros(n, n);
   for (size_t i = 0; i < numDenseConstraints; i++)
     denseA[i].zeros(n, n);
-  for (size_t i = 0; i < numDenseConstraints; i++)
+  for (size_t i = 0; i < numDenseInequalityConstraints; i++)
     denseInequalityA[i].zeros(n, n);
 }
 

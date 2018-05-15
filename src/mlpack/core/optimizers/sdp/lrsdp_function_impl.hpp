@@ -42,8 +42,8 @@ LRSDPFunction<SDPType>::LRSDPFunction(
                             const size_t numDenseInequalityConstraints,
                             const arma::mat& initialPoint):
     sdp(initialPoint.n_rows,
-        numSparseInequalityConstraints,
         numSparseConstraints,
+        numSparseInequalityConstraints,
         numDenseConstraints,
         numDenseInequalityConstraints),
     initialPoint(initialPoint)
