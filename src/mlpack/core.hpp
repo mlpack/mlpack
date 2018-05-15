@@ -245,6 +245,7 @@
  *   - Rohan Raj <rajrohan1108@gmail.com>
  *   - Conrad Sanderson
  *   - Thanasis Mattas <mattasa@auth.gr>
+ *   - Shashank Shekhar <contactshashankshekhar@gmail.com>
  */
 
 // First, include all of the prerequisites.
