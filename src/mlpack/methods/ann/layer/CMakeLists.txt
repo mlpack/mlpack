@@ -59,6 +59,8 @@ set(SOURCES
   mean_pooling_impl.hpp
   multiply_constant.hpp
   multiply_constant_impl.hpp
+  multiply_merge.hpp
+  multiply_merge_impl.hpp
   negative_log_likelihood.hpp
   negative_log_likelihood_impl.hpp
   parametric_relu.hpp
