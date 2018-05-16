@@ -141,7 +141,7 @@ class ContinuousMountainCar
     // If it is a terminal state, add a reward of 100.0
     if (IsTerminal(nextState))
       reward = 100.0;
-    reward -= std::pow(action.action[0], 2) * 0.1; 
+    reward -= std::pow(action.action[0], 2) * 0.1;
     return reward;
   }
 
