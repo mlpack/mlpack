@@ -103,7 +103,8 @@ class SDP
 
   //! Return the vector of sparse A matrices (which correspond to the sparse
   //! inequality constraints).
-  const std::vector<arma::sp_mat>& SparseInequalityA() const { return sparseInequalityA; }
+  const std::vector<arma::sp_mat>& SparseInequalityA() const
+      { return sparseInequalityA; }
 
   //! Modify the vector of sparse A matrices (which correspond to the sparse
   //! inequality constraints).
@@ -119,7 +120,8 @@ class SDP
 
   //! Return the vector of dense A matrices (which correspond to the dense
   //! inequalityconstraints).
-  const std::vector<arma::mat>& DenseInequalityA() const { return denseInequalityA; }
+  const std::vector<arma::mat>& DenseInequalityA() const
+      { return denseInequalityA; }
 
   //! Modify the vector of dense A matrices (which correspond to the dense
   //! inequalityconstraints).

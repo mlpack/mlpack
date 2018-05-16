@@ -105,7 +105,7 @@ class PrimalDualSolver
   //! Starting lagrange multiplier for the sparse constraints.
   arma::vec initialYsparse;
 
-  //! Starting lagrange multiplier for the sparse constraints.
+  //! Starting lagrange multiplier for the dense constraints.
   arma::vec initialYdense;
 
   //! Starting point for Z, the complementary slack variable. Needs to be

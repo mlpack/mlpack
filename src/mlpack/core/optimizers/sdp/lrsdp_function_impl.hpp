@@ -97,13 +97,13 @@ double LRSDPFunction<SDPType>::EvaluateConstraint(
   {
     double eval = arma::accu(SDP().SparseInequalityA()[index1] % rrt) -
         SDP().SparseB()[index];
-    return eval >= 0 ? 0 : -eval;
+    return eval >= 0 ? 0 : eval;
   }
 
   // Computation for dense constraints.
-  const size_t index2 = index1 - SDP().SparseInequalityA().size();
+  const size_t index2 = index - SDP().NumSparseConstraints();
 
-  if (index < SDP().DenseA().size())
+  if (index2 < SDP().DenseA().size())
     return accu(SDP().DenseA()[index2] % rrt) - SDP().DenseB()[index2];
 
   // Computation for inequality dense constraints.
@@ -111,7 +111,7 @@ double LRSDPFunction<SDPType>::EvaluateConstraint(
 
   double eval = arma::accu(SDP().DenseInequalityA()[index3] % rrt) -
       SDP().DenseB()[index2];
-  return eval >= 0 ? 0 : -eval;
+  return eval >= 0 ? 0 : eval;
 }
 
 template <typename SDPType>
