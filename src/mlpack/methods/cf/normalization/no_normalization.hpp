@@ -26,10 +26,7 @@ class NoNormalization
 {
  public:
   // Empty constructor.
-  NoNormalization(const arma::mat& /* data */) { }
-
-  // Empty constructor.
-  NoNormalization(const arma::sp_mat* /* cleanedData */) { }
+  NoNormalization() { }
 
   /**
    * Do nothing.
