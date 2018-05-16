@@ -1,6 +1,7 @@
 /**
  * @file continuous_mountain_car.hpp
  * @author Rohan Raj
+ * @author Shashank Shekhar
  *
  * This file is an implementation of Continous Mountain Car task:
  * https://gym.openai.com/envs/MountainCarContinuous-v0/
