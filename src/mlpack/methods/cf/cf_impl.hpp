@@ -129,7 +129,8 @@ CF<NormalizationType>::CF(const arma::sp_mat& data,
 
 template<typename NormalizationType>
 template<typename FactorizerType>
-void CF<NormalizationType>::Train(const arma::mat& data, FactorizerType factorizer)
+void CF<NormalizationType>::Train(const arma::mat& data,
+                                  FactorizerType factorizer)
 {
   CleanData(data, cleanedData);
 
@@ -297,7 +298,8 @@ void CF<NormalizationType>::GetRecommendations(const size_t numRecs,
 
 // Predict the rating for a single user/item combination.
 template<typename NormalizationType>
-double CF<NormalizationType>::Predict(const size_t user, const size_t item) const
+double CF<NormalizationType>::Predict(const size_t user,
+                                      const size_t item) const
 {
   // First, we need to find the nearest neighbors of the given user.
   // We'll use the same technique as for GetRecommendations().
@@ -398,7 +400,8 @@ void CF<NormalizationType>::Predict(const arma::Mat<size_t>& combinations,
 }
 
 template<typename NormalizationType>
-void CF<NormalizationType>::CleanData(const arma::mat& data, arma::sp_mat& cleanedData)
+void CF<NormalizationType>::CleanData(const arma::mat& data,
+                                      arma::sp_mat& cleanedData)
 {
   // Generate list of locations for batch insert constructor for sparse
   // matrices.
@@ -426,7 +429,8 @@ void CF<NormalizationType>::CleanData(const arma::mat& data, arma::sp_mat& clean
 //! Serialize the model.
 template<typename NormalizationType>
 template<typename Archive>
-void CF<NormalizationType>::serialize(Archive& ar, const unsigned int /* version */)
+void CF<NormalizationType>::serialize(Archive& ar,
+                                      const unsigned int /* version */)
 {
   // This model is simple; just serialize all the members.  No special handling
   // required.
