@@ -60,7 +60,7 @@ class NoNormalization
    * Do nothing.
    *
    * @param combinations User/Item combinations.
-   * @param predictions Predicted Ratings for each User/Item combination.
+   * @param predictions Predicted ratings for each user/item combination.
    */
   inline void Denormalize(const arma::Mat<size_t>& /* combinations */,
                  const arma::vec& /* predictions */) const

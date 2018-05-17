@@ -50,6 +50,25 @@ void ApplyFactorizer(FactorizerType& factorizer,
   factorizer.Apply(cleanedData, rank, w, h);
 }
 
+// Default CF constructor.
+template<typename NormalizationType>
+CF<NormalizationType>::CF(const size_t numUsersForSimilarity,
+       const size_t rank,
+       const NormalizationType normalization) :
+    numUsersForSimilarity(numUsersForSimilarity),
+    rank(rank),
+    normalization(normalization)
+{
+  // Validate neighbourhood size.
+  if (numUsersForSimilarity < 1)
+  {
+    Log::Warn << "CF::CF(): neighbourhood size should be > 0 ("
+        << numUsersForSimilarity << " given). Setting value to 5.\n";
+    // Set default value of 5.
+    this->numUsersForSimilarity = 5;
+  }
+}
+
 /**
  * Construct the CF object using an instantiated factorizer.
  */
@@ -163,43 +182,6 @@ void CF<NormalizationType>::Train(const arma::sp_mat& data,
   Timer::Start("cf_factorization");
   factorizer.Apply(cleanedData, this->rank, w, h);
   Timer::Stop("cf_factorization");
-}
-
-//! Serialize the model.
-template<typename NormalizationType>
-template<typename Archive>
-void CF<NormalizationType>::serialize(Archive& ar, const unsigned int /* version */)
-{
-  // This model is simple; just serialize all the members.  No special handling
-  // required.
-  ar & BOOST_SERIALIZATION_NVP(numUsersForSimilarity);
-  ar & BOOST_SERIALIZATION_NVP(rank);
-  ar & BOOST_SERIALIZATION_NVP(w);
-  ar & BOOST_SERIALIZATION_NVP(h);
-  ar & BOOST_SERIALIZATION_NVP(cleanedData);
-  ar & BOOST_SERIALIZATION_NVP(normalization);
-}
-
-
-
-
-// Default CF constructor.
-template<typename NormalizationType>
-CF<NormalizationType>::CF(const size_t numUsersForSimilarity,
-       const size_t rank,
-       const NormalizationType normalization) :
-    numUsersForSimilarity(numUsersForSimilarity),
-    rank(rank),
-    normalization(normalization)
-{
-  // Validate neighbourhood size.
-  if (numUsersForSimilarity < 1)
-  {
-    Log::Warn << "CF::CF(): neighbourhood size should be > 0 ("
-        << numUsersForSimilarity << " given). Setting value to 5.\n";
-    // Set default value of 5.
-    this->numUsersForSimilarity = 5;
-  }
 }
 
 template<typename NormalizationType>
@@ -441,8 +423,20 @@ void CF<NormalizationType>::CleanData(const arma::mat& data, arma::sp_mat& clean
   cleanedData = arma::sp_mat(locations, values, maxItemID, maxUserID);
 }
 
-
-
+//! Serialize the model.
+template<typename NormalizationType>
+template<typename Archive>
+void CF<NormalizationType>::serialize(Archive& ar, const unsigned int /* version */)
+{
+  // This model is simple; just serialize all the members.  No special handling
+  // required.
+  ar & BOOST_SERIALIZATION_NVP(numUsersForSimilarity);
+  ar & BOOST_SERIALIZATION_NVP(rank);
+  ar & BOOST_SERIALIZATION_NVP(w);
+  ar & BOOST_SERIALIZATION_NVP(h);
+  ar & BOOST_SERIALIZATION_NVP(cleanedData);
+  ar & BOOST_SERIALIZATION_NVP(normalization);
+}
 
 } // namespace cf
 } // namespace mlpack

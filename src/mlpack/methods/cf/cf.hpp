@@ -58,7 +58,7 @@ struct FactorizerTraits
  * extern arma::Col<size_t> users; // users seeking recommendations
  * arma::Mat<size_t> recommendations; // Recommendations
  *
- * CF cf(data); // Default options.
+ * CF<> cf(data); // Default options.
  *
  * // Generate 10 recommendations for all users.
  * cf.GetRecommendations(10, recommendations);
@@ -74,6 +74,10 @@ struct FactorizerTraits
  * are in a matrix that holds doubles, should hold integer (or size_t) values.
  * The user and item indices are assumed to start at 0.
  *
+ * @tparam NormalizationType The type of normalization performed on raw data.
+ *     Data is normalized before calling Train() method. Predicted rating is
+ *     denormalized before return.
+ * 
  * @tparam FactorizerType The type of matrix factorization to use to decompose
  *     the rating matrix (a W and H matrix).  This must implement the method
  *     Apply(arma::sp_mat& data, size_t rank, arma::mat& W, arma::mat& H).
@@ -106,6 +110,7 @@ class CF
    * @param factorizer Instantiated factorizer object.
    * @param numUsersForSimilarity Size of the neighborhood.
    * @param rank Rank parameter for matrix factorization.
+   * @param normalization Instantiated normalization object.
    */
   template<typename FactorizerType = amf::NMFALSFactorizer>
   CF(const arma::mat& data,
@@ -131,6 +136,7 @@ class CF
    * @param factorizer Instantiated factorizer object.
    * @param numUsersForSimilarity Size of the neighborhood.
    * @param rank Rank parameter for matrix factorization.
+   * @param normalization Instantiated normalization object.
    */
   template<typename FactorizerType = amf::NMFALSFactorizer>
   CF(const arma::sp_mat& data,
