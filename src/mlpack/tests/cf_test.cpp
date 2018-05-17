@@ -44,10 +44,10 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersTest)
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
-  CF::CleanData(dataset, cleanedData);
+  CF<>::CleanData(dataset, cleanedData);
 
   // Create a CF object.
-  CF c(cleanedData);
+  CF<> c(cleanedData);
 
   // Generate recommendations when query set is not specified.
   c.GetRecommendations(numRecs, recommendations);
@@ -84,9 +84,9 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserTest)
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
-  CF::CleanData(dataset, cleanedData);
+  CF<>::CleanData(dataset, cleanedData);
 
-  CF c(cleanedData);
+  CF<> c(cleanedData);
 
   // Generate recommendations when query set is specified.
   c.GetRecommendations(numRecsDefault, recommendations, users);
@@ -143,10 +143,10 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyTest)
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
-  CF::CleanData(dataset, cleanedData);
+  CF<>::CleanData(dataset, cleanedData);
 
   // Now create the CF object.
-  CF c(cleanedData);
+  CF<> c(cleanedData);
 
   // Obtain 150 recommendations for the users in savedCols, and make sure the
   // missing item shows up in most of them.  First, create the list of users,
@@ -237,10 +237,10 @@ BOOST_AUTO_TEST_CASE(CFPredictTest)
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
-  CF::CleanData(dataset, cleanedData);
+  CF<>::CleanData(dataset, cleanedData);
 
   // Now create the CF object.
-  CF c(cleanedData);
+  CF<> c(cleanedData);
 
   // Now, for each removed rating, make sure the prediction is... reasonably
   // accurate.
@@ -304,10 +304,10 @@ BOOST_AUTO_TEST_CASE(CFBatchPredictTest)
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
-  CF::CleanData(dataset, cleanedData);
+  CF<>::CleanData(dataset, cleanedData);
 
   // Now create the CF object.
-  CF c(cleanedData);
+  CF<> c(cleanedData);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -335,7 +335,7 @@ BOOST_AUTO_TEST_CASE(TrainTest)
   // Generate random data.
   arma::sp_mat randomData;
   randomData.sprandu(100, 100, 0.3);
-  CF c(randomData);
+  CF<> c(randomData);
 
   // Now retrain with data we know about.
   arma::mat dataset;
@@ -377,7 +377,7 @@ BOOST_AUTO_TEST_CASE(TrainTest)
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
-  CF::CleanData(dataset, cleanedData);
+  CF<>::CleanData(dataset, cleanedData);
 
   // Now retrain.
   c.Train(dataset);
@@ -406,7 +406,7 @@ BOOST_AUTO_TEST_CASE(TrainTest)
 BOOST_AUTO_TEST_CASE(EmptyConstructorTrainTest)
 {
   // Use default constructor.
-  CF c;
+  CF<> c;
 
   // Now retrain with data we know about.
   arma::mat dataset;
@@ -448,7 +448,7 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTrainTest)
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
-  CF::CleanData(dataset, cleanedData);
+  CF<>::CleanData(dataset, cleanedData);
 
   // Now retrain.
   c.Train(cleanedData);
@@ -481,16 +481,16 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   data::Load("GroupLensSmall.csv", dataset);
 
   arma::sp_mat cleanedData;
-  CF::CleanData(dataset, cleanedData);
+  CF<>::CleanData(dataset, cleanedData);
 
-  CF c(cleanedData);
+  CF<> c(cleanedData);
 
   arma::sp_mat randomData;
   randomData.sprandu(100, 100, 0.3);
 
-  CF cXml(randomData);
-  CF cBinary;
-  CF cText(cleanedData, amf::NMFALSFactorizer(), 5, 5);
+  CF<> cXml(randomData);
+  CF<> cBinary;
+  CF<> cText(cleanedData, amf::NMFALSFactorizer(), 5, 5);
 
   SerializeObjectAll(c, cXml, cText, cBinary);
 
