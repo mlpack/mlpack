@@ -101,8 +101,8 @@ PARAM_DOUBLE_IN("min_residue", "Residue required to terminate the factorization"
     " (lower values generally mean better fits).", "r", 1e-5);
 
 // Load/save a model.
-PARAM_MODEL_IN(CF, "input_model", "Trained CF model to load.", "m");
-PARAM_MODEL_OUT(CF, "output_model", "Output for trained CF model.", "M");
+PARAM_MODEL_IN(CF<>, "input_model", "Trained CF model to load.", "m");
+PARAM_MODEL_OUT(CF<>, "output_model", "Output for trained CF model.", "M");
 
 // Query settings.
 PARAM_UMATRIX_IN("query", "List of query users for which recommendations should"
@@ -116,7 +116,7 @@ PARAM_INT_IN("recommendations", "Number of recommendations to generate for each"
 
 PARAM_INT_IN("seed", "Set the random seed (0 uses std::time(NULL)).", "s", 0);
 
-void ComputeRecommendations(CF* cf,
+void ComputeRecommendations(CF<>* cf,
                             const size_t numRecs,
                             arma::Mat<size_t>& recommendations)
 {
@@ -142,7 +142,7 @@ void ComputeRecommendations(CF* cf,
   }
 }
 
-void ComputeRMSE(CF* cf)
+void ComputeRMSE(CF<>* cf)
 {
   // Now, compute each test point.
   arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
@@ -169,7 +169,7 @@ void ComputeRMSE(CF* cf)
   Log::Info << "RMSE is " << rmse << "." << endl;
 }
 
-void PerformAction(CF* c)
+void PerformAction(CF<>* c)
 {
   if (CLI::HasParam("query") || CLI::HasParam("all_user_recommendations"))
   {
@@ -187,7 +187,7 @@ void PerformAction(CF* c)
   if (CLI::HasParam("test"))
     ComputeRMSE(c);
 
-  CLI::GetParam<CF*>("output_model") = c;
+  CLI::GetParam<CF<>*>("output_model") = c;
 }
 
 template<typename Factorizer>
@@ -197,7 +197,7 @@ void PerformAction(Factorizer&& factorizer,
 {
   // Parameters for generating the CF object.
   const size_t neighborhood = (size_t) CLI::GetParam<int>("neighborhood");
-  CF* c = new CF(dataset, factorizer, neighborhood, rank);
+  CF<>* c = new CF<>(dataset, factorizer, neighborhood, rank);
 
   PerformAction(c);
 }
@@ -348,7 +348,7 @@ static void mlpackMain()
         "test" }, true);
 
     // Load an input model.
-    CF* c = std::move(CLI::GetParam<CF*>("input_model"));
+    CF<>* c = std::move(CLI::GetParam<CF<>*>("input_model"));
 
     PerformAction(c);
   }

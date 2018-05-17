@@ -21,6 +21,7 @@
 #include <mlpack/methods/amf/amf.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_als.hpp>
 #include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
+#include <mlpack/methods/cf/normalization/no_normalization.hpp>
 #include <set>
 #include <map>
 #include <iostream>
@@ -77,6 +78,8 @@ struct FactorizerTraits
  *     the rating matrix (a W and H matrix).  This must implement the method
  *     Apply(arma::sp_mat& data, size_t rank, arma::mat& W, arma::mat& H).
  */
+
+template<typename NormalizationType = NoNormalization>
 class CF
 {
  public:
@@ -85,7 +88,8 @@ class CF
    * call Train() before calling GetRecommendations() or any other functions!
    */
   CF(const size_t numUsersForSimilarity = 5,
-     const size_t rank = 0);
+     const size_t rank = 0,
+     const NormalizationType normalization = NormalizationType());
 
   /**
    * Initialize the CF object using an instantiated factorizer, immediately
@@ -107,7 +111,8 @@ class CF
   CF(const arma::mat& data,
      FactorizerType factorizer = FactorizerType(),
      const size_t numUsersForSimilarity = 5,
-     const size_t rank = 0);
+     const size_t rank = 0,
+     const NormalizationType normalization = NormalizationType());
 
   /**
    * Initialize the CF object using an instantiated factorizer, immediately
@@ -132,6 +137,7 @@ class CF
      FactorizerType factorizer = FactorizerType(),
      const size_t numUsersForSimilarity = 5,
      const size_t rank = 0,
+     const NormalizationType normalization = NormalizationType(),
      const typename std::enable_if_t<
          !FactorizerTraits<FactorizerType>::UsesCoordinateList>* = 0);
 
@@ -261,6 +267,8 @@ class CF
   arma::mat h;
   //! Cleaned data matrix.
   arma::sp_mat cleanedData;
+  //! Data normalization object.
+  NormalizationType normalization;
 
   //! Candidate represents a possible recommendation (value, item).
   typedef std::pair<double, size_t> Candidate;
