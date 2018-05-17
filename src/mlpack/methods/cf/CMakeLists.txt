@@ -3,7 +3,6 @@
 set(SOURCES
   cf.hpp
   cf_impl.hpp
-  cf.cpp
   svd_wrapper.hpp
   svd_wrapper_impl.hpp
 )
