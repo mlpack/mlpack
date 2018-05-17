@@ -7,6 +7,8 @@ set(SOURCES
   svd_wrapper_impl.hpp
 )
 
+add_subdirectory(normalization)
+
 # Add directory name to sources.
 set(DIR_SRCS)
 foreach(file ${SOURCES})
