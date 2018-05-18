@@ -261,20 +261,4 @@ class RandomizedSVD
 } // namespace svd
 } // namespace mlpack
 
-namespace mlpack {
-namespace cf {
-
-//! Factorizer traits of Regularized SVD.
-template<>
-class FactorizerTraits<mlpack::svd::RandomizedSVD>
-{
- public:
-  //! Data provided to RandomizedSVD has to be cleaned.
-  static const bool UsesCoordinateList = false;
-  static const bool UsesRandomizedSVD = true;
-};
-
-} // namespace cf
-} // namespace mlpack
-
 #endif
