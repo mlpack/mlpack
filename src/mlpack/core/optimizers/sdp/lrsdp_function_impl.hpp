@@ -104,13 +104,14 @@ double LRSDPFunction<SDPType>::EvaluateConstraint(
   const size_t index2 = index - SDP().NumSparseConstraints();
 
   if (index2 < SDP().DenseA().size())
-    return accu(SDP().DenseA()[index2] % rrt) - SDP().DenseB()[index2];
+    return trace((trans(coordinates) * SDP().DenseA()[index2]) * coordinates) -
+        SDP().DenseB()[index2];
 
   // Computation for inequality dense constraints.
   const size_t index3 = index2 - SDP().DenseA().size();
 
-  double eval = arma::accu(SDP().DenseInequalityA()[index3] % rrt) -
-      SDP().DenseB()[index2];
+  double eval = trace((trans(coordinates) * SDP().DenseInequalityA()[index3]) *
+      coordinates) - SDP().DenseB()[index2];
   return eval >= 0 ? 0 : eval;
 }
 
