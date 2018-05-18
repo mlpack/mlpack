@@ -66,7 +66,6 @@ class RandomizedSVDPolicy
              const double /* minResidue */,
              const bool /* mit */)
   {
-
     arma::vec sigma;
 
     // Do singular value decomposition using the randomized SVD algorithm.

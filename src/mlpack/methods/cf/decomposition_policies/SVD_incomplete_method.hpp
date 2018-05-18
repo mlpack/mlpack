@@ -53,7 +53,7 @@ class SVDIncompletePolicy
              const double minResidue,
              const bool mit)
   {
-    if(mit)
+    if (mit)
     {
       amf::MaxIterationTermination iter(maxIterations);
 
