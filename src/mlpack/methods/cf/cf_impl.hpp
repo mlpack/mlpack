@@ -79,13 +79,13 @@ void CF<DecompositionPolicy>::Apply(mat_type const& data,
             const double minResidue,
             const bool mit)
 {
-  decomposition.Apply(data, cleanedData, rank, w, 
+  decomposition.Apply(data, cleanedData, rank, w,
                       h, maxIterations, minResidue, mit);
 }
 
 // Train when data is given in dense matrix form.
 template<typename DecompositionPolicy>
-void CF<DecompositionPolicy>::Train(const arma::mat& data, 
+void CF<DecompositionPolicy>::Train(const arma::mat& data,
        DecompositionPolicy decomposition,
        const size_t maxIterations,
        const double minResidue,
@@ -111,14 +111,14 @@ void CF<DecompositionPolicy>::Train(const arma::mat& data,
   // Decompose the data matrix (which is in coordinate list form) to user and
   // data matrices.
   Timer::Start("cf_factorization");
-  decomposition.Apply(data, cleanedData, rank, w, 
+  decomposition.Apply(data, cleanedData, rank, w,
                       h, maxIterations, minResidue, mit);
   Timer::Stop("cf_factorization");
 }
 
 // Train when data is given as sparse matrix of user item table.
 template<typename DecompositionPolicy>
-void CF<DecompositionPolicy>::Train(const arma::sp_mat& data, 
+void CF<DecompositionPolicy>::Train(const arma::sp_mat& data,
        DecompositionPolicy decomposition,
        const size_t maxIterations,
        const double minResidue,
@@ -144,7 +144,7 @@ void CF<DecompositionPolicy>::Train(const arma::sp_mat& data,
   // Decompose the data matrix (which is in coordinate list form) to user and
   // data matrices.
   Timer::Start("cf_factorization");
-  decomposition.Apply(data, cleanedData, rank, w, 
+  decomposition.Apply(data, cleanedData, rank, w,
                       h, maxIterations, minResidue, mit);
   Timer::Stop("cf_factorization");
 }
@@ -260,7 +260,8 @@ void CF<DecompositionPolicy>::GetRecommendations(const size_t numRecs,
 
 // Predict the rating for a single user/item combination.
 template<typename DecompositionPolicy>
-double CF<DecompositionPolicy>::Predict(const size_t user, const size_t item) const
+double CF<DecompositionPolicy>::Predict(const size_t user,
+                                        const size_t item) const
 {
   // First, we need to find the nearest neighbors of the given user.
   // We'll use the same technique as for GetRecommendations().
@@ -356,7 +357,8 @@ void CF<DecompositionPolicy>::Predict(const arma::Mat<size_t>& combinations,
 }
 
 template<typename DecompositionPolicy>
-void CF<DecompositionPolicy>::CleanData(const arma::mat& data, arma::sp_mat& cleanedData)
+void CF<DecompositionPolicy>::CleanData(const arma::mat& data,
+                                        arma::sp_mat& cleanedData)
 {
   // Generate list of locations for batch insert constructor for sparse
   // matrices.
@@ -384,9 +386,10 @@ void CF<DecompositionPolicy>::CleanData(const arma::mat& data, arma::sp_mat& cle
 //! Serialize the model.
 template<typename DecompositionPolicy>
 template<typename Archive>
-void CF<DecompositionPolicy>::serialize(Archive& ar, const unsigned int /* version */)
+void CF<DecompositionPolicy>::serialize(Archive& ar,
+                                        const unsigned int /* version */)
 {
-  // This model is simple; just serialize all the members.  No special handling
+  // This model is simple; just serialize all the members. No special handling
   // required.
   ar & BOOST_SERIALIZATION_NVP(numUsersForSimilarity);
   ar & BOOST_SERIALIZATION_NVP(rank);

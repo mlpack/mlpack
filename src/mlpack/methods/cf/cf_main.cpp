@@ -207,7 +207,7 @@ void PerformAction(arma::mat& dataset,
   const DecompositionPolicy& decomposition = DecompositionPolicy();
   const size_t neighborhood = (size_t) CLI::GetParam<int>("neighborhood");
   CF<DecompositionPolicy>* c = new CF<DecompositionPolicy>(dataset,
-          decomposition, neighborhood, rank, maxIterations, minResidue, 
+          decomposition, neighborhood, rank, maxIterations, minResidue,
           CLI::HasParam("iteration_only_termination"));
 
   PerformAction(c);

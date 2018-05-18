@@ -53,14 +53,14 @@ class SVDCompletePolicy
              const double minResidue,
              const bool mit)
   {
-    if(mit)
+    if (mit)
     {
       amf::MaxIterationTermination iter(maxIterations);
 
       // Do singular value decomposition using complete incremental method.
       amf::AMF<amf::MaxIterationTermination, amf::RandomInitialization,
           amf::SVDCompleteIncrementalLearning<arma::sp_mat>> svdci(iter);
-    
+
       svdci.Apply(cleanedData, rank, w, h);
     }
     else
@@ -69,10 +69,9 @@ class SVDCompletePolicy
 
       // Do singular value decomposition using complete incremental method.
       amf::SVDCompleteIncrementalFactorizer<arma::sp_mat> svdci(srt);
-    
+
       svdci.Apply(cleanedData, rank, w, h);
     }
-
   }
 };
 

@@ -60,7 +60,7 @@ class SVDIncompletePolicy
       // Do singular value decomposition using incomplete incremental method.
       amf::AMF<amf::MaxIterationTermination, amf::RandomInitialization,
           amf::SVDIncompleteIncrementalLearning> svdici(iter);
-    
+
       svdici.Apply(cleanedData, rank, w, h);
     }
     else
@@ -72,7 +72,6 @@ class SVDIncompletePolicy
 
       svdici.Apply(cleanedData, rank, w, h);
     }
-
   }
 };
 

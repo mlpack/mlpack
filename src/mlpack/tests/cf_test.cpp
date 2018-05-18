@@ -921,7 +921,8 @@ void EmptyConstructorTrain<RegSVDPolicy>(const RegSVDPolicy& decomposition)
  * Ensure we can load and save the CF model.
  */
 template<typename DecompositionPolicy>
-void Serialization(const DecompositionPolicy& decomposition = DecompositionPolicy())
+void Serialization(const DecompositionPolicy& decomposition =
+                                              DecompositionPolicy())
 {
   // Load a dataset to train on.
   arma::mat dataset;
@@ -1224,14 +1225,14 @@ BOOST_AUTO_TEST_CASE(CFBatchPredictNMFTest)
   BatchPredict<NMFPolicy>();
 }
 
-// Compare batch Predict() and individual Predict() for 
+// Compare batch Predict() and individual Predict() for
 // SVD Complete Incremental method.
 BOOST_AUTO_TEST_CASE(CFBatchPredictSVDCompleteTest)
 {
   BatchPredict<SVDCompletePolicy>();
 }
 
-// Compare batch Predict() and individual Predict() for 
+// Compare batch Predict() and individual Predict() for
 // SVD Incomplete Incremental method.
 BOOST_AUTO_TEST_CASE(CFBatchPredictSVDIncompleteTest)
 {

@@ -134,7 +134,7 @@ class CF
    * @param minResidue Residue required to terminate.
    * @param mit Whether to terminate only when maxIterations is reached.
    */
-  void Train(const arma::mat& data, 
+  void Train(const arma::mat& data,
              DecompositionPolicy decomposition = DecompositionPolicy(),
              const size_t maxIterations = 1000,
              const double minResidue = 1e-5,
@@ -151,7 +151,7 @@ class CF
    * @param minResidue Residue required to terminate.
    * @param mit Whether to terminate only when maxIterations is reached.
    */
-  void Train(const arma::sp_mat& data, 
+  void Train(const arma::sp_mat& data,
              DecompositionPolicy decomposition = DecompositionPolicy(),
              const size_t maxIterations = 1000,
              const double minResidue = 1e-5,

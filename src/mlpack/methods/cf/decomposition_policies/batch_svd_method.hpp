@@ -52,14 +52,14 @@ class BatchSVDPolicy
              const double minResidue,
              const bool mit)
   {
-    if(mit)
+    if (mit)
     {
       amf::MaxIterationTermination iter(maxIterations);
 
       // Do singular value decomposition using the batch SVD algorithm.
       amf::AMF<amf::MaxIterationTermination, amf::RandomInitialization,
           amf::SVDBatchLearning> svdbatch(iter);
-    
+
       svdbatch.Apply(cleanedData, rank, w, h);
     }
     else
@@ -68,7 +68,7 @@ class BatchSVDPolicy
 
       // Do singular value decomposition using the batch SVD algorithm.
       amf::SVDBatchFactorizer<> svdbatch(srt);
-    
+
       svdbatch.Apply(cleanedData, rank, w, h);
     }
   }

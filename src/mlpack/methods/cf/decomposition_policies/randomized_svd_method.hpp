@@ -66,7 +66,7 @@ class RandomizedSVDPolicy
              const double /* minResidue */,
              const bool /* mit */)
   {
-    
+
     arma::vec sigma;
 
     // Do singular value decomposition using the randomized SVD algorithm.
@@ -79,7 +79,7 @@ class RandomizedSVDPolicy
     // Take transpose of the matrix h as required by CF class.
     h = arma::trans(h);
   }
- 
+
   //! Get the size of the normalized power iterations.
   size_t IteratedPower() const { return iteratedPower; }
   //! Modify the size of the normalized power iterations.
