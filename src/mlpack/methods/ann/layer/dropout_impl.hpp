@@ -21,11 +21,10 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 Dropout<InputDataType, OutputDataType>::Dropout(
-    const double ratio, const bool rescale) :
+    const double ratio) :
     ratio(ratio),
     scale(1.0 / (1.0 - ratio)),
-    deterministic(true),
-    rescale(rescale)
+    deterministic(false)
 {
   // Nothing to do here.
 }
@@ -40,21 +39,14 @@ void Dropout<InputDataType, OutputDataType>::Forward(
   // (during testing).
   if (deterministic)
   {
-    if (!rescale)
-    {
-      output = input;
-    }
-    else
-    {
-      output = input * scale;
-    }
+    output = input;
   }
   else
   {
     // Scale with input / (1 - ratio) and set values to zero with probability
-    // ratio.
+    // 'ratio'.
     mask = arma::randu<arma::Mat<eT> >(input.n_rows, input.n_cols);
-    mask.transform( [&](double val) { return (val > ratio); } );
+    mask.transform([&](double val) { return (val > ratio); });
     output = input % mask * scale;
   }
 }
@@ -76,7 +68,6 @@ void Dropout<InputDataType, OutputDataType>::serialize(
     const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(ratio);
-  ar & BOOST_SERIALIZATION_NVP(rescale);
 
   // Reset scale.
   scale = 1.0 / (1.0 - ratio);

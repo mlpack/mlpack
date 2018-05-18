@@ -96,11 +96,13 @@ class MountainCar
   MountainCar(const double positionMin = -1.2,
               const double positionMax = 0.5,
               const double velocityMin = -0.07,
-              const double velocityMax = 0.07) :
+              const double velocityMax = 0.07,
+              const double doneReward = 0) :
       positionMin(positionMin),
       positionMax(positionMax),
       velocityMin(velocityMin),
-      velocityMax(velocityMax)
+      velocityMax(velocityMax),
+      doneReward(doneReward)
   { /* Nothing to do here */ }
 
   /**
@@ -132,7 +134,16 @@ class MountainCar
     {
       nextState.Velocity() = 0.0;
     }
-
+    bool done = IsTerminal(nextState);
+    /**
+     * If done is true , it means that car has reached its goal.
+     * To make sure that the agent learns this, we will give some
+     * positive reward to the agent. If the agent doesn't reach the
+     * terminal state, then we will give a -1.0 reward to penalize 
+     * the agent to take that step.
+     */
+    if (done)
+      return doneReward;
     return -1.0;
   }
 
@@ -187,6 +198,9 @@ class MountainCar
 
   //! Locally-stored maximum legal velocity.
   double velocityMax;
+
+  //! Locally-stored done reward.
+  double doneReward;
 };
 
 } // namespace rl

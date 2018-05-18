@@ -1,6 +1,7 @@
 /**
  * @file sigmoid_cross_entropy_error_impl.hpp
- * @author Kris Singh and Shikhar Jaiswal
+ * @author Kris Singh
+ * @author Shikhar Jaiswal
  *
  * Implementation of the sigmoid cross entropy error performance function.
  *
@@ -9,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_SIGMOID_CROSS_ENTROPY_ERROR_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_SIGMOID_CROSS_ENTROPY_ERROR_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTION_SIGMOID_CROSS_ENTROPY_ERROR_IMPL_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTION_SIGMOID_CROSS_ENTROPY_ERROR_IMPL_HPP
 
 // In case it hasn't yet been included.
 #include "sigmoid_cross_entropy_error.hpp"
@@ -37,6 +38,7 @@ inline double SigmoidCrossEntropyError<InputDataType, OutputDataType>::Forward(
     maximum += std::max(input[i], 0.0) +
         std::log(1 + std::exp(-std::abs(input[i])));
   }
+
   return maximum - arma::accu(input % target);
 }
 

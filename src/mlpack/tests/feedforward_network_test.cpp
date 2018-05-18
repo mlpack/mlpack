@@ -15,6 +15,7 @@
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
 #include <boost/test/unit_test.hpp>

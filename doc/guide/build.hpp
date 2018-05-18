@@ -22,7 +22,7 @@ to build mlpack on Windows, see <a
 href="https://keon.io/mlpack-on-windows/">Keon's excellent tutorial</a>.
 
 You can download the latest mlpack release from here:
-<a href="http://www.mlpack.org/files/mlpack-3.0.0.tar.gz">mlpack-3.0.0</a>
+<a href="http://www.mlpack.org/files/mlpack-3.0.1.tar.gz">mlpack-3.0.1</a>
 
 @section build_simple Simple Linux build instructions
 
@@ -30,9 +30,9 @@ Assuming all dependencies are installed in the system, you can run the commands
 below directly to build and install mlpack.
 
 @code
-$ wget http://www.mlpack.org/files/mlpack-3.0.0.tar.gz
-$ tar -xvzpf mlpack-3.0.0.tar.gz
-$ mkdir mlpack-3.0.0/build && cd mlpack-3.0.0/build
+$ wget http://www.mlpack.org/files/mlpack-3.0.1.tar.gz
+$ tar -xvzpf mlpack-3.0.1.tar.gz
+$ mkdir mlpack-3.0.1/build && cd mlpack-3.0.1/build
 $ cmake ../
 $ make -j4  # The -j is the number of cores you want to use for a build.
 $ sudo make install
@@ -50,8 +50,8 @@ configure mlpack.
 First we should unpack the mlpack source and create a build directory.
 
 @code
-$ tar -xvzpf mlpack-3.0.0.tar.gz
-$ cd mlpack-3.0.0
+$ tar -xvzpf mlpack-3.0.1.tar.gz
+$ cd mlpack-3.0.1
 $ mkdir build
 @endcode
 
@@ -79,16 +79,19 @@ In Ubuntu and Debian, you can get all of these dependencies through apt:
 @code
 # apt-get install libboost-math-dev libboost-program-options-dev
   libboost-test-dev libboost-serialization-dev libarmadillo-dev binutils-dev
-  python-pandas python-numpy python-cython python-setuptools
+  python-pandas python-numpy cython python-setuptools
 @endcode
 
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 
 @code
 # dnf install boost-devel boost-test boost-program-options boost-math
-  armadillo-devel binutils-devel python3-Cython python3-setuptools
-  python3-numpy python3-pandas
+  armadillo-devel binutils-devel python2-Cython python2-setuptools
+  python2-numpy python2-pandas
 @endcode
+
+(It's also possible to use python3 packages from the package manager---mlpack
+will work with either.)
 
 @section build_config Configuring CMake
 

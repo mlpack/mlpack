@@ -106,7 +106,7 @@ double SA<CoolingScheduleType>::Optimize(FunctionType& function,
  * GenerateMove proposes a move on element iterate(idx), and determines
  * it that move is acceptable or not according to the Metropolis criterion.
  * After that it increments idx so next call will make a move on next
- * parameters. When all elements of the state has been moved (a sweep), it
+ * parameters. When all elements of the state have been moved (a sweep), it
  * resets idx and increments sweepCounter. When sweepCounter reaches
  * moveCtrlSweep, it performs moveControl and resets sweepCounter.
  */
