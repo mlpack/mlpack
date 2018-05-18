@@ -1608,7 +1608,7 @@ BOOST_AUTO_TEST_CASE(GradientTransposedConvolutionLayerTest)
 }
 
 /**
- * Simple multiply merge module test.
+ * Simple MultiplyMerge module test.
  */
 BOOST_AUTO_TEST_CASE(SimpleMultiplyMergeLayerTest)
 {
@@ -1636,6 +1636,87 @@ BOOST_AUTO_TEST_CASE(SimpleMultiplyMergeLayerTest)
     module.Backward(std::move(input), std::move(output), std::move(delta));
     BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(delta));
   }
+}
+
+/**
+ * Simple Atrous Convolution layer test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleAtrousConvolutionLayerTest)
+{
+  arma::mat output, input, delta;
+
+  AtrousConvolution<> module1(1, 1, 3, 3, 1, 1, 0, 0, 7, 7, 2, 2);
+  // Test the Forward function.
+  input = arma::linspace<arma::colvec>(0, 48, 49);
+  module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module1.Parameters()(0) = 1.0;
+  module1.Parameters()(8) = 2.0;
+  module1.Reset();
+  module1.Forward(std::move(input), std::move(output));
+  // Value calculated using tensorflow.nn.atrous_conv2d()
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 792.0);
+
+  // Test the Backward function.
+  module1.Backward(std::move(input), std::move(output), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 2376);
+
+  AtrousConvolution<> module2(1, 1, 3, 3, 2, 2, 0, 0, 7, 7, 2, 2);
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 48, 49);
+  module2.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module2.Parameters()(0) = 1.0;
+  module2.Parameters()(3) = 1.0;
+  module2.Parameters()(6) = 1.0;
+  module2.Reset();
+  module2.Forward(std::move(input), std::move(output));
+  // Value calculated using tensorflow.nn.conv2d()
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 264.0);
+
+  // Test the backward function.
+  module2.Backward(std::move(input), std::move(output), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 792.0);
+}
+
+/**
+ * Atrous Convolution layer numerically gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientAtrousConvolutionLayerTest)
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::linspace<arma::colvec>(0, 35, 36);
+      target = arma::mat("1");
+
+      model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<AtrousConvolution<> >(1, 1, 3, 3, 1, 1, 0, 0, 6, 6, 2, 2);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, RandomInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-3);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
