@@ -36,12 +36,12 @@ class ItemMeanNormalization
   {
     const size_t itemNum = arma::max(data.row(1)) + 1;
     // Should we use overall mean if an item has no rating?
-    itemMean = arma::vec(itemNum, arma::fill:zeros);
+    itemMean = arma::vec(itemNum, arma::fill::zeros);
     // Number of ratings for each item.
     arma::vec ratingNum(itemNum, arma::fill::zeros);
 
     // Sum ratings for each item.
-    data.each_col([&](vec& datapoint) {
+    data.each_col([&](arma::vec& datapoint) {
       const size_t item = (size_t) datapoint(1);
       const double rating = datapoint(2);
       itemMean(item) += rating;
@@ -50,10 +50,10 @@ class ItemMeanNormalization
 
     // Calculate item mean and subtract item mean from ratings.
     // Set item mean to 0 if the item has no rating.
-    for (int i = 0; i < itemNum; i++)
+    for (size_t i = 0; i < itemNum; i++)
       if ((size_t) itemNum != 0)
-        itemMean(i) /= itemNum(i);
-    data.each_col([&](vec& datapoint) {
+        itemMean(i) /= ratingNum(i);
+    data.each_col([&](arma::vec& datapoint) {
       const size_t item = (size_t) datapoint(1);
       datapoint(2) -= itemMean(item);
     });
@@ -69,7 +69,7 @@ class ItemMeanNormalization
     itemMean = arma::mean(cleanedData, 1);
 
     arma::sp_mat::iterator it = cleanedData.begin();
-    arma::sp_mat::iterator it_end = cleanedData.end(); 
+    arma::sp_mat::iterator it_end = cleanedData.end();
     for (; it != it_end; it++)
       *it = *it - itemMean(it.row());
   }
@@ -97,7 +97,7 @@ class ItemMeanNormalization
   void Denormalize(const arma::Mat<size_t>& combinations,
                    arma::vec& predictions) const
   {
-    for (int i = 0; i < predictions.n_elem; i++)
+    for (size_t i = 0; i < predictions.n_elem; i++)
     {
       const size_t item = combinations(1, i);
       predictions(i) += itemMean(item);

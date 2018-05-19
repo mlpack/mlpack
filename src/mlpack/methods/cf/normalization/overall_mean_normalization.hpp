@@ -49,7 +49,7 @@ class OverallMeanNormalization
     mean = arma::accu(cleanedData) / cleanedData.n_nonzero;
     // Subtract mean from all non zero ratings.
     arma::sp_mat::iterator it = cleanedData.begin();
-    arma::sp_mat::iterator it_end = cleanedData.end(); 
+    arma::sp_mat::iterator it_end = cleanedData.end();
     for (; it != it_end; it++)
       *it = *it - mean;
   }
