@@ -50,8 +50,8 @@ class NoNormalization
    * @param rating Computed rating before denormalization.
    */
   inline double Denormalize(const int /* user */,
-                   const int /* item */,
-                   const double rating) const
+                            const int /* item */,
+                            const double rating) const
   {
     return rating;
   }
@@ -63,7 +63,7 @@ class NoNormalization
    * @param predictions Predicted ratings for each user/item combination.
    */
   inline void Denormalize(const arma::Mat<size_t>& /* combinations */,
-                 const arma::vec& /* predictions */) const
+                          const arma::vec& /* predictions */) const
   { }
 
   /**
