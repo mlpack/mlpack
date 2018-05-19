@@ -41,6 +41,8 @@ set(SOURCES
   join.hpp
   join_impl.hpp
   layer.hpp
+  layer_norm.hpp
+  layer_norm_impl.hpp
   layer_traits.hpp
   layer_types.hpp
   leaky_relu.hpp
