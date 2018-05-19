@@ -2,6 +2,9 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   no_normalization.hpp
+  overall_mean_normalization.hpp
+  user_mean_normalization.hpp
+  item_mean_normalization.hpp
 )
 
 # Add directory name to sources.
