@@ -53,11 +53,9 @@ void ApplyFactorizer(FactorizerType& factorizer,
 // Default CF constructor.
 template<typename NormalizationType>
 CF<NormalizationType>::CF(const size_t numUsersForSimilarity,
-       const size_t rank,
-       const NormalizationType normalization) :
+       const size_t rank) :
     numUsersForSimilarity(numUsersForSimilarity),
-    rank(rank),
-    normalization(normalization)
+    rank(rank)
 {
   // Validate neighbourhood size.
   if (numUsersForSimilarity < 1)
@@ -77,11 +75,9 @@ template<typename FactorizerType>
 CF<NormalizationType>::CF(const arma::mat& data,
        FactorizerType factorizer,
        const size_t numUsersForSimilarity,
-       const size_t rank,
-       const NormalizationType normalization) :
+       const size_t rank) :
     numUsersForSimilarity(numUsersForSimilarity),
-    rank(rank),
-    normalization(normalization)
+    rank(rank)
 {
   // Validate neighbourhood size.
   if (numUsersForSimilarity < 1)
@@ -92,8 +88,6 @@ CF<NormalizationType>::CF(const arma::mat& data,
     this->numUsersForSimilarity = 5;
   }
 
-  // Normalize data and train.
-  normalization.Normalize(data);
   Train(data, factorizer);
 }
 
@@ -106,12 +100,10 @@ CF<NormalizationType>::CF(const arma::sp_mat& data,
        FactorizerType factorizer,
        const size_t numUsersForSimilarity,
        const size_t rank,
-       const NormalizationType normalization,
        const typename std::enable_if_t<
            !FactorizerTraits<FactorizerType>::UsesCoordinateList>*) :
     numUsersForSimilarity(numUsersForSimilarity),
-    rank(rank),
-    normalization(normalization)
+    rank(rank)
 {
   // Validate neighbourhood size.
   if (numUsersForSimilarity < 1)
@@ -122,8 +114,6 @@ CF<NormalizationType>::CF(const arma::sp_mat& data,
     this->numUsersForSimilarity = 5;
   }
 
-  // Normalize data and train.
-  normalization.Normalize(data);
   Train(data, factorizer);
 }
 
@@ -132,7 +122,10 @@ template<typename FactorizerType>
 void CF<NormalizationType>::Train(const arma::mat& data,
                                   FactorizerType factorizer)
 {
-  CleanData(data, cleanedData);
+  // Make a copy of data before performing normalization.
+  arma::mat ds(data);
+  normalization.Normalize(ds);
+  CleanData(ds, cleanedData);
 
   // Check if the user wanted us to choose a rank for them.
   if (rank == 0)
@@ -152,7 +145,7 @@ void CF<NormalizationType>::Train(const arma::mat& data,
   // Decompose the data matrix (which is in coordinate list form) to user and
   // data matrices.
   Timer::Start("cf_factorization");
-  ApplyFactorizer(factorizer, data, cleanedData, this->rank, w, h);
+  ApplyFactorizer(factorizer, ds, cleanedData, this->rank, w, h);
   Timer::Stop("cf_factorization");
 }
 
@@ -164,6 +157,7 @@ void CF<NormalizationType>::Train(const arma::sp_mat& data,
                    FactorizerType>::UsesCoordinateList>*)
 {
   cleanedData = data;
+  normalization.Normalize(cleanedData);
 
   // Check if the user wanted us to choose a rank for them.
   if (rank == 0)

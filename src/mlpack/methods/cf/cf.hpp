@@ -22,6 +22,7 @@
 #include <mlpack/methods/amf/update_rules/nmf_als.hpp>
 #include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
 #include <mlpack/methods/cf/normalization/no_normalization.hpp>
+#include <mlpack/methods/cf/normalization/overall_mean_normalization.hpp>
 #include <set>
 #include <map>
 #include <iostream>
@@ -92,8 +93,7 @@ class CF
    * call Train() before calling GetRecommendations() or any other functions!
    */
   CF(const size_t numUsersForSimilarity = 5,
-     const size_t rank = 0,
-     const NormalizationType normalization = NormalizationType());
+     const size_t rank = 0);
 
   /**
    * Initialize the CF object using an instantiated factorizer, immediately
@@ -110,14 +110,12 @@ class CF
    * @param factorizer Instantiated factorizer object.
    * @param numUsersForSimilarity Size of the neighborhood.
    * @param rank Rank parameter for matrix factorization.
-   * @param normalization Instantiated normalization object.
    */
   template<typename FactorizerType = amf::NMFALSFactorizer>
   CF(const arma::mat& data,
      FactorizerType factorizer = FactorizerType(),
      const size_t numUsersForSimilarity = 5,
-     const size_t rank = 0,
-     const NormalizationType normalization = NormalizationType());
+     const size_t rank = 0);
 
   /**
    * Initialize the CF object using an instantiated factorizer, immediately
@@ -136,14 +134,12 @@ class CF
    * @param factorizer Instantiated factorizer object.
    * @param numUsersForSimilarity Size of the neighborhood.
    * @param rank Rank parameter for matrix factorization.
-   * @param normalization Instantiated normalization object.
    */
   template<typename FactorizerType = amf::NMFALSFactorizer>
   CF(const arma::sp_mat& data,
      FactorizerType factorizer = FactorizerType(),
      const size_t numUsersForSimilarity = 5,
      const size_t rank = 0,
-     const NormalizationType normalization = NormalizationType(),
      const typename std::enable_if_t<
          !FactorizerTraits<FactorizerType>::UsesCoordinateList>* = 0);
 
