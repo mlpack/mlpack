@@ -1,17 +1,17 @@
 /**
- * @file add_merge.hpp
- * @author Marcus Edel
+ * @file multiply_merge.hpp
+ * @author Haritha Nair
  *
- * Definition of the AddMerge module which accumulates the output of the given
- * modules.
+ * Definition of the MultiplyMerge module which multiplies the output of the
+ * given modules element-wise.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_ADD_MERGE_HPP
-#define MLPACK_METHODS_ANN_LAYER_ADD_MERGE_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_MULTIPLY_MERGE_HPP
+#define MLPACK_METHODS_ANN_LAYER_MULTIPLY_MERGE_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -25,8 +25,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the AddMerge module class. The AddMerge class accumulates
- * the output of various modules.
+ * Implementation of the MultiplyMerge module class. The MultiplyMerge class
+ * multiplies the output of various modules element-wise.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -39,18 +39,18 @@ template<
     typename OutputDataType = arma::mat,
     typename... CustomLayers
 >
-class AddMerge
+class MultiplyMerge
 {
  public:
   /**
-   * Create the AddMerge object using the specified parameters.
+   * Create the MultiplyMerge object using the specified parameters.
    *
    * @param model Expose all the network modules.
    */
-  AddMerge(const bool model = false);
+  MultiplyMerge(const bool model = false);
 
   //! Destructor to release allocated memory.
-  ~AddMerge();
+  ~MultiplyMerge();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -64,7 +64,7 @@ class AddMerge
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards trough f. Using the results from the feed
+   * f(x) by propagating x backwards trough f, using the results from the feed
    * forward pass.
    *
    * @param input The propagated input activation.
@@ -161,12 +161,12 @@ class AddMerge
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class AddMerge
+}; // class MultiplyMerge
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "add_merge_impl.hpp"
+#include "multiply_merge_impl.hpp"
 
 #endif

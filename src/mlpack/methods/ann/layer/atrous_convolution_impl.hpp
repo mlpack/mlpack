@@ -1,19 +1,20 @@
 /**
- * @file convolution_impl.hpp
- * @author Marcus Edel
+ * @file atrous_convolution_impl.hpp
+ * @author Aarush Gupta
+ * @author Shikhar Jaiswal
  *
- * Implementation of the Convolution module class.
+ * Implementation of the Atrous Convolution module class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_CONVOLUTION_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_CONVOLUTION_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_ATROUS_CONVOLUTION_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_ATROUS_CONVOLUTION_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "convolution.hpp"
+#include "atrous_convolution.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -25,13 +26,13 @@ template<
     typename InputDataType,
     typename OutputDataType
 >
-Convolution<
+AtrousConvolution<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::Convolution()
+>::AtrousConvolution()
 {
   // Nothing to do here.
 }
@@ -43,13 +44,13 @@ template<
     typename InputDataType,
     typename OutputDataType
 >
-Convolution<
+AtrousConvolution<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::Convolution(
+>::AtrousConvolution(
     const size_t inSize,
     const size_t outSize,
     const size_t kW,
@@ -59,7 +60,9 @@ Convolution<
     const size_t padW,
     const size_t padH,
     const size_t inputWidth,
-    const size_t inputHeight) :
+    const size_t inputHeight,
+    const size_t dilationW,
+    const size_t dilationH) :
     inSize(inSize),
     outSize(outSize),
     kW(kW),
@@ -71,7 +74,9 @@ Convolution<
     inputWidth(inputWidth),
     inputHeight(inputHeight),
     outputWidth(0),
-    outputHeight(0)
+    outputHeight(0),
+    dilationW(dilationW),
+    dilationH(dilationH)
 {
   weights.set_size((outSize * inSize * kW * kH) + outSize, 1);
 }
@@ -83,7 +88,7 @@ template<
     typename InputDataType,
     typename OutputDataType
 >
-void Convolution<
+void AtrousConvolution<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -105,7 +110,7 @@ template<
     typename OutputDataType
 >
 template<typename eT>
-void Convolution<
+void AtrousConvolution<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -120,8 +125,8 @@ void Convolution<
     Pad(inputTemp, padW, padH, inputPaddedTemp);
   }
 
-  size_t wConv = ConvOutSize(inputWidth, kW, dW, padW);
-  size_t hConv = ConvOutSize(inputHeight, kH, dH, padH);
+  size_t wConv = ConvOutSize(inputWidth, kW, dW, padW, dilationW);
+  size_t hConv = ConvOutSize(inputHeight, kH, dH, padH, dilationH);
 
   output.set_size(wConv * hConv * outSize, 1);
   outputTemp = arma::Cube<eT>(output.memptr(), wConv, hConv, outSize,
@@ -133,18 +138,16 @@ void Convolution<
     for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
     {
       arma::Mat<eT> convOutput;
-
       if (padW != 0 || padH != 0)
       {
         ForwardConvolutionRule::Convolution(inputPaddedTemp.slice(inMap),
-            weight.slice(outMapIdx), convOutput, dW, dH);
+            weight.slice(outMapIdx), convOutput, dW, dH, dilationW, dilationH);
       }
       else
       {
         ForwardConvolutionRule::Convolution(inputTemp.slice(inMap),
-            weight.slice(outMapIdx), convOutput, dW, dH);
+            weight.slice(outMapIdx), convOutput, dW, dH, dilationW, dilationH);
       }
-
       outputTemp.slice(outMap) += convOutput;
     }
 
@@ -163,7 +166,7 @@ template<
     typename OutputDataType
 >
 template<typename eT>
-void Convolution<
+void AtrousConvolution<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -184,12 +187,11 @@ void Convolution<
   {
     for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
     {
-      arma::Mat<eT> rotatedFilter;
+      arma::Mat<eT> output, rotatedFilter;
       Rotate180(weight.slice(outMapIdx), rotatedFilter);
 
-      arma::Mat<eT> output;
       BackwardConvolutionRule::Convolution(mappedError.slice(outMap),
-          rotatedFilter, output, dW, dH);
+          rotatedFilter, output, dW, dH, dilationW, dilationH);
 
       if (padW != 0 || padH != 0)
       {
@@ -214,7 +216,7 @@ template<
     typename OutputDataType
 >
 template<typename eT>
-void Convolution<
+void AtrousConvolution<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -259,26 +261,46 @@ void Convolution<
 
       arma::Cube<eT> deltaSlices = mappedError.slices(outMap, outMap);
 
-      arma::Cube<eT> output;
+      arma::Cube<eT> output, reducedOutput;
       GradientConvolutionRule::Convolution(inputSlices, deltaSlices,
-          output, dW, dH);
+          output, dW, dH, 1, 1);
+      arma::Mat<eT> reducedMat;
+      reducedOutput = arma::zeros<arma::Cube<eT> >(kW, kH, output.n_slices);
+
+      for (size_t j = 0; j < output.n_slices; j++)
+      {
+        reducedMat = output.slice(j);
+        if (dilationH > 1)
+        {
+          for (size_t i = 1; i < reducedMat.n_cols; i++){
+            reducedMat.shed_cols(i, i + dilationH - 2);
+          }
+        }
+        if (dilationW > 1)
+        {
+          for (size_t i = 1; i < reducedMat.n_rows; i++){
+            reducedMat.shed_rows(i, i + dilationW - 2);
+          }
+        }
+        reducedOutput.slice(j) = reducedMat;
+      }
 
       if ((padW != 0 || padH != 0) &&
-          (gradientTemp.n_rows < output.n_rows &&
-          gradientTemp.n_cols < output.n_cols))
+          (gradientTemp.n_rows < reducedOutput.n_rows &&
+          gradientTemp.n_cols < reducedOutput.n_cols))
       {
-        for (size_t i = 0; i < output.n_slices; i++)
+        for (size_t i = 0; i < reducedOutput.n_slices; i++)
         {
-          gradientTemp.slice(s) += output.slice(i).submat(output.n_rows / 2,
-              output.n_cols / 2,
-              output.n_rows / 2 + gradientTemp.n_rows - 1,
-              output.n_cols / 2 + gradientTemp.n_cols - 1);
+          gradientTemp.slice(s) += reducedOutput.slice(i).submat(
+              reducedOutput.n_rows / 2, reducedOutput.n_cols / 2,
+              reducedOutput.n_rows / 2 + gradientTemp.n_rows - 1,
+              reducedOutput.n_cols / 2 + gradientTemp.n_cols - 1);
         }
       }
       else
       {
-        for (size_t i = 0; i < output.n_slices; i++)
-          gradientTemp.slice(s) += output.slice(i);
+        for (size_t i = 0; i < reducedOutput.n_slices; i++)
+          gradientTemp.slice(s) += reducedOutput.slice(i);
       }
     }
 
@@ -295,7 +317,7 @@ template<
     typename OutputDataType
 >
 template<typename Archive>
-void Convolution<
+void AtrousConvolution<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
@@ -316,6 +338,8 @@ void Convolution<
   ar & BOOST_SERIALIZATION_NVP(inputHeight);
   ar & BOOST_SERIALIZATION_NVP(outputWidth);
   ar & BOOST_SERIALIZATION_NVP(outputHeight);
+  ar & BOOST_SERIALIZATION_NVP(dilationW);
+  ar & BOOST_SERIALIZATION_NVP(dilationH);
 
   if (Archive::is_loading::value)
     weights.set_size((outSize * inSize * kW * kH) + outSize, 1);

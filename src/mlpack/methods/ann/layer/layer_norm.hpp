@@ -1,17 +1,16 @@
 /**
- * @file batch_norm.hpp
- * @author Praveen Ch
- * @author Manthan-R-Sheth
+ * @file layer_norm.hpp
+ * @author Shikhar Jaiswal
  *
- * Definition of the Batch Normalization layer class.
+ * Definition of the Layer Normalization class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_BATCHNORM_HPP
-#define MLPACK_METHODS_ANN_LAYER_BATCHNORM_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_LAYERNORM_HPP
+#define MLPACK_METHODS_ANN_LAYER_LAYERNORM_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -19,16 +18,26 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Declaration of the Batch Normalization layer class. The layer transforms
+ * Declaration of the Layer Normalization class. The layer transforms
  * the input data into zero mean and unit variance and then scales and shifts
- * the data by parameters, gamma and beta respectively. These parameters are
- * learnt by the network.
+ * the data by parameters, gamma and beta respectively over a single training
+ * data. These parameters are learnt by the network. Layer Normalization is
+ * different from Batch Normalization in the way that normalization is done
+ * for individual training cases, and the mean and standard deviations are
+ * computed across the layer dimensions, as opposed to across the batch.
  *
- * If deterministic is false (training), the mean and variance over the batch is
- * calculated and the data is normalized. If it is set to true (testing) then
- * the mean and variance accrued over the training set is used.
+ * For more information, refer to the following papers,
  *
- * For more information, refer to the following paper,
+ * @code
+ * @article{Ba16,
+ *   author    = {Jimmy Lei Ba, Jamie Ryan Kiros and Geoffrey E. Hinton},
+ *   title     = {Layer Normalization},
+ *   volume    = {abs/1607.06450},
+ *   year      = {2016},
+ *   url       = {http://arxiv.org/abs/1607.06450},
+ *   eprint    = {1607.06450},
+ * }
+ * @endcode
  *
  * @code
  * @article{Ioffe15,
@@ -53,31 +62,31 @@ template <
   typename InputDataType = arma::mat,
   typename OutputDataType = arma::mat
 >
-class BatchNorm
+class LayerNorm
 {
  public:
-  //! Create the BatchNorm object.
-  BatchNorm();
+  //! Create the LayerNorm object.
+  LayerNorm();
 
   /**
-  * Create the BatchNorm layer object for a specified number of input units.
+  * Create the LayerNorm object for a specified number of input units.
   *
   * @param size The number of input units.
   * @param eps The epsilon added to variance to ensure numerical stability.
   */
-  BatchNorm(const size_t size, const double eps = 1e-8);
+  LayerNorm(const size_t size, const double eps = 1e-8);
 
   /**
-   * Reset the layer parameters
+   * Reset the layer parameters.
    */
   void Reset();
 
   /**
-   * Forward pass of the Batch Normalization layer. Transforms the input data
+   * Forward pass of Layer Normalization. Transforms the input data
    * into zero mean and unit variance, scales the data by a factor gamma and
    * shifts it by beta.
    *
-   * @param input Input data for the layer
+   * @param input Input data for the layer.
    * @param output Resulting output activations.
    */
   template<typename eT>
@@ -86,7 +95,7 @@ class BatchNorm
   /**
    * Backward pass through the layer.
    *
-   * @param input The input activations
+   * @param input The input activations.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -98,8 +107,8 @@ class BatchNorm
   /**
    * Calculate the gradient using the output delta and the input activations.
    *
-   * @param input The input activations
-   * @param error The calculated error
+   * @param input The input activations.
+   * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
   template<typename eT>
@@ -132,19 +141,14 @@ class BatchNorm
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
-  //! Get the value of deterministic parameter.
-  bool Deterministic() const { return deterministic; }
-  //! Modify the value of deterministic parameter.
-  bool& Deterministic() { return deterministic; }
+  //! Get the mean across single training data.
+  OutputDataType Mean() { return mean; }
 
-  //! Get the mean over the training data.
-  OutputDataType TrainingMean() { return stats.mean(); }
-
-  //! Get the variance over the training data.
-  OutputDataType TrainingVariance() { return stats.var(1); }
+  //! Get the variance across single training data.
+  OutputDataType Variance() { return variance; }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -165,20 +169,11 @@ class BatchNorm
   //! Locally-stored parameters.
   OutputDataType weights;
 
-  /**
-   * If true then mean and variance over the training set will be considered
-   * instead of being calculated over the batch.
-   */
-  bool deterministic;
-
   //! Locally-stored mean object.
   OutputDataType mean;
 
   //! Locally-stored variance object.
   OutputDataType variance;
-
-  //! Locally-stored running statistics object.
-  arma::running_stat_vec<arma::colvec> stats;
 
   //! Locally-stored gradient object.
   OutputDataType gradient;
@@ -194,12 +189,12 @@ class BatchNorm
 
   //! Locally-stored normalized input.
   OutputDataType normalized;
-}; // class BatchNorm
+}; // class LayerNorm
 
 } // namespace ann
 } // namespace mlpack
 
 // Include the implementation.
-#include "batch_norm_impl.hpp"
+#include "layer_norm_impl.hpp"
 
 #endif
