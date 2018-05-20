@@ -134,6 +134,9 @@ class Lookup
   OutputDataType outputParameter;
 }; // class Lookup
 
+// Alias for using as embedding layer.
+using Embedding = Lookup<arma::mat, arma::mat>;
+
 } // namespace ann
 } // namespace mlpack
 
