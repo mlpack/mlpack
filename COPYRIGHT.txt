@@ -101,6 +101,7 @@ Copyright:
   Copyright 2018, Namrata Mukhija <namratamukhija@gmail.com>
   Copyright 2018, Conrad Sanderson
   Copyright 2018, Thanasis Mattas <mattasa@auth.gr>
+  Copyright 2018, Shashank Shekhar <contactshashankshekhar@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.
