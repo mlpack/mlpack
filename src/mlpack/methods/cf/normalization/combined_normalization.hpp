@@ -112,7 +112,7 @@ class CombinedNormalization
     std::get<I>(normalizations).Normalize(data);
     SequenceNormalize<I+1>(data);
   }
-  
+
   //! End of tuple unpacking.
   template<
       int I, /* Which normalization in tuple to use */
