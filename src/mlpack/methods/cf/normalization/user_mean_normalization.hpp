@@ -28,14 +28,14 @@ class UserMeanNormalization
   UserMeanNormalization() { }
 
   /**
-   * Normalize the data by subtracting user mean from each of existing rating.
+   * Normalize the data by subtracting user mean from each of existing ratings.
    *
    * @param data Input dataset in the form of coordinate list.
    */
   void Normalize(arma::mat& data)
   {
     const size_t userNum = arma::max(data.row(0)) + 1;
-    // Should we use overall mean if a user has no rating?
+    // Should we use mean of all user means if a user has no rating?
     userMean = arma::vec(userNum, arma::fill::zeros);
     // Number of ratings for each user.
     arma::vec ratingNum(userNum, arma::fill::zeros);

@@ -3,7 +3,7 @@
  * @author Wenhao Huang
  *
  * CombinedNormalization is a class template for performing a sequence of data
- * normalization methods which are specified by template parameters.
+ * normalization methods which are specified by template parameter.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -32,7 +32,7 @@ class CombinedNormalization
   CombinedNormalization() { }
 
   /**
-   * Normalize the data.
+   * Normalize the data by calling Normalize() in each normalization object.
    *
    * @param data Input dataset in the form of coordinate list.
    */
@@ -42,7 +42,7 @@ class CombinedNormalization
   }
 
   /**
-   * Normalize the data by subtracting the mean of all existing ratings.
+   * Normalize the data by calling Normalize() in each normalization object.
    *
    * @param cleanedData Sparse matrix data.
    */
@@ -52,7 +52,9 @@ class CombinedNormalization
   }
 
   /**
-   * Denormalize computed rating by adding mean.
+   * Denormalize rating by calling Denormalize() in each normalization object.
+   * Note that the order of objects calling Denormalize() should be the
+   * reversed order of objects calling Normalize().
    *
    * @param user User ID.
    * @param item Item ID.
@@ -66,7 +68,9 @@ class CombinedNormalization
   }
 
   /**
-   * Denormalize computed rating by adding mean.
+   * Denormalize rating by calling Denormalize() in each normalization object.
+   * Note that the order of objects calling Denormalize() should be the
+   * reversed order of objects calling Normalize().
    *
    * @param combinations User/Item combinations.
    * @param predictions Predicted ratings for each user/item combination.
@@ -78,7 +82,7 @@ class CombinedNormalization
   }
 
   /**
-   * Return normalizations.
+   * Return normalizations tuple.
    */
   TupleType Normalizations() const
   {
@@ -96,7 +100,10 @@ class CombinedNormalization
   }
 
  private:
+  //! A tuple of all normalization objects.
+  TupleType normalizations;
 
+  //! Unpack normalizations tuple to normalize data.
   template<
       int I, /* Which normalization in tuple to use */
       typename = std::enable_if_t<(I < std::tuple_size<TupleType>::value)>>
@@ -105,13 +112,15 @@ class CombinedNormalization
     std::get<I>(normalizations).Normalize(data);
     SequenceNormalize<I+1>(data);
   }
-
+  
+  //! End of tuple unpacking.
   template<
       int I, /* Which normalization in tuple to use */
       typename = std::enable_if_t<(I >= std::tuple_size<TupleType>::value)>,
       typename = void>
   void SequenceNormalize(arma::mat& /* data */) { }
 
+  //! Unpack normalizations tuple to normalize cleanedData.
   template<
       int I, /* Which normalization in tuple to use */
       typename = std::enable_if_t<(I < std::tuple_size<TupleType>::value)>>
@@ -121,12 +130,14 @@ class CombinedNormalization
     SequenceNormalize<I+1>(cleanedData);
   }
 
+  //! End of tuple unpacking.
   template<
       int I, /* Which normalization in tuple to use */
       typename = std::enable_if_t<(I >= std::tuple_size<TupleType>::value)>,
       typename = void>
   void SequenceNormalize(arma::sp_mat& /* cleanedData */) { }
 
+  //! Unpack normalizations tuple to denormalize.
   template<
       int I, /* Which normalization in tuple to use */
       typename = std::enable_if_t<(I < std::tuple_size<TupleType>::value)>>
@@ -134,13 +145,15 @@ class CombinedNormalization
                              const int item,
                              const double rating) const
   {
-    // The order of denormalization should be the reversed order 
+    // The order of denormalization should be the reversed order
     // of normalization.
     double realRating = SequenceDenormalize<I+1>(user, item, rating);
-    realRating = std::get<I>(normalizations).Denormalize(user, item, realRating);
+    realRating =
+        std::get<I>(normalizations).Denormalize(user, item, realRating);
     return realRating;
   }
 
+  //! End of tuple unpacking.
   template<
       int I, /* Which normalization in tuple to use */
       typename = std::enable_if_t<(I >= std::tuple_size<TupleType>::value)>,
@@ -152,27 +165,26 @@ class CombinedNormalization
     return rating;
   }
 
+  //! Unpack normalizations tuple to denormalize.
   template<
       int I, /* Which normalization in tuple to use */
       typename = std::enable_if_t<(I < std::tuple_size<TupleType>::value)>>
   void SequenceDenormalize(const arma::Mat<size_t>& combinations,
                              arma::vec& predictions) const
   {
-    // The order of denormalization should be the reversed order 
+    // The order of denormalization should be the reversed order
     // of normalization.
     SequenceDenormalize<I+1>(combinations, predictions);
     std::get<I>(normalizations).Denormalize(combinations, predictions);
   }
 
+  //! End of tuple unpacking.
   template<
       int I, /* Which normalization in tuple to use */
       typename = std::enable_if_t<(I >= std::tuple_size<TupleType>::value)>,
       typename = void>
   void SequenceDenormalize(const arma::Mat<size_t>& /* combinations */,
                              arma::vec& /* predictions */) const { }
-
-  //! A tuple of all normalizations.
-  TupleType normalizations;
 };
 
 } // namespace cf

@@ -28,14 +28,14 @@ class ItemMeanNormalization
   ItemMeanNormalization() { }
 
   /**
-   * Normalize the data by subtracting item mean from each of existing rating.
+   * Normalize the data by subtracting item mean from each of existing ratings.
    *
    * @param data Input dataset in the form of coordinate list.
    */
   void Normalize(arma::mat& data)
   {
     const size_t itemNum = arma::max(data.row(1)) + 1;
-    // Should we use overall mean if an item has no rating?
+    // Should we use mean of all item means if an item has no rating?
     itemMean = arma::vec(itemNum, arma::fill::zeros);
     // Number of ratings for each item.
     arma::vec ratingNum(itemNum, arma::fill::zeros);
@@ -60,7 +60,7 @@ class ItemMeanNormalization
   }
 
   /**
-   * Normalize the data by subtracting item mean from each of existing rating.
+   * Normalize the data by subtracting item mean from each of existing ratings.
    *
    * @param cleanedData Sparse matrix data.
    */

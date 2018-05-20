@@ -45,8 +45,8 @@ class ZScoreNormalization
    */
   void Normalize(arma::sp_mat& cleanedData)
   {
-    arma::vec ratings = arma::nonzeros(cleanedData);
     // Caculate mean and stdev of all non zero ratings.
+    arma::vec ratings = arma::nonzeros(cleanedData);
     mean = arma::mean(ratings);
     stddev = arma::stddev(ratings);
 
