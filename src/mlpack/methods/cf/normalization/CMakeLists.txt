@@ -5,6 +5,8 @@ set(SOURCES
   overall_mean_normalization.hpp
   user_mean_normalization.hpp
   item_mean_normalization.hpp
+  z_score_normalization.hpp
+  combined_normalization.hpp
 )
 
 # Add directory name to sources.

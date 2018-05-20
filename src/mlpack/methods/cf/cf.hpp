@@ -22,9 +22,6 @@
 #include <mlpack/methods/amf/update_rules/nmf_als.hpp>
 #include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
 #include <mlpack/methods/cf/normalization/no_normalization.hpp>
-#include <mlpack/methods/cf/normalization/overall_mean_normalization.hpp>
-#include <mlpack/methods/cf/normalization/user_mean_normalization.hpp>
-#include <mlpack/methods/cf/normalization/item_mean_normalization.hpp>
 #include <set>
 #include <map>
 #include <iostream>

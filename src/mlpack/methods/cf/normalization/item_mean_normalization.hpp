@@ -51,7 +51,7 @@ class ItemMeanNormalization
     // Calculate item mean and subtract item mean from ratings.
     // Set item mean to 0 if the item has no rating.
     for (size_t i = 0; i < itemNum; i++)
-      if ((size_t) itemNum != 0)
+      if ((size_t) ratingNum(i) != 0)
         itemMean(i) /= ratingNum(i);
     data.each_col([&](arma::vec& datapoint) {
       const size_t item = (size_t) datapoint(1);
