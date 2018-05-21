@@ -134,6 +134,10 @@ class Lookup
   OutputDataType outputParameter;
 }; // class Lookup
 
+// Alias for using as embedding layer.
+template<typename MatType = arma::mat>
+using Embedding = Lookup<MatType, MatType>;
+
 } // namespace ann
 } // namespace mlpack
 
