@@ -135,7 +135,8 @@ class Lookup
 }; // class Lookup
 
 // Alias for using as embedding layer.
-using Embedding = Lookup<arma::mat, arma::mat>;
+template<typename MatType = arma::mat>
+using Embedding = Lookup<MatType, MatType>;
 
 } // namespace ann
 } // namespace mlpack
