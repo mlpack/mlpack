@@ -22,7 +22,49 @@
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 
 // Define parameters.
-// PROGRAM_INFO() :  To be done.
+PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
+    "This program implements Large Margin Nearest Neighbors, a distance "
+    "learning technique.  The method seeks to improve k-nearest-neighbor "
+    "classification on a dataset.  The method employes the strategy of "
+    "reducing distance between similar labeled data points (a.k.a target "
+    "neighbors) and increasing distance between differently labeled points"
+    " (a.k.a impostors) using standard optimization techniques over the "
+    "gradient of the distance between data points."
+    "\n\n"
+    "To work, this algorithm needs labeled data.  It can be given as the last "
+    "row of the input dataset (specified with " + PRINT_PARAM_STRING("input") +
+    "), or alternatively as a separate matrix (specified with " +
+    PRINT_PARAM_STRING("labels") + ")."
+    "\n\n"
+    "This implementation of LMNN uses stochastic gradient descent, mini-batch "
+    "stochastic gradient descent, or the L_BFGS optimizer. "
+    "\n\n"
+    "Stochastic gradient descent, specified by the value 'sgd' for the "
+    "parameter " + PRINT_PARAM_STRING("optimizer") + ", depends "
+    "primarily on three parameters: the step size (specified with " +
+    PRINT_PARAM_STRING("step_size") + "), the batch size (specified with " +
+    PRINT_PARAM_STRING("batch_size") + "), and the maximum number of iterations"
+    " (specified with " + PRINT_PARAM_STRING("max_iterations") + ").  In "
+    "addition, a normalized starting point can be used by specifying the " +
+    PRINT_PARAM_STRING("normalize") + " parameter. "
+    "\n\n"
+    "The L-BFGS optimizer, specified by the value 'lbfgs' for the parameter " +
+    PRINT_PARAM_STRING("optimizer") + ", uses a back-tracking line search "
+    "algorithm to minimize a function.  The following parameters are used by "
+    "L-BFGS: " + PRINT_PARAM_STRING("num_basis") + " (specifies the number"
+    " of memory points used by L-BFGS), " +
+    PRINT_PARAM_STRING("max_iterations") + ", " +
+    PRINT_PARAM_STRING("armijo_constant") + ", " +
+    PRINT_PARAM_STRING("wolfe") + ", " + PRINT_PARAM_STRING("tolerance") +
+    " (the optimization is terminated when the gradient norm is below this "
+    "value), " + PRINT_PARAM_STRING("max_line_search_trials") + ", " +
+    PRINT_PARAM_STRING("min_step") + ", and " +
+    PRINT_PARAM_STRING("max_step") + " (which both refer to the line search "
+    "routine).  For more details on the L-BFGS optimizer, consult either the "
+    "mlpack L-BFGS documentation (in lbfgs.hpp) or the vast set of published "
+    "literature on L-BFGS."
+    "\n\n"
+    "By default, the SGD optimizer is used.");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run LMNN on.", "i");
 PARAM_UROW_IN("labels", "Labels for input dataset.", "l");
@@ -60,8 +102,6 @@ PARAM_DOUBLE_IN("min_step", "Minimum step of line search for L-BFGS.", "m",
 PARAM_DOUBLE_IN("max_step", "Maximum step of line search for L-BFGS.", "M",
     1e20);
 
-PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
-
 using namespace mlpack;
 using namespace mlpack::lmnn;
 using namespace mlpack::metric;
@@ -71,11 +111,6 @@ using namespace std;
 
 static void mlpackMain()
 {
-  if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
-  else
-    math::RandomSeed((size_t) std::time(NULL));
-
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
   const string optimizerType = CLI::GetParam<string>("optimizer");

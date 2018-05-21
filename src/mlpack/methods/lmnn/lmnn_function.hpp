@@ -2,7 +2,7 @@
  * @file lmnn_function.hpp
  * @author Manish Kumar
  *
- * An implementation of the LMNNFunction class.
+ * Declaration of the LMNNFunction class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -27,7 +27,7 @@ class LMNNFunction
   /**
    * Constructor for LMNNFunction class.
    *
-   * @param data Dataset for which SVD is calculated.
+   * @param data Dataset for which metric is calculated.
    * @param rank Rank used for matrix factorization.
    * @param lambda Regularization parameter used for optimization.
    */
@@ -38,7 +38,7 @@ class LMNNFunction
                MetricType metric = MetricType());
 
   /**
-   * Shuffle the points in the dataset.  This may be used by optimizers.
+   * Shuffle the points in the dataset. This may be used by optimizers.
    */
   void Shuffle();
 

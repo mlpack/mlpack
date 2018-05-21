@@ -45,7 +45,7 @@ void Constraints::TargetNeighbors(arma::Mat<size_t>& outputMatrix)
 {
   size_t N = dataset.n_cols;
 
-  arma::Row<size_t> uniqueLabels= arma::unique(labels);
+  arma::Row<size_t> uniqueLabels = arma::unique(labels);
 
   outputMatrix = arma::Mat<size_t>(k, N, arma::fill::zeros);
 
@@ -58,7 +58,7 @@ void Constraints::TargetNeighbors(arma::Mat<size_t>& outputMatrix)
   // Vectors to store indices.
   arma::uvec indexSame;
 
-  for( size_t i=0; i < uniqueLabels.n_cols; i++)
+  for ( size_t i = 0; i < uniqueLabels.n_cols; i++)
   {
     // Calculate Target Neighbors.
     indexSame = arma::find(labels == uniqueLabels[i]);
@@ -69,10 +69,10 @@ void Constraints::TargetNeighbors(arma::Mat<size_t>& outputMatrix)
     knn.Search(k, neighbors, distances);
 
     // Re-map neighbors to their index.
-    for(size_t j=0;j<neighbors.n_elem;j++)
+    for (size_t j = 0; j < neighbors.n_elem;j++)
       neighbors(j) = indexSame.at(neighbors(j));
 
-    // Store impostors.
+    // Store target neihbors.
     outputMatrix.cols(indexSame) = neighbors;
   }
 }
@@ -82,7 +82,7 @@ void Constraints::Impostors(arma::Mat<size_t>& outputMatrix)
 {
   size_t N = dataset.n_cols;
 
-  arma::Row<size_t> uniqueLabels= arma::unique(labels);
+  arma::Row<size_t> uniqueLabels = arma::unique(labels);
 
   outputMatrix = arma::Mat<size_t>(k, N, arma::fill::zeros);
 
@@ -96,7 +96,7 @@ void Constraints::Impostors(arma::Mat<size_t>& outputMatrix)
   arma::uvec indexSame;
   arma::uvec indexDiff;
 
-  for( size_t i=0; i < uniqueLabels.n_cols; i++)
+  for( size_t i = 0; i < uniqueLabels.n_cols; i++)
   {
     // Calculate impostors.
     indexSame = arma::find(labels == uniqueLabels[i]);
@@ -108,7 +108,7 @@ void Constraints::Impostors(arma::Mat<size_t>& outputMatrix)
     knn.Search(dataset.cols(indexSame), k, neighbors, distances);
 
     // Re-map neighbors to their index.
-    for(size_t j=0; j < neighbors.n_elem;j++)
+    for (size_t j = 0; j < neighbors.n_elem; j++)
       neighbors(j) = indexDiff.at(neighbors(j));
 
     // Store impostors.
@@ -123,15 +123,16 @@ void Constraints::Triplets(arma::Mat<size_t>& outputMatrix)
   size_t N = dataset.n_cols;
 
   arma::Mat<size_t> impostors = arma::Mat<size_t>(k, N, arma::fill::zeros);
-  arma::Mat<size_t> targetNeighbors = arma::Mat<size_t>(k, N, arma::fill::zeros);
+  arma::Mat<size_t> targetNeighbors =
+      arma::Mat<size_t>(k, N, arma::fill::zeros);
 
   outputMatrix = arma::Mat<size_t>(3, k * k * N , arma::fill::zeros);
 
-  for(size_t i=0, r=0; i < N; i++)
+  for (size_t i = 0, r=0; i < N; i++)
   {
-    for(size_t j=0;j < k; j++)
+    for (size_t j = 0; j < k; j++)
     {
-      for(size_t l=0; l < k; l++, r++)
+      for (size_t l = 0; l < k; l++, r++)
       {
         outputMatrix(0, r) = i;
         outputMatrix(1, r) = targetNeighbors(j, i);
@@ -141,7 +142,7 @@ void Constraints::Triplets(arma::Mat<size_t>& outputMatrix)
   }
 }
 
-} // namespace nca
+} // namespace constraints
 } // namespace mlpack
 
 #endif

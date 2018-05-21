@@ -2,7 +2,7 @@
  * @file lmnn_function_impl.cpp
  * @author Manish Kumar
  *
- * An implementation of the RegularizedSVDFunction class.
+ * An implementation of the LMNNFunction class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -78,7 +78,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates)
 
   for (size_t i = 0; i < dataset.n_cols; i++)
   {
-    for(size_t j = 0; j < k ; j++)
+    for (size_t j = 0; j < k ; j++)
     {
       // Calculate cost due to distance between target neighbors & data point.
       double eval = metric.Evaluate(transformedDataset.col(i),
@@ -86,9 +86,9 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates)
       cost += (1 - regularization) * eval;
     }
 
-    for(size_t j = 0; j < k ; j++)
+    for (size_t j = 0; j < k ; j++)
     {
-      for(size_t l = 0; l < k ; l++)
+      for (size_t l = 0; l < k ; l++)
       {
         // Calculate cost due to data point, target neighbors, impostors
         // triplets.
@@ -121,7 +121,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates,
 
   for (size_t i = begin; i < begin + batchSize; i++)
   {
-    for(size_t j = 0; j < k ; j++)
+    for (size_t j = 0; j < k ; j++)
     {
       // Calculate cost due to distance between target neighbors & data point.
       double eval = metric.Evaluate(transformedDataset.col(i),
@@ -129,9 +129,9 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates,
       cost += (1 - regularization) * eval;
     }
 
-    for(size_t j = 0; j < k ; j++)
+    for (size_t j = 0; j < k ; j++)
     {
-      for(size_t l = 0; l < k ; l++)
+      for (size_t l = 0; l < k ; l++)
       {
         // Calculate cost due to data point, target neighbors, impostors
         // triplets.
@@ -143,7 +143,6 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates,
         cost += regularization * std::max(0.0, 1 + eval);
       }
     }
-    
   }
 
   return cost;
@@ -156,18 +155,18 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& coordinates,
 {
   gradient.zeros(dataset.n_rows, dataset.n_rows);
 
-  for(size_t i = 0; i < dataset.n_rows; i++)
+  for (size_t i = 0; i < dataset.n_rows; i++)
   {
-    for(size_t j = 0; j < k ; j++)
+    for (size_t j = 0; j < k ; j++)
     {
       // Calculate gradient due to target neighbors.
       arma::vec cij = dataset.col(i) - dataset.col(targetNeighbors(j, i));
       gradient += (1 - regularization) * OuterProduct(cij);
     }
 
-    for(size_t j = 0; j < k ; j++)
+    for (size_t j = 0; j < k ; j++)
     {
-      for(size_t l = 0; l < k ; l++)
+      for (size_t l = 0; l < k ; l++)
       {
         // Calculate gradient due to triplets.
         arma::vec cij = dataset.col(i) - dataset.col(targetNeighbors(j, i));
@@ -189,18 +188,18 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& coordinates,
 {
   gradient.zeros(dataset.n_rows, dataset.n_rows);
 
-  for(size_t i = begin; i < begin + batchSize; i++)
+  for (size_t i = begin; i < begin + batchSize; i++)
   {
-    for(size_t j = 0; j < k ; j++)
+    for (size_t j = 0; j < k ; j++)
     {
       // Calculate gradient due to target neighbors.
       arma::vec cij = dataset.col(i) - dataset.col(targetNeighbors(j, i));
       gradient += (1 - regularization) * OuterProduct(cij);
     }
 
-    for(size_t j = 0; j < k ; j++)
+    for (size_t j = 0; j < k ; j++)
     {
-      for(size_t l = 0; l < k ; l++)
+      for (size_t l = 0; l < k ; l++)
       {
         // Calculate gradient due to triplets.
         arma::vec cij = dataset.col(i) - dataset.col(targetNeighbors(j, i));
@@ -231,7 +230,8 @@ inline void Projection(arma::mat& iterate)
 
   arma::uvec ind = arma::find(realEigVal > 0);
   arma::mat diagEigVal = arma::diagmat(realEigVal);
-  iterate = realEigVec.cols(ind) * diagEigVal.submat(ind,ind) * arma::trans(realEigVec.cols(ind));
+  iterate = realEigVec.cols(ind) * diagEigVal.submat(ind, ind) *
+      arma::trans(realEigVec.cols(ind));
 }
 
 // Template specialization for the SGD optimizer.
@@ -311,7 +311,7 @@ double StandardSGD::Optimize(
         gradient, effectiveBatchSize);
 
     // Apply projection.
-    if(!currentFunction)
+    if (!currentFunction)
       Projection(iterate);
 
     // Use the update policy to take a step.
@@ -337,7 +337,7 @@ double StandardSGD::Optimize(
   return overallObjective;
 }
 
-}
-}
+} // namespace optimization
+} // namespace mlpack
 
 #endif
