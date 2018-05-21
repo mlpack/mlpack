@@ -48,32 +48,7 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
-    const MatType& referenceSetIn,
-    const bool naive,
-    const bool singleMode,
-    const MetricType metric) :
-    referenceTree(naive ? NULL : BuildTree<Tree>(referenceSetIn,
-        oldFromNewReferences)),
-    referenceSet(naive ? &referenceSetIn : &referenceTree->Dataset()),
-    treeOwner(!naive), // If in naive mode, we are not building any trees.
-    setOwner(false),
-    naive(naive),
-    singleMode(!naive && singleMode), // Naive overrides single mode.
-    metric(metric),
-    baseCases(0),
-    scores(0)
-{
-  // Nothing to do.
-}
-
-// Move constructor.
-template<typename MetricType,
-         typename MatType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
-    MatType&& referenceSet,
+    MatType referenceSet,
     const bool naive,
     const bool singleMode,
     const MetricType metric) :
@@ -82,7 +57,6 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
     referenceSet(naive ? new MatType(std::move(referenceSet)) :
         &referenceTree->Dataset()),
     treeOwner(!naive),
-    setOwner(naive),
     naive(naive),
     singleMode(!naive && singleMode),
     metric(metric),
@@ -104,7 +78,6 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
     referenceTree(referenceTree),
     referenceSet(&referenceTree->Dataset()),
     treeOwner(false),
-    setOwner(false),
     naive(false),
     singleMode(singleMode),
     metric(metric),
@@ -126,7 +99,6 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
     referenceTree(NULL),
     referenceSet(new MatType()), // Empty matrix.
     treeOwner(false),
-    setOwner(true),
     naive(naive),
     singleMode(singleMode),
     metric(metric),
@@ -154,7 +126,6 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
     referenceSet(other.referenceTree ? &referenceTree->Dataset() :
         new MatType(*other.referenceSet)),
     treeOwner(other.referenceTree),
-    setOwner(!other.referenceTree),
     naive(other.naive),
     singleMode(other.singleMode),
     metric(other.metric),
@@ -174,7 +145,6 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(RangeSearch&& other) :
     referenceTree(other.referenceTree),
     referenceSet(other.referenceSet),
     treeOwner(other.treeOwner),
-    setOwner(other.setOwner),
     naive(other.naive),
     singleMode(other.singleMode),
     metric(std::move(other.metric)),
@@ -187,7 +157,6 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(RangeSearch&& other) :
       BuildTree<Tree>(const_cast<MatType&>(*other.referenceSet),
       other.oldFromNewReferences);
   other.treeOwner = true;
-  other.setOwner = true;
   other.naive = false;
   other.singleMode = false;
   other.baseCases = 0;
@@ -200,42 +169,12 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 RangeSearch<MetricType, MatType, TreeType>&
-RangeSearch<MetricType, MatType, TreeType>::operator=(const RangeSearch& other)
+RangeSearch<MetricType, MatType, TreeType>::operator=(RangeSearch other)
 {
   // Clean memory first.
   if (treeOwner)
     delete referenceTree;
-  if (setOwner)
-    delete referenceSet;
-
-  // Copy the other model.
-  oldFromNewReferences = other.oldFromNewReferences;
-  referenceTree = other.referenceTree ? new Tree(*other.referenceTree) : NULL;
-  referenceSet = other.referenceTree ? &referenceTree->Dataset() :
-      new MatType(*other.referenceSet);
-  treeOwner = other.referenceTree;
-  setOwner = !other.referenceTree;
-  naive = other.naive;
-  singleMode = other.singleMode;
-  metric = other.metric;
-  baseCases = other.baseCases;
-  scores = other.scores;
-
-  return *this;
-}
-
-template<typename MetricType,
-         typename MatType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-RangeSearch<MetricType, MatType, TreeType>&
-RangeSearch<MetricType, MatType, TreeType>::operator=(RangeSearch&& other)
-{
-  // Clean memory first.
-  if (treeOwner)
-    delete referenceTree;
-  if (setOwner)
+  if (naive)
     delete referenceSet;
 
   // Move the other model.
@@ -243,24 +182,11 @@ RangeSearch<MetricType, MatType, TreeType>::operator=(RangeSearch&& other)
   referenceTree = other.referenceTree;
   referenceSet = other.referenceSet;
   treeOwner = other.treeOwner;
-  setOwner = other.setOwner;
   naive = other.naive;
   singleMode = other.singleMode;
   metric = std::move(other.metric);
   baseCases = other.baseCases;
   scores = other.scores;
-
-  // Clean other model.
-  other.referenceSet = new MatType();
-  other.referenceTree =
-      BuildTree<Tree>(const_cast<MatType&>(*other.referenceSet),
-      other.oldFromNewReferences);
-  other.treeOwner = true;
-  other.setOwner = true;
-  other.naive = false;
-  other.singleMode = false;
-  other.baseCases = 0;
-  other.scores = 0;
 
   return *this;
 }
@@ -274,7 +200,7 @@ RangeSearch<MetricType, MatType, TreeType>::~RangeSearch()
 {
   if (treeOwner && referenceTree)
     delete referenceTree;
-  if (setOwner && referenceSet)
+  if (naive && referenceSet)
     delete referenceSet;
 }
 
@@ -284,42 +210,7 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Train(
-    const MatType& referenceSet)
-{
-  // Clean up the old tree, if we built one.
-  if (treeOwner && referenceTree)
-    delete referenceTree;
-
-  // Rebuild the tree, if necessary.
-  if (!naive)
-  {
-    referenceTree = BuildTree<Tree>(const_cast<MatType&>(referenceSet),
-        oldFromNewReferences);
-    treeOwner = true;
-  }
-  else
-  {
-    treeOwner = false;
-  }
-
-  // Delete the old reference set, if we owned it.
-  if (setOwner && this->referenceSet)
-    delete this->referenceSet;
-
-  if (!naive)
-    this->referenceSet = &referenceTree->Dataset();
-  else
-    this->referenceSet = &referenceSet;
-  setOwner = false;
-}
-
-template<typename MetricType,
-         typename MatType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-void RangeSearch<MetricType, MatType, TreeType>::Train(
-    MatType&& referenceSet)
+    MatType referenceSet)
 {
   // Clean up the old tree, if we built one.
   if (treeOwner && referenceTree)
@@ -338,18 +229,16 @@ void RangeSearch<MetricType, MatType, TreeType>::Train(
   }
 
   // Delete the old reference set, if we owned it.
-  if (setOwner && this->referenceSet)
+  if (naive && this->referenceSet)
     delete this->referenceSet;
 
   if (!naive)
   {
     this->referenceSet = &referenceTree->Dataset();
-    setOwner = false;
   }
   else
   {
     this->referenceSet = new MatType(std::move(referenceSet));
-    setOwner = true;
   }
 }
 
@@ -367,13 +256,10 @@ void RangeSearch<MetricType, MatType, TreeType>::Train(
 
   if (treeOwner && referenceTree)
     delete this->referenceTree;
-  if (setOwner && referenceSet)
-    delete this->referenceSet;
 
   this->referenceTree = referenceTree;
   this->referenceSet = &referenceTree->Dataset();
   treeOwner = false;
-  setOwner = false;
 }
 
 template<typename MetricType,
@@ -759,10 +645,8 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
   {
     if (Archive::is_loading::value)
     {
-      if (setOwner && referenceSet)
+      if (referenceSet)
         delete referenceSet;
-
-      setOwner = true;
     }
 
     ar & BOOST_SERIALIZATION_NVP(referenceSet);
@@ -798,12 +682,8 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
     // necessary.
     if (Archive::is_loading::value)
     {
-      if (setOwner && referenceSet)
-        delete referenceSet;
-
       referenceSet = &referenceTree->Dataset();
       metric = referenceTree->Metric(); // Get the metric from the tree.
-      setOwner = false;
     }
   }
 }

@@ -1,5 +1,31 @@
-### mlpack ?.?.?
-###### ????-??-??
+### mlpack 3.0.1
+###### 2018-05-10
+  * Fix intermittently failing tests (#1387).
+
+  * Add big-batch SGD (BBSGD) optimizer in
+    src/mlpack/core/optimizers/bigbatch_sgd/ (#1131).
+
+  * Fix simple compiler warnings (#1380, #1373).
+
+  * Simplify NeighborSearch constructor and Train() overloads (#1378).
+
+  * Add warning for OpenMP setting differences (#1358/#1382).  When mlpack is
+    compiled with OpenMP but another application is not (or vice versa), a
+    compilation warning will now be issued.
+
+  * Restructured loss functions in src/mlpack/methods/ann/ (#1365).
+
+  * Add environments for reinforcement learning tests (#1368, #1370, #1329).
+
+  * Allow single outputs for multiple timestep inputs for recurrent neural
+    networks (#1348).
+
+  * Add He and LeCun normal initializations for neural networks (#1342).
+    Neural networks: add He and LeCun normal initializations (#1342), add FReLU
+    and SELU activation functions (#1346, #1341), add alpha-dropout (#1349).
+
+### mlpack 3.0.0
+###### 2018-03-30
   * Speed and memory improvements for DBSCAN.  --single_mode can now be used for
     situations where previously RAM usage was too high.
 
@@ -7,6 +33,26 @@
 
   * Add automatically generated Python bindings.  These have the same interface
     as the command-line programs.
+
+  * Add deep learning infrastructure in src/mlpack/methods/ann/.
+
+  * Add reinforcement learning infrastructure in
+    src/mlpack/methods/reinforcement_learning/.
+
+  * Add optimizers: AdaGrad, CMAES, CNE, FrankeWolfe, GradientDescent,
+    GridSearch, IQN, Katyusha, LineSearch, ParallelSGD, SARAH, SCD, SGDR,
+    SMORMS3, SPALeRA, SVRG.
+
+  * Add hyperparameter tuning infrastructure and cross-validation infrastructure
+    in src/mlpack/core/cv/ and src/mlpack/core/hpt/.
+
+  * Fix bug in mean shift.
+
+  * Add random forests (see src/mlpack/methods/random_forest).
+
+  * Numerous other bugfixes and testing improvements.
+
+  * Add randomized Krylov SVD and Block Krylov SVD.
 
 ### mlpack 2.2.5
 ###### 2017-08-25

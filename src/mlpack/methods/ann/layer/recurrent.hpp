@@ -14,8 +14,8 @@
 #define MLPACK_METHODS_ANN_LAYER_RECURRENT_HPP
 
 #include <mlpack/core.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
 
+#include "../visitor/delete_visitor.hpp"
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
 #include "../visitor/weight_size_visitor.hpp"
@@ -50,13 +50,16 @@ class Recurrent
    */
   Recurrent();
 
+  //! Destructor to release allocated memory.
+  ~Recurrent();
+
   /**
    * Create the Recurrent object using the specified modules.
    *
    * @param start The start module.
-   * @param start The input module.
-   * @param start The feedback module.
-   * @param start The transfer module.
+   * @param input The input module.
+   * @param feedback The feedback module.
+   * @param transfer The transfer module.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
   template<typename StartModuleType,
@@ -145,6 +148,9 @@ class Recurrent
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
+  //! Locally-stored delete visitor module object.
+  DeleteVisitor deleteVisitor;
+
   //! Locally-stored start module.
   LayerTypes<CustomLayers...> startModule;
 
@@ -171,6 +177,10 @@ class Recurrent
 
   //! If true dropout and scaling is disabled, see notes above.
   bool deterministic;
+
+  //! To know whether this object allocated memory. We need this to know
+  //! whether we should delete the metric member variable in the destructor.
+  bool ownsLayer;
 
   //! Locally-stored weight object.
   OutputDataType parameters;

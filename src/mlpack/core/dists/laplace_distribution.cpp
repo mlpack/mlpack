@@ -74,8 +74,9 @@ void LaplaceDistribution::Estimate(const arma::mat& observations,
     mean += observations.col(i) * probabilities(i);
   mean /= arma::accu(probabilities);
 
-  // This the same formula as the previous function, but here we are multiplying
-  // by the probability that the point is actually from this distribution.
+  // This is the same formula as the previous function, but here we are
+  // multiplying by the probability that the point is actually from
+  // this distribution.
   scale = 0.0;
   for (size_t i = 0; i < observations.n_cols; ++i)
     scale += probabilities(i) * arma::norm(observations.col(i) - mean, 2);

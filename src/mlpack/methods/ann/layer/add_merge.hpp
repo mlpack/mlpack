@@ -42,8 +42,15 @@ template<
 class AddMerge
 {
  public:
-  //! Create the AddMerge object.
-  AddMerge();
+  /**
+   * Create the AddMerge object using the specified parameters.
+   *
+   * @param model Expose all the network modules.
+   */
+  AddMerge(const bool model = false);
+
+  //! Destructor to release allocated memory.
+  ~AddMerge();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -107,6 +114,17 @@ class AddMerge
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Return the model modules.
+  std::vector<LayerTypes<CustomLayers...> >& Model()
+  {
+    if (model)
+    {
+      return network;
+    }
+
+    return empty;
+  }
+
   /**
    * Serialize the layer.
    */
@@ -114,7 +132,17 @@ class AddMerge
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
+  //! Parameter which indicates if the modules should be exposed.
+  bool model;
+
+  //! We need this to know whether we should delete the layer in the destructor.
+  bool ownsLayer;
+
+  //! Locally-stored network modules.
   std::vector<LayerTypes<CustomLayers...> > network;
+
+  //! Locally-stored empty list of modules.
+  std::vector<LayerTypes<CustomLayers...> > empty;
 
   //! Locally-stored delete visitor module object.
   DeleteVisitor deleteVisitor;

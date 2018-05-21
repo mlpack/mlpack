@@ -119,6 +119,41 @@ BOOST_AUTO_TEST_CASE(MeanShiftInPlaceTest)
 }
 
 /**
+ * Ensure that force_convergence is used by testing that the
+ * force_convergence flag makes a difference in the program.
+ */
+BOOST_AUTO_TEST_CASE(MeanShiftForceConvergenceTest)
+{
+  arma::mat x;
+  if (!data::Load("iris_test.csv", x))
+    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+
+  // Input random data points.
+  SetInputParam("input", x);
+  // Set a very small max_iterations.
+  SetInputParam("max_iterations", (int) 1);
+
+  mlpackMain();
+
+  const int numCentroids1 = CLI::GetParam<arma::mat>("centroid").n_cols;
+
+  ResetSettings();
+
+  // Input same random data points.
+  SetInputParam("input", std::move(x));
+  // Set the same small max_iterations.
+  SetInputParam("max_iterations", (int) 1);
+  // Set the force_convergence flag on.
+  SetInputParam("force_convergence", true);
+
+  mlpackMain();
+
+  const int numCentroids2 = CLI::GetParam<arma::mat>("centroid").n_cols;
+  // Resulting number of centroids should be different.
+  BOOST_REQUIRE_NE(numCentroids1, numCentroids2);
+}
+
+/**
  * Ensure that radius is used by testing that the radius
  * makes a difference in the program.
  */

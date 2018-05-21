@@ -46,35 +46,6 @@ typedef RASearch<> KRANN;
  */
 typedef RASearch<FurthestNeighborSort> KRAFN;
 
-/**
- * @deprecated
- * The AllkRANN class is the all-k-rank-approximate-nearest-neighbors method.  It
- * returns L2 distances for each of the k rank-approximate nearest-neighbors.
- *
- * The approximation is controlled with two parameters (see allkrann_main.cpp)
- * which can be specified at search time. So the tree building is done only once
- * while the search can be performed multiple times with different approximation
- * levels.
- *
- * This typedef will be removed in mlpack 3.0.0; use the KRANN typedef instead.
- */
-typedef RASearch<> AllkRANN;
-
-/**
- * @deprecated
- * The AllkRAFN class is the all-k-rank-approximate-farthest-neighbors method.
- * It returns L2 distances for each of the k rank-approximate
- * farthest-neighbors.
- *
- * The approximation is controlled with two parameters (see allkrann_main.cpp)
- * which can be specified at search time. So the tree building is done only once
- * while the search can be performed multiple times with different approximation
- * levels.
- *
- * This typedef will be removed in mlpack 3.0.0; use the KRANN typedef instead.
- */
-typedef RASearch<> AllkRAFN;
-
 } // namespace neighbor
 } // namespace mlpack
 

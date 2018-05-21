@@ -96,7 +96,7 @@ void BiSearchVisitor<SortPolicy>::SearchLeaf(RAType* ra) const
     // Unmap the query points.
     distances.set_size(distancesOut.n_rows, distancesOut.n_cols);
     neighbors.set_size(neighborsOut.n_rows, neighborsOut.n_cols);
-    for (size_t i = 0; i < neighborsOut.n_cols; ++i)
+    for (size_t i = 0; i < oldFromNewQueries.size(); ++i)
     {
       neighbors.col(oldFromNewQueries[i]) = neighborsOut.col(i);
       distances.col(oldFromNewQueries[i]) = distancesOut.col(i);
@@ -222,7 +222,7 @@ bool& SingleModeVisitor::operator()(RAType* ra) const
 {
   if (ra)
     return ra->SingleMode();
-  throw std::runtime_error("no rank-approximate model is intialized");
+  throw std::runtime_error("no rank-approximate model is initialized");
 }
 
 //! Exposes the referenceSet of the given RAType.
@@ -231,7 +231,7 @@ const arma::mat& ReferenceSetVisitor::operator()(RAType* ra) const
 {
   if (ra)
     return ra->ReferenceSet();
-  throw std::runtime_error("no rank-approximate model is intialized");
+  throw std::runtime_error("no rank-approximate model is initialized");
 }
 
 //! Exposes the Naive() method of the given RAType instance.
@@ -240,7 +240,7 @@ bool& NaiveVisitor::operator()(RAType* ra) const
 {
   if (ra)
     return ra->Naive();
-  throw std::runtime_error("no rank-approximate search model is intialized");
+  throw std::runtime_error("no rank-approximate search model is initialized");
 }
 
 //! For cleaning memory
