@@ -69,7 +69,7 @@ void Constraints::TargetNeighbors(arma::Mat<size_t>& outputMatrix)
     knn.Search(k, neighbors, distances);
 
     // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem;j++)
+    for (size_t j = 0; j < neighbors.n_elem; j++)
       neighbors(j) = indexSame.at(neighbors(j));
 
     // Store target neihbors.
@@ -96,7 +96,7 @@ void Constraints::Impostors(arma::Mat<size_t>& outputMatrix)
   arma::uvec indexSame;
   arma::uvec indexDiff;
 
-  for( size_t i = 0; i < uniqueLabels.n_cols; i++)
+  for ( size_t i = 0; i < uniqueLabels.n_cols; i++)
   {
     // Calculate impostors.
     indexSame = arma::find(labels == uniqueLabels[i]);
@@ -142,7 +142,7 @@ void Constraints::Triplets(arma::Mat<size_t>& outputMatrix)
   }
 }
 
-} // namespace constraints
+} // namespace lmnn
 } // namespace mlpack
 
 #endif

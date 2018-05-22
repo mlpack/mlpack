@@ -55,12 +55,11 @@ void LMNNFunction<MetricType>::Shuffle()
 
   dataset = std::move(newDataset);
   labels = std::move(newLabels);
-}
 
-//! Calculate outer product of vector.
-arma::mat OuterProduct(arma::vec& diff)
-{
-  return diff * arma::trans(diff);
+  // Re-calculate target neighbors as indices changed.
+  // TODO: Devise a better way of doing this.
+  Constraints constraint(dataset, labels, k);
+  constraint.TargetNeighbors(targetNeighbors);
 }
 
 //! Evaluate cost over whole dataset.
@@ -150,18 +149,22 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates,
 
 //! Compute gradient over whole dataset.
 template<typename MetricType>
+template<typename GradType>
 void LMNNFunction<MetricType>::Gradient(const arma::mat& coordinates,
-                                        arma::mat& gradient)
+                                        GradType& gradient)
 {
   gradient.zeros(dataset.n_rows, dataset.n_rows);
+
+  arma::mat cij = arma::zeros(dataset.n_rows, dataset.n_rows);
+  arma::mat cil = arma::zeros(dataset.n_rows, dataset.n_rows);
 
   for (size_t i = 0; i < dataset.n_rows; i++)
   {
     for (size_t j = 0; j < k ; j++)
     {
       // Calculate gradient due to target neighbors.
-      arma::vec cij = dataset.col(i) - dataset.col(targetNeighbors(j, i));
-      gradient += (1 - regularization) * OuterProduct(cij);
+      arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+      cij += diff * arma::trans(diff);
     }
 
     for (size_t j = 0; j < k ; j++)
@@ -169,18 +172,21 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& coordinates,
       for (size_t l = 0; l < k ; l++)
       {
         // Calculate gradient due to triplets.
-        arma::vec cij = dataset.col(i) - dataset.col(targetNeighbors(j, i));
-        arma::vec cil = dataset.col(i) - dataset.col(impostors(l, i));
+        arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+        cil += diff * arma::trans(diff);
 
-        gradient += regularization * (OuterProduct(cij) - OuterProduct(cil));
+        diff = dataset.col(i) - dataset.col(impostors(l, i));
+        cil -= diff * arma::trans(diff);
       }
     }
   }
+
+  gradient = (1 - regularization) * cij + regularization * cil;
 }
 
 //! Compute gradient over a batch of data points.
 template<typename MetricType>
-template <typename GradType>
+template<typename GradType>
 void LMNNFunction<MetricType>::Gradient(const arma::mat& coordinates,
                                         const size_t begin,
                                         GradType& gradient,
@@ -188,13 +194,16 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& coordinates,
 {
   gradient.zeros(dataset.n_rows, dataset.n_rows);
 
+  arma::mat cij = arma::zeros(dataset.n_rows, dataset.n_rows);
+  arma::mat cil = arma::zeros(dataset.n_rows, dataset.n_rows);
+
   for (size_t i = begin; i < begin + batchSize; i++)
   {
     for (size_t j = 0; j < k ; j++)
     {
       // Calculate gradient due to target neighbors.
-      arma::vec cij = dataset.col(i) - dataset.col(targetNeighbors(j, i));
-      gradient += (1 - regularization) * OuterProduct(cij);
+      arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+      cij += diff * arma::trans(diff);
     }
 
     for (size_t j = 0; j < k ; j++)
@@ -202,13 +211,144 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& coordinates,
       for (size_t l = 0; l < k ; l++)
       {
         // Calculate gradient due to triplets.
-        arma::vec cij = dataset.col(i) - dataset.col(targetNeighbors(j, i));
-        arma::vec cil = dataset.col(i) - dataset.col(impostors(l, i));
+        arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+        cil += diff * arma::trans(diff);
 
-        gradient += regularization * (OuterProduct(cij) - OuterProduct(cil));
+        diff = dataset.col(i) - dataset.col(impostors(l, i));
+        cil -= diff * arma::trans(diff);
       }
     }
   }
+
+  gradient = (1 - regularization) * cij + regularization * cil;
+}
+
+//! Compute cost & gradient over whole dataset.
+template<typename MetricType>
+template<typename GradType>
+void LMNNFunction<MetricType>::EvaluateWithGradient(
+                                  const arma::mat& coordinates,
+                                  GradType& gradient)
+{
+  double cost = 0;
+
+  // Apply metric over dataset.
+  transformedDataset = coordinates * dataset;
+
+  // Calculate impostors.
+  Constraints constraint(transformedDataset, labels, k);
+  constraint.Impostors(impostors);
+
+  gradient.zeros(dataset.n_rows, dataset.n_rows);
+
+  arma::mat cij = arma::zeros(dataset.n_rows, dataset.n_rows);
+  arma::mat cil = arma::zeros(dataset.n_rows, dataset.n_rows);
+
+  for (size_t i = 0; i < dataset.n_rows; i++)
+  {
+    for (size_t j = 0; j < k ; j++)
+    {
+      // Calculate cost due to distance between target neighbors & data point.
+      double eval = metric.Evaluate(transformedDataset.col(i),
+                          transformedDataset.col(targetNeighbors(j, i)));
+      cost += (1 - regularization) * eval;
+
+      // Calculate gradient due to target neighbors.
+      arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+      cij += diff * arma::trans(diff);
+    }
+
+    for (size_t j = 0; j < k ; j++)
+    {
+      for (size_t l = 0; l < k ; l++)
+      {
+        // Calculate cost due to {data point, target neighbors, impostors}
+        // triplets.
+         double eval = metric.Evaluate(transformedDataset.col(i),
+                          transformedDataset.col(targetNeighbors(j, i))) -
+                       metric.Evaluate(transformedDataset.col(i),
+                          transformedDataset.col(impostors(l, i)));
+
+        cost += regularization * std::max(0.0, 1 + eval);
+
+        // Calculate gradient due to triplets.
+        arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+        cil += diff * arma::trans(diff);
+
+        diff = dataset.col(i) - dataset.col(impostors(l, i));
+        cil -= diff * arma::trans(diff);
+      }
+    }
+  }
+
+  gradient = (1 - regularization) * cij + regularization * cil;
+
+  return cost;
+}
+
+//! Compute cost & gradient over a batch of data points.
+template<typename MetricType>
+template<typename GradType>
+void LMNNFunction<MetricType>::EvaluateWithGradient(
+                                  const arma::mat& coordinates,
+                                  const size_t begin,
+                                  GradType& gradient,
+                                  const size_t batchSize)
+{
+  double cost = 0;
+
+  // Apply metric over dataset.
+  transformedDataset = coordinates * dataset;
+
+  // Calculate impostors.
+  Constraints constraint(transformedDataset, labels, k);
+  constraint.Impostors(impostors);
+
+  gradient.zeros(dataset.n_rows, dataset.n_rows);
+
+  arma::mat cij = arma::zeros(dataset.n_rows, dataset.n_rows);
+  arma::mat cil = arma::zeros(dataset.n_rows, dataset.n_rows);
+
+  for (size_t i = begin; i < begin + batchSize; i++)
+  {
+    for (size_t j = 0; j < k ; j++)
+    {
+      // Calculate cost due to distance between target neighbors & data point.
+      double eval = metric.Evaluate(transformedDataset.col(i),
+                          transformedDataset.col(targetNeighbors(j, i)));
+      cost += (1 - regularization) * eval;
+
+      // Calculate gradient due to target neighbors.
+      arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+      cij += diff * arma::trans(diff);
+    }
+
+    for (size_t j = 0; j < k ; j++)
+    {
+      for (size_t l = 0; l < k ; l++)
+      {
+        // Calculate cost due to {data point, target neighbors, impostors}
+        // triplets.
+         double eval = metric.Evaluate(transformedDataset.col(i),
+                          transformedDataset.col(targetNeighbors(j, i))) -
+                       metric.Evaluate(transformedDataset.col(i),
+                          transformedDataset.col(impostors(l, i)));
+
+        cost += regularization * std::max(0.0, 1 + eval);
+
+        // Calculate gradient due to triplets.
+        arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+        cil += diff * arma::trans(diff);
+
+        diff = dataset.col(i) - dataset.col(impostors(l, i));
+        cil -= diff * arma::trans(diff);
+      }
+    }
+  }
+
+  gradient = (1 - regularization) * cij + regularization * cil;
+
+  return cost;
 }
 
 } // namespace lmnn
@@ -220,18 +360,15 @@ namespace optimization{
 inline void Projection(arma::mat& iterate)
 {
   // Projection.
-  arma::cx_vec eigval;
-  arma::cx_mat eigvec;
+  arma::vec eigval;
+  arma::mat eigvec;
 
-  arma::eig_gen(eigval, eigvec, iterate);
+  arma::eig_sym(eigval, eigvec, iterate);
 
-  arma::vec realEigVal = arma::real(eigval);
-  arma::mat realEigVec = arma::real(eigvec);
-
-  arma::uvec ind = arma::find(realEigVal > 0);
-  arma::mat diagEigVal = arma::diagmat(realEigVal);
-  iterate = realEigVec.cols(ind) * diagEigVal.submat(ind, ind) *
-      arma::trans(realEigVec.cols(ind));
+  arma::uvec ind = arma::find(eigval > 0);
+  arma::mat diagEigVal = arma::diagmat(eigval);
+  iterate = eigvec.cols(ind) * diagEigVal.submat(ind, ind) *
+      arma::trans(eigvec.cols(ind));
 }
 
 // Template specialization for the SGD optimizer.
