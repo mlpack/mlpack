@@ -111,7 +111,7 @@ class LMNNFunction
    * @param gradient Matrix to store the calculated gradient in.
    */
   template<typename GradType>
-  void EvaluateWithGradient(const arma::mat& coordinates,
+  double EvaluateWithGradient(const arma::mat& coordinates,
                             GradType& gradient);
 
   /**
@@ -130,7 +130,7 @@ class LMNNFunction
    * @param gradient Matrix to store the calculated gradient in.
    */
   template<typename GradType>
-  void EvaluateWithGradient(const arma::mat& covariance,
+  double EvaluateWithGradient(const arma::mat& covariance,
                             const size_t begin,
                             GradType& gradient,
                             const size_t batchSize = 1);

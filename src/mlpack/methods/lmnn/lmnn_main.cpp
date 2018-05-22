@@ -225,5 +225,5 @@ static void mlpackMain()
 
   // Save the output.
   if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(distance * data);
+    CLI::GetParam<arma::mat>("output") = std::move(distance);
 }

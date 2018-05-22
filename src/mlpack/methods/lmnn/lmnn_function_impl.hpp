@@ -226,7 +226,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& coordinates,
 //! Compute cost & gradient over whole dataset.
 template<typename MetricType>
 template<typename GradType>
-void LMNNFunction<MetricType>::EvaluateWithGradient(
+double LMNNFunction<MetricType>::EvaluateWithGradient(
                                   const arma::mat& coordinates,
                                   GradType& gradient)
 {
@@ -289,7 +289,7 @@ void LMNNFunction<MetricType>::EvaluateWithGradient(
 //! Compute cost & gradient over a batch of data points.
 template<typename MetricType>
 template<typename GradType>
-void LMNNFunction<MetricType>::EvaluateWithGradient(
+double LMNNFunction<MetricType>::EvaluateWithGradient(
                                   const arma::mat& coordinates,
                                   const size_t begin,
                                   GradType& gradient,
