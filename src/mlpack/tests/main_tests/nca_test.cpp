@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(NCALBFGSTest)
   arma::mat x;
   x.randu(3, 100);
   arma::Row<size_t> labels;
-  labels.zeros(3);
+  labels.zeros(100);
 
   // Input random data points.
   SetInputParam("input", std::move(x));
