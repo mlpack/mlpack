@@ -36,9 +36,10 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
   // Initialize the initial learning point.
   initialPoint.eye(dataset.n_rows, dataset.n_rows);
 
-  // Initialize target neighbors.
+  // Initialize target neighbors & impostors.
   Constraints constraint(dataset, labels, k);
   constraint.TargetNeighbors(targetNeighbors);
+  constraint.Impostors(impostors);
 }
 
 //! Shuffle the dataset.
@@ -62,10 +63,30 @@ void LMNNFunction<MetricType>::Shuffle()
   constraint.TargetNeighbors(targetNeighbors);
 }
 
+inline void Projection(arma::mat& iterate)
+{
+  // Projection.
+  arma::vec eigval;
+  arma::mat eigvec;
+
+  arma::eig_sym(eigval, eigvec, iterate);
+
+  arma::uvec ind = arma::find(eigval > 0);
+  arma::mat diagEigVal = arma::diagmat(eigval);
+  iterate = eigvec.cols(ind) * diagEigVal.submat(ind, ind) *
+      arma::trans(eigvec.cols(ind));
+}
+
 //! Evaluate cost over whole dataset.
 template<typename MetricType>
 double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates)
 {
+  // Hack
+  arma::mat& iterate = const_cast<arma::mat&>(coordinates);
+  // Apply projection.
+  if (arma::accu(iterate == initialPoint) != initialPoint.n_cols)
+    Projection(iterate);
+
   double cost = 0;
 
   // Apply metric over dataset.
@@ -110,6 +131,12 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates,
                                           const size_t begin,
                                           const size_t batchSize)
 {
+  // Hack
+  arma::mat& iterate = const_cast<arma::mat&>(coordinates);
+  // Apply projection.
+  if (arma::accu(iterate == initialPoint) != initialPoint.n_cols)
+    Projection(iterate);
+
   double cost = 0;
 
   // Apply metric over dataset.
@@ -150,7 +177,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates,
 //! Compute gradient over whole dataset.
 template<typename MetricType>
 template<typename GradType>
-void LMNNFunction<MetricType>::Gradient(const arma::mat& coordinates,
+void LMNNFunction<MetricType>::Gradient(const arma::mat& /* coordinates */,
                                         GradType& gradient)
 {
   gradient.zeros(dataset.n_rows, dataset.n_rows);
@@ -158,7 +185,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& coordinates,
   arma::mat cij = arma::zeros(dataset.n_rows, dataset.n_rows);
   arma::mat cil = arma::zeros(dataset.n_rows, dataset.n_rows);
 
-  for (size_t i = 0; i < dataset.n_rows; i++)
+  for (size_t i = 0; i < dataset.n_cols; i++)
   {
     for (size_t j = 0; j < k ; j++)
     {
@@ -187,7 +214,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& coordinates,
 //! Compute gradient over a batch of data points.
 template<typename MetricType>
 template<typename GradType>
-void LMNNFunction<MetricType>::Gradient(const arma::mat& coordinates,
+void LMNNFunction<MetricType>::Gradient(const arma::mat& /* coordinates */,
                                         const size_t begin,
                                         GradType& gradient,
                                         const size_t batchSize)
@@ -230,6 +257,12 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
                                   const arma::mat& coordinates,
                                   GradType& gradient)
 {
+  // Hack
+  arma::mat& iterate = const_cast<arma::mat&>(coordinates);
+  // Apply projection.
+  if (arma::accu(iterate == initialPoint) != initialPoint.n_cols)
+    Projection(iterate);
+
   double cost = 0;
 
   // Apply metric over dataset.
@@ -244,7 +277,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   arma::mat cij = arma::zeros(dataset.n_rows, dataset.n_rows);
   arma::mat cil = arma::zeros(dataset.n_rows, dataset.n_rows);
 
-  for (size_t i = 0; i < dataset.n_rows; i++)
+  for (size_t i = 0; i < dataset.n_cols; i++)
   {
     for (size_t j = 0; j < k ; j++)
     {
@@ -295,6 +328,12 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
                                   GradType& gradient,
                                   const size_t batchSize)
 {
+  // Hack
+  arma::mat& iterate = const_cast<arma::mat&>(coordinates);
+  // Apply projection.
+  if (arma::accu(iterate == initialPoint) != initialPoint.n_cols)
+    Projection(iterate);
+
   double cost = 0;
 
   // Apply metric over dataset.
@@ -352,129 +391,6 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
 }
 
 } // namespace lmnn
-} // namespace mlpack
-
-namespace mlpack {
-namespace optimization{
-
-inline void Projection(arma::mat& iterate)
-{
-  // Projection.
-  arma::vec eigval;
-  arma::mat eigvec;
-
-  arma::eig_sym(eigval, eigvec, iterate);
-
-  arma::uvec ind = arma::find(eigval > 0);
-  arma::mat diagEigVal = arma::diagmat(eigval);
-  iterate = eigvec.cols(ind) * diagEigVal.submat(ind, ind) *
-      arma::trans(eigvec.cols(ind));
-}
-
-// Template specialization for the SGD optimizer.
-template<>
-template<typename DecomposableFunctionType>
-double StandardSGD::Optimize(
-    DecomposableFunctionType& function,
-    arma::mat& iterate)
-{
-  typedef Function<DecomposableFunctionType> FullFunctionType;
-  FullFunctionType& f(static_cast<FullFunctionType&>(function));
-
-  // Make sure we have all the methods that we need.
-  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType>();
-
-  // Find the number of functions to use.
-  const size_t numFunctions = f.NumFunctions();
-
-  // To keep track of where we are and how things are going.
-  size_t currentFunction = 0;
-  double overallObjective = 0;
-  double lastObjective = DBL_MAX;
-
-  // Initialize the update policy.
-  if (resetPolicy)
-    updatePolicy.Initialize(iterate.n_rows, iterate.n_cols);
-
-  // Now iterate!
-  arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  const size_t actualMaxIterations = (maxIterations == 0) ?
-      std::numeric_limits<size_t>::max() : maxIterations;
-  for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
-  {
-    // Is this iteration the start of a sequence?
-    if ((currentFunction % numFunctions) == 0 && i > 0)
-    {
-      // Output current objective function.
-      Log::Info << "SGD: iteration " << i << ", objective " << overallObjective
-          << "." << std::endl;
-
-      if (std::isnan(overallObjective) || std::isinf(overallObjective))
-      {
-        Log::Warn << "SGD: converged to " << overallObjective << "; terminating"
-            << " with failure.  Try a smaller step size?" << std::endl;
-        return overallObjective;
-      }
-
-      if (std::abs(lastObjective - overallObjective) < tolerance)
-      {
-        Log::Info << "SGD: minimized within tolerance " << tolerance << "; "
-            << "terminating optimization." << std::endl;
-        return overallObjective;
-      }
-
-      // Reset the counter variables.
-      lastObjective = overallObjective;
-      overallObjective = 0;
-      currentFunction = 0;
-
-      if (shuffle) // Determine order of visitation.
-        f.Shuffle();
-    }
-
-    // Find the effective batch size; we have to take the minimum of three
-    // things:
-    // - the batch size can't be larger than the user-specified batch size;
-    // - the batch size can't be larger than the number of iterations left
-    //       before actualMaxIterations is hit;
-    // - the batch size can't be larger than the number of functions left.
-    const size_t effectiveBatchSize = std::min(
-        std::min(batchSize, actualMaxIterations - i),
-        numFunctions - currentFunction);
-
-    // Technically we are computing the objective before we take the step, but
-    // for many FunctionTypes it may be much quicker to do it like this.
-    overallObjective += f.EvaluateWithGradient(iterate, currentFunction,
-        gradient, effectiveBatchSize);
-
-    // Apply projection.
-    if (!currentFunction)
-      Projection(iterate);
-
-    // Use the update policy to take a step.
-    updatePolicy.Update(iterate, stepSize, gradient);
-
-    // Now update the learning rate if requested by the user.
-    decayPolicy.Update(iterate, stepSize, gradient);
-
-    i += effectiveBatchSize;
-    currentFunction += effectiveBatchSize;
-  }
-
-  Log::Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
-      << "terminating optimization." << std::endl;
-
-  // Calculate final objective.
-  overallObjective = 0;
-  for (size_t i = 0; i < numFunctions; i += batchSize)
-  {
-    const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
-  }
-  return overallObjective;
-}
-
-} // namespace optimization
 } // namespace mlpack
 
 #endif
