@@ -177,6 +177,12 @@ static void mlpackMain()
   if (CLI::HasParam("labels"))
   {
     rawLabels = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
+
+    if (rawLabels.n_elem != data.n_cols)
+    {
+      Log::Fatal << "The number of labels (" << rawLabels.n_elem << ") must "
+          << "match the number of points (" << data.n_cols << ")!" << endl;
+    }
   }
   else
   {

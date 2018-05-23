@@ -102,6 +102,7 @@ Copyright:
   Copyright 2018, Conrad Sanderson
   Copyright 2018, Thanasis Mattas <mattasa@auth.gr>
   Copyright 2018, Shashank Shekhar <contactshashankshekhar@gmail.com>
+  Copyright 2018, Yasmine Dumouchel <yasmine.dumouchel@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.
