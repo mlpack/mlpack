@@ -43,8 +43,8 @@ class SVDIncompletePolicy
    * @param minResidue Residue required to terminate.
    * @param mit Whether to terminate only when maxIterations is reached.
    */
-  template<typename mat_type>
-  void Apply(mat_type const& /* data */,
+  template<typename MatType>
+  void Apply(MatType const& /* data */,
              const arma::sp_mat& cleanedData,
              const size_t rank,
              arma::mat& w,

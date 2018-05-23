@@ -5,7 +5,7 @@
  *
  * Collaborative filtering.
  *
- * Defines the CF class to perform collaborative filtering on the specified data
+ * Defines the CFType class to perform collaborative filtering on the specified data
  * set using alternating least squares (ALS).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -40,7 +40,7 @@ namespace cf /** Collaborative filtering. **/ {
  * extern arma::Col<size_t> users; // users seeking recommendations
  * arma::Mat<size_t> recommendations; // Recommendations
  *
- * CF<> cf(data); // Default options.
+ * CFType cf(data); // Default options.
  *
  * // Generate 10 recommendations for all users.
  * cf.GetRecommendations(10, recommendations);
@@ -57,22 +57,20 @@ namespace cf /** Collaborative filtering. **/ {
  * The user and item indices are assumed to start at 0.
  *
  * @tparam DecompositionPolicy The algorithm to use to decompose
- *     the rating matrix (a W and H matrix).  This must implement the method
- *     Apply(arma::sp_mat& data, size_t rank, arma::mat& W, arma::mat& H).
+ *     the rating matrix (a W and H matrix).
  */
-template<typename DecompositionPolicy = NMFPolicy>
-class CF
+class CFType
 {
  public:
   /**
-   * Initialize the CF object without performing any factorization.  Be sure to
+   * Initialize the CFType object without performing any factorization.  Be sure to
    * call Train() before calling GetRecommendations() or any other functions!
    */
-  CF(const size_t numUsersForSimilarity = 5,
+  CFType(const size_t numUsersForSimilarity = 5,
      const size_t rank = 0);
 
   /**
-   * Initialize the CF object using any decomposition method, immediately
+   * Initialize the CFType object using any decomposition method, immediately
    * factorizing the given data to create a model. There are parameters that can
    * be set; default values are provided for each of them. If the rank is left
    * unset (or is set to 0), a simple density-based heuristic will be used to
@@ -91,9 +89,9 @@ class CF
    * @param minResidue Residue required to terminate.
    * @param mit Whether to terminate only when maxIterations is reached.
    */
-  template<typename mat_type>
-  CF(mat_type const& data,
-     const DecompositionPolicy& decomposition = DecompositionPolicy(),
+  template<typename MatType, typename DecompositionPolicy = NMFPolicy>
+  CFType(MatType const& data,
+     DecompositionPolicy& decomposition = DecompositionPolicy(),
      const size_t numUsersForSimilarity = 5,
      const size_t rank = 0,
      const size_t maxIterations = 1000,
@@ -101,31 +99,8 @@ class CF
      const bool mit = false);
 
   /**
-   * Function to call the apply function of the decomposition policy.
-   *
-   * @param data Data matrix: dense matrix (coordinate lists) 
-   *    or sparse matrix(cleaned).
-   * @param cleanedData item user table in form of sparse matrix.
-   * @param rank Rank parameter for matrix factorization.
-   * @param w First matrix formed after decomposition.
-   * @param h Second matrix formed after decomposition.
-   * @param maxIterations Maximum number of iterations.
-   * @param minResidue Residue required to terminate.
-   * @param mit Whether to terminate only when maxIterations is reached.
-   */
-  template<typename mat_type>
-  void Apply(mat_type const& data,
-             const arma::sp_mat& cleanedData,
-             const size_t rank,
-             arma::mat& w,
-             arma::mat& h,
-             const size_t maxIterations,
-             const double minResidue,
-             const bool mit);
-
-  /**
-   * Train the CF model (i.e. factorize the input matrix) using the parameters
-   * that have already been set for the model (specifically, the rank
+   * Train the CFType model (i.e. factorize the input matrix) using the
+   * parameters that have already been set for the model (specifically, the rank
    * parameter), and optionally, using the given DecompositionPolicy.
    *
    * @param data Input dataset; dense matrix (coordinate lists).
@@ -134,16 +109,17 @@ class CF
    * @param minResidue Residue required to terminate.
    * @param mit Whether to terminate only when maxIterations is reached.
    */
+  template<typename DecompositionPolicy>
   void Train(const arma::mat& data,
-             DecompositionPolicy decomposition = DecompositionPolicy(),
+             DecompositionPolicy& decomposition,
              const size_t maxIterations = 1000,
              const double minResidue = 1e-5,
              const bool mit = false);
 
   /**
-   * Train the CF model (i.e. factorize the input matrix) using the parameters
-   * that have already been set for the model (specifically, the rank
-   * parameter), and optionally, using the given DecompositionPolicy.
+   * Train the CFType model (i.e. factorize the input matrix) using the
+   * parameters that have already been set for the model (specifically, the
+   * rank parameter), and optionally, using the given DecompositionPolicy.
    *
    * @param data Input dataset; sparse matrix (user item table).
    * @param decomposition Instantiated DecompositionPolicy object.
@@ -151,8 +127,9 @@ class CF
    * @param minResidue Residue required to terminate.
    * @param mit Whether to terminate only when maxIterations is reached.
    */
+  template<typename DecompositionPolicy>
   void Train(const arma::sp_mat& data,
-             DecompositionPolicy decomposition = DecompositionPolicy(),
+             DecompositionPolicy& decomposition,
              const size_t maxIterations = 1000,
              const double minResidue = 1e-5,
              const bool mit = false);
@@ -162,7 +139,7 @@ class CF
   {
     if (num < 1)
     {
-      Log::Warn << "CF::NumUsersForSimilarity(): invalid value (< 1) "
+      Log::Warn << "CFType::NumUsersForSimilarity(): invalid value (< 1) "
           "ignored." << std::endl;
       return;
     }
@@ -241,14 +218,12 @@ class CF
                arma::vec& predictions) const;
 
   /**
-   * Serialize the CF model to the given archive.
+   * Serialize the CFType model to the given archive.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  //! Decomposition method used to perform collaborative filtering.
-  DecompositionPolicy decomposition;
   //! Number of users for similarity.
   size_t numUsersForSimilarity;
   //! Rank used for matrix factorization.
@@ -270,7 +245,7 @@ class CF
       return c1.first > c2.first;
     };
   };
-}; // class CF
+}; // class CFType
 
 } // namespace cf
 } // namespace mlpack

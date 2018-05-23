@@ -105,8 +105,8 @@ PARAM_DOUBLE_IN("min_residue", "Residue required to terminate the factorization"
     " (lower values generally mean better fits).", "r", 1e-5);
 
 // Load/save a model.
-PARAM_MODEL_IN(CF<>, "input_model", "Trained CF model to load.", "m");
-PARAM_MODEL_OUT(CF<>, "output_model", "Output for trained CF model.", "M");
+PARAM_MODEL_IN(CFType, "input_model", "Trained CF model to load.", "m");
+PARAM_MODEL_OUT(CFType, "output_model", "Output for trained CF model.", "M");
 
 // Query settings.
 PARAM_UMATRIX_IN("query", "List of query users for which recommendations should"
@@ -120,8 +120,7 @@ PARAM_INT_IN("recommendations", "Number of recommendations to generate for each"
 
 PARAM_INT_IN("seed", "Set the random seed (0 uses std::time(NULL)).", "s", 0);
 
-template<typename DecompositionPolicy>
-void ComputeRecommendations(CF<DecompositionPolicy>* cf,
+void ComputeRecommendations(CFType* cf,
                             const size_t numRecs,
                             arma::Mat<size_t>& recommendations)
 {
@@ -147,8 +146,7 @@ void ComputeRecommendations(CF<DecompositionPolicy>* cf,
   }
 }
 
-template<typename DecompositionPolicy>
-void ComputeRMSE(CF<DecompositionPolicy>* cf)
+void ComputeRMSE(CFType* cf)
 {
   // Now, compute each test point.
   arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
@@ -175,8 +173,7 @@ void ComputeRMSE(CF<DecompositionPolicy>* cf)
   Log::Info << "RMSE is " << rmse << "." << endl;
 }
 
-template<typename DecompositionPolicy>
-void PerformAction(CF<DecompositionPolicy>* c)
+void PerformAction(CFType* c)
 {
   if (CLI::HasParam("query") || CLI::HasParam("all_user_recommendations"))
   {
@@ -194,21 +191,19 @@ void PerformAction(CF<DecompositionPolicy>* c)
   if (CLI::HasParam("test"))
     ComputeRMSE(c);
 
-  CLI::GetParam<CF<DecompositionPolicy>*>("output_model") = c;
+  CLI::GetParam<CFType*>("output_model") = c;
 }
 
 template<typename DecompositionPolicy>
 void PerformAction(arma::mat& dataset,
                    const size_t rank,
                    const size_t maxIterations,
-                   const double minResidue)
+                   const double minResidue,
+                   DecompositionPolicy& decomposition)
 {
-  // Parameters for generating the CF object.
-  const DecompositionPolicy& decomposition = DecompositionPolicy();
   const size_t neighborhood = (size_t) CLI::GetParam<int>("neighborhood");
-  CF<DecompositionPolicy>* c = new CF<DecompositionPolicy>(dataset,
-          decomposition, neighborhood, rank, maxIterations, minResidue,
-          CLI::HasParam("iteration_only_termination"));
+  CFType* c = new CFType(dataset, decomposition, neighborhood, rank,
+      maxIterations, minResidue, CLI::HasParam("iteration_only_termination"));
 
   PerformAction(c);
 }
@@ -222,33 +217,37 @@ void AssembleFactorizerType(const std::string& algorithm,
 
   if (algorithm == "NMF")
   {
-    PerformAction<NMFPolicy>(dataset, rank, maxIterations, minResidue);
+    NMFPolicy decomposition;
+    PerformAction(dataset, rank, maxIterations, minResidue, decomposition);
   }
   else if (algorithm == "BatchSVD")
   {
-    PerformAction<BatchSVDPolicy>(dataset, rank, maxIterations, minResidue);
+    BatchSVDPolicy decomposition;
+    PerformAction(dataset, rank, maxIterations, minResidue, decomposition);
   }
   else if (algorithm == "SVDIncompleteIncremental")
   {
-    PerformAction<SVDIncompletePolicy>(dataset, rank, maxIterations,
-                                       minResidue);
+    SVDIncompletePolicy decomposition;
+    PerformAction(dataset, rank, maxIterations, minResidue, decomposition);
   }
   else if (algorithm == "SVDCompleteIncremental")
   {
-    PerformAction<SVDCompletePolicy>(dataset, rank, maxIterations, minResidue);
+    SVDCompletePolicy decomposition;
+    PerformAction(dataset, rank, maxIterations, minResidue, decomposition);
   }
   else if (algorithm == "RegSVD")
   {
     ReportIgnoredParam("min_residue", "Regularized SVD terminates only "
         "when max_iterations is reached");
-    PerformAction<RegSVDPolicy>(dataset, rank, maxIterations, minResidue);
+    RegSVDPolicy decomposition;
+    PerformAction(dataset, rank, maxIterations, minResidue, decomposition);
   }
   else if (algorithm == "RandSVD")
   {
     ReportIgnoredParam("min_residue", "Randomized SVD terminates only "
         "when max_iterations is reached");
-    PerformAction<RandomizedSVDPolicy>(dataset, rank, maxIterations,
-                                       minResidue);
+    RandomizedSVDPolicy decomposition;
+    PerformAction(dataset, rank, maxIterations, minResidue, decomposition);
   }
 }
 
@@ -323,7 +322,7 @@ static void mlpackMain()
         "test" }, true);
 
     // Load an input model.
-    CF<>* c = std::move(CLI::GetParam<CF<>*>("input_model"));
+    CFType* c = std::move(CLI::GetParam<CFType*>("input_model"));
 
     PerformAction(c);
   }
