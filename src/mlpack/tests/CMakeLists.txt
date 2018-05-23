@@ -145,6 +145,7 @@ add_executable(mlpack_test
   main_tests/lsh_test.cpp
   main_tests/mean_shift_test.cpp
   main_tests/nbc_test.cpp
+  main_tests/nca_test.cpp
   main_tests/nmf_test.cpp
   main_tests/pca_test.cpp
   main_tests/perceptron_test.cpp

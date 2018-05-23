@@ -246,6 +246,7 @@
  *   - Conrad Sanderson
  *   - Thanasis Mattas <mattasa@auth.gr>
  *   - Shashank Shekhar <contactshashankshekhar@gmail.com>
+ *   - Yasmine Dumouchel <yasmine.dumouchel@gmail.com>
  */
 
 // First, include all of the prerequisites.
