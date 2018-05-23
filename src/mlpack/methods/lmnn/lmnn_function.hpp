@@ -181,23 +181,6 @@ class LMNNFunction
 } // namespace lmnn
 } // namespace mlpack
 
-namespace mlpack {
-namespace optimization {
-
-  /**
-   * Template specialization for the SGD. Needed because of projection of
-   * iterate on cone of positive semidefinite matrices step.
-   */
-  template <>
-  template <typename DecomposableFunctionType>
-  inline double StandardSGD::Optimize(
-      DecomposableFunctionType& function,
-      arma::mat& parameters);
-
-} // namespace optimization
-} // namespace mlpack
-
-
 #include "lmnn_function_impl.hpp"
 
 #endif
