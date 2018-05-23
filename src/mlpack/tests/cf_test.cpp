@@ -584,7 +584,8 @@ void EmptyConstructorTrain(bool cleanData = true)
 
   for (size_t i = 0; i < combinations.n_cols; ++i)
   {
-    const double prediction = cf.Predict(combinations(0, i), combinations(1, i));
+    const double prediction = cf.Predict(combinations(0, i),
+        combinations(1, i));
     BOOST_REQUIRE_CLOSE(prediction, predictions[i], 1e-8);
   }
 }
