@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(NCALabelSizeTest)
 
   // Check that an error is thrown.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::logic_error);
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
