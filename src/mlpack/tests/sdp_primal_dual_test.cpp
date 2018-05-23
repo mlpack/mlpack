@@ -122,7 +122,7 @@ class UndirectedGraph
 static inline SDP<arma::sp_mat>
 ConstructMaxCutSDPFromGraph(const UndirectedGraph& g)
 {
-  SDP<arma::sp_mat> sdp(g.NumVertices(), g.NumVertices(), 0);
+  SDP<arma::sp_mat> sdp(g.NumVertices(), g.NumVertices(), 0, 0, 0);
   g.Laplacian(sdp.C());
   sdp.C() *= -1;
   for (size_t i = 0; i < g.NumVertices(); i++)
@@ -137,7 +137,7 @@ ConstructMaxCutSDPFromGraph(const UndirectedGraph& g)
 static inline SDP<arma::mat>
 ConstructLovaszThetaSDPFromGraph(const UndirectedGraph& g)
 {
-  SDP<arma::mat> sdp(g.NumVertices(), g.NumEdges() + 1, 0);
+  SDP<arma::mat> sdp(g.NumVertices(), g.NumEdges() + 1, 0, 0, 0);
   sdp.C().ones();
   sdp.C() *= -1.;
   sdp.SparseA()[0].eye(g.NumVertices(), g.NumVertices());
@@ -159,7 +159,7 @@ ConstructMaxCutSDPFromLaplacian(const std::string& laplacianFilename)
   data::Load(laplacianFilename, laplacian, true, false);
   if (laplacian.n_rows != laplacian.n_cols)
     Log::Fatal << "laplacian not square" << std::endl;
-  SDP<arma::sp_mat> sdp(laplacian.n_rows, laplacian.n_rows, 0);
+  SDP<arma::sp_mat> sdp(laplacian.n_rows, laplacian.n_rows, 0, 0, 0);
   sdp.C() = -arma::sp_mat(laplacian);
   for (size_t i = 0; i < laplacian.n_rows; i++)
   {
@@ -330,7 +330,7 @@ ConstructLogChebychevApproxSdp(const arma::mat& A, const arma::vec& b)
   cblock(1, 2) = cblock(2, 1) = 1.;
   const arma::sp_mat C = RepeatBlockDiag(cblock, p);
 
-  SDP<arma::sp_mat> sdp(C.n_rows, k + 1, 0);
+  SDP<arma::sp_mat> sdp(C.n_rows, k + 1, 0, 0, 0);
   sdp.C() = C;
   sdp.SparseB().zeros();
   sdp.SparseB()[0] = -1;
@@ -501,7 +501,7 @@ BOOST_AUTO_TEST_CASE(CorrelationCoeffToySdp)
 
   std::vector<arma::sp_mat> ais({A0, A1, A2, A3, A4, A5, A6});
 
-  SDP<arma::sp_mat> sdp(7, 7 + 4 + 4 + 4 + 3 + 2 + 1, 0);
+  SDP<arma::sp_mat> sdp(7, 7 + 4 + 4 + 4 + 3 + 2 + 1, 0, 0, 0);
 
   for (size_t j = 0; j < 3; j++)
   {

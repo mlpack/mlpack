@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(Johnson844LovaszThetaSDP)
 
   CreateLovaszThetaInitialPoint(edges, coordinates);
 
-  LRSDP<SDP<arma::mat>> lovasz(edges.n_cols + 1, 0, coordinates);
+  LRSDP<SDP<arma::mat>> lovasz(edges.n_cols + 1, 0, 0, 0, coordinates);
 
   SetupLovaszTheta(edges, lovasz);
 
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(ErdosRenyiRandomGraphMaxCutSDP)
     coordinates(i, i % coordinates.n_cols) = 1.;
   }
 
-  LRSDP<SDP<arma::sp_mat>> maxcut(laplacian.n_rows, 0, coordinates);
+  LRSDP<SDP<arma::sp_mat>> maxcut(laplacian.n_rows, 0, 0, 0, coordinates);
   maxcut.SDP().C() = laplacian;
   maxcut.SDP().C() *= -1.; // need to minimize the negative
   maxcut.SDP().SparseB().ones(laplacian.n_rows);
@@ -243,7 +243,7 @@ BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
   arma::mat coordinates;
   coordinates.eye(m + n, ceil(r));
 
-  LRSDP<SDP<arma::sp_mat>> sensing(0, p, coordinates, 15);
+  LRSDP<SDP<arma::sp_mat>> sensing(0, 0, p, 0, coordinates, 15);
   sensing.SDP().C().eye(m + n, m + n);
   sensing.SDP().DenseB() = 2. * b;
 

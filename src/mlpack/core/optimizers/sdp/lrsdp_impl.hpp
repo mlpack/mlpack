@@ -20,10 +20,16 @@ namespace optimization {
 
 template <typename SDPType>
 LRSDP<SDPType>::LRSDP(const size_t numSparseConstraints,
+                      const size_t numSparseInequalityConstraints,
                       const size_t numDenseConstraints,
+                      const size_t numDenseInequalityConstraints,
                       const arma::mat& initialPoint,
                       const size_t maxIterations) :
-    function(numSparseConstraints, numDenseConstraints, initialPoint),
+    function(numSparseConstraints,
+             numSparseInequalityConstraints,
+             numDenseConstraints,
+             numDenseInequalityConstraints,
+             initialPoint),
     maxIterations(maxIterations)
 { }
 

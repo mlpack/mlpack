@@ -20,25 +20,35 @@ template <typename ObjectiveMatrixType>
 SDP<ObjectiveMatrixType>::SDP() :
     c(),
     sparseA(),
+    sparseInequalityA(),
     sparseB(),
     denseA(),
+    denseInequalityA(),
     denseB()
 { /* Nothing to do. */ }
 
 template <typename ObjectiveMatrixType>
 SDP<ObjectiveMatrixType>::SDP(const size_t n,
                               const size_t numSparseConstraints,
-                              const size_t numDenseConstraints) :
+                              const size_t numSparseInequalityConstraints,
+                              const size_t numDenseConstraints,
+                              const size_t numDenseInequalityConstraints) :
     c(n, n),
     sparseA(numSparseConstraints),
+    sparseInequalityA(numSparseInequalityConstraints),
     sparseB(numSparseConstraints),
     denseA(numDenseConstraints),
+    denseInequalityA(numDenseInequalityConstraints),
     denseB(numDenseConstraints)
 {
   for (size_t i = 0; i < numSparseConstraints; i++)
     sparseA[i].zeros(n, n);
+  for (size_t i = 0; i < numSparseInequalityConstraints; i++)
+    sparseInequalityA[i].zeros(n, n);
   for (size_t i = 0; i < numDenseConstraints; i++)
     denseA[i].zeros(n, n);
+  for (size_t i = 0; i < numDenseInequalityConstraints; i++)
+    denseInequalityA[i].zeros(n, n);
 }
 
 template <typename ObjectiveMatrixType>
@@ -51,17 +61,32 @@ bool SDP<ObjectiveMatrixType>::HasLinearlyIndependentConstraints() const
   if (A.n_rows > n2bar)
     return false;
 
-  for (size_t i = 0; i < NumSparseConstraints(); i++)
+  for (size_t i = 0; i < SparseA().n_elem; i++)
   {
     arma::vec sa;
     math::Svec(arma::mat(SparseA()[i]), sa);
     A.row(i) = sa.t();
   }
-  for (size_t i = 0; i < NumDenseConstraints(); i++)
+
+  for (size_t i = 0; i < SparseInequalityA().n_elem; i++)
+  {
+    arma::vec sa;
+    math::Svec(arma::mat(SparseInequalityA()[i]), sa);
+    A.row(SparseA().n_elem + i) = sa.t();
+  }
+
+  for (size_t i = 0; i < DenseA().n_elem; i++)
   {
     arma::vec sa;
     math::Svec(DenseA()[i], sa);
     A.row(NumSparseConstraints() + i) = sa.t();
+  }
+
+  for (size_t i = 0; i < DenseInequalityA().n_elem; i++)
+  {
+    arma::vec sa;
+    math::Svec(DenseInequalityA()[i], sa);
+    A.row(NumSparseConstraints() + DenseA().n_elem + i) = sa.t();
   }
 
   const arma::vec s = arma::svd(A);

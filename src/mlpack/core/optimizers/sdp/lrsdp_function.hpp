@@ -50,14 +50,19 @@ class LRSDPFunction
    * constraints. Note n_cols of the initialPoint specifies the rank.
    *
    * Set the A_x, B_x, and C_x  matrices for each constraint using the A_x(),
-   * B_x(), and C_x() functions, for x in {sparse, dense}.
+   * B_x(), and C_x() functions, for x in {sparse, sparse inequality,
+   * dense, dense inequality}.
    *
    * @param numSparseConstraints
+   * @param numSparseInequalityConstraints
    * @param numDenseConstraints
+   * @param numDenseInequalityConstraints
    * @param initialPoint
    */
   LRSDPFunction(const size_t numSparseConstraints,
+                const size_t numSparseInequalityConstraints,
                 const size_t numDenseConstraints,
+                const size_t numDenseInequalityConstraints,
                 const arma::mat& initialPoint);
 
   /**

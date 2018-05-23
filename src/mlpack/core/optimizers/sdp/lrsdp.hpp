@@ -37,12 +37,18 @@ class LRSDP
    * associated with this optimizer.
    *
    * @param numSparseConstraints Number of sparse constraints in the problem.
+   * @param numSparseInequalityConstraints Number of sparse inequality
+   * constraints.
    * @param numDenseConstraints Number of dense constraints in the problem.
+   * @param numDenseInequalityConstraints Number of dense inequality
+   * constraints.
    * @param initialPoint Initial point of the optimization.
    * @param maxIterations Maximum number of iterations.
    */
   LRSDP(const size_t numSparseConstraints,
+        const size_t numSparseInequalityConstraints,
         const size_t numDenseConstraints,
+        const size_t numDenseInequalityConstraints,
         const arma::mat& initialPoint,
         const size_t maxIterations = 1000);
 

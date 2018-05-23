@@ -249,18 +249,30 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
   arma::sp_mat Asparse(sdp.NumSparseConstraints(), n2bar);
   arma::sp_vec Aisparse;
 
-  for (size_t i = 0; i < sdp.NumSparseConstraints(); i++)
+  for (size_t i = 0; i < sdp.SparseA().size(); i++)
   {
     math::Svec(sdp.SparseA()[i], Aisparse);
     Asparse.row(i) = Aisparse.t();
   }
 
+  for (size_t i = sdp.SparseA().size(); i < sdp.NumSparseConstraints(); i++)
+  {
+    math::Svec(sdp.SparseInequalityA()[i], Aisparse);
+    Asparse.row(sdp.SparseInequalityA().size() + i) = Aisparse.t();
+  }
+
   arma::mat Adense(sdp.NumDenseConstraints(), n2bar);
   arma::vec Aidense;
-  for (size_t i = 0; i < sdp.NumDenseConstraints(); i++)
+  for (size_t i = 0; i < sdp.DenseA().size(); i++)
   {
     math::Svec(sdp.DenseA()[i], Aidense);
     Adense.row(i) = Aidense.t();
+  }
+
+  for (size_t i = sdp.DenseA().size(); i < sdp.NumDenseConstraints(); i++)
+  {
+    math::Svec(sdp.DenseInequalityA()[i], Aidense);
+    Adense.row(sdp.DenseInequalityA().size() + i) = Aidense.t();
   }
 
   typename private_::vectype<typename SDPType::objective_matrix_type>::type sc;
@@ -298,12 +310,44 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
     // significantly reduce the number of required iterations (and is used
     // by most practical solver implementations).
 
-    if (sdp.NumSparseConstraints())
-      rp(arma::span(0, sdp.NumSparseConstraints() - 1)) =
-        sdp.SparseB() - Asparse * sx;
-    if (sdp.NumDenseConstraints())
-      rp(arma::span(sdp.NumSparseConstraints(), sdp.NumConstraints() - 1)) =
-          sdp.DenseB() - Adense * sx;
+    if (sdp.SparseA().size())
+    {
+      rp(arma::span(0, sdp.SparseA().size() - 1)) =
+          sdp.SparseB()(arma::span(0 , sdp.SparseA().size() - 1)) -
+          Asparse.rows(0, sdp.SparseA().size() - 1) * sx;
+    }
+
+    if (sdp.SparseInequalityA().size())
+    {
+      arma::vec A = sdp.SparseB()(arma::span(sdp.SparseA().size(),
+          sdp.NumSparseConstraints() - 1)) -
+          Asparse.rows(sdp.SparseA().size(),
+          sdp.NumSparseConstraints() - 1) * sx;
+
+      A.transform( [](double val) { return (val >= 0 ? 0 : val); } );
+
+      rp(arma::span(sdp.SparseA().size(), sdp.NumSparseConstraints() - 1)) = A;
+    }
+
+    if (sdp.DenseA().size())
+    {
+      rp(arma::span(sdp.NumSparseConstraints(), sdp.NumSparseConstraints() +
+          sdp.DenseA().size() - 1)) =
+          sdp.DenseB()(arma::span(0 , sdp.DenseA().size() - 1)) -
+          Adense.rows(0, sdp.DenseA().size() - 1) * sx;
+    }
+
+    if (sdp.DenseInequalityA().size())
+    {
+      arma::vec A = sdp.DenseB()(arma::span(sdp.DenseA().size(),
+          sdp.NumDenseConstraints() - 1)) -
+          Adense.rows(sdp.DenseA().size(),
+          sdp.NumDenseConstraints() - 1) * sx;
+
+      A.transform( [](double val) { return (val >= 0 ? 0 : val); } );
+
+      rp(arma::span(sdp.DenseA().size(), sdp.NumDenseConstraints() - 1)) = A;
+    }
 
     // Rd = C - Z - smat A^T y
     rd = sc - sz - Asparse.t() * ysparse - Adense.t() * ydense;
@@ -312,16 +356,32 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
 
     // We compute E^(-1) F A^T by solving Lyapunov equations.
     // See (2.16).
-    for (size_t i = 0; i < sdp.NumSparseConstraints(); i++)
+    for (size_t i = 0; i < sdp.SparseA().size(); i++)
     {
       SolveLyapunov(Gk, Z, X * sdp.SparseA()[i] + sdp.SparseA()[i] * X);
       math::Svec(Gk, gk);
       Einv_F_AsparseT.col(i) = gk;
     }
 
-    for (size_t i = 0; i < sdp.NumDenseConstraints(); i++)
+    for (size_t i = sdp.SparseA().size(); i < sdp.NumSparseConstraints(); i++)
+    {
+      SolveLyapunov(Gk, Z, X * sdp.SparseInequalityA()[i] +
+          sdp.SparseInequalityA()[i] * X);
+      math::Svec(Gk, gk);
+      Einv_F_AsparseT.col(i) = gk;
+    }
+
+    for (size_t i = 0; i < sdp.DenseA().size(); i++)
     {
       SolveLyapunov(Gk, Z, X * sdp.DenseA()[i] + sdp.DenseA()[i] * X);
+      math::Svec(Gk, gk);
+      Einv_F_AdenseT.col(i) = gk;
+    }
+
+    for (size_t i = sdp.DenseA().size(); i < sdp.NumDenseConstraints(); i++)
+    {
+      SolveLyapunov(Gk, Z, X * sdp.DenseInequalityA()[i] +
+          sdp.DenseInequalityA()[i] * X);
       math::Svec(Gk, gk);
       Einv_F_AdenseT.col(i) = gk;
     }
@@ -451,10 +511,14 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
     // TODO(stephentu): this dual check is quite expensive,
     // maybe make it optional?
     DualCheck = Z - sdp.C();
-    for (size_t i = 0; i < sdp.NumSparseConstraints(); i++)
+    for (size_t i = 0; i < sdp.SparseA().size(); i++)
       DualCheck += ysparse(i) * sdp.SparseA()[i];
-    for (size_t i = 0; i < sdp.NumDenseConstraints(); i++)
+    for (size_t i = sdp.SparseA().size(); i < sdp.NumSparseConstraints(); i++)
+      DualCheck += ysparse(i) * sdp.SparseInequalityA()[i];
+    for (size_t i = 0; i < sdp.DenseA().size(); i++)
       DualCheck += ydense(i) * sdp.DenseA()[i];
+    for (size_t i = sdp.DenseA().size(); i < sdp.NumDenseConstraints(); i++)
+      DualCheck += ydense(i) * sdp.DenseInequalityA()[i];
     const double dualInfeas = arma::norm(DualCheck, "fro");
 
     Log::Debug
