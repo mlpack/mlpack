@@ -146,8 +146,8 @@ BOOST_AUTO_TEST_CASE(NCANormalizationTest)
   // Set parameters and set normalize to true.
   SetInputParam("input", std::move(inputData));
   SetInputParam("labels", std::move(labels));
-  SetInputParam("normalize", true);
   SetInputParam("linear_scan", true);
+  SetInputParam("tolerance", 0.01);
 
   mlpackMain();
 
@@ -168,7 +168,9 @@ BOOST_AUTO_TEST_CASE(NCANormalizationTest)
   // Use the same input but set normalize to false.
   SetInputParam("input", std::move(inputData2));
   SetInputParam("labels", std::move(labels2));
-  SetInputParam("normalize", false);
+  SetInputParam("normalize", true);
+  SetInputParam("linear_scan", true);
+  SetInputParam("tolerance", 0.01);
 
   mlpackMain();
 
@@ -190,6 +192,7 @@ BOOST_AUTO_TEST_CASE(NCADifferentStepSizeTest)
   SetInputParam("input", std::move(x));
   SetInputParam("labels", std::move(labels));
   SetInputParam("step_size", (double) 1.2);
+  SetInputParam("linear_scan", true);
 
   mlpackMain();
 
@@ -208,6 +211,7 @@ BOOST_AUTO_TEST_CASE(NCADifferentStepSizeTest)
   SetInputParam("input", std::move(y));
   SetInputParam("labels", std::move(labels2));
   SetInputParam("step_size", (double) 20.5);
+  SetInputParam("linear_scan", true);
 
   mlpackMain();
 
@@ -266,7 +270,8 @@ BOOST_AUTO_TEST_CASE(NCADifferentBatchSizeTest)
   SetInputParam("input", std::move(x));
   SetInputParam("labels", std::move(labels));
   SetInputParam("optimizer", std::string("sgd"));
-  SetInputParam("batch_size", (int) 25);
+  SetInputParam("batch_size", (int) 2);
+  SetInputParam("linear_scan", true);
 
   mlpackMain();
 
@@ -285,7 +290,8 @@ BOOST_AUTO_TEST_CASE(NCADifferentBatchSizeTest)
   SetInputParam("input", std::move(y));
   SetInputParam("labels", std::move(labels2));
   SetInputParam("optimizer", std::string("sgd"));
-  SetInputParam("batch_size", (int) 50);
+  SetInputParam("batch_size", (int) 3);
+  SetInputParam("linear_scan", true);
 
   mlpackMain();
 
