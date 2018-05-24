@@ -35,10 +35,9 @@ class UserMeanNormalization
   void Normalize(arma::mat& data)
   {
     const size_t userNum = arma::max(data.row(0)) + 1;
-    // Should we use mean of all user means if a user has no rating?
     userMean = arma::vec(userNum, arma::fill::zeros);
     // Number of ratings for each user.
-    arma::vec ratingNum(userNum, arma::fill::zeros);
+    arma::Row<size_t> ratingNum(userNum, arma::fill::zeros);
 
     // Sum ratings for each user.
     data.each_col([&](arma::vec& datapoint) {
@@ -50,8 +49,9 @@ class UserMeanNormalization
 
     // Calculate user mean and subtract user mean from ratings.
     // Set user mean to 0 if the user has no rating.
+    // Should we use mean of all user means if a user has no rating?
     for (size_t i = 0; i < userNum; i++)
-      if ((size_t) ratingNum(i) != 0)
+      if (ratingNum(i) != 0)
         userMean(i) /= ratingNum(i);
     data.each_col([&](arma::vec& datapoint) {
       const size_t user = (size_t) datapoint(0);

@@ -46,7 +46,10 @@ class OverallMeanNormalization
   void Normalize(arma::sp_mat& cleanedData)
   {
     // Caculate mean of all non zero ratings.
-    mean = arma::accu(cleanedData) / cleanedData.n_nonzero;
+    if (cleanedData.n_nonzero != 0)
+      mean = arma::accu(cleanedData) / cleanedData.n_nonzero;
+    else
+      mean = 0;
     // Subtract mean from all non zero ratings.
     arma::sp_mat::iterator it = cleanedData.begin();
     arma::sp_mat::iterator it_end = cleanedData.end();

@@ -35,6 +35,14 @@ class ZScoreNormalization
   {
     mean = arma::mean(data.row(2));
     stddev = arma::stddev(data.row(2));
+
+    if (std::fabs(stddev) < 1e-14)
+    {
+      Log::Fatal << "Standard deviation of all existing ratings is 0! "
+          << "This may indicate that all existing ratings are the same." 
+          << std::endl;
+    }
+
     data.row(2) = (data.row(2) - mean) / stddev;
   }
 
@@ -49,6 +57,13 @@ class ZScoreNormalization
     arma::vec ratings = arma::nonzeros(cleanedData);
     mean = arma::mean(ratings);
     stddev = arma::stddev(ratings);
+
+    if (std::fabs(stddev) < 1e-14)
+    {
+      Log::Fatal << "Standard deviation of all existing ratings is 0! "
+          << "This may indicate that all existing ratings are the same." 
+          << std::endl;
+    }
 
     // Subtract mean from existing rating and divide it by stddev.
     arma::sp_mat::iterator it = cleanedData.begin();
@@ -68,7 +83,7 @@ class ZScoreNormalization
                      const int /* item */,
                      const double rating) const
   {
-    return (rating + mean) * stddev;
+    return rating * stddev + mean;
   }
 
   /**
@@ -80,7 +95,7 @@ class ZScoreNormalization
   void Denormalize(const arma::Mat<size_t>& /* combinations */,
                    arma::vec& predictions) const
   {
-    predictions = (predictions + mean) * stddev;
+    predictions = predictions * stddev + mean;
   }
 
   /**

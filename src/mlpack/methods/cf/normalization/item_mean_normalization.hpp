@@ -35,10 +35,9 @@ class ItemMeanNormalization
   void Normalize(arma::mat& data)
   {
     const size_t itemNum = arma::max(data.row(1)) + 1;
-    // Should we use mean of all item means if an item has no rating?
     itemMean = arma::vec(itemNum, arma::fill::zeros);
     // Number of ratings for each item.
-    arma::vec ratingNum(itemNum, arma::fill::zeros);
+    arma::Row<sizt_t> ratingNum(itemNum, arma::fill:zeros);
 
     // Sum ratings for each item.
     data.each_col([&](arma::vec& datapoint) {
@@ -50,8 +49,9 @@ class ItemMeanNormalization
 
     // Calculate item mean and subtract item mean from ratings.
     // Set item mean to 0 if the item has no rating.
+    // Should we use mean of all item means if an item has no rating?
     for (size_t i = 0; i < itemNum; i++)
-      if ((size_t) ratingNum(i) != 0)
+      if (ratingNum(i) != 0)
         itemMean(i) /= ratingNum(i);
     data.each_col([&](arma::vec& datapoint) {
       const size_t item = (size_t) datapoint(1);
