@@ -39,7 +39,7 @@ class ZScoreNormalization
     if (std::fabs(stddev) < 1e-14)
     {
       Log::Fatal << "Standard deviation of all existing ratings is 0! "
-          << "This may indicate that all existing ratings are the same." 
+          << "This may indicate that all existing ratings are the same."
           << std::endl;
     }
 
@@ -61,7 +61,7 @@ class ZScoreNormalization
     if (std::fabs(stddev) < 1e-14)
     {
       Log::Fatal << "Standard deviation of all existing ratings is 0! "
-          << "This may indicate that all existing ratings are the same." 
+          << "This may indicate that all existing ratings are the same."
           << std::endl;
     }
 
