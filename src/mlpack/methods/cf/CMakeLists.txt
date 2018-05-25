@@ -8,7 +8,7 @@ set(SOURCES
   svd_wrapper_impl.hpp
 )
 
-add_subdirectory(interpolation_polices)
+add_subdirectory(interpolation_policies)
 
 # Add directory name to sources.
 set(DIR_SRCS)
