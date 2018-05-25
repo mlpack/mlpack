@@ -1,14 +1,8 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  cf.hpp
-  cf_impl.hpp
-  cf.cpp
-  svd_wrapper.hpp
-  svd_wrapper_impl.hpp
+  average_interpolation.hpp
 )
-
-add_subdirectory(interpolation_polices)
 
 # Add directory name to sources.
 set(DIR_SRCS)
@@ -18,6 +12,3 @@ endforeach()
 # Append sources (with directory name) to list of all mlpack sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-add_cli_executable(cf)
-add_python_binding(cf)
