@@ -1,16 +1,16 @@
 /**
- * @file average_interpolation.hpp
+ * @file similarity_interpolation.hpp
  * @author Wenhao Huang
  *
- * Interoplation weights are identical and sum up to one.
+ * Interpolation weights are based on similarities and weights sum up to one.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_CF_AVERAGE_INTERPOLATION_HPP
-#define MLPACK_METHODS_CF_AVERAGE_INTERPOLATION_HPP
+#ifndef MLPACK_METHODS_CF_SIMILARITY_INTERPOLATION_HPP
+#define MLPACK_METHODS_CF_SIMILARITY_INTERPOLATION_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -18,17 +18,18 @@ namespace mlpack {
 namespace cf {
 
 /**
- * This class performs average interpolation to generate interpolation weights
- * for neighborhood-based collaborative filtering.
+ * With SimilarityInterpolation, interpolation weights are based on
+ * similarities between query user and its neighbors. All interpolation
+ * weights sum up to one.
  */
-class AverageInterpolation
+class SimilarityInterpolation
 {
  public:
-  // Empty constructor.
-  AverageInterpolation() { }
+  // Em[ty onstructor.
+  SimilarityInterpolation() { }
 
  /**
-  * Interoplation weights are identical and sum up to one.
+  * Interpolation weights are computed as normalized similarities.
   *
   * @param weights resulting interpolation weights.
   * @param similarities similarites between query user and neighbors.
@@ -40,8 +41,12 @@ class AverageInterpolation
       Log::Fatal << "Require: similarities.n_elem > 0. There should be at least "
           << "one neighbor!" << std::endl;
     }
-    weights.resize(similarities.n_elem);
-    weights.fill(1.0 / similarities.n_elem);
+
+    double similaritiesSum = arma::sum(similarites);
+    if (std::fabs(similaritiesSum) < 1e-14)
+      weights = arma::vec(similarities.n_elem, arma::fill::zeros);
+    else
+      weights = similarities / similaritiesSum;
   }
 };
 

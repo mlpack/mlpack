@@ -2,6 +2,7 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   average_interpolation.hpp
+  similarity_interpolation.hpp
 )
 
 # Add directory name to sources.
