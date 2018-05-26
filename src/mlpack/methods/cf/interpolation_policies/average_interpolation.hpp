@@ -37,8 +37,8 @@ class AverageInterpolation
   {
     if (similarities.n_elem == 0)
     {
-      Log::Fatal << "Require: similarities.n_elem > 0. There should be at least "
-          << "one neighbor!" << std::endl;
+      Log::Fatal << "Require: similarities.n_elem > 0. There should be at "
+          << "least one neighbor!" << std::endl;
     }
     weights.resize(similarities.n_elem);
     weights.fill(1.0 / similarities.n_elem);
