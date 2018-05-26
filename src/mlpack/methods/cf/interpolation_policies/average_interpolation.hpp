@@ -30,18 +30,17 @@ class AverageInterpolation
 
  /**
   * @param weights resulting interpolation weights.
-  * @param distances distances from NeighborSearch::Search().
+  * @param similarities similarites between query user and neighbors.
   */
-  void GetWeights(arma::vec& weights, const arma::vec& distances) const
+  void GetWeights(arma::vec& weights, const arma::vec& similarities) const
   {
-    weights.resize(distances.n_elem);
-    if (distances.n_elem == 0)
+    weights.resize(similarities.n_elem);
+    if (similarities.n_elem == 0)
     {
-      Log::Fatal << "Require: distances.n_elem > 0. There should be at least "
-          << "one neighbor!"
-          << std::endl;
+      Log::Fatal << "Require: similarities.n_elem > 0. There should be at least "
+          << "one neighbor!" << std::endl;
     }
-    weights.fill(1.0 / distances.n_elem);
+    weights.fill(1.0 / similarities.n_elem);
   }
 };
 
