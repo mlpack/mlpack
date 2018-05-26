@@ -2,8 +2,8 @@
  * @file randomized_svd_method.hpp
  * @author Haritha Nair
  *
- * Implementation of the randomized svd method for use in the Principal
- * Components Analysis method.
+ * Implementation of the randomized svd method for use in
+ * Collaborative Fitlering.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -21,7 +21,8 @@ namespace mlpack {
 namespace cf {
 
 /**
- * Implementation of the randomized SVD policy.
+ * Implementation of the Randomized SVD policy to act as a wrapper when
+ * accessing Randomized SVD from within CFType.
  */
 class RandomizedSVDPolicy
 {
@@ -57,7 +58,7 @@ class RandomizedSVDPolicy
    * @param mit Whether to terminate only when maxIterations is reached.
    */
   template<typename MatType>
-  void Apply(MatType const& /* data */,
+  void Apply(const MatType& /* data */,
              const arma::sp_mat& cleanedData,
              const size_t rank,
              arma::mat& w,
@@ -69,7 +70,7 @@ class RandomizedSVDPolicy
     arma::vec sigma;
 
     // Do singular value decomposition using the randomized SVD algorithm.
-    svd::RandomizedSVD rsvd(rank+2, maxIterations);
+    svd::RandomizedSVD rsvd(iteratedPower, maxIterations);
     rsvd.Apply(cleanedData, w, sigma, h, rank);
 
     // Sigma matrix is multiplied to w.

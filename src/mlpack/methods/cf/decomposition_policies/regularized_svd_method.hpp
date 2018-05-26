@@ -21,7 +21,8 @@ namespace mlpack {
 namespace cf {
 
 /**
- * Implementation of the regularized SVD policy.
+ * Implementation of the Regularized SVD policy to act as a wrapper when
+ * accessing Regularized SVD from within CFType.
  */
 class RegSVDPolicy
 {

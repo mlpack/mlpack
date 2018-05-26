@@ -90,13 +90,13 @@ class CFType
    * @param mit Whether to terminate only when maxIterations is reached.
    */
   template<typename MatType, typename DecompositionPolicy = NMFPolicy>
-  CFType(MatType const& data,
-     DecompositionPolicy& decomposition = DecompositionPolicy(),
-     const size_t numUsersForSimilarity = 5,
-     const size_t rank = 0,
-     const size_t maxIterations = 1000,
-     const double minResidue = 1e-5,
-     const bool mit = false);
+  CFType(const MatType& data,
+         DecompositionPolicy& decomposition = DecompositionPolicy(),
+         const size_t numUsersForSimilarity = 5,
+         const size_t rank = 0,
+         const size_t maxIterations = 1000,
+         const double minResidue = 1e-5,
+         const bool mit = false);
 
   /**
    * Train the CFType model (i.e. factorize the input matrix) using the

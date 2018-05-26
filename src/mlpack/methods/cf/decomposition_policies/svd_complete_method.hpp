@@ -24,7 +24,8 @@ namespace mlpack {
 namespace cf {
 
 /**
- * Implementation of the SVD complete incremental policy
+ * Implementation of the SVD complete incremental policy to act as a wrapper
+ * when accessing SVD complete decomposition from within CFType.
  */
 class SVDCompletePolicy
 {
@@ -44,7 +45,7 @@ class SVDCompletePolicy
    * @param mit Whether to terminate only when maxIterations is reached.
    */
   template<typename MatType>
-  void Apply(MatType const& /* data */,
+  void Apply(const MatType& /* data */,
              const arma::sp_mat& cleanedData,
              const size_t rank,
              arma::mat& w,
@@ -57,7 +58,8 @@ class SVDCompletePolicy
     {
       amf::MaxIterationTermination iter(maxIterations);
 
-      // Do singular value decomposition using complete incremental method.
+      // Do singular value decomposition using complete incremental method
+      // using cleaned data in form of sparse matrix.
       amf::AMF<amf::MaxIterationTermination, amf::RandomInitialization,
           amf::SVDCompleteIncrementalLearning<arma::sp_mat>> svdci(iter);
 
@@ -67,7 +69,8 @@ class SVDCompletePolicy
     {
       amf::SimpleResidueTermination srt(minResidue, maxIterations);
 
-      // Do singular value decomposition using complete incremental method.
+      // Do singular value decomposition using complete incremental method
+      // using cleaned data in form of sparse matrix.
       amf::SVDCompleteIncrementalFactorizer<arma::sp_mat> svdci(srt);
 
       svdci.Apply(cleanedData, rank, w, h);

@@ -23,7 +23,8 @@ namespace mlpack {
 namespace cf {
 
 /**
- * Implementation of the batch SVD policy.
+ * Implementation of the Batch SVD policy to act as a wrapper when accessing
+ * Batch SVD from within CFType.
  */
 class BatchSVDPolicy
 {
@@ -43,7 +44,7 @@ class BatchSVDPolicy
    * @param mit Whether to terminate only when maxIterations is reached.
    */
   template<typename MatType>
-  void Apply(MatType const& /* data */,
+  void Apply(const MatType& /* data */,
              const arma::sp_mat& cleanedData,
              const size_t rank,
              arma::mat& w,

@@ -19,8 +19,8 @@
 #include <mlpack/methods/cf/decomposition_policies/batch_svd_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/randomized_svd_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp>
-#include <mlpack/methods/cf/decomposition_policies/SVD_complete_method.hpp>
-#include <mlpack/methods/cf/decomposition_policies/SVD_incomplete_method.hpp>
+#include <mlpack/methods/cf/decomposition_policies/svd_complete_method.hpp>
+#include <mlpack/methods/cf/decomposition_policies/svd_incomplete_method.hpp>
 
 using namespace mlpack;
 using namespace mlpack::cf;

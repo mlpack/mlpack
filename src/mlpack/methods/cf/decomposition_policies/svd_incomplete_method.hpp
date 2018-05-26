@@ -24,7 +24,8 @@ namespace mlpack {
 namespace cf {
 
 /**
- * Implementation of the SVD incomplete incremental policy.
+ * Implementation of the SVD incomplete incremental to act as a wrapper when
+ * accessing SVD incomplete incremental from within CFType.
  */
 class SVDIncompletePolicy
 {
@@ -44,7 +45,7 @@ class SVDIncompletePolicy
    * @param mit Whether to terminate only when maxIterations is reached.
    */
   template<typename MatType>
-  void Apply(MatType const& /* data */,
+  void Apply(const MatType& /* data */,
              const arma::sp_mat& cleanedData,
              const size_t rank,
              arma::mat& w,
@@ -67,7 +68,8 @@ class SVDIncompletePolicy
     {
       amf::SimpleResidueTermination srt(minResidue, maxIterations);
 
-      // Do singular value decomposition using incomplete incremental method.
+      // Do singular value decomposition using incomplete incremental method
+      // using cleaned data in form of sparse matrix.
       amf::SVDIncompleteIncrementalFactorizer<arma::sp_mat> svdici(srt);
 
       svdici.Apply(cleanedData, rank, w, h);

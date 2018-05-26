@@ -148,13 +148,13 @@ class RandomizedSVD
    * @param rank Rank of the approximation.
    * @param rowMean Centered mean value matrix.
    */
-  template<typename mat_type>
-  void Apply(mat_type const& data,
+  template<typename MatType>
+  void Apply(const MatType& data,
              arma::mat& u,
              arma::vec& s,
              arma::mat& v,
              const size_t rank,
-             mat_type rowMean)
+             MatType rowMean)
   {
     if (iteratedPower == 0)
       iteratedPower = rank + 2;

@@ -16,8 +16,8 @@
 #include <mlpack/methods/cf/decomposition_policies/batch_svd_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/randomized_svd_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp>
-#include <mlpack/methods/cf/decomposition_policies/SVD_complete_method.hpp>
-#include <mlpack/methods/cf/decomposition_policies/SVD_incomplete_method.hpp>
+#include <mlpack/methods/cf/decomposition_policies/svd_complete_method.hpp>
+#include <mlpack/methods/cf/decomposition_policies/svd_incomplete_method.hpp>
 
 #include <iostream>
 
@@ -57,7 +57,7 @@ void GetRecommendationsAllUsers(bool cleanData = true)
     arma::sp_mat cleanedData;
     CFType::CleanData(dataset, cleanedData);
 
-    dataset = cleanData;
+    dataset = cleanedData;
   }
 
   CFType c(dataset, decomposition);
@@ -103,7 +103,7 @@ void GetRecommendationsQueriedUser(bool cleanData = true)
     arma::sp_mat cleanedData;
     CFType::CleanData(dataset, cleanedData);
 
-    dataset = cleanData;
+    dataset = cleanedData;
   }
 
   CFType c(dataset, decomposition);
@@ -169,7 +169,7 @@ void RecommendationAccuracy(bool cleanData = true)
     arma::sp_mat cleanedData;
     CFType::CleanData(dataset, cleanedData);
 
-    dataset = cleanData;
+    dataset = cleanedData;
   }
 
   CFType c(dataset, decomposition);
@@ -269,7 +269,7 @@ void CFPredict(bool cleanData = true)
     arma::sp_mat cleanedData;
     CFType::CleanData(dataset, cleanedData);
 
-    dataset = cleanData;
+    dataset = cleanedData;
   }
 
   CFType c(dataset, decomposition);
@@ -342,7 +342,7 @@ void BatchPredict(bool cleanData = true)
     arma::sp_mat cleanedData;
     CFType::CleanData(dataset, cleanedData);
 
-    dataset = cleanData;
+    dataset = cleanedData;
   }
 
   CFType c(dataset, decomposition);
@@ -566,7 +566,7 @@ void EmptyConstructorTrain(bool cleanData = true)
     arma::sp_mat cleanedData;
     CFType::CleanData(dataset, cleanedData);
 
-    dataset = cleanData;
+    dataset = cleanedData;
   }
 
   CFType cf(dataset, decomposition);
@@ -584,8 +584,7 @@ void EmptyConstructorTrain(bool cleanData = true)
 
   for (size_t i = 0; i < combinations.n_cols; ++i)
   {
-    const double prediction = cf.Predict(combinations(0, i),
-        combinations(1, i));
+    const double prediction = cf.Predict(combinations(0, i), combinations(1, i));
     BOOST_REQUIRE_CLOSE(prediction, predictions[i], 1e-8);
   }
 }
@@ -684,7 +683,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersRandSVDTest)
  */
 BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersRegSVDTest)
 {
-  GetRecommendationsAllUsers<RegSVDPolicy>();
+  GetRecommendationsAllUsers<RegSVDPolicy>(false);
 }
 
 /**
@@ -739,7 +738,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserRandSVDTest)
  */
 BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserRegSVDTest)
 {
-  GetRecommendationsQueriedUser<RegSVDPolicy>();
+  GetRecommendationsQueriedUser<RegSVDPolicy>(false);
 }
 
 /**
@@ -793,7 +792,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyRandSVDTest)
  */
 BOOST_AUTO_TEST_CASE(RecommendationAccuracyRegSVDTest)
 {
-  RecommendationAccuracy<RegSVDPolicy>();
+  RecommendationAccuracy<RegSVDPolicy>(false);
 }
 
 /**
@@ -841,7 +840,7 @@ BOOST_AUTO_TEST_CASE(CFPredictRandSVDTest)
 // Make sure that Predict() is returning reasonable results for regularized SVD.
 BOOST_AUTO_TEST_CASE(CFPredictRegSVDTest)
 {
-  CFPredict<RegSVDPolicy>();
+  CFPredict<RegSVDPolicy>(false);
 }
 
 // Make sure that Predict() is returning reasonable results for batch SVD.
@@ -883,7 +882,7 @@ BOOST_AUTO_TEST_CASE(CFBatchPredictRandSVDTest)
 // Compare batch Predict() and individual Predict() for regularized SVD.
 BOOST_AUTO_TEST_CASE(CFBatchPredictRegSVDTest)
 {
-  BatchPredict<RegSVDPolicy>();
+  BatchPredict<RegSVDPolicy>(false);
 }
 
 // Compare batch Predict() and individual Predict() for batch SVD.
@@ -981,7 +980,7 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTrainRandSVDTest)
  */
 BOOST_AUTO_TEST_CASE(EmptyConstructorTrainRegSVDTest)
 {
-  EmptyConstructorTrain<RegSVDPolicy>();
+  EmptyConstructorTrain<RegSVDPolicy>(false);
 }
 
 /**

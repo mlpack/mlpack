@@ -5,8 +5,8 @@ set(SOURCES
   nmf_method.hpp
   randomized_svd_method.hpp
   regularized_svd_method.hpp
-  SVD_complete_method.hpp
-  SVD_incomplete_method.hpp
+  svd_complete_method.hpp
+  svd_incomplete_method.hpp
 )
 
 # Add directory name to sources.

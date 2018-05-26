@@ -2,8 +2,7 @@
  * @file nmf_method.hpp
  * @author Haritha Nair
  *
- * Implementation of the exact svd method for use in the Principal Components
- * Analysis method.
+ * Implementation of the exact svd method for use in Collaborative Filtering.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -24,7 +23,8 @@ namespace mlpack {
 namespace cf {
 
 /**
- * Implementation of the NMF policy.
+ * Implementation of the NMF policy to act as a wrapper when accessing
+ * NMF from within CFType.
  */
 class NMFPolicy
 {
@@ -43,7 +43,7 @@ class NMFPolicy
    * @param mit Whether to terminate only when maxIterations is reached.
    */
   template<typename MatType>
-  void Apply(MatType const& /* data */,
+  void Apply(const MatType& /* data */,
              const arma::sp_mat& cleanedData,
              const size_t rank,
              arma::mat& w,
@@ -56,7 +56,7 @@ class NMFPolicy
     {
       amf::MaxIterationTermination iter(maxIterations);
 
-      // Do singular value decomposition using the batch SVD algorithm.
+      // Do singular value decomposition using the NMF algorithm.
       amf::AMF<amf::MaxIterationTermination, amf::RandomInitialization,
           amf::NMFALSUpdate> nmf(iter);
       nmf.Apply(cleanedData, rank, w, h);
@@ -65,7 +65,7 @@ class NMFPolicy
     {
       amf::SimpleResidueTermination srt(minResidue, maxIterations);
 
-      // Do singular value decomposition using the batch SVD algorithm.
+      // Do singular value decomposition using the NMF algorithm.
       amf::NMFALSFactorizer nmf(srt);
       nmf.Apply(cleanedData, rank, w, h);
     }

@@ -26,7 +26,7 @@ namespace cf {
  * Construct the CF object using an instantiated decomposition policy.
  */
 template<typename MatType, typename DecompositionPolicy>
-CFType::CFType(MatType const& data,
+CFType::CFType(const MatType& data,
                DecompositionPolicy& decomposition,
                const size_t numUsersForSimilarity,
                const size_t rank,
@@ -110,7 +110,7 @@ void CFType::Train(const arma::sp_mat& data,
   // data matrices.
   Timer::Start("cf_factorization");
   decomposition.Apply(data, cleanedData, rank, w,
-                      h, maxIterations, minResidue, mit);
+      h, maxIterations, minResidue, mit);
   Timer::Stop("cf_factorization");
 }
 
