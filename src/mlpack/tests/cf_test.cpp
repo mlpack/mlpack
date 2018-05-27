@@ -373,88 +373,23 @@ void BatchPredict(bool cleanData = true)
  * Make sure we can train an already-trained model and it works okay.
  */
 template<typename DecompositionPolicy>
-void Train()
+void Train(bool cleanData = true)
 {
   DecompositionPolicy decomposition;
-  // Generate random data.
-  arma::sp_mat randomData;
-  randomData.sprandu(100, 100, 0.3);
-  CFType c(randomData, decomposition);
-
-  // Now retrain with data we know about.
-  arma::mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
-
-  // Save the columns we've removed.
-  arma::mat savedCols(3, 50); // Remove 50 5-star ratings.
-  savedCols.fill(/* random very large value */ 10000000);
-  size_t currentCol = 0;
-  for (size_t i = 0; i < dataset.n_cols; ++i)
-  {
-    if (currentCol == 50)
-      break;
-
-    if (dataset(2, i) > 4.5) // 5-star rating.
-    {
-      // Make sure we don't have this user yet.  This is a slow way to do this
-      // but I don't particularly care here because it's in the tests.
-      bool found = false;
-      for (size_t j = 0; j < currentCol; ++j)
-      {
-        if (savedCols(0, j) == dataset(0, i))
-        {
-          found = true;
-          break;
-        }
-      }
-
-      // If this user doesn't already exist in savedCols, add them.  Otherwise
-      // ignore this point.
-      if (!found)
-      {
-        savedCols.col(currentCol) = dataset.col(i);
-        dataset.shed_col(i);
-        ++currentCol;
-      }
-    }
-  }
-
-  // Make data into sparse matrix.
-  arma::sp_mat cleanedData;
-  CFType::CleanData(dataset, cleanedData);
-
-  // Now retrain.
-  c.Train(dataset, decomposition);
-
-  // Get predictions for all user/item pairs we held back.
-  arma::Mat<size_t> combinations(2, savedCols.n_cols);
-  for (size_t i = 0; i < savedCols.n_cols; ++i)
-  {
-    combinations(0, i) = size_t(savedCols(0, i));
-    combinations(1, i) = size_t(savedCols(1, i));
-  }
-
-  arma::vec predictions;
-  c.Predict(combinations, predictions);
-
-  for (size_t i = 0; i < combinations.n_cols; ++i)
-  {
-    const double prediction = c.Predict(combinations(0, i), combinations(1, i));
-    BOOST_REQUIRE_CLOSE(prediction, predictions[i], 1e-8);
-  }
-}
-
-/**
- * Make sure we can train an already-trained model and it works okay
- * for policies that use coordinate lists.
- */
-template<>
-void Train<RegSVDPolicy>()
-{
-  RegSVDPolicy decomposition;
-  // Generate random data.
   arma::mat randomData(100, 100);
-  randomData.randu();
+
+  if (cleanData)
+  {
+    // Generate random data.
+    arma::sp_mat randomData;
+    randomData.sprandu(100, 100, 0.3);
+  }
+  else
+  {
+    // Generate random data.
+    randomData.randu();
+  }
+
   CFType c(randomData, decomposition);
 
   // Now retrain with data we know about.
@@ -493,6 +428,16 @@ void Train<RegSVDPolicy>()
         ++currentCol;
       }
     }
+  }
+
+  if (cleanData)
+  {
+    // Make data into sparse matrix.
+    arma::sp_mat cleanedData;
+    CFType::CleanData(dataset, cleanedData);
+
+    arma::sp_mat dataset;
+    dataset = cleanedData;
   }
 
   // Now retrain.
@@ -574,7 +519,7 @@ void EmptyConstructorTrain(bool cleanData = true)
     dataset = cleanedData;
   }
 
-  CFType cf(dataset, decomposition);
+  c.Train(dataset, decomposition);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -589,7 +534,7 @@ void EmptyConstructorTrain(bool cleanData = true)
 
   for (size_t i = 0; i < combinations.n_cols; ++i)
   {
-    const double prediction = cf.Predict(combinations(0, i),
+    const double prediction = c.Predict(combinations(0, i),
         combinations(1, i));
     BOOST_REQUIRE_CLOSE(prediction, predictions[i], 1e-8);
   }
@@ -932,7 +877,7 @@ BOOST_AUTO_TEST_CASE(TrainRandSVDTest)
  */
 BOOST_AUTO_TEST_CASE(TrainRegSVDTest)
 {
-  Train<RegSVDPolicy>();
+  Train<RegSVDPolicy>(false);
 }
 
 /**
