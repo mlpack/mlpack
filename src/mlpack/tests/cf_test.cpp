@@ -381,8 +381,11 @@ void Train(bool cleanData = true)
   if (cleanData)
   {
     // Generate random data.
+    arma::sp_mat rdData;
+    rdData.sprandu(100, 100, 0.3);
+
     arma::sp_mat randomData;
-    randomData.sprandu(100, 100, 0.3);
+    randomData = rdData;
   }
   else
   {
