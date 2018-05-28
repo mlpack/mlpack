@@ -49,20 +49,17 @@ void LMNNFunction<MetricType>::Shuffle()
   arma::mat newDataset;
   arma::Row<size_t> newLabels;
 
-  // Generate ordering.
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
-       dataset.n_cols - 1, dataset.n_cols));
-
-  // Store re-ordered data.
-  newDataset = dataset.cols(ordering);
-  newLabels = labels.cols(ordering);
-  targetNeighbors = targetNeighbors.cols(ordering);
+  math::ShuffleData(dataset, labels, newDataset, newLabels);
 
   math::ClearAlias(dataset);
   math::ClearAlias(labels);
 
   dataset = std::move(newDataset);
   labels = std::move(newLabels);
+
+  // Re-calculate target neighbors as indices changed.
+  Constraints constraint(dataset, labels, k);
+  constraint.TargetNeighbors(targetNeighbors);
 }
 
 inline void Projection(arma::mat& iterate)
