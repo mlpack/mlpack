@@ -20,7 +20,6 @@
 namespace mlpack {
 namespace lmnn {
 
-// Initialize with the given kernel.
 Constraints::Constraints(
     const arma::mat& dataset,
     const arma::Row<size_t>& labels,
@@ -128,12 +127,13 @@ void Constraints::Triplets(arma::Mat<size_t>& outputMatrix)
 
   outputMatrix = arma::Mat<size_t>(3, k * k * N , arma::fill::zeros);
 
-  for (size_t i = 0, r=0; i < N; i++)
+  for (size_t i = 0, r = 0; i < N; i++)
   {
     for (size_t j = 0; j < k; j++)
     {
       for (size_t l = 0; l < k; l++, r++)
       {
+        // Generate triplets.
         outputMatrix(0, r) = i;
         outputMatrix(1, r) = targetNeighbors(j, i);
         outputMatrix(2, r) = impostors(l, i);

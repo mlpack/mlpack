@@ -41,12 +41,8 @@ class LMNN
  public:
   /**
    * Initialize the LMNN object, passing a dataset (distance metric
-   * is learned using this dataset)and labels. Initialization will copy
+   * is learned using this dataset) and labels. Initialization will copy
    * both dataset and labels matrices to internal copies.
-   * 
-   * @note
-   * Call targetNeighbor() & triplets() before calling LearnDistance().
-   * @endnote
    *
    * @param dataset Input dataset.
    * @param labels Input dataset labels.

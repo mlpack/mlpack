@@ -16,16 +16,25 @@
 
 namespace mlpack {
 namespace lmnn {
-
+/**
+ * Interface for generating distance based constraints on a given
+ * dataset, provided corresponding true labels and a quantity parameter (k)
+ * are specified.
+ *
+ * Class provides TargetNeighbors() (Used for calculating target neighbors
+ * of each data point), Impostors() (used for calculating impostors of each
+ * data point) and Triplets() (Generates sets of {dataset, target neighbors,
+ * impostors} tripltets.)
+ */
 class Constraints
 {
  public:
   /**
-   * Initialize Constraints with dataset and labels.
+   * Constructor for creating a Constraints instance.
    *
    * @param dataset Input dataset.
    * @param labels Input dataset labels.
-   * @param k Number of target neigbors.
+   * @param k Number of target neighbors, impostors & triplets.
    */
   Constraints(const arma::mat& dataset,
               const arma::Row<size_t>& labels,
@@ -34,18 +43,24 @@ class Constraints
   /**
    * Calculates k similar labeled nearest neighbors and stores them into the
    * passed matrix.
+   *
+   * @param outputMatrix Coordinates matrix to store target neighbors.
    */
   void TargetNeighbors(arma::Mat<size_t>& outputMatrix);
 
   /**
    * Calculates k differently labeled nearest neighbors for each datapoint and
-   * writes them back to passed matrix
+   * writes them back to passed matrix.
+   *
+   * @param outputMatrix Coordinates matrix to store impostors.
    */
   void Impostors(arma::Mat<size_t>& outputMatrix);
 
   /**
    * Generate triplets {i, j, l} for each datapoint i and writes back generated
    * triplets to matrix passed.
+   *
+   * @param outputMatrix Coordinates matrix to store triplets.
    */
   void Triplets(arma::Mat<size_t>& outputMatrix);
 
