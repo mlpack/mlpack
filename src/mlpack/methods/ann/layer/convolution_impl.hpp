@@ -113,8 +113,6 @@ void Convolution<
     OutputDataType
 >::Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  std::cout << "Enter Forward Convolution" << std::endl;
-  std::cout << "Input Dimensions: " << inputWidth << " x " << inputHeight << std::endl;
   inputTemp = arma::cube(input.memptr(), inputWidth, inputHeight, inSize);
 
   if (padW != 0 || padH != 0)
@@ -155,9 +153,6 @@ void Convolution<
 
   outputWidth = outputTemp.n_rows;
   outputHeight = outputTemp.n_cols;
-  std::cout << "Output Dimensions: " << outputWidth << " x " << outputHeight << std::endl;
-  std::cout << "Padded Dimensions: " << padW << " x " << padH << std::endl;
-  std::cout << "Exit Forward Convolution" << std::endl;
 }
 
 template<
@@ -177,10 +172,6 @@ void Convolution<
 >::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  std::cout << "Enter Backward Convolution" << std::endl;
-  std::cout << "Output Dimensions: " << outputWidth << " x " << outputHeight << std::endl;
-  std::cout << "Input Dimensions: " << inputWidth << " x " << inputHeight << std::endl;
-  std::cout << "Padded Dimensions: " << padW << " x " << padH << std::endl;
   arma::cube mappedError(gy.memptr(), outputWidth, outputHeight, outSize,
       false, false);
 
@@ -213,7 +204,6 @@ void Convolution<
       }
     }
   }
-  std::cout << "Exit Backward Convolution" << std::endl;
 }
 
 template<
@@ -235,10 +225,6 @@ void Convolution<
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
-  std::cout << "Enter Convolution Gradient" << std::endl;
-  std::cout << "Output Dimensions: " << outputWidth << " x " << outputHeight << std::endl;
-  std::cout << "Input Dimensions: " << inputWidth << " x " << inputHeight << std::endl;
-  std::cout << "Padded Dimensions: " << padW << " x " << padH << std::endl;
   arma::cube mappedError;
   if (padW != 0 && padH != 0)
   {
@@ -299,7 +285,6 @@ void Convolution<
     gradient.submat(weight.n_elem + outMap, 0, weight.n_elem + outMap, 0) =
         arma::accu(mappedError.slices(outMap, outMap));
   }
-  std::cout << "Exit Convolution Gradient" << std::endl;
 }
 
 template<

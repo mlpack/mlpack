@@ -48,10 +48,8 @@ template<typename eT>
 void Linear<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  //std::cout << "Enter Linear Forward" << std::endl;
   output = weight * input;
   output.each_col() += bias;
-  //std::cout << "Exit Linear Forward" << std::endl;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -59,9 +57,7 @@ template<typename eT>
 void Linear<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  //std::cout << "Enter Linear Backward" << std::endl;
   g = weight.t() * gy;
-  //std::cout << "Exit Linear Backward" << std::endl;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -71,12 +67,10 @@ void Linear<InputDataType, OutputDataType>::Gradient(
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
-  //std::cout << "Enter Linear Gradient" << std::endl;
   gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
       error * input.t());
   gradient.submat(weight.n_elem, 0, gradient.n_elem - 1, 0) =
       arma::sum(error, 1);
-  //std::cout << "Exit Linear Gradient" << std::endl;
 }
 
 template<typename InputDataType, typename OutputDataType>

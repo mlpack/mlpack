@@ -22,16 +22,55 @@
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. **/ {
-template<typename Model, typename InitializationRuleType, class Noise>
+
+/**
+ * The implementation of the standard GAN module. Generative Adversarial
+ * Networks (GANs) are a class of artificial intelligence algorithms used
+ * in unsupervised machine learning, implemented by a system of two neural
+ * networks contesting with each other in a zero-sum game framework. This
+ * technique can generate photographs that look at least superficially
+ * authentic to human observers, having many realistic characteristics.
+ *
+ * For more information, see the following papers.
+ *
+ * @code
+ * @article{Goodfellow14,
+ *   author    = {Ian J. Goodfellow, Jean Pouget-Abadi, Mehdi Mirza, Bing Xu,
+ *                David Warde-Farley, Sherjil Ozair, Aaron Courville and
+ *                Yoshua Bengio},
+ *   title     = {Generative Adversarial Nets},
+ *   year      = {2014},
+ *   url       = {http://arxiv.org/abs/1406.2661},
+ *   eprint    = {1406.2661},
+ * }
+ * @endcode
+ * 
+ * @code
+ * @article{Salimans16,
+ *   author    = {Tim Salimans, Ian Goodfellow, Wojciech Zaremba,
+ *                Vicki Cheung, Alec Radford and Xi Chen},
+ *   title     = {Improved Techniques for Training GANs},
+ *   year      = {2016},
+ *   url       = {http://arxiv.org/abs/1606.03498},
+ *   eprint    = {1606.03498},
+ * }
+ * @endcode
+ *
+ * @tparam Model The class type of Generator and Discriminator.
+ * @tparam InitializationRuleType Type of Initializer.
+ * @tparam Noise The noise function to use.
+ */
+template<
+  typename Model,
+  typename InitializationRuleType,
+  class Noise
+>
 class GAN
 {
  public:
   /**
    * Constructor for GAN class.
    *
-   * @tparam Model The class type of Generator and Discriminator.
-   * @tparam InitializationRuleType Type of Initializer.
-   * @tparam Noise The noise function to use.
    * @param trainData The real data.
    * @param generator Generator network.
    * @param discriminator Discriminator network.
@@ -66,8 +105,9 @@ class GAN
    * @param parameters The parameters of the network.
    * @param i Index of the current input.
    */
-  double Evaluate(const arma::mat& parameters, const size_t i,
-      const size_t batchSize);
+  double Evaluate(const arma::mat& parameters,
+                  const size_t i,
+                  const size_t batchSize);
 
   /**
    * Gradient function for GAN.
@@ -78,8 +118,10 @@ class GAN
    * @param i Index of the predictors.
    * @param gradient Variable to store the present gradient.
    */
-  void Gradient(const arma::mat& parameters, const size_t i,
-      arma::mat& gradient, const size_t batchSize);
+  void Gradient(const arma::mat& parameters,
+                const size_t i,
+                arma::mat& gradient,
+                const size_t batchSize);
 
   /**
    * Shuffle the order of function visitation. This may be called by the
@@ -100,7 +142,8 @@ class GAN
    * @param input The input the Discriminator network.
    * @param output Result of the Discriminator network.
    */
-  void Predict(arma::mat&& input, arma::mat& output);
+  void Predict(arma::mat&& input,
+               arma::mat& output);
 
   //! Return the parameters of the network.
   const arma::mat& Parameters() const { return parameter; }

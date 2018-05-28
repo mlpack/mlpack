@@ -87,7 +87,7 @@ BOOST_AUTO_TEST_CASE(GANTest)
       multiplier);
   gan.Reset();
 
-  std::cout << "Loading Parameters" << std::endl;
+  Log::Info << "Loading Parameters" << std::endl;
   arma::mat parameters, generatorParameters;
   parameters.load("preTrainedGAN.arm");
   gan.Parameters() = parameters;
@@ -133,26 +133,28 @@ BOOST_AUTO_TEST_CASE(GANTest)
 
 /*
  * Tests the GAN implementation on the O'Reilly Test on the MNIST dataset.
- */
+ * It's currently not possible to run this every time due to time constraints.
+ * Please refer mlpack/models repository for the tutorial.
+
 BOOST_AUTO_TEST_CASE(GANMNISTTest)
 {
   size_t dNumKernels = 32;
-  size_t discriminatorPreTrain = 10;
+  size_t discriminatorPreTrain = 300;
   size_t batchSize = 1;
   size_t noiseDim = 100;
   size_t generatorUpdateStep = 1;
   size_t numSamples = 10;
   double stepSize = 0.0003;
   double eps = 1e-8;
-  size_t numEpoches = 4;
+  size_t numEpoches = 10;
   double tolerance = 1e-5;
-  int datasetMaxCols = 10;
+  int datasetMaxCols = -1;
   bool shuffle = true;
   double multiplier = 10;
-  std::string output_dataset = "output_mnist/";
+  std::string output_dataset = "output_mnist.csv";
 
-  std::cout << "output_dataset = '" << output_dataset << "'" << std::endl;
-  std::cout << std::boolalpha
+  Log::Info << "output_dataset = '" << output_dataset << "'" << std::endl;
+  Log::Info << std::boolalpha
       << " batchSize = " << batchSize << std::endl
       << " generatorUpdateStep = " << generatorUpdateStep << std::endl
       << " noiseDim = " << noiseDim << std::endl
@@ -164,7 +166,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
 
   arma::mat trainData;
   trainData.load("mnist_first250_training_4s_and_9s.arm");
-  std::cout << arma::size(trainData) << std::endl;
+  Log::Info << arma::size(trainData) << std::endl;
 
   if (datasetMaxCols > 0)
     trainData = trainData.cols(0, datasetMaxCols - 1);
@@ -172,9 +174,9 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
   size_t numIterations = trainData.n_cols * numEpoches;
   numIterations /= batchSize;
 
-  std::cout << "Dataset loaded (" << trainData.n_rows << ", "
+  Log::Info << "Dataset loaded (" << trainData.n_rows << ", "
             << trainData.n_cols << ")" << std::endl;
-  std::cout << trainData.n_rows << "--------" << trainData.n_cols << std::endl;
+  Log::Info << trainData.n_rows << "--------" << trainData.n_cols << std::endl;
 
   // Create the Discriminator network
   FFN<SigmoidCrossEntropyError<> > discriminator;
@@ -192,18 +194,16 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
   // Create the Generator network
   FFN<SigmoidCrossEntropyError<> > generator;
   generator.Add<Linear<> >(noiseDim, 3136);
-  // Batch Norm required here for batches.
   generator.Add<ReLULayer<> >();
   generator.Add<Convolution<> >(1, noiseDim / 2, 3, 3, 2, 2, 1, 1, 56, 56);
   generator.Add<ReLULayer<> >();
   generator.Add<BilinearInterpolation<> >(28, 28, 56, 56, noiseDim / 2);
   generator.Add<Convolution<> >(noiseDim / 2, noiseDim / 4, 3, 3, 2, 2, 1, 1,
       56, 56);
-  // Batch Norm required here for batches.
   generator.Add<ReLULayer<> >();
   generator.Add<BilinearInterpolation<> >(28, 28, 56, 56, noiseDim / 4);
   generator.Add<Convolution<> >(noiseDim / 4, 1, 3, 3, 2, 2, 1, 1, 56, 56);
-  generator.Add<SigmoidLayer<> >();
+  generator.Add<TanHLayer<> >();
 
   // Create GAN
   GaussianInitialization gaussian(0, 1);
@@ -216,11 +216,11 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
-  std::cout << "Training..." << std::endl;
+  Log::Info << "Training..." << std::endl;
   gan.Train(optimizer);
 
   // Generate samples
-  std::cout << "Sampling..." << std::endl;
+  Log::Info << "Sampling..." << std::endl;
   arma::mat noise(noiseDim, 1);
   size_t dim = std::sqrt(trainData.n_rows);
   arma::mat generatedData(2 * dim, dim * numSamples);
@@ -244,9 +244,10 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
         i * dim, 2 * dim - 1, i * dim + dim - 1) = samples;
   }
 
-  std::cout << "Saving output to " << output_dataset << "..." << std::endl;
-  generatedData.save(output_dataset, arma::raw_ascii);
-  std::cout << "Output saved!" << std::endl;
+  Log::Info << "Saving output to " << output_dataset << "..." << std::endl;
+  generatedData.save(output_dataset, arma::csv_ascii);
+  Log::Info << "Output saved!" << std::endl;
 }
+*/
 
 BOOST_AUTO_TEST_SUITE_END();

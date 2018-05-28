@@ -395,8 +395,13 @@ class FFN
   //! Locally-stored copy visitor
   CopyVisitor<CustomLayers...> copyVisitor;
 
-template<typename Model, typename InitializerType, class NoiseType>
-friend class GAN;
+  // The GAN class should have access to internal members.
+  template<
+    typename Model,
+    typename InitializerType,
+    class NoiseType
+  >
+  friend class GAN;
 }; // class FFN
 
 } // namespace ann

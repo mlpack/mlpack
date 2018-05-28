@@ -32,14 +32,13 @@ template<typename InputType, typename TargetType>
 inline double SigmoidCrossEntropyError<InputDataType, OutputDataType>::Forward(
     const InputType&& input, const TargetType&& target)
 {
-  //std::cout << "Enter Sigmoid Cross Entropy Forward" << std::endl;
   double maximum = 0;
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     maximum += std::max(input[i], 0.0) +
         std::log(1 + std::exp(-std::abs(input[i])));
   }
-  //std::cout << "Exit Sigmoid Cross Entropy Forward" << std::endl;
+
   return maximum - arma::accu(input % target);
 }
 
@@ -50,9 +49,7 @@ inline void SigmoidCrossEntropyError<InputDataType, OutputDataType>::Backward(
     const TargetType&& target,
     OutputType&& output)
 {
-  //std::cout << "Enter Sigmoid Cross Entropy Backward" << std::endl;
   output = 1.0 / (1.0 + arma::exp(-input)) - target;
-  //std::cout << "Exit Sigmoid Cross Entropy Backward" << std::endl;
 }
 
 template<typename InputDataType, typename OutputDataType>
