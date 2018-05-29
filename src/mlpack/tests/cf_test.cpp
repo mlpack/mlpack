@@ -451,8 +451,8 @@ template<>
 void Train<>(RegSVDPolicy& decomposition)
 {
   // Generate random data.
-  arma::mat randomData(100, 100);
-  randomData.randu();
+  arma::mat randomData = arma::zeros(100, 100);
+  randomData.diag().ones();
   CFType c(randomData, decomposition);
 
   // Now retrain with data we know about.
