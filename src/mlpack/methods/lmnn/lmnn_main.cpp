@@ -101,6 +101,7 @@ PARAM_DOUBLE_IN("min_step", "Minimum step of line search for L-BFGS.", "m",
     1e-20);
 PARAM_DOUBLE_IN("max_step", "Maximum step of line search for L-BFGS.", "M",
     1e20);
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace mlpack;
 using namespace mlpack::lmnn;
@@ -111,6 +112,11 @@ using namespace std;
 
 static void mlpackMain()
 {
+  if (CLI::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  else
+    math::RandomSeed((size_t) std::time(NULL));
+
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
   const string optimizerType = CLI::GetParam<string>("optimizer");

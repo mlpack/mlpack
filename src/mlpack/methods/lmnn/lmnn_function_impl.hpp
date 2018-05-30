@@ -83,7 +83,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates)
   // Hack
   arma::mat& iterate = const_cast<arma::mat&>(coordinates);
   // Apply projection.
-  if (arma::accu(iterate == initialPoint) != initialPoint.n_cols)
+  if (arma::accu(iterate == initialPoint) != initialPoint.n_elem)
     Projection(iterate);
 
   double cost = 0;
@@ -111,10 +111,10 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates)
       {
         // Calculate cost due to data point, target neighbors, impostors
         // triplets.
-         double eval = metric.Evaluate(transformedDataset.col(i),
-                            transformedDataset.col(targetNeighbors(j, i))) -
-                       metric.Evaluate(transformedDataset.col(i),
-                            transformedDataset.col(impostors(l, i)));
+        double eval = metric.Evaluate(transformedDataset.col(i),
+                          transformedDataset.col(targetNeighbors(j, i))) -
+                      metric.Evaluate(transformedDataset.col(i),
+                          transformedDataset.col(impostors(l, i)));
 
         cost += regularization * std::max(0.0, 1 + eval);
       }
@@ -133,7 +133,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates,
   // Hack
   arma::mat& iterate = const_cast<arma::mat&>(coordinates);
   // Apply projection.
-  if (arma::accu(iterate == initialPoint) != initialPoint.n_cols)
+  if (arma::accu(iterate == initialPoint) != initialPoint.n_elem)
     Projection(iterate);
 
   double cost = 0;
@@ -150,7 +150,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates,
     {
       // Calculate cost due to distance between target neighbors & data point.
       double eval = metric.Evaluate(transformedDataset.col(i),
-                          transformedDataset.col(targetNeighbors(j, i)));
+                        transformedDataset.col(targetNeighbors(j, i)));
       cost += (1 - regularization) * eval;
     }
 
@@ -160,10 +160,10 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates,
       {
         // Calculate cost due to data point, target neighbors, impostors
         // triplets.
-         double eval = metric.Evaluate(transformedDataset.col(i),
-                            transformedDataset.col(targetNeighbors(j, i))) -
-                       metric.Evaluate(transformedDataset.col(i),
-                            transformedDataset.col(impostors(l, i)));
+        double eval = metric.Evaluate(transformedDataset.col(i),
+                          transformedDataset.col(targetNeighbors(j, i))) -
+                      metric.Evaluate(transformedDataset.col(i),
+                          transformedDataset.col(impostors(l, i)));
 
         cost += regularization * std::max(0.0, 1 + eval);
       }
@@ -198,11 +198,18 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& /* coordinates */,
       for (size_t l = 0; l < k ; l++)
       {
         // Calculate gradient due to triplets.
-        arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
-        cil += diff * arma::trans(diff);
+        double eval = metric.Evaluate(transformedDataset.col(i),
+                          transformedDataset.col(targetNeighbors(j, i))) -
+                      metric.Evaluate(transformedDataset.col(i),
+                          transformedDataset.col(impostors(l, i)));
+        if (eval > -1)
+        {
+          arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+          cil += diff * arma::trans(diff);
 
-        diff = dataset.col(i) - dataset.col(impostors(l, i));
-        cil -= diff * arma::trans(diff);
+          diff = dataset.col(i) - dataset.col(impostors(l, i));
+          cil -= diff * arma::trans(diff);
+        }
       }
     }
   }
@@ -237,11 +244,18 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& /* coordinates */,
       for (size_t l = 0; l < k ; l++)
       {
         // Calculate gradient due to triplets.
-        arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
-        cil += diff * arma::trans(diff);
+        double eval = metric.Evaluate(transformedDataset.col(i),
+                          transformedDataset.col(targetNeighbors(j, i))) -
+                      metric.Evaluate(transformedDataset.col(i),
+                          transformedDataset.col(impostors(l, i)));
+        if (eval > -1)
+        {
+          arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+          cil += diff * arma::trans(diff);
 
-        diff = dataset.col(i) - dataset.col(impostors(l, i));
-        cil -= diff * arma::trans(diff);
+          diff = dataset.col(i) - dataset.col(impostors(l, i));
+          cil -= diff * arma::trans(diff);
+        }
       }
     }
   }
@@ -259,7 +273,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   // Hack
   arma::mat& iterate = const_cast<arma::mat&>(coordinates);
   // Apply projection.
-  if (arma::accu(iterate == initialPoint) != initialPoint.n_cols)
+  if (arma::accu(iterate == initialPoint) != initialPoint.n_elem)
     Projection(iterate);
 
   double cost = 0;
@@ -282,7 +296,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
     {
       // Calculate cost due to distance between target neighbors & data point.
       double eval = metric.Evaluate(transformedDataset.col(i),
-                          transformedDataset.col(targetNeighbors(j, i)));
+                        transformedDataset.col(targetNeighbors(j, i)));
       cost += (1 - regularization) * eval;
 
       // Calculate gradient due to target neighbors.
@@ -296,19 +310,21 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
       {
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
-         double eval = metric.Evaluate(transformedDataset.col(i),
+        double eval = metric.Evaluate(transformedDataset.col(i),
                           transformedDataset.col(targetNeighbors(j, i))) -
-                       metric.Evaluate(transformedDataset.col(i),
+                      metric.Evaluate(transformedDataset.col(i),
                           transformedDataset.col(impostors(l, i)));
 
         cost += regularization * std::max(0.0, 1 + eval);
 
-        // Calculate gradient due to triplets.
-        arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
-        cil += diff * arma::trans(diff);
+        if (eval > -1)
+        {
+          arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+          cil += diff * arma::trans(diff);
 
-        diff = dataset.col(i) - dataset.col(impostors(l, i));
-        cil -= diff * arma::trans(diff);
+          diff = dataset.col(i) - dataset.col(impostors(l, i));
+          cil -= diff * arma::trans(diff);
+        }
       }
     }
   }
@@ -330,7 +346,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   // Hack
   arma::mat& iterate = const_cast<arma::mat&>(coordinates);
   // Apply projection.
-  if (arma::accu(iterate == initialPoint) != initialPoint.n_cols)
+  if (arma::accu(iterate == initialPoint) != initialPoint.n_elem)
     Projection(iterate);
 
   double cost = 0;
@@ -353,7 +369,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
     {
       // Calculate cost due to distance between target neighbors & data point.
       double eval = metric.Evaluate(transformedDataset.col(i),
-                          transformedDataset.col(targetNeighbors(j, i)));
+                        transformedDataset.col(targetNeighbors(j, i)));
       cost += (1 - regularization) * eval;
 
       // Calculate gradient due to target neighbors.
@@ -367,19 +383,21 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
       {
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
-         double eval = metric.Evaluate(transformedDataset.col(i),
+        double eval = metric.Evaluate(transformedDataset.col(i),
                           transformedDataset.col(targetNeighbors(j, i))) -
-                       metric.Evaluate(transformedDataset.col(i),
+                      metric.Evaluate(transformedDataset.col(i),
                           transformedDataset.col(impostors(l, i)));
 
         cost += regularization * std::max(0.0, 1 + eval);
 
-        // Calculate gradient due to triplets.
-        arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
-        cil += diff * arma::trans(diff);
+        if (eval > -1)
+        {
+          arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+          cil += diff * arma::trans(diff);
 
-        diff = dataset.col(i) - dataset.col(impostors(l, i));
-        cil -= diff * arma::trans(diff);
+          diff = dataset.col(i) - dataset.col(impostors(l, i));
+          cil -= diff * arma::trans(diff);
+        }
       }
     }
   }
