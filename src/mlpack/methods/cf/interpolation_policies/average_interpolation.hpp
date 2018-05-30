@@ -27,12 +27,12 @@ class AverageInterpolation
   // Empty constructor.
   AverageInterpolation() { }
 
- /**
-  * Interoplation weights are identical and sum up to one.
-  *
-  * @param weights resulting interpolation weights.
-  * @param similarities similarites between query user and neighbors.
-  */
+  /**
+   * Interoplation weights are identical and sum up to one.
+   *
+   * @param weights resulting interpolation weights.
+   * @param similarities similarites between query user and neighbors.
+   */
   void GetWeights(arma::vec& weights, const arma::vec& similarities) const
   {
     if (similarities.n_elem == 0)

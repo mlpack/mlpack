@@ -25,15 +25,15 @@ namespace cf {
 class SimilarityInterpolation
 {
  public:
-  // Em[ty onstructor.
+  // Empty onstructor.
   SimilarityInterpolation() { }
 
- /**
-  * Interpolation weights are computed as normalized similarities.
-  *
-  * @param weights resulting interpolation weights.
-  * @param similarities similarites between query user and neighbors.
-  */
+  /**
+   * Interpolation weights are computed as normalized similarities.
+   *
+   * @param weights resulting interpolation weights.
+   * @param similarities similarites between query user and neighbors.
+   */
   void GetWeights(arma::vec& weights, const arma::vec& similarities) const
   {
     if (similarities.n_elem == 0)
