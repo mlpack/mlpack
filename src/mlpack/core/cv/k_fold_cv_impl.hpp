@@ -26,57 +26,9 @@ KFoldCV<MLAlgorithm,
         PredictionsType,
         WeightsType>::KFoldCV(const size_t k,
                               const MatType& xs,
-                              const PredictionsType& ys) :
-    KFoldCV(Base(), k, xs, ys)
-{ /* Nothing left to do. */ }
-
-template<typename MLAlgorithm,
-         typename Metric,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-KFoldCV<MLAlgorithm,
-        Metric,
-        MatType,
-        PredictionsType,
-        WeightsType>::KFoldCV(const size_t k,
-                              const MatType& xs,
                               const PredictionsType& ys,
-                              const size_t numClasses) :
-    KFoldCV(Base(numClasses), k, xs, ys)
-{ /* Nothing left to do. */ }
-
-template<typename MLAlgorithm,
-         typename Metric,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-KFoldCV<MLAlgorithm,
-        Metric,
-        MatType,
-        PredictionsType,
-        WeightsType>::KFoldCV(const size_t k,
-                              const MatType& xs,
-                              const data::DatasetInfo& datasetInfo,
-                              const PredictionsType& ys,
-                              const size_t numClasses) :
-    KFoldCV(Base(datasetInfo, numClasses), k, xs, ys)
-{ /* Nothing left to do. */ }
-
-template<typename MLAlgorithm,
-         typename Metric,
-         typename MatType,
-         typename PredictionsType,
-         typename WeightsType>
-KFoldCV<MLAlgorithm,
-        Metric,
-        MatType,
-        PredictionsType,
-        WeightsType>::KFoldCV(const size_t k,
-                              const MatType& xs,
-                              const PredictionsType& ys,
-                              const WeightsType& weights) :
-    KFoldCV(Base(), k, xs, ys, weights)
+                              const bool shuffle) :
+    KFoldCV(Base(), k, xs, ys, shuffle)
 { /* Nothing left to do. */ }
 
 template<typename MLAlgorithm,
@@ -92,8 +44,8 @@ KFoldCV<MLAlgorithm,
                               const MatType& xs,
                               const PredictionsType& ys,
                               const size_t numClasses,
-                              const WeightsType& weights) :
-    KFoldCV(Base(numClasses), k, xs, ys, weights)
+                              const bool shuffle) :
+    KFoldCV(Base(numClasses), k, xs, ys, shuffle)
 { /* Nothing left to do. */ }
 
 template<typename MLAlgorithm,
@@ -110,8 +62,62 @@ KFoldCV<MLAlgorithm,
                               const data::DatasetInfo& datasetInfo,
                               const PredictionsType& ys,
                               const size_t numClasses,
-                              const WeightsType& weights) :
-    KFoldCV(Base(datasetInfo, numClasses), k, xs, ys, weights)
+                              const bool shuffle) :
+    KFoldCV(Base(datasetInfo, numClasses), k, xs, ys, shuffle)
+{ /* Nothing left to do. */ }
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+KFoldCV<MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>::KFoldCV(const size_t k,
+                              const MatType& xs,
+                              const PredictionsType& ys,
+                              const WeightsType& weights,
+                              const bool shuffle) :
+    KFoldCV(Base(), k, xs, ys, weights, shuffle)
+{ /* Nothing left to do. */ }
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+KFoldCV<MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>::KFoldCV(const size_t k,
+                              const MatType& xs,
+                              const PredictionsType& ys,
+                              const size_t numClasses,
+                              const WeightsType& weights,
+                              const bool shuffle) :
+    KFoldCV(Base(numClasses), k, xs, ys, weights, shuffle)
+{ /* Nothing left to do. */ }
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+KFoldCV<MLAlgorithm,
+        Metric,
+        MatType,
+        PredictionsType,
+        WeightsType>::KFoldCV(const size_t k,
+                              const MatType& xs,
+                              const data::DatasetInfo& datasetInfo,
+                              const PredictionsType& ys,
+                              const size_t numClasses,
+                              const WeightsType& weights,
+                              const bool shuffle) :
+    KFoldCV(Base(datasetInfo, numClasses), k, xs, ys, weights, shuffle)
 { /* Nothing left to do. */ }
 
 template<typename MLAlgorithm,
@@ -126,8 +132,11 @@ KFoldCV<MLAlgorithm,
         WeightsType>::KFoldCV(Base&& base,
                               const size_t k,
                               const MatType& xs,
-                              const PredictionsType& ys) :
-  base(std::move(base)), k(k)
+                              const PredictionsType& ys,
+                              const bool shuffle) :
+    base(std::move(base)),
+    k(k),
+    shuffle(shuffle)
 {
   if (k < 2)
     throw std::invalid_argument("KFoldCV: k should not be less than 2");
@@ -151,8 +160,9 @@ KFoldCV<MLAlgorithm,
                               const size_t k,
                               const MatType& xs,
                               const PredictionsType& ys,
-                              const WeightsType& weights) :
-    KFoldCV(std::move(base), k, xs, ys)
+                              const WeightsType& weights,
+                              const bool shuffle) :
+    KFoldCV(std::move(base), k, xs, ys, shuffle)
 {
   Base::AssertWeightsConsistency(xs, weights);
 
@@ -171,6 +181,10 @@ double KFoldCV<MLAlgorithm,
                PredictionsType,
                WeightsType>::Evaluate(const MLAlgorithmArgs&... args)
 {
+  // Do we need to shuffle the dataset?
+  if (shuffle)
+    ShuffleData();
+
   return TrainAndEvaluate(args...);
 }
 
@@ -268,6 +282,58 @@ double KFoldCV<MLAlgorithm,
   }
 
   return arma::mean(evaluations);
+}
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<bool Enabled, typename>
+void KFoldCV<MLAlgorithm,
+             Metric,
+             MatType,
+             PredictionsType,
+             WeightsType>::ShuffleData()
+{
+  MatType data = xs.cols(0, (k - 1) * binSize + lastBinSize - 1);
+  PredictionsType labels = ys.subvec(0, (k - 1) * binSize + lastBinSize - 1);
+
+  // Now shuffle the data.
+  math::ShuffleData(data, labels, data, labels);
+
+  InitKFoldCVMat(data, xs);
+  InitKFoldCVMat(labels, ys);
+}
+
+template<typename MLAlgorithm,
+         typename Metric,
+         typename MatType,
+         typename PredictionsType,
+         typename WeightsType>
+template<bool Enabled, typename, typename>
+void KFoldCV<MLAlgorithm,
+             Metric,
+             MatType,
+             PredictionsType,
+             WeightsType>::ShuffleData()
+{
+  MatType data = xs.cols(0, (k - 1) * binSize + lastBinSize - 1);
+  PredictionsType labels = ys.cols(0, (k - 1) * binSize + lastBinSize - 1);
+  WeightsType newWeights;
+  if (weights.n_elem > 0)
+    newWeights = weights.cols(0, (k - 1) * binSize + lastBinSize - 1);
+
+  // Now shuffle the data.
+  if (weights.n_elem > 0)
+    math::ShuffleData(data, labels, newWeights, data, labels, newWeights);
+  else
+    math::ShuffleData(data, labels, data, labels);
+
+  InitKFoldCVMat(data, xs);
+  InitKFoldCVMat(labels, ys);
+  if (weights.n_elem > 0)
+    InitKFoldCVMat(newWeights, weights);
 }
 
 template<typename MLAlgorithm,
