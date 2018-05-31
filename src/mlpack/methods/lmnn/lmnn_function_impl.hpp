@@ -35,6 +35,8 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
 {
   // Initialize the initial learning point.
   initialPoint.eye(dataset.n_rows, dataset.n_rows);
+  // Initialize transformed dataset to base dataset.
+  transformedDataset = dataset;
 
   // Initialize target neighbors & impostors.
   Constraints constraint(dataset, labels, k);
