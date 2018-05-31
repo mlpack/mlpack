@@ -181,6 +181,9 @@ class KFoldCV
   //! The extended (by repeating the first k - 2 bins) weights.
   WeightsType weights;
 
+  //! The original size of the dataset.
+  size_t lastBinSize;
+
   //! The size of each bin in terms of data points.
   size_t binSize;
 
@@ -219,7 +222,7 @@ class KFoldCV
   /**
    * Train and run evaluation in the case of non-weighted learning.
    */
-  template<typename...MLAlgorithmArgs,
+  template<typename... MLAlgorithmArgs,
            bool Enabled = !Base::MIE::SupportsWeights,
            typename = typename std::enable_if<Enabled>::type>
   double TrainAndEvaluate(const MLAlgorithmArgs& ...mlAlgorithmArgs);

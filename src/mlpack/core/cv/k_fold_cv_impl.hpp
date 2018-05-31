@@ -207,6 +207,7 @@ void KFoldCV<MLAlgorithm,
 {
   binSize = source.n_cols / k;
   trainingSubsetSize = binSize * (k - 1);
+  lastBinSize = source.n_cols - ((k - 1) * binSize);
 
   destination = (k == 2) ? source : arma::join_rows(source,
       source.cols(0, trainingSubsetSize - binSize - 1));
@@ -280,7 +281,8 @@ size_t KFoldCV<MLAlgorithm,
                PredictionsType,
                WeightsType>::ValidationSubsetFirstCol(const size_t i)
 {
-  return (i < k - 1) ? (binSize * i + trainingSubsetSize) : (binSize * (i - 1));
+  // Use as close to the beginning of the dataset as we can.
+  return (i == 0) ? trainingSubsetSize : binSize * (i - 1);
 }
 
 template<typename MLAlgorithm,
@@ -297,8 +299,13 @@ arma::Mat<ElementType> KFoldCV<MLAlgorithm,
     arma::Mat<ElementType>& m,
     const size_t i)
 {
-  return arma::Mat<ElementType>(m.colptr(binSize * i), m.n_rows,
-      trainingSubsetSize, false, true);
+  // If this is the last fold, we have to handle it a little bit differently,
+  // since the last fold may not contain 'binSize' points.
+  const size_t subsetSize = (i == k - 1) ? lastBinSize + (k - 2) * binSize :
+      trainingSubsetSize;
+
+  return arma::Mat<ElementType>(m.colptr(binSize * i), m.n_rows, subsetSize,
+      false, true);
 }
 
 template<typename MLAlgorithm,
@@ -315,8 +322,12 @@ arma::Row<ElementType> KFoldCV<MLAlgorithm,
     arma::Row<ElementType>& r,
     const size_t i)
 {
-  return arma::Row<ElementType>(r.colptr(binSize * i), trainingSubsetSize,
-      false, true);
+  // If this is the last fold, we have to handle it a little bit differently,
+  // since the last fold may not contain 'binSize' points.
+  const size_t subsetSize = (i == k - 1) ? lastBinSize + (k - 2) * binSize :
+      trainingSubsetSize;
+
+  return arma::Row<ElementType>(r.colptr(binSize * i), subsetSize, false, true);
 }
 
 template<typename MLAlgorithm,
@@ -333,8 +344,9 @@ arma::Mat<ElementType> KFoldCV<MLAlgorithm,
     arma::Mat<ElementType>& m,
     const size_t i)
 {
+  const size_t subsetSize = (i == 0) ? lastBinSize : binSize;
   return arma::Mat<ElementType>(m.colptr(ValidationSubsetFirstCol(i)), m.n_rows,
-      binSize, false, true);
+      subsetSize, false, true);
 }
 
 template<typename MLAlgorithm,
@@ -351,8 +363,9 @@ arma::Row<ElementType> KFoldCV<MLAlgorithm,
     arma::Row<ElementType>& r,
     const size_t i)
 {
-  return arma::Row<ElementType>(r.colptr(ValidationSubsetFirstCol(i)), binSize,
-      false, true);
+  const size_t subsetSize = (i == 0) ? lastBinSize : binSize;
+  return arma::Row<ElementType>(r.colptr(ValidationSubsetFirstCol(i)),
+      subsetSize, false, true);
 }
 
 } // namespace cv
