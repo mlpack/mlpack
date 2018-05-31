@@ -61,15 +61,14 @@ void ShuffleData(const MatType& inputPoints,
 
   // Extract coordinate list representation.
   arma::umat locations(2, inputPoints.n_nonzero);
-  arma::Col<typename MatType::elem_type> values(
-      const_cast<typename MatType::elem_type*>(inputPoints.values),
-      inputPoints.n_nonzero, false, true);
+  arma::Col<typename MatType::elem_type> values(inputPoints.n_nonzero);
   typename MatType::const_iterator it = inputPoints.begin();
   size_t index = 0;
   while (it != inputPoints.end())
   {
     locations(0, index) = it.row();
     locations(1, index) = ordering[it.col()];
+    values(index) = (*it);
     ++it;
     ++index;
   }
@@ -201,15 +200,14 @@ void ShuffleData(const MatType& inputPoints,
 
   // Extract coordinate list representation.
   arma::umat locations(2, inputPoints.n_nonzero);
-  arma::Col<typename MatType::elem_type> values(
-      const_cast<typename MatType::elem_type*>(inputPoints.values),
-      inputPoints.n_nonzero, false, true);
+  arma::Col<typename MatType::elem_type> values(inputPoints.n_nonzero);
   typename MatType::const_iterator it = inputPoints.begin();
   size_t index = 0;
   while (it != inputPoints.end())
   {
     locations(0, index) = it.row();
     locations(1, index) = ordering[it.col()];
+    values(index) = (*it);
     ++it;
     ++index;
   }

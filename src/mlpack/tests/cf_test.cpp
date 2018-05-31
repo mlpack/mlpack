@@ -520,6 +520,10 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
       cBinary.CleanedData().n_nonzero);
   BOOST_REQUIRE_EQUAL(c.CleanedData().n_nonzero, cText.CleanedData().n_nonzero);
 
+#if ARMA_VERSION_MAJOR >= 8
+  c.CleanedData().sync();
+#endif
+
   for (size_t i = 0; i <= c.CleanedData().n_cols; ++i)
   {
     BOOST_REQUIRE_EQUAL(c.CleanedData().col_ptrs[i],
