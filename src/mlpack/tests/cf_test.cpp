@@ -60,7 +60,7 @@ void GetRecommendationsAllUsers(bool cleanData = true)
     arma::sp_mat dataset;
     dataset = cleanedData;
   }
-  CFType c(dataset, decomposition);
+  CFType c(dataset, decomposition, 5, 5, 70);
 
   // Generate recommendations when query set is not specified.
   c.GetRecommendations(numRecs, recommendations);
@@ -107,7 +107,7 @@ void GetRecommendationsQueriedUser(bool cleanData = true)
     dataset = cleanedData;
   }
 
-  CFType c(dataset, decomposition);
+  CFType c(dataset, decomposition, 5, 5, 70);
 
   // Generate recommendations when query set is specified.
   c.GetRecommendations(numRecsDefault, recommendations, users);
@@ -174,7 +174,7 @@ void RecommendationAccuracy(bool cleanData = true)
     dataset = cleanedData;
   }
 
-  CFType c(dataset, decomposition);
+  CFType c(dataset, decomposition, 5, 5, 70);
 
   // Obtain 150 recommendations for the users in savedCols, and make sure the
   // missing item shows up in most of them.  First, create the list of users,
@@ -275,7 +275,7 @@ void CFPredict(bool cleanData = true)
     dataset = cleanedData;
   }
 
-  CFType c(dataset, decomposition);
+  CFType c(dataset, decomposition, 5, 5, 70);
 
   // Now, for each removed rating, make sure the prediction is... reasonably
   // accurate.
@@ -349,7 +349,7 @@ void BatchPredict(bool cleanData = true)
     dataset = cleanedData;
   }
 
-  CFType c(dataset, decomposition);
+  CFType c(dataset, decomposition, 5, 5, 70);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -378,7 +378,7 @@ void Train(DecompositionPolicy& decomposition)
   // Generate random data.
   arma::sp_mat randomData;
   randomData.sprandu(100, 100, 0.3);
-  CFType c(randomData, decomposition);
+  CFType c(randomData, decomposition, 5, 5, 70);
 
   // Now retrain with data we know about.
   arma::mat dataset;
@@ -423,7 +423,7 @@ void Train(DecompositionPolicy& decomposition)
   CFType::CleanData(dataset, cleanedData);
 
   // Now retrain.
-  c.Train(dataset, decomposition);
+  c.Train(dataset, decomposition, 70);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -450,10 +450,9 @@ void Train(DecompositionPolicy& decomposition)
 template<>
 void Train<>(RegSVDPolicy& decomposition)
 {
-  // Generate random data.
   arma::mat randomData = arma::zeros(100, 100);
   randomData.diag().ones();
-  CFType c(randomData, decomposition);
+  CFType c(randomData, decomposition, 5, 5, 70);
 
   // Now retrain with data we know about.
   arma::mat dataset;
@@ -494,7 +493,7 @@ void Train<>(RegSVDPolicy& decomposition)
   }
 
   // Now retrain.
-  c.Train(dataset, decomposition);
+  c.Train(dataset, decomposition, 70);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -572,7 +571,7 @@ void EmptyConstructorTrain(bool cleanData = true)
     dataset = cleanedData;
   }
 
-  c.Train(dataset, decomposition);
+  c.Train(dataset, decomposition, 70);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -607,14 +606,14 @@ void Serialization()
   arma::sp_mat cleanedData;
   CFType::CleanData(dataset, cleanedData);
 
-  CFType c(cleanedData, decomposition);
+  CFType c(cleanedData, decomposition, 5, 5, 70);
 
   arma::sp_mat randomData;
   randomData.sprandu(100, 100, 0.3);
 
-  CFType cXml(randomData, decomposition);
+  CFType cXml(randomData, decomposition, 5, 5, 70);
   CFType cBinary;
-  CFType cText(cleanedData, decomposition, 5, 5);
+  CFType cText(cleanedData, decomposition, 5, 5, 70);
 
   SerializeObjectAll(c, cXml, cText, cBinary);
 
