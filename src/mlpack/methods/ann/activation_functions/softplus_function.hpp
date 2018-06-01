@@ -66,7 +66,7 @@ class SoftplusFunction
   static void Fn(const InputType& x, OutputType& y)
   {
     y = x;
-    y.for_each([](OutputType::elem_type& val) {val = Fn(val);})
+    y.transform([](double val) {return (Fn(val));} );
   }
 
   /**
@@ -113,7 +113,7 @@ class SoftplusFunction
   static void Inv(const InputType& y, OutputType& x)
   {
     x = y;
-    x.for_each([](OutputType::elem_type& val) {val = Inv(val);})
+    x.transform([](double val) {return (Inv(val));} );
   }
 }; // class SoftplusFunction
 
