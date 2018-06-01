@@ -25,15 +25,15 @@ Sampling<InputDataType, OutputDataType>::Sampling()
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType>
-Sampling<InputDataType, OutputDataType>::Sampling(
-    const size_t inSize,
-    const size_t outSize) :
-    inSize(inSize),
-    outSize(outSize)
-{
-  weights.set_size(2 * outSize * inSize + 2 * outSize, 1);
-}
+// template <typename InputDataType, typename OutputDataType>
+// Sampling<InputDataType, OutputDataType>::Sampling(
+//     const size_t inSize,
+//     const size_t outSize) :
+//     inSize(inSize),
+//     outSize(outSize)
+// {
+//   weights.set_size(2 * outSize * inSize + 2 * outSize, 1);
+// }
 
 template <typename InputDataType, typename OutputDataType>
 Sampling<InputDataType, OutputDataType>::Sampling(
@@ -43,15 +43,15 @@ Sampling<InputDataType, OutputDataType>::Sampling(
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-void Sampling<InputDataType, OutputDataType>::Reset()
-{
-  weights.set_size(2 * outSize * inSize + 2 * outSize, 1);
+// template<typename InputDataType, typename OutputDataType>
+// void Sampling<InputDataType, OutputDataType>::Reset()
+// {
+//   weights.set_size(2 * outSize * inSize + 2 * outSize, 1);
 
-  weight = arma::mat(weights.memptr(), 2 * outSize, inSize, false, false);
-  bias = arma::mat(weights.memptr() + weight.n_elem,
-      2 * outSize, 1, false, false);
-}
+//   weight = arma::mat(weights.memptr(), 2 * outSize, inSize, false, false);
+//   bias = arma::mat(weights.memptr() + weight.n_elem,
+//       2 * outSize, 1, false, false);
+// }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
@@ -60,11 +60,11 @@ void Sampling<InputDataType, OutputDataType>::Forward(
 {
   arma::arma_rng::set_seed_random();
 
-  output = weight * input;
-  output.each_col() += bias;
-  gaussianSample = arma::randn<arma::mat>(outSize, output.n_cols);
-  output = (output.submat(outSize, 0, 2 * outSize - 1, output.n_cols - 1) +
-      output.submat(0, 0, outSize - 1, output.n_cols - 1)) % gaussianSample;
+  // output = weight * input;
+  // output.each_col() += bias;
+  gaussianSample = arma::randn<arma::mat>(outSize, input.n_cols);
+  output = (input.submat(outSize, 0, 2 * outSize - 1, input.n_cols - 1) +
+      input.submat(0, 0, outSize - 1, input.n_cols - 1)) % gaussianSample;
 }
 
 template<typename InputDataType, typename OutputDataType>

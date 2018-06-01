@@ -45,7 +45,7 @@ class Sampling
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  Sampling(const size_t inSize, const size_t outSize);
+  // Sampling(const size_t inSize, const size_t outSize);
 
   /**
    * Create the Sampling layer object using the specified sample vector size.
@@ -57,7 +57,7 @@ class Sampling
   /*
    * Reset the layer parameter.
    */
-  void Reset();
+  // void Reset();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
