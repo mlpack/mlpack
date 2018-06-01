@@ -295,14 +295,14 @@ void KFoldCV<MLAlgorithm,
              PredictionsType,
              WeightsType>::ShuffleData()
 {
-  MatType data = xs.cols(0, (k - 1) * binSize + lastBinSize - 1);
-  PredictionsType labels = ys.subvec(0, (k - 1) * binSize + lastBinSize - 1);
+  MatType xsOrig = xs.cols(0, (k - 1) * binSize + lastBinSize - 1);
+  PredictionsType ysOrig = ys.cols(0, (k - 1) * binSize + lastBinSize - 1);
 
   // Now shuffle the data.
-  math::ShuffleData(data, labels, data, labels);
+  math::ShuffleData(xsOrig, ysOrig, xsOrig, ysOrig);
 
-  InitKFoldCVMat(data, xs);
-  InitKFoldCVMat(labels, ys);
+  InitKFoldCVMat(xsOrig, xs);
+  InitKFoldCVMat(ysOrig, ys);
 }
 
 template<typename MLAlgorithm,
@@ -317,22 +317,22 @@ void KFoldCV<MLAlgorithm,
              PredictionsType,
              WeightsType>::ShuffleData()
 {
-  MatType data = xs.cols(0, (k - 1) * binSize + lastBinSize - 1);
-  PredictionsType labels = ys.cols(0, (k - 1) * binSize + lastBinSize - 1);
-  WeightsType newWeights;
+  MatType xsOrig = xs.cols(0, (k - 1) * binSize + lastBinSize - 1);
+  PredictionsType ysOrig = ys.cols(0, (k - 1) * binSize + lastBinSize - 1);
+  WeightsType weightsOrig;
   if (weights.n_elem > 0)
-    newWeights = weights.cols(0, (k - 1) * binSize + lastBinSize - 1);
+    weightsOrig = weights.cols(0, (k - 1) * binSize + lastBinSize - 1);
 
   // Now shuffle the data.
   if (weights.n_elem > 0)
-    math::ShuffleData(data, labels, newWeights, data, labels, newWeights);
+    math::ShuffleData(xsOrig, ysOrig, weightsOrig, xsOrig, ysOrig, weightsOrig);
   else
-    math::ShuffleData(data, labels, data, labels);
+    math::ShuffleData(xsOrig, ysOrig, xsOrig, ysOrig);
 
-  InitKFoldCVMat(data, xs);
-  InitKFoldCVMat(labels, ys);
+  InitKFoldCVMat(xsOrig, xs);
+  InitKFoldCVMat(ysOrig, ys);
   if (weights.n_elem > 0)
-    InitKFoldCVMat(newWeights, weights);
+    InitKFoldCVMat(weightsOrig, weights);
 }
 
 template<typename MLAlgorithm,
