@@ -221,9 +221,6 @@ class KFoldCV
   //! The size of each bin in terms of data points.
   size_t binSize;
 
-  //! The size of each training subset in terms of data points.
-  size_t trainingSubsetSize;
-
   //! A pointer to a model from the last run of k-fold cross-validation.
   std::unique_ptr<MLAlgorithm> modelPtr;
 
