@@ -1,17 +1,17 @@
 /**
- * @file linear.hpp
- * @author Marcus Edel
+ * @file sampling.hpp
+ * @author Atharva Khandait
  *
- * Definition of the Linear layer class also known as fully-connected layer or
- * affine transformation.
+ * Definition of the Sampling layer class which samples from parameters for a given
+ * distribution.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_LINEAR_HPP
-#define MLPACK_METHODS_ANN_LAYER_LINEAR_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_SAMPLING_HPP
+#define MLPACK_METHODS_ANN_LAYER_SAMPLING_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -21,8 +21,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the Linear layer class. The Linear class represents a
- * single layer of a neural network.
+ * Implementation of the Sampling layer class. This layer samples from the given
+ * parameters of a normal distribution.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -33,19 +33,26 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class Linear
+class Sampling
 {
  public:
-  //! Create the Linear object.
-  Linear();
+  //! Create the Sampling object.
+  Sampling();
 
   /**
-   * Create the Linear layer object using the specified number of units.
+   * Create the Sampling layer object using the specified number of units.
    *
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  Linear(const size_t inSize, const size_t outSize);;
+  Sampling(const size_t inSize, const size_t outSize);
+
+  /**
+   * Create the Sampling layer object using the specified sample vector size.
+   *
+   * @param layerSize The number of output units.
+   */
+  Sampling(const size_t sampleSize);
 
   /*
    * Reset the layer parameter.
@@ -113,6 +120,16 @@ class Linear
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the input size.
+  size_t const& InputSize() const { return inSize; }
+  //! Modify the input size.
+  size_t& InputSize() { return inSize; }
+
+  //! Get the output size.
+  size_t const& OutputSize() const { return outSize; }
+  //! Modify the output size.
+  size_t& OutputSize() { return outSize; }
+
   /**
    * Serialize the layer
    */
@@ -141,17 +158,20 @@ class Linear
   //! Locally-stored gradient object.
   OutputDataType gradient;
 
+  //! Locally-stored current gaussian sample.
+  OutputDataType gaussianSample;
+
   //! Locally-stored input parameter object.
   InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class Linear
+}; // class Sampling
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "linear_impl.hpp"
+#include "sampling_impl.hpp"
 
 #endif
