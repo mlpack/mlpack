@@ -40,6 +40,10 @@ namespace cv {
  * double softmaxAccuracy = cv.Evaluate(lambda);
  * @endcode
  *
+ * Before calling @c Evaluate(), it is possible to shuffle the data by calling
+ * the @c Shuffle() function.  Shuffling is performed at construction time if
+ * the parameter @c shuffle is set to @c true in the constructor.
+ *
  * @tparam MLAlgorithm A machine learning algorithm.
  * @tparam Metric A metric to assess the quality of a trained model.
  * @tparam MatType The type of data.
@@ -69,9 +73,7 @@ class KFoldCV
    * @param xs Data points to cross-validate on.
    * @param ys Predictions (labels for classification algorithms and responses
    *     for regression algorithms) for each data point.
-   * @param shuffle Whether or not to shuffle the data and predictions before
-   *     performing cross-validation.  Shuffling will be performed before every
-   *     call to Evaluate().
+   * @param shuffle Whether or not to shuffle the data during construction.
    */
   KFoldCV(const size_t k,
           const MatType& xs,
@@ -85,9 +87,7 @@ class KFoldCV
    * @param xs Data points to cross-validate on.
    * @param ys Labels for each data point.
    * @param numClasses Number of classes in the dataset.
-   * @param shuffle Whether or not to shuffle the data and predictions before
-   *     performing cross-validation.  Shuffling will be performed before every
-   *     call to Evaluate().
+   * @param shuffle Whether or not to shuffle the data during construction.
    */
   KFoldCV(const size_t k,
           const MatType& xs,
@@ -104,9 +104,7 @@ class KFoldCV
    * @param datasetInfo Type information for each dimension of the dataset.
    * @param ys Labels for each data point.
    * @param numClasses Number of classes in the dataset.
-   * @param shuffle Whether or not to shuffle the data and predictions before
-   *     performing cross-validation.  Shuffling will be performed before every
-   *     call to Evaluate().
+   * @param shuffle Whether or not to shuffle the data during construction.
    */
   KFoldCV(const size_t k,
           const MatType& xs,
@@ -124,9 +122,7 @@ class KFoldCV
    * @param ys Predictions (labels for classification algorithms and responses
    *     for regression algorithms) for each data point.
    * @param weights Observation weights (for boosting).
-   * @param shuffle Whether or not to shuffle the data and predictions before
-   *     performing cross-validation.  Shuffling will be performed before every
-   *     call to Evaluate().
+   * @param shuffle Whether or not to shuffle the data during construction.
    */
   KFoldCV(const size_t k,
           const MatType& xs,
@@ -143,9 +139,7 @@ class KFoldCV
    * @param ys Labels for each data point.
    * @param numClasses Number of classes in the dataset.
    * @param weights Observation weights (for boosting).
-   * @param shuffle Whether or not to shuffle the data and predictions before
-   *     performing cross-validation.  Shuffling will be performed before every
-   *     call to Evaluate().
+   * @param shuffle Whether or not to shuffle the data during construction.
    */
   KFoldCV(const size_t k,
           const MatType& xs,
@@ -164,9 +158,7 @@ class KFoldCV
    * @param ys Labels for each data point.
    * @param numClasses Number of classes in the dataset.
    * @param weights Observation weights (for boosting).
-   * @param shuffle Whether or not to shuffle the data and predictions before
-   *     performing cross-validation.  Shuffling will be performed before every
-   *     call to Evaluate().
+   * @param shuffle Whether or not to shuffle the data during construction.
    */
   KFoldCV(const size_t k,
           const MatType& xs,
