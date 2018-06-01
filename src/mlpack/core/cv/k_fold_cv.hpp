@@ -188,17 +188,29 @@ class KFoldCV
   //! Access and modify a model from the last run of k-fold cross-validation.
   MLAlgorithm& Model();
 
-  //! Access whether or not shuffling will be performed before k-fold
-  //! cross-validation.
-  bool Shuffle() const { return shuffle; }
-  //! Modify whether or not shuffling will be performed before k-fold
-  //! cross-validation.
-  bool& Shuffle() { return shuffle; }
-
  private:
   //! A short alias for CVBase.
   using Base = CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>;
 
+ public:
+  /**
+   * Shuffle the data.  This overload is called if weights are not supported by
+   * the model type.
+   */
+  template<bool Enabled = !Base::MIE::SupportsWeights,
+           typename = typename std::enable_if<Enabled>::type>
+  void Shuffle();
+
+  /**
+   * Shuffle the data.  This overload is called if weights are supported by the
+   * model type.
+   */
+  template<bool Enabled = Base::MIE::SupportsWeights,
+           typename = typename std::enable_if<Enabled>::type,
+           typename = void>
+  void Shuffle();
+
+ private:
   //! An auxiliary object.
   Base base;
 
@@ -211,9 +223,6 @@ class KFoldCV
   PredictionsType ys;
   //! The extended (by repeating the first k - 2 bins) weights.
   WeightsType weights;
-
-  //! Whether or not to shuffle when calling Evaluate().
-  bool shuffle;
 
   //! The original size of the dataset.
   size_t lastBinSize;
@@ -268,21 +277,6 @@ class KFoldCV
            typename = typename std::enable_if<Enabled>::type,
            typename = void>
   double TrainAndEvaluate(const MLAlgorithmArgs& ...mlAlgorithmArgs);
-
-  /**
-   * Shuffle data if weights are not supported.
-   */
-  template<bool Enabled = !Base::MIE::SupportsWeights,
-           typename = typename std::enable_if<Enabled>::type>
-  void ShuffleData();
-
-  /**
-   * Shuffle data if weights are supported.
-   */
-  template<bool Enabled = Base::MIE::SupportsWeights,
-           typename = typename std::enable_if<Enabled>::type,
-           typename = void>
-  void ShuffleData();
 
   /**
    * Calculate the index of the first column of the ith validation subset.

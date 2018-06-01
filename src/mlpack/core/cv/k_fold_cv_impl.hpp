@@ -135,8 +135,7 @@ KFoldCV<MLAlgorithm,
                               const PredictionsType& ys,
                               const bool shuffle) :
     base(std::move(base)),
-    k(k),
-    shuffle(shuffle)
+    k(k)
 {
   if (k < 2)
     throw std::invalid_argument("KFoldCV: k should not be less than 2");
@@ -145,6 +144,10 @@ KFoldCV<MLAlgorithm,
 
   InitKFoldCVMat(xs, this->xs);
   InitKFoldCVMat(ys, this->ys);
+
+  // Do we need to shuffle the dataset?
+  if (shuffle)
+    Shuffle();
 }
 
 template<typename MLAlgorithm,
@@ -162,11 +165,18 @@ KFoldCV<MLAlgorithm,
                               const PredictionsType& ys,
                               const WeightsType& weights,
                               const bool shuffle) :
-    KFoldCV(std::move(base), k, xs, ys, shuffle)
+    base(std::move(base)),
+    k(k)
 {
   Base::AssertWeightsConsistency(xs, weights);
 
+  InitKFoldCVMat(xs, this->xs);
+  InitKFoldCVMat(ys, this->ys);
   InitKFoldCVMat(weights, this->weights);
+
+  // Do we need to shuffle the dataset?
+  if (shuffle)
+    Shuffle();
 }
 
 template<typename MLAlgorithm,
@@ -181,10 +191,6 @@ double KFoldCV<MLAlgorithm,
                PredictionsType,
                WeightsType>::Evaluate(const MLAlgorithmArgs&... args)
 {
-  // Do we need to shuffle the dataset?
-  if (shuffle)
-    ShuffleData();
-
   return TrainAndEvaluate(args...);
 }
 
@@ -293,7 +299,7 @@ void KFoldCV<MLAlgorithm,
              Metric,
              MatType,
              PredictionsType,
-             WeightsType>::ShuffleData()
+             WeightsType>::Shuffle()
 {
   MatType xsOrig = xs.cols(0, (k - 1) * binSize + lastBinSize - 1);
   PredictionsType ysOrig = ys.cols(0, (k - 1) * binSize + lastBinSize - 1);
@@ -315,7 +321,7 @@ void KFoldCV<MLAlgorithm,
              Metric,
              MatType,
              PredictionsType,
-             WeightsType>::ShuffleData()
+             WeightsType>::Shuffle()
 {
   MatType xsOrig = xs.cols(0, (k - 1) * binSize + lastBinSize - 1);
   PredictionsType ysOrig = ys.cols(0, (k - 1) * binSize + lastBinSize - 1);
