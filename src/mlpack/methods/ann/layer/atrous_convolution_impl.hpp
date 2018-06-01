@@ -215,10 +215,9 @@ void AtrousConvolution<
 
       if (padW != 0 || padH != 0)
       {
-        gTemp.slice(inMap + batchCount * inSize) += output.submat(
-            rotatedFilter.n_rows / 2, rotatedFilter.n_cols / 2,
-            rotatedFilter.n_rows / 2 + gTemp.n_rows - 1,
-            rotatedFilter.n_cols / 2 + gTemp.n_cols - 1);
+        gTemp.slice(inMap + batchCount * inSize) += output.submat(padW, padH,
+            padW + gTemp.n_rows - 1,
+            padH + gTemp.n_cols - 1);
       }
       else
       {
@@ -308,10 +307,9 @@ void AtrousConvolution<
           (gradientTemp.n_rows < output.n_rows &&
           gradientTemp.n_cols < output.n_cols))
       {
-        gradientTemp.slice(outMapIdx) += output.submat(output.n_rows / 2,
-            output.n_cols / 2,
-            output.n_rows / 2 + gradientTemp.n_rows - 1,
-            output.n_cols / 2 + gradientTemp.n_cols - 1);
+        gradientTemp.slice(outMapIdx) += output.submat(padW, padH,
+            padW + gradientTemp.n_rows - 1,
+            padH + gradientTemp.n_cols - 1);
       }
       else
       {

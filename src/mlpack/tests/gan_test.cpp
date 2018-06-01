@@ -132,28 +132,26 @@ BOOST_AUTO_TEST_CASE(GANTest)
 }
 
 /*
- * Tests the GAN implementation on the O'Reilly Test on the MNIST dataset.
- * It's currently not possible to run this every time due to time constraints.
+ * Tests the GAN implementation of the O'Reilly Test on the MNIST dataset.
+ * It's not viable to train on bigger parameters due to time constraints.
  * Please refer mlpack/models repository for the tutorial.
-
+ */
 BOOST_AUTO_TEST_CASE(GANMNISTTest)
 {
   size_t dNumKernels = 32;
-  size_t discriminatorPreTrain = 300;
-  size_t batchSize = 50;
+  size_t discriminatorPreTrain = 5;
+  size_t batchSize = 5;
   size_t noiseDim = 100;
   size_t generatorUpdateStep = 1;
   size_t numSamples = 10;
   double stepSize = 0.0003;
   double eps = 1e-8;
-  size_t numEpoches = 20;
+  size_t numEpoches = 1;
   double tolerance = 1e-5;
-  int datasetMaxCols = -1;
+  int datasetMaxCols = 10;
   bool shuffle = true;
   double multiplier = 10;
-  std::string output_dataset = "output_mnist.csv";
 
-  Log::Info << "output_dataset = '" << output_dataset << "'" << std::endl;
   Log::Info << std::boolalpha
       << " batchSize = " << batchSize << std::endl
       << " generatorUpdateStep = " << generatorUpdateStep << std::endl
@@ -244,10 +242,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
         i * dim, 2 * dim - 1, i * dim + dim - 1) = samples;
   }
 
-  Log::Info << "Saving output to " << output_dataset << "..." << std::endl;
-  generatedData.save(output_dataset, arma::csv_ascii);
-  Log::Info << "Output saved!" << std::endl;
+  Log::Info << "Output generated!" << std::endl;
 }
-*/
 
 BOOST_AUTO_TEST_SUITE_END();
