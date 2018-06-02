@@ -107,9 +107,10 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates)
       cost += (1 - regularization) * eval;
     }
 
-    for (size_t j = 0; j < k ; j++)
+    for (int j = k - 1; j >= 0; j--)
     {
-      for (size_t l = 0; l < k ; l++)
+      // Bound constraints to avoid uneccesary computation.
+      for (size_t l = 0, bp = k; l < bp ; l++)
       {
         // Calculate cost due to data point, target neighbors, impostors
         // triplets.
@@ -118,7 +119,15 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates)
                       metric.Evaluate(transformedDataset.col(i),
                           transformedDataset.col(impostors(l, i)));
 
-        cost += regularization * std::max(0.0, 1 + eval);
+        // Check bounding condition.
+        if (eval < -1)
+        {
+          // update bound.
+          bp = l;
+          break;
+        }
+
+        cost += regularization * (1 + eval);
       }
     }
   }
@@ -144,7 +153,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates,
   transformedDataset = coordinates * dataset;
 
   Constraints constraint(transformedDataset, labels, k);
-  constraint.Impostors(impostors);
+  constraint.Impostors(impostors, begin, batchSize);
 
   for (size_t i = begin; i < begin + batchSize; i++)
   {
@@ -156,9 +165,10 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates,
       cost += (1 - regularization) * eval;
     }
 
-    for (size_t j = 0; j < k ; j++)
+    for (int j = k - 1; j >= 0; j--)
     {
-      for (size_t l = 0; l < k ; l++)
+      // Bound constraints to avoid uneccesary computation.
+      for (size_t l = 0, bp = k; l < bp ; l++)
       {
         // Calculate cost due to data point, target neighbors, impostors
         // triplets.
@@ -167,7 +177,15 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates,
                       metric.Evaluate(transformedDataset.col(i),
                           transformedDataset.col(impostors(l, i)));
 
-        cost += regularization * std::max(0.0, 1 + eval);
+        // Check bounding condition.
+        if (eval < -1)
+        {
+          // update bound.
+          bp = l;
+          break;
+        }
+
+        cost += regularization * (1 + eval);
       }
     }
   }
@@ -195,23 +213,30 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& /* coordinates */,
       cij += diff * arma::trans(diff);
     }
 
-    for (size_t j = 0; j < k ; j++)
+    for (int j = k - 1; j >= 0; j--)
     {
-      for (size_t l = 0; l < k ; l++)
+      // Bound constraints to avoid uneccesary computation.
+      for (size_t l = 0, bp = k; l < bp ; l++)
       {
         // Calculate gradient due to triplets.
         double eval = metric.Evaluate(transformedDataset.col(i),
                           transformedDataset.col(targetNeighbors(j, i))) -
                       metric.Evaluate(transformedDataset.col(i),
                           transformedDataset.col(impostors(l, i)));
-        if (eval > -1)
-        {
-          arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
-          cil += diff * arma::trans(diff);
 
-          diff = dataset.col(i) - dataset.col(impostors(l, i));
-          cil -= diff * arma::trans(diff);
+        // Check bounding condition.
+        if (eval < -1)
+        {
+          // update bound.
+          bp = l;
+          break;
         }
+
+        arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+        cil += diff * arma::trans(diff);
+
+        diff = dataset.col(i) - dataset.col(impostors(l, i));
+        cil -= diff * arma::trans(diff);
       }
     }
   }
@@ -241,23 +266,30 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& /* coordinates */,
       cij += diff * arma::trans(diff);
     }
 
-    for (size_t j = 0; j < k ; j++)
+    for (int j = k - 1; j >= 0; j--)
     {
-      for (size_t l = 0; l < k ; l++)
+      // Bound constraints to avoid uneccesary computation.
+      for (size_t l = 0, bp = k; l < bp ; l++)
       {
         // Calculate gradient due to triplets.
         double eval = metric.Evaluate(transformedDataset.col(i),
                           transformedDataset.col(targetNeighbors(j, i))) -
                       metric.Evaluate(transformedDataset.col(i),
                           transformedDataset.col(impostors(l, i)));
-        if (eval > -1)
-        {
-          arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
-          cil += diff * arma::trans(diff);
 
-          diff = dataset.col(i) - dataset.col(impostors(l, i));
-          cil -= diff * arma::trans(diff);
+        // Check bounding condition.
+        if (eval < -1)
+        {
+          // update bound.
+          bp = l;
+          break;
         }
+
+        arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+        cil += diff * arma::trans(diff);
+
+        diff = dataset.col(i) - dataset.col(impostors(l, i));
+        cil -= diff * arma::trans(diff);
       }
     }
   }
@@ -306,9 +338,10 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
       cij += diff * arma::trans(diff);
     }
 
-    for (size_t j = 0; j < k ; j++)
+    for (int j = k - 1; j >= 0; j--)
     {
-      for (size_t l = 0; l < k ; l++)
+      // Bound constraints to avoid uneccesary computation.
+      for (size_t l = 0, bp = k; l < bp ; l++)
       {
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
@@ -317,16 +350,21 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
                       metric.Evaluate(transformedDataset.col(i),
                           transformedDataset.col(impostors(l, i)));
 
-        cost += regularization * std::max(0.0, 1 + eval);
-
-        if (eval > -1)
+        // Check bounding condition.
+        if (eval < -1)
         {
-          arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
-          cil += diff * arma::trans(diff);
-
-          diff = dataset.col(i) - dataset.col(impostors(l, i));
-          cil -= diff * arma::trans(diff);
+          // update bound.
+          bp = l;
+          break;
         }
+
+        cost += regularization * (1 + eval);
+
+        arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+        cil += diff * arma::trans(diff);
+
+        diff = dataset.col(i) - dataset.col(impostors(l, i));
+        cil -= diff * arma::trans(diff);
       }
     }
   }
@@ -358,7 +396,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
 
   // Calculate impostors.
   Constraints constraint(transformedDataset, labels, k);
-  constraint.Impostors(impostors);
+  constraint.Impostors(impostors, begin, batchSize);
 
   gradient.zeros(dataset.n_rows, dataset.n_rows);
 
@@ -379,9 +417,10 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
       cij += diff * arma::trans(diff);
     }
 
-    for (size_t j = 0; j < k ; j++)
+    for (int j = k - 1; j >= 0; j--)
     {
-      for (size_t l = 0; l < k ; l++)
+      // Bound constraints to avoid uneccesary computation.
+      for (size_t l = 0, bp = k; l < bp ; l++)
       {
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
@@ -390,16 +429,21 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
                       metric.Evaluate(transformedDataset.col(i),
                           transformedDataset.col(impostors(l, i)));
 
-        cost += regularization * std::max(0.0, 1 + eval);
-
-        if (eval > -1)
+        // Check bounding condition.
+        if (eval < -1)
         {
-          arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
-          cil += diff * arma::trans(diff);
-
-          diff = dataset.col(i) - dataset.col(impostors(l, i));
-          cil -= diff * arma::trans(diff);
+          // update bound.
+          bp = l;
+          break;
         }
+
+        cost += regularization * (1 + eval);
+
+        arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
+        cil += diff * arma::trans(diff);
+
+        diff = dataset.col(i) - dataset.col(impostors(l, i));
+        cil -= diff * arma::trans(diff);
       }
     }
   }

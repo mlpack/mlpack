@@ -49,12 +49,36 @@ class Constraints
   void TargetNeighbors(arma::Mat<size_t>& outputMatrix);
 
   /**
+   * Calculates k similar labeled nearest neighbors for a batch of dataset and
+   *  stores them into the passed matrix.
+   *
+   * @param outputMatrix Coordinates matrix to store target neighbors.
+   * @param begin Index of the initial point of dataset.
+   * @param batchSize Number of data points to use.
+   */
+  void TargetNeighbors(arma::Mat<size_t>& outputMatrix,
+                     const size_t begin,
+                     const size_t batchSize);
+
+  /**
    * Calculates k differently labeled nearest neighbors for each datapoint and
    * writes them back to passed matrix.
    *
    * @param outputMatrix Coordinates matrix to store impostors.
    */
   void Impostors(arma::Mat<size_t>& outputMatrix);
+
+  /**
+   * Calculates k differently labeled nearest neighbors for a batch of dataset
+   * and writes them back to passed matrix.
+   *
+   * @param outputMatrix Coordinates matrix to store impostors.
+   * @param begin Index of the initial point of dataset.
+   * @param batchSize Number of data points to use.
+   */
+  void Impostors(arma::Mat<size_t>& outputMatrix,
+                 const size_t begin,
+                 const size_t batchSize);
 
   /**
    * Generate triplets {i, j, l} for each datapoint i and writes back generated
