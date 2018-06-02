@@ -2,6 +2,8 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   lmetric_search.hpp
+  cosine_search.hpp
+  pearson_search.hpp
 )
 
 # Add directory name to sources.
