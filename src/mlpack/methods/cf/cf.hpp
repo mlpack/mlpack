@@ -22,6 +22,7 @@
 #include <mlpack/methods/amf/update_rules/nmf_als.hpp>
 #include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
 #include <mlpack/methods/cf/decomposition_policies/nmf_method.hpp>
+#include <mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp>
 #include <set>
 #include <map>
 #include <iostream>

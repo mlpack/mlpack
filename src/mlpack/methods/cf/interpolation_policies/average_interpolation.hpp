@@ -30,8 +30,8 @@ class AverageInterpolation
   /**
    * Interoplation weights are identical and sum up to one.
    *
-   * @param weights resulting interpolation weights.
-   * @param similarities similarites between query user and neighbors.
+   * @param weights Resulting interpolation weights.
+   * @param similarities Similarites between query user and neighbors.
    */
   void GetWeights(arma::vec& weights, const arma::vec& similarities) const
   {
@@ -40,7 +40,7 @@ class AverageInterpolation
       Log::Fatal << "Require: similarities.n_elem > 0. There should be at "
           << "least one neighbor!" << std::endl;
     }
-    weights.resize(similarities.n_elem);
+    weights.set_size(similarities.n_elem);
     weights.fill(1.0 / similarities.n_elem);
   }
 };

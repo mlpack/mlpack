@@ -31,8 +31,8 @@ class SimilarityInterpolation
   /**
    * Interpolation weights are computed as normalized similarities.
    *
-   * @param weights resulting interpolation weights.
-   * @param similarities similarites between query user and neighbors.
+   * @param weights Resulting interpolation weights.
+   * @param similarities Similarites between query user and neighbors.
    */
   void GetWeights(arma::vec& weights, const arma::vec& similarities) const
   {
@@ -42,11 +42,7 @@ class SimilarityInterpolation
           << "least one neighbor!" << std::endl;
     }
 
-    double similaritiesSum = arma::sum(similarites);
-    if (std::fabs(similaritiesSum) < 1e-14)
-      weights = arma::vec(similarities.n_elem, arma::fill::zeros);
-    else
-      weights = similarities / similaritiesSum;
+    similarties = similarities / (arma::sum(similarities) + 1e-9);
   }
 };
 

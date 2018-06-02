@@ -50,11 +50,11 @@ class LMetricSearch
   void Search(const arma::mat& query, const size_t k,
       arma::Mat<size_t>& neighbors, arma::mat& similarities)
   {
-    neighbor.Search(query, k, neighbors, similarities);
-    
+    neighborSearch.Search(query, k, neighbors, similarities);
+
     // Calculate similarities from L_p distance. We restrict that similarities
     // are not larger than one.
-    similarites = 1.0 / (1.0 + similarities);
+    similarities = 1.0 / (1.0 + similarities);
   }
 
  private:
