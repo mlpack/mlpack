@@ -322,7 +322,7 @@ static void mlpackMain()
         "test" }, true);
 
     // Load an input model.
-    CFType* c = std::move(CLI::GetParam<CFType<>*>("input_model"));
+    CFType<>* c = std::move(CLI::GetParam<CFType<>*>("input_model"));
 
     PerformAction(c);
   }

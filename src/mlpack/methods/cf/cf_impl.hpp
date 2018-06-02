@@ -382,7 +382,7 @@ void CFType<NormalizationType>::CleanData(const arma::mat& data,
 //! Serialize the model.
 template<typename NormalizationType>
 template<typename Archive>
-void CFType::serialize(Archive& ar, const unsigned int /* version */)
+void CFType<NormalizationType>::serialize(Archive& ar, const unsigned int /* version */)
 {
   // This model is simple; just serialize all the members. No special handling
   // required.
