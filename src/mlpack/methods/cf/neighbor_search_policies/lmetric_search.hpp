@@ -2,7 +2,7 @@
  * @file lmetric_search.hpp
  * @author Wenhao Huang
  *
- * Search with L_p distance.
+ * Nearest neighbor search with L_p distance.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,7 +20,7 @@ namespace mlpack {
 namespace cf {
 
 /**
- * Search with L_p distance.
+ * Nearest neighbor search with L_p distance.
  *
  * @tparam TPower Power of metric.
  */
@@ -40,7 +40,7 @@ class LMetricSearch
 
   /**
    * Given a set of query points, find the nearest k neighbors, and return
-   * similarites. Similarities are less than or equal to one.
+   * similarites. Similarities are non-negative and no larger thant one.
    *
    * @param query A set of query points.
    * @param k Number of neighbors to search.
