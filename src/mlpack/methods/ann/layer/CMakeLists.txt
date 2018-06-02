@@ -7,6 +7,8 @@ set(SOURCES
   add_merge_impl.hpp
   alpha_dropout.hpp
   alpha_dropout_impl.hpp
+  atrous_convolution.hpp
+  atrous_convolution_impl.hpp
   base_layer.hpp
   bilinear_interpolation.hpp
   bilinear_interpolation_impl.hpp
@@ -59,6 +61,8 @@ set(SOURCES
   mean_pooling_impl.hpp
   multiply_constant.hpp
   multiply_constant_impl.hpp
+  multiply_merge.hpp
+  multiply_merge_impl.hpp
   negative_log_likelihood.hpp
   negative_log_likelihood_impl.hpp
   parametric_relu.hpp

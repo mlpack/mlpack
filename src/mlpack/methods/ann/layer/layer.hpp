@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_ANN_LAYER_LAYER_HPP
 
 #include "add_merge.hpp"
+#include "atrous_convolution.hpp"
 #include "batch_norm.hpp"
 #include "concat_performance.hpp"
 #include "convolution.hpp"
@@ -22,6 +23,7 @@
 #include "linear.hpp"
 #include "linear_no_bias.hpp"
 #include "lstm.hpp"
+#include "multiply_merge.hpp"
 #include "gru.hpp"
 #include "fast_lstm.hpp"
 #include "recurrent.hpp"

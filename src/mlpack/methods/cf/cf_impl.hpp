@@ -22,45 +22,17 @@
 namespace mlpack {
 namespace cf {
 
-// Apply the factorizer when a coordinate list is used.
-template<typename FactorizerType>
-void ApplyFactorizer(FactorizerType& factorizer,
-                     const arma::mat& data,
-                     const arma::sp_mat& /* cleanedData */,
-                     const size_t rank,
-                     arma::mat& w,
-                     arma::mat& h,
-                     const typename std::enable_if_t<FactorizerTraits<
-                         FactorizerType>::UsesCoordinateList>* = 0)
-{
-  factorizer.Apply(data, rank, w, h);
-}
-
-// Apply the factorizer when coordinate lists are not used.
-template<typename FactorizerType>
-void ApplyFactorizer(FactorizerType& factorizer,
-                     const arma::mat& /* data */,
-                     const arma::sp_mat& cleanedData,
-                     const size_t rank,
-                     arma::mat& w,
-                     arma::mat& h,
-                     const typename std::enable_if_t<!FactorizerTraits<
-                         FactorizerType>::UsesCoordinateList>* = 0)
-{
-  factorizer.Apply(cleanedData, rank, w, h);
-}
-
 // Default CF constructor.
 template<typename NormalizationType>
-CF<NormalizationType>::CF(const size_t numUsersForSimilarity,
+CFType<NormalizationType>::CFType(const size_t numUsersForSimilarity,
        const size_t rank) :
-    numUsersForSimilarity(numUsersForSimilarity),
-    rank(rank)
+       numUsersForSimilarity(numUsersForSimilarity),
+       rank(rank)
 {
   // Validate neighbourhood size.
   if (numUsersForSimilarity < 1)
   {
-    Log::Warn << "CF::CF(): neighbourhood size should be > 0 ("
+    Log::Warn << "CFType::CFType(): neighbourhood size should be > 0 ("
         << numUsersForSimilarity << " given). Setting value to 5.\n";
     // Set default value of 5.
     this->numUsersForSimilarity = 5;
@@ -68,59 +40,40 @@ CF<NormalizationType>::CF(const size_t numUsersForSimilarity,
 }
 
 /**
- * Construct the CF object using an instantiated factorizer.
+ * Construct the CF object using an instantiated decomposition policy.
  */
 template<typename NormalizationType>
-template<typename FactorizerType>
-CF<NormalizationType>::CF(const arma::mat& data,
-       FactorizerType factorizer,
-       const size_t numUsersForSimilarity,
-       const size_t rank) :
+template<typename MatType, typename DecompositionPolicy>
+CFType<NormalizationType>::CFType(const MatType& data,
+                                  DecompositionPolicy& decomposition,
+                                  const size_t numUsersForSimilarity,
+                                  const size_t rank,
+                                  const size_t maxIterations,
+                                  const double minResidue,
+                                  const bool mit) :
     numUsersForSimilarity(numUsersForSimilarity),
     rank(rank)
 {
   // Validate neighbourhood size.
   if (numUsersForSimilarity < 1)
   {
-    Log::Warn << "CF::CF(): neighbourhood size should be > 0 ("
+    Log::Warn << "CFType::CFType(): neighbourhood size should be > 0 ("
         << numUsersForSimilarity << " given). Setting value to 5.\n";
     // Set default value of 5.
     this->numUsersForSimilarity = 5;
   }
 
-  Train(data, factorizer);
+    Train(data, decomposition, maxIterations, minResidue, mit);
 }
 
-/**
- * Construct the CF object using an instantiated factorizer.
- */
+// Train when data is given in dense matrix form.
 template<typename NormalizationType>
-template<typename FactorizerType>
-CF<NormalizationType>::CF(const arma::sp_mat& data,
-       FactorizerType factorizer,
-       const size_t numUsersForSimilarity,
-       const size_t rank,
-       const typename std::enable_if_t<
-           !FactorizerTraits<FactorizerType>::UsesCoordinateList>*) :
-    numUsersForSimilarity(numUsersForSimilarity),
-    rank(rank)
-{
-  // Validate neighbourhood size.
-  if (numUsersForSimilarity < 1)
-  {
-    Log::Warn << "CF::CF(): neighbourhood size should be > 0("
-        << numUsersForSimilarity << " given). Setting value to 5.\n";
-    // Setting Default Value of 5
-    this->numUsersForSimilarity = 5;
-  }
-
-  Train(data, factorizer);
-}
-
-template<typename NormalizationType>
-template<typename FactorizerType>
-void CF<NormalizationType>::Train(const arma::mat& data,
-                                  FactorizerType factorizer)
+template<typename DecompositionPolicy>
+void CFType<NormalizationType>::Train(const arma::mat& data,
+                                      DecompositionPolicy& decomposition,
+                                      const size_t maxIterations,
+                                      const double minResidue,
+                                      const bool mit)
 {
   // Make a copy of data before performing normalization.
   arma::mat ds(data);
@@ -145,16 +98,19 @@ void CF<NormalizationType>::Train(const arma::mat& data,
   // Decompose the data matrix (which is in coordinate list form) to user and
   // data matrices.
   Timer::Start("cf_factorization");
-  ApplyFactorizer(factorizer, ds, cleanedData, this->rank, w, h);
+  decomposition.Apply(data, cleanedData, rank, w,
+      h, maxIterations, minResidue, mit);
   Timer::Stop("cf_factorization");
 }
 
+// Train when data is given as sparse matrix of user item table.
 template<typename NormalizationType>
-template<typename FactorizerType>
-void CF<NormalizationType>::Train(const arma::sp_mat& data,
-               FactorizerType factorizer,
-               const typename std::enable_if_t<!FactorizerTraits<
-                   FactorizerType>::UsesCoordinateList>*)
+template<typename DecompositionPolicy>
+void CFType<NormalizationType>::Train(const arma::sp_mat& data,
+                                      DecompositionPolicy& decomposition,
+                                      const size_t maxIterations,
+                                      const double minResidue,
+                                      const bool mit)
 {
   cleanedData = data;
   normalization.Normalize(cleanedData);
@@ -174,13 +130,16 @@ void CF<NormalizationType>::Train(const arma::sp_mat& data,
     this->rank = rankEstimate;
   }
 
+  // Decompose the data matrix (which is in coordinate list form) to user and
+  // data matrices.
   Timer::Start("cf_factorization");
-  factorizer.Apply(cleanedData, this->rank, w, h);
+  decomposition.Apply(data, cleanedData, rank, w,
+      h, maxIterations, minResidue, mit);
   Timer::Stop("cf_factorization");
 }
 
 template<typename NormalizationType>
-void CF<NormalizationType>::GetRecommendations(const size_t numRecs,
+void CFType<NormalizationType>::GetRecommendations(const size_t numRecs,
                             arma::Mat<size_t>& recommendations)
 {
   // Generate list of users.  Maybe it would be more efficient to pass an empty
@@ -195,7 +154,7 @@ void CF<NormalizationType>::GetRecommendations(const size_t numRecs,
 }
 
 template<typename NormalizationType>
-void CF<NormalizationType>::GetRecommendations(const size_t numRecs,
+void CFType<NormalizationType>::GetRecommendations(const size_t numRecs,
                             arma::Mat<size_t>& recommendations,
                             const arma::Col<size_t>& users)
 {
@@ -292,7 +251,7 @@ void CF<NormalizationType>::GetRecommendations(const size_t numRecs,
 
 // Predict the rating for a single user/item combination.
 template<typename NormalizationType>
-double CF<NormalizationType>::Predict(const size_t user,
+double CFType<NormalizationType>::Predict(const size_t user,
                                       const size_t item) const
 {
   // First, we need to find the nearest neighbors of the given user.
@@ -337,7 +296,7 @@ double CF<NormalizationType>::Predict(const size_t user,
 
 // Predict the rating for a group of user/item combinations.
 template<typename NormalizationType>
-void CF<NormalizationType>::Predict(const arma::Mat<size_t>& combinations,
+void CFType<NormalizationType>::Predict(const arma::Mat<size_t>& combinations,
                  arma::vec& predictions) const
 {
   // First, for nearest neighbor search, stretch the H matrix.
@@ -394,7 +353,7 @@ void CF<NormalizationType>::Predict(const arma::Mat<size_t>& combinations,
 }
 
 template<typename NormalizationType>
-void CF<NormalizationType>::CleanData(const arma::mat& data,
+void CFType<NormalizationType>::CleanData(const arma::mat& data,
                                       arma::sp_mat& cleanedData)
 {
   // Generate list of locations for batch insert constructor for sparse
@@ -423,10 +382,9 @@ void CF<NormalizationType>::CleanData(const arma::mat& data,
 //! Serialize the model.
 template<typename NormalizationType>
 template<typename Archive>
-void CF<NormalizationType>::serialize(Archive& ar,
-                                      const unsigned int /* version */)
+void CFType::serialize(Archive& ar, const unsigned int /* version */)
 {
-  // This model is simple; just serialize all the members.  No special handling
+  // This model is simple; just serialize all the members. No special handling
   // required.
   ar & BOOST_SERIALIZATION_NVP(numUsersForSimilarity);
   ar & BOOST_SERIALIZATION_NVP(rank);

@@ -1,11 +1,12 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  mountain_car.hpp
-  cart_pole.hpp
-  continuous_mountain_car.hpp
-  acrobat.hpp
-  pendulum.hpp
+  batch_svd_method.hpp
+  nmf_method.hpp
+  randomized_svd_method.hpp
+  regularized_svd_method.hpp
+  svd_complete_method.hpp
+  svd_incomplete_method.hpp
 )
 
 # Add directory name to sources.
