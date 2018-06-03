@@ -60,8 +60,8 @@ class CombinedNormalization
    * @param item Item ID.
    * @param rating Computed rating before denormalization.
    */
-  double Denormalize(const int user,
-                     const int item,
+  double Denormalize(const size_t user,
+                     const size_t item,
                      const double rating) const
   {
     return SequenceDenormalize<0>(user, item, rating);
@@ -141,8 +141,8 @@ class CombinedNormalization
   template<
       int I, /* Which normalization in tuple to use */
       typename = std::enable_if_t<(I < std::tuple_size<TupleType>::value)>>
-  double SequenceDenormalize(const int user,
-                             const int item,
+  double SequenceDenormalize(const size_t user,
+                             const size_t item,
                              const double rating) const
   {
     // The order of denormalization should be the reversed order
@@ -158,8 +158,8 @@ class CombinedNormalization
       int I, /* Which normalization in tuple to use */
       typename = std::enable_if_t<(I >= std::tuple_size<TupleType>::value)>,
       typename = void>
-  double SequenceDenormalize(const int /* user */,
-                             const int /* item */,
+  double SequenceDenormalize(const size_t /* user */,
+                             const size_t /* item */,
                              const double rating) const
   {
     return rating;

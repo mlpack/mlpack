@@ -64,8 +64,8 @@ class OverallMeanNormalization
    * @param item Item ID.
    * @param rating Computed rating before denormalization.
    */
-  double Denormalize(const int /* user */,
-                     const int /* item */,
+  double Denormalize(const size_t /* user */,
+                     const size_t /* item */,
                      const double rating) const
   {
     return rating + mean;

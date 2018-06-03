@@ -25,9 +25,9 @@ namespace cf {
 // Default CF constructor.
 template<typename NormalizationType>
 CFType<NormalizationType>::CFType(const size_t numUsersForSimilarity,
-       const size_t rank) :
-       numUsersForSimilarity(numUsersForSimilarity),
-       rank(rank)
+                                  const size_t rank) :
+                                  numUsersForSimilarity(numUsersForSimilarity),
+                                  rank(rank)
 {
   // Validate neighbourhood size.
   if (numUsersForSimilarity < 1)
@@ -139,8 +139,9 @@ void CFType<NormalizationType>::Train(const arma::sp_mat& data,
 }
 
 template<typename NormalizationType>
-void CFType<NormalizationType>::GetRecommendations(const size_t numRecs,
-                            arma::Mat<size_t>& recommendations)
+void CFType<NormalizationType>::GetRecommendations(
+    const size_t numRecs,
+    arma::Mat<size_t>& recommendations)
 {
   // Generate list of users.  Maybe it would be more efficient to pass an empty
   // users list, and then have the other overload of GetRecommendations() assume
@@ -154,9 +155,10 @@ void CFType<NormalizationType>::GetRecommendations(const size_t numRecs,
 }
 
 template<typename NormalizationType>
-void CFType<NormalizationType>::GetRecommendations(const size_t numRecs,
-                            arma::Mat<size_t>& recommendations,
-                            const arma::Col<size_t>& users)
+void CFType<NormalizationType>::GetRecommendations(
+    const size_t numRecs,
+    arma::Mat<size_t>& recommendations,
+    const arma::Col<size_t>& users)
 {
   // We want to avoid calculating the full rating matrix, so we will do nearest
   // neighbor search only on the H matrix, using the observation that if the
@@ -252,7 +254,7 @@ void CFType<NormalizationType>::GetRecommendations(const size_t numRecs,
 // Predict the rating for a single user/item combination.
 template<typename NormalizationType>
 double CFType<NormalizationType>::Predict(const size_t user,
-                                      const size_t item) const
+                                          const size_t item) const
 {
   // First, we need to find the nearest neighbors of the given user.
   // We'll use the same technique as for GetRecommendations().
@@ -297,7 +299,7 @@ double CFType<NormalizationType>::Predict(const size_t user,
 // Predict the rating for a group of user/item combinations.
 template<typename NormalizationType>
 void CFType<NormalizationType>::Predict(const arma::Mat<size_t>& combinations,
-                 arma::vec& predictions) const
+                                        arma::vec& predictions) const
 {
   // First, for nearest neighbor search, stretch the H matrix.
   arma::mat l = arma::chol(w.t() * w);
@@ -354,7 +356,7 @@ void CFType<NormalizationType>::Predict(const arma::Mat<size_t>& combinations,
 
 template<typename NormalizationType>
 void CFType<NormalizationType>::CleanData(const arma::mat& data,
-                                      arma::sp_mat& cleanedData)
+                                          arma::sp_mat& cleanedData)
 {
   // Generate list of locations for batch insert constructor for sparse
   // matrices.
@@ -382,7 +384,8 @@ void CFType<NormalizationType>::CleanData(const arma::mat& data,
 //! Serialize the model.
 template<typename NormalizationType>
 template<typename Archive>
-void CFType<NormalizationType>::serialize(Archive& ar, const unsigned int /* version */)
+void CFType<NormalizationType>::serialize(Archive& ar,
+                                          const unsigned int /* version */)
 {
   // This model is simple; just serialize all the members. No special handling
   // required.

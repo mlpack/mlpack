@@ -49,8 +49,8 @@ class NoNormalization
    * @param item Item ID.
    * @param rating Computed rating before denormalization.
    */
-  inline double Denormalize(const int /* user */,
-                            const int /* item */,
+  inline double Denormalize(const size_t /* user */,
+                            const size_t /* item */,
                             const double rating) const
   {
     return rating;
