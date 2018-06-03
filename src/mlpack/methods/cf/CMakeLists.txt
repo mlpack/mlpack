@@ -8,6 +8,7 @@ set(SOURCES
 )
 
 add_subdirectory(normalization)
+add_subdirectory(decomposition_policies)
 
 # Add directory name to sources.
 set(DIR_SRCS)

@@ -63,7 +63,7 @@ CFType<NormalizationType>::CFType(const MatType& data,
     this->numUsersForSimilarity = 5;
   }
 
-    Train(data, decomposition, maxIterations, minResidue, mit);
+  Train(data, decomposition, maxIterations, minResidue, mit);
 }
 
 // Train when data is given in dense matrix form.
