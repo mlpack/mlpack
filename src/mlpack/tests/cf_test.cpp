@@ -18,6 +18,12 @@
 #include <mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/svd_complete_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/svd_incomplete_method.hpp>
+#include  <mlpack/methods/cf/normalization/no_normalization.hpp>
+#include  <mlpack/methods/cf/normalization/overall_mean_normalization.hpp>
+#include  <mlpack/methods/cf/normalization/user_mean_normalization.hpp>
+#include  <mlpack/methods/cf/normalization/item_mean_normalization.hpp>
+#include  <mlpack/methods/cf/normalization/z_score_normalization.hpp>
+#include  <mlpack/methods/cf/normalization/combined_normalization.hpp>
 
 #include <iostream>
 
@@ -122,7 +128,8 @@ void GetRecommendationsQueriedUser(bool cleanData = true)
 /**
  * Make sure recommendations that are generated are reasonably accurate.
  */
-template<typename DecompositionPolicy>
+template<typename DecompositionPolicy,
+         typename NormalizationType = NoNormalization>
 void RecommendationAccuracy(bool cleanData = true)
 {
   DecompositionPolicy decomposition;
@@ -168,13 +175,13 @@ void RecommendationAccuracy(bool cleanData = true)
   {
     // Make data into sparse matrix.
     arma::sp_mat cleanedData;
-    CFType<>::CleanData(dataset, cleanedData);
+    CFType<NormalizationType>::CleanData(dataset, cleanedData);
 
     arma::sp_mat dataset;
     dataset = cleanedData;
   }
 
-  CFType<> c(dataset, decomposition, 5, 5, 70);
+  CFType<NormalizationType> c(dataset, decomposition, 5, 5, 70);
 
   // Obtain 150 recommendations for the users in savedCols, and make sure the
   // missing item shows up in most of them.  First, create the list of users,
@@ -223,7 +230,8 @@ void RecommendationAccuracy(bool cleanData = true)
 }
 
 // Make sure that Predict() is returning reasonable results.
-template<typename DecompositionPolicy>
+template<typename DecompositionPolicy,
+         typename NormalizationType = NoNormalization>
 void CFPredict(bool cleanData = true)
 {
   DecompositionPolicy decomposition;
@@ -269,13 +277,13 @@ void CFPredict(bool cleanData = true)
   {
     // Make data into sparse matrix.
     arma::sp_mat cleanedData;
-    CFType<>::CleanData(dataset, cleanedData);
+    CFType<NormalizationType>::CleanData(dataset, cleanedData);
 
     arma::sp_mat dataset;
     dataset = cleanedData;
   }
 
-  CFType<> c(dataset, decomposition, 5, 5, 70);
+  CFType<NormalizationType> c(dataset, decomposition, 5, 5, 70);
 
   // Now, for each removed rating, make sure the prediction is... reasonably
   // accurate.
@@ -1066,6 +1074,56 @@ BOOST_AUTO_TEST_CASE(SerializationSVDCompleteTest)
 BOOST_AUTO_TEST_CASE(SerializationSVDIncompleteTest)
 {
   Serialization<SVDIncompletePolicy>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for NMF and
+ * OverallMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictOverallMeanNormalization)
+{
+  CFPredict<NMFPolicy, OverallMeanNormalization>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for NMF and
+ * UserMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictUserMeanNormalization)
+{
+  CFPredict<NMFPolicy, UserMeanNormalization>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for NMF and
+ * ItemMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictItemMeanNormalization)
+{
+  CFPredict<NMFPolicy, ItemMeanNormalization>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for NMF and
+ * ZScoreNormalization.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictZScoreNormalization)
+{
+  CFPredict<NMFPolicy, ZScoreNormalization>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for NMF and
+ * CombinedNormalization<OverallMeanNormalization, UserMeanNormalization,
+ * ItemMeanNormalization>.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictCombinedNormalization)
+{
+  CFPredict<NMFPolicy,
+            CombinedNormalization<
+                OverallMeanNormalization,
+                UserMeanNormalization,
+                ItemMeanNormalization>>();
 }
 
 BOOST_AUTO_TEST_SUITE_END();

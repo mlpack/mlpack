@@ -37,7 +37,7 @@ class ItemMeanNormalization
     const size_t itemNum = arma::max(data.row(1)) + 1;
     itemMean = arma::vec(itemNum, arma::fill::zeros);
     // Number of ratings for each item.
-    arma::Row<sizt_t> ratingNum(itemNum, arma::fill:zeros);
+    arma::Row<size_t> ratingNum(itemNum, arma::fill::zeros);
 
     // Sum ratings for each item.
     data.each_col([&](arma::vec& datapoint) {
