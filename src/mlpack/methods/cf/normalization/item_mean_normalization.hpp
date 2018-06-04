@@ -66,7 +66,7 @@ class ItemMeanNormalization
    */
   void Normalize(arma::sp_mat& cleanedData)
   {
-    itemMean = arma::mean(cleanedData, 1);
+    itemMean = arma::vec(arma::mean(cleanedData, 1));
 
     arma::sp_mat::iterator it = cleanedData.begin();
     arma::sp_mat::iterator it_end = cleanedData.end();

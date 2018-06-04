@@ -66,7 +66,7 @@ class UserMeanNormalization
    */
   void Normalize(arma::sp_mat& cleanedData)
   {
-    userMean = arma::mean(cleanedData, 0);
+    userMean = arma::vec(arma::mean(cleanedData, 0));
 
     arma::sp_mat::iterator it = cleanedData.begin();
     arma::sp_mat::iterator it_end = cleanedData.end();
