@@ -44,8 +44,6 @@ void Reparametrization<InputDataType, OutputDataType>::Forward(
         << "be 2 * latent size of the Reparametrization layer!" << std::endl;
   }
 
-  arma::arma_rng::set_seed_random();
-
   mean = input.submat(latentSize, 0, 2 * latentSize - 1, input.n_cols - 1);
   SoftplusFunction::Fn(input.submat(0, 0, latentSize - 1, input.n_cols - 1),
       stdDeviation);
