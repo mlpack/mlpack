@@ -37,6 +37,14 @@ mkdir -p mlpack-3.0.1/build/ && cd mlpack-3.0.1/build/
 cmake ../ && make -j4 && sudo make install
 @endcode
 
+More information on the build process and details can be found on the @ref build
+page.  You may also need to set the environment variable @c LD_LIBRARY_PATH to
+include @c /usr/local/lib/ on most Linux systems.
+
+@code
+export LD_LIBRARY_PATH=/usr/local/lib/
+@endcode
+
 You can also use the mlpack Docker image on Dockerhub, which has all of the
 Python bindings pre-installed:
 

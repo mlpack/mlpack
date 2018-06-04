@@ -41,6 +41,13 @@ $ sudo make install
 If the \c cmake \c .. command fails, you are probably missing a dependency, so
 check the output and install any necessary libraries.  (See \ref build_dep.)
 
+On many Linux systems, mlpack will install by default to @c /usr/local/lib and
+you may need to set the @c LD_LIBRARY_PATH environment variable:
+
+@code
+export LD_LIBRARY_PATH=/usr/local/lib
+@endcode
+
 The instructions above are the simplest way to get, build, and install mlpack.
 The sections below discuss each of those steps in further detail and show how to
 configure mlpack.
