@@ -11,6 +11,12 @@ with the following command:
 $ sudo apt-get install libmlpack-dev
 @endcode
 
+@note Older Ubuntu versions may not have the most recent version of mlpack
+available---for instance, at the time of this writing, Ubuntu 16.04 only has
+mlpack 2.0.1 available.  Options include upgrading Ubuntu to a newer release,
+finding a PPA or other non-official sources, or installing with a manual build
+(below).
+
 If mlpack is not available in your system's package manager, then you can follow
 this document for how to compile and install mlpack from source.
 
