@@ -195,6 +195,27 @@ If you wish to install mlpack to the system, make sure you have root privileges
 
 You can now run the executables by name; you can link against mlpack with
 \c -lmlpack, and the mlpack headers are found in \c /usr/include or
-\c /usr/local/include (depending on the system and CMake configuration).
+\c /usr/local/include (depending on the system and CMake configuration).  If
+Python bindings were installed, they should be available when you start Python.
+
+@section build_run Using mlpack without installing
+
+If you would prefer to use mlpack after building but without installing it to
+the system, this is possible.  All of the command-line programs in the
+@c build/bin/ directory will run directly with no modification.
+
+For running the Python bindings from the build directory, the situation is a
+little bit different.  You will need to set the following environment variables:
+
+@code
+export LD_LIBRARY_PATH=/path/to/mlpack/build/lib/:${LD_LIBRARY_PATH}
+export PYTHONPATH=/path/to/mlpack/build/src/mlpack/bindings/python/:${PYTHONPATH}
+@endcode
+
+(Be sure to substitute the correct path to your build directory for
+`/path/to/mlpack/build/`.)
+
+Once those environment variables are set, you should be able to start a Python
+interpreter and `import mlpack`, then use the Python bindings.
 
 */
