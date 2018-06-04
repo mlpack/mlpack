@@ -65,16 +65,16 @@ void Sampling<InputDataType, OutputDataType>::Forward(
       stdDeviation);
 
   gaussianSample = arma::randn<arma::Mat<eT>>(outSize, input.n_cols);
-  output = mean + stdDeviation % gaussianSample;
+  output = mean + std::move(stdDeviation) % gaussianSample;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Sampling<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
-{ 
+{
   arma::Mat<eT> softplusDer;
-  SoftplusFunction::Deriv((input - mean) / gaussianSample, 
+  SoftplusFunction::Deriv((input - std::move(mean)) / gaussianSample,
       softplusDer);
 
   g = join_cols(gy % std::move(gaussianSample) % std::move(softplusDer), gy);
@@ -82,10 +82,23 @@ void Sampling<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType>
-double Sampling<InputDataType, OutputDataType>::klForward()
+double Sampling<InputDataType, OutputDataType>::klForward(
+    const InputType&& input)
 {
-  return -0.5 * arma::accu(arma::log(stdDeviation) - stdDeviation -
-      arma::pow(mean, 2) + 1);
+  stdDeviation = input.submat(0, 0, outSize - 1, input.n_cols);
+
+  return -0.5 * arma::accu(arma::log(stdDeviation) - stdDeviation - arma::pow(
+      input.submat(outSize, 0, 2 * outSize - 1, input.n_cols), 2) + 1);
+}
+
+template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
+void Sampling<InputDataType, OutputDataType>::klBackward(
+    const InputType&& input,
+    OutputType&& output)
+{
+  output = join_cols(-1 / input.submat(0, 0, outSize - 1, input.n_cols) - 1,
+      input.submat(outSize, 0, 2 * outSize - 1, input.n_cols))
 }
 
 template<typename InputDataType, typename OutputDataType>

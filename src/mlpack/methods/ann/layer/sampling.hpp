@@ -87,7 +87,7 @@ class Sampling
    * @param input Input data used for evaluating the specified function.
    */
   template<typename InputType>
-  double klForward();
+  double klForward(const InputType&& input);
 
   /**
    * Ordinary feed backward pass of a neural network, evaluating the backward
@@ -98,10 +98,9 @@ class Sampling
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void klBackward(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  template<typename InputType, typename OutputType>
+  void klBackward(const InputType&& input,
+                OutputType&& output);
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
