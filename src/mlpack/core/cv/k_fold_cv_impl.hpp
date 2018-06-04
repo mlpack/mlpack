@@ -370,9 +370,10 @@ arma::Mat<ElementType> KFoldCV<MLAlgorithm,
     arma::Mat<ElementType>& m,
     const size_t i)
 {
-  // If this is the last fold, we have to handle it a little bit differently,
-  // since the last fold may contain slightly more than 'binSize' points.
-  const size_t subsetSize = (i == k - 1) ? lastBinSize + (k - 2) * binSize :
+  // If this is not the first fold, we have to handle it a little bit
+  // differently, since the last fold may contain slightly more than 'binSize'
+  // points.
+  const size_t subsetSize = (i != 0) ? lastBinSize + (k - 2) * binSize :
       (k - 1) * binSize;
 
   return arma::Mat<ElementType>(m.colptr(binSize * i), m.n_rows, subsetSize,
@@ -393,9 +394,10 @@ arma::Row<ElementType> KFoldCV<MLAlgorithm,
     arma::Row<ElementType>& r,
     const size_t i)
 {
-  // If this is the last fold, we have to handle it a little bit differently,
-  // since the last fold may not contain 'binSize' points.
-  const size_t subsetSize = (i == k - 1) ? lastBinSize + (k - 2) * binSize :
+  // If this is not the first fold, we have to handle it a little bit
+  // differently, since the last fold may contain slightly more than 'binSize'
+  // points.
+  const size_t subsetSize = (i != 0) ? lastBinSize + (k - 2) * binSize :
       (k - 1) * binSize;
 
   return arma::Row<ElementType>(r.colptr(binSize * i), subsetSize, false, true);
