@@ -1847,4 +1847,21 @@ BOOST_AUTO_TEST_CASE(SubviewIndexTest)
   CheckMatrices(outputEnd, subEnd);
 }
 
+/*
+ * Simple Sampling module test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleSamplingLayerTest)
+{
+  arma::mat input, output, delta;
+  Sampling<> module(10, 5);
+
+  // Test the Forward function.
+  input = join_cols(arma::ones<arma::mat>(5, 1) * -10,
+      arma::zeros<arma::mat>(5, 1));
+  module.Forward(std::move(input), std::move(output));
+  BOOST_REQUIRE_LE(arma::accu(output), 1e-3);
+
+  // Test the Backward function.
+}
+
 BOOST_AUTO_TEST_SUITE_END();

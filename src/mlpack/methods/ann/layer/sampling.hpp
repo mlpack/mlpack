@@ -2,7 +2,7 @@
  * @file sampling.hpp
  * @author Atharva Khandait
  *
- * Definition of the Sampling layer class which samples from parameters for a given
+ * Definition of the Sampling layer class which samples from a gaussian
  * distribution.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -16,13 +16,14 @@
 #include <mlpack/prereqs.hpp>
 
 #include "layer_types.hpp"
+#include "../activation_functions/softplus_function.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the Sampling layer class. This layer samples from the given
- * parameters of a normal distribution.
+ * Implementation of the Sampling layer class. This layer samples from the
+ * given parameters of a normal distribution.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -45,7 +46,7 @@ class Sampling
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  // Sampling(const size_t inSize, const size_t outSize);
+  Sampling(const size_t inSize, const size_t outSize);
 
   /**
    * Create the Sampling layer object using the specified sample vector size.
@@ -53,11 +54,6 @@ class Sampling
    * @param layerSize The number of output units.
    */
   Sampling(const size_t sampleSize);
-
-  /*
-   * Reset the layer parameter.
-   */
-  // void Reset();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -79,26 +75,33 @@ class Sampling
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
+  void Backward(const arma::Mat<eT>&& input,
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g);
 
-  /*
-   * Calculate the gradient using the output delta and the input activation.
+  /**
+   * Ordinary feed forward pass of a neural network, evaluating
+   * Kullback–Leibler divergence between a normal distribution
+   * and the standard normal.
    *
-   * @param input The input parameter used for calculating the gradient.
-   * @param error The calculated error.
-   * @param gradient The calculated gradient.
+   * @param input Input data used for evaluating the specified function.
+   */
+  template<typename InputType>
+  double klForward();
+
+  /**
+   * Ordinary feed backward pass of a neural network, evaluating the backward
+   * pass of Kullback–Leibler divergence. Using the results from the
+   * KL divergence feed forward pass.
+   *
+   * @param input The propagated input activation.
+   * @param gy The backpropagated error.
+   * @param g The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
-
-  //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
-  //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  void klBackward(const arma::Mat<eT>&& input,
+                arma::Mat<eT>&& gy,
+                arma::Mat<eT>&& g);
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
@@ -114,11 +117,6 @@ class Sampling
   OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
 
   //! Get the input size.
   size_t const& InputSize() const { return inSize; }
@@ -143,23 +141,17 @@ class Sampling
   //! Locally-stored number of output units.
   size_t outSize;
 
-  //! Locally-stored weight object.
-  OutputDataType weights;
-
-  //! Locally-stored weight parameters.
-  OutputDataType weight;
-
-  //! Locally-stored bias term parameters.
-  OutputDataType bias;
-
   //! Locally-stored delta object.
   OutputDataType delta;
 
-  //! Locally-stored gradient object.
-  OutputDataType gradient;
-
   //! Locally-stored current gaussian sample.
   OutputDataType gaussianSample;
+
+  //! Locally-stored current mean.
+  OutputDataType mean;
+
+  //! Locally-stored current standard deviation.
+  OutputDataType stdDeviation;
 
   //! Locally-stored input parameter object.
   InputDataType inputParameter;

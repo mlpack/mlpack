@@ -25,15 +25,19 @@ Sampling<InputDataType, OutputDataType>::Sampling()
   // Nothing to do here.
 }
 
-// template <typename InputDataType, typename OutputDataType>
-// Sampling<InputDataType, OutputDataType>::Sampling(
-//     const size_t inSize,
-//     const size_t outSize) :
-//     inSize(inSize),
-//     outSize(outSize)
-// {
-//   weights.set_size(2 * outSize * inSize + 2 * outSize, 1);
-// }
+template <typename InputDataType, typename OutputDataType>
+Sampling<InputDataType, OutputDataType>::Sampling(
+    const size_t inSize,
+    const size_t outSize) :
+    inSize(inSize),
+    outSize(outSize)
+{
+  if (inSize != 2 * outSize)
+  {
+  	Log::Fatal << "The input size of Sampling layer should be 2 * output size!"
+  	    << std::endl;
+  }
+}
 
 template <typename InputDataType, typename OutputDataType>
 Sampling<InputDataType, OutputDataType>::Sampling(
@@ -43,51 +47,45 @@ Sampling<InputDataType, OutputDataType>::Sampling(
   // Nothing to do here.
 }
 
-// template<typename InputDataType, typename OutputDataType>
-// void Sampling<InputDataType, OutputDataType>::Reset()
-// {
-//   weights.set_size(2 * outSize * inSize + 2 * outSize, 1);
-
-//   weight = arma::mat(weights.memptr(), 2 * outSize, inSize, false, false);
-//   bias = arma::mat(weights.memptr() + weight.n_elem,
-//       2 * outSize, 1, false, false);
-// }
-
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Sampling<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
+  if (input.n_rows != 2 * outSize)
+  {
+  	Log::Fatal << "The output size of layer before the Sampling layer should "
+  	    << "be 2 * output size of the Sampling layer!" << std::endl;
+  }
+
   arma::arma_rng::set_seed_random();
 
-  // output = weight * input;
-  // output.each_col() += bias;
-  gaussianSample = arma::randn<arma::mat>(outSize, input.n_cols);
-  output = (input.submat(outSize, 0, 2 * outSize - 1, input.n_cols - 1) +
-      input.submat(0, 0, outSize - 1, input.n_cols - 1)) % gaussianSample;
+  mean = input.submat(outSize, 0, 2 * outSize - 1, input.n_cols - 1);
+  SoftplusFunction::Fn(input.submat(0, 0, outSize - 1, input.n_cols - 1),
+      stdDeviation);
+
+  gaussianSample = arma::randn<arma::Mat<eT>>(outSize, input.n_cols);
+  output = mean + stdDeviation % gaussianSample;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Sampling<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
-{std::cout << gy.n_rows << std::endl << gy.n_cols << std::endl;
-  g = join_cols((weight.submat(0, 0, outSize - 1, inSize - 1).t() * gy) % 
-      gaussianSample, 
-      weight.submat(outSize, 0, 2 * outSize - 1, inSize - 1).t() * gy);
+    const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+{ 
+  arma::Mat<eT> softplusDer;
+  SoftplusFunction::Deriv((input - mean) / gaussianSample, 
+      softplusDer);
+
+  g = join_cols(gy % std::move(gaussianSample) % std::move(softplusDer), gy);
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Sampling<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>&& input,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& gradient)
+template<typename InputType>
+double Sampling<InputDataType, OutputDataType>::klForward()
 {
-  gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
-      error * input.t());
-  gradient.submat(weight.n_elem, 0, gradient.n_elem - 1, 0) =
-      arma::sum(error, 1);
+  return -0.5 * arma::accu(arma::log(stdDeviation) - stdDeviation -
+      arma::pow(mean, 2) + 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -95,13 +93,8 @@ template<typename Archive>
 void Sampling<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(inSize);
+  // ar & BOOST_SERIALIZATION_NVP(inSize);
   ar & BOOST_SERIALIZATION_NVP(outSize);
-
-  // This is inefficient, but we have to allocate this memory so that
-  // WeightSetVisitor gets the right size.
-  if (Archive::is_loading::value)
-    weights.set_size(2 * outSize * inSize + 2 * outSize, 1);
 }
 
 } // namespace ann
