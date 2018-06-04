@@ -1,8 +1,8 @@
 /**
- * @file sampling.hpp
+ * @file reparametrization.hpp
  * @author Atharva Khandait
  *
- * Definition of the Sampling layer class which samples from a gaussian
+ * Definition of the Reparametrization layer class which samples from a gaussian
  * distribution.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_SAMPLING_HPP
-#define MLPACK_METHODS_ANN_LAYER_SAMPLING_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_REPARAMETRIZATION_HPP
+#define MLPACK_METHODS_ANN_LAYER_REPARAMETRIZATION_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -22,7 +22,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the Sampling layer class. This layer samples from the
+ * Implementation of the Reparametrization layer class. This layer samples from the
  * given parameters of a normal distribution.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -34,26 +34,18 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class Sampling
+class Reparametrization
 {
  public:
-  //! Create the Sampling object.
-  Sampling();
+  //! Create the Reparametrization object.
+  Reparametrization();
 
   /**
-   * Create the Sampling layer object using the specified number of units.
-   *
-   * @param inSize The number of input units.
-   * @param outSize The number of output units.
-   */
-  Sampling(const size_t inSize, const size_t outSize);
-
-  /**
-   * Create the Sampling layer object using the specified sample vector size.
+   * Create the Reparametrization layer object using the specified sample vector size.
    *
    * @param layerSize The number of output units.
    */
-  Sampling(const size_t sampleSize);
+  Reparametrization(const size_t latentSize);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -134,11 +126,8 @@ class Sampling
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  //! Locally-stored number of input units.
-  size_t inSize;
-
   //! Locally-stored number of output units.
-  size_t outSize;
+  size_t latentSize;
 
   //! Locally-stored delta object.
   OutputDataType delta;
@@ -157,12 +146,12 @@ class Sampling
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class Sampling
+}; // class Reparametrization
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "sampling_impl.hpp"
+#include "reparametrization_impl.hpp"
 
 #endif

@@ -1,8 +1,8 @@
 /**
- * @file sampling_impl.hpp
+ * @file reparametrization_impl.hpp
  * @author Atharva Khandait
  *
- * Implementation of the Sampling class which samples from parameters for a given
+ * Implementation of the Reparametrization class which samples from parameters for a given
  * distribution.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -10,67 +10,53 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_SAMPLING_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_SAMPLING_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_REPARAMETRIZATION_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_REPARAMETRIZATION_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "sampling.hpp"
+#include "reparametrization.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-Sampling<InputDataType, OutputDataType>::Sampling()
+Reparametrization<InputDataType, OutputDataType>::Reparametrization()
 {
   // Nothing to do here.
 }
 
 template <typename InputDataType, typename OutputDataType>
-Sampling<InputDataType, OutputDataType>::Sampling(
-    const size_t inSize,
-    const size_t outSize) :
-    inSize(inSize),
-    outSize(outSize)
-{
-  if (inSize != 2 * outSize)
-  {
-    Log::Fatal << "The input size of Sampling layer should be 2 * output size!"
-        << std::endl;
-  }
-}
-
-template <typename InputDataType, typename OutputDataType>
-Sampling<InputDataType, OutputDataType>::Sampling(
-    const size_t sampleSize) :
-    outSize(sampleSize)
+Reparametrization<InputDataType, OutputDataType>::Reparametrization(
+    const size_t latentSize) :
+    latentSize(latentSize)
 {
   // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void Sampling<InputDataType, OutputDataType>::Forward(
+void Reparametrization<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  if (input.n_rows != 2 * outSize)
+  if (input.n_rows != 2 * latentSize)
   {
-    Log::Fatal << "The output size of layer before the Sampling layer should "
-        << "be 2 * output size of the Sampling layer!" << std::endl;
+    Log::Fatal << "The output size of layer before the Reparametrization layer should "
+        << "be 2 * latent size of the Reparametrization layer!" << std::endl;
   }
 
   arma::arma_rng::set_seed_random();
 
-  mean = input.submat(outSize, 0, 2 * outSize - 1, input.n_cols - 1);
-  SoftplusFunction::Fn(input.submat(0, 0, outSize - 1, input.n_cols - 1),
+  mean = input.submat(latentSize, 0, 2 * latentSize - 1, input.n_cols - 1);
+  SoftplusFunction::Fn(input.submat(0, 0, latentSize - 1, input.n_cols - 1),
       stdDeviation);
 
-  gaussianSample = arma::randn<arma::Mat<eT>>(outSize, input.n_cols);
+  gaussianSample = arma::randn<arma::Mat<eT>>(latentSize, input.n_cols);
   output = mean + std::move(stdDeviation) % gaussianSample;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void Sampling<InputDataType, OutputDataType>::Backward(
+void Reparametrization<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
   arma::Mat<eT> softplusDer;
@@ -82,32 +68,31 @@ void Sampling<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType>
-double Sampling<InputDataType, OutputDataType>::klForward(
+double Reparametrization<InputDataType, OutputDataType>::klForward(
     const InputType&& input)
 {
-  stdDeviation = input.submat(0, 0, outSize - 1, input.n_cols);
+  stdDeviation = input.submat(0, 0, latentSize - 1, input.n_cols);
 
   return -0.5 * arma::accu(arma::log(stdDeviation) - stdDeviation - arma::pow(
-      input.submat(outSize, 0, 2 * outSize - 1, input.n_cols), 2) + 1);
+      input.submat(latentSize, 0, 2 * latentSize - 1, input.n_cols), 2) + 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void Sampling<InputDataType, OutputDataType>::klBackward(
+void Reparametrization<InputDataType, OutputDataType>::klBackward(
     const InputType&& input,
     OutputType&& output)
 {
-  output = join_cols(-1 / input.submat(0, 0, outSize - 1, input.n_cols) - 1,
-      input.submat(outSize, 0, 2 * outSize - 1, input.n_cols))
+  output = join_cols(-1 / input.submat(0, 0, latentSize - 1, input.n_cols) - 1,
+      input.submat(latentSize, 0, 2 * latentSize - 1, input.n_cols))
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void Sampling<InputDataType, OutputDataType>::serialize(
+void Reparametrization<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  // ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar & BOOST_SERIALIZATION_NVP(latentSize);
 }
 
 } // namespace ann
