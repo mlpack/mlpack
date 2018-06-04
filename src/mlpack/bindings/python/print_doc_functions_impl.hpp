@@ -142,7 +142,14 @@ template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args)
 {
   std::ostringstream oss;
-  oss << ">>> " << programName << "(";
+  oss << ">>> ";
+
+  // Find out if we have any output options first.
+  std::ostringstream ossOutput;
+  ossOutput << PrintOutputOptions(args...);
+  if (ossOutput.str() != "")
+    oss << "output = ";
+  oss << programName << "(";
 
   // Now process each input option.
   oss << PrintInputOptions(args...);
