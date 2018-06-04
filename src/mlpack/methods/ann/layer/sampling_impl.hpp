@@ -34,8 +34,8 @@ Sampling<InputDataType, OutputDataType>::Sampling(
 {
   if (inSize != 2 * outSize)
   {
-  	Log::Fatal << "The input size of Sampling layer should be 2 * output size!"
-  	    << std::endl;
+    Log::Fatal << "The input size of Sampling layer should be 2 * output size!"
+        << std::endl;
   }
 }
 
@@ -54,8 +54,8 @@ void Sampling<InputDataType, OutputDataType>::Forward(
 {
   if (input.n_rows != 2 * outSize)
   {
-  	Log::Fatal << "The output size of layer before the Sampling layer should "
-  	    << "be 2 * output size of the Sampling layer!" << std::endl;
+    Log::Fatal << "The output size of layer before the Sampling layer should "
+        << "be 2 * output size of the Sampling layer!" << std::endl;
   }
 
   arma::arma_rng::set_seed_random();
