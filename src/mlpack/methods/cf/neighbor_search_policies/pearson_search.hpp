@@ -52,10 +52,9 @@ class PearsonSearch
       normalizedSet.col(i) =
           referenceSet.col(i) - arma::mean(referenceSet.col(i));
       // Normalize the vector to unit length.
-      normalizedSet.col(i) =
-          normalizedSet.col(i) / arma::norm(normalizedSet.col(i));
+      normalizedSet.col(i) = arma::normalise(normalizedSet.col(i), 2);
     }
-    
+
     neighborSearch.Train(std::move(normalizedSet));
   }
 
@@ -80,17 +79,16 @@ class PearsonSearch
       // Subtract mean(x) from each element in x.
       normalizedQuery.col(i) = query.col(i) - arma::mean(query.col(i));
       // Normalize the vector to unit length.
-      normalizedQuery.col(i) =
-          normalizedQuery.col(i) / arma::norm(normalizedQuery.col(i));
+      normalizedQuery.col(i) = arma::normalise(normalizedQuery.col(i), 2);
     }
 
     neighborSearch.Search(normalizedQuery, k, neighbors, similarities);
-    
+
     // Resulting similarities from Search() are Euclidean distance.
     // For normalized vectors a and b, pearson(a, b) = 1 - dis(a, b) ^ 2 / 2,
     // where dis(a, b) is Euclidean distance.
     similarities = 1 - arma::pow(similarities, 2) / 2.0;
-    
+
     // The range of pearson correlation is [-1, 1]. We restrict the range of
     // similarity to be [0, 1].
     similarities = (similarities + 1) / 2.0;

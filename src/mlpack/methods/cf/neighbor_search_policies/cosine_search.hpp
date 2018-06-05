@@ -39,13 +39,8 @@ class CosineSearch
   CosineSearch(const arma::mat& referenceSet)
   {
     // Normalize all vectors to unit length.
-    arma::mat normalizedSet(arma::size(referenceSet));
-    for (size_t i = 0; i < referenceSet.n_cols; i++)
-    {
-      normalizedSet.col(i) =
-          referenceSet.col(i) / arma::norm(referenceSet.col(i));
-    }
-    
+    arma::mat normalizedSet = arma::normalise(referenceSet, 2, 0);
+
     neighborSearch.Train(std::move(normalizedSet));
   }
 
@@ -62,19 +57,15 @@ class CosineSearch
       arma::Mat<size_t>& neighbors, arma::mat& similarities)
   {
     // Normalize query vectors to unit length.
-    arma::mat normalizedQuery(arma::size(query));
-    for (size_t i = 0; i < query.n_cols; i++)
-    {
-      normalizedQuery.col(i) = query.col(i) / arma::norm(query.col(i));
-    }
+    arma::mat normalizedQuery = arma::normalise(query, 2, 0);
 
     neighborSearch.Search(normalizedQuery, k, neighbors, similarities);
-    
+
     // Resulting similarities from Search() are Euclidean distance.
     // For unit vectors a and b, cos(a, b) = 1 - dis(a, b) ^ 2 / 2,
     // where dis(a, b) is Euclidean distance.
     similarities = 1 - arma::pow(similarities, 2) / 2.0;
-    
+
     // The range of cosine value is [-1, 1]. We restrict the range of similarity
     // to be [0, 1].
     similarities = (similarities + 1) / 2.0;
