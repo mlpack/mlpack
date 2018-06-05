@@ -1848,12 +1848,12 @@ BOOST_AUTO_TEST_CASE(SubviewIndexTest)
 }
 
 /*
- * Simple Sampling module test.
+ * Simple Reparametrization module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleSamplingLayerTest)
+BOOST_AUTO_TEST_CASE(SimpleReparametrizationLayerTest)
 {
-  arma::mat input, output, delta;
-  Sampling<> module(10, 5);
+  arma::mat input, output;
+  Reparametrization<> module(5);
 
   // Test the Forward function.
   input = join_cols(arma::ones<arma::mat>(5, 1) * -10,

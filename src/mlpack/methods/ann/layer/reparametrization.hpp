@@ -94,11 +94,6 @@ class Reparametrization
   void klBackward(const InputType&& input,
                 OutputType&& output);
 
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -109,15 +104,10 @@ class Reparametrization
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the input size.
-  size_t const& InputSize() const { return inSize; }
-  //! Modify the input size.
-  size_t& InputSize() { return inSize; }
-
   //! Get the output size.
-  size_t const& OutputSize() const { return outSize; }
+  size_t const& OutputSize() const { return latentSize; }
   //! Modify the output size.
-  size_t& OutputSize() { return outSize; }
+  size_t& OutputSize() { return latentSize; }
 
   /**
    * Serialize the layer
@@ -140,9 +130,6 @@ class Reparametrization
 
   //! Locally-stored current standard deviation.
   OutputDataType stdDeviation;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;

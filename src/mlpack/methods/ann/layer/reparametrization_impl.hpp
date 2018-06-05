@@ -40,8 +40,9 @@ void Reparametrization<InputDataType, OutputDataType>::Forward(
 {
   if (input.n_rows != 2 * latentSize)
   {
-    Log::Fatal << "The output size of layer before the Reparametrization layer should "
-        << "be 2 * latent size of the Reparametrization layer!" << std::endl;
+    Log::Fatal << "The output size of layer before the Reparametrization "
+        << "layer should be 2 * latent size of the Reparametrization layer!"
+        << std::endl;
   }
 
   mean = input.submat(latentSize, 0, 2 * latentSize - 1, input.n_cols - 1);
@@ -82,7 +83,7 @@ void Reparametrization<InputDataType, OutputDataType>::klBackward(
     OutputType&& output)
 {
   output = join_cols(-1 / input.submat(0, 0, latentSize - 1, input.n_cols) - 1,
-      input.submat(latentSize, 0, 2 * latentSize - 1, input.n_cols))
+      input.submat(latentSize, 0, 2 * latentSize - 1, input.n_cols));
 }
 
 template<typename InputDataType, typename OutputDataType>
