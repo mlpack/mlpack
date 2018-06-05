@@ -64,30 +64,10 @@ void LMNNFunction<MetricType>::Shuffle()
   constraint.TargetNeighbors(targetNeighbors);
 }
 
-inline void Projection(arma::mat& iterate)
-{
-  // Projection.
-  arma::vec eigval;
-  arma::mat eigvec;
-
-  arma::eig_sym(eigval, eigvec, iterate);
-
-  arma::uvec ind = arma::find(eigval > 0);
-  arma::mat diagEigVal = arma::diagmat(eigval);
-  iterate = eigvec.cols(ind) * diagEigVal.submat(ind, ind) *
-      arma::trans(eigvec.cols(ind));
-}
-
 //! Evaluate cost over whole dataset.
 template<typename MetricType>
 double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates)
 {
-  // Hack
-  arma::mat& iterate = const_cast<arma::mat&>(coordinates);
-  // Apply projection.
-  if (arma::accu(iterate == initialPoint) != initialPoint.n_elem)
-    Projection(iterate);
-
   double cost = 0;
 
   // Apply metric over dataset.
@@ -109,7 +89,8 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates)
 
     for (int j = k - 1; j >= 0; j--)
     {
-      // Bound constraints to avoid uneccesary computation.
+      // Bound constraints to avoid uneccesary computation. Here bp stands for
+      // breaking point.
       for (size_t l = 0, bp = k; l < bp ; l++)
       {
         // Calculate cost due to data point, target neighbors, impostors
@@ -141,12 +122,6 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates,
                                           const size_t begin,
                                           const size_t batchSize)
 {
-  // Hack
-  arma::mat& iterate = const_cast<arma::mat&>(coordinates);
-  // Apply projection.
-  if (arma::accu(iterate == initialPoint) != initialPoint.n_elem)
-    Projection(iterate);
-
   double cost = 0;
 
   // Apply metric over dataset.
@@ -196,13 +171,13 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates,
 //! Compute gradient over whole dataset.
 template<typename MetricType>
 template<typename GradType>
-void LMNNFunction<MetricType>::Gradient(const arma::mat& /* coordinates */,
+void LMNNFunction<MetricType>::Gradient(const arma::mat& coordinates,
                                         GradType& gradient)
 {
-  gradient.zeros(dataset.n_rows, dataset.n_rows);
+  gradient.zeros(coordinates.n_rows, coordinates.n_cols);
 
-  arma::mat cij = arma::zeros(dataset.n_rows, dataset.n_rows);
-  arma::mat cil = arma::zeros(dataset.n_rows, dataset.n_rows);
+  arma::mat cij = arma::zeros(coordinates.n_rows, coordinates.n_cols);
+  arma::mat cil = arma::zeros(coordinates.n_rows, coordinates.n_cols);
 
   for (size_t i = 0; i < dataset.n_cols; i++)
   {
@@ -241,21 +216,22 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& /* coordinates */,
     }
   }
 
-  gradient = (1 - regularization) * cij + regularization * cil;
+  gradient = 2 * coordinates * ((1 - regularization) * cij +
+      regularization * cil);
 }
 
 //! Compute gradient over a batch of data points.
 template<typename MetricType>
 template<typename GradType>
-void LMNNFunction<MetricType>::Gradient(const arma::mat& /* coordinates */,
+void LMNNFunction<MetricType>::Gradient(const arma::mat& coordinates,
                                         const size_t begin,
                                         GradType& gradient,
                                         const size_t batchSize)
 {
-  gradient.zeros(dataset.n_rows, dataset.n_rows);
+  gradient.zeros(coordinates.n_rows, coordinates.n_cols);
 
-  arma::mat cij = arma::zeros(dataset.n_rows, dataset.n_rows);
-  arma::mat cil = arma::zeros(dataset.n_rows, dataset.n_rows);
+  arma::mat cij = arma::zeros(coordinates.n_rows, coordinates.n_cols);
+  arma::mat cil = arma::zeros(coordinates.n_rows, coordinates.n_cols);
 
   for (size_t i = begin; i < begin + batchSize; i++)
   {
@@ -294,22 +270,17 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& /* coordinates */,
     }
   }
 
-  gradient = (1 - regularization) * cij + regularization * cil;
+  gradient = 2 * coordinates * ((1 - regularization) * cij +
+      regularization * cil);
 }
 
 //! Compute cost & gradient over whole dataset.
 template<typename MetricType>
 template<typename GradType>
 double LMNNFunction<MetricType>::EvaluateWithGradient(
-                                  const arma::mat& coordinates,
-                                  GradType& gradient)
+                                   const arma::mat& coordinates,
+                                   GradType& gradient)
 {
-  // Hack
-  arma::mat& iterate = const_cast<arma::mat&>(coordinates);
-  // Apply projection.
-  if (arma::accu(iterate == initialPoint) != initialPoint.n_elem)
-    Projection(iterate);
-
   double cost = 0;
 
   // Apply metric over dataset.
@@ -319,10 +290,10 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   Constraints constraint(transformedDataset, labels, k);
   constraint.Impostors(impostors);
 
-  gradient.zeros(dataset.n_rows, dataset.n_rows);
+  gradient.zeros(coordinates.n_rows, coordinates.n_cols);
 
-  arma::mat cij = arma::zeros(dataset.n_rows, dataset.n_rows);
-  arma::mat cil = arma::zeros(dataset.n_rows, dataset.n_rows);
+  arma::mat cij = arma::zeros(coordinates.n_rows, coordinates.n_cols);
+  arma::mat cil = arma::zeros(coordinates.n_rows, coordinates.n_cols);
 
   for (size_t i = 0; i < dataset.n_cols; i++)
   {
@@ -369,7 +340,8 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
     }
   }
 
-  gradient = (1 - regularization) * cij + regularization * cil;
+  gradient = 2 * coordinates * ((1 - regularization) * cij +
+      regularization * cil);
 
   return cost;
 }
@@ -378,17 +350,11 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
 template<typename MetricType>
 template<typename GradType>
 double LMNNFunction<MetricType>::EvaluateWithGradient(
-                                  const arma::mat& coordinates,
-                                  const size_t begin,
-                                  GradType& gradient,
-                                  const size_t batchSize)
+                                   const arma::mat& coordinates,
+                                   const size_t begin,
+                                   GradType& gradient,
+                                   const size_t batchSize)
 {
-  // Hack
-  arma::mat& iterate = const_cast<arma::mat&>(coordinates);
-  // Apply projection.
-  if (arma::accu(iterate == initialPoint) != initialPoint.n_elem)
-    Projection(iterate);
-
   double cost = 0;
 
   // Apply metric over dataset.
@@ -398,10 +364,10 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   Constraints constraint(transformedDataset, labels, k);
   constraint.Impostors(impostors, begin, batchSize);
 
-  gradient.zeros(dataset.n_rows, dataset.n_rows);
+  gradient.zeros(coordinates.n_rows, coordinates.n_cols);
 
-  arma::mat cij = arma::zeros(dataset.n_rows, dataset.n_rows);
-  arma::mat cil = arma::zeros(dataset.n_rows, dataset.n_rows);
+  arma::mat cij = arma::zeros(coordinates.n_rows, coordinates.n_cols);
+  arma::mat cil = arma::zeros(coordinates.n_rows, coordinates.n_cols);
 
   for (size_t i = begin; i < begin + batchSize; i++)
   {
@@ -448,7 +414,8 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
     }
   }
 
-  gradient = (1 - regularization) * cij + regularization * cil;
+  gradient = 2 * coordinates * ((1 - regularization) * cij +
+      regularization * cil);
 
   return cost;
 }
