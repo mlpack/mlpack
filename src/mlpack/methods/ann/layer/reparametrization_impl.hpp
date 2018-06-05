@@ -2,8 +2,8 @@
  * @file reparametrization_impl.hpp
  * @author Atharva Khandait
  *
- * Implementation of the Reparametrization class which samples from parameters for a given
- * distribution.
+ * Implementation of the Reparametrization layer class which samples from a
+ * gaussian distribution.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -50,17 +50,16 @@ void Reparametrization<InputDataType, OutputDataType>::Forward(
       stdDeviation);
 
   gaussianSample = arma::randn<arma::Mat<eT>>(latentSize, input.n_cols);
-  output = mean + std::move(stdDeviation) % gaussianSample;
+  output = mean + stdDeviation % gaussianSample;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Reparametrization<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
   arma::Mat<eT> softplusDer;
-  SoftplusFunction::Deriv((input - std::move(mean)) / gaussianSample,
-      softplusDer);
+  SoftplusFunction::Deriv(std::move(stdDeviation), softplusDer);
 
   g = join_cols(gy % std::move(gaussianSample) % std::move(softplusDer), gy);
 }
@@ -71,9 +70,10 @@ double Reparametrization<InputDataType, OutputDataType>::klForward(
     const InputType&& input)
 {
   stdDeviation = input.submat(0, 0, latentSize - 1, input.n_cols);
+  mean = input.submat(latentSize, 0, 2 * latentSize - 1, input.n_cols);
 
-  return -0.5 * arma::accu(arma::log(stdDeviation) - stdDeviation - arma::pow(
-      input.submat(latentSize, 0, 2 * latentSize - 1, input.n_cols), 2) + 1);
+  return -0.5 * arma::accu(2 * arma::log(stdDeviation) -
+      arma::pov(stdDeviation, 2) - arma::pow(mean, 2) + 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -82,8 +82,7 @@ void Reparametrization<InputDataType, OutputDataType>::klBackward(
     const InputType&& input,
     OutputType&& output)
 {
-  output = join_cols(-1 / input.submat(0, 0, latentSize - 1, input.n_cols) - 1,
-      input.submat(latentSize, 0, 2 * latentSize - 1, input.n_cols));
+  output = join_cols(-1 / stdDeviation + stdDeviation, mean);
 }
 
 template<typename InputDataType, typename OutputDataType>

@@ -61,6 +61,11 @@ template<typename InputDataType, typename OutputDataType> class Reparametrizatio
 template<typename InputDataType, typename OutputDataType> class VRClassReward;
 
 template<typename InputDataType,
+         typename OutputDataType
+>
+class Reparametrization;
+
+template<typename InputDataType,
          typename OutputDataType,
          typename... CustomLayers
 >
