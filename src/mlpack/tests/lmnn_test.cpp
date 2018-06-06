@@ -376,8 +376,8 @@ BOOST_AUTO_TEST_CASE(LMNNLBFGSSimpleDatasetTest)
 }
 
 double KnnAccuracy(const arma::mat& dataset,
-                 const arma::Row<size_t>& labels,
-                 const size_t k)
+                   const arma::Row<size_t>& labels,
+                   const size_t k)
 {
   arma::Row<size_t> uniqueLabels = arma::unique(labels);
 
