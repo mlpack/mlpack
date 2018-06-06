@@ -20,24 +20,24 @@
 namespace mlpack {
 namespace cf {
 
-// Default CF constructor.
-CF::CF(const size_t numUsersForSimilarity,
-       const size_t rank) :
+// Default CFType constructor.
+CFType::CFType(const size_t numUsersForSimilarity,
+               const size_t rank) :
     numUsersForSimilarity(numUsersForSimilarity),
     rank(rank)
 {
   // Validate neighbourhood size.
   if (numUsersForSimilarity < 1)
   {
-    Log::Warn << "CF::CF(): neighbourhood size should be > 0 ("
+    Log::Warn << "CFType::CFType(): neighbourhood size should be > 0 ("
         << numUsersForSimilarity << " given). Setting value to 5.\n";
     // Set default value of 5.
     this->numUsersForSimilarity = 5;
   }
 }
 
-void CF::GetRecommendations(const size_t numRecs,
-                            arma::Mat<size_t>& recommendations)
+void CFType::GetRecommendations(const size_t numRecs,
+                                arma::Mat<size_t>& recommendations)
 {
   // Generate list of users.  Maybe it would be more efficient to pass an empty
   // users list, and then have the other overload of GetRecommendations() assume
@@ -50,9 +50,9 @@ void CF::GetRecommendations(const size_t numRecs,
   GetRecommendations(numRecs, recommendations, users);
 }
 
-void CF::GetRecommendations(const size_t numRecs,
-                            arma::Mat<size_t>& recommendations,
-                            const arma::Col<size_t>& users)
+void CFType::GetRecommendations(const size_t numRecs,
+                                arma::Mat<size_t>& recommendations,
+                                const arma::Col<size_t>& users)
 {
   // We want to avoid calculating the full rating matrix, so we will do nearest
   // neighbor search only on the H matrix, using the observation that if the
@@ -144,7 +144,7 @@ void CF::GetRecommendations(const size_t numRecs,
 }
 
 // Predict the rating for a single user/item combination.
-double CF::Predict(const size_t user, const size_t item) const
+double CFType::Predict(const size_t user, const size_t item) const
 {
   // First, we need to find the nearest neighbors of the given user.
   // We'll use the same technique as for GetRecommendations().
@@ -185,8 +185,8 @@ double CF::Predict(const size_t user, const size_t item) const
 }
 
 // Predict the rating for a group of user/item combinations.
-void CF::Predict(const arma::Mat<size_t>& combinations,
-                 arma::vec& predictions) const
+void CFType::Predict(const arma::Mat<size_t>& combinations,
+                     arma::vec& predictions) const
 {
   // First, for nearest neighbor search, stretch the H matrix.
   arma::mat l = arma::chol(w.t() * w);
@@ -238,7 +238,7 @@ void CF::Predict(const arma::Mat<size_t>& combinations,
   }
 }
 
-void CF::CleanData(const arma::mat& data, arma::sp_mat& cleanedData)
+void CFType::CleanData(const arma::mat& data, arma::sp_mat& cleanedData)
 {
   // Generate list of locations for batch insert constructor for sparse
   // matrices.

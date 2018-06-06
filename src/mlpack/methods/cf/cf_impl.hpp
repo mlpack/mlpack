@@ -22,84 +22,39 @@
 namespace mlpack {
 namespace cf {
 
-// Apply the factorizer when a coordinate list is used.
-template<typename FactorizerType>
-void ApplyFactorizer(FactorizerType& factorizer,
-                     const arma::mat& data,
-                     const arma::sp_mat& /* cleanedData */,
-                     const size_t rank,
-                     arma::mat& w,
-                     arma::mat& h,
-                     const typename std::enable_if_t<FactorizerTraits<
-                         FactorizerType>::UsesCoordinateList>* = 0)
-{
-  factorizer.Apply(data, rank, w, h);
-}
-
-// Apply the factorizer when coordinate lists are not used.
-template<typename FactorizerType>
-void ApplyFactorizer(FactorizerType& factorizer,
-                     const arma::mat& /* data */,
-                     const arma::sp_mat& cleanedData,
-                     const size_t rank,
-                     arma::mat& w,
-                     arma::mat& h,
-                     const typename std::enable_if_t<!FactorizerTraits<
-                         FactorizerType>::UsesCoordinateList>* = 0)
-{
-  factorizer.Apply(cleanedData, rank, w, h);
-}
-
 /**
- * Construct the CF object using an instantiated factorizer.
+ * Construct the CF object using an instantiated decomposition policy.
  */
-template<typename FactorizerType>
-CF::CF(const arma::mat& data,
-       FactorizerType factorizer,
-       const size_t numUsersForSimilarity,
-       const size_t rank) :
+template<typename MatType, typename DecompositionPolicy>
+CFType::CFType(const MatType& data,
+               DecompositionPolicy& decomposition,
+               const size_t numUsersForSimilarity,
+               const size_t rank,
+               const size_t maxIterations,
+               const double minResidue,
+               const bool mit) :
     numUsersForSimilarity(numUsersForSimilarity),
     rank(rank)
 {
   // Validate neighbourhood size.
   if (numUsersForSimilarity < 1)
   {
-    Log::Warn << "CF::CF(): neighbourhood size should be > 0 ("
+    Log::Warn << "CFType::CFType(): neighbourhood size should be > 0 ("
         << numUsersForSimilarity << " given). Setting value to 5.\n";
     // Set default value of 5.
     this->numUsersForSimilarity = 5;
   }
 
-  Train(data, factorizer);
+  Train(data, decomposition, maxIterations, minResidue, mit);
 }
 
-/**
- * Construct the CF object using an instantiated factorizer.
- */
-template<typename FactorizerType>
-CF::CF(const arma::sp_mat& data,
-       FactorizerType factorizer,
-       const size_t numUsersForSimilarity,
-       const size_t rank,
-       const typename std::enable_if_t<
-           !FactorizerTraits<FactorizerType>::UsesCoordinateList>*) :
-    numUsersForSimilarity(numUsersForSimilarity),
-    rank(rank)
-{
-  // Validate neighbourhood size.
-  if (numUsersForSimilarity < 1)
-  {
-    Log::Warn << "CF::CF(): neighbourhood size should be > 0("
-        << numUsersForSimilarity << " given). Setting value to 5.\n";
-    // Setting Default Value of 5
-    this->numUsersForSimilarity = 5;
-  }
-
-  Train(data, factorizer);
-}
-
-template<typename FactorizerType>
-void CF::Train(const arma::mat& data, FactorizerType factorizer)
+// Train when data is given in dense matrix form.
+template<typename DecompositionPolicy>
+void CFType::Train(const arma::mat& data,
+                   DecompositionPolicy& decomposition,
+                   const size_t maxIterations,
+                   const double minResidue,
+                   const bool mit)
 {
   CleanData(data, cleanedData);
 
@@ -121,15 +76,18 @@ void CF::Train(const arma::mat& data, FactorizerType factorizer)
   // Decompose the data matrix (which is in coordinate list form) to user and
   // data matrices.
   Timer::Start("cf_factorization");
-  ApplyFactorizer(factorizer, data, cleanedData, this->rank, w, h);
+  decomposition.Apply(data, cleanedData, rank, w,
+      h, maxIterations, minResidue, mit);
   Timer::Stop("cf_factorization");
 }
 
-template<typename FactorizerType>
-void CF::Train(const arma::sp_mat& data,
-               FactorizerType factorizer,
-               const typename std::enable_if_t<!FactorizerTraits<
-                   FactorizerType>::UsesCoordinateList>*)
+// Train when data is given as sparse matrix of user item table.
+template<typename DecompositionPolicy>
+void CFType::Train(const arma::sp_mat& data,
+                   DecompositionPolicy& decomposition,
+                   const size_t maxIterations,
+                   const double minResidue,
+                   const bool mit)
 {
   cleanedData = data;
 
@@ -148,16 +106,19 @@ void CF::Train(const arma::sp_mat& data,
     this->rank = rankEstimate;
   }
 
+  // Decompose the data matrix (which is in coordinate list form) to user and
+  // data matrices.
   Timer::Start("cf_factorization");
-  factorizer.Apply(cleanedData, this->rank, w, h);
+  decomposition.Apply(data, cleanedData, rank, w,
+      h, maxIterations, minResidue, mit);
   Timer::Stop("cf_factorization");
 }
 
 //! Serialize the model.
 template<typename Archive>
-void CF::serialize(Archive& ar, const unsigned int /* version */)
+void CFType::serialize(Archive& ar, const unsigned int /* version */)
 {
-  // This model is simple; just serialize all the members.  No special handling
+  // This model is simple; just serialize all the members. No special handling
   // required.
   ar & BOOST_SERIALIZATION_NVP(numUsersForSimilarity);
   ar & BOOST_SERIALIZATION_NVP(rank);

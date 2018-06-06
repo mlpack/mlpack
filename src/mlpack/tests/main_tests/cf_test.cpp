@@ -215,7 +215,7 @@ BOOST_AUTO_TEST_CASE(CFModelReuseTest)
     SetInputParam("query", std::move(query));
     SetInputParam("recommendations", recommendations);
     SetInputParam("input_model",
-        std::move(CLI::GetParam<CF*>("output_model")));
+        std::move(CLI::GetParam<CFType*>("output_model")));
 
     mlpackMain();
 
@@ -262,7 +262,7 @@ BOOST_AUTO_TEST_CASE(CFRankTest)
 
   mlpackMain();
 
-  const CF* outputModel = CLI::GetParam<CF*>("output_model");
+  const CFType* outputModel = CLI::GetParam<CFType*>("output_model");
 
   BOOST_REQUIRE_EQUAL(outputModel->Rank(), rank);
 }
@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE(CFMinResidueTest)
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
-  const CF* outputModel;
+  const CFType* outputModel;
 
   // Set a larger min_residue.
   SetInputParam("min_residue", double(100));
@@ -286,7 +286,7 @@ BOOST_AUTO_TEST_CASE(CFMinResidueTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel =  CLI::GetParam<CF*>("output_model");
+  outputModel =  CLI::GetParam<CFType*>("output_model");
   const mat w1 = outputModel->W();
   const mat h1 = outputModel->H();
 
@@ -302,7 +302,7 @@ BOOST_AUTO_TEST_CASE(CFMinResidueTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel = CLI::GetParam<CF*>("output_model");
+  outputModel = CLI::GetParam<CFType*>("output_model");
   const mat w2 = outputModel->W();
   const mat h2 = outputModel->H();
 
@@ -317,7 +317,7 @@ BOOST_AUTO_TEST_CASE(CFIterationOnlyTerminationTest)
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
-  const CF* outputModel;
+  const CFType* outputModel;
 
   // Set iteration_only_termination.
   SetInputParam("iteration_only_termination", true);
@@ -329,7 +329,7 @@ BOOST_AUTO_TEST_CASE(CFIterationOnlyTerminationTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel =  CLI::GetParam<CF*>("output_model");
+  outputModel =  CLI::GetParam<CFType*>("output_model");
   const mat w1 = outputModel->W();
   const mat h1 = outputModel->H();
 
@@ -344,7 +344,7 @@ BOOST_AUTO_TEST_CASE(CFIterationOnlyTerminationTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel = CLI::GetParam<CF*>("output_model");
+  outputModel = CLI::GetParam<CFType*>("output_model");
   const mat w2 = outputModel->W();
   const mat h2 = outputModel->H();
 
@@ -359,7 +359,7 @@ BOOST_AUTO_TEST_CASE(CFMaxIterationsTest)
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
-  const CF* outputModel;
+  const CFType* outputModel;
 
   // Set a larger max_iterations.
   SetInputParam("max_iterations", int(100));
@@ -370,7 +370,7 @@ BOOST_AUTO_TEST_CASE(CFMaxIterationsTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel =  CLI::GetParam<CF*>("output_model");
+  outputModel =  CLI::GetParam<CFType*>("output_model");
   const mat w1 = outputModel->W();
   const mat h1 = outputModel->H();
 
@@ -385,7 +385,7 @@ BOOST_AUTO_TEST_CASE(CFMaxIterationsTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel = CLI::GetParam<CF*>("output_model");
+  outputModel = CLI::GetParam<CFType*>("output_model");
   const mat w2 = outputModel->W();
   const mat h2 = outputModel->H();
 

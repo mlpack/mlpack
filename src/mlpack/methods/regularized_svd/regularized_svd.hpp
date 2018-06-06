@@ -97,21 +97,6 @@ class RegularizedSVD
 } // namespace svd
 } // namespace mlpack
 
-namespace mlpack {
-namespace cf {
-
-//! Factorizer traits of Regularized SVD.
-template<>
-class FactorizerTraits<mlpack::svd::RegularizedSVD<> >
-{
- public:
-  //! Data provided to RegularizedSVD need not be cleaned.
-  static const bool UsesCoordinateList = true;
-};
-
-} // namespace cf
-} // namespace mlpack
-
 // Include implementation.
 #include "regularized_svd_impl.hpp"
 
