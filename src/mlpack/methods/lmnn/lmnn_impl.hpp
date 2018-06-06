@@ -38,9 +38,10 @@ LMNN<MetricType, OptimizerType>::LMNN(const arma::mat& dataset,
 template<typename MetricType, typename OptimizerType>
 void LMNN<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix)
 {
-  // See if we were passed an initialized matrix.
-  if ((outputMatrix.n_rows != dataset.n_rows) ||
-      (outputMatrix.n_cols != dataset.n_rows))
+  // See if we were passed an initialized matrix. outputMatrix (L) must be
+  // having r x d dimensionality.
+  if ((outputMatrix.n_cols != dataset.n_rows) ||
+      !(arma::is_finite(outputMatrix)))
     outputMatrix.eye(dataset.n_rows, dataset.n_rows);
 
   Timer::Start("lmnn_sgd_optimization");

@@ -398,7 +398,7 @@ double KnnAccuracy(const arma::mat& dataset,
     Map.zeros(uniqueLabels.n_cols);
 
     for (size_t j=0; j < k; j++)
-      Map(labels(neighbors(j, i)))++;
+      Map(labels(neighbors(j, i))) += std::exp(1 / (j + 1));
 
     arma::vec index = arma::conv_to<arma::vec>::from(arma::find(Map
         == arma::max(Map)));
