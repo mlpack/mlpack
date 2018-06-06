@@ -133,7 +133,6 @@ static void mlpackMain()
         "L-BFGS optimizer is not being used");
     ReportIgnoredParam("min_step", "L-BFGS optimizer is not being used");
     ReportIgnoredParam("max_step", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("batch_size", "L-BFGS optimizer is not being used");
   }
   else if (optimizerType == "lbfgs")
   {

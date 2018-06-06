@@ -1,6 +1,8 @@
 /**
  * @file lmnn_test.cpp
+ * @author Ryan Curtin
  * @author Manish Kumar
+ *
  * Unit tests for Large Margin Nearest Neighbors and related code (including
  * the constraints class).
  *
@@ -13,6 +15,7 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/lmnn/lmnn.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -113,7 +116,7 @@ BOOST_AUTO_TEST_CASE(LMNNInitialPointTest)
 /***
  * Ensure non-seprable objective function is right.
  */
-BOOST_AUTO_TEST_CASE(LMNNInitialEvaluation)
+BOOST_AUTO_TEST_CASE(LMNNInitialEvaluationTest)
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -131,7 +134,7 @@ BOOST_AUTO_TEST_CASE(LMNNInitialEvaluation)
 /**
  * Ensure non-seprable gradient function is right.
  */
-BOOST_AUTO_TEST_CASE(LMNNInitialGradient)
+BOOST_AUTO_TEST_CASE(LMNNInitialGradientTest)
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -154,7 +157,7 @@ BOOST_AUTO_TEST_CASE(LMNNInitialGradient)
 /***
  * Ensure non-seprable EvaluateWithGradient function is right.
  */
-BOOST_AUTO_TEST_CASE(LMNNInitialEvaluateWithGradient)
+BOOST_AUTO_TEST_CASE(LMNNInitialEvaluateWithGradientTest)
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -179,7 +182,7 @@ BOOST_AUTO_TEST_CASE(LMNNInitialEvaluateWithGradient)
 /**
  * Ensure the separable objective function is right.
  */
-BOOST_AUTO_TEST_CASE(LMNNSeparableObjective)
+BOOST_AUTO_TEST_CASE(LMNNSeparableObjectiveTest)
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -201,7 +204,7 @@ BOOST_AUTO_TEST_CASE(LMNNSeparableObjective)
 /**
  * Ensure the separable gradient is right.
  */
-BOOST_AUTO_TEST_CASE(LMNNSeparableGradient)
+BOOST_AUTO_TEST_CASE(LMNNSeparableGradientTest)
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -259,7 +262,7 @@ BOOST_AUTO_TEST_CASE(LMNNSeparableGradient)
 /**
  * Ensure the separable EvaluateWithGradient function is right.
  */
-BOOST_AUTO_TEST_CASE(LMNNSeparableEvaluateWithGradient)
+BOOST_AUTO_TEST_CASE(LMNNSeparableEvaluateWithGradientTest)
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -326,7 +329,8 @@ BOOST_AUTO_TEST_CASE(LMNNSeparableEvaluateWithGradient)
   BOOST_REQUIRE_CLOSE(gradient(1, 1), 2.0, 1e-5);
 }
 
-BOOST_AUTO_TEST_CASE(LMNNSGDSimpleDataset)
+// Check that final objective value using SGD optimizer is optimal.
+BOOST_AUTO_TEST_CASE(LMNNSGDSimpleDatasetTest)
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -348,7 +352,8 @@ BOOST_AUTO_TEST_CASE(LMNNSGDSimpleDataset)
   BOOST_REQUIRE_LT(finalObj, initObj);
 }
 
-BOOST_AUTO_TEST_CASE(LMNNLBFGSSimpleDataset)
+// Check that final objective value using L-BFGS optimizer is optimal.
+BOOST_AUTO_TEST_CASE(LMNNLBFGSSimpleDatasetTest)
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -368,6 +373,176 @@ BOOST_AUTO_TEST_CASE(LMNNLBFGSSimpleDataset)
 
   // finalObj must be less than initObj.
   BOOST_REQUIRE_LT(finalObj, initObj);
+}
+
+double KnnAccuracy(const arma::mat& dataset,
+                 const arma::Row<size_t>& labels,
+                 const size_t k)
+{
+  arma::Row<size_t> uniqueLabels = arma::unique(labels);
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+
+  neighbor::KNN knn;
+
+  knn.Train(dataset);
+  knn.Search(k, neighbors, distances);
+
+  //Keep count.
+  double count = 0.0;
+
+  for (size_t i = 0; i < dataset.n_cols; i++)
+  {
+    arma::Row<size_t> Map;
+    Map.zeros(uniqueLabels.n_cols);
+
+    for (size_t j=0; j < k; j++)
+      Map(labels(neighbors(j,i)))++;
+
+    arma::vec index = arma::conv_to<arma::vec>::from(arma::find(Map
+        == arma::max(Map)));
+
+    // Increase count if labels match.
+    if (index(0) == labels(i))
+        count++;
+  }
+
+  // return accuracy.
+  return (count / dataset.n_cols) * 100;
+}
+
+// Check that final accuracy is greater than initial accuracy on
+// simple dataset.
+BOOST_AUTO_TEST_CASE(LMNNAccuracyTest)
+{
+  // Useful but simple dataset with six points and two classes.
+  arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+
+  // Taking k = 3 as the case of k = 1 can be easily observed.
+  double initAccuracy = KnnAccuracy(dataset, labels, 3);
+
+  LMNN<> lmnn(dataset, labels, 1);
+
+  arma::mat outputMatrix;
+  lmnn.LearnDistance(outputMatrix);
+
+  double finalAccuracy = KnnAccuracy(outputMatrix * dataset, labels, 3);
+
+  // finalObj must be less than initObj.
+  BOOST_REQUIRE_LT(initAccuracy, finalAccuracy);
+
+  // Since this is a very simple dataset final accuracy should be around 100%.
+  BOOST_REQUIRE_CLOSE(finalAccuracy, 100.0, 1e-5);
+}
+
+// Comprehensive gradient tests by Ryan Curtin.
+
+// Simple numerical gradient checker.
+template<class FunctionType>
+double CheckGradient(FunctionType& function,
+                     arma::mat& coordinates,
+                     const double eps = 1e-7)
+{
+  // Get gradients for the current parameters.
+  arma::mat orgGradient, gradient, estGradient;
+  function.Gradient(coordinates, orgGradient);
+
+  estGradient = arma::zeros(orgGradient.n_rows, orgGradient.n_cols);
+
+  // Compute numeric approximations to gradient.
+  for (size_t i = 0; i < orgGradient.n_elem; ++i)
+  {
+    double tmp = coordinates(i);
+
+    // Perturb parameter with a positive constant and get costs.
+    coordinates(i) += eps;
+    double costPlus = function.Evaluate(coordinates);
+
+    // Perturb parameter with a negative constant and get costs.
+    coordinates(i) -= (2 * eps);
+    double costMinus = function.Evaluate(coordinates);
+
+    // Restore the parameter value.
+    coordinates(i) = tmp;
+
+    // Compute numerical gradients using the costs calculated above.
+    estGradient(i) = (costPlus - costMinus) / (2 * eps);
+  }
+
+  // Estimate error of gradient.
+  return arma::norm(orgGradient - estGradient) /
+      arma::norm(orgGradient + estGradient);
+}
+
+BOOST_AUTO_TEST_CASE(LMNNFunctionGradientTest)
+{
+  // Useful but simple dataset with six points and two classes.
+  arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+
+  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6);
+
+  // 10 trials with random positions.
+  for (size_t i = 0; i < 10; ++i)
+  {
+    arma::mat coordinates(2, 2, arma::fill::randn);
+    CheckGradient(lmnnfn, coordinates);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(LMNNFunctionGradientTest2)
+{
+  // Useful but simple dataset with six points and two classes.
+  arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+
+  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6);
+
+  // 10 trials with random positions.
+  for (size_t i = 0; i < 10; ++i)
+  {
+    arma::mat coordinates(2, 2, arma::fill::randu);
+    CheckGradient(lmnnfn, coordinates);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(LMNNFunctionGradientTest3)
+{
+  arma::mat dataset;
+  arma::Row<size_t> labels;
+  data::Load("iris.csv", dataset);
+  data::Load("iris_labels.txt", labels);
+
+  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6);
+
+  // 10 trials with random positions.
+  for (size_t i = 0; i < 10; ++i)
+  {
+    arma::mat coordinates(dataset.n_rows, dataset.n_rows, arma::fill::randn);
+    CheckGradient(lmnnfn, coordinates);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(LMNNFunctionGradientTest4)
+{
+  arma::mat dataset;
+  arma::Row<size_t> labels;
+  data::Load("iris.csv", dataset);
+  data::Load("iris_labels.txt", labels);
+
+  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6);
+
+  // 10 trials with random positions.
+  for (size_t i = 0; i < 10; ++i)
+  {
+    arma::mat coordinates(dataset.n_rows, dataset.n_rows, arma::fill::randu);
+    CheckGradient(lmnnfn, coordinates);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

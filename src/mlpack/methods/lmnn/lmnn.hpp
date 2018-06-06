@@ -89,15 +89,16 @@ class LMNN
   //! Labels reference.
   const arma::Row<size_t>& labels;
 
-  LMNNFunction<MetricType> objFunction;
+  const size_t k;
 
   //! Metric to be used.
   MetricType metric;
 
-  const size_t k;
-
   //! The optimizer to use.
   OptimizerType optimizer;
+
+  // LMNN objective function.
+  LMNNFunction<MetricType> objFunction;
 }; // class LMNN
 
 } // namespace lmnn

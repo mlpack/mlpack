@@ -30,6 +30,7 @@ LMNN<MetricType, OptimizerType>::LMNN(const arma::mat& dataset,
     dataset(dataset),
     labels(labels),
     k(k),
+    metric(metric),
     objFunction(dataset, labels, k, 0.5) // Default regularization value
                                          // set to 0.5.
 { /* nothing to do */ }
