@@ -296,10 +296,10 @@ void CFPredict(bool cleanData = true)
     totalError += error;
   }
 
-  totalError = std::sqrt(totalError) / savedCols.n_cols;
+  const double rmse = std::sqrt(totalError / savedCols.n_cols);
 
-  // The mean squared error should be less than one.
-  BOOST_REQUIRE_LT(totalError, 0.6);
+  // The root mean square error should be less than ?.
+  BOOST_REQUIRE_LT(rmse, 4.3);
 }
 
 // Do the same thing as the previous test, but ensure that the ratings we
