@@ -389,7 +389,7 @@ double KnnAccuracy(const arma::mat& dataset,
   knn.Train(dataset);
   knn.Search(k, neighbors, distances);
 
-  //Keep count.
+  // Keep count.
   double count = 0.0;
 
   for (size_t i = 0; i < dataset.n_cols; i++)
@@ -398,7 +398,7 @@ double KnnAccuracy(const arma::mat& dataset,
     Map.zeros(uniqueLabels.n_cols);
 
     for (size_t j=0; j < k; j++)
-      Map(labels(neighbors(j,i)))++;
+      Map(labels(neighbors(j, i)))++;
 
     arma::vec index = arma::conv_to<arma::vec>::from(arma::find(Map
         == arma::max(Map)));
