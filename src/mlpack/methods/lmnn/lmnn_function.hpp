@@ -176,16 +176,6 @@ class LMNNFunction
   MetricType metric;
   //! Regularization value.
   double regularization;
-
-  //! Holds pre-calculated cij.
-  std::vector<std::vector<arma::mat>> p_cij;
-  //! False if nothing has ever been precalculated.
-  bool precalculated;
-
-  // Precalculate the gradient part due to target neighbors and stores
-  // the contribution of each data point as a matrix of matrices p_cij
-  // for each pair {i, j}.
-  void Precalculate();
 };
 
 } // namespace lmnn
