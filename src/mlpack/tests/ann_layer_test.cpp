@@ -229,7 +229,7 @@ BOOST_AUTO_TEST_CASE(JacobianAddLayerTest)
 }
 
 /**
- * Add layer numerically gradient test.
+ * Add layer numerical gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientAddLayerTest)
 {
@@ -256,7 +256,7 @@ BOOST_AUTO_TEST_CASE(GradientAddLayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      arma::mat output;
+      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
@@ -535,7 +535,7 @@ BOOST_AUTO_TEST_CASE(JacobianLinearLayerTest)
 }
 
 /**
- * Linear layer numerically gradient test.
+ * Linear layer numerical gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
 {
@@ -562,7 +562,7 @@ BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      arma::mat output;
+      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
@@ -619,7 +619,7 @@ BOOST_AUTO_TEST_CASE(JacobianLinearNoBiasLayerTest)
 }
 
 /**
- * LinearNoBias layer numerically gradient test.
+ * LinearNoBias layer numerical gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientLinearNoBiasLayerTest)
 {
@@ -646,7 +646,7 @@ BOOST_AUTO_TEST_CASE(GradientLinearNoBiasLayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      arma::mat output;
+      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
@@ -721,7 +721,7 @@ BOOST_AUTO_TEST_CASE(JacobianFlexibleReLULayerTest)
 }
 
 /**
- * Flexible ReLU layer numerically gradient test.
+ * Flexible ReLU layer numerical gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientFlexibleReLULayerTest)
 {
@@ -750,7 +750,7 @@ BOOST_AUTO_TEST_CASE(GradientFlexibleReLULayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      arma::mat output;
+      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
@@ -957,7 +957,7 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      arma::mat output;
+      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
@@ -1039,7 +1039,7 @@ BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      arma::mat output;
+      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
@@ -1194,7 +1194,7 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
 }
 
 /**
- * Concat layer numerically gradient test.
+ * Concat layer numerical gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientConcatLayerTest)
 {
@@ -1225,7 +1225,7 @@ BOOST_AUTO_TEST_CASE(GradientConcatLayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      arma::mat output;
+      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
@@ -1394,7 +1394,7 @@ BOOST_AUTO_TEST_CASE(BatchNormTest)
 }
 
 /**
- * BatchNorm layer numerically gradient test.
+ * BatchNorm layer numerical gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientBatchNormTest)
 {
@@ -1423,7 +1423,7 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      arma::mat output;
+      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 256, false);
       model->Gradient(model->Parameters(), 0, gradient, 256);
       return error;
@@ -1566,7 +1566,7 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
 }
 
 /**
- * Transposed Convolution layer numerically gradient test.
+ * Transposed Convolution layer numerical gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientTransposedConvolutionLayerTest)
 {
@@ -1592,7 +1592,7 @@ BOOST_AUTO_TEST_CASE(GradientTransposedConvolutionLayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      arma::mat output;
+      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
@@ -1678,7 +1678,7 @@ BOOST_AUTO_TEST_CASE(SimpleAtrousConvolutionLayerTest)
 }
 
 /**
- * Atrous Convolution layer numerically gradient test.
+ * Atrous Convolution layer numerical gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientAtrousConvolutionLayerTest)
 {
@@ -1704,7 +1704,7 @@ BOOST_AUTO_TEST_CASE(GradientAtrousConvolutionLayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      arma::mat output;
+      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
@@ -1754,7 +1754,7 @@ BOOST_AUTO_TEST_CASE(LayerNormTest)
 }
 
 /**
- * LayerNorm layer numerically gradient test.
+ * LayerNorm layer numerical gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientLayerNormTest)
 {
@@ -1783,7 +1783,7 @@ BOOST_AUTO_TEST_CASE(GradientLayerNormTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      arma::mat output;
+      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 256, false);
       model->Gradient(model->Parameters(), 0, gradient, 256);
       return error;
@@ -1862,6 +1862,51 @@ BOOST_AUTO_TEST_CASE(SimpleReparametrizationLayerTest)
   BOOST_REQUIRE_LE(arma::accu(output), 1e-3);
 
   // Test the Backward function.
+}
+
+/**
+ * Reparametrization layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerTest)
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::mat("1");
+
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 6);
+      model->Add<Reparametrization<> >(3);
+      model->Add<Linear<> >(3, 2);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      // arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

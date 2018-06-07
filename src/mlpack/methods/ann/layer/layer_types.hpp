@@ -57,7 +57,6 @@ template<typename InputDataType, typename OutputDataType> class LinearNoBias;
 template<typename InputDataType, typename OutputDataType> class LSTM;
 template<typename InputDataType, typename OutputDataType> class GRU;
 template<typename InputDataType, typename OutputDataType> class FastLSTM;
-template<typename InputDataType, typename OutputDataType> class Reparametrization;
 template<typename InputDataType, typename OutputDataType> class VRClassReward;
 
 template<typename InputDataType,
