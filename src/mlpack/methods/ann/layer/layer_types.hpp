@@ -25,6 +25,7 @@
 #include <mlpack/methods/ann/layer/elu.hpp>
 #include <mlpack/methods/ann/layer/hard_tanh.hpp>
 #include <mlpack/methods/ann/layer/join.hpp>
+#include <mlpack/methods/ann/layer/layer_norm.hpp>
 #include <mlpack/methods/ann/layer/leaky_relu.hpp>
 #include <mlpack/methods/ann/layer/flexible_relu.hpp>
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
@@ -45,10 +46,10 @@
 namespace mlpack {
 namespace ann {
 
-
 template<typename InputDataType, typename OutputDataType> class BatchNorm;
 template<typename InputDataType, typename OutputDataType> class DropConnect;
 template<typename InputDataType, typename OutputDataType> class Glimpse;
+template<typename InputDataType, typename OutputDataType> class LayerNorm;
 template<typename InputDataType, typename OutputDataType> class Linear;
 template<typename InputDataType, typename OutputDataType> class LinearNoBias;
 template<typename InputDataType, typename OutputDataType> class LSTM;
@@ -97,15 +98,43 @@ template<
 class Convolution;
 
 template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+class TransposedConvolution;
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+class AtrousConvolution;
+
+template<
     typename InputDataType,
     typename OutputDataType
 >
 class RecurrentAttention;
 
+template<typename InputDataType,
+         typename OutputDataType,
+         typename... CustomLayers
+>
+class MultiplyMerge;
+
 template <typename... CustomLayers>
 using LayerTypes = boost::variant<
     Add<arma::mat, arma::mat>*,
     AddMerge<arma::mat, arma::mat>*,
+    AtrousConvolution<NaiveConvolution<ValidConvolution>,
+                      NaiveConvolution<FullConvolution>,
+                      NaiveConvolution<ValidConvolution>,
+                      arma::mat, arma::mat>*,
     BaseLayer<LogisticFunction, arma::mat, arma::mat>*,
     BaseLayer<IdentityFunction, arma::mat, arma::mat>*,
     BaseLayer<TanhFunction, arma::mat, arma::mat>*,
@@ -119,6 +148,9 @@ using LayerTypes = boost::variant<
     Convolution<NaiveConvolution<ValidConvolution>,
                 NaiveConvolution<FullConvolution>,
                 NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
+    TransposedConvolution<NaiveConvolution<ValidConvolution>,
+            NaiveConvolution<FullConvolution>,
+            NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
     DropConnect<arma::mat, arma::mat>*,
     Dropout<arma::mat, arma::mat>*,
     AlphaDropout<arma::mat, arma::mat>*,
@@ -127,6 +159,7 @@ using LayerTypes = boost::variant<
     Glimpse<arma::mat, arma::mat>*,
     HardTanH<arma::mat, arma::mat>*,
     Join<arma::mat, arma::mat>*,
+    LayerNorm<arma::mat, arma::mat>*,
     LeakyReLU<arma::mat, arma::mat>*,
     Linear<arma::mat, arma::mat>*,
     LinearNoBias<arma::mat, arma::mat>*,
@@ -138,6 +171,7 @@ using LayerTypes = boost::variant<
     MaxPooling<arma::mat, arma::mat>*,
     MeanPooling<arma::mat, arma::mat>*,
     MultiplyConstant<arma::mat, arma::mat>*,
+    MultiplyMerge<arma::mat, arma::mat>*,
     NegativeLogLikelihood<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
     Recurrent<arma::mat, arma::mat>*,

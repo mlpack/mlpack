@@ -73,7 +73,7 @@ void Convolution3DMethodTest(const arma::cube input,
   arma::cube convOutput;
   ConvolutionFunction::Convolution(input, filter, convOutput);
 
-  // Check the outut dimension.
+  // Check the output dimension.
   bool b = (convOutput.n_rows == output.n_rows) &&
       (convOutput.n_cols == output.n_cols &&
       convOutput.n_slices == output.n_slices);
@@ -105,7 +105,7 @@ void ConvolutionMethodBatchTest(const arma::mat input,
   arma::cube convOutput;
   ConvolutionFunction::Convolution(input, filter, convOutput);
 
-  // Check the outut dimension.
+  // Check the output dimension.
   bool b = (convOutput.n_rows == output.n_rows) &&
       (convOutput.n_cols == output.n_cols &&
       convOutput.n_slices == output.n_slices);

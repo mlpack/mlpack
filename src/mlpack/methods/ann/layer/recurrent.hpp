@@ -57,9 +57,9 @@ class Recurrent
    * Create the Recurrent object using the specified modules.
    *
    * @param start The start module.
-   * @param start The input module.
-   * @param start The feedback module.
-   * @param start The transfer module.
+   * @param input The input module.
+   * @param feedback The feedback module.
+   * @param transfer The transfer module.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
   template<typename StartModuleType,

@@ -1,3 +1,20 @@
+### mlpack 3.0.2
+###### 2018-06-08
+  * Documentation generation fixes for Python bindings (#1421).
+
+  * Fix build error for man pages if command-line bindings are not being built
+    (#1424).
+
+  * Add 'shuffle' parameter and Shuffle() method to KFoldCV (#1412).  This will
+    shuffle the data when the object is constructed, or when Shuffle() is
+    called.
+
+  * Added neural network layers: AtrousConvolution (#1390), Embedding (#1401),
+    and LayerNorm (layer normalization) (#1389).
+
+  * Add Pendulum environment for reinforcement learning (#1388) and update
+    Mountain Car environment (#1394).
+
 ### mlpack 3.0.1
 ###### 2018-05-10
   * Fix intermittently failing tests (#1387).

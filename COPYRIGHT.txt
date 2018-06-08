@@ -24,7 +24,7 @@ Copyright:
   Copyright 2012, Patrick Mason <patrick.s.mason@gmail.com>
   Copyright 2013-2018, Marcus Edel <marcus.edel@fu-berlin.de>
   Copyright 2013, Mudit Raj Gupta <mudit.raaj.gupta@gmail.com>
-  Copyright 2013, Sumedh Ghaisas <sumedhghaisas@gmail.com>
+  Copyright 2013-2018, Sumedh Ghaisas <sumedhghaisas@gmail.com>
   Copyright 2014, Michael Fox <michaelfox99@gmail.com>
   Copyright 2014, Ryan Birmingham <birm@gatech.edu>
   Copyright 2014, Siddharth Agrawal <siddharth.950@gmail.com>
@@ -48,14 +48,14 @@ Copyright:
   Copyright 2015, Joseph Mariadassou <joe.mariadassou@gmail.com>
   Copyright 2015, Pavel Zhigulin <pashaworking@gmail.com>
   Copyright 2016, Andy Fang <AndyFang.DZ@gmail.com>
-  Copyright 2016, Barak Pearlmutter <barak+git@pearlmutter.net>
+  Copyright 2016-2018, Barak Pearlmutter <barak+git@pearlmutter.net>
   Copyright 2016, Ivari Horm <ivari@risk.ee>
   Copyright 2016, Dhawal Arora <d.p.arora1@gmail.com>
   Copyright 2016, Alexander Leinoff <alexander-leinoff@uiowa.edu>
   Copyright 2016, Palash Ahuja <abhor902@gmail.com>
   Copyright 2016, Yannis Mentekidis <mentekid@gmail.com>
   Copyright 2016, Ranjan Mondal <ranjan.rev@gmail.com>
-  Copyright 2016, Mikhail Lozhnikov <lozhnikovma@gmail.com>
+  Copyright 2016-2018, Mikhail Lozhnikov <lozhnikovma@gmail.com>
   Copyright 2016, Marcos Pividori <marcos.pividori@gmail.com>
   Copyright 2016, Keon Kim <kwk236@gmail.com>
   Copyright 2016, Nilay Jain <nilayjain13@gmail.com>
@@ -84,9 +84,9 @@ Copyright:
   Copyright 2017, N Rajiv Vaidyanathan <rajivvaidyanathan4@gmail.com>
   Copyright 2017, Kartik Nighania <kartiknighania@gmail.com>
   Copyright 2017-2018, Eugene Freyman <evg.freyman@gmail.com>
-  Copyright 2017, Manish Kumar <manish887kr@gmail.com>
-  Copyright 2017, Haritha Sreedharan Nair <haritha1313@gmail.com>
-  Copyright 2017&2018, Sourabh Varshney <sourabhvarshney111@gmail.com>
+  Copyright 2017-2018, Manish Kumar <manish887kr@gmail.com>
+  Copyright 2017-2018, Haritha Sreedharan Nair <haritha1313@gmail.com>
+  Copyright 2017-2018, Sourabh Varshney <sourabhvarshney111@gmail.com>
   Copyright 2018, Projyal Dev <projyal@gmail.com>
   Copyright 2018, Nikhil Goel <nikhilgoel199797@gmail.com>
   Copyright 2018, Shikhar Jaiswal <jaiswalshikhar87@gmail.com>
@@ -101,6 +101,8 @@ Copyright:
   Copyright 2018, Namrata Mukhija <namratamukhija@gmail.com>
   Copyright 2018, Conrad Sanderson
   Copyright 2018, Thanasis Mattas <mattasa@auth.gr>
+  Copyright 2018, Shashank Shekhar <contactshashankshekhar@gmail.com>
+  Copyright 2018, Yasmine Dumouchel <yasmine.dumouchel@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.

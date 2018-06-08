@@ -137,12 +137,15 @@ add_executable(mlpack_test
   main_tests/approx_kfn_test.cpp
   main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
+  main_tests/det_test.cpp
   main_tests/decision_tree_test.cpp
   main_tests/decision_stump_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/logistic_regression_test.cpp
+  main_tests/lsh_test.cpp
   main_tests/mean_shift_test.cpp
   main_tests/nbc_test.cpp
+  main_tests/nca_test.cpp
   main_tests/nmf_test.cpp
   main_tests/pca_test.cpp
   main_tests/perceptron_test.cpp
@@ -158,6 +161,7 @@ add_executable(mlpack_test
   main_tests/hmm_train_test.cpp
   main_tests/hmm_loglik_test.cpp
   main_tests/hmm_generate_test.cpp
+  main_tests/radical_test.cpp
   main_tests/hmm_test_utils.hpp
 )
 

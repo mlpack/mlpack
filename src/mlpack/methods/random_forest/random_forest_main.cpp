@@ -25,7 +25,52 @@ PROGRAM_INFO("Random forests",
     "trained and saved for later use, or a random forest may be loaded "
     "and predictions or class probabilities for points may be generated."
     "\n\n"
-    "This documentation will be rewritten once #880 is merged.");
+    "The training set and associated labels are specified with the " +
+    PRINT_PARAM_STRING("training") + " and " + PRINT_PARAM_STRING("labels") +
+    " parameters, respectively.  The labels should be in the range [0, "
+    "num_classes - 1]. Optionally, if " +
+    PRINT_PARAM_STRING("labels") + " is not specified, the labels are assumed "
+    "to be the last dimension of the training dataset."
+    "\n\n"
+    "When a model is trained, the " + PRINT_PARAM_STRING("output_model") + " "
+    "output parameter may be used to save the trained model.  A model may be "
+    "loaded for predictions with the " + PRINT_PARAM_STRING("input_model") +
+    "parameter. The " + PRINT_PARAM_STRING("input_model") + " parameter may "
+    "not be specified when the " + PRINT_PARAM_STRING("training") + " parameter"
+    " is specified.  The " + PRINT_PARAM_STRING("minimum_leaf_size") +
+    " parameter specifies the minimum number of training points that must fall "
+    "into each leaf for it to be split.  The " +
+    PRINT_PARAM_STRING("num_trees") +
+    " controls the number of trees in the random forest. If " +
+    PRINT_PARAM_STRING("print_training_accuracy") + " is specified, the "
+    "calculated accuracy on the training set will be printed."
+    "\n\n"
+    "Test data may be specified with the " + PRINT_PARAM_STRING("test") + " "
+    "parameter, and if performance measures are desired for that test set, "
+    "labels for the test points may be specified with the " +
+    PRINT_PARAM_STRING("test_labels") + " parameter.  Predictions for each "
+    "test point may be saved via the " + PRINT_PARAM_STRING("predictions") +
+    "output parameter.  Class probabilities for each prediction may be saved "
+    "with the " + PRINT_PARAM_STRING("probabilities") + " output parameter."
+    "\n\n"
+    "For example, to train a random forest with a minimum leaf size of 20 "
+    "using 10 trees on the dataset contained in " + PRINT_DATASET("data") +
+    "with labels " + PRINT_DATASET("labels") + ", saving the output random "
+    "forest to " + PRINT_MODEL("rf_model") + " and printing the training "
+    "error, one could call"
+    "\n\n" +
+    PRINT_CALL("random_forest", "training", "data", "labels", "labels",
+        "minimum_leaf_size", 20, "num_trees", 10, "output_model", "rf_model",
+        "print_training_accuracy", true) +
+    "\n\n"
+    "Then, to use that model to classify points in " +
+    PRINT_DATASET("test_set") + " and print the test error given the labels " +
+    PRINT_DATASET("test_labels") + " using that model, while saving the "
+    "predictions for each point to " + PRINT_DATASET("predictions") + ", one "
+    "could call "
+    "\n\n" +
+    PRINT_CALL("random_forest", "input_model", "rf_model", "test", "test_set",
+        "test_labels", "test_labels", "predictions", "predictions"));
 
 PARAM_MATRIX_IN("training", "Training dataset.", "t");
 PARAM_UROW_IN("labels", "Labels for training dataset.", "l");

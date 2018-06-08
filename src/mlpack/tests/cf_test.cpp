@@ -1,6 +1,7 @@
 /**
  * @file cf_test.cpp
  * @author Mudit Raj Gupta
+ * @author Haritha Nair
  *
  * Test file for CF class.
  *
@@ -12,6 +13,12 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/cf/cf.hpp>
+#include <mlpack/methods/cf/decomposition_policies/batch_svd_method.hpp>
+#include <mlpack/methods/cf/decomposition_policies/randomized_svd_method.hpp>
+#include <mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp>
+#include <mlpack/methods/cf/decomposition_policies/svd_complete_method.hpp>
+#include <mlpack/methods/cf/decomposition_policies/svd_incomplete_method.hpp>
+
 #include <iostream>
 
 #include <boost/test/unit_test.hpp>
@@ -28,8 +35,10 @@ using namespace std;
  * Make sure that correct number of recommendations are generated when query
  * set. Default case.
  */
-BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersTest)
+template<typename DecompositionPolicy>
+void GetRecommendationsAllUsers(bool cleanData = true)
 {
+  DecompositionPolicy decomposition;
   // Dummy number of recommendations.
   size_t numRecs = 3;
   // GroupLensSmall.csv dataset has 200 users.
@@ -42,12 +51,16 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersTest)
   arma::mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
 
-  // Make data into sparse matrix.
-  arma::sp_mat cleanedData;
-  CF::CleanData(dataset, cleanedData);
+  if (cleanData)
+  {
+    // Make data into sparse matrix.
+    arma::sp_mat cleanedData;
+    CFType::CleanData(dataset, cleanedData);
 
-  // Create a CF object.
-  CF c(cleanedData);
+    arma::sp_mat dataset;
+    dataset = cleanedData;
+  }
+  CFType c(dataset, decomposition, 5, 5, 70);
 
   // Generate recommendations when query set is not specified.
   c.GetRecommendations(numRecs, recommendations);
@@ -62,8 +75,10 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersTest)
 /**
  * Make sure that the recommendations are generated for queried users only.
  */
-BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserTest)
+template<typename DecompositionPolicy>
+void GetRecommendationsQueriedUser(bool cleanData = true)
 {
+  DecompositionPolicy decomposition;
   // Number of users that we will search for recommendations for.
   size_t numUsers = 10;
 
@@ -82,11 +97,17 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserTest)
   arma::mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
 
-  // Make data into sparse matrix.
-  arma::sp_mat cleanedData;
-  CF::CleanData(dataset, cleanedData);
+  if (cleanData)
+  {
+    // Make data into sparse matrix.
+    arma::sp_mat cleanedData;
+    CFType::CleanData(dataset, cleanedData);
 
-  CF c(cleanedData);
+    arma::sp_mat dataset;
+    dataset = cleanedData;
+  }
+
+  CFType c(dataset, decomposition, 5, 5, 70);
 
   // Generate recommendations when query set is specified.
   c.GetRecommendations(numRecsDefault, recommendations, users);
@@ -101,8 +122,10 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserTest)
 /**
  * Make sure recommendations that are generated are reasonably accurate.
  */
-BOOST_AUTO_TEST_CASE(RecommendationAccuracyTest)
+template<typename DecompositionPolicy>
+void RecommendationAccuracy(bool cleanData = true)
 {
+  DecompositionPolicy decomposition;
   // Load the GroupLens dataset; then, we will remove some values from it.
   arma::mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -141,12 +164,17 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyTest)
     }
   }
 
-  // Make data into sparse matrix.
-  arma::sp_mat cleanedData;
-  CF::CleanData(dataset, cleanedData);
+  if (cleanData)
+  {
+    // Make data into sparse matrix.
+    arma::sp_mat cleanedData;
+    CFType::CleanData(dataset, cleanedData);
 
-  // Now create the CF object.
-  CF c(cleanedData);
+    arma::sp_mat dataset;
+    dataset = cleanedData;
+  }
+
+  CFType c(dataset, decomposition, 5, 5, 70);
 
   // Obtain 150 recommendations for the users in savedCols, and make sure the
   // missing item shows up in most of them.  First, create the list of users,
@@ -195,8 +223,10 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyTest)
 }
 
 // Make sure that Predict() is returning reasonable results.
-BOOST_AUTO_TEST_CASE(CFPredictTest)
+template<typename DecompositionPolicy>
+void CFPredict(bool cleanData = true)
 {
+  DecompositionPolicy decomposition;
   // Load the GroupLens dataset; then, we will remove some values from it.
   arma::mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -235,12 +265,17 @@ BOOST_AUTO_TEST_CASE(CFPredictTest)
     }
   }
 
-  // Make data into sparse matrix.
-  arma::sp_mat cleanedData;
-  CF::CleanData(dataset, cleanedData);
+  if (cleanData)
+  {
+    // Make data into sparse matrix.
+    arma::sp_mat cleanedData;
+    CFType::CleanData(dataset, cleanedData);
 
-  // Now create the CF object.
-  CF c(cleanedData);
+    arma::sp_mat dataset;
+    dataset = cleanedData;
+  }
+
+  CFType c(dataset, decomposition, 5, 5, 70);
 
   // Now, for each removed rating, make sure the prediction is... reasonably
   // accurate.
@@ -256,14 +291,16 @@ BOOST_AUTO_TEST_CASE(CFPredictTest)
   totalError = std::sqrt(totalError) / savedCols.n_cols;
 
   // The mean squared error should be less than one.
-  BOOST_REQUIRE_LT(totalError, 0.5);
+  BOOST_REQUIRE_LT(totalError, 0.6);
 }
 
 // Do the same thing as the previous test, but ensure that the ratings we
 // predict with the batch Predict() are the same as the individual Predict()
 // calls.
-BOOST_AUTO_TEST_CASE(CFBatchPredictTest)
+template<typename DecompositionPolicy>
+void BatchPredict(bool cleanData = true)
 {
+  DecompositionPolicy decomposition;
   // Load the GroupLens dataset; then, we will remove some values from it.
   arma::mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -302,12 +339,17 @@ BOOST_AUTO_TEST_CASE(CFBatchPredictTest)
     }
   }
 
-  // Make data into sparse matrix.
-  arma::sp_mat cleanedData;
-  CF::CleanData(dataset, cleanedData);
+  if (cleanData)
+  {
+    // Make data into sparse matrix.
+    arma::sp_mat cleanedData;
+    CFType::CleanData(dataset, cleanedData);
 
-  // Now create the CF object.
-  CF c(cleanedData);
+    arma::sp_mat dataset;
+    dataset = cleanedData;
+  }
+
+  CFType c(dataset, decomposition, 5, 5, 70);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -330,12 +372,13 @@ BOOST_AUTO_TEST_CASE(CFBatchPredictTest)
 /**
  * Make sure we can train an already-trained model and it works okay.
  */
-BOOST_AUTO_TEST_CASE(TrainTest)
+template<typename DecompositionPolicy>
+void Train(DecompositionPolicy& decomposition)
 {
   // Generate random data.
   arma::sp_mat randomData;
   randomData.sprandu(100, 100, 0.3);
-  CF c(randomData);
+  CFType c(randomData, decomposition, 5, 5, 70);
 
   // Now retrain with data we know about.
   arma::mat dataset;
@@ -377,10 +420,80 @@ BOOST_AUTO_TEST_CASE(TrainTest)
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
-  CF::CleanData(dataset, cleanedData);
+  CFType::CleanData(dataset, cleanedData);
 
   // Now retrain.
-  c.Train(dataset);
+  c.Train(dataset, decomposition, 70);
+
+  // Get predictions for all user/item pairs we held back.
+  arma::Mat<size_t> combinations(2, savedCols.n_cols);
+  for (size_t i = 0; i < savedCols.n_cols; ++i)
+  {
+    combinations(0, i) = size_t(savedCols(0, i));
+    combinations(1, i) = size_t(savedCols(1, i));
+  }
+
+  arma::vec predictions;
+  c.Predict(combinations, predictions);
+
+  for (size_t i = 0; i < combinations.n_cols; ++i)
+  {
+    const double prediction = c.Predict(combinations(0, i), combinations(1, i));
+    BOOST_REQUIRE_CLOSE(prediction, predictions[i], 1e-8);
+  }
+}
+
+/**
+ * Make sure we can train an already-trained model and it works okay
+ * for policies that use coordinate lists.
+ */
+template<>
+void Train<>(RegSVDPolicy& decomposition)
+{
+  arma::mat randomData = arma::zeros(100, 100);
+  randomData.diag().ones();
+  CFType c(randomData, decomposition, 5, 5, 70);
+
+  // Now retrain with data we know about.
+  arma::mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
+
+  // Save the columns we've removed.
+  arma::mat savedCols(3, 50); // Remove 50 5-star ratings.
+  savedCols.fill(/* random very large value */ 10000000);
+  size_t currentCol = 0;
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+  {
+    if (currentCol == 50)
+      break;
+
+    if (dataset(2, i) > 4.5) // 5-star rating.
+    {
+      // Make sure we don't have this user yet.  This is a slow way to do this
+      // but I don't particularly care here because it's in the tests.
+      bool found = false;
+      for (size_t j = 0; j < currentCol; ++j)
+      {
+        if (savedCols(0, j) == dataset(0, i))
+        {
+          found = true;
+          break;
+        }
+      }
+
+      // If this user doesn't already exist in savedCols, add them.  Otherwise
+      // ignore this point.
+      if (!found)
+      {
+        savedCols.col(currentCol) = dataset.col(i);
+        dataset.shed_col(i);
+        ++currentCol;
+      }
+    }
+  }
+
+  // Now retrain.
+  c.Train(dataset, decomposition, 70);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -403,10 +516,12 @@ BOOST_AUTO_TEST_CASE(TrainTest)
 /**
  * Make sure we can train a model after using the empty constructor.
  */
-BOOST_AUTO_TEST_CASE(EmptyConstructorTrainTest)
+template<typename DecompositionPolicy>
+void EmptyConstructorTrain(bool cleanData = true)
 {
+  DecompositionPolicy decomposition;
   // Use default constructor.
-  CF c;
+  CFType c;
 
   // Now retrain with data we know about.
   arma::mat dataset;
@@ -446,12 +561,17 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTrainTest)
     }
   }
 
-  // Make data into sparse matrix.
-  arma::sp_mat cleanedData;
-  CF::CleanData(dataset, cleanedData);
+  if (cleanData)
+  {
+    // Make data into sparse matrix.
+    arma::sp_mat cleanedData;
+    CFType::CleanData(dataset, cleanedData);
 
-  // Now retrain.
-  c.Train(cleanedData);
+    arma::sp_mat dataset;
+    dataset = cleanedData;
+  }
+
+  c.Train(dataset, decomposition, 70);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -466,7 +586,8 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTrainTest)
 
   for (size_t i = 0; i < combinations.n_cols; ++i)
   {
-    const double prediction = c.Predict(combinations(0, i), combinations(1, i));
+    const double prediction = c.Predict(combinations(0, i),
+        combinations(1, i));
     BOOST_REQUIRE_CLOSE(prediction, predictions[i], 1e-8);
   }
 }
@@ -474,23 +595,25 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTrainTest)
 /**
  * Ensure we can load and save the CF model.
  */
-BOOST_AUTO_TEST_CASE(SerializationTest)
+template<typename DecompositionPolicy>
+void Serialization()
 {
+  DecompositionPolicy decomposition;
   // Load a dataset to train on.
   arma::mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
 
   arma::sp_mat cleanedData;
-  CF::CleanData(dataset, cleanedData);
+  CFType::CleanData(dataset, cleanedData);
 
-  CF c(cleanedData);
+  CFType c(cleanedData, decomposition, 5, 5, 70);
 
   arma::sp_mat randomData;
   randomData.sprandu(100, 100, 0.3);
 
-  CF cXml(randomData);
-  CF cBinary;
-  CF cText(cleanedData, amf::NMFALSFactorizer(), 5, 5);
+  CFType cXml(randomData, decomposition, 5, 5, 70);
+  CFType cBinary;
+  CFType cText(cleanedData, decomposition, 5, 5, 70);
 
   SerializeObjectAll(c, cXml, cText, cBinary);
 
@@ -520,6 +643,10 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
       cBinary.CleanedData().n_nonzero);
   BOOST_REQUIRE_EQUAL(c.CleanedData().n_nonzero, cText.CleanedData().n_nonzero);
 
+#if ARMA_VERSION_MAJOR >= 8
+  c.CleanedData().sync();
+#endif
+
   for (size_t i = 0; i <= c.CleanedData().n_cols; ++i)
   {
     BOOST_REQUIRE_EQUAL(c.CleanedData().col_ptrs[i],
@@ -548,5 +675,401 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   }
 }
 
+/**
+ * Make sure that correct number of recommendations are generated when query
+ * set for randomized SVD.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersRandSVDTest)
+{
+  GetRecommendationsAllUsers<RandomizedSVDPolicy>();
+}
+
+/**
+ * Make sure that correct number of recommendations are generated when query
+ * set for regularized SVD.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersRegSVDTest)
+{
+  GetRecommendationsAllUsers<RegSVDPolicy>(false);
+}
+
+/**
+ * Make sure that correct number of recommendations are generated when query
+ * set for Batch SVD.
+ */
+
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersBatchSVDTest)
+{
+  GetRecommendationsAllUsers<BatchSVDPolicy>();
+}
+
+/**
+ * Make sure that correct number of recommendations are generated when query
+ * set for NMF.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersNMFTest)
+{
+  GetRecommendationsAllUsers<NMFPolicy>();
+}
+
+/**
+ * Make sure that correct number of recommendations are generated when query
+ * set for SVD Complete Incremental method.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersSVDCompleteTest)
+{
+  GetRecommendationsAllUsers<SVDCompletePolicy>();
+}
+
+/**
+ * Make sure that correct number of recommendations are generated when query
+ * set for SVD Incomplete Incremental method.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersSVDIncompleteTest)
+{
+  GetRecommendationsAllUsers<SVDIncompletePolicy>();
+}
+
+/**
+ * Make sure that the recommendations are generated for queried users only
+ * for randomized SVD.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserRandSVDTest)
+{
+  GetRecommendationsQueriedUser<RandomizedSVDPolicy>();
+}
+
+/**
+ * Make sure that the recommendations are generated for queried users only
+ * for regularized SVD.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserRegSVDTest)
+{
+  GetRecommendationsQueriedUser<RegSVDPolicy>(false);
+}
+
+/**
+ * Make sure that the recommendations are generated for queried users only
+ * for batch SVD.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserBatchSVDTest)
+{
+  GetRecommendationsQueriedUser<BatchSVDPolicy>();
+}
+
+/**
+ * Make sure that the recommendations are generated for queried users only
+ * for NMF.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserNMFTest)
+{
+  GetRecommendationsQueriedUser<NMFPolicy>();
+}
+
+/**
+ * Make sure that the recommendations are generated for queried users only
+ * for SVD Complete Incremental method.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserSVDCompleteTest)
+{
+  GetRecommendationsQueriedUser<SVDCompletePolicy>();
+}
+
+/**
+ * Make sure that the recommendations are generated for queried users only
+ * for SVD Incomplete Incremental method.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserSVDIncompleteTest)
+{
+  GetRecommendationsQueriedUser<SVDIncompletePolicy>();
+}
+
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for randomized SVD.
+ */
+BOOST_AUTO_TEST_CASE(RecommendationAccuracyRandSVDTest)
+{
+  RecommendationAccuracy<RandomizedSVDPolicy>();
+}
+
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for regularized SVD.
+ */
+BOOST_AUTO_TEST_CASE(RecommendationAccuracyRegSVDTest)
+{
+  RecommendationAccuracy<RegSVDPolicy>(false);
+}
+
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for batch SVD.
+ */
+BOOST_AUTO_TEST_CASE(RecommendationAccuracyBatchSVDTest)
+{
+  RecommendationAccuracy<BatchSVDPolicy>();
+}
+
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for NMF.
+ */
+BOOST_AUTO_TEST_CASE(RecommendationAccuracyNMFTest)
+{
+  RecommendationAccuracy<NMFPolicy>();
+}
+
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for SVD Complete Incremental method.
+ */
+BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDCompleteTest)
+{
+  RecommendationAccuracy<SVDCompletePolicy>();
+}
+
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for SVD Incomplete Incremental method.
+ */ 
+BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDIncompleteTest)
+{
+  RecommendationAccuracy<SVDIncompletePolicy>();
+}
+
+// Make sure that Predict() is returning reasonable results for randomized SVD.
+BOOST_AUTO_TEST_CASE(CFPredictRandSVDTest)
+{
+  CFPredict<RandomizedSVDPolicy>();
+}
+
+// Make sure that Predict() is returning reasonable results for regularized SVD.
+BOOST_AUTO_TEST_CASE(CFPredictRegSVDTest)
+{
+  CFPredict<RegSVDPolicy>(false);
+}
+
+// Make sure that Predict() is returning reasonable results for batch SVD.
+BOOST_AUTO_TEST_CASE(CFPredictBatchSVDTest)
+{
+  CFPredict<BatchSVDPolicy>();
+}
+
+// Make sure that Predict() is returning reasonable results for NMF.
+BOOST_AUTO_TEST_CASE(CFPredictNMFTest)
+{
+  CFPredict<NMFPolicy>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for SVD Complete
+ * Incremental method.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictSVDCompleteTest)
+{
+  CFPredict<SVDCompletePolicy>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for SVD Incomplete
+ * Incremental method.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictSVDIncompleteTest)
+{
+  CFPredict<SVDIncompletePolicy>();
+}
+
+// Compare batch Predict() and individual Predict() for randomized SVD.
+BOOST_AUTO_TEST_CASE(CFBatchPredictRandSVDTest)
+{
+  BatchPredict<RandomizedSVDPolicy>();
+}
+
+// Compare batch Predict() and individual Predict() for regularized SVD.
+BOOST_AUTO_TEST_CASE(CFBatchPredictRegSVDTest)
+{
+  BatchPredict<RegSVDPolicy>(false);
+}
+
+// Compare batch Predict() and individual Predict() for batch SVD.
+BOOST_AUTO_TEST_CASE(CFBatchPredictBatchSVDTest)
+{
+  BatchPredict<BatchSVDPolicy>();
+}
+
+// Compare batch Predict() and individual Predict() for NMF.
+BOOST_AUTO_TEST_CASE(CFBatchPredictNMFTest)
+{
+  BatchPredict<NMFPolicy>();
+}
+
+// Compare batch Predict() and individual Predict() for
+// SVD Complete Incremental method.
+BOOST_AUTO_TEST_CASE(CFBatchPredictSVDCompleteTest)
+{
+  BatchPredict<SVDCompletePolicy>();
+}
+
+// Compare batch Predict() and individual Predict() for
+// SVD Incomplete Incremental method.
+BOOST_AUTO_TEST_CASE(CFBatchPredictSVDIncompleteTest)
+{
+  BatchPredict<SVDIncompletePolicy>();
+}
+
+/**
+ * Make sure we can train an already-trained model and it works okay for
+ * randomized SVD.
+ */
+BOOST_AUTO_TEST_CASE(TrainRandSVDTest)
+{
+  RandomizedSVDPolicy decomposition;
+  Train(decomposition);
+}
+
+/**
+ * Make sure we can train an already-trained model and it works okay for
+ * regularized SVD.
+ */
+BOOST_AUTO_TEST_CASE(TrainRegSVDTest)
+{
+  RegSVDPolicy decomposition;
+  Train(decomposition);
+}
+
+/**
+ * Make sure we can train an already-trained model and it works okay for
+ * batch SVD.
+ */
+BOOST_AUTO_TEST_CASE(TrainBatchSVDTest)
+{
+  BatchSVDPolicy decomposition;
+  Train(decomposition);
+}
+
+/**
+ * Make sure we can train an already-trained model and it works okay for
+ * NMF.
+ */
+BOOST_AUTO_TEST_CASE(TrainNMFTest)
+{
+  NMFPolicy decomposition;
+  Train(decomposition);
+}
+
+/**
+ * Make sure we can train an already-trained model and it works okay for
+ * SVD Complete Incremental method.
+ */
+BOOST_AUTO_TEST_CASE(TrainSVDCompleteTest)
+{
+  SVDCompletePolicy decomposition;
+  Train(decomposition);
+}
+
+/**
+ * Make sure we can train an already-trained model and it works okay for
+ * SVD Incomplete Incremental method.
+ */
+BOOST_AUTO_TEST_CASE(TrainSVDIncompleteTest)
+{
+  SVDIncompletePolicy decomposition;
+  Train(decomposition);
+}
+
+/**
+ * Make sure we can train a model after using the empty constructor when
+ * using randomized SVD.
+ */
+BOOST_AUTO_TEST_CASE(EmptyConstructorTrainRandSVDTest)
+{
+  EmptyConstructorTrain<RandomizedSVDPolicy>();
+}
+
+/**
+ * Make sure we can train a model after using the empty constructor when
+ * using regularized SVD.
+ */
+BOOST_AUTO_TEST_CASE(EmptyConstructorTrainRegSVDTest)
+{
+  EmptyConstructorTrain<RegSVDPolicy>(false);
+}
+
+/**
+ * Make sure we can train a model after using the empty constructor when
+ * using batch SVD.
+ */
+BOOST_AUTO_TEST_CASE(EmptyConstructorTrainBatchSVDTest)
+{
+  EmptyConstructorTrain<BatchSVDPolicy>();
+}
+
+/**
+ * Make sure we can train a model after using the empty constructor when
+ * using NMF.
+ */
+BOOST_AUTO_TEST_CASE(EmptyConstructorTrainNMFTest)
+{
+  EmptyConstructorTrain<NMFPolicy>();
+}
+
+/**
+ * Make sure we can train a model after using the empty constructor when
+ * using SVD Complete Incremental method.
+ */
+BOOST_AUTO_TEST_CASE(EmptyConstructorTrainSVDCompleteTest)
+{
+  EmptyConstructorTrain<SVDCompletePolicy>();
+}
+
+/**
+ * Make sure we can train a model after using the empty constructor when
+ * using SVD Incomplete Incremental method.
+ */
+BOOST_AUTO_TEST_CASE(EmptyConstructorTrainSVDIncompleteTest)
+{
+  EmptyConstructorTrain<SVDIncompletePolicy>();
+}
+
+/**
+ * Ensure we can load and save the CF model using randomized SVD policy.
+ */
+BOOST_AUTO_TEST_CASE(SerializationRandSVDTest)
+{
+  Serialization<RandomizedSVDPolicy>();
+}
+
+/**
+ * Ensure we can load and save the CF model using batch SVD policy.
+ */
+BOOST_AUTO_TEST_CASE(SerializationBatchSVDTest)
+{
+  Serialization<BatchSVDPolicy>();
+}
+
+/**
+ * Ensure we can load and save the CF model using NMF policy.
+ */
+BOOST_AUTO_TEST_CASE(SerializationNMFTest)
+{
+  Serialization<NMFPolicy>();
+}
+
+/**
+ * Ensure we can load and save the CF model using SVD Complete Incremental.
+ */
+BOOST_AUTO_TEST_CASE(SerializationSVDCompleteTest)
+{
+  Serialization<SVDCompletePolicy>();
+}
+
+/**
+ * Ensure we can load and save the CF model using SVD Incomplete Incremental.
+ */
+BOOST_AUTO_TEST_CASE(SerializationSVDIncompleteTest)
+{
+  Serialization<SVDIncompletePolicy>();
+}
 
 BOOST_AUTO_TEST_SUITE_END();
