@@ -25,7 +25,7 @@ PROGRAM_INFO("Decision tree",
     "numeric or categorical features, and associated labels for each point in "
     "the dataset, this program can train a decision tree on that data."
     "\n\n"
-    "The training file and associated labels are specified with the " +
+    "The training set and associated labels are specified with the " +
     PRINT_PARAM_STRING("training") + " and " + PRINT_PARAM_STRING("labels") +
     " parameters, respectively.  The labels should be in the range [0, "
     "num_classes - 1]. Optionally, if " +
@@ -35,7 +35,7 @@ PROGRAM_INFO("Decision tree",
     "When a model is trained, the " + PRINT_PARAM_STRING("output_model") + " "
     "output parameter may be used to save the trained model.  A model may be "
     "loaded for predictions with the " + PRINT_PARAM_STRING("input_model") +
-    "' parameter.  The " + PRINT_PARAM_STRING("input_model") + " parameter "
+    " parameter.  The " + PRINT_PARAM_STRING("input_model") + " parameter "
     "may not be specified when the " + PRINT_PARAM_STRING("training") + " "
     "parameter is specified.  The " + PRINT_PARAM_STRING("minimum_leaf_size") +
     " parameter specifies the minimum number of training points that must fall"
