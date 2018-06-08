@@ -76,9 +76,9 @@ void CFType<NormalizationType>::Train(const arma::mat& data,
                                       const bool mit)
 {
   // Make a copy of data before performing normalization.
-  arma::mat ds(data);
-  normalization.Normalize(ds);
-  CleanData(ds, cleanedData);
+  arma::mat normalizedData(data);
+  normalization.Normalize(normalizedData);
+  CleanData(normalizedData, cleanedData);
 
   // Check if the user wanted us to choose a rank for them.
   if (rank == 0)
@@ -98,7 +98,7 @@ void CFType<NormalizationType>::Train(const arma::mat& data,
   // Decompose the data matrix (which is in coordinate list form) to user and
   // data matrices.
   Timer::Start("cf_factorization");
-  decomposition.Apply(data, cleanedData, rank, w,
+  decomposition.Apply(normalizedData, cleanedData, rank, w,
       h, maxIterations, minResidue, mit);
   Timer::Stop("cf_factorization");
 }
@@ -112,6 +112,8 @@ void CFType<NormalizationType>::Train(const arma::sp_mat& data,
                                       const double minResidue,
                                       const bool mit)
 {
+  // data is not used in the following decomposition.Apply() method, so we only
+  // need to Normalize cleanedData.
   cleanedData = data;
   normalization.Normalize(cleanedData);
 
