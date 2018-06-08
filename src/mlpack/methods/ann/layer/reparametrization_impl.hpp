@@ -27,8 +27,10 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization()
 
 template <typename InputDataType, typename OutputDataType>
 Reparametrization<InputDataType, OutputDataType>::Reparametrization(
-    const size_t latentSize) :
-    latentSize(latentSize)
+    const size_t latentSize,
+    const bool stochastic) :
+    latentSize(latentSize),
+    stochastic(stochastic)
 {
   // Nothing to do here.
 }
@@ -46,11 +48,14 @@ void Reparametrization<InputDataType, OutputDataType>::Forward(
   }
 
   mean = input.submat(latentSize, 0, 2 * latentSize - 1, input.n_cols - 1);
-  stdDeviation = input.submat(0, 0, latentSize - 1, input.n_cols - 1);
+  preStdDev = input.submat(0, 0, latentSize - 1, input.n_cols - 1);
 
-  SoftplusFunction::Fn(input.submat(0, 0, latentSize - 1, input.n_cols - 1),
-      output);
-  gaussianSample = arma::randn<arma::Mat<eT>>(latentSize, input.n_cols);
+  if (stochastic)
+    gaussianSample = arma::randn<arma::Mat<eT>>(latentSize, input.n_cols);
+  else
+    gaussianSample = arma::ones<arma::Mat<eT>>(latentSize, input.n_cols) * 0.7;
+
+  SoftplusFunction::Fn(preStdDev, output);
   output = mean + output % gaussianSample;
 }
 
@@ -59,8 +64,7 @@ template<typename eT>
 void Reparametrization<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  SoftplusFunction::Deriv(std::move(stdDeviation), g);
-
+  SoftplusFunction::Deriv(std::move(preStdDev), g);
   g = join_cols(gy % std::move(gaussianSample) % g, gy);
 }
 
@@ -69,11 +73,11 @@ template<typename InputType>
 double Reparametrization<InputDataType, OutputDataType>::klForward(
     const InputType&& input)
 {
-  stdDeviation = input.submat(0, 0, latentSize - 1, input.n_cols);
+  preStdDev = input.submat(0, 0, latentSize - 1, input.n_cols);
   mean = input.submat(latentSize, 0, 2 * latentSize - 1, input.n_cols);
 
-  return -0.5 * arma::accu(2 * arma::log(stdDeviation) -
-      arma::pow(stdDeviation, 2) - arma::pow(mean, 2) + 1);
+  return -0.5 * arma::accu(2 * arma::log(preStdDev) -
+      arma::pow(preStdDev, 2) - arma::pow(mean, 2) + 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -82,7 +86,7 @@ void Reparametrization<InputDataType, OutputDataType>::klBackward(
     const InputType&& input,
     OutputType&& output)
 {
-  output = join_cols(-1 / stdDeviation + stdDeviation, mean);
+  output = join_cols(-1 / preStdDev + preStdDev, mean);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -91,6 +95,7 @@ void Reparametrization<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(latentSize);
+  ar & BOOST_SERIALIZATION_NVP(stochastic);
 }
 
 } // namespace ann

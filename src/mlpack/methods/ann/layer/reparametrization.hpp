@@ -45,7 +45,7 @@ class Reparametrization
    *
    * @param layerSize The number of output units.
    */
-  Reparametrization(const size_t latentSize);
+  Reparametrization(const size_t latentSize, const bool stochastic = true);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -119,6 +119,9 @@ class Reparametrization
   //! Locally-stored number of output units.
   size_t latentSize;
 
+  //! If false, sample will be constant.
+  bool stochastic;
+
   //! Locally-stored delta object.
   OutputDataType delta;
 
@@ -128,8 +131,8 @@ class Reparametrization
   //! Locally-stored current mean.
   OutputDataType mean;
 
-  //! Locally-stored current standard deviation.
-  OutputDataType stdDeviation;
+  //! Locally-stored pre Standard Deviation, after softplus gives Standard Deviation.
+  OutputDataType preStdDev;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;

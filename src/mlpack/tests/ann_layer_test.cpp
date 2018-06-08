@@ -256,7 +256,6 @@ BOOST_AUTO_TEST_CASE(GradientAddLayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
@@ -562,7 +561,6 @@ BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
@@ -646,7 +644,6 @@ BOOST_AUTO_TEST_CASE(GradientLinearNoBiasLayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
@@ -750,7 +747,6 @@ BOOST_AUTO_TEST_CASE(GradientFlexibleReLULayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
@@ -957,7 +953,6 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
@@ -1039,7 +1034,6 @@ BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
@@ -1225,7 +1219,6 @@ BOOST_AUTO_TEST_CASE(GradientConcatLayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
@@ -1423,7 +1416,6 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 256, false);
       model->Gradient(model->Parameters(), 0, gradient, 256);
       return error;
@@ -1592,7 +1584,6 @@ BOOST_AUTO_TEST_CASE(GradientTransposedConvolutionLayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
@@ -1704,7 +1695,6 @@ BOOST_AUTO_TEST_CASE(GradientAtrousConvolutionLayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
@@ -1783,7 +1773,6 @@ BOOST_AUTO_TEST_CASE(GradientLayerNormTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 256, false);
       model->Gradient(model->Parameters(), 0, gradient, 256);
       return error;
@@ -1882,7 +1871,7 @@ BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerTest)
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(10, 6);
-      model->Add<Reparametrization<> >(3);
+      model->Add<Reparametrization<> >(3, false);
       model->Add<Linear<> >(3, 2);
       model->Add<LogSoftMax<> >();
     }
@@ -1894,7 +1883,6 @@ BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      // arma::mat output;
       double error = model->Evaluate(model->Parameters(), 0, 1);
       model->Gradient(model->Parameters(), 0, gradient, 1);
       return error;
