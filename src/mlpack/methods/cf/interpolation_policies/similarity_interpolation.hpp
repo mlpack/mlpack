@@ -42,7 +42,16 @@ class SimilarityInterpolation
           << "least one neighbor!" << std::endl;
     }
 
-    similarties = similarities / (arma::sum(similarities) + 1e-9);
+    double similaritiesSum = arma::sum(similarities);
+    if (std::fabs(similaritiesSum) < 1e-14)
+    {
+      weights.set_size(similarities.n_elem);
+      weights.fill(1.0 / similarities.n_elem);
+    }
+    else
+    {
+      weights = similarities / similaritiesSum;
+    }
   }
 };
 
