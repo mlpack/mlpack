@@ -1841,16 +1841,38 @@ BOOST_AUTO_TEST_CASE(SubviewIndexTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleReparametrizationLayerTest)
 {
-  arma::mat input, output;
+  arma::mat input, output, delta;
   Reparametrization<> module(5);
 
   // Test the Forward function.
-  input = join_cols(arma::ones<arma::mat>(5, 1) * -10,
+  input = join_cols(arma::ones<arma::mat>(5, 1) * -20,
       arma::zeros<arma::mat>(5, 1));
   module.Forward(std::move(input), std::move(output));
-  BOOST_REQUIRE_LE(arma::accu(output), 1e-3);
+  BOOST_REQUIRE_LE(arma::accu(output), 1e-5);
 
   // Test the Backward function.
+  arma::mat gy = arma::zeros<arma::mat>(5, 1);
+  module.Backward(std::move(input), std::move(gy), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+}
+
+/**
+ * Jacobian Reparametrization module test.
+ */
+BOOST_AUTO_TEST_CASE(JacobianReparametrizationLayerTest)
+{
+  for (size_t i = 0; i < 5; i++)
+  {
+    const size_t inputElementsHalf = math::RandInt(2, 1000);
+
+    arma::mat input;
+    input.set_size(inputElementsHalf * 2, 1);
+
+    Reparametrization<> module(inputElementsHalf, false);
+
+    double error = JacobianTest(module, input);
+    BOOST_REQUIRE_LE(error, 1e-5);
+  }
 }
 
 /**
@@ -1895,6 +1917,23 @@ BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerTest)
   } function;
 
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
+ * Simple Reparametrization module KL divergence test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleReparametrizationLayerKlTest)
+{
+  arma::mat input, output;
+  Reparametrization<> module(5);
+
+  // Test the Forward function.
+  input = join_cols(arma::ones<arma::mat>(5, 1), arma::zeros<arma::mat>(5, 1));
+  BOOST_REQUIRE_EQUAL(module.klForward(std::move(input)), 0);
+
+  // Test the Backward function.
+  module.klBackward(output);
+  BOOST_REQUIRE_EQUAL(arma::accu(std::move(output)), 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

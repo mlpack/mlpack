@@ -90,9 +90,8 @@ class Reparametrization
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename InputType, typename OutputType>
-  void klBackward(const InputType&& input,
-                OutputType&& output);
+  template<typename OutputType>
+  void klBackward(OutputType&& output);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -131,8 +130,12 @@ class Reparametrization
   //! Locally-stored current mean.
   OutputDataType mean;
 
-  //! Locally-stored pre Standard Deviation, after softplus gives Standard Deviation.
+  //! Locally-stored pre standard deviation.
+  //! After softplus activation gives standard deviation.
   OutputDataType preStdDev;
+
+  //! Locally-stored current standard deviation.
+  OutputDataType stdDev;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
