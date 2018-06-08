@@ -72,7 +72,6 @@ template<typename eT>
 void MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-
   if (run)
   {
     for (size_t i = 0; i < network.size(); ++i)

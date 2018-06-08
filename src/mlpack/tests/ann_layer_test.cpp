@@ -869,7 +869,7 @@ BOOST_AUTO_TEST_CASE(SimpleAddMergeLayerTest)
 
   for (size_t i = 0; i < 5; ++i)
   {
-    AddMerge<> module;
+    AddMerge<> module(false, false);
     const size_t numMergeModules = math::RandInt(2, 10);
     for (size_t m = 0; m < numMergeModules; ++m)
     {
@@ -1617,7 +1617,7 @@ BOOST_AUTO_TEST_CASE(SimpleMultiplyMergeLayerTest)
 
   for (size_t i = 0; i < 5; ++i)
   {
-    MultiplyMerge<> module;
+    MultiplyMerge<> module(false, false);
     const size_t numMergeModules = math::RandInt(2, 10);
     for (size_t m = 0; m < numMergeModules; ++m)
     {
