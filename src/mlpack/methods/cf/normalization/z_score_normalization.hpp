@@ -44,6 +44,9 @@ class ZScoreNormalization
     }
 
     data.row(2) = (data.row(2) - mean) / stddev;
+    // The algorithm omits rating of zero. If normalized rating equals zero,
+    // it is set to the smallest positive double value.
+    data.row(2).replace(0, std::numeric_limits<double>::min());
   }
 
   /**
@@ -69,7 +72,13 @@ class ZScoreNormalization
     arma::sp_mat::iterator it = cleanedData.begin();
     arma::sp_mat::iterator it_end = cleanedData.end();
     for (; it != it_end; it++)
+    {
       *it = (*it - mean) / stddev;
+      // The algorithm omits rating of zero. If normalized rating equals zero,
+      // it is set to the smallest positive double value.
+      if (*it == 0)
+        *it = std::numeric_limits<double>::min();
+    }
   }
 
   /**

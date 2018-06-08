@@ -36,6 +36,9 @@ class OverallMeanNormalization
   {
     mean = arma::mean(data.row(2));
     data.row(2) -= mean;
+    // The algorithm omits rating of zero. If normalized rating equals zero,
+    // it is set to the smallest positive double value.
+    data.row(2).replace(0, std::numeric_limits<double>::min());
   }
 
   /**
@@ -53,7 +56,13 @@ class OverallMeanNormalization
       arma::sp_mat::iterator it = cleanedData.begin();
       arma::sp_mat::iterator it_end = cleanedData.end();
       for (; it != it_end; it++)
+      {
         *it = *it - mean;
+        // The algorithm omits rating of zero. If normalized rating equals zero,
+        // it is set to the smallest positive double value.
+        if (*it == 0)
+          *it = std::numeric_limits<double>::min();
+      }
     }
     else
     {

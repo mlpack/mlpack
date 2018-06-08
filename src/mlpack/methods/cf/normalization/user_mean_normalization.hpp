@@ -56,6 +56,10 @@ class UserMeanNormalization
     data.each_col([&](arma::vec& datapoint) {
       const size_t user = (size_t) datapoint(0);
       datapoint(2) -= userMean(user);
+      // The algorithm omits rating of zero. If normalized rating equals zero,
+      // it is set to the smallest positive double value.
+      if (datapoint(2) == 0)
+        datapoint(2) = std::numeric_limits<double>::min();
     });
   }
 
@@ -71,7 +75,13 @@ class UserMeanNormalization
     arma::sp_mat::iterator it = cleanedData.begin();
     arma::sp_mat::iterator it_end = cleanedData.end();
     for (; it != it_end; it++)
+    {
       *it = *it - userMean(it.col());
+      // The algorithm omits rating of zero. If normalized rating equals zero,
+      // it is set to the smallest positive double value.
+      if (*it == 0)
+        *it = std::numeric_limits<double>::min();
+    }
   }
 
   /**
