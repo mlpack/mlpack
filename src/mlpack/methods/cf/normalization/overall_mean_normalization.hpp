@@ -38,7 +38,10 @@ class OverallMeanNormalization
     data.row(2) -= mean;
     // The algorithm omits rating of zero. If normalized rating equals zero,
     // it is set to the smallest positive double value.
-    data.row(2).replace(0, std::numeric_limits<double>::min());
+    data.row(2).for_each([](double& x) {
+      if (x == 0)
+        x = std::numeric_limits<double>::min();
+    });
   }
 
   /**
