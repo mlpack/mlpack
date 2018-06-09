@@ -3,6 +3,7 @@
 set(SOURCES
   average_interpolation.hpp
   similarity_interpolation.hpp
+  regression_interpolation.hpp
 )
 
 # Add directory name to sources.
