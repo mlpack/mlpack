@@ -127,8 +127,7 @@ void Constraints::Impostors(arma::Mat<size_t>& outputMatrix)
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  for (size_t i = 0; i < uniqueLabels.n_cols21.504923s
-; i++)
+  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
   {
     // Perform KNN search with differently labeled points as reference
     // set and  same class points as query set.
