@@ -232,7 +232,7 @@ void RecommendationAccuracy(bool cleanData = true)
 // Make sure that Predict() is returning reasonable results.
 template<typename DecompositionPolicy,
          typename NormalizationType = NoNormalization>
-void CFPredict(bool cleanData = true)
+void CFPredict(bool cleanData = true, const double rmseBound = 2.0)
 {
   DecompositionPolicy decomposition;
   // Load the GroupLens dataset; then, we will remove some values from it.
@@ -299,7 +299,7 @@ void CFPredict(bool cleanData = true)
   const double rmse = std::sqrt(totalError / savedCols.n_cols);
 
   // The root mean square error should be less than ?.
-  BOOST_REQUIRE_LT(rmse, 4.3);
+  BOOST_REQUIRE_LT(rmse, rmseBound);
 }
 
 // Do the same thing as the previous test, but ensure that the ratings we
@@ -680,6 +680,8 @@ void Serialization()
 }
 
 /**
+
+/**
  * Make sure that correct number of recommendations are generated when query
  * set for randomized SVD.
  */
@@ -845,7 +847,8 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDIncompleteTest)
 // Make sure that Predict() is returning reasonable results for randomized SVD.
 BOOST_AUTO_TEST_CASE(CFPredictRandSVDTest)
 {
-  CFPredict<RandomizedSVDPolicy>();
+  // RandomizedSVD doesn't give a w 
+  CFPredict<RandomizedSVDPolicy>(true, 4.5);
 }
 
 // Make sure that Predict() is returning reasonable results for regularized SVD.
@@ -863,7 +866,7 @@ BOOST_AUTO_TEST_CASE(CFPredictBatchSVDTest)
 // Make sure that Predict() is returning reasonable results for NMF.
 BOOST_AUTO_TEST_CASE(CFPredictNMFTest)
 {
-  CFPredict<NMFPolicy>();
+  CFPredict<NMFPolicy>(true,3.5);
 }
 
 /**
@@ -872,7 +875,7 @@ BOOST_AUTO_TEST_CASE(CFPredictNMFTest)
  */
 BOOST_AUTO_TEST_CASE(CFPredictSVDCompleteTest)
 {
-  CFPredict<SVDCompletePolicy>();
+  CFPredict<SVDCompletePolicy>(true, 3.5);
 }
 
 /**
@@ -881,7 +884,7 @@ BOOST_AUTO_TEST_CASE(CFPredictSVDCompleteTest)
  */
 BOOST_AUTO_TEST_CASE(CFPredictSVDIncompleteTest)
 {
-  CFPredict<SVDIncompletePolicy>();
+  CFPredict<SVDIncompletePolicy>(true, 3.5);
 }
 
 // Compare batch Predict() and individual Predict() for randomized SVD.
