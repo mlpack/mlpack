@@ -108,6 +108,12 @@ class Reparametrization
   //! Modify the output size.
   size_t& OutputSize() { return latentSize; }
 
+  //! Get the KL divergence with standard normal.
+  double const& Loss() const
+  {
+    return klForward(join_cols(stdDev, mean));
+  }
+
   /**
    * Serialize the layer
    */
