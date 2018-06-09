@@ -102,6 +102,24 @@ class Constraints
 
   //! Number of target neighbors & impostors to calulate.
   size_t k;
+
+  //! Store unique labels.
+  arma::Row<size_t> uniqueLabels;
+
+  //! Store indices of data points having similar label.
+  std::vector<arma::uvec> indexSame;
+
+  //! Store indices of data points having different label.
+  std::vector<arma::uvec> indexDiff;
+
+  //! False if nothing has ever been precalculated.
+  bool precalculated;
+
+  /**
+  * Precalculate the unique labels, and indices of similar
+  * and different datapoints on the basis of labels.
+  */
+  void Precalculate();
 };
 
 } // namespace lmnn
