@@ -194,7 +194,8 @@ class CombinedNormalization
   {
     std::string tagName = "normalization_";
     tagName += std::to_string(I);
-    ar & boost::serialization::make_nvp(tagName.c_str(), std::get<I>(normalizations));
+    ar & boost::serialization::make_nvp(
+        tagName.c_str(), std::get<I>(normalizations));
     SequenceSerialize<I+1, Archive>(ar, version);
   }
 
@@ -204,7 +205,8 @@ class CombinedNormalization
       typename Archive,
       typename = std::enable_if_t<(I >= std::tuple_size<TupleType>::value)>,
       typename = void>
-  void SequenceSerialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void SequenceSerialize(Archive& /* ar */, const unsigned int /* version */)
+  { }
 };
 
 } // namespace cf
