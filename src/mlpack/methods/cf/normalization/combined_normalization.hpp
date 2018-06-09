@@ -93,10 +93,9 @@ class CombinedNormalization
    * Serialization.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int version)
   {
-    // Boost does not support tuple serialization???
-    ar & BOOST_SERIALIZATION_NVP(normalizations);
+    SequenceSerialize<0, Archive>(ar, version);
   }
 
  private:
@@ -185,6 +184,27 @@ class CombinedNormalization
       typename = void>
   void SequenceDenormalize(const arma::Mat<size_t>& /* combinations */,
                              arma::vec& /* predictions */) const { }
+
+  //! Unpack normalizations tuple to serialize.
+  template<
+      int I, /* Which normalization in tuple to serialize */
+      typename Archive,
+      typename = std::enable_if_t<(I < std::tuple_size<TupleType>::value)>>
+  void SequenceSerialize(Archive& ar, const unsigned int version)
+  {
+    std::string tagName = "normalization_";
+    tagName += std::to_string(I);
+    ar & boost::serialization::make_nvp(tagName.c_str(), std::get<I>(normalizations));
+    SequenceSerialize<I+1, Archive>(ar, version);
+  }
+
+  //! End of tuple unpacking.
+  template<
+      int I, /* Which normalization in tuple to serialize */
+      typename Archive,
+      typename = std::enable_if_t<(I >= std::tuple_size<TupleType>::value)>,
+      typename = void>
+  void SequenceSerialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 } // namespace cf
