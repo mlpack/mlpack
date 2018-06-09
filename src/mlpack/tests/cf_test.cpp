@@ -603,7 +603,8 @@ void EmptyConstructorTrain(bool cleanData = true)
 /**
  * Ensure we can load and save the CF model.
  */
-template<typename DecompositionPolicy>
+template<typename DecompositionPolicy,
+         typename NormalizationType = NoNormalization>
 void Serialization()
 {
   DecompositionPolicy decomposition;
@@ -612,16 +613,16 @@ void Serialization()
   data::Load("GroupLensSmall.csv", dataset);
 
   arma::sp_mat cleanedData;
-  CFType<>::CleanData(dataset, cleanedData);
+  CFType<NormalizationType>::CleanData(dataset, cleanedData);
 
-  CFType<> c(cleanedData, decomposition, 5, 5, 70);
+  CFType<NormalizationType> c(cleanedData, decomposition, 5, 5, 70);
 
   arma::sp_mat randomData;
   randomData.sprandu(100, 100, 0.3);
 
-  CFType<> cXml(randomData, decomposition, 5, 5, 70);
-  CFType<> cBinary;
-  CFType<> cText(cleanedData, decomposition, 5, 5, 70);
+  CFType<NormalizationType> cXml(randomData, decomposition, 5, 5, 70);
+  CFType<NormalizationType> cBinary;
+  CFType<NormalizationType> cText(cleanedData, decomposition, 5, 5, 70);
 
   SerializeObjectAll(c, cXml, cText, cBinary);
 
@@ -678,8 +679,6 @@ void Serialization()
         cText.CleanedData().values[i], 1e-5);
   }
 }
-
-/**
 
 /**
  * Make sure that correct number of recommendations are generated when query
@@ -847,7 +846,6 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDIncompleteTest)
 // Make sure that Predict() is returning reasonable results for randomized SVD.
 BOOST_AUTO_TEST_CASE(CFPredictRandSVDTest)
 {
-  // RandomizedSVD doesn't give a w 
   CFPredict<RandomizedSVDPolicy>(true, 4.5);
 }
 
@@ -866,7 +864,7 @@ BOOST_AUTO_TEST_CASE(CFPredictBatchSVDTest)
 // Make sure that Predict() is returning reasonable results for NMF.
 BOOST_AUTO_TEST_CASE(CFPredictNMFTest)
 {
-  CFPredict<NMFPolicy>(true,3.5);
+  CFPredict<NMFPolicy>(true, 3.5);
 }
 
 /**
@@ -1127,6 +1125,99 @@ BOOST_AUTO_TEST_CASE(CFPredictCombinedNormalization)
                 OverallMeanNormalization,
                 UserMeanNormalization,
                 ItemMeanNormalization>>();
+}
+
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for OverallMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(RecommendationAccuracyOverallMeanNormalizationTest)
+{
+  RecommendationAccuracy<NMFPolicy, OverallMeanNormalization>();
+}
+
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for UserMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(RecommendationAccuracyUserMeanNormalizationTest)
+{
+  RecommendationAccuracy<NMFPolicy, UserMeanNormalization>();
+}
+
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for ItemMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(RecommendationAccuracyItemMeanNormalizationTest)
+{
+  RecommendationAccuracy<NMFPolicy, ItemMeanNormalization>();
+}
+
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for ZScoreNormalization.
+ */
+BOOST_AUTO_TEST_CASE(RecommendationAccuracyZScoreNormalizationTest)
+{
+  RecommendationAccuracy<NMFPolicy, ZScoreNormalization>();
+}
+
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for CombinedNormalization.
+ */
+BOOST_AUTO_TEST_CASE(RecommendationAccuracyCombinedNormalizationTest)
+{
+  RecommendationAccuracy<NMFPolicy,
+                         CombinedNormalization<
+                           OverallMeanNormalization,
+                           UserMeanNormalization,
+                           ItemMeanNormalization>>();
+}
+
+/**
+ * Ensure we can load and save the CF model using OverallMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(SerializationOverallMeanNormalizationTest)
+{
+  Serialization<NMFPolicy, OverallMeanNormalization>();
+}
+
+/**
+ * Ensure we can load and save the CF model using UserMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(SerializationUserMeanNormalizationTest)
+{
+  Serialization<NMFPolicy, UserMeanNormalization>();
+}
+
+/**
+ * Ensure we can load and save the CF model using ItemMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(SerializationItemMeanNormalizationTest)
+{
+  Serialization<NMFPolicy, ItemMeanNormalization>();
+}
+
+/**
+ * Ensure we can load and save the CF model using ZScoreMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(SerializationZScoreNormalizationTest)
+{
+  Serialization<NMFPolicy, ZScoreNormalization>();
+}
+
+/**
+ * Ensure we can load and save the CF model using CombinedNormalization.
+ */
+BOOST_AUTO_TEST_CASE(SerializationCombinedNormalizationTest)
+{
+  Serialization<NMFPolicy,
+                CombinedNormalization<
+                    OverallMeanNormalization,
+                    UserMeanNormalization,
+                    ItemMeanNormalization>>();
 }
 
 BOOST_AUTO_TEST_SUITE_END();
