@@ -2,7 +2,7 @@
  * @file average_interpolation.hpp
  * @author Wenhao Huang
  *
- * Interoplation weights are identical and sum up to one.
+ * Definition of AverageInterpolation class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -28,20 +28,37 @@ class AverageInterpolation
   AverageInterpolation() { }
 
   /**
+   * This constructor is needed for interface consistency.
+   */
+  AverageInterpolation(const arma::sp_mat& /* cleanedData */) { }
+
+  /**
    * Interoplation weights are identical and sum up to one.
    *
    * @param weights Resulting interpolation weights.
+   * @param w Matrix W from decomposition.
+   * @param h Matrix H from decomposition.
+   * @param queryUser Queried user.
+   * @param neighbors Neighbors of queried user.
    * @param similarities Similarites between query user and neighbors.
+   * @param cleanedData Sparse rating matrix.
    */
-  void GetWeights(arma::vec& weights, const arma::vec& similarities) const
+  void GetWeights(arma::vec& weights,
+                  const arma::mat& /* w */,
+                  const arma::mat& /* h */,
+                  const size_t /* queryUser */,
+                  const arma::Col<size_t>& neighbors,
+                  const arma::vec& /* similarities */,
+                  const arma::sp_mat& /* cleanedData */)
   {
-    if (similarities.n_elem == 0)
+    if (neighbors.n_elem == 0)
     {
-      Log::Fatal << "Require: similarities.n_elem > 0. There should be at "
+      Log::Fatal << "Require: neighbors.n_elem > 0. There should be at "
           << "least one neighbor!" << std::endl;
     }
-    weights.set_size(similarities.n_elem);
-    weights.fill(1.0 / similarities.n_elem);
+
+    weights.set_size(neighbors.n_elem);
+    weights.fill(1.0 / neighbors.n_elem);
   }
 };
 

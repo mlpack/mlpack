@@ -2,7 +2,7 @@
  * @file similarity_interpolation.hpp
  * @author Wenhao Huang
  *
- * Interpolation weights are based on similarities and weights sum up to one.
+ * Definition of SimilarityInterpolation class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -29,12 +29,28 @@ class SimilarityInterpolation
   SimilarityInterpolation() { }
 
   /**
+   * This constructor is needed for interface consistency.
+   */
+  SimilarityInterpolation(const arma::sp_mat& /* cleanedData */) { }
+
+  /**
    * Interpolation weights are computed as normalized similarities.
    *
    * @param weights Resulting interpolation weights.
+   * @param w Matrix W from decomposition.
+   * @param h Matrix H from decomposition.
+   * @param queryUser Queried user.
+   * @param neighbors Neighbors of queried user.
    * @param similarities Similarites between query user and neighbors.
+   * @param cleanedData Sparse rating matrix.
    */
-  void GetWeights(arma::vec& weights, const arma::vec& similarities) const
+  void GetWeights(arma::vec& weights,
+                  const arma::mat& /* w */,
+                  const arma::mat& /* h */,
+                  const size_t /* queryUser */,
+                  const arma::Col<size_t>& /* neighbors */,
+                  const arma::vec& similarities,
+                  const arma::sp_mat& /* cleanedData */)
   {
     if (similarities.n_elem == 0)
     {
