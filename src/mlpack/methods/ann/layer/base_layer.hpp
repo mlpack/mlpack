@@ -18,6 +18,7 @@
 #include <mlpack/methods/ann/activation_functions/identity_function.hpp>
 #include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
+#include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -167,6 +168,18 @@ template <
 >
 using TanHLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard Softplus-Layer using the Softplus activation function.
+ */
+template <
+    class ActivationFunction = SoftplusFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using SoftPlusLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
 
 } // namespace ann
 } // namespace mlpack

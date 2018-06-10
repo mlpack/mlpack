@@ -28,9 +28,9 @@ SigmoidCrossEntropyError<InputDataType, OutputDataType>
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename eT>
+template<typename InputType, typename TargetType>
 inline double SigmoidCrossEntropyError<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, const arma::Mat<eT>&& target)
+    const InputType&& input, const TargetType&& target)
 {
   double maximum = 0;
   for (size_t i = 0; i < input.n_elem; ++i)
@@ -43,11 +43,11 @@ inline double SigmoidCrossEntropyError<InputDataType, OutputDataType>::Forward(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename eT>
+template<typename InputType, typename TargetType, typename OutputType>
 inline void SigmoidCrossEntropyError<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& input,
-    const arma::Mat<eT>&& target,
-    arma::Mat<eT>&& output)
+    const InputType&& input,
+    const TargetType&& target,
+    OutputType&& output)
 {
   output = 1.0 / (1.0 + arma::exp(-input)) - target;
 }
