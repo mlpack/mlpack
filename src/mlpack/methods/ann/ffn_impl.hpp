@@ -185,7 +185,7 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
 {
   double res = 0;
   for (size_t i = 0; i < predictors.n_cols; ++i)
-    res += Evaluate(parameters, i, true);
+    res += Evaluate(parameters, i, 1, true);
 
   return res;
 }
