@@ -176,6 +176,18 @@ class LMNNFunction
   MetricType metric;
   //! Regularization value.
   double regularization;
+  //! Holds pre-calculated cij.
+  std::vector<arma::mat> p_cij;
+  //! False if nothing has ever been precalculated.
+  bool precalculated;
+  /**
+  * Precalculate the gradient part due to target neighbors and stores
+  * the contribution of each data point as a matrix of matrices p_cij
+  * for each batch. In case of L-BFGS batch size will be equal to total
+  * number of data points.
+  * @param batchSize Number of points to use for each p_cij internal matrix.
+  */
+  void Precalculate(const size_t batchSize);
 };
 
 } // namespace lmnn
