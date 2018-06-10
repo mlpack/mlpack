@@ -21,8 +21,24 @@ namespace cf {
 /**
  * This normalization class performs a sequence of normalization methods on
  * raw ratings.
+ *
+ * An example of how to use CombinedNormalization in CF is shown below:
+ *
+ * @code
+ * extern arma::mat data; // (user, item, rating) table
+ * extern arma::Col<size_t> users; // users seeking recommendations
+ * arma::Mat<size_t> recommendations; // Recommendations
+ *
+ * CFType<CombinedNormalization<
+ *            OverallMeanNormalization,
+ *            UserMeanNormalization,
+ *            ItemMeanNormalization>> cf(data);
+ *
+ * // Generate 10 recommendations for all users.
+ * cf.GetRecommendations(10, recommendations);
+ * @endcode
  */
-template<typename ...NormalizationTypes>
+template<typename... NormalizationTypes>
 class CombinedNormalization
 {
  public:

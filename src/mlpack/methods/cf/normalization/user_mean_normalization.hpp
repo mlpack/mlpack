@@ -20,6 +20,18 @@ namespace cf {
 
 /**
  * This normalization class performs user mean normalization on raw ratings.
+ *
+ * An example of how to use UserMeanNormalization in CF is shown below:
+ *
+ * @code
+ * extern arma::mat data; // (user, item, rating) table
+ * extern arma::Col<size_t> users; // users seeking recommendations
+ * arma::Mat<size_t> recommendations; // Recommendations
+ *
+ * CFType<UserMeanNormalization> cf(data);
+ *
+ * // Generate 10 recommendations for all users.
+ * cf.GetRecommendations(10, recommendations);
  */
 class UserMeanNormalization
 {
@@ -49,10 +61,12 @@ class UserMeanNormalization
 
     // Calculate user mean and subtract user mean from ratings.
     // Set user mean to 0 if the user has no rating.
-    // Should we use mean of all user means if a user has no rating?
     for (size_t i = 0; i < userNum; i++)
+    {
       if (ratingNum(i) != 0)
         userMean(i) /= ratingNum(i);
+    }
+
     data.each_col([&](arma::vec& datapoint) {
       const size_t user = (size_t) datapoint(0);
       datapoint(2) -= userMean(user);

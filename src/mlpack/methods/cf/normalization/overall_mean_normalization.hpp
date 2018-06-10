@@ -20,6 +20,19 @@ namespace cf {
 
 /**
  * This normalization class performs overall mean normalization on raw ratings.
+ *
+ * An example of how to use OverallMeanNormalization in CF is shown below:
+ *
+ * @code
+ * extern arma::mat data; // (user, item, rating) table
+ * extern arma::Col<size_t> users; // users seeking recommendations
+ * arma::Mat<size_t> recommendations; // Recommendations
+ *
+ * CFType<OverallMeanNormalization> cf(data);
+ *
+ * // Generate 10 recommendations for all users.
+ * cf.GetRecommendations(10, recommendations);
+ * @endcode
  */
 class OverallMeanNormalization
 {

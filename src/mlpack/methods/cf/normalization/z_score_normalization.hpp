@@ -19,6 +19,18 @@ namespace cf {
 
 /**
  * This normalization class performs z-score normalization on raw ratings.
+ *
+ * An example of how to use ZScoreNormalization in CF is shown below:
+ *
+ * @code
+ * extern arma::mat data; // (user, item, rating) table
+ * extern arma::Col<size_t> users; // users seeking recommendations
+ * arma::Mat<size_t> recommendations; // Recommendations
+ *
+ * CFType<ZScoreNormalization> cf(data);
+ *
+ * // Generate 10 recommendations for all users.
+ * cf.GetRecommendations(10, recommendations);
  */
 class ZScoreNormalization
 {

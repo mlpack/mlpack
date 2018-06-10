@@ -20,6 +20,19 @@ namespace cf {
 
 /**
  * This normalization class performs item mean normalization on raw ratings.
+ *
+ * An example of how to use ItemMeanNormalization in CF is shown below:
+ *
+ * @code
+ * extern arma::mat data; // (user, item, rating) table
+ * extern arma::Col<size_t> users; // users seeking recommendations
+ * arma::Mat<size_t> recommendations; // Recommendations
+ *
+ * CFType<ItemMeanNormalization> cf(data);
+ *
+ * // Generate 10 recommendations for all users.
+ * cf.GetRecommendations(10, recommendations);
+ * @endcode
  */
 class ItemMeanNormalization
 {
@@ -49,10 +62,12 @@ class ItemMeanNormalization
 
     // Calculate item mean and subtract item mean from ratings.
     // Set item mean to 0 if the item has no rating.
-    // Should we use mean of all item means if an item has no rating?
     for (size_t i = 0; i < itemNum; i++)
+    {
       if (ratingNum(i) != 0)
         itemMean(i) /= ratingNum(i);
+    }
+
     data.each_col([&](arma::vec& datapoint) {
       const size_t item = (size_t) datapoint(1);
       datapoint(2) -= itemMean(item);
