@@ -8,6 +8,7 @@ set(SOURCES
   svd_wrapper_impl.hpp
 )
 
+add_subdirectory(decomposition_policies)
 add_subdirectory(interpolation_policies)
 add_subdirectory(neighbor_search_policies)
 

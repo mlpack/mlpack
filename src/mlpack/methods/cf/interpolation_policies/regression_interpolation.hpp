@@ -2,6 +2,7 @@
  * @file regression_interpolation.hpp
  * @author Wenhao Huang
  *
+ * Definition of RegressionInterpolation class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -17,18 +18,36 @@ namespace mlpack {
 namespace cf {
 
 /**
- * 
+ * Implementation of regression-based interpolation method. Predicting a user's
+ * rating r_iu by it's neighbors' ratings can be regarded as solving linear
+ * regression of r_iu on r_iv, where v are u's neighbors.
+ *
+ * For more information, see the folloing paper.
+ *
+ * @code
+ * @inproceedings{bell2007improved,
+ *  title={Improved neighborhood-based collaborative filtering},
+ *  author={Bell, Robert M and Koren, Yehuda},
+ *  booktitle={KDD cup and workshop at the 13th ACM SIGKDD international
+ *      conference on knowledge discovery and data mining},
+ *  pages={7--14},
+ *  year={2007},
+ *  organization={Citeseer}
+ * }
+ * @endcode
  */
 class RegressionInterpolation
 {
  public:
   /**
-   *
+   * Empty Constructor.
    */
   RegressionInterpolation() { }
 
   /**
-   * 
+   * Use cleanedData to perform necessary preprocessing.
+   *
+   * @param cleanedData Sparse rating matrix.
    */
   RegressionInterpolation(const arma::sp_mat& cleanedData)
   {
@@ -38,15 +57,24 @@ class RegressionInterpolation
   }
 
   /**
+   * The regression-based interpolation problem can be solved by a linear
+   * system of equations. This method first calculates the coefficients and
+   * contant terms for the equations and then solve the equations to get
+   * weights.
    *
    * @param weights Resulting interpolation weights.
+   * @param w Matrix W from decomposition.
+   * @param h Matrix H from decomposition.
+   * @param queryUser Queried user.
+   * @param neighbors Neighbors of queried user.
    * @param similarities Similarites between query user and neighbors.
+   * @param cleanedData Sparse rating matrix.
    */
   void GetWeights(arma::vec& weights,
                   const arma::mat& w,
                   const arma::mat& h,
                   const size_t queryUser,
-                  const arma::vec& neigbors,
+                  const arma::Col<size_t>& neighbors,
                   const arma::vec& /* similarities*/,
                   const arma::sp_mat& cleanedData)
   {
@@ -58,19 +86,27 @@ class RegressionInterpolation
     // Constant terms of the linear equations used to compute weights.
     arma::vec constant(neighborNum);
 
-    arma::vec userRating = cleanedData.col(queryUser);
-    const double support = arma::accu(userRating != 0);
-    
+    arma::vec userRating(cleanedData.col(queryUser));
+    const size_t support = arma::accu(userRating != 0);
+
+    // If user has no rating at all, average interpolation is used.
+    if (support == 0)
+    {
+      weights.set_size(neighbors.n_elem);
+      weights.fill(1.0 / neighbors.n_elem);
+      return;
+    }
+
     for (size_t i = 0; i < neighborNum; i++)
     {
       // Calculate coefficient.
       arma::vec iPrediction;
       for (size_t j = i; j < neighborNum; j++)
       {
-        if (a(neighbors(i), a(neigbors(j))) != 0)
+        if (a(neighbors(i), a(neighbors(j))) != 0)
         {
           // The coefficient has already been cached.
-          coeff(i, j) = a(neighbors(i), a(neigbors(j)));
+          coeff(i, j) = a(neighbors(i), a(neighbors(j)));
           coeff(j, i) = coeff(i, j);
         }
         else
@@ -82,7 +118,7 @@ class RegressionInterpolation
           arma::vec jPrediction = w * h.col(neighbors(j));
           coeff(i, j) = arma::dot(iPrediction, jPrediction) / itemNum;
           if (coeff(i, j) == 0)
-            coeff(i, j) = std::numeric_limits<double>::min()
+            coeff(i, j) = std::numeric_limits<double>::min();
           coeff(j, i) = coeff(i, j);
           // Cache calcualted coefficient.
           a(neighbors(i), neighbors(j)) = coeff(i, j);
@@ -93,7 +129,7 @@ class RegressionInterpolation
       // Calculate constant term.
       if (b(neighbors(i), queryUser) != 0)
         // The constant term has already been cached.
-        constant(i) = b(neigbors(i), queryUser);
+        constant(i) = b(neighbors(i), queryUser);
       else
       {
         // Calcuate the constant term.
@@ -101,15 +137,11 @@ class RegressionInterpolation
         if (constant(i) == 0)
           constant(i) = std::numeric_limits<double>::min();
         // Cache calculated constant term.
-        b(neigbors(i), queryUser) = constant(i);
+        b(neighbors(i), queryUser) = constant(i);
       }
     }
     weights = arma::solve(coeff, constant);
   }
-
-  const arma::sp_mat& A() const { return a; }
-
-  const arma::sp_mat& B() const { return b; }
 
  private:
   //! Cached coefficients used in linear equations to compute weights.
