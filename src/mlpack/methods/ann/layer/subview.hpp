@@ -41,7 +41,7 @@ class Subview
    * @param begin Start index.
    * @param end End index.
    */
-  Subview(const arma::uword begin, const arma::uword end):
+  Subview(const arma::uword begin = 0, const arma::uword end = 0):
     begin(begin),
     end(end)
   {
@@ -59,7 +59,7 @@ class Subview
   void Forward(InputType&& input, OutputType&& output)
   {
     // Check if input has been selected as required.
-    if (input.n_rows != (end-begin+1))
+    if ((input.n_rows != (end-begin+1)) && (end != 0))
     {
       if (begin == 0)
       {
@@ -89,7 +89,7 @@ class Subview
                 arma::Mat<eT>&& g)
   {
     // Check if input has been selected as required.
-    if (input.n_rows != (end-begin+1))
+    if ((input.n_rows != (end-begin+1)) && (end != 0))
     {
       if (begin == 0)
       {
