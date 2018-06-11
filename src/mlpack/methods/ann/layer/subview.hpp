@@ -35,12 +35,6 @@ template <
 class Subview
 {
  public:
-  //! Create the Subview object.
-  Subview()
-  {
-    /* Nothing to do here */
-  }
-
   /**
    * Create the Subview layer object using the specified range of input to accept.
    *
