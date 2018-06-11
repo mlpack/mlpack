@@ -1919,21 +1919,4 @@ BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerTest)
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
-// /**
-//  * Simple Reparametrization module KL divergence test.
-//  */
-// BOOST_AUTO_TEST_CASE(SimpleReparametrizationLayerKlTest)
-// {
-//   arma::mat input, output;
-//   Reparametrization<> module(5);
-
-//   // Test the Forward function.
-//   input = join_cols(arma::ones<arma::mat>(5, 1), arma::zeros<arma::mat>(5, 1));
-//   BOOST_REQUIRE_EQUAL(module.klForward(std::move(input)), 0);
-
-//   // Test the Backward function.
-//   module.klBackward(output);
-//   BOOST_REQUIRE(arma::accu(std::move(output)) != 0);
-// }
-
 BOOST_AUTO_TEST_SUITE_END();
