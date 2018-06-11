@@ -32,6 +32,7 @@ namespace cf {
  *
  * // Generate 10 recommendations for all users.
  * cf.GetRecommendations(10, recommendations);
+ * @endcode
  */
 class UserMeanNormalization
 {

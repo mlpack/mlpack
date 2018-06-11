@@ -185,7 +185,7 @@ class CombinedNormalization
       int I, /* Which normalization in tuple to use */
       typename = std::enable_if_t<(I < std::tuple_size<TupleType>::value)>>
   void SequenceDenormalize(const arma::Mat<size_t>& combinations,
-                             arma::vec& predictions) const
+                           arma::vec& predictions) const
   {
     // The order of denormalization should be the reversed order
     // of normalization.
@@ -199,7 +199,7 @@ class CombinedNormalization
       typename = std::enable_if_t<(I >= std::tuple_size<TupleType>::value)>,
       typename = void>
   void SequenceDenormalize(const arma::Mat<size_t>& /* combinations */,
-                             arma::vec& /* predictions */) const { }
+                           arma::vec& /* predictions */) const { }
 
   //! Unpack normalizations tuple to serialize.
   template<

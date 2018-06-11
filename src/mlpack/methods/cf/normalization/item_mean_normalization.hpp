@@ -147,7 +147,7 @@ class ItemMeanNormalization
   }
 
  private:
-  //! item mean.
+  //! Item mean.
   arma::vec itemMean;
 };
 

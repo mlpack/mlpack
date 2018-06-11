@@ -223,14 +223,17 @@ void CFType<NormalizationType>::GetRecommendations(
     for (size_t j = 0; j < averages.n_rows; ++j)
     {
       // Ensure that the user hasn't already rated the item.
+      // The algorithm omits rating of zero. Thus, when normalizing original
+      // ratings in Normalize(), if normalized rating equals zero, it is set
+      // to the smallest positive double value.
       if (cleanedData(j, users(i)) != 0.0)
         continue; // The user already rated the item.
 
       // Is the estimated value better than the worst candidate?
-      if (averages[j] > pqueue.top().first)
+      // Denormalize rating before comparison.
+      double realRating = normalization.Denormalize(i, j, averages[j]);
+      if (realRating > pqueue.top().first)
       {
-        // Denormalize rating before comparation.
-        double realRating = normalization.Denormalize(i, j, averages[j]);
         Candidate c = std::make_pair(realRating, j);
         pqueue.pop();
         pqueue.push(c);
@@ -370,6 +373,10 @@ void CFType<NormalizationType>::CleanData(const arma::mat& data,
     locations(1, i) = ((arma::uword) data(0, i));
     locations(0, i) = ((arma::uword) data(1, i));
     values(i) = data(2, i);
+
+    // The algorithm omits rating of zero. Thus, when normalizing original
+    // ratings in Normalize(), if normalized rating equals zero, it is set
+    // to the smallest positive double value.
     if (values(i) == 0)
       Log::Warn << "User rating of 0 ignored for user " << locations(1, i)
           << ", item " << locations(0, i) << "." << std::endl;
