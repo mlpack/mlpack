@@ -132,6 +132,11 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Backward(
   double res = outputLayer.Forward(std::move(boost::apply_visitor(
       outputParameterVisitor, network.back())), std::move(targets));
 
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    res += boost::apply_visitor(lossVisitor, network[i]);
+  }
+
   outputLayer.Backward(std::move(boost::apply_visitor(outputParameterVisitor,
       network.back())), std::move(targets), std::move(error));
 
@@ -211,6 +216,11 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
   double res = outputLayer.Forward(
       std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
       std::move(responses.cols(begin, begin + batchSize - 1)));
+
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    res += boost::apply_visitor(lossVisitor, network[i]);
+  }
 
   return res;
 }

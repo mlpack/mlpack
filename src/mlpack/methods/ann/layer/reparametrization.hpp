@@ -109,9 +109,10 @@ class Reparametrization
   size_t& OutputSize() { return latentSize; }
 
   //! Get the KL divergence with standard normal.
-  double const& Loss() const
+  double Loss()
   {
-    return klForward(join_cols(stdDev, mean));
+    OutputDataType input = join_cols(stdDev, mean);
+    return klForward(std::move(input));
   }
 
   /**

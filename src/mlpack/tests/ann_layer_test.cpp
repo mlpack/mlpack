@@ -1853,7 +1853,7 @@ BOOST_AUTO_TEST_CASE(SimpleReparametrizationLayerTest)
   // Test the Backward function.
   arma::mat gy = arma::zeros<arma::mat>(5, 1);
   module.Backward(std::move(input), std::move(gy), std::move(delta));
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+  BOOST_REQUIRE(arma::accu(delta) != 0); // klBackward will be added.
 }
 
 /**

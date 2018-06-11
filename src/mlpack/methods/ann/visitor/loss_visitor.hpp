@@ -34,28 +34,28 @@ class LossVisitor : public boost::static_visitor<double>
   //! Return 0 if the module doesn't implement the Loss() or Model() function.
   template<typename T>
   typename std::enable_if<
-      !HasLoss<T, double&(T::*)()>::value &&
+      !HasLoss<T, double(T::*)()>::value &&
       !HasModelCheck<T>::value, double>::type
   LayerLoss(T* layer) const;
 
   //! Return the output height if the module implements the Loss() function.
   template<typename T>
   typename std::enable_if<
-      HasLoss<T, double&(T::*)()>::value &&
+      HasLoss<T, double(T::*)()>::value &&
       !HasModelCheck<T>::value, double>::type
   LayerLoss(T* layer) const;
 
   //! Return the loss if the module implements the Model() function.
   template<typename T>
   typename std::enable_if<
-      !HasLoss<T, double&(T::*)()>::value &&
+      !HasLoss<T, double(T::*)()>::value &&
       HasModelCheck<T>::value, double>::type
   LayerLoss(T* layer) const;
 
   //! Return the loss if the module implements the Model() or loss() function.
   template<typename T>
   typename std::enable_if<
-      HasLoss<T, double&(T::*)()>::value &&
+      HasLoss<T, double(T::*)()>::value &&
       HasModelCheck<T>::value, double>::type
   LayerLoss(T* layer) const;
 };
@@ -64,6 +64,6 @@ class LossVisitor : public boost::static_visitor<double>
 } // namespace mlpack
 
 // Include implementation.
-#include "kl_divergence_visitor_impl.hpp"
+#include "loss_visitor_impl.hpp"
 
 #endif

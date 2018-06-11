@@ -27,7 +27,7 @@ inline double LossVisitor::operator()(LayerType* layer) const
 
 template<typename T>
 inline typename std::enable_if<
-    !HasLoss<T, double&(T::*)()>::value &&
+    !HasLoss<T, double(T::*)()>::value &&
     !HasModelCheck<T>::value, double>::type
 LossVisitor::LayerLoss(T* /* layer */) const
 {
@@ -36,7 +36,7 @@ LossVisitor::LayerLoss(T* /* layer */) const
 
 template<typename T>
 inline typename std::enable_if<
-    HasLoss<T, double&(T::*)()>::value &&
+    HasLoss<T, double(T::*)()>::value &&
     !HasModelCheck<T>::value, double>::type
 LossVisitor::LayerLoss(T* layer) const
 {
@@ -45,7 +45,7 @@ LossVisitor::LayerLoss(T* layer) const
 
 template<typename T>
 inline typename std::enable_if<
-    !HasLoss<T, double&(T::*)()>::value &&
+    !HasLoss<T, double(T::*)()>::value &&
     HasModelCheck<T>::value, double>::type
 LossVisitor::LayerLoss(T* layer) const
 {
@@ -65,7 +65,7 @@ LossVisitor::LayerLoss(T* layer) const
 
 template<typename T>
 inline typename std::enable_if<
-    HasLoss<T, double&(T::*)()>::value &&
+    HasLoss<T, double(T::*)()>::value &&
     HasModelCheck<T>::value, double>::type
 LossVisitor::LayerLoss(T* layer) const
 {

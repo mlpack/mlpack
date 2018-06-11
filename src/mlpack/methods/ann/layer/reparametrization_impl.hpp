@@ -55,9 +55,8 @@ void Reparametrization<InputDataType, OutputDataType>::Forward(
   else
     gaussianSample = arma::ones<arma::Mat<eT>>(latentSize, input.n_cols) * 0.7;
 
-  SoftplusFunction::Fn(preStdDev, output);
-  output %= gaussianSample;
-  output += mean;
+  SoftplusFunction::Fn(preStdDev, stdDev);
+  output = mean + stdDev % gaussianSample;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -65,8 +64,10 @@ template<typename eT>
 void Reparametrization<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  SoftplusFunction::Deriv(std::move(preStdDev), g);
-  g = join_cols(gy % std::move(gaussianSample) % g, gy);
+  SoftplusFunction::Deriv(preStdDev, g);
+  arma::Mat<eT> klBack;
+  klBackward(std::move(klBack));
+  g = join_cols(gy % std::move(gaussianSample) % g, gy) + std::move(klBack);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -86,7 +87,8 @@ template<typename OutputType>
 void Reparametrization<InputDataType, OutputDataType>::klBackward(
     OutputType&& output)
 {
-  output = join_cols(-1 / stdDev + stdDev, mean);
+  SoftplusFunction::Deriv(preStdDev, output);
+  output = join_cols((-1 / stdDev + stdDev) % output, mean);
 }
 
 template<typename InputDataType, typename OutputDataType>
