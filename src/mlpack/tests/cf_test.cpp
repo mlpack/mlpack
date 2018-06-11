@@ -42,7 +42,7 @@ using namespace std;
  * set. Default case.
  */
 template<typename DecompositionPolicy>
-void GetRecommendationsAllUsers(bool cleanData = true)
+void GetRecommendationsAllUsers()
 {
   DecompositionPolicy decomposition;
   // Dummy number of recommendations.
@@ -57,15 +57,6 @@ void GetRecommendationsAllUsers(bool cleanData = true)
   arma::mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
 
-  if (cleanData)
-  {
-    // Make data into sparse matrix.
-    arma::sp_mat cleanedData;
-    CFType<>::CleanData(dataset, cleanedData);
-
-    arma::sp_mat dataset;
-    dataset = cleanedData;
-  }
   CFType<> c(dataset, decomposition, 5, 5, 70);
 
   // Generate recommendations when query set is not specified.
@@ -82,7 +73,7 @@ void GetRecommendationsAllUsers(bool cleanData = true)
  * Make sure that the recommendations are generated for queried users only.
  */
 template<typename DecompositionPolicy>
-void GetRecommendationsQueriedUser(bool cleanData = true)
+void GetRecommendationsQueriedUser()
 {
   DecompositionPolicy decomposition;
   // Number of users that we will search for recommendations for.
@@ -103,16 +94,6 @@ void GetRecommendationsQueriedUser(bool cleanData = true)
   arma::mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
 
-  if (cleanData)
-  {
-    // Make data into sparse matrix.
-    arma::sp_mat cleanedData;
-    CFType<>::CleanData(dataset, cleanedData);
-
-    arma::sp_mat dataset;
-    dataset = cleanedData;
-  }
-
   CFType<> c(dataset, decomposition, 5, 5, 70);
 
   // Generate recommendations when query set is specified.
@@ -130,7 +111,7 @@ void GetRecommendationsQueriedUser(bool cleanData = true)
  */
 template<typename DecompositionPolicy,
          typename NormalizationType = NoNormalization>
-void RecommendationAccuracy(bool cleanData = true)
+void RecommendationAccuracy()
 {
   DecompositionPolicy decomposition;
   // Load the GroupLens dataset; then, we will remove some values from it.
@@ -169,16 +150,6 @@ void RecommendationAccuracy(bool cleanData = true)
         ++currentCol;
       }
     }
-  }
-
-  if (cleanData)
-  {
-    // Make data into sparse matrix.
-    arma::sp_mat cleanedData;
-    CFType<NormalizationType>::CleanData(dataset, cleanedData);
-
-    arma::sp_mat dataset;
-    dataset = cleanedData;
   }
 
   CFType<NormalizationType> c(dataset, decomposition, 5, 5, 70);
@@ -232,7 +203,7 @@ void RecommendationAccuracy(bool cleanData = true)
 // Make sure that Predict() is returning reasonable results.
 template<typename DecompositionPolicy,
          typename NormalizationType = NoNormalization>
-void CFPredict(bool cleanData = true, const double rmseBound = 2.0)
+void CFPredict(const double rmseBound = 2.0)
 {
   DecompositionPolicy decomposition;
   // Load the GroupLens dataset; then, we will remove some values from it.
@@ -271,16 +242,6 @@ void CFPredict(bool cleanData = true, const double rmseBound = 2.0)
         ++currentCol;
       }
     }
-  }
-
-  if (cleanData)
-  {
-    // Make data into sparse matrix.
-    arma::sp_mat cleanedData;
-    CFType<NormalizationType>::CleanData(dataset, cleanedData);
-
-    arma::sp_mat dataset;
-    dataset = cleanedData;
   }
 
   CFType<NormalizationType> c(dataset, decomposition, 5, 5, 70);
@@ -306,7 +267,7 @@ void CFPredict(bool cleanData = true, const double rmseBound = 2.0)
 // predict with the batch Predict() are the same as the individual Predict()
 // calls.
 template<typename DecompositionPolicy>
-void BatchPredict(bool cleanData = true)
+void BatchPredict()
 {
   DecompositionPolicy decomposition;
   // Load the GroupLens dataset; then, we will remove some values from it.
@@ -345,16 +306,6 @@ void BatchPredict(bool cleanData = true)
         ++currentCol;
       }
     }
-  }
-
-  if (cleanData)
-  {
-    // Make data into sparse matrix.
-    arma::sp_mat cleanedData;
-    CFType<>::CleanData(dataset, cleanedData);
-
-    arma::sp_mat dataset;
-    dataset = cleanedData;
   }
 
   CFType<> c(dataset, decomposition, 5, 5, 70);
@@ -525,7 +476,7 @@ void Train<>(RegSVDPolicy& decomposition)
  * Make sure we can train a model after using the empty constructor.
  */
 template<typename DecompositionPolicy>
-void EmptyConstructorTrain(bool cleanData = true)
+void EmptyConstructorTrain()
 {
   DecompositionPolicy decomposition;
   // Use default constructor.
@@ -567,16 +518,6 @@ void EmptyConstructorTrain(bool cleanData = true)
         ++currentCol;
       }
     }
-  }
-
-  if (cleanData)
-  {
-    // Make data into sparse matrix.
-    arma::sp_mat cleanedData;
-    CFType<>::CleanData(dataset, cleanedData);
-
-    arma::sp_mat dataset;
-    dataset = cleanedData;
   }
 
   c.Train(dataset, decomposition, 70);
@@ -695,7 +636,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersRandSVDTest)
  */
 BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersRegSVDTest)
 {
-  GetRecommendationsAllUsers<RegSVDPolicy>(false);
+  GetRecommendationsAllUsers<RegSVDPolicy>();
 }
 
 /**
@@ -750,7 +691,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserRandSVDTest)
  */
 BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserRegSVDTest)
 {
-  GetRecommendationsQueriedUser<RegSVDPolicy>(false);
+  GetRecommendationsQueriedUser<RegSVDPolicy>();
 }
 
 /**
@@ -804,7 +745,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyRandSVDTest)
  */
 BOOST_AUTO_TEST_CASE(RecommendationAccuracyRegSVDTest)
 {
-  RecommendationAccuracy<RegSVDPolicy>(false);
+  RecommendationAccuracy<RegSVDPolicy>();
 }
 
 /**
@@ -846,13 +787,13 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDIncompleteTest)
 // Make sure that Predict() is returning reasonable results for randomized SVD.
 BOOST_AUTO_TEST_CASE(CFPredictRandSVDTest)
 {
-  CFPredict<RandomizedSVDPolicy>(true, 4.5);
+  CFPredict<RandomizedSVDPolicy>(4.5);
 }
 
 // Make sure that Predict() is returning reasonable results for regularized SVD.
 BOOST_AUTO_TEST_CASE(CFPredictRegSVDTest)
 {
-  CFPredict<RegSVDPolicy>(false);
+  CFPredict<RegSVDPolicy>();
 }
 
 // Make sure that Predict() is returning reasonable results for batch SVD.
@@ -864,7 +805,7 @@ BOOST_AUTO_TEST_CASE(CFPredictBatchSVDTest)
 // Make sure that Predict() is returning reasonable results for NMF.
 BOOST_AUTO_TEST_CASE(CFPredictNMFTest)
 {
-  CFPredict<NMFPolicy>(true, 3.5);
+  CFPredict<NMFPolicy>(3.5);
 }
 
 /**
@@ -873,7 +814,7 @@ BOOST_AUTO_TEST_CASE(CFPredictNMFTest)
  */
 BOOST_AUTO_TEST_CASE(CFPredictSVDCompleteTest)
 {
-  CFPredict<SVDCompletePolicy>(true, 3.5);
+  CFPredict<SVDCompletePolicy>(3.5);
 }
 
 /**
@@ -882,7 +823,7 @@ BOOST_AUTO_TEST_CASE(CFPredictSVDCompleteTest)
  */
 BOOST_AUTO_TEST_CASE(CFPredictSVDIncompleteTest)
 {
-  CFPredict<SVDIncompletePolicy>(true, 3.5);
+  CFPredict<SVDIncompletePolicy>(3.5);
 }
 
 // Compare batch Predict() and individual Predict() for randomized SVD.
@@ -894,7 +835,7 @@ BOOST_AUTO_TEST_CASE(CFBatchPredictRandSVDTest)
 // Compare batch Predict() and individual Predict() for regularized SVD.
 BOOST_AUTO_TEST_CASE(CFBatchPredictRegSVDTest)
 {
-  BatchPredict<RegSVDPolicy>(false);
+  BatchPredict<RegSVDPolicy>();
 }
 
 // Compare batch Predict() and individual Predict() for batch SVD.
@@ -998,7 +939,7 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTrainRandSVDTest)
  */
 BOOST_AUTO_TEST_CASE(EmptyConstructorTrainRegSVDTest)
 {
-  EmptyConstructorTrain<RegSVDPolicy>(false);
+  EmptyConstructorTrain<RegSVDPolicy>();
 }
 
 /**
