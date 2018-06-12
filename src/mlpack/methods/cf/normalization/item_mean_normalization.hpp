@@ -83,7 +83,7 @@ class ItemMeanNormalization
   /**
    * Normalize the data by subtracting item mean from each of existing ratings.
    *
-   * @param cleanedData Sparse matrix data.
+   * @param cleanedData Input data as a sparse matrix.
    */
   void Normalize(arma::sp_mat& cleanedData)
   {

@@ -70,7 +70,7 @@ class ZScoreNormalization
   /**
    * Normalize the data to zero mean and one standard deviation.
    *
-   * @param cleanedData Sparse matrix data.
+   * @param cleanedData Input data as a sparse matrix.
    */
   void Normalize(arma::sp_mat& cleanedData)
   {

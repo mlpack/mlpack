@@ -38,7 +38,7 @@ class NoNormalization
   /**
    * Do nothing.
    *
-   * @param cleanedData Sparse matrix data.
+   * @param cleanedData Input data as a sparse matrix.
    */
   inline void Normalize(const arma::sp_mat& /* cleanedData */) const { }
 
