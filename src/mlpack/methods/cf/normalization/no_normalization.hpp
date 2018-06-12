@@ -31,16 +31,10 @@ class NoNormalization
   /**
    * Do nothing.
    *
-   * @param data Input dataset in the form of coordinate list.
+   * @param data Input dataset.
    */
-  inline void Normalize(const arma::mat& /* data */) const { }
-
-  /**
-   * Do nothing.
-   *
-   * @param cleanedData Input data as a sparse matrix.
-   */
-  inline void Normalize(const arma::sp_mat& /* cleanedData */) const { }
+  template<typename MatType>
+  inline void Normalize(const MatType& /* data */) const { }
 
   /**
    * Do nothing.

@@ -51,21 +51,12 @@ class CombinedNormalization
   /**
    * Normalize the data by calling Normalize() in each normalization object.
    *
-   * @param data Input dataset in the form of coordinate list.
+   * @param data Input dataset.
    */
-  void Normalize(arma::mat& data)
+  template<typename MatType>
+  void Normalize(MatType& data)
   {
     SequenceNormalize<0>(data);
-  }
-
-  /**
-   * Normalize the data by calling Normalize() in each normalization object.
-   *
-   * @param cleanedData Input data as a sparse matrix.
-   */
-  void Normalize(arma::sp_mat& cleanedData)
-  {
-    SequenceNormalize<0>(cleanedData);
   }
 
   /**
@@ -122,8 +113,9 @@ class CombinedNormalization
   //! Unpack normalizations tuple to normalize data.
   template<
       int I, /* Which normalization in tuple to use */
+      typename MatType,
       typename = std::enable_if_t<(I < std::tuple_size<TupleType>::value)>>
-  void SequenceNormalize(arma::mat& data)
+  void SequenceNormalize(MatType& data)
   {
     std::get<I>(normalizations).Normalize(data);
     SequenceNormalize<I+1>(data);
@@ -132,26 +124,10 @@ class CombinedNormalization
   //! End of tuple unpacking.
   template<
       int I, /* Which normalization in tuple to use */
+      typename MatType,
       typename = std::enable_if_t<(I >= std::tuple_size<TupleType>::value)>,
       typename = void>
-  void SequenceNormalize(arma::mat& /* data */) { }
-
-  //! Unpack normalizations tuple to normalize cleanedData.
-  template<
-      int I, /* Which normalization in tuple to use */
-      typename = std::enable_if_t<(I < std::tuple_size<TupleType>::value)>>
-  void SequenceNormalize(arma::sp_mat& cleanedData)
-  {
-    std::get<I>(normalizations).Normalize(cleanedData);
-    SequenceNormalize<I+1>(cleanedData);
-  }
-
-  //! End of tuple unpacking.
-  template<
-      int I, /* Which normalization in tuple to use */
-      typename = std::enable_if_t<(I >= std::tuple_size<TupleType>::value)>,
-      typename = void>
-  void SequenceNormalize(arma::sp_mat& /* cleanedData */) { }
+  void SequenceNormalize(MatType& /* data */) { }
 
   //! Unpack normalizations tuple to denormalize.
   template<
