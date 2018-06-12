@@ -1813,8 +1813,38 @@ BOOST_AUTO_TEST_CASE(SimpleSubviewLayerTest)
 
   // Test the Backward function.
   module.Backward(std::move(input), std::move(input), std::move(delta));
-  BOOST_REQUIRE_EQUAL(accu(delta), 10);
-  BOOST_REQUIRE_EQUAL(delta.n_rows, 10);
+  BOOST_REQUIRE_EQUAL(accu(delta), 20);
+  BOOST_REQUIRE_EQUAL(delta.n_rows, 20);
+}
+
+/**
+ * Subview index test.
+ */
+BOOST_AUTO_TEST_CASE(SubviewIndexTest)
+{
+  arma::mat outputEnd, outputMid, outputStart, input, delta;
+  input = arma::linspace<arma::vec>(1, 20, 20);
+
+  // Slicing from the initial indices.
+  Subview<> moduleStart(0, 9);
+  arma::mat subStart = arma::linspace<arma::vec>(1, 10, 10);
+
+  moduleStart.Forward(std::move(input), std::move(outputStart));
+  CheckMatrices(outputStart, subStart);
+
+  // Slicing from the mid indices.
+  Subview<> moduleMid(6, 15);
+  arma::mat subMid = arma::linspace<arma::vec>(7, 16, 10);
+
+  moduleMid.Forward(std::move(input), std::move(outputMid));
+  CheckMatrices(outputMid, subMid);
+
+  // Slicing from the end indices.
+  Subview<> moduleEnd(10, 19);
+  arma::mat subEnd = arma::linspace<arma::vec>(11, 20, 10);
+
+  moduleEnd.Forward(std::move(input), std::move(outputEnd));
+  CheckMatrices(outputEnd, subEnd);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

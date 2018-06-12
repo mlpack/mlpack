@@ -41,7 +41,7 @@ class Subview
    * @param begin Start index.
    * @param end End index.
    */
-  Subview(const arma::uword begin = 0, const arma::uword end = 0):
+  Subview(const size_t begin = 0, const size_t end = 0):
     begin(begin),
     end(end)
   {
@@ -58,11 +58,11 @@ class Subview
   template<typename InputType, typename OutputType>
   void Forward(InputType&& input, OutputType&& output)
   {
+   
     // Check if input has been selected as required.
     if ((input.n_rows != (end-begin+1)) && (end != 0))
     {
-      arma::uword cols = input.n_cols;
-      output = arma::mat(&input(begin), end - begin + 1, cols, false);
+      output = arma::mat(&input(begin), end - begin + 1, input.n_cols, false);
     }
     else
     {
@@ -80,16 +80,10 @@ class Subview
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(arma::Mat<eT>&& input,
+  void Backward(arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g)
   {
-    // Check if input has been selected as required.
-    if ((input.n_rows != (end-begin+1)) && (end != 0))
-    {
-      arma::uword cols = input.n_cols;
-      input = arma::mat(&input(begin), end - begin + 1, cols, false);
-    }
     g = gy;
   }
 
