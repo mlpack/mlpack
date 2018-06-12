@@ -61,17 +61,13 @@ class Subview
     // Check if input has been selected as required.
     if ((input.n_rows != (end-begin+1)) && (end != 0))
     {
-      if (begin == 0)
-      {
-        arma::uword limit = input.n_rows;
-        input.shed_rows(end+1, limit-1);
-      }
-      else
-      {
-        input.shed_rows(0, begin-1);
-      }
+      arma::uword cols = input.n_cols;
+      output = arma::mat(&input(begin), end - begin + 1, cols, false);
     }
-    IdentityFunction::Fn(input, output);
+    else
+    {
+      output = input;
+    }
   }
 
   /**
@@ -91,19 +87,10 @@ class Subview
     // Check if input has been selected as required.
     if ((input.n_rows != (end-begin+1)) && (end != 0))
     {
-      if (begin == 0)
-      {
-        arma::uword limit = input.n_rows;
-        input.shed_rows(end+1, limit-1);
-      }
-      else
-      {
-        input.shed_rows(0, begin-1);
-      }
+      arma::uword cols = input.n_cols;
+      input = arma::mat(&input(begin), end - begin + 1, cols, false);
     }
-    arma::Mat<eT> derivative;
-    IdentityFunction::Deriv(input, derivative);
-    g = gy % derivative;
+    g = gy;
   }
 
   //! Get the input parameter.
