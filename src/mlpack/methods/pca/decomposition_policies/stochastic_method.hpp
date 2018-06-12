@@ -37,7 +37,7 @@ HAS_MEM_FUNC(StepSize, HasStepSize);
  * For more information, see the following.
  *
  * @code
- * @inproceedings{Musco2015,
+ * @inproceedings{Arora2012,
  *   author    = {Arora, Raman and Cotter, Andrew and Livescu, Karen
  *                and Srebro, Nathan},
  *   title     = {Stochastic optimization for PCA and PLS.},
