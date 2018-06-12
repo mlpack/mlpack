@@ -147,10 +147,12 @@ class StochasticPolicyType
      *
      * @param data Data matrix.
      */
-    PCAFunction(const arma::mat& data) : data(data), pl(0)
+    PCAFunction(const arma::mat& data) :
+        // We promise to be well-behaved... the elements won't be modified.
+        data(math::MakeAlias(const_cast<arma::mat&>(data), false)),
+        pl(0)
     {
-      visitationOrder = arma::linspace<arma::Row<size_t> >(0,
-          data.n_cols - 1, data.n_cols);
+      // Nothing to do here.
     }
 
     /**
@@ -159,8 +161,16 @@ class StochasticPolicyType
      */
     void Shuffle()
     {
-      visitationOrder = arma::shuffle(
-          arma::linspace<arma::Row<size_t> >(0, data.n_cols - 1, data.n_cols));
+      // Generate ordering.
+      arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
+          data.n_cols - 1, data.n_cols));
+      arma::mat newData = data.cols(ordering);
+
+      // If we are an alias, make sure we don't write to the original data.
+      math::ClearAlias(data);
+
+      // Take ownership of the new data.
+      data = std::move(newData);
     }
 
     //! Return the number of functions.
@@ -193,15 +203,8 @@ class StochasticPolicyType
                   arma::mat& gradient,
                   const size_t batchSize)
     {
-      // Increase the pseudo loss.
-      pl++;
-
-      gradient.zeros(coordinates.n_rows, coordinates.n_cols);
-      for (size_t j = begin; j < begin + batchSize; ++j)
-      {
-        const size_t p = visitationOrder[j];
-        gradient += data.col(p) * data.col(p).t() * coordinates;
-      }
+      gradient = data.cols(begin, begin + batchSize - 1) *
+          data.cols(begin, begin + batchSize - 1).t() * coordinates;
     }
 
    private:
