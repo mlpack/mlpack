@@ -114,30 +114,39 @@ void TransposedConvolution<
     OutputDataType
 >::Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  inputTemp = arma::cube(input.memptr(), inputWidth, inputHeight, inSize);
+  batchSize = input.n_cols;
+  inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
+      inputWidth, inputHeight, inSize * batchSize, false, false);
 
   outputWidth = TransposedConvOutSize(inputWidth, kW, dW, padW);
   outputHeight = TransposedConvOutSize(inputHeight, kH, dH, padH);
 
-  output.set_size(outputWidth * outputHeight * outSize, 1);
+  output.set_size(outputWidth * outputHeight * outSize, batchSize);
   outputTemp = arma::Cube<eT>(output.memptr(), outputWidth, outputHeight,
-      outSize, false, false);
+      outSize * batchSize, false, false);
   outputTemp.zeros();
 
-  for (size_t outMap = 0, outMapIdx = 0; outMap < outSize; outMap++)
+  for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
+      outSize * batchSize; outMap++)
   {
+    if (outMap != 0 && outMap % outSize == 0)
+    {
+      batchCount++;
+      outMapIdx = 0;
+    }
+
     for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
     {
       arma::Mat<eT> convOutput, rotatedFilter;
       Rotate180(weight.slice(outMapIdx), rotatedFilter);
 
-      BackwardConvolutionRule::Convolution(inputTemp.slice(inMap),
-          rotatedFilter, convOutput, 1, 1);
+      BackwardConvolutionRule::Convolution(inputTemp.slice(inMap +
+          batchCount * inSize), rotatedFilter, convOutput, 1, 1);
 
       outputTemp.slice(outMap) += convOutput;
     }
 
-    outputTemp.slice(outMap) += bias(outMap);
+    outputTemp.slice(outMap) += bias(outMap % outSize);
   }
 }
 
@@ -158,16 +167,23 @@ void TransposedConvolution<
 >::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  arma::cube mappedError(gy.memptr(), outputWidth, outputHeight, outSize,
-      false, false);
-
-  g.set_size(inputTemp.n_rows * inputTemp.n_cols * inputTemp.n_slices, 1);
+  arma::cube mappedError(gy.memptr(), outputWidth, outputHeight,
+      outSize * batchSize, false, false);
+  g.set_size(inputTemp.n_rows * inputTemp.n_cols * inSize, batchSize);
   gTemp = arma::Cube<eT>(g.memptr(), inputTemp.n_rows,
       inputTemp.n_cols, inputTemp.n_slices, false, false);
+
   gTemp.zeros();
 
-  for (size_t outMap = 0, outMapIdx = 0; outMap < outSize; outMap++)
+  for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
+      outSize * batchSize; outMap++)
   {
+    if (outMap != 0 && outMap % outSize == 0)
+    {
+      batchCount++;
+      outMapIdx = 0;
+    }
+
     for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
     {
       arma::Mat<eT> output;
@@ -175,7 +191,7 @@ void TransposedConvolution<
       ForwardConvolutionRule::Convolution(mappedError.slice(outMap),
           weight.slice(outMapIdx), output, 1, 1);
 
-      gTemp.slice(inMap) += output;
+      gTemp.slice(inMap + batchCount * inSize) += output;
     }
   }
 }
@@ -200,31 +216,36 @@ void TransposedConvolution<
     arma::Mat<eT>&& gradient)
 {
   arma::cube mappedError(error.memptr(), outputWidth,
-      outputHeight, outSize, false, false);
+      outputHeight, outSize * batchSize, false, false);
 
   gradient.set_size(weights.n_elem, 1);
-  gradientTemp = arma::Cube<eT>(gradient.memptr(), weight.n_rows, weight.n_cols,
-      weight.n_slices, false, false);
+  gradientTemp = arma::Cube<eT>(gradient.memptr(), weight.n_rows,
+      weight.n_cols, weight.n_slices, false, false);
   gradientTemp.zeros();
 
-  for (size_t outMap = 0, outMapIdx = 0; outMap < outSize; outMap++)
+  for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
+      outSize * batchSize; outMap++)
   {
-    for (size_t inMap = 0, s = outMap; inMap < inSize; inMap++, outMapIdx++,
-        s += outSize)
+    if (outMap != 0 && outMap % outSize == 0)
     {
-      arma::Cube<eT> inputSlices, output;
-      inputSlices = inputTemp.slices(inMap, inMap);
-      arma::Cube<eT> deltaSlices = mappedError.slices(outMap, outMap);
-
-      GradientConvolutionRule::Convolution(deltaSlices, inputSlices,
-          output, 1, 1);
-
-      for (size_t i = 0; i < output.n_slices; i++)
-        gradientTemp.slice(s) += output.slice(i);
+      batchCount++;
+      outMapIdx = 0;
     }
 
-    gradient.submat(weight.n_elem + outMap, 0, weight.n_elem + outMap, 0) =
-        arma::accu(mappedError.slices(outMap, outMap));
+    for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
+    {
+      arma::Mat<eT> inputSlice, output;
+      inputSlice = inputTemp.slice(inMap + batchCount * inSize);
+      arma::Mat<eT> deltaSlice = mappedError.slice(outMap);
+
+      GradientConvolutionRule::Convolution(deltaSlice, inputSlice,
+          output, 1, 1);
+
+      gradientTemp.slice(outMapIdx) += output;
+    }
+
+    gradient.submat(weight.n_elem + (outMap % outSize), 0, weight.n_elem +
+        (outMap % outSize), 0) = arma::accu(mappedError.slices(outMap, outMap));
   }
 }
 
@@ -247,6 +268,7 @@ void TransposedConvolution<
 {
   ar & BOOST_SERIALIZATION_NVP(inSize);
   ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar & BOOST_SERIALIZATION_NVP(batchSize);
   ar & BOOST_SERIALIZATION_NVP(kW);
   ar & BOOST_SERIALIZATION_NVP(kH);
   ar & BOOST_SERIALIZATION_NVP(dW);

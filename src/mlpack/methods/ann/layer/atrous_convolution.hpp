@@ -272,11 +272,14 @@ class AtrousConvolution
     }
   }
 
-  //! Locally-stored number of input units.
+  //! Locally-stored number of input channels.
   size_t inSize;
 
-  //! Locally-stored number of output units.
+  //! Locally-stored number of output channels.
   size_t outSize;
+
+  //! Locally-stored number of input units.
+  size_t batchSize;
 
   //! Locally-stored filter/kernel width.
   size_t kW;
