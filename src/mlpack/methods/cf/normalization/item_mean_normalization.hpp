@@ -134,10 +134,7 @@ class ItemMeanNormalization
   /**
    * Return item mean.
    */
-  arma::vec ItemMean() const
-  {
-    return itemMean;
-  }
+  const arma::vec& Mean() const { return itemMean; }
 
   /**
    * Serialization.

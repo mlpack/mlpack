@@ -134,10 +134,7 @@ class UserMeanNormalization
   /**
    * Return user mean.
    */
-  arma::vec UserMean() const
-  {
-    return userMean;
-  }
+  const arma::vec& Mean() const { return userMean; }
 
   /**
    * Serialization.
