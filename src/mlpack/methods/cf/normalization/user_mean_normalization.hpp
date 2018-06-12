@@ -55,7 +55,8 @@ class UserMeanNormalization
     arma::Row<size_t> ratingNum(userNum, arma::fill::zeros);
 
     // Sum ratings for each user.
-    data.each_col([&](arma::vec& datapoint) {
+    data.each_col([&](arma::vec& datapoint)
+    {
       const size_t user = (size_t) datapoint(0);
       const double rating = datapoint(2);
       userMean(user) += rating;
@@ -70,7 +71,8 @@ class UserMeanNormalization
         userMean(i) /= ratingNum(i);
     }
 
-    data.each_col([&](arma::vec& datapoint) {
+    data.each_col([&](arma::vec& datapoint)
+    {
       const size_t user = (size_t) datapoint(0);
       datapoint(2) -= userMean(user);
       // The algorithm omits rating of zero. If normalized rating equals zero,

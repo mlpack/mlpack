@@ -55,7 +55,8 @@ class ItemMeanNormalization
     arma::Row<size_t> ratingNum(itemNum, arma::fill::zeros);
 
     // Sum ratings for each item.
-    data.each_col([&](arma::vec& datapoint) {
+    data.each_col([&](arma::vec& datapoint)
+    {
       const size_t item = (size_t) datapoint(1);
       const double rating = datapoint(2);
       itemMean(item) += rating;
@@ -70,7 +71,8 @@ class ItemMeanNormalization
         itemMean(i) /= ratingNum(i);
     }
 
-    data.each_col([&](arma::vec& datapoint) {
+    data.each_col([&](arma::vec& datapoint)
+    {
       const size_t item = (size_t) datapoint(1);
       datapoint(2) -= itemMean(item);
       // The algorithm omits rating of zero. If normalized rating equals zero,
