@@ -58,7 +58,6 @@ class Subview
   template<typename InputType, typename OutputType>
   void Forward(InputType&& input, OutputType&& output)
   {
-   
     // Check if input has been selected as required.
     if ((input.n_rows != (end-begin+1)) && (end != 0))
     {
