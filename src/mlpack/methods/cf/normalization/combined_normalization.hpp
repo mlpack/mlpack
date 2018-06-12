@@ -25,9 +25,10 @@ namespace cf {
  * An example of how to use CombinedNormalization in CF is shown below:
  *
  * @code
- * extern arma::mat data; // (user, item, rating) table
- * extern arma::Col<size_t> users; // users seeking recommendations
- * arma::Mat<size_t> recommendations; // Recommendations
+ * extern arma::mat data; // data is a (user, item, rating) table.
+ * // Users for whom recommendations are generated.
+ * extern arma::Col<size_t> users;
+ * arma::Mat<size_t> recommendations; // Resulting recommendations.
  *
  * CFType<CombinedNormalization<
  *            OverallMeanNormalization,
