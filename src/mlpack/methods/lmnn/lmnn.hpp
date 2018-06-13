@@ -14,7 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/core/optimizers/adam/adam.hpp>
 
 #include "lmnn_function.hpp"
 
@@ -35,7 +35,7 @@ namespace lmnn /** Large Margin Nearest Neighbor. */ {
  * @tparam SDPType The type of SDP to use for computation. ex. SDP<arma::mat>
  */
 template<typename MetricType = metric::SquaredEuclideanDistance,
-         typename OptimizerType = optimization::StandardSGD>
+         typename OptimizerType = optimization::AMSGrad>
 class LMNN
 {
  public:
