@@ -45,7 +45,9 @@ class Reparametrization
    *
    * @param layerSize The number of output units.
    */
-  Reparametrization(const size_t latentSize, const bool stochastic = true);
+  Reparametrization(const size_t latentSize,
+                    const bool stochastic = true,
+                    const bool includeKl = true);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -127,6 +129,9 @@ class Reparametrization
 
   //! If false, sample will be constant.
   bool stochastic;
+
+  //! If false, KL error will not be included in Backward function.
+  bool includeKl;
 
   //! Locally-stored delta object.
   OutputDataType delta;

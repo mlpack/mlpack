@@ -1857,6 +1857,41 @@ BOOST_AUTO_TEST_CASE(SimpleReparametrizationLayerTest)
 }
 
 /**
+ * Reparametrization module stochastic boolean test.
+ */
+BOOST_AUTO_TEST_CASE(ReparametrizationLayerStochasticTest)
+{
+  arma::mat input, outputA, outputB;
+  Reparametrization<> module(5, false);
+
+  input = join_cols(arma::ones<arma::mat>(5, 1),
+      arma::zeros<arma::mat>(5, 1));
+
+  // Test if two forward passes generate same output.
+  module.Forward(std::move(input), std::move(outputA));
+  module.Forward(std::move(input), std::move(outputB));
+
+  CheckMatrices(std::move(outputA), std::move(outputB));
+}
+
+/**
+ * Reparametrization module includeKl boolean test.
+ */
+BOOST_AUTO_TEST_CASE(ReparametrizationLayerIncludeKlTest)
+{
+  arma::mat input, output, gy, delta;
+  Reparametrization<> module(5, true, false);
+
+  input = join_cols(arma::ones<arma::mat>(5, 1),
+      arma::zeros<arma::mat>(5, 1));
+  module.Forward(std::move(input), std::move(output));
+  gy = arma::zeros(output.n_rows, output.n_cols);
+  module.Backward(std::move(output), std::move(gy), std::move(delta));
+
+  BOOST_REQUIRE_EQUAL(arma::accu(std::move(delta)), 0);
+}
+
+/**
  * Jacobian Reparametrization module test.
  */
 BOOST_AUTO_TEST_CASE(JacobianReparametrizationLayerTest)
@@ -1868,7 +1903,7 @@ BOOST_AUTO_TEST_CASE(JacobianReparametrizationLayerTest)
     arma::mat input;
     input.set_size(inputElementsHalf * 2, 1);
 
-    Reparametrization<> module(inputElementsHalf, false);
+    Reparametrization<> module(inputElementsHalf, false, false);
 
     double error = JacobianTest(module, input);
     BOOST_REQUIRE_LE(error, 1e-5);

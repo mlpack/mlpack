@@ -28,9 +28,11 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization()
 template <typename InputDataType, typename OutputDataType>
 Reparametrization<InputDataType, OutputDataType>::Reparametrization(
     const size_t latentSize,
-    const bool stochastic) :
+    const bool stochastic,
+    const bool includeKl) :
     latentSize(latentSize),
-    stochastic(stochastic)
+    stochastic(stochastic),
+    includeKl(includeKl)
 {
   // Nothing to do here.
 }
@@ -65,9 +67,15 @@ void Reparametrization<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
   SoftplusFunction::Deriv(preStdDev, g);
-  arma::Mat<eT> klBack;
-  klBackward(std::move(klBack));
-  g = join_cols(gy % std::move(gaussianSample) % g, gy) + std::move(klBack);
+
+  if (includeKl)
+  {
+    arma::Mat<eT> klBack;
+    klBackward(std::move(klBack));
+    g = join_cols(gy % std::move(gaussianSample) % g, gy) + std::move(klBack);
+  }
+  else
+    g = join_cols(gy % std::move(gaussianSample) % g, gy);
 }
 
 template<typename InputDataType, typename OutputDataType>
