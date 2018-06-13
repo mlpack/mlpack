@@ -40,7 +40,7 @@ class OverallMeanNormalization
 {
  public:
   // Empty constructor.
-  OverallMeanNormalization() { }
+  OverallMeanNormalization(): mean(0) { }
 
   /**
    * Normalize the data by subtracting the mean of all existing ratings.
