@@ -157,6 +157,11 @@ class LMNNFunction
   //! Modify the value of k.
   size_t& K() { return k; }
 
+  //! Access the value of range.
+  const size_t& Range() const { return range; }
+  //! Modify the value of k.
+  size_t& Range() { return range; }
+
  private:
   //! data.  This will be an alias until Shuffle() is called.
   arma::mat dataset;
@@ -176,6 +181,10 @@ class LMNNFunction
   MetricType metric;
   //! Regularization value.
   double regularization;
+  //! Keep iterations count.
+  size_t iteration;
+  //! Range after which impostors need to be recalculated.
+  size_t range;
   //! Holds pre-calculated cij.
   arma::mat p_cij;
   //! False if nothing has ever been precalculated.

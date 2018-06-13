@@ -134,6 +134,8 @@ PARAM_DOUBLE_IN("min_step", "Minimum step of line search for L-BFGS.", "m",
     1e-20);
 PARAM_DOUBLE_IN("max_step", "Maximum step of line search for L-BFGS.", "M",
     1e20);
+PARAM_INT_IN("range", "Number of iterations after which impostors needs to be "
+    "recalculated", "R", 1);
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace mlpack;
@@ -234,6 +236,7 @@ static void mlpackMain()
   const double beta2 = CLI::GetParam<double>("beta2");
   const double epsilon = CLI::GetParam<double>("epsilon");
   const double batchDelta = CLI::GetParam<double>("batch_delta");
+  const size_t range = (size_t) CLI::GetParam<int>("range");
 
   // Load data.
   arma::mat data = std::move(CLI::GetParam<arma::mat>("input"));
@@ -283,6 +286,7 @@ static void mlpackMain()
   {
     LMNN<LMetric<2>> lmnn(data, labels, numTargets);
     lmnn.Regularization() = regularization;
+    lmnn.Range() = range;
     lmnn.Optimizer().StepSize() = stepSize;
     lmnn.Optimizer().MaxIterations() = passes * data.n_cols;
     lmnn.Optimizer().Beta1() = beta1;
@@ -298,6 +302,7 @@ static void mlpackMain()
   {
     LMNN<LMetric<2>, BBS_BB> lmnn(data, labels, numTargets);
     lmnn.Regularization() = regularization;
+    lmnn.Range() = range;
     lmnn.Optimizer().StepSize() = stepSize;
     lmnn.Optimizer().BatchDelta() = batchDelta;
     lmnn.Optimizer().MaxIterations() = passes * data.n_cols;
@@ -313,6 +318,7 @@ static void mlpackMain()
     // diverge to inf causing serious memory problems.
     LMNN<LMetric<2>, StandardSGD> lmnn(data, labels, numTargets);
     lmnn.Regularization() = regularization;
+    lmnn.Range() = range;
     lmnn.Optimizer().StepSize() = stepSize;
     lmnn.Optimizer().MaxIterations() = passes * data.n_cols;
     lmnn.Optimizer().Tolerance() = tolerance;
@@ -325,6 +331,7 @@ static void mlpackMain()
   {
     LMNN<LMetric<2>, L_BFGS> lmnn(data, labels, numTargets);
     lmnn.Regularization() = regularization;
+    lmnn.Range() = range;
     lmnn.Optimizer().NumBasis() = numBasis;
     lmnn.Optimizer().MaxIterations() = maxIterations;
     lmnn.Optimizer().ArmijoConstant() = armijoConstant;

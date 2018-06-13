@@ -75,6 +75,11 @@ class LMNN
   //! Modify the regularization value.
   double& Regularization() { return objFunction.Regularization(); }
 
+  //! Access the range value.
+  const size_t& Range() const { return objFunction.Range(); }
+  //! Modify the range value.
+  size_t& Range() { return objFunction.Range(); }
+
   //! Access the value of k.
   const size_t& K() const { return k; }
 

@@ -32,6 +32,8 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
     k(k),
     metric(metric),
     regularization(regularization),
+    iteration(0),
+    range(1),
     precalculated(false)
 {
   // Initialize the initial learning point.
@@ -74,9 +76,12 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates)
   // Apply metric over dataset.
   transformedDataset = coordinates * dataset;
 
-  // Re-calculate impostors on transformed dataset.
-  Constraints constraint(transformedDataset, labels, k);
-  constraint.Impostors(impostors);
+  if (iteration++ % range == 0)
+  {
+    // Re-calculate impostors on transformed dataset.
+    Constraints constraint(transformedDataset, labels, k);
+    constraint.Impostors(impostors);
+  }
 
   for (size_t i = 0; i < dataset.n_cols; i++)
   {
@@ -128,8 +133,12 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates,
   // Apply metric over dataset.
   transformedDataset = coordinates * dataset;
 
-  Constraints constraint(transformedDataset, labels, k);
-  constraint.Impostors(impostors, begin, batchSize);
+  if (iteration++ % range == 0)
+  {
+    // Re-calculate impostors on transformed dataset.
+    Constraints constraint(transformedDataset, labels, k);
+    constraint.Impostors(impostors, begin, batchSize);
+  }
 
   for (size_t i = begin; i < begin + batchSize; i++)
   {
@@ -286,9 +295,12 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   // Apply metric over dataset.
   transformedDataset = coordinates * dataset;
 
-  // Calculate impostors.
-  Constraints constraint(transformedDataset, labels, k);
-  constraint.Impostors(impostors);
+  if (iteration++ % range == 0)
+  {
+    // Re-calculate impostors on transformed dataset.
+    Constraints constraint(transformedDataset, labels, k);
+    constraint.Impostors(impostors);
+  }
 
   gradient.zeros(coordinates.n_rows, coordinates.n_cols);
 
@@ -361,9 +373,12 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   // Apply metric over dataset.
   transformedDataset = coordinates * dataset;
 
-  // Calculate impostors.
-  Constraints constraint(transformedDataset, labels, k);
-  constraint.Impostors(impostors, begin, batchSize);
+  if (iteration++ % range == 0)
+  {
+    // Re-calculate impostors on transformed dataset.
+    Constraints constraint(transformedDataset, labels, k);
+    constraint.Impostors(impostors, begin, batchSize);
+  }
 
   gradient.zeros(coordinates.n_rows, coordinates.n_cols);
 
