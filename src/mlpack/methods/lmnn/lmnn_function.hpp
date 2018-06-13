@@ -176,6 +176,16 @@ class LMNNFunction
   MetricType metric;
   //! Regularization value.
   double regularization;
+  //! Holds pre-calculated cij.
+  arma::mat p_cij;
+  //! False if nothing has ever been precalculated.
+  bool precalculated;
+  /**
+  * Precalculate the gradient part due to target neighbors and stores
+  * the result as a matrix. Used for L-BFGS like optimizers which does not
+  * uses batches.
+  */
+  void Precalculate();
 };
 
 } // namespace lmnn

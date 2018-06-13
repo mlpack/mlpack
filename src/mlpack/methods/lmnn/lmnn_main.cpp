@@ -101,7 +101,7 @@ PARAM_STRING_IN("optimizer", "Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or "
     "'lbfgs'.", "O", "amsgrad");
 PARAM_DOUBLE_IN("regularization", "Regularization for LMNN objective function ",
     "r", 0.5);
-PARAM_FLAG("normalize", "Use a normalized starting point for optimization. This "
+PARAM_FLAG("normalize", "Use a normalized starting point for optimization. It"
     "is useful for when points are far apart, or when SGD is returning NaN.",
     "N");
 PARAM_INT_IN("passes", "Maximum number of full passes over dataset for "
@@ -118,7 +118,7 @@ PARAM_INT_IN("batch_size", "Batch size for mini-batch SGD.", "b", 50);
 
 PARAM_DOUBLE_IN("beta1", "Exponential decay rate for the first moment "
     "estimates of AMSGrad.", "x", 0.9);
-PARAM_DOUBLE_IN("beta2", "Exponential decay rate for the weighted infinity norm "
+PARAM_DOUBLE_IN("beta2", "Exponential decay rate for weighted infinity norm "
     "estimates of AMSGrad.", "y", 0.999);
 PARAM_DOUBLE_IN("epsilon", "Value used to initialise the mean squared gradient "
     "parameter of AMSGrad.", "e", 1e-8);
