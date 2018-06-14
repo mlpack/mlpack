@@ -26,8 +26,8 @@ namespace cf {
 template<typename NormalizationType>
 CFType<NormalizationType>::CFType(const size_t numUsersForSimilarity,
                                   const size_t rank) :
-                                  numUsersForSimilarity(numUsersForSimilarity),
-                                  rank(rank)
+    numUsersForSimilarity(numUsersForSimilarity),
+    rank(rank)
 {
   // Validate neighbourhood size.
   if (numUsersForSimilarity < 1)

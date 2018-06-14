@@ -39,7 +39,7 @@ class ZScoreNormalization
 {
  public:
   // Empty constructor.
-  ZScoreNormalization(): mean(0), stddev(1) { }
+  ZScoreNormalization() : mean(0), stddev(1) { }
 
   /**
    * Normalize the data to zero mean and one standard deviation.
