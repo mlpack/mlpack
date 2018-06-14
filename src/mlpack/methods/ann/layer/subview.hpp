@@ -22,7 +22,6 @@ namespace ann {
  * Implementation of the subview layer. The subview layer modifies the input to
  * a submatrix of required size.
  *
- *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
@@ -36,14 +35,13 @@ class Subview
 {
  public:
   /**
-   * Create the Subview layer object using the specified range of input to accept.
+   * Create the Subview layer object using the specified range of input to
+   * accept.
    *
    * @param begin Start index.
    * @param end End index.
    */
-  Subview(const size_t begin = 0, const size_t end = 0):
-    begin(begin),
-    end(end)
+  Subview(const size_t begin = 0, const size_t end = 0) : begin(begin), end(end)
   {
     /* Nothing to do here */
   }
@@ -59,7 +57,7 @@ class Subview
   void Forward(InputType&& input, OutputType&& output)
   {
     // Check if input has been selected as required.
-    if ((input.n_rows != (end-begin+1)) && (end != 0))
+    if ((input.n_rows != (end - begin + 1)) && (end != 0))
     {
       output = arma::mat(&input(begin), end - begin + 1, input.n_cols, false);
     }
@@ -105,17 +103,18 @@ class Subview
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    /* Nothing to do here */
+    ar & BOOST_SERIALIZATION_NVP(begin);
+    ar & BOOST_SERIALIZATION_NVP(end);
   }
 
  private:
   //! Locally-stored number of input units.
-  arma::uword begin;
+  size_t begin;
 
   //! Locally-stored number of output units.
-  arma::uword end;
+  size_t end;
 
   //! Locally-stored delta object.
   OutputDataType delta;

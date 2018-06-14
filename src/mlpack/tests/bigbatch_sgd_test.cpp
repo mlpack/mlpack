@@ -84,6 +84,8 @@ void CreateLogisticRegressionTestData(arma::mat& data,
  */
 BOOST_AUTO_TEST_CASE(BBSBBLogisticRegressionTest)
 {
+  mlpack::math::RandomSeed(time(NULL));
+
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
 
@@ -111,6 +113,8 @@ BOOST_AUTO_TEST_CASE(BBSBBLogisticRegressionTest)
  */
 BOOST_AUTO_TEST_CASE(BBSArmijoLogisticRegressionTest)
 {
+  mlpack::math::RandomSeed(time(NULL));
+
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
 
@@ -118,7 +122,7 @@ BOOST_AUTO_TEST_CASE(BBSArmijoLogisticRegressionTest)
       responses, testResponses, shuffledResponses);
 
   // Now run big-batch SGD with a couple of batch sizes.
-  for (size_t batchSize = 30; batchSize < 40; batchSize += 5)
+  for (size_t batchSize = 30; batchSize < 60; batchSize += 1)
   {
     BBS_Armijo bbsgd(batchSize, 0.01, 0.1, 6000, 1e-3);
     LogisticRegression<> lr(shuffledData, shuffledResponses, bbsgd, 0.5);
