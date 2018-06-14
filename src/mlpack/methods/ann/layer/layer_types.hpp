@@ -37,6 +37,7 @@
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
+#include <mlpack/methods/ann/layer/subview.hpp>
 
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
@@ -180,6 +181,7 @@ using LayerTypes = boost::variant<
     ReinforceNormal<arma::mat, arma::mat>*,
     Select<arma::mat, arma::mat>*,
     Sequential<arma::mat, arma::mat>*,
+    Subview<arma::mat, arma::mat>*,
     VRClassReward<arma::mat, arma::mat>*,
     CustomLayers*...
 >;
