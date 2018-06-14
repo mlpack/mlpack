@@ -231,7 +231,7 @@ void CFType<NormalizationType>::GetRecommendations(
 
       // Is the estimated value better than the worst candidate?
       // Denormalize rating before comparison.
-      double realRating = normalization.Denormalize(i, j, averages[j]);
+      double realRating = normalization.Denormalize(users(i), j, averages[j]);
       if (realRating > pqueue.top().first)
       {
         Candidate c = std::make_pair(realRating, j);
