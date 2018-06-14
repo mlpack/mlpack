@@ -50,7 +50,7 @@ class UserMeanNormalization
   void Normalize(arma::mat& data)
   {
     const size_t userNum = arma::max(data.row(0)) + 1;
-    userMean = arma::vec(userNum, arma::fill::zeros);
+    userMean = arma::rowvec(userNum, arma::fill::zeros);
     // Number of ratings for each user.
     arma::Row<size_t> ratingNum(userNum, arma::fill::zeros);
 
@@ -89,7 +89,7 @@ class UserMeanNormalization
    */
   void Normalize(arma::sp_mat& cleanedData)
   {
-    userMean = arma::vec(arma::mean(cleanedData, 0));
+    userMean = arma::rowvec(arma::mean(cleanedData, 0));
 
     arma::sp_mat::iterator it = cleanedData.begin();
     arma::sp_mat::iterator it_end = cleanedData.end();
@@ -136,7 +136,7 @@ class UserMeanNormalization
   /**
    * Return user mean.
    */
-  const arma::vec& Mean() const { return userMean; }
+  const arma::rowvec& Mean() const { return userMean; }
 
   /**
    * Serialization.
@@ -149,7 +149,7 @@ class UserMeanNormalization
 
  private:
   //! User mean.
-  arma::vec userMean;
+  arma::rowvec userMean;
 };
 
 } // namespace cf
