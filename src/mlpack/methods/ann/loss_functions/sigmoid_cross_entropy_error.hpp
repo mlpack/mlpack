@@ -63,9 +63,9 @@ class SigmoidCrossEntropyError
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  inline double Forward(const arma::Mat<eT>&& input,
-                        const arma::Mat<eT>&& target);
+  template<typename InputType, typename TargetType>
+  inline double Forward(const InputType&& input,
+                        const TargetType&& target);
   /**
    * Ordinary feed backward pass of a neural network.
    *
@@ -73,10 +73,10 @@ class SigmoidCrossEntropyError
    * @param target The target vector.
    * @param output The calculated error.
    */
-  template<typename eT>
-  inline void Backward(const arma::Mat<eT>&& input,
-                       const arma::Mat<eT>&& target,
-                       arma::Mat<eT>&& output);
+  template<typename InputType, typename TargetType, typename OutputType>
+  inline void Backward(const InputType&& input,
+                       const TargetType&& target,
+                       OutputType&& output);
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }

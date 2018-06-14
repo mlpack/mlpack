@@ -37,11 +37,13 @@ PROGRAM_INFO("K-Rank-Approximate-Nearest-Neighbors (kRANN)",
     "(and optionally the success probability)."
     "\n\n"
     "For example, the following will return 5 neighbors from the top 0.1% of "
-    "the data (with probability 0.95) for each point in 'input.csv' and store "
-    "the distances in 'distances.csv' and the neighbors in the file "
-    "'neighbors.csv':"
-    "\n\n"
-    "$ allkrann -k 5 -r input.csv -d distances.csv -n neighbors.csv --tau 0.1"
+    "the data (with probability 0.95) for each point in " +
+    PRINT_DATASET("input") + " and store the distances in " +
+    PRINT_DATASET("distances") + " and the neighbors in " +
+    PRINT_DATASET("neighbors.csv") + ":"
+    "\n\n" +
+    PRINT_CALL("krann", "reference", "input", "k", 5, "distances", "distances",
+        "neighbors", "neighbors", "tau", 0.1) +
     "\n\n"
     "Note that tau must be set such that the number of points in the "
     "corresponding percentile of the data is greater than k.  Thus, if we "
@@ -49,7 +51,7 @@ PROGRAM_INFO("K-Rank-Approximate-Nearest-Neighbors (kRANN)",
     "attempting to choose 5 nearest neighbors out of the closest 1 point -- "
     "this is invalid and the program will terminate with an error message."
     "\n\n"
-    "The output files are organized such that row i and column j in the "
+    "The output matrices are organized such that row i and column j in the "
     "neighbors output file corresponds to the index of the point in the "
     "reference set which is the i'th nearest neighbor from the point in the "
     "query set with index j.  Row i and column j in the distances output file "

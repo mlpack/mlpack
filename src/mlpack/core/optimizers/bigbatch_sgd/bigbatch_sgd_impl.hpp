@@ -143,7 +143,7 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
         if (batchOffset <= 0)
           batchOffset = 1;
 
-        if (batchSize + batchOffset >= numFunctions)
+        if ((currentFunction + batchSize + batchOffset) >= numFunctions)
           break;
 
         // Update the stochastic gradient estimation.

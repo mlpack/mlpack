@@ -612,7 +612,7 @@ BOOST_AUTO_TEST_CASE(ShuffleTest)
     BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
     BOOST_REQUIRE_SMALL(outputData(1, i), 1e-5);
     BOOST_REQUIRE_SMALL(outputData(2, i), 1e-5);
-    counts[labels[i]]++;
+    counts[outputLabels[i]]++;
   }
 
   for (size_t i = 0; i < 10; ++i)
@@ -650,7 +650,7 @@ BOOST_AUTO_TEST_CASE(SparseShuffleTest)
     BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
     BOOST_REQUIRE_SMALL((double) outputData(1, i), 1e-5);
     BOOST_REQUIRE_SMALL((double) outputData(2, i), 1e-5);
-    counts[labels[i]]++;
+    counts[outputLabels[i]]++;
   }
 
   for (size_t i = 0; i < 10; ++i)
@@ -702,6 +702,100 @@ BOOST_AUTO_TEST_CASE(CubeShuffleTest)
 }
 
 /**
+ * Make sure shuffling data with weights works.
+ */
+BOOST_AUTO_TEST_CASE(ShuffleWeightsTest)
+{
+  arma::mat data(3, 10, arma::fill::zeros);
+  arma::Row<size_t> labels(10);
+  arma::rowvec weights(10);
+  for (size_t i = 0; i < 10; ++i)
+  {
+    data(0, i) = i;
+    labels[i] = i;
+    weights[i] = i;
+  }
+
+  arma::mat outputData;
+  arma::Row<size_t> outputLabels;
+  arma::rowvec outputWeights;
+
+  ShuffleData(data, labels, weights, outputData, outputLabels, outputWeights);
+
+  BOOST_REQUIRE_EQUAL(outputData.n_rows, data.n_rows);
+  BOOST_REQUIRE_EQUAL(outputData.n_cols, data.n_cols);
+  BOOST_REQUIRE_EQUAL(outputLabels.n_elem, labels.n_elem);
+  BOOST_REQUIRE_EQUAL(outputWeights.n_elem, weights.n_elem);
+
+  // Make sure we only have each point once.
+  arma::Row<size_t> counts(10, arma::fill::zeros);
+  arma::Row<size_t> weightCounts(10, arma::fill::zeros);
+  for (size_t i = 0; i < 10; ++i)
+  {
+    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
+    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), (size_t) outputWeights[i]);
+    BOOST_REQUIRE_SMALL(outputData(1, i), 1e-5);
+    BOOST_REQUIRE_SMALL(outputData(2, i), 1e-5);
+    counts[outputLabels[i]]++;
+    weightCounts[(size_t) outputWeights[i]]++;
+  }
+
+  for (size_t i = 0; i < 10; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(counts[i], 1);
+    BOOST_REQUIRE_EQUAL(weightCounts[i], 1);
+  }
+}
+
+/**
+ * Make sure shuffling sparse data with weights works.
+ */
+BOOST_AUTO_TEST_CASE(SparseShuffleWeightsTest)
+{
+  arma::sp_mat data(3, 10);
+  arma::Row<size_t> labels(10);
+  arma::rowvec weights(10);
+  for (size_t i = 0; i < 10; ++i)
+  {
+    data(0, i) = i;
+    labels[i] = i;
+    weights[i] = i;
+  }
+  // This appears to be a necessary workaround for an Armadillo 8 bug.
+  data *= 1.0;
+
+  arma::sp_mat outputData;
+  arma::Row<size_t> outputLabels;
+  arma::rowvec outputWeights;
+
+  ShuffleData(data, labels, weights, outputData, outputLabels, outputWeights);
+
+  BOOST_REQUIRE_EQUAL(outputData.n_rows, data.n_rows);
+  BOOST_REQUIRE_EQUAL(outputData.n_cols, data.n_cols);
+  BOOST_REQUIRE_EQUAL(outputLabels.n_elem, labels.n_elem);
+  BOOST_REQUIRE_EQUAL(outputWeights.n_elem, weights.n_elem);
+
+  // Make sure we only have each point once.
+  arma::Row<size_t> counts(10, arma::fill::zeros);
+  arma::Row<size_t> weightCounts(10, arma::fill::zeros);
+  for (size_t i = 0; i < 10; ++i)
+  {
+    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
+    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), (size_t) outputWeights[i]);
+    BOOST_REQUIRE_SMALL((double) outputData(1, i), 1e-5);
+    BOOST_REQUIRE_SMALL((double) outputData(2, i), 1e-5);
+    counts[outputLabels[i]]++;
+    weightCounts[(size_t) outputWeights[i]]++;
+  }
+
+  for (size_t i = 0; i < 10; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(counts[i], 1);
+    BOOST_REQUIRE_EQUAL(weightCounts[i], 1);
+  }
+}
+
+/**
  * Make sure shuffling data works when the same matrices are given as input and
  * output.
  */
@@ -731,7 +825,7 @@ BOOST_AUTO_TEST_CASE(InplaceShuffleTest)
     BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
     BOOST_REQUIRE_SMALL(outputData(1, i), 1e-5);
     BOOST_REQUIRE_SMALL(outputData(2, i), 1e-5);
-    counts[labels[i]]++;
+    counts[outputLabels[i]]++;
   }
 
   for (size_t i = 0; i < 10; ++i)
@@ -768,7 +862,7 @@ BOOST_AUTO_TEST_CASE(InplaceSparseShuffleTest)
     BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
     BOOST_REQUIRE_SMALL((double) outputData(1, i), 1e-5);
     BOOST_REQUIRE_SMALL((double) outputData(2, i), 1e-5);
-    counts[labels[i]]++;
+    counts[outputLabels[i]]++;
   }
 
   for (size_t i = 0; i < 10; ++i)
@@ -817,6 +911,102 @@ BOOST_AUTO_TEST_CASE(InplaceCubeShuffleTest)
 
   for (size_t i = 0; i < 10; ++i)
     BOOST_REQUIRE_EQUAL(counts[i], data.n_slices);
+}
+
+/**
+ * Make sure shuffling data with weights works when the same matrices are given
+ * as input and output.
+ */
+BOOST_AUTO_TEST_CASE(InplaceShuffleWeightsTest)
+{
+  arma::mat data(3, 10, arma::fill::zeros);
+  arma::Row<size_t> labels(10);
+  arma::rowvec weights(10);
+  for (size_t i = 0; i < 10; ++i)
+  {
+    data(0, i) = i;
+    labels[i] = i;
+    weights[i] = i;
+  }
+
+  arma::mat outputData(data);
+  arma::Row<size_t> outputLabels(labels);
+  arma::rowvec outputWeights(weights);
+
+  ShuffleData(outputData, outputLabels, outputWeights, outputData, outputLabels,
+      outputWeights);
+
+  BOOST_REQUIRE_EQUAL(outputData.n_rows, data.n_rows);
+  BOOST_REQUIRE_EQUAL(outputData.n_cols, data.n_cols);
+  BOOST_REQUIRE_EQUAL(outputLabels.n_elem, labels.n_elem);
+  BOOST_REQUIRE_EQUAL(outputWeights.n_elem, weights.n_elem);
+
+  // Make sure we only have each point once.
+  arma::Row<size_t> counts(10, arma::fill::zeros);
+  arma::Row<size_t> weightCounts(10, arma::fill::zeros);
+  for (size_t i = 0; i < 10; ++i)
+  {
+    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
+    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), (size_t) outputWeights[i]);
+    BOOST_REQUIRE_SMALL(outputData(1, i), 1e-5);
+    BOOST_REQUIRE_SMALL(outputData(2, i), 1e-5);
+    counts[outputLabels[i]]++;
+    weightCounts[(size_t) outputWeights[i]]++;
+  }
+
+  for (size_t i = 0; i < 10; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(counts[i], 1);
+    BOOST_REQUIRE_EQUAL(weightCounts[i], 1);
+  }
+}
+
+/**
+ * Make sure shuffling sparse data with weights works when the input and output
+ * matrices are the same.
+ */
+BOOST_AUTO_TEST_CASE(InplaceSparseShuffleWeightsTest)
+{
+  arma::sp_mat data(3, 10);
+  arma::Row<size_t> labels(10);
+  arma::rowvec weights(10);
+  for (size_t i = 0; i < 10; ++i)
+  {
+    data(0, i) = i;
+    labels[i] = i;
+    weights[i] = i;
+  }
+
+  arma::sp_mat outputData(data);
+  arma::Row<size_t> outputLabels(labels);
+  arma::rowvec outputWeights(weights);
+
+  ShuffleData(outputData, outputLabels, outputWeights, outputData, outputLabels,
+      outputWeights);
+
+  BOOST_REQUIRE_EQUAL(outputData.n_rows, data.n_rows);
+  BOOST_REQUIRE_EQUAL(outputData.n_cols, data.n_cols);
+  BOOST_REQUIRE_EQUAL(outputLabels.n_elem, labels.n_elem);
+  BOOST_REQUIRE_EQUAL(outputWeights.n_elem, weights.n_elem);
+
+  // Make sure we only have each point once.
+  arma::Row<size_t> counts(10, arma::fill::zeros);
+  arma::Row<size_t> weightCounts(10, arma::fill::zeros);
+  for (size_t i = 0; i < 10; ++i)
+  {
+    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
+    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), (size_t) outputWeights[i]);
+    BOOST_REQUIRE_SMALL((double) outputData(1, i), 1e-5);
+    BOOST_REQUIRE_SMALL((double) outputData(2, i), 1e-5);
+    counts[outputLabels[i]]++;
+    weightCounts[(size_t) outputWeights[i]]++;
+  }
+
+  for (size_t i = 0; i < 10; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(counts[i], 1);
+    BOOST_REQUIRE_EQUAL(weightCounts[i], 1);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

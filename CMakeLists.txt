@@ -479,7 +479,7 @@ endif ()
 
 # Make a target to generate the man page documentation, but only if we are on a
 # UNIX-like system.
-if (UNIX)
+if (BUILD_CLI_EXECUTABLES AND UNIX)
   find_program(TXT2MAN txt2man)
 
   # It's not a requirement that we make man pages.

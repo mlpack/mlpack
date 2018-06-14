@@ -40,6 +40,10 @@ namespace cv {
  * double softmaxAccuracy = cv.Evaluate(lambda);
  * @endcode
  *
+ * Before calling @c Evaluate(), it is possible to shuffle the data by calling
+ * the @c Shuffle() function.  Shuffling is performed at construction time if
+ * the parameter @c shuffle is set to @c true in the constructor.
+ *
  * @tparam MLAlgorithm A machine learning algorithm.
  * @tparam Metric A metric to assess the quality of a trained model.
  * @tparam MatType The type of data.
@@ -69,10 +73,12 @@ class KFoldCV
    * @param xs Data points to cross-validate on.
    * @param ys Predictions (labels for classification algorithms and responses
    *     for regression algorithms) for each data point.
+   * @param shuffle Whether or not to shuffle the data during construction.
    */
   KFoldCV(const size_t k,
           const MatType& xs,
-          const PredictionsType& ys);
+          const PredictionsType& ys,
+          const bool shuffle = true);
 
   /**
    * This constructor can be used for multiclass classification algorithms.
@@ -81,11 +87,13 @@ class KFoldCV
    * @param xs Data points to cross-validate on.
    * @param ys Labels for each data point.
    * @param numClasses Number of classes in the dataset.
+   * @param shuffle Whether or not to shuffle the data during construction.
    */
   KFoldCV(const size_t k,
           const MatType& xs,
           const PredictionsType& ys,
-          const size_t numClasses);
+          const size_t numClasses,
+          const bool shuffle = true);
 
   /**
    * This constructor can be used for multiclass classification algorithms that
@@ -96,12 +104,14 @@ class KFoldCV
    * @param datasetInfo Type information for each dimension of the dataset.
    * @param ys Labels for each data point.
    * @param numClasses Number of classes in the dataset.
+   * @param shuffle Whether or not to shuffle the data during construction.
    */
   KFoldCV(const size_t k,
           const MatType& xs,
           const data::DatasetInfo& datasetInfo,
           const PredictionsType& ys,
-          const size_t numClasses);
+          const size_t numClasses,
+          const bool shuffle = true);
 
   /**
    * This constructor can be used for regression and binary classification
@@ -112,11 +122,13 @@ class KFoldCV
    * @param ys Predictions (labels for classification algorithms and responses
    *     for regression algorithms) for each data point.
    * @param weights Observation weights (for boosting).
+   * @param shuffle Whether or not to shuffle the data during construction.
    */
   KFoldCV(const size_t k,
           const MatType& xs,
           const PredictionsType& ys,
-          const WeightsType& weights);
+          const WeightsType& weights,
+          const bool shuffle = true);
 
   /**
    * This constructor can be used for multiclass classification algorithms that
@@ -127,12 +139,14 @@ class KFoldCV
    * @param ys Labels for each data point.
    * @param numClasses Number of classes in the dataset.
    * @param weights Observation weights (for boosting).
+   * @param shuffle Whether or not to shuffle the data during construction.
    */
   KFoldCV(const size_t k,
           const MatType& xs,
           const PredictionsType& ys,
           const size_t numClasses,
-          const WeightsType& weights);
+          const WeightsType& weights,
+          const bool shuffle = true);
 
   /**
    * This constructor can be used for multiclass classification algorithms that
@@ -144,13 +158,15 @@ class KFoldCV
    * @param ys Labels for each data point.
    * @param numClasses Number of classes in the dataset.
    * @param weights Observation weights (for boosting).
+   * @param shuffle Whether or not to shuffle the data during construction.
    */
   KFoldCV(const size_t k,
           const MatType& xs,
           const data::DatasetInfo& datasetInfo,
           const PredictionsType& ys,
           const size_t numClasses,
-          const WeightsType& weights);
+          const WeightsType& weights,
+          const bool shuffle = true);
 
   /**
    * Run k-fold cross-validation.
@@ -168,6 +184,25 @@ class KFoldCV
   //! A short alias for CVBase.
   using Base = CVBase<MLAlgorithm, MatType, PredictionsType, WeightsType>;
 
+ public:
+  /**
+   * Shuffle the data.  This overload is called if weights are not supported by
+   * the model type.
+   */
+  template<bool Enabled = !Base::MIE::SupportsWeights,
+           typename = typename std::enable_if<Enabled>::type>
+  void Shuffle();
+
+  /**
+   * Shuffle the data.  This overload is called if weights are supported by the
+   * model type.
+   */
+  template<bool Enabled = Base::MIE::SupportsWeights,
+           typename = typename std::enable_if<Enabled>::type,
+           typename = void>
+  void Shuffle();
+
+ private:
   //! An auxiliary object.
   Base base;
 
@@ -181,11 +216,11 @@ class KFoldCV
   //! The extended (by repeating the first k - 2 bins) weights.
   WeightsType weights;
 
+  //! The original size of the dataset.
+  size_t lastBinSize;
+
   //! The size of each bin in terms of data points.
   size_t binSize;
-
-  //! The size of each training subset in terms of data points.
-  size_t trainingSubsetSize;
 
   //! A pointer to a model from the last run of k-fold cross-validation.
   std::unique_ptr<MLAlgorithm> modelPtr;
@@ -197,7 +232,8 @@ class KFoldCV
   KFoldCV(Base&& base,
           const size_t k,
           const MatType& xs,
-          const PredictionsType& ys);
+          const PredictionsType& ys,
+          const bool shuffle);
 
   /**
    * Assert the k parameter and data consistency and initialize fields required
@@ -207,7 +243,8 @@ class KFoldCV
           const size_t k,
           const MatType& xs,
           const PredictionsType& ys,
-          const WeightsType& weights);
+          const WeightsType& weights,
+          const bool shuffle);
 
   /**
    * Initialize the given destination matrix with the given source joined with
@@ -219,7 +256,7 @@ class KFoldCV
   /**
    * Train and run evaluation in the case of non-weighted learning.
    */
-  template<typename...MLAlgorithmArgs,
+  template<typename... MLAlgorithmArgs,
            bool Enabled = !Base::MIE::SupportsWeights,
            typename = typename std::enable_if<Enabled>::type>
   double TrainAndEvaluate(const MLAlgorithmArgs& ...mlAlgorithmArgs);
@@ -227,7 +264,7 @@ class KFoldCV
   /**
    * Train and run evaluation in the case of supporting weighted learning.
    */
-  template<typename...MLAlgorithmArgs,
+  template<typename... MLAlgorithmArgs,
            bool Enabled = Base::MIE::SupportsWeights,
            typename = typename std::enable_if<Enabled>::type,
            typename = void>

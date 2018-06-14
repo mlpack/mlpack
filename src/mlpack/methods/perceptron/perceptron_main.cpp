@@ -55,17 +55,17 @@ PROGRAM_INFO("Perceptron",
     " perceptron for later classification.  The invocation below trains a "
     "perceptron on " + PRINT_DATASET("training_data") + " with labels " +
     PRINT_DATASET("training_labels") + ", and saves the model to " +
-    PRINT_MODEL("perceptron") + "."
+    PRINT_MODEL("perceptron_model") + "."
     "\n\n" +
     PRINT_CALL("perceptron", "training", "training_data", "labels",
-        "training_labels", "output_model", "perceptron") +
+        "training_labels", "output_model", "perceptron_model") +
     "\n\n"
     "Then, this model can be re-used for classification on the test data " +
     PRINT_DATASET("test_data") + ".  The example below does precisely that, "
     "saving the predicted classes to " + PRINT_DATASET("predictions") + "."
     "\n\n" +
-    PRINT_CALL("perceptron", "input_model", "perceptron", "test", "test_data",
-        "output", "predictions") +
+    PRINT_CALL("perceptron", "input_model", "perceptron_model", "test",
+        "test_data", "output", "predictions") +
     "\n\n"
     "Note that all of the options may be specified at once: predictions may be "
     "calculated right after training a model, and model training can occur even"
