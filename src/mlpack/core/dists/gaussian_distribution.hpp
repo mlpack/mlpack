@@ -193,7 +193,6 @@ inline void GaussianDistribution::LogProbability(
   logProbabilities = -0.5 * k * log2pi - 0.5 * logDetCov + logExponents;
 }
 
-
 } // namespace distribution
 } // namespace mlpack
 
