@@ -18,36 +18,40 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-ReconstructionLoss<InputDataType, OutputDataType>::ReconstructionLoss()
+template<typename InputDataType, typename OutputDataType, typename DistType>
+ReconstructionLoss<
+    InputDataType,
+    OutputDataType,
+    DistType
+>::ReconstructionLoss()
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType, typename DistType>
 template<typename InputType, typename TargetType>
-double ReconstructionLoss<InputDataType, OutputDataType>::Forward(
+double ReconstructionLoss<InputDataType, OutputDataType, DistType>::Forward(
     const InputType&& input, const TargetType&& target)
 {
-  normalDist(input.submat(0, 0, input.n_rows / 2 - 1, input.n_cols - 1),
+  dist(input.submat(0, 0, input.n_rows / 2 - 1, input.n_cols - 1),
       input.submat(input.n_rows / 2, 0, input.n_rows - 1, input.n_cols - 1));
 
-  return normalDist.LogProbability(target);
+  return dist.LogProbability(target);
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType, typename DistType>
 template<typename InputType, typename TargetType, typename OutputType>
-void ReconstructionLoss<InputDataType, OutputDataType>::Backward(
+void ReconstructionLoss<InputDataType, OutputDataType, DistType>::Backward(
     const InputType&& input,
     const TargetType&& target,
     OutputType&& output)
 {
-  normalDist.LogProbBackward(target, output);
+  dist.LogProbBackward(target, output);
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType, typename DistType>
 template<typename Archive>
-void ReconstructionLoss<InputDataType, OutputDataType>::serialize(
+void ReconstructionLoss<InputDataType, OutputDataType, DistType>::serialize(
     Archive& /* ar */,
     const unsigned int /* version */)
 {

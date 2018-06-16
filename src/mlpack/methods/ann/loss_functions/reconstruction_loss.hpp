@@ -30,7 +30,8 @@ namespace ann /** Artificial Neural Network. */ {
  */
 template <
     typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename OutputDataType = arma::mat,
+    typename DistType = NormalDistribution<InputDataType>
 >
 class ReconstructionLoss
 {
@@ -80,8 +81,8 @@ class ReconstructionLoss
   //! Locally-stored delta object.
   OutputDataType delta;
 
-  //! Locally-stored normal distribution object.
-  NormalDistribution<InputDataType> normalDist;
+  //! Locally-stored distribution object.
+  DistType dist;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
