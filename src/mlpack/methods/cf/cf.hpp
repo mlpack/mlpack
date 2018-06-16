@@ -21,6 +21,7 @@
 #include <mlpack/methods/amf/amf.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_als.hpp>
 #include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
+#include <mlpack/methods/cf/normalization/no_normalization.hpp>
 #include <mlpack/methods/cf/decomposition_policies/nmf_method.hpp>
 #include <set>
 #include <map>
@@ -40,7 +41,7 @@ namespace cf /** Collaborative filtering. **/ {
  * extern arma::Col<size_t> users; // users seeking recommendations
  * arma::Mat<size_t> recommendations; // Recommendations
  *
- * CFType cf(data); // Default options.
+ * CFType<> cf(data); // Default options.
  *
  * // Generate 10 recommendations for all users.
  * cf.GetRecommendations(10, recommendations);
@@ -56,9 +57,11 @@ namespace cf /** Collaborative filtering. **/ {
  * are in a matrix that holds doubles, should hold integer (or size_t) values.
  * The user and item indices are assumed to start at 0.
  *
- * @tparam DecompositionPolicy The algorithm to use to decompose
- *     the rating matrix (a W and H matrix).
+ * @tparam NormalizationType The type of normalization performed on raw data.
+ *     Data is normalized before calling Train() method. Predicted rating is
+ *     denormalized before return.
  */
+template<typename NormalizationType = NoNormalization>
 class CFType
 {
  public:
@@ -66,8 +69,7 @@ class CFType
    * Initialize the CFType object without performing any factorization.  Be sure to
    * call Train() before calling GetRecommendations() or any other functions!
    */
-  CFType(const size_t numUsersForSimilarity = 5,
-     const size_t rank = 0);
+  CFType(const size_t numUsersForSimilarity = 5, const size_t rank = 0);
 
   /**
    * Initialize the CFType object using any decomposition method, immediately
@@ -79,6 +81,12 @@ class CFType
    * The provided dataset can be a coordinate list; that is, a 3-row matrix
    * where each column corresponds to a (user, item, rating) entry in the
    * matrix or a sparse matrix representing (user, item) table.
+   *
+   * @tparam MatType The type of input matrix, which is expected to be either
+   *     arma::mat (table of (user, item, rating)) or arma::sp_mat (sparse
+   *     rating matrix where row is item and column is user).
+   * @tparam DecompositionPolicy The algorithm to use to decompose
+   *     the rating matrix (a W and H matrix).
    *
    * @param data Data matrix: dense matrix (coordinate lists) 
    *    or sparse matrix(cleaned).
@@ -103,6 +111,9 @@ class CFType
    * parameters that have already been set for the model (specifically, the rank
    * parameter), and optionally, using the given DecompositionPolicy.
    *
+   * @tparam DecompositionPolicy The algorithm to use to decompose
+   *     the rating matrix (a W and H matrix).
+   *
    * @param data Input dataset; dense matrix (coordinate lists).
    * @param decomposition Instantiated DecompositionPolicy object.
    * @param maxIterations Maximum number of iterations.
@@ -120,6 +131,9 @@ class CFType
    * Train the CFType model (i.e. factorize the input matrix) using the
    * parameters that have already been set for the model (specifically, the
    * rank parameter), and optionally, using the given DecompositionPolicy.
+   *
+   * @tparam DecompositionPolicy The algorithm to use to decompose
+   *     the rating matrix (a W and H matrix).
    *
    * @param data Input dataset; sparse matrix (user item table).
    * @param decomposition Instantiated DecompositionPolicy object.
@@ -234,6 +248,8 @@ class CFType
   arma::mat h;
   //! Cleaned data matrix.
   arma::sp_mat cleanedData;
+  //! Data normalization object.
+  NormalizationType normalization;
 
   //! Candidate represents a possible recommendation (value, item).
   typedef std::pair<double, size_t> Candidate;

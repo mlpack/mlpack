@@ -18,6 +18,12 @@
 #include <mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/svd_complete_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/svd_incomplete_method.hpp>
+#include  <mlpack/methods/cf/normalization/no_normalization.hpp>
+#include  <mlpack/methods/cf/normalization/overall_mean_normalization.hpp>
+#include  <mlpack/methods/cf/normalization/user_mean_normalization.hpp>
+#include  <mlpack/methods/cf/normalization/item_mean_normalization.hpp>
+#include  <mlpack/methods/cf/normalization/z_score_normalization.hpp>
+#include  <mlpack/methods/cf/normalization/combined_normalization.hpp>
 
 #include <iostream>
 
@@ -36,7 +42,7 @@ using namespace std;
  * set. Default case.
  */
 template<typename DecompositionPolicy>
-void GetRecommendationsAllUsers(bool cleanData = true)
+void GetRecommendationsAllUsers()
 {
   DecompositionPolicy decomposition;
   // Dummy number of recommendations.
@@ -51,16 +57,7 @@ void GetRecommendationsAllUsers(bool cleanData = true)
   arma::mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
 
-  if (cleanData)
-  {
-    // Make data into sparse matrix.
-    arma::sp_mat cleanedData;
-    CFType::CleanData(dataset, cleanedData);
-
-    arma::sp_mat dataset;
-    dataset = cleanedData;
-  }
-  CFType c(dataset, decomposition, 5, 5, 70);
+  CFType<> c(dataset, decomposition, 5, 5, 70);
 
   // Generate recommendations when query set is not specified.
   c.GetRecommendations(numRecs, recommendations);
@@ -76,7 +73,7 @@ void GetRecommendationsAllUsers(bool cleanData = true)
  * Make sure that the recommendations are generated for queried users only.
  */
 template<typename DecompositionPolicy>
-void GetRecommendationsQueriedUser(bool cleanData = true)
+void GetRecommendationsQueriedUser()
 {
   DecompositionPolicy decomposition;
   // Number of users that we will search for recommendations for.
@@ -97,17 +94,7 @@ void GetRecommendationsQueriedUser(bool cleanData = true)
   arma::mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
 
-  if (cleanData)
-  {
-    // Make data into sparse matrix.
-    arma::sp_mat cleanedData;
-    CFType::CleanData(dataset, cleanedData);
-
-    arma::sp_mat dataset;
-    dataset = cleanedData;
-  }
-
-  CFType c(dataset, decomposition, 5, 5, 70);
+  CFType<> c(dataset, decomposition, 5, 5, 70);
 
   // Generate recommendations when query set is specified.
   c.GetRecommendations(numRecsDefault, recommendations, users);
@@ -122,8 +109,9 @@ void GetRecommendationsQueriedUser(bool cleanData = true)
 /**
  * Make sure recommendations that are generated are reasonably accurate.
  */
-template<typename DecompositionPolicy>
-void RecommendationAccuracy(bool cleanData = true)
+template<typename DecompositionPolicy,
+         typename NormalizationType = NoNormalization>
+void RecommendationAccuracy()
 {
   DecompositionPolicy decomposition;
   // Load the GroupLens dataset; then, we will remove some values from it.
@@ -164,17 +152,7 @@ void RecommendationAccuracy(bool cleanData = true)
     }
   }
 
-  if (cleanData)
-  {
-    // Make data into sparse matrix.
-    arma::sp_mat cleanedData;
-    CFType::CleanData(dataset, cleanedData);
-
-    arma::sp_mat dataset;
-    dataset = cleanedData;
-  }
-
-  CFType c(dataset, decomposition, 5, 5, 70);
+  CFType<NormalizationType> c(dataset, decomposition, 5, 5, 70);
 
   // Obtain 150 recommendations for the users in savedCols, and make sure the
   // missing item shows up in most of them.  First, create the list of users,
@@ -223,8 +201,9 @@ void RecommendationAccuracy(bool cleanData = true)
 }
 
 // Make sure that Predict() is returning reasonable results.
-template<typename DecompositionPolicy>
-void CFPredict(bool cleanData = true)
+template<typename DecompositionPolicy,
+         typename NormalizationType = NoNormalization>
+void CFPredict(const double rmseBound = 2.0)
 {
   DecompositionPolicy decomposition;
   // Load the GroupLens dataset; then, we will remove some values from it.
@@ -265,17 +244,7 @@ void CFPredict(bool cleanData = true)
     }
   }
 
-  if (cleanData)
-  {
-    // Make data into sparse matrix.
-    arma::sp_mat cleanedData;
-    CFType::CleanData(dataset, cleanedData);
-
-    arma::sp_mat dataset;
-    dataset = cleanedData;
-  }
-
-  CFType c(dataset, decomposition, 5, 5, 70);
+  CFType<NormalizationType> c(dataset, decomposition, 5, 5, 70);
 
   // Now, for each removed rating, make sure the prediction is... reasonably
   // accurate.
@@ -288,17 +257,17 @@ void CFPredict(bool cleanData = true)
     totalError += error;
   }
 
-  totalError = std::sqrt(totalError) / savedCols.n_cols;
+  const double rmse = std::sqrt(totalError / savedCols.n_cols);
 
-  // The mean squared error should be less than one.
-  BOOST_REQUIRE_LT(totalError, 0.6);
+  // The root mean square error should be less than ?.
+  BOOST_REQUIRE_LT(rmse, rmseBound);
 }
 
 // Do the same thing as the previous test, but ensure that the ratings we
 // predict with the batch Predict() are the same as the individual Predict()
 // calls.
 template<typename DecompositionPolicy>
-void BatchPredict(bool cleanData = true)
+void BatchPredict()
 {
   DecompositionPolicy decomposition;
   // Load the GroupLens dataset; then, we will remove some values from it.
@@ -339,17 +308,7 @@ void BatchPredict(bool cleanData = true)
     }
   }
 
-  if (cleanData)
-  {
-    // Make data into sparse matrix.
-    arma::sp_mat cleanedData;
-    CFType::CleanData(dataset, cleanedData);
-
-    arma::sp_mat dataset;
-    dataset = cleanedData;
-  }
-
-  CFType c(dataset, decomposition, 5, 5, 70);
+  CFType<> c(dataset, decomposition, 5, 5, 70);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -378,7 +337,7 @@ void Train(DecompositionPolicy& decomposition)
   // Generate random data.
   arma::sp_mat randomData;
   randomData.sprandu(100, 100, 0.3);
-  CFType c(randomData, decomposition, 5, 5, 70);
+  CFType<> c(randomData, decomposition, 5, 5, 70);
 
   // Now retrain with data we know about.
   arma::mat dataset;
@@ -420,7 +379,7 @@ void Train(DecompositionPolicy& decomposition)
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
-  CFType::CleanData(dataset, cleanedData);
+  CFType<>::CleanData(dataset, cleanedData);
 
   // Now retrain.
   c.Train(dataset, decomposition, 70);
@@ -452,7 +411,7 @@ void Train<>(RegSVDPolicy& decomposition)
 {
   arma::mat randomData = arma::zeros(100, 100);
   randomData.diag().ones();
-  CFType c(randomData, decomposition, 5, 5, 70);
+  CFType<> c(randomData, decomposition, 5, 5, 70);
 
   // Now retrain with data we know about.
   arma::mat dataset;
@@ -517,11 +476,11 @@ void Train<>(RegSVDPolicy& decomposition)
  * Make sure we can train a model after using the empty constructor.
  */
 template<typename DecompositionPolicy>
-void EmptyConstructorTrain(bool cleanData = true)
+void EmptyConstructorTrain()
 {
   DecompositionPolicy decomposition;
   // Use default constructor.
-  CFType c;
+  CFType<> c;
 
   // Now retrain with data we know about.
   arma::mat dataset;
@@ -561,16 +520,6 @@ void EmptyConstructorTrain(bool cleanData = true)
     }
   }
 
-  if (cleanData)
-  {
-    // Make data into sparse matrix.
-    arma::sp_mat cleanedData;
-    CFType::CleanData(dataset, cleanedData);
-
-    arma::sp_mat dataset;
-    dataset = cleanedData;
-  }
-
   c.Train(dataset, decomposition, 70);
 
   // Get predictions for all user/item pairs we held back.
@@ -595,7 +544,8 @@ void EmptyConstructorTrain(bool cleanData = true)
 /**
  * Ensure we can load and save the CF model.
  */
-template<typename DecompositionPolicy>
+template<typename DecompositionPolicy,
+         typename NormalizationType = NoNormalization>
 void Serialization()
 {
   DecompositionPolicy decomposition;
@@ -604,16 +554,16 @@ void Serialization()
   data::Load("GroupLensSmall.csv", dataset);
 
   arma::sp_mat cleanedData;
-  CFType::CleanData(dataset, cleanedData);
+  CFType<NormalizationType>::CleanData(dataset, cleanedData);
 
-  CFType c(cleanedData, decomposition, 5, 5, 70);
+  CFType<NormalizationType> c(cleanedData, decomposition, 5, 5, 70);
 
   arma::sp_mat randomData;
   randomData.sprandu(100, 100, 0.3);
 
-  CFType cXml(randomData, decomposition, 5, 5, 70);
-  CFType cBinary;
-  CFType cText(cleanedData, decomposition, 5, 5, 70);
+  CFType<NormalizationType> cXml(randomData, decomposition, 5, 5, 70);
+  CFType<NormalizationType> cBinary;
+  CFType<NormalizationType> cText(cleanedData, decomposition, 5, 5, 70);
 
   SerializeObjectAll(c, cXml, cText, cBinary);
 
@@ -690,7 +640,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersRandSVDTest)
  */
 BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersRegSVDTest)
 {
-  GetRecommendationsAllUsers<RegSVDPolicy>(false);
+  GetRecommendationsAllUsers<RegSVDPolicy>();
 }
 
 /**
@@ -745,7 +695,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserRandSVDTest)
  */
 BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserRegSVDTest)
 {
-  GetRecommendationsQueriedUser<RegSVDPolicy>(false);
+  GetRecommendationsQueriedUser<RegSVDPolicy>();
 }
 
 /**
@@ -799,7 +749,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyRandSVDTest)
  */
 BOOST_AUTO_TEST_CASE(RecommendationAccuracyRegSVDTest)
 {
-  RecommendationAccuracy<RegSVDPolicy>(false);
+  RecommendationAccuracy<RegSVDPolicy>();
 }
 
 /**
@@ -841,13 +791,13 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDIncompleteTest)
 // Make sure that Predict() is returning reasonable results for randomized SVD.
 BOOST_AUTO_TEST_CASE(CFPredictRandSVDTest)
 {
-  CFPredict<RandomizedSVDPolicy>();
+  CFPredict<RandomizedSVDPolicy>(4.5);
 }
 
 // Make sure that Predict() is returning reasonable results for regularized SVD.
 BOOST_AUTO_TEST_CASE(CFPredictRegSVDTest)
 {
-  CFPredict<RegSVDPolicy>(false);
+  CFPredict<RegSVDPolicy>();
 }
 
 // Make sure that Predict() is returning reasonable results for batch SVD.
@@ -859,7 +809,7 @@ BOOST_AUTO_TEST_CASE(CFPredictBatchSVDTest)
 // Make sure that Predict() is returning reasonable results for NMF.
 BOOST_AUTO_TEST_CASE(CFPredictNMFTest)
 {
-  CFPredict<NMFPolicy>();
+  CFPredict<NMFPolicy>(3.5);
 }
 
 /**
@@ -868,7 +818,7 @@ BOOST_AUTO_TEST_CASE(CFPredictNMFTest)
  */
 BOOST_AUTO_TEST_CASE(CFPredictSVDCompleteTest)
 {
-  CFPredict<SVDCompletePolicy>();
+  CFPredict<SVDCompletePolicy>(3.5);
 }
 
 /**
@@ -877,7 +827,7 @@ BOOST_AUTO_TEST_CASE(CFPredictSVDCompleteTest)
  */
 BOOST_AUTO_TEST_CASE(CFPredictSVDIncompleteTest)
 {
-  CFPredict<SVDIncompletePolicy>();
+  CFPredict<SVDIncompletePolicy>(3.5);
 }
 
 // Compare batch Predict() and individual Predict() for randomized SVD.
@@ -889,7 +839,7 @@ BOOST_AUTO_TEST_CASE(CFBatchPredictRandSVDTest)
 // Compare batch Predict() and individual Predict() for regularized SVD.
 BOOST_AUTO_TEST_CASE(CFBatchPredictRegSVDTest)
 {
-  BatchPredict<RegSVDPolicy>(false);
+  BatchPredict<RegSVDPolicy>();
 }
 
 // Compare batch Predict() and individual Predict() for batch SVD.
@@ -993,7 +943,7 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTrainRandSVDTest)
  */
 BOOST_AUTO_TEST_CASE(EmptyConstructorTrainRegSVDTest)
 {
-  EmptyConstructorTrain<RegSVDPolicy>(false);
+  EmptyConstructorTrain<RegSVDPolicy>();
 }
 
 /**
@@ -1070,6 +1020,149 @@ BOOST_AUTO_TEST_CASE(SerializationSVDCompleteTest)
 BOOST_AUTO_TEST_CASE(SerializationSVDIncompleteTest)
 {
   Serialization<SVDIncompletePolicy>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for NMF and
+ * OverallMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictOverallMeanNormalization)
+{
+  CFPredict<NMFPolicy, OverallMeanNormalization>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for NMF and
+ * UserMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictUserMeanNormalization)
+{
+  CFPredict<NMFPolicy, UserMeanNormalization>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for NMF and
+ * ItemMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictItemMeanNormalization)
+{
+  CFPredict<NMFPolicy, ItemMeanNormalization>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for NMF and
+ * ZScoreNormalization.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictZScoreNormalization)
+{
+  CFPredict<NMFPolicy, ZScoreNormalization>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for NMF and
+ * CombinedNormalization<OverallMeanNormalization, UserMeanNormalization,
+ * ItemMeanNormalization>.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictCombinedNormalization)
+{
+  CFPredict<NMFPolicy,
+            CombinedNormalization<
+                OverallMeanNormalization,
+                UserMeanNormalization,
+                ItemMeanNormalization>>();
+}
+
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for OverallMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(RecommendationAccuracyOverallMeanNormalizationTest)
+{
+  RecommendationAccuracy<NMFPolicy, OverallMeanNormalization>();
+}
+
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for UserMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(RecommendationAccuracyUserMeanNormalizationTest)
+{
+  RecommendationAccuracy<NMFPolicy, UserMeanNormalization>();
+}
+
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for ItemMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(RecommendationAccuracyItemMeanNormalizationTest)
+{
+  RecommendationAccuracy<NMFPolicy, ItemMeanNormalization>();
+}
+
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for ZScoreNormalization.
+ */
+BOOST_AUTO_TEST_CASE(RecommendationAccuracyZScoreNormalizationTest)
+{
+  RecommendationAccuracy<NMFPolicy, ZScoreNormalization>();
+}
+
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for CombinedNormalization.
+ */
+BOOST_AUTO_TEST_CASE(RecommendationAccuracyCombinedNormalizationTest)
+{
+  RecommendationAccuracy<NMFPolicy,
+                         CombinedNormalization<
+                           OverallMeanNormalization,
+                           UserMeanNormalization,
+                           ItemMeanNormalization>>();
+}
+
+/**
+ * Ensure we can load and save the CF model using OverallMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(SerializationOverallMeanNormalizationTest)
+{
+  Serialization<NMFPolicy, OverallMeanNormalization>();
+}
+
+/**
+ * Ensure we can load and save the CF model using UserMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(SerializationUserMeanNormalizationTest)
+{
+  Serialization<NMFPolicy, UserMeanNormalization>();
+}
+
+/**
+ * Ensure we can load and save the CF model using ItemMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(SerializationItemMeanNormalizationTest)
+{
+  Serialization<NMFPolicy, ItemMeanNormalization>();
+}
+
+/**
+ * Ensure we can load and save the CF model using ZScoreMeanNormalization.
+ */
+BOOST_AUTO_TEST_CASE(SerializationZScoreNormalizationTest)
+{
+  Serialization<NMFPolicy, ZScoreNormalization>();
+}
+
+/**
+ * Ensure we can load and save the CF model using CombinedNormalization.
+ */
+BOOST_AUTO_TEST_CASE(SerializationCombinedNormalizationTest)
+{
+  Serialization<NMFPolicy,
+                CombinedNormalization<
+                    OverallMeanNormalization,
+                    UserMeanNormalization,
+                    ItemMeanNormalization>>();
 }
 
 BOOST_AUTO_TEST_SUITE_END();
