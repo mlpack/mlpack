@@ -80,11 +80,6 @@ class Dropout
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g);
 
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter;  }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -119,9 +114,6 @@ class Dropout
  private:
   //! Locally-stored delta object.
   OutputDataType delta;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
