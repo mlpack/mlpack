@@ -120,22 +120,22 @@ class AdaMaxUpdate
   double& Beta2() { return beta2; }
 
  private:
-  // The epsilon value used to initialise the squared gradient parameter.
+  //! The epsilon value used to initialise the squared gradient parameter.
   double epsilon;
 
-  // The smoothing parameter.
+  //! The smoothing parameter.
   double beta1;
 
-  // The second moment coefficient.
+  //! The second moment coefficient.
   double beta2;
 
-  // The exponential moving average of gradient values.
+  //! The exponential moving average of gradient values.
   arma::mat m;
 
-  // The exponentially weighted infinity norm.
+  //! The exponentially weighted infinity norm.
   arma::mat u;
 
-  // The number of iterations.
+  //! The number of iterations.
   double iteration;
 };
 

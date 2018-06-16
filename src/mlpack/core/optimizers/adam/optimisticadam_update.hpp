@@ -2,7 +2,7 @@
  * @file optimisticadam_update.hpp
  * @author Moksh Jain
  *
- * OptmisticAdam optimizer. Implements Optimistic Adam, an algorithm which 
+ * OptmisticAdam optimizer. Implements Optimistic Adam, an algorithm which
  * uses Optimistic Mirror Descent with the Adam optimizer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -19,20 +19,21 @@ namespace mlpack {
 namespace optimization {
 
 /**
- * OptimisticAdam is an optimizer which implements the Optimistic Adam 
+ * OptimisticAdam is an optimizer which implements the Optimistic Adam
  * algorithm which uses Optmistic Mirror Descent with the Adam Optimizer.
  * It addresses the problem of limit cycling while training GANs. It uses
- * OMD to achieve faster regret rates in solving the zero sum game of 
- * training a GAN. It consistently achieves a smaller KL divergnce with 
+ * OMD to achieve faster regret rates in solving the zero sum game of
+ * training a GAN. It consistently achieves a smaller KL divergnce with
  * respect to the true underlying data distribution.
  *
  * For more information, see the following.
  *
  * @code
- * @article{
- *   author  = {Constantinos Daskalakis, Andrew Ilyas, Vasilis Syrgkanis, 
+ * @article{Daskalakis2017,
+ *   author  = {Constantinos Daskalakis, Andrew Ilyas, Vasilis Syrgkanis,
  *              Haoyang Zeng},
  *   title   = {Training GANs with Optimism},
+ *   journal = {CoRR},
  *   year    = {2017},
  *   url     = {https://arxiv.org/abs/1711.00141}
  * }
@@ -121,24 +122,24 @@ class OptimisticAdamUpdate
   double& Beta2() { return beta2; }
 
  private:
-  // The epsilon value used to initialize the squared gradient parameter.
+  //! The epsilon value used to initialize the squared gradient parameter.
   double epsilon;
 
-  // The smoothing parameter.
+  //! The smoothing parameter.
   double beta1;
 
-  // The second moment coefficient.
+  //! The second moment coefficient.
   double beta2;
 
-  // The exponential moving average of gradient values.
+  //! The exponential moving average of gradient values.
   arma::mat m;
 
-  // The exponential moving average of squared gradient values.
+  //! The exponential moving average of squared gradient values.
   arma::mat v;
-  // The previous update.
+  //! The previous update.
   arma::mat g;
 
-  // The number of iterations.
+  //! The number of iterations.
   double iteration;
 };
 

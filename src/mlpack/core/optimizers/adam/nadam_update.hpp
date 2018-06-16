@@ -142,28 +142,28 @@ class NadamUpdate
   double& ScheduleDecay() { return scheduleDecay; }
 
  private:
-  // The epsilon value used to initialise the squared gradient parameter.
+  //! The epsilon value used to initialise the squared gradient parameter.
   double epsilon;
 
-  // The smoothing parameter.
+  //! The smoothing parameter.
   double beta1;
 
-  // The second moment coefficient.
+  //! The second moment coefficient.
   double beta2;
 
-  // The exponential moving average of gradient values.
+  //! The exponential moving average of gradient values.
   arma::mat m;
 
-  // The exponential moving average of squared gradient values.
+  //! The exponential moving average of squared gradient values.
   arma::mat v;
 
-  // The decay parameter for decay coefficients
+  //! The decay parameter for decay coefficients
   double scheduleDecay;
 
-  // The number of iterations.
+  //! The number of iterations.
   double iteration;
 
-  // The cumulative product of decay coefficients
+  //! The cumulative product of decay coefficients
   double cumBeta1;
 };
 

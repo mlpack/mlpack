@@ -2,7 +2,7 @@
  * @file amsgrad_update.hpp
  * @author Haritha Nair
  *
- * Implementation of AMSGrad optimizer. AMSGrad is an exponential moving average 
+ * Implementation of AMSGrad optimizer. AMSGrad is an exponential moving average
  * optimizer that dynamically adapts over time with guaranteed convergence.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -27,10 +27,12 @@ namespace optimization {
  * For more information, see the following.
  *
  * @code
- * @article{
- *   title   = {On the convergence of Adam and beyond},
- *   url     = {https://openreview.net/pdf?id=ryQu7f-RZ}
- *   year    = {2018}
+ * @inproceedings{Reddi2018,
+ *   author    = {Sashank J. Reddi and Satyen Kale and Sanjiv Kumar},
+ *   title     = {On the convergence of Adam and beyond},
+ *   booktitle = {International Conference on Learning Representations},
+ *   url       = {https://openreview.net/forum?id=ryQu7f-RZ},
+ *   year      = {2018}
  * }
  * @endcode
  */
@@ -117,25 +119,25 @@ class AMSGradUpdate
   double& Beta2() { return beta2; }
 
  private:
-  // The epsilon value used to initialise the squared gradient parameter.
+  //! The epsilon value used to initialise the squared gradient parameter.
   double epsilon;
 
-  // The smoothing parameter.
+  //! The smoothing parameter.
   double beta1;
 
-  // The second moment coefficient.
+  //! The second moment coefficient.
   double beta2;
 
-  // The exponential moving average of gradient values.
+  //! The exponential moving average of gradient values.
   arma::mat m;
 
-  // The exponential moving average of squared gradient values.
+  //! The exponential moving average of squared gradient values.
   arma::mat v;
 
-  // The optimal sqaured gradient value.
+  //! The optimal sqaured gradient value.
   arma::mat vImproved;
 
-  // The number of iterations.
+  //! The number of iterations.
   double iteration;
 };
 
