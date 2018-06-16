@@ -1803,17 +1803,25 @@ BOOST_AUTO_TEST_CASE(GradientLayerNormTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleSubviewLayerTest)
 {
-  arma::mat output, input, delta;
-  Subview<> module(10, 19);
+  arma::mat output, input, delta, outputMat;
+  Subview<> moduleRow(10, 19);
 
-  // Test the Forward function.
+  // Test the Forward function for a vector.
   input = arma::ones(20, 1);
-  module.Forward(std::move(input), std::move(output));
+  moduleRow.Forward(std::move(input), std::move(output));
   BOOST_REQUIRE_EQUAL(output.n_rows, 10);
 
+  Subview<> moduleMat(3, 6, 3, 6);
+
+  // Test the Forward function for a matrix.
+  input = arma::ones(20, 10);
+  moduleMat.Forward(std::move(input), std::move(outputMat));
+  BOOST_REQUIRE_EQUAL(outputMat.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(outputMat.n_cols, 4);
+
   // Test the Backward function.
-  module.Backward(std::move(input), std::move(input), std::move(delta));
-  BOOST_REQUIRE_EQUAL(accu(delta), 20);
+  moduleMat.Backward(std::move(input), std::move(input), std::move(delta));
+  BOOST_REQUIRE_EQUAL(accu(delta), 200);
   BOOST_REQUIRE_EQUAL(delta.n_rows, 20);
 }
 

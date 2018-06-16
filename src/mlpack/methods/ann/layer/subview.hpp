@@ -41,7 +41,11 @@ class Subview
    * @param begin Start index.
    * @param end End index.
    */
-  Subview(const size_t begin = 0, const size_t end = 0) : begin(begin), end(end)
+  Subview(const size_t beginRow = 0,
+          const size_t endRow = 0,
+          const size_t beginCol = 0,
+          const size_t endCol = 0) :
+      beginRow(beginRow), endRow(endRow), beginCol(beginCol), endCol(endCol)
   {
     /* Nothing to do here */
   }
@@ -57,9 +61,11 @@ class Subview
   void Forward(InputType&& input, OutputType&& output)
   {
     // Check if input has been selected as required.
-    if ((input.n_rows != (end - begin + 1)) && (end != 0))
+    if (((input.n_rows != (endRow - beginRow + 1)) ||
+        (input.n_cols != (endCol - beginCol +1))) 
+        && !(endRow == 0 && endCol == 0))
     {
-      output = arma::mat(&input(begin), end - begin + 1, input.n_cols, false);
+      output = input.submat(beginRow, beginCol, endRow, endCol);
     }
     else
     {
@@ -105,16 +111,24 @@ class Subview
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(begin);
-    ar & BOOST_SERIALIZATION_NVP(end);
+    ar & BOOST_SERIALIZATION_NVP(beginRow);
+    ar & BOOST_SERIALIZATION_NVP(endRow);
+    ar & BOOST_SERIALIZATION_NVP(beginCol);
+    ar & BOOST_SERIALIZATION_NVP(endCol);
   }
 
  private:
-  //! Locally-stored number of input units.
-  size_t begin;
+  //! Starting row index of subview vector or matrix.
+  size_t beginRow;
 
-  //! Locally-stored number of output units.
-  size_t end;
+  //! Ending row index of subview vector or matrix.
+  size_t endRow;
+
+  //! Starting column index of subview vector or matrix.
+  size_t beginCol;
+
+  //! Ending column index of subview vector or matrix.
+  size_t endCol;
 
   //! Locally-stored delta object.
   OutputDataType delta;
