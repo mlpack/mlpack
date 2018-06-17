@@ -190,7 +190,7 @@ void CFType<NormalizationType>::GetRecommendations(
 
   // Calculate the neighborhood of the queried users.  Note that the query user
   // is part of the neighborhood---this is intentional.  We want to use the
-  // weighted sum of both the query user and the local neighborhood of the 
+  // weighted sum of both the query user and the local neighborhood of the
   // query user.
   // Calculate the neighborhood of the queried users.
   NeighborSearchPolicy neighborSearch(stretchedH);

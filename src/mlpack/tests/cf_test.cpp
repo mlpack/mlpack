@@ -186,7 +186,7 @@ void RecommendationAccuracy()
 
   // Save the columns we've removed.
   arma::mat savedCols;
-  
+
   GetDatasets(dataset, savedCols);
 
   CFType<NormalizationType> c(dataset, decomposition, 5, 5, 70);
@@ -246,12 +246,12 @@ void CFPredict(const double rmseBound = 2.0)
 {
   DecompositionPolicy decomposition;
 
-   // Small GroupLens dataset.
+  // Small GroupLens dataset.
   arma::mat dataset;
 
   // Save the columns we've removed.
   arma::mat savedCols;
-  
+
   GetDatasets(dataset, savedCols);
 
   CFType<NormalizationType> c(dataset, decomposition, 5, 5, 70);
@@ -282,7 +282,7 @@ void BatchPredict()
 {
   DecompositionPolicy decomposition;
 
-   // Small GroupLens dataset.
+  // Small GroupLens dataset.
   arma::mat dataset;
 
   // Save the columns we've removed.
@@ -326,7 +326,7 @@ void Train(DecompositionPolicy& decomposition)
 
   // Save the columns we've removed.
   arma::mat savedCols;
-  
+
   GetDatasets(dataset, savedCols);
 
   // Make data into sparse matrix.
@@ -371,7 +371,7 @@ void Train<>(RegSVDPolicy& decomposition)
 
   // Save the columns we've removed.
   arma::mat savedCols;
-  
+
   GetDatasets(dataset, savedCols);
 
   // Now retrain.
