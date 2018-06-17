@@ -22,7 +22,7 @@ namespace cf {
  * rating r_iu by it's neighbors' ratings can be regarded as solving linear
  * regression of r_iu on r_iv, where v are u's neighbors.
  *
- * For more information, see the folloing paper.
+ * For more information, see the following paper.
  *
  * @code
  * @inproceedings{bell2007improved,

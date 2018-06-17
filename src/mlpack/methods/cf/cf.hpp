@@ -24,6 +24,7 @@
 #include <mlpack/methods/cf/normalization/no_normalization.hpp>
 #include <mlpack/methods/cf/decomposition_policies/nmf_method.hpp>
 #include <mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp>
+#include <mlpack/methods/cf/interpolation_policies/average_interpolation.hpp>
 #include <set>
 #include <map>
 #include <iostream>
@@ -189,19 +190,33 @@ class CFType
   /**
    * Generates the given number of recommendations for all users.
    *
+   * @tparam NeighborSearchPolicy The policy used to search neighbors of
+   *     query set in referece set.
+   * @tparam InterpolationPolicy The policy used to calculate interpolation
+   *     weights.
+   *
    * @param numRecs Number of Recommendations.
    * @param recommendations Matrix to save recommendations into.
    */
+  template<typename NeighborSearchPolicy = EuclideanSearch,
+           typename InterpolationPolicy = AverageInterpolation>
   void GetRecommendations(const size_t numRecs,
                           arma::Mat<size_t>& recommendations);
 
   /**
    * Generates the given number of recommendations for the specified users.
    *
+   * @tparam NeighborSearchPolicy The policy used to search neighbors of
+   *     query set in referece set.
+   * @tparam InterpolationPolicy The policy used to calculate interpolation
+   *     weights.
+   *
    * @param numRecs Number of Recommendations.
    * @param recommendations Matrix to save recommendations.
    * @param users Users for which recommendations are to be generated.
    */
+  template<typename NeighborSearchPolicy = EuclideanSearch,
+           typename InterpolationPolicy = AverageInterpolation>
   void GetRecommendations(const size_t numRecs,
                           arma::Mat<size_t>& recommendations,
                           const arma::Col<size_t>& users);
@@ -212,9 +227,16 @@ class CFType
   /**
    * Predict the rating of an item by a particular user.
    *
+   * @tparam NeighborSearchPolicy The policy used to search neighbors of
+   *     query set in referece set.
+   * @tparam InterpolationPolicy The policy used to calculate interpolation
+   *     weights.
+   *
    * @param user User to predict for.
    * @param item Item to predict for.
    */
+  template<typename NeighborSearchPolicy = EuclideanSearch,
+           typename InterpolationPolicy = AverageInterpolation>
   double Predict(const size_t user, const size_t item) const;
 
   /**
@@ -226,9 +248,16 @@ class CFType
    * have length equal to combinations.n_cols, and predictions[i] will be equal
    * to the prediction for the user/item combination in combinations.col(i).
    *
+   * @tparam NeighborSearchPolicy The policy used to search neighbors of
+   *     query set in referece set.
+   * @tparam InterpolationPolicy The policy used to calculate interpolation
+   *     weights.
+   *
    * @param combinations User/item combinations to predict.
    * @param predictions Predicted ratings for each user/item combination.
    */
+  template<typename NeighborSearchPolicy = EuclideanSearch,
+           typename InterpolationPolicy = AverageInterpolation>
   void Predict(const arma::Mat<size_t>& combinations,
                arma::vec& predictions) const;
 

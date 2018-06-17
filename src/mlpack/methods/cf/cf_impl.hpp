@@ -141,6 +141,7 @@ void CFType<NormalizationType>::Train(const arma::sp_mat& data,
 }
 
 template<typename NormalizationType>
+template<typename NeighborSearchPolicy, typename InterpolationPolicy>
 void CFType<NormalizationType>::GetRecommendations(
     const size_t numRecs,
     arma::Mat<size_t>& recommendations)
@@ -153,10 +154,12 @@ void CFType<NormalizationType>::GetRecommendations(
       cleanedData.n_cols - 1, cleanedData.n_cols);
 
   // Call the main overload for recommendations.
-  GetRecommendations(numRecs, recommendations, users);
+  GetRecommendations<NeighborSearchPolicy,
+                     InterpolationPolicy>(numRecs, recommendations, users);
 }
 
 template<typename NormalizationType>
+template<typename NeighborSearchPolicy, typename InterpolationPolicy>
 void CFType<NormalizationType>::GetRecommendations(
     const size_t numRecs,
     arma::Mat<size_t>& recommendations,
@@ -186,30 +189,41 @@ void CFType<NormalizationType>::GetRecommendations(
   arma::Mat<size_t> neighborhood;
 
   // Calculate the neighborhood of the queried users.  Note that the query user
-  // is part of the neighborhood---this is intentional.  We want to use an
-  // average of both the query user and the local neighborhood of the query
-  // user.
-  // The neighbor search technique should be a template parameter.
-  neighbor::KNN a(stretchedH);
-  arma::mat resultingDistances; // Temporary storage.
-  a.Search(query, numUsersForSimilarity, neighborhood, resultingDistances);
+  // is part of the neighborhood---this is intentional.  We want to use the
+  // weighted sum of both the query user and the local neighborhood of the 
+  // query user.
+  // Calculate the neighborhood of the queried users.
+  NeighborSearchPolicy neighborSearch(stretchedH);
+  arma::mat similarities; // Resulting similarities.
+
+  neighborSearch.Search(
+      query, numUsersForSimilarity, neighborhood, similarities);
 
   // Generate recommendations for each query user by finding the maximum numRecs
-  // elements in the averages matrix.
+  // elements in the ratings vector.
   recommendations.set_size(numRecs, users.n_elem);
   arma::mat values(numRecs, users.n_elem);
   recommendations.fill(SIZE_MAX);
   values.fill(DBL_MAX);
 
+  // Initialization of an InterpolationPolicy object should be put ahead of the
+  // following loop, because the initialization may takes a relatively long
+  // time and we don't want to repeat the initialization process in each loop.
+  InterpolationPolicy interpolation(cleanedData);
+
   for (size_t i = 0; i < users.n_elem; i++)
   {
-    // First, calculate average of neighborhood values.
-    arma::vec averages;
-    averages.zeros(cleanedData.n_rows);
+    // First, calculate the weighted sum of neighborhood values.
+    arma::vec ratings;
+    ratings.zeros(cleanedData.n_rows);
+
+    // Calculate interpolation weights.
+    arma::vec weights;
+    interpolation.GetWeights(weights, w, h, users(i),
+        neighborhood.col(i), similarities.col(i), cleanedData);
 
     for (size_t j = 0; j < neighborhood.n_rows; ++j)
-      averages += w * h.col(neighborhood(j, i));
-    averages /= neighborhood.n_rows;
+      ratings += weights(j) * (w * h.col(neighborhood(j, i)));
 
     // Let's build the list of candidate recomendations for the given user.
     // Default candidate: the smallest possible value and invalid item number.
@@ -219,8 +233,8 @@ void CFType<NormalizationType>::GetRecommendations(
         CandidateList;
     CandidateList pqueue(CandidateCmp(), std::move(vect));
 
-    // Look through the averages column corresponding to the current user.
-    for (size_t j = 0; j < averages.n_rows; ++j)
+    // Look through the ratings column corresponding to the current user.
+    for (size_t j = 0; j < ratings.n_rows; ++j)
     {
       // Ensure that the user hasn't already rated the item.
       // The algorithm omits rating of zero. Thus, when normalizing original
@@ -231,7 +245,7 @@ void CFType<NormalizationType>::GetRecommendations(
 
       // Is the estimated value better than the worst candidate?
       // Denormalize rating before comparison.
-      double realRating = normalization.Denormalize(users(i), j, averages[j]);
+      double realRating = normalization.Denormalize(users(i), j, ratings[j]);
       if (realRating > pqueue.top().first)
       {
         Candidate c = std::make_pair(realRating, j);
@@ -258,6 +272,7 @@ void CFType<NormalizationType>::GetRecommendations(
 
 // Predict the rating for a single user/item combination.
 template<typename NormalizationType>
+template<typename NeighborSearchPolicy, typename InterpolationPolicy>
 double CFType<NormalizationType>::Predict(const size_t user,
                                           const size_t item) const
 {
@@ -284,17 +299,26 @@ double CFType<NormalizationType>::Predict(const size_t user,
   arma::Mat<size_t> neighborhood;
 
   // Calculate the neighborhood of the queried users.
-  // This should be a templatized option.
-  neighbor::KNN a(stretchedH, neighbor::SINGLE_TREE_MODE);
-  arma::mat resultingDistances; // Temporary storage.
+  NeighborSearchPolicy neighborSearch(stretchedH);
+  arma::mat similarities; // Resulting similarities.
 
-  a.Search(query, numUsersForSimilarity, neighborhood, resultingDistances);
+  neighborSearch.Search(
+      query, numUsersForSimilarity, neighborhood, similarities);
 
-  double rating = 0; // We'll take the average of neighborhood values.
+  arma::vec weights;
+
+  // Calculate interpolation weights.
+  InterpolationPolicy interpolation(cleanedData);
+  interpolation.GetWeights(weights, w, h, user,
+      neighborhood.col(0), similarities, cleanedData);
+
+  double rating = 0; // We'll take the weighted sum of neighborhood values.
 
   for (size_t j = 0; j < neighborhood.n_rows; ++j)
-    rating += arma::as_scalar(w.row(item) * h.col(neighborhood(j, 0)));
-  rating /= neighborhood.n_rows;
+  {
+    rating += weights(j) *
+        arma::as_scalar(w.row(item) * h.col(neighborhood(j, 0)));
+  }
 
   // Denormalize rating and return.
   double realRating = normalization.Denormalize(user, item, rating);
@@ -303,6 +327,7 @@ double CFType<NormalizationType>::Predict(const size_t user,
 
 // Predict the rating for a group of user/item combinations.
 template<typename NormalizationType>
+template<typename NeighborSearchPolicy, typename InterpolationPolicy>
 void CFType<NormalizationType>::Predict(const arma::Mat<size_t>& combinations,
                                         arma::vec& predictions) const
 {
@@ -326,12 +351,27 @@ void CFType<NormalizationType>::Predict(const arma::Mat<size_t>& combinations,
   for (size_t i = 0; i < queries.n_cols; ++i)
     queries.col(i) = stretchedH.col(users[i]);
 
-  // Now calculate the neighborhood of these users.
-  neighbor::KNN a(stretchedH);
-  arma::mat distances;
+  // Temporary storage for neighborhood of the queried users.
   arma::Mat<size_t> neighborhood;
 
-  a.Search(queries, numUsersForSimilarity, neighborhood, distances);
+  // Now calculate the neighborhood of these users.
+  NeighborSearchPolicy neighborSearch(stretchedH);
+  arma::mat similarities; // Resulting similarities.
+
+  neighborSearch.Search(
+      queries, numUsersForSimilarity, neighborhood, similarities);
+
+  arma::mat weights(numUsersForSimilarity, users.n_elem);
+
+  // Calculate interpolation weights.
+  InterpolationPolicy interpolation(cleanedData);
+  for (size_t i = 0; i < users.n_elem; i++)
+  {
+    arma::vec weightVec;
+    interpolation.GetWeights(weightVec, w, h, users[i],
+        neighborhood.col(i), similarities.col(i), cleanedData);
+    weights.col(i) = weightVec;
+  }
 
   // Now that we have the neighborhoods we need, calculate the predictions.
   predictions.set_size(combinations.n_cols);
@@ -348,9 +388,10 @@ void CFType<NormalizationType>::Predict(const arma::Mat<size_t>& combinations,
       ++user;
 
     for (size_t j = 0; j < neighborhood.n_rows; ++j)
-      rating += arma::as_scalar(w.row(sortedCombinations(1, i)) *
-          h.col(neighborhood(j, user)));
-    rating /= neighborhood.n_rows;
+    {
+      rating += weights(j, user) * arma::as_scalar(
+          w.row(sortedCombinations(1, i)) * h.col(neighborhood(j, user)));
+    }
 
     predictions(ordering[i]) = rating;
   }
