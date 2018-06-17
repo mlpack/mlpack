@@ -28,7 +28,7 @@ to build mlpack on Windows, see <a
 href="https://keon.io/mlpack-on-windows/">Keon's excellent tutorial</a>.
 
 You can download the latest mlpack release from here:
-<a href="http://www.mlpack.org/files/mlpack-3.0.1.tar.gz">mlpack-3.0.1</a>
+<a href="http://www.mlpack.org/files/mlpack-3.0.2.tar.gz">mlpack-3.0.2</a>
 
 @section build_simple Simple Linux build instructions
 
@@ -36,9 +36,9 @@ Assuming all dependencies are installed in the system, you can run the commands
 below directly to build and install mlpack.
 
 @code
-$ wget http://www.mlpack.org/files/mlpack-3.0.1.tar.gz
-$ tar -xvzpf mlpack-3.0.1.tar.gz
-$ mkdir mlpack-3.0.1/build && cd mlpack-3.0.1/build
+$ wget http://www.mlpack.org/files/mlpack-3.0.2.tar.gz
+$ tar -xvzpf mlpack-3.0.2.tar.gz
+$ mkdir mlpack-3.0.2/build && cd mlpack-3.0.2/build
 $ cmake ../
 $ make -j4  # The -j is the number of cores you want to use for a build.
 $ sudo make install
@@ -63,8 +63,8 @@ configure mlpack.
 First we should unpack the mlpack source and create a build directory.
 
 @code
-$ tar -xvzpf mlpack-3.0.1.tar.gz
-$ cd mlpack-3.0.1
+$ tar -xvzpf mlpack-3.0.2.tar.gz
+$ cd mlpack-3.0.2
 $ mkdir build
 @endcode
 

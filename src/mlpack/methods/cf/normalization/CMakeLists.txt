@@ -1,21 +1,13 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  ffn.hpp
-  ffn_impl.hpp
-  gan_impl.hpp
-  gan.hpp
-  rnn.hpp
-  rnn_impl.hpp
+  no_normalization.hpp
+  overall_mean_normalization.hpp
+  user_mean_normalization.hpp
+  item_mean_normalization.hpp
+  z_score_normalization.hpp
+  combined_normalization.hpp
 )
-
-add_subdirectory(visitor)
-add_subdirectory(activation_functions)
-add_subdirectory(init_rules)
-add_subdirectory(layer)
-add_subdirectory(loss_functions)
-add_subdirectory(convolution_rules)
-add_subdirectory(augmented)
 
 # Add directory name to sources.
 set(DIR_SRCS)

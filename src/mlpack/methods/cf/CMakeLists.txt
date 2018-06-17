@@ -3,7 +3,6 @@
 set(SOURCES
   cf.hpp
   cf_impl.hpp
-  cf.cpp
   svd_wrapper.hpp
   svd_wrapper_impl.hpp
 )
@@ -11,6 +10,7 @@ set(SOURCES
 add_subdirectory(decomposition_policies)
 add_subdirectory(interpolation_policies)
 add_subdirectory(neighbor_search_policies)
+add_subdirectory(normalization)
 
 # Add directory name to sources.
 set(DIR_SRCS)

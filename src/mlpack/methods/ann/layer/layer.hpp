@@ -30,6 +30,7 @@
 #include "recurrent.hpp"
 #include "recurrent_attention.hpp"
 #include "sequential.hpp"
+#include "subview.hpp"
 #include "concat.hpp"
 #include "vr_class_reward.hpp"
 #include "transposed_convolution.hpp"
