@@ -38,8 +38,10 @@ class Subview
    * Create the Subview layer object using the specified range of input to
    * accept.
    *
-   * @param begin Start index.
-   * @param end End index.
+   * @param beginRow Starting row index.
+   * @param endRow Ending row index.
+   * @param beginCol Starting column index.
+   * @param endCol Ending column index.
    */
   Subview(const size_t beginRow = 0,
           const size_t endRow = 0,
@@ -66,10 +68,14 @@ class Subview
         && !(endRow == 0 && endCol == 0))
     {
       if (beginCol != 0)
+      {
         output = input.submat(beginRow, beginCol, endRow, endCol);
+      }
       else
+      {
         output = arma::mat(
             &input(beginRow), endRow - beginRow + 1, endCol + 1, false);
+      }
     }
     else
     {
