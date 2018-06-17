@@ -62,7 +62,7 @@ class Subview
   {
     // Check if input has been selected as required.
     if (((input.n_rows != (endRow - beginRow + 1)) ||
-        (input.n_cols != (endCol - beginCol +1))) 
+        (input.n_cols != (endCol - beginCol +1)))
         && !(endRow == 0 && endCol == 0))
     {
       if (beginCol != 0)
