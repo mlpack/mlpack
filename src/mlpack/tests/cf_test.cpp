@@ -1059,4 +1059,70 @@ BOOST_AUTO_TEST_CASE(SerializationCombinedNormalizationTest)
                     ItemMeanNormalization>>();
 }
 
+/**
+ * Make sure that Predict() is returning reasonable results for
+ * EuclideanSearch.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictEuclideanSearch)
+{
+  CFPredict<NMFPolicy, OverallMeanNormalization, EuclideanSearch>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for
+ * CosineSearch.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictCosineSearch)
+{
+  CFPredict<NMFPolicy, OverallMeanNormalization, CosineSearch>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for
+ * PearsonSearch.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictPearsonSearch)
+{
+  CFPredict<NMFPolicy, OverallMeanNormalization, PearsonSearch>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for
+ * AverageInterpolation.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictAverageInterpolation)
+{
+  CFPredict<NMFPolicy,
+            OverallMeanNormalization,
+            EuclideanSearch,
+            AverageInterpolation>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for
+ * SimilarityInterpolation.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictSimilarityInterpolation)
+{
+  CFPredict<NMFPolicy,
+            OverallMeanNormalization,
+            EuclideanSearch,
+            SimilarityInterpolation>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for
+ * RegressionInterpolation.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictRegressionInterpolation)
+{
+  // The small Grouplens dataset we use is very sparse.
+  // RegressionInterpolation doesn't generalize well when the data
+  // is very sparse. Thus we set a very high rmse bound here.
+  CFPredict<NMFPolicy,
+            OverallMeanNormalization,
+            EuclideanSearch,
+            RegressionInterpolation>(12);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
