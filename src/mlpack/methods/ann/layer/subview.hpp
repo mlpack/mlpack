@@ -62,10 +62,14 @@ class Subview
   {
     // Check if input has been selected as required.
     if (((input.n_rows != (endRow - beginRow + 1)) ||
-        (input.n_cols != (endCol - beginCol +1)))
+        (input.n_cols != (endCol - beginCol +1))) 
         && !(endRow == 0 && endCol == 0))
     {
-      output = input.submat(beginRow, beginCol, endRow, endCol);
+      if (beginCol != 0)
+        output = input.submat(beginRow, beginCol, endRow, endCol);
+      else
+        output = arma::mat(
+            &input(beginRow), endRow - beginRow + 1, endCol + 1, false);
     }
     else
     {
