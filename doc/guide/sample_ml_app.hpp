@@ -12,7 +12,7 @@ adapt it to a different platform by following the provided source code.
 @section sample_create_project Creating the VS project
 
 - Open Visual Studio and create a new project (Windows Console Application)
-- For this sample, the project is named “mymlpackapp” and is located at "C:\myprojects\"
+- For this sample, the project is named “sample-ml-app”
 
 @section sample_project_config Project Configuration
 
@@ -22,16 +22,22 @@ mlpack and dependencies in Release Mode).
 
 - Right click on the project and select Properties, select the x64 Debug profile
 - Under C/C++ > General > Additional Include Directories add:
- - "C:\boost\boost_1_66_0"
- - "C:\mlpack\armadillo-8.500.1\include"
- - "C:\mlpack\mlpack-3.0.2\build\include"
+@code
+ - C:\boost\boost_1_66_0
+ - C:\mlpack\armadillo-8.500.1\include
+ - C:\mlpack\mlpack-3.0.2\build\include
+@endcode
 - Under Linker > Input > Additional Dependencies add:
- - "C:\mlpack\mlpack-3.0.2\build\Debug\mlpack.lib"
- - "C:\boost\boost_1_66_0\lib64-msvc-14.1\libboost_serialization-vc141-mt-gd-x64-1_66.lib"
- - "C:\boost\boost_1_66_0\lib64-msvc-14.1\libboost_program_options-vc141-mt-gd-x64-1_66.lib"
+@code
+ - C:\mlpack\mlpack-3.0.2\build\Debug\mlpack.lib
+ - C:\boost\boost_1_66_0\lib64-msvc-14.1\libboost_serialization-vc141-mt-gd-x64-1_66.lib
+ - C:\boost\boost_1_66_0\lib64-msvc-14.1\libboost_program_options-vc141-mt-gd-x64-1_66.lib
+@endcode
 - Under Build Events > Post-Build Event > Command Line add:
+@code
  - xcopy /y "C:\mlpack\mlpack-3.0.2\build\Debug\mlpack.dll" $(OutDir)
  - xcopy /y "C:\mlpack\mlpack-3.0.2\packages\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll" $(OutDir)
+@endcode
 
 @note Recent versions of Visual Studio set "Conformance Mode" enabled by default. This causes some issues with
 the armadillo library. If you encounter this issue, disable "Conformance Mode" under C/C++ > Language.
@@ -75,8 +81,8 @@ using namespace mlpack::cv;
 
 @section sample_load_dataset Loading the dataset
 
-First step is about loading the dataset. Here we load a CSV dataset, assuming the labels
-don't require normalization.
+First step is about loading the dataset. Here we load a CSV dataset 
+(i.e.: mlpack/tests/data/german.csv), assuming the labels don't require normalization.
 
 @code
 bool loaded = mlpack::data::Load("data/german.csv", dataset);
@@ -181,7 +187,8 @@ printf("\nClassification result: %i (Probabilities: %f/%f)", result,
 @section sample_app_conclussion Final thoughts
 
 Building real-life applications and services using machine learning can be challenging. Hopefully, this
-tutorial provides a good starting point that covers the entire workflow you may need to follow while
-developing it. You can take a look at the entire source code in the provided sample project.
+tutorial provides a good starting point that covers the basic workflow you may need to follow while
+developing it. You can take a look at the entire source code in the provided sample project located here:
+"doc\examples\sample-ml-app".
 
 */
