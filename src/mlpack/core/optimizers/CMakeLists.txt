@@ -3,8 +3,8 @@ set(DIRS
   ada_grad
   adam
   aug_lagrangian
-  cmaes
   bigbatch_sgd
+  cmaes
   cne
   fw
   gradient_descent
@@ -24,8 +24,9 @@ set(DIRS
   sgd
   sgdr
   smorms3
-  svrg
   spalera_sgd
+  svrg
+  swats
 )
 
 foreach(dir ${DIRS})
