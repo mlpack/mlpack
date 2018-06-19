@@ -114,9 +114,7 @@
     <PostBuildEvent>
       <Command>xcopy /y "C:\mlpack\mlpack-3.0.2\build\Debug\mlpack.dll" $(OutDir)
 xcopy /y "C:\mlpack\mlpack-3.0.2\packages\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll" $(OutDir)
-xcopy /y "$(ProjectDir)..\..\..\..\src\mlpack\tests\data\german.csv" "$(ProjectDir)data\german.csv"
-
-</Command>
+xcopy /y "$(ProjectDir)..\..\..\..\src\mlpack\tests\data\german.csv" "$(ProjectDir)data\german.csv*"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
