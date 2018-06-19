@@ -16,13 +16,18 @@
 // In case it hasn't yet been included.
 #include "multiply_merge.hpp"
 
+#include "../visitor/forward_visitor.hpp"
+#include "../visitor/backward_visitor.hpp"
+#include "../visitor/gradient_visitor.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::MultiplyMerge(
-    const bool model) : model(model), ownsLayer(!model)
+    const bool model, const bool run) :
+    model(model), run(run), ownsLayer(!model)
 {
   // Nothing to do here.
 }
@@ -42,10 +47,19 @@ template <typename InputDataType, typename OutputDataType,
           typename... CustomLayers>
 template<typename InputType, typename OutputType>
 void MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::Forward(
-    const InputType&& /* input */, OutputType&& output)
+    InputType&& input, OutputType&& output)
 {
-  output = boost::apply_visitor(outputParameterVisitor, network.front());
+  if (run)
+  {
+    for (size_t i = 0; i < network.size(); ++i)
+    {
+      boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
+          boost::apply_visitor(outputParameterVisitor, network[i]))),
+          network[i]);
+    }
+  }
 
+  output = boost::apply_visitor(outputParameterVisitor, network.front());
   for (size_t i = 1; i < network.size(); ++i)
   {
     output %= boost::apply_visitor(outputParameterVisitor, network[i]);
@@ -58,7 +72,41 @@ template<typename eT>
 void MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  g = gy;
+  if (run)
+  {
+    for (size_t i = 0; i < network.size(); ++i)
+    {
+      boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
+          outputParameterVisitor, network[i])), std::move(gy), std::move(
+          boost::apply_visitor(deltaVisitor, network[i]))), network[i]);
+    }
+
+    g = boost::apply_visitor(deltaVisitor, network[0]);
+    for (size_t i = 1; i < network.size(); ++i)
+    {
+      g += boost::apply_visitor(deltaVisitor, network[i]);
+    }
+  }
+  else
+    g = gy;
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+template<typename eT>
+void MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::Gradient(
+    arma::Mat<eT>&& input,
+    arma::Mat<eT>&& error,
+    arma::Mat<eT>&& /* gradient */ )
+{
+  if (run)
+  {
+    for (size_t i = 0; i < network.size(); ++i)
+    {
+      boost::apply_visitor(GradientVisitor(std::move(input), std::move(error)),
+          network[i]);
+    }
+  }
 }
 
 template<typename InputDataType, typename OutputDataType,

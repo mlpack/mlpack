@@ -869,7 +869,7 @@ BOOST_AUTO_TEST_CASE(SimpleAddMergeLayerTest)
 
   for (size_t i = 0; i < 5; ++i)
   {
-    AddMerge<> module;
+    AddMerge<> module(false, false);
     const size_t numMergeModules = math::RandInt(2, 10);
     for (size_t m = 0; m < numMergeModules; ++m)
     {
@@ -877,7 +877,7 @@ BOOST_AUTO_TEST_CASE(SimpleAddMergeLayerTest)
       identityLayer.Forward(std::move(input),
           std::move(identityLayer.OutputParameter()));
 
-      module.Add(identityLayer);
+      module.Add<IdentityLayer<> >(identityLayer);
     }
 
     // Test the Forward function.
@@ -1617,7 +1617,7 @@ BOOST_AUTO_TEST_CASE(SimpleMultiplyMergeLayerTest)
 
   for (size_t i = 0; i < 5; ++i)
   {
-    MultiplyMerge<> module;
+    MultiplyMerge<> module(false, false);
     const size_t numMergeModules = math::RandInt(2, 10);
     for (size_t m = 0; m < numMergeModules; ++m)
     {
@@ -1625,7 +1625,7 @@ BOOST_AUTO_TEST_CASE(SimpleMultiplyMergeLayerTest)
       identityLayer.Forward(std::move(input),
           std::move(identityLayer.OutputParameter()));
 
-      module.Add(identityLayer);
+      module.Add<IdentityLayer<> >(identityLayer);
     }
 
     // Test the Forward function.
@@ -1796,6 +1796,70 @@ BOOST_AUTO_TEST_CASE(GradientLayerNormTest)
   } function;
 
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
+ * Test if the AddMerge layer is able to forward the
+ * Forward/Backward/Gradient calls.
+ */
+BOOST_AUTO_TEST_CASE(AddMergeRunTest)
+{
+  arma::mat output, input, delta, error;
+
+  AddMerge<> module(true, true);
+
+  Linear<>* linear = new Linear<>(10, 10);
+  module.Add(linear);
+
+  linear->Parameters().randu();
+  linear->Reset();
+
+  input = arma::zeros(10, 1);
+  module.Forward(std::move(input), std::move(output));
+
+  double parameterSum = arma::accu(linear->Parameters().submat(
+      100, 0, linear->Parameters().n_elem - 1, 0));
+
+  // Test the Backward function.
+  module.Backward(std::move(input), std::move(input), std::move(delta));
+
+  // Clean up before we break,
+  delete linear;
+
+  BOOST_REQUIRE_CLOSE(parameterSum, arma::accu(output), 1e-3);
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+}
+
+/**
+ * Test if the MultiplyMerge layer is able to forward the
+ * Forward/Backward/Gradient calls.
+ */
+BOOST_AUTO_TEST_CASE(MultiplyMergeRunTest)
+{
+  arma::mat output, input, delta, error;
+
+  MultiplyMerge<> module(true, true);
+
+  Linear<>* linear = new Linear<>(10, 10);
+  module.Add(linear);
+
+  linear->Parameters().randu();
+  linear->Reset();
+
+  input = arma::zeros(10, 1);
+  module.Forward(std::move(input), std::move(output));
+
+  double parameterSum = arma::accu(linear->Parameters().submat(
+      100, 0, linear->Parameters().n_elem - 1, 0));
+
+  // Test the Backward function.
+  module.Backward(std::move(input), std::move(input), std::move(delta));
+
+  // Clean up before we break,
+  delete linear;
+
+  BOOST_REQUIRE_CLOSE(parameterSum, arma::accu(output), 1e-3);
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
 }
 
 /**
