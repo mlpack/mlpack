@@ -81,10 +81,14 @@ using namespace mlpack::cv;
 
 @section sample_load_dataset Loading the dataset
 
-First step is about loading the dataset. Here we load a CSV dataset 
-(i.e.: mlpack/tests/data/german.csv), assuming the labels don't require normalization.
+First step is about loading the dataset. Different dataset file formats are supported, but here
+we load a CSV dataset, and we assume the labels don't require normalization.
+
+@note Make sure you update the path to your dataset file. For this sample, you can simply
+copy "mlpack/tests/data/german.csv" and paste into a new "data" folder in your project directory.
 
 @code
+mat dataset;
 bool loaded = mlpack::data::Load("data/german.csv", dataset);
 if (!loaded)
 	return -1;
@@ -123,7 +127,7 @@ Now that the training is completed, we quickly compute the training accuracy:
 Row<size_t> predictions;
 rf.Classify(dataset, predictions);
 const size_t correct = arma::accu(predictions == labels);
-printf("\nTraining Accuracy: %f", (double(correct) / double(labels.n_elem)));
+cout << "\nTraining Accuracy: " << (double(correct) / double(labels.n_elem));
 @endcode
 
 @section sample_crossvalidation Cross-Validating
@@ -136,20 +140,20 @@ const size_t k = 10;
 KFoldCV<RandomForest<GiniGain, RandomDimensionSelect>, Accuracy> cv(k, 
 	dataset, labels, numClasses);
 double cvAcc = cv.Evaluate(numTrees, minimumLeafSize);
-printf("\nKFoldCV Accuracy: %f", cvAcc);
+cout << "\nKFoldCV Accuracy: " << cvAcc;
 @endcode
 
 To compute other relevant metrics, such as Precision, Recall and F1:
 
 @code
 double cvPrecision = Precision<Binary>::Evaluate(rf, dataset, labels);
-printf("\nPrecision: %f", cvPrecision);
+cout << "\nPrecision: " << cvPrecision;
 
 double cvRecall = Recall<Binary>::Evaluate(rf, dataset, labels);
-printf("\nRecall: %f", cvRecall);
+cout << "\nRecall: " << cvRecall;
 
 double cvF1 = F1<Binary>::Evaluate(rf, dataset, labels);
-printf("\nF1: %f", cvF1);
+cout << "\nF1: " << cvF1;
 @endcode
 
 @section sample_save_model Saving the model
@@ -157,8 +161,7 @@ printf("\nF1: %f", cvF1);
 Now that our model is trained and validated, we save it to a file so we can use it later.
 
 @code
-mlpack::data::Save("mymodel.xml", "model", rf, false,
-		mlpack::data::format::xml);
+mlpack::data::Save("mymodel.xml", "model", rf, false);
 @endcode
 
 @section sample_load_model Loading the model
@@ -180,8 +183,8 @@ mat sample("2 12 2 13 1 2 2 1 3 24 3 1 1 1 1 1 0 1 0 1 0 0 0");
 mat probabilities;
 rf.Classify(sample, predictions, probabilities);
 u64 result = predictions.at(0);
-printf("\nClassification result: %i (Probabilities: %f/%f)", result,
-	probabilities.at(0), probabilities.at(1));
+cout << "\nClassification result: " << result << " , Probabilities: " <<
+		probabilities.at(0) << "/" << probabilities.at(1);
 @endcode
 
 @section sample_app_conclussion Final thoughts
@@ -189,6 +192,6 @@ printf("\nClassification result: %i (Probabilities: %f/%f)", result,
 Building real-life applications and services using machine learning can be challenging. Hopefully, this
 tutorial provides a good starting point that covers the basic workflow you may need to follow while
 developing it. You can take a look at the entire source code in the provided sample project located here:
-"doc\examples\sample-ml-app".
+"doc/examples/sample-ml-app".
 
 */
