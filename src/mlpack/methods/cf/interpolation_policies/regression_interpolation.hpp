@@ -103,10 +103,10 @@ class RegressionInterpolation
       arma::vec iPrediction;
       for (size_t j = i; j < neighborNum; j++)
       {
-        if (a(neighbors(i), a(neighbors(j))) != 0)
+        if (a(neighbors(i), neighbors(j)) != 0)
         {
           // The coefficient has already been cached.
-          coeff(i, j) = a(neighbors(i), a(neighbors(j)));
+          coeff(i, j) = a(neighbors(i), neighbors(j));
           coeff(j, i) = coeff(i, j);
         }
         else
