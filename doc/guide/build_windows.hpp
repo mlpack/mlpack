@@ -24,7 +24,7 @@ The directories and paths used in this tutorial are just for reference purposes.
 and make sure you can use it from the Command Prompt (may need to add to the PATH)
 
 - Download the latest mlpack release from here:
-<a href="http://www.mlpack.org/files/mlpack-3.0.2.tar.gz">mlpack-3.0.2</a>
+<a href="http://www.mlpack.org/download.html">mlpack</a>
 
 @section build_instructions Windows build instructions
 
