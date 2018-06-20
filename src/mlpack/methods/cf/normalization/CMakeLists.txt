@@ -1,14 +1,13 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  cf.hpp
-  cf_impl.hpp
-  svd_wrapper.hpp
-  svd_wrapper_impl.hpp
+  no_normalization.hpp
+  overall_mean_normalization.hpp
+  user_mean_normalization.hpp
+  item_mean_normalization.hpp
+  z_score_normalization.hpp
+  combined_normalization.hpp
 )
-
-add_subdirectory(normalization)
-add_subdirectory(decomposition_policies)
 
 # Add directory name to sources.
 set(DIR_SRCS)
@@ -18,6 +17,3 @@ endforeach()
 # Append sources (with directory name) to list of all mlpack sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-add_cli_executable(cf)
-add_python_binding(cf)

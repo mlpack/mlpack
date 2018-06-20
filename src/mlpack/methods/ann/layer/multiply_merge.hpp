@@ -46,8 +46,9 @@ class MultiplyMerge
    * Create the MultiplyMerge object using the specified parameters.
    *
    * @param model Expose all the network modules.
+   * @param run Call the Forward/Backward method before the output is merged.
    */
-  MultiplyMerge(const bool model = false);
+  MultiplyMerge(const bool model = false, const bool run = true);
 
   //! Destructor to release allocated memory.
   ~MultiplyMerge();
@@ -60,7 +61,7 @@ class MultiplyMerge
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& /* input */, OutputType&& output);
+  void Forward(InputType&& /* input */, OutputType&& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -77,19 +78,16 @@ class MultiplyMerge
                 arma::Mat<eT>&& g);
 
   /*
-   * Add a new module to the model.
+   * Calculate the gradient using the output delta and the input activation.
    *
-   * @param layer The Layer to be added to the model.
+   * @param input The input parameter used for calculating the gradient.
+   * @param error The calculated error.
+   * @param gradient The calculated gradient.
    */
-  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
-
-  /*
-   * Add a new module to the model.
-   *
-   * @param layer The Layer to be added to the model.
-   */
-  template<typename LayerType>
-  void Add(const LayerType& layer) { network.push_back(new LayerType(layer)); }
+  template<typename eT>
+  void Gradient(arma::Mat<eT>&& input,
+                arma::Mat<eT>&& error,
+                arma::Mat<eT>&& gradient);
 
   /*
    * Add a new module to the model.
@@ -98,6 +96,13 @@ class MultiplyMerge
    */
   template <class LayerType, class... Args>
   void Add(Args... args) { network.push_back(new LayerType(args...)); }
+
+  /*
+   * Add a new module to the model.
+   *
+   * @param layer The Layer to be added to the model.
+   */
+  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -108,6 +113,11 @@ class MultiplyMerge
   OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
+
+  //! Get the gradient.
+  OutputDataType const& Gradient() const { return gradient; }
+  //! Modify the gradient.
+  OutputDataType& Gradient() { return gradient; }
 
   //! Return the model modules.
   std::vector<LayerTypes<CustomLayers...> >& Model()
@@ -120,6 +130,11 @@ class MultiplyMerge
     return empty;
   }
 
+  //! Get the parameters.
+  OutputDataType const& Parameters() const { return weights; }
+  //! Modify the parameters.
+  OutputDataType& Parameters() { return weights; }
+
   /**
    * Serialize the layer.
    */
@@ -129,6 +144,10 @@ class MultiplyMerge
  private:
   //! Parameter which indicates if the modules should be exposed.
   bool model;
+
+  //! Parameter which indicates if the Forward/Backward method should be called
+  //! before merging the output.
+  bool run;
 
   //! We need this to know whether we should delete the layer in the destructor.
   bool ownsLayer;
@@ -151,8 +170,14 @@ class MultiplyMerge
   //! Locally-stored delta object.
   OutputDataType delta;
 
+  //! Locally-stored gradient object.
+  OutputDataType gradient;
+
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! Locally-stored weight object.
+  OutputDataType weights;
 }; // class MultiplyMerge
 
 } // namespace ann

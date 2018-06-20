@@ -105,8 +105,8 @@ PARAM_DOUBLE_IN("min_residue", "Residue required to terminate the factorization"
     " (lower values generally mean better fits).", "r", 1e-5);
 
 // Load/save a model.
-PARAM_MODEL_IN(CFType, "input_model", "Trained CF model to load.", "m");
-PARAM_MODEL_OUT(CFType, "output_model", "Output for trained CF model.", "M");
+PARAM_MODEL_IN(CFType<>, "input_model", "Trained CF model to load.", "m");
+PARAM_MODEL_OUT(CFType<>, "output_model", "Output for trained CF model.", "M");
 
 // Query settings.
 PARAM_UMATRIX_IN("query", "List of query users for which recommendations should"
@@ -120,7 +120,7 @@ PARAM_INT_IN("recommendations", "Number of recommendations to generate for each"
 
 PARAM_INT_IN("seed", "Set the random seed (0 uses std::time(NULL)).", "s", 0);
 
-void ComputeRecommendations(CFType* cf,
+void ComputeRecommendations(CFType<>* cf,
                             const size_t numRecs,
                             arma::Mat<size_t>& recommendations)
 {
@@ -146,7 +146,7 @@ void ComputeRecommendations(CFType* cf,
   }
 }
 
-void ComputeRMSE(CFType* cf)
+void ComputeRMSE(CFType<>* cf)
 {
   // Now, compute each test point.
   arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
@@ -173,7 +173,7 @@ void ComputeRMSE(CFType* cf)
   Log::Info << "RMSE is " << rmse << "." << endl;
 }
 
-void PerformAction(CFType* c)
+void PerformAction(CFType<>* c)
 {
   if (CLI::HasParam("query") || CLI::HasParam("all_user_recommendations"))
   {
@@ -191,7 +191,7 @@ void PerformAction(CFType* c)
   if (CLI::HasParam("test"))
     ComputeRMSE(c);
 
-  CLI::GetParam<CFType*>("output_model") = c;
+  CLI::GetParam<CFType<>*>("output_model") = c;
 }
 
 template<typename DecompositionPolicy>
@@ -202,7 +202,7 @@ void PerformAction(arma::mat& dataset,
                    DecompositionPolicy& decomposition)
 {
   const size_t neighborhood = (size_t) CLI::GetParam<int>("neighborhood");
-  CFType* c = new CFType(dataset, decomposition, neighborhood, rank,
+  CFType<>* c = new CFType<>(dataset, decomposition, neighborhood, rank,
       maxIterations, minResidue, CLI::HasParam("iteration_only_termination"));
 
   PerformAction(c);
@@ -322,7 +322,7 @@ static void mlpackMain()
         "test" }, true);
 
     // Load an input model.
-    CFType* c = std::move(CLI::GetParam<CFType*>("input_model"));
+    CFType<>* c = std::move(CLI::GetParam<CFType<>*>("input_model"));
 
     PerformAction(c);
   }
