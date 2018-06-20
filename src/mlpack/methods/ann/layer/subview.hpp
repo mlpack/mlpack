@@ -67,18 +67,29 @@ class Subview
         (input.n_cols != (endCol - beginCol +1)))
         && !(endRow == 0 && endCol == 0))
     {
-      if (beginCol != 0)
+      // Only one column being considered.
+      if (input.n_cols == 1 || (beginCol == 0 && endCol == 0))
       {
-        output = input.submat(beginRow, beginCol, endRow, endCol);
+        output = arma::mat(
+            &input(beginRow), endRow - beginRow + 1, 1, false);
       }
       else
       {
-        output = arma::mat(
-            &input(beginRow), endRow - beginRow + 1, endCol + 1, false);
+        // Include all rows.
+        if (beginRow == 0 && endRow == (input.n_rows - 1))
+        {
+          output = arma::mat(&input(beginCol * input.n_rows),
+              input.n_rows, endCol - beginCol + 1, false);
+        }
+        else
+        {
+          output = input.submat(beginRow, beginCol, endRow, endCol);
+        }
       }
     }
     else
     {
+      // Input is in the desired form.
       output = input;
     }
   }
