@@ -20,7 +20,10 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-Reparametrization<InputDataType, OutputDataType>::Reparametrization()
+Reparametrization<InputDataType, OutputDataType>::Reparametrization() :
+    latentSize(0),
+    stochastic(true),
+    includeKl(true)
 {
   // Nothing to do here.
 }
@@ -53,9 +56,9 @@ void Reparametrization<InputDataType, OutputDataType>::Forward(
   preStdDev = input.submat(0, 0, latentSize - 1, input.n_cols - 1);
 
   if (stochastic)
-    gaussianSample = arma::randn<arma::Mat<eT>>(latentSize, input.n_cols);
+    gaussianSample = arma::randn<arma::Mat<eT> >(latentSize, input.n_cols);
   else
-    gaussianSample = arma::ones<arma::Mat<eT>>(latentSize, input.n_cols) * 0.7;
+    gaussianSample = arma::ones<arma::Mat<eT> >(latentSize, input.n_cols) * 0.7;
 
   SoftplusFunction::Fn(preStdDev, stdDev);
   output = mean + stdDev % gaussianSample;
