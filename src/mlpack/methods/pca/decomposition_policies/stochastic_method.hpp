@@ -263,42 +263,15 @@ class PCAUpdate
   }
 
   /**
-   * General update step.
+   * General update step, all parameters are forwarded to the actual
+   * update policy.
    *
    * @param iterate Parameters that minimize the function.
-   * @param stepSize Step size to be used for the given iteration.
-   * @param gradient The gradient matrix.
    */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
+  template<typename... Targs>
+  void Update(arma::mat& iterate, Targs... Fargs)
   {
-    updatePolicy.Update(iterate, stepSize, gradient);
-
-    arma::mat R;
-    arma::qr_econ(iterate, R, iterate);
-  }
-
-  /**
-   * SVRG update step. The function parameters are updated in the negative
-   * direction of the gradient.
-   *
-   * @param iterate Parameters that minimize the function.
-   * @param fullGradient The computed full gradient.
-   * @param gradient The current gradient matrix at time t.
-   * @param gradient0 The old gradient matrix at time t - 1.
-   * @param batchSize Batch size to be used for the given iteration.
-   * @param stepSize Step size to be used for the given iteration.
-   */
-  void Update(arma::mat& iterate,
-              const arma::mat& fullGradient,
-              const arma::mat& gradient,
-              const arma::mat& gradient0,
-              const size_t batchSize,
-              const double stepSize)
-  {
-    updatePolicy.Update(iterate, fullGradient, gradient, gradient0, batchSize,
-        stepSize);
+    updatePolicy.Update(iterate, Fargs...);
 
     arma::mat R;
     arma::qr_econ(iterate, R, iterate);
