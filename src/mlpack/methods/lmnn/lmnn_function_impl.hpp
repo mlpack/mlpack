@@ -76,11 +76,12 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates)
   // Apply metric over dataset.
   transformedDataset = coordinates * dataset;
 
+  arma::mat distance = arma::mat(k, dataset.n_cols, arma::fill::zeros);
   if (iteration++ % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
     Constraints constraint(transformedDataset, labels, k);
-    constraint.Impostors(impostors);
+    constraint.Impostors(impostors, distance);
   }
 
   for (size_t i = 0; i < dataset.n_cols; i++)
@@ -99,12 +100,17 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates)
       // breaking point.
       for (size_t l = 0, bp = k; l < bp ; l++)
       {
-        // Calculate cost due to data point, target neighbors, impostors
+        // Check if we already have distance between impostor & data point
+        // stored.
+        double distImp = distance(l, i) > 0 ? distance(l, i) :
+            metric.Evaluate(transformedDataset.col(i),
+            transformedDataset.col(impostors(l, i)));
+
+        // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = metric.Evaluate(transformedDataset.col(i),
                           transformedDataset.col(targetNeighbors(j, i))) -
-                      metric.Evaluate(transformedDataset.col(i),
-                          transformedDataset.col(impostors(l, i)));
+                      distImp;
 
         // Check bounding condition.
         if (eval < -1)
@@ -133,11 +139,12 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates,
   // Apply metric over dataset.
   transformedDataset = coordinates * dataset;
 
+  arma::mat distance = arma::mat(k, dataset.n_cols, arma::fill::zeros);
   if (iteration++ % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
     Constraints constraint(transformedDataset, labels, k);
-    constraint.Impostors(impostors, begin, batchSize);
+    constraint.Impostors(impostors, distance, begin, batchSize);
   }
 
   for (size_t i = begin; i < begin + batchSize; i++)
@@ -155,12 +162,17 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& coordinates,
       // Bound constraints to avoid uneccesary computation.
       for (size_t l = 0, bp = k; l < bp ; l++)
       {
-        // Calculate cost due to data point, target neighbors, impostors
+        // Check if we already have distance between impostor & data point
+        // stored.
+        double distImp = distance(l, i) > 0 ? distance(l, i) :
+            metric.Evaluate(transformedDataset.col(i),
+            transformedDataset.col(impostors(l, i)));
+
+        // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = metric.Evaluate(transformedDataset.col(i),
                           transformedDataset.col(targetNeighbors(j, i))) -
-                      metric.Evaluate(transformedDataset.col(i),
-                          transformedDataset.col(impostors(l, i)));
+                      distImp;
 
         // Check bounding condition.
         if (eval < -1)
@@ -295,11 +307,12 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   // Apply metric over dataset.
   transformedDataset = coordinates * dataset;
 
+  arma::mat distance = arma::mat(k, dataset.n_cols, arma::fill::zeros);
   if (iteration++ % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
     Constraints constraint(transformedDataset, labels, k);
-    constraint.Impostors(impostors);
+    constraint.Impostors(impostors, distance);
   }
 
   gradient.zeros(coordinates.n_rows, coordinates.n_cols);
@@ -326,12 +339,17 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
       // Bound constraints to avoid uneccesary computation.
       for (size_t l = 0, bp = k; l < bp ; l++)
       {
+        // Check if we already have distance between impostor & data point
+        // stored.
+        double distImp = distance(l, i) > 0 ? distance(l, i) :
+            metric.Evaluate(transformedDataset.col(i),
+            transformedDataset.col(impostors(l, i)));
+
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = metric.Evaluate(transformedDataset.col(i),
                           transformedDataset.col(targetNeighbors(j, i))) -
-                      metric.Evaluate(transformedDataset.col(i),
-                          transformedDataset.col(impostors(l, i)));
+                      distImp;
 
         // Check bounding condition.
         if (eval < -1)
@@ -373,11 +391,12 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   // Apply metric over dataset.
   transformedDataset = coordinates * dataset;
 
+  arma::mat distance = arma::mat(k, dataset.n_cols, arma::fill::zeros);
   if (iteration++ % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
     Constraints constraint(transformedDataset, labels, k);
-    constraint.Impostors(impostors, begin, batchSize);
+    constraint.Impostors(impostors, distance, begin, batchSize);
   }
 
   gradient.zeros(coordinates.n_rows, coordinates.n_cols);
@@ -404,12 +423,17 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
       // Bound constraints to avoid uneccesary computation.
       for (size_t l = 0, bp = k; l < bp ; l++)
       {
+        // Check if we already have distance between impostor & data point
+        // stored.
+        double distImp = distance(l, i) > 0 ? distance(l, i) :
+            metric.Evaluate(transformedDataset.col(i),
+            transformedDataset.col(impostors(l, i)));
+
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = metric.Evaluate(transformedDataset.col(i),
                           transformedDataset.col(targetNeighbors(j, i))) -
-                      metric.Evaluate(transformedDataset.col(i),
-                          transformedDataset.col(impostors(l, i)));
+                      distImp;
 
         // Check bounding condition.
         if (eval < -1)

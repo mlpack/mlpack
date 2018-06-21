@@ -69,6 +69,16 @@ class Constraints
   void Impostors(arma::Mat<size_t>& outputMatrix);
 
   /**
+   * Calculates k differently labeled nearest neighbors & distances to
+   * impostors for each datapoint and writes them back to passed matrices.
+   *
+   * @param outputNeighbors Coordinates matrix to store impostors.
+   * @param outputDistance matrix to store distance.
+   */
+  void Impostors(arma::Mat<size_t>& outputNeighbors,
+                 arma::mat& outputDistance);
+
+  /**
    * Calculates k differently labeled nearest neighbors for a batch of dataset
    * and writes them back to passed matrix.
    *
@@ -77,6 +87,20 @@ class Constraints
    * @param batchSize Number of data points to use.
    */
   void Impostors(arma::Mat<size_t>& outputMatrix,
+                 const size_t begin,
+                 const size_t batchSize);
+
+  /**
+   * Calculates k differently labeled nearest neighbors & distances to
+   * impostors for a batch of dataset and writes them back to passed matrices.
+   *
+   * @param outputNeighbors Coordinates matrix to store impostors.
+   * @param outputDistance matrix to store distance.
+   * @param begin Index of the initial point of dataset.
+   * @param batchSize Number of data points to use.
+   */
+  void Impostors(arma::Mat<size_t>& outputNeighbors,
+                 arma::mat& outputDistance,
                  const size_t begin,
                  const size_t batchSize);
 
