@@ -1,4 +1,8 @@
-/*! @page sample_ml_app Sample C++ ML App
+/**
+ * @file sample_ml_app.hpp
+ * @author German Lancioni
+
+@page sample_ml_app Sample C++ ML App for Windows
 
 @section sample_intro Introduction
 
@@ -132,7 +136,9 @@ cout << "\nTraining Accuracy: " << (double(correct) / double(labels.n_elem));
 
 @section sample_crossvalidation Cross-Validating
 
-To evaluate the classifier, we use K-Fold cross-validation. We also define which metric to use in order
+Instead of training the Random Forest directly, we could also use K-fold cross-validation for training,
+which will give us a measure of performance on a held-out test set. This can give us a better estimate 
+of how the model will perform when given new data. We also define which metric to use in order
 to assess the quality of the trained model.
 
 @code
@@ -158,11 +164,15 @@ cout << "\nF1: " << cvF1;
 
 @section sample_save_model Saving the model
 
-Now that our model is trained and validated, we save it to a file so we can use it later.
+Now that our model is trained and validated, we save it to a file so we can use it later. Here we save the
+model that was trained using the entire dataset. Alternatively, we could extract the model from the cross-validation
+stage by using \c cv.Model()
 
 @code
 mlpack::data::Save("mymodel.xml", "model", rf, false);
 @endcode
+
+We can also save the model in \c bin format ("mymodel.bin") which would result in a smaller file.
 
 @section sample_load_model Loading the model
 
