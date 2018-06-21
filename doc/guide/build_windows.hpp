@@ -1,11 +1,15 @@
-/*! @page build_windows Building mlpack From Source
+/**
+ * @file build_windows.hpp
+ * @author German Lancioni
 
-@section build_intro Introduction
+@page build_windows Building mlpack From Source on Windows
+
+@section build_windows_intro Introduction
 
 This document discusses how to build mlpack for Windows from source, so you can later
 create your own C++ applications.
 
-@section build_env Environment
+@section build_windows_env Environment
 
 This tutorial has been designed and tested using:
 - Windows 10
@@ -18,7 +22,7 @@ This tutorial has been designed and tested using:
 
 The directories and paths used in this tutorial are just for reference purposes.
 
-@section build_prereqs Pre-requisites
+@section build_windows_prereqs Pre-requisites
 
 - Install CMake for Windows (win64-x64 version from https://cmake.org/download/)
 and make sure you can use it from the Command Prompt (may need to add to the PATH)
@@ -26,7 +30,7 @@ and make sure you can use it from the Command Prompt (may need to add to the PAT
 - Download the latest mlpack release from here:
 <a href="http://www.mlpack.org/download.html">mlpack</a>
 
-@section build_instructions Windows build instructions
+@section build_windows_instructions Windows build instructions
 
 - Unzip mlpack to "C:\mlpack\mlpack-3.0.2"
 - Open Visual Studio and select: File > New > Project from Existing Code
@@ -36,7 +40,7 @@ and make sure you can use it from the Command Prompt (may need to add to the PAT
  - Finish
 - We will use this Visual Studio project to get the OpenBLAS dependency in the next section
 
-@section build_dependencies Dependencies
+@section build_windows_dependencies Dependencies
 
 <b> OpenBLAS Dependency </b>
 
@@ -76,7 +80,7 @@ or a different VS version, update the cmake command accordingly.
 - Build > Build Solution
 - Once it has successfully finished, close Visual Studio
 
-@section build_mlpack Building mlpack
+@section build_windows_mlpack Building mlpack
 
 - Create a "build" directory into "C:\mlpack\mlpack-3.0.2\"
 - Open the Command Prompt and navigate to "C:\mlpack\mlpack-3.0.2\build"
