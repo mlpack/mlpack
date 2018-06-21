@@ -38,6 +38,7 @@ class Subview
    * Create the Subview layer object using the specified range of input to
    * accept.
    *
+   * @param inSize Width of sample.
    * @param beginRow Starting row index.
    * @param endRow Ending row index.
    * @param beginCol Starting column index.
