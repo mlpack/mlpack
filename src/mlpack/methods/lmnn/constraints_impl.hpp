@@ -238,6 +238,8 @@ void Constraints::Impostors(arma::Mat<size_t>& outputNeighbors,
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
+  outputDistance = arma::mat(k, dataset.n_cols, arma::fill::zeros);
+
   // Vectors to store indices.
   arma::uvec subIndexSame;
 
