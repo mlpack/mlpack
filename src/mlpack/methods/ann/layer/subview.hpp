@@ -43,11 +43,16 @@ class Subview
    * @param beginCol Starting column index.
    * @param endCol Ending column index.
    */
-  Subview(const size_t beginRow = 0,
+  Subview(const size_t inSize = 1,
+          const size_t beginRow = 0,
           const size_t endRow = 0,
           const size_t beginCol = 0,
           const size_t endCol = 0) :
-      beginRow(beginRow), endRow(endRow), beginCol(beginCol), endCol(endCol)
+      inSize(inSize),
+      beginRow(beginRow),
+      endRow(endRow),
+      beginCol(beginCol),
+      endCol(endCol)
   {
     /* Nothing to do here */
   }
@@ -62,35 +67,32 @@ class Subview
   template<typename InputType, typename OutputType>
   void Forward(InputType&& input, OutputType&& output)
   {
-    // Check if input has been selected as required.
-    if (((input.n_rows != (endRow - beginRow + 1)) ||
-        (input.n_cols != (endCol - beginCol +1)))
-        && !(endRow == 0 && endCol == 0))
+    size_t batchSize = input.n_cols / inSize;
+
+    // Check if subview parameters are within the indices of input sample.
+    endRow = (endRow < input.n_rows) ? endRow : (input.n_rows - 1);
+    endCol = (endCol < inSize) ? endCol : (inSize - 1);
+
+    output.set_size(
+        (endRow - beginRow + 1) * (endCol - beginCol + 1), batchSize);
+
+    for (size_t i = 0; i < batchSize; i++)
     {
-      // Only one column being considered.
-      if (input.n_cols == 1 || (beginCol == 0 && endCol == 0))
+      if (beginRow == 0 && endRow == (input.n_rows - 1))
       {
-        output = arma::mat(
-            &input(beginRow), endRow - beginRow + 1, 1, false);
+        // Matrix of contiguous elements.
+        output.col(i) = arma::mat(&input(beginCol * input.n_rows),
+            (input.n_rows * (endCol - beginCol + 1)), 1, false);
       }
       else
       {
-        // Include all rows.
-        if (beginRow == 0 && endRow == (input.n_rows - 1))
-        {
-          output = arma::mat(&input(beginCol * input.n_rows),
-              input.n_rows, endCol - beginCol + 1, false);
-        }
-        else
-        {
-          output = input.submat(beginRow, beginCol, endRow, endCol);
-        }
+        output.col(i) = arma::vectorise(
+            input.submat(beginRow, beginCol, endRow, endCol));
       }
-    }
-    else
-    {
-      // Input is in the desired form.
-      output = input;
+
+      // Move to next batch.
+      beginCol += inSize;
+      endCol += inSize;
     }
   }
 
@@ -132,6 +134,7 @@ class Subview
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
+    ar & BOOST_SERIALIZATION_NVP(inSize);
     ar & BOOST_SERIALIZATION_NVP(beginRow);
     ar & BOOST_SERIALIZATION_NVP(endRow);
     ar & BOOST_SERIALIZATION_NVP(beginCol);
@@ -139,6 +142,9 @@ class Subview
   }
 
  private:
+  //! Width of each sample.
+  size_t inSize;
+
   //! Starting row index of subview vector or matrix.
   size_t beginRow;
 

@@ -1804,24 +1804,24 @@ BOOST_AUTO_TEST_CASE(GradientLayerNormTest)
 BOOST_AUTO_TEST_CASE(SimpleSubviewLayerTest)
 {
   arma::mat output, input, delta, outputMat;
-  Subview<> moduleRow(10, 19);
+  Subview<> moduleRow(1, 10, 19);
 
   // Test the Forward function for a vector.
   input = arma::ones(20, 1);
   moduleRow.Forward(std::move(input), std::move(output));
   BOOST_REQUIRE_EQUAL(output.n_rows, 10);
 
-  Subview<> moduleMat(3, 6, 3, 6);
+  Subview<> moduleMat(4, 3, 6, 0, 2);
 
   // Test the Forward function for a matrix.
-  input = arma::ones(20, 10);
+  input = arma::ones(20, 8);
   moduleMat.Forward(std::move(input), std::move(outputMat));
-  BOOST_REQUIRE_EQUAL(outputMat.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(outputMat.n_cols, 4);
+  BOOST_REQUIRE_EQUAL(outputMat.n_rows, 12);
+  BOOST_REQUIRE_EQUAL(outputMat.n_cols, 2);
 
   // Test the Backward function.
   moduleMat.Backward(std::move(input), std::move(input), std::move(delta));
-  BOOST_REQUIRE_EQUAL(accu(delta), 200);
+  BOOST_REQUIRE_EQUAL(accu(delta), 160);
   BOOST_REQUIRE_EQUAL(delta.n_rows, 20);
 }
 
@@ -1834,21 +1834,21 @@ BOOST_AUTO_TEST_CASE(SubviewIndexTest)
   input = arma::linspace<arma::vec>(1, 20, 20);
 
   // Slicing from the initial indices.
-  Subview<> moduleStart(0, 9);
+  Subview<> moduleStart(1, 0, 9);
   arma::mat subStart = arma::linspace<arma::vec>(1, 10, 10);
 
   moduleStart.Forward(std::move(input), std::move(outputStart));
   CheckMatrices(outputStart, subStart);
 
   // Slicing from the mid indices.
-  Subview<> moduleMid(6, 15);
+  Subview<> moduleMid(1, 6, 15);
   arma::mat subMid = arma::linspace<arma::vec>(7, 16, 10);
 
   moduleMid.Forward(std::move(input), std::move(outputMid));
   CheckMatrices(outputMid, subMid);
 
   // Slicing from the end indices.
-  Subview<> moduleEnd(10, 19);
+  Subview<> moduleEnd(1, 10, 19);
   arma::mat subEnd = arma::linspace<arma::vec>(11, 20, 10);
 
   moduleEnd.Forward(std::move(input), std::move(outputEnd));
