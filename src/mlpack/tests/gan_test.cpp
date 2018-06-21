@@ -140,13 +140,13 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
 {
   size_t dNumKernels = 32;
   size_t discriminatorPreTrain = 300;
-  size_t batchSize = 1;
+  size_t batchSize = 50;
   size_t noiseDim = 100;
   size_t generatorUpdateStep = 1;
   size_t numSamples = 10;
   double stepSize = 0.0003;
   double eps = 1e-8;
-  size_t numEpoches = 10;
+  size_t numEpoches = 20;
   double tolerance = 1e-5;
   int datasetMaxCols = -1;
   bool shuffle = true;
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;
-  arma::mat noise(noiseDim, 1);
+  arma::mat noise(noiseDim, batchSize);
   size_t dim = std::sqrt(trainData.n_rows);
   arma::mat generatedData(2 * dim, dim * numSamples);
 

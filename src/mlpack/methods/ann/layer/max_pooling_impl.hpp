@@ -43,6 +43,9 @@ MaxPooling<InputDataType, OutputDataType>::MaxPooling(
     inputHeight(0),
     outputWidth(0),
     outputHeight(0),
+    batchSize(0),
+    inSize(0),
+    outSize(0),
     deterministic(false)
 {
   // Nothing to do here.
@@ -53,8 +56,10 @@ template<typename eT>
 void MaxPooling<InputDataType, OutputDataType>::Forward(
   const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  const size_t slices = input.n_elem / (inputWidth * inputHeight);
-  inputTemp = arma::cube(input.memptr(), inputWidth, inputHeight, slices);
+  batchSize = input.n_cols;
+  inSize = input.n_elem / (inputWidth * inputHeight * batchSize);
+  inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
+      inputWidth, inputHeight, batchSize * inSize, false, false);
 
   if (floor)
   {
@@ -70,7 +75,7 @@ void MaxPooling<InputDataType, OutputDataType>::Forward(
   }
 
   outputTemp = arma::zeros<arma::Cube<eT> >(outputWidth, outputHeight,
-      slices);
+      batchSize * inSize);
 
   if (!deterministic)
   {
@@ -102,11 +107,12 @@ void MaxPooling<InputDataType, OutputDataType>::Forward(
     }
   }
 
-  output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem, 1);
+  output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem / batchSize,
+      batchSize);
 
   outputWidth = outputTemp.n_rows;
   outputHeight = outputTemp.n_cols;
-  outSize = slices;
+  outSize = batchSize * inSize;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -115,7 +121,7 @@ void MaxPooling<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
   arma::cube mappedError = arma::cube(gy.memptr(), outputWidth,
-      outputHeight, outSize);
+      outputHeight, outSize, false, false);
 
   gTemp = arma::zeros<arma::cube>(inputTemp.n_rows,
       inputTemp.n_cols, inputTemp.n_slices);
@@ -128,7 +134,7 @@ void MaxPooling<InputDataType, OutputDataType>::Backward(
 
   poolingIndices.pop_back();
 
-  g = arma::mat(gTemp.memptr(), gTemp.n_elem, 1);
+  g = arma::mat(gTemp.memptr(), gTemp.n_elem / batchSize, batchSize);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -141,6 +147,7 @@ void MaxPooling<InputDataType, OutputDataType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(kH);
   ar & BOOST_SERIALIZATION_NVP(dW);
   ar & BOOST_SERIALIZATION_NVP(dH);
+  ar & BOOST_SERIALIZATION_NVP(batchSize);
 }
 
 } // namespace ann
