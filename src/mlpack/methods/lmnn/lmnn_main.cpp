@@ -38,6 +38,15 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "), or alternatively as a separate matrix (specified with " +
     PRINT_PARAM_STRING("labels") + ")."
     "\n\n"
+    "The program also requires number of targets neighbors to work with ( "
+    "specified with " + PRINT_PARAM_STRING("num_targets") + "), A "
+    "regularization parameter can also be passed, It acts as a trade of "
+    "between the pulling and pushing terms  (specified with " +
+    PRINT_PARAM_STRING("regularization") + "), In addition, this "
+    "implementation of LMNN includes a parameter to decide the interval "
+    "after which impostors must be re-calculated (specified with " +
+    PRINT_PARAM_STRING("range") + ")."
+    "\n\n"
     "This implementation of LMNN uses AdaGrad, BigBatch_SGD, stochastic "
     "gradient descent, mini-batch stochastic gradient descent, or the L_BFGS "
     "optimizer. "
@@ -88,9 +97,23 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     PRINT_PARAM_STRING("max_step") + " (which both refer to the line search "
     "routine).  For more details on the L-BFGS optimizer, consult either the "
     "mlpack L-BFGS documentation (in lbfgs.hpp) or the vast set of published "
-    "literature on L-BFGS."
+    "literature on L-BFGS.  In addition, a normalized starting point can be "
+    "used by specifying the " + PRINT_PARAM_STRING("normalize") + " parameter."
     "\n\n"
-    "By default, the SGD optimizer is used.");
+    "By default, the L-BFGS optimizer is used."
+    "\n\n"
+    "Example - Let's say we want to learn distance on iris dataset with "
+    "number of targets as 3 using BigBatch_SGD optimizer. A simple call for "
+    "the same will look like: "
+    "\n\n"
+    "$ bin/mlpack_lmnn -i iris.csv -l iris_labels.txt -k 3 -O bbsgd -o "
+    "output.csv --verbose"
+    "\n\n"
+    "An another program call making use of range & regularization parameter "
+    "with dataset having labels as last column can be made as: "
+    "\n\n"
+    "$ bin/mlpack_lmnn -i letter_recognition.csv -k 5 -R 10 -r 0.4 -o "
+    "output.csv --verbose");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run LMNN on.", "i");
 PARAM_UROW_IN("labels", "Labels for input dataset.", "l");
@@ -98,7 +121,7 @@ PARAM_INT_IN("num_targets", "Number of target neighbors to use for each "
     "datapoint.", "k", 1);
 PARAM_MATRIX_OUT("output", "Output matrix for learned distance matrix.", "o");
 PARAM_STRING_IN("optimizer", "Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or "
-    "'lbfgs'.", "O", "amsgrad");
+    "'lbfgs'.", "O", "lbfgs");
 PARAM_DOUBLE_IN("regularization", "Regularization for LMNN objective function ",
     "r", 0.5);
 PARAM_FLAG("normalize", "Use a normalized starting point for optimization. It"

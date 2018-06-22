@@ -118,6 +118,11 @@ class Constraints
    */
   void Triplets(arma::Mat<size_t>& outputMatrix);
 
+  //! Get the dataset reference.
+  const arma::mat& Dataset() const { return dataset; }
+  //! Modify the dataset reference.
+  arma::mat& Dataset() { return dataset; }
+
   //! Access the value of k.
   const size_t& K() const { return k; }
   //! Modify the value of k.
