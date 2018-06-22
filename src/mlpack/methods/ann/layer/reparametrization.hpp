@@ -44,6 +44,8 @@ class Reparametrization
    * Create the Reparametrization layer object using the specified sample vector size.
    *
    * @param layerSize The number of output units.
+   * @param stochastic Whether we want random sample or constant.
+   * @param includeKl Whether we want to include KL loss in backward function.
    */
   Reparametrization(const size_t latentSize,
                     const bool stochastic = true,
@@ -88,9 +90,7 @@ class Reparametrization
    * pass of Kullback–Leibler divergence. Using the results from the
    * KL divergence feed forward pass.
    *
-   * @param input The propagated input activation.
-   * @param gy The backpropagated error.
-   * @param g The calculated gradient.
+   * @param output The calculated gradient of KL divergence.
    */
   template<typename OutputType>
   void klBackward(OutputType&& output);
