@@ -26,6 +26,7 @@ add_executable(mlpack_test
   cosine_tree_test.cpp
   cv_test.cpp
   dbscan_test.cpp
+  dcgan_test.cpp
   decision_stump_test.cpp
   decision_tree_test.cpp
   det_test.cpp
