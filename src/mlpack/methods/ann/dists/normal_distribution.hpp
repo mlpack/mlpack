@@ -2,20 +2,20 @@
  * @file normal_distribution.hpp
  * @author Atharva Khandait
  *
- * Implementation of the Normal distribution.
+ * Definition of the Normal distribution class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DISTRIBUTIONS_NORMAL_DISTRIBUTION_HPP
-#define MLPACK_CORE_DISTRIBUTIONS_NORMAL_DISTRIBUTION_HPP
+#ifndef MLPACK_METHODS_ANN_DISTRIBUTIONS_NORMAL_DISTRIBUTION_HPP
+#define MLPACK_METHODS_ANN_DISTRIBUTIONS_NORMAL_DISTRIBUTION_HPP
 
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace distribution {
+namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Multiple univariate Normal(Gaussian) distributions.

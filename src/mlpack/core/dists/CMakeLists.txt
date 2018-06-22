@@ -7,8 +7,6 @@ set(SOURCES
   gaussian_distribution.cpp
   laplace_distribution.hpp
   laplace_distribution.cpp
-  normal_distribution.hpp
-  normal_distribution_impl.hpp
   regression_distribution.hpp
   regression_distribution.cpp
   gamma_distribution.hpp
