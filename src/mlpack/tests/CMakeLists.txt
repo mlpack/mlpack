@@ -140,6 +140,7 @@ add_executable(mlpack_test
   main_tests/decision_stump_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/logistic_regression_test.cpp
+  main_tests/lmnn_test.cpp
   main_tests/mean_shift_test.cpp
   main_tests/nbc_test.cpp
   main_tests/nmf_test.cpp

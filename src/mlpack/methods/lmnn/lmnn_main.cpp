@@ -240,6 +240,25 @@ static void mlpackMain()
         "BigBatch_SGD optimizer is not being used");
   }
 
+  RequireParamValue<int>("num_targets", [](int x) { return x > 0; }, true,
+      "number of targets must be positive");
+  RequireParamValue<int>("range", [](int x) { return x > 0; }, true,
+      "range must be positive");
+  RequireParamValue<int>("batch_size", [](int x) { return x > 0; }, true,
+      "batch size must be positive");
+  RequireParamValue<double>("regularization", [](double x)
+      { return x >= 0.0; }, true, "regularization value must be nonnegative");
+  RequireParamValue<double>("step_size", [](double x)
+      { return x >= 0.0; }, true, "step size value must be nonnegative");
+  RequireParamValue<int>("max_iterations", [](int x)
+      { return x >= 0; }, true,
+      "maximum number of iterations must be nonnegative");
+  RequireParamValue<int>("passes", [](int x) { return x >= 0; }, true,
+      "maximum number of passes must be nonnegative");
+  RequireParamValue<double>("tolerance",
+      [](double x) { return x >= 0.0; }, true,
+      "tolerance must be nonnegative");
+
   const size_t numTargets = (size_t) CLI::GetParam<int>("num_targets");
   const double regularization = CLI::GetParam<double>("regularization");
   const double stepSize = CLI::GetParam<double>("step_size");
