@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_RANDOMIZED_SVD_RANDOMIZED_SVD_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/methods/cf/cf.hpp>
 
 namespace mlpack {
 namespace svd {
@@ -104,9 +105,25 @@ class RandomizedSVD
                 const size_t maxIterations = 2,
                 const double eps = 1e-7);
 
-  /**
-   * Apply Principal Component Analysis to the provided data set using the
-   * randomized SVD.
+/**
+   * Center the data to apply Principal Component Analysis on given sparse
+   * matrix dataset using randomized SVD.
+   *
+   * @param data Sparse data matrix.
+   * @param u First unitary matrix.
+   * @param v Second unitary matrix.
+   * @param sigma Diagonal matrix of singular values.
+   * @param rank Rank of the approximation.
+   */
+  void Apply(const arma::sp_mat& data,
+             arma::mat& u,
+             arma::vec& s,
+             arma::mat& v,
+             const size_t rank);
+
+/**
+   * Center the data to apply Principal Component Analysis on given matrix
+   * dataset using randomized SVD.
    *
    * @param data Data matrix.
    * @param u First unitary matrix.
@@ -119,6 +136,101 @@ class RandomizedSVD
              arma::vec& s,
              arma::mat& v,
              const size_t rank);
+
+  /**
+   * Apply Principal Component Analysis to the provided matrix data set
+   * using the randomized SVD.
+   *
+   * @param data Data matrix.
+   * @param u First unitary matrix.
+   * @param v Second unitary matrix.
+   * @param sigma Diagonal matrix of singular values.
+   * @param rank Rank of the approximation.
+   * @param rowMean Centered mean value matrix.
+   */
+  template<typename MatType>
+  void Apply(const MatType& data,
+             arma::mat& u,
+             arma::vec& s,
+             arma::mat& v,
+             const size_t rank,
+             MatType rowMean)
+  {
+    if (iteratedPower == 0)
+      iteratedPower = rank + 2;
+
+    arma::mat R, Q, Qdata;
+
+    // Apply the centered data matrix to a random matrix, obtaining Q.
+    if (data.n_cols >= data.n_rows)
+    {
+      R = arma::randn<arma::mat>(data.n_rows, iteratedPower);
+      Q = (data.t() * R) - arma::repmat(arma::trans(R.t() * rowMean),
+          data.n_cols, 1);
+    }
+    else
+    {
+      R = arma::randn<arma::mat>(data.n_cols, iteratedPower);
+      Q = (data * R) - (rowMean * (arma::ones(1, data.n_cols) * R));
+    }
+
+    // Form a matrix Q whose columns constitute a
+    // well-conditioned basis for the columns of the earlier Q.
+    if (maxIterations == 0)
+    {
+      arma::qr_econ(Q, v, Q);
+    }
+    else
+    {
+      arma::lu(Q, v, Q);
+    }
+
+    // Perform normalized power iterations.
+    for (size_t i = 0; i < maxIterations; ++i)
+    {
+      if (data.n_cols >= data.n_rows)
+      {
+        Q = (data * Q) - rowMean * (arma::ones(1, data.n_cols) * Q);
+        arma::lu(Q, v, Q);
+        Q = (data.t() * Q) - arma::repmat(rowMean.t() * Q, data.n_cols, 1);
+      }
+      else
+      {
+        Q = (data.t() * Q) - arma::repmat(rowMean.t() * Q, data.n_cols, 1);
+        arma::lu(Q, v, Q);
+        Q = (data * Q) - (rowMean * (arma::ones(1, data.n_cols) * Q));
+      }
+
+      // Computing the LU decomposition is more efficient than computing the QR
+      // decomposition, so we only use it in the last iteration, a pivoted QR
+      // decomposition which renormalizes Q, ensuring that the columns of Q are
+      // orthonormal.
+      if (i < (maxIterations - 1))
+      {
+        arma::lu(Q, v, Q);
+      }
+      else
+      {
+        arma::qr_econ(Q, v, Q);
+      }
+    }
+
+    // Do economical singular value decomposition and compute only the
+    // approximations of the left singular vectors by using the centered data
+    // applied to Q.
+    if (data.n_cols >= data.n_rows)
+    {
+      Qdata = (data * Q) - rowMean * (arma::ones(1, data.n_cols) * Q);
+      arma::svd_econ(u, s, v, Qdata);
+      v = Q * v;
+    }
+    else
+    {
+      Qdata = (Q.t() * data) - arma::repmat(Q.t() * rowMean, 1,  data.n_cols);
+      arma::svd_econ(u, s, v, Qdata);
+      u = Q * u;
+    }
+  }
 
   //! Get the size of the normalized power iterations.
   size_t IteratedPower() const { return iteratedPower; }

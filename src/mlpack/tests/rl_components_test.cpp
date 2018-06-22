@@ -17,6 +17,7 @@
 #include <mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/acrobat.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
 #include <mlpack/methods/reinforcement_learning/replay/random_replay.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 
@@ -27,6 +28,26 @@ using namespace mlpack;
 using namespace mlpack::rl;
 
 BOOST_AUTO_TEST_SUITE(RLComponentsTest)
+
+/**
+ * Constructs a Pendulum instance and check if the main routine works as it
+ * should be working.
+ */
+BOOST_AUTO_TEST_CASE(SimplePendulumTest)
+{
+  const Pendulum task = Pendulum();
+
+  Pendulum::State state = task.InitialSample();
+  Pendulum::Action action;
+  action.action[0] = math::Random(-2.0, 2.0);
+  double reward = task.Sample(state, action);
+
+  // The reward is always negative. Check if not lower than lowest possible.
+  BOOST_REQUIRE(reward >= -(pow(M_PI, 2) + 6.404));
+
+  // The action is simply the torque. Check if dimension is 1.
+  BOOST_REQUIRE_EQUAL(1, action.size);
+}
 
 /**
  * Constructs a Continuous MountainCar instance and check if the main rountine 

@@ -46,7 +46,7 @@ class LeakyReLU
  public:
   /**
    * Create the LeakyReLU object using the specified parameters.
-   * The non zero gradient can be adjusted by specifying tha parameter
+   * The non zero gradient can be adjusted by specifying the parameter
    * alpha in the range 0 to 1. Default (alpha = 0.03)
    *
    * @param alpha Non zero gradient

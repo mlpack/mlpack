@@ -61,15 +61,14 @@ void ShuffleData(const MatType& inputPoints,
 
   // Extract coordinate list representation.
   arma::umat locations(2, inputPoints.n_nonzero);
-  arma::Col<typename MatType::elem_type> values(
-      const_cast<typename MatType::elem_type*>(inputPoints.values),
-      inputPoints.n_nonzero, false, true);
+  arma::Col<typename MatType::elem_type> values(inputPoints.n_nonzero);
   typename MatType::const_iterator it = inputPoints.begin();
   size_t index = 0;
   while (it != inputPoints.end())
   {
     locations(0, index) = it.row();
     locations(1, index) = ordering[it.col()];
+    values(index) = (*it);
     ++it;
     ++index;
   }
@@ -145,6 +144,96 @@ void ShuffleData(const MatType& inputPoints,
   {
     outputLabels = std::move(*outputLabelsPtr);
     delete outputLabelsPtr;
+  }
+}
+
+/**
+ * Shuffle a dataset and associated labels (or responses) and weights.  It is
+ * expected that inputPoints and inputLabels and inputWeights have the same
+ * number of columns (so, be sure that inputLabels, if it is a vector, is a row
+ * vector).
+ *
+ * Shuffled data will be output into outputPoints and outputLabels and
+ * outputWeights.
+ */
+template<typename MatType, typename LabelsType, typename WeightsType>
+void ShuffleData(const MatType& inputPoints,
+                 const LabelsType& inputLabels,
+                 const WeightsType& inputWeights,
+                 MatType& outputPoints,
+                 LabelsType& outputLabels,
+                 WeightsType& outputWeights,
+                 const std::enable_if_t<!arma::is_SpMat<MatType>::value>* = 0,
+                 const std::enable_if_t<!arma::is_Cube<MatType>::value>* = 0)
+{
+  // Generate ordering.
+  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
+      inputPoints.n_cols - 1, inputPoints.n_cols));
+
+  outputPoints = inputPoints.cols(ordering);
+  outputLabels = inputLabels.cols(ordering);
+  outputWeights = inputWeights.cols(ordering);
+}
+
+/**
+ * Shuffle a sparse dataset and associated labels (or responses) and weights.
+ * It is expected that inputPoints and inputLabels and inputWeights have the
+ * same number of columns (so, be sure that inputLabels, if it is a vector, is a
+ * row vector).
+ *
+ * Shuffled data will be output into outputPoints and outputLabels and
+ * outputWeights.
+ */
+template<typename MatType, typename LabelsType, typename WeightsType>
+void ShuffleData(const MatType& inputPoints,
+                 const LabelsType& inputLabels,
+                 const WeightsType& inputWeights,
+                 MatType& outputPoints,
+                 LabelsType& outputLabels,
+                 WeightsType& outputWeights,
+                 const std::enable_if_t<arma::is_SpMat<MatType>::value>* = 0,
+                 const std::enable_if_t<!arma::is_Cube<MatType>::value>* = 0)
+{
+  // Generate ordering.
+  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
+      inputPoints.n_cols - 1, inputPoints.n_cols));
+
+  // Extract coordinate list representation.
+  arma::umat locations(2, inputPoints.n_nonzero);
+  arma::Col<typename MatType::elem_type> values(inputPoints.n_nonzero);
+  typename MatType::const_iterator it = inputPoints.begin();
+  size_t index = 0;
+  while (it != inputPoints.end())
+  {
+    locations(0, index) = it.row();
+    locations(1, index) = ordering[it.col()];
+    values(index) = (*it);
+    ++it;
+    ++index;
+  }
+
+  if (&inputPoints == &outputPoints || &inputLabels == &outputLabels ||
+      &inputWeights == &outputWeights)
+  {
+    MatType newOutputPoints(locations, values, inputPoints.n_rows,
+        inputPoints.n_cols, true);
+    LabelsType newOutputLabels(inputLabels.n_elem);
+    WeightsType newOutputWeights(inputWeights.n_elem);
+    newOutputLabels.cols(ordering) = inputLabels;
+    newOutputWeights.cols(ordering) = inputWeights;
+
+    outputPoints = std::move(newOutputPoints);
+    outputLabels = std::move(newOutputLabels);
+    outputWeights = std::move(newOutputWeights);
+  }
+  else
+  {
+    outputPoints = MatType(locations, values, inputPoints.n_rows,
+        inputPoints.n_cols, true);
+    outputLabels.set_size(inputLabels.n_elem);
+    outputLabels.cols(ordering) = inputLabels;
+    outputWeights.set_size(inputWeights.n_elem);
+    outputWeights.cols(ordering) = inputWeights;
   }
 }
 

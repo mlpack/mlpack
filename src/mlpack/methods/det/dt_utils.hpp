@@ -118,12 +118,12 @@ class PathCacher
   /**
    * Return the constructed path for a given tag.
    */
-  const std::string& PathFor(int tag) const;
+  inline const std::string& PathFor(int tag) const;
 
   /**
    * Get the parent tag of a given tag.
    */
-  int ParentOf(int tag) const;
+  inline int ParentOf(int tag) const;
 
   /**
    * Get the number of nodes in the path cache.
@@ -138,7 +138,7 @@ class PathCacher
   PathFormat    format;
   PathCacheType pathCache;
 
-  std::string   BuildString();
+  inline std::string   BuildString();
 };
 
 } // namespace det

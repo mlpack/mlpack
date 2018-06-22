@@ -99,7 +99,7 @@ void BatchNorm<InputDataType, OutputDataType>::Backward(
   const arma::mat inputMean = input.each_col() - mean;
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
-  // Step 1: dl / dxhat *
+  // Step 1: dl / dxhat
   const arma::mat norm = gy.each_col() % gamma;
 
   // Step 2: sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
@@ -113,8 +113,8 @@ void BatchNorm<InputDataType, OutputDataType>::Backward(
 
   // Step 3: sum (dl / dxhat * -1 / stdInv) + variance *
   // (sum -2 * (x - mu)) / m.
-  g.each_col() += arma::sum(norm.each_col() % -stdInv, 1) + var %
-      arma::mean(-2 * inputMean, 1) / input.n_cols;
+  g.each_col() += (arma::sum(norm.each_col() % -stdInv, 1) + (var %
+      arma::mean(-2 * inputMean, 1))) / input.n_cols;
 }
 
 template<typename InputDataType, typename OutputDataType>

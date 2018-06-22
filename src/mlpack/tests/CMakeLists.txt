@@ -13,6 +13,7 @@ add_executable(mlpack_test
   async_learning_test.cpp
   aug_lagrangian_test.cpp
   augmented_rnns_tasks_test.cpp
+  bigbatch_sgd_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
   cf_test.cpp
@@ -25,6 +26,7 @@ add_executable(mlpack_test
   cosine_tree_test.cpp
   cv_test.cpp
   dbscan_test.cpp
+  dcgan_test.cpp
   decision_stump_test.cpp
   decision_tree_test.cpp
   det_test.cpp
@@ -35,6 +37,7 @@ add_executable(mlpack_test
   feedforward_network_test.cpp
   frankwolfe_test.cpp
   function_test.cpp
+  gan_test.cpp
   gmm_test.cpp
   gradient_clipping_test.cpp
   gradient_descent_test.cpp
@@ -64,6 +67,7 @@ add_executable(mlpack_test
   local_coordinate_coding_test.cpp
   log_test.cpp
   logistic_regression_test.cpp
+  loss_functions_test.cpp
   lrsdp_test.cpp
   lsh_test.cpp
   math_test.cpp
@@ -136,13 +140,16 @@ add_executable(mlpack_test
   main_tests/approx_kfn_test.cpp
   main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
+  main_tests/det_test.cpp
   main_tests/decision_tree_test.cpp
   main_tests/decision_stump_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/logistic_regression_test.cpp
   main_tests/lmnn_test.cpp
+  main_tests/lsh_test.cpp
   main_tests/mean_shift_test.cpp
   main_tests/nbc_test.cpp
+  main_tests/nca_test.cpp
   main_tests/nmf_test.cpp
   main_tests/pca_test.cpp
   main_tests/perceptron_test.cpp
@@ -158,6 +165,7 @@ add_executable(mlpack_test
   main_tests/hmm_train_test.cpp
   main_tests/hmm_loglik_test.cpp
   main_tests/hmm_generate_test.cpp
+  main_tests/radical_test.cpp
   main_tests/hmm_test_utils.hpp
 )
 

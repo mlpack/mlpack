@@ -1,6 +1,7 @@
 /**
  * @file bilinear_interpolation.hpp
- * @author Kris Singh and Shikhar Jaiswal
+ * @author Kris Singh
+ * @author Shikhar Jaiswal
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license. You should have received a copy of the
@@ -114,6 +115,8 @@ class BilinearInterpolation
   size_t outColSize;
   //! Locally stored depth of the input.
   size_t depth;
+  //! Locally stored number of input points.
+  size_t batchSize;
   //! Locally-stored delta object.
   OutputDataType delta;
   //! Locally-stored input parameter object.

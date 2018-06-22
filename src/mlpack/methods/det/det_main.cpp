@@ -121,6 +121,8 @@ static void mlpackMain()
 
   ReportIgnoredParam({{ "test", false }}, "test_set_estimates");
 
+  RequireParamValue<int>("folds", [](int x) { return x >= 0; }, true,
+      "folds must be non-negative");
   RequireParamValue<int>("max_leaf_size", [](int x) { return x > 0; }, true,
       "maximum leaf size must be positive");
   RequireParamValue<int>("min_leaf_size", [](int x) { return x > 0; }, true,

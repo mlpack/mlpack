@@ -3,6 +3,8 @@
 set(SOURCES
   ffn.hpp
   ffn_impl.hpp
+  gan_impl.hpp
+  gan.hpp
   rnn.hpp
   rnn_impl.hpp
 )
@@ -11,6 +13,7 @@ add_subdirectory(visitor)
 add_subdirectory(activation_functions)
 add_subdirectory(init_rules)
 add_subdirectory(layer)
+add_subdirectory(loss_functions)
 add_subdirectory(convolution_rules)
 add_subdirectory(augmented)
 

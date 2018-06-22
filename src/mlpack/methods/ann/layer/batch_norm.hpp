@@ -19,7 +19,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Declaration of the Batch Normalization layer class. The layer tranforms
+ * Declaration of the Batch Normalization layer class. The layer transforms
  * the input data into zero mean and unit variance and then scales and shifts
  * the data by parameters, gamma and beta respectively. These parameters are
  * learnt by the network.

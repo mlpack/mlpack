@@ -14,6 +14,7 @@
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 #include <mlpack/core/data/binarize.hpp>
 #include <mlpack/core/math/random.hpp>
@@ -1220,7 +1221,7 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
 BOOST_AUTO_TEST_CASE(MultiTimestepTest)
 {
   double err = RNNSineTest(4, 10, 20);
-  BOOST_REQUIRE_LE(err, 1e-02);
+  BOOST_REQUIRE_LE(err, 0.025);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

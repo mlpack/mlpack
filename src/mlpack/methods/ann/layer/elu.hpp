@@ -36,13 +36,13 @@ namespace ann /** Artificial Neural Network. */ {
  * f(x) &=& \left\{
  *   \begin{array}{lr}
  *    x & : x > 0 \\
- *    alpha(e^x - 1) & : x \le 0
+ *    \alpha(e^x - 1) & : x \le 0
  *   \end{array}
  * \right. \\
  * f'(x) &=& \left\{
  *   \begin{array}{lr}
  *     1 & : x > 0 \\
- *     y + alpha & : x \le 0
+ *     y + \alpha & : x \le 0
  *   \end{array}
  * \right.
  * @f}
@@ -66,14 +66,14 @@ namespace ann /** Artificial Neural Network. */ {
  * @f{eqnarray*}{
  * f(x) &=& \left\{
  *   \begin{array}{lr}
- *    lambda * x & : x > 0 \\
- *    lambda * alpha(e^x - 1) & : x \le 0
+ *    \lambda * x & : x > 0 \\
+ *    \lambda * \alpha(e^x - 1) & : x \le 0
  *   \end{array}
  * \right. \\
  * f'(x) &=& \left\{
  *   \begin{array}{lr}
- *     lambda & : x > 0 \\
- *     lambda * (y + alpha) & : x \le 0
+ *     \lambda & : x > 0 \\
+ *     \lambda * (y + \alpha) & : x \le 0
  *   \end{array}
  * \right.
  * @f}
