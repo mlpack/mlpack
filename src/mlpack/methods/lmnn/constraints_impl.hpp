@@ -23,8 +23,8 @@ Constraints<MetricType>::Constraints(
     const arma::mat& dataset,
     const arma::Row<size_t>& labels,
     size_t k) :
-    dataset(dataset),
-    labels(labels),
+    dataset(math::MakeAlias(const_cast<arma::mat&>(dataset), false)),
+    labels(math::MakeAlias(const_cast<arma::Row<size_t>&>(labels), false)),
     k(k)
 {
   // Ensure a valid k is passed.

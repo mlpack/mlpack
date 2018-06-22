@@ -100,7 +100,7 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "literature on L-BFGS.  In addition, a normalized starting point can be "
     "used by specifying the " + PRINT_PARAM_STRING("normalize") + " parameter."
     "\n\n"
-    "By default, the L-BFGS optimizer is used."
+    "By default, the AMSGrad optimizer is used."
     "\n\n"
     "Example - Let's say we want to learn distance on iris dataset with "
     "number of targets as 3 using BigBatch_SGD optimizer. A simple call for "
@@ -121,7 +121,7 @@ PARAM_INT_IN("num_targets", "Number of target neighbors to use for each "
     "datapoint.", "k", 1);
 PARAM_MATRIX_OUT("output", "Output matrix for learned distance matrix.", "o");
 PARAM_STRING_IN("optimizer", "Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or "
-    "'lbfgs'.", "O", "lbfgs");
+    "'lbfgs'.", "O", "amsgrad");
 PARAM_DOUBLE_IN("regularization", "Regularization for LMNN objective function ",
     "r", 0.5);
 PARAM_FLAG("normalize", "Use a normalized starting point for optimization. It"
