@@ -19,21 +19,13 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * Multiple univariate Normal(Gaussian) distributions.
+ *
+ * @tparam DataType Type of the input data. (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
 template <typename DataType = arma::mat>
 class NormalDistribution
 {
- private:
-  //! Means of the distributions.
-  DataType mean;
-  //! Standard deviations of the distributions.
-  DataType stdDeviation;
-  //! Pre standard deviation. After softplus this will give standard deviation.
-  DataType preStdDev;
-
-  //! log(2pi)
-  static const constexpr double log2pi = 1.83787706640934533908193770912475883;
-
  public:
   /**
    * Default constructor, which creates a Normal distribution with zero
@@ -45,19 +37,29 @@ class NormalDistribution
   }
 
   /**
-   * Create multiple Normal distributions with the given means and Standard
-   * deviations.
+   * Create multiple Normal distributions with the given parameters.
+   *
+   * @param mean The DataType of means of the multiple distributions
+   * @param stdDeviation The DataType of standard deviations of the multiple
+   *        distributions.
    */
   NormalDistribution(const DataType& mean, const DataType& stdDeviation);
 
   /*
-   * Create multiple Normal distribution with the given input matrix which
-   * has pre standard deviation in the upper half and mean in the lower half.
+   * Create multiple Normal distributions with the given data.
+   * Originally designed to be used along with the ReconstructionLoss class.
+   * The input to the loss function which will be a single matrix can directly
+   * be passed on to this function.
+   *
+   * @param input The DataType which has means in the lower half.
+   *        The upper half has pre standard deviations.
+   * @param applySoftplus If true, after applying softplus function to the pre
+   *        standard deviations, we get the standard deviations.
    */
-  NormalDistribution(const DataType& input);
+  NormalDistribution(const DataType& input, const bool applySoftplus = true);
 
   /**
-   * Return the probabilities of the given matrix of observations.
+   * Return the probabilities of the given DataType of observations.
    */
   double Probability(const DataType& observation) const
   {
@@ -65,41 +67,34 @@ class NormalDistribution
   }
 
   /**
-   * Return the log probabilities of the given matrix of observations.
+   * Return the log probabilities of the given DataType of observations.
    */
   double LogProbability(const DataType& observation) const;
 
   /**
-   * Stores the gradient of the log probability in the output matrix.
+   * Stores the gradient of the log probabilities of the observations in the
+   * output DataType.
    */
   void LogProbBackward(const DataType& observation, DataType& output) const;
 
   /**
-   * Return a matrix of randomly generated observations according to the
+   * Return a matrix of randomly generated samples according to the
    * probability distributions defined by this object.
    *
-   * @return Matrix of random observations from this Normal distribution.
+   * @return Matrix of random samples from the multiple Normal distributions.
    */
-  DataType Random() const;
+  DataType Sample() const;
 
-  /**
-   * Return the mean.
-   */
+  //! Return the mean.
   const DataType& Mean() const { return mean; }
 
-  /**
-   * Return a modifiable copy of the mean.
-   */
+  //! Return a modifiable copy of the mean.
   DataType& Mean() { return mean; }
 
-  /**
-   * Return the standard deviation.
-   */
+  //! Return the standard deviation.
   const DataType& StdDeviation() const { return stdDeviation; }
 
-  /**
-   * Return a modifiable copy of the standard deviation.
-   */
+  //! Return a modifiable copy of the standard deviation.
   DataType& StdDeviation() { return stdDeviation; }
 
   /**
@@ -111,10 +106,27 @@ class NormalDistribution
     // We just need to serialize each of the members.
     ar & BOOST_SERIALIZATION_NVP(mean);
     ar & BOOST_SERIALIZATION_NVP(stdDeviation);
+    ar & BOOST_SERIALIZATION_NVP(preStdDev);
   }
+
+ private:
+  //! Means of the distributions.
+  DataType mean;
+
+  //! Standard deviations of the distributions.
+  DataType stdDeviation;
+
+  //! Pre standard deviation. After softplus this will give standard deviation.
+  DataType preStdDev;
+
+  //! If true, apply softplus function to upper half of input matrix.
+  bool applySoftplus;
+
+  //! log(2pi)
+  static const constexpr double log2pi = 1.83787706640934533908193770912475883;
 }; // class NormalDistribution
 
-} // namespace distribution
+} // namespace ann
 } // namespace mlpack
 
 // Include implementation.

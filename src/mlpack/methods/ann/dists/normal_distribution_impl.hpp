@@ -35,7 +35,8 @@ NormalDistribution<DataType>::NormalDistribution(
 
 template<typename DataType>
 NormalDistribution<DataType>::NormalDistribution(
-    const DataType& input) :
+    const DataType& input,
+    const bool applySoftplus) :
     mean(input.submat(input.n_rows / 2, 0, input.n_rows - 1,
         input.n_cols - 1)),
     preStdDev(input.submat(0, 0, input.n_rows / 2 - 1, input.n_cols - 1))
@@ -46,11 +47,14 @@ NormalDistribution<DataType>::NormalDistribution(
         << "rows of input matrix should be even." << std::endl;
   }
 
-  SoftplusFunction::Fn(preStdDev, stdDeviation);
+  if (applySoftplus)
+    SoftplusFunction::Fn(preStdDev, stdDeviation);
+  else
+    stdDeviation = preStdDev;
 }
 
 template<typename DataType>
-DataType NormalDistribution<DataType>::Random() const
+DataType NormalDistribution<DataType>::Sample() const
 {
   return stdDeviation % arma::randn<DataType>(mean.n_rows, mean.n_cols) + mean;
 }
@@ -67,7 +71,7 @@ template<typename DataType>
 void NormalDistribution<DataType>::LogProbBackward(
     const DataType& observation, DataType& output) const
 {
-  if (preStdDev.is_empty())
+  if (!applySoftplus)
     output = -0.5 * join_cols((2 / stdDeviation - 2 *
       arma::pow(mean - observation, 2) / arma::pow(stdDeviation, 3)), 2 *
       (mean - observation) / arma::pow(stdDeviation, 2));
