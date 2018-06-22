@@ -110,8 +110,8 @@ PARAM_INT_IN("max_iterations", "Maximum number of iterations for "
     "L-BFGS (0 indicates no limit).", "n", 100000);
 PARAM_DOUBLE_IN("tolerance", "Maximum tolerance for termination of AMSGrad, "
     "BB_SGD, SGD or L-BFGS.", "t", 1e-7);
-PARAM_DOUBLE_IN("step_size", "Step size for AMSGrad, BB_SGD and SGD."
-    "(alpha).", "a", 0.01);
+PARAM_DOUBLE_IN("step_size", "Step size for AMSGrad, BB_SGD and SGD (alpha).",
+    "a", 0.01);
 PARAM_FLAG("linear_scan", "Don't shuffle the order in which data points are "
     "visited for SGD or mini-batch SGD.", "L");
 PARAM_INT_IN("batch_size", "Batch size for mini-batch SGD.", "b", 50);

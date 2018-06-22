@@ -43,44 +43,44 @@ class LMNNFunction
   void Shuffle();
 
   /**
-   * Evaluate the LMNN function for the given covariance matrix.  This is the
+   * Evaluate the LMNN function for the given transformation matrix.  This is the
    * non-separable implementation, where the objective function is not
    * decomposed into the sum of several objective functions.
    *
-   * @param covariance Covariance matrix of Mahalanobis distance.
+   * @param transformation Transformation matrix of Mahalanobis distance.
    */
-  double Evaluate(const arma::mat& covariance);
+  double Evaluate(const arma::mat& transformation);
 
   /**
-   * Evaluate the LMNN objective function for the given covariance matrix on
+   * Evaluate the LMNN objective function for the given transformation matrix on
    * the given batch size from a given inital point of the dataset.
    * This is the separable implementation, where the objective 
    * function is decomposed into the sum of many objective
    * functions, and here, only one of those constituent objective functions is
    * returned.
    *
-   * @param covariance Covariance matrix of Mahalanobis distance.
+   * @param transformation Transformation matrix of Mahalanobis distance.
    * @param begin Index of the initial point to use for objective function.
    * @param batchSize Number of points to use for objective function.
    */
-  double Evaluate(const arma::mat& covariance,
+  double Evaluate(const arma::mat& transformation,
                   const size_t begin,
                   const size_t batchSize = 1);
 
   /**
-   * Evaluate the gradient of the LMNN function for the given covariance
+   * Evaluate the gradient of the LMNN function for the given transformation
    * matrix.  This is the non-separable implementation, where the objective
    * function is not decomposed into the sum of several objective functions.
    *
    * @tparam GradType The type of the gradient out-param.
-   * @param covariance Covariance matrix of Mahalanobis distance.
+   * @param transformation Transformation matrix of Mahalanobis distance.
    * @param gradient Matrix to store the calculated gradient in.
    */
   template<typename GradType>
-  void Gradient(const arma::mat& covariance, GradType& gradient);
+  void Gradient(const arma::mat& transformation, GradType& gradient);
 
   /**
-   * Evaluate the gradient of the LMNN function for the given covariance
+   * Evaluate the gradient of the LMNN function for the given transformation
    * matrix on the given batch size, from a given initial point of the dataset.
    * This is the separable implementation, where the objective function is
    * decomposed into the sum of many objective functions, and here,
@@ -89,34 +89,34 @@ class LMNNFunction
    * argument to allow the computation of a sparse gradient.
    *
    * @tparam GradType The type of the gradient out-param.
-   * @param covariance Covariance matrix of Mahalanobis distance.
+   * @param transformation Transformation matrix of Mahalanobis distance.
    * @param begin Index of the initial point to use for objective function.
    * @param batchSize Number of points to use for objective function.
    * @param gradient Matrix to store the calculated gradient in.
    */
   template<typename GradType>
-  void Gradient(const arma::mat& covariance,
+  void Gradient(const arma::mat& transformation,
                 const size_t begin,
                 GradType& gradient,
                 const size_t batchSize = 1);
 
   /**
    * Evaluate the LMNN objective function together with gradient for the given
-   * covariance matrix.  This is the non-separable implementation, where the
+   * transformation matrix.  This is the non-separable implementation, where the
    * objective function is not decomposed into the sum of several objective
    * functions.
    *
    * @tparam GradType The type of the gradient out-param.
-   * @param covariance Covariance matrix of Mahalanobis distance.
+   * @param transformation Transformation matrix of Mahalanobis distance.
    * @param gradient Matrix to store the calculated gradient in.
    */
   template<typename GradType>
-  double EvaluateWithGradient(const arma::mat& coordinates,
+  double EvaluateWithGradient(const arma::mat& transformation,
                             GradType& gradient);
 
   /**
    * Evaluate the LMNN objective function together with gradient for the given
-   * covariance matrix on the given batch size, from a given initial point of
+   * transformation matrix on the given batch size, from a given initial point of
    * the dataset. This is the separable implementation, where the objective
    * function is decomposed into the sum of many objective functions, and
    * here, only one of those constituent objective functions is returned.
@@ -124,13 +124,13 @@ class LMNNFunction
    * argument to allow the computation of a sparse gradient.
    *
    * @tparam GradType The type of the gradient out-param.
-   * @param covariance Covariance matrix of Mahalanobis distance.
+   * @param transformation Transformation matrix of Mahalanobis distance.
    * @param begin Index of the initial point to use for objective function.
    * @param batchSize Number of points to use for objective function.
    * @param gradient Matrix to store the calculated gradient in.
    */
   template<typename GradType>
-  double EvaluateWithGradient(const arma::mat& covariance,
+  double EvaluateWithGradient(const arma::mat& transformation,
                             const size_t begin,
                             GradType& gradient,
                             const size_t batchSize = 1);
@@ -175,6 +175,8 @@ class LMNNFunction
   arma::Mat<size_t> targetNeighbors;
   //! Initial impostors.
   arma::Mat<size_t> impostors;
+  //! Cache distance. Used to avoid repetive calculation.
+  arma::mat distance;
   //! Number of target neighbors.
   size_t k;
   //! The instantiated metric.
@@ -187,14 +189,12 @@ class LMNNFunction
   size_t range;
   //! Holds pre-calculated cij.
   arma::mat p_cij;
-  //! False if nothing has ever been precalculated.
-  bool precalculated;
   /**
   * Precalculate the gradient part due to target neighbors and stores
   * the result as a matrix. Used for L-BFGS like optimizers which does not
   * uses batches.
   */
-  void Precalculate();
+  inline void Precalculate();
 };
 
 } // namespace lmnn

@@ -44,11 +44,11 @@ void LMNN<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix)
       !(arma::is_finite(outputMatrix)))
     outputMatrix.eye(dataset.n_rows, dataset.n_rows);
 
-  Timer::Start("lmnn_sgd_optimization");
+  Timer::Start("lmnn_optimization");
 
   optimizer.Optimize(objFunction, outputMatrix);
 
-  Timer::Stop("lmnn_sgd_optimization");
+  Timer::Stop("lmnn_optimization");
 }
 
 

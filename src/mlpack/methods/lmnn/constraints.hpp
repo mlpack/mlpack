@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_LMNN_CONSTRAINTS_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 namespace mlpack {
 namespace lmnn {
@@ -26,9 +27,14 @@ namespace lmnn {
  * data point) and Triplets() (Generates sets of {dataset, target neighbors,
  * impostors} tripltets.)
  */
+template<typename MetricType = metric::SquaredEuclideanDistance>
 class Constraints
 {
  public:
+  //! Convenience typedef.
+  typedef neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType>
+      KNN;
+
   /**
    * Constructor for creating a Constraints instance.
    *
@@ -135,9 +141,6 @@ class Constraints
 
   //! Store indices of data points having different label.
   std::vector<arma::uvec> indexDiff;
-
-  //! False if nothing has ever been precalculated.
-  bool precalculated;
 
   /**
   * Precalculate the unique labels, and indices of similar

@@ -43,10 +43,11 @@ BOOST_AUTO_TEST_CASE(LMNNTargetNeighborsTest)
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  Constraints constraint(dataset, labels, 1);
+  Constraints<> constraint(dataset, labels, 1);
 
   //! Store target neighbors of data points.
-  arma::Mat<size_t> targetNeighbors;
+  arma::Mat<size_t> targetNeighbors =
+      arma::Mat<size_t>(1, dataset.n_cols, arma::fill::zeros);
 
   constraint.TargetNeighbors(targetNeighbors);
 
@@ -68,10 +69,11 @@ BOOST_AUTO_TEST_CASE(LMNNImpostorsTest)
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  Constraints constraint(dataset, labels, 1);
+  Constraints<> constraint(dataset, labels, 1);
 
   //! Store impostors of data points.
-  arma::Mat<size_t> impostors;
+  arma::Mat<size_t> impostors =
+      arma::Mat<size_t>(1, dataset.n_cols, arma::fill::zeros);
 
   constraint.Impostors(impostors);
 

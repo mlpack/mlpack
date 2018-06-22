@@ -32,7 +32,23 @@ namespace lmnn /** Large Margin Nearest Neighbor. */ {
  * target neighbors beforehand. Moreover, target neighbors once initialized
  * remain same.
  *
- * @tparam SDPType The type of SDP to use for computation. ex. SDP<arma::mat>
+ * For more details, see the following published paper:
+ *
+ * @code
+ * @ARTICLE{weinberger09distance,
+ *   author = {Weinberger, K.Q. and Saul, L.K.},
+ *   title = {{Distance metric learning for large margin nearest neighbor
+ *       classification}},
+ *   journal = {The Journal of Machine Learning Research},
+ *   year = {2009},
+ *   volume = {10},
+ *   pages = {207--244},
+ *   publisher = {MIT Press}
+ * }
+ * @endcode
+ *
+ * @tparam MetricType The type of metric to use for computation.
+ * @tparam OptimizerType Optimizer to use for developing distance.
  */
 template<typename MetricType = metric::SquaredEuclideanDistance,
          typename OptimizerType = optimization::AMSGrad>
@@ -46,6 +62,8 @@ class LMNN
    *
    * @param dataset Input dataset.
    * @param labels Input dataset labels.
+   * @param k Number of targets to consider.
+   * @param metric Type of metric used for computation.
    */
   LMNN(const arma::mat& dataset,
        const arma::Row<size_t>& labels,
