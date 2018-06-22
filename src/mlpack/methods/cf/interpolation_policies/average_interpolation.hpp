@@ -33,7 +33,9 @@ class AverageInterpolation
   AverageInterpolation(const arma::sp_mat& /* cleanedData */) { }
 
   /**
-   * Interoplation weights are identical and sum up to one.
+   * Interoplation weights are identical and sum up to one. After getting the
+   * weights, CF algorithm  multiplies each neighbor's rating by its
+   * corresponding weight and sums them to get predicted rating.
    *
    * @param weights Resulting interpolation weights.
    * @param w Matrix W from decomposition.

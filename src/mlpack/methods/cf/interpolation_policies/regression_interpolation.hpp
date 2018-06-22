@@ -19,8 +19,9 @@ namespace cf {
 
 /**
  * Implementation of regression-based interpolation method. Predicting a user's
- * rating r_iu by it's neighbors' ratings can be regarded as solving linear
- * regression of r_iu on r_iv, where v are u's neighbors.
+ * rating \f$ r_{iu} \f$ by it's neighbors' ratings can be regarded as solving 
+ * linear regression of \f$ r_{iu} \f$ on \f$ r_{iv} \f$, where v are u's
+ * neighbors.
  *
  * For more information, see the following paper.
  *
@@ -59,8 +60,11 @@ class RegressionInterpolation
   /**
    * The regression-based interpolation problem can be solved by a linear
    * system of equations. This method first calculates the coefficients and
-   * contant terms for the equations and then solve the equations to get
-   * weights.
+   * constant terms for the equations and then solve the equations. The
+   * solution of the linear system of equations is the resulting interpolation
+   * weights (the first parameter). After getting the weights, CF algorithm
+   * multiplies each neighbor's rating by its corresponding weight and sums
+   * them to get predicted rating.
    *
    * @param weights Resulting interpolation weights.
    * @param w Matrix W from decomposition.
