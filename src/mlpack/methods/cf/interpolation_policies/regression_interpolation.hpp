@@ -130,13 +130,16 @@ class RegressionInterpolation
         }
       }
 
-      // Calculate constant term.
+      // Calculate constant terms.
       if (b(neighbors(i), queryUser) != 0)
         // The constant term has already been cached.
         constant(i) = b(neighbors(i), queryUser);
       else
       {
         // Calcuate the constant term.
+        if (iPrediction.size() == 0)
+            // Avoid recalculation of iPrediction.
+            iPrediction = w * h.col(neighbors(i));
         constant(i) = arma::dot(iPrediction, userRating) / support;
         if (constant(i) == 0)
           constant(i) = std::numeric_limits<double>::min();
