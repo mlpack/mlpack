@@ -156,18 +156,19 @@ BOOST_AUTO_TEST_CASE(LMNNOptimizerTest)
 }
 
 /**
- * Ensure that if labels are of a different size than required
- * by the input, an error occurs.
+ * Ensure that if number of available labels in a class is less than
+ * the number of targets, an error occurs.
  */
-BOOST_AUTO_TEST_CASE(LMNNLabelSizeTest)
+BOOST_AUTO_TEST_CASE(LMNNNumTargetsTest)
 {
-  // Input labels of wrong size.
+  // Input Dataset
   arma::mat inputData      = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
-  arma::Row<size_t> labels = " 0    0    0    0    0    0";
+  arma::Row<size_t> labels = " 0    0    0    1    1    1";
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("labels", std::move(labels));
+  SetInputParam("num_targets", (int) 5);
 
   // Check that an error is thrown.
   Log::Fatal.ignoreInput = true;
@@ -179,7 +180,7 @@ BOOST_AUTO_TEST_CASE(LMNNLabelSizeTest)
  * Ensure that setting normalize as true results in a
  * different output matrix then when set to false.
  */
-BOOST_AUTO_TEST_CASE(LMNNNormalizationTest)
+BOOST_AUTO_TEST_CASE(LMNNDiffNormalizationTest)
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
@@ -220,7 +221,7 @@ BOOST_AUTO_TEST_CASE(LMNNNormalizationTest)
 /**
  * Ensure that output is different when step_size is different.
  */
-BOOST_AUTO_TEST_CASE(LMNNDifferentStepSizeTest)
+BOOST_AUTO_TEST_CASE(LMNNDiffStepSizeTest)
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
@@ -258,7 +259,7 @@ BOOST_AUTO_TEST_CASE(LMNNDifferentStepSizeTest)
 /**
  * Ensure that output is different when the tolerance is different.
  */
-BOOST_AUTO_TEST_CASE(LMNNDifferentToleranceTest)
+BOOST_AUTO_TEST_CASE(LMNNDiffToleranceTest)
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
@@ -294,7 +295,7 @@ BOOST_AUTO_TEST_CASE(LMNNDifferentToleranceTest)
 /**
  * Ensure that output is different when batch_size is different.
  */
-BOOST_AUTO_TEST_CASE(LMNNDifferentBatchSizeTest)
+BOOST_AUTO_TEST_CASE(LMNNDiffBatchSizeTest)
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
@@ -333,7 +334,7 @@ BOOST_AUTO_TEST_CASE(LMNNDifferentBatchSizeTest)
  * Ensure that different value of number of targets results in a
  * different output matrix.
  */
-BOOST_AUTO_TEST_CASE(LMNNNumTargetsTest)
+BOOST_AUTO_TEST_CASE(LMNNDiffNumTargetsTest)
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
@@ -372,7 +373,7 @@ BOOST_AUTO_TEST_CASE(LMNNNumTargetsTest)
  * Ensure that different value of regularization results in a
  * different output matrix.
  */
-BOOST_AUTO_TEST_CASE(LMNNRegularizationTest)
+BOOST_AUTO_TEST_CASE(LMNNDiffRegularizationTest)
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
@@ -411,7 +412,7 @@ BOOST_AUTO_TEST_CASE(LMNNRegularizationTest)
  * Ensure that different value of range results in a
  * different output matrix.
  */
-BOOST_AUTO_TEST_CASE(LMNNRangeTest)
+BOOST_AUTO_TEST_CASE(LMNNDiffRangeTest)
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
@@ -449,7 +450,7 @@ BOOST_AUTO_TEST_CASE(LMNNRangeTest)
  * Ensure that different value of batch delta results in a
  * different output matrix.
  */
-BOOST_AUTO_TEST_CASE(LMNNBatchDeltaTest)
+BOOST_AUTO_TEST_CASE(LMNNDiffBatchDeltaTest)
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
@@ -489,7 +490,7 @@ BOOST_AUTO_TEST_CASE(LMNNBatchDeltaTest)
  * Ensure that different value of epsilon results in a
  * different output matrix.
  */
-BOOST_AUTO_TEST_CASE(LMNNEpsilonTest)
+BOOST_AUTO_TEST_CASE(LMNNDiffEpsilonTest)
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
@@ -529,7 +530,7 @@ BOOST_AUTO_TEST_CASE(LMNNEpsilonTest)
  * Ensure that different value of wolfe results in a
  * different output matrix.
  */
-BOOST_AUTO_TEST_CASE(LMNNWolfeTest)
+BOOST_AUTO_TEST_CASE(LMNNDiffWolfeTest)
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
@@ -572,7 +573,7 @@ BOOST_AUTO_TEST_CASE(LMNNWolfeTest)
  * Ensure that different value of NumBasis results in a
  * different output matrix.
  */
-BOOST_AUTO_TEST_CASE(LMNNDifferentNumBasisTest)
+BOOST_AUTO_TEST_CASE(LMNNDiffNumBasisTest)
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
@@ -615,7 +616,7 @@ BOOST_AUTO_TEST_CASE(LMNNDifferentNumBasisTest)
  * Ensure that using a different value of max_iteration
  * results in a different output matrix.
  */
-BOOST_AUTO_TEST_CASE(LMNNDifferentMaxIterationTest)
+BOOST_AUTO_TEST_CASE(LMNNDiffMaxIterationTest)
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
@@ -658,7 +659,7 @@ BOOST_AUTO_TEST_CASE(LMNNDifferentMaxIterationTest)
  * Ensure that using a different value of passes
  * results in a different output matrix.
  */
-BOOST_AUTO_TEST_CASE(LMNNDifferentPassesTest)
+BOOST_AUTO_TEST_CASE(LMNNDiffPassesTest)
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
