@@ -14,6 +14,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/ann/gan_policies.hpp>
 #include <mlpack/methods/ann/visitor/output_parameter_visitor.hpp>
 #include <mlpack/methods/ann/visitor/reset_visitor.hpp>
 #include <mlpack/methods/ann/visitor/weight_size_visitor.hpp>
@@ -31,7 +32,7 @@ namespace ann /** Artificial Neural Network. **/ {
  * technique can generate photographs that look at least superficially
  * authentic to human observers, having many realistic characteristics.
  *
- * For more information, see the following papers.
+ * For more information, see the following paper:
  *
  * @code
  * @article{Goodfellow14,
@@ -44,26 +45,17 @@ namespace ann /** Artificial Neural Network. **/ {
  *   eprint    = {1406.2661},
  * }
  * @endcode
- * 
- * @code
- * @article{Salimans16,
- *   author    = {Tim Salimans, Ian Goodfellow, Wojciech Zaremba,
- *                Vicki Cheung, Alec Radford and Xi Chen},
- *   title     = {Improved Techniques for Training GANs},
- *   year      = {2016},
- *   url       = {http://arxiv.org/abs/1606.03498},
- *   eprint    = {1606.03498},
- * }
- * @endcode
  *
  * @tparam Model The class type of Generator and Discriminator.
  * @tparam InitializationRuleType Type of Initializer.
  * @tparam Noise The noise function to use.
+ * @tparam PolicyType The GAN variant to be used (GAN, DCGAN, WGAN or WGANGP).
  */
 template<
   typename Model,
   typename InitializationRuleType,
-  class Noise
+  typename Noise,
+  typename PolicyType = StandardGAN
 >
 class GAN
 {
@@ -74,11 +66,13 @@ class GAN
    * @param trainData The real data.
    * @param generator Generator network.
    * @param discriminator Discriminator network.
-   * @param batchSize BatchSize to be used for training.
-   * @param generatorUpdateStep Number of steps of Discriminator training
-   *                            before updating generator.
-   * @param preTrainSize Num of preTraining step of Discriminator.
+   * @param batchSize Batch size to be used for training.
+   * @param generatorUpdateStep Number of steps to train Discriminator
+   *                            before updating Generator.
+   * @param preTrainSize Number of pre-training steps of Discriminator.
    * @param multiplier Ratio of learning rate of Discriminator to the Generator.
+   * @param clippingParameter Weight range for enforcing Lipschitz constraint.
+   * @param lambda Parameter for setting the gradient penalty.
    */
   GAN(arma::mat& trainData,
       Model& generator,
@@ -89,7 +83,9 @@ class GAN
       size_t batchSize,
       size_t generatorUpdateStep,
       size_t preTrainSize,
-      double multiplier);
+      double multiplier,
+      double clippingParameter = 0.01,
+      double lambda = 10.0);
 
   // Reset function.
   void Reset();
@@ -99,29 +95,103 @@ class GAN
   void Train(OptimizerType& Optimizer);
 
   /**
-   * Evaluate function for the GAN gives the performance of the GAN on the
+   * Evaluate function for the Standard GAN and DCGAN.
+   * This function gives the performance of the Standard GAN or DCGAN on the
    * current input.
    *
    * @param parameters The parameters of the network.
    * @param i Index of the current input.
+   * @param batchSize Variable to store the present number of inputs.
    */
-  double Evaluate(const arma::mat& parameters,
-                  const size_t i,
-                  const size_t batchSize);
+  template<typename Policy = PolicyType>
+  typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
+                          std::is_same<Policy, DCGAN>::value, double>::type
+  Evaluate(const arma::mat& parameters,
+           const size_t i,
+           const size_t batchSize);
 
   /**
-   * Gradient function for GAN.
+   * Evaluate function for the WGAN.
+   * This function gives the performance of the WGAN on the current input.
+   *
+   * @param parameters The parameters of the network.
+   * @param i Index of the current input.
+   * @param batchSize Variable to store the present number of inputs.
+   */
+  template<typename Policy = PolicyType>
+  typename std::enable_if<std::is_same<Policy, WGAN>::value,
+                          double>::type
+  Evaluate(const arma::mat& parameters,
+           const size_t i,
+           const size_t batchSize);
+
+  /**
+   * Evaluate function for the WGAN-GP.
+   * This function gives the performance of the WGAN-GP on the current input.
+   *
+   * @param parameters The parameters of the network.
+   * @param i Index of the current input.
+   * @param batchSize Variable to store the present number of inputs.
+   */
+  template<typename Policy = PolicyType>
+  typename std::enable_if<std::is_same<Policy, WGANGP>::value,
+                          double>::type
+  Evaluate(const arma::mat& parameters,
+           const size_t i,
+           const size_t batchSize);
+
+  /**
+   * Gradient function for Standard GAN and DCGAN.
    * This function passes the gradient based on which network is being
    * trained, i.e., Generator or Discriminator.
    * 
    * @param parameters present parameters of the network.
    * @param i Index of the predictors.
    * @param gradient Variable to store the present gradient.
+   * @param batchSize Variable to store the present number of inputs.
    */
-  void Gradient(const arma::mat& parameters,
-                const size_t i,
-                arma::mat& gradient,
-                const size_t batchSize);
+  template<typename Policy = PolicyType>
+  typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
+                          std::is_same<Policy, DCGAN>::value, void>::type
+  Gradient(const arma::mat& parameters,
+           const size_t i,
+           arma::mat& gradient,
+           const size_t batchSize);
+
+  /**
+   * Gradient function for WGAN.
+   * This function passes the gradient based on which network is being
+   * trained, i.e., Generator or Discriminator.
+   * 
+   * @param parameters present parameters of the network.
+   * @param i Index of the predictors.
+   * @param gradient Variable to store the present gradient.
+   * @param batchSize Variable to store the present number of inputs.
+   */
+  template<typename Policy = PolicyType>
+  typename std::enable_if<std::is_same<Policy, WGAN>::value, void>::type
+  Gradient(const arma::mat& parameters,
+           const size_t i,
+           arma::mat& gradient,
+           const size_t batchSize);
+
+  /**
+   * Gradient function for WGAN-GP.
+   * This function passes the gradient based on which network is being
+   * trained, i.e., Generator or Discriminator.
+   * 
+   * @param parameters present parameters of the network.
+   * @param i Index of the predictors.
+   * @param gradient Variable to store the present gradient.
+   * @param batchSize Variable to store the present number of inputs.
+   */
+  template<typename Policy = PolicyType>
+  typename std::enable_if<std::is_same<Policy, WGANGP>::value,
+                          void>::type
+  Gradient(const arma::mat& parameters,
+           const size_t i,
+           arma::mat& gradient,
+           const size_t batchSize);
 
   /**
    * Shuffle the order of function visitation. This may be called by the
@@ -167,7 +237,7 @@ class GAN
   //! Locally stored Discriminator network.
   Model& discriminator;
   //! Locally stored Initializer.
-  InitializationRuleType  initializeRule;
+  InitializationRuleType initializeRule;
   //! Locally stored Noise function
   Noise noiseFunction;
   //! Locally stored input dimension of the Generator network.
@@ -186,6 +256,10 @@ class GAN
   size_t preTrainSize;
   //! Locally stored learning rate ratio for Generator network.
   double multiplier;
+  //! Locally stored weight clipping parameter.
+  double clippingParameter;
+  //! Locally stored lambda parameter.
+  double lambda;
   //! Locally stored reset parameter.
   bool reset;
   //! Locally stored delta visitor.
@@ -208,6 +282,8 @@ class GAN
   arma::mat gradientDiscriminator;
   //! Locally stored gradient for noise data in the predictors.
   arma::mat noiseGradientDiscriminator;
+  //! Locally stored norm of the gradient of Discriminator.
+  arma::mat normGradientDiscriminator;
   //! Locally stored noise using the noise function.
   arma::mat noise;
   //! Locally stored gradient for Generator.

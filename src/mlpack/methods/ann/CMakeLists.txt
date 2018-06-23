@@ -3,8 +3,9 @@
 set(SOURCES
   ffn.hpp
   ffn_impl.hpp
-  gan_impl.hpp
   gan.hpp
+  gan_impl.hpp
+  gan_policies.hpp
   rnn.hpp
   rnn_impl.hpp
 )

@@ -403,7 +403,8 @@ class FFN
   template<
     typename Model,
     typename InitializerType,
-    class NoiseType
+    typename NoiseType,
+    typename PolicyType
   >
   friend class GAN;
 }; // class FFN

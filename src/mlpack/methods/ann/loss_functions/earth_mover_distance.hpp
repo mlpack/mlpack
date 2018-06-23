@@ -1,16 +1,16 @@
 /**
- * @file cross_entropy_error.hpp
- * @author Konstantin Sidorov
+ * @file earth_mover_distance.hpp
+ * @author Shikhar Jaiswal
  *
- * Definition of the cross-entropy performance function.
+ * Definition of the earth mover distance function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_ERROR_HPP
-#define MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_ERROR_HPP
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTIONS_EARTH_MOVER_DISTANCE_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTIONS_EARTH_MOVER_DISTANCE_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -18,9 +18,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The cross-entropy performance function measures the network's
- * performance according to the cross-entropy
- * between the input and target distributions.
+ * The earth mover distance function measures the network's performance
+ * according to the Kantorovich-Rubinstein duality approximation.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -31,19 +30,16 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class CrossEntropyError
+class EarthMoverDistance
 {
  public:
   /**
-   * Create the CrossEntropyError object.
-   *
-   * @param eps The minimum value used for computing logarithms
-   *            and denominators in a numerically stable way.
+   * Create the EarthMoverDistance object.
    */
-  CrossEntropyError(const double eps = 1e-10);
+  EarthMoverDistance();
 
   /*
-   * Computes the cross-entropy function.
+   * Ordinary feed forward pass of a neural network.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
@@ -68,11 +64,6 @@ class CrossEntropyError
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
-  //! Get the epsilon.
-  double Eps() const { return eps; }
-  //! Modify the epsilon.
-  double& Eps() { return eps; }
-
   /**
    * Serialize the layer.
    */
@@ -82,15 +73,12 @@ class CrossEntropyError
  private:
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-
-  //! The minimum value used for computing logarithms and denominators
-  double eps;
-}; // class CrossEntropyError
+}; // class EarthMoverDistance
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "cross_entropy_error_impl.hpp"
+#include "earth_mover_distance_impl.hpp"
 
 #endif
