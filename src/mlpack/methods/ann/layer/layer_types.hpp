@@ -31,7 +31,6 @@
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
 #include <mlpack/methods/ann/layer/lookup.hpp>
 #include <mlpack/methods/ann/layer/multiply_constant.hpp>
-#include <mlpack/methods/ann/layer/negative_log_likelihood.hpp>
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
@@ -43,6 +42,9 @@
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
+
+// Loss function modules.
+#include <mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp>
 
 namespace mlpack {
 namespace ann {

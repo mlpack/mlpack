@@ -130,11 +130,6 @@ class AtrousConvolution
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -346,9 +341,6 @@ class AtrousConvolution
 
   //! Locally-stored gradient object.
   OutputDataType gradient;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
