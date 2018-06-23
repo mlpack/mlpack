@@ -25,6 +25,7 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
                            const arma::Row<size_t>& labels,
                            size_t k,
                            double regularization,
+                           size_t range,
                            MetricType metric) :
     dataset(math::MakeAlias(const_cast<arma::mat&>(dataset), false)),
     labels(math::MakeAlias(const_cast<arma::Row<size_t>&>(labels), false)),
@@ -32,7 +33,7 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
     metric(metric),
     regularization(regularization),
     iteration(0),
-    range(1),
+    range(range),
     constraint(dataset, labels, k)
 {
   // Initialize the initial learning point.

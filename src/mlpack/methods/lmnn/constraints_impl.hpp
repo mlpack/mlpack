@@ -300,7 +300,8 @@ void Constraints<MetricType>::Triplets(arma::Mat<size_t>& outputMatrix,
 }
 
 template<typename MetricType>
-inline void Constraints<MetricType>::Precalculate(const arma::Row<size_t>& labels)
+inline void Constraints<MetricType>::Precalculate(
+                                        const arma::Row<size_t>& labels)
 {
   // Make sure the calculation is necessary.
   if (precalculated)

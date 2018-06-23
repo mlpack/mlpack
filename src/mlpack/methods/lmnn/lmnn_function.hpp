@@ -37,6 +37,7 @@ class LMNNFunction
                const arma::Row<size_t>& labels,
                size_t k,
                double regularization,
+               size_t range,
                MetricType metric = MetricType());
 
   /**

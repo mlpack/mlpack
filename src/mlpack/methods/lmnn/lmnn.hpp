@@ -89,17 +89,19 @@ class LMNN
   const arma::Row<size_t>& Labels() const { return labels; }
 
   //! Access the regularization value.
-  const double& Regularization() const { return objFunction.Regularization(); }
+  const double& Regularization() const { return regularization; }
   //! Modify the regularization value.
-  double& Regularization() { return objFunction.Regularization(); }
+  double& Regularization() { return regularization; }
 
   //! Access the range value.
-  const size_t& Range() const { return objFunction.Range(); }
+  const size_t& Range() const { return range; }
   //! Modify the range value.
-  size_t& Range() { return objFunction.Range(); }
+  size_t& Range() { return range; }
 
   //! Access the value of k.
   const size_t& K() const { return k; }
+  //! Modify the value of k.
+  size_t K() { return k; }
 
   //! Get the optimizer.
   const OptimizerType& Optimizer() const { return optimizer; }
@@ -112,16 +114,20 @@ class LMNN
   //! Labels reference.
   const arma::Row<size_t>& labels;
 
-  const size_t k;
+  //! Number of target points.
+  size_t k;
+
+  //! Regularization value.
+  double regularization;
+
+  //! Range after which impostors need to be recalculated.
+  size_t range;
 
   //! Metric to be used.
   MetricType metric;
 
   //! The optimizer to use.
   OptimizerType optimizer;
-
-  // LMNN objective function.
-  LMNNFunction<MetricType> objFunction;
 }; // class LMNN
 
 } // namespace lmnn

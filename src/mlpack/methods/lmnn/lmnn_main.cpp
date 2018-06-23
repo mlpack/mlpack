@@ -47,6 +47,13 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "after which impostors must be re-calculated (specified with " +
     PRINT_PARAM_STRING("range") + ")."
     "\n\n"
+    "Output can be either the learned distance matrix (specified with " +
+    PRINT_PARAM_STRING("output") +"), or the transformed dataset "
+    " (specified with " + PRINT_PARAM_STRING("transformed_data") + "), or "
+    "both. Accuracy on initial dataset and final transformed dataset can "
+    "be printed by specifying the " + PRINT_PARAM_STRING("print_accuracy") +
+    " parameter. "
+    "\n\n"
     "This implementation of LMNN uses AdaGrad, BigBatch_SGD, stochastic "
     "gradient descent, mini-batch stochastic gradient descent, or the L_BFGS "
     "optimizer. "
@@ -201,11 +208,11 @@ double KnnAccuracy(const arma::mat& dataset,
       Map(labels(neighbors(j, i))) +=
           1 / std::pow(distances(j, i) + 1, 2);
 
-    size_t index = arma::conv_to<size_t>::from(arma::find(Map
+    arma::vec index = arma::conv_to<arma::vec>::from(arma::find(Map
         == arma::max(Map)));
 
     // Increase count if labels match.
-    if (index == labels(i))
+    if (index(0) == labels(i))
         count++;
   }
 
