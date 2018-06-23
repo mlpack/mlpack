@@ -112,15 +112,15 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "Example - Let's say we want to learn distance on iris dataset with "
     "number of targets as 3 using BigBatch_SGD optimizer. A simple call for "
     "the same will look like: "
-    "\n\n"
-    "$ bin/mlpack_lmnn -i iris.csv -l iris_labels.txt -k 3 -O bbsgd -o "
-    "output.csv --verbose"
+    "\n\n" +
+    PRINT_CALL("mlpack_lmnn", "input", "iris", "labels", "iris_labels",
+    "k", 3, "optimizer", "bbsgd", "output", "output") +
     "\n\n"
     "An another program call making use of range & regularization parameter "
     "with dataset having labels as last column can be made as: "
-    "\n\n"
-    "$ bin/mlpack_lmnn -i letter_recognition.csv -k 5 -R 10 -r 0.4 -o "
-    "output.csv --verbose");
+    "\n\n" +
+    PRINT_CALL("mlpack_lmnn", "input", "letter_recognition", "k", 5,
+    "range", 10, "regularization", 0.4, "output", "output"));
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run LMNN on.", "i");
 PARAM_UROW_IN("labels", "Labels for input dataset.", "l");
