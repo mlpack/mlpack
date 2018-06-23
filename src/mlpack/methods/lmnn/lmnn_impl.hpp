@@ -30,6 +30,8 @@ LMNN<MetricType, OptimizerType>::LMNN(const arma::mat& dataset,
     dataset(dataset),
     labels(labels),
     k(k),
+    regularization(0.5),
+    range(1),
     metric(metric)
 { /* nothing to do */ }
 
