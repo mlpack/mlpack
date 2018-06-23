@@ -310,7 +310,7 @@ double CFType<NormalizationType>::Predict(const size_t user,
   // Calculate interpolation weights.
   InterpolationPolicy interpolation(cleanedData);
   interpolation.GetWeights(weights, w, h, user,
-      neighborhood.col(0), similarities, cleanedData);
+      neighborhood.col(0), similarities.col(0), cleanedData);
 
   double rating = 0; // We'll take the weighted sum of neighborhood values.
 
