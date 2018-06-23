@@ -67,6 +67,10 @@ BOOST_AUTO_TEST_CASE(LMNNExplicitImplicitLabelsTest)
       inputData.n_rows - 1);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols,
       inputData.n_rows - 1);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_rows,
+      inputData.n_rows - 1);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_cols,
+      inputData.n_cols);
 
   // Reset Settings.
   CLI::ClearSettings();
@@ -91,6 +95,10 @@ BOOST_AUTO_TEST_CASE(LMNNExplicitImplicitLabelsTest)
       inputData.n_rows);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols,
       inputData.n_rows);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_rows,
+      inputData.n_rows);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_cols,
+      inputData.n_cols);
 }
 
 /**
@@ -119,6 +127,10 @@ BOOST_AUTO_TEST_CASE(LMNNOptimizerTest)
       inputData.n_rows);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols,
       inputData.n_rows);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_rows,
+      inputData.n_rows);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_cols,
+      inputData.n_cols);
 
   // Reset rettings.
   CLI::ClearSettings();
@@ -136,6 +148,10 @@ BOOST_AUTO_TEST_CASE(LMNNOptimizerTest)
       inputData.n_rows);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols,
       inputData.n_rows);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_rows,
+      inputData.n_rows);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_cols,
+      inputData.n_cols);
 
   // Reset rettings.
   CLI::ClearSettings();
@@ -153,6 +169,10 @@ BOOST_AUTO_TEST_CASE(LMNNOptimizerTest)
       inputData.n_rows);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols,
       inputData.n_rows);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_rows,
+      inputData.n_rows);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_cols,
+      inputData.n_cols);
 }
 
 /**
@@ -168,7 +188,7 @@ BOOST_AUTO_TEST_CASE(LMNNNumTargetsTest)
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("labels", std::move(labels));
-  SetInputParam("num_targets", (int) 5);
+  SetInputParam("k", (int) 5);
 
   // Check that an error is thrown.
   Log::Fatal.ignoreInput = true;
@@ -199,6 +219,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffNormalizationTest)
   mlpackMain();
 
   arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset rettings.
   CLI::ClearSettings();
@@ -216,6 +237,8 @@ BOOST_AUTO_TEST_CASE(LMNNDiffNormalizationTest)
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
       arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
+      transformedData), 0);
 }
 
 /**
@@ -235,10 +258,12 @@ BOOST_AUTO_TEST_CASE(LMNNDiffStepSizeTest)
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
   SetInputParam("step_size", (double) 0.01);
+  SetInputParam("linear_scan",  (bool) true);
 
   mlpackMain();
 
   arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset settings.
   CLI::ClearSettings();
@@ -248,12 +273,16 @@ BOOST_AUTO_TEST_CASE(LMNNDiffStepSizeTest)
   SetInputParam("input", std::move(inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("step_size", (double) 20.5);
+  SetInputParam("linear_scan",  (bool) true);
 
   mlpackMain();
-
+BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
+      transformedData), 0);
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
       arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
+      transformedData), 0);
 }
 
 /**
@@ -271,11 +300,13 @@ BOOST_AUTO_TEST_CASE(LMNNDiffToleranceTest)
 
   // Set parameters with a small tolerance.
   SetInputParam("input", inputData);
-  SetInputParam("tolerance", (double) 0.00005);
+  SetInputParam("tolerance", (double) 1e-6);
+  SetInputParam("linear_scan",  (bool) true);
 
   mlpackMain();
 
   arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset settings.
   CLI::ClearSettings();
@@ -284,12 +315,15 @@ BOOST_AUTO_TEST_CASE(LMNNDiffToleranceTest)
   // Set parameters using the same input but with a larger tolerance.
   SetInputParam("input", std::move(inputData));
   SetInputParam("tolerance", (double) 0.3);
+  SetInputParam("linear_scan",  (bool) true);
 
   mlpackMain();
 
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
       arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
+      transformedData), 0);
 }
 
 /**
@@ -309,10 +343,12 @@ BOOST_AUTO_TEST_CASE(LMNNDiffBatchSizeTest)
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
   SetInputParam("batch_size", (int) 20);
+  SetInputParam("linear_scan",  (bool) true);
 
   mlpackMain();
 
   arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset settings.
   CLI::ClearSettings();
@@ -322,12 +358,15 @@ BOOST_AUTO_TEST_CASE(LMNNDiffBatchSizeTest)
   SetInputParam("input", std::move(inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("batch_size", (int) 30);
+  SetInputParam("linear_scan",  (bool) true);
 
   mlpackMain();
 
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
       arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
+      transformedData), 0);
 }
 
 /**
@@ -347,11 +386,13 @@ BOOST_AUTO_TEST_CASE(LMNNDiffNumTargetsTest)
   // Set parameters.
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
-  SetInputParam("num_targets", std::move(1));
+  SetInputParam("k", 1);
+  SetInputParam("linear_scan",  (bool) true);
 
   mlpackMain();
 
   arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset settings.
   CLI::ClearSettings();
@@ -360,13 +401,16 @@ BOOST_AUTO_TEST_CASE(LMNNDiffNumTargetsTest)
   // Set different parameters.
   SetInputParam("input", std::move(inputData));
   SetInputParam("labels", std::move(labels));
-  SetInputParam("num_targets", std::move(5));
+  SetInputParam("k", 5);
+  SetInputParam("linear_scan",  (bool) true);
 
   mlpackMain();
 
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
       arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
+      transformedData), 0);
 }
 
 /**
@@ -386,11 +430,13 @@ BOOST_AUTO_TEST_CASE(LMNNDiffRegularizationTest)
   // Set parameters.
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
-  SetInputParam("regularization", std::move(1.0));
+  SetInputParam("linear_scan",  (bool) true);
+  SetInputParam("regularization", 1.0);
 
   mlpackMain();
 
   arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset settings.
   CLI::ClearSettings();
@@ -399,13 +445,16 @@ BOOST_AUTO_TEST_CASE(LMNNDiffRegularizationTest)
   // Set different parameters.
   SetInputParam("input", std::move(inputData));
   SetInputParam("labels", std::move(labels));
-  SetInputParam("regularization", std::move(0.1));
+  SetInputParam("linear_scan",  (bool) true);
+  SetInputParam("regularization", 0.1);
 
   mlpackMain();
 
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
       arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
+      transformedData), 0);
 }
 
 /**
@@ -425,10 +474,12 @@ BOOST_AUTO_TEST_CASE(LMNNDiffRangeTest)
   // Set parameters.
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
+  SetInputParam("linear_scan",  (bool) true);
 
   mlpackMain();
 
   arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset settings.
   CLI::ClearSettings();
@@ -437,53 +488,16 @@ BOOST_AUTO_TEST_CASE(LMNNDiffRangeTest)
   // Set different parameters.
   SetInputParam("input", std::move(inputData));
   SetInputParam("labels", std::move(labels));
-  SetInputParam("range", std::move(50));
+  SetInputParam("linear_scan",  (bool) true);
+  SetInputParam("range", 100);
 
   mlpackMain();
 
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
       arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
-}
-
-/**
- * Ensure that different value of batch delta results in a
- * different output matrix.
- */
-BOOST_AUTO_TEST_CASE(LMNNDiffBatchDeltaTest)
-{
-  arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load iris.csv!");
-
-  arma::Row<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load iris_labels.txt!");
-
-  // Set parameters.
-  SetInputParam("input", inputData);
-  SetInputParam("labels", labels);
-  SetInputParam("optimizer",  std::string("bbsgd"));
-
-  mlpackMain();
-
-  arma::mat output = CLI::GetParam<arma::mat>("output");
-
-  // Reset settings.
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
-
-  // Set different parameters.
-  SetInputParam("input", std::move(inputData));
-  SetInputParam("labels", std::move(labels));
-  SetInputParam("optimizer",  std::string("bbsgd"));
-  SetInputParam("batch_delta", std::move(10.0));
-
-  mlpackMain();
-
-  // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(
-      arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
+      transformedData), 0);
 }
 
 /**
@@ -504,10 +518,13 @@ BOOST_AUTO_TEST_CASE(LMNNDiffEpsilonTest)
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
   SetInputParam("optimizer",  std::string("amsgrad"));
+  SetInputParam("k", 5);
+  SetInputParam("linear_scan",  (bool) true);
 
   mlpackMain();
 
   arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset settings.
   CLI::ClearSettings();
@@ -517,13 +534,17 @@ BOOST_AUTO_TEST_CASE(LMNNDiffEpsilonTest)
   SetInputParam("input", std::move(inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("optimizer",  std::string("amsgrad"));
-  SetInputParam("epsilon", std::move(10.0));
+  SetInputParam("k", 5);
+  SetInputParam("linear_scan",  (bool) true);
+  SetInputParam("epsilon", 10.0);
 
   mlpackMain();
 
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
       arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
+      transformedData), 0);
 }
 
 /**
@@ -544,12 +565,13 @@ BOOST_AUTO_TEST_CASE(LMNNDiffWolfeTest)
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
   SetInputParam("optimizer",  std::string("lbfgs"));
-  SetInputParam("num_targets", std::move(5));
+  SetInputParam("k", 5);
   SetInputParam("wolfe", 0.1);
 
   mlpackMain();
 
   arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset settings.
   CLI::ClearSettings();
@@ -559,7 +581,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffWolfeTest)
   SetInputParam("input", std::move(inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("optimizer",  std::string("lbfgs"));
-  SetInputParam("num_targets", std::move(5));
+  SetInputParam("k", 5);
   SetInputParam("wolfe", 1.0);
 
   mlpackMain();
@@ -567,6 +589,8 @@ BOOST_AUTO_TEST_CASE(LMNNDiffWolfeTest)
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
       arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
+      transformedData), 0);
 }
 
 /**
@@ -587,12 +611,13 @@ BOOST_AUTO_TEST_CASE(LMNNDiffNumBasisTest)
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
   SetInputParam("optimizer",  std::string("lbfgs"));
-  SetInputParam("num_targets", std::move(5));
+  SetInputParam("k", 5);
   SetInputParam("num_basis", (int) 100);
 
   mlpackMain();
 
   arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset Settings.
   CLI::ClearSettings();
@@ -602,7 +627,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffNumBasisTest)
   SetInputParam("input", std::move(inputData));
   SetInputParam("labels", labels);
   SetInputParam("optimizer",  std::string("lbfgs"));
-  SetInputParam("num_targets", std::move(5));
+  SetInputParam("k", 5);
   SetInputParam("num_basis", (int) 1);
 
   mlpackMain();
@@ -610,6 +635,8 @@ BOOST_AUTO_TEST_CASE(LMNNDiffNumBasisTest)
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
       arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
+      transformedData), 0);
 }
 
 /**
@@ -630,12 +657,13 @@ BOOST_AUTO_TEST_CASE(LMNNDiffMaxIterationTest)
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
   SetInputParam("optimizer",  std::string("lbfgs"));
-  SetInputParam("num_targets", std::move(5));
+  SetInputParam("k", 5);
   SetInputParam("max_iterations", (int) 2);
 
   mlpackMain();
 
   arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset settings.
   CLI::ClearSettings();
@@ -645,7 +673,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffMaxIterationTest)
   SetInputParam("input", std::move(inputData));
   SetInputParam("labels", labels);
   SetInputParam("optimizer",  std::string("lbfgs"));
-  SetInputParam("num_targets", std::move(5));
+  SetInputParam("k", 5);
   SetInputParam("max_iterations", (int) 500);
 
   mlpackMain();
@@ -653,6 +681,8 @@ BOOST_AUTO_TEST_CASE(LMNNDiffMaxIterationTest)
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
       arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
+      transformedData), 0);
 }
 
 /**
@@ -672,11 +702,13 @@ BOOST_AUTO_TEST_CASE(LMNNDiffPassesTest)
   // Set parameters with a small max_iterations.
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
+  SetInputParam("linear_scan",  (bool) true);
   SetInputParam("passes", (int) 2);
 
   mlpackMain();
 
   arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset settings.
   CLI::ClearSettings();
@@ -685,6 +717,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffPassesTest)
   // Set parameters using the same input but with a larger max_iterations.
   SetInputParam("input", std::move(inputData));
   SetInputParam("labels", labels);
+  SetInputParam("linear_scan",  (bool) true);
   SetInputParam("passes", (int) 6);
 
   mlpackMain();
@@ -692,6 +725,8 @@ BOOST_AUTO_TEST_CASE(LMNNDiffPassesTest)
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
       arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
+      transformedData), 0);
 }
 
 /**
@@ -714,7 +749,7 @@ BOOST_AUTO_TEST_CASE(LMNNBoundsTest)
   // Input training data.
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
-  SetInputParam("num_targets", (int) 0);
+  SetInputParam("k", (int) 0);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);

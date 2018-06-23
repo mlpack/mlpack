@@ -192,7 +192,7 @@ class LMNNFunction
   //! Constraints Object.
   Constraints<MetricType> constraint;
   //! Holds pre-calculated cij.
-  arma::mat p_cij;
+  arma::mat pCij;
   /**
   * Precalculate the gradient part due to target neighbors and stores
   * the result as a matrix. Used for L-BFGS like optimizers which does not

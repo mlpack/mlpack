@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(LMNNTargetNeighborsTest)
   arma::Mat<size_t> targetNeighbors =
       arma::Mat<size_t>(1, dataset.n_cols, arma::fill::zeros);
 
-  constraint.TargetNeighbors(targetNeighbors);
+  constraint.TargetNeighbors(targetNeighbors, dataset, labels);
 
   BOOST_REQUIRE_EQUAL(targetNeighbors(0, 0), 1);
   BOOST_REQUIRE_EQUAL(targetNeighbors(0, 1), 0);
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(LMNNImpostorsTest)
   arma::Mat<size_t> impostors =
       arma::Mat<size_t>(1, dataset.n_cols, arma::fill::zeros);
 
-  constraint.Impostors(impostors);
+  constraint.Impostors(impostors, dataset, labels);
 
   BOOST_REQUIRE_EQUAL(impostors(0, 0), 3);
   BOOST_REQUIRE_EQUAL(impostors(0, 1), 4);

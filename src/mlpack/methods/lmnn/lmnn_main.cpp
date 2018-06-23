@@ -39,7 +39,7 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     PRINT_PARAM_STRING("labels") + ")."
     "\n\n"
     "The program also requires number of targets neighbors to work with ( "
-    "specified with " + PRINT_PARAM_STRING("num_targets") + "), A "
+    "specified with " + PRINT_PARAM_STRING("k") + "), A "
     "regularization parameter can also be passed, It acts as a trade of "
     "between the pulling and pushing terms  (specified with " +
     PRINT_PARAM_STRING("regularization") + "), In addition, this "
@@ -117,9 +117,13 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run LMNN on.", "i");
 PARAM_UROW_IN("labels", "Labels for input dataset.", "l");
-PARAM_INT_IN("num_targets", "Number of target neighbors to use for each "
+PARAM_INT_IN("k", "Number of target neighbors to use for each "
     "datapoint.", "k", 1);
 PARAM_MATRIX_OUT("output", "Output matrix for learned distance matrix.", "o");
+PARAM_MATRIX_OUT("transformed_data", "Output matrix for transformed dataset.",
+    "D");
+PARAM_FLAG("print_accuracy", "Print accuracies on initial and transformed "
+    "dataset", "P");
 PARAM_STRING_IN("optimizer", "Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or "
     "'lbfgs'.", "O", "amsgrad");
 PARAM_DOUBLE_IN("regularization", "Regularization for LMNN objective function ",
@@ -167,6 +171,47 @@ using namespace mlpack::metric;
 using namespace mlpack::optimization;
 using namespace mlpack::util;
 using namespace std;
+
+// Function to calculate KNN accuracy.
+double KnnAccuracy(const arma::mat& dataset,
+                   const arma::Row<size_t>& labels,
+                   const size_t k)
+{
+  // Get unique labels.
+  arma::Row<size_t> uniqueLabels = arma::unique(labels);
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+
+  // KNN instance.
+  neighbor::KNN knn;
+
+  knn.Train(dataset);
+  knn.Search(k, neighbors, distances);
+
+  // Keep count.
+  size_t count = 0.0;
+
+  for (size_t i = 0; i < dataset.n_cols; i++)
+  {
+    arma::vec Map;
+    Map.zeros(uniqueLabels.n_cols);
+
+    for (size_t j = 0; j < k; j++)
+      Map(labels(neighbors(j, i))) +=
+          1 / std::pow(distances(j, i) + 1, 2);
+
+    size_t index = arma::conv_to<size_t>::from(arma::find(Map
+        == arma::max(Map)));
+
+    // Increase count if labels match.
+    if (index == labels(i))
+        count++;
+  }
+
+  // return accuracy.
+  return ((double) count / dataset.n_cols) * 100;
+}
 
 static void mlpackMain()
 {
@@ -240,7 +285,7 @@ static void mlpackMain()
         "BigBatch_SGD optimizer is not being used");
   }
 
-  RequireParamValue<int>("num_targets", [](int x) { return x > 0; }, true,
+  RequireParamValue<int>("k", [](int x) { return x > 0; }, true,
       "number of targets must be positive");
   RequireParamValue<int>("range", [](int x) { return x > 0; }, true,
       "range must be positive");
@@ -259,13 +304,14 @@ static void mlpackMain()
       [](double x) { return x >= 0.0; }, true,
       "tolerance must be nonnegative");
 
-  const size_t numTargets = (size_t) CLI::GetParam<int>("num_targets");
+  const size_t k = (size_t) CLI::GetParam<int>("k");
   const double regularization = CLI::GetParam<double>("regularization");
   const double stepSize = CLI::GetParam<double>("step_size");
   const size_t passes = (size_t) CLI::GetParam<int>("passes");
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
   const double tolerance = CLI::GetParam<double>("tolerance");
   const bool normalize = CLI::HasParam("normalize");
+  const bool printAccuracy = CLI::HasParam("print_accuracy");
   const bool shuffle = !CLI::HasParam("linear_scan");
   const int numBasis = CLI::GetParam<int>("num_basis");
   const double armijoConstant = CLI::GetParam<double>("armijo_constant");
@@ -326,7 +372,7 @@ static void mlpackMain()
   // Now create the LMNN object and run the optimization.
   if (optimizerType == "amsgrad")
   {
-    LMNN<LMetric<2>> lmnn(data, labels, numTargets);
+    LMNN<LMetric<2>> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
     lmnn.Optimizer().StepSize() = stepSize;
@@ -342,7 +388,7 @@ static void mlpackMain()
   }
   else if (optimizerType == "bbsgd")
   {
-    LMNN<LMetric<2>, BBS_BB> lmnn(data, labels, numTargets);
+    LMNN<LMetric<2>, BBS_BB> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
     lmnn.Optimizer().StepSize() = stepSize;
@@ -358,7 +404,7 @@ static void mlpackMain()
   {
     // Using SGD is not recommended as the learning matrix can
     // diverge to inf causing serious memory problems.
-    LMNN<LMetric<2>, StandardSGD> lmnn(data, labels, numTargets);
+    LMNN<LMetric<2>, StandardSGD> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
     lmnn.Optimizer().StepSize() = stepSize;
@@ -371,7 +417,7 @@ static void mlpackMain()
   }
   else if (optimizerType == "lbfgs")
   {
-    LMNN<LMetric<2>, L_BFGS> lmnn(data, labels, numTargets);
+    LMNN<LMetric<2>, L_BFGS> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
     lmnn.Optimizer().NumBasis() = numBasis;
@@ -386,7 +432,21 @@ static void mlpackMain()
     lmnn.LearnDistance(distance);
   }
 
+  // Print initial & final accuracies if required.
+  if (printAccuracy)
+  {
+    double initAccuracy = KnnAccuracy(data, labels, k);
+    double finalAccuracy = KnnAccuracy(distance * data, labels, k);
+
+    Log::Info << "Accuracy on initial dataset: " << initAccuracy <<
+        "%" << endl;
+    Log::Info << "Accuracy on transformed dataset: " << finalAccuracy <<
+        "%"<< endl;
+  }
+
   // Save the output.
   if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(distance);
+    CLI::GetParam<arma::mat>("output") = distance;
+  if (CLI::HasParam("transformed_data"))
+    CLI::GetParam<arma::mat>("transformed_data") = std::move(distance * data);
 }
