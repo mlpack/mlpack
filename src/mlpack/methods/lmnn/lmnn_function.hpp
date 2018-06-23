@@ -16,6 +16,8 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 
+#include "constraints.hpp"
+
 namespace mlpack {
 namespace lmnn {
 
@@ -187,6 +189,8 @@ class LMNNFunction
   size_t iteration;
   //! Range after which impostors need to be recalculated.
   size_t range;
+  //! Constraints Object.
+  Constraints<MetricType> constraint;
   //! Holds pre-calculated cij.
   arma::mat p_cij;
   /**

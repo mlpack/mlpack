@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_LMNN_FUNCTION_IMPL_HPP
 
 #include "lmnn_function.hpp"
-#include "constraints.hpp"
 
 #include <mlpack/core/math/make_alias.hpp>
 #include <mlpack/core/optimizers/function.hpp>
@@ -33,7 +32,8 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
     metric(metric),
     regularization(regularization),
     iteration(0),
-    range(1)
+    range(1),
+    constraint(dataset, labels, k)
 {
   // Initialize the initial learning point.
   initialPoint.eye(dataset.n_rows, dataset.n_rows);
@@ -44,9 +44,9 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
   targetNeighbors = arma::Mat<size_t>(k, dataset.n_cols, arma::fill::zeros);
   impostors = arma::Mat<size_t>(k, dataset.n_cols, arma::fill::zeros);
   distance = arma::mat(k, dataset.n_cols, arma::fill::zeros);
-  Constraints<MetricType> constraint(dataset, labels, k);
-  constraint.TargetNeighbors(targetNeighbors);
-  constraint.Impostors(impostors);
+
+  constraint.TargetNeighbors(targetNeighbors, dataset, labels);
+  constraint.Impostors(impostors, dataset, labels);
 
   // Precalculate and save the gradient due to target neighbors.
   Precalculate();
@@ -68,8 +68,8 @@ void LMNNFunction<MetricType>::Shuffle()
   labels = std::move(newLabels);
 
   // Re-calculate target neighbors as indices changed.
-  Constraints<MetricType> constraint(dataset, labels, k);
-  constraint.TargetNeighbors(targetNeighbors);
+  constraint.PreCalulated() = false;
+  constraint.TargetNeighbors(targetNeighbors, dataset, labels);
 }
 
 //! Evaluate cost over whole dataset.
@@ -84,8 +84,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
   if (iteration % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
-    Constraints<MetricType> constraint(transformedDataset, labels, k);
-    constraint.Impostors(impostors, distance);
+    constraint.Impostors(impostors, distance, transformedDataset, labels);
   }
 
   for (size_t i = 0; i < dataset.n_cols; i++)
@@ -151,8 +150,8 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
   if (iteration % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
-    Constraints<MetricType> constraint(transformedDataset, labels, k);
-    constraint.Impostors(impostors, distance, begin, batchSize);
+    constraint.Impostors(impostors, distance, transformedDataset, labels,
+        begin, batchSize);
   }
 
   for (size_t i = begin; i < begin + batchSize; i++)
@@ -322,8 +321,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   if (iteration % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
-    Constraints<MetricType> constraint(transformedDataset, labels, k);
-    constraint.Impostors(impostors, distance);
+    constraint.Impostors(impostors, distance, transformedDataset, labels);
   }
 
   gradient.zeros(transformation.n_rows, transformation.n_cols);
@@ -409,8 +407,8 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   if (iteration % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
-    Constraints<MetricType> constraint(transformedDataset, labels, k);
-    constraint.Impostors(impostors, distance, begin, batchSize);
+    constraint.Impostors(impostors, distance, transformedDataset, labels,
+        begin, batchSize);
   }
 
   gradient.zeros(transformation.n_rows, transformation.n_cols);

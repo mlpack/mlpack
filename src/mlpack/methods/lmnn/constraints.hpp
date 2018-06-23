@@ -51,28 +51,40 @@ class Constraints
    * passed matrix.
    *
    * @param outputMatrix Coordinates matrix to store target neighbors.
+   * @param dataset Input dataset.
+   * @param labels Input dataset labels.
    */
-  void TargetNeighbors(arma::Mat<size_t>& outputMatrix);
+  void TargetNeighbors(arma::Mat<size_t>& outputMatrix,
+                       const arma::mat& dataset,
+                       const arma::Row<size_t>& labels);
 
   /**
    * Calculates k similar labeled nearest neighbors for a batch of dataset and
    *  stores them into the passed matrix.
    *
    * @param outputMatrix Coordinates matrix to store target neighbors.
+   * @param dataset Input dataset.
+   * @param labels Input dataset labels.
    * @param begin Index of the initial point of dataset.
    * @param batchSize Number of data points to use.
    */
   void TargetNeighbors(arma::Mat<size_t>& outputMatrix,
-                     const size_t begin,
-                     const size_t batchSize);
+                       const arma::mat& dataset,
+                       const arma::Row<size_t>& labels,
+                       const size_t begin,
+                       const size_t batchSize);
 
   /**
    * Calculates k differently labeled nearest neighbors for each datapoint and
    * writes them back to passed matrix.
    *
    * @param outputMatrix Coordinates matrix to store impostors.
+   * @param dataset Input dataset.
+   * @param labels Input dataset labels.
    */
-  void Impostors(arma::Mat<size_t>& outputMatrix);
+  void Impostors(arma::Mat<size_t>& outputMatrix,
+                 const arma::mat& dataset,
+                 const arma::Row<size_t>& labels);
 
   /**
    * Calculates k differently labeled nearest neighbors & distances to
@@ -80,19 +92,27 @@ class Constraints
    *
    * @param outputNeighbors Coordinates matrix to store impostors.
    * @param outputDistance matrix to store distance.
+   * @param dataset Input dataset.
+   * @param labels Input dataset labels.
    */
   void Impostors(arma::Mat<size_t>& outputNeighbors,
-                 arma::mat& outputDistance);
+                 arma::mat& outputDistance,
+                 const arma::mat& dataset,
+                 const arma::Row<size_t>& labels);
 
   /**
    * Calculates k differently labeled nearest neighbors for a batch of dataset
    * and writes them back to passed matrix.
    *
    * @param outputMatrix Coordinates matrix to store impostors.
+   * @param dataset Input dataset.
+   * @param labels Input dataset labels.
    * @param begin Index of the initial point of dataset.
    * @param batchSize Number of data points to use.
    */
   void Impostors(arma::Mat<size_t>& outputMatrix,
+                 const arma::mat& dataset,
+                 const arma::Row<size_t>& labels,
                  const size_t begin,
                  const size_t batchSize);
 
@@ -102,11 +122,15 @@ class Constraints
    *
    * @param outputNeighbors Coordinates matrix to store impostors.
    * @param outputDistance matrix to store distance.
+   * @param dataset Input dataset.
+   * @param labels Input dataset labels.
    * @param begin Index of the initial point of dataset.
    * @param batchSize Number of data points to use.
    */
   void Impostors(arma::Mat<size_t>& outputNeighbors,
                  arma::mat& outputDistance,
+                 const arma::mat& dataset,
+                 const arma::Row<size_t>& labels,
                  const size_t begin,
                  const size_t batchSize);
 
@@ -115,21 +139,24 @@ class Constraints
    * triplets to matrix passed.
    *
    * @param outputMatrix Coordinates matrix to store triplets.
+   * @param dataset Input dataset.
+   * @param labels Input dataset labels.
    */
-  void Triplets(arma::Mat<size_t>& outputMatrix);
+  void Triplets(arma::Mat<size_t>& outputMatrix,
+                const arma::mat& dataset,
+                const arma::Row<size_t>& labels);
 
   //! Access the value of k.
   const size_t& K() const { return k; }
   //! Modify the value of k.
   size_t& K() { return k; }
 
+  //! Access the boolean value of precalculated.
+  const bool& PreCalulated() const { return precalculated; }
+  //! Modify the value of precalculated.
+  bool& PreCalulated() { return precalculated; }
+
  private:
-  //! An alias of dataset.
-  arma::mat dataset;
-
-  //! An alias of Labels.
-  arma::Row<size_t> labels;
-
   //! Number of target neighbors & impostors to calulate.
   size_t k;
 
@@ -142,11 +169,14 @@ class Constraints
   //! Store indices of data points having different label.
   std::vector<arma::uvec> indexDiff;
 
+  //! False if nothing has ever been precalculated.
+  bool precalculated;
+
   /**
   * Precalculate the unique labels, and indices of similar
   * and different datapoints on the basis of labels.
   */
-  void Precalculate();
+  inline void Precalculate(const arma::Row<size_t>& labels);
 };
 
 } // namespace lmnn

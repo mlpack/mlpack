@@ -20,12 +20,11 @@ namespace lmnn {
 
 template<typename MetricType>
 Constraints<MetricType>::Constraints(
-    const arma::mat& dataset,
+    const arma::mat& /* dataset */,
     const arma::Row<size_t>& labels,
     size_t k) :
-    dataset(math::MakeAlias(const_cast<arma::mat&>(dataset), false)),
-    labels(math::MakeAlias(const_cast<arma::Row<size_t>&>(labels), false)),
-    k(k)
+    k(k),
+    precalculated(false)
 {
   // Ensure a valid k is passed.
   size_t minCount = arma::min(arma::histc(labels, arma::unique(labels)));
@@ -36,15 +35,17 @@ Constraints<MetricType>::Constraints(
         << minCount << " instances, but value of k is " << k << "  "
         << "(k should be < " << minCount << ")!" << std::endl;
   }
-
-  // Perform pre-calculation.
-  Precalculate();
 }
 
 // Calculates k similar labeled nearest neighbors.
 template<typename MetricType>
-void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix)
+void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
+                                              const arma::mat& dataset,
+                                              const arma::Row<size_t>& labels)
 {
+  // Perform pre-calculation. If neccesary.
+  Precalculate(labels);
+
   // KNN instance.
   KNN knn;
 
@@ -71,9 +72,14 @@ void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix)
 // batch of data points.
 template<typename MetricType>
 void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
-                                  const size_t begin,
-                                  const size_t batchSize)
+                                              const arma::mat& dataset,
+                                              const arma::Row<size_t>& labels,
+                                              const size_t begin,
+                                              const size_t batchSize)
 {
+  // Perform pre-calculation. If neccesary.
+  Precalculate(labels);
+
   arma::mat subDataset = dataset.cols(begin, begin + batchSize - 1);
   arma::Row<size_t> sublabels = labels.cols(begin, begin + batchSize - 1);
 
@@ -107,8 +113,13 @@ void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
 
 // Calculates k differently labeled nearest neighbors.
 template<typename MetricType>
-void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix)
+void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
+                                        const arma::mat& dataset,
+                                        const arma::Row<size_t>& labels)
 {
+  // Perform pre-calculation. If neccesary.
+  Precalculate(labels);
+
   // KNN instance.
   KNN knn;
 
@@ -135,8 +146,13 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix)
 // writes back calculated neighbors & distances to passed matrices.
 template<typename MetricType>
 void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
-                            arma::mat& outputDistance)
+                                        arma::mat& outputDistance,
+                                        const arma::mat& dataset,
+                                        const arma::Row<size_t>& labels)
 {
+  // Perform pre-calculation. If neccesary.
+  Precalculate(labels);
+
   // KNN instance.
   KNN knn;
 
@@ -164,9 +180,14 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
 // batch of data points.
 template<typename MetricType>
 void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
-                            const size_t begin,
-                            const size_t batchSize)
+                                        const arma::mat& dataset,
+                                        const arma::Row<size_t>& labels,
+                                        const size_t begin,
+                                        const size_t batchSize)
 {
+  // Perform pre-calculation. If neccesary.
+  Precalculate(labels);
+
   arma::mat subDataset = dataset.cols(begin, begin + batchSize - 1);
   arma::Row<size_t> sublabels = labels.cols(begin, begin + batchSize - 1);
 
@@ -202,10 +223,15 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
 // batch of data points.
 template<typename MetricType>
 void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
-                            arma::mat& outputDistance,
-                            const size_t begin,
-                            const size_t batchSize)
+                                        arma::mat& outputDistance,
+                                        const arma::mat& dataset,
+                                        const arma::Row<size_t>& labels,
+                                        const size_t begin,
+                                        const size_t batchSize)
 {
+  // Perform pre-calculation. If neccesary.
+  Precalculate(labels);
+
   arma::mat subDataset = dataset.cols(begin, begin + batchSize - 1);
   arma::Row<size_t> sublabels = labels.cols(begin, begin + batchSize - 1);
 
@@ -241,15 +267,20 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
 // Generates {data point, target neighbors, impostors} triplets using
 // TargetNeighbors() and Impostors().
 template<typename MetricType>
-void Constraints<MetricType>::Triplets(arma::Mat<size_t>& outputMatrix)
+void Constraints<MetricType>::Triplets(arma::Mat<size_t>& outputMatrix,
+                                       const arma::mat& dataset,
+                                       const arma::Row<size_t>& labels)
 {
+  // Perform pre-calculation. If neccesary.
+  Precalculate(labels);
+
   size_t N = dataset.n_cols;
 
   arma::Mat<size_t> impostors;
-  Impostors(impostors);
+  Impostors(impostors, dataset);
 
   arma::Mat<size_t> targetNeighbors;
-  TargetNeighbors(targetNeighbors);
+  TargetNeighbors(targetNeighbors, dataset);
 
   outputMatrix = arma::Mat<size_t>(3, k * k * N , arma::fill::zeros);
 
@@ -269,8 +300,12 @@ void Constraints<MetricType>::Triplets(arma::Mat<size_t>& outputMatrix)
 }
 
 template<typename MetricType>
-void Constraints<MetricType>::Precalculate()
+inline void Constraints<MetricType>::Precalculate(const arma::Row<size_t>& labels)
 {
+  // Make sure the calculation is necessary.
+  if (precalculated)
+    return;
+
   uniqueLabels = arma::unique(labels);
 
   indexSame.resize(uniqueLabels.n_elem);
@@ -282,6 +317,8 @@ void Constraints<MetricType>::Precalculate()
     indexSame[i] = arma::find(labels == uniqueLabels[i]);
     indexDiff[i] = arma::find(labels != uniqueLabels[i]);
   }
+
+  precalculated = true;
 }
 
 } // namespace lmnn
