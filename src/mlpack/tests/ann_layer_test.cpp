@@ -1855,4 +1855,36 @@ BOOST_AUTO_TEST_CASE(SubviewIndexTest)
   CheckMatrices(outputEnd, subEnd);
 }
 
+/**
+ * Subview batch test.
+ */
+BOOST_AUTO_TEST_CASE(SubviewBatchTest)
+{
+  arma::mat output, input, outputCol, outputMat, outputDef;
+
+  // All rows selected.
+  Subview<> moduleCol(1, 0, 19);
+
+  // Test with inSize 1.
+  input = arma::ones(20, 8);
+  moduleCol.Forward(std::move(input), std::move(outputCol));
+  CheckMatrices(outputCol, input);
+
+  // Few rows and columns selected.
+  Subview<> moduleMat(4, 3, 6, 0, 2);
+
+  // Test with inSize greater than 1.
+  moduleMat.Forward(std::move(input), std::move(outputMat));
+  output = arma::ones(12, 2);
+  CheckMatrices(outputMat, output);
+
+  // endCol changed to 3 by default.
+  Subview<> moduleDef(4, 1, 6, 0, 4);
+
+  // Test with inSize greater than 1 and endCol >= inSize.
+  moduleDef.Forward(std::move(input), std::move(outputDef));
+  output = arma::ones(24, 2);
+  CheckMatrices(outputDef, output);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
