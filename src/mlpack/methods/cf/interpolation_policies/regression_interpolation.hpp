@@ -66,7 +66,8 @@ class RegressionInterpolation
    * multiplies each neighbor's rating by its corresponding weight and sums
    * them to get predicted rating.
    *
-   * @param weights Resulting interpolation weights.
+   * @param weights Resulting interpolation weights. The size of weights should
+   *     be set to the number of neighbors before calling GetWeights().
    * @param w Matrix W from decomposition.
    * @param h Matrix H from decomposition.
    * @param queryUser Queried user.
@@ -89,7 +90,7 @@ class RegressionInterpolation
           << "be set to the number of neighbors before calling GetWeights()."
           << std::endl;
     }
-    
+
     const size_t itemNum = cleanedData.n_rows;
     const size_t neighborNum = neighbors.size();
 
