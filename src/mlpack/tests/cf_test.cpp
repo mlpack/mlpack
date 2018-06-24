@@ -43,64 +43,44 @@ using namespace mlpack;
 using namespace mlpack::cf;
 using namespace std;
 
-// Get train and test dataset. We save datasets as static variables
-// to avoid reloading and regenerating datasets.
+// Get train and test datasets.
 static void GetDatasets(arma::mat& dataset, arma::mat& savedCols)
 {
-  // Whether datasets have been initialized.
-  static bool datasetsInitialized = false;
-
-  static arma::mat initDataset;
-  static arma::mat initSavedCols(3, 50);
-
-  // If datasets have been initialized, just pass them to parameters.
-  if (datasetsInitialized)
-  {
-    dataset = initDataset;
-    savedCols = initSavedCols;
-    return;
-  }
-
-  // If datasets haven't been initialized, initialize them.
-  data::Load("GroupLensSmall.csv", initDataset);
+  data::Load("GroupLensSmall.csv", dataset);
+  savedCols.set_size(3, 50);
 
   // Save the columns we've removed.
-  initSavedCols.fill(/* random very large value */ 10000000);
+  savedCols.fill(/* random very large value */ 10000000);
   size_t currentCol = 0;
-  for (size_t i = 0; i < initDataset.n_cols; ++i)
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     if (currentCol == 50)
       break;
 
-    if (initDataset(2, i) > 4.5) // 5-star rating.
+    if (dataset(2, i) > 4.5) // 5-star rating.
     {
       // Make sure we don't have this user yet.  This is a slow way to do this
       // but I don't particularly care here because it's in the tests.
       bool found = false;
       for (size_t j = 0; j < currentCol; ++j)
       {
-        if (initSavedCols(0, j) == initDataset(0, i))
+        if (savedCols(0, j) == dataset(0, i))
         {
           found = true;
           break;
         }
       }
 
-      // If this user doesn't already exist in initSavedCols, add them.
+      // If this user doesn't already exist in savedCols, add them.
       // Otherwise ignore this point.
       if (!found)
       {
-        initSavedCols.col(currentCol) = initDataset.col(i);
-        initDataset.shed_col(i);
+        savedCols.col(currentCol) = dataset.col(i);
+        dataset.shed_col(i);
         ++currentCol;
       }
     }
   }
-
-  // Pass datasets to parameters and set datasetsInitialized to true.
-  dataset = initDataset;
-  savedCols = initSavedCols;
-  datasetsInitialized = true;
 }
 
 /**
