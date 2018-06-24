@@ -71,8 +71,10 @@ class Subview
     size_t batchSize = input.n_cols / inSize;
 
     // Check if subview parameters are within the indices of input sample.
-    endRow = (endRow < input.n_rows) ? endRow : (input.n_rows - 1);
-    endCol = (endCol < inSize) ? endCol : (inSize - 1);
+    endRow = ((endRow < input.n_rows) && (endRow >= beginRow))?
+        endRow : (input.n_rows - 1);
+    endCol = ((endCol < inSize) && (endCol >= beginCol)) ?
+        endCol : (inSize - 1);
 
     output.set_size(
         (endRow - beginRow + 1) * (endCol - beginCol + 1), batchSize);
