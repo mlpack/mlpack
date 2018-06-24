@@ -218,7 +218,7 @@ void CFType<NormalizationType>::GetRecommendations(
     ratings.zeros(cleanedData.n_rows);
 
     // Calculate interpolation weights.
-    arma::vec weights;
+    arma::vec weights(numUsersForSimilarity);
     interpolation.GetWeights(weights, w, h, users(i),
         neighborhood.col(i), similarities.col(i), cleanedData);
 
@@ -305,7 +305,7 @@ double CFType<NormalizationType>::Predict(const size_t user,
   neighborSearch.Search(
       query, numUsersForSimilarity, neighborhood, similarities);
 
-  arma::vec weights;
+  arma::vec weights(numUsersForSimilarity);
 
   // Calculate interpolation weights.
   InterpolationPolicy interpolation(cleanedData);
@@ -367,10 +367,8 @@ void CFType<NormalizationType>::Predict(const arma::Mat<size_t>& combinations,
   InterpolationPolicy interpolation(cleanedData);
   for (size_t i = 0; i < users.n_elem; i++)
   {
-    arma::vec weightVec;
-    interpolation.GetWeights(weightVec, w, h, users[i],
+    interpolation.GetWeights(weights.col(i), w, h, users[i],
         neighborhood.col(i), similarities.col(i), cleanedData);
-    weights.col(i) = weightVec;
   }
 
   // Now that we have the neighborhoods we need, calculate the predictions.

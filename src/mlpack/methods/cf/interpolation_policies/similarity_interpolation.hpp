@@ -38,7 +38,8 @@ class SimilarityInterpolation
    * After getting the weights, CF algorithm multiplies each neighbor's rating
    * by its corresponding weight and sums them to get predicted rating.
    *
-   * @param weights Resulting interpolation weights.
+   * @param weights Resulting interpolation weights. The size of weights should
+   *     be set to the number of neighbors before calling GetWeights().
    * @param w Matrix W from decomposition.
    * @param h Matrix H from decomposition.
    * @param queryUser Queried user.
@@ -46,11 +47,12 @@ class SimilarityInterpolation
    * @param similarities Similarites between query user and neighbors.
    * @param cleanedData Sparse rating matrix.
    */
-  void GetWeights(arma::vec& weights,
+  template <typename VectorType>
+  void GetWeights(VectorType&& weights,
                   const arma::mat& /* w */,
                   const arma::mat& /* h */,
                   const size_t /* queryUser */,
-                  const arma::Col<size_t>& /* neighbors */,
+                  const arma::Col<size_t>& neighbors,
                   const arma::vec& similarities,
                   const arma::sp_mat& /* cleanedData */)
   {
@@ -60,10 +62,16 @@ class SimilarityInterpolation
           << "least one neighbor!" << std::endl;
     }
 
+    if (weights.n_elem != neighbors.n_elem)
+    {
+      Log::Fatal << "The size of the first parameter (weights) should "
+          << "be set to the number of neighbors before calling GetWeights()."
+          << std::endl;
+    }
+
     double similaritiesSum = arma::sum(similarities);
     if (std::fabs(similaritiesSum) < 1e-14)
     {
-      weights.set_size(similarities.n_elem);
       weights.fill(1.0 / similarities.n_elem);
     }
     else

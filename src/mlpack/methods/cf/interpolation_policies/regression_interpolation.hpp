@@ -74,7 +74,8 @@ class RegressionInterpolation
    * @param similarities Similarites between query user and neighbors.
    * @param cleanedData Sparse rating matrix.
    */
-  void GetWeights(arma::vec& weights,
+  template <typename VectorType>
+  void GetWeights(VectorType&& weights,
                   const arma::mat& w,
                   const arma::mat& h,
                   const size_t queryUser,
@@ -82,6 +83,13 @@ class RegressionInterpolation
                   const arma::vec& /* similarities*/,
                   const arma::sp_mat& cleanedData)
   {
+    if (weights.n_elem != neighbors.n_elem)
+    {
+      Log::Fatal << "The size of the first parameter (weights) should "
+          << "be set to the number of neighbors before calling GetWeights()."
+          << std::endl;
+    }
+    
     const size_t itemNum = cleanedData.n_rows;
     const size_t neighborNum = neighbors.size();
 
@@ -96,7 +104,6 @@ class RegressionInterpolation
     // If user has no rating at all, average interpolation is used.
     if (support == 0)
     {
-      weights.set_size(neighbors.n_elem);
       weights.fill(1.0 / neighbors.n_elem);
       return;
     }
