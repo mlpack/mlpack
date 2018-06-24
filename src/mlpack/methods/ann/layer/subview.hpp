@@ -77,23 +77,35 @@ class Subview
     output.set_size(
         (endRow - beginRow + 1) * (endCol - beginCol + 1), batchSize);
 
-    for (size_t i = 0; i < batchSize; i++)
-    {
-      if (beginRow == 0 && endRow == (input.n_rows - 1))
-      {
-        // Matrix of contiguous elements.
-        output.col(i) = arma::mat(&input(beginCol * input.n_rows),
-            (input.n_rows * (endCol - beginCol + 1)), 1, false);
-      }
-      else
-      {
-        output.col(i) = arma::vectorise(
-            input.submat(beginRow, beginCol, endRow, endCol));
-      }
+    size_t batchBegin = beginCol;
+    size_t batchEnd = endCol;
 
-      // Move to next batch.
-      beginCol += inSize;
-      endCol += inSize;
+    // Check whether the input is already in desired form.
+    if ((input.n_rows != ((endRow - beginRow + 1) *
+        (endCol - beginCol + 1))) || (input.n_cols != batchSize))
+    {
+      for (size_t i = 0; i < batchSize; i++)
+      {
+        if (beginRow == 0 && endRow == (input.n_rows - 1))
+        {
+          // Matrix of contiguous elements.
+          output.col(i) = arma::mat(&input(batchBegin * input.n_rows),
+              (input.n_rows * (batchEnd - batchBegin + 1)), 1, false);
+        }
+        else
+        {
+          output.col(i) = arma::vectorise(
+              input.submat(beginRow, batchBegin, endRow, batchEnd));
+        }
+
+        // Move to next batch.
+        batchBegin += inSize;
+        batchEnd += inSize;
+      }
+    }
+    else
+    {
+      output = input;
     }
   }
 
