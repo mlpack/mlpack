@@ -36,7 +36,10 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "To work, this algorithm needs labeled data.  It can be given as the last "
     "row of the input dataset (specified with " + PRINT_PARAM_STRING("input") +
     "), or alternatively as a separate matrix (specified with " +
-    PRINT_PARAM_STRING("labels") + ")."
+    PRINT_PARAM_STRING("labels") + "). Additionally, a starting point for "
+    "optimization (specified with " + PRINT_PARAM_STRING("distance") +
+    "can be given, having (r x d) dimensionality.  Here r should satisfy "
+    "1 <= r <= d, Consequently a Low-Rank matrix will be optimized."
     "\n\n"
     "The program also requires number of targets neighbors to work with ( "
     "specified with " + PRINT_PARAM_STRING("k") + "), A "
@@ -123,6 +126,8 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "range", 10, "regularization", 0.4, "output", "output"));
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run LMNN on.", "i");
+PARAM_MATRIX_IN("distance", "Initial distance matrix to be used as "
+    "starting point", "d");
 PARAM_UROW_IN("labels", "Labels for input dataset.", "l");
 PARAM_INT_IN("k", "Number of target neighbors to use for each "
     "datapoint.", "k", 1);
@@ -157,7 +162,7 @@ PARAM_DOUBLE_IN("beta2", "Exponential decay rate for weighted infinity norm "
 PARAM_DOUBLE_IN("epsilon", "Value used to initialise the mean squared gradient "
     "parameter of AMSGrad.", "e", 1e-8);
 PARAM_DOUBLE_IN("batch_delta", "Factor for the batch update step of "
-  "BigBatch_SGD.", "d", 0.1);
+  "BigBatch_SGD.", "E", 0.1);
 PARAM_INT_IN("num_basis", "Number of memory points to be stored for L-BFGS.",
     "B", 5);
 PARAM_DOUBLE_IN("armijo_constant", "Armijo constant for L-BFGS.", "A", 1e-4);
@@ -180,7 +185,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Function to calculate KNN accuracy.
-double KnnAccuracy(const arma::mat& dataset,
+double KNNAccuracy(const arma::mat& dataset,
                    const arma::Row<size_t>& labels,
                    const size_t k)
 {
@@ -358,8 +363,12 @@ static void mlpackMain()
 
   arma::mat distance;
 
+  if (CLI::HasParam("distance"))
+  {
+    distance = std::move(CLI::GetParam<arma::mat>("distance"));
+  }
   // Normalize the data, if necessary.
-  if (normalize)
+  else if (normalize)
   {
     // Find the minimum and maximum values for each dimension.
     arma::vec ranges = arma::max(data, 1) - arma::min(data, 1);
@@ -442,8 +451,8 @@ static void mlpackMain()
   // Print initial & final accuracies if required.
   if (printAccuracy)
   {
-    double initAccuracy = KnnAccuracy(data, labels, k);
-    double finalAccuracy = KnnAccuracy(distance * data, labels, k);
+    double initAccuracy = KNNAccuracy(data, labels, k);
+    double finalAccuracy = KNNAccuracy(distance * data, labels, k);
 
     Log::Info << "Accuracy on initial dataset: " << initAccuracy <<
         "%" << endl;
