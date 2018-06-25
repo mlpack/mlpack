@@ -29,6 +29,7 @@
 #include "fast_lstm.hpp"
 #include "recurrent.hpp"
 #include "recurrent_attention.hpp"
+#include "reparametrization.hpp"
 #include "sequential.hpp"
 #include "subview.hpp"
 #include "concat.hpp"

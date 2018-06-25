@@ -73,6 +73,8 @@ set(SOURCES
   recurrent_attention_impl.hpp
   reinforce_normal.hpp
   reinforce_normal_impl.hpp
+  reparametrization.hpp
+  reparametrization_impl.hpp
   select.hpp
   select_impl.hpp
   sequential.hpp
