@@ -176,6 +176,78 @@ BOOST_AUTO_TEST_CASE(LMNNOptimizerTest)
 }
 
 /**
+ * Ensure that when we pass a valid initial learning point, we get
+ * output of the same dimensions.
+ */
+BOOST_AUTO_TEST_CASE(LMNNValidDistanceTest)
+{
+  arma::mat inputData;
+  if (!data::Load("iris.csv", inputData))
+    BOOST_FAIL("Cannot load iris.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("iris_labels.txt", labels))
+    BOOST_FAIL("Cannot load iris_labels.txt!");
+
+  // Initial learning point.
+  arma::mat distance;
+  distance.randu(inputData.n_rows - 1, inputData.n_rows);
+
+  // Input random data points.
+  SetInputParam("input", inputData);
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("distance", std::move(distance));
+
+  mlpackMain();
+
+  // Check that final output has expected number of rows and colums.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows,
+      inputData.n_rows - 1);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols,
+      inputData.n_rows);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_rows,
+      inputData.n_rows - 1);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_cols,
+      inputData.n_cols);
+}
+
+/**
+ * Ensure that when we pass an invalid initial learning point, we get
+ * output as the square matrix.
+ */
+BOOST_AUTO_TEST_CASE(LMNNInvalidDistanceTest)
+{
+  arma::mat inputData;
+  if (!data::Load("iris.csv", inputData))
+    BOOST_FAIL("Cannot load iris.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("iris_labels.txt", labels))
+    BOOST_FAIL("Cannot load iris_labels.txt!");
+
+  // Initial learning point.
+  arma::mat distance;
+  distance.randu(inputData.n_rows + 1, inputData.n_rows);
+
+  // Input random data points.
+  SetInputParam("input", inputData);
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("distance", std::move(distance));
+
+  mlpackMain();
+
+  // Check that final output has expected number of rows and colums.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows,
+      inputData.n_rows);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols,
+      inputData.n_rows);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_rows,
+      inputData.n_rows);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_cols,
+      inputData.n_cols);
+}
+
+/**
  * Ensure that if number of available labels in a class is less than
  * the number of targets, an error occurs.
  */

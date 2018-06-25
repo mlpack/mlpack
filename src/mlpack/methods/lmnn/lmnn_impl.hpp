@@ -45,8 +45,14 @@ void LMNN<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix)
   // See if we were passed an initialized matrix. outputMatrix (L) must be
   // having r x d dimensionality.
   if ((outputMatrix.n_cols != dataset.n_rows) ||
+      (outputMatrix.n_rows > dataset.n_rows) ||
       !(arma::is_finite(outputMatrix)))
+  {
+    Log::Info << "Initial learning point have invalid dimensionality.  "
+        "Identity matrix will be used as initial learning point for "
+         "optimization." << std::endl;
     outputMatrix.eye(dataset.n_rows, dataset.n_rows);
+  }
 
   Timer::Start("lmnn_optimization");
 
