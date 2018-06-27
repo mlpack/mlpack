@@ -74,7 +74,7 @@ void Reparametrization<InputDataType, OutputDataType>::Backward(
   if (includeKl)
   {
     arma::Mat<eT> klBack;
-    klBackward(std::move(klBack));
+    KLBackward(std::move(klBack));
     g = join_cols(gy % std::move(gaussianSample) % g, gy) + std::move(klBack);
   }
   else
@@ -83,7 +83,7 @@ void Reparametrization<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType>
-double Reparametrization<InputDataType, OutputDataType>::klForward(
+double Reparametrization<InputDataType, OutputDataType>::KLForward(
     const InputType&& input)
 {
   stdDev = input.submat(0, 0, latentSize - 1, input.n_cols - 1);
@@ -95,7 +95,7 @@ double Reparametrization<InputDataType, OutputDataType>::klForward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename OutputType>
-void Reparametrization<InputDataType, OutputDataType>::klBackward(
+void Reparametrization<InputDataType, OutputDataType>::KLBackward(
     OutputType&& output)
 {
   SoftplusFunction::Deriv(preStdDev, output);
@@ -109,6 +109,7 @@ void Reparametrization<InputDataType, OutputDataType>::serialize(
 {
   ar & BOOST_SERIALIZATION_NVP(latentSize);
   ar & BOOST_SERIALIZATION_NVP(stochastic);
+  ar & BOOST_SERIALIZATION_NVP(includeKl);
 }
 
 } // namespace ann

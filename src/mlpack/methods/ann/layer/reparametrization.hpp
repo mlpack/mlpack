@@ -83,7 +83,7 @@ class Reparametrization
    * @param input Input data used for evaluating the specified function.
    */
   template<typename InputType>
-  double klForward(const InputType&& input);
+  double KLForward(const InputType&& input);
 
   /**
    * Ordinary feed backward pass of a neural network, evaluating the backward
@@ -93,7 +93,7 @@ class Reparametrization
    * @param output The calculated gradient of KL divergence.
    */
   template<typename OutputType>
-  void klBackward(OutputType&& output);
+  void KLBackward(OutputType&& output);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -114,7 +114,7 @@ class Reparametrization
   double Loss()
   {
     OutputDataType input = join_cols(stdDev, mean);
-    return klForward(std::move(input));
+    return KLForward(std::move(input));
   }
 
   /**

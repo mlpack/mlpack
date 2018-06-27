@@ -1908,8 +1908,10 @@ BOOST_AUTO_TEST_CASE(SimpleReparametrizationLayerTest)
   arma::mat input, output, delta;
   Reparametrization<> module(5);
 
-  // Test the Forward function.
-  input = join_cols(arma::ones<arma::mat>(5, 1) * -20,
+  // Test the Forward function. As the mean is zero and the standard
+  // deviation is small, after multiplying the gaussian sample, the
+  // output should be small enough.
+  input = join_cols(arma::ones<arma::mat>(5, 1) * -15,
       arma::zeros<arma::mat>(5, 1));
   module.Forward(std::move(input), std::move(output));
   BOOST_REQUIRE_LE(arma::accu(output), 1e-5);
@@ -1935,7 +1937,7 @@ BOOST_AUTO_TEST_CASE(ReparametrizationLayerStochasticTest)
   module.Forward(std::move(input), std::move(outputA));
   module.Forward(std::move(input), std::move(outputB));
 
-  CheckMatrices(std::move(outputA), std::move(outputB));
+  CheckMatrices(outputA, outputB);
 }
 
 /**
@@ -1949,6 +1951,9 @@ BOOST_AUTO_TEST_CASE(ReparametrizationLayerIncludeKlTest)
   input = join_cols(arma::ones<arma::mat>(5, 1),
       arma::zeros<arma::mat>(5, 1));
   module.Forward(std::move(input), std::move(output));
+
+  // As KL divergence is not included, with the above inputs, the delta
+  // matrix should be all zeros.
   gy = arma::zeros(output.n_rows, output.n_cols);
   module.Backward(std::move(output), std::move(gy), std::move(delta));
 
