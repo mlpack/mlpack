@@ -212,6 +212,42 @@ BOOST_AUTO_TEST_CASE(LMNNValidDistanceTest)
 }
 
 /**
+ * Ensure that when we pass a valid initial square matrix as the learning
+ * point, we get output of the same dimensions.
+ */
+BOOST_AUTO_TEST_CASE(LMNNValidDistanceTest2)
+{
+  arma::mat inputData;
+  if (!data::Load("iris.csv", inputData))
+    BOOST_FAIL("Cannot load iris.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("iris_labels.txt", labels))
+    BOOST_FAIL("Cannot load iris_labels.txt!");
+
+  // Initial learning point (square matrix).
+  arma::mat distance;
+  distance.randu(inputData.n_rows, inputData.n_rows);
+
+  // Input random data points.
+  SetInputParam("input", inputData);
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("distance", std::move(distance));
+
+  mlpackMain();
+
+  // Check that final output has expected number of rows and colums.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows,
+      inputData.n_rows );
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols,
+      inputData.n_rows);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_rows,
+      inputData.n_rows);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_cols,
+      inputData.n_cols);
+}
+
+/**
  * Ensure that when we pass an invalid initial learning point, we get
  * output as the square matrix.
  */
@@ -573,53 +609,6 @@ BOOST_AUTO_TEST_CASE(LMNNDiffRangeTest)
 }
 
 /**
- * Ensure that different value of epsilon results in a
- * different output matrix.
- */
-BOOST_AUTO_TEST_CASE(LMNNDiffEpsilonTest)
-{
-  arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load iris.csv!");
-
-  arma::Row<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load iris_labels.txt!");
-
-  // Set parameters.
-  SetInputParam("input", inputData);
-  SetInputParam("labels", labels);
-  SetInputParam("optimizer",  std::string("amsgrad"));
-  SetInputParam("k", 5);
-  SetInputParam("linear_scan",  (bool) true);
-
-  mlpackMain();
-
-  arma::mat output = CLI::GetParam<arma::mat>("output");
-  arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
-
-  // Reset settings.
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
-
-  // Set different parameters.
-  SetInputParam("input", std::move(inputData));
-  SetInputParam("labels", std::move(labels));
-  SetInputParam("optimizer",  std::string("amsgrad"));
-  SetInputParam("k", 5);
-  SetInputParam("linear_scan",  (bool) true);
-  SetInputParam("epsilon", 10.0);
-
-  mlpackMain();
-
-  // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(
-      arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
-  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
-      transformedData), 0);
-}
-
-/**
  * Ensure that different value of wolfe results in a
  * different output matrix.
  */
@@ -728,6 +717,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffMaxIterationTest)
   // Set parameters with a small max_iterations.
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
+  SetInputParam("linear_scan",  (bool) true);
   SetInputParam("optimizer",  std::string("lbfgs"));
   SetInputParam("k", 5);
   SetInputParam("max_iterations", (int) 2);
@@ -744,6 +734,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffMaxIterationTest)
   // Set parameters using the same input but with a larger max_iterations.
   SetInputParam("input", std::move(inputData));
   SetInputParam("labels", labels);
+  SetInputParam("linear_scan",  (bool) true);
   SetInputParam("optimizer",  std::string("lbfgs"));
   SetInputParam("k", 5);
   SetInputParam("max_iterations", (int) 500);
@@ -771,7 +762,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffPassesTest)
   if (!data::Load("iris_labels.txt", labels))
     BOOST_FAIL("Cannot load iris_labels.txt!");
 
-  // Set parameters with a small max_iterations.
+  // Set parameters with a small passes.
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
   SetInputParam("linear_scan",  (bool) true);
@@ -786,7 +777,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffPassesTest)
   CLI::ClearSettings();
   CLI::RestoreSettings(testName);
 
-  // Set parameters using the same input but with a larger max_iterations.
+  // Set parameters using the same input but with a larger passes.
   SetInputParam("input", std::move(inputData));
   SetInputParam("labels", labels);
   SetInputParam("linear_scan",  (bool) true);
@@ -803,7 +794,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffPassesTest)
 
 /**
  * Ensure that number of targets, range, batch size must be always positive
- * and regularization, step size, max iterations, passes & tolerance are
+ * and regularization, step size, max iterations, rank, passes & tolerance are
  * always non-negative 
  */
 BOOST_AUTO_TEST_CASE(LMNNBoundsTest)
@@ -912,6 +903,21 @@ BOOST_AUTO_TEST_CASE(LMNNBoundsTest)
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
   SetInputParam("passes", (int) -1.0);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  // Reset settings.
+  CLI::ClearSettings();
+  CLI::RestoreSettings(testName);
+
+  // Test for max iterations value.
+
+  // Input training data.
+  SetInputParam("input", inputData);
+  SetInputParam("labels", labels);
+  SetInputParam("rank", (int) -1.0);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);

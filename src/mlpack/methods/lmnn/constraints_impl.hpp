@@ -22,7 +22,7 @@ template<typename MetricType>
 Constraints<MetricType>::Constraints(
     const arma::mat& /* dataset */,
     const arma::Row<size_t>& labels,
-    size_t k) :
+    const size_t k) :
     k(k),
     precalculated(false)
 {

@@ -44,7 +44,7 @@ class Constraints
    */
   Constraints(const arma::mat& dataset,
               const arma::Row<size_t>& labels,
-              size_t k);
+              const size_t k);
 
   /**
    * Calculates k similar labeled nearest neighbors and stores them into the
@@ -60,7 +60,7 @@ class Constraints
 
   /**
    * Calculates k similar labeled nearest neighbors for a batch of dataset and
-   *  stores them into the passed matrix.
+   * stores them into the passed matrix.
    *
    * @param outputMatrix Coordinates matrix to store target neighbors.
    * @param dataset Input dataset.
@@ -146,10 +146,8 @@ class Constraints
                 const arma::mat& dataset,
                 const arma::Row<size_t>& labels);
 
-  //! Access the value of k.
+  //! Get the number of target neighbors (k).
   const size_t& K() const { return k; }
-  //! Modify the value of k.
-  size_t& K() { return k; }
 
   //! Access the boolean value of precalculated.
   const bool& PreCalulated() const { return precalculated; }
@@ -158,7 +156,7 @@ class Constraints
 
  private:
   //! Number of target neighbors & impostors to calulate.
-  size_t k;
+  const size_t k;
 
   //! Store unique labels.
   arma::Row<size_t> uniqueLabels;

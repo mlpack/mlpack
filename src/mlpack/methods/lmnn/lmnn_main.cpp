@@ -36,15 +36,18 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "To work, this algorithm needs labeled data.  It can be given as the last "
     "row of the input dataset (specified with " + PRINT_PARAM_STRING("input") +
     "), or alternatively as a separate matrix (specified with " +
-    PRINT_PARAM_STRING("labels") + "). Additionally, a starting point for "
+    PRINT_PARAM_STRING("labels") + ").  Additionally, a starting point for "
     "optimization (specified with " + PRINT_PARAM_STRING("distance") +
     "can be given, having (r x d) dimensionality.  Here r should satisfy "
-    "1 <= r <= d, Consequently a Low-Rank matrix will be optimized."
+    "1 <= r <= d, Consequently a Low-Rank matrix will be optimized. "
+    "Alternatively, Low-Rank distance can be learned by specifying the " +
+    PRINT_PARAM_STRING("rank") + "parameter (A Low-Rank matrix with uniformly "
+    "distributed values will be used as initial learning point). "
     "\n\n"
     "The program also requires number of targets neighbors to work with ( "
     "specified with " + PRINT_PARAM_STRING("k") + "), A "
     "regularization parameter can also be passed, It acts as a trade of "
-    "between the pulling and pushing terms  (specified with " +
+    "between the pulling and pushing terms (specified with " +
     PRINT_PARAM_STRING("regularization") + "), In addition, this "
     "implementation of LMNN includes a parameter to decide the interval "
     "after which impostors must be re-calculated (specified with " +
@@ -53,9 +56,9 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "Output can be either the learned distance matrix (specified with " +
     PRINT_PARAM_STRING("output") +"), or the transformed dataset "
     " (specified with " + PRINT_PARAM_STRING("transformed_data") + "), or "
-    "both. Accuracy on initial dataset and final transformed dataset can "
+    "both.  Accuracy on initial dataset and final transformed dataset can "
     "be printed by specifying the " + PRINT_PARAM_STRING("print_accuracy") +
-    " parameter. "
+    "parameter. "
     "\n\n"
     "This implementation of LMNN uses AdaGrad, BigBatch_SGD, stochastic "
     "gradient descent, mini-batch stochastic gradient descent, or the L_BFGS "
@@ -66,11 +69,7 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "gradients. It primarily on six parameters: the step size (specified "
     "with " + PRINT_PARAM_STRING("step_size") + "), the batch size (specified "
     "with " + PRINT_PARAM_STRING("batch_size") + "), the maximum number of "
-    "passes (specified with " + PRINT_PARAM_STRING("passes") + ") "
-    ", the exponential decay rate for the first moment estimates (specified "
-    "with " + PRINT_PARAM_STRING("beta1") + "), the exponential decay rate for "
-    "weighted infinity norm (specified with " + PRINT_PARAM_STRING("beta2") +
-     "), epsilon (specified with " + PRINT_PARAM_STRING("epsilon") + ").  In "
+    "passes (specified with " + PRINT_PARAM_STRING("passes") + "). In"
     "addition, a normalized starting point can be used by specifying the " +
     PRINT_PARAM_STRING("normalize") + " parameter. "
     "\n\n"
@@ -79,9 +78,8 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "the step size (specified with " + PRINT_PARAM_STRING("step_size") + "), "
     "the batch size (specified with " + PRINT_PARAM_STRING("batch_size") + "), "
     "the maximum number of passes (specified with " +
-    PRINT_PARAM_STRING("passes") + "), the batch delta (specified "
-    "with " + PRINT_PARAM_STRING("batch_delta") + ").  In addition, "
-    "a normalized starting point can be used by specifying the " +
+    PRINT_PARAM_STRING("passes") + ").  In addition, a normalized starting "
+    "point can be used by specifying the " +
     PRINT_PARAM_STRING("normalize") + " parameter. "
     "\n\n"
     "Stochastic gradient descent, specified by the value 'sgd' for the "
@@ -102,10 +100,7 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     PRINT_PARAM_STRING("armijo_constant") + ", " +
     PRINT_PARAM_STRING("wolfe") + ", " + PRINT_PARAM_STRING("tolerance") +
     " (the optimization is terminated when the gradient norm is below this "
-    "value), " + PRINT_PARAM_STRING("max_line_search_trials") + ", " +
-    PRINT_PARAM_STRING("min_step") + ", and " +
-    PRINT_PARAM_STRING("max_step") + " (which both refer to the line search "
-    "routine).  For more details on the L-BFGS optimizer, consult either the "
+    "value).  For more details on the L-BFGS optimizer, consult either the "
     "mlpack L-BFGS documentation (in lbfgs.hpp) or the vast set of published "
     "literature on L-BFGS.  In addition, a normalized starting point can be "
     "used by specifying the " + PRINT_PARAM_STRING("normalize") + " parameter."
@@ -140,6 +135,7 @@ PARAM_STRING_IN("optimizer", "Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or "
     "'lbfgs'.", "O", "amsgrad");
 PARAM_DOUBLE_IN("regularization", "Regularization for LMNN objective function ",
     "r", 0.5);
+PARAM_INT_IN("rank", "Rank of distance matrix to be optimized. ", "K", 0);
 PARAM_FLAG("normalize", "Use a normalized starting point for optimization. It"
     "is useful for when points are far apart, or when SGD is returning NaN.",
     "N");
@@ -154,25 +150,10 @@ PARAM_DOUBLE_IN("step_size", "Step size for AMSGrad, BB_SGD and SGD (alpha).",
 PARAM_FLAG("linear_scan", "Don't shuffle the order in which data points are "
     "visited for SGD or mini-batch SGD.", "L");
 PARAM_INT_IN("batch_size", "Batch size for mini-batch SGD.", "b", 50);
-
-PARAM_DOUBLE_IN("beta1", "Exponential decay rate for the first moment "
-    "estimates of AMSGrad.", "x", 0.9);
-PARAM_DOUBLE_IN("beta2", "Exponential decay rate for weighted infinity norm "
-    "estimates of AMSGrad.", "y", 0.999);
-PARAM_DOUBLE_IN("epsilon", "Value used to initialise the mean squared gradient "
-    "parameter of AMSGrad.", "e", 1e-8);
-PARAM_DOUBLE_IN("batch_delta", "Factor for the batch update step of "
-  "BigBatch_SGD.", "E", 0.1);
 PARAM_INT_IN("num_basis", "Number of memory points to be stored for L-BFGS.",
     "B", 5);
 PARAM_DOUBLE_IN("armijo_constant", "Armijo constant for L-BFGS.", "A", 1e-4);
 PARAM_DOUBLE_IN("wolfe", "Wolfe condition parameter for L-BFGS.", "w", 0.9);
-PARAM_INT_IN("max_line_search_trials", "Maximum number of line search trials "
-    "for L-BFGS.", "T", 50);
-PARAM_DOUBLE_IN("min_step", "Minimum step of line search for L-BFGS.", "m",
-    1e-20);
-PARAM_DOUBLE_IN("max_step", "Maximum step of line search for L-BFGS.", "M",
-    1e20);
 PARAM_INT_IN("range", "Number of iterations after which impostors needs to be "
     "recalculated", "R", 1);
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
@@ -202,7 +183,7 @@ double KNNAccuracy(const arma::mat& dataset,
   knn.Search(k, neighbors, distances);
 
   // Keep count.
-  size_t count = 0.0;
+  size_t count = 0;
 
   for (size_t i = 0; i < dataset.n_cols; i++)
   {
@@ -210,8 +191,10 @@ double KNNAccuracy(const arma::mat& dataset,
     Map.zeros(uniqueLabels.n_cols);
 
     for (size_t j = 0; j < k; j++)
+    {
       Map(labels(neighbors(j, i))) +=
           1 / std::pow(distances(j, i) + 1, 2);
+    }
 
     arma::vec index = arma::conv_to<arma::vec>::from(arma::find(Map
         == arma::max(Map)));
@@ -244,13 +227,7 @@ static void mlpackMain()
     ReportIgnoredParam("num_basis", "L-BFGS optimizer is not being used");
     ReportIgnoredParam("armijo_constant", "L-BFGS optimizer is not being used");
     ReportIgnoredParam("wolfe", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("max_line_search_trials",
-        "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("min_step", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("max_step", "L-BFGS optimizer is not being used");
     ReportIgnoredParam("num_basis", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("batch_delta",
-        "BigBatch_SGD optimizer is not being used");
     ReportIgnoredParam("max_iterations", "L-BFGS optimizer is not being used");
   }
   else if (optimizerType == "bbsgd")
@@ -258,14 +235,7 @@ static void mlpackMain()
     ReportIgnoredParam("num_basis", "L-BFGS optimizer is not being used");
     ReportIgnoredParam("armijo_constant", "L-BFGS optimizer is not being used");
     ReportIgnoredParam("wolfe", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("max_line_search_trials",
-        "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("min_step", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("max_step", "L-BFGS optimizer is not being used");
     ReportIgnoredParam("num_basis", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("beta1", "AMSGrad optimizer is not being used");
-    ReportIgnoredParam("beta2", "AMSGrad optimizer is not being used");
-    ReportIgnoredParam("epsilon", "AMSGrad optimizer is not being used");
     ReportIgnoredParam("max_iterations", "L-BFGS optimizer is not being used");
   }
   else if (optimizerType == "sgd")
@@ -273,28 +243,14 @@ static void mlpackMain()
     ReportIgnoredParam("num_basis", "L-BFGS optimizer is not being used");
     ReportIgnoredParam("armijo_constant", "L-BFGS optimizer is not being used");
     ReportIgnoredParam("wolfe", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("max_line_search_trials",
-        "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("min_step", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("max_step", "L-BFGS optimizer is not being used");
     ReportIgnoredParam("num_basis", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("beta1", "AMSGrad optimizer is not being used");
-    ReportIgnoredParam("beta2", "AMSGrad optimizer is not being used");
-    ReportIgnoredParam("epsilon", "AMSGrad optimizer is not being used");
     ReportIgnoredParam("max_iterations", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("batch_delta",
-        "BigBatch_SGD optimizer is not being used");
   }
   else if (optimizerType == "lbfgs")
   {
     ReportIgnoredParam("step_size", "SGD optimizer is not being used");
     ReportIgnoredParam("linear_scan", "SGD optimizer is not being used");
     ReportIgnoredParam("batch_size", "SGD optimizer is not being used");
-    ReportIgnoredParam("beta1", "AMSGrad optimizer is not being used");
-    ReportIgnoredParam("beta2", "AMSGrad optimizer is not being used");
-    ReportIgnoredParam("epsilon", "AMSGrad optimizer is not being used");
-    ReportIgnoredParam("batch_delta",
-        "BigBatch_SGD optimizer is not being used");
   }
 
   RequireParamValue<int>("k", [](int x) { return x > 0; }, true,
@@ -304,17 +260,19 @@ static void mlpackMain()
   RequireParamValue<int>("batch_size", [](int x) { return x > 0; }, true,
       "batch size must be positive");
   RequireParamValue<double>("regularization", [](double x)
-      { return x >= 0.0; }, true, "regularization value must be nonnegative");
+      { return x >= 0.0; }, true, "regularization value must be non-negative");
   RequireParamValue<double>("step_size", [](double x)
-      { return x >= 0.0; }, true, "step size value must be nonnegative");
+      { return x >= 0.0; }, true, "step size value must be non-negative");
   RequireParamValue<int>("max_iterations", [](int x)
       { return x >= 0; }, true,
-      "maximum number of iterations must be nonnegative");
+      "maximum number of iterations must be non-negative");
   RequireParamValue<int>("passes", [](int x) { return x >= 0; }, true,
-      "maximum number of passes must be nonnegative");
+      "maximum number of passes must be non-negative");
   RequireParamValue<double>("tolerance",
       [](double x) { return x >= 0.0; }, true,
-      "tolerance must be nonnegative");
+      "tolerance must be non-negative");
+  RequireParamValue<int>("rank", [](int x)
+      { return x >= 0; }, true, "rank must be nonnegative");
 
   const size_t k = (size_t) CLI::GetParam<int>("k");
   const double regularization = CLI::GetParam<double>("regularization");
@@ -328,15 +286,9 @@ static void mlpackMain()
   const int numBasis = CLI::GetParam<int>("num_basis");
   const double armijoConstant = CLI::GetParam<double>("armijo_constant");
   const double wolfe = CLI::GetParam<double>("wolfe");
-  const int maxLineSearchTrials = CLI::GetParam<int>("max_line_search_trials");
-  const double minStep = CLI::GetParam<double>("min_step");
-  const double maxStep = CLI::GetParam<double>("max_step");
   const size_t batchSize = (size_t) CLI::GetParam<int>("batch_size");
-  const double beta1 = CLI::GetParam<double>("beta1");
-  const double beta2 = CLI::GetParam<double>("beta2");
-  const double epsilon = CLI::GetParam<double>("epsilon");
-  const double batchDelta = CLI::GetParam<double>("batch_delta");
   const size_t range = (size_t) CLI::GetParam<int>("range");
+  const size_t rank = (size_t) CLI::GetParam<int>("rank");
 
   // Load data.
   arma::mat data = std::move(CLI::GetParam<arma::mat>("input"));
@@ -367,6 +319,10 @@ static void mlpackMain()
   {
     distance = std::move(CLI::GetParam<arma::mat>("distance"));
   }
+  else if (rank)
+  {
+    distance = arma::randu(rank, data.n_rows);
+  }
   // Normalize the data, if necessary.
   else if (normalize)
   {
@@ -393,9 +349,6 @@ static void mlpackMain()
     lmnn.Range() = range;
     lmnn.Optimizer().StepSize() = stepSize;
     lmnn.Optimizer().MaxIterations() = passes * data.n_cols;
-    lmnn.Optimizer().Beta1() = beta1;
-    lmnn.Optimizer().Beta2() = beta2;
-    lmnn.Optimizer().Epsilon() = epsilon;
     lmnn.Optimizer().Tolerance() = tolerance;
     lmnn.Optimizer().Shuffle() = shuffle;
     lmnn.Optimizer().BatchSize() = batchSize;
@@ -408,7 +361,6 @@ static void mlpackMain()
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
     lmnn.Optimizer().StepSize() = stepSize;
-    lmnn.Optimizer().BatchDelta() = batchDelta;
     lmnn.Optimizer().MaxIterations() = passes * data.n_cols;
     lmnn.Optimizer().Tolerance() = tolerance;
     lmnn.Optimizer().Shuffle() = shuffle;
@@ -441,9 +393,6 @@ static void mlpackMain()
     lmnn.Optimizer().ArmijoConstant() = armijoConstant;
     lmnn.Optimizer().Wolfe() = wolfe;
     lmnn.Optimizer().MinGradientNorm() = tolerance;
-    lmnn.Optimizer().MaxLineSearchTrials() = maxLineSearchTrials;
-    lmnn.Optimizer().MinStep() = minStep;
-    lmnn.Optimizer().MaxStep() = maxStep;
 
     lmnn.LearnDistance(distance);
   }
