@@ -468,7 +468,7 @@ BOOST_AUTO_TEST_CASE(LMNNLowRankAccuracyTest)
   arma::mat dataset = join_rows(dataPart1, dataPart2);
   dataset = dataset.cols(ordering);
 
-  //Generate labels.
+  // Generate labels.
   arma::Row<size_t> labels = join_rows(labelsPart1, labelsPart2);
   labels = labels.cols(ordering);
 

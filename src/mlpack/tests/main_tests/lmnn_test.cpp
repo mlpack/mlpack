@@ -238,7 +238,7 @@ BOOST_AUTO_TEST_CASE(LMNNValidDistanceTest2)
 
   // Check that final output has expected number of rows and colums.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows,
-      inputData.n_rows );
+      inputData.n_rows);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols,
       inputData.n_rows);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_rows,
