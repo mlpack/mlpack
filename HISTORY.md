@@ -1,3 +1,7 @@
+### mlpack ?.?.?
+###### ????-??-??
+  * Fix Visual Studio compilation issue (#1443).
+
 ### mlpack 3.0.2
 ###### 2018-06-08
   * Documentation generation fixes for Python bindings (#1421).
