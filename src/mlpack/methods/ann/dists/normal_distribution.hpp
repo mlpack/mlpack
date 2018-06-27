@@ -48,15 +48,15 @@ class NormalDistribution
   /*
    * Create multiple Normal distributions with the given data.
    * Originally designed to be used along with the ReconstructionLoss class.
-   * The input to the loss function which will be a single matrix can directly
+   * The target of the loss function which will be a single matrix can directly
    * be passed on to this function.
    *
-   * @param input The DataType which has means in the lower half.
+   * @param param The DataType which has means in the lower half.
    *        The upper half has pre standard deviations.
    * @param applySoftplus If true, after applying softplus function to the pre
    *        standard deviations, we get the standard deviations.
    */
-  NormalDistribution(const DataType& input, const bool applySoftplus = true);
+  NormalDistribution(const DataType& param, const bool applySoftplus = true);
 
   /**
    * Return the probabilities of the given DataType of observations.
@@ -119,7 +119,7 @@ class NormalDistribution
   //! Pre standard deviation. After softplus this will give standard deviation.
   DataType preStdDev;
 
-  //! If true, apply softplus function to upper half of input matrix.
+  //! If true, apply softplus function to upper half of param matrix.
   bool applySoftplus;
 
   //! log(2pi)

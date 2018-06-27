@@ -35,16 +35,17 @@ NormalDistribution<DataType>::NormalDistribution(
 
 template<typename DataType>
 NormalDistribution<DataType>::NormalDistribution(
-    const DataType& input,
+    const DataType& param,
     const bool applySoftplus) :
-    mean(input.submat(input.n_rows / 2, 0, input.n_rows - 1,
-        input.n_cols - 1)),
-    preStdDev(input.submat(0, 0, input.n_rows / 2 - 1, input.n_cols - 1))
+    mean(param.submat(param.n_rows / 2, 0, param.n_rows - 1,
+        param.n_cols - 1)),
+    preStdDev(param.submat(0, 0, param.n_rows / 2 - 1, param.n_cols - 1)),
+    applySoftplus(applySoftplus)
 {
-  if (input.n_rows % 2 != 0)
+  if (param.n_rows % 2 != 0)
   {
     Log::Fatal << "NormalDistribution<>::NormalDistribution(): The number of "
-        << "rows of input matrix should be even." << std::endl;
+        << "rows of param matrix should be even." << std::endl;
   }
 
   if (applySoftplus)
@@ -63,8 +64,15 @@ template<typename DataType>
 double NormalDistribution<DataType>::LogProbability(
     const DataType& observation) const
 {
-  return -0.5 * (arma::accu(2 * arma::log(stdDeviation) +
-      arma::pow((mean - observation) / stdDeviation, 2) + log2pi));
+  if (observation.size() != mean.size())
+  {
+    Log::Fatal << "NormalDistribution<>::NormalDistribution(): The size of the"
+        << "observation should be equal to the sizes of the mean and standard"
+        << "deviation." << std::endl;
+  }
+
+  return -0.5 * (arma::accu(2 * arma::log(stdDeviation) + arma::pow(
+      (mean - observation) / stdDeviation, 2) + log2pi));
 }
 
 template<typename DataType>
