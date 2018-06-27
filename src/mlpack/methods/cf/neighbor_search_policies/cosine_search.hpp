@@ -54,7 +54,7 @@ class CosineSearch
    * @param similarites Similarities between query point and its neighbors.
    */
   void Search(const arma::mat& query, const size_t k,
-      arma::Mat<size_t>& neighbors, arma::mat& similarities)
+              arma::Mat<size_t>& neighbors, arma::mat& similarities)
   {
     // Normalize query vectors to unit length.
     arma::mat normalizedQuery = arma::normalise(query, 2, 0);

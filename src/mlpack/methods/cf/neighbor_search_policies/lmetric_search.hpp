@@ -48,7 +48,7 @@ class LMetricSearch
    * @param similarites Similarities between query point and its neighbors.
    */
   void Search(const arma::mat& query, const size_t k,
-      arma::Mat<size_t>& neighbors, arma::mat& similarities)
+              arma::Mat<size_t>& neighbors, arma::mat& similarities)
   {
     neighborSearch.Search(query, k, neighbors, similarities);
 

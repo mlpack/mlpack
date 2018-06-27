@@ -68,7 +68,7 @@ class PearsonSearch
    * @param similarites Similarities between query point and its neighbors.
    */
   void Search(const arma::mat& query, const size_t k,
-      arma::Mat<size_t>& neighbors, arma::mat& similarities)
+              arma::Mat<size_t>& neighbors, arma::mat& similarities)
   {
     // Normalize all vectors in query.
     // For each vector x, first subtract mean(x) from each element in x.
