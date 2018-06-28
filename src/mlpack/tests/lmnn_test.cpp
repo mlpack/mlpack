@@ -1,5 +1,6 @@
 /**
  * @file lmnn_test.cpp
+ * @author Marcus Edel
  * @author Ryan Curtin
  * @author Manish Kumar
  *
@@ -490,7 +491,7 @@ BOOST_AUTO_TEST_CASE(LMNNLowRankAccuracyTest)
   // BOOST_REQUIRE_CLOSE(Accuracy1, Accuracy2, 2.0);
 }
 
-// Comprehensive gradient tests by Ryan Curtin.
+// Comprehensive gradient tests by Marcus Edel & Ryan Curtin.
 
 // Simple numerical gradient checker.
 template<class FunctionType>

@@ -94,12 +94,9 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "The L-BFGS optimizer, specified by the value 'lbfgs' for the parameter " +
     PRINT_PARAM_STRING("optimizer") + ", uses a back-tracking line search "
     "algorithm to minimize a function.  The following parameters are used by "
-    "L-BFGS: " + PRINT_PARAM_STRING("num_basis") + " (specifies the number"
-    " of memory points used by L-BFGS), " +
-    PRINT_PARAM_STRING("max_iterations") + ", " +
-    PRINT_PARAM_STRING("armijo_constant") + ", " +
-    PRINT_PARAM_STRING("wolfe") + ", " + PRINT_PARAM_STRING("tolerance") +
-    " (the optimization is terminated when the gradient norm is below this "
+    "L-BFGS: " + PRINT_PARAM_STRING("max_iterations") + ", " +
+    PRINT_PARAM_STRING("tolerance") +
+    "(the optimization is terminated when the gradient norm is below this "
     "value).  For more details on the L-BFGS optimizer, consult either the "
     "mlpack L-BFGS documentation (in lbfgs.hpp) or the vast set of published "
     "literature on L-BFGS.  In addition, a normalized starting point can be "
@@ -135,7 +132,7 @@ PARAM_STRING_IN("optimizer", "Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or "
     "'lbfgs'.", "O", "amsgrad");
 PARAM_DOUBLE_IN("regularization", "Regularization for LMNN objective function ",
     "r", 0.5);
-PARAM_INT_IN("rank", "Rank of distance matrix to be optimized. ", "K", 0);
+PARAM_INT_IN("rank", "Rank of distance matrix to be optimized. ", "A", 0);
 PARAM_FLAG("normalize", "Use a normalized starting point for optimization. It"
     "is useful for when points are far apart, or when SGD is returning NaN.",
     "N");
@@ -150,10 +147,6 @@ PARAM_DOUBLE_IN("step_size", "Step size for AMSGrad, BB_SGD and SGD (alpha).",
 PARAM_FLAG("linear_scan", "Don't shuffle the order in which data points are "
     "visited for SGD or mini-batch SGD.", "L");
 PARAM_INT_IN("batch_size", "Batch size for mini-batch SGD.", "b", 50);
-PARAM_INT_IN("num_basis", "Number of memory points to be stored for L-BFGS.",
-    "B", 5);
-PARAM_DOUBLE_IN("armijo_constant", "Armijo constant for L-BFGS.", "A", 1e-4);
-PARAM_DOUBLE_IN("wolfe", "Wolfe condition parameter for L-BFGS.", "w", 0.9);
 PARAM_INT_IN("range", "Number of iterations after which impostors needs to be "
     "recalculated", "R", 1);
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
@@ -224,26 +217,14 @@ static void mlpackMain()
   // Warn on unused parameters.
   if (optimizerType == "amsgrad")
   {
-    ReportIgnoredParam("num_basis", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("armijo_constant", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("wolfe", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("num_basis", "L-BFGS optimizer is not being used");
     ReportIgnoredParam("max_iterations", "L-BFGS optimizer is not being used");
   }
   else if (optimizerType == "bbsgd")
   {
-    ReportIgnoredParam("num_basis", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("armijo_constant", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("wolfe", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("num_basis", "L-BFGS optimizer is not being used");
     ReportIgnoredParam("max_iterations", "L-BFGS optimizer is not being used");
   }
   else if (optimizerType == "sgd")
   {
-    ReportIgnoredParam("num_basis", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("armijo_constant", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("wolfe", "L-BFGS optimizer is not being used");
-    ReportIgnoredParam("num_basis", "L-BFGS optimizer is not being used");
     ReportIgnoredParam("max_iterations", "L-BFGS optimizer is not being used");
   }
   else if (optimizerType == "lbfgs")
@@ -283,9 +264,6 @@ static void mlpackMain()
   const bool normalize = CLI::HasParam("normalize");
   const bool printAccuracy = CLI::HasParam("print_accuracy");
   const bool shuffle = !CLI::HasParam("linear_scan");
-  const int numBasis = CLI::GetParam<int>("num_basis");
-  const double armijoConstant = CLI::GetParam<double>("armijo_constant");
-  const double wolfe = CLI::GetParam<double>("wolfe");
   const size_t batchSize = (size_t) CLI::GetParam<int>("batch_size");
   const size_t range = (size_t) CLI::GetParam<int>("range");
   const size_t rank = (size_t) CLI::GetParam<int>("rank");
@@ -388,10 +366,7 @@ static void mlpackMain()
     LMNN<LMetric<2>, L_BFGS> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
-    lmnn.Optimizer().NumBasis() = numBasis;
     lmnn.Optimizer().MaxIterations() = maxIterations;
-    lmnn.Optimizer().ArmijoConstant() = armijoConstant;
-    lmnn.Optimizer().Wolfe() = wolfe;
     lmnn.Optimizer().MinGradientNorm() = tolerance;
 
     lmnn.LearnDistance(distance);
