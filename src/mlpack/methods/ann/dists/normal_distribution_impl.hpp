@@ -21,8 +21,8 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename DataType>
 NormalDistribution<DataType>::NormalDistribution(
-    const DataType& mean,
-    const DataType& stdDeviation) :
+    const DataType&& mean,
+    const DataType&& stdDeviation) :
     mean(mean),
     stdDeviation(stdDeviation)
 {
@@ -35,7 +35,7 @@ NormalDistribution<DataType>::NormalDistribution(
 
 template<typename DataType>
 NormalDistribution<DataType>::NormalDistribution(
-    const DataType& param,
+    const DataType&& param,
     const bool applySoftplus) :
     mean(param.submat(param.n_rows / 2, 0, param.n_rows - 1,
         param.n_cols - 1)),
@@ -62,7 +62,7 @@ DataType NormalDistribution<DataType>::Sample() const
 
 template<typename DataType>
 double NormalDistribution<DataType>::LogProbability(
-    const DataType& observation) const
+    const DataType&& observation) const
 {
   if (observation.size() != mean.size())
   {
@@ -77,7 +77,7 @@ double NormalDistribution<DataType>::LogProbability(
 
 template<typename DataType>
 void NormalDistribution<DataType>::LogProbBackward(
-    const DataType& observation, DataType& output) const
+    const DataType&& observation, DataType&& output) const
 {
   if (!applySoftplus)
     output = -0.5 * join_cols((2 / stdDeviation - 2 *

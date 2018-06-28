@@ -33,15 +33,15 @@ BOOST_AUTO_TEST_CASE(SimpleNormalDistributionTest)
   param.ones(10, 1);
   target.ones(5, 1);
 
-  NormalDistribution<> module(param, false);
+  NormalDistribution<> module(std::move(param), false);
 
   // Test if the LogProbability function with the given input gives output
   // equal to manually evaluated output.
-  output = module.LogProbability(target);
+  output = module.LogProbability(std::move(target));
   BOOST_REQUIRE_EQUAL(output, -0.5 * log2pi * target.n_elem);
 
   // Test the Backward Log Probability function.
-  module.LogProbBackward(target, gradient);
+  module.LogProbBackward(std::move(target), std::move(gradient));
   BOOST_REQUIRE_EQUAL(arma::accu(gradient), -5);
 }
 
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(JacobianNormalDistributionTest)
     arma::mat target;
     target.randn(targetElements, 1);
 
-    NormalDistribution<> module(param);
+    NormalDistribution<> module(std::move(param));
 
     const double perturbation = 1e-6;
     double outputA, outputB, original;
@@ -73,9 +73,9 @@ BOOST_AUTO_TEST_CASE(JacobianNormalDistributionTest)
     {
       original = module.StdDeviation()(j);
       module.StdDeviation()(j) = original - perturbation;
-      outputA = module.LogProbability(target);
+      outputA = module.LogProbability(std::move(target));
       module.StdDeviation()(j) = original + perturbation;
-      outputB = module.LogProbability(target);
+      outputB = module.LogProbability(std::move(target));
       module.StdDeviation()(j) = original;
       outputB -= outputA;
       outputB /= 2 * perturbation;
@@ -83,16 +83,16 @@ BOOST_AUTO_TEST_CASE(JacobianNormalDistributionTest)
 
       original = module.Mean()(j);
       module.Mean()(j) = original - perturbation;
-      outputA = module.LogProbability(target);
+      outputA = module.LogProbability(std::move(target));
       module.Mean()(j) = original + perturbation;
-      outputB = module.LogProbability(target);
+      outputB = module.LogProbability(std::move(target));
       module.Mean()(j) = original;
       outputB -= outputA;
       outputB /= 2 * perturbation;
       jacobianA(j + targetElements) = outputB;
     }
 
-    module.LogProbBackward(target, jacobianB);
+    module.LogProbBackward(std::move(target), std::move(jacobianB));
     BOOST_REQUIRE_LE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))),
         1e-5);
   }

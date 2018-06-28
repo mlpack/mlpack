@@ -43,7 +43,7 @@ class NormalDistribution
    * @param stdDeviation The DataType of standard deviations of the multiple
    *        distributions.
    */
-  NormalDistribution(const DataType& mean, const DataType& stdDeviation);
+  NormalDistribution(const DataType&& mean, const DataType&& stdDeviation);
 
   /*
    * Create multiple Normal distributions with the given data.
@@ -56,12 +56,12 @@ class NormalDistribution
    * @param applySoftplus If true, after applying softplus function to the pre
    *        standard deviations, we get the standard deviations.
    */
-  NormalDistribution(const DataType& param, const bool applySoftplus = true);
+  NormalDistribution(const DataType&& param, const bool applySoftplus = true);
 
   /**
    * Return the probabilities of the given DataType of observations.
    */
-  double Probability(const DataType& observation) const
+  double Probability(const DataType&& observation) const
   {
     return exp(LogProbability(observation));
   }
@@ -69,13 +69,13 @@ class NormalDistribution
   /**
    * Return the log probabilities of the given DataType of observations.
    */
-  double LogProbability(const DataType& observation) const;
+  double LogProbability(const DataType&& observation) const;
 
   /**
    * Stores the gradient of the log probabilities of the observations in the
    * output DataType.
    */
-  void LogProbBackward(const DataType& observation, DataType& output) const;
+  void LogProbBackward(const DataType&& observation, DataType&& output) const;
 
   /**
    * Return a matrix of randomly generated samples according to the
