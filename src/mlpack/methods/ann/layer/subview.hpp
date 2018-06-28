@@ -88,17 +88,8 @@ class Subview
     {
       for (size_t i = 0; i < batchSize; i++)
       {
-        if (beginRow == 0 && endRow == (input.n_rows - 1))
-        {
-          // Matrix of contiguous elements.
-          output.col(i) = arma::mat(&input(batchBegin * input.n_rows),
-              (input.n_rows * (batchEnd - batchBegin + 1)), 1, false);
-        }
-        else
-        {
-          output.col(i) = arma::vectorise(
-              input.submat(beginRow, batchBegin, endRow, batchEnd));
-        }
+        output.col(i) = arma::vectorise(
+            input.submat(beginRow, batchBegin, endRow, batchEnd));
 
         // Move to next batch.
         batchBegin += inSize;
