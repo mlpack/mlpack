@@ -83,19 +83,16 @@ void Reparametrization<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType>
-double Reparametrization<InputDataType, OutputDataType>::KLForward(
-    const InputType&& input)
+inline double Reparametrization<InputDataType, OutputDataType>::KLForward(
+    const InputType&& mean, const InputType&& stdDev)
 {
-  stdDev = input.submat(0, 0, latentSize - 1, input.n_cols - 1);
-  mean = input.submat(latentSize, 0, 2 * latentSize - 1, input.n_cols - 1);
-
   return -0.5 * arma::accu(2 * arma::log(stdDev) -
       arma::pow(stdDev, 2) - arma::pow(mean, 2) + 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename OutputType>
-void Reparametrization<InputDataType, OutputDataType>::KLBackward(
+inline void Reparametrization<InputDataType, OutputDataType>::KLBackward(
     OutputType&& output)
 {
   SoftplusFunction::Deriv(preStdDev, output);

@@ -43,7 +43,7 @@ class Reparametrization
   /**
    * Create the Reparametrization layer object using the specified sample vector size.
    *
-   * @param layerSize The number of output units.
+   * @param latentSize The number of output latent units.
    * @param stochastic Whether we want random sample or constant.
    * @param includeKl Whether we want to include KL loss in backward function.
    */
@@ -80,10 +80,11 @@ class Reparametrization
    * Kullback–Leibler divergence between a normal distribution
    * and the standard normal.
    *
-   * @param input Input data used for evaluating the specified function.
+   * @param mean Mean used for evaluating the KL divergence.
+   * @param stdDev Standard deviation used for evaluating the KL divergence.
    */
   template<typename InputType>
-  double KLForward(const InputType&& input);
+  double KLForward(const InputType&& mean, const InputType&& stdDev);
 
   /**
    * Ordinary feed backward pass of a neural network, evaluating the backward
@@ -113,8 +114,7 @@ class Reparametrization
   //! Get the KL divergence with standard normal.
   double Loss()
   {
-    OutputDataType input = join_cols(stdDev, mean);
-    return KLForward(std::move(input));
+    return KLForward(std::move(mean), std::move(stdDev));
   }
 
   /**
