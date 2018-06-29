@@ -269,7 +269,7 @@ class PCAUpdate
    * @param iterate Parameters that minimize the function.
    */
   template<typename... Targs>
-  void Update(arma::mat& iterate, Targs... Fargs)
+  void Update(arma::mat& iterate, Targs... fArgs)
   {
     updatePolicy.Update(iterate, Fargs...);
 
