@@ -46,9 +46,62 @@ BOOST_AUTO_TEST_CASE(SimpleNormalDistributionTest)
 }
 
 /**
- * Jacobian normal distribution module test.
+ * Jacobian normal distribution module test when we don't apply softplus.
  */
 BOOST_AUTO_TEST_CASE(JacobianNormalDistributionTest)
+{
+  for (size_t i = 0; i < 5; i++)
+  {
+    const size_t targetElements = math::RandInt(2, 1000);
+
+    arma::mat param;
+    param.randn(targetElements * 2, 1);
+
+    arma::mat target;
+    target.randn(targetElements, 1);
+
+    NormalDistribution<> module(std::move(param), false);
+
+    const double perturbation = 1e-6;
+    double outputA, outputB, original;
+    arma::mat jacobianA, jacobianB;
+
+    // Initialize the jacobian matrix.
+    jacobianA = arma::zeros(targetElements * 2, 1);
+
+    for (size_t j = 0; j < targetElements; ++j)
+    {
+      original = module.StdDev()(j);
+      module.StdDev()(j) = original - perturbation;
+      outputA = module.LogProbability(std::move(target));
+      module.StdDev()(j) = original + perturbation;
+      outputB = module.LogProbability(std::move(target));
+      module.StdDev()(j) = original;
+      outputB -= outputA;
+      outputB /= 2 * perturbation;
+      jacobianA(j) = outputB;
+
+      original = module.Mean()(j);
+      module.Mean()(j) = original - perturbation;
+      outputA = module.LogProbability(std::move(target));
+      module.Mean()(j) = original + perturbation;
+      outputB = module.LogProbability(std::move(target));
+      module.Mean()(j) = original;
+      outputB -= outputA;
+      outputB /= 2 * perturbation;
+      jacobianA(j + targetElements) = outputB;
+    }
+
+    module.LogProbBackward(std::move(target), std::move(jacobianB));
+    BOOST_REQUIRE_LE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))),
+        1e-5);
+  }
+}
+
+/**
+ * Jacobian normal distribution module test when we apply softplus.
+ */
+BOOST_AUTO_TEST_CASE(JacobianNormalDistributionSoftplusTest)
 {
   for (size_t i = 0; i < 5; i++)
   {
@@ -71,12 +124,15 @@ BOOST_AUTO_TEST_CASE(JacobianNormalDistributionTest)
 
     for (size_t j = 0; j < targetElements; ++j)
     {
-      original = module.StdDeviation()(j);
-      module.StdDeviation()(j) = original - perturbation;
+      original = module.PreStdDev()(j);
+      module.PreStdDev()(j) = original - perturbation;
+      module.ApplySoftplus();
       outputA = module.LogProbability(std::move(target));
-      module.StdDeviation()(j) = original + perturbation;
+      module.PreStdDev()(j) = original + perturbation;
+      module.ApplySoftplus();
       outputB = module.LogProbability(std::move(target));
-      module.StdDeviation()(j) = original;
+      module.PreStdDev()(j) = original;
+      module.ApplySoftplus();
       outputB -= outputA;
       outputB /= 2 * perturbation;
       jacobianA(j) = outputB;

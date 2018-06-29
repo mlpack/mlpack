@@ -14,7 +14,6 @@
 
 // In case it hasn't yet been included.
 #include "normal_distribution.hpp"
-#include "../activation_functions/softplus_function.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -22,11 +21,11 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename DataType>
 NormalDistribution<DataType>::NormalDistribution(
     const DataType&& mean,
-    const DataType&& stdDeviation) :
+    const DataType&& stdDev) :
     mean(mean),
-    stdDeviation(stdDeviation)
+    stdDev(stdDev)
 {
-  if (mean.size() != stdDeviation.size())
+  if (mean.size() != stdDev.size())
   {
     Log::Fatal << "NormalDistribution<>::NormalDistribution(): The sizes of "
         << "the mean and the standard deviation should be equal." << std::endl;
@@ -49,15 +48,15 @@ NormalDistribution<DataType>::NormalDistribution(
   }
 
   if (applySoftplus)
-    SoftplusFunction::Fn(preStdDev, stdDeviation);
+    SoftplusFunction::Fn(preStdDev, stdDev);
   else
-    stdDeviation = preStdDev;
+    stdDev = preStdDev;
 }
 
 template<typename DataType>
 DataType NormalDistribution<DataType>::Sample() const
 {
-  return stdDeviation % arma::randn<DataType>(mean.n_rows, mean.n_cols) + mean;
+  return stdDev % arma::randn<DataType>(mean.n_rows, mean.n_cols) + mean;
 }
 
 template<typename DataType>
@@ -71,8 +70,8 @@ double NormalDistribution<DataType>::LogProbability(
         << "deviation." << std::endl;
   }
 
-  return -0.5 * (arma::accu(2 * arma::log(stdDeviation) + arma::pow(
-      (mean - observation) / stdDeviation, 2) + log2pi));
+  return -0.5 * (arma::accu(2 * arma::log(stdDev) + arma::pow(
+      (mean - observation) / stdDev, 2) + log2pi));
 }
 
 template<typename DataType>
@@ -80,15 +79,17 @@ void NormalDistribution<DataType>::LogProbBackward(
     const DataType&& observation, DataType&& output) const
 {
   if (!applySoftplus)
-    output = -0.5 * join_cols((2 / stdDeviation - 2 *
-      arma::pow(mean - observation, 2) / arma::pow(stdDeviation, 3)), 2 *
-      (mean - observation) / arma::pow(stdDeviation, 2));
+  {
+    output = -0.5 * join_cols((2 / stdDev - 2 *
+        arma::pow(mean - observation, 2) / arma::pow(stdDev, 3)), 2 *
+        (mean - observation) / arma::pow(stdDev, 2));
+  }
   else
   {
     SoftplusFunction::Deriv(preStdDev, output);
-    output = -0.5 * join_cols((2 / stdDeviation - 2 *
-        arma::pow(mean - observation, 2) / arma::pow(stdDeviation, 3)) % output,
-        2 * (mean - observation) / arma::pow(stdDeviation, 2));
+    output = -0.5 * join_cols((2 / stdDev - 2 *
+        arma::pow(mean - observation, 2) / arma::pow(stdDev, 3)) % output,
+        2 * (mean - observation) / arma::pow(stdDev, 2));
   }
 }
 

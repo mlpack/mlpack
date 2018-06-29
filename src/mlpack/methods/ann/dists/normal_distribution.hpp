@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_ANN_DISTRIBUTIONS_NORMAL_DISTRIBUTION_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "../activation_functions/softplus_function.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -40,10 +41,10 @@ class NormalDistribution
    * Create multiple Normal distributions with the given parameters.
    *
    * @param mean The DataType of means of the multiple distributions
-   * @param stdDeviation The DataType of standard deviations of the multiple
+   * @param stdDev The DataType of standard deviations of the multiple
    *        distributions.
    */
-  NormalDistribution(const DataType&& mean, const DataType&& stdDeviation);
+  NormalDistribution(const DataType&& mean, const DataType&& stdDev);
 
   /*
    * Create multiple Normal distributions with the given data.
@@ -92,10 +93,20 @@ class NormalDistribution
   DataType& Mean() { return mean; }
 
   //! Return the standard deviation.
-  const DataType& StdDeviation() const { return stdDeviation; }
+  const DataType& StdDev() const { return stdDev; }
 
   //! Return a modifiable copy of the standard deviation.
-  DataType& StdDeviation() { return stdDeviation; }
+  DataType& StdDev() { return stdDev; }
+
+  //! Return the pre standard deviation.
+  const DataType& PreStdDev() const { return preStdDev; }
+
+  //! Return a modifiable copy of the pre standard deviation.
+  DataType& PreStdDev() { return preStdDev; }
+
+  //! Calculate standard deviation from the pre standard deviation.
+  //! Only meant for testing.
+  void ApplySoftplus() { SoftplusFunction::Fn(preStdDev, stdDev); }
 
   /**
    * Serialize the distribution.
@@ -105,7 +116,7 @@ class NormalDistribution
   {
     // We just need to serialize each of the members.
     ar & BOOST_SERIALIZATION_NVP(mean);
-    ar & BOOST_SERIALIZATION_NVP(stdDeviation);
+    ar & BOOST_SERIALIZATION_NVP(stdDev);
     ar & BOOST_SERIALIZATION_NVP(preStdDev);
   }
 
@@ -114,7 +125,7 @@ class NormalDistribution
   DataType mean;
 
   //! Standard deviations of the distributions.
-  DataType stdDeviation;
+  DataType stdDev;
 
   //! Pre standard deviation. After softplus this will give standard deviation.
   DataType preStdDev;
