@@ -74,11 +74,10 @@ class PearsonSearch
     // Resulting similarities from Search() are Euclidean distance.
     // For normalized vectors a and b, pearson(a, b) = 1 - dis(a, b) ^ 2 / 2,
     // where dis(a, b) is Euclidean distance.
-    similarities = 1 - arma::pow(similarities, 2) / 2.0;
-
-    // The range of pearson correlation is [-1, 1]. We restrict the range of
-    // similarity to be [0, 1].
-    similarities = (similarities + 1) / 2.0;
+    // Furthermore, we restrict the range of similarity to be [0, 1]:
+    // similarities = (pearson(a,b) + 1) / 2.0. As a result we have the
+    // following formula.
+    similarities = 1 - arma::pow(similarities, 2) / 4.0;
   }
 
  private:

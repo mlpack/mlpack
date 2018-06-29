@@ -64,11 +64,10 @@ class CosineSearch
     // Resulting similarities from Search() are Euclidean distance.
     // For unit vectors a and b, cos(a, b) = 1 - dis(a, b) ^ 2 / 2,
     // where dis(a, b) is Euclidean distance.
-    similarities = 1 - arma::pow(similarities, 2) / 2.0;
-
-    // The range of cosine value is [-1, 1]. We restrict the range of similarity
-    // to be [0, 1].
-    similarities = (similarities + 1) / 2.0;
+    // Furthermore, we restrict the range of similarity to be [0, 1]:
+    // similarities = (cos(a,b) + 1) / 2.0. As a result we have the following
+    // formula.
+    similarities = 1 - arma::pow(similarities, 2) / 4.0;
   }
 
  private:
