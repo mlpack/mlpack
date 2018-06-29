@@ -107,7 +107,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = 0;
-        if (iteration - 1 % range == 0)
+        if ((iteration - 1 % range == 0) && (iteration - 1 != 0))
         {
           eval = metric.Evaluate(transformedDataset.col(i),
                     transformedDataset.col(targetNeighbors(j, i))) -
@@ -173,7 +173,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = 0;
-        if (iteration - 1 % range == 0)
+        if ((iteration - 1 % range == 0) && (iteration - 1 != 0))
         {
           eval = metric.Evaluate(transformedDataset.col(i),
                     transformedDataset.col(targetNeighbors(j, i))) -
@@ -351,7 +351,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = 0;
-        if (iteration - 1 % range == 0)
+        if ((iteration - 1 % range == 0) && (iteration - 1 != 0))
         {
           eval = metric.Evaluate(transformedDataset.col(i),
                     transformedDataset.col(targetNeighbors(j, i))) -
@@ -439,7 +439,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = 0;
-        if (iteration - 1 % range == 0)
+        if ((iteration - 1 % range == 0) && (iteration - 1 != 0))
         {
           eval = metric.Evaluate(transformedDataset.col(i),
                     transformedDataset.col(targetNeighbors(j, i))) -
