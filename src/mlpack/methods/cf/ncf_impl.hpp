@@ -51,7 +51,7 @@ void NCF::FindNegatives(const size_t numUsers,
                         arma::mat& dataset,
                         std::vector<std::vector<double>>& negatives)
 {
-  for(int i = 0; i< numUsers; i++)
+  for (int i = 0; i< numUsers; i++)
   {
     // Find items the user has rated.
     arma::uvec userRates = arma::find(dataset.row(0) == i);
@@ -62,9 +62,9 @@ void NCF::FindNegatives(const size_t numUsers,
 
     // List of all items.
     vec negativeList = linspace<vec> (0, numItems - 1, numItems);
-    for(int j = 0; j < itemRates.n_cols; j++)
+    for (int j = 0; j < itemRates.n_cols; j++)
     {
-      //Remove items which have been rated.
+      // Remove items which have been rated.
       arma::uvec temp = arma::find(negativeList ==  itemRates(j));
       negativeList.shed_row(temp(0));
     }
@@ -85,27 +85,27 @@ void NCF::GetTrainingInstance(arma::mat& dataset,
                               arma::mat& labels,
                               std::vector<std::vector<double>>& negatives)
 {
-  long long int q =0;
+  long long int q = 0;
   int temp;
 
-  for(int i = 0; i < dataset.n_cols; i++)
+  for (int i = 0; i < dataset.n_cols; i++)
   {
     temp = neg;
 
     // Rating exists.
-    users(q)=dataset(0,i);
-    items(q)=dataset(1,i);
-    labels(q)=1;
+    users(q) = dataset(0, i);
+    items(q) = dataset(1, i);
+    labels(q) = 1;
     q++;
 
     // From find negatives.
-    int val = negatives[dataset(0,i)].size();
+    int val = negatives[dataset(0, i)].size();
 
     while (temp != 0)
     {
       int j = math::RandInt(val);
       // Add negatives.
-      users(q) = dataset(0,i);
+      users(q) = dataset(0, i);
       items(q) = j;
       labels(q) = 0;
       q++;
@@ -167,7 +167,6 @@ FFN& NCF::CreateMLP(arma::mat& data,
                     const size_t numUsers,
                     const size_t numItems)
 {
-
   size_t size = data.n_rows/2;
 
   // User sub-network.
