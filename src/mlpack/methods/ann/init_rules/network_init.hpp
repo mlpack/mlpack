@@ -60,7 +60,10 @@ class NetworkInitialization
     {
       size_t weights = 0;
       for (size_t i = 0; i < network.size(); ++i)
+      {
+        boost::apply_visitor(resetVisitor, network[i]);
         weights += boost::apply_visitor(weightSizeVisitor, network[i]);
+      }
       parameter.set_size(weights, 1);
     }
 

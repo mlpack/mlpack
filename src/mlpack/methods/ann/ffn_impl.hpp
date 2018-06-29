@@ -66,7 +66,10 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::ResetData(
   ResetDeterministic();
 
   if (!reset)
-    SetInputSize();
+  {
+    size = predictors.n_rows;
+    ResetParameters();
+  }
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
@@ -118,16 +121,16 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Forward(
     arma::mat inputs, arma::mat& results)
 {
   if (parameter.is_empty())
+  {
+    size = inputs.n_rows;
     ResetParameters();
+  }
 
   if (!deterministic)
   {
     deterministic = true;
     ResetDeterministic();
   }
-
-  if (!reset)
-    SetInputSize();
 
   currentInput = std::move(inputs);
   Forward(std::move(currentInput));
@@ -185,7 +188,10 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     arma::mat predictors, arma::mat& results)
 {
   if (parameter.is_empty())
+  {
+    size = predictors.n_rows;
     ResetParameters();
+  }
 
   if (!deterministic)
   {
@@ -261,7 +267,10 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
     const bool deterministic)
 {
   if (parameter.is_empty())
+  {
+    size = predictors.n_rows;
     ResetParameters();
+  }
 
   if (deterministic != this->deterministic)
   {
@@ -315,7 +324,10 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   if (gradient.is_empty())
   {
     if (parameter.is_empty())
+    {
+      size = predictors.n_rows;
       ResetParameters();
+    }
 
     gradient = arma::zeros<arma::mat>(parameter.n_rows, parameter.n_cols);
   }
@@ -377,6 +389,8 @@ void FFN<OutputLayerType, InitializationRuleType,
 {
   ResetDeterministic();
 
+  SetInputSize();
+
   // Reset the network parameter with the given initialization rule.
   NetworkInitialization<InitializationRuleType,
                         CustomLayers...> networkInit(initializeRule);
@@ -411,12 +425,7 @@ template<typename OutputLayerType, typename InitializationRuleType,
 void FFN<OutputLayerType, InitializationRuleType,
          CustomLayers...>::SetInputSize()
 {
-  if (boost::apply_visitor(outputSizeVisitor, network.front()) != 0)
-  {
-    size = boost::apply_visitor(outputSizeVisitor, network.front());
-  }
-
-  for (size_t i = 1; i < network.size(); ++i)
+  for (size_t i = 0; i < network.size(); ++i)
   {
     // Set the input size.
     boost::apply_visitor(SetInputSizeVisitor(size), network[i]);
@@ -427,8 +436,6 @@ void FFN<OutputLayerType, InitializationRuleType,
       size = boost::apply_visitor(outputSizeVisitor, network[i]);
     }
   }
-
-  ResetParameters();
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
