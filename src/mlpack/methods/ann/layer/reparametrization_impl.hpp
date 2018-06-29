@@ -73,30 +73,11 @@ void Reparametrization<InputDataType, OutputDataType>::Backward(
 
   if (includeKl)
   {
-    arma::Mat<eT> klBack;
-    KLBackward(std::move(klBack));
-    g = join_cols(gy % std::move(gaussianSample) % g, gy) + std::move(klBack);
+    g = join_cols(gy % std::move(gaussianSample) % g + (-1 / stdDev + stdDev)
+        % g, gy + mean);
   }
   else
     g = join_cols(gy % std::move(gaussianSample) % g, gy);
-}
-
-template<typename InputDataType, typename OutputDataType>
-template<typename InputType>
-inline double Reparametrization<InputDataType, OutputDataType>::KLForward(
-    const InputType&& mean, const InputType&& stdDev)
-{
-  return -0.5 * arma::accu(2 * arma::log(stdDev) -
-      arma::pow(stdDev, 2) - arma::pow(mean, 2) + 1);
-}
-
-template<typename InputDataType, typename OutputDataType>
-template<typename OutputType>
-inline void Reparametrization<InputDataType, OutputDataType>::KLBackward(
-    OutputType&& output)
-{
-  SoftplusFunction::Deriv(preStdDev, output);
-  output = join_cols((-1 / stdDev + stdDev) % output, mean);
 }
 
 template<typename InputDataType, typename OutputDataType>

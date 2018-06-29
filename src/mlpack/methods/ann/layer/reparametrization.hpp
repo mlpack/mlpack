@@ -75,27 +75,6 @@ class Reparametrization
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g);
 
-  /**
-   * Ordinary feed forward pass of a neural network, evaluating
-   * Kullback–Leibler divergence between a normal distribution
-   * and the standard normal.
-   *
-   * @param mean Mean used for evaluating the KL divergence.
-   * @param stdDev Standard deviation used for evaluating the KL divergence.
-   */
-  template<typename InputType>
-  double KLForward(const InputType&& mean, const InputType&& stdDev);
-
-  /**
-   * Ordinary feed backward pass of a neural network, evaluating the backward
-   * pass of Kullback–Leibler divergence. Using the results from the
-   * KL divergence feed forward pass.
-   *
-   * @param output The calculated gradient of KL divergence.
-   */
-  template<typename OutputType>
-  void KLBackward(OutputType&& output);
-
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -114,7 +93,8 @@ class Reparametrization
   //! Get the KL divergence with standard normal.
   double Loss()
   {
-    return KLForward(std::move(mean), std::move(stdDev));
+    return -0.5 * arma::accu(2 * arma::log(stdDev) - arma::pow(stdDev, 2)
+        - arma::pow(mean, 2) + 1);
   }
 
   /**
