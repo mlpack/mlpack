@@ -46,7 +46,8 @@ class PearsonSearch
     // For each vector x, first subtract mean(x) from each element in x.
     // Then normalize the vector to unit length.
     arma::mat normalizedSet(arma::size(referenceSet));
-    normalizedSet = arma::normalise(referenceSet - arma::mean(referenceSet));
+    normalizedSet = arma::normalise(
+        referenceSet.each_row() - arma::mean(referenceSet));
 
     neighborSearch.Train(std::move(normalizedSet));
   }
