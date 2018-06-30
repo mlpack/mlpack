@@ -19,6 +19,13 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename DataType>
+NormalDistribution<DataType>::NormalDistribution() :
+    applySoftplus(true)
+{
+  // Nothing to do here.
+}
+
+template<typename DataType>
 NormalDistribution<DataType>::NormalDistribution(
     const DataType&& mean,
     const DataType&& stdDev) :

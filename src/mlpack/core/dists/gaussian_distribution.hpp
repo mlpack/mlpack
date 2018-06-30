@@ -20,6 +20,9 @@ namespace distribution {
 
 /**
  * A single multivariate Gaussian distribution.
+ *
+ * Note: For multiple univariate distributions, there is another class
+ * NormalDistribution in methods/ann/dists.
  */
 class GaussianDistribution
 {

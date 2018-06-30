@@ -21,6 +21,9 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * Multiple univariate Normal(Gaussian) distributions.
  *
+ * Note: For multivariate distributions, where covariace is not diagonal, there is
+ * another class GaussianDistribution in core/dists.
+ *
  * @tparam DataType Type of the input data. (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
@@ -32,10 +35,7 @@ class NormalDistribution
    * Default constructor, which creates a Normal distribution with zero
    * dimension.
    */
-  NormalDistribution()
-  {
-    // Nothing to do here.
-  }
+  NormalDistribution();
 
   /**
    * Create multiple Normal distributions with the given parameters.
