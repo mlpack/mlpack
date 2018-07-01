@@ -103,7 +103,7 @@ void GetRecommendationsAllUsers()
   arma::mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
 
-  CFType<> c(dataset, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy> c(dataset, decomposition, 5, 5, 70);
 
   // Generate recommendations when query set is not specified.
   c.GetRecommendations(numRecs, recommendations);
@@ -140,7 +140,7 @@ void GetRecommendationsQueriedUser()
   arma::mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
 
-  CFType<> c(dataset, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy> c(dataset, decomposition, 5, 5, 70);
 
   // Generate recommendations when query set is specified.
   c.GetRecommendations(numRecsDefault, recommendations, users);
@@ -169,7 +169,8 @@ void RecommendationAccuracy()
 
   GetDatasets(dataset, savedCols);
 
-  CFType<NormalizationType> c(dataset, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy,
+      NormalizationType> c(dataset, decomposition, 5, 5, 70);
 
   // Obtain 150 recommendations for the users in savedCols, and make sure the
   // missing item shows up in most of them.  First, create the list of users,
@@ -234,7 +235,8 @@ void CFPredict(const double rmseBound = 2.0)
 
   GetDatasets(dataset, savedCols);
 
-  CFType<NormalizationType> c(dataset, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy,
+      NormalizationType> c(dataset, decomposition, 5, 5, 70);
 
   // Now, for each removed rating, make sure the prediction is... reasonably
   // accurate.
@@ -270,7 +272,7 @@ void BatchPredict()
 
   GetDatasets(dataset, savedCols);
 
-  CFType<> c(dataset, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy> c(dataset, decomposition, 5, 5, 70);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -299,7 +301,7 @@ void Train(DecompositionPolicy& decomposition)
   // Generate random data.
   arma::sp_mat randomData;
   randomData.sprandu(100, 100, 0.3);
-  CFType<> c(randomData, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy> c(randomData, decomposition, 5, 5, 70);
 
   // Small GroupLens dataset.
   arma::mat dataset;
@@ -311,7 +313,7 @@ void Train(DecompositionPolicy& decomposition)
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
-  CFType<>::CleanData(dataset, cleanedData);
+  CFType<DecompositionPolicy>::CleanData(dataset, cleanedData);
 
   // Now retrain.
   c.Train(dataset, decomposition, 70);
@@ -343,7 +345,7 @@ void Train<>(RegSVDPolicy& decomposition)
 {
   arma::mat randomData = arma::zeros(100, 100);
   randomData.diag().ones();
-  CFType<> c(randomData, decomposition, 5, 5, 70);
+  CFType<RegSVDPolicy> c(randomData, decomposition, 5, 5, 70);
 
   // Now retrain with data we know about.
   // Small GroupLens dataset.
@@ -383,7 +385,7 @@ void EmptyConstructorTrain()
 {
   DecompositionPolicy decomposition;
   // Use default constructor.
-  CFType<> c;
+  CFType<DecompositionPolicy> c;
 
   // Now retrain with data we know about.
   // Small GroupLens dataset.
@@ -428,16 +430,21 @@ void Serialization()
   data::Load("GroupLensSmall.csv", dataset);
 
   arma::sp_mat cleanedData;
-  CFType<NormalizationType>::CleanData(dataset, cleanedData);
+  CFType<DecompositionPolicy,
+      NormalizationType>::CleanData(dataset, cleanedData);
 
-  CFType<NormalizationType> c(cleanedData, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy,
+      NormalizationType> c(cleanedData, decomposition, 5, 5, 70);
 
   arma::sp_mat randomData;
   randomData.sprandu(100, 100, 0.3);
 
-  CFType<NormalizationType> cXml(randomData, decomposition, 5, 5, 70);
-  CFType<NormalizationType> cBinary;
-  CFType<NormalizationType> cText(cleanedData, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy,
+      NormalizationType> cXml(randomData, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy,
+      NormalizationType> cBinary;
+  CFType<DecompositionPolicy,
+      NormalizationType> cText(cleanedData, decomposition, 5, 5, 70);
 
   SerializeObjectAll(c, cXml, cText, cBinary);
 
@@ -451,8 +458,10 @@ void Serialization()
   BOOST_REQUIRE_EQUAL(c.Rank(), cBinary.Rank());
   BOOST_REQUIRE_EQUAL(c.Rank(), cText.Rank());
 
-  CheckMatrices(c.W(), cXml.W(), cBinary.W(), cText.W());
-  CheckMatrices(c.H(), cXml.H(), cBinary.H(), cText.H());
+  CheckMatrices(c.Decomposition().W(), cXml.Decomposition().W(),
+      cBinary.Decomposition().W(), cText.Decomposition().W());
+  CheckMatrices(c.Decomposition().H(), cXml.Decomposition().H(),
+      cBinary.Decomposition().H(), cText.Decomposition().H());
 
   BOOST_REQUIRE_EQUAL(c.CleanedData().n_rows, cXml.CleanedData().n_rows);
   BOOST_REQUIRE_EQUAL(c.CleanedData().n_rows, cBinary.CleanedData().n_rows);
