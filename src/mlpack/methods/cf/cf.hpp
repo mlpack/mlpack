@@ -63,7 +63,8 @@ namespace cf /** Collaborative filtering. **/ {
  *     Data is normalized before calling Train() method. Predicted rating is
  *     denormalized before return.
  */
-template<typename NormalizationType = NoNormalization>
+template<typename DecompositionPolicy = NMFPolicy,
+         typename NormalizationType = NoNormalization>
 class CFType
 {
  public:
@@ -99,7 +100,7 @@ class CFType
    * @param minResidue Residue required to terminate.
    * @param mit Whether to terminate only when maxIterations is reached.
    */
-  template<typename MatType, typename DecompositionPolicy = NMFPolicy>
+  template<typename MatType>
   CFType(const MatType& data,
          DecompositionPolicy& decomposition = DecompositionPolicy(),
          const size_t numUsersForSimilarity = 5,
@@ -122,7 +123,6 @@ class CFType
    * @param minResidue Residue required to terminate.
    * @param mit Whether to terminate only when maxIterations is reached.
    */
-  template<typename DecompositionPolicy>
   void Train(const arma::mat& data,
              DecompositionPolicy& decomposition,
              const size_t maxIterations = 1000,
@@ -143,7 +143,6 @@ class CFType
    * @param minResidue Residue required to terminate.
    * @param mit Whether to terminate only when maxIterations is reached.
    */
-  template<typename DecompositionPolicy>
   void Train(const arma::sp_mat& data,
              DecompositionPolicy& decomposition,
              const size_t maxIterations = 1000,
@@ -180,10 +179,9 @@ class CFType
     return rank;
   }
 
-  //! Get the User Matrix.
-  const arma::mat& W() const { return w; }
-  //! Get the Item Matrix.
-  const arma::mat& H() const { return h; }
+  //! Gets decomposition object.
+  const DecompositionPolicy& Decomposition() const { return decomposition; }
+
   //! Get the cleaned data matrix.
   const arma::sp_mat& CleanedData() const { return cleanedData; }
 
@@ -272,10 +270,8 @@ class CFType
   size_t numUsersForSimilarity;
   //! Rank used for matrix factorization.
   size_t rank;
-  //! User matrix.
-  arma::mat w;
-  //! Item matrix.
-  arma::mat h;
+  //! DecompositionPolicy object.
+  DecompositionPolicy decomposition;
   //! Cleaned data matrix.
   arma::sp_mat cleanedData;
   //! Data normalization object.
