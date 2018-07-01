@@ -56,8 +56,6 @@ class RegSVDPolicy
   void Apply(const arma::mat& data,
              const arma::sp_mat& /* cleanedData */,
              const size_t rank,
-             arma::mat& w,
-             arma::mat& h,
              const size_t maxIterations,
              const double /* minResidue */,
              const bool /* mit */)
@@ -67,14 +65,68 @@ class RegSVDPolicy
     regsvd.Apply(data, rank, w, h);
   }
 
+  double GetRating(const size_t user, const size_t item) const 
+  {
+    double rating = arma::as_scalar(w.row(item) * h.col(user));
+    return rating;
+  }
+
+  void GetRatingOfUser(const size_t user, arma::vec& rating) const
+  {
+    rating = w * h.col(user);
+  }
+
+  template<typename NeighborSearchPolicy>
+  void GetNeighborhood(const arma::Col<size_t>& users,
+                       const size_t numUsersForSimilarity,
+                       arma::Mat<size_t>& neighborhood,
+                       arma::mat& similarities) const
+  {
+    // We want to avoid calculating the full rating matrix, so we will do nearest
+    // neighbor search only on the H matrix, using the observation that if the
+    // rating matrix X = W*H, then d(X.col(i), X.col(j)) = d(W H.col(i), W
+    // H.col(j)).  This can be seen as nearest neighbor search on the H matrix
+    // with the Mahalanobis distance where M^{-1} = W^T W.  So, we'll decompose
+    // M^{-1} = L L^T (the Cholesky decomposition), and then multiply H by L^T.
+    // Then we can perform nearest neighbor search.
+    arma::mat l = arma::chol(w.t() * w);
+    arma::mat stretchedH = l * h; // Due to the Armadillo API, l is L^T.
+
+    // Temporarily store feature vector of queried users.
+    arma::mat query(stretchedH.n_rows, users.n_elem);
+    // Select feature vectors of queried users.
+    for (size_t i = 0; i < users.n_elem; i++)
+      query.col(i) = stretchedH.col(users(i));
+
+    NeighborSearchPolicy neighborSearch(stretchedH);
+    neighborSearch.Search(
+      query, numUsersForSimilarity, neighborhood, similarities);
+  }
+
+  //! Get the User Matrix.
+  const arma::mat& W() const { return w; }
+  //! Get the Item Matrix.
+  const arma::mat& H() const { return h; }
+
   //! Get the number of iterations.
   size_t MaxIterations() const { return maxIterations; }
   //! Modify the number of iterations.
   size_t& MaxIterations() { return maxIterations; }
 
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & BOOST_SERIALIZATION_NVP(w);
+    ar & BOOST_SERIALIZATION_NVP(h);
+  }
+
  private:
   //! Locally stored number of iterations.
   size_t maxIterations;
+  //! User matrix.
+  arma::mat w;
+  //! Item matrix.
+  arma::mat h;
 };
 
 } // namespace cf
