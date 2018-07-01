@@ -115,7 +115,6 @@ template<typename Archive>
 void AddMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-
   // Be sure to clear other layers before loading.
   if (Archive::is_loading::value)
     network.clear();
