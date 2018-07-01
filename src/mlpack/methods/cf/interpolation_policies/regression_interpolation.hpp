@@ -75,10 +75,10 @@ class RegressionInterpolation
    * @param similarities Similarites between query user and neighbors.
    * @param cleanedData Sparse rating matrix.
    */
-  template <typename VectorType>
+  template <typename VectorType,
+            typename DecompositionPolicy>
   void GetWeights(VectorType&& weights,
-                  const arma::mat& w,
-                  const arma::mat& h,
+                  const DecompositionPolicy& decomposition,
                   const size_t queryUser,
                   const arma::Col<size_t>& neighbors,
                   const arma::vec& /* similarities*/,
@@ -91,6 +91,8 @@ class RegressionInterpolation
           << std::endl;
     }
 
+    const arma::mat& w = decomposition.W();
+    const arma::mat& h = decomposition.H();
     const size_t itemNum = cleanedData.n_rows;
     const size_t neighborNum = neighbors.size();
 
