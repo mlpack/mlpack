@@ -67,17 +67,41 @@ class NMFPolicy
     }
   }
 
+  /**
+   * Return predicted rating given user ID and item ID.
+   *
+   * @param user User ID.
+   * @param item Item ID.
+   */
   double GetRating(const size_t user, const size_t item) const 
   {
     double rating = arma::as_scalar(w.row(item) * h.col(user));
     return rating;
   }
 
+  /**
+   * Get predicted ratings for a user.
+   *
+   * @param user User ID.
+   * @param rating Resulting rating vector.
+   */
   void GetRatingOfUser(const size_t user, arma::vec& rating) const
   {
     rating = w * h.col(user);
   }
 
+  /**
+   * Get the neighborhood and corresponding similarities for a set of users.
+   *
+   * @tparam NeighborSearchPolicy The policy to perform neighbor search.
+   *
+   * @param users Users whose neighborhood is to be computed.
+   * @param numUsersForSimilarity The number of neighbors returned for
+   *     each user.
+   * @param neighborhood Neighbors represented by user IDs.
+   * @param similarities Similarity between each user and each of its
+   *     neighbors.
+   */
   template<typename NeighborSearchPolicy>
   void GetNeighborhood(const arma::Col<size_t>& users,
                        const size_t numUsersForSimilarity,
@@ -110,6 +134,9 @@ class NMFPolicy
   //! Get the Item Matrix.
   const arma::mat& H() const { return h; }
 
+  /**
+   * Serialization.
+   */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
