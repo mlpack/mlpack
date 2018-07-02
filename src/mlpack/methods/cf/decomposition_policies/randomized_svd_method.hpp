@@ -82,7 +82,7 @@ class RandomizedSVDPolicy
    * @param user User ID.
    * @param item Item ID.
    */
-  double GetRating(const size_t user, const size_t item) const 
+  double GetRating(const size_t user, const size_t item) const
   {
     double rating = arma::as_scalar(w.row(item) * h.col(user));
     return rating;
@@ -117,13 +117,13 @@ class RandomizedSVDPolicy
                        arma::Mat<size_t>& neighborhood,
                        arma::mat& similarities) const
   {
-    // We want to avoid calculating the full rating matrix, so we will do nearest
-    // neighbor search only on the H matrix, using the observation that if the
-    // rating matrix X = W*H, then d(X.col(i), X.col(j)) = d(W H.col(i), W
-    // H.col(j)).  This can be seen as nearest neighbor search on the H matrix
-    // with the Mahalanobis distance where M^{-1} = W^T W.  So, we'll decompose
-    // M^{-1} = L L^T (the Cholesky decomposition), and then multiply H by L^T.
-    // Then we can perform nearest neighbor search.
+    // We want to avoid calculating the full rating matrix, so we will do
+    // nearest neighbor search only on the H matrix, using the observation that
+    // if the rating matrix X = W*H, then d(X.col(i), X.col(j)) = d(W H.col(i),
+    // W H.col(j)).  This can be seen as nearest neighbor search on the H
+    // matrix with the Mahalanobis distance where M^{-1} = W^T W.  So, we'll
+    // decompose M^{-1} = L L^T (the Cholesky decomposition), and then multiply
+    // H by L^T. Then we can perform nearest neighbor search.
     arma::mat l = arma::chol(w.t() * w);
     arma::mat stretchedH = l * h; // Due to the Armadillo API, l is L^T.
 

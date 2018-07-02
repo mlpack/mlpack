@@ -68,7 +68,7 @@ class CFModel
   size_t DecompositionPolicy() const { return decompositionPolicy; }
   //! Modify the decomposition policy.
   size_t& DecompositionPolicy() { return decompositionPolicy; }
-  
+
   //! Get the pointer to CFType<> object.
   template<typename DecompositionPolicy>
   const CFType<DecompositionPolicy>* CFPtr() const
@@ -126,7 +126,7 @@ class CFModel
           numUsersForSimilarity, rank, maxIterations, minResidue, mit);
     }
     else if (decompositionPolicy == DecompositionPolicies::REGULARIZED_SVD)
-    {  
+    {
       RegSVDPolicy decomposition;
       regSVDCF = new CFType<RegSVDPolicy>(data, decomposition,
           numUsersForSimilarity, rank, maxIterations, minResidue, mit);
@@ -153,7 +153,7 @@ class CFModel
   void GetRecommendations(const size_t numRecs,
                           arma::Mat<size_t>& recommendations,
                           const arma::Col<size_t>& users);
-  
+
   //! Compute recommendations for all users.
   void GetRecommendations(const size_t numRecs,
                           arma::Mat<size_t>& recommendations);
