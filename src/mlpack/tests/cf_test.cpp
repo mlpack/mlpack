@@ -1099,10 +1099,10 @@ BOOST_AUTO_TEST_CASE(CFPredictRegressionInterpolation)
   // The small Grouplens dataset we use is very sparse.
   // RegressionInterpolation doesn't generalize well when the data
   // is very sparse. Thus we set a very high rmse bound here.
-  CFPredict<NMFPolicy,
+  CFPredict<RegSVDPolicy,
             OverallMeanNormalization,
             EuclideanSearch,
-            RegressionInterpolation>(12);
+            RegressionInterpolation>();
 }
 
 BOOST_AUTO_TEST_SUITE_END();
