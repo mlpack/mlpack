@@ -129,7 +129,7 @@ class Linear
   //! Locally-stored weight object.
   OutputDataType weights;
 
-  //! Locally-stored weight paramters.
+  //! Locally-stored weight parameters.
   OutputDataType weight;
 
   //! Locally-stored bias term parameters.

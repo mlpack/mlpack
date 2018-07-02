@@ -187,7 +187,7 @@ void mlpack::radical::WhitenFeatureMajorMatrix(const mat& matX,
 {
   mat matU, matV;
   vec s;
-  svd(matU, s, matV, cov(matX));
+  arma::svd(matU, s, matV, cov(matX));
   matWhitening = matU * diagmat(1 / sqrt(s)) * trans(matV);
   matXWhitened = matX * matWhitening;
 }

@@ -62,20 +62,10 @@ class CrossEntropyError
                 const TargetType&& target,
                 OutputType&& output);
 
-  //! Get the input parameter.
-  InputDataType& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
 
   //! Get the epsilon.
   double Eps() const { return eps; }
@@ -89,12 +79,6 @@ class CrossEntropyError
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
-
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
