@@ -67,7 +67,7 @@ void CFModel::Predict(const arma::Mat<size_t>& combinations,
   }
 }
 
-//! Compute recommendations for query users.
+//! Compute recommendations for queried users.
 void CFModel::GetRecommendations(const size_t numRecs,
                                  arma::Mat<size_t>& recommendations,
                                  const arma::Col<size_t>& users)

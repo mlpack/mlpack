@@ -58,7 +58,7 @@ class CFModel
   CFType<SVDIncompletePolicy>* incompleteSVDCF;
 
  public:
-  //! Create an empty AdaBoost model.
+  //! Create an empty CF model.
   CFModel();
 
   //! Clean up memory.
@@ -69,7 +69,7 @@ class CFModel
   //! Modify the decomposition policy.
   size_t& DecompositionPolicy() { return decompositionPolicy; }
   
-  //! Get the pointer to CF object.
+  //! Get the pointer to CFType<> object.
   template<typename DecompositionPolicy>
   const CFType<DecompositionPolicy>* CFPtr() const
   {
@@ -210,7 +210,7 @@ class CFModel
   }
 };
 
-} // namespace adaboost
+} // namespace cf
 } // namespace mlpack
 
 #endif

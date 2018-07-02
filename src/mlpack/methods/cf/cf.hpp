@@ -59,6 +59,8 @@ namespace cf /** Collaborative filtering. **/ {
  * are in a matrix that holds doubles, should hold integer (or size_t) values.
  * The user and item indices are assumed to start at 0.
  *
+ * @tparam DecompositionPolicy The policy used to decompose the rating matrix.
+ *     It also provides methods to compute prediction and neighborhood.
  * @tparam NormalizationType The type of normalization performed on raw data.
  *     Data is normalized before calling Train() method. Predicted rating is
  *     denormalized before return.

@@ -185,7 +185,6 @@ GetRecommendations(const size_t numRecs,
                    arma::Mat<size_t>& recommendations,
                    const arma::Col<size_t>& users)
 {
-
   // Temporary storage for neighborhood of the queried users.
   arma::Mat<size_t> neighborhood;
   // Resulting similarities.
