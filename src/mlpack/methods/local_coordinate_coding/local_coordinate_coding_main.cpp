@@ -101,7 +101,6 @@ static void mlpackMain()
     RandomSeed((size_t) std::time(NULL));
 
   // Check for parameter validity.
-  RequireOnlyOnePassed({ "input_model", "initial_dictionary" }, true);
   RequireOnlyOnePassed({ "training", "input_model" }, true);
 
   if (CLI::HasParam("training"))
