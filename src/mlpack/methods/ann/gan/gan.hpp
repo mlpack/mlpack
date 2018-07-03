@@ -8,13 +8,13 @@
  * 3-clause BSD license along with mlpack. If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_GAN_HPP
-#define MLPACK_METHODS_ANN_GAN_HPP
+#ifndef MLPACK_METHODS_ANN_GAN_GAN_HPP
+#define MLPACK_METHODS_ANN_GAN_GAN_HPP
 
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/ann/ffn.hpp>
-#include <mlpack/methods/ann/gan_policies.hpp>
+#include <mlpack/methods/ann/gan/gan_policies.hpp>
 #include <mlpack/methods/ann/visitor/output_parameter_visitor.hpp>
 #include <mlpack/methods/ann/visitor/reset_visitor.hpp>
 #include <mlpack/methods/ann/visitor/weight_size_visitor.hpp>
@@ -31,6 +31,8 @@ namespace ann /** Artificial Neural Network. **/ {
  * networks contesting with each other in a zero-sum game framework. This
  * technique can generate photographs that look at least superficially
  * authentic to human observers, having many realistic characteristics.
+ * GANs have been used in Text-to-Image Synthesis, Medical Drug Discovery,
+ * High Resolution Imagery Generation, Neural Machine Translation and so on.
  *
  * For more information, see the following paper:
  *
@@ -75,17 +77,23 @@ class GAN
    * @param lambda Parameter for setting the gradient penalty.
    */
   GAN(arma::mat& trainData,
-      Model& generator,
-      Model& discriminator,
-      InitializationRuleType initializeRule,
-      Noise noiseFunction,
-      size_t noiseDim,
-      size_t batchSize,
-      size_t generatorUpdateStep,
-      size_t preTrainSize,
-      double multiplier,
-      double clippingParameter = 0.01,
-      double lambda = 10.0);
+      Model generator,
+      Model discriminator,
+      InitializationRuleType& initializeRule,
+      Noise& noiseFunction,
+      const size_t noiseDim,
+      const size_t batchSize,
+      const size_t generatorUpdateStep,
+      const size_t preTrainSize,
+      const double multiplier,
+      const double clippingParameter = 0.01,
+      const double lambda = 10.0);
+
+  //! Copy constructor.
+  GAN(const GAN&);
+
+  //! Move constructor.
+  GAN(GAN&&);
 
   // Reset function.
   void Reset();
@@ -139,6 +147,60 @@ class GAN
   Evaluate(const arma::mat& parameters,
            const size_t i,
            const size_t batchSize);
+
+  /**
+   * EvaluateWithGradient function for the Standard GAN and DCGAN.
+   * This function gives the performance of the Standard GAN or DCGAN on the
+   * current input, while updating Gradients.
+   *
+   * @param parameters The parameters of the network.
+   * @param i Index of the current input.
+   * @param gradient Variable to store the present gradient.
+   * @param batchSize Variable to store the present number of inputs.
+   */
+  template<typename GradType, typename Policy = PolicyType>
+  typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
+                          std::is_same<Policy, DCGAN>::value, double>::type
+  EvaluateWithGradient(const arma::mat& parameters,
+                       const size_t i,
+                       GradType& gradient,
+                       const size_t batchSize);
+
+  /**
+   * EvaluateWithGradient function for the WGAN.
+   * This function gives the performance of the WGAN on the
+   * current input, while updating Gradients.
+   *
+   * @param parameters The parameters of the network.
+   * @param i Index of the current input.
+   * @param gradient Variable to store the present gradient.
+   * @param batchSize Variable to store the present number of inputs.
+   */
+  template<typename GradType, typename Policy = PolicyType>
+  typename std::enable_if<std::is_same<Policy, WGAN>::value,
+                          double>::type
+  EvaluateWithGradient(const arma::mat& parameters,
+                       const size_t i,
+                       GradType& gradient,
+                       const size_t batchSize);
+
+  /**
+   * EvaluateWithGradient function for the WGAN-GP.
+   * This function gives the performance of the WGAN-GP on the
+   * current input, while updating Gradients.
+   *
+   * @param parameters The parameters of the network.
+   * @param i Index of the current input.
+   * @param gradient Variable to store the present gradient.
+   * @param batchSize Variable to store the present number of inputs.
+   */
+  template<typename GradType, typename Policy = PolicyType>
+  typename std::enable_if<std::is_same<Policy, WGANGP>::value,
+                          double>::type
+  EvaluateWithGradient(const arma::mat& parameters,
+                       const size_t i,
+                       GradType& gradient,
+                       const size_t batchSize);
 
   /**
    * Gradient function for Standard GAN and DCGAN.
@@ -217,8 +279,17 @@ class GAN
 
   //! Return the parameters of the network.
   const arma::mat& Parameters() const { return parameter; }
-  //! Modify the parameters of the network
+  //! Modify the parameters of the network.
   arma::mat& Parameters() { return parameter; }
+
+  //! Return the generator of the GAN.
+  const Model& Generator() const { return generator; }
+  //! Modify the generator of the GAN.
+  Model& Generator() { return generator; }
+  //! Return the discriminator of the GAN.
+  const Model& Discriminator() const { return discriminator; }
+  //! Modify the discriminator of the GAN.
+  Model& Discriminator() { return discriminator; }
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
@@ -233,9 +304,9 @@ class GAN
   //! Locally stored parameters of the network.
   arma::mat parameter;
   //! Locally stored Generator network.
-  Model& generator;
+  Model generator;
   //! Locally stored Discriminator network.
-  Model& discriminator;
+  Model discriminator;
   //! Locally stored Initializer.
   InitializationRuleType initializeRule;
   //! Locally stored Noise function
@@ -296,5 +367,8 @@ class GAN
 
 // Include implementation.
 #include "gan_impl.hpp"
+#include "wgan_impl.hpp"
+#include "wgangp_impl.hpp"
+
 
 #endif

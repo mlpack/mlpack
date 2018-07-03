@@ -13,7 +13,7 @@
 
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
-#include <mlpack/methods/ann/gan.hpp>
+#include <mlpack/methods/ann/gan/gan.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
     arma::mat samples;
     noise.imbue( [&]() { return noiseFunction(); } );
 
-    generator.Forward(noise, samples);
+    dcgan.Generator().Forward(noise, samples);
     samples.reshape(dim, dim);
     samples = samples.t();
 
@@ -265,7 +265,7 @@ BOOST_AUTO_TEST_CASE(DCGANCelebATest)
     arma::mat samples;
     noise.imbue( [&]() { return noiseFunction(); } );
 
-    generator.Forward(noise, samples);
+    dcgan.Generator().Forward(noise, samples);
     samples.reshape(dim, dim);
     samples = samples.t();
 

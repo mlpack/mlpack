@@ -14,7 +14,7 @@
 
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
-#include <mlpack/methods/ann/gan.hpp>
+#include <mlpack/methods/ann/gan/gan.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include <mlpack/core/optimizers/adam/adam.hpp>
@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(GANTest)
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;
-  arma::mat noise(noiseDim, 1);
+  arma::mat noise(noiseDim, batchSize);
 
   size_t dim = std::sqrt(trainData.n_rows);
   arma::mat generatedData(2 * dim, dim * numSamples);
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(GANTest)
     arma::mat samples;
     noise.imbue( [&]() { return noiseFunction(); } );
 
-    generator.Forward(noise, samples);
+    gan.Generator().Forward(noise, samples);
     samples.reshape(dim, dim);
     samples = samples.t();
 
@@ -228,7 +228,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
     arma::mat samples;
     noise.imbue( [&]() { return noiseFunction(); } );
 
-    generator.Forward(noise, samples);
+    gan.Generator().Forward(noise, samples);
     samples.reshape(dim, dim);
     samples = samples.t();
 

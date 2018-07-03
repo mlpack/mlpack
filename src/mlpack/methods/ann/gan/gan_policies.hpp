@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_GAN_POLICIES_HPP
-#define MLPACK_METHODS_ANN_GAN_POLICIES_HPP
+#ifndef MLPACK_METHODS_ANN_GAN_GAN_POLICIES_HPP
+#define MLPACK_METHODS_ANN_GAN_GAN_POLICIES_HPP
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
