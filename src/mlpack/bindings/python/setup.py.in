@@ -42,8 +42,7 @@ else:
                   library_dirs=['${CMAKE_BINARY_DIR}/lib/'],
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=('-DBINDING_TYPE=BINDING_TYPE_PYX ' + \
-                      '-std=c++11 ' + \
-                      '${CMAKE_CXX_FLAGS}'.lstrip().rstrip()).split(' '),
+                      '-std=c++11${CMAKE_CXX_FLAGS}').split(' '),
                   extra_link_args=['${OpenMP_CXX_FLAGS}'],
                   undef_macros=[] if len("${DISABLE_CFLAGS}") == 0 \
                       else '${DISABLE_CFLAGS}'.split(';')) \
@@ -62,8 +61,7 @@ else:
                   library_dirs=['${CMAKE_BINARY_DIR}/lib/'],
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=('-DBINDING_TYPE=BINDING_TYPE_PYX ' + \
-                      '-std=c++11 ' + \
-                      '${CMAKE_CXX_FLAGS}'.lstrip().rstrip()).split(' '),
+                      '-std=c++11${CMAKE_CXX_FLAGS}').split(' '),
                   extra_link_args=['${OpenMP_CXX_FLAGS}'],
                   undef_macros=[] if len("${DISABLE_CFLAGS}") == 0 \
                       else '${DISABLE_CFLAGS}'.split(';')) \
@@ -71,6 +69,32 @@ else:
 
 setup(name='mlpack',
       version='${PACKAGE_VERSION}',
+      description='a flexible, fast machine learning library',
+      long_description='mlpack is a fast, flexible machine learning ' + \
+          'library, written in C++, that aims to provide fast, extensible ' + \
+          'implementations of cutting-edge machine learning algorithms. ' + \
+          'mlpack provides these algorithms as simple command-line ' + \
+          'programs, Python bindings, and C++ classes which can then be ' + \
+          'integrated into larger-scale machine learning solutions.',
+      long_description_content_type='text/plain',
+      url='http://www.mlpack.org/',
+      author='mlpack developers',
+      author_email='mlpack@lists.mlpack.org',
+      license='BSD',
+      classifiers=[
+          'Development Status :: 5 - Production/Stable',
+          'Intended Audience :: Science/Research',
+          'License :: OSI Approved :: BSD License',
+          'Topic :: Scientific/Engineering :: Artificial Intelligence',
+          'Topic :: Scientific/Engineering :: Mathematics',
+          'Topic :: Software Development :: Libraries',
+          'Topic :: Software Development :: Libraries :: Application Frameworks'],
+      keywords='machine learning, data mining, deep learning, optimization',
+      project_urls={
+          'Documentation': 'http://www.mlpack.org/docs/mlpack-3.0.0/python.html',
+          'Source': 'https://github.com/mlpack/mlpack/',
+          'Tracker': 'https://github.com/mlpack/mlpack/issues'},
+      install_requires=['cython>=0.24', 'numpy', 'pandas'],
       package_dir={ '': '${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/' },
       packages=['mlpack'],
       cmdclass={ 'build_ext': build_ext },
