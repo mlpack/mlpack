@@ -39,7 +39,7 @@ extern MLPACK_EXPORT std::normal_distribution<> randNormalDist;
  */
 inline void RandomSeed(const size_t seed)
 {
-  #if (BINDING_TYPE != BINDING_TYPE_TEST)
+  #if (BINDING_TYPE == NULL || BINDING_TYPE != BINDING_TYPE_TEST)
     randGen.seed((uint32_t) seed);
     srand((unsigned int) seed);
     arma::arma_rng::set_seed(seed);
@@ -55,7 +55,7 @@ inline void RandomSeed(const size_t seed)
  * a difference to execution of CLI binding.
  * Refer to pull request #1306 for discussion on this function.
  */
-#if (BINDING_TYPE == BINDING_TYPE_TEST)
+#if (BINDING_TYPE == BINDING_TYPE_TEST && BINDING_TYPE != NULL)
 inline void FixedRandomSeed()
 {
   const static size_t seed = rand();
