@@ -22,11 +22,11 @@ namespace lmnn {
 
 template<typename MetricType>
 LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
-                           const arma::Row<size_t>& labels,
-                           size_t k,
-                           double regularization,
-                           size_t range,
-                           MetricType metric) :
+                                       const arma::Row<size_t>& labels,
+                                       size_t k,
+                                       double regularization,
+                                       size_t range,
+                                       MetricType metric) :
     dataset(math::MakeAlias(const_cast<arma::mat&>(dataset), false)),
     labels(math::MakeAlias(const_cast<arma::Row<size_t>&>(labels), false)),
     k(k),

@@ -21,7 +21,27 @@
 namespace mlpack {
 namespace lmnn {
 
-
+/**
+ * The Large Margin Nearest Neighbors function.
+ *
+ * The actual function is
+ *
+ * \epsilon(M) = \sum_{ij}\eta_{ij}|| L x_i - L x_j ||^2 +
+ *     c\sum_{ijl}\eta_{ij}(1-y_{il})[1 + || L x_i - L x_j ||^2 -
+ *     || L x_i - L x_l ||^2)]_{+}
+ *
+ * where x_n represents a point and A is the current scaling matrix.
+ *
+ * This class is more flexible than the original paper, allowing an arbitrary
+ * metric function to be used in place of || A x_i - A x_j ||^2, meaning that
+ * the squared Euclidean distance is not the only allowed metric for LMNN.
+ * However, that is probably the best way to use this class.
+ *
+ * In addition to the standard Evaluate() and Gradient() functions which mlpack
+ * optimizers use, overloads of Evaluate() and Gradient() are given which only
+ * operate on one point in the dataset.  This is useful for optimizers like
+ * stochastic gradient descent (see mlpack::optimization::SGD).
+ */
 template<typename MetricType = metric::SquaredEuclideanDistance>
 class LMNNFunction
 {
@@ -29,9 +49,12 @@ class LMNNFunction
   /**
    * Constructor for LMNNFunction class.
    *
-   * @param data Dataset for which metric is calculated.
-   * @param rank Rank used for matrix factorization.
-   * @param lambda Regularization parameter used for optimization.
+   * @param dataset Input dataset.
+   * @param labels Input dataset labels.
+   * @param k Number of target neighbors to be used.
+   * @param regularization Regularization value.
+   * @param range Range after which impostors need to be recalculated.
+   * @param metric Type of metric used for computation.
    */
   LMNNFunction(const arma::mat& dataset,
                const arma::Row<size_t>& labels,
@@ -94,8 +117,8 @@ class LMNNFunction
    * @tparam GradType The type of the gradient out-param.
    * @param transformation Transformation matrix of Mahalanobis distance.
    * @param begin Index of the initial point to use for objective function.
-   * @param batchSize Number of points to use for objective function.
    * @param gradient Matrix to store the calculated gradient in.
+   * @param batchSize Number of points to use for objective function.
    */
   template<typename GradType>
   void Gradient(const arma::mat& transformation,
@@ -115,7 +138,7 @@ class LMNNFunction
    */
   template<typename GradType>
   double EvaluateWithGradient(const arma::mat& transformation,
-                            GradType& gradient);
+                              GradType& gradient);
 
   /**
    * Evaluate the LMNN objective function together with gradient for the given
@@ -129,14 +152,14 @@ class LMNNFunction
    * @tparam GradType The type of the gradient out-param.
    * @param transformation Transformation matrix of Mahalanobis distance.
    * @param begin Index of the initial point to use for objective function.
-   * @param batchSize Number of points to use for objective function.
    * @param gradient Matrix to store the calculated gradient in.
+   * @param batchSize Number of points to use for objective function.
    */
   template<typename GradType>
   double EvaluateWithGradient(const arma::mat& transformation,
-                            const size_t begin,
-                            GradType& gradient,
-                            const size_t batchSize = 1);
+                              const size_t begin,
+                              GradType& gradient,
+                              const size_t batchSize = 1);
 
   //! Return the initial point for the optimization.
   const arma::mat& GetInitialPoint() const { return initialPoint; }
