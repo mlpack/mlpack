@@ -63,6 +63,7 @@ class LMNNFunction
                size_t range,
                MetricType metric = MetricType());
 
+
   /**
    * Shuffle the points in the dataset. This may be used by optimizers.
    */
@@ -217,6 +218,12 @@ class LMNNFunction
   Constraints<MetricType> constraint;
   //! Holds pre-calculated cij.
   arma::mat pCij;
+  //! Holds the norm of each data point.
+  arma::vec norm;
+  //! Hold previous eval value.
+  double evalOld;
+  //! Holds previous transformation matrix.
+  arma::mat transformationOld;
   /**
   * Precalculate the gradient part due to target neighbors and stores
   * the result as a matrix. Used for L-BFGS like optimizers which does not

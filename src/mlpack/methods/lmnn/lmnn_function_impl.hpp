@@ -107,18 +107,34 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = 0;
-        if ((iteration - 1 % range == 0) && (iteration - 1 != 0))
+        if(transformationOld.n_elem != 0)
         {
-          eval = metric.Evaluate(transformedDataset.col(i),
-                    transformedDataset.col(targetNeighbors(j, i))) -
-                 distance(l, i);
+          eval = evalOld + arma::norm(transformation - transformationOld) *
+              (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) + 2 * norm(i));
+          if (eval > -1)
+          {
+            // Calculate exact eval.
+            if ((iteration - 1 % range == 0))
+            {
+              eval = metric.Evaluate(transformedDataset.col(i),
+                         transformedDataset.col(targetNeighbors(j, i))) -
+                     distance(l, i);
+            }
+            else
+            {
+              eval = metric.Evaluate(transformedDataset.col(i),
+                       transformedDataset.col(targetNeighbors(j, i))) -
+                     metric.Evaluate(transformedDataset.col(i),
+                       transformedDataset.col(impostors(l, i)));
+            }
+          }
         }
         else
         {
           eval = metric.Evaluate(transformedDataset.col(i),
-                    transformedDataset.col(targetNeighbors(j, i))) -
+                     transformedDataset.col(targetNeighbors(j, i))) -
                  metric.Evaluate(transformedDataset.col(i),
-                    transformedDataset.col(impostors(l, i)));
+                     transformedDataset.col(impostors(l, i)));
         }
 
         // Check bounding condition.
@@ -128,6 +144,10 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
           bp = l;
           break;
         }
+
+        // Update cache.
+        evalOld = eval;
+        transformationOld = transformation;
 
         cost += regularization * (1 + eval);
       }
@@ -173,18 +193,34 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = 0;
-        if ((iteration - 1 % range == 0) && (iteration - 1 != 0))
+        if(transformationOld.n_elem != 0)
         {
-          eval = metric.Evaluate(transformedDataset.col(i),
-                    transformedDataset.col(targetNeighbors(j, i))) -
-                 distance(l, i);
+          eval = evalOld + arma::norm(transformation - transformationOld) *
+              (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) + 2 * norm(i));
+          if (eval > -1)
+          {
+            // Calculate exact eval.
+            if ((iteration - 1 % range == 0))
+            {
+              eval = metric.Evaluate(transformedDataset.col(i),
+                        transformedDataset.col(targetNeighbors(j, i))) -
+                     distance(l, i);
+            }
+            else
+            {
+              eval = metric.Evaluate(transformedDataset.col(i),
+                       transformedDataset.col(targetNeighbors(j, i))) -
+                     metric.Evaluate(transformedDataset.col(i),
+                       transformedDataset.col(impostors(l, i)));
+            }
+          }
         }
         else
         {
           eval = metric.Evaluate(transformedDataset.col(i),
-                    transformedDataset.col(targetNeighbors(j, i))) -
+                     transformedDataset.col(targetNeighbors(j, i))) -
                  metric.Evaluate(transformedDataset.col(i),
-                    transformedDataset.col(impostors(l, i)));
+                     transformedDataset.col(impostors(l, i)));
         }
 
         // Check bounding condition.
@@ -194,6 +230,10 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
           bp = l;
           break;
         }
+
+        // Update cache.
+        evalOld = eval;
+        transformationOld = transformation;
 
         cost += regularization * (1 + eval);
       }
@@ -351,18 +391,34 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = 0;
-        if ((iteration - 1 % range == 0) && (iteration - 1 != 0))
+        if(transformationOld.n_elem != 0)
         {
-          eval = metric.Evaluate(transformedDataset.col(i),
-                    transformedDataset.col(targetNeighbors(j, i))) -
-                 distance(l, i);
+          eval = evalOld + arma::norm(transformation - transformationOld) *
+              (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) + 2 * norm(i));
+          if (eval > -1)
+          {
+            // Calculate exact eval.
+            if ((iteration - 1 % range == 0))
+            {
+              eval = metric.Evaluate(transformedDataset.col(i),
+                        transformedDataset.col(targetNeighbors(j, i))) -
+                     distance(l, i);
+            }
+            else
+            {
+              eval = metric.Evaluate(transformedDataset.col(i),
+                       transformedDataset.col(targetNeighbors(j, i))) -
+                     metric.Evaluate(transformedDataset.col(i),
+                       transformedDataset.col(impostors(l, i)));
+            }
+          }
         }
         else
         {
           eval = metric.Evaluate(transformedDataset.col(i),
-                    transformedDataset.col(targetNeighbors(j, i))) -
+                     transformedDataset.col(targetNeighbors(j, i))) -
                  metric.Evaluate(transformedDataset.col(i),
-                    transformedDataset.col(impostors(l, i)));
+                     transformedDataset.col(impostors(l, i)));
         }
 
         // Check bounding condition.
@@ -372,6 +428,10 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
           bp = l;
           break;
         }
+
+        // Update cache.
+        evalOld = eval;
+        transformationOld = transformation;
 
         cost += regularization * (1 + eval);
 
@@ -439,18 +499,34 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = 0;
-        if ((iteration - 1 % range == 0) && (iteration - 1 != 0))
+        if(transformationOld.n_elem != 0)
         {
-          eval = metric.Evaluate(transformedDataset.col(i),
-                    transformedDataset.col(targetNeighbors(j, i))) -
-                 distance(l, i);
+          eval = evalOld + arma::norm(transformation - transformationOld) *
+              (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) + 2 * norm(i));
+          if (eval > -1)
+          {
+            // Calculate exact eval.
+            if ((iteration - 1 % range == 0))
+            {
+              eval = metric.Evaluate(transformedDataset.col(i),
+                        transformedDataset.col(targetNeighbors(j, i))) -
+                     distance(l, i);
+            }
+            else
+            {
+              eval = metric.Evaluate(transformedDataset.col(i),
+                       transformedDataset.col(targetNeighbors(j, i))) -
+                     metric.Evaluate(transformedDataset.col(i),
+                       transformedDataset.col(impostors(l, i)));
+            }
+          }
         }
         else
         {
           eval = metric.Evaluate(transformedDataset.col(i),
-                    transformedDataset.col(targetNeighbors(j, i))) -
+                     transformedDataset.col(targetNeighbors(j, i))) -
                  metric.Evaluate(transformedDataset.col(i),
-                    transformedDataset.col(impostors(l, i)));
+                     transformedDataset.col(impostors(l, i)));
         }
 
         // Check bounding condition.
@@ -460,6 +536,10 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
           bp = l;
           break;
         }
+
+        // Update cache.
+        evalOld = eval;
+        transformationOld = transformation;
 
         cost += regularization * (1 + eval);
 
@@ -483,9 +563,11 @@ template<typename MetricType>
 inline void LMNNFunction<MetricType>::Precalculate()
 {
   pCij.zeros(dataset.n_rows, dataset.n_rows);
+  norm.zeros(dataset.n_cols);
 
   for (size_t i = 0; i < dataset.n_cols; i++)
   {
+    norm(i) = arma::norm(dataset.col(i));
     for (size_t j = 0; j < k ; j++)
     {
       // Calculate gradient due to target neighbors.
