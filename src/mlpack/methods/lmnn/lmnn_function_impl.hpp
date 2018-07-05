@@ -107,10 +107,11 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = 0;
-        if(transformationOld.n_elem != 0)
+        if (transformationOld.n_elem != 0)
         {
           eval = evalOld + arma::norm(transformation - transformationOld) *
-              (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) + 2 * norm(i));
+              (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) +
+              2 * norm(i));
           if (eval > -1)
           {
             // Calculate exact eval.
@@ -138,7 +139,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
         }
 
         // Check bounding condition.
-        if (eval < -1)
+        if (eval <= -1)
         {
           // update bound.
           bp = l;
@@ -193,10 +194,11 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = 0;
-        if(transformationOld.n_elem != 0)
+        if (transformationOld.n_elem != 0)
         {
           eval = evalOld + arma::norm(transformation - transformationOld) *
-              (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) + 2 * norm(i));
+              (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) +
+              2 * norm(i));
           if (eval > -1)
           {
             // Calculate exact eval.
@@ -224,7 +226,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
         }
 
         // Check bounding condition.
-        if (eval < -1)
+        if (eval <= -1)
         {
           // update bound.
           bp = l;
@@ -391,10 +393,11 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = 0;
-        if(transformationOld.n_elem != 0)
+        if (transformationOld.n_elem != 0)
         {
           eval = evalOld + arma::norm(transformation - transformationOld) *
-              (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) + 2 * norm(i));
+              (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) +
+              2 * norm(i));
           if (eval > -1)
           {
             // Calculate exact eval.
@@ -422,7 +425,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         }
 
         // Check bounding condition.
-        if (eval < -1)
+        if (eval <= -1)
         {
           // update bound.
           bp = l;
@@ -499,10 +502,11 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = 0;
-        if(transformationOld.n_elem != 0)
+        if (transformationOld.n_elem != 0)
         {
           eval = evalOld + arma::norm(transformation - transformationOld) *
-              (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) + 2 * norm(i));
+              (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) +
+              2 * norm(i));
           if (eval > -1)
           {
             // Calculate exact eval.
@@ -530,7 +534,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         }
 
         // Check bounding condition.
-        if (eval < -1)
+        if (eval <= -1)
         {
           // update bound.
           bp = l;
