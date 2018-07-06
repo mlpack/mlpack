@@ -34,7 +34,8 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
     regularization(regularization),
     iteration(0),
     range(range),
-    constraint(dataset, labels, k)
+    constraint(dataset, labels, k),
+    evalOld(0)
 {
   // Initialize the initial learning point.
   initialPoint.eye(dataset.n_rows, dataset.n_rows);
@@ -82,6 +83,13 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
   // Apply metric over dataset.
   transformedDataset = transformation * dataset;
 
+  // Calculate norm of change in transformation.
+  double transformationDiff = 0;
+  if (transformationOld.n_elem != 0)
+  {
+    transformationDiff = arma::norm(transformation - transformationOld);
+  }
+
   if (iteration++ % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
@@ -109,13 +117,12 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
         double eval = 0;
         if (transformationOld.n_elem != 0)
         {
-          eval = evalOld + arma::norm(transformation - transformationOld) *
-              (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) +
-              2 * norm(i));
+          eval = evalOld + transformationDiff * (norm(targetNeighbors(j, i)) +
+              norm(impostors(l, i)) + 2 * norm(i));
           if (eval > -1)
           {
             // Calculate exact eval.
-            if ((iteration - 1 % range == 0))
+            if (iteration - 1 % range == 0)
             {
               eval = metric.Evaluate(transformedDataset.col(i),
                          transformedDataset.col(targetNeighbors(j, i))) -
@@ -146,14 +153,16 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
           break;
         }
 
-        // Update cache.
+        // Update cache eval value.
         evalOld = eval;
-        transformationOld = transformation;
 
         cost += regularization * (1 + eval);
       }
     }
   }
+
+  // Update cache transformation matrix.
+  transformationOld = transformation;
 
   return cost;
 };
@@ -168,6 +177,13 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
 
   // Apply metric over dataset.
   transformedDataset = transformation * dataset;
+
+  // Calculate norm of change in transformation.
+  double transformationDiff = 0;
+  if (transformationOld.n_elem != 0)
+  {
+    transformationDiff = arma::norm(transformation - transformationOld);
+  }
 
   if (iteration++ % range == 0)
   {
@@ -196,13 +212,12 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
         double eval = 0;
         if (transformationOld.n_elem != 0)
         {
-          eval = evalOld + arma::norm(transformation - transformationOld) *
-              (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) +
-              2 * norm(i));
+          eval = evalOld + transformationDiff * (norm(targetNeighbors(j, i)) +
+              norm(impostors(l, i)) + 2 * norm(i));
           if (eval > -1)
           {
             // Calculate exact eval.
-            if ((iteration - 1 % range == 0))
+            if (iteration - 1 % range == 0)
             {
               eval = metric.Evaluate(transformedDataset.col(i),
                         transformedDataset.col(targetNeighbors(j, i))) -
@@ -233,14 +248,16 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
           break;
         }
 
-        // Update cache.
+        // Update cache eval value.
         evalOld = eval;
-        transformationOld = transformation;
 
         cost += regularization * (1 + eval);
       }
     }
   }
+
+  // Update cache transformation matrix.
+  transformationOld = transformation;
 
   return cost;
 }
@@ -361,6 +378,13 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   // Apply metric over dataset.
   transformedDataset = transformation * dataset;
 
+  // Calculate norm of change in transformation.
+  double transformationDiff = 0;
+  if (transformationOld.n_elem != 0)
+  {
+    transformationDiff = arma::norm(transformation - transformationOld);
+  }
+
   if (iteration++ % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
@@ -395,13 +419,12 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         double eval = 0;
         if (transformationOld.n_elem != 0)
         {
-          eval = evalOld + arma::norm(transformation - transformationOld) *
-              (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) +
-              2 * norm(i));
+          eval = evalOld + transformationDiff * (norm(targetNeighbors(j, i)) +
+              norm(impostors(l, i)) + 2 * norm(i));
           if (eval > -1)
           {
             // Calculate exact eval.
-            if ((iteration - 1 % range == 0))
+            if (iteration - 1 % range == 0)
             {
               eval = metric.Evaluate(transformedDataset.col(i),
                         transformedDataset.col(targetNeighbors(j, i))) -
@@ -432,9 +455,8 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
           break;
         }
 
-        // Update cache.
+        // Update cache eval value.
         evalOld = eval;
-        transformationOld = transformation;
 
         cost += regularization * (1 + eval);
 
@@ -450,6 +472,9 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
 
   gradient = 2 * transformation * ((1 - regularization) * cij +
       regularization * cil);
+
+  // Update cache transformation matrix.
+  transformationOld = transformation;
 
   return cost;
 }
@@ -467,6 +492,13 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
 
   // Apply metric over dataset.
   transformedDataset = transformation * dataset;
+
+  // Calculate norm of change in transformation.
+  double transformationDiff = 0;
+  if (transformationOld.n_elem != 0)
+  {
+    transformationDiff = arma::norm(transformation - transformationOld);
+  }
 
   if (iteration++ % range == 0)
   {
@@ -504,13 +536,12 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         double eval = 0;
         if (transformationOld.n_elem != 0)
         {
-          eval = evalOld + arma::norm(transformation - transformationOld) *
-              (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) +
-              2 * norm(i));
+          eval = evalOld + transformationDiff * (norm(targetNeighbors(j, i)) +
+              norm(impostors(l, i)) + 2 * norm(i));
           if (eval > -1)
           {
             // Calculate exact eval.
-            if ((iteration - 1 % range == 0))
+            if (iteration - 1 % range == 0)
             {
               eval = metric.Evaluate(transformedDataset.col(i),
                         transformedDataset.col(targetNeighbors(j, i))) -
@@ -541,9 +572,8 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
           break;
         }
 
-        // Update cache.
+        // Update cache eval value.
         evalOld = eval;
-        transformationOld = transformation;
 
         cost += regularization * (1 + eval);
 
@@ -560,6 +590,9 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   gradient = 2 * transformation * ((1 - regularization) * cij +
       regularization * cil);
 
+  // Update cache transformation matrix.
+  transformationOld = transformation;
+
   return cost;
 }
 
@@ -571,6 +604,7 @@ inline void LMNNFunction<MetricType>::Precalculate()
 
   for (size_t i = 0; i < dataset.n_cols; i++)
   {
+    // Store norm of each datapoint. Used for bounds.
     norm(i) = arma::norm(dataset.col(i));
     for (size_t j = 0; j < k ; j++)
     {
