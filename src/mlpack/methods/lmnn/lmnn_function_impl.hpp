@@ -141,8 +141,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
         {
           eval = metric.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
-                 metric.Evaluate(transformedDataset.col(i),
-                     transformedDataset.col(impostors(l, i)));
+                 distance(l, i);
         }
 
         // Check bounding condition.
@@ -236,8 +235,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
         {
           eval = metric.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
-                 metric.Evaluate(transformedDataset.col(i),
-                     transformedDataset.col(impostors(l, i)));
+                 distance(l, i);
         }
 
         // Check bounding condition.
@@ -443,8 +441,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         {
           eval = metric.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
-                 metric.Evaluate(transformedDataset.col(i),
-                     transformedDataset.col(impostors(l, i)));
+                 distance(l, i);
         }
 
         // Check bounding condition.
@@ -560,8 +557,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         {
           eval = metric.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
-                 metric.Evaluate(transformedDataset.col(i),
-                     transformedDataset.col(impostors(l, i)));
+                 distance(l, i);
         }
 
         // Check bounding condition.
