@@ -11,21 +11,16 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_PCA_DECOMPOSITION_POLICIES_STOACHASTIC_METHOD_HPP
-#define MLPACK_METHODS_PCA_DECOMPOSITION_POLICIES_STOACHASTIC_METHOD_HPP
+#ifndef MLPACK_METHODS_PCA_DECOMPOSITION_POLICIES_STOCHASTIC_METHOD_HPP
+#define MLPACK_METHODS_PCA_DECOMPOSITION_POLICIES_STOCHASTIC_METHOD_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include <mlpack/core/optimizers/adam/adam.hpp>
 #include <mlpack/core/optimizers/svrg/svrg.hpp>
 
-#include <mlpack/core/util/sfinae_utility.hpp>
-
 namespace mlpack {
 namespace pca {
-
-//! Detect an StepSize() method.
-HAS_MEM_FUNC(StepSize, HasStepSize);
 
 /**
  * Implementation of the Stochastic Policy. The stochastic approximation
@@ -84,7 +79,7 @@ class StochasticPolicyType
     PCAFunction f(centeredData);
 
     // Adjust the step size if necessary.
-    SetStepSize(optimizer);
+    // SetStepSize(optimizer);
 
     eigvec = arma::randn(centeredData.n_rows, rank);
     optimizer.Optimize(f, eigvec);
@@ -108,29 +103,7 @@ class StochasticPolicyType
   OptimizerType& Optimizer() { return optimizer; }
 
  private:
-  //! Adjust the step size if required.
-  template<typename T>
-  inline typename std::enable_if<
-      HasStepSize<T, double&(T::*)()>::value, void>::type
-  SetStepSize(T& optimizer)
-  {
-    if (optimizer.StepSize() > 0)
-    {
-      Log::Warn << "StepSize(): invalid value (> 0), automatically take the "
-          << "negative direction." << std::endl;
-      optimizer.StepSize() *= -1;
-    }
-  }
-
-  //! Adjust the step size if required.
-  template<typename T>
-  inline typename std::enable_if<
-      !HasStepSize<T, double&(T::*)()>::value, void>::type
-  SetStepSize(T& /* optimizer */)
-  {
-    /* Nothing to do here */
-  }
-
+  //! Locally stored optimizer instance.
   OptimizerType optimizer;
 
   /**
@@ -142,15 +115,14 @@ class StochasticPolicyType
   {
    public:
     /**
-     * Construct The principal component analysis (PCA) function with the
+     * Construct the principal component analysis (PCA) function with the
      * given data.
      *
      * @param data Data matrix.
      */
     PCAFunction(const arma::mat& data) :
         // We promise to be well-behaved... the elements won't be modified.
-        data(math::MakeAlias(const_cast<arma::mat&>(data), false)),
-        pl(0)
+        data(math::MakeAlias(const_cast<arma::mat&>(data), false))
     {
       // Nothing to do here.
     }
@@ -177,21 +149,23 @@ class StochasticPolicyType
     size_t NumFunctions() const { return data.n_cols; }
 
     /*
-     * Evaluate a function for a particular batch-size.
+     * Evaluate the PCA function for a particular batch-size.
      *
      * @param coordinates The function coordinates.
      * @param begin The first function.
      * @param batchSize Number of points to process.
      */
-    double Evaluate(const arma::mat& /* coordinates */,
-                    const size_t /* begin */,
-                    const size_t /* batchSize */)
+    double Evaluate(const arma::mat& coordinates,
+                    const size_t begin,
+                    const size_t batchSize)
     {
-      return pl;
+
+      return arma::trace(coordinates * data.cols(begin, begin + batchSize - 1) *
+          data.cols(begin, begin + batchSize - 1).t() * coordinates);
     }
 
     /*
-     * Evaluate the gradient of a function for a particular batch-size.
+     * Evaluate the gradient of the PCA function for a particular batch-size.
      *
      * @param coordinates The function coordinates.
      * @param begin The first function.
@@ -204,18 +178,32 @@ class StochasticPolicyType
                   const size_t batchSize)
     {
       gradient = data.cols(begin, begin + batchSize - 1) *
-          data.cols(begin, begin + batchSize - 1).t() * coordinates;
+          data.cols(begin, begin + batchSize - 1).t() * (coordinates);
+    }
+
+    /*
+     * Evaluate the objective function and gradient of the PCA function for a
+     * particular batch-size.
+     *
+     * @param coordinates The function coordinates.
+     * @param begin The first function.
+     * @param gradient The function gradient.
+     * @param batchSize Number of points to process.
+     */
+    double EvaluateWithGradient(const arma::mat& coordinates,
+                                const size_t begin,
+                                arma::mat& gradient,
+                                const size_t batchSize)
+    {
+      gradient = data.cols(begin, begin + batchSize - 1) *
+          data.cols(begin, begin + batchSize - 1).t() * (coordinates);
+
+      return arma::trace(coordinates * gradient);
     }
 
    private:
     //! Data matrix..
     arma::mat data;
-
-    //! Locally-stored pseudo loss.
-    double pl;
-
-    //! For shuffling.
-    arma::Row<size_t> visitationOrder;
   };
 };
 
@@ -271,7 +259,8 @@ class PCAUpdate
   template<typename... Targs>
   void Update(arma::mat& iterate, Targs... fArgs)
   {
-    updatePolicy.Update(iterate, Fargs...);
+    iterate *= -1;
+    updatePolicy.Update(iterate, fArgs...);
 
     arma::mat R;
     arma::qr_econ(iterate, R, iterate);
