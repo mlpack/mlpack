@@ -26,6 +26,7 @@ add_executable(mlpack_test
   cosine_tree_test.cpp
   cv_test.cpp
   dbscan_test.cpp
+  dcgan_test.cpp
   decision_stump_test.cpp
   decision_tree_test.cpp
   det_test.cpp
@@ -61,6 +62,7 @@ add_executable(mlpack_test
   lin_alg_test.cpp
   line_search_test.cpp
   linear_regression_test.cpp
+  lmnn_test.cpp
   load_save_test.cpp
   local_coordinate_coding_test.cpp
   log_test.cpp
@@ -143,6 +145,7 @@ add_executable(mlpack_test
   main_tests/decision_stump_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/logistic_regression_test.cpp
+  main_tests/lmnn_test.cpp
   main_tests/lsh_test.cpp
   main_tests/mean_shift_test.cpp
   main_tests/nbc_test.cpp

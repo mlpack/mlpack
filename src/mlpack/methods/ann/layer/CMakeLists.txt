@@ -65,8 +65,6 @@ set(SOURCES
   multiply_constant_impl.hpp
   multiply_merge.hpp
   multiply_merge_impl.hpp
-  negative_log_likelihood.hpp
-  negative_log_likelihood_impl.hpp
   parametric_relu.hpp
   parametric_relu_impl.hpp
   recurrent.hpp
@@ -75,6 +73,8 @@ set(SOURCES
   recurrent_attention_impl.hpp
   reinforce_normal.hpp
   reinforce_normal_impl.hpp
+  reparametrization.hpp
+  reparametrization_impl.hpp
   select.hpp
   select_impl.hpp
   sequential.hpp

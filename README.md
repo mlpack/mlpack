@@ -13,7 +13,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 </h5>
 
 <p align="center">
-  <a href="http://masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/s/http/masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test.svg?label=Linux%20build&style=flat-square" alt="Jenkins"></a>
+  <a href="http://ci.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/s/http/ci.mlpack.org/job/mlpack%20-%20git%20commit%20test.svg?label=Linux%20build&style=flat-square" alt="Jenkins"></a>
   <a href="https://ci.appveyor.com/project/mlpack/mlpack"><img src="https://img.shields.io/appveyor/ci/mlpack/mlpack/master.svg?label=Windows%20build&style=flat-square&logoWidth=0.1" alt="Appveyor"></a>
   <a href="https://coveralls.io/github/mlpack/mlpack?branch=master"><img src="https://img.shields.io/coveralls/mlpack/mlpack/master.svg?style=flat-square" alt="Coveralls"></a>
   <a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square" alt="License"></a>

@@ -130,11 +130,6 @@ class AtrousConvolution
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -272,11 +267,14 @@ class AtrousConvolution
     }
   }
 
-  //! Locally-stored number of input units.
+  //! Locally-stored number of input channels.
   size_t inSize;
 
-  //! Locally-stored number of output units.
+  //! Locally-stored number of output channels.
   size_t outSize;
+
+  //! Locally-stored number of input units.
+  size_t batchSize;
 
   //! Locally-stored filter/kernel width.
   size_t kW;
@@ -343,9 +341,6 @@ class AtrousConvolution
 
   //! Locally-stored gradient object.
   OutputDataType gradient;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;

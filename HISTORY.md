@@ -1,5 +1,9 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Fix Visual Studio compilation issue (#1443).
+
+  * Allow running local_coordinate_coding binding with no initial_dictionary
+    parameter when input_model is not specified (#1457).
 
 ### mlpack 3.0.2
 ###### 2018-06-08

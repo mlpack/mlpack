@@ -144,11 +144,6 @@ class ELU
   template<typename DataType>
   void Backward(const DataType&& input, DataType&& gy, DataType&& g);
 
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -237,9 +232,6 @@ class ELU
 
   //! Locally-stored delta object.
   OutputDataType delta;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;

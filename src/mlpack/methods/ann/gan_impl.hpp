@@ -60,19 +60,21 @@ GAN<Model, InitializationRuleType, Noise>::GAN(
   responses.set_size(1, predictors.n_cols);
   responses.ones();
 
-  discriminator.predictors.set_size(predictors.n_rows, predictors.n_cols + 1);
+  discriminator.predictors.set_size(predictors.n_rows,
+      predictors.n_cols + batchSize);
   discriminator.predictors.cols(0, predictors.n_cols - 1) = predictors;
 
-  discriminator.responses.set_size(1, predictors.n_cols + 1);
+  discriminator.responses.set_size(1, predictors.n_cols + batchSize);
   discriminator.responses.ones();
-  discriminator.responses(predictors.n_cols) = 0;
+  discriminator.responses.cols(predictors.n_cols,
+      predictors.n_cols + batchSize - 1) = arma::zeros(1, batchSize);
 
   numFunctions = predictors.n_cols;
 
-  noise.set_size(noiseDim, 1);
+  noise.set_size(noiseDim, batchSize);
 
-  generator.predictors.set_size(noiseDim, 1);
-  generator.responses.set_size(predictors.n_rows, 1);
+  generator.predictors.set_size(noiseDim, batchSize);
+  generator.responses.set_size(predictors.n_rows, batchSize);
 }
 
 template<typename Model, typename InitializationRuleType, typename Noise>
@@ -98,7 +100,7 @@ void GAN<Model, InitializationRuleType, Noise>::Reset()
   generator.Parameters() = arma::mat(parameter.memptr(), genWeights, 1, false,
       false);
   discriminator.Parameters() = arma::mat(parameter.memptr() + genWeights,
-      discWeights, 1 , false, false);
+      discWeights, 1, false, false);
 
   // Initialize the parameters generator
   networkInit.Initialize(generator.network, parameter);
@@ -127,8 +129,10 @@ double GAN<Model, InitializationRuleType, Noise>::Evaluate(
   if (!reset)
     Reset();
 
-  currentInput = this->predictors.unsafe_col(i);
-  currentTarget = this->responses.unsafe_col(i);
+  currentInput = arma::mat(predictors.memptr() + (i * predictors.n_rows),
+      predictors.n_rows, batchSize, false, false);
+  currentTarget = arma::mat(responses.memptr() + i, 1, batchSize, false,
+      false);
 
   discriminator.Forward(std::move(currentInput));
   double res = discriminator.outputLayer.Forward(
@@ -139,12 +143,15 @@ double GAN<Model, InitializationRuleType, Noise>::Evaluate(
   noise.imbue( [&]() { return noiseFunction();} );
   generator.Forward(std::move(noise));
 
-  discriminator.predictors.col(numFunctions) = boost::apply_visitor(
-      outputParameterVisitor, generator.network.back());;
-  discriminator.Forward(std::move(discriminator.predictors.col(numFunctions)));
-  discriminator.responses(numFunctions) = 0;
+  discriminator.predictors.cols(numFunctions, numFunctions + batchSize - 1) =
+      boost::apply_visitor(outputParameterVisitor, generator.network.back());
+  discriminator.Forward(std::move(discriminator.predictors.cols(numFunctions,
+      numFunctions + batchSize - 1)));
+  discriminator.responses.cols(numFunctions, numFunctions + batchSize - 1) =
+      arma::zeros(1, batchSize);
 
-  currentTarget = discriminator.responses.unsafe_col(numFunctions);
+  currentTarget = arma::mat(discriminator.responses.memptr() + numFunctions,
+      1, batchSize, false, false);
   res += discriminator.outputLayer.Forward(
         std::move(boost::apply_visitor(
             outputParameterVisitor,
@@ -190,13 +197,13 @@ Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient,
   // Get the gradients of the Discriminator.
   discriminator.Gradient(discriminator.parameter, i, gradientDiscriminator,
       batchSize);
-
   noise.imbue( [&]() { return noiseFunction();} );
   generator.Forward(std::move(noise));
-  discriminator.predictors.col(numFunctions) = boost::apply_visitor(
-      outputParameterVisitor, generator.network.back());
+  discriminator.predictors.cols(numFunctions, numFunctions + batchSize - 1) =
+      boost::apply_visitor(outputParameterVisitor, generator.network.back());
 
-  discriminator.responses(numFunctions) = 0;
+  discriminator.responses.cols(numFunctions, numFunctions + batchSize - 1) =
+      arma::zeros(1, batchSize);
   discriminator.Gradient(discriminator.parameter, numFunctions,
       noiseGradientDiscriminator, batchSize);
   gradientDiscriminator += noiseGradientDiscriminator;
@@ -205,7 +212,8 @@ Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient,
   {
     // Minimize -log(D(G(noise))).
     // Pass the error from Discriminator to Generator.
-    discriminator.responses(numFunctions) = 1;
+    discriminator.responses.cols(numFunctions, numFunctions + batchSize - 1) =
+        arma::ones(1, batchSize);
     discriminator.Gradient(discriminator.parameter, numFunctions,
       noiseGradientDiscriminator, batchSize);
     generator.error = boost::apply_visitor(deltaVisitor,
@@ -213,7 +221,7 @@ Gradient(const arma::mat& /*parameters*/, const size_t i, arma::mat& gradient,
 
     generator.Predictors() = noise;
     generator.ResetGradients(gradientGenerator);
-    generator.Gradient(generator.parameter, 0, gradientGenerator, noise.n_cols);
+    generator.Gradient(generator.parameter, 0, gradientGenerator, batchSize);
 
     gradientGenerator *= multiplier;
   }

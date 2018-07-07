@@ -124,6 +124,7 @@ class Sequential
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameters; }
 
+  //! Get the input parameter.
   arma::mat const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   arma::mat& InputParameter() { return inputParameter; }

@@ -25,6 +25,8 @@ set(SOURCES
   gradient_zero_visitor_impl.hpp
   load_output_parameter_visitor.hpp
   load_output_parameter_visitor_impl.hpp
+  loss_visitor.hpp
+  loss_visitor_impl.hpp
   output_height_visitor.hpp
   output_height_visitor_impl.hpp
   output_parameter_visitor.hpp
