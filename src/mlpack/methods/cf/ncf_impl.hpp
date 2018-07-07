@@ -40,15 +40,15 @@ NCF::NCF(arma::mat& dataset,
     // Set default value of 8.
     this->embedSize = 8;
   }
+  numUsers = (size_t) max(dataset.row(0)) + 1;
+  numItems = (size_t) max(dataset.row(1)) + 1;
 }
 
 /**
  * Compute all unrated items for each user.
  */
 template<typename AlgorithmType, typename OptimizerType>
-void NCF::FindNegatives(const size_t numUsers,
-                        const size_t numItems,
-                        arma::mat& dataset,
+void NCF::FindNegatives(arma::mat& dataset,
                         std::vector<std::vector<double>>& negatives)
 {
   for (int i = 0; i< numUsers; i++)
@@ -61,7 +61,7 @@ void NCF::FindNegatives(const size_t numUsers,
     itemRates.shed_row(1);
 
     // List of all items.
-    vec negativeList = linspace<vec> (0, numItems - 1, numItems);
+    vec negativeList = linspace<vec> (0,3705,3706);
     for (int j = 0; j < itemRates.n_cols; j++)
     {
       // Remove items which have been rated.
@@ -127,11 +127,9 @@ void NCF::Train(arma::mat& dataset)
  * Create a model for GMF.
  */
 template<typename AlgorithmType, typename OptimizerType>
-FFN& NCF::CreateGMF(arma::mat& data,
-                    const size_t numUsers,
-                    const size_t numItems)
+void NCF::CreateGMF(arma::mat& data, size_t embedSize)
 {
-  size_t size = data.n_rows/2;
+  size_t size = data/2;
 
   // User sub-network.
   Sequential<>* userModel = new Sequential<>();
@@ -155,19 +153,15 @@ FFN& NCF::CreateGMF(arma::mat& data,
   network.Add<IdentityLayer<> >();
   network.Add<MultiplyMerge<> >(mergeModel);
   network.Add<SigmoidLayer<> >();
-
-  return network;
 }
 
 /**
  * Create a model for MLP.
  */
 template<typename AlgorithmType, typename OptimizerType>
-FFN& NCF::CreateMLP(arma::mat& data,
-                    const size_t numUsers,
-                    const size_t numItems)
+void NCF::CreateMLP(arma::mat& data, size_t embedSize)
 {
-  size_t size = data.n_rows/2;
+  size_t size = data/2;
 
   // User sub-network.
   Sequential<>* userModel = new Sequential<>();
@@ -190,17 +184,13 @@ FFN& NCF::CreateMLP(arma::mat& data,
   network.Add(mergeModel);
   network.Add<Subview<> >(2, 0, (embedSize * size) - 1, 0, 1);
   network.Add<SigmoidLayer<> >();
-
-  return network;
 }
 
 /**
  * Create a model for Neural Matrix Factorization.
  */
 template<typename AlgorithmType, typename OptimizerType>
-FFN& NCF::CreateNeuMF(arma::mat& data,
-                      const size_t numUsers,
-                      const size_t numItems)
+void NCF::CreateNeuMF(arma::mat& data, size_t embedSize)
 {
   // To be added.
 }
@@ -221,7 +211,12 @@ template<typename AlgorithmType, typename OptimizerType>
 void NCF::GetRecommendations(const size_t numRecs,
                              arma::Mat<size_t>& recommendations)
 {
-  // Being implemented.
+  // Generate list of users.
+  arma::Col<size_t> users = arma::linspace<arma::Col<size_t> >(0,
+      numUsers - 1, numUsers);
+
+  // Call the main overload for recommendations.
+  GetRecommendations(numRecs, recommendations, users);
 }
 
 /**
@@ -232,7 +227,28 @@ void NCF::GetRecommendations(const size_t numRecs,
                              arma::Mat<size_t>& recommendations,
                              const arma::Col<size_t>& users);
 {
-  // Being implemented.
+  // Column vector of all items.
+  arma::Col<size_t> itemVec = arma::linspace<arma::Col<size_t> >(0,
+      numItems - 1, numItems);
+  arma::Col<size_t> predictors, userVec(numItems);
+
+  // Predict rating for all user item combinations for given users.
+  for (size_t i = 0; i < users.n_elem; i++)
+  {
+    arma::mat results;
+    userVec.fill(users[i]);
+
+    // Form input for the network.
+    predictors = arma::join_vert(userVec, itemVec);
+    network.Predict(predictors, results);
+
+    // Find top k recommendations.
+    for (size_t k = 0; k < numRecs; k++)
+    {
+      recommendations(k, i) = (size_t) arma::index_max(results);
+      itemScore(arma::index_max(itemScore)) = 0;
+    }
+  }
 }
 
 /**
@@ -247,6 +263,8 @@ void serialize(Archive& ar, const unsigned int /* version */)
   ar & BOOST_SERIALIZATION_NVP(neg);
   ar & BOOST_SERIALIZATION_NVP(epochs);
   ar & BOOST_SERIALIZATION_NVP(embedSize);
+  ar & BOOST_SERIALIZATION_NVP(numUsers);
+  ar & BOOST_SERIALIZATION_NVP(numItems);
 }
 
 } // namespace cf

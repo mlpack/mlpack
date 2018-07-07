@@ -72,9 +72,7 @@ class NCF
    * @param dataset Data matrix: dense matrix (coordinate lists).
    * @param negatives A vector storing unrated items for each user.
    */
-  void FindNegatives(const size_t numUsers,
-                     const size_t numItems,
-                     arma::mat& dataset,
+  void FindNegatives(arma::mat& dataset,
                      std::vector<std::vector<double>>& negatives);
 
   /**
@@ -104,34 +102,25 @@ class NCF
    * Create the model for General Matrix Factorization.
    *
    * @param data Vector with user and item training data concatenated.
-   * @param numUsers Total number of users.
-   * @param numItems Total number of items.
+   * @param embedSize Size of embedding for each user and item being considered.
    */
-  FFN& CreateGMF(arma::mat& data,
-                 const size_t numUsers,
-                 const size_t numItems);
+  void CreateGMF(arma::mat& data, size_t embedSize);
 
   /**
    * Create the model for Multi Layer Perceptron.
    *
    * @param data Vector with user and item training data concatenated.
-   * @param numUsers Total number of users.
-   * @param numItems Total number of items.
+   * @param embedSize Size of embedding for each user and item being considered.
    */
-  FFN& CreateMLP(arma::mat& data,
-                 const size_t numUsers,
-                 const size_t numItems);
+  void CreateMLP(arma::mat& data, size_t embedSize);
 
   /**
    * Create the model for Neural Matrix Factorization.
    *
    * @param data Vector with user and item training data concatenated.
-   * @param numUsers Total number of users.
-   * @param numItems Total number of items.
+   * @param embedSize Size of embedding for each user and item being considered.
    */
-  FFN& CreateNeuMF(arma::mat& data,
-                   const size_t numUsers,
-                   const size_t numItems);
+  void CreateNeuMF(arma::mat& data, size_t embedSize);
 
   /**
    * Evaluate the model.
@@ -171,7 +160,7 @@ class NCF
 
  private:
   //! Model for the algorithm to be used.
-  FFN<NegativeLogLikelihood<>, RandomInitialization> model;
+  FFN<NegativeLogLikelihood<>, RandomInitialization> network;
 
   //! Optimizer to be used for training.
   OptimizerType optimizer;
@@ -184,6 +173,12 @@ class NCF
 
   //! Size of embedding for each user and item.
   size_t embedSize;
+
+  //! Number of users in the dataset.
+  size_t numUsers;
+
+  //! Number of items in the dataset.
+  size_t numItems;
 }; // class NCF
 
 } // namespace cf
