@@ -104,7 +104,7 @@ class NCF
    * @param data Vector with user and item training data concatenated.
    * @param embedSize Size of embedding for each user and item being considered.
    */
-  void CreateGMF(arma::mat& data, size_t embedSize);
+  void CreateGMF(arma::mat& data, const size_t embedSize);
 
   /**
    * Create the model for Multi Layer Perceptron.
@@ -112,7 +112,7 @@ class NCF
    * @param data Vector with user and item training data concatenated.
    * @param embedSize Size of embedding for each user and item being considered.
    */
-  void CreateMLP(arma::mat& data, size_t embedSize);
+  void CreateMLP(arma::mat& data, const size_t embedSize);
 
   /**
    * Create the model for Neural Matrix Factorization.
@@ -120,13 +120,15 @@ class NCF
    * @param data Vector with user and item training data concatenated.
    * @param embedSize Size of embedding for each user and item being considered.
    */
-  void CreateNeuMF(arma::mat& data, size_t embedSize);
+  void CreateNeuMF(arma::mat& data, const size_t embedSize);
 
   /**
    * Evaluate the model.
    *
    */
-  void Evaluate();
+  void Evaluate(arma::mat& testData,
+                std::vector<std::vector<double>>& negatives,
+                const size_t numRecs = 10);
 
   /**
    * Generates the given number of recommendations for all users.

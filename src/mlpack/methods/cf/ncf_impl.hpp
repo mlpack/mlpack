@@ -127,7 +127,7 @@ void NCF::Train(arma::mat& dataset)
  * Create a model for GMF.
  */
 template<typename AlgorithmType, typename OptimizerType>
-void NCF::CreateGMF(arma::mat& data, size_t embedSize)
+void NCF::CreateGMF(arma::mat& data, const size_t embedSize)
 {
   size_t size = data/2;
 
@@ -159,7 +159,7 @@ void NCF::CreateGMF(arma::mat& data, size_t embedSize)
  * Create a model for MLP.
  */
 template<typename AlgorithmType, typename OptimizerType>
-void NCF::CreateMLP(arma::mat& data, size_t embedSize)
+void NCF::CreateMLP(arma::mat& data, const size_t embedSize)
 {
   size_t size = data/2;
 
@@ -190,7 +190,7 @@ void NCF::CreateMLP(arma::mat& data, size_t embedSize)
  * Create a model for Neural Matrix Factorization.
  */
 template<typename AlgorithmType, typename OptimizerType>
-void NCF::CreateNeuMF(arma::mat& data, size_t embedSize)
+void NCF::CreateNeuMF(arma::mat& data, const size_t embedSize)
 {
   // To be added.
 }
@@ -199,9 +199,59 @@ void NCF::CreateNeuMF(arma::mat& data, size_t embedSize)
  * Evaluate the model.
  */
 template<typename AlgorithmType, typename OptimizerType>
-void NCF::Evaluate()
+void NCF::Evaluate(arma::mat& testData,
+                   std::vector<std::vector<double>>& negatives,
+                   const size_t numRecs)
 {
-  // Being implemented.
+  // Variable declarations.
+  arma::Col<size_t> predictors, userVec(numItems), itemScore(numItems);
+  arma::Mat<size_t>& recommendations;
+
+  arma::Col<size_t> hits(testData.n_rows), rmses(testData.n_rows);
+  for (size_t i = 0; i < testData.n_rows; i++)
+  {
+    // Considered user item rating test data.
+    size_t u = testData[i][0];
+    size_t gtItem = testData[i][1];
+    size_t rt = testData[i][2];
+
+    // Get negatives of items.
+    colvec itemVec = (conv_to< colvec >::from(negatives[u])).rows(0, 98);
+    itemVec.insert(99, gtItem);
+
+    // Form input for the network.
+    userVec.fill(u);
+    predictors = arma::join_vert(userVec, itemVec);
+    network.Predict(predictors, results);
+
+    // Find root mean squared error of predicted rating of considered item.
+    for (size_t j = 0; j < itemVec.n_elem; j++)
+    {
+      itemScore[itemVec[j]] = results[j];
+      if (gtItem == item)
+      {
+        size_t norm = (itemScore[item] * 4) + 1;
+        size_t rmse = ((rt - norm) ^ 2);
+      }
+    }
+    size_t hr = 0;
+
+    // Find if the item has been predicted in top k.
+    for (size_t k = 0; k < numRecs; k++)
+    {
+      if (arma::index_max(results) == gtItem)
+      {
+        hr = 1;
+      }
+      itemScore(arma::index_max(itemScore)) = 0;
+    }
+    hits.insert(i, hr);
+    rmses.insert(i, rmse);
+  }
+
+  // Find hit ratio and root mean squared error.
+  size_t hitRatio = mean(hits);
+  size_t rmseMean = math::sqrt(mean(rmses));
 }
 
 /**

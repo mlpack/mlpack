@@ -55,7 +55,8 @@ void Lookup<InputDataType, OutputDataType>::Gradient(
     arma::Mat<eT>&& gradient)
 {
   gradient = arma::zeros<arma::Mat<eT> >(weights.n_rows, weights.n_cols);
-  gradient.cols(arma::conv_to<arma::uvec>::from(input) - 1) = error;
+  gradient.cols(arma::conv_to<arma::uvec>::from(input) - 1) =
+      arma::mat(error.memptr(), weights.n_rows, weights.n_cols, false, false);
 }
 
 template<typename InputDataType, typename OutputDataType>
