@@ -7,8 +7,8 @@ add_executable(mlpack_test
   adam_test.cpp
   akfn_test.cpp
   aknn_test.cpp
-  ann_layer_test.cpp
   ann_dist_test.cpp
+  ann_layer_test.cpp
   arma_extend_test.cpp
   armadillo_svd_test.cpp
   async_learning_test.cpp

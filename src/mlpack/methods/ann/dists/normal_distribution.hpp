@@ -40,8 +40,8 @@ class NormalDistribution
   /**
    * Create multiple Normal distributions with the given parameters.
    *
-   * @param mean The DataType of means of the multiple distributions
-   * @param stdDev The DataType of standard deviations of the multiple
+   * @param mean The matrix of means of the multiple distributions.
+   * @param stdDev The matrix of standard deviations of the multiple
    *        distributions.
    */
   NormalDistribution(const DataType&& mean, const DataType&& stdDev);
@@ -52,7 +52,7 @@ class NormalDistribution
    * The target of the loss function which will be a single matrix can directly
    * be passed on to this function.
    *
-   * @param param The DataType which has means in the lower half.
+   * @param param The matrix which has means in the lower half.
    *        The upper half has pre standard deviations.
    * @param applySoftplus If true, after applying softplus function to the pre
    *        standard deviations, we get the standard deviations.
@@ -60,21 +60,28 @@ class NormalDistribution
   NormalDistribution(const DataType&& param, const bool applySoftplus = true);
 
   /**
-   * Return the probabilities of the given DataType of observations.
+   * Return the probabilities of the given matrix of observations.
+   *
+   * @param oberservation The observation matrix.
    */
   double Probability(const DataType&& observation) const
   {
-    return exp(LogProbability(observation));
+    return std::exp(LogProbability(observation));
   }
 
   /**
-   * Return the log probabilities of the given DataType of observations.
+   * Return the log probabilities of the given matrix of observations.
+   *
+   * @param oberservation The observation matrix.
    */
   double LogProbability(const DataType&& observation) const;
 
   /**
    * Stores the gradient of the log probabilities of the observations in the
-   * output DataType.
+   * output matrix.
+   *
+   * @param oberservation The observation matrix.
+   * @param output The output matrix where the gradients are stored.
    */
   void LogProbBackward(const DataType&& observation, DataType&& output) const;
 
@@ -104,10 +111,6 @@ class NormalDistribution
   //! Return a modifiable copy of the pre standard deviation.
   DataType& PreStdDev() { return preStdDev; }
 
-  //! Calculate standard deviation from the pre standard deviation.
-  //! Only meant for testing.
-  void ApplySoftplus() { SoftplusFunction::Fn(preStdDev, stdDev); }
-
   /**
    * Serialize the distribution.
    */
@@ -118,6 +121,7 @@ class NormalDistribution
     ar & BOOST_SERIALIZATION_NVP(mean);
     ar & BOOST_SERIALIZATION_NVP(stdDev);
     ar & BOOST_SERIALIZATION_NVP(preStdDev);
+    ar & BOOST_SERIALIZATION_NVP(applySoftplus);
   }
 
  private:

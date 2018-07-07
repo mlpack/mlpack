@@ -17,6 +17,8 @@
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
+#include "../methods/ann/activation_functions/softplus_function.hpp"
+
 using namespace mlpack;
 using namespace mlpack::ann;
 
@@ -28,10 +30,10 @@ BOOST_AUTO_TEST_SUITE(ANNDistTest);
 BOOST_AUTO_TEST_CASE(SimpleNormalDistributionTest)
 {
   static const constexpr double log2pi = 1.83787706640934533908193770912475883;
-  arma::mat param, target, gradient;
+  arma::mat gradient;
+  arma::mat param = arma::ones(10, 1);
+  arma::mat target = arma::ones(5, 1);
   double output;
-  param.ones(10, 1);
-  target.ones(5, 1);
 
   NormalDistribution<> module(std::move(param), false);
 
@@ -126,13 +128,13 @@ BOOST_AUTO_TEST_CASE(JacobianNormalDistributionSoftplusTest)
     {
       original = module.PreStdDev()(j);
       module.PreStdDev()(j) = original - perturbation;
-      module.ApplySoftplus();
+      SoftplusFunction::Fn(module.PreStdDev(), module.StdDev());
       outputA = module.LogProbability(std::move(target));
       module.PreStdDev()(j) = original + perturbation;
-      module.ApplySoftplus();
+      SoftplusFunction::Fn(module.PreStdDev(), module.StdDev());
       outputB = module.LogProbability(std::move(target));
       module.PreStdDev()(j) = original;
-      module.ApplySoftplus();
+      SoftplusFunction::Fn(module.PreStdDev(), module.StdDev());
       outputB -= outputA;
       outputB /= 2 * perturbation;
       jacobianA(j) = outputB;
@@ -150,7 +152,7 @@ BOOST_AUTO_TEST_CASE(JacobianNormalDistributionSoftplusTest)
 
     module.LogProbBackward(std::move(target), std::move(jacobianB));
     BOOST_REQUIRE_LE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))),
-        1e-5);
+        3e-5);
   }
 }
 
