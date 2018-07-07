@@ -51,7 +51,7 @@ template<typename MatType>
 CFType<DecompositionPolicy,
        NormalizationType>::
 CFType(const MatType& data,
-       DecompositionPolicy& decomposition,
+       const DecompositionPolicy& decomposition,
        const size_t numUsersForSimilarity,
        const size_t rank,
        const size_t maxIterations,
@@ -78,7 +78,7 @@ template<typename DecompositionPolicy,
 void CFType<DecompositionPolicy,
             NormalizationType>::
 Train(const arma::mat& data,
-      DecompositionPolicy& decomposition,
+      const DecompositionPolicy& decomposition,
       const size_t maxIterations,
       const double minResidue,
       const bool mit)
@@ -119,7 +119,7 @@ template<typename DecompositionPolicy,
 void CFType<DecompositionPolicy,
             NormalizationType>::
 Train(const arma::sp_mat& data,
-      DecompositionPolicy& decomposition,
+      const DecompositionPolicy& decomposition,
       const size_t maxIterations,
       const double minResidue,
       const bool mit)

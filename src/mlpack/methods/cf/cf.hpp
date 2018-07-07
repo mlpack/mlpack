@@ -104,7 +104,7 @@ class CFType
    */
   template<typename MatType>
   CFType(const MatType& data,
-         DecompositionPolicy& decomposition = DecompositionPolicy(),
+         const DecompositionPolicy& decomposition = DecompositionPolicy(),
          const size_t numUsersForSimilarity = 5,
          const size_t rank = 0,
          const size_t maxIterations = 1000,
@@ -126,7 +126,7 @@ class CFType
    * @param mit Whether to terminate only when maxIterations is reached.
    */
   void Train(const arma::mat& data,
-             DecompositionPolicy& decomposition,
+             const DecompositionPolicy& decomposition,
              const size_t maxIterations = 1000,
              const double minResidue = 1e-5,
              const bool mit = false);
@@ -146,7 +146,7 @@ class CFType
    * @param mit Whether to terminate only when maxIterations is reached.
    */
   void Train(const arma::sp_mat& data,
-             DecompositionPolicy& decomposition,
+             const DecompositionPolicy& decomposition,
              const size_t maxIterations = 1000,
              const double minResidue = 1e-5,
              const bool mit = false);
