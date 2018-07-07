@@ -135,7 +135,7 @@ class RandomizedSVDPolicy
 
     NeighborSearchPolicy neighborSearch(stretchedH);
     neighborSearch.Search(
-      query, numUsersForSimilarity, neighborhood, similarities);
+        query, numUsersForSimilarity, neighborhood, similarities);
   }
 
   //! Get the User Matrix.
