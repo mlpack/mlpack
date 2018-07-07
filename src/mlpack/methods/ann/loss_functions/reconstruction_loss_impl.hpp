@@ -33,8 +33,8 @@ template<typename InputType, typename TargetType>
 double ReconstructionLoss<InputDataType, OutputDataType, DistType>::Forward(
     const InputType&& input, const TargetType&& target)
 {
-  dist = new DistType(std::move(input));
-  return dist->LogProbability(std::move(target));
+  dist = DistType(std::move(input));
+  return -dist.LogProbability(std::move(target));
 }
 
 template<typename InputDataType, typename OutputDataType, typename DistType>
@@ -44,7 +44,8 @@ void ReconstructionLoss<InputDataType, OutputDataType, DistType>::Backward(
     const TargetType&& target,
     OutputType&& output)
 {
-  dist->LogProbBackward(std::move(target), std::move(output));
+  dist.LogProbBackward(std::move(target), std::move(output));
+  output = -output;
 }
 
 template<typename InputDataType, typename OutputDataType, typename DistType>

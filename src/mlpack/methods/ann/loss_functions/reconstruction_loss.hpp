@@ -74,7 +74,7 @@ class ReconstructionLoss
 
  private:
   //! Locally-stored distribution object.
-  DistType* dist;
+  DistType dist;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
