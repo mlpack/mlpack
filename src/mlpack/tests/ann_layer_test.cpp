@@ -1261,8 +1261,9 @@ BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
   BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(input));
 
   // Test the Gradient function.
-  arma::mat error = arma::ones(2, 5);
+  arma::mat error = arma::zeros(12, 5);
   error = error.t();
+  error.col(0) += 1;
   error.col(1) *= 0.5;
 
   module.Gradient(std::move(input), std::move(error), std::move(gradient));
