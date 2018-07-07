@@ -38,10 +38,22 @@ class Subview
    * Create the Subview layer object using the specified range of input to
    * accept.
    *
-   * @param begin Start index.
-   * @param end End index.
+   * @param inSize Width of sample.
+   * @param beginRow Starting row index.
+   * @param endRow Ending row index.
+   * @param beginCol Starting column index.
+   * @param endCol Ending column index.
    */
-  Subview(const size_t begin = 0, const size_t end = 0) : begin(begin), end(end)
+  Subview(const size_t inSize = 1,
+          const size_t beginRow = 0,
+          const size_t endRow = 0,
+          const size_t beginCol = 0,
+          const size_t endCol = 0) :
+      inSize(inSize),
+      beginRow(beginRow),
+      endRow(endRow),
+      beginCol(beginCol),
+      endCol(endCol)
   {
     /* Nothing to do here */
   }
@@ -56,10 +68,33 @@ class Subview
   template<typename InputType, typename OutputType>
   void Forward(InputType&& input, OutputType&& output)
   {
-    // Check if input has been selected as required.
-    if ((input.n_rows != (end - begin + 1)) && (end != 0))
+    size_t batchSize = input.n_cols / inSize;
+
+    // Check if subview parameters are within the indices of input sample.
+    endRow = ((endRow < input.n_rows) && (endRow >= beginRow))?
+        endRow : (input.n_rows - 1);
+    endCol = ((endCol < inSize) && (endCol >= beginCol)) ?
+        endCol : (inSize - 1);
+
+    output.set_size(
+        (endRow - beginRow + 1) * (endCol - beginCol + 1), batchSize);
+
+    size_t batchBegin = beginCol;
+    size_t batchEnd = endCol;
+
+    // Check whether the input is already in desired form.
+    if ((input.n_rows != ((endRow - beginRow + 1) *
+        (endCol - beginCol + 1))) || (input.n_cols != batchSize))
     {
-      output = arma::mat(&input(begin), end - begin + 1, input.n_cols, false);
+      for (size_t i = 0; i < batchSize; i++)
+      {
+        output.col(i) = arma::vectorise(
+            input.submat(beginRow, batchBegin, endRow, batchEnd));
+
+        // Move to next batch.
+        batchBegin += inSize;
+        batchEnd += inSize;
+      }
     }
     else
     {
@@ -100,16 +135,28 @@ class Subview
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(begin);
-    ar & BOOST_SERIALIZATION_NVP(end);
+    ar & BOOST_SERIALIZATION_NVP(inSize);
+    ar & BOOST_SERIALIZATION_NVP(beginRow);
+    ar & BOOST_SERIALIZATION_NVP(endRow);
+    ar & BOOST_SERIALIZATION_NVP(beginCol);
+    ar & BOOST_SERIALIZATION_NVP(endCol);
   }
 
  private:
-  //! Locally-stored number of input units.
-  size_t begin;
+  //! Width of each sample.
+  size_t inSize;
 
-  //! Locally-stored number of output units.
-  size_t end;
+  //! Starting row index of subview vector or matrix.
+  size_t beginRow;
+
+  //! Ending row index of subview vector or matrix.
+  size_t endRow;
+
+  //! Starting column index of subview vector or matrix.
+  size_t beginCol;
+
+  //! Ending column index of subview vector or matrix.
+  size_t endCol;
 
   //! Locally-stored delta object.
   OutputDataType delta;

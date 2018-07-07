@@ -1,18 +1,13 @@
-# Define the files we need to compile
+# Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  cf.hpp
-  cf_impl.hpp
-  ncf.hpp
-  ncf_impl.hpp
-  svd_wrapper.hpp
-  svd_wrapper_impl.hpp
+  lmnn.hpp
+  lmnn_impl.hpp
+  lmnn_function.hpp
+  lmnn_function_impl.hpp
+  constraints.hpp
+  constraints_impl.hpp
 )
-
-add_subdirectory(decomposition_policies)
-add_subdirectory(interpolation_policies)
-add_subdirectory(neighbor_search_policies)
-add_subdirectory(normalization)
 
 # Add directory name to sources.
 set(DIR_SRCS)
@@ -23,5 +18,5 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_cli_executable(cf)
-add_python_binding(cf)
+add_cli_executable(lmnn)
+add_python_binding(lmnn)

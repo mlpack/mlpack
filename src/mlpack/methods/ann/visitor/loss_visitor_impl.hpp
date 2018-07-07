@@ -51,12 +51,12 @@ LossVisitor::LayerLoss(T* layer) const
 {
   for (size_t i = 0; i < layer->Model().size(); ++i)
   {
-    double Loss = boost::apply_visitor(LossVisitor(),
+    double loss = boost::apply_visitor(LossVisitor(),
         layer->Model()[layer->Model().size() - 1 - i]);
 
-    if (Loss != 0)
+    if (loss != 0)
     {
-      return Loss;
+      return loss;
     }
   }
 
@@ -69,23 +69,23 @@ inline typename std::enable_if<
     HasModelCheck<T>::value, double>::type
 LossVisitor::LayerLoss(T* layer) const
 {
-  double Loss = layer->Loss();
+  double loss = layer->Loss();
 
-  if (Loss == 0)
+  if (loss == 0)
   {
     for (size_t i = 0; i < layer->Model().size(); ++i)
     {
-      Loss = boost::apply_visitor(LossVisitor(),
+      loss = boost::apply_visitor(LossVisitor(),
           layer->Model()[layer->Model().size() - 1 - i]);
 
-      if (Loss != 0)
+      if (loss != 0)
       {
-        return Loss;
+        return loss;
       }
     }
   }
 
-  return Loss;
+  return loss;
 }
 
 } // namespace ann

@@ -73,33 +73,11 @@ void Reparametrization<InputDataType, OutputDataType>::Backward(
 
   if (includeKl)
   {
-    arma::Mat<eT> klBack;
-    klBackward(std::move(klBack));
-    g = join_cols(gy % std::move(gaussianSample) % g, gy) + std::move(klBack);
+    g = join_cols(gy % std::move(gaussianSample) % g + (-1 / stdDev + stdDev)
+        % g, gy + mean);
   }
   else
     g = join_cols(gy % std::move(gaussianSample) % g, gy);
-}
-
-template<typename InputDataType, typename OutputDataType>
-template<typename InputType>
-double Reparametrization<InputDataType, OutputDataType>::klForward(
-    const InputType&& input)
-{
-  stdDev = input.submat(0, 0, latentSize - 1, input.n_cols - 1);
-  mean = input.submat(latentSize, 0, 2 * latentSize - 1, input.n_cols - 1);
-
-  return -0.5 * arma::accu(2 * arma::log(stdDev) -
-      arma::pow(stdDev, 2) - arma::pow(mean, 2) + 1);
-}
-
-template<typename InputDataType, typename OutputDataType>
-template<typename OutputType>
-void Reparametrization<InputDataType, OutputDataType>::klBackward(
-    OutputType&& output)
-{
-  SoftplusFunction::Deriv(preStdDev, output);
-  output = join_cols((-1 / stdDev + stdDev) % output, mean);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -109,6 +87,7 @@ void Reparametrization<InputDataType, OutputDataType>::serialize(
 {
   ar & BOOST_SERIALIZATION_NVP(latentSize);
   ar & BOOST_SERIALIZATION_NVP(stochastic);
+  ar & BOOST_SERIALIZATION_NVP(includeKl);
 }
 
 } // namespace ann

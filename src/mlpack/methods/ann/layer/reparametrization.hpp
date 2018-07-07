@@ -43,7 +43,7 @@ class Reparametrization
   /**
    * Create the Reparametrization layer object using the specified sample vector size.
    *
-   * @param layerSize The number of output units.
+   * @param latentSize The number of output latent units.
    * @param stochastic Whether we want random sample or constant.
    * @param includeKl Whether we want to include KL loss in backward function.
    */
@@ -75,26 +75,6 @@ class Reparametrization
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g);
 
-  /**
-   * Ordinary feed forward pass of a neural network, evaluating
-   * Kullback–Leibler divergence between a normal distribution
-   * and the standard normal.
-   *
-   * @param input Input data used for evaluating the specified function.
-   */
-  template<typename InputType>
-  double klForward(const InputType&& input);
-
-  /**
-   * Ordinary feed backward pass of a neural network, evaluating the backward
-   * pass of Kullback–Leibler divergence. Using the results from the
-   * KL divergence feed forward pass.
-   *
-   * @param output The calculated gradient of KL divergence.
-   */
-  template<typename OutputType>
-  void klBackward(OutputType&& output);
-
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -113,8 +93,8 @@ class Reparametrization
   //! Get the KL divergence with standard normal.
   double Loss()
   {
-    OutputDataType input = join_cols(stdDev, mean);
-    return klForward(std::move(input));
+    return -0.5 * arma::accu(2 * arma::log(stdDev) - arma::pow(stdDev, 2)
+        - arma::pow(mean, 2) + 1);
   }
 
   /**
