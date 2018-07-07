@@ -24,8 +24,7 @@ mlpack uses CMake as a build system and allows several flexible build
 configuration options.  One can consult any of numerous CMake tutorials for
 further documentation, but this tutorial should be enough to get mlpack built
 and installed on most Linux and UNIX-like systems (including OS X).  If you want
-to build mlpack on Windows, see <a
-href="https://keon.io/mlpack-on-windows/">Keon's excellent tutorial</a>.
+to build mlpack on Windows, see \ref build_windows.
 
 You can download the latest mlpack release from here:
 <a href="http://www.mlpack.org/files/mlpack-3.0.2.tar.gz">mlpack-3.0.2</a>
