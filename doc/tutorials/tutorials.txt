@@ -21,11 +21,13 @@ developers who want to use and contribute to mlpack but are not sure where to
 start.
 
  - \ref build
+ - \ref build_windows
  - \ref formatdoc
  - \ref matrices
  - \ref iodoc
  - \ref timer
  - \ref sample
+ - \ref sample_ml_app
 
 @section method_tut Method-specific Tutorials
 
