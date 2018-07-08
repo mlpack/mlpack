@@ -3,6 +3,8 @@
 set(SOURCES
   cross_entropy_error.hpp
   cross_entropy_error_impl.hpp
+  earth_mover_distance.hpp
+  earth_mover_distance_impl.hpp
   kl_divergence.hpp
   kl_divergence_impl.hpp
   mean_squared_error.hpp

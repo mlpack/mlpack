@@ -134,6 +134,7 @@ add_executable(mlpack_test
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
+  wgan_test.cpp
   main_tests/test_helper.hpp
   main_tests/emst_test.cpp
   main_tests/adaboost_test.cpp
