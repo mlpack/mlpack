@@ -27,19 +27,26 @@ PROGRAM_INFO("Kernel Density Estimation", "This program performs a Kernel "
     "Density Estimation for a given reference dataset.");
 
 // Required options.
-PARAM_DOUBLE_IN_REQ("bandwidth", "Bandwidth of the kernel", "b");
-PARAM_MATRIX_IN_REQ("reference", "Input dataset to KDE on.", "i");
+PARAM_MATRIX_IN_REQ("reference", "Input dataset to KDE on.", "r");
 PARAM_MATRIX_IN_REQ("query", "Query dataset to KDE on.", "q");
+PARAM_DOUBLE_IN_REQ("bandwidth", "Bandwidth of the kernel", "b");
 
 // Configuration options
 PARAM_STRING_IN("kernel", "Kernel to use for the estimation"
-    "('gaussian').", "k", "gaussian");
+    "('gaussian', 'epanechnikov').", "k", "gaussian");
 PARAM_STRING_IN("tree", "Tree to use for the estimation"
-    "('kd-tree', 'ball-tree).", "t", "kd-tree");
+    "('kd-tree', 'ball-tree').", "t", "kd-tree");
 PARAM_STRING_IN("metric", "Metric to use for the estimation"
     "('euclidean').", "m", "euclidean");
-PARAM_DOUBLE_IN("error", "Relative error tolerance for the result" , "e", 1e-8);
-PARAM_FLAG("breadth_first", "Use breadth-first traversal instead of depth"
+PARAM_DOUBLE_IN("rel-error",
+                "Relative error tolerance for the result",
+                "e",
+                1e-8);
+PARAM_DOUBLE_IN("abs-error",
+                "Relative error tolerance for the result",
+                "E",
+                0.0);
+PARAM_FLAG("breadth-first", "Use breadth-first traversal instead of depth"
            "first.", "w");
 
 // Output options.
@@ -48,20 +55,53 @@ PARAM_MATRIX_OUT("output", "Matrix to store output estimations.",
 
 static void mlpackMain()
 {
+  // Get all parameters.
   arma::mat reference = std::move(CLI::GetParam<arma::mat>("reference"));
   arma::mat query = std::move(CLI::GetParam<arma::mat>("query"));
-  double error = CLI::GetParam<double>("error");
-  double bandwidth = CLI::GetParam<double>("bandwidth");
-  bool breadthFirst = CLI::GetParam<bool>("breadth_first");
-
+  const double bandwidth = CLI::GetParam<double>("bandwidth");
+  const std::string kernelStr = CLI::GetParam<std::string>("kernel");
+  const std::string treeStr = CLI::GetParam<std::string>("tree");
+  const std::string metricStr = CLI::GetParam<std::string>("metric");
+  const double relError = CLI::GetParam<double>("rel-error");
+  const double absError = CLI::GetParam<double>("abs-error");
+  const bool breadthFirst = CLI::GetParam<bool>("breadth-first");
+  // Initialize results vector.
   arma::vec estimations = std::move(arma::vec(query.n_cols, arma::fill::zeros));
-  kde::KDE<mlpack::metric::EuclideanDistance,
-           arma::mat,
-           kernel::GaussianKernel,
-           tree::KDTree>
-    model(bandwidth, 0.0, error, breadthFirst);
-  model.Train(reference);
-  model.Evaluate(query, estimations);
+
+  // Handle KD-Tree, Gaussian, Euclidean KDE.
+  if (treeStr == "kd-tree" &&
+      kernelStr == "gaussian" &&
+      metricStr == "euclidean")
+  {
+    kernel::GaussianKernel kernel(bandwidth);
+    metric::EuclideanDistance metric;
+    kde::KDE<metric::EuclideanDistance,
+             arma::mat,
+             kernel::GaussianKernel,
+             tree::KDTree>
+      model(metric, kernel, relError, absError, breadthFirst);
+    model.Train(reference);
+    model.Evaluate(query, estimations);
+    estimations = estimations / (kernel.Normalizer(query.n_rows));
+  }
+
+  // Handle Ball-Tree, Gaussian, Euclidean KDE.
+  else if (treeStr == "ball-tree" &&
+           kernelStr == "gaussian" &&
+           metricStr == "euclidean")
+  {
+    kernel::GaussianKernel kernel(bandwidth);
+    metric::EuclideanDistance metric;
+    kde::KDE<metric::EuclideanDistance,
+             arma::mat,
+             kernel::GaussianKernel,
+             tree::BallTree>
+      model(metric, kernel, relError, absError, breadthFirst);
+    model.Train(reference);
+    model.Evaluate(query, estimations);
+    estimations = estimations / (kernel.Normalizer(query.n_rows));
+  }
+
   // Output estimations to file if defined.
   if (CLI::HasParam("output"))
   {
