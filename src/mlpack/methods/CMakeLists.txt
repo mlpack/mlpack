@@ -26,6 +26,7 @@ set(DIRS
   amf
   ann
   approx_kfn
+  bias_svd
   block_krylov_svd
   cf
   dbscan
