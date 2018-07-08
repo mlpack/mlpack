@@ -102,6 +102,46 @@ static void mlpackMain()
     estimations = estimations / (kernel.Normalizer(query.n_rows));
   }
 
+  // Handle KD-Tree, Epanechnikov, Euclidean KDE.
+  else if (treeStr == "kd-tree" &&
+           kernelStr == "epanechnikov" &&
+           metricStr == "euclidean")
+  {
+    kernel::EpanechnikovKernel kernel(bandwidth);
+    metric::EuclideanDistance metric;
+    kde::KDE<metric::EuclideanDistance,
+             arma::mat,
+             kernel::EpanechnikovKernel,
+             tree::KDTree>
+      model(metric, kernel, relError, absError, breadthFirst);
+    model.Train(reference);
+    model.Evaluate(query, estimations);
+    estimations = estimations / (kernel.Normalizer(query.n_rows));
+  }
+
+  // Handle Ball-Tree, Epanechnikov, Euclidean KDE.
+  else if (treeStr == "ball-tree" &&
+           kernelStr == "epanechnikov" &&
+           metricStr == "euclidean")
+  {
+    kernel::EpanechnikovKernel kernel(bandwidth);
+    metric::EuclideanDistance metric;
+    kde::KDE<metric::EuclideanDistance,
+             arma::mat,
+             kernel::EpanechnikovKernel,
+             tree::BallTree>
+      model(metric, kernel, relError, absError, breadthFirst);
+    model.Train(reference);
+    model.Evaluate(query, estimations);
+    estimations = estimations / (kernel.Normalizer(query.n_rows));
+  }
+
+  // Input parameters are wrong or are not supported yet.
+  else
+  {
+    Log::Fatal << "Input parameters are not valid or are not supported yet."
+               << std::endl;
+  }
   // Output estimations to file if defined.
   if (CLI::HasParam("output"))
   {
