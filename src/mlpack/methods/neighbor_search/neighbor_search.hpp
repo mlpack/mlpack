@@ -93,39 +93,16 @@ class NeighborSearch
    * where the metric has internal data (i.e. the distance::MahalanobisDistance
    * class).
    *
-   * This method will copy the matrices to internal copies, which are rearranged
-   * during tree-building.  You can avoid this extra copy by pre-constructing
-   * the trees and passing them using a different constructor, or by using the
-   * construct that takes an rvalue reference to the dataset.
+   * This method will move the matrices to internal copies, which are rearranged
+   * during tree-building.  You can avoid creating an extra copy by pre-constructing
+   * the trees, passing std::move(yourReferenceSet).
    *
    * @param referenceSet Set of reference points.
    * @param mode Neighbor search mode.
    * @param epsilon Relative approximate error (non-negative).
    * @param metric An optional instance of the MetricType class.
    */
-  NeighborSearch(const MatType& referenceSet,
-                 const NeighborSearchMode mode = DUAL_TREE_MODE,
-                 const double epsilon = 0,
-                 const MetricType metric = MetricType());
-
-  /**
-   * Initialize the NeighborSearch object, taking ownership of the reference
-   * dataset (this is the dataset which is searched).  Optionally, perform the
-   * computation in a different mode.  An initialized distance metric can be
-   * given, for cases where the metric has internal data (i.e. the
-   * distance::MahalanobisDistance class).
-   *
-   * This method will not copy the data matrix, but will take ownership of it,
-   * and depending on the type of tree used, may rearrange the points.  If you
-   * would rather a copy be made, consider using the constructor that takes a
-   * const reference to the data instead.
-   *
-   * @param referenceSet Set of reference points.
-   * @param mode Neighbor search mode.
-   * @param epsilon Relative approximate error (non-negative).
-   * @param metric An optional instance of the MetricType class.
-   */
-  NeighborSearch(MatType&& referenceSet,
+  NeighborSearch(MatType referenceSet,
                  const NeighborSearchMode mode = DUAL_TREE_MODE,
                  const double epsilon = 0,
                  const MetricType metric = MetricType());
@@ -138,8 +115,9 @@ class NeighborSearch
    * instantiated distance metric can be given, for cases where the distance
    * metric holds data.
    *
-   * This method will copy the given tree.  You can avoid this copy by using the
-   * construct that takes a rvalue reference to the tree.
+   * This method will copy the given tree. When copies must absolutely be avoided,
+   * you can avoid this copy, while taking ownership of the given tree, by passing
+   * std::move(yourReferenceTree)
    *
    * @note
    * Mapping the points of the matrix back to their original indices is not done
@@ -153,41 +131,10 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    * @param metric Instantiated distance metric.
    */
-  NeighborSearch(
-      const Tree& referenceTree,
-      const NeighborSearchMode mode = DUAL_TREE_MODE,
-      const double epsilon = 0,
-      const MetricType metric = MetricType());
-
-  /**
-   * Initialize the NeighborSearch object with the given pre-constructed
-   * reference tree (this is the tree built on the points that will be
-   * searched).  Optionally, choose to use single-tree mode.  Naive mode is not
-   * available as an option for this constructor.  Additionally, an instantiated
-   * distance metric can be given, for cases where the distance metric holds
-   * data.
-   *
-   * This method will take ownership of the given tree. There is no copying of
-   * the data matrices (because tree-building is not necessary), so this is the
-   * constructor to use when copies absolutely must be avoided.
-   *
-   * @note
-   * Mapping the points of the matrix back to their original indices is not done
-   * when this constructor is used, so if the tree type you are using maps
-   * points (like BinarySpaceTree), then you will have to perform the re-mapping
-   * manually.
-   * @endnote
-   *
-   * @param referenceTree Pre-built tree for reference points.
-   * @param mode Neighbor search mode.
-   * @param epsilon Relative approximate error (non-negative).
-   * @param metric Instantiated distance metric.
-   */
-  NeighborSearch(
-      Tree&& referenceTree,
-      const NeighborSearchMode mode = DUAL_TREE_MODE,
-      const double epsilon = 0,
-      const MetricType metric = MetricType());
+  NeighborSearch(Tree referenceTree,
+                 const NeighborSearchMode mode = DUAL_TREE_MODE,
+                 const double epsilon = 0,
+                 const MetricType metric = MetricType());
 
   /**
    * Create a NeighborSearch object without any reference data.  If Search() is

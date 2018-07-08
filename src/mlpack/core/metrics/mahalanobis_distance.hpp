@@ -31,9 +31,16 @@ namespace metric {
  * where Q is the covariance matrix.
  *
  * Because each evaluation multiplies (x_1 - x_2) by the covariance matrix, it
- * may be much quicker to use an LMetric and simply stretch the actual dataset
- * itself before performing any evaluations.  However, this class is provided
- * for convenience.
+ * is typically much quicker to use an LMetric and simply stretch the actual
+ * dataset itself before performing any evaluations.  However, this class is
+ * provided for convenience.
+ *
+ * If you wish to use the KNN class or other tree-based algorithms with this
+ * distance, it is recommended to instead stretch the dataset first, by
+ * decomposing Q = L^T L (perhaps via a Cholesky decomposition), and then
+ * multiply the data by L.  If you still wish to use the KNN class with a custom
+ * distance anyway, you will need to use a different tree type than the default
+ * KDTree, which only works with the LMetric class.
  *
  * Similar to the LMetric class, this offers a template parameter TakeRoot
  * which, when set to false, will instead evaluate the distance

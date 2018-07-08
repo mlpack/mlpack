@@ -1,6 +1,7 @@
 /**
  * @file bilinear_interpolation_impl.hpp
- * @author Kris Singh and Shikhar Jaiswal
+ * @author Kris Singh
+ * @author Shikhar Jaiswal
  *
  * Implementation of the bilinear interpolation function as an individual layer.
  *
@@ -26,7 +27,8 @@ BilinearInterpolation():
     inColSize(0),
     outRowSize(0),
     outColSize(0),
-    depth(0)
+    depth(0),
+    batchSize(0)
 {
   // Nothing to do here.
 }
@@ -43,7 +45,8 @@ BilinearInterpolation(
     inColSize(inColSize),
     outRowSize(outRowSize),
     outColSize(outColSize),
-    depth(depth)
+    depth(depth),
+    batchSize(0)
 {
   // Nothing to do here.
 }
@@ -53,20 +56,22 @@ template<typename eT>
 void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
+  batchSize = input.n_cols;
   if (output.is_empty())
-    output.set_size(outRowSize * outColSize * depth, 1);
+    output.set_size(outRowSize * outColSize * depth, batchSize);
   else
   {
     assert(output.n_rows == outRowSize * outColSize * depth);
-    assert(output.n_cols == 1);
+    assert(output.n_cols == batchSize);
   }
 
   assert(inRowSize >= 2);
   assert(inColSize >= 2);
 
-  arma::cube inputAsCube(input.memptr(), inRowSize, inColSize, depth);
-  arma::cube outputAsCube(output.memptr(), outRowSize, outColSize, depth,
-                          false, true);
+  arma::cube inputAsCube(const_cast<arma::Mat<eT>&&>(input).memptr(),
+      inRowSize, inColSize, depth * batchSize, false, false);
+  arma::cube outputAsCube(output.memptr(), outRowSize, outColSize,
+                          depth * batchSize, false, true);
 
   double scaleRow = (double) inRowSize / (double) outRowSize;
   double scaleCol = (double) inColSize / (double) outColSize;
@@ -97,7 +102,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
       coeffs[2] = (1 - deltaR) * deltaC;
       coeffs[3] = deltaR * deltaC;
 
-      for (size_t k = 0; k < depth; k++)
+      for (size_t k = 0; k < depth * batchSize; k++)
       {
         outputAsCube(i, j, k) = arma::accu(inputAsCube.slice(k).submat(
             rOrigin, cOrigin, rOrigin + 1, cOrigin + 1) % coeffs);
@@ -114,19 +119,20 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
     arma::Mat<eT>&& output)
 {
   if (output.is_empty())
-    output.set_size(inRowSize * inColSize * depth, 1);
+    output.set_size(inRowSize * inColSize * depth, batchSize);
   else
   {
     assert(output.n_rows == inRowSize * inColSize * depth);
-    assert(output.n_cols == 1);
+    assert(output.n_cols == batchSize);
   }
 
   assert(outRowSize >= 2);
   assert(outColSize >= 2);
 
-  arma::cube gradientAsCube(gradient.memptr(), outRowSize, outColSize, depth);
-  arma::cube outputAsCube(output.memptr(), inRowSize, inColSize, depth, false,
-                          true);
+  arma::cube gradientAsCube(gradient.memptr(), outRowSize, outColSize,
+                            depth * batchSize, false, false);
+  arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
+                          depth * batchSize, false, true);
 
   if (gradient.n_elem == output.n_elem)
   {
@@ -157,7 +163,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
         coeffs[2] = (1 - deltaR) * deltaC;
         coeffs[3] = deltaR * deltaC;
 
-        for (size_t k = 0; k < depth; k++)
+        for (size_t k = 0; k < depth * batchSize; k++)
         {
           outputAsCube(i, j, k) = arma::accu(gradientAsCube.slice(k).submat(
               rOrigin, cOrigin, rOrigin + 1, cOrigin + 1) % coeffs);

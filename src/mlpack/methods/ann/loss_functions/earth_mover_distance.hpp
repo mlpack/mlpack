@@ -1,16 +1,16 @@
 /**
- * @file mean_squared_error.hpp
- * @author Marcus Edel
+ * @file earth_mover_distance.hpp
+ * @author Shikhar Jaiswal
  *
- * Definition of the mean squared error performance function.
+ * Definition of the earth mover distance function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_MEAN_SQUARED_ERROR_HPP
-#define MLPACK_METHODS_ANN_LAYER_MEAN_SQUARED_ERROR_HPP
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTIONS_EARTH_MOVER_DISTANCE_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTIONS_EARTH_MOVER_DISTANCE_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -18,10 +18,9 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The mean squared error performance function measures the network's
- * performance according to the mean of squared errors.
+ * The earth mover distance function measures the network's performance
+ * according to the Kantorovich-Rubinstein duality approximation.
  *
- * @tparam ActivationFunction Activation function used for the embedding layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
@@ -31,22 +30,23 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class MeanSquaredError
+class EarthMoverDistance
 {
  public:
   /**
-   * Create the MeanSquaredError object.
+   * Create the EarthMoverDistance object.
    */
-  MeanSquaredError();
+  EarthMoverDistance();
 
   /*
-   * Computes the mean squared error function.
+   * Ordinary feed forward pass of a neural network.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
   template<typename InputType, typename TargetType>
   double Forward(const InputType&& input, const TargetType&& target);
+
   /**
    * Ordinary feed backward pass of a neural network.
    *
@@ -59,42 +59,26 @@ class MeanSquaredError
                 const TargetType&& target,
                 OutputType&& output);
 
-  //! Get the input parameter.
-  InputDataType& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
-  //! Get the delta.
-  OutputDataType& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
-
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
-
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class MeanSquaredError
+}; // class EarthMoverDistance
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "mean_squared_error_impl.hpp"
+#include "earth_mover_distance_impl.hpp"
 
 #endif

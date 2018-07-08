@@ -23,6 +23,7 @@
 #include "visitor/reset_visitor.hpp"
 #include "visitor/weight_size_visitor.hpp"
 #include "visitor/copy_visitor.hpp"
+#include "visitor/loss_visitor.hpp"
 
 #include "init_rules/network_init.hpp"
 
@@ -371,6 +372,9 @@ class FFN
   //! Locally-stored output height visitor.
   OutputHeightVisitor outputHeightVisitor;
 
+  //! Locally-stored loss visitor
+  LossVisitor lossVisitor;
+
   //! Locally-stored reset visitor.
   ResetVisitor resetVisitor;
 
@@ -394,11 +398,19 @@ class FFN
 
   //! Locally-stored copy visitor
   CopyVisitor<CustomLayers...> copyVisitor;
+
+  // The GAN class should have access to internal members.
+  template<
+    typename Model,
+    typename InitializerType,
+    typename NoiseType,
+    typename PolicyType
+  >
+  friend class GAN;
 }; // class FFN
 
 } // namespace ann
 } // namespace mlpack
-
 // Include implementation.
 #include "ffn_impl.hpp"
 

@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(MatRowColIteratorDecrementOperatorTest)
 
   // Check that postfix-- does not decrement the position when position is
   // pointing to the beginning.
-  (void) it2--;
+  auto junk = it2--; (void)(junk);
   BOOST_REQUIRE_EQUAL(it1.row(), it2.row());
   BOOST_REQUIRE_EQUAL(it1.col(), it2.col());
 

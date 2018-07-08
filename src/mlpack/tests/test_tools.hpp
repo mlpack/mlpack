@@ -66,6 +66,97 @@ inline void CheckMatrices(const arma::cube& a,
   }
 }
 
+// Check if two matrices are different.
+inline void CheckMatricesNotEqual(const arma::mat& a,
+                                  const arma::mat& b,
+                                  double tolerance = 1e-5)
+{
+  bool areDifferent = false;
+
+  // Only check the elements if the dimensions are equal.
+  if (a.n_rows == b.n_rows && a.n_cols == b.n_cols)
+  {
+    for (size_t i = 0; i < a.n_elem; ++i)
+    {
+      if (std::abs(a[i]) < tolerance / 2 &&
+          b[i] > tolerance / 2)
+      {
+        areDifferent = true;
+        break;
+      }
+      else if (std::abs(a[i] - b[i]) > tolerance)
+      {
+        areDifferent = true;
+        break;
+      }
+    }
+  }
+  else
+    areDifferent = true;
+
+  if (!areDifferent)
+    BOOST_ERROR("The matrices are equal.");
+}
+
+// Check if two unsigned matrices are different.
+inline void CheckMatricesNotEqual(const arma::Mat<size_t>& a,
+                                  const arma::Mat<size_t>& b)
+{
+  bool areDifferent = false;
+
+  // Only check the elements if the dimensions are equal.
+  if (a.n_rows == b.n_rows && a.n_cols == b.n_cols)
+  {
+    for (size_t i = 0; i < a.n_elem; ++i)
+    {
+      if (a[i] != b[i])
+      {
+        areDifferent = true;
+        break;
+      }
+    }
+  }
+  else
+    areDifferent = true;
+
+  if (!areDifferent)
+    BOOST_ERROR("The matrices are equal.");
+}
+
+// Check if two cubes are different.
+inline void CheckMatricesNotEqual(const arma::cube& a,
+                                  const arma::cube& b,
+                                  double tolerance = 1e-5)
+{
+  bool areDifferent = false;
+
+  // Only check the elements if the dimensions are equal.
+  if (a.n_rows == b.n_rows && a.n_cols == b.n_cols &&
+      a.n_slices == b.n_slices)
+  {
+    for (size_t i = 0; i < a.n_elem; ++i)
+    {
+      if (std::abs(a[i]) < tolerance / 2 &&
+          b[i] > tolerance / 2)
+      {
+        areDifferent = true;
+        break;
+      }
+      else if (std::abs(a[i] - b[i]) > tolerance)
+      {
+        areDifferent = true;
+        break;
+      }
+    }
+  }
+  else
+    areDifferent = true;
+
+  if (!areDifferent)
+    BOOST_ERROR("The matrices are equal.");
+}
+
+
 // Filter typeinfo string to generate unique filenames for serialization tests.
 inline std::string FilterFileName(const std::string& inputString)
 {

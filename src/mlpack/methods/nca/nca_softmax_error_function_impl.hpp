@@ -240,12 +240,16 @@ void SoftmaxErrorFunction<MetricType>::Precalculate(
     const arma::mat& coordinates)
 {
   // Ensure it is the right size.
-  lastCoordinates.set_size(coordinates.n_rows, coordinates.n_cols);
-
-  // Make sure the calculation is necessary.
-  if ((accu(coordinates == lastCoordinates) == coordinates.n_elem) &&
+  if (lastCoordinates.n_rows != coordinates.n_rows ||
+      lastCoordinates.n_cols != coordinates.n_cols)
+  {
+    lastCoordinates.set_size(coordinates.n_rows, coordinates.n_cols);
+  }
+  else if ((accu(coordinates == lastCoordinates) == coordinates.n_elem) &&
       precalculated)
+  {
     return; // No need to calculate; we already have this stuff saved.
+  }
 
   // Coordinates are different; save the new ones, and stretch the dataset.
   lastCoordinates = coordinates;

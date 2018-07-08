@@ -41,6 +41,7 @@ set(DIRS
   kmeans
   lars
   linear_regression
+  lmnn
   local_coordinate_coding
   logistic_regression
   lsh

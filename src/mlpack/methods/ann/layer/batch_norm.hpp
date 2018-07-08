@@ -10,7 +10,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #ifndef MLPACK_METHODS_ANN_LAYER_BATCHNORM_HPP
 #define MLPACK_METHODS_ANN_LAYER_BATCHNORM_HPP
 
@@ -20,7 +19,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Declaration of the Batch Normalization layer class. The layer tranforms
+ * Declaration of the Batch Normalization layer class. The layer transforms
  * the input data into zero mean and unit variance and then scales and shifts
  * the data by parameters, gamma and beta respectively. These parameters are
  * learnt by the network.
@@ -113,11 +112,6 @@ class BatchNorm
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -186,9 +180,6 @@ class BatchNorm
 
   //! Locally-stored delta object.
   OutputDataType delta;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;

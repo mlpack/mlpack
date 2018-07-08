@@ -76,7 +76,7 @@ Recurrent<InputDataType, OutputDataType, CustomLayers...>::Recurrent(
     ownsLayer(true)
 {
   initialModule = new Sequential<>();
-  mergeModule = new AddMerge<>(false);
+  mergeModule = new AddMerge<>(false, false);
   recurrentModule = new Sequential<>(false);
 
   boost::apply_visitor(AddVisitor<CustomLayers...>(inputModule),
@@ -261,7 +261,7 @@ void Recurrent<InputDataType, OutputDataType, CustomLayers...>::serialize(
   if (Archive::is_loading::value)
   {
     initialModule = new Sequential<>();
-    mergeModule = new AddMerge<>(false);
+    mergeModule = new AddMerge<>(false, false);
     recurrentModule = new Sequential<>(false);
 
     boost::apply_visitor(AddVisitor<CustomLayers...>(inputModule),

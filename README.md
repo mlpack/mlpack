@@ -13,7 +13,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 </h5>
 
 <p align="center">
-  <a href="http://masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/s/http/masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test.svg?label=Linux%20build&style=flat-square" alt="Jenkins"></a>
+  <a href="http://ci.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/s/http/ci.mlpack.org/job/mlpack%20-%20git%20commit%20test.svg?label=Linux%20build&style=flat-square" alt="Jenkins"></a>
   <a href="https://ci.appveyor.com/project/mlpack/mlpack"><img src="https://img.shields.io/appveyor/ci/mlpack/mlpack/master.svg?label=Windows%20build&style=flat-square&logoWidth=0.1" alt="Appveyor"></a>
   <a href="https://coveralls.io/github/mlpack/mlpack?branch=master"><img src="https://img.shields.io/coveralls/mlpack/mlpack/master.svg?style=flat-square" alt="Coveralls"></a>
   <a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square" alt="License"></a>
@@ -22,7 +22,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="http://www.mlpack.org/files/mlpack-3.0.0.tar.gz">current stable version (3.0.0)</a>
+    <a href="http://www.mlpack.org/files/mlpack-3.0.2.tar.gz">current stable version (3.0.2)</a>
   </em>
 </p>
 
@@ -105,6 +105,11 @@ package manager for your system.  For example, on Ubuntu, you can install mlpack
 with the following command:
 
     $ sudo apt-get install libmlpack-dev
+
+Note: Older Ubuntu versions may not have the most recent version of mlpack
+available---for instance, at the time of this writing, Ubuntu 16.04 only has
+mlpack 2.0.1 available.  Options include upgrading your Ubuntu version, finding
+a PPA or other non-official sources, or installing with a manual build.
 
 There are some other useful pages to consult in addition to this section:
 

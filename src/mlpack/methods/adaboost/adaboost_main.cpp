@@ -79,7 +79,7 @@ PROGRAM_INFO("AdaBoost", "This program implements the AdaBoost (or Adaptive "
     "storing the trained model in " + PRINT_MODEL("model") + ", one could "
     "use the following command: "
     "\n\n" +
-    PRINT_CALL("adaboost", "training", "data", "output", "model",
+    PRINT_CALL("adaboost", "training", "data", "output_model", "model",
         "weak_learner", "perceptron") +
     "\n\n"
     "Similarly, an already-trained model in " + PRINT_MODEL("model") + " can"
