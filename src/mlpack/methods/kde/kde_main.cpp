@@ -38,15 +38,15 @@ PARAM_STRING_IN("tree", "Tree to use for the estimation"
     "('kd-tree', 'ball-tree').", "t", "kd-tree");
 PARAM_STRING_IN("metric", "Metric to use for the estimation"
     "('euclidean').", "m", "euclidean");
-PARAM_DOUBLE_IN("rel-error",
+PARAM_DOUBLE_IN("rel_error",
                 "Relative error tolerance for the result",
                 "e",
                 1e-8);
-PARAM_DOUBLE_IN("abs-error",
+PARAM_DOUBLE_IN("abs_error",
                 "Relative error tolerance for the result",
                 "E",
                 0.0);
-PARAM_FLAG("breadth-first", "Use breadth-first traversal instead of depth"
+PARAM_FLAG("breadth_first", "Use breadth-first traversal instead of depth"
            "first.", "w");
 
 // Output options.
@@ -62,9 +62,9 @@ static void mlpackMain()
   const std::string kernelStr = CLI::GetParam<std::string>("kernel");
   const std::string treeStr = CLI::GetParam<std::string>("tree");
   const std::string metricStr = CLI::GetParam<std::string>("metric");
-  const double relError = CLI::GetParam<double>("rel-error");
-  const double absError = CLI::GetParam<double>("abs-error");
-  const bool breadthFirst = CLI::GetParam<bool>("breadth-first");
+  const double relError = CLI::GetParam<double>("rel_error");
+  const double absError = CLI::GetParam<double>("abs_error");
+  const bool breadthFirst = CLI::GetParam<bool>("breadth_first");
   // Initialize results vector.
   arma::vec estimations = std::move(arma::vec(query.n_cols, arma::fill::zeros));
 
