@@ -135,6 +135,23 @@ class Constraints
                  const size_t batchSize);
 
   /**
+   * Calculates k differently labeled nearest neighbors & distances to
+   * impostors for some points of dataset and writes them back to passed
+   * matrices.
+   *
+   * @param outputNeighbors Coordinates matrix to store impostors.
+   * @param outputDistance matrix to store distance.
+   * @param dataset Input dataset.
+   * @param labels Input dataset labels.
+   * @param points Indices of data points to calculate impostors on.
+   */
+  void Impostors(arma::Mat<size_t>& outputNeighbors,
+                 arma::mat& outputDistance,
+                 const arma::mat& dataset,
+                 const arma::Row<size_t>& labels,
+                 const arma::uvec& points);
+
+  /**
    * Generate triplets {i, j, l} for each datapoint i and writes back generated
    * triplets to matrix passed.
    *

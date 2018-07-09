@@ -264,6 +264,50 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
   }
 }
 
+// Calculates k differently labeled nearest neighbors & distances over some
+// data points.
+template<typename MetricType>
+void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
+                                        arma::mat& outputDistance,
+                                        const arma::mat& dataset,
+                                        const arma::Row<size_t>& labels,
+                                        const arma::uvec& points)
+{
+  // Perform pre-calculation. If neccesary.
+  Precalculate(labels);
+
+  arma::mat subDataset = dataset.cols(points);
+  arma::Row<size_t> sublabels = labels.cols(points);
+
+  // KNN instance.
+  KNN knn;
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+
+  // Vectors to store indices.
+  arma::uvec subIndexSame;
+
+  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
+  {
+    // Calculate impostors.
+    subIndexSame = arma::find(sublabels == uniqueLabels[i]);
+
+    // Perform KNN search with differently labeled points as reference
+    // set and same class points as query set.
+    knn.Train(dataset.cols(indexDiff[i]));
+    knn.Search(subDataset.cols(subIndexSame), k, neighbors, distances);
+
+    // Re-map neighbors to their index.
+    for (size_t j = 0; j < neighbors.n_elem; j++)
+      neighbors(j) = indexDiff[i].at(neighbors(j));
+
+    // Store impostors.
+    outputNeighbors.cols(points.elem(subIndexSame)) =  neighbors;
+    outputDistance.cols(points.elem(subIndexSame)) =  distances;
+  }
+}
+
 // Generates {data point, target neighbors, impostors} triplets using
 // TargetNeighbors() and Impostors().
 template<typename MetricType>
