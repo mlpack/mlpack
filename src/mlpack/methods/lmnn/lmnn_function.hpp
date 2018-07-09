@@ -220,8 +220,8 @@ class LMNNFunction
   arma::mat pCij;
   //! Holds the norm of each data point.
   arma::vec norm;
-  //! Hold previous eval value.
-  double evalOld;
+  //! Hold previous eval values for each datapoint.
+  arma::vec evalOld;
   //! Holds previous transformation matrix.
   arma::mat transformationOld;
   /**
