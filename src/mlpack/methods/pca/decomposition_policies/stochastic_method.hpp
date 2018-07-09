@@ -159,7 +159,6 @@ class StochasticPolicyType
                     const size_t begin,
                     const size_t batchSize)
     {
-
       return arma::trace(coordinates * data.cols(begin, begin + batchSize - 1) *
           data.cols(begin, begin + batchSize - 1).t() * coordinates);
     }
@@ -178,7 +177,7 @@ class StochasticPolicyType
                   const size_t batchSize)
     {
       gradient = data.cols(begin, begin + batchSize - 1) *
-          data.cols(begin, begin + batchSize - 1).t() * (coordinates);
+          data.cols(begin, begin + batchSize - 1).t() * coordinates;
     }
 
     /*
@@ -196,7 +195,7 @@ class StochasticPolicyType
                                 const size_t batchSize)
     {
       gradient = data.cols(begin, begin + batchSize - 1) *
-          data.cols(begin, begin + batchSize - 1).t() * (coordinates);
+          data.cols(begin, begin + batchSize - 1).t() * coordinates;
 
       return arma::trace(coordinates * gradient);
     }
