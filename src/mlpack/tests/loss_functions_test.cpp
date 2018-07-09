@@ -229,7 +229,6 @@ BOOST_AUTO_TEST_CASE(SimpleSigmoidCrossEntropyErrorTest)
 }
 
 /**
-<<<<<<< 9cecc3e18160a4411c1e80831b6773bdbd80b789
  * Simple test for the Earth Mover Distance Layer.
  */
 BOOST_AUTO_TEST_CASE(SimpleEarthMoverDistanceLayerTest)
@@ -265,7 +264,9 @@ BOOST_AUTO_TEST_CASE(SimpleEarthMoverDistanceLayerTest)
     BOOST_REQUIRE_SMALL(output(i) - expectedOutput(i), 1e-5);
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
-=======
+}
+
+/*
  * Reconstruction Loss numerical gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientReconstructionLossTest)
@@ -306,7 +307,6 @@ BOOST_AUTO_TEST_CASE(GradientReconstructionLossTest)
   } function;
 
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
->>>>>>> Add reconstruction loss with test.
 }
 
 BOOST_AUTO_TEST_SUITE_END();
