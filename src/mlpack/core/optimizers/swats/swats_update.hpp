@@ -120,7 +120,10 @@ class SWATSUpdate
       sgdRate = sgdLamda / biasCorrection2;
 
       if (std::abs(sgdRate - rate) < epsilon && iteration > 1)
+      {
         phaseSGD = true;
+        sgdV.zeros();
+      }
     }
   }
 
