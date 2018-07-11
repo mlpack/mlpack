@@ -276,9 +276,6 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
 
-  arma::mat subDataset = dataset.cols(points);
-  arma::Row<size_t> sublabels = labels.cols(points);
-
   // KNN instance.
   KNN knn;
 
@@ -291,12 +288,13 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
   for (size_t i = 0; i < uniqueLabels.n_cols; i++)
   {
     // Calculate impostors.
-    subIndexSame = arma::find(sublabels == uniqueLabels[i]);
+    subIndexSame = arma::find(labels.cols(points) == uniqueLabels[i]);
 
     // Perform KNN search with differently labeled points as reference
     // set and same class points as query set.
     knn.Train(dataset.cols(indexDiff[i]));
-    knn.Search(subDataset.cols(subIndexSame), k, neighbors, distances);
+    knn.Search(dataset.cols(points.elem(subIndexSame)),
+        k, neighbors, distances);
 
     // Re-map neighbors to their index.
     for (size_t j = 0; j < neighbors.n_elem; j++)
