@@ -45,7 +45,7 @@ void ReconstructionLoss<InputDataType, OutputDataType, DistType>::Backward(
     OutputType&& output)
 {
   dist.LogProbBackward(std::move(target), std::move(output));
-  output = -output;
+  output *= -1;
 }
 
 template<typename InputDataType, typename OutputDataType, typename DistType>

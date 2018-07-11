@@ -283,8 +283,8 @@ BOOST_AUTO_TEST_CASE(GradientReconstructionLossTest)
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
-      model->Add<Linear<> >(10, 4);
-      model->Add<ReLULayer<> >();
+      model->Add<Linear<> >(10, 2);
+      model->Add<SigmoidLayer<> >();
     }
 
     ~GradientFunction()
