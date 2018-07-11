@@ -34,7 +34,9 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
     regularization(regularization),
     iteration(0),
     range(range),
-    constraint(dataset, labels, k)
+    constraint(dataset, labels, k),
+    evalOld(dataset.n_cols),
+    transformationOldPoint(dataset.n_cols)
 {
   // Initialize the initial learning point.
   initialPoint.eye(dataset.n_rows, dataset.n_rows);
@@ -49,9 +51,6 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
   constraint.TargetNeighbors(targetNeighbors, dataset, labels);
   constraint.Impostors(impostors, dataset, labels);
 
-  // Initialize evalOld.
-  evalOld.zeros(dataset.n_cols);
-
   // Precalculate and save the gradient due to target neighbors.
   Precalculate();
 }
@@ -60,16 +59,26 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
 template<typename MetricType>
 void LMNNFunction<MetricType>::Shuffle()
 {
-  arma::mat newDataset;
-  arma::Row<size_t> newLabels;
+  arma::mat newDataset = dataset;
+  arma::Mat<size_t> newLabels = labels;
+  std::vector<arma::mat> newEvalOld = evalOld;
+  std::vector<arma::mat> newTransformationOldPoint = transformationOldPoint;
 
-  math::ShuffleData(dataset, labels, newDataset, newLabels);
+  // Generate ordering.
+  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
+      dataset.n_cols - 1, dataset.n_cols));
 
   math::ClearAlias(dataset);
   math::ClearAlias(labels);
 
-  dataset = std::move(newDataset);
-  labels = std::move(newLabels);
+  dataset = newDataset.cols(ordering);
+  labels = newLabels.cols(ordering);
+
+  for (size_t i = 0; i < ordering.n_cols; i++)
+  {
+    evalOld[i] = newEvalOld[ordering[i]];
+    transformationOldPoint[i] = newTransformationOldPoint[ordering[i]];
+  }
 
   // Re-calculate target neighbors as indices changed.
   constraint.PreCalulated() = false;
@@ -108,6 +117,12 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
       cost += (1 - regularization) * eval;
     }
 
+    // Ensure that evalOld has proper size.
+    if (evalOld[i].n_elem == 0)
+    {
+      evalOld[i].set_size(k, k);
+    }
+
     for (int j = k - 1; j >= 0; j--)
     {
       // Bound constraints to avoid uneccesary computation. Here bp stands for
@@ -117,34 +132,42 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = 0;
-        if (transformationOld.n_elem != 0)
+
+        // Flag to trigger exact eval calculation.
+        bool exactEval = true;
+
+        // Bounds for eval.
+        if (transformationOld.n_elem != 0 && !std::isnan(evalOld[i](j, l)))
         {
-          eval = evalOld[i] + transformationDiff * (norm(targetNeighbors(j, i)) +
-              norm(impostors(l, i)) + 2 * norm(i));
-          if (eval > -1)
-          {
-            // Calculate exact eval.
-            if (iteration - 1 % range == 0)
-            {
-              eval = metric.Evaluate(transformedDataset.col(i),
-                         transformedDataset.col(targetNeighbors(j, i))) -
-                     distance(l, i);
-            }
-            else
-            {
-              eval = metric.Evaluate(transformedDataset.col(i),
-                       transformedDataset.col(targetNeighbors(j, i))) -
-                     metric.Evaluate(transformedDataset.col(i),
-                       transformedDataset.col(impostors(l, i)));
-            }
-          }
+          eval = evalOld[i](j, l) + transformationDiff *
+            (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) +
+            2 * norm(i));
+
+          // Check if there is need to calculate exact eval value.
+          if (eval <= -1)
+            exactEval = false;
         }
-        else
+
+        // Calculate exact eval value.
+        if(exactEval)
         {
-          eval = metric.Evaluate(transformedDataset.col(i),
+          if (iteration - 1 % range == 0)
+          {
+            eval = metric.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
                  distance(l, i);
+          }
+          else
+          {
+            eval = metric.Evaluate(transformedDataset.col(i),
+                     transformedDataset.col(targetNeighbors(j, i))) -
+                   metric.Evaluate(transformedDataset.col(i),
+                       transformedDataset.col(impostors(l, i)));
+          }
         }
+
+        // Update cache eval value.
+        evalOld[i](j, l) = eval;
 
         // Check bounding condition.
         if (eval <= -1)
@@ -153,9 +176,6 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
           bp = l;
           break;
         }
-
-        // Update cache eval value.
-        evalOld[i] = eval;
 
         cost += regularization * (1 + eval);
       }
@@ -179,13 +199,6 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
   // Apply metric over dataset.
   transformedDataset = transformation * dataset;
 
-  // Calculate norm of change in transformation.
-  double transformationDiff = 0;
-  if (transformationOld.n_elem != 0)
-  {
-    transformationDiff = arma::norm(transformation - transformationOld);
-  }
-
   if (iteration++ % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
@@ -199,46 +212,72 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
     {
       // Calculate cost due to distance between target neighbors & data point.
       double eval = metric.Evaluate(transformedDataset.col(i),
-                        transformedDataset.col(targetNeighbors(j, i)));
+                          transformedDataset.col(targetNeighbors(j, i)));
       cost += (1 - regularization) * eval;
+    }
+
+    // Calculate norm of change in transformation.
+    double transformationDiff = 0;
+    if (transformationOldPoint[i].n_elem != 0)
+    {
+      transformationDiff = arma::norm(transformation -
+          transformationOldPoint[i]);
+    }
+
+    // Ensure that evalOld has proper size.
+    if (evalOld[i].n_elem == 0)
+    {
+      evalOld[i].set_size(k, k);
     }
 
     for (int j = k - 1; j >= 0; j--)
     {
-      // Bound constraints to avoid uneccesary computation.
+      // Bound constraints to avoid uneccesary computation. Here bp stands for
+      // breaking point.
       for (size_t l = 0, bp = k; l < bp ; l++)
       {
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = 0;
-        if (transformationOld.n_elem != 0)
+
+        // Flag to trigger exact eval calculation.
+        bool exactEval = true;
+
+        // Bounds for eval.
+        if (transformationOldPoint[i].n_elem != 0 && !std::isnan(evalOld[i](j, l)))
         {
-          eval = evalOld[i] + transformationDiff * (norm(targetNeighbors(j, i)) +
-              norm(impostors(l, i)) + 2 * norm(i));
-          if (eval > -1)
-          {
-            // Calculate exact eval.
-            if (iteration - 1 % range == 0)
-            {
-              eval = metric.Evaluate(transformedDataset.col(i),
-                        transformedDataset.col(targetNeighbors(j, i))) -
-                     distance(l, i);
-            }
-            else
-            {
-              eval = metric.Evaluate(transformedDataset.col(i),
-                       transformedDataset.col(targetNeighbors(j, i))) -
-                     metric.Evaluate(transformedDataset.col(i),
-                       transformedDataset.col(impostors(l, i)));
-            }
-          }
+          eval = evalOld[i](j, l) + transformationDiff *
+              (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) +
+              2 * norm(i));
+
+          // Check if there is need to calculate exact eval value.
+          if (eval <= -1)
+            exactEval = false;
         }
-        else
+
+        // Calculate exact eval value.
+        if(exactEval)
         {
-          eval = metric.Evaluate(transformedDataset.col(i),
+          if (iteration - 1 % range == 0)
+          {
+            eval = metric.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
                  distance(l, i);
+          }
+          else
+          {
+            eval = metric.Evaluate(transformedDataset.col(i),
+                     transformedDataset.col(targetNeighbors(j, i))) -
+                   metric.Evaluate(transformedDataset.col(i),
+                       transformedDataset.col(impostors(l, i)));
+          }
         }
+
+        // Update cache eval value.
+        evalOld[i](j, l) = eval;
+
+        // Update cache transformation matrix.
+        transformationOldPoint[i] = transformation;
 
         // Check bounding condition.
         if (eval <= -1)
@@ -248,16 +287,10 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
           break;
         }
 
-        // Update cache eval value.
-        evalOld[i] = eval;
-
         cost += regularization * (1 + eval);
       }
     }
   }
-
-  // Update cache transformation matrix.
-  transformationOld = transformation;
 
   return cost;
 }
@@ -284,10 +317,28 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
       for (size_t l = 0, bp = k; l < bp ; l++)
       {
         // Calculate gradient due to triplets.
-        double eval = metric.Evaluate(transformedDataset.col(i),
-                          transformedDataset.col(targetNeighbors(j, i))) -
-                      metric.Evaluate(transformedDataset.col(i),
-                          transformedDataset.col(impostors(l, i)));
+        double eval = 0;
+
+        // Flag to trigger exact eval calculation.
+        bool exactEval = true;
+
+        if (evalOld[i].n_elem != 0)
+        {
+          // Use eval calualated during Evaluate.
+          if (!std::isnan(evalOld[i](j, l)))
+          {
+            eval = evalOld[i](j, l);
+            exactEval = false;
+          }
+        }
+
+        if (exactEval)
+        {
+          eval = metric.Evaluate(transformedDataset.col(i),
+                        transformedDataset.col(targetNeighbors(j, i))) -
+                    metric.Evaluate(transformedDataset.col(i),
+                        transformedDataset.col(impostors(l, i)));
+        }
 
         // Check bounding condition.
         if (eval < -1)
@@ -339,10 +390,28 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
       for (size_t l = 0, bp = k; l < bp ; l++)
       {
         // Calculate gradient due to triplets.
-        double eval = metric.Evaluate(transformedDataset.col(i),
-                          transformedDataset.col(targetNeighbors(j, i))) -
-                      metric.Evaluate(transformedDataset.col(i),
-                          transformedDataset.col(impostors(l, i)));
+        double eval = 0;
+
+        // Flag to trigger exact eval calculation.
+        bool exactEval = true;
+
+        if (evalOld[i].n_elem != 0)
+        {
+          // Use eval calualated during Evaluate.
+          if (!std::isnan(evalOld[i](j, l)))
+          {
+            eval = evalOld[i](j, l);
+            exactEval = false;
+          }
+        }
+
+        if (exactEval)
+        {
+          eval = metric.Evaluate(transformedDataset.col(i),
+                        transformedDataset.col(targetNeighbors(j, i))) -
+                    metric.Evaluate(transformedDataset.col(i),
+                        transformedDataset.col(impostors(l, i)));
+        }
 
         // Check bounding condition.
         if (eval < -1)
@@ -409,6 +478,12 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
       cost += (1 - regularization) * eval;
     }
 
+    // Ensure that evalOld has proper size.
+    if (evalOld[i].n_elem == 0)
+    {
+      evalOld[i].set_size(k, k);
+    }
+
     for (int j = k - 1; j >= 0; j--)
     {
       // Bound constraints to avoid uneccesary computation.
@@ -417,34 +492,42 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = 0;
-        if (transformationOld.n_elem != 0)
+
+        // Flag to trigger exact eval calculation.
+        bool exactEval = true;
+
+        // Bounds for eval.
+        if (transformationOld.n_elem != 0 && !std::isnan(evalOld[i](j, l)))
         {
-          eval = evalOld[i] + transformationDiff * (norm(targetNeighbors(j, i)) +
-              norm(impostors(l, i)) + 2 * norm(i));
-          if (eval > -1)
-          {
-            // Calculate exact eval.
-            if (iteration - 1 % range == 0)
-            {
-              eval = metric.Evaluate(transformedDataset.col(i),
-                        transformedDataset.col(targetNeighbors(j, i))) -
-                     distance(l, i);
-            }
-            else
-            {
-              eval = metric.Evaluate(transformedDataset.col(i),
-                       transformedDataset.col(targetNeighbors(j, i))) -
-                     metric.Evaluate(transformedDataset.col(i),
-                       transformedDataset.col(impostors(l, i)));
-            }
-          }
+          eval = evalOld[i](j, l) + transformationDiff *
+            (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) +
+            2 * norm(i));
+
+          // Check if there is need to calculate exact eval value.
+          if (eval <= -1)
+            exactEval = false;
         }
-        else
+
+        // Calculate exact eval value.
+        if(exactEval)
         {
-          eval = metric.Evaluate(transformedDataset.col(i),
+          if (iteration - 1 % range == 0)
+          {
+            eval = metric.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
                  distance(l, i);
+          }
+          else
+          {
+            eval = metric.Evaluate(transformedDataset.col(i),
+                     transformedDataset.col(targetNeighbors(j, i))) -
+                   metric.Evaluate(transformedDataset.col(i),
+                       transformedDataset.col(impostors(l, i)));
+          }
         }
+
+        // Update cache eval value.
+        evalOld[i](j, l) = eval;
 
         // Check bounding condition.
         if (eval <= -1)
@@ -453,9 +536,6 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
           bp = l;
           break;
         }
-
-        // Update cache eval value.
-        evalOld[i] = eval;
 
         cost += regularization * (1 + eval);
 
@@ -525,6 +605,12 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
       cij += diff * arma::trans(diff);
     }
 
+    // Ensure that evalOld has proper size.
+    if (evalOld[i].n_elem == 0)
+    {
+      evalOld[i].set_size(k, k);
+    }
+
     for (int j = k - 1; j >= 0; j--)
     {
       // Bound constraints to avoid uneccesary computation.
@@ -533,34 +619,42 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         // Calculate cost due to {data point, target neighbors, impostors}
         // triplets.
         double eval = 0;
-        if (transformationOld.n_elem != 0)
+
+        // Flag to trigger exact eval calculation.
+        bool exactEval = true;
+
+        // Bounds for eval.
+        if (transformationOld.n_elem != 0 && !std::isnan(evalOld[i](j, l)))
         {
-          eval = evalOld[i] + transformationDiff * (norm(targetNeighbors(j, i)) +
-              norm(impostors(l, i)) + 2 * norm(i));
-          if (eval > -1)
-          {
-            // Calculate exact eval.
-            if (iteration - 1 % range == 0)
-            {
-              eval = metric.Evaluate(transformedDataset.col(i),
-                        transformedDataset.col(targetNeighbors(j, i))) -
-                     distance(l, i);
-            }
-            else
-            {
-              eval = metric.Evaluate(transformedDataset.col(i),
-                       transformedDataset.col(targetNeighbors(j, i))) -
-                     metric.Evaluate(transformedDataset.col(i),
-                       transformedDataset.col(impostors(l, i)));
-            }
-          }
+          eval = evalOld[i](j, l) + transformationDiff *
+            (norm(targetNeighbors(j, i)) + norm(impostors(l, i)) +
+            2 * norm(i));
+
+          // Check if there is need to calculate exact eval value.
+          if (eval <= -1)
+            exactEval = false;
         }
-        else
+
+        // Calculate exact eval value.
+        if(exactEval)
         {
-          eval = metric.Evaluate(transformedDataset.col(i),
+          if (iteration - 1 % range == 0)
+          {
+            eval = metric.Evaluate(transformedDataset.col(i),
                      transformedDataset.col(targetNeighbors(j, i))) -
                  distance(l, i);
+          }
+          else
+          {
+            eval = metric.Evaluate(transformedDataset.col(i),
+                     transformedDataset.col(targetNeighbors(j, i))) -
+                   metric.Evaluate(transformedDataset.col(i),
+                       transformedDataset.col(impostors(l, i)));
+          }
         }
+
+        // Update cache eval value.
+        evalOld[i](j, l) = eval;
 
         // Check bounding condition.
         if (eval <= -1)
@@ -569,9 +663,6 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
           bp = l;
           break;
         }
-
-        // Update cache eval value.
-        evalOld[i] = eval;
 
         cost += regularization * (1 + eval);
 

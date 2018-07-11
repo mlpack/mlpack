@@ -221,9 +221,12 @@ class LMNNFunction
   //! Holds the norm of each data point.
   arma::vec norm;
   //! Hold previous eval values for each datapoint.
-  arma::vec evalOld;
-  //! Holds previous transformation matrix.
+  std::vector<arma::mat> evalOld;
+  //! Holds previous transformation matrix. Used for L-BFGS like optimizer.
   arma::mat transformationOld;
+  //! Holds previous transformation matrix for each point. Used for
+  //! optimizers which operates over batches.
+  std::vector<arma::mat> transformationOldPoint;
   /**
   * Precalculate the gradient part due to target neighbors and stores
   * the result as a matrix. Used for L-BFGS like optimizers which does not
