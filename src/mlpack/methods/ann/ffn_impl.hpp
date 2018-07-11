@@ -241,7 +241,7 @@ EvaluateWithGradient(const arma::mat& parameters, GradType& gradient)
 {
   double res = 0;
   for (size_t i = 0; i < predictors.n_cols; ++i)
-    res += EvaluateWithGradient(parameters, i, gradient, 1, false);
+    res += EvaluateWithGradient(parameters, i, gradient, 1);
 
   return res;
 }
@@ -253,8 +253,7 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::
 EvaluateWithGradient(const arma::mat& /* parameters */,
                      const size_t begin,
                      GradType& gradient,
-                     const size_t batchSize,
-                     const bool deterministic)
+                     const size_t batchSize)
 {
   if (gradient.is_empty())
   {
@@ -268,9 +267,9 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     gradient.zeros();
   }
 
-  if (deterministic != this->deterministic)
+  if (this->deterministic)
   {
-    this->deterministic = deterministic;
+    this->deterministic = false;
     ResetDeterministic();
   }
 
@@ -298,46 +297,13 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
-template<typename GradType>
-double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::
-EvaluateWithGradient(const arma::mat& parameters,
-                     const size_t begin,
-                     GradType& gradient,
-                     const size_t batchSize)
-{
-  return EvaluateWithGradient(parameters, begin, gradient, batchSize, false);
-}
-
-template<typename OutputLayerType, typename InitializationRuleType,
-         typename... CustomLayers>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
     const arma::mat& parameters,
     const size_t begin,
     arma::mat& gradient,
     const size_t batchSize)
 {
-  if (gradient.is_empty())
-  {
-    if (parameter.is_empty())
-      ResetParameters();
-
-    gradient = arma::zeros<arma::mat>(parameter.n_rows, parameter.n_cols);
-  }
-  else
-  {
-    gradient.zeros();
-  }
-
-  Evaluate(parameters, begin, batchSize, false);
-
-  outputLayer.Backward(
-      std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
-      std::move(responses.cols(begin, begin + batchSize - 1)),
-      std::move(error));
-
-  Backward();
-  ResetGradients(gradient);
-  Gradient(std::move(predictors.cols(begin, begin + batchSize - 1)));
+  this->EvaluateWithGradient(parameters, begin, gradient, batchSize);
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
