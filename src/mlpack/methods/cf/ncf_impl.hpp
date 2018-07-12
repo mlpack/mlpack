@@ -22,8 +22,9 @@ namespace cf {
 /**
  * Construct the NCF object using the desired algorithm and optimizer.
  */
-template<typename AlgorithmType, typename OptimizerType>
+template<typename OptimizerType>
 NCF::NCF(arma::mat& dataset,
+         std::string algorithm,
          OptimizerType optimizer,
          const size_t embedSize,
          const size_t neg,
@@ -42,15 +43,18 @@ NCF::NCF(arma::mat& dataset,
   }
   numUsers = (size_t) max(dataset.row(0)) + 1;
   numItems = (size_t) max(dataset.row(1)) + 1;
+
+  Train(dataset, algorithm);
 }
 
 /**
  * Compute all unrated items for each user.
  */
-template<typename AlgorithmType, typename OptimizerType>
-void NCF::FindNegatives(arma::mat& dataset,
-                        std::vector<std::vector<double>>& negatives)
+template<typename OptimizerType>
+void NCF::FindNegatives(arma::mat& dataset)
 {
+  negatives.clear();
+
   for (int i = 0; i< numUsers; i++)
   {
     // Find items the user has rated.
@@ -78,15 +82,14 @@ void NCF::FindNegatives(arma::mat& dataset,
 /**
  * Create training instances using both positive and negative instances.
  */
-template<typename AlgorithmType, typename OptimizerType>
+template<typename OptimizerType>
 void NCF::GetTrainingInstance(arma::mat& dataset,
-                              arma::mat& users,
-                              arma::mat& items,
-                              arma::mat& labels,
-                              std::vector<std::vector<double>>& negatives)
+                              arma::mat& predictors,
+                              arma::mat& responses)
 {
   long long int q = 0;
   int temp;
+  arma::colvec users, items;
 
   for (int i = 0; i < dataset.n_cols; i++)
   {
@@ -95,7 +98,7 @@ void NCF::GetTrainingInstance(arma::mat& dataset,
     // Rating exists.
     users(q) = dataset(0, i);
     items(q) = dataset(1, i);
-    labels(q) = 1;
+    responses(q) = 1;
     q++;
 
     // From find negatives.
@@ -107,27 +110,77 @@ void NCF::GetTrainingInstance(arma::mat& dataset,
       // Add negatives.
       users(q) = dataset(0, i);
       items(q) = j;
-      labels(q) = 0;
+      responses(q) = 0;
       q++;
       temp--;
     }
   }
+  predictors = arma::join_vert(users, items);
+}
+
+template<typename OptimizerType>
+double NCF::Evaluate(const arma::mat& parameters,
+                     const size_t begin,
+                     const size_t batchSize,
+                     const bool deterministic)
+{
+   // Run the forward pass of the GMF network created by CreateGMF().
+  double loss = network.Evaluate(parameters, begin, batchSize, deterministic);
+
+  return loss;
+}
+
+template<typename OptimizerType>
+void NCF::Gradient(const arma::mat& parameters,
+                   const size_t begin,
+                   arma::mat& gradient,
+                   const size_t batchSize)
+{
+  network.Gradient(parameters, begin, gradient, batchSize);
+  GetTrainingData(predictors, responses);
 }
 
 /**
  * Train the model using the given optimizer.
  */
-template<typename AlgorithmType, typename OptimizerType>
-void NCF::Train(arma::mat& dataset)
+template<typename OptimizerType>
+void NCF::Train(arma::mat& dataset,
+                std::string algorithm)
 {
-  // Being implemented.
+  if (algorithm == "GMF")
+  {
+    CreateGMF(dataset);
+  }
+  else if (algorithm == "MLP")
+  {
+    CreateMLP(dataset);
+  }
+  else if (algorithm == "NeuMF")
+  {
+    CreateNeuMF(dataset);
+  }
+  arma::mat predictors, responses;
+
+  FindNegatives(dataset);
+
+  GetTrainingInstance(dataset, predictors, responses);
+
+  network.ResetData(std::move(predictors), std::move(responses));
+
+  // Train the model.
+  Timer::Start("ncf_optimization");
+  const double out = optimizer.Optimize(*this.network, network.parameter);
+  Timer::Stop("ncf_optimization");
+
+  Log::Info << "NCF::NCF(): final objective of trained model is " << out
+      << "." << std::endl;
 }
 
 /**
  * Create a model for GMF.
  */
-template<typename AlgorithmType, typename OptimizerType>
-void NCF::CreateGMF(arma::mat& data, const size_t embedSize)
+template<typename OptimizerType>
+void NCF::CreateGMF(arma::mat& data)
 {
   size_t size = data/2;
 
@@ -158,8 +211,8 @@ void NCF::CreateGMF(arma::mat& data, const size_t embedSize)
 /**
  * Create a model for MLP.
  */
-template<typename AlgorithmType, typename OptimizerType>
-void NCF::CreateMLP(arma::mat& data, const size_t embedSize)
+template<typename OptimizerType>
+void NCF::CreateMLP(arma::mat& data)
 {
   size_t size = data/2;
 
@@ -189,8 +242,8 @@ void NCF::CreateMLP(arma::mat& data, const size_t embedSize)
 /**
  * Create a model for Neural Matrix Factorization.
  */
-template<typename AlgorithmType, typename OptimizerType>
-void NCF::CreateNeuMF(arma::mat& data, const size_t embedSize)
+template<typename OptimizerType>
+void NCF::CreateNeuMF(arma::mat& data)
 {
   // To be added.
 }
@@ -198,10 +251,9 @@ void NCF::CreateNeuMF(arma::mat& data, const size_t embedSize)
 /**
  * Evaluate the model.
  */
-template<typename AlgorithmType, typename OptimizerType>
-void NCF::Evaluate(arma::mat& testData,
-                   std::vector<std::vector<double>>& negatives,
-                   const size_t numRecs)
+template<typename OptimizerType>
+void NCF::EvaluateModel(arma::mat& testData,
+                        const size_t numRecs)
 {
   // Variable declarations.
   arma::Col<size_t> predictors, userVec(numItems), itemScore(numItems);
@@ -257,7 +309,7 @@ void NCF::Evaluate(arma::mat& testData,
 /**
  * Get recommendations for all users.
  */
-template<typename AlgorithmType, typename OptimizerType>
+template<typename OptimizerType>
 void NCF::GetRecommendations(const size_t numRecs,
                              arma::Mat<size_t>& recommendations)
 {
@@ -272,7 +324,7 @@ void NCF::GetRecommendations(const size_t numRecs,
 /**
  * Get recommendations for given set of users.
  */
-template<typename AlgorithmType, typename OptimizerType>
+template<typename OptimizerType>
 void NCF::GetRecommendations(const size_t numRecs,
                              arma::Mat<size_t>& recommendations,
                              const arma::Col<size_t>& users);
@@ -304,7 +356,7 @@ void NCF::GetRecommendations(const size_t numRecs,
 /**
  * Serialize the NCF model to the given archive.
  */
-template<typename AlgorithmType, typename OptimizerType>
+template<typename OptimizerType>
 template<typename Archive>
 void serialize(Archive& ar, const unsigned int /* version */)
 {

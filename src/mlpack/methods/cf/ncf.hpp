@@ -30,15 +30,11 @@ namespace cf {
  * are in a matrix that holds doubles, should hold integer (or size_t) values.
  * The user and item indices are assumed to start at 0.
  *
- * @tparam AlgorithmType The algorithm used among General matrix factorization,
- * Multi layer perceptron and Neural matrix factorization as part of performing
- * Neural Collaborative Filtering.
- *
  * @tparam OptimizerType The algorithm used among General matrix factorization,
  * Multi layer perceptron and Neural matrix factorization as part of performing
  * Neural Collaborative Filtering.
  */
-template<typename AlgorithmType, typename OptimizerType>
+template<typename OptimizerType>
 class NCF
 {
  public:
@@ -52,12 +48,14 @@ class NCF
    * matrix.
    *
    * @param dataset Data matrix: dense matrix (coordinate lists).
+   * @param algorithm Algorithm to be used.
    * @param optimizer Optimizer to be used to train the model.
    * @param embedSize Size of embedding for each user and item being considered.
    * @param neg Number of negative instances to consider per positive instance.
    * @param epochs Number of epochs to train the model on.
    */
   NCF(arma::mat& dataset,
+      std::string algorithm,
       OptimizerType& optimizer = OptimizerType(),
       const size_t embedSize = 8,
       const size_t neg = 4,
@@ -72,8 +70,7 @@ class NCF
    * @param dataset Data matrix: dense matrix (coordinate lists).
    * @param negatives A vector storing unrated items for each user.
    */
-  void FindNegatives(arma::mat& dataset,
-                     std::vector<std::vector<double>>& negatives);
+  void FindNegatives(arma::mat& dataset);
 
   /**
    * To be used to get training instance for each epoch. Each training instance
@@ -86,17 +83,50 @@ class NCF
    * @param negatives A vector storing unrated items for each user.
    */
   void GetTrainingInstance(arma::mat& dataset,
-                           arma::mat& users,
-                           arma::mat& items,
-                           arma::mat& labels,
-                           std::vector<std::vector<double>>& negatives);
+                           arma::mat& predictors,
+                           arma::mat& responses);
 
+   /**
+   * Evaluate the feedforward network with the given parameters, but using only
+   * one data point. This is useful for optimizers such as SGD, which require a
+   * separable objective function.
+   *
+   * @param parameters Matrix model parameters.
+   * @param begin Index of the starting point to use for objective function
+   *        evaluation.
+   * @param batchSize Number of points to be passed at a time to use for
+   *        objective function evaluation.
+   * @param deterministic Whether or not to train or test the model. Note some
+   *        layer act differently in training or testing mode.
+   */
+  double Evaluate(const arma::mat& parameters,
+                  const size_t begin,
+                  const size_t batchSize,
+                  const bool deterministic);
+
+  /**
+   * Evaluate the gradient of the feedforward network with the given parameters,
+   * and with respect to only one point in the dataset. This is useful for
+   * optimizers such as SGD, which require a separable objective function.
+   *
+   * @param parameters Matrix of the model parameters to be optimized.
+   * @param begin Index of the starting point to use for objective function
+   *        gradient evaluation.
+   * @param gradient Matrix to output gradient into.
+   * @param batchSize Number of points to be processed as a batch for objective
+   *        function gradient evaluation.
+   */
+  void Gradient(const arma::mat& parameters,
+                const size_t begin,
+                arma::mat& gradient,
+                const size_t batchSize);
   /**
    * Train the model using the specified algorithm and optimizer.
    *
    * @param dataset Data matrix: dense matrix (coordinate lists).
+   * @param algorithm Algorithm to be used.
    */
-  void Train(arma::mat& dataset);
+  void Train(arma::mat& dataset, std::string algorithm);
 
   /**
    * Create the model for General Matrix Factorization.
@@ -104,7 +134,7 @@ class NCF
    * @param data Vector with user and item training data concatenated.
    * @param embedSize Size of embedding for each user and item being considered.
    */
-  void CreateGMF(arma::mat& data, const size_t embedSize);
+  void CreateGMF(arma::mat& data);
 
   /**
    * Create the model for Multi Layer Perceptron.
@@ -112,7 +142,7 @@ class NCF
    * @param data Vector with user and item training data concatenated.
    * @param embedSize Size of embedding for each user and item being considered.
    */
-  void CreateMLP(arma::mat& data, const size_t embedSize);
+  void CreateMLP(arma::mat& data);
 
   /**
    * Create the model for Neural Matrix Factorization.
@@ -120,15 +150,14 @@ class NCF
    * @param data Vector with user and item training data concatenated.
    * @param embedSize Size of embedding for each user and item being considered.
    */
-  void CreateNeuMF(arma::mat& data, const size_t embedSize);
+  void CreateNeuMF(arma::mat& data);
 
   /**
    * Evaluate the model.
    *
    */
-  void Evaluate(arma::mat& testData,
-                std::vector<std::vector<double>>& negatives,
-                const size_t numRecs = 10);
+  void EvaluateModel(arma::mat& testData,
+                     const size_t numRecs = 10);
 
   /**
    * Generates the given number of recommendations for all users.
@@ -181,6 +210,9 @@ class NCF
 
   //! Number of items in the dataset.
   size_t numItems;
+
+  //! Negatives for each user stored in vector form.
+  std::vector<std::vector<double>> negatives;
 }; // class NCF
 
 } // namespace cf
