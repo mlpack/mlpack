@@ -91,7 +91,7 @@ setup(name='mlpack',
           'Topic :: Software Development :: Libraries :: Application Frameworks'],
       keywords='machine learning, data mining, deep learning, optimization',
       project_urls={
-          'Documentation': 'http://www.mlpack.org/docs/mlpack-3.0.0/python.html',
+          'Documentation': 'http://www.mlpack.org/docs/mlpack-${PACKAGE_VERSION}/python.html',
           'Source': 'https://github.com/mlpack/mlpack/',
           'Tracker': 'https://github.com/mlpack/mlpack/issues'},
       install_requires=['cython>=0.24', 'numpy', 'pandas'],
