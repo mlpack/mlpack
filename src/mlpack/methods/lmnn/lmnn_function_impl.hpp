@@ -45,7 +45,7 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
   evalOld.fill(arma::datum::nan);
 
   maxImpNorm.set_size(k, dataset.n_cols);
-  maxImpNorm.fill(arma::datum::nan);
+  maxImpNorm.fill(0);
 
   // Initialize target neighbors & impostors.
   targetNeighbors = arma::Mat<size_t>(k, dataset.n_cols, arma::fill::zeros);
@@ -137,19 +137,13 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
         bool exactEval = true;
 
         // Bounds for eval.
-        if (transformationOld.n_elem != 0 && !std::isnan(evalOld(j, l, i)))
+        if (transformationOld.n_elem != 0 && !std::isnan(evalOld(l, j, i)))
         {
-          double maxNorm;
-          if (!std::isnan(maxImpNorm(l, i)))
-            maxNorm = std::max(norm(impostors(l, i)), maxImpNorm(l, i));
-          else
-            maxNorm = norm(impostors(l, i));
-
           // Update cache max impostor norm.
-          maxImpNorm(l, i) = maxNorm;
+          maxImpNorm(l, i) = std::max(maxImpNorm(l, i), norm(impostors(l, i)));
 
-          eval = evalOld(j, l, i) + transformationDiff *
-            (norm(targetNeighbors(j, i)) + maxNorm +
+          eval = evalOld(l, j, i) + transformationDiff *
+            (norm(targetNeighbors(j, i)) + maxImpNorm(l, i) +
             2 * norm(i));
 
           // Check if there is need to calculate exact eval value.
@@ -160,8 +154,8 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
           else
           {
             // Reset cacche max impostor norm.
-            maxImpNorm(l, i) = arma::datum::nan;
-            evalOld(j, l, i) = arma::datum::nan;
+            maxImpNorm(l, i) = 0;
+            evalOld(l, j, i) = arma::datum::nan;
           }
         }
 
@@ -184,7 +178,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
         }
 
         // Update cache eval value.
-        evalOld(j, l, i) = eval;
+        evalOld(l, j, i) = eval;
 
         // Check bounding condition.
         if (eval <= -1)
@@ -263,19 +257,13 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
         bool exactEval = true;
 
         // Bounds for eval.
-        if (!transformationOldPoint.slice(i).has_nan() && !std::isnan(evalOld(j, l, i)))
+        if (transformationOld.n_elem != 0 && !std::isnan(evalOld(l, j, i)))
         {
-          double maxNorm;
-          if (!std::isnan(maxImpNorm(l, i)))
-            maxNorm = std::max(norm(impostors(l, i)), maxImpNorm(l, i));
-          else
-            maxNorm = norm(impostors(l, i));
-
           // Update cache max impostor norm.
-          maxImpNorm(l, i) = maxNorm;
+          maxImpNorm(l, i) = std::max(maxImpNorm(l, i), norm(impostors(l, i)));
 
-          eval = evalOld(j, l, i) + transformationDiff *
-            (norm(targetNeighbors(j, i)) + maxNorm +
+          eval = evalOld(l, j, i) + transformationDiff *
+            (norm(targetNeighbors(j, i)) + maxImpNorm(l, i) +
             2 * norm(i));
 
           // Check if there is need to calculate exact eval value.
@@ -286,8 +274,8 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
           else
           {
             // Reset cacche max impostor norm.
-            maxImpNorm(l, i) = arma::datum::nan;
-            evalOld(j, l, i) = arma::datum::nan;
+            maxImpNorm(l, i) = 0;
+            evalOld(l, j, i) = arma::datum::nan;
           }
         }
 
@@ -310,7 +298,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
         }
 
         // Update cache eval value.
-        evalOld(j, l, i) = eval;
+        evalOld(l, j, i) = eval;
 
         // Update cache transformation matrix.
         transformationOldPoint.slice(i) = transformation;
@@ -359,9 +347,9 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
         bool exactEval = true;
 
         // Use eval calualated during Evaluate.
-        if (!std::isnan(evalOld(j, l, i)))
+        if (!std::isnan(evalOld(l, j, i)))
         {
-          eval = evalOld(j, l, i);
+          eval = evalOld(l, j, i);
           exactEval = false;
         }
 
@@ -429,9 +417,9 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
         bool exactEval = true;
 
         // Use eval calualated during Evaluate.
-        if (!std::isnan(evalOld(j, l, i)))
+        if (!std::isnan(evalOld(l, j, i)))
         {
-          eval = evalOld(j, l, i);
+          eval = evalOld(l, j, i);
           exactEval = false;
         }
 
@@ -521,19 +509,13 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         bool exactEval = true;
 
         // Bounds for eval.
-        if (transformationOld.n_elem != 0 && !std::isnan(evalOld(j, l, i)))
+        if (transformationOld.n_elem != 0 && !std::isnan(evalOld(l, j, i)))
         {
-          double maxNorm;
-          if (!std::isnan(maxImpNorm(l, i)))
-            maxNorm = std::max(norm(impostors(l, i)), maxImpNorm(l, i));
-          else
-            maxNorm = norm(impostors(l, i));
-
           // Update cache max impostor norm.
-          maxImpNorm(l, i) = maxNorm;
+          maxImpNorm(l, i) = std::max(maxImpNorm(l, i), norm(impostors(l, i)));
 
-          eval = evalOld(j, l, i) + transformationDiff *
-            (norm(targetNeighbors(j, i)) + maxNorm +
+          eval = evalOld(l, j, i) + transformationDiff *
+            (norm(targetNeighbors(j, i)) + maxImpNorm(l, i) +
             2 * norm(i));
 
           // Check if there is need to calculate exact eval value.
@@ -544,8 +526,8 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
           else
           {
             // Reset cacche max impostor norm.
-            maxImpNorm(l, i) = arma::datum::nan;
-            evalOld(j, l, i) = arma::datum::nan;
+            maxImpNorm(l, i) = 0;
+            evalOld(l, j, i) = arma::datum::nan;
           }
         }
 
@@ -568,7 +550,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         }
 
         // Update cache eval value.
-        evalOld(j, l, i) = eval;
+        evalOld(l, j, i) = eval;
 
         // Check bounding condition.
         if (eval <= -1)
@@ -668,19 +650,13 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         bool exactEval = true;
 
         // Bounds for eval.
-        if (!transformationOldPoint.slice(i).has_nan() && !std::isnan(evalOld(j, l, i)))
+        if (transformationOld.n_elem != 0 && !std::isnan(evalOld(l, j, i)))
         {
-          double maxNorm;
-          if (!std::isnan(maxImpNorm(l, i)))
-            maxNorm = std::max(norm(impostors(l, i)), maxImpNorm(l, i));
-          else
-            maxNorm = norm(impostors(l, i));
-
           // Update cache max impostor norm.
-          maxImpNorm(l, i) = maxNorm;
+          maxImpNorm(l, i) = std::max(maxImpNorm(l, i), norm(impostors(l, i)));
 
-          eval = evalOld(j, l, i) + transformationDiff *
-            (norm(targetNeighbors(j, i)) + maxNorm +
+          eval = evalOld(l, j, i) + transformationDiff *
+            (norm(targetNeighbors(j, i)) + maxImpNorm(l, i) +
             2 * norm(i));
 
           // Check if there is need to calculate exact eval value.
@@ -691,8 +667,8 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
           else
           {
             // Reset cacche max impostor norm.
-            maxImpNorm(l, i) = arma::datum::nan;
-            evalOld(j, l, i) = arma::datum::nan;
+            maxImpNorm(l, i) = 0;
+            evalOld(l, j, i) = arma::datum::nan;
           }
         }
 
@@ -715,7 +691,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         }
 
         // Update cache eval value.
-        evalOld(j, l, i) = eval;
+        evalOld(l, j, i) = eval;
 
         // Update cache transformation matrix.
         transformationOldPoint.slice(i) = transformation;
