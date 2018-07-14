@@ -226,9 +226,12 @@ class LMNNFunction
   arma::mat maxImpNorm;
   //! Holds previous transformation matrix. Used for L-BFGS like optimizer.
   arma::mat transformationOld;
-  //! Holds previous transformation matrix for each point. Used for
-  //! optimizers which operates over batches.
-  arma::cube transformationOldPoint;
+  //! Holds previous transformation matrices.
+  std::vector<arma::mat> oldTransformationMatrices;
+  //! Holds number of points which are using each transformation matrix.
+  std::vector<size_t> oldTransformationCounts;
+  //! Holds points to transformation matrix mapping.
+  arma::vec lastTransformationIndices;
   /**
   * Precalculate the gradient part due to target neighbors and stores
   * the result as a matrix. Used for L-BFGS like optimizers which does not
