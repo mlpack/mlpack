@@ -152,15 +152,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
 
           // Check if there is need to calculate exact eval value.
           if (eval <= -1)
-          {
             exactEval = false;
-          }
-          else
-          {
-            // Reset cacche max impostor norm.
-            maxImpNorm(l, i) = 0;
-            evalOld(l, j, i) = arma::datum::nan;
-          }
         }
 
         // Calculate exact eval value.
@@ -193,6 +185,14 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
         }
 
         cost += regularization * (1 + eval);
+
+        // Reset cache.
+        if (eval > -1)
+        {
+          // update bound.
+          evalOld(l, j, i) = arma::datum::nan;
+          maxImpNorm(l, i) = 0;
+        }
       }
     }
   }
@@ -303,7 +303,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
         {
           // update bound.
           evalOld(l, j, i) = arma::datum::nan;
-          maxImpNorm(l, i)=0;
+          maxImpNorm(l, i) = 0;
           lastTransformationIndices(i) = arma::datum::nan;
           --oldTransformationCounts[lastTransformationIndices(i)];
         }
@@ -352,6 +352,22 @@ template<typename GradType>
 void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
                                         GradType& gradient)
 {
+  // Apply metric over dataset.
+  transformedDataset = transformation * dataset;
+
+  // Calculate norm of change in transformation.
+  double transformationDiff = 0;
+  if (transformationOld.n_elem != 0)
+  {
+    transformationDiff = arma::norm(transformation - transformationOld);
+  }
+
+  if (iteration++ % range == 0)
+  {
+    // Re-calculate impostors on transformed dataset.
+    constraint.Impostors(impostors, distance, transformedDataset, labels);
+  }
+
   gradient.zeros(transformation.n_rows, transformation.n_cols);
 
   // Calculate gradient due to target neighbors.
@@ -367,18 +383,63 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
       // Bound constraints to avoid uneccesary computation.
       for (size_t l = 0, bp = k; l < bp ; l++)
       {
-        // Calculate gradient due to triplets.
-        double eval = metric.Evaluate(transformedDataset.col(i),
-                        transformedDataset.col(targetNeighbors(j, i))) -
-                    metric.Evaluate(transformedDataset.col(i),
-                        transformedDataset.col(impostors(l, i)));
+        // Calculate cost due to {data point, target neighbors, impostors}
+        // triplets.
+        double eval = 0;
+
+        // Flag to trigger exact eval calculation.
+        bool exactEval = true;
+
+        // Bounds for eval.
+        if (transformationOld.n_elem != 0 && !std::isnan(evalOld(l, j, i)))
+        {
+          // Update cache max impostor norm.
+          maxImpNorm(l, i) = std::max(maxImpNorm(l, i), norm(impostors(l, i)));
+
+          eval = evalOld(l, j, i) + transformationDiff *
+            (norm(targetNeighbors(j, i)) + maxImpNorm(l, i) +
+            2 * norm(i));
+
+          // Check if there is need to calculate exact eval value.
+          if (eval <= -1)
+            exactEval = false;
+        }
+
+        // Calculate exact eval value.
+        if(exactEval)
+        {
+          if (iteration - 1 % range == 0)
+          {
+            eval = metric.Evaluate(transformedDataset.col(i),
+                     transformedDataset.col(targetNeighbors(j, i))) -
+                 distance(l, i);
+          }
+          else
+          {
+            eval = metric.Evaluate(transformedDataset.col(i),
+                     transformedDataset.col(targetNeighbors(j, i))) -
+                   metric.Evaluate(transformedDataset.col(i),
+                       transformedDataset.col(impostors(l, i)));
+          }
+        }
+
+        // Update cache eval value.
+        evalOld(l, j, i) = eval;
 
         // Check bounding condition.
-        if (eval < -1)
+        if (eval <= -1)
         {
           // update bound.
           bp = l;
           break;
+        }
+
+        // Reset cache.
+        if (eval > -1)
+        {
+          // update bound.
+          evalOld(l, j, i) = arma::datum::nan;
+          maxImpNorm(l, i) = 0;
         }
 
         // Caculate gradient due to impostors.
@@ -393,6 +454,9 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
 
   gradient = 2 * transformation * ((1 - regularization) * cij +
       regularization * cil);
+
+  // Update cache transformation matrix.
+  transformationOld = transformation;
 }
 
 //! Compute gradient over a batch of data points.
@@ -403,6 +467,16 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
                                         GradType& gradient,
                                         const size_t batchSize)
 {
+  // Apply metric over dataset.
+  transformedDataset = transformation * dataset;
+
+  if (iteration++ % range == 0)
+  {
+    // Re-calculate impostors on transformed dataset.
+    constraint.Impostors(impostors, distance, transformedDataset, labels,
+        begin, batchSize);
+  }
+
   gradient.zeros(transformation.n_rows, transformation.n_cols);
 
   arma::mat cij = arma::zeros(dataset.n_rows, dataset.n_rows);
@@ -417,23 +491,77 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
       cij += diff * arma::trans(diff);
     }
 
+    // Calculate norm of change in transformation.
+    double transformationDiff = 0;
+    if (arma::is_finite(lastTransformationIndices(i)))
+    {
+      transformationDiff = arma::norm(transformation -
+          oldTransformationMatrices[lastTransformationIndices(i)]);
+    }
+
     for (int j = k - 1; j >= 0; j--)
     {
       // Bound constraints to avoid uneccesary computation.
       for (size_t l = 0, bp = k; l < bp ; l++)
       {
-        // Calculate gradient due to triplets.
-        double eval = metric.Evaluate(transformedDataset.col(i),
-                        transformedDataset.col(targetNeighbors(j, i))) -
-                    metric.Evaluate(transformedDataset.col(i),
-                        transformedDataset.col(impostors(l, i)));
+        // Calculate cost due to {data point, target neighbors, impostors}
+        // triplets.
+        double eval = 0;
+
+        // Flag to trigger exact eval calculation.
+        bool exactEval = true;
+
+        // Bounds for eval.
+        if (arma::is_finite(lastTransformationIndices(i)) && !std::isnan(evalOld(l, j, i)))
+        {
+          // Update cache max impostor norm.
+          maxImpNorm(l, i) = std::max(maxImpNorm(l, i), norm(impostors(l, i)));
+
+          eval = evalOld(l, j, i) + transformationDiff *
+            (norm(targetNeighbors(j, i)) + maxImpNorm(l, i) +
+            2 * norm(i));
+
+          if (eval <= -1)
+            exactEval = false;
+        }
+
+        // Calculate exact eval value.
+        if(exactEval)
+        {
+          if (iteration - 1 % range == 0)
+          {
+            eval = metric.Evaluate(transformedDataset.col(i),
+                     transformedDataset.col(targetNeighbors(j, i))) -
+                 distance(l, i);
+          }
+          else
+          {
+            eval = metric.Evaluate(transformedDataset.col(i),
+                     transformedDataset.col(targetNeighbors(j, i))) -
+                   metric.Evaluate(transformedDataset.col(i),
+                       transformedDataset.col(impostors(l, i)));
+          }
+        }
+
+        // Update cache eval value.
+        evalOld(l, j, i) = eval;
 
         // Check bounding condition.
-        if (eval < -1)
+        if (eval <= -1)
         {
           // update bound.
           bp = l;
           break;
+        }
+
+        // Reset cache.
+        if (eval > -1 && arma::is_finite(lastTransformationIndices(i)))
+        {
+          // update bound.
+          evalOld(l, j, i) = arma::datum::nan;
+          maxImpNorm(l, i) = 0;
+          lastTransformationIndices(i) = arma::datum::nan;
+          --oldTransformationCounts[lastTransformationIndices(i)];
         }
 
         // Caculate gradient due to impostors.
@@ -448,6 +576,38 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
 
   gradient = 2 * transformation * ((1 - regularization) * cij +
       regularization * cil);
+
+  // Update cache transformation matrices.
+  // Are there any empty transformation matrices?
+  size_t index = oldTransformationMatrices.size();
+  for (size_t i = 0; i < oldTransformationCounts.size(); ++i)
+  {
+    if (oldTransformationCounts[i] == 0)
+    {
+      index = i; // Reuse this index.
+      break;
+    }
+  }
+
+  // Did we find an unused matrix?  If not, we have to allocate new space.
+  if (index == oldTransformationMatrices.size())
+  {
+    oldTransformationMatrices.push_back(transformation);
+    oldTransformationCounts.push_back(0);
+  }
+  else
+  {
+    oldTransformationMatrices[index] = transformation;
+  }
+
+  // Update all the transformation indices.
+  for (size_t i = begin; i < begin + batchSize; ++i)
+  {
+    --oldTransformationCounts[lastTransformationIndices(i)];
+    lastTransformationIndices(i) = index;
+  }
+
+  oldTransformationCounts[index] += batchSize;
 }
 
 //! Compute cost & gradient over whole dataset.
@@ -517,15 +677,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
 
           // Check if there is need to calculate exact eval value.
           if (eval <= -1)
-          {
             exactEval = false;
-          }
-          else
-          {
-            // Reset cacche max impostor norm.
-            maxImpNorm(l, i) = 0;
-            evalOld(l, j, i) = arma::datum::nan;
-          }
         }
 
         // Calculate exact eval value.
@@ -558,6 +710,14 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         }
 
         cost += regularization * (1 + eval);
+
+        // Reset cache.
+        if (eval > -1)
+        {
+          // update bound.
+          evalOld(l, j, i) = arma::datum::nan;
+          maxImpNorm(l, i) = 0;
+        }
 
         // Caculate gradient due to impostors.
         arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
@@ -689,7 +849,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         {
           // update bound.
           evalOld(l, j, i) = arma::datum::nan;
-          maxImpNorm(l, i)=0;
+          maxImpNorm(l, i) = 0;
           lastTransformationIndices(i) = arma::datum::nan;
           --oldTransformationCounts[lastTransformationIndices(i)];
         }
