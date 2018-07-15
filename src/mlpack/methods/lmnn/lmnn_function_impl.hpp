@@ -43,13 +43,18 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
 
   // Initialize cache.
   evalOld.set_size(k, k, dataset.n_cols);
-  evalOld.fill(arma::datum::nan);
+  evalOld.zeros();
 
   maxImpNorm.set_size(k, dataset.n_cols);
-  maxImpNorm.fill(0);
+  maxImpNorm.zeros();
 
   lastTransformationIndices.set_size(dataset.n_cols);
-  lastTransformationIndices.fill(arma::datum::nan);
+  lastTransformationIndices.zeros();
+
+  // Reserve the first element of cache.
+  arma::mat emptyMat;
+  oldTransformationMatrices.push_back(emptyMat);
+  oldTransformationCounts.push_back(dataset.n_cols);
 
   // Initialize target neighbors & impostors.
   targetNeighbors = arma::Mat<size_t>(k, dataset.n_cols, arma::fill::zeros);
@@ -95,6 +100,88 @@ void LMNNFunction<MetricType>::Shuffle()
   constraint.TargetNeighbors(targetNeighbors, dataset, labels);
 }
 
+// Update cache transformation matrices.
+template<typename MetricType>
+inline void LMNNFunction<MetricType>::UpdateCache(
+                                          const arma::mat& transformation,
+                                          const size_t begin,
+                                          const size_t batchSize)
+{
+  // Are there any empty transformation matrices?
+  size_t index = oldTransformationMatrices.size();
+  for (size_t i = 1; i < oldTransformationCounts.size(); ++i)
+  {
+    if (oldTransformationCounts[i] == 0)
+    {
+      index = i; // Reuse this index.
+      break;
+    }
+  }
+
+  // Did we find an unused matrix?  If not, we have to allocate new space.
+  if (index == oldTransformationMatrices.size())
+  {
+    oldTransformationMatrices.push_back(transformation);
+    oldTransformationCounts.push_back(0);
+  }
+  else
+  {
+    oldTransformationMatrices[index] = transformation;
+  }
+
+  // Update all the transformation indices.
+  for (size_t i = begin; i < begin + batchSize; ++i)
+  {
+    --oldTransformationCounts[lastTransformationIndices(i)];
+    lastTransformationIndices(i) = index;
+  }
+
+  oldTransformationCounts[index] += batchSize;
+
+  #ifdef DEBUG
+    size_t total = 0;
+    for (size_t i = 1; i < oldTransformationCounts.size(); ++i)
+    {
+      std::ostringstream oss;
+      oss << "transformation counts for matrix " << i
+          << " invalid (" << oldTransformationCounts[i] << ")!";
+      Log::Assert(oldTransformationCounts[i] <= dataset.n_cols, oss.str());
+      total += oldTransformationCounts[i];
+    }
+
+    std::ostringstream oss;
+    oss << "total count for transformation matrices invalid (" << total
+        << ", " << "should be " << dataset.n_cols << "!";
+    if (begin + batchSize == dataset.n_cols)
+      Log::Assert(total == dataset.n_cols, oss.str());
+  #endif
+}
+
+// Calculate norm of change in transformation.
+template<typename MetricType>
+inline void LMNNFunction<MetricType>::TransDiff(
+                                std::map<size_t, double>& transformationDiffs,
+                                const arma::mat& transformation,
+                                const size_t begin,
+                                const size_t batchSize)
+{
+  for (size_t i = begin; i < begin + batchSize; ++i)
+  {
+    if (transformationDiffs.count(lastTransformationIndices[i]) == 0)
+    {
+      if (lastTransformationIndices[i] == 0)
+      {
+        transformationDiffs[0] = 0.0; // This won't be used anyway...
+      }
+      else
+      {
+        transformationDiffs[lastTransformationIndices[i]] = arma::norm(transformation -
+            oldTransformationMatrices[lastTransformationIndices(i)]);
+      }
+    }
+  }
+}
+
 //! Evaluate cost over whole dataset.
 template<typename MetricType>
 double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
@@ -137,26 +224,19 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
         // triplets.
         double eval = 0;
 
-        // Flag to trigger exact eval calculation.
-        bool exactEval = true;
-
         // Bounds for eval.
-        if (transformationOld.n_elem != 0 && !std::isnan(evalOld(l, j, i)))
+        if (transformationOld.n_elem != 0 && evalOld(l, j, i) < -1)
         {
           // Update cache max impostor norm.
           maxImpNorm(l, i) = std::max(maxImpNorm(l, i), norm(impostors(l, i)));
 
           eval = evalOld(l, j, i) + transformationDiff *
-            (norm(targetNeighbors(j, i)) + maxImpNorm(l, i) +
-            2 * norm(i));
-
-          // Check if there is need to calculate exact eval value.
-          if (eval <= -1)
-            exactEval = false;
+              (norm(targetNeighbors(j, i)) + maxImpNorm(l, i) +
+              2 * norm(i));
         }
 
         // Calculate exact eval value.
-        if(exactEval)
+        if (eval > -1)
         {
           if (iteration - 1 % range == 0)
           {
@@ -190,7 +270,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
         if (eval > -1)
         {
           // update bound.
-          evalOld(l, j, i) = arma::datum::nan;
+          evalOld(l, j, i) = 0;
           maxImpNorm(l, i) = 0;
         }
       }
@@ -201,7 +281,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
   transformationOld = transformation;
 
   return cost;
-};
+}
 
 //! Calculate cost over batches.
 template<typename MetricType>
@@ -210,6 +290,10 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
                                           const size_t batchSize)
 {
   double cost = 0;
+
+  // Calculate norm of change in transformation.
+  std::map<size_t, double> transformationDiffs;
+  TransDiff(transformationDiffs, transformation, begin, batchSize);
 
   // Apply metric over dataset.
   transformedDataset = transformation * dataset;
@@ -231,14 +315,6 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
       cost += (1 - regularization) * eval;
     }
 
-    // Calculate norm of change in transformation.
-    double transformationDiff = 0;
-    if (arma::is_finite(lastTransformationIndices(i)))
-    {
-      transformationDiff = arma::norm(transformation -
-          oldTransformationMatrices[lastTransformationIndices(i)]);
-    }
-
     for (int j = k - 1; j >= 0; j--)
     {
       // Bound constraints to avoid uneccesary computation. Here bp stands for
@@ -249,26 +325,19 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
         // triplets.
         double eval = 0;
 
-        // Flag to trigger exact eval calculation.
-        bool exactEval = true;
-
         // Bounds for eval.
-        if (arma::is_finite(lastTransformationIndices(i)) && !std::isnan(evalOld(l, j, i)))
+        if (lastTransformationIndices(i) && evalOld(l, j, i) < -1)
         {
           // Update cache max impostor norm.
           maxImpNorm(l, i) = std::max(maxImpNorm(l, i), norm(impostors(l, i)));
 
-          eval = evalOld(l, j, i) + transformationDiff *
-            (norm(targetNeighbors(j, i)) + maxImpNorm(l, i) +
-            2 * norm(i));
-
-          // Check if there is need to calculate exact eval value.
-          if (eval <= -1)
-            exactEval = false;
+          eval = evalOld(l, j, i) +
+              transformationDiffs[lastTransformationIndices[i]] *
+              (norm(targetNeighbors(j, i)) + maxImpNorm(l, i) + 2 * norm(i));
         }
 
         // Calculate exact eval value.
-        if(exactEval)
+        if (eval > -1)
         {
           if (iteration - 1 % range == 0)
           {
@@ -299,49 +368,20 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
         cost += regularization * (1 + eval);
 
         // Reset cache.
-        if (eval > -1 && arma::is_finite(lastTransformationIndices(i)))
+        if (eval > -1 && lastTransformationIndices(i))
         {
           // update bound.
-          evalOld(l, j, i) = arma::datum::nan;
+          evalOld(l, j, i) = 0;
           maxImpNorm(l, i) = 0;
-          lastTransformationIndices(i) = arma::datum::nan;
           --oldTransformationCounts[lastTransformationIndices(i)];
+          lastTransformationIndices(i) = 0;
         }
       }
     }
   }
 
-  // Update cache transformation matrices.
-  // Are there any empty transformation matrices?
-  size_t index = oldTransformationMatrices.size();
-  for (size_t i = 0; i < oldTransformationCounts.size(); ++i)
-  {
-    if (oldTransformationCounts[i] == 0)
-    {
-      index = i; // Reuse this index.
-      break;
-    }
-  }
-
-  // Did we find an unused matrix?  If not, we have to allocate new space.
-  if (index == oldTransformationMatrices.size())
-  {
-    oldTransformationMatrices.push_back(transformation);
-    oldTransformationCounts.push_back(0);
-  }
-  else
-  {
-    oldTransformationMatrices[index] = transformation;
-  }
-
-  // Update all the transformation indices.
-  for (size_t i = begin; i < begin + batchSize; ++i)
-  {
-    --oldTransformationCounts[lastTransformationIndices(i)];
-    lastTransformationIndices(i) = index;
-  }
-
-  oldTransformationCounts[index] += batchSize;
+  // Update cache.
+  UpdateCache(transformation, begin, batchSize);
 
   return cost;
 }
@@ -387,26 +427,19 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
         // triplets.
         double eval = 0;
 
-        // Flag to trigger exact eval calculation.
-        bool exactEval = true;
-
         // Bounds for eval.
-        if (transformationOld.n_elem != 0 && !std::isnan(evalOld(l, j, i)))
+        if (transformationOld.n_elem != 0 && evalOld(l, j, i) < -1)
         {
           // Update cache max impostor norm.
           maxImpNorm(l, i) = std::max(maxImpNorm(l, i), norm(impostors(l, i)));
 
           eval = evalOld(l, j, i) + transformationDiff *
-            (norm(targetNeighbors(j, i)) + maxImpNorm(l, i) +
-            2 * norm(i));
-
-          // Check if there is need to calculate exact eval value.
-          if (eval <= -1)
-            exactEval = false;
+              (norm(targetNeighbors(j, i)) + maxImpNorm(l, i) +
+              2 * norm(i));
         }
 
         // Calculate exact eval value.
-        if(exactEval)
+        if (eval > -1)
         {
           if (iteration - 1 % range == 0)
           {
@@ -438,7 +471,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
         if (eval > -1)
         {
           // update bound.
-          evalOld(l, j, i) = arma::datum::nan;
+          evalOld(l, j, i) = 0;
           maxImpNorm(l, i) = 0;
         }
 
@@ -470,6 +503,10 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
   // Apply metric over dataset.
   transformedDataset = transformation * dataset;
 
+  // Calculate norm of change in transformation.
+  std::map<size_t, double> transformationDiffs;
+  TransDiff(transformationDiffs, transformation, begin, batchSize);
+
   if (iteration++ % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
@@ -491,14 +528,6 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
       cij += diff * arma::trans(diff);
     }
 
-    // Calculate norm of change in transformation.
-    double transformationDiff = 0;
-    if (arma::is_finite(lastTransformationIndices(i)))
-    {
-      transformationDiff = arma::norm(transformation -
-          oldTransformationMatrices[lastTransformationIndices(i)]);
-    }
-
     for (int j = k - 1; j >= 0; j--)
     {
       // Bound constraints to avoid uneccesary computation.
@@ -508,25 +537,19 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
         // triplets.
         double eval = 0;
 
-        // Flag to trigger exact eval calculation.
-        bool exactEval = true;
-
         // Bounds for eval.
-        if (arma::is_finite(lastTransformationIndices(i)) && !std::isnan(evalOld(l, j, i)))
+        if (lastTransformationIndices(i) && evalOld(l, j, i) < -1)
         {
           // Update cache max impostor norm.
           maxImpNorm(l, i) = std::max(maxImpNorm(l, i), norm(impostors(l, i)));
 
-          eval = evalOld(l, j, i) + transformationDiff *
-            (norm(targetNeighbors(j, i)) + maxImpNorm(l, i) +
-            2 * norm(i));
-
-          if (eval <= -1)
-            exactEval = false;
+          eval = evalOld(l, j, i) +
+              transformationDiffs[lastTransformationIndices[i]] *
+              (norm(targetNeighbors(j, i)) + maxImpNorm(l, i) + 2 * norm(i));
         }
 
         // Calculate exact eval value.
-        if(exactEval)
+        if (eval > -1)
         {
           if (iteration - 1 % range == 0)
           {
@@ -555,13 +578,13 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
         }
 
         // Reset cache.
-        if (eval > -1 && arma::is_finite(lastTransformationIndices(i)))
+        if (eval > -1 && lastTransformationIndices(i))
         {
           // update bound.
-          evalOld(l, j, i) = arma::datum::nan;
+          evalOld(l, j, i) = 0;
           maxImpNorm(l, i) = 0;
-          lastTransformationIndices(i) = arma::datum::nan;
           --oldTransformationCounts[lastTransformationIndices(i)];
+          lastTransformationIndices(i) = 0;
         }
 
         // Caculate gradient due to impostors.
@@ -577,37 +600,8 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
   gradient = 2 * transformation * ((1 - regularization) * cij +
       regularization * cil);
 
-  // Update cache transformation matrices.
-  // Are there any empty transformation matrices?
-  size_t index = oldTransformationMatrices.size();
-  for (size_t i = 0; i < oldTransformationCounts.size(); ++i)
-  {
-    if (oldTransformationCounts[i] == 0)
-    {
-      index = i; // Reuse this index.
-      break;
-    }
-  }
-
-  // Did we find an unused matrix?  If not, we have to allocate new space.
-  if (index == oldTransformationMatrices.size())
-  {
-    oldTransformationMatrices.push_back(transformation);
-    oldTransformationCounts.push_back(0);
-  }
-  else
-  {
-    oldTransformationMatrices[index] = transformation;
-  }
-
-  // Update all the transformation indices.
-  for (size_t i = begin; i < begin + batchSize; ++i)
-  {
-    --oldTransformationCounts[lastTransformationIndices(i)];
-    lastTransformationIndices(i) = index;
-  }
-
-  oldTransformationCounts[index] += batchSize;
+  // Update cache.
+  UpdateCache(transformation, begin, batchSize);
 }
 
 //! Compute cost & gradient over whole dataset.
@@ -662,26 +656,19 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         // triplets.
         double eval = 0;
 
-        // Flag to trigger exact eval calculation.
-        bool exactEval = true;
-
         // Bounds for eval.
-        if (transformationOld.n_elem != 0 && !std::isnan(evalOld(l, j, i)))
+        if (transformationOld.n_elem != 0 && evalOld(l, j, i) < -1)
         {
           // Update cache max impostor norm.
           maxImpNorm(l, i) = std::max(maxImpNorm(l, i), norm(impostors(l, i)));
 
           eval = evalOld(l, j, i) + transformationDiff *
-            (norm(targetNeighbors(j, i)) + maxImpNorm(l, i) +
-            2 * norm(i));
-
-          // Check if there is need to calculate exact eval value.
-          if (eval <= -1)
-            exactEval = false;
+              (norm(targetNeighbors(j, i)) + maxImpNorm(l, i) +
+              2 * norm(i));
         }
 
         // Calculate exact eval value.
-        if(exactEval)
+        if (eval > -1)
         {
           if (iteration - 1 % range == 0)
           {
@@ -710,14 +697,6 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         }
 
         cost += regularization * (1 + eval);
-
-        // Reset cache.
-        if (eval > -1)
-        {
-          // update bound.
-          evalOld(l, j, i) = arma::datum::nan;
-          maxImpNorm(l, i) = 0;
-        }
 
         // Caculate gradient due to impostors.
         arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
@@ -749,6 +728,10 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
 {
   double cost = 0;
 
+  // Calculate norm of change in transformation.
+  std::map<size_t, double> transformationDiffs;
+  TransDiff(transformationDiffs, transformation, begin, batchSize);
+
   // Apply metric over dataset.
   transformedDataset = transformation * dataset;
 
@@ -778,14 +761,6 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
       cij += diff * arma::trans(diff);
     }
 
-    // Calculate norm of change in transformation.
-    double transformationDiff = 0;
-    if (arma::is_finite(lastTransformationIndices(i)))
-    {
-      transformationDiff = arma::norm(transformation -
-          oldTransformationMatrices[lastTransformationIndices(i)]);
-    }
-
     for (int j = k - 1; j >= 0; j--)
     {
       // Bound constraints to avoid uneccesary computation.
@@ -795,26 +770,19 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         // triplets.
         double eval = 0;
 
-        // Flag to trigger exact eval calculation.
-        bool exactEval = true;
-
         // Bounds for eval.
-        if (arma::is_finite(lastTransformationIndices(i)) && !std::isnan(evalOld(l, j, i)))
+        if (lastTransformationIndices(i) && evalOld(l, j, i) < -1)
         {
           // Update cache max impostor norm.
           maxImpNorm(l, i) = std::max(maxImpNorm(l, i), norm(impostors(l, i)));
 
-          eval = evalOld(l, j, i) + transformationDiff *
-            (norm(targetNeighbors(j, i)) + maxImpNorm(l, i) +
-            2 * norm(i));
-
-          // Check if there is need to calculate exact eval value.
-          if (eval <= -1)
-            exactEval = false;
+          eval = evalOld(l, j, i) +
+              transformationDiffs[lastTransformationIndices[i]] *
+              (norm(targetNeighbors(j, i)) + maxImpNorm(l, i) + 2 * norm(i));
         }
 
         // Calculate exact eval value.
-        if(exactEval)
+        if (eval > -1)
         {
           if (iteration - 1 % range == 0)
           {
@@ -844,16 +812,6 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
 
         cost += regularization * (1 + eval);
 
-        // Reset cache.
-        if (eval > -1 && arma::is_finite(lastTransformationIndices(i)))
-        {
-          // update bound.
-          evalOld(l, j, i) = arma::datum::nan;
-          maxImpNorm(l, i) = 0;
-          lastTransformationIndices(i) = arma::datum::nan;
-          --oldTransformationCounts[lastTransformationIndices(i)];
-        }
-
         // Caculate gradient due to impostors.
         arma::vec diff = dataset.col(i) - dataset.col(targetNeighbors(j, i));
         cil += diff * arma::trans(diff);
@@ -867,38 +825,8 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   gradient = 2 * transformation * ((1 - regularization) * cij +
       regularization * cil);
 
-  // Update cache transformation matrices.
-  // Are there any empty transformation matrices?
-  size_t index = oldTransformationMatrices.size();
-  for (size_t i = 0; i < oldTransformationCounts.size(); ++i)
-  {
-    if (oldTransformationCounts[i] == 0)
-    {
-      index = i; // Reuse this index.
-      break;
-    }
-  }
-
-  // Did we find an unused matrix?  If not, we have to allocate new space.
-  if (index == oldTransformationMatrices.size())
-  {
-    oldTransformationMatrices.push_back(transformation);
-    oldTransformationCounts.push_back(0);
-  }
-  else
-  {
-    oldTransformationMatrices[index] = transformation;
-  }
-
-  // Update all the transformation indices.
-  for (size_t i = begin; i < begin + batchSize; ++i)
-  {
-    --oldTransformationCounts[lastTransformationIndices(i)];
-    lastTransformationIndices(i) = index;
-  }
-
-  oldTransformationCounts[index] += batchSize;
-
+  // Update cache.
+  UpdateCache(transformation, begin, batchSize);
 
   return cost;
 }

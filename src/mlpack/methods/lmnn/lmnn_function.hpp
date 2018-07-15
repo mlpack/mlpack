@@ -238,6 +238,15 @@ class LMNNFunction
   * uses batches.
   */
   inline void Precalculate();
+  //! Update cache transformation matrices.
+  inline void UpdateCache(const arma::mat& transformation,
+                          const size_t begin,
+                          const size_t batchSize);
+  //! Calculate norm of change in transformation.
+  inline void TransDiff(std::map<size_t, double>& transformationDiffs,
+                        const arma::mat& transformation,
+                        const size_t begin,
+                        const size_t batchSize);
 };
 
 } // namespace lmnn
