@@ -227,11 +227,33 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
-void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
-    const arma::mat& parameters,
-    const size_t begin,
-    arma::mat& gradient,
-    const size_t batchSize)
+double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
+    const arma::mat& parameters, const size_t begin, const size_t batchSize)
+{
+  return Evaluate(parameters, begin, batchSize, true);
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+template<typename GradType>
+double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::
+EvaluateWithGradient(const arma::mat& parameters, GradType& gradient)
+{
+  double res = 0;
+  for (size_t i = 0; i < predictors.n_cols; ++i)
+    res += EvaluateWithGradient(parameters, i, gradient, 1);
+
+  return res;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+template<typename GradType>
+double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::
+EvaluateWithGradient(const arma::mat& /* parameters */,
+                     const size_t begin,
+                     GradType& gradient,
+                     const size_t batchSize)
 {
   if (gradient.is_empty())
   {
@@ -245,7 +267,21 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
     gradient.zeros();
   }
 
-  Evaluate(parameters, begin, batchSize, false);
+  if (this->deterministic)
+  {
+    this->deterministic = false;
+    ResetDeterministic();
+  }
+
+  Forward(std::move(predictors.cols(begin, begin + batchSize - 1)));
+  double res = outputLayer.Forward(
+      std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
+      std::move(responses.cols(begin, begin + batchSize - 1)));
+
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    res += boost::apply_visitor(lossVisitor, network[i]);
+  }
 
   outputLayer.Backward(
       std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
@@ -255,6 +291,19 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
   Backward();
   ResetGradients(gradient);
   Gradient(std::move(predictors.cols(begin, begin + batchSize - 1)));
+
+  return res;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
+    const arma::mat& parameters,
+    const size_t begin,
+    arma::mat& gradient,
+    const size_t batchSize)
+{
+  this->EvaluateWithGradient(parameters, begin, gradient, batchSize);
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
