@@ -24,6 +24,25 @@ using namespace mlpack::kernel;
 
 BOOST_AUTO_TEST_SUITE(KDETest);
 
+// Brute force gaussian KDE
+void BruteForceGaussianKDE(const arma::mat& reference,
+                           const arma::mat& query,
+                           arma::vec& densities,
+                           const double bandwidth)
+{
+  metric::EuclideanDistance metric;
+  kernel::GaussianKernel kernel(bandwidth);
+  for (size_t i = 0; i < query.n_cols; ++i)
+  {
+    for (size_t j = 0; j < reference.n_cols; ++j)
+    {
+      double distance = metric.Evaluate(query.col(i),reference.col(j));
+      densities(i) += kernel.Evaluate(distance);
+    }
+  }
+  densities /= reference.n_cols;
+}
+
 /**
  * Test if simple case is correct.
  */
