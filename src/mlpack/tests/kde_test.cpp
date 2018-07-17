@@ -234,4 +234,35 @@ BOOST_AUTO_TEST_CASE(DuplicatedReferenceSampleKDETest)
     BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
 }
 
+/**
+ * Test duplicated value in query matrix.
+ */
+BOOST_AUTO_TEST_CASE(DuplicatedQuerySampleKDETest)
+{
+  arma::mat reference = arma::randu(2, 30);
+  arma::mat query = arma::randu(2, 10);
+  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
+  const double kernelBandwidth = 0.4;
+  const double relError = 1e-5;
+
+  // Duplicate value
+  query.col(2) = query.col(3);
+
+  // Dual-tree KDE
+  typedef KDTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
+  std::vector<size_t> oldFromNewQueries;
+  Tree queryTree(query, oldFromNewQueries, 2);
+  Tree referenceTree(reference, 2);
+  KDE<EuclideanDistance,
+      arma::mat,
+      GaussianKernel,
+      KDTree>
+  kde(kernelBandwidth, relError, 0.0, false);
+  kde.Train(referenceTree);
+  kde.Evaluate(queryTree, oldFromNewQueries, estimations);
+
+  // Check wether results are equal.
+  BOOST_REQUIRE_CLOSE(estimations[2], estimations[3], relError);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
