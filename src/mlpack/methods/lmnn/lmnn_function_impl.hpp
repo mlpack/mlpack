@@ -193,7 +193,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
 
   // Calculate norm of change in transformation.
   double transformationDiff = 0;
-  if (transformationOld.n_elem != 0)
+  if (!transformationOld.is_empty())
   {
     transformationDiff = arma::norm(transformation - transformationOld);
   }
@@ -225,7 +225,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
         double eval = 0;
 
         // Bounds for eval.
-        if (transformationOld.n_elem != 0 && evalOld(l, j, i) < -1)
+        if (!transformationOld.is_empty() && evalOld(l, j, i) < -1)
         {
           // Update cache max impostor norm.
           maxImpNorm(l, i) = std::max(maxImpNorm(l, i), norm(impostors(l, i)));
@@ -397,7 +397,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
 
   // Calculate norm of change in transformation.
   double transformationDiff = 0;
-  if (transformationOld.n_elem != 0)
+  if (!transformationOld.is_empty())
   {
     transformationDiff = arma::norm(transformation - transformationOld);
   }
@@ -428,7 +428,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
         double eval = 0;
 
         // Bounds for eval.
-        if (transformationOld.n_elem != 0 && evalOld(l, j, i) < -1)
+        if (!transformationOld.is_empty() && evalOld(l, j, i) < -1)
         {
           // Update cache max impostor norm.
           maxImpNorm(l, i) = std::max(maxImpNorm(l, i), norm(impostors(l, i)));
@@ -618,7 +618,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
 
   // Calculate norm of change in transformation.
   double transformationDiff = 0;
-  if (transformationOld.n_elem != 0)
+  if (!transformationOld.is_empty())
   {
     transformationDiff = arma::norm(transformation - transformationOld);
   }
@@ -657,7 +657,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
         double eval = 0;
 
         // Bounds for eval.
-        if (transformationOld.n_elem != 0 && evalOld(l, j, i) < -1)
+        if (!transformationOld.is_empty() && evalOld(l, j, i) < -1)
         {
           // Update cache max impostor norm.
           maxImpNorm(l, i) = std::max(maxImpNorm(l, i), norm(impostors(l, i)));
