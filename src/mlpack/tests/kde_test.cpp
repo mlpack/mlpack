@@ -110,8 +110,8 @@ BOOST_AUTO_TEST_CASE(KDETreeAsArguments)
   // Get dual-tree results.
   typedef KDTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
-  Tree queryTree = Tree(query, oldFromNewQueries, 2);
-  Tree referenceTree = Tree(reference, 2);
+  Tree queryTree(query, oldFromNewQueries, 2);
+  Tree referenceTree(reference, 2);
   KDE<EuclideanDistance,
       arma::mat,
       GaussianKernel,
@@ -128,7 +128,6 @@ BOOST_AUTO_TEST_CASE(KDETreeAsArguments)
  */
 BOOST_AUTO_TEST_CASE(GaussianKDEBruteForceTest)
 {
-  // Transposed reference and query sets because it's easier to read.
   arma::mat reference = arma::randu(2, 200);
   arma::mat query = arma::randu(2, 60);
   arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
@@ -145,7 +144,6 @@ BOOST_AUTO_TEST_CASE(GaussianKDEBruteForceTest)
 
   // Optimized KDE
   metric::EuclideanDistance metric;
-  kernel = GaussianKernel(kernelBandwidth);
   KDE<metric::EuclideanDistance,
       arma::mat,
       kernel::GaussianKernel,
@@ -164,7 +162,6 @@ BOOST_AUTO_TEST_CASE(GaussianKDEBruteForceTest)
  */
 BOOST_AUTO_TEST_CASE(BallTreeGaussianKDETest)
 {
-  // Transposed reference and query sets because it's easier to read.
   arma::mat reference = arma::randu(2, 200);
   arma::mat query = arma::randu(2, 60);
   arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
@@ -182,12 +179,52 @@ BOOST_AUTO_TEST_CASE(BallTreeGaussianKDETest)
   // BallTree KDE
   typedef BallTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
-  Tree queryTree = Tree(query, oldFromNewQueries, 2);
-  Tree referenceTree = Tree(reference, 2);
+  Tree queryTree(query, oldFromNewQueries, 2);
+  Tree referenceTree(reference, 2);
   KDE<EuclideanDistance,
       arma::mat,
       GaussianKernel,
       BallTree>
+  kde(kernelBandwidth, relError, 0.0, false);
+  kde.Train(referenceTree);
+  kde.Evaluate(queryTree, oldFromNewQueries, treeEstimations);
+
+  // Check wether results are equal.
+  for (size_t i = 0; i < query.n_cols; ++i)
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
+}
+
+/**
+ * Test duplicated value in reference matrix.
+ */
+BOOST_AUTO_TEST_CASE(DuplicatedReferenceSampleKDETest)
+{
+  arma::mat reference = arma::randu(2, 30);
+  arma::mat query = arma::randu(2, 10);
+  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  const double kernelBandwidth = 0.4;
+  const double relError = 1e-5;
+
+  // Duplicate value
+  reference.col(2) = reference.col(3);
+
+  // Brute force KDE
+  GaussianKernel kernel(kernelBandwidth);
+  BruteForceKDE<GaussianKernel>(reference,
+                                query,
+                                bfEstimations,
+                                kernel);
+
+  // Dual-tree KDE
+  typedef KDTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
+  std::vector<size_t> oldFromNewQueries;
+  Tree queryTree(query, oldFromNewQueries, 2);
+  Tree referenceTree(reference, 2);
+  KDE<EuclideanDistance,
+      arma::mat,
+      GaussianKernel,
+      KDTree>
   kde(kernelBandwidth, relError, 0.0, false);
   kde.Train(referenceTree);
   kde.Evaluate(queryTree, oldFromNewQueries, treeEstimations);
