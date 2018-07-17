@@ -25,13 +25,13 @@ using namespace mlpack::kernel;
 BOOST_AUTO_TEST_SUITE(KDETest);
 
 // Brute force gaussian KDE
-void BruteForceGaussianKDE(const arma::mat& reference,
-                           const arma::mat& query,
-                           arma::vec& densities,
-                           const double bandwidth)
+template <typename T>
+void BruteForceKDE(const arma::mat& reference,
+                   const arma::mat& query,
+                   arma::vec& densities,
+                   T& kernel)
 {
   metric::EuclideanDistance metric;
-  kernel::GaussianKernel kernel(bandwidth);
   for (size_t i = 0; i < query.n_cols; ++i)
   {
     for (size_t j = 0; j < reference.n_cols; ++j)
@@ -101,7 +101,11 @@ BOOST_AUTO_TEST_CASE(KDETreeAsArguments)
   const double kernelBandwidth = 0.8;
 
   // Get brute force results.
-  BruteForceGaussianKDE(reference, query, estimationsResult, kernelBandwidth);
+  GaussianKernel kernel(kernelBandwidth);
+  BruteForceKDE<GaussianKernel>(reference,
+                                query,
+                                estimationsResult,
+                                kernel);
 
   // Get dual-tree results.
   typedef KDTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
@@ -133,11 +137,15 @@ BOOST_AUTO_TEST_CASE(GaussianKDEBruteForceTest)
   const double relError = 1e-8;
 
   // Brute force KDE
-  BruteForceGaussianKDE(reference, query, bfEstimations, kernelBandwidth);
+  GaussianKernel kernel(kernelBandwidth);
+  BruteForceKDE<GaussianKernel>(reference,
+                                query,
+                                bfEstimations,
+                                kernel);
 
   // Optimized KDE
   metric::EuclideanDistance metric;
-  kernel::GaussianKernel kernel(kernelBandwidth);
+  kernel = GaussianKernel(kernelBandwidth);
   KDE<metric::EuclideanDistance,
       arma::mat,
       kernel::GaussianKernel,
