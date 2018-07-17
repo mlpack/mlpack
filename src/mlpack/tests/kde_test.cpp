@@ -265,4 +265,39 @@ BOOST_AUTO_TEST_CASE(DuplicatedQuerySampleKDETest)
   BOOST_REQUIRE_CLOSE(estimations[2], estimations[3], relError);
 }
 
+/**
+ * Test dual-tree breadth-first implementation results against brute force
+ * results.
+ */
+BOOST_AUTO_TEST_CASE(BreadthFirstKDETest)
+{
+  arma::mat reference = arma::randu(2, 200);
+  arma::mat query = arma::randu(2, 60);
+  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  const double kernelBandwidth = 0.8;
+  const double relError = 1e-8;
+
+  // Brute force KDE
+  GaussianKernel kernel(kernelBandwidth);
+  BruteForceKDE<GaussianKernel>(reference,
+                                query,
+                                bfEstimations,
+                                kernel);
+
+  // Breadth-First KDE
+  metric::EuclideanDistance metric;
+  KDE<metric::EuclideanDistance,
+      arma::mat,
+      kernel::GaussianKernel,
+      tree::KDTree>
+    kde(metric, kernel, relError, 0.0, true);
+  kde.Train(reference);
+  kde.Evaluate(query, treeEstimations);
+
+  // Check wether results are equal.
+  for (size_t i = 0; i < query.n_cols; ++i)
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
