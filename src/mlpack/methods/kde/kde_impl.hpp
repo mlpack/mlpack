@@ -204,6 +204,10 @@ template<typename MetricType,
 void KDE<MetricType, MatType, KernelType, TreeType>::
 Train(const MatType& referenceSet)
 {
+  // Check if referenceSet is not an empty set.
+  if (referenceSet.n_cols == 0)
+    throw std::invalid_argument("cannot train KDE model with an empty "
+                                "reference set");
   this->ownsReferenceTree = true;
   this->referenceTree = new Tree(referenceSet);
   this->trained = true;
@@ -218,6 +222,10 @@ template<typename MetricType,
 void KDE<MetricType, MatType, KernelType, TreeType>::
 Train(Tree& referenceTree)
 {
+  // Check if referenceTree dataset is not an empty set.
+  if (referenceTree.Dataset().n_cols == 0)
+    throw std::invalid_argument("cannot train KDE model with an empty "
+                                "reference set");
   if (this->ownsReferenceTree == true)
     delete this->referenceTree;
   this->ownsReferenceTree = false;
