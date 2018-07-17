@@ -159,4 +159,42 @@ BOOST_AUTO_TEST_CASE(GaussianKDEBruteForceTest)
     BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
 }
 
+/**
+ * Test BallTree dual-tree implementation results against brute force results.
+ */
+BOOST_AUTO_TEST_CASE(BallTreeGaussianKDETest)
+{
+  // Transposed reference and query sets because it's easier to read.
+  arma::mat reference = arma::randu(2, 200);
+  arma::mat query = arma::randu(2, 60);
+  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  const double kernelBandwidth = 0.4;
+  const double relError = 1e-5;
+
+  // Brute force KDE
+  GaussianKernel kernel(kernelBandwidth);
+  BruteForceKDE<GaussianKernel>(reference,
+                                query,
+                                bfEstimations,
+                                kernel);
+
+  // BallTree KDE
+  typedef BallTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
+  std::vector<size_t> oldFromNewQueries;
+  Tree queryTree = Tree(query, oldFromNewQueries, 2);
+  Tree referenceTree = Tree(reference, 2);
+  KDE<EuclideanDistance,
+      arma::mat,
+      GaussianKernel,
+      BallTree>
+  kde(kernelBandwidth, relError, 0.0, false);
+  kde.Train(referenceTree);
+  kde.Evaluate(queryTree, oldFromNewQueries, treeEstimations);
+
+  // Check wether results are equal.
+  for (size_t i = 0; i < query.n_cols; ++i)
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
