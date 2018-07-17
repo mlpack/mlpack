@@ -334,4 +334,30 @@ BOOST_AUTO_TEST_CASE(OneDimensionalTest)
     BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
 }
 
+BOOST_AUTO_TEST_CASE(EmptyReferenceTest)
+{
+  arma::mat reference;
+  arma::mat query = arma::randu(1, 10);
+  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
+  const double kernelBandwidth = 0.7;
+  const double relError = 1e-8;
+
+  // KDE
+  metric::EuclideanDistance metric;
+  GaussianKernel kernel(kernelBandwidth);
+  KDE<metric::EuclideanDistance,
+      arma::mat,
+      kernel::GaussianKernel,
+      tree::KDTree>
+    kde(metric, kernel, relError, 0.0, false);
+
+  // When training using the dataset matrix
+  BOOST_CHECK_THROW(kde.Train(reference), std::invalid_argument);
+
+  // When training using a tree
+  typedef KDTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
+  Tree referenceTree(reference, 2);
+  BOOST_CHECK_THROW(kde.Train(referenceTree), std::invalid_argument);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
