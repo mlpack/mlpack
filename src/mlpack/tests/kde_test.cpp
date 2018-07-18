@@ -334,6 +334,9 @@ BOOST_AUTO_TEST_CASE(OneDimensionalTest)
     BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
 }
 
+/**
+ * Test a case where an empty reference set is given to train the model.
+ */
 BOOST_AUTO_TEST_CASE(EmptyReferenceTest)
 {
   arma::mat reference;
@@ -352,14 +355,17 @@ BOOST_AUTO_TEST_CASE(EmptyReferenceTest)
     kde(metric, kernel, relError, 0.0, false);
 
   // When training using the dataset matrix
-  BOOST_CHECK_THROW(kde.Train(reference), std::invalid_argument);
+  BOOST_REQUIRE_THROW(kde.Train(reference), std::invalid_argument);
 
   // When training using a tree
   typedef KDTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
   Tree referenceTree(reference, 2);
-  BOOST_CHECK_THROW(kde.Train(referenceTree), std::invalid_argument);
+  BOOST_REQUIRE_THROW(kde.Train(referenceTree), std::invalid_argument);
 }
 
+/**
+ * Tests when reference set values and query set values dimensions don't match.
+ */
 BOOST_AUTO_TEST_CASE(EvaluationMatchDimensionsTest)
 {
   arma::mat reference = arma::randu(3, 10);
@@ -379,15 +385,47 @@ BOOST_AUTO_TEST_CASE(EvaluationMatchDimensionsTest)
   kde.Train(reference);
 
   // When evaluating using the query dataset matrix
-  BOOST_CHECK_THROW(kde.Evaluate(query, estimations),
+  BOOST_REQUIRE_THROW(kde.Evaluate(query, estimations),
                     std::invalid_argument);
 
   // When evaluating using a query tree
   typedef KDTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
   Tree queryTree(query, oldFromNewQueries, 3);
-  BOOST_CHECK_THROW(kde.Evaluate(queryTree, oldFromNewQueries, estimations),
+  BOOST_REQUIRE_THROW(kde.Evaluate(queryTree, oldFromNewQueries, estimations),
                     std::invalid_argument);
+}
+
+/**
+ * Tests when an empty query set is given to be evaluated.
+ */
+BOOST_AUTO_TEST_CASE(EmptyQuerySetTest)
+{
+  arma::mat reference = arma::randu(1, 10);
+  arma::mat query;
+  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
+  const double kernelBandwidth = 0.7;
+  const double relError = 1e-8;
+
+  // KDE
+  metric::EuclideanDistance metric;
+  GaussianKernel kernel(kernelBandwidth);
+  KDE<metric::EuclideanDistance,
+      arma::mat,
+      kernel::GaussianKernel,
+      tree::KDTree>
+    kde(metric, kernel, relError, 0.0, false);
+  kde.Train(reference);
+
+  // When evaluating using the query dataset matrix
+  BOOST_REQUIRE_NO_THROW(kde.Evaluate(query, estimations));
+
+  // When evaluating using a query tree
+  typedef KDTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
+  std::vector<size_t> oldFromNewQueries;
+  Tree queryTree(query, oldFromNewQueries, 3);
+  BOOST_REQUIRE_NO_THROW(
+    kde.Evaluate(queryTree, oldFromNewQueries, estimations));
 }
 
 BOOST_AUTO_TEST_SUITE_END();
