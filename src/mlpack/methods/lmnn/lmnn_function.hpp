@@ -63,6 +63,7 @@ class LMNNFunction
                size_t range,
                MetricType metric = MetricType());
 
+
   /**
    * Shuffle the points in the dataset. This may be used by optimizers.
    */
@@ -217,12 +218,35 @@ class LMNNFunction
   Constraints<MetricType> constraint;
   //! Holds pre-calculated cij.
   arma::mat pCij;
+  //! Holds the norm of each data point.
+  arma::vec norm;
+  //! Hold previous eval values for each datapoint.
+  arma::cube evalOld;
+  //! Hold previous maximum norm of impostor.
+  arma::mat maxImpNorm;
+  //! Holds previous transformation matrix. Used for L-BFGS like optimizer.
+  arma::mat transformationOld;
+  //! Holds previous transformation matrices.
+  std::vector<arma::mat> oldTransformationMatrices;
+  //! Holds number of points which are using each transformation matrix.
+  std::vector<size_t> oldTransformationCounts;
+  //! Holds points to transformation matrix mapping.
+  arma::vec lastTransformationIndices;
   /**
   * Precalculate the gradient part due to target neighbors and stores
   * the result as a matrix. Used for L-BFGS like optimizers which does not
   * uses batches.
   */
   inline void Precalculate();
+  //! Update cache transformation matrices.
+  inline void UpdateCache(const arma::mat& transformation,
+                          const size_t begin,
+                          const size_t batchSize);
+  //! Calculate norm of change in transformation.
+  inline void TransDiff(std::map<size_t, double>& transformationDiffs,
+                        const arma::mat& transformation,
+                        const size_t begin,
+                        const size_t batchSize);
 };
 
 } // namespace lmnn
