@@ -360,4 +360,34 @@ BOOST_AUTO_TEST_CASE(EmptyReferenceTest)
   BOOST_CHECK_THROW(kde.Train(referenceTree), std::invalid_argument);
 }
 
+BOOST_AUTO_TEST_CASE(EvaluationMatchDimensionsTest)
+{
+  arma::mat reference = arma::randu(3, 10);
+  arma::mat query = arma::randu(1, 10);
+  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
+  const double kernelBandwidth = 0.7;
+  const double relError = 1e-8;
+
+  // KDE
+  metric::EuclideanDistance metric;
+  GaussianKernel kernel(kernelBandwidth);
+  KDE<metric::EuclideanDistance,
+      arma::mat,
+      kernel::GaussianKernel,
+      tree::KDTree>
+    kde(metric, kernel, relError, 0.0, false);
+  kde.Train(reference);
+
+  // When evaluating using the query dataset matrix
+  BOOST_CHECK_THROW(kde.Evaluate(query, estimations),
+                    std::invalid_argument);
+
+  // When evaluating using a query tree
+  typedef KDTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
+  std::vector<size_t> oldFromNewQueries;
+  Tree queryTree(query, oldFromNewQueries, 3);
+  BOOST_CHECK_THROW(kde.Evaluate(queryTree, oldFromNewQueries, estimations),
+                    std::invalid_argument);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
