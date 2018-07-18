@@ -242,6 +242,12 @@ template<typename MetricType,
 void KDE<MetricType, MatType, KernelType, TreeType>::
 Evaluate(const MatType& querySet, arma::vec& estimations)
 {
+  // Check querySet has at least 1 element to evaluate.
+  if (querySet.n_cols == 0)
+  {
+    Log::Warn << "querySet is empty" << std::endl;
+    return;
+  }
   // Check whether dimensions match.
   if (querySet.n_rows != referenceTree->Dataset().n_rows)
     throw std::invalid_argument("cannot train KDE model: querySet and "
@@ -316,6 +322,12 @@ Evaluate(Tree& queryTree,
          const std::vector<size_t>& oldFromNewQueries,
          arma::vec& estimations)
 {
+  // Check querySet has at least 1 element to evaluate.
+  if (queryTree.Dataset().n_cols == 0)
+  {
+    Log::Warn << "querySet is empty" << std::endl;
+    return;
+  }
   // Check whether dimensions match.
   if (queryTree.Dataset().n_rows != referenceTree->Dataset().n_rows)
     throw std::invalid_argument("cannot train KDE model: querySet and "
