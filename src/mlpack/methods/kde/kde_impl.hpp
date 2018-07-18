@@ -242,6 +242,12 @@ template<typename MetricType,
 void KDE<MetricType, MatType, KernelType, TreeType>::
 Evaluate(const MatType& querySet, arma::vec& estimations)
 {
+  // Check whether dimensions match.
+  if (querySet.n_rows != referenceTree->Dataset().n_rows)
+    throw std::invalid_argument("cannot train KDE model: querySet and "
+                                "referenceSet dimensions don't match");
+
+  // Evaluate
   std::vector<size_t> oldFromNewQueries;
   Tree* queryTree = BuildTree<Tree>(querySet, oldFromNewQueries);
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
@@ -310,6 +316,12 @@ Evaluate(Tree& queryTree,
          const std::vector<size_t>& oldFromNewQueries,
          arma::vec& estimations)
 {
+  // Check whether dimensions match.
+  if (queryTree.Dataset().n_rows != referenceTree->Dataset().n_rows)
+    throw std::invalid_argument("cannot train KDE model: querySet and "
+                                "referenceSet dimensions don't match");
+
+  // Evaluate
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
   RuleType rules = RuleType(referenceTree->Dataset(),
                             queryTree.Dataset(),
