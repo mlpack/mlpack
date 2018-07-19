@@ -620,4 +620,51 @@ BOOST_AUTO_TEST_CASE(CustomLayerTest)
   arma::mat prediction = arma::zeros<arma::mat>(1, predictionTemp.n_cols);
 }
 
+/**
+ * Test the overload of Forward function which allows partial forward pass.
+ */
+BOOST_AUTO_TEST_CASE(PartialForwardTest)
+{
+  FFN<NegativeLogLikelihood<>, RandomInitialization> model;
+  model.Add<Linear<> >(5, 10);
+
+  // Add a new Add<> module which adds a constant term to the input.
+  Add<>* AddModule = new Add<>(10);
+  model.Add(AddModule);
+
+  LinearNoBias<>* LinearNoBiasModule = new LinearNoBias<>(10, 10);
+  model.Add(LinearNoBiasModule);
+
+  model.Add<Linear<> >(10, 10);
+
+  model.ResetParameters();
+  // Set the parameters of the Add<> module to a matrix of ones.
+  AddModule->Parameters() = arma::ones(10, 1);
+  // Set the parameters of the LinearNoBias<> module to a matrix of ones.
+  LinearNoBiasModule->Parameters() = arma::ones(10, 10);
+
+  arma::mat input = arma::ones(10, 1);
+  arma::mat output;
+
+  // Forward pass only through the Add module.
+  model.Forward(input,
+                output,
+                1 /* Index of the Add module */,
+                1 /* Index of the Add module */);
+
+  // As we only forward pass through Add module, input and output should
+  // differ by a matrix of ones.
+  CheckMatrices(input, output - 1);
+
+  // Forward pass only through the Add module and the LinearNoBias module.
+  model.Forward(input,
+                output,
+                1 /* Index of the Add module */,
+                2 /* Index of the LinearNoBias module */);
+
+  // As we only forward pass through Add module followed by the LinearNoBias
+  // module, output should be a matrix of 20s.(output = weight * input)
+  CheckMatrices(output, arma::ones(10, 1) * 20);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
