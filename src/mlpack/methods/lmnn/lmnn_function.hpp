@@ -232,6 +232,8 @@ class LMNNFunction
   std::vector<size_t> oldTransformationCounts;
   //! Holds points to transformation matrix mapping.
   arma::vec lastTransformationIndices;
+  //! Flag for controlling use of bounds over impostors.
+  bool impBounds;
   /**
   * Precalculate the gradient part due to target neighbors and stores
   * the result as a matrix. Used for L-BFGS like optimizers which does not

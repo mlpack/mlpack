@@ -165,6 +165,8 @@ class Constraints
 
   //! Get the number of target neighbors (k).
   const size_t& K() const { return k; }
+  //! Modify the number of target neighbors (k).
+  size_t& K() { return k; }
 
   //! Access the boolean value of precalculated.
   const bool& PreCalulated() const { return precalculated; }
@@ -173,7 +175,7 @@ class Constraints
 
  private:
   //! Number of target neighbors & impostors to calulate.
-  const size_t k;
+  size_t k;
 
   //! Store unique labels.
   arma::Row<size_t> uniqueLabels;
