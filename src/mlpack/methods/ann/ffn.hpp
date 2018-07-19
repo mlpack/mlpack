@@ -146,8 +146,8 @@ class FFN
 
    /**
    * Evaluate the feedforward network with the given parameters, but using only
-   * one data point. This is useful for optimizers such as SGD, which require a
-   * separable objective function.
+   * a number of data points. This is useful for optimizers such as SGD, which
+   * require a separable objective function.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
@@ -164,9 +164,9 @@ class FFN
 
    /**
    * Evaluate the feedforward network with the given parameters, but using only
-   * one data point. This is useful for optimizers such as SGD, which require a
-   * separable objective function.  This just calls the overload of Evaluate()
-   * with deterministic = true.
+   * a number of data points. This is useful for optimizers such as SGD, which
+   * require a separable objective function. This just calls the overload of
+   * Evaluate() with deterministic = true.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
@@ -176,15 +176,41 @@ class FFN
    */
   double Evaluate(const arma::mat& parameters,
                   const size_t begin,
-                  const size_t batchSize)
-  {
-    return Evaluate(parameters, begin, batchSize, true);
-  }
+                  const size_t batchSize);
+
+  /**
+   * Evaluate the feedforward network with the given parameters.
+   * This function is usually called by the optimizer to train the model.
+   *
+   * @param parameters Matrix model parameters.
+   * @param gradient Matrix to output gradient into.
+   */
+  template<typename GradType>
+  double EvaluateWithGradient(const arma::mat& parameters, GradType& gradient);
+
+   /**
+   * Evaluate the feedforward network with the given parameters, but using only
+   * a number of data points. This is useful for optimizers such as SGD, which
+   * require a separable objective function.  This just calls the overload of
+   * Evaluate() with deterministic = true.
+   *
+   * @param parameters Matrix model parameters.
+   * @param begin Index of the starting point to use for objective function
+   *        evaluation.
+   * @param gradient Matrix to output gradient into.
+   * @param batchSize Number of points to be passed at a time to use for
+   *        objective function evaluation.
+   */
+  template<typename GradType>
+  double EvaluateWithGradient(const arma::mat& parameters,
+                              const size_t begin,
+                              GradType& gradient,
+                              const size_t batchSize);
 
   /**
    * Evaluate the gradient of the feedforward network with the given parameters,
-   * and with respect to only one point in the dataset. This is useful for
-   * optimizers such as SGD, which require a separable objective function.
+   * and with respect to only a number of points in the dataset. This is useful
+   * for optimizers such as SGD, which require a separable objective function.
    *
    * @param parameters Matrix of the model parameters to be optimized.
    * @param begin Index of the starting point to use for objective function
@@ -403,7 +429,8 @@ class FFN
   template<
     typename Model,
     typename InitializerType,
-    class NoiseType
+    typename NoiseType,
+    typename PolicyType
   >
   friend class GAN;
 }; // class FFN

@@ -177,10 +177,25 @@ class RNN
    */
   double Evaluate(const arma::mat& parameters,
                   const size_t begin,
-                  const size_t batchSize)
-  {
-    return Evaluate(parameters, begin, batchSize, true);
-  }
+                  const size_t batchSize);
+
+  /**
+   * Evaluate the recurrent neural network with the given parameters. This
+   * function is usually called by the optimizer to train the model.  This just
+   * calls the other overload of Evaluate() with deterministic = true.
+   *
+   * @param parameters Matrix model parameters.
+   * @param begin Index of the starting point to use for objective function
+   *        evaluation.
+   * @param gradient Matrix to output gradient into.
+   * @param batchSize Number of points to be passed at a time to use for
+   *        objective function evaluation.
+   */
+  template<typename GradType>
+  double EvaluateWithGradient(const arma::mat& parameters,
+                              const size_t begin,
+                              GradType& gradient,
+                              const size_t batchSize);
 
   /**
    * Evaluate the gradient of the recurrent neural network with the given

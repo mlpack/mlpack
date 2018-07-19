@@ -18,12 +18,18 @@
 #include <mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/svd_complete_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/svd_incomplete_method.hpp>
-#include  <mlpack/methods/cf/normalization/no_normalization.hpp>
-#include  <mlpack/methods/cf/normalization/overall_mean_normalization.hpp>
-#include  <mlpack/methods/cf/normalization/user_mean_normalization.hpp>
-#include  <mlpack/methods/cf/normalization/item_mean_normalization.hpp>
-#include  <mlpack/methods/cf/normalization/z_score_normalization.hpp>
-#include  <mlpack/methods/cf/normalization/combined_normalization.hpp>
+#include <mlpack/methods/cf/normalization/no_normalization.hpp>
+#include <mlpack/methods/cf/normalization/overall_mean_normalization.hpp>
+#include <mlpack/methods/cf/normalization/user_mean_normalization.hpp>
+#include <mlpack/methods/cf/normalization/item_mean_normalization.hpp>
+#include <mlpack/methods/cf/normalization/z_score_normalization.hpp>
+#include <mlpack/methods/cf/normalization/combined_normalization.hpp>
+#include <mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp>
+#include <mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp>
+#include <mlpack/methods/cf/neighbor_search_policies/pearson_search.hpp>
+#include <mlpack/methods/cf/interpolation_policies/average_interpolation.hpp>
+#include <mlpack/methods/cf/interpolation_policies/similarity_interpolation.hpp>
+#include <mlpack/methods/cf/interpolation_policies/regression_interpolation.hpp>
 
 #include <iostream>
 
@@ -36,6 +42,46 @@ BOOST_AUTO_TEST_SUITE(CFTest);
 using namespace mlpack;
 using namespace mlpack::cf;
 using namespace std;
+
+// Get train and test datasets.
+static void GetDatasets(arma::mat& dataset, arma::mat& savedCols)
+{
+  data::Load("GroupLensSmall.csv", dataset);
+  savedCols.set_size(3, 50);
+
+  // Save the columns we've removed.
+  savedCols.fill(/* random very large value */ 10000000);
+  size_t currentCol = 0;
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+  {
+    if (currentCol == 50)
+      break;
+
+    if (dataset(2, i) > 4.5) // 5-star rating.
+    {
+      // Make sure we don't have this user yet.  This is a slow way to do this
+      // but I don't particularly care here because it's in the tests.
+      bool found = false;
+      for (size_t j = 0; j < currentCol; ++j)
+      {
+        if (savedCols(0, j) == dataset(0, i))
+        {
+          found = true;
+          break;
+        }
+      }
+
+      // If this user doesn't already exist in savedCols, add them.
+      // Otherwise ignore this point.
+      if (!found)
+      {
+        savedCols.col(currentCol) = dataset.col(i);
+        dataset.shed_col(i);
+        ++currentCol;
+      }
+    }
+  }
+}
 
 /**
  * Make sure that correct number of recommendations are generated when query
@@ -114,43 +160,14 @@ template<typename DecompositionPolicy,
 void RecommendationAccuracy()
 {
   DecompositionPolicy decomposition;
-  // Load the GroupLens dataset; then, we will remove some values from it.
+
+  // Small GroupLens dataset.
   arma::mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
 
   // Save the columns we've removed.
-  arma::mat savedCols(3, 50); // Remove 50 5-star ratings.
-  savedCols.fill(/* random very large value */ 10000000);
-  size_t currentCol = 0;
-  for (size_t i = 0; i < dataset.n_cols; ++i)
-  {
-    if (currentCol == 50)
-      break;
+  arma::mat savedCols;
 
-    if (dataset(2, i) > 4.5) // 5-star rating.
-    {
-      // Make sure we don't have this user yet.  This is a slow way to do this
-      // but I don't particularly care here because it's in the tests.
-      bool found = false;
-      for (size_t j = 0; j < currentCol; ++j)
-      {
-        if (savedCols(0, j) == dataset(0, i))
-        {
-          found = true;
-          break;
-        }
-      }
-
-      // If this user doesn't already exist in savedCols, add them.  Otherwise
-      // ignore this point.
-      if (!found)
-      {
-        savedCols.col(currentCol) = dataset.col(i);
-        dataset.shed_col(i);
-        ++currentCol;
-      }
-    }
-  }
+  GetDatasets(dataset, savedCols);
 
   CFType<NormalizationType> c(dataset, decomposition, 5, 5, 70);
 
@@ -202,47 +219,20 @@ void RecommendationAccuracy()
 
 // Make sure that Predict() is returning reasonable results.
 template<typename DecompositionPolicy,
-         typename NormalizationType = NoNormalization>
+         typename NormalizationType = NoNormalization,
+         typename NeighborSearchPolicy = EuclideanSearch,
+         typename InterpolationPolicy = AverageInterpolation>
 void CFPredict(const double rmseBound = 2.0)
 {
   DecompositionPolicy decomposition;
-  // Load the GroupLens dataset; then, we will remove some values from it.
+
+  // Small GroupLens dataset.
   arma::mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
 
   // Save the columns we've removed.
-  arma::mat savedCols(3, 50); // Remove 50 5-star ratings.
-  savedCols.fill(/* random very large value */ 10000000);
-  size_t currentCol = 0;
-  for (size_t i = 0; i < dataset.n_cols; ++i)
-  {
-    if (currentCol == 50)
-      break;
+  arma::mat savedCols;
 
-    if (dataset(2, i) > 4.5) // 5-star rating.
-    {
-      // Make sure we don't have this user yet.  This is a slow way to do this
-      // but I don't particularly care here because it's in the tests.
-      bool found = false;
-      for (size_t j = 0; j < currentCol; ++j)
-      {
-        if (savedCols(0, j) == dataset(0, i))
-        {
-          found = true;
-          break;
-        }
-      }
-
-      // If this user doesn't already exist in savedCols, add them.  Otherwise
-      // ignore this point.
-      if (!found)
-      {
-        savedCols.col(currentCol) = dataset.col(i);
-        dataset.shed_col(i);
-        ++currentCol;
-      }
-    }
-  }
+  GetDatasets(dataset, savedCols);
 
   CFType<NormalizationType> c(dataset, decomposition, 5, 5, 70);
 
@@ -251,7 +241,8 @@ void CFPredict(const double rmseBound = 2.0)
   double totalError = 0.0;
   for (size_t i = 0; i < savedCols.n_cols; ++i)
   {
-    const double prediction = c.Predict(savedCols(0, i), savedCols(1, i));
+    const double prediction = c.template Predict<NeighborSearchPolicy,
+        InterpolationPolicy>(savedCols(0, i), savedCols(1, i));
 
     const double error = std::pow(prediction - savedCols(2, i), 2.0);
     totalError += error;
@@ -270,43 +261,14 @@ template<typename DecompositionPolicy>
 void BatchPredict()
 {
   DecompositionPolicy decomposition;
-  // Load the GroupLens dataset; then, we will remove some values from it.
+
+  // Small GroupLens dataset.
   arma::mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
 
   // Save the columns we've removed.
-  arma::mat savedCols(3, 50); // Remove 50 5-star ratings.
-  savedCols.fill(/* random very large value */ 10000000);
-  size_t currentCol = 0;
-  for (size_t i = 0; i < dataset.n_cols; ++i)
-  {
-    if (currentCol == 50)
-      break;
+  arma::mat savedCols;
 
-    if (dataset(2, i) > 4.5) // 5-star rating.
-    {
-      // Make sure we don't have this user yet.  This is a slow way to do this
-      // but I don't particularly care here because it's in the tests.
-      bool found = false;
-      for (size_t j = 0; j < currentCol; ++j)
-      {
-        if (savedCols(0, j) == dataset(0, i))
-        {
-          found = true;
-          break;
-        }
-      }
-
-      // If this user doesn't already exist in savedCols, add them.  Otherwise
-      // ignore this point.
-      if (!found)
-      {
-        savedCols.col(currentCol) = dataset.col(i);
-        dataset.shed_col(i);
-        ++currentCol;
-      }
-    }
-  }
+  GetDatasets(dataset, savedCols);
 
   CFType<> c(dataset, decomposition, 5, 5, 70);
 
@@ -339,43 +301,13 @@ void Train(DecompositionPolicy& decomposition)
   randomData.sprandu(100, 100, 0.3);
   CFType<> c(randomData, decomposition, 5, 5, 70);
 
-  // Now retrain with data we know about.
+  // Small GroupLens dataset.
   arma::mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
 
   // Save the columns we've removed.
-  arma::mat savedCols(3, 50); // Remove 50 5-star ratings.
-  savedCols.fill(/* random very large value */ 10000000);
-  size_t currentCol = 0;
-  for (size_t i = 0; i < dataset.n_cols; ++i)
-  {
-    if (currentCol == 50)
-      break;
+  arma::mat savedCols;
 
-    if (dataset(2, i) > 4.5) // 5-star rating.
-    {
-      // Make sure we don't have this user yet.  This is a slow way to do this
-      // but I don't particularly care here because it's in the tests.
-      bool found = false;
-      for (size_t j = 0; j < currentCol; ++j)
-      {
-        if (savedCols(0, j) == dataset(0, i))
-        {
-          found = true;
-          break;
-        }
-      }
-
-      // If this user doesn't already exist in savedCols, add them.  Otherwise
-      // ignore this point.
-      if (!found)
-      {
-        savedCols.col(currentCol) = dataset.col(i);
-        dataset.shed_col(i);
-        ++currentCol;
-      }
-    }
-  }
+  GetDatasets(dataset, savedCols);
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
@@ -414,42 +346,13 @@ void Train<>(RegSVDPolicy& decomposition)
   CFType<> c(randomData, decomposition, 5, 5, 70);
 
   // Now retrain with data we know about.
+  // Small GroupLens dataset.
   arma::mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
 
   // Save the columns we've removed.
-  arma::mat savedCols(3, 50); // Remove 50 5-star ratings.
-  savedCols.fill(/* random very large value */ 10000000);
-  size_t currentCol = 0;
-  for (size_t i = 0; i < dataset.n_cols; ++i)
-  {
-    if (currentCol == 50)
-      break;
+  arma::mat savedCols;
 
-    if (dataset(2, i) > 4.5) // 5-star rating.
-    {
-      // Make sure we don't have this user yet.  This is a slow way to do this
-      // but I don't particularly care here because it's in the tests.
-      bool found = false;
-      for (size_t j = 0; j < currentCol; ++j)
-      {
-        if (savedCols(0, j) == dataset(0, i))
-        {
-          found = true;
-          break;
-        }
-      }
-
-      // If this user doesn't already exist in savedCols, add them.  Otherwise
-      // ignore this point.
-      if (!found)
-      {
-        savedCols.col(currentCol) = dataset.col(i);
-        dataset.shed_col(i);
-        ++currentCol;
-      }
-    }
-  }
+  GetDatasets(dataset, savedCols);
 
   // Now retrain.
   c.Train(dataset, decomposition, 70);
@@ -483,42 +386,13 @@ void EmptyConstructorTrain()
   CFType<> c;
 
   // Now retrain with data we know about.
+  // Small GroupLens dataset.
   arma::mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
 
   // Save the columns we've removed.
-  arma::mat savedCols(3, 50); // Remove 300 5-star ratings.
-  savedCols.fill(/* random very large value */ 10000000);
-  size_t currentCol = 0;
-  for (size_t i = 0; i < dataset.n_cols; ++i)
-  {
-    if (currentCol == 50)
-      break;
+  arma::mat savedCols;
 
-    if (dataset(2, i) > 4.5) // 5-star rating.
-    {
-      // Make sure we don't have this user yet.  This is a slow way to do this
-      // but I don't particularly care here because it's in the tests.
-      bool found = false;
-      for (size_t j = 0; j < currentCol; ++j)
-      {
-        if (savedCols(0, j) == dataset(0, i))
-        {
-          found = true;
-          break;
-        }
-      }
-
-      // If this user doesn't already exist in savedCols, add them.  Otherwise
-      // ignore this point.
-      if (!found)
-      {
-        savedCols.col(currentCol) = dataset.col(i);
-        dataset.shed_col(i);
-        ++currentCol;
-      }
-    }
-  }
+  GetDatasets(dataset, savedCols);
 
   c.Train(dataset, decomposition, 70);
 
@@ -1163,6 +1037,69 @@ BOOST_AUTO_TEST_CASE(SerializationCombinedNormalizationTest)
                     OverallMeanNormalization,
                     UserMeanNormalization,
                     ItemMeanNormalization>>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for
+ * EuclideanSearch.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictEuclideanSearch)
+{
+  CFPredict<NMFPolicy, OverallMeanNormalization, EuclideanSearch>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for
+ * CosineSearch.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictCosineSearch)
+{
+  CFPredict<NMFPolicy, OverallMeanNormalization, CosineSearch>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for
+ * PearsonSearch.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictPearsonSearch)
+{
+  CFPredict<NMFPolicy, OverallMeanNormalization, PearsonSearch>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for
+ * AverageInterpolation.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictAverageInterpolation)
+{
+  CFPredict<NMFPolicy,
+            OverallMeanNormalization,
+            EuclideanSearch,
+            AverageInterpolation>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for
+ * SimilarityInterpolation.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictSimilarityInterpolation)
+{
+  CFPredict<NMFPolicy,
+            OverallMeanNormalization,
+            EuclideanSearch,
+            SimilarityInterpolation>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for
+ * RegressionInterpolation.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictRegressionInterpolation)
+{
+  CFPredict<RegSVDPolicy,
+            OverallMeanNormalization,
+            EuclideanSearch,
+            RegressionInterpolation>();
 }
 
 BOOST_AUTO_TEST_SUITE_END();

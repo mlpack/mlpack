@@ -10,6 +10,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#include <mlpack/methods/ann/loss_functions/earth_mover_distance.hpp>
 #include <mlpack/methods/ann/loss_functions/kl_divergence.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
@@ -169,7 +170,7 @@ BOOST_AUTO_TEST_CASE(SimpleSigmoidCrossEntropyLayerTest)
   SigmoidCrossEntropyError<> module;
 
   // Test the Forward function on a user generator input and compare it against
-  // the manually calculated result.
+  // the calculated result.
   input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
   target1 = arma::zeros(1, 8);
   double error1 = module.Forward(std::move(input1), std::move(target1));
@@ -217,6 +218,44 @@ BOOST_AUTO_TEST_CASE(SimpleSigmoidCrossEntropyLayerTest)
   }
   BOOST_REQUIRE_EQUAL(output.n_rows, input3.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input3.n_cols);
+}
+
+/**
+ * Simple test for the Earth Mover Distance Layer.
+ */
+BOOST_AUTO_TEST_CASE(SimpleEarthMoverDistanceLayerTest)
+{
+  arma::mat input1, input2, output, target1, target2, expectedOutput;
+  EarthMoverDistance<> module;
+
+  // Test the Forward function on a user generator input and compare it against
+  // the manually calculated result.
+  input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
+  target1 = arma::zeros(1, 8);
+  double error1 = module.Forward(std::move(input1), std::move(target1));
+  double expected = 0.0;
+  BOOST_REQUIRE_SMALL(error1 / input1.n_elem - expected, 1e-7);
+
+  input2 = arma::mat("1 2 3 4 5");
+  target2 = arma::mat("1 0 1 0 1");
+  double error2 = module.Forward(std::move(input2), std::move(target2));
+  expected = -1.8;
+  BOOST_REQUIRE_SMALL(error2 / input2.n_elem - expected, 1e-6);
+
+  // Test the Backward function.
+  module.Backward(std::move(input1), std::move(target1), std::move(output));
+  expected = 0.0;
+  for (size_t i = 0; i < output.n_elem; i++)
+    BOOST_REQUIRE_SMALL(output(i) - expected, 1e-5);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input1.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
+
+  expectedOutput = arma::mat("-1 0 -1 0 -1");
+  module.Backward(std::move(input2), std::move(target2), std::move(output));
+  for (size_t i = 0; i < output.n_elem; i++)
+    BOOST_REQUIRE_SMALL(output(i) - expectedOutput(i), 1e-5);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

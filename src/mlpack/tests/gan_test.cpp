@@ -1,5 +1,5 @@
 /**
- * @file gan_network_test.cpp
+ * @file gan_test.cpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *
@@ -14,9 +14,7 @@
 
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
-#include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
-#include <mlpack/methods/ann/gan.hpp>
-#include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/ann/gan/gan.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include <mlpack/core/optimizers/adam/adam.hpp>
@@ -94,7 +92,7 @@ BOOST_AUTO_TEST_CASE(GANTest)
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;
-  arma::mat noise(noiseDim, 1);
+  arma::mat noise(noiseDim, batchSize);
 
   size_t dim = std::sqrt(trainData.n_rows);
   arma::mat generatedData(2 * dim, dim * numSamples);
@@ -104,7 +102,7 @@ BOOST_AUTO_TEST_CASE(GANTest)
     arma::mat samples;
     noise.imbue( [&]() { return noiseFunction(); } );
 
-    generator.Forward(noise, samples);
+    gan.Generator().Forward(noise, samples);
     samples.reshape(dim, dim);
     samples = samples.t();
 
@@ -166,8 +164,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
   trainData.load("mnist_first250_training_4s_and_9s.arm");
   Log::Info << arma::size(trainData) << std::endl;
 
-  if (datasetMaxCols > 0)
-    trainData = trainData.cols(0, datasetMaxCols - 1);
+  trainData = trainData.cols(0, datasetMaxCols - 1);
 
   size_t numIterations = trainData.n_cols * numEpoches;
   numIterations /= batchSize;
@@ -177,7 +174,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
   Log::Info << trainData.n_rows << "--------" << trainData.n_cols << std::endl;
 
   // Create the Discriminator network
-  FFN<SigmoidCrossEntropyError<> > discriminator;
+  FFN<CrossEntropyError<> > discriminator;
   discriminator.Add<Convolution<> >(1, dNumKernels, 5, 5, 1, 1, 2, 2, 28, 28);
   discriminator.Add<ReLULayer<> >();
   discriminator.Add<MeanPooling<> >(2, 2, 2, 2);
@@ -190,14 +187,17 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
   discriminator.Add<Linear<> >(1024, 1);
 
   // Create the Generator network
-  FFN<SigmoidCrossEntropyError<> > generator;
+  FFN<CrossEntropyError<> > generator;
   generator.Add<Linear<> >(noiseDim, 3136);
+  generator.Add<BatchNorm<> >(3136);
   generator.Add<ReLULayer<> >();
   generator.Add<Convolution<> >(1, noiseDim / 2, 3, 3, 2, 2, 1, 1, 56, 56);
+  generator.Add<BatchNorm<> >(39200);
   generator.Add<ReLULayer<> >();
   generator.Add<BilinearInterpolation<> >(28, 28, 56, 56, noiseDim / 2);
   generator.Add<Convolution<> >(noiseDim / 2, noiseDim / 4, 3, 3, 2, 2, 1, 1,
       56, 56);
+  generator.Add<BatchNorm<> >(19600);
   generator.Add<ReLULayer<> >();
   generator.Add<BilinearInterpolation<> >(28, 28, 56, 56, noiseDim / 4);
   generator.Add<Convolution<> >(noiseDim / 4, 1, 3, 3, 2, 2, 1, 1, 56, 56);
@@ -209,7 +209,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
       tolerance, shuffle);
   std::function<double()> noiseFunction = [] () {
       return math::RandNormal(0, 1);};
-  GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
+  GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
       std::function<double()> > gan(trainData, generator, discriminator,
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
@@ -228,7 +228,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
     arma::mat samples;
     noise.imbue( [&]() { return noiseFunction(); } );
 
-    generator.Forward(noise, samples);
+    gan.Generator().Forward(noise, samples);
     samples.reshape(dim, dim);
     samples = samples.t();
 

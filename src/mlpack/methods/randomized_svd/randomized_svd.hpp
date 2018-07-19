@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_RANDOMIZED_SVD_RANDOMIZED_SVD_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/methods/cf/cf.hpp>
 
 namespace mlpack {
 namespace svd {
