@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(KDETreeAsArguments)
                                 kernel);
 
   // Get dual-tree results.
-  typedef KDTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
+  typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
   Tree queryTree(query, oldFromNewQueries, 2);
   Tree referenceTree(reference, 2);
@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(BallTreeGaussianKDETest)
                                 kernel);
 
   // BallTree KDE
-  typedef BallTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
+  typedef BallTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
   Tree queryTree(query, oldFromNewQueries, 2);
   Tree referenceTree(reference, 2);
@@ -217,7 +217,7 @@ BOOST_AUTO_TEST_CASE(DuplicatedReferenceSampleKDETest)
                                 kernel);
 
   // Dual-tree KDE
-  typedef KDTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
+  typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
   Tree queryTree(query, oldFromNewQueries, 2);
   Tree referenceTree(reference, 2);
@@ -249,7 +249,7 @@ BOOST_AUTO_TEST_CASE(DuplicatedQuerySampleKDETest)
   query.col(2) = query.col(3);
 
   // Dual-tree KDE
-  typedef KDTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
+  typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
   Tree queryTree(query, oldFromNewQueries, 2);
   Tree referenceTree(reference, 2);
@@ -358,7 +358,7 @@ BOOST_AUTO_TEST_CASE(EmptyReferenceTest)
   BOOST_REQUIRE_THROW(kde.Train(reference), std::invalid_argument);
 
   // When training using a tree
-  typedef KDTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
+  typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
   Tree referenceTree(reference, 2);
   BOOST_REQUIRE_THROW(kde.Train(referenceTree), std::invalid_argument);
 }
@@ -389,7 +389,7 @@ BOOST_AUTO_TEST_CASE(EvaluationMatchDimensionsTest)
                     std::invalid_argument);
 
   // When evaluating using a query tree
-  typedef KDTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
+  typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
   Tree queryTree(query, oldFromNewQueries, 3);
   BOOST_REQUIRE_THROW(kde.Evaluate(queryTree, oldFromNewQueries, estimations),
@@ -421,7 +421,7 @@ BOOST_AUTO_TEST_CASE(EmptyQuerySetTest)
   BOOST_REQUIRE_NO_THROW(kde.Evaluate(query, estimations));
 
   // When evaluating using a query tree
-  typedef KDTree<EuclideanDistance, tree::EmptyStatistic, arma::mat> Tree;
+  typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
   Tree queryTree(query, oldFromNewQueries, 3);
   BOOST_REQUIRE_NO_THROW(

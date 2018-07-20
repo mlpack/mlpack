@@ -17,6 +17,8 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
 
+#include "kde_stat.hpp"
+
 namespace mlpack {
 namespace kde /** Kernel Density Estimation. */ {
 
@@ -29,7 +31,7 @@ template<typename MetricType = mlpack::metric::EuclideanDistance,
 class KDE
 {
  public:
-  typedef TreeType<MetricType, tree::EmptyStatistic, MatType> Tree;
+  typedef TreeType<MetricType, kde::KDEStat, MatType> Tree;
 
   KDE(const double bandwidth = 1.0,
       const double relError = 1e-5,
