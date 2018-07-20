@@ -59,7 +59,7 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
 
   // Check if we can impose bounds over impostors.
   size_t minCount = arma::min(arma::histc(labels, arma::unique(labels)));
-  if (minCount < k + 1)
+  if (minCount <= k + 1)
   {
     // Initialize target neighbors & impostors.
     targetNeighbors.set_size(k, dataset.n_cols);

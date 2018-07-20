@@ -29,7 +29,7 @@ Constraints<MetricType>::Constraints(
   // Ensure a valid k is passed.
   size_t minCount = arma::min(arma::histc(labels, arma::unique(labels)));
 
-  if (minCount < k)
+  if (minCount < k + 1)
   {
     Log::Fatal << "Constraints::Constraints(): One of the class contains only "
         << minCount << " instances, but value of k is " << k << "  "
