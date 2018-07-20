@@ -101,6 +101,10 @@ class KDERules
 
   //! The number of scores.
   size_t scores;
+
+  // Check TreeType is supported.
+  static_assert(!tree::TreeTraits<TreeType>::HasDuplicatedPoints,
+                "TreeType must not have duplicated points.");
 };
 
 } // namespace kde
