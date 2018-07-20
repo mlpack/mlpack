@@ -144,6 +144,16 @@ Rescore(TreeType& /*queryNode*/,
   return oldScore;
 }
 
+template<typename MetricType, typename KernelType, typename TreeType>
+double KDERules<MetricType, KernelType, TreeType>::
+EvaluateKernel(const size_t queryIndex,
+               const size_t referenceIndex) const
+{
+  return kernel.Evaluate(metric.Evaluate(querySet.unsafe_col(queryIndex),
+                                         referenceSet.unsafe_col(referenceIndex)
+                                         ));
+}
+
 } // namespace kde
 } // namespace mlpack
 
