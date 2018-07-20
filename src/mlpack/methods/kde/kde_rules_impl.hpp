@@ -98,19 +98,36 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
   if (bound <= (absError + relError * minKernel) / referenceSet.n_cols)
   {
-    arma::vec queryCenter, referenceCenter;
+    double kernelValue;
+    // If calculating a center is not required.
     if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
     {
-      queryCenter = querySet.unsafe_col(queryNode.Point(0));
-      referenceCenter = referenceSet.unsafe_col(referenceNode.Point(0));
+      // If a child center is the same as a parent center.
+      if (tree::TreeTraits<TreeType>::HasSelfChildren)
+      {
+        if ((referenceNode.Parent() != NULL) &&
+            (referenceNode.Point(0) == referenceNode.Parent()->Point(0)))
+          kernelValue = referenceNode.Parent()->Stat().LastKernelValue();
+        else
+          kernelValue = EvaluateKernel(queryNode.Point(0),
+                                       referenceNode.Point(0));
+      }
+      else
+        kernelValue = EvaluateKernel(queryNode.Point(0),
+                                     referenceNode.Point(0));
     }
     else
     {
+      arma::vec queryCenter, referenceCenter;
       referenceNode.Center(referenceCenter);
       queryNode.Center(queryCenter);
+      kernelValue = kernel.Evaluate(metric.Evaluate(referenceCenter,
+                                                    queryCenter));
     }
-    const double kernelValue = kernel.Evaluate(metric.Evaluate(referenceCenter,
-                                                               queryCenter));
+
+    // Update lastKernelValue
+    referenceNode.Stat().LastKernelValue() = kernelValue;
+
     for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
     {
       if (tree::TreeTraits<TreeType>::RearrangesDataset)
