@@ -37,6 +37,52 @@ Constraints<MetricType>::Constraints(
   }
 }
 
+template<typename TreeType>
+inline void UpdateTree(TreeType& node, const arma::mat& dataset)
+{
+  double minWidth = DBL_MAX;
+  arma::Col<double> mins(min(dataset, 1));
+  arma::Col<double> maxs(max(dataset, 1));
+
+    // Update each of the HRectBound dimensions...
+  for (size_t d = 0; d < node.Bound().Dim(); ++d)
+  {
+    // Basically we had a previous bound and we want to "stretch" it for each dimension...
+    node.Bound()[d] |= math::RangeType<double>(mins[d], maxs[d]);
+
+    // Calculate minWidth.
+    double width = node.Bound()[d].Width();
+      minWidth = width;
+  }
+
+  node.Bound().MinWidth() = minWidth;
+
+  // We also have to update the properties of the tree.  Some are easier after recursion.
+  node.MinimumBoundDistance() = node.Bound().MinWidth() / 2.0;
+  // Technically this is loose but it is what the BinarySpaceTree already does.
+  node.FurthestDescendantDistance() = 0.5 * node.Bound().Diameter();
+
+  // Recurse into the children.
+  if (node.NumChildren() > 0)
+  {
+    UpdateTree(node.Child(0), dataset);
+    UpdateTree(node.Child(1), dataset);
+
+    // Recompute the parent distance for the left and right child.
+    arma::vec center, leftCenter, rightCenter;
+    node.Center(center);
+    node.Child(0).Center(leftCenter);
+    node.Child(1).Center(rightCenter);
+
+    const double leftParentDistance = node.Metric().Evaluate(center, leftCenter);
+    const double rightParentDistance = node.Metric().Evaluate(center,
+        rightCenter);
+
+    node.Child(0).ParentDistance() = leftParentDistance;
+    node.Child(1).ParentDistance() = rightParentDistance;
+  }
+}
+
 // Calculates k similar labeled nearest neighbors.
 template<typename MetricType>
 void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
@@ -145,7 +191,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
 // Calculates k differently labeled nearest neighbors. The function
 // writes back calculated neighbors & distances to passed matrices.
 template<typename MetricType>
-void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
+void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
                                         arma::mat& outputDistance,
                                         const arma::mat& dataset,
                                         const arma::Row<size_t>& labels)
@@ -153,25 +199,40 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
 
-  // KNN instance.
-  KNN knn;
-
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
   for (size_t i = 0; i < uniqueLabels.n_cols; i++)
   {
     // Perform KNN search with differently labeled points as reference
-    // set and  same class points as query set.
-    knn.Train(dataset.cols(indexDiff[i]));
-    knn.Search(dataset.cols(indexSame[i]), k, neighbors, distances);
+    // set and same class points as query set.
+    if (knnObjects.size() == uniqueLabels.n_elem)
+    {
+      auto Tree = knnObjects[i].ReferenceTree();
+
+      Tree.Dataset() = dataset;
+      UpdateTree(Tree, dataset);
+
+      knnObjects[i].Train(Tree);
+      knnObjects[i].Search(dataset.cols(indexSame[i]), k, neighbors, distances);
+    }
+    else
+    {
+      // KNN instance.
+      KNN knn;
+      knn.Train(dataset.cols(indexDiff[i]));
+      knn.Search(dataset.cols(indexSame[i]), k, neighbors, distances);
+
+      // Cache KNN object.
+      knnObjects.push_back(knn);
+    }
 
     // Re-map neighbors to their index.
     for (size_t j = 0; j < neighbors.n_elem; j++)
       neighbors(j) = indexDiff[i].at(neighbors(j));
 
     // Store impostors.
-    outputNeighbors.cols(indexSame[i]) =  neighbors;
+    outputMatrix.cols(indexSame[i]) =  neighbors;
     outputDistance.cols(indexSame[i]) =  distances;
   }
 }

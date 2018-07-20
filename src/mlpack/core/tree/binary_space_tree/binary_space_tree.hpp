@@ -384,8 +384,14 @@ class BinarySpaceTree
    */
   ElemType FurthestDescendantDistance() const;
 
+  //! Modify the furthest possible descendant distance.
+  ElemType& FurthestDescendantDistance() { return furthestDescendantDistance; }
+
   //! Return the minimum distance from the center of the node to any bound edge.
   ElemType MinimumBoundDistance() const;
+
+  //! Modify the minimum distance from the center of the node to any bound edge.
+  ElemType& MinimumBoundDistance() { return minimumBoundDistance; }
 
   //! Return the distance from the center of this node to the center of the
   //! parent node.

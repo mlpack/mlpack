@@ -170,6 +170,9 @@ class Constraints
   //! False if nothing has ever been precalculated.
   bool precalculated;
 
+  //! Store KNN Objects.
+  std::vector<KNN> knnObjects;
+
   /**
   * Precalculate the unique labels, and indices of similar
   * and different datapoints on the basis of labels.
