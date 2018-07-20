@@ -38,7 +38,7 @@ using namespace mlpack::regression;
 
 BOOST_AUTO_TEST_SUITE(RBMNetworkTest);
 
-BOOST_AUTO_TEST_CASE(ClassificationTest)
+BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
 {
   // Normalised dataset.
   int hiddenLayerSize = 100;
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(ClassificationTest)
 
   size_t numRBMIterations = trainData.n_cols * numEpoches;
   numRBMIterations /= batchSize;
-  optimization::StandardSGD msgd(0.06, batchSize, numRBMIterations, 0, true);
+  optimization::StandardSGD msgd(0.03, batchSize, numRBMIterations, 0, true);
   model.Reset();
   model.VisibleBias().ones();
   model.HiddenBias().ones();

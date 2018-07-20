@@ -111,8 +111,11 @@ typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, double>::type
 RBM<InitializationRuleType, DataType, PolicyType>::FreeEnergy(
     arma::Mat<ElemType>&& input)
 {
-  preActivation = arma::log(1 + arma::trunc_exp((weight * input) + hiddenBias));
-  return -(arma::accu(preActivation) + arma::dot(input, visibleBias));
+  preActivation = (weight * input);
+  preActivation.each_col() += hiddenBias;
+  preActivation = arma::log(1 + arma::trunc_exp(preActivation));
+  return -(arma::accu(preActivation) + arma::dot(input, arma::repmat(
+      visibleBias, 1, input.n_cols)));
 }
 
 template<
@@ -204,7 +207,8 @@ typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::VisibleMean(DataType&& input,
     DataType&& output)
 {
-  output = weight.t() * input + visibleBias;
+  output = weight.t() * input;
+  output.each_col() += visibleBias;
   LogisticFunction::Fn(output, output);
 }
 
@@ -218,7 +222,8 @@ typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::HiddenMean(DataType&& input,
     DataType&& output)
 {
-  output = weight * input + hiddenBias;
+  output = weight * input;
+  output.each_col() += hiddenBias;
   LogisticFunction::Fn(output, output);
 }
 
@@ -281,6 +286,7 @@ void RBM<InitializationRuleType, DataType, PolicyType>::Gradient(
 
     negativeGradient += tempNegativeGradient;
   }
+
   gradient = ((negativeGradient / negSteps) - positiveGradient);
 }
 
@@ -313,6 +319,8 @@ void RBM<InitializationRuleType, DataType, PolicyType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(negSteps);
   ar & BOOST_SERIALIZATION_NVP(persistence);
   ar & BOOST_SERIALIZATION_NVP(poolSize);
+  ar & BOOST_SERIALIZATION_NVP(visibleBias);
+  ar & BOOST_SERIALIZATION_NVP(hiddenBias);
   ar & BOOST_SERIALIZATION_NVP(weight);
   ar & BOOST_SERIALIZATION_NVP(weightCube);
   ar & BOOST_SERIALIZATION_NVP(spikeBias);
