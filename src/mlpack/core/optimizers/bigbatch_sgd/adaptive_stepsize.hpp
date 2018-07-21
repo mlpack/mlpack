@@ -90,7 +90,7 @@ class AdaptiveStepsize
     iterate -= stepSize * gradient;
 
     // TODO: Develop an absolute strategy to deal with stepSizeDecay updates in
-    // case we reaches arrive at local minima. See #1469 for more details.
+    // case we arrive at local minima. See #1469 for more details.
     double stepSizeDecay = 0;
     if (gradientNorm && sampleVariance && batchSize)
     {
