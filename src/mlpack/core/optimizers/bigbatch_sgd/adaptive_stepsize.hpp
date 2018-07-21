@@ -89,15 +89,20 @@ class AdaptiveStepsize
     // Update the iterate.
     iterate -= stepSize * gradient;
 
+    // TODO: Develop an absolute strategy to deal with stepSizeDecay updates in
+    // case we reaches arrive at local minima. See #1469 for more details.
     double stepSizeDecay = 0;
-    if (batchSize < function.NumFunctions())
+    if (gradientNorm && sampleVariance && batchSize)
     {
-      stepSizeDecay = (1 - (1 / ((double) batchSize - 1) * sampleVariance) /
-          (batchSize * gradientNorm)) / batchSize;
-    }
-    else
-    {
-      stepSizeDecay = 1 / function.NumFunctions();
+      if (batchSize < function.NumFunctions())
+      {
+        stepSizeDecay = (1 - (1 / ((double) batchSize - 1) * sampleVariance) /
+            (batchSize * gradientNorm)) / batchSize;
+      }
+      else
+      {
+        stepSizeDecay = 1 / function.NumFunctions();
+      }
     }
 
     // Stepsize smoothing.
