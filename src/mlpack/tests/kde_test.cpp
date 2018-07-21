@@ -15,12 +15,15 @@
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::kde;
 using namespace mlpack::metric;
 using namespace mlpack::tree;
 using namespace mlpack::kernel;
+
+using namespace boost::serialization;
 
 BOOST_AUTO_TEST_SUITE(KDETest);
 
@@ -426,6 +429,71 @@ BOOST_AUTO_TEST_CASE(EmptyQuerySetTest)
   Tree queryTree(query, oldFromNewQueries, 3);
   BOOST_REQUIRE_NO_THROW(
     kde.Evaluate(queryTree, oldFromNewQueries, estimations));
+}
+
+/**
+ * Tests serialiation of KDE models.
+ */
+BOOST_AUTO_TEST_CASE(SerializationTest)
+{
+  // Initial KDE model to me serialized.
+  const double relError = 0.25;
+  const double absError = 0.0;
+  const bool bf = false;
+  arma::mat reference = arma::randu(4, 800);
+  KDE<metric::EuclideanDistance,
+      arma::mat,
+      kernel::GaussianKernel,
+      tree::KDTree>
+    kde(0.25, relError, absError, bf);
+  kde.Train(reference);
+
+  // Initialize serialized objects.
+  KDE<metric::EuclideanDistance,
+      arma::mat,
+      kernel::GaussianKernel,
+      tree::KDTree> kdeXml, kdeText, kdeBinary;
+  SerializeObjectAll(kde, kdeXml, kdeText, kdeBinary);
+
+  // Check everything is correct.
+  BOOST_REQUIRE_CLOSE(kde.RelativeError(), relError, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeXml.RelativeError(), relError, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeText.RelativeError(), relError, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeBinary.RelativeError(), relError, 1e-8);
+
+  BOOST_REQUIRE_CLOSE(kde.AbsoluteError(), absError, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeXml.AbsoluteError(), absError, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeText.AbsoluteError(), absError, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeBinary.AbsoluteError(), absError, 1e-8);
+
+  BOOST_REQUIRE_EQUAL(kde.BreadthFirst(), bf);
+  BOOST_REQUIRE_EQUAL(kdeXml.BreadthFirst(), bf);
+  BOOST_REQUIRE_EQUAL(kdeText.BreadthFirst(), bf);
+  BOOST_REQUIRE_EQUAL(kdeBinary.BreadthFirst(), bf);
+
+  BOOST_REQUIRE_EQUAL(kde.IsTrained(), true);
+  BOOST_REQUIRE_EQUAL(kdeXml.IsTrained(), true);
+  BOOST_REQUIRE_EQUAL(kdeText.IsTrained(), true);
+  BOOST_REQUIRE_EQUAL(kdeBinary.IsTrained(), true);
+
+  // Test if execution gives the same result.
+  arma::mat query = arma::randu(4, 100);;
+  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec xmlEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec textEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec binEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+
+  kde.Evaluate(query, estimations);
+  kde.Evaluate(query, xmlEstimations);
+  kde.Evaluate(query, textEstimations);
+  kde.Evaluate(query, binEstimations);
+
+  for (size_t i = 0; i < query.n_cols; ++i)
+  {
+    BOOST_REQUIRE_CLOSE(estimations[i], xmlEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(estimations[i], textEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(estimations[i], binEstimations[i], relError);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();
