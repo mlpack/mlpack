@@ -138,7 +138,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
       neighbors(j) = indexDiff[i].at(neighbors(j));
 
     // Store impostors.
-    outputMatrix.cols(indexSame[i]) =  neighbors;
+    outputMatrix.cols(indexSame[i]) = neighbors;
   }
 }
 
@@ -171,8 +171,8 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
       neighbors(j) = indexDiff[i].at(neighbors(j));
 
     // Store impostors.
-    outputNeighbors.cols(indexSame[i]) =  neighbors;
-    outputDistance.cols(indexSame[i]) =  distances;
+    outputNeighbors.cols(indexSame[i]) = neighbors;
+    outputDistance.cols(indexSame[i]) = distances;
   }
 }
 
@@ -215,7 +215,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
       neighbors(j) = indexDiff[i].at(neighbors(j));
 
     // Store impostors.
-    outputMatrix.cols(begin + subIndexSame) =  neighbors;
+    outputMatrix.cols(begin + subIndexSame) = neighbors;
   }
 }
 
@@ -259,8 +259,8 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
       neighbors(j) = indexDiff[i].at(neighbors(j));
 
     // Store impostors.
-    outputNeighbors.cols(begin + subIndexSame) =  neighbors;
-    outputDistance.cols(begin + subIndexSame) =  distances;
+    outputNeighbors.cols(begin + subIndexSame) = neighbors;
+    outputDistance.cols(begin + subIndexSame) = distances;
   }
 }
 
@@ -271,7 +271,8 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
                                         arma::mat& outputDistance,
                                         const arma::mat& dataset,
                                         const arma::Row<size_t>& labels,
-                                        const arma::uvec& points)
+                                        const arma::uvec& points,
+                                        const size_t numPoints)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
@@ -288,7 +289,8 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
   for (size_t i = 0; i < uniqueLabels.n_cols; i++)
   {
     // Calculate impostors.
-    subIndexSame = arma::find(labels.cols(points) == uniqueLabels[i]);
+    subIndexSame = arma::find(labels.cols(points.head(numPoints)) ==
+        uniqueLabels[i]);
 
     // Perform KNN search with differently labeled points as reference
     // set and same class points as query set.
@@ -301,8 +303,8 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
       neighbors(j) = indexDiff[i].at(neighbors(j));
 
     // Store impostors.
-    outputNeighbors.cols(points.elem(subIndexSame)) =  neighbors;
-    outputDistance.cols(points.elem(subIndexSame)) =  distances;
+    outputNeighbors.cols(points.elem(subIndexSame)) = neighbors;
+    outputDistance.cols(points.elem(subIndexSame)) = distances;
   }
 }
 

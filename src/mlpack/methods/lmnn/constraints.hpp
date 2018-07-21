@@ -144,12 +144,14 @@ class Constraints
    * @param dataset Input dataset.
    * @param labels Input dataset labels.
    * @param points Indices of data points to calculate impostors on.
+   * @param numPoints Number of points to actually calculate impostors on.
    */
   void Impostors(arma::Mat<size_t>& outputNeighbors,
                  arma::mat& outputDistance,
                  const arma::mat& dataset,
                  const arma::Row<size_t>& labels,
-                 const arma::uvec& points);
+                 const arma::uvec& points,
+                 const size_t numPoints);
 
   /**
    * Generate triplets {i, j, l} for each datapoint i and writes back generated

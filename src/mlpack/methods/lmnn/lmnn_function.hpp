@@ -232,6 +232,8 @@ class LMNNFunction
   std::vector<size_t> oldTransformationCounts;
   //! Holds points to transformation matrix mapping.
   arma::vec lastTransformationIndices;
+  //! Used for storing points to re-calculate impostors for.
+  arma::uvec points;
   //! Flag for controlling use of bounds over impostors.
   bool impBounds;
   /**

@@ -35,6 +35,7 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
     iteration(0),
     range(range),
     constraint(dataset, labels, k),
+    points(dataset.n_cols),
     impBounds(false)
 {
   // Initialize the initial learning point.
@@ -208,22 +209,23 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
   transformedDataset = transformation * dataset;
 
   double transformationDiff = 0;
-  if (!transformationOld.is_empty() && iteration++ % range == 0)
+  if (!transformationOld.is_empty())
   {
     // Calculate norm of change in transformation.
     transformationDiff = arma::norm(transformation - transformationOld);
+  }
 
+  if (!transformationOld.is_empty() && iteration++ % range == 0)
+  {
     if (impBounds)
     {
-      arma::uvec points(dataset.n_cols);
-
       // Track number of data points to use for impostors calculatiom.
       size_t numPoints = 0;
 
       for (size_t i = 0; i < dataset.n_cols; i++)
       {
         if (transformationDiff * (2 * norm(i) + norm(impostors(k - 1, i)) +
-            norm(impostors(k, i))) > distance(k, i) -  distance(k - 1, i))
+            norm(impostors(k, i))) > distance(k, i) - distance(k - 1, i))
         {
           points(numPoints++) = i;
         }
@@ -233,7 +235,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
 
       // Re-calculate impostors on transformed dataset.
       constraint.Impostors(impostors, distance,
-          transformedDataset, labels, points);
+          transformedDataset, labels, points, numPoints);
     }
     else
     {
@@ -243,8 +245,8 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
   }
   else if (iteration++ % range == 0)
   {
-      // Re-calculate impostors on transformed dataset.
-      constraint.Impostors(impostors, distance, transformedDataset, labels);
+    // Re-calculate impostors on transformed dataset.
+    constraint.Impostors(impostors, distance, transformedDataset, labels);
   }
 
   for (size_t i = 0; i < dataset.n_cols; i++)
@@ -343,8 +345,6 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
 
   if (impBounds && iteration++ % range == 0)
   {
-    arma::uvec points(dataset.n_cols);
-
     // Track number of data points to use for impostors calculatiom.
     size_t numPoints = 0;
 
@@ -354,7 +354,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
       {
         if (transformationDiffs[lastTransformationIndices[i]] *
             (2 * norm(i) + norm(impostors(k - 1, i)) +
-            norm(impostors(k, i))) > distance(k, i) -  distance(k - 1, i))
+            norm(impostors(k, i))) > distance(k, i) - distance(k - 1, i))
         {
           points(numPoints++)  = i;
         }
@@ -369,7 +369,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
 
     // Re-calculate impostors on transformed dataset.
     constraint.Impostors(impostors, distance,
-        transformedDataset, labels, points);
+        transformedDataset, labels, points, numPoints);
   }
   else if (iteration++ % range == 0)
   {
@@ -476,15 +476,13 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
 
     if (impBounds)
     {
-      arma::uvec points(dataset.n_cols);
-
       // Track number of data points to use for impostors calculatiom.
       size_t numPoints = 0;
 
       for (size_t i = 0; i < dataset.n_cols; i++)
       {
         if (transformationDiff * (2 * norm(i) + norm(impostors(k - 1, i)) +
-            norm(impostors(k, i))) > distance(k, i) -  distance(k - 1, i))
+            norm(impostors(k, i))) > distance(k, i) - distance(k - 1, i))
         {
           points(numPoints++) = i;
         }
@@ -494,7 +492,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
 
       // Re-calculate impostors on transformed dataset.
       constraint.Impostors(impostors, distance,
-          transformedDataset, labels, points);
+          transformedDataset, labels, points, numPoints);
     }
     else
     {
@@ -609,8 +607,6 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
 
   if (impBounds && iteration++ % range == 0)
   {
-    arma::uvec points(dataset.n_cols);
-
     // Track number of data points to use for impostors calculatiom.
     size_t numPoints = 0;
 
@@ -620,7 +616,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
       {
         if (transformationDiffs[lastTransformationIndices[i]] *
             (2 * norm(i) + norm(impostors(k - 1, i)) +
-            norm(impostors(k, i))) > distance(k, i) -  distance(k - 1, i))
+            norm(impostors(k, i))) > distance(k, i) - distance(k - 1, i))
         {
           points(numPoints++)  = i;
         }
@@ -635,7 +631,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
 
     // Re-calculate impostors on transformed dataset.
     constraint.Impostors(impostors, distance,
-        transformedDataset, labels, points);
+        transformedDataset, labels, points, numPoints);
   }
   else if (iteration++ % range == 0)
   {
@@ -747,32 +743,31 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   transformedDataset = transformation * dataset;
 
   double transformationDiff = 0;
-  if (!transformationOld.is_empty() && iteration++ % range == 0)
+  if (!transformationOld.is_empty())
   {
     // Calculate norm of change in transformation.
     transformationDiff = arma::norm(transformation - transformationOld);
+  }
 
+  if (!transformationOld.is_empty() && iteration++ % range == 0)
+  {
     if (impBounds)
     {
-      arma::uvec points(dataset.n_cols);
-
       // Track number of data points to use for impostors calculatiom.
       size_t numPoints = 0;
 
       for (size_t i = 0; i < dataset.n_cols; i++)
       {
         if (transformationDiff * (2 * norm(i) + norm(impostors(k - 1, i)) +
-            norm(impostors(k, i))) > distance(k, i) -  distance(k - 1, i))
+            norm(impostors(k, i))) > distance(k, i) - distance(k - 1, i))
         {
           points(numPoints++) = i;
         }
       }
 
-      points.resize(numPoints);
-
       // Re-calculate impostors on transformed dataset.
       constraint.Impostors(impostors, distance,
-          transformedDataset, labels, points);
+          transformedDataset, labels, points, numPoints);
     }
     else
     {
@@ -894,8 +889,6 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
 
   if (impBounds && iteration++ % range == 0)
   {
-    arma::uvec points(dataset.n_cols);
-
     // Track number of data points to use for impostors calculatiom.
     size_t numPoints = 0;
 
@@ -905,7 +898,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
       {
         if (transformationDiffs[lastTransformationIndices[i]] *
             (2 * norm(i) + norm(impostors(k - 1, i)) +
-            norm(impostors(k, i))) > distance(k, i) -  distance(k - 1, i))
+            norm(impostors(k, i))) > distance(k, i) - distance(k - 1, i))
         {
           points(numPoints++)  = i;
         }
@@ -920,7 +913,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
 
     // Re-calculate impostors on transformed dataset.
     constraint.Impostors(impostors, distance,
-        transformedDataset, labels, points);
+        transformedDataset, labels, points, numPoints);
   }
   else if (iteration++ % range == 0)
   {
