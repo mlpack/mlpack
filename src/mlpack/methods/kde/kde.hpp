@@ -33,13 +33,15 @@ class KDE
  public:
   typedef TreeType<MetricType, kde::KDEStat, MatType> Tree;
 
-  KDE(const double bandwidth = 1.0,
+  KDE();
+
+  KDE(const double bandwidth,
       const double relError = 1e-5,
       const double absError = 0,
       const bool breadthFirst = false);
 
-  KDE(MetricType& metric = MetricType(),
-      KernelType& kernel = KernelType(),
+  KDE(MetricType& metric,
+      KernelType& kernel,
       const double relError = 1e-5,
       const double absError = 0,
       const bool breadthFirst = false);

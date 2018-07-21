@@ -45,6 +45,23 @@ template<typename MetricType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
+KDE<MetricType, MatType, KernelType, TreeType>::KDE() :
+    kernel(new KernelType()),
+    metric(new MetricType()),
+    relError(1e-8),
+    absError(0.0),
+    breadthFirst(false),
+    ownsKernel(true),
+    ownsMetric(true),
+    ownsReferenceTree(false),
+    trained(false) { }
+
+template<typename MetricType,
+         typename MatType,
+         typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 KDE<MetricType, MatType, KernelType, TreeType>::
 KDE(const double bandwidth,
     const double relError,
