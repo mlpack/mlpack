@@ -94,6 +94,10 @@ class KDE
   //! Check if KDE model is trained or not.
   bool IsTrained() const { return trained; }
 
+  //! Serialize the model.
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */);
+
  private:
   KernelType* kernel;
 

@@ -408,5 +408,42 @@ AbsoluteError(const double newError)
     this->absError = newError;
 }
 
+template<typename MetricType,
+         typename MatType,
+         typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+template<typename Archive>
+void KDE<MetricType, MatType, KernelType, TreeType>::
+serialize(Archive& ar, const unsigned int /* version */)
+{
+  // Serialize preferences.
+  ar & BOOST_SERIALIZATION_NVP(relError);
+  ar & BOOST_SERIALIZATION_NVP(absError);
+  ar & BOOST_SERIALIZATION_NVP(breadthFirst);
+  ar & BOOST_SERIALIZATION_NVP(trained);
+
+  // If we are loading, clean up memory if necessary.
+  if (Archive::is_loading::value)
+  {
+    if (ownsKernel && kernel)
+      delete kernel;
+    if (ownsMetric && metric)
+      delete metric;
+    if (ownsReferenceTree && referenceTree)
+      delete referenceTree;
+    // After loading kernel, metric and tree, we own it.
+    ownsKernel = true;
+    ownsMetric = true;
+    ownsReferenceTree = true;
+  }
+
+  // Serialize the rest of values.
+  ar & BOOST_SERIALIZATION_NVP(kernel);
+  ar & BOOST_SERIALIZATION_NVP(metric);
+  ar & BOOST_SERIALIZATION_NVP(referenceTree);
+}
+
 } // namespace kde
 } // namespace mlpack
