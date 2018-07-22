@@ -77,11 +77,7 @@ KDE(const double bandwidth,
     ownsReferenceTree(false),
     trained(false)
 {
-  if (relError > 0 && absError > 0)
-    Log::Warn << "Absolute and relative error tolerances will be sumed up"
-              << std::endl;
-  if (relError < 0 || absError < 0)
-    Log::Fatal << "Error tolerance can't be less than 0" << std::endl;
+  CheckErrorValues(relError, absError);
 }
 
 template<typename MetricType,
@@ -106,11 +102,7 @@ KDE(MetricType& metric,
     ownsReferenceTree(false),
     trained(false)
 {
-  if (relError > 0 && absError > 0)
-    Log::Warn << "Absolute and relative error tolerances will be sumed up"
-              << std::endl;
-  if (relError < 0 || absError < 0)
-    Log::Fatal << "Error tolerance can't be less than 0" << std::endl;
+  CheckErrorValues(relError, absError);
 }
 
 template<typename MetricType,
@@ -395,11 +387,8 @@ template<typename MetricType,
 void KDE<MetricType, MatType, KernelType, TreeType>::
 RelativeError(const double newError)
 {
-  if (newError < 0 || newError > 1)
-    Log::Fatal << "Relative error tolerance must be a value between 0 and 1"
-               << std::endl;
-  else
-    this->relError = newError;
+  CheckErrorValues(newError, absError);
+  relError = newError;
 }
 
 template<typename MetricType,
@@ -411,11 +400,8 @@ template<typename MetricType,
 void KDE<MetricType, MatType, KernelType, TreeType>::
 AbsoluteError(const double newError)
 {
-  if (newError < 0)
-    Log::Fatal << "Absolute error tolerance must be a value greater or equal "
-               << "to 0" << std::endl;
-  else
-    this->absError = newError;
+  CheckErrorValues(relError, newError);
+  absError = newError;
 }
 
 template<typename MetricType,
@@ -453,6 +439,26 @@ serialize(Archive& ar, const unsigned int /* version */)
   ar & BOOST_SERIALIZATION_NVP(kernel);
   ar & BOOST_SERIALIZATION_NVP(metric);
   ar & BOOST_SERIALIZATION_NVP(referenceTree);
+}
+
+template<typename MetricType,
+         typename MatType,
+         typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void KDE<MetricType, MatType, KernelType, TreeType>::
+CheckErrorValues(const double relError, const double absError) const
+{
+  if (relError < 0 || relError > 1)
+    throw std::invalid_argument("Relative error tolerance must be a value "
+                                "between 0 and 1");
+  if (absError < 0)
+    throw std::invalid_argument("Absolute error tolerance must be a value "
+                                "greater or equal to 0");
+  if (relError > 0 && absError > 0)
+    Log::Warn << "Absolute and relative error tolerances will be sumed up"
+              << std::endl;
 }
 
 } // namespace kde

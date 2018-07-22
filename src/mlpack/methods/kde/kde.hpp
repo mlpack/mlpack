@@ -176,13 +176,13 @@ class KDE
   //! Get relative error tolerance.
   double RelativeError() const { return relError; }
 
-  //! Modify relative error tolerance.
+  //! Modify relative error tolerance (0 <= newError <= 1).
   void RelativeError(const double newError);
 
   //! Get absolute error tolerance.
   double AbsoluteError() const { return absError; }
 
-  //! Modify absolute error tolerance.
+  //! Modify absolute error tolerance (0 <= newError).
   void AbsoluteError(const double newError);
 
   //! Get whether breadth-first traversal is being used.
@@ -231,6 +231,9 @@ class KDE
 
   //! If true, the KDE object is trained.
   bool trained;
+
+  //! Check whether absolute and relative error values are compatible.
+  void CheckErrorValues(const double relError, const double absError) const;
 };
 
 } // namespace kde
