@@ -270,6 +270,11 @@ Evaluate(const MatType& querySet, arma::vec& estimations)
     throw std::invalid_argument("cannot train KDE model: querySet and "
                                 "referenceSet dimensions don't match");
 
+  // Get estimations vector ready.
+  estimations.clear();
+  estimations.resize(querySet.n_cols);
+  estimations.fill(arma::fill::zeros);
+
   // Evaluate
   std::vector<size_t> oldFromNewQueries;
   Tree* queryTree = BuildTree<Tree>(querySet, oldFromNewQueries);
@@ -349,6 +354,11 @@ Evaluate(Tree& queryTree,
   if (queryTree.Dataset().n_rows != referenceTree->Dataset().n_rows)
     throw std::invalid_argument("cannot train KDE model: querySet and "
                                 "referenceSet dimensions don't match");
+
+  // Get estimations vector ready.
+  estimations.clear();
+  estimations.resize(queryTree.Dataset().n_cols);
+  estimations.fill(arma::fill::zeros);
 
   // Evaluate
   typedef KDERules<MetricType, KernelType, Tree> RuleType;

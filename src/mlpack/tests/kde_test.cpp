@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(KDESimpleTest)
                       {-2.1,  1.0} };
   arma::inplace_trans(reference);
   arma::inplace_trans(query);
-  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec estimations;
   // Manually calculated results.
   arma::vec estimations_result = {0.08323668699564207296148765635734889656305,
                                   0.00167470061366603324010116082831700623501,
