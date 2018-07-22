@@ -46,11 +46,18 @@ BOOST_AUTO_TEST_CASE(LMNNTargetNeighborsTest)
 
   Constraints<> constraint(dataset, labels, 1);
 
+  // Calculate norm of datapoints.
+  arma::vec norm(dataset.n_cols);
+  for (size_t i = 0; i < dataset.n_cols; i++)
+  {
+    norm(i) = arma::norm(dataset.col(i));
+  }
+
   //! Store target neighbors of data points.
   arma::Mat<size_t> targetNeighbors =
       arma::Mat<size_t>(1, dataset.n_cols, arma::fill::zeros);
 
-  constraint.TargetNeighbors(targetNeighbors, dataset, labels);
+  constraint.TargetNeighbors(targetNeighbors, dataset, labels, norm);
 
   BOOST_REQUIRE_EQUAL(targetNeighbors(0, 0), 1);
   BOOST_REQUIRE_EQUAL(targetNeighbors(0, 1), 0);
@@ -72,11 +79,18 @@ BOOST_AUTO_TEST_CASE(LMNNImpostorsTest)
 
   Constraints<> constraint(dataset, labels, 1);
 
+  // Calculate norm of datapoints.
+  arma::vec norm(dataset.n_cols);
+  for (size_t i = 0; i < dataset.n_cols; i++)
+  {
+    norm(i) = arma::norm(dataset.col(i));
+  }
+
   //! Store impostors of data points.
   arma::Mat<size_t> impostors =
       arma::Mat<size_t>(1, dataset.n_cols, arma::fill::zeros);
 
-  constraint.Impostors(impostors, dataset, labels);
+  constraint.Impostors(impostors, dataset, labels, norm);
 
   BOOST_REQUIRE_EQUAL(impostors(0, 0), 3);
   BOOST_REQUIRE_EQUAL(impostors(0, 1), 4);
