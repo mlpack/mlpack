@@ -211,7 +211,7 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void KDE<MetricType, MatType, KernelType, TreeType>::
-Train(const MatType& referenceSet)
+Train(MatType referenceSet)
 {
   // Check if referenceSet is not an empty set.
   if (referenceSet.n_cols == 0)
@@ -229,16 +229,16 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void KDE<MetricType, MatType, KernelType, TreeType>::
-Train(Tree& referenceTree)
+Train(Tree* referenceTree)
 {
   // Check if referenceTree dataset is not an empty set.
-  if (referenceTree.Dataset().n_cols == 0)
+  if (referenceTree->Dataset().n_cols == 0)
     throw std::invalid_argument("cannot train KDE model with an empty "
                                 "reference set");
   if (this->ownsReferenceTree == true)
     delete this->referenceTree;
   this->ownsReferenceTree = false;
-  this->referenceTree = &referenceTree;
+  this->referenceTree = referenceTree;
   this->trained = true;
 }
 
@@ -332,30 +332,30 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void KDE<MetricType, MatType, KernelType, TreeType>::
-Evaluate(Tree& queryTree,
+Evaluate(Tree* queryTree,
          const std::vector<size_t>& oldFromNewQueries,
          arma::vec& estimations)
 {
   // Check querySet has at least 1 element to evaluate.
-  if (queryTree.Dataset().n_cols == 0)
+  if (queryTree->Dataset().n_cols == 0)
   {
     Log::Warn << "querySet is empty" << std::endl;
     return;
   }
   // Check whether dimensions match.
-  if (queryTree.Dataset().n_rows != referenceTree->Dataset().n_rows)
+  if (queryTree->Dataset().n_rows != referenceTree->Dataset().n_rows)
     throw std::invalid_argument("cannot train KDE model: querySet and "
                                 "referenceSet dimensions don't match");
 
   // Get estimations vector ready.
   estimations.clear();
-  estimations.resize(queryTree.Dataset().n_cols);
+  estimations.resize(queryTree->Dataset().n_cols);
   estimations.fill(arma::fill::zeros);
 
   // Evaluate
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
   RuleType rules = RuleType(referenceTree->Dataset(),
-                            queryTree.Dataset(),
+                            queryTree->Dataset(),
                             estimations,
                             relError,
                             absError,
@@ -367,13 +367,13 @@ Evaluate(Tree& queryTree,
     // DualTreeTraverser Breadth-First
     typename Tree::template BreadthFirstDualTreeTraverser<RuleType>
       traverser(rules);
-    traverser.Traverse(queryTree, *referenceTree);
+    traverser.Traverse(*queryTree, *referenceTree);
   }
   else
   {
     // DualTreeTraverser Depth-First
     typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
-    traverser.Traverse(queryTree, *referenceTree);
+    traverser.Traverse(*queryTree, *referenceTree);
   }
   estimations /= referenceTree->Dataset().n_cols;
 }

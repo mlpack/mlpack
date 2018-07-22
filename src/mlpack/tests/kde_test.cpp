@@ -113,8 +113,8 @@ BOOST_AUTO_TEST_CASE(KDETreeAsArguments)
   // Get dual-tree results.
   typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
-  Tree queryTree(query, oldFromNewQueries, 2);
-  Tree referenceTree(reference, 2);
+  Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
+  Tree* referenceTree = new Tree(reference, 2);
   KDE<EuclideanDistance,
       arma::mat,
       GaussianKernel,
@@ -124,6 +124,8 @@ BOOST_AUTO_TEST_CASE(KDETreeAsArguments)
   kde.Evaluate(queryTree, oldFromNewQueries, estimations);
   for (size_t i = 0; i < query.n_cols; ++i)
     BOOST_REQUIRE_CLOSE(estimations[i], estimationsResult[i], 1e-8);
+  delete queryTree;
+  delete referenceTree;
 }
 
 /**
@@ -182,8 +184,8 @@ BOOST_AUTO_TEST_CASE(BallTreeGaussianKDETest)
   // BallTree KDE
   typedef BallTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
-  Tree queryTree(query, oldFromNewQueries, 2);
-  Tree referenceTree(reference, 2);
+  Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
+  Tree* referenceTree = new Tree(reference, 2);
   KDE<EuclideanDistance,
       arma::mat,
       GaussianKernel,
@@ -195,6 +197,9 @@ BOOST_AUTO_TEST_CASE(BallTreeGaussianKDETest)
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
     BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
+
+  delete queryTree;
+  delete referenceTree;
 }
 
 /**
@@ -222,8 +227,8 @@ BOOST_AUTO_TEST_CASE(DuplicatedReferenceSampleKDETest)
   // Dual-tree KDE
   typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
-  Tree queryTree(query, oldFromNewQueries, 2);
-  Tree referenceTree(reference, 2);
+  Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
+  Tree* referenceTree = new Tree(reference, 2);
   KDE<EuclideanDistance,
       arma::mat,
       GaussianKernel,
@@ -235,6 +240,9 @@ BOOST_AUTO_TEST_CASE(DuplicatedReferenceSampleKDETest)
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
     BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
+
+  delete queryTree;
+  delete referenceTree;
 }
 
 /**
@@ -254,8 +262,8 @@ BOOST_AUTO_TEST_CASE(DuplicatedQuerySampleKDETest)
   // Dual-tree KDE
   typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
-  Tree queryTree(query, oldFromNewQueries, 2);
-  Tree referenceTree(reference, 2);
+  Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
+  Tree* referenceTree = new Tree(reference, 2);
   KDE<EuclideanDistance,
       arma::mat,
       GaussianKernel,
@@ -266,6 +274,9 @@ BOOST_AUTO_TEST_CASE(DuplicatedQuerySampleKDETest)
 
   // Check whether results are equal.
   BOOST_REQUIRE_CLOSE(estimations[2], estimations[3], relError);
+
+  delete queryTree;
+  delete referenceTree;
 }
 
 /**
@@ -362,8 +373,10 @@ BOOST_AUTO_TEST_CASE(EmptyReferenceTest)
 
   // When training using a tree
   typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
-  Tree referenceTree(reference, 2);
+  Tree* referenceTree = new Tree(reference, 2);
   BOOST_REQUIRE_THROW(kde.Train(referenceTree), std::invalid_argument);
+
+  delete referenceTree;
 }
 
 /**
@@ -394,9 +407,10 @@ BOOST_AUTO_TEST_CASE(EvaluationMatchDimensionsTest)
   // When evaluating using a query tree
   typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
-  Tree queryTree(query, oldFromNewQueries, 3);
+  Tree* queryTree = new Tree(query, oldFromNewQueries, 3);
   BOOST_REQUIRE_THROW(kde.Evaluate(queryTree, oldFromNewQueries, estimations),
                     std::invalid_argument);
+  delete queryTree;
 }
 
 /**
@@ -426,9 +440,11 @@ BOOST_AUTO_TEST_CASE(EmptyQuerySetTest)
   // When evaluating using a query tree
   typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
-  Tree queryTree(query, oldFromNewQueries, 3);
+  Tree* queryTree = new Tree(query, oldFromNewQueries, 3);
   BOOST_REQUIRE_NO_THROW(
     kde.Evaluate(queryTree, oldFromNewQueries, estimations));
+
+  delete queryTree;
 }
 
 /**

@@ -122,14 +122,14 @@ class KDE
    *
    * @param referenceSet Set of reference data.
    */
-  void Train(const MatType& referenceSet);
+  void Train(MatType referenceSet);
 
   /**
    * Trains the KDE model. Sets the reference tree to an already created tree.
    *
    * @param referenceTree New already created reference tree.
    */
-  void Train(Tree& referenceTree);
+  void Train(Tree* referenceTree);
 
   /**
    * Estimate density of each point in the query set given the data of the
@@ -160,7 +160,7 @@ class KDE
    * @param oldFromNewQueries Mappings of query points to the tree dataset.
    * @param estimations Object which will hold the density of each query point.
    */
-  void Evaluate(Tree& queryTree,
+  void Evaluate(Tree* queryTree,
                 const std::vector<size_t>& oldFromNewQueries,
                 arma::vec& estimations);
 
@@ -171,7 +171,7 @@ class KDE
   KernelType& Kernel() { return kernel; }
 
   //! Get the reference tree.
-  const Tree& ReferenceTree() const { return referenceTree; }
+  Tree* ReferenceTree() { return referenceTree; }
 
   //! Get relative error tolerance.
   double RelativeError() const { return relError; }
