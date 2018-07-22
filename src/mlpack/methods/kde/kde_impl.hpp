@@ -48,7 +48,7 @@ template<typename MetricType,
 KDE<MetricType, MatType, KernelType, TreeType>::KDE() :
     kernel(new KernelType()),
     metric(new MetricType()),
-    relError(1e-8),
+    relError(1e-6),
     absError(0.0),
     breadthFirst(false),
     ownsKernel(true),
