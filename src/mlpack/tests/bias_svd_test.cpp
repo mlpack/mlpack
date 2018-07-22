@@ -59,8 +59,8 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionRandomEvaluate)
       const size_t item = data(1, j) + numUsers;
 
       const double rating = data(2, j);
-      const double userBias = parameters(user, rank);
-      const double itemBias = parameters(item, rank);
+      const double userBias = parameters(rank, user);
+      const double itemBias = parameters(rank, item);
       const double ratingError = rating - userBias - itemBias -
           arma::dot(parameters.col(user).subvec(0, rank - 1),
                     parameters.col(item).subvec(0, rank - 1));

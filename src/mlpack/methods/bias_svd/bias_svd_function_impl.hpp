@@ -44,8 +44,7 @@ void BiasSVDFunction<MatType>::Shuffle()
 }
 
 template <typename MatType>
-double BiasSVDFunction<MatType>::Evaluate(const arma::mat& parameters)
-const
+double BiasSVDFunction<MatType>::Evaluate(const arma::mat& parameters) const
 {
   // ...
 
@@ -59,8 +58,8 @@ const
 
     // Calculate the squared error in the prediction.
     const double rating = data(2, i);
-    const double userBias = parameters(user, rank);
-    const double itemBias = parameters(item, rank);
+    const double userBias = parameters(rank, user);
+    const double itemBias = parameters(rank, item);
     double ratingError = rating - userBias - itemBias -
         arma::dot(parameters.col(user).subvec(0, rank - 1),
                   parameters.col(item).subvec(0, rank - 1));
@@ -70,9 +69,7 @@ const
     double userVecNorm = arma::norm(parameters.col(user), 2);
     double itemVecNorm = arma::norm(parameters.col(item), 2);
     double regularizationError = lambda * (userVecNorm * userVecNorm +
-                                           itemVecNorm * itemVecNorm + 
-                                           userBias * userBias +
-                                           itemBias + itemBias);
+                                           itemVecNorm * itemVecNorm);
 
     cost += (ratingErrorSquared + regularizationError);
   }
@@ -95,8 +92,8 @@ double BiasSVDFunction<MatType>::Evaluate(const arma::mat& parameters,
 
     // Calculate the squared error in the prediction.
     const double rating = data(2, i);
-    const double userBias = parameters(user, rank);
-    const double itemBias = parameters(item, rank);
+    const double userBias = parameters(rank, user);
+    const double itemBias = parameters(rank, item);
     double ratingError = rating - userBias - itemBias -
         arma::dot(parameters.col(user).subvec(0, rank - 1),
                   parameters.col(item).subvec(0, rank - 1));
@@ -106,9 +103,7 @@ double BiasSVDFunction<MatType>::Evaluate(const arma::mat& parameters,
     double userVecNorm = arma::norm(parameters.col(user), 2);
     double itemVecNorm = arma::norm(parameters.col(item), 2);
     double regularizationError = lambda * (userVecNorm * userVecNorm +
-                                           itemVecNorm * itemVecNorm +
-                                           userBias * userBias +
-                                           itemBias * itemBias);
+                                           itemVecNorm * itemVecNorm);
 
     objective += (ratingErrorSquared + regularizationError);
   }
@@ -132,8 +127,8 @@ void BiasSVDFunction<MatType>::Gradient(const arma::mat& parameters,
 
     // Prediction error for the example.
     const double rating = data(2, i);
-    const double userBias = parameters(user, rank);
-    const double itemBias = parameters(item, rank);
+    const double userBias = parameters(rank, user);
+    const double itemBias = parameters(rank, item);
     double ratingError = rating - userBias - itemBias -
         arma::dot(parameters.col(user).subvec(0, rank - 1),
                   parameters.col(item).subvec(0, rank - 1));
@@ -146,10 +141,10 @@ void BiasSVDFunction<MatType>::Gradient(const arma::mat& parameters,
     gradient.col(item).subvec(0, rank - 1) +=
         2 * (lambda * parameters.col(item).subvec(0, rank - 1) -
         ratingError * parameters.col(user).subvec(0, rank - 1));
-    gradient(user, rank) +=
-        2 * (lambda * parameters(user, rank) - ratingError);
-    gradient(item, rank) +=
-        2 * (lambda * parameters(item, rank) - ratingError);
+    gradient(rank, user) +=
+        2 * (lambda * parameters(rank, user) - ratingError);
+    gradient(rank, item) +=
+        2 * (lambda * parameters(rank, item) - ratingError);
   }
 }
 
@@ -160,7 +155,7 @@ void BiasSVDFunction<MatType>::Gradient(const arma::mat& parameters,
                                                GradType& gradient,
                                                const size_t batchSize) const
 {
-  gradient.zeros(rank, numUsers + numItems);
+  gradient.zeros(rank + 1, numUsers + numItems);
 
   // It's possible this could be SIMD-vectorized for additional speedup.
   for (size_t i = start; i < start + batchSize; ++i)
@@ -170,8 +165,8 @@ void BiasSVDFunction<MatType>::Gradient(const arma::mat& parameters,
 
     // Prediction error for the example.
     const double rating = data(2, i);
-    const double userBias = parameters(user, rank);
-    const double itemBias = parameters(item, rank);
+    const double userBias = parameters(rank, user);
+    const double itemBias = parameters(rank, item);
     double ratingError = rating - userBias - itemBias -
         arma::dot(parameters.col(user).subvec(0, rank - 1),
                   parameters.col(item).subvec(0, rank - 1));
@@ -184,10 +179,10 @@ void BiasSVDFunction<MatType>::Gradient(const arma::mat& parameters,
     gradient.col(item).subvec(0, rank - 1) +=
         2 * (lambda * parameters.col(item).subvec(0, rank - 1) -
         ratingError * parameters.col(user).subvec(0, rank - 1));
-    gradient(user, rank) +=
-        2 * (lambda * parameters(user, rank) - ratingError);
-    gradient(item, rank) +=
-        2 * (lambda * parameters(item, rank) - ratingError);
+    gradient(rank, user) +=
+        2 * (lambda * parameters(rank, user) - ratingError);
+    gradient(rank, item) +=
+        2 * (lambda * parameters(rank, item) - ratingError);
   }
 }
 
@@ -243,8 +238,8 @@ double StandardSGD::Optimize(
 
     // Prediction error for the example.
     const double rating = data(2, currentFunction);
-    const double userBias = parameters(user, rank);
-    const double itemBias = parameters(item, rank);
+    const double userBias = parameters(rank, user);
+    const double itemBias = parameters(rank, item);
     double ratingError = rating - userBias - itemBias -
         arma::dot(parameters.col(user).subvec(0, rank - 1),
                   parameters.col(item).subvec(0, rank - 1));
@@ -259,10 +254,10 @@ double StandardSGD::Optimize(
     parameters.col(item).subvec(0, rank - 1) -= stepSize * (
         lambda * parameters.col(item).subvec(0, rank - 1) -
         ratingError * parameters.col(user).subvec(0, rank - 1));
-    parameters(user, rank) -= stepSize * (
-        lambda * parameters(user, rank) - ratingError);
-    parameters(item, rank) -= stepSize * (
-        lambda * parameters(item, rank) - ratingError);
+    parameters(rank, user) -= stepSize * (
+        lambda * parameters(rank, user) - ratingError);
+    parameters(rank, item) -= stepSize * (
+        lambda * parameters(rank, item) - ratingError);
 
     // Now add that to the overall objective function.
     overallObjective += function.Evaluate(parameters, currentFunction);
@@ -352,8 +347,8 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
 
         // Prediction error for the example.
         const double rating = data(2, visitationOrder[j]);
-        const double userBias = iterate(user, rank);
-        const double itemBias = iterate(item, rank);
+        const double userBias = iterate(rank, user);
+        const double itemBias = iterate(rank, item);
         double ratingError = rating - userBias - itemBias -
             arma::dot(iterate.col(user).subvec(0, rank - 1),
                       iterate.col(item).subvec(0, rank - 1));
@@ -367,9 +362,9 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
             lambda * iterate.col(item).subvec(0, rank - 1) -
             ratingError * iterate.col(user).subvec(0, rank - 1));
         double userBiasUpdate = stepSize * (
-            lambda * iterate(user, rank) - ratingError);
+            lambda * iterate(rank, user) - ratingError);
         double itemBiasUpdate = stepSize * (
-            lambda * iterate(item, rank) - ratingError);
+            lambda * iterate(rank, item) - ratingError);
 
         // Gradient is non-zero only for the parameter columns corresponding to
         // the example.
@@ -382,6 +377,7 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
         }
         #pragma omp atomic
         iterate(rank, user) -= userBiasUpdate;
+        #pragma omp atomic
         iterate(rank, item) -= itemBiasUpdate;
       }
     }
