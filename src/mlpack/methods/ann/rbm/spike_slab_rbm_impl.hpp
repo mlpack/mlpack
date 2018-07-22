@@ -41,12 +41,12 @@ RBM<InitializationRuleType, DataType, PolicyType>::Reset()
   slabMean.set_size(poolSize, hiddenSize);
 
   // Weight shape D * K * N
-  weightCube = arma::Cube<ElemType>(parameter.memptr(), visibleSize, poolSize,
+  weight = arma::Cube<ElemType>(parameter.memptr(), visibleSize, poolSize,
       hiddenSize, false, false);
-  // spike bias shape N * 1
+  // Spike bias shape N * 1
   spikeBias = DataType(parameter.memptr() + weight.n_elem, hiddenSize, 1,
       false, false);
-  // visible penalty 1 * 1 => D * D(when used)
+  // Visible penalty 1 * 1 => D * D(when used)
   visiblePenalty = DataType(parameter.memptr() + weight.n_elem +
       spikeBias.n_elem, 1, 1, false, false);
 
@@ -69,15 +69,14 @@ typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, double>::type
 RBM<InitializationRuleType, DataType, PolicyType>::FreeEnergy(
     arma::Mat<ElemType>&& input)
 {
-  ElemType freeEnergy = 0.5 * visiblePenalty(0) * arma::accu(input.t() * input);
+  ElemType freeEnergy = 0.5 * visiblePenalty(0) * arma::dot(input, input);
 
   freeEnergy -= 0.5 * hiddenSize * poolSize *
       std::log((2.0 * M_PI) / slabPenalty);
 
   for (size_t i = 0; i < hiddenSize; i++)
   {
-    ElemType sum = 0;
-    sum = arma::accu(arma::square(input.t() * weightCube.slice(i))) /
+    ElemType sum = arma::accu(arma::square(input.t() * weight.slice(i))) /
         (2.0 * slabPenalty);
     freeEnergy -= SoftplusFunction::Fn(spikeBias(i) - sum);
   }
@@ -117,7 +116,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::Phase(
 
   spikeBiasGrad = spikeMean;
 
-  visiblePenaltyGrad = -0.5 * arma::accu(input.t() * input)
+  visiblePenaltyGrad = -0.5 * arma::dot(input, input)
       / std::pow(input.n_cols, 2);
 }
 
@@ -179,7 +178,6 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleVisible(
         << arma::norm(output, 2)
         << " terminating optimization."
         << std::endl;
-    return;
   }
 }
 
@@ -202,7 +200,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::VisibleMean(
 
   for (size_t i = 0; i < hiddenSize; i++)
   {
-    output += weightCube.slice(i) * slab.col(i) * spike(i);
+    output += weight.slice(i) * slab.col(i) * spike(i);
   }
 
   output = ((1.0 / visiblePenalty(0)) * output);
@@ -244,7 +242,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SpikeMean(
   for (size_t i = 0; i < hiddenSize; i++)
   {
     spikeMean(i) = LogisticFunction::Fn(0.5 * (1.0 / slabPenalty) * arma::accu(
-        visible.t() * (weightCube.slice(i) * weightCube.slice(i).t()) * visible)
+        visible.t() * (weight.slice(i) * weight.slice(i).t()) * visible)
         / std::pow(visible.n_cols, 2) + spikeBias(i));
   }
 }
@@ -281,7 +279,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SlabMean(
   for (size_t i = 0; i < hiddenSize; i++)
   {
     slabMean.col(i) = arma::mean((1.0 / slabPenalty) * spike(i) *
-        weightCube.slice(i).t() * visible, 1);
+        weight.slice(i).t() * visible, 1);
   }
 }
 

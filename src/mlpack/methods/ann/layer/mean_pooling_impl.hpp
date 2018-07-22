@@ -36,17 +36,17 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
     kH(kH),
     dW(dW),
     dH(dH),
+    floor(floor),
+    inSize(0),
+    outSize(0),
     inputWidth(0),
     inputHeight(0),
     outputWidth(0),
     outputHeight(0),
     reset(false),
-    floor(floor),
     deterministic(false),
     offset(0),
-    batchSize(0),
-    inSize(0),
-    outSize(0)
+    batchSize(0)
 {
   // Nothing to do here.
 }

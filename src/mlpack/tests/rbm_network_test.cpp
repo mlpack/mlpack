@@ -38,6 +38,9 @@ using namespace mlpack::regression;
 
 BOOST_AUTO_TEST_SUITE(RBMNetworkTest);
 
+/*
+ * Tests the BinaryRBM implementation on the Digits dataset.
+ */
 BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
 {
   // Normalised dataset.
@@ -115,6 +118,9 @@ BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
   BOOST_REQUIRE_GE(rbmClassificationAccuracy, classificationAccuray);
 }
 
+/*
+ * Tests the SpikeSlabRBM implementation on the Digits dataset.
+ */
 BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
 {
   size_t batchSize = 10;
@@ -197,6 +203,8 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   double ssRbmClassificationAccuracy = ssRbmRegressor.ComputeAccuracy(
       YRbm, testLabels);
 
+  // 76.18 is the standard accuracy of the Softmax regression classifier,
+  // omitted here for speed.
   BOOST_REQUIRE_GE(ssRbmClassificationAccuracy, 76.18);
 }
 
@@ -210,16 +218,15 @@ void BuildVanillaNetwork(MatType& trainData,
       trainData.n_rows, hiddenLayerSize, 1, 1, 1, 2, 8, 1, true);
 
   model.Reset();
-  // Set the parameters from a learned RBM Sklearn random state 23
+  // Set the parameters from a learned RBM Sklearn random state 23.
   model.Parameters() = MatType(
       "-0.23224054, -0.23000632, -0.25701271, -0.25122418, -0.20716651,"
       "-0.20962217, -0.59922456, -0.60003836, -0.6, -0.625, -0.475;");
 
-  // Check free energy
+  // Check free energy.
   arma::Mat<float> freeEnergy = MatType(
       "-0.87523715, 0.50615066, 0.46923476, 1.21509084;");
-  arma::vec calculatedFreeEnergy(4);
-  calculatedFreeEnergy.zeros();
+  arma::vec calculatedFreeEnergy(4, arma::fill::zeros);
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
     calculatedFreeEnergy(i) = model.FreeEnergy(std::move(trainData.col(i)));
@@ -229,12 +236,11 @@ void BuildVanillaNetwork(MatType& trainData,
     BOOST_REQUIRE_CLOSE(calculatedFreeEnergy(i), freeEnergy(i), 1e-3);
 }
 
+/*
+ * Train and evaluate a Vanilla network with the specified structure.
+ */
 BOOST_AUTO_TEST_CASE(MiscTest)
 {
-  /**
-   * Train and evaluate a Vanilla network with the specified structure.
-   */
-
   arma::Mat<float> X = arma::Mat<float>("0.0, 0.0, 0.0;"
                           "0.0, 1.0, 1.0;"
                           "1.0, 0.0, 1.0;"

@@ -172,15 +172,6 @@ class MeanPooling
     }
   }
 
-  //! Locally-stored number of input channels.
-  size_t inSize;
-
-  //! Locally-stored number of output channels.
-  size_t outSize;
-
-  //! Locally-stored number of input units.
-  size_t batchSize;
-
   //! Locally-stored width of the pooling window.
   size_t kW;
 
@@ -192,6 +183,15 @@ class MeanPooling
 
   //! Locally-stored height of the stride operation.
   size_t dH;
+
+  //! Rounding operation used.
+  bool floor;
+
+  //! Locally-stored number of input channels.
+  size_t inSize;
+
+  //! Locally-stored number of output channels.
+  size_t outSize;
 
   //! Locally-stored input width.
   size_t inputWidth;
@@ -208,14 +208,14 @@ class MeanPooling
   //! Locally-stored reset parameter used to initialize the module once.
   bool reset;
 
-  //! Rounding operation used.
-  bool floor;
-
   //! If true use maximum a posteriori during the forward pass.
   bool deterministic;
 
   //! Locally-stored stored rounding offset.
   size_t offset;
+
+  //! Locally-stored number of input units.
+  size_t batchSize;
 
   //! Locally-stored output parameter.
   arma::cube outputTemp;

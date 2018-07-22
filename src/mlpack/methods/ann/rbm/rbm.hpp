@@ -18,7 +18,13 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The RBM class.
+ * The implementation of the RBM module. A Restricted Boltzmann Machines (RBM)
+ * is a generative stochastic artificial neural network that can learn a
+ * probability distribution over its set of inputs. RBMs have found applications
+ * in dimensionality reduction, classification, collaborative filtering, feature
+ * learning and topic modelling. They can be trained in either supervised or
+ * unsupervised ways, depending on the task. They are a variant of Boltzmann
+ * machines, with the restriction that the neurons must form a bipartite graph.
  *
  * @tparam InitializationRuleType Rule used to initialize the network.
  * @tparam DataType The type of matrix to be used.
@@ -38,14 +44,17 @@ class RBM
   /**
    * Initialize all the parameters of the network using initializeRule.
    *
-   * @tparam initializeRule InitializationRule object for
-   *         initializing the network parameter.
    * @param predictors Training data to be used.
+   * @param initializeRule InitializationRule object for initializing the
+   *        network parameter.
    * @param visibleSize Number of visible neurons.
    * @param hiddenSize Number of hidden neurons.
    * @param batchSize Batch size to be used for training.
    * @param numSteps Number of Gibbs Sampling steps.
    * @param negSteps Number of negative samples to average negative gradient.
+   * @param poolSize Number of hidden neurons to pool together.
+   * @param slabPenalty Regulariser of slab variables.
+   * @param radius Feasible regions for visible layer samples.
    * @param persistence Indicates whether to use Persistent CD or not.
    */
   RBM(arma::Mat<ElemType> predictors,
@@ -71,7 +80,7 @@ class RBM
   Reset();
 
   /**
-   * Train the feed-forward network on the given input data.
+   * Train the RBM on the given input data.
    *
    * This will use the existing model parameters as a starting point for the
    * optimization. If this is not what you want, then you should access the
@@ -293,7 +302,7 @@ class RBM
    */
   void Gibbs(arma::Mat<ElemType>&& input,
              arma::Mat<ElemType>&& output,
-             size_t steps = SIZE_MAX);
+             const size_t steps = SIZE_MAX);
 
   /**
    * Calculates the gradients for the RBM network.
@@ -325,14 +334,10 @@ class RBM
   //! Modify the parameters of the network.
   arma::Mat<ElemType>& Parameters() { return parameter; }
 
-  //! Return the weights of the network.
-  const DataType& Weight() const { return weight; }
+  //! Get the weights of the network.
+  arma::Cube<ElemType> const& Weight() const { return weight; }
   //! Modify the weights of the network.
-  DataType& Weight() { return weight; }
-  //! Get the weight of the network.
-  arma::cube const& WeightCube() const { return weightCube; }
-  //! Modify the weights of the network.
-  arma::cube& WeightCube() { return weightCube; }
+  arma::Cube<ElemType>& Weight() { return weight; }
 
   //! Return the visible bias of the network.
   DataType const& VisibleBias() const { return visibleBias; }
@@ -391,17 +396,16 @@ class RBM
   size_t negSteps;
   //! Locally stored variable poolSize.
   size_t poolSize;
+  //! Locally stored number of Sampling steps.
+  size_t steps;
   //! Locally stored weight of the network.
-  DataType weight;
+  arma::Cube<ElemType> weight;
   //! Locally stored biases of the visible layer.
   DataType visibleBias;
   //! Locally stored biases of the hidden layer.
   DataType hiddenBias;
   //! Locally-stored output of the preActivation function used in FreeEnergy.
   DataType preActivation;
-  //! Locally stored weight of the network
-  //! (visibleSize * poolSize * hiddenSize).
-  arma::Cube<ElemType> weightCube;
   //! Locally stored spikeBias (hiddenSize * 1).
   DataType spikeBias;
   //! Locally stored visible Penalty (1 * 1).

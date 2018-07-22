@@ -69,7 +69,8 @@ RBM<InitializationRuleType, DataType, PolicyType>::Reset()
   tempNegativeGradient.set_size(shape, 1);
   negativeSamples.set_size(visibleSize, batchSize);
 
-  weight = DataType(parameter.memptr(), hiddenSize, visibleSize, false, false);
+  weight = arma::Cube<ElemType>(parameter.memptr(), hiddenSize, visibleSize, 1,
+      false, false);
   hiddenBias = DataType(parameter.memptr() + weight.n_elem,
       hiddenSize, 1, false, false);
   visibleBias = DataType(parameter.memptr() + weight.n_elem +
@@ -111,11 +112,10 @@ typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, double>::type
 RBM<InitializationRuleType, DataType, PolicyType>::FreeEnergy(
     arma::Mat<ElemType>&& input)
 {
-  preActivation = (weight * input);
+  preActivation = (weight.slice(0) * input);
   preActivation.each_col() += hiddenBias;
-  preActivation = arma::log(1 + arma::trunc_exp(preActivation));
-  return -(arma::accu(preActivation) + arma::dot(input, arma::repmat(
-      visibleBias, 1, input.n_cols)));
+  return -(arma::accu(arma::log(1 + arma::trunc_exp(preActivation))) +
+      arma::dot(input, arma::repmat(visibleBias, 1, input.n_cols)));
 }
 
 template<
@@ -129,8 +129,8 @@ RBM<InitializationRuleType, DataType, PolicyType>::Phase(
     DataType&& input,
     DataType&& gradient)
 {
-  DataType weightGrad = DataType(gradient.memptr(),
-      hiddenSize, visibleSize, false, false);
+  arma::Cube<ElemType> weightGrad = arma::Cube<ElemType>(gradient.memptr(),
+      hiddenSize, visibleSize, 1, false, false);
 
   DataType hiddenBiasGrad = DataType(gradient.memptr() + weightGrad.n_elem,
       hiddenSize, 1, false, false);
@@ -139,7 +139,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::Phase(
       hiddenBiasGrad.n_elem, visibleSize, 1, false, false);
 
   HiddenMean(std::move(input), std::move(hiddenBiasGrad));
-  weightGrad = hiddenBiasGrad * input.t();
+  weightGrad.slice(0) = hiddenBiasGrad * input.t();
   visibleBiasGrad = input;
 }
 
@@ -207,7 +207,7 @@ typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::VisibleMean(DataType&& input,
     DataType&& output)
 {
-  output = weight.t() * input;
+  output = weight.slice(0).t() * input;
   output.each_col() += visibleBias;
   LogisticFunction::Fn(output, output);
 }
@@ -222,7 +222,7 @@ typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::HiddenMean(DataType&& input,
     DataType&& output)
 {
-  output = weight * input;
+  output = weight.slice(0) * input;
   output.each_col() += hiddenBias;
   LogisticFunction::Fn(output, output);
 }
@@ -235,9 +235,9 @@ template<
 void RBM<InitializationRuleType, DataType, PolicyType>::Gibbs(
     arma::Mat<ElemType>&& input,
     arma::Mat<ElemType>&& output,
-    size_t steps)
+    const size_t steps)
 {
-  steps = (steps == SIZE_MAX) ? this->numSteps : steps;
+  this->steps = (steps == SIZE_MAX) ? this->numSteps : steps;
 
   if (persistence && !state.is_empty())
   {
@@ -250,7 +250,7 @@ void RBM<InitializationRuleType, DataType, PolicyType>::Gibbs(
     SampleVisible(std::move(gibbsTemporary), std::move(output));
   }
 
-  for (size_t j = 1; j < steps; j++)
+  for (size_t j = 1; j < this->steps; j++)
   {
     SampleHidden(std::move(output), std::move(gibbsTemporary));
     SampleVisible(std::move(gibbsTemporary), std::move(output));
@@ -322,7 +322,6 @@ void RBM<InitializationRuleType, DataType, PolicyType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(visibleBias);
   ar & BOOST_SERIALIZATION_NVP(hiddenBias);
   ar & BOOST_SERIALIZATION_NVP(weight);
-  ar & BOOST_SERIALIZATION_NVP(weightCube);
   ar & BOOST_SERIALIZATION_NVP(spikeBias);
   ar & BOOST_SERIALIZATION_NVP(slabPenalty);
   ar & BOOST_SERIALIZATION_NVP(radius);

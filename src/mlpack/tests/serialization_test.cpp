@@ -1697,7 +1697,6 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeTest)
  * Build a Binary RBM, then save it and make sure the parameters of the
  * all the RBM are equal.
  */
-
 BOOST_AUTO_TEST_CASE(BinaryRBMTest)
 {
   arma::mat data;
@@ -1735,15 +1734,14 @@ BOOST_AUTO_TEST_CASE(BinaryRBMTest)
  * Build a ssRBM, then save it and make sure the parameters of the
  * all the RBM are equal.
  */
-
 BOOST_AUTO_TEST_CASE(ssRBMTest)
 {
   arma::mat data;
   size_t hiddenLayerSize = 5;
   data.randu(3, 100);
   double slabPenalty = 1;
-  double radius, tempRadius;
-  for (size_t i = 0; i < data.n_cols; i++)
+  double tempRadius, radius = arma::norm(data.col(0));
+  for (size_t i = 1; i < data.n_cols; i++)
   {
     tempRadius = arma::norm(data.col(i));
     if (radius < tempRadius)
@@ -1781,9 +1779,9 @@ BOOST_AUTO_TEST_CASE(ssRBMTest)
   CheckMatrices(Rbm.SpikeBias(), RbmText.SpikeBias());
   CheckMatrices(Rbm.SpikeBias(), RbmBinary.SpikeBias());
 
-  CheckMatrices(Rbm.WeightCube(), RbmXml.WeightCube());
-  CheckMatrices(Rbm.WeightCube(), RbmText.WeightCube());
-  CheckMatrices(Rbm.WeightCube(), RbmBinary.WeightCube());
+  CheckMatrices(Rbm.Weight(), RbmXml.Weight());
+  CheckMatrices(Rbm.Weight(), RbmText.Weight());
+  CheckMatrices(Rbm.Weight(), RbmBinary.Weight());
 }
 
 BOOST_AUTO_TEST_SUITE_END();
