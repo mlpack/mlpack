@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_NCF_IMPL_NCF_IMPL_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/ncf.hpp>
+#include "ncf.hpp"
 
 namespace mlpack {
 namespace cf {
