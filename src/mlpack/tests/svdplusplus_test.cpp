@@ -167,8 +167,13 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusCleanDataTest)
 
   // We also want to test whether CleanData() can give matrix
   // of right size when maximum user/item is not in implicitData.
-  implicitData.row(0).replace(numUsers - 1, 0);
-  implicitData.row(1).replace(numItems - 1, 0);
+  for (size_t i = 0; i < numImplicitData; i++)
+  {
+    if (implicitData(0, i) == numUsers - 1)
+      implicitData(0, i) = 0;
+    if (implicitData(1, i) == numItems - 1)
+      implicitData(1, i) = 0;
+  }
 
   // Converts implicit data from coordinate list to sparse matrix.
   arma::sp_mat cleanedData;
