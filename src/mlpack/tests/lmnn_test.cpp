@@ -16,6 +16,7 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/lmnn/lmnn.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <mlpack/core/optimizers/bigbatch_sgd/bigbatch_sgd.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -417,8 +418,8 @@ double KnnAccuracy(const arma::mat& dataset,
 }
 
 // Check that final accuracy is greater than initial accuracy on
-// simple dataset.
-BOOST_AUTO_TEST_CASE(LMNNAccuracyTest)
+// simple dataset using AMSGrad optimizer.
+BOOST_AUTO_TEST_CASE(LMNNAMSGradAccuracyTest)
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -435,11 +436,54 @@ BOOST_AUTO_TEST_CASE(LMNNAccuracyTest)
 
   double finalAccuracy = KnnAccuracy(outputMatrix * dataset, labels, 3);
 
-  // finalObj must be less than initObj.
+  // finalObj must be less than or equal to initObj.
   BOOST_REQUIRE_LT(initAccuracy, finalAccuracy);
+}
 
-  // Since this is a very simple dataset final accuracy should be around 100%.
-  BOOST_REQUIRE_CLOSE(finalAccuracy, 100.0, 1e-5);
+// Check that final accuracy is greater than initial accuracy on
+// simple dataset using BigBatchSGD optimizer.
+BOOST_AUTO_TEST_CASE(LMNNBBSGDAccuracyTest)
+{
+  // Useful but simple dataset with six points and two classes.
+  arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+
+  // Taking k = 3 as the case of k = 1 can be easily observed.
+  double initAccuracy = KnnAccuracy(dataset, labels, 3);
+
+  LMNN<LMetric<2>, BBS_BB> lmnn(dataset, labels, 1);
+
+  arma::mat outputMatrix;
+  lmnn.LearnDistance(outputMatrix);
+
+  double finalAccuracy = KnnAccuracy(outputMatrix * dataset, labels, 3);
+
+  // finalObj must be less than or equal to initObj.
+  BOOST_REQUIRE(initAccuracy <= finalAccuracy);
+}
+
+// Check that final accuracy is greater than initial accuracy on
+// simple dataset using L-BFGS optimizer.
+BOOST_AUTO_TEST_CASE(LMNNLBFGSAccuracyTest)
+{
+  // Useful but simple dataset with six points and two classes.
+  arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                             " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
+
+  // Taking k = 3 as the case of k = 1 can be easily observed.
+  double initAccuracy = KnnAccuracy(dataset, labels, 3);
+
+  LMNN<LMetric<2>, L_BFGS> lmnn(dataset, labels, 1);
+
+  arma::mat outputMatrix;
+  lmnn.LearnDistance(outputMatrix);
+
+  double finalAccuracy = KnnAccuracy(outputMatrix * dataset, labels, 3);
+
+  // finalObj must be less than or equal to initObj.
+  BOOST_REQUIRE_LT(initAccuracy, finalAccuracy);
 }
 
 // Check that accuracy while learning square distance matrix is same
@@ -596,6 +640,43 @@ BOOST_AUTO_TEST_CASE(LMNNFunctionGradientTest4)
     arma::mat coordinates(dataset.n_rows, dataset.n_rows, arma::fill::randu);
     CheckGradient(lmnnfn, coordinates);
   }
+}
+
+/**
+ * Test the tree update function.
+ */
+BOOST_AUTO_TEST_CASE(UpdateTreeTest)
+{
+  // What I want to do is nearest neighbor search on a stretched dataset and on
+  // an updated tree.  This takes a little bit of care because depending on
+  // usage the NeighborSearch object may remap the indices of points.  So we
+  // can't check the trees directly (easily at least) but we can check the
+  // results.
+  arma::mat dataset(10, 1000, arma::fill::randn);
+
+  neighbor::KNN knn(dataset); // Make a copy of the data and build the tree.
+
+  // Now stretch the dataset randomly.
+  arma::mat transformation = arma::eye<arma::mat>(10, 10) + 0.01 *
+      arma::randn<arma::mat>(10, 10);
+  arma::mat transformedDataset = transformation * dataset;
+
+  neighbor::KNN knn2(transformedDataset);
+
+  // Next, update the reference tree we built with the first object.
+  knn.ReferenceTree().Dataset() = transformation *
+      knn.ReferenceTree().Dataset();
+  UpdateTree(knn.ReferenceTree());
+
+  // Run search for both, and ensure the results are the same.
+  arma::mat distances1, distances2;
+  arma::Mat<size_t> neighbors1, neighbors2;
+
+  knn.Search(5, neighbors1, distances1);
+  knn2.Search(5, neighbors2, distances2);
+
+  CheckMatrices(neighbors1, neighbors2);
+  CheckMatrices(distances1, distances2);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

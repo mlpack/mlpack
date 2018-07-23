@@ -37,27 +37,48 @@ Constraints<MetricType>::Constraints(
   }
 }
 
+// We assume the dataset held in the tree has already been stretched.
 template<typename TreeType>
-inline void UpdateTree(TreeType& node, const arma::mat& dataset)
+inline void UpdateTree(TreeType& node)
 {
   double minWidth = DBL_MAX;
-  arma::Col<double> mins(min(dataset, 1));
-  arma::Col<double> maxs(max(dataset, 1));
-
-    // Update each of the HRectBound dimensions...
+  arma::Col<double> mins(node.Dataset().n_rows);
+  arma::Col<double> maxs(node.Dataset().n_rows);
   for (size_t d = 0; d < node.Bound().Dim(); ++d)
   {
-    // Basically we had a previous bound and we want to "stretch" it for each dimension...
-    node.Bound()[d] |= math::RangeType<double>(mins[d], maxs[d]);
+    mins[d] = node.Dataset().col(node.Descendant(0))[d];
+    maxs[d] = node.Dataset().col(node.Descendant(0))[d];
+  }
+
+  for (size_t desc = 1; desc < node.NumDescendants(); ++desc)
+  {
+    for (size_t d = 0; d < node.Bound().Dim(); ++d)
+    {
+      const double value = node.Dataset().col(node.Descendant(desc))[d];
+      if (value < mins[d])
+        mins[d] = value;
+      if (value > maxs[d])
+        maxs[d] = value;
+    }
+  }
+
+  // Update each of the HRectBound dimensions...
+  for (size_t d = 0; d < node.Bound().Dim(); ++d)
+  {
+    // Basically we had a previous bound and we want to "stretch" it for each
+    // dimension...
+    node.Bound()[d] = math::RangeType<double>(mins[d], maxs[d]);
 
     // Calculate minWidth.
     double width = node.Bound()[d].Width();
+    if (width < minWidth)
       minWidth = width;
   }
 
   node.Bound().MinWidth() = minWidth;
 
-  // We also have to update the properties of the tree.  Some are easier after recursion.
+  // We also have to update the properties of the tree.  Some are easier after
+  // recursion.
   node.MinimumBoundDistance() = node.Bound().MinWidth() / 2.0;
   // Technically this is loose but it is what the BinarySpaceTree already does.
   node.FurthestDescendantDistance() = 0.5 * node.Bound().Diameter();
@@ -65,8 +86,8 @@ inline void UpdateTree(TreeType& node, const arma::mat& dataset)
   // Recurse into the children.
   if (node.NumChildren() > 0)
   {
-    UpdateTree(node.Child(0), dataset);
-    UpdateTree(node.Child(1), dataset);
+    UpdateTree(node.Child(0));
+    UpdateTree(node.Child(1));
 
     // Recompute the parent distance for the left and right child.
     arma::vec center, leftCenter, rightCenter;
@@ -74,7 +95,8 @@ inline void UpdateTree(TreeType& node, const arma::mat& dataset)
     node.Child(0).Center(leftCenter);
     node.Child(1).Center(rightCenter);
 
-    const double leftParentDistance = node.Metric().Evaluate(center, leftCenter);
+    const double leftParentDistance = node.Metric().Evaluate(center,
+        leftCenter);
     const double rightParentDistance = node.Metric().Evaluate(center,
         rightCenter);
 
@@ -194,7 +216,8 @@ template<typename MetricType>
 void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
                                         arma::mat& outputDistance,
                                         const arma::mat& dataset,
-                                        const arma::Row<size_t>& labels)
+                                        const arma::Row<size_t>& labels,
+                                        const arma::mat& diffTransform)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
@@ -210,8 +233,8 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
     {
       auto Tree = knnObjects[i].ReferenceTree();
 
-      Tree.Dataset() = dataset;
-      UpdateTree(Tree, dataset);
+      Tree.Dataset() = diffTransform * origDatasets[i];
+      UpdateTree(Tree);
 
       knnObjects[i].Train(Tree);
       knnObjects[i].Search(dataset.cols(indexSame[i]), k, neighbors, distances);
@@ -225,6 +248,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
 
       // Cache KNN object.
       knnObjects.push_back(knn);
+      origDatasets.push_back(knn.ReferenceTree().Dataset());
     }
 
     // Re-map neighbors to their index.
