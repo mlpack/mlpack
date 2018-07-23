@@ -45,11 +45,11 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionRandomEvaluate)
   data(1, numRatings - 1) = numItems - 1;
 
   // Make a BiasSVDFunction with zero regularization.
-  BiasSVDFunction<arma::mat> rSVDFunc(data, rank, 0);
+  BiasSVDFunction<arma::mat> biasSVDFunc(data, rank, 0);
 
   for (size_t i = 0; i < numTrials; i++)
   {
-    arma::mat parameters = arma::randu(rank, numUsers + numItems);
+    arma::mat parameters = arma::randu(rank + 1, numUsers + numItems);
 
     // Calculate cost by summing up cost of each example.
     double cost = 0;
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionRandomEvaluate)
     }
 
     // Compare calculated cost and value obtained using Evaluate().
-    BOOST_REQUIRE_CLOSE(cost, rSVDFunc.Evaluate(parameters), 1e-5);
+    BOOST_REQUIRE_CLOSE(cost, biasSVDFunc.Evaluate(parameters), 1e-5);
   }
 }
 

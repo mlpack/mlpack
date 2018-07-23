@@ -1,5 +1,5 @@
 /**
- * @file bias_svd_function.cpp
+ * @file bias_svd_function_impl.hpp
  * @author Siddharth Agrawal
  * @author Wenhao Huang
  *
@@ -281,9 +281,11 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
       (function.NumFunctions() - 1), function.NumFunctions());
 
   const arma::mat data = function.Dataset();
+  const size_t numUsers = function.NumUsers();
+  const double lambda = function.Lambda();
 
   // Rank of decomposition.
-  const size_t rank = iterate.n_rows - 1;
+  const size_t rank = function.Rank();
 
   // Iterate till the objective is within tolerance or the maximum number of
   // allowed iterations is reached. If maxIterations is 0, this will iterate
@@ -339,7 +341,6 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
           j < (threadId + 1) * threadShareSize && j < visitationOrder.n_elem;
           ++j)
       {
-        const size_t numUsers = function.NumUsers();
 
         // Indices for accessing the the correct parameter columns.
         const size_t user = data(0, visitationOrder[j]);
@@ -352,8 +353,6 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
         double ratingError = rating - userBias - itemBias -
             arma::dot(iterate.col(user).subvec(0, rank - 1),
                       iterate.col(item).subvec(0, rank - 1));
-
-        double lambda = function.Lambda();
 
         arma::mat userVecUpdate = stepSize * (
             lambda * iterate.col(user).subvec(0, rank - 1) -
@@ -368,7 +367,7 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
 
         // Gradient is non-zero only for the parameter columns corresponding to
         // the example.
-        for (size_t i = 0; i < rank - 1; ++i)
+        for (size_t i = 0; i < rank; ++i)
         {
           #pragma omp atomic
           iterate(i, user) -= userVecUpdate(i);

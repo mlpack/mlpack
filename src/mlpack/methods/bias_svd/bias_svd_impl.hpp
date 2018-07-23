@@ -43,13 +43,13 @@ void BiasSVD<OptimizerType>::Apply(const arma::mat& data,
       << std::endl;
 
   // Make the optimizer object using a BiasSVDFunction object.
-  BiasSVDFunction<arma::mat> rSVDFunc(data, rank, lambda);
+  BiasSVDFunction<arma::mat> biasSVDFunc(data, rank, lambda);
   mlpack::optimization::StandardSGD optimizer(alpha, batchSize,
       iterations * data.n_cols);
 
   // Get optimized parameters.
-  arma::mat parameters = rSVDFunc.GetInitialPoint();
-  optimizer.Optimize(rSVDFunc, parameters);
+  arma::mat parameters = biasSVDFunc.GetInitialPoint();
+  optimizer.Optimize(biasSVDFunc, parameters);
 
   // Constants for extracting user and item matrices.
   const size_t numUsers = max(data.row(0)) + 1;
