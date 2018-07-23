@@ -77,9 +77,6 @@ inline void UpdateTree(TreeType& node)
 
   node.Bound().MinWidth() = minWidth;
 
-  // We also have to update the properties of the tree.  Some are easier after
-  // recursion.
-  node.MinimumBoundDistance() = node.Bound().MinWidth() / 2.0;
   // Technically this is loose but it is what the BinarySpaceTree already does.
   node.FurthestDescendantDistance() = 0.5 * node.Bound().Diameter();
 
