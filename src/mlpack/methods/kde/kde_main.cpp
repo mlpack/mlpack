@@ -66,7 +66,7 @@ static void mlpackMain()
   const double absError = CLI::GetParam<double>("abs_error");
   const bool breadthFirst = CLI::GetParam<bool>("breadth_first");
   // Initialize results vector.
-  arma::vec estimations = std::move(arma::vec(query.n_cols, arma::fill::zeros));
+  arma::vec estimations;
 
   // Handle KD-Tree, Gaussian, Euclidean KDE.
   if (treeStr == "kd-tree" &&
