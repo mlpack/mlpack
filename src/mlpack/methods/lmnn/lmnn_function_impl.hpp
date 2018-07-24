@@ -77,6 +77,7 @@ void LMNNFunction<MetricType>::Shuffle()
   arma::cube newEvalOld = evalOld;
   arma::vec newlastTransformationIndices = lastTransformationIndices;
   arma::mat newMaxImpNorm = maxImpNorm;
+  arma::vec newNorm = norm;
 
   // Generate ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -89,6 +90,7 @@ void LMNNFunction<MetricType>::Shuffle()
   labels = newLabels.cols(ordering);
   maxImpNorm = newMaxImpNorm.cols(ordering);
   lastTransformationIndices = newlastTransformationIndices.elem(ordering);
+  norm = newNorm.elem(ordering);
 
   for (size_t i = 0; i < ordering.n_elem; i++)
   {
