@@ -2037,7 +2037,8 @@ BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerTest)
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(10, 6);
-      model->Add<Reparametrization<> >(3, false);
+      // Use a value of beta not equal to 1.
+      model->Add<Reparametrization<> >(3, false, true, 2);
       model->Add<Linear<> >(3, 2);
       model->Add<LogSoftMax<> >();
     }

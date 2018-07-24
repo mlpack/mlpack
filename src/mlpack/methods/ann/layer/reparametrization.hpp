@@ -46,10 +46,12 @@ class Reparametrization
    * @param latentSize The number of output latent units.
    * @param stochastic Whether we want random sample or constant.
    * @param includeKl Whether we want to include KL loss in backward function.
+   * @param beta Hyperparameter for constrained variational frameworks.
    */
   Reparametrization(const size_t latentSize,
                     const bool stochastic = true,
-                    const bool includeKl = true);
+                    const bool includeKl = true,
+                    const double beta = 1);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -93,8 +95,11 @@ class Reparametrization
   //! Get the KL divergence with standard normal.
   double Loss()
   {
-    return -0.5 * arma::accu(2 * arma::log(stdDev) - arma::pow(stdDev, 2)
-        - arma::pow(mean, 2) + 1);
+    if (!includeKl)
+      return 0;
+
+    return -0.5 * beta * arma::accu(2 * arma::log(stdDev) - arma::pow(stdDev, 2)
+        - arma::pow(mean, 2) + 1) / mean.n_cols;
   }
 
   /**
@@ -106,6 +111,9 @@ class Reparametrization
  private:
   //! Locally-stored number of output units.
   size_t latentSize;
+
+  //! The beta hyperparameter for constrained variational frameworks.
+  double beta;
 
   //! If false, sample will be constant.
   bool stochastic;
