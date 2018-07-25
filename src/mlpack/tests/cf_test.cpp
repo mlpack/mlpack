@@ -14,10 +14,12 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/cf/cf.hpp>
 #include <mlpack/methods/cf/decomposition_policies/batch_svd_method.hpp>
+#include <mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/randomized_svd_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/svd_complete_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/svd_incomplete_method.hpp>
+#include <mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp>
 #include <mlpack/methods/cf/normalization/no_normalization.hpp>
 #include <mlpack/methods/cf/normalization/overall_mean_normalization.hpp>
 #include <mlpack/methods/cf/normalization/user_mean_normalization.hpp>
@@ -340,12 +342,12 @@ void Train(DecompositionPolicy& decomposition)
  * Make sure we can train an already-trained model and it works okay
  * for policies that use coordinate lists.
  */
-template<>
-void Train<>(RegSVDPolicy& decomposition)
+template<typename DecompositionPolicy>
+void TrainWithCoordinateList(DecompositionPolicy& decomposition)
 {
   arma::mat randomData = arma::zeros(100, 100);
   randomData.diag().ones();
-  CFType<RegSVDPolicy> c(randomData, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy> c(randomData, decomposition, 5, 5, 70);
 
   // Now retrain with data we know about.
   // Small GroupLens dataset.
@@ -564,6 +566,24 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersSVDIncompleteTest)
 }
 
 /**
+ * Make sure that correct number of recommendations are generated when query
+ * set for Bias SVD method.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersBiasSVDTest)
+{
+  GetRecommendationsAllUsers<BiasSVDPolicy>();
+}
+
+/**
+ * Make sure that correct number of recommendations are generated when query
+ * set for SVDPlusPlus method.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersSVDPPTest)
+{
+  GetRecommendationsAllUsers<SVDPlusPlusPolicy>();
+}
+
+/**
  * Make sure that the recommendations are generated for queried users only
  * for randomized SVD.
  */
@@ -615,6 +635,24 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserSVDCompleteTest)
 BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserSVDIncompleteTest)
 {
   GetRecommendationsQueriedUser<SVDIncompletePolicy>();
+}
+
+/**
+ * Make sure that the recommendations are generated for queried users only
+ * for Bias SVD method.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserBiasSVDTest)
+{
+  GetRecommendationsQueriedUser<BiasSVDPolicy>();
+}
+
+/**
+ * Make sure that the recommendations are generated for queried users only
+ * for SVDPlusPlus method.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserSVDPPTest)
+{
+  GetRecommendationsQueriedUser<SVDPlusPlusPolicy>();
 }
 
 /**
@@ -671,6 +709,24 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDIncompleteTest)
   RecommendationAccuracy<SVDIncompletePolicy>();
 }
 
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for Bias SVD method.
+ */ 
+BOOST_AUTO_TEST_CASE(RecommendationAccuracyBiasSVDTest)
+{
+  RecommendationAccuracy<BiasSVDPolicy>();
+}
+
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for SVDPlusPlus method.
+ */ 
+BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDPPTest)
+{
+  RecommendationAccuracy<SVDPlusPlusPolicy>();
+}
+
 // Make sure that Predict() is returning reasonable results for randomized SVD.
 BOOST_AUTO_TEST_CASE(CFPredictRandSVDTest)
 {
@@ -713,6 +769,24 @@ BOOST_AUTO_TEST_CASE(CFPredictSVDIncompleteTest)
   CFPredict<SVDIncompletePolicy>(3.5);
 }
 
+/**
+ * Make sure that Predict() is returning reasonable results for Bias SVD
+ * method.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictBiasSVDTest)
+{
+  CFPredict<BiasSVDPolicy>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for SVDPlusPlus
+ * method.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictSVDPPTest)
+{
+  CFPredict<SVDPlusPlusPolicy>();
+}
+
 // Compare batch Predict() and individual Predict() for randomized SVD.
 BOOST_AUTO_TEST_CASE(CFBatchPredictRandSVDTest)
 {
@@ -751,6 +825,20 @@ BOOST_AUTO_TEST_CASE(CFBatchPredictSVDIncompleteTest)
   BatchPredict<SVDIncompletePolicy>();
 }
 
+// Compare batch Predict() and individual Predict() for
+// Bias SVD method.
+BOOST_AUTO_TEST_CASE(CFBatchPredictBiasSVDTest)
+{
+  BatchPredict<BiasSVDPolicy>();
+}
+
+// Compare batch Predict() and individual Predict() for
+// SVDPlusPlus method.
+BOOST_AUTO_TEST_CASE(CFBatchPredictSVDPPTest)
+{
+  BatchPredict<SVDPlusPlusPolicy>();
+}
+
 /**
  * Make sure we can train an already-trained model and it works okay for
  * randomized SVD.
@@ -768,7 +856,7 @@ BOOST_AUTO_TEST_CASE(TrainRandSVDTest)
 BOOST_AUTO_TEST_CASE(TrainRegSVDTest)
 {
   RegSVDPolicy decomposition;
-  Train(decomposition);
+  TrainWithCoordinateList(decomposition);
 }
 
 /**
@@ -809,6 +897,26 @@ BOOST_AUTO_TEST_CASE(TrainSVDIncompleteTest)
 {
   SVDIncompletePolicy decomposition;
   Train(decomposition);
+}
+
+/**
+ * Make sure we can train an already-trained model and it works okay for
+ * BiasSVD method.
+ */
+BOOST_AUTO_TEST_CASE(TrainBiasSVDTest)
+{
+  BiasSVDPolicy decomposition;
+  TrainWithCoordinateList(decomposition);
+}
+
+/**
+ * Make sure we can train an already-trained model and it works okay for
+ * SVDPlusPlus method.
+ */
+BOOST_AUTO_TEST_CASE(TrainSVDPPTest)
+{
+  SVDPlusPlusPolicy decomposition;
+  TrainWithCoordinateList(decomposition);
 }
 
 /**
