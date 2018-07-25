@@ -61,15 +61,18 @@ documentation. The website should be consulted for further information:
 If you use mlpack in your research or software, please cite mlpack using the
 citation below (given in BiBTeX format):
 
-    @article{mlpack2013,
-      title     = {{mlpack}: A Scalable {C++} Machine Learning Library},
-      author    = {Curtin, Ryan R. and Cline, James R. and Slagle, Neil P. and
-                   March, William B. and Ram, P. and Mehta, Nishant A. and Gray,
-                   Alexander G.},
-      journal   = {Journal of Machine Learning Research},
-      volume    = {14},
-      pages     = {801--805},
-      year      = {2013}
+    @article{mlpack2018,
+        title     = {mlpack 3: a fast, flexible machine learning library},
+        author    = {Curtin, Ryan R. and Edel, Marcus and Lozhnikov, Mikhail and
+                     Mentekidis, Yannis and Ghaisas, Sumedh and Zhang,
+                     Shangtong},
+        journal   = {Journal of Open Source Software},
+        volume    = {3},
+        issue     = {26},
+        pages     = {726},
+        year      = {2018},
+        doi       = {10.21105/joss.00726},
+        url       = {https://doi.org/10.21105/joss.00726}
     }
 
 Citations are beneficial for the growth and improvement of mlpack.
