@@ -42,8 +42,8 @@ template<typename TreeType>
 inline void UpdateTree(TreeType& node)
 {
   double minWidth = DBL_MAX;
-  arma::Col<double> mins(node.Dataset().n_rows);
-  arma::Col<double> maxs(node.Dataset().n_rows);
+  arma::Col<typename TreeType::ElemType> mins(node.Dataset().n_rows);
+  arma::Col<typename TreeType::ElemType> maxs(node.Dataset().n_rows);
   for (size_t d = 0; d < node.Bound().Dim(); ++d)
   {
     mins[d] = node.Dataset().col(node.Descendant(0))[d];
@@ -214,7 +214,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
                                         arma::mat& outputDistance,
                                         const arma::mat& dataset,
                                         const arma::Row<size_t>& labels,
-                                        const arma::mat& diffTransform)
+                                        const arma::mat& transformation)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
@@ -228,12 +228,10 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
     // set and same class points as query set.
     if (knnObjects.size() == uniqueLabels.n_elem)
     {
-      auto Tree = knnObjects[i].ReferenceTree();
+      knnObjects[i].ReferenceTree().Dataset() =
+        transformation * origDatasets[i];
+      UpdateTree(knnObjects[i].ReferenceTree());
 
-      Tree.Dataset() = diffTransform * origDatasets[i];
-      UpdateTree(Tree);
-
-      knnObjects[i].Train(Tree);
       knnObjects[i].Search(dataset.cols(indexSame[i]), k, neighbors, distances);
     }
     else
