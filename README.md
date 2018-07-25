@@ -117,7 +117,7 @@ a PPA or other non-official sources, or installing with a manual build.
 There are some other useful pages to consult in addition to this section:
 
   - [Building mlpack From Source](http://www.mlpack.org/docs/mlpack-git/doxygen/build.html)
-  - [Building mlpack Under Windows](https://github.com/mlpack/mlpack/wiki/WindowsBuild)
+  - [Building mlpack From Source on Windows](http://www.mlpack.org/docs/mlpack-git/doxygen/build_windows.html)
 
 mlpack uses CMake as a build system and allows several flexible build
 configuration options. One can consult any of numerous CMake tutorials for
