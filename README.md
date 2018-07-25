@@ -155,13 +155,17 @@ Options are specified with the -D flag.  A list of options allowed:
     ARMADILLO_LIBRARY=(/path/to/armadillo/libarmadillo.so): Armadillo library
     BUILD_CLI_EXECUTABLES=(ON/OFF): whether or not to build command-line programs
     BUILD_PYTHON_BINDINGS=(ON/OFF): whether or not to build Python bindings
+    BUILD_TESTS=(ON/OFF): whether or not to build tests
+    USE_OPENMP=(ON/OFF): whether or not to use OpenMP if available
 
 Other tools can also be used to configure CMake, but those are not documented
-here.
+here.  See [this section of the build guide](http://www.mlpack.org/docs/mlpack-git/doxygen/build.html#build_config)
+for more details.
 
 By default, command-line programs will be built, and if the Python dependencies
 (Cython, setuptools, numpy, pandas) are available, then Python bindings will
-also be built.
+also be built.  OpenMP will be used for parallelization when possible by
+default.
 
 Once CMake is configured, building the library is as simple as typing 'make'.
 This will build all library components as well as 'mlpack_test'.
