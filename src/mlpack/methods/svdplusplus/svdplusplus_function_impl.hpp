@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_BIAS_SVD_BIAS_FUNCTION_SVD_IMPL_HPP
-#define MLPACK_METHODS_BIAS_SVD_BIAS_FUNCTION_SVD_IMPL_HPP
+#ifndef MLPACK_METHODS_SVDPLUSPLUS_SVDPLUSPLUS_FUNCTION_IMPL_HPP
+#define MLPACK_METHODS_SVDPLUSPLUS_SVDPLUSPLUS_FUNCTION_IMPL_HPP
 
 #include "svdplusplus_function.hpp"
 #include <mlpack/core/math/make_alias.hpp>
@@ -329,12 +329,12 @@ double StandardSGD::Optimize(
     }
 
     // Indices for accessing the the correct parameter columns.
-    const size_t user = data(0, i);
-    const size_t item = data(1, i) + numUsers;
+    const size_t user = data(0, currentFunction);
+    const size_t item = data(1, currentFunction) + numUsers;
     const size_t implicitStart = numUsers + numItems;
 
     // Calculate the squared error in the prediction.
-    const double rating = data(2, i);
+    const double rating = data(2, currentFunction);
     const double userBias = parameters(rank, user);
     const double itemBias = parameters(rank, item);
 
