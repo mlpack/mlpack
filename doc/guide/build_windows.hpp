@@ -6,8 +6,15 @@
 
 @section build_windows_intro Introduction
 
-This document discusses how to build mlpack for Windows from source, so you can later
-create your own C++ applications.
+This document discusses how to build mlpack for Windows from source, so you can
+later create your own C++ applications.  There are a couple of other tutorials
+for Windows, but they may be out of date:
+
+ * <a href="https://github.com/mlpack/mlpack/wiki/WindowsBuild">Github wiki Windows Build page</a>
+ * <a href="http://keon.io/mlpack-on-windows">Keon's tutorial for mlpack 2.0.3</a>
+ * <a href="https://overdosedblog.wordpress.com/2016/08/15/once_again/">Kirizaki's tutorial for mlpack 2</a>
+
+Those guides could be used in addition to this tutorial.
 
 @section build_windows_env Environment
 
