@@ -293,6 +293,11 @@ Evaluate(const MatType& querySet, arma::vec& estimations)
     traverser.Traverse(*queryTree, *referenceTree);
   }
   estimations /= referenceTree->Dataset().n_cols;
+
+  // Normalize if required.
+  if (kernel::KernelTraits<KernelType>::IsNormalized)
+    estimations /= kernel->Normalizer(querySet.n_rows);
+
   delete queryTree;
 
   // Ideas for the future...
@@ -376,6 +381,10 @@ Evaluate(Tree* queryTree,
     traverser.Traverse(*queryTree, *referenceTree);
   }
   estimations /= referenceTree->Dataset().n_cols;
+
+  // Normalize if required.
+  if (kernel::KernelTraits<KernelType>::IsNormalized)
+    estimations /= kernel->Normalizer(queryTree->Dataset().n_rows);
 }
 
 template<typename MetricType,
