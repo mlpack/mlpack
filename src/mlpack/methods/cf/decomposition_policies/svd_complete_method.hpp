@@ -135,9 +135,9 @@ class SVDCompletePolicy
         query, numUsersForSimilarity, neighborhood, similarities);
   }
 
-  //! Get the User Matrix.
-  const arma::mat& W() const { return w; }
   //! Get the Item Matrix.
+  const arma::mat& W() const { return w; }
+  //! Get the User Matrix.
   const arma::mat& H() const { return h; }
 
   /**
@@ -151,9 +151,9 @@ class SVDCompletePolicy
   }
 
  private:
-  //! User matrix.
-  arma::mat w;
   //! Item matrix.
+  arma::mat w;
+  //! User matrix.
   arma::mat h;
 };
 

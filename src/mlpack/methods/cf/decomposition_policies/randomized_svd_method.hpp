@@ -138,9 +138,9 @@ class RandomizedSVDPolicy
         query, numUsersForSimilarity, neighborhood, similarities);
   }
 
-  //! Get the User Matrix.
-  const arma::mat& W() const { return w; }
   //! Get the Item Matrix.
+  const arma::mat& W() const { return w; }
+  //! Get the User Matrix.
   const arma::mat& H() const { return h; }
 
   //! Get the size of the normalized power iterations.
@@ -168,9 +168,9 @@ class RandomizedSVDPolicy
   size_t iteratedPower;
   //! Locally stored number of iterations.
   size_t maxIterations;
-  //! User matrix.
-  arma::mat w;
   //! Item matrix.
+  arma::mat w;
+  //! User matrix.
   arma::mat h;
 };
 

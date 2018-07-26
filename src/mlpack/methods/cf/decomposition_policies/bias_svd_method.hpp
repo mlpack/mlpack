@@ -116,9 +116,9 @@ class BiasSVDPolicy
         query, numUsersForSimilarity, neighborhood, similarities);
   }
 
-  //! Get the User Matrix.
-  const arma::mat& W() const { return w; }
   //! Get the Item Matrix.
+  const arma::mat& W() const { return w; }
+  //! Get the User Matrix.
   const arma::mat& H() const { return h; }
   //! Get the User Bias Vector.
   const arma::vec& Q() const { return q; }
@@ -145,9 +145,9 @@ class BiasSVDPolicy
  private:
   //! Locally stored number of iterations.
   size_t maxIterations;
-  //! User matrix.
-  arma::mat w;
   //! Item matrix.
+  arma::mat w;
+  //! User matrix.
   arma::mat h;
   //! Item bias.
   arma::vec p;
