@@ -6,6 +6,8 @@ set(SOURCES
   kde_rules.hpp
   kde_rules_impl.hpp
   kde_stat.hpp
+  kde_model.hpp
+  kde_model_impl.hpp
 )
 
 # Add directory name to sources.
