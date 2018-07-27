@@ -40,76 +40,50 @@ Constraints<MetricType>::Constraints(
 
 // Calculates k similar labeled nearest neighbors.
 template<typename MetricType>
-void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
-                                              const arma::mat& dataset,
-                                              const arma::Row<size_t>& labels)
+void Constraints<MetricType>::TargetsAndImpostors(
+    const arma::mat& dataset,
+    const arma::Row<size_t>& labels,
+    const size_t neighborsK,
+    const size_t impostorsK,
+    arma::Mat<size_t>& neighbors,
+    arma::Mat<size_t>& impostors)
 {
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
 
-  // KNN instance.
-  KNN knn;
+  typedef tree::KDTree<MetricType, LMNNStat, arma::mat> TreeType;
 
-  arma::Mat<size_t> neighbors;
-  arma::mat distances;
+  // These will be returned but not used.
+  arma::mat neighborDistances, impostorDistances;
 
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
-  {
-    // Perform KNN search with same class points as both reference
-    // set and query set.
-    knn.Train(dataset.cols(indexSame[i]));
-    knn.Search(k, neighbors, distances);
+  // For now let's always do dual-tree search.
+  // So, build a tree on the reference data.
+  Timer::Start("tree_building");
+  std::vector<size_t> oldFromNew, newFromOld;
+  TreeType tree(dataset, oldFromNew, newFromOld);
+  arma::Row<size_t> sortedLabels(labels.n_elem);
+  for (size_t i = 0; i < labels.n_elem; ++i)
+    sortedLabels[newFromOld[i]] = labels[i];
 
-    // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
-      neighbors(j) = indexSame[i].at(neighbors(j));
+  // Set the statistics correctly.
+  SetLMNNStat(tree, sortedLabels, uniqueLabels.n_cols);
+  Timer::Stop("tree_building");
 
-    // Store target neihbors.
-    outputMatrix.cols(indexSame[i]) = neighbors;
-  }
-}
+  MetricType metric = tree.Metric(); // No way to get an lvalue...
+  LMNNTargetsAndImpostorsRules<MetricType, TreeType> rules(tree.Dataset(),
+      sortedLabels, oldFromNew, tree.Dataset(), sortedLabels, oldFromNew,
+      neighborsK, impostorsK, uniqueLabels.n_cols, metric);
 
-// Calculates k similar labeled nearest neighbors  on a
-// batch of data points.
-template<typename MetricType>
-void Constraints<MetricType>::TargetNeighbors(arma::Mat<size_t>& outputMatrix,
-                                              const arma::mat& dataset,
-                                              const arma::Row<size_t>& labels,
-                                              const size_t begin,
-                                              const size_t batchSize)
-{
-  // Perform pre-calculation. If neccesary.
-  Precalculate(labels);
+  typename TreeType::template DualTreeTraverser<
+      LMNNTargetsAndImpostorsRules<MetricType, TreeType>> traverser(rules);
 
-  arma::mat subDataset = dataset.cols(begin, begin + batchSize - 1);
-  arma::Row<size_t> sublabels = labels.cols(begin, begin + batchSize - 1);
+  // Now perform the dual-tree traversal.
+  Timer::Start("computing_targets_and_impostors");
+  traverser.Traverse(tree, tree);
 
-  // KNN instance.
-  KNN knn;
-
-  arma::Mat<size_t> neighbors;
-  arma::mat distances;
-
-  // Vectors to store indices.
-  arma::uvec subIndexSame;
-
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
-  {
-    // Calculate Target Neighbors.
-    subIndexSame = arma::find(sublabels == uniqueLabels[i]);
-
-    // Perform KNN search with same class points as both reference
-    // set and query set.
-    knn.Train(dataset.cols(indexSame[i]));
-    knn.Search(subDataset.cols(subIndexSame), k, neighbors, distances);
-
-    // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
-      neighbors(j) = indexSame[i].at(neighbors(j));
-
-    // Store target neighbors.
-    outputMatrix.cols(begin + subIndexSame) = neighbors;
-  }
+  // Next, process the results.  The unmapping is done inside the rules.
+  rules.GetResults(neighbors, neighborDistances, impostors, impostorDistances);
+  Timer::Stop("computing_targets_and_impostors");
 }
 
 // Calculates k differently labeled nearest neighbors.

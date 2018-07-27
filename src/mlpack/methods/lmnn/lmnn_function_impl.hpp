@@ -56,13 +56,11 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
   oldTransformationMatrices.push_back(emptyMat);
   oldTransformationCounts.push_back(dataset.n_cols);
 
-  // Initialize target neighbors & impostors.
-  targetNeighbors = arma::Mat<size_t>(k, dataset.n_cols, arma::fill::zeros);
-  impostors = arma::Mat<size_t>(k, dataset.n_cols, arma::fill::zeros);
+  // TODO: what should happen here?  These weren't set before.
   distance = arma::mat(k, dataset.n_cols, arma::fill::zeros);
 
-  constraint.TargetNeighbors(targetNeighbors, dataset, labels);
-  constraint.Impostors(impostors, dataset, labels);
+  constraint.TargetsAndImpostors(dataset, labels, k, k, targetNeighbors,
+      impostors);
 
   // Precalculate and save the gradient due to target neighbors.
   Precalculate();
@@ -97,9 +95,16 @@ void LMNNFunction<MetricType>::Shuffle()
     evalOld.slice(i) = newEvalOld.slice(ordering(i));
   }
 
-  // Re-calculate target neighbors as indices changed.
-  constraint.PreCalulated() = false;
-  constraint.TargetNeighbors(targetNeighbors, dataset, labels);
+  // Remap target neighbors to new indices.
+  arma::Mat<size_t> newNeighbors(targetNeighbors.n_rows,
+                                 targetNeighbors.n_cols);
+  for (size_t i = 0; i < targetNeighbors.n_cols; ++i)
+  {
+    const size_t newCol = ordering[i];
+    for (size_t j = 0; j < targetNeighbors.n_rows; ++j)
+      newNeighbors(j, newCol) = ordering(targetNeighbors(j, i));
+  }
+  targetNeighbors = std::move(newNeighbors);
 }
 
 // Update cache transformation matrices.

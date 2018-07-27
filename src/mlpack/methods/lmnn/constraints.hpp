@@ -14,28 +14,25 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include "lmnn_targets_and_impostors_rules.hpp"
 #include "lmnn_impostors_rules.hpp"
-#include "lmnn_impostors_rules_impl.hpp"
 
 namespace mlpack {
 namespace lmnn {
+
 /**
  * Interface for generating distance based constraints on a given
  * dataset, provided corresponding true labels and a quantity parameter (k)
  * are specified.
  *
- * Class provides TargetNeighbors() (used for calculating target neighbors
- * of each data point) and Impostors() (used for calculating impostors of each
- * data point).
+ * Class provides NeighborsAndImpostors() (used for calculating target neighbors
+ * and impostors of each data point simultaneously) and Impostors() (used for
+ * calculating impostors of each data point).
  */
 template<typename MetricType = metric::SquaredEuclideanDistance>
 class Constraints
 {
  public:
-  //! Convenience typedef.
-  typedef neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType>
-      KNN;
-
   /**
    * Constructor for creating a Constraints instance.
    *
@@ -48,32 +45,22 @@ class Constraints
               const size_t k);
 
   /**
-   * Calculates k similar labeled nearest neighbors and stores them into the
-   * passed matrix.
+   * Calculates neighborsK similar labeled nearest neighbors and impostorsK
+   * impostors and stores them into the passed matrices.
    *
-   * @param outputMatrix Coordinates matrix to store target neighbors.
    * @param dataset Input dataset.
    * @param labels Input dataset labels.
+   * @param neighborsK Number of neighbors to search for.
+   * @param impostorsK Number of impostors to search for.
+   * @param neighbors Matrix to output target neighbors into.
+   * @param impostors Matrix to output impostors into.
    */
-  void TargetNeighbors(arma::Mat<size_t>& outputMatrix,
-                       const arma::mat& dataset,
-                       const arma::Row<size_t>& labels);
-
-  /**
-   * Calculates k similar labeled nearest neighbors for a batch of dataset and
-   * stores them into the passed matrix.
-   *
-   * @param outputMatrix Coordinates matrix to store target neighbors.
-   * @param dataset Input dataset.
-   * @param labels Input dataset labels.
-   * @param begin Index of the initial point of dataset.
-   * @param batchSize Number of data points to use.
-   */
-  void TargetNeighbors(arma::Mat<size_t>& outputMatrix,
-                       const arma::mat& dataset,
-                       const arma::Row<size_t>& labels,
-                       const size_t begin,
-                       const size_t batchSize);
+  void TargetsAndImpostors(const arma::mat& dataset,
+                           const arma::Row<size_t>& labels,
+                           const size_t neighborsK,
+                           const size_t impostorsK,
+                           arma::Mat<size_t>& neighbors,
+                           arma::Mat<size_t>& impostors);
 
   /**
    * Calculates k differently labeled nearest neighbors for each datapoint and
