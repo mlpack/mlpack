@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
 /*
  * Tests the SpikeSlabRBM implementation on the Digits dataset.
  */
-BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
+BOOST_AUTO_TEST_CASE(SpikeSlabRBMClassificationTest)
 {
   size_t batchSize = 10;
   size_t numEpoches = 3;
@@ -206,6 +206,182 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   // 76.18 is the standard accuracy of the Softmax regression classifier,
   // omitted here for speed.
   BOOST_REQUIRE_GE(ssRbmClassificationAccuracy, 76.18);
+}
+
+/*
+ * Tests the SpikeSlabRBM implementation on the CIFAR-10 dataset.
+ */
+BOOST_AUTO_TEST_CASE(SpikeSlabRBMCIFARTest)
+{
+  arma::mat dataset, labels;
+  size_t datasetMaxCols = 500;
+  size_t hiddenLayerSize = 256;
+  size_t numPatches = 49 * 500;
+  size_t batchSize = 10;
+  double stepSize = 0.0001;
+  size_t numEpoches = 10;
+  double tolerance = 1e-5;
+  bool shuffle = true;
+  size_t poolSize = 4;
+  double slabPenalty = 10.5;
+  double lambdaBias = 10;
+
+  if (!CLI::HasParam("dataset"))
+    Log::Fatal << "Input dataset is undefined!" << std::endl;
+  if (!CLI::HasParam("label"))
+    Log::Fatal << "Input lable  is undefined!" << std::endl;
+
+  std::string datafile = CLI::GetParam<std::string>("dataset");
+  std::string labelfile = CLI::GetParam<std::string>("label");
+
+  std::cout << "dataset = '" << dataset << "'" << std::endl;
+
+  std::cout << std::boolalpha
+      << "hiddenLayerSize = " << hiddenLayerSize
+      << " batchSize = " << batchSize
+      << " stepSize = " << stepSize
+      << " numEpoches = " << numEpoches
+      << " tolerance = " << tolerance
+      << " shuffle = " << shuffle << std::endl;
+
+  arma::mat tempData;
+  double radius = 0;
+  double tempRadius = 0;
+
+  // Number of patches.
+  size_t numImages = numPatches / 49;
+  std::cout << "numImages" << numImages << std::endl;
+  size_t trainSize = numImages - numImages / 10;
+  size_t labelSize = numImages - numImages / 10;
+  size_t testSize = numPatches - trainSize;
+
+  dataset.load(datafile);
+  labels.load(labelfile);
+
+  std::cout << "dataset size "<< arma::size(dataset) << std::endl;
+  std::cout << dataset.n_cols << std::endl;
+  std::cout << "trainSize" << trainSize << std::endl;
+  std::cout << "label size " << arma::size(labels) << std::endl;
+
+  assert(labels.n_rows >= numImages);
+  std::cout << "numPatches" << numPatches << std::endl;
+  std::cout << "dataset.n_cols" << dataset.n_cols << std::endl;
+  assert(dataset.n_cols >= numPatches);
+
+  arma::mat tempTrainData(192, numPatches);
+
+  arma::mat trainData = arma::mat(dataset.memptr(), 192, trainSize, false, false);
+  arma::mat testData = arma::mat(dataset.memptr() + trainData.n_elem, 192, testSize,
+      false, false);
+
+  arma::mat trainLabelsTemp = arma::mat(labels.memptr(), labelSize , 1, false, false);
+  arma::mat testLabelsTemp = arma::mat(labels.memptr() + trainLabelsTemp.n_elem,
+      numImages - labelSize, 1, false, false);
+
+  std::cout << trainLabelsTemp(trainLabelsTemp.n_elem - 1) << std::endl;
+  std::cout << testLabelsTemp(testLabelsTemp.n_elem - 1) << std::endl;
+
+  GaussianInitialization gaussian(0, 1);
+
+  arma::Row<size_t> trainLabels = arma::zeros<arma::Row<size_t>>(1,
+      trainLabelsTemp.n_rows);
+  arma::Row<size_t> testLabels = arma::zeros<arma::Row<size_t>>(1,
+      testLabelsTemp.n_rows);
+
+  for (size_t i = 0; i < trainLabelsTemp.n_rows; ++i)
+  {
+    trainLabels(i) = arma::as_scalar(trainLabelsTemp.row(i));
+  }
+
+  for (size_t i = 0; i < testLabelsTemp.n_rows; ++i)
+  {
+    testLabelsTemp(i) = arma::as_scalar(testLabelsTemp.row(i));
+  }
+
+  // Calculate radius
+  for (size_t i = 0; i < trainData.n_cols; i++)
+  {
+    tempRadius = arma::norm(trainData.col(i));
+    if (radius < tempRadius)
+      radius = tempRadius;
+  }
+  radius *=3;
+
+  size_t iter =  (numEpoches * trainData.n_cols) / batchSize;
+  std::cout << "Iterations: " << iter << std::endl;
+
+  RBM<GaussianInitialization, arma::mat, SpikeSlabRBM> modelssRBM(trainData,
+      gaussian, trainData.n_rows, hiddenLayerSize, batchSize, 1, 1, poolSize,
+      slabPenalty, radius);
+
+  optimization::StandardSGD msgd(stepSize, batchSize, iter, tolerance, shuffle);
+  modelssRBM.Reset();
+  modelssRBM.VisiblePenalty().fill(10);
+  modelssRBM.SpikeBias().fill(-5);
+  modelssRBM.Train(msgd);
+
+  // hiddenLayer size * number of patches in one image
+  arma::cube hiddenMeanTest(hiddenLayerSize , 49, testData.n_cols);
+  arma::cube hiddenMeanTrain(hiddenLayerSize , 49, trainData.n_cols);
+  arma::mat ssRBMFeaturesTest(hiddenLayerSize * 49, testData.n_cols);
+  arma::mat ssRBMFeaturesTrain(hiddenLayerSize * 49, trainData.n_cols);
+
+  for (size_t i = 0, j = 0; i < testData.n_cols; i++, j++)
+  {
+    j = j % 49;
+    modelssRBM.SampleHidden(std::move(testData.col(i)),
+        std::move(hiddenMeanTest.slice(i).col(j)));
+    j++;
+  }
+
+  for (size_t i = 0; i < hiddenMeanTest.n_slices; ++i)
+  {
+    ssRBMFeaturesTest.col(i) = arma::vectorise(hiddenMeanTest.slice(i), 1).t();
+  }
+
+  for (size_t i = 0, j = 0; i < trainData.n_cols; i++, j++)
+  {
+    j = j % 49;
+    modelssRBM.SampleHidden(std::move(trainData.col(i)),
+        std::move(hiddenMeanTrain.slice(i).col(j)));
+    j++;
+  }
+  for (size_t i = 0; i < hiddenMeanTrain.n_slices; ++i)
+  {
+    ssRBMFeaturesTrain.col(i) =
+        arma::vectorise(hiddenMeanTrain.slice(i), 1).t();
+  }
+
+  std::cout << "ssRBMFeaturesTrain = " << arma::size(ssRBMFeaturesTrain)
+      << std::endl;
+  std::cout << "ssRBMFeaturesTest = " << arma::size(ssRBMFeaturesTest)
+      << std::endl;
+
+  arma::mat normalTrainFeat(trainData.n_rows * 49, trainData.n_cols);
+  arma::mat normalTestFeat(trainData.n_rows * 49, testData.n_cols);
+
+  trainData.resize(trainData.n_rows * 49, trainData.n_cols);
+  testData.resize(trainData.n_rows * 49, testData.n_cols);
+
+  const size_t numClasses = 10; // Number of classes.
+  const size_t numBasis = 5; // Parameter required for L-BFGS algorithm.
+  const size_t numIterations = 1000; // Maximum number of iterations.
+
+  arma::Row<size_t> predictions1, predictions2;
+  L_BFGS optimizer1(numBasis, numIterations);
+  SoftmaxRegression regressor2(normalTrainFeat, trainLabels, numClasses,
+      0.001, false, optimizer1);
+
+  SoftmaxRegression regressor1(ssRBMFeaturesTrain, trainLabels, numClasses,
+      0.001, false, optimizer1);
+
+  double classificationAccurayssRBM = regressor1.ComputeAccuracy(
+      ssRBMFeaturesTest, testLabels);
+  double classificationAccurayNormal = regressor2.ComputeAccuracy(
+      normalTestFeat, testLabels);
+
+  std::cout << "RBM Accuracy" << classificationAccurayssRBM << std::endl;
+  std::cout << "noraml Accuracy" << classificationAccurayNormal << std::endl;
 }
 
 template<typename MatType = arma::mat>
