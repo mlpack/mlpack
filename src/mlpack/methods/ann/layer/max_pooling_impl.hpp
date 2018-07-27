@@ -36,17 +36,17 @@ MaxPooling<InputDataType, OutputDataType>::MaxPooling(
     kH(kH),
     dW(dW),
     dH(dH),
-    reset(false),
     floor(floor),
-    offset(0),
+    inSize(0),
+    outSize(0),
+    reset(false),
     inputWidth(0),
     inputHeight(0),
     outputWidth(0),
     outputHeight(0),
-    batchSize(0),
-    inSize(0),
-    outSize(0),
-    deterministic(false)
+    deterministic(false),
+    offset(0),
+    batchSize(0)
 {
   // Nothing to do here.
 }

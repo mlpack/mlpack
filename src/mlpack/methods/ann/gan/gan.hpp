@@ -362,6 +362,7 @@ class GAN
   //! Locally stored output of the Generator network.
   arma::mat ganOutput;
 };
+
 } // namespace ann
 } // namespace mlpack
 
