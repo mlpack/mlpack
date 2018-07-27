@@ -36,6 +36,7 @@ PROGRAM_INFO("Kernel Density Estimation",
     "with a 0.2 bandwidth to each reference point and use a KD-Tree for the "
     "dual-tree optimization. The result will be stored in a densities.csv file "
     "with a maximum error of 5%"
+    "\n\n"
     "$ kde --reference reference_set.csv --query query_set.csv --bandwidth 0.2 "
     "--kernel epanechnikov --tree kd-tree --rel_error 0.05 --output "
     "densities.csv"
@@ -86,8 +87,7 @@ PARAM_MATRIX_OUT("output", "Matrix to store output estimations.",
 static void mlpackMain()
 {
   const size_t output_precision = 40;
-  // Get all parameters.
-  arma::mat reference = std::move(CLI::GetParam<arma::mat>("reference"));
+  // Get some parameters.
   arma::mat query = std::move(CLI::GetParam<arma::mat>("query"));
   const double bandwidth = CLI::GetParam<double>("bandwidth");
   const std::string kernelStr = CLI::GetParam<std::string>("kernel");
@@ -102,15 +102,17 @@ static void mlpackMain()
   RequireOnlyOnePassed({ "reference", "input_model" }, true);
   ReportIgnoredParam({{ "input_model", true }}, "tree");
   ReportIgnoredParam({{ "input_model", true }}, "kernel");
-  ReportIgnoredParam({{ "input_model", true }}, "metric");
   ReportIgnoredParam({{ "input_model", true }}, "rel_error");
   ReportIgnoredParam({{ "input_model", true }}, "abs_error");
   ReportIgnoredParam({{ "input_model", true }}, "breadth_first");
 
-  KDEModel* kde = new KDEModel();
+  KDEModel* kde;
 
   if (CLI::HasParam("reference"))
   {
+    arma::mat reference = std::move(CLI::GetParam<arma::mat>("reference"));
+
+    kde = new KDEModel();
     // Set parameters
     kde->Bandwidth() = bandwidth;
     kde->RelativeError() = relError;
@@ -140,6 +142,7 @@ static void mlpackMain()
   }
   else
   {
+    // Load model
     kde = CLI::GetParam<KDEModel*>("input_model");
   }
 
@@ -156,10 +159,7 @@ static void mlpackMain()
     estimations.raw_print(std::cout);
   }
 
-  // Save output model.
+  // Save model.
   if (CLI::HasParam("output_model"))
     CLI::GetParam<KDEModel*>("output_model") = kde;
-
-  // Delete model.
-  delete kde;
 }
