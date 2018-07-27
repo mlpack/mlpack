@@ -269,11 +269,6 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
       std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
       std::move(responses.cols(begin, begin + batchSize - 1)));
 
-  for (size_t i = 0; i < network.size(); ++i)
-  {
-    res += boost::apply_visitor(lossVisitor, network[i]);
-  }
-
   outputLayer.Backward(
       std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
       std::move(responses.cols(begin, begin + batchSize - 1)),
