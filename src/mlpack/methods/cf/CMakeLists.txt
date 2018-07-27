@@ -4,7 +4,7 @@ set(SOURCES
   cf.hpp
   cf_impl.hpp
   cf_model.hpp
-  cf_model.cpp
+  cf_model_impl.hpp
   svd_wrapper.hpp
   svd_wrapper_impl.hpp
 )

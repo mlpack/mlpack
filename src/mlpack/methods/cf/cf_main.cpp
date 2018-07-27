@@ -195,16 +195,15 @@ void PerformAction(CFModel* c)
   CLI::GetParam<CFModel*>("output_model") = c;
 }
 
+template<typename DecompositionPolicy>
 void PerformAction(arma::mat& dataset,
                    const size_t rank,
                    const size_t maxIterations,
-                   const double minResidue,
-                   size_t decompositionPolicy)
+                   const double minResidue)
 {
   const size_t neighborhood = (size_t) CLI::GetParam<int>("neighborhood");
   CFModel* c = new CFModel();
-  c->DecompositionPolicy() = decompositionPolicy;
-  c->template Train<>(dataset, neighborhood, rank,
+  c->template Train<DecompositionPolicy>(dataset, neighborhood, rank,
       maxIterations, minResidue, CLI::HasParam("iteration_only_termination"));
 
   PerformAction(c);
@@ -219,37 +218,33 @@ void AssembleFactorizerType(const std::string& algorithm,
 
   if (algorithm == "NMF")
   {
-    PerformAction(dataset, rank, maxIterations, minResidue,
-        CFModel::DecompositionPolicies::NMF);
+    PerformAction<NMFPolicy>(dataset, rank, maxIterations, minResidue);
   }
   else if (algorithm == "BatchSVD")
   {
-    PerformAction(dataset, rank, maxIterations, minResidue,
-        CFModel::DecompositionPolicies::BATCH_SVD);
+    PerformAction<BatchSVDPolicy>(dataset, rank, maxIterations, minResidue);
   }
   else if (algorithm == "SVDIncompleteIncremental")
   {
-    PerformAction(dataset, rank, maxIterations, minResidue,
-        CFModel::DecompositionPolicies::SVD_INCOMPLETE);
+    PerformAction<SVDIncompletePolicy>(dataset, rank, maxIterations,
+        minResidue);
   }
   else if (algorithm == "SVDCompleteIncremental")
   {
-    PerformAction(dataset, rank, maxIterations, minResidue,
-        CFModel::DecompositionPolicies::SVD_COMPLETE);
+    PerformAction<SVDCompletePolicy>(dataset, rank, maxIterations, minResidue);
   }
   else if (algorithm == "RegSVD")
   {
     ReportIgnoredParam("min_residue", "Regularized SVD terminates only "
         "when max_iterations is reached");
-    PerformAction(dataset, rank, maxIterations, minResidue,
-        CFModel::DecompositionPolicies::REGULARIZED_SVD);
+    PerformAction<RegSVDPolicy>(dataset, rank, maxIterations, minResidue);
   }
   else if (algorithm == "RandSVD")
   {
     ReportIgnoredParam("min_residue", "Randomized SVD terminates only "
         "when max_iterations is reached");
-    PerformAction(dataset, rank, maxIterations, minResidue,
-        CFModel::DecompositionPolicies::RANDOMIZED_SVD);
+    PerformAction<RandomizedSVDPolicy>(dataset, rank, maxIterations,
+        minResidue);
   }
 }
 

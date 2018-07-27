@@ -13,8 +13,8 @@
 #define MLPACK_METHODS_CF_CF_MODEL_HPP
 
 #include <mlpack/core.hpp>
+#include <boost/variant.hpp>
 #include "cf.hpp"
-
 
 #include <mlpack/methods/cf/decomposition_policies/batch_svd_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/randomized_svd_method.hpp>
@@ -25,125 +25,102 @@
 namespace mlpack {
 namespace cf {
 
+class DeleteVisitor : public boost::static_visitor<void>
+{
+ public:
+  //! Delete CFType object.
+  template<typename DecompositionPolicy>
+  void operator()(CFType<DecompositionPolicy>* c) const;
+};
+
+class GetValueVisitor : public boost::static_visitor<void*>
+{
+ public:
+  //! Return stored pointer as void* type.
+  template<typename DecompositionPolicy>
+  void* operator()(CFType<DecompositionPolicy>* c) const;
+};
+
+class PredictVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! User/item combinations to predict.
+  const arma::Mat<size_t>& combinations;
+  //! Predicted ratings for each user/item combination.
+  arma::vec& predictions;
+
+ public:
+  //! Predict ratings for each user-item combination.
+  template<typename DecompositionPolicy>
+  void operator()(CFType<DecompositionPolicy>* c) const;
+
+  //! Visitor constructor.
+  PredictVisitor(const arma::Mat<size_t>& combinations,
+                 arma::vec& predictions);
+};
+
+class RecommendationVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Number of Recommendations.
+  const size_t numRecs;
+  //! Recommendations matrix to save recommendations.
+  arma::Mat<size_t>& recommendations;
+  //! Users for which recommendations are to be generated.
+  const arma::Col<size_t>& users;
+  //! Whether users are given.
+  const bool usersGiven;
+
+ public:
+  //! Visitor constructor.
+  RecommendationVisitor(const size_t numRecs,
+                        arma::Mat<size_t>& recommendations,
+                        const arma::Col<size_t>& users,
+                        const bool usersGiven);
+
+  //! Generates the given number of recommendations.
+  template<typename DecompositionPolicy>
+  void operator()(CFType<DecompositionPolicy>* c) const;
+};
+
 /**
  * The model to save to disk.
  */
 class CFModel
 {
- public:
-  enum DecompositionPolicies
-  {
-    NMF,
-    BATCH_SVD,
-    RANDOMIZED_SVD,
-    REGULARIZED_SVD,
-    SVD_COMPLETE,
-    SVD_INCOMPLETE
-  };
-
  private:
-  //! The type of decomposition policy.
-  size_t decompositionPolicy;
-  //! Non-NULL if using NMFPolicy.
-  CFType<NMFPolicy>* nmfCF;
-  //! Non-NULL if using BatchSVDPolicy.
-  CFType<BatchSVDPolicy>* batchSVDCF;
-  //! Non-NULL if using RandomizedSVDPolicy.
-  CFType<RandomizedSVDPolicy>* randSVDCF;
-  //! Non-NULL if using RegSVDPolicy.
-  CFType<RegSVDPolicy>* regSVDCF;
-  //! Non-NULL if using SVDCompletePolicy.
-  CFType<SVDCompletePolicy>* completeSVDCF;
-  //! Non-NULL if using SVDIncompletePolicy.
-  CFType<SVDIncompletePolicy>* incompleteSVDCF;
+  /**
+   * cf holds an instance of the CFType class for the current
+   * decompositionPolicy. It is initialized every time Train() is executed.
+   * We access to the contained value through the visitor classes defined above.
+   */
+  boost::variant<CFType<NMFPolicy>*,
+                 CFType<BatchSVDPolicy>*,
+                 CFType<RandomizedSVDPolicy>*,
+                 CFType<RegSVDPolicy>*,
+                 CFType<SVDCompletePolicy>*,
+                 CFType<SVDIncompletePolicy>*> cf;
 
  public:
   //! Create an empty CF model.
-  CFModel();
+  CFModel() { }
 
   //! Clean up memory.
   ~CFModel();
 
-  //! Get the decomposition policy.
-  size_t DecompositionPolicy() const { return decompositionPolicy; }
-  //! Modify the decomposition policy.
-  size_t& DecompositionPolicy() { return decompositionPolicy; }
-
   //! Get the pointer to CFType<> object.
   template<typename DecompositionPolicy>
-  const CFType<DecompositionPolicy>* CFPtr() const
-  {
-    void* pointer = NULL;
-    switch (decompositionPolicy)
-    {
-      case DecompositionPolicies::NMF:
-        pointer = (void*) nmfCF;
-        break;
-      case DecompositionPolicies::BATCH_SVD:
-        pointer = (void*) batchSVDCF;
-        break;
-      case DecompositionPolicies::RANDOMIZED_SVD:
-        pointer = (void*) randSVDCF;
-        break;
-      case DecompositionPolicies::REGULARIZED_SVD:
-        pointer = (void*) regSVDCF;
-        break;
-      case DecompositionPolicies::SVD_COMPLETE:
-        pointer = (void*) completeSVDCF;
-        break;
-      case DecompositionPolicies::SVD_INCOMPLETE:
-        pointer = (void*) incompleteSVDCF;
-        break;
-    }
-    return (CFType<DecompositionPolicy>*) pointer;
-  }
+  const CFType<DecompositionPolicy>* CFPtr() const;
 
   //! Train the model.
-  template <typename MatType>
+  template<typename DecompositionPolicy,
+           typename MatType>
   void Train(const MatType& data,
              const size_t numUsersForSimilarity,
              const size_t rank,
              const size_t maxIterations,
              const double minResidue,
-             const bool mit)
-  {
-    if (decompositionPolicy == DecompositionPolicies::NMF)
-    {
-      NMFPolicy decomposition;
-      nmfCF = new CFType<NMFPolicy>(data, decomposition,
-            numUsersForSimilarity, rank, maxIterations, minResidue, mit);
-    }
-    else if (decompositionPolicy == DecompositionPolicies::BATCH_SVD)
-    {
-      BatchSVDPolicy decomposition;
-      batchSVDCF = new CFType<BatchSVDPolicy>(data, decomposition,
-          numUsersForSimilarity, rank, maxIterations, minResidue, mit);
-    }
-    else if (decompositionPolicy == DecompositionPolicies::RANDOMIZED_SVD)
-    {
-      RandomizedSVDPolicy decomposition;
-      randSVDCF = new CFType<RandomizedSVDPolicy>(data, decomposition,
-          numUsersForSimilarity, rank, maxIterations, minResidue, mit);
-    }
-    else if (decompositionPolicy == DecompositionPolicies::REGULARIZED_SVD)
-    {
-      RegSVDPolicy decomposition;
-      regSVDCF = new CFType<RegSVDPolicy>(data, decomposition,
-          numUsersForSimilarity, rank, maxIterations, minResidue, mit);
-    }
-    else if (decompositionPolicy == DecompositionPolicies::SVD_COMPLETE)
-    {
-      SVDCompletePolicy decomposition;
-      completeSVDCF = new CFType<SVDCompletePolicy>(data, decomposition,
-          numUsersForSimilarity, rank, maxIterations, minResidue, mit);
-    }
-    else if (decompositionPolicy == DecompositionPolicies::SVD_INCOMPLETE)
-    {
-        SVDIncompletePolicy decomposition;
-        incompleteSVDCF = new CFType<SVDIncompletePolicy>(data, decomposition,
-            numUsersForSimilarity, rank, maxIterations, minResidue, mit);
-    }
-  }
+             const bool mit);
 
   //! Make predictions.
   void Predict(const arma::Mat<size_t>& combinations,
@@ -160,57 +137,13 @@ class CFModel
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
-  {
-    if (Archive::is_loading::value)
-    {
-      if (nmfCF)
-        delete nmfCF;
-      if (batchSVDCF)
-        delete batchSVDCF;
-      if (randSVDCF)
-        delete randSVDCF;
-      if (regSVDCF)
-        delete regSVDCF;
-      if (completeSVDCF)
-        delete completeSVDCF;
-      if (incompleteSVDCF)
-        delete incompleteSVDCF;
-
-      nmfCF = NULL;
-      batchSVDCF = NULL;
-      randSVDCF = NULL;
-      regSVDCF = NULL;
-      completeSVDCF = NULL;
-      incompleteSVDCF = NULL;
-    }
-
-    ar & BOOST_SERIALIZATION_NVP(decompositionPolicy);
-    switch (decompositionPolicy)
-    {
-      case DecompositionPolicies::NMF:
-        ar & BOOST_SERIALIZATION_NVP(nmfCF);
-        break;
-      case DecompositionPolicies::BATCH_SVD:
-        ar & BOOST_SERIALIZATION_NVP(batchSVDCF);
-        break;
-      case DecompositionPolicies::RANDOMIZED_SVD:
-        ar & BOOST_SERIALIZATION_NVP(randSVDCF);
-        break;
-      case DecompositionPolicies::REGULARIZED_SVD:
-        ar & BOOST_SERIALIZATION_NVP(batchSVDCF);
-        break;
-      case DecompositionPolicies::SVD_COMPLETE:
-        ar & BOOST_SERIALIZATION_NVP(completeSVDCF);
-        break;
-      case DecompositionPolicies::SVD_INCOMPLETE:
-        ar & BOOST_SERIALIZATION_NVP(incompleteSVDCF);
-        break;
-    }
-  }
+  void serialize(Archive& ar, const unsigned int /* version */);
 };
 
 } // namespace cf
 } // namespace mlpack
+
+// Include implementation.
+#include "cf_model_impl.hpp"
 
 #endif
