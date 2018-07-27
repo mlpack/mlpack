@@ -24,30 +24,28 @@ class KDEStat
 {
  public:
   //! Initialize the statistic.
-  KDEStat() :
-      lastKernelValue(0.0) { }
+  KDEStat() { }
 
   //! Initialization for a fully initialized node.
   template<typename TreeType>
-  KDEStat(TreeType& /* node */) :
-      lastKernelValue(0.0) { }
+  KDEStat(TreeType& /* node */) { }
 
-  //! Get the last kernel value calculation.
-  double LastKernelValue() const { return lastKernelValue; }
+  //! Get the centroid calculation.
+  const arma::vec& Centroid() const { return centroid; }
 
-  //! Modify the last kernel value calculation.
-  double& LastKernelValue() { return lastKernelValue; }
+  //! Modify the centroid calculation.
+  arma::vec& Centroid() { return centroid; }
 
   //! Serialize the statistic to/from an archive.
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(lastKernelValue);
+    ar & BOOST_SERIALIZATION_NVP(centroid);
   }
 
  private:
-  //! Last kernel value evaluation.
-  double lastKernelValue;
+  //! Node centroid.
+  arma::vec centroid;
 };
 
 } // namespace kde
