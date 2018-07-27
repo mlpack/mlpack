@@ -42,25 +42,10 @@ template<typename TreeType>
 inline void UpdateTree(TreeType& node)
 {
   double minWidth = DBL_MAX;
-  arma::Col<typename TreeType::ElemType> mins(node.Dataset().n_rows);
-  arma::Col<typename TreeType::ElemType> maxs(node.Dataset().n_rows);
-  for (size_t d = 0; d < node.Bound().Dim(); ++d)
-  {
-    mins[d] = node.Dataset().col(node.Descendant(0))[d];
-    maxs[d] = node.Dataset().col(node.Descendant(0))[d];
-  }
-
-  for (size_t desc = 1; desc < node.NumDescendants(); ++desc)
-  {
-    for (size_t d = 0; d < node.Bound().Dim(); ++d)
-    {
-      const double value = node.Dataset().col(node.Descendant(desc))[d];
-      if (value < mins[d])
-        mins[d] = value;
-      if (value > maxs[d])
-        maxs[d] = value;
-    }
-  }
+  arma::Col<typename TreeType::ElemType> mins(min(node.Dataset().cols(
+      node.Begin(), node.Begin() + node.Count() - 1), 1));
+  arma::Col<typename TreeType::ElemType> maxs(max(node.Dataset().cols(
+      node.Begin(), node.Begin() + node.Count() - 1), 1));
 
   // Update each of the HRectBound dimensions...
   for (size_t d = 0; d < node.Bound().Dim(); ++d)
