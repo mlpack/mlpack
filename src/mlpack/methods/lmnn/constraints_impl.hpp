@@ -14,6 +14,7 @@
 
 // In case it hasn't been included already.
 #include "constraints.hpp"
+#include "lmnn_stat.hpp"
 
 namespace mlpack {
 namespace lmnn {
@@ -264,8 +265,10 @@ void SetLMNNStat(TreeType& node,
     SetLMNNStat(child, labels, numClasses);
     for (size_t c = 0; c < numClasses; ++c)
     {
-      node.Stat().HasImpostors()[c] |= child.Stat().HasImpostors()[c];
-      node.Stat().HasTrueNeighbors()[c] |= child.Stat().HasTrueNeighbors()[c];
+      node.Stat().HasImpostors()[c] =
+          (node.Stat().HasImpostors()[c] | child.Stat().HasImpostors()[c]);
+      node.Stat().HasTrueNeighbors()[c] = (node.Stat().HasTrueNeighbors()[c] |
+          child.Stat().HasTrueNeighbors()[c]);
     }
   }
 
@@ -298,7 +301,7 @@ void Constraints<MetricType>::ComputeImpostors(
     arma::Mat<size_t>& neighbors,
     arma::mat& distances) const
 {
-  typedef KDTree<MetricType, LMNNStat, arma::mat> TreeType;
+  typedef tree::KDTree<MetricType, LMNNStat, arma::mat> TreeType;
 
   // For now let's always do dual-tree search.
   // So, build a tree on the reference data.
@@ -343,8 +346,8 @@ void Constraints<MetricType>::ComputeImpostors(
       sortedRefLabels, oldFromNew, queryTree->Dataset(), *sortedQueryLabels,
       *queryOldFromNew, k, uniqueLabels.n_cols, metric);
 
-  TreeType::template DualTreeTraverser<LMNNImpostorsRules<MetricType, TreeType>>
-      traverser(rules);
+  typename TreeType::template DualTreeTraverser<LMNNImpostorsRules<MetricType,
+      TreeType>> traverser(rules);
 
   // Now perform the dual-tree traversal.
   Timer::Start("computing_impostors");

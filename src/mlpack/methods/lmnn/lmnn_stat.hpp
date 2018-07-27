@@ -28,15 +28,7 @@ class LMNNStat
  private:
   //! The first bound on the node's neighbor distances (B_1).  This represents
   //! the worst candidate distance of any descendants of this node.
-  double firstBound;
-  //! The second bound on the node's neighbor distances (B_2).  This represents
-  //! a bound on the worst distance of any descendants of this node assembled
-  //! using the best descendant candidate distance modified by the furthest
-  //! descendant distance.
-  double secondBound;
-  //! The aux bound on the node's neighbor distances (B_aux). This represents
-  //! the best descendant candidate distance (used to calculate secondBound).
-  double auxBound;
+  double bound;
   //! The last distance evaluation.
   double lastDistance;
   //! Whether or not the node contains any impostors for a given class as
@@ -52,9 +44,7 @@ class LMNNStat
    * construction, hasImpostors and hasTrueNeighbors are still not set!  This
    * must be done after tree building.
    */
-  LMNNStat() :
-      bound(DBL_MAX),
-      lastDistance(0.0) { }
+  LMNNStat() : bound(DBL_MAX), lastDistance(0.0) { }
 
   /**
    * Initialization for a fully initialized node.  In this case, we don't need
@@ -62,9 +52,7 @@ class LMNNStat
    * hasTrueNeighbors are still not set!  This must be done after tree building.
    */
   template<typename TreeType>
-  NeighborSearchStat(TreeType& /* node */) :
-      bound(DBL_MAX),
-      lastDistance(0.0) { }
+  LMNNStat(TreeType& /* node */) : bound(DBL_MAX), lastDistance(0.0) { }
 
   /**
    * Reset statistic parameters to initial values.
@@ -76,9 +64,9 @@ class LMNNStat
   }
 
   //! Get the first bound.
-  double Bound() const { return firstBound; }
+  double Bound() const { return bound; }
   //! Modify the first bound.
-  double& Bound() { return firstBound; }
+  double& Bound() { return bound; }
   //! Get the last distance calculation.
   double LastDistance() const { return lastDistance; }
   //! Modify the last distance calculation.
@@ -102,7 +90,7 @@ class LMNNStat
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(firstBound);
+    ar & BOOST_SERIALIZATION_NVP(bound);
     ar & BOOST_SERIALIZATION_NVP(lastDistance);
     ar & BOOST_SERIALIZATION_NVP(hasImpostors);
     ar & BOOST_SERIALIZATION_NVP(hasTrueNeighbors);
