@@ -190,41 +190,6 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
   outputDistance.cols(begin, begin + batchSize - 1) = subdistances;
 }
 
-// Generates {data point, target neighbors, impostors} triplets using
-// TargetNeighbors() and Impostors().
-template<typename MetricType>
-void Constraints<MetricType>::Triplets(arma::Mat<size_t>& outputMatrix,
-                                       const arma::mat& dataset,
-                                       const arma::Row<size_t>& labels)
-{
-  // Perform pre-calculation. If neccesary.
-  Precalculate(labels);
-
-  size_t N = dataset.n_cols;
-
-  arma::Mat<size_t> impostors;
-  Impostors(impostors, dataset);
-
-  arma::Mat<size_t> targetNeighbors;
-  TargetNeighbors(targetNeighbors, dataset);
-
-  outputMatrix = arma::Mat<size_t>(3, k * k * N , arma::fill::zeros);
-
-  for (size_t i = 0, r = 0; i < N; i++)
-  {
-    for (size_t j = 0; j < k; j++)
-    {
-      for (size_t l = 0; l < k; l++, r++)
-      {
-        // Generate triplets.
-        outputMatrix(0, r) = i;
-        outputMatrix(1, r) = targetNeighbors(j, i);
-        outputMatrix(2, r) = impostors(l, i);
-      }
-    }
-  }
-}
-
 template<typename MetricType>
 inline void Constraints<MetricType>::Precalculate(
                                          const arma::Row<size_t>& labels)

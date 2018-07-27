@@ -24,10 +24,9 @@ namespace lmnn {
  * dataset, provided corresponding true labels and a quantity parameter (k)
  * are specified.
  *
- * Class provides TargetNeighbors() (Used for calculating target neighbors
- * of each data point), Impostors() (used for calculating impostors of each
- * data point) and Triplets() (Generates sets of {dataset, target neighbors,
- * impostors} tripltets.)
+ * Class provides TargetNeighbors() (used for calculating target neighbors
+ * of each data point) and Impostors() (used for calculating impostors of each
+ * data point).
  */
 template<typename MetricType = metric::SquaredEuclideanDistance>
 class Constraints
@@ -135,18 +134,6 @@ class Constraints
                  const arma::Row<size_t>& labels,
                  const size_t begin,
                  const size_t batchSize);
-
-  /**
-   * Generate triplets {i, j, l} for each datapoint i and writes back generated
-   * triplets to matrix passed.
-   *
-   * @param outputMatrix Coordinates matrix to store triplets.
-   * @param dataset Input dataset.
-   * @param labels Input dataset labels.
-   */
-  void Triplets(arma::Mat<size_t>& outputMatrix,
-                const arma::mat& dataset,
-                const arma::Row<size_t>& labels);
 
   //! Get the number of target neighbors (k).
   const size_t& K() const { return k; }
