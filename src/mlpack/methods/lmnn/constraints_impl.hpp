@@ -158,8 +158,10 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
 
   // Compute the impostors of the batch.
   arma::mat distances;
-  ComputeImpostors(dataset, labels, subDataset, sublabels, outputMatrix,
+  arma::Mat<size_t> suboutput;
+  ComputeImpostors(dataset, labels, subDataset, sublabels, suboutput,
       distances);
+  outputMatrix.cols(begin, begin + batchSize - 1) = suboutput;
 }
 
 // Calculates k differently labeled nearest neighbors & distances on a
@@ -179,8 +181,12 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
   arma::Row<size_t> sublabels = labels.cols(begin, begin + batchSize - 1);
 
   // Compute the impostors of the batch.
-  ComputeImpostors(dataset, labels, subDataset, sublabels, outputNeighbors,
-      outputDistance);
+  arma::Mat<size_t> subneighbors;
+  arma::mat subdistances;
+  ComputeImpostors(dataset, labels, subDataset, sublabels, subneighbors,
+      subdistances);
+  outputNeighbors.cols(begin, begin + batchSize - 1) = subneighbors;
+  outputDistance.cols(begin, begin + batchSize - 1) = subdistances;
 }
 
 // Generates {data point, target neighbors, impostors} triplets using
@@ -241,6 +247,47 @@ inline void Constraints<MetricType>::Precalculate(
   precalculated = true;
 }
 
+// Helper function to set hasImpostors and hasTrueNeighbors for a tree node.
+template<typename TreeType>
+void SetLMNNStat(TreeType& node,
+                 const arma::Row<size_t>& labels,
+                 const size_t numClasses)
+{
+  // Set the size of the vectors.
+  node.Stat().HasImpostors().resize(numClasses, false);
+  node.Stat().HasTrueNeighbors().resize(numClasses, false);
+
+  // We first need the results of any children.
+  for (size_t i = 0; i < node.NumChildren(); ++i)
+  {
+    TreeType& child = node.Child(i);
+    SetLMNNStat(child, labels, numClasses);
+    for (size_t c = 0; c < numClasses; ++c)
+    {
+      node.Stat().HasImpostors()[c] |= child.Stat().HasImpostors()[c];
+      node.Stat().HasTrueNeighbors()[c] |= child.Stat().HasTrueNeighbors()[c];
+    }
+  }
+
+  // Now compute the results of any points.
+  if (node.NumPoints() > 0)
+  {
+    arma::Col<size_t> counts(numClasses, arma::fill::zeros);
+    for (size_t i = 0; i < node.NumPoints(); ++i)
+      counts[labels[node.Point(i)]]++;
+
+    // Now, with the counts, we can determine whether impostors and true
+    // neighbors are present.
+    for (size_t c = 0; c < numClasses; ++c)
+    {
+      if (counts[c] > 0) // There is at least one true neighbor present.
+        node.Stat().HasTrueNeighbors()[c] = true;
+      if (counts[c] < node.NumPoints()) // There must be at least one impostor.
+        node.Stat().HasImpostors()[c] = true;
+    }
+  }
+}
+
 // Note the inputs here can just be the reference set.
 template<typename MetricType>
 void Constraints<MetricType>::ComputeImpostors(
@@ -251,17 +298,22 @@ void Constraints<MetricType>::ComputeImpostors(
     arma::Mat<size_t>& neighbors,
     arma::mat& distances) const
 {
+  typedef KDTree<MetricType, LMNNStat, arma::mat> TreeType;
+
   // For now let's always do dual-tree search.
   // So, build a tree on the reference data.
   Timer::Start("tree_building");
   std::vector<size_t> oldFromNew, newFromOld;
-  typename KNN::Tree tree(referenceSet, oldFromNew, newFromOld);
+  TreeType tree(referenceSet, oldFromNew, newFromOld);
   arma::Row<size_t> sortedRefLabels(referenceLabels.n_elem);
   for (size_t i = 0; i < referenceLabels.n_elem; ++i)
     sortedRefLabels[newFromOld[i]] = referenceLabels[i];
 
+  // Set the statistics correctly.
+  SetLMNNStat(tree, sortedRefLabels, uniqueLabels.n_cols);
+
   // Should we build a query tree?
-  typename KNN::Tree* queryTree;
+  TreeType* queryTree;
   arma::Row<size_t>* sortedQueryLabels;
   std::vector<size_t>* queryOldFromNew;
   std::vector<size_t>* queryNewFromOld;
@@ -270,11 +322,11 @@ void Constraints<MetricType>::ComputeImpostors(
     queryOldFromNew = new std::vector<size_t>();
     queryNewFromOld = new std::vector<size_t>();
 
-    queryTree = new typename KNN::Tree(querySet, *queryOldFromNew,
+    queryTree = new TreeType(querySet, *queryOldFromNew,
         *queryNewFromOld);
     sortedQueryLabels = new arma::Row<size_t>(queryLabels.n_elem);
     for (size_t i = 0; i < queryLabels.n_elem; ++i)
-      sortedQueryLabels[newFromOld[i]] = queryLabels[i];
+      (*sortedQueryLabels)[(*queryNewFromOld)[i]] = queryLabels[i];
   }
   else
   {
@@ -287,12 +339,12 @@ void Constraints<MetricType>::ComputeImpostors(
   Timer::Stop("tree_building");
 
   MetricType metric = tree.Metric(); // No way to get an lvalue...
-  LMNNImpostorsRules<MetricType, typename KNN::Tree> rules(tree.Dataset(),
+  LMNNImpostorsRules<MetricType, TreeType> rules(tree.Dataset(),
       sortedRefLabels, oldFromNew, queryTree->Dataset(), *sortedQueryLabels,
       *queryOldFromNew, k, uniqueLabels.n_cols, metric);
 
-  typename KNN::Tree::template DualTreeTraverser<LMNNImpostorsRules<MetricType,
-      typename KNN::Tree>> traverser(rules);
+  TreeType::template DualTreeTraverser<LMNNImpostorsRules<MetricType, TreeType>>
+      traverser(rules);
 
   // Now perform the dual-tree traversal.
   Timer::Start("computing_impostors");

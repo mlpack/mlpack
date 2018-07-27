@@ -114,6 +114,12 @@ inline double LMNNImpostorsRules<MetricType, TreeType>::Score(
     const size_t queryIndex,
     TreeType& referenceNode)
 {
+  // Sanity check: we can always prune a node that has no impostors, since it
+  // can't possibly help us with the results.
+  const size_t queryClass = queryLabels[queryIndex];
+  if (!referenceNode.Stat().HasImpostors()[queryClass])
+    return DBL_MAX;
+
   double distance;
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
   {
@@ -170,6 +176,21 @@ inline double LMNNImpostorsRules<MetricType, TreeType>::Score(
     TreeType& queryNode,
     TreeType& referenceNode)
 {
+  // Sanity check: ensure that any classes in the query point have impostors in
+  // the descendants of the reference node.
+  bool hasImpostors = false;
+  for (size_t c = 0; c < referenceNode.Stat().HasTrueNeighbors().size(); ++c)
+  {
+    if (queryNode.Stat().HasTrueNeighbors()[c] &&
+        referenceNode.Stat().HasImpostors()[c])
+    {
+      hasImpostors = true;
+      break;
+    }
+  }
+  if (!hasImpostors)
+    return DBL_MAX;
+
   // Update our bound.
   const double bestDistance = CalculateBound(queryNode);
 
@@ -346,105 +367,56 @@ template<typename MetricType, typename TreeType>
 inline double LMNNImpostorsRules<MetricType, TreeType>::CalculateBound(
     TreeType& queryNode) const
 {
-  // This is an adapted form of the B(N_q) function in the paper
+  // This is an adapted form of the B_1(N_q) function in the paper
   // ``Tree-Independent Dual-Tree Algorithms'' by Curtin et. al.; the goal is to
   // place a bound on the worst possible distance a point combination could have
   // to improve any of the current neighbor estimates.  If the best possible
   // distance between two nodes is greater than this bound, then the node
   // combination can be pruned (see Score()).
 
-  // First, we can consider the current worst neighbor candidate distance of any
-  // descendant point.  This is assembled with 'worstDistance' by looping
-  // through the points held by the query node, and then by taking the cached
-  // worst distance from any child nodes (Stat().FirstBound()).  This
-  // corresponds roughly to B_1(N_q) in the paper.
-
-  // The other way of bounding is to use the triangle inequality.  To do this,
-  // we find the current best kth-neighbor candidate distance of any descendant
-  // query point, and use the triangle inequality to place a bound on the
-  // distance that candidate would have to any other descendant query point.
-  // This corresponds roughly to B_2(N_q) in the paper, and is the bounding
-  // style for cover trees.
-
-  // Then, to assemble the final bound, since both bounds are valid, we simply
-  // take the better of the two.
+  // This particular form will work best only for depth-first recursions, as it
+  // does not consider the B_2(N_q) term from that paper.  This is because it
+  // turns out to be complex to adapt that term: we would need to hold one
+  // B_2(N_q) for each possible class to properly apply the bound.  Given that
+  // extra bookkeeping and complexity, we have chosen here to just use B_1(N_q).
+  // Therefore, the cover tree will not be a good choice for these rules.
 
   double worstDistance = 0.0;
-  double bestDistance = DBL_MAX;
-  double bestPointDistance = DBL_MAX;
-  double auxDistance = DBL_MAX;
 
   // Loop over points held in the node.
   for (size_t i = 0; i < queryNode.NumPoints(); ++i)
   {
     const double distance = candidates[queryNode.Point(i)].top().first;
-    if (worstDistance <= distance)
+    if (worstDistance < distance)
       worstDistance = distance;
-    if (distance <= bestPointDistance)
-      bestPointDistance = distance;
   }
-
-  auxDistance = bestPointDistance;
 
   // Loop over children of the node, and use their cached information to
   // assemble bounds.
   for (size_t i = 0; i < queryNode.NumChildren(); ++i)
   {
-    const double firstBound = queryNode.Child(i).Stat().FirstBound();
-    const double auxBound = queryNode.Child(i).Stat().AuxBound();
-
-    if (worstDistance <= firstBound)
-      worstDistance = firstBound;
-    if (auxBound <= auxDistance)
-      auxDistance = auxBound;
+    const double bound = queryNode.Child(i).Stat().Bound();
+    if (worstDistance < bound)
+      worstDistance = bound;
   }
-
-  // Add triangle inequality adjustment to best distance.  It is possible this
-  // could be tighter for some certain types of trees.
-  bestDistance = neighbor::NearestNeighborSort::CombineWorst(auxDistance,
-      2 * queryNode.FurthestDescendantDistance());
-
-  // Add triangle inequality adjustment to best distance of points in node.
-  bestPointDistance = neighbor::NearestNeighborSort::CombineWorst(
-      bestPointDistance, queryNode.FurthestPointDistance() +
-      queryNode.FurthestDescendantDistance());
-
-  if (bestPointDistance <= bestDistance)
-    bestDistance = bestPointDistance;
-
-  // At this point:
-  // worstDistance holds the value of B_1(N_q).
-  // bestDistance holds the value of B_2(N_q).
-  // auxDistance holds the value of B_aux(N_q).
 
   // Now consider the parent bounds.
   if (queryNode.Parent() != NULL)
   {
-    // The parent's worst distance bound implies that the bound for this node
-    // must be at least as good.  Thus, if the parent worst distance bound is
-    // better, then take it.
-    if (queryNode.Parent()->Stat().FirstBound() <= worstDistance)
-      worstDistance = queryNode.Parent()->Stat().FirstBound();
-
-    // The parent's best distance bound implies that the bound for this node
-    // must be at least as good.  Thus, if the parent best distance bound is
-    // better, then take it.
-    if (queryNode.Parent()->Stat().SecondBound() <= bestDistance)
-      bestDistance = queryNode.Parent()->Stat().SecondBound();
+    // The parent's bound implies that the bound for this node must be at least
+    // as good.  Thus, if the parent bound is better, then take it.
+    if (queryNode.Parent()->Stat().Bound() <= worstDistance)
+      worstDistance = queryNode.Parent()->Stat().Bound();
   }
 
   // Could the existing bounds be better?
-  if (queryNode.Stat().FirstBound() <= worstDistance)
-    worstDistance = queryNode.Stat().FirstBound();
-  if (queryNode.Stat().SecondBound() <= bestDistance)
-    bestDistance = queryNode.Stat().SecondBound();
+  if (queryNode.Stat().Bound() <= worstDistance)
+    worstDistance = queryNode.Stat().Bound();
 
   // Cache bounds for later.
-  queryNode.Stat().FirstBound() = worstDistance;
-  queryNode.Stat().SecondBound() = bestDistance;
-  queryNode.Stat().AuxBound() = auxDistance;
+  queryNode.Stat().Bound() = worstDistance;
 
-  return std::min(worstDistance, bestDistance);
+  return worstDistance;
 }
 
 /**
