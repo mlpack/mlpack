@@ -98,35 +98,45 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
   if (bound <= (absError + relError * minKernel) / referenceSet.n_cols)
   {
+    // Auxiliary variables.
     double kernelValue;
+    arma::vec& referenceCenter = referenceNode.Stat().Centroid();
+    arma::vec& queryCenter = queryNode.Stat().Centroid();
+
     // If calculating a center is not required.
     if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
     {
-      // If a child center is the same as a parent center.
-      if (tree::TreeTraits<TreeType>::HasSelfChildren)
-      {
-        if ((referenceNode.Parent() != NULL) &&
-            (referenceNode.Point(0) == referenceNode.Parent()->Point(0)))
-          kernelValue = referenceNode.Parent()->Stat().LastKernelValue();
-        else
-          kernelValue = EvaluateKernel(queryNode.Point(0),
-                                       referenceNode.Point(0));
-      }
-      else
-        kernelValue = EvaluateKernel(queryNode.Point(0),
-                                     referenceNode.Point(0));
+      kernelValue = EvaluateKernel(queryNode.Point(0), referenceNode.Point(0));
     }
+    // If a child center is the same as its parent center.
+    else if (tree::TreeTraits<TreeType>::HasSelfChildren)
+    {
+      // Reference node.
+      if (referenceNode.Parent() != NULL &&
+          referenceNode.Point(0) == referenceNode.Parent()->Point(0))
+        referenceCenter = referenceNode.Parent()->Stat().Centroid();
+      else
+      {
+        referenceNode.Center(referenceCenter);
+      }
+      // Query node.
+      if (queryNode.Parent() != NULL &&
+          queryNode.Point(0) == queryNode.Parent()->Point(0))
+        queryCenter = queryNode.Parent()->Stat().Centroid();
+      else
+      {
+        queryNode.Center(queryCenter);
+      }
+      // Compute kernel value.
+      kernelValue = EvaluateKernel(queryCenter, referenceCenter);
+    }
+    // Regular case.
     else
     {
-      arma::vec queryCenter, referenceCenter;
       referenceNode.Center(referenceCenter);
       queryNode.Center(queryCenter);
-      kernelValue = kernel.Evaluate(metric.Evaluate(referenceCenter,
-                                                    queryCenter));
+      kernelValue = EvaluateKernel(queryCenter, referenceCenter);
     }
-
-    // Update lastKernelValue
-    referenceNode.Stat().LastKernelValue() = kernelValue;
 
     for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
     {
