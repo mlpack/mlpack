@@ -64,9 +64,13 @@ class KDERules
   size_t Scores() const { return scores; }
 
  private:
-  //! Evaluate kernel value of 2 points.
+  //! Evaluate kernel value of 2 points given their indexes.
   double EvaluateKernel(const size_t queryIndex,
                         const size_t referenceIndex) const;
+
+  //! Evaluate kernel value of 2 points.
+  double EvaluateKernel(const arma::vec& query,
+                        const arma::vec& reference) const;
 
   //! The reference set.
   const arma::mat& referenceSet;

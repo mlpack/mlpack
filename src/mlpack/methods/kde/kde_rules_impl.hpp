@@ -86,7 +86,7 @@ double KDERules<MetricType, KernelType, TreeType>::Rescore(
 
 //! Double-tree scoring function.
 template<typename MetricType, typename KernelType, typename TreeType>
-double KDERules<MetricType, KernelType, TreeType>::
+inline double KDERules<MetricType, KernelType, TreeType>::
 Score(TreeType& queryNode, TreeType& referenceNode)
 {
   const double maxKernel =
@@ -162,13 +162,19 @@ Rescore(TreeType& /*queryNode*/,
 }
 
 template<typename MetricType, typename KernelType, typename TreeType>
-double KDERules<MetricType, KernelType, TreeType>::
+inline force_inline double KDERules<MetricType, KernelType, TreeType>::
 EvaluateKernel(const size_t queryIndex,
                const size_t referenceIndex) const
 {
-  return kernel.Evaluate(metric.Evaluate(querySet.unsafe_col(queryIndex),
-                                         referenceSet.unsafe_col(referenceIndex)
-                                         ));
+  return EvaluateKernel(querySet.unsafe_col(queryIndex),
+                        referenceSet.unsafe_col(referenceIndex));
+}
+
+template<typename MetricType, typename KernelType, typename TreeType>
+inline force_inline double KDERules<MetricType, KernelType, TreeType>::
+EvaluateKernel(const arma::vec& query, const arma::vec& reference) const
+{
+  return kernel.Evaluate(metric.Evaluate(query, reference));
 }
 
 } // namespace kde
