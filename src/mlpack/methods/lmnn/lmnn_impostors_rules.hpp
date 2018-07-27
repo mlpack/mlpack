@@ -1,17 +1,17 @@
 /**
- * @file neighbor_search_rules.hpp
+ * @file lmnn_impostors_rules.hpp
  * @author Ryan Curtin
  *
  * Defines the pruning rules and base case rules necessary to perform a
- * tree-based search (with an arbitrary tree) for the NeighborSearch class.
+ * tree-based search (with an arbitrary tree) for impostors for the LMNN class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
-#define MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
+#ifndef MLPACK_METHODS_LMNN_LMNN_IMPOSTORS_RULES_HPP
+#define MLPACK_METHODS_LMNN_LMNN_IMPOSTORS_RULES_HPP
 
 #include <mlpack/core/tree/traversal_info.hpp>
 
@@ -21,11 +21,13 @@ namespace mlpack {
 namespace lmnn {
 
 /**
- * The NeighborSearchRules class is a template helper class used by
- * NeighborSearch class when performing distance-based neighbor searches.  For
- * each point in the query dataset, it keeps track of the k neighbors in the
- * reference dataset which have the 'best' distance according to a given sorting
- * policy.
+ * The LMNNImpostorsRules class is a template helper class used by
+ * the LMNN Constraints class when performing distance-based neighbor searches
+ * for points of different classes.  It is very closely related to
+ * NeighborSearchRules, but the problem is sufficiently different that different
+ * code is needed.  For each point in the query dataset, it keeps track of the k
+ * neighbors in the reference dataset which have the nearest distance and
+ * different class.
  *
  * @tparam MetricType The metric to use for computation.
  * @tparam TreeType The tree type to use; must adhere to the TreeType API.
@@ -35,24 +37,27 @@ class LMNNImpostorsRules
 {
  public:
   /**
-   * Construct the NeighborSearchRules object.  This is usually done from within
-   * the NeighborSearch class at search time.
+   * Construct the LMNNImpostorsRules object.  This is usually done from within
+   * the Constraints class at search time.
    *
    * @param referenceSet Set of reference data.
+   * @param referenceLabels Set of reference labels.
+   * @param refOldFromNew oldFromNew mappings from reference tree building.
    * @param querySet Set of query data.
+   * @param queryLabels Set of query labels.
+   * @param queryOldFromNew oldFromNew mappings from query tree building.
    * @param k Number of neighbors to search for.
    * @param metric Instantiated metric.
-   * @param epsilon Relative approximate error.
-   * @param sameSet If true, the query and reference set are taken to be the
-   *      same, and a query point will not return itself in the results.
    */
-  LMNNRules(const typename TreeType::Mat& referenceSet,
-            const arma::Row<size_t>& referenceLabels,
-            const typename TreeType::Mat& querySet,
-            const arma::Row<size_t>& queryLabels,
-            const size_t k,
-            const size_t numClasses,
-            MetricType& metric);
+  LMNNImpostorsRules(const typename TreeType::Mat& referenceSet,
+                     const arma::Row<size_t>& referenceLabels,
+                     const std::vector<size_t>& refOldFromNew,
+                     const typename TreeType::Mat& querySet,
+                     const arma::Row<size_t>& queryLabels,
+                     const std::vector<size_t>& queryOldFromNew,
+                     const size_t k,
+                     const size_t numClasses,
+                     MetricType& metric);
 
   /**
    * Store the list of candidates for each query point in the given matrices.
@@ -82,22 +87,6 @@ class LMNNImpostorsRules
    * @param referenceNode Candidate node to be recursed into.
    */
   double Score(const size_t queryIndex, TreeType& referenceNode);
-
-  /**
-   * Get the child node with the best score.
-   *
-   * @param queryIndex Index of query point.
-   * @param referenceNode Candidate node to be recursed into.
-   */
-  size_t GetBestChild(const size_t queryIndex, TreeType& referenceNode);
-
-  /**
-   * Get the child node with the best score.
-   *
-   * @param queryNode Node to be considered.
-   * @param referenceNode Candidate node to be recursed into.
-   */
-  size_t GetBestChild(const TreeType& queryNode, TreeType& referenceNode);
 
   /**
    * Re-evaluate the score for recursion order.  A low score indicates priority
@@ -139,16 +128,6 @@ class LMNNImpostorsRules
                  TreeType& referenceNode,
                  const double oldScore) const;
 
-  //! Get the number of base cases that have been performed.
-  size_t BaseCases() const { return baseCases; }
-  //! Modify the number of base cases that have been performed.
-  size_t& BaseCases() { return baseCases; }
-
-  //! Get the number of scores that have been performed.
-  size_t Scores() const { return scores; }
-  //! Modify the number of scores that have been performed.
-  size_t& Scores() { return scores; }
-
   //! Convenience typedef.
   typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
 
@@ -162,11 +141,15 @@ class LMNNImpostorsRules
   const typename TreeType::Mat& referenceSet;
   //! The labels for the reference set.
   const arma::Row<size_t>& referenceLabels;
+  //! The mappings for the reference set.
+  const std::vector<size_t>& refOldFromNew;
 
   //! The query set.
   const typename TreeType::Mat& querySet;
   //! The labels for the query set.
   const arma::Row<size_t>& queryLabels;
+  //! The mappings for the query set.
+  const std::vector<size_t>& queryOldFromNew;
 
   //! Candidate represents a possible candidate neighbor (distance, index).
   typedef std::pair<double, size_t> Candidate;
@@ -175,7 +158,7 @@ class LMNNImpostorsRules
   struct CandidateCmp {
     bool operator()(const Candidate& c1, const Candidate& c2)
     {
-      return !SortPolicy::IsBetter(c2.first, c1.first);
+      return !(c2.first <= c1.first);
     };
   };
 
@@ -194,23 +177,12 @@ class LMNNImpostorsRules
   //! The instantiated metric.
   MetricType& metric;
 
-  //! Denotes whether or not the reference and query sets are the same.
-  bool sameSet;
-
-  //! Relative error to be considered in approximate search.
-  const double epsilon;
-
   //! The last query point BaseCase() was called with.
   size_t lastQueryIndex;
   //! The last reference point BaseCase() was called with.
   size_t lastReferenceIndex;
   //! The last base case result.
   double lastBaseCase;
-
-  //! The number of base cases that have been performed.
-  size_t baseCases;
-  //! The number of scores that have been performed.
-  size_t scores;
 
   //! Traversal info for the parent combination; this is updated by the
   //! traversal before each call to Score().
@@ -237,6 +209,6 @@ class LMNNImpostorsRules
 } // namespace mlpack
 
 // Include implementation.
-#include "neighbor_search_rules_impl.hpp"
+#include "lmnn_impostors_rules_impl.hpp"
 
-#endif // MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
+#endif // MLPACK_METHODS_LMNN_LMNN_IMPOSTORS_RULES_HPP

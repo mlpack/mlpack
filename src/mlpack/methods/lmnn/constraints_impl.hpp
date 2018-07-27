@@ -120,26 +120,9 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
 
-  // KNN instance.
-  KNN knn;
-
-  arma::Mat<size_t> neighbors;
+  // Compute all the impostors.
   arma::mat distances;
-
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
-  {
-    // Perform KNN search with differently labeled points as reference
-    // set and  same class points as query set.
-    knn.Train(dataset.cols(indexDiff[i]));
-    knn.Search(dataset.cols(indexSame[i]), k, neighbors, distances);
-
-    // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
-      neighbors(j) = indexDiff[i].at(neighbors(j));
-
-    // Store impostors.
-    outputMatrix.cols(indexSame[i]) =  neighbors;
-  }
+  ComputeImpostors(dataset, labels, dataset, labels, outputMatrix, distances);
 }
 
 // Calculates k differently labeled nearest neighbors. The function
@@ -153,27 +136,9 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
   // Perform pre-calculation. If neccesary.
   Precalculate(labels);
 
-  // KNN instance.
-  KNN knn;
-
-  arma::Mat<size_t> neighbors;
-  arma::mat distances;
-
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
-  {
-    // Perform KNN search with differently labeled points as reference
-    // set and  same class points as query set.
-    knn.Train(dataset.cols(indexDiff[i]));
-    knn.Search(dataset.cols(indexSame[i]), k, neighbors, distances);
-
-    // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
-      neighbors(j) = indexDiff[i].at(neighbors(j));
-
-    // Store impostors.
-    outputNeighbors.cols(indexSame[i]) =  neighbors;
-    outputDistance.cols(indexSame[i]) =  distances;
-  }
+  // Compute all the impostors.
+  ComputeImpostors(dataset, labels, dataset, labels, outputNeighbors,
+      outputDistance);
 }
 
 // Calculates k differently labeled nearest neighbors on a
@@ -191,32 +156,10 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
   arma::mat subDataset = dataset.cols(begin, begin + batchSize - 1);
   arma::Row<size_t> sublabels = labels.cols(begin, begin + batchSize - 1);
 
-  // KNN instance.
-  KNN knn;
-
-  arma::Mat<size_t> neighbors;
+  // Compute the impostors of the batch.
   arma::mat distances;
-
-  // Vectors to store indices.
-  arma::uvec subIndexSame;
-
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
-  {
-    // Calculate impostors.
-    subIndexSame = arma::find(sublabels == uniqueLabels[i]);
-
-    // Perform KNN search with differently labeled points as reference
-    // set and same class points as query set.
-    knn.Train(dataset.cols(indexDiff[i]));
-    knn.Search(subDataset.cols(subIndexSame), k, neighbors, distances);
-
-    // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
-      neighbors(j) = indexDiff[i].at(neighbors(j));
-
-    // Store impostors.
-    outputMatrix.cols(begin + subIndexSame) =  neighbors;
-  }
+  ComputeImpostors(dataset, labels, subDataset, sublabels, outputMatrix,
+      distances);
 }
 
 // Calculates k differently labeled nearest neighbors & distances on a
@@ -235,33 +178,9 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
   arma::mat subDataset = dataset.cols(begin, begin + batchSize - 1);
   arma::Row<size_t> sublabels = labels.cols(begin, begin + batchSize - 1);
 
-  // KNN instance.
-  KNN knn;
-
-  arma::Mat<size_t> neighbors;
-  arma::mat distances;
-
-  // Vectors to store indices.
-  arma::uvec subIndexSame;
-
-  for (size_t i = 0; i < uniqueLabels.n_cols; i++)
-  {
-    // Calculate impostors.
-    subIndexSame = arma::find(sublabels == uniqueLabels[i]);
-
-    // Perform KNN search with differently labeled points as reference
-    // set and same class points as query set.
-    knn.Train(dataset.cols(indexDiff[i]));
-    knn.Search(subDataset.cols(subIndexSame), k, neighbors, distances);
-
-    // Re-map neighbors to their index.
-    for (size_t j = 0; j < neighbors.n_elem; j++)
-      neighbors(j) = indexDiff[i].at(neighbors(j));
-
-    // Store impostors.
-    outputNeighbors.cols(begin + subIndexSame) =  neighbors;
-    outputDistance.cols(begin + subIndexSame) =  distances;
-  }
+  // Compute the impostors of the batch.
+  ComputeImpostors(dataset, labels, subDataset, sublabels, outputNeighbors,
+      outputDistance);
 }
 
 // Generates {data point, target neighbors, impostors} triplets using
@@ -320,6 +239,78 @@ inline void Constraints<MetricType>::Precalculate(
   }
 
   precalculated = true;
+}
+
+// Note the inputs here can just be the reference set.
+template<typename MetricType>
+void Constraints<MetricType>::ComputeImpostors(
+    const arma::mat& referenceSet,
+    const arma::Row<size_t>& referenceLabels,
+    const arma::mat& querySet,
+    const arma::Row<size_t>& queryLabels,
+    arma::Mat<size_t>& neighbors,
+    arma::mat& distances) const
+{
+  // For now let's always do dual-tree search.
+  // So, build a tree on the reference data.
+  Timer::Start("tree_building");
+  std::vector<size_t> oldFromNew, newFromOld;
+  typename KNN::Tree tree(referenceSet, oldFromNew, newFromOld);
+  arma::Row<size_t> sortedRefLabels(referenceLabels.n_elem);
+  for (size_t i = 0; i < referenceLabels.n_elem; ++i)
+    sortedRefLabels[newFromOld[i]] = referenceLabels[i];
+
+  // Should we build a query tree?
+  typename KNN::Tree* queryTree;
+  arma::Row<size_t>* sortedQueryLabels;
+  std::vector<size_t>* queryOldFromNew;
+  std::vector<size_t>* queryNewFromOld;
+  if (&querySet != &referenceSet)
+  {
+    queryOldFromNew = new std::vector<size_t>();
+    queryNewFromOld = new std::vector<size_t>();
+
+    queryTree = new typename KNN::Tree(querySet, *queryOldFromNew,
+        *queryNewFromOld);
+    sortedQueryLabels = new arma::Row<size_t>(queryLabels.n_elem);
+    for (size_t i = 0; i < queryLabels.n_elem; ++i)
+      sortedQueryLabels[newFromOld[i]] = queryLabels[i];
+  }
+  else
+  {
+    queryOldFromNew = &oldFromNew;
+    queryNewFromOld = &newFromOld;
+
+    queryTree = &tree;
+    sortedQueryLabels = &sortedRefLabels;
+  }
+  Timer::Stop("tree_building");
+
+  MetricType metric = tree.Metric(); // No way to get an lvalue...
+  LMNNImpostorsRules<MetricType, typename KNN::Tree> rules(tree.Dataset(),
+      sortedRefLabels, oldFromNew, queryTree->Dataset(), *sortedQueryLabels,
+      *queryOldFromNew, k, uniqueLabels.n_cols, metric);
+
+  typename KNN::Tree::template DualTreeTraverser<LMNNImpostorsRules<MetricType,
+      typename KNN::Tree>> traverser(rules);
+
+  // Now perform the dual-tree traversal.
+  Timer::Start("computing_impostors");
+  traverser.Traverse(*queryTree, tree);
+
+  // Next, process the results.  The unmapping is done inside the rules.
+  rules.GetResults(neighbors, distances);
+
+  Timer::Stop("computing_impostors");
+
+  if (&querySet != &referenceSet)
+  {
+    delete queryOldFromNew;
+    delete queryNewFromOld;
+
+    delete queryTree;
+    delete sortedQueryLabels;
+  }
 }
 
 } // namespace lmnn

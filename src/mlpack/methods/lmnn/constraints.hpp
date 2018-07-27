@@ -14,6 +14,8 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include "lmnn_impostors_rules.hpp"
+#include "lmnn_impostors_rules_impl.hpp"
 
 namespace mlpack {
 namespace lmnn {
@@ -171,10 +173,20 @@ class Constraints
   bool precalculated;
 
   /**
-  * Precalculate the unique labels, and indices of similar
-  * and different datapoints on the basis of labels.
-  */
+   * Precalculate the unique labels, and indices of similar
+   * and different datapoints on the basis of labels.
+   */
   inline void Precalculate(const arma::Row<size_t>& labels);
+
+  /**
+   * Compute the impostors of the given set.
+   */
+  void ComputeImpostors(const arma::mat& referenceSet,
+                        const arma::Row<size_t>& referenceLabels,
+                        const arma::mat& querySet,
+                        const arma::Row<size_t>& queryLabels,
+                        arma::Mat<size_t>& neighbors,
+                        arma::mat& distances) const;
 };
 
 } // namespace lmnn
