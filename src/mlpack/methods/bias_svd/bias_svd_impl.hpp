@@ -59,8 +59,8 @@ void BiasSVD<OptimizerType>::Apply(const arma::mat& data,
   // parameters.
   u = parameters.submat(0, numUsers, rank - 1, numUsers + numItems - 1).t();
   v = parameters.submat(0, 0, rank - 1, numUsers - 1);
-  p = parameters.row(rank).subvec(numUsers, numUsers + numItems - 1);
-  q = parameters.row(rank).subvec(0, numUsers - 1);
+  p = parameters.row(rank).subvec(numUsers, numUsers + numItems - 1).t();
+  q = parameters.row(rank).subvec(0, numUsers - 1).t();
 }
 
 } // namespace svd
