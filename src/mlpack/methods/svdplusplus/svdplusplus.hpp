@@ -37,8 +37,8 @@ class SVDPlusPlus
    * @param lambda Regularization parameter for the optimization.
    */
   SVDPlusPlus(const size_t iterations = 10,
-          const double alpha = 0.005,
-          const double lambda = 0.02);
+          const double alpha = 0.002,
+          const double lambda = 0.1);
 
   /**
    *

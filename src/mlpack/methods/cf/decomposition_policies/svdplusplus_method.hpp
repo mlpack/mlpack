@@ -31,9 +31,15 @@ class SVDPlusPlusPolicy
    * Use SVDPlusPlus method to perform collaborative filtering.
    *
    * @param maxIterations Number of iterations.
+   * @param alpha Learning rate for optimization.
+   * @param Regularization parameter for optimization.
    */
-  SVDPlusPlusPolicy(const size_t maxIterations = 10) :
-      maxIterations(maxIterations)
+  SVDPlusPlusPolicy(const size_t maxIterations = 10,
+                    const double alpha = 0.002,
+                    const double lambda = 0.1) :
+      maxIterations(maxIterations),
+      alpha(alpha),
+      lambda(lambda)
   {
     /* Nothing to do here */
   }
@@ -57,7 +63,7 @@ class SVDPlusPlusPolicy
              const double /* minResidue */,
              const bool /* mit */)
   {
-    svd::SVDPlusPlus<> svdpp(maxIterations);
+    svd::SVDPlusPlus<> svdpp(maxIterations, alpha, lambda);
 
     // Save implicit data in the form of sparse matrix.
     arma::mat implicitDenseData = data.submat(0, 0, 1, data.n_cols - 1);
@@ -169,12 +175,25 @@ class SVDPlusPlusPolicy
   //! Modify the number of iterations.
   size_t& MaxIterations() { return maxIterations; }
 
+  //! Get learning rate.
+  double Alpha() const { return alpha; }
+  //! Modify learning rate.
+  double& Alpha() { return alpha; }
+
+  //! Get regularization parameter.
+  double Lambda() const { return lambda; }
+  //! Modify regularization parameter.
+  double& Lambda() { return lambda; }
+
   /**
    * Serialization.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
+    ar & BOOST_SERIALIZATION_NVP(maxIterations);
+    ar & BOOST_SERIALIZATION_NVP(alpha);
+    ar & BOOST_SERIALIZATION_NVP(lambda);
     ar & BOOST_SERIALIZATION_NVP(w);
     ar & BOOST_SERIALIZATION_NVP(h);
     ar & BOOST_SERIALIZATION_NVP(p);
@@ -186,6 +205,10 @@ class SVDPlusPlusPolicy
  private:
   //! Locally stored number of iterations.
   size_t maxIterations;
+  //! Learning rate for optimization.
+  double alpha;
+  //! Regularization parameter for optimization.
+  double lambda;
   //! Item matrix.
   arma::mat w;
   //! User matrix.

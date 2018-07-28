@@ -31,9 +31,15 @@ class BiasSVDPolicy
    * Use Bias SVD method to perform collaborative filtering.
    *
    * @param maxIterations Number of iterations.
+   * @param alpha Learning rate for optimization.
+   * @param Regularization parameter for optimization.
    */
-  BiasSVDPolicy(const size_t maxIterations = 10) :
-      maxIterations(maxIterations)
+  BiasSVDPolicy(const size_t maxIterations = 10,
+                const double alpha = 0.01,
+                const double lambda = 0.02) :
+      maxIterations(maxIterations),
+      alpha(alpha),
+      lambda(lambda)
   {
     /* Nothing to do here */
   }
@@ -58,7 +64,7 @@ class BiasSVDPolicy
              const bool /* mit */)
   {
     // Perform decomposition using the bias SVD algorithm.
-    svd::BiasSVD<> biassvd(maxIterations);
+    svd::BiasSVD<> biassvd(maxIterations, alpha, lambda);
     biassvd.Apply(data, rank, w, h, p, q);
   }
 
@@ -130,12 +136,25 @@ class BiasSVDPolicy
   //! Modify the number of iterations.
   size_t& MaxIterations() { return maxIterations; }
 
+  //! Get learning rate.
+  double Alpha() const { return alpha; }
+  //! Modify learning rate.
+  double& Alpha() { return alpha; }
+
+  //! Get regularization parameter.
+  double Lambda() const { return lambda; }
+  //! Modify regularization parameter.
+  double& Lambda() { return lambda; }
+
   /**
    * Serialization.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
+    ar & BOOST_SERIALIZATION_NVP(maxIterations);
+    ar & BOOST_SERIALIZATION_NVP(alpha);
+    ar & BOOST_SERIALIZATION_NVP(lambda);
     ar & BOOST_SERIALIZATION_NVP(w);
     ar & BOOST_SERIALIZATION_NVP(h);
     ar & BOOST_SERIALIZATION_NVP(p);
@@ -145,6 +164,10 @@ class BiasSVDPolicy
  private:
   //! Locally stored number of iterations.
   size_t maxIterations;
+  //! Learning rate for optimization.
+  double alpha;
+  //! Regularization parameter for optimization.
+  double lambda;
   //! Item matrix.
   arma::mat w;
   //! User matrix.
