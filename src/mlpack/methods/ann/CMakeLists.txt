@@ -16,6 +16,7 @@ add_subdirectory(convolution_rules)
 add_subdirectory(gan)
 add_subdirectory(rbm)
 add_subdirectory(augmented)
+add_subdirectory(dists)
 
 # Add directory name to sources.
 set(DIR_SRCS)

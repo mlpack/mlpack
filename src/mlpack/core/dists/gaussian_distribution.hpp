@@ -20,6 +20,9 @@ namespace distribution {
 
 /**
  * A single multivariate Gaussian distribution.
+ *
+ * Note: For multiple univariate distributions, there is another class
+ * NormalDistribution in methods/ann/dists.
  */
 class GaussianDistribution
 {
@@ -192,7 +195,6 @@ inline void GaussianDistribution::LogProbability(
 
   logProbabilities = -0.5 * k * log2pi - 0.5 * logDetCov + logExponents;
 }
-
 
 } // namespace distribution
 } // namespace mlpack
