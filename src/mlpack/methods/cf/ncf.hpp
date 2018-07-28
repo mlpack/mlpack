@@ -17,7 +17,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
-#include <mlpack/core/optimizers/cne/cne.hpp>
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
 
 namespace mlpack {
 namespace cf {
@@ -34,10 +34,10 @@ namespace cf {
  * Multi layer perceptron and Neural matrix factorization as part of performing
  * Neural Collaborative Filtering.
  */
-template<typename OptimizerType>
 class NCF
 {
  public:
+  NCF();
   /**
    * Initialize the NCF object using any algorithm and optimizer, according to
    * which a model will be trained. There are parameters that can
@@ -53,37 +53,32 @@ class NCF
    * @param embedSize Size of embedding for each user and item being considered.
    * @param neg Number of negative instances to consider per positive instance.
    * @param epochs Number of epochs to train the model on.
+   * @param implicit Whether to convert data to implicit feedback rating form.
    */
+  template<typename OptimizerType = mlpack::optimization::SGD<>>
   NCF(arma::mat& dataset,
       std::string algorithm,
       OptimizerType& optimizer = OptimizerType(),
       const size_t embedSize = 8,
       const size_t neg = 4,
-      const size_t epochs = 100);
+      const size_t epochs = 100,
+      bool implicit = false);
 
   /**
    * To be run once to create a vector of items which haven't been rated by
    * a user. This is used later to create training instances which contain
    * negative instances too.
-   *
-   * @param numUsers Number of users being considered in the dataset.
-   * @param dataset Data matrix: dense matrix (coordinate lists).
-   * @param negatives A vector storing unrated items for each user.
    */
-  void FindNegatives(arma::mat& dataset);
+  void FindNegatives();
 
   /**
    * To be used to get training instance for each epoch. Each training instance
    * will create vectors of users items and labels for training.
    *
-   * @param dataset Data matrix: dense matrix (coordinate lists).
-   * @param users Matrix to store training data for users.
-   * @param items Matrix to store training data for items.
-   * @param labels Matrix to store labels (1 for rated and 0 for unrated).
-   * @param negatives A vector storing unrated items for each user.
+   * @param predictors Matrix to store user and item data.
+   * @param responses Matrix to store their response or rating of item.
    */
-  void GetTrainingInstance(arma::mat& dataset,
-                           arma::mat& predictors,
+  void GetTrainingInstance(arma::mat& predictors,
                            arma::mat& responses);
 
    /**
@@ -122,41 +117,32 @@ class NCF
                 const size_t batchSize);
   /**
    * Train the model using the specified algorithm and optimizer.
-   *
-   * @param dataset Data matrix: dense matrix (coordinate lists).
-   * @param algorithm Algorithm to be used.
    */
-  void Train(arma::mat& dataset, std::string algorithm);
+  template<typename OptimizerType>
+  void Train(OptimizerType optimizer);
 
   /**
    * Create the model for General Matrix Factorization.
-   *
-   * @param data Vector with user and item training data concatenated.
-   * @param embedSize Size of embedding for each user and item being considered.
    */
-  void CreateGMF(arma::mat& data);
+  void CreateGMF();
 
   /**
    * Create the model for Multi Layer Perceptron.
-   *
-   * @param data Vector with user and item training data concatenated.
-   * @param embedSize Size of embedding for each user and item being considered.
    */
-  void CreateMLP(arma::mat& data);
+  void CreateMLP();
 
   /**
    * Create the model for Neural Matrix Factorization.
-   *
-   * @param data Vector with user and item training data concatenated.
-   * @param embedSize Size of embedding for each user and item being considered.
    */
-  void CreateNeuMF(arma::mat& data);
+  void CreateNeuMF();
 
   /**
    * Evaluate the model.
    *
    */
   void EvaluateModel(arma::mat& testData,
+                     size_t& hitRatio,
+                     size_t& rmseMean,
                      const size_t numRecs = 10);
 
   /**
@@ -179,9 +165,26 @@ class NCF
                           arma::Mat<size_t>& recommendations,
                           const arma::Col<size_t>& users);
 
-  const size_t Neg() const { return neg; }
+  //! Sets negative instances size.
+  void Neg(const size_t negValue)
+  {
+    this->neg = negValue;
+  }
 
-  const size_t EmbedSize() const { return embedSize; }
+  //! Get negative instances value.
+  size_t Neg() const { return neg; }
+
+  //! Sets embed size.
+  void EmbedSize(const size_t embedSizeValue)
+  {
+    this->embedSize = embedSizeValue;
+  }
+
+  //! Get embed size.
+  size_t EmbedSize() const { return embedSize; }
+
+  //! Get the Dataset Matrix.
+  const arma::mat& Dataset() const { return dataset; }
 
   /**
    * Serialize the NCF model to the given archive.
@@ -190,11 +193,11 @@ class NCF
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  //! Model for the algorithm to be used.
-  FFN<NegativeLogLikelihood<>, RandomInitialization> network;
+  //! Dataset to perform collaborative filtering on.
+  arma::mat dataset;
 
-  //! Optimizer to be used for training.
-  OptimizerType optimizer;
+  //! Model for the algorithm to be used.
+  ann::FFN<ann::NegativeLogLikelihood<>, ann::RandomInitialization> network;
 
   //! Number of negative instances per positive instances in training data.
   size_t neg;
@@ -213,6 +216,9 @@ class NCF
 
   //! Negatives for each user stored in vector form.
   std::vector<std::vector<double>> negatives;
+
+  //! Whether to convert the ratings as implicit feedback.
+  bool implicit;
 }; // class NCF
 
 } // namespace cf

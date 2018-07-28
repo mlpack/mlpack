@@ -18,21 +18,24 @@
 
 namespace mlpack {
 namespace cf {
-
 /**
  * Construct the NCF object using the desired algorithm and optimizer.
  */
 template<typename OptimizerType>
 NCF::NCF(arma::mat& dataset,
          std::string algorithm,
-         OptimizerType optimizer,
+         OptimizerType& optimizer,
          const size_t embedSize,
          const size_t neg,
-         const size_t epochs):
-    optimizer(optimizer),
-    embedSize(embedSize),
+         const size_t epochs,
+         bool implicit):
+    dataset(dataset),
+    network(ann::FFN<ann::NegativeLogLikelihood<>,
+        ann::RandomInitialization>()),
     neg(neg),
-    epochs(epochs)
+    epochs(epochs),
+    embedSize(embedSize),
+    implicit(implicit)
 {
   if (embedSize < 1)
   {
@@ -44,18 +47,30 @@ NCF::NCF(arma::mat& dataset,
   numUsers = (size_t) max(dataset.row(0)) + 1;
   numItems = (size_t) max(dataset.row(1)) + 1;
 
-  Train(dataset, algorithm);
+  if (algorithm == "GMF")
+  {
+    CreateGMF();
+  }
+  else if (algorithm == "MLP")
+  {
+    CreateMLP();
+  }
+  else if (algorithm == "NeuMF")
+  {
+    CreateNeuMF();
+  }
+
+  Train(optimizer);
 }
 
 /**
  * Compute all unrated items for each user.
  */
-template<typename OptimizerType>
-void NCF::FindNegatives(arma::mat& dataset)
+void NCF::FindNegatives()
 {
   negatives.clear();
 
-  for (int i = 0; i< numUsers; i++)
+  for (size_t i = 0; i< numUsers; i++)
   {
     // Find items the user has rated.
     arma::uvec userRates = arma::find(dataset.row(0) == i);
@@ -64,17 +79,18 @@ void NCF::FindNegatives(arma::mat& dataset)
     itemRates.shed_row(0);
     itemRates.shed_row(1);
 
-    // List of all items.
-    vec negativeList = linspace<vec> (0,3705,3706);
-    for (int j = 0; j < itemRates.n_cols; j++)
+    // List of all items.n
+    arma::vec negativeList = arma::linspace<arma::vec> (0,3705,3706);
+    for (size_t j = 0; j < itemRates.n_cols; j++)
     {
       // Remove items which have been rated.
       arma::uvec temp = arma::find(negativeList ==  itemRates(j));
       negativeList.shed_row(temp(0));
     }
 
+    std::vector<double> negList;
     // Add all negatives to a vector.
-    stdvec negList = conv_to<stdvec>::from(negativeList);
+    negList = arma::conv_to<std::vector<double>>::from(negativeList);
     negatives.push_back(negList);
   }
 }
@@ -82,31 +98,28 @@ void NCF::FindNegatives(arma::mat& dataset)
 /**
  * Create training instances using both positive and negative instances.
  */
-template<typename OptimizerType>
-void NCF::GetTrainingInstance(arma::mat& dataset,
-                              arma::mat& predictors,
+void NCF::GetTrainingInstance(arma::mat& predictors,
                               arma::mat& responses)
 {
-  long long int q = 0;
-  int temp;
+  size_t q = 0, temp;
   arma::colvec users, items;
 
-  for (int i = 0; i < dataset.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; i++)
   {
     temp = neg;
 
     // Rating exists.
     users(q) = dataset(0, i);
     items(q) = dataset(1, i);
-    responses(q) = 1;
+    responses(q) = implicit ? 1:dataset(2,i);
     q++;
 
     // From find negatives.
-    int val = negatives[dataset(0, i)].size();
+    size_t val = negatives[dataset(0, i)].size();
 
     while (temp != 0)
     {
-      int j = math::RandInt(val);
+      size_t j = math::RandInt(val);
       // Add negatives.
       users(q) = dataset(0, i);
       items(q) = j;
@@ -118,58 +131,41 @@ void NCF::GetTrainingInstance(arma::mat& dataset,
   predictors = arma::join_vert(users, items);
 }
 
-template<typename OptimizerType>
 double NCF::Evaluate(const arma::mat& parameters,
                      const size_t begin,
                      const size_t batchSize,
                      const bool deterministic)
 {
-   // Run the forward pass of the GMF network created by CreateGMF().
   double loss = network.Evaluate(parameters, begin, batchSize, deterministic);
-
   return loss;
 }
 
-template<typename OptimizerType>
 void NCF::Gradient(const arma::mat& parameters,
                    const size_t begin,
                    arma::mat& gradient,
                    const size_t batchSize)
 {
   network.Gradient(parameters, begin, gradient, batchSize);
-  GetTrainingData(predictors, responses);
+  GetTrainingInstance(network.predictors, network.responses);
 }
 
 /**
  * Train the model using the given optimizer.
  */
 template<typename OptimizerType>
-void NCF::Train(arma::mat& dataset,
-                std::string algorithm)
+void NCF::Train(OptimizerType optimizer)
 {
-  if (algorithm == "GMF")
-  {
-    CreateGMF(dataset);
-  }
-  else if (algorithm == "MLP")
-  {
-    CreateMLP(dataset);
-  }
-  else if (algorithm == "NeuMF")
-  {
-    CreateNeuMF(dataset);
-  }
   arma::mat predictors, responses;
 
-  FindNegatives(dataset);
+  FindNegatives();
 
-  GetTrainingInstance(dataset, predictors, responses);
+  GetTrainingInstance(predictors, responses);
 
   network.ResetData(std::move(predictors), std::move(responses));
 
   // Train the model.
   Timer::Start("ncf_optimization");
-  const double out = optimizer.Optimize(*this.network, network.parameter);
+  const double out = optimizer.Optimize(this->network, network.parameter);
   Timer::Stop("ncf_optimization");
 
   Log::Info << "NCF::NCF(): final objective of trained model is " << out
@@ -179,111 +175,114 @@ void NCF::Train(arma::mat& dataset,
 /**
  * Create a model for GMF.
  */
-template<typename OptimizerType>
-void NCF::CreateGMF(arma::mat& data)
+void NCF::CreateGMF()
 {
-  size_t size = data/2;
+  size_t size = dataset.n_cols/2;
 
   // User sub-network.
-  Sequential<>* userModel = new Sequential<>();
-  userModel->Add<Subview<> >(1, 0, size - 1);
-  userModel->Add<Embedding<> >(numUsers, embedSize);
-  userModel->Add<Subview<> >(size, 0, embedSize - 1, 0, size - 1);
+  ann::Sequential<>* userModel = new ann::Sequential<>();
+  userModel->Add<ann::Subview<> >(1, 0, size - 1);
+  userModel->Add<ann::Embedding<> >(numUsers, embedSize);
+  userModel->Add<ann::Subview<> >(size, 0, embedSize - 1, 0, size - 1);
 
   // Item sub-network.
-  Sequential<>* itemModel = new Sequential<>();
-  itemModel->Add<Subview<> >(1, size, data.n_rows - 1);
-  itemModel->Add<Embedding<> >(numItems, embedSize);
-  userModel->Add<Subview<> >(size, 0, embedSize - 1, 0, size - 1);
+  ann::Sequential<>* itemModel = new ann::Sequential<>();
+  itemModel->Add<ann::Subview<> >(1, size, dataset.n_rows - 1);
+  itemModel->Add<ann::Embedding<> >(numItems, embedSize);
+  userModel->Add<ann::Subview<> >(size, 0, embedSize - 1, 0, size - 1);
 
   // Merge the user and item sub-network.
-  MultiplyMerge<> mergeModel(true, true);
+  ann::MultiplyMerge<> mergeModel(true, true);
   mergeModel.Add(userModel);
   mergeModel.Add(itemModel);
 
   // Create the main network.
-  FFN<NegativeLogLikelihood<>, RandomInitialization> network;
-  network.Add<IdentityLayer<> >();
-  network.Add<MultiplyMerge<> >(mergeModel);
-  network.Add<SigmoidLayer<> >();
+  network.Add<ann::IdentityLayer<> >();
+  network.Add<ann::MultiplyMerge<> >(mergeModel);
+  network.Add<ann::SigmoidLayer<> >();
 }
 
 /**
  * Create a model for MLP.
  */
-template<typename OptimizerType>
-void NCF::CreateMLP(arma::mat& data)
+void NCF::CreateMLP()
 {
-  size_t size = data/2;
+  size_t size = dataset.n_cols/2;
 
   // User sub-network.
-  Sequential<>* userModel = new Sequential<>();
-  userModel->Add<Subview<> >(1, 0, size - 1);
-  userModel->Add<Embedding<> >(numUsers, embedSize);
+  ann::Sequential<>* userModel = new ann::Sequential<>();
+  userModel->Add<ann::Subview<> >(1, 0, size - 1);
+  userModel->Add<ann::Embedding<> >(numUsers, embedSize);
 
   // Item sub-network.
-  Sequential<>* itemModel = new Sequential<>();
-  itemModel->Add<Subview<> >(1, size, data.n_rows - 1);
-  itemModel->Add<Embedding<> >(numItems, embedSize);
+  ann::Sequential<>* itemModel = new ann::Sequential<>();
+  itemModel->Add<ann::Subview<> >(1, size, dataset.n_rows - 1);
+  itemModel->Add<ann::Embedding<> >(numItems, embedSize);
 
   // Merge the user and item sub-network.
-  Concat<>* mergeModel = new Concat<>(true, true);
+  ann::Concat<>* mergeModel = new ann::Concat<>(true, true);
   mergeModel->Add(userModel);
   mergeModel->Add(itemModel);
 
   // Create the main network.
-  FFN<NegativeLogLikelihood<>, RandomInitialization> network;
-  network.Add<IdentityLayer<> >();
+  network.Add<ann::IdentityLayer<> >();
   network.Add(mergeModel);
-  network.Add<Subview<> >(2, 0, (embedSize * size) - 1, 0, 1);
-  network.Add<SigmoidLayer<> >();
+  network.Add<ann::Subview<> >(2, 0, (embedSize * size) - 1, 0, 1);
+  network.Add<ann::SigmoidLayer<> >();
 }
 
 /**
  * Create a model for Neural Matrix Factorization.
  */
-template<typename OptimizerType>
-void NCF::CreateNeuMF(arma::mat& data)
+void NCF::CreateNeuMF()
 {
-  // To be added.
+  // Being debugged.
 }
 
 /**
  * Evaluate the model.
  */
-template<typename OptimizerType>
 void NCF::EvaluateModel(arma::mat& testData,
+                        size_t& hitRatio,
+                        size_t& rmseMean,
                         const size_t numRecs)
 {
   // Variable declarations.
-  arma::Col<size_t> predictors, userVec(numItems), itemScore(numItems);
-  arma::Mat<size_t>& recommendations;
+  arma::Col<size_t> userVec(numItems), itemScore(numItems);
+  arma::mat predictors;
 
-  arma::Col<size_t> hits(testData.n_rows), rmses(testData.n_rows);
-  for (size_t i = 0; i < testData.n_rows; i++)
+  size_t norm, rmse;
+  arma::Col<size_t> hits(testData.n_cols), rmses(testData.n_cols);
+
+  for (size_t i = 0; i < testData.n_cols; i++)
   {
     // Considered user item rating test data.
-    size_t u = testData[i][0];
-    size_t gtItem = testData[i][1];
-    size_t rt = testData[i][2];
+    size_t u = testData(0, i);
+    size_t gtItem = testData(1, i);
+    size_t rt = testData(2, i);
 
     // Get negatives of items.
-    colvec itemVec = (conv_to< colvec >::from(negatives[u])).rows(0, 98);
-    itemVec.insert(99, gtItem);
+    arma::Col<size_t> itemVec(100);
+    itemVec.rows(0, 98) = (arma::conv_to< arma::Col<size_t> >::from(
+        negatives[u])).rows(0, 98);
+    itemVec(99) = size_t(gtItem);
 
     // Form input for the network.
     userVec.fill(u);
-    predictors = arma::join_vert(userVec, itemVec);
+    predictors = arma::conv_to< arma::mat >::from(
+        arma::join_vert(userVec, itemVec));
+
+    arma::mat results;
     network.Predict(predictors, results);
 
     // Find root mean squared error of predicted rating of considered item.
     for (size_t j = 0; j < itemVec.n_elem; j++)
     {
       itemScore[itemVec[j]] = results[j];
-      if (gtItem == item)
+      if (gtItem == itemVec[j])
       {
-        size_t norm = (itemScore[item] * 4) + 1;
-        size_t rmse = ((rt - norm) ^ 2);
+        norm = (itemScore[itemVec[j]] * 4) + 1;
+        rmse = ((rt - norm) ^ 2);
       }
     }
     size_t hr = 0;
@@ -291,25 +290,24 @@ void NCF::EvaluateModel(arma::mat& testData,
     // Find if the item has been predicted in top k.
     for (size_t k = 0; k < numRecs; k++)
     {
-      if (arma::index_max(results) == gtItem)
+      if (results.index_max() == gtItem)
       {
         hr = 1;
       }
-      itemScore(arma::index_max(itemScore)) = 0;
+      itemScore(itemScore.index_max()) = 0;
     }
-    hits.insert(i, hr);
-    rmses.insert(i, rmse);
+    hits.insert_rows(i, hr);
+    rmses.insert_rows(i, rmse);
   }
 
   // Find hit ratio and root mean squared error.
-  size_t hitRatio = mean(hits);
-  size_t rmseMean = math::sqrt(mean(rmses));
+  hitRatio = arma::mean(hits);
+  rmseMean = std::sqrt(arma::mean(rmses));
 }
 
 /**
  * Get recommendations for all users.
  */
-template<typename OptimizerType>
 void NCF::GetRecommendations(const size_t numRecs,
                              arma::Mat<size_t>& recommendations)
 {
@@ -324,15 +322,15 @@ void NCF::GetRecommendations(const size_t numRecs,
 /**
  * Get recommendations for given set of users.
  */
-template<typename OptimizerType>
 void NCF::GetRecommendations(const size_t numRecs,
                              arma::Mat<size_t>& recommendations,
-                             const arma::Col<size_t>& users);
+                             const arma::Col<size_t>& users)
 {
   // Column vector of all items.
   arma::Col<size_t> itemVec = arma::linspace<arma::Col<size_t> >(0,
       numItems - 1, numItems);
-  arma::Col<size_t> predictors, userVec(numItems);
+  arma::Col<size_t> userVec(numItems);
+  arma::mat predictors;
 
   // Predict rating for all user item combinations for given users.
   for (size_t i = 0; i < users.n_elem; i++)
@@ -341,14 +339,15 @@ void NCF::GetRecommendations(const size_t numRecs,
     userVec.fill(users[i]);
 
     // Form input for the network.
-    predictors = arma::join_vert(userVec, itemVec);
+    predictors = arma::conv_to< arma::mat >::from(
+        arma::join_vert(userVec, itemVec));
     network.Predict(predictors, results);
 
     // Find top k recommendations.
     for (size_t k = 0; k < numRecs; k++)
     {
-      recommendations(k, i) = (size_t) arma::index_max(results);
-      itemScore(arma::index_max(itemScore)) = 0;
+      recommendations(k, i) = (size_t) (results.index_max());
+      results(results.index_max()) = 0;
     }
   }
 }
@@ -356,12 +355,9 @@ void NCF::GetRecommendations(const size_t numRecs,
 /**
  * Serialize the NCF model to the given archive.
  */
-template<typename OptimizerType>
 template<typename Archive>
-void serialize(Archive& ar, const unsigned int /* version */)
+void NCF::serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(algorithm);
-  ar & BOOST_SERIALIZATION_NVP(optimizer);
   ar & BOOST_SERIALIZATION_NVP(neg);
   ar & BOOST_SERIALIZATION_NVP(epochs);
   ar & BOOST_SERIALIZATION_NVP(embedSize);

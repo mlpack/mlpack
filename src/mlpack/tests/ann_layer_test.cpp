@@ -1157,13 +1157,13 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
 {
   arma::mat output, input, delta, error;
 
-  Linear<> moduleA(10, 10);
-  moduleA.Parameters().randu();
-  moduleA.Reset();
+  Linear<>* moduleA = new Linear<>(10, 10);
+  moduleA->Parameters().randu();
+  moduleA->Reset();
 
-  Linear<> moduleB(10, 10);
-  moduleB.Parameters().randu();
-  moduleB.Reset();
+  Linear<>* moduleB = new Linear<>(10, 10);
+  moduleB->Parameters().randu();
+  moduleB->Reset();
 
   Concat<> module;
   module.Add(moduleA);
@@ -1174,12 +1174,12 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
   module.Forward(std::move(input), std::move(output));
 
   BOOST_REQUIRE_CLOSE(arma::accu(
-      moduleA.Parameters().submat(100, 0, moduleA.Parameters().n_elem - 1, 0)),
-      arma::accu(output.col(0)), 1e-3);
+      moduleA->Parameters().submat(100, 0, moduleA->Parameters().n_elem - 1,
+      0)), arma::accu(output.col(0)), 1e-3);
 
   BOOST_REQUIRE_CLOSE(arma::accu(
-      moduleB.Parameters().submat(100, 0, moduleB.Parameters().n_elem - 1, 0)),
-      arma::accu(output.col(1)), 1e-3);
+      moduleB->Parameters().submat(100, 0, moduleB->Parameters().n_elem - 1,
+      0)), arma::accu(output.col(1)), 1e-3);
 
   // Test the Backward function.
   error = arma::zeros(10, 2);

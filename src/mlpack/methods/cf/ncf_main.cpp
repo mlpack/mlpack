@@ -16,6 +16,9 @@
 
 #include "ncf.hpp"
 
+#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/ffn.hpp>
+
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include <mlpack/core/optimizers/adam/adam.hpp>
 #include <mlpack/core/optimizers/ada_grad/ada_grad.hpp>
@@ -24,6 +27,7 @@
 using namespace mlpack;
 using namespace mlpack::cf;
 using namespace mlpack::util;
+using namespace mlpack::optimization;
 using namespace std;
 
 // Document program.
@@ -100,8 +104,8 @@ PARAM_STRING_IN("optimizer", "Optimizer to train the network on.", "o", "SGD");
 PARAM_MATRIX_IN("test", "Test set to calculate RMSE on.", "T");
 
 // Load/save a model.
-PARAM_MODEL_IN(NCF<>, "input_model", "Trained NCF model to load.", "m");
-PARAM_MODEL_OUT(NCF<>, "output_model", "Output for trained NCF model.", "M");
+PARAM_MODEL_IN(NCF, "input_model", "Trained NCF model to load.", "m");
+PARAM_MODEL_OUT(NCF, "output_model", "Output for trained NCF model.", "M");
 
 // Query settings.
 PARAM_UMATRIX_IN("query", "List of query users for which recommendations should"
@@ -116,12 +120,14 @@ PARAM_INT_IN("embedsize", "Size of embedding to be used for each item and user "
     " data point.", "e", 8);
 PARAM_INT_IN("neg", "Number of negative instances per positive instance to be "
     " trained upon.", "g", 4);
-PARAM_INT_IN("epochs", "Number of epochs for which training is to be performed."
-    "p", 100);
+PARAM_INT_IN("epochs", "Number of epochs for which training is to be "
+    " performed.", "p", 100);
+PARAM_FLAG("implicit", "If true, treat the ratings as implicit feedback data."
+    "i", false);
 
 PARAM_INT_IN("seed", "Set the random seed (0 uses std::time(NULL)).", "s", 0);
 
-void ComputeRecommendations(NCF<>* ncf,
+void ComputeRecommendations(NCF* ncf,
                             const size_t numRecs,
                             arma::Mat<size_t>& recommendations)
 {
@@ -138,28 +144,28 @@ void ComputeRecommendations(NCF<>* ncf,
 
     Log::Info << "Generating recommendations for " << users.n_elem << " users."
         << endl;
-    cf->GetRecommendations(numRecs, recommendations, users.row(0).t());
+    ncf->GetRecommendations(numRecs, recommendations, users.row(0).t());
   }
   else
   {
     Log::Info << "Generating recommendations for all users." << endl;
-    cf->GetRecommendations(numRecs, recommendations);
+    ncf->GetRecommendations(numRecs, recommendations);
   }
 }
 
-void ComputeRMSE(NCF<>* ncf)
+void ComputeRMSE(NCF* ncf)
 {
   // Now, compute each test point.
   arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
 
   // Now compute the RMSE.
   size_t hitRatio, rmse;
-  cf->EvaluateModel(testData, hitRatio, rmse);
+  ncf->EvaluateModel(testData, hitRatio, rmse);
 
   Log::Info << "Hit Ratio is "<< hitRatio << "and RMSE is " << rmse << "." << endl;
 }
 
-void PerformAction(NCF<>* c)
+void PerformAction(NCF* c)
 {
   if (CLI::HasParam("query") || CLI::HasParam("all_user_recommendations"))
   {
@@ -177,7 +183,7 @@ void PerformAction(NCF<>* c)
   if (CLI::HasParam("test"))
     ComputeRMSE(c);
 
-  CLI::GetParam<NCF<>*>("output_model") = c;
+  CLI::GetParam<NCF*>("output_model") = c;
 }
 
 template<typename OptimizerType>
@@ -188,14 +194,16 @@ void PerformAction(arma::mat& dataset,
   const size_t embedSize = (size_t) CLI::GetParam<int>("embedsize");
   const size_t neg = (size_t) CLI::GetParam<int>("neg");
   const size_t epochs = (size_t) CLI::GetParam<int>("epochs");
+  const bool implicit = CLI::HasParam("implicit");
 
-  NCF<>* c = new NCF<>(dataset, algorithm, optimizer, embedSize, neg, epochs));
+  NCF* c = new NCF(dataset, algorithm, optimizer, embedSize,
+      neg, epochs, implicit);
 
   PerformAction(c);
 }
 
 void AssembleOptimizerType(const std::string& algorithm,
-                            arma::mat& dataset)
+                           arma::mat& dataset)
 {
   if (algorithm == "adagrad")
   {
@@ -214,7 +222,7 @@ void AssembleOptimizerType(const std::string& algorithm,
   }
   else
   {
-    SGD optimizer;
+    SGD<> optimizer;
     PerformAction(dataset, algorithm, optimizer);
   }
 }
@@ -269,7 +277,7 @@ static void mlpackMain()
         "test" }, true);
 
     // Load an input model.
-    CFType<>* c = std::move(CLI::GetParam<CFType<>*>("input_model"));
+    NCF* c = std::move(CLI::GetParam<NCF*>("input_model"));
 
     PerformAction(c);
   }
