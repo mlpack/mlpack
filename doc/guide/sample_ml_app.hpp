@@ -29,18 +29,18 @@ mlpack and dependencies in Release Mode).
 @code
  - C:\boost\boost_1_66_0
  - C:\mlpack\armadillo-8.500.1\include
- - C:\mlpack\mlpack-3.0.2\build\include
+ - C:\mlpack\mlpack-3.0.3\build\include
 @endcode
 - Under Linker > Input > Additional Dependencies add:
 @code
- - C:\mlpack\mlpack-3.0.2\build\Debug\mlpack.lib
+ - C:\mlpack\mlpack-3.0.3\build\Debug\mlpack.lib
  - C:\boost\boost_1_66_0\lib64-msvc-14.1\libboost_serialization-vc141-mt-gd-x64-1_66.lib
  - C:\boost\boost_1_66_0\lib64-msvc-14.1\libboost_program_options-vc141-mt-gd-x64-1_66.lib
 @endcode
 - Under Build Events > Post-Build Event > Command Line add:
 @code
- - xcopy /y "C:\mlpack\mlpack-3.0.2\build\Debug\mlpack.dll" $(OutDir)
- - xcopy /y "C:\mlpack\mlpack-3.0.2\packages\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll" $(OutDir)
+ - xcopy /y "C:\mlpack\mlpack-3.0.3\build\Debug\mlpack.dll" $(OutDir)
+ - xcopy /y "C:\mlpack\mlpack-3.0.3\packages\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll" $(OutDir)
 @endcode
 
 @note Recent versions of Visual Studio set "Conformance Mode" enabled by default. This causes some issues with
