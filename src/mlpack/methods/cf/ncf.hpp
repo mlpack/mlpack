@@ -29,16 +29,14 @@ namespace cf {
  * the item; and the third represents the rating.  The user and item, while they
  * are in a matrix that holds doubles, should hold integer (or size_t) values.
  * The user and item indices are assumed to start at 0.
- *
- * @tparam OptimizerType The algorithm used among General matrix factorization,
- * Multi layer perceptron and Neural matrix factorization as part of performing
- * Neural Collaborative Filtering.
  */
 class NCF
 {
  public:
+  // Default constructor for NCF.
   NCF()
   {
+    // Nothing to do here.
   }
   /**
    * Initialize the NCF object using any algorithm and optimizer, according to
@@ -48,7 +46,7 @@ class NCF
    * The provided dataset can shall be a coordinate list; that is, a 3-row
    * matrix where each column corresponds to a (user, item, rating) entry in the
    * matrix.
-   *
+   * @tparam OptimizerType The optimizer to train the network on.
    * @param dataset Data matrix: dense matrix (coordinate lists).
    * @param algorithm Algorithm to be used.
    * @param optimizer Optimizer to be used to train the model.
@@ -119,6 +117,7 @@ class NCF
                 const size_t batchSize);
   /**
    * Train the model using the specified algorithm and optimizer.
+   * @tparam OptimizerType The optimizer to train the network on.
    */
   template<typename OptimizerType>
   void Train(OptimizerType optimizer);

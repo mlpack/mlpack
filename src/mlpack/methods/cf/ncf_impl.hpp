@@ -288,11 +288,12 @@ void NCF::EvaluateModel(arma::mat& testData,
     // Find if the item has been predicted in top k.
     for (size_t k = 0; k < numRecs; k++)
     {
-      if (results.index_max() == gtItem)
+      if (arma::as_scalar(arma::find(results.max() == results, 1)) == gtItem)
       {
         hr = 1;
       }
-      itemScore(itemScore.index_max()) = 0;
+      itemScore(arma::as_scalar(
+          arma::find(itemScore.max() == itemScore, 1))) = 0;
     }
     hits.insert_rows(i, hr);
     rmses.insert_rows(i, rmse);
@@ -344,8 +345,9 @@ void NCF::GetRecommendations(const size_t numRecs,
     // Find top k recommendations.
     for (size_t k = 0; k < numRecs; k++)
     {
-      recommendations(k, i) = (size_t) (results.index_max());
-      results(results.index_max()) = 0;
+      recommendations(k, i) = (size_t) (arma::as_scalar(
+          arma::find(results.max() == results, 1)));
+      results(arma::as_scalar(arma::find(results.max() == results, 1))) = 0;
     }
   }
 }
