@@ -138,6 +138,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
       kernelValue = EvaluateKernel(queryCenter, referenceCenter);
     }
 
+    #pragma omp for
     for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
     {
       if (tree::TreeTraits<TreeType>::RearrangesDataset)
