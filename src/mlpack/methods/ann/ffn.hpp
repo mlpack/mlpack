@@ -33,7 +33,6 @@
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
-
 /**
  * Implementation of a standard feed forward network.
  *
@@ -271,6 +270,15 @@ class FFN
    */
   double Backward(arma::mat targets, arma::mat& gradients);
 
+  /**
+   * Prepare the network for the given data.
+   * This function won't actually trigger training process.
+   *
+   * @param predictors Input data variables.
+   * @param responses Outputs results from input data variables.
+   */
+  void ResetData(arma::mat predictors, arma::mat responses);
+
  private:
   // Helper functions.
   /**
@@ -280,15 +288,6 @@ class FFN
    * @param input Data sequence to compute probabilities for.
    */
   void Forward(arma::mat&& input);
-
-  /**
-   * Prepare the network for the given data.
-   * This function won't actually trigger training process.
-   *
-   * @param predictors Input data variables.
-   * @param responses Outputs results from input data variables.
-   */
-  void ResetData(arma::mat predictors, arma::mat responses);
 
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm). Computes

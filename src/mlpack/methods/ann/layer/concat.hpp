@@ -106,7 +106,7 @@ class Concat
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }s
+  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
 
   //! Return the model modules.
   std::vector<LayerTypes<CustomLayers...> >& Model()
