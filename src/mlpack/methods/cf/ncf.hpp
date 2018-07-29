@@ -37,7 +37,9 @@ namespace cf {
 class NCF
 {
  public:
-  NCF();
+  NCF()
+  {
+  }
   /**
    * Initialize the NCF object using any algorithm and optimizer, according to
    * which a model will be trained. There are parameters that can

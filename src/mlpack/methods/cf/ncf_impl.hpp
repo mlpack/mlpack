@@ -10,8 +10,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_NCF__NCF_IMPL_HPP
-#define MLPACK_METHODS_NCF_IMPL_NCF_IMPL_HPP
+#ifndef MLPACK_METHODS_NCF_NCF_IMPL_HPP
+#define MLPACK_METHODS_NCF_NCF_IMPL_HPP
 
 #include <mlpack/prereqs.hpp>
 #include "ncf.hpp"
@@ -30,8 +30,6 @@ NCF::NCF(arma::mat& dataset,
          const size_t epochs,
          bool implicit):
     dataset(dataset),
-    network(ann::FFN<ann::NegativeLogLikelihood<>,
-        ann::RandomInitialization>()),
     neg(neg),
     epochs(epochs),
     embedSize(embedSize),
@@ -146,7 +144,7 @@ void NCF::Gradient(const arma::mat& parameters,
                    const size_t batchSize)
 {
   network.Gradient(parameters, begin, gradient, batchSize);
-  GetTrainingInstance(network.predictors, network.responses);
+  GetTrainingInstance(network.Predictors(), network.Responses());
 }
 
 /**
@@ -165,7 +163,7 @@ void NCF::Train(OptimizerType optimizer)
 
   // Train the model.
   Timer::Start("ncf_optimization");
-  const double out = optimizer.Optimize(this->network, network.parameter);
+  const double out = optimizer.Optimize(this->network, network.Parameters());
   Timer::Stop("ncf_optimization");
 
   Log::Info << "NCF::NCF(): final objective of trained model is " << out

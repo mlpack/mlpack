@@ -100,7 +100,7 @@ PROGRAM_INFO("Neural collaborative Filtering", "This program performs "
 PARAM_MATRIX_IN("training", "Input dataset to perform CF on.", "t");
 PARAM_STRING_IN("algorithm", "Algorithm for the network to be created.", "a",
     "GMF");
-PARAM_STRING_IN("optimizer", "Optimizer to train the network on.", "o", "SGD");
+PARAM_STRING_IN("optimizer", "Optimizer to train the network on.", "z", "SGD");
 PARAM_MATRIX_IN("test", "Test set to calculate RMSE on.", "T");
 
 // Load/save a model.
