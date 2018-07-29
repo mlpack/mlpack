@@ -345,8 +345,10 @@ void Train(DecompositionPolicy& decomposition)
 template<typename DecompositionPolicy>
 void TrainWithCoordinateList(DecompositionPolicy& decomposition)
 {
-  arma::mat randomData = arma::zeros(100, 100);
-  randomData.diag().ones();
+  arma::mat randomData(3, 100);
+  randomData.row(0) = arma::linspace<arma::rowvec>(0, 99, 100);
+  randomData.row(1) = arma::linspace<arma::rowvec>(0, 99, 100);
+  randomData.row(2).fill(3);
   CFType<DecompositionPolicy> c(randomData, decomposition, 5, 5, 70);
 
   // Now retrain with data we know about.

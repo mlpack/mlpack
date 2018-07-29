@@ -24,31 +24,20 @@ using namespace mlpack::optimization;
 
 BOOST_AUTO_TEST_SUITE(SVDPlusPlusTest);
 
-BOOST_AUTO_TEST_CASE(SVDPlusPlusRandomEvaluate)
+BOOST_AUTO_TEST_CASE(SVDPlusPlusEvaluate)
 {
+  // Load small GroupLens dataset.
+  arma::mat data;
+  data::Load("GroupLensSmall.csv", data);
+
   // Define useful constants.
-  const size_t numUsers = 100;
-  const size_t numItems = 100;
-  const size_t numRatings = 1000;
-  const size_t numImplicitData = 500;
-  const size_t maxRating = 5;
+  const size_t numUsers = max(data.row(0)) + 1;
+  const size_t numItems = max(data.row(1)) + 1;
   const size_t rank = 10;
   const size_t numTrials = 50;
 
-  // Make a random rating dataset.
-  arma::mat data = arma::randu(3, numRatings);
-  data.row(0) = floor(data.row(0) * numUsers);
-  data.row(1) = floor(data.row(1) * numItems);
-  data.row(2) = floor(data.row(2) * maxRating + 0.5);
-
-  // Manually set last row to maximum user and maximum item.
-  data(0, numRatings - 1) = numUsers - 1;
-  data(1, numRatings - 1) = numItems - 1;
-
-  // Make a random implicit dataset.
-  arma::mat implicitData = arma::randu(2, numImplicitData);
-  implicitData.row(0) = floor(implicitData.row(0) * numUsers);
-  implicitData.row(1) = floor(implicitData.row(1) * numItems);
+  // Make an implicit dataset with the explicit rating dataset.
+  arma::mat implicitData = data.submat(0, 0, 1, data.n_cols - 1);
 
   // Converts implicit data from coordinate list to sparse matrix.
   arma::sp_mat cleanedData;
@@ -63,7 +52,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusRandomEvaluate)
 
     // Calculate cost by summing up cost of each example.
     double cost = 0;
-    for (size_t j = 0; j < numRatings; j++)
+    for (size_t j = 0; j < data.n_cols; j++)
     {
       const size_t user = data(0, j);
       const size_t item = data(1, j) + numUsers;
@@ -103,23 +92,15 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusRandomEvaluate)
 
 BOOST_AUTO_TEST_CASE(SVDplusPlusOutputSizeTest)
 {
+  // Load small GroupLens dataset.
+  arma::mat data;
+  data::Load("GroupLensSmall.csv", data);
+
   // Define useful constants.
-  const size_t numUsers = 100;
-  const size_t numItems = 50;
-  const size_t numRatings = 500;
-  const size_t maxRating = 5;
-  const size_t rank = 5;
+  const size_t numUsers = max(data.row(0)) + 1;
+  const size_t numItems = max(data.row(1)) + 1;
+  const size_t rank = 10;
   const size_t iterations = 10;
-
-  // Make a random rating dataset.
-  arma::mat data = arma::randu(3, numRatings);
-  data.row(0) = floor(data.row(0) * numUsers);
-  data.row(1) = floor(data.row(1) * numItems);
-  data.row(2) = floor(data.row(2) * maxRating + 0.5);
-
-  // Manually set last row to maximum user and maximum item.
-  data(0, numRatings - 1) = numUsers - 1;
-  data(1, numRatings - 1) = numItems - 1;
 
   // Resulting user/item matrices/bias, and item implicit matrix.
   arma::mat userLatent, itemLatent;
@@ -143,36 +124,30 @@ BOOST_AUTO_TEST_CASE(SVDplusPlusOutputSizeTest)
 
 BOOST_AUTO_TEST_CASE(SVDPlusPlusCleanDataTest)
 {
+  // Load small GroupLens dataset.
+  arma::mat data;
+  data::Load("GroupLensSmall.csv", data);
+
   // Define useful constants.
-  const size_t numUsers = 100;
-  const size_t numItems = 100;
-  const size_t numImplicitData = 2000;
-  const size_t numRatings = 1000;
-  const size_t maxRating = 5;
+  const size_t numUsers = max(data.row(0)) + 1;
+  const size_t numItems = max(data.row(1)) + 1;
 
-  // Make a random rating dataset.
-  arma::mat data = arma::randu(3, numRatings);
-  data.row(0) = floor(data.row(0) * numUsers);
-  data.row(1) = floor(data.row(1) * numItems);
-  data.row(2) = floor(data.row(2) * maxRating + 0.5);
-
-  // Manually set last column to maximum user and maximum item.
-  data(0, numRatings - 1) = numUsers - 1;
-  data(1, numRatings - 1) = numItems - 1;
-
-  // Make a random implicit dataset.
-  arma::mat implicitData = arma::randu(2, numImplicitData);
-  implicitData.row(0) = floor(implicitData.row(0) * numUsers);
-  implicitData.row(1) = floor(implicitData.row(1) * numItems);
+  // Make an implicit dataset with the explicit rating dataset.
+  arma::mat implicitData = data.submat(0, 0, 1, data.n_cols - 1);
 
   // We also want to test whether CleanData() can give matrix
   // of right size when maximum user/item is not in implicitData.
-  for (size_t i = 0; i < numImplicitData; i++)
+  for (size_t i = 0; i < implicitData.n_cols;)
   {
-    if (implicitData(0, i) == numUsers - 1)
-      implicitData(0, i) = 0;
-    if (implicitData(1, i) == numItems - 1)
-      implicitData(1, i) = 0;
+    if (implicitData(0, i) == numUsers - 1 ||
+        implicitData(1, i) == numItems - 1)
+    {
+      implicitData.shed_col(i);
+    }
+    else
+    {
+      i++;
+    }
   }
 
   // Converts implicit data from coordinate list to sparse matrix.
@@ -184,13 +159,13 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusCleanDataTest)
   BOOST_REQUIRE_EQUAL(cleanedData.n_cols, numUsers);
 
   // Make sure cleanedData has correct number of implicit data.
-  BOOST_REQUIRE_EQUAL(cleanedData.n_nonzero, numImplicitData);
+  BOOST_REQUIRE_EQUAL(cleanedData.n_nonzero, implicitData.n_cols);
 
   // Make sure all implicitData are in cleanedData.
-  for (size_t i = 0; i < numImplicitData; i++)
+  for (size_t i = 0; i < implicitData.n_cols; i++)
   {
     double value = cleanedData(implicitData(1, i), implicitData(0, i));
-    BOOST_REQUIRE_GT(std::fabs(value), 1e-5);
+    BOOST_REQUIRE_GT(std::fabs(value), 0);
   }
 }
 
