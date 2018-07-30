@@ -41,8 +41,8 @@ else:
                   libraries=['mlpack', 'boost_serialization'],
                   library_dirs=['${CMAKE_BINARY_DIR}/lib/'],
                   # CMAKE_CXX_FLAGS seems to have an extra space.
-                  extra_compile_args=('-DBINDING_TYPE=BINDING_TYPE_PYX ' + \
-                      '-std=c++11 ${CMAKE_CXX_FLAGS}').split(' '),
+                  extra_compile_args=(['-DBINDING_TYPE=BINDING_TYPE_PYX'] + \
+                      ('-std=c++11 ' + '${CMAKE_CXX_FLAGS}'.strip()).split(' '),
                   extra_link_args=['${OpenMP_CXX_FLAGS}'],
                   undef_macros=[] if len("${DISABLE_CFLAGS}") == 0 \
                       else '${DISABLE_CFLAGS}'.split(';')) \
@@ -60,8 +60,8 @@ else:
                   libraries=['mlpack', 'boost_serialization'],
                   library_dirs=['${CMAKE_BINARY_DIR}/lib/'],
                   # CMAKE_CXX_FLAGS seems to have an extra space.
-                  extra_compile_args=('-DBINDING_TYPE=BINDING_TYPE_PYX ' + \
-                      '-std=c++11 ${CMAKE_CXX_FLAGS}').split(' '),
+                  extra_compile_args=(['-DBINDING_TYPE=BINDING_TYPE_PYX'] + \
+                      ('-std=c++11 ' + '${CMAKE_CXX_FLAGS}'.strip()).split(' '),
                   extra_link_args=['${OpenMP_CXX_FLAGS}'],
                   undef_macros=[] if len("${DISABLE_CFLAGS}") == 0 \
                       else '${DISABLE_CFLAGS}'.split(';')) \
