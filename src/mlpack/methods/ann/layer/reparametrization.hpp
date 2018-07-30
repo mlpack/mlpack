@@ -25,6 +25,24 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the Reparametrization layer class. This layer samples from the
  * given parameters of a normal distribution.
  *
+ * This class also supports beta-VAE, a state-of-the-art framework for
+ * automated discovery of interpretable factorised latent representations from
+ * raw image data in a completely unsupervised manner.
+ *
+ * For more information, refer the following paper.
+ *
+ * @code
+ * @article{ICLR2017,
+ *   title   = {beta-VAE: Learning basic visual concepts with a constrained
+ *              variational framework},
+ *   author  = {Irina Higgins, Loic Matthey, Arka Pal, Christopher Burgess,
+ *              Xavier Glorot, Matthew Botvinick, Shakir Mohamed and
+ *              Alexander Lerchner | Google DeepMind},
+ *   journal = {2017 International Conference on Learning Representations(ICLR)},
+ *   year    = {2017}
+ * }
+ * @endcode
+ *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
@@ -46,7 +64,7 @@ class Reparametrization
    * @param latentSize The number of output latent units.
    * @param stochastic Whether we want random sample or constant.
    * @param includeKl Whether we want to include KL loss in backward function.
-   * @param beta Hyperparameter for constrained variational frameworks.
+   * @param beta The beta (hyper)parameter for beta-VAE mentioned above.
    */
   Reparametrization(const size_t latentSize,
                     const bool stochastic = true,

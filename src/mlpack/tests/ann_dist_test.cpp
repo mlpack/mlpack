@@ -107,15 +107,15 @@ BOOST_AUTO_TEST_CASE(JacobianBernoulliDistributionLogisticTest)
 
     for (size_t j = 0; j < targetElements; ++j)
     {
-      original = module.PreProbability()(j);
-      module.PreProbability()(j) = original - perturbation;
-      LogisticFunction::Fn(module.PreProbability(), module.Probability());
+      original = module.Logits()(j);
+      module.Logits()(j) = original - perturbation;
+      LogisticFunction::Fn(module.Logits(), module.Probability());
       outputA = module.LogProbability(std::move(target));
-      module.PreProbability()(j) = original + perturbation;
-      LogisticFunction::Fn(module.PreProbability(), module.Probability());
+      module.Logits()(j) = original + perturbation;
+      LogisticFunction::Fn(module.Logits(), module.Probability());
       outputB = module.LogProbability(std::move(target));
-      module.PreProbability()(j) = original;
-      LogisticFunction::Fn(module.PreProbability(), module.Probability());
+      module.Logits()(j) = original;
+      LogisticFunction::Fn(module.Logits(), module.Probability());
       outputB -= outputA;
       outputB /= 2 * perturbation;
       jacobianA(j) = outputB;

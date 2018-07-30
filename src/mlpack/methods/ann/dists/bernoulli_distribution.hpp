@@ -19,7 +19,13 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Multiple Bernoulli distributions.
+ * Multiple independent Bernoulli distributions.
+ *
+ * Bernoulli distribution is the discrete probability distribution of a random
+ * variable which takes the value 1 with probability p and the value 0 with
+ * probability q = 1 - p.
+ * In this implementation, the p values of the distributions are given by the
+ * param matrix.
  *
  * @tparam DataType Type of the input data. (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -35,14 +41,22 @@ class BernoulliDistribution
   BernoulliDistribution();
 
   /**
-   * Create multiple Bernoulli distributions with the given parameters.
-   * If the param matrix is already between [0, 1], then applyLogistic can be
-   * set to false.
+   * Create multiple independent Bernoulli distributions whose p values are
+   * given by the param parameter. Thus, we create nofRows * nofColumns
+   * distributions. The shape of the matrix of distributions is the same as the
+   * shape of the param matrix as each element of the param matrix parameterizes
+   * one Bernoulli distribution.
+   * This is used in the ANN module to define distriution for each feature in
+   * each batch, where number of features becomes nofRows and batch size becomes
+   * nofColumns.
+   *
+   * applyLogistic has to be true if all the elements of param matrix are not
+   * in the range [0, 1].
    *
    * @param param The matrix of probabilities or pre probabilities of
    *        the multiple distributions.
-   * @param applyLogsitic If true, then we apply Logistic function to the
-   *        param matrix (pre probability) to get probability
+   * @param applyLogsitic If true, we apply Logistic function to the param
+   *        matrix (pre probability) to get probability.
    * @param eps The minimum value used for computing logarithms and
    *        denominators.
    */
@@ -90,11 +104,11 @@ class BernoulliDistribution
   //! Return a modifiable copy of the probability matrix.
   DataType& Probability() { return probability; }
 
-  //! Return the pre probability matrix.
-  const DataType& PreProbability() const { return preProbability; }
+  //! Return the logits matrix.
+  const DataType& Logits() const { return logits; }
 
   //! Return a modifiable copy of the pre probability matrix.
-  DataType& PreProbability() { return preProbability; }
+  DataType& Logits() { return logits; }
 
   /**
    * Serialize the distribution.
@@ -104,7 +118,7 @@ class BernoulliDistribution
   {
     // We just need to serialize each of the members.
     ar & BOOST_SERIALIZATION_NVP(probability);
-    ar & BOOST_SERIALIZATION_NVP(preProbability);
+    ar & BOOST_SERIALIZATION_NVP(logits);
     ar & BOOST_SERIALIZATION_NVP(applyLogistic);
     ar & BOOST_SERIALIZATION_NVP(eps);
   }
@@ -113,8 +127,9 @@ class BernoulliDistribution
   //! Probabilities of the distributions.
   DataType probability;
 
-  //! Pre Probabilities of the distributions.
-  DataType preProbability;
+  //! logits matrix of the distributions. After applying logistic function, it
+  //! gives probability matrix.
+  DataType logits;
 
   //! If true, apply logistic function to probability matrix.
   bool applyLogistic;

@@ -31,16 +31,16 @@ BernoulliDistribution<DataType>::BernoulliDistribution(
     const DataType&& param,
     const bool applyLogistic,
     const double eps) :
-    preProbability(param),
+    logits(param),
     applyLogistic(applyLogistic),
     eps(eps)
 {
   if (applyLogistic)
-    LogisticFunction::Fn(preProbability, probability);
+    LogisticFunction::Fn(logits, probability);
   else
   {
-    probability = arma::mat(preProbability.memptr(), preProbability.n_rows,
-        preProbability.n_cols, false, false);
+    probability = arma::mat(logits.memptr(), logits.n_rows,
+        logits.n_cols, false, false);
   }
 }
 
