@@ -122,7 +122,7 @@ PARAM_INT_IN("neg", "Number of negative instances per positive instance to be "
     " trained upon.", "g", 4);
 PARAM_INT_IN("epochs", "Number of epochs for which training is to be "
     " performed.", "p", 100);
-PARAM_FLAG("implicit", "If true, treat the ratings as implicit feedback data."
+PARAM_FLAG("implicit", "If true, treat the ratings as implicit feedback data.",
     "i");
 
 PARAM_INT_IN("seed", "Set the random seed (0 uses std::time(NULL)).", "s", 0);
