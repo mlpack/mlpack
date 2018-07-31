@@ -173,12 +173,15 @@ void BiasSVDFunction<MatType>::Gradient(const arma::mat& parameters,
 
     // Gradient is non-zero only for the parameter columns corresponding to the
     // example.
-    gradient.col(user).subvec(0, rank - 1) +=
-        2 * (lambda * parameters.col(user).subvec(0, rank - 1) -
-        ratingError * parameters.col(item).subvec(0, rank - 1));
-    gradient.col(item).subvec(0, rank - 1) +=
-        2 * (lambda * parameters.col(item).subvec(0, rank - 1) -
-        ratingError * parameters.col(user).subvec(0, rank - 1));
+    for (size_t j = 0; j < rank; ++j)
+    {
+      gradient(j, user) +=
+          2 * (lambda * parameters(j, user) -
+          ratingError * parameters(j, item));
+      gradient(j, item) +=
+          2 * (lambda * parameters(j, item) -
+          ratingError * parameters(j, user));
+    }
     gradient(rank, user) +=
         2 * (lambda * parameters(rank, user) - ratingError);
     gradient(rank, item) +=

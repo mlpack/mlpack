@@ -256,12 +256,15 @@ void SVDPlusPlusFunction<MatType>::Gradient(const arma::mat& parameters,
 
     // Gradient is non-zero only for the parameter columns corresponding to the
     // example.
-    gradient.col(user).subvec(0, rank - 1) +=
-        2 * (lambda * parameters.col(user).subvec(0, rank - 1) -
-        ratingError * parameters.col(item).subvec(0, rank - 1));
-    gradient.col(item).subvec(0, rank - 1) +=
-        2 * (lambda * parameters.col(item).subvec(0, rank - 1) -
-        ratingError * userVec);
+    for (size_t j = 0; j < rank; ++j)
+    {
+      gradient(j, user) +=
+          2 * (lambda * parameters(j, user) -
+          ratingError * parameters(j, item));
+      gradient(j, item) +=
+          2 * (lambda * parameters(j, item) -
+          ratingError * userVec(j));
+    }
     gradient(rank, user) +=
         2 * (lambda * parameters(rank, user) - ratingError);
     gradient(rank, item) +=
@@ -271,11 +274,14 @@ void SVDPlusPlusFunction<MatType>::Gradient(const arma::mat& parameters,
     it_end = implicitData.end_col(user);
     for (; it != it_end; it++)
     {
-      gradient.col(implicitStart + it.row()).subvec(0, rank - 1) +=
-          2 * (lambda *
-          parameters.col(implicitStart + it.row()).subvec(0, rank - 1) -
-          ratingError / std::sqrt(implicitCount) *
-          parameters.col(item).subvec(0, rank - 1));
+      for (size_t j = 0; j < rank; ++j)
+      {
+        gradient(j, implicitStart + it.row()) +=
+            2 * (lambda *
+            parameters(j, implicitStart + it.row()) -
+            ratingError / std::sqrt(implicitCount) *
+            parameters(j, item));
+      }
     }
   }
 }
