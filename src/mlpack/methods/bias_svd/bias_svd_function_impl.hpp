@@ -216,7 +216,7 @@ double StandardSGD::Optimize(
   const arma::mat data = function.Dataset();
 
   // Rank of decomposition.
-  const size_t rank = parameters.n_rows - 1;
+  const size_t function.Rank();
 
   // Now iterate!
   for (size_t i = 1; i != maxIterations; i++, currentFunction++)
