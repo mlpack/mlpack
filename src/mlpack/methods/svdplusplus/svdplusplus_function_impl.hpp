@@ -364,15 +364,15 @@ double StandardSGD::Optimize(
 
     // Gradient is non-zero only for the parameter columns corresponding to the
     // example.
-    parameters.col(user).subvec(0, rank - 1) -= stepSize * (
+    parameters.col(user).subvec(0, rank - 1) -= stepSize * 2 * (
         lambda * parameters.col(user).subvec(0, rank - 1) -
         ratingError * parameters.col(item).subvec(0, rank - 1));
-    parameters.col(item).subvec(0, rank - 1) -= stepSize * (
+    parameters.col(item).subvec(0, rank - 1) -= stepSize * 2 * (
         lambda * parameters.col(item).subvec(0, rank - 1) -
         ratingError * userVec);
-    parameters(rank, user) -= stepSize * (
+    parameters(rank, user) -= stepSize * 2 * (
         lambda * parameters(rank, user) - ratingError);
-    parameters(rank, item) -= stepSize * (
+    parameters(rank, item) -= stepSize * 2 * (
         lambda * parameters(rank, item) - ratingError);
     // Update item implicit vectors.
     it = implicitData.begin_col(user);
@@ -380,7 +380,7 @@ double StandardSGD::Optimize(
     for (; it != it_end; it++)
     {
       parameters.col(implicitStart + it.row()).subvec(0, rank - 1) -=
-          stepSize * (lambda *
+          stepSize * 2 * (lambda *
           parameters.col(implicitStart + it.row()).subvec(0, rank - 1) -
           ratingError / std::sqrt(implicitCount) *
           parameters.col(item).subvec(0, rank - 1));
@@ -497,15 +497,15 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
         double ratingError = rating - userBias - itemBias -
         arma::dot(userVec, iterate.col(item).subvec(0, rank - 1));
 
-        arma::mat userVecUpdate = stepSize * (
+        arma::mat userVecUpdate = stepSize * 2 * (
             lambda * iterate.col(user).subvec(0, rank - 1) -
             ratingError * iterate.col(item).subvec(0, rank - 1));
-        arma::mat itemVecUpdate = stepSize * (
+        arma::mat itemVecUpdate = stepSize * 2 * (
             lambda * iterate.col(item).subvec(0, rank - 1) -
             ratingError * userVec);
-        double userBiasUpdate = stepSize * (
+        double userBiasUpdate = stepSize * 2 * (
             lambda * iterate(rank, user) - ratingError);
-        double itemBiasUpdate = stepSize * (
+        double itemBiasUpdate = stepSize * 2 * (
             lambda * iterate(rank, item) - ratingError);
 
         // Update of item implicit vectors.
@@ -517,7 +517,7 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
         for (; it != it_end; it++, implicitIndex++)
         {
           itemImplicitUpdate.col(implicitIndex) =
-              stepSize * (lambda *
+              stepSize * 2 * (lambda *
               iterate.col(implicitStart + it.row()).subvec(0, rank - 1) -
               ratingError / std::sqrt(implicitCount) *
               iterate.col(item).subvec(0, rank - 1));

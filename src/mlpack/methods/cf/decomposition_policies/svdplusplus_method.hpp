@@ -35,7 +35,7 @@ class SVDPlusPlusPolicy
    * @param Regularization parameter for optimization.
    */
   SVDPlusPlusPolicy(const size_t maxIterations = 10,
-                    const double alpha = 0.002,
+                    const double alpha = 0.001,
                     const double lambda = 0.1) :
       maxIterations(maxIterations),
       alpha(alpha),

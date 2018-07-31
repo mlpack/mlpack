@@ -35,7 +35,7 @@ class BiasSVDPolicy
    * @param Regularization parameter for optimization.
    */
   BiasSVDPolicy(const size_t maxIterations = 10,
-                const double alpha = 0.01,
+                const double alpha = 0.005,
                 const double lambda = 0.02) :
       maxIterations(maxIterations),
       alpha(alpha),

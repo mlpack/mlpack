@@ -37,7 +37,7 @@ class BiasSVD
    * @param lambda Regularization parameter for the optimization.
    */
   BiasSVD(const size_t iterations = 10,
-          const double alpha = 0.01,
+          const double alpha = 0.005,
           const double lambda = 0.02);
 
   /**

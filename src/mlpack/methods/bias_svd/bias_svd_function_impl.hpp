@@ -216,7 +216,7 @@ double StandardSGD::Optimize(
   const arma::mat data = function.Dataset();
 
   // Rank of decomposition.
-  const size_t function.Rank();
+  const size_t rank = function.Rank();
 
   // Now iterate!
   for (size_t i = 1; i != maxIterations; i++, currentFunction++)
@@ -251,15 +251,15 @@ double StandardSGD::Optimize(
 
     // Gradient is non-zero only for the parameter columns corresponding to the
     // example.
-    parameters.col(user).subvec(0, rank - 1) -= stepSize * (
+    parameters.col(user).subvec(0, rank - 1) -= stepSize * 2 *(
         lambda * parameters.col(user).subvec(0, rank - 1) -
         ratingError * parameters.col(item).subvec(0, rank - 1));
-    parameters.col(item).subvec(0, rank - 1) -= stepSize * (
+    parameters.col(item).subvec(0, rank - 1) -= stepSize * 2 * (
         lambda * parameters.col(item).subvec(0, rank - 1) -
         ratingError * parameters.col(user).subvec(0, rank - 1));
-    parameters(rank, user) -= stepSize * (
+    parameters(rank, user) -= stepSize * 2 * (
         lambda * parameters(rank, user) - ratingError);
-    parameters(rank, item) -= stepSize * (
+    parameters(rank, item) -= stepSize * 2 * (
         lambda * parameters(rank, item) - ratingError);
 
     // Now add that to the overall objective function.
@@ -357,15 +357,15 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
             arma::dot(iterate.col(user).subvec(0, rank - 1),
                       iterate.col(item).subvec(0, rank - 1));
 
-        arma::mat userVecUpdate = stepSize * (
+        arma::mat userVecUpdate = stepSize * 2 * (
             lambda * iterate.col(user).subvec(0, rank - 1) -
             ratingError * iterate.col(item).subvec(0, rank - 1));
-        arma::mat itemVecUpdate = stepSize * (
+        arma::mat itemVecUpdate = stepSize * 2 * (
             lambda * iterate.col(item).subvec(0, rank - 1) -
             ratingError * iterate.col(user).subvec(0, rank - 1));
-        double userBiasUpdate = stepSize * (
+        double userBiasUpdate = stepSize * 2 * (
             lambda * iterate(rank, user) - ratingError);
-        double itemBiasUpdate = stepSize * (
+        double itemBiasUpdate = stepSize * 2 * (
             lambda * iterate(rank, item) - ratingError);
 
         // Gradient is non-zero only for the parameter columns corresponding to
