@@ -94,11 +94,13 @@ class Constraints
    * @param outputDistance matrix to store distance.
    * @param dataset Input dataset.
    * @param labels Input dataset labels.
+   * @param transformation Transformation matrix.
    */
   void Impostors(arma::Mat<size_t>& outputNeighbors,
                  arma::mat& outputDistance,
                  const arma::mat& dataset,
-                 const arma::Row<size_t>& labels);
+                 const arma::Row<size_t>& labels,
+                 const arma::mat& transformation);
 
   /**
    * Calculates k differently labeled nearest neighbors for a batch of dataset
@@ -169,6 +171,12 @@ class Constraints
 
   //! False if nothing has ever been precalculated.
   bool precalculated;
+
+  //! Store KNN Objects.
+  std::vector<KNN> knnObjects;
+
+  //! Store re-ordered datasets.
+  std::vector<arma::mat> origDatasets;
 
   /**
   * Precalculate the unique labels, and indices of similar

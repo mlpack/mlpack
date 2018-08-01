@@ -203,7 +203,8 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
   if (iteration++ % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
-    constraint.Impostors(impostors, distance, transformedDataset, labels);
+    constraint.Impostors(impostors, distance, transformedDataset, labels,
+      transformation);
   }
 
   for (size_t i = 0; i < dataset.n_cols; i++)
@@ -407,7 +408,8 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
   if (iteration++ % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
-    constraint.Impostors(impostors, distance, transformedDataset, labels);
+    constraint.Impostors(impostors, distance, transformedDataset, labels,
+      transformation);
   }
 
   gradient.zeros(transformation.n_rows, transformation.n_cols);
@@ -628,7 +630,8 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   if (iteration++ % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
-    constraint.Impostors(impostors, distance, transformedDataset, labels);
+    constraint.Impostors(impostors, distance, transformedDataset, labels,
+      transformation);
   }
 
   gradient.zeros(transformation.n_rows, transformation.n_cols);
