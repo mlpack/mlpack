@@ -55,6 +55,11 @@ double SVDPlusPlusFunction<MatType>::Evaluate(const arma::mat& parameters) const
 {
   // ...
 
+  // The norm square of implicit item vectors is cached to avoid repeated
+  // calculation.
+  arma::vec implicitVecsNormSquare(numItems);
+  implicitVecsNormSquare.fill(-1);
+
   double cost = 0.0;
 
   for (size_t i = 0; i < data.n_cols; i++)
@@ -62,6 +67,7 @@ double SVDPlusPlusFunction<MatType>::Evaluate(const arma::mat& parameters) const
     // Indices for accessing the the correct parameter columns.
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;
+    const size_t itemRealIdx = data(1, i);
     const size_t implicitStart = numUsers + numItems;
 
     // Calculate the squared error in the prediction.
@@ -75,9 +81,18 @@ double SVDPlusPlusFunction<MatType>::Evaluate(const arma::mat& parameters) const
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
+    double regularizationError = 0;
     for (; it != it_end; it++)
     {
       userVec += parameters.col(implicitStart + it.row()).subvec(0, rank - 1);
+      if (implicitVecsNormSquare(itemRealIdx) < 0)
+      { 
+        double implicitVecNorm = arma::norm(
+            parameters.col(implicitStart + it.row()).subvec(0, rank - 1), 2);
+        implicitVecsNormSquare(itemRealIdx) =
+            implicitVecNorm * implicitVecNorm;
+      }
+      regularizationError += lambda * implicitVecsNormSquare(itemRealIdx);
       implicitCount += 1;
     }
     if (implicitCount != 0)
@@ -89,9 +104,9 @@ double SVDPlusPlusFunction<MatType>::Evaluate(const arma::mat& parameters) const
     double ratingErrorSquared = ratingError * ratingError;
 
     // Calculate the regularization penalty corresponding to the parameters.
-    double userVecNorm = arma::norm(userVec, 2);
+    double userVecNorm = arma::norm(parameters.col(user), 2);
     double itemVecNorm = arma::norm(parameters.col(item), 2);
-    double regularizationError = lambda * (userVecNorm * userVecNorm +
+    regularizationError += lambda * (userVecNorm * userVecNorm +
                                            itemVecNorm * itemVecNorm);
 
     cost += (ratingErrorSquared + regularizationError);
@@ -107,11 +122,18 @@ double SVDPlusPlusFunction<MatType>::Evaluate(const arma::mat& parameters,
 {
   // It's possible this loop could be changed so that it's SIMD-vectorized.
   double objective = 0.0;
+
+  // The norm square of implicit item vectors is cached to avoid repeated
+  // calculation.
+  arma::vec implicitVecsNormSquare(numItems);
+  implicitVecsNormSquare.fill(-1);
+
   for (size_t i = start; i < start + batchSize; ++i)
   {
     // Indices for accessing the the correct parameter columns.
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;
+    const size_t itemRealIdx = data(1, i);
     const size_t implicitStart = numUsers + numItems;
 
     // Calculate the squared error in the prediction.
@@ -125,9 +147,18 @@ double SVDPlusPlusFunction<MatType>::Evaluate(const arma::mat& parameters,
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
+    double regularizationError = 0;
     for (; it != it_end; it++)
     {
       userVec += parameters.col(implicitStart + it.row()).subvec(0, rank - 1);
+      if (implicitVecsNormSquare(itemRealIdx) < 0)
+      { 
+        double implicitVecNorm = arma::norm(
+            parameters.col(implicitStart + it.row()).subvec(0, rank - 1), 2);
+        implicitVecsNormSquare(itemRealIdx) =
+            implicitVecNorm * implicitVecNorm;
+      }
+      regularizationError += lambda * implicitVecsNormSquare(itemRealIdx);
       implicitCount += 1;
     }
     if (implicitCount != 0)
@@ -139,9 +170,9 @@ double SVDPlusPlusFunction<MatType>::Evaluate(const arma::mat& parameters,
     double ratingErrorSquared = ratingError * ratingError;
 
     // Calculate the regularization penalty corresponding to the parameters.
-    double userVecNorm = arma::norm(userVec, 2);
+    double userVecNorm = arma::norm(parameters.col(user), 2);
     double itemVecNorm = arma::norm(parameters.col(item), 2);
-    double regularizationError = lambda * (userVecNorm * userVecNorm +
+    regularizationError += lambda * (userVecNorm * userVecNorm +
                                            itemVecNorm * itemVecNorm);
 
     objective += (ratingErrorSquared + regularizationError);
