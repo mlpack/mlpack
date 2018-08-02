@@ -276,11 +276,11 @@ void Constraints<MetricType>::Triplets(arma::Mat<size_t>& outputMatrix,
 
   size_t N = dataset.n_cols;
 
-  arma::Mat<size_t> impostors;
-  Impostors(impostors, dataset);
+  arma::Mat<size_t> impostors(k, dataset.n_cols);
+  Impostors(impostors, dataset, labels);
 
-  arma::Mat<size_t> targetNeighbors;
-  TargetNeighbors(targetNeighbors, dataset);
+  arma::Mat<size_t> targetNeighbors(k, dataset.n_cols);
+  TargetNeighbors(targetNeighbors, dataset, labels);
 
   outputMatrix = arma::Mat<size_t>(3, k * k * N , arma::fill::zeros);
 
