@@ -74,8 +74,6 @@ void BOOSTMETRIC<MetricType>::LearnDistance(arma::mat& outputMatrix)
 
   arma::cube A(dim, dim, N);
 
-  
-
   // Initialize A (coefficient matrix of difference between distance
   // of impostors & target neighbors).
   for (size_t i = 0; i < N; i++)
