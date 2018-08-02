@@ -164,7 +164,8 @@ BOOST_AUTO_TEST_CASE(CFNeighborhoodBoundTest)
 
 /**
  * Ensure algorithm is one of { "NMF", "BatchSVD",
- * "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD" }.
+ * "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD",
+ * "BiasSVD", "SVDPP" }.
  */
 BOOST_AUTO_TEST_CASE(CFAlgorithmBoundTest)
 {
@@ -185,19 +186,19 @@ BOOST_AUTO_TEST_CASE(CFAlgorithmBoundTest)
  */
 BOOST_AUTO_TEST_CASE(CFModelReuseTest)
 {
-  const size_t algorithmNum = 5;
-  std::string algorithms[algorithmNum] = { "NMF", "BatchSVD",
-      "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD" };
+  std::string algorithms[] = { "NMF", "BatchSVD",
+      "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD",
+      "BiasSVD", "SVDPP" };
 
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
 
-  for (size_t i = 0; i < algorithmNum; i++)
+  for (std::string& algorithm : algorithms)
   {
     ResetSettings();
     SetInputParam("training", dataset);
     SetInputParam("max_iterations", int(10));
-    SetInputParam("algorithm", algorithms[i]);
+    SetInputParam("algorithm", algorithm);
 
     mlpackMain();
 

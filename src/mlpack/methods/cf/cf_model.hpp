@@ -21,6 +21,8 @@
 #include <mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/svd_complete_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/svd_incomplete_method.hpp>
+#include <mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp>
+#include <mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp>
 
 namespace mlpack {
 namespace cf {
@@ -99,7 +101,9 @@ class CFModel
                  CFType<RandomizedSVDPolicy>*,
                  CFType<RegSVDPolicy>*,
                  CFType<SVDCompletePolicy>*,
-                 CFType<SVDIncompletePolicy>*> cf;
+                 CFType<SVDIncompletePolicy>*,
+                 CFType<BiasSVDPolicy>*,
+                 CFType<SVDPlusPlusPolicy>*> cf;
 
  public:
   //! Create an empty CF model.

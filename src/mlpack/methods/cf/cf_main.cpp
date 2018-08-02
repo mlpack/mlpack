@@ -22,6 +22,8 @@
 #include <mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/svd_complete_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/svd_incomplete_method.hpp>
+#include <mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp>
+#include <mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp>
 
 using namespace mlpack;
 using namespace mlpack::cf;
@@ -67,6 +69,8 @@ PROGRAM_INFO("Collaborative Filtering", "This program performs collaborative "
     " - 'BatchSVD' -- SVD batch learning\n"
     " - 'SVDIncompleteIncremental' -- SVD incomplete incremental learning\n"
     " - 'SVDCompleteIncremental' -- SVD complete incremental learning\n"
+    " - 'BiasSVD' -- Bias SVD using a SGD optimizer\n"
+    " - 'SVDPP' -- SVD++ using a SGD optimizer\n"
     "\n"
     "A trained model may be saved to with the " +
     PRINT_PARAM_STRING("output_model") + " output parameter."
@@ -246,6 +250,18 @@ void AssembleFactorizerType(const std::string& algorithm,
     PerformAction<RandomizedSVDPolicy>(dataset, rank, maxIterations,
         minResidue);
   }
+  else if (algorithm == "BiasSVD")
+  {
+    ReportIgnoredParam("min_residue", "Bias SVD terminates only "
+        "when max_iterations is reached");
+    PerformAction<BiasSVDPolicy>(dataset, rank, maxIterations, minResidue);
+  }
+  else if (algorithm == "SVDPP")
+  {
+    ReportIgnoredParam("min_residue", "SVD++ terminates only "
+        "when max_iterations is reached");
+    PerformAction<SVDPlusPlusPolicy>(dataset, rank, maxIterations, minResidue);
+  }
 }
 
 static void mlpackMain()
@@ -269,7 +285,7 @@ static void mlpackMain()
 
   RequireParamInSet<string>("algorithm", { "NMF", "BatchSVD",
       "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD",
-      "RandSVD" }, true, "unknown algorithm");
+      "RandSVD", "BiasSVD", "SVDPP" }, true, "unknown algorithm");
 
   ReportIgnoredParam({{ "iteration_only_termination", true }}, "min_residue");
 
