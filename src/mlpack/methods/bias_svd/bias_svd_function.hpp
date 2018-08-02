@@ -23,6 +23,9 @@ namespace mlpack {
 namespace svd {
 
 /**
+ * This class contains methods which are used to calculate the cost of
+ * BiasSVD's objective function, to calculate gradient of parameters with
+ * respect to the objective function, etc.
  *
  * @tparam MatType The matrix type of the dataset.
  */
@@ -31,6 +34,9 @@ class BiasSVDFunction
 {
  public:
   /**
+   * Constructor for BiasSVDFunction class. The constructor calculates
+   * the number of users and items in the passed data. It also randomly
+   * initializes the parameter values.
    *
    * @param data Dataset for which SVD is calculated.
    * @param rank Rank used for matrix factorization.
