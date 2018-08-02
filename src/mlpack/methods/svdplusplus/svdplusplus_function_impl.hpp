@@ -53,7 +53,15 @@ void SVDPlusPlusFunction<MatType>::Shuffle()
 template <typename MatType>
 double SVDPlusPlusFunction<MatType>::Evaluate(const arma::mat& parameters) const
 {
-  // ...
+  // The cost for the optimization is as follows:
+  //    f(u, v, p, q, y) =
+  //        sum((rating(i, j) - p(i) - q(j) - u(i).t() * (v(j) + sum(y(k))))^2)
+  // The sum is over all the ratings in the rating matrix.
+  // 'i' points to the user and 'j' points to the item being considered.
+  // 'k' points to the items which user 'i' interacted with.
+  // The regularization term is added to the above cost, where the vectors u(i)
+  // and v(j), bias p(i) and q(j), implicit vectors y(k) are regularized for
+  // each rating they contribute to.
 
   // The norm square of implicit item vectors is cached to avoid repeated
   // calculation.
@@ -185,7 +193,18 @@ template <typename MatType>
 void SVDPlusPlusFunction<MatType>::Gradient(const arma::mat& parameters,
                                                arma::mat& gradient) const
 {
-  // ...
+  // For an example with rating corresponding to user 'i' and item 'j', the
+  // gradients for the parameters is as follows:
+  //           uservec = v(j) + sum(y(k))
+  //           grad(u(i)) = 2 * (lambda * u(i) - error * v(j))
+  //           grad(v(j)) = 2 * (lambda * v(j) - error * uservec)
+  //           grad(p(i)) = 2 * (lambda * p(i) - error)
+  //           grad(q(j)) = 2 * (lambda * q(j) - error)
+  //           grad(y(k)) = 2 * (lambda * y(k) - error / sqrt(N(u)) * v(j))
+  // 'error' is the prediction error for that example, which is:
+  //           rating(i, j) - p(i) - q(j) - u(i).t() * (v(j) + sum(y(k)))
+  // The full gradient is calculated by summing the contributions over all the
+  // training examples.
 
   gradient.zeros(rank + 1, numUsers + 2 * numItems);
 
