@@ -53,12 +53,15 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "after which impostors must be re-calculated (specified with " +
     PRINT_PARAM_STRING("range") + ")."
     "\n\n"
-    "Output can be either the learned distance matrix (specified with " +
+    "Output can either be the learned distance matrix (specified with " +
     PRINT_PARAM_STRING("output") +"), or the transformed dataset "
     " (specified with " + PRINT_PARAM_STRING("transformed_data") + "), or "
-    "both.  Accuracy on initial dataset and final transformed dataset can "
-    "be printed by specifying the " + PRINT_PARAM_STRING("print_accuracy") +
-    "parameter. "
+    "both. Additionally mean-centered dataset (specified with " +
+    PRINT_PARAM_STRING("centered_data") + ") can be accessed given "
+    "mean-centering (specified with " + PRINT_PARAM_STRING("center") +
+    ") is performed on the dataset. Accuracy on initial dataset and final "
+    "transformed dataset can be printed by specifying the " +
+    PRINT_PARAM_STRING("print_accuracy") + "parameter. "
     "\n\n"
     "This implementation of LMNN uses AdaGrad, BigBatch_SGD, stochastic "
     "gradient descent, mini-batch stochastic gradient descent, or the L_BFGS "
@@ -128,6 +131,8 @@ PARAM_INT_IN("k", "Number of target neighbors to use for each "
 PARAM_MATRIX_OUT("output", "Output matrix for learned distance matrix.", "o");
 PARAM_MATRIX_OUT("transformed_data", "Output matrix for transformed dataset.",
     "D");
+PARAM_MATRIX_OUT("centered_data", "Output matrix for mean-centered dataset.",
+    "c");
 PARAM_FLAG("print_accuracy", "Print accuracies on initial and transformed "
     "dataset", "P");
 PARAM_STRING_IN("optimizer", "Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or "
@@ -139,7 +144,7 @@ PARAM_FLAG("normalize", "Use a normalized starting point for optimization. It"
     "is useful for when points are far apart, or when SGD is returning NaN.",
     "N");
 PARAM_FLAG("center", "Perform mean-centering on the dataset. It is useful "
-    "when points have large norm values.", "C");
+    "when the centroid of the data is far from the origin.", "C");
 PARAM_INT_IN("passes", "Maximum number of full passes over dataset for "
     "AMSGrad, BB_SGD and SGD.", "p", 50);
 PARAM_INT_IN("max_iterations", "Maximum number of iterations for "
@@ -403,4 +408,12 @@ static void mlpackMain()
     CLI::GetParam<arma::mat>("output") = distance;
   if (CLI::HasParam("transformed_data"))
     CLI::GetParam<arma::mat>("transformed_data") = std::move(distance * data);
+  if (CLI::HasParam("centered_data"))
+  {
+    if (center)
+      CLI::GetParam<arma::mat>("centered_data") = std::move(data);
+    else
+      Log::Info << "Mean-centering was not performed. Centered dataset "
+          "will not be saved." << endl;
+  }
 }
