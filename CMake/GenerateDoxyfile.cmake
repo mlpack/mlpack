@@ -9,44 +9,44 @@ file(READ "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile" DOXYFILE_CONTENTS)
 # hand.  If more are added, they'll need to be added here too.
 string(REPLACE
     "./src/mlpack"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack"
+    "\"${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack\""
     DOXYFILE_AUXVAR "${DOXYFILE_CONTENTS}"
 )
 
 string(REPLACE
     "./doc/guide"
-    "${CMAKE_CURRENT_SOURCE_DIR}/doc/guide"
+    "\"${CMAKE_CURRENT_SOURCE_DIR}/doc/guide\""
     DOXYFILE_CONTENTS "${DOXYFILE_AUXVAR}"
 )
 
 string(REPLACE
     "./doc/tutorials"
-    "${CMAKE_CURRENT_SOURCE_DIR}/doc/tutorials"
+    "\"${CMAKE_CURRENT_SOURCE_DIR}/doc/tutorials\""
     DOXYFILE_AUXVAR "${DOXYFILE_CONTENTS}"
 )
 
 string(REPLACE
     "./doc/policies"
-    "${CMAKE_CURRENT_SOURCE_DIR}/doc/policies"
+    "\"${CMAKE_CURRENT_SOURCE_DIR}/doc/policies\""
     DOXYFILE_CONTENTS "${DOXYFILE_AUXVAR}"
 )
 
 string(REPLACE
     "./doc/doxygen/footer.html"
-    "${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen/footer.html"
+    "\"${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen/footer.html\""
     DOXYFILE_AUXVAR "${DOXYFILE_CONTENTS}"
 )
 
 string(REPLACE
     "./doc/doxygen/extra-stylesheet.css"
-    "${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen/extra-stylesheet.css"
+    "\"${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen/extra-stylesheet.css\""
     DOXYFILE_CONTENTS "${DOXYFILE_AUXVAR}")
 
 # Change the STRIP_FROM_PATH so that it works right even in the build directory;
 # otherwise, every file will have the full path in it.
 string(REGEX REPLACE
     "(STRIP_FROM_PATH[ ]*=) ./"
-    "\\1 ${CMAKE_CURRENT_SOURCE_DIR}/"
+    "\\1 \"${CMAKE_CURRENT_SOURCE_DIR}\"/"
     DOXYFILE_AUXVAR ${DOXYFILE_CONTENTS})
 
 # Apply the MathJax option. If the option is specified, we change the NO to
@@ -71,4 +71,4 @@ else ()
 endif ()
 
 # Save the Doxyfile to its new location.
-file(WRITE "${DESTDIR}/Doxyfile" "${DOXYFILE_CONTENTS}")
+file(WRITE ${DESTDIR}/Doxyfile "${DOXYFILE_CONTENTS}")
