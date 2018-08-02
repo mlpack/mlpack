@@ -43,10 +43,10 @@ build_script:
 
 artifacts:
   - path: '**\*.zip'
-  - name: mlpack-windows-zip
+    name: mlpack-windows-zip
   
   - path: '%APPVEYOR_BUILD_FOLDER%\dist\win-installer\mlpack-win-installer\bin\x64\Release\*.msi'
-  - name: mlpack-windows-installer
+    name: mlpack-windows-installer
 
 notifications:
 - provider: Email
