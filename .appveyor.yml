@@ -37,8 +37,8 @@ build_script:
   - '"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" "C:\projects\mlpack\build\mlpack.sln" /m /verbosity:minimal /nologo /p:BuildInParallel=true /p:Configuration=Release;Platform=x64'
   - 7z a mlpack-windows-no-libs.zip "%APPVEYOR_BUILD_FOLDER%\build\Release\*.exe"
   - 7z a mlpack-windows.zip "%APPVEYOR_BUILD_FOLDER%\build\Release\*.*" "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/*.*"
-  - ps: cp %APPVEYOR_BUILD_FOLDER%\build\Release\*.* %APPVEYOR_BUILD_FOLDER%\dist\win-installer\staging\lib\
-  - ps: cp %APPVEYOR_BUILD_FOLDER%\build\include\*.* %APPVEYOR_BUILD_FOLDER%\dist\win-installer\staging\
+  - ps: cp C:\projects\mlpack\build\Release\*.* C:\projects\mlpack\dist\win-installer\staging\lib\
+  - ps: cp C:\projects\mlpack\build\include\*.* C:\projects\mlpack\dist\win-installer\staging\
   - '"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" "%APPVEYOR_BUILD_FOLDER%\dist\win-installer\mlpack-win-installer.sln" /m /verbosity:minimal /nologo /p:BuildInParallel=true /p:Configuration=Release;Platform=x64'
 
 artifacts:
