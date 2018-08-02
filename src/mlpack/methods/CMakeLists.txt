@@ -27,6 +27,7 @@ set(DIRS
   ann
   approx_kfn
   block_krylov_svd
+  boostmetric
   cf
   dbscan
   decision_stump
