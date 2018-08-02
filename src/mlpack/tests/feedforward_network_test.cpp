@@ -629,19 +629,19 @@ BOOST_AUTO_TEST_CASE(PartialForwardTest)
   model.Add<Linear<> >(5, 10);
 
   // Add a new Add<> module which adds a constant term to the input.
-  Add<>* AddModule = new Add<>(10);
-  model.Add(AddModule);
+  Add<>* addModule = new Add<>(10);
+  model.Add(addModule);
 
-  LinearNoBias<>* LinearNoBiasModule = new LinearNoBias<>(10, 10);
-  model.Add(LinearNoBiasModule);
+  LinearNoBias<>* linearNoBiasModule = new LinearNoBias<>(10, 10);
+  model.Add(linearNoBiasModule);
 
   model.Add<Linear<> >(10, 10);
 
   model.ResetParameters();
   // Set the parameters of the Add<> module to a matrix of ones.
-  AddModule->Parameters() = arma::ones(10, 1);
+  addModule->Parameters() = arma::ones(10, 1);
   // Set the parameters of the LinearNoBias<> module to a matrix of ones.
-  LinearNoBiasModule->Parameters() = arma::ones(10, 10);
+  linearNoBiasModule->Parameters() = arma::ones(10, 10);
 
   arma::mat input = arma::ones(10, 1);
   arma::mat output;
