@@ -27,11 +27,11 @@ namespace ann /**Artificial Neural Network*/ {
  * @f{eqnarray*}{
  * f(x) &=& \max(0,x)+alpha \\
  * f'(x) &=& \left\{
- * 	 \begin(array){lr}
+ * 	 \begin{array}{lr}
  * 	   1 & : x > 0 \\
  * 	   0 & : x \le 0
  * 	 \end{array}
- * \right
+ * \right.
  * @f}
  *
  * For more information, read the following paper:
