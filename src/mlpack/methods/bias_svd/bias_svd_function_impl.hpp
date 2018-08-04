@@ -46,6 +46,14 @@ void BiasSVDFunction<MatType>::Shuffle()
 template <typename MatType>
 double BiasSVDFunction<MatType>::Evaluate(const arma::mat& parameters) const
 {
+  return Evaluate(parameters, 0, data.n_cols);
+}
+
+template <typename MatType>
+double BiasSVDFunction<MatType>::Evaluate(const arma::mat& parameters,
+                                          const size_t start,
+                                          const size_t batchSize) const
+{
   // The cost for the optimization is as follows:
   //    f(u, v, p ,q) = sum((rating(i, j) - p(i) - q(j) - u(i).t() * v(j))^2)
   // The sum is over all the ratings in the rating matrix.
@@ -54,40 +62,6 @@ double BiasSVDFunction<MatType>::Evaluate(const arma::mat& parameters) const
   // and v(j), bias p(i) and q(j) are regularized for each rating they
   // contribute to.
 
-  double cost = 0.0;
-
-  for (size_t i = 0; i < data.n_cols; i++)
-  {
-    // Indices for accessing the the correct parameter columns.
-    const size_t user = data(0, i);
-    const size_t item = data(1, i) + numUsers;
-
-    // Calculate the squared error in the prediction.
-    const double rating = data(2, i);
-    const double userBias = parameters(rank, user);
-    const double itemBias = parameters(rank, item);
-    double ratingError = rating - userBias - itemBias -
-        arma::dot(parameters.col(user).subvec(0, rank - 1),
-                  parameters.col(item).subvec(0, rank - 1));
-    double ratingErrorSquared = ratingError * ratingError;
-
-    // Calculate the regularization penalty corresponding to the parameters.
-    double userVecNorm = arma::norm(parameters.col(user), 2);
-    double itemVecNorm = arma::norm(parameters.col(item), 2);
-    double regularizationError = lambda * (userVecNorm * userVecNorm +
-                                           itemVecNorm * itemVecNorm);
-
-    cost += (ratingErrorSquared + regularizationError);
-  }
-
-  return cost;
-}
-
-template <typename MatType>
-double BiasSVDFunction<MatType>::Evaluate(const arma::mat& parameters,
-                                          const size_t start,
-                                          const size_t batchSize) const
-{
   // It's possible this loop could be changed so that it's SIMD-vectorized.
   double objective = 0.0;
   for (size_t i = start; i < start + batchSize; ++i)
@@ -166,9 +140,9 @@ void BiasSVDFunction<MatType>::Gradient(const arma::mat& parameters,
 template <typename MatType>
 template <typename GradType>
 void BiasSVDFunction<MatType>::Gradient(const arma::mat& parameters,
-                                               const size_t start,
-                                               GradType& gradient,
-                                               const size_t batchSize) const
+                                        const size_t start,
+                                        GradType& gradient,
+                                        const size_t batchSize) const
 {
   gradient.zeros(rank + 1, numUsers + numItems);
 
