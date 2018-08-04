@@ -105,7 +105,7 @@ void GetRecommendationsAllUsers()
   arma::mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
 
-  CFType<DecompositionPolicy> c(dataset, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy> c(dataset, decomposition, 5, 5, 30);
 
   // Generate recommendations when query set is not specified.
   c.GetRecommendations(numRecs, recommendations);
@@ -142,7 +142,7 @@ void GetRecommendationsQueriedUser()
   arma::mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
 
-  CFType<DecompositionPolicy> c(dataset, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy> c(dataset, decomposition, 5, 5, 30);
 
   // Generate recommendations when query set is specified.
   c.GetRecommendations(numRecsDefault, recommendations, users);
@@ -172,7 +172,7 @@ void RecommendationAccuracy()
   GetDatasets(dataset, savedCols);
 
   CFType<DecompositionPolicy,
-      NormalizationType> c(dataset, decomposition, 5, 5, 70);
+      NormalizationType> c(dataset, decomposition, 5, 5, 30);
 
   // Obtain 150 recommendations for the users in savedCols, and make sure the
   // missing item shows up in most of them.  First, create the list of users,
@@ -238,7 +238,7 @@ void CFPredict(const double rmseBound = 2.0)
   GetDatasets(dataset, savedCols);
 
   CFType<DecompositionPolicy,
-      NormalizationType> c(dataset, decomposition, 5, 5, 70);
+      NormalizationType> c(dataset, decomposition, 5, 5, 30);
 
   // Now, for each removed rating, make sure the prediction is... reasonably
   // accurate.
@@ -274,7 +274,7 @@ void BatchPredict()
 
   GetDatasets(dataset, savedCols);
 
-  CFType<DecompositionPolicy> c(dataset, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy> c(dataset, decomposition, 5, 5, 30);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -303,7 +303,7 @@ void Train(DecompositionPolicy& decomposition)
   // Generate random data.
   arma::sp_mat randomData;
   randomData.sprandu(100, 100, 0.3);
-  CFType<DecompositionPolicy> c(randomData, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy> c(randomData, decomposition, 5, 5, 30);
 
   // Small GroupLens dataset.
   arma::mat dataset;
@@ -318,7 +318,7 @@ void Train(DecompositionPolicy& decomposition)
   CFType<DecompositionPolicy>::CleanData(dataset, cleanedData);
 
   // Now retrain.
-  c.Train(dataset, decomposition, 70);
+  c.Train(dataset, decomposition, 30);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -349,7 +349,7 @@ void TrainWithCoordinateList(DecompositionPolicy& decomposition)
   randomData.row(0) = arma::linspace<arma::rowvec>(0, 99, 100);
   randomData.row(1) = arma::linspace<arma::rowvec>(0, 99, 100);
   randomData.row(2).fill(3);
-  CFType<DecompositionPolicy> c(randomData, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy> c(randomData, decomposition, 5, 5, 30);
 
   // Now retrain with data we know about.
   // Small GroupLens dataset.
@@ -361,7 +361,7 @@ void TrainWithCoordinateList(DecompositionPolicy& decomposition)
   GetDatasets(dataset, savedCols);
 
   // Now retrain.
-  c.Train(dataset, decomposition, 70);
+  c.Train(dataset, decomposition, 30);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -400,7 +400,7 @@ void EmptyConstructorTrain()
 
   GetDatasets(dataset, savedCols);
 
-  c.Train(dataset, decomposition, 70);
+  c.Train(dataset, decomposition, 30);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -438,17 +438,17 @@ void Serialization()
       NormalizationType>::CleanData(dataset, cleanedData);
 
   CFType<DecompositionPolicy,
-      NormalizationType> c(cleanedData, decomposition, 5, 5, 70);
+      NormalizationType> c(cleanedData, decomposition, 5, 5, 30);
 
   arma::sp_mat randomData;
   randomData.sprandu(100, 100, 0.3);
 
   CFType<DecompositionPolicy,
-      NormalizationType> cXml(randomData, decomposition, 5, 5, 70);
+      NormalizationType> cXml(randomData, decomposition, 5, 5, 30);
   CFType<DecompositionPolicy,
       NormalizationType> cBinary;
   CFType<DecompositionPolicy,
-      NormalizationType> cText(cleanedData, decomposition, 5, 5, 70);
+      NormalizationType> cText(cleanedData, decomposition, 5, 5, 30);
 
   SerializeObjectAll(c, cXml, cText, cBinary);
 
