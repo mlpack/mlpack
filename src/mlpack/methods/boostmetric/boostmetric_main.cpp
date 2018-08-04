@@ -206,7 +206,7 @@ static void mlpackMain()
   }
 
   // Now create the BoostMetric object and perform the optimization.
-  BOOSTMETRIC<> bm(data, labels, k);
+  BoostMetric<> bm(data, labels, k);
   bm.MaxIterations() = maxIterations;
   bm.Tolerance() = tolerance;
   bm.WTolerance() = wTolerance;

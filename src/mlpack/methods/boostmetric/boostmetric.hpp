@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_BOOSTMETRIC_BOOSTMETRIC_HPP
-#define MLPACK_METHODS_BOOSTMETRIC_BOOSTMETRIC_HPP
+#ifndef MLPACK_METHODS_BoostMetric_BoostMetric_HPP
+#define MLPACK_METHODS_BoostMetric_BoostMetric_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
@@ -49,11 +49,11 @@ namespace boostmetric /** BoostMetric Distance Learning. */ {
  * @tparam MetricType The type of metric to use for computation.
  */
 template<typename MetricType = metric::SquaredEuclideanDistance>
-class BOOSTMETRIC
+class BoostMetric
 {
  public:
   /**
-   * Initialize the BOOSTMETRIC object, passing a dataset (distance metric
+   * Initialize the BoostMetric object, passing a dataset (distance metric
    * is learned using this dataset) and labels. Initialization will copy
    * both dataset and labels matrices to internal copies.
    *
@@ -61,7 +61,7 @@ class BOOSTMETRIC
    * @param labels Input dataset labels.
    * @param k Number of targets to consider.
    */
-  BOOSTMETRIC(const arma::mat& dataset,
+  BoostMetric(const arma::mat& dataset,
        const arma::Row<size_t>& labels,
        const size_t k);
 
@@ -139,7 +139,7 @@ class BOOSTMETRIC
 
   //! Constraints instance.
   lmnn::Constraints<MetricType> constraint;
-}; // class BOOSTMETRIC
+}; // class BoostMetric
 
 } // namespace boostmetric
 } // namespace mlpack

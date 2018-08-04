@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_BOOSTMETRIC_BOOSTMETRIC_IMPL_HPP
-#define MLPACK_METHODS_BOOSTMETRIC_BOOSTMETRIC_IMPL_HPP
+#ifndef MLPACK_METHODS_BoostMetric_BoostMetric_IMPL_HPP
+#define MLPACK_METHODS_BoostMetric_BoostMetric_IMPL_HPP
 
 // In case it was not already included.
 #include "boostmetric.hpp"
@@ -23,7 +23,7 @@ namespace boostmetric {
  * all of the member variables and constraint object.
  */
 template<typename MetricType>
-BOOSTMETRIC<MetricType>::BOOSTMETRIC(const arma::mat& dataset,
+BoostMetric<MetricType>::BoostMetric(const arma::mat& dataset,
                                      const arma::Row<size_t>& labels,
                                      const size_t k) :
     dataset(dataset),
@@ -35,19 +35,8 @@ BOOSTMETRIC<MetricType>::BOOSTMETRIC(const arma::mat& dataset,
     constraint(dataset, labels, k)
 { /* nothing to do */ }
 
-// Calculate inner product of two matrices.
-inline double innerProduct(arma::mat& Ar, arma::mat& Z)
-{
-  double sum = 0.0;
-
-  for (size_t i = 0; i < Z.n_elem; i++)
-    sum += Ar(i) * Z(i);
-
-  return sum;
-}
-
 template<typename MetricType>
-void BOOSTMETRIC<MetricType>::LearnDistance(arma::mat& outputMatrix)
+void BoostMetric<MetricType>::LearnDistance(arma::mat& outputMatrix)
 {
   Timer::Start("boostmetric");
 
@@ -59,8 +48,15 @@ void BOOSTMETRIC<MetricType>::LearnDistance(arma::mat& outputMatrix)
   }
 
   // Compute triplets.
+  // Calculate and store norm of datapoints.
+  arma::vec norm(dataset.n_cols);
+  for (size_t i = 0; i < dataset.n_cols; i++)
+  {
+    norm(i) = arma::norm(dataset.col(i));
+  }
+
   arma::Mat<size_t> triplets;
-  constraint.Triplets(triplets, dataset, labels);
+  constraint.Triplets(triplets, dataset, labels, norm);
 
   size_t N = triplets.n_cols;
   size_t dim = dataset.n_rows;
@@ -88,13 +84,17 @@ void BOOSTMETRIC<MetricType>::LearnDistance(arma::mat& outputMatrix)
   // Declare weighted sum of Ar matrices.
   arma::mat Acap;
 
+  // Keep track of iterations.
+  size_t i;
+
   // Now iterate!
-  for (size_t i = 0; i < maxIter; i++)
+  for (i = 0; i < maxIter; i++)
   {
     // Initialize Acap.
     Acap.zeros(dim, dim);
     for (size_t j = 0; j < N; j++)
-      Acap += u(j) * A.slice(j);
+      if (u(j) > tolerance)
+        Acap += u(j) * A.slice(j);
 
     arma::vec eigval;
     arma::mat eigvec;
@@ -117,12 +117,13 @@ void BOOSTMETRIC<MetricType>::LearnDistance(arma::mat& outputMatrix)
     // Get index of maximum element.
     arma::uvec maxIndex = arma::find(eigval == maxEig);
 
-    arma::mat Z = eigvec.col(maxIndex(0)) * arma::trans(eigvec.col(maxIndex(0)));
+    arma::mat Z = eigvec.col(maxIndex(0)) *
+        arma::trans(eigvec.col(maxIndex(0)));
 
     // Initialize H vector by computing inner product. Hr = <Ar, Z>
     arma::vec H(N);
     for (size_t j = 0; j < N; j++)
-      H(j) = innerProduct(A.slice(j), Z);
+      H(j) = arma::accu(A.slice(j) % Z);
 
     // Binary Search for weight calculation.
     double w;
@@ -157,6 +158,12 @@ void BOOSTMETRIC<MetricType>::LearnDistance(arma::mat& outputMatrix)
     outputMatrix += w * Z;
   }
 
+  if (i == maxIter)
+  {
+    Log::Info << "BoostMetric: maximum iterations (" << maxIter << ") reached; "
+      << "terminating optimization." << std::endl;
+  }
+
   // Generate distance from p.s.d matrix.
   arma::vec eigval;
   arma::mat eigvec;
@@ -165,7 +172,8 @@ void BOOSTMETRIC<MetricType>::LearnDistance(arma::mat& outputMatrix)
   arma::eig_sym(eigval, eigvec, (outputMatrix + arma::trans(outputMatrix)) / 2);
 
   // Discard negative eigen values, if any.
-  eigval.transform( [](double val) { return (val > 0) ? std::sqrt(val) : double(0); } );
+  eigval.transform( [](double val) { return (val > 0) ?
+      std::sqrt(val) : double(0); } );
 
   outputMatrix = arma::trans(eigvec * diagmat(eigval));
 
