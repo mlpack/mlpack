@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_BIAS_SVD_BIAS_FUNCTION_SVD_IMPL_HPP
-#define MLPACK_METHODS_BIAS_SVD_BIAS_FUNCTION_SVD_IMPL_HPP
+#ifndef MLPACK_METHODS_BIAS_SVD_BIAS_SVD_FUNCTION_IMPL_HPP
+#define MLPACK_METHODS_BIAS_SVD_BIAS_SVD_FUNCTION_IMPL_HPP
 
 #include "bias_svd_function.hpp"
 #include <mlpack/core/math/make_alias.hpp>
@@ -85,8 +85,8 @@ double BiasSVDFunction<MatType>::Evaluate(const arma::mat& parameters) const
 
 template <typename MatType>
 double BiasSVDFunction<MatType>::Evaluate(const arma::mat& parameters,
-                                                 const size_t start,
-                                                 const size_t batchSize) const
+                                          const size_t start,
+                                          const size_t batchSize) const
 {
   // It's possible this loop could be changed so that it's SIMD-vectorized.
   double objective = 0.0;

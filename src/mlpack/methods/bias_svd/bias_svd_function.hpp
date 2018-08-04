@@ -11,8 +11,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_BIAS_SVD_BIAS_FUNCTION_SVD_HPP
-#define MLPACK_METHODS_BIAS_SVD_BIAS_FUNCTION_SVD_HPP
+#ifndef MLPACK_METHODS_BIAS_SVD_BIAS_SVD_FUNCTION_HPP
+#define MLPACK_METHODS_BIAS_SVD_BIAS_SVD_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
