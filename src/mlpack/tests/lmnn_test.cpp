@@ -17,6 +17,7 @@
 #include <mlpack/methods/lmnn/lmnn.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include <mlpack/core/optimizers/bigbatch_sgd/bigbatch_sgd.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -46,11 +47,18 @@ BOOST_AUTO_TEST_CASE(LMNNTargetNeighborsTest)
 
   Constraints<> constraint(dataset, labels, 1);
 
+  // Calculate norm of datapoints.
+  arma::vec norm(dataset.n_cols);
+  for (size_t i = 0; i < dataset.n_cols; i++)
+  {
+    norm(i) = arma::norm(dataset.col(i));
+  }
+
   //! Store target neighbors of data points.
   arma::Mat<size_t> targetNeighbors =
       arma::Mat<size_t>(1, dataset.n_cols, arma::fill::zeros);
 
-  constraint.TargetNeighbors(targetNeighbors, dataset, labels);
+  constraint.TargetNeighbors(targetNeighbors, dataset, labels, norm);
 
   BOOST_REQUIRE_EQUAL(targetNeighbors(0, 0), 1);
   BOOST_REQUIRE_EQUAL(targetNeighbors(0, 1), 0);
@@ -72,11 +80,18 @@ BOOST_AUTO_TEST_CASE(LMNNImpostorsTest)
 
   Constraints<> constraint(dataset, labels, 1);
 
+  // Calculate norm of datapoints.
+  arma::vec norm(dataset.n_cols);
+  for (size_t i = 0; i < dataset.n_cols; i++)
+  {
+    norm(i) = arma::norm(dataset.col(i));
+  }
+
   //! Store impostors of data points.
   arma::Mat<size_t> impostors =
       arma::Mat<size_t>(1, dataset.n_cols, arma::fill::zeros);
 
-  constraint.Impostors(impostors, dataset, labels);
+  constraint.Impostors(impostors, dataset, labels, norm);
 
   BOOST_REQUIRE_EQUAL(impostors(0, 0), 3);
   BOOST_REQUIRE_EQUAL(impostors(0, 1), 4);
@@ -442,54 +457,174 @@ BOOST_AUTO_TEST_CASE(LMNNAccuracyTest)
   BOOST_REQUIRE_CLOSE(finalAccuracy, 100.0, 1e-5);
 }
 
-// Check that accuracy while learning square distance matrix is same
-// as when we are learnig low rank matrix.
+// Check that accuracy while learning square distance matrix is the same as when
+// we are learning low rank matrix.  I'm ok if this passes only once out of
+// three tries.
+BOOST_AUTO_TEST_CASE(LMNNLowRankAccuracyLBFGSTest)
+{
+  bool success = false;
+  for (size_t trial = 0; trial < 3; ++trial)
+  {
+    arma::mat dataPart1;
+    dataPart1.randn(5, 50);
+
+    arma::Row<size_t> labelsPart1(50);
+    labelsPart1.fill(0);
+
+    arma::mat dataPart2;
+    dataPart2.randn(5, 50);
+
+    arma::Row<size_t> labelsPart2(50);
+    labelsPart2.fill(1);
+
+    // Generate ordering.
+    arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0, 99, 100));
+
+    // Generate datasets.
+    arma::mat dataset = join_rows(dataPart1, dataPart2);
+    dataset = dataset.cols(ordering);
+
+    // Generate labels.
+    arma::Row<size_t> labels = join_rows(labelsPart1, labelsPart2);
+    labels = labels.cols(ordering);
+
+    LMNN<SquaredEuclideanDistance, L_BFGS> lmnn(dataset, labels, 1);
+
+    // Learn a square matrix.
+    arma::mat outputMatrix;
+    lmnn.LearnDistance(outputMatrix);
+
+    double acc1 = KnnAccuracy(outputMatrix * dataset, labels, 1);
+
+    // Learn a low rank matrix.
+    outputMatrix = arma::randu(4, 5);
+    lmnn.LearnDistance(outputMatrix);
+
+    double acc2 = KnnAccuracy(outputMatrix * dataset, labels, 1);
+
+    // We keep the tolerance very high.  We need to ensure the accuracy drop
+    // isn't any more than 10%.
+    success = ((acc1 - acc2) <= 10.0);
+    if (success)
+      break;
+  }
+
+  BOOST_REQUIRE_EQUAL(success, true);
+}
+
+// Check that accuracy while learning square distance matrix is the same as when
+// we are learning low rank matrix.  I'm ok if this passes only once out of
+// three tries.
 BOOST_AUTO_TEST_CASE(LMNNLowRankAccuracyTest)
 {
-  arma::arma_rng::set_seed(2);
+  bool success = false;
+  for (size_t trial = 0; trial < 3; ++trial)
+  {
+    arma::mat dataPart1;
+    dataPart1.randn(5, 50);
 
-  arma::mat dataPart1;
-  dataPart1.randn(5, 50);
+    arma::Row<size_t> labelsPart1(50);
+    labelsPart1.fill(0);
 
-  arma::Row<size_t> labelsPart1(50);
-  labelsPart1.fill(0);
+    arma::mat dataPart2;
+    dataPart2.randn(5, 50);
 
-  arma::arma_rng::set_seed(50);
+    arma::Row<size_t> labelsPart2(50);
+    labelsPart2.fill(1);
 
-  arma::mat dataPart2;
-  dataPart2.randn(5, 50);
+    // Generate ordering.
+    arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0, 99, 100));
 
-  arma::Row<size_t> labelsPart2(50);
-  labelsPart2.fill(1);
+    // Generate datasets.
+    arma::mat dataset = join_rows(dataPart1, dataPart2);
+    dataset = dataset.cols(ordering);
 
-  // Generate ordering.
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0, 99, 100));
+    // Generate labels.
+    arma::Row<size_t> labels = join_rows(labelsPart1, labelsPart2);
+    labels = labels.cols(ordering);
 
-  // Generate datasets.
-  arma::mat dataset = join_rows(dataPart1, dataPart2);
-  dataset = dataset.cols(ordering);
+    LMNN<> lmnn(dataset, labels, 1);
 
-  // Generate labels.
-  arma::Row<size_t> labels = join_rows(labelsPart1, labelsPart2);
-  labels = labels.cols(ordering);
+    // Learn a square matrix.
+    arma::mat outputMatrix;
+    lmnn.LearnDistance(outputMatrix);
 
-  LMNN<> lmnn(dataset, labels, 1);
+    double acc1 = KnnAccuracy(outputMatrix * dataset, labels, 1);
 
-  // Learn a square matrix.
-  arma::mat outputMatrix;
-  lmnn.LearnDistance(outputMatrix);
+    // Learn a low rank matrix.
+    outputMatrix = arma::randu(4, 5);
+    lmnn.LearnDistance(outputMatrix);
 
-  double Accuracy1 = KnnAccuracy(outputMatrix * dataset, labels, 1);
+    double acc2 = KnnAccuracy(outputMatrix * dataset, labels, 1);
 
-  // Learn a low rank matrix.
-  outputMatrix = arma::randu(4, 5);
-  lmnn.LearnDistance(outputMatrix);
+    // We keep the tolerance very high.  We need to ensure the accuracy drop
+    // isn't any more than 10%.
+    success = ((acc1 - acc2) <= 10.0);
+    if (success)
+      break;
+  }
 
-  double Accuracy2 = KnnAccuracy(outputMatrix * dataset, labels, 1);
-
-  // Keeping tolerance very high.
-  // BOOST_REQUIRE_CLOSE(Accuracy1, Accuracy2, 2.0);
+  BOOST_REQUIRE_EQUAL(success, true);
 }
+
+// Check that accuracy while learning square distance matrix is the same as when
+// we are learning low rank matrix.  I'm ok if this passes only once out of
+// five tries, since BBSGD seems to have a harder time converging.
+/*
+BOOST_AUTO_TEST_CASE(LMNNLowRankAccuracyBBSGDTest)
+{
+  bool success = false;
+  for (size_t trial = 0; trial < 5; ++trial)
+  {
+    arma::mat dataPart1;
+    dataPart1.randn(5, 50);
+
+    arma::Row<size_t> labelsPart1(50);
+    labelsPart1.fill(0);
+
+    arma::mat dataPart2;
+    dataPart2.randn(5, 50);
+
+    arma::Row<size_t> labelsPart2(50);
+    labelsPart2.fill(1);
+
+    // Generate ordering.
+    arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0, 99, 100));
+
+    // Generate datasets.
+    arma::mat dataset = join_rows(dataPart1, dataPart2);
+    dataset = dataset.cols(ordering);
+
+    // Generate labels.
+    arma::Row<size_t> labels = join_rows(labelsPart1, labelsPart2);
+    labels = labels.cols(ordering);
+
+    LMNN<SquaredEuclideanDistance, BigBatchSGD<>> lmnn(dataset, labels, 1);
+
+    // Learn a square matrix.
+    arma::mat outputMatrix;
+    lmnn.LearnDistance(outputMatrix);
+
+    double acc1 = KnnAccuracy(outputMatrix * dataset, labels, 1);
+
+    // Learn a low rank matrix.
+    outputMatrix = arma::randu(4, 5);
+    lmnn.LearnDistance(outputMatrix);
+
+    double acc2 = KnnAccuracy(outputMatrix * dataset, labels, 1);
+    if (acc2 < 5)
+      std::cout << "super fail\n" << outputMatrix << std::endl;
+
+    // We keep the tolerance very high.  We need to ensure the accuracy drop
+    // isn't any more than 10%.
+    success = ((acc1 - acc2) <= 10.0);
+    if (success)
+      break;
+  }
+
+  BOOST_REQUIRE_EQUAL(success, true);
+}
+*/
 
 // Comprehensive gradient tests by Marcus Edel & Ryan Curtin.
 

@@ -456,7 +456,7 @@ if (DOXYGEN_FOUND)
   add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Doxyfile
       PRE_BUILD
       COMMAND ${CMAKE_COMMAND}
-          -D DESTDIR="${CMAKE_BINARY_DIR}"
+          -D DESTDIR=${CMAKE_BINARY_DIR}
           -D MATHJAX="${MATHJAX}"
           -D MATHJAX_FOUND="${MATHJAX_FOUND}"
           -D MATHJAX_PATH="${MATHJAX_PATH}"
