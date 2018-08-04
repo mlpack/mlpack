@@ -19,6 +19,9 @@ install:
   - ps: nuget install boost_serialization-vc140 -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
   - ps: nuget install boost_math_c99-vc140 -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
   - ps: nuget install OpenBLAS -o "${env:APPVEYOR_BUILD_FOLDER}"
+  - set path=C:\Program Files (x86)\WiX Toolset v3.11\bin;%path%
+  - ps: $ver = (Get-Content "${env:APPVEYOR_BUILD_FOLDER}\src\mlpack\core\util\version.hpp" | where {$_ -like "*MLPACK_VERSION*"}); $env:MLPACK_VERSION = ($ver[0].substring($ver[0].length-1,1)+'.'+$ver[1].substring($ver[1].length-1,1)+'.'+$ver[2].substring($ver[2].length-1,1))
+  - echo ML_PACK_VERSION is %MLPACK_VERSION%
 
 build_script:
   - mkdir boost_libs
