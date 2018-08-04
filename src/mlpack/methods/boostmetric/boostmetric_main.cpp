@@ -90,7 +90,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Function to calculate KNN accuracy.
-double KNNAccuracy(const arma::mat& dataset,
+double BoostMetricKnnAccuracy(const arma::mat& dataset,
                    const arma::Row<size_t>& labels,
                    const size_t k)
 {
@@ -188,7 +188,11 @@ static void mlpackMain()
 
   arma::mat distance;
 
-  if (normalize)
+  if (CLI::HasParam("distance"))
+  {
+    distance = std::move(CLI::GetParam<arma::mat>("distance"));
+  }
+  else if (normalize)
   {
     // Find the minimum and maximum values for each dimension.
     arma::vec ranges = arma::max(data, 1) - arma::min(data, 1);
@@ -217,8 +221,8 @@ static void mlpackMain()
   // Print initial & final accuracies if required.
   if (printAccuracy)
   {
-    double initAccuracy = KNNAccuracy(data, labels, k);
-    double finalAccuracy = KNNAccuracy(distance * data, labels, k);
+    double initAccuracy = BoostMetricKnnAccuracy(data, labels, k);
+    double finalAccuracy = BoostMetricKnnAccuracy(distance * data, labels, k);
 
     Log::Info << "Accuracy on initial dataset: " << initAccuracy <<
         "%" << endl;

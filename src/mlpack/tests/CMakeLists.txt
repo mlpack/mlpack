@@ -16,6 +16,7 @@ add_executable(mlpack_test
   bigbatch_sgd_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
+  boostmetric_test.cpp
   cf_test.cpp
   cli_binding_test.cpp
   cli_test.cpp
@@ -140,6 +141,7 @@ add_executable(mlpack_test
   main_tests/emst_test.cpp
   main_tests/adaboost_test.cpp
   main_tests/approx_kfn_test.cpp
+  main_tests/boostmetric_test.cpp
   main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
   main_tests/det_test.cpp

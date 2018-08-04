@@ -32,6 +32,8 @@ BoostMetric<MetricType>::BoostMetric(const arma::mat& dataset,
     maxIter(500),
     tolerance(1e-7),
     wTolerance(1e-5),
+    wHigh(10.0),
+    wLow(0.0),
     constraint(dataset, labels, k)
 { /* nothing to do */ }
 
