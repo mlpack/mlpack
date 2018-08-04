@@ -42,7 +42,7 @@ build_script:
   - 7z a mlpack-windows.zip "%APPVEYOR_BUILD_FOLDER%\build\Release\*.*" "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/*.*"
   - cd C:\projects\mlpack\dist\win-installer\staging && mkdir lib
   - ps: cp C:\projects\mlpack\build\Release\*.* C:\projects\mlpack\dist\win-installer\staging\lib\
-  - ps: cp C:\projects\mlpack\build\include\*.* C:\projects\mlpack\dist\win-installer\staging\
+  - ps: cp C:\projects\mlpack\build\include\mlpack C:\projects\mlpack\dist\win-installer\staging -recurse
   - cd C:\projects\mlpack\dist\win-installer\mlpack-win-installer
   - heat dir ..\staging -cg HeatGenerated -dr INSTALLFOLDER -sreg -srd -var var.HarvestPath -ag -sfrag -out HeatGeneratedFileList.wxs
   - candle -dHarvestPath=..\staging -dConfiguration=Release -dOutDir=bin\x64\Release\ -dPlatform=x64 -dProjectDir=. -dProjectExt=.wixproj -dProjectFileName=mlpack-win-installer.wixproj -dProjectName=mlpack-win-installer -dProjectPath=mlpack-win-installer.wixproj -dTargetDir=.\bin\x64\Release\ -dTargetExt=.msi -dTargetFileName=mlpack-windows.msi -dTargetName=mlpack-windows -dTargetPath=.\bin\x64\Release\mlpack-windows.msi -out obj\x64\Release\ -arch x64 -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUIExtension.dll" Product.wxs HeatGeneratedFileList.wxs
