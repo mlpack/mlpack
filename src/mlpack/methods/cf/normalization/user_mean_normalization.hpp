@@ -108,7 +108,7 @@ class UserMeanNormalization
     // Normalize the data.
     it = cleanedData.begin();
     it_end = cleanedData.end();
-    std::cout << cleanedData.n_cols << std::endl;
+
     for (; it != it_end; it++)
     {
       *it = *it - userMean(it.col());
