@@ -203,19 +203,20 @@ void PerformAction(arma::mat& dataset,
 }
 
 void AssembleOptimizerType(const std::string& algorithm,
+                           const std::string& optimizerType,
                            arma::mat& dataset)
 {
-  if (algorithm == "adagrad")
+  if (optimizerType == "adagrad")
   {
     AdaGrad optimizer;
     PerformAction(dataset, algorithm, optimizer);
   }
-  else if (algorithm == "rmsprop")
+  else if (optimizerType == "rmsprop")
   {
     RMSProp optimizer;
     PerformAction(dataset, algorithm, optimizer);
   }
-  else if (algorithm == "adam")
+  else if (optimizerType == "adam")
   {
     Adam optimizer;
     PerformAction(dataset, algorithm, optimizer);
@@ -248,9 +249,6 @@ static void mlpackMain()
   if (!CLI::HasParam("query") && !CLI::HasParam("all_user_recommendations"))
     ReportIgnoredParam("output", "no recommendations requested");
 
-  RequireParamInSet<string>("algorithm", { "GMF", "MLP", "NeuMF" }, true,
-      "unknown algorithm");
-
   RequireParamValue<int>("recommendations", [](int x) { return x > 0; }, true,
         "recommendations must be positive");
 
@@ -268,7 +266,7 @@ static void mlpackMain()
     const string algo = CLI::GetParam<string>("algorithm");
 
     // Perform the factorization and do whatever the user wanted.
-    AssembleOptimizerType(algo, dataset);
+    AssembleOptimizerType(algo, optimizerType, dataset);
   }
   else
   {

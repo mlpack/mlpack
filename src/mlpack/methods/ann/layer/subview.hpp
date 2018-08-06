@@ -112,11 +112,26 @@ class Subview
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(arma::Mat<eT>&& /* input */,
+  void Backward(arma::Mat<eT>&& input,
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g)
   {
-    g = gy;
+    g.zeros(input.n_rows, input.n_cols);
+
+    size_t batchSize = input.n_cols / inSize;
+
+    size_t batchBegin = beginCol;
+    size_t batchEnd = endCol;
+
+    for (size_t i = 0; i < batchSize; i++)
+    {
+      g.submat(beginRow, batchBegin, endRow, batchEnd) =
+          (arma::mat(&gy(0, i), endRow-beginRow+1, batchEnd-batchBegin+1));
+
+      // Move to next batch.
+      batchBegin += inSize;
+      batchEnd += inSize;
+    }
   }
 
   //! Get the output parameter.

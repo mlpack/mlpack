@@ -76,14 +76,16 @@ void NCF::FindNegatives()
 
     itemRates.shed_row(0);
     itemRates.shed_row(1);
-
     // List of all items.n
-    arma::vec negativeList = arma::linspace<arma::vec> (0,3705,3706);
+    arma::vec negativeList = arma::linspace<arma::vec>(
+        0, numItems - 1, numItems);
+
     for (size_t j = 0; j < itemRates.n_cols; j++)
     {
       // Remove items which have been rated.
       arma::uvec temp = arma::find(negativeList ==  itemRates(j));
-      negativeList.shed_row(temp(0));
+      if(temp.n_rows != 0)
+        negativeList.shed_row(temp(0));
     }
 
     std::vector<double> negList;
@@ -100,7 +102,8 @@ void NCF::GetTrainingInstance(arma::mat& predictors,
                               arma::mat& responses)
 {
   size_t q = 0, temp;
-  arma::colvec users, items;
+  arma::colvec users(dataset.n_cols * (neg+1));
+  arma::colvec resp(dataset.n_cols * (neg+1)), items(dataset.n_cols * (neg+1));
 
   for (size_t i = 0; i < dataset.n_cols; i++)
   {
@@ -109,9 +112,8 @@ void NCF::GetTrainingInstance(arma::mat& predictors,
     // Rating exists.
     users(q) = dataset(0, i);
     items(q) = dataset(1, i);
-    responses(q) = implicit ? 1:dataset(2,i);
+    resp(q) = implicit ? 1 : dataset(2, i);
     q++;
-
     // From find negatives.
     size_t val = negatives[dataset(0, i)].size();
 
@@ -121,12 +123,13 @@ void NCF::GetTrainingInstance(arma::mat& predictors,
       // Add negatives.
       users(q) = dataset(0, i);
       items(q) = j;
-      responses(q) = 0;
+      resp(q) = 0;
       q++;
       temp--;
     }
   }
   predictors = arma::join_vert(users, items);
+  responses = arma::conv_to<arma::mat>::from(resp);
 }
 
 double NCF::Evaluate(const arma::mat& parameters,
@@ -175,7 +178,7 @@ void NCF::Train(OptimizerType optimizer)
  */
 void NCF::CreateGMF()
 {
-  size_t size = dataset.n_cols/2;
+  size_t size = dataset.n_cols*(neg+1);
 
   // User sub-network.
   ann::Sequential<>* userModel = new ann::Sequential<>();
@@ -185,9 +188,9 @@ void NCF::CreateGMF()
 
   // Item sub-network.
   ann::Sequential<>* itemModel = new ann::Sequential<>();
-  itemModel->Add<ann::Subview<> >(1, size, dataset.n_rows - 1);
+  itemModel->Add<ann::Subview<> >(1, size, (size * 2) - 1);
   itemModel->Add<ann::Embedding<> >(numItems, embedSize);
-  userModel->Add<ann::Subview<> >(size, 0, embedSize - 1, 0, size - 1);
+  itemModel->Add<ann::Subview<> >(size, 0, embedSize - 1, 0, size - 1);
 
   // Merge the user and item sub-network.
   ann::MultiplyMerge<> mergeModel(true, true);
@@ -205,7 +208,7 @@ void NCF::CreateGMF()
  */
 void NCF::CreateMLP()
 {
-  size_t size = dataset.n_cols/2;
+  size_t size = dataset.n_cols*(neg+1);
 
   // User sub-network.
   ann::Sequential<>* userModel = new ann::Sequential<>();
@@ -214,7 +217,7 @@ void NCF::CreateMLP()
 
   // Item sub-network.
   ann::Sequential<>* itemModel = new ann::Sequential<>();
-  itemModel->Add<ann::Subview<> >(1, size, dataset.n_rows - 1);
+  itemModel->Add<ann::Subview<> >(1, size, (size * 2) - 1);
   itemModel->Add<ann::Embedding<> >(numItems, embedSize);
 
   // Merge the user and item sub-network.
