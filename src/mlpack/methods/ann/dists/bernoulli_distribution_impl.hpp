@@ -47,9 +47,11 @@ BernoulliDistribution<DataType>::BernoulliDistribution(
 template<typename DataType>
 DataType BernoulliDistribution<DataType>::Sample() const
 {
-  DataType sample;
-  sample = arma::conv_to<DataType>::from(arma::randu<DataType>
-      (probability.n_rows, probability.n_cols) <= probability);
+  DataType sample = arma::randu<DataType>
+      (probability.n_rows, probability.n_cols);
+
+  for (size_t i = 0; i < sample.n_elem; i++)
+      sample(i) = sample(i) < probability(i);
 
   return sample;
 }
@@ -69,7 +71,7 @@ void BernoulliDistribution<DataType>::LogProbBackward(
   if (!applyLogistic)
   {
     output = observation / (probability + eps) - (1 - observation) /
-        (1 - probability);
+        (1 - probability + eps);
   }
   else
   {
