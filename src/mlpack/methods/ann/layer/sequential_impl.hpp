@@ -72,10 +72,10 @@ void Sequential<InputDataType, OutputDataType, CustomLayers...>::Forward(
     if (!reset)
     {
       // Set the input width.
-      boost::apply_visitor(SetInputWidthVisitor(width, true), network[i]);
+      boost::apply_visitor(SetInputWidthVisitor(width), network[i]);
 
       // Set the input height.
-      boost::apply_visitor(SetInputHeightVisitor(height, true), network[i]);
+      boost::apply_visitor(SetInputHeightVisitor(height), network[i]);
     }
 
     boost::apply_visitor(ForwardVisitor(std::move(boost::apply_visitor(

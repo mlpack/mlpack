@@ -23,7 +23,8 @@ template<typename InputDataType, typename OutputDataType>
 Reparametrization<InputDataType, OutputDataType>::Reparametrization() :
     latentSize(0),
     stochastic(true),
-    includeKl(true)
+    includeKl(true),
+    beta(1)
 {
   // Nothing to do here.
 }
@@ -32,12 +33,18 @@ template <typename InputDataType, typename OutputDataType>
 Reparametrization<InputDataType, OutputDataType>::Reparametrization(
     const size_t latentSize,
     const bool stochastic,
-    const bool includeKl) :
+    const bool includeKl,
+    const double beta) :
     latentSize(latentSize),
     stochastic(stochastic),
-    includeKl(includeKl)
+    includeKl(includeKl),
+    beta(beta)
 {
-  // Nothing to do here.
+  if (includeKl == false && beta != 1)
+  {
+    Log::Info << "The beta parameter will be ignored as KL divergence is not "
+        << "included." << std::endl;
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -74,7 +81,7 @@ void Reparametrization<InputDataType, OutputDataType>::Backward(
   if (includeKl)
   {
     g = join_cols(gy % std::move(gaussianSample) % g + (-1 / stdDev + stdDev)
-        % g, gy + mean);
+        % g * beta, gy + mean * beta);
   }
   else
     g = join_cols(gy % std::move(gaussianSample) % g, gy);

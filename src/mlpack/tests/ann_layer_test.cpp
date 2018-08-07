@@ -2037,7 +2037,52 @@ BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerTest)
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(10, 6);
-      model->Add<Reparametrization<> >(3, false);
+      model->Add<Reparametrization<> >(3, false, true, 1);
+      model->Add<Linear<> >(3, 2);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
+ * Reparametrization layer beta numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerBetaTest)
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::mat("1");
+
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 6);
+      // Use a value of beta not equal to 1.
+      model->Add<Reparametrization<> >(3, false, true, 2);
       model->Add<Linear<> >(3, 2);
       model->Add<LogSoftMax<> >();
     }
