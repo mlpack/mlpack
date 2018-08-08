@@ -208,7 +208,8 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
   if (iteration++ % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
-    constraint.Impostors(impostors, distance, transformedDataset, labels);
+    constraint.Impostors(impostors, distance, transformedDataset, labels,
+        transformation);
   }
 
   for (size_t i = 0; i < dataset.n_cols; i++)
@@ -309,7 +310,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
   {
     // Re-calculate impostors on transformed dataset.
     constraint.Impostors(impostors, distance, transformedDataset, labels,
-        begin, batchSize);
+        begin, batchSize, transformation);
   }
 
   for (size_t i = begin; i < begin + batchSize; i++)
@@ -412,7 +413,8 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
   if (iteration++ % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
-    constraint.Impostors(impostors, distance, transformedDataset, labels);
+    constraint.Impostors(impostors, distance, transformedDataset, labels,
+        transformation);
   }
 
   gradient.zeros(transformation.n_rows, transformation.n_cols);
@@ -518,7 +520,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
   {
     // Re-calculate impostors on transformed dataset.
     constraint.Impostors(impostors, distance, transformedDataset, labels,
-        begin, batchSize);
+        begin, batchSize, transformation);
   }
 
   gradient.zeros(transformation.n_rows, transformation.n_cols);
@@ -633,7 +635,8 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   if (iteration++ % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
-    constraint.Impostors(impostors, distance, transformedDataset, labels);
+    constraint.Impostors(impostors, distance, transformedDataset, labels,
+        transformation);
   }
 
   gradient.zeros(transformation.n_rows, transformation.n_cols);
@@ -746,7 +749,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   {
     // Re-calculate impostors on transformed dataset.
     constraint.Impostors(impostors, distance, transformedDataset, labels,
-        begin, batchSize);
+        begin, batchSize, transformation);
   }
 
   gradient.zeros(transformation.n_rows, transformation.n_cols);

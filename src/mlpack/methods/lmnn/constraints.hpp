@@ -16,6 +16,7 @@
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include "lmnn_targets_and_impostors_rules.hpp"
 #include "lmnn_impostors_rules.hpp"
+#include "lmnn_stat.hpp"
 
 namespace mlpack {
 namespace lmnn {
@@ -33,6 +34,8 @@ template<typename MetricType = metric::SquaredEuclideanDistance>
 class Constraints
 {
  public:
+  typedef tree::KDTree<MetricType, LMNNStat, arma::mat> TreeType;
+
   /**
    * Constructor for creating a Constraints instance.
    *
@@ -43,6 +46,11 @@ class Constraints
   Constraints(const arma::mat& dataset,
               const arma::Row<size_t>& labels,
               const size_t k);
+
+  /**
+   * Free all memory.
+   */
+  ~Constraints();
 
   /**
    * Calculates neighborsK similar labeled nearest neighbors and impostorsK
@@ -72,7 +80,8 @@ class Constraints
    */
   void Impostors(arma::Mat<size_t>& outputMatrix,
                  const arma::mat& dataset,
-                 const arma::Row<size_t>& labels);
+                 const arma::Row<size_t>& labels,
+                 const arma::mat& transformation);
 
   /**
    * Calculates k differently labeled nearest neighbors & distances to
@@ -86,7 +95,8 @@ class Constraints
   void Impostors(arma::Mat<size_t>& outputNeighbors,
                  arma::mat& outputDistance,
                  const arma::mat& dataset,
-                 const arma::Row<size_t>& labels);
+                 const arma::Row<size_t>& labels,
+                 const arma::mat& transformation);
 
   /**
    * Calculates k differently labeled nearest neighbors for a batch of dataset
@@ -102,7 +112,8 @@ class Constraints
                  const arma::mat& dataset,
                  const arma::Row<size_t>& labels,
                  const size_t begin,
-                 const size_t batchSize);
+                 const size_t batchSize,
+                 const arma::mat& transformation);
 
   /**
    * Calculates k differently labeled nearest neighbors & distances to
@@ -120,7 +131,8 @@ class Constraints
                  const arma::mat& dataset,
                  const arma::Row<size_t>& labels,
                  const size_t begin,
-                 const size_t batchSize);
+                 const size_t batchSize,
+                 const arma::mat& transformation);
 
   //! Get the number of target neighbors (k).
   const size_t& K() const { return k; }
@@ -143,6 +155,15 @@ class Constraints
   //! Store indices of data points having different label.
   std::vector<arma::uvec> indexDiff;
 
+  //! Reference tree used for search.
+  TreeType* tree;
+  //! Sorted labels for points in the reference tree.
+  arma::Row<size_t> sortedLabels;
+  //! Mapping used in tree building.
+  std::vector<size_t> oldFromNew;
+  //! Mapping used in tree building.
+  std::vector<size_t> newFromOld;
+
   //! False if nothing has ever been precalculated.
   bool precalculated;
 
@@ -159,6 +180,7 @@ class Constraints
                         const arma::Row<size_t>& referenceLabels,
                         const arma::mat& querySet,
                         const arma::Row<size_t>& queryLabels,
+                        const arma::mat& transformation,
                         arma::Mat<size_t>& neighbors,
                         arma::mat& distances) const;
 };

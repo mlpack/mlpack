@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_LMNN_LMNN_STAT_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/tree/hrectbound.hpp>
 
 namespace mlpack {
 namespace lmnn {
@@ -37,6 +38,8 @@ class LMNNStat
   //! Whether or not the node contains any true neighbors for a given class as
   //! descendant points.
   std::vector<bool> hasTrueNeighbors;
+  //! The original dataset.  Only non-NULL in the root node.
+  arma::mat* origDataset;
 
  public:
   /**
@@ -44,7 +47,15 @@ class LMNNStat
    * construction, hasImpostors and hasTrueNeighbors are still not set!  This
    * must be done after tree building.
    */
-  LMNNStat() : bound(DBL_MAX), lastDistance(0.0) { }
+  LMNNStat() :
+      bound(DBL_MAX),
+      lastDistance(0.0),
+      origDataset(NULL) { }
+
+  /**
+   * Delete any allocated memory.
+   */
+  ~LMNNStat() { delete origDataset; }
 
   /**
    * Initialization for a fully initialized node.  In this case, we don't need
@@ -52,7 +63,10 @@ class LMNNStat
    * hasTrueNeighbors are still not set!  This must be done after tree building.
    */
   template<typename TreeType>
-  LMNNStat(TreeType& /* node */) : bound(DBL_MAX), lastDistance(0.0) { }
+  LMNNStat(TreeType& /* node */) :
+      bound(DBL_MAX),
+      lastDistance(0.0),
+      origDataset(NULL) { }
 
   /**
    * Reset statistic parameters to initial values.
@@ -86,6 +100,11 @@ class LMNNStat
   //! each class.
   std::vector<bool>& HasTrueNeighbors() { return hasTrueNeighbors; }
 
+  //! Get the original dataset.
+  const arma::mat* OrigDataset() const { return origDataset; }
+  //! Modify the original dataset.
+  arma::mat*& OrigDataset() { return origDataset; }
+
   //! Serialize the statistic to/from an archive.
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
@@ -94,6 +113,7 @@ class LMNNStat
     ar & BOOST_SERIALIZATION_NVP(lastDistance);
     ar & BOOST_SERIALIZATION_NVP(hasImpostors);
     ar & BOOST_SERIALIZATION_NVP(hasTrueNeighbors);
+    ar & BOOST_SERIALIZATION_NVP(origDataset);
   }
 };
 
