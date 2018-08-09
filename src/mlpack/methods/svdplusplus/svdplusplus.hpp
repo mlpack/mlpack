@@ -33,7 +33,6 @@ namespace svd {
  * 
  * For more information, see the following paper:
  *
- * @code
  * @inproceedings{koren2008factorization,
  * title={Factorization meets the neighborhood: a multifaceted collaborative
  *        filtering model},
@@ -44,7 +43,6 @@ namespace svd {
  * year={2008},
  * organization={ACM}
  * }
- * @endcode
  *
  * An example of how to use the interface is shown below:
  *
@@ -70,8 +68,6 @@ namespace svd {
  * // Use the Apply() method to get a factorization.
  * svdPP.Apply(data, implicitData, rank, u, v, p, q, y);
  * @endcode
- * 
-}
  */
 template<typename OptimizerType = mlpack::optimization::StandardSGD>
 class SVDPlusPlus
@@ -86,8 +82,8 @@ class SVDPlusPlus
    * @param lambda Regularization parameter for the optimization.
    */
   SVDPlusPlus(const size_t iterations = 10,
-          const double alpha = 0.001,
-          const double lambda = 0.1);
+              const double alpha = 0.001,
+              const double lambda = 0.1);
 
   /**
    * Trains the model and obtains user/item matrices, user/item bias, and

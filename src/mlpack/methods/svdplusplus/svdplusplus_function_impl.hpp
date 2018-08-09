@@ -40,6 +40,8 @@ SVDPlusPlusFunction<MatType>::SVDPlusPlusFunction(const MatType& data,
   // User bias: row(rank).subvec(0, numUsers - 1)
   // Item implicit matrix: submat(0, numUsers + numItems,
   //     rank - 1, numUsers + 2 * numItems - 1)
+  // Unused:
+  //     row(rank).subvec(numUsers + numItems, numUsers + 2 * numItems - 1)
   initialPoint.randu(rank + 1, numUsers + 2 * numItems);
 }
 
@@ -104,16 +106,18 @@ double SVDPlusPlusFunction<MatType>::Evaluate(const arma::mat& parameters,
       userVec += parameters.col(implicitStart + it.row()).subvec(0, rank - 1);
       if (implicitVecsNormSquare(itemRealIdx) < 0)
       { 
-        double implicitVecNorm = arma::norm(
-            parameters.col(implicitStart + it.row()).subvec(0, rank - 1), 2);
-        implicitVecsNormSquare(itemRealIdx) =
-            implicitVecNorm * implicitVecNorm;
+        implicitVecsNormSquare(itemRealIdx) = arma::dot(
+            parameters.col(implicitStart + it.row()).subvec(0, rank - 1),
+            parameters.col(implicitStart + it.row()).subvec(0, rank - 1));
       }
       regularizationError += lambda * implicitVecsNormSquare(itemRealIdx);
       implicitCount += 1;
     }
     if (implicitCount != 0)
+    {
       userVec /= std::sqrt(implicitCount);
+      regularizationError /= implicitCount;
+    }
     userVec += parameters.col(user).subvec(0, rank - 1);
 
     double ratingError = rating - userBias - itemBias -
@@ -124,7 +128,7 @@ double SVDPlusPlusFunction<MatType>::Evaluate(const arma::mat& parameters,
     double userVecNorm = arma::norm(parameters.col(user), 2);
     double itemVecNorm = arma::norm(parameters.col(item), 2);
     regularizationError += lambda * (userVecNorm * userVecNorm +
-                                           itemVecNorm * itemVecNorm);
+                                     itemVecNorm * itemVecNorm);
 
     objective += (ratingErrorSquared + regularizationError);
   }
@@ -198,8 +202,9 @@ void SVDPlusPlusFunction<MatType>::Gradient(const arma::mat& parameters,
     it_end = implicitData.end_col(user);
     for (; it != it_end; it++)
     {
+      // Note that implicitCount != 0 if this loop is acutally executed.
       gradient.col(implicitStart + it.row()).subvec(0, rank - 1) +=
-          2 * (lambda *
+          2.0 / implicitCount * (lambda *
           parameters.col(implicitStart + it.row()).subvec(0, rank - 1) -
           ratingError / std::sqrt(implicitCount) *
           parameters.col(item).subvec(0, rank - 1));
@@ -267,10 +272,11 @@ void SVDPlusPlusFunction<MatType>::Gradient(const arma::mat& parameters,
     it_end = implicitData.end_col(user);
     for (; it != it_end; it++)
     {
+      // Note that implicitCount != 0 if this loop is acutally executed.
       for (size_t j = 0; j < rank; ++j)
       {
         gradient(j, implicitStart + it.row()) +=
-            2 * (lambda *
+            2.0 / implicitCount * (lambda *
             parameters(j, implicitStart + it.row()) -
             ratingError / std::sqrt(implicitCount) *
             parameters(j, item));
@@ -372,8 +378,9 @@ double StandardSGD::Optimize(
     it_end = implicitData.end_col(user);
     for (; it != it_end; it++)
     {
+      // Note that implicitCount != 0 if this loop is acutally executed.
       parameters.col(implicitStart + it.row()).subvec(0, rank - 1) -=
-          stepSize * 2 * (lambda *
+          stepSize * 2.0 / implicitCount * (lambda *
           parameters.col(implicitStart + it.row()).subvec(0, rank - 1) -
           ratingError / std::sqrt(implicitCount) *
           parameters.col(item).subvec(0, rank - 1));
@@ -510,7 +517,7 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
         for (; it != it_end; it++, implicitIndex++)
         {
           itemImplicitUpdate.col(implicitIndex) =
-              stepSize * 2 * (lambda *
+              stepSize * 2.0 / implicitCount * (lambda *
               iterate.col(implicitStart + it.row()).subvec(0, rank - 1) -
               ratingError / std::sqrt(implicitCount) *
               iterate.col(item).subvec(0, rank - 1));

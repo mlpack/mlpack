@@ -93,7 +93,7 @@ double BiasSVDFunction<MatType>::Evaluate(const arma::mat& parameters,
 
 template <typename MatType>
 void BiasSVDFunction<MatType>::Gradient(const arma::mat& parameters,
-                                               arma::mat& gradient) const
+                                        arma::mat& gradient) const
 {
   // For an example with rating corresponding to user 'i' and item 'j', the
   // gradients for the parameters is as follows:

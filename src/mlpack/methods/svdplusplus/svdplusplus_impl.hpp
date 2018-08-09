@@ -38,7 +38,7 @@ void SVDPlusPlus<OptimizerType>::Apply(const arma::mat& data,
                                        arma::vec& q,
                                        arma::mat& y)
 {
-  // batchSize is 1 in our implementation of Bias SVD.
+  // batchSize is 1 in our implementation of SVDPlusPlus.
   // batchSize other than 1 has not been supported yet.
   const int batchSize = 1;
   Log::Warn << "The batch size for optimizing SVDPlusPlus is 1."

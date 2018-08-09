@@ -146,17 +146,20 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionRegularizationEvaluate)
       arma::sp_mat::const_iterator it = implicitData.begin_col(user);
       arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
       double regularizationError = 0;
+      size_t implicitCount = 0;
       for (; it != it_end; it++)
       {
         if (implicitVecsNormSquare(itemRealIdx) < 0)
         { 
-          double implicitVecNorm = arma::norm(
-              parameters.col(implicitStart + it.row()).subvec(0, rank - 1), 2);
-          implicitVecsNormSquare(itemRealIdx) =
-              implicitVecNorm * implicitVecNorm;
+          implicitVecsNormSquare(itemRealIdx) = arma::dot(
+            parameters.col(implicitStart + it.row()).subvec(0, rank - 1),
+            parameters.col(implicitStart + it.row()).subvec(0, rank - 1));
         }
         regularizationError += implicitVecsNormSquare(itemRealIdx);
+        implicitCount += 1;
       }
+      if (implicitCount != 0)
+        regularizationError /= implicitCount;
 
       // Calculate the regularization penalty corresponding to the parameters.
       double userVecNorm = arma::norm(parameters.col(user), 2);
