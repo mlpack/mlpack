@@ -232,13 +232,8 @@ class LMNNFunction
   std::vector<size_t> oldTransformationCounts;
   //! Holds points to transformation matrix mapping.
   arma::vec lastTransformationIndices;
-  /**
-  * Precalculate the gradient part due to target neighbors and stores
-  * the result as a matrix. Used for L-BFGS like optimizers which does not
-  * uses batches.
-  */
-  inline void Precalculate();
-  //! Update cache transformation matrices.
+
+  //! Update cached transformation matrices.
   inline void UpdateCache(const arma::mat& transformation,
                           const size_t begin,
                           const size_t batchSize);

@@ -60,6 +60,7 @@ class Constraints
    * @param labels Input dataset labels.
    * @param neighborsK Number of neighbors to search for.
    * @param impostorsK Number of impostors to search for.
+   * @param norms Precalculated norms of each point.
    * @param neighbors Matrix to output target neighbors into.
    * @param impostors Matrix to output impostors into.
    */
@@ -67,6 +68,7 @@ class Constraints
                            const arma::Row<size_t>& labels,
                            const size_t neighborsK,
                            const size_t impostorsK,
+                           const arma::vec& norms,
                            arma::Mat<size_t>& neighbors,
                            arma::Mat<size_t>& impostors);
 
@@ -81,7 +83,8 @@ class Constraints
   void Impostors(arma::Mat<size_t>& outputMatrix,
                  const arma::mat& dataset,
                  const arma::Row<size_t>& labels,
-                 const arma::mat& transformation);
+                 const arma::mat& transformation,
+                 const double transformationDiff);
 
   /**
    * Calculates k differently labeled nearest neighbors & distances to
@@ -96,7 +99,8 @@ class Constraints
                  arma::mat& outputDistance,
                  const arma::mat& dataset,
                  const arma::Row<size_t>& labels,
-                 const arma::mat& transformation);
+                 const arma::mat& transformation,
+                 const double transformationDiff);
 
   /**
    * Calculates k differently labeled nearest neighbors for a batch of dataset
@@ -113,7 +117,8 @@ class Constraints
                  const arma::Row<size_t>& labels,
                  const size_t begin,
                  const size_t batchSize,
-                 const arma::mat& transformation);
+                 const arma::mat& transformation,
+                 const double transformationDiff);
 
   /**
    * Calculates k differently labeled nearest neighbors & distances to
@@ -132,7 +137,8 @@ class Constraints
                  const arma::Row<size_t>& labels,
                  const size_t begin,
                  const size_t batchSize,
-                 const arma::mat& transformation);
+                 const arma::mat& transformation,
+                 const double transformationDiff);
 
   //! Get the number of target neighbors (k).
   const size_t& K() const { return k; }
@@ -159,6 +165,8 @@ class Constraints
   TreeType* tree;
   //! Sorted labels for points in the reference tree.
   arma::Row<size_t> sortedLabels;
+  //! Sorted norms for points in the reference tree.
+  arma::vec sortedNorms;
   //! Mapping used in tree building.
   std::vector<size_t> oldFromNew;
   //! Mapping used in tree building.
@@ -166,12 +174,19 @@ class Constraints
 
   //! False if nothing has ever been precalculated.
   bool precalculated;
+  //! True if we've only run the first impostors+neighbors search.
+  bool runFirstSearch;
 
   /**
    * Precalculate the unique labels, and indices of similar
    * and different datapoints on the basis of labels.
    */
   inline void Precalculate(const arma::Row<size_t>& labels);
+
+  void UpdateTreeStat(TreeType& node,
+                      const arma::Mat<size_t>& lastNeighbors,
+                      const arma::mat& lastDistances,
+                      const double transformationDiff);
 
   /**
    * Compute the impostors of the given set.
@@ -181,8 +196,9 @@ class Constraints
                         const arma::mat& querySet,
                         const arma::Row<size_t>& queryLabels,
                         const arma::mat& transformation,
+                        const double transformationDiff,
                         arma::Mat<size_t>& neighbors,
-                        arma::mat& distances) const;
+                        arma::mat& distances);
 };
 
 } // namespace lmnn

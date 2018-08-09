@@ -25,7 +25,8 @@ Constraints<MetricType>::Constraints(
     const size_t k) :
     k(k),
     tree(NULL),
-    precalculated(false)
+    precalculated(false),
+    runFirstSearch(false)
 {
   // Ensure a valid k is passed.
   size_t minCount = arma::min(arma::histc(labels, arma::unique(labels)));
@@ -42,157 +43,6 @@ template<typename MetricType>
 Constraints<MetricType>::~Constraints()
 {
   delete tree;
-}
-
-// Calculates k similar labeled nearest neighbors.
-template<typename MetricType>
-void Constraints<MetricType>::TargetsAndImpostors(
-    const arma::mat& dataset,
-    const arma::Row<size_t>& labels,
-    const size_t neighborsK,
-    const size_t impostorsK,
-    arma::Mat<size_t>& neighbors,
-    arma::Mat<size_t>& impostors)
-{
-  // Perform pre-calculation. If neccesary.
-  Precalculate(labels);
-
-  // These will be returned but not used.
-  arma::mat neighborDistances, impostorDistances;
-
-  // For now let's always do dual-tree search.
-  // So, build a tree on the reference data.
-  Timer::Start("tree_building");
-  tree = new TreeType(dataset, oldFromNew, newFromOld);
-  sortedLabels.set_size(labels.n_elem);
-  for (size_t i = 0; i < labels.n_elem; ++i)
-    sortedLabels[newFromOld[i]] = labels[i];
-
-  // Set the statistics correctly.
-  SetLMNNStat(*tree, sortedLabels, uniqueLabels.n_cols);
-  Timer::Stop("tree_building");
-
-  MetricType metric = tree->Metric(); // No way to get an lvalue...
-  LMNNTargetsAndImpostorsRules<MetricType, TreeType> rules(tree->Dataset(),
-      sortedLabels, oldFromNew, tree->Dataset(), sortedLabels, oldFromNew,
-      neighborsK, impostorsK, uniqueLabels.n_cols, metric);
-
-  typename TreeType::template DualTreeTraverser<
-      LMNNTargetsAndImpostorsRules<MetricType, TreeType>> traverser(rules);
-
-  // Now perform the dual-tree traversal.
-  Timer::Start("computing_targets_and_impostors");
-  traverser.Traverse(*tree, *tree);
-
-  // Next, process the results.  The unmapping is done inside the rules.
-  rules.GetResults(neighbors, neighborDistances, impostors, impostorDistances);
-  Timer::Stop("computing_targets_and_impostors");
-}
-
-// Calculates k differently labeled nearest neighbors.
-template<typename MetricType>
-void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
-                                        const arma::mat& dataset,
-                                        const arma::Row<size_t>& labels,
-                                        const arma::mat& transformation)
-{
-  // Perform pre-calculation. If neccesary.
-  Precalculate(labels);
-
-  // Compute all the impostors.
-  arma::mat distances;
-  ComputeImpostors(dataset, labels, dataset, labels, transformation,
-      outputMatrix, distances);
-}
-
-// Calculates k differently labeled nearest neighbors. The function
-// writes back calculated neighbors & distances to passed matrices.
-template<typename MetricType>
-void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
-                                        arma::mat& outputDistance,
-                                        const arma::mat& dataset,
-                                        const arma::Row<size_t>& labels,
-                                        const arma::mat& transformation)
-{
-  // Perform pre-calculation. If neccesary.
-  Precalculate(labels);
-
-  // Compute all the impostors.
-  ComputeImpostors(dataset, labels, dataset, labels, transformation,
-      outputNeighbors, outputDistance);
-}
-
-// Calculates k differently labeled nearest neighbors on a
-// batch of data points.
-template<typename MetricType>
-void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
-                                        const arma::mat& dataset,
-                                        const arma::Row<size_t>& labels,
-                                        const size_t begin,
-                                        const size_t batchSize,
-                                        const arma::mat& transformation)
-{
-  // Perform pre-calculation. If neccesary.
-  Precalculate(labels);
-
-  arma::mat subDataset = dataset.cols(begin, begin + batchSize - 1);
-  arma::Row<size_t> sublabels = labels.cols(begin, begin + batchSize - 1);
-
-  // Compute the impostors of the batch.
-  arma::mat distances;
-  arma::Mat<size_t> suboutput;
-  ComputeImpostors(dataset, labels, subDataset, sublabels, transformation,
-      suboutput, distances);
-  outputMatrix.cols(begin, begin + batchSize - 1) = suboutput;
-}
-
-// Calculates k differently labeled nearest neighbors & distances on a
-// batch of data points.
-template<typename MetricType>
-void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
-                                        arma::mat& outputDistance,
-                                        const arma::mat& dataset,
-                                        const arma::Row<size_t>& labels,
-                                        const size_t begin,
-                                        const size_t batchSize,
-                                        const arma::mat& transformation)
-{
-  // Perform pre-calculation. If neccesary.
-  Precalculate(labels);
-
-  arma::mat subDataset = dataset.cols(begin, begin + batchSize - 1);
-  arma::Row<size_t> sublabels = labels.cols(begin, begin + batchSize - 1);
-
-  // Compute the impostors of the batch.
-  arma::Mat<size_t> subneighbors;
-  arma::mat subdistances;
-  ComputeImpostors(dataset, labels, subDataset, sublabels, transformation,
-      subneighbors, subdistances);
-  outputNeighbors.cols(begin, begin + batchSize - 1) = subneighbors;
-  outputDistance.cols(begin, begin + batchSize - 1) = subdistances;
-}
-
-template<typename MetricType>
-inline void Constraints<MetricType>::Precalculate(
-                                         const arma::Row<size_t>& labels)
-{
-  // Make sure the calculation is necessary.
-  if (precalculated)
-    return;
-
-  uniqueLabels = arma::unique(labels);
-
-  indexSame.resize(uniqueLabels.n_elem);
-  indexDiff.resize(uniqueLabels.n_elem);
-
-  for (size_t i = 0; i < uniqueLabels.n_elem; i++)
-  {
-    // Store same and diff indices.
-    indexSame[i] = arma::find(labels == uniqueLabels[i]);
-    indexDiff[i] = arma::find(labels != uniqueLabels[i]);
-  }
-
-  precalculated = true;
 }
 
 // Helper function to set hasImpostors and hasTrueNeighbors for a tree node.
@@ -214,6 +64,7 @@ void SetLMNNStat(TreeType& node,
   {
     TreeType& child = node.Child(i);
     SetLMNNStat(child, labels, numClasses);
+
     for (size_t c = 0; c < numClasses; ++c)
     {
       node.Stat().HasImpostors()[c] =
@@ -242,51 +93,177 @@ void SetLMNNStat(TreeType& node,
   }
 }
 
+// Calculates k similar labeled nearest neighbors.
+template<typename MetricType>
+void Constraints<MetricType>::TargetsAndImpostors(
+    const arma::mat& dataset,
+    const arma::Row<size_t>& labels,
+    const size_t neighborsK,
+    const size_t impostorsK,
+    const arma::vec& norms,
+    arma::Mat<size_t>& neighbors,
+    arma::Mat<size_t>& impostors)
+{
+  // Perform pre-calculation. If neccesary.
+  Precalculate(labels);
+
+  // These will be returned but not used.
+  arma::mat neighborDistances, impostorDistances;
+
+  // For now let's always do dual-tree search.
+  // So, build a tree on the reference data.
+  Timer::Start("tree_building");
+  tree = new TreeType(dataset, oldFromNew, newFromOld);
+  sortedLabels.set_size(labels.n_elem);
+  sortedNorms.set_size(labels.n_elem);
+  for (size_t i = 0; i < labels.n_elem; ++i)
+  {
+    sortedLabels[newFromOld[i]] = labels[i];
+    sortedNorms[newFromOld[i]] = norms[i];
+  }
+
+  // Set the statistics correctly.
+  SetLMNNStat(*tree, sortedLabels, uniqueLabels.n_cols);
+  Timer::Stop("tree_building");
+
+  MetricType metric = tree->Metric(); // No way to get an lvalue...
+  LMNNTargetsAndImpostorsRules<MetricType, TreeType> rules(tree->Dataset(),
+      sortedLabels, oldFromNew, tree->Dataset(), sortedLabels, oldFromNew,
+      neighborsK, impostorsK, uniqueLabels.n_cols, metric);
+
+  typename TreeType::template DualTreeTraverser<
+      LMNNTargetsAndImpostorsRules<MetricType, TreeType>> traverser(rules);
+
+  // Now perform the dual-tree traversal.
+  Timer::Start("computing_targets_and_impostors");
+  traverser.Traverse(*tree, *tree);
+
+  // Next, process the results.  The unmapping is done inside the rules.
+  rules.GetResults(neighbors, neighborDistances, impostors, impostorDistances);
+  Timer::Stop("computing_targets_and_impostors");
+
+  runFirstSearch = true;
+}
+
+// Calculates k differently labeled nearest neighbors.
+template<typename MetricType>
+void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
+                                        const arma::mat& dataset,
+                                        const arma::Row<size_t>& labels,
+                                        const arma::mat& transformation,
+                                        const double transformationDiff)
+{
+  // Perform pre-calculation. If neccesary.
+  Precalculate(labels);
+
+  // Compute all the impostors.
+  arma::mat distances;
+  ComputeImpostors(dataset, labels, dataset, labels, transformation,
+      transformationDiff, outputMatrix, distances);
+}
+
+// Calculates k differently labeled nearest neighbors. The function
+// writes back calculated neighbors & distances to passed matrices.
+template<typename MetricType>
+void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
+                                        arma::mat& outputDistance,
+                                        const arma::mat& dataset,
+                                        const arma::Row<size_t>& labels,
+                                        const arma::mat& transformation,
+                                        const double transformationDiff)
+{
+  // Perform pre-calculation. If neccesary.
+  Precalculate(labels);
+
+  // Compute all the impostors.
+  ComputeImpostors(dataset, labels, dataset, labels, transformation,
+      transformationDiff, outputNeighbors, outputDistance);
+}
+
+// Calculates k differently labeled nearest neighbors on a
+// batch of data points.
+template<typename MetricType>
+void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
+                                        const arma::mat& dataset,
+                                        const arma::Row<size_t>& labels,
+                                        const size_t begin,
+                                        const size_t batchSize,
+                                        const arma::mat& transformation,
+                                        const double transformationDiff)
+{
+  // Perform pre-calculation. If neccesary.
+  Precalculate(labels);
+
+  arma::mat subDataset = dataset.cols(begin, begin + batchSize - 1);
+  arma::Row<size_t> sublabels = labels.cols(begin, begin + batchSize - 1);
+
+  // Compute the impostors of the batch.
+  arma::mat distances;
+  arma::Mat<size_t> suboutput;
+  ComputeImpostors(dataset, labels, subDataset, sublabels, transformation,
+      suboutput, distances, transformationDiff);
+  outputMatrix.cols(begin, begin + batchSize - 1) = suboutput;
+}
+
+// Calculates k differently labeled nearest neighbors & distances on a
+// batch of data points.
+template<typename MetricType>
+void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
+                                        arma::mat& outputDistance,
+                                        const arma::mat& dataset,
+                                        const arma::Row<size_t>& labels,
+                                        const size_t begin,
+                                        const size_t batchSize,
+                                        const arma::mat& transformation,
+                                        const double transformationDiff)
+{
+  // Perform pre-calculation. If neccesary.
+  Precalculate(labels);
+
+  arma::mat subDataset = dataset.cols(begin, begin + batchSize - 1);
+  arma::Row<size_t> sublabels = labels.cols(begin, begin + batchSize - 1);
+
+  // Compute the impostors of the batch.
+  arma::Mat<size_t> subneighbors;
+  arma::mat subdistances;
+  ComputeImpostors(dataset, labels, subDataset, sublabels, transformation,
+        transformationDiff, subneighbors, subdistances);
+  outputNeighbors.cols(begin, begin + batchSize - 1) = subneighbors;
+  outputDistance.cols(begin, begin + batchSize - 1) = subdistances;
+}
+
+template<typename MetricType>
+inline void Constraints<MetricType>::Precalculate(
+                                         const arma::Row<size_t>& labels)
+{
+  // Make sure the calculation is necessary.
+  if (precalculated)
+    return;
+
+  uniqueLabels = arma::unique(labels);
+
+  indexSame.resize(uniqueLabels.n_elem);
+  indexDiff.resize(uniqueLabels.n_elem);
+
+  for (size_t i = 0; i < uniqueLabels.n_elem; i++)
+  {
+    // Store same and diff indices.
+    indexSame[i] = arma::find(labels == uniqueLabels[i]);
+    indexDiff[i] = arma::find(labels != uniqueLabels[i]);
+  }
+
+  precalculated = true;
+}
+
 // We assume the dataset held in the tree has already been stretched.
 template<typename TreeType>
 inline void UpdateTree(TreeType& node, const arma::mat& transformation)
 {
-  // Stretch the bound.
-  // This only works if the data is laid out like we expect... I think...
-//  Log::Assert(sizeof(math::RangeType<double>) == 2 * sizeof(double));
-//  arma::Mat<typename TreeType::ElemType> ranges(&node.Bound()[0].Lo(),
-//      2, node.Bound().Dim(), false, true);
-//  arma::Mat<typename TreeType::ElemType> origRanges(
-//      &node.Stat().OrigBound()[0].Lo(), 2, node.Bound().Dim(), false, true);
-
-//  TreeType* root = &node;
-//  while (root->Parent() != NULL)
-//    root = root->Parent();
-
-  // Just transform the bound.
-//  if (node.NumChildren() == 0)
-//  {
-//    Log::Info << transformation.t();
-//    Log::Warn << ranges.t();
-//    Log::Warn << origRanges.t();
-//  }
   node.Bound().Clear();
-//  ranges = origRanges * transformation.t();
   if (node.NumChildren() == 0)
   {
     node.Bound() |= node.Dataset().cols(node.Point(0), node.Point(0) +
         node.NumPoints() - 1);
-
-//    for (size_t i = 0; i < node.Bound().Dim(); ++i)
-//    {
-//      Log::Info << "Old dimension " << i << ": " <<
-//          node.Stat().OrigBound()[i].Lo() << ", " <<
-//          node.Stat().OrigBound()[i].Hi() << ".\n";
-//      Log::Info << "New dimension " << i << ": " << node.Bound()[i].Lo() << ", "
-//          << node.Bound()[i].Hi() << ".\n";
-//    }
-
-
-//    for (size_t i = 0; i < node.NumPoints(); ++i)
-//    {
-//      Log::Warn << root->Stat().OrigDataset()->col(i).t();
-//      Log::Info << node.Dataset().col(i).t();
-//    }
   }
 
   // Recurse into the children.
@@ -318,6 +295,49 @@ inline void UpdateTree(TreeType& node, const arma::mat& transformation)
   }
 }
 
+template<typename MetricType>
+void Constraints<MetricType>::UpdateTreeStat(
+    TreeType& node,
+    const arma::Mat<size_t>& lastNeighbors,
+    const arma::mat& lastDistances,
+    const double transformationDiff)
+{
+  for (size_t i = 0; i < node.NumChildren(); ++i)
+  {
+    UpdateTreeStat(node.Child(i), lastNeighbors, lastDistances,
+        transformationDiff);
+  }
+
+  // Now, manually compute the bound for search.  We know that the k'th
+  // nearest neighbor next iteration can't be further away than this
+  // iteration's distance plus a bound.
+  if (!runFirstSearch)
+  {
+    double relaxedBound = 0.0;
+    for (size_t i = 0; i < node.NumPoints(); ++i)
+    {
+      const size_t index = node.Point(i);
+      const size_t k = lastDistances.n_rows - 1;
+      const size_t neighbor = lastNeighbors(k, index);
+
+      const double pointBound = lastDistances(k, oldFromNew[index]) +
+          transformationDiff * (sortedNorms[index] +
+          sortedNorms[newFromOld[neighbor]]);
+
+      relaxedBound = std::max(relaxedBound, pointBound);
+    }
+
+    for (size_t i = 0; i < node.NumChildren(); ++i)
+      relaxedBound = std::max(relaxedBound, node.Child(i).Stat().Bound());
+
+    node.Stat().Bound() = relaxedBound;
+  }
+  else
+  {
+    node.Stat().Bound() = DBL_MAX;
+  }
+}
+
 // Note the inputs here can just be the reference set.
 template<typename MetricType>
 void Constraints<MetricType>::ComputeImpostors(
@@ -326,9 +346,14 @@ void Constraints<MetricType>::ComputeImpostors(
     const arma::mat& querySet,
     const arma::Row<size_t>& queryLabels,
     const arma::mat& transformation,
+    const double transformationDiff,
     arma::Mat<size_t>& neighbors,
-    arma::mat& distances) const
+    arma::mat& distances)
 {
+  // Hopefully these are already filled with last iteration's distances.
+  arma::Mat<size_t> lastNeighbors = std::move(neighbors);
+  arma::mat lastDistances = std::move(distances);
+
   // Handle the SGD case differently, where the query set is not equal to the
   // reference set.
   if (querySet.n_cols != referenceSet.n_cols)
@@ -370,20 +395,8 @@ void Constraints<MetricType>::ComputeImpostors(
     Timer::Stop("tree_update");
 
     // Now that the tree is ready, we have to reset the statistics for search.
-    std::stack<TreeType*> stack;
-    stack.push(tree);
-    while (!stack.empty())
-    {
-      TreeType* node = stack.top();
-      stack.pop();
-
-      node->Stat().Reset();
-      if (node->NumChildren() > 0)
-      {
-        stack.push(node->Left());
-        stack.push(node->Right());
-      }
-    }
+    UpdateTreeStat(*tree, lastNeighbors, lastDistances, transformationDiff);
+    runFirstSearch = false;
 
     // Now we are ready to search!
     MetricType metric = tree->Metric(); // No way to get an lvalue...
@@ -400,7 +413,6 @@ void Constraints<MetricType>::ComputeImpostors(
 
     // Next, process the results.  The unmapping is done inside the rules.
     rules.GetResults(neighbors, distances);
-
     Timer::Stop("computing_impostors");
   }
 }
