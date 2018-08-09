@@ -135,6 +135,15 @@ class FFN
   void Predict(arma::mat predictors, arma::mat& results);
 
   /**
+   * Evaluate the feedforward network with the given ppredictors and responses.
+   * This functions is usually used to monitor progress while training.
+   *
+   * @param predictors Input variables.
+   * @param responses Target outputs for input variables.
+   */
+  double Evaluate(arma::mat predictors, arma::mat responses);
+
+  /**
    * Evaluate the feedforward network with the given parameters. This function
    * is usually called by the optimizer to train the model.
    *

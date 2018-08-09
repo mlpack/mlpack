@@ -1,52 +1,52 @@
 /**
- * @file cross_entropy_error.hpp
- * @author Konstantin Sidorov
+ * @file reconstruction_loss.hpp
+ * @author Atharva Khandait
  *
- * Definition of the cross-entropy performance function.
+ * Definition of the reconstruction loss performance function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_ERROR_HPP
-#define MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_ERROR_HPP
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTION_RECONSTRUCTION_LOSS_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTION_RECONSTRUCTION_LOSS_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/methods/ann/dists/bernoulli_distribution.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The cross-entropy performance function measures the network's
- * performance according to the cross-entropy
- * between the input and target distributions.
+ * The reconstruction loss performance function measures the network's
+ * performance equal to the negative log probability of the target with
+ * the input distribution.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
+ * @tparam DistType The type of distribution parametrized by the input.
  */
 template <
     typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename OutputDataType = arma::mat,
+    typename DistType = BernoulliDistribution<InputDataType>
 >
-class CrossEntropyError
+class ReconstructionLoss
 {
  public:
   /**
-   * Create the CrossEntropyError object.
-   *
-   * @param eps The minimum value used for computing logarithms
-   *            and denominators in a numerically stable way.
+   * Create the ReconstructionLoss object.
    */
-  CrossEntropyError(const double eps = 1e-10);
+  ReconstructionLoss();
 
   /*
-   * Computes the cross-entropy function.
+   * Computes the reconstruction loss.
    *
    * @param input Input data used for evaluating the specified function.
-   * @param target The target vector.
+   * @param target The target matrix.
    */
   template<typename InputType, typename TargetType>
   double Forward(const InputType&& input, const TargetType&& target);
@@ -55,7 +55,7 @@ class CrossEntropyError
    * Ordinary feed backward pass of a neural network.
    *
    * @param input The propagated input activation.
-   * @param target The target vector.
+   * @param target The target matrix.
    * @param output The calculated error.
    */
   template<typename InputType, typename TargetType, typename OutputType>
@@ -68,29 +68,24 @@ class CrossEntropyError
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
-  //! Get the epsilon.
-  double Eps() const { return eps; }
-  //! Modify the epsilon.
-  double& Eps() { return eps; }
-
   /**
-   * Serialize the layer.
+   * Serialize the layer
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
+  //! Locally-stored distribution object.
+  DistType dist;
+
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-
-  //! The minimum value used for computing logarithms and denominators
-  double eps;
-}; // class CrossEntropyError
+}; // class ReconstructionLoss
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "cross_entropy_error_impl.hpp"
+#include "reconstruction_loss_impl.hpp"
 
 #endif
