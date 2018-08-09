@@ -178,7 +178,7 @@ void NCF::Train(OptimizerType optimizer)
  */
 void NCF::CreateGMF()
 {
-  size_t size = (dataset.n_cols * (neg+1))/2;
+  size_t size = (dataset.n_cols * (neg+1));
 
   // User sub-network.
   ann::Sequential<>* userModel = new ann::Sequential<>();
@@ -208,7 +208,7 @@ void NCF::CreateGMF()
  */
 void NCF::CreateMLP()
 {
-  size_t size = (dataset.n_cols * (neg+1))/2;
+  size_t size = (dataset.n_cols * (neg+1));
 
   // User sub-network.
   ann::Sequential<>* userModel = new ann::Sequential<>();
@@ -237,7 +237,7 @@ void NCF::CreateMLP()
  */
 void NCF::CreateNeuMF()
 {
-  size_t size = (dataset.n_cols * (neg+1))/2;
+  size_t size = (dataset.n_cols * (neg+1));
 
   // GMF user sub-network.
   ann::Sequential<>* userGMFModel = new ann::Sequential<>();
