@@ -178,7 +178,7 @@ void NCF::Train(OptimizerType optimizer)
  */
 void NCF::CreateGMF()
 {
-  size_t size = dataset.n_cols*(neg+1);
+  size_t size = (dataset.n_cols * (neg+1))/2;
 
   // User sub-network.
   ann::Sequential<>* userModel = new ann::Sequential<>();
@@ -208,7 +208,7 @@ void NCF::CreateGMF()
  */
 void NCF::CreateMLP()
 {
-  size_t size = dataset.n_cols*(neg+1);
+  size_t size = (dataset.n_cols * (neg+1))/2;
 
   // User sub-network.
   ann::Sequential<>* userModel = new ann::Sequential<>();
@@ -237,7 +237,61 @@ void NCF::CreateMLP()
  */
 void NCF::CreateNeuMF()
 {
-  // Being debugged.
+  size_t size = (dataset.n_cols * (neg+1))/2;
+
+  // GMF user sub-network.
+  ann::Sequential<>* userGMFModel = new ann::Sequential<>();
+  userGMFModel->Add<ann::Subview<> >(1, 0, size - 1);
+  userGMFModel->Add<ann::Embedding<> >(numUsers, embedSize);
+  userGMFModel->Add<ann::Subview<> >(size, 0, embedSize - 1, 0, size - 1);
+
+  // GMF item sub-network.
+  ann::Sequential<>* itemGMFModel = new ann::Sequential<>();
+  itemGMFModel->Add<ann::Subview<> >(1, size, (size * 2) - 1);
+  itemGMFModel->Add<ann::Embedding<> >(numItems, embedSize);
+  itemGMFModel->Add<ann::Subview<> >(size, 0, embedSize - 1, 0, size - 1);
+
+  // Merge the user and item sub-network.
+  ann::MultiplyMerge<> mergeGMFModel(true, true);
+  mergeGMFModel.Add(userGMFModel);
+  mergeGMFModel.Add(itemGMFModel);
+
+  // Create the main GMF network.
+  ann::Sequential<>* networkGMF = new ann::Sequential<>();
+  networkGMF->Add<ann::IdentityLayer<> >();
+  networkGMF->Add<ann::MultiplyMerge<> >(mergeGMFModel);
+
+  // MLP user sub-network.
+  ann::Sequential<>* userMLPModel = new ann::Sequential<>();
+  userMLPModel->Add<ann::Subview<> >(1, 0, size - 1);
+  userMLPModel->Add<ann::Embedding<> >(numUsers, embedSize);
+
+  // MLP item sub-network.
+  ann::Sequential<>* itemMLPModel = new ann::Sequential<>();
+  itemMLPModel->Add<ann::Subview<> >(1, size, (size * 2) - 1);
+  itemMLPModel->Add<ann::Embedding<> >(numItems, embedSize);
+
+  // Merge the user and item sub-network.
+  ann::Concat<>* mergeMLPModel = new ann::Concat<>(true, true);
+  mergeMLPModel->Add(userMLPModel);
+  mergeMLPModel->Add(itemMLPModel);
+
+  // Create the main MLP network.
+  ann::Sequential<>* networkMLP = new ann::Sequential<>();
+  networkMLP->Add<ann::IdentityLayer<> >();
+  networkMLP->Add(mergeMLPModel);
+
+
+  // Concatenate GMF and MLP
+  ann::Concat<>* mergeModel = new ann::Concat<>(true, true);
+  mergeModel->Add(networkMLP);
+  mergeModel->Add(networkGMF);
+
+  network.Add<ann::IdentityLayer<> >();
+  network.Add(mergeModel);
+  network.Add<ann::Subview<> >(2, 0, (embedSize * size) - 1, 0, 1);
+  network.Add<ann::Subview<> >(1, 0, (3 * embedSize * size) - 1, 0, 0);
+  network.Add<ann::SigmoidLayer<> >();
 }
 
 /**

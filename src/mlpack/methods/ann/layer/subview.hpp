@@ -68,11 +68,14 @@ class Subview
   template<typename InputType, typename OutputType>
   void Forward(InputType&& input, OutputType&& output)
   {
-    size_t batchSize = input.n_cols / inSize;
+    inputRows = input.n_rows;
+    inputCols = input.n_cols;
+
+    batchSize = input.n_cols / inSize;
 
     // Check if subview parameters are within the indices of input sample.
-    endRow = ((endRow < input.n_rows) && (endRow >= beginRow))?
-        endRow : (input.n_rows - 1);
+    endRow = ((endRow < inputRows) && (endRow >= beginRow))?
+        endRow : (inputRows - 1);
     endCol = ((endCol < inSize) && (endCol >= beginCol)) ?
         endCol : (inSize - 1);
 
@@ -83,8 +86,8 @@ class Subview
     size_t batchEnd = endCol;
 
     // Check whether the input is already in desired form.
-    if ((input.n_rows != ((endRow - beginRow + 1) *
-        (endCol - beginCol + 1))) || (input.n_cols != batchSize))
+    if ((inputRows != ((endRow - beginRow + 1) *
+        (endCol - beginCol + 1))) || (inputCols != batchSize))
     {
       for (size_t i = 0; i < batchSize; i++)
       {
@@ -112,13 +115,11 @@ class Subview
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(arma::Mat<eT>&& input,
+  void Backward(arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g)
   {
-    g.zeros(input.n_rows, input.n_cols);
-
-    size_t batchSize = input.n_cols / inSize;
+    g.zeros(inputRows, inputCols);
 
     size_t batchBegin = beginCol;
     size_t batchEnd = endCol;
@@ -173,6 +174,14 @@ class Subview
   //! Ending column index of subview vector or matrix.
   size_t endCol;
 
+  //! Batch size
+  size_t batchSize;
+
+  //! Number of rows in input matrix.
+  size_t inputRows;
+
+  //! Number of columns in input matrix.
+  size_t inputCols;
   //! Locally-stored delta object.
   OutputDataType delta;
 
