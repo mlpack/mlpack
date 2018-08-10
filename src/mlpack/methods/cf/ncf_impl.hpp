@@ -110,8 +110,8 @@ void NCF::GetTrainingInstance(arma::mat& predictors,
     temp = neg;
 
     // Rating exists.
-    users(q) = dataset(0, i);
-    items(q) = dataset(1, i);
+    users(q) = dataset(0, i) + 1;
+    items(q) = dataset(1, i) + 1;
     resp(q) = implicit ? 1 : dataset(2, i);
     q++;
     // From find negatives.
@@ -121,8 +121,8 @@ void NCF::GetTrainingInstance(arma::mat& predictors,
     {
       size_t j = math::RandInt(val);
       // Add negatives.
-      users(q) = dataset(0, i);
-      items(q) = j;
+      users(q) = dataset(0, i) + 1;
+      items(q) = negatives[dataset(0, i)][j] + 1;
       resp(q) = 0;
       q++;
       temp--;
@@ -162,7 +162,8 @@ void NCF::Train(OptimizerType optimizer)
 
   GetTrainingInstance(predictors, responses);
 
-  network.ResetData(std::move(predictors), std::move(responses));
+  network.Predictors() = std::move(predictors);
+  network.Responses() = std::move(responses);
 
   // Train the model.
   Timer::Start("ncf_optimization");
@@ -312,14 +313,15 @@ void NCF::EvaluateModel(arma::mat& testData,
   for (size_t i = 0; i < testData.n_cols; i++)
   {
     // Considered user item rating test data.
-    size_t u = testData(0, i);
-    size_t gtItem = testData(1, i);
+    size_t u = testData(0, i) + 1;
+    size_t gtItem = testData(1, i) + 1;
     size_t rt = testData(2, i);
 
     // Get negatives of items.
     arma::Col<size_t> itemVec(100);
     itemVec.rows(0, 98) = (arma::conv_to< arma::Col<size_t> >::from(
         negatives[u])).rows(0, 98);
+    itemVec.transform( [](double val) { return (val + 1); } );
     itemVec(99) = size_t(gtItem);
 
     // Form input for the network.
@@ -368,8 +370,8 @@ void NCF::GetRecommendations(const size_t numRecs,
                              arma::Mat<size_t>& recommendations)
 {
   // Generate list of users.
-  arma::Col<size_t> users = arma::linspace<arma::Col<size_t> >(0,
-      numUsers - 1, numUsers);
+  arma::Col<size_t> users = arma::linspace<arma::Col<size_t> >(1,
+      numUsers, numUsers);
 
   // Call the main overload for recommendations.
   GetRecommendations(numRecs, recommendations, users);
@@ -383,8 +385,8 @@ void NCF::GetRecommendations(const size_t numRecs,
                              const arma::Col<size_t>& users)
 {
   // Column vector of all items.
-  arma::Col<size_t> itemVec = arma::linspace<arma::Col<size_t> >(0,
-      numItems - 1, numItems);
+  arma::Col<size_t> itemVec = arma::linspace<arma::Col<size_t> >(1,
+      numItems, numItems);
   arma::Col<size_t> userVec(numItems);
   arma::mat predictors;
 
