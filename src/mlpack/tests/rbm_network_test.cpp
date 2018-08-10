@@ -226,13 +226,8 @@ BOOST_AUTO_TEST_CASE(SpikeSlabRBMCIFARTest)
   double slabPenalty = 10.5;
   double lambdaBias = 10;
 
-  if (!CLI::HasParam("dataset"))
-    Log::Fatal << "Input dataset is undefined!" << std::endl;
-  if (!CLI::HasParam("label"))
-    Log::Fatal << "Input lable  is undefined!" << std::endl;
-
-  std::string datafile = CLI::GetParam<std::string>("dataset");
-  std::string labelfile = CLI::GetParam<std::string>("label");
+  std::string datafile = "";
+  std::string labelfile = "";
 
   std::cout << "dataset = '" << dataset << "'" << std::endl;
 
@@ -326,12 +321,11 @@ BOOST_AUTO_TEST_CASE(SpikeSlabRBMCIFARTest)
   arma::mat ssRBMFeaturesTest(hiddenLayerSize * 49, testData.n_cols);
   arma::mat ssRBMFeaturesTrain(hiddenLayerSize * 49, trainData.n_cols);
 
-  for (size_t i = 0, j = 0; i < testData.n_cols; i++, j++)
+  for (size_t i = 0, j = 0; i < testData.n_cols; i++, j += 2)
   {
     j = j % 49;
     modelssRBM.SampleHidden(std::move(testData.col(i)),
         std::move(hiddenMeanTest.slice(i).col(j)));
-    j++;
   }
 
   for (size_t i = 0; i < hiddenMeanTest.n_slices; ++i)
@@ -339,12 +333,11 @@ BOOST_AUTO_TEST_CASE(SpikeSlabRBMCIFARTest)
     ssRBMFeaturesTest.col(i) = arma::vectorise(hiddenMeanTest.slice(i), 1).t();
   }
 
-  for (size_t i = 0, j = 0; i < trainData.n_cols; i++, j++)
+  for (size_t i = 0, j = 0; i < trainData.n_cols; i++, j += 2)
   {
     j = j % 49;
     modelssRBM.SampleHidden(std::move(trainData.col(i)),
         std::move(hiddenMeanTrain.slice(i).col(j)));
-    j++;
   }
   for (size_t i = 0; i < hiddenMeanTrain.n_slices; ++i)
   {
@@ -381,7 +374,7 @@ BOOST_AUTO_TEST_CASE(SpikeSlabRBMCIFARTest)
       normalTestFeat, testLabels);
 
   std::cout << "RBM Accuracy" << classificationAccurayssRBM << std::endl;
-  std::cout << "noraml Accuracy" << classificationAccurayNormal << std::endl;
+  std::cout << "Normal Accuracy" << classificationAccurayNormal << std::endl;
 }
 
 template<typename MatType = arma::mat>
