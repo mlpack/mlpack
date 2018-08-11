@@ -27,6 +27,10 @@
 namespace mlpack {
 namespace cf {
 
+/**
+ * DeleteVisitor deletes the CFType<> object which is pointed to by the
+ * variable cf in class CFModel.
+ */
 class DeleteVisitor : public boost::static_visitor<void>
 {
  public:
@@ -35,6 +39,9 @@ class DeleteVisitor : public boost::static_visitor<void>
   void operator()(CFType<DecompositionPolicy>* c) const;
 };
 
+/**
+ * GetValueVisitor returns the pointer which points to the CFType object.
+ */
 class GetValueVisitor : public boost::static_visitor<void*>
 {
  public:
@@ -43,6 +50,10 @@ class GetValueVisitor : public boost::static_visitor<void*>
   void* operator()(CFType<DecompositionPolicy>* c) const;
 };
 
+/**
+ * PredictVisitor uses the CFType object to make predictions on the given
+ * combinations of users and items.
+ */
 class PredictVisitor : public boost::static_visitor<void>
 {
  private:
@@ -61,6 +72,10 @@ class PredictVisitor : public boost::static_visitor<void>
                  arma::vec& predictions);
 };
 
+/**
+ * RecommendationVisitor uses the CFType object to get recommendations for the
+ * given users.
+ */
 class RecommendationVisitor : public boost::static_visitor<void>
 {
  private:
