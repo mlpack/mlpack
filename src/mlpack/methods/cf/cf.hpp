@@ -90,8 +90,6 @@ class CFType
    * @tparam MatType The type of input matrix, which is expected to be either
    *     arma::mat (table of (user, item, rating)) or arma::sp_mat (sparse
    *     rating matrix where row is item and column is user).
-   * @tparam DecompositionPolicy The algorithm to use to decompose
-   *     the rating matrix (a W and H matrix).
    *
    * @param data Data matrix: dense matrix (coordinate lists) 
    *    or sparse matrix(cleaned).
@@ -116,9 +114,6 @@ class CFType
    * parameters that have already been set for the model (specifically, the rank
    * parameter), and optionally, using the given DecompositionPolicy.
    *
-   * @tparam DecompositionPolicy The algorithm to use to decompose
-   *     the rating matrix (a W and H matrix).
-   *
    * @param data Input dataset; dense matrix (coordinate lists).
    * @param decomposition Instantiated DecompositionPolicy object.
    * @param maxIterations Maximum number of iterations.
@@ -135,9 +130,6 @@ class CFType
    * Train the CFType model (i.e. factorize the input matrix) using the
    * parameters that have already been set for the model (specifically, the
    * rank parameter), and optionally, using the given DecompositionPolicy.
-   *
-   * @tparam DecompositionPolicy The algorithm to use to decompose
-   *     the rating matrix (a W and H matrix).
    *
    * @param data Input dataset; sparse matrix (user item table).
    * @param decomposition Instantiated DecompositionPolicy object.
