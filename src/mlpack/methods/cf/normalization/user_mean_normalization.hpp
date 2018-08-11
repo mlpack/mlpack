@@ -107,9 +107,7 @@ class UserMeanNormalization
 
     // Normalize the data.
     it = cleanedData.begin();
-    it_end = cleanedData.end();
-
-    for (; it != it_end; it++)
+    for (; it != cleanedData.end(); it++)
     {
       *it = *it - userMean(it.col());
       // The algorithm omits rating of zero. If normalized rating equals zero,
