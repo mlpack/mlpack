@@ -2,9 +2,9 @@
 * @file generate_go_${PROGRAM_NAME}.cpp
 * @author Yasmine Dumouchel
 *
-* This is an automatically-generated file that is used to generate the .cpp
+* This is an automatically-generated file that is used to generate the .go
 * files that are used for the Go bindings.  This program will print the
-* .cpp file on stdout when run and doesn't need any input parameters.
+* .go file on stdout when run and doesn't need any input parameters.
 *
 * The CMake variable ${PROGRAM_NAME} must be set for
 * this to configure correctly.

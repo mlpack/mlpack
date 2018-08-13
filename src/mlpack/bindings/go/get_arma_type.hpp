@@ -3,7 +3,7 @@
  * @author Yasmine Dumouchle
  *
  * Given a matrix type, return the letter we should append to get the right
- * arma_numpy method call.
+ * ArmaToGonum or GonumToArma method call.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

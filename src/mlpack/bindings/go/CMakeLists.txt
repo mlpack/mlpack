@@ -1,8 +1,8 @@
 # If we are not supposed to make Python bindings, define the macro so it does
 # nothing and leave this file.
-# if (NOT BUILD_GO_BINDINGS)
-#   not_found_return("Not building Go bindings.")
-# endif ()
+if (NOT BUILD_GO_BINDINGS)
+  not_found_return("Not building Go bindings.")
+endif ()
 
 # Nothing in this directory will be compiled into mlpack.
 set(BINDING_SOURCES
@@ -15,7 +15,6 @@ set(BINDING_SOURCES
   mlpack/arma_util.hpp
   mlpack/cli_util.h
   mlpack/cli_util.hpp
-  print_class_defn.hpp
   print_cpp.cpp
   print_cpp.hpp
   print_defn_input.hpp
@@ -27,10 +26,10 @@ set(BINDING_SOURCES
   print_go.cpp
   print_h.hpp
   print_h.cpp
-  print_import_decl.hpp
   print_input_processing.hpp
   print_method_config.hpp
   print_method_init.hpp
+  print_model_util.hpp
   print_output_processing.hpp
   strip_type.hpp
 )
@@ -121,7 +120,6 @@ add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/generate_cp
        -DGENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/generate_go.cpp.in
        -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/generate_cpp_${name}.cpp
        -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
-       -DPROGRAM_MAIN_DIR=${CMAKE_CURRENT_SOURCE_DIR}
        -DPROGRAM_NAME=${name}
        -P ${CMAKE_SOURCE_DIR}/CMake/GenerateGoCPP.cmake
    DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/generate_go.cpp.in)

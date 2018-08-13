@@ -3,7 +3,7 @@
  * @author Yasmine Dumouchel
  *
  * Template metaprogramming to return the string representation of the type
- * for the go bindings.
+ * for the Go bindings.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

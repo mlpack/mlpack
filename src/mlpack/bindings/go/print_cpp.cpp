@@ -32,7 +32,6 @@ namespace go {
  */
 void PrintCPP(const ProgramDoc& programInfo,
               const string& mainFilename,
-              const string& mainDirectory,
               const string& functionName)
 {
   // Restore parameters.

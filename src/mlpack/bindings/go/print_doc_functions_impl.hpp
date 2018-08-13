@@ -54,38 +54,38 @@ std::string PrintOptionalInputs() { return ""; }
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
- * not exist in CLI.  For a parameter 'x' with value '5', this will print
- * something like x=5.
+ * not exist in CLI.
  */
 template<typename T, typename... Args>
 std::string PrintOptionalInputs(const std::string& paramName,
                               const T& value,
                               Args... args)
 {
-    // See if this is part of the program.
-    std::string result = "";
-    if (CLI::Parameters().count(paramName) > 0)
+  // See if this is part of the program.
+  std::string result = "";
+  if (CLI::Parameters().count(paramName) > 0)
+  {
+    const util::ParamData& d = CLI::Parameters()[paramName];
+    if (d.input && !d.required)
     {
-      const util::ParamData& d = CLI::Parameters()[paramName];
-      if (d.input && !d.required)
-      {
-        std::string goParamName = paramName;
-        goParamName[0] = std::toupper(goParamName[0]);
-        // Print the input option.
-        std::ostringstream oss;
-        oss << ">>> " << "param." << goParamName << " = ";
-        oss << PrintValue(value, d.tname == TYPENAME(std::string));
-        oss << "\n";
-        result = oss.str();
-      }
+      std::string goParamName = paramName;
+      goParamName[0] = std::toupper(goParamName[0]);
+
+      // Print the input option.
+      std::ostringstream oss;
+      oss << ">>> " << "param." << goParamName << " = ";
+      oss << PrintValue(value, d.tname == TYPENAME(std::string));
+      oss << "\n";
+      result = oss.str();
     }
-    else
-    {
-      // Unknown parameter!
-      throw std::runtime_error("Unknown parameter '" + paramName + "' " +
-          "encountered while assembling documentation!  Check PROGRAM_INFO() " +
-          "declaration.");
-    }
+  }
+  else
+  {
+    // Unknown parameter!
+    throw std::runtime_error("Unknown parameter '" + paramName + "' " +
+        "encountered while assembling documentation!  Check PROGRAM_INFO() " +
+        "declaration.");
+  }
 
   // Continue recursion.
   std::string rest = PrintOptionalInputs(args...);
@@ -102,8 +102,7 @@ std::string PrintInputOptions() { return ""; }
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
- * not exist in CLI.  For a parameter 'x' with value '5', this will print
- * something like x=5.
+ * not exist in CLI.
  */
 template<typename T, typename... Args>
 std::string PrintInputOptions(const std::string& paramName,
@@ -220,7 +219,7 @@ std::string ProgramCall(const std::string& programName, Args... args)
   std::string input = oss.str();
   if (input != "")
     result = result + input + ", ";
-  oss.str("");
+  oss.str(""); // Reset it.
   if (param != "")
    result = result + "param";
 
@@ -263,8 +262,7 @@ inline std::string ProgramCall(const std::string& programName)
 }
 
 /**
- * Print any closing call to a program.  For a Python binding this is a closing
- * brace.
+ * Print any closing call to a program.
  */
 inline std::string ProgramCallClose()
 {
@@ -279,8 +277,7 @@ inline std::string ParamString(const std::string& paramName)
 {
   // For a Go binding we don't need to know the type.
 
-  // Make sure that we don't print reserved keywords.
-    return "'" + paramName + "'";
+  return "'" + paramName + "'";
 }
 
 /**

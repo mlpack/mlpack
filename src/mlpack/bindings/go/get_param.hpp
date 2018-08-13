@@ -2,7 +2,7 @@
  * @file get_param.hpp
  * @author Ryan Curtin
  *
- * Get a parameter for a Python binding.
+ * Get a parameter for a Go binding.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

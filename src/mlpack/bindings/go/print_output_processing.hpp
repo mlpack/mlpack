@@ -35,14 +35,9 @@ void PrintOutputProcessing(
         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
 {
   const std::string prefix(indent, ' ');
-  /**
-   * This gives us code like:
-   *
-   *
-   */
-  std::cout << prefix << d.name << " := GetParam" << GetType<T>(d)
-      << "(\"" << d.name << "\")" << std::endl;
 
+  std::cout << prefix << d.name << " := GetParam" << GetType<T>(d)
+            << "(\"" << d.name << "\")" << std::endl;
 }
 
 /**
@@ -56,31 +51,11 @@ void PrintOutputProcessing(
 {
   const std::string prefix(indent, ' ');
 
-  /**
-   * This gives us code like:
-   *
-   *
-   * where X indicates the type to convert to.
-   */
-   std::cout << prefix << "var " << d.name << "Ptr MLPACK_Arma"
-              << std::endl;
-   std::cout << prefix << d.name << " := " << d.name
-              << "Ptr.ArmaToGonum_" << GetArmaType<T>() << GetType<T>(d)
-              << "(\""  << d.name << "\")" << std::endl;
+  std::cout << prefix << "var " << d.name << "Ptr MLPACK_Arma" << std::endl;
+  std::cout << prefix << d.name << " := " << d.name
+            << "Ptr.ArmaToGonum_" << GetArmaType<T>() << GetType<T>(d)
+            << "(\""  << d.name << "\")" << std::endl;
 }
-
-// /**
-//  * Print output processing for a dataset info / matrix combination.
-//  */
-// template<typename T>
-// void PrintOutputProcessing(
-//     const util::ParamData& d,
-//     const size_t indent,
-//     const bool onlyOutput,
-//     const typename boost::enable_if<std::is_same<T,
-//         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
-// {
-// }
 
 /**
  * Print output processing for a serializable model.
@@ -98,14 +73,9 @@ void PrintOutputProcessing(
 
   const std::string prefix(indent, ' ');
 
-  /**
-   * This gives us code like:
-   *
-   */
-   std::cout << prefix << "var " << d.name << " "
-      << strippedType << std::endl;
-   std::cout << prefix << d.name << ".get" << strippedType
-      << "(\"" << d.name << "\")" << std::endl;
+  std::cout << prefix << "var " << d.name << " " << strippedType << std::endl;
+  std::cout << prefix << d.name << ".get" << strippedType
+            << "(\"" << d.name << "\")" << std::endl;
 }
 
 /**

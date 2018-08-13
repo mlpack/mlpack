@@ -1,6 +1,6 @@
 /**
  * @file print_doc.hpp
- * @author Yasmine Dumouchel
+ * @author Ryan Curtin.
  *
  * Print documentation for a Go binding parameter.
  *
@@ -40,7 +40,7 @@ void PrintDoc(const util::ParamData& d,
   const size_t indent = *((size_t*) input);
   std::ostringstream oss;
   oss << " - ";
-    oss << d.name << " (";
+  oss << d.name << " (";
   oss << GetGoType<typename std::remove_pointer<T>::type>(d) << "): "
       << d.desc;
 

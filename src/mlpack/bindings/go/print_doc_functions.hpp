@@ -1,9 +1,9 @@
 /**
  * @file print_doc_functions.hpp
- * @author 
+ * @author Yasmine Dumouchel
  *
  * This file contains functions useful for printing documentation strings
- * related to Python bindings.
+ * related to Go bindings.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -34,8 +34,7 @@ inline std::string PrintInputOptions();
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
- * not exist in CLI.  For a parameter 'x' with value '5', this will print
- * something like x=5.
+ * not exist in CLI.
  */
 template<typename T, typename... Args>
 std::string PrintInputOptions(const std::string& paramName,
@@ -75,24 +74,19 @@ inline std::string PrintDataset(const std::string& datasetName);
 inline std::string ParamString(const std::string& paramName);
 
 /**
- * Print whether or not we should ignore a check on the given parameter.  For
- * Python bindings, we ignore any checks on output parameters, so if paramName
- * is an output parameter, this returns true.
+ * Print whether or not we should ignore a check on the given parameter.
  */
 inline bool IgnoreCheck(const std::string& paramName);
 
 /**
  * Print whether or not we should ignore a check on the given set of
- * constraints.  For Python bindings, we ignore any checks on output parameters,
- * so if any parameter is an output parameter, this returns true.
+ * constraints.
  */
 inline bool IgnoreCheck(const std::vector<std::string>& constraints);
 
 /**
  * Print whether or not we should ignore a check on the given set of
- * constraints.  For Python bindings, we ignore any checks on output parameters,
- * so if any constraint parameter or the main parameter are output parameters,
- * this returns true.
+ * constraints.
  */
 inline bool IgnoreCheck(
     const std::vector<std::pair<std::string, bool>>& constraints,

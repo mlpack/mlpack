@@ -2,7 +2,7 @@
  * @file cli_util.hpp
  * @author Yasmine Dumouchel
  *
- * Simple function to work around C and Go's lack of support for templates.
+ * Utility function for Go to set and get parameters to and from the CLI.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

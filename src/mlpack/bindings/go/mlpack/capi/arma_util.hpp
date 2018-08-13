@@ -2,7 +2,7 @@
  * @file arma_util.hpp
  * @author Ryan Curtin
  *
- * Utility function for Cython to set the memory state of an Armadillo object.
+ * Utility function for Go to get memory pointer of an Armadillo Object.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -27,20 +27,6 @@ void SetMemState(T& t, int state)
   const_cast<arma::uhword&>(t.mem_state) = state;
 }
 
-
-// // Return the number of elems.
-// template<typename T>
-// inline int NumElem(T& t, const char *identifier)
-// {
-//   if (T::is_row)
-//     arma::Row<double> output = CLI::GetParam<arma::Row<double>>(identifier);
-//   else if (T::is_col)
-//     arma::Col<double> output = CLI::GetParam<arma::Col<double>>(identifier);
-//   else
-//     arma::mat output = CLI::GetParam<arma::mat<double>>(identifier);
-//
-//   return output.n_elem;
-// }
 
 /**
  * Get the memory state of the given Armadillo object.

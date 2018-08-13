@@ -54,19 +54,6 @@ void PrintDefnInput(
   }
 }
 
-// /**
-//  * Print output processing for a dataset info / matrix combination.
-//  */
-// template<typename T>
-// void PrintOutputProcessing(
-//     const util::ParamData& d,
-//     const size_t indent,
-//     const bool onlyOutput,
-//     const typename boost::enable_if<std::is_same<T,
-//         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
-// {
-// }
-
 /**
  * Print input in method definition for a  serializable model.
  */

@@ -21,6 +21,7 @@
 #define BINDING_TYPE_CLI 0
 #define BINDING_TYPE_TEST 1
 #define BINDING_TYPE_PYX 2
+#define BINDING_TYPE_GO 3
 #define BINDING_TYPE_UNKNOWN -1
 
 #ifndef BINDING_TYPE
@@ -134,6 +135,51 @@ static const std::string testName = "";
     namespace mlpack { \
     namespace bindings { \
     namespace python { \
+    std::string programName = NAME; \
+    } \
+    } \
+    }
+
+PARAM_FLAG("verbose", "Display informational messages and the full list of "
+    "parameters and timers at the end of execution.", "v");
+PARAM_FLAG("copy_all_inputs", "If specified, all input parameters will be deep"
+    " copied before the method is run.  This is useful for debugging problems "
+    "where the input parameters are being modified by the algorithm, but can "
+    "slow down the code.", "");
+
+// Nothing else needs to be defined---the binding will use mlpackMain() as-is.
+
+#elif(BINDING_TYPE == BINDING_TYPE_GO) // This is a Go binding.
+
+#include <mlpack/bindings/go/go_option.hpp>
+#include <mlpack/bindings/go/print_doc_functions.hpp>
+
+#define PRINT_PARAM_STRING mlpack::bindings::go::ParamString
+#define PRINT_PARAM_VALUE mlpack::bindings::go::PrintValue
+#define PRINT_DATASET mlpack::bindings::go::PrintDataset
+#define PRINT_MODEL mlpack::bindings::go::PrintModel
+#define PRINT_CALL mlpack::bindings::go::ProgramCall
+#define BINDING_IGNORE_CHECK mlpack::bindings::go::IgnoreCheck
+
+namespace mlpack {
+namespace util {
+
+template<typename T>
+using Option = mlpack::bindings::go::GoOption<T>;
+
+}
+}
+
+static const std::string testName = "";
+#include <mlpack/core/util/param.hpp>
+
+#undef PROGRAM_INFO
+#define PROGRAM_INFO(NAME, DESC) static mlpack::util::ProgramDoc \
+    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, \
+        []() { return DESC; }); \
+    namespace mlpack { \
+    namespace bindings { \
+    namespace go { \
     std::string programName = NAME; \
     } \
     } \

@@ -15,14 +15,13 @@
 #include <mlpack/core/util/param_data.hpp>
 #include "get_param.hpp"
 #include "get_printable_param.hpp"
-#include "print_class_defn.hpp"
 #include "print_defn_input.hpp"
 #include "print_defn_output.hpp"
 #include "print_doc.hpp"
-#include "print_import_decl.hpp"
 #include "print_input_processing.hpp"
 #include "print_method_config.hpp"
 #include "print_method_init.hpp"
+#include "print_model_util.hpp"
 #include "print_output_processing.hpp"
 
 namespace mlpack {
@@ -82,25 +81,22 @@ class GoOption
     // Set the function pointers that we'll need.  All of these function
     // pointers will be used by both the program that generates the .cpp,
     // the .h, and the .go binding files also the binding itself.
-    // (The binding itself will only use GetParam, GetPrintableParam,
-    // and GetRawParam.)
     CLI::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
     CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
         &GetPrintableParam<T>;
 
     // These are used by the go binding generator.
-    CLI::GetSingleton().functionMap[data.tname]["PrintClassDefnCPP"] =
-        &PrintClassDefnCPP<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintClassDefnH"] =
-        &PrintClassDefnH<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintClassDefnGo"] =
-        &PrintClassDefnGo<T>;
+    CLI::GetSingleton().functionMap[data.tname]["PrintModelUtilCPP"] =
+        &PrintModelUtilCPP<T>;
+    CLI::GetSingleton().functionMap[data.tname]["PrintModelUtilH"] =
+        &PrintModelUtilH<T>;
+    CLI::GetSingleton().functionMap[data.tname]["PrintModelUtilGo"] =
+        &PrintModelUtilGo<T>;
     CLI::GetSingleton().functionMap[data.tname]["PrintDefnInput"] =
         &PrintDefnInput<T>;
     CLI::GetSingleton().functionMap[data.tname]["PrintDefnOutput"] =
         &PrintDefnOutput<T>;
     CLI::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
-    CLI::GetSingleton().functionMap[data.tname]["ImportDecl"] = &ImportDecl<T>;
     CLI::GetSingleton().functionMap[data.tname]["PrintOutputProcessing"] =
         &PrintOutputProcessing<T>;
     CLI::GetSingleton().functionMap[data.tname]["PrintMethodConfig"] =

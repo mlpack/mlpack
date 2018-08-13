@@ -29,7 +29,6 @@ namespace go {
  */
 void PrintCPP(const util::ProgramDoc& programInfo,
               const std::string& mainFilename,
-              const std::string& mainDirectory,
               const std::string& functionName);
 
 } // namespace go

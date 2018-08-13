@@ -45,5 +45,5 @@ int main(int /* argc */, char** /* argv */)
  // programName is defined in mlpack_main.hpp.
  CLI::RestoreSettings(programName);
 
- PrintCPP(*CLI::GetSingleton().doc, "${PROGRAM_MAIN_FILE}", "${PROGRAM_MAIN_DIR}", "${PROGRAM_NAME}");
+ PrintCPP(*CLI::GetSingleton().doc, "${PROGRAM_MAIN_FILE}", "${PROGRAM_NAME}");
 }
