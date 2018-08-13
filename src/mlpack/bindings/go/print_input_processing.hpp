@@ -45,19 +45,26 @@ void PrintInputProcessing(
   if (std::is_same<T, bool>::value)
     def = "false";
 
-    std::string paramName = d.name;
-    std::string goParamName = paramName;
-    if (!paramName.empty())
-    {
-      goParamName[0] = std::toupper(goParamName[0]);
-    }
+  // Capitalize the first letter of parameter name so it is
+  // of exported type in Go.
+  std::string paramName = d.name;
+  std::string goParamName = paramName;
+  if (!paramName.empty())
+  {
+    goParamName[0] = std::toupper(goParamName[0]);
+  }
 
   /**
    * This gives us code like:
    *
+   *  // Detect if the parameter was passed; set if so.
+   *  if param.Name != nil {
+   *     SetParam<d.cppType>("paramName", param.Name)
+   *     SetPassed("paramName")
+   *  }
    */
   std::cout << prefix << "// Detect if the parameter was passed; set if so."
-      << std::endl;
+            << std::endl;
   if (!d.required)
   {
     std::cout << prefix << "if param." << goParamName << " != ";
@@ -90,28 +97,33 @@ void PrintInputProcessing(
     {
       std::cout << "nil";
     }
-    std::cout << " {"  << std::endl;
-    std::cout << prefix << "  SetParam" << GetType<T>(d) << "(\""
-        << d.name << "\", param.";
-    std::cout << goParamName;
-    std::cout << ")" << std::endl;
-    std::cout << prefix << "  SetPassed(\"" << d.name << "\")"
-        << std::endl;
+
+    // Print function call to set the given parameter into the cli.
+    std::cout << " {" << std::endl;
+    std::cout << prefix << prefix << "SetParam" << GetType<T>(d) << "(\""
+              << d.name << "\", param." << goParamName << ")" << std::endl;
+
+    // Print function call to set the given parameter as passed.
+    std::cout << prefix << prefix << "SetPassed(\""
+              << d.name << "\")" << std::endl;
 
     // If this parameter is "verbose", then enable verbose output.
     if (d.name == "verbose")
-      std::cout << prefix << "  EnableVerbose()" << std::endl;
-      std::cout << prefix << "}" << std::endl;
+      std::cout << prefix << prefix << "EnableVerbose()" << std::endl;
+
+    std::cout << prefix << "}" << std::endl; // Closing brace.
   }
   else
   {
     std::string lowercaseParamName = d.name;
     lowercaseParamName[0]  = std::tolower(lowercaseParamName[0]);
+
+    // Print function call to set the given parameter into the cli.
     std::cout << prefix << "SetParam" << GetType<T>(d) << "(\""
-              << lowercaseParamName << "\", "
-              << d.name << ")" << std::endl;
-    std::cout << prefix << "SetPassed(\"" << d.name << "\")"
-        << std::endl;
+              << lowercaseParamName << "\", " << d.name << ")" << std::endl;
+
+    // Print function call to set the given parameter as passed.
+    std::cout << prefix << "SetPassed(\"" << d.name << "\")" << std::endl;
   }
   std::cout << std::endl; // Extra line is to clear up the code a bit.
 }
@@ -127,7 +139,8 @@ void PrintInputProcessing(
 {
   const std::string prefix(indent, ' ');
 
-  // Make sure that we don't useparamNames that are Python keywords.
+  // Capitalize the first letter of parameter name so it is
+  // of exported type in Go.
   std::string paramName = d.name;
   std::string goParamName =paramName;
   if (!paramName.empty())
@@ -138,31 +151,43 @@ void PrintInputProcessing(
   /**
    * This gives us code like:
    *
+   *  // Detect if the parameter was passed; set if so.
+   *  if param.Name != nil {
+   *     GonumToArma_<type>("paramName", param.Name)
+   *     SetPassed("paramName")
+   *  }
    */
   std::cout << prefix << "// Detect if the parameter was passed; set if so."
-      << std::endl;
+            << std::endl;
   if (!d.required)
   {
     std::cout << prefix << "if param." << goParamName
-        << " != nil {" << std::endl;
-    std::cout << prefix << "  " << "GonumToArma_" << GetType<T>(d)
-         << "(\"" << d.name << "\", param." << goParamName
-        << ")" << std::endl;
-    std::cout << prefix << "  SetPassed(\"" << d.name << "\")"
-        << std::endl;
-    std::cout << prefix << "}" << std::endl;
+              << " != nil {" << std::endl;
+
+    // Print function call to set the given parameter into the cli.
+    std::cout << prefix << prefix << "GonumToArma_" << GetType<T>(d)
+              << "(\"" << d.name << "\", param." << goParamName
+              << ")" << std::endl;
+
+    // Print function call to set the given parameter as passed.
+    std::cout << prefix << prefix << "SetPassed(\"" << d.name << "\")"
+              << std::endl;
+    std::cout << prefix << "}" << std::endl; // Closing brace.
   }
   else
   {
     std::string lowercaseParamName = d.name;
     lowercaseParamName[0]  = std::tolower(lowercaseParamName[0]);
+
+    // Print function call to set the given parameter into the cli.
     std::cout << prefix << "GonumToArma_" << GetType<T>(d)
-        << "(\"" << d.name << "\", " << lowercaseParamName
-        << ")" << std::endl;
-    std::cout << prefix << "SetPassed(\"" << d.name << "\")"
-        << std::endl;
+              << "(\"" << d.name << "\", " << lowercaseParamName
+              << ")" << std::endl;
+
+    // Print function call to set the given parameter as passed.
+    std::cout << prefix << "SetPassed(\"" << d.name << "\")" << std::endl;
   }
-  std::cout << std::endl;
+  std::cout << std::endl; // Extra line is to clear up the code a bit.
 }
 
 /**
@@ -181,7 +206,8 @@ void PrintInputProcessing(
 
   const std::string prefix(indent, ' ');
 
-  // Make sure that we don't useparamNames that are Python keywords.
+  // Capitalize the first letter of parameter name so it is
+  // of exported type in Go.
   std::string paramName = d.name;
   std::string goParamName = paramName;
   if (!paramName.empty())
@@ -192,40 +218,38 @@ void PrintInputProcessing(
   /**
    * This gives us code like:
    *
+   *  // Detect if the parameter was passed; set if so.
+   *  if param.Name != nil {
+   *     set<ModelType>("paramName", param.Name)
+   *     SetPassed("paramName")
+   *  }
    */
   std::cout << prefix << "// Detect if the parameter was passed; set if so."
       << std::endl;
   if (!d.required)
   {
+    std::cout << prefix << "if param." << goParamName << " != nil {"
+              << std::endl;
+    // Print function call to set the given parameter into the cli.
+    std::cout << prefix << prefix << "set" << strippedType << "(\""
+              << d.name << "\", param." << goParamName << ")" << std::endl;
 
-    std::cout << prefix << "if param." << goParamName << " != nil {" << std::endl;
-    std::cout << prefix << "  " << "set" << strippedType
-        << "(\"" << d.name << "\", param." << goParamName << ")" << std::endl;
-    std::cout << prefix << "  SetPassed(\"" << d.name << "\")"
-        << std::endl;
-    std::cout << prefix << "}" << std::endl;
+    // Print function call to set the given parameter as passed.
+    std::cout << prefix << prefix << "SetPassed(\"" << d.name << "\")"
+              << std::endl;
+    std::cout << prefix << "}" << std::endl; // Closing brace.
   }
   else
   {
-      std::cout << prefix << "set" << strippedType << "(\""
-          << d.name << "\", " << paramName << ")" << std::endl;
-      std::cout << prefix << "SetPassed(\"" << d.name << "\")"
-          << std::endl;
-  }
-  std::cout << std::endl;
-}
+    // Print function call to set the given parameter into the cli.
+    std::cout << prefix << "set" << strippedType << "(\"" << d.name
+              << "\", " << paramName << ")" << std::endl;
 
-// /**
-//  * Print input processing for a matrix/DatasetInfo type.
-//  */
-// template<typename T>
-// void PrintInputProcessing(
-//     const util::ParamData& d,
-//     const size_t indent,
-//     const typename boost::enable_if<std::is_same<T,
-//         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
-// {
-// }
+    // Print function call to set the given parameter as passed.
+    std::cout << prefix << "SetPassed(\"" << d.name << "\")" << std::endl;
+  }
+  std::cout << std::endl; // Extra line is to clear up the code a bit.
+}
 
 /**
  * Given parameter information and the current number of spaces for indentation,

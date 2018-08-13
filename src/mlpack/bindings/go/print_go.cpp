@@ -22,7 +22,6 @@ namespace mlpack {
 namespace bindings {
 namespace go {
 
-
 /**
  * Given a list of parameter definition and program documentation, print a
  * generated .go file to stdout.
@@ -49,8 +48,7 @@ void PrintGo(const util::ProgramDoc& programInfo,
     if (d.input && d.required)
     {
       // Ignore some parameters.
-      if (d.name != "help" && d.name != "info" &&
-          d.name != "version")
+      if (d.name != "help" && d.name != "info" && d.name != "version")
         inputOptions.push_back(it->first);
     }
     else if (!d.input)
@@ -68,21 +66,22 @@ void PrintGo(const util::ProgramDoc& programInfo,
       inputOptions.push_back(it->first);
   }
 
-  // First, we must generate the header comment.
-
-  // Now import all the necessary packages.
+  // First, we must generate the mlpack package name.
   cout << "package mlpack" << endl;
   cout << endl;
+
+  // Now we must print the cgo's import libraries and files.
   cout << "/*" << endl;
   cout << "#cgo CFLAGS: -I/capi -I. -g -Wall" << endl;
   cout << "#cgo LDFLAGS: -L/usr/local/lib/ -lm "
-        << "-lmlpack -L. -lmlpack_go_" << functionName << endl;
+      << "-lmlpack -L. -lmlpack_go_" << functionName << endl;
   cout << "#include <capi/" << functionName << ".h>" << endl;
   cout << "#include <stdlib.h>" << endl;
-  cout << " */" << endl;
+  cout << "*/" << endl;
   cout << "import \"C\" " << endl;
   cout << endl;
 
+  // Then we must print the import of the gonum package.
   cout << "import (" << endl;
   cout << "  " << "\"gonum.org/v1/gonum/mat\" " << endl;
   for (size_t i = 0; i < inputOptions.size(); ++i)
@@ -91,15 +90,16 @@ void PrintGo(const util::ProgramDoc& programInfo,
     size_t indent = 2;
     CLI::GetSingleton().functionMap[d.tname]["ImportDecl"](d,
         (void*) &indent, NULL);
-
   }
   cout << ")" << endl;
   cout << endl;
 
-  // Print Go method configuration struct
+  // Capitalize the first letter of parameter name so it is
+  // of exported type in Go.
   std::string goFunctionName = functionName;
   goFunctionName[0] = std::toupper(goFunctionName[0]);
 
+  // Print Go method configuration struct
   cout << "type " << goFunctionName << "OptionalParam struct {"
       << std::endl;
   for (size_t i = 0; i < inputOptions.size(); ++i)
@@ -129,12 +129,12 @@ void PrintGo(const util::ProgramDoc& programInfo,
   cout << "}" << endl;
   cout << endl;
 
-  // Print any extra class definitions we might need.
+  // Then we must print utility function for model type parameters if needed.
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
     const util::ParamData& d = it->second;
     if (d.input)
-      CLI::GetSingleton().functionMap[d.tname]["PrintClassDefnGo"](d, NULL, NULL);
+      CLI::GetSingleton().functionMap[d.tname]["PrintModelUtilGo"](d, NULL, NULL);
   }
 
   // Print the comment describing the function and its parameters.
@@ -167,11 +167,13 @@ void PrintGo(const util::ProgramDoc& programInfo,
     cout << endl;
   }
   cout << endl;
-  cout <<  "*/" << endl;
+  cout << "*/" << endl;
 
 
   // Print the function definition.
   cout << "func " << goFunctionName << "(";
+
+  // Then we print the required input.
   size_t counter = 0;
   size_t indent = 4 /* 'def ' */ + functionName.size() + 1 /* '(' */;
   for (size_t i = 0; i < inputOptions.size(); ++i)
@@ -185,18 +187,19 @@ void PrintGo(const util::ProgramDoc& programInfo,
       CLI::GetSingleton().functionMap[d.tname]["PrintDefnInput"](d, NULL, NULL);
       counter++;
     }
-
   }
+
+  // Then we print the optional parameter struct input.
   if (counter == 0)
   {
     cout << "param *" << goFunctionName << "OptionalParam) (";
   }
   else
   {
-      cout << ", param *" << goFunctionName << "OptionalParam) (";
+    cout << ", param *" << goFunctionName << "OptionalParam) (";
   }
 
-  // Print output variables
+  // We must then print the output options.
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
     const util::ParamData& d = parameters.at(outputOptions[i]);
@@ -206,29 +209,30 @@ void PrintGo(const util::ProgramDoc& programInfo,
 
     std::tuple<size_t, bool> t = std::make_tuple(2, false);
     CLI::GetSingleton().functionMap[d.tname]["PrintDefnOutput"](d,
-        (void*) &t, NULL);
+      (void*) &t, NULL);
   }
 
-  // Print opening brace for function definition.
+  // Print opening brace for function.
   cout << ") {" << endl;
 
   // Reset any timers and disable backtraces.
-  cout << "  ResetTimers()" << endl;
-  cout << "  EnableTimers()" << endl;
-  cout << "  DisableBacktrace()" << endl;
-  cout << "  DisableVerbose()" << endl;
+  cout << "  " << "ResetTimers()" << endl;
+  cout << "  " << "EnableTimers()" << endl;
+  cout << "  " << "DisableBacktrace()" << endl;
+  cout << "  " << "DisableVerbose()" << endl;
 
   // Restore the parameters.
-  cout << "  RestoreSettings(\"" << programInfo.programName << "\")"
-      << endl;
+  cout << "  " << "RestoreSettings(\"" << programInfo.programName
+      << "\")" << endl;
   cout << endl;
 
   // Determine whether or not we need to copy parameters.
-  cout << "   // Detect if the parameter was passed; set if so." << endl;
-  cout << "  if param.Copy_all_inputs == true {" << endl;
-  cout << "    SetParamBool(\"copy_all_inputs\", param.Copy_all_inputs)" << endl;
-  cout << "    SetPassed(\"copy_all_inputs\")" << endl;
-  cout << "  }" << endl;
+  cout << "  " << "// Detect if the parameter was passed; set if so." << endl;
+  cout << "  " << "if param.Copy_all_inputs == true {" << endl;
+  cout << "  " << "  "
+      << "SetParamBool(\"copy_all_inputs\", param.Copy_all_inputs)" << endl;
+  cout << "  " << "  " << "SetPassed(\"copy_all_inputs\")" << endl;
+  cout << "  " << "}" << endl;
   cout << endl;
 
   // Do any input processing.
@@ -242,21 +246,21 @@ void PrintGo(const util::ProgramDoc& programInfo,
   }
 
   // Set all output options as passed.
-  cout << "  // Mark all output options as passed." << endl;
+  cout << "  " << "// Mark all output options as passed." << endl;
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
     const util::ParamData& d = parameters.at(outputOptions[i]);
-    cout << "  SetPassed(\"" << d.name << "\")" << endl;
+    cout << "  " << "SetPassed(\"" << d.name << "\")" << endl;
   }
-  cout << "" << endl;
+  cout << endl;
 
   // Call the method.
-  cout << "  // Call the mlpack program." << endl;
-  cout << "  C.MLPACK_" << functionName << "()" << endl;
+  cout << "  " << "// Call the mlpack program." << endl;
+  cout << "  " << "C.MLPACK_" << functionName << "()" << endl;
   cout << endl;
 
   // Do any output processing and return.
-  cout << "  // Initialize result variable and get output." << endl;
+  cout << "  " << "// Initialize result variable and get output." << endl;
 
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {

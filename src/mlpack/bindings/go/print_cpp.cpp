@@ -1,8 +1,8 @@
 /**
- * @file print_go.cpp
+ * @file print_cpp.cpp
  * @author Yasmine Dumouchel
  *
- * Implementation of function to generate a .go file given a list of parameters
+ * Implementation of function to generate a .cpp file given a list of parameters
  * for the function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -49,8 +49,7 @@ void PrintCPP(const ProgramDoc& programInfo,
     if (d.input && d.required)
     {
       // Ignore some parameters.
-      if (d.name != "help" && d.name != "info" &&
-          d.name != "version")
+      if (d.name != "help" && d.name != "info" && d.name != "version")
         inputOptions.push_back(it->first);
     }
     else if (!d.input)
@@ -72,49 +71,21 @@ void PrintCPP(const ProgramDoc& programInfo,
   cout << "#include \"" << functionName << ".h\""<< endl;
   cout << "#include <" << mainFilename << ">" << endl;
   cout << "#include <mlpack/bindings/go/mlpack/capi/cli_util.hpp>" << endl;
-
-  // // Print any extra header files we need to include
-  // for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
-  // {
-  //   int counter;
-  //   const util::ParamData& d = it->second;
-  //   if (d.input)
-  //   {
-  //     bool ismodel = HasModel(d, NULL, NULL);
-  //     if (ismodel == true)
-  //       cout << "#include " << mainDirectory << "/" << d.name << std::endl;
-  //   }
-  // }
   cout << endl;
-
   cout << "using namespace mlpack;" << endl;
   cout << "using namespace mlpack::util;" << endl;
   cout << "using namespace std;" << endl;
-
-  // // Print any extra namespace we might need.
-  // for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
-  // {
-  //   int counter;
-  //   const util::ParamData& d = it->second;
-  //   if (d.input)
-  //   {
-  //     bool ismodel = HasModel<T>(HasModel(d, NULL, NULL);
-  //     if (ismodel == true)
-  //       cout << "using namespace mlpack::" << d.name << std::endl;
-  //   }
-  // }
   cout << endl;
 
-  // Then we must print any class definitions if needed.
-  // Print any extra class definitions we might need.
+  // Then we must print utility function for model type parameters if needed.
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
     const util::ParamData& d = it->second;
     if (d.input)
-      CLI::GetSingleton().functionMap[d.tname]["PrintClassDefnCPP"](d, NULL, NULL);
+      CLI::GetSingleton().functionMap[d.tname]["PrintModelUtilCPP"](d, NULL, NULL);
   }
 
-  // Finally, we generate the wrapper for mlpackMain()
+  // Finally, we generate the wrapper function for mlpackMain().
   cout << "static void " << functionName << "_mlpackMain()" << endl;
   cout << "{" << endl;
   cout << "  " << "mlpackMain();" << endl;
@@ -125,7 +96,6 @@ void PrintCPP(const ProgramDoc& programInfo,
   cout << "  " << functionName << "_mlpackMain();" << endl;
   cout << "}" << endl;
   cout << endl;
-
 }
 
 } // namespace go

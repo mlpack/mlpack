@@ -1,8 +1,8 @@
 /**
- * @file print_go.cpp
+ * @file print_h.cpp
  * @author Yasmine Dumouchel
  *
- * Implementation of function to generate a .go file given a list of parameters
+ * Implementation of function to generate a .h file given a list of parameters
  * for the function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -32,7 +32,7 @@ namespace go {
  * @param functionName Name of the function (i.e. "pca").
  */
 void PrintH(const util::ProgramDoc& programInfo,
-              const std::string& functionName)
+            const std::string& functionName)
 {
   // Restore parameters.
   CLI::RestoreSettings(programInfo.programName);
@@ -49,8 +49,7 @@ void PrintH(const util::ProgramDoc& programInfo,
     if (d.input && d.required)
     {
       // Ignore some parameters.
-      if (d.name != "help" && d.name != "info" &&
-          d.name != "version")
+      if (d.name != "help" && d.name != "info" && d.name != "version")
         inputOptions.push_back(it->first);
     }
     else if (!d.input)
@@ -77,18 +76,19 @@ void PrintH(const util::ProgramDoc& programInfo,
   cout << "#endif" << endl;
   cout << endl;
 
-  // Then we must print any class definitions if needed.
-  // Print any extra class definitions we might need.
+  // Then we must print utility function for model type parameters if needed.
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
     const util::ParamData& d = it->second;
     if (d.input)
-      CLI::GetSingleton().functionMap[d.tname]["PrintClassDefnH"](d, NULL, NULL);
+      CLI::GetSingleton().functionMap[d.tname]["PrintModelUtilH"](d, NULL, NULL);
   }
 
-  // Finally, we generate the wrapper for mlpackMain()
+  // We generate the wrapper function for mlpackMain().
   cout << "extern void MLPACK_" << functionName << "();" << endl;
   cout << endl;
+
+  // Finally we close print the closing bracket for extern C.
   cout << "#if defined(__cplusplus) || defined(c_plusplus)" << endl;
   cout << "}" << endl;
   cout << "#endif" << endl;

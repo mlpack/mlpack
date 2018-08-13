@@ -2,7 +2,8 @@
  * @file print_method_init.hpp
  * @author Yasmine Dumouchel
  *
- * Print method initiation function for a Go Binding
+ * Print a config struct initialization function for the optional
+ * parameter of a method for a Go binding.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -21,7 +22,7 @@ namespace bindings {
 namespace go {
 
 /**
- * Print parameter with it default value for a standard option type.
+ * Print parameter with it's default value for a standard option type.
  */
 template<typename T>
 void PrintMethodInit(
@@ -38,24 +39,23 @@ void PrintMethodInit(
   if (std::is_same<T, bool>::value)
     def = "false";
 
-    std::string name = d.name;
-    std::string goParamName = name;
-    if (!name.empty())
-    {
-      goParamName[0] = std::toupper(goParamName[0]);
-    }
+  // Capitalize the first letter of parameter name so it is
+  // of exported type in Go.
+  std::string name = d.name;
+  std::string goParamName = name;
+  if (!name.empty())
+  {
+    goParamName[0] = std::toupper(goParamName[0]);
+  }
 
-  /**
-   * This gives us code like:
-   *
-   */
+  // Only print param that are not required.
   if (!d.required)
   {
-
     if (d.cppType == "std::string")
     {
       std::string value = boost::any_cast<std::string>(d.value);
-      std::cout << prefix << goParamName << ": \"" << value << "\"," << std::endl;
+      std::cout << prefix << goParamName << ": \""
+                << value << "\"," << std::endl;
     }
     else if (d.cppType == "double")
     {
@@ -79,7 +79,7 @@ void PrintMethodInit(
 }
 
 /**
- * Print parameter with it default value for a matrix type.
+ * Print parameter with it's default value for a matrix type.
  */
 template<typename T>
 void PrintMethodInit(
@@ -93,18 +93,16 @@ void PrintMethodInit(
   if (std::is_same<T, bool>::value)
     def = "false";
 
-    // Make sure that we don't use names that are Python keywords.
-    std::string name = d.name;
-    std::string goParamName = name;
-    if (!name.empty())
-    {
-      goParamName[0] = std::toupper(goParamName[0]);
-    }
+  // Capitalize the first letter of parameter name so it is
+  // of exported type in Go.
+  std::string name = d.name;
+  std::string goParamName = name;
+  if (!name.empty())
+  {
+    goParamName[0] = std::toupper(goParamName[0]);
+  }
 
-  /**
-   * This gives us code like:
-   *
-   */
+  // Only print param that are not required.
   if (!d.required)
   {
     std::cout << prefix << goParamName << ": " << def << ","
@@ -113,7 +111,7 @@ void PrintMethodInit(
 }
 
 /**
- * Print parameter with it default valuefor a serializable type.
+ * Print parameter with it's default valuefor a serializable type.
  */
 template<typename T>
 void PrintMethodInit(
@@ -128,34 +126,22 @@ void PrintMethodInit(
   if (std::is_same<T, bool>::value)
     def = "false";
 
-    // Make sure that we don't use names that are Python keywords.
-    std::string name = d.name;
-    std::string goParamName = name;
-    if (!name.empty())
-    {
-      goParamName[0] = std::toupper(goParamName[0]);
-    }
+  // Capitalize the first letter of parameter name so it is
+  // of exported type in Go.
+  std::string name = d.name;
+  std::string goParamName = name;
+  if (!name.empty())
+  {
+    goParamName[0] = std::toupper(goParamName[0]);
+  }
 
-  /**
-   * This gives us code like:
-   *
-   */
-  std::cout << prefix << goParamName << ": " << def << ","
-        << std::endl;
-
+  // Only print param that are not required.
+  if (!d.required)
+  {
+    std::cout << prefix << goParamName << ": " << def << ","
+              << std::endl;
+  }
 }
-
-// /**
-//  * Print input processing for a matrix/DatasetInfo type.
-//  */
-// template<typename T>
-// void PrintMethodInit(
-//     const util::ParamData& d,
-//     const size_t indent,
-//     const typename boost::enable_if<std::is_same<T,
-//         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
-// {
-// }
 
 /**
  * Given parameter information and the current number of spaces for indentation,

@@ -1,5 +1,5 @@
 /**
- * @file print_go.hpp
+ * @file print_cpp.hpp
  * @author Yasmine Dumouchel
  *
  * Given a list of ParamData structures, emit a .cpp file defining the
@@ -30,6 +30,7 @@ namespace go {
 void PrintCPP(const util::ProgramDoc& programInfo,
               const std::string& mainFilename,
               const std::string& functionName);
+
 
 } // namespace go
 } // namespace bindings

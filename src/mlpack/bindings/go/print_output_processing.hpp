@@ -36,6 +36,12 @@ void PrintOutputProcessing(
 {
   const std::string prefix(indent, ' ');
 
+  /**
+   * This gives us code like:
+   *
+   *  <paramName> := GetParam<Type>("paramName")
+   *
+   */
   std::cout << prefix << d.name << " := GetParam" << GetType<T>(d)
             << "(\"" << d.name << "\")" << std::endl;
 }
@@ -51,6 +57,13 @@ void PrintOutputProcessing(
 {
   const std::string prefix(indent, ' ');
 
+  /**
+   * This gives us code like:
+   *
+   *  var <paramName>Ptr MLPACK_Arma
+   *  <paramName> := <paramName>Ptr.ArmaToGonum_<Type>("paramName")
+   *
+   */
   std::cout << prefix << "var " << d.name << "Ptr MLPACK_Arma" << std::endl;
   std::cout << prefix << d.name << " := " << d.name
             << "Ptr.ArmaToGonum_" << GetArmaType<T>() << GetType<T>(d)
@@ -73,6 +86,13 @@ void PrintOutputProcessing(
 
   const std::string prefix(indent, ' ');
 
+  /**
+   * This gives us code like:
+   *
+   *  var <paramName> <Type>
+   *  <paramName>.get<Type>("paramName")
+   *
+   */
   std::cout << prefix << "var " << d.name << " " << strippedType << std::endl;
   std::cout << prefix << d.name << ".get" << strippedType
             << "(\"" << d.name << "\")" << std::endl;

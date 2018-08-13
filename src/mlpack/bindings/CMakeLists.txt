@@ -3,6 +3,7 @@ set(DIRS
   cli
   python
   tests
+  go
 )
 
 foreach(dir ${DIRS})

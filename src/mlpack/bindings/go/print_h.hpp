@@ -1,8 +1,8 @@
 /**
- * @file print_go.hpp
+ * @file print_h.hpp
  * @author Yasmine Dumouchel
  *
- * Given a list of ParamData structures, emit a .h file defining the 
+ * Given a list of ParamData structures, emit a .h file defining the
  * Go bindings.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -28,7 +28,8 @@ namespace go {
  * @param functionName Name of the function (i.e. "pca").
  */
 void PrintH(const util::ProgramDoc& programInfo,
-              const std::string& functionName);
+            const std::string& functionName);
+
 
 } // namespace go
 } // namespace bindings
