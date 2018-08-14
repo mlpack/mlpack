@@ -130,14 +130,14 @@ void NCF::GetTrainingInstance(arma::mat& predictors,
   }
   predictors = arma::join_vert(users, items);
   responses = arma::conv_to<arma::mat>::from(resp);
+  numFunctions = responses.n_cols;
 }
 
 double NCF::Evaluate(const arma::mat& parameters,
                      const size_t begin,
-                     const size_t batchSize,
-                     const bool deterministic)
+                     const size_t batchSize)
 {
-  double loss = network.Evaluate(parameters, begin, batchSize, deterministic);
+  double loss = network.Evaluate(parameters, begin, batchSize, true);
   return loss;
 }
 
@@ -162,12 +162,12 @@ void NCF::Train(OptimizerType optimizer)
 
   GetTrainingInstance(predictors, responses);
 
-  network.Predictors() = std::move(predictors);
-  network.Responses() = std::move(responses);
+  network.Predictors() = predictors;
+  network.Responses() = responses;
 
   // Train the model.
   Timer::Start("ncf_optimization");
-  const double out = optimizer.Optimize(this->network, network.Parameters());
+  const double out = optimizer.Optimize(*this, network.Parameters());
   Timer::Stop("ncf_optimization");
 
   Log::Info << "NCF::NCF(): final objective of trained model is " << out
@@ -186,12 +186,14 @@ void NCF::CreateGMF()
   userModel->Add<ann::Subview<> >(1, 0, size - 1);
   userModel->Add<ann::Embedding<> >(numUsers, embedSize);
   userModel->Add<ann::Subview<> >(size, 0, embedSize - 1, 0, size - 1);
+  //userModel->Add<ann::Linear<> >(embedSize*size, size);
 
   // Item sub-network.
   ann::Sequential<>* itemModel = new ann::Sequential<>();
   itemModel->Add<ann::Subview<> >(1, size, (size * 2) - 1);
   itemModel->Add<ann::Embedding<> >(numItems, embedSize);
   itemModel->Add<ann::Subview<> >(size, 0, embedSize - 1, 0, size - 1);
+  //itemModel->Add<ann::Linear<> >(embedSize*size, size);
 
   // Merge the user and item sub-network.
   ann::MultiplyMerge<> mergeModel(true, true);
@@ -230,6 +232,8 @@ void NCF::CreateMLP()
   network.Add<ann::IdentityLayer<> >();
   network.Add(mergeModel);
   network.Add<ann::Subview<> >(2, 0, (embedSize * size) - 1, 0, 1);
+  //network.Add<ann::Linear<> >(embedSize * size * 2, size * 2);
+  //network.Add<ann::Linear<> >(size * 2, size);
   network.Add<ann::SigmoidLayer<> >();
 }
 

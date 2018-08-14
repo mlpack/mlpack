@@ -91,13 +91,10 @@ class NCF
    *        evaluation.
    * @param batchSize Number of points to be passed at a time to use for
    *        objective function evaluation.
-   * @param deterministic Whether or not to train or test the model. Note some
-   *        layer act differently in training or testing mode.
    */
   double Evaluate(const arma::mat& parameters,
                   const size_t begin,
-                  const size_t batchSize,
-                  const bool deterministic);
+                  const size_t batchSize);
 
   /**
    * Evaluate the gradient of the feedforward network with the given parameters,
@@ -115,6 +112,11 @@ class NCF
                 const size_t begin,
                 arma::mat& gradient,
                 const size_t batchSize);
+
+  void Shuffle()
+  {
+    // Nothing to do here.
+  }
   /**
    * Train the model using the specified algorithm and optimizer.
    * @tparam OptimizerType The optimizer to train the network on.
@@ -187,6 +189,9 @@ class NCF
   //! Get the Dataset Matrix.
   const arma::mat& Dataset() const { return dataset; }
 
+  //! Return the number of separable functions (the number of predictor points).
+  size_t NumFunctions() const { return numFunctions; }
+
   /**
    * Serialize the NCF model to the given archive.
    */
@@ -220,6 +225,8 @@ class NCF
 
   //! Whether to convert the ratings as implicit feedback.
   bool implicit;
+
+  size_t numFunctions;
 }; // class NCF
 
 } // namespace cf
