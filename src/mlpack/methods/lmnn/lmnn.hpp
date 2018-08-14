@@ -101,7 +101,12 @@ class LMNN
   //! Access the value of k.
   const size_t& K() const { return k; }
   //! Modify the value of k.
-  size_t K() { return k; }
+  size_t& K() { return k; }
+
+  //! Access the value of linear scan.
+  const bool& LinearScan() const { return linearScan; }
+  //! Modify linear scan.
+  bool& LinearScan() { return linearScan; }
 
   //! Get the optimizer.
   const OptimizerType& Optimizer() const { return optimizer; }
@@ -125,6 +130,9 @@ class LMNN
 
   //! Metric to be used.
   MetricType metric;
+
+  //! Control linear scan over dataset.
+  bool linearScan;
 
   //! The optimizer to use.
   OptimizerType optimizer;

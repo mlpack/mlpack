@@ -61,6 +61,7 @@ class LMNNFunction
                size_t k,
                double regularization,
                size_t range,
+               bool linearScan,
                MetricType metric = MetricType());
 
 
@@ -214,6 +215,8 @@ class LMNNFunction
   size_t iteration;
   //! Range after which impostors need to be recalculated.
   size_t range;
+  //! Controls linear scan of dataset.
+  bool linearScan;
   //! Constraints Object.
   Constraints<MetricType> constraint;
   //! Holds pre-calculated cij.
@@ -236,6 +239,8 @@ class LMNNFunction
   arma::uvec points;
   //! Flag for controlling use of bounds over impostors.
   bool impBounds;
+  //! Flag for controlling impostors recalculation.
+  bool recalculate;
   /**
   * Precalculate the gradient part due to target neighbors and stores
   * the result as a matrix. Used for L-BFGS like optimizers which does not

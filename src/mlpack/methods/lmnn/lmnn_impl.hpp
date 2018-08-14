@@ -32,7 +32,8 @@ LMNN<MetricType, OptimizerType>::LMNN(const arma::mat& dataset,
     k(k),
     regularization(0.5),
     range(1),
-    metric(metric)
+    metric(metric),
+    linearScan(false)
 { /* nothing to do */ }
 
 template<typename MetricType, typename OptimizerType>
@@ -40,7 +41,7 @@ void LMNN<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix)
 {
   // LMNN objective function.
   LMNNFunction<MetricType> objFunction(dataset, labels, k,
-      regularization, range);
+      regularization, range, linearScan);
 
   // See if we were passed an initialized matrix. outputMatrix (L) must be
   // having r x d dimensionality.

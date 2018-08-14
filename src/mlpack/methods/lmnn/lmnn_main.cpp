@@ -344,10 +344,12 @@ static void mlpackMain()
     LMNN<LMetric<2>> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
+    lmnn.LinearScan() = shuffle;
     lmnn.Optimizer().StepSize() = stepSize;
     lmnn.Optimizer().MaxIterations() = passes * data.n_cols;
     lmnn.Optimizer().Tolerance() = tolerance;
-    lmnn.Optimizer().Shuffle() = shuffle;
+    // Bypass LinearScan. It will be handle in shuffle().
+    lmnn.Optimizer().Shuffle() = true;
     lmnn.Optimizer().BatchSize() = batchSize;
 
     lmnn.LearnDistance(distance);
@@ -357,10 +359,12 @@ static void mlpackMain()
     LMNN<LMetric<2>, BBS_BB> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
+    lmnn.LinearScan() = shuffle;
     lmnn.Optimizer().StepSize() = stepSize;
     lmnn.Optimizer().MaxIterations() = passes * data.n_cols;
     lmnn.Optimizer().Tolerance() = tolerance;
-    lmnn.Optimizer().Shuffle() = shuffle;
+    // Bypass LinearScan. It will be handle in shuffle().
+    lmnn.Optimizer().Shuffle() = true;
     lmnn.Optimizer().BatchSize() = batchSize;
 
     lmnn.LearnDistance(distance);
@@ -372,10 +376,12 @@ static void mlpackMain()
     LMNN<LMetric<2>, StandardSGD> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
+    lmnn.LinearScan() = shuffle;
     lmnn.Optimizer().StepSize() = stepSize;
     lmnn.Optimizer().MaxIterations() = passes * data.n_cols;
     lmnn.Optimizer().Tolerance() = tolerance;
-    lmnn.Optimizer().Shuffle() = shuffle;
+    // Bypass LinearScan. It will be handle in shuffle().
+    lmnn.Optimizer().Shuffle() = true;
     lmnn.Optimizer().BatchSize() = batchSize;
 
     lmnn.LearnDistance(distance);
