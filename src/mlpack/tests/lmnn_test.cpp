@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(LMNNInitialPointTest)
   arma::mat dataset = arma::randu(5, 5);
   arma::Row<size_t> labels = "0 1 1 0 0";
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.5, 1);
+  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.5, 1, false);
 
   // Verify the initial point is the identity matrix.
   arma::mat initialPoint = lmnnfn.GetInitialPoint();
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE(LMNNInitialEvaluationTest)
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1, false);
 
   double objective = lmnnfn.Evaluate(arma::eye<arma::mat>(2, 2));
 
@@ -159,7 +159,7 @@ BOOST_AUTO_TEST_CASE(LMNNInitialGradientTest)
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1, false);
 
   arma::mat gradient;
   arma::mat coordinates = arma::eye<arma::mat>(2, 2);
@@ -182,7 +182,7 @@ BOOST_AUTO_TEST_CASE(LMNNInitialEvaluateWithGradientTest)
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1, false);
 
   arma::mat gradient;
   arma::mat coordinates = arma::eye<arma::mat>(2, 2);
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(LMNNSeparableObjectiveTest)
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1, false);
 
   // Result calculated by hand.
   arma::mat coordinates = arma::eye<arma::mat>(2, 2);
@@ -229,7 +229,7 @@ BOOST_AUTO_TEST_CASE(LMNNSeparableGradientTest)
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1, false);
 
   arma::mat coordinates = arma::eye<arma::mat>(2, 2);
   arma::mat gradient(2, 2);
@@ -287,7 +287,7 @@ BOOST_AUTO_TEST_CASE(LMNNSeparableEvaluateWithGradientTest)
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1, false);
 
   arma::mat coordinates = arma::eye<arma::mat>(2, 2);
   arma::mat gradient(2, 2);
@@ -361,7 +361,7 @@ BOOST_AUTO_TEST_CASE(LMNNSGDSimpleDatasetTest)
   lmnn.LearnDistance(outputMatrix);
 
   // Ensure that the objective function is better now.
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1, false);
 
   double initObj = lmnnfn.Evaluate(arma::eye<arma::mat>(2, 2));
   double finalObj = lmnnfn.Evaluate(outputMatrix);
@@ -384,7 +384,7 @@ BOOST_AUTO_TEST_CASE(LMNNLBFGSSimpleDatasetTest)
   lmnn.LearnDistance(outputMatrix);
 
   // Ensure that the objective function is better now.
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1, false);
 
   double initObj = lmnnfn.Evaluate(arma::eye<arma::mat>(2, 2));
   double finalObj = lmnnfn.Evaluate(outputMatrix);
@@ -670,7 +670,7 @@ BOOST_AUTO_TEST_CASE(LMNNFunctionGradientTest)
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1, false);
 
   // 10 trials with random positions.
   for (size_t i = 0; i < 10; ++i)
@@ -687,7 +687,7 @@ BOOST_AUTO_TEST_CASE(LMNNFunctionGradientTest2)
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels = " 0    0    0    1    1    1   ";
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1, false);
 
   // 10 trials with random positions.
   for (size_t i = 0; i < 10; ++i)
@@ -704,7 +704,7 @@ BOOST_AUTO_TEST_CASE(LMNNFunctionGradientTest3)
   data::Load("iris.csv", dataset);
   data::Load("iris_labels.txt", labels);
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1, false);
 
   // 10 trials with random positions.
   for (size_t i = 0; i < 10; ++i)
@@ -721,7 +721,7 @@ BOOST_AUTO_TEST_CASE(LMNNFunctionGradientTest4)
   data::Load("iris.csv", dataset);
   data::Load("iris_labels.txt", labels);
 
-  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
+  LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1, false);
 
   // 10 trials with random positions.
   for (size_t i = 0; i < 10; ++i)
