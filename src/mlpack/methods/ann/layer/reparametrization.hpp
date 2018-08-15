@@ -130,14 +130,14 @@ class Reparametrization
   //! Locally-stored number of output units.
   size_t latentSize;
 
-  //! The beta hyperparameter for constrained variational frameworks.
-  double beta;
-
   //! If false, sample will be constant.
   bool stochastic;
 
   //! If false, KL error will not be included in Backward function.
   bool includeKl;
+
+  //! The beta hyperparameter for constrained variational frameworks.
+  double beta;
 
   //! Locally-stored delta object.
   OutputDataType delta;
