@@ -461,6 +461,13 @@ class FFN
     typename PolicyType
   >
   friend class GAN;
+
+  // The CycleGAN class should have access to internal members.
+  template<
+    typename Model,
+    typename InitializerType
+  >
+  friend class CycleGAN;
 }; // class FFN
 
 } // namespace ann

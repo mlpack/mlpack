@@ -278,8 +278,7 @@ class GAN
    * @param input The input the Discriminator network.
    * @param output Result of the Discriminator network.
    */
-  void Predict(arma::mat&& input,
-               arma::mat& output);
+  void Predict(arma::mat&& input, arma::mat& output);
 
   //! Return the parameters of the network.
   const arma::mat& Parameters() const { return parameter; }
@@ -374,6 +373,5 @@ class GAN
 #include "gan_impl.hpp"
 #include "wgan_impl.hpp"
 #include "wgangp_impl.hpp"
-
 
 #endif
