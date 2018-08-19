@@ -393,6 +393,7 @@ void NCF::GetRecommendations(const size_t numRecs,
       numItems, numItems);
   arma::Col<size_t> userVec(numItems);
   arma::mat predictors;
+  recommendations.set_size(numRecs, numUsers);
 
   // Predict rating for all user item combinations for given users.
   for (size_t i = 0; i < users.n_elem; i++)
