@@ -231,12 +231,23 @@ class LMNNFunction
   //! Holds number of points which are using each transformation matrix.
   std::vector<size_t> oldTransformationCounts;
   //! Holds points to transformation matrix mapping.
-  arma::vec lastTransformationIndices;
+  arma::Row<size_t> lastTransformationIndices;
+  //! Used for storing points to re-calculate impostors for.
+  arma::uvec points;
+  //! Flag for controlling use of bounds over impostors.
+  bool impBounds;
+  /**
+  * Precalculate the gradient part due to target neighbors and stores
+  * the result as a matrix. Used for L-BFGS like optimizers which does not
+  * uses batches.
+  */
+  inline void Precalculate();
 
   //! Update cached transformation matrices.
   inline void UpdateCache(const arma::mat& transformation,
                           const size_t begin,
                           const size_t batchSize);
+
   //! Calculate norm of change in transformation.
   inline void TransDiff(std::map<size_t, double>& transformationDiffs,
                         const arma::mat& transformation,

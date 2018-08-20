@@ -2,6 +2,7 @@
  * @file loss_functions_test.cpp
  * @author Dakshit Agrawal
  * @author Sourabh Varshney
+ * @author Atharva Khandait
  *
  * Tests for loss functions in mlpack::methods::ann:loss_functions.
  *
@@ -10,14 +11,21 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/methods/ann/loss_functions/earth_mover_distance.hpp>
+#include <mlpack/core.hpp>
+
+#include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/kl_divergence.hpp>
+#include <mlpack/methods/ann/loss_functions/earth_mover_distance.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
+#include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
+#include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
+#include <mlpack/methods/ann/ffn.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
+#include "ann_test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -85,7 +93,7 @@ BOOST_AUTO_TEST_CASE(KLDivergenceNoMeanTest)
 /*
  * Simple test for the mean squared error performance function.
  */
-BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorLayerTest)
+BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorTest)
 {
   arma::mat input, output, target;
   MeanSquaredError<> module;
@@ -120,7 +128,7 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorLayerTest)
 /*
  * Simple test for the cross-entropy error performance function.
  */
-BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorLayerTest)
+BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorTest)
 {
   arma::mat input1, input2, output, target1, target2;
   CrossEntropyError<> module(1e-6);
@@ -161,9 +169,9 @@ BOOST_AUTO_TEST_CASE(SimpleCrossEntropyErrorLayerTest)
 }
 
 /**
- * Simple test for the Sigmoid Cross Entropy Layer.
+ * Simple test for the Sigmoid Cross Entropy performance function.
  */
-BOOST_AUTO_TEST_CASE(SimpleSigmoidCrossEntropyLayerTest)
+BOOST_AUTO_TEST_CASE(SimpleSigmoidCrossEntropyErrorTest)
 {
   arma::mat input1, input2, input3, output, target1,
             target2, target3, expectedOutput;
@@ -256,6 +264,49 @@ BOOST_AUTO_TEST_CASE(SimpleEarthMoverDistanceLayerTest)
     BOOST_REQUIRE_SMALL(output(i) - expectedOutput(i), 1e-5);
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
+}
+
+/*
+ * Reconstruction Loss numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientReconstructionLossTest)
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::randu(2, 1);
+
+      model = new FFN<ReconstructionLoss<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 2);
+      model->Add<SigmoidLayer<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<ReconstructionLoss<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

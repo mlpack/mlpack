@@ -239,17 +239,8 @@ void Convolution<
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
-  arma::cube mappedError;
-  if (padW != 0 && padH != 0)
-  {
-    mappedError = arma::cube(error.memptr(), outputWidth / padW,
-        outputHeight / padH, outSize * batchSize, false, false);
-  }
-  else
-  {
-    mappedError = arma::cube(error.memptr(), outputWidth,
-        outputHeight, outSize * batchSize, false, false);
-  }
+  arma::cube mappedError(error.memptr(), outputWidth,
+      outputHeight, outSize * batchSize, false, false);
 
   gradient.set_size(weights.n_elem, 1);
   gradientTemp = arma::Cube<eT>(gradient.memptr(), weight.n_rows,
@@ -283,13 +274,17 @@ void Convolution<
       GradientConvolutionRule::Convolution(inputSlice, deltaSlice,
           output, dW, dH);
 
-      if ((padW != 0 || padH != 0) &&
-          (gradientTemp.n_rows < output.n_rows &&
-          gradientTemp.n_cols < output.n_cols))
+      if (gradientTemp.n_rows < output.n_rows ||
+          gradientTemp.n_cols < output.n_cols)
       {
-        gradientTemp.slice(outMapIdx) += output.submat(padW, padH,
-            padW + gradientTemp.n_rows - 1,
-            padH + gradientTemp.n_cols - 1);
+        gradientTemp.slice(outMapIdx) += output.submat(0, 0,
+            gradientTemp.n_rows - 1, gradientTemp.n_cols - 1);
+      }
+      else if (gradientTemp.n_rows > output.n_rows ||
+          gradientTemp.n_cols > output.n_cols)
+      {
+        gradientTemp.slice(outMapIdx).submat(0, 0, output.n_rows - 1,
+            output.n_cols - 1) += output;
       }
       else
       {

@@ -135,6 +135,15 @@ class FFN
   void Predict(arma::mat predictors, arma::mat& results);
 
   /**
+   * Evaluate the feedforward network with the given ppredictors and responses.
+   * This functions is usually used to monitor progress while training.
+   *
+   * @param predictors Input variables.
+   * @param responses Target outputs for input variables.
+   */
+  double Evaluate(arma::mat predictors, arma::mat responses);
+
+  /**
    * Evaluate the feedforward network with the given parameters. This function
    * is usually called by the optimizer to train the model.
    *
@@ -283,6 +292,22 @@ class FFN
    * @param results The predicted results.
    */
   void Forward(arma::mat inputs, arma::mat& results);
+
+  /**
+   * Perform a partial forward pass of the data.
+   *
+   * This function is meant for the cases when users require a forward pass only
+   * through certain layers and not the entire network.
+   *
+   * @param inputs The input data for the specified first layer.
+   * @param results The predicted results from the specified last layer.
+   * @param begin The index of the first layer.
+   * @param end The index of the last layer.
+   */
+  void Forward(arma::mat inputs,
+               arma::mat& results,
+               const size_t begin,
+               const size_t end);
 
   /**
    * Perform the backward pass of the data in real batch mode.

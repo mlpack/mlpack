@@ -82,6 +82,17 @@ inline double Random(const double lo, const double hi)
 }
 
 /**
+ * Generates a 0/1 specified by the input.
+ */
+inline double RandBernoulli(const double input)
+{
+  if (Random() < input)
+    return 1;
+  else
+    return 0;
+}
+
+/**
  * Generates a uniform random integer.
  */
 inline int RandInt(const int hiExclusive)

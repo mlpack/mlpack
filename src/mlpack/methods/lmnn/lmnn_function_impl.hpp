@@ -34,12 +34,21 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
     regularization(regularization),
     iteration(0),
     range(range),
-    constraint(dataset, labels, k)
+    constraint(dataset, labels, k),
+    points(dataset.n_cols),
+    impBounds(false)
 {
   // Initialize the initial learning point.
   initialPoint.eye(dataset.n_rows, dataset.n_rows);
   // Initialize transformed dataset to base dataset.
   transformedDataset = dataset;
+
+  // Calculate and store norm of datapoints.
+  norm.set_size(dataset.n_cols);
+  for (size_t i = 0; i < dataset.n_cols; i++)
+  {
+    norm(i) = arma::norm(dataset.col(i));
+  }
 
   // Initialize cache.
   evalOld.set_size(k, k, dataset.n_cols);
@@ -68,6 +77,26 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
     norm(i) = arma::norm(dataset.col(i));
   }
 
+  // Check if we can impose bounds over impostors.
+  size_t minCount = arma::min(arma::histc(labels, arma::unique(labels)));
+  if (minCount <= k + 1)
+  {
+    // Initialize target neighbors & impostors.
+    targetNeighbors.set_size(k, dataset.n_cols);
+    impostors.set_size(k, dataset.n_cols);
+    distance.set_size(k, dataset.n_cols);
+  }
+  else
+  {
+    // Update parameters.
+    constraint.K() = k + 1;
+    impBounds = true;
+    // Initialize target neighbors & impostors.
+    targetNeighbors.set_size(k + 1, dataset.n_cols);
+    impostors.set_size(k + 1, dataset.n_cols);
+    distance.set_size(k + 1, dataset.n_cols);
+  }
+
   constraint.TargetsAndImpostors(dataset, labels, k, k, norm, targetNeighbors,
       impostors);
 
@@ -91,7 +120,7 @@ void LMNNFunction<MetricType>::Shuffle()
   arma::mat newDataset = dataset;
   arma::Mat<size_t> newLabels = labels;
   arma::cube newEvalOld = evalOld;
-  arma::vec newlastTransformationIndices = lastTransformationIndices;
+  arma::Row<size_t> newlastTransformationIndices = lastTransformationIndices;
   arma::mat newMaxImpNorm = maxImpNorm;
   arma::vec newNorm = norm;
 
@@ -216,10 +245,10 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
   // Apply metric over dataset.
   transformedDataset = transformation * dataset;
 
-  // Calculate norm of change in transformation.
   double transformationDiff = 0;
   if (!transformationOld.is_empty())
   {
+    // Calculate norm of change in transformation.
     transformationDiff = arma::norm(transformation - transformationOld);
   }
 
@@ -227,7 +256,7 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation)
   {
     // Re-calculate impostors on transformed dataset.
     constraint.Impostors(impostors, distance, transformedDataset, labels,
-        transformation, transformationDiff);
+        norm, transformation, transformationDiff, impBounds);
   }
 
   for (size_t i = 0; i < dataset.n_cols; i++)
@@ -327,8 +356,9 @@ double LMNNFunction<MetricType>::Evaluate(const arma::mat& transformation,
   if (iteration++ % range == 0)
   {
     // Re-calculate impostors on transformed dataset.
+    // TODO: this will fail
     constraint.Impostors(impostors, distance, transformedDataset, labels,
-        begin, batchSize, transformation, 0.0);
+        norm, begin, batchSize, transformation, 0.0, impBounds);
   }
 
   for (size_t i = begin; i < begin + batchSize; i++)
@@ -421,10 +451,10 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
   // Apply metric over dataset.
   transformedDataset = transformation * dataset;
 
-  // Calculate norm of change in transformation.
   double transformationDiff = 0;
-  if (!transformationOld.is_empty())
+  if (!transformationOld.is_empty() && iteration++ % range == 0)
   {
+    // Calculate norm of change in transformation.
     transformationDiff = arma::norm(transformation - transformationOld);
   }
 
@@ -432,7 +462,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
   {
     // Re-calculate impostors on transformed dataset.
     constraint.Impostors(impostors, distance, transformedDataset, labels,
-        transformation, transformationDiff);
+        norm, transformation, transformationDiff, impBounds);
   }
 
   gradient.zeros(transformation.n_rows, transformation.n_cols);
@@ -538,7 +568,7 @@ void LMNNFunction<MetricType>::Gradient(const arma::mat& transformation,
   {
     // Re-calculate impostors on transformed dataset.
     constraint.Impostors(impostors, distance, transformedDataset, labels,
-        begin, batchSize, transformation, 0.0); // TODO: wrong
+        norm, begin, batchSize, transformation, 0.0, impBounds); // TODO: wrong
   }
 
   gradient.zeros(transformation.n_rows, transformation.n_cols);
@@ -643,10 +673,10 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   // Apply metric over dataset.
   transformedDataset = transformation * dataset;
 
-  // Calculate norm of change in transformation.
   double transformationDiff = 0;
   if (!transformationOld.is_empty())
   {
+    // Calculate norm of change in transformation.
     transformationDiff = arma::norm(transformation - transformationOld);
   }
 
@@ -654,7 +684,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   {
     // Re-calculate impostors on transformed dataset.
     constraint.Impostors(impostors, distance, transformedDataset, labels,
-        transformation, transformationDiff);
+        norm, transformation, transformationDiff, impBounds);
   }
 
   gradient.zeros(transformation.n_rows, transformation.n_cols);
@@ -767,7 +797,7 @@ double LMNNFunction<MetricType>::EvaluateWithGradient(
   {
     // Re-calculate impostors on transformed dataset.
     constraint.Impostors(impostors, distance, transformedDataset, labels,
-        begin, batchSize, transformation, 0.0); // TODO: wrong
+        norm, begin, batchSize, transformation, 0.0, impBounds); // TODO: wrong
   }
 
   gradient.zeros(transformation.n_rows, transformation.n_cols);

@@ -21,6 +21,7 @@ option(MATHJAX
     "Use MathJax for HTML Doxygen output (disabled by default)." OFF)
 option(FORCE_CXX11
     "Don't check that the compiler supports C++11, just assume it.  Make sure to specify any necessary flag to enable C++11 as part of CXXFLAGS." OFF)
+option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
 enable_testing()
 
 # Currently Python bindings aren't known to build successfully on Windows, so
@@ -348,7 +349,10 @@ add_definitions(-DBOOST_TEST_DYN_LINK)
 #   ... openMP code here ...
 # }
 # #endif
-find_package(OpenMP)
+if (USE_OPENMP)
+  find_package(OpenMP)
+endif ()
+
 if (OPENMP_FOUND)
   add_definitions(-DHAS_OPENMP)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
@@ -452,7 +456,7 @@ if (DOXYGEN_FOUND)
   add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Doxyfile
       PRE_BUILD
       COMMAND ${CMAKE_COMMAND}
-          -D DESTDIR="${CMAKE_BINARY_DIR}"
+          -D DESTDIR=${CMAKE_BINARY_DIR}
           -D MATHJAX="${MATHJAX}"
           -D MATHJAX_FOUND="${MATHJAX_FOUND}"
           -D MATHJAX_PATH="${MATHJAX_PATH}"

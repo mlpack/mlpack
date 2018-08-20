@@ -31,7 +31,7 @@ Constraints<MetricType>::Constraints(
   // Ensure a valid k is passed.
   size_t minCount = arma::min(arma::histc(labels, arma::unique(labels)));
 
-  if (minCount < k)
+  if (minCount < k + 1)
   {
     Log::Fatal << "Constraints::Constraints(): One of the class contains only "
         << minCount << " instances, but value of k is " << k << "  "
@@ -43,6 +43,46 @@ template<typename MetricType>
 Constraints<MetricType>::~Constraints()
 {
   delete tree;
+}
+
+template<typename MetricType>
+inline void Constraints<MetricType>::ReorderResults(
+    const arma::mat& distances,
+    arma::Mat<size_t>& neighbors,
+    const arma::vec& norms)
+{
+  // Shortcut...
+  if (neighbors.n_rows == 1)
+    return;
+
+  // Just a simple loop over the results---we want to make sure that the
+  // largest-norm point with identical distance has the last location.
+  for (size_t i = 0; i < neighbors.n_cols; i++)
+  {
+    for (size_t start = 0; start < neighbors.n_rows - 1; start++)
+    {
+      size_t end = start + 1;
+      while (distances(start, i) == distances(end, i) &&
+          end < neighbors.n_rows)
+      {
+        end++;
+        if (end == neighbors.n_rows)
+          break;
+      }
+
+      if (start != end)
+      {
+        // We must sort these elements by norm.
+        arma::Col<size_t> newNeighbors =
+            neighbors.col(i).subvec(start, end - 1);
+        arma::uvec indices = arma::conv_to<arma::uvec>::from(newNeighbors);
+
+        arma::uvec order = arma::sort_index(norms.elem(indices));
+        neighbors.col(i).subvec(start, end - 1) =
+            newNeighbors.elem(order);
+      }
+    }
+  }
 }
 
 // Helper function to set hasImpostors and hasTrueNeighbors for a tree node.
@@ -142,6 +182,11 @@ void Constraints<MetricType>::TargetsAndImpostors(
   rules.GetResults(neighbors, neighborDistances, impostors, impostorDistances);
   Timer::Stop("computing_targets_and_impostors");
 
+  // Re-order neighbors on the basis of increasing norm in case of ties among
+  // distances.
+  ReorderResults(neighborDistances, neighbors);
+  ReorderResults(impostorDistances, impostors);
+
   runFirstSearch = true;
 }
 
@@ -150,6 +195,7 @@ template<typename MetricType>
 void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
                                         const arma::mat& dataset,
                                         const arma::Row<size_t>& labels,
+                                        const arma::vec& norms,
                                         const arma::mat& transformation,
                                         const double transformationDiff)
 {
@@ -158,7 +204,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
 
   // Compute all the impostors.
   arma::mat distances;
-  ComputeImpostors(dataset, labels, dataset, labels, transformation,
+  ComputeImpostors(dataset, labels, dataset, labels, norms, transformation,
       transformationDiff, outputMatrix, distances);
 }
 
@@ -169,6 +215,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
                                         arma::mat& outputDistance,
                                         const arma::mat& dataset,
                                         const arma::Row<size_t>& labels,
+                                        const arma::vec& norms,
                                         const arma::mat& transformation,
                                         const double transformationDiff)
 {
@@ -176,7 +223,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
   Precalculate(labels);
 
   // Compute all the impostors.
-  ComputeImpostors(dataset, labels, dataset, labels, transformation,
+  ComputeImpostors(dataset, labels, dataset, labels, norms, transformation,
       transformationDiff, outputNeighbors, outputDistance);
 }
 
@@ -186,6 +233,7 @@ template<typename MetricType>
 void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
                                         const arma::mat& dataset,
                                         const arma::Row<size_t>& labels,
+                                        const arma::vec& norms,
                                         const size_t begin,
                                         const size_t batchSize,
                                         const arma::mat& transformation,
@@ -200,8 +248,8 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputMatrix,
   // Compute the impostors of the batch.
   arma::mat distances;
   arma::Mat<size_t> suboutput;
-  ComputeImpostors(dataset, labels, subDataset, sublabels, transformation,
-      suboutput, distances, transformationDiff);
+  ComputeImpostors(dataset, labels, subDataset, sublabels, norms,
+      transformation, suboutput, distances, transformationDiff);
   outputMatrix.cols(begin, begin + batchSize - 1) = suboutput;
 }
 
@@ -212,6 +260,7 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
                                         arma::mat& outputDistance,
                                         const arma::mat& dataset,
                                         const arma::Row<size_t>& labels,
+                                        const arma::vec& norms,
                                         const size_t begin,
                                         const size_t batchSize,
                                         const arma::mat& transformation,
@@ -226,8 +275,8 @@ void Constraints<MetricType>::Impostors(arma::Mat<size_t>& outputNeighbors,
   // Compute the impostors of the batch.
   arma::Mat<size_t> subneighbors;
   arma::mat subdistances;
-  ComputeImpostors(dataset, labels, subDataset, sublabels, transformation,
-        transformationDiff, subneighbors, subdistances);
+  ComputeImpostors(dataset, labels, subDataset, sublabels, norms,
+      transformation, transformationDiff, subneighbors, subdistances);
   outputNeighbors.cols(begin, begin + batchSize - 1) = subneighbors;
   outputDistance.cols(begin, begin + batchSize - 1) = subdistances;
 }
@@ -338,6 +387,20 @@ void Constraints<MetricType>::UpdateTreeStat(
   }
 }
 
+void Constraints<MetricType>::Triplets(arma::Mat<size_t>& outputMatrix,
+                                       const arma::mat& dataset,
+                                       const arma::Row<size_t>& labels,
+                                       const arma::vec& norms)
+{
+  arma::Mat<size_t> impostors(k, dataset.n_cols);
+  Impostors(impostors, dataset, labels, norms);
+
+  arma::Mat<size_t> targetNeighbors(k, dataset.n_cols);;
+  TargetNeighbors(targetNeighbors, dataset, labels, norms);
+
+  // TODO: what else went here ?
+}
+
 // Note the inputs here can just be the reference set.
 template<typename MetricType>
 void Constraints<MetricType>::ComputeImpostors(
@@ -345,6 +408,7 @@ void Constraints<MetricType>::ComputeImpostors(
     const arma::Row<size_t>& /* referenceLabels */,
     const arma::mat& querySet,
     const arma::Row<size_t>& queryLabels,
+    const arma::vec& norms,
     const arma::mat& transformation,
     const double transformationDiff,
     arma::Mat<size_t>& neighbors,
@@ -415,6 +479,8 @@ void Constraints<MetricType>::ComputeImpostors(
     rules.GetResults(neighbors, distances);
     Timer::Stop("computing_impostors");
   }
+
+  ReorderResults(neighbors, distances, norms);
 }
 
 } // namespace lmnn

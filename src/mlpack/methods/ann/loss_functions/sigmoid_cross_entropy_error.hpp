@@ -61,7 +61,7 @@ class SigmoidCrossEntropyError
    * Computes the Sigmoid CrossEntropy Error functions.
    *
    * @param input Input data used for evaluating the specified function.
-   * @param output Resulting output activation.
+   * @param target The target vector.
    */
   template<typename InputType, typename TargetType>
   inline double Forward(const InputType&& input,

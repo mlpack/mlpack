@@ -126,6 +126,26 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Forward(
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Forward(
+    arma::mat inputs, arma::mat& results, const size_t begin, const size_t end)
+{
+  boost::apply_visitor(ForwardVisitor(std::move(inputs), std::move(
+      boost::apply_visitor(outputParameterVisitor, network[begin]))),
+      network[begin]);
+
+  for (size_t i = 1; i < end - begin + 1; ++i)
+  {
+    boost::apply_visitor(ForwardVisitor(std::move(boost::apply_visitor(
+        outputParameterVisitor, network[begin + i - 1])), std::move(
+        boost::apply_visitor(outputParameterVisitor, network[begin + i]))),
+        network[begin + i]);
+  }
+
+  results = boost::apply_visitor(outputParameterVisitor, network[end]);
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
 double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Backward(
     arma::mat targets, arma::mat& gradients)
 {
@@ -181,6 +201,33 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
         network.back());
     results.col(i) = resultsTemp.col(0);
   }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
+    arma::mat predictors, arma::mat responses)
+{
+  if (parameter.is_empty())
+    ResetParameters();
+
+  if (!deterministic)
+  {
+    deterministic = true;
+    ResetDeterministic();
+  }
+
+  Forward(std::move(predictors));
+
+  double res = outputLayer.Forward(std::move(boost::apply_visitor(
+      outputParameterVisitor, network.back())), std::move(responses));
+
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    res += boost::apply_visitor(lossVisitor, network[i]);
+  }
+
+  return res;
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,

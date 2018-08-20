@@ -45,7 +45,7 @@ class Linear
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  Linear(const size_t inSize, const size_t outSize);;
+  Linear(const size_t inSize, const size_t outSize);
 
   /*
    * Reset the layer parameter.
