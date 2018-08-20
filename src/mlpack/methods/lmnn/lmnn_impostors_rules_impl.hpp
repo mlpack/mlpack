@@ -18,14 +18,15 @@
 namespace mlpack {
 namespace lmnn {
 
-template<typename MetricType, typename TreeType>
-LMNNImpostorsRules<MetricType, TreeType>::LMNNImpostorsRules(
+template<typename MetricType, typename TreeType, bool UseImpBounds>
+LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::LMNNImpostorsRules(
     const typename TreeType::Mat& referenceSet,
     const arma::Row<size_t>& referenceLabels,
     const std::vector<size_t>& refOldFromNew,
     const typename TreeType::Mat& querySet,
     const arma::Row<size_t>& queryLabels,
     const std::vector<size_t>& queryOldFromNew,
+    const std::vector<bool>& pruned,
     const size_t k,
     const size_t numClasses,
     MetricType& metric) :
@@ -35,6 +36,7 @@ LMNNImpostorsRules<MetricType, TreeType>::LMNNImpostorsRules(
     querySet(querySet),
     queryLabels(queryLabels),
     queryOldFromNew(queryOldFromNew),
+    pruned(pruned),
     k(k),
     numClasses(numClasses),
     metric(metric),
@@ -61,8 +63,8 @@ LMNNImpostorsRules<MetricType, TreeType>::LMNNImpostorsRules(
     candidates.push_back(pqueue);
 }
 
-template<typename MetricType, typename TreeType>
-void LMNNImpostorsRules<MetricType, TreeType>::GetResults(
+template<typename MetricType, typename TreeType, bool UseImpBounds>
+void LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::GetResults(
     arma::Mat<size_t>& neighbors,
     arma::mat& distances)
 {
@@ -83,9 +85,9 @@ void LMNNImpostorsRules<MetricType, TreeType>::GetResults(
   }
 };
 
-template<typename MetricType, typename TreeType>
+template<typename MetricType, typename TreeType, bool UseImpBounds>
 inline force_inline // Absolutely MUST be inline so optimizations can happen.
-double LMNNImpostorsRules<MetricType, TreeType>::BaseCase(
+double LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::BaseCase(
     const size_t queryIndex, const size_t referenceIndex)
 {
   // If we have already performed this base case, then do not perform it again.
@@ -94,6 +96,11 @@ double LMNNImpostorsRules<MetricType, TreeType>::BaseCase(
 
   // If these points have the same class, then don't do anything.
   if (queryLabels[queryIndex] == referenceLabels[referenceIndex])
+    return 0.0;
+
+  // If we've pruned this point because its impostors can't change this
+  // iteration, don't do anything.
+  if (UseImpBounds && pruned[queryIndex])
     return 0.0;
 
   double distance = metric.Evaluate(querySet.col(queryIndex),
@@ -109,8 +116,8 @@ double LMNNImpostorsRules<MetricType, TreeType>::BaseCase(
   return distance;
 }
 
-template<typename MetricType, typename TreeType>
-inline double LMNNImpostorsRules<MetricType, TreeType>::Score(
+template<typename MetricType, typename TreeType, bool UseImpBounds>
+inline double LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::Score(
     const size_t queryIndex,
     TreeType& referenceNode)
 {
@@ -118,6 +125,10 @@ inline double LMNNImpostorsRules<MetricType, TreeType>::Score(
   // can't possibly help us with the results.
   const size_t queryClass = queryLabels[queryIndex];
   if (!referenceNode.Stat().HasImpostors()[queryClass])
+    return DBL_MAX;
+
+  // If we are using impostor bounds, prune if we can.
+  if (UseImpBounds && pruned[queryIndex])
     return DBL_MAX;
 
   double distance;
@@ -155,13 +166,14 @@ inline double LMNNImpostorsRules<MetricType, TreeType>::Score(
   return (distance <= bestDistance) ? distance : DBL_MAX;
 }
 
-template<typename MetricType, typename TreeType>
-inline double LMNNImpostorsRules<MetricType, TreeType>::Rescore(
+template<typename MetricType, typename TreeType, bool UseImpBounds>
+inline double LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::Rescore(
     const size_t queryIndex,
     TreeType& /* referenceNode */,
     const double oldScore) const
 {
-  // If we are already pruning, still prune.
+  // If we are already pruning, still prune.  (Any points pruned by impostor
+  // bounds will have already been pruned.)
   if (oldScore == DBL_MAX)
     return oldScore;
 
@@ -171,11 +183,15 @@ inline double LMNNImpostorsRules<MetricType, TreeType>::Rescore(
   return (oldScore <= bestDistance) ? oldScore : DBL_MAX;
 }
 
-template<typename MetricType, typename TreeType>
-inline double LMNNImpostorsRules<MetricType, TreeType>::Score(
+template<typename MetricType, typename TreeType, bool UseImpBounds>
+inline double LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::Score(
     TreeType& queryNode,
     TreeType& referenceNode)
 {
+  // If we can, prune with impostor bounds.
+  if (UseImpBounds && queryNode.Stat().Pruned())
+    return DBL_MAX;
+
   // Sanity check: ensure that any classes in the query point have impostors in
   // the descendants of the reference node.
   bool hasImpostors = false;
@@ -346,8 +362,8 @@ inline double LMNNImpostorsRules<MetricType, TreeType>::Score(
   }
 }
 
-template<typename MetricType, typename TreeType>
-inline double LMNNImpostorsRules<MetricType, TreeType>::Rescore(
+template<typename MetricType, typename TreeType, bool UseImpBounds>
+inline double LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::Rescore(
     TreeType& queryNode,
     TreeType& /* referenceNode */,
     const double oldScore) const
@@ -363,9 +379,9 @@ inline double LMNNImpostorsRules<MetricType, TreeType>::Rescore(
 
 // Calculate the bound for a given query node in its current state and update
 // it.
-template<typename MetricType, typename TreeType>
-inline double LMNNImpostorsRules<MetricType, TreeType>::CalculateBound(
-    TreeType& queryNode) const
+template<typename MetricType, typename TreeType, bool UseImpBounds>
+inline double LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::
+    CalculateBound(TreeType& queryNode) const
 {
   // This is an adapted form of the B_1(N_q) function in the paper
   // ``Tree-Independent Dual-Tree Algorithms'' by Curtin et. al.; the goal is to
@@ -386,6 +402,10 @@ inline double LMNNImpostorsRules<MetricType, TreeType>::CalculateBound(
   // Loop over points held in the node.
   for (size_t i = 0; i < queryNode.NumPoints(); ++i)
   {
+    // Skip any pruned points.
+    if (UseImpBounds && pruned[queryNode.Point(i)])
+      continue;
+
     const double distance = candidates[queryNode.Point(i)].top().first;
     if (worstDistance < distance)
       worstDistance = distance;
@@ -395,6 +415,9 @@ inline double LMNNImpostorsRules<MetricType, TreeType>::CalculateBound(
   // assemble bounds.
   for (size_t i = 0; i < queryNode.NumChildren(); ++i)
   {
+    if (UseImpBounds && queryNode.Child(i).Stat().Pruned())
+      continue;
+
     const double bound = queryNode.Child(i).Stat().Bound();
     if (worstDistance < bound)
       worstDistance = bound;
@@ -426,11 +449,11 @@ inline double LMNNImpostorsRules<MetricType, TreeType>::CalculateBound(
  * @param neighbor Index of reference point which is being inserted.
  * @param distance Distance from query point to reference point.
  */
-template<typename MetricType, typename TreeType>
-inline void LMNNImpostorsRules<MetricType, TreeType>::InsertNeighbor(
-    const size_t queryIndex,
-    const size_t neighbor,
-    const double distance)
+template<typename MetricType, typename TreeType, bool UseImpBounds>
+inline void LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::
+    InsertNeighbor(const size_t queryIndex,
+                   const size_t neighbor,
+                   const double distance)
 {
   CandidateList& pqueue = candidates[queryIndex];
   Candidate c = std::make_pair(distance, neighbor);

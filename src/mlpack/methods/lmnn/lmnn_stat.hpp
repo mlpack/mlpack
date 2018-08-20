@@ -40,6 +40,8 @@ class LMNNStat
   std::vector<bool> hasTrueNeighbors;
   //! The original dataset.  Only non-NULL in the root node.
   arma::mat* origDataset;
+  //! Whether all descendant points in the node are pruned.
+  bool pruned;
 
  public:
   /**
@@ -66,7 +68,8 @@ class LMNNStat
   LMNNStat(TreeType& /* node */) :
       bound(DBL_MAX),
       lastDistance(0.0),
-      origDataset(NULL) { }
+      origDataset(NULL),
+      pruned(false) { }
 
   /**
    * Reset statistic parameters to initial values.
@@ -75,6 +78,7 @@ class LMNNStat
   {
     bound = DBL_MAX;
     lastDistance = 0.0;
+    pruned = false;
   }
 
   //! Get the first bound.
@@ -105,6 +109,11 @@ class LMNNStat
   //! Modify the original dataset.
   arma::mat*& OrigDataset() { return origDataset; }
 
+  //! Get whether or not all descendant points are pruned.
+  bool Pruned() const { return pruned; }
+  //! Modify whether or not all descendant points are pruned.
+  bool& Pruned() { return pruned; }
+
   //! Serialize the statistic to/from an archive.
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
@@ -114,6 +123,7 @@ class LMNNStat
     ar & BOOST_SERIALIZATION_NVP(hasImpostors);
     ar & BOOST_SERIALIZATION_NVP(hasTrueNeighbors);
     ar & BOOST_SERIALIZATION_NVP(origDataset);
+    ar & BOOST_SERIALIZATION_NVP(pruned);
   }
 };
 

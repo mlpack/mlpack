@@ -85,7 +85,8 @@ class Constraints
                  const arma::Row<size_t>& labels,
                  const arma::vec& norms,
                  const arma::mat& transformation,
-                 const double transformationDiff);
+                 const double transformationDiff,
+                 const bool useImpBounds);
 
   /**
    * Calculates k differently labeled nearest neighbors & distances to
@@ -102,7 +103,8 @@ class Constraints
                  const arma::Row<size_t>& labels,
                  const arma::vec& norms,
                  const arma::mat& transformation,
-                 const double transformationDiff);
+                 const double transformationDiff,
+                 const bool useImpBounds);
 
   /**
    * Calculates k differently labeled nearest neighbors for a batch of dataset
@@ -121,7 +123,8 @@ class Constraints
                  const size_t begin,
                  const size_t batchSize,
                  const arma::mat& transformation,
-                 const double transformationDiff);
+                 const double transformationDiff,
+                 const bool useImpBounds);
 
   /**
    * Calculates k differently labeled nearest neighbors & distances to
@@ -142,27 +145,8 @@ class Constraints
                  const size_t begin,
                  const size_t batchSize,
                  const arma::mat& transformation,
-                 const double transformationDiff);
-
-  /**
-   * Calculates k differently labeled nearest neighbors & distances to
-   * impostors for some points of dataset and writes them back to passed
-   * matrices.
-   *
-   * @param outputNeighbors Coordinates matrix to store impostors.
-   * @param outputDistance matrix to store distance.
-   * @param dataset Input dataset.
-   * @param labels Input dataset labels.
-   * @param points Indices of data points to calculate impostors on.
-   * @param numPoints Number of points to actually calculate impostors on.
-   */
-  void Impostors(arma::Mat<size_t>& outputNeighbors,
-                 arma::mat& outputDistance,
-                 const arma::mat& dataset,
-                 const arma::Row<size_t>& labels,
-                 const arma::vec& norms,
-                 const arma::uvec& points,
-                 const size_t numPoints);
+                 const double transformationDiff,
+                 const bool useImpBounds);
 
   /**
    * Generate triplets {i, j, l} for each datapoint i and writes back generated
@@ -234,8 +218,10 @@ class Constraints
                         const arma::Row<size_t>& referenceLabels,
                         const arma::mat& querySet,
                         const arma::Row<size_t>& queryLabels,
+                        const arma::vec& norms,
                         const arma::mat& transformation,
                         const double transformationDiff,
+                        const bool useImpBounds,
                         arma::Mat<size_t>& neighbors,
                         arma::mat& distances);
   /**

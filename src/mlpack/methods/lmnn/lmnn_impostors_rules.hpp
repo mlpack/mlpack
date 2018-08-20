@@ -31,8 +31,9 @@ namespace lmnn {
  *
  * @tparam MetricType The metric to use for computation.
  * @tparam TreeType The tree type to use; must adhere to the TreeType API.
+ * @tparam UseImpBounds Use impostor bounds to filter points and nodes.
  */
-template<typename MetricType, typename TreeType>
+template<typename MetricType, typename TreeType, bool UseImpBounds>
 class LMNNImpostorsRules
 {
  public:
@@ -46,6 +47,8 @@ class LMNNImpostorsRules
    * @param querySet Set of query data.
    * @param queryLabels Set of query labels.
    * @param queryOldFromNew oldFromNew mappings from query tree building.
+   * @param pruned Set of points that are pruned; pass an empty vector if
+   *      UseImpBounds = false.
    * @param k Number of neighbors to search for.
    * @param metric Instantiated metric.
    */
@@ -55,6 +58,7 @@ class LMNNImpostorsRules
                      const typename TreeType::Mat& querySet,
                      const arma::Row<size_t>& queryLabels,
                      const std::vector<size_t>& queryOldFromNew,
+                     const std::vector<bool>& pruned,
                      const size_t k,
                      const size_t numClasses,
                      MetricType& metric);
@@ -150,6 +154,9 @@ class LMNNImpostorsRules
   const arma::Row<size_t>& queryLabels;
   //! The mappings for the query set.
   const std::vector<size_t>& queryOldFromNew;
+
+  //! The list of points that are pruned.
+  const std::vector<bool>& pruned;
 
   //! Candidate represents a possible candidate neighbor (distance, index).
   typedef std::pair<double, size_t> Candidate;
