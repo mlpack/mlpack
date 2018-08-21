@@ -203,7 +203,7 @@ void SVDPlusPlusFunction<MatType>::Gradient(const arma::mat& parameters,
     {
       // Note that implicitCount != 0 if this loop is acutally executed.
       gradient.col(implicitStart + it.row()).subvec(0, rank - 1) +=
-          2.0 / implicitCount * (lambda *
+          2.0 * (lambda / implicitCount *
           parameters.col(implicitStart + it.row()).subvec(0, rank - 1) -
           ratingError / std::sqrt(implicitCount) *
           parameters.col(item).subvec(0, rank - 1));
@@ -275,7 +275,7 @@ void SVDPlusPlusFunction<MatType>::Gradient(const arma::mat& parameters,
       for (size_t j = 0; j < rank; ++j)
       {
         gradient(j, implicitStart + it.row()) +=
-            2.0 / implicitCount * (lambda *
+            2.0 * (lambda / implicitCount *
             parameters(j, implicitStart + it.row()) -
             ratingError / std::sqrt(implicitCount) *
             parameters(j, item));
@@ -379,7 +379,7 @@ double StandardSGD::Optimize(
     {
       // Note that implicitCount != 0 if this loop is acutally executed.
       parameters.col(implicitStart + it.row()).subvec(0, rank - 1) -=
-          stepSize * 2.0 / implicitCount * (lambda *
+          stepSize * 2.0 * (lambda / implicitCount *
           parameters.col(implicitStart + it.row()).subvec(0, rank - 1) -
           ratingError / std::sqrt(implicitCount) *
           parameters.col(item).subvec(0, rank - 1));
@@ -516,7 +516,7 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
         for (; it != it_end; it++, implicitIndex++)
         {
           itemImplicitUpdate.col(implicitIndex) =
-              stepSize * 2.0 / implicitCount * (lambda *
+              stepSize * 2.0 * (lambda / implicitCount *
               iterate.col(implicitStart + it.row()).subvec(0, rank - 1) -
               ratingError / std::sqrt(implicitCount) *
               iterate.col(item).subvec(0, rank - 1));
