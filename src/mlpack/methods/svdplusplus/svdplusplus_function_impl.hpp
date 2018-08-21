@@ -86,7 +86,6 @@ double SVDPlusPlusFunction<MatType>::Evaluate(const arma::mat& parameters,
     // Indices for accessing the the correct parameter columns.
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;
-    const size_t itemRealIdx = data(1, i);
     const size_t implicitStart = numUsers + numItems;
 
     // Calculate the squared error in the prediction.
@@ -104,13 +103,13 @@ double SVDPlusPlusFunction<MatType>::Evaluate(const arma::mat& parameters,
     for (; it != it_end; it++)
     {
       userVec += parameters.col(implicitStart + it.row()).subvec(0, rank - 1);
-      if (implicitVecsNormSquare(itemRealIdx) < 0)
+      if (implicitVecsNormSquare(it.row()) < 0)
       { 
-        implicitVecsNormSquare(itemRealIdx) = arma::dot(
+        implicitVecsNormSquare(it.row()) = arma::dot(
             parameters.col(implicitStart + it.row()).subvec(0, rank - 1),
             parameters.col(implicitStart + it.row()).subvec(0, rank - 1));
       }
-      regularizationError += lambda * implicitVecsNormSquare(itemRealIdx);
+      regularizationError += lambda * implicitVecsNormSquare(it.row());
       implicitCount += 1;
     }
     if (implicitCount != 0)

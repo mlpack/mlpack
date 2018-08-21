@@ -139,7 +139,6 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionRegularizationEvaluate)
     {
       const size_t user = data(0, j);
       const size_t item = data(1, j) + numUsers;
-      const size_t itemRealIdx = data(1, j);
       const size_t implicitStart = numUsers + numItems;
 
       // Iterate through each item which the user interacted with.
@@ -149,13 +148,13 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionRegularizationEvaluate)
       size_t implicitCount = 0;
       for (; it != it_end; it++)
       {
-        if (implicitVecsNormSquare(itemRealIdx) < 0)
+        if (implicitVecsNormSquare(it.row()) < 0)
         { 
-          implicitVecsNormSquare(itemRealIdx) = arma::dot(
+          implicitVecsNormSquare(it.row()) = arma::dot(
             parameters.col(implicitStart + it.row()).subvec(0, rank - 1),
             parameters.col(implicitStart + it.row()).subvec(0, rank - 1));
         }
-        regularizationError += implicitVecsNormSquare(itemRealIdx);
+        regularizationError += implicitVecsNormSquare(it.row());
         implicitCount += 1;
       }
       if (implicitCount != 0)
