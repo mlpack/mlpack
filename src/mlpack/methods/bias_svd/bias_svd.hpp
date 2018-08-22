@@ -66,8 +66,8 @@ class BiasSVD
    * @param lambda Regularization parameter for the optimization.
    */
   BiasSVD(const size_t iterations = 10,
-          const double alpha = 0.005,
-          const double lambda = 0.02);
+          const double alpha = 0.02,
+          const double lambda = 0.05);
 
   /**
    * Trains the model and obtains user/item matrices and user/item bias.
