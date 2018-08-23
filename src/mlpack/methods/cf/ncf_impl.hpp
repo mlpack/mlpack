@@ -308,10 +308,12 @@ void NCF::EvaluateModel(arma::mat& testData,
                         const size_t numRecs)
 {
   // Variable declarations.
-  arma::Col<size_t> userVec(numItems), itemScore(numItems);
+  arma::Col<size_t> userVec(100), itemScore(numItems);
   arma::mat predictors;
+  arma::Col<size_t> itemVec(100);
 
   size_t norm, rmse;
+  arma::mat results, midPred;
   arma::Col<size_t> hits(testData.n_cols), rmses(testData.n_cols);
 
   for (size_t i = 0; i < testData.n_cols; i++)
@@ -322,28 +324,31 @@ void NCF::EvaluateModel(arma::mat& testData,
     size_t rt = testData(2, i);
 
     // Get negatives of items.
-    arma::Col<size_t> itemVec(100);
     itemVec.rows(0, 98) = (arma::conv_to< arma::Col<size_t> >::from(
         negatives[u])).rows(0, 98);
-    itemVec.transform( [](double val) { return (val + 1); } );
-    itemVec(99) = size_t(gtItem);
+    midPred = arma::conv_to< arma::mat >::from(itemVec);
+    midPred.for_each( [](arma::mat::elem_type& val) { val = val+1; } );
+    midPred(99) = size_t(gtItem);
 
     // Form input for the network.
     userVec.fill(u);
     predictors = arma::conv_to< arma::mat >::from(
-        arma::join_vert(userVec, itemVec));
+        arma::join_vert(arma::conv_to< arma::mat >::from(userVec), midPred));
 
-    arma::mat results;
     network.Predict(predictors, results);
 
     // Find root mean squared error of predicted rating of considered item.
-    for (size_t j = 0; j < itemVec.n_elem; j++)
+    for (size_t j = 0; j < midPred.n_elem; j++)
     {
-      itemScore[itemVec[j]] = results[j];
-      if (gtItem == itemVec[j])
+      itemScore[midPred[j]] = results[j];
+      if (gtItem == midPred[j])
       {
-        norm = (itemScore[itemVec[j]] * 4) + 1;
-        rmse = ((rt - norm) ^ 2);
+        norm = (itemScore[ midPred[j] ] * 4) + 1;
+        rmse = (rt > norm) ? (rt - norm) : (norm - rt);
+      }
+      else
+      {
+        rmse = 0;
       }
     }
     size_t hr = 0;
@@ -358,13 +363,13 @@ void NCF::EvaluateModel(arma::mat& testData,
       itemScore(arma::as_scalar(
           arma::find(itemScore.max() == itemScore, 1))) = 0;
     }
-    hits.insert_rows(i, hr);
-    rmses.insert_rows(i, rmse);
+    hits(i) = hr;
+    rmses(i) = rmse;
   }
 
   // Find hit ratio and root mean squared error.
   hitRatio = arma::mean(hits);
-  rmseMean = std::sqrt(arma::mean(rmses));
+  rmseMean = (size_t) std::sqrt(arma::mean(arma::square(rmses)));
 }
 
 /**
