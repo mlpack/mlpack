@@ -1993,8 +1993,8 @@ BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerBetaTest)
   {
     GradientFunction()
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
+      input = arma::randu(10, 2);
+      target = arma::mat("1 1");
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;

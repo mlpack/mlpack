@@ -38,8 +38,6 @@ class Concatenate
  public:
   /**
    * Create the Concatenate object using the specified number of output units.
-   *
-   * @param conat The matrix to be concatenated to the input.
    */
   Concatenate();
 
