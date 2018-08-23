@@ -1084,6 +1084,27 @@ BOOST_AUTO_TEST_CASE(GradientConcatLayerTest)
 }
 
 /**
+ * Simple concatenate module test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleConcatenateLayerTest)
+{
+  arma::mat input = arma::ones(5, 1);
+  arma::mat output, delta;
+
+  Concatenate<> module;
+  module.Concat() = arma::ones(5, 1) * 0.5;
+
+  // Test the Forward function.
+  module.Forward(std::move(input), std::move(output));
+
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 7.5);
+
+  // Test the Backward function.
+  module.Backward(std::move(input), std::move(output), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 5);
+}
+
+/**
  * Concatenate layer numerical gradient test.
  */
 BOOST_AUTO_TEST_CASE(GradientConcatenateLayerTest)
