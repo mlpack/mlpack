@@ -3,6 +3,8 @@
 set(SOURCES
   cf.hpp
   cf_impl.hpp
+  ncf.hpp
+  ncf_impl.hpp
   svd_wrapper.hpp
   svd_wrapper_impl.hpp
 )
@@ -22,4 +24,5 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(cf)
+add_cli_executable(ncf)
 add_python_binding(cf)

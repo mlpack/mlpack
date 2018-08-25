@@ -1006,13 +1006,13 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
 {
   arma::mat output, input, delta, error;
 
-  Linear<> moduleA(10, 10);
-  moduleA.Parameters().randu();
-  moduleA.Reset();
+  Linear<>* moduleA = new Linear<>(10, 10);
+  moduleA->Parameters().randu();
+  moduleA->Reset();
 
-  Linear<> moduleB(10, 10);
-  moduleB.Parameters().randu();
-  moduleB.Reset();
+  Linear<>* moduleB = new Linear<>(10, 10);
+  moduleB->Parameters().randu();
+  moduleB->Reset();
 
   Concat<> module;
   module.Add(moduleA);
@@ -1023,12 +1023,12 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
   module.Forward(std::move(input), std::move(output));
 
   BOOST_REQUIRE_CLOSE(arma::accu(
-      moduleA.Parameters().submat(100, 0, moduleA.Parameters().n_elem - 1, 0)),
-      arma::accu(output.col(0)), 1e-3);
+      moduleA->Parameters().submat(100, 0, moduleA->Parameters().n_elem - 1,
+      0)), arma::accu(output.col(0)), 1e-3);
 
   BOOST_REQUIRE_CLOSE(arma::accu(
-      moduleB.Parameters().submat(100, 0, moduleB.Parameters().n_elem - 1, 0)),
-      arma::accu(output.col(1)), 1e-3);
+      moduleB->Parameters().submat(100, 0, moduleB->Parameters().n_elem - 1,
+      0)), arma::accu(output.col(1)), 1e-3);
 
   // Test the Backward function.
   error = arma::zeros(10, 2);
@@ -1110,8 +1110,9 @@ BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
   BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(input));
 
   // Test the Gradient function.
-  arma::mat error = arma::ones(2, 5);
+  arma::mat error = arma::zeros(12, 5);
   error = error.t();
+  error.col(0) += 1;
   error.col(1) *= 0.5;
 
   module.Gradient(std::move(input), std::move(error), std::move(gradient));
@@ -1722,8 +1723,8 @@ BOOST_AUTO_TEST_CASE(SimpleSubviewLayerTest)
   BOOST_REQUIRE_EQUAL(outputMat.n_cols, 2);
 
   // Test the Backward function.
-  moduleMat.Backward(std::move(input), std::move(input), std::move(delta));
-  BOOST_REQUIRE_EQUAL(accu(delta), 160);
+  moduleMat.Backward(std::move(input), std::move(outputMat), std::move(delta));
+  BOOST_REQUIRE_EQUAL(accu(delta), 24);
   BOOST_REQUIRE_EQUAL(delta.n_rows, 20);
 }
 
