@@ -49,7 +49,12 @@ build_script:
   
   # Preparing installer staging
   - cd C:\projects\mlpack\dist\win-installer\staging && mkdir lib
-  - ps: cp C:\projects\mlpack\build\Release\*.* C:\projects\mlpack\dist\win-installer\staging\lib\
+  - ps: cp C:\projects\mlpack\build\Release\*.lib C:\projects\mlpack\dist\win-installer\staging\lib\
+  - ps: cp C:\projects\mlpack\build\Release\*.exp C:\projects\mlpack\dist\win-installer\staging\lib\
+  - ps: cp C:\projects\mlpack\build\Release\*.dll C:\projects\mlpack\dist\win-installer\staging\
+  - ps: cp C:\projects\mlpack\build\Release\*.exe C:\projects\mlpack\dist\win-installer\staging\
+  - ps: cp C:\projects\mlpack\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll C:\projects\mlpack\dist\win-installer\staging\
+  - ps: cp C:\projects\mlpack\boost_libs\boost_unit_test_framework-vc*.dll C:\projects\mlpack\dist\win-installer\staging\
   - ps: cp C:\projects\mlpack\build\include\mlpack C:\projects\mlpack\dist\win-installer\staging -recurse
   - ps: cp C:\projects\mlpack\doc\examples C:\projects\mlpack\dist\win-installer\staging -recurse
   
@@ -60,7 +65,7 @@ build_script:
   - light -out .\bin\x64\Release\mlpack-%MLPACK_VERSION%.msi -pdbout .\bin\x64\Release\mlpack-windows.wixpdb -cultures:null -loc mlpack-localization.wxl -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUIExtension.dll" -contentsfile obj\x64\Release\mlpack-win-installer.wixproj.BindContentsFileListnull.txt -outputsfile obj\x64\Release\mlpack-win-installer.wixproj.BindOutputsFileListnull.txt -builtoutputsfile obj\x64\Release\mlpack-win-installer.wixproj.BindBuiltOutputsFileListnull.txt -wixprojectfile mlpack-win-installer.wixproj obj\x64\Release\Product.wixobj obj\x64\Release\HeatGeneratedFileList.wixobj
 
 artifacts:
-  - path: '**\*.zip'
+  - path: 'build\*.zip'
     name: mlpack-windows-zip
   
   - path: 'dist\win-installer\mlpack-win-installer\bin\x64\Release\*.msi'
