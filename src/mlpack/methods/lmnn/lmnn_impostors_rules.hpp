@@ -37,6 +37,21 @@ template<typename MetricType, typename TreeType, bool UseImpBounds>
 class LMNNImpostorsRules
 {
  public:
+  //! Candidate represents a possible candidate neighbor (distance, index).
+  typedef std::pair<double, size_t> Candidate;
+
+  //! Compare two candidates based on the distance.
+  struct CandidateCmp {
+    bool operator()(const Candidate& c1, const Candidate& c2)
+    {
+      return !(c2.first <= c1.first);
+    };
+  };
+
+  //! Use a priority queue to represent the list of candidate neighbors.
+  typedef std::priority_queue<Candidate, std::vector<Candidate>, CandidateCmp>
+      CandidateList;
+
   /**
    * Construct the LMNNImpostorsRules object.  This is usually done from within
    * the Constraints class at search time.
@@ -61,7 +76,9 @@ class LMNNImpostorsRules
                      const std::vector<bool>& pruned,
                      const size_t k,
                      const size_t numClasses,
-                     MetricType& metric);
+                     MetricType& metric,
+                     const std::vector<CandidateList> list =
+                         std::vector<CandidateList>());
 
   /**
    * Store the list of candidates for each query point in the given matrices.
@@ -91,6 +108,9 @@ class LMNNImpostorsRules
    * @param referenceNode Candidate node to be recursed into.
    */
   double Score(const size_t queryIndex, TreeType& referenceNode);
+
+  size_t pointPruned;
+  size_t nodePruned;
 
   /**
    * Re-evaluate the score for recursion order.  A low score indicates priority
@@ -157,21 +177,6 @@ class LMNNImpostorsRules
 
   //! The list of points that are pruned.
   const std::vector<bool>& pruned;
-
-  //! Candidate represents a possible candidate neighbor (distance, index).
-  typedef std::pair<double, size_t> Candidate;
-
-  //! Compare two candidates based on the distance.
-  struct CandidateCmp {
-    bool operator()(const Candidate& c1, const Candidate& c2)
-    {
-      return !(c2.first <= c1.first);
-    };
-  };
-
-  //! Use a priority queue to represent the list of candidate neighbors.
-  typedef std::priority_queue<Candidate, std::vector<Candidate>, CandidateCmp>
-      CandidateList;
 
   //! Set of candidate neighbors for each point.
   std::vector<CandidateList> candidates;

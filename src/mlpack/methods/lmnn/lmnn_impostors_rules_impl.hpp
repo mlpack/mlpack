@@ -29,7 +29,10 @@ LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::LMNNImpostorsRules(
     const std::vector<bool>& pruned,
     const size_t k,
     const size_t numClasses,
-    MetricType& metric) :
+    MetricType& metric,
+    std::vector<CandidateList> list) :
+    pointPruned(0),
+    nodePruned(0),
     referenceSet(referenceSet),
     referenceLabels(referenceLabels),
     refOldFromNew(refOldFromNew),
@@ -41,7 +44,8 @@ LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::LMNNImpostorsRules(
     numClasses(numClasses),
     metric(metric),
     lastQueryIndex(querySet.n_cols),
-    lastReferenceIndex(referenceSet.n_cols)
+    lastReferenceIndex(referenceSet.n_cols),
+    candidates(std::move(list))
 {
   // We must set the traversal info last query and reference node pointers to
   // something that is both invalid (i.e. not a tree node) and not NULL.  We'll
@@ -49,18 +53,21 @@ LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::LMNNImpostorsRules(
   traversalInfo.LastQueryNode() = (TreeType*) this;
   traversalInfo.LastReferenceNode() = (TreeType*) this;
 
-  // Let's build the list of candidate neighbors for each query point.
-  // It will be initialized with k candidates: (WorstDistance, size_t() - 1)
-  // The list of candidates will be updated when visiting new points with the
-  // BaseCase() method.
-  const Candidate def = std::make_pair(DBL_MAX, size_t() - 1);
+  // Let's build the list of candidate neighbors for each query point, if we
+  // received an empty list.  It will be initialized with k candidates:
+  // (WorstDistance, size_t() - 1) The list of candidates will be updated when
+  // visiting new points with the BaseCase() method.
+  if (candidates.size() == 0)
+  {
+    const Candidate def = std::make_pair(DBL_MAX, size_t() - 1);
 
-  std::vector<Candidate> vect(k, def);
-  CandidateList pqueue(CandidateCmp(), std::move(vect));
+    std::vector<Candidate> vect(k, def);
+    CandidateList pqueue(CandidateCmp(), std::move(vect));
 
-  candidates.reserve(querySet.n_cols);
-  for (size_t i = 0; i < querySet.n_cols; i++)
-    candidates.push_back(pqueue);
+    candidates.reserve(querySet.n_cols);
+    for (size_t i = 0; i < querySet.n_cols; i++)
+      candidates.push_back(pqueue);
+  }
 }
 
 template<typename MetricType, typename TreeType, bool UseImpBounds>
@@ -96,7 +103,10 @@ double LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::BaseCase(
 
   // If these points have the same class, then don't do anything.
   if (queryLabels[queryIndex] == referenceLabels[referenceIndex])
+  {
+    ++pointPruned;
     return 0.0;
+  }
 
   // If we've pruned this point because its impostors can't change this
   // iteration, don't do anything.
@@ -125,7 +135,10 @@ inline double LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::Score(
   // can't possibly help us with the results.
   const size_t queryClass = queryLabels[queryIndex];
   if (!referenceNode.Stat().HasImpostors()[queryClass])
+  {
+    ++nodePruned;
     return DBL_MAX;
+  }
 
   // If we are using impostor bounds, prune if we can.
   if (UseImpBounds && pruned[queryIndex])
@@ -205,7 +218,10 @@ inline double LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::Score(
     }
   }
   if (!hasImpostors)
+  {
+    ++nodePruned;
     return DBL_MAX;
+  }
 
   // Update our bound.
   const double bestDistance = CalculateBound(queryNode);

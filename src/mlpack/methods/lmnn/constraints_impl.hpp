@@ -545,7 +545,13 @@ void Constraints<MetricType>::ComputeImpostors(
 
     // Now perform the dual-tree traversal.
     Timer::Start("computing_impostors");
+    std::cout << "compute impostors!\n";
     traverser.Traverse(*tree, *tree);
+
+    Log::Info << traverser.NumBaseCases() << " base cases.\n";
+    Log::Info << traverser.NumScores() << " node combinations visited.\n";
+  std::cout << "points pruned: " << rules.pointPruned << "\nnodes pruned: " <<
+rules.nodePruned << "\n";
 
     // Next, process the results.  The unmapping is done inside the rules.
     rules.GetResults(neighbors, distances);

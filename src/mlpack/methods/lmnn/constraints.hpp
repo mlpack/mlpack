@@ -185,7 +185,7 @@ class Constraints
   std::vector<arma::uvec> indexDiff;
 
   //! Reference tree used for search.
-  TreeType* tree;
+  std::vector<TreeType*> trees;
   //! Sorted labels for points in the reference tree.
   arma::Row<size_t> sortedLabels;
   //! Sorted norms for points in the reference tree.
