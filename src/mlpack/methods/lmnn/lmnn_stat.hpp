@@ -32,12 +32,6 @@ class LMNNStat
   double bound;
   //! The last distance evaluation.
   double lastDistance;
-  //! Whether or not the node contains any impostors for a given class as
-  //! descendant points.
-  std::vector<bool> hasImpostors;
-  //! Whether or not the node contains any true neighbors for a given class as
-  //! descendant points.
-  std::vector<bool> hasTrueNeighbors;
   //! The original dataset.  Only non-NULL in the root node.
   arma::mat* origDataset;
   //! Whether all descendant points in the node are pruned.
@@ -90,20 +84,6 @@ class LMNNStat
   //! Modify the last distance calculation.
   double& LastDistance() { return lastDistance; }
 
-  //! Get whether or not the node has any impostors as descendants for each
-  //! class.
-  const std::vector<bool>& HasImpostors() const { return hasImpostors; }
-  //! Modify whether or not the node has any impostors as descendants for each
-  //! class.
-  std::vector<bool>& HasImpostors() { return hasImpostors; }
-
-  //! Get whether or not the node has any true neighbors as descendants for each
-  //! class.
-  const std::vector<bool>& HasTrueNeighbors() const { return hasTrueNeighbors; }
-  //! Modify whether or not the node has any true neighbors as descendants for
-  //! each class.
-  std::vector<bool>& HasTrueNeighbors() { return hasTrueNeighbors; }
-
   //! Get the original dataset.
   const arma::mat* OrigDataset() const { return origDataset; }
   //! Modify the original dataset.
@@ -120,8 +100,6 @@ class LMNNStat
   {
     ar & BOOST_SERIALIZATION_NVP(bound);
     ar & BOOST_SERIALIZATION_NVP(lastDistance);
-    ar & BOOST_SERIALIZATION_NVP(hasImpostors);
-    ar & BOOST_SERIALIZATION_NVP(hasTrueNeighbors);
     ar & BOOST_SERIALIZATION_NVP(origDataset);
     ar & BOOST_SERIALIZATION_NVP(pruned);
   }

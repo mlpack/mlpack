@@ -1,45 +1,31 @@
 /**
- * @file lmnn_targets_and_impostors_rules_impl.hpp
+ * @file lmnn_targets_rules_impl.hpp
  * @author Ryan Curtin
  *
- * Implementation of LMNNTargetsAndImpostorsRules.
+ * Implementation of LMNNTargetsRules.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_LMNN_LMNN_TARGETS_AND_IMPOSTORS_RULES_IMPL_HPP
-#define MLPACK_METHODS_LMNN_LMNN_TARGETS_AND_IMPOSTORS_RULES_IMPL_HPP
+#ifndef MLPACK_METHODS_LMNN_LMNN_TARGETS_RULES_IMPL_HPP
+#define MLPACK_METHODS_LMNN_LMNN_TARGETS_RULES_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "lmnn_targets_and_impostors_rules.hpp"
+#include "lmnn_targets_rules.hpp"
 
 namespace mlpack {
 namespace lmnn {
 
 template<typename MetricType, typename TreeType>
-LMNNTargetsAndImpostorsRules<MetricType, TreeType>::
-LMNNTargetsAndImpostorsRules(
+LMNNTargetsRules<MetricType, TreeType>::
+LMNNTargetsRules(
     const typename TreeType::Mat& referenceSet,
-    const arma::Row<size_t>& referenceLabels,
-    const std::vector<size_t>& refOldFromNew,
-    const typename TreeType::Mat& querySet,
-    const arma::Row<size_t>& queryLabels,
-    const std::vector<size_t>& queryOldFromNew,
-    const size_t neighborsK,
-    const size_t impostorsK,
-    const size_t numClasses,
+    const size_t k,
     MetricType& metric) :
     referenceSet(referenceSet),
-    referenceLabels(referenceLabels),
-    refOldFromNew(refOldFromNew),
-    querySet(querySet),
-    queryLabels(queryLabels),
-    queryOldFromNew(queryOldFromNew),
-    neighborsK(neighborsK),
-    impostorsK(impostorsK),
-    numClasses(numClasses),
+    k(k),
     metric(metric),
     lastQueryIndex(querySet.n_cols),
     lastReferenceIndex(referenceSet.n_cols)
@@ -50,67 +36,45 @@ LMNNTargetsAndImpostorsRules(
   traversalInfo.LastQueryNode() = (TreeType*) this;
   traversalInfo.LastReferenceNode() = (TreeType*) this;
 
-  // Let's build the list of candidate neighbors and impostors for each query
-  // point.  They will be initialized with neighborsK or impostorsK candidates:
-  // (DBL_MAX, size_t() - 1) The list of candidates will be updated when
-  // visiting new points with the BaseCase() method.
+  // Let's build the list of candidate neighbors for each query point.  They
+  // will be initialized with k candidates: (DBL_MAX, size_t() - 1) The list of
+  // candidates will be updated when visiting new points with the BaseCase()
+  // method.
   const Candidate def = std::make_pair(DBL_MAX, size_t() - 1);
 
-  std::vector<Candidate> vect(neighborsK, def);
+  std::vector<Candidate> vect(k, def);
   CandidateList pqueue(CandidateCmp(), std::move(vect));
-  std::vector<Candidate> impVect(impostorsK, def);
-  CandidateList impqueue(CandidateCmp(), std::move(impVect));
 
-  candidateNeighbors.reserve(querySet.n_cols);
-  candidateImpostors.reserve(querySet.n_cols);
+  candidates.reserve(querySet.n_cols);
   for (size_t i = 0; i < querySet.n_cols; ++i)
   {
-    candidateNeighbors.push_back(pqueue);
-    candidateImpostors.push_back(impqueue);
+    candidates.push_back(pqueue);
   }
 }
 
 template<typename MetricType, typename TreeType>
-void LMNNTargetsAndImpostorsRules<MetricType, TreeType>::GetResults(
+void LMNNTargetsRules<MetricType, TreeType>::GetResults(
+    const std::vector<size_t>& oldFromNew,
     arma::Mat<size_t>& neighbors,
-    arma::mat& neighborDistances,
-    arma::Mat<size_t>& impostors,
-    arma::mat& impostorDistances)
+    arma::mat& neighborDistances)
 {
-  neighbors.set_size(neighborsK, querySet.n_cols);
-  neighborDistances.set_size(neighborsK, querySet.n_cols);
-  impostors.set_size(impostorsK, querySet.n_cols);
-  impostorDistances.set_size(impostorsK, querySet.n_cols);
-
   // We also perform the reverse mapping here.
   for (size_t i = 0; i < querySet.n_cols; i++)
   {
-    // First the true neighbors.
     CandidateList& pqueue = candidateNeighbors[i];
-    const size_t queryIndex = queryOldFromNew[i];
+    const size_t queryIndex = oldFromNew[i];
     for (size_t j = 1; j <= neighborsK; ++j)
     {
-      neighbors(neighborsK - j, queryIndex) =
-          refOldFromNew[pqueue.top().second];
-      neighborDistances(neighborsK - j, queryIndex) = pqueue.top().first;
+      neighbors(k - j, queryIndex) = oldFromNew[pqueue.top().second];
+      neighborDistances(k - j, queryIndex) = pqueue.top().first;
       pqueue.pop();
-    }
-
-    // Now the impostors.
-    CandidateList& impqueue = candidateImpostors[i];
-    for (size_t j = 1; j <= impostorsK; ++j)
-    {
-      impostors(impostorsK - j, queryIndex) =
-          refOldFromNew[impqueue.top().second];
-      impostorDistances(impostorsK - j, queryIndex) = impqueue.top().first;
-      impqueue.pop();
     }
   }
 };
 
 template<typename MetricType, typename TreeType>
 inline force_inline // Absolutely MUST be inline so optimizations can happen.
-double LMNNTargetsAndImpostorsRules<MetricType, TreeType>::BaseCase(
+double LMNNTargetsRules<MetricType, TreeType>::BaseCase(
     const size_t queryIndex, const size_t referenceIndex)
 {
   // If we have already performed this base case, then do not perform it again.
@@ -126,10 +90,7 @@ double LMNNTargetsAndImpostorsRules<MetricType, TreeType>::BaseCase(
   double distance = metric.Evaluate(querySet.col(queryIndex),
                                     referenceSet.col(referenceIndex));
 
-  if (queryLabels[queryIndex] == referenceLabels[referenceIndex])
-    InsertNeighbor(queryIndex, referenceIndex, distance);
-  else
-    InsertImpostor(queryIndex, referenceIndex, distance);
+  InsertNeighbor(queryIndex, referenceIndex, distance);
 
   // Cache this information for the next time BaseCase() is called.
   lastQueryIndex = queryIndex;
@@ -140,7 +101,7 @@ double LMNNTargetsAndImpostorsRules<MetricType, TreeType>::BaseCase(
 }
 
 template<typename MetricType, typename TreeType>
-inline double LMNNTargetsAndImpostorsRules<MetricType, TreeType>::Score(
+inline double LMNNTargetsRules<MetricType, TreeType>::Score(
     const size_t queryIndex,
     TreeType& referenceNode)
 {
@@ -175,14 +136,13 @@ inline double LMNNTargetsAndImpostorsRules<MetricType, TreeType>::Score(
 
   // Compare against the best k'th neighbor and impostor distances for this
   // query point so far.
-  double bestDistance = std::max(candidateNeighbors[queryIndex].top().first,
-                                 candidateImpostors[queryIndex].top().first);
+  double bestDistance = candidates[queryIndex].top().first;
 
   return (distance <= bestDistance) ? distance : DBL_MAX;
 }
 
 template<typename MetricType, typename TreeType>
-inline double LMNNTargetsAndImpostorsRules<MetricType, TreeType>::Rescore(
+inline double LMNNTargetsRules<MetricType, TreeType>::Rescore(
     const size_t queryIndex,
     TreeType& /* referenceNode */,
     const double oldScore) const
@@ -192,14 +152,13 @@ inline double LMNNTargetsAndImpostorsRules<MetricType, TreeType>::Rescore(
     return oldScore;
 
   // Just check the score again against the distances.
-  double bestDistance = std::max(candidateNeighbors[queryIndex].top().first,
-                                 candidateImpostors[queryIndex].top().first);
+  double bestDistance = candidates[queryIndex].top().first;
 
   return (oldScore <= bestDistance) ? oldScore : DBL_MAX;
 }
 
 template<typename MetricType, typename TreeType>
-inline double LMNNTargetsAndImpostorsRules<MetricType, TreeType>::Score(
+inline double LMNNTargetsRules<MetricType, TreeType>::Score(
     TreeType& queryNode,
     TreeType& referenceNode)
 {
@@ -359,7 +318,7 @@ inline double LMNNTargetsAndImpostorsRules<MetricType, TreeType>::Score(
 }
 
 template<typename MetricType, typename TreeType>
-inline double LMNNTargetsAndImpostorsRules<MetricType, TreeType>::Rescore(
+inline double LMNNTargetsRules<MetricType, TreeType>::Rescore(
     TreeType& queryNode,
     TreeType& /* referenceNode */,
     const double oldScore) const
@@ -376,7 +335,7 @@ inline double LMNNTargetsAndImpostorsRules<MetricType, TreeType>::Rescore(
 // Calculate the bound for a given query node in its current state and update
 // it.
 template<typename MetricType, typename TreeType>
-inline double LMNNTargetsAndImpostorsRules<MetricType, TreeType>::
+inline double LMNNTargetsRules<MetricType, TreeType>::
 CalculateBound(TreeType& queryNode) const
 {
   // This is an adapted form of the B_1(N_q) function in the paper
@@ -402,9 +361,7 @@ CalculateBound(TreeType& queryNode) const
   // Loop over points held in the node.
   for (size_t i = 0; i < queryNode.NumPoints(); ++i)
   {
-    const double distance = std::max(
-        candidateNeighbors[queryNode.Point(i)].top().first,
-        candidateImpostors[queryNode.Point(i)].top().first);
+    const double distance = candidates[queryNode.Point(i)].top().first;
     if (worstDistance < distance)
       worstDistance = distance;
   }
@@ -445,35 +402,12 @@ CalculateBound(TreeType& queryNode) const
  * @param distance Distance from query point to reference point.
  */
 template<typename MetricType, typename TreeType>
-inline void LMNNTargetsAndImpostorsRules<MetricType, TreeType>::InsertNeighbor(
+inline void LMNNTargetsRules<MetricType, TreeType>::InsertNeighbor(
     const size_t queryIndex,
     const size_t neighbor,
     const double distance)
 {
-  CandidateList& pqueue = candidateNeighbors[queryIndex];
-  Candidate c = std::make_pair(distance, neighbor);
-
-  if (CandidateCmp()(c, pqueue.top()))
-  {
-    pqueue.pop();
-    pqueue.push(c);
-  }
-}
-
-/**
- * Helper function to insert a point into the list of candidate impostors.
- *
- * @param queryIndex Index of point whose impostors we are inserting into.
- * @param neighbor Index of reference point which is being inserted.
- * @param distance Distance from query point to reference point.
- */
-template<typename MetricType, typename TreeType>
-inline void LMNNTargetsAndImpostorsRules<MetricType, TreeType>::InsertImpostor(
-    const size_t queryIndex,
-    const size_t neighbor,
-    const double distance)
-{
-  CandidateList& pqueue = candidateImpostors[queryIndex];
+  CandidateList& pqueue = candidates[queryIndex];
   Candidate c = std::make_pair(distance, neighbor);
 
   if (CandidateCmp()(c, pqueue.top()))
@@ -486,4 +420,4 @@ inline void LMNNTargetsAndImpostorsRules<MetricType, TreeType>::InsertImpostor(
 } // namespace lmnn
 } // namespace mlpack
 
-#endif // MLPACK_METHODS_LMNN_LMNN_TARGETS_AND_IMPOSTORS_RULES_IMPL_HPP
+#endif // MLPACK_METHODS_LMNN_LMNN_TARGETS_RULES_IMPL_HPP

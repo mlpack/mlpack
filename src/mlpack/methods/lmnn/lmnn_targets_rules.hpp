@@ -1,5 +1,5 @@
 /**
- * @file lmnn_targets_and_impostors_rules.hpp
+ * @file lmnn_targets_rules.hpp
  * @author Ryan Curtin
  *
  * Defines the pruning rules and base case rules necessary to perform a
@@ -11,8 +11,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_LMNN_LMNN_TARGETS_AND_IMPOSTORS_RULES_HPP
-#define MLPACK_METHODS_LMNN_LMNN_TARGETS_AND_IMPOSTORS_RULES_HPP
+#ifndef MLPACK_METHODS_LMNN_LMNN_TARGETS_RULES_HPP
+#define MLPACK_METHODS_LMNN_LMNN_TARGETS_RULES_HPP
 
 #include <mlpack/core/tree/traversal_info.hpp>
 
@@ -22,19 +22,17 @@ namespace mlpack {
 namespace lmnn {
 
 /**
- * The LMNNTargetsAndImpostorsRules class is a template helper class used by
+ * The LMNNTargetsRules class is a template helper class used by
  * the LMNN Constraints class when performing distance-based neighbor searches
  * for points of different classes.  It is very closely related to
- * NeighborSearchRules, but the problem is sufficiently different that different
- * code is needed.  For each point in the query dataset, it keeps track of the k
- * target neighbors and impostors in the reference dataset which have the
- * nearest distance.
+ * NeighborSearchRules, but the problem is somewhat simplified.  Here we want to
+ * find the points in the same set that are neighbors.
  *
  * @tparam MetricType The metric to use for computation.
  * @tparam TreeType The tree type to use; must adhere to the TreeType API.
  */
 template<typename MetricType, typename TreeType>
-class LMNNTargetsAndImpostorsRules
+class LMNNTargetsRules
 {
  public:
   /**
@@ -42,37 +40,24 @@ class LMNNTargetsAndImpostorsRules
    * from within the Constraints class at search time.
    *
    * @param referenceSet Set of reference data.
-   * @param referenceLabels Set of reference labels.
-   * @param refOldFromNew oldFromNew mappings from reference tree building.
-   * @param querySet Set of query data.
-   * @param queryLabels Set of query labels.
-   * @param queryOldFromNew oldFromNew mappings from query tree building.
-   * @param neighborsK Number of neighbors to search for.
-   * @param impostorsK Number of impostors to search for.
+   * @param k Number of neighbors to search for.
    * @param metric Instantiated metric.
    */
-  LMNNTargetsAndImpostorsRules(const typename TreeType::Mat& referenceSet,
-                               const arma::Row<size_t>& referenceLabels,
-                               const std::vector<size_t>& refOldFromNew,
-                               const typename TreeType::Mat& querySet,
-                               const arma::Row<size_t>& queryLabels,
-                               const std::vector<size_t>& queryOldFromNew,
-                               const size_t neighborsK,
-                               const size_t impostorsK,
-                               const size_t numClasses,
-                               MetricType& metric);
+  LMNNTargetsRules(const typename TreeType::Mat& referenceSet,
+                   const size_t k,
+                   MetricType& metric);
 
   /**
    * Store the list of candidates for each query point in the given matrices.
    *
+   * @param oldFromNew Index transformations for each point.
    * @param neighbors Matrix storing lists of neighbors for each query point.
    * @param distances Matrix storing distances of neighbors for each query
    *     point.
    */
-  void GetResults(arma::Mat<size_t>& trueNeighbors,
-                  arma::mat& trueDistances,
-                  arma::Mat<size_t>& impostors,
-                  arma::mat& impostorDistances);
+  void GetResults(const std::vector<size_t>& oldFromNew,
+                  arma::Mat<size_t>& neighbors,
+                  arma::mat& neighborDistances);
 
   /**
    * Get the distance from the query point to the reference point.
@@ -173,14 +158,10 @@ class LMNNTargetsAndImpostorsRules
       CandidateList;
 
   //! Set of candidate neighbors for each point.
-  std::vector<CandidateList> candidateNeighbors;
-  //! Set of candidate impostors for each point.
-  std::vector<CandidateList> candidateImpostors;
+  std::vector<CandidateList> candidates;
 
   //! Number of neighbors to search for.
-  const size_t neighborsK;
-  //! Number of impostors to search for.
-  const size_t impostorsK;
+  const size_t k;
   //! Number of classes.
   const size_t numClasses;
 
@@ -230,6 +211,6 @@ class LMNNTargetsAndImpostorsRules
 } // namespace mlpack
 
 // Include implementation.
-#include "lmnn_targets_and_impostors_rules_impl.hpp"
+#include "lmnn_targets_rules_impl.hpp"
 
-#endif // MLPACK_METHODS_LMNN_LMNN_TARGETS_AND_IMPOSTORS_RULES_HPP
+#endif // MLPACK_METHODS_LMNN_LMNN_TARGETS_RULES_HPP

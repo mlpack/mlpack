@@ -38,13 +38,13 @@ class LMNNImpostorsRules
 {
  public:
   //! Candidate represents a possible candidate neighbor (distance, index).
-  typedef std::pair<double, size_t> Candidate;
+  typedef std::tuple<double, size_t, size_t> Candidate;
 
   //! Compare two candidates based on the distance.
   struct CandidateCmp {
     bool operator()(const Candidate& c1, const Candidate& c2)
     {
-      return !(c2.first <= c1.first);
+      return !(std::get<0>(c2) <= std::get<0>(c1));
     };
   };
 
@@ -57,37 +57,21 @@ class LMNNImpostorsRules
    * the Constraints class at search time.
    *
    * @param referenceSet Set of reference data.
-   * @param referenceLabels Set of reference labels.
-   * @param refOldFromNew oldFromNew mappings from reference tree building.
+   * @param referenceClass Index of reference set class.
    * @param querySet Set of query data.
-   * @param queryLabels Set of query labels.
-   * @param queryOldFromNew oldFromNew mappings from query tree building.
    * @param pruned Set of points that are pruned; pass an empty vector if
    *      UseImpBounds = false.
    * @param k Number of neighbors to search for.
    * @param metric Instantiated metric.
    */
   LMNNImpostorsRules(const typename TreeType::Mat& referenceSet,
-                     const arma::Row<size_t>& referenceLabels,
-                     const std::vector<size_t>& refOldFromNew,
+                     const size_t referenceClass,
                      const typename TreeType::Mat& querySet,
-                     const arma::Row<size_t>& queryLabels,
-                     const std::vector<size_t>& queryOldFromNew,
                      const std::vector<bool>& pruned,
                      const size_t k,
-                     const size_t numClasses,
                      MetricType& metric,
                      const std::vector<CandidateList> list =
                          std::vector<CandidateList>());
-
-  /**
-   * Store the list of candidates for each query point in the given matrices.
-   *
-   * @param neighbors Matrix storing lists of neighbors for each query point.
-   * @param distances Matrix storing distances of neighbors for each query
-   *     point.
-   */
-  void GetResults(arma::Mat<size_t>& neighbors, arma::mat& distances);
 
   /**
    * Get the distance from the query point to the reference point.
@@ -108,9 +92,6 @@ class LMNNImpostorsRules
    * @param referenceNode Candidate node to be recursed into.
    */
   double Score(const size_t queryIndex, TreeType& referenceNode);
-
-  size_t pointPruned;
-  size_t nodePruned;
 
   /**
    * Re-evaluate the score for recursion order.  A low score indicates priority
@@ -163,28 +144,16 @@ class LMNNImpostorsRules
  protected:
   //! The reference set.
   const typename TreeType::Mat& referenceSet;
-  //! The labels for the reference set.
-  const arma::Row<size_t>& referenceLabels;
-  //! The mappings for the reference set.
-  const std::vector<size_t>& refOldFromNew;
-
+  //! The class of points in the reference set.
+  const size_t referenceClass;
   //! The query set.
   const typename TreeType::Mat& querySet;
-  //! The labels for the query set.
-  const arma::Row<size_t>& queryLabels;
-  //! The mappings for the query set.
-  const std::vector<size_t>& queryOldFromNew;
 
   //! The list of points that are pruned.
   const std::vector<bool>& pruned;
 
-  //! Set of candidate neighbors for each point.
-  std::vector<CandidateList> candidates;
-
   //! Number of neighbors to search for.
   const size_t k;
-  //! Number of classes.
-  const size_t numClasses;
 
   //! The instantiated metric.
   MetricType& metric;
@@ -199,6 +168,9 @@ class LMNNImpostorsRules
   //! Traversal info for the parent combination; this is updated by the
   //! traversal before each call to Score().
   TraversalInfoType traversalInfo;
+
+  //! Set of candidate neighbors for each point.
+  std::vector<CandidateList>& candidates;
 
   /**
    * Recalculate the bound for a given query node.

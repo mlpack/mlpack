@@ -21,76 +21,28 @@ namespace lmnn {
 template<typename MetricType, typename TreeType, bool UseImpBounds>
 LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::LMNNImpostorsRules(
     const typename TreeType::Mat& referenceSet,
-    const arma::Row<size_t>& referenceLabels,
-    const std::vector<size_t>& refOldFromNew,
+    const size_t referenceClass,
     const typename TreeType::Mat& querySet,
-    const arma::Row<size_t>& queryLabels,
-    const std::vector<size_t>& queryOldFromNew,
     const std::vector<bool>& pruned,
     const size_t k,
-    const size_t numClasses,
     MetricType& metric,
-    std::vector<CandidateList> list) :
-    pointPruned(0),
-    nodePruned(0),
+    std::vector<CandidateList>& candidates) :
     referenceSet(referenceSet),
-    referenceLabels(referenceLabels),
-    refOldFromNew(refOldFromNew),
+    referenceClass(referenceClass),
     querySet(querySet),
-    queryLabels(queryLabels),
-    queryOldFromNew(queryOldFromNew),
     pruned(pruned),
     k(k),
-    numClasses(numClasses),
     metric(metric),
     lastQueryIndex(querySet.n_cols),
     lastReferenceIndex(referenceSet.n_cols),
-    candidates(std::move(list))
+    candidates(candidates)
 {
   // We must set the traversal info last query and reference node pointers to
   // something that is both invalid (i.e. not a tree node) and not NULL.  We'll
   // use the this pointer.
   traversalInfo.LastQueryNode() = (TreeType*) this;
   traversalInfo.LastReferenceNode() = (TreeType*) this;
-
-  // Let's build the list of candidate neighbors for each query point, if we
-  // received an empty list.  It will be initialized with k candidates:
-  // (WorstDistance, size_t() - 1) The list of candidates will be updated when
-  // visiting new points with the BaseCase() method.
-  if (candidates.size() == 0)
-  {
-    const Candidate def = std::make_pair(DBL_MAX, size_t() - 1);
-
-    std::vector<Candidate> vect(k, def);
-    CandidateList pqueue(CandidateCmp(), std::move(vect));
-
-    candidates.reserve(querySet.n_cols);
-    for (size_t i = 0; i < querySet.n_cols; i++)
-      candidates.push_back(pqueue);
-  }
 }
-
-template<typename MetricType, typename TreeType, bool UseImpBounds>
-void LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::GetResults(
-    arma::Mat<size_t>& neighbors,
-    arma::mat& distances)
-{
-  neighbors.set_size(k, querySet.n_cols);
-  distances.set_size(k, querySet.n_cols);
-
-  // We also perform the reverse mapping here.
-  for (size_t i = 0; i < querySet.n_cols; i++)
-  {
-    CandidateList& pqueue = candidates[i];
-    const size_t queryIndex = queryOldFromNew[i];
-    for (size_t j = 1; j <= k; j++)
-    {
-      neighbors(k - j, queryIndex) = refOldFromNew[pqueue.top().second];
-      distances(k - j, queryIndex) = pqueue.top().first;
-      pqueue.pop();
-    }
-  }
-};
 
 template<typename MetricType, typename TreeType, bool UseImpBounds>
 inline force_inline // Absolutely MUST be inline so optimizations can happen.
@@ -100,13 +52,6 @@ double LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::BaseCase(
   // If we have already performed this base case, then do not perform it again.
   if ((lastQueryIndex == queryIndex) && (lastReferenceIndex == referenceIndex))
     return lastBaseCase;
-
-  // If these points have the same class, then don't do anything.
-  if (queryLabels[queryIndex] == referenceLabels[referenceIndex])
-  {
-    ++pointPruned;
-    return 0.0;
-  }
 
   // If we've pruned this point because its impostors can't change this
   // iteration, don't do anything.
@@ -134,11 +79,6 @@ inline double LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::Score(
   // Sanity check: we can always prune a node that has no impostors, since it
   // can't possibly help us with the results.
   const size_t queryClass = queryLabels[queryIndex];
-  if (!referenceNode.Stat().HasImpostors()[queryClass])
-  {
-    ++nodePruned;
-    return DBL_MAX;
-  }
 
   // If we are using impostor bounds, prune if we can.
   if (UseImpBounds && pruned[queryIndex])
@@ -204,24 +144,6 @@ inline double LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::Score(
   // If we can, prune with impostor bounds.
   if (UseImpBounds && queryNode.Stat().Pruned())
     return DBL_MAX;
-
-  // Sanity check: ensure that any classes in the query point have impostors in
-  // the descendants of the reference node.
-  bool hasImpostors = false;
-  for (size_t c = 0; c < referenceNode.Stat().HasTrueNeighbors().size(); ++c)
-  {
-    if (queryNode.Stat().HasTrueNeighbors()[c] &&
-        referenceNode.Stat().HasImpostors()[c])
-    {
-      hasImpostors = true;
-      break;
-    }
-  }
-  if (!hasImpostors)
-  {
-    ++nodePruned;
-    return DBL_MAX;
-  }
 
   // Update our bound.
   const double bestDistance = CalculateBound(queryNode);
