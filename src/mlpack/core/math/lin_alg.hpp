@@ -137,6 +137,39 @@ T Sign(const T x)
     return (T(0) < x) - (x < T(0));
 }
 
+/**
+ * Sign correction to ensure deterministic SVD results.
+ *
+ * For more information, see the following.
+ *
+ * @code
+ * @article{Bro2008,
+ *   author  = {Rasmus Bro and Evrim Acar and Tamara G. Kolda},
+ *   title   = {Resolving the Sign Ambiguity in the Singular Value
+ *              Decomposition}, 
+ *   journal = {Journal of Chemometrics}, 
+ *   volume  = {22}, 
+ *   number  = {2}, 
+ *   pages   = {135--140}, 
+ *   month   = {February}, 
+ *   year    = {2008},
+ * }
+ * @endcode
+ *
+ * @param u First unitary matrix.
+ * @param v Second unitary matrix.
+ */
+void SVDFlip(arma::mat& u, arma::mat& v);
+
+/**
+ * Sign correction to ensure deterministic SVD results.
+ *
+ * For more information, @see @ref SVDFlip, SVDFlip.
+ *
+ * @param u First unitary matrix.
+ */
+void SVDFlip(arma::mat& u);
+
 } // namespace math
 } // namespace mlpack
 

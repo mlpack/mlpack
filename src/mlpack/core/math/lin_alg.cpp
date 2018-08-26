@@ -303,3 +303,21 @@ void mlpack::math::SymKronId(const arma::mat& A, arma::mat& op)
     }
   }
 }
+
+void mlpack::math::SVDFlip(arma::mat& u, arma::mat& v)
+{
+  const arma::urowvec indices = arma::index_max(arma::abs(u), 0);
+  arma::rowvec signs(indices.n_elem);
+  for (size_t i = 0; i < indices.n_elem; i++)
+    signs(i) = u.col(i)(indices(i)) >= 0 ? 1 : -1;
+  u.each_row() %= signs;
+
+  if (!v.is_empty())
+    v.each_row() %= signs;
+}
+
+void mlpack::math::SVDFlip(arma::mat& u)
+{
+  arma::mat v;
+  mlpack::math::SVDFlip(u, v)
+}
