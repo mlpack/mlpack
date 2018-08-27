@@ -1,6 +1,7 @@
 /**
  * @file lin_alg.hpp
  * @author Nishant Mehta
+ * @author Marcus Edel
  *
  * Linear algebra utilities.
  *

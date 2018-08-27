@@ -319,5 +319,5 @@ void mlpack::math::SVDFlip(arma::mat& u, arma::mat& v)
 void mlpack::math::SVDFlip(arma::mat& u)
 {
   arma::mat v;
-  mlpack::math::SVDFlip(u, v)
+  mlpack::math::SVDFlip(u, v);
 }

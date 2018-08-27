@@ -1,6 +1,7 @@
 /**
  * @file lin_alg_test.cpp
  * @author Ryan Curtin
+ * @author Marcus Edel
  *
  * Simple tests for things in the linalg__private namespace.
  * Partly so I can be sure that my changes are working.
@@ -287,6 +288,28 @@ BOOST_AUTO_TEST_CASE(TestSymKronId)
     for (size_t j = 0; j < lhs.n_elem; j++)
       BOOST_REQUIRE_CLOSE(lhs(j), rhs(j), 1e-5);
   }
+}
+
+// Simple SVD flip function test.
+BOOST_AUTO_TEST_CASE(TestSVDFlip)
+{
+  // Check square matrix reconstruction.
+  arma::mat data = arma::randu<arma::mat>(100, 100);
+
+  arma::mat U, V;
+  arma::vec s;
+  arma::svd(U, s, V, data);
+  SVDFlip(U, V);
+
+  arma::mat X = U * arma::diagmat(s) * V.t();
+  CheckMatrices(X, data);
+
+  // Check non square matrix reconstruction.
+  data = arma::randu<arma::mat>(5, 10);
+  arma::svd(U, s, V, data);
+
+  X = U * arma::diagmat(s) * V.t();
+  CheckMatrices(X, data);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
