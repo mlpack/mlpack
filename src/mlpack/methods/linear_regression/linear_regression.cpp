@@ -82,7 +82,7 @@ void LinearRegression::Train(const arma::mat& predictors,
   // The total runtime of this should be O(d^2 N) + O(d^3) + O(dN).
   // (assuming the SVD is used to solve it)
   arma::mat cov = p * p.t() +
-      lambda * arma::eye<arma::mat>(predictors.n_rows, predictors.n_rows);
+      lambda * arma::eye<arma::mat>(p.n_rows, p.n_rows);
 
   parameters = arma::solve(cov, p * r.t());
 }
