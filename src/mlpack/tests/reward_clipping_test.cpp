@@ -33,8 +33,8 @@ BOOST_AUTO_TEST_CASE(ClippedRewardTest)
   Pendulum task;
   RewardClipping<Pendulum> rewardClipping(task, -2.0, +2.0);
   
-  RewardClipping<Pendulum>::StateType state = rewardClipping.InitialSample();
-  RewardClipping<Pendulum>::ActionType action;
+  RewardClipping<Pendulum>::State state = rewardClipping.InitialSample();
+  RewardClipping<Pendulum>::Action action;
   action.action[0] = math::Random(-1.0, 1.0);
   double reward = rewardClipping.Sample(state, action);
 
