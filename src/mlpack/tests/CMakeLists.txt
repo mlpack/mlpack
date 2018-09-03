@@ -104,6 +104,7 @@ add_executable(mlpack_test
   rectangle_tree_test.cpp
   recurrent_network_test.cpp
   regularized_svd_test.cpp
+  reward_clipping_test.cpp
   rl_components_test.cpp
   rmsprop_test.cpp
   sa_test.cpp

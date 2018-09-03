@@ -43,12 +43,12 @@ class RewardClipping
    * @param environment An instance of the environment used for actual
    *                    simulations.
    */
-  RewardClipping(const double minReward = -1.0,
-                 const double maxReward = 1.0,
-                 EnvironmentType& environment) :
+  RewardClipping(EnvironmentType& environment,
+                 const double minReward = -1.0,
+                 const double maxReward = 1.0) :
+    environment(environment),
     minReward(minReward),
-    maxReward(maxReward),
-    environment(environment)
+    maxReward(maxReward)
   {
     // Nothing to do here
   }
@@ -89,7 +89,8 @@ class RewardClipping
     // Get original unclipped reward from base environment
     double unclippedReward =  environment.Sample(state, action, nextState);
     // Clip rewards according to the min and max limit
-    double clippedReward = arma::clamp(unclippedReward, minReward, maxReward);
+    double clippedReward = std::min(
+        std::max(unclippedReward, minReward), maxReward);
     return clippedReward;
   }
 
@@ -109,14 +110,16 @@ class RewardClipping
   double& MaxReward() { return maxReward; }
 
  private:
+  //! An instance of the UpdatePolicy used for actual optimization.
+  EnvironmentType environment;
+  
   //! Minimum possible value of clipped reward.
   double minReward;
 
   //! Maximum possible value of clipped reward.
   double maxReward;
 
-  //! An instance of the UpdatePolicy used for actual optimization.
-  EnvironmentType environment;
+  
 };
 
 } // namespace rl
