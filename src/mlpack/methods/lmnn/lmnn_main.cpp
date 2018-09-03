@@ -348,8 +348,6 @@ static void mlpackMain()
     lmnn.Optimizer().StepSize() = stepSize;
     lmnn.Optimizer().MaxIterations() = passes * data.n_cols;
     lmnn.Optimizer().Tolerance() = tolerance;
-    // Bypass LinearScan. It will be handle in shuffle().
-    lmnn.Optimizer().Shuffle() = true;
     lmnn.Optimizer().BatchSize() = batchSize;
 
     lmnn.LearnDistance(distance);
@@ -363,8 +361,6 @@ static void mlpackMain()
     lmnn.Optimizer().StepSize() = stepSize;
     lmnn.Optimizer().MaxIterations() = passes * data.n_cols;
     lmnn.Optimizer().Tolerance() = tolerance;
-    // Bypass LinearScan. It will be handle in shuffle().
-    lmnn.Optimizer().Shuffle() = true;
     lmnn.Optimizer().BatchSize() = batchSize;
 
     lmnn.LearnDistance(distance);
@@ -380,8 +376,6 @@ static void mlpackMain()
     lmnn.Optimizer().StepSize() = stepSize;
     lmnn.Optimizer().MaxIterations() = passes * data.n_cols;
     lmnn.Optimizer().Tolerance() = tolerance;
-    // Bypass LinearScan. It will be handle in shuffle().
-    lmnn.Optimizer().Shuffle() = true;
     lmnn.Optimizer().BatchSize() = batchSize;
 
     lmnn.LearnDistance(distance);

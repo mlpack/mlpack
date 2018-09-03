@@ -256,6 +256,9 @@ class LMNNFunction
                         const arma::mat& transformation,
                         const size_t begin,
                         const size_t batchSize);
+  // Recalculate impostors.
+  inline void ReCalculateImpostors(const arma::mat& transformedDataset,
+                                   double transformationDiff);
 };
 
 } // namespace lmnn
