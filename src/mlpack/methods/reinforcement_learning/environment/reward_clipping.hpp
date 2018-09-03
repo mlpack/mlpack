@@ -30,10 +30,10 @@ class RewardClipping
 {
  public:
   //! Convenient typedef for state.
-  using StateType = typename EnvironmentType::State;
+  using State = typename EnvironmentType::State;
 
   //! Convenient typedef for action.
-  using ActionType = typename EnvironmentType::Action;
+  using Action = typename EnvironmentType::Action;
 
   /**
    * Constructor for creating a RewardClipping instance.
@@ -58,7 +58,7 @@ class RewardClipping
    * starting state. Returns whatever Initial Sample is returned by the
    * environment.
    */
-  StateType InitialSample()
+  State InitialSample()
   {
     return environment.InitialSample();
   }
@@ -70,10 +70,32 @@ class RewardClipping
    * @param state desired state.
    * @return true if state is a terminal state, otherwise false.
    */
-  bool IsTerminal(const StateType& state) const
+  bool IsTerminal(const State& state) const
   {
     return environment.IsTerminal(state);
   }
+
+  /**
+   * Dynamics of Continuous Mountain Car. Get reward and next state based 
+   * on current state and current action.
+   *
+   * @param state The current state.
+   * @param action The current action.
+   * @param nextState The next state.
+   * @return clippedReward, Reward clipped between [minReward, maxReward].
+   */
+  double Sample(const State& state,
+                const Action& action,
+                State& nextState) const
+  {
+    // Get original unclipped reward from base environment
+    double unclippedReward =  environment.Sample(state, action, nextState);
+    // Clip rewards according to the min and max limit
+    double clippedReward = std::min(
+        std::max(unclippedReward, minReward), maxReward);
+    return clippedReward;
+  }
+  
 
   /**
    * Dynamics of Environment. The rewards returned from the base environment
@@ -83,9 +105,9 @@ class RewardClipping
    * @param action The current action.
    * @return clippedReward, Reward clipped between [minReward, maxReward].
    */
-  double Sample(const StateType& state, const ActionType& action) const
+  double Sample(const State& state, const Action& action) const
   {
-    StateType nextState;
+    State nextState;
     // Get original unclipped reward from base environment
     double unclippedReward =  environment.Sample(state, action, nextState);
     // Clip rewards according to the min and max limit
@@ -112,7 +134,7 @@ class RewardClipping
  private:
   //! An instance of the UpdatePolicy used for actual optimization.
   EnvironmentType environment;
-  
+
   //! Minimum possible value of clipped reward.
   double minReward;
 
