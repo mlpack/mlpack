@@ -94,7 +94,7 @@ class ItemMeanNormalization
     arma::Col<size_t> ratingNum(cleanedData.n_rows, arma::fill::zeros);
     arma::sp_mat::iterator it = cleanedData.begin();
     arma::sp_mat::iterator it_end = cleanedData.end();
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
     {
       itemMean(it.row()) += *it;
       ratingNum(it.row()) += 1;
@@ -107,7 +107,7 @@ class ItemMeanNormalization
 
     // Normalize the data.
     it = cleanedData.begin();
-    for (; it != cleanedData.end(); it++)
+    for (; it != cleanedData.end(); ++it)
     {
       *it = *it - itemMean(it.row());
       // The algorithm omits rating of zero. If normalized rating equals zero,

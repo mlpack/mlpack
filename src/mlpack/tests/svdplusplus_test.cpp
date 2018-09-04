@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusEvaluate)
       arma::sp_mat::const_iterator it = implicitData.begin_col(user);
       arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
       size_t implicitCount = 0;
-      for (; it != it_end; it++)
+      for (; it != it_end; ++it)
       {
         userVec += parameters.col(implicitStart + it.row()).subvec(0, rank - 1);
         implicitCount += 1;
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionRegularizationEvaluate)
       arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
       double regularizationError = 0;
       size_t implicitCount = 0;
-      for (; it != it_end; it++)
+      for (; it != it_end; ++it)
       {
         if (implicitVecsNormSquare(it.row()) < 0)
         { 
@@ -243,12 +243,12 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionGradient)
       if (std::abs(gradient1(i, j)) <= 1e-6)
         BOOST_REQUIRE_SMALL(numGradient1, 1e-5);
       else
-        BOOST_REQUIRE_CLOSE(numGradient1, gradient1(i, j), 0.5);
+        BOOST_REQUIRE_CLOSE(numGradient1, gradient1(i, j), 0.02);
 
       if (std::abs(gradient2(i, j)) <= 1e-6)
         BOOST_REQUIRE_SMALL(numGradient2, 1e-5);
       else
-        BOOST_REQUIRE_CLOSE(numGradient2, gradient2(i, j), 0.5);
+        BOOST_REQUIRE_CLOSE(numGradient2, gradient2(i, j), 0.02);
     }
   }
 }
@@ -374,7 +374,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionOptimize)
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
     {
       userVec += parameters.col(implicitStart + it.row()).subvec(0, rank - 1);
       implicitCount += 1;
@@ -412,7 +412,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionOptimize)
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
     {
       userVec +=
           optParameters.col(implicitStart + it.row()).subvec(0, rank - 1);
@@ -431,7 +431,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionOptimize)
                                arma::norm(data, "frob");
 
   // Relative error should be small.
-  BOOST_REQUIRE_SMALL(relativeError, 1e-1);
+  BOOST_REQUIRE_SMALL(relativeError, 1e-2);
 }
 
 // The test is only compiled if the user has specified OpenMP to be
@@ -481,7 +481,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionParallelOptimize)
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
     {
       userVec += parameters.col(implicitStart + it.row()).subvec(0, rank - 1);
       implicitCount += 1;
@@ -526,7 +526,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionParallelOptimize)
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
     {
       userVec +=
           optParameters.col(implicitStart + it.row()).subvec(0, rank - 1);
@@ -545,7 +545,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionParallelOptimize)
                                arma::norm(data, "frob");
 
   // Relative error should be small.
-  BOOST_REQUIRE_SMALL(relativeError, 1e-1);
+  BOOST_REQUIRE_SMALL(relativeError, 1e-2);
 }
 
 #endif

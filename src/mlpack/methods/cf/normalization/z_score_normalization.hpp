@@ -90,7 +90,7 @@ class ZScoreNormalization
     // Subtract mean from existing rating and divide it by stddev.
     arma::sp_mat::iterator it = cleanedData.begin();
     arma::sp_mat::iterator it_end = cleanedData.end();
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
     {
       *it = (*it - mean) / stddev;
       // The algorithm omits rating of zero. If normalized rating equals zero,

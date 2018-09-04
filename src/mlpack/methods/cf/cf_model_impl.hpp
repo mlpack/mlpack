@@ -28,9 +28,10 @@ void DeleteVisitor::operator()(CFType<DecompositionPolicy>* c) const
 template<typename DecompositionPolicy>
 void* GetValueVisitor::operator()(CFType<DecompositionPolicy>* c) const
 {
-  if (c)
-    return (void*) c;
-  throw std::runtime_error("no cf model initialized");
+  if (!c)
+    throw std::runtime_error("no cf model initialized");
+
+  return (void*) c;
 }
 
 PredictVisitor::PredictVisitor(
@@ -43,9 +44,13 @@ PredictVisitor::PredictVisitor(
 template<typename DecompositionPolicy>
 void PredictVisitor::operator()(CFType<DecompositionPolicy>* c) const
 {
-  if (c)
-    return c->Predict(combinations, predictions);
-  throw std::runtime_error("no cf model initialized");
+  if (!c)
+  {
+    throw std::runtime_error("no cf model initialized");
+    return;
+  }
+
+  c->Predict(combinations, predictions);
 }
 
 RecommendationVisitor::RecommendationVisitor(
@@ -62,15 +67,16 @@ RecommendationVisitor::RecommendationVisitor(
 template<typename DecompositionPolicy>
 void RecommendationVisitor::operator()(CFType<DecompositionPolicy>* c) const
 {
-  if (c)
+  if (!c)
   {
-    if (usersGiven)
-      c->GetRecommendations(numRecs, recommendations, users);
-    else
-      c->GetRecommendations(numRecs, recommendations);
+    throw std::runtime_error("no cf model initialized");
     return;
   }
-  throw std::runtime_error("no cf model initialized");
+
+  if (usersGiven)
+    c->GetRecommendations(numRecs, recommendations, users);
+  else
+    c->GetRecommendations(numRecs, recommendations);
 }
 
 CFModel::~CFModel()

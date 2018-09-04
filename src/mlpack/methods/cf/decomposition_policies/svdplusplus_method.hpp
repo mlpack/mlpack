@@ -87,7 +87,7 @@ class SVDPlusPlusPolicy
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
     {
       userVec += y.col(it.row());
       implicitCount += 1;
@@ -115,7 +115,7 @@ class SVDPlusPlusPolicy
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
     {
       userVec += y.col(it.row());
       implicitCount += 1;

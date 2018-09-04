@@ -94,7 +94,7 @@ class UserMeanNormalization
     arma::Col<size_t> ratingNum(cleanedData.n_cols, arma::fill::zeros);
     arma::sp_mat::iterator it = cleanedData.begin();
     arma::sp_mat::iterator it_end = cleanedData.end();
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
     {
       userMean(it.col()) += *it;
       ratingNum(it.col()) += 1;
@@ -107,7 +107,7 @@ class UserMeanNormalization
 
     // Normalize the data.
     it = cleanedData.begin();
-    for (; it != cleanedData.end(); it++)
+    for (; it != cleanedData.end(); ++it)
     {
       *it = *it - userMean(it.col());
       // The algorithm omits rating of zero. If normalized rating equals zero,

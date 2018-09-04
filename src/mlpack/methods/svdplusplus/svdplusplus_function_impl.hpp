@@ -100,7 +100,7 @@ double SVDPlusPlusFunction<MatType>::Evaluate(const arma::mat& parameters,
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
     double regularizationError = 0;
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
     {
       userVec += parameters.col(implicitStart + it.row()).subvec(0, rank - 1);
       if (implicitVecsNormSquare(it.row()) < 0)
@@ -172,7 +172,7 @@ void SVDPlusPlusFunction<MatType>::Gradient(const arma::mat& parameters,
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
     {
       userVec += parameters.col(implicitStart + it.row()).subvec(0, rank - 1);
       implicitCount += 1;
@@ -199,7 +199,7 @@ void SVDPlusPlusFunction<MatType>::Gradient(const arma::mat& parameters,
     // Calculate gradients for item implicit vector.
     it = implicitData.begin_col(user);
     it_end = implicitData.end_col(user);
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
     {
       // Note that implicitCount != 0 if this loop is acutally executed.
       gradient.col(implicitStart + it.row()).subvec(0, rank - 1) +=
@@ -239,7 +239,7 @@ void SVDPlusPlusFunction<MatType>::Gradient(const arma::mat& parameters,
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
     {
       userVec += parameters.col(implicitStart + it.row()).subvec(0, rank - 1);
       implicitCount += 1;
@@ -269,7 +269,7 @@ void SVDPlusPlusFunction<MatType>::Gradient(const arma::mat& parameters,
     // Calculate gradients for item implicit vector.
     it = implicitData.begin_col(user);
     it_end = implicitData.end_col(user);
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
     {
       // Note that implicitCount != 0 if this loop is acutally executed.
       for (size_t j = 0; j < rank; ++j)
@@ -348,7 +348,7 @@ double StandardSGD::Optimize(
     arma::sp_mat::const_iterator it = implicitData.begin_col(user);
     arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
     size_t implicitCount = 0;
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
     {
       userVec += parameters.col(implicitStart + it.row()).subvec(0, rank - 1);
       implicitCount += 1;
@@ -375,7 +375,7 @@ double StandardSGD::Optimize(
     // Update item implicit vectors.
     it = implicitData.begin_col(user);
     it_end = implicitData.end_col(user);
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
     {
       // Note that implicitCount != 0 if this loop is acutally executed.
       parameters.col(implicitStart + it.row()).subvec(0, rank - 1) -=
@@ -484,7 +484,7 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
         arma::sp_mat::const_iterator it = implicitData.begin_col(user);
         arma::sp_mat::const_iterator it_end = implicitData.end_col(user);
         size_t implicitCount = 0;
-        for (; it != it_end; it++)
+        for (; it != it_end; ++it)
         {
           userVec += iterate.col(implicitStart + it.row()).subvec(0, rank - 1);
           implicitCount += 1;
@@ -513,7 +513,7 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
         it = implicitData.begin_col(user);
         it_end = implicitData.end_col(user);
         size_t implicitIndex = 0;
-        for (; it != it_end; it++, implicitIndex++)
+        for (; it != it_end; ++it, ++implicitIndex)
         {
           itemImplicitUpdate.col(implicitIndex) =
               stepSize * 2.0 * (lambda / implicitCount *
