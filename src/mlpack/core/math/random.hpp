@@ -39,7 +39,7 @@ extern MLPACK_EXPORT std::normal_distribution<> randNormalDist;
  */
 inline void RandomSeed(const size_t seed)
 {
-  #if (BINDING_TYPE != BINDING_TYPE_TEST)
+  #if (!defined(BINDING_TYPE) || BINDING_TYPE != BINDING_TYPE_TEST)
     randGen.seed((uint32_t) seed);
     srand((unsigned int) seed);
     arma::arma_rng::set_seed(seed);
@@ -79,6 +79,17 @@ inline double Random()
 inline double Random(const double lo, const double hi)
 {
   return lo + (hi - lo) * randUniformDist(randGen);
+}
+
+/**
+ * Generates a 0/1 specified by the input.
+ */
+inline double RandBernoulli(const double input)
+{
+  if (Random() < input)
+    return 1;
+  else
+    return 0;
 }
 
 /**

@@ -240,11 +240,22 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
-void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
+double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
     const arma::mat& parameters,
     const size_t begin,
-    arma::mat& gradient,
     const size_t batchSize)
+{
+  return Evaluate(parameters, begin, batchSize, true);
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+template<typename GradType>
+double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::
+EvaluateWithGradient(const arma::mat& /* parameters */,
+                     const size_t begin,
+                     GradType& gradient,
+                     const size_t batchSize)
 {
   // Initialize passed gradient.
   if (gradient.is_empty())
@@ -261,7 +272,58 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
     gradient.zeros();
   }
 
-  Evaluate(parameters, begin, batchSize, false);
+  if (this->deterministic)
+  {
+    this->deterministic = false;
+    ResetDeterministic();
+  }
+
+  if (!inputSize)
+  {
+    inputSize = predictors.n_rows;
+    targetSize = responses.n_rows;
+  }
+  else if (targetSize == 0)
+  {
+    targetSize = responses.n_rows;
+  }
+
+  ResetCells();
+
+  double performance = 0;
+  size_t responseSeq = 0;
+
+  for (size_t seqNum = 0; seqNum < rho; ++seqNum)
+  {
+    // Wrap a matrix around our data to avoid a copy.
+    arma::mat stepData(predictors.slice(seqNum).colptr(begin),
+        predictors.n_rows, batchSize, false, true);
+    Forward(std::move(stepData));
+    if (!single)
+    {
+      responseSeq = seqNum;
+    }
+
+    if (!deterministic)
+    {
+      for (size_t l = 0; l < network.size(); ++l)
+      {
+        boost::apply_visitor(SaveOutputParameterVisitor(
+            std::move(moduleOutputParameter)), network[l]);
+      }
+    }
+
+    performance += outputLayer.Forward(std::move(boost::apply_visitor(
+        outputParameterVisitor, network.back())),
+        std::move(arma::mat(responses.slice(responseSeq).colptr(begin),
+            responses.n_rows, batchSize, false, true)));
+  }
+
+  if (outputSize == 0)
+  {
+    outputSize = boost::apply_visitor(outputParameterVisitor,
+        network.back()).n_elem / batchSize;
+  }
 
   // Initialize current/working gradient.
   if (currentGradient.is_empty())
@@ -307,6 +369,19 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
         predictors.n_rows, batchSize, false, true)));
     gradient += currentGradient;
   }
+
+  return performance;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
+    const arma::mat& parameters,
+    const size_t begin,
+    arma::mat& gradient,
+    const size_t batchSize)
+{
+  this->EvaluateWithGradient(parameters, begin, gradient, batchSize);
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,

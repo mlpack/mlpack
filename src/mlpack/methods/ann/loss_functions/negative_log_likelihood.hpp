@@ -44,7 +44,8 @@ class NegativeLogLikelihood
    * Computes the Negative log likelihood.
    *
    * @param input Input data used for evaluating the specified function.
-   * @param output Resulting output activation.
+   * @param target The target vector, that contains the class index in the range
+   *        between 1 and the number of classes.
    */
   template<typename InputType, typename TargetType>
   double Forward(const InputType&& input, TargetType&& target);

@@ -22,9 +22,11 @@ authors:
 
 - name: Yannis Mentekidis
   orcid: 0000-0003-3860-9885
+  affiliation: 5
 
 - name: Sumedh Ghaisas
   orcid: 0000-0003-3753-9029
+  affiliation: 5
 
 - name: Shangtong Zhang
   orcid: 0000-0003-4255-1364
@@ -39,6 +41,8 @@ affiliations:
   index: 3
 - name: University of Alberta
   index: 4
+- name: None
+  index: 5
 
 date: 5 April 2018
 bibliography: paper.bib

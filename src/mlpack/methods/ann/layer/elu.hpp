@@ -36,13 +36,13 @@ namespace ann /** Artificial Neural Network. */ {
  * f(x) &=& \left\{
  *   \begin{array}{lr}
  *    x & : x > 0 \\
- *    alpha(e^x - 1) & : x \le 0
+ *    \alpha(e^x - 1) & : x \le 0
  *   \end{array}
  * \right. \\
  * f'(x) &=& \left\{
  *   \begin{array}{lr}
  *     1 & : x > 0 \\
- *     y + alpha & : x \le 0
+ *     y + \alpha & : x \le 0
  *   \end{array}
  * \right.
  * @f}
@@ -66,14 +66,14 @@ namespace ann /** Artificial Neural Network. */ {
  * @f{eqnarray*}{
  * f(x) &=& \left\{
  *   \begin{array}{lr}
- *    lambda * x & : x > 0 \\
- *    lambda * alpha(e^x - 1) & : x \le 0
+ *    \lambda * x & : x > 0 \\
+ *    \lambda * \alpha(e^x - 1) & : x \le 0
  *   \end{array}
  * \right. \\
  * f'(x) &=& \left\{
  *   \begin{array}{lr}
- *     lambda & : x > 0 \\
- *     lambda * (y + alpha) & : x \le 0
+ *     \lambda & : x > 0 \\
+ *     \lambda * (y + \alpha) & : x \le 0
  *   \end{array}
  * \right.
  * @f}
@@ -143,11 +143,6 @@ class ELU
    */
   template<typename DataType>
   void Backward(const DataType&& input, DataType&& gy, DataType&& g);
-
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -237,9 +232,6 @@ class ELU
 
   //! Locally-stored delta object.
   OutputDataType delta;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;

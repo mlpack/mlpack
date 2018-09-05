@@ -36,14 +36,17 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
     kH(kH),
     dW(dW),
     dH(dH),
+    floor(floor),
+    inSize(0),
+    outSize(0),
     inputWidth(0),
     inputHeight(0),
     outputWidth(0),
     outputHeight(0),
     reset(false),
-    floor(floor),
     deterministic(false),
-    offset(0)
+    offset(0),
+    batchSize(0)
 {
   // Nothing to do here.
 }
@@ -53,8 +56,10 @@ template<typename eT>
 void MeanPooling<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  size_t slices = input.n_elem / (inputWidth * inputHeight);
-  inputTemp = arma::cube(input.memptr(), inputWidth, inputHeight, slices);
+  batchSize = input.n_cols;
+  inSize = input.n_elem / (inputWidth * inputHeight * batchSize);
+  inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
+      inputWidth, inputHeight, batchSize * inSize, false, false);
 
   if (floor)
   {
@@ -72,16 +77,17 @@ void MeanPooling<InputDataType, OutputDataType>::Forward(
   }
 
   outputTemp = arma::zeros<arma::Cube<eT> >(outputWidth, outputHeight,
-      slices);
+      batchSize * inSize);
 
   for (size_t s = 0; s < inputTemp.n_slices; s++)
     Pooling(inputTemp.slice(s), outputTemp.slice(s));
 
-  output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem, 1);
+  output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem / batchSize,
+      batchSize);
 
   outputWidth = outputTemp.n_rows;
   outputHeight = outputTemp.n_cols;
-  outSize = slices;
+  outSize = batchSize * inSize;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -92,7 +98,7 @@ void MeanPooling<InputDataType, OutputDataType>::Backward(
   arma::Mat<eT>&& g)
 {
   arma::cube mappedError = arma::cube(gy.memptr(), outputWidth,
-      outputHeight, outSize);
+      outputHeight, outSize, false, false);
 
   gTemp = arma::zeros<arma::cube>(inputTemp.n_rows,
       inputTemp.n_cols, inputTemp.n_slices);
@@ -102,7 +108,7 @@ void MeanPooling<InputDataType, OutputDataType>::Backward(
     Unpooling(inputTemp.slice(s), mappedError.slice(s), gTemp.slice(s));
   }
 
-  g = arma::mat(gTemp.memptr(), gTemp.n_elem, 1);
+  g = arma::mat(gTemp.memptr(), gTemp.n_elem / batchSize, batchSize);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -115,6 +121,7 @@ void MeanPooling<InputDataType, OutputDataType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(kH);
   ar & BOOST_SERIALIZATION_NVP(dW);
   ar & BOOST_SERIALIZATION_NVP(dH);
+  ar & BOOST_SERIALIZATION_NVP(batchSize);
 }
 
 } // namespace ann

@@ -11,6 +11,12 @@ with the following command:
 $ sudo apt-get install libmlpack-dev
 @endcode
 
+@note Older Ubuntu versions may not have the most recent version of mlpack
+available---for instance, at the time of this writing, Ubuntu 16.04 only has
+mlpack 2.0.1 available.  Options include upgrading Ubuntu to a newer release,
+finding a PPA or other non-official sources, or installing with a manual build
+(below).
+
 If mlpack is not available in your system's package manager, then you can follow
 this document for how to compile and install mlpack from source.
 
@@ -18,11 +24,12 @@ mlpack uses CMake as a build system and allows several flexible build
 configuration options.  One can consult any of numerous CMake tutorials for
 further documentation, but this tutorial should be enough to get mlpack built
 and installed on most Linux and UNIX-like systems (including OS X).  If you want
-to build mlpack on Windows, see <a
-href="https://keon.io/mlpack-on-windows/">Keon's excellent tutorial</a>.
+to build mlpack on Windows, see \ref build_windows (alternatively, you can read 
+<a href="https://keon.io/mlpack-on-windows/">Keon's excellent tutorial</a> which
+is based on older versions).
 
 You can download the latest mlpack release from here:
-<a href="http://www.mlpack.org/files/mlpack-3.0.0.tar.gz">mlpack-3.0.0</a>
+<a href="http://www.mlpack.org/files/mlpack-3.0.3.tar.gz">mlpack-3.0.3</a>
 
 @section build_simple Simple Linux build instructions
 
@@ -30,9 +37,9 @@ Assuming all dependencies are installed in the system, you can run the commands
 below directly to build and install mlpack.
 
 @code
-$ wget http://www.mlpack.org/files/mlpack-3.0.0.tar.gz
-$ tar -xvzpf mlpack-3.0.0.tar.gz
-$ mkdir mlpack-3.0.0/build && cd mlpack-3.0.0/build
+$ wget http://www.mlpack.org/files/mlpack-3.0.3.tar.gz
+$ tar -xvzpf mlpack-3.0.3.tar.gz
+$ mkdir mlpack-3.0.3/build && cd mlpack-3.0.3/build
 $ cmake ../
 $ make -j4  # The -j is the number of cores you want to use for a build.
 $ sudo make install
@@ -40,6 +47,13 @@ $ sudo make install
 
 If the \c cmake \c .. command fails, you are probably missing a dependency, so
 check the output and install any necessary libraries.  (See \ref build_dep.)
+
+On many Linux systems, mlpack will install by default to @c /usr/local/lib and
+you may need to set the @c LD_LIBRARY_PATH environment variable:
+
+@code
+export LD_LIBRARY_PATH=/usr/local/lib
+@endcode
 
 The instructions above are the simplest way to get, build, and install mlpack.
 The sections below discuss each of those steps in further detail and show how to
@@ -50,8 +64,8 @@ configure mlpack.
 First we should unpack the mlpack source and create a build directory.
 
 @code
-$ tar -xvzpf mlpack-3.0.0.tar.gz
-$ cd mlpack-3.0.0
+$ tar -xvzpf mlpack-3.0.3.tar.gz
+$ cd mlpack-3.0.3
 $ mkdir build
 @endcode
 
@@ -79,16 +93,19 @@ In Ubuntu and Debian, you can get all of these dependencies through apt:
 @code
 # apt-get install libboost-math-dev libboost-program-options-dev
   libboost-test-dev libboost-serialization-dev libarmadillo-dev binutils-dev
-  python-pandas python-numpy python-cython python-setuptools
+  python-pandas python-numpy cython python-setuptools
 @endcode
 
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 
 @code
 # dnf install boost-devel boost-test boost-program-options boost-math
-  armadillo-devel binutils-devel python3-Cython python3-setuptools
-  python3-numpy python3-pandas
+  armadillo-devel binutils-devel python2-Cython python2-setuptools
+  python2-numpy python2-pandas
 @endcode
+
+(It's also possible to use python3 packages from the package manager---mlpack
+will work with either.)
 
 @section build_config Configuring CMake
 
@@ -130,6 +147,8 @@ The full list of options mlpack allows:
  - FORCE_CXX11=(ON/OFF): assume that the compiler supports C++11 instead of
        checking; be sure to specify any necessary flag to enable C++11 as part
        of CXXFLAGS (default OFF)
+ - USE_OPENMP=(ON/OFF): if ON, then use OpenMP if the compiler supports it; if
+       OFF, OpenMP support is manually disabled (default ON)
 
 Each option can be specified to CMake with the '-D' flag.  Other tools can also
 be used to configure CMake, but those are not documented here.
@@ -192,6 +211,27 @@ If you wish to install mlpack to the system, make sure you have root privileges
 
 You can now run the executables by name; you can link against mlpack with
 \c -lmlpack, and the mlpack headers are found in \c /usr/include or
-\c /usr/local/include (depending on the system and CMake configuration).
+\c /usr/local/include (depending on the system and CMake configuration).  If
+Python bindings were installed, they should be available when you start Python.
+
+@section build_run Using mlpack without installing
+
+If you would prefer to use mlpack after building but without installing it to
+the system, this is possible.  All of the command-line programs in the
+@c build/bin/ directory will run directly with no modification.
+
+For running the Python bindings from the build directory, the situation is a
+little bit different.  You will need to set the following environment variables:
+
+@code
+export LD_LIBRARY_PATH=/path/to/mlpack/build/lib/:${LD_LIBRARY_PATH}
+export PYTHONPATH=/path/to/mlpack/build/src/mlpack/bindings/python/:${PYTHONPATH}
+@endcode
+
+(Be sure to substitute the correct path to your build directory for
+`/path/to/mlpack/build/`.)
+
+Once those environment variables are set, you should be able to start a Python
+interpreter and `import mlpack`, then use the Python bindings.
 
 */

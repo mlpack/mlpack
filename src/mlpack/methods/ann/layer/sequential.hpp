@@ -34,6 +34,9 @@ namespace ann /** Artificial Neural Network. */ {
  * feed-forward fully connected network container which plugs various layers
  * together.
  *
+ * Note: If this class is used as the first layer of a network, it should be
+ * preceded by IdentityLayer<>.
+ *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
@@ -124,6 +127,7 @@ class Sequential
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameters; }
 
+  //! Get the input parameter.
   arma::mat const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   arma::mat& InputParameter() { return inputParameter; }

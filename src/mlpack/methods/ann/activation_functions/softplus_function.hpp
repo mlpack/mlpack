@@ -62,13 +62,11 @@ class SoftplusFunction
    * @param x Input data.
    * @param y The resulting output activation.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Fn(const InputVecType& x, OutputVecType& y)
+  template<typename InputType, typename OutputType>
+  static void Fn(const InputType& x, OutputType& y)
   {
     y = x;
-
-    for (size_t i = 0; i < x.n_elem; i++)
-      y(i) = Fn(x(i));
+    y.transform([](double val) {return (Fn(val));} );
   }
 
   /**
@@ -88,8 +86,8 @@ class SoftplusFunction
    * @param y Input activations.
    * @param x The resulting derivatives.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType& y, OutputVecType& x)
+  template<typename InputType, typename OutputType>
+  static void Deriv(const InputType& y, OutputType& x)
   {
     x = 1.0 / (1 + arma::exp(-y));
   }
@@ -111,13 +109,11 @@ class SoftplusFunction
    * @param y Input data.
    * @param x The resulting inverse of the input data.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void Inv(const InputVecType& y, OutputVecType& x)
+  template<typename InputType, typename OutputType>
+  static void Inv(const InputType& y, OutputType& x)
   {
     x = y;
-
-    for (size_t i = 0; i < y.n_elem; i++)
-      x(i) = Inv(y(i));
+    x.transform([](double val) {return (Inv(val));} );
   }
 }; // class SoftplusFunction
 

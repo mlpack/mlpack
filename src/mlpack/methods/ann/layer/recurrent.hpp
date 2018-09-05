@@ -57,9 +57,9 @@ class Recurrent
    * Create the Recurrent object using the specified modules.
    *
    * @param start The start module.
-   * @param start The input module.
-   * @param start The feedback module.
-   * @param start The transfer module.
+   * @param input The input module.
+   * @param feedback The feedback module.
+   * @param transfer The transfer module.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
   template<typename StartModuleType,
@@ -120,11 +120,6 @@ class Recurrent
   OutputDataType const& Parameters() const { return parameters; }
   //! Modify the parameters.
   OutputDataType& Parameters() { return parameters; }
-
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -214,9 +209,6 @@ class Recurrent
 
   //! Locally-stored gradient object.
   OutputDataType gradient;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;

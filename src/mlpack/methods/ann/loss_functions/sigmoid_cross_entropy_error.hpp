@@ -61,11 +61,11 @@ class SigmoidCrossEntropyError
    * Computes the Sigmoid CrossEntropy Error functions.
    *
    * @param input Input data used for evaluating the specified function.
-   * @param output Resulting output activation.
+   * @param target The target vector.
    */
-  template<typename eT>
-  inline double Forward(const arma::Mat<eT>&& input,
-                        const arma::Mat<eT>&& target);
+  template<typename InputType, typename TargetType>
+  inline double Forward(const InputType&& input,
+                        const TargetType&& target);
   /**
    * Ordinary feed backward pass of a neural network.
    *
@@ -73,25 +73,15 @@ class SigmoidCrossEntropyError
    * @param target The target vector.
    * @param output The calculated error.
    */
-  template<typename eT>
-  inline void Backward(const arma::Mat<eT>&& input,
-                       const arma::Mat<eT>&& target,
-                       arma::Mat<eT>&& output);
-
-  //! Get the input parameter.
-  InputDataType& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
+  template<typename InputType, typename TargetType, typename OutputType>
+  inline void Backward(const InputType&& input,
+                       const TargetType&& target,
+                       OutputType&& output);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
 
   /**
    * Serialize the layer.
@@ -100,12 +90,6 @@ class SigmoidCrossEntropyError
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
-
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 }; // class SigmoidCrossEntropy

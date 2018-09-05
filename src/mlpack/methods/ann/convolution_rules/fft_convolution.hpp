@@ -22,7 +22,7 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * Computes the two-dimensional convolution through fft. This class allows
  * specification of the type of the border type. The convolution can be
- * computed with the valid border type of the full border type (default).
+ * computed with the valid border type or the full border type (default).
  *
  * FullConvolution: returns the full two-dimensional convolution.
  * ValidConvolution: returns only those parts of the convolution that are

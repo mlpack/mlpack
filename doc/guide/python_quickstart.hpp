@@ -13,19 +13,36 @@ This quickstart guide is also available for @ref cli_quickstart "the command-lin
 
 @section python_quickstart_install Installing mlpack
 
-(This section will be simplified when mlpack is available in PyPI or conda.)
+Installing the mlpack bindings for Python is straightforward.  It's easy to use
+conda or pip to do this:
 
-Installing the mlpack bindings for Python is straightforward.  First we have to
-install the dependencies (the code below is for Ubuntu), then we can build and
-install mlpack.  You can copy-paste the commands into your shell.
+@code{.sh}
+pip install mlpack/mlpack3
+@endcode
+
+@code{.sh}
+conda install -c mlpack mlpack
+@endcode
+
+Otherwise, we can build the Python bindings from scratch, as follows.  First we
+have to install the dependencies (the code below is for Ubuntu), then we can
+build and install mlpack.  You can copy-paste the commands into your shell.
 
 @code{.sh}
 sudo apt-get install libboost-all-dev g++ cmake libarmadillo-dev python-pip wget
 sudo pip install cython setuptools distutils numpy pandas
-wget http://www.mlpack.org/files/mlpack-3.0.0.tar.gz
-tar -xvzpf mlpack-3.0.0.tar.gz
-mkdir -p mlpack-3.0.0/build/ && cd mlpack-3.0.0/build/
+wget http://www.mlpack.org/files/mlpack-3.0.3.tar.gz
+tar -xvzpf mlpack-3.0.3.tar.gz
+mkdir -p mlpack-3.0.3/build/ && cd mlpack-3.0.3/build/
 cmake ../ && make -j4 && sudo make install
+@endcode
+
+More information on the build process and details can be found on the @ref build
+page.  You may also need to set the environment variable @c LD_LIBRARY_PATH to
+include @c /usr/local/lib/ on most Linux systems.
+
+@code
+export LD_LIBRARY_PATH=/usr/local/lib/
 @endcode
 
 You can also use the mlpack Docker image on Dockerhub, which has all of the

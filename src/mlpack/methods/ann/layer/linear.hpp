@@ -45,7 +45,7 @@ class Linear
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  Linear(const size_t inSize, const size_t outSize);;
+  Linear(const size_t inSize, const size_t outSize);
 
   /*
    * Reset the layer parameter.
@@ -129,7 +129,7 @@ class Linear
   //! Locally-stored weight object.
   OutputDataType weights;
 
-  //! Locally-stored weight paramters.
+  //! Locally-stored weight parameters.
   OutputDataType weight;
 
   //! Locally-stored bias term parameters.

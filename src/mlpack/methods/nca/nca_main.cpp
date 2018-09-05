@@ -12,8 +12,8 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
-#include <mlpack/core/math/random.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/math/random.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 
 #include "nca.hpp"
@@ -177,6 +177,12 @@ static void mlpackMain()
   if (CLI::HasParam("labels"))
   {
     rawLabels = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
+
+    if (rawLabels.n_elem != data.n_cols)
+    {
+      Log::Fatal << "The number of labels (" << rawLabels.n_elem << ") must "
+          << "match the number of points (" << data.n_cols << ")!" << endl;
+    }
   }
   else
   {

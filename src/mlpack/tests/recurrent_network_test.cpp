@@ -1221,7 +1221,7 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
 BOOST_AUTO_TEST_CASE(MultiTimestepTest)
 {
   double err = RNNSineTest(4, 10, 20);
-  BOOST_REQUIRE_LE(err, 1e-02);
+  BOOST_REQUIRE_LE(err, 0.025);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
