@@ -15,6 +15,7 @@ add_executable(mlpack_test
   async_learning_test.cpp
   aug_lagrangian_test.cpp
   augmented_rnns_tasks_test.cpp
+  bias_svd_test.cpp
   bigbatch_sgd_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
@@ -127,6 +128,7 @@ add_executable(mlpack_test
   split_data_test.cpp
   svd_batch_test.cpp
   svd_incremental_test.cpp
+  svdplusplus_test.cpp
   svrg_test.cpp
   termination_policy_test.cpp
   test_function_tools.hpp

@@ -59,11 +59,14 @@ namespace cf /** Collaborative filtering. **/ {
  * are in a matrix that holds doubles, should hold integer (or size_t) values.
  * The user and item indices are assumed to start at 0.
  *
+ * @tparam DecompositionPolicy The policy used to decompose the rating matrix.
+ *     It also provides methods to compute prediction and neighborhood.
  * @tparam NormalizationType The type of normalization performed on raw data.
  *     Data is normalized before calling Train() method. Predicted rating is
  *     denormalized before return.
  */
-template<typename NormalizationType = NoNormalization>
+template<typename DecompositionPolicy = NMFPolicy,
+         typename NormalizationType = NoNormalization>
 class CFType
 {
  public:
@@ -87,8 +90,6 @@ class CFType
    * @tparam MatType The type of input matrix, which is expected to be either
    *     arma::mat (table of (user, item, rating)) or arma::sp_mat (sparse
    *     rating matrix where row is item and column is user).
-   * @tparam DecompositionPolicy The algorithm to use to decompose
-   *     the rating matrix (a W and H matrix).
    *
    * @param data Data matrix: dense matrix (coordinate lists) 
    *    or sparse matrix(cleaned).
@@ -99,9 +100,9 @@ class CFType
    * @param minResidue Residue required to terminate.
    * @param mit Whether to terminate only when maxIterations is reached.
    */
-  template<typename MatType, typename DecompositionPolicy = NMFPolicy>
+  template<typename MatType>
   CFType(const MatType& data,
-         DecompositionPolicy& decomposition = DecompositionPolicy(),
+         const DecompositionPolicy& decomposition = DecompositionPolicy(),
          const size_t numUsersForSimilarity = 5,
          const size_t rank = 0,
          const size_t maxIterations = 1000,
@@ -113,18 +114,14 @@ class CFType
    * parameters that have already been set for the model (specifically, the rank
    * parameter), and optionally, using the given DecompositionPolicy.
    *
-   * @tparam DecompositionPolicy The algorithm to use to decompose
-   *     the rating matrix (a W and H matrix).
-   *
    * @param data Input dataset; dense matrix (coordinate lists).
    * @param decomposition Instantiated DecompositionPolicy object.
    * @param maxIterations Maximum number of iterations.
    * @param minResidue Residue required to terminate.
    * @param mit Whether to terminate only when maxIterations is reached.
    */
-  template<typename DecompositionPolicy>
   void Train(const arma::mat& data,
-             DecompositionPolicy& decomposition,
+             const DecompositionPolicy& decomposition,
              const size_t maxIterations = 1000,
              const double minResidue = 1e-5,
              const bool mit = false);
@@ -134,18 +131,14 @@ class CFType
    * parameters that have already been set for the model (specifically, the
    * rank parameter), and optionally, using the given DecompositionPolicy.
    *
-   * @tparam DecompositionPolicy The algorithm to use to decompose
-   *     the rating matrix (a W and H matrix).
-   *
    * @param data Input dataset; sparse matrix (user item table).
    * @param decomposition Instantiated DecompositionPolicy object.
    * @param maxIterations Maximum number of iterations.
    * @param minResidue Residue required to terminate.
    * @param mit Whether to terminate only when maxIterations is reached.
    */
-  template<typename DecompositionPolicy>
   void Train(const arma::sp_mat& data,
-             DecompositionPolicy& decomposition,
+             const DecompositionPolicy& decomposition,
              const size_t maxIterations = 1000,
              const double minResidue = 1e-5,
              const bool mit = false);
@@ -180,10 +173,9 @@ class CFType
     return rank;
   }
 
-  //! Get the User Matrix.
-  const arma::mat& W() const { return w; }
-  //! Get the Item Matrix.
-  const arma::mat& H() const { return h; }
+  //! Gets decomposition object.
+  const DecompositionPolicy& Decomposition() const { return decomposition; }
+
   //! Get the cleaned data matrix.
   const arma::sp_mat& CleanedData() const { return cleanedData; }
 
@@ -272,10 +264,8 @@ class CFType
   size_t numUsersForSimilarity;
   //! Rank used for matrix factorization.
   size_t rank;
-  //! User matrix.
-  arma::mat w;
-  //! Item matrix.
-  arma::mat h;
+  //! DecompositionPolicy object.
+  DecompositionPolicy decomposition;
   //! Cleaned data matrix.
   arma::sp_mat cleanedData;
   //! Data normalization object.
