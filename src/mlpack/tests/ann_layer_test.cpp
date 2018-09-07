@@ -428,6 +428,34 @@ BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
 }
 
 /**
+ * Simple linear layer with only output size test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleLinearLayerOutputSizeTest)
+{
+  FFN<NegativeLogLikelihood<>, ConstInitialization> modelA, modelB;
+  arma::mat outputA, outputB, input, delta;
+
+  // Test the Forward function.
+  input = arma::randu(10, 1);
+
+  modelA.Add<Linear<> >(10, 10);
+  modelA.Add<SigmoidLayer<> >();
+  modelA.Add<Linear<> >(10, 10);
+  modelA.Add<SigmoidLayer<> >();
+
+  modelA.Forward(input, outputA);
+
+  modelB.Add<Linear<> >(10);
+  modelB.Add<SigmoidLayer<> >();
+  modelB.Add<Linear<> >(10);
+  modelB.Add<SigmoidLayer<> >();
+
+  modelB.Forward(input, outputB);
+
+  CheckMatrices(outputA, outputB);
+}
+
+/**
  * Simple linear no bias module test.
  */
 BOOST_AUTO_TEST_CASE(SimpleLinearNoBiasLayerTest)
