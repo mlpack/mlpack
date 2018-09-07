@@ -39,7 +39,7 @@ void MeanSquaredError<InputDataType, OutputDataType>::Backward(
     const TargetType&& target,
     OutputType&& output)
 {
-  output = (input - target);
+  output = 2 * (input - target) / target.n_cols;
 }
 
 template<typename InputDataType, typename OutputDataType>
