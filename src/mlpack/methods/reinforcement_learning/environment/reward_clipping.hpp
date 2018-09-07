@@ -76,8 +76,8 @@ class RewardClipping
   }
 
   /**
-   * Dynamics of Continuous Mountain Car. Get reward and next state based 
-   * on current state and current action.
+   * Dynamics of Environment. The rewards returned from the base environment
+   * are clipped according the maximum and minimum values specified.
    *
    * @param state The current state.
    * @param action The current action.
@@ -88,12 +88,10 @@ class RewardClipping
                 const Action& action,
                 State& nextState) const
   {
-    // Get original unclipped reward from base environment
+    // Get original unclipped reward from base environment.
     double unclippedReward =  environment.Sample(state, action, nextState);
-    // Clip rewards according to the min and max limit
-    double clippedReward = std::min(
-        std::max(unclippedReward, minReward), maxReward);
-    return clippedReward;
+    // Clip rewards according to the min and max limit and return.
+    return std::min(std::max(unclippedReward, minReward), maxReward);
   }
   
 
@@ -108,12 +106,7 @@ class RewardClipping
   double Sample(const State& state, const Action& action) const
   {
     State nextState;
-    // Get original unclipped reward from base environment
-    double unclippedReward =  environment.Sample(state, action, nextState);
-    // Clip rewards according to the min and max limit
-    double clippedReward = std::min(
-        std::max(unclippedReward, minReward), maxReward);
-    return clippedReward;
+    return Sample(state, action, nextState);
   }
 
   //! Get the environment.
@@ -139,9 +132,7 @@ class RewardClipping
   double minReward;
 
   //! Maximum possible value of clipped reward.
-  double maxReward;
-
-  
+  double maxReward;  
 };
 
 } // namespace rl
