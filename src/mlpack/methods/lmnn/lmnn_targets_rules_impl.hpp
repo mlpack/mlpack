@@ -21,14 +21,14 @@ namespace lmnn {
 template<typename MetricType, typename TreeType>
 LMNNTargetsRules<MetricType, TreeType>::
 LMNNTargetsRules(
-    const typename TreeType::Mat& referenceSet,
+    const typename TreeType::Mat& dataset,
     const size_t k,
     MetricType& metric) :
-    referenceSet(referenceSet),
+    dataset(dataset),
     k(k),
     metric(metric),
-    lastQueryIndex(querySet.n_cols),
-    lastReferenceIndex(referenceSet.n_cols)
+    lastQueryIndex(dataset.n_cols),
+    lastReferenceIndex(dataset.n_cols)
 {
   // We must set the traversal info last query and reference node pointers to
   // something that is both invalid (i.e. not a tree node) and not NULL.  We'll
@@ -45,8 +45,8 @@ LMNNTargetsRules(
   std::vector<Candidate> vect(k, def);
   CandidateList pqueue(CandidateCmp(), std::move(vect));
 
-  candidates.reserve(querySet.n_cols);
-  for (size_t i = 0; i < querySet.n_cols; ++i)
+  candidates.reserve(dataset.n_cols);
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     candidates.push_back(pqueue);
   }
@@ -59,11 +59,11 @@ void LMNNTargetsRules<MetricType, TreeType>::GetResults(
     arma::mat& neighborDistances)
 {
   // We also perform the reverse mapping here.
-  for (size_t i = 0; i < querySet.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; i++)
   {
-    CandidateList& pqueue = candidateNeighbors[i];
+    CandidateList& pqueue = candidates[i];
     const size_t queryIndex = oldFromNew[i];
-    for (size_t j = 1; j <= neighborsK; ++j)
+    for (size_t j = 1; j <= k; ++j)
     {
       neighbors(k - j, queryIndex) = oldFromNew[pqueue.top().second];
       neighborDistances(k - j, queryIndex) = pqueue.top().first;
@@ -87,8 +87,8 @@ double LMNNTargetsRules<MetricType, TreeType>::BaseCase(
   if (queryIndex == referenceIndex)
     return 0.0;
 
-  double distance = metric.Evaluate(querySet.col(queryIndex),
-                                    referenceSet.col(referenceIndex));
+  double distance = metric.Evaluate(dataset.col(queryIndex),
+                                    dataset.col(referenceIndex));
 
   InsertNeighbor(queryIndex, referenceIndex, distance);
 
@@ -131,7 +131,7 @@ inline double LMNNTargetsRules<MetricType, TreeType>::Score(
   else
   {
     distance = neighbor::NearestNeighborSort::BestPointToNodeDistance(
-        querySet.col(queryIndex), &referenceNode);
+        dataset.col(queryIndex), &referenceNode);
   }
 
   // Compare against the best k'th neighbor and impostor distances for this

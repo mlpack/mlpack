@@ -14,7 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
-#include "lmnn_targets_and_impostors_rules.hpp"
+#include "lmnn_targets_rules.hpp"
 #include "lmnn_impostors_rules.hpp"
 #include "lmnn_stat.hpp"
 
@@ -67,10 +67,10 @@ class Constraints
   void TargetsAndImpostors(const arma::mat& dataset,
                            const arma::Row<size_t>& labels,
                            const size_t neighborsK,
-                           const size_t impostorsK,
                            const arma::vec& norms,
                            arma::Mat<size_t>& neighbors,
-                           arma::Mat<size_t>& impostors);
+                           arma::Mat<size_t>& impostors,
+                           arma::mat& impostorDistances);
 
   /**
    * Calculates k differently labeled nearest neighbors for each datapoint and
@@ -167,9 +167,9 @@ class Constraints
   size_t& K() { return k; }
 
   //! Access the boolean value of precalculated.
-  const bool& PreCalulated() const { return precalculated; }
+  const bool& PreCalculated() const { return precalculated; }
   //! Modify the value of precalculated.
-  bool& PreCalulated() { return precalculated; }
+  bool& PreCalculated() { return precalculated; }
 
  private:
   //! Number of target neighbors & impostors to calulate.
@@ -186,14 +186,8 @@ class Constraints
 
   //! Reference tree used for search.
   std::vector<TreeType*> trees;
-  //! Sorted labels for points in the reference tree.
-  arma::Row<size_t> sortedLabels;
-  //! Sorted norms for points in the reference tree.
-  arma::vec sortedNorms;
   //! Mapping used in tree building.
-  std::vector<size_t> oldFromNew;
-  //! Mapping used in tree building.
-  std::vector<size_t> newFromOld;
+  std::vector<std::vector<size_t>> oldFromNews;
 
   //! False if nothing has ever been precalculated.
   bool precalculated;
@@ -204,20 +198,21 @@ class Constraints
    * Precalculate the unique labels, and indices of similar
    * and different datapoints on the basis of labels.
    */
-  inline void Precalculate(const arma::Row<size_t>& labels);
+  inline void Precalculate(const arma::mat& dataset,
+                           const arma::Row<size_t>& labels);
 
   void UpdateTreeStat(TreeType& node,
+                      const std::vector<size_t>& oldFromNew,
+                      const arma::vec& norms,
                       const arma::Mat<size_t>& lastNeighbors,
                       const arma::mat& lastDistances,
-                      const double transformationDiff);
+                      const double transformationDiff,
+                      arma::vec& pointBounds);
 
   /**
    * Compute the impostors of the given set.
    */
-  void ComputeImpostors(const arma::mat& referenceSet,
-                        const arma::Row<size_t>& referenceLabels,
-                        const arma::mat& querySet,
-                        const arma::Row<size_t>& queryLabels,
+  void ComputeImpostors(const arma::mat& dataset,
                         const arma::vec& norms,
                         const arma::mat& transformation,
                         const double transformationDiff,

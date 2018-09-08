@@ -39,11 +39,11 @@ class LMNNTargetsRules
    * Construct the LMNNTargetsAndImpostorsRules object.  This is usually done
    * from within the Constraints class at search time.
    *
-   * @param referenceSet Set of reference data.
+   * @param dataset Set of reference data.
    * @param k Number of neighbors to search for.
    * @param metric Instantiated metric.
    */
-  LMNNTargetsRules(const typename TreeType::Mat& referenceSet,
+  LMNNTargetsRules(const typename TreeType::Mat& dataset,
                    const size_t k,
                    MetricType& metric);
 
@@ -129,18 +129,7 @@ class LMNNTargetsRules
 
  protected:
   //! The reference set.
-  const typename TreeType::Mat& referenceSet;
-  //! The labels for the reference set.
-  const arma::Row<size_t>& referenceLabels;
-  //! The mappings for the reference set.
-  const std::vector<size_t>& refOldFromNew;
-
-  //! The query set.
-  const typename TreeType::Mat& querySet;
-  //! The labels for the query set.
-  const arma::Row<size_t>& queryLabels;
-  //! The mappings for the query set.
-  const std::vector<size_t>& queryOldFromNew;
+  const typename TreeType::Mat& dataset;
 
   //! Candidate represents a possible candidate neighbor (distance, index).
   typedef std::pair<double, size_t> Candidate;
@@ -162,8 +151,6 @@ class LMNNTargetsRules
 
   //! Number of neighbors to search for.
   const size_t k;
-  //! Number of classes.
-  const size_t numClasses;
 
   //! The instantiated metric.
   MetricType& metric;

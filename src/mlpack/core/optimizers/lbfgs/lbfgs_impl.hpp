@@ -185,14 +185,14 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
   for (size_t itNum = 0; optimizeUntilConvergence || (itNum != maxIterations);
        ++itNum)
   {
-#ifdef DEBUG
-    Log::Debug << "L-BFGS iteration " << itNum << "; objective "
+//#ifdef DEBUG
+    Log::Info << "L-BFGS iteration " << itNum << "; objective "
         << functionValue << ", gradient norm " << arma::norm(gradient, 2)
         << ", " << ((prevFunctionValue - functionValue) /
             std::max(std::max(fabs(prevFunctionValue),
                               fabs(functionValue)), 1.0))
         << "." << std::endl;
-#endif
+//#endif
 
     prevFunctionValue = functionValue;
 

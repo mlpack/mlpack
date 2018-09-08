@@ -20,6 +20,21 @@
 namespace mlpack {
 namespace lmnn {
 
+//! Candidate represents a possible candidate neighbor (distance, index).
+typedef std::tuple<double, size_t, size_t> Candidate;
+
+//! Compare two candidates based on the distance.
+struct CandidateCmp {
+  bool operator()(const Candidate& c1, const Candidate& c2)
+  {
+    return !(std::get<0>(c2) <= std::get<0>(c1));
+  };
+};
+
+//! Use a priority queue to represent the list of candidate neighbors.
+typedef std::priority_queue<Candidate, std::vector<Candidate>, CandidateCmp>
+    CandidateList;
+
 /**
  * The LMNNImpostorsRules class is a template helper class used by
  * the LMNN Constraints class when performing distance-based neighbor searches
@@ -37,21 +52,6 @@ template<typename MetricType, typename TreeType, bool UseImpBounds>
 class LMNNImpostorsRules
 {
  public:
-  //! Candidate represents a possible candidate neighbor (distance, index).
-  typedef std::tuple<double, size_t, size_t> Candidate;
-
-  //! Compare two candidates based on the distance.
-  struct CandidateCmp {
-    bool operator()(const Candidate& c1, const Candidate& c2)
-    {
-      return !(std::get<0>(c2) <= std::get<0>(c1));
-    };
-  };
-
-  //! Use a priority queue to represent the list of candidate neighbors.
-  typedef std::priority_queue<Candidate, std::vector<Candidate>, CandidateCmp>
-      CandidateList;
-
   /**
    * Construct the LMNNImpostorsRules object.  This is usually done from within
    * the Constraints class at search time.
@@ -70,8 +70,7 @@ class LMNNImpostorsRules
                      const std::vector<bool>& pruned,
                      const size_t k,
                      MetricType& metric,
-                     const std::vector<CandidateList> list =
-                         std::vector<CandidateList>());
+                     std::vector<CandidateList>& list);
 
   /**
    * Get the distance from the query point to the reference point.

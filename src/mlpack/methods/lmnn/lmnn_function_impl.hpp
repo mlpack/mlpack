@@ -97,8 +97,8 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
     distance.set_size(k + 1, dataset.n_cols);
   }
 
-  constraint.TargetsAndImpostors(dataset, labels, k, k, norm, targetNeighbors,
-      impostors);
+  constraint.TargetsAndImpostors(dataset, labels, k, norm, targetNeighbors,
+      impostors, distance);
 
   // Precalculate and save the gradient due to target neighbors.
   pCij.zeros(dataset.n_rows, dataset.n_rows);
@@ -111,6 +111,8 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
       pCij += diff * arma::trans(diff);
     }
   }
+
+  transformationOld = arma::eye<arma::mat>(dataset.n_rows, dataset.n_rows);
 }
 
 //! Shuffle the dataset.

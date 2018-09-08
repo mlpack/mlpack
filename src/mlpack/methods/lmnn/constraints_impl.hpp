@@ -24,9 +24,8 @@ Constraints<MetricType>::Constraints(
     const arma::Row<size_t>& labels,
     const size_t k) :
     k(k),
-    tree(NULL),
     precalculated(false),
-    runFirstSearch(false)
+    runFirstSearch(true)
 {
   // Ensure a valid k is passed.
   size_t minCount = arma::min(arma::histc(labels, arma::unique(labels)));
@@ -42,7 +41,8 @@ Constraints<MetricType>::Constraints(
 template<typename MetricType>
 Constraints<MetricType>::~Constraints()
 {
-  delete tree;
+  for (size_t i = 0; i < trees.size(); ++i)
+    delete trees[i];
 }
 
 template<typename MetricType>
@@ -85,35 +85,28 @@ inline void Constraints<MetricType>::ReorderResults(
   }
 }
 
-// Helper function to set hasImpostors and hasTrueNeighbors for a tree node.
-template<typename TreeType>
-void SetLMNNStat(TreeType& node,
-                 const arma::Row<size_t>& labels,
-                 const size_t numClasses)
-{
-  // If we are the root, copy the dataset.
-  if (node.Parent() == NULL)
-    node.Stat().OrigDataset() = new arma::mat(node.Dataset());
-
 // Calculates k similar labeled nearest neighbors.
 template<typename MetricType>
 void Constraints<MetricType>::TargetsAndImpostors(
     const arma::mat& dataset,
+    const arma::Row<size_t>& labels,
     const size_t neighborsK,
-    const size_t impostorsK,
     const arma::vec& norms,
     arma::Mat<size_t>& neighbors,
-    arma::Mat<size_t>& impostors)
+    arma::Mat<size_t>& impostors,
+    arma::mat& impostorDistances)
 {
   // Perform pre-calculation. If neccesary.
-  Precalculate(labels);
+  Precalculate(dataset, labels);
 
   // Compute targets with a search for each class.  We can use the existing KNN
   // search rules code for this.
-  arma::mat neighborDistances;
+  arma::mat neighborDistances(neighborsK, dataset.n_cols);
+  neighbors.set_size(neighborsK, dataset.n_cols);
+  MetricType metric = trees[0]->Metric(); // We need an instantiated object.
   for (size_t i = 0; i < trees.size(); ++i)
   {
-    typename LMNNTargetsRules<MetricType, TreeType> rules(trees[i]->Dataset(),
+    LMNNTargetsRules<MetricType, TreeType> rules(trees[i]->Dataset(),
         neighborsK, metric);
 
     typename TreeType::template DualTreeTraverser<LMNNTargetsRules<MetricType,
@@ -124,15 +117,14 @@ void Constraints<MetricType>::TargetsAndImpostors(
     traverser.Traverse(*trees[i], *trees[i]);
 
     // Next, process the results.
-    rules.GetResults(oldFromNews[i], neighbors, neighborsDistances);
+    rules.GetResults(oldFromNews[i], neighbors, neighborDistances);
     Timer::Stop("computing_targets_and_impostors");
   }
   ReorderResults(neighborDistances, neighbors, norms);
 
   // Now that the targets are computed, we need to compute the impostors.
-  arma::mat impostorDistances; // Unused.
   ComputeImpostors(dataset, norms, arma::eye<arma::mat>(dataset.n_rows,
-      dataset.n_rows), 0.0, useImpBounds, impostors, impostorDistances);
+      dataset.n_rows), 0.0, false, impostors, impostorDistances);
 }
 
 // Calculates k differently labeled nearest neighbors.
@@ -146,13 +138,15 @@ void Constraints<MetricType>::Impostors(
     const double transformationDiff,
     const bool useImpBounds)
 {
+  Timer::Start("impostors");
   // Perform pre-calculation. If neccesary.
-  Precalculate(labels);
+  Precalculate(dataset, labels);
 
   // Compute all the impostors.
   arma::mat distances;
   ComputeImpostors(dataset, norms, transformation, transformationDiff,
       useImpBounds, outputMatrix, distances);
+  Timer::Stop("impostors");
 }
 
 // Calculates k differently labeled nearest neighbors. The function
@@ -168,12 +162,14 @@ void Constraints<MetricType>::Impostors(
     const double transformationDiff,
     const bool useImpBounds)
 {
+  Timer::Start("impostors");
   // Perform pre-calculation. If neccesary.
-  Precalculate(labels);
+  Precalculate(dataset, labels);
 
   // Compute all the impostors.
   ComputeImpostors(dataset, norms, transformation, transformationDiff,
       useImpBounds, outputNeighbors, outputDistance);
+  Timer::Stop("impostors");
 }
 
 // Calculates k differently labeled nearest neighbors on a
@@ -183,15 +179,16 @@ void Constraints<MetricType>::Impostors(
     arma::Mat<size_t>& outputMatrix,
     const arma::mat& dataset,
     const arma::Row<size_t>& labels,
-    const arma::vec& norms,
+    const arma::vec& /* norms */,
     const size_t begin,
     const size_t batchSize,
-    const arma::mat& transformation,
-    const double transformationDiff,
-    const bool useImpBounds)
+    const arma::mat& /* transformation */,
+    const double /* transformationDiff */,
+    const bool /* useImpBounds */)
 {
+  Timer::Start("impostors");
   // Perform pre-calculation. If neccesary.
-  Precalculate(labels);
+  Precalculate(dataset, labels);
 
   arma::mat subDataset = dataset.cols(begin, begin + batchSize - 1);
   arma::Row<size_t> sublabels = labels.cols(begin, begin + batchSize - 1);
@@ -203,6 +200,7 @@ void Constraints<MetricType>::Impostors(
   //ComputeImpostors(dataset, labels, subDataset, sublabels, norms,
   //    transformation, transformationDiff, useImpBounds, suboutput, distances);
   outputMatrix.cols(begin, begin + batchSize - 1) = suboutput;
+  Timer::Stop("impostors");
 }
 
 // Calculates k differently labeled nearest neighbors & distances on a
@@ -213,15 +211,16 @@ void Constraints<MetricType>::Impostors(
     arma::mat& outputDistance,
     const arma::mat& dataset,
     const arma::Row<size_t>& labels,
-    const arma::vec& norms,
+    const arma::vec& /* norms */,
     const size_t begin,
     const size_t batchSize,
-    const arma::mat& transformation,
-    const double transformationDiff,
-    const bool useImpBounds)
+    const arma::mat& /* transformation */,
+    const double /* transformationDiff */,
+    const bool /* useImpBounds */)
 {
+  Timer::Start("impostors");
   // Perform pre-calculation. If neccesary.
-  Precalculate(labels);
+  Precalculate(dataset, labels);
 
   arma::mat subDataset = dataset.cols(begin, begin + batchSize - 1);
   arma::Row<size_t> sublabels = labels.cols(begin, begin + batchSize - 1);
@@ -235,11 +234,13 @@ void Constraints<MetricType>::Impostors(
   //    subdistances);
   outputNeighbors.cols(begin, begin + batchSize - 1) = subneighbors;
   outputDistance.cols(begin, begin + batchSize - 1) = subdistances;
+  Timer::Stop("impostors");
 }
 
 template<typename MetricType>
 inline void Constraints<MetricType>::Precalculate(
-                                         const arma::Row<size_t>& labels)
+    const arma::mat& dataset,
+    const arma::Row<size_t>& labels)
 {
   // Make sure the calculation is necessary.
   if (precalculated)
@@ -252,10 +253,9 @@ inline void Constraints<MetricType>::Precalculate(
   for (size_t i = 0; i < uniqueLabels.n_elem; i++)
   {
     arma::uvec index = arma::find(labels == uniqueLabels[i]);
-    trees[i] = new TreeType(std::move(dataset.cols(index)), oldFromNews[i],
-        newFromOlds[i]);
+    trees[i] = new TreeType(std::move(dataset.cols(index)), oldFromNews[i]);
     // Only set the original dataset for the root.
-    trees[i]->Stat().OrigDataset() = new arma::mat(node.Dataset());
+    trees[i]->Stat().OrigDataset() = new arma::mat(trees[i]->Dataset());
 
     // We have to make the tree's mappings into the whole dataset mapping.
     for (size_t j = 0; j < oldFromNews[i].size(); ++j)
@@ -280,7 +280,7 @@ inline void ImpBoundFilterTree(
     std::vector<bool>& pruned)
 {
   // First, see which points we can filter.
-  bool fullyFiltered = true;
+  bool fullyFiltered = false;
   for (size_t i = 0; i < node.NumPoints(); ++i)
   {
     const size_t index = oldFromNew[node.Point(i)];
@@ -289,7 +289,7 @@ inline void ImpBoundFilterTree(
         unsortedNorms[oldImpostors(k, index)]) >
         oldDistances(k, index) - oldDistances(k - 1, index))
     {
-      pruned[node.Point(i)] = true;
+//      pruned[node.Point(i)] = true;
     }
     else
     {
@@ -352,6 +352,7 @@ template<typename MetricType>
 void Constraints<MetricType>::UpdateTreeStat(
     TreeType& node,
     const std::vector<size_t>& oldFromNew,
+    const arma::vec& norms,
     const arma::Mat<size_t>& lastNeighbors,
     const arma::mat& lastDistances,
     const double transformationDiff,
@@ -359,8 +360,8 @@ void Constraints<MetricType>::UpdateTreeStat(
 {
   for (size_t i = 0; i < node.NumChildren(); ++i)
   {
-    UpdateTreeStat(node.Child(i), lastNeighbors, lastDistances,
-        transformationDiff);
+    UpdateTreeStat(node.Child(i), oldFromNew, norms, lastNeighbors,
+        lastDistances, transformationDiff, pointBounds);
   }
 
   // Now, manually compute the bound for search.  We know that the k'th
@@ -379,7 +380,7 @@ void Constraints<MetricType>::UpdateTreeStat(
       pointBounds[node.Point(i)] = lastDistances(k, oldIndex) +
           transformationDiff * (norms[oldIndex] + norms[neighbor]);
 
-      relaxedBound = std::max(relaxedBound, pointsBounds[node.Point(i)]);
+      relaxedBound = std::max(relaxedBound, pointBounds[node.Point(i)]);
     }
 
     for (size_t i = 0; i < node.NumChildren(); ++i)
@@ -423,6 +424,9 @@ void Constraints<MetricType>::ComputeImpostors(
   arma::Mat<size_t> lastNeighbors = std::move(neighbors);
   arma::mat lastDistances = std::move(distances);
 
+  neighbors.set_size(k, dataset.n_cols);
+  distances.set_size(k, dataset.n_cols);
+
   // First we need to update the tree.  Start by stretching the dataset.  But we
   // never need to stretch the dataset on the first search, since it's done by
   // TargetsAndImpostors().
@@ -438,15 +442,8 @@ void Constraints<MetricType>::ComputeImpostors(
     Timer::Stop("tree_update");
   }
 
-  // These typedefs are the same regardless of whether the template parameter is
-  // true or false.
-  typedef LMNNImpostorsRules<MetricType, TreeType, true>::Candidate
-      Candidate;
-  typedef LMNNImpostorsRules<MetricType, TreeType, true>::CandidateList
-      CandidateList;
-
   // Auxiliary variable to be used during search.
-  MetricType metric = tree->Metric(); // No way to get an lvalue...
+  MetricType metric = trees[0]->Metric(); // No way to get an lvalue...
 
   // We need to search for impostors for each combination of classes.
   for (size_t i = 0; i < uniqueLabels.n_elem; ++i)
@@ -454,8 +451,8 @@ void Constraints<MetricType>::ComputeImpostors(
     // Before searching, we have to reset the statistics in our query tree.
     Timer::Start("tree_bound_update");
     arma::vec pointBounds(trees[i]->Dataset().n_cols);
-    UpdateTreeStat(*trees[i], oldFromNews[i], lastNeighbors, lastDistances,
-        transformationDiff, pointBounds);
+    UpdateTreeStat(*trees[i], oldFromNews[i], norms, lastNeighbors,
+        lastDistances, transformationDiff, pointBounds);
     Timer::Stop("tree_bound_update");
 
     // Attempt to perform impostor bound pruning.
@@ -480,21 +477,23 @@ void Constraints<MetricType>::ComputeImpostors(
     {
       const Candidate def = std::make_tuple(DBL_MAX, 0, size_t() - 1);
       std::vector<Candidate> vect(k, def);
+      CandidateList pqueue(CandidateCmp(), std::move(vect));
 
       for (size_t j = 0; j < trees[i]->Dataset().n_cols; ++j)
-        candidates.push_back(vect);
+        candidates.push_back(pqueue);
     }
     else
     {
       // Use the individually computed point bounds from UpdateTreeStat().
       for (size_t j = 0; j < trees[i]->Dataset().n_cols; ++j)
       {
-        const Candidate def = std::make_tuple(std::nextafter(pointBounds[j]),
-            0, size_t() - 1);
-        candidates.push_back(std::move(std::vector<Candidate>(k, def)));
+        const Candidate def = std::make_tuple(std::nextafter(pointBounds[j],
+            DBL_MAX), 0, size_t() - 1);
+        std::vector<Candidate> vect(k, def);
+        CandidateList pqueue(CandidateCmp(), std::move(vect));
+        candidates.push_back(pqueue);
       }
     }
-    runFirstSearch = false;
 
     // Now search with all other classes as the reference set.
     for (size_t j = 0; j < uniqueLabels.n_elem; ++j)
@@ -539,7 +538,7 @@ void Constraints<MetricType>::ComputeImpostors(
       const size_t queryIndex = oldFromNews[i][j];
       for (size_t l = 1; l <= k; ++l)
       {
-        Candidate& t = pqueue.top();
+        const Candidate& t = pqueue.top();
         neighbors(k - l, queryIndex) =
             oldFromNews[std::get<1>(t)][std::get<2>(t)];
         distances(k - l, queryIndex) = std::get<0>(t);
@@ -569,6 +568,7 @@ void Constraints<MetricType>::ComputeImpostors(
       Timer::Stop("update_pruned_impostors");
     }
   }
+  runFirstSearch = false;
 
   ReorderResults(distances, neighbors, norms);
 }

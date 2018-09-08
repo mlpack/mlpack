@@ -76,10 +76,6 @@ inline double LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::Score(
     const size_t queryIndex,
     TreeType& referenceNode)
 {
-  // Sanity check: we can always prune a node that has no impostors, since it
-  // can't possibly help us with the results.
-  const size_t queryClass = queryLabels[queryIndex];
-
   // If we are using impostor bounds, prune if we can.
   if (UseImpBounds && pruned[queryIndex])
     return DBL_MAX;
@@ -114,7 +110,7 @@ inline double LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::Score(
   }
 
   // Compare against the best k'th distance for this query point so far.
-  double bestDistance = candidates[queryIndex].top().first;
+  double bestDistance = std::get<0>(candidates[queryIndex].top());
 
   return (distance <= bestDistance) ? distance : DBL_MAX;
 }
@@ -131,7 +127,7 @@ inline double LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::Rescore(
     return oldScore;
 
   // Just check the score again against the distances.
-  double bestDistance = candidates[queryIndex].top().first;
+  double bestDistance = std::get<0>(candidates[queryIndex].top());
 
   return (oldScore <= bestDistance) ? oldScore : DBL_MAX;
 }
@@ -344,7 +340,7 @@ inline double LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::
     if (UseImpBounds && pruned[queryNode.Point(i)])
       continue;
 
-    const double distance = candidates[queryNode.Point(i)].top().first;
+    const double distance = std::get<0>(candidates[queryNode.Point(i)].top());
     if (worstDistance < distance)
       worstDistance = distance;
   }
@@ -394,7 +390,7 @@ inline void LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::
                    const double distance)
 {
   CandidateList& pqueue = candidates[queryIndex];
-  Candidate c = std::make_pair(distance, neighbor);
+  Candidate c = std::make_tuple(distance, referenceClass, neighbor);
 
   if (CandidateCmp()(c, pqueue.top()))
   {
