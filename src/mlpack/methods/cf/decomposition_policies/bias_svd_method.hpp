@@ -1,8 +1,9 @@
 /**
- * @file nmf_method.hpp
- * @author Haritha Nair
+ * @file bias_svd_method.hpp
+ * @author Wenhao Huang
  *
- * Implementation of the exact svd method for use in Collaborative Filtering.
+ * Implementation of the bias svd method for use in the Collaborative
+ * Filtering.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -10,27 +11,42 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_CF_DECOMPOSITION_POLICIES_NMF_METHOD_HPP
-#define MLPACK_METHODS_CF_DECOMPOSITION_POLICIES_NMF_METHOD_HPP
+#ifndef MLPACK_METHODS_CF_DECOMPOSITION_POLICIES_BIAS_SVD_METHOD_HPP
+#define MLPACK_METHODS_CF_DECOMPOSITION_POLICIES_BIAS_SVD_METHOD_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/methods/amf/amf.hpp>
-#include <mlpack/methods/amf/update_rules/nmf_als.hpp>
-#include <mlpack/methods/amf/termination_policies/max_iteration_termination.hpp>
-#include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
+#include <mlpack/methods/bias_svd/bias_svd.hpp>
 
 namespace mlpack {
 namespace cf {
 
 /**
- * Implementation of the NMF policy to act as a wrapper when accessing
- * NMF from within CFType.
+ * Implementation of the Bias SVD policy to act as a wrapper when
+ * accessing Bias SVD from within CFType.
  */
-class NMFPolicy
+class BiasSVDPolicy
 {
  public:
   /**
-   * Apply Collaborative Filtering to the provided dataset using NMF method.
+   * Use Bias SVD method to perform collaborative filtering.
+   *
+   * @param maxIterations Number of iterations.
+   * @param alpha Learning rate for optimization.
+   * @param Regularization parameter for optimization.
+   */
+  BiasSVDPolicy(const size_t maxIterations = 10,
+                const double alpha = 0.02,
+                const double lambda = 0.05) :
+      maxIterations(maxIterations),
+      alpha(alpha),
+      lambda(lambda)
+  {
+    /* Nothing to do here */
+  }
+
+  /**
+   * Apply Collaborative Filtering to the provided data set using the
+   * bias SVD.
    *
    * @param data Data matrix: dense matrix (coordinate lists) 
    *    or sparse matrix(cleaned).
@@ -40,31 +56,16 @@ class NMFPolicy
    * @param minResidue Residue required to terminate.
    * @param mit Whether to terminate only when maxIterations is reached.
    */
-  template<typename MatType>
-  void Apply(const MatType& /* data */,
-             const arma::sp_mat& cleanedData,
+  void Apply(const arma::mat& data,
+             const arma::sp_mat& /* cleanedData */,
              const size_t rank,
              const size_t maxIterations,
-             const double minResidue,
-             const bool mit)
+             const double /* minResidue */,
+             const bool /* mit */)
   {
-    if (mit)
-    {
-      amf::MaxIterationTermination iter(maxIterations);
-
-      // Do singular value decomposition using the NMF algorithm.
-      amf::AMF<amf::MaxIterationTermination, amf::RandomInitialization,
-          amf::NMFALSUpdate> nmf(iter);
-      nmf.Apply(cleanedData, rank, w, h);
-    }
-    else
-    {
-      amf::SimpleResidueTermination srt(minResidue, maxIterations);
-
-      // Do singular value decomposition using the NMF algorithm.
-      amf::NMFALSFactorizer nmf(srt);
-      nmf.Apply(cleanedData, rank, w, h);
-    }
+    // Perform decomposition using the bias SVD algorithm.
+    svd::BiasSVD<> biassvd(maxIterations, alpha, lambda);
+    biassvd.Apply(data, rank, w, h, p, q);
   }
 
   /**
@@ -75,7 +76,8 @@ class NMFPolicy
    */
   double GetRating(const size_t user, const size_t item) const
   {
-    double rating = arma::as_scalar(w.row(item) * h.col(user));
+    double rating =
+        arma::as_scalar(w.row(item) * h.col(user)) + p(item) + q(user);
     return rating;
   }
 
@@ -87,7 +89,7 @@ class NMFPolicy
    */
   void GetRatingOfUser(const size_t user, arma::vec& rating) const
   {
-    rating = w * h.col(user);
+    rating = w * h.col(user) + p + q(user);
   }
 
   /**
@@ -108,23 +110,14 @@ class NMFPolicy
                        arma::Mat<size_t>& neighborhood,
                        arma::mat& similarities) const
   {
-    // We want to avoid calculating the full rating matrix, so we will do
-    // nearest neighbor search only on the H matrix, using the observation that
-    // if the rating matrix X = W*H, then d(X.col(i), X.col(j)) = d(W H.col(i),
-    // W H.col(j)).  This can be seen as nearest neighbor search on the H
-    // matrix with the Mahalanobis distance where M^{-1} = W^T W.  So, we'll
-    // decompose M^{-1} = L L^T (the Cholesky decomposition), and then multiply
-    // H by L^T. Then we can perform nearest neighbor search.
-    arma::mat l = arma::chol(w.t() * w);
-    arma::mat stretchedH = l * h; // Due to the Armadillo API, l is L^T.
-
+    // User latent vectors (matrix H) are used for neighbor search.
     // Temporarily store feature vector of queried users.
-    arma::mat query(stretchedH.n_rows, users.n_elem);
+    arma::mat query(h.n_rows, users.n_elem);
     // Select feature vectors of queried users.
     for (size_t i = 0; i < users.n_elem; i++)
-      query.col(i) = stretchedH.col(users(i));
+      query.col(i) = h.col(users(i));
 
-    NeighborSearchPolicy neighborSearch(stretchedH);
+    NeighborSearchPolicy neighborSearch(h);
     neighborSearch.Search(
         query, numUsersForSimilarity, neighborhood, similarities);
   }
@@ -133,6 +126,25 @@ class NMFPolicy
   const arma::mat& W() const { return w; }
   //! Get the User Matrix.
   const arma::mat& H() const { return h; }
+  //! Get the User Bias Vector.
+  const arma::vec& Q() const { return q; }
+  //! Get the Item Bias Vector.
+  const arma::vec& P() const { return p; }
+
+  //! Get the number of iterations.
+  size_t MaxIterations() const { return maxIterations; }
+  //! Modify the number of iterations.
+  size_t& MaxIterations() { return maxIterations; }
+
+  //! Get learning rate.
+  double Alpha() const { return alpha; }
+  //! Modify learning rate.
+  double& Alpha() { return alpha; }
+
+  //! Get regularization parameter.
+  double Lambda() const { return lambda; }
+  //! Modify regularization parameter.
+  double& Lambda() { return lambda; }
 
   /**
    * Serialization.
@@ -140,15 +152,30 @@ class NMFPolicy
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
+    ar & BOOST_SERIALIZATION_NVP(maxIterations);
+    ar & BOOST_SERIALIZATION_NVP(alpha);
+    ar & BOOST_SERIALIZATION_NVP(lambda);
     ar & BOOST_SERIALIZATION_NVP(w);
     ar & BOOST_SERIALIZATION_NVP(h);
+    ar & BOOST_SERIALIZATION_NVP(p);
+    ar & BOOST_SERIALIZATION_NVP(q);
   }
 
  private:
+  //! Locally stored number of iterations.
+  size_t maxIterations;
+  //! Learning rate for optimization.
+  double alpha;
+  //! Regularization parameter for optimization.
+  double lambda;
   //! Item matrix.
   arma::mat w;
   //! User matrix.
   arma::mat h;
+  //! Item bias.
+  arma::vec p;
+  //! User bias.
+  arma::vec q;
 };
 
 } // namespace cf

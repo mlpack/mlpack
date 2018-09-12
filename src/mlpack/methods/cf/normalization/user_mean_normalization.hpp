@@ -50,7 +50,7 @@ class UserMeanNormalization
   void Normalize(arma::mat& data)
   {
     const size_t userNum = arma::max(data.row(0)) + 1;
-    userMean = arma::rowvec(userNum, arma::fill::zeros);
+    userMean = arma::vec(userNum, arma::fill::zeros);
     // Number of ratings for each user.
     arma::Row<size_t> ratingNum(userNum, arma::fill::zeros);
 
@@ -89,11 +89,25 @@ class UserMeanNormalization
    */
   void Normalize(arma::sp_mat& cleanedData)
   {
-    userMean = arma::rowvec(arma::mean(cleanedData, 0));
-
+    // Calculate userMean.
+    userMean = arma::vec(cleanedData.n_cols, arma::fill::zeros);
+    arma::Col<size_t> ratingNum(cleanedData.n_cols, arma::fill::zeros);
     arma::sp_mat::iterator it = cleanedData.begin();
     arma::sp_mat::iterator it_end = cleanedData.end();
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
+    {
+      userMean(it.col()) += *it;
+      ratingNum(it.col()) += 1;
+    }
+    for (size_t i = 0; i < userMean.n_elem; i++)
+    {
+      if (ratingNum(i) != 0)
+        userMean(i) /= ratingNum(i);
+    }
+
+    // Normalize the data.
+    it = cleanedData.begin();
+    for (; it != cleanedData.end(); ++it)
     {
       *it = *it - userMean(it.col());
       // The algorithm omits rating of zero. If normalized rating equals zero,
@@ -136,7 +150,7 @@ class UserMeanNormalization
   /**
    * Return user mean.
    */
-  const arma::rowvec& Mean() const { return userMean; }
+  const arma::vec& Mean() const { return userMean; }
 
   /**
    * Serialization.
@@ -149,7 +163,7 @@ class UserMeanNormalization
 
  private:
   //! User mean.
-  arma::rowvec userMean;
+  arma::vec userMean;
 };
 
 } // namespace cf
