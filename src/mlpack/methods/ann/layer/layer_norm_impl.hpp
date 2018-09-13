@@ -114,8 +114,10 @@ template<typename Archive>
 void LayerNorm<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(gamma);
-  ar & BOOST_SERIALIZATION_NVP(beta);
+  ar & BOOST_SERIALIZATION_NVP(size);
+
+  if (Archive::is_loading::value)
+    weights.set_size(size + size, 1);
 }
 
 } // namespace ann

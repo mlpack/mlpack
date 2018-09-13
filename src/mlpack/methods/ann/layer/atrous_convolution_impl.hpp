@@ -96,10 +96,8 @@ void AtrousConvolution<
     OutputDataType
 >::Reset()
 {
-    weight = arma::cube(weights.memptr(), kW, kH,
-        outSize * inSize, false, false);
-    bias = arma::mat(weights.memptr() + weight.n_elem,
-        outSize, 1, false, false);
+  weight = arma::cube(weights.memptr(), kW, kH, outSize * inSize, false, false);
+  bias = arma::mat(weights.memptr() + weight.n_elem, outSize, 1, false, false);
 }
 
 template<
