@@ -26,6 +26,20 @@ namespace cf {
 /**
  * Implementation of the SVD complete incremental policy to act as a wrapper
  * when accessing SVD complete decomposition from within CFType.
+ *
+ * An example of how to use SVDCompletePolicy in CF is shown below:
+ *
+ * @code
+ * extern arma::mat data; // data is a (user, item, rating) table.
+ * // Users for whom recommendations are generated.
+ * extern arma::Col<size_t> users;
+ * arma::Mat<size_t> recommendations; // Resulting recommendations.
+ *
+ * CFType<SVDCompletePolicy> cf(data);
+ *
+ * // Generate 10 recommendations for all users.
+ * cf.GetRecommendations(10, recommendations);
+ * @endcode
  */
 class SVDCompletePolicy
 {

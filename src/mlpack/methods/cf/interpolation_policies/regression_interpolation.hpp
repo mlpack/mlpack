@@ -23,6 +23,22 @@ namespace cf {
  * linear regression of \f$ r_{iu} \f$ on \f$ r_{iv} \f$, where v are u's
  * neighbors.
  *
+ * An example of how to use RegressionInterpolation in CF is shown below:
+ *
+ * @code
+ * extern arma::mat data; // data is a (user, item, rating) table.
+ * // Users for whom recommendations are generated.
+ * extern arma::Col<size_t> users;
+ * arma::Mat<size_t> recommendations; // Resulting recommendations.
+ *
+ * CFType<> cf(data);
+ *
+ * // Generate 10 recommendations for all users.
+ * cf.template GetRecommendations<
+ *     EuclideanSearch,
+ *     RegressionInterpolation>(10, recommendations);
+ * @endcode
+ *
  * For more information, see the following paper.
  *
  * @code

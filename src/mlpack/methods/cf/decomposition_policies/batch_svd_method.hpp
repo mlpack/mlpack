@@ -25,6 +25,20 @@ namespace cf {
 /**
  * Implementation of the Batch SVD policy to act as a wrapper when accessing
  * Batch SVD from within CFType.
+ *
+ * An example of how to use BatchSVDPolicy in CF is shown below:
+ *
+ * @code
+ * extern arma::mat data; // data is a (user, item, rating) table.
+ * // Users for whom recommendations are generated.
+ * extern arma::Col<size_t> users;
+ * arma::Mat<size_t> recommendations; // Resulting recommendations.
+ *
+ * CFType<BatchSVDPolicy> cf(data);
+ *
+ * // Generate 10 recommendations for all users.
+ * cf.GetRecommendations(10, recommendations);
+ * @endcode
  */
 class BatchSVDPolicy
 {
