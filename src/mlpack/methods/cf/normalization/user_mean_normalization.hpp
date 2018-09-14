@@ -30,7 +30,7 @@ namespace cf {
  * arma::Mat<size_t> recommendations; // Resulting recommendations.
  *
  * // Use UserMeanNormalization as normalization method.
- * CFType<UserMeanNormalization> cf(data);
+ * CFType<NMFPolicy, UserMeanNormalization> cf(data);
  *
  * // Generate 10 recommendations for all users.
  * cf.GetRecommendations(10, recommendations);
