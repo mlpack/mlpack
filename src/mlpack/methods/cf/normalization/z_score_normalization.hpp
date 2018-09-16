@@ -29,7 +29,7 @@ namespace cf {
  * arma::Mat<size_t> recommendations; // Resulting recommendations.
  *
  * // Use ZScoreNormalization as normalization method.
- * CFType<ZScoreNormalization> cf(data);
+ * CFType<NMFPolicy, ZScoreNormalization> cf(data);
  *
  * // Generate 10 recommendations for all users.
  * cf.GetRecommendations(10, recommendations);
