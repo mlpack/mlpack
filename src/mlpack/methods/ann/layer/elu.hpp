@@ -199,7 +199,7 @@ class ELU
   template<typename eT>
   void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
-    y.set_size(size(x));
+    y.set_size(arma::size(x));
 
     for (size_t i = 0; i < x.n_elem; i++)
     {
