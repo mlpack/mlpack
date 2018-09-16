@@ -466,6 +466,11 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
     kde(0.25, relError, absError, bf);
   kde.Train(reference);
 
+  // Get estimations to compare.
+  arma::mat query = arma::randu(4, 100);;
+  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
+  kde.Evaluate(query, estimations);
+
   // Initialize serialized objects.
   KDE<metric::EuclideanDistance,
       arma::mat,
@@ -495,13 +500,10 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   BOOST_REQUIRE_EQUAL(kdeBinary.IsTrained(), true);
 
   // Test if execution gives the same result.
-  arma::mat query = arma::randu(4, 100);;
-  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
   arma::vec xmlEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   arma::vec textEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   arma::vec binEstimations = arma::vec(query.n_cols, arma::fill::zeros);
 
-  kde.Evaluate(query, estimations);
   kde.Evaluate(query, xmlEstimations);
   kde.Evaluate(query, textEstimations);
   kde.Evaluate(query, binEstimations);
