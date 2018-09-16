@@ -60,11 +60,11 @@ class BatchNorm
   BatchNorm();
 
   /**
-  * Create the BatchNorm layer object for a specified number of input units.
-  *
-  * @param size The number of input units.
-  * @param eps The epsilon added to variance to ensure numerical stability.
-  */
+   * Create the BatchNorm layer object for a specified number of input units.
+   *
+   * @param size The number of input units.
+   * @param eps The epsilon added to variance to ensure numerical stability.
+   */
   BatchNorm(const size_t size, const double eps = 1e-8);
 
   /**
@@ -133,10 +133,10 @@ class BatchNorm
   bool& Deterministic() { return deterministic; }
 
   //! Get the mean over the training data.
-  OutputDataType TrainingMean() { return stats.mean(); }
+  OutputDataType TrainingMean() { return runningMean; }
 
   //! Get the variance over the training data.
-  OutputDataType TrainingVariance() { return stats.var(1); }
+  OutputDataType TrainingVariance() { return runningVariance / count; }
 
   /**
    * Serialize the layer
@@ -150,6 +150,9 @@ class BatchNorm
 
   //! Locally-stored epsilon value.
   double eps;
+
+  //! Whether we are in loading or saving mode.
+  bool loading;
 
   //! Locally-stored scale parameter.
   OutputDataType gamma;
@@ -166,14 +169,20 @@ class BatchNorm
    */
   bool deterministic;
 
+  //! Locally-stored running mean/variance counter.
+  size_t count;
+
   //! Locally-stored mean object.
   OutputDataType mean;
 
   //! Locally-stored variance object.
   OutputDataType variance;
 
-  //! Locally-stored running statistics object.
-  arma::running_stat_vec<arma::colvec> stats;
+  //! Locally-stored mean object.
+  OutputDataType runningMean;
+
+  //! Locally-stored variance object.
+  OutputDataType runningVariance;
 
   //! Locally-stored gradient object.
   OutputDataType gradient;

@@ -20,23 +20,28 @@
 namespace mlpack {
 namespace ann { /** Artificial Neural Network. */
 
-template<typename InputDataType, typename OutputDataType>
+template <typename InputDataType, typename OutputDataType>
 BatchNorm<InputDataType, OutputDataType>::BatchNorm() :
     size(10),
     eps(1e-8),
-    deterministic(false)
+    loading(false),
+    deterministic(false),
+    count(0)
 {
   // Nothing to do here.
 }
-
 template <typename InputDataType, typename OutputDataType>
 BatchNorm<InputDataType, OutputDataType>::BatchNorm(
     const size_t size, const double eps) :
     size(size),
     eps(eps),
-    deterministic(false)
+    loading(false),
+    deterministic(false),
+    count(0)
 {
   weights.set_size(size + size, 1);
+  runningMean.zeros(size, 1);
+  runningVariance.zeros(size, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -44,10 +49,15 @@ void BatchNorm<InputDataType, OutputDataType>::Reset()
 {
   gamma = arma::mat(weights.memptr(), size, 1, false, false);
   beta = arma::mat(weights.memptr() + gamma.n_elem, size, 1, false, false);
+
+  if (!loading)
+  {
+    gamma.fill(1.0);
+    beta.fill(0.0);
+  }
+
   deterministic = false;
-  gamma.fill(1.0);
-  beta.fill(0.0);
-  stats.reset();
+  loading = false;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -59,15 +69,9 @@ void BatchNorm<InputDataType, OutputDataType>::Forward(
   // the forward pass when deterministic is set to true.
   if (deterministic)
   {
-    // Mini--batch mean using the stats object.
-    mean = stats.mean();
-
-    // Mini--batch variance using the stats object.
-    variance = stats.var(1);
-
     // Normalize the input and scale and shift the output.
-    output = input.each_col() - mean;
-    output.each_col() %= gamma / arma::sqrt(variance + eps);
+    output = input.each_col() - runningMean;
+    output.each_col() %= gamma / arma::sqrt(runningVariance / count + eps);
     output.each_col() += beta;
   }
   else
@@ -75,12 +79,19 @@ void BatchNorm<InputDataType, OutputDataType>::Forward(
     mean = arma::mean(input, 1);
     variance = arma::var(input, 1, 1);
 
-    for (size_t i = 0; i < input.n_cols; i++)
-      stats(input.col(i));
-
     // Normalize the input.
     output = input.each_col() - mean;
     output.each_col() /= arma::sqrt(variance + eps);
+
+    // Use Welford method to compute the sample variance and mean.
+    for (size_t i = 0; i < input.n_cols; i++)
+    {
+      count += 1;
+
+      OutputDataType delta = input.col(i) - runningMean;
+      runningMean = runningMean + delta / count;
+      runningVariance += delta % (input.col(i) - runningMean);
+    }
 
     // Reused in the backward and gradient step.
     normalized = output;
@@ -139,8 +150,20 @@ template<typename Archive>
 void BatchNorm<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
+  ar & BOOST_SERIALIZATION_NVP(size);
+
+  if (Archive::is_loading::value)
+  {
+    weights.set_size(size + size, 1);
+    loading = false;
+  }
+
+  ar & BOOST_SERIALIZATION_NVP(eps);
   ar & BOOST_SERIALIZATION_NVP(gamma);
   ar & BOOST_SERIALIZATION_NVP(beta);
+  ar & BOOST_SERIALIZATION_NVP(count);
+  ar & BOOST_SERIALIZATION_NVP(runningMean);
+  ar & BOOST_SERIALIZATION_NVP(runningVariance);
 }
 
 } // namespace ann
