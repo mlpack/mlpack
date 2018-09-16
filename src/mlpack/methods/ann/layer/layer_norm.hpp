@@ -69,11 +69,11 @@ class LayerNorm
   LayerNorm();
 
   /**
-  * Create the LayerNorm object for a specified number of input units.
-  *
-  * @param size The number of input units.
-  * @param eps The epsilon added to variance to ensure numerical stability.
-  */
+   * Create the LayerNorm object for a specified number of input units.
+   *
+   * @param size The number of input units.
+   * @param eps The epsilon added to variance to ensure numerical stability.
+   */
   LayerNorm(const size_t size, const double eps = 1e-8);
 
   /**
@@ -159,6 +159,9 @@ class LayerNorm
 
   //! Locally-stored epsilon value.
   double eps;
+
+  //! Whether we are in loading or saving mode.
+  bool loading;
 
   //! Locally-stored scale parameter.
   OutputDataType gamma;

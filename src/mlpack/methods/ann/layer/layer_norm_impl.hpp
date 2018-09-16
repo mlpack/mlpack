@@ -19,10 +19,12 @@
 namespace mlpack {
 namespace ann { /** Artificial Neural Network. */
 
-template<typename InputDataType, typename OutputDataType>
+
+template <typename InputDataType, typename OutputDataType>
 LayerNorm<InputDataType, OutputDataType>::LayerNorm() :
-    size(10),
-    eps(1e-8)
+    size(1),
+    eps(1e-8),
+    loading(false)
 {
   // Nothing to do here.
 }
@@ -31,7 +33,8 @@ template <typename InputDataType, typename OutputDataType>
 LayerNorm<InputDataType, OutputDataType>::LayerNorm(
     const size_t size, const double eps) :
     size(size),
-    eps(eps)
+    eps(eps),
+    loading(false)
 {
   weights.set_size(size + size, 1);
 }
@@ -41,8 +44,14 @@ void LayerNorm<InputDataType, OutputDataType>::Reset()
 {
   gamma = arma::mat(weights.memptr(), 1, size, false, false);
   beta = arma::mat(weights.memptr() + gamma.n_elem, 1, size, false, false);
-  gamma.fill(1.0);
-  beta.fill(0.0);
+
+  if (!loading)
+  {
+    gamma.fill(1.0);
+    beta.fill(0.0);
+  }
+
+  loading = false;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -55,6 +64,7 @@ void LayerNorm<InputDataType, OutputDataType>::Forward(
 
   // Normalize the input.
   output = input.each_row() - mean;
+
   output.each_row() /= arma::sqrt(variance + eps);
 
   // Reused in the backward and gradient step.
@@ -114,6 +124,15 @@ template<typename Archive>
 void LayerNorm<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
+  ar & BOOST_SERIALIZATION_NVP(size);
+
+  if (Archive::is_loading::value)
+  {
+    weights.set_size(size + size, 1);
+    loading = true;
+  }
+
+  ar & BOOST_SERIALIZATION_NVP(eps);
   ar & BOOST_SERIALIZATION_NVP(gamma);
   ar & BOOST_SERIALIZATION_NVP(beta);
 }
