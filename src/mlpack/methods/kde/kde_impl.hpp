@@ -251,83 +251,10 @@ template<typename MetricType,
 void KDE<MetricType, MatType, KernelType, TreeType>::
 Evaluate(const MatType& querySet, arma::vec& estimations)
 {
-  // Check querySet has at least 1 element to evaluate.
-  if (querySet.n_cols == 0)
-  {
-    Log::Warn << "querySet is empty" << std::endl;
-    return;
-  }
-  // Check whether dimensions match.
-  if (querySet.n_rows != referenceTree->Dataset().n_rows)
-    throw std::invalid_argument("cannot train KDE model: querySet and "
-                                "referenceSet dimensions don't match");
-
-  // Get estimations vector ready.
-  estimations.clear();
-  estimations.resize(querySet.n_cols);
-  estimations.fill(arma::fill::zeros);
-
-  // Evaluate
   std::vector<size_t> oldFromNewQueries;
   Tree* queryTree = BuildTree<Tree>(querySet, oldFromNewQueries);
-  typedef KDERules<MetricType, KernelType, Tree> RuleType;
-  RuleType rules = RuleType(referenceTree->Dataset(),
-                            queryTree->Dataset(),
-                            estimations,
-                            relError,
-                            absError,
-                            oldFromNewQueries,
-                            *metric,
-                            *kernel);
-  if (breadthFirst)
-  {
-    // DualTreeTraverser Breadth-First
-    typename Tree::template BreadthFirstDualTreeTraverser<RuleType>
-      traverser(rules);
-    traverser.Traverse(*queryTree, *referenceTree);
-  }
-  else
-  {
-    // DualTreeTraverser Depth-First
-    typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
-    traverser.Traverse(*queryTree, *referenceTree);
-  }
-  estimations /= referenceTree->Dataset().n_cols;
-
-  // Normalize if required.
-  if (kernel::KernelTraits<KernelType>::IsNormalized)
-    estimations /= kernel->Normalizer(querySet.n_rows);
-
+  this->Evaluate(queryTree, oldFromNewQueries, estimations);
   delete queryTree;
-
-  // Ideas for the future...
-  // SingleTreeTraverser
-  /*
-  typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
-  for(size_t i = 0; i < query.n_cols; ++i)
-    traverser.Traverse(i, *referenceTree);
-  */
-  // Brute force
-  /*
-  arma::vec result = arma::vec(query.n_cols);
-  result = arma::zeros<arma::vec>(query.n_cols);
-
-  for(size_t i = 0; i < query.n_cols; ++i)
-  {
-    arma::vec density = arma::zeros<arma::vec>(referenceSet.n_cols);
-    
-    for(size_t j = 0; j < this->referenceSet.n_cols; ++j)
-    {
-      density(j) = this->kernel.Evaluate(query.col(i),
-                                         this->referenceSet.col(j));
-    }
-    result(i) = arma::trunc_log(arma::sum(density)) -
-      std::log(referenceSet.n_cols);
-    //this->kernel.Normalizer(query.n_rows);
-    //result(i) = (1/referenceSet.n_cols)*(accumulated);
-  }
-  return result;
-  */
 }
 
 template<typename MetricType,
