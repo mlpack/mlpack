@@ -218,7 +218,7 @@ Train(MatType referenceSet)
     throw std::invalid_argument("cannot train KDE model with an empty "
                                 "reference set");
   this->ownsReferenceTree = true;
-  this->referenceTree = new Tree(referenceSet);
+  this->referenceTree = new Tree(std::move(referenceSet));
   this->trained = true;
 }
 
