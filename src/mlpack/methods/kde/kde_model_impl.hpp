@@ -94,20 +94,25 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
   boost::apply_visitor(DeleteVisitor(), kdeModel);
 
   if (kernelType == GAUSSIAN_KERNEL && treeType == KD_TREE)
+  {
     kdeModel = new KDEType<kernel::GaussianKernel, tree::KDTree>
-      (bandwidth, relError, absError, breadthFirst);
-
+        (bandwidth, relError, absError, breadthFirst);
+  }
   else if (kernelType == GAUSSIAN_KERNEL && treeType == BALL_TREE)
+  {
     kdeModel = new KDEType<kernel::GaussianKernel, tree::BallTree>
-      (bandwidth, relError, absError, breadthFirst);
-
+        (bandwidth, relError, absError, breadthFirst);
+  }
   else if (kernelType == EPANECHNIKOV_KERNEL && treeType == KD_TREE)
+  {
     kdeModel = new KDEType<kernel::EpanechnikovKernel, tree::KDTree>
-      (bandwidth, relError, absError, breadthFirst);
-
+        (bandwidth, relError, absError, breadthFirst);
+  }
   else if (kernelType == EPANECHNIKOV_KERNEL && treeType == BALL_TREE)
+  {
     kdeModel = new KDEType<kernel::EpanechnikovKernel, tree::BallTree>
-      (bandwidth, relError, absError, breadthFirst);
+        (bandwidth, relError, absError, breadthFirst);
+  }
 
   TrainVisitor train(std::move(referenceSet));
   boost::apply_visitor(train, kdeModel);
