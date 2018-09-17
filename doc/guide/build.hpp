@@ -24,11 +24,12 @@ mlpack uses CMake as a build system and allows several flexible build
 configuration options.  One can consult any of numerous CMake tutorials for
 further documentation, but this tutorial should be enough to get mlpack built
 and installed on most Linux and UNIX-like systems (including OS X).  If you want
-to build mlpack on Windows, see <a
-href="https://keon.io/mlpack-on-windows/">Keon's excellent tutorial</a>.
+to build mlpack on Windows, see \ref build_windows (alternatively, you can read 
+<a href="https://keon.io/mlpack-on-windows/">Keon's excellent tutorial</a> which
+is based on older versions).
 
 You can download the latest mlpack release from here:
-<a href="http://www.mlpack.org/files/mlpack-3.0.2.tar.gz">mlpack-3.0.2</a>
+<a href="http://www.mlpack.org/files/mlpack-3.0.3.tar.gz">mlpack-3.0.3</a>
 
 @section build_simple Simple Linux build instructions
 
@@ -36,9 +37,9 @@ Assuming all dependencies are installed in the system, you can run the commands
 below directly to build and install mlpack.
 
 @code
-$ wget http://www.mlpack.org/files/mlpack-3.0.2.tar.gz
-$ tar -xvzpf mlpack-3.0.2.tar.gz
-$ mkdir mlpack-3.0.2/build && cd mlpack-3.0.2/build
+$ wget http://www.mlpack.org/files/mlpack-3.0.3.tar.gz
+$ tar -xvzpf mlpack-3.0.3.tar.gz
+$ mkdir mlpack-3.0.3/build && cd mlpack-3.0.3/build
 $ cmake ../
 $ make -j4  # The -j is the number of cores you want to use for a build.
 $ sudo make install
@@ -63,8 +64,8 @@ configure mlpack.
 First we should unpack the mlpack source and create a build directory.
 
 @code
-$ tar -xvzpf mlpack-3.0.2.tar.gz
-$ cd mlpack-3.0.2
+$ tar -xvzpf mlpack-3.0.3.tar.gz
+$ cd mlpack-3.0.3
 $ mkdir build
 @endcode
 
@@ -146,6 +147,8 @@ The full list of options mlpack allows:
  - FORCE_CXX11=(ON/OFF): assume that the compiler supports C++11 instead of
        checking; be sure to specify any necessary flag to enable C++11 as part
        of CXXFLAGS (default OFF)
+ - USE_OPENMP=(ON/OFF): if ON, then use OpenMP if the compiler supports it; if
+       OFF, OpenMP support is manually disabled (default ON)
 
 Each option can be specified to CMake with the '-D' flag.  Other tools can also
 be used to configure CMake, but those are not documented here.

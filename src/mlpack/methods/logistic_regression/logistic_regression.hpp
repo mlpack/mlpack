@@ -125,9 +125,10 @@ class LogisticRegression
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
+   * @return The final objective of the trained model (NaN or Inf on error)
    */
   template<typename OptimizerType = mlpack::optimization::L_BFGS>
-  void Train(const MatType& predictors,
+  double Train(const MatType& predictors,
              const arma::Row<size_t>& responses);
 
   /**
@@ -145,9 +146,10 @@ class LogisticRegression
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer with instantiated error function.
+   * @return The final objective of the trained model (NaN or Inf on error)
    */
   template<typename OptimizerType>
-  void Train(const MatType& predictors,
+  double Train(const MatType& predictors,
              const arma::Row<size_t>& responses,
              OptimizerType& optimizer);
 

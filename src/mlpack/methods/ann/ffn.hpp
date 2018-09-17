@@ -135,6 +135,15 @@ class FFN
   void Predict(arma::mat predictors, arma::mat& results);
 
   /**
+   * Evaluate the feedforward network with the given ppredictors and responses.
+   * This functions is usually used to monitor progress while training.
+   *
+   * @param predictors Input variables.
+   * @param responses Target outputs for input variables.
+   */
+  double Evaluate(arma::mat predictors, arma::mat responses);
+
+  /**
    * Evaluate the feedforward network with the given parameters. This function
    * is usually called by the optimizer to train the model.
    *
@@ -146,8 +155,8 @@ class FFN
 
    /**
    * Evaluate the feedforward network with the given parameters, but using only
-   * one data point. This is useful for optimizers such as SGD, which require a
-   * separable objective function.
+   * a number of data points. This is useful for optimizers such as SGD, which
+   * require a separable objective function.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
@@ -164,9 +173,9 @@ class FFN
 
    /**
    * Evaluate the feedforward network with the given parameters, but using only
-   * one data point. This is useful for optimizers such as SGD, which require a
-   * separable objective function.  This just calls the overload of Evaluate()
-   * with deterministic = true.
+   * a number of data points. This is useful for optimizers such as SGD, which
+   * require a separable objective function. This just calls the overload of
+   * Evaluate() with deterministic = true.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
@@ -176,15 +185,41 @@ class FFN
    */
   double Evaluate(const arma::mat& parameters,
                   const size_t begin,
-                  const size_t batchSize)
-  {
-    return Evaluate(parameters, begin, batchSize, true);
-  }
+                  const size_t batchSize);
+
+  /**
+   * Evaluate the feedforward network with the given parameters.
+   * This function is usually called by the optimizer to train the model.
+   *
+   * @param parameters Matrix model parameters.
+   * @param gradient Matrix to output gradient into.
+   */
+  template<typename GradType>
+  double EvaluateWithGradient(const arma::mat& parameters, GradType& gradient);
+
+   /**
+   * Evaluate the feedforward network with the given parameters, but using only
+   * a number of data points. This is useful for optimizers such as SGD, which
+   * require a separable objective function.  This just calls the overload of
+   * Evaluate() with deterministic = true.
+   *
+   * @param parameters Matrix model parameters.
+   * @param begin Index of the starting point to use for objective function
+   *        evaluation.
+   * @param gradient Matrix to output gradient into.
+   * @param batchSize Number of points to be passed at a time to use for
+   *        objective function evaluation.
+   */
+  template<typename GradType>
+  double EvaluateWithGradient(const arma::mat& parameters,
+                              const size_t begin,
+                              GradType& gradient,
+                              const size_t batchSize);
 
   /**
    * Evaluate the gradient of the feedforward network with the given parameters,
-   * and with respect to only one point in the dataset. This is useful for
-   * optimizers such as SGD, which require a separable objective function.
+   * and with respect to only a number of points in the dataset. This is useful
+   * for optimizers such as SGD, which require a separable objective function.
    *
    * @param parameters Matrix of the model parameters to be optimized.
    * @param begin Index of the starting point to use for objective function
@@ -257,6 +292,22 @@ class FFN
    * @param results The predicted results.
    */
   void Forward(arma::mat inputs, arma::mat& results);
+
+  /**
+   * Perform a partial forward pass of the data.
+   *
+   * This function is meant for the cases when users require a forward pass only
+   * through certain layers and not the entire network.
+   *
+   * @param inputs The input data for the specified first layer.
+   * @param results The predicted results from the specified last layer.
+   * @param begin The index of the first layer.
+   * @param end The index of the last layer.
+   */
+  void Forward(arma::mat inputs,
+               arma::mat& results,
+               const size_t begin,
+               const size_t end);
 
   /**
    * Perform the backward pass of the data in real batch mode.

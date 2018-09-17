@@ -10,14 +10,16 @@ set(SOURCES
   atrous_convolution.hpp
   atrous_convolution_impl.hpp
   base_layer.hpp
-  bilinear_interpolation.hpp
-  bilinear_interpolation_impl.hpp
   batch_norm.hpp
   batch_norm_impl.hpp
+  bilinear_interpolation.hpp
+  bilinear_interpolation_impl.hpp
   concat.hpp
   concat_impl.hpp
   concat_performance.hpp
   concat_performance_impl.hpp
+  concatenate.hpp
+  concatenate_impl.hpp
   constant.hpp
   constant_impl.hpp
   convolution.hpp

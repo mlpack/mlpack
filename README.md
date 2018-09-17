@@ -22,7 +22,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="http://www.mlpack.org/files/mlpack-3.0.2.tar.gz">current stable version (3.0.2)</a>
+    <a href="http://www.mlpack.org/files/mlpack-3.0.3.tar.gz">current stable version (3.0.3)</a>
   </em>
 </p>
 
@@ -61,15 +61,18 @@ documentation. The website should be consulted for further information:
 If you use mlpack in your research or software, please cite mlpack using the
 citation below (given in BiBTeX format):
 
-    @article{mlpack2013,
-      title     = {{mlpack}: A Scalable {C++} Machine Learning Library},
-      author    = {Curtin, Ryan R. and Cline, James R. and Slagle, Neil P. and
-                   March, William B. and Ram, P. and Mehta, Nishant A. and Gray,
-                   Alexander G.},
-      journal   = {Journal of Machine Learning Research},
-      volume    = {14},
-      pages     = {801--805},
-      year      = {2013}
+    @article{mlpack2018,
+        title     = {mlpack 3: a fast, flexible machine learning library},
+        author    = {Curtin, Ryan R. and Edel, Marcus and Lozhnikov, Mikhail and
+                     Mentekidis, Yannis and Ghaisas, Sumedh and Zhang,
+                     Shangtong},
+        journal   = {Journal of Open Source Software},
+        volume    = {3},
+        issue     = {26},
+        pages     = {726},
+        year      = {2018},
+        doi       = {10.21105/joss.00726},
+        url       = {https://doi.org/10.21105/joss.00726}
     }
 
 Citations are beneficial for the growth and improvement of mlpack.
@@ -114,7 +117,7 @@ a PPA or other non-official sources, or installing with a manual build.
 There are some other useful pages to consult in addition to this section:
 
   - [Building mlpack From Source](http://www.mlpack.org/docs/mlpack-git/doxygen/build.html)
-  - [Building mlpack Under Windows](https://github.com/mlpack/mlpack/wiki/WindowsBuild)
+  - [Building mlpack From Source on Windows](http://www.mlpack.org/docs/mlpack-git/doxygen/build_windows.html)
 
 mlpack uses CMake as a build system and allows several flexible build
 configuration options. One can consult any of numerous CMake tutorials for
@@ -155,13 +158,17 @@ Options are specified with the -D flag.  A list of options allowed:
     ARMADILLO_LIBRARY=(/path/to/armadillo/libarmadillo.so): Armadillo library
     BUILD_CLI_EXECUTABLES=(ON/OFF): whether or not to build command-line programs
     BUILD_PYTHON_BINDINGS=(ON/OFF): whether or not to build Python bindings
+    BUILD_TESTS=(ON/OFF): whether or not to build tests
+    USE_OPENMP=(ON/OFF): whether or not to use OpenMP if available
 
 Other tools can also be used to configure CMake, but those are not documented
-here.
+here.  See [this section of the build guide](http://www.mlpack.org/docs/mlpack-git/doxygen/build.html#build_config)
+for more details.
 
 By default, command-line programs will be built, and if the Python dependencies
 (Cython, setuptools, numpy, pandas) are available, then Python bindings will
-also be built.
+also be built.  OpenMP will be used for parallelization when possible by
+default.
 
 Once CMake is configured, building the library is as simple as typing 'make'.
 This will build all library components as well as 'mlpack_test'.

@@ -56,7 +56,8 @@ class Constraints
    */
   void TargetNeighbors(arma::Mat<size_t>& outputMatrix,
                        const arma::mat& dataset,
-                       const arma::Row<size_t>& labels);
+                       const arma::Row<size_t>& labels,
+                       const arma::vec& norms);
 
   /**
    * Calculates k similar labeled nearest neighbors for a batch of dataset and
@@ -71,6 +72,7 @@ class Constraints
   void TargetNeighbors(arma::Mat<size_t>& outputMatrix,
                        const arma::mat& dataset,
                        const arma::Row<size_t>& labels,
+                       const arma::vec& norms,
                        const size_t begin,
                        const size_t batchSize);
 
@@ -84,7 +86,8 @@ class Constraints
    */
   void Impostors(arma::Mat<size_t>& outputMatrix,
                  const arma::mat& dataset,
-                 const arma::Row<size_t>& labels);
+                 const arma::Row<size_t>& labels,
+                 const arma::vec& norms);
 
   /**
    * Calculates k differently labeled nearest neighbors & distances to
@@ -98,7 +101,8 @@ class Constraints
   void Impostors(arma::Mat<size_t>& outputNeighbors,
                  arma::mat& outputDistance,
                  const arma::mat& dataset,
-                 const arma::Row<size_t>& labels);
+                 const arma::Row<size_t>& labels,
+                 const arma::vec& norms);
 
   /**
    * Calculates k differently labeled nearest neighbors for a batch of dataset
@@ -113,6 +117,7 @@ class Constraints
   void Impostors(arma::Mat<size_t>& outputMatrix,
                  const arma::mat& dataset,
                  const arma::Row<size_t>& labels,
+                 const arma::vec& norms,
                  const size_t begin,
                  const size_t batchSize);
 
@@ -131,8 +136,29 @@ class Constraints
                  arma::mat& outputDistance,
                  const arma::mat& dataset,
                  const arma::Row<size_t>& labels,
+                 const arma::vec& norms,
                  const size_t begin,
                  const size_t batchSize);
+
+  /**
+   * Calculates k differently labeled nearest neighbors & distances to
+   * impostors for some points of dataset and writes them back to passed
+   * matrices.
+   *
+   * @param outputNeighbors Coordinates matrix to store impostors.
+   * @param outputDistance matrix to store distance.
+   * @param dataset Input dataset.
+   * @param labels Input dataset labels.
+   * @param points Indices of data points to calculate impostors on.
+   * @param numPoints Number of points to actually calculate impostors on.
+   */
+  void Impostors(arma::Mat<size_t>& outputNeighbors,
+                 arma::mat& outputDistance,
+                 const arma::mat& dataset,
+                 const arma::Row<size_t>& labels,
+                 const arma::vec& norms,
+                 const arma::uvec& points,
+                 const size_t numPoints);
 
   /**
    * Generate triplets {i, j, l} for each datapoint i and writes back generated
@@ -144,10 +170,13 @@ class Constraints
    */
   void Triplets(arma::Mat<size_t>& outputMatrix,
                 const arma::mat& dataset,
-                const arma::Row<size_t>& labels);
+                const arma::Row<size_t>& labels,
+                const arma::vec& norms);
 
   //! Get the number of target neighbors (k).
   const size_t& K() const { return k; }
+  //! Modify the number of target neighbors (k).
+  size_t& K() { return k; }
 
   //! Access the boolean value of precalculated.
   const bool& PreCalulated() const { return precalculated; }
@@ -156,7 +185,7 @@ class Constraints
 
  private:
   //! Number of target neighbors & impostors to calulate.
-  const size_t k;
+  size_t k;
 
   //! Store unique labels.
   arma::Row<size_t> uniqueLabels;
@@ -175,6 +204,14 @@ class Constraints
   * and different datapoints on the basis of labels.
   */
   inline void Precalculate(const arma::Row<size_t>& labels);
+
+  /**
+  * Re-order neighbors on the basis of increasing norm in case
+  * of ties among distances.
+  */
+  inline void ReorderResults(const arma::mat& distances,
+                             arma::Mat<size_t>& neighbors,
+                             const arma::vec& norms);
 };
 
 } // namespace lmnn

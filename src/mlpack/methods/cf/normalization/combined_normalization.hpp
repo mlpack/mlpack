@@ -30,7 +30,8 @@ namespace cf {
  * extern arma::Col<size_t> users;
  * arma::Mat<size_t> recommendations; // Resulting recommendations.
  *
- * CFType<CombinedNormalization<
+ * CFType<NMFPolicy,
+ *        CombinedNormalization<
  *            OverallMeanNormalization,
  *            UserMeanNormalization,
  *            ItemMeanNormalization>> cf(data);

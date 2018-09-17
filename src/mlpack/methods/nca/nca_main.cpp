@@ -12,8 +12,8 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
-#include <mlpack/core/math/random.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/math/random.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 
 #include "nca.hpp"

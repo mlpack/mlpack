@@ -96,10 +96,12 @@
  * A few short tutorials on how to use mlpack are given below.
  *
  *  - @ref build
+ *  - @ref build_windows
  *  - @ref matrices
  *  - @ref iodoc
  *  - @ref timer
  *  - @ref sample
+ *  - @ref sample_ml_app
  *  - @ref cv
  *  - @ref hpt
  *  - @ref verinfo
@@ -247,6 +249,7 @@
  *   - Thanasis Mattas <mattasa@auth.gr>
  *   - Shashank Shekhar <contactshashankshekhar@gmail.com>
  *   - Yasmine Dumouchel <yasmine.dumouchel@gmail.com>
+ *   - German Lancioni
  */
 
 // First, include all of the prerequisites.

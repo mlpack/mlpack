@@ -30,7 +30,7 @@ namespace cf {
  * arma::Mat<size_t> recommendations; // Resulting recommendations.
  *
  * // Use OverallMeanNormalization as normalization method.
- * CFType<OverallMeanNormalization> cf(data);
+ * CFType<NMFPolicy, OverallMeanNormalization> cf(data);
  *
  * // Generate 10 recommendations for all users.
  * cf.GetRecommendations(10, recommendations);
@@ -74,7 +74,7 @@ class OverallMeanNormalization
       // Subtract mean from all non zero ratings.
       arma::sp_mat::iterator it = cleanedData.begin();
       arma::sp_mat::iterator it_end = cleanedData.end();
-      for (; it != it_end; it++)
+      for (; it != it_end; ++it)
       {
         *it = *it - mean;
         // The algorithm omits rating of zero. If normalized rating equals zero,

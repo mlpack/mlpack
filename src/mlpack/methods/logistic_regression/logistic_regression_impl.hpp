@@ -68,16 +68,16 @@ LogisticRegression<MatType>::LogisticRegression(
 
 template<typename MatType>
 template<typename OptimizerType>
-void LogisticRegression<MatType>::Train(const MatType& predictors,
+double LogisticRegression<MatType>::Train(const MatType& predictors,
                                         const arma::Row<size_t>& responses)
 {
   OptimizerType optimizer;
-  Train(predictors, responses, optimizer);
+  return Train(predictors, responses, optimizer);
 }
 
 template<typename MatType>
 template<typename OptimizerType>
-void LogisticRegression<MatType>::Train(
+double LogisticRegression<MatType>::Train(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
     OptimizerType& optimizer)
@@ -93,6 +93,8 @@ void LogisticRegression<MatType>::Train(
 
   Log::Info << "LogisticRegression::LogisticRegression(): final objective of "
       << "trained model is " << out << "." << std::endl;
+
+  return out;
 }
 
 template<typename MatType>

@@ -12,8 +12,8 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
-#include <mlpack/core/math/random.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/math/random.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
@@ -53,12 +53,15 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "after which impostors must be re-calculated (specified with " +
     PRINT_PARAM_STRING("range") + ")."
     "\n\n"
-    "Output can be either the learned distance matrix (specified with " +
+    "Output can either be the learned distance matrix (specified with " +
     PRINT_PARAM_STRING("output") +"), or the transformed dataset "
     " (specified with " + PRINT_PARAM_STRING("transformed_data") + "), or "
-    "both.  Accuracy on initial dataset and final transformed dataset can "
-    "be printed by specifying the " + PRINT_PARAM_STRING("print_accuracy") +
-    "parameter. "
+    "both. Additionally mean-centered dataset (specified with " +
+    PRINT_PARAM_STRING("centered_data") + ") can be accessed given "
+    "mean-centering (specified with " + PRINT_PARAM_STRING("center") +
+    ") is performed on the dataset. Accuracy on initial dataset and final "
+    "transformed dataset can be printed by specifying the " +
+    PRINT_PARAM_STRING("print_accuracy") + "parameter. "
     "\n\n"
     "This implementation of LMNN uses AdaGrad, BigBatch_SGD, stochastic "
     "gradient descent, mini-batch stochastic gradient descent, or the L_BFGS "
@@ -89,7 +92,9 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     PRINT_PARAM_STRING("batch_size") + "), and the maximum number of passes "
     "(specified with " + PRINT_PARAM_STRING("passes") + ").  In "
     "addition, a normalized starting point can be used by specifying the " +
-    PRINT_PARAM_STRING("normalize") + " parameter. "
+    PRINT_PARAM_STRING("normalize") + " parameter. Furthermore, " +
+    "mean-centering can be performed on the dataset by specifying the " +
+    PRINT_PARAM_STRING("center") + "parameter. "
     "\n\n"
     "The L-BFGS optimizer, specified by the value 'lbfgs' for the parameter " +
     PRINT_PARAM_STRING("optimizer") + ", uses a back-tracking line search "
@@ -126,6 +131,8 @@ PARAM_INT_IN("k", "Number of target neighbors to use for each "
 PARAM_MATRIX_OUT("output", "Output matrix for learned distance matrix.", "o");
 PARAM_MATRIX_OUT("transformed_data", "Output matrix for transformed dataset.",
     "D");
+PARAM_MATRIX_OUT("centered_data", "Output matrix for mean-centered dataset.",
+    "c");
 PARAM_FLAG("print_accuracy", "Print accuracies on initial and transformed "
     "dataset", "P");
 PARAM_STRING_IN("optimizer", "Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or "
@@ -136,6 +143,8 @@ PARAM_INT_IN("rank", "Rank of distance matrix to be optimized. ", "A", 0);
 PARAM_FLAG("normalize", "Use a normalized starting point for optimization. It"
     "is useful for when points are far apart, or when SGD is returning NaN.",
     "N");
+PARAM_FLAG("center", "Perform mean-centering on the dataset. It is useful "
+    "when the centroid of the data is far from the origin.", "C");
 PARAM_INT_IN("passes", "Maximum number of full passes over dataset for "
     "AMSGrad, BB_SGD and SGD.", "p", 50);
 PARAM_INT_IN("max_iterations", "Maximum number of iterations for "
@@ -262,6 +271,7 @@ static void mlpackMain()
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
   const double tolerance = CLI::GetParam<double>("tolerance");
   const bool normalize = CLI::HasParam("normalize");
+  const bool center = CLI::HasParam("center");
   const bool printAccuracy = CLI::HasParam("print_accuracy");
   const bool shuffle = !CLI::HasParam("linear_scan");
   const size_t batchSize = (size_t) CLI::GetParam<int>("batch_size");
@@ -270,6 +280,15 @@ static void mlpackMain()
 
   // Load data.
   arma::mat data = std::move(CLI::GetParam<arma::mat>("input"));
+
+  // Carry out mean-centering on the dataset, if necessary.
+  if (center)
+  {
+    for (size_t i = 0; i < data.n_rows; i++)
+    {
+      data.row(i) -= arma::mean(data.row(i));
+    }
+  }
 
   // Do we want to load labels separately?
   arma::Row<size_t> rawLabels(data.n_cols);
@@ -389,4 +408,12 @@ static void mlpackMain()
     CLI::GetParam<arma::mat>("output") = distance;
   if (CLI::HasParam("transformed_data"))
     CLI::GetParam<arma::mat>("transformed_data") = std::move(distance * data);
+  if (CLI::HasParam("centered_data"))
+  {
+    if (center)
+      CLI::GetParam<arma::mat>("centered_data") = std::move(data);
+    else
+      Log::Info << "Mean-centering was not performed. Centered dataset "
+          "will not be saved." << endl;
+  }
 }

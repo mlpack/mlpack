@@ -42,7 +42,7 @@ class EarthMoverDistance
    * Ordinary feed forward pass of a neural network.
    *
    * @param input Input data used for evaluating the specified function.
-   * @param output Resulting output activation.
+   * @param target The target vector.
    */
   template<typename InputType, typename TargetType>
   double Forward(const InputType&& input, const TargetType&& target);

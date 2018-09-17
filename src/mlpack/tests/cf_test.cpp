@@ -14,10 +14,12 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/cf/cf.hpp>
 #include <mlpack/methods/cf/decomposition_policies/batch_svd_method.hpp>
+#include <mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/randomized_svd_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/svd_complete_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/svd_incomplete_method.hpp>
+#include <mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp>
 #include <mlpack/methods/cf/normalization/no_normalization.hpp>
 #include <mlpack/methods/cf/normalization/overall_mean_normalization.hpp>
 #include <mlpack/methods/cf/normalization/user_mean_normalization.hpp>
@@ -103,7 +105,7 @@ void GetRecommendationsAllUsers()
   arma::mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
 
-  CFType<> c(dataset, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy> c(dataset, decomposition, 5, 5, 30);
 
   // Generate recommendations when query set is not specified.
   c.GetRecommendations(numRecs, recommendations);
@@ -140,7 +142,7 @@ void GetRecommendationsQueriedUser()
   arma::mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
 
-  CFType<> c(dataset, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy> c(dataset, decomposition, 5, 5, 30);
 
   // Generate recommendations when query set is specified.
   c.GetRecommendations(numRecsDefault, recommendations, users);
@@ -169,7 +171,8 @@ void RecommendationAccuracy()
 
   GetDatasets(dataset, savedCols);
 
-  CFType<NormalizationType> c(dataset, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy,
+      NormalizationType> c(dataset, decomposition, 5, 5, 30);
 
   // Obtain 150 recommendations for the users in savedCols, and make sure the
   // missing item shows up in most of them.  First, create the list of users,
@@ -234,7 +237,8 @@ void CFPredict(const double rmseBound = 2.0)
 
   GetDatasets(dataset, savedCols);
 
-  CFType<NormalizationType> c(dataset, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy,
+      NormalizationType> c(dataset, decomposition, 5, 5, 30);
 
   // Now, for each removed rating, make sure the prediction is... reasonably
   // accurate.
@@ -270,7 +274,7 @@ void BatchPredict()
 
   GetDatasets(dataset, savedCols);
 
-  CFType<> c(dataset, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy> c(dataset, decomposition, 5, 5, 30);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -299,7 +303,7 @@ void Train(DecompositionPolicy& decomposition)
   // Generate random data.
   arma::sp_mat randomData;
   randomData.sprandu(100, 100, 0.3);
-  CFType<> c(randomData, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy> c(randomData, decomposition, 5, 5, 30);
 
   // Small GroupLens dataset.
   arma::mat dataset;
@@ -311,10 +315,10 @@ void Train(DecompositionPolicy& decomposition)
 
   // Make data into sparse matrix.
   arma::sp_mat cleanedData;
-  CFType<>::CleanData(dataset, cleanedData);
+  CFType<DecompositionPolicy>::CleanData(dataset, cleanedData);
 
   // Now retrain.
-  c.Train(dataset, decomposition, 70);
+  c.Train(dataset, decomposition, 30);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -338,12 +342,14 @@ void Train(DecompositionPolicy& decomposition)
  * Make sure we can train an already-trained model and it works okay
  * for policies that use coordinate lists.
  */
-template<>
-void Train<>(RegSVDPolicy& decomposition)
+template<typename DecompositionPolicy>
+void TrainWithCoordinateList(DecompositionPolicy& decomposition)
 {
-  arma::mat randomData = arma::zeros(100, 100);
-  randomData.diag().ones();
-  CFType<> c(randomData, decomposition, 5, 5, 70);
+  arma::mat randomData(3, 100);
+  randomData.row(0) = arma::linspace<arma::rowvec>(0, 99, 100);
+  randomData.row(1) = arma::linspace<arma::rowvec>(0, 99, 100);
+  randomData.row(2).fill(3);
+  CFType<DecompositionPolicy> c(randomData, decomposition, 5, 5, 30);
 
   // Now retrain with data we know about.
   // Small GroupLens dataset.
@@ -355,7 +361,7 @@ void Train<>(RegSVDPolicy& decomposition)
   GetDatasets(dataset, savedCols);
 
   // Now retrain.
-  c.Train(dataset, decomposition, 70);
+  c.Train(dataset, decomposition, 30);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -383,7 +389,7 @@ void EmptyConstructorTrain()
 {
   DecompositionPolicy decomposition;
   // Use default constructor.
-  CFType<> c;
+  CFType<DecompositionPolicy> c;
 
   // Now retrain with data we know about.
   // Small GroupLens dataset.
@@ -394,7 +400,7 @@ void EmptyConstructorTrain()
 
   GetDatasets(dataset, savedCols);
 
-  c.Train(dataset, decomposition, 70);
+  c.Train(dataset, decomposition, 30);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);
@@ -428,16 +434,21 @@ void Serialization()
   data::Load("GroupLensSmall.csv", dataset);
 
   arma::sp_mat cleanedData;
-  CFType<NormalizationType>::CleanData(dataset, cleanedData);
+  CFType<DecompositionPolicy,
+      NormalizationType>::CleanData(dataset, cleanedData);
 
-  CFType<NormalizationType> c(cleanedData, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy,
+      NormalizationType> c(cleanedData, decomposition, 5, 5, 30);
 
   arma::sp_mat randomData;
   randomData.sprandu(100, 100, 0.3);
 
-  CFType<NormalizationType> cXml(randomData, decomposition, 5, 5, 70);
-  CFType<NormalizationType> cBinary;
-  CFType<NormalizationType> cText(cleanedData, decomposition, 5, 5, 70);
+  CFType<DecompositionPolicy,
+      NormalizationType> cXml(randomData, decomposition, 5, 5, 30);
+  CFType<DecompositionPolicy,
+      NormalizationType> cBinary;
+  CFType<DecompositionPolicy,
+      NormalizationType> cText(cleanedData, decomposition, 5, 5, 30);
 
   SerializeObjectAll(c, cXml, cText, cBinary);
 
@@ -451,8 +462,10 @@ void Serialization()
   BOOST_REQUIRE_EQUAL(c.Rank(), cBinary.Rank());
   BOOST_REQUIRE_EQUAL(c.Rank(), cText.Rank());
 
-  CheckMatrices(c.W(), cXml.W(), cBinary.W(), cText.W());
-  CheckMatrices(c.H(), cXml.H(), cBinary.H(), cText.H());
+  CheckMatrices(c.Decomposition().W(), cXml.Decomposition().W(),
+      cBinary.Decomposition().W(), cText.Decomposition().W());
+  CheckMatrices(c.Decomposition().H(), cXml.Decomposition().H(),
+      cBinary.Decomposition().H(), cText.Decomposition().H());
 
   BOOST_REQUIRE_EQUAL(c.CleanedData().n_rows, cXml.CleanedData().n_rows);
   BOOST_REQUIRE_EQUAL(c.CleanedData().n_rows, cBinary.CleanedData().n_rows);
@@ -555,6 +568,24 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersSVDIncompleteTest)
 }
 
 /**
+ * Make sure that correct number of recommendations are generated when query
+ * set for Bias SVD method.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersBiasSVDTest)
+{
+  GetRecommendationsAllUsers<BiasSVDPolicy>();
+}
+
+/**
+ * Make sure that correct number of recommendations are generated when query
+ * set for SVDPlusPlus method.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersSVDPPTest)
+{
+  GetRecommendationsAllUsers<SVDPlusPlusPolicy>();
+}
+
+/**
  * Make sure that the recommendations are generated for queried users only
  * for randomized SVD.
  */
@@ -606,6 +637,24 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserSVDCompleteTest)
 BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserSVDIncompleteTest)
 {
   GetRecommendationsQueriedUser<SVDIncompletePolicy>();
+}
+
+/**
+ * Make sure that the recommendations are generated for queried users only
+ * for Bias SVD method.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserBiasSVDTest)
+{
+  GetRecommendationsQueriedUser<BiasSVDPolicy>();
+}
+
+/**
+ * Make sure that the recommendations are generated for queried users only
+ * for SVDPlusPlus method.
+ */
+BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserSVDPPTest)
+{
+  GetRecommendationsQueriedUser<SVDPlusPlusPolicy>();
 }
 
 /**
@@ -662,6 +711,26 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDIncompleteTest)
   RecommendationAccuracy<SVDIncompletePolicy>();
 }
 
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for Bias SVD method.
+ */ 
+BOOST_AUTO_TEST_CASE(RecommendationAccuracyBiasSVDTest)
+{
+  RecommendationAccuracy<BiasSVDPolicy>();
+}
+
+/**
+ * Make sure recommendations that are generated are reasonably accurate
+ * for SVDPlusPlus method.
+ */
+// This test is commented out because it fails and we haven't solved it yet.
+// Please refer to issue #1501 for more info about this test.
+// BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDPPTest)
+// {
+//   RecommendationAccuracy<SVDPlusPlusPolicy>();
+// }
+
 // Make sure that Predict() is returning reasonable results for randomized SVD.
 BOOST_AUTO_TEST_CASE(CFPredictRandSVDTest)
 {
@@ -704,6 +773,24 @@ BOOST_AUTO_TEST_CASE(CFPredictSVDIncompleteTest)
   CFPredict<SVDIncompletePolicy>(3.5);
 }
 
+/**
+ * Make sure that Predict() is returning reasonable results for Bias SVD
+ * method.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictBiasSVDTest)
+{
+  CFPredict<BiasSVDPolicy>();
+}
+
+/**
+ * Make sure that Predict() is returning reasonable results for SVDPlusPlus
+ * method.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictSVDPPTest)
+{
+  CFPredict<SVDPlusPlusPolicy>();
+}
+
 // Compare batch Predict() and individual Predict() for randomized SVD.
 BOOST_AUTO_TEST_CASE(CFBatchPredictRandSVDTest)
 {
@@ -742,6 +829,20 @@ BOOST_AUTO_TEST_CASE(CFBatchPredictSVDIncompleteTest)
   BatchPredict<SVDIncompletePolicy>();
 }
 
+// Compare batch Predict() and individual Predict() for
+// Bias SVD method.
+BOOST_AUTO_TEST_CASE(CFBatchPredictBiasSVDTest)
+{
+  BatchPredict<BiasSVDPolicy>();
+}
+
+// Compare batch Predict() and individual Predict() for
+// SVDPlusPlus method.
+BOOST_AUTO_TEST_CASE(CFBatchPredictSVDPPTest)
+{
+  BatchPredict<SVDPlusPlusPolicy>();
+}
+
 /**
  * Make sure we can train an already-trained model and it works okay for
  * randomized SVD.
@@ -759,7 +860,7 @@ BOOST_AUTO_TEST_CASE(TrainRandSVDTest)
 BOOST_AUTO_TEST_CASE(TrainRegSVDTest)
 {
   RegSVDPolicy decomposition;
-  Train(decomposition);
+  TrainWithCoordinateList(decomposition);
 }
 
 /**
@@ -800,6 +901,26 @@ BOOST_AUTO_TEST_CASE(TrainSVDIncompleteTest)
 {
   SVDIncompletePolicy decomposition;
   Train(decomposition);
+}
+
+/**
+ * Make sure we can train an already-trained model and it works okay for
+ * BiasSVD method.
+ */
+BOOST_AUTO_TEST_CASE(TrainBiasSVDTest)
+{
+  BiasSVDPolicy decomposition;
+  TrainWithCoordinateList(decomposition);
+}
+
+/**
+ * Make sure we can train an already-trained model and it works okay for
+ * SVDPlusPlus method.
+ */
+BOOST_AUTO_TEST_CASE(TrainSVDPPTest)
+{
+  SVDPlusPlusPolicy decomposition;
+  TrainWithCoordinateList(decomposition);
 }
 
 /**

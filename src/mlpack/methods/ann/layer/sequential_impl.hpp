@@ -72,10 +72,10 @@ void Sequential<InputDataType, OutputDataType, CustomLayers...>::Forward(
     if (!reset)
     {
       // Set the input width.
-      boost::apply_visitor(SetInputWidthVisitor(width, true), network[i]);
+      boost::apply_visitor(SetInputWidthVisitor(width), network[i]);
 
       // Set the input height.
-      boost::apply_visitor(SetInputHeightVisitor(height, true), network[i]);
+      boost::apply_visitor(SetInputHeightVisitor(height), network[i]);
     }
 
     boost::apply_visitor(ForwardVisitor(std::move(boost::apply_visitor(
@@ -138,15 +138,20 @@ void Sequential<InputDataType, OutputDataType, CustomLayers...>::Gradient(
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& /* gradient */)
 {
-  boost::apply_visitor(GradientVisitor(std::move(input), std::move(error)),
-      network.front());
+  boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
+      outputParameterVisitor, network[network.size() - 2])), std::move(error)),
+      network.back());
 
-  for (size_t i = 1; i < network.size() - 1; ++i)
+  for (size_t i = 2; i < network.size(); ++i)
   {
     boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, network[i - 1])), std::move(
-        boost::apply_visitor(deltaVisitor, network[i + 1]))), network[i]);
+        outputParameterVisitor, network[network.size() - i - 1])), std::move(
+        boost::apply_visitor(deltaVisitor, network[network.size() - i + 1]))),
+        network[network.size() - i]);
   }
+
+  boost::apply_visitor(GradientVisitor(std::move(input), std::move(
+      boost::apply_visitor(deltaVisitor, network[1]))), network.front());
 }
 
 template<typename InputDataType, typename OutputDataType,

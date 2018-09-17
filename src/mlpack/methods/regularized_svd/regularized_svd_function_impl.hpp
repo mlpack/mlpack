@@ -45,37 +45,7 @@ template <typename MatType>
 double RegularizedSVDFunction<MatType>::Evaluate(const arma::mat& parameters)
 const
 {
-  // The cost for the optimization is as follows:
-  //          f(u, v) = sum((rating(i, j) - u(i).t() * v(j))^2)
-  // The sum is over all the ratings in the rating matrix.
-  // 'i' points to the user and 'j' points to the item being considered.
-  // The regularization term is added to the above cost, where the vectors u(i)
-  // and v(j) are regularized for each rating they contribute to.
-
-  double cost = 0.0;
-
-  for (size_t i = 0; i < data.n_cols; i++)
-  {
-    // Indices for accessing the the correct parameter columns.
-    const size_t user = data(0, i);
-    const size_t item = data(1, i) + numUsers;
-
-    // Calculate the squared error in the prediction.
-    const double rating = data(2, i);
-    double ratingError = rating - arma::dot(parameters.col(user),
-                                            parameters.col(item));
-    double ratingErrorSquared = ratingError * ratingError;
-
-    // Calculate the regularization penalty corresponding to the parameters.
-    double userVecNorm = arma::norm(parameters.col(user), 2);
-    double itemVecNorm = arma::norm(parameters.col(item), 2);
-    double regularizationError = lambda * (userVecNorm * userVecNorm +
-                                           itemVecNorm * itemVecNorm);
-
-    cost += (ratingErrorSquared + regularizationError);
-  }
-
-  return cost;
+  return Evaluate(parameters, 0, data.n_cols);
 }
 
 template <typename MatType>
@@ -83,6 +53,13 @@ double RegularizedSVDFunction<MatType>::Evaluate(const arma::mat& parameters,
                                                  const size_t start,
                                                  const size_t batchSize) const
 {
+  // The cost for the optimization is as follows:
+  //          f(u, v) = sum((rating(i, j) - u(i).t() * v(j))^2)
+  // The sum is over all the ratings in the rating matrix.
+  // 'i' points to the user and 'j' points to the item being considered.
+  // The regularization term is added to the above cost, where the vectors u(i)
+  // and v(j) are regularized for each rating they contribute to.
+
   // It's possible this loop could be changed so that it's SIMD-vectorized.
   double objective = 0.0;
   for (size_t i = start; i < start + batchSize; ++i)
