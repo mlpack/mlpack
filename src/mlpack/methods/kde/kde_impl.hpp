@@ -392,9 +392,6 @@ CheckErrorValues(const double relError, const double absError) const
   if (absError < 0)
     throw std::invalid_argument("Absolute error tolerance must be a value "
                                 "greater or equal to 0");
-  if (relError > 0 && absError > 0)
-    Log::Warn << "Absolute and relative error tolerances will be sumed up"
-              << std::endl;
 }
 
 } // namespace kde
