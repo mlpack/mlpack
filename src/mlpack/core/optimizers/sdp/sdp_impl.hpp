@@ -54,6 +54,9 @@ bool SDP<ObjectiveMatrixType>::HasLinearlyIndependentConstraints() const
   for (size_t i = 0; i < NumSparseConstraints(); i++)
   {
     arma::vec sa;
+    // Here I don't think it is proper to use
+    // scaled upper triangular representation of the sym-matrix.
+    // But it does works for checking linear independence of matrices.
     math::Svec(arma::mat(SparseA()[i]), sa);
     A.row(i) = sa.t();
   }
@@ -63,7 +66,6 @@ bool SDP<ObjectiveMatrixType>::HasLinearlyIndependentConstraints() const
     math::Svec(DenseA()[i], sa);
     A.row(NumSparseConstraints() + i) = sa.t();
   }
-
   const arma::vec s = arma::svd(A);
   return s(s.n_elem - 1) > 1e-5;
 }

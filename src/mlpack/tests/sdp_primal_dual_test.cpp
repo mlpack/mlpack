@@ -1,6 +1,7 @@
 /**
  * @file sdp_primal_dual_test.cpp
  * @author Stephen Tu
+ * @author Kaiqiang Xu
  *
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -557,92 +558,130 @@ BOOST_AUTO_TEST_CASE(CorrelationCoeffToySdp)
   BOOST_REQUIRE_CLOSE(obj, 2 * (-0.978), 1e-3);
 }
 
-// /**
-// * Maximum variance unfolding (MVU) SDP to learn the unrolled gram matrix. For
-// * the SDP formulation, see:
-// *
-// *   Unsupervised learning of image manifolds by semidefinite programming.
-// *   Kilian Weinberger and Lawrence Saul. CVPR 04.
-// *   http://repository.upenn.edu/cgi/viewcontent.cgi?article=1000&context=cis_papers
-// *
-// * @param origData origDim x numPoints
-// * @param numNeighbors
-// */
-// static inline SDP<arma::sp_mat> ConstructMvuSDP(const arma::mat& origData,
-//                                                size_t numNeighbors)
-// {
-//  const size_t numPoints = origData.n_cols;
+/**
+ * Maximum variance unfolding (MVU) SDP to learn the unrolled gram matrix. For
+ * the SDP formulation, see:
+ *
+ *   Unsupervised learning of image manifolds by semidefinite programming.
+ *   Kilian Weinberger and Lawrence Saul. CVPR 04.
+ *   http://repository.upenn.edu/cgi/viewcontent.cgi?article=1000&context=cis_papers
+ *
+ * Here is another paper which clarifies more specific SDP formulation of MVU problem.
+ *
+ *   Scalable semidefinite manifold learning
+ *   Nikolaos Vasiloglou, Alexander G. Gray, David V. Anderson.
+ *   2008 IEEE Workshop on Machine Learning for Signal Processing
+ *
+ * @param origData origDim x numPoints
+ * @param numNeighbors
+ */
+static inline SDP<arma::sp_mat> ConstructMvuSDP(const arma::mat& origData,
+                                              size_t numNeighbors)
+{
+  const size_t numPoints = origData.n_cols;
 
-//  assert(numNeighbors <= numPoints);
+  assert(numNeighbors <= numPoints);
 
-//  arma::Mat<size_t> neighbors;
-//  arma::mat distances;
-//  KNN knn(origData);
-//  knn.Search(numNeighbors, neighbors, distances);
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+  KNN knn(origData);
+  knn.Search(numNeighbors, neighbors, distances);
 
-//  SDP<arma::sp_mat> sdp(numPoints, numNeighbors * numPoints, 1);
-//  sdp.C().eye(numPoints, numPoints);
-//  sdp.C() *= -1;
-//  sdp.DenseA()[0].ones(numPoints, numPoints);
-//  sdp.DenseB()[0] = 0;
-
-//  for (size_t i = 0; i < neighbors.n_cols; ++i)
+  typedef std::tuple<size_t, size_t, double_t> neighborTupleType;
+//  auto comp = [](const neighborTupleType& t1,
+//                 const neighborTupleType& t2)
 //  {
-//    for (size_t j = 0; j < numNeighbors; ++j)
-//    {
-//      // This is the index of the constraint.
-//      const size_t index = (i * numNeighbors) + j;
+//    return std::get<0>(t1) != std::get<0>(t2) or
+//            std::get<1>(t1) != std::get<1>(t2);
+//  };
+//  auto neighborsSet = std::set<neighborTupleType, decltype(comp)>(comp);
+  std::set<neighborTupleType > neighborsSet;
+  for (size_t i = 0; i < neighbors.n_cols; ++i)
+  {
+    for (size_t j = 0; j < numNeighbors; ++j)
+    {
+      size_t x = i, y = neighbors(j, i);
+      if (x > y)
+      {
+        x = neighbors(j, i);
+        y = i;
+      }
+      neighborsSet.insert(std::make_tuple(x, y, distances(j, i)));
+    }
+  }
+  // how to construct the matrices A, b, and C? Plz refer to the above paper.
+  SDP<arma::sp_mat> sdp(numPoints, neighborsSet.size(), 1);
+  sdp.C().eye(numPoints, numPoints);
+  sdp.C() *= -1;
+  sdp.DenseA()[0].ones(numPoints, numPoints);
+  sdp.DenseB()[0] = 0;
 
-//      arma::sp_mat& aRef = sdp.SparseA()[index];
-//      aRef.zeros(numPoints, numPoints);
+  size_t index = 0;
 
-//      // A_ij(i, i) = 1.
-//      aRef(i, i) = 1;
+  for (auto it = neighborsSet.begin(); it != neighborsSet.end(); it++)
+  {
+    size_t x = std::get<0>(*it);
+    size_t y = std::get<1>(*it);
+    double_t d = std::get<2>(*it);
 
-//      // A_ij(i, j) = -1.
-//      aRef(i, neighbors(j, i)) = -1;
+    arma::sp_mat& aRef = sdp.SparseA()[index];
+    aRef.zeros(numPoints, numPoints);
 
-//      // A_ij(j, i) = -1.
-//      aRef(neighbors(j, i), i) = -1;
+    // A_ij(i, i) = 1.
+    aRef(x, x) = 1;
 
-//      // A_ij(j, j) = 1.
-//      aRef(neighbors(j, i), neighbors(j, i)) = 1;
+    // A_ij(i, j) = -1.
+    aRef(x, y) = -1;
 
-//      // The constraint b_ij is the distance between these two points.
-//      sdp.SparseB()[index] = distances(j, i);
-//    }
-//  }
+    // A_ij(j, i) = -1.
+    aRef(y, x) = -1;
 
-//  return sdp;
-// }
+    // A_ij(j, j) = 1.
+    aRef(y, y) = 1;
 
-// /**
-// * Maximum variance unfolding
-// *
-// * Test doesn't work, because the constraint matrices are not linearly
-// * independent.
-// */
-// BOOST_AUTO_TEST_CASE(SmallMvuSdp)
-// {
-//  const size_t n = 20;
+    // The constraint b_ij is the distance between these two points.
+    sdp.SparseB()[index] = d;
 
-//  arma::mat origData(3, n);
+    index += 1;
+  }
+  return sdp;
+}
 
-//  // sample n random points on 3-dim unit sphere
-//  GaussianDistribution gauss(3);
-//  for (size_t i = 0; i < n; i++)
-//  {
-//    // how european of them
-//    origData.col(i) = arma::normalise(gauss.Random());
-//  }
+/**
+ * Maximum variance unfolding
+ *
+ * Test sometimes doesn't work, though the linear independence
+ * of constraints has been satisfied. It is the problem of SDP solver.
+ *
+ * For this case, the number of samples, i.e. the variable n, is set to 20,
+ * and the numNeighbors to 5, it is works (converges).
+ */
+BOOST_AUTO_TEST_CASE(SmallMvuSdp)
+{
+  const size_t n = 20;
 
-//  auto sdp = ConstructMvuSDP(origData, 5);
+  arma::mat origData(3, n);
+  mlpack::math::RandomSeed((size_t) std::time(NULL));
+  // sample n random points on 3-dim unit sphere
+  GaussianDistribution gauss(3);
+  for (size_t i = 0; i < n; i++)
+  {
+    // how european of them
+    origData.col(i) = arma::normalise(gauss.Random());
+  }
 
-//  PrimalDualSolver<SDP<arma::sp_mat>> solver(sdp);
-//  arma::mat X, Z;
-//  arma::vec ysparse, ydense;
-//  const auto p = solver.Optimize(X, ysparse, ydense, Z);
-//  BOOST_REQUIRE(p.first);
-// }
+  auto sdp = ConstructMvuSDP(origData, 5);
+  // now plz check if the constraints is linearly independent.
+  // Note that the constraints of MVU are always linear independence
+  BOOST_REQUIRE_EQUAL(sdp.HasLinearlyIndependentConstraints(), true);
+
+  PrimalDualSolver<SDP<arma::sp_mat>> solver(sdp);
+  arma::mat X, Z;
+  arma::vec ysparse, ydense;
+  solver.Optimize(X, ysparse, ydense, Z);
+  bool success = CheckKKT(sdp, X, ysparse, ydense, Z);
+  BOOST_REQUIRE_EQUAL(success, true);
+  // BOOST_REQUIRE(p.first);
+}
 
 BOOST_AUTO_TEST_SUITE_END();
