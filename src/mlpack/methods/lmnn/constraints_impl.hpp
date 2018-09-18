@@ -256,8 +256,6 @@ inline void Constraints<MetricType>::Precalculate(
   {
     arma::uvec index = arma::find(labels == uniqueLabels[i]);
     trees[i] = new TreeType(std::move(dataset.cols(index)), oldFromNews[i]);
-    // Only set the original dataset for the root.
-    trees[i]->Stat().OrigDataset() = new arma::mat(trees[i]->Dataset());
 
     // We have to make the tree's mappings into the whole dataset mapping.
     for (size_t j = 0; j < oldFromNews[i].size(); ++j)
@@ -284,16 +282,16 @@ inline void ImpBoundFilterTree(
     std::vector<bool>& pruned)
 {
   // First, see which points we can filter.
-  bool fullyFiltered = false;
+  bool fullyFiltered = true;
   for (size_t i = 0; i < node.NumPoints(); ++i)
   {
     const size_t index = oldFromNew[node.Point(i)];
     if (transformationDiff * (2 * unsortedNorms[index] +
         unsortedNorms[oldImpostors(k - 1, index)] +
-        unsortedNorms[oldImpostors(k, index)]) >
+        unsortedNorms[oldImpostors(k, index)]) <=
         oldDistances(k, index) - oldDistances(k - 1, index))
     {
-//      pruned[node.Point(i)] = true;
+      pruned[node.Point(i)] = true;
     }
     else
     {
