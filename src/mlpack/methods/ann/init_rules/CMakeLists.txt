@@ -13,6 +13,7 @@ set(SOURCES
   orthogonal_init.hpp
   random_init.hpp
   glorot_init.hpp
+  truncated_gaussian_init.hpp
 )
 
 # Add directory name to sources.

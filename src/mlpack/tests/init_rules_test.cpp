@@ -26,6 +26,7 @@
 #include <mlpack/methods/ann/init_rules/glorot_init.hpp>
 #include <mlpack/methods/ann/init_rules/he_init.hpp>
 #include <mlpack/methods/ann/init_rules/lecun_normal_init.hpp>
+#include <mlpack/methods/ann/init_rules/truncated_gaussian_init.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -201,6 +202,41 @@ BOOST_AUTO_TEST_CASE(GaussianInitTest)
 }
 
 /**
+ * Simple test of the TruncatedGaussianInitialization class.
+ * Generated random values are sampled from a Gaussian distribution of given
+ * mean and variance. Random values must lie within two standard deviations
+ * of the mean.
+ */
+BOOST_AUTO_TEST_CASE(TruncatedGaussianInitTest)
+{
+  const size_t rows = 7;
+  const size_t cols = 8;
+  const size_t slices = 2;
+
+  arma::mat weights;
+  arma::cube weights3d;
+
+  TruncatedGaussianInitialization t(0, 0.2);
+
+  t.Initialize(weights, rows, cols);
+  t.Initialize(weights3d, rows, cols, slices);
+
+  BOOST_REQUIRE_EQUAL(weights.n_rows, rows);
+  BOOST_REQUIRE_EQUAL(weights.n_cols, cols);
+
+  BOOST_REQUIRE_EQUAL(weights3d.n_rows, rows);
+  BOOST_REQUIRE_EQUAL(weights3d.n_cols, cols);
+  BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
+
+  double stddev = sqrt(0.2);
+
+  for (size_t i=0; i < weights.n_elem; i++)
+    BOOST_REQUIRE_LE(std::abs(weights[i]), 2.0 * stddev);
+  for (size_t i=0; i < weights3d.n_elem; i++)
+    BOOST_REQUIRE_LE(std::abs(weights3d[i]), 2.0 * stddev);
+}
+
+/**
  * Simple test of the NetworkInitialization class, we test it with every
  * implemented initialization rule and make sure the output is reasonable.
  */
@@ -286,6 +322,17 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
   gaussianModel.Predict(input, response);
 
   BOOST_REQUIRE_EQUAL(gaussianModel.Parameters().n_elem, 42);
+
+  // Create a simple network and use the TruncatedGaussianInitialization rule to
+  // initialize the network parameters.
+  FFN<NegativeLogLikelihood<>, TruncatedGaussianInitialization> truncatedModel;
+  truncatedModel.Add<IdentityLayer<> >();
+  truncatedModel.Add<Linear<> >(5, 5);
+  truncatedModel.Add<Linear<> >(5, 2);
+  truncatedModel.Add<LogSoftMax<> >();
+  truncatedModel.Predict(input, response);
+
+  BOOST_REQUIRE_EQUAL(truncatedModel.Parameters().n_elem, 42);
 }
 
 /**
