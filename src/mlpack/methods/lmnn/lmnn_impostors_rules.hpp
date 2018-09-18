@@ -20,14 +20,17 @@
 namespace mlpack {
 namespace lmnn {
 
-//! Candidate represents a possible candidate neighbor (distance, index).
-typedef std::tuple<double, size_t, size_t> Candidate;
+//! Candidate represents a possible candidate neighbor (distance, ref norm,
+//! ref class, index).
+typedef std::tuple<double, double, size_t, size_t> Candidate;
 
 //! Compare two candidates based on the distance.
 struct CandidateCmp {
   bool operator()(const Candidate& c1, const Candidate& c2)
   {
-    return !(std::get<0>(c2) <= std::get<0>(c1));
+    return ((std::get<0>(c2) > std::get<0>(c1)) ||
+            (std::get<0>(c2) == std::get<0>(c1) &&
+             std::get<1>(c2) > std::get<1>(c1)));
   };
 };
 
@@ -66,6 +69,8 @@ class LMNNImpostorsRules
    */
   LMNNImpostorsRules(const typename TreeType::Mat& referenceSet,
                      const size_t referenceClass,
+                     const arma::vec& unsortedReferenceNorms,
+                     const std::vector<size_t>& referenceOldFromNew,
                      const typename TreeType::Mat& querySet,
                      const std::vector<bool>& pruned,
                      const size_t k,
@@ -145,6 +150,12 @@ class LMNNImpostorsRules
   const typename TreeType::Mat& referenceSet;
   //! The class of points in the reference set.
   const size_t referenceClass;
+
+  //! The norms of all reference points.
+  const arma::vec& referenceNorms;
+  //! The mappings for reference points.
+  const std::vector<size_t>& referenceOldFromNew;
+
   //! The query set.
   const typename TreeType::Mat& querySet;
 
@@ -181,10 +192,12 @@ class LMNNImpostorsRules
    *
    * @param queryIndex Index of point whose neighbors we are inserting into.
    * @param neighbor Index of reference point which is being inserted.
+   * @param referenceNorm Norm of reference point.
    * @param distance Distance from query point to reference point.
    */
   void InsertNeighbor(const size_t queryIndex,
                       const size_t neighbor,
+                      const double referenceNorm,
                       const double distance);
 };
 

@@ -512,7 +512,7 @@ void Constraints<MetricType>::ComputeImpostors(
     candidates.reserve(trees[i]->Dataset().n_cols);
     if (runFirstSearch)
     {
-      const Candidate def = std::make_tuple(DBL_MAX, 0, size_t() - 1);
+      const Candidate def = std::make_tuple(DBL_MAX, DBL_MAX, 0, size_t() - 1);
       std::vector<Candidate> vect(k, def);
       CandidateList pqueue(CandidateCmp(), std::move(vect));
 
@@ -525,7 +525,7 @@ void Constraints<MetricType>::ComputeImpostors(
       for (size_t j = 0; j < trees[i]->Dataset().n_cols; ++j)
       {
         const Candidate def = std::make_tuple(std::nextafter(pointBounds[j],
-            DBL_MAX), 0, size_t() - 1);
+            DBL_MAX), DBL_MAX, 0, size_t() - 1);
         std::vector<Candidate> vect(k, def);
         CandidateList pqueue(CandidateCmp(), std::move(vect));
         candidates.push_back(pqueue);
@@ -543,8 +543,8 @@ void Constraints<MetricType>::ComputeImpostors(
       if (useImpBounds)
       {
         LMNNImpostorsRules<MetricType, TreeType, true> rules(
-            trees[j]->Dataset(), j, trees[i]->Dataset(), pruned, k, metric,
-            candidates);
+            trees[j]->Dataset(), j, norms, oldFromNews[j], trees[i]->Dataset(),
+            pruned, k, metric, candidates);
 
         typename TreeType::template DualTreeTraverser<
             LMNNImpostorsRules<MetricType, TreeType, true>> traverser(rules);
@@ -556,8 +556,8 @@ void Constraints<MetricType>::ComputeImpostors(
       else
       {
         LMNNImpostorsRules<MetricType, TreeType, false> rules(
-            trees[j]->Dataset(), j, trees[i]->Dataset(), pruned, k, metric,
-            candidates);
+            trees[j]->Dataset(), j, norms, oldFromNews[j], trees[i]->Dataset(),
+            pruned, k, metric, candidates);
 
         typename TreeType::template DualTreeTraverser<
             LMNNImpostorsRules<MetricType, TreeType, false>> traverser(rules);
@@ -577,7 +577,7 @@ void Constraints<MetricType>::ComputeImpostors(
       {
         const Candidate& t = pqueue.top();
         neighbors(k - l, queryIndex) =
-            oldFromNews[std::get<1>(t)][std::get<2>(t)];
+            oldFromNews[std::get<2>(t)][std::get<3>(t)];
         distances(k - l, queryIndex) = std::get<0>(t);
         pqueue.pop();
       }

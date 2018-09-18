@@ -22,6 +22,8 @@ template<typename MetricType, typename TreeType, bool UseImpBounds>
 LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::LMNNImpostorsRules(
     const typename TreeType::Mat& referenceSet,
     const size_t referenceClass,
+    const arma::vec& referenceNorms,
+    const std::vector<size_t>& referenceOldFromNew,
     const typename TreeType::Mat& querySet,
     const std::vector<bool>& pruned,
     const size_t k,
@@ -29,6 +31,8 @@ LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::LMNNImpostorsRules(
     std::vector<CandidateList>& candidates) :
     referenceSet(referenceSet),
     referenceClass(referenceClass),
+    referenceNorms(referenceNorms),
+    referenceOldFromNew(referenceOldFromNew),
     querySet(querySet),
     pruned(pruned),
     k(k),
@@ -61,7 +65,8 @@ double LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::BaseCase(
   double distance = metric.Evaluate(querySet.col(queryIndex),
                                     referenceSet.col(referenceIndex));
 
-  InsertNeighbor(queryIndex, referenceIndex, distance);
+  InsertNeighbor(queryIndex, referenceIndex,
+      referenceNorms[referenceOldFromNew[referenceIndex]], distance);
 
   // Cache this information for the next time BaseCase() is called.
   lastQueryIndex = queryIndex;
@@ -387,10 +392,12 @@ template<typename MetricType, typename TreeType, bool UseImpBounds>
 inline void LMNNImpostorsRules<MetricType, TreeType, UseImpBounds>::
     InsertNeighbor(const size_t queryIndex,
                    const size_t neighbor,
+                   const double referenceNorm,
                    const double distance)
 {
   CandidateList& pqueue = candidates[queryIndex];
-  Candidate c = std::make_tuple(distance, referenceClass, neighbor);
+  Candidate c = std::make_tuple(distance, referenceNorm, referenceClass,
+      neighbor);
 
   if (CandidateCmp()(c, pqueue.top()))
   {
