@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(GaussianKDEBruteForceTest)
       tree::KDTree>
     kde(metric, kernel, relError, 0.0, false);
   kde.Train(reference);
-  kde.Evaluate(query, treeEstimations);
+  kde.Evaluate(std::move(query), treeEstimations);
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)

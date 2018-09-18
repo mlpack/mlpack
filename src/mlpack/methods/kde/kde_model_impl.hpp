@@ -121,7 +121,7 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
 // Perform evaluation
 inline void KDEModel::Evaluate(arma::mat&& querySet, arma::vec& estimations)
 {
-  DualTreeVisitor eval(querySet, estimations);
+  DualTreeVisitor eval(std::move(querySet), estimations);
   boost::apply_visitor(eval, kdeModel);
 }
 
@@ -132,9 +132,8 @@ inline void KDEModel::CleanMemory()
 }
 
 // Parameters for KDE evaluation
-DualTreeVisitor::DualTreeVisitor(const arma::mat& querySet,
-                                 arma::vec& estimations):
-    querySet(querySet),
+DualTreeVisitor::DualTreeVisitor(arma::mat&& querySet, arma::vec& estimations):
+    querySet(std::move(querySet)),
     estimations(estimations)
 {}
 
@@ -146,7 +145,7 @@ template<typename KernelType,
 void DualTreeVisitor::operator()(KDETypeT<KernelType, TreeType>* kde) const
 {
   if (kde)
-    kde->Evaluate(querySet, estimations);
+    kde->Evaluate(std::move(querySet), estimations);
   else
     throw std::runtime_error("no KDE model initialized");
 }

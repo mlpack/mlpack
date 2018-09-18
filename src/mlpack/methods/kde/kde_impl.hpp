@@ -249,10 +249,10 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void KDE<MetricType, MatType, KernelType, TreeType>::
-Evaluate(const MatType& querySet, arma::vec& estimations)
+Evaluate(MatType querySet, arma::vec& estimations)
 {
   std::vector<size_t> oldFromNewQueries;
-  Tree* queryTree = BuildTree<Tree>(querySet, oldFromNewQueries);
+  Tree* queryTree = BuildTree<Tree>(std::move(querySet), oldFromNewQueries);
   this->Evaluate(queryTree, oldFromNewQueries, estimations);
   delete queryTree;
 }

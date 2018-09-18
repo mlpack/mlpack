@@ -57,8 +57,7 @@ class DualTreeVisitor : public boost::static_visitor<void>
 
   // TODO Implement specific cases where a leaf size can be selected.
 
-  DualTreeVisitor(const arma::mat& querySet,
-                  arma::vec& estimations);
+  DualTreeVisitor(arma::mat&& querySet, arma::vec& estimations);
 };
 
 class TrainVisitor : public boost::static_visitor<void>

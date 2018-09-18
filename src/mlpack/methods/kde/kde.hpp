@@ -144,7 +144,7 @@ class KDE
    * @param querySet Set of query points to get the density of.
    * @param estimations Object which will hold the density of each query point.
    */
-  void Evaluate(const MatType& querySet, arma::vec& estimations);
+  void Evaluate(MatType querySet, arma::vec& estimations);
 
   /**
    * Estimate density of each point in the query set given the data of an
