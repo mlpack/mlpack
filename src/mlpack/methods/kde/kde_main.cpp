@@ -106,6 +106,16 @@ static void mlpackMain()
   ReportIgnoredParam({{ "input_model", true }}, "abs_error");
   ReportIgnoredParam({{ "input_model", true }}, "breadth_first");
 
+  // Requirements for parameter values.
+  RequireParamInSet<string>("kernel", { "gaussian", "epanechnikov" }, true,
+      "unknown kernel type");
+  RequireParamInSet<string>("tree", { "kd-tree", "ball-tree" }, true,
+      "unknown tree type");
+  RequireParamValue<double>("rel_error", [](double x){return x >= 0 && x <= 1;},
+      true, "relative error must be between 0 and 1");
+  RequireParamValue<double>("abs_error", [](double x){return x >= 0;},
+      true, "absolute error must be equal or greater than 0");
+
   KDEModel* kde;
 
   if (CLI::HasParam("reference"))
@@ -124,18 +134,12 @@ static void mlpackMain()
       kde->KernelType() = KDEModel::GAUSSIAN_KERNEL;
     else if (kernelStr == "epanechnikov")
       kde->KernelType() = KDEModel::EPANECHNIKOV_KERNEL;
-    else
-      Log::Fatal << "Input kernel is not valid or not supported yet."
-                 << std::endl;
 
     // Set TreeType
     if (treeStr == "kd-tree")
       kde->TreeType() = KDEModel::KD_TREE;
     else if (treeStr == "ball-tree")
       kde->TreeType() = KDEModel::BALL_TREE;
-    else
-      Log::Fatal << "Input tree is not valid or not supported yet."
-                 << std::endl;
 
     // Build model
     kde->BuildModel(std::move(reference));
