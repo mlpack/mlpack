@@ -53,6 +53,8 @@ class LMNNFunction
    * @param labels Input dataset labels.
    * @param k Number of target neighbors to be used.
    * @param regularization Regularization value.
+   * @param rebuildTolerance Tolerance for rebuilding trees for impostor
+   *      recalculation.
    * @param range Range after which impostors need to be recalculated.
    * @param metric Type of metric used for computation.
    */
@@ -60,6 +62,7 @@ class LMNNFunction
                const arma::Row<size_t>& labels,
                size_t k,
                double regularization,
+               double rebuildTolerance,
                size_t range,
                MetricType metric = MetricType());
 

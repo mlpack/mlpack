@@ -32,8 +32,6 @@ class LMNNStat
   double bound;
   //! The last distance evaluation.
   double lastDistance;
-  //! The original dataset.  Only non-NULL in the root node.
-  arma::mat* origDataset;
   //! Whether all descendant points in the node are pruned.
   bool pruned;
 
@@ -45,13 +43,7 @@ class LMNNStat
    */
   LMNNStat() :
       bound(DBL_MAX),
-      lastDistance(0.0),
-      origDataset(NULL) { }
-
-  /**
-   * Delete any allocated memory.
-   */
-  ~LMNNStat() { delete origDataset; }
+      lastDistance(0.0) { }
 
   /**
    * Initialization for a fully initialized node.  In this case, we don't need
@@ -62,7 +54,6 @@ class LMNNStat
   LMNNStat(TreeType& /* node */) :
       bound(DBL_MAX),
       lastDistance(0.0),
-      origDataset(NULL),
       pruned(false) { }
 
   /**
@@ -84,11 +75,6 @@ class LMNNStat
   //! Modify the last distance calculation.
   double& LastDistance() { return lastDistance; }
 
-  //! Get the original dataset.
-  const arma::mat* OrigDataset() const { return origDataset; }
-  //! Modify the original dataset.
-  arma::mat*& OrigDataset() { return origDataset; }
-
   //! Get whether or not all descendant points are pruned.
   bool Pruned() const { return pruned; }
   //! Modify whether or not all descendant points are pruned.
@@ -100,7 +86,6 @@ class LMNNStat
   {
     ar & BOOST_SERIALIZATION_NVP(bound);
     ar & BOOST_SERIALIZATION_NVP(lastDistance);
-    ar & BOOST_SERIALIZATION_NVP(origDataset);
     ar & BOOST_SERIALIZATION_NVP(pruned);
   }
 };

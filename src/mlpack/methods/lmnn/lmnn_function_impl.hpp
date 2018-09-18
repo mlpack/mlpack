@@ -25,6 +25,7 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
                                        const arma::Row<size_t>& labels,
                                        size_t k,
                                        double regularization,
+                                       double rebuildTolerance,
                                        size_t range,
                                        MetricType metric) :
     dataset(math::MakeAlias(const_cast<arma::mat&>(dataset), false)),
@@ -34,7 +35,7 @@ LMNNFunction<MetricType>::LMNNFunction(const arma::mat& dataset,
     regularization(regularization),
     iteration(0),
     range(range),
-    constraint(dataset, labels, k),
+    constraint(dataset, labels, k, rebuildTolerance),
     points(dataset.n_cols),
     impBounds(false)
 {

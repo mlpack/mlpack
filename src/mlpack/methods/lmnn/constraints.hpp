@@ -42,10 +42,13 @@ class Constraints
    * @param dataset Input dataset.
    * @param labels Input dataset labels.
    * @param k Number of target neighbors, impostors & triplets.
+   * @param rebuildTolerance Transformation change tolerance for rebuilding
+   *      trees.
    */
   Constraints(const arma::mat& dataset,
               const arma::Row<size_t>& labels,
-              const size_t k);
+              const size_t k,
+              const double rebuildTolerance);
 
   /**
    * Free all memory.
@@ -193,6 +196,10 @@ class Constraints
   bool precalculated;
   //! True if we've only run the first impostors+neighbors search.
   bool runFirstSearch;
+  //! The last transformation matrix used during tree building.
+  arma::mat lastTreeTransformation;
+  //! Tolerance for rebuilding the tree.
+  double rebuildTolerance;
 
   /**
    * Precalculate the unique labels, and indices of similar

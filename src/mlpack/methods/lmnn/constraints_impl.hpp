@@ -22,10 +22,12 @@ template<typename MetricType>
 Constraints<MetricType>::Constraints(
     const arma::mat& /* dataset */,
     const arma::Row<size_t>& labels,
-    const size_t k) :
+    const size_t k,
+    const double rebuildTolerance) :
     k(k),
     precalculated(false),
-    runFirstSearch(true)
+    runFirstSearch(true),
+    rebuildTolerance(rebuildTolerance)
 {
   // Ensure a valid k is passed.
   size_t minCount = arma::min(arma::histc(labels, arma::unique(labels)));
@@ -264,6 +266,8 @@ inline void Constraints<MetricType>::Precalculate(
     }
   }
 
+  lastTreeTransformation = arma::eye<arma::mat>(dataset.n_rows, dataset.n_rows);
+
   precalculated = true;
 }
 
@@ -427,19 +431,54 @@ void Constraints<MetricType>::ComputeImpostors(
   neighbors.set_size(k, dataset.n_cols);
   distances.set_size(k, dataset.n_cols);
 
-  // First we need to update the tree.  Start by stretching the dataset.  But we
-  // never need to stretch the dataset on the first search, since it's done by
-  // TargetsAndImpostors().
+  // First we need to update the tree or rebuild it depending on the
+  // transformation matrix difference.
   if (!runFirstSearch)
   {
-    Timer::Start("tree_stretch_dataset");
-    for (size_t i = 0; i < trees.size(); ++i)
-      trees[i]->Dataset() = transformation * (*trees[i]->Stat().OrigDataset());
-    Timer::Stop("tree_stretch_dataset");
-    Timer::Start("tree_update");
-    for (size_t i = 0; i < trees.size(); ++i)
-      UpdateTree(*trees[i], transformation);
-    Timer::Stop("tree_update");
+    const double treeTransDiff = arma::norm(lastTreeTransformation -
+        transformation, 2);
+    if (treeTransDiff > rebuildTolerance)
+    {
+      Log::Info << "Rebuild trees!" << std::endl;
+      Timer::Start("tree_rebuilding");
+      // Rebuild the trees on the new dataset.
+      for (size_t t = 0; t < trees.size(); ++t)
+      {
+        // Copy new points.
+        arma::mat newData(trees[t]->Dataset().n_rows, trees[t]->Dataset().n_cols);
+        for (size_t i = 0; i < newData.n_cols; ++i)
+          newData.col(i) = dataset.col(oldFromNews[t][i]);
+
+        std::vector<size_t> oldFromNew;
+
+        delete trees[t];
+        trees[t] = new TreeType(std::move(newData), oldFromNew);
+
+        // Now we need to update the indices.
+        std::vector<size_t> updatedOldFromNew;
+        updatedOldFromNew.resize(oldFromNews[t].size());
+        for (size_t i = 0; i < oldFromNews[t].size(); ++i)
+          updatedOldFromNew[i] = oldFromNews[t][oldFromNew[i]];
+
+        oldFromNews[t] = std::move(updatedOldFromNew);
+      }
+
+      // Store transformation.
+      lastTreeTransformation = transformation;
+      Timer::Stop("tree_rebuilding");
+    }
+    else
+    {
+      // Copy columns.
+      for (size_t t = 0; t < trees.size(); ++t)
+      {
+        for (size_t i = 0; i < oldFromNews[t].size(); ++i)
+        {
+          trees[t]->Dataset().col(i) = dataset.col(oldFromNews[t][i]);
+        }
+        UpdateTree(*trees[t], transformation);
+      }
+    }
   }
 
   // Auxiliary variable to be used during search.

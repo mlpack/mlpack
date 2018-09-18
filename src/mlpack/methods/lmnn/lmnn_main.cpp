@@ -159,6 +159,8 @@ PARAM_INT_IN("batch_size", "Batch size for mini-batch SGD.", "b", 50);
 PARAM_INT_IN("range", "Number of iterations after which impostors needs to be "
     "recalculated", "R", 1);
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_DOUBLE_IN("rebuild_tolerance", "Tolerance for rebuilding trees for "
+    "impostor computation.", "T", 1.0);
 
 using namespace mlpack;
 using namespace mlpack::lmnn;
@@ -263,6 +265,8 @@ static void mlpackMain()
       "tolerance must be non-negative");
   RequireParamValue<int>("rank", [](int x)
       { return x >= 0; }, true, "rank must be nonnegative");
+  RequireParamValue<double>("rebuild_tolerance", [](double x)
+      { return x >= 0; }, true, "rebuild tolerance must be non-negative");
 
   const size_t k = (size_t) CLI::GetParam<int>("k");
   const double regularization = CLI::GetParam<double>("regularization");
@@ -277,6 +281,7 @@ static void mlpackMain()
   const size_t batchSize = (size_t) CLI::GetParam<int>("batch_size");
   const size_t range = (size_t) CLI::GetParam<int>("range");
   const size_t rank = (size_t) CLI::GetParam<int>("rank");
+  const double rebuildTolerance = CLI::GetParam<double>("rebuild_tolerance");
 
   // Load data.
   arma::mat data = std::move(CLI::GetParam<arma::mat>("input"));
@@ -356,6 +361,7 @@ static void mlpackMain()
   {
     LMNN<LMetric<2>, BBS_BB> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
+    lmnn.RebuildTolerance() = rebuildTolerance;
     lmnn.Range() = range;
     lmnn.Optimizer().StepSize() = stepSize;
     lmnn.Optimizer().MaxIterations() = passes * data.n_cols;
@@ -372,6 +378,7 @@ static void mlpackMain()
     LMNN<LMetric<2>, StandardSGD> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
+    lmnn.RebuildTolerance() = rebuildTolerance;
     lmnn.Optimizer().StepSize() = stepSize;
     lmnn.Optimizer().MaxIterations() = passes * data.n_cols;
     lmnn.Optimizer().Tolerance() = tolerance;
@@ -384,6 +391,7 @@ static void mlpackMain()
   {
     LMNN<LMetric<2>, L_BFGS> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
+    lmnn.RebuildTolerance() = rebuildTolerance;
     lmnn.Range() = range;
     lmnn.Optimizer().MaxIterations() = maxIterations;
     lmnn.Optimizer().MinGradientNorm() = tolerance;
