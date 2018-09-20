@@ -39,8 +39,8 @@ LayerNorm<InputDataType, OutputDataType>::LayerNorm(
 template<typename InputDataType, typename OutputDataType>
 void LayerNorm<InputDataType, OutputDataType>::Reset()
 {
-  gamma = arma::mat(weights.memptr(), 1, size, false, false);
-  beta = arma::mat(weights.memptr() + gamma.n_elem, 1, size, false, false);
+  gamma = arma::mat(weights.memptr(), size, 1, false, false);
+  beta = arma::mat(weights.memptr() + gamma.n_elem, size, 1, false, false);
   gamma.fill(1.0);
   beta.fill(0.0);
 }
@@ -61,8 +61,8 @@ void LayerNorm<InputDataType, OutputDataType>::Forward(
   normalized = output;
 
   // Scale and shift the output.
-  output.each_row() %= gamma;
-  output.each_row() += beta;
+  output.each_col() %= gamma;
+  output.each_col() += beta;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -74,7 +74,7 @@ void LayerNorm<InputDataType, OutputDataType>::Backward(
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
   // dl / dxhat
-  const arma::mat norm = gy.each_row() % gamma;
+  const arma::mat norm = gy.each_col() % gamma;
 
   // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
   const arma::mat var = arma::sum(norm % inputMean, 0) %
@@ -101,12 +101,11 @@ void LayerNorm<InputDataType, OutputDataType>::Gradient(
   gradient.set_size(size + size, 1);
 
   // Step 5: dl / dy * xhat.
-  gradient.submat(0, 0, gamma.n_elem - 1, 0) = arma::reshape(arma::sum(
-      normalized % error, 0), normalized.n_cols, 1);
+  gradient.submat(0, 0, gamma.n_elem - 1, 0) = arma::sum(normalized % error, 1);
 
   // Step 6: dl / dy.
   gradient.submat(gamma.n_elem, 0, gradient.n_elem - 1, 0) =
-      arma::reshape(arma::sum(error, 0), error.n_cols, 1);
+      arma::sum(error, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>

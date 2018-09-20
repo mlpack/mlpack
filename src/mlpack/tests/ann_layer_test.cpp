@@ -1568,7 +1568,7 @@ BOOST_AUTO_TEST_CASE(LayerNormTest)
         << 4.9 << 3.0 << arma::endr
         << 4.7 << 3.2 << arma::endr;
 
-  LayerNorm<> model(input.n_cols);
+  LayerNorm<> model(input.n_rows);
   model.Reset();
 
   model.Forward(std::move(input), std::move(output));
@@ -1610,7 +1610,7 @@ BOOST_AUTO_TEST_CASE(GradientLayerNormTest)
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
-      model->Add<LayerNorm<> >(256);
+      model->Add<LayerNorm<> >(10);
       model->Add<Linear<> >(10, 2);
       model->Add<LogSoftMax<> >();
     }
