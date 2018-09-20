@@ -15,6 +15,7 @@
 #include <mlpack/methods/decision_tree/gini_gain.hpp>
 #include <mlpack/methods/decision_tree/random_dimension_select.hpp>
 #include <mlpack/methods/decision_tree/multiple_random_dimension_select.hpp>
+#include <mlpack/methods/decision_tree/reduced_error_post_pruning.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -556,7 +557,7 @@ BOOST_AUTO_TEST_CASE(PerfectTrainingSetWithWeight)
 
   DecisionTree<> d(dataset, labels, 3, weights, 1); // Minimum leaf size of 1.
 
-  // This part of code is dupliacte with no weighted one.
+  // This part of code is duplicate with no weighted one.
   for (size_t i = 0; i < 1000; ++i)
   {
     size_t prediction;
@@ -749,7 +750,8 @@ BOOST_AUTO_TEST_CASE(DecisionStumpTest)
 
   // Build a decision stump.
   DecisionTree<GiniGain, BestBinaryNumericSplit, AllCategoricalSplit,
-      AllDimensionSelect, double, true> stump(dataset, labels, 3, 1);
+      ReducedErrorPostPruning, AllDimensionSelect, double, true>
+      stump(dataset, labels, 3, 1);
 
   // Check that it has children.
   BOOST_REQUIRE_EQUAL(stump.NumChildren(), 2);
@@ -1106,7 +1108,7 @@ BOOST_AUTO_TEST_CASE(RegularisedDecisionTree)
   DecisionTree<> dRegularised(dataset, labels, 3, weights, 1, 0.01);
 
   size_t count = 0;
-  // This part of code is dupliacte with no weighted one.
+  // This part of code is duplicate with no weighted one.
   for (size_t i = 0; i < 1000; ++i)
   {
     size_t prediction, predictionsregularised;
@@ -1124,6 +1126,54 @@ BOOST_AUTO_TEST_CASE(RegularisedDecisionTree)
   }
 
   BOOST_REQUIRE_GT(count, 0);
+}
+
+/**
+ * Construct the decision tree and prune it to regularise it.
+ */
+BOOST_AUTO_TEST_CASE(PostPruneDecisionTree)
+{
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  // Initialize an all-ones weight matrix.
+  arma::rowvec weights(labels.n_cols, arma::fill::ones);
+
+  // Build decision tree.
+  DecisionTree<> wd(inputData, labels, 3, weights, 1, 1e-7);
+
+  // Load testing data.
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData))
+    BOOST_FAIL("Cannot load test dataset vc2_test.csv!");
+
+  arma::Row<size_t> trueTestLabels;
+  if (!data::Load("vc2_test_labels.txt", trueTestLabels))
+    BOOST_FAIL("Cannot load labels for vc2_test_labels.txt");
+
+  // Get the predicted test labels.
+  arma::Row<size_t> predictions;
+  wd.Classify(testData, predictions);
+
+  // Finiding the accuracy.
+  double wdcorrect = 0.0;
+  for (size_t i = 0; i < predictions.n_elem; ++i)
+    if (predictions[i] == trueTestLabels[i])
+      ++wdcorrect;
+  wdcorrect /= predictions.n_elem;
+
+  DecisionTree<>* root = &wd;
+  double bestScore = wdcorrect;
+  // Reset the predictions
+  predictions.zeros();
+  wd.Prune<true>(root, labels, 3, weights, testData, trueTestLabels, bestScore);
+
+  BOOST_REQUIRE_GT(bestScore, wdcorrect);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

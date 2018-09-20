@@ -18,6 +18,7 @@
 #include "best_binary_numeric_split.hpp"
 #include "all_categorical_split.hpp"
 #include "all_dimension_select.hpp"
+#include "reduced_error_post_pruning.hpp"
 #include <type_traits>
 
 namespace mlpack {
@@ -33,6 +34,7 @@ namespace tree {
 template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
+         template<typename> class PruningMethod = ReducedErrorPostPruning,
          typename DimensionSelectionType = AllDimensionSelect,
          typename ElemType = double,
          bool NoRecursion = false>
@@ -47,6 +49,8 @@ class DecisionTree :
   typedef NumericSplitType<FitnessFunction> NumericSplit;
   //! Allow access to the categorical split type.
   typedef CategoricalSplitType<FitnessFunction> CategoricalSplit;
+  //! Allow access to the pruning method type.
+  typedef PruningMethod<DecisionTree> PostPruningMethod;
   //! Allow access to the dimension selection type.
   typedef DimensionSelectionType DimensionSelection;
 
@@ -339,6 +343,23 @@ class DecisionTree :
   //! Modify the child of the given index (be careful!).
   DecisionTree& Child(const size_t i) { return *children[i]; }
 
+  //! Get class probabilities
+  arma::vec getClassProbabilities() const { return classProbabilities; }
+  //! Modify the class probabilities.
+  arma::vec setClassProbabilities() { return classProbabilities; }
+
+  //! Get children of curent node
+  std::vector<DecisionTree*> getChildren() const { return children; }
+  //! Modify the children.
+  std::vector<DecisionTree*> setChildren() { return children; }
+
+  //! Get dimensionTypeOrMajorityClass
+  size_t getDimensionTypeOrMajorityClass() const
+  { return dimensionTypeOrMajorityClass; }
+  //! Modify dimensionTypeOrMajorityClass
+  size_t& setDimensionTypeOrMajorityClass() 
+  { return dimensionTypeOrMajorityClass; }
+
   /**
    * Given a point and that this node is not a leaf, calculate the index of the
    * child node this point would go towards.  This method is primarily used by
@@ -354,6 +375,27 @@ class DecisionTree :
    */
   size_t NumClasses() const;
 
+  /**
+   * Prune the already built decision tree by making tree nodes as leaf nodes
+   * if the score on the validation set increases.
+   *
+   * @param root pointer to the root node of the tree for score calculation.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param weights Weights of all the labels
+   * @param validData Validation dataset.
+   * @param validLabels labels for validation points.
+   * @param bestScore best score of pruning on validation set.
+   */
+  template<bool UseWeights, typename MatType, typename LabelsType,
+      typename WeightsType>
+  void Prune(DecisionTree* root,
+             LabelsType&& labels,
+             const size_t numClasses,
+             WeightsType&& weights,
+             MatType&& validData,
+             LabelsType&& validLabels,
+             double& bestScore);
  private:
   //! The vector of children.
   std::vector<DecisionTree*> children;
@@ -444,11 +486,13 @@ class DecisionTree :
 template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
+         template<typename> class PruningMethod = ReducedErrorPostPruning,
          typename DimensionSelectType = AllDimensionSelect,
          typename ElemType = double>
 using DecisionStump = DecisionTree<FitnessFunction,
                                    NumericSplitType,
                                    CategoricalSplitType,
+                                   PruningMethod,
                                    DimensionSelectType,
                                    ElemType,
                                    false>;

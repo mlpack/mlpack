@@ -23,6 +23,7 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
+    template<typename> class PruningMethod,
     typename ElemType
 >
 template<typename MatType>
@@ -31,6 +32,7 @@ RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
+    PruningMethod,
     ElemType
 >::RandomForest(const MatType& dataset,
                 const arma::Row<size_t>& labels,
@@ -50,6 +52,7 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
+    template<typename> class PruningMethod,
     typename ElemType
 >
 template<typename MatType>
@@ -58,6 +61,7 @@ RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
+    PruningMethod,
     ElemType
 >::RandomForest(const MatType& dataset,
                 const data::DatasetInfo& datasetInfo,
@@ -77,6 +81,7 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
+    template<typename> class PruningMethod,
     typename ElemType
 >
 template<typename MatType>
@@ -85,6 +90,7 @@ RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
+    PruningMethod,
     ElemType
 >::RandomForest(const MatType& dataset,
                 const arma::Row<size_t>& labels,
@@ -104,6 +110,7 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
+    template<typename> class PruningMethod,
     typename ElemType
 >
 template<typename MatType>
@@ -112,6 +119,7 @@ RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
+    PruningMethod,
     ElemType
 >::RandomForest(const MatType& dataset,
                 const data::DatasetInfo& datasetInfo,
@@ -131,6 +139,7 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
+    template<typename> class PruningMethod,
     typename ElemType
 >
 template<typename MatType>
@@ -139,6 +148,7 @@ void RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
+    PruningMethod,
     ElemType
 >::Train(const MatType& dataset,
          const arma::Row<size_t>& labels,
@@ -158,6 +168,7 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
+    template<typename> class PruningMethod,
     typename ElemType
 >
 template<typename MatType>
@@ -166,6 +177,7 @@ void RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
+    PruningMethod,
     ElemType
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
@@ -185,6 +197,7 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
+    template<typename> class PruningMethod,
     typename ElemType
 >
 template<typename MatType>
@@ -193,6 +206,7 @@ void RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
+    PruningMethod,
     ElemType
 >::Train(const MatType& dataset,
          const arma::Row<size_t>& labels,
@@ -212,6 +226,7 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
+    template<typename> class PruningMethod,
     typename ElemType
 >
 template<typename MatType>
@@ -220,6 +235,7 @@ void RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
+    PruningMethod,
     ElemType
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
@@ -239,6 +255,7 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
+    template<typename> class PruningMethod,
     typename ElemType
 >
 template<typename VecType>
@@ -247,6 +264,7 @@ size_t RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
+    PruningMethod,
     ElemType
 >::Classify(const VecType& point) const
 {
@@ -263,6 +281,7 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
+    template<typename> class PruningMethod,
     typename ElemType
 >
 template<typename VecType>
@@ -271,6 +290,7 @@ void RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
+    PruningMethod,
     ElemType
 >::Classify(const VecType& point,
             size_t& prediction,
@@ -310,6 +330,7 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
+    template<typename> class PruningMethod,
     typename ElemType
 >
 template<typename MatType>
@@ -318,6 +339,7 @@ void RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
+    PruningMethod,
     ElemType
 >::Classify(const MatType& data,
             arma::Row<size_t>& predictions) const
@@ -343,6 +365,7 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
+    template<typename> class PruningMethod,
     typename ElemType
 >
 template<typename MatType>
@@ -351,6 +374,7 @@ void RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
+    PruningMethod,
     ElemType
 >::Classify(const MatType& data,
             arma::Row<size_t>& predictions,
@@ -381,6 +405,7 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
+    template<typename> class PruningMethod,
     typename ElemType
 >
 template<typename Archive>
@@ -389,6 +414,7 @@ void RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
+    PruningMethod,
     ElemType
 >::serialize(Archive& ar, const unsigned int /* version */)
 {
@@ -412,6 +438,7 @@ template<
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType,
+    template<typename> class PruningMethod,
     typename ElemType
 >
 template<bool UseWeights, bool UseDatasetInfo, typename MatType>
@@ -420,6 +447,7 @@ void RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType,
+    PruningMethod,
     ElemType
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,

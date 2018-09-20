@@ -14,6 +14,8 @@ set(SOURCES
   information_gain.hpp
   multiple_random_dimension_select.hpp
   random_dimension_select.hpp
+  reduced_error_post_pruning.hpp
+  reduced_error_post_pruning_impl.hpp
 )
 
 # Add directory name to sources.
