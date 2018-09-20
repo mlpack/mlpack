@@ -97,7 +97,6 @@ PARAM_MATRIX_OUT("output", "Matrix to store output estimations.",
 
 static void mlpackMain()
 {
-  const size_t output_precision = 40;
   // Get some parameters.
   arma::mat query = std::move(CLI::GetParam<arma::mat>("query"));
   const double bandwidth = CLI::GetParam<double>("bandwidth");
@@ -163,16 +162,9 @@ static void mlpackMain()
 
   kde->Evaluate(std::move(query), estimations);
 
-  // Output estimations to file if defined.
+  // Output results if needed.
   if (CLI::HasParam("output"))
-  {
     CLI::GetParam<arma::mat>("output") = std::move(estimations);
-  }
-  else
-  {
-    std::cout.precision(output_precision);
-    estimations.raw_print(std::cout);
-  }
 
   // Save model.
   if (CLI::HasParam("output_model"))
