@@ -1,6 +1,6 @@
 /**
  * @file kde_main.cpp
- * @author Roberto Hueso (robertohueso96@gmail.com)
+ * @author Roberto Hueso
  *
  * Executable for running Kernel Density Estimation.
  *
@@ -28,25 +28,36 @@ PROGRAM_INFO("Kernel Density Estimation",
     "This program performs a Kernel Density Estimation. KDE is a "
     "non-parametric way of estimating probability density function. "
     "For each query point the program will estimate its probability density "
-    "by applying a kernel function to each reference point. Computational "
-    " complexity is O(n^2) but it is optimized by making use of dual-trees. "
-    "\n\n"
-    "For example, the following will run KDE using the points in "
-    "reference_set.csv and query_set.csv. It will apply an Epanechnikov kernel "
-    "with a 0.2 bandwidth to each reference point and use a KD-Tree for the "
-    "dual-tree optimization. The result will be stored in a densities.csv file "
-    "with a maximum error of 5%"
-    "\n\n"
-    "$ kde --reference reference_set.csv --query query_set.csv --bandwidth 0.2 "
-    "--kernel epanechnikov --tree kd-tree --rel_error 0.05 --output "
-    "densities.csv"
+    "by applying a kernel function to each reference point. The computational "
+    "complexity of this is O(N^2) where there are N query points and N "
+    "reference points, but this implementation will typically see better "
+    "performance as it uses an approximate dual-tree algorithm for "
+    "acceleration."
     "\n\n"
     "Dual-tree optimization allows to avoid lots of barely relevant "
-    "calculations (as kernel function values decrease with distance) if you "
-    "can afford a little error (you can define how much is the maximum you are "
-    "willing to afford) over the final result. This program runs using an "
-    "Euclidean metric. If no output file is specified then it will output the "
-    "result to standard output.");
+    "calculations (as kernel function values decrease with distance), so it is "
+    "an approximate computation. You can specify the maximum relative error "
+    "tolerance for each query value with " + PRINT_PARAM_STRING("rel_error") +
+    " as well as the maximum absolute error tolerance with the parameter " +
+    PRINT_PARAM_STRING("abs_error") + ". This program runs using an Euclidean "
+    "metric. Kernel function can be selected using the " +
+    PRINT_PARAM_STRING("kernel") + " option. You can also choose what which "
+    "type of tree to use for the dual-tree algorithm with " +
+    PRINT_PARAM_STRING("tree") +
+    "\n\n"
+    "For example, the following will run KDE using the data in " +
+    PRINT_DATASET("ref_data") + " for training and the data in " +
+    PRINT_DATASET("qu_data") + " as query data. It will apply an Epanechnikov "
+    "kernel with a 0.2 bandwidth to each reference point and use a KD-Tree for "
+    "the dual-tree optimization. The returned results will be within 5% of the "
+    "real KDE value for each query point."
+    "\n\n" +
+    PRINT_CALL("kde", "reference", "ref_data", "query", "qu_data", "bandwidth",
+        0.2, "kernel", "epanechnikov", "tree", "kd-tree", "rel_error",
+        0.05, "output", "out_data") +
+    "\n\n"
+    "the output density estimations will be stored in " +
+    PRINT_DATASET("out_data") + ".");
 
 // Required options.
 PARAM_MATRIX_IN("reference", "Input dataset to KDE on.", "r");
@@ -56,11 +67,11 @@ PARAM_DOUBLE_IN("bandwidth", "Bandwidth of the kernel", "b", 1.0);
 // Load or save models.
 PARAM_MODEL_IN(KDEModel,
                "input_model",
-               "File containing pre-trained KDE model.",
+               "Contains pre-trained KDE model.",
                "m");
 PARAM_MODEL_OUT(KDEModel,
                 "output_model",
-                "If specified, the KDE model will be saved to the given file.",
+                "If specified, the KDE model will be saved here.",
                 "M");
 
 // Configuration options
