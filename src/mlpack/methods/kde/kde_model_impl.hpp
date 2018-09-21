@@ -133,6 +133,7 @@ inline void KDEModel::CleanMemory()
 
 // Parameters for KDE evaluation
 DualTreeVisitor::DualTreeVisitor(arma::mat&& querySet, arma::vec& estimations):
+    dimension(querySet.n_rows),
     querySet(std::move(querySet)),
     estimations(estimations)
 {}
@@ -146,6 +147,38 @@ void DualTreeVisitor::operator()(KDETypeT<KernelType, TreeType>* kde) const
 {
   if (kde)
     kde->Evaluate(std::move(querySet), estimations);
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Evaluation specialized for Gaussian Kernel
+template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+void DualTreeVisitor::operator()(KDETypeT<kernel::GaussianKernel,
+                                 TreeType>* kde) const
+{
+  if (kde)
+  {
+    kde->Evaluate(std::move(querySet), estimations);
+    estimations /= kde->Kernel().Normalizer(dimension);
+  }
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Evaluation specialized for EpanechnikovKernel Kernel
+template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+void DualTreeVisitor::operator()(KDETypeT<kernel::EpanechnikovKernel,
+                                 TreeType>* kde) const
+{
+  if (kde)
+  {
+    kde->Evaluate(std::move(querySet), estimations);
+    estimations /= kde->Kernel().Normalizer(dimension);
+  }
   else
     throw std::runtime_error("no KDE model initialized");
 }

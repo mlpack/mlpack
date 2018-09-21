@@ -40,6 +40,9 @@ using KDEType = KDE<metric::EuclideanDistance, arma::mat, KernelType, TreeType>;
 class DualTreeVisitor : public boost::static_visitor<void>
 {
  private:
+    //! Query set dimensionality.
+  const size_t dimension;
+
   //! The query set for the KDE.
   const arma::mat& querySet;
 
@@ -60,6 +63,18 @@ class DualTreeVisitor : public boost::static_visitor<void>
                     typename TreeStatType,
                     typename TreeMatType> class TreeType>
   void operator()(KDETypeT<KernelType, TreeType>* kde) const;
+
+  //! DualTreeVisitor specialized on Gaussian Kernel KDEType.
+  template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDETypeT<kernel::GaussianKernel, TreeType>* kde) const;
+
+  //! DualTreeVisitor specialized on Epanechnikov Kernel KDEType.
+  template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDETypeT<kernel::EpanechnikovKernel, TreeType>* kde) const;
 
   // TODO Implement specific cases where a leaf size can be selected.
 
@@ -240,7 +255,8 @@ class KDEModel
   /**
    * Perform kernel density estimation on the given query set.
    * Takes possession of the query set to avoid a copy, so the query set
-   * will not be usable after this.
+   * will not be usable after this. If possible, it returns normalized
+   * estimations.
    *
    * @pre The model has to be previously created with BuildModel.
    * @param querySet Set of query points.
