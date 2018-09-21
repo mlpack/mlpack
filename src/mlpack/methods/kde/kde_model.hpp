@@ -140,7 +140,8 @@ class KDEModel
     GAUSSIAN_KERNEL,
     EPANECHNIKOV_KERNEL,
     LAPLACIAN_KERNEL,
-    SPHERICAL_KERNEL
+    SPHERICAL_KERNEL,
+    TRIANGULAR_KERNEL
   };
 
  private:
@@ -171,7 +172,9 @@ class KDEModel
                  KDEType<kernel::LaplacianKernel, tree::KDTree>*,
                  KDEType<kernel::LaplacianKernel, tree::BallTree>*,
                  KDEType<kernel::SphericalKernel, tree::KDTree>*,
-                 KDEType<kernel::SphericalKernel, tree::BallTree>*> kdeModel;
+                 KDEType<kernel::SphericalKernel, tree::BallTree>*,
+                 KDEType<kernel::TriangularKernel, tree::KDTree>*,
+                 KDEType<kernel::TriangularKernel, tree::BallTree>*> kdeModel;
 
  public:
   /**
