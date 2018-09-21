@@ -76,6 +76,12 @@ class DualTreeVisitor : public boost::static_visitor<void>
                     typename TreeMatType> class TreeType>
   void operator()(KDETypeT<kernel::EpanechnikovKernel, TreeType>* kde) const;
 
+  //! DualTreeVisitor specialized on Spherical Kernel KDEType.
+  template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDETypeT<kernel::SphericalKernel, TreeType>* kde) const;
+
   // TODO Implement specific cases where a leaf size can be selected.
 
   //! DualTreeVisitor constructor. Takes ownership of the given querySet.
@@ -133,7 +139,8 @@ class KDEModel
   {
     GAUSSIAN_KERNEL,
     EPANECHNIKOV_KERNEL,
-    LAPLACIAN_KERNEL
+    LAPLACIAN_KERNEL,
+    SPHERICAL_KERNEL
   };
 
  private:
@@ -162,7 +169,9 @@ class KDEModel
                  KDEType<kernel::EpanechnikovKernel, tree::KDTree>*,
                  KDEType<kernel::EpanechnikovKernel, tree::BallTree>*,
                  KDEType<kernel::LaplacianKernel, tree::KDTree>*,
-                 KDEType<kernel::LaplacianKernel, tree::BallTree>*> kdeModel;
+                 KDEType<kernel::LaplacianKernel, tree::BallTree>*,
+                 KDEType<kernel::SphericalKernel, tree::KDTree>*,
+                 KDEType<kernel::SphericalKernel, tree::BallTree>*> kdeModel;
 
  public:
   /**

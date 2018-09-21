@@ -123,6 +123,16 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
     kdeModel = new KDEType<kernel::LaplacianKernel, tree::BallTree>
         (bandwidth, relError, absError, breadthFirst);
   }
+  else if (kernelType == SPHERICAL_KERNEL && treeType == KD_TREE)
+  {
+    kdeModel = new KDEType<kernel::SphericalKernel, tree::KDTree>
+        (bandwidth, relError, absError, breadthFirst);
+  }
+  else if (kernelType == SPHERICAL_KERNEL && treeType == BALL_TREE)
+  {
+    kdeModel = new KDEType<kernel::SphericalKernel, tree::BallTree>
+        (bandwidth, relError, absError, breadthFirst);
+  }
 
   TrainVisitor train(std::move(referenceSet));
   boost::apply_visitor(train, kdeModel);
@@ -182,6 +192,22 @@ template<template<typename TreeMetricType,
                     typename TreeStatType,
                     typename TreeMatType> class TreeType>
 void DualTreeVisitor::operator()(KDETypeT<kernel::EpanechnikovKernel,
+                                 TreeType>* kde) const
+{
+  if (kde)
+  {
+    kde->Evaluate(std::move(querySet), estimations);
+    estimations /= kde->Kernel().Normalizer(dimension);
+  }
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Evaluation specialized for SphericalKernel Kernel
+template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+void DualTreeVisitor::operator()(KDETypeT<kernel::SphericalKernel,
                                  TreeType>* kde) const
 {
   if (kde)
