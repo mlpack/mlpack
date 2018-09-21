@@ -132,7 +132,8 @@ class KDEModel
   enum KernelTypes
   {
     GAUSSIAN_KERNEL,
-    EPANECHNIKOV_KERNEL
+    EPANECHNIKOV_KERNEL,
+    LAPLACIAN_KERNEL
   };
 
  private:
@@ -159,7 +160,9 @@ class KDEModel
   boost::variant<KDEType<kernel::GaussianKernel, tree::KDTree>*,
                  KDEType<kernel::GaussianKernel, tree::BallTree>*,
                  KDEType<kernel::EpanechnikovKernel, tree::KDTree>*,
-                 KDEType<kernel::EpanechnikovKernel, tree::BallTree>*> kdeModel;
+                 KDEType<kernel::EpanechnikovKernel, tree::BallTree>*,
+                 KDEType<kernel::LaplacianKernel, tree::KDTree>*,
+                 KDEType<kernel::LaplacianKernel, tree::BallTree>*> kdeModel;
 
  public:
   /**

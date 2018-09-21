@@ -113,6 +113,16 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
     kdeModel = new KDEType<kernel::EpanechnikovKernel, tree::BallTree>
         (bandwidth, relError, absError, breadthFirst);
   }
+  else if (kernelType == LAPLACIAN_KERNEL && treeType == KD_TREE)
+  {
+    kdeModel = new KDEType<kernel::LaplacianKernel, tree::KDTree>
+        (bandwidth, relError, absError, breadthFirst);
+  }
+  else if (kernelType == LAPLACIAN_KERNEL && treeType == BALL_TREE)
+  {
+    kdeModel = new KDEType<kernel::LaplacianKernel, tree::BallTree>
+        (bandwidth, relError, absError, breadthFirst);
+  }
 
   TrainVisitor train(std::move(referenceSet));
   boost::apply_visitor(train, kdeModel);

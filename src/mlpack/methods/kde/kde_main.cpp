@@ -76,7 +76,7 @@ PARAM_MODEL_OUT(KDEModel,
 
 // Configuration options
 PARAM_STRING_IN("kernel", "Kernel to use for the estimation"
-    "('gaussian', 'epanechnikov').", "k", "gaussian");
+    "('gaussian', 'epanechnikov', 'laplacian').", "k", "gaussian");
 PARAM_STRING_IN("tree", "Tree to use for the estimation"
     "('kd-tree', 'ball-tree').", "t", "kd-tree");
 PARAM_DOUBLE_IN("rel_error",
@@ -117,8 +117,8 @@ static void mlpackMain()
   ReportIgnoredParam({{ "input_model", true }}, "breadth_first");
 
   // Requirements for parameter values.
-  RequireParamInSet<string>("kernel", { "gaussian", "epanechnikov" }, true,
-      "unknown kernel type");
+  RequireParamInSet<string>("kernel", { "gaussian", "epanechnikov",
+      "laplacian" }, true, "unknown kernel type");
   RequireParamInSet<string>("tree", { "kd-tree", "ball-tree" }, true,
       "unknown tree type");
   RequireParamValue<double>("rel_error", [](double x){return x >= 0 && x <= 1;},
@@ -144,6 +144,8 @@ static void mlpackMain()
       kde->KernelType() = KDEModel::GAUSSIAN_KERNEL;
     else if (kernelStr == "epanechnikov")
       kde->KernelType() = KDEModel::EPANECHNIKOV_KERNEL;
+    else if (kernelStr == "laplacian")
+      kde->KernelType() = KDEModel::LAPLACIAN_KERNEL;
 
     // Set TreeType
     if (treeStr == "kd-tree")
