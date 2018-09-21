@@ -134,6 +134,7 @@ class KDE
   /**
    * Estimate density of each point in the query set given the data of the
    * reference set. The result is stored in an estimations vector.
+   * Estimations might not be normalized.
    *
    * - Dimension of each point in the query set must match the dimension of each
    *   point in the reference set.
@@ -149,6 +150,7 @@ class KDE
   /**
    * Estimate density of each point in the query set given the data of an
    * already created query tree. The result is stored in an estimations vector.
+   * Estimations might not be normalized.
    *
    * - Dimension of each point in the queryTree dataset must match the dimension
    *    of each point in the reference set.

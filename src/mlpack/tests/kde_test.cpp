@@ -44,8 +44,6 @@ void BruteForceKDE(const arma::mat& reference,
     }
   }
   densities /= reference.n_cols;
-  if (kernel::KernelTraits<T>::IsNormalized)
-    densities /= kernel.Normalizer(query.n_rows);
 }
 
 /**
@@ -68,10 +66,10 @@ BOOST_AUTO_TEST_CASE(KDESimpleTest)
   arma::inplace_trans(query);
   arma::vec estimations;
   // Manually calculated results.
-  arma::vec estimations_result = {0.02069926590929581,
-                                  0.00041646387634996807,
-                                  0.019046040026090477,
-                                  0.002556725645852806};
+  arma::vec estimations_result = {0.08323668699564207296148765,
+                                  0.00167470061366603324010116,
+                                  0.07658867126520703394465527,
+                                  0.01028120384800740999553525};
   KDE<EuclideanDistance,
       arma::mat,
       GaussianKernel,
