@@ -167,10 +167,10 @@ class KDE
                 arma::vec& estimations);
 
   //! Get the kernel.
-  const KernelType& Kernel() const { return kernel; }
+  const KernelType& Kernel() const { return *kernel; }
 
   //! Modify the kernel.
-  KernelType& Kernel() { return kernel; }
+  KernelType& Kernel() { return *kernel; }
 
   //! Get the reference tree.
   Tree* ReferenceTree() { return referenceTree; }
