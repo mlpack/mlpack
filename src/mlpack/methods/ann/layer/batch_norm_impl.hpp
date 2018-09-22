@@ -20,7 +20,7 @@
 namespace mlpack {
 namespace ann { /** Artificial Neural Network. */
 
-template <typename InputDataType, typename OutputDataType>
+template<typename InputDataType, typename OutputDataType>
 BatchNorm<InputDataType, OutputDataType>::BatchNorm() :
     size(10),
     eps(1e-8),
