@@ -22,6 +22,20 @@ namespace cf {
 /**
  * Nearest neighbor search with L_p distance.
  *
+ * An example of how to use LMetricSearch in CF is shown below:
+ *
+ * @code
+ * extern arma::mat data; // data is a (user, item, rating) table.
+ * // Users for whom recommendations are generated.
+ * extern arma::Col<size_t> users;
+ * arma::Mat<size_t> recommendations; // Resulting recommendations.
+ *
+ * CFType<> cf(data);
+ *
+ * // Generate 10 recommendations for all users.
+ * cf.template GetRecommendations<LMetricSearch<2>>(10, recommendations);
+ * @endcode
+ *
  * @tparam TPower Power of metric.
  */
 template<int TPower>

@@ -23,6 +23,20 @@ namespace cf {
 /**
  * Implementation of the SVDPlusPlus policy to act as a wrapper when
  * accessing SVDPlusPlus from within CFType.
+ *
+ * An example of how to use SVDPlusPlusPolicy in CF is shown below:
+ *
+ * @code
+ * extern arma::mat data; // data is a (user, item, rating) table.
+ * // Users for whom recommendations are generated.
+ * extern arma::Col<size_t> users;
+ * arma::Mat<size_t> recommendations; // Resulting recommendations.
+ *
+ * CFType<SVDPlusPlusPolicy> cf(data);
+ *
+ * // Generate 10 recommendations for all users.
+ * cf.GetRecommendations(10, recommendations);
+ * @endcode
  */
 class SVDPlusPlusPolicy
 {
