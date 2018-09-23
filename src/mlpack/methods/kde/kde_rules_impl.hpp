@@ -28,7 +28,8 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     const double absError,
     const std::vector<size_t>& oldFromNewQueries,
     MetricType& metric,
-    KernelType& kernel) :
+    KernelType& kernel,
+    const bool sameSet) :
     referenceSet(referenceSet),
     querySet(querySet),
     densities(densities),
@@ -37,6 +38,7 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     oldFromNewQueries(oldFromNewQueries),
     metric(metric),
     kernel(kernel),
+    sameSet(sameSet),
     lastQueryIndex(querySet.n_cols),
     lastReferenceIndex(referenceSet.n_cols),
     baseCases(0),
@@ -52,6 +54,11 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
     const size_t queryIndex,
     const size_t referenceIndex)
 {
+  // If reference and query sets are the same we don't want to compute the
+  // estimation of a point with itself.
+  if (sameSet && queryIndex == referenceIndex)
+    return 0.0;
+
   double distance = metric.Evaluate(querySet.col(queryIndex),
                                     referenceSet.col(referenceIndex));
   if (tree::TreeTraits<TreeType>::RearrangesDataset)

@@ -112,16 +112,16 @@ BOOST_AUTO_TEST_CASE(KDETreeAsArguments)
 
   // Get dual-tree results.
   typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
-  std::vector<size_t> oldFromNewQueries;
+  std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
-  Tree* referenceTree = new Tree(reference, 2);
+  Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
   KDE<EuclideanDistance,
       arma::mat,
       GaussianKernel,
       KDTree>
   kde(kernelBandwidth, 0.0, 1e-8, false);
-  kde.Train(referenceTree);
-  kde.Evaluate(queryTree, oldFromNewQueries, estimations);
+  kde.Train(referenceTree, &oldFromNewReferences);
+  kde.Evaluate(queryTree, std::move(oldFromNewQueries), estimations);
   for (size_t i = 0; i < query.n_cols; ++i)
     BOOST_REQUIRE_CLOSE(estimations[i], estimationsResult[i], 1e-8);
   delete queryTree;
@@ -183,16 +183,16 @@ BOOST_AUTO_TEST_CASE(BallTreeGaussianKDETest)
 
   // BallTree KDE
   typedef BallTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
-  std::vector<size_t> oldFromNewQueries;
+  std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
-  Tree* referenceTree = new Tree(reference, 2);
+  Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
   KDE<EuclideanDistance,
       arma::mat,
       GaussianKernel,
       BallTree>
   kde(kernelBandwidth, relError, 0.0, false);
-  kde.Train(referenceTree);
-  kde.Evaluate(queryTree, oldFromNewQueries, treeEstimations);
+  kde.Train(referenceTree, &oldFromNewReferences);
+  kde.Evaluate(queryTree, std::move(oldFromNewQueries), treeEstimations);
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
@@ -226,15 +226,15 @@ BOOST_AUTO_TEST_CASE(DuplicatedReferenceSampleKDETest)
 
   // Dual-tree KDE
   typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
-  std::vector<size_t> oldFromNewQueries;
+  std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
-  Tree* referenceTree = new Tree(reference, 2);
+  Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
   KDE<EuclideanDistance,
       arma::mat,
       GaussianKernel,
       KDTree>
   kde(kernelBandwidth, relError, 0.0, false);
-  kde.Train(referenceTree);
+  kde.Train(referenceTree, &oldFromNewReferences);
   kde.Evaluate(queryTree, oldFromNewQueries, treeEstimations);
 
   // Check whether results are equal.
@@ -261,15 +261,15 @@ BOOST_AUTO_TEST_CASE(DuplicatedQuerySampleKDETest)
 
   // Dual-tree KDE
   typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
-  std::vector<size_t> oldFromNewQueries;
+  std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
-  Tree* referenceTree = new Tree(reference, 2);
+  Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
   KDE<EuclideanDistance,
       arma::mat,
       GaussianKernel,
       KDTree>
   kde(kernelBandwidth, relError, 0.0, false);
-  kde.Train(referenceTree);
+  kde.Train(referenceTree, &oldFromNewReferences);
   kde.Evaluate(queryTree, oldFromNewQueries, estimations);
 
   // Check whether results are equal.
@@ -372,9 +372,11 @@ BOOST_AUTO_TEST_CASE(EmptyReferenceTest)
   BOOST_REQUIRE_THROW(kde.Train(reference), std::invalid_argument);
 
   // When training using a tree
+  std::vector<size_t> oldFromNewReferences;
   typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
-  Tree* referenceTree = new Tree(reference, 2);
-  BOOST_REQUIRE_THROW(kde.Train(referenceTree), std::invalid_argument);
+  Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
+  BOOST_REQUIRE_THROW(
+      kde.Train(referenceTree, &oldFromNewReferences), std::invalid_argument);
 
   delete referenceTree;
 }

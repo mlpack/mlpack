@@ -127,9 +127,14 @@ class KDE
   /**
    * Trains the KDE model. Sets the reference tree to an already created tree.
    *
+   * - If TreeTraits<TreeType>::RearrangesDataset is False then it is possible
+   *   to use an empty oldFromNewReferences vector.
+   *
    * @param referenceTree New already created reference tree.
+   * @param oldFromNewReferences Permutations of reference points obtained
+   *                             during tree generation.
    */
-  void Train(Tree* referenceTree);
+  void Train(Tree* referenceTree, std::vector<size_t>* oldFromNewReferences);
 
   /**
    * Estimate density of each point in the query set given the data of the
@@ -165,6 +170,18 @@ class KDE
   void Evaluate(Tree* queryTree,
                 const std::vector<size_t>& oldFromNewQueries,
                 arma::vec& estimations);
+
+  /**
+   * Estimate density of each point in the reference set given the data of the
+   * reference set. It does not compute the estimation of a point with itself.
+   * The result is stored in an estimations vector. Estimations might not be
+   * normalized.
+   *
+   * @pre The model has to be previously trained.
+   * @param estimations Object which will hold the density of each reference
+   *                    point.
+   */
+  void Evaluate(arma::vec& estimations);
 
   //! Get the kernel.
   const KernelType& Kernel() const { return *kernel; }
@@ -212,6 +229,9 @@ class KDE
 
   //! Reference tree.
   Tree* referenceTree;
+
+  //! Permutations of reference points.
+  std::vector<size_t>* oldFromNewReferences;
 
   //! Relative error tolerance.
   double relError;

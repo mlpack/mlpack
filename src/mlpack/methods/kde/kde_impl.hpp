@@ -125,9 +125,15 @@ KDE<MetricType, MatType, KernelType, TreeType>::KDE(const KDE& other) :
   if (trained)
   {
     if (ownsReferenceTree)
-      referenceTree = new Tree(other.referenceTree);
+    {
+      oldFromNewReferences = new std::vector<size_t>;
+      referenceTree = new Tree(other.referenceTree, *oldFromNewReferences);
+    }
     else
+    {
+      oldFromNewReferences = other.oldFromNewReferences;
       referenceTree = other.referenceTree;
+    }
   }
 }
 
@@ -141,6 +147,7 @@ KDE<MetricType, MatType, KernelType, TreeType>::KDE(KDE&& other) :
     kernel(other.kernel),
     metric(other.metric),
     referenceTree(other.referenceTree),
+    oldFromNewReferences(other.oldFromNewReferences),
     relError(other.relError),
     absError(other.absError),
     breadthFirst(other.breadthFirst),
@@ -152,6 +159,7 @@ KDE<MetricType, MatType, KernelType, TreeType>::KDE(KDE&& other) :
   other.kernel = new KernelType();
   other.metric = new MetricType();
   other.referenceTree = nullptr;
+  other.oldFromNewReferences = nullptr;
   other.ownsReferenceTree = false;
   other.trained = false;
 }
@@ -171,12 +179,16 @@ KDE<MetricType, MatType, KernelType, TreeType>::operator=(KDE other)
   if (ownsMetric)
     delete metric;
   if (ownsReferenceTree)
+  {
     delete referenceTree;
+    delete oldFromNewReferences;
+  }
 
   // Move
   this->kernel = std::move(other.kernel);
   this->metric = std::move(other.metric);
   this->referenceTree = std::move(other.referenceTree);
+  this->oldFromNewReferences = std::move(other.oldFromNewReferences);
   this->relError = other.relError;
   this->absError = other.absError;
   this->breadthFirst = other.breadthFirst;
@@ -201,7 +213,10 @@ KDE<MetricType, MatType, KernelType, TreeType>::~KDE()
   if (ownsMetric)
     delete metric;
   if (ownsReferenceTree)
+  {
     delete referenceTree;
+    delete oldFromNewReferences;
+  }
 }
 
 template<typename MetricType,
@@ -217,8 +232,15 @@ Train(MatType referenceSet)
   if (referenceSet.n_cols == 0)
     throw std::invalid_argument("cannot train KDE model with an empty "
                                 "reference set");
+  if (ownsReferenceTree)
+  {
+    delete referenceTree;
+    delete oldFromNewReferences;
+  }
   this->ownsReferenceTree = true;
-  this->referenceTree = new Tree(std::move(referenceSet));
+  this->oldFromNewReferences = new std::vector<size_t>;
+  this->referenceTree = BuildTree<Tree>(std::move(referenceSet),
+                                        *oldFromNewReferences);
   this->trained = true;
 }
 
@@ -229,16 +251,20 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void KDE<MetricType, MatType, KernelType, TreeType>::
-Train(Tree* referenceTree)
+Train(Tree* referenceTree, std::vector<size_t>* oldFromNewReferences)
 {
   // Check if referenceTree dataset is not an empty set.
   if (referenceTree->Dataset().n_cols == 0)
     throw std::invalid_argument("cannot train KDE model with an empty "
                                 "reference set");
-  if (this->ownsReferenceTree == true)
+  if (ownsReferenceTree == true)
+  {
     delete this->referenceTree;
+    delete this->oldFromNewReferences;
+  }
   this->ownsReferenceTree = false;
   this->referenceTree = referenceTree;
+  this->oldFromNewReferences = oldFromNewReferences;
   this->trained = true;
 }
 
@@ -293,7 +319,8 @@ Evaluate(Tree* queryTree,
                             absError,
                             oldFromNewQueries,
                             *metric,
-                            *kernel);
+                            *kernel,
+                            false);
   if (breadthFirst)
   {
     // DualTreeTraverser Breadth-First
@@ -306,6 +333,47 @@ Evaluate(Tree* queryTree,
     // DualTreeTraverser Depth-First
     typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
     traverser.Traverse(*queryTree, *referenceTree);
+  }
+  estimations /= referenceTree->Dataset().n_cols;
+}
+
+template<typename MetricType,
+         typename MatType,
+         typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void KDE<MetricType, MatType, KernelType, TreeType>::
+Evaluate(arma::vec& estimations)
+{
+  // Get estimations vector ready.
+  estimations.clear();
+  estimations.resize(referenceTree->Dataset().n_cols);
+  estimations.fill(arma::fill::zeros);
+
+  // Evaluate
+  typedef KDERules<MetricType, KernelType, Tree> RuleType;
+  RuleType rules = RuleType(referenceTree->Dataset(),
+                            referenceTree->Dataset(),
+                            estimations,
+                            relError,
+                            absError,
+                            *oldFromNewReferences,
+                            *metric,
+                            *kernel,
+                            true);
+  if (breadthFirst)
+  {
+    // DualTreeTraverser Breadth-First
+    typename Tree::template BreadthFirstDualTreeTraverser<RuleType>
+      traverser(rules);
+    traverser.Traverse(*referenceTree, *referenceTree);
+  }
+  else
+  {
+    // DualTreeTraverser Depth-First
+    typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
+    traverser.Traverse(*referenceTree, *referenceTree);
   }
   estimations /= referenceTree->Dataset().n_cols;
 }
@@ -360,7 +428,10 @@ serialize(Archive& ar, const unsigned int /* version */)
     if (ownsMetric && metric)
       delete metric;
     if (ownsReferenceTree && referenceTree)
+    {
       delete referenceTree;
+      delete oldFromNewReferences;
+    }
     // After loading kernel, metric and tree, we own it.
     ownsKernel = true;
     ownsMetric = true;
@@ -371,6 +442,7 @@ serialize(Archive& ar, const unsigned int /* version */)
   ar & BOOST_SERIALIZATION_NVP(kernel);
   ar & BOOST_SERIALIZATION_NVP(metric);
   ar & BOOST_SERIALIZATION_NVP(referenceTree);
+  ar & BOOST_SERIALIZATION_NVP(oldFromNewReferences);
 }
 
 template<typename MetricType,
