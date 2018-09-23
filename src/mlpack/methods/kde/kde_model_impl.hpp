@@ -148,10 +148,17 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
   boost::apply_visitor(train, kdeModel);
 }
 
-// Perform evaluation
+// Perform bichromatic evaluation
 inline void KDEModel::Evaluate(arma::mat&& querySet, arma::vec& estimations)
 {
-  DualTreeVisitor eval(std::move(querySet), estimations);
+  DualBiKDE eval(std::move(querySet), estimations);
+  boost::apply_visitor(eval, kdeModel);
+}
+
+// Perform monochromatic evaluation
+inline void KDEModel::Evaluate(arma::vec& estimations)
+{
+  DualMonoKDE eval(estimations);
   boost::apply_visitor(eval, kdeModel);
 }
 
@@ -162,7 +169,76 @@ inline void KDEModel::CleanMemory()
 }
 
 // Parameters for KDE evaluation
-DualTreeVisitor::DualTreeVisitor(arma::mat&& querySet, arma::vec& estimations):
+DualMonoKDE::DualMonoKDE(arma::vec& estimations):
+    estimations(estimations)
+{}
+
+// Default KDE evaluation
+template<typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void DualMonoKDE::operator()(KDETypeT<KernelType, TreeType>* kde) const
+{
+  if (kde)
+    kde->Evaluate(estimations);
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Evaluation specialized for Gaussian Kernel
+template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+void DualMonoKDE::operator()(KDETypeT<kernel::GaussianKernel,
+                             TreeType>* kde) const
+{
+  if (kde)
+  {
+    const size_t dimension = (kde->ReferenceTree())->Dataset().n_rows;
+    kde->Evaluate(estimations);
+    estimations /= kde->Kernel().Normalizer(dimension);
+  }
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Evaluation specialized for EpanechnikovKernel Kernel
+template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+void DualMonoKDE::operator()(KDETypeT<kernel::EpanechnikovKernel,
+                             TreeType>* kde) const
+{
+  if (kde)
+  {
+    const size_t dimension = (kde->ReferenceTree())->Dataset().n_rows;
+    kde->Evaluate(estimations);
+    estimations /= kde->Kernel().Normalizer(dimension);
+  }
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Evaluation specialized for SphericalKernel Kernel
+template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+void DualMonoKDE::operator()(KDETypeT<kernel::SphericalKernel,
+                             TreeType>* kde) const
+{
+  if (kde)
+  {
+    const size_t dimension = (kde->ReferenceTree())->Dataset().n_rows;
+    kde->Evaluate(estimations);
+    estimations /= kde->Kernel().Normalizer(dimension);
+  }
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Parameters for KDE evaluation
+DualBiKDE::DualBiKDE(arma::mat&& querySet, arma::vec& estimations):
     dimension(querySet.n_rows),
     querySet(std::move(querySet)),
     estimations(estimations)
@@ -173,7 +249,7 @@ template<typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void DualTreeVisitor::operator()(KDETypeT<KernelType, TreeType>* kde) const
+void DualBiKDE::operator()(KDETypeT<KernelType, TreeType>* kde) const
 {
   if (kde)
     kde->Evaluate(std::move(querySet), estimations);
@@ -185,8 +261,8 @@ void DualTreeVisitor::operator()(KDETypeT<KernelType, TreeType>* kde) const
 template<template<typename TreeMetricType,
                     typename TreeStatType,
                     typename TreeMatType> class TreeType>
-void DualTreeVisitor::operator()(KDETypeT<kernel::GaussianKernel,
-                                 TreeType>* kde) const
+void DualBiKDE::operator()(KDETypeT<kernel::GaussianKernel,
+                           TreeType>* kde) const
 {
   if (kde)
   {
@@ -201,8 +277,8 @@ void DualTreeVisitor::operator()(KDETypeT<kernel::GaussianKernel,
 template<template<typename TreeMetricType,
                     typename TreeStatType,
                     typename TreeMatType> class TreeType>
-void DualTreeVisitor::operator()(KDETypeT<kernel::EpanechnikovKernel,
-                                 TreeType>* kde) const
+void DualBiKDE::operator()(KDETypeT<kernel::EpanechnikovKernel,
+                           TreeType>* kde) const
 {
   if (kde)
   {
@@ -217,8 +293,8 @@ void DualTreeVisitor::operator()(KDETypeT<kernel::EpanechnikovKernel,
 template<template<typename TreeMetricType,
                     typename TreeStatType,
                     typename TreeMatType> class TreeType>
-void DualTreeVisitor::operator()(KDETypeT<kernel::SphericalKernel,
-                                 TreeType>* kde) const
+void DualBiKDE::operator()(KDETypeT<kernel::SphericalKernel,
+                           TreeType>* kde) const
 {
   if (kde)
   {

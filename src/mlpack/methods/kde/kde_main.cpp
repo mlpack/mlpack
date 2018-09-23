@@ -57,11 +57,14 @@ PROGRAM_INFO("Kernel Density Estimation",
         0.05, "output", "out_data") +
     "\n\n"
     "the output density estimations will be stored in " +
-    PRINT_DATASET("out_data") + ".");
+    PRINT_DATASET("out_data") + "."
+    "\n"
+    "If no " + PRINT_PARAM_STRING("query") + " is provided, then KDE will be "
+    "computed on the " + PRINT_PARAM_STRING("reference") + " dataset.");
 
 // Required options.
 PARAM_MATRIX_IN("reference", "Input dataset to KDE on.", "r");
-PARAM_MATRIX_IN_REQ("query", "Query dataset to KDE on.", "q");
+PARAM_MATRIX_IN("query", "Query dataset to KDE on.", "q");
 PARAM_DOUBLE_IN("bandwidth", "Bandwidth of the kernel", "b", 1.0);
 
 // Load or save models.
@@ -99,7 +102,6 @@ PARAM_MATRIX_OUT("output", "Matrix to store output estimations.",
 static void mlpackMain()
 {
   // Get some parameters.
-  arma::mat query = std::move(CLI::GetParam<arma::mat>("query"));
   const double bandwidth = CLI::GetParam<double>("bandwidth");
   const std::string kernelStr = CLI::GetParam<std::string>("kernel");
   const std::string treeStr = CLI::GetParam<std::string>("tree");
@@ -167,7 +169,13 @@ static void mlpackMain()
     kde = CLI::GetParam<KDEModel*>("input_model");
   }
 
-  kde->Evaluate(std::move(query), estimations);
+  if (CLI::HasParam("query"))
+  {
+    arma::mat query = std::move(CLI::GetParam<arma::mat>("query"));
+    kde->Evaluate(std::move(query), estimations);
+  }
+  else
+    kde->Evaluate(estimations);
 
   // Output results if needed.
   if (CLI::HasParam("output"))

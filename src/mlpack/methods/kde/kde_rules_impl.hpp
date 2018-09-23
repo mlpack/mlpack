@@ -56,7 +56,7 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
 {
   // If reference and query sets are the same we don't want to compute the
   // estimation of a point with itself.
-  if (sameSet && queryIndex == referenceIndex)
+  if (sameSet && (queryIndex == referenceIndex))
     return 0.0;
 
   double distance = metric.Evaluate(querySet.col(queryIndex),

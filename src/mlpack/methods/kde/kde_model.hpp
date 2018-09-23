@@ -35,12 +35,62 @@ template<typename KernelType,
 using KDEType = KDE<metric::EuclideanDistance, arma::mat, KernelType, TreeType>;
 
 /**
- * DualTreeVisitor computes a Kernel Density Estimation on the given KDEType.
+ * DualMonoKDE computes a Kernel Density Estimation on the given KDEType.
+ * It performs a monochromatic KDE.
  */
-class DualTreeVisitor : public boost::static_visitor<void>
+class DualMonoKDE : public boost::static_visitor<void>
 {
  private:
-    //! Query set dimensionality.
+  //! Vector to store the KDE results.
+  arma::vec& estimations;
+
+ public:
+  //! Alias template necessary for visual C++ compiler.
+  template<typename KernelType,
+           template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  using KDETypeT = KDEType<KernelType, TreeType>;
+
+  //! Default DualMonoKDE on some KDEType.
+  template<typename KernelType,
+           template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDETypeT<KernelType, TreeType>* kde) const;
+
+  //! DualMonoKDE specialized on Gaussian Kernel KDEType.
+  template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDETypeT<kernel::GaussianKernel, TreeType>* kde) const;
+
+  //! DualMonoKDE specialized on Epanechnikov Kernel KDEType.
+  template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDETypeT<kernel::EpanechnikovKernel, TreeType>* kde) const;
+
+  //! DualMonoKDE specialized on Spherical Kernel KDEType.
+  template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDETypeT<kernel::SphericalKernel, TreeType>* kde) const;
+
+  // TODO Implement specific cases where a leaf size can be selected.
+
+  //! DualMonoKDE constructor.
+  DualMonoKDE(arma::vec& estimations);
+};
+
+/**
+ * DualBiKDE computes a Kernel Density Estimation on the given KDEType.
+ * It performs a bichromatic KDE.
+ */
+class DualBiKDE : public boost::static_visitor<void>
+{
+ private:
+  //! Query set dimensionality.
   const size_t dimension;
 
   //! The query set for the KDE.
@@ -57,26 +107,26 @@ class DualTreeVisitor : public boost::static_visitor<void>
                     typename TreeMatType> class TreeType>
   using KDETypeT = KDEType<KernelType, TreeType>;
 
-  //! Default DualTreeVisitor on some KDEType.
+  //! Default DualBiKDE on some KDEType.
   template<typename KernelType,
            template<typename TreeMetricType,
                     typename TreeStatType,
                     typename TreeMatType> class TreeType>
   void operator()(KDETypeT<KernelType, TreeType>* kde) const;
 
-  //! DualTreeVisitor specialized on Gaussian Kernel KDEType.
+  //! DualBiKDE specialized on Gaussian Kernel KDEType.
   template<template<typename TreeMetricType,
                     typename TreeStatType,
                     typename TreeMatType> class TreeType>
   void operator()(KDETypeT<kernel::GaussianKernel, TreeType>* kde) const;
 
-  //! DualTreeVisitor specialized on Epanechnikov Kernel KDEType.
+  //! DualBiKDE specialized on Epanechnikov Kernel KDEType.
   template<template<typename TreeMetricType,
                     typename TreeStatType,
                     typename TreeMatType> class TreeType>
   void operator()(KDETypeT<kernel::EpanechnikovKernel, TreeType>* kde) const;
 
-  //! DualTreeVisitor specialized on Spherical Kernel KDEType.
+  //! DualBiKDE specialized on Spherical Kernel KDEType.
   template<template<typename TreeMetricType,
                     typename TreeStatType,
                     typename TreeMatType> class TreeType>
@@ -84,8 +134,8 @@ class DualTreeVisitor : public boost::static_visitor<void>
 
   // TODO Implement specific cases where a leaf size can be selected.
 
-  //! DualTreeVisitor constructor. Takes ownership of the given querySet.
-  DualTreeVisitor(arma::mat&& querySet, arma::vec& estimations);
+  //! DualBiKDE constructor. Takes ownership of the given querySet.
+  DualBiKDE(arma::mat&& querySet, arma::vec& estimations);
 };
 
 /**
@@ -279,6 +329,17 @@ class KDEModel
    *                    order as the query points.
    */
   void Evaluate(arma::mat&& querySet, arma::vec& estimations);
+
+  /**
+   * Perform kernel density estimation on the reference set.
+   * If possible, it returns normalized estimations.
+   *
+   * @pre The model has to be previously created with BuildModel.
+   * @param estimations Vector where the results will be stored in the same
+   *                    order as the query points.
+   */
+  void Evaluate(arma::vec& estimations);
+
 
  private:
   //! Clean memory.
