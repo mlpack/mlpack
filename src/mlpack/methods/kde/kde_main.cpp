@@ -86,7 +86,7 @@ PARAM_STRING_IN("tree", "Tree to use for the estimation"
 PARAM_DOUBLE_IN("rel_error",
                 "Relative error tolerance for the result",
                 "e",
-                1e-8);
+                0.05);
 PARAM_DOUBLE_IN("abs_error",
                 "Relative error tolerance for the result",
                 "E",

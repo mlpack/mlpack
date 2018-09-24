@@ -61,7 +61,7 @@ inline KDEModel::KDEModel(KDEModel&& other) :
 {
   // Reset other model
   other.bandwidth = 1.0;
-  other.relError = 1e-6;
+  other.relError = 0.05;
   other.absError = 0;
   other.breadthFirst = false;
   other.kernelType = KernelTypes::GAUSSIAN_KERNEL;

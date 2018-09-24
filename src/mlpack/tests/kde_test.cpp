@@ -74,11 +74,11 @@ BOOST_AUTO_TEST_CASE(KDESimpleTest)
       arma::mat,
       GaussianKernel,
       KDTree>
-    kde(0.8, 0.0, 1e-8, false);
+    kde(0.8, 0.0, 0.01, false);
   kde.Train(reference);
   kde.Evaluate(query, estimations);
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(estimations[i], estimations_result[i], 1e-8);
+    BOOST_REQUIRE_CLOSE(estimations[i], estimations_result[i], 0.01);
 }
 
 /**
@@ -119,11 +119,11 @@ BOOST_AUTO_TEST_CASE(KDETreeAsArguments)
       arma::mat,
       GaussianKernel,
       KDTree>
-  kde(kernelBandwidth, 0.0, 1e-8, false);
+  kde(kernelBandwidth, 0.0, 1e-6, false);
   kde.Train(referenceTree, &oldFromNewReferences);
   kde.Evaluate(queryTree, std::move(oldFromNewQueries), estimations);
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(estimations[i], estimationsResult[i], 1e-8);
+    BOOST_REQUIRE_CLOSE(estimations[i], estimationsResult[i], 0.01);
   delete queryTree;
   delete referenceTree;
 }
@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE(GaussianKDEBruteForceTest)
   arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   const double kernelBandwidth = 0.3;
-  const double relError = 1e-8;
+  const double relError = 0.01;
 
   // Brute force KDE
   GaussianKernel kernel(kernelBandwidth);
@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE(BallTreeGaussianKDETest)
   arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   const double kernelBandwidth = 0.4;
-  const double relError = 1e-5;
+  const double relError = 0.05;
 
   // Brute force KDE
   GaussianKernel kernel(kernelBandwidth);
@@ -212,7 +212,7 @@ BOOST_AUTO_TEST_CASE(DuplicatedReferenceSampleKDETest)
   arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   const double kernelBandwidth = 0.4;
-  const double relError = 1e-5;
+  const double relError = 0.05;
 
   // Duplicate value
   reference.col(2) = reference.col(3);
@@ -254,7 +254,7 @@ BOOST_AUTO_TEST_CASE(DuplicatedQuerySampleKDETest)
   arma::mat query = arma::randu(2, 10);
   arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
   const double kernelBandwidth = 0.4;
-  const double relError = 1e-5;
+  const double relError = 0.05;
 
   // Duplicate value
   query.col(2) = query.col(3);
@@ -290,7 +290,7 @@ BOOST_AUTO_TEST_CASE(BreadthFirstKDETest)
   arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   const double kernelBandwidth = 0.8;
-  const double relError = 1e-8;
+  const double relError = 0.01;
 
   // Brute force KDE
   GaussianKernel kernel(kernelBandwidth);
@@ -324,7 +324,7 @@ BOOST_AUTO_TEST_CASE(OneDimensionalTest)
   arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   const double kernelBandwidth = 0.7;
-  const double relError = 1e-8;
+  const double relError = 0.01;
 
   // Brute force KDE
   GaussianKernel kernel(kernelBandwidth);
@@ -357,7 +357,7 @@ BOOST_AUTO_TEST_CASE(EmptyReferenceTest)
   arma::mat query = arma::randu(1, 10);
   arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
   const double kernelBandwidth = 0.7;
-  const double relError = 1e-8;
+  const double relError = 0.01;
 
   // KDE
   metric::EuclideanDistance metric;
@@ -390,7 +390,7 @@ BOOST_AUTO_TEST_CASE(EvaluationMatchDimensionsTest)
   arma::mat query = arma::randu(1, 10);
   arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
   const double kernelBandwidth = 0.7;
-  const double relError = 1e-8;
+  const double relError = 0.01;
 
   // KDE
   metric::EuclideanDistance metric;
@@ -424,7 +424,7 @@ BOOST_AUTO_TEST_CASE(EmptyQuerySetTest)
   arma::mat query;
   arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
   const double kernelBandwidth = 0.7;
-  const double relError = 1e-8;
+  const double relError = 0.01;
 
   // KDE
   metric::EuclideanDistance metric;

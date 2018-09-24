@@ -243,7 +243,7 @@ class KDEModel
    * @param treeType Type of tree to use.
    */
   KDEModel(const double bandwidth = 1.0,
-           const double relError = 1e-6,
+           const double relError = 0.05,
            const double absError = 0,
            const bool breadthFirst = false,
            const KernelTypes kernelType = KernelTypes::GAUSSIAN_KERNEL,

@@ -48,8 +48,8 @@ class KDE
 
   /**
    * Initialize KDE object with the default Kernel and Metric parameters.
-   * Relative error tolernce is initialized to 1e-6, absolute error tolerance
-   * is 0.0 and uses a depth-first approach.
+   * Relative error tolernce is initialized to 0.05 (5%), absolute error
+   * tolerance is 0.0 and uses a depth-first approach.
    */
   KDE();
 
@@ -65,7 +65,7 @@ class KDE
    *        breadth-first approach.
    */
   KDE(const double bandwidth,
-      const double relError = 1e-6,
+      const double relError = 0.05,
       const double absError = 0,
       const bool breadthFirst = false);
 
@@ -81,7 +81,7 @@ class KDE
    */
   KDE(MetricType& metric,
       KernelType& kernel,
-      const double relError = 1e-6,
+      const double relError = 0.05,
       const double absError = 0,
       const bool breadthFirst = false);
 
