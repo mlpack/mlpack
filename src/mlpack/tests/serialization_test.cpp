@@ -1747,7 +1747,7 @@ BOOST_AUTO_TEST_CASE(BatchNormSerializationTest)
  */
 BOOST_AUTO_TEST_CASE(LayerNormSerializationTest)
 {
-  LayerNorm<> layer(1);
+  LayerNorm<> layer(10);
   ANNLayerSerializationTest(layer);
 }
 
