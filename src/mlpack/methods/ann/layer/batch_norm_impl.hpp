@@ -22,7 +22,6 @@ namespace ann { /** Artificial Neural Network. */
 
 template<typename InputDataType, typename OutputDataType>
 BatchNorm<InputDataType, OutputDataType>::BatchNorm() :
-    size(10),
     eps(1e-8),
     loading(false),
     deterministic(false),
