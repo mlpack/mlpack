@@ -91,8 +91,6 @@ PARAM_DOUBLE_IN("abs_error",
                 "Relative error tolerance for the result",
                 "E",
                 0.0);
-PARAM_FLAG("breadth_first", "Use breadth-first traversal instead of depth"
-           "first.", "w");
 // Maybe in the future it could be interesting to implement different metrics.
 
 // Output options.
@@ -107,7 +105,6 @@ static void mlpackMain()
   const std::string treeStr = CLI::GetParam<std::string>("tree");
   const double relError = CLI::GetParam<double>("rel_error");
   const double absError = CLI::GetParam<double>("abs_error");
-  const bool breadthFirst = CLI::GetParam<bool>("breadth_first");
   // Initialize results vector.
   arma::vec estimations;
 
@@ -117,7 +114,6 @@ static void mlpackMain()
   ReportIgnoredParam({{ "input_model", true }}, "kernel");
   ReportIgnoredParam({{ "input_model", true }}, "rel_error");
   ReportIgnoredParam({{ "input_model", true }}, "abs_error");
-  ReportIgnoredParam({{ "input_model", true }}, "breadth_first");
 
   // Requirements for parameter values.
   RequireParamInSet<string>("kernel", { "gaussian", "epanechnikov",
@@ -140,7 +136,6 @@ static void mlpackMain()
     kde->Bandwidth() = bandwidth;
     kde->RelativeError() = relError;
     kde->AbsoluteError() = absError;
-    kde->BreadthFirst() = breadthFirst;
 
     // Set KernelType
     if (kernelStr == "gaussian")

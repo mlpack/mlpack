@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(KDESimpleTest)
       arma::mat,
       GaussianKernel,
       KDTree>
-    kde(0.8, 0.0, 0.01, false);
+    kde(0.8, 0.0, 0.01);
   kde.Train(reference);
   kde.Evaluate(query, estimations);
   for (size_t i = 0; i < query.n_cols; ++i)
@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE(KDETreeAsArguments)
       arma::mat,
       GaussianKernel,
       KDTree>
-  kde(kernelBandwidth, 0.0, 1e-6, false);
+  kde(kernelBandwidth, 0.0, 1e-6);
   kde.Train(referenceTree, &oldFromNewReferences);
   kde.Evaluate(queryTree, std::move(oldFromNewQueries), estimations);
   for (size_t i = 0; i < query.n_cols; ++i)
@@ -153,7 +153,7 @@ BOOST_AUTO_TEST_CASE(GaussianKDEBruteForceTest)
       arma::mat,
       kernel::GaussianKernel,
       tree::KDTree>
-    kde(metric, kernel, relError, 0.0, false);
+    kde(metric, kernel, relError, 0.0);
   kde.Train(reference);
   kde.Evaluate(std::move(query), treeEstimations);
 
@@ -190,7 +190,7 @@ BOOST_AUTO_TEST_CASE(BallTreeGaussianKDETest)
       arma::mat,
       GaussianKernel,
       BallTree>
-  kde(kernelBandwidth, relError, 0.0, false);
+  kde(kernelBandwidth, relError, 0.0);
   kde.Train(referenceTree, &oldFromNewReferences);
   kde.Evaluate(queryTree, std::move(oldFromNewQueries), treeEstimations);
 
@@ -233,7 +233,7 @@ BOOST_AUTO_TEST_CASE(DuplicatedReferenceSampleKDETest)
       arma::mat,
       GaussianKernel,
       KDTree>
-  kde(kernelBandwidth, relError, 0.0, false);
+  kde(kernelBandwidth, relError, 0.0);
   kde.Train(referenceTree, &oldFromNewReferences);
   kde.Evaluate(queryTree, oldFromNewQueries, treeEstimations);
 
@@ -268,7 +268,7 @@ BOOST_AUTO_TEST_CASE(DuplicatedQuerySampleKDETest)
       arma::mat,
       GaussianKernel,
       KDTree>
-  kde(kernelBandwidth, relError, 0.0, false);
+  kde(kernelBandwidth, relError, 0.0);
   kde.Train(referenceTree, &oldFromNewReferences);
   kde.Evaluate(queryTree, oldFromNewQueries, estimations);
 
@@ -304,8 +304,11 @@ BOOST_AUTO_TEST_CASE(BreadthFirstKDETest)
   KDE<metric::EuclideanDistance,
       arma::mat,
       kernel::GaussianKernel,
-      tree::KDTree>
-    kde(metric, kernel, relError, 0.0, true);
+      tree::KDTree,
+      tree::KDTree<metric::EuclideanDistance,
+                   kde::KDEStat,
+                   arma::mat>::template BreadthFirstDualTreeTraverser>
+    kde(metric, kernel, relError, 0.0);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -339,7 +342,7 @@ BOOST_AUTO_TEST_CASE(OneDimensionalTest)
       arma::mat,
       kernel::GaussianKernel,
       tree::KDTree>
-    kde(metric, kernel, relError, 0.0, false);
+    kde(metric, kernel, relError, 0.0);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -366,7 +369,7 @@ BOOST_AUTO_TEST_CASE(EmptyReferenceTest)
       arma::mat,
       kernel::GaussianKernel,
       tree::KDTree>
-    kde(metric, kernel, relError, 0.0, false);
+    kde(metric, kernel, relError, 0.0);
 
   // When training using the dataset matrix
   BOOST_REQUIRE_THROW(kde.Train(reference), std::invalid_argument);
@@ -399,7 +402,7 @@ BOOST_AUTO_TEST_CASE(EvaluationMatchDimensionsTest)
       arma::mat,
       kernel::GaussianKernel,
       tree::KDTree>
-    kde(metric, kernel, relError, 0.0, false);
+    kde(metric, kernel, relError, 0.0);
   kde.Train(reference);
 
   // When evaluating using the query dataset matrix
@@ -433,7 +436,7 @@ BOOST_AUTO_TEST_CASE(EmptyQuerySetTest)
       arma::mat,
       kernel::GaussianKernel,
       tree::KDTree>
-    kde(metric, kernel, relError, 0.0, false);
+    kde(metric, kernel, relError, 0.0);
   kde.Train(reference);
 
   // When evaluating using the query dataset matrix
@@ -457,13 +460,12 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   // Initial KDE model to me serialized.
   const double relError = 0.25;
   const double absError = 0.0;
-  const bool bf = false;
   arma::mat reference = arma::randu(4, 800);
   KDE<metric::EuclideanDistance,
       arma::mat,
       kernel::GaussianKernel,
       tree::KDTree>
-    kde(0.25, relError, absError, bf);
+    kde(0.25, relError, absError);
   kde.Train(reference);
 
   // Get estimations to compare.
@@ -488,11 +490,6 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   BOOST_REQUIRE_CLOSE(kdeXml.AbsoluteError(), absError, 1e-8);
   BOOST_REQUIRE_CLOSE(kdeText.AbsoluteError(), absError, 1e-8);
   BOOST_REQUIRE_CLOSE(kdeBinary.AbsoluteError(), absError, 1e-8);
-
-  BOOST_REQUIRE_EQUAL(kde.BreadthFirst(), bf);
-  BOOST_REQUIRE_EQUAL(kdeXml.BreadthFirst(), bf);
-  BOOST_REQUIRE_EQUAL(kdeText.BreadthFirst(), bf);
-  BOOST_REQUIRE_EQUAL(kdeBinary.BreadthFirst(), bf);
 
   BOOST_REQUIRE_EQUAL(kde.IsTrained(), true);
   BOOST_REQUIRE_EQUAL(kdeXml.IsTrained(), true);

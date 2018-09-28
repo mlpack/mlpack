@@ -44,13 +44,13 @@ template<typename MetricType,
          typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-KDE<MetricType, MatType, KernelType, TreeType>::KDE() :
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType>
+KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::KDE() :
     kernel(new KernelType()),
     metric(new MetricType()),
     relError(0.05),
     absError(0.0),
-    breadthFirst(false),
     ownsKernel(true),
     ownsMetric(true),
     ownsReferenceTree(false),
@@ -61,17 +61,16 @@ template<typename MetricType,
          typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-KDE<MetricType, MatType, KernelType, TreeType>::
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType>
+KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
 KDE(const double bandwidth,
     const double relError,
-    const double absError,
-    const bool breadthFirst) :
+    const double absError) :
     kernel(new KernelType(bandwidth)),
     metric(new MetricType()),
     relError(relError),
     absError(absError),
-    breadthFirst(breadthFirst),
     ownsKernel(true),
     ownsMetric(true),
     ownsReferenceTree(false),
@@ -85,18 +84,17 @@ template<typename MetricType,
          typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-KDE<MetricType, MatType, KernelType, TreeType>::
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType>
+KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
 KDE(MetricType& metric,
     KernelType& kernel,
     const double relError,
-    const double absError,
-    const bool breadthFirst) :
+    const double absError) :
     kernel(&kernel),
     metric(&metric),
     relError(relError),
     absError(absError),
-    breadthFirst(breadthFirst),
     ownsKernel(false),
     ownsMetric(false),
     ownsReferenceTree(false),
@@ -110,13 +108,14 @@ template<typename MetricType,
          typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-KDE<MetricType, MatType, KernelType, TreeType>::KDE(const KDE& other) :
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType>
+KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
+KDE(const KDE& other) :
     kernel(new KernelType(other.kernel)),
     metric(new MetricType(other.metric)),
     relError(other.relError),
     absError(other.absError),
-    breadthFirst(other.breadthFirst),
     ownsKernel(other.ownsKernel),
     ownsMetric(other.ownsMetric),
     ownsReferenceTree(other.ownsReferenceTree),
@@ -142,15 +141,16 @@ template<typename MetricType,
          typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-KDE<MetricType, MatType, KernelType, TreeType>::KDE(KDE&& other) :
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType>
+KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
+KDE(KDE&& other) :
     kernel(other.kernel),
     metric(other.metric),
     referenceTree(other.referenceTree),
     oldFromNewReferences(other.oldFromNewReferences),
     relError(other.relError),
     absError(other.absError),
-    breadthFirst(other.breadthFirst),
     ownsKernel(other.ownsKernel),
     ownsMetric(other.ownsMetric),
     ownsReferenceTree(other.ownsReferenceTree),
@@ -169,9 +169,11 @@ template<typename MetricType,
          typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-KDE<MetricType, MatType, KernelType, TreeType>&
-KDE<MetricType, MatType, KernelType, TreeType>::operator=(KDE other)
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType>
+KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>&
+KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
+operator=(KDE other)
 {
   // Clean memory
   if (ownsKernel)
@@ -191,7 +193,6 @@ KDE<MetricType, MatType, KernelType, TreeType>::operator=(KDE other)
   this->oldFromNewReferences = std::move(other.oldFromNewReferences);
   this->relError = other.relError;
   this->absError = other.absError;
-  this->breadthFirst = other.breadthFirst;
   this->ownsKernel = other.ownsKernel;
   this->ownsMetric = other.ownsMetric;
   this->ownsReferenceTree = other.ownsReferenceTree;
@@ -205,8 +206,9 @@ template<typename MetricType,
          typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-KDE<MetricType, MatType, KernelType, TreeType>::~KDE()
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType>
+KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::~KDE()
 {
   if (ownsKernel)
     delete kernel;
@@ -224,8 +226,9 @@ template<typename MetricType,
          typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-void KDE<MetricType, MatType, KernelType, TreeType>::
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType>
+void KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
 Train(MatType referenceSet)
 {
   // Check if referenceSet is not an empty set.
@@ -249,8 +252,9 @@ template<typename MetricType,
          typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-void KDE<MetricType, MatType, KernelType, TreeType>::
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType>
+void KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
 Train(Tree* referenceTree, std::vector<size_t>* oldFromNewReferences)
 {
   // Check if referenceTree dataset is not an empty set.
@@ -273,8 +277,9 @@ template<typename MetricType,
          typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-void KDE<MetricType, MatType, KernelType, TreeType>::
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType>
+void KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
 Evaluate(MatType querySet, arma::vec& estimations)
 {
   std::vector<size_t> oldFromNewQueries;
@@ -288,8 +293,9 @@ template<typename MetricType,
          typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-void KDE<MetricType, MatType, KernelType, TreeType>::
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType>
+void KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
 Evaluate(Tree* queryTree,
          const std::vector<size_t>& oldFromNewQueries,
          arma::vec& estimations)
@@ -321,19 +327,10 @@ Evaluate(Tree* queryTree,
                             *metric,
                             *kernel,
                             false);
-  if (breadthFirst)
-  {
-    // DualTreeTraverser Breadth-First
-    typename Tree::template BreadthFirstDualTreeTraverser<RuleType>
-      traverser(rules);
-    traverser.Traverse(*queryTree, *referenceTree);
-  }
-  else
-  {
-    // DualTreeTraverser Depth-First
-    typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
-    traverser.Traverse(*queryTree, *referenceTree);
-  }
+
+  // Create traverser.
+  DualTreeTraversalType<RuleType> traverser(rules);
+  traverser.Traverse(*queryTree, *referenceTree);
   estimations /= referenceTree->Dataset().n_cols;
 }
 
@@ -342,8 +339,9 @@ template<typename MetricType,
          typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-void KDE<MetricType, MatType, KernelType, TreeType>::
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType>
+void KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
 Evaluate(arma::vec& estimations)
 {
   // Get estimations vector ready.
@@ -362,19 +360,10 @@ Evaluate(arma::vec& estimations)
                             *metric,
                             *kernel,
                             true);
-  if (breadthFirst)
-  {
-    // DualTreeTraverser Breadth-First
-    typename Tree::template BreadthFirstDualTreeTraverser<RuleType>
-      traverser(rules);
-    traverser.Traverse(*referenceTree, *referenceTree);
-  }
-  else
-  {
-    // DualTreeTraverser Depth-First
-    typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
-    traverser.Traverse(*referenceTree, *referenceTree);
-  }
+
+  // Create traverser.
+  DualTreeTraversalType<RuleType> traverser(rules);
+  traverser.Traverse(*referenceTree, *referenceTree);
   estimations /= referenceTree->Dataset().n_cols;
 }
 
@@ -383,8 +372,9 @@ template<typename MetricType,
          typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-void KDE<MetricType, MatType, KernelType, TreeType>::
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType>
+void KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
 RelativeError(const double newError)
 {
   CheckErrorValues(newError, absError);
@@ -396,8 +386,9 @@ template<typename MetricType,
          typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-void KDE<MetricType, MatType, KernelType, TreeType>::
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType>
+void KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
 AbsoluteError(const double newError)
 {
   CheckErrorValues(relError, newError);
@@ -409,15 +400,15 @@ template<typename MetricType,
          typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType>
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType>
 template<typename Archive>
-void KDE<MetricType, MatType, KernelType, TreeType>::
+void KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
 serialize(Archive& ar, const unsigned int /* version */)
 {
   // Serialize preferences.
   ar & BOOST_SERIALIZATION_NVP(relError);
   ar & BOOST_SERIALIZATION_NVP(absError);
-  ar & BOOST_SERIALIZATION_NVP(breadthFirst);
   ar & BOOST_SERIALIZATION_NVP(trained);
 
   // If we are loading, clean up memory if necessary.
@@ -450,8 +441,9 @@ template<typename MetricType,
          typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-void KDE<MetricType, MatType, KernelType, TreeType>::
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType>
+void KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
 CheckErrorValues(const double relError, const double absError) const
 {
   if (relError < 0 || relError > 1)

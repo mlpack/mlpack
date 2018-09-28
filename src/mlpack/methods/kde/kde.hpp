@@ -39,7 +39,11 @@ template<typename MetricType = mlpack::metric::EuclideanDistance,
          typename KernelType = kernel::GaussianKernel,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType = tree::KDTree>
+                  typename TreeMatType> class TreeType = tree::KDTree,
+         template<typename RuleType> class DualTreeTraversalType =
+             TreeType<MetricType,
+                      kde::KDEStat,
+                      MatType>::template DualTreeTraverser>
 class KDE
 {
  public:
@@ -61,13 +65,10 @@ class KDE
    * @param bandwidth Bandwidth of the kernel.
    * @param relError Relative error tolerance of the model.
    * @param absError Absolute error tolerance of the model.
-   * @param breadthFirst Whether the tree should be traversed using a
-   *        breadth-first approach.
    */
   KDE(const double bandwidth,
       const double relError = 0.05,
-      const double absError = 0,
-      const bool breadthFirst = false);
+      const double absError = 0);
 
   /**
    * Initialize KDE object using custom instantiated Metric and Kernel objects.
@@ -76,14 +77,11 @@ class KDE
    * @param kernel Instantiated kernel object.
    * @param relError Relative error tolerance of the model.
    * @param absError Absolute error tolerance of the model.
-   * @param breadthFirst Whether the tree should be traversed using a
-   *        breadth-first approach.
    */
   KDE(MetricType& metric,
       KernelType& kernel,
       const double relError = 0.05,
-      const double absError = 0,
-      const bool breadthFirst = false);
+      const double absError = 0);
 
   /**
    * Construct KDE object as a copy of the given model. This may be
@@ -204,12 +202,6 @@ class KDE
   //! Modify absolute error tolerance (0 <= newError).
   void AbsoluteError(const double newError);
 
-  //! Get whether breadth-first traversal is being used.
-  bool BreadthFirst() const { return breadthFirst; }
-
-  //! Modify whether breadth-first traversal is being used.
-  bool& BreadthFirst() { return breadthFirst; }
-
   //! Check whether reference tree is owned by the KDE model.
   bool OwnsReferenceTree() const { return ownsReferenceTree; }
 
@@ -238,9 +230,6 @@ class KDE
 
   //! Absolute error tolerance.
   double absError;
-
-  //! If true, a breadth-first approach is used when evaluating.
-  bool breadthFirst;
 
   //! If true, the KDE object is responsible for deleting the kernel.
   bool ownsKernel;

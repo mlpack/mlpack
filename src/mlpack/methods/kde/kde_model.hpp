@@ -32,7 +32,13 @@ template<typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-using KDEType = KDE<metric::EuclideanDistance, arma::mat, KernelType, TreeType>;
+using KDEType = KDE<metric::EuclideanDistance,
+                    arma::mat,
+                    KernelType,
+                    TreeType,
+                    TreeType<metric::EuclideanDistance,
+                             kde::KDEStat,
+                             arma::mat>::template DualTreeTraverser>;
 
 /**
  * DualMonoKDE computes a Kernel Density Estimation on the given KDEType.
@@ -204,9 +210,6 @@ class KDEModel
   //! Absolute error tolerance.
   double absError;
 
-  //! If true, a breadth-first approach is used when evaluating.
-  bool breadthFirst;
-
   KernelTypes kernelType;
 
   TreeTypes treeType;
@@ -237,15 +240,12 @@ class KDEModel
    * @param absError Maximum absolute error tolerance for each point in the
    *                 model. For example, 0.1 means that for each point the
    *                 value can have a maximum error of 0.1 units.
-   * @param breadthFirst Whether the tree should be traversed using a
-   *                     breadth-first approach.
    * @param kernelType Type of kernel to use.
    * @param treeType Type of tree to use.
    */
   KDEModel(const double bandwidth = 1.0,
            const double relError = 0.05,
            const double absError = 0,
-           const bool breadthFirst = false,
            const KernelTypes kernelType = KernelTypes::GAUSSIAN_KERNEL,
            const TreeTypes treeType = TreeTypes::KD_TREE);
 
@@ -288,12 +288,6 @@ class KDEModel
 
   //! Modify the absolute error tolerance.
   double& AbsoluteError() { return absError; }
-
-  //! Get whether breadth-first traversal is being used.
-  bool BreadthFirst() const { return breadthFirst; }
-
-  //! Modify whether breadth-first traversal is being used.
-  bool& BreadthFirst() { return breadthFirst; }
 
   //! Get the tree type of the model.
   TreeTypes TreeType() const { return treeType; }

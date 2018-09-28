@@ -24,13 +24,11 @@ namespace kde {
 inline KDEModel::KDEModel(const double bandwidth,
                           const double relError,
                           const double absError,
-                          const bool breadthFirst,
                           const KernelTypes kernelType,
                           const TreeTypes treeType) :
   bandwidth(bandwidth),
   relError(relError),
   absError(absError),
-  breadthFirst(breadthFirst),
   kernelType(kernelType),
   treeType(treeType)
 {
@@ -42,7 +40,6 @@ inline KDEModel::KDEModel(const KDEModel& other) :
   bandwidth(other.bandwidth),
   relError(other.relError),
   absError(other.absError),
-  breadthFirst(other.breadthFirst),
   kernelType(other.kernelType),
   treeType(other.treeType)
 {
@@ -54,7 +51,6 @@ inline KDEModel::KDEModel(KDEModel&& other) :
   bandwidth(other.bandwidth),
   relError(other.relError),
   absError(other.absError),
-  breadthFirst(other.breadthFirst),
   kernelType(other.kernelType),
   treeType(other.treeType),
   kdeModel(std::move(other.kdeModel))
@@ -63,7 +59,6 @@ inline KDEModel::KDEModel(KDEModel&& other) :
   other.bandwidth = 1.0;
   other.relError = 0.05;
   other.absError = 0;
-  other.breadthFirst = false;
   other.kernelType = KernelTypes::GAUSSIAN_KERNEL;
   other.treeType = TreeTypes::KD_TREE;
   other.kdeModel = decltype(other.kdeModel)();
@@ -75,7 +70,6 @@ inline KDEModel& KDEModel::operator=(KDEModel other)
   bandwidth = other.bandwidth;
   relError = other.relError;
   absError = other.absError;
-  breadthFirst = other.breadthFirst;
   kernelType = other.kernelType;
   treeType = other.treeType;
   kdeModel = std::move(other.kdeModel);
@@ -96,52 +90,52 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
   if (kernelType == GAUSSIAN_KERNEL && treeType == KD_TREE)
   {
     kdeModel = new KDEType<kernel::GaussianKernel, tree::KDTree>
-        (bandwidth, relError, absError, breadthFirst);
+        (bandwidth, relError, absError);
   }
   else if (kernelType == GAUSSIAN_KERNEL && treeType == BALL_TREE)
   {
     kdeModel = new KDEType<kernel::GaussianKernel, tree::BallTree>
-        (bandwidth, relError, absError, breadthFirst);
+        (bandwidth, relError, absError);
   }
   else if (kernelType == EPANECHNIKOV_KERNEL && treeType == KD_TREE)
   {
     kdeModel = new KDEType<kernel::EpanechnikovKernel, tree::KDTree>
-        (bandwidth, relError, absError, breadthFirst);
+        (bandwidth, relError, absError);
   }
   else if (kernelType == EPANECHNIKOV_KERNEL && treeType == BALL_TREE)
   {
     kdeModel = new KDEType<kernel::EpanechnikovKernel, tree::BallTree>
-        (bandwidth, relError, absError, breadthFirst);
+        (bandwidth, relError, absError);
   }
   else if (kernelType == LAPLACIAN_KERNEL && treeType == KD_TREE)
   {
     kdeModel = new KDEType<kernel::LaplacianKernel, tree::KDTree>
-        (bandwidth, relError, absError, breadthFirst);
+        (bandwidth, relError, absError);
   }
   else if (kernelType == LAPLACIAN_KERNEL && treeType == BALL_TREE)
   {
     kdeModel = new KDEType<kernel::LaplacianKernel, tree::BallTree>
-        (bandwidth, relError, absError, breadthFirst);
+        (bandwidth, relError, absError);
   }
   else if (kernelType == SPHERICAL_KERNEL && treeType == KD_TREE)
   {
     kdeModel = new KDEType<kernel::SphericalKernel, tree::KDTree>
-        (bandwidth, relError, absError, breadthFirst);
+        (bandwidth, relError, absError);
   }
   else if (kernelType == SPHERICAL_KERNEL && treeType == BALL_TREE)
   {
     kdeModel = new KDEType<kernel::SphericalKernel, tree::BallTree>
-        (bandwidth, relError, absError, breadthFirst);
+        (bandwidth, relError, absError);
   }
   else if (kernelType == TRIANGULAR_KERNEL && treeType == KD_TREE)
   {
     kdeModel = new KDEType<kernel::TriangularKernel, tree::KDTree>
-        (bandwidth, relError, absError, breadthFirst);
+        (bandwidth, relError, absError);
   }
   else if (kernelType == TRIANGULAR_KERNEL && treeType == BALL_TREE)
   {
     kdeModel = new KDEType<kernel::TriangularKernel, tree::BallTree>
-        (bandwidth, relError, absError, breadthFirst);
+        (bandwidth, relError, absError);
   }
 
   TrainVisitor train(std::move(referenceSet));
@@ -338,7 +332,6 @@ void KDEModel::serialize(Archive& ar, const unsigned int /* version */)
   ar & BOOST_SERIALIZATION_NVP(bandwidth);
   ar & BOOST_SERIALIZATION_NVP(relError);
   ar & BOOST_SERIALIZATION_NVP(absError);
-  ar & BOOST_SERIALIZATION_NVP(breadthFirst);
   ar & BOOST_SERIALIZATION_NVP(kernelType);
   ar & BOOST_SERIALIZATION_NVP(treeType);
 
