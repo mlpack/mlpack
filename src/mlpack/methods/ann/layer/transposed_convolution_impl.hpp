@@ -274,7 +274,7 @@ void TransposedConvolution<
       weight.n_cols, weight.n_slices, false, false);
   gradientTemp.zeros();
 
-  arma::Mat<eT> inputSlice, output, deltaSlice;
+  arma::Mat<eT> inputSlice, output, deltaSlice, rotatedOutput;
 
   for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
       outSize * batchSize; outMap++)
@@ -289,8 +289,6 @@ void TransposedConvolution<
 
     for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
     {
-      arma::Mat<eT> inputSlice, output;
-
       if (dW > 1 || dH > 1 || padW != 0 || padH != 0 || aW != 0 || aH != 0)
       {
         inputSlice = inputPaddedTemp.slice(inMap + batchCount * inSize);
@@ -302,8 +300,8 @@ void TransposedConvolution<
 
       GradientConvolutionRule::Convolution(inputSlice, deltaSlice,
           output, 1, 1);
-
-      gradientTemp.slice(outMapIdx) += output;
+      Rotate180(output, rotatedOutput);
+      gradientTemp.slice(outMapIdx) += rotatedOutput;
     }
 
     gradient.submat(weight.n_elem + (outMap % outSize), 0, weight.n_elem +
