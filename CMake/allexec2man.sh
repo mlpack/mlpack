@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
@@ -23,5 +23,4 @@ for program in $(find . -type f -executable -iname 'mlpack_*' | \
                 grep -v '_test$'); do
   echo "Generating man page for $program...";
   "$exec2man" "$program" "$outdir/$program.1"
-  gzip -f "$outdir/$program.1"
 done
