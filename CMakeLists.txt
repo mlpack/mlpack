@@ -119,6 +119,14 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   endif ()
 endif()
 
+# If we're using gcc, then we need to link against pthreads to use std::thread,
+# which we do in the tests.
+if(CMAKE_COMPILER_IS_GNUCC)
+  find_package(Threads)
+  set(COMPILER_SUPPORT_LIBRARIES ${COMPILER_SUPPORT_LIBRARIES}
+      ${CMAKE_THREAD_LIBS_INIT})
+endif()
+
 # Setup build for test coverage
 if(BUILD_WITH_COVERAGE)
   # Currently coverage only works with GNU g++
