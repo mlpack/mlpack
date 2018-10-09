@@ -355,6 +355,7 @@ if (OPENMP_FOUND)
 else ()
   # Disable warnings for all the unknown OpenMP pragmas.
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
+  set(OpenMP_CXX_FLAGS "")
 endif ()
 
 # Create a 'distclean' target in case the user is using an in-source build for

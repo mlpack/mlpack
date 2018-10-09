@@ -24,6 +24,11 @@ from Cython.Distutils import build_ext
 
 pyxs='${MLPACK_PYXS}'.split(';')
 
+if not '${OpenMP_CXX_FLAGS}':
+  extra_link_args=[]
+else:
+  extra_link_args=['${OpenMP_CXX_FLAGS}']
+
 # Only build the extensions if we are asked to.
 if os.getenv('NO_BUILD') == '1':
   modules = []
@@ -47,7 +52,7 @@ else:
                   library_dirs=['${CMAKE_BINARY_DIR}/lib/'],
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
-                  extra_link_args=['${OpenMP_CXX_FLAGS}'],
+                  extra_link_args=extra_link_args,
                   undef_macros=[] if len("${DISABLE_CFLAGS}") == 0 \
                       else '${DISABLE_CFLAGS}'.split(';')) \
         for name in pyxs if name == module]
@@ -65,7 +70,7 @@ else:
                   library_dirs=['${CMAKE_BINARY_DIR}/lib/'],
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
-                  extra_link_args=['${OpenMP_CXX_FLAGS}'],
+                  extra_link_args=extra_link_args,
                   undef_macros=[] if len("${DISABLE_CFLAGS}") == 0 \
                       else '${DISABLE_CFLAGS}'.split(';')) \
         for name in pyxs]
