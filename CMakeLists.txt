@@ -150,11 +150,6 @@ if(BUILD_WITH_COVERAGE)
   endif()
 endif()
 
-# For clock_gettime().
-if (UNIX AND NOT APPLE AND NOT HAIKU)
-  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "rt")
-endif ()
-
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
 if(DEBUG)
   if (NOT MSVC)
