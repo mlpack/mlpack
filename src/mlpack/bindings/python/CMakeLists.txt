@@ -185,8 +185,9 @@ if (BUILD_PYTHON_BINDINGS)
           -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_pyx_${name}.cpp
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
           -DPROGRAM_NAME=${name}
-          -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureGeneratePYX.cmake
-      DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_pyx.cpp.in)
+          -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake
+      DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_pyx.cpp.in
+              ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake)
 
   add_executable(generate_pyx_${name}
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_pyx_${name}.cpp
@@ -197,9 +198,9 @@ if (BUILD_PYTHON_BINDINGS)
       -DBINDING_TYPE=BINDING_TYPE_PYX)
   add_custom_command(TARGET generate_pyx_${name} POST_BUILD
       COMMAND ${CMAKE_COMMAND}
-          -DGENERATE_PYX_PROGRAM=${CMAKE_BINARY_DIR}/bin/generate_pyx_${name}
-          -DPYX_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${name}.pyx
-          -P ${CMAKE_SOURCE_DIR}/CMake/GeneratePYX.cmake)
+          -DGENERATE_BINDING_PROGRAM=${CMAKE_BINARY_DIR}/bin/generate_pyx_${name}
+          -DBINDING_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${name}.pyx
+          -P ${CMAKE_SOURCE_DIR}/CMake/GenerateBinding.cmake)
 
   # Build the pyx.  Since distutils doesn't support a parallel build, we'll
   # enforce it here.  Although this will always be rebuilt, that's okay because

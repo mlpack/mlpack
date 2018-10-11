@@ -29,5 +29,8 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 # Add mlpack_knn and mlpack_kfn executables.
 add_cli_executable(knn)
 add_python_binding(knn)
+add_julia_binding(knn)
+
 add_cli_executable(kfn)
 add_python_binding(kfn)
+add_julia_binding(kfn)

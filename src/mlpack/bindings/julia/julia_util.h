@@ -54,11 +54,25 @@ void CLI_SetParamMat(const char* paramName,
 /**
  * Call CLI::SetParam<arma::Mat<size_t>>().
  */
-void CLI_SetParamUmat(const char* paramName,
+void CLI_SetParamUMat(const char* paramName,
                       size_t* memptr,
                       const size_t rows,
                       const size_t cols,
                       const bool pointsAsRows);
+
+/**
+ * Call CLI::SetParam<arma::Row<size_t>>().
+ */
+void CLI_SetParamURow(const char* paramName,
+                      size_t* memptr,
+                      const size_t cols);
+
+/**
+ * Call CLI::SetParam<arma::Col<size_t>>().
+ */
+void CLI_SetParamUCol(const char* paramName,
+                      size_t* memptr,
+                      const size_t rows);
 
 /**
  * Get the number of rows in a matrix parameter.
@@ -76,6 +90,18 @@ size_t CLI_GetParamMatCols(const char* paramName);
  * the memory!
  */
 double* CLI_GetParamMat(const char* paramName);
+
+/**
+ * Get the number of columns in a row parameter.
+ */
+size_t CLI_GetParamURowCols(const char* paramName);
+
+/**
+ * Get the memory pointer for a row parameter.
+ * Note that this will assume that whatever is calling will take ownership of
+ * the memory!
+ */
+size_t* CLI_GetParamURow(const char* paramName);
 
 /**
  * Enable verbose output.

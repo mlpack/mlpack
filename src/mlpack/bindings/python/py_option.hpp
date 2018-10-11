@@ -51,6 +51,8 @@ class PyOption
            const bool noTranspose = false,
            const std::string& /*testName*/ = "")
   {
+    std::cout << "Add parameter " << identifier << " with program name " <<
+programName << ".\n";
     // Create the ParamData object to give to CLI.
     util::ParamData data;
 

@@ -1,12 +1,103 @@
-add_library(mlpack_julia_util
-  julia_util.h
-  julia_util.cpp)
+if (BUILD_JULIA_BINDINGS)
 
-target_link_libraries(mlpack_julia_util mlpack)
+  add_library(mlpack_julia_util
+    julia_util.h
+    julia_util.cpp)
 
-add_library(mlpack_julia_pca
-  julia_pca.h
-  julia_pca.cpp
-)
+  target_link_libraries(mlpack_julia_util mlpack)
 
-target_link_libraries(mlpack_julia_pca mlpack)
+  ## We need to check here if Julia is even available.  Although actually
+  ## technically, I'm not sure if we even need to know!  For the tests though we
+  ## do.  So it's probably a good idea to check.
+  find_package(Julia 0.7.0)
+  if (NOT JULIA_FOUND)
+    # We can't build anything, so define the macro to do nothing.
+    macro (add_julia_binding name)
+      # Do nothing.
+    endmacro ()
+
+    return ()
+  endif ()
+
+  add_custom_target(julia ALL)
+
+  add_custom_command(TARGET julia PRE_BUILD
+      COMMAND ${CMAKE_COMMAND} -E make_directory
+          ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/)
+  add_custom_command(TARGET julia PRE_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy
+          ${CMAKE_CURRENT_SOURCE_DIR}/mlpack/cli.jl
+          ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/cli.jl)
+endif ()
+
+macro (add_julia_binding name)
+if (BUILD_JULIA_BINDINGS)
+  # We have to take multiple steps.
+
+  # 1. Generate julia_${name}.h and julia_${name}.cpp.
+  add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/julia_${name}.h
+                            ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/julia_${name}.cpp
+      COMMAND ${CMAKE_COMMAND}
+          -DPROGRAM_NAME="${name}"
+          -DPROGRAM_MAIN_FILE="${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp"
+          -DJULIA_H_IN="${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.h.in"
+          -DJULIA_H_OUT="${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/julia_${name}.h"
+          -DJULIA_CPP_IN="${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.cpp.in"
+          -DJULIA_CPP_OUT="${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/julia_${name}.cpp"
+          -P ${CMAKE_SOURCE_DIR}/CMake/julia/ConfigureJuliaHCPP.cmake
+      DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.h.in
+              ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.cpp.in
+              ${CMAKE_SOURCE_DIR}/CMake/julia/ConfigureJuliaHCPP.cmake)
+
+  # 2. Build libmlpack_julia_${name}.so.
+  add_library(mlpack_julia_${name}
+      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/julia_${name}.h
+      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/julia_${name}.cpp)
+  target_link_libraries(mlpack_julia_${name} mlpack mlpack_julia_util)
+
+  # 3. Generate ${name}.jl.
+  add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/generate_jl_${name}.cpp
+      COMMAND ${CMAKE_COMMAND}
+          -DNAME=${name}
+          -DGENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/generate_jl.cpp.in
+          -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/generate_jl_${name}.cpp
+          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+          -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake
+      DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/generate_jl.cpp.in
+              ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake)
+
+  add_executable(generate_jl_${name}
+      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/generate_jl_${name}.cpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_jl.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_jl.cpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/get_julia_type.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/get_param.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/get_printable_param.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_option.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_doc_functions.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_doc_functions_impl.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_input_param.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_input_processing.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_input_processing_impl.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_output_processing.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_output_processing_impl.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_param_defn.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/strip_type.hpp)
+  target_link_libraries(generate_jl_${name} mlpack ${MLPACK_LIBRARIES})
+  set_target_properties(generate_jl_${name} PROPERTIES COMPILE_FLAGS
+      -DBINDING_TYPE=BINDING_TYPE_JL)
+  add_custom_command(TARGET generate_jl_${name} POST_BUILD
+      COMMAND ${CMAKE_COMMAND}
+          -DGENERATE_BINDING_PROGRAM=${CMAKE_BINARY_DIR}/bin/generate_jl_${name}
+          -DBINDING_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/${name}.jl
+          -P ${CMAKE_SOURCE_DIR}/CMake/GenerateBinding.cmake)
+
+  # Add the generate_jl_${name} target to the list of targets that are built
+  # when 'make julia' is typed.
+  add_dependencies(julia generate_jl_${name})
+endif ()
+endmacro ()
+
+if (BUILD_TESTS)
+  add_subdirectory(tests)
+endif ()

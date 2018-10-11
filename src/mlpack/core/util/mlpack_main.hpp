@@ -21,6 +21,7 @@
 #define BINDING_TYPE_CLI 0
 #define BINDING_TYPE_TEST 1
 #define BINDING_TYPE_PYX 2
+#define BINDING_TYPE_JL 3
 #define BINDING_TYPE_UNKNOWN -1
 
 #ifndef BINDING_TYPE
@@ -147,6 +148,45 @@ PARAM_FLAG("copy_all_inputs", "If specified, all input parameters will be deep"
     "slow down the code.", "");
 
 // Nothing else needs to be defined---the binding will use mlpackMain() as-is.
+
+#elif(BINDING_TYPE == BINDING_TYPE_JL) // This is a Julia binding.
+
+#include <mlpack/bindings/julia/julia_option.hpp>
+#include <mlpack/bindings/julia/print_doc_functions.hpp>
+
+#define PRINT_PARAM_STRING mlpack::bindings::julia::ParamString
+#define PRINT_PARAM_VALUE mlpack::bindings::julia::PrintValue
+#define PRINT_DATASET mlpack::bindings::julia::PrintDataset
+#define PRINT_MODEL mlpack::bindings::julia::PrintModel
+#define PRINT_CALL mlpack::bindings::julia::ProgramCall
+#define BINDING_IGNORE_CHECK mlpack::bindings::julia::IgnoreCheck
+
+namespace mlpack {
+namespace util {
+
+template<typename T>
+using Option = mlpack::bindings::julia::JuliaOption<T>;
+
+}
+}
+
+static const std::string testName = "";
+#include <mlpack/core/util/param.hpp>
+
+#undef PROGRAM_INFO
+#define PROGRAM_INFO(NAME, DESC) static mlpack::util::ProgramDoc \
+    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, \
+        []() { return DESC; }); \
+    namespace mlpack { \
+    namespace bindings { \
+    namespace julia { \
+    std::string programName = NAME; \
+    } \
+    } \
+    }
+
+PARAM_FLAG("verbose", "Display informational messages and the full list of "
+    "parameters and timers at the end of execution.", "v");
 
 #else
 

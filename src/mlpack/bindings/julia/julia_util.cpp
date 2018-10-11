@@ -75,7 +75,7 @@ void CLI_SetParamMat(const char* paramName,
 /**
  * Call CLI::SetParam<arma::Mat<size_t>>().
  */
-void CLI_SetParamUmat(const char* paramName,
+void CLI_SetParamUMat(const char* paramName,
                       size_t* memptr,
                       const size_t rows,
                       const size_t cols,
@@ -85,6 +85,30 @@ void CLI_SetParamUmat(const char* paramName,
   arma::Mat<size_t> m(memptr, rows, cols, false, true);
   CLI::GetParam<arma::Mat<size_t>>(paramName) = pointsAsRows ? m.t() :
       std::move(m);
+  CLI::SetPassed(paramName);
+}
+
+/**
+ * Call CLI::SetParam<arma::Row<size_t>>().
+ */
+void CLI_SetParamURow(const char* paramName,
+                      size_t* memptr,
+                      const size_t cols)
+{
+  arma::Row<size_t> m(memptr, cols, false, true);
+  CLI::GetParam<arma::Row<size_t>>(paramName) = std::move(m);
+  CLI::SetPassed(paramName);
+}
+
+/**
+ * Call CLI::SetParam<arma::Col<size_t>>().
+ */
+void CLI_SetParamUCol(const char* paramName,
+                      size_t* memptr,
+                      const size_t rows)
+{
+  arma::Col<size_t> m(memptr, rows, false, true);
+  CLI::GetParam<arma::Col<size_t>>(paramName) = std::move(m);
   CLI::SetPassed(paramName);
 }
 
@@ -113,6 +137,25 @@ double* CLI_GetParamMat(const char* paramName)
 {
   arma::access::rw(CLI::GetParam<arma::mat>(paramName).mem_state) = 1;
   return CLI::GetParam<arma::mat>(paramName).memptr();
+}
+
+/**
+ * Get the number of columns in a row parameter.
+ */
+size_t CLI_GetParamURowCols(const char* paramName)
+{
+  return CLI::GetParam<arma::Row<size_t>>(paramName).n_cols;
+}
+
+/**
+ * Get the memory pointer for a row parameter.
+ * Note that this will assume that whatever is calling will take ownership of
+ * the memory!
+ */
+size_t* CLI_GetParamURow(const char* paramName)
+{
+  arma::access::rw(CLI::GetParam<arma::Row<size_t>>(paramName).mem_state) = 1;
+  return CLI::GetParam<arma::Row<size_t>>(paramName).memptr();
 }
 
 /**
