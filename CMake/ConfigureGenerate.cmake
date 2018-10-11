@@ -1,4 +1,4 @@
-# ConfigureGeneratePYX.cmake: generate an mlpack .pyx file given input
+# ConfigureGenerate.cmake: generate an mlpack binding file given input
 # arguments.
 #
 # This file depends on the following variables being set:
