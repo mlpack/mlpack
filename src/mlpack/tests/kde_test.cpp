@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(GaussianKDEBruteForceTest)
       tree::KDTree>
     kde(metric, kernel, relError, 0.0);
   kde.Train(reference);
-  kde.Evaluate(std::move(query), treeEstimations);
+  kde.Evaluate(query, treeEstimations);
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
@@ -231,7 +231,7 @@ BOOST_AUTO_TEST_CASE(OctreeGaussianKDETest)
       tree::Octree>
     kde(metric, kernel, relError, 0.0);
   kde.Train(reference);
-  kde.Evaluate(std::move(query), treeEstimations);
+  kde.Evaluate(query, treeEstimations);
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
@@ -265,7 +265,42 @@ BOOST_AUTO_TEST_CASE(RTreeGaussianKDETest)
       tree::RTree>
     kde(metric, kernel, relError, 0.0);
   kde.Train(reference);
-  kde.Evaluate(std::move(query), treeEstimations);
+  kde.Evaluate(query, treeEstimations);
+
+  // Check whether results are equal.
+  for (size_t i = 0; i < query.n_cols; ++i)
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
+}
+
+/**
+ * Test Standard Cover Tree dual-tree implementation results against brute
+ * force results.
+ */
+BOOST_AUTO_TEST_CASE(StandardCoverTreeGaussianKDETest)
+{
+  arma::mat reference = arma::randu(2, 500);
+  arma::mat query = arma::randu(2, 200);
+  arma::vec bfEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  arma::vec treeEstimations = arma::vec(query.n_cols, arma::fill::zeros);
+  const double kernelBandwidth = 0.3;
+  const double relError = 0.01;
+
+  // Brute force KDE
+  GaussianKernel kernel(kernelBandwidth);
+  BruteForceKDE<GaussianKernel>(reference,
+                                query,
+                                bfEstimations,
+                                kernel);
+
+  // Optimized KDE
+  metric::EuclideanDistance metric;
+  KDE<metric::EuclideanDistance,
+      arma::mat,
+      kernel::GaussianKernel,
+      tree::StandardCoverTree>
+    kde(metric, kernel, relError, 0.0);
+  kde.Train(reference);
+  kde.Evaluate(query, treeEstimations);
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
