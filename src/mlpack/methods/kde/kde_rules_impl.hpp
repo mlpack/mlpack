@@ -59,12 +59,18 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
   if (sameSet && (queryIndex == referenceIndex))
     return 0.0;
 
+  // Avoid duplicated calculations.
+  if ((lastQueryIndex == queryIndex) && (lastReferenceIndex == referenceIndex))
+    return 0.0;
+
+  // Calculations.
   double distance = metric.Evaluate(querySet.col(queryIndex),
                                     referenceSet.col(referenceIndex));
   if (tree::TreeTraits<TreeType>::RearrangesDataset)
     densities(oldFromNewQueries.at(queryIndex)) += kernel.Evaluate(distance);
   else
     densities(queryIndex) += kernel.Evaluate(distance);
+
   ++baseCases;
   lastQueryIndex = queryIndex;
   lastReferenceIndex = referenceIndex;
@@ -96,14 +102,31 @@ template<typename MetricType, typename KernelType, typename TreeType>
 inline double KDERules<MetricType, KernelType, TreeType>::
 Score(TreeType& queryNode, TreeType& referenceNode)
 {
+  double score;
+  // Calculations are not duplicated.
+  bool newCalculations = true;
   const double maxKernel =
     kernel.Evaluate(queryNode.MinDistance(referenceNode));
   const double minKernel =
     kernel.Evaluate(queryNode.MaxDistance(referenceNode));
   const double bound = maxKernel - minKernel;
-  double score;
 
-  if (bound <= (absError + relError * minKernel) / referenceSet.n_cols)
+  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  {
+    if ((traversalInfo.LastQueryNode() != NULL) &&
+        (traversalInfo.LastReferenceNode() != NULL) &&
+        (traversalInfo.LastQueryNode()->Point(0) == queryNode.Point(0)) &&
+        (traversalInfo.LastReferenceNode()->Point(0) == referenceNode.Point(0)))
+    {
+      // Don't duplicate calculations.
+      newCalculations = false;
+      lastQueryIndex = queryNode.Point(0);
+      lastReferenceIndex = referenceNode.Point(0);
+    }
+  }
+
+  if (bound <= (absError + relError * minKernel) / referenceSet.n_cols &&
+      newCalculations)
   {
     // Auxiliary variables.
     double kernelValue;
@@ -145,7 +168,9 @@ Score(TreeType& queryNode, TreeType& referenceNode)
       kernelValue = EvaluateKernel(queryCenter, referenceCenter);
     }
 
-    #pragma omp for
+    // Can be paralellized but we avoid it for now because of a compilation
+    // error in visual C++ compiler.
+    // #pragma omp for
     for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
     {
       if (tree::TreeTraits<TreeType>::RearrangesDataset)
