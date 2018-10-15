@@ -97,6 +97,21 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
     kdeModel = new KDEType<kernel::GaussianKernel, tree::BallTree>
         (bandwidth, relError, absError);
   }
+  else if (kernelType == GAUSSIAN_KERNEL && treeType == COVER_TREE)
+  {
+    kdeModel = new KDEType<kernel::GaussianKernel, tree::StandardCoverTree>
+        (bandwidth, relError, absError);
+  }
+  else if (kernelType == GAUSSIAN_KERNEL && treeType == OCTREE)
+  {
+    kdeModel = new KDEType<kernel::GaussianKernel, tree::Octree>
+        (bandwidth, relError, absError);
+  }
+  else if (kernelType == GAUSSIAN_KERNEL && treeType == R_TREE)
+  {
+    kdeModel = new KDEType<kernel::GaussianKernel, tree::RTree>
+        (bandwidth, relError, absError);
+  }
   else if (kernelType == EPANECHNIKOV_KERNEL && treeType == KD_TREE)
   {
     kdeModel = new KDEType<kernel::EpanechnikovKernel, tree::KDTree>
@@ -105,6 +120,21 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
   else if (kernelType == EPANECHNIKOV_KERNEL && treeType == BALL_TREE)
   {
     kdeModel = new KDEType<kernel::EpanechnikovKernel, tree::BallTree>
+        (bandwidth, relError, absError);
+  }
+  else if (kernelType == EPANECHNIKOV_KERNEL && treeType == COVER_TREE)
+  {
+    kdeModel = new KDEType<kernel::EpanechnikovKernel, tree::StandardCoverTree>
+        (bandwidth, relError, absError);
+  }
+  else if (kernelType == EPANECHNIKOV_KERNEL && treeType == OCTREE)
+  {
+    kdeModel = new KDEType<kernel::EpanechnikovKernel, tree::Octree>
+        (bandwidth, relError, absError);
+  }
+  else if (kernelType == EPANECHNIKOV_KERNEL && treeType == R_TREE)
+  {
+    kdeModel = new KDEType<kernel::EpanechnikovKernel, tree::RTree>
         (bandwidth, relError, absError);
   }
   else if (kernelType == LAPLACIAN_KERNEL && treeType == KD_TREE)
@@ -117,6 +147,21 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
     kdeModel = new KDEType<kernel::LaplacianKernel, tree::BallTree>
         (bandwidth, relError, absError);
   }
+  else if (kernelType == LAPLACIAN_KERNEL && treeType == COVER_TREE)
+  {
+    kdeModel = new KDEType<kernel::LaplacianKernel, tree::StandardCoverTree>
+        (bandwidth, relError, absError);
+  }
+  else if (kernelType == LAPLACIAN_KERNEL && treeType == OCTREE)
+  {
+    kdeModel = new KDEType<kernel::LaplacianKernel, tree::Octree>
+        (bandwidth, relError, absError);
+  }
+  else if (kernelType == LAPLACIAN_KERNEL && treeType == R_TREE)
+  {
+    kdeModel = new KDEType<kernel::LaplacianKernel, tree::RTree>
+        (bandwidth, relError, absError);
+  }
   else if (kernelType == SPHERICAL_KERNEL && treeType == KD_TREE)
   {
     kdeModel = new KDEType<kernel::SphericalKernel, tree::KDTree>
@@ -127,6 +172,21 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
     kdeModel = new KDEType<kernel::SphericalKernel, tree::BallTree>
         (bandwidth, relError, absError);
   }
+  else if (kernelType == SPHERICAL_KERNEL && treeType == COVER_TREE)
+  {
+    kdeModel = new KDEType<kernel::SphericalKernel, tree::StandardCoverTree>
+        (bandwidth, relError, absError);
+  }
+  else if (kernelType == SPHERICAL_KERNEL && treeType == OCTREE)
+  {
+    kdeModel = new KDEType<kernel::SphericalKernel, tree::Octree>
+        (bandwidth, relError, absError);
+  }
+  else if (kernelType == SPHERICAL_KERNEL && treeType == R_TREE)
+  {
+    kdeModel = new KDEType<kernel::SphericalKernel, tree::RTree>
+        (bandwidth, relError, absError);
+  }
   else if (kernelType == TRIANGULAR_KERNEL && treeType == KD_TREE)
   {
     kdeModel = new KDEType<kernel::TriangularKernel, tree::KDTree>
@@ -135,6 +195,21 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
   else if (kernelType == TRIANGULAR_KERNEL && treeType == BALL_TREE)
   {
     kdeModel = new KDEType<kernel::TriangularKernel, tree::BallTree>
+        (bandwidth, relError, absError);
+  }
+   else if (kernelType == TRIANGULAR_KERNEL && treeType == COVER_TREE)
+  {
+    kdeModel = new KDEType<kernel::TriangularKernel, tree::StandardCoverTree>
+        (bandwidth, relError, absError);
+  }
+   else if (kernelType == TRIANGULAR_KERNEL && treeType == OCTREE)
+  {
+    kdeModel = new KDEType<kernel::TriangularKernel, tree::Octree>
+        (bandwidth, relError, absError);
+  }
+   else if (kernelType == TRIANGULAR_KERNEL && treeType == R_TREE)
+  {
+    kdeModel = new KDEType<kernel::TriangularKernel, tree::RTree>
         (bandwidth, relError, absError);
   }
 

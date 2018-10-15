@@ -82,7 +82,8 @@ PARAM_STRING_IN("kernel", "Kernel to use for the estimation"
     "('gaussian', 'epanechnikov', 'laplacian', 'spherical', 'triangular').",
     "k", "gaussian");
 PARAM_STRING_IN("tree", "Tree to use for the estimation"
-    "('kd-tree', 'ball-tree').", "t", "kd-tree");
+    "('kd-tree', 'ball-tree', 'cover-tree', 'octree', 'r-tree').",
+    "t", "kd-tree");
 PARAM_DOUBLE_IN("rel_error",
                 "Relative error tolerance for the result",
                 "e",
@@ -118,8 +119,8 @@ static void mlpackMain()
   // Requirements for parameter values.
   RequireParamInSet<string>("kernel", { "gaussian", "epanechnikov",
       "laplacian", "spherical", "triangular" }, true, "unknown kernel type");
-  RequireParamInSet<string>("tree", { "kd-tree", "ball-tree" }, true,
-      "unknown tree type");
+  RequireParamInSet<string>("tree", { "kd-tree", "ball-tree", "cover-tree",
+      "octree", "r-tree"}, true, "unknown tree type");
   RequireParamValue<double>("rel_error", [](double x){return x >= 0 && x <= 1;},
       true, "relative error must be between 0 and 1");
   RequireParamValue<double>("abs_error", [](double x){return x >= 0;},
@@ -154,6 +155,12 @@ static void mlpackMain()
       kde->TreeType() = KDEModel::KD_TREE;
     else if (treeStr == "ball-tree")
       kde->TreeType() = KDEModel::BALL_TREE;
+    else if (treeStr == "cover-tree")
+      kde->TreeType() = KDEModel::COVER_TREE;
+    else if (treeStr == "octree")
+      kde->TreeType() = KDEModel::OCTREE;
+    else if (treeStr == "r-tree")
+      kde->TreeType() = KDEModel::R_TREE;
 
     // Build model
     kde->BuildModel(std::move(reference));

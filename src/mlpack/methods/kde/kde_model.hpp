@@ -14,6 +14,9 @@
 
 // Include trees
 #include <mlpack/core/tree/binary_space_tree.hpp>
+#include <mlpack/core/tree/octree.hpp>
+#include <mlpack/core/tree/cover_tree.hpp>
+#include <mlpack/core/tree/rectangle_tree.hpp>
 
 // Include kernels
 #include <mlpack/core/kernels/kernel_traits.hpp>
@@ -188,7 +191,10 @@ class KDEModel
   enum TreeTypes
   {
     KD_TREE,
-    BALL_TREE
+    BALL_TREE,
+    COVER_TREE,
+    OCTREE,
+    R_TREE
   };
 
   enum KernelTypes
@@ -220,14 +226,29 @@ class KDEModel
    */
   boost::variant<KDEType<kernel::GaussianKernel, tree::KDTree>*,
                  KDEType<kernel::GaussianKernel, tree::BallTree>*,
+                 KDEType<kernel::GaussianKernel, tree::StandardCoverTree>*,
+                 KDEType<kernel::GaussianKernel, tree::Octree>*,
+                 KDEType<kernel::GaussianKernel, tree::RTree>*,
                  KDEType<kernel::EpanechnikovKernel, tree::KDTree>*,
                  KDEType<kernel::EpanechnikovKernel, tree::BallTree>*,
+                 KDEType<kernel::EpanechnikovKernel, tree::StandardCoverTree>*,
+                 KDEType<kernel::EpanechnikovKernel, tree::Octree>*,
+                 KDEType<kernel::EpanechnikovKernel, tree::RTree>*,
                  KDEType<kernel::LaplacianKernel, tree::KDTree>*,
                  KDEType<kernel::LaplacianKernel, tree::BallTree>*,
+                 KDEType<kernel::LaplacianKernel, tree::StandardCoverTree>*,
+                 KDEType<kernel::LaplacianKernel, tree::Octree>*,
+                 KDEType<kernel::LaplacianKernel, tree::RTree>*,
                  KDEType<kernel::SphericalKernel, tree::KDTree>*,
                  KDEType<kernel::SphericalKernel, tree::BallTree>*,
+                 KDEType<kernel::SphericalKernel, tree::StandardCoverTree>*,
+                 KDEType<kernel::SphericalKernel, tree::Octree>*,
+                 KDEType<kernel::SphericalKernel, tree::RTree>*,
                  KDEType<kernel::TriangularKernel, tree::KDTree>*,
-                 KDEType<kernel::TriangularKernel, tree::BallTree>*> kdeModel;
+                 KDEType<kernel::TriangularKernel, tree::BallTree>*,
+                 KDEType<kernel::TriangularKernel, tree::StandardCoverTree>*,
+                 KDEType<kernel::TriangularKernel, tree::Octree>*,
+                 KDEType<kernel::TriangularKernel, tree::RTree>*> kdeModel;
 
  public:
   /**
