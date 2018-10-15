@@ -187,42 +187,25 @@ class NeighborSearch
 
   /**
    * Set the reference set to a new reference set, and build a tree if
-   * necessary.  This method is called 'Train()' in order to match the rest of
-   * the mlpack abstractions, even though calling this "training" is maybe a bit
-   * of a stretch.
+   * necessary. The dataset is copied by default, but the copy can be avoided by
+   * transferring the ownership of the dataset using std::move().  This method
+   * is called 'Train()' in order to match the rest of the mlpack abstractions,
+   * even though calling this "training" is maybe a bit of a stretch.
    *
    * @param referenceSet New set of reference data.
    */
-  void Train(const MatType& referenceSet);
+  void Train(MatType referenceSet);
 
   /**
-   * Set the reference set to a new reference set, taking ownership of the set,
-   * and build a tree if necessary.  This method is called 'Train()' in order to
-   * match the rest of the mlpack abstractions, even though calling this
-   * "training" is maybe a bit of a stretch.
-   *
-   * @param referenceSet New set of reference data.
-   */
-  void Train(MatType&& referenceSet);
-
-  /**
-   * Set the reference tree as a copy of the given reference tree.
-   *
-   * This method will copy the given tree.  You can avoid this copy by using the
-   * Train() method that takes a rvalue reference to the tree.
+   * Set the reference tree to a new reference tree.  The tree is copied by
+   * default, but the copy can be avoided by using std::move() to transfer the
+   * ownership of the tree.  This method is called 'Train()' in order to match
+   * the rest of the mlpack abstractions, even though calling this "training" is
+   * maybe a bit of a stretch.
    *
    * @param referenceTree Pre-built tree for reference points.
    */
-  void Train(const Tree& referenceTree);
-
-  /**
-   * Set the reference tree to a new reference tree.
-   *
-   * This method will take ownership of the given tree.
-   *
-   * @param referenceTree Pre-built tree for reference points.
-   */
-  void Train(Tree&& referenceTree);
+  void Train(Tree referenceTree);
 
   /**
    * For each point in the query set, compute the nearest neighbors and store
