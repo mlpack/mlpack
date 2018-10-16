@@ -105,8 +105,9 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   double score;
   // Calculations are not duplicated.
   bool newCalculations = true;
+  const double minDistance = queryNode.MinDistance(referenceNode);
   const double maxKernel =
-    kernel.Evaluate(queryNode.MinDistance(referenceNode));
+    kernel.Evaluate(minDistance);
   const double minKernel =
     kernel.Evaluate(queryNode.MaxDistance(referenceNode));
   const double bound = maxKernel - minKernel;
@@ -130,42 +131,33 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   {
     // Auxiliary variables.
     double kernelValue;
-    arma::vec& referenceCenter = referenceNode.Stat().Centroid();
-    arma::vec& queryCenter = queryNode.Stat().Centroid();
+    kde::KDEStat& referenceStat = referenceNode.Stat();
+    kde::KDEStat& queryStat = queryNode.Stat();
 
     // If calculating a center is not required.
     if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
     {
       kernelValue = EvaluateKernel(queryNode.Point(0), referenceNode.Point(0));
     }
-    // If a child center is the same as its parent center.
-    else if (tree::TreeTraits<TreeType>::HasSelfChildren)
-    {
-      // Reference node.
-      if (referenceNode.Parent() != NULL &&
-          referenceNode.Point(0) == referenceNode.Parent()->Point(0))
-        referenceCenter = referenceNode.Parent()->Stat().Centroid();
-      else
-      {
-        referenceNode.Center(referenceCenter);
-      }
-      // Query node.
-      if (queryNode.Parent() != NULL &&
-          queryNode.Point(0) == queryNode.Parent()->Point(0))
-        queryCenter = queryNode.Parent()->Stat().Centroid();
-      else
-      {
-        queryNode.Center(queryCenter);
-      }
-      // Compute kernel value.
-      kernelValue = EvaluateKernel(queryCenter, referenceCenter);
-    }
-    // Regular case.
+    // Sadly, we have no choice but to calculate the center.
     else
     {
-      referenceNode.Center(referenceCenter);
-      queryNode.Center(queryCenter);
-      kernelValue = EvaluateKernel(queryCenter, referenceCenter);
+      // Calculate center for each node if it has not been calculated yet.
+      if (!referenceStat.ValidCentroid())
+      {
+        arma::vec referenceCenter;
+        referenceNode.Center(referenceCenter);
+        referenceStat.SetCentroid(std::move(referenceCenter));
+      }
+      if (!queryStat.ValidCentroid())
+      {
+        arma::vec queryCenter;
+        queryNode.Center(queryCenter);
+        queryStat.SetCentroid(std::move(queryCenter));
+      }
+      // Compute kernel value.
+      kernelValue = EvaluateKernel(queryStat.Centroid(),
+                                   referenceStat.Centroid());
     }
 
     // Can be paralellized but we avoid it for now because of a compilation
@@ -184,7 +176,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   }
   else
   {
-    score = queryNode.MinDistance(referenceNode);
+    score = minDistance;
   }
 
   ++scores;
