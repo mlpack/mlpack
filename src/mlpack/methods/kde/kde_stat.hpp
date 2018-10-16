@@ -24,28 +24,45 @@ class KDEStat
 {
  public:
   //! Initialize the statistic.
-  KDEStat() { }
+  KDEStat() : validCentroid(false) { }
 
   //! Initialization for a fully initialized node.
   template<typename TreeType>
-  KDEStat(TreeType& /* node */) { }
+  KDEStat(TreeType& /* node */) : validCentroid(false) { }
 
-  //! Get the centroid calculation.
-  const arma::vec& Centroid() const { return centroid; }
+  //! Get the centroid of the node.
+  inline const arma::vec& Centroid() const
+  {
+    if (validCentroid)
+      return centroid;
+    throw std::logic_error("Centroid must be assigned before requesting its "
+                           "value");
+  }
 
-  //! Modify the centroid calculation.
-  arma::vec& Centroid() { return centroid; }
+  //! Modify the centroid of the node.
+  void SetCentroid(arma::vec newCentroid)
+  {
+    validCentroid = true;
+    centroid = std::move(newCentroid);
+  }
+
+  //! Get whether the centroid is valid.
+  inline bool ValidCentroid() const { return validCentroid; }
 
   //! Serialize the statistic to/from an archive.
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & BOOST_SERIALIZATION_NVP(centroid);
+    ar & BOOST_SERIALIZATION_NVP(validCentroid);
   }
 
  private:
   //! Node centroid.
   arma::vec centroid;
+
+  //! Whether the centroid is updated or is junk.
+  bool validCentroid;
 };
 
 } // namespace kde
