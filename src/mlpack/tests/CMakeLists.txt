@@ -175,6 +175,7 @@ add_executable(mlpack_test
   main_tests/hmm_generate_test.cpp
   main_tests/radical_test.cpp
   main_tests/hmm_test_utils.hpp
+  main_tests/kde_test.cpp
 )
 
 # Link dependencies of test executable.
