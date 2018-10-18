@@ -433,13 +433,13 @@ add_subdirectory(src/mlpack)
 # If we need to keep gitversion.hpp up to date, then make sure the mlpack target
 # depends on it.
 if (USING_GIT STREQUAL "YES")
-  add_dependencies(mlpack mlpack_gitversion)
+  add_dependencies(mlpack_headers mlpack_gitversion)
 endif ()
 
 # Make the mlpack_arma_config target depend on mlpack (we couldn't do this
 # before the add_subdirectory() call because the mlpack target didn't exist
 # before that).
-add_dependencies(mlpack mlpack_arma_config)
+add_dependencies(mlpack_headers mlpack_arma_config)
 
 # Make a target to generate the documentation.  If Doxygen isn't installed, then
 # I guess this option will just be unavailable.
