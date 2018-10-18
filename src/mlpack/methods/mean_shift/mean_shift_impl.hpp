@@ -225,7 +225,7 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
 
       rangeSearcher.Search(allCentroids.unsafe_col(i), validRadius,
           neighbors, distances);
-      if (neighbors[0].size() <= 1)
+      if (neighbors[0].size() == 0) // There are no points in the cluster.
         break;
 
       // Calculate new centroid.
