@@ -68,7 +68,7 @@ EstimateRadius(const MatType& data, double ratio)
   arma::rowvec maxDistances = max(distances);
 
   // Calculate and return the radius.
-  return sum(maxDistances) / (double) data.n_cols;
+  return arma::sum(maxDistances) / (double) data.n_cols;
 }
 
 // Class to compare two vectors.
@@ -218,7 +218,7 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
     // Initial centroid is the seed itself.
     allCentroids.col(i) = pSeeds->unsafe_col(i);
     for (size_t completedIterations = 0; completedIterations < maxIterations
-      || forceConvergence; completedIterations++)
+        || forceConvergence; completedIterations++)
     {
       // Store new centroid in this.
       arma::colvec newCentroid = arma::zeros<arma::colvec>(pSeeds->n_rows);
@@ -265,8 +265,9 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
   // forcing convergence, take 1 random centroid calculated.
   if (centroids.empty())
   {
-    Log::Warn << "No clusters converge, setting 1 random centroid calculated. "
-    "Try a larger max_iterations or pass force_convergence flag." << std::endl;
+    Log::Warn << "No clusters converged; setting 1 random centroid calculated. "
+        << "Try a larger max_iterations or pass force_convergence flag."
+        << std::endl;
 
     if (maxIterations == 0)
     {
