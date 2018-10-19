@@ -164,7 +164,8 @@ BOOST_AUTO_TEST_CASE(CFNeighborhoodBoundTest)
 
 /**
  * Ensure algorithm is one of { "NMF", "BatchSVD",
- * "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD" }.
+ * "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD",
+ * "BiasSVD", "SVDPP" }.
  */
 BOOST_AUTO_TEST_CASE(CFAlgorithmBoundTest)
 {
@@ -185,19 +186,19 @@ BOOST_AUTO_TEST_CASE(CFAlgorithmBoundTest)
  */
 BOOST_AUTO_TEST_CASE(CFModelReuseTest)
 {
-  const size_t algorithmNum = 5;
-  std::string algorithms[algorithmNum] = { "NMF", "BatchSVD",
-      "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD" };
+  std::string algorithms[] = { "NMF", "BatchSVD",
+      "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD",
+      "BiasSVD", "SVDPP" };
 
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
 
-  for (size_t i = 0; i < algorithmNum; i++)
+  for (std::string& algorithm : algorithms)
   {
     ResetSettings();
     SetInputParam("training", dataset);
     SetInputParam("max_iterations", int(10));
-    SetInputParam("algorithm", algorithms[i]);
+    SetInputParam("algorithm", algorithm);
 
     mlpackMain();
 
@@ -215,7 +216,7 @@ BOOST_AUTO_TEST_CASE(CFModelReuseTest)
     SetInputParam("query", std::move(query));
     SetInputParam("recommendations", recommendations);
     SetInputParam("input_model",
-        std::move(CLI::GetParam<CFType<>*>("output_model")));
+        std::move(CLI::GetParam<CFModel*>("output_model")));
 
     mlpackMain();
 
@@ -262,9 +263,9 @@ BOOST_AUTO_TEST_CASE(CFRankTest)
 
   mlpackMain();
 
-  const CFType<>* outputModel = CLI::GetParam<CFType<>*>("output_model");
+  const CFModel* outputModel = CLI::GetParam<CFModel*>("output_model");
 
-  BOOST_REQUIRE_EQUAL(outputModel->Rank(), rank);
+  BOOST_REQUIRE_EQUAL(outputModel->template CFPtr<NMFPolicy>()->Rank(), rank);
 }
 
 /**
@@ -274,7 +275,7 @@ BOOST_AUTO_TEST_CASE(CFMinResidueTest)
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
-  const CFType<>* outputModel;
+  const CFModel* outputModel;
 
   // Set a larger min_residue.
   SetInputParam("min_residue", double(100));
@@ -286,9 +287,10 @@ BOOST_AUTO_TEST_CASE(CFMinResidueTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel =  CLI::GetParam<CFType<>*>("output_model");
-  const mat w1 = outputModel->W();
-  const mat h1 = outputModel->H();
+  outputModel =  CLI::GetParam<CFModel*>("output_model");
+  // By default the main program use NMFPolicy.
+  const mat w1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
+  const mat h1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
 
   ResetSettings();
 
@@ -302,9 +304,10 @@ BOOST_AUTO_TEST_CASE(CFMinResidueTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel = CLI::GetParam<CFType<>*>("output_model");
-  const mat w2 = outputModel->W();
-  const mat h2 = outputModel->H();
+  outputModel = CLI::GetParam<CFModel*>("output_model");
+  // By default the main program use NMFPolicy.
+  const mat w2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
+  const mat h2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
 
   // The resulting matrices should be different.
   BOOST_REQUIRE(arma::norm(w1 - w2) > 1e-5 || arma::norm(h1 - h2) > 1e-5);
@@ -317,7 +320,7 @@ BOOST_AUTO_TEST_CASE(CFIterationOnlyTerminationTest)
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
-  const CFType<>* outputModel;
+  const CFModel* outputModel;
 
   // Set iteration_only_termination.
   SetInputParam("iteration_only_termination", true);
@@ -329,9 +332,10 @@ BOOST_AUTO_TEST_CASE(CFIterationOnlyTerminationTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel =  CLI::GetParam<CFType<>*>("output_model");
-  const mat w1 = outputModel->W();
-  const mat h1 = outputModel->H();
+  outputModel =  CLI::GetParam<CFModel*>("output_model");
+  // By default, the main program use NMFPolicy.
+  const mat w1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
+  const mat h1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
 
   ResetSettings();
 
@@ -344,9 +348,10 @@ BOOST_AUTO_TEST_CASE(CFIterationOnlyTerminationTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel = CLI::GetParam<CFType<>*>("output_model");
-  const mat w2 = outputModel->W();
-  const mat h2 = outputModel->H();
+  outputModel = CLI::GetParam<CFModel*>("output_model");
+  // By default, the main program use NMFPolicy.
+  const mat w2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
+  const mat h2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
 
   // The resulting matrices should be different.
   BOOST_REQUIRE(arma::norm(w1 - w2) > 1e-5 || arma::norm(h1 - h2) > 1e-5);
@@ -359,7 +364,7 @@ BOOST_AUTO_TEST_CASE(CFMaxIterationsTest)
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
-  const CFType<>* outputModel;
+  const CFModel* outputModel;
 
   // Set a larger max_iterations.
   SetInputParam("max_iterations", int(100));
@@ -370,9 +375,10 @@ BOOST_AUTO_TEST_CASE(CFMaxIterationsTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel =  CLI::GetParam<CFType<>*>("output_model");
-  const mat w1 = outputModel->W();
-  const mat h1 = outputModel->H();
+  outputModel =  CLI::GetParam<CFModel*>("output_model");
+  // By default, the main program use NMFPolicy.
+  const mat w1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
+  const mat h1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
 
   ResetSettings();
 
@@ -385,9 +391,10 @@ BOOST_AUTO_TEST_CASE(CFMaxIterationsTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel = CLI::GetParam<CFType<>*>("output_model");
-  const mat w2 = outputModel->W();
-  const mat h2 = outputModel->H();
+  outputModel = CLI::GetParam<CFModel*>("output_model");
+  // By default the main program use NMFPolicy.
+  const mat w2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
+  const mat h2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
 
   // The resulting matrices should be different.
   BOOST_REQUIRE(arma::norm(w1 - w2) > 1e-5 || arma::norm(h1 - h2) > 1e-5);

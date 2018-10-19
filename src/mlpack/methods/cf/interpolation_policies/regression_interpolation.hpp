@@ -23,6 +23,22 @@ namespace cf {
  * linear regression of \f$ r_{iu} \f$ on \f$ r_{iv} \f$, where v are u's
  * neighbors.
  *
+ * An example of how to use RegressionInterpolation in CF is shown below:
+ *
+ * @code
+ * extern arma::mat data; // data is a (user, item, rating) table.
+ * // Users for whom recommendations are generated.
+ * extern arma::Col<size_t> users;
+ * arma::Mat<size_t> recommendations; // Resulting recommendations.
+ *
+ * CFType<> cf(data);
+ *
+ * // Generate 10 recommendations for all users.
+ * cf.template GetRecommendations<
+ *     EuclideanSearch,
+ *     RegressionInterpolation>(10, recommendations);
+ * @endcode
+ *
  * For more information, see the following paper.
  *
  * @code
@@ -68,17 +84,16 @@ class RegressionInterpolation
    *
    * @param weights Resulting interpolation weights. The size of weights should
    *     be set to the number of neighbors before calling GetWeights().
-   * @param w Matrix W from decomposition.
-   * @param h Matrix H from decomposition.
+   * @param decomposition Decomposition object.
    * @param queryUser Queried user.
    * @param neighbors Neighbors of queried user.
    * @param similarities Similarites between query user and neighbors.
    * @param cleanedData Sparse rating matrix.
    */
-  template <typename VectorType>
+  template <typename VectorType,
+            typename DecompositionPolicy>
   void GetWeights(VectorType&& weights,
-                  const arma::mat& w,
-                  const arma::mat& h,
+                  const DecompositionPolicy& decomposition,
                   const size_t queryUser,
                   const arma::Col<size_t>& neighbors,
                   const arma::vec& /* similarities*/,
@@ -91,6 +106,8 @@ class RegressionInterpolation
           << std::endl;
     }
 
+    const arma::mat& w = decomposition.W();
+    const arma::mat& h = decomposition.H();
     const size_t itemNum = cleanedData.n_rows;
     const size_t neighborNum = neighbors.size();
 

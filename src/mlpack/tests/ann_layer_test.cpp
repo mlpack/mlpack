@@ -1084,6 +1084,77 @@ BOOST_AUTO_TEST_CASE(GradientConcatLayerTest)
 }
 
 /**
+ * Simple concatenate module test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleConcatenateLayerTest)
+{
+  arma::mat input = arma::ones(5, 1);
+  arma::mat output, delta;
+
+  Concatenate<> module;
+  module.Concat() = arma::ones(5, 1) * 0.5;
+
+  // Test the Forward function.
+  module.Forward(std::move(input), std::move(output));
+
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 7.5);
+
+  // Test the Backward function.
+  module.Backward(std::move(input), std::move(output), std::move(delta));
+  BOOST_REQUIRE_EQUAL(arma::accu(delta), 5);
+}
+
+/**
+ * Concatenate layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientConcatenateLayerTest)
+{
+  // Concatenate function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::mat("1");
+
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 5);
+
+      arma::mat concat = arma::ones(5, 1);
+      concatenate = new Concatenate<>();
+      concatenate->Concat() = concat;
+      model->Add(concatenate);
+
+      model->Add<Linear<> >(10, 5);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    Concatenate<>* concatenate;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
  * Simple lookup module test.
  */
 BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
@@ -1568,7 +1639,7 @@ BOOST_AUTO_TEST_CASE(LayerNormTest)
         << 4.9 << 3.0 << arma::endr
         << 4.7 << 3.2 << arma::endr;
 
-  LayerNorm<> model(input.n_cols);
+  LayerNorm<> model(input.n_rows);
   model.Reset();
 
   model.Forward(std::move(input), std::move(output));
@@ -1610,7 +1681,7 @@ BOOST_AUTO_TEST_CASE(GradientLayerNormTest)
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
-      model->Add<LayerNorm<> >(256);
+      model->Add<LayerNorm<> >(10);
       model->Add<Linear<> >(10, 2);
       model->Add<LogSoftMax<> >();
     }
@@ -1922,8 +1993,8 @@ BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerBetaTest)
   {
     GradientFunction()
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
+      input = arma::randu(10, 2);
+      target = arma::mat("1 1");
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;

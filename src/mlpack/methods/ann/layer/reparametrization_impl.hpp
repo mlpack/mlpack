@@ -81,7 +81,7 @@ void Reparametrization<InputDataType, OutputDataType>::Backward(
   if (includeKl)
   {
     g = join_cols(gy % std::move(gaussianSample) % g + (-1 / stdDev + stdDev)
-        % g * beta, gy + mean * beta);
+        % g * beta, gy + mean * beta / mean.n_cols);
   }
   else
     g = join_cols(gy % std::move(gaussianSample) % g, gy);
