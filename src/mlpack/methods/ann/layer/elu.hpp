@@ -210,7 +210,7 @@ class ELU
    */
   double Deriv(const double y)
   {
-    return (y > 0) ? lambda : lambda * (Fn(y) + alpha);
+    return (y > 0) ? lambda : (Fn(y) + lambda * alpha);
   }
 
   /**
