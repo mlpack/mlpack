@@ -342,11 +342,6 @@ class NeighborSearch
   //! Reference dataset.  In some situations we may be the owner of this.
   const MatType* referenceSet;
 
-  //! If true, this object created the trees and is responsible for them.
-  bool treeOwner;
-  //! If true, we own the reference set.
-  bool setOwner;
-
   //! Indicates the neighbor search mode.
   NeighborSearchMode searchMode;
   //! Indicates the relative error to be considered in approximate search.
