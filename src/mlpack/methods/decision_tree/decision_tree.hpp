@@ -64,9 +64,9 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType>
-  DecisionTree(MatType&& data,
+  DecisionTree(MatType data,
                const data::DatasetInfo& datasetInfo,
-               LabelsType&& labels,
+               LabelsType labels,
                const size_t numClasses,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7);
@@ -84,8 +84,8 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType>
-  DecisionTree(MatType&& data,
-               LabelsType&& labels,
+  DecisionTree(MatType data,
+               LabelsType labels,
                const size_t numClasses,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7);
@@ -105,11 +105,11 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
-  DecisionTree(MatType&& data,
+  DecisionTree(MatType data,
                const data::DatasetInfo& datasetInfo,
-               LabelsType&& labels,
+               LabelsType labels,
                const size_t numClasses,
-               WeightsType&& weights,
+               WeightsType weights,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
                const std::enable_if_t<arma::is_arma_type<
@@ -130,10 +130,10 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
-  DecisionTree(MatType&& data,
-               LabelsType&& labels,
+  DecisionTree(MatType data,
+               LabelsType labels,
                const size_t numClasses,
-               WeightsType&& weights,
+               WeightsType weights,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
                const std::enable_if_t<arma::is_arma_type<
@@ -200,9 +200,9 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType>
-  void Train(MatType&& data,
+  void Train(MatType data,
              const data::DatasetInfo& datasetInfo,
-             LabelsType&& labels,
+             LabelsType labels,
              const size_t numClasses,
              const size_t minimumLeafSize = 10,
              const double minimumGainSplit = 1e-7);
@@ -221,8 +221,8 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType>
-  void Train(MatType&& data,
-             LabelsType&& labels,
+  void Train(MatType data,
+             LabelsType labels,
              const size_t numClasses,
              const size_t minimumLeafSize = 10,
              const double minimumGainSplit = 1e-7);
@@ -243,11 +243,11 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
-  void Train(MatType&& data,
+  void Train(MatType data,
              const data::DatasetInfo& datasetInfo,
-             LabelsType&& labels,
+             LabelsType labels,
              const size_t numClasses,
-             WeightsType&& weights,
+             WeightsType weights,
              const size_t minimumLeafSize = 10,
              const double minimumGainSplit = 1e-7,
              const std::enable_if_t<arma::is_arma_type<typename
@@ -267,10 +267,10 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
-  void Train(MatType&& data,
-             LabelsType&& labels,
+  void Train(MatType data,
+             LabelsType labels,
              const size_t numClasses,
-             WeightsType&& weights,
+             WeightsType weights,
              const size_t minimumLeafSize = 10,
              const double minimumGainSplit = 1e-7,
              const std::enable_if_t<arma::is_arma_type<typename
