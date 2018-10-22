@@ -56,6 +56,8 @@ class DecisionTree :
    * minimumGainSplit too small may cause the tree to overfit, but setting them
    * too large may cause it to underfit.
    *
+   * Use std::move if data or labels are no longer needed to avoid copies.
+   *
    * @param data Dataset to train on.
    * @param datasetInfo Type information for each dimension of the dataset.
    * @param labels Labels for each training point.
@@ -77,6 +79,8 @@ class DecisionTree :
    * minimumGainSplit too small may cause the tree to overfit, but setting them
    * too large may cause it to underfit.
    *
+   * Use std::move if data or labels are no longer needed to avoid copies.
+   *
    * @param data Dataset to train on.
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
@@ -95,6 +99,9 @@ class DecisionTree :
    * where the data can be both numeric and categorical. Setting minimumLeafSize
    * and minimumGainSplit too small may cause the tree to overfit, but setting
    * them too large may cause it to underfit.
+   *
+   * Use std::move if data, labels or weights are no longer needed to avoid
+   * copies.
    *
    * @param data Dataset to train on.
    * @param datasetInfo Type information for each dimension of the dataset.
@@ -121,6 +128,9 @@ class DecisionTree :
    * assuming that the data is all of the numeric type. Setting minimumLeafSize
    * and minimumGainSplit too small may cause the tree to overfit, but setting
    * them too large may cause it to underfit.
+   *
+   * Use std::move if data, labels or weights are no longer needed to avoid
+   * copies.
    *
    * @param data Dataset to train on.
    * @param labels Labels for each training point.
@@ -191,6 +201,8 @@ class DecisionTree :
    * minimumGainSplit too small may cause the tree to overfit, but setting them
    * too large may cause it to underfit.
    *
+   * Use std::move if data or labels are no longer needed to avoid copies.
+   *
    * @param data Dataset to train on.
    * @param datasetInfo Type information for each dimension.
    * @param labels Labels for each training point.
@@ -213,6 +225,8 @@ class DecisionTree :
    * minimumGainSplit too small may cause the tree to overfit, but setting them
    * too large may cause it to underfit.
    *
+   * Use std::move if data or labels are no longer needed to avoid copies.
+   *
    * @param data Dataset to train on.
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
@@ -233,6 +247,9 @@ class DecisionTree :
    * specified by the datasetInfo parameter.  Setting minimumLeafSize and
    * minimumGainSplit too small may cause the tree to overfit, but setting them
    * too large may cause it to underfit.
+   *
+   * Use std::move if data, labels or weights are no longer needed to avoid
+   * copies.
    *
    * @param data Dataset to train on.
    * @param datasetInfo Type information for each dimension.
@@ -258,6 +275,9 @@ class DecisionTree :
    * dimensions are numeric.  This will overwrite the given model. Setting
    * minimumLeafSize and minimumGainSplit too small may cause the tree to
    * overfit, but setting them too large may cause it to underfit.
+   *
+   * Use std::move if data, labels or weights are no longer needed to avoid
+   * copies.
    *
    * @param data Dataset to train on.
    * @param labels Labels for each training point.
