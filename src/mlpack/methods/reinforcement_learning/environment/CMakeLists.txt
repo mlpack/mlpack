@@ -6,6 +6,7 @@ set(SOURCES
   continuous_mountain_car.hpp
   acrobat.hpp
   pendulum.hpp
+  reward_clipping.hpp
 )
 
 # Add directory name to sources.

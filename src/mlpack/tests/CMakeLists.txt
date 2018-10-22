@@ -105,6 +105,7 @@ add_executable(mlpack_test
   rectangle_tree_test.cpp
   recurrent_network_test.cpp
   regularized_svd_test.cpp
+  reward_clipping_test.cpp
   rl_components_test.cpp
   rmsprop_test.cpp
   sa_test.cpp
@@ -179,6 +180,7 @@ add_executable(mlpack_test
 target_link_libraries(mlpack_test
   mlpack
   ${BOOST_unit_test_framework_LIBRARY}
+  ${COMPILER_SUPPORT_LIBRARIES}
 )
 
 set_target_properties(mlpack_test PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "../core.hpp")
