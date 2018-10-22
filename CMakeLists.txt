@@ -119,6 +119,14 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   endif ()
 endif()
 
+# If we're using gcc, then we need to link against pthreads to use std::thread,
+# which we do in the tests.
+if(CMAKE_COMPILER_IS_GNUCC)
+  find_package(Threads)
+  set(COMPILER_SUPPORT_LIBRARIES ${COMPILER_SUPPORT_LIBRARIES}
+      ${CMAKE_THREAD_LIBS_INIT})
+endif()
+
 # Setup build for test coverage
 if(BUILD_WITH_COVERAGE)
   # Currently coverage only works with GNU g++
@@ -149,11 +157,6 @@ if(BUILD_WITH_COVERAGE)
     message(FATAL_ERROR "BUILD_WITH_COVERAGE can only work with GNU environment.")
   endif()
 endif()
-
-# For clock_gettime().
-if (UNIX AND NOT APPLE AND NOT HAIKU)
-  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "rt")
-endif ()
 
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
 if(DEBUG)
@@ -360,6 +363,7 @@ if (OPENMP_FOUND)
 else ()
   # Disable warnings for all the unknown OpenMP pragmas.
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
+  set(OpenMP_CXX_FLAGS "")
 endif ()
 
 # Create a 'distclean' target in case the user is using an in-source build for
@@ -427,6 +431,31 @@ add_custom_target(mlpack_arma_config ALL
 set(MLPACK_SRCS ${MLPACK_SRCS}
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
 
+# Make a target to generate the man page documentation, but only if we are on a
+# UNIX-like system.
+if (BUILD_CLI_EXECUTABLES AND UNIX)
+  find_program(TXT2MAN txt2man)
+
+  # It's not a requirement that we make man pages.
+  if (NOT TXT2MAN)
+    message(WARNING "txt2man not found; man pages will not be generated.")
+  else ()
+    # We have the tools.  We can make them.
+    add_custom_target(man ALL
+        ${CMAKE_CURRENT_SOURCE_DIR}/CMake/allexec2man.sh
+            ${CMAKE_CURRENT_SOURCE_DIR}/CMake/exec2man.sh
+            ${CMAKE_BINARY_DIR}/share/man
+        WORKING_DIRECTORY
+          ${CMAKE_BINARY_DIR}/bin
+        COMMENT "Generating man pages from built executables."
+    )
+
+    # Set the rules to install the documentation.
+    install(DIRECTORY ${CMAKE_BINARY_DIR}/share/man/
+        DESTINATION share/man/man1/)
+  endif ()
+endif ()
+
 # Recurse into the rest of the project.
 add_subdirectory(src/mlpack)
 
@@ -479,69 +508,6 @@ if (DOXYGEN_FOUND)
       COMPONENT doc
       OPTIONAL
   )
-endif ()
-
-# Make a target to generate the man page documentation, but only if we are on a
-# UNIX-like system.
-if (BUILD_CLI_EXECUTABLES AND UNIX)
-  find_program(TXT2MAN txt2man)
-
-  # It's not a requirement that we make man pages.
-  if (NOT TXT2MAN)
-    message(WARNING "txt2man not found; man pages will not be generated.")
-  else ()
-    # We have the tools.  We can make them.
-    add_custom_target(man ALL
-        ${CMAKE_CURRENT_SOURCE_DIR}/CMake/allexec2man.sh
-            ${CMAKE_CURRENT_SOURCE_DIR}/CMake/exec2man.sh
-            ${CMAKE_BINARY_DIR}/share/man
-        WORKING_DIRECTORY
-          ${CMAKE_BINARY_DIR}/bin
-        DEPENDS
-          mlpack_adaboost
-          mlpack_approx_kfn
-          mlpack_kfn
-          mlpack_knn
-          mlpack_krann
-          mlpack_cf
-          mlpack_dbscan
-          mlpack_decision_stump
-          mlpack_decision_tree
-          mlpack_det
-          mlpack_emst
-          mlpack_fastmks
-          mlpack_gmm_train
-          mlpack_gmm_probability
-          mlpack_gmm_generate
-          mlpack_hmm_generate
-          mlpack_hmm_loglik
-          mlpack_hmm_train
-          mlpack_hmm_viterbi
-          mlpack_hoeffding_tree
-          mlpack_kernel_pca
-          mlpack_kmeans
-          mlpack_lars
-          mlpack_linear_regression
-          mlpack_local_coordinate_coding
-          mlpack_logistic_regression
-          mlpack_lsh
-          mlpack_mean_shift
-          mlpack_nbc
-          mlpack_nca
-          mlpack_nmf
-          mlpack_pca
-          mlpack_perceptron
-          mlpack_radical
-          mlpack_range_search
-          mlpack_softmax_regression
-          mlpack_sparse_coding
-        COMMENT "Generating man pages from built executables."
-    )
-
-    # Set the rules to install the documentation.
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/share/man/
-        DESTINATION share/man/man1/)
-  endif ()
 endif ()
 
 # Create the pkg-config file, if we have pkg-config.

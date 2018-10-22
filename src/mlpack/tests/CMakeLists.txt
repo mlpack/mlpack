@@ -180,6 +180,7 @@ add_executable(mlpack_test
 target_link_libraries(mlpack_test
   mlpack
   ${BOOST_unit_test_framework_LIBRARY}
+  ${COMPILER_SUPPORT_LIBRARIES}
 )
 
 set_target_properties(mlpack_test PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "../core.hpp")

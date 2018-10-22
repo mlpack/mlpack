@@ -164,10 +164,10 @@ execute_process(COMMAND ${PYTHON}
     "${CMAKE_CURRENT_SOURCE_DIR}/print_python_version.py" "${CMAKE_INSTALL_PREFIX}"
     OUTPUT_VARIABLE NEW_PYTHONPATH)
 install(CODE "set(ENV{PYTHONPATH} ${NEW_PYTHONPATH})")
-install(CODE "execute_process(COMMAND mkdir -p ${NEW_PYTHONPATH})")
+install(CODE "execute_process(COMMAND mkdir -p $ENV{DESTDIR}${NEW_PYTHONPATH})")
 install(CODE "execute_process(COMMAND ${PYTHON}
     \"${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py\" install
-    --prefix=${CMAKE_INSTALL_PREFIX}
+    --prefix=${CMAKE_INSTALL_PREFIX} --root=$ENV{DESTDIR}
     WORKING_DIRECTORY \"${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/\")")
 
 # Prepare __init__.py for having all of the convenience imports appended to it.
