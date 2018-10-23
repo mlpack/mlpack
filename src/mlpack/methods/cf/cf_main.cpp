@@ -25,6 +25,15 @@
 #include <mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp>
 #include <mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp>
 
+#include <mlpack/methods/cf/interpolation_policies/average_interpolation.hpp>
+#include <mlpack/methods/cf/interpolation_policies/regression_interpolation.hpp>
+#include <mlpack/methods/cf/interpolation_policies/similarity_interpolation.hpp>
+
+#include <mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp>
+#include <mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp>
+#include <mlpack/methods/cf/neighbor_search_policies/pearson_search.hpp>
+
+
 using namespace mlpack;
 using namespace mlpack::cf;
 using namespace mlpack::amf;
@@ -125,10 +134,21 @@ PARAM_INT_IN("recommendations", "Number of recommendations to generate for each"
 
 PARAM_INT_IN("seed", "Set the random seed (0 uses std::time(NULL)).", "s", 0);
 
+//  Interpolation and Neighbour Search Algorithms
+PARAM_STRING_IN("interpolation", "Algorithm used for weight interpolation.", "i",
+                "Average");
+
+PARAM_STRING_IN("neighbour_search", "Algorithm used for neighbour search.", "f",
+                "Euclidean");
+
 void ComputeRecommendations(CFModel* cf,
                             const size_t numRecs,
                             arma::Mat<size_t>& recommendations)
 {
+
+  const string ns_algo = CLI::GetParam<string>("neighbour_search");
+  const string iw_algo = CLI::GetParam<string>("interpolation");
+
   // Reading users.
   if (CLI::HasParam("query"))
   {
@@ -142,17 +162,112 @@ void ComputeRecommendations(CFModel* cf,
 
     Log::Info << "Generating recommendations for " << users.n_elem << " users."
         << endl;
-    cf->GetRecommendations(numRecs, recommendations, users.row(0).t());
+
+    //  Making All the possible paths
+    if(ns_algo=="Cosine")
+    {
+        if(iw_algo=="Average")
+        {
+            cf->GetRecommendations<CosineSearch,AverageInterpolation>(numRecs, recommendations, users.row(0).t());
+        }
+        else if(iw_algo=="Regression")
+        {
+            cf->GetRecommendations<CosineSearch,RegressionInterpolation>(numRecs, recommendations, users.row(0).t());
+        }
+        else if(iw_algo=="Similarity")
+        {
+            cf->GetRecommendations<CosineSearch,SimilarityInterpolation>(numRecs, recommendations, users.row(0).t());
+        }
+    }
+    else if(ns_algo=="Euclidean")
+    {
+        if(iw_algo=="Average")
+        {
+            cf->GetRecommendations<EuclideanSearch,AverageInterpolation>(numRecs, recommendations, users.row(0).t());
+        }
+        else if(iw_algo=="Regression")
+        {
+            cf->GetRecommendations<EuclideanSearch,RegressionInterpolation>(numRecs, recommendations, users.row(0).t());
+        }
+        else if(iw_algo=="Similarity")
+        {
+            cf->GetRecommendations<EuclideanSearch,SimilarityInterpolation>(numRecs, recommendations, users.row(0).t());
+        }
+    }
+    else if(ns_algo=="Pearson")
+    {
+        if(iw_algo=="Average")
+        {
+            cf->GetRecommendations<PearsonSearch,AverageInterpolation>(numRecs, recommendations, users.row(0).t());
+        }
+        else if(iw_algo=="Regression")
+        {
+            cf->GetRecommendations<PearsonSearch,RegressionInterpolation>(numRecs, recommendations, users.row(0).t());
+        }
+        else if(iw_algo=="Similarity")
+        {
+            cf->GetRecommendations<PearsonSearch,SimilarityInterpolation>(numRecs, recommendations, users.row(0).t());
+        }
+    }
   }
   else
   {
     Log::Info << "Generating recommendations for all users." << endl;
-    cf->GetRecommendations(numRecs, recommendations);
+      if(ns_algo=="Cosine")
+      {
+          if(iw_algo=="Average")
+          {
+              cf->GetRecommendations<CosineSearch,AverageInterpolation>(numRecs, recommendations);
+          }
+          else if(iw_algo=="Regression")
+          {
+              cf->GetRecommendations<CosineSearch,RegressionInterpolation>(numRecs, recommendations);
+          }
+          else if(iw_algo=="Similarity")
+          {
+              cf->GetRecommendations<CosineSearch,SimilarityInterpolation>(numRecs, recommendations);
+          }
+      }
+      else if(ns_algo=="Euclidean")
+      {
+          if(iw_algo=="Average")
+          {
+              cf->GetRecommendations<EuclideanSearch,AverageInterpolation>(numRecs, recommendations);
+          }
+          else if(iw_algo=="Regression")
+          {
+              cf->GetRecommendations<EuclideanSearch,RegressionInterpolation>(numRecs, recommendations);
+          }
+          else if(iw_algo=="Similarity")
+          {
+              cf->GetRecommendations<EuclideanSearch,SimilarityInterpolation>(numRecs, recommendations);
+          }
+      }
+      else if(ns_algo=="Pearson")
+      {
+          if(iw_algo=="Average")
+          {
+              cf->GetRecommendations<PearsonSearch,AverageInterpolation>(numRecs, recommendations);
+          }
+          else if(iw_algo=="Regression")
+          {
+              cf->GetRecommendations<PearsonSearch,RegressionInterpolation>(numRecs, recommendations);
+          }
+          else if(iw_algo=="Similarity")
+          {
+              cf->GetRecommendations<PearsonSearch,SimilarityInterpolation>(numRecs, recommendations);
+          }
+      }
   }
 }
 
 void ComputeRMSE(CFModel* cf)
 {
+  //    Interpolation and Neighbour Search
+
+  const string ns_algo = CLI::GetParam<string>("neighbour_search");
+  const string iw_algo = CLI::GetParam<string>("interpolation");
+
   // Now, compute each test point.
   arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
 
@@ -166,7 +281,52 @@ void ComputeRMSE(CFModel* cf)
 
   // Now compute the RMSE.
   arma::vec predictions;
-  cf->Predict(combinations, predictions);
+
+  if(ns_algo=="Cosine")
+    {
+        if(iw_algo=="Average")
+        {
+            cf->Predict<CosineSearch,AverageInterpolation>(combinations, predictions);
+        }
+        else if(iw_algo=="Regression")
+        {
+            cf->Predict<CosineSearch,RegressionInterpolation>(combinations, predictions);
+        }
+        else if(iw_algo=="Similarity")
+        {
+            cf->Predict<CosineSearch,SimilarityInterpolation>(combinations, predictions);
+        }
+    }
+  else if(ns_algo=="Euclidean")
+    {
+        if(iw_algo=="Average")
+        {
+            cf->Predict<EuclideanSearch,AverageInterpolation>(combinations, predictions);
+        }
+        else if(iw_algo=="Regression")
+        {
+            cf->Predict<EuclideanSearch,RegressionInterpolation>(combinations, predictions);
+        }
+        else if(iw_algo=="Similarity")
+        {
+            cf->Predict<EuclideanSearch,SimilarityInterpolation>(combinations, predictions);
+        }
+    }
+  else if(ns_algo=="Pearson")
+    {
+        if(iw_algo=="Average")
+        {
+            cf->Predict<PearsonSearch,AverageInterpolation>(combinations, predictions);
+        }
+        else if(iw_algo=="Regression")
+        {
+            cf->Predict<PearsonSearch,RegressionInterpolation>(combinations, predictions);
+        }
+        else if(iw_algo=="Similarity")
+        {
+            cf->Predict<PearsonSearch,SimilarityInterpolation>(combinations, predictions);
+        }
+    }
 
   // Compute the root of the sum of the squared errors, divide by the number of
   // points to get the RMSE.  It turns out this is just the L2-norm divided by
@@ -286,6 +446,13 @@ static void mlpackMain()
   RequireParamInSet<string>("algorithm", { "NMF", "BatchSVD",
       "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD",
       "RandSVD", "BiasSVD", "SVDPP" }, true, "unknown algorithm");
+
+    //    Validate the interpolation and neighbour_search policy
+  RequireParamInSet<string>("interpolation", { "Average", "Regression", "Similarity" },
+      true, "unknown interpolation algorithm");
+
+  RequireParamInSet<string>("neighbour_search", { "Cosine", "Euclidean", "Pearson" },
+      true, "unknown neighbour search algorithm");
 
   ReportIgnoredParam({{ "iteration_only_termination", true }}, "min_residue");
 
