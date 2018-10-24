@@ -135,11 +135,11 @@ PARAM_INT_IN("recommendations", "Number of recommendations to generate for each"
 PARAM_INT_IN("seed", "Set the random seed (0 uses std::time(NULL)).", "s", 0);
 
 //  Interpolation and Neighbour Search Algorithms
-PARAM_STRING_IN("interpolation", "Algorithm used for weight interpolation.", "i",
-                "Average");
+PARAM_STRING_IN("interpolation", "Algorithm used for weight interpolation.",
+    "i", "Average");
 
-PARAM_STRING_IN("neighbour_search", "Algorithm used for neighbour search.", "f",
-                "Euclidean");
+PARAM_STRING_IN("neighbour_search", "Algorithm used for neighbour search.",
+    "f", "Euclidean");
 
 void ComputeRecommendations(CFModel* cf,
                             const size_t numRecs,
@@ -312,45 +312,54 @@ void ComputeRMSE(CFModel* cf)
     {
         if (iw_algo == "Average")
         {
-            cf->Predict<CosineSearch, AverageInterpolation>(combinations, predictions);
+            cf->Predict<CosineSearch,
+              AverageInterpolation>(combinations, predictions);
         }
         else if (iw_algo == "Regression")
         {
-            cf->Predict<CosineSearch, RegressionInterpolation>(combinations, predictions);
+            cf->Predict<CosineSearch,
+              RegressionInterpolation>(combinations, predictions);
         }
         else if (iw_algo == "Similarity")
         {
-            cf->Predict<CosineSearch, SimilarityInterpolation>(combinations, predictions);
+            cf->Predict<CosineSearch,
+              SimilarityInterpolation>(combinations, predictions);
         }
     }
   else if (ns_algo == "Euclidean")
     {
         if (iw_algo == "Average")
         {
-            cf->Predict<EuclideanSearch, AverageInterpolation>(combinations, predictions);
+            cf->Predict<EuclideanSearch,
+              AverageInterpolation>(combinations, predictions);
         }
         else if (iw_algo == "Regression")
         {
-            cf->Predict<EuclideanSearch, RegressionInterpolation>(combinations, predictions);
+            cf->Predict<EuclideanSearch,
+              RegressionInterpolation>(combinations, predictions);
         }
         else if (iw_algo == "Similarity")
         {
-            cf->Predict<EuclideanSearch, SimilarityInterpolation>(combinations, predictions);
+            cf->Predict<EuclideanSearch,
+              SimilarityInterpolation>(combinations, predictions);
         }
     }
   else if (ns_algo == "Pearson")
     {
         if (iw_algo == "Average")
         {
-            cf->Predict<PearsonSearch, AverageInterpolation>(combinations, predictions);
+            cf->Predict<PearsonSearch,
+              AverageInterpolation>(combinations, predictions);
         }
         else if (iw_algo == "Regression")
         {
-            cf->Predict<PearsonSearch, RegressionInterpolation>(combinations, predictions);
+            cf->Predict<PearsonSearch,
+              RegressionInterpolation>(combinations, predictions);
         }
         else if (iw_algo == "Similarity")
         {
-            cf->Predict<PearsonSearch, SimilarityInterpolation>(combinations, predictions);
+            cf->Predict<PearsonSearch,
+              SimilarityInterpolation>(combinations, predictions);
         }
     }
 
@@ -474,11 +483,11 @@ static void mlpackMain()
       "RandSVD", "BiasSVD", "SVDPP" }, true, "unknown algorithm");
 
     //    Validate the interpolation and neighbour_search policy
-  RequireParamInSet<string>("interpolation", { "Average", "Regression", "Similarity" },
-      true, "unknown interpolation algorithm");
+  RequireParamInSet<string>("interpolation", { "Average",
+      "Regression", "Similarity" }, true, "unknown interpolation algorithm");
 
-  RequireParamInSet<string>("neighbour_search", { "Cosine", "Euclidean", "Pearson" },
-      true, "unknown neighbour search algorithm");
+  RequireParamInSet<string>("neighbour_search", { "Cosine",
+      "Euclidean", "Pearson" }, true, "unknown neighbour search algorithm");
 
   ReportIgnoredParam({{ "iteration_only_termination", true }}, "min_residue");
 

@@ -46,7 +46,7 @@ PredictVisitor<NeighbourSearchPolicy,InterpolationPolicy>::PredictVisitor(
 template <typename NeighbourSearchPolicy,
           typename InterpolationPolicy>
 template<typename DecompositionPolicy>
-void PredictVisitor<NeighbourSearchPolicy,InterpolationPolicy>
+void PredictVisitor<NeighbourSearchPolicy, InterpolationPolicy>
         ::operator()(CFType<DecompositionPolicy>* c) const
 {
   if (!c)
@@ -61,7 +61,7 @@ void PredictVisitor<NeighbourSearchPolicy,InterpolationPolicy>
 
 template <typename NeighbourSearchPolicy,
           typename InterpolationPolicy>
-RecommendationVisitor<NeighbourSearchPolicy,InterpolationPolicy>
+RecommendationVisitor<NeighbourSearchPolicy, InterpolationPolicy>
         ::RecommendationVisitor(
     const size_t numRecs,
     arma::Mat<size_t>& recommendations,
@@ -76,7 +76,7 @@ RecommendationVisitor<NeighbourSearchPolicy,InterpolationPolicy>
 template <typename NeighbourSearchPolicy,
         typename InterpolationPolicy>
 template<typename DecompositionPolicy>
-void RecommendationVisitor<NeighbourSearchPolicy,InterpolationPolicy>
+void RecommendationVisitor<NeighbourSearchPolicy, InterpolationPolicy>
         ::operator()(CFType<DecompositionPolicy>* c) const
 {
   if (!c)
