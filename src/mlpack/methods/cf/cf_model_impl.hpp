@@ -46,7 +46,8 @@ PredictVisitor<NeighbourSearchPolicy,InterpolationPolicy>::PredictVisitor(
 template <typename NeighbourSearchPolicy,
           typename InterpolationPolicy>
 template<typename DecompositionPolicy>
-void PredictVisitor<NeighbourSearchPolicy,InterpolationPolicy>::operator()(CFType<DecompositionPolicy>* c) const
+void PredictVisitor<NeighbourSearchPolicy,InterpolationPolicy>
+        ::operator()(CFType<DecompositionPolicy>* c) const
 {
   if (!c)
   {
@@ -54,7 +55,8 @@ void PredictVisitor<NeighbourSearchPolicy,InterpolationPolicy>::operator()(CFTyp
     return;
   }
 
-  c->template Predict<NeighbourSearchPolicy,InterpolationPolicy>(combinations, predictions);
+  c->template Predict<NeighbourSearchPolicy,
+    InterpolationPolicy>(combinations, predictions);
 }
 
 template <typename NeighbourSearchPolicy,
@@ -84,9 +86,11 @@ void RecommendationVisitor<NeighbourSearchPolicy,InterpolationPolicy>
   }
 
   if (usersGiven)
-    c->template GetRecommendations<NeighbourSearchPolicy,InterpolationPolicy>(numRecs, recommendations, users);
+    c->template GetRecommendations<NeighbourSearchPolicy,
+      InterpolationPolicy>(numRecs, recommendations, users);
   else
-    c->template GetRecommendations<NeighbourSearchPolicy,InterpolationPolicy>(numRecs, recommendations);
+    c->template GetRecommendations<NeighbourSearchPolicy,
+      InterpolationPolicy>(numRecs, recommendations);
 }
 
 CFModel::~CFModel()
@@ -118,7 +122,8 @@ template <typename NeighbourSearchPolicy,
 void CFModel::Predict(const arma::Mat<size_t>& combinations,
                       arma::vec& predictions)
 {
-  PredictVisitor<NeighbourSearchPolicy,InterpolationPolicy> predict(combinations, predictions);
+  PredictVisitor<NeighbourSearchPolicy,
+    InterpolationPolicy> predict(combinations, predictions);
   boost::apply_visitor(predict, cf);
 }
 
@@ -129,7 +134,8 @@ void CFModel::GetRecommendations(const size_t numRecs,
                                  arma::Mat<size_t>& recommendations,
                                  const arma::Col<size_t>& users)
 {
-  RecommendationVisitor<NeighbourSearchPolicy,InterpolationPolicy> recommendation(numRecs, recommendations, users, true);
+  RecommendationVisitor<NeighbourSearchPolicy,
+    InterpolationPolicy> recommendation(numRecs, recommendations, users, true);
   boost::apply_visitor(recommendation, cf);
 }
 
@@ -140,7 +146,8 @@ void CFModel::GetRecommendations(const size_t numRecs,
                                  arma::Mat<size_t>& recommendations)
 {
   arma::Col<size_t> users;
-  RecommendationVisitor<NeighbourSearchPolicy,InterpolationPolicy> recommendation(numRecs, recommendations, users, false);
+  RecommendationVisitor<NeighbourSearchPolicy,
+    InterpolationPolicy> recommendation(numRecs, recommendations, users, false);
   boost::apply_visitor(recommendation, cf);
 }
 

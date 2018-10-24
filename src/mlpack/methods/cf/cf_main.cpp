@@ -145,7 +145,6 @@ void ComputeRecommendations(CFModel* cf,
                             const size_t numRecs,
                             arma::Mat<size_t>& recommendations)
 {
-
   const string ns_algo = CLI::GetParam<string>("neighbour_search");
   const string iw_algo = CLI::GetParam<string>("interpolation");
 
@@ -164,98 +163,125 @@ void ComputeRecommendations(CFModel* cf,
         << endl;
 
     //  Making All the possible paths
-    if(ns_algo=="Cosine")
+    if (ns_algo == "Cosine")
     {
-        if(iw_algo=="Average")
+        if (iw_algo == "Average")
         {
-            cf->GetRecommendations<CosineSearch,AverageInterpolation>(numRecs, recommendations, users.row(0).t());
+            cf->GetRecommendations<CosineSearch,
+              AverageInterpolation>(numRecs, recommendations,
+              users.row(0).t());
         }
-        else if(iw_algo=="Regression")
+        else if (iw_algo == "Regression")
         {
-            cf->GetRecommendations<CosineSearch,RegressionInterpolation>(numRecs, recommendations, users.row(0).t());
+            cf->GetRecommendations<CosineSearch,
+              RegressionInterpolation>(numRecs, recommendations,
+              users.row(0).t());
         }
-        else if(iw_algo=="Similarity")
+        else if (iw_algo == "Similarity")
         {
-            cf->GetRecommendations<CosineSearch,SimilarityInterpolation>(numRecs, recommendations, users.row(0).t());
+            cf->GetRecommendations<CosineSearch,
+              SimilarityInterpolation>(numRecs, recommendations,
+              users.row(0).t());
         }
     }
-    else if(ns_algo=="Euclidean")
+    else if (ns_algo == "Euclidean")
     {
-        if(iw_algo=="Average")
+        if (iw_algo == "Average")
         {
-            cf->GetRecommendations<EuclideanSearch,AverageInterpolation>(numRecs, recommendations, users.row(0).t());
+            cf->GetRecommendations<EuclideanSearch,
+              AverageInterpolation>(numRecs, recommendations,
+              users.row(0).t());
         }
-        else if(iw_algo=="Regression")
+        else if (iw_algo == "Regression")
         {
-            cf->GetRecommendations<EuclideanSearch,RegressionInterpolation>(numRecs, recommendations, users.row(0).t());
+            cf->GetRecommendations<EuclideanSearch,
+              RegressionInterpolation>(numRecs, recommendations,
+              users.row(0).t());
         }
-        else if(iw_algo=="Similarity")
+        else if (iw_algo == "Similarity")
         {
-            cf->GetRecommendations<EuclideanSearch,SimilarityInterpolation>(numRecs, recommendations, users.row(0).t());
+            cf->GetRecommendations<EuclideanSearch,
+              SimilarityInterpolation>(numRecs, recommendations,
+              users.row(0).t());
         }
     }
-    else if(ns_algo=="Pearson")
+    else if (ns_algo == "Pearson")
     {
-        if(iw_algo=="Average")
+        if (iw_algo == "Average")
         {
-            cf->GetRecommendations<PearsonSearch,AverageInterpolation>(numRecs, recommendations, users.row(0).t());
+            cf->GetRecommendations<PearsonSearch,
+              AverageInterpolation>(numRecs, recommendations,
+              users.row(0).t());
         }
-        else if(iw_algo=="Regression")
+        else if (iw_algo == "Regression")
         {
-            cf->GetRecommendations<PearsonSearch,RegressionInterpolation>(numRecs, recommendations, users.row(0).t());
+            cf->GetRecommendations<PearsonSearch,
+              RegressionInterpolation>(numRecs, recommendations,
+              users.row(0).t());
         }
-        else if(iw_algo=="Similarity")
+        else if (iw_algo == "Similarity")
         {
-            cf->GetRecommendations<PearsonSearch,SimilarityInterpolation>(numRecs, recommendations, users.row(0).t());
+            cf->GetRecommendations<PearsonSearch,
+              SimilarityInterpolation>(numRecs, recommendations,
+              users.row(0).t());
         }
     }
   }
   else
   {
     Log::Info << "Generating recommendations for all users." << endl;
-      if(ns_algo=="Cosine")
+      if (ns_algo == "Cosine")
       {
-          if(iw_algo=="Average")
+          if (iw_algo == "Average")
           {
-              cf->GetRecommendations<CosineSearch,AverageInterpolation>(numRecs, recommendations);
+              cf->GetRecommendations<CosineSearch,
+                AverageInterpolation>(numRecs, recommendations);
           }
-          else if(iw_algo=="Regression")
+          else if (iw_algo == "Regression")
           {
-              cf->GetRecommendations<CosineSearch,RegressionInterpolation>(numRecs, recommendations);
+              cf->GetRecommendations<CosineSearch,
+                RegressionInterpolation>(numRecs, recommendations);
           }
-          else if(iw_algo=="Similarity")
+          else if (iw_algo == "Similarity")
           {
-              cf->GetRecommendations<CosineSearch,SimilarityInterpolation>(numRecs, recommendations);
+              cf->GetRecommendations<CosineSearch,
+                SimilarityInterpolation>(numRecs, recommendations);
           }
       }
-      else if(ns_algo=="Euclidean")
+      else if (ns_algo == "Euclidean")
       {
-          if(iw_algo=="Average")
+          if (iw_algo == "Average")
           {
-              cf->GetRecommendations<EuclideanSearch,AverageInterpolation>(numRecs, recommendations);
+              cf->GetRecommendations<EuclideanSearch,
+                AverageInterpolation>(numRecs, recommendations);
           }
-          else if(iw_algo=="Regression")
+          else if (iw_algo == "Regression")
           {
-              cf->GetRecommendations<EuclideanSearch,RegressionInterpolation>(numRecs, recommendations);
+              cf->GetRecommendations<EuclideanSearch,
+                RegressionInterpolation>(numRecs, recommendations);
           }
-          else if(iw_algo=="Similarity")
+          else if (iw_algo == "Similarity")
           {
-              cf->GetRecommendations<EuclideanSearch,SimilarityInterpolation>(numRecs, recommendations);
+              cf->GetRecommendations<EuclideanSearch,
+                SimilarityInterpolation>(numRecs, recommendations);
           }
       }
-      else if(ns_algo=="Pearson")
+      else if (ns_algo == "Pearson")
       {
-          if(iw_algo=="Average")
+          if (iw_algo == "Average")
           {
-              cf->GetRecommendations<PearsonSearch,AverageInterpolation>(numRecs, recommendations);
+              cf->GetRecommendations<PearsonSearch,
+                AverageInterpolation>(numRecs, recommendations);
           }
-          else if(iw_algo=="Regression")
+          else if (iw_algo == "Regression")
           {
-              cf->GetRecommendations<PearsonSearch,RegressionInterpolation>(numRecs, recommendations);
+              cf->GetRecommendations<PearsonSearch,
+                RegressionInterpolation>(numRecs, recommendations);
           }
-          else if(iw_algo=="Similarity")
+          else if (iw_algo == "Similarity")
           {
-              cf->GetRecommendations<PearsonSearch,SimilarityInterpolation>(numRecs, recommendations);
+              cf->GetRecommendations<PearsonSearch,
+                SimilarityInterpolation>(numRecs, recommendations);
           }
       }
   }
@@ -282,49 +308,49 @@ void ComputeRMSE(CFModel* cf)
   // Now compute the RMSE.
   arma::vec predictions;
 
-  if(ns_algo=="Cosine")
+  if (ns_algo == "Cosine")
     {
-        if(iw_algo=="Average")
+        if (iw_algo == "Average")
         {
-            cf->Predict<CosineSearch,AverageInterpolation>(combinations, predictions);
+            cf->Predict<CosineSearch, AverageInterpolation>(combinations, predictions);
         }
-        else if(iw_algo=="Regression")
+        else if (iw_algo == "Regression")
         {
-            cf->Predict<CosineSearch,RegressionInterpolation>(combinations, predictions);
+            cf->Predict<CosineSearch, RegressionInterpolation>(combinations, predictions);
         }
-        else if(iw_algo=="Similarity")
+        else if (iw_algo == "Similarity")
         {
-            cf->Predict<CosineSearch,SimilarityInterpolation>(combinations, predictions);
+            cf->Predict<CosineSearch, SimilarityInterpolation>(combinations, predictions);
         }
     }
-  else if(ns_algo=="Euclidean")
+  else if (ns_algo == "Euclidean")
     {
-        if(iw_algo=="Average")
+        if (iw_algo == "Average")
         {
-            cf->Predict<EuclideanSearch,AverageInterpolation>(combinations, predictions);
+            cf->Predict<EuclideanSearch, AverageInterpolation>(combinations, predictions);
         }
-        else if(iw_algo=="Regression")
+        else if (iw_algo == "Regression")
         {
-            cf->Predict<EuclideanSearch,RegressionInterpolation>(combinations, predictions);
+            cf->Predict<EuclideanSearch, RegressionInterpolation>(combinations, predictions);
         }
-        else if(iw_algo=="Similarity")
+        else if (iw_algo == "Similarity")
         {
-            cf->Predict<EuclideanSearch,SimilarityInterpolation>(combinations, predictions);
+            cf->Predict<EuclideanSearch, SimilarityInterpolation>(combinations, predictions);
         }
     }
-  else if(ns_algo=="Pearson")
+  else if (ns_algo == "Pearson")
     {
-        if(iw_algo=="Average")
+        if (iw_algo == "Average")
         {
-            cf->Predict<PearsonSearch,AverageInterpolation>(combinations, predictions);
+            cf->Predict<PearsonSearch, AverageInterpolation>(combinations, predictions);
         }
-        else if(iw_algo=="Regression")
+        else if (iw_algo == "Regression")
         {
-            cf->Predict<PearsonSearch,RegressionInterpolation>(combinations, predictions);
+            cf->Predict<PearsonSearch, RegressionInterpolation>(combinations, predictions);
         }
-        else if(iw_algo=="Similarity")
+        else if (iw_algo == "Similarity")
         {
-            cf->Predict<PearsonSearch,SimilarityInterpolation>(combinations, predictions);
+            cf->Predict<PearsonSearch, SimilarityInterpolation>(combinations, predictions);
         }
     }
 
