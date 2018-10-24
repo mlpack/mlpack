@@ -211,10 +211,10 @@ class HMM
    * @return Log-likelihood of most likely state sequence.
    */
   double Estimate(const arma::mat& dataSeq,
-                  arma::mat& stateProb,
-                  arma::mat& forwardProb,
-                  arma::mat& backwardProb,
-                  arma::vec& scales) const;
+                  arma::mat& stateLogProb,
+                  arma::mat& forwardLogProb,
+                  arma::mat& backwardLogProb,
+                  arma::vec& logScales) const;
 
   /**
    * Estimate the probabilities of each hidden state at each time step of each
@@ -228,7 +228,7 @@ class HMM
    * @return Log-likelihood of most likely state sequence.
    */
   double Estimate(const arma::mat& dataSeq,
-                  arma::mat& stateProb) const;
+                  arma::mat& stateLogProb) const;
 
   /**
    * Generate a random data sequence of the given length.  The data sequence is
@@ -341,8 +341,8 @@ class HMM
    * @param forwardProb Matrix in which forward probabilities will be saved.
    */
   void Forward(const arma::mat& dataSeq,
-               arma::vec& scales,
-               arma::mat& forwardProb) const;
+               arma::vec& logScales,
+               arma::mat& forwardLogProb) const;
 
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm).  Computes
@@ -356,8 +356,8 @@ class HMM
    * @param backwardProb Matrix in which backward probabilities will be saved.
    */
   void Backward(const arma::mat& dataSeq,
-                const arma::vec& scales,
-                arma::mat& backwardProb) const;
+                const arma::vec& logScales,
+                arma::mat& backwardLogProb) const;
 
   //! Set of emission probability distributions; one for each state.
   std::vector<Distribution> emission;

@@ -17,6 +17,8 @@
 // In case it hasn't already been included.
 #include "gmm.hpp"
 
+#include <mlpack/core/math/log_add.hpp>
+
 namespace mlpack {
 namespace gmm {
 
