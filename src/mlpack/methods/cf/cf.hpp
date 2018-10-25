@@ -179,6 +179,9 @@ class CFType
   //! Get the cleaned data matrix.
   const arma::sp_mat& CleanedData() const { return cleanedData; }
 
+  //! Get the normalization object.
+  const NormalizationType& Normalization() const { return normalization; }
+
   /**
    * Generates the given number of recommendations for all users.
    *
