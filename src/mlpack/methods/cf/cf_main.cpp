@@ -150,6 +150,7 @@ void ComputeRecommendations(CFModel* cf,
       ("neighbor_search");
   const string interpolationAlgorithm = CLI::GetParam<string>("interpolation");
   
+    // Reading users.
     if (CLI::HasParam("query"))
     {
       // User matrix.
