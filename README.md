@@ -84,7 +84,7 @@ mlpack has the following dependencies:
       Armadillo     >= 6.500.0
       Boost (program_options, math_c99, unit_test_framework, serialization,
              spirit)
-      CMake         >= 2.8.5
+      CMake         >= 3.3.2
 
 All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for
