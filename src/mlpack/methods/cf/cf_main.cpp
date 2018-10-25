@@ -397,7 +397,7 @@ void PerformAction(arma::mat& dataset,
   const size_t neighborhood = (size_t) CLI::GetParam<int>("neighborhood");
   CFModel* c = new CFModel();
   c->template Train<DecompositionPolicy>(dataset, neighborhood, rank,
-    maxIterations, minResidue, CLI::HasParam("iteration_only_termination"));
+      maxIterations, minResidue, CLI::HasParam("iteration_only_termination"));
 
   PerformAction(c);
 }
