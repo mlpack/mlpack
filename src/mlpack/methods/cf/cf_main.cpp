@@ -159,8 +159,8 @@ void ComputeRecommendations(CFModel* cf,
     if (users.n_rows > 1)
       users = users.t();
     if (users.n_rows > 1)
-        Log::Fatal << "List of query users must be one-dimensional!"
-                   << std::endl;
+      Log::Fatal << "List of query users must be one-dimensional!"
+                 << std::endl;
 
     Log::Info << "Generating recommendations for "
               << users.n_elem << " users."
