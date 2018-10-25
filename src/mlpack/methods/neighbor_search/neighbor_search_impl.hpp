@@ -219,15 +219,9 @@ NeighborSearch<SortPolicy,
 
   // Clean memory first.
   if (referenceTree)
-  {
     delete referenceTree;
-    referenceTree = NULL;
-  }
   else
-  {
     delete referenceSet;
-    referenceSet = NULL;
-  }
 
   oldFromNewReferences = other.oldFromNewReferences;
   referenceTree = other.referenceTree ? new Tree(*other.referenceTree) : NULL;
@@ -268,15 +262,9 @@ NeighborSearch<SortPolicy,
 
   // Clean memory first.
   if (referenceTree)
-  {
     delete referenceTree;
-    referenceTree = NULL;
-  }
   else
-  {
     delete referenceSet;
-    referenceSet = NULL;
-  }
 
   oldFromNewReferences = std::move(other.oldFromNewReferences);
   referenceTree = other.referenceTree;
@@ -312,15 +300,9 @@ NeighborSearch<SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType,
 SingleTreeTraversalType>::~NeighborSearch()
 {
   if (referenceTree)
-  {
     delete referenceTree;
-    referenceTree = NULL;
-  }
   else
-  {
     delete referenceSet;
-    referenceSet = NULL;
-  }
 }
 
 template<typename SortPolicy,
@@ -344,7 +326,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Train(MatType referenceSetIn)
   else
   {
     delete referenceSet;
-    referenceSet = NULL;
   }
 
   // We may need to rebuild the tree.
@@ -379,12 +360,10 @@ DualTreeTraversalType, SingleTreeTraversalType>::Train(Tree referenceTree)
   {
     oldFromNewReferences.clear();
     delete this->referenceTree;
-    this->referenceTree = NULL;
   }
   else
   {
     delete this->referenceSet;
-    this->referenceSet = NULL;
   }
 
   this->referenceTree = new Tree(std::move(referenceTree));
@@ -979,7 +958,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
     if (Archive::is_loading::value && referenceSet)
     {
       delete referenceSet;
-      referenceSet = NULL;
     }
 
     ar & BOOST_SERIALIZATION_NVP(referenceSet);
@@ -1001,7 +979,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
     if (Archive::is_loading::value && referenceTree)
     {
       delete referenceTree;
-      referenceTree = NULL;
     }
 
     ar & BOOST_SERIALIZATION_NVP(referenceTree);
