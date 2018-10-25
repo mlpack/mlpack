@@ -285,7 +285,6 @@ void ComputeRecommendations(CFModel* cf,
 void ComputeRMSE(CFModel* cf)
 {
   //    Interpolation and Neighbor Search
-
   const string neighborSearchAlgorithm = CLI::GetParam<string>("neighbor_search");
   const string interpolationAlgorithm = CLI::GetParam<string>("interpolation");
 
