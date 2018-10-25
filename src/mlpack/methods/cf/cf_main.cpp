@@ -149,138 +149,137 @@ void ComputeRecommendations(CFModel* cf,
   const string neighborSearchAlgorithm = CLI::GetParam<string>
       ("neighbor_search");
   const string interpolationAlgorithm = CLI::GetParam<string>("interpolation");
-  
-    // Reading users.
-    if (CLI::HasParam("query"))
-    {
-      // User matrix.
-      arma::Mat<size_t> users =
-        std::move(CLI::GetParam<arma::Mat<size_t>>("query"));
-      if (users.n_rows > 1)
-        users = users.t();
-      if (users.n_rows > 1)
+
+  // Reading users.
+  if (CLI::HasParam("query"))
+  {
+    // User matrix.
+    arma::Mat<size_t> users =
+      std::move(CLI::GetParam<arma::Mat<size_t>>("query"));
+    if (users.n_rows > 1)
+      users = users.t();
+    if (users.n_rows > 1)
         Log::Fatal << "List of query users must be one-dimensional!"
                    << std::endl;
 
-      Log::Info << "Generating recommendations for "
-                << users.n_elem << " users."
-                << endl;
+    Log::Info << "Generating recommendations for "
+              << users.n_elem << " users."
+              << endl;
 
-      //  All possible alternatives for Recommendations
-      if (neighborSearchAlgorithm == "Cosine")
-      {
-        if (interpolationAlgorithm == "Average")
-        {
-          cf->GetRecommendations<CosineSearch, AverageInterpolation>
-              (numRecs, recommendations, users.row(0).t());
-        }
-        else if (interpolationAlgorithm == "Regression")
-        {
-          cf->GetRecommendations<CosineSearch, RegressionInterpolation>
-              (numRecs, recommendations, users.row(0).t());
-        }
-        else if (interpolationAlgorithm == "Similarity")
-        {
-          cf->GetRecommendations<CosineSearch, SimilarityInterpolation>
-              (numRecs, recommendations, users.row(0).t());
-        }
-      }
-      else if (neighborSearchAlgorithm == "Euclidean")
-      {
-        if (interpolationAlgorithm == "Average")
-        {
-          cf->GetRecommendations<EuclideanSearch, AverageInterpolation>
-              (numRecs, recommendations, users.row(0).t());
-        }
-        else if (interpolationAlgorithm == "Regression")
-        {
-          cf->GetRecommendations<EuclideanSearch, RegressionInterpolation>
-              (numRecs, recommendations, users.row(0).t());
-        }
-        else if (interpolationAlgorithm == "Similarity")
-        {
-          cf->GetRecommendations<EuclideanSearch, SimilarityInterpolation>
-              (numRecs, recommendations, users.row(0).t());
-        }
-      }
-      else if (neighborSearchAlgorithm == "Pearson")
-      {
-        if (interpolationAlgorithm == "Average")
-        {
-          cf->GetRecommendations<PearsonSearch, AverageInterpolation>
-              (numRecs, recommendations, users.row(0).t());
-        }
-        else if (interpolationAlgorithm == "Regression")
-        {
-          cf->GetRecommendations<PearsonSearch, RegressionInterpolation>
-              (numRecs, recommendations, users.row(0).t());
-        }
-        else if (interpolationAlgorithm == "Similarity")
-        {
-          cf->GetRecommendations<PearsonSearch, SimilarityInterpolation>
-              (numRecs, recommendations, users.row(0).t());
-        }
-      }
-    }
-    else
+    //  All possible alternatives for Recommendations
+    if (neighborSearchAlgorithm == "Cosine")
     {
-      Log::Info << "Generating recommendations for all users." << endl;
-      if (neighborSearchAlgorithm == "Cosine")
+      if (interpolationAlgorithm == "Average")
       {
-        if (interpolationAlgorithm == "Average")
-        {
-          cf->GetRecommendations<CosineSearch, AverageInterpolation>
-              (numRecs, recommendations);
-        }
-        else if (interpolationAlgorithm == "Regression")
-        {
-          cf->GetRecommendations<CosineSearch, RegressionInterpolation>
-              (numRecs, recommendations);
-        }
-        else if (interpolationAlgorithm == "Similarity")
-        {
-          cf->GetRecommendations<CosineSearch, SimilarityInterpolation>
-              (numRecs, recommendations);
-        }
+        cf->GetRecommendations<CosineSearch, AverageInterpolation>
+            (numRecs, recommendations, users.row(0).t());
       }
-      else if (neighborSearchAlgorithm == "Euclidean")
+      else if (interpolationAlgorithm == "Regression")
       {
-        if (interpolationAlgorithm == "Average")
-        {
-          cf->GetRecommendations<EuclideanSearch, AverageInterpolation>
-              (numRecs, recommendations);
-        }
-        else if (interpolationAlgorithm == "Regression")
-        {
-          cf->GetRecommendations<EuclideanSearch, RegressionInterpolation>
-              (numRecs, recommendations);
-        }
-        else if (interpolationAlgorithm == "Similarity")
-        {
-          cf->GetRecommendations<EuclideanSearch, SimilarityInterpolation>
-              (numRecs, recommendations);
-        }
+        cf->GetRecommendations<CosineSearch, RegressionInterpolation>
+            (numRecs, recommendations, users.row(0).t());
       }
-      else if (neighborSearchAlgorithm == "Pearson")
+      else if (interpolationAlgorithm == "Similarity")
       {
-        if (interpolationAlgorithm == "Average")
-        {
-          cf->GetRecommendations<PearsonSearch, AverageInterpolation>
-              (numRecs, recommendations);
-        }
-        else if (interpolationAlgorithm == "Regression")
-        {
-          cf->GetRecommendations<PearsonSearch, RegressionInterpolation>
-              (numRecs, recommendations);
-        }
-        else if (interpolationAlgorithm == "Similarity")
-        {
-          cf->GetRecommendations<PearsonSearch, SimilarityInterpolation>
-              (numRecs, recommendations);
-        }
+        cf->GetRecommendations<CosineSearch, SimilarityInterpolation>
+            (numRecs, recommendations, users.row(0).t());
       }
     }
-
+    else if (neighborSearchAlgorithm == "Euclidean")
+    {
+      if (interpolationAlgorithm == "Average")
+      {
+        cf->GetRecommendations<EuclideanSearch, AverageInterpolation>
+            (numRecs, recommendations, users.row(0).t());
+      }
+      else if (interpolationAlgorithm == "Regression")
+      {
+        cf->GetRecommendations<EuclideanSearch, RegressionInterpolation>
+            (numRecs, recommendations, users.row(0).t());
+      }
+      else if (interpolationAlgorithm == "Similarity")
+      {
+        cf->GetRecommendations<EuclideanSearch, SimilarityInterpolation>
+            (numRecs, recommendations, users.row(0).t());
+      }
+    }
+    else if (neighborSearchAlgorithm == "Pearson")
+    {
+      if (interpolationAlgorithm == "Average")
+      {
+        cf->GetRecommendations<PearsonSearch, AverageInterpolation>
+            (numRecs, recommendations, users.row(0).t());
+      }
+      else if (interpolationAlgorithm == "Regression")
+      {
+        cf->GetRecommendations<PearsonSearch, RegressionInterpolation>
+            (numRecs, recommendations, users.row(0).t());
+      }
+      else if (interpolationAlgorithm == "Similarity")
+      {
+        cf->GetRecommendations<PearsonSearch, SimilarityInterpolation>
+            (numRecs, recommendations, users.row(0).t());
+      }
+    }
+  }
+  else
+  {
+    Log::Info << "Generating recommendations for all users." << endl;
+    if (neighborSearchAlgorithm == "Cosine")
+    {
+      if (interpolationAlgorithm == "Average")
+      {
+        cf->GetRecommendations<CosineSearch, AverageInterpolation>
+            (numRecs, recommendations);
+      }
+      else if (interpolationAlgorithm == "Regression")
+      {
+        cf->GetRecommendations<CosineSearch, RegressionInterpolation>
+            (numRecs, recommendations);
+      }
+      else if (interpolationAlgorithm == "Similarity")
+      {
+        cf->GetRecommendations<CosineSearch, SimilarityInterpolation>
+            (numRecs, recommendations);
+      }
+    }
+    else if (neighborSearchAlgorithm == "Euclidean")
+    {
+      if (interpolationAlgorithm == "Average")
+      {
+        cf->GetRecommendations<EuclideanSearch, AverageInterpolation>
+            (numRecs, recommendations);
+      }
+      else if (interpolationAlgorithm == "Regression")
+      {
+        cf->GetRecommendations<EuclideanSearch, RegressionInterpolation>
+            (numRecs, recommendations);
+      }
+      else if (interpolationAlgorithm == "Similarity")
+      {
+        cf->GetRecommendations<EuclideanSearch, SimilarityInterpolation>
+            (numRecs, recommendations);
+      }
+    }
+    else if (neighborSearchAlgorithm == "Pearson")
+    {
+      if (interpolationAlgorithm == "Average")
+      {
+        cf->GetRecommendations<PearsonSearch, AverageInterpolation>
+            (numRecs, recommendations);
+      }
+      else if (interpolationAlgorithm == "Regression")
+      {
+        cf->GetRecommendations<PearsonSearch, RegressionInterpolation>
+            (numRecs, recommendations);
+      }
+      else if (interpolationAlgorithm == "Similarity")
+      {
+        cf->GetRecommendations<PearsonSearch, SimilarityInterpolation>
+            (numRecs, recommendations);
+      }
+    }
+  }
 }
 
 void ComputeRMSE(CFModel* cf)
