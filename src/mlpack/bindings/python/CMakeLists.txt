@@ -116,7 +116,8 @@ endforeach()
 add_custom_command(TARGET python_copy PRE_BUILD
     COMMAND ${CMAKE_COMMAND} ARGS -E copy
         ${CMAKE_CURRENT_SOURCE_DIR}/setup.cfg
-        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
+        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/
+	BYPRODUCTS ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${cython_file})
 add_custom_command(TARGET python_copy PRE_BUILD
     COMMAND ${CMAKE_COMMAND} ARGS -E copy
         ${CMAKE_CURRENT_SOURCE_DIR}/copy_artifacts.py
@@ -127,7 +128,8 @@ if (BUILD_TESTS)
     add_custom_command(TARGET python_copy PRE_BUILD
         COMMAND ${CMAKE_COMMAND} ARGS -E copy
             ${CMAKE_CURRENT_SOURCE_DIR}/${test_file}
-            ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/tests/)
+            ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/tests/
+	BYPRODUCTS ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/tests/${test_file})
   endforeach ()
 endif ()
 
