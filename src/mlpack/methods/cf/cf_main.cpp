@@ -155,7 +155,7 @@ void ComputeRecommendations(CFModel* cf,
   {
     // User matrix.
     arma::Mat<size_t> users =
-      std::move(CLI::GetParam<arma::Mat<size_t>>("query"));
+        std::move(CLI::GetParam<arma::Mat<size_t>>("query"));
     if (users.n_rows > 1)
       users = users.t();
     if (users.n_rows > 1)
