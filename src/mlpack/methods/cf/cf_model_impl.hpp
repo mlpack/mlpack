@@ -36,7 +36,7 @@ void* GetValueVisitor::operator()(CFType<DecompositionPolicy>* c) const
 
 template <typename NeighborSearchPolicy,
           typename InterpolationPolicy>
-PredictVisitor<NeighborSearchPolicy,InterpolationPolicy>::PredictVisitor(
+PredictVisitor<NeighborSearchPolicy, InterpolationPolicy>::PredictVisitor(
     const arma::Mat<size_t>& combinations,
     arma::vec& predictions) :
     combinations(combinations),
