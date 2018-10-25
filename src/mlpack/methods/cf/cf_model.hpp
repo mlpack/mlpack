@@ -54,7 +54,7 @@ class GetValueVisitor : public boost::static_visitor<void*>
  * PredictVisitor uses the CFType object to make predictions on the given
  * combinations of users and items.
  */
-template <typename NeighbourSearchPolicy,
+template <typename NeighborSearchPolicy,
           typename InterpolationPolicy>
 class PredictVisitor : public boost::static_visitor<void>
 {
@@ -78,7 +78,7 @@ class PredictVisitor : public boost::static_visitor<void>
  * RecommendationVisitor uses the CFType object to get recommendations for the
  * given users.
  */
-template <typename NeighbourSearchPolicy,
+template <typename NeighborSearchPolicy,
           typename InterpolationPolicy>
 class RecommendationVisitor : public boost::static_visitor<void>
 {
@@ -146,21 +146,21 @@ class CFModel
              const bool mit);
 
   //! Make predictions.
-  template <typename NeighbourSearchPolicy,
+  template <typename NeighborSearchPolicy,
             typename InterpolationPolicy>
   void Predict(const arma::Mat<size_t>& combinations,
                arma::vec& predictions);
 
   //! Compute recommendations for query users.
-  template<typename NeighbourSearchPolicy,
+  template<typename NeighborSearchPolicy,
            typename InterpolationPolicy>
   void GetRecommendations(const size_t numRecs,
                           arma::Mat<size_t>& recommendations,
                           const arma::Col<size_t>& users);
 
   //! Compute recommendations for all users.
-  template<typename NeighbourSearchPolicy,
-          typename InterpolationPolicy>
+  template<typename NeighborSearchPolicy,
+           typename InterpolationPolicy>
   void GetRecommendations(const size_t numRecs,
                           arma::Mat<size_t>& recommendations);
 
