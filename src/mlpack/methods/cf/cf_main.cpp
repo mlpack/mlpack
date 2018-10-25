@@ -80,6 +80,18 @@ PROGRAM_INFO("Collaborative Filtering", "This program performs collaborative "
     " - 'SVDCompleteIncremental' -- SVD complete incremental learning\n"
     " - 'BiasSVD' -- Bias SVD using a SGD optimizer\n"
     " - 'SVDPP' -- SVD++ using a SGD optimizer\n"
+    "\n\n"
+    "The following neighbor search algorithms can be specified via" +
+    " the " + PRINT_PARAM_STRING("neighbor_search") + " parameter:"
+    " - 'Cosine'  -- Cosine Search Algorithm\n"
+    " - 'Euclidean'  -- Euclidean Search Algorithm\n"
+    " - 'Pearson'  -- Pearson Search Algorithm\n"
+    "\n\n"
+    "The following weight interpolation algorithms can be specified via" +
+    " the " + PRINT_PARAM_STRING("interpolation") + " parameter:"
+    " - 'Average'  -- Average Interpolation Algorithm\n"
+    " - 'Regression'  -- Regression Interpolation Algorithm\n"
+    " - 'Similarity'  -- Similarity Interpolation Algorithm\n"
     "\n"
     "A trained model may be saved to with the " +
     PRINT_PARAM_STRING("output_model") + " output parameter."
