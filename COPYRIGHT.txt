@@ -104,6 +104,7 @@ Copyright:
   Copyright 2018, Shashank Shekhar <contactshashankshekhar@gmail.com>
   Copyright 2018, Yasmine Dumouchel <yasmine.dumouchel@gmail.com>
   Copyright 2018, German Lancioni
+  Copyright 2018, Arash Abghari <arash.abghari@gmail.com>
   
 License: BSD-3-clause
   All rights reserved.

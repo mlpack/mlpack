@@ -1,5 +1,6 @@
 /**
  * @file log_add.hpp
+ * @author Arash Abghari
  *
  * Functions for logarithmic addition.
  */
