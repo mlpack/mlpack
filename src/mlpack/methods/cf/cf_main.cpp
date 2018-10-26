@@ -83,12 +83,14 @@ PROGRAM_INFO("Collaborative Filtering", "This program performs collaborative "
     "\n\n"
     "The following neighbor search algorithms can be specified via" +
     " the " + PRINT_PARAM_STRING("neighbor_search") + " parameter:"
+    "\n"
     " - 'Cosine'  -- Cosine Search Algorithm\n"
     " - 'Euclidean'  -- Euclidean Search Algorithm\n"
     " - 'Pearson'  -- Pearson Search Algorithm\n"
     "\n\n"
     "The following weight interpolation algorithms can be specified via" +
     " the " + PRINT_PARAM_STRING("interpolation") + " parameter:"
+    "\n"
     " - 'Average'  -- Average Interpolation Algorithm\n"
     " - 'Regression'  -- Regression Interpolation Algorithm\n"
     " - 'Similarity'  -- Similarity Interpolation Algorithm\n"
@@ -315,59 +317,59 @@ void ComputeRMSE(CFModel* cf)
   arma::vec predictions;
 
   if (neighborSearchAlgorithm == "Cosine")
+  {
+    if (interpolationAlgorithm == "Average")
     {
-      if (interpolationAlgorithm == "Average")
-      {
-        cf->Predict<CosineSearch, AverageInterpolation>
-            (combinations, predictions);
-      }
-      else if (interpolationAlgorithm == "Regression")
-      {
-        cf->Predict<CosineSearch, RegressionInterpolation>
-            (combinations, predictions);
-      }
-      else if (interpolationAlgorithm == "Similarity")
-      {
-        cf->Predict<CosineSearch, SimilarityInterpolation>
-            (combinations, predictions);
-      }
+      cf->Predict<CosineSearch, AverageInterpolation>
+          (combinations, predictions);
     }
+    else if (interpolationAlgorithm == "Regression")
+    {
+      cf->Predict<CosineSearch, RegressionInterpolation>
+          (combinations, predictions);
+    }
+    else if (interpolationAlgorithm == "Similarity")
+    {
+      cf->Predict<CosineSearch, SimilarityInterpolation>
+          (combinations, predictions);
+    }
+  }
   else if (neighborSearchAlgorithm == "Euclidean")
+  {
+    if (interpolationAlgorithm == "Average")
     {
-      if (interpolationAlgorithm == "Average")
-      {
-        cf->Predict<EuclideanSearch, AverageInterpolation>
-            (combinations, predictions);
-      }
-      else if (interpolationAlgorithm == "Regression")
-      {
-        cf->Predict<EuclideanSearch, RegressionInterpolation>
-            (combinations, predictions);
-      }
-      else if (interpolationAlgorithm == "Similarity")
-      {
-        cf->Predict<EuclideanSearch, SimilarityInterpolation>
-            (combinations, predictions);
-      }
+      cf->Predict<EuclideanSearch, AverageInterpolation>
+          (combinations, predictions);
     }
+    else if (interpolationAlgorithm == "Regression")
+    {
+      cf->Predict<EuclideanSearch, RegressionInterpolation>
+          (combinations, predictions);
+    }
+    else if (interpolationAlgorithm == "Similarity")
+    {
+      cf->Predict<EuclideanSearch, SimilarityInterpolation>
+          (combinations, predictions);
+    }
+  }
   else if (neighborSearchAlgorithm == "Pearson")
+  {
+    if (interpolationAlgorithm == "Average")
     {
-      if (interpolationAlgorithm == "Average")
-      {
-        cf->Predict<PearsonSearch, AverageInterpolation>
-            (combinations, predictions);
-      }
-      else if (interpolationAlgorithm == "Regression")
-      {
-        cf->Predict<PearsonSearch, RegressionInterpolation>
-            (combinations, predictions);
-      }
-      else if (interpolationAlgorithm == "Similarity")
-      {
-        cf->Predict<PearsonSearch, SimilarityInterpolation>
-            (combinations, predictions);
-      }
+      cf->Predict<PearsonSearch, AverageInterpolation>
+          (combinations, predictions);
     }
+    else if (interpolationAlgorithm == "Regression")
+    {
+      cf->Predict<PearsonSearch, RegressionInterpolation>
+          (combinations, predictions);
+    }
+    else if (interpolationAlgorithm == "Similarity")
+    {
+      cf->Predict<PearsonSearch, SimilarityInterpolation>
+          (combinations, predictions);
+    }
+  }
 
   // Compute the root of the sum of the squared errors, divide by the number of
   // points to get the RMSE.  It turns out this is just the L2-norm divided by
