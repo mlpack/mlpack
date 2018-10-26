@@ -7,6 +7,8 @@ set(SOURCES
   lin_alg.hpp
   lin_alg_impl.hpp
   lin_alg.cpp
+  log_add.hpp
+  log_add.cpp
   make_alias.hpp
   random.hpp
   random.cpp

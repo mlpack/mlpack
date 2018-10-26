@@ -12,6 +12,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "gmm.hpp"
+#include "mlpack/core/math/log_add.hpp"
 
 namespace mlpack {
 namespace gmm {
@@ -51,17 +52,38 @@ GMM& GMM::operator=(const GMM& other)
 }
 
 /**
+ * Return the log probability of the given observation being from this GMM.
+ */
+double GMM::LogProbability(const arma::vec& observation) const
+{
+  // Sum the probability for each Gaussian in our mixture (and we have to
+  // multiply by the prior for each Gaussian too).
+  double sum = -std::numeric_limits<double>::infinity();
+  for (size_t i = 0; i < gaussians; i++)
+    sum = LogAdd(sum, log(weights[i]) + dists[i].LogProbability(observation));
+
+  return sum;
+}
+
+/**
  * Return the probability of the given observation being from this GMM.
  */
 double GMM::Probability(const arma::vec& observation) const
 {
-  // Sum the probability for each Gaussian in our mixture (and we have to
-  // multiply by the prior for each Gaussian too).
-  double sum = 0;
-  for (size_t i = 0; i < gaussians; i++)
-    sum += weights[i] * dists[i].Probability(observation);
+  return exp(LogProbability(observation));
+}
 
-  return sum;
+
+/**
+ * Return the log probability of the given observation being from the given
+ * component in the mixture.
+ */
+double GMM::LogProbability(const arma::vec& observation,
+                        const size_t component) const
+{
+  // We are only considering one Gaussian component -- so we only need to call
+  // Probability() once.  We do consider the prior probability!
+  return log(weights[component]) + dists[component].LogProbability(observation);
 }
 
 /**
@@ -71,9 +93,7 @@ double GMM::Probability(const arma::vec& observation) const
 double GMM::Probability(const arma::vec& observation,
                         const size_t component) const
 {
-  // We are only considering one Gaussian component -- so we only need to call
-  // Probability() once.  We do consider the prior probability!
-  return weights[component] * dists[component].Probability(observation);
+  return exp(LogProbability(observation, component));
 }
 
 /**
