@@ -56,7 +56,7 @@ void PredictVisitor<NeighborSearchPolicy, InterpolationPolicy>
   }
 
   c->template Predict<NeighborSearchPolicy,
-    InterpolationPolicy>(combinations, predictions);
+      InterpolationPolicy>(combinations, predictions);
 }
 
 template <typename NeighborSearchPolicy,
