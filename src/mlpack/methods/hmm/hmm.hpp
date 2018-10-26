@@ -192,7 +192,7 @@ class HMM
   void Train(const std::vector<arma::mat>& dataSeq,
              const std::vector<arma::Row<size_t> >& stateSeq);
 
-    /**
+  /**
    * Estimate the probabilities of each hidden state at each time step for each
    * given data observation, using the Forward-Backward algorithm.  Each matrix
    * which is returned has columns equal to the number of data observations, and
@@ -211,12 +211,12 @@ class HMM
    * @return Log-likelihood of most likely state sequence.
    */
   double LogEstimate(const arma::mat& dataSeq,
-                  arma::mat& stateLogProb,
-                  arma::mat& forwardLogProb,
-                  arma::mat& backwardLogProb,
-                  arma::vec& logScales) const;
+                     arma::mat& stateLogProb,
+                     arma::mat& forwardLogProb,
+                     arma::mat& backwardLogProb,
+                     arma::vec& logScales) const;
 
-/**
+  /**
    * Estimate the probabilities of each hidden state at each time step for each
    * given data observation, using the Forward-Backward algorithm.  Each matrix
    * which is returned has columns equal to the number of data observations, and

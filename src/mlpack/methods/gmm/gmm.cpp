@@ -12,7 +12,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "gmm.hpp"
-#include "mlpack/core/math/log_add.hpp"
+#include <mlpack/core/math/log_add.hpp>
 
 namespace mlpack {
 namespace gmm {
@@ -60,7 +60,7 @@ double GMM::LogProbability(const arma::vec& observation) const
   // multiply by the prior for each Gaussian too).
   double sum = -std::numeric_limits<double>::infinity();
   for (size_t i = 0; i < gaussians; i++)
-    sum = LogAdd(sum, log(weights[i]) + dists[i].LogProbability(observation));
+    sum = math::LogAdd(sum, log(weights[i]) + dists[i].LogProbability(observation));
 
   return sum;
 }
@@ -72,7 +72,6 @@ double GMM::Probability(const arma::vec& observation) const
 {
   return exp(LogProbability(observation));
 }
-
 
 /**
  * Return the log probability of the given observation being from the given
