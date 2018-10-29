@@ -56,9 +56,9 @@ typename T::elem_type AccuLog(const T& x)
   typename T::elem_type sum =
       -std::numeric_limits<typename T::elem_type>::infinity();
 
-  for (auto&& v : x)
+  for (size_t i = 0; i < x.n_elem; ++i)
   {
-    sum = LogAdd(sum, v);
+    sum = LogAdd(sum, x[i]);
   }
 
   return sum;
