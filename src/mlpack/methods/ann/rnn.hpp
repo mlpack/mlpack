@@ -382,7 +382,7 @@ template<typename OutputLayerType,
 struct version<
     mlpack::ann::RNN<OutputLayerType, InitializationRuleType, CustomLayer...>>
 {
-  BOOST_STATIC_CONSTANT(unsigned int, value = 1);
+  BOOST_STATIC_CONSTANT(int, value = 1);
 };
 
 } // namespace serialization
