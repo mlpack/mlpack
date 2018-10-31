@@ -263,7 +263,6 @@ void ComputeRMSE(CFModel* cf)
 
   // Now compute the RMSE.
   arma::vec predictions;
-
   cf->Predict<NeighborSearchType, InterpolationType>
       (combinations, predictions);
 
