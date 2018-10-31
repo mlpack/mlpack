@@ -84,16 +84,16 @@ PROGRAM_INFO("Collaborative Filtering", "This program performs collaborative "
     "The following neighbor search algorithms can be specified via" +
     " the " + PRINT_PARAM_STRING("neighbor_search") + " parameter:"
     "\n"
-    " - 'Cosine'  -- Cosine Search Algorithm\n"
-    " - 'Euclidean'  -- Euclidean Search Algorithm\n"
-    " - 'Pearson'  -- Pearson Search Algorithm\n"
+    " - 'cosine'  -- Cosine Search Algorithm\n"
+    " - 'euclidean'  -- Euclidean Search Algorithm\n"
+    " - 'pearson'  -- Pearson Search Algorithm\n"
     "\n\n"
     "The following weight interpolation algorithms can be specified via" +
     " the " + PRINT_PARAM_STRING("interpolation") + " parameter:"
     "\n"
-    " - 'Average'  -- Average Interpolation Algorithm\n"
-    " - 'Regression'  -- Regression Interpolation Algorithm\n"
-    " - 'Similarity'  -- Similarity Interpolation Algorithm\n"
+    " - 'average'  -- Average Interpolation Algorithm\n"
+    " - 'regression'  -- Regression Interpolation Algorithm\n"
+    " - 'similarity'  -- Similarity Interpolation Algorithm\n"
     "\n"
     "A trained model may be saved to with the " +
     PRINT_PARAM_STRING("output_model") + " output parameter."
@@ -150,20 +150,17 @@ PARAM_INT_IN("seed", "Set the random seed (0 uses std::time(NULL)).", "s", 0);
 
 //  Interpolation and Neighbor Search Algorithms
 PARAM_STRING_IN("interpolation", "Algorithm used for weight interpolation.",
-    "i", "Average");
+    "i", "average");
 
 PARAM_STRING_IN("neighbor_search", "Algorithm used for neighbor search.",
-    "f", "Euclidean");
+    "S", "euclidean");
 
+template <typename NeighborSearchType,
+          typename InterpolationType>
 void ComputeRecommendations(CFModel* cf,
                             const size_t numRecs,
                             arma::Mat<size_t>& recommendations)
 {
-  //  Taking alternatives
-  const string neighborSearchAlgorithm = CLI::GetParam<string>
-      ("neighbor_search");
-  const string interpolationAlgorithm = CLI::GetParam<string>("interpolation");
-
   // Reading users.
   if (CLI::HasParam("query"))
   {
@@ -180,128 +177,79 @@ void ComputeRecommendations(CFModel* cf,
               << users.n_elem << " users."
               << endl;
 
-    //  All possible alternatives for Recommendations
-    if (neighborSearchAlgorithm == "Cosine")
-    {
-      if (interpolationAlgorithm == "Average")
-      {
-        cf->GetRecommendations<CosineSearch, AverageInterpolation>
-            (numRecs, recommendations, users.row(0).t());
-      }
-      else if (interpolationAlgorithm == "Regression")
-      {
-        cf->GetRecommendations<CosineSearch, RegressionInterpolation>
-            (numRecs, recommendations, users.row(0).t());
-      }
-      else if (interpolationAlgorithm == "Similarity")
-      {
-        cf->GetRecommendations<CosineSearch, SimilarityInterpolation>
-            (numRecs, recommendations, users.row(0).t());
-      }
-    }
-    else if (neighborSearchAlgorithm == "Euclidean")
-    {
-      if (interpolationAlgorithm == "Average")
-      {
-        cf->GetRecommendations<EuclideanSearch, AverageInterpolation>
-            (numRecs, recommendations, users.row(0).t());
-      }
-      else if (interpolationAlgorithm == "Regression")
-      {
-        cf->GetRecommendations<EuclideanSearch, RegressionInterpolation>
-            (numRecs, recommendations, users.row(0).t());
-      }
-      else if (interpolationAlgorithm == "Similarity")
-      {
-        cf->GetRecommendations<EuclideanSearch, SimilarityInterpolation>
-            (numRecs, recommendations, users.row(0).t());
-      }
-    }
-    else if (neighborSearchAlgorithm == "Pearson")
-    {
-      if (interpolationAlgorithm == "Average")
-      {
-        cf->GetRecommendations<PearsonSearch, AverageInterpolation>
-            (numRecs, recommendations, users.row(0).t());
-      }
-      else if (interpolationAlgorithm == "Regression")
-      {
-        cf->GetRecommendations<PearsonSearch, RegressionInterpolation>
-            (numRecs, recommendations, users.row(0).t());
-      }
-      else if (interpolationAlgorithm == "Similarity")
-      {
-        cf->GetRecommendations<PearsonSearch, SimilarityInterpolation>
-            (numRecs, recommendations, users.row(0).t());
-      }
-    }
+    cf->GetRecommendations<NeighborSearchType, InterpolationType>
+        (numRecs, recommendations, users.row(0).t());
   }
   else
   {
     Log::Info << "Generating recommendations for all users." << endl;
-    if (neighborSearchAlgorithm == "Cosine")
-    {
-      if (interpolationAlgorithm == "Average")
-      {
-        cf->GetRecommendations<CosineSearch, AverageInterpolation>
-            (numRecs, recommendations);
-      }
-      else if (interpolationAlgorithm == "Regression")
-      {
-        cf->GetRecommendations<CosineSearch, RegressionInterpolation>
-            (numRecs, recommendations);
-      }
-      else if (interpolationAlgorithm == "Similarity")
-      {
-        cf->GetRecommendations<CosineSearch, SimilarityInterpolation>
-            (numRecs, recommendations);
-      }
-    }
-    else if (neighborSearchAlgorithm == "Euclidean")
-    {
-      if (interpolationAlgorithm == "Average")
-      {
-        cf->GetRecommendations<EuclideanSearch, AverageInterpolation>
-            (numRecs, recommendations);
-      }
-      else if (interpolationAlgorithm == "Regression")
-      {
-        cf->GetRecommendations<EuclideanSearch, RegressionInterpolation>
-            (numRecs, recommendations);
-      }
-      else if (interpolationAlgorithm == "Similarity")
-      {
-        cf->GetRecommendations<EuclideanSearch, SimilarityInterpolation>
-            (numRecs, recommendations);
-      }
-    }
-    else if (neighborSearchAlgorithm == "Pearson")
-    {
-      if (interpolationAlgorithm == "Average")
-      {
-        cf->GetRecommendations<PearsonSearch, AverageInterpolation>
-            (numRecs, recommendations);
-      }
-      else if (interpolationAlgorithm == "Regression")
-      {
-        cf->GetRecommendations<PearsonSearch, RegressionInterpolation>
-            (numRecs, recommendations);
-      }
-      else if (interpolationAlgorithm == "Similarity")
-      {
-        cf->GetRecommendations<PearsonSearch, SimilarityInterpolation>
-            (numRecs, recommendations);
-      }
-    }
+    cf->GetRecommendations<NeighborSearchType, InterpolationType>
+        (numRecs, recommendations);
   }
 }
 
-void ComputeRMSE(CFModel* cf)
+template <typename NeighborSearchType>
+void ComputeRecommendations(CFModel* cf,
+                            const size_t numRecs,
+                            arma::Mat<size_t>& recommendations)
 {
-  //    Interpolation and Neighbor Search
-  const string neighborSearchAlgorithm = CLI::GetParam<string>("neighbor_search");
+  //  Verifying the Interpolation algorithms
+  RequireParamInSet<string>("interpolation", { "average",
+      "regression", "similarity" }, true, "unknown interpolation algorithm");
+
+  //  Taking Interpolation Alternatives
   const string interpolationAlgorithm = CLI::GetParam<string>("interpolation");
 
+  //  Determining the Interpolation Algorithm
+  if (interpolationAlgorithm == "average")
+  {
+    ComputeRecommendations<NeighborSearchType, AverageInterpolation>
+        (cf, numRecs, recommendations);
+  }
+  else if (interpolationAlgorithm == "regression")
+  {
+    ComputeRecommendations<NeighborSearchType, RegressionInterpolation>
+        (cf, numRecs, recommendations);
+  }
+  else if (interpolationAlgorithm == "similarity")
+  {
+    ComputeRecommendations<NeighborSearchType, SimilarityInterpolation>
+        (cf, numRecs, recommendations);
+  }
+}
+
+void ComputeRecommendations(CFModel* cf,
+                            const size_t numRecs,
+                            arma::Mat<size_t>& recommendations)
+{
+  //  Verifying the Neighbor Search algorithms
+  RequireParamInSet<string>("neighbor_search", { "cosine",
+      "euclidean", "pearson" }, true, "unknown neighbor search algorithm");
+
+  //  Taking Neighbor Search alternatives
+  const string neighborSearchAlgorithm = CLI::GetParam<string>
+      ("neighbor_search");
+
+
+  // Determining the Neighbor Search Algorithms
+  if (neighborSearchAlgorithm == "cosine")
+  {
+    ComputeRecommendations<CosineSearch>(cf, numRecs, recommendations);
+  }
+  else if (neighborSearchAlgorithm == "euclidean")
+  {
+    ComputeRecommendations<EuclideanSearch>(cf, numRecs, recommendations);
+  }
+  else if (neighborSearchAlgorithm == "pearson")
+  {
+    ComputeRecommendations<PearsonSearch>(cf, numRecs, recommendations);
+  }
+}
+
+template <typename NeighborSearchType,
+          typename InterpolationType>
+void ComputeRMSE(CFModel* cf)
+{
   // Now, compute each test point.
   arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
 
@@ -315,61 +263,8 @@ void ComputeRMSE(CFModel* cf)
 
   // Now compute the RMSE.
   arma::vec predictions;
-
-  if (neighborSearchAlgorithm == "Cosine")
-  {
-    if (interpolationAlgorithm == "Average")
-    {
-      cf->Predict<CosineSearch, AverageInterpolation>
-          (combinations, predictions);
-    }
-    else if (interpolationAlgorithm == "Regression")
-    {
-      cf->Predict<CosineSearch, RegressionInterpolation>
-          (combinations, predictions);
-    }
-    else if (interpolationAlgorithm == "Similarity")
-    {
-      cf->Predict<CosineSearch, SimilarityInterpolation>
-          (combinations, predictions);
-    }
-  }
-  else if (neighborSearchAlgorithm == "Euclidean")
-  {
-    if (interpolationAlgorithm == "Average")
-    {
-      cf->Predict<EuclideanSearch, AverageInterpolation>
-          (combinations, predictions);
-    }
-    else if (interpolationAlgorithm == "Regression")
-    {
-      cf->Predict<EuclideanSearch, RegressionInterpolation>
-          (combinations, predictions);
-    }
-    else if (interpolationAlgorithm == "Similarity")
-    {
-      cf->Predict<EuclideanSearch, SimilarityInterpolation>
-          (combinations, predictions);
-    }
-  }
-  else if (neighborSearchAlgorithm == "Pearson")
-  {
-    if (interpolationAlgorithm == "Average")
-    {
-      cf->Predict<PearsonSearch, AverageInterpolation>
-          (combinations, predictions);
-    }
-    else if (interpolationAlgorithm == "Regression")
-    {
-      cf->Predict<PearsonSearch, RegressionInterpolation>
-          (combinations, predictions);
-    }
-    else if (interpolationAlgorithm == "Similarity")
-    {
-      cf->Predict<PearsonSearch, SimilarityInterpolation>
-          (combinations, predictions);
-    }
-  }
+  cf->Predict<NeighborSearchType, InterpolationType>
+      (combinations, predictions);
 
   // Compute the root of the sum of the squared errors, divide by the number of
   // points to get the RMSE.  It turns out this is just the L2-norm divided by
@@ -379,6 +274,54 @@ void ComputeRMSE(CFModel* cf)
       std::sqrt((double) testData.n_cols);
 
   Log::Info << "RMSE is " << rmse << "." << endl;
+}
+
+template <typename NeighborSearchType>
+void ComputeRMSE(CFModel* cf)
+{
+  //  Verifying the Interpolation algorithms
+  RequireParamInSet<string>("interpolation", { "average",
+      "regression", "similarity" }, true, "unknown interpolation algorithm");
+
+  //  Taking Interpolation Alternatives
+  const string interpolationAlgorithm = CLI::GetParam<string>("interpolation");
+
+  if (interpolationAlgorithm == "average")
+  {
+    ComputeRMSE<NeighborSearchType, AverageInterpolation>(cf);
+  }
+  else if (interpolationAlgorithm == "regression")
+  {
+    ComputeRMSE<NeighborSearchType, RegressionInterpolation>(cf);
+  }
+  else if (interpolationAlgorithm == "similarity")
+  {
+    ComputeRMSE<NeighborSearchType, SimilarityInterpolation>(cf);
+  }
+}
+
+void ComputeRMSE(CFModel* cf)
+{
+  //  Verifying the Neighbor Search algorithms
+  RequireParamInSet<string>("neighbor_search", { "cosine",
+      "euclidean", "pearson" }, true, "unknown neighbor search algorithm");
+
+  //  Taking Neighbor Search alternatives
+  const string neighborSearchAlgorithm = CLI::GetParam<string>
+    ("neighbor_search");
+
+  if (neighborSearchAlgorithm == "cosine")
+  {
+    ComputeRMSE<CosineSearch>(cf);
+  }
+  else if (neighborSearchAlgorithm == "euclidean")
+  {
+    ComputeRMSE<EuclideanSearch>(cf);
+  }
+  else if (neighborSearchAlgorithm == "pearson")
+  {
+    ComputeRMSE<PearsonSearch>(cf);
+  }
 }
 
 void PerformAction(CFModel* c)
@@ -489,13 +432,6 @@ static void mlpackMain()
   RequireParamInSet<string>("algorithm", { "NMF", "BatchSVD",
       "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD",
       "RandSVD", "BiasSVD", "SVDPP" }, true, "unknown algorithm");
-
-    //    Validate the interpolation and neighbor_search policy
-  RequireParamInSet<string>("interpolation", { "Average",
-      "Regression", "Similarity" }, true, "unknown interpolation algorithm");
-
-  RequireParamInSet<string>("neighbor_search", { "Cosine",
-      "Euclidean", "Pearson" }, true, "unknown neighbor search algorithm");
 
   ReportIgnoredParam({{ "iteration_only_termination", true }}, "min_residue");
 
