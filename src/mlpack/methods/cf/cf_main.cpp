@@ -84,16 +84,16 @@ PROGRAM_INFO("Collaborative Filtering", "This program performs collaborative "
     "The following neighbor search algorithms can be specified via" +
     " the " + PRINT_PARAM_STRING("neighbor_search") + " parameter:"
     "\n"
-    " - 'Cosine'  -- Cosine Search Algorithm\n"
-    " - 'Euclidean'  -- Euclidean Search Algorithm\n"
-    " - 'Pearson'  -- Pearson Search Algorithm\n"
+    " - 'cosine'  -- Cosine Search Algorithm\n"
+    " - 'euclidean'  -- Euclidean Search Algorithm\n"
+    " - 'pearson'  -- Pearson Search Algorithm\n"
     "\n\n"
     "The following weight interpolation algorithms can be specified via" +
     " the " + PRINT_PARAM_STRING("interpolation") + " parameter:"
     "\n"
-    " - 'Average'  -- Average Interpolation Algorithm\n"
-    " - 'Regression'  -- Regression Interpolation Algorithm\n"
-    " - 'Similarity'  -- Similarity Interpolation Algorithm\n"
+    " - 'average'  -- Average Interpolation Algorithm\n"
+    " - 'regression'  -- Regression Interpolation Algorithm\n"
+    " - 'similarity'  -- Similarity Interpolation Algorithm\n"
     "\n"
     "A trained model may be saved to with the " +
     PRINT_PARAM_STRING("output_model") + " output parameter."
@@ -150,10 +150,10 @@ PARAM_INT_IN("seed", "Set the random seed (0 uses std::time(NULL)).", "s", 0);
 
 //  Interpolation and Neighbor Search Algorithms
 PARAM_STRING_IN("interpolation", "Algorithm used for weight interpolation.",
-    "i", "Average");
+    "i", "average");
 
 PARAM_STRING_IN("neighbor_search", "Algorithm used for neighbor search.",
-    "S", "Euclidean");
+    "S", "euclidean");
 
 template <typename NeighborSearchType,
           typename InterpolationType>
