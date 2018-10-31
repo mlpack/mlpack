@@ -162,7 +162,8 @@ void ComputeRecommendations(CFModel* cf,
                             arma::Mat<size_t>& recommendations)
 {
   // Reading users.
-  if (CLI::HasParam("query")) {
+  if (CLI::HasParam("query"))
+  {
     // User matrix.
     arma::Mat<size_t> users =
         std::move(CLI::GetParam<arma::Mat<size_t>>("query"));
@@ -271,7 +272,7 @@ void ComputeRMSE(CFModel* cf)
   // the square root of the number of points, if we interpret the predictions
   // and the true values as vectors.
   const double rmse = arma::norm(predictions - testData.row(2).t(), 2) /
-                      std::sqrt((double) testData.n_cols);
+      std::sqrt((double) testData.n_cols);
 
   Log::Info << "RMSE is " << rmse << "." << endl;
 }
