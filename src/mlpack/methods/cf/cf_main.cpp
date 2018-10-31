@@ -165,7 +165,7 @@ void ComputeRecommendations(CFModel* cf,
   if (CLI::HasParam("query")) {
     // User matrix.
     arma::Mat<size_t> users =
-      std::move(CLI::GetParam<arma::Mat<size_t>>("query"));
+        std::move(CLI::GetParam<arma::Mat<size_t>>("query"));
     if (users.n_rows > 1)
       users = users.t();
     if (users.n_rows > 1)
@@ -249,8 +249,6 @@ template <typename NeighborSearchType,
           typename InterpolationType>
 void ComputeRMSE(CFModel* cf)
 {
-  const string interpolationAlgorithm = CLI::GetParam<string>("interpolation");
-
   // Now, compute each test point.
   arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
 
@@ -300,7 +298,6 @@ void ComputeRMSE(CFModel* cf)
   {
     ComputeRMSE<NeighborSearchType, SimilarityInterpolation>(cf);
   }
-
 }
 
 void ComputeRMSE(CFModel* cf)
@@ -325,7 +322,6 @@ void ComputeRMSE(CFModel* cf)
   {
     ComputeRMSE<PearsonSearch>(cf);
   }
-
 }
 
 void PerformAction(CFModel* c)
