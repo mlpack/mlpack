@@ -114,7 +114,7 @@ void Convolution<
 >::Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
   batchSize = input.n_cols;
-  inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
+  arma::cube inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
       inputWidth, inputHeight, inSize * batchSize, false, false);
 
   if (padW != 0 || padH != 0)
@@ -179,8 +179,10 @@ void Convolution<
     InputDataType,
     OutputDataType
 >::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
+  arma::cube inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
+      inputWidth, inputHeight, inSize * batchSize, false, false);
   arma::cube mappedError(gy.memptr(), outputWidth, outputHeight,
       outSize * batchSize, false, false);
 
@@ -235,10 +237,12 @@ void Convolution<
     InputDataType,
     OutputDataType
 >::Gradient(
-    const arma::Mat<eT>&& /* input */,
+    const arma::Mat<eT>&& input,
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& gradient)
 {
+  arma::cube inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
+      inputWidth, inputHeight, inSize * batchSize, false, false);
   arma::cube mappedError(error.memptr(), outputWidth,
       outputHeight, outSize * batchSize, false, false);
 

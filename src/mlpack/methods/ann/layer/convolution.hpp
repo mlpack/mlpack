@@ -312,9 +312,6 @@ class Convolution
   //! Locally-stored transformed output parameter.
   arma::cube outputTemp;
 
-  //! Locally-stored transformed input parameter.
-  arma::cube inputTemp;
-
   //! Locally-stored transformed padded input parameter.
   arma::cube inputPaddedTemp;
 
