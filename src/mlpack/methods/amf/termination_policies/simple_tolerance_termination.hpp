@@ -34,10 +34,19 @@ class SimpleToleranceTermination
   //! empty constructor
   SimpleToleranceTermination(const double tolerance = 1e-5,
                              const size_t maxIterations = 10000,
-                             const size_t reverseStepTolerance = 3)
-            : tolerance(tolerance),
-              maxIterations(maxIterations),
-              reverseStepTolerance(reverseStepTolerance) {}
+                             const size_t reverseStepTolerance = 3) :
+      tolerance(tolerance),
+      maxIterations(maxIterations),
+      V(NULL),
+      iteration(1),
+      residueOld(DBL_MAX),
+      residue(DBL_MIN),
+      normOld(0.0),
+      reverseStepTolerance(reverseStepTolerance),
+      reverseStepCount(0),
+      isCopy(false),
+      cIndexOld(0.0),
+      cIndex(0.0) {}
 
   /**
    * Initializes the termination policy before stating the factorization.
@@ -54,8 +63,8 @@ class SimpleToleranceTermination
 
     this->V = &V;
 
-    c_index = 0;
-    c_indexOld = 0;
+    cIndex = 0;
+    cIndexOld = 0;
 
     reverseStepCount = 0;
   }
@@ -80,17 +89,17 @@ class SimpleToleranceTermination
     size_t count = 0;
     for (size_t i = 0; i < n; i++)
     {
-        for (size_t j = 0; j < m; j++)
+      for (size_t j = 0; j < m; j++)
+      {
+        double temp = 0;
+        if ((temp = (*V)(i, j)) != 0)
         {
-            double temp = 0;
-            if ((temp = (*V)(i, j)) != 0)
-            {
-                temp = (temp - WH(i, j));
-                temp = temp * temp;
-                sum += temp;
-                count++;
-            }
+          temp = (temp - WH(i, j));
+          temp = temp * temp;
+          sum += temp;
+          count++;
         }
+      }
     }
     residue = sum / count;
     residue = sqrt(residue);
@@ -111,8 +120,8 @@ class SimpleToleranceTermination
         this->W = W;
         this->H = H;
         // store residue values
-        c_index = residue;
-        c_indexOld = residueOld;
+        cIndex = residue;
+        cIndexOld = residueOld;
       }
       // increase successive drop count
       reverseStepCount++;
@@ -123,7 +132,7 @@ class SimpleToleranceTermination
       // initialize successive drop count
       reverseStepCount = 0;
       // if residue is droped below minimum scrap stored values
-      if (residue <= c_indexOld && isCopy == true)
+      if (residue <= cIndexOld && isCopy == true)
       {
         isCopy = false;
       }
@@ -138,58 +147,63 @@ class SimpleToleranceTermination
       {
         W = this->W;
         H = this->H;
-        residue = c_index;
+        residue = cIndex;
       }
       return true;
     }
-    else return false;
+    else
+    {
+      return false;
+    }
   }
 
-  //! Get current value of residue
+  //! Get current value of residue.
   const double& Index() const { return residue; }
 
-  //! Get current iteration count
+  //! Get current iteration count.
   const size_t& Iteration() const { return iteration; }
 
-  //! Access upper limit of iteration count
+  //! Access upper limit of iteration count.
   const size_t& MaxIterations() const { return maxIterations; }
+  //! Modify upper limit of iteration count.
   size_t& MaxIterations() { return maxIterations; }
 
-  //! Access tolerance value
+  //! Access tolerance value.
   const double& Tolerance() const { return tolerance; }
+  //! Modify tolerance value.
   double& Tolerance() { return tolerance; }
 
  private:
-  //! tolerance
+  //! Tolerance for termination.
   double tolerance;
-  //! iteration threshold
+  //! Iteration threshold.
   size_t maxIterations;
 
-  //! pointer to matrix being factorized
+  //! Pointer to matrix being factorized.
   const MatType* V;
 
-  //! current iteration count
+  //! Current iteration count.
   size_t iteration;
 
-  //! residue values
+  //! Residue values.
   double residueOld;
   double residue;
   double normOld;
 
-  //! tolerance on successive residue drops
+  //! Tolerance on successive residue drops.
   size_t reverseStepTolerance;
-  //! successive residue drops
+  //! Number of successive residue drops.
   size_t reverseStepCount;
 
-  //! indicates whether a copy of information is available which corresponds to
-  //! minimum residue point
+  //! Indicates whether a copy of information is available which corresponds to
+  //! minimum residue point.
   bool isCopy;
 
-  //! variables to store information of minimum residue poi
+  //! Variables to store information of minimum residue point.
   arma::mat W;
   arma::mat H;
-  double c_indexOld;
-  double c_index;
+  double cIndexOld;
+  double cIndex;
 }; // class SimpleToleranceTermination
 
 } // namespace amf

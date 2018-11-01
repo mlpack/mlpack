@@ -92,10 +92,10 @@ class HardCodedSortModel
  public:
   HardCodedSortModel(size_t bitLen) : bitLen(bitLen) {}
 
-  void Train(arma::field<arma::mat>& predictors,
-             arma::field<arma::mat>& labels)
+  void Train(arma::field<arma::mat>& /* predictors */,
+             arma::field<arma::mat>& /* labels */)
   {
-    assert(predictors.n_elem == labels.n_elem);
+    return;
   }
 
   void Predict(arma::mat& predictors,
