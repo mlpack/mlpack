@@ -246,6 +246,12 @@ void Convolution<
   arma::cube mappedError(error.memptr(), outputWidth,
       outputHeight, outSize * batchSize, false, false);
 
+  // Pad again if we need...
+  if (padW != 0 || padH != 0)
+  {
+    Pad(inputTemp, padW, padH, inputPaddedTemp);
+  }
+
   gradient.set_size(weights.n_elem, 1);
   gradientTemp = arma::Cube<eT>(gradient.memptr(), weight.n_rows,
       weight.n_cols, weight.n_slices, false, false);
