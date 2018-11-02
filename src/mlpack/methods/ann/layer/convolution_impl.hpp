@@ -91,10 +91,10 @@ void Convolution<
     OutputDataType
 >::Reset()
 {
-    weight = arma::cube(weights.memptr(), kW, kH,
-        outSize * inSize, false, false);
-    bias = arma::mat(weights.memptr() + weight.n_elem,
-        outSize, 1, false, false);
+  weight = arma::cube(weights.memptr(), kW, kH,
+      outSize * inSize, false, false);
+  bias = arma::mat(weights.memptr() + weight.n_elem,
+      outSize, 1, false, false);
 }
 
 template<
@@ -116,6 +116,7 @@ void Convolution<
   batchSize = input.n_cols;
   arma::cube inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
       inputWidth, inputHeight, inSize * batchSize, false, false);
+  arma::cube inputPaddedTemp;
 
   if (padW != 0 || padH != 0)
   {
@@ -243,6 +244,7 @@ void Convolution<
 {
   arma::cube inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
       inputWidth, inputHeight, inSize * batchSize, false, false);
+  arma::cube inputPaddedTemp;
   arma::cube mappedError(error.memptr(), outputWidth,
       outputHeight, outSize * batchSize, false, false);
 
