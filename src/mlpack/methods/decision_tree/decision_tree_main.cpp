@@ -180,13 +180,30 @@ static void mlpackMain()
     {
       arma::Row<double> weights =
           std::move(CLI::GetParam<arma::Mat<double>>("weights"));
-      model->tree = DecisionTree<>(trainingSet, model->info, labels,
-          numClasses, weights, minLeafSize, minimumGainSplit);
+      if (CLI::HasParam("print_training_error"))
+      {
+        model->tree = DecisionTree<>(trainingSet, model->info, labels,
+            numClasses, std::move(weights), minLeafSize, minimumGainSplit);
+      }
+      else
+      {
+        model->tree = DecisionTree<>(std::move(trainingSet), model->info,
+            std::move(labels), numClasses, std::move(weights), minLeafSize,
+            minimumGainSplit);
+      }
     }
     else
     {
-      model->tree = DecisionTree<>(trainingSet, model->info, labels,
-          numClasses, minLeafSize, minimumGainSplit);
+      if (CLI::HasParam("print_training_error"))
+      {
+        model->tree = DecisionTree<>(trainingSet, model->info, labels,
+            numClasses, minLeafSize, minimumGainSplit);
+      }
+      else
+      {
+        model->tree = DecisionTree<>(std::move(trainingSet), model->info,
+            std::move(labels), numClasses, minLeafSize, minimumGainSplit);
+      }
     }
 
     // Do we need to print training error?
