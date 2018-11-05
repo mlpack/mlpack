@@ -23,9 +23,34 @@ namespace julia {
 template<typename T>
 void PrintOutputProcessing(
     const util::ParamData& d,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type*)
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
-  std::cout << "CLIGetParam(\"" << d.name << "\")";
+  std::string type;
+  if (std::is_same<T, bool>::value)
+    type = "Bool";
+  else if (std::is_same<T, int>::value)
+    type = "Int";
+  else if (std::is_same<T, double>::value)
+    type = "Double";
+  else if (std::is_same<T, std::string>::value)
+    type = "String";
+  else if (std::is_same<T, std::vector<std::string>>::value)
+    type = "VectorStr";
+  else if (std::is_same<T, std::vector<int>>::value)
+    type = "VectorInt";
+  else
+    type = "Unknown";
+
+  // Strings need a little special handling.
+  if (std::is_same<T, std::string>::value)
+    std::cout << "Base.unsafe_string(";
+
+  std::cout << "CLIGetParam" << type << "(\"" << d.name << "\")";
+
+  if (std::is_same<T, std::string>::value)
+    std::cout << ")";
 }
 
 /**
@@ -34,17 +59,30 @@ void PrintOutputProcessing(
 template<typename T>
 void PrintOutputProcessing(
     const util::ParamData& d,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type*)
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
-  std::string uChar = (std::is_same<T, size_t>::value) ? "U" : "";
+  std::string uChar = (std::is_same<typename T::elem_type, size_t>::value) ?
+      "U" : "";
   std::string matTypeSuffix = "";
+  std::string extra = "";
   if (T::is_row)
+  {
     matTypeSuffix = "Row";
+  }
   else if (T::is_col)
+  {
     matTypeSuffix = "Col";
+  }
+  else
+  {
+    matTypeSuffix = "Mat";
+    extra = ", points_are_rows";
+  }
 
   std::cout << "CLIGetParam" << uChar << matTypeSuffix << "(\"" << d.name
-      << "\")";
+      << "\"" << extra << ")";
 }
 
 /**
@@ -54,10 +92,24 @@ template<typename T>
 void PrintOutputProcessing(
     const util::ParamData& d,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type*)
+    const typename std::enable_if<data::HasSerialize<T>::value>::type*,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   std::cout << "CLIGetParam" << StripType(d.cppType) << "Ptr(\"" << d.name
       << "\")";
+}
+
+/**
+ * Print the output processing for a mat/DatasetInfo tuple type.
+ */
+template<typename T>
+void PrintOutputProcessing(
+    const util::ParamData& d,
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+{
+  std::cout << "CLIGetParamMatWithInfo(\"" << d.name << "\")";
 }
 
 } // namespace julia

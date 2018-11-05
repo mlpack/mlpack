@@ -20,7 +20,9 @@ namespace julia {
 template<typename T>
 void PrintOutputProcessing(
     const util::ParamData& d,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0);
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
 
 /**
  * Print the output processing for an Armadillo type.
@@ -28,19 +30,32 @@ void PrintOutputProcessing(
 template<typename T>
 void PrintOutputProcessing(
     const util::ParamData& d,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0);
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
 
 /**
- * Print the input processing for a serializable type.
+ * Print the output processing for a serializable type.
  */
 template<typename T>
 void PrintOutputProcessing(
     const util::ParamData& d,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0);
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
 
 /**
- * Print the input processing (basically calling CLI::GetParam<>()) for a type.
+ * Print the output processing for a mat/DatasetInfo tuple type.
+ */
+template<typename T>
+void PrintOutputProcessing(
+    const util::ParamData& d,
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
+
+/**
+ * Print the output processing (basically calling CLI::GetParam<>()) for a type.
  */
 template<typename T>
 void PrintOutputProcessing(const util::ParamData& d,
@@ -48,7 +63,7 @@ void PrintOutputProcessing(const util::ParamData& d,
                            void* /* output */)
 {
   // Call out to the right overload.
-  PrintOutputProcessing<T>(d);
+  PrintOutputProcessing<typename std::remove_pointer<T>::type>(d);
 }
 
 } // namespace julia

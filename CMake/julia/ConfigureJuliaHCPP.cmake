@@ -58,6 +58,7 @@ void* CLI_GetParam${MODEL_TYPE}Ptr(const char* paramName)
 void CLI_SetParam${MODEL_TYPE}Ptr(const char* paramName, void* ptr)
 {
   CLI::GetParam<${MODEL_TYPE}*>(paramName) = (${MODEL_TYPE}*) ptr;
+  CLI::SetPassed(paramName);
 }
 
 ")

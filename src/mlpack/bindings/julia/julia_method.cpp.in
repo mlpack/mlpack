@@ -6,7 +6,7 @@
  */
 #include "julia_${PROGRAM_NAME}.h"
 
-#define BINDING_TYPE BINDING_TYPE_PYX
+#define BINDING_TYPE BINDING_TYPE_JL
 #include <${PROGRAM_MAIN_FILE}>
 
 static void ${PROGRAM_NAME}_mlpackMain()

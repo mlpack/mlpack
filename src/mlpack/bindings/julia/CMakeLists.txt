@@ -94,6 +94,7 @@ if (BUILD_JULIA_BINDINGS)
 
   # Add the generate_jl_${name} target to the list of targets that are built
   # when 'make julia' is typed.
+  add_dependencies(julia mlpack_julia_${name})
   add_dependencies(julia generate_jl_${name})
 endif ()
 endmacro ()

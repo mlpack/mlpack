@@ -65,7 +65,7 @@ void PrintParamDefn(
       << ".\"" << std::endl;
   std::cout << "function CLIGetParam" << type << "Ptr(paramName::String)"
       << std::endl;
-  std::cout << "  return ccall((:CLIGetParam" << type << "Ptr, "
+  std::cout << "  return ccall((:CLI_GetParam" << type << "Ptr, "
       << "\"libmlpack_julia_" << programName << ".so\"), Ptr{Nothing}, "
       << "(Cstring,), paramName)" << std::endl;
   std::cout << "end" << std::endl;
@@ -75,7 +75,7 @@ void PrintParamDefn(
       << ".\"" << std::endl;
   std::cout << "function CLISetParam" << type << "Ptr(paramName::String, "
       << "ptr::Ptr{Nothing})" << std::endl;
-  std::cout << "  ccall((:CLISetParam<Type>Ptr, \"libmlpack_julia_"
+  std::cout << "  ccall((:CLI_SetParam" << type << "Ptr, \"libmlpack_julia_"
       << programName << ".so\"), Nothing, (Cstring, Ptr{Nothing}), paramName, "
       << "ptr)" << std::endl;
   std::cout << "end" << std::endl;

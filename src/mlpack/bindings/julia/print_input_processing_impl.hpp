@@ -21,7 +21,9 @@ namespace julia {
 template<typename T>
 void PrintInputProcessing(
     const util::ParamData& d,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type*)
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   // Here we can just call CLISetParam() directly; we don't need a separate
   // overload.
@@ -29,18 +31,18 @@ void PrintInputProcessing(
   {
     // This gives us code like the following:
     //
-    // CLISetParam("<param_name>", convert(<type>, <paramName>))
-    std::cout << "  CLISetParam(\"" << d.name << "\", convert("
-        << GetJuliaType<T>() << ", " << d.name << "))" << std::endl;
+    // CLISetParam("<param_name>", <paramName>)
+    std::cout << "  CLISetParam(\"" << d.name << "\", " << d.name << ")"
+        << std::endl;
   }
   else
   {
     // This gives us code like the following:
     //
-    // if <param_name> !== nothing
+    // if <param_name> !== missing
     //   CLISetParam("<param_name>", convert(<type>, <param_name>))
     // end
-    std::cout << "  if " << d.name << " !== nothing" << std::endl;
+    std::cout << "  if " << d.name << " !== missing" << std::endl;
     std::cout << "    CLISetParam(\"" << d.name << "\", convert("
         << GetJuliaType<T>() << ", " << d.name << "))" << std::endl;
     std::cout << "  end" << std::endl;
@@ -53,13 +55,15 @@ void PrintInputProcessing(
 template<typename T>
 void PrintInputProcessing(
     const util::ParamData& d,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* )
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   // If the argument is not required, then we have to encase the code in an if.
   size_t extraIndent = 0;
   if (!d.required)
   {
-    std::cout << "  if " << d.name << " !== nothing" << std::endl;
+    std::cout << "  if " << d.name << " !== missing" << std::endl;
     extraIndent = 2;
   }
 
@@ -69,15 +73,25 @@ void PrintInputProcessing(
       "U" : "";
   std::string indent(extraIndent + 2, ' ');
   std::string matTypeModifier = "";
+  std::string extra = "";
   if (T::is_row)
+  {
     matTypeModifier = "Row";
+  }
   else if (T::is_col)
+  {
     matTypeModifier = "Col";
+  }
+  else
+  {
+    matTypeModifier = "Mat";
+    extra = ", points_are_rows";
+  }
 
   // Now print the CLISetParam call.
   std::cout << indent << "CLISetParam" << uChar << matTypeModifier << "(\""
-      << d.name << "\", convert(" << GetJuliaType<T>() << ", " << d.name << "))"
-      << std::endl;
+      << d.name << "\", convert(" << GetJuliaType<T>() << ", " << d.name << ")"
+      << extra << ")" << std::endl;
 
   if (!d.required)
   {
@@ -92,24 +106,62 @@ template<typename T>
 void PrintInputProcessing(
     const util::ParamData& d,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type*)
+    const typename std::enable_if<data::HasSerialize<T>::value>::type*,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   // If the argument is not required, then we have to encase the code in an if.
   size_t extraIndent = 0;
   if (!d.required)
   {
-    std::cout << "  if " << d.name << " !== nothing" << std::endl;
+    std::cout << "  if " << d.name << " !== missing" << std::endl;
     extraIndent = 2;
   }
 
   std::string indent(extraIndent + 2, ' ');
   std::string type = StripType(d.cppType);
   std::cout << indent << "CLISetParam" << type << "Ptr(\"" << d.name
-      << "\", convert(" << GetJuliaType<T>() << ", " << d.name << "))"
-      << std::endl;
+      << "\", convert(" << GetJuliaType<typename std::remove_pointer<T>::type>()
+      << ", " << d.name << "))" << std::endl;
 
   if (!d.required)
   {
+    std::cout << "  end" << std::endl;
+  }
+}
+
+/**
+ * Print the input processing (basically calling CLI::GetParam<>()) for a
+ * matrix with DatasetInfo type.
+ */
+template<typename T>
+void PrintInputProcessing(
+    const util::ParamData& d,
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+{
+  // Here we can just call CLISetParam() directly; we don't need a separate
+  // overload.  But we do have to pass in points_are_rows.
+  if (d.required)
+  {
+    // This gives us code like the following:
+    //
+    // CLISetParam("<param_name>", convert(<type>, <paramName>))
+    std::cout << "  CLISetParam(\"" << d.name << "\", convert("
+        << GetJuliaType<T>() << ", " << d.name << "), points_are_rows)"
+        << std::endl;
+  }
+  else
+  {
+    // This gives us code like the following:
+    //
+    // if <param_name> !== missing
+    //   CLISetParam("<param_name>", convert(<type>, <param_name>))
+    // end
+    std::cout << "  if " << d.name << " !== missing" << std::endl;
+    std::cout << "    CLISetParam(\"" << d.name << "\", convert("
+        << GetJuliaType<T>() << ", " << d.name << "), points_are_rows)"
+        << std::endl;
     std::cout << "  end" << std::endl;
   }
 }

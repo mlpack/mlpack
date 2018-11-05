@@ -19,14 +19,14 @@ extern std::string programName;
  * Print the code for a .jl binding for an mlpack program to stdout.
  */
 void PrintJL(const util::ProgramDoc& programInfo,
-             const std::string& mainFilename,
-             const std::string& functionName)
+             const string& mainFilename,
+             const string& functionName)
 {
   // Restore parameters.
   CLI::RestoreSettings(programInfo.programName);
 
-  const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
-  typedef std::map<std::string, util::ParamData>::const_iterator ParamIter;
+  const map<string, util::ParamData>& parameters = CLI::Parameters();
+  typedef map<string, util::ParamData>::const_iterator ParamIter;
 
   // First, let's get a list of input and output options.  We'll take two passes
   // so that the required input options are the first in the list.
@@ -73,7 +73,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   // their values from the CLI object.  We do this with the PrintParamDefn()
   // function.  We'll gather all names of classes we've done this with, so that
   // we don't print any duplicates.
-  std::set<std::string> classNames;
+  set<string> classNames;
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
     const util::ParamData& d = it->second;
@@ -93,16 +93,35 @@ void PrintJL(const util::ProgramDoc& programInfo,
 
   // Print required input arguments as part of the function signature, followed
   // by non-required input arguments.
+  bool defaults = false;
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
-    if (i > 0)
-      cout << "," << endl << std::string(indent, ' ');
-
-    const std::string& opt = inputOptions[i];
+    const string& opt = inputOptions[i];
     const util::ParamData& d = parameters.at(opt);
+
+    if (i > 0)
+    {
+      if (!defaults && !d.required)
+      {
+        cout << ";" << endl << string(indent, ' ');
+        defaults = true;
+      }
+      else
+      {
+        cout << "," << endl << string(indent, ' ');
+      }
+    }
+
     CLI::GetSingleton().functionMap[d.tname]["PrintInputParam"](d, NULL,
         NULL);
   }
+
+  // Print the 'points_are_rows' option.
+  if (!defaults)
+    cout << ";" << endl << string(indent, ' ');
+  else
+    cout << "," << endl << string(indent, ' ');
+  cout << "points_are_rows::Bool = false)" << endl;
 
   // Force symbols to load.
   cout << "  # Force the symbols to load." << endl;

@@ -14,75 +14,108 @@ namespace bindings {
 namespace julia {
 
 template<typename T>
-inline std::string GetJuliaType()
+inline std::string GetJuliaType(
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0)
 {
   return "unknown_"; // This will cause an error most likely...
 }
 
 template<>
-inline std::string GetJuliaType<bool>()
+inline std::string GetJuliaType<bool>(
+    const typename std::enable_if<!util::IsStdVector<bool>::value>::type*,
+    const typename std::enable_if<!arma::is_arma_type<bool>::value>::type*,
+    const typename std::enable_if<!std::is_same<bool,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*,
+    const typename std::enable_if<!data::HasSerialize<bool>::value>::type*)
 {
   return "Bool";
 }
 
 template<>
-inline std::string GetJuliaType<int>()
+inline std::string GetJuliaType<int>(
+    const typename std::enable_if<!util::IsStdVector<int>::value>::type*,
+    const typename std::enable_if<!arma::is_arma_type<int>::value>::type*,
+    const typename std::enable_if<!std::is_same<int,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*,
+    const typename std::enable_if<!data::HasSerialize<int>::value>::type*)
 {
   return "Int";
 }
 
 template<>
-inline std::string GetJuliaType<double>()
+inline std::string GetJuliaType<size_t>(
+    const typename std::enable_if<!util::IsStdVector<size_t>::value>::type*,
+    const typename std::enable_if<!arma::is_arma_type<size_t>::value>::type*,
+    const typename std::enable_if<!std::is_same<size_t,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*,
+    const typename std::enable_if<!data::HasSerialize<size_t>::value>::type*)
+{
+  return "UInt";
+}
+
+template<>
+inline std::string GetJuliaType<double>(
+    const typename std::enable_if<!util::IsStdVector<double>::value>::type*,
+    const typename std::enable_if<!arma::is_arma_type<double>::value>::type*,
+    const typename std::enable_if<!std::is_same<double,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*,
+    const typename std::enable_if<!data::HasSerialize<double>::value>::type*)
 {
   // I suppose on some systems this may not be 64 bit.
   return "Float64";
 }
 
 template<>
-inline std::string GetJuliaType<std::string>()
+inline std::string GetJuliaType<std::string>(
+    const typename std::enable_if<
+        !util::IsStdVector<std::string>::value>::type*,
+    const typename std::enable_if<
+        !arma::is_arma_type<std::string>::value>::type*,
+    const typename std::enable_if<!std::is_same<std::string,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*,
+    const typename std::enable_if<
+        !data::HasSerialize<std::string>::value>::type*)
 {
   return "String";
 }
 
-template<>
-inline std::string GetJuliaType<arma::mat>()
+template<typename T>
+inline std::string GetJuliaType(
+    const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0)
 {
-  return "Array{" + GetJuliaType<double>() + ", 2}";
+  return "Vector{" + GetJuliaType<typename T::value_type>() + "}";
 }
 
-template<>
-inline std::string GetJuliaType<arma::Mat<size_t>>()
+template<typename T>
+inline std::string GetJuliaType(
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0,
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
-  return "Array{" + GetJuliaType<size_t>() + ", 2}";
+  return "Array{" + GetJuliaType<typename T::elem_type>() + ", "
+      + (T::is_col || T::is_row ? "1" : "2") + "}";
 }
 
-template<>
-inline std::string GetJuliaType<arma::vec>()
+template<typename T>
+inline std::string GetJuliaType(
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
-  return "Array{" + GetJuliaType<double>() + ", 1}";
-}
-
-template<>
-inline std::string GetJuliaType<arma::Col<size_t>>()
-{
-  return "Array{" + GetJuliaType<size_t>() + ", 1}";
-}
-
-template<>
-inline std::string GetJuliaType<arma::rowvec>()
-{
-  return "Array{" + GetJuliaType<double>() + ", 1}";
-}
-
-template<>
-inline std::string GetJuliaType<arma::Row<size_t>>()
-{
-  return "Array{" + GetJuliaType<size_t>() + ", 1}";
+  return "Tuple{Array{Bool, 1}, Array{Float64, 2}}";
 }
 
 // for serializable types
 template<typename T>
 inline std::string GetJuliaType(
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
