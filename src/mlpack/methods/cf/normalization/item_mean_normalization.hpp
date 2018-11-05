@@ -30,7 +30,7 @@ namespace cf {
  * arma::Mat<size_t> recommendations; // Resulting recommendations.
  *
  * // Use ItemMeanNormalization as normalization method.
- * CFType<ItemMeanNormalization> cf(data);
+ * CFType<NMFPolicy, ItemMeanNormalization> cf(data);
  *
  * // Generate 10 recommendations for all users.
  * cf.GetRecommendations(10, recommendations);
@@ -89,11 +89,25 @@ class ItemMeanNormalization
    */
   void Normalize(arma::sp_mat& cleanedData)
   {
-    itemMean = arma::vec(arma::mean(cleanedData, 1));
-
+    // Calculate itemMean.
+    itemMean = arma::vec(cleanedData.n_rows, arma::fill::zeros);
+    arma::Col<size_t> ratingNum(cleanedData.n_rows, arma::fill::zeros);
     arma::sp_mat::iterator it = cleanedData.begin();
     arma::sp_mat::iterator it_end = cleanedData.end();
-    for (; it != it_end; it++)
+    for (; it != it_end; ++it)
+    {
+      itemMean(it.row()) += *it;
+      ratingNum(it.row()) += 1;
+    }
+    for (size_t i = 0; i < itemMean.n_elem; i++)
+    {
+      if (ratingNum(i) != 0)
+        itemMean(i) /= ratingNum(i);
+    }
+
+    // Normalize the data.
+    it = cleanedData.begin();
+    for (; it != cleanedData.end(); ++it)
     {
       *it = *it - itemMean(it.row());
       // The algorithm omits rating of zero. If normalized rating equals zero,

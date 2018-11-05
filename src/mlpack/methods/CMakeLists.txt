@@ -1,24 +1,3 @@
-# This macro adds a command-line executable with the given name.  It assumes
-# that the file with main() is in <name>_main.cpp, and produces an output
-# program with the name mlpack_<name>.
-macro (add_cli_executable name)
-if (BUILD_CLI_EXECUTABLES)
-  add_executable(mlpack_${name}
-    ${name}_main.cpp
-  )
-  target_link_libraries(mlpack_${name}
-    mlpack
-    ${Boost_LIBRARIES}
-    ${COMPILER_SUPPORT_LIBRARIES}
-  )
-  # Make sure that we set BINDING_TYPE to cli so the command-line program is
-  # compiled with the correct int main() call.
-  set_target_properties(mlpack_${name} PROPERTIES COMPILE_FLAGS
-      -DBINDING_TYPE=BINDING_TYPE_CLI)
-  install(TARGETS mlpack_${name} RUNTIME DESTINATION bin)
-endif ()
-endmacro ()
-
 # Recurse into each method mlpack provides.
 set(DIRS
   # mvu # Note: this implementation of MVU does not work.  See #189.
@@ -26,6 +5,7 @@ set(DIRS
   amf
   ann
   approx_kfn
+  bias_svd
   block_krylov_svd
   cf
   dbscan
@@ -67,6 +47,7 @@ set(DIRS
   sparse_autoencoder
   sparse_coding
   sparse_svm
+  svdplusplus
 )
 
 foreach(dir ${DIRS})

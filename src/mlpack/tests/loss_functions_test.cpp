@@ -107,8 +107,10 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorTest)
 
   // Test the Backward function.
   module.Backward(std::move(input), std::move(target), std::move(output));
-  // We subtract a zero vector, so the output should be equal with the input.
-  CheckMatrices(input, output);
+  // We subtract a zero vector, so according to the used backward formula:
+  // output = 2 * (input - target) / target.n_cols,
+  // output * nofColumns / 2 should be equal to input.
+  CheckMatrices(input, output * output.n_cols / 2);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
 
@@ -121,7 +123,7 @@ BOOST_AUTO_TEST_CASE(SimpleMeanSquaredErrorTest)
   // Test the Backward function on a single input.
   module.Backward(std::move(input), std::move(target), std::move(output));
   // Test whether the output is negative.
-  BOOST_REQUIRE_EQUAL(arma::accu(output), -1);
+  BOOST_REQUIRE_EQUAL(arma::accu(output), -2);
   BOOST_REQUIRE_EQUAL(output.n_elem, 1);
 }
 
@@ -264,6 +266,49 @@ BOOST_AUTO_TEST_CASE(SimpleEarthMoverDistanceLayerTest)
     BOOST_REQUIRE_SMALL(output(i) - expectedOutput(i), 1e-5);
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
+}
+
+/*
+ * Mean Squared Error numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientMeanSquaredErrorTest)
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::randu(2, 1);
+
+      model = new FFN<MeanSquaredError<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 2);
+      model->Add<SigmoidLayer<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<MeanSquaredError<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 /*

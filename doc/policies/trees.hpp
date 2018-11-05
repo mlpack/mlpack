@@ -430,9 +430,12 @@ which provides the \c Variance() method, and then call \c Stat().Variance() when
 the variance is required.  This also holds true for cached data members.
 
 Each node should have its own instance of a \c StatisticType class.  The
-\c StatisticType must provide the following constructor:
+\c StatisticType must provide the following constructors:
 
 @code
+// Default constructor required by the StatisticType policy.
+StatisticType();
+
 // This constructor is required by the StatisticType policy.
 template<typename TreeType>
 StatisticType(TreeType& node);
