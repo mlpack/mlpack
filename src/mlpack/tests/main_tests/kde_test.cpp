@@ -102,4 +102,23 @@ BOOST_AUTO_TEST_CASE(KDENoInputData)
   Log::Fatal.ignoreInput = false;
 }
 
+/**
+  * Check that there're as many densities in the result as query points.
+ **/
+BOOST_AUTO_TEST_CASE(KDEOutputSize)
+{
+  const size_t dim = 3;
+  const size_t samples = 110;
+  arma::mat reference = arma::randu<arma::mat>(dim, 325);
+  arma::mat query = arma::randu<arma::mat>(dim, samples);
+
+  // Main params
+  SetInputParam("reference", reference);
+  SetInputParam("query", query);
+
+  mlpackMain();
+  // Check number of output elements
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").size(), samples);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
