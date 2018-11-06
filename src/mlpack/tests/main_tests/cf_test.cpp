@@ -441,7 +441,7 @@ BOOST_AUTO_TEST_CASE(CFNeighborhoodTest)
 }
 
 /**
- * Ensure algorithm is one of { "average", "regression",
+ * Ensure interpolation algorithm is one of { "average", "regression",
  * "similarity" }.
  */
 BOOST_AUTO_TEST_CASE(CFInterpolationAlgorithmBoundTest)
@@ -528,7 +528,8 @@ BOOST_AUTO_TEST_CASE(CFInterpolationTest)
 }
 
 /**
- * Ensure algorithm is one of { "cosine", "euclidean", "pearson" }.
+ * Ensure neighbor search algorithm is one of { "cosine", "euclidean",
+ * "pearson" }.
  */
 BOOST_AUTO_TEST_CASE(CFNeighborSearchAlgorithmBoundTest)
 {
