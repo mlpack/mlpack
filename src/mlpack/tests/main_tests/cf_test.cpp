@@ -440,4 +440,177 @@ BOOST_AUTO_TEST_CASE(CFNeighborhoodTest)
   BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
 }
 
+/**
+ * Ensure algorithm is one of { "average", "regression",
+ * "similarity" }.
+ */
+BOOST_AUTO_TEST_CASE(CFInterpolationAlgorithmBoundTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
+
+  const int querySize = 7;
+  Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
+
+  // interpolation algorithm should be valid.
+  SetInputParam("interpolation", std::string("invalid_algorithm"));
+  SetInputParam("training", std::move(dataset));
+  SetInputParam("query", query);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Ensure that using interpolation algorithm makes a difference.
+ */
+BOOST_AUTO_TEST_CASE(CFInterpolationTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
+
+  const int querySize = 7;
+  Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
+
+  // Query with different interpolation types.
+  ResetSettings();
+
+  // Using average interplation algorithm.
+  SetInputParam("training", dataset);
+  SetInputParam("max_iterations", int(10));
+  SetInputParam("query", query);
+  SetInputParam("interpolation", std::string("average"));
+  SetInputParam("recommendations", 5);
+
+  mlpackMain();
+
+  const arma::Mat<size_t> output1 = CLI::GetParam<arma::Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output1.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(output1.n_cols, 7);
+
+  ResetSettings();
+
+  // Using regression interpolation algorithm.
+  SetInputParam("training", dataset);
+  SetInputParam("max_iterations", int(10));
+  SetInputParam("query", query);
+  SetInputParam("interpolation", std::string("regression"));
+  SetInputParam("recommendations", 5);
+
+  mlpackMain();
+
+  const arma::Mat<size_t> output2 = CLI::GetParam<arma::Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output2.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(output2.n_cols, 7);
+
+  ResetSettings();
+
+  // Using similarity interpolation algorithm.
+  SetInputParam("training", dataset);
+  SetInputParam("max_iterations", int(10));
+  SetInputParam("query", query);
+  SetInputParam("interpolation", std::string("similarity"));
+  SetInputParam("recommendations", 5);
+
+  mlpackMain();
+
+  const arma::Mat<size_t> output3 = CLI::GetParam<arma::Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output3.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(output3.n_cols, 7);
+
+  // The resulting matrices should be different.
+  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output3)));
+}
+
+/**
+ * Ensure algorithm is one of { "cosine", "euclidean", "pearson" }.
+ */
+BOOST_AUTO_TEST_CASE(CFNeighborSearchAlgorithmBoundTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
+
+  const int querySize = 7;
+  Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
+
+  // neighbor search algorithm should be valid.
+  SetInputParam("neighbor_search", std::string("invalid_algorithm"));
+  SetInputParam("training", std::move(dataset));
+  SetInputParam("query", query);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Ensure that using neighbor search algorithm makes a difference.
+ */
+BOOST_AUTO_TEST_CASE(CFNeighborSearchTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
+
+  const int querySize = 7;
+  Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
+
+  // Query with different neighbor search types.
+  ResetSettings();
+
+  // Using euclidean neighbor search algorithm.
+  SetInputParam("training", dataset);
+  SetInputParam("max_iterations", int(10));
+  SetInputParam("query", query);
+  SetInputParam("neighbor_search", std::string("euclidean"));
+  SetInputParam("recommendations", 5);
+
+  mlpackMain();
+
+  const arma::Mat<size_t> output1 = CLI::GetParam<arma::Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output1.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(output1.n_cols, 7);
+
+  ResetSettings();
+
+  // Using cosine neighbor search algorithm.
+  SetInputParam("training", dataset);
+  SetInputParam("max_iterations", int(10));
+  SetInputParam("query", query);
+  SetInputParam("neighbor_search", std::string("cosine"));
+  SetInputParam("recommendations", 5);
+
+  mlpackMain();
+
+  const arma::Mat<size_t> output2 = CLI::GetParam<arma::Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output2.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(output2.n_cols, 7);
+
+  ResetSettings();
+
+  // Using pearson neighbor search algorithm.
+  SetInputParam("training", dataset);
+  SetInputParam("max_iterations", int(10));
+  SetInputParam("query", query);
+  SetInputParam("neighbor_search", std::string("pearson"));
+  SetInputParam("recommendations", 5);
+
+  mlpackMain();
+
+  const arma::Mat<size_t> output3 = CLI::GetParam<arma::Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output3.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(output3.n_cols, 7);
+
+  // The resulting matrices should be different.
+  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output3)));
+}
+
 BOOST_AUTO_TEST_SUITE_END();
