@@ -121,4 +121,41 @@ BOOST_AUTO_TEST_CASE(KDEOutputSize)
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").size(), samples);
 }
 
+/**
+  * Check that saved model can be reused.
+ **/
+BOOST_AUTO_TEST_CASE(KDEModelReuse)
+{
+  const size_t dim = 3;
+  const size_t samples = 100;
+  const double relError = 0.05;
+  arma::mat reference = arma::randu<arma::mat>(dim, 300);
+  arma::mat query = arma::randu<arma::mat>(dim, samples);
+
+  // Main params
+  SetInputParam("reference", reference);
+  SetInputParam("query", query);
+  SetInputParam("bandwidth", 2.4);
+  SetInputParam("rel_error", 0.05);
+
+  mlpackMain();
+
+  arma::vec oldEstimations = std::move(CLI::GetParam<arma::mat>("output"));
+
+  // Change parameters and load model
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  SetInputParam("bandwidth", 0.5);
+  SetInputParam("query", query);
+  SetInputParam("input_model",
+      std::move(CLI::GetParam<KDEModel*>("output_model")));
+
+  mlpackMain();
+
+  arma::vec newEstimations = std::move(CLI::GetParam<arma::mat>("output"));
+
+  // Check estimations are the same
+  for (size_t i = 0; i < samples; ++i)
+    BOOST_REQUIRE_CLOSE(oldEstimations[i], newEstimations[i], relError);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
