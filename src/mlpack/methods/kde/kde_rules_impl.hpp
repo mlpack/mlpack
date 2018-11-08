@@ -80,11 +80,72 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
 //! Single-tree scoring function.
 template<typename MetricType, typename KernelType, typename TreeType>
 double KDERules<MetricType, KernelType, TreeType>::
-Score(const size_t /* queryIndex */, TreeType& /* referenceNode */)
+Score(const size_t queryIndex, TreeType& referenceNode)
 {
+  double score;
+  bool newCalculations = true;
+  const arma::vec& queryPoint = querySet.unsafe_col(queryIndex);
+  const double minDistance = referenceNode.MinDistance(queryPoint);
+  const double maxKernel = kernel.Evaluate(minDistance);
+  const double minKernel =
+    kernel.Evaluate(referenceNode.MaxDistance(queryPoint));
+  const double bound = maxKernel - minKernel;
+
+  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid &&
+      lastQueryIndex == queryIndex &&
+      traversalInfo.LastReferenceNode() != NULL &&
+      traversalInfo.LastReferenceNode()->Point(0) == referenceNode.Point(0))
+  {
+    // Don't duplicate calculations.
+    newCalculations = false;
+    lastQueryIndex = queryIndex;
+    lastReferenceIndex = referenceNode.Point(0);
+  }
+
+  if (bound <= (absError + relError * minKernel) / referenceSet.n_cols &&
+      newCalculations)
+  {
+    double kernelValue;
+
+    // Calculate kernel value based on reference node centroid.
+    if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+    {
+      kernelValue = EvaluateKernel(queryIndex, referenceNode.Point(0));
+    }
+    else
+    {
+      kde::KDEStat& referenceStat = referenceNode.Stat();
+      if (!referenceStat.ValidCentroid())
+      {
+        arma::vec referenceCenter;
+        referenceNode.Center(referenceCenter);
+        referenceStat.SetCentroid(std::move(referenceCenter));
+      }
+      kernelValue = EvaluateKernel(queryPoint, referenceStat.Centroid());
+    }
+
+    // Add kernel value to density estimations
+    if (tree::TreeTraits<TreeType>::RearrangesDataset)
+    {
+      densities(oldFromNewQueries.at(queryIndex)) +=
+        referenceNode.NumDescendants() * kernelValue;
+    }
+    else
+    {
+      densities(queryIndex) += referenceNode.NumDescendants() * kernelValue;
+    }
+    // Don't explore this tree branch
+    score = DBL_MAX;
+  }
+  else
+  {
+    score = minDistance;
+  }
+
   ++scores;
-  traversalInfo.LastScore() = 0.0;
-  return 0.0;
+  traversalInfo.LastReferenceNode() = &referenceNode;
+  traversalInfo.LastScore() = score;
+  return score;
 }
 
 template<typename MetricType, typename KernelType, typename TreeType>
@@ -106,8 +167,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   // Calculations are not duplicated.
   bool newCalculations = true;
   const double minDistance = queryNode.MinDistance(referenceNode);
-  const double maxKernel =
-    kernel.Evaluate(minDistance);
+  const double maxKernel = kernel.Evaluate(minDistance);
   const double minKernel =
     kernel.Evaluate(queryNode.MaxDistance(referenceNode));
   const double bound = maxKernel - minKernel;
@@ -126,6 +186,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     }
   }
 
+  // If possible, avoid some calculations because of the error tolerance
   if (bound <= (absError + relError * minKernel) / referenceSet.n_cols &&
       newCalculations)
   {
