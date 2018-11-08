@@ -606,9 +606,9 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   arma::vec textEstimations = arma::vec(query.n_cols, arma::fill::zeros);
   arma::vec binEstimations = arma::vec(query.n_cols, arma::fill::zeros);
 
-  kde.Evaluate(query, xmlEstimations);
-  kde.Evaluate(query, textEstimations);
-  kde.Evaluate(query, binEstimations);
+  kdeXml.Evaluate(query, xmlEstimations);
+  kdeText.Evaluate(query, textEstimations);
+  kdeBinary.Evaluate(query, binEstimations);
 
   for (size_t i = 0; i < query.n_cols; ++i)
   {
