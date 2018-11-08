@@ -12,15 +12,17 @@
 namespace mlpack {
 namespace math {
 
- /** Internal log-addition
+/** Internal log-addition
  *
+ * @f[
  * e^z = e^x + e^y
  * e^z = e^x(1 + e^{y-x})     = e^y(1 + e^{x-y})
- * z   = x + log(1 + e^{y-x}) = y + log(1 + e^{x-y})
- * 
- * So when y > x, z = y + log(1 + e^{x-y})
- *    when x > y, z = x + log(1 + e^{y-x})
- * 
+ * z   = x + \log(1 + e^{y-x}) = y + \log(1 + e^{x-y})
+ * @f]
+ *
+ * So when \f$ y > x \f$, \f$ z = y + \log(1 + e^{x-y}) \f$;
+ *    when \f$ x > y \f$, \f$ z = x + \log(1 + e^{y-x}) \f$.
+ *
  * @param x log value
  * @param y log value
  * @return log(e^x + e^y)
@@ -28,7 +30,7 @@ namespace math {
 template<typename T>
 T LogAdd(T x, T y)
 {
-  double d, r;
+  T d, r;
   if (x > y)
   {
     d = y - x;

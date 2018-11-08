@@ -4,8 +4,8 @@
  *
  * Functions for logarithmic addition.
  */
-#ifndef MLPACK_CORE_LOG_ADD_HPP
-#define MLPACK_CORE_LOG_ADD_HPP
+#ifndef MLPACK_CORE_MATH_LOG_ADD_HPP
+#define MLPACK_CORE_MATH_LOG_ADD_HPP
 
 #include <mlpack/prereqs.hpp>
 
