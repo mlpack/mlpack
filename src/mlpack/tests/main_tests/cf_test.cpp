@@ -497,7 +497,7 @@ BOOST_AUTO_TEST_CASE(CFInterpolationTest)
 
   // Using regression interpolation algorithm.
   SetInputParam("input_model",
-    std::move(CLI::GetParam<CFModel*>("output_model")));
+      std::move(CLI::GetParam<CFModel*>("output_model")));
   SetInputParam("query", query);
   SetInputParam("interpolation", std::string("regression"));
   SetInputParam("recommendations", 5);
@@ -511,7 +511,7 @@ BOOST_AUTO_TEST_CASE(CFInterpolationTest)
 
   // Using similarity interpolation algorithm.
   SetInputParam("input_model",
-    std::move(CLI::GetParam<CFModel*>("output_model")));
+      std::move(CLI::GetParam<CFModel*>("output_model")));
   SetInputParam("query", query);
   SetInputParam("interpolation", std::string("similarity"));
   SetInputParam("recommendations", 5);
@@ -585,7 +585,7 @@ BOOST_AUTO_TEST_CASE(CFNeighborSearchTest)
 
   // Using cosine neighbor search algorithm.
   SetInputParam("input_model",
-    std::move(CLI::GetParam<CFModel*>("output_model")));
+      std::move(CLI::GetParam<CFModel*>("output_model")));
   SetInputParam("query", query);
   SetInputParam("neighbor_search", std::string("cosine"));
   SetInputParam("recommendations", 5);
@@ -599,7 +599,7 @@ BOOST_AUTO_TEST_CASE(CFNeighborSearchTest)
 
   // Using pearson neighbor search algorithm.
   SetInputParam("input_model",
-    std::move(CLI::GetParam<CFModel*>("output_model")));
+      std::move(CLI::GetParam<CFModel*>("output_model")));
   SetInputParam("query", query);
   SetInputParam("neighbor_search", std::string("pearson"));
   SetInputParam("recommendations", 5);
