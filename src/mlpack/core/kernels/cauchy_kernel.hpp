@@ -26,6 +26,20 @@ namespace kernel {
  * @f[
  * K(x, y) = \frac{1}{1 + (\frac{|| x - y ||}{\sigma})^2}.
  * @f]
+ *
+ * For more details, see the following published paper:
+ *
+ * @code
+ * @inproceedings{Basak2008,
+ *   title={A least square kernel machine with box constraints},
+ *   author={Basak, Jayanta},
+ *   booktitle={Pattern Recognition, 2008. ICPR 2008. 19th International
+ *       Conference on},
+ *   pages={1--4},
+ *   year={2008},
+ *   organization={IEEE}
+ * }
+ * @endcode
  */
 class CauchyKernel
 {
@@ -33,13 +47,13 @@ class CauchyKernel
   /**
    * Default constructor; sets bandwidth to 1.0.
    */
-  CauchyKernel(): bandwidth(1.0)
+  CauchyKernel() : bandwidth(1.0)
   { }
 
   /**
    * Construct the Cauchy kernel with a custom bandwidth.
    */
-  CauchyKernel(double bandwidth): bandwidth(bandwidth)
+  CauchyKernel(double bandwidth) : bandwidth(bandwidth)
   { }
 
   /**
@@ -57,7 +71,7 @@ class CauchyKernel
   double Evaluate(const VecTypeA& a, const VecTypeB& b)
   {
     return 1 / (1 + (
-        pow(metric::EuclideanDistance::Evaluate(a, b) / bandwidth, 2)));
+        std::pow(metric::EuclideanDistance::Evaluate(a, b) / bandwidth, 2)));
   }
 
   /**
