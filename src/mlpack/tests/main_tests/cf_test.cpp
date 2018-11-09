@@ -476,7 +476,7 @@ BOOST_AUTO_TEST_CASE(CFInterpolationTest)
   // Query with different interpolation types.
   ResetSettings();
 
-  // Using average interplation algorithm.
+  // Using average interpolation algorithm.
   SetInputParam("training", dataset);
   SetInputParam("max_iterations", int(10));
   SetInputParam("query", query);
@@ -490,11 +490,14 @@ BOOST_AUTO_TEST_CASE(CFInterpolationTest)
   BOOST_REQUIRE_EQUAL(output1.n_rows, 5);
   BOOST_REQUIRE_EQUAL(output1.n_cols, 7);
 
-  ResetSettings();
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["max_iterations"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
 
   // Using regression interpolation algorithm.
-  SetInputParam("training", dataset);
-  SetInputParam("max_iterations", int(10));
+  SetInputParam("input_model",
+      std::move(CLI::GetParam<CFModel*>("output_model")));
   SetInputParam("query", query);
   SetInputParam("interpolation", std::string("regression"));
   SetInputParam("recommendations", 5);
@@ -506,11 +509,9 @@ BOOST_AUTO_TEST_CASE(CFInterpolationTest)
   BOOST_REQUIRE_EQUAL(output2.n_rows, 5);
   BOOST_REQUIRE_EQUAL(output2.n_cols, 7);
 
-  ResetSettings();
-
   // Using similarity interpolation algorithm.
-  SetInputParam("training", dataset);
-  SetInputParam("max_iterations", int(10));
+  SetInputParam("input_model",
+      std::move(CLI::GetParam<CFModel*>("output_model")));
   SetInputParam("query", query);
   SetInputParam("interpolation", std::string("similarity"));
   SetInputParam("recommendations", 5);
@@ -577,11 +578,14 @@ BOOST_AUTO_TEST_CASE(CFNeighborSearchTest)
   BOOST_REQUIRE_EQUAL(output1.n_rows, 5);
   BOOST_REQUIRE_EQUAL(output1.n_cols, 7);
 
-  ResetSettings();
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["max_iterations"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
 
   // Using cosine neighbor search algorithm.
-  SetInputParam("training", dataset);
-  SetInputParam("max_iterations", int(10));
+  SetInputParam("input_model",
+      std::move(CLI::GetParam<CFModel*>("output_model")));
   SetInputParam("query", query);
   SetInputParam("neighbor_search", std::string("cosine"));
   SetInputParam("recommendations", 5);
@@ -593,11 +597,9 @@ BOOST_AUTO_TEST_CASE(CFNeighborSearchTest)
   BOOST_REQUIRE_EQUAL(output2.n_rows, 5);
   BOOST_REQUIRE_EQUAL(output2.n_cols, 7);
 
-  ResetSettings();
-
   // Using pearson neighbor search algorithm.
-  SetInputParam("training", dataset);
-  SetInputParam("max_iterations", int(10));
+  SetInputParam("input_model",
+      std::move(CLI::GetParam<CFModel*>("output_model")));
   SetInputParam("query", query);
   SetInputParam("neighbor_search", std::string("pearson"));
   SetInputParam("recommendations", 5);
