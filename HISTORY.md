@@ -2,7 +2,13 @@
 ###### ????-??-??
   * Bump minimum CMake version to 3.3.2.
 
-  * CMake fixes for Ninja generator by Marc Espie.
+  * CMake fixes for Ninja generator by Marc Espie (#1550, #1537, #1523).
+
+  * More efficient linear regression implementation (#1500).
+
+  * Serialization fixes for neural networks (#1508, #1535).
+
+  * Mean shift now allows single-point clusters (#1536).
 
 ### mlpack 3.0.3
 ###### 2018-07-27
