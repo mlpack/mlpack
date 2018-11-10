@@ -51,6 +51,7 @@ using namespace mlpack::regression;
 using namespace mlpack::naive_bayes;
 using namespace mlpack::neighbor;
 using namespace mlpack::decision_stump;
+using namespace mlpack::ann;
 
 using namespace arma;
 using namespace boost;
