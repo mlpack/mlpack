@@ -172,12 +172,12 @@ void TransposedConvolution<
 
       if (dW > 1 || dH > 1 || padW != 0 || padH != 0 || aW != 0 || aH != 0)
       {
-        BackwardConvolutionRule::Convolution(inputPaddedTemp.slice(inMap +
+        ForwardConvolutionRule::Convolution(inputPaddedTemp.slice(inMap +
             batchCount * inSize), rotatedFilter, convOutput, 1, 1);
       }
       else
       {
-        BackwardConvolutionRule::Convolution(inputTemp.slice(inMap +
+        ForwardConvolutionRule::Convolution(inputTemp.slice(inMap +
             batchCount * inSize), rotatedFilter, convOutput, 1, 1);
       }
 
@@ -233,12 +233,12 @@ void TransposedConvolution<
 
       if (kW - padW - 1 > 0 || kH - padH - 1 > 0)
       {
-        ForwardConvolutionRule::Convolution(mappedErrorPadded.slice(outMap),
+        BackwardConvolutionRule::Convolution(mappedErrorPadded.slice(outMap),
             weight.slice(outMapIdx), output, dW, dH);
       }
       else
       {
-        ForwardConvolutionRule::Convolution(mappedError.slice(outMap),
+        BackwardConvolutionRule::Convolution(mappedError.slice(outMap),
             weight.slice(outMapIdx), output, dW, dH);
       }
 
