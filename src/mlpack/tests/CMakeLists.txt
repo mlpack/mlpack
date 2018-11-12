@@ -179,8 +179,8 @@ add_executable(mlpack_test
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test
   mlpack
-  ${BOOST_unit_test_framework_LIBRARY}
-  ${BOOST_program_options_LIBRARY}
+  ${ARMADILLO_LIBRARIES}
+  ${Boost_LIBRARIES}
   ${COMPILER_SUPPORT_LIBRARIES}
 )
 
