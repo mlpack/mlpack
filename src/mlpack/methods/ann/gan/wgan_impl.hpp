@@ -178,6 +178,9 @@ Gradient(const arma::mat& parameters,
          arma::mat& gradient,
          const size_t batchSize)
 {
+  if (!reset)
+    Reset();
+
   this->EvaluateWithGradient(parameters, i, gradient, batchSize);
 }
 

@@ -76,8 +76,7 @@ class GAN
    * @param clippingParameter Weight range for enforcing Lipschitz constraint.
    * @param lambda Parameter for setting the gradient penalty.
    */
-  GAN(arma::mat& trainData,
-      Model generator,
+  GAN(Model generator,
       Model discriminator,
       InitializationRuleType& initializeRule,
       Noise& noiseFunction,
@@ -98,9 +97,14 @@ class GAN
   // Reset function.
   void Reset();
 
+  // ResetData function.
+  void ResetData(arma::mat predictors, arma::mat responses);
+
   // Train function.
   template<typename OptimizerType>
-  void Train(OptimizerType& Optimizer);
+  void Train(arma::mat predictors,
+             arma::mat responses,
+             OptimizerType& Optimizer);
 
   /**
    * Evaluate function for the Standard GAN and DCGAN.
@@ -315,6 +319,8 @@ class GAN
   size_t noiseDim;
   //! Locally stored number of data points.
   size_t numFunctions;
+  //! Locally stored number of dimensions per data point.
+  size_t numDimensions;
   //! Locally stored batch size parameter.
   size_t batchSize;
   //! Locally stored number of iterations that have been completed.

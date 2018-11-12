@@ -67,6 +67,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
   Log::Info << arma::size(trainData) << std::endl;
 
   trainData = trainData.cols(0, datasetMaxCols - 1);
+  arma::mat responseData = arma::ones(1, trainData.n_cols);
 
   size_t numIterations = trainData.n_cols * numEpoches;
   numIterations /= batchSize;
@@ -121,12 +122,12 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
   std::function<double()> noiseFunction = [] () {
       return math::RandNormal(0, 1);};
   GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
-      std::function<double()>, DCGAN> dcgan(trainData, generator, discriminator,
-      gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
+      std::function<double()>, DCGAN> dcgan(generator, discriminator, gaussian,
+      noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
   Log::Info << "Training..." << std::endl;
-  dcgan.Train(optimizer);
+  dcgan.Train(trainData, responseData, optimizer);
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;
@@ -194,6 +195,8 @@ BOOST_AUTO_TEST_CASE(DCGANCelebATest)
   if (datasetMaxCols > 0)
     trainData = trainData.cols(0, datasetMaxCols - 1);
 
+  arma::mat responseData = arma::ones(1, trainData.n_cols);
+
   size_t numIterations = trainData.n_cols * numEpoches;
   numIterations /= batchSize;
 
@@ -247,12 +250,12 @@ BOOST_AUTO_TEST_CASE(DCGANCelebATest)
   std::function<double()> noiseFunction = [] () {
       return math::RandNormal(0, 1);};
   GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
-      std::function<double()>, DCGAN> dcgan(trainData, generator, discriminator,
-      gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
+      std::function<double()>, DCGAN> dcgan(generator, discriminator, gaussian,
+      noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
   Log::Info << "Training..." << std::endl;
-  dcgan.Train(optimizer);
+  dcgan.Train(trainData, responseData, optimizer);
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;

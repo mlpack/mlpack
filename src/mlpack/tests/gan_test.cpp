@@ -80,10 +80,11 @@ BOOST_AUTO_TEST_CASE(GANTest)
   GAN<FFN<CrossEntropyError<> >,
       GaussianInitialization,
       std::function<double()> >
-  gan(trainData, generator, discriminator, gaussian, noiseFunction,
+  gan(generator, discriminator, gaussian, noiseFunction,
       noiseDim, batchSize, generatorUpdateStep, discriminatorPreTrain,
       multiplier);
-  gan.Reset();
+  arma::mat responseData = arma::ones(1, trainData.n_cols);
+  gan.ResetData(trainData, responseData);
 
   Log::Info << "Loading Parameters" << std::endl;
   arma::mat parameters, generatorParameters;
@@ -165,6 +166,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
   Log::Info << arma::size(trainData) << std::endl;
 
   trainData = trainData.cols(0, datasetMaxCols - 1);
+  arma::mat responseData = arma::ones(1, trainData.n_cols);
 
   size_t numIterations = trainData.n_cols * numEpoches;
   numIterations /= batchSize;
@@ -210,12 +212,12 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
   std::function<double()> noiseFunction = [] () {
       return math::RandNormal(0, 1);};
   GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
-      std::function<double()> > gan(trainData, generator, discriminator,
-      gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
+      std::function<double()> > gan(generator, discriminator, gaussian,
+      noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
   Log::Info << "Training..." << std::endl;
-  gan.Train(optimizer);
+  gan.Train(trainData, responseData, optimizer);
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;

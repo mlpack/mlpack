@@ -30,7 +30,6 @@ template<
   typename PolicyType
 >
 GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
-    arma::mat& predictors,
     Model generator,
     Model discriminator,
     InitializationRuleType& initializeRule,
@@ -42,7 +41,6 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     const double multiplier,
     const double clippingParameter,
     const double lambda):
-    predictors(predictors),
     generator(std::move(generator)),
     discriminator(std::move(discriminator)),
     initializeRule(initializeRule),
@@ -60,30 +58,6 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
   this->discriminator.network.insert(
       this->discriminator.network.begin(),
       new IdentityLayer<>());
-
-  counter = 0;
-  currentBatch = 0;
-
-  this->discriminator.deterministic = this->generator.deterministic = true;
-
-  responses.set_size(1, predictors.n_cols);
-  responses.ones();
-
-  this->discriminator.predictors.set_size(predictors.n_rows,
-      predictors.n_cols + batchSize);
-  this->discriminator.predictors.cols(0, predictors.n_cols - 1) = predictors;
-
-  this->discriminator.responses.set_size(1, predictors.n_cols + batchSize);
-  this->discriminator.responses.ones();
-  this->discriminator.responses.cols(predictors.n_cols,
-      predictors.n_cols + batchSize - 1) = arma::zeros(1, batchSize);
-
-  numFunctions = predictors.n_cols;
-
-  noise.set_size(noiseDim, batchSize);
-
-  this->generator.predictors.set_size(noiseDim, batchSize);
-  this->generator.responses.set_size(predictors.n_rows, batchSize);
 }
 
 template<
@@ -156,6 +130,8 @@ template<
 >
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::Reset()
 {
+  counter = 0;
+  currentBatch = 0;
   size_t genWeights = 0;
   size_t discWeights = 0;
 
@@ -192,12 +168,48 @@ template<
   typename Noise,
   typename PolicyType
 >
-template<typename OptimizerType>
-void GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
-    OptimizerType& Optimizer)
+void GAN<Model, InitializationRuleType, Noise, PolicyType>::ResetData(
+    arma::mat predictors, arma::mat responses)
 {
+  this->predictors = std::move(predictors);
+  this->responses = std::move(responses);
+  numFunctions = predictors.n_cols;
+  numDimensions = predictors.n_rows;
+  noise.set_size(noiseDim, batchSize);
+
+  this->discriminator.deterministic = this->generator.deterministic = true;
+
+  this->discriminator.predictors.set_size(numDimensions,
+      numFunctions + batchSize);
+  this->discriminator.predictors.cols(0, numFunctions - 1) = predictors;
+
+  this->discriminator.responses.set_size(1, numFunctions + batchSize);
+  this->discriminator.responses.ones();
+  this->discriminator.responses.cols(numFunctions,
+      numFunctions + batchSize - 1) = arma::zeros(1, batchSize);
+
+  this->generator.predictors.set_size(noiseDim, batchSize);
+  this->generator.responses.set_size(numDimensions, batchSize);
+
   if (!reset)
     Reset();
+}
+
+template<
+  typename Model,
+  typename InitializationRuleType,
+  typename Noise,
+  typename PolicyType
+>
+template<typename OptimizerType>
+void GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
+    arma::mat predictors, arma::mat responses, OptimizerType& Optimizer)
+{
+  ResetData(std::move(predictors), std::move(responses));
+
+  if (!reset)
+    Reset();
+
   Optimizer.Optimize(*this, parameter);
 }
 
@@ -218,8 +230,8 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
   if (!reset)
     Reset();
 
-  currentInput = arma::mat(predictors.memptr() + (i * predictors.n_rows),
-      predictors.n_rows, batchSize, false, false);
+  currentInput = arma::mat(predictors.memptr() + (i * numDimensions),
+      numDimensions, batchSize, false, false);
   currentTarget = arma::mat(responses.memptr() + i, 1, batchSize, false,
       false);
 
@@ -359,6 +371,8 @@ Gradient(const arma::mat& parameters,
          arma::mat& gradient,
          const size_t batchSize)
 {
+  if (!reset)
+    Reset();
   this->EvaluateWithGradient(parameters, i, gradient, batchSize);
 }
 
@@ -425,6 +439,15 @@ serialize(Archive& ar, const unsigned int /* version */)
   ar & BOOST_SERIALIZATION_NVP(generator);
   ar & BOOST_SERIALIZATION_NVP(discriminator);
   ar & BOOST_SERIALIZATION_NVP(noiseFunction);
+  ar & BOOST_SERIALIZATION_NVP(noiseDim);
+  ar & BOOST_SERIALIZATION_NVP(numFunctions);
+  ar & BOOST_SERIALIZATION_NVP(numDimensions);
+  ar & BOOST_SERIALIZATION_NVP(batchSize);
+  ar & BOOST_SERIALIZATION_NVP(generatorUpdateStep);
+  ar & BOOST_SERIALIZATION_NVP(preTrainSize);
+  ar & BOOST_SERIALIZATION_NVP(multiplier);
+  ar & BOOST_SERIALIZATION_NVP(clippingParameter);
+  ar & BOOST_SERIALIZATION_NVP(lambda);
 }
 
 } // namespace ann
