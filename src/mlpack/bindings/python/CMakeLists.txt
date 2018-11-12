@@ -15,7 +15,7 @@ endif ()
 
 # Generate Python setuptools file.
 # We can probably use FindPythonInterp when we require CMake 3.0.
-find_package(PythonInterp REQUIRED)
+find_package(PythonInterp)
 if (NOT PYTHON_EXECUTABLE)
   not_found_return("Python not found; not building Python bindings.")
 else ()
