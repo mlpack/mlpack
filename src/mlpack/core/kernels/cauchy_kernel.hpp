@@ -45,15 +45,9 @@ class CauchyKernel
 {
  public:
   /**
-   * Default constructor; sets bandwidth to 1.0.
+   * Construct the Cauchy kernel; by default, the bandwidth is 1.0.
    */
-  CauchyKernel() : bandwidth(1.0)
-  { }
-
-  /**
-   * Construct the Cauchy kernel with a custom bandwidth.
-   */
-  CauchyKernel(double bandwidth) : bandwidth(bandwidth)
+  CauchyKernel(double bandwidth = 1.0) : bandwidth(bandwidth)
   { }
 
   /**
