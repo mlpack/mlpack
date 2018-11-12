@@ -180,6 +180,7 @@ add_executable(mlpack_test
 target_link_libraries(mlpack_test
   mlpack
   ${BOOST_unit_test_framework_LIBRARY}
+  ${BOOST_program_options_LIBRARY}
   ${COMPILER_SUPPORT_LIBRARIES}
 )
 
