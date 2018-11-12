@@ -250,6 +250,7 @@
  *   - Shashank Shekhar <contactshashankshekhar@gmail.com>
  *   - Yasmine Dumouchel <yasmine.dumouchel@gmail.com>
  *   - German Lancioni
+ *   - Tommi Laivamaa <tommi.laivamaa@protonmail.com>
  */
 
 // First, include all of the prerequisites.
