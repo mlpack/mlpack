@@ -1,5 +1,5 @@
 ### mlpack 3.0.4
-###### ????-??-??
+###### 2018-11-13
   * Bump minimum CMake version to 3.3.2.
 
   * CMake fixes for Ninja generator by Marc Espie (#1550, #1537, #1523).
