@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 3.3.2)
 project(mlpack C CXX)
 
 include(CMake/cotire.cmake)
@@ -12,7 +12,16 @@ option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
-option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
+
+# Currently Python bindings aren't known to build successfully on Windows, so
+# set BUILD_PYTHON_BINDINGS to OFF when the platform is Windows.
+if (WIN32)
+  option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
+  message(WARNING "By default Python bindings are not compiled for Windows because they are not known to work.  Set BUILD_PYTHON_BINDINGS to ON if you want them built.")
+else ()
+  option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
+endif()
+
 option(BUILD_SHARED_LIBS
     "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 option(BUILD_WITH_COVERAGE
@@ -24,34 +33,9 @@ option(FORCE_CXX11
 option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
 enable_testing()
 
-# Currently Python bindings aren't known to build successfully on Windows, so
-# set BUILD_PYTHON_BINDINGS to OFF when the platform is Windows.
-if (WIN32)
-  option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
-  message(WARNING "By default Python bindings are not compiled for Windows because they are not known to work.  Set BUILD_PYTHON_BINDINGS to ON if you want them built.")
-endif()
-
-# Ensure that we have a C++11 compiler.  In newer versions of CMake, this is
-# done with target_compile_features() when the mlpack library target is added in
-# src/mlpack/CMakeLists.txt.
-if ((${CMAKE_MAJOR_VERSION} LESS 3 OR
-    (${CMAKE_MAJOR_VERSION} EQUAL 3 AND ${CMAKE_MINOR_VERSION} LESS 1))
-    AND NOT FORCE_CXX11)
-  # Older versions of CMake do not support target_compile_features(), so we have
-  # to use something kind of hacky.
-  include(CMake/CXX11.cmake)
-  check_for_cxx11_compiler(HAS_CXX11)
-  if(NOT HAS_CXX11)
-    message(FATAL_ERROR "No C++11 compiler available!")
-  endif()
-  enable_cxx11()
-else()
-  # set required standard to c++11
-  set(CMAKE_CXX_STANDARD 11)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif ()
-# Otherwise, we may have to set the C++11 mode after the mlpack target is
-# defined.
+# Set required standard to c++11
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
@@ -462,13 +446,13 @@ add_subdirectory(src/mlpack)
 # If we need to keep gitversion.hpp up to date, then make sure the mlpack target
 # depends on it.
 if (USING_GIT STREQUAL "YES")
-  add_dependencies(mlpack mlpack_gitversion)
+  add_dependencies(mlpack_headers mlpack_gitversion)
 endif ()
 
 # Make the mlpack_arma_config target depend on mlpack (we couldn't do this
 # before the add_subdirectory() call because the mlpack target didn't exist
 # before that).
-add_dependencies(mlpack mlpack_arma_config)
+add_dependencies(mlpack_headers mlpack_arma_config)
 
 # Make a target to generate the documentation.  If Doxygen isn't installed, then
 # I guess this option will just be unavailable.

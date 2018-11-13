@@ -28,6 +28,7 @@
 #include "init_rules/network_init.hpp"
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 
@@ -462,6 +463,24 @@ class FFN
 
 } // namespace ann
 } // namespace mlpack
+
+//! Set the serialization version of the FFN class.  Multiple template arguments
+//! makes this ugly...
+namespace boost {
+namespace serialization {
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename... CustomLayer>
+struct version<
+    mlpack::ann::FFN<OutputLayerType, InitializationRuleType, CustomLayer...>>
+{
+  BOOST_STATIC_CONSTANT(int, value = 1);
+};
+
+} // namespace serialization
+} // namespace boost
+
 // Include implementation.
 #include "ffn_impl.hpp"
 

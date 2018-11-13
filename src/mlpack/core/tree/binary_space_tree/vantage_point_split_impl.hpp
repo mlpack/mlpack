@@ -25,7 +25,7 @@ SplitNode(const BoundType& bound, MatType& data, const size_t begin,
     const size_t count, SplitInfo& splitInfo)
 {
   ElemType mu = 0;
-  size_t vantagePointIndex;
+  size_t vantagePointIndex = 0;
 
   // Find the best vantage point.
   SelectVantagePoint(bound.Metric(), data, begin, count, vantagePointIndex, mu);
