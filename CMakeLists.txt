@@ -327,12 +327,6 @@ find_package(Boost 1.49
 
 link_directories(${Boost_LIBRARY_DIRS})
 
-# Disable automatic linking in Visual Studio.
-if (MSVC)
-  link_directories(${Boost_LIBRARY_DIRS})
-  add_definitions(-DBOOST_ALL_NO_LIB)
-endif ()
-
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${Boost_LIBRARIES})
 set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS} ${Boost_LIBRARY_DIRS})
