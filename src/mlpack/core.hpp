@@ -250,6 +250,8 @@
  *   - Shashank Shekhar <contactshashankshekhar@gmail.com>
  *   - Yasmine Dumouchel <yasmine.dumouchel@gmail.com>
  *   - German Lancioni
+ *   - Arash Abghari <arash.abghari@gmail.com>
+ *   - Ayush Chamoli
  *   - Tommi Laivamaa <tommi.laivamaa@protonmail.com>
  */
 
