@@ -232,7 +232,6 @@ double DecisionStump<MatType>::SetupSplitDimension(
   // labels.  This sort is stable.
   arma::uvec sortedIndexDim = arma::stable_sort_index(dimension.t());
 
-  // hrer
   arma::Row<size_t> sortedLabels(dimension.n_elem);
   arma::rowvec sortedWeights(dimension.n_elem);
 
