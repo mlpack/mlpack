@@ -1,7 +1,7 @@
 /**
  * @file metric_test.cpp
  *
- * Unit tests for the 'LMetric' class.
+ * Tests for the various metric classes.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -10,13 +10,14 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/metrics/cosine_distance.hpp>
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
 using namespace std;
 using namespace mlpack::metric;
 
-BOOST_AUTO_TEST_SUITE(LMetricTest);
+BOOST_AUTO_TEST_SUITE(MetricTest);
 
 BOOST_AUTO_TEST_CASE(L1MetricTest)
 {
@@ -85,6 +86,16 @@ BOOST_AUTO_TEST_CASE(LINFMetricTest)
 
   BOOST_REQUIRE_CLOSE((double) arma::as_scalar(arma::max(arma::abs(a2 - b2))),
                       lMetric.Evaluate(a2, b2), 1e-5);
+}
+
+BOOST_AUTO_TEST_CASE(CosineDistanceTest)
+{
+  arma::vec a = "1 2 3";
+  arma::vec b = "6 5 4";
+
+  CosineDistance cosDistance;
+
+  BOOST_REQUIRE_CLOSE(0.1471971345, cosDistance.Evaluate(a, b), 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
