@@ -42,6 +42,37 @@ using KDEType = KDE<metric::EuclideanDistance,
                     TreeType<metric::EuclideanDistance,
                              kde::KDEStat,
                              arma::mat>::template DualTreeTraverser>;
+/**
+ * KernerlNormalizer holds a set of methods to normalize estimations applying
+ * in each case the appropiate kernel normalizer function.
+ */
+class KernelNormalizer
+{
+ public:
+  //! Normalization not needed.
+  template<typename KernelType>
+  static void ApplyNormalizer(KernelType& /* kernel */,
+                              const size_t /* dimension */,
+                              arma::vec& /* estimations */) { return; }
+
+  //! Normalize Gaussian Kernel.
+  template<typename KernelType>
+  static void ApplyNormalizer(kernel::GaussianKernel& kernel,
+                              const size_t dimension,
+                              arma::vec& estimations);
+
+  //! Normalize Epanechnikov Kernel.
+  template<typename KernelType>
+  static void ApplyNormalizer(kernel::EpanechnikovKernel& kernel,
+                              const size_t dimension,
+                              arma::vec& estimations);
+
+  //! Normalize SphericalKernel Kernel.
+  template<typename KernelType>
+  static void ApplyNormalizer(kernel::SphericalKernel& kernel,
+                              const size_t dimension,
+                              arma::vec& estimations);
+};
 
 /**
  * DualMonoKDE computes a Kernel Density Estimation on the given KDEType.
@@ -67,24 +98,6 @@ class DualMonoKDE : public boost::static_visitor<void>
                     typename TreeStatType,
                     typename TreeMatType> class TreeType>
   void operator()(KDETypeT<KernelType, TreeType>* kde) const;
-
-  //! DualMonoKDE specialized on Gaussian Kernel KDEType.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(KDETypeT<kernel::GaussianKernel, TreeType>* kde) const;
-
-  //! DualMonoKDE specialized on Epanechnikov Kernel KDEType.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(KDETypeT<kernel::EpanechnikovKernel, TreeType>* kde) const;
-
-  //! DualMonoKDE specialized on Spherical Kernel KDEType.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(KDETypeT<kernel::SphericalKernel, TreeType>* kde) const;
 
   // TODO Implement specific cases where a leaf size can be selected.
 
@@ -123,24 +136,6 @@ class DualBiKDE : public boost::static_visitor<void>
                     typename TreeMatType> class TreeType>
   void operator()(KDETypeT<KernelType, TreeType>* kde) const;
 
-  //! DualBiKDE specialized on Gaussian Kernel KDEType.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(KDETypeT<kernel::GaussianKernel, TreeType>* kde) const;
-
-  //! DualBiKDE specialized on Epanechnikov Kernel KDEType.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(KDETypeT<kernel::EpanechnikovKernel, TreeType>* kde) const;
-
-  //! DualBiKDE specialized on Spherical Kernel KDEType.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(KDETypeT<kernel::SphericalKernel, TreeType>* kde) const;
-
   // TODO Implement specific cases where a leaf size can be selected.
 
   //! DualBiKDE constructor. Takes ownership of the given querySet.
@@ -157,19 +152,12 @@ class TrainVisitor : public boost::static_visitor<void>
   arma::mat&& referenceSet;
 
  public:
-  //! Alias template necessary for visual C++ compiler.
-  template<typename KernelType,
-           template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  using KDETypeT = KDEType<KernelType, TreeType>;
-
   //! Default TrainVisitor on some KDEType.
   template<typename KernelType,
            template<typename TreeMetricType,
                     typename TreeStatType,
                     typename TreeMatType> class TreeType>
-  void operator()(KDETypeT<KernelType, TreeType>* kde) const;
+  void operator()(KDEType<KernelType, TreeType>* kde) const;
 
   // TODO Implement specific cases where a leaf size can be selected.
 

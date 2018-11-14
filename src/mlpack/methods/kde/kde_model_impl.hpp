@@ -237,6 +237,33 @@ inline void KDEModel::CleanMemory()
   boost::apply_visitor(DeleteVisitor(), kdeModel);
 }
 
+// Gaussian KDE normalization
+template<typename KernelType>
+void KernelNormalizer::ApplyNormalizer(kernel::GaussianKernel& kernel,
+                                       const size_t dimension,
+                                       arma::vec& estimations)
+{
+  estimations /= kernel.Normalizer(dimension);
+}
+
+// Epanechnikov KDE normalization
+template<typename KernelType>
+void KernelNormalizer::ApplyNormalizer(kernel::EpanechnikovKernel& kernel,
+                                       const size_t dimension,
+                                       arma::vec& estimations)
+{
+  estimations /= kernel.Normalizer(dimension);
+}
+
+// Spherical KDE normalization
+template<typename KernelType>
+void KernelNormalizer::ApplyNormalizer(kernel::SphericalKernel& kernel,
+                                       const size_t dimension,
+                                       arma::vec& estimations)
+{
+  estimations /= kernel.Normalizer(dimension);
+}
+
 // Parameters for KDE evaluation
 DualMonoKDE::DualMonoKDE(arma::vec& estimations):
     estimations(estimations)
@@ -250,57 +277,12 @@ template<typename KernelType,
 void DualMonoKDE::operator()(KDETypeT<KernelType, TreeType>* kde) const
 {
   if (kde)
-    kde->Evaluate(estimations);
-  else
-    throw std::runtime_error("no KDE model initialized");
-}
-
-// Evaluation specialized for Gaussian Kernel
-template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-void DualMonoKDE::operator()(KDETypeT<kernel::GaussianKernel,
-                             TreeType>* kde) const
-{
-  if (kde)
   {
-    const size_t dimension = (kde->ReferenceTree())->Dataset().n_rows;
     kde->Evaluate(estimations);
-    estimations /= kde->Kernel().Normalizer(dimension);
-  }
-  else
-    throw std::runtime_error("no KDE model initialized");
-}
-
-// Evaluation specialized for EpanechnikovKernel Kernel
-template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-void DualMonoKDE::operator()(KDETypeT<kernel::EpanechnikovKernel,
-                             TreeType>* kde) const
-{
-  if (kde)
-  {
     const size_t dimension = (kde->ReferenceTree())->Dataset().n_rows;
-    kde->Evaluate(estimations);
-    estimations /= kde->Kernel().Normalizer(dimension);
-  }
-  else
-    throw std::runtime_error("no KDE model initialized");
-}
-
-// Evaluation specialized for SphericalKernel Kernel
-template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-void DualMonoKDE::operator()(KDETypeT<kernel::SphericalKernel,
-                             TreeType>* kde) const
-{
-  if (kde)
-  {
-    const size_t dimension = (kde->ReferenceTree())->Dataset().n_rows;
-    kde->Evaluate(estimations);
-    estimations /= kde->Kernel().Normalizer(dimension);
+    KernelNormalizer::ApplyNormalizer<KernelType>(kde->Kernel(),
+                                                  dimension,
+                                                  estimations);
   }
   else
     throw std::runtime_error("no KDE model initialized");
@@ -321,54 +303,11 @@ template<typename KernelType,
 void DualBiKDE::operator()(KDETypeT<KernelType, TreeType>* kde) const
 {
   if (kde)
-    kde->Evaluate(std::move(querySet), estimations);
-  else
-    throw std::runtime_error("no KDE model initialized");
-}
-
-// Evaluation specialized for Gaussian Kernel
-template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-void DualBiKDE::operator()(KDETypeT<kernel::GaussianKernel,
-                           TreeType>* kde) const
-{
-  if (kde)
   {
     kde->Evaluate(std::move(querySet), estimations);
-    estimations /= kde->Kernel().Normalizer(dimension);
-  }
-  else
-    throw std::runtime_error("no KDE model initialized");
-}
-
-// Evaluation specialized for EpanechnikovKernel Kernel
-template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-void DualBiKDE::operator()(KDETypeT<kernel::EpanechnikovKernel,
-                           TreeType>* kde) const
-{
-  if (kde)
-  {
-    kde->Evaluate(std::move(querySet), estimations);
-    estimations /= kde->Kernel().Normalizer(dimension);
-  }
-  else
-    throw std::runtime_error("no KDE model initialized");
-}
-
-// Evaluation specialized for SphericalKernel Kernel
-template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-void DualBiKDE::operator()(KDETypeT<kernel::SphericalKernel,
-                           TreeType>* kde) const
-{
-  if (kde)
-  {
-    kde->Evaluate(std::move(querySet), estimations);
-    estimations /= kde->Kernel().Normalizer(dimension);
+    KernelNormalizer::ApplyNormalizer<KernelType>(kde->Kernel(),
+                                                  dimension,
+                                                  estimations);
   }
   else
     throw std::runtime_error("no KDE model initialized");
@@ -384,7 +323,7 @@ template<typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void TrainVisitor::operator()(KDETypeT<KernelType, TreeType>* kde) const
+void TrainVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
 {
   if (kde)
     kde->Train(std::move(referenceSet));
