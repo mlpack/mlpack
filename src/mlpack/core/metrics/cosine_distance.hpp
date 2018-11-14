@@ -47,8 +47,7 @@ class CosineDistance
   template<typename VecTypeA, typename VecTypeB>
   double Evaluate(const VecTypeA& a, const VecTypeB& b)
   {
-    return 1 - arma::dot(a, b) /
-      (std::sqrt(arma::dot(a, a)) * std::sqrt(arma::dot(b, b)));
+    return 1 - arma::dot(a, b) / (std::sqrt(arma::dot(a, a) * arma::dot(b, b)));
   }
 };
 
