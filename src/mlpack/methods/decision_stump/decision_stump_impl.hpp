@@ -266,7 +266,7 @@ double DecisionStump<MatType>::SetupSplitDimension(
           sortedLabels.subvec(begin, end), sortedWeights.subvec(begin, end));
       i++;
     }
-    else if (dimension(sortedLabels(i)) != dimension(sortedLabels(i + 1)))
+    else if (dimension(sortedIndexDim(i)) != dimension(sortedIndexDim(i + 1)))
     {
       // If we're not at the last element of sortedLabels, then check whether
       // count is less than the current bucket size.
