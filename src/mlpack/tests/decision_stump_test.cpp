@@ -203,7 +203,9 @@ BOOST_AUTO_TEST_CASE(MultiClassSplit)
 
   mat testingData;
   testingData << -6.1 << -5.9 << -2.1 << -0.7 << 2.5 << 4.7 << 7.2 << 9.1;
-
+  // After training, we will get 6 bins before merging.
+  // bins: x < -4; -4 <= x < -1; -1 <= x < 2; 2 <= x < 5; 5 <= x < 8; 8 <= x
+  // labels:   0;            1;            0;          1;          2;      2
   DecisionStump<> ds(trainingData, labelsIn.row(0), numClasses, inpBucketSize);
 
   Row<size_t> predictedLabels;
@@ -299,6 +301,8 @@ BOOST_AUTO_TEST_CASE(DimensionSelectionTest)
   DecisionStump<> ds(dataset, labels, numClasses, inpBucketSize);
 
   // Make sure it split on the dimension that is most separable.
+  // Obviously the first dimension should be selected because it is the
+  // most distinguishing.
   BOOST_CHECK_EQUAL(ds.SplitDimension(), 0);
 
   // Make sure every bin below -1 classifies as label 0, and every bin above 1
@@ -374,7 +378,10 @@ BOOST_AUTO_TEST_CASE(IntTest)
            << 1 << 1 << 1 << 2 << 1 << 2 << 2 << 2 << 2 << 2;
 
   DecisionStump<arma::imat> ds(trainingData, labelsIn.row(0), 3, 4);
-
+  // After training, we will get 5 bins if do not merge:
+  // bins:   x < -3; -3 <= x < 1; 1 <= x < 5; 5 <= x < 9; 9 <= x
+  // labels:    0  ;      1     ;      1    ;     2     ;    2
+  // Then we can decide which bins a new sample should locate in.
   imat testingData;
   testingData << -6 << -6 << -2 << -1 << 3 << 5 << 7 << 9;
 
