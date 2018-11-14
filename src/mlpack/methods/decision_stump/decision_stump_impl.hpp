@@ -508,7 +508,7 @@ double DecisionStump<MatType>::CalculateEntropy(
     }
   }
 
-  return entropy / std::log(2.0);
+  return -1 * entropy / std::log(2.0);
 }
 
 } // namespace decision_stump
