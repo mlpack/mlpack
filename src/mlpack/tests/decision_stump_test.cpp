@@ -212,7 +212,7 @@ BOOST_AUTO_TEST_CASE(MultiClassSplit)
   BOOST_CHECK_EQUAL(predictedLabels(0, 0), 0);
   BOOST_CHECK_EQUAL(predictedLabels(0, 1), 0);
   BOOST_CHECK_EQUAL(predictedLabels(0, 2), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 3), 1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 3), 0);
   BOOST_CHECK_EQUAL(predictedLabels(0, 4), 1);
   BOOST_CHECK_EQUAL(predictedLabels(0, 5), 1);
   BOOST_CHECK_EQUAL(predictedLabels(0, 6), 2);
@@ -299,7 +299,7 @@ BOOST_AUTO_TEST_CASE(DimensionSelectionTest)
   DecisionStump<> ds(dataset, labels, numClasses, inpBucketSize);
 
   // Make sure it split on the dimension that is most separable.
-  BOOST_CHECK_EQUAL(ds.SplitDimension(), 1);
+  BOOST_CHECK_EQUAL(ds.SplitDimension(), 0);
 
   // Make sure every bin below -1 classifies as label 0, and every bin above 1
   // classifies as label 1 (What happens in [-1, 1] isn't that big a deal.).
@@ -342,11 +342,11 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
   mat testingData;
   testingData << -6.1 << -5.9 << -2.1 << -0.7 << 2.5 << 4.7 << 7.2 << 9.1;
 
-  DecisionStump<> ds(trainingData, labelsIn.row(0), 4, 3);
+  DecisionStump<> ds(trainingData, labelsIn.row(0), 3, 4);
 
   Row<size_t> predictedLabels(testingData.n_cols);
   ds.Classify(testingData, predictedLabels);
-
+ 
   BOOST_CHECK_EQUAL(predictedLabels(0, 0), 0);
   BOOST_CHECK_EQUAL(predictedLabels(0, 1), 0);
   BOOST_CHECK_EQUAL(predictedLabels(0, 2), 1);
@@ -373,7 +373,7 @@ BOOST_AUTO_TEST_CASE(IntTest)
   labelsIn << 0 << 0 << 0 << 0 << 1 << 1 << 0 << 0
            << 1 << 1 << 1 << 2 << 1 << 2 << 2 << 2 << 2 << 2;
 
-  DecisionStump<arma::imat> ds(trainingData, labelsIn.row(0), 4, 3);
+  DecisionStump<arma::imat> ds(trainingData, labelsIn.row(0), 3, 4);
 
   imat testingData;
   testingData << -6 << -6 << -2 << -1 << 3 << 5 << 7 << 9;
@@ -386,7 +386,7 @@ BOOST_AUTO_TEST_CASE(IntTest)
   BOOST_CHECK_EQUAL(predictedLabels(0, 2), 1);
   BOOST_CHECK_EQUAL(predictedLabels(0, 3), 1);
   BOOST_CHECK_EQUAL(predictedLabels(0, 4), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 5), 1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 5), 2);
   BOOST_CHECK_EQUAL(predictedLabels(0, 6), 2);
   BOOST_CHECK_EQUAL(predictedLabels(0, 7), 2);
 }
