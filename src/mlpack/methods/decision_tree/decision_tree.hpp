@@ -56,6 +56,8 @@ class DecisionTree :
    * minimumGainSplit too small may cause the tree to overfit, but setting them
    * too large may cause it to underfit.
    *
+   * Use std::move if data or labels are no longer needed to avoid copies.
+   *
    * @param data Dataset to train on.
    * @param datasetInfo Type information for each dimension of the dataset.
    * @param labels Labels for each training point.
@@ -64,9 +66,9 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType>
-  DecisionTree(MatType&& data,
+  DecisionTree(MatType data,
                const data::DatasetInfo& datasetInfo,
-               LabelsType&& labels,
+               LabelsType labels,
                const size_t numClasses,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7);
@@ -77,6 +79,8 @@ class DecisionTree :
    * minimumGainSplit too small may cause the tree to overfit, but setting them
    * too large may cause it to underfit.
    *
+   * Use std::move if data or labels are no longer needed to avoid copies.
+   *
    * @param data Dataset to train on.
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
@@ -84,8 +88,8 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType>
-  DecisionTree(MatType&& data,
-               LabelsType&& labels,
+  DecisionTree(MatType data,
+               LabelsType labels,
                const size_t numClasses,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7);
@@ -96,6 +100,9 @@ class DecisionTree :
    * and minimumGainSplit too small may cause the tree to overfit, but setting
    * them too large may cause it to underfit.
    *
+   * Use std::move if data, labels or weights are no longer needed to avoid
+   * copies.
+   *
    * @param data Dataset to train on.
    * @param datasetInfo Type information for each dimension of the dataset.
    * @param labels Labels for each training point.
@@ -105,11 +112,11 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
-  DecisionTree(MatType&& data,
+  DecisionTree(MatType data,
                const data::DatasetInfo& datasetInfo,
-               LabelsType&& labels,
+               LabelsType labels,
                const size_t numClasses,
-               WeightsType&& weights,
+               WeightsType weights,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
                const std::enable_if_t<arma::is_arma_type<
@@ -122,6 +129,9 @@ class DecisionTree :
    * and minimumGainSplit too small may cause the tree to overfit, but setting
    * them too large may cause it to underfit.
    *
+   * Use std::move if data, labels or weights are no longer needed to avoid
+   * copies.
+   *
    * @param data Dataset to train on.
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
@@ -130,10 +140,10 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
-  DecisionTree(MatType&& data,
-               LabelsType&& labels,
+  DecisionTree(MatType data,
+               LabelsType labels,
                const size_t numClasses,
-               WeightsType&& weights,
+               WeightsType weights,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
                const std::enable_if_t<arma::is_arma_type<
@@ -191,6 +201,8 @@ class DecisionTree :
    * minimumGainSplit too small may cause the tree to overfit, but setting them
    * too large may cause it to underfit.
    *
+   * Use std::move if data or labels are no longer needed to avoid copies.
+   *
    * @param data Dataset to train on.
    * @param datasetInfo Type information for each dimension.
    * @param labels Labels for each training point.
@@ -200,9 +212,9 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType>
-  void Train(MatType&& data,
+  void Train(MatType data,
              const data::DatasetInfo& datasetInfo,
-             LabelsType&& labels,
+             LabelsType labels,
              const size_t numClasses,
              const size_t minimumLeafSize = 10,
              const double minimumGainSplit = 1e-7);
@@ -213,6 +225,8 @@ class DecisionTree :
    * minimumGainSplit too small may cause the tree to overfit, but setting them
    * too large may cause it to underfit.
    *
+   * Use std::move if data or labels are no longer needed to avoid copies.
+   *
    * @param data Dataset to train on.
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
@@ -221,8 +235,8 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType>
-  void Train(MatType&& data,
-             LabelsType&& labels,
+  void Train(MatType data,
+             LabelsType labels,
              const size_t numClasses,
              const size_t minimumLeafSize = 10,
              const double minimumGainSplit = 1e-7);
@@ -234,6 +248,9 @@ class DecisionTree :
    * minimumGainSplit too small may cause the tree to overfit, but setting them
    * too large may cause it to underfit.
    *
+   * Use std::move if data, labels or weights are no longer needed to avoid
+   * copies.
+   *
    * @param data Dataset to train on.
    * @param datasetInfo Type information for each dimension.
    * @param labels Labels for each training point.
@@ -243,11 +260,11 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
-  void Train(MatType&& data,
+  void Train(MatType data,
              const data::DatasetInfo& datasetInfo,
-             LabelsType&& labels,
+             LabelsType labels,
              const size_t numClasses,
-             WeightsType&& weights,
+             WeightsType weights,
              const size_t minimumLeafSize = 10,
              const double minimumGainSplit = 1e-7,
              const std::enable_if_t<arma::is_arma_type<typename
@@ -259,6 +276,9 @@ class DecisionTree :
    * minimumLeafSize and minimumGainSplit too small may cause the tree to
    * overfit, but setting them too large may cause it to underfit.
    *
+   * Use std::move if data, labels or weights are no longer needed to avoid
+   * copies.
+   *
    * @param data Dataset to train on.
    * @param labels Labels for each training point.
    * @param numClasses Number of classes in the dataset.
@@ -267,10 +287,10 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
-  void Train(MatType&& data,
-             LabelsType&& labels,
+  void Train(MatType data,
+             LabelsType labels,
              const size_t numClasses,
-             WeightsType&& weights,
+             WeightsType weights,
              const size_t minimumLeafSize = 10,
              const double minimumGainSplit = 1e-7,
              const std::enable_if_t<arma::is_arma_type<typename

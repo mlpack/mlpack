@@ -93,7 +93,7 @@ class CombinedNormalization
   /**
    * Return normalizations tuple.
    */
-  TupleType Normalizations() const
+  const TupleType& Normalizations() const
   {
     return normalizations;
   }

@@ -28,9 +28,9 @@ DecisionTree<FitnessFunction,
              CategoricalSplitType,
              DimensionSelectionType,
              ElemType,
-             NoRecursion>::DecisionTree(MatType&& data,
+             NoRecursion>::DecisionTree(MatType data,
                                         const data::DatasetInfo& datasetInfo,
-                                        LabelsType&& labels,
+                                        LabelsType labels,
                                         const size_t numClasses,
                                         const size_t minimumLeafSize,
                                         const double minimumGainSplit)
@@ -39,8 +39,8 @@ DecisionTree<FitnessFunction,
   using TrueLabelsType = typename std::decay<LabelsType>::type;
 
   // Copy or move data.
-  TrueMatType tmpData(std::forward<MatType>(data));
-  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
 
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
@@ -61,8 +61,8 @@ DecisionTree<FitnessFunction,
              CategoricalSplitType,
              DimensionSelectionType,
              ElemType,
-             NoRecursion>::DecisionTree(MatType&& data,
-                                        LabelsType&& labels,
+             NoRecursion>::DecisionTree(MatType data,
+                                        LabelsType labels,
                                         const size_t numClasses,
                                         const size_t minimumLeafSize,
                                         const double minimumGainSplit)
@@ -71,8 +71,8 @@ DecisionTree<FitnessFunction,
   using TrueLabelsType = typename std::decay<LabelsType>::type;
 
   // Copy or move data.
-  TrueMatType tmpData(std::forward<MatType>(data));
-  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
 
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
@@ -93,11 +93,11 @@ DecisionTree<FitnessFunction,
              CategoricalSplitType,
              DimensionSelectionType,
              ElemType,
-             NoRecursion>::DecisionTree(MatType&& data,
+             NoRecursion>::DecisionTree(MatType data,
                                         const data::DatasetInfo& datasetInfo,
-                                        LabelsType&& labels,
+                                        LabelsType labels,
                                         const size_t numClasses,
-                                        WeightsType&& weights,
+                                        WeightsType weights,
                                         const size_t minimumLeafSize,
                                         const double minimumGainSplit,
                                         const std::enable_if_t<
@@ -110,9 +110,9 @@ DecisionTree<FitnessFunction,
   using TrueWeightsType = typename std::decay<WeightsType>::type;
 
   // Copy or move data.
-  TrueMatType tmpData(std::forward<MatType>(data));
-  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
-  TrueWeightsType tmpWeights(std::forward<WeightsType>(weights));
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+  TrueWeightsType tmpWeights(std::move(weights));
 
   // Pass off work to the weighted Train() method.
   Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
@@ -132,10 +132,10 @@ DecisionTree<FitnessFunction,
              CategoricalSplitType,
              DimensionSelectionType,
              ElemType,
-             NoRecursion>::DecisionTree(MatType&& data,
-                                        LabelsType&& labels,
+             NoRecursion>::DecisionTree(MatType data,
+                                        LabelsType labels,
                                         const size_t numClasses,
-                                        WeightsType&& weights,
+                                        WeightsType weights,
                                         const size_t minimumLeafSize,
                                         const double minimumGainSplit,
                                         const std::enable_if_t<
@@ -148,9 +148,9 @@ DecisionTree<FitnessFunction,
   using TrueWeightsType = typename std::decay<WeightsType>::type;
 
   // Copy or move data.
-  TrueMatType tmpData(std::forward<MatType>(data));
-  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
-  TrueWeightsType tmpWeights(std::forward<WeightsType>(weights));
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+  TrueWeightsType tmpWeights(std::move(weights));
 
   // Pass off work to the weighted Train() method.
   Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, tmpWeights,
@@ -345,9 +345,9 @@ void DecisionTree<FitnessFunction,
                   CategoricalSplitType,
                   DimensionSelectionType,
                   ElemType,
-                  NoRecursion>::Train(MatType&& data,
+                  NoRecursion>::Train(MatType data,
                                       const data::DatasetInfo& datasetInfo,
-                                      LabelsType&& labels,
+                                      LabelsType labels,
                                       const size_t numClasses,
                                       const size_t minimumLeafSize,
                                       const double minimumGainSplit)
@@ -366,8 +366,8 @@ void DecisionTree<FitnessFunction,
   using TrueLabelsType = typename std::decay<LabelsType>::type;
 
   // Copy or move data.
-  TrueMatType tmpData(std::forward<MatType>(data));
-  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
 
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
@@ -388,8 +388,8 @@ void DecisionTree<FitnessFunction,
                   CategoricalSplitType,
                   DimensionSelectionType,
                   ElemType,
-                  NoRecursion>::Train(MatType&& data,
-                                      LabelsType&& labels,
+                  NoRecursion>::Train(MatType data,
+                                      LabelsType labels,
                                       const size_t numClasses,
                                       const size_t minimumLeafSize,
                                       const double minimumGainSplit)
@@ -408,8 +408,8 @@ void DecisionTree<FitnessFunction,
   using TrueLabelsType = typename std::decay<LabelsType>::type;
 
   // Copy or move data.
-  TrueMatType tmpData(std::forward<MatType>(data));
-  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
 
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
@@ -430,11 +430,11 @@ void DecisionTree<FitnessFunction,
                   CategoricalSplitType,
                   DimensionSelectionType,
                   ElemType,
-                  NoRecursion>::Train(MatType&& data,
+                  NoRecursion>::Train(MatType data,
                                       const data::DatasetInfo& datasetInfo,
-                                      LabelsType&& labels,
+                                      LabelsType labels,
                                       const size_t numClasses,
-                                      WeightsType&& weights,
+                                      WeightsType weights,
                                       const size_t minimumLeafSize,
                                       const double minimumGainSplit,
                                       const std::enable_if_t<arma::is_arma_type<
@@ -456,9 +456,9 @@ void DecisionTree<FitnessFunction,
   using TrueWeightsType = typename std::decay<WeightsType>::type;
 
   // Copy or move data.
-  TrueMatType tmpData(std::forward<MatType>(data));
-  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
-  TrueWeightsType tmpWeights(std::forward<WeightsType>(weights));
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+  TrueWeightsType tmpWeights(std::move(weights));
 
   // Pass off work to the Train() method.
   Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
@@ -478,10 +478,10 @@ void DecisionTree<FitnessFunction,
                   CategoricalSplitType,
                   DimensionSelectionType,
                   ElemType,
-                  NoRecursion>::Train(MatType&& data,
-                                      LabelsType&& labels,
+                  NoRecursion>::Train(MatType data,
+                                      LabelsType labels,
                                       const size_t numClasses,
-                                      WeightsType&& weights,
+                                      WeightsType weights,
                                       const size_t minimumLeafSize,
                                       const double minimumGainSplit,
                                       const std::enable_if_t<arma::is_arma_type<
@@ -503,9 +503,9 @@ void DecisionTree<FitnessFunction,
   using TrueWeightsType = typename std::decay<WeightsType>::type;
 
   // Copy or move data.
-  TrueMatType tmpData(std::forward<MatType>(data));
-  TrueLabelsType tmpLabels(std::forward<LabelsType>(labels));
-  TrueWeightsType tmpWeights(std::forward<WeightsType>(weights));
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+  TrueWeightsType tmpWeights(std::move(weights));
 
   // Pass off work to the Train() method.
   Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, tmpWeights,
