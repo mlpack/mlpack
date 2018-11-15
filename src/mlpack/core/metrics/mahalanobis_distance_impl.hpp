@@ -1,5 +1,5 @@
 /***
- * @file mahalanobis_distance.cc
+ * @file mahalanobis_distance.cpp
  * @author Ryan Curtin
  *
  * Implementation of the Mahalanobis distance.
