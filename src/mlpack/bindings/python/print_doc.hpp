@@ -44,7 +44,7 @@ void PrintDoc(const util::ParamData& d,
     oss << d.name << "_ (";
   else
     oss << d.name << " (";
-  oss << GetPythonType<typename std::remove_pointer<T>::type>(d) << "): "
+  oss << GetPrintableType<typename std::remove_pointer<T>::type>(d) << "): "
       << d.desc;
 
   // Print a default, if possible.

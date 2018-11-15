@@ -17,6 +17,7 @@
 #include "get_printable_param.hpp"
 #include "get_printable_param_name.hpp" // For cli bindings.
 #include "get_printable_param_value.hpp" // For cli bindings.
+#include "get_printable_type.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -81,6 +82,8 @@ class MDOption
         &GetPrintableParamName<T>;
     CLI::GetSingleton().functionMap[data.tname]["GetPrintableParamValue"] =
         &GetPrintableParamValue<T>;
+    CLI::GetSingleton().functionMap[data.tname]["GetPrintableType"] =
+        &GetPrintableType<T>;
 
     // Add the ParamData object, then store.  This is necessary because we may
     // import more than one .so that uses CLI, so we have to keep the options

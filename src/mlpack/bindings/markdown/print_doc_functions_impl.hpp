@@ -135,12 +135,15 @@ std::string ProgramCall(const std::string& programName, Args... args)
  */
 inline std::string ParamString(const std::string& paramName)
 {
+  std::cout << "in ParamString()\n";
   if (BindingInfo::Language() == "cli")
   {
+    std::cout << "it is cli\n";
     return cli::ParamString(paramName);
   }
   else if (BindingInfo::Language() == "python")
   {
+    std::cout << "it is python\n";
     return python::ParamString(paramName);
   }
   else
@@ -148,6 +151,80 @@ inline std::string ParamString(const std::string& paramName)
     throw std::invalid_argument("ParamString(): unknown "
         "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
+}
+
+/**
+ * Print the user-encountered type of an option.
+ */
+inline std::string ParamType(const util::ParamData& d)
+{
+  std::string output;
+  CLI::GetSingleton().functionMap[d.tname]["GetPrintableType"](d, NULL,
+      &output);
+  return output;
+}
+
+/**
+ * Print the default value of an option, unless it is required (in which case
+ * Markdown italicized '--' is printed).
+ */
+inline std::string ParamDefault(const util::ParamData& d)
+{
+  // Shortcut: if it's required, we don't actually need to print any default
+  // value.
+  if (d.required)
+    return "**--**";
+
+  std::ostringstream oss;
+  if (d.cppType == "int")
+  {
+    int x;
+    CLI::GetSingleton().functionMap[d.tname]["GetParam"](d, NULL, &x);
+    oss << x;
+  }
+  else if (d.cppType == "float")
+  {
+    float x;
+    CLI::GetSingleton().functionMap[d.tname]["GetParam"](d, NULL, &x);
+    oss << x;
+  }
+  else if (d.cppType == "double")
+  {
+    double x;
+    CLI::GetSingleton().functionMap[d.tname]["GetParam"](d, NULL, &x);
+    oss << x;
+  }
+  else if (d.cppType == "std::string")
+  {
+    std::string x;
+    CLI::GetSingleton().functionMap[d.tname]["GetParam"](d, NULL, &x);
+    oss << "\"" << x << "\"";
+  }
+  else if (d.cppType == "std::vector<int>")
+  {
+    std::vector<int> x;
+    CLI::GetSingleton().functionMap[d.tname]["GetParam"](d, NULL, &x);
+    oss << "{ ";
+    for (size_t i = 1; i < x.size(); ++i)
+      oss << x[i - 1] << ", ";
+    oss << x[x.size() - 1] << "}";
+  }
+  else if (d.cppType == "std::vector<std::string>")
+  {
+    std::vector<std::string> x;
+    CLI::GetSingleton().functionMap[d.tname]["GetParam"](d, NULL, &x);
+    oss << "{ ";
+    for (size_t i = 1; i < x.size(); ++i)
+      oss << "\"" << x[i - 1] << "\", ";
+    oss << "\"" << x[x.size() - 1] << "\"}";
+  }
+  else
+  {
+    throw std::invalid_argument("Don't know how to print default value for type"
+        " " + d.cppType + "!");
+  }
+
+  return oss.str();
 }
 
 template<typename T>

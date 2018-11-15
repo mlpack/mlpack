@@ -1,5 +1,5 @@
 /**
- * @file get_python_type.hpp
+ * @file get_printable_type.hpp
  * @author Ryan Curtin
  *
  * Template metaprogramming to return the string representation of the Python
@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_PYTHON_GET_PYTHON_TYPE_HPP
-#define MLPACK_BINDINGS_PYTHON_GET_PYTHON_TYPE_HPP
+#ifndef MLPACK_BINDINGS_PYTHON_GET_PRINTABLE_TYPE_HPP
+#define MLPACK_BINDINGS_PYTHON_GET_PRINTABLE_TYPE_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/is_std_vector.hpp>
@@ -21,108 +21,83 @@ namespace bindings {
 namespace python {
 
 template<typename T>
-inline std::string GetPythonType(
+inline std::string GetPrintableType(
     const util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0)
-{
-  return "unknown";
-}
+    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0);
 
 template<>
-inline std::string GetPythonType<int>(
+inline std::string GetPrintableType<int>(
     const util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<int>>::type*,
     const typename boost::disable_if<data::HasSerialize<int>>::type*,
-    const typename boost::disable_if<arma::is_arma_type<int>>::type*)
-{
-  return "int";
-}
+    const typename boost::disable_if<arma::is_arma_type<int>>::type*);
 
 template<>
-inline std::string GetPythonType<float>(
+inline std::string GetPrintableType<float>(
     const util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<float>>::type*,
     const typename boost::disable_if<data::HasSerialize<float>>::type*,
-    const typename boost::disable_if<arma::is_arma_type<float>>::type*)
-{
-  return "float";
-}
+    const typename boost::disable_if<arma::is_arma_type<float>>::type*);
 
 template<>
-inline std::string GetPythonType<double>(
+inline std::string GetPrintableType<double>(
     const util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<double>>::type*,
     const typename boost::disable_if<data::HasSerialize<double>>::type*,
-    const typename boost::disable_if<arma::is_arma_type<double>>::type*)
-{
-  return "double";
-}
+    const typename boost::disable_if<arma::is_arma_type<double>>::type*);
 
 template<>
-inline std::string GetPythonType<std::string>(
+inline std::string GetPrintableType<std::string>(
     const util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<std::string>>::type*,
     const typename boost::disable_if<data::HasSerialize<std::string>>::type*,
-    const typename boost::disable_if<arma::is_arma_type<std::string>>::type*)
-{
-  return "string";
-}
+    const typename boost::disable_if<arma::is_arma_type<std::string>>::type*);
 
 template<>
-inline std::string GetPythonType<size_t>(
+inline std::string GetPrintableType<size_t>(
     const util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<size_t>>::type*,
     const typename boost::disable_if<data::HasSerialize<size_t>>::type*,
-    const typename boost::disable_if<arma::is_arma_type<size_t>>::type*)
-{
-  return "size_t";
-}
+    const typename boost::disable_if<arma::is_arma_type<size_t>>::type*);
 
 template<>
-inline std::string GetPythonType<bool>(
+inline std::string GetPrintableType<bool>(
     const util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<bool>>::type*,
     const typename boost::disable_if<data::HasSerialize<bool>>::type*,
-    const typename boost::disable_if<arma::is_arma_type<bool>>::type*)
-{
-  return "bool";
-}
+    const typename boost::disable_if<arma::is_arma_type<bool>>::type*);
 
 template<typename T>
-inline std::string GetPythonType(
+inline std::string GetPrintableType(
     const util::ParamData& d,
-    const typename boost::enable_if<util::IsStdVector<T>>::type* = 0)
-{
-  return "list of " + GetPythonType<typename T::value_type>(d) + "s";
-}
+    const typename boost::enable_if<util::IsStdVector<T>>::type* = 0);
 
 template<typename T>
-inline std::string GetPythonType(
+inline std::string GetPrintableType(
     const util::ParamData& /* d */,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
-{
-  std::string type = "matrix";
-  if (T::is_row)
-    type = "row vector";
-  else if (T::is_col)
-    type = "column vector";
-
-  return type;
-}
+    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0);
 
 template<typename T>
-inline std::string GetPythonType(
+inline std::string GetPrintableType(
     const util::ParamData& d,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0);
+
+template<typename T>
+void GetPrintableType(const util::ParamData& d,
+                      const void* /* input */,
+                      void* output)
 {
-  return d.cppType + "Type";
+  *((std::string*) output) =
+      GetPrintableType<typename std::remove_pointer<T>::type>(d);
 }
 
 } // namespace python
 } // namespace bindings
 } // namespace mlpack
+
+#include "get_printable_type_impl.hpp"
 
 #endif

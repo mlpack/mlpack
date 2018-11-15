@@ -2,93 +2,126 @@
  * @file get_printable_type_impl.hpp
  * @author Ryan Curtin
  *
- * Get the printable type of a parameter.  This type is not the C++ type but
- * instead the command-line type that a user would use.
+ * Template metaprogramming to return the string representation of the Python
+ * type for a given Python binding parameter.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_CLI_GET_PRINTABLE_TYPE_IMPL_HPP
-#define MLPACK_BINDINGS_CLI_GET_PRINTABLE_TYPE_IMPL_HPP
+#ifndef MLPACK_BINDINGS_PYTHON_GET_PRINTABLE_TYPE_IMPL_HPP
+#define MLPACK_BINDINGS_PYTHON_GET_PRINTABLE_TYPE_IMPL_HPP
 
 #include "get_printable_type.hpp"
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace python {
 
-/**
- * Return a string representing the command-line type of an option.
- */
 template<typename T>
-std::string GetPrintableType(
-    const util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+inline std::string GetPrintableType(
+    const util::ParamData& /* d */,
+    const typename boost::disable_if<util::IsStdVector<T>>::type*,
+    const typename boost::disable_if<data::HasSerialize<T>>::type*,
+    const typename boost::disable_if<arma::is_arma_type<T>>::type*)
 {
-  if (std::is_same<T, bool>)
-    return "flag";
-  else if (std::is_same<T, int>)
-    return "int";
-  else if (std::is_same<T, float>)
-    return "double"; // Not quite right but I'd rather print fewer type names.
-  else if (std::is_same<T, double>)
-    return "double";
-  else if (std::is_same<T, std::string>)
-    return "string";
-  else
-    throw std::invalid_argument("unknown parameter type" + data.cppType);
+  return "unknown";
 }
 
-/**
- * Return a string representing the command-line type of a vector.
- */
-template<typename T>
-std::string GetPrintableType(
-    const util::ParamData& data,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0)
+template<>
+inline std::string GetPrintableType<int>(
+    const util::ParamData& /* d */,
+    const typename boost::disable_if<util::IsStdVector<int>>::type*,
+    const typename boost::disable_if<data::HasSerialize<int>>::type*,
+    const typename boost::disable_if<arma::is_arma_type<int>>::type*)
 {
-  if (std::is_same<T, int>)
-    return "int vector";
-  else if (std::is_same<T, std::string>)
-    return "string vector"
-  else
-    throw std::invalid_argument("unknown vector type " + data.cppType);
+  return "int";
 }
 
-/**
- * Return a string representing the command-line type of a matrix option.
- */
-template<typename T>
-std::string GetPrintableType(
-    const util::ParamData& data,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
+template<>
+inline std::string GetPrintableType<float>(
+    const util::ParamData& /* d */,
+    const typename boost::disable_if<util::IsStdVector<float>>::type*,
+    const typename boost::disable_if<data::HasSerialize<float>>::type*,
+    const typename boost::disable_if<arma::is_arma_type<float>>::type*)
 {
-  return "data filename (csv/txt/h5/bin)";
+  return "float";
 }
 
-/**
- * Return a string representing the command-line type of a matrix tuple option.
- */
-template<typename T>
-std::string GetPrintableType(
-    const util::ParamData& data,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+template<>
+inline std::string GetPrintableType<double>(
+    const util::ParamData& /* d */,
+    const typename boost::disable_if<util::IsStdVector<double>>::type*,
+    const typename boost::disable_if<data::HasSerialize<double>>::type*,
+    const typename boost::disable_if<arma::is_arma_type<double>>::type*)
 {
-  return "categorical/numeric data filename (arff/csv)";
+  return "double";
 }
 
-/**
- * Return a string representing the command-line type of a model.
- */
-template<typename T>
-std::string GetPrintableType(
-    const util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+template<>
+inline std::string GetPrintableType<std::string>(
+    const util::ParamData& /* d */,
+    const typename boost::disable_if<util::IsStdVector<std::string>>::type*,
+    const typename boost::disable_if<data::HasSerialize<std::string>>::type*,
+    const typename boost::disable_if<arma::is_arma_type<std::string>>::type*)
 {
-  return d.cppType + " model filename (xml/txt/bin)";
+  return "string";
 }
+
+template<>
+inline std::string GetPrintableType<size_t>(
+    const util::ParamData& /* d */,
+    const typename boost::disable_if<util::IsStdVector<size_t>>::type*,
+    const typename boost::disable_if<data::HasSerialize<size_t>>::type*,
+    const typename boost::disable_if<arma::is_arma_type<size_t>>::type*)
+{
+  return "size_t";
+}
+
+template<>
+inline std::string GetPrintableType<bool>(
+    const util::ParamData& /* d */,
+    const typename boost::disable_if<util::IsStdVector<bool>>::type*,
+    const typename boost::disable_if<data::HasSerialize<bool>>::type*,
+    const typename boost::disable_if<arma::is_arma_type<bool>>::type*)
+{
+  return "bool";
+}
+
+template<typename T>
+inline std::string GetPrintableType(
+    const util::ParamData& d,
+    const typename boost::enable_if<util::IsStdVector<T>>::type*)
+{
+  return "list of " + GetPrintableType<typename T::value_type>(d) + "s";
+}
+
+template<typename T>
+inline std::string GetPrintableType(
+    const util::ParamData& /* d */,
+    const typename boost::enable_if<arma::is_arma_type<T>>::type*)
+{
+  std::string type = "matrix";
+  if (T::is_row)
+    type = "row vector";
+  else if (T::is_col)
+    type = "column vector";
+
+  return type;
+}
+
+template<typename T>
+inline std::string GetPrintableType(
+    const util::ParamData& d,
+    const typename boost::disable_if<arma::is_arma_type<T>>::type*,
+    const typename boost::enable_if<data::HasSerialize<T>>::type*)
+{
+  return d.cppType + "Type";
+}
+
+} // namespace python
+} // namespace bindings
+} // namespace mlpack
 
 #endif

@@ -58,6 +58,17 @@ std::string ProgramCall(const std::string& programName, Args... args);
 inline std::string ParamString(const std::string& paramName);
 
 /**
+ * Print the user-encountered type of an option.
+ */
+inline std::string ParamType(const util::ParamData& d);
+
+/**
+ * Print the default value of an option, unless it is required (in which case
+ * Markdown italicized '--' is printed).
+ */
+inline std::string ParamDefault(const util::ParamData& d);
+
+/**
  * Return whether or not a runtime check on parameters should be ignored.
  */
 template<typename T>

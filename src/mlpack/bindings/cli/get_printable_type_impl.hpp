@@ -20,21 +20,21 @@ namespace cli {
 template<typename T>
 std::string GetPrintableType(
     const util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
+    const typename boost::disable_if<arma::is_arma_type<T>>::type*,
+    const typename boost::disable_if<util::IsStdVector<T>>::type*,
+    const typename boost::disable_if<data::HasSerialize<T>>::type*,
     const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+        std::tuple<data::DatasetInfo, arma::mat>>>::type*)
 {
-  if (std::is_same<T, bool>)
+  if (std::is_same<T, bool>::value)
     return "flag";
-  else if (std::is_same<T, int>)
+  else if (std::is_same<T, int>::value)
     return "int";
-  else if (std::is_same<T, float>)
+  else if (std::is_same<T, float>::value)
     return "double"; // Not quite right but I'd rather print fewer type names.
-  else if (std::is_same<T, double>)
+  else if (std::is_same<T, double>::value)
     return "double";
-  else if (std::is_same<T, std::string>)
+  else if (std::is_same<T, std::string>::value)
     return "string";
   else
     throw std::invalid_argument("unknown parameter type" + data.cppType);
@@ -46,12 +46,12 @@ std::string GetPrintableType(
 template<typename T>
 std::string GetPrintableType(
     const util::ParamData& data,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0)
+    const typename std::enable_if<util::IsStdVector<T>::value>::type*)
 {
-  if (std::is_same<T, int>)
+  if (std::is_same<T, int>::value)
     return "int vector";
-  else if (std::is_same<T, std::string>)
-    return "string vector"
+  else if (std::is_same<T, std::string>::value)
+    return "string vector";
   else
     throw std::invalid_argument("unknown vector type " + data.cppType);
 }
@@ -61,8 +61,8 @@ std::string GetPrintableType(
  */
 template<typename T>
 std::string GetPrintableType(
-    const util::ParamData& data,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
+    const util::ParamData& /* data */,
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type*)
 {
   return "data filename (csv/txt/h5/bin)";
 }
@@ -72,9 +72,9 @@ std::string GetPrintableType(
  */
 template<typename T>
 std::string GetPrintableType(
-    const util::ParamData& data,
+    const util::ParamData& /* data */,
     const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   return "categorical/numeric data filename (arff/csv)";
 }
@@ -85,10 +85,14 @@ std::string GetPrintableType(
 template<typename T>
 std::string GetPrintableType(
     const util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    const typename boost::disable_if<arma::is_arma_type<T>>::type*,
+    const typename boost::enable_if<data::HasSerialize<T>>::type*)
 {
-  return d.cppType + " model filename (xml/txt/bin)";
+  return data.cppType + " model filename (xml/txt/bin)";
 }
+
+} // namespace cli
+} // namespace bindings
+} // namespace mlpack
 
 #endif

@@ -64,10 +64,10 @@ void PrintDocs(const std::string& bindingName,
     {
       // Print name, type, description, default.
       cout << "| ";
-      cout << ParamString(it.second.name) << " | ";
-      cout << ParamType(it.second) << " | "; // needs implementation
-      cout << ParamDescription(it.second) << " | "; // just a string
-      cout << ParamDefault(it.second) << " |"; // needs implementation
+      cout << ParamString(it->second.name) << " | ";
+      cout << ParamType(it->second) << " | ";
+      cout << it->second.desc << " | "; // just a string
+      cout << ParamDefault(it->second) << " |"; // needs implementation
       cout << endl;
     }
 
