@@ -1,11 +1,8 @@
-set(DIRS
-  gradient_descent
-  grid_search
+set(SOURCES
+  gradient_descent.hpp
+  gradient_descent.cpp
+  gradient_descent_impl.hpp
 )
-
-foreach(dir ${DIRS})
-  add_subdirectory(${dir})
-endforeach()
 
 set(DIR_SRCS)
 foreach(file ${SOURCES})
