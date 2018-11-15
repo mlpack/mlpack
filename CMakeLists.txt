@@ -275,7 +275,8 @@ if (WIN32)
 endif ()
 
 # Include directories for the previous dependencies.
-set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS}
+    ${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen)
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
 # Unfortunately this configuration variable is necessary and will need to be
