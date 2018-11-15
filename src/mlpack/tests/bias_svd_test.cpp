@@ -343,11 +343,11 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionParallelOptimize)
   // Make the Bias SVD function and the optimizer.
   BiasSVDFunction<arma::mat> biasSVDFunc(data, rank, lambda);
 
-  ConstantStep decayPolicy(alpha);
+  ens::ConstantStep decayPolicy(alpha);
 
   // Iterate till convergence.
   // The threadShareSize is chosen such that each function gets optimized.
-  ens::ParallelSGD<ConstantStep> optimizer(0,
+  ens::ParallelSGD<ens::ConstantStep> optimizer(0,
       std::ceil((float) biasSVDFunc.NumFunctions() / omp_get_max_threads()), 1e-5,
       true, decayPolicy);
 
