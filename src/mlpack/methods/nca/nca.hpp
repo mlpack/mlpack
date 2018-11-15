@@ -14,7 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 
 #include "nca_softmax_error_function.hpp"
 
@@ -45,7 +45,7 @@ namespace nca /** Neighborhood Components Analysis. */ {
  * @endcode
  */
 template<typename MetricType = metric::SquaredEuclideanDistance,
-         typename OptimizerType = optimization::StandardSGD>
+         typename OptimizerType = ens::StandardSGD>
 class NCA
 {
  public:

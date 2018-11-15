@@ -15,7 +15,7 @@
 #define MLPACK_METHODS_BIAS_SVD_BIAS_SVD_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 #include <mlpack/methods/cf/cf.hpp>
 
 #include "bias_svd_function.hpp"
@@ -32,7 +32,7 @@ namespace svd {
  * learning of large feature values by means of regularization.
  *
  * An example of how to use the interface is shown below:
- * 
+ *
  * @code
  * arma::mat data; // Rating data in the form of coordinate list.
  *
@@ -53,7 +53,7 @@ namespace svd {
  * @endcode
  *
  */
-template<typename OptimizerType = mlpack::optimization::StandardSGD>
+template<typename OptimizerType = ens::StandardSGD>
 class BiasSVD
 {
  public:

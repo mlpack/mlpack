@@ -12,14 +12,12 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/svdplusplus/svdplusplus.hpp>
-#include <mlpack/core/optimizers/parallel_sgd/parallel_sgd.hpp>
-#include <mlpack/core/optimizers/parallel_sgd/decay_policies/constant_step.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 using namespace mlpack;
 using namespace mlpack::svd;
-using namespace mlpack::optimization;
 
 BOOST_AUTO_TEST_SUITE(SVDPlusPlusTest);
 
@@ -389,7 +387,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionOptimize)
 
   // Make the SVD++ function and the optimizer.
   SVDPlusPlusFunction<arma::mat> svdPPFunc(data, implicitData, rank, lambda);
-  mlpack::optimization::StandardSGD optimizer(alpha, iterations * numRatings);
+  ens::StandardSGD optimizer(alpha, iterations * numRatings);
 
   // Obtain optimized parameters after training.
   arma::mat optParameters = arma::randu(rank + 1, numUsers + 2 * numItems);

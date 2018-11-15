@@ -18,7 +18,7 @@
 
 #include "nca.hpp"
 
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 
 // Define parameters.
 PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
@@ -120,7 +120,6 @@ PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 using namespace mlpack;
 using namespace mlpack::nca;
 using namespace mlpack::metric;
-using namespace mlpack::optimization;
 using namespace mlpack::util;
 using namespace std;
 
@@ -232,7 +231,7 @@ static void mlpackMain()
   }
   else if (optimizerType == "lbfgs")
   {
-    NCA<LMetric<2>, L_BFGS> nca(data, labels);
+    NCA<LMetric<2>, ens::L_BFGS> nca(data, labels);
     nca.Optimizer().NumBasis() = numBasis;
     nca.Optimizer().MaxIterations() = maxIterations;
     nca.Optimizer().ArmijoConstant() = armijoConstant;

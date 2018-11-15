@@ -12,8 +12,7 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
-#include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
@@ -25,7 +24,6 @@
 
 using namespace mlpack;
 using namespace mlpack::ann;
-using namespace mlpack::optimization;
 
 BOOST_AUTO_TEST_SUITE(FeedForwardNetworkTest);
 
@@ -71,7 +69,7 @@ void BuildVanillaNetwork(MatType& trainData,
   model.Add<LogSoftMax<> >();
 
   // RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
-  RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
   model.Train(trainData, trainLabels, opt);
 
   MatType predictionTemp;
@@ -157,7 +155,7 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
   model.Add<Linear<> >(50, 10);
   model.Add<LogSoftMax<> >();
 
-  VanillaUpdate opt;
+  ens::VanillaUpdate opt;
   model.ResetParameters();
   opt.Initialize(model.Parameters().n_rows, model.Parameters().n_cols);
   double stepSize = 0.01;
@@ -256,7 +254,7 @@ void BuildDropoutNetwork(MatType& trainData,
   model.Add<Linear<> >(hiddenLayerSize, outputSize);
   model.Add<LogSoftMax<> >();
 
-  RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
 
   model.Train(trainData, trainLabels, opt);
 
@@ -368,7 +366,7 @@ void BuildDropConnectNetwork(MatType& trainData,
   model.Add<DropConnect<> >(hiddenLayerSize, outputSize);
   model.Add<LogSoftMax<> >();
 
-  RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
 
   model.Train(trainData, trainLabels, opt);
 
@@ -480,7 +478,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   model.Add<Linear<> >(8, 3);
   model.Add<LogSoftMax<> >();
 
-  RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
 
   model.Train(trainData, trainLabels, opt);
 
@@ -525,7 +523,7 @@ BOOST_AUTO_TEST_CASE(CustomLayerTest)
   model.Add<Linear<> >(8, 3);
   model.Add<LogSoftMax<> >();
 
-  RMSProp opt(0.01, 32, 0.88, 1e-8, 15, -1);
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, 15, -1);
   model.Train(trainData, trainLabels, opt);
 
   arma::mat predictionTemp;

@@ -22,8 +22,7 @@
 #include <mlpack/methods/reinforcement_learning/environment/acrobat.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
-#include <mlpack/core/optimizers/adam/adam_update.hpp>
-#include <mlpack/core/optimizers/rmsprop/rmsprop_update.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -31,7 +30,7 @@
 
 using namespace mlpack;
 using namespace mlpack::ann;
-using namespace mlpack::optimization;
+using namespace ens;
 using namespace mlpack::rl;
 
 BOOST_AUTO_TEST_SUITE(QLearningTest);

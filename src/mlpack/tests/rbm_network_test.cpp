@@ -12,7 +12,7 @@
  * title = "{UCI} Machine Learning Repository",
  * url = "http://archive.ics.uci.edu/ml",
  * institution = "University of California,
- * Irvine, School of Information and Computer Sciences" } 
+ * Irvine, School of Information and Computer Sciences" }
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license. You should have received a copy of the
@@ -21,19 +21,17 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/rbm/rbm.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
-using namespace mlpack::optimization;
+using namespace ens;
 using namespace mlpack::regression;
 
 BOOST_AUTO_TEST_SUITE(RBMNetworkTest);
@@ -77,7 +75,7 @@ BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
 
   size_t numRBMIterations = trainData.n_cols * numEpoches;
   numRBMIterations /= batchSize;
-  optimization::StandardSGD msgd(0.03, batchSize, numRBMIterations, 0, true);
+  ens::StandardSGD msgd(0.03, batchSize, numRBMIterations, 0, true);
   model.Reset();
   model.VisibleBias().ones();
   model.HiddenBias().ones();
@@ -174,7 +172,7 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   size_t numRBMIterations = trainData.n_cols * numEpoches;
   numRBMIterations /= batchSize;
 
-  optimization::StandardSGD msgd(0.02, batchSize, numRBMIterations, 0, true);
+  ens::StandardSGD msgd(0.02, batchSize, numRBMIterations, 0, true);
   modelssRBM.Reset();
   modelssRBM.VisiblePenalty().fill(5);
   modelssRBM.SpikeBias().fill(1);

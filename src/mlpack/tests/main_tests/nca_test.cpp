@@ -20,7 +20,7 @@ static const std::string testName = "nca";
 #include <mlpack/core/metrics/lmetric.hpp>
 #include "test_helper.hpp"
 #include <mlpack/methods/nca/nca_main.cpp>
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "../test_tools.hpp"

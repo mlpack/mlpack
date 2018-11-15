@@ -13,7 +13,7 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 
 #include <memory>
 #include <set>
@@ -256,7 +256,7 @@ Model* TrainSoftmax(const size_t maxIterations)
     const bool intercept = CLI::HasParam("no_intercept") ? false : true;
 
     const size_t numBasis = 5;
-    optimization::L_BFGS optimizer(numBasis, maxIterations);
+    ens::L_BFGS optimizer(numBasis, maxIterations);
     sm = new Model(trainData, trainLabels, numClasses,
         CLI::GetParam<double>("lambda"), intercept, std::move(optimizer));
   }

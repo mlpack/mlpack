@@ -15,9 +15,7 @@
 #define MLPACK_METHODS_BIAS_SVD_BIAS_SVD_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
-#include <mlpack/core/optimizers/parallel_sgd/parallel_sgd.hpp>
-#include <mlpack/core/optimizers/parallel_sgd/decay_policies/exponential_backoff.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 
 namespace mlpack {
 namespace svd {
@@ -141,8 +139,7 @@ class BiasSVDFunction
 } // namespace svd
 } // namespace mlpack
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
   /**
    * Template specialization for the SGD and parallel SGD optimizer. Used
@@ -162,8 +159,7 @@ namespace optimization {
       mlpack::svd::BiasSVDFunction<arma::mat>& function,
       arma::mat& parameters);
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #include "bias_svd_function_impl.hpp"
 

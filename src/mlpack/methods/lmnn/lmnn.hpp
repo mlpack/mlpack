@@ -14,7 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
-#include <mlpack/core/optimizers/adam/adam.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 
 #include "lmnn_function.hpp"
 
@@ -51,7 +51,7 @@ namespace lmnn /** Large Margin Nearest Neighbor. */ {
  * @tparam OptimizerType Optimizer to use for developing distance.
  */
 template<typename MetricType = metric::SquaredEuclideanDistance,
-         typename OptimizerType = optimization::AMSGrad>
+         typename OptimizerType = ens::AMSGrad>
 class LMNN
 {
  public:

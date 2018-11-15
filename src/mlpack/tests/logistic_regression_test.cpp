@@ -12,14 +12,13 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::regression;
-using namespace mlpack::optimization;
 using namespace mlpack::distribution;
 
 BOOST_AUTO_TEST_SUITE(LogisticRegressionTest);
@@ -515,7 +514,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDSimpleTest)
 
   // Create a logistic regression object using a custom SGD object with a much
   // smaller tolerance.
-  StandardSGD sgd(0.005, 1, 500000, 1e-10);
+  ens::StandardSGD sgd(0.005, 1, 500000, 1e-10);
   LogisticRegression<> lr(data, responses, sgd, 0.001);
 
   // Test sigmoid function.
@@ -563,7 +562,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDRegularizationSimpleTest)
 
   // Create a logistic regression object using custom SGD with a much smaller
   // tolerance.
-  StandardSGD sgd(0.005, 32, 500000, 1e-10);
+  ens::StandardSGD sgd(0.005, 32, 500000, 1e-10);
   LogisticRegression<> lr(data, responses, sgd, 0.001);
 
   // Test sigmoid function.
@@ -601,7 +600,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionLBFGSGaussianTest)
 
   // Now train a logistic regression object on it.
   LogisticRegression<> lr(data.n_rows, 0.5);
-  lr.Train<L_BFGS>(data, responses);
+  lr.Train<ens::L_BFGS>(data, responses);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
@@ -648,7 +647,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDGaussianTest)
 
   // Now train a logistic regression object on it.
   LogisticRegression<> lr(data.n_rows, 0.5);
-  lr.Train<StandardSGD>(data, responses);
+  lr.Train<ens::StandardSGD>(data, responses);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
@@ -684,7 +683,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionInstantiatedOptimizer)
   arma::Row<size_t> responses("1 1 0");
 
   // Create an optimizer and function.
-  L_BFGS lbfgsOpt;
+  ens::L_BFGS lbfgsOpt;
   lbfgsOpt.MinGradientNorm() = 1e-50;
   LogisticRegression<> lr(data, responses, lbfgsOpt, 0.0005);
 
@@ -698,7 +697,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionInstantiatedOptimizer)
   BOOST_REQUIRE_SMALL(sigmoids[2], 0.1);
 
   // Now do the same with SGD.
-  StandardSGD sgdOpt;
+  ens::StandardSGD sgdOpt;
   sgdOpt.StepSize() = 0.15;
   sgdOpt.Tolerance() = 1e-75;
   LogisticRegression<> lr2(data, responses, sgdOpt, 0.0005);
@@ -748,11 +747,11 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDTrainTest)
   for (size_t i = 0; i < 800; ++i)
     labels[i] = math::RandInt(0, 2);
 
-  SGD<> sgd;
+  ens::SGD<> sgd;
   sgd.Shuffle() = false;
   LogisticRegression<> lr(dataset, labels, sgd, 0.3);
 
-  SGD<> sgd2;
+  ens::SGD<> sgd2;
   sgd2.Shuffle() = false;
   LogisticRegression<> lr2(dataset.n_rows, 0.3);
   lr2.Train(dataset, labels, sgd2);
@@ -799,12 +798,12 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSparseSGDTest)
     labels[i] = math::RandInt(0, 2);
 
   LogisticRegression<> lr(10, 0.3);
-  SGD<> sgd;
+  ens::SGD<> sgd;
   sgd.Shuffle() = false;
   lr.Train(denseDataset, labels, sgd);
 
   LogisticRegression<arma::sp_mat> lrSparse(10, 0.3);
-  SGD<> sgdSparse;
+  ens::SGD<> sgdSparse;
   sgdSparse.Shuffle() = false;
   lrSparse.Train(dataset, labels, sgdSparse);
 

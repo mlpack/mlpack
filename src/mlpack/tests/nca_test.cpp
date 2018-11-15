@@ -13,7 +13,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/nca/nca.hpp>
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -21,7 +21,7 @@
 using namespace mlpack;
 using namespace mlpack::metric;
 using namespace mlpack::nca;
-using namespace mlpack::optimization;
+using namespace ens;
 
 //
 // Tests for the SoftmaxErrorFunction

@@ -15,8 +15,9 @@
 #include <mlpack/core/hpt/cv_function.hpp>
 #include <mlpack/core/hpt/fixed.hpp>
 #include <mlpack/core/hpt/hpt.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
+#include <mlpack/core/optimizers/gradient_descent/gradient_descent.hpp>
 #include <mlpack/core/optimizers/grid_search/grid_search.hpp>
-#include <mlpack/core/optimizers/gradient_descent/gradient_descent.cpp>
 #include <mlpack/methods/lars/lars.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
@@ -320,8 +321,8 @@ BOOST_AUTO_TEST_CASE(HPTGradientDescentTest)
   // We pass LARS just because some ML algorithm should be passed. We pass MSE
   // to tell HyperParameterTuner that the objective function (QuadraticFunction)
   // should be minimized.
-  HyperParameterTuner<LARS, MSE, QuadraticFunction, GradientDescent>
-      hpt(a, b, c, d, xMin, yMin, zMin);
+  HyperParameterTuner<LARS, MSE, QuadraticFunction,
+      mlpack::optimization::GradientDescent> hpt(a, b, c, d, xMin, yMin, zMin);
 
   // Setting GradientDescent to find more close solution to the optimal one.
   hpt.Optimizer().StepSize() = 0.1;

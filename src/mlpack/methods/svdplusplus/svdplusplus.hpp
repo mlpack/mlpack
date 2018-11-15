@@ -15,7 +15,7 @@
 #define MLPACK_METHODS_SVDPLUSPLUS_SVDPLUSPLUS_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 #include <mlpack/methods/cf/cf.hpp>
 
 #include "svdplusplus_function.hpp"
@@ -30,7 +30,7 @@ namespace svd {
  * vectors, user/item bias, and item vectors with regard to implicit feedback.
  * Parameters are optmized by Stochastic Gradient Desent(SGD). The updates also
  * penalize the learning of large feature values by means of regularization.
- * 
+ *
  * For more information, see the following paper:
  *
  * @inproceedings{koren2008factorization,
@@ -69,7 +69,7 @@ namespace svd {
  * svdPP.Apply(data, implicitData, rank, u, v, p, q, y);
  * @endcode
  */
-template<typename OptimizerType = mlpack::optimization::StandardSGD>
+template<typename OptimizerType = ens::StandardSGD>
 class SVDPlusPlus
 {
  public:
@@ -106,7 +106,7 @@ class SVDPlusPlus
              arma::vec& p,
              arma::vec& q,
              arma::mat& y);
-  
+
   /**
    * Trains the model and obtains user/item matrices, user/item bias, and
    * item implicit matrix. Whether a user rates an item is used as implicit
@@ -128,7 +128,7 @@ class SVDPlusPlus
              arma::vec& p,
              arma::vec& q,
              arma::mat& y);
-  
+
   /**
    * Converts the User, Item matrix of implicit data to Item-User Table.
    */

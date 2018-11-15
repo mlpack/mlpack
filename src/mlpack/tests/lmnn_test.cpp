@@ -15,9 +15,8 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/lmnn/lmnn.hpp>
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
-#include <mlpack/core/optimizers/bigbatch_sgd/bigbatch_sgd.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -25,7 +24,7 @@
 using namespace mlpack;
 using namespace mlpack::metric;
 using namespace mlpack::lmnn;
-using namespace mlpack::optimization;
+using namespace ens;
 
 
 BOOST_AUTO_TEST_SUITE(LMNNTest);

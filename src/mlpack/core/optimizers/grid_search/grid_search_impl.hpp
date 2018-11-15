@@ -13,7 +13,7 @@
 #define MLPACK_CORE_OPTIMIZERS_GRID_SEARCH_GRID_SEARCH_IMPL_HPP
 
 #include <limits>
-#include <mlpack/core/optimizers/function.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -61,7 +61,7 @@ void GridSearch::Optimize(
     size_t i)
 {
   // Make sure we have the methods that we need.
-  traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType>();
+  ens::traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType>();
 
   if (i < datasetInfo.Dimensionality())
   {

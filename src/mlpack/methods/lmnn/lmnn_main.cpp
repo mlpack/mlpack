@@ -19,9 +19,7 @@
 
 #include "lmnn.hpp"
 
-#include <mlpack/core/optimizers/bigbatch_sgd/bigbatch_sgd.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 
 // Define parameters.
 PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
@@ -163,7 +161,6 @@ PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 using namespace mlpack;
 using namespace mlpack::lmnn;
 using namespace mlpack::metric;
-using namespace mlpack::optimization;
 using namespace mlpack::util;
 using namespace std;
 
@@ -354,7 +351,7 @@ static void mlpackMain()
   }
   else if (optimizerType == "bbsgd")
   {
-    LMNN<LMetric<2>, BBS_BB> lmnn(data, labels, k);
+    LMNN<LMetric<2>, ens::BBS_BB> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
     lmnn.Optimizer().StepSize() = stepSize;
@@ -369,7 +366,7 @@ static void mlpackMain()
   {
     // Using SGD is not recommended as the learning matrix can
     // diverge to inf causing serious memory problems.
-    LMNN<LMetric<2>, StandardSGD> lmnn(data, labels, k);
+    LMNN<LMetric<2>, ens::StandardSGD> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
     lmnn.Optimizer().StepSize() = stepSize;
@@ -382,7 +379,7 @@ static void mlpackMain()
   }
   else if (optimizerType == "lbfgs")
   {
-    LMNN<LMetric<2>, L_BFGS> lmnn(data, labels, k);
+    LMNN<LMetric<2>, ens::L_BFGS> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
     lmnn.Optimizer().MaxIterations() = maxIterations;

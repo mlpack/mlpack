@@ -18,7 +18,7 @@
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/reinforcement_learning/async_learning.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
-#include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
+#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/aggregated_policy.hpp>
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
@@ -28,7 +28,6 @@
 
 using namespace mlpack;
 using namespace mlpack::ann;
-using namespace mlpack::optimization;
 using namespace mlpack::rl;
 
 BOOST_AUTO_TEST_SUITE(AsyncLearningTest);
@@ -68,7 +67,8 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
   config.StepLimit() = 200;
   config.TargetNetworkSyncInterval() = 200;
 
-  OneStepQLearning<CartPole, decltype(model), VanillaUpdate, decltype(policy)>
+  OneStepQLearning<
+      CartPole, decltype(model), ens::VanillaUpdate, decltype(policy)>
       agent(std::move(config), std::move(model), std::move(policy));
 
   arma::vec rewards(20, arma::fill::zeros);
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(OneStepSarsaTest)
   config.StepLimit() = 200;
   config.TargetNetworkSyncInterval() = 200;
 
-  OneStepSarsa<CartPole, decltype(model), VanillaUpdate, decltype(policy)>
+  OneStepSarsa<CartPole, decltype(model), ens::VanillaUpdate, decltype(policy)>
       agent(std::move(config), std::move(model), std::move(policy));
 
   arma::vec rewards(20, arma::fill::zeros);
@@ -192,7 +192,8 @@ BOOST_AUTO_TEST_CASE(NStepQLearningTest)
   config.StepLimit() = 200;
   config.TargetNetworkSyncInterval() = 200;
 
-  NStepQLearning<CartPole, decltype(model), VanillaUpdate, decltype(policy)>
+  NStepQLearning<
+      CartPole, decltype(model), ens::VanillaUpdate, decltype(policy)>
       agent(std::move(config), std::move(model), std::move(policy));
 
   arma::vec rewards(20, arma::fill::zeros);
