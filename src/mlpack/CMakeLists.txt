@@ -123,3 +123,11 @@ if (BUILD_PYTHON_BINDINGS)
   configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in
                  ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py)
 endif ()
+
+# If we are building Julia bindings, we have to end the 'module' declaration in
+# mlpack.jl
+if (BUILD_JULIA_BINDINGS)
+  file(APPEND
+      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
+      "\nend\n")
+endif ()
