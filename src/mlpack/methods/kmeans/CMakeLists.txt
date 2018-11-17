@@ -40,3 +40,4 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(kmeans)
 add_python_binding(kmeans)
+add_julia_binding(kmeans)
