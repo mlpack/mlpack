@@ -25,6 +25,9 @@ void PrintInputProcessing(
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
+  // "type" is a reserved keyword or function.
+  const std::string juliaName = (d.name == "type") ? "type_" : d.name;
+
   // Here we can just call CLISetParam() directly; we don't need a separate
   // overload.
   if (d.required)
@@ -32,19 +35,19 @@ void PrintInputProcessing(
     // This gives us code like the following:
     //
     // CLISetParam("<param_name>", <paramName>)
-    std::cout << "  CLISetParam(\"" << d.name << "\", " << d.name << ")"
+    std::cout << "  CLISetParam(\"" << d.name << "\", " << juliaName << ")"
         << std::endl;
   }
   else
   {
     // This gives us code like the following:
     //
-    // if <param_name> !== missing
+    // if !ismissing(<param_name>)
     //   CLISetParam("<param_name>", convert(<type>, <param_name>))
     // end
-    std::cout << "  if " << d.name << " !== missing" << std::endl;
+    std::cout << "  if !ismissing(" << juliaName << ")" << std::endl;
     std::cout << "    CLISetParam(\"" << d.name << "\", convert("
-        << GetJuliaType<T>() << ", " << d.name << "))" << std::endl;
+        << GetJuliaType<T>() << ", " << juliaName << "))" << std::endl;
     std::cout << "  end" << std::endl;
   }
 }
@@ -59,11 +62,14 @@ void PrintInputProcessing(
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
+  // "type" is a reserved keyword or function.
+  const std::string juliaName = (d.name == "type") ? "type_" : d.name;
+
   // If the argument is not required, then we have to encase the code in an if.
   size_t extraIndent = 0;
   if (!d.required)
   {
-    std::cout << "  if " << d.name << " !== missing" << std::endl;
+    std::cout << "  if !ismissing(" << juliaName << ")" << std::endl;
     extraIndent = 2;
   }
 
@@ -90,8 +96,8 @@ void PrintInputProcessing(
 
   // Now print the CLISetParam call.
   std::cout << indent << "CLISetParam" << uChar << matTypeModifier << "(\""
-      << d.name << "\", convert(" << GetJuliaType<T>() << ", " << d.name << ")"
-      << extra << ")" << std::endl;
+      << d.name << "\", convert(" << GetJuliaType<T>() << ", " << juliaName
+      << ")" << extra << ")" << std::endl;
 
   if (!d.required)
   {
@@ -110,11 +116,14 @@ void PrintInputProcessing(
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
+  // "type" is a reserved keyword or function.
+  const std::string juliaName = (d.name == "type") ? "type_" : d.name;
+
   // If the argument is not required, then we have to encase the code in an if.
   size_t extraIndent = 0;
   if (!d.required)
   {
-    std::cout << "  if " << d.name << " !== missing" << std::endl;
+    std::cout << "  if !ismissing(" << juliaName << ")" << std::endl;
     extraIndent = 2;
   }
 
@@ -122,7 +131,7 @@ void PrintInputProcessing(
   std::string type = StripType(d.cppType);
   std::cout << indent << "CLISetParam" << type << "Ptr(\"" << d.name
       << "\", convert(" << GetJuliaType<typename std::remove_pointer<T>::type>()
-      << ", " << d.name << "))" << std::endl;
+      << ", " << juliaName << "))" << std::endl;
 
   if (!d.required)
   {
@@ -140,6 +149,9 @@ void PrintInputProcessing(
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
+  // "type" is a reserved keyword or function.
+  const std::string juliaName = (d.name == "type") ? "type_" : d.name;
+
   // Here we can just call CLISetParam() directly; we don't need a separate
   // overload.  But we do have to pass in points_are_rows.
   if (d.required)
@@ -148,19 +160,19 @@ void PrintInputProcessing(
     //
     // CLISetParam("<param_name>", convert(<type>, <paramName>))
     std::cout << "  CLISetParam(\"" << d.name << "\", convert("
-        << GetJuliaType<T>() << ", " << d.name << "), points_are_rows)"
+        << GetJuliaType<T>() << ", " << juliaName << "), points_are_rows)"
         << std::endl;
   }
   else
   {
     // This gives us code like the following:
     //
-    // if <param_name> !== missing
+    // if !ismissing(<param_name>)
     //   CLISetParam("<param_name>", convert(<type>, <param_name>))
     // end
-    std::cout << "  if " << d.name << " !== missing" << std::endl;
+    std::cout << "  if !ismissing(" << juliaName << ")" << std::endl;
     std::cout << "    CLISetParam(\"" << d.name << "\", convert("
-        << GetJuliaType<T>() << ", " << d.name << "), points_are_rows)"
+        << GetJuliaType<T>() << ", " << juliaName << "), points_are_rows)"
         << std::endl;
     std::cout << "  end" << std::endl;
   }

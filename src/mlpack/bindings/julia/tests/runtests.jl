@@ -3,8 +3,10 @@
 #
 # Tests for the Julia bindings.
 include("/home/ryan/src/mlpack-rc2/build/src/mlpack/bindings/julia/mlpack/test_julia_binding.jl")
+using Pkg
+Pkg.activate("/home/ryan/src/mlpack-rc2/build/src/mlpack/bindings/julia/")
 using Test
-#using mlpack
+using mlpack
 
 # The return order for the binding is this:
 #

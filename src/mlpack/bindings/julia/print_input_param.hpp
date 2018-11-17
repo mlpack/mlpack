@@ -23,7 +23,10 @@ void PrintInputParam(const util::ParamData& d,
                      const void* /* input */,
                      void* /* output */)
 {
-  std::cout << d.name << "::";
+  // "type" is a reserved keyword or function.
+  const std::string juliaName = (d.name == "type") ? "type_" : d.name;
+
+  std::cout << juliaName << "::";
   // If it's required, then we need the type.
   if (d.required)
   {

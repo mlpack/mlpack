@@ -1,44 +1,77 @@
-using Printf
+module cli
+
+export CLIRestoreSettings
+export CLISetParam
+export CLISetParamMat
+export CLISetParamUMat
+export CLISetParamRow
+export CLISetParamCol
+export CLISetParamURow
+export CLISetParamUCol
+export CLIGetParamBool
+export CLIGetParamInt
+export CLIGetParamDouble
+export CLIGetParamString
+export CLIGetParamVectorStr
+export CLIGetParamVectorInt
+export CLIGetParamMat
+export CLIGetParamUMat
+export CLIGetParamCol
+export CLIGetParamRow
+export CLIGetParamUCol
+export CLIGetParamURow
+export CLIGetParamMatWithInfo
+export CLIEnableVerbose
+export CLIDisableVerbose
+export CLISetPassed
+
+const library = joinpath(@__DIR__, "libmlpack_julia_util.so")
 
 function CLIRestoreSettings(programName::String)
-  ccall((:CLI_RestoreSettings, "./libmlpack_julia_util.so"), Nothing, (Cstring,),
-      programName);
+  ccall((:CLI_RestoreSettings, library), Nothing, (Cstring,), programName);
 end
 
 function CLISetParam(paramName::String, paramValue::Int)
-  ccall((:CLI_SetParamInt, "./libmlpack_julia_util.so"), Nothing, (Cstring, Int),
-      paramName, paramValue);
+  ccall((:CLI_SetParamInt, library), Nothing, (Cstring, Int), paramName,
+      paramValue);
 end
 
 function CLISetParam(paramName::String, paramValue::Float64)
-  ccall((:CLI_SetParamDouble, "./libmlpack_julia_util.so"), Nothing, (Cstring,
-      Float64), paramName, paramValue);
+  ccall((:CLI_SetParamDouble, library), Nothing, (Cstring, Float64), paramName,
+      paramValue);
 end
 
 function CLISetParam(paramName::String, paramValue::Bool)
-  ccall((:CLI_SetParamBool, "./libmlpack_julia_util.so"), Nothing, (Cstring,
-      Bool), paramName, paramValue);
+  ccall((:CLI_SetParamBool, library), Nothing, (Cstring, Bool), paramName,
+      paramValue);
 end
 
 function CLISetParam(paramName::String, paramValue::String)
-  ccall((:CLI_SetParamString, "./libmlpack_julia_util.so"), Nothing, (Cstring,
-      Cstring), paramName, paramValue);
+  ccall((:CLI_SetParamString, library), Nothing, (Cstring, Cstring), paramName,
+      paramValue);
 end
 
 function CLISetParamMat(paramName::String,
                         paramValue::Array{Float64, 2},
                         pointsAsRows::Bool)
-  ccall((:CLI_SetParamMat, "./libmlpack_julia_util.so"), Nothing, (Cstring,
-      Ptr{Float64}, UInt64, UInt64, Bool), paramName, Base.pointer(paramValue),
-      size(paramValue, 1), size(paramValue, 2), pointsAsRows);
+  ccall((:CLI_SetParamMat, library), Nothing, (Cstring, Ptr{Float64}, UInt64,
+      UInt64, Bool), paramName, Base.pointer(paramValue), size(paramValue, 1),
+      size(paramValue, 2), pointsAsRows);
 end
 
 function CLISetParamUMat(paramName::String,
-                         paramValue::Array{UInt64, 2},
+                         paramValue::Array{Int64, 2},
                          pointsAsRows::Bool)
-  ccall((:CLI_SetParamUMat, "./libmlpack_julia_util.so"), Nothing, (Cstring,
-      Ptr{UInt64}, UInt64, UInt64, Bool), paramName, Base.pointer(paramValue),
-      size(paramValue, 1), size(paramValue, 2), pointsAsRows);
+  # Sanity check.
+  if minimum(d) == 0
+    throw(DomainError("Array{Int64, 2} input cannot have 0 values!  Must be 1" \
+        " or greater."))
+  end
+
+  m = convert(Array{UInt64, 2}, paramValue - 1)
+  ccall((:CLI_SetParamUMat, library), Nothing, (Cstring, Ptr{UInt64}, UInt64,
+      UInt64, Bool), paramName, Base.pointer(m), size(paramValue, 1),
+      size(paramValue, 2), pointsAsRows);
 end
 
 function CLISetParam(paramName::String,
@@ -47,81 +80,82 @@ function CLISetParam(paramName::String,
   # sequentially.  I am not sure if this is fully necessary but I have some
   # reservations about Julia's support for passing arrays of strings correctly
   # as a const char**.
-  ccall((:CLI_SetParamVectorStrLen, "./libmlpack_julia_util.so"), Nothing,
-      (Cstring, UInt64), paramName, size(vector, 1));
+  ccall((:CLI_SetParamVectorStrLen, library), Nothing, (Cstring, UInt64),
+      paramName, size(vector, 1));
   for i in 1:size(vector, 1)
-    ccall((:CLI_SetParamVectorStrStr, "./libmlpack_julia_util.so"), Nothing,
-        (Cstring, Cstring, UInt64), paramName, vector[i], i - 1);
+    ccall((:CLI_SetParamVectorStrStr, library), Nothing, (Cstring, Cstring,
+        UInt64), paramName, vector[i], i - 1);
   end
 end
 
 function CLISetParam(paramName::String,
-                     vector::Vector{Int})
-  CLISetParam(paramName, convert(Vector{Int64}, vector))
-end
-
-function CLISetParam(paramName::String,
                      vector::Vector{Int64})
-  ccall((:CLI_SetParamVectorInt, "./libmlpack_julia_util.so"), Nothing,
-      (Cstring, Ptr{Int64}, Int64), paramName, Base.pointer(vector),
-      size(vector, 1));
+  ccall((:CLI_SetParamVectorInt, library), Nothing, (Cstring, Ptr{Int64},
+      Int64), paramName, Base.pointer(vector), size(vector, 1));
 end
 
 function CLISetParam(paramName::String,
                      matWithInfo::Tuple{Array{Bool, 1}, Array{Float64, 2}},
                      pointsAsRows::Bool)
-  ccall((:CLI_SetParamMatWithInfo, "./libmlpack_julia_util.so"), Nothing,
-      (Cstring, Ptr{Bool}, Ptr{Float64}, Int64, Int64, Bool), paramName,
+  ccall((:CLI_SetParamMatWithInfo, library), Nothing, (Cstring, Ptr{Bool},
+      Ptr{Float64}, Int64, Int64, Bool), paramName,
       Base.pointer(matWithInfo[1]), Base.pointer(matWithInfo[2]),
       size(matWithInfo[2], 1), size(matWithInfo[2], 2), pointsAsRows);
 end
 
 function CLISetParamRow(paramName::String,
                         paramValue::Array{Float64, 1})
-  ccall((:CLI_SetParamRow, "./libmlpack_julia_util.so"), Nothing, (Cstring,
-      Ptr{Float64}, UInt64), paramName, Base.pointer(paramValue),
-      size(paramValue, 1));
+  ccall((:CLI_SetParamRow, library), Nothing, (Cstring, Ptr{Float64}, UInt64),
+      paramName, Base.pointer(paramValue), size(paramValue, 1));
 end
 
 function CLISetParamCol(paramName::String,
                         paramValue::Array{Float64, 1})
-  ccall((:CLI_SetParamCol, "./libmlpack_julia_util.so"), Nothing, (Cstring,
-      Ptr{Float64}, UInt64), paramName, Base.pointer(paramValue),
-      size(paramValue, 1));
+  ccall((:CLI_SetParamCol, library), Nothing, (Cstring, Ptr{Float64}, UInt64),
+      paramName, Base.pointer(m), size(paramValue, 1));
 end
 
 function CLISetParamURow(paramName::String,
-                         paramValue::Array{UInt64, 1})
-  ccall((:CLI_SetParamURow, "./libmlpack_julia_util.so"), Nothing, (Cstring,
-      Ptr{UInt64}, UInt64), paramName, Base.pointer(paramValue),
-      size(paramValue, 1));
+                         paramValue::Array{Int64, 1})
+  # Sanity check.
+  if minimum(d) == 0
+    throw(DomainError("Array{Int64, 2} input cannot have 0 values!  Must be 1" \
+        " or greater."))
+  end
+  m = convert(Array{UInt64, 1}, paramValue - 1)
+
+  ccall((:CLI_SetParamURow, library), Nothing, (Cstring, Ptr{UInt64}, UInt64),
+      paramName, Base.pointer(paramValue), size(paramValue, 1));
 end
 
 function CLISetParamUCol(paramName::String,
                          paramValue::Array{UInt64, 1})
-  ccall((:CLI_SetParamUCol, "./libmlpack_julia_util.so"), Nothing, (Cstring,
-      Ptr{UInt64}, UInt64), paramName, Base.pointer(paramValue),
+  # Sanity check.
+  if minimum(d) == 0
+    throw(DomainError("Array{Int64, 2} input cannot have 0 values!  Must be 1" \
+        " or greater."))
+  end
+  m = convert(Array{UInt64, 1}, paramValue - 1)
+
+  ccall((:CLI_SetParamUCol, library), Nothing, (Cstring, Ptr{UInt64}, UInt64),
+      paramName, Base.pointer(m),
       size(paramValue, 1));
 end
 
 function CLIGetParamBool(paramName::String)
-  return ccall((:CLI_GetParamBool, "./libmlpack_julia_util.so"), Bool,
-      (Cstring,), paramName)
+  return ccall((:CLI_GetParamBool, library), Bool, (Cstring,), paramName)
 end
 
 function CLIGetParamInt(paramName::String)
-  return ccall((:CLI_GetParamInt, "./libmlpack_julia_util.so"), Int64,
-      (Cstring,), paramName)
+  return ccall((:CLI_GetParamInt, library), Int64, (Cstring,), paramName)
 end
 
 function CLIGetParamDouble(paramName::String)
-  return ccall((:CLI_GetParamDouble, "./libmlpack_julia_util.so"), Float64,
-      (Cstring,), paramName)
+  return ccall((:CLI_GetParamDouble, library), Float64, (Cstring,), paramName)
 end
 
 function CLIGetParamString(paramName::String)
-  return ccall((:CLI_GetParamString, "./libmlpack_julia_util.so"), Cstring,
-      (Cstring,), paramName)
+  return ccall((:CLI_GetParamString, library), Cstring, (Cstring,), paramName)
 end
 
 function CLIGetParamVectorStr(paramName::String)
@@ -129,12 +163,12 @@ function CLIGetParamVectorStr(paramName::String)
   local ptr::Ptr{String}
 
   # Get the size of the vector, then each element.
-  size = ccall((:CLI_GetParamVectorStrLen, "./libmlpack_julia_util.so"), UInt64,
-      (Cstring,), paramName);
+  size = ccall((:CLI_GetParamVectorStrLen, library), UInt64, (Cstring,),
+      paramName);
   out = Array{String, 1}()
   for i = 1:size
-    s = ccall((:CLI_GetParamVectorStrStr, "./libmlpack_julia_util.so"), Cstring,
-        (Cstring, UInt64), paramName, i - 1)
+    s = ccall((:CLI_GetParamVectorStrStr, library), Cstring, (Cstring, UInt64),
+        paramName, i - 1)
     push!(out, Base.unsafe_string(s))
   end
 
@@ -147,10 +181,10 @@ function CLIGetParamVectorInt(paramName::String)
 
   # Get the size of the vector, then the pointer to it.  We will own the
   # pointer.
-  size = ccall((:CLI_GetParamVectorIntLen, "./libmlpack_julia_util.so"), UInt64,
-      (Cstring,), paramName);
-  ptr = ccall((:CLI_GetParamVectorIntPtr, "./libmlpack_julia_util.so"),
-      Ptr{Int64}, (Cstring,), paramName);
+  size = ccall((:CLI_GetParamVectorIntLen, library), UInt64, (Cstring,),
+      paramName);
+  ptr = ccall((:CLI_GetParamVectorIntPtr, library), Ptr{Int64}, (Cstring,),
+      paramName);
 
   return Base.unsafe_wrap(Array{Int64, 1}, ptr, (size), own=true)
 end
@@ -162,12 +196,9 @@ function CLIGetParamMat(paramName::String, pointsAsRows::Bool)
   local rows::UInt64, cols::UInt64;
   # I suppose it would be possible to do this all in one call, but this seems
   # easy enough.
-  rows = ccall((:CLI_GetParamMatRows, "./libmlpack_julia_util.so"), UInt64,
-      (Cstring,), paramName);
-  cols = ccall((:CLI_GetParamMatCols, "./libmlpack_julia_util.so"), UInt64,
-      (Cstring,), paramName);
-  ptr = ccall((:CLI_GetParamMat, "./libmlpack_julia_util.so"), Ptr{Float64},
-      (Cstring,), paramName);
+  rows = ccall((:CLI_GetParamMatRows, library), UInt64, (Cstring,), paramName);
+  cols = ccall((:CLI_GetParamMatCols, library), UInt64, (Cstring,), paramName);
+  ptr = ccall((:CLI_GetParamMat, library), Ptr{Float64}, (Cstring,), paramName);
 
   if pointsAsRows
     # In this case we have to transpose, unfortunately.
@@ -186,20 +217,18 @@ function CLIGetParamUMat(paramName::String, pointsAsRows::Bool)
   local rows::UInt64, cols::UInt64;
   # I suppose it would be possible to do this all in one call, but this seems
   # easy enough.
-  rows = ccall((:CLI_GetParamUMatRows, "./libmlpack_julia_util.so"), UInt64,
-      (Cstring,), paramName);
-  cols = ccall((:CLI_GetParamUMatCols, "./libmlpack_julia_util.so"), UInt64,
-      (Cstring,), paramName);
-  ptr = ccall((:CLI_GetParamUMat, "./libmlpack_julia_util.so"), Ptr{UInt64},
-      (Cstring,), paramName);
+  rows = ccall((:CLI_GetParamUMatRows, library), UInt64, (Cstring,), paramName);
+  cols = ccall((:CLI_GetParamUMatCols, library), UInt64, (Cstring,), paramName);
+  ptr = ccall((:CLI_GetParamUMat, library), Ptr{UInt64}, (Cstring,), paramName);
 
   if pointsAsRows
     # In this case we have to transpose, unfortunately.
-    m = Base.unsafe_wrap(Array{UInt64, 2}, ptr, (rows, cols), own=true)
-    return m';
+    m = Base.unsafe_wrap(Array{UInt64, 2}, ptr, (rows, cols), own=true);
+    return convert(Array{Int64, 2}, m + 1) # Add 1 because these are indexes.
   else
     # Here no transpose is necessary.
-    return Base.unsafe_wrap(Array{UInt64, 2}, ptr, (rows, cols), own=true);
+    m = Base.unsafe_wrap(Array{UInt64, 2}, ptr, (rows, cols), own=true);
+    return convert(Array{Int64, 2}, m + 1)
   end
 end
 
@@ -207,9 +236,9 @@ function CLIGetParamCol(paramName::String)
   local ptr::Ptr{Float64};
   local rows::UInt64;
 
-  rows = ccall((:CLI_GetParamColRows, "./libmlpack_julia_util.so"), UInt64,
+  rows = ccall((:CLI_GetParamColRows, "libmlpack_julia_util.so"), UInt64,
       (Cstring,), paramName);
-  ptr = ccall((:CLI_GetParamCol, "./libmlpack_julia_util.so"), Ptr{Float64},
+  ptr = ccall((:CLI_GetParamCol, "libmlpack_julia_util.so"), Ptr{Float64},
       (Cstring,), paramName);
 
   return Base.unsafe_wrap(Array{Float64, 1}, ptr, rows, own=true);
@@ -219,9 +248,9 @@ function CLIGetParamRow(paramName::String)
   local ptr::Ptr{Float64};
   local cols::UInt64;
 
-  cols = ccall((:CLI_GetParamRowCols, "./libmlpack_julia_util.so"), UInt64,
+  cols = ccall((:CLI_GetParamRowCols, "libmlpack_julia_util.so"), UInt64,
       (Cstring,), paramName);
-  ptr = ccall((:CLI_GetParamRow, "./libmlpack_julia_util.so"), Ptr{Float64},
+  ptr = ccall((:CLI_GetParamRow, "libmlpack_julia_util.so"), Ptr{Float64},
       (Cstring,), paramName);
 
   return Base.unsafe_wrap(Array{Float64, 1}, ptr, cols, own=true);
@@ -231,24 +260,24 @@ function CLIGetParamUCol(paramName::String)
   local ptr::Ptr{UInt64};
   local rows::UInt64;
 
-  rows = ccall((:CLI_GetParamUColRows, "./libmlpack_julia_util.so"), UInt64,
+  rows = ccall((:CLI_GetParamUColRows, "libmlpack_julia_util.so"), UInt64,
       (Cstring,), paramName);
-  ptr = ccall((:CLI_GetParamUCol, "./libmlpack_julia_util.so"), Ptr{UInt64},
+  ptr = ccall((:CLI_GetParamUCol, "libmlpack_julia_util.so"), Ptr{UInt64},
       (Cstring,), paramName);
 
-  return Base.unsafe_wrap(Array{UInt64, 1}, ptr, rows, own=true);
+  m = Base.unsafe_wrap(Array{UInt64, 1}, ptr, rows, own=true);
+  return convert(Array{Int64, 1}, m + 1)
 end
 
 function CLIGetParamURow(paramName::String)
   local ptr::Ptr{UInt64};
   local cols::UInt64;
 
-  cols = ccall((:CLI_GetParamURowCols, "./libmlpack_julia_util.so"), UInt64,
-      (Cstring,), paramName);
-  ptr = ccall((:CLI_GetParamURow, "./libmlpack_julia_util.so"), Ptr{UInt64},
-      (Cstring,), paramName);
+  cols = ccall((:CLI_GetParamURowCols, library), UInt64, (Cstring,), paramName);
+  ptr = ccall((:CLI_GetParamURow, library), Ptr{UInt64}, (Cstring,), paramName);
 
-  return Base.unsafe_wrap(Array{UInt64, 1}, ptr, cols, own=true);
+  m = Base.unsafe_wrap(Array{UInt64, 1}, ptr, cols, own=true);
+  return convert(Array{Int64, 1}, m + 1)
 end
 
 function CLIGetParamMatWithInfo(paramName::String, pointsAsRows::Bool)
@@ -257,14 +286,14 @@ function CLIGetParamMatWithInfo(paramName::String, pointsAsRows::Bool)
   local rows::UInt64;
   local cols::UInt64;
 
-  rows = ccall((:CLI_GetParamMatWithInfoRows, "./libmlpack_julia_util.so"),
-      UInt64, (Cstring,), paramName);
-  cols = ccall((:CLI_GetParamMatWithInfoCols, "./libmlpack_julia_util.so"),
-      UInt64, (Cstring,), paramName);
-  ptrBool = ccall((:CLI_GetParamMatWithInfoBoolPtr,
-      "./libmlpack_julia_util.so"), Ptr{Bool}, (Cstring,), paramName);
-  ptrMem = ccall((:CLI_GetParamMatWithInfoPtr,
-      "./libmlpack_julia_util.so"), Ptr{Float64}, (Cstring,), paramName);
+  rows = ccall((:CLI_GetParamMatWithInfoRows, library), UInt64, (Cstring,),
+      paramName);
+  cols = ccall((:CLI_GetParamMatWithInfoCols, library), UInt64, (Cstring,),
+      paramName);
+  ptrBool = ccall((:CLI_GetParamMatWithInfoBoolPtr, library), Ptr{Bool},
+      (Cstring,), paramName);
+  ptrMem = ccall((:CLI_GetParamMatWithInfoPtr, library), Ptr{Float64},
+      (Cstring,), paramName);
 
   types = Base.unsafe_wrap(Array{Bool, 1}, ptrBool, (rows), own=true)
   if pointsAsRows
@@ -279,14 +308,15 @@ function CLIGetParamMatWithInfo(paramName::String, pointsAsRows::Bool)
 end
 
 function CLIEnableVerbose()
-  ccall((:CLI_EnableVerbose, "./libmlpack_julia_util.so"), Nothing, ());
+  ccall((:CLI_EnableVerbose, library), Nothing, ());
 end
 
 function CLIDisableVerbose()
-  ccall((:CLI_DisableVerbose, "./libmlpack_julia_util.so"), Nothing, ());
+  ccall((:CLI_DisableVerbose, library), Nothing, ());
 end
 
 function CLISetPassed(paramName::String)
-  ccall((:CLI_SetPassed, "./libmlpack_julia_util.so"), Nothing, (Cstring,),
-      paramName);
+  ccall((:CLI_SetPassed, library), Nothing, (Cstring,), paramName);
 end
+
+end # module cli

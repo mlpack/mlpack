@@ -19,6 +19,7 @@
 #include "print_input_param.hpp"
 #include "print_input_processing.hpp"
 #include "print_output_processing.hpp"
+#include "print_doc.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -93,6 +94,7 @@ class JuliaOption
         &PrintOutputProcessing<T>;
     CLI::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
         &PrintInputProcessing<T>;
+    CLI::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
 
     // Add the ParamData object, then store.  This is necessary because we may
     // import more than one .so that uses CLI, so we have to keep the options

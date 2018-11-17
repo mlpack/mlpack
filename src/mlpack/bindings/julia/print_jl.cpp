@@ -5,6 +5,7 @@
  * Implementation of utility PrintJL() function.
  */
 #include "print_jl.hpp"
+#include <mlpack/core/util/hyphenate_string.hpp>
 
 using namespace mlpack;
 using namespace std;
@@ -19,7 +20,6 @@ extern std::string programName;
  * Print the code for a .jl binding for an mlpack program to stdout.
  */
 void PrintJL(const util::ProgramDoc& programInfo,
-             const string& mainFilename,
              const string& functionName)
 {
   // Restore parameters.
@@ -56,16 +56,25 @@ void PrintJL(const util::ProgramDoc& programInfo,
       inputOptions.push_back(it->first);
   }
 
-  // First we need to include utility functions.
-  cout << "include(\"cli.jl\")" << endl;
+  // First, define what we are exporting.
+  cout << "export " << functionName << endl;
+  cout << endl;
+
+  // We need to include utility functions.
+  cout << "using mlpack.cli" << endl;
+  cout << endl;
+
+  // Make sure the libraries we need are accessible.
+  cout << "const " << functionName << "Library = joinpath(@__DIR__, "
+      << "\"libmlpack_julia_" << functionName << ".so\")" << endl;
   cout << endl;
 
   // Define mlpackMain() function to call.
-  cout << "\"Call the C binding of the mlpack " << functionName << " binding.\""
+  cout << "# Call the C binding of the mlpack " << functionName << " binding."
       << endl;
   cout << "function " << functionName << "_mlpackMain()" << endl;
-  cout << "  ccall((:" << functionName << ", \"./libmlpack_julia_"
-      << functionName << ".so\"), Nothing, ())" << endl;
+  cout << "  ccall((:" << functionName << ", " << functionName << "Library), "
+      << "Nothing, ())" << endl;
   cout << "end" << endl;
   cout << endl;
 
@@ -87,13 +96,92 @@ void PrintJL(const util::ProgramDoc& programInfo,
     }
   }
 
+  // Print the documentation.
+  cout << "\"\"\"" << endl;
+  cout << "    " << functionName << "(";
+
+  // Print a list of input arguments after the function name.
+  bool defaults = false;
+  for (size_t i = 0; i < inputOptions.size(); ++i)
+  {
+    const string& opt = inputOptions[i];
+    const util::ParamData& d = parameters.at(opt);
+
+    if (i > 0)
+    {
+      if (!defaults && !d.required)
+      {
+        // Open the bracket.
+        cout << " [; ";
+        defaults = true;
+      }
+      else
+      {
+        cout << ", ";
+      }
+    }
+    else if (!defaults && !d.required)
+    {
+      // Open the bracket.
+      cout << "[";
+      defaults = true;
+    }
+
+    cout << d.name;
+  }
+  if (defaults)
+    cout << "]";
+  cout << ")" << endl;
+  cout << endl;
+
+  // Next print the description.
+  cout << util::HyphenateString(programInfo.documentation(), 0) << endl;
+
+  // Next, print information on the input options.
+  cout << endl;
+  cout << "# Arguments" << endl;
+  cout << endl;
+
+  for (size_t i = 0; i < inputOptions.size(); ++i)
+  {
+    const string& opt = inputOptions[i];
+    const util::ParamData& d = parameters.at(opt);
+
+    std::ostringstream oss;
+    oss << " - ";
+
+    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &oss);
+
+    cout << util::HyphenateString(oss.str(), 6) << endl;
+  }
+
+  cout << endl;
+  cout << "# Return values" << endl;
+  cout << endl;
+
+  for (size_t i = 0; i < outputOptions.size(); ++i)
+  {
+    const string& opt = outputOptions[i];
+    const util::ParamData& d = parameters.at(opt);
+
+    std::ostringstream oss;
+    oss << " - ";
+
+    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &oss);
+
+    cout << util::HyphenateString(oss.str(), 6) << endl;
+  }
+  cout << endl;
+
+  cout << "\"\"\"" << endl;
+
   // Print the signature.
   cout << "function " << functionName << "(";
   const size_t indent = 10 + functionName.size();
 
   // Print required input arguments as part of the function signature, followed
   // by non-required input arguments.
-  bool defaults = false;
+  defaults = false;
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
     const string& opt = inputOptions[i];
@@ -125,8 +213,8 @@ void PrintJL(const util::ProgramDoc& programInfo,
 
   // Force symbols to load.
   cout << "  # Force the symbols to load." << endl;
-  cout << "  ccall((:loadSymbols, \"./libmlpack_julia_" << functionName
-      << ".so\"), Nothing, ());" << endl;
+  cout << "  ccall((:loadSymbols, " << functionName << "Library), Nothing, ());"
+      << endl;
   cout << endl;
 
   // Restore CLI settings.

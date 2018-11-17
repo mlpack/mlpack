@@ -52,12 +52,12 @@ void PrintParamDefn(
   // We need to print something of the form below:
   //
   // function CLIGetParam<Type>Ptr(paramName::String)
-  //   return ccall((:CLIGetParam<Type>Ptr, "libmlpack_julia_<name>.so"),
+  //   return ccall((:CLIGetParam<Type>Ptr, <programName>Library),
   //       Ptr{Nothing}, (Cstring,), paramName)
   // end
   //
   // function CLISetParam<Type>Ptr(paramName::String, ptr::Ptr{Nothing})
-  //   ccall((:CLISetParam<Type>Ptr, "libmlpack_julia_<name>.so"), Nothing,
+  //   ccall((:CLISetParam<Type>Ptr, <programName>Library), Nothing,
   //       (Cstring, Ptr{Nothing}), paramName, ptr)
   // end
   std::string type = StripType(d.cppType);
@@ -66,7 +66,7 @@ void PrintParamDefn(
   std::cout << "function CLIGetParam" << type << "Ptr(paramName::String)"
       << std::endl;
   std::cout << "  return ccall((:CLI_GetParam" << type << "Ptr, "
-      << "\"libmlpack_julia_" << programName << ".so\"), Ptr{Nothing}, "
+      << programName << "Library), Ptr{Nothing}, "
       << "(Cstring,), paramName)" << std::endl;
   std::cout << "end" << std::endl;
   std::cout << std::endl;
@@ -75,9 +75,9 @@ void PrintParamDefn(
       << ".\"" << std::endl;
   std::cout << "function CLISetParam" << type << "Ptr(paramName::String, "
       << "ptr::Ptr{Nothing})" << std::endl;
-  std::cout << "  ccall((:CLI_SetParam" << type << "Ptr, \"libmlpack_julia_"
-      << programName << ".so\"), Nothing, (Cstring, Ptr{Nothing}), paramName, "
-      << "ptr)" << std::endl;
+  std::cout << "  ccall((:CLI_SetParam" << type << "Ptr, "
+      << programName << "Library), Nothing, (Cstring, "
+      << "Ptr{Nothing}), paramName, ptr)" << std::endl;
   std::cout << "end" << std::endl;
   std::cout << std::endl;
 }
