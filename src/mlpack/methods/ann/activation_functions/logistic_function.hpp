@@ -81,7 +81,7 @@ class LogisticFunction
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& y, OutputVecType& x)
   {
-    x = y % (1.0 - y);
+    x = y * (1.0 - y);
   }
 
   /**
