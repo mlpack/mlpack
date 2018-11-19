@@ -51,9 +51,9 @@ BOOST_FIXTURE_TEST_SUITE(KDEMainTest, KDETestFixture);
 
 /**
   * Ensure that the estimations we get for KDEMain, are the same as the ones we
-  * get from the KDE class without any wrappers.
+  * get from the KDE class without any wrappers. Requires normalization.
  **/
-BOOST_AUTO_TEST_CASE(KDEEqualResultsForMain)
+BOOST_AUTO_TEST_CASE(KDEGaussianRTreeResultsMain)
 {
   // Datasets
   arma::mat reference = arma::randu(3, 500);
@@ -79,6 +79,46 @@ BOOST_AUTO_TEST_CASE(KDEEqualResultsForMain)
   SetInputParam("query", query);
   SetInputParam("kernel", std::string("gaussian"));
   SetInputParam("tree", std::string("r-tree"));
+  SetInputParam("rel_error", relError);
+  SetInputParam("bandwidth", kernelBandwidth);
+
+  mlpackMain();
+
+  mainEstimations = std::move(CLI::GetParam<arma::mat>("output"));
+
+  // Check whether results are equal.
+  for (size_t i = 0; i < query.n_cols; ++i)
+    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], relError);
+}
+
+/**
+  * Ensure that the estimations we get for KDEMain, are the same as the ones we
+  * get from the KDE class without any wrappers. Doesn't require normalization.
+ **/
+BOOST_AUTO_TEST_CASE(KDETriangularBallTreeResultsMain)
+{
+  // Datasets
+  arma::mat reference = arma::randu(3, 300);
+  arma::mat query = arma::randu(3, 100);
+  arma::vec kdeEstimations, mainEstimations;
+  double kernelBandwidth = 3.0;
+  double relError = 0.06;
+
+  kernel::TriangularKernel kernel(kernelBandwidth);
+  metric::EuclideanDistance metric;
+  KDE<metric::EuclideanDistance,
+      arma::mat,
+      kernel::TriangularKernel,
+      tree::BallTree>
+    kde(metric, kernel, relError, 0.0);
+  kde.Train(reference);
+  kde.Evaluate(query, kdeEstimations);
+
+  // Main estimations
+  SetInputParam("reference", reference);
+  SetInputParam("query", query);
+  SetInputParam("kernel", std::string("triangular"));
+  SetInputParam("tree", std::string("ball-tree"));
   SetInputParam("rel_error", relError);
   SetInputParam("bandwidth", kernelBandwidth);
 
