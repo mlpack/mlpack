@@ -266,7 +266,7 @@ double DecisionStump<MatType>::SetupSplitDimension(
           sortedLabels.subvec(begin, end), sortedWeights.subvec(begin, end));
       i++;
     }
-    else if (sortedLabels(i) != sortedLabels(i + 1))
+    else if (dimension(sortedIndexDim(i)) != dimension(sortedIndexDim(i + 1)))
     {
       // If we're not at the last element of sortedLabels, then check whether
       // count is less than the current bucket size.
@@ -344,7 +344,7 @@ void DecisionStump<MatType>::TrainOnDim(const VecType& dimension,
 
       i++;
     }
-    else if (sortedLabels(i) != sortedLabels(i + 1))
+    else if (sortedSplitDim(i) != sortedSplitDim(i + 1))
     {
       if (count < bucketSize)
       {
@@ -508,7 +508,7 @@ double DecisionStump<MatType>::CalculateEntropy(
     }
   }
 
-  return entropy / std::log(2.0);
+  return -1.0 * entropy / std::log(2.0);
 }
 
 } // namespace decision_stump
