@@ -220,6 +220,7 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
 // Perform bichromatic evaluation
 inline void KDEModel::Evaluate(arma::mat&& querySet, arma::vec& estimations)
 {
+  Log::Info << "Evaluating KDE..." << std::endl;
   DualBiKDE eval(std::move(querySet), estimations);
   boost::apply_visitor(eval, kdeModel);
 }
@@ -227,6 +228,7 @@ inline void KDEModel::Evaluate(arma::mat&& querySet, arma::vec& estimations)
 // Perform monochromatic evaluation
 inline void KDEModel::Evaluate(arma::vec& estimations)
 {
+  Log::Info << "Evaluating KDE..." << std::endl;
   DualMonoKDE eval(estimations);
   boost::apply_visitor(eval, kdeModel);
 }
@@ -325,6 +327,7 @@ template<typename KernelType,
                   typename TreeMatType> class TreeType>
 void TrainVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
 {
+  Log::Info << "Training KDE model..." << std::endl;
   if (kde)
     kde->Train(std::move(referenceSet));
   else

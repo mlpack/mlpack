@@ -241,9 +241,11 @@ Train(MatType referenceSet)
     delete oldFromNewReferences;
   }
   this->ownsReferenceTree = true;
+  Timer::Start("building_reference_tree");
   this->oldFromNewReferences = new std::vector<size_t>;
   this->referenceTree = BuildTree<Tree>(std::move(referenceSet),
                                         *oldFromNewReferences);
+  Timer::Stop("building_reference_tree");
   this->trained = true;
 }
 
@@ -282,10 +284,10 @@ template<typename MetricType,
 void KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
 Evaluate(MatType querySet, arma::vec& estimations)
 {
-  Timer::Start("building_tree");
+  Timer::Start("building_query_tree");
   std::vector<size_t> oldFromNewQueries;
   Tree* queryTree = BuildTree<Tree>(std::move(querySet), oldFromNewQueries);
-  Timer::Stop("building_tree");
+  Timer::Stop("building_query_tree");
   this->Evaluate(queryTree, oldFromNewQueries, estimations);
   delete queryTree;
 }
@@ -336,6 +338,9 @@ Evaluate(Tree* queryTree,
   traverser.Traverse(*queryTree, *referenceTree);
   estimations /= referenceTree->Dataset().n_cols;
   Timer::Stop("computing_kde");
+
+  Log::Info << rules.Scores() << " node combinations were scored." << std::endl;
+  Log::Info << rules.BaseCases() << " base cases were calculated." << std::endl;
 }
 
 template<typename MetricType,
@@ -371,6 +376,9 @@ Evaluate(arma::vec& estimations)
   traverser.Traverse(*referenceTree, *referenceTree);
   estimations /= referenceTree->Dataset().n_cols;
   Timer::Stop("computing_kde");
+
+  Log::Info << rules.Scores() << " node combinations were scored." << std::endl;
+  Log::Info << rules.BaseCases() << " base cases were calculated." << std::endl;
 }
 
 template<typename MetricType,
