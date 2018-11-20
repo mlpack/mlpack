@@ -282,8 +282,10 @@ template<typename MetricType,
 void KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
 Evaluate(MatType querySet, arma::vec& estimations)
 {
+  Timer::Start("building_tree");
   std::vector<size_t> oldFromNewQueries;
   Tree* queryTree = BuildTree<Tree>(std::move(querySet), oldFromNewQueries);
+  Timer::Stop("building_tree");
   this->Evaluate(queryTree, oldFromNewQueries, estimations);
   delete queryTree;
 }
@@ -311,6 +313,7 @@ Evaluate(Tree* queryTree,
     throw std::invalid_argument("cannot train KDE model: querySet and "
                                 "referenceSet dimensions don't match");
 
+  Timer::Start("computing_kde");
   // Get estimations vector ready.
   estimations.clear();
   estimations.resize(queryTree->Dataset().n_cols);
@@ -332,6 +335,7 @@ Evaluate(Tree* queryTree,
   DualTreeTraversalType<RuleType> traverser(rules);
   traverser.Traverse(*queryTree, *referenceTree);
   estimations /= referenceTree->Dataset().n_cols;
+  Timer::Stop("computing_kde");
 }
 
 template<typename MetricType,
@@ -344,6 +348,7 @@ template<typename MetricType,
 void KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
 Evaluate(arma::vec& estimations)
 {
+  Timer::Start("computing_kde");
   // Get estimations vector ready.
   estimations.clear();
   estimations.resize(referenceTree->Dataset().n_cols);
@@ -365,6 +370,7 @@ Evaluate(arma::vec& estimations)
   DualTreeTraversalType<RuleType> traverser(rules);
   traverser.Traverse(*referenceTree, *referenceTree);
   estimations /= referenceTree->Dataset().n_cols;
+  Timer::Stop("computing_kde");
 }
 
 template<typename MetricType,
