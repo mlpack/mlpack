@@ -132,6 +132,47 @@ BOOST_AUTO_TEST_CASE(KDETriangularBallTreeResultsMain)
 }
 
 /**
+  * Ensure that the estimations we get for KDEMain, are the same as the ones we
+  * get from the KDE class without any wrappers in the monochromatic case.
+ **/
+BOOST_AUTO_TEST_CASE(KDEMonoResultsMain)
+{
+  // Datasets
+  arma::mat reference = arma::randu(2, 300);
+  arma::vec kdeEstimations, mainEstimations;
+  double kernelBandwidth = 2.3;
+  double relError = 0.05;
+
+  kernel::EpanechnikovKernel kernel(kernelBandwidth);
+  metric::EuclideanDistance metric;
+  KDE<metric::EuclideanDistance,
+      arma::mat,
+      kernel::EpanechnikovKernel,
+      tree::StandardCoverTree>
+    kde(metric, kernel, relError, 0.0);
+  kde.Train(reference);
+  // Perform monochromatic KDE.
+  kde.Evaluate(kdeEstimations);
+  // Normalize
+  kdeEstimations /= kernel.Normalizer(reference.n_rows);
+
+  // Main estimations
+  SetInputParam("reference", reference);
+  SetInputParam("kernel", std::string("epanechnikov"));
+  SetInputParam("tree", std::string("cover-tree"));
+  SetInputParam("rel_error", relError);
+  SetInputParam("bandwidth", kernelBandwidth);
+
+  mlpackMain();
+
+  mainEstimations = std::move(CLI::GetParam<arma::mat>("output"));
+
+  // Check whether results are equal.
+  for (size_t i = 0; i < reference.n_cols; ++i)
+    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], relError);
+}
+
+/**
   * Ensuring that absence of input data is checked.
  **/
 BOOST_AUTO_TEST_CASE(KDENoInputData)
