@@ -303,8 +303,8 @@ if (NOT ENSMALLEN_FOUND)
       list(LENGTH ENS_DIRECTORIES ENS_DIRECTORIES_LEN)
       if (ENS_DIRECTORIES_LEN EQUAL 1)
         list(GET ENS_DIRECTORIES 0 ENSMALLEN_INCLUDE_DIR)
-        set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} 
-            "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIRS}/include")
+        set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+            "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include")
         message(STATUS
             "Successfully downloaded ensmallen into ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/")
       else ()
