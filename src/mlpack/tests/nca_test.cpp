@@ -13,7 +13,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/nca/nca.hpp>
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
+#include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"

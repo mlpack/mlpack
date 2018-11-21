@@ -15,7 +15,7 @@
 #define MLPACK_METHODS_SVDPLUSPLUS_SVDPLUSPLUS_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
+#include <ensmallen.hpp>
 
 namespace mlpack {
 namespace svd {

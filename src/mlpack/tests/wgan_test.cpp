@@ -17,7 +17,8 @@
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
+
+#include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"

@@ -13,7 +13,7 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
+#include <ensmallen.hpp>
 
 #include <memory>
 #include <set>

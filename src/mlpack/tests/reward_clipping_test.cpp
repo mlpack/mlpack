@@ -26,7 +26,8 @@
 #include <mlpack/methods/reinforcement_learning/q_learning.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
+
+#include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"

@@ -12,10 +12,11 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
+
+#include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"

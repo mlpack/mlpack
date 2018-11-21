@@ -14,7 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
+#include <ensmallen.hpp>
 
 #include "nca_softmax_error_function.hpp"
 

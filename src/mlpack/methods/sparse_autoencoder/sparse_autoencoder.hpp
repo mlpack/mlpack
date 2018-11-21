@@ -13,7 +13,7 @@
 #define MLPACK_METHODS_SPARSE_AUTOENCODER_SPARSE_AUTOENCODER_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
+#include <ensmallen.hpp>
 
 #include "sparse_autoencoder_function.hpp"
 

@@ -1,6 +1,4 @@
 set(DIRS
-  gradient_descent
-  grid_search
 )
 
 foreach(dir ${DIRS})

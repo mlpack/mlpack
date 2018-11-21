@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_REGULARIZED_SVD_REGULARIZED_FUNCTION_SVD_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
+#include <ensmallen.hpp>
 
 namespace mlpack {
 namespace svd {

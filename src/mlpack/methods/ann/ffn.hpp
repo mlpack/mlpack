@@ -30,7 +30,7 @@
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
+#include <ensmallen.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

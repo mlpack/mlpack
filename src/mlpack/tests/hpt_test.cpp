@@ -15,19 +15,18 @@
 #include <mlpack/core/hpt/cv_function.hpp>
 #include <mlpack/core/hpt/fixed.hpp>
 #include <mlpack/core/hpt/hpt.hpp>
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
-#include <mlpack/core/optimizers/gradient_descent/gradient_descent.hpp>
-#include <mlpack/core/optimizers/grid_search/grid_search.hpp>
 #include <mlpack/methods/lars/lars.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+
+#include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 
 using namespace mlpack::cv;
 using namespace mlpack::data;
 using namespace mlpack::hpt;
-using namespace mlpack::optimization;
 using namespace mlpack::regression;
+using namespace ens;
 
 BOOST_AUTO_TEST_SUITE(HPTTest);
 
@@ -219,10 +218,19 @@ BOOST_AUTO_TEST_CASE(GridSearchTest)
   for (double lambda2 : lambda2Set)
     datasetInfo.MapString<size_t>(lambda2, 1);
 
-  GridSearch optimizer;
+  ens::GridSearch optimizer;
   arma::mat actualParameters;
-  double actualObjective =
-      optimizer.Optimize(cvFun, actualParameters, datasetInfo);
+
+  std::vector<bool> categoricalDimensions(datasetInfo.Dimensionality());
+  arma::Row<size_t> numCategories(datasetInfo.Dimensionality());
+  for (size_t d = 0; d < datasetInfo.Dimensionality(); d++)
+  {
+    numCategories[d] = datasetInfo.NumMappings(d);
+    categoricalDimensions[d] = datasetInfo.Type(d) != mlpack::data::Datatype::categorical;
+  }
+
+  double actualObjective = optimizer.Optimize(cvFun, actualParameters,
+      categoricalDimensions, numCategories);
 
   BOOST_REQUIRE_CLOSE(expectedObjective, actualObjective, 1e-5);
   BOOST_REQUIRE_CLOSE(expectedLambda1, actualParameters(0, 0), 1e-5);
@@ -322,7 +330,7 @@ BOOST_AUTO_TEST_CASE(HPTGradientDescentTest)
   // to tell HyperParameterTuner that the objective function (QuadraticFunction)
   // should be minimized.
   HyperParameterTuner<LARS, MSE, QuadraticFunction,
-      mlpack::optimization::GradientDescent> hpt(a, b, c, d, xMin, yMin, zMin);
+      GradientDescent> hpt(a, b, c, d, xMin, yMin, zMin);
 
   // Setting GradientDescent to find more close solution to the optimal one.
   hpt.Optimizer().StepSize() = 0.1;

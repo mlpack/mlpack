@@ -19,7 +19,7 @@
 
 #include "lmnn.hpp"
 
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
+#include <ensmallen.hpp>
 
 // Define parameters.
 PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",

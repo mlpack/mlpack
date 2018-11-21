@@ -18,7 +18,7 @@
 
 #include "nca.hpp"
 
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
+#include <ensmallen.hpp>
 
 // Define parameters.
 PROGRAM_INFO("Neighborhood Components Analysis (NCA)",

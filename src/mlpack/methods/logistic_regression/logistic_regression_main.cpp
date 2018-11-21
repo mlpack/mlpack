@@ -15,7 +15,7 @@
 
 #include "logistic_regression.hpp"
 
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
+#include <ensmallen.hpp>
 
 using namespace std;
 using namespace mlpack;

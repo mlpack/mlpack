@@ -12,7 +12,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
+#include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"

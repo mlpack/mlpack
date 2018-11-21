@@ -13,7 +13,7 @@
 #ifndef MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP
 #define MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP
 
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
+#include <ensmallen.hpp>
 
 namespace mlpack {
 namespace matrix_completion {

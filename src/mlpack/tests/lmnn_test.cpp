@@ -15,7 +15,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/lmnn/lmnn.hpp>
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
+#include <ensmallen.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 #include <boost/test/unit_test.hpp>

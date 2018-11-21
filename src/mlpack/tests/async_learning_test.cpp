@@ -18,10 +18,11 @@
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/reinforcement_learning/async_learning.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/aggregated_policy.hpp>
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
+
+#include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"

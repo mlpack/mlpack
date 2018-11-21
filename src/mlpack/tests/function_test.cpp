@@ -22,7 +22,7 @@
 
 using namespace mlpack;
 using namespace mlpack::optimization;
-using namespace mlpack::optimization::traits; // For some SFINAE checks.
+using namespace ens::traits; // For some SFINAE checks.
 using namespace mlpack::regression;
 
 /**

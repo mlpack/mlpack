@@ -19,7 +19,6 @@
 #include <mlpack/core/cv/metrics/recall.hpp>
 #include <mlpack/core/cv/simple_cv.hpp>
 #include <mlpack/core/cv/k_fold_cv.hpp>
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
@@ -32,6 +31,8 @@
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 #include <mlpack/methods/naive_bayes/naive_bayes_classifier.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
+
+#include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "mock_categorical_data.hpp"

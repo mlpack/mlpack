@@ -12,7 +12,8 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/bias_svd/bias_svd.hpp>
-#include <mlpack/core/optimizers/ensmallen/ensmallen.hpp>
+
+#include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"

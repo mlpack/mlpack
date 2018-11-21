@@ -87,12 +87,22 @@ void HyperParameterTuner<MLAlgorithm,
 {
   static const size_t totalArgs = std::tuple_size<ArgsTuple>::value;
 
+  std::vector<bool> categoricalDimensions(datasetInfo.Dimensionality());
+  arma::Row<size_t> numCategories(datasetInfo.Dimensionality());
+  for (size_t d = 0; d < datasetInfo.Dimensionality(); d++)
+  {
+    numCategories[d] = datasetInfo.NumMappings(d);
+    categoricalDimensions[d] = datasetInfo.Type(d) !=
+        mlpack::data::Datatype::categorical;
+  }
+
   CVFunction<CVType, MLAlgorithm, totalArgs, FixedArgs...>
       cvFunction(cv, relativeDelta, minDelta, fixedArgs...);
-  bestObjective = Metric::NeedsMinimization?
-      optimizer.Optimize(cvFunction, bestParams, datasetInfo) :
-      -optimizer.Optimize(cvFunction, bestParams, datasetInfo);
-  bestModel = std::move(cvFunction.BestModel());
+  bestObjective = Metric::NeedsMinimization ? optimizer.Optimize(cvFunction,
+      bestParams, categoricalDimensions, numCategories) :
+      -optimizer.Optimize(cvFunction, bestParams, categoricalDimensions,
+      numCategories);
+      bestModel = std::move(cvFunction.BestModel());
 }
 
 template<typename MLAlgorithm,
