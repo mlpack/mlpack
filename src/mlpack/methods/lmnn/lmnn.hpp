@@ -93,6 +93,11 @@ class LMNN
   //! Modify the regularization value.
   double& Regularization() { return regularization; }
 
+  //! Access the rebuild tolerance value.
+  const double& RebuildTolerance() const { return rebuildTolerance; }
+  //! Modify the rebuild tolerance value.
+  double& RebuildTolerance() { return rebuildTolerance; }
+
   //! Access the range value.
   const size_t& Range() const { return range; }
   //! Modify the range value.
@@ -119,6 +124,9 @@ class LMNN
 
   //! Regularization value.
   double regularization;
+
+  //! Tolerance for rebuilding trees for impostors.
+  double rebuildTolerance;
 
   //! Range after which impostors need to be recalculated.
   size_t range;

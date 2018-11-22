@@ -1,9 +1,9 @@
 /**
- * @file neighbor_search.hpp
+ * @file neighbor_search_stat.hpp
  * @author Ryan Curtin
  *
- * Defines the NeighborSearch class, which performs an abstract
- * nearest-neighbor-like query on two datasets.
+ * Defines the NeighborSearchStat class, which holds bounds in tree nodes for
+ * the NeighborSearch class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

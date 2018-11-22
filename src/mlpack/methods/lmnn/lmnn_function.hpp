@@ -53,6 +53,8 @@ class LMNNFunction
    * @param labels Input dataset labels.
    * @param k Number of target neighbors to be used.
    * @param regularization Regularization value.
+   * @param rebuildTolerance Tolerance for rebuilding trees for impostor
+   *      recalculation.
    * @param range Range after which impostors need to be recalculated.
    * @param metric Type of metric used for computation.
    */
@@ -60,6 +62,7 @@ class LMNNFunction
                const arma::Row<size_t>& labels,
                size_t k,
                double regularization,
+               double rebuildTolerance,
                size_t range,
                MetricType metric = MetricType());
 
@@ -231,7 +234,7 @@ class LMNNFunction
   //! Holds number of points which are using each transformation matrix.
   std::vector<size_t> oldTransformationCounts;
   //! Holds points to transformation matrix mapping.
-  arma::vec lastTransformationIndices;
+  arma::Row<size_t> lastTransformationIndices;
   //! Used for storing points to re-calculate impostors for.
   arma::uvec points;
   //! Flag for controlling use of bounds over impostors.
@@ -242,10 +245,12 @@ class LMNNFunction
   * uses batches.
   */
   inline void Precalculate();
-  //! Update cache transformation matrices.
+
+  //! Update cached transformation matrices.
   inline void UpdateCache(const arma::mat& transformation,
                           const size_t begin,
                           const size_t batchSize);
+
   //! Calculate norm of change in transformation.
   inline void TransDiff(std::map<size_t, double>& transformationDiffs,
                         const arma::mat& transformation,

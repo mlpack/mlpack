@@ -5,6 +5,10 @@ set(SOURCES
   lmnn_impl.hpp
   lmnn_function.hpp
   lmnn_function_impl.hpp
+  lmnn_targets_rules.hpp
+  lmnn_targets_rules_impl.hpp
+  lmnn_impostors_rules.hpp
+  lmnn_impostors_rules_impl.hpp
   constraints.hpp
   constraints_impl.hpp
 )
