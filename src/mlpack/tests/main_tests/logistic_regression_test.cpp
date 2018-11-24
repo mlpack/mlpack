@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(LRPridictionSizeCheck)
   mlpackMain();
 
   // Get the output predictions of the test data.
-  const arma::Row<size_t> &testY = CLI::GetParam<arma::Row<size_t>>("output");
+  const arma::Row<size_t> &testY = CLI::GetParam<arma::Row<size_t>>("predictions");
 
   // Output predictions size must match the test data set size.
   BOOST_REQUIRE_EQUAL(testY.n_rows, 1);
@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentationTest)
 
   // Get the output.
   const arma::Row<size_t> testY1 =
-      std::move(CLI::GetParam<arma::Row<size_t>>("output"));
+      std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
 
   // Reset the settings.
   bindings::tests::CleanMemory();
@@ -170,7 +170,7 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentationTest)
 
   // get the output
   const arma::Row<size_t> &testY2 =
-      CLI::GetParam<arma::Row<size_t>>("output");
+      CLI::GetParam<arma::Row<size_t>>("predictions");
 
   // Both solutions should be equal.
   BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(LRModelReload)
       CLI::GetParam<LogisticRegression<>*>("output_model");
   // Get the output.
   const arma::Row<size_t> testY1 =
-      std::move(CLI::GetParam<arma::Row<size_t>>("output"));
+      std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
 
   // Reset the data passed.
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
@@ -222,7 +222,7 @@ BOOST_AUTO_TEST_CASE(LRModelReload)
 
   // Get the output.
   const arma::Row<size_t> &testY2 =
-      CLI::GetParam<arma::Row<size_t>>("output");
+      CLI::GetParam<arma::Row<size_t>>("predictions");
 
   // Both solutions must be equal.
   BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
@@ -618,7 +618,7 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
   mlpackMain();
 
   // Get the output after first training.
-  const arma::Row<size_t> output1 = CLI::GetParam<arma::Row<size_t>>("output");
+  const arma::Row<size_t> output1 = CLI::GetParam<arma::Row<size_t>>("predictions");
 
   // Reset the settings.
   bindings::tests::CleanMemory();
@@ -634,7 +634,7 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
   mlpackMain();
 
   // Get the output after second training.
-  const arma::Row<size_t> &output2 = CLI::GetParam<arma::Row<size_t>>("output");
+  const arma::Row<size_t> &output2 = CLI::GetParam<arma::Row<size_t>>("predictions");
 
   // Check that the output changed when the decision boundary moved.
   BOOST_REQUIRE_GT(arma::accu(output1 != output2), 0);
