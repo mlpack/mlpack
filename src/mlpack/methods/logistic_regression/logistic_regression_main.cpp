@@ -126,7 +126,12 @@ PARAM_MODEL_OUT(LogisticRegression<>, "output_model", "Output for trained "
 PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
 PARAM_UROW_OUT("output", "If test data is specified, this matrix is where "
     "the predictions for the test set will be saved.", "o");
+
+//The output matrix with the output_probabilities option can be removed in mlpack 4.0.0
 PARAM_MATRIX_OUT("output_probabilities", "If test data is specified, this "
+    "matrix is where the class probabilities for the test set will be saved.",
+    "p");
+PARAM_MATRIX_OUT("predictions", "If test data is specified, this "
     "matrix is where the class probabilities for the test set will be saved.",
     "p");
 PARAM_DOUBLE_IN("decision_boundary", "Decision boundary for prediction; if the "
