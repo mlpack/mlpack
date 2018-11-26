@@ -149,15 +149,14 @@ static void mlpackMain()
   arma::mat trainingSet;
   arma::Row<size_t> labels;
 
+  // Returns true, if the training parameter is present 
   if (CLI::HasParam("training"))
   {
     model = new DecisionTreeModel();
     model->info = std::move(std::get<0>(CLI::GetParam<TupleType>("training")));
     trainingSet = std::move(std::get<1>(CLI::GetParam<TupleType>("training")));
     if (CLI::HasParam("labels"))
-    {
       labels = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
-    }
     else
     {
       // Extract the labels as the last
@@ -180,30 +179,26 @@ static void mlpackMain()
     {
       arma::Row<double> weights =
           std::move(CLI::GetParam<arma::Mat<double>>("weights"));
+      // Returns true ,if the print_training_error parameter is present
       if (CLI::HasParam("print_training_error"))
-      {
-        model->tree = DecisionTree<>(trainingSet, model->info, labels,
+      model->tree = DecisionTree<>(trainingSet, model->info, labels,
             numClasses, std::move(weights), minLeafSize, minimumGainSplit);
-      }
       else
-      {
-        model->tree = DecisionTree<>(std::move(trainingSet), model->info,
+      model->tree = DecisionTree<>(std::move(trainingSet), model->info,
             std::move(labels), numClasses, std::move(weights), minLeafSize,
             minimumGainSplit);
-      }
+      
     }
     else
     {
+      // Returns true ,if the print_training_error parameter is present
       if (CLI::HasParam("print_training_error"))
-      {
-        model->tree = DecisionTree<>(trainingSet, model->info, labels,
+      model->tree = DecisionTree<>(trainingSet, model->info, labels,
             numClasses, minLeafSize, minimumGainSplit);
-      }
+     
       else
-      {
-        model->tree = DecisionTree<>(std::move(trainingSet), model->info,
+      model->tree = DecisionTree<>(std::move(trainingSet), model->info,
             std::move(labels), numClasses, minLeafSize, minimumGainSplit);
-      }
     }
 
     // Do we need to print training error?
@@ -226,9 +221,8 @@ static void mlpackMain()
     }
   }
   else
-  {
-    model = CLI::GetParam<DecisionTreeModel*>("input_model");
-  }
+  model = CLI::GetParam<DecisionTreeModel*>("input_model");
+  
 
   // Do we need to get predictions?
   if (CLI::HasParam("test"))
