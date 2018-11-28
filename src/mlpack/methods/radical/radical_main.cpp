@@ -2,7 +2,7 @@
  * @file radical_main.cpp
  * @author Nishant Mehta
  *
- * Executable for RADICAL.
+ * Executable for RADICAL, an algorithm for independent component analysis (ICA).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -15,6 +15,14 @@
 #include <mlpack/core/math/random.hpp>
 #include "radical.hpp"
 
+using namespace mlpack;
+using namespace mlpack::radical;
+using namespace mlpack::math;
+using namespace mlpack::util;
+using namespace std;
+using namespace arma;
+
+// Information about the program.
 PROGRAM_INFO("RADICAL", "An implementation of RADICAL, a method for independent "
     "component analysis (ICA).  Assuming that we have an input matrix X, the "
     "goal is to find a square unmixing matrix W such that Y = W * X and the "
@@ -33,11 +41,11 @@ PROGRAM_INFO("RADICAL", "An implementation of RADICAL, a method for independent 
     "\n\n" +
     PRINT_CALL("radical", "input", "X", "replicates", 40, "output_ic", "ic"));
 
+// Define the input parameter that the program takes.
 PARAM_MATRIX_IN_REQ("input", "Input dataset for ICA.", "i");
 
 PARAM_MATRIX_OUT("output_ic", "Matrix to save independent components to.", "o");
 PARAM_MATRIX_OUT("output_unmixing", "Matrix to save unmixing matrix to.", "u");
-
 PARAM_DOUBLE_IN("noise_std_dev", "Standard deviation of Gaussian noise.", "n",
     0.175);
 PARAM_INT_IN("replicates", "Number of Gaussian-perturbed replicates to use "
@@ -50,13 +58,6 @@ PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_FLAG("objective", "If set, an estimate of the final objective function "
     "is printed.", "O");
 
-using namespace mlpack;
-using namespace mlpack::radical;
-using namespace mlpack::math;
-using namespace mlpack::util;
-using namespace std;
-using namespace arma;
-
 static void mlpackMain()
 {
   // Set random seed.
@@ -64,7 +65,8 @@ static void mlpackMain()
     RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
     RandomSeed((size_t) std::time(NULL));
-
+  
+  // Require at least one of the two parameters, output_ic and output_unmixing.
   RequireAtLeastOnePassed({ "output_ic", "output_unmixing" }, false, "no output"
       " will be saved");
 

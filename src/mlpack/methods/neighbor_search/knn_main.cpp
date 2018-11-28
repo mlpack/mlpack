@@ -15,11 +15,9 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
-
 #include <string>
 #include <fstream>
 #include <iostream>
-
 #include "neighbor_search.hpp"
 #include "unmap.hpp"
 #include "ns_model.hpp"
@@ -88,7 +86,6 @@ PARAM_DOUBLE_IN("tau", "Overlapping size (only valid for spill trees).", "u",
     0);
 PARAM_DOUBLE_IN("rho", "Balance threshold (only valid for spill trees).", "b",
     0.7);
-
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
 PARAM_INT_IN("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
@@ -101,6 +98,7 @@ PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate nearest neighbor "
 
 static void mlpackMain()
 {
+  // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else

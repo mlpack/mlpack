@@ -1,3 +1,4 @@
+
 /**
  * @file radical.hpp
  * @author Nishant Mehta
@@ -10,11 +11,10 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#include <mlpack/prereqs.hpp>
 
 #ifndef MLPACK_METHODS_RADICAL_RADICAL_HPP
 #define MLPACK_METHODS_RADICAL_RADICAL_HPP
-
-#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace radical {

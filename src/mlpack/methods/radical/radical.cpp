@@ -93,7 +93,8 @@ double Radical::DoRadical2D(const mat& matX)
   }
 
   uword indOpt = 0;
-  values.min(indOpt); // we ignore the return value; we don't care about it
+  // We ignore the return value; we don't care about it
+  values.min(indOpt); 
   return (indOpt / (double) angles) * M_PI / 2.0;
 }
 
@@ -122,18 +123,14 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
   WhitenFeatureMajorMatrix(matX, matY, matWhitening);
   Timer::Stop("radical_whiten_data");
   // matY is now the whitened form of matX.
-
   // In the RADICAL code, they do not copy and perturb initially, although the
   // paper does.  We follow the code as it should match their reported results
   // and likely does a better job bouncing out of local optima.
   // GeneratePerturbedX(X, X);
-
   // Initialize the unmixing matrix to the whitening matrix.
   Timer::Start("radical_do_radical");
   matW = matWhitening;
-
   mat matYSubspace(nPoints, 2);
-
   mat matJ = eye(nDims, nDims);
 
   for (size_t sweepNum = 0; sweepNum < sweeps; sweepNum++)
