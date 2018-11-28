@@ -134,7 +134,7 @@ PARAM_MATRIX_OUT("transformed_data", "Output matrix for transformed dataset.",
     "D");
 PARAM_MATRIX_OUT("centered_data", "Output matrix for mean-centered dataset.",
     "c");
-PARAM_MATRIX_OUT("predictions", "Output matrix for learned distance matrix.", "p");
+PARAM_MATRIX_OUT("predictions", "Prediction matrix for learned distance matrix.", "p");
 PARAM_FLAG("print_accuracy", "Print accuracies on initial and transformed "
     "dataset", "P");
 PARAM_STRING_IN("optimizer", "Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or "

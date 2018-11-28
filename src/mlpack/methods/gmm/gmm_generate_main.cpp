@@ -40,7 +40,7 @@ PARAM_INT_IN_REQ("samples", "Number of samples to generate.", "n");
 
 //The output matrix with the output_probabilities option can be removed in mlpack 4.0.0
 PARAM_MATRIX_OUT("output", "Matrix to save output samples in.", "o");
-PARAM_MATRIX_OUT("predictions", "Matrix to save output samples in.", "p");
+PARAM_MATRIX_OUT("predictions", "Matrix to save prediction samples in.", "p");
 
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 

@@ -46,7 +46,7 @@ PARAM_MATRIX_IN_REQ("input", "Input data matrix.", "i");
 
 //The output matrix with the output_probabilities option can be removed in mlpack 4.0.0
 PARAM_MATRIX_OUT("output", "Matrix in which to save the output.", "o");
-PARAM_MATRIX_OUT("predictions", "Matrix in which to save the output.", "p");
+PARAM_MATRIX_OUT("predictions", "Matrix in which to save the predictions.", "p");
 PARAM_INT_IN("dimension", "Dimension to apply the binarization. If not set, the"
     " program will binarize every dimension by default.", "d", 0);
 PARAM_DOUBLE_IN("threshold", "Threshold to be applied for binarization. If not "

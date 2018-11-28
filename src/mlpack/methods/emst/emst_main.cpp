@@ -62,7 +62,7 @@ PARAM_MATRIX_IN_REQ("input", "Input data matrix.", "i");
 
 //The output matrix with the output_probabilities option can be removed in mlpack 4.0.0
 PARAM_MATRIX_OUT("output", "Output data.  Stored as an edge list.", "o");
-PARAM_MATRIX_OUT("predictions", "Output data.  Stored as an edge list.", "p");
+PARAM_MATRIX_OUT("predictions", "Prediction data.  Stored as an edge list.", "p");
 PARAM_FLAG("naive", "Compute the MST using O(n^2) naive algorithm.", "n");
 PARAM_INT_IN("leaf_size", "Leaf size in the kd-tree.  One-element leaves give "
     "the empirically best performance, but at the cost of greater memory "

@@ -101,7 +101,7 @@ PARAM_MATRIX_OUT("output", "Matrix to store output labels or labeled data to.",
     "o");
 PARAM_MATRIX_OUT("centroid", "If specified, the centroids of each cluster will "
     " be written to the given file.", "C");
-PARAM_MATRIX_OUT("predictions", "Matrix to store output labels or labeled data to.",
+PARAM_MATRIX_OUT("predictions", "Matrix to store prediction labels or labeled data to.",
     "p");
 
 // k-means configuration options.
