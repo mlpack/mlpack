@@ -163,13 +163,21 @@ add_dependencies(python python_copy)
 # Configure installation script file.
 execute_process(COMMAND ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/print_python_version.py" "${CMAKE_INSTALL_PREFIX}"
-    OUTPUT_VARIABLE NEW_PYTHONPATH)
-install(CODE "set(ENV{PYTHONPATH} ${NEW_PYTHONPATH})")
-install(CODE "execute_process(COMMAND mkdir -p $ENV{DESTDIR}${NEW_PYTHONPATH})")
-install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE}
-    \"${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py\" install
-    --prefix=${CMAKE_INSTALL_PREFIX} --root=$ENV{DESTDIR}
-    WORKING_DIRECTORY \"${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/\")")
+    OUTPUT_VARIABLE CMAKE_PYTHON_PATH)
+string(STRIP "${CMAKE_PYTHON_PATH}" CMAKE_PYTHON_PATH)
+install(CODE "set(ENV{PYTHONPATH} ${CMAKE_PYTHON_PATH})")
+install(CODE "execute_process(COMMAND mkdir -p $ENV{DESTDIR}${CMAKE_PYTHON_PATH})")
+if ($ENV{DESTDIR})
+  install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE}
+      \"${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py\" install
+      --prefix=${CMAKE_INSTALL_PREFIX} --root=$ENV{DESTDIR}
+      WORKING_DIRECTORY \"${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/\")")
+else ()
+  install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE}
+      \"${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py\" install
+      --prefix=${CMAKE_INSTALL_PREFIX}
+      WORKING_DIRECTORY \"${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/\")")
+endif ()
 
 # Prepare __init__.py for having all of the convenience imports appended to it.
 file(COPY mlpack/__init__.py DESTINATION

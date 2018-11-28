@@ -90,14 +90,15 @@ endforeach()
 
 # At install time, we simply install that directory of header files we
 # collected to include/.
-install(DIRECTORY ${CMAKE_BINARY_DIR}/include/mlpack DESTINATION include)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/include/mlpack DESTINATION
+    ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Set generated executables to be installed.  Unfortunately they must manually
 # be entered...
 install(TARGETS mlpack
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib)
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 add_dependencies(mlpack mlpack_headers)
 
