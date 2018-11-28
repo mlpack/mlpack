@@ -54,7 +54,10 @@ PARAM_MODEL_IN_REQ(HMMModel, "model", "Trained HMM to generate sequences with.",
 PARAM_INT_IN_REQ("length", "Length of sequence to generate.", "l");
 
 PARAM_INT_IN("start_state", "Starting state of sequence.", "t", 0);
+
+//The output matrix with the output_probabilities option can be removed in mlpack 4.0.0
 PARAM_MATRIX_OUT("output", "Matrix to save observation sequence to.", "o");
+PARAM_MATRIX_OUT("predictions", "Matrix to save observation sequence to.", "p");
 PARAM_UMATRIX_OUT("state", "Matrix to save hidden state sequence to.", "S");
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 

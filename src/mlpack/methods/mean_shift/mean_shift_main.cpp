@@ -56,8 +56,12 @@ PARAM_FLAG("labels_only", "If specified, only the output labels will be "
 PARAM_FLAG("force_convergence", "If specified, the mean shift algorithm will "
   "continue running regardless of max_iterations until the clusters converge."
   , "f");
+
+//The output matrix with the output_probabilities option can be removed in mlpack 4.0.0
 PARAM_MATRIX_OUT("output", "Matrix to write output labels or labeled data to.",
     "o");
+PARAM_MATRIX_OUT("predictions", "Matrix to write output labels or labeled data to.",
+    "p");
 PARAM_MATRIX_OUT("centroid", "If specified, the centroids of each cluster will "
     "be written to the given matrix.", "C");
 

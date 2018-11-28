@@ -39,7 +39,9 @@ PARAM_MODEL_IN_REQ(GMM, "input_model", "Input GMM to use as model.", "m");
 PARAM_MATRIX_IN_REQ("input", "Input matrix to calculate probabilities of.",
     "i");
 
+//The output matrix with the output_probabilities option can be removed in mlpack 4.0.0
 PARAM_MATRIX_OUT("output", "Matrix to store calculated probabilities in.", "o");
+PARAM_MATRIX_OUT("predictions", "Matrix to store calculated probabilities in.", "p");
 
 static void mlpackMain()
 {

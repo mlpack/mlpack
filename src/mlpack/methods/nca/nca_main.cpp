@@ -85,7 +85,10 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
     "By default, the SGD optimizer is used.");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run NCA on.", "i");
+
+//The output matrix with the output_probabilities option can be removed in mlpack 4.0.0
 PARAM_MATRIX_OUT("output", "Output matrix for learned distance matrix.", "o");
+PARAM_MATRIX_OUT("predictions", "Output matrix for learned distance matrix.", "p");
 PARAM_UROW_IN("labels", "Labels for input dataset.", "l");
 PARAM_STRING_IN("optimizer", "Optimizer to use; 'sgd' or 'lbfgs'.", "O", "sgd");
 
