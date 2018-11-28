@@ -14,7 +14,7 @@ set(DIRS
 )
 
 foreach(dir ${DIRS})
-    add_subdirectory(${dir})
+  add_subdirectory(${dir})
 endforeach()
 
 # MLPACK_SRCS is set in the subdirectories.  The dependencies (MLPACK_LIBRARIES)
@@ -40,8 +40,7 @@ if (NOT BUILD_SHARED_LIBS)
   add_definitions(-DMLPACK_STATIC_DEFINE)
 endif ()
 
-target_link_libraries(mlpack
-  ${MLPACK_LIBRARIES})
+target_link_libraries(mlpack ${MLPACK_LIBRARIES})
 
 set_target_properties(mlpack
   PROPERTIES
