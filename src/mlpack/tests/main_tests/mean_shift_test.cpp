@@ -65,9 +65,9 @@ BOOST_AUTO_TEST_CASE(MeanShiftOutputDimensionTest)
   mlpackMain();
 
   // Now check that the output has 1 extra row for labels.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 3 + 1);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_rows, 3 + 1);
   // Check number of output points are the same.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 100);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_cols, 100);
 }
 
 /**
@@ -86,9 +86,9 @@ BOOST_AUTO_TEST_CASE(MeanShiftLabelOnlyOutputDimensionTest)
   mlpackMain();
 
   // Check that there is only 1 row containing all the labels.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_rows, 1);
   // Check number of output points are the same.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 100);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_cols, 100);
 }
 
 /**
@@ -113,9 +113,9 @@ BOOST_AUTO_TEST_CASE(MeanShiftInPlaceTest)
   mlpackMain();
 
   // Now check that the output has 1 extra row for labels.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, numRows + 1);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_rows, numRows + 1);
   // Check number of output points are the same.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, numCols);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_cols, numCols);
 }
 
 /**

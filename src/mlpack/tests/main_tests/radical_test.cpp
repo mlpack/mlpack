@@ -55,8 +55,8 @@ BOOST_AUTO_TEST_CASE(RadicalOutputDimensionTest)
   mlpackMain();
 
   // Check dimension of Y matrix.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_ic").n_rows, 5);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_ic").n_cols, 3);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_rows, 5);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_cols, 3);
 
   // Check dimension of W matrix.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_unmixing").n_rows, 5);
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(RadicalDiffNoiseStdDevTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  arma::mat Y = CLI::GetParam<arma::mat>("output_ic");
+  arma::mat Y = CLI::GetParam<arma::mat>("predictions");
 
   bindings::tests::CleanMemory();
 
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(RadicalDiffNoiseStdDevTest)
 
   // Check that initial output and final output using two models are different.
   BOOST_REQUIRE_LT(arma::accu(Y ==
-      CLI::GetParam<arma::mat>("output_ic")), Y.n_elem);
+      CLI::GetParam<arma::mat>("predictions")), Y.n_elem);
 }
 
 /**
@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE(RadicalDiffReplicatesTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  arma::mat Y = CLI::GetParam<arma::mat>("output_ic");
+  arma::mat Y = CLI::GetParam<arma::mat>("predictions");
 
   bindings::tests::CleanMemory();
 
@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE(RadicalDiffReplicatesTest)
 
   // Check that initial output and final output using two models are different.
   BOOST_REQUIRE_LT(arma::accu(Y ==
-      CLI::GetParam<arma::mat>("output_ic")), Y.n_elem);
+      CLI::GetParam<arma::mat>("predictions")), Y.n_elem);
 }
 
 /**
@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_CASE(RadicalDiffAnglesTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  arma::mat Y = CLI::GetParam<arma::mat>("output_ic");
+  arma::mat Y = CLI::GetParam<arma::mat>("predictions");
 
   bindings::tests::CleanMemory();
 
@@ -193,7 +193,7 @@ BOOST_AUTO_TEST_CASE(RadicalDiffAnglesTest)
 
   // Check that initial output and final output using two models are different.
   BOOST_REQUIRE_LT(arma::accu(Y ==
-      CLI::GetParam<arma::mat>("output_ic")), Y.n_elem);
+      CLI::GetParam<arma::mat>("predictions")), Y.n_elem);
 }
 
 /**
@@ -208,7 +208,7 @@ BOOST_AUTO_TEST_CASE(RadicalDiffSweepsTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  arma::mat Y = CLI::GetParam<arma::mat>("output_ic");
+  arma::mat Y = CLI::GetParam<arma::mat>("predictions");
 
   bindings::tests::CleanMemory();
 
@@ -220,7 +220,7 @@ BOOST_AUTO_TEST_CASE(RadicalDiffSweepsTest)
 
   // Check that initial output and final output using two models are different.
   BOOST_REQUIRE_LT(arma::accu(Y ==
-      CLI::GetParam<arma::mat>("output_ic")), Y.n_elem);
+      CLI::GetParam<arma::mat>("predictions")), Y.n_elem);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

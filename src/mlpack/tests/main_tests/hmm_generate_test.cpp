@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(HMMGenerateDiscreteHMMCheckDimensionsTest)
 
   // Get the generated observation sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
-  arma::mat obsSeq = CLI::GetParam<arma::mat>("output");
+  arma::mat obsSeq = CLI::GetParam<arma::mat>("predictions");
   BOOST_REQUIRE_EQUAL(obsSeq.n_cols, (size_t)length);
   BOOST_REQUIRE_EQUAL(obsSeq.n_rows, (size_t)1);
   BOOST_REQUIRE_EQUAL(obsSeq.n_elem, (size_t)length);
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(HMMGenerateGaussianHMMCheckDimensionsTest)
 
   // Get the generated observation sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
-  arma::mat obsSeq = CLI::GetParam<arma::mat>("output");
+  arma::mat obsSeq = CLI::GetParam<arma::mat>("predictions");
   BOOST_REQUIRE_EQUAL(obsSeq.n_cols, (size_t)length);
   BOOST_REQUIRE_EQUAL(obsSeq.n_rows, (size_t)1);
   BOOST_REQUIRE_EQUAL(obsSeq.n_elem, (size_t)length);
@@ -158,7 +158,7 @@ BOOST_AUTO_TEST_CASE(HMMGenerateGMMHMMCheckDimensionsTest)
 
   // Get the generated observation sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
-  arma::mat obsSeq = CLI::GetParam<arma::mat>("output");
+  arma::mat obsSeq = CLI::GetParam<arma::mat>("predictions");
   BOOST_REQUIRE_EQUAL(obsSeq.n_cols, (size_t) length);
   BOOST_REQUIRE_EQUAL(obsSeq.n_rows, (size_t) 2);
   BOOST_REQUIRE_EQUAL(obsSeq.n_elem, (size_t) (length*2));

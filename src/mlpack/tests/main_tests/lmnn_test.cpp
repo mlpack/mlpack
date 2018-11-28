@@ -63,9 +63,9 @@ BOOST_AUTO_TEST_CASE(LMNNExplicitImplicitLabelsTest)
   mlpackMain();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_rows,
       inputData.n_rows - 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_cols,
       inputData.n_rows - 1);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_rows,
       inputData.n_rows - 1);
@@ -91,9 +91,9 @@ BOOST_AUTO_TEST_CASE(LMNNExplicitImplicitLabelsTest)
   mlpackMain();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_rows,
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_cols,
       inputData.n_rows);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_rows,
       inputData.n_rows);
@@ -125,9 +125,9 @@ BOOST_AUTO_TEST_CASE(LMNNOptimizerTest)
   mlpackMain();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_rows,
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_cols,
       inputData.n_rows);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_rows,
       inputData.n_rows);
@@ -146,9 +146,9 @@ BOOST_AUTO_TEST_CASE(LMNNOptimizerTest)
   mlpackMain();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_rows,
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_cols,
       inputData.n_rows);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_rows,
       inputData.n_rows);
@@ -167,9 +167,9 @@ BOOST_AUTO_TEST_CASE(LMNNOptimizerTest)
   mlpackMain();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_rows,
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_cols,
       inputData.n_rows);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_rows,
       inputData.n_rows);
@@ -203,9 +203,9 @@ BOOST_AUTO_TEST_CASE(LMNNValidDistanceTest)
   mlpackMain();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_rows,
       inputData.n_rows - 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_cols,
       inputData.n_rows);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_rows,
       inputData.n_rows - 1);
@@ -239,9 +239,9 @@ BOOST_AUTO_TEST_CASE(LMNNValidDistanceTest2)
   mlpackMain();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_rows,
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_cols,
       inputData.n_rows);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_rows,
       inputData.n_rows);
@@ -275,9 +275,9 @@ BOOST_AUTO_TEST_CASE(LMNNInvalidDistanceTest)
   mlpackMain();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_rows,
       inputData.n_rows);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols,
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_cols,
       inputData.n_rows);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("transformed_data").n_rows,
       inputData.n_rows);
@@ -328,7 +328,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffNormalizationTest)
 
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = CLI::GetParam<arma::mat>("predictions");
   arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset rettings.
@@ -346,7 +346,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffNormalizationTest)
 
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
-      arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+      arma::accu(CLI::GetParam<arma::mat>("predictions") != output), 0);
   BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
       transformedData), 0);
 }
@@ -372,7 +372,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffStepSizeTest)
 
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = CLI::GetParam<arma::mat>("predictions");
   arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset settings.
@@ -390,7 +390,7 @@ BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
       transformedData), 0);
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
-      arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+      arma::accu(CLI::GetParam<arma::mat>("predictions") != output), 0);
   BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
       transformedData), 0);
 }
@@ -415,7 +415,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffToleranceTest)
 
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = CLI::GetParam<arma::mat>("predictions");
   arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset settings.
@@ -431,7 +431,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffToleranceTest)
 
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
-      arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+      arma::accu(CLI::GetParam<arma::mat>("predictions") != output), 0);
   BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
       transformedData), 0);
 }
@@ -457,7 +457,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffBatchSizeTest)
 
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = CLI::GetParam<arma::mat>("predictions");
   arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset settings.
@@ -474,7 +474,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffBatchSizeTest)
 
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
-      arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+      arma::accu(CLI::GetParam<arma::mat>("predictions") != output), 0);
   BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
       transformedData), 0);
 }
@@ -501,7 +501,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffNumTargetsTest)
 
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = CLI::GetParam<arma::mat>("predictions");
   arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset settings.
@@ -518,7 +518,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffNumTargetsTest)
 
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
-      arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+      arma::accu(CLI::GetParam<arma::mat>("predictions") != output), 0);
   BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
       transformedData), 0);
 }
@@ -545,7 +545,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffRegularizationTest)
 
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = CLI::GetParam<arma::mat>("predictions");
   arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset settings.
@@ -562,7 +562,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffRegularizationTest)
 
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
-      arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+      arma::accu(CLI::GetParam<arma::mat>("predictions") != output), 0);
   BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
       transformedData), 0);
 }
@@ -588,7 +588,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffRangeTest)
 
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = CLI::GetParam<arma::mat>("predictions");
   arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset settings.
@@ -605,7 +605,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffRangeTest)
 
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
-      arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+      arma::accu(CLI::GetParam<arma::mat>("predictions") != output), 0);
   BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
       transformedData), 0);
 }
@@ -634,7 +634,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffMaxIterationTest)
 
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = CLI::GetParam<arma::mat>("predictions");
   arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset settings.
@@ -653,7 +653,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffMaxIterationTest)
 
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
-      arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+      arma::accu(CLI::GetParam<arma::mat>("predictions") != output), 0);
   BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
       transformedData), 0);
 }
@@ -680,7 +680,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffPassesTest)
 
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = CLI::GetParam<arma::mat>("predictions");
   arma::mat transformedData = CLI::GetParam<arma::mat>("transformed_data");
 
   // Reset settings.
@@ -697,7 +697,7 @@ BOOST_AUTO_TEST_CASE(LMNNDiffPassesTest)
 
   // Check that the output matrices are different.
   BOOST_REQUIRE_GT(
-      arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+      arma::accu(CLI::GetParam<arma::mat>("predictions") != output), 0);
   BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("transformed_data") !=
       transformedData), 0);
 }

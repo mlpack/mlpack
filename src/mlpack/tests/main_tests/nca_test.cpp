@@ -63,8 +63,8 @@ BOOST_AUTO_TEST_CASE(NCAExplicitImplicitLabelsTest)
 
   // Check that last row was treated as label by checking that
   // the output has 1 less row.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 2);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 2);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_rows, 2);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_cols, 2);
 
   // Reset Settings.
   CLI::ClearSettings();
@@ -82,8 +82,8 @@ BOOST_AUTO_TEST_CASE(NCAExplicitImplicitLabelsTest)
   mlpackMain();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 2);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 2);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_rows, 2);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_cols, 2);
 }
 
 /**
@@ -105,8 +105,8 @@ BOOST_AUTO_TEST_CASE(NCALBFGSTest)
   mlpackMain();
 
   // Check that final output has expected number of rows and colums.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 3);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 3);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_rows, 3);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("predictions").n_cols, 3);
 }
 
 /**
@@ -151,7 +151,7 @@ BOOST_AUTO_TEST_CASE(NCANormalizationTest)
 
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = CLI::GetParam<arma::mat>("predictions");
 
   // Reset rettings.
   CLI::ClearSettings();
@@ -175,7 +175,7 @@ BOOST_AUTO_TEST_CASE(NCANormalizationTest)
   mlpackMain();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("predictions") != output), 0);
 }
 
 /**
@@ -196,7 +196,7 @@ BOOST_AUTO_TEST_CASE(NCADifferentStepSizeTest)
 
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = CLI::GetParam<arma::mat>("predictions");
 
   // Reset settings.
   CLI::ClearSettings();
@@ -216,7 +216,7 @@ BOOST_AUTO_TEST_CASE(NCADifferentStepSizeTest)
   mlpackMain();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("predictions") != output), 0);
 }
 
 /**
@@ -238,7 +238,7 @@ BOOST_AUTO_TEST_CASE(NCADifferentToleranceTest)
 
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = CLI::GetParam<arma::mat>("predictions");
 
   // Reset settings.
   CLI::ClearSettings();
@@ -253,7 +253,7 @@ BOOST_AUTO_TEST_CASE(NCADifferentToleranceTest)
   mlpackMain();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("predictions") != output), 0);
 }
 
 /**
@@ -275,7 +275,7 @@ BOOST_AUTO_TEST_CASE(NCADifferentBatchSizeTest)
 
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = CLI::GetParam<arma::mat>("predictions");
 
   // Reset settings.
   CLI::ClearSettings();
@@ -296,7 +296,7 @@ BOOST_AUTO_TEST_CASE(NCADifferentBatchSizeTest)
   mlpackMain();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("predictions") != output), 0);
 }
 
 /**
@@ -316,7 +316,7 @@ BOOST_AUTO_TEST_CASE(NCALinearScanTest)
 
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = CLI::GetParam<arma::mat>("predictions");
 
   // Reset settings.
   CLI::ClearSettings();
@@ -336,7 +336,7 @@ BOOST_AUTO_TEST_CASE(NCALinearScanTest)
   mlpackMain();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("predictions") != output), 0);
 }
 
 /**
@@ -356,7 +356,7 @@ BOOST_AUTO_TEST_CASE(NCALinearScanTest2)
 
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = CLI::GetParam<arma::mat>("predictions");
 
   // Reset Settings.
   CLI::ClearSettings();
@@ -373,7 +373,7 @@ BOOST_AUTO_TEST_CASE(NCALinearScanTest2)
   mlpackMain();
 
   // Check that the output matrices are equal.
-  CheckMatrices(output, CLI::GetParam<arma::mat>("output"));
+  CheckMatrices(output, CLI::GetParam<arma::mat>("predictions"));
 }
 
 /**
@@ -395,7 +395,7 @@ BOOST_AUTO_TEST_CASE(NCADifferentNumBasisTest)
 
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = CLI::GetParam<arma::mat>("predictions");
 
   // Reset Settings.
   CLI::ClearSettings();
@@ -409,7 +409,7 @@ BOOST_AUTO_TEST_CASE(NCADifferentNumBasisTest)
   mlpackMain();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("predictions") != output), 0);
 }
 
 /**
@@ -431,7 +431,7 @@ BOOST_AUTO_TEST_CASE(NCADifferentMaxIterationTest)
 
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = CLI::GetParam<arma::mat>("predictions");
 
   // Reset settings.
   CLI::ClearSettings();
@@ -445,7 +445,7 @@ BOOST_AUTO_TEST_CASE(NCADifferentMaxIterationTest)
   mlpackMain();
 
   // Check that the output matrices are different.
-  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("output") != output), 0);
+  BOOST_REQUIRE_GT(arma::accu(CLI::GetParam<arma::mat>("predictions") != output), 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
