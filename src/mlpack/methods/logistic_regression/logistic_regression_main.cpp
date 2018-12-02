@@ -57,10 +57,10 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     PRINT_PARAM_STRING("max_iterations") + " parameter specifies the maximum "
     "number of allowed iterations, and the " +
     PRINT_PARAM_STRING("tolerance") + " parameter specifies the tolerance for "
-    " convergence.  For the SGD optimizer, the " +
-    PRINT_PARAM_STRING("step_size") + " parameter controls the step size taken"
-    " at each iteration by the optimizer.  The batch size for SGD is controlled"
-    " with the " + PRINT_PARAM_STRING("batch_size") + " parameter. If the "
+    "convergence.  For the SGD optimizer, the " +
+    PRINT_PARAM_STRING("step_size") + " parameter controls the step size taken "
+    "at each iteration by the optimizer.  The batch size for SGD is controlled "
+    "with the " + PRINT_PARAM_STRING("batch_size") + " parameter. If the "
     "objective function for your data is oscillating between Inf and 0, the "
     "step size is probably too large.  There are more parameters for the "
     "optimizers, but the C++ interface must be used to access these."
