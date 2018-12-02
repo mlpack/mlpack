@@ -3,7 +3,7 @@
  * @author Nishant Mehta
  *
  * Declaration of Radical class (RADICAL is Robust, Accurate, Direct ICA
- * aLgorithm).
+ * algorithm).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
