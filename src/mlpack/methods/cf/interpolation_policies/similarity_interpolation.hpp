@@ -21,6 +21,22 @@ namespace cf {
  * With SimilarityInterpolation, interpolation weights are based on
  * similarities between query user and its neighbors. All interpolation
  * weights sum up to one.
+ *
+ * An example of how to use SimilarityInterpolation in CF is shown below:
+ *
+ * @code
+ * extern arma::mat data; // data is a (user, item, rating) table.
+ * // Users for whom recommendations are generated.
+ * extern arma::Col<size_t> users;
+ * arma::Mat<size_t> recommendations; // Resulting recommendations.
+ *
+ * CFType<> cf(data);
+ *
+ * // Generate 10 recommendations for all users.
+ * cf.template GetRecommendations<
+ *     EuclideanSearch,
+ *     SimilarityInterpolation>(10, recommendations);
+ * @endcode
  */
 class SimilarityInterpolation
 {
@@ -40,17 +56,16 @@ class SimilarityInterpolation
    *
    * @param weights Resulting interpolation weights. The size of weights should
    *     be set to the number of neighbors before calling GetWeights().
-   * @param w Matrix W from decomposition.
-   * @param h Matrix H from decomposition.
+   * @param decomposition Decomposition object.
    * @param queryUser Queried user.
    * @param neighbors Neighbors of queried user.
    * @param similarities Similarites between query user and neighbors.
    * @param cleanedData Sparse rating matrix.
    */
-  template <typename VectorType>
+  template <typename VectorType,
+            typename DecompositionPolicy>
   void GetWeights(VectorType&& weights,
-                  const arma::mat& /* w */,
-                  const arma::mat& /* h */,
+                  const DecompositionPolicy& /* decomposition */,
                   const size_t /* queryUser */,
                   const arma::Col<size_t>& neighbors,
                   const arma::vec& similarities,

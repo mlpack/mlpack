@@ -443,7 +443,7 @@ BOOST_AUTO_TEST_CASE(LMNNAccuracyTest)
   // Taking k = 3 as the case of k = 1 can be easily observed.
   double initAccuracy = KnnAccuracy(dataset, labels, 3);
 
-  LMNN<> lmnn(dataset, labels, 1);
+  LMNN<> lmnn(dataset, labels, 2);
 
   arma::mat outputMatrix;
   lmnn.LearnDistance(outputMatrix);

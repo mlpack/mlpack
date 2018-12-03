@@ -27,6 +27,20 @@ namespace cf {
  * normalize all vectors, and then use neighbor::KNN (i.e. NeighborSearch with
  * Euclidean distance, KDTree). Pearson correlation are calculated from
  * Euclidean distance.
+ *
+ * An example of how to use PearsonSearch in CF is shown below:
+ *
+ * @code
+ * extern arma::mat data; // data is a (user, item, rating) table.
+ * // Users for whom recommendations are generated.
+ * extern arma::Col<size_t> users;
+ * arma::Mat<size_t> recommendations; // Resulting recommendations.
+ *
+ * CFType<> cf(data);
+ *
+ * // Generate 10 recommendations for all users.
+ * cf.template GetRecommendations<PearsonSearch>(10, recommendations);
+ * @endcode
  */
 class PearsonSearch
 {

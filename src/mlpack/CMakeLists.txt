@@ -85,7 +85,8 @@ foreach(incl_file ${INCLUDE_FILES})
   add_custom_command(TARGET mlpack_headers POST_BUILD
     COMMAND ${CMAKE_COMMAND} ARGS -E
       copy ${CMAKE_CURRENT_SOURCE_DIR}/${incl_file}
-           ${CMAKE_BINARY_DIR}/include/mlpack/${incl_file})
+           ${CMAKE_BINARY_DIR}/include/mlpack/${incl_file}
+      BYPRODUCTS ${CMAKE_BINARY_DIR}/include/mlpack/${incl_file})
 endforeach()
 
 # At install time, we simply install that directory of header files we

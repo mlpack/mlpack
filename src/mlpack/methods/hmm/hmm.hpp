@@ -200,6 +200,30 @@ class HMM
    * of the most probable sequence is returned.
    *
    * @param dataSeq Sequence of observations.
+   * @param stateProb Matrix in which the log probabilities of each state at each
+   *    time interval will be stored.
+   * @param forwardProb Matrix in which the forward log probabilities of each state
+   *    at each time interval will be stored.
+   * @param backwardProb Matrix in which the backward log probabilities of each
+   *    state at each time interval will be stored.
+   * @param scales Vector in which the log of scaling factors at each time interval
+   *    will be stored.
+   * @return Log-likelihood of most likely state sequence.
+   */
+  double LogEstimate(const arma::mat& dataSeq,
+                     arma::mat& stateLogProb,
+                     arma::mat& forwardLogProb,
+                     arma::mat& backwardLogProb,
+                     arma::vec& logScales) const;
+
+  /**
+   * Estimate the probabilities of each hidden state at each time step for each
+   * given data observation, using the Forward-Backward algorithm.  Each matrix
+   * which is returned has columns equal to the number of data observations, and
+   * rows equal to the number of hidden states in the model.  The log-likelihood
+   * of the most probable sequence is returned.
+   *
+   * @param dataSeq Sequence of observations.
    * @param stateProb Matrix in which the probabilities of each state at each
    *    time interval will be stored.
    * @param forwardProb Matrix in which the forward probabilities of each state
@@ -341,8 +365,8 @@ class HMM
    * @param forwardProb Matrix in which forward probabilities will be saved.
    */
   void Forward(const arma::mat& dataSeq,
-               arma::vec& scales,
-               arma::mat& forwardProb) const;
+               arma::vec& logScales,
+               arma::mat& forwardLogProb) const;
 
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm).  Computes
@@ -356,8 +380,8 @@ class HMM
    * @param backwardProb Matrix in which backward probabilities will be saved.
    */
   void Backward(const arma::mat& dataSeq,
-                const arma::vec& scales,
-                arma::mat& backwardProb) const;
+                const arma::vec& logScales,
+                arma::mat& backwardLogProb) const;
 
   //! Set of emission probability distributions; one for each state.
   std::vector<Distribution> emission;

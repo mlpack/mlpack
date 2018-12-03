@@ -2,11 +2,13 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   batch_svd_method.hpp
+  bias_svd_method.hpp
   nmf_method.hpp
   randomized_svd_method.hpp
   regularized_svd_method.hpp
   svd_complete_method.hpp
   svd_incomplete_method.hpp
+  svdplusplus_method.hpp
 )
 
 # Add directory name to sources.

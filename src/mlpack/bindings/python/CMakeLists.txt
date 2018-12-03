@@ -15,11 +15,11 @@ endif ()
 
 # Generate Python setuptools file.
 # We can probably use FindPythonInterp when we require CMake 3.0.
-find_program(PYTHON "python" REQUIRED)
-if (NOT PYTHON)
+find_package(PythonInterp)
+if (NOT PYTHON_EXECUTABLE)
   not_found_return("Python not found; not building Python bindings.")
 else ()
-  message(STATUS "Found Python: ${PYTHON}")
+  message(STATUS "Found Python: ${PYTHON_EXECUTABLE}")
 endif ()
 
 # Import find_python_module.
@@ -116,7 +116,8 @@ endforeach()
 add_custom_command(TARGET python_copy PRE_BUILD
     COMMAND ${CMAKE_COMMAND} ARGS -E copy
         ${CMAKE_CURRENT_SOURCE_DIR}/setup.cfg
-        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
+        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/
+	BYPRODUCTS ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${cython_file})
 add_custom_command(TARGET python_copy PRE_BUILD
     COMMAND ${CMAKE_COMMAND} ARGS -E copy
         ${CMAKE_CURRENT_SOURCE_DIR}/copy_artifacts.py
@@ -127,20 +128,21 @@ if (BUILD_TESTS)
     add_custom_command(TARGET python_copy PRE_BUILD
         COMMAND ${CMAKE_COMMAND} ARGS -E copy
             ${CMAKE_CURRENT_SOURCE_DIR}/${test_file}
-            ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/tests/)
+            ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/tests/
+	BYPRODUCTS ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/tests/${test_file})
   endforeach ()
 endif ()
 
 # Install any dependencies via setuptools automatically.
 add_custom_command(TARGET python_copy POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E env NO_BUILD=1 ${PYTHON}
+    COMMAND ${CMAKE_COMMAND} -E env NO_BUILD=1 ${PYTHON_EXECUTABLE}
         ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py build
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
 
 # Then do the actual build.
 add_custom_command(TARGET python POST_BUILD
-    COMMAND ${PYTHON} ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
-        build_ext
+    COMMAND ${PYTHON_EXECUTABLE}
+        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py build_ext
     DEPENDS mlpack/arma_numpy.pxd
             mlpack/arma_numpy.pyx
             mlpack/arma.pxd
@@ -153,21 +155,21 @@ add_custom_command(TARGET python POST_BUILD
 
 # Copy the built artifacts, so that it is also an in-place build.
 add_custom_command(TARGET python POST_BUILD
-    COMMAND ${PYTHON}
+    COMMAND ${PYTHON_EXECUTABLE}
         ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/copy_artifacts.py
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
 
 add_dependencies(python python_copy)
 
 # Configure installation script file.
-execute_process(COMMAND ${PYTHON}
+execute_process(COMMAND ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/print_python_version.py" "${CMAKE_INSTALL_PREFIX}"
     OUTPUT_VARIABLE NEW_PYTHONPATH)
 install(CODE "set(ENV{PYTHONPATH} ${NEW_PYTHONPATH})")
-install(CODE "execute_process(COMMAND mkdir -p ${NEW_PYTHONPATH})")
-install(CODE "execute_process(COMMAND ${PYTHON}
+install(CODE "execute_process(COMMAND mkdir -p $ENV{DESTDIR}${NEW_PYTHONPATH})")
+install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE}
     \"${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py\" install
-    --prefix=${CMAKE_INSTALL_PREFIX}
+    --prefix=${CMAKE_INSTALL_PREFIX} --root=$ENV{DESTDIR}
     WORKING_DIRECTORY \"${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/\")")
 
 # Prepare __init__.py for having all of the convenience imports appended to it.
@@ -205,7 +207,8 @@ if (BUILD_PYTHON_BINDINGS)
   # enforce it here.  Although this will always be rebuilt, that's okay because
   # distutils will determine whether or not it *actually* needs to be rebuilt.
   add_custom_target(build_pyx_${name}
-      ${PYTHON} ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
+      ${PYTHON_EXECUTABLE}
+          ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
           build_ext --module=${name}.pyx
       DEPENDS generate_pyx_${name}
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/
@@ -225,8 +228,8 @@ endmacro ()
 # Add a test.
 if (BUILD_PYTHON_BINDINGS)
   add_test(NAME python_bindings_test
-      COMMAND ${PYTHON} ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
-          test
+      COMMAND ${PYTHON_EXECUTABLE}
+          ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py test
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
   set_tests_properties(python_bindings_test
       PROPERTIES ENVIRONMENT "NO_BUILD=1;LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}:${CMAKE_BINARY_DIR}/lib/")

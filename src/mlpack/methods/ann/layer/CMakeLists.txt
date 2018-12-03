@@ -18,6 +18,8 @@ set(SOURCES
   concat_impl.hpp
   concat_performance.hpp
   concat_performance_impl.hpp
+  concatenate.hpp
+  concatenate_impl.hpp
   constant.hpp
   constant_impl.hpp
   convolution.hpp
