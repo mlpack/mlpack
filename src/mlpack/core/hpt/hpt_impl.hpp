@@ -62,6 +62,12 @@ TupleOfHyperParameters<Args...> HyperParameterTuner<MLAlgorithm,
 
   InitAndOptimize<0>(argsTuple, bestParameters, datasetInfo);
 
+  for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
+  {
+    if (datasetInfo.Type(i) == data::Datatype::categorical)
+      bestParameters[i] = datasetInfo.UnmapString(bestParameters[i], i);
+  }
+
   return VectorToTuple<TupleOfHyperParameters<Args...>, 0>(bestParameters);
 }
 
@@ -97,7 +103,7 @@ void HyperParameterTuner<MLAlgorithm,
   }
 
   CVFunction<CVType, MLAlgorithm, totalArgs, FixedArgs...>
-      cvFunction(cv, relativeDelta, minDelta, fixedArgs...);
+      cvFunction(cv, datasetInfo, relativeDelta, minDelta, fixedArgs...);
   bestObjective = Metric::NeedsMinimization ? optimizer.Optimize(cvFunction,
       bestParams, categoricalDimensions, numCategories) :
       -optimizer.Optimize(cvFunction, bestParams, categoricalDimensions,
