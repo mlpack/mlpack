@@ -98,7 +98,7 @@ void HyperParameterTuner<MLAlgorithm,
   for (size_t d = 0; d < datasetInfo.Dimensionality(); d++)
   {
     numCategories[d] = datasetInfo.NumMappings(d);
-    categoricalDimensions[d] = datasetInfo.Type(d) !=
+    categoricalDimensions[d] = datasetInfo.Type(d) ==
         mlpack::data::Datatype::categorical;
   }
 
