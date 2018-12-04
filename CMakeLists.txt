@@ -327,6 +327,14 @@ find_package(Boost 1.49
 
 link_directories(${Boost_LIBRARY_DIRS})
 
+# In Visual Studio, automatic linking is performed, so we don't need to worry
+# about it.  Clear the list of libraries to link against and let Visual Studio
+# handle it.
+if (MSVC)
+  link_directories(${Boost_LIBRARY_DIRS})
+  set(Boost_LIBRARIES "")
+endif ()
+
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${Boost_LIBRARIES})
 set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS} ${Boost_LIBRARY_DIRS})
