@@ -1,5 +1,5 @@
 /***
- * @file mahalanobis_dstance.hpp
+ * @file mahalanobis_distance.hpp
  * @author Ryan Curtin
  *
  * The Mahalanobis distance.
