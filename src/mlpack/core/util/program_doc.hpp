@@ -40,6 +40,11 @@ class ProgramDoc
   ProgramDoc(const std::string& programName,
              const std::function<std::string()>& documentation);
 
+  /**
+   * Construct an empty ProgramDoc object.  (This is not meant to be used!)
+   */
+  ProgramDoc();
+
   //! The name of the program.
   std::string programName;
   //! Documentation for what the program does.
