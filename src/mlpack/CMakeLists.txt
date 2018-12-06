@@ -123,3 +123,9 @@ if (BUILD_PYTHON_BINDINGS)
   configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in
                  ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py)
 endif ()
+
+# If we are building Markdown documentation, we have to run some setup after we
+# recurse into methods/.
+#if (BUILD_MARKDOWN_DOCS)
+  post_markdown_setup()
+#endif ()
