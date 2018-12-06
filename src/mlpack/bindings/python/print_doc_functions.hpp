@@ -20,6 +20,11 @@ namespace bindings {
 namespace python {
 
 /**
+ * Given the name of a binding, print its Python name.
+ */
+inline std::string GetBindingName(const std::string& bindingName);
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>

@@ -21,6 +21,15 @@ namespace bindings {
 namespace cli {
 
 /**
+ * Given the name of a binding, print its command-line name (this returns
+ * "mlpack_<bindingName>".
+ */
+inline std::string GetBindingName(const std::string& bindingName)
+{
+  return "mlpack_" + bindingName;
+}
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>
