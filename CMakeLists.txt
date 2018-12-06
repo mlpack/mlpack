@@ -49,6 +49,7 @@ else ()
   set(CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
   set(CMAKE_INSTALL_MANDIR ${CMAKE_INSTALL_PREFIX}/man)
   set(CMAKE_INSTALL_DOCDIR ${CMAKE_INSTALL_PREFIX}/share/doc/mlpack)
+  set(CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIX}/include)
 endif ()
 
 # This is as of yet unused.
