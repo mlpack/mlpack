@@ -1,0 +1,18 @@
+/**
+ * @file generate_markdown.cpp.in
+ * @author Ryan Curtin
+ *
+ * This file is configured by CMake to generate all of the Markdown required by
+ * the project.
+ */
+#include <mlpack/core.hpp>
+${MARKDOWN_INCLUDE_CODE}
+
+using namespace mlpack;
+using namespace mlpack::bindings;
+using namespace mlpack::bindings::markdown;
+
+int main()
+{
+  ${MARKDOWN_CALL_CODE}
+}
