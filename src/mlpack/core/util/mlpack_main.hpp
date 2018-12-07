@@ -175,7 +175,6 @@ using Option = mlpack::bindings::markdown::MDOption<T>;
 }
 }
 
-static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 #include <mlpack/bindings/markdown/program_doc_wrapper.hpp>
 
@@ -183,14 +182,7 @@ static const std::string testName = "";
 #define PROGRAM_INFO(NAME, DESC) static \
     mlpack::bindings::markdown::ProgramDocWrapper \
     cli_programdoc_dummy_object = \
-    mlpack::bindings::markdown::ProgramDocWrapper(BINDING_NAME, NAME, []() { return DESC; });\
-    namespace mlpack { \
-    namespace bindings { \
-    namespace markdown { \
-    std::string programName = NAME; \
-    } \
-    } \
-    }
+    mlpack::bindings::markdown::ProgramDocWrapper(BINDING_NAME, NAME, []() { return DESC; });
 
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");

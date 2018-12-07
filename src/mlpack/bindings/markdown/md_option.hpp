@@ -26,9 +26,6 @@ namespace mlpack {
 namespace bindings {
 namespace markdown {
 
-// Defined in mlpack_main.hpp.
-extern std::string programName;
-
 /**
  * The Markdown option class.
  */
@@ -41,7 +38,7 @@ class MDOption
    * with CLI. The testName parameter is not used and added for compatibility 
    * reasons.
    */
-  PyOption(const T defaultValue,
+  MDOption(const T defaultValue,
            const std::string& identifier,
            const std::string& description,
            const std::string& alias,
@@ -49,7 +46,7 @@ class MDOption
            const bool required = false,
            const bool input = true,
            const bool noTranspose = false,
-           const std::string& /*testName*/ = "")
+           const std::string& bindingName = "")
   {
     // Create the ParamData object to give to CLI.
     util::ParamData data;
@@ -75,7 +72,7 @@ class MDOption
 
     // Restore the parameters for this program.
     if (identifier != "verbose" && identifier != "copy_all_inputs")
-      CLI::RestoreSettings(programName, false);
+      CLI::RestoreSettings(bindingName, false);
 
     // Set the function pointers that we'll need.  All of these function
     // pointers will be used by both the program that generates the pyx, and
@@ -103,7 +100,7 @@ class MDOption
     // separate.  programName is a global variable from mlpack_main.hpp.
     CLI::Add(std::move(data));
     if (identifier != "verbose" && identifier != "copy_all_inputs")
-      CLI::StoreSettings(programName);
+      CLI::StoreSettings(bindingName);
     CLI::ClearSettings();
   }
 };

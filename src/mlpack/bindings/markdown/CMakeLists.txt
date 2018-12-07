@@ -48,6 +48,7 @@ macro (add_markdown_docs name languages)
   # generate_markdown.<binding>.cpp.
   set(BINDING ${name})
   set(LANGUAGES_PUSH_BACK_CODE "")
+  set(PROGRAM_MAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp")
   foreach (lang ${languages})
     set(LANGUAGES_PUSH_BACK_CODE "${LANGUAGES_PUSH_BACK_CODE}\n  languages.push_back(\"${lang}\");")
   endforeach ()
@@ -95,6 +96,7 @@ function (post_markdown_setup)
   target_link_libraries(generate_markdown mlpack ${MLPACK_LIBRARIES})
   add_dependencies(generate_markdown markdown_copy)
   set_target_properties(generate_markdown PROPERTIES
+      COMPILE_FLAGS -DBINDING_TYPE=BINDING_TYPE_MARKDOWN
       RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/)
 
   add_custom_target(markdown ALL DEPENDS generate_markdown)

@@ -23,7 +23,7 @@ class ProgramDocWrapper
                     const std::string& programName,
                     const std::function<std::string()>& documentation)
   {
-    ProgramDoc pd(programName, std::forward(documentation));
+    util::ProgramDoc pd(programName, documentation);
     BindingInfo::RegisterProgramDoc(bindingName, pd);
   }
 };

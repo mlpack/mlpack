@@ -22,7 +22,7 @@ void PrintDocs(const std::string& bindingName,
 {
   ProgramDoc& programDoc = BindingInfo::GetProgramDoc(bindingName);
 
-  CLI::RestoreSettings(programDoc.programName);
+  CLI::RestoreSettings(bindingName);
 
   // First, for this section, print each of the names.
   for (size_t i = 0; i < languages.size(); ++i)

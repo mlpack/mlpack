@@ -13,6 +13,10 @@
 #include "print_docs.hpp"
 #include "get_binding_name.hpp"
 
+static const std::string testName = "${BINDING}";
+#include <${PROGRAM_MAIN_FILE}>
+
+
 using namespace std;
 
 namespace mlpack {

@@ -29,7 +29,6 @@ util::ProgramDoc& BindingInfo::GetProgramDoc(const std::string& bindingName)
 void BindingInfo::RegisterProgramDoc(const std::string& bindingName,
                                      const util::ProgramDoc& programDoc)
 {
-  std::cout << "register program doc " << bindingName << "\n";
   GetSingleton().map[bindingName] = programDoc;
 }
 
