@@ -15,12 +15,8 @@
 #include <mlpack/core/util/param_data.hpp>
 #include "get_param.hpp"
 #include "get_printable_param.hpp"
-#include "print_class_defn.hpp"
-#include "print_defn.hpp"
-#include "print_doc.hpp"
-#include "print_input_processing.hpp"
-#include "print_output_processing.hpp"
-#include "import_decl.hpp"
+#include "get_printable_param_name.hpp" // For cli bindings.
+#include "get_printable_param_value.hpp" // For cli bindings.
 
 namespace mlpack {
 namespace bindings {
@@ -78,22 +74,13 @@ class MDOption
     // pointers will be used by both the program that generates the pyx, and
     // also the binding itself.  (The binding itself will only use GetParam,
     // GetPrintableParam, and GetRawParam.)
-/*
     CLI::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
     CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
         &GetPrintableParam<T>;
-
-    // These are used by the pyx generator.
-    CLI::GetSingleton().functionMap[data.tname]["PrintClassDefn"] =
-        &PrintClassDefn<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintDefn"] = &PrintDefn<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintOutputProcessing"] =
-        &PrintOutputProcessing<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
-        &PrintInputProcessing<T>;
-    CLI::GetSingleton().functionMap[data.tname]["ImportDecl"] = &ImportDecl<T>;
-*/
+    CLI::GetSingleton().functionMap[data.tname]["GetPrintableParamName"] =
+        &GetPrintableParamName<T>;
+    CLI::GetSingleton().functionMap[data.tname]["GetPrintableParamValue"] =
+        &GetPrintableParamValue<T>;
 
     // Add the ParamData object, then store.  This is necessary because we may
     // import more than one .so that uses CLI, so we have to keep the options
