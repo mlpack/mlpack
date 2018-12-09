@@ -12,6 +12,7 @@
 #include <mlpack/core/tree/bounds.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/metrics/mahalanobis_distance.hpp>
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 
@@ -1659,6 +1660,30 @@ BOOST_AUTO_TEST_CASE(BallTreeTest)
     // Now check that each point is contained inside of all bounds above it.
     CheckPointBounds(root);
   }
+}
+
+/**
+ * Ensure that we can build a ball tree with a custom instantiated metric type.
+ */
+BOOST_AUTO_TEST_CASE(MahalanobisBallTreeTest)
+{
+  arma::mat dataset(10, 1000, arma::fill::randu);
+  arma::mat cov = arma::eye<arma::mat>(10, 10);
+  cov(2, 2) = 2.0; // Just so it's not completely the identity matrix.
+  MahalanobisDistance<> m(std::move(cov));
+
+  typedef BallTree<MahalanobisDistance<>, EmptyStatistic, arma::mat> TreeType;
+
+  TreeType tree(dataset);
+
+  // As long as it built successfully, I am okay with that.
+  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 1000);
+
+  // Also test when we give oldFromNew, since this uses a different code path.
+  std::vector<size_t> oldFromNew;
+  TreeType tree2(std::move(dataset), oldFromNew);
+
+  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 1000);
 }
 
 template<typename TreeType>

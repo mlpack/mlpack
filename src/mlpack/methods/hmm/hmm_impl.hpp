@@ -16,6 +16,7 @@
 
 // Just in case...
 #include "hmm.hpp"
+#include <mlpack/core/math/log_add.hpp>
 
 namespace mlpack {
 namespace hmm {
@@ -115,10 +116,10 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
   for (size_t iter = 0; iter < iterations; iter++)
   {
     // Clear new transition matrix and emission probabilities.
-    arma::vec newInitial(transition.n_rows);
-    newInitial.zeros();
-    arma::mat newTransition(transition.n_rows, transition.n_cols);
-    newTransition.zeros();
+    arma::vec newLogInitial(transition.n_rows);
+    newLogInitial.fill(-std::numeric_limits<double>::infinity());
+    arma::mat newLogTransition(transition.n_rows, transition.n_cols);
+    newLogTransition.fill(-std::numeric_limits<double>::infinity());
 
     // Reset log likelihood.
     loglik = 0;
@@ -129,17 +130,17 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
     // Loop over each sequence.
     for (size_t seq = 0; seq < dataSeq.size(); seq++)
     {
-      arma::mat stateProb;
-      arma::mat forward;
-      arma::mat backward;
-      arma::vec scales;
+      arma::mat stateLogProb;
+      arma::mat forwardLog;
+      arma::mat backwardLog;
+      arma::vec logScales;
 
       // Add the log-likelihood of this sequence.  This is the E-step.
-      loglik += Estimate(dataSeq[seq], stateProb, forward, backward, scales);
+      loglik += LogEstimate(dataSeq[seq], stateLogProb, forwardLog, backwardLog, logScales);
 
       // Add to estimate of initial probability for state j.
       for (size_t j = 0; j < transition.n_cols; ++j)
-        newInitial[j] += stateProb(j, 0);
+        newLogInitial[j] = math::LogAdd(newLogInitial[j], stateLogProb(j, 0));
 
       // Now re-estimate the parameters.  This is the M-step.
       //   pi_i = sum_d ((1 / P(seq[d])) sum_t (f(i, 0) b(i, 0))
@@ -156,14 +157,17 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
             // Estimate of T_ij (probability of transition from state j to state
             // i).  We postpone multiplication of the old T_ij until later.
             for (size_t i = 0; i < transition.n_rows; i++)
-              newTransition(i, j) += forward(j, t) * backward(i, t + 1) *
-                  emission[i].Probability(dataSeq[seq].unsafe_col(t + 1)) /
-                  scales[t + 1];
+            {
+              newLogTransition(i, j) = math::LogAdd(newLogTransition(i, j),
+                  forwardLog(j, t) + backwardLog(i, t + 1) +
+                  emission[i].LogProbability(dataSeq[seq].unsafe_col(t + 1)) -
+                  logScales[t + 1]);
+            }
           }
 
           // Add to list of emission observations, for Distribution::Train().
           emissionList.col(sumTime) = dataSeq[seq].col(t);
-          emissionProb[j][sumTime] = stateProb(j, t);
+          emissionProb[j][sumTime] = exp(stateLogProb(j, t));
         }
         sumTime++;
       }
@@ -179,15 +183,15 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
 
     // Normalize the new initial probabilities.
     if (dataSeq.size() > 1)
-      initial = newInitial / dataSeq.size();
+      initial = exp(newLogInitial) / dataSeq.size();
     else
-      initial = newInitial;
+      initial = exp(newLogInitial);
 
     // Assign the new transition matrix.  We use %= (element-wise
     // multiplication) because every element of the new transition matrix must
     // still be multiplied by the old elements (this is the multiplication we
     // earlier postponed).
-    transition %= newTransition;
+    transition %= exp(newLogTransition);
 
     // Now we normalize the transition matrix.
     for (size_t i = 0; i < transition.n_cols; i++)
@@ -308,22 +312,49 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
  * given data observation.
  */
 template<typename Distribution>
+double HMM<Distribution>::LogEstimate(const arma::mat& dataSeq,
+                                      arma::mat& stateLogProb,
+                                      arma::mat& forwardLogProb,
+                                      arma::mat& backwardLogProb,
+                                      arma::vec& logScales) const
+{
+  // First run the forward-backward algorithm.
+  Forward(dataSeq, logScales, forwardLogProb);
+  Backward(dataSeq, logScales, backwardLogProb);
+
+  // Now assemble the state probability matrix based on the forward and backward
+  // probabilities.
+  stateLogProb = forwardLogProb + backwardLogProb;
+
+  // Finally assemble the log-likelihood and return it.
+  return accu(logScales);
+}
+
+/**
+ * Estimate the probabilities of each hidden state at each time step for each
+ * given data observation.
+ */
+template<typename Distribution>
 double HMM<Distribution>::Estimate(const arma::mat& dataSeq,
                                    arma::mat& stateProb,
                                    arma::mat& forwardProb,
                                    arma::mat& backwardProb,
                                    arma::vec& scales) const
 {
-  // First run the forward-backward algorithm.
-  Forward(dataSeq, scales, forwardProb);
-  Backward(dataSeq, scales, backwardProb);
+  arma::mat stateLogProb;
+  arma::mat forwardLogProb;
+  arma::mat backwardLogProb;
+  arma::vec logScales;
 
-  // Now assemble the state probability matrix based on the forward and backward
-  // probabilities.
-  stateProb = forwardProb % backwardProb;
+  const double loglikelihood = LogEstimate(dataSeq, stateLogProb,
+      forwardLogProb, backwardLogProb, logScales);
 
-  // Finally assemble the log-likelihood and return it.
-  return accu(log(scales));
+  stateProb = exp(stateLogProb);
+  forwardProb = exp(forwardLogProb);
+  backwardProb = exp(backwardLogProb);
+  scales = exp(logScales);
+
+  return loglikelihood;
 }
 
 /**
@@ -335,10 +366,17 @@ double HMM<Distribution>::Estimate(const arma::mat& dataSeq,
                                    arma::mat& stateProb) const
 {
   // We don't need to save these.
-  arma::mat forwardProb, backwardProb;
-  arma::vec scales;
+  arma::mat stateLogProb;
+  arma::mat forwardLogProb;
+  arma::mat backwardLogProb;
+  arma::vec logScales;
 
-  return Estimate(dataSeq, stateProb, forwardProb, backwardProb, scales);
+  const double loglikelihood = LogEstimate(dataSeq, stateLogProb,
+      forwardLogProb, backwardLogProb, logScales);
+
+  stateProb = exp(stateLogProb);
+
+  return loglikelihood;
 }
 
 /**
@@ -417,8 +455,8 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
   logStateProb.col(0).zeros();
   for (size_t state = 0; state < transition.n_rows; state++)
   {
-    logStateProb(state, 0) = log(initial[state] *
-        emission[state].Probability(dataSeq.unsafe_col(0)));
+    logStateProb(state, 0) = log(initial[state]) +
+        emission[state].LogProbability(dataSeq.unsafe_col(0));
     stateSeqBack(state, 0) = state;
   }
 
@@ -433,8 +471,8 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
     {
       arma::vec prob = logStateProb.col(t - 1) + logTrans.col(j);
       logStateProb(j, t) = prob.max(index) +
-          log(emission[j].Probability(dataSeq.unsafe_col(t)));
-        stateSeqBack(j, t) = index;
+          emission[j].LogProbability(dataSeq.unsafe_col(t));
+      stateSeqBack(j, t) = index;
     }
   }
 
@@ -442,8 +480,10 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
   logStateProb.unsafe_col(dataSeq.n_cols - 1).max(index);
   stateSeq[dataSeq.n_cols - 1] = index;
   for (size_t t = 2; t <= dataSeq.n_cols; t++)
+  {
     stateSeq[dataSeq.n_cols - t] =
         stateSeqBack(stateSeq[dataSeq.n_cols - t + 1], dataSeq.n_cols - t + 1);
+  }
 
   return logStateProb(stateSeq(dataSeq.n_cols - 1), dataSeq.n_cols - 1);
 }
@@ -454,13 +494,13 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
 template<typename Distribution>
 double HMM<Distribution>::LogLikelihood(const arma::mat& dataSeq) const
 {
-  arma::mat forward;
-  arma::vec scales;
+  arma::mat forwardLog;
+  arma::vec logScales;
 
-  Forward(dataSeq, scales, forward);
+  Forward(dataSeq, logScales, forwardLog);
 
   // The log-likelihood is the log of the scales for each time step.
-  return accu(log(scales));
+  return accu(logScales);
 }
 
 /**
@@ -472,9 +512,11 @@ void HMM<Distribution>::Filter(const arma::mat& dataSeq,
                                size_t ahead) const
 {
   // First run the forward algorithm.
-  arma::mat forwardProb;
-  arma::vec scales;
-  Forward(dataSeq, scales, forwardProb);
+  arma::mat forwardLogProb;
+  arma::vec logScales;
+  Forward(dataSeq, logScales, forwardLogProb);
+
+  arma::mat forwardProb = exp(forwardProb);
 
   // Propagate state ahead.
   if (ahead != 0)
@@ -495,14 +537,17 @@ void HMM<Distribution>::Smooth(const arma::mat& dataSeq,
                                arma::mat& smoothSeq) const
 {
   // First run the forward algorithm.
-  arma::mat stateProb;
-  Estimate(dataSeq, stateProb);
+  arma::mat stateLogProb;
+  arma::mat forwardLogProb;
+  arma::mat backwardLogProb;
+  arma::mat logScales;
+  LogEstimate(dataSeq, stateLogProb, forwardLogProb, backwardLogProb, logScales);
 
   // Compute expected emissions.
   // Will not work for distributions without a Mean() function.
   smoothSeq.zeros(dimensionality, dataSeq.n_cols);
   for (size_t i = 0; i < emission.size(); i++)
-    smoothSeq += emission[i].Mean() * stateProb.row(i);
+    smoothSeq += emission[i].Mean() * exp(stateLogProb.row(i));
 }
 
 /**
@@ -510,13 +555,17 @@ void HMM<Distribution>::Smooth(const arma::mat& dataSeq,
  */
 template<typename Distribution>
 void HMM<Distribution>::Forward(const arma::mat& dataSeq,
-                                arma::vec& scales,
-                                arma::mat& forwardProb) const
+                                arma::vec& logScales,
+                                arma::mat& forwardLogProb) const
 {
   // Our goal is to calculate the forward probabilities:
   //  P(X_k | o_{1:k}) for all possible states X_k, for each time point k.
-  forwardProb.zeros(transition.n_rows, dataSeq.n_cols);
-  scales.zeros(dataSeq.n_cols);
+  forwardLogProb.resize(transition.n_rows, dataSeq.n_cols);
+  forwardLogProb.fill(-std::numeric_limits<double>::infinity());
+  logScales.resize(dataSeq.n_cols);
+  logScales.fill(-std::numeric_limits<double>::infinity());
+
+  arma::mat logTrans = trans(log(transition));
 
   // The first entry in the forward algorithm uses the initial state
   // probabilities.  Note that MATLAB assumes that the starting state (at
@@ -524,13 +573,15 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
   // behavior, you could append a single starting state to every single data
   // sequence and that should produce results in line with MATLAB.
   for (size_t state = 0; state < transition.n_rows; state++)
-    forwardProb(state, 0) = initial(state) *
-        emission[state].Probability(dataSeq.unsafe_col(0));
+  {
+    forwardLogProb(state, 0) = log(initial(state)) +
+        emission[state].LogProbability(dataSeq.unsafe_col(0));
+  }
 
   // Then normalize the column.
-  scales[0] = accu(forwardProb.col(0));
-  if (scales[0] > 0.0)
-    forwardProb.col(0) /= scales[0];
+  logScales[0] = math::AccuLog(forwardLogProb.col(0));
+  if (std::isfinite(logScales[0]))
+    forwardLogProb.col(0) -= logScales[0];
 
   // Now compute the probabilities for each successive observation.
   for (size_t t = 1; t < dataSeq.n_cols; t++)
@@ -540,29 +591,31 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
       // The forward probability of state j at time t is the sum over all states
       // of the probability of the previous state transitioning to the current
       // state and emitting the given observation.
-      forwardProb(j, t) = accu(forwardProb.col(t - 1) %
-          trans(transition.row(j))) *
-          emission[j].Probability(dataSeq.unsafe_col(t));
+      arma::vec tmp = forwardLogProb.col(t - 1) + logTrans.col(j);
+      forwardLogProb(j, t) = math::AccuLog(tmp) +
+          emission[j].LogProbability(dataSeq.unsafe_col(t));
     }
 
     // Normalize probability.
-    scales[t] = accu(forwardProb.col(t));
-    if (scales[t] > 0.0)
-      forwardProb.col(t) /= scales[t];
+    logScales[t] = math::AccuLog(forwardLogProb.col(t));
+    if(std::isfinite(logScales[t]))
+        forwardLogProb.col(t) -= logScales[t];
   }
 }
 
 template<typename Distribution>
 void HMM<Distribution>::Backward(const arma::mat& dataSeq,
-                                 const arma::vec& scales,
-                                 arma::mat& backwardProb) const
+                                 const arma::vec& logScales,
+                                 arma::mat& backwardLogProb) const
 {
   // Our goal is to calculate the backward probabilities:
   //  P(X_k | o_{k + 1:T}) for all possible states X_k, for each time point k.
-  backwardProb.zeros(transition.n_rows, dataSeq.n_cols);
+  backwardLogProb.resize(transition.n_rows, dataSeq.n_cols);
+  backwardLogProb.fill(-std::numeric_limits<double>::infinity());
+  arma::mat logTrans = log(transition);
 
   // The last element probability is 1.
-  backwardProb.col(dataSeq.n_cols - 1).fill(1);
+  backwardLogProb.col(dataSeq.n_cols - 1).fill(0);
 
   // Now step backwards through all other observations.
   for (size_t t = dataSeq.n_cols - 2; t + 1 > 0; t--)
@@ -574,12 +627,15 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
       // current state multiplied by the probability of each of those states
       // emitting the given observation.
       for (size_t state = 0; state < transition.n_rows; state++)
-        backwardProb(j, t) += transition(state, j) * backwardProb(state, t + 1)
-            * emission[state].Probability(dataSeq.unsafe_col(t + 1));
+      {
+        backwardLogProb(j, t) = math::LogAdd(backwardLogProb(j, t),
+            logTrans(state, j) + backwardLogProb(state, t + 1)
+            + emission[state].LogProbability(dataSeq.unsafe_col(t + 1)));
+      }
 
       // Normalize by the weights from the forward algorithm.
-      if (scales[t + 1] > 0.0)
-        backwardProb(j, t) /= scales[t + 1];
+      if (std::isfinite(logScales[t + 1]))
+        backwardLogProb(j, t) -= logScales[t + 1];
     }
   }
 }
