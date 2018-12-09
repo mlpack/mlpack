@@ -15,12 +15,11 @@
 
 #include "logistic_regression.hpp"
 
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <ensmallen.hpp>
 
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::regression;
-using namespace mlpack::optimization;
 using namespace mlpack::util;
 
 PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
@@ -279,7 +278,7 @@ static void mlpackMain()
 
     if (optimizerType == "sgd")
     {
-      SGD<> sgdOpt;
+      ens::SGD<> sgdOpt;
       sgdOpt.MaxIterations() = maxIterations;
       sgdOpt.Tolerance() = tolerance;
       sgdOpt.StepSize() = stepSize;
@@ -291,7 +290,7 @@ static void mlpackMain()
     }
     else if (optimizerType == "lbfgs")
     {
-      L_BFGS lbfgsOpt;
+      ens::L_BFGS lbfgsOpt;
       lbfgsOpt.MaxIterations() = maxIterations;
       lbfgsOpt.MinGradientNorm() = tolerance;
       Log::Info << "Training model with L-BFGS optimizer." << endl;

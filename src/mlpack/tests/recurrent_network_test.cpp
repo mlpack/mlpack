@@ -11,8 +11,7 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
-#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
+#include <ensmallen.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
@@ -26,7 +25,7 @@
 
 using namespace mlpack;
 using namespace mlpack::ann;
-using namespace mlpack::optimization;
+using namespace ens;
 using namespace mlpack::math;
 
 BOOST_AUTO_TEST_SUITE(RecurrentNetworkTest);

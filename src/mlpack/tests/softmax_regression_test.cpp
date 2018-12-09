@@ -18,7 +18,6 @@
 using namespace mlpack;
 using namespace mlpack::regression;
 using namespace mlpack::distribution;
-using namespace mlpack::optimization;
 
 BOOST_AUTO_TEST_SUITE(SoftmaxRegressionTest);
 
@@ -362,7 +361,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainTest)
   SoftmaxRegression sr2(dataset.n_rows, 2);
   sr.Parameters() = sr2.Parameters();
   sr.Train(dataset, labels, 2);
-  L_BFGS lbfgs;
+  ens::L_BFGS lbfgs;
   sr2.Train(dataset, labels, 2, std::move(lbfgs));
 
   // Ensure that the parameters are the same.
@@ -387,10 +386,10 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionOptimizerTrainTest)
   for (size_t i = 500; i < 1000; ++i)
     labels[i] = size_t(1.0);
 
-  L_BFGS lbfgs;
+  ens::L_BFGS lbfgs;
   SoftmaxRegression sr(dataset.n_rows, 2, true);
 
-  L_BFGS lbfgs2;
+  ens::L_BFGS lbfgs2;
   SoftmaxRegression sr2(dataset.n_rows, 2, true);
 
   sr.Lambda() = sr2.Lambda() = 0.01;

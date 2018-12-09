@@ -30,7 +30,7 @@
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
+#include <ensmallen.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -106,7 +106,7 @@ class FFN
   /**
    * Train the feedforward network on the given input data. By default, the
    * RMSProp optimization algorithm is used, but others can be specified
-   * (such as mlpack::optimization::SGD).
+   * (such as ens::SGD).
    *
    * This will use the existing model parameters as a starting point for the
    * optimization. If this is not what you want, then you should access the
@@ -119,7 +119,7 @@ class FFN
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    */
-  template<typename OptimizerType = mlpack::optimization::RMSProp>
+  template<typename OptimizerType = ens::RMSProp>
   void Train(arma::mat predictors, arma::mat responses);
 
   /**
