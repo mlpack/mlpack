@@ -34,12 +34,24 @@ option(FORCE_CXX11
 option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
 enable_testing()
 
-# Set required standard to c++11
+# Set required standard to C++11.
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
+
+# If we are on a Unix-like system, use the GNU install directories module.
+# Otherwise set the values manually.
+if (UNIX)
+  include(GNUInstallDirs)
+else ()
+  set(CMAKE_INSTALL_BINDIR ${CMAKE_INSTALL_PREFIX}/bin)
+  set(CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
+  set(CMAKE_INSTALL_MANDIR ${CMAKE_INSTALL_PREFIX}/man)
+  set(CMAKE_INSTALL_DOCDIR ${CMAKE_INSTALL_PREFIX}/share/doc/mlpack)
+  set(CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIX}/include)
+endif ()
 
 # This is as of yet unused.
 #option(PGO "Use profile-guided optimization if not a debug build" ON)
@@ -491,7 +503,7 @@ if (BUILD_CLI_EXECUTABLES AND UNIX)
 
     # Set the rules to install the documentation.
     install(DIRECTORY ${CMAKE_BINARY_DIR}/share/man/
-        DESTINATION share/man/man1/)
+        DESTINATION ${CMAKE_INSTALL_MANDIR})
   endif ()
 endif ()
 
@@ -543,7 +555,7 @@ if (DOXYGEN_FOUND)
   )
 
   install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html
-      DESTINATION share/doc/mlpack
+      DESTINATION ${CMAKE_INSTALL_DOCDIR}
       COMPONENT doc
       OPTIONAL
   )
@@ -622,7 +634,6 @@ if (PKG_CONFIG_FOUND)
       DEPENDS mlpack_headers
       COMMENT "Generating mlpack.pc (pkg-config) file.")
 
-  # Do we need a different directory?
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc
-      DESTINATION lib/pkgconfig/)
+      DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig/)
 endif ()
