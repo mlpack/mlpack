@@ -9,7 +9,6 @@ set(DIRS
   kernels
   math
   metrics
-  optimizers
   tree
   util
 )

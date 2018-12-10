@@ -14,9 +14,7 @@
 #define MLPACK_METHODS_REGULARIZED_SVD_REGULARIZED_FUNCTION_SVD_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
-#include <mlpack/core/optimizers/parallel_sgd/parallel_sgd.hpp>
-#include <mlpack/core/optimizers/parallel_sgd/decay_policies/exponential_backoff.hpp>
+#include <ensmallen.hpp>
 
 namespace mlpack {
 namespace svd {
@@ -135,8 +133,7 @@ class RegularizedSVDFunction
 } // namespace svd
 } // namespace mlpack
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
   /**
    * Template specialization for the SGD and parallel SGD optimizer. Used
@@ -156,8 +153,7 @@ namespace optimization {
       mlpack::svd::RegularizedSVDFunction<arma::mat>& function,
       arma::mat& parameters);
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #include "regularized_svd_function_impl.hpp"
 

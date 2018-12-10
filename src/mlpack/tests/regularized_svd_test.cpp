@@ -11,15 +11,15 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/regularized_svd/regularized_svd.hpp>
-#include <mlpack/core/optimizers/parallel_sgd/parallel_sgd.hpp>
-#include <mlpack/core/optimizers/parallel_sgd/decay_policies/constant_step.hpp>
+
+#include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::svd;
-using namespace mlpack::optimization;
+using namespace ens;
 
 BOOST_AUTO_TEST_SUITE(RegularizedSVDTest);
 
@@ -229,7 +229,7 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimize)
 
   // Make the Reg SVD function and the optimizer.
   RegularizedSVDFunction<arma::mat> rSVDFunc(data, rank, lambda);
-  mlpack::optimization::StandardSGD optimizer(alpha, iterations * numRatings);
+  ens::StandardSGD optimizer(alpha, iterations * numRatings);
 
   // Obtain optimized parameters after training.
   arma::mat optParameters = arma::randu(rank, numUsers + numItems);

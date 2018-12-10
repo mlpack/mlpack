@@ -15,9 +15,7 @@
 #define MLPACK_METHODS_SVDPLUSPLUS_SVDPLUSPLUS_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
-#include <mlpack/core/optimizers/parallel_sgd/parallel_sgd.hpp>
-#include <mlpack/core/optimizers/parallel_sgd/decay_policies/exponential_backoff.hpp>
+#include <ensmallen.hpp>
 
 namespace mlpack {
 namespace svd {
@@ -149,8 +147,7 @@ class SVDPlusPlusFunction
 } // namespace svd
 } // namespace mlpack
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
   /**
    * Template specialization for the SGD and parallel SGD optimizer. Used
@@ -170,8 +167,7 @@ namespace optimization {
       mlpack::svd::SVDPlusPlusFunction<arma::mat>& function,
       arma::mat& parameters);
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #include "svdplusplus_function_impl.hpp"
 

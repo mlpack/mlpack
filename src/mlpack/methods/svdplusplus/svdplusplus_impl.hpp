@@ -43,14 +43,14 @@ void SVDPlusPlus<OptimizerType>::Apply(const arma::mat& data,
   const int batchSize = 1;
   Log::Warn << "The batch size for optimizing SVDPlusPlus is 1."
       << std::endl;
-  
+
   // Converts implicitData to the form of sparse matrix.
   arma::sp_mat cleanedData;
   CleanData(implicitData, cleanedData, data);
 
   // Make the optimizer object using a SVDPlusPlusFunction object.
   SVDPlusPlusFunction<arma::mat> svdPPFunc(data, cleanedData, rank, lambda);
-  mlpack::optimization::StandardSGD optimizer(alpha, batchSize,
+  ens::StandardSGD optimizer(alpha, batchSize,
       iterations * data.n_cols);
 
   // Get optimized parameters.

@@ -765,7 +765,7 @@ BOOST_AUTO_TEST_CASE(LSTMRrhoTest)
   modelB.Add<LSTM<> >(10, 3);
   modelB.Add<LogSoftMax<> >();
 
-  optimization::StandardSGD opt(0.1, 1, 5, -100, false);
+  ens::StandardSGD opt(0.1, 1, 5, -100, false);
   modelA.Train(input, target, opt);
   modelB.Train(input, target, opt);
 
@@ -846,7 +846,7 @@ BOOST_AUTO_TEST_CASE(FastLSTMRrhoTest)
   modelB.Add<FastLSTM<> >(10, 3);
   modelB.Add<LogSoftMax<> >();
 
-  optimization::StandardSGD opt(0.1, 1, 5, -100, false);
+  ens::StandardSGD opt(0.1, 1, 5, -100, false);
   modelA.Train(input, target, opt);
   modelB.Train(input, target, opt);
 
