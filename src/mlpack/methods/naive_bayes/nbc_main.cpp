@@ -101,13 +101,16 @@ PARAM_FLAG("incremental_variance", "The variance of each class will be "
 // Test parameters.
 PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
 
+//The output matrix with the output can be removed in mlpack 4.0.0
 PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
     " test set will be written.", "o");
+PARAM_UROW_OUT("predictions", "The matrix in which the predicted labels for the"
+    " test set will be written.", "o");
 
-//The output matrix with the output_probabilities option can be removed in mlpack 4.0.0
+//The output matrix with the output_probs can be removed in mlpack 4.0.0
 PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability"
     " of labels for the test set will be written.", "p");
-PARAM_MATRIX_OUT("predictions", "The matrix in which the predicted probability"
+PARAM_MATRIX_OUT("probabilities", "The matrix in which the predicted probability"
     " of labels for the test set will be written.", "p");
 
 static void mlpackMain()

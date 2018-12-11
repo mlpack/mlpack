@@ -128,13 +128,11 @@ PARAM_MATRIX_IN("distance", "Initial distance matrix to be used as "
 PARAM_UROW_IN("labels", "Labels for input dataset.", "l");
 PARAM_INT_IN("k", "Number of target neighbors to use for each "
     "datapoint.", "k", 1);
-//The output matrix with the output_probabilities option can be removed in mlpack 4.0.0
 PARAM_MATRIX_OUT("output", "Output matrix for learned distance matrix.", "o");
 PARAM_MATRIX_OUT("transformed_data", "Output matrix for transformed dataset.",
     "D");
 PARAM_MATRIX_OUT("centered_data", "Output matrix for mean-centered dataset.",
     "c");
-PARAM_MATRIX_OUT("predictions", "Prediction matrix for learned distance matrix.", "p");
 PARAM_FLAG("print_accuracy", "Print accuracies on initial and transformed "
     "dataset", "P");
 PARAM_STRING_IN("optimizer", "Optimizer to use; 'amsgrad', 'bbsgd', 'sgd', or "

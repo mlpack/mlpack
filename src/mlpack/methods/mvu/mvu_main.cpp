@@ -24,10 +24,7 @@ PROGRAM_INFO("Maximum Variance Unfolding (MVU)", "This program implements "
 PARAM_MATRIX_IN_REQ("input", "Input dataset.", "i");
 PARAM_INT_IN_REQ("new_dim", "New dimensionality of dataset.", "d");
 
-
-//The output matrix with the output_probabilities option can be removed in mlpack 4.0.0
 PARAM_MATRIX_OUT("output", "Matrix to save unfolded dataset to.", "o");
-PARAM_MATRIX_OUT("predictions", "Matrix to save unfolded dataset to.", "p");
 PARAM_INT_IN("num_neighbors", "Number of nearest neighbors to consider while "
     "unfolding.", "k", 5);
 

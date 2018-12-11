@@ -35,9 +35,7 @@ PROGRAM_INFO("RADICAL", "An implementation of RADICAL, a method for independent 
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset for ICA.", "i");
 
-//The output matrix with the output_probabilities option can be removed in mlpack 4.0.0
 PARAM_MATRIX_OUT("output_ic", "Matrix to save independent components to.", "o");
-PARAM_MATRIX_OUT("predictions","Matrix to save independent components to. ", "p");
 PARAM_MATRIX_OUT("output_unmixing", "Matrix to save unmixing matrix to.", "u");
 
 PARAM_DOUBLE_IN("noise_std_dev", "Standard deviation of Gaussian noise.", "n",

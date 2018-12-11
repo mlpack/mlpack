@@ -56,10 +56,7 @@ PROGRAM_INFO("Principal Components Analysis", "This program performs principal "
 
 // Parameters for program.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform PCA on.", "i");
-
-//The output matrix with the output_probabilities option can be removed in mlpack 4.0.0
 PARAM_MATRIX_OUT("output", "Matrix to save modified dataset to.", "o");
-PARAM_MATRIX_OUT("predictions", "Matrix to save modified dataset to.", "p");
 PARAM_INT_IN("new_dimensionality", "Desired dimensionality of output dataset. "
     "If 0, no dimensionality reduction is performed.", "d", 0);
 PARAM_DOUBLE_IN("var_to_retain", "Amount of variance to retain; should be "
