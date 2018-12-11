@@ -96,10 +96,7 @@ PROGRAM_INFO("Kernel Principal Components Analysis",
     "following list: 'kmeans', 'random', 'ordered'.");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform KPCA on.", "i");
-
-//The output matrix with the output_probabilities option can be removed in mlpack 4.0.0
 PARAM_MATRIX_OUT("output", "Matrix to save modified dataset to.", "o");
-PARAM_MATRIX_OUT("predictions", "Matrix to save modified dataset to.", "p");
 PARAM_STRING_IN_REQ("kernel", "The kernel to use; see the above documentation "
     "for the list of usable kernels.", "k");
 

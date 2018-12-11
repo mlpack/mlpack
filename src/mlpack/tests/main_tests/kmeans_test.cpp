@@ -180,7 +180,7 @@ BOOST_AUTO_TEST_CASE(KmClusteringSizeCheckLabelOnly)
 
 
 /**
- * Checking that output are not same when --allow_empty_clusters or kill_empty_clusters are specified
+ * Checking that predictions are not same when --allow_empty_clusters or kill_empty_clusters are specified
  */
 BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
 {
