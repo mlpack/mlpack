@@ -28,7 +28,13 @@ namespace ann /** Artificial Neural Network. */ {
 template <typename InputDataType, typename OutputDataType,
           typename... CustomLayers>
 Sequential<InputDataType, OutputDataType, CustomLayers...>::Sequential(
-    const bool model) : model(model), reset(false), width(0), height(0)
+    const bool model,
+    const bool residual) :
+    model(model),
+    residual(residual),
+    reset(false),
+    width(0),
+    height(0)
 {
   // Nothing to do here.
 }
@@ -99,12 +105,23 @@ void Sequential<InputDataType, OutputDataType, CustomLayers...>::Forward(
     }
   }
 
-if (!reset)
-{
-  reset = true;
-}
+  if (!reset)
+  {
+    reset = true;
+  }
 
   output = boost::apply_visitor(outputParameterVisitor, network.back());
+
+  if (residual)
+  {
+    if (arma::size(output) != arma::size(input))
+    {
+      Log::Fatal << "The sizes of the output and input matrices of the residual"
+          << " block should be equal. Please examine the network architecture."
+          << std::endl;
+    }
+    output += input;
+  }
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -128,6 +145,11 @@ void Sequential<InputDataType, OutputDataType, CustomLayers...>::Backward(
   }
 
   g = boost::apply_visitor(deltaVisitor, network.front());
+
+  if (residual)
+  {
+    g += gy;
+  }
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -154,6 +176,14 @@ void Sequential<InputDataType, OutputDataType, CustomLayers...>::Gradient(
       boost::apply_visitor(deltaVisitor, network[1]))), network.front());
 }
 
+template <typename InputDataType, typename OutputDataType,
+          typename... CustomLayers>
+void Sequential<InputDataType, OutputDataType, CustomLayers...>::DeleteModules()
+{
+  for (LayerTypes<CustomLayers...>& layer : network)
+      boost::apply_visitor(deleteVisitor, layer);
+}
+
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
@@ -168,6 +198,7 @@ void Sequential<InputDataType, OutputDataType, CustomLayers...>::serialize(
   }
 
   ar & BOOST_SERIALIZATION_NVP(model);
+  ar & BOOST_SERIALIZATION_NVP(residual);
   ar & BOOST_SERIALIZATION_NVP(network);
 }
 

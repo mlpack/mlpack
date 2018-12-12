@@ -34,8 +34,15 @@ namespace ann /** Artificial Neural Network. */ {
  * feed-forward fully connected network container which plugs various layers
  * together.
  *
+ * This class can also be used as a container for a residual block. In that
+ * case, the sizes of the input and output matrices of this class should be
+ * equal.
+ *
  * Note: If this class is used as the first layer of a network, it should be
- * preceded by IdentityLayer<>.
+ *       preceded by IdentityLayer<>.
+ *
+ * Note: This class should at least have two layers for a call to its Gradient()
+ *       function.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -54,8 +61,9 @@ class Sequential
    * Create the Sequential object using the specified parameters.
    *
    * @param model Expose the all network modules.
+   * @param residual Use the object as a residual block.
    */
-  Sequential(const bool model = true);
+  Sequential(const bool model = true, const bool residual = false);
 
   //! Destroy the Sequential object.
   ~Sequential();
@@ -111,6 +119,13 @@ class Sequential
    */
   void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
 
+  /*
+   * Destroy all the modules added to the Sequential object.
+   *
+   * Note: Do not use when the model parameter is false to avoid double freeing.
+   */
+  void DeleteModules();
+
   //! Return the model modules.
   std::vector<LayerTypes<CustomLayers...> >& Model()
   {
@@ -137,7 +152,7 @@ class Sequential
   //! Modify the output parameter.
   arma::mat& OutputParameter() { return outputParameter; }
 
-  //! Get the delta.e
+  //! Get the delta.
   arma::mat const& Delta() const { return delta; }
   //! Modify the delta.
   arma::mat& Delta() { return delta; }
@@ -156,6 +171,9 @@ class Sequential
  private:
   //! Parameter which indicates if the modules should be exposed.
   bool model;
+
+  //! Parameter which indicates if the object is used as a residual block.
+  bool residual;
 
   //! Indicator if we already initialized the model.
   bool reset;
