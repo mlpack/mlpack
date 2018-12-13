@@ -106,8 +106,8 @@ BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
   SoftmaxRegression regressor(trainData, trainLabels,
       numClasses, 0.001, false, optimizer);
 
-  double classificationAccuray = regressor.ComputeAccuracy(testData,
-   testLabels);
+  double classificationAccuracy = regressor.ComputeAccuracy(testData,
+    testLabels);
 
   L_BFGS rbmOptimizer(numBasis, numIterations);
   SoftmaxRegression rbmRegressor(XRbm, trainLabels, numClasses,
@@ -115,7 +115,9 @@ BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
   double rbmClassificationAccuracy = rbmRegressor.ComputeAccuracy(YRbm,
       testLabels);
 
-  BOOST_REQUIRE_GE(rbmClassificationAccuracy, classificationAccuray);
+  // We allow a 6% tolerance because the RBM may not reconstruct samples as
+  // well.  (Typically it does, but we have no guarantee.)
+  BOOST_REQUIRE_GE(rbmClassificationAccuracy, classificationAccuracy - 6.0);
 }
 
 /*
@@ -204,8 +206,10 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
       YRbm, testLabels);
 
   // 76.18 is the standard accuracy of the Softmax regression classifier,
-  // omitted here for speed.
-  BOOST_REQUIRE_GE(ssRbmClassificationAccuracy, 76.18);
+  // omitted here for speed.  We add a margin of 2% since ssRBM isn't guaranteed
+  // to give us better results (we just generally expect it to be about as good
+  // or better).
+  BOOST_REQUIRE_GE(ssRbmClassificationAccuracy, 76.18 - 2.0);
 }
 
 template<typename MatType = arma::mat>

@@ -213,19 +213,16 @@ void RecommendationAccuracy()
       ++failures;
   }
 
-  // Make sure the right item showed up in at least 1/3 of the recommendations.
-  // GroupLens dataset would give somewhere around a 10% success rate (failures
-  // would be closer to 270).  The failure rate is allowed to be so high because
-  // the dataset used here is pretty small and it is hard to generalize.
+  // Make sure the right item showed up in at least 2/3 of the recommendations.
   BOOST_REQUIRE_LT(failures, 17);
 }
 
 // Make sure that Predict() is returning reasonable results.
 template<typename DecompositionPolicy,
-         typename NormalizationType = NoNormalization,
+         typename NormalizationType = OverallMeanNormalization,
          typename NeighborSearchPolicy = EuclideanSearch,
          typename InterpolationPolicy = AverageInterpolation>
-void CFPredict(const double rmseBound = 2.0)
+void CFPredict(const double rmseBound = 1.5)
 {
   DecompositionPolicy decomposition;
 
@@ -734,7 +731,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyBiasSVDTest)
 // Make sure that Predict() is returning reasonable results for randomized SVD.
 BOOST_AUTO_TEST_CASE(CFPredictRandSVDTest)
 {
-  CFPredict<RandomizedSVDPolicy>(4.5);
+  CFPredict<RandomizedSVDPolicy>();
 }
 
 // Make sure that Predict() is returning reasonable results for regularized SVD.
@@ -752,7 +749,7 @@ BOOST_AUTO_TEST_CASE(CFPredictBatchSVDTest)
 // Make sure that Predict() is returning reasonable results for NMF.
 BOOST_AUTO_TEST_CASE(CFPredictNMFTest)
 {
-  CFPredict<NMFPolicy>(3.5);
+  CFPredict<NMFPolicy>();
 }
 
 /**
@@ -761,7 +758,7 @@ BOOST_AUTO_TEST_CASE(CFPredictNMFTest)
  */
 BOOST_AUTO_TEST_CASE(CFPredictSVDCompleteTest)
 {
-  CFPredict<SVDCompletePolicy>(3.5);
+  CFPredict<SVDCompletePolicy>();
 }
 
 /**
@@ -770,7 +767,7 @@ BOOST_AUTO_TEST_CASE(CFPredictSVDCompleteTest)
  */
 BOOST_AUTO_TEST_CASE(CFPredictSVDIncompleteTest)
 {
-  CFPredict<SVDIncompletePolicy>(3.5);
+  CFPredict<SVDIncompletePolicy>();
 }
 
 /**
