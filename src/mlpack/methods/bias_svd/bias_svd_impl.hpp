@@ -44,7 +44,7 @@ void BiasSVD<OptimizerType>::Apply(const arma::mat& data,
 
   // Make the optimizer object using a BiasSVDFunction object.
   BiasSVDFunction<arma::mat> biasSVDFunc(data, rank, lambda);
-  mlpack::optimization::StandardSGD optimizer(alpha, batchSize,
+  ens::StandardSGD optimizer(alpha, batchSize,
       iterations * data.n_cols);
 
   // Get optimized parameters.

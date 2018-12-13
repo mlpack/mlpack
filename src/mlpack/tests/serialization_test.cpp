@@ -1803,7 +1803,7 @@ void ANNLayerSerializationTest(LayerType& layer)
   model.Add<Linear<>>(10, output.n_rows);
   model.Add<LogSoftMax<>>();
 
-  optimization::StandardSGD opt(0.1, 1, 5, -100, false);
+  ens::StandardSGD opt(0.1, 1, 5, -100, false);
   model.Train(input, output, opt);
 
   arma::mat originalOutput;

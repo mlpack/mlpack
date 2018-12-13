@@ -12,15 +12,14 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/bias_svd/bias_svd.hpp>
-#include <mlpack/core/optimizers/parallel_sgd/parallel_sgd.hpp>
-#include <mlpack/core/optimizers/parallel_sgd/decay_policies/constant_step.hpp>
+
+#include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::svd;
-using namespace mlpack::optimization;
 
 BOOST_AUTO_TEST_SUITE(BiasSVDTest);
 
@@ -276,7 +275,7 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionOptimize)
 
   // Make the Bias SVD function and the optimizer.
   BiasSVDFunction<arma::mat> biasSVDFunc(data, rank, lambda);
-  mlpack::optimization::StandardSGD optimizer(alpha, iterations * numRatings);
+  ens::StandardSGD optimizer(alpha, iterations * numRatings);
 
   // Obtain optimized parameters after training.
   arma::mat optParameters = arma::randu(rank + 1, numUsers + numItems);
@@ -345,11 +344,11 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionParallelOptimize)
   // Make the Bias SVD function and the optimizer.
   BiasSVDFunction<arma::mat> biasSVDFunc(data, rank, lambda);
 
-  ConstantStep decayPolicy(alpha);
+  ens::ConstantStep decayPolicy(alpha);
 
   // Iterate till convergence.
   // The threadShareSize is chosen such that each function gets optimized.
-  ParallelSGD<ConstantStep> optimizer(0,
+  ens::ParallelSGD<ens::ConstantStep> optimizer(0,
       std::ceil((float) biasSVDFunc.NumFunctions() / omp_get_max_threads()), 1e-5,
       true, decayPolicy);
 
