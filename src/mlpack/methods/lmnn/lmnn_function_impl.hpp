@@ -15,7 +15,6 @@
 #include "lmnn_function.hpp"
 
 #include <mlpack/core/math/make_alias.hpp>
-#include <mlpack/core/optimizers/function.hpp>
 
 namespace mlpack {
 namespace lmnn {

@@ -19,7 +19,6 @@
 #include <mlpack/core/cv/metrics/recall.hpp>
 #include <mlpack/core/cv/simple_cv.hpp>
 #include <mlpack/core/cv/k_fold_cv.hpp>
-#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
@@ -33,6 +32,8 @@
 #include <mlpack/methods/naive_bayes/naive_bayes_classifier.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 
+#include <ensmallen.hpp>
+
 #include <boost/test/unit_test.hpp>
 #include "mock_categorical_data.hpp"
 
@@ -40,7 +41,6 @@ using namespace mlpack;
 using namespace mlpack::ann;
 using namespace mlpack::cv;
 using namespace mlpack::naive_bayes;
-using namespace mlpack::optimization;
 using namespace mlpack::regression;
 using namespace mlpack::tree;
 
@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(MSEMatResponsesTest)
   ffn.Add<Linear<>>(1, 2);
   ffn.Add<IdentityLayer<>>();
 
-  RMSProp opt(0.2);
+  ens::RMSProp opt(0.2);
   opt.BatchSize() = 1;
   opt.Shuffle() = false;
   ffn.Train(data, trainingResponses, opt);

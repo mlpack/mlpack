@@ -43,6 +43,9 @@ class CVFunction
    * Initialize a CVFunction object.
    *
    * @param cv A cross-validation object.
+   * @param datasetInfo Information on each parameter (categorical/numeric).
+   *     Contains mappings from optimizer-passed size_t indices to double values
+   *     that should be used.
    * @param relativeDelta Relative increase of arguments for calculation of
    *     partial derivatives (by the definition). The exact increase for some
    *     particular argument is equal to the absolute value of the argument
@@ -57,6 +60,7 @@ class CVFunction
    *     method of this object.
    */
   CVFunction(CVType& cv,
+             data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
              const double relativeDelta,
              const double minDelta,
              const BoundArgs&... args);
@@ -102,6 +106,9 @@ class CVFunction
 
   //! A reference to the cross-validation object.
   CVType& cv;
+
+  //! Information on each argument to be optimized.
+  data::DatasetMapper<data::IncrementPolicy, double> datasetInfo;
 
   //! The bound arguments.
   BoundArgsTupleType boundArgs;

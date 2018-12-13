@@ -40,7 +40,7 @@ namespace lmnn {
  * In addition to the standard Evaluate() and Gradient() functions which mlpack
  * optimizers use, overloads of Evaluate() and Gradient() are given which only
  * operate on one point in the dataset.  This is useful for optimizers like
- * stochastic gradient descent (see mlpack::optimization::SGD).
+ * stochastic gradient descent (see ens::SGD).
  */
 template<typename MetricType = metric::SquaredEuclideanDistance>
 class LMNNFunction
