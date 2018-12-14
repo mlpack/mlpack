@@ -49,27 +49,29 @@ void PrintDocs(const std::string& bindingName,
     cout << programDoc.documentation() << endl;
 
     // Now, iterate through each of the input options.
+    cout << endl;
     cout << "### Input options" << endl;
     cout << endl;
 
-/*
+
     cout << "| ***name*** | ***type*** | ***description*** | ***default*** |"
         << endl;
     cout << "---------------------------------------------------------------"
         << endl;
-    map<string, ParamData>& parameters = CLI.Parameters();
+    map<string, ParamData>& parameters = CLI::Parameters();
     for (map<string, ParamData>::const_iterator it = parameters.begin();
          it != parameters.end(); ++it)
     {
       // Print name, type, description, default.
       cout << "| ";
       cout << ParamString(it.second.name) << " | ";
-      cout << ParamType(it.second) << " | ";
-      cout << ParamDescription(it.second) << " | ";
-      cout << ParamDefault(it.second) << " |";
+      cout << ParamType(it.second) << " | "; // needs implementation
+      cout << ParamDescription(it.second) << " | "; // just a string
+      cout << ParamDefault(it.second) << " |"; // needs implementation
       cout << endl;
     }
-*/
+
+    cout << endl;
   }
 
   CLI::ClearSettings();

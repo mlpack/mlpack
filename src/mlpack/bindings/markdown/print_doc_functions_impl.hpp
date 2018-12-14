@@ -114,11 +114,11 @@ std::string ProgramCall(const std::string& programName, Args... args)
 {
   if (BindingInfo::Language() == "cli")
   {
-    return cli::ProgramCall(programName, args...);
+    return cli::ProgramCall(GetBindingName(programName), args...);
   }
   else if (BindingInfo::Language() == "python")
   {
-    return python::ProgramCall(programName, args...);
+    return python::ProgramCall(GetBindingName(programName), args...);
   }
   else
   {

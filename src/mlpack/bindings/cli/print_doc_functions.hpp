@@ -43,6 +43,12 @@ inline std::string PrintDataset(const std::string& dataset);
 inline std::string PrintModel(const std::string& model);
 
 /**
+ * Print the type of a parameter that a user would specify from the
+ * command-line..
+ */
+inline std::string PrintType(const util::ParamData& param);
+
+/**
  * Base case for recursion.
  */
 inline std::string ProcessOptions();
