@@ -1020,7 +1020,7 @@ BOOST_AUTO_TEST_CASE(SerializationSVDIncompleteTest)
  */
 BOOST_AUTO_TEST_CASE(CFPredictOverallMeanNormalization)
 {
-  CFPredict<NMFPolicy, OverallMeanNormalization>();
+  CFPredict<NMFPolicy, OverallMeanNormalization>(2.0);
 }
 
 /**
@@ -1029,7 +1029,7 @@ BOOST_AUTO_TEST_CASE(CFPredictOverallMeanNormalization)
  */
 BOOST_AUTO_TEST_CASE(CFPredictUserMeanNormalization)
 {
-  CFPredict<NMFPolicy, UserMeanNormalization>();
+  CFPredict<NMFPolicy, UserMeanNormalization>(2.0);
 }
 
 /**
@@ -1038,7 +1038,7 @@ BOOST_AUTO_TEST_CASE(CFPredictUserMeanNormalization)
  */
 BOOST_AUTO_TEST_CASE(CFPredictItemMeanNormalization)
 {
-  CFPredict<NMFPolicy, ItemMeanNormalization>();
+  CFPredict<NMFPolicy, ItemMeanNormalization>(2.0);
 }
 
 /**
@@ -1047,7 +1047,7 @@ BOOST_AUTO_TEST_CASE(CFPredictItemMeanNormalization)
  */
 BOOST_AUTO_TEST_CASE(CFPredictZScoreNormalization)
 {
-  CFPredict<NMFPolicy, ZScoreNormalization>();
+  CFPredict<NMFPolicy, ZScoreNormalization>(2.0);
 }
 
 /**
@@ -1061,7 +1061,15 @@ BOOST_AUTO_TEST_CASE(CFPredictCombinedNormalization)
             CombinedNormalization<
                 OverallMeanNormalization,
                 UserMeanNormalization,
-                ItemMeanNormalization>>();
+                ItemMeanNormalization>>(2.0);
+}
+
+/**
+ * Make sure that Predict() works with NoNormalization.
+ */
+BOOST_AUTO_TEST_CASE(CFPredictNoNormalization)
+{
+  CFPredict<RegSVDPolicy, NoNormalization>(2.0);
 }
 
 /**
@@ -1163,7 +1171,7 @@ BOOST_AUTO_TEST_CASE(SerializationCombinedNormalizationTest)
  */
 BOOST_AUTO_TEST_CASE(CFPredictEuclideanSearch)
 {
-  CFPredict<NMFPolicy, OverallMeanNormalization, EuclideanSearch>();
+  CFPredict<NMFPolicy, OverallMeanNormalization, EuclideanSearch>(2.0);
 }
 
 /**
@@ -1172,7 +1180,7 @@ BOOST_AUTO_TEST_CASE(CFPredictEuclideanSearch)
  */
 BOOST_AUTO_TEST_CASE(CFPredictCosineSearch)
 {
-  CFPredict<NMFPolicy, OverallMeanNormalization, CosineSearch>();
+  CFPredict<NMFPolicy, OverallMeanNormalization, CosineSearch>(2.0);
 }
 
 /**
@@ -1181,7 +1189,7 @@ BOOST_AUTO_TEST_CASE(CFPredictCosineSearch)
  */
 BOOST_AUTO_TEST_CASE(CFPredictPearsonSearch)
 {
-  CFPredict<NMFPolicy, OverallMeanNormalization, PearsonSearch>();
+  CFPredict<NMFPolicy, OverallMeanNormalization, PearsonSearch>(2.0);
 }
 
 /**
@@ -1193,7 +1201,7 @@ BOOST_AUTO_TEST_CASE(CFPredictAverageInterpolation)
   CFPredict<NMFPolicy,
             OverallMeanNormalization,
             EuclideanSearch,
-            AverageInterpolation>();
+            AverageInterpolation>(2.0);
 }
 
 /**
@@ -1205,7 +1213,7 @@ BOOST_AUTO_TEST_CASE(CFPredictSimilarityInterpolation)
   CFPredict<NMFPolicy,
             OverallMeanNormalization,
             EuclideanSearch,
-            SimilarityInterpolation>();
+            SimilarityInterpolation>(2.0);
 }
 
 /**
@@ -1217,7 +1225,7 @@ BOOST_AUTO_TEST_CASE(CFPredictRegressionInterpolation)
   CFPredict<RegSVDPolicy,
             OverallMeanNormalization,
             EuclideanSearch,
-            RegressionInterpolation>();
+            RegressionInterpolation>(2.0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
