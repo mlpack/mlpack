@@ -38,6 +38,18 @@ namespace ann /** Artificial Neural Network. */ {
  * case, the sizes of the input and output matrices of this class should be
  * equal.
  *
+ * For more information, refer the following paper.
+ *
+ * @code
+ * @article{He15,
+ *   author    = {Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun},
+ *   title     = {Deep Residual Learning for Image Recognition},
+ *   year      = {2015},
+ *   url       = {https://arxiv.org/abs/1512.03385},
+ *   eprint    = {1512.03385},
+ * }
+ * @endcode
+ *
  * Note: If this class is used as the first layer of a network, it should be
  *       preceded by IdentityLayer<>.
  *
@@ -121,8 +133,6 @@ class Sequential
 
   /*
    * Destroy all the modules added to the Sequential object.
-   *
-   * Note: Do not use when the model parameter is false to avoid double freeing.
    */
   void DeleteModules();
 

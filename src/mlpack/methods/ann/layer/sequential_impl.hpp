@@ -180,8 +180,11 @@ template <typename InputDataType, typename OutputDataType,
           typename... CustomLayers>
 void Sequential<InputDataType, OutputDataType, CustomLayers...>::DeleteModules()
 {
-  for (LayerTypes<CustomLayers...>& layer : network)
+  if (model == true)
+  {
+    for (LayerTypes<CustomLayers...>& layer : network)
       boost::apply_visitor(deleteVisitor, layer);
+  }
 }
 
 template<typename InputDataType, typename OutputDataType,
