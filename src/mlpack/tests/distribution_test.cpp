@@ -488,11 +488,11 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithProbabilitiesTest)
   GaussianDistribution guDist2;
   guDist2.Train(rdata);
 
-  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], guDist2.Mean()[0], 5);
-  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], guDist2.Covariance()[0], 5);
+  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], guDist2.Mean()[0], 6);
+  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], guDist2.Covariance()[0], 6);
 
-  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], mean[0], 5);
-  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], cov[0], 5);
+  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], mean[0], 6);
+  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], cov[0], 6);
 }
 
 /**
