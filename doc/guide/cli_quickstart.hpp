@@ -95,7 +95,7 @@ other tools; for instance, we can easily calculate the number of points that
 were predicted incorrectly:
 
 @code{.sh}
-$ diff -U 0 predictions.csv covertype-test.labels.csv | grep '^@@' | wc -l
+$ diff -U 0 predictions.csv covertype.test.labels.csv | grep '^@@' | wc -l
 @endcode
 
 It's easy to modify the code above to do more complex things, or to use
