@@ -107,8 +107,8 @@ BOOST_AUTO_TEST_CASE(KernelPCAInvalidKernelTest)
 }
 
 /**
- * Make sure if 0 dimensions is specified, we get a dataset with same
- * dimensionality as input.
+ * Ensure for zero dimensionality, we get a dataset with the same dimensionality
+ * as the input dataset.
  */
 BOOST_AUTO_TEST_CASE(KernelPCA0DimensionalityTest)
 {
