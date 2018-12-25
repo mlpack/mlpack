@@ -88,7 +88,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   const double minDistance = referenceNode.MinDistance(queryPoint);
   const double maxKernel = kernel.Evaluate(minDistance);
   const double minKernel =
-    kernel.Evaluate(referenceNode.MaxDistance(queryPoint));
+      kernel.Evaluate(referenceNode.MaxDistance(queryPoint));
   const double bound = maxKernel - minKernel;
 
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid &&
@@ -169,7 +169,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   const double minDistance = queryNode.MinDistance(referenceNode);
   const double maxKernel = kernel.Evaluate(minDistance);
   const double minKernel =
-    kernel.Evaluate(queryNode.MaxDistance(referenceNode));
+      kernel.Evaluate(queryNode.MaxDistance(referenceNode));
   const double bound = maxKernel - minKernel;
 
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
