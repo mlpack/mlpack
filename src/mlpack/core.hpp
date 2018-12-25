@@ -250,6 +250,9 @@
  *   - Shashank Shekhar <contactshashankshekhar@gmail.com>
  *   - Yasmine Dumouchel <yasmine.dumouchel@gmail.com>
  *   - German Lancioni
+ *   - Arash Abghari <arash.abghari@gmail.com>
+ *   - Ayush Chamoli
+ *   - Tommi Laivamaa <tommi.laivamaa@protonmail.com>
  */
 
 // First, include all of the prerequisites.
@@ -293,6 +296,7 @@
 #include <mlpack/core/kernels/pspectrum_string_kernel.hpp>
 #include <mlpack/core/kernels/spherical_kernel.hpp>
 #include <mlpack/core/kernels/triangular_kernel.hpp>
+#include <mlpack/core/kernels/cauchy_kernel.hpp>
 
 // Use OpenMP if compiled with -DHAS_OPENMP.
 #ifdef HAS_OPENMP

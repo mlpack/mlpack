@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 3.3.2)
 project(mlpack C CXX)
 
 include(CMake/cotire.cmake)
@@ -12,7 +12,17 @@ option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
-option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
+option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
+
+# Currently Python bindings aren't known to build successfully on Windows, so
+# set BUILD_PYTHON_BINDINGS to OFF when the platform is Windows.
+if (WIN32)
+  option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
+  message(WARNING "By default Python bindings are not compiled for Windows because they are not known to work.  Set BUILD_PYTHON_BINDINGS to ON if you want them built.")
+else ()
+  option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
+endif()
+
 option(BUILD_SHARED_LIBS
     "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 option(BUILD_WITH_COVERAGE
@@ -24,37 +34,24 @@ option(FORCE_CXX11
 option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
 enable_testing()
 
-# Currently Python bindings aren't known to build successfully on Windows, so
-# set BUILD_PYTHON_BINDINGS to OFF when the platform is Windows.
-if (WIN32)
-  option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
-  message(WARNING "By default Python bindings are not compiled for Windows because they are not known to work.  Set BUILD_PYTHON_BINDINGS to ON if you want them built.")
-endif()
-
-# Ensure that we have a C++11 compiler.  In newer versions of CMake, this is
-# done with target_compile_features() when the mlpack library target is added in
-# src/mlpack/CMakeLists.txt.
-if ((${CMAKE_MAJOR_VERSION} LESS 3 OR
-    (${CMAKE_MAJOR_VERSION} EQUAL 3 AND ${CMAKE_MINOR_VERSION} LESS 1))
-    AND NOT FORCE_CXX11)
-  # Older versions of CMake do not support target_compile_features(), so we have
-  # to use something kind of hacky.
-  include(CMake/CXX11.cmake)
-  check_for_cxx11_compiler(HAS_CXX11)
-  if(NOT HAS_CXX11)
-    message(FATAL_ERROR "No C++11 compiler available!")
-  endif()
-  enable_cxx11()
-else()
-  # set required standard to c++11
-  set(CMAKE_CXX_STANDARD 11)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif ()
-# Otherwise, we may have to set the C++11 mode after the mlpack target is
-# defined.
+# Set required standard to C++11.
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
+
+# If we are on a Unix-like system, use the GNU install directories module.
+# Otherwise set the values manually.
+if (UNIX)
+  include(GNUInstallDirs)
+else ()
+  set(CMAKE_INSTALL_BINDIR ${CMAKE_INSTALL_PREFIX}/bin)
+  set(CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
+  set(CMAKE_INSTALL_MANDIR ${CMAKE_INSTALL_PREFIX}/man)
+  set(CMAKE_INSTALL_DOCDIR ${CMAKE_INSTALL_PREFIX}/share/doc/mlpack)
+  set(CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIX}/include)
+endif ()
 
 # This is as of yet unused.
 #option(PGO "Use profile-guided optimization if not a debug build" ON)
@@ -119,6 +116,14 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   endif ()
 endif()
 
+# If we're using gcc, then we need to link against pthreads to use std::thread,
+# which we do in the tests.
+if(CMAKE_COMPILER_IS_GNUCC)
+  find_package(Threads)
+  set(COMPILER_SUPPORT_LIBRARIES ${COMPILER_SUPPORT_LIBRARIES}
+      ${CMAKE_THREAD_LIBS_INIT})
+endif()
+
 # Setup build for test coverage
 if(BUILD_WITH_COVERAGE)
   # Currently coverage only works with GNU g++
@@ -150,11 +155,6 @@ if(BUILD_WITH_COVERAGE)
   endif()
 endif()
 
-# For clock_gettime().
-if (UNIX AND NOT APPLE AND NOT HAIKU)
-  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "rt")
-endif ()
-
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
 if(DEBUG)
   if (NOT MSVC)
@@ -182,8 +182,13 @@ if(DEBUG)
 else()
   add_definitions(-DARMA_NO_DEBUG)
   add_definitions(-DNDEBUG)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -O3")
+  if (NOT MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -O3")
+  else ()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O3")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /O3")
+  endif ()
 endif()
 
 # Profiling CFLAGS.  Turn profiling information on.
@@ -212,6 +217,7 @@ endif()
 #   BOOST_ROOT - root of Boost installation
 #   BOOST_INCLUDEDIR - include directory for Boost
 #   BOOST_LIBRARYDIR - library directory for Boost
+#   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
 #   MATHJAX_ROOT - root of MathJax installation
 
 find_package(Armadillo 6.500.0 REQUIRED)
@@ -291,9 +297,61 @@ endif ()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
+# Find ensmallen.
+# Once ensmallen is readily available in package repos, the automatic downloader
+# here can be removed.
+find_package(Ensmallen 1.10.0)
+if (NOT ENSMALLEN_FOUND)
+  if (DOWNLOAD_ENSMALLEN)
+    file(DOWNLOAD http://www.ensmallen.org/files/ensmallen-latest.tar.gz
+        "${CMAKE_BINARY_DIR}/deps/ensmallen-latest.tar.gz"
+        STATUS ENS_DOWNLOAD_STATUS_LIST LOG ENS_DOWBLOAD_LOG
+        SHOW_PROGRESS)
+    list(GET ENS_DOWNLOAD_STATUS_LIST 0 ENS_DOWNLOAD_STATUS)
+    if (ENS_DOWNLOAD_STATUS EQUAL 0)
+      execute_process(COMMAND ${CMAKE_COMMAND} -E
+          tar xzf "${CMAKE_BINARY_DIR}/deps/ensmallen-latest.tar.gz"
+          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
+
+      # Get the name of the directory.
+      file (GLOB ENS_DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
+          "${CMAKE_BINARY_DIR}/deps/ensmallen-[0-9]*.[0-9]*.[0-9]*")
+      list(LENGTH ENS_DIRECTORIES ENS_DIRECTORIES_LEN)
+      if (ENS_DIRECTORIES_LEN EQUAL 1)
+        list(GET ENS_DIRECTORIES 0 ENSMALLEN_INCLUDE_DIR)
+        set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+            "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include")
+        message(STATUS
+            "Successfully downloaded ensmallen into ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/")
+      else ()
+        message(FATAL_ERROR "Problem unpacking ensmallen!  Expected only one directory ensmallen-x.y.z/; found ${ENS_DIRECTORIES}. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
+      endif ()
+    else ()
+      list(GET ENS_DOWNLOAD_STATUS_LIST 1 ENS_DOWNLOAD_ERROR)
+      message(FATAL_ERROR
+          "Could not download ensmallen! Error code ${ENS_DOWNLOAD_STATUS}:
+${ENS_DOWNLOAD_ERROR}!  Error log: ${ENS_DOWBLOAD_LOG}")
+    endif ()
+  else ()
+    # Release versions will have ensmallen packaged with the release so we can
+    # just reference that.
+    if (EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen/ensmallen.hpp")
+      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS}
+          "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen")
+    else ()
+      message(FATAL_ERROR
+          "Cannot find ensmallen headers!  Try setting ENSMALLEN_INCLUDE_DIR!")
+    endif ()
+  endif ()
+else ()
+  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ENSMALLEN_INCLUDE_DIRS})
+endif ()
+
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.68.0" "1.68"
+  "1.67.0" "1.67"
   "1.66.0" "1.66"
   "1.65.1" "1.65.0" "1.65"
   "1.64.1" "1.64.0" "1.64"
@@ -359,7 +417,12 @@ if (OPENMP_FOUND)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 else ()
   # Disable warnings for all the unknown OpenMP pragmas.
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
+  if (NOT MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
+  else ()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4068")
+  endif ()
+  set(OpenMP_CXX_FLAGS "")
 endif ()
 
 # Create a 'distclean' target in case the user is using an in-source build for
@@ -427,19 +490,44 @@ add_custom_target(mlpack_arma_config ALL
 set(MLPACK_SRCS ${MLPACK_SRCS}
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
 
+# Make a target to generate the man page documentation, but only if we are on a
+# UNIX-like system.
+if (BUILD_CLI_EXECUTABLES AND UNIX)
+  find_program(TXT2MAN txt2man)
+
+  # It's not a requirement that we make man pages.
+  if (NOT TXT2MAN)
+    message(WARNING "txt2man not found; man pages will not be generated.")
+  else ()
+    # We have the tools.  We can make them.
+    add_custom_target(man ALL
+        ${CMAKE_CURRENT_SOURCE_DIR}/CMake/allexec2man.sh
+            ${CMAKE_CURRENT_SOURCE_DIR}/CMake/exec2man.sh
+            ${CMAKE_BINARY_DIR}/share/man
+        WORKING_DIRECTORY
+          ${CMAKE_BINARY_DIR}/bin
+        COMMENT "Generating man pages from built executables."
+    )
+
+    # Set the rules to install the documentation.
+    install(DIRECTORY ${CMAKE_BINARY_DIR}/share/man/
+        DESTINATION ${CMAKE_INSTALL_MANDIR})
+  endif ()
+endif ()
+
 # Recurse into the rest of the project.
 add_subdirectory(src/mlpack)
 
 # If we need to keep gitversion.hpp up to date, then make sure the mlpack target
 # depends on it.
 if (USING_GIT STREQUAL "YES")
-  add_dependencies(mlpack mlpack_gitversion)
+  add_dependencies(mlpack_headers mlpack_gitversion)
 endif ()
 
 # Make the mlpack_arma_config target depend on mlpack (we couldn't do this
 # before the add_subdirectory() call because the mlpack target didn't exist
 # before that).
-add_dependencies(mlpack mlpack_arma_config)
+add_dependencies(mlpack_headers mlpack_arma_config)
 
 # Make a target to generate the documentation.  If Doxygen isn't installed, then
 # I guess this option will just be unavailable.
@@ -475,73 +563,10 @@ if (DOXYGEN_FOUND)
   )
 
   install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html
-      DESTINATION share/doc/mlpack
+      DESTINATION ${CMAKE_INSTALL_DOCDIR}
       COMPONENT doc
       OPTIONAL
   )
-endif ()
-
-# Make a target to generate the man page documentation, but only if we are on a
-# UNIX-like system.
-if (BUILD_CLI_EXECUTABLES AND UNIX)
-  find_program(TXT2MAN txt2man)
-
-  # It's not a requirement that we make man pages.
-  if (NOT TXT2MAN)
-    message(WARNING "txt2man not found; man pages will not be generated.")
-  else ()
-    # We have the tools.  We can make them.
-    add_custom_target(man ALL
-        ${CMAKE_CURRENT_SOURCE_DIR}/CMake/allexec2man.sh
-            ${CMAKE_CURRENT_SOURCE_DIR}/CMake/exec2man.sh
-            ${CMAKE_BINARY_DIR}/share/man
-        WORKING_DIRECTORY
-          ${CMAKE_BINARY_DIR}/bin
-        DEPENDS
-          mlpack_adaboost
-          mlpack_approx_kfn
-          mlpack_kfn
-          mlpack_knn
-          mlpack_krann
-          mlpack_cf
-          mlpack_dbscan
-          mlpack_decision_stump
-          mlpack_decision_tree
-          mlpack_det
-          mlpack_emst
-          mlpack_fastmks
-          mlpack_gmm_train
-          mlpack_gmm_probability
-          mlpack_gmm_generate
-          mlpack_hmm_generate
-          mlpack_hmm_loglik
-          mlpack_hmm_train
-          mlpack_hmm_viterbi
-          mlpack_hoeffding_tree
-          mlpack_kernel_pca
-          mlpack_kmeans
-          mlpack_lars
-          mlpack_linear_regression
-          mlpack_local_coordinate_coding
-          mlpack_logistic_regression
-          mlpack_lsh
-          mlpack_mean_shift
-          mlpack_nbc
-          mlpack_nca
-          mlpack_nmf
-          mlpack_pca
-          mlpack_perceptron
-          mlpack_radical
-          mlpack_range_search
-          mlpack_softmax_regression
-          mlpack_sparse_coding
-        COMMENT "Generating man pages from built executables."
-    )
-
-    # Set the rules to install the documentation.
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/share/man/
-        DESTINATION share/man/man1/)
-  endif ()
 endif ()
 
 # Create the pkg-config file, if we have pkg-config.
@@ -617,7 +642,6 @@ if (PKG_CONFIG_FOUND)
       DEPENDS mlpack_headers
       COMMENT "Generating mlpack.pc (pkg-config) file.")
 
-  # Do we need a different directory?
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc
-      DESTINATION lib/pkgconfig/)
+      DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig/)
 endif ()

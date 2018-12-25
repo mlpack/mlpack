@@ -13,7 +13,7 @@
 #define MLPACK_METHODS_SPARSE_AUTOENCODER_SPARSE_AUTOENCODER_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <ensmallen.hpp>
 
 #include "sparse_autoencoder_function.hpp"
 
@@ -77,7 +77,7 @@ class SparseAutoencoder
    * @param beta KL divergence parameter.
    * @param rho Sparsity parameter.
    */
-  template<typename OptimizerType = mlpack::optimization::L_BFGS>
+  template<typename OptimizerType = ens::L_BFGS>
   SparseAutoencoder(const arma::mat& data,
                     const size_t visibleSize,
                     const size_t hiddenSize,

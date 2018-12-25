@@ -22,8 +22,10 @@
 #include "init_rules/network_init.hpp"
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
+
+#include <ensmallen.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -101,7 +103,7 @@ class RNN
   /**
    * Train the recurrent neural network on the given input data. By default, the
    * SGD optimization algorithm is used, but others can be specified
-   * (such as mlpack::optimization::RMSprop).
+   * (such as ens::RMSprop).
    *
    * This will use the existing model parameters as a starting point for the
    * optimization. If this is not what you want, then you should access the
@@ -121,7 +123,7 @@ class RNN
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    */
-  template<typename OptimizerType = mlpack::optimization::StandardSGD>
+  template<typename OptimizerType = ens::StandardSGD>
   void Train(arma::cube predictors, arma::cube responses);
 
   /**
@@ -384,6 +386,23 @@ class RNN
 
 } // namespace ann
 } // namespace mlpack
+
+//! Set the serialization version of the RNN class.  Multiple template arguments
+//! makes this ugly...
+namespace boost {
+namespace serialization {
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename... CustomLayer>
+struct version<
+    mlpack::ann::RNN<OutputLayerType, InitializationRuleType, CustomLayer...>>
+{
+  BOOST_STATIC_CONSTANT(int, value = 1);
+};
+
+} // namespace serialization
+} // namespace boost
 
 // Include implementation.
 #include "rnn_impl.hpp"

@@ -1,3 +1,9 @@
+### mlpack 3.0.4
+###### 2018-11-13
+  * Bump minimum CMake version to 3.3.2.
+
+  * CMake fixes for Ninja generator by Marc Espie.
+
 ### mlpack 3.0.3
 ###### 2018-07-27
   * Fix Visual Studio compilation issue (#1443).

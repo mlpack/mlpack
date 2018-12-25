@@ -677,6 +677,7 @@ void HRectBound<MetricType, ElemType>::serialize(
   auto boundsArray = boost::serialization::make_array(bounds, dim);
   ar & BOOST_SERIALIZATION_NVP(boundsArray);
   ar & BOOST_SERIALIZATION_NVP(minWidth);
+  ar & BOOST_SERIALIZATION_NVP(metric);
 }
 
 } // namespace bound

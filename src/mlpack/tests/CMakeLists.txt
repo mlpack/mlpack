@@ -1,10 +1,7 @@
 # mlpack test executable.
 add_executable(mlpack_test
   activation_functions_test.cpp
-  ada_delta_test.cpp
-  ada_grad_test.cpp
   adaboost_test.cpp
-  adam_test.cpp
   akfn_test.cpp
   aknn_test.cpp
   ann_dist_test.cpp
@@ -13,17 +10,13 @@ add_executable(mlpack_test
   arma_extend_test.cpp
   armadillo_svd_test.cpp
   async_learning_test.cpp
-  aug_lagrangian_test.cpp
   augmented_rnns_tasks_test.cpp
   bias_svd_test.cpp
-  bigbatch_sgd_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
   cf_test.cpp
   cli_binding_test.cpp
   cli_test.cpp
-  cmaes_test.cpp
-  cne_test.cpp
   convolution_test.cpp
   convolutional_network_test.cpp
   cosine_tree_test.cpp
@@ -38,20 +31,14 @@ add_executable(mlpack_test
   emst_test.cpp
   fastmks_test.cpp
   feedforward_network_test.cpp
-  frankwolfe_test.cpp
-  function_test.cpp
   gan_test.cpp
   gmm_test.cpp
-  gradient_clipping_test.cpp
-  gradient_descent_test.cpp
   hmm_test.cpp
   hoeffding_tree_test.cpp
   hpt_test.cpp
   hyperplane_test.cpp
   imputation_test.cpp
   init_rules_test.cpp
-  iqn_test.cpp
-  katyusha_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
   kernel_traits_test.cpp
@@ -61,9 +48,7 @@ add_executable(mlpack_test
   krann_search_test.cpp
   ksinit_test.cpp
   lars_test.cpp
-  lbfgs_test.cpp
   lin_alg_test.cpp
-  line_search_test.cpp
   linear_regression_test.cpp
   lmnn_test.cpp
   load_save_test.cpp
@@ -71,7 +56,6 @@ add_executable(mlpack_test
   log_test.cpp
   logistic_regression_test.cpp
   loss_functions_test.cpp
-  lrsdp_test.cpp
   lsh_test.cpp
   math_test.cpp
   matrix_completion_test.cpp
@@ -80,18 +64,14 @@ add_executable(mlpack_test
   metric_test.cpp
   mlpack_test.cpp
   mock_categorical_data.hpp
-  momentum_sgd_test.cpp
   nbc_test.cpp
   nca_test.cpp
-  nesterov_momentum_sgd_test.cpp
   nmf_test.cpp
   nystroem_method_test.cpp
   octree_test.cpp
-  parallel_sgd_test.cpp
   pca_test.cpp
   perceptron_test.cpp
   prefixedoutstream_test.cpp
-  proximal_test.cpp
   python_binding_test.cpp
   q_learning_test.cpp
   qdafn_test.cpp
@@ -107,22 +87,12 @@ add_executable(mlpack_test
   regularized_svd_test.cpp
   reward_clipping_test.cpp
   rl_components_test.cpp
-  rmsprop_test.cpp
-  sa_test.cpp
-  sarah_test.cpp
-  scd_test.cpp
-  sdp_primal_dual_test.cpp
   serialization.cpp
   serialization.hpp
   serialization_test.cpp
   sfinae_test.cpp
-  sgd_test.cpp
-  sgdr_test.cpp
-  smorms3_test.cpp
-  snapshot_ensembles.cpp
   softmax_regression_test.cpp
   sort_policy_test.cpp
-  spalera_sgd_test.cpp
   sparse_autoencoder_test.cpp
   sparse_coding_test.cpp
   spill_tree_test.cpp
@@ -130,7 +100,6 @@ add_executable(mlpack_test
   svd_batch_test.cpp
   svd_incremental_test.cpp
   svdplusplus_test.cpp
-  svrg_test.cpp
   termination_policy_test.cpp
   test_function_tools.hpp
   test_tools.hpp
@@ -175,13 +144,16 @@ add_executable(mlpack_test
   main_tests/hmm_generate_test.cpp
   main_tests/radical_test.cpp
   main_tests/hmm_test_utils.hpp
+  main_tests/kernel_pca_test.cpp
   main_tests/kde_test.cpp
 )
 
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test
   mlpack
-  ${BOOST_unit_test_framework_LIBRARY}
+  ${ARMADILLO_LIBRARIES}
+  ${BOOST_LIBRARIES}
+  ${COMPILER_SUPPORT_LIBRARIES}
 )
 
 set_target_properties(mlpack_test PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "../core.hpp")
@@ -206,7 +178,7 @@ add_custom_command(TARGET mlpack_test
 # The list of long running parallel tests
 set(parallel_tests
   "AsyncLearningTest"
-  "SdpPrimalDualTest;SVDIncrementalTest;SVDBatchTest;"
+  "SVDIncrementalTest;SVDBatchTest;"
   "LocalCoordinateCodingTest;FeedForwardNetworkTest;SparseAutoencoderTest;"
   "GMMTest;CFTest;ConvolutionalNetworkTest;HMMTest;LARSTest;"
   "LogisticRegressionTest")

@@ -14,7 +14,7 @@
 
 #include <mlpack/core/cv/meta_info_extractor.hpp>
 #include <mlpack/core/hpt/deduce_hp_types.hpp>
-#include <mlpack/core/optimizers/grid_search/grid_search.hpp>
+#include <ensmallen.hpp>
 
 namespace mlpack {
 namespace hpt {
@@ -85,7 +85,7 @@ namespace hpt {
 template<typename MLAlgorithm,
          typename Metric,
          template<typename, typename, typename, typename, typename> class CV,
-         typename OptimizerType = mlpack::optimization::GridSearch,
+         typename OptimizerType = ens::GridSearch,
          typename MatType = arma::mat,
          typename PredictionsType =
              typename cv::MetaInfoExtractor<MLAlgorithm,

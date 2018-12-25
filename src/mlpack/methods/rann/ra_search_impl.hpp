@@ -46,40 +46,6 @@ TreeType* BuildTree(
 
 } // namespace aux
 
-// Construct the object.
-template<typename SortPolicy,
-         typename MetricType,
-         typename MatType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-RASearch<SortPolicy, MetricType, MatType, TreeType>::
-RASearch(const MatType& referenceSetIn,
-         const bool naive,
-         const bool singleMode,
-         const double tau,
-         const double alpha,
-         const bool sampleAtLeaves,
-         const bool firstLeafExact,
-         const size_t singleSampleLimit,
-         const MetricType metric) :
-    referenceTree(naive ? NULL : aux::BuildTree<Tree>(
-        const_cast<MatType&>(referenceSetIn), oldFromNewReferences)),
-    referenceSet(naive ? &referenceSetIn : &referenceTree->Dataset()),
-    treeOwner(!naive),
-    setOwner(false),
-    naive(naive),
-    singleMode(!naive && singleMode), // No single mode if naive.
-    tau(tau),
-    alpha(alpha),
-    sampleAtLeaves(sampleAtLeaves),
-    firstLeafExact(firstLeafExact),
-    singleSampleLimit(singleSampleLimit),
-    metric(metric)
-{
-  // Nothing to do.
-}
-
 // Construct the object, taking ownership of the data matrix.
 template<typename SortPolicy,
          typename MetricType,
@@ -88,7 +54,7 @@ template<typename SortPolicy,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 RASearch<SortPolicy, MetricType, MatType, TreeType>::
-RASearch(MatType&& referenceSetIn,
+RASearch(MatType referenceSetIn,
          const bool naive,
          const bool singleMode,
          const double tau,
@@ -210,43 +176,7 @@ template<typename SortPolicy,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void RASearch<SortPolicy, MetricType, MatType, TreeType>::Train(
-    const MatType& referenceSet)
-{
-  // Clean up the old tree, if we built one.
-  if (treeOwner && referenceTree)
-    delete referenceTree;
-
-  // We may need to rebuild the tree.
-  if (!naive)
-  {
-    referenceTree = aux::BuildTree<Tree>(referenceSet, oldFromNewReferences);
-    treeOwner = true;
-  }
-  else
-  {
-    treeOwner = false;
-  }
-
-  // Delete the old reference set, if we owned it.
-  if (setOwner && this->referenceSet)
-    delete this->referenceSet;
-
-  if (!naive)
-    this->referenceSet = &referenceTree->Dataset();
-  else
-    this->referenceSet = &referenceSet;
-  setOwner = false; // We don't own the set in either case.
-}
-
-// Train on a new reference set.
-template<typename SortPolicy,
-         typename MetricType,
-         typename MatType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-void RASearch<SortPolicy, MetricType, MatType, TreeType>::Train(
-    MatType&& referenceSet)
+    MatType referenceSet)
 {
   // Clean up the old tree, if we built one.
   if (treeOwner && referenceTree)

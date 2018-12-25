@@ -22,7 +22,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="http://www.mlpack.org/files/mlpack-3.0.3.tar.gz">current stable version (3.0.3)</a>
+    <a href="http://www.mlpack.org/files/mlpack-3.0.4.tar.gz">current stable version (3.0.4)</a>
   </em>
 </p>
 
@@ -46,7 +46,7 @@ Python bindings.
 
 ###  1. Introduction
 
-The mlpack website can be found at http://www.mlpack.org and contains numerous
+The mlpack website can be found at http://www.mlpack.org and it contains numerous
 tutorials and extensive documentation.  This README serves as a guide for what
 mlpack is, how to install it, how to run it, and where to find more
 documentation. The website should be consulted for further information:
@@ -84,13 +84,13 @@ mlpack has the following dependencies:
       Armadillo     >= 6.500.0
       Boost (program_options, math_c99, unit_test_framework, serialization,
              spirit)
-      CMake         >= 2.8.5
+      CMake         >= 3.3.2
 
 All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for
 each of those packages for more information.
 
-If you would like use or build the mlpack Python bindings, make sure that the
+If you would like to use or build the mlpack Python bindings, make sure that the
 following Python packages are installed:
 
       setuptools
