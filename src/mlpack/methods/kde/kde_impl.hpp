@@ -306,12 +306,13 @@ Evaluate(Tree* queryTree,
   // Check querySet has at least 1 element to evaluate.
   if (queryTree->Dataset().n_cols == 0)
   {
-    Log::Warn << "querySet is empty" << std::endl;
+    Log::Warn << "KDE::Evaluate(): querySet is empty, no predictions will "
+              << "be returned" << std::endl;
     return;
   }
   // Check whether dimensions match.
   if (queryTree->Dataset().n_rows != referenceTree->Dataset().n_rows)
-    throw std::invalid_argument("cannot train KDE model: querySet and "
+    throw std::invalid_argument("cannot evaluate KDE model: querySet and "
                                 "referenceSet dimensions don't match");
 
   Timer::Start("computing_kde");
