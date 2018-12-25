@@ -12,7 +12,6 @@
 
 #include "kde.hpp"
 #include "kde_rules.hpp"
-#include <cmath>
 
 namespace mlpack {
 namespace kde {

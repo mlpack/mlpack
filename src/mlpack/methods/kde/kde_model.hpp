@@ -18,10 +18,8 @@
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 
-// Include kernels
-#include <mlpack/core/kernels/kernel_traits.hpp>
-#include <mlpack/core/kernels/gaussian_kernel.hpp>
-#include <mlpack/core/kernels/epanechnikov_kernel.hpp>
+// Include core
+#include <mlpack/core.hpp>
 
 // Remaining includes
 #include <boost/variant.hpp>
