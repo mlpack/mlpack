@@ -38,8 +38,8 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     "those things at once.  In addition, this program allows classification on "
     "a test dataset (specified with the " + PRINT_PARAM_STRING("test") + " "
     "parameter) and the classification results may be saved with the " +
-    PRINT_PARAM_STRING("predictions") + " predictions parameter.  The trained logistic "
-    "regression model may be saved using the " +
+    PRINT_PARAM_STRING("predictions") + " predictions parameter."
+    " The trained logistic regression model may be saved using the " +
     PRINT_PARAM_STRING("output_model") + " output parameter."
     "\n\n"
     "The training data, if specified, may have class labels as its last "
