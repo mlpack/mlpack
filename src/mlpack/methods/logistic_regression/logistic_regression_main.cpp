@@ -38,7 +38,7 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     "those things at once.  In addition, this program allows classification on "
     "a test dataset (specified with the " + PRINT_PARAM_STRING("test") + " "
     "parameter) and the classification results may be saved with the " +
-    PRINT_PARAM_STRING("output") + " output parameter.  The trained logistic "
+    PRINT_PARAM_STRING("predictions") + " predictions parameter.  The trained logistic "
     "regression model may be saved using the " +
     PRINT_PARAM_STRING("output_model") + " output parameter."
     "\n\n"
@@ -75,7 +75,9 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     "so long as an existing logistic regression model is given with the " +
     PRINT_PARAM_STRING("input_model") + " parameter.  The output predictions "
     "from the logistic regression model may be saved with the " +
-    PRINT_PARAM_STRING("output") + " parameter."
+    PRINT_PARAM_STRING("predictions") + " parameter." + 
+    "The" + PRINT_PARAM_STRING("output") + "parameter is depracated" + 
+    " and to be removed in mlpack-4.0.0 "
     "\n\n"
     "This implementation of logistic regression does not support the general "
     "multi-class case but instead only the two-class case.  Any labels must "
@@ -123,11 +125,19 @@ PARAM_MODEL_OUT(LogisticRegression<>, "output_model", "Output for trained "
 
 // Testing.
 PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
+//The PARAM_UROW_OUT("output"..) is depracated and can be removed in mlpack4.0.0
 PARAM_UROW_OUT("output", "If test data is specified, this matrix is where "
     "the predictions for the test set will be saved.", "o");
+PARAM_UROW_OUT("predictions", "If test data is specified, this matrix is where "
+    "the predictions for the test set will be saved.", "P");
+//PARAM_MATRIX_OUT("output_probabilities"..) is depracated 
+//and it can be removed in mlpack 4.0.0
 PARAM_MATRIX_OUT("output_probabilities", "If test data is specified, this "
     "matrix is where the class probabilities for the test set will be saved.",
     "p");
+PARAM_MATRIX_OUT("probabilities", "If test data is specified, this "
+    "matrix is where the class probabilities for the test set will be saved.",
+    "x");
 PARAM_DOUBLE_IN("decision_boundary", "Decision boundary for prediction; if the "
     "logistic function for a point is less than the boundary, the class is "
     "taken to be 0; otherwise, the class is 1.", "d", 0.5);
@@ -154,11 +164,18 @@ static void mlpackMain()
         "be saved");
   }
 
-  RequireAtLeastOnePassed({ "output_model", "output", "output_probabilities" },
+  // options "output" and "output_probabilites" are depracated and replaced by 
+  //"predictions" and "probabilties" respectively 
+  // options "output" and "output_probabilites" can be removed in mlpack 4.0.0
+  RequireAtLeastOnePassed({ "output_model", "output", "output_probabilities",
+  "predictions", "probabilities"},
       false, "no output will be saved");
 
+  //"output" and "output_probabilities" lines can be removed in mlpack 4.0.0
   ReportIgnoredParam({{ "test", false }}, "output");
   ReportIgnoredParam({{ "test", false }}, "output_probabilities");
+  ReportIgnoredParam({{ "test", false }}, "predictions");
+  ReportIgnoredParam({{ "test", false }}, "probabilites");
 
   // Max Iterations needs to be positive.
   RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; },
@@ -317,6 +334,8 @@ static void mlpackMain()
           << trainingDimensionality << ")!" << endl;
     }
 
+    // The CLI param "output" is depracated and replaced by "predictions"
+    // The following if statement can be removed in mlpack 4.0.0
     // We must perform predictions on the test set.  Training (and the
     // optimizer) are irrelevant here; we'll pass in the model we have.
     if (CLI::HasParam("output"))
@@ -328,6 +347,19 @@ static void mlpackMain()
       CLI::GetParam<arma::Row<size_t>>("output") = std::move(predictions);
     }
 
+    // We must perform predictions on the test set.  Training (and the
+    // optimizer) are irrelevant here; we'll pass in the model we have.
+    if (CLI::HasParam("predictions"))
+    {
+      Log::Info << "Predicting classes of points in '"
+          << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
+      model->Classify(testSet, predictions, decisionBoundary);
+
+      CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictions);
+    }
+
+    //"output_probabilities" parameter is depracated and replaced by 
+    //"probabilities". The following if statement can be removed in mlpack 4.0.0
     if (CLI::HasParam("output_probabilities"))
     {
       Log::Info << "Calculating class probabilities of points in '"
@@ -336,6 +368,17 @@ static void mlpackMain()
       model->Classify(testSet, probabilities);
 
       CLI::GetParam<arma::mat>("output_probabilities") =
+          std::move(probabilities);
+    }
+
+    if (CLI::HasParam("probabilities"))
+    {
+      Log::Info << "Calculating class probabilities of points in '"
+          << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
+      arma::mat probabilities;
+      model->Classify(testSet, probabilities);
+
+      CLI::GetParam<arma::mat>("probabilities") =
           std::move(probabilities);
     }
   }
