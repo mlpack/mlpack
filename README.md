@@ -59,7 +59,7 @@ documentation. The website should be consulted for further information:
 ### 2. Citation details
 
 If you use mlpack in your research or software, please cite mlpack using the
-citation below (given in BiBTeX format):
+citation below (given in BibTeX format):
 
     @article{mlpack2018,
         title     = {mlpack 3: a fast, flexible machine learning library},
@@ -175,12 +175,12 @@ This will build all library components as well as 'mlpack_test'.
 
     $ make
 
-You can specify individual components which you want to build, if you do not
+You can specify individual components which you want to build if you do not
 want to build everything in the library:
 
     $ make mlpack_pca mlpack_knn mlpack_kfn
 
-If the build fails and you cannot figure out why, register an account on Github
+If the build fails and you cannot figure out why to register an account on Github
 and submit an issue; the mlpack developers will quickly help you figure it out:
 
 [mlpack on Github](https://www.github.com/mlpack/mlpack/)
@@ -232,7 +232,7 @@ be stated more simply: for each point in the dataset, we wish to know the k
 nearest points to that point.
 
 Each mlpack program has extensive help documentation which details what the
-method does, what each of the parameters are, and how to use them:
+method does, what each of the parameters is, and how to use them:
 
 ```shell
 $ mlpack_knn --help
@@ -298,7 +298,7 @@ older versions of mlpack:
 If you find a bug in mlpack or have any problems, numerous routes are available
 for help.
 
-Github is used for bug tracking, and can be found at
+Github is used for bug tracking and can be found at
 https://github.com/mlpack/mlpack/.
 It is easy to register an account and file a bug there, and the mlpack
 development team will try to quickly resolve your issue.
