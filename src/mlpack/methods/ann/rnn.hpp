@@ -381,6 +381,16 @@ class RNN
 
   //! The current gradient for the gradient pass.
   arma::mat currentGradient;
+
+  // The BRN class should have access to internal members.
+  template<
+    typename OutputLayerType1,
+    typename MergeLayerType1,
+    typename MergeOutputType1,
+    typename InitializationRuleType1,
+    typename... CustomLayers1
+  >
+  friend class BRNN;
 }; // class RNN
 
 } // namespace ann

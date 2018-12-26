@@ -30,7 +30,7 @@ class GradientVisitor : public boost::static_visitor<void>
  public:
   //! Executes the Gradient() method of the given module using the input and
   //! delta parameter.
-  GradientVisitor(arma::mat&& input, arma::mat&& delta);
+  GradientVisitor(arma::mat&& input, arma::mat&& delta, int layer = -1);
 
   //! Executes the Gradient() method.
   template<typename LayerType>
@@ -43,11 +43,23 @@ class GradientVisitor : public boost::static_visitor<void>
   //! The delta parameter.
   arma::mat&& delta;
 
+  //! Index of the layer to run.
+  int index;
+
   //! Execute the Gradient() function if the module implements the Gradient()
   //! function.
   template<typename T>
   typename std::enable_if<
-      HasGradientCheck<T, arma::mat&(T::*)()>::value, void>::type
+      HasGradientCheck<T, arma::mat&(T::*)()>::value &&
+      !HasRunCheck<T, bool&(T::*)(void)>::value, void>::type
+  LayerGradients(T* layer, arma::mat& input) const;
+
+  //! Execute the Gradient() function if the module implements the Gradient()
+  //! and has a Run() function.
+  template<typename T>
+  typename std::enable_if<
+      HasGradientCheck<T, arma::mat&(T::*)()>::value &&
+      HasRunCheck<T, bool&(T::*)(void)>::value, void>::type
   LayerGradients(T* layer, arma::mat& input) const;
 
   //! Do not execute the Gradient() function if the module doesn't implement

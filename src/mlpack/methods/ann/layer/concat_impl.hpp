@@ -25,7 +25,7 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 Concat<InputDataType, OutputDataType, CustomLayers...>::Concat(
-    const bool model, const bool same) : model(model), same(same)
+    const bool model, const bool run) : model(model), run(run)
 {
   parameters.set_size(0, 0);
 }
@@ -45,38 +45,21 @@ template<typename eT>
 void Concat<InputDataType, OutputDataType, CustomLayers...>::Forward(
     arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
-  size_t outSize = 0;
-
-  for (size_t i = 0; i < network.size(); ++i)
+  if (run)
   {
-    boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
-        boost::apply_visitor(outputParameterVisitor, network[i]))),
-        network[i]);
-
-    if (boost::apply_visitor(
-        outputParameterVisitor, network[i]).n_elem > outSize)
+    for (size_t i = 0; i < network.size(); ++i)
     {
-      outSize = boost::apply_visitor(outputParameterVisitor,
-          network[i]).n_elem;
+      boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
+          boost::apply_visitor(outputParameterVisitor, network[i]))),
+          network[i]);
     }
   }
-
-  output = arma::zeros(outSize, network.size());
-  for (size_t i = 0; i < network.size(); ++i)
+  // Vertically concatentate output from each layer.
+  output = boost::apply_visitor(outputParameterVisitor, network.front());
+  for (size_t i = 1; i < network.size(); ++i)
   {
-    size_t elements = boost::apply_visitor(outputParameterVisitor,
-        network[i]).n_elem;
-
-    if (elements < outSize)
-    {
-      output.submat(0, i, elements - 1, i) = arma::vectorise(
-          boost::apply_visitor(outputParameterVisitor, network[i]));
-    }
-    else
-    {
-      output.col(i) = arma::vectorise(boost::apply_visitor(
-        outputParameterVisitor, network[i]));
-    }
+    output = arma::join_cols(output,
+        boost::apply_visitor(outputParameterVisitor, network[i]));
   }
 }
 
@@ -86,64 +69,52 @@ template<typename eT>
 void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
-  size_t outSize = 0;
-  size_t elements = 0;
-
-  for (size_t i = 0, j = 0; i < network.size(); ++i, j += elements)
+  size_t rowCount = 0;
+  if (run)
   {
-    elements = boost::apply_visitor(outputParameterVisitor,
-        network[i]).n_elem;
-
     arma::mat delta;
-    if (gy.n_cols == 1)
-    {
-      delta = gy.submat(j, 0, j + elements - 1, 0);
-    }
-    else
-    {
-      delta = gy.submat(0, i, elements - 1, i);
-    }
-
-    boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, network[i])), std::move(delta), std::move(
-        boost::apply_visitor(deltaVisitor, network[i]))), network[i]);
-
-    if (boost::apply_visitor(deltaVisitor, network[i]).n_elem > outSize)
-    {
-      outSize = boost::apply_visitor(deltaVisitor, network[i]).n_elem;
-    }
-
-    if (same)
-    {
-      if (i == 0)
-      {
-        g = std::move(boost::apply_visitor(deltaVisitor, network[i]));
-      }
-      else
-      {
-        g += std::move(boost::apply_visitor(deltaVisitor, network[i]));
-      }
-    }
-  }
-
-  if (!same)
-  {
-    g = arma::zeros(outSize, network.size());
     for (size_t i = 0; i < network.size(); ++i)
     {
-      size_t elements = boost::apply_visitor(deltaVisitor, network[i]).n_elem;
-      if (elements < outSize)
-      {
-        g.submat(0, i, elements - 1, i) = arma::vectorise(
-            boost::apply_visitor(deltaVisitor, network[i]));
-      }
-      else
-      {
-        g.col(i) = arma::vectorise(
-            boost::apply_visitor(deltaVisitor, network[i]));
-      }
+      // Backward rows from the error corresponding to the output from each layer.
+      size_t rows = boost::apply_visitor(outputParameterVisitor, network[i]).n_rows;
+      delta = gy.rows(rowCount, rowCount + rows - 1);
+      boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
+          outputParameterVisitor, network[i])), std::move(delta), std::move(
+          boost::apply_visitor(deltaVisitor, network[i]))), network[i]);
+      rowCount += rows;
+    }
+
+    g = boost::apply_visitor(deltaVisitor, network[0]);
+    for (size_t i = 1; i < network.size(); ++i)
+    {
+      g += boost::apply_visitor(deltaVisitor, network[i]);
     }
   }
+  else
+  {
+    g = gy;
+  }
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+template<typename eT>
+void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
+    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g,
+    const size_t index)
+{
+  size_t rowCount = 0, rows = 0;
+  for (size_t i = 0; i < index; ++i)
+  {
+    rowCount += boost::apply_visitor(outputParameterVisitor, network[i]).n_rows;
+  }
+  rows = boost::apply_visitor(outputParameterVisitor, network[index]).n_rows;
+  arma::mat delta = gy.rows(rowCount, rowCount + rows - 1);
+  boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
+      outputParameterVisitor, network[index])), std::move(delta), std::move(
+      boost::apply_visitor(deltaVisitor, network[index]))), network[index]);
+
+  g = boost::apply_visitor(deltaVisitor, network[index]);
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -154,11 +125,36 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
     arma::Mat<eT>&& error,
     arma::Mat<eT>&& /* gradient */)
 {
-  for (size_t i = 0; i < network.size(); ++i)
+  if (run)
   {
-    boost::apply_visitor(GradientVisitor(std::move(input),
-        std::move(error)), network[i]);
+    size_t rowCount = 0;
+    for (size_t i = 0; i < network.size(); ++i)
+    {
+      size_t rows = boost::apply_visitor(outputParameterVisitor, network[i]).n_rows;
+      boost::apply_visitor(GradientVisitor(std::move(input),
+          std::move(error.rows(rowCount, rowCount + rows - 1))), network[i]);
+      rowCount += rows;
+    }
   }
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+template<typename eT>
+void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
+    arma::Mat<eT>&& input,
+    arma::Mat<eT>&& error,
+    arma::Mat<eT>&& /* gradient */,
+    const size_t index)
+{
+  size_t rowCount = 0;
+  for (size_t i = 0; i < index; ++i)
+  {
+    rowCount += boost::apply_visitor(outputParameterVisitor, network[i]).n_rows;
+  }
+  size_t rows = boost::apply_visitor(outputParameterVisitor, network[index]).n_rows;
+  boost::apply_visitor(GradientVisitor(std::move(input),
+      std::move(error.rows(rowCount, rowCount + rows - 1))), network[index]);
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -168,7 +164,7 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(model);
-  ar & BOOST_SERIALIZATION_NVP(same);
+  ar & BOOST_SERIALIZATION_NVP(run);
 
   // Do we have to load or save a model?
   if (model)

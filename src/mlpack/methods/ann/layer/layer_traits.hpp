@@ -108,6 +108,10 @@ HAS_MEM_FUNC(Rho, HasRho);
 // can use with SFINAE to catch when a type has a Loss() function.
 HAS_MEM_FUNC(Loss, HasLoss);
 
+// This gives us a HasRunCheck<T, U> type (where U is a function pointer) we
+// can use with SFINAE to catch when a type has a Run() function.
+HAS_MEM_FUNC(Run, HasRunCheck);
+
 } // namespace ann
 } // namespace mlpack
 

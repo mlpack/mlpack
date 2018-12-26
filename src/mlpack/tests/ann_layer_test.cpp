@@ -1022,17 +1022,13 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
   // Test the Forward function.
   input = arma::zeros(10, 1);
   module.Forward(std::move(input), std::move(output));
-
   BOOST_REQUIRE_CLOSE(arma::accu(
-      moduleA.Parameters().submat(100, 0, moduleA.Parameters().n_elem - 1, 0)),
+      moduleA.Parameters().submat(100, 0, moduleA.Parameters().n_elem - 1, 0)) +
+      arma::accu(moduleB.Parameters().submat(100, 0, moduleB.Parameters().n_elem - 1, 0)),
       arma::accu(output.col(0)), 1e-3);
 
-  BOOST_REQUIRE_CLOSE(arma::accu(
-      moduleB.Parameters().submat(100, 0, moduleB.Parameters().n_elem - 1, 0)),
-      arma::accu(output.col(1)), 1e-3);
-
   // Test the Backward function.
-  error = arma::zeros(10, 2);
+  error = arma::zeros(20, 1);
   module.Backward(std::move(input), std::move(error), std::move(delta));
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
 }
@@ -1055,7 +1051,7 @@ BOOST_AUTO_TEST_CASE(GradientConcatLayerTest)
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
 
-      concat = new Concat<>();
+      concat = new Concat<>(true);
       concat->Add<Linear<> >(10, 2);
       model->Add(concat);
 

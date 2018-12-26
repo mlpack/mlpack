@@ -30,7 +30,8 @@ class BackwardVisitor : public boost::static_visitor<void>
  public:
   //! Execute the Backward() function given the input, error and delta
   //! parameter.
-  BackwardVisitor(arma::mat&& input, arma::mat&& error, arma::mat&& delta);
+  BackwardVisitor(arma::mat&& input, arma::mat&& error, arma::mat&& delta,
+      int layer = -1);
 
   //! Execute the Backward() function.
   template<typename LayerType>
@@ -45,6 +46,22 @@ class BackwardVisitor : public boost::static_visitor<void>
 
   //! The delta parameter.
   arma::mat&& delta;
+
+  //! The index of the layer to run.
+  int index;
+
+  //! Execute the Backward() function if the module does not have Run()
+  //! check.
+  template<typename T>
+  typename std::enable_if<
+      !HasRunCheck<T, bool&(T::*)(void)>::value, void>::type
+  LayerBackward(T* layer, arma::mat& input) const;
+
+  //! Execute the Backward() function if the module is has Run() function.
+  template<typename T>
+  typename std::enable_if<
+      HasRunCheck<T, bool&(T::*)(void)>::value, void>::type
+  LayerBackward(T* layer, arma::mat& input) const;
 };
 
 } // namespace ann

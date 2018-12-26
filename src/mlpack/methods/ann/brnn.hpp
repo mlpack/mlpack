@@ -1,61 +1,61 @@
 /**
- * @file ffn.hpp
- * @author Marcus Edel
- * @author Shangtong Zhang
+ * @file brnn.hpp
+ * @author Saksham Bansal
  *
- * Definition of the FFN class, which implements feed forward neural networks.
+ * Definition of the BRNN class, which implements bidirectional recurrent
+ * neural networks.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_FFN_HPP
-#define MLPACK_METHODS_ANN_FFN_HPP
+#ifndef MLPACK_METHODS_ANN_BRNN_HPP
+#define MLPACK_METHODS_ANN_BRNN_HPP
 
 #include <mlpack/prereqs.hpp>
 
 #include "visitor/delete_visitor.hpp"
 #include "visitor/delta_visitor.hpp"
-#include "visitor/output_height_visitor.hpp"
-#include "visitor/output_parameter_visitor.hpp"
-#include "visitor/output_width_visitor.hpp"
-#include "visitor/reset_visitor.hpp"
-#include "visitor/weight_size_visitor.hpp"
 #include "visitor/copy_visitor.hpp"
-#include "visitor/loss_visitor.hpp"
+#include "visitor/output_parameter_visitor.hpp"
+#include "visitor/reset_visitor.hpp"
 
 #include "init_rules/network_init.hpp"
-
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
+
 #include <ensmallen.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of a standard feed forward network.
+ * Implementation of a standard bidirectional recurrent neural network container.
  *
  * @tparam OutputLayerType The output layer type used to evaluate the network.
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
- * @tparam CustomLayers Any set of custom layers that could be a part of the
- *         feed forward network.
  */
 template<
   typename OutputLayerType = NegativeLogLikelihood<>,
+  typename MergeLayerType = Concat<>,
+  typename MergeOutputType = LogSoftMax<>,
   typename InitializationRuleType = RandomInitialization,
   typename... CustomLayers
 >
-class FFN
+class BRNN
 {
  public:
   //! Convenience typedef for the internal model construction.
-  using NetworkType = FFN<OutputLayerType, InitializationRuleType>;
+  using NetworkType = BRNN<OutputLayerType,
+                           MergeLayerType,
+                           MergeOutputType,
+                           InitializationRuleType,
+                           CustomLayers...>;
 
   /**
-   * Create the FFN object.
+   * Create the BRNN object.
    *
    * Optionally, specify which initialize rule and performance function should
    * be used.
@@ -63,28 +63,22 @@ class FFN
    * If you want to pass in a parameter and discard the original parameter
    * object, be sure to use std::move to avoid unnecessary copy.
    *
+   * @param rho Maximum number of steps to backpropagate through time (BPTT).
+   * @param single Predict only the last element of the input sequence.
    * @param outputLayer Output layer used to evaluate the network.
    * @param initializeRule Optional instantiated InitializationRule object
    *        for initializing the network parameter.
    */
-  FFN(OutputLayerType outputLayer = OutputLayerType(),
-      InitializationRuleType initializeRule = InitializationRuleType());
-
-  //! Copy constructor.
-  FFN(const FFN&);
-
-  //! Move constructor.
-  FFN(FFN&&);
-
-  //! Copy/move assignment operator.
-  FFN& operator = (FFN);
-
-  //! Destructor to release allocated memory.
-  ~FFN();
+  BRNN(const size_t rho,
+       const bool single = false,
+       OutputLayerType outputLayer = OutputLayerType(),
+       MergeLayerType mergeLayer = MergeLayerType(),
+       MergeOutputType mergeOutput = MergeOutputType(),
+       InitializationRuleType initializeRule = InitializationRuleType());
 
   /**
-   * Train the feedforward network on the given input data using the given
-   * optimizer.
+   * Train the bidirectional recurrent neural network on the given input data
+   * using the given optimizer.
    *
    * This will use the existing model parameters as a starting point for the
    * optimization. If this is not what you want, then you should access the
@@ -92,6 +86,13 @@ class FFN
    *
    * If you want to pass in a parameter and discard the original parameter
    * object, be sure to use std::move to avoid unnecessary copy.
+   *
+   * The format of the data should be as follows:
+   *  - each slice should correspond to a time step
+   *  - each column should correspond to a data point
+   *  - each row should correspond to a dimension
+   * So, e.g., predictors(i, j, k) is the i'th dimension of the j'th data point
+   * at time slice k.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
@@ -99,14 +100,14 @@ class FFN
    * @param optimizer Instantiated optimizer used to train the model.
    */
   template<typename OptimizerType>
-  void Train(arma::mat predictors,
-             arma::mat responses,
+  void Train(arma::cube predictors,
+             arma::cube responses,
              OptimizerType& optimizer);
 
   /**
-   * Train the feedforward network on the given input data. By default, the
-   * RMSProp optimization algorithm is used, but others can be specified
-   * (such as ens::SGD).
+   * Train the bidirectional recurrent neural network on the given input data.
+   * By default, the SGD optimization algorithm is used, but others can be specified
+   * (such as ens::RMSprop).
    *
    * This will use the existing model parameters as a starting point for the
    * optimization. If this is not what you want, then you should access the
@@ -115,12 +116,19 @@ class FFN
    * If you want to pass in a parameter and discard the original parameter
    * object, be sure to use std::move to avoid unnecessary copy.
    *
+   * The format of the data should be as follows:
+   *  - each slice should correspond to a time step
+   *  - each column should correspond to a data point
+   *  - each row should correspond to a dimension
+   * So, e.g., predictors(i, j, k) is the i'th dimension of the j'th data point
+   * at time slice k.
+   *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    */
-  template<typename OptimizerType = ens::RMSProp>
-  void Train(arma::mat predictors, arma::mat responses);
+  template<typename OptimizerType = ens::StandardSGD>
+  void Train(arma::cube predictors, arma::cube responses);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -130,34 +138,25 @@ class FFN
    * If you want to pass in a parameter and discard the original parameter
    * object, be sure to use std::move to avoid unnecessary copy.
    *
+   * The format of the data should be as follows:
+   *  - each slice should correspond to a time step
+   *  - each column should correspond to a data point
+   *  - each row should correspond to a dimension
+   * So, e.g., predictors(i, j, k) is the i'th dimension of the j'th data point
+   * at time slice k.  The responses will be in the same format.
+   *
    * @param predictors Input predictors.
    * @param results Matrix to put output predictions of responses into.
+   * @param batchSize Number of points to predict at once.
    */
-  void Predict(arma::mat predictors, arma::mat& results);
+  void Predict(arma::cube predictors,
+               arma::cube& results,
+               const size_t batchSize = 256);
 
   /**
-   * Evaluate the feedforward network with the given predictors and responses.
-   * This functions is usually used to monitor progress while training.
-   *
-   * @param predictors Input variables.
-   * @param responses Target outputs for input variables.
-   */
-  double Evaluate(arma::mat predictors, arma::mat responses);
-
-  /**
-   * Evaluate the feedforward network with the given parameters. This function
-   * is usually called by the optimizer to train the model.
-   *
-   * @param parameters Matrix model parameters.
-   * @param deterministic Whether or not to train or test the model. Note some
-   *        layer act differently in training or testing mode.
-   */
-  double Evaluate(const arma::mat& parameters);
-
-   /**
-   * Evaluate the feedforward network with the given parameters, but using only
-   * a number of data points. This is useful for optimizers such as SGD, which
-   * require a separable objective function.
+   * Evaluate the bidirectional recurrent neural network with the given
+   * parameters. This function is usually called by the optimizer to train
+   * the model.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
@@ -172,11 +171,11 @@ class FFN
                   const size_t batchSize,
                   const bool deterministic);
 
-   /**
-   * Evaluate the feedforward network with the given parameters, but using only
-   * a number of data points. This is useful for optimizers such as SGD, which
-   * require a separable objective function. This just calls the overload of
-   * Evaluate() with deterministic = true.
+  /**
+   * Evaluate the bidirectional recurrent neural network with the given
+   * parameters. This function is usually called by the optimizer to train
+   * the model.  This just calls the other overload of Evaluate() with
+   * deterministic = true.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
@@ -189,20 +188,10 @@ class FFN
                   const size_t batchSize);
 
   /**
-   * Evaluate the feedforward network with the given parameters.
-   * This function is usually called by the optimizer to train the model.
-   * This just calls the overload of EvaluateWithGradient() with batchSize = 1.
-   *
-   * @param parameters Matrix model parameters.
-   * @param gradient Matrix to output gradient into.
-   */
-  template<typename GradType>
-  double EvaluateWithGradient(const arma::mat& parameters, GradType& gradient);
-
-   /**
-   * Evaluate the feedforward network with the given parameters, but using only
-   * a number of data points. This is useful for optimizers such as SGD, which
-   * require a separable objective function.
+   * Evaluate the bidirectional recurrent neural network with the given
+   * parameters. This function is usually called by the optimizer to train
+   * the model.  This just calls the other overload of Evaluate()
+   * with deterministic = true.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
@@ -218,9 +207,10 @@ class FFN
                               const size_t batchSize);
 
   /**
-   * Evaluate the gradient of the feedforward network with the given parameters,
-   * and with respect to only a number of points in the dataset. This is useful
-   * for optimizers such as SGD, which require a separable objective function.
+   * Evaluate the gradient of the bidirectional recurrent neural network
+   * with the given parameters, and with respect to only one point in
+   * the dataset. This is useful for optimizers such as SGD, which require
+   * a separable objective function.
    *
    * @param parameters Matrix of the model parameters to be optimized.
    * @param begin Index of the starting point to use for objective function
@@ -246,14 +236,14 @@ class FFN
    * @param args The layer parameter.
    */
   template <class LayerType, class... Args>
-  void Add(Args... args) { network.push_back(new LayerType(args...)); }
+  void Add(Args... args);
 
   /*
    * Add a new module to the model.
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
+  void Add(LayerTypes<CustomLayers...> layer);
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
@@ -263,18 +253,30 @@ class FFN
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameter; }
 
+  //! Return the maximum length of backpropagation through time.
+  const size_t& Rho() const { return rho; }
+  //! Modify the maximum length of backpropagation through time.
+  size_t& Rho() { return rho; }
+
   //! Get the matrix of responses to the input data points.
-  const arma::mat& Responses() const { return responses; }
+  const arma::cube& Responses() const { return responses; }
   //! Modify the matrix of responses to the input data points.
-  arma::mat& Responses() { return responses; }
+  arma::cube& Responses() { return responses; }
 
   //! Get the matrix of data points (predictors).
-  const arma::mat& Predictors() const { return predictors; }
+  const arma::cube& Predictors() const { return predictors; }
   //! Modify the matrix of data points (predictors).
-  arma::mat& Predictors() { return predictors; }
+  arma::cube& Predictors() { return predictors; }
 
   /**
-   * Reset the module infomration (weights/parameters).
+   * Reset the state of the network.  This ensures that all internally-held
+   * gradients are set to 0, all memory cells are reset, and the parameters
+   * matrix is the right size.
+   */
+  void Reset();
+
+  /**
+   * Reset the module information (weights/parameters).
    */
   void ResetParameters();
 
@@ -282,120 +284,50 @@ class FFN
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
 
-  /**
-   * Perform the forward pass of the data in real batch mode.
-   *
-   * Forward and Backward should be used as a pair, and they are designed mainly
-   * for advanced users. User should try to use Predict and Train unless those
-   * two functions can't satisfy some special requirements.
-   *
-   * @param inputs The input data.
-   * @param results The predicted results.
-   */
-  void Forward(arma::mat inputs, arma::mat& results);
-
-  /**
-   * Perform a partial forward pass of the data.
-   *
-   * This function is meant for the cases when users require a forward pass only
-   * through certain layers and not the entire network.
-   *
-   * @param inputs The input data for the specified first layer.
-   * @param results The predicted results from the specified last layer.
-   * @param begin The index of the first layer.
-   * @param end The index of the last layer.
-   */
-  void Forward(arma::mat inputs,
-               arma::mat& results,
-               const size_t begin,
-               const size_t end);
-
-  /**
-   * Perform the backward pass of the data in real batch mode.
-   *
-   * Forward and Backward should be used as a pair, and they are designed mainly
-   * for advanced users. User should try to use Predict and Train unless those
-   * two functions can't satisfy some special requirements.
-   *
-   * @param targets The training target.
-   * @param gradients Computed gradients.
-   * @return Training error of the current pass.
-   */
-  double Backward(arma::mat targets, arma::mat& gradients);
-
  private:
   // Helper functions.
-  /**
-   * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
-   * forward probabilities for each module.
-   *
-   * @param input Data sequence to compute probabilities for.
-   */
-  void Forward(arma::mat&& input);
-
-  /**
-   * Prepare the network for the given data.
-   * This function won't actually trigger training process.
-   *
-   * @param predictors Input data variables.
-   * @param responses Outputs results from input data variables.
-   */
-  void ResetData(arma::mat predictors, arma::mat responses);
-
-  /**
-   * The Backward algorithm (part of the Forward-Backward algorithm). Computes
-   * backward pass for module.
-   */
-  void Backward();
-
-  /**
-   * Iterate through all layer modules and update the the gradient using the
-   * layer defined optimizer.
-   */
-  void Gradient(arma::mat&& input);
-
   /**
    * Reset the module status by setting the current deterministic parameter
    * for all modules that implement the Deterministic function.
    */
   void ResetDeterministic();
 
-  /**
-   * Reset the gradient for all modules that implement the Gradient function.
-   */
-  void ResetGradients(arma::mat& gradient);
-
-  /**
-   * Swap the content of this network with given network.
-   *
-   * @param network Desired source network.
-   */
-  void Swap(FFN& network);
+  //! Number of steps to backpropagate through time (BPTT).
+  size_t rho;
 
   //! Instantiated outputlayer used to evaluate the network.
   OutputLayerType outputLayer;
+
+  //! Locally-stored merge Layer
+  LayerTypes<CustomLayers...> mergeLayer;
+
+  //! Locally-stored merge Layer
+  LayerTypes<CustomLayers...> mergeOutput;
 
   //! Instantiated InitializationRule object for initializing the network
   //! parameter.
   InitializationRuleType initializeRule;
 
-  //! The input width.
-  size_t width;
+  //! The input size.
+  size_t inputSize;
 
-  //! The input height.
-  size_t height;
+  //! The output size.
+  size_t outputSize;
+
+  //! The target size.
+  size_t targetSize;
 
   //! Indicator if we already trained the model.
   bool reset;
 
-  //! Locally-stored model modules.
-  std::vector<LayerTypes<CustomLayers...> > network;
+    //! Only predict the last element of the input sequence.
+  bool single;
 
   //! The matrix of data points (predictors).
-  arma::mat predictors;
+  arma::cube predictors;
 
   //! The matrix of responses to the input data points.
-  arma::mat responses;
+  arma::cube responses;
 
   //! Matrix of (trained) parameters.
   arma::mat parameter;
@@ -406,26 +338,20 @@ class FFN
   //! The current error for the backward pass.
   arma::mat error;
 
-  //! THe current input of the forward/backward pass.
-  arma::mat currentInput;
-
   //! Locally-stored delta visitor.
   DeltaVisitor deltaVisitor;
 
   //! Locally-stored output parameter visitor.
   OutputParameterVisitor outputParameterVisitor;
 
+  //! All output parameters for the backward pass (BBTT) for forward RNN.
+  std::vector<arma::mat> forwardRNNOutputParameter;
+
+  //! All output parameters for the backward pass (BBTT) for backward RNN.
+  std::vector<arma::mat> backwardRNNOutputParameter;
+
   //! Locally-stored weight size visitor.
   WeightSizeVisitor weightSizeVisitor;
-
-  //! Locally-stored output width visitor.
-  OutputWidthVisitor outputWidthVisitor;
-
-  //! Locally-stored output height visitor.
-  OutputHeightVisitor outputHeightVisitor;
-
-  //! Locally-stored loss visitor
-  LossVisitor lossVisitor;
 
   //! Locally-stored reset visitor.
   ResetVisitor resetVisitor;
@@ -433,47 +359,45 @@ class FFN
   //! Locally-stored delete visitor.
   DeleteVisitor deleteVisitor;
 
+  //! Locally-stored delete visitor.
+  CopyVisitor<CustomLayers...> copyVisitor;
+
   //! The current evaluation mode (training or testing).
   bool deterministic;
 
-  //! Locally-stored delta object.
-  arma::mat delta;
+  //! The current gradient for the gradient pass for forward RNN.
+  arma::mat forwardGradient;
 
-  //! Locally-stored input parameter object.
-  arma::mat inputParameter;
+  //! The current gradient for the gradient pass for backward RNN.
+  arma::mat backwardGradient;
 
-  //! Locally-stored output parameter object.
-  arma::mat outputParameter;
+  //! The total gradient from each gradient pass.
+  arma::mat totalGradient;
 
-  //! Locally-stored gradient parameter.
-  arma::mat gradient;
+  //! Forward RNN
+  RNN<OutputLayerType, InitializationRuleType, CustomLayers...> forwardRNN;
 
-  //! Locally-stored copy visitor
-  CopyVisitor<CustomLayers...> copyVisitor;
+  //! Backward RNN
+  RNN<OutputLayerType, InitializationRuleType, CustomLayers...> backwardRNN;
 
-  // The GAN class should have access to internal members.
-  template<
-    typename Model,
-    typename InitializerType,
-    typename NoiseType,
-    typename PolicyType
-  >
-  friend class GAN;
-}; // class FFN
+}; // class BRNN
 
 } // namespace ann
 } // namespace mlpack
 
-//! Set the serialization version of the FFN class.  Multiple template arguments
+//! Set the serialization version of the BRNN class.  Multiple template arguments
 //! makes this ugly...
 namespace boost {
 namespace serialization {
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
+         typename MergeLayerType,
+         typename MergeOutputType,
          typename... CustomLayer>
 struct version<
-    mlpack::ann::FFN<OutputLayerType, InitializationRuleType, CustomLayer...>>
+    mlpack::ann::BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
+        InitializationRuleType, CustomLayer...>>
 {
   BOOST_STATIC_CONSTANT(int, value = 1);
 };
@@ -482,6 +406,6 @@ struct version<
 } // namespace boost
 
 // Include implementation.
-#include "ffn_impl.hpp"
+#include "brnn_impl.hpp"
 
 #endif
