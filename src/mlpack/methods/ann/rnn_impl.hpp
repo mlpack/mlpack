@@ -260,11 +260,6 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   // Initialize passed gradient.
   if (gradient.is_empty())
   {
-    if (parameter.is_empty())
-    {
-      ResetParameters();
-    }
-
     gradient = arma::zeros<arma::mat>(parameter.n_rows, parameter.n_cols);
   }
   else
@@ -272,55 +267,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     gradient.zeros();
   }
 
-  if (this->deterministic)
-  {
-    this->deterministic = false;
-    ResetDeterministic();
-  }
-
-  if (!inputSize)
-  {
-    inputSize = predictors.n_rows;
-    targetSize = responses.n_rows;
-  }
-  else if (targetSize == 0)
-  {
-    targetSize = responses.n_rows;
-  }
-
-  ResetCells();
-
-  double performance = 0;
-  size_t responseSeq = 0;
-
-  for (size_t seqNum = 0; seqNum < rho; ++seqNum)
-  {
-    // Wrap a matrix around our data to avoid a copy.
-    arma::mat stepData(predictors.slice(seqNum).colptr(begin),
-        predictors.n_rows, batchSize, false, true);
-    Forward(std::move(stepData));
-    if (!single)
-    {
-      responseSeq = seqNum;
-    }
-
-    for (size_t l = 0; l < network.size(); ++l)
-    {
-      boost::apply_visitor(SaveOutputParameterVisitor(
-          std::move(moduleOutputParameter)), network[l]);
-    }
-
-    performance += outputLayer.Forward(std::move(boost::apply_visitor(
-        outputParameterVisitor, network.back())),
-        std::move(arma::mat(responses.slice(responseSeq).colptr(begin),
-            responses.n_rows, batchSize, false, true)));
-  }
-
-  if (outputSize == 0)
-  {
-    outputSize = boost::apply_visitor(outputParameterVisitor,
-        network.back()).n_elem / batchSize;
-  }
+  double performance = Evaluate(parameter, begin, batchSize, false);
 
   // Initialize current/working gradient.
   if (currentGradient.is_empty())

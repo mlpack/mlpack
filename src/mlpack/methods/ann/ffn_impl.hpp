@@ -304,9 +304,6 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
 {
   if (gradient.is_empty())
   {
-    if (parameter.is_empty())
-      ResetParameters();
-
     gradient = arma::zeros<arma::mat>(parameter.n_rows, parameter.n_cols);
   }
   else
@@ -314,21 +311,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     gradient.zeros();
   }
 
-  if (this->deterministic)
-  {
-    this->deterministic = false;
-    ResetDeterministic();
-  }
-
-  Forward(std::move(predictors.cols(begin, begin + batchSize - 1)));
-  double res = outputLayer.Forward(
-      std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
-      std::move(responses.cols(begin, begin + batchSize - 1)));
-
-  for (size_t i = 0; i < network.size(); ++i)
-  {
-    res += boost::apply_visitor(lossVisitor, network[i]);
-  }
+  double res = Evaluate(parameter, begin, batchSize, false);
 
   outputLayer.Backward(
       std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
