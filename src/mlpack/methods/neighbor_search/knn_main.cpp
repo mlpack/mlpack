@@ -36,6 +36,12 @@ typedef NSModel<NearestNeighborSort> KNNModel;
 
 // Information about the program itself.
 PROGRAM_INFO("k-Nearest-Neighbors Search",
+    // Short description.
+    "An implementation of k-nearest-neighbor search using single-tree and "
+    "dual-tree algorithms.  Given a set of reference points and query points, "
+    "this can find the k nearest neighbors in the reference set of each query "
+    "point using trees; trees that are built can be saved for future use.",
+    // Long description.
     "This program will calculate the k-nearest-neighbors of a set of "
     "points using kd-trees or cover trees (cover tree support is experimental "
     "and may be slow). You may specify a separate set of "
@@ -49,11 +55,11 @@ PROGRAM_INFO("k-Nearest-Neighbors Search",
     "\n\n" +
     PRINT_CALL("knn", "k", 5, "reference", "input", "neighbors", "neighbors") +
     "\n\n"
-    "The output files are organized such that row i and column j in the "
-    "neighbors output matrix corresponds to the index of the point in the "
-    "reference set which is the j'th nearest neighbor from the point in the "
-    "query set with index i.  Row j and column i in the distances output matrix"
-    " corresponds to the distance between those two points.");
+    "The output is organized such that row i and column j in the neighbors "
+    "output matrix corresponds to the index of the point in the reference set "
+    "which is the j'th nearest neighbor from the point in the query set with "
+    "index i.  Row j and column i in the distances output matrix corresponds to"
+    " the distance between those two points.");
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");

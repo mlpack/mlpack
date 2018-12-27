@@ -21,6 +21,12 @@ using namespace mlpack::data;
 using namespace mlpack::util;
 
 PROGRAM_INFO("Decision tree",
+    // Short description.
+    "An implementation of an ID3-style decision tree for classification, which"
+    " supports categorical data.  Given labeled data with numeric or "
+    "categorical features, a decision tree can be trained and saved; or, an "
+    "existing decision tree can be used for classification on new points.",
+    // Long description.
     "Train and evaluate using a decision tree.  Given a dataset containing "
     "numeric or categorical features, and associated labels for each point in "
     "the dataset, this program can train a decision tree on that data."

@@ -27,6 +27,10 @@ using namespace mlpack::util;
 using namespace std;
 
 PROGRAM_INFO("DBSCAN clustering",
+    // Short description.
+    "An implementation of DBSCAN clustering.  Given a dataset, this can "
+    "compute and return a clustering of that dataset.",
+    // Long description.
     "This program implements the DBSCAN algorithm for clustering using "
     "accelerated tree-based range search.  The type of tree that is used "
     "may be parameterized, or brute-force range search may also be used."

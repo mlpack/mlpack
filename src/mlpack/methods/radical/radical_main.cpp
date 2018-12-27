@@ -15,11 +15,18 @@
 #include <mlpack/core/math/random.hpp>
 #include "radical.hpp"
 
-PROGRAM_INFO("RADICAL", "An implementation of RADICAL, a method for independent"
-    "component analysis (ICA).  Assuming that we have an input matrix X, the"
-    "goal is to find a square unmixing matrix W such that Y = W * X and the "
-    "dimensions of Y are independent components.  If the algorithm is running"
-    "particularly slowly, try reducing the number of replicates."
+PROGRAM_INFO("RADICAL",
+    // Short description.
+    "An implementation of RADICAL, a method for independent component analysis "
+    "(ICA).  Given a dataset, this can decompose the dataset into an unmixing "
+    "matrix and an independent component matrix; this can be useful for "
+    "preprocessing.",
+    // Long description.
+    "An implementation of RADICAL, a method for independent component analysis "
+    "(ICA).  Assuming that we have an input matrix X, the goal is to find a "
+    "square unmixing matrix W such that Y = W * X and the dimensions of Y are "
+    "independent components.  If the algorithm is running particularly slowly, "
+    "try reducing the number of replicates."
     "\n\n"
     "The input matrix to perform ICA on should be specified with the " +
     PRINT_PARAM_STRING("input") + " parameter.  The output matrix Y may be "

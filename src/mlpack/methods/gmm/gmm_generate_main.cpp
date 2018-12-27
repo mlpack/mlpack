@@ -20,6 +20,10 @@ using namespace mlpack::gmm;
 using namespace mlpack::util;
 
 PROGRAM_INFO("GMM Sample Generator",
+    // Short description.
+    "A sample generator for pre-trained GMMs.  Given a pre-trained GMM, this "
+    "can sample new points randomly from that distribution.",
+    // Long description.
     "This program is able to generate samples from a pre-trained GMM (use "
     "gmm_train to train a GMM).  The pre-trained GMM must be specified with "
     "the " + PRINT_PARAM_STRING("input_model") + " parameter.  The number "

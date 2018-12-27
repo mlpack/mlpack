@@ -25,6 +25,12 @@
 
 // Define parameters.
 PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
+    // Short description.
+    "An implementation of Large Margin Nearest Neighbors (LMNN), a distance "
+    "learning technique.  Given a labeled dataset, this learns a transformation"
+    " of the data that improves k-nearest-neighbor performance; this can be "
+    "useful as a preprocessing step.",
+    // Long description.
     "This program implements Large Margin Nearest Neighbors, a distance "
     "learning technique.  The method seeks to improve k-nearest-neighbor "
     "classification on a dataset.  The method employes the strategy of "

@@ -24,6 +24,12 @@ using namespace mlpack::sparse_coding; // For NothingInitializer.
 using namespace mlpack::util;
 
 PROGRAM_INFO("Local Coordinate Coding",
+    // Short description.
+    "An implementation of Local Coordinate Coding (LCC), a data transformation "
+    "technique.  Given input data, this transforms each point to be expressed "
+    "as a linear combination of a few points in the dataset; once an LCC model "
+    "is trained, it can be used to transform points later also.",
+    // Long description.
     "An implementation of Local Coordinate Coding (LCC), which "
     "codes data that approximately lives on a manifold using a variation of l1-"
     "norm regularized sparse coding.  Given a dense data matrix X with n points"

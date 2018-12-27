@@ -26,6 +26,11 @@ using namespace std;
 using namespace arma;
 
 PROGRAM_INFO("Parametric Naive Bayes Classifier",
+    // Short description.
+    "An implementation of the Naive Bayes Classifier, used for classification. "
+    "Given labeled data, an NBC model can be trained and saved, or, a "
+    "pre-trained model can be used for classification.",
+    // Long description.
     "This program trains the Naive Bayes classifier on the given labeled "
     "training set, or loads a model from the given model file, and then may use"
     " that trained model to classify the points in a given test set."

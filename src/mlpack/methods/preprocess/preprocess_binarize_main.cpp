@@ -14,7 +14,13 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/data/binarize.hpp>
 
-PROGRAM_INFO("Binarize Data", "This utility takes a dataset and binarizes the "
+PROGRAM_INFO("Binarize Data",
+    // Short description.
+    "A utility to binarize a dataset.  Given a dataset, this utility converts "
+    "each value in the desired dimension(s) to 0 or 1; this can be a useful "
+    "preprocessing step.",
+    // Long description.
+    "This utility takes a dataset and binarizes the "
     "variables into either 0 or 1 given threshold. User can apply binarization "
     "on a dimension or the whole dataset.  The dimension to apply binarization "
     "to can be specified using the " + PRINT_PARAM_STRING("dimension") +

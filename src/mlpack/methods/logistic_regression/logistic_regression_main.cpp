@@ -24,6 +24,11 @@ using namespace mlpack::optimization;
 using namespace mlpack::util;
 
 PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
+    // Short description.
+    "An implementation of L2-regularized logistic regression for two-class "
+    "classification.  Given labeled data, a model can be trained and saved for "
+    "future use; or, a pre-trained model can be used to classify new points.",
+    // Long description.
     "An implementation of L2-regularized logistic regression using either the "
     "L-BFGS optimizer or SGD (stochastic gradient descent).  This solves the "
     "regression problem"

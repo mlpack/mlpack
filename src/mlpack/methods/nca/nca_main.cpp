@@ -22,6 +22,12 @@
 
 // Define parameters.
 PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
+    // Short description.
+    "An implementation of neighborhood components analysis, a distance learning"
+    " technique that can be used for preprocessing.  Given a labeled dataset, "
+    "this uses NCA, which seeks to improve the k-nearest-neighbor "
+    "classification, and returns the learned distance metric.",
+    // Long description.
     "This program implements Neighborhood Components Analysis, both a linear "
     "dimensionality reduction technique and a distance learning technique.  The"
     " method seeks to improve k-nearest-neighbor classification on a dataset "

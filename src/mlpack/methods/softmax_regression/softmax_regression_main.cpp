@@ -24,11 +24,18 @@ using namespace mlpack::regression;
 using namespace mlpack::util;
 
 // Define parameters for the executable.
-PROGRAM_INFO("Softmax Regression", "This program performs softmax regression, "
-    "a generalization of logistic regression to the multiclass case, and has "
-    "support for L2 regularization.  The program is able to train a model, load"
-    " an existing model, and give predictions (and optionally their accuracy) "
-    "for test data."
+PROGRAM_INFO("Softmax Regression",
+    // Short description.
+    "An implementation of softmax regression for classification, which is a "
+    "multiclass generalization of logistic regression.  Given labeled data, a "
+    "softmax regression model can be trained and saved for future use, or, a "
+    "pre-trained softmax regression model can be used for classification of "
+    "new points.",
+    // Long description.
+    "This program performs softmax regression, a generalization of logistic "
+    "regression to the multiclass case, and has support for L2 regularization. "
+    " The program is able to train a model, load  an existing model, and give "
+    "predictions (and optionally their accuracy) for test data."
     "\n\n"
     "Training a softmax regression model is done by giving a file of training "
     "points with the " + PRINT_PARAM_STRING("training") + " parameter and their"

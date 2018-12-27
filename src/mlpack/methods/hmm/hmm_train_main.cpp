@@ -27,9 +27,15 @@ using namespace mlpack::math;
 using namespace arma;
 using namespace std;
 
-PROGRAM_INFO("Hidden Markov Model (HMM) Training", "This program allows a "
-    "Hidden Markov Model to be trained on labeled or unlabeled data.  It "
-    "support three types of HMMs: discrete HMMs, Gaussian HMMs, or GMM HMMs."
+PROGRAM_INFO("Hidden Markov Model (HMM) Training",
+    // Short description.
+    "An implementation of training algorithms for Hidden Markov Models (HMMs). "
+    "Given labeled or unlabeled data, an HMM can be trained for further use "
+    "with other mlpack HMM tools.",
+    // Long description.
+    "This program allows a Hidden Markov Model to be trained on labeled or "
+    "unlabeled data.  It supports three types of HMMs: discrete HMMs, "
+    "Gaussian HMMs, or GMM HMMs."
     "\n\n"
     "Either one input sequence can be specified (with --input_file), or, a "
     "file containing files in which input sequences can be found (when "

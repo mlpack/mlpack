@@ -22,6 +22,12 @@ using namespace arma;
 using namespace std;
 
 PROGRAM_INFO("Simple Linear Regression and Prediction",
+    // Short description.
+    "An implementation of simple linear regression and ridge regression using "
+    "ordinary least squares.  Given a dataset and responses, a model can be "
+    "trained and saved for later use, or a pre-trained model can be used to "
+    "output regression predictions for a test set.",
+    // Long description.
     "An implementation of simple linear regression and simple ridge regression "
     "using ordinary least squares. This solves the problem"
     "\n\n"

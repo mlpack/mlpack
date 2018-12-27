@@ -42,7 +42,13 @@ using namespace mlpack::util;
 using namespace std;
 
 // Document program.
-PROGRAM_INFO("Collaborative Filtering", "This program performs collaborative "
+PROGRAM_INFO("Collaborative Filtering",
+    // Short description.
+    "An implementation of several collaborative filtering (CF) techniques for "
+    "recommender systems.  This can be used to train a new CF model, or use an"
+    " existing CF model to compute recommendations.",
+    // Long description.
+    "This program performs collaborative "
     "filtering (CF) on the given dataset. Given a list of user, item and "
     "preferences (the " + PRINT_PARAM_STRING("training") + " parameter), "
     "the program will perform a matrix decomposition and then can perform a "

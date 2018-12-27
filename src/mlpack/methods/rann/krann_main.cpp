@@ -30,6 +30,13 @@ typedef RAModel<NearestNeighborSort> RANNModel;
 
 // Information about the program itself.
 PROGRAM_INFO("K-Rank-Approximate-Nearest-Neighbors (kRANN)",
+    // Short description.
+    "An implementation of rank-approximate k-nearest-neighbor search (kRANN) "
+    " using single-tree and dual-tree algorithms.  Given a set of reference "
+    "points and query points, this can find the k nearest neighbors in the "
+    "reference set of each query point using trees; trees that are built can "
+    "be saved for future use.",
+    // Long description.
     "This program will calculate the k rank-approximate-nearest-neighbors of a "
     "set of points. You may specify a separate set of reference points and "
     "query points, or just a reference set which will be used as both the "

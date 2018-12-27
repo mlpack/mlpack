@@ -26,8 +26,14 @@ using namespace mlpack::gmm;
 using namespace arma;
 using namespace std;
 
-PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Log-Likelihood", "This "
-    "utility takes an already-trained HMM, specified with the " +
+PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Log-Likelihood",
+    // Short description.
+    "A utility for computing the log-likelihood of a sequence for Hidden Markov"
+    " Models (HMMs).  Given a pre-trained HMM and an observation sequence, this"
+    " computes and returns the log-likelihood of that sequence being observed "
+    "from that HMM.",
+    // Long description.
+    "This utility takes an already-trained HMM, specified with the " +
     PRINT_PARAM_STRING("input_model") + " parameter, and evaluates the "
     "log-likelihood of a sequence of observations, given with the " +
     PRINT_PARAM_STRING("input") + " parameter.  The computed log-likelihood is"

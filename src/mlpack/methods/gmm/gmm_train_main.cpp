@@ -26,6 +26,11 @@ using namespace mlpack::kmeans;
 using namespace std;
 
 PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
+    // Short description.
+    "An implementation of the EM algorithm for training Gaussian mixture "
+    "models (GMMs).  Given a dataset, this can train a GMM for future use "
+    "with other tools.",
+    // Long description.
     "This program takes a parametric estimate of a Gaussian mixture model (GMM)"
     " using the EM algorithm to find the maximum likelihood estimate.  The "
     "model may be saved and reused by other mlpack GMM tools."

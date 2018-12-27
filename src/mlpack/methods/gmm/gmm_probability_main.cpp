@@ -20,6 +20,11 @@ using namespace mlpack::gmm;
 using namespace mlpack::util;
 
 PROGRAM_INFO("GMM Probability Calculator",
+    // Short description.
+    "A probability calculator for GMMs.  Given a pre-trained GMM and a set of "
+    "points, this can compute the probability that each point is from the given"
+    " GMM.",
+    // Long description.
     "This program calculates the probability that given points came from a "
     "given GMM (that is, P(X | gmm)).  The GMM is specified with the " +
     PRINT_PARAM_STRING("input_model") + " parameter, and the points are "

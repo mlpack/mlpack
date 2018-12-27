@@ -26,6 +26,12 @@ using namespace std;
 using namespace arma;
 
 PROGRAM_INFO("Perceptron",
+    // Short description.
+    "An implementation of a perceptron---a single level neural network--=for "
+    "classification.  Given labeled data, a perceptron can be trained and saved"
+    " for future use; or, a pre-trained perceptron can be used for "
+    "classification on new points.",
+    // Long description.
     "This program implements a perceptron, which is a single level neural "
     "network. The perceptron makes its predictions based on a linear predictor "
     "function combining a set of weights with the feature vector.  The "

@@ -15,11 +15,16 @@
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/split_data.hpp>
 
-PROGRAM_INFO("Split Data", "This utility takes a dataset and optionally labels "
-    "and splits them into a training set and a test set. Before the split, the "
-    "points in the dataset are randomly reordered. The percentage of the "
-    "dataset to be used as the test set can be specified with the " +
-    PRINT_PARAM_STRING("test_ratio") + " parameter; the default is 0.2 (20%)."
+PROGRAM_INFO("Split Data",
+    // Short description.
+    "A utility to split data into a training and testing dataset.  This can "
+    "also split labels according to the same split.",
+    // Long description.
+    "This utility takes a dataset and optionally labels and splits them into a "
+    "training set and a test set. Before the split, the points in the dataset "
+    "are randomly reordered. The percentage of the dataset to be used as the "
+    "test set can be specified with the " + PRINT_PARAM_STRING("test_ratio") +
+    " parameter; the default is 0.2 (20%)."
     "\n\n"
     "The output training and test matrices may be saved with the " +
     PRINT_PARAM_STRING("training") + " and " + PRINT_PARAM_STRING("test") +

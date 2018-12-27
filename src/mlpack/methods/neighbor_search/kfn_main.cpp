@@ -34,6 +34,12 @@ typedef NSModel<FurthestNeighborSort> KFNModel;
 
 // Information about the program itself.
 PROGRAM_INFO("k-Furthest-Neighbors Search",
+    // Short description.
+    "An implementation of k-furthrest-neighbor search using single-tree and "
+    "dual-tree algorithms.  Given a set of reference points and query points, "
+    "this can find the k furthest neighbors in the reference set of each query"
+    " point using trees; trees that are built can be saved for future use.",
+    // Long description.
     "This program will calculate the k-furthest-neighbors of a set of "
     "points. You may specify a separate set of reference points and query "
     "points, or just a reference set which will be used as both the reference "
