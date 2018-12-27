@@ -183,8 +183,7 @@ class RNN
 
   /**
    * Evaluate the recurrent neural network with the given parameters. This
-   * function is usually called by the optimizer to train the model.  This just
-   * calls the other overload of Evaluate() with deterministic = true.
+   * function is usually called by the optimizer to train the model.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
