@@ -100,9 +100,9 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 #include <mlpack/core/util/param.hpp>
 
 #undef PROGRAM_INFO
-#define PROGRAM_INFO(NAME, DESC) static mlpack::util::ProgramDoc \
-    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, \
-        []() { return DESC; });
+#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) static mlpack::util::ProgramDoc \
+    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
+    []() { return DESC; }, { __VA_ARGS__ })
 
 #elif(BINDING_TYPE == BINDING_TYPE_PYX) // This is a Python binding.
 
@@ -129,9 +129,9 @@ static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
 #undef PROGRAM_INFO
-#define PROGRAM_INFO(NAME, DESC) static mlpack::util::ProgramDoc \
-    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, \
-        []() { return DESC; }); \
+#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) static mlpack::util::ProgramDoc \
+    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
+    []() { return DESC; }, { __VA_ARGS__ }) \
     namespace mlpack { \
     namespace bindings { \
     namespace python { \
@@ -179,10 +179,11 @@ using Option = mlpack::bindings::markdown::MDOption<T>;
 #include <mlpack/bindings/markdown/program_doc_wrapper.hpp>
 
 #undef PROGRAM_INFO
-#define PROGRAM_INFO(NAME, DESC) static \
+#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) static \
     mlpack::bindings::markdown::ProgramDocWrapper \
     cli_programdoc_dummy_object = \
-    mlpack::bindings::markdown::ProgramDocWrapper(BINDING_NAME, NAME, []() { return DESC; });
+    mlpack::bindings::markdown::ProgramDocWrapper(BINDING_NAME, NAME, \
+    SHORT_DESC, []() { return DESC; }, { __VA_ARGS__ }); \
 
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");

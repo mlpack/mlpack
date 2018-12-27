@@ -33,12 +33,18 @@ class ProgramDoc
    * will be returned.
    *
    * @param programName Short string representing the name of the program.
+   * @param shortDocumentation A short two-sentence description of the program,
+   *     what it does, and what it is useful for.
    * @param documentation Long string containing documentation on how to use the
    *     program and what it is.  No newline characters are necessary; this is
    *     taken care of by CLI later.
+   * @param seeAlso A set of pairs of strings with useful "see also"
+   *     information; each pair is <description, url>.
    */
   ProgramDoc(const std::string& programName,
-             const std::function<std::string()>& documentation);
+             const std::string& shortDocumentation,
+             const std::function<std::string()>& documentation,
+             const std::vector<std::pair<std::string, std::string>>& seeAlso);
 
   /**
    * Construct an empty ProgramDoc object.  (This is not meant to be used!)
@@ -47,8 +53,12 @@ class ProgramDoc
 
   //! The name of the program.
   std::string programName;
+  //! The short documentation for the program.
+  std::string shortDocumentation;
   //! Documentation for what the program does.
   std::function<std::string()> documentation;
+  //! Set of see also information.
+  std::vector<std::pair<std::string, std::string>> seeAlso;
 };
 
 } // namespace util
