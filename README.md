@@ -175,12 +175,12 @@ This will build all library components as well as 'mlpack_test'.
 
     $ make
 
-You can specify individual components which you want to build if you do not
+You can specify individual components which you want to build, if you do not
 want to build everything in the library:
 
     $ make mlpack_pca mlpack_knn mlpack_kfn
 
-If the build fails and you cannot figure out why to register an account on Github
+If the build fails and you cannot figure out why, register an account on Github
 and submit an issue; the mlpack developers will quickly help you figure it out:
 
 [mlpack on Github](https://www.github.com/mlpack/mlpack/)
@@ -298,7 +298,7 @@ older versions of mlpack:
 If you find a bug in mlpack or have any problems, numerous routes are available
 for help.
 
-Github is used for bug tracking and can be found at
+Github is used for bug tracking, and can be found at
 https://github.com/mlpack/mlpack/.
 It is easy to register an account and file a bug there, and the mlpack
 development team will try to quickly resolve your issue.
