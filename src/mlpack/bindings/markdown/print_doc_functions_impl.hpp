@@ -66,6 +66,42 @@ inline std::string PrintValue(const T& value, bool quotes)
 }
 
 /**
+ * Given a parameter name, print its corresponding default value.
+ */
+inline std::string PrintDefault(const std::string& paramName)
+{
+  if (CLI::Parameters().count(paramName) == 0)
+    throw std::invalid_argument("unknown parameter" + paramName + "!");
+
+  const util::ParamData& d = CLI::Parameters()[paramName];
+
+  std::ostringstream oss;
+
+  if (d.required)
+  {
+    oss << "**--**";
+  }
+  else
+  {
+    if (BindingInfo::Language() == "cli")
+    {
+      oss << cli::PrintDefault(paramName);
+    }
+    else if (BindingInfo::Language() == "python")
+    {
+      oss << python::PrintDefault(paramName);
+    }
+    else
+    {
+      throw std::invalid_argument("PrintDefault: unknown "
+          "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+    }
+  }
+
+  return oss.str();
+}
+
+/**
  * Print a dataset type parameter (add .csv and return).
  */
 inline std::string PrintDataset(const std::string& dataset)
@@ -135,15 +171,12 @@ std::string ProgramCall(const std::string& programName, Args... args)
  */
 inline std::string ParamString(const std::string& paramName)
 {
-  std::cout << "in ParamString()\n";
   if (BindingInfo::Language() == "cli")
   {
-    std::cout << "it is cli\n";
     return cli::ParamString(paramName);
   }
   else if (BindingInfo::Language() == "python")
   {
-    std::cout << "it is python\n";
     return python::ParamString(paramName);
   }
   else
@@ -162,69 +195,6 @@ inline std::string ParamType(const util::ParamData& d)
   CLI::GetSingleton().functionMap[d.tname]["GetPrintableType"](d, NULL,
       &output);
   return output;
-}
-
-/**
- * Print the default value of an option, unless it is required (in which case
- * Markdown italicized '--' is printed).
- */
-inline std::string ParamDefault(const util::ParamData& d)
-{
-  // Shortcut: if it's required, we don't actually need to print any default
-  // value.
-  if (d.required)
-    return "**--**";
-
-  std::ostringstream oss;
-  if (d.cppType == "int")
-  {
-    int x;
-    CLI::GetSingleton().functionMap[d.tname]["GetParam"](d, NULL, &x);
-    oss << x;
-  }
-  else if (d.cppType == "float")
-  {
-    float x;
-    CLI::GetSingleton().functionMap[d.tname]["GetParam"](d, NULL, &x);
-    oss << x;
-  }
-  else if (d.cppType == "double")
-  {
-    double x;
-    CLI::GetSingleton().functionMap[d.tname]["GetParam"](d, NULL, &x);
-    oss << x;
-  }
-  else if (d.cppType == "std::string")
-  {
-    std::string x;
-    CLI::GetSingleton().functionMap[d.tname]["GetParam"](d, NULL, &x);
-    oss << "\"" << x << "\"";
-  }
-  else if (d.cppType == "std::vector<int>")
-  {
-    std::vector<int> x;
-    CLI::GetSingleton().functionMap[d.tname]["GetParam"](d, NULL, &x);
-    oss << "{ ";
-    for (size_t i = 1; i < x.size(); ++i)
-      oss << x[i - 1] << ", ";
-    oss << x[x.size() - 1] << "}";
-  }
-  else if (d.cppType == "std::vector<std::string>")
-  {
-    std::vector<std::string> x;
-    CLI::GetSingleton().functionMap[d.tname]["GetParam"](d, NULL, &x);
-    oss << "{ ";
-    for (size_t i = 1; i < x.size(); ++i)
-      oss << "\"" << x[i - 1] << "\", ";
-    oss << "\"" << x[x.size() - 1] << "\"}";
-  }
-  else
-  {
-    throw std::invalid_argument("Don't know how to print default value for type"
-        " " + d.cppType + "!");
-  }
-
-  return oss.str();
 }
 
 template<typename T>

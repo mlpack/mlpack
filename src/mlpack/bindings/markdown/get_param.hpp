@@ -27,10 +27,12 @@ void GetParam(const util::ParamData& d,
               const void* /* input */,
               void* output)
 {
-  *((T**) output) = const_cast<T*>(boost::any_cast<T>(&d.value));
+  util::ParamData& dmod = const_cast<util::ParamData&>(d);
+  std::cout << "call GetParam()\n";
+  *((T**) output) = boost::any_cast<T>(&dmod.value);
 }
 
-} // namespace python
+} // namespace markdown
 } // namespace bindings
 } // namespace mlpack
 

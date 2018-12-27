@@ -15,6 +15,7 @@ endmacro ()
 set(SOURCES
   "binding_info.hpp"
   "binding_info.cpp"
+  "default_param.hpp"
   "get_binding_name.hpp"
   "get_binding_name.cpp"
   "get_param.hpp"

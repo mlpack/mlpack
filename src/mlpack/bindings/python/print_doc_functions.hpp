@@ -34,6 +34,11 @@ inline std::string PrintValue(const T& value, bool quotes);
 template<>
 inline std::string PrintValue(const bool& value, bool quotes);
 
+/**
+ * Given a parameter name, print its corresponding default value.
+ */
+inline std::string PrintDefault(const std::string& paramName);
+
 // Recursion base case.
 inline std::string PrintInputOptions();
 

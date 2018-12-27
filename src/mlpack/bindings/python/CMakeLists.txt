@@ -43,6 +43,8 @@ endif ()
 
 # Nothing in this directory will be compiled into mlpack.
 set(BINDING_SOURCES
+  default_param.hpp
+  default_param_impl.hpp
   generate_pyx.hpp
   generate_pyx.cpp
   get_arma_type.hpp

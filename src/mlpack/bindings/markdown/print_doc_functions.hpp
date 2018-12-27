@@ -33,6 +33,12 @@ template<typename T>
 inline std::string PrintValue(const T& value, bool quotes);
 
 /**
+ * Print the default value of an option, unless it is required (in which case
+ * Markdown italicized '--' is printed).
+ */
+inline std::string PrintDefault(const std::string& paramName);
+
+/**
  * Print a dataset type parameter (add .csv and return).
  */
 inline std::string PrintDataset(const std::string& dataset);
@@ -61,12 +67,6 @@ inline std::string ParamString(const std::string& paramName);
  * Print the user-encountered type of an option.
  */
 inline std::string ParamType(const util::ParamData& d);
-
-/**
- * Print the default value of an option, unless it is required (in which case
- * Markdown italicized '--' is printed).
- */
-inline std::string ParamDefault(const util::ParamData& d);
 
 /**
  * Return whether or not a runtime check on parameters should be ignored.

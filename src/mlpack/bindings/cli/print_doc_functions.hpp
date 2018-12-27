@@ -33,6 +33,11 @@ template<typename T>
 inline std::string PrintValue(const T& value, bool quotes);
 
 /**
+ * Given a parameter name, print its corresponding default value.
+ */
+inline std::string PrintDefault(const std::string& paramName);
+
+/**
  * Print a dataset type parameter (add .csv and return).
  */
 inline std::string PrintDataset(const std::string& dataset);

@@ -13,6 +13,7 @@
 #define MLPACK_BINDINGS_MARKDOWN_MD_OPTION_HPP
 
 #include <mlpack/core/util/param_data.hpp>
+#include "default_param.hpp"
 #include "get_param.hpp"
 #include "get_printable_param.hpp"
 #include "get_printable_param_name.hpp" // For cli bindings.
@@ -75,6 +76,8 @@ class MDOption
     // pointers will be used by both the program that generates the pyx, and
     // also the binding itself.  (The binding itself will only use GetParam,
     // GetPrintableParam, and GetRawParam.)
+    CLI::GetSingleton().functionMap[data.tname]["DefaultParam"] =
+        &DefaultParam<T>;
     CLI::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
     CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
         &GetPrintableParam<T>;

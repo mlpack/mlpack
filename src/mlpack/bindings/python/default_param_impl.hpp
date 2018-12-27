@@ -9,14 +9,14 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_CLI_DEFAULT_PARAM_IMPL_HPP
-#define MLPACK_BINDINGS_CLI_DEFAULT_PARAM_IMPL_HPP
+#ifndef MLPACK_BINDINGS_PYTHON_DEFAULT_PARAM_IMPL_HPP
+#define MLPACK_BINDINGS_PYTHON_DEFAULT_PARAM_IMPL_HPP
 
 #include "default_param.hpp"
 
 namespace mlpack {
 namespace bindings {
-namespace cli {
+namespace python {
 
 /**
  * Return the default value of an option.
@@ -32,7 +32,9 @@ std::string DefaultParamImpl(
         std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* /* junk */)
 {
   std::ostringstream oss;
-  if (!std::is_same<T, bool>::value)
+  if (std::is_same<T, bool>::value)
+    oss << "False";
+  else
     oss << boost::any_cast<T>(data.value);
 
   return oss.str();
@@ -50,9 +52,20 @@ std::string DefaultParamImpl(
   std::ostringstream oss;
   const T& vector = boost::any_cast<T>(data.value);
   oss << "[";
-  for (size_t i = 0; i < vector.size() - 1; ++i)
-    oss << vector[i] << " ";
-  oss << vector[vector.size() - 1] << "]";
+  if (std::is_same<T, std::vector<std::string>>::value)
+  {
+    for (size_t i = 0; i < vector.size() - 1; ++i)
+      oss << vector[i] << " ";
+
+    oss << "'" << vector[vector.size() - 1] << "']";
+  }
+  else
+  {
+    for (size_t i = 0; i < vector.size() - 1; ++i)
+      oss << "'" << vector[i] << "' ";
+
+    oss << vector[vector.size() - 1] << "]";
+  }
   return oss.str();
 }
 
@@ -69,7 +82,8 @@ std::string DefaultParamImpl(
 }
 
 /**
- * Return the default value of a matrix option (an empty filename).
+ * Return the default value of a matrix option (this returns the default
+ * filename, or '' if the default is no file).
  */
 template<typename T>
 std::string DefaultParamImpl(
@@ -79,12 +93,22 @@ std::string DefaultParamImpl(
         std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
                                    arma::mat>>::value>::type* /* junk */)
 {
-  // The filename will always be empty.
-  return "''";
+  // Get the filename and return it, or return an empty string.
+  if (std::is_same<T, arma::rowvec>::value ||
+      std::is_same<T, arma::Row<size_t>>::value ||
+      std::is_same<T, arma::vec>::value ||
+      std::is_same<T, arma::Col<size_t>>::value)
+  {
+    return "empty 1-d ndarray";
+  }
+  else
+  {
+    return "empty 2-d ndarray";
+  }
 }
 
 /**
- * Return the default value of a model option (an empty filename).
+ * Return the default value of a model option (always "None").
  */
 template<typename T>
 std::string DefaultParamImpl(
@@ -92,11 +116,10 @@ std::string DefaultParamImpl(
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
 {
-  return "''";
+  return "None";
 }
 
-
-} // namespace cli
+} // namespace python
 } // namespace bindings
 } // namespace mlpack
 

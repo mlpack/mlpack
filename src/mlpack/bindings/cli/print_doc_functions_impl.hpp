@@ -45,6 +45,23 @@ inline std::string PrintValue(const T& value, bool quotes)
 }
 
 /**
+ * Given a parameter name, print its corresponding default value.
+ */
+inline std::string PrintDefault(const std::string& paramName)
+{
+  if (CLI::Parameters().count(paramName) == 0)
+    throw std::invalid_argument("unknown parameter " + paramName + "!");
+
+  const util::ParamData& d = CLI::Parameters()[paramName];
+
+  std::string defaultValue;
+  CLI::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL,
+      (void*) &defaultValue);
+
+  return defaultValue;
+}
+
+/**
  * Print a dataset type parameter (add .csv and return).
  */
 inline std::string PrintDataset(const std::string& dataset)
