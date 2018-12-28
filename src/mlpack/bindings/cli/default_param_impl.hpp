@@ -50,9 +50,35 @@ std::string DefaultParamImpl(
   std::ostringstream oss;
   const T& vector = boost::any_cast<T>(data.value);
   oss << "[";
-  for (size_t i = 0; i < vector.size() - 1; ++i)
-    oss << vector[i] << " ";
-  oss << vector[vector.size() - 1] << "]";
+  if (std::is_same<T, std::vector<std::string>>::value)
+  {
+    if (vector.size() > 0)
+    {
+      for (size_t i = 0; i < vector.size() - 1; ++i)
+      {
+        oss << "'" << vector[i] << "', ";
+      }
+
+      oss << "'" << vector[vector.size() - 1] << "'";
+    }
+
+    oss << "]";
+  }
+  else
+  {
+    if (vector.size() > 0)
+    {
+      for (size_t i = 0; i < vector.size() - 1; ++i)
+      {
+        oss << vector[i] << ", ";
+      }
+
+      oss << vector[vector.size() - 1];
+    }
+
+    oss << "]";
+  }
+
   return oss.str();
 }
 

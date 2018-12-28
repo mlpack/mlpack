@@ -54,17 +54,31 @@ std::string DefaultParamImpl(
   oss << "[";
   if (std::is_same<T, std::vector<std::string>>::value)
   {
-    for (size_t i = 0; i < vector.size() - 1; ++i)
-      oss << vector[i] << " ";
+    if (vector.size() > 0)
+    {
+      for (size_t i = 0; i < vector.size() - 1; ++i)
+      {
+        oss << "'" << vector[i] << "', ";
+      }
 
-    oss << "'" << vector[vector.size() - 1] << "']";
+      oss << "'" << vector[vector.size() - 1] << "'";
+    }
+
+    oss << "]";
   }
   else
   {
-    for (size_t i = 0; i < vector.size() - 1; ++i)
-      oss << "'" << vector[i] << "' ";
+    if (vector.size() > 0)
+    {
+      for (size_t i = 0; i < vector.size() - 1; ++i)
+      {
+        oss << vector[i] << ", ";
+      }
 
-    oss << vector[vector.size() - 1] << "]";
+      oss << vector[vector.size() - 1];
+    }
+
+    oss << "]";
   }
   return oss.str();
 }

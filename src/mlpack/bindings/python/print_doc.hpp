@@ -14,7 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/hyphenate_string.hpp>
-#include "get_python_type.hpp"
+#include "get_printable_type.hpp"
 
 namespace mlpack {
 namespace bindings {
