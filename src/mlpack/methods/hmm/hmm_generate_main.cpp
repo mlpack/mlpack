@@ -52,7 +52,14 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Generator",
     PRINT_DATASET("states") + ", the following command may be used: "
     "\n\n" +
     PRINT_CALL("hmm_generate", "model", "hmm", "length", 150, "output",
-        "observations", "state", "states"));
+        "observations", "state", "states"),
+    SEE_ALSO("@hmm_train", "#hmm_train"),
+    SEE_ALSO("@hmm_loglik", "#hmm_loglik"),
+    SEE_ALSO("@hmm_viterbi", "#hmm_viterbi"),
+    SEE_ALSO("Hidden Mixture Models on Wikipedia",
+        "https://en.wikipedia.org/wiki/Hidden_Markov_model"),
+    SEE_ALSO("mlpack::hmm::HMM class documentation",
+        "@doxygen/classmlpack_1_1hmm_1_1HMM.html"));
 
 PARAM_MODEL_IN_REQ(HMMModel, "model", "Trained HMM to generate sequences with.",
     "m");

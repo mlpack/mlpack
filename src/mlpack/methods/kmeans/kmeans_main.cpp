@@ -91,7 +91,21 @@ PROGRAM_INFO("K-Means Clustering",
     "following command may be used:"
     "\n\n" +
     PRINT_CALL("kmeans", "input", "data", "initial_centroids", "initial",
-        "clusters", 10, "max_iterations", 500, "centroid", "final"));
+        "clusters", 10, "max_iterations", 500, "centroid", "final"),
+    SEE_ALSO("K-Means tutorial", "@doxygen/kmtutorial.html"),
+    SEE_ALSO("@dbscan", "#dbscan"),
+    SEE_ALSO("Using the triangle inequality to accelerate k-means (pdf)",
+        "http://www.aaai.org/Papers/ICML/2003/ICML03-022.pdf"),
+    SEE_ALSO("Making k-means even faster (pdf)",
+        "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.586.2554"
+        "&rep=rep1&type=pdf"),
+    SEE_ALSO("Accelerating exact k-means algorithms with geometric reasoning "
+        "(pdf)", "http://reports-archive.adm.cs.cmu.edu/anon/anon/usr/ftp/"
+        "usr0/ftp/2000/CMU-CS-00-105.pdf"),
+    SEE_ALSO("A dual-tree algorithm for fast k-means clustering with large k "
+        "(pdf)", "http://www.ratml.org/pub/pdf/2017dual.pdf"),
+    SEE_ALSO("mlpack::kmeans::KMeans class documentation",
+        "@doxygen/classmlpack_1_1kmeans_1_1KMeans.html"));
 
 // Required options.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform clustering on.", "i");

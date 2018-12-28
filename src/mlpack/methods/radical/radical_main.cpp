@@ -38,7 +38,14 @@ PROGRAM_INFO("RADICAL",
     "40 replicates, saving the independent components to " +
     PRINT_DATASET("ic") + ", the following command may be used: "
     "\n\n" +
-    PRINT_CALL("radical", "input", "X", "replicates", 40, "output_ic", "ic"));
+    PRINT_CALL("radical", "input", "X", "replicates", 40, "output_ic", "ic"),
+    SEE_ALSO("Independent component analysis on Wikipedia",
+        "https://en.wikipedia.org/wiki/Independent_component_analysis"),
+    SEE_ALSO("ICA using spacings estimates of entropy (pdf)",
+        "http://www.jmlr.org/papers/volume4/learned-miller03a/"
+        "learned-miller03a.pdf"),
+    SEE_ALSO("mlpack::radical::Radical C++ class documentation",
+        "@doxygen/classmlpack_1_1radical_1_1Radical.html"));
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset for ICA.", "i");
 

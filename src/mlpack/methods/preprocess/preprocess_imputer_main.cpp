@@ -40,7 +40,10 @@ PROGRAM_INFO("Impute Data",
     "column-wise dataset, and save the result to result.csv, we could run"
     "\n\n"
     "$ mlpack_preprocess_imputer -i dataset.csv -o result.csv -m NULL -d 0 \n"
-    "> -s listwise_deletion");
+    "> -s listwise_deletion",
+    SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
+    SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
+    SEE_ALSO("@preprocess_split", "#preprocess_split"));
 
 PARAM_STRING_IN_REQ("input_file", "File containing data.", "i");
 PARAM_STRING_OUT("output_file", "File to save output into.", "o");

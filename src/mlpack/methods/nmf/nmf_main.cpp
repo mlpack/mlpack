@@ -65,7 +65,17 @@ PROGRAM_INFO("Non-negative Matrix Factorization",
     PRINT_DATASET("H") + ", the following command could be used: "
     "\n\n" +
     PRINT_CALL("nmf", "input", "V", "w", "W", "h", "H", "rank", 10,
-        "update_rules", "multdist"));
+        "update_rules", "multdist"),
+    SEE_ALSO("@cf", "#cf"),
+    SEE_ALSO("Alternating matrix factorization tutorial",
+        "@doxygen/amftutorial.html"),
+    SEE_ALSO("Non-negative matrix factorization on Wikipedia",
+        "https://en.wikipedia.org/wiki/Non-negative_matrix_factorization"),
+    SEE_ALSO("Algorithms for non-negative matrix factorization (pdf)",
+        "http://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-"
+        "factorization.pdf"),
+    SEE_ALSO("mlpack::amf::AMF C++ class documentation",
+        "@doxygen/classmlpack_1_1amf_1_1AMF.html"));
 
 // Parameters for program.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform NMF on.", "i");

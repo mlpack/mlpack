@@ -76,7 +76,13 @@ PROGRAM_INFO("Hoeffding trees",
     PRINT_DATASET("class_probs") + " with the following command: "
     "\n\n" +
     PRINT_CALL("hoeffding_tree", "input_model", "tree", "test", "test_set",
-        "predictions", "predictions", "probabilities", "class_probs"));
+        "predictions", "predictions", "probabilities", "class_probs"),
+    SEE_ALSO("@decision_tree", "#decision_tree"),
+    SEE_ALSO("@random_forest", "#random_forest"),
+    SEE_ALSO("Mining High-Speed Data Streams (pdf)",
+        "http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf"),
+    SEE_ALSO("mlpack::tree::HoeffdingTree class documentation",
+        "@doxygen/classmlpack_1_1tree_1_1HoeffdingTree.html"));
 
 PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",
     "t");

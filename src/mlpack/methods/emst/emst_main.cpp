@@ -60,7 +60,14 @@ PROGRAM_INFO("Fast Euclidean Minimum Spanning Tree",
     "The output matrix is a three-dimensional matrix, where each row indicates "
     "an edge.  The first dimension corresponds to the lesser index of the edge;"
     " the second dimension corresponds to the greater index of the edge; and "
-    "the third column corresponds to the distance between the two points.");
+    "the third column corresponds to the distance between the two points.",
+    SEE_ALSO("EMST Tutorial", "@doxygen/emst_tutorial.html"),
+    SEE_ALSO("Minimum spanning tree on Wikipedia",
+        "https://en.wikipedia.org/wiki/Minimum_spanning_tree"),
+    SEE_ALSO("Fast Euclidean Minimum Spanning Tree: Algorithm, Analysis, and "
+        "Applications (pdf)", "http://www.mlpack.org/papers/emst.pdf"),
+    SEE_ALSO("mlpack::emst::DualTreeBoruvka class documentation",
+        "@doxygen/classmlpack_1_1emst_1_1DualTreeBoruvka.html"));
 
 PARAM_MATRIX_IN_REQ("input", "Input data matrix.", "i");
 PARAM_MATRIX_OUT("output", "Output data.  Stored as an edge list.", "o");

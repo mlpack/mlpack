@@ -100,7 +100,13 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     PRINT_DATASET("predictions") + "', the following command may be used: "
     "\n\n" +
     PRINT_CALL("logistic_regression", "input_model", "lr_model", "test", "test",
-        "output", "predictions"));
+        "output", "predictions"),
+    SEE_ALSO("@softmax_regression", "#softmax_regression"),
+    SEE_ALSO("@random_forest", "#random_forest"),
+    SEE_ALSO("Logistic regression on Wikipedia",
+        "https://en.wikipedia.org/wiki/Logistic_regression"),
+    SEE_ALSO("mlpack::regression::LogisticRegression C++ class documentation",
+        "@doxygen/classmlpack_1_1regression_1_1LogisticRegression.html"));
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "

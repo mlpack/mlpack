@@ -76,7 +76,15 @@ PROGRAM_INFO("Decision tree",
     PRINT_DATASET("predictions") + ", one could call "
     "\n\n" +
     PRINT_CALL("decision_tree", "input_model", "tree", "test", "test_set",
-        "test_labels", "test_labels", "predictions", "predictions"));
+        "test_labels", "test_labels", "predictions", "predictions"),
+    SEE_ALSO("Decision stump", "#decision_stump"),
+    SEE_ALSO("Random forest", "#random_forest"),
+    SEE_ALSO("Decision trees on Wikipedia",
+        "https://en.wikipedia.org/wiki/Decision_tree_learning"),
+    SEE_ALSO("Induction of Decision Trees (pdf)",
+        "https://link.springer.com/content/pdf/10.1007/BF00116251.pdf"),
+    SEE_ALSO("mlpack::tree::DecisionTree class documentation",
+        "@doxygen/classmlpack_1_1tree_1_1DecisionTree.html"));
 
 // Datasets.
 PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",

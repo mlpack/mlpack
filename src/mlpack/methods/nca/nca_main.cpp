@@ -88,7 +88,15 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
     "mlpack L-BFGS documentation (in lbfgs.hpp) or the vast set of published "
     "literature on L-BFGS."
     "\n\n"
-    "By default, the SGD optimizer is used.");
+    "By default, the SGD optimizer is used.",
+    SEE_ALSO("@lmnn", "#lmnn"),
+    SEE_ALSO("Neighbourhood components analysis on Wikipedia",
+        "https://en.wikipedia.org/wiki/Neighbourhood_components_analysis"),
+    SEE_ALSO("Neighbourhood components analysis (pdf)",
+        "http://papers.nips.cc/paper/2566-neighbourhood-components-"
+        "analysis.pdf"),
+    SEE_ALSO("mlpack::nca::NCA C++ class documentation",
+        "@doxygen/classmlpack_1_1nca_1_1NCA.html"));
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run NCA on.", "i");
 PARAM_MATRIX_OUT("output", "Output matrix for learned distance matrix.", "o");

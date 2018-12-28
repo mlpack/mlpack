@@ -44,7 +44,10 @@ PROGRAM_INFO("Binarize Data",
     PRINT_DATASET("X") + ",  we could instead run"
     "\n\n" +
     PRINT_CALL("preprocess_binarize", "input", "X", "threshold", 5.0,
-        "dimension", 0, "output", "Y"));
+        "dimension", 0, "output", "Y"),
+    SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
+    SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"),
+    SEE_ALSO("@preprocess_split", "#preprocess_split"));
 
 // Define parameters for data.
 PARAM_MATRIX_IN_REQ("input", "Input data matrix.", "i");

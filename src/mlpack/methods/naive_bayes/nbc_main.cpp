@@ -71,7 +71,14 @@ PROGRAM_INFO("Parametric Naive Bayes Classifier",
     "may be used:"
     "\n\n" +
     PRINT_CALL("nbc", "input_model", "nbc_model", "test", "test_set", "output",
-        "predictions"));
+        "predictions"),
+    SEE_ALSO("@softmax_regression", "#softmax_regression"),
+    SEE_ALSO("@random_forest", "#random_forest"),
+    SEE_ALSO("Naive Bayes classifier on Wikipedia",
+        "https://en.wikipedia.org/wiki/Naive_Bayes_classifier"),
+    SEE_ALSO("mlpack::naive_bayes::NaiveBayesClassifier C++ class "
+        "documentation", "@doxygen/classmlpack_1_1naive__bayes_1_1"
+        "NaiveBayesClassifier.html"));
 
 // A struct for saving the model with mappings.
 struct NBCModel

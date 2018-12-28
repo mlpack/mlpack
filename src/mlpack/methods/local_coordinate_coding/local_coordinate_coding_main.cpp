@@ -73,7 +73,13 @@ PROGRAM_INFO("Local Coordinate Coding",
     "be used:"
     "\n\n" +
     PRINT_CALL("local_coordinate_coding", "input_model", "lcc_model", "test",
-        "points", "codes", "new_codes"));
+        "points", "codes", "new_codes"),
+    SEE_ALSO("@sparse_coding", "#sparse_coding"),
+    SEE_ALSO("Nonlinear learning using local coordinate coding (pdf)",
+        "https://papers.nips.cc/paper/3875-nonlinear-learning-using-local-"
+        "coordinate-coding.pdf"),
+    SEE_ALSO("mlpack::lcc::LocalCoordinateCoding C++ class documentation",
+        "@doxygen/classmlpack_1_1lcc_1_1LocalCoordinateCoding.html"));
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "Matrix of training data (X).", "t");

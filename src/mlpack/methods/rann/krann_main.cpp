@@ -62,7 +62,15 @@ PROGRAM_INFO("K-Rank-Approximate-Nearest-Neighbors (kRANN)",
     "neighbors output file corresponds to the index of the point in the "
     "reference set which is the i'th nearest neighbor from the point in the "
     "query set with index j.  Row i and column j in the distances output file "
-    "corresponds to the distance between those two points.");
+    "corresponds to the distance between those two points.",
+    SEE_ALSO("@knn", "#knn"),
+    SEE_ALSO("@lsh", "#lsh"),
+    SEE_ALSO("Rank-approximate nearest neighbor search: Retaining meaning and "
+        "speed in high dimensions (pdf)", "https://papers.nips.cc/paper/3864-"
+        "rank-approximate-nearest-neighbor-search-retaining-meaning-and-speed-"
+        "in-high-dimensions.pdf"),
+    SEE_ALSO("mlpack::neighbor::RASearch C++ class documentation",
+        "@doxygen/classmlpack_1_1neighbor_1_1RASearch.html"));
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");

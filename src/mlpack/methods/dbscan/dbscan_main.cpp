@@ -63,7 +63,13 @@ PROGRAM_INFO("DBSCAN clustering",
     PRINT_DATASET("input") + " with a radius of 0.5 and a minimum cluster size"
     " of 5 is given below:"
     "\n\n" +
-    PRINT_CALL("dbscan", "input", "input", "epsilon", 0.5, "min_size", 5));
+    PRINT_CALL("dbscan", "input", "input", "epsilon", 0.5, "min_size", 5),
+    SEE_ALSO("DBSCAN on Wikipedia", "https://en.wikipedia.org/wiki/DBSCAN"),
+    SEE_ALSO("A density-based algorithm for discovering clusters in large "
+        "spatial databases with noise (pdf)",
+        "http://www.aaai.org/Papers/KDD/1996/KDD96-037.pdf"),
+    SEE_ALSO("mlpack::dbscan::DBSCAN class documentation",
+        "@doxygen/classmlpack_1_1dbscan_1_1DBSCAN.html"));
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to cluster.", "i");
 PARAM_UROW_OUT("assignments", "Output matrix for assignments of each "

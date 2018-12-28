@@ -98,8 +98,8 @@ PROGRAM_INFO("AdaBoost",
         "output", "predictions"),
     // See also...
     SEE_ALSO("AdaBoost on Wikipedia", "https://en.wikipedia.org/wiki/AdaBoost"),
-    SEE_ALSO("Improved boosting algorithms using confidence-rated predictions",
-        "http://rob.schapire.net/papers/SchapireSi98.pdf"),
+    SEE_ALSO("Improved boosting algorithms using confidence-rated predictions "
+        "(pdf)", "http://rob.schapire.net/papers/SchapireSi98.pdf"),
     SEE_ALSO("Perceptron", "#perceptron"),
     SEE_ALSO("Decision Stump", "#decision_stump"),
     SEE_ALSO("mlpack::adaboost::AdaBoost C++ class documentation",

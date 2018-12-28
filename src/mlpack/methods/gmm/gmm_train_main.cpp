@@ -89,7 +89,13 @@ PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
     ", the following command may be used: "
     "\n\n" +
     PRINT_CALL("gmm_train", "input_model", "gmm", "input", "data2",
-        "gaussians", 6, "output_model", "new_gmm"));
+        "gaussians", 6, "output_model", "new_gmm"),
+    SEE_ALSO("@gmm_generate", "#gmm_generate"),
+    SEE_ALSO("@gmm_probability", "#gmm_probability"),
+    SEE_ALSO("Gaussian Mixture Models on Wikipedia",
+        "https://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model"),
+    SEE_ALSO("mlpack::gmm::GMM class documentation",
+        "@doxygen/classmlpack_1_1gmm_1_1GMM.html"));
 
 // Parameters for training.
 PARAM_MATRIX_IN_REQ("input", "The training data on which the model will be "

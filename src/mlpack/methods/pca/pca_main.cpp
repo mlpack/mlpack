@@ -58,7 +58,11 @@ PROGRAM_INFO("Principal Components Analysis",
     PRINT_DATASET("data_mod") + ", the following command can be used:"
     "\n\n" +
     PRINT_CALL("pca", "input", "data", "new_dimensionality", 5,
-        "decomposition_method", "randomized", "output", "data_mod"));
+        "decomposition_method", "randomized", "output", "data_mod"),
+    SEE_ALSO("Principal component analysis on Wikipedia",
+        "https://en.wikipedia.org/wiki/Principal_component_analysis"),
+    SEE_ALSO("mlpack::pca::PCA C++ class documentation",
+        "@doxygen/classmlpack_1_1pca_1_1PCA.html"));
 
 // Parameters for program.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform PCA on.", "i");

@@ -56,7 +56,15 @@ PROGRAM_INFO("K-Approximate-Nearest-Neighbor Search with LSH",
     " parameter can be specified to set the random seed."
     "\n\n"
     "This program also has many other parameters to control its functionality;"
-    " see the parameter-specific documentation for more information.");
+    " see the parameter-specific documentation for more information.",
+    SEE_ALSO("@knn", "#knn"),
+    SEE_ALSO("@krann", "#krann"),
+    SEE_ALSO("Locality-sensitive hashing on Wikipedia",
+        "https://en.wikipedia.org/wiki/Locality-sensitive_hashing"),
+    SEE_ALSO("Locality-sensitive hashing scheme based on p-stable distributions"
+        " (pdf)", "http://mlpack.org/papers/lsh.pdf"),
+    SEE_ALSO("mlpack::neighbor::LSHSearch C++ class documentation",
+        "@doxygen/classmlpack_1_1neighbor_1_1LSHSearch.html"));
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");

@@ -92,7 +92,18 @@ PROGRAM_INFO("Approximate furthest neighbor search",
     PRINT_DATASET("neighbors") + " by calling"
     "\n\n" +
     PRINT_CALL("approx_kfn", "input_model", "model", "query", "new_query_set",
-        "k", 3, "neighbors", "neighbors"));
+        "k", 3, "neighbors", "neighbors"),
+    SEE_ALSO("k-furthest-neighbor search", "#kfn"),
+    SEE_ALSO("k-nearest-neighbor search", "#knn"),
+    SEE_ALSO("Fast approximate furthest neighbors with data-dependent candidate"
+        " selection (pdf)", "http://ratml.org/pub/pdf/2016fast.pdf"),
+    SEE_ALSO("Approximate furthest neighbor in high dimensions (pdf)",
+        "https://pdfs.semanticscholar.org/a4b5/7b9cbf37201fb1d9a56c0f4eefad0466"
+        "9c20.pdf"),
+    SEE_ALSO("mlpack::neighbor::QDAFN class documentation",
+        "@doxygen/classmlpack_1_1neighbor_1_1QDAFN.html"),
+    SEE_ALSO("mlpack::neighbor::DrusillaSelect class documentation",
+        "@doxygen/classmlpack_1_1neighbor_1_1DrusillaSelect.html"));
 
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
 PARAM_MATRIX_IN("query", "Matrix containing query points.", "q");

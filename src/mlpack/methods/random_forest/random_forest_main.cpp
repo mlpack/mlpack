@@ -76,7 +76,16 @@ PROGRAM_INFO("Random forests",
     "could call "
     "\n\n" +
     PRINT_CALL("random_forest", "input_model", "rf_model", "test", "test_set",
-        "test_labels", "test_labels", "predictions", "predictions"));
+        "test_labels", "test_labels", "predictions", "predictions"),
+    SEE_ALSO("@decision_tree", "#decision_tree"),
+    SEE_ALSO("@hoeffding_tree", "#hoeffding_tree"),
+    SEE_ALSO("@softmax_regression", "#softmax_regression"),
+    SEE_ALSO("Random forest on Wikipedia",
+        "https://en.wikipedia.org/wiki/Random_forest"),
+    SEE_ALSO("Random forests (pdf)",
+        "https://link.springer.com/content/pdf/10.1023/A:1010933404324.pdf"),
+    SEE_ALSO("mlpack::tree::RandomForest C++ class documentation",
+        "@doxygen/classmlpack_1_1tree_1_1RandomForest.html"));
 
 PARAM_MATRIX_IN("training", "Training dataset.", "t");
 PARAM_UROW_IN("labels", "Labels for training dataset.", "l");

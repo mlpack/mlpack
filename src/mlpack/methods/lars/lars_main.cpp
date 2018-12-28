@@ -86,7 +86,12 @@ PROGRAM_INFO("LARS",
     "and save those responses to " + PRINT_DATASET("test_predictions") + ": "
     "\n\n" +
     PRINT_CALL("lars", "input_model", "lasso_model", "test", "test",
-        "output_predictions", "test_predictions"));
+        "output_predictions", "test_predictions"),
+    SEE_ALSO("@linear_regression", "#linear_regression"),
+    SEE_ALSO("Least angle regression (pdf)",
+        "http://mlpack.org/papers/lars.pdf"),
+    SEE_ALSO("mlpack::regression::LARS C++ class documentation",
+        "@doxygen/classmlpack_1_1regression_1_1LARS.html"));
 
 PARAM_TMATRIX_IN("input", "Matrix of covariates (X).", "i");
 PARAM_MATRIX_IN("responses", "Matrix of responses/observations (y).", "r");

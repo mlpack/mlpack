@@ -117,7 +117,20 @@ PROGRAM_INFO("Collaborative Filtering",
     "call "
     "\n\n" +
     PRINT_CALL("cf", "input_model", "model", "query", "users",
-        "recommendations", 5, "output", "recommendations"));
+        "recommendations", 5, "output", "recommendations"),
+    SEE_ALSO("Collaborative filtering tutorial", "@doxygen/cftutorial.html"),
+    SEE_ALSO("Alternating Matrix Factorization tutorial",
+        "@doxygen/amftutorial.html"),
+    SEE_ALSO("Collaborative Filtering on Wikipedia",
+        "https://en.wikipedia.org/wiki/Collaborative_filtering"),
+    SEE_ALSO("Matrix factorization on Wikipedia",
+        "https://en.wikipedia.org/wiki/Matrix_factorization_"
+        "(recommender_systems)"),
+    SEE_ALSO("Matrix factorization techniques for recommender systems (pdf)",
+        "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.441.3234"
+        "&rep=rep1&type=pdf"),
+    SEE_ALSO("mlpack::cf::CFType class documentation",
+        "@doxygen/classmlpack_1_1cf_1_1CFType.html"));
 
 // Parameters for training a model.
 PARAM_MATRIX_IN("training", "Input dataset to perform CF on.", "t");

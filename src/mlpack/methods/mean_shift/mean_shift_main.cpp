@@ -48,7 +48,16 @@ PROGRAM_INFO("Mean Shift Clustering",
     PRINT_DATASET("data") + " and store the centroids to " +
     PRINT_DATASET("centroids") + ", the following command may be used: "
     "\n\n" +
-    PRINT_CALL("mean_shift", "input", "data", "centroid", "centroids"));
+    PRINT_CALL("mean_shift", "input", "data", "centroid", "centroids"),
+    SEE_ALSO("@kmeans", "#kmeans"),
+    SEE_ALSO("@dbscan", "#dbscan"),
+    SEE_ALSO("Mean shift on Wikipedia",
+        "https://en.wikipedia.org/wiki/Mean_shift"),
+    SEE_ALSO("Mean Shift, Mode Seeking, and Clustering (pdf)",
+        "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.510.1222"
+        "&rep=rep1&type=pdf"),
+    SEE_ALSO("mlpack::mean_shift::MeanShift C++ class documentation",
+        "@doxygen/classmlpack_1_1meanshift_1_1MeanShift.html"));
 
 // Required options.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform clustering on.", "i");

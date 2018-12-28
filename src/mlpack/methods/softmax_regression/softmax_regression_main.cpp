@@ -78,7 +78,14 @@ PROGRAM_INFO("Softmax Regression",
     " " + PRINT_DATASET("predictions") + ", the following command can be used:"
     "\n\n" +
     PRINT_CALL("softmax_regression", "input_model", "sr_model", "test",
-        "test_points", "predictions", "predictions"));
+        "test_points", "predictions", "predictions"),
+    SEE_ALSO("@logistic_regression", "#logistic_regression"),
+    SEE_ALSO("@random_forest", "#random_forest"),
+    SEE_ALSO("Multinomial logistic regression (softmax regression) on "
+        "Wikipedia",
+        "https://en.wikipedia.org/wiki/Multinomial_logistic_regression"),
+    SEE_ALSO("mlpack::regression::SoftmaxRegression C++ class documentation",
+        "@doxygen/classmlpack_1_1regression_1_1SoftmaxRegression.html"));
 
 // Required options.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "

@@ -53,7 +53,10 @@ PROGRAM_INFO("Split Data",
     "\n\n" +
     PRINT_CALL("preprocess_split", "input", "X", "input_labels", "y",
         "test_ratio", 0.3, "training", "X_train", "training_labels", "y_train",
-        "test", "X_test", "test_labels", "y_test"));
+        "test", "X_test", "test_labels", "y_test"),
+    SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
+    SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
+    SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"));
 
 // Define parameters for data.
 PARAM_MATRIX_IN_REQ("input", "Matrix containing data.", "i");

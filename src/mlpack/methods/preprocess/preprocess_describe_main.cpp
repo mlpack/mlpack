@@ -52,7 +52,10 @@ PROGRAM_INFO("Descriptive Statistics",
     "the dataset as a population, we could run"
     "\n\n" +
     PRINT_CALL("preprocess_describe", "input", "X", "width", 10, "precision", 5,
-        "verbose", true));
+        "verbose", true),
+    SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
+    SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"),
+    SEE_ALSO("@preprocess_split", "#preprocess_split"));
 
 // Define parameters for data.
 PARAM_MATRIX_IN_REQ("input", "Matrix containing data,", "i");

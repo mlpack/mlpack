@@ -126,7 +126,15 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "with dataset having labels as last column can be made as: "
     "\n\n" +
     PRINT_CALL("mlpack_lmnn", "input", "letter_recognition", "k", 5,
-    "range", 10, "regularization", 0.4, "output", "output"));
+    "range", 10, "regularization", 0.4, "output", "output"),
+    SEE_ALSO("@nca", "#nca"),
+    SEE_ALSO("Large margin nearest neighbor on Wikipedia",
+        "https://en.wikipedia.org/wiki/Large_margin_nearest_neighbor"),
+    SEE_ALSO("Distance metric learning for large margin nearest neighbor "
+        "classification (pdf)", "http://papers.nips.cc/paper/2795-distance-"
+        "metric-learning-for-large-margin-nearest-neighbor-classification.pdf"),
+    SEE_ALSO("mlpack::lmnn::LMNN C++ class documentation",
+        "@doxygen/classmlpack_1_1lmnn_1_1LMNN.html"));
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run LMNN on.", "i");
 PARAM_MATRIX_IN("distance", "Initial distance matrix to be used as "

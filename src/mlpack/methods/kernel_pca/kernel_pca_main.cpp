@@ -98,7 +98,13 @@ PROGRAM_INFO("Kernel Principal Components Analysis",
     "the kernel matrix; to specify the sampling scheme, the " +
     PRINT_PARAM_STRING("sampling") + " parameter is used.  The "
     "sampling scheme for the Nystr\u00F6m method can be chosen from the "
-    "following list: 'kmeans', 'random', 'ordered'.");
+    "following list: 'kmeans', 'random', 'ordered'.",
+    SEE_ALSO("Kernel principal component analysis on Wikipedia",
+        "https://en.wikipedia.org/wiki/Kernel_principal_component_analysis"),
+    SEE_ALSO("Kernel Principal Component Analysis (pdf)",
+        "http://pca.narod.ru/scholkopf_kernel.pdf"),
+    SEE_ALSO("mlpack::kpca::KernelPCA class documentation",
+        "@doxygen/classmlpack_1_1kpca_1_1KernelPCA.html"));
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform KPCA on.", "i");
 PARAM_MATRIX_OUT("output", "Matrix to save modified dataset to.", "o");

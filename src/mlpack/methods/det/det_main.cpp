@@ -54,7 +54,15 @@ PROGRAM_INFO("Density Estimation With Density Estimation Trees",
     "trained on the given training points, or a tree given as the parameter " +
     PRINT_PARAM_STRING("input_model") + ".  The density estimates for the test"
     " points may be saved using the " +
-    PRINT_PARAM_STRING("test_set_estimates") + " output parameter.");
+    PRINT_PARAM_STRING("test_set_estimates") + " output parameter.",
+    SEE_ALSO("Density estimation tree (DET) tutorial",
+        "@doxygen/dettutorial.html"),
+    SEE_ALSO("Density estimation on Wikipedia",
+        "https://en.wikipedia.org/wiki/Density_estimation"),
+    SEE_ALSO("Density estimation trees (pdf)",
+        "http://www.mlpack.org/papers/det.pdf"),
+    SEE_ALSO("mlpack::tree::DTree class documentation",
+        "@doxygen/classmlpack_1_1det_1_1DTree.html"));
 
 // Input data files.
 PARAM_MATRIX_IN("training", "The data set on which to build a density "

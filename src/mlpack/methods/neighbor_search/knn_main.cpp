@@ -59,7 +59,16 @@ PROGRAM_INFO("k-Nearest-Neighbors Search",
     "output matrix corresponds to the index of the point in the reference set "
     "which is the j'th nearest neighbor from the point in the query set with "
     "index i.  Row j and column i in the distances output matrix corresponds to"
-    " the distance between those two points.");
+    " the distance between those two points.",
+    SEE_ALSO("@lsh", "#lsh"),
+    SEE_ALSO("@krann", "#krann"),
+    SEE_ALSO("@kfn", "#kfn"),
+    SEE_ALSO("NeighborSearch tutorial (k-nearest-neighbors)",
+        "@doxygen/nstutorial.html"),
+    SEE_ALSO("Tree-independent dual-tree algorithms (pdf)",
+        "http://proceedings.mlr.press/v28/curtin13.pdf"),
+    SEE_ALSO("mlpack::neighbor::NeighborSearch C++ class documentation",
+        "@doxygen/classmlpack_1_1neighbor_1_1NeighborSearch.html"));
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");

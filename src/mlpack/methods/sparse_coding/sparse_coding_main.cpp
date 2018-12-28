@@ -70,7 +70,18 @@ PROGRAM_INFO("Sparse Coding",
     PRINT_DATASET("codes") + ": "
     "\n\n" +
     PRINT_CALL("sparse_coding", "input_model", "model", "test", "otherdata",
-        "codes", "codes"));
+        "codes", "codes"),
+    SEE_ALSO("@local_coordinate_coding", "#local_coordinate_coding"),
+    SEE_ALSO("Sparse dictionary learning on Wikipedia",
+        "https://en.wikipedia.org/wiki/Sparse_dictionary_learning"),
+    SEE_ALSO("Efficient sparse coding algorithms (pdf)",
+        "http://papers.nips.cc/paper/2979-efficient-sparse-coding-"
+        "algorithms.pdf"),
+    SEE_ALSO("Regularization and variable selection via the elastic net",
+        "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.124.4696&"
+        "rep=rep1&type=pdf"),
+    SEE_ALSO("mlpack::sparse_coding::SparseCoding C++ class documentation",
+        "@doxygen/classmlpack_1_1sparse__coding_1_1SparseCoding.html"));
 
 // Train the model.
 PARAM_MATRIX_IN("training", "Matrix of training data (X).", "t");
