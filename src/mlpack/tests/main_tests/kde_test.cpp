@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(KDEGaussianRTreeResultsMain)
 
   mlpackMain();
 
-  mainEstimations = std::move(CLI::GetParam<arma::mat>("output"));
+  mainEstimations = std::move(CLI::GetParam<arma::vec>("predictions"));
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(KDETriangularBallTreeResultsMain)
 
   mlpackMain();
 
-  mainEstimations = std::move(CLI::GetParam<arma::mat>("output"));
+  mainEstimations = std::move(CLI::GetParam<arma::vec>("predictions"));
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE(KDEMonoResultsMain)
 
   mlpackMain();
 
-  mainEstimations = std::move(CLI::GetParam<arma::mat>("output"));
+  mainEstimations = std::move(CLI::GetParam<arma::vec>("predictions"));
 
   // Check whether results are equal.
   for (size_t i = 0; i < reference.n_cols; ++i)
@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE(KDEOutputSize)
 
   mlpackMain();
   // Check number of output elements
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").size(), samples);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::vec>("predictions").size(), samples);
 }
 
 /**
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE(KDEModelReuse)
 
   mlpackMain();
 
-  arma::vec oldEstimations = std::move(CLI::GetParam<arma::mat>("output"));
+  arma::vec oldEstimations = std::move(CLI::GetParam<arma::vec>("predictions"));
 
   // Change parameters and load model
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
@@ -232,7 +232,7 @@ BOOST_AUTO_TEST_CASE(KDEModelReuse)
 
   mlpackMain();
 
-  arma::vec newEstimations = std::move(CLI::GetParam<arma::mat>("output"));
+  arma::vec newEstimations = std::move(CLI::GetParam<arma::vec>("predictions"));
 
   // Check estimations are the same
   for (size_t i = 0; i < samples; ++i)

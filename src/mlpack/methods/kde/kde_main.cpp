@@ -51,9 +51,9 @@ PROGRAM_INFO("Kernel Density Estimation",
     "\n\n" +
     PRINT_CALL("kde", "reference", "ref_data", "query", "qu_data", "bandwidth",
         0.2, "kernel", "epanechnikov", "tree", "kd-tree", "rel_error",
-        0.05, "output", "out_data") +
+        0.05, "predictions", "out_data") +
     "\n\n"
-    "the output density estimations will be stored in " +
+    "the predicted density estimations will be stored in " +
     PRINT_DATASET("out_data") + "."
     "\n"
     "If no " + PRINT_PARAM_STRING("query") + " is provided, then KDE will be "
@@ -91,9 +91,9 @@ PARAM_DOUBLE_IN("abs_error",
                 0.0);
 // Maybe in the future it could be interesting to implement different metrics.
 
-// Output options.
-PARAM_MATRIX_OUT("output", "Matrix to store output estimations.",
-    "o");
+// Output predictions options.
+PARAM_COL_OUT("predictions", "Vector to store density predictions.",
+    "p");
 
 static void mlpackMain()
 {
@@ -176,9 +176,9 @@ static void mlpackMain()
   else
     kde->Evaluate(estimations);
 
-  // Output results if needed.
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(estimations);
+  // Output predictions if needed.
+  if (CLI::HasParam("predictions"))
+    CLI::GetParam<arma::vec>("predictions") = std::move(estimations);
 
   // Save model.
   if (CLI::HasParam("output_model"))
