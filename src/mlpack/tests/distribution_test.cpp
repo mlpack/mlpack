@@ -667,11 +667,11 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainWithProbabilitiesTest)
   BOOST_REQUIRE_CLOSE(gDist2.Alpha(1), gDist.Alpha(1), 1.5);
   BOOST_REQUIRE_CLOSE(gDist2.Beta(1), gDist.Beta(1), 1.5);
 
-  BOOST_REQUIRE_CLOSE(alphaReal, gDist.Alpha(0), 2.5);
-  BOOST_REQUIRE_CLOSE(betaReal, gDist.Beta(0), 2.5);
+  BOOST_REQUIRE_CLOSE(alphaReal, gDist.Alpha(0), 3.0);
+  BOOST_REQUIRE_CLOSE(betaReal, gDist.Beta(0), 3.0);
 
-  BOOST_REQUIRE_CLOSE(alphaReal, gDist.Alpha(1), 2.5);
-  BOOST_REQUIRE_CLOSE(betaReal, gDist.Beta(1), 2.5);
+  BOOST_REQUIRE_CLOSE(alphaReal, gDist.Alpha(1), 3.0);
+  BOOST_REQUIRE_CLOSE(betaReal, gDist.Beta(1), 3.0);
 }
 
 /**
