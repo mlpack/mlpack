@@ -46,30 +46,41 @@ using KDEType = KDE<metric::EuclideanDistance,
  */
 class KernelNormalizer
 {
+ private:
+  // SFINAE check if has Normalizer.
+  template <typename T>
+  class HasNormalizer
+  {
+   private:
+    typedef char YesType[1];
+    typedef char NoType[2];
+
+    template <typename X> static YesType& test( decltype(&X::Normalizer) ) ;
+    template <typename X> static NoType& test(...);
+   public:
+    enum { value = sizeof(test<T>(0)) == sizeof(YesType) };
+  };
+
  public:
   //! Normalization not needed.
   template<typename KernelType>
   static void ApplyNormalizer(KernelType& /* kernel */,
                               const size_t /* dimension */,
-                              arma::vec& /* estimations */) { return; }
+                              arma::vec& /* estimations */,
+                              const typename std::enable_if<
+                                  !HasNormalizer<KernelType>::value>::type* = 0)
+  { return; }
 
-  //! Normalize Gaussian Kernel.
+  //! Normalize kernels that have normalizer.
   template<typename KernelType>
-  static void ApplyNormalizer(kernel::GaussianKernel& kernel,
+  static void ApplyNormalizer(KernelType& kernel,
                               const size_t dimension,
-                              arma::vec& estimations);
-
-  //! Normalize Epanechnikov Kernel.
-  template<typename KernelType>
-  static void ApplyNormalizer(kernel::EpanechnikovKernel& kernel,
-                              const size_t dimension,
-                              arma::vec& estimations);
-
-  //! Normalize SphericalKernel Kernel.
-  template<typename KernelType>
-  static void ApplyNormalizer(kernel::SphericalKernel& kernel,
-                              const size_t dimension,
-                              arma::vec& estimations);
+                              arma::vec& estimations,
+                              const typename std::enable_if<
+                                  HasNormalizer<KernelType>::value>::type* = 0)
+  {
+    estimations /= kernel.Normalizer(dimension);
+  }
 };
 
 /**

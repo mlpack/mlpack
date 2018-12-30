@@ -239,33 +239,6 @@ inline void KDEModel::CleanMemory()
   boost::apply_visitor(DeleteVisitor(), kdeModel);
 }
 
-// Gaussian KDE normalization
-template<typename KernelType>
-void KernelNormalizer::ApplyNormalizer(kernel::GaussianKernel& kernel,
-                                       const size_t dimension,
-                                       arma::vec& estimations)
-{
-  estimations /= kernel.Normalizer(dimension);
-}
-
-// Epanechnikov KDE normalization
-template<typename KernelType>
-void KernelNormalizer::ApplyNormalizer(kernel::EpanechnikovKernel& kernel,
-                                       const size_t dimension,
-                                       arma::vec& estimations)
-{
-  estimations /= kernel.Normalizer(dimension);
-}
-
-// Spherical KDE normalization
-template<typename KernelType>
-void KernelNormalizer::ApplyNormalizer(kernel::SphericalKernel& kernel,
-                                       const size_t dimension,
-                                       arma::vec& estimations)
-{
-  estimations /= kernel.Normalizer(dimension);
-}
-
 // Parameters for KDE evaluation
 DualMonoKDE::DualMonoKDE(arma::vec& estimations):
     estimations(estimations)
