@@ -303,6 +303,11 @@ Evaluate(Tree* queryTree,
          const std::vector<size_t>& oldFromNewQueries,
          arma::vec& estimations)
 {
+  // Get estimations vector ready.
+  estimations.clear();
+  estimations.set_size(queryTree->Dataset().n_cols);
+  estimations.fill(arma::fill::zeros);
+
   // Check querySet has at least 1 element to evaluate.
   if (queryTree->Dataset().n_cols == 0)
   {
@@ -316,10 +321,6 @@ Evaluate(Tree* queryTree,
                                 "referenceSet dimensions don't match");
 
   Timer::Start("computing_kde");
-  // Get estimations vector ready.
-  estimations.clear();
-  estimations.resize(queryTree->Dataset().n_cols);
-  estimations.fill(arma::fill::zeros);
 
   // Evaluate
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
@@ -353,12 +354,12 @@ template<typename MetricType,
 void KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
 Evaluate(arma::vec& estimations)
 {
-  Timer::Start("computing_kde");
   // Get estimations vector ready.
   estimations.clear();
-  estimations.resize(referenceTree->Dataset().n_cols);
+  estimations.set_size(referenceTree->Dataset().n_cols);
   estimations.fill(arma::fill::zeros);
 
+  Timer::Start("computing_kde");
   // Evaluate
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
   RuleType rules = RuleType(referenceTree->Dataset(),
