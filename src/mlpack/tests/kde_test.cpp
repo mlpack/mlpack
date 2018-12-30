@@ -530,7 +530,8 @@ BOOST_AUTO_TEST_CASE(EmptyQuerySetTest)
 {
   arma::mat reference = arma::randu(1, 10);
   arma::mat query;
-  arma::vec estimations = arma::vec(query.n_cols, arma::fill::zeros);
+  // Set estimations to the wrong size
+  arma::vec estimations(33, arma::fill::zeros);
   const double kernelBandwidth = 0.7;
   const double relError = 0.01;
 
@@ -544,6 +545,8 @@ BOOST_AUTO_TEST_CASE(EmptyQuerySetTest)
     kde(metric, kernel, relError, 0.0);
   kde.Train(reference);
 
+  // The query set must be empty
+  BOOST_REQUIRE_EQUAL(query.n_cols, 0);
   // When evaluating using the query dataset matrix
   BOOST_REQUIRE_NO_THROW(kde.Evaluate(query, estimations));
 
@@ -553,8 +556,10 @@ BOOST_AUTO_TEST_CASE(EmptyQuerySetTest)
   Tree* queryTree = new Tree(query, oldFromNewQueries, 3);
   BOOST_REQUIRE_NO_THROW(
     kde.Evaluate(queryTree, oldFromNewQueries, estimations));
-
   delete queryTree;
+
+  // Estimations must be empty
+  BOOST_REQUIRE_EQUAL(estimations.size(), 0);
 }
 
 /**
