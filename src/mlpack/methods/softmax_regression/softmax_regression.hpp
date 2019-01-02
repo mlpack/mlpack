@@ -13,7 +13,7 @@
 #define MLPACK_METHODS_SOFTMAX_REGRESSION_SOFTMAX_REGRESSION_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <ensmallen.hpp>
 
 #include "softmax_regression_function.hpp"
 
@@ -90,7 +90,7 @@ class SoftmaxRegression
    * @param lambda L2-regularization constant.
    * @param fitIntercept add intercept term or not.
    */
-  template<typename OptimizerType = mlpack::optimization::L_BFGS>
+  template<typename OptimizerType = ens::L_BFGS>
   SoftmaxRegression(const arma::mat& data,
                     const arma::Row<size_t>& labels,
                     const size_t numClasses,
@@ -165,7 +165,7 @@ class SoftmaxRegression
    * @param optimizer Desired optimizer.
    * @return Objective value of the final point.
    */
-  template<typename OptimizerType = mlpack::optimization::L_BFGS>
+  template<typename OptimizerType = ens::L_BFGS>
   double Train(const arma::mat& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses,

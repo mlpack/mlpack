@@ -15,18 +15,18 @@
 #include <mlpack/core/hpt/cv_function.hpp>
 #include <mlpack/core/hpt/fixed.hpp>
 #include <mlpack/core/hpt/hpt.hpp>
-#include <mlpack/core/optimizers/grid_search/grid_search.hpp>
-#include <mlpack/core/optimizers/gradient_descent/gradient_descent.cpp>
 #include <mlpack/methods/lars/lars.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+
+#include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 
 using namespace mlpack::cv;
 using namespace mlpack::data;
 using namespace mlpack::hpt;
-using namespace mlpack::optimization;
 using namespace mlpack::regression;
+using namespace ens;
 
 BOOST_AUTO_TEST_SUITE(HPTTest);
 
@@ -47,15 +47,55 @@ BOOST_AUTO_TEST_CASE(CVFunctionTest)
   double lambda1 = 1.0;
   double lambda2 = 2.0;
 
+  IncrementPolicy policy(true);
+  DatasetMapper<IncrementPolicy, double> datasetInfo(policy, 2);
+
   FixedArg<bool, 1> fixedUseCholesky{useCholesky};
   FixedArg<double, 3> fixedLambda1{lambda2};
   CVFunction<decltype(cv), LARS, 4, FixedArg<bool, 1>, FixedArg<double, 3>>
-      cvFun(cv, 0.0, 0.0, fixedUseCholesky, fixedLambda1);
+      cvFun(cv, datasetInfo, 0.0, 0.0, fixedUseCholesky, fixedLambda1);
 
   double expected = cv.Evaluate(transposeData, useCholesky, lambda1, lambda2);
   arma::vec parameters(2);
   parameters(0) = transposeData;
   parameters(1) = lambda1;
+  double actual = cvFun.Evaluate(parameters);
+
+  BOOST_REQUIRE_CLOSE(expected, actual, 1e-5);
+}
+
+/**
+ * Test CVFunction runs cross-validation in according with specified fixed
+ * arguments and passed parameters, where the passed parameters are categorical
+ * parameters.
+ */
+BOOST_AUTO_TEST_CASE(CVFunctionCategoricalTest)
+{
+  arma::mat xs = arma::randn(5, 100);
+  arma::vec beta = arma::randn(5, 1);
+  arma::rowvec ys = beta.t() * xs + 0.1 * arma::randn(1, 100);
+
+  SimpleCV<LARS, MSE> cv(0.2, xs, ys);
+
+  bool transposeData = true;
+  bool useCholesky = false;
+  double lambda1 = 1.0;
+  double lambda2 = 2.0;
+
+  IncrementPolicy policy(true);
+  DatasetMapper<IncrementPolicy, double> datasetInfo(policy, 2);
+  datasetInfo.MapString<double>(transposeData, 0);
+  datasetInfo.MapString<double>(lambda1, 1);
+
+  FixedArg<bool, 1> fixedUseCholesky{useCholesky};
+  FixedArg<double, 3> fixedLambda1{lambda2};
+  CVFunction<decltype(cv), LARS, 4, FixedArg<bool, 1>, FixedArg<double, 3>>
+      cvFun(cv, datasetInfo, 0.0, 0.0, fixedUseCholesky, fixedLambda1);
+
+  double expected = cv.Evaluate(transposeData, useCholesky, lambda1, lambda2);
+  arma::vec parameters(2);
+  parameters(0) = 0; // Should be unmapped to 'true'.
+  parameters(1) = 0; // Should be unmapped to 1.0.
   double actual = cvFun.Evaluate(parameters);
 
   BOOST_REQUIRE_CLOSE(expected, actual, 1e-5);
@@ -110,9 +150,14 @@ BOOST_AUTO_TEST_CASE(CVFunctionGradientTest)
   double d = 3.0;
   QuadraticFunction<LARS> lf(a, b, c, d);
 
+  // All values are numeric.
+  IncrementPolicy policy(true);
+  DatasetMapper<IncrementPolicy, double> datasetInfo(policy, 3);
+
   double relativeDelta = 0.01;
   double minDelta = 0.001;
-  CVFunction<decltype(lf), LARS, 3> cvFun(lf, relativeDelta, minDelta);
+  CVFunction<decltype(lf), LARS, 3> cvFun(lf, datasetInfo, relativeDelta,
+      minDelta);
 
   double x = 0.0;
   double y = -1.0;
@@ -173,6 +218,7 @@ void FindLARSBestLambdas(arma::mat& xs,
   bestObjective = std::numeric_limits<double>::max();
 
   for (double lambda1 : lambda1Set)
+  {
     for (double lambda2 : lambda2Set)
     {
       double objective =
@@ -184,6 +230,7 @@ void FindLARSBestLambdas(arma::mat& xs,
         bestLambda2 = lambda2;
       }
     }
+  }
 }
 
  /**
@@ -207,10 +254,6 @@ BOOST_AUTO_TEST_CASE(GridSearchTest)
       lambda1Set, lambda2Set, expectedLambda1, expectedLambda2,
       expectedObjective);
 
-  SimpleCV<LARS, MSE> cv(validationSize, xs, ys);
-  CVFunction<decltype(cv), LARS, 4, FixedArg<bool, 0>, FixedArg<bool, 1>>
-      cvFun(cv, 0.0, 0.0, {transposeData}, {useCholesky});
-
   IncrementPolicy policy(true);
   DatasetMapper<IncrementPolicy, double> datasetInfo(policy, 2);
   for (double lambda1 : lambda1Set)
@@ -218,14 +261,29 @@ BOOST_AUTO_TEST_CASE(GridSearchTest)
   for (double lambda2 : lambda2Set)
     datasetInfo.MapString<size_t>(lambda2, 1);
 
-  GridSearch optimizer;
+  SimpleCV<LARS, MSE> cv(validationSize, xs, ys);
+  CVFunction<decltype(cv), LARS, 4, FixedArg<bool, 0>, FixedArg<bool, 1>>
+      cvFun(cv, datasetInfo, 0.0, 0.0, {transposeData}, {useCholesky});
+
+  ens::GridSearch optimizer;
   arma::mat actualParameters;
-  double actualObjective =
-      optimizer.Optimize(cvFun, actualParameters, datasetInfo);
+
+  std::vector<bool> categoricalDimensions(datasetInfo.Dimensionality());
+  arma::Row<size_t> numCategories(datasetInfo.Dimensionality());
+  for (size_t d = 0; d < datasetInfo.Dimensionality(); d++)
+  {
+    numCategories[d] = datasetInfo.NumMappings(d);
+    categoricalDimensions[d] = datasetInfo.Type(d) == mlpack::data::Datatype::categorical;
+  }
+
+  double actualObjective = optimizer.Optimize(cvFun, actualParameters,
+      categoricalDimensions, numCategories);
 
   BOOST_REQUIRE_CLOSE(expectedObjective, actualObjective, 1e-5);
-  BOOST_REQUIRE_CLOSE(expectedLambda1, actualParameters(0, 0), 1e-5);
-  BOOST_REQUIRE_CLOSE(expectedLambda2, actualParameters(1, 0), 1e-5);
+  BOOST_REQUIRE_CLOSE(expectedLambda1,
+      datasetInfo.UnmapString(actualParameters(0, 0), 0), 1e-5);
+  BOOST_REQUIRE_CLOSE(expectedLambda2,
+      datasetInfo.UnmapString(actualParameters(1, 0), 1), 1e-5);
 }
 
 /**
@@ -320,8 +378,8 @@ BOOST_AUTO_TEST_CASE(HPTGradientDescentTest)
   // We pass LARS just because some ML algorithm should be passed. We pass MSE
   // to tell HyperParameterTuner that the objective function (QuadraticFunction)
   // should be minimized.
-  HyperParameterTuner<LARS, MSE, QuadraticFunction, GradientDescent>
-      hpt(a, b, c, d, xMin, yMin, zMin);
+  HyperParameterTuner<LARS, MSE, QuadraticFunction,
+      GradientDescent> hpt(a, b, c, d, xMin, yMin, zMin);
 
   // Setting GradientDescent to find more close solution to the optimal one.
   hpt.Optimizer().StepSize() = 0.1;

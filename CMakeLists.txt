@@ -12,6 +12,7 @@ option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
+option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 
 # Currently Python bindings aren't known to build successfully on Windows, so
 # set BUILD_PYTHON_BINDINGS to OFF when the platform is Windows.
@@ -49,6 +50,7 @@ else ()
   set(CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
   set(CMAKE_INSTALL_MANDIR ${CMAKE_INSTALL_PREFIX}/man)
   set(CMAKE_INSTALL_DOCDIR ${CMAKE_INSTALL_PREFIX}/share/doc/mlpack)
+  set(CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIX}/include)
 endif ()
 
 # This is as of yet unused.
@@ -180,8 +182,13 @@ if(DEBUG)
 else()
   add_definitions(-DARMA_NO_DEBUG)
   add_definitions(-DNDEBUG)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -O3")
+  if (NOT MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -O3")
+  else ()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O3")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /O3")
+  endif ()
 endif()
 
 # Profiling CFLAGS.  Turn profiling information on.
@@ -210,6 +217,7 @@ endif()
 #   BOOST_ROOT - root of Boost installation
 #   BOOST_INCLUDEDIR - include directory for Boost
 #   BOOST_LIBRARYDIR - library directory for Boost
+#   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
 #   MATHJAX_ROOT - root of MathJax installation
 
 find_package(Armadillo 6.500.0 REQUIRED)
@@ -289,9 +297,61 @@ endif ()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
+# Find ensmallen.
+# Once ensmallen is readily available in package repos, the automatic downloader
+# here can be removed.
+find_package(Ensmallen 1.10.0)
+if (NOT ENSMALLEN_FOUND)
+  if (DOWNLOAD_ENSMALLEN)
+    file(DOWNLOAD http://www.ensmallen.org/files/ensmallen-latest.tar.gz
+        "${CMAKE_BINARY_DIR}/deps/ensmallen-latest.tar.gz"
+        STATUS ENS_DOWNLOAD_STATUS_LIST LOG ENS_DOWBLOAD_LOG
+        SHOW_PROGRESS)
+    list(GET ENS_DOWNLOAD_STATUS_LIST 0 ENS_DOWNLOAD_STATUS)
+    if (ENS_DOWNLOAD_STATUS EQUAL 0)
+      execute_process(COMMAND ${CMAKE_COMMAND} -E
+          tar xzf "${CMAKE_BINARY_DIR}/deps/ensmallen-latest.tar.gz"
+          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
+
+      # Get the name of the directory.
+      file (GLOB ENS_DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
+          "${CMAKE_BINARY_DIR}/deps/ensmallen-[0-9]*.[0-9]*.[0-9]*")
+      list(LENGTH ENS_DIRECTORIES ENS_DIRECTORIES_LEN)
+      if (ENS_DIRECTORIES_LEN EQUAL 1)
+        list(GET ENS_DIRECTORIES 0 ENSMALLEN_INCLUDE_DIR)
+        set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+            "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include")
+        message(STATUS
+            "Successfully downloaded ensmallen into ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/")
+      else ()
+        message(FATAL_ERROR "Problem unpacking ensmallen!  Expected only one directory ensmallen-x.y.z/; found ${ENS_DIRECTORIES}. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
+      endif ()
+    else ()
+      list(GET ENS_DOWNLOAD_STATUS_LIST 1 ENS_DOWNLOAD_ERROR)
+      message(FATAL_ERROR
+          "Could not download ensmallen! Error code ${ENS_DOWNLOAD_STATUS}:
+${ENS_DOWNLOAD_ERROR}!  Error log: ${ENS_DOWBLOAD_LOG}")
+    endif ()
+  else ()
+    # Release versions will have ensmallen packaged with the release so we can
+    # just reference that.
+    if (EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen/ensmallen.hpp")
+      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS}
+          "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen")
+    else ()
+      message(FATAL_ERROR
+          "Cannot find ensmallen headers!  Try setting ENSMALLEN_INCLUDE_DIR!")
+    endif ()
+  endif ()
+else ()
+  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ENSMALLEN_INCLUDE_DIRS})
+endif ()
+
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.68.0" "1.68"
+  "1.67.0" "1.67"
   "1.66.0" "1.66"
   "1.65.1" "1.65.0" "1.65"
   "1.64.1" "1.64.0" "1.64"
@@ -357,7 +417,11 @@ if (OPENMP_FOUND)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 else ()
   # Disable warnings for all the unknown OpenMP pragmas.
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
+  if (NOT MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
+  else ()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4068")
+  endif ()
   set(OpenMP_CXX_FLAGS "")
 endif ()
 

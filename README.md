@@ -22,7 +22,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="http://www.mlpack.org/files/mlpack-3.0.3.tar.gz">current stable version (3.0.3)</a>
+    <a href="http://www.mlpack.org/files/mlpack-3.0.4.tar.gz">current stable version (3.0.4)</a>
   </em>
 </p>
 
@@ -59,7 +59,7 @@ documentation. The website should be consulted for further information:
 ### 2. Citation details
 
 If you use mlpack in your research or software, please cite mlpack using the
-citation below (given in BiBTeX format):
+citation below (given in BibTeX format):
 
     @article{mlpack2018,
         title     = {mlpack 3: a fast, flexible machine learning library},
@@ -232,7 +232,7 @@ be stated more simply: for each point in the dataset, we wish to know the k
 nearest points to that point.
 
 Each mlpack program has extensive help documentation which details what the
-method does, what each of the parameters are, and how to use them:
+method does, what each of the parameters is, and how to use them:
 
 ```shell
 $ mlpack_knn --help

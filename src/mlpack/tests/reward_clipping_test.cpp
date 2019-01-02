@@ -25,17 +25,16 @@
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/reinforcement_learning/q_learning.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
-#include <mlpack/core/optimizers/adam/adam_update.hpp>
-#include <mlpack/core/optimizers/adam/adam.hpp>
-#include <mlpack/core/optimizers/rmsprop/rmsprop_update.hpp>
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
+
+#include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
-using namespace mlpack::optimization;
+using namespace ens;
 using namespace mlpack::rl;
 
 BOOST_AUTO_TEST_SUITE(RewardClippingTest);
@@ -45,10 +44,10 @@ BOOST_AUTO_TEST_CASE(ClippedRewardTest)
 {
   Pendulum task;
   RewardClipping<Pendulum> rewardClipping(task, -2.0, +2.0);
-  
+
   RewardClipping<Pendulum>::State state = rewardClipping.InitialSample();
   RewardClipping<Pendulum>::Action action;
-  action.action[0] = math::Random(-1.0, 1.0);
+  action.action[0] = mlpack::math::Random(-1.0, 1.0);
   double reward = rewardClipping.Sample(state, action);
 
   BOOST_REQUIRE(reward <= 2.0);

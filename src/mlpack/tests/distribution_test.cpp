@@ -488,11 +488,11 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithProbabilitiesTest)
   GaussianDistribution guDist2;
   guDist2.Train(rdata);
 
-  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], guDist2.Mean()[0], 5);
-  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], guDist2.Covariance()[0], 5);
+  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], guDist2.Mean()[0], 6);
+  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], guDist2.Covariance()[0], 6);
 
-  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], mean[0], 5);
-  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], cov[0], 5);
+  BOOST_REQUIRE_CLOSE(guDist.Mean()[0], mean[0], 6);
+  BOOST_REQUIRE_CLOSE(guDist.Covariance()[0], cov[0], 6);
 }
 
 /**
@@ -667,11 +667,11 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainWithProbabilitiesTest)
   BOOST_REQUIRE_CLOSE(gDist2.Alpha(1), gDist.Alpha(1), 1.5);
   BOOST_REQUIRE_CLOSE(gDist2.Beta(1), gDist.Beta(1), 1.5);
 
-  BOOST_REQUIRE_CLOSE(alphaReal, gDist.Alpha(0), 2.5);
-  BOOST_REQUIRE_CLOSE(betaReal, gDist.Beta(0), 2.5);
+  BOOST_REQUIRE_CLOSE(alphaReal, gDist.Alpha(0), 3.0);
+  BOOST_REQUIRE_CLOSE(betaReal, gDist.Beta(0), 3.0);
 
-  BOOST_REQUIRE_CLOSE(alphaReal, gDist.Alpha(1), 2.5);
-  BOOST_REQUIRE_CLOSE(betaReal, gDist.Beta(1), 2.5);
+  BOOST_REQUIRE_CLOSE(alphaReal, gDist.Alpha(1), 3.0);
+  BOOST_REQUIRE_CLOSE(betaReal, gDist.Beta(1), 3.0);
 }
 
 /**

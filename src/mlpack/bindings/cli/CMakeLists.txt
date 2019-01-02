@@ -49,6 +49,7 @@ if (BUILD_CLI_EXECUTABLES)
   )
   target_link_libraries(mlpack_${name}
     mlpack
+    ${ARMADILLO_LIBRARIES}
     ${Boost_LIBRARIES}
     ${COMPILER_SUPPORT_LIBRARIES}
   )
