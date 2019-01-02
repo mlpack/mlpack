@@ -17,6 +17,7 @@
 #include <mlpack/methods/range_search/range_search.hpp>
 #include <mlpack/methods/emst/union_find.hpp>
 #include "random_point_selection.hpp"
+#include "ordered_point_selection.hpp"
 #include <boost/dynamic_bitset.hpp>
 
 namespace mlpack {
