@@ -1,3 +1,7 @@
+### mlpack 3.0.5
+###### ????-??-??
+  * Allow DBSCAN with RandomSelection using PointSelectionPolicy (#1625).
+
 ### mlpack 3.0.4
 ###### 2018-11-13
   * Bump minimum CMake version to 3.3.2.

@@ -92,6 +92,18 @@ void RunDBSCAN(RangeSearchType rs = RangeSearchType())
   const double epsilon = CLI::GetParam<double>("epsilon");
   const size_t minSize = (size_t) CLI::GetParam<int>("min_size");
 
+  // Check if random selection is used.
+  if (!CLI::HasParam("random_selection"))
+  {
+    DBSCAN<RangeSearchType> d(epsilon, minSize, !CLI::HasParam("single_mode"),
+        rs);   
+  }
+  else
+  {
+    DBSCAN<RangeSearchType, RandomPointSelection> d(epsilon, minSize,
+        !CLI::HasParam("single_mode"), rs);
+  }
+
   DBSCAN<RangeSearchType> d(epsilon, minSize, !CLI::HasParam("single_mode"),
       rs);
 
