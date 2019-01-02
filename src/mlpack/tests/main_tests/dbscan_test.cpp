@@ -462,7 +462,7 @@ BOOST_AUTO_TEST_CASE(DBSCANRandomSelectionTest)
   arma::Row<size_t> randomSelectionOutput;
   randomSelectionOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
 
-  BOOST_REQUIRE_EQUAL(orderedSelectionOutput.n_cols, inputSize);
+  BOOST_REQUIRE_EQUAL(randomSelectionOutput.n_cols, inputSize);
 
   CheckMatricesNotEqual(orderedSelectionOutput, randomSelectionOutput);
 }
