@@ -104,8 +104,8 @@ void RunDBSCAN(RangeSearchType rs = RangeSearchType())
         !CLI::HasParam("single_mode"), rs);
   }
 
-  DBSCAN<RangeSearchType> d(epsilon, minSize, !CLI::HasParam("single_mode"),
-      rs);
+  DBSCAN<RangeSearchType, RandomPointSelection> d(epsilon, minSize, 
+        !CLI::HasParam("single_mode"), rs);
 
   // If possible, avoid the overhead of calculating centroids.
   arma::Row<size_t> assignments;
