@@ -15,7 +15,7 @@
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
-
+#include <mlpack/methods/dbscan/random_point_selection.hpp>
 #include "dbscan.hpp"
 
 using namespace mlpack;
@@ -76,6 +76,8 @@ PARAM_FLAG("single_mode", "If set, single-tree range search (not dual-tree) "
     "will be used.", "S");
 PARAM_FLAG("naive", "If set, brute-force range search (not tree-based) "
     "will be used.", "N");
+PARAM_FLAG("random_selection", "If set, random point selection (not ordered) "
+    "will be used.", "R");
 
 // Actually run the clustering, and process the output.
 template<typename RangeSearchType>

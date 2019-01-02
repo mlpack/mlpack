@@ -11,6 +11,7 @@
  */
 #ifndef MLPACK_METHODS_DBSCAN_RANDOM_POINT_SELECTION_HPP
 #define MLPACK_METHODS_DBSCAN_RANDOM_POINT_SELECTION_HPP
+
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {

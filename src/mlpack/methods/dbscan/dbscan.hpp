@@ -18,7 +18,6 @@
 #include <mlpack/methods/emst/union_find.hpp>
 #include "random_point_selection.hpp"
 #include "ordered_point_selection.hpp"
-#include <boost/dynamic_bitset.hpp>
 
 namespace mlpack {
 namespace dbscan {
@@ -49,7 +48,7 @@ namespace dbscan {
  *      with.
  */
 template<typename RangeSearchType = range::RangeSearch<>,
-         typename PointSelectionPolicy = RandomPointSelection>
+         typename PointSelectionPolicy = OrderedPointSelection>
 class DBSCAN
 {
  public:
