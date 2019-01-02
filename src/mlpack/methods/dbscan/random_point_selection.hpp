@@ -27,16 +27,24 @@ class RandomPointSelection
   /**
    * Select the next point to use, randomly.
    *
-   * @param unvisited Bitset indicating which points are unvisited.
-   * @param data Unused data.
+   * @param point Unused data.
+   * @param data Dataset to cluster.
    */
   template<typename MatType>
-  static size_t Select(const boost::dynamic_bitset<>& unvisited,
-                       const MatType& /* data */)
+  size_t Select(const size_t /* point */,
+                       const MatType& data /* data */)
   {
+    // Initialize the length of the unvisited bitset
+    size_t size = data.n_cols; // Get the size of points.
+    if (unvisited.size() != size) 
+    {
+      unvisited.resize(size); // Resize & Set bitset to one
+      unvisited.set();
+    }
+
     const size_t max = unvisited.count();
     const size_t index = math::RandInt(max);
-
+    
     // Select the index'th unvisited point.
     size_t found = 0;
     for (size_t i = 0; i < unvisited.size(); ++i)
@@ -45,13 +53,19 @@ class RandomPointSelection
         ++found;
 
       if (found > index)
+      {
+        unvisited[i].flip(); // Set unvisited point to visited point
         return i;
+      }
     }
-
     return 0; // Not sure if it is possible to get here.
   }
-};
 
+ private:
+  // Bitmask for unvisited points, If true, mean unvisited.
+  boost::dynamic_bitset<> unvisited;
+};
+  
 } // namespace dbscan
 } // namespace mlpack
 

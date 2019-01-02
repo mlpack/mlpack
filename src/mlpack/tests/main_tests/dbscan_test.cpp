@@ -429,4 +429,27 @@ BOOST_AUTO_TEST_CASE(DBSCANNaiveSearchTest)
   CheckMatrices(output, naiveOutput);
 }
 
+/**
+ * Check that the random selection is same 
+ */
+BOOST_AUTO_TEST_CASE(DBSCANRandomSelectionFlagTest)
+{
+  arma::mat inputData;
+  if (!data::Load("iris.csv", inputData))
+    BOOST_FAIL("Unable to load dataset iris.csv!");
+
+  size_t inputSize = inputData.n_cols;
+
+  SetInputParam("input", inputData);
+  SetInputParam("random_selection", true);
+
+  mlpackMain();
+
+  // Check that number of predicted labels is equal to the input test points.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("assignments").n_cols,
+                      inputSize);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("assignments").n_rows,
+                      1);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
