@@ -77,7 +77,6 @@ endmacro ()
 # 'generate_markdown' target.
 function (post_markdown_setup)
   # We need to generate the program file.
-  message(STATUS "MARKDOWN_SRCS: ${MARKDOWN_SRCS}")
   message(STATUS "MARKDOWN_NAMES: ${MARKDOWN_NAMES}")
   foreach (name ${MARKDOWN_NAMES})
     set (MARKDOWN_INCLUDE_CODE "${MARKDOWN_INCLUDE_CODE}\n#include \"generate_markdown.${name}.hpp\"")
@@ -88,15 +87,6 @@ function (post_markdown_setup)
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown.cpp)
 
   add_executable(generate_markdown
-      ${MARKDOWN_SRCS}
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/binding_info.hpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/binding_info.cpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/get_binding_name.hpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/get_binding_name.cpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/md_option.hpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/print_docs.hpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/print_docs.cpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/program_doc_wrapper.hpp"
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown.cpp")
   target_link_libraries(generate_markdown mlpack ${MLPACK_LIBRARIES})
   add_dependencies(generate_markdown markdown_copy)
