@@ -429,4 +429,42 @@ BOOST_AUTO_TEST_CASE(DBSCANNaiveSearchTest)
   CheckMatrices(output, naiveOutput);
 }
 
+/**
+ * Check number of assignment with random selection   
+ * and difference with ordered selection
+*/
+BOOST_AUTO_TEST_CASE(DBSCANRandomSelectionTest)
+{
+  arma::mat inputData;
+  if (!data::Load("iris.csv", inputData))
+    BOOST_FAIL("Unable to load dataset iris.csv!");
+
+  size_t inputSize = inputData.n_cols;
+
+  SetInputParam("input", inputData);
+
+  mlpackMain();
+
+  arma::Row<size_t> orderedSelectionOutput;
+  orderedSelectionOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+
+  BOOST_REQUIRE_EQUAL(orderedSelectionOutput.n_cols, inputSize);
+
+  bindings::tests::CleanMemory();
+
+  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
+
+  SetInputParam("input", inputData);
+  SetInputParam("random_selection", true);
+
+  mlpackMain();
+
+  arma::Row<size_t> randomSelectionOutput;
+  randomSelectionOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+
+  BOOST_REQUIRE_EQUAL(orderedSelectionOutput.n_cols, inputSize);
+
+  CheckMatricesNotEqual(orderedSelectionOutput, randomSelectionOutput);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
