@@ -11,11 +11,13 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/dbscan/dbscan.hpp>
+#include <mlpack/methods/dbscan/random_point_selection.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
+using namespace mlpack::range;
 using namespace mlpack::dbscan;
 using namespace mlpack::distribution;
 
@@ -269,6 +271,42 @@ BOOST_AUTO_TEST_CASE(GaussiansSingleModeTest)
     BOOST_REQUIRE_NE(assignments(i), matches(0));
     BOOST_REQUIRE_NE(assignments(i), matches(1));
   }
+}
+
+/**
+ * Check that OrderedPointSelection works correctly.
+ */
+BOOST_AUTO_TEST_CASE(OrderedPointSelectionTest)
+{
+  arma::mat points(10, 200, arma::fill::randu);
+
+  DBSCAN<> d(2.0, 2);
+
+  arma::Row<size_t> assignments;
+  const size_t clusters = d.Cluster(points, assignments);
+
+  BOOST_REQUIRE_EQUAL(clusters, 1);
+
+  // The number of assignments returned should be the same as points's
+  BOOST_REQUIRE_EQUAL(assignments.n_elem, points.n_cols);
+}
+
+/**
+ * Check that RandomPointSelection works correctly.
+ */
+BOOST_AUTO_TEST_CASE(RandomPointSelectionTest)
+{
+  arma::mat points(10, 200, arma::fill::randu);
+  
+  DBSCAN<RangeSearch<>, RandomPointSelection> d(2.0, 2);
+
+  arma::Row<size_t> assignments;
+  const size_t clusters = d.Cluster(points, assignments);
+
+  BOOST_REQUIRE_EQUAL(clusters, 1);
+
+  // The number of assignments returned should be the same as points's
+  BOOST_REQUIRE_EQUAL(assignments.n_elem, points.n_cols);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
