@@ -1,6 +1,6 @@
 /**
  * @file ordered_point_selection.hpp
- * @author Ryan Curtin
+ * @author Kim Sang-Yeon
  *
  * sequentially select the next point for DBSCAN.
  *
@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_DBSCAN_ORDERED_POINT_SELECTION_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <boost/dynamic_bitset.hpp>
 
 namespace mlpack {
 namespace dbscan {
