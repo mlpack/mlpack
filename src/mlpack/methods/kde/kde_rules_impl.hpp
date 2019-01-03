@@ -82,14 +82,10 @@ template<typename MetricType, typename KernelType, typename TreeType>
 double KDERules<MetricType, KernelType, TreeType>::
 Score(const size_t queryIndex, TreeType& referenceNode)
 {
-  double score;
-  bool newCalculations = true;
+  double score, maxKernel, minKernel, bound;
   const arma::vec& queryPoint = querySet.unsafe_col(queryIndex);
   const double minDistance = referenceNode.MinDistance(queryPoint);
-  const double maxKernel = kernel.Evaluate(minDistance);
-  const double minKernel =
-      kernel.Evaluate(referenceNode.MaxDistance(queryPoint));
-  const double bound = maxKernel - minKernel;
+  bool newCalculations = true;
 
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid &&
       lastQueryIndex == queryIndex &&
@@ -101,9 +97,16 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     lastQueryIndex = queryIndex;
     lastReferenceIndex = referenceNode.Point(0);
   }
+  else
+  {
+    // Calculations are new.
+    maxKernel = kernel.Evaluate(minDistance);
+    minKernel = kernel.Evaluate(referenceNode.MaxDistance(queryPoint));
+    bound = maxKernel - minKernel;
+  }
 
-  if (bound <= (absError + relError * minKernel) / referenceSet.n_cols &&
-      newCalculations)
+  if (newCalculations &&
+      bound <= (absError + relError * minKernel) / referenceSet.n_cols)
   {
     double kernelValue;
 
@@ -157,32 +160,33 @@ template<typename MetricType, typename KernelType, typename TreeType>
 inline double KDERules<MetricType, KernelType, TreeType>::
 Score(TreeType& queryNode, TreeType& referenceNode)
 {
-  double score;
+  double score, maxKernel, minKernel, bound;
+  const double minDistance = queryNode.MinDistance(referenceNode);
   // Calculations are not duplicated.
   bool newCalculations = true;
-  const double minDistance = queryNode.MinDistance(referenceNode);
-  const double maxKernel = kernel.Evaluate(minDistance);
-  const double minKernel =
-      kernel.Evaluate(queryNode.MaxDistance(referenceNode));
-  const double bound = maxKernel - minKernel;
 
-  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid &&
+      (traversalInfo.LastQueryNode() != NULL) &&
+      (traversalInfo.LastReferenceNode() != NULL) &&
+      (traversalInfo.LastQueryNode()->Point(0) == queryNode.Point(0)) &&
+      (traversalInfo.LastReferenceNode()->Point(0) == referenceNode.Point(0)))
   {
-    if ((traversalInfo.LastQueryNode() != NULL) &&
-        (traversalInfo.LastReferenceNode() != NULL) &&
-        (traversalInfo.LastQueryNode()->Point(0) == queryNode.Point(0)) &&
-        (traversalInfo.LastReferenceNode()->Point(0) == referenceNode.Point(0)))
-    {
-      // Don't duplicate calculations.
-      newCalculations = false;
-      lastQueryIndex = queryNode.Point(0);
-      lastReferenceIndex = referenceNode.Point(0);
-    }
+    // Don't duplicate calculations.
+    newCalculations = false;
+    lastQueryIndex = queryNode.Point(0);
+    lastReferenceIndex = referenceNode.Point(0);
+  }
+  else
+  {
+    // Calculations are new.
+    maxKernel = kernel.Evaluate(minDistance);
+    minKernel = kernel.Evaluate(queryNode.MaxDistance(referenceNode));
+    bound = maxKernel - minKernel;
   }
 
   // If possible, avoid some calculations because of the error tolerance
-  if (bound <= (absError + relError * minKernel) / referenceSet.n_cols &&
-      newCalculations)
+  if (newCalculations &&
+      bound <= (absError + relError * minKernel) / referenceSet.n_cols)
   {
     // Auxiliary variables.
     double kernelValue;
