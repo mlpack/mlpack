@@ -115,12 +115,6 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     else
     {
       kde::KDEStat& referenceStat = referenceNode.Stat();
-      if (!referenceStat.ValidCentroid())
-      {
-        arma::vec referenceCenter;
-        referenceNode.Center(referenceCenter);
-        referenceStat.SetCentroid(std::move(referenceCenter));
-      }
       kernelValue = EvaluateKernel(queryPoint, referenceStat.Centroid());
     }
 
@@ -203,20 +197,6 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     // Sadly, we have no choice but to calculate the center.
     else
     {
-      // Calculate center for each node if it has not been calculated yet.
-      if (!referenceStat.ValidCentroid())
-      {
-        arma::vec referenceCenter;
-        referenceNode.Center(referenceCenter);
-        referenceStat.SetCentroid(std::move(referenceCenter));
-      }
-      if (!queryStat.ValidCentroid())
-      {
-        arma::vec queryCenter;
-        queryNode.Center(queryCenter);
-        queryStat.SetCentroid(std::move(queryCenter));
-      }
-      // Compute kernel value.
       kernelValue = EvaluateKernel(queryStat.Centroid(),
                                    referenceStat.Centroid());
     }

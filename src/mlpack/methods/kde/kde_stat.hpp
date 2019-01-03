@@ -28,7 +28,19 @@ class KDEStat
 
   //! Initialization for a fully initialized node.
   template<typename TreeType>
-  KDEStat(TreeType& /* node */) : validCentroid(false) { }
+  KDEStat(TreeType& node)
+  {
+    // Calculate centroid if necessary.
+    if (!tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+    {
+      node.Center(centroid);
+      validCentroid = true;
+    }
+    else
+    {
+      validCentroid = false;
+    }
+  }
 
   //! Get the centroid of the node.
   inline const arma::vec& Centroid() const
