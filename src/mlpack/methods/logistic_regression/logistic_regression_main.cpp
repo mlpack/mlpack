@@ -133,6 +133,9 @@ PARAM_UROW_OUT("predictions", "If test data is specified, this matrix is where "
 PARAM_MATRIX_OUT("output_probabilities", "If test data is specified, this "
     "matrix is where the class probabilities for the test set will be saved.",
     "p");
+PARAM_MATRIX_OUT("probabilities", "If test data is specified, this "
+    "matrix is where the class probabilities for the test set will be saved.",
+    "q");
 PARAM_DOUBLE_IN("decision_boundary", "Decision boundary for prediction; if the "
     "logistic function for a point is less than the boundary, the class is "
     "taken to be 0; otherwise, the class is 1.", "d", 0.5);
@@ -159,11 +162,13 @@ static void mlpackMain()
         "be saved");
   }
 
-  RequireAtLeastOnePassed({ "output_model", "output", "output_probabilities" },
+  RequireAtLeastOnePassed({ "output_model", "output", "output_probabilities", "predictions", "probabilities" },
       false, "no output will be saved");
 
   ReportIgnoredParam({{ "test", false }}, "output");
   ReportIgnoredParam({{ "test", false }}, "output_probabilities");
+  ReportIgnoredParam({{ "test", false }}, "predictions");
+  ReportIgnoredParam({{ "test", false }}, "probabilities");
 
   // Max Iterations needs to be positive.
   RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; },

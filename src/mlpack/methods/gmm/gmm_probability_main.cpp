@@ -25,9 +25,7 @@ PROGRAM_INFO("GMM Probability Calculator",
     PRINT_PARAM_STRING("input_model") + " parameter, and the points are "
     "specified with the " + PRINT_PARAM_STRING("input") + " parameter.  The "
     "output probabilities may be saved via the " +
-    PRINT_PARAM_STRING("output") + "Matrix to store calculated probabilities in.  This option is deprecated and will be removed in mlpack 4.0.0---use the 'probabilities' option instead."
-    "\n\n" +
-    PRINT_PARAM_STRING("probabilities") + "Matrix to store calculated probabilities in."
+    PRINT_PARAM_STRING("output") + " output parameter."
     "\n\n"
     "So, for example, to calculate the probabilities of each point in " +
     PRINT_DATASET("points") + " coming from the pre-trained GMM " +
@@ -41,9 +39,7 @@ PARAM_MODEL_IN_REQ(GMM, "input_model", "Input GMM to use as model.", "m");
 PARAM_MATRIX_IN_REQ("input", "Input matrix to calculate probabilities of.",
     "i");
 
-//The output matrix with the output option can be removed in mlpack 4.0.0
 PARAM_MATRIX_OUT("output", "Matrix to store calculated probabilities in.", "o");
-PARAM_MATRIX_OUT("probabilities", "Matrix to store calculated probabilities in.", "p");
 
 static void mlpackMain()
 {
