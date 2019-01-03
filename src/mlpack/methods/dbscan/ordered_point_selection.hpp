@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_DBSCAN_RANDOM_POINT_SELECTION_HPP
-#define MLPACK_METHODS_DBSCAN_RANDOM_POINT_SELECTION_HPP
+#ifndef MLPACK_METHODS_DBSCAN_ORDERED_POINT_SELECTION_HPP
+#define MLPACK_METHODS_DBSCAN_ORDERED_POINT_SELECTION_HPP
 
 #include <mlpack/prereqs.hpp>
 

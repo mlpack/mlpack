@@ -58,7 +58,7 @@ class RandomPointSelection
     return 0; // Not sure if it is possible to get here.
   }
  private:
-  std::vector<bool> unvisited;
+  static std::vector<bool> unvisited;
 };
 
 } // namespace dbscan
