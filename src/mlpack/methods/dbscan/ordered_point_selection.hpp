@@ -30,7 +30,7 @@ class OrderedPointSelection
    * @param data Unused data.
    */
   template<typename MatType>
-  static size_t Select(const size_t point,
+  size_t Select(const size_t point,
                        const MatType& /* data */)
   { 
     return point; // Just return point.
