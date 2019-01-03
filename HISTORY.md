@@ -1,6 +1,6 @@
 ### mlpack 3.0.5
-###### 2019-01-02
-  * Fix DBSCAN isn't using PointSelectionPolicy issue (#1625).
+###### ????-??-??
+  * Change DBSCAN to use PointSelectionPolicy and add RandomSelectionPolicy (#1625).
   
 ### mlpack 3.0.4
 ###### 2018-11-13
