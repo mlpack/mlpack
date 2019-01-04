@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(KDEGaussianRTreeResultsMain)
       arma::mat,
       kernel::GaussianKernel,
       tree::RTree>
-    kde(metric, kernel, relError, 0.0);
+    kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
   kde.Evaluate(query, kdeEstimations);
   // Normalize estimations
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(KDETriangularBallTreeResultsMain)
       arma::mat,
       kernel::TriangularKernel,
       tree::BallTree>
-    kde(metric, kernel, relError, 0.0);
+    kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
   kde.Evaluate(query, kdeEstimations);
 
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(KDEMonoResultsMain)
       arma::mat,
       kernel::EpanechnikovKernel,
       tree::StandardCoverTree>
-    kde(metric, kernel, relError, 0.0);
+    kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
   // Perform monochromatic KDE.
   kde.Evaluate(kdeEstimations);

@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(KDESimpleTest)
       arma::mat,
       GaussianKernel,
       KDTree>
-    kde(0.8, 0.0, 0.01);
+    kde(0.0, 0.01, GaussianKernel(0.8));
   kde.Train(reference);
   kde.Evaluate(query, estimations);
   for (size_t i = 0; i < query.n_cols; ++i)
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(KDETreeAsArguments)
       arma::mat,
       GaussianKernel,
       KDTree>
-  kde(kernelBandwidth, 0.0, 1e-6);
+    kde(0.0, 1e-6, GaussianKernel(kernelBandwidth));
   kde.Train(referenceTree, &oldFromNewReferences);
   kde.Evaluate(queryTree, std::move(oldFromNewQueries), estimations);
   for (size_t i = 0; i < query.n_cols; ++i)
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(GaussianKDEBruteForceTest)
       arma::mat,
       kernel::GaussianKernel,
       tree::KDTree>
-    kde(metric, kernel, relError, 0.0);
+    kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -192,7 +192,7 @@ BOOST_AUTO_TEST_CASE(BallTreeGaussianKDETest)
       arma::mat,
       GaussianKernel,
       BallTree>
-  kde(kernelBandwidth, relError, 0.0);
+    kde(relError, 0.0, GaussianKernel(kernelBandwidth));
   kde.Train(referenceTree, &oldFromNewReferences);
   kde.Evaluate(queryTree, std::move(oldFromNewQueries), treeEstimations);
 
@@ -229,7 +229,7 @@ BOOST_AUTO_TEST_CASE(OctreeGaussianKDETest)
       arma::mat,
       kernel::GaussianKernel,
       tree::Octree>
-    kde(metric, kernel, relError, 0.0);
+    kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -263,7 +263,7 @@ BOOST_AUTO_TEST_CASE(RTreeGaussianKDETest)
       arma::mat,
       kernel::GaussianKernel,
       tree::RTree>
-    kde(metric, kernel, relError, 0.0);
+    kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -298,7 +298,7 @@ BOOST_AUTO_TEST_CASE(StandardCoverTreeGaussianKDETest)
       arma::mat,
       kernel::GaussianKernel,
       tree::StandardCoverTree>
-    kde(metric, kernel, relError, 0.0);
+    kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -338,7 +338,7 @@ BOOST_AUTO_TEST_CASE(DuplicatedReferenceSampleKDETest)
       arma::mat,
       GaussianKernel,
       KDTree>
-  kde(kernelBandwidth, relError, 0.0);
+    kde(relError, 0.0, GaussianKernel(kernelBandwidth));
   kde.Train(referenceTree, &oldFromNewReferences);
   kde.Evaluate(queryTree, oldFromNewQueries, treeEstimations);
 
@@ -373,7 +373,7 @@ BOOST_AUTO_TEST_CASE(DuplicatedQuerySampleKDETest)
       arma::mat,
       GaussianKernel,
       KDTree>
-  kde(kernelBandwidth, relError, 0.0);
+    kde(relError, 0.0, GaussianKernel(kernelBandwidth));
   kde.Train(referenceTree, &oldFromNewReferences);
   kde.Evaluate(queryTree, oldFromNewQueries, estimations);
 
@@ -413,7 +413,7 @@ BOOST_AUTO_TEST_CASE(BreadthFirstKDETest)
       tree::KDTree<metric::EuclideanDistance,
                    kde::KDEStat,
                    arma::mat>::template BreadthFirstDualTreeTraverser>
-    kde(metric, kernel, relError, 0.0);
+    kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -447,7 +447,7 @@ BOOST_AUTO_TEST_CASE(OneDimensionalTest)
       arma::mat,
       kernel::GaussianKernel,
       tree::KDTree>
-    kde(metric, kernel, relError, 0.0);
+    kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
   kde.Evaluate(query, treeEstimations);
 
@@ -474,7 +474,7 @@ BOOST_AUTO_TEST_CASE(EmptyReferenceTest)
       arma::mat,
       kernel::GaussianKernel,
       tree::KDTree>
-    kde(metric, kernel, relError, 0.0);
+    kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
 
   // When training using the dataset matrix
   BOOST_REQUIRE_THROW(kde.Train(reference), std::invalid_argument);
@@ -507,7 +507,7 @@ BOOST_AUTO_TEST_CASE(EvaluationMatchDimensionsTest)
       arma::mat,
       kernel::GaussianKernel,
       tree::KDTree>
-    kde(metric, kernel, relError, 0.0);
+    kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
 
   // When evaluating using the query dataset matrix
@@ -542,7 +542,7 @@ BOOST_AUTO_TEST_CASE(EmptyQuerySetTest)
       arma::mat,
       kernel::GaussianKernel,
       tree::KDTree>
-    kde(metric, kernel, relError, 0.0);
+    kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
 
   // The query set must be empty
@@ -575,7 +575,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
       arma::mat,
       kernel::GaussianKernel,
       tree::KDTree>
-    kde(0.25, relError, absError);
+    kde(relError, absError, GaussianKernel(0.25));
   kde.Train(reference);
 
   // Get estimations to compare.
@@ -605,6 +605,12 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   BOOST_REQUIRE_EQUAL(kdeXml.IsTrained(), true);
   BOOST_REQUIRE_EQUAL(kdeText.IsTrained(), true);
   BOOST_REQUIRE_EQUAL(kdeBinary.IsTrained(), true);
+
+  const KDEMode mode = KDEMode::DUAL_TREE_MODE;
+  BOOST_REQUIRE_EQUAL(kde.Mode(), mode);
+  BOOST_REQUIRE_EQUAL(kdeXml.Mode(), mode);
+  BOOST_REQUIRE_EQUAL(kdeText.Mode(), mode);
+  BOOST_REQUIRE_EQUAL(kdeBinary.Mode(), mode);
 
   // Test if execution gives the same result.
   arma::vec xmlEstimations = arma::vec(query.n_cols, arma::fill::zeros);
