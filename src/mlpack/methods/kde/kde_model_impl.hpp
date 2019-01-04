@@ -315,6 +315,28 @@ void DeleteVisitor::operator()(KDEType* kde) const
     delete kde;
 }
 
+// Mode of model
+template<typename KDEType>
+KDEMode& ModeVisitor::operator()(KDEType* kde) const
+{
+  if (kde)
+    return kde->Mode();
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Get mode of model
+KDEMode KDEModel::Mode() const
+{
+  return boost::apply_visitor(ModeVisitor(), kdeModel);
+}
+
+// Modify mode of model
+KDEMode& KDEModel::Mode()
+{
+  return boost::apply_visitor(ModeVisitor(), kdeModel);
+}
+
 // Serialize the model.
 template<typename Archive>
 void KDEModel::serialize(Archive& ar, const unsigned int /* version */)

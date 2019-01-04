@@ -170,6 +170,17 @@ class TrainVisitor : public boost::static_visitor<void>
   TrainVisitor(arma::mat&& referenceSet);
 };
 
+/**
+ * ModeVisitor exposes the Mode() method of the KDEType.
+ */
+class ModeVisitor : public boost::static_visitor<KDEMode&>
+{
+ public:
+  //! Return mode of KDEType instance.
+  template<typename KDEType>
+  KDEMode& operator()(KDEType* kde) const;
+};
+
 class DeleteVisitor : public boost::static_visitor<void>
 {
  public:
@@ -314,6 +325,12 @@ class KDEModel
 
   //! Modify the kernel type of the model.
   KernelTypes& KernelType() { return kernelType; }
+
+  //! Get the mode of the model.
+  KDEMode Mode() const;
+
+  //! Modify de mode of the model.
+  KDEMode& Mode();
 
   /**
    * Build the KDE model with the given parameters and then trains it with the
