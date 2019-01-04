@@ -21,6 +21,13 @@
 namespace mlpack {
 namespace kde /** Kernel Density Estimation. */ {
 
+//! KDEMode represents the ways in which KDE algorithm can be executed.
+enum KDEMode
+{
+  DUAL_TREE_MODE,
+  SINGLE_TREE_MODE
+};
+
 /**
  * The KDE class is a template class for performing Kernel Density Estimations.
  * In statistics, kernel density estimation, is a way to estimate the
@@ -42,7 +49,11 @@ template<typename MetricType = mlpack::metric::EuclideanDistance,
          template<typename RuleType> class DualTreeTraversalType =
              TreeType<MetricType,
                       kde::KDEStat,
-                      MatType>::template DualTreeTraverser>
+                      MatType>::template DualTreeTraverser,
+         template<typename RuleType> class SingleTreeTraversalType =
+             TreeType<MetricType,
+                      kde::KDEStat,
+                      MatType>::template SingleTreeTraverser>
 class KDE
 {
  public:
@@ -52,7 +63,7 @@ class KDE
   /**
    * Initialize KDE object with the default Kernel and Metric parameters.
    * Relative error tolernce is initialized to 0.05 (5%), absolute error
-   * tolerance is 0.0 and uses a depth-first approach.
+   * tolerance is 0.0 and uses a depth-first approach. Mode is dual-tree.
    */
   KDE();
 
@@ -64,10 +75,12 @@ class KDE
    * @param bandwidth Bandwidth of the kernel.
    * @param relError Relative error tolerance of the model.
    * @param absError Absolute error tolerance of the model.
+   * @param mode Mode for the algorithm.
    */
   KDE(const double bandwidth,
       const double relError = 0.05,
-      const double absError = 0);
+      const double absError = 0,
+      const KDEMode mode = DUAL_TREE_MODE);
 
   /**
    * Initialize KDE object using custom instantiated Metric and Kernel objects.
@@ -76,11 +89,13 @@ class KDE
    * @param kernel Instantiated kernel object.
    * @param relError Relative error tolerance of the model.
    * @param absError Absolute error tolerance of the model.
+   * @param mode Mode for the algorithm.
    */
   KDE(MetricType& metric,
       KernelType& kernel,
       const double relError = 0.05,
-      const double absError = 0);
+      const double absError = 0,
+      const KDEMode mode = DUAL_TREE_MODE);
 
   /**
    * Construct KDE object as a copy of the given model. This may be
@@ -159,7 +174,7 @@ class KDE
    *
    * - Use std::move if the query tree is no longer needed.
    *
-   * @pre The model has to be previously trained.
+   * @pre The model has to be previously trained and mode has to be dual-tree.
    * @param queryTree Tree of query points to get the density of.
    * @param oldFromNewQueries Mappings of query points to the tree dataset.
    * @param estimations Object which will hold the density of each query point.
@@ -241,6 +256,9 @@ class KDE
 
   //! If true, the KDE object is trained.
   bool trained;
+
+  //! Mode of the KDE algorithm.
+  KDEMode mode;
 
   //! Check whether absolute and relative error values are compatible.
   static void CheckErrorValues(const double relError, const double absError);
