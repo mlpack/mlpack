@@ -52,73 +52,15 @@ KDE<MetricType,
     TreeType,
     DualTreeTraversalType,
     SingleTreeTraversalType>::
-KDE() :
-    kernel(new KernelType()),
-    metric(new MetricType()),
-    relError(0.05),
-    absError(0.0),
-    ownsKernel(true),
-    ownsMetric(true),
-    ownsReferenceTree(false),
-    trained(false),
-    mode(DUAL_TREE_MODE) { }
-
-template<typename MetricType,
-         typename MatType,
-         typename KernelType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType,
-         template<typename> class DualTreeTraversalType,
-         template<typename> class SingleTreeTraversalType>
-KDE<MetricType,
-    MatType,
-    KernelType,
-    TreeType,
-    DualTreeTraversalType,
-    SingleTreeTraversalType>::
-KDE(const double bandwidth,
-    const double relError,
+KDE(const double relError,
     const double absError,
-    const KDEMode mode) :
-    kernel(new KernelType(bandwidth)),
-    metric(new MetricType()),
+    KernelType kernel,
+    const KDEMode mode,
+    MetricType metric) :
+    kernel(kernel),
+    metric(metric),
     relError(relError),
     absError(absError),
-    ownsKernel(true),
-    ownsMetric(true),
-    ownsReferenceTree(false),
-    trained(false),
-    mode(mode)
-{
-  CheckErrorValues(relError, absError);
-}
-
-template<typename MetricType,
-         typename MatType,
-         typename KernelType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType,
-         template<typename> class DualTreeTraversalType,
-         template<typename> class SingleTreeTraversalType>
-KDE<MetricType,
-    MatType,
-    KernelType,
-    TreeType,
-    DualTreeTraversalType,
-    SingleTreeTraversalType>::
-KDE(MetricType& metric,
-    KernelType& kernel,
-    const double relError,
-    const double absError,
-    const KDEMode mode) :
-    kernel(&kernel),
-    metric(&metric),
-    relError(relError),
-    absError(absError),
-    ownsKernel(false),
-    ownsMetric(false),
     ownsReferenceTree(false),
     trained(false),
     mode(mode)
@@ -141,12 +83,10 @@ KDE<MetricType,
     DualTreeTraversalType,
     SingleTreeTraversalType>::
 KDE(const KDE& other) :
-    kernel(new KernelType(other.kernel)),
-    metric(new MetricType(other.metric)),
+    kernel(KernelType(other.kernel)),
+    metric(MetricType(other.metric)),
     relError(other.relError),
     absError(other.absError),
-    ownsKernel(other.ownsKernel),
-    ownsMetric(other.ownsMetric),
     ownsReferenceTree(other.ownsReferenceTree),
     trained(other.trained),
     mode(other.mode)
@@ -187,14 +127,12 @@ KDE(KDE&& other) :
     oldFromNewReferences(other.oldFromNewReferences),
     relError(other.relError),
     absError(other.absError),
-    ownsKernel(other.ownsKernel),
-    ownsMetric(other.ownsMetric),
     ownsReferenceTree(other.ownsReferenceTree),
     trained(other.trained),
     mode(other.mode)
 {
-  other.kernel = new KernelType();
-  other.metric = new MetricType();
+  other.kernel = KernelType();
+  other.metric = MetricType();
   other.referenceTree = nullptr;
   other.oldFromNewReferences = nullptr;
   other.ownsReferenceTree = false;
@@ -224,10 +162,6 @@ KDE<MetricType,
 operator=(KDE other)
 {
   // Clean memory
-  if (ownsKernel)
-    delete kernel;
-  if (ownsMetric)
-    delete metric;
   if (ownsReferenceTree)
   {
     delete referenceTree;
@@ -241,8 +175,6 @@ operator=(KDE other)
   this->oldFromNewReferences = std::move(other.oldFromNewReferences);
   this->relError = other.relError;
   this->absError = other.absError;
-  this->ownsKernel = other.ownsKernel;
-  this->ownsMetric = other.ownsMetric;
   this->ownsReferenceTree = other.ownsReferenceTree;
   this->trained = other.trained;
   this->mode = other.mode;
@@ -266,10 +198,6 @@ KDE<MetricType,
     SingleTreeTraversalType>::
 ~KDE()
 {
-  if (ownsKernel)
-    delete kernel;
-  if (ownsMetric)
-    delete metric;
   if (ownsReferenceTree)
   {
     delete referenceTree;
@@ -393,8 +321,8 @@ Evaluate(MatType querySet, arma::vec& estimations)
                               estimations,
                               relError,
                               absError,
-                              *metric,
-                              *kernel,
+                              metric,
+                              kernel,
                               false);
 
     // Create traverser.
@@ -463,8 +391,8 @@ Evaluate(Tree* queryTree,
                             estimations,
                             relError,
                             absError,
-                            *metric,
-                            *kernel,
+                            metric,
+                            kernel,
                             false);
 
   // Create traverser.
@@ -509,8 +437,8 @@ Evaluate(arma::vec& estimations)
                             estimations,
                             relError,
                             absError,
-                            *metric,
-                            *kernel,
+                            metric,
+                            kernel,
                             true);
 
   if (mode == DUAL_TREE_MODE)
@@ -601,18 +529,12 @@ serialize(Archive& ar, const unsigned int /* version */)
   // If we are loading, clean up memory if necessary.
   if (Archive::is_loading::value)
   {
-    if (ownsKernel && kernel)
-      delete kernel;
-    if (ownsMetric && metric)
-      delete metric;
     if (ownsReferenceTree && referenceTree)
     {
       delete referenceTree;
       delete oldFromNewReferences;
     }
-    // After loading kernel, metric and tree, we own it.
-    ownsKernel = true;
-    ownsMetric = true;
+    // After loading tree, we own it.
     ownsReferenceTree = true;
   }
 

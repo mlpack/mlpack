@@ -61,41 +61,19 @@ class KDE
   typedef TreeType<MetricType, kde::KDEStat, MatType> Tree;
 
   /**
-   * Initialize KDE object with the default Kernel and Metric parameters.
-   * Relative error tolernce is initialized to 0.05 (5%), absolute error
-   * tolerance is 0.0 and uses a depth-first approach. Mode is dual-tree.
-   */
-  KDE();
-
-  /**
-   * Initialize KDE object using the default Metric parameters and a given
-   * Kernel bandwidth (<b>only for kernels that require a bandwidth and are
-   * constructed like kernel(bandwidth)</b>).
-   *
-   * @param bandwidth Bandwidth of the kernel.
-   * @param relError Relative error tolerance of the model.
-   * @param absError Absolute error tolerance of the model.
-   * @param mode Mode for the algorithm.
-   */
-  KDE(const double bandwidth,
-      const double relError = 0.05,
-      const double absError = 0,
-      const KDEMode mode = DUAL_TREE_MODE);
-
-  /**
    * Initialize KDE object using custom instantiated Metric and Kernel objects.
    *
-   * @param metric Instantiated metric object.
-   * @param kernel Instantiated kernel object.
    * @param relError Relative error tolerance of the model.
    * @param absError Absolute error tolerance of the model.
+   * @param kernel Instantiated kernel object.
    * @param mode Mode for the algorithm.
+   * @param metric Instantiated metric object.
    */
-  KDE(MetricType& metric,
-      KernelType& kernel,
-      const double relError = 0.05,
+  KDE(const double relError = 0.05,
       const double absError = 0,
-      const KDEMode mode = DUAL_TREE_MODE);
+      KernelType kernel = KernelType(),
+      const KDEMode mode = DUAL_TREE_MODE,
+      MetricType metric = MetricType());
 
   /**
    * Construct KDE object as a copy of the given model. This may be
@@ -196,10 +174,10 @@ class KDE
   void Evaluate(arma::vec& estimations);
 
   //! Get the kernel.
-  const KernelType& Kernel() const { return *kernel; }
+  const KernelType& Kernel() const { return kernel; }
 
   //! Modify the kernel.
-  KernelType& Kernel() { return *kernel; }
+  KernelType& Kernel() { return kernel; }
 
   //! Get the reference tree.
   Tree* ReferenceTree() { return referenceTree; }
@@ -222,16 +200,22 @@ class KDE
   //! Check whether KDE model is trained or not.
   bool IsTrained() const { return trained; }
 
+  //! Get the mode of KDE.
+  KDEMode Mode() const { return mode; }
+
+  //! Modify the mode of KDE.
+  KDEMode& Mode() { return mode; }
+
   //! Serialize the model.
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Kernel.
-  KernelType* kernel;
+  KernelType kernel;
 
   //! Metric.
-  MetricType* metric;
+  MetricType metric;
 
   //! Reference tree.
   Tree* referenceTree;
@@ -244,12 +228,6 @@ class KDE
 
   //! Absolute error tolerance.
   double absError;
-
-  //! If true, the KDE object is responsible for deleting the kernel.
-  bool ownsKernel;
-
-  //! If true, the KDE object is responsible for deleting the metric.
-  bool ownsMetric;
 
   //! If true, the KDE object is responsible for deleting the reference tree.
   bool ownsReferenceTree;
