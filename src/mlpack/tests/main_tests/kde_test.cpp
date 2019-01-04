@@ -239,4 +239,46 @@ BOOST_AUTO_TEST_CASE(KDEModelReuse)
     BOOST_REQUIRE_CLOSE(oldEstimations[i], newEstimations[i], relError);
 }
 
+/**
+  * Ensure that the estimations we get for KDEMain, are the same as the ones we
+  * get from the KDE class without any wrappers using single-tree mode.
+ **/
+BOOST_AUTO_TEST_CASE(KDEGaussianSingleKDTreeResultsMain)
+{
+  // Datasets
+  arma::mat reference = arma::randu(3, 400);
+  arma::mat query = arma::randu(3, 400);
+  arma::vec kdeEstimations, mainEstimations;
+  double kernelBandwidth = 3.0;
+  double relError = 0.06;
+
+  kernel::GaussianKernel kernel(kernelBandwidth);
+  metric::EuclideanDistance metric;
+  KDE<metric::EuclideanDistance,
+      arma::mat,
+      kernel::GaussianKernel,
+      tree::BallTree>
+    kde(relError, 0.0, kernel, KDEMode::SINGLE_TREE_MODE, metric);
+  kde.Train(reference);
+  kde.Evaluate(query, kdeEstimations);
+  kdeEstimations /= kernel.Normalizer(reference.n_rows);
+
+  // Main estimations
+  SetInputParam("reference", reference);
+  SetInputParam("query", query);
+  SetInputParam("kernel", std::string("gaussian"));
+  SetInputParam("tree", std::string("kd-tree"));
+  SetInputParam("algorithm", std::string("single-tree"));
+  SetInputParam("rel_error", relError);
+  SetInputParam("bandwidth", kernelBandwidth);
+
+  mlpackMain();
+
+  mainEstimations = std::move(CLI::GetParam<arma::vec>("predictions"));
+
+  // Check whether results are equal.
+  for (size_t i = 0; i < query.n_cols; ++i)
+    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], relError);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
