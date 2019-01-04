@@ -2029,14 +2029,14 @@ BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerBetaTest)
 }
 
 /**
- * Simple sequential module residual block test.
+ * Simple residual module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleSequentialLayerResidualBlockTest)
+BOOST_AUTO_TEST_CASE(SimpleResidualLayerTest)
 {
-  arma::mat outputA /* sequential */, outputB /* residual */, input,
-      deltaA /* sequential */, deltaB /* residual */;
-  Sequential<>* sequential = new Sequential<>(true, false);
-  Sequential<>* residual = new Sequential<>(true, true);
+  arma::mat outputA, outputB, input, deltaA, deltaB;
+
+  Sequential<>* sequential = new Sequential<>(true);
+  Residual<>* residual = new Residual<>(true);
 
   Linear<>* linearA = new Linear<>(10, 10);
   linearA->Parameters().randu();
@@ -2045,22 +2045,22 @@ BOOST_AUTO_TEST_CASE(SimpleSequentialLayerResidualBlockTest)
   linearB->Parameters().randu();
   linearB->Reset();
 
-  // Add the same layers(with the same parameters) to both normal Sequential and
-  // residual Sequential object.
+  // Add the same layers (with the same parameters) to both Sequential and
+  // Residual object.
   sequential->Add(linearA);
   sequential->Add(linearB);
 
   residual->Add(linearA);
   residual->Add(linearB);
 
-  // Test the Forward function(Pass the same input to both).
+  // Test the Forward function (pass the same input to both).
   input = arma::randu(10, 1);
   sequential->Forward(std::move(input), std::move(outputA));
   residual->Forward(std::move(input), std::move(outputB));
 
   CheckMatrices(outputA, outputB - input);
 
-  // Test the Backward function(Pass the same error to both).
+  // Test the Backward function (pass the same error to both).
   sequential->Backward(std::move(input), std::move(input), std::move(deltaA));
   residual->Backward(std::move(input), std::move(input), std::move(deltaB));
 

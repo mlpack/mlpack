@@ -36,7 +36,7 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * This class can also be used as a container for a residual block. In that
  * case, the sizes of the input and output matrices of this class should be
- * equal.
+ * equal. A typedef has been added for use as a Residual<> class.
  *
  * For more information, refer the following paper.
  *
@@ -60,10 +60,12 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
+ * @tparam Residual If true, use the object as a Residual block.
  */
 template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat,
+    bool Residual = false,
     typename... CustomLayers
 >
 class Sequential
@@ -73,9 +75,8 @@ class Sequential
    * Create the Sequential object using the specified parameters.
    *
    * @param model Expose the all network modules.
-   * @param residual Use the object as a residual block.
    */
-  Sequential(const bool model = true, const bool residual = false);
+  Sequential(const bool model = true);
 
   //! Destroy the Sequential object.
   ~Sequential();
@@ -182,9 +183,6 @@ class Sequential
   //! Parameter which indicates if the modules should be exposed.
   bool model;
 
-  //! Parameter which indicates if the object is used as a residual block.
-  bool residual;
-
   //! Indicator if we already initialized the model.
   bool reset;
 
@@ -230,6 +228,17 @@ class Sequential
   //! The input height.
   size_t height;
 }; // class Sequential
+
+/*
+ * Convenience typedef for use as Residual<> layer.
+ */
+template<
+  typename InputDataType = arma::mat,
+  typename OutputDataType = arma::mat,
+  typename... CustomLayers
+>
+using Residual = Sequential<
+    InputDataType, OutputDataType, true, CustomLayers...>;
 
 } // namespace ann
 } // namespace mlpack
