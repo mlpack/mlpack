@@ -91,36 +91,46 @@ void RunDBSCAN(RangeSearchType rs = RangeSearchType())
   
   const double epsilon = CLI::GetParam<double>("epsilon");
   const size_t minSize = (size_t) CLI::GetParam<int>("min_size");
-
-  
-  // Check if random selection is used.
-  if (!CLI::HasParam("random_selection"))
-  {
-    DBSCAN<RangeSearchType> d(epsilon, minSize, !CLI::HasParam("single_mode"),
-        rs);   
-  }
-  else
-  {
-    DBSCAN<RangeSearchType, RandomPointSelection> d(epsilon, minSize,
-        !CLI::HasParam("single_mode"), rs);
-  }
-
-  DBSCAN<RangeSearchType, RandomPointSelection> d(epsilon, minSize,
-        !CLI::HasParam("single_mode"), rs);
-  
-  // If possible, avoid the overhead of calculating centroids.
   arma::Row<size_t> assignments;
-  if (CLI::HasParam("centroids"))
+
+  // Check if random selection is used.
+  if (CLI::HasParam("random_selection")) // Random Selection
   {
-    arma::mat centroids;
+    DBSCAN<RangeSearchType, RandomPointSelection> d(epsilon, minSize, 
+        !CLI::HasParam("single_mode"), rs);
 
-    d.Cluster(dataset, assignments, centroids);
+    // If possible, avoid the overhead of calculating centroids.
+    if (CLI::HasParam("centroids"))
+    {
+      arma::mat centroids;
 
-    CLI::GetParam<arma::mat>("centroids") = std::move(centroids);
+      d.Cluster(dataset, assignments, centroids);
+
+      CLI::GetParam<arma::mat>("centroids") = std::move(centroids);
+    }
+    else
+    {
+      d.Cluster(dataset, assignments);
+    }
   }
-  else
+  else // Ordered Selection
   {
-    d.Cluster(dataset, assignments);
+    DBSCAN<RangeSearchType> d(epsilon, minSize,
+        !CLI::HasParam("single_mode"), rs);
+        
+    // If possible, avoid the overhead of calculating centroids.
+    if (CLI::HasParam("centroids"))
+    {
+      arma::mat centroids;
+
+      d.Cluster(dataset, assignments, centroids);
+
+      CLI::GetParam<arma::mat>("centroids") = std::move(centroids);
+    }
+    else
+    {
+      d.Cluster(dataset, assignments);
+    }
   }
 
   if (CLI::HasParam("assignments"))

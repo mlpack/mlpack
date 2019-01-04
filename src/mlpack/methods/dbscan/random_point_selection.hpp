@@ -13,7 +13,7 @@
 #define MLPACK_METHODS_DBSCAN_RANDOM_POINT_SELECTION_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <boost/dynamic_bitset.hpp>
+#include <vector>
 
 namespace mlpack {
 namespace dbscan {
@@ -38,11 +38,11 @@ class RandomPointSelection
     size_t size = data.n_cols; // Get the size of points.
     if (unvisited.size() != size) 
     {
-      unvisited.resize(size); // Resize & Set bitset to one
-      unvisited.set();
+      unvisited.resize(size, true); // Resize & Set bitset to one
     }
-
-    const size_t max = unvisited.count();
+    
+    // Count the unvisited points and generate n-th index randomly
+    const size_t max = std::count(unvisited.begin(), unvisited.end(), true);
     const size_t index = math::RandInt(max);
     
     // Select the index'th unvisited point.
@@ -62,8 +62,8 @@ class RandomPointSelection
   }
 
  private:
-  // Bitmask for unvisited points, If true, mean unvisited.
-  boost::dynamic_bitset<> unvisited;
+  // Bitset for unvisited points. If true, mean unvisited.
+  std::vector<bool> unvisited;
 };
   
 } // namespace dbscan

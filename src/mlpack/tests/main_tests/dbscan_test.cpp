@@ -430,7 +430,8 @@ BOOST_AUTO_TEST_CASE(DBSCANNaiveSearchTest)
 }
 
 /**
- * Check that the random selection is same 
+ * Check that the assignment of cluster is different if
+ * different point selection policies.
  */
 BOOST_AUTO_TEST_CASE(DBSCANRandomSelectionFlagTest)
 {
@@ -438,18 +439,29 @@ BOOST_AUTO_TEST_CASE(DBSCANRandomSelectionFlagTest)
   if (!data::Load("iris.csv", inputData))
     BOOST_FAIL("Unable to load dataset iris.csv!");
 
-  size_t inputSize = inputData.n_cols;
-
   SetInputParam("input", inputData);
+  SetInputParam("epsilon", (double) 0.358);
+  SetInputParam("min_size", 1);
+  SetInputParam("random_selection", false);
+
+  mlpackMain();
+  
+  arma::Row<size_t> orderedOutput;
+  orderedOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+
+  bindings::tests::CleanMemory();
+  
+  SetInputParam("input", inputData);
+  SetInputParam("epsilon", (double) 0.358);
+  SetInputParam("min_size", 1);
   SetInputParam("random_selection", true);
 
   mlpackMain();
+  
+  arma::Row<size_t> randomOutput;
+  randomOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
 
-  // Check that number of predicted labels is equal to the input test points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("assignments").n_cols,
-                      inputSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("assignments").n_rows,
-                      1);
+  BOOST_REQUIRE_LT(arma::accu(orderedOutput == randomOutput), 150);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
