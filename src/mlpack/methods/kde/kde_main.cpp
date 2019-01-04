@@ -81,6 +81,9 @@ PARAM_STRING_IN("kernel", "Kernel to use for the estimation"
 PARAM_STRING_IN("tree", "Tree to use for the estimation"
     "('kd-tree', 'ball-tree', 'cover-tree', 'octree', 'r-tree').",
     "t", "kd-tree");
+PARAM_STRING_IN("algorithm", "Algorithm to use for the estimation"
+    "('dual-tree', 'single-tree').",
+    "a", "dual-tree");
 PARAM_DOUBLE_IN("rel_error",
                 "Relative error tolerance for the result",
                 "e",
@@ -101,6 +104,7 @@ static void mlpackMain()
   const double bandwidth = CLI::GetParam<double>("bandwidth");
   const std::string kernelStr = CLI::GetParam<std::string>("kernel");
   const std::string treeStr = CLI::GetParam<std::string>("tree");
+  const std::string modeStr = CLI::GetParam<std::string>("algorithm");
   const double relError = CLI::GetParam<double>("rel_error");
   const double absError = CLI::GetParam<double>("abs_error");
   // Initialize results vector.
@@ -118,6 +122,8 @@ static void mlpackMain()
       "laplacian", "spherical", "triangular" }, true, "unknown kernel type");
   RequireParamInSet<string>("tree", { "kd-tree", "ball-tree", "cover-tree",
       "octree", "r-tree"}, true, "unknown tree type");
+  RequireParamInSet<string>("algorithm", { "dual-tree", "single-tree"},
+      true, "unknown algorithm");
   RequireParamValue<double>("rel_error", [](double x){return x >= 0 && x <= 1;},
       true, "relative error must be between 0 and 1");
   RequireParamValue<double>("abs_error", [](double x){return x >= 0;},
@@ -161,6 +167,12 @@ static void mlpackMain()
 
     // Build model
     kde->BuildModel(std::move(reference));
+
+    // Set Mode
+    if (modeStr == "dual-tree")
+      kde->Mode() = KDEMode::DUAL_TREE_MODE;
+    else if (modeStr == "single-tree")
+      kde->Mode() = KDEMode::SINGLE_TREE_MODE;
   }
   else
   {
@@ -168,6 +180,7 @@ static void mlpackMain()
     kde = CLI::GetParam<KDEModel*>("input_model");
   }
 
+  // Evaluation
   if (CLI::HasParam("query"))
   {
     arma::mat query = std::move(CLI::GetParam<arma::mat>("query"));
