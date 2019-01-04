@@ -47,37 +47,30 @@ using KDEType = KDE<metric::EuclideanDistance,
 class KernelNormalizer
 {
  private:
-  // SFINAE check if has Normalizer.
-  template <typename T>
-  class HasNormalizer
-  {
-   private:
-    typedef char YesType[1];
-    typedef char NoType[2];
-
-    template <typename X> static YesType& test( decltype(&X::Normalizer) ) ;
-    template <typename X> static NoType& test(...);
-   public:
-    enum { value = sizeof(test<T>(0)) == sizeof(YesType) };
-  };
+  // SFINAE helper to check if has a Normalizer function.
+  HAS_MEM_FUNC(Normalizer, HasNormalizer);
 
  public:
   //! Normalization not needed.
   template<typename KernelType>
-  static void ApplyNormalizer(KernelType& /* kernel */,
-                              const size_t /* dimension */,
-                              arma::vec& /* estimations */,
-                              const typename std::enable_if<
-                                  !HasNormalizer<KernelType>::value>::type* = 0)
+  static void ApplyNormalizer(
+      KernelType& /* kernel */,
+      const size_t /* dimension */,
+      arma::vec& /* estimations */,
+      const typename std::enable_if<
+          !HasNormalizer<KernelType, double(KernelType::*)(size_t)>::value>::
+          type* = 0)
   { return; }
 
   //! Normalize kernels that have normalizer.
   template<typename KernelType>
-  static void ApplyNormalizer(KernelType& kernel,
-                              const size_t dimension,
-                              arma::vec& estimations,
-                              const typename std::enable_if<
-                                  HasNormalizer<KernelType>::value>::type* = 0)
+  static void ApplyNormalizer(
+      KernelType& kernel,
+      const size_t dimension,
+      arma::vec& estimations,
+      const typename std::enable_if<
+          HasNormalizer<KernelType, double(KernelType::*)(size_t)>::value>::
+          type* = 0)
   {
     estimations /= kernel.Normalizer(dimension);
   }
