@@ -28,7 +28,6 @@ class KDERules
            arma::vec& densities,
            const double relError,
            const double absError,
-           const std::vector<size_t>& oldFromNewQueries,
            MetricType& metric,
            KernelType& kernel,
            const bool sameSet);
@@ -87,9 +86,6 @@ class KDERules
 
   //! Relatve error tolerance.
   const double relError;
-
-  //! New query dataset order.
-  const std::vector<size_t>& oldFromNewQueries;
 
   //! Instantiated metric.
   MetricType& metric;

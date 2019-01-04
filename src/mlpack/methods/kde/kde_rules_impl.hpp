@@ -26,7 +26,6 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     arma::vec& densities,
     const double relError,
     const double absError,
-    const std::vector<size_t>& oldFromNewQueries,
     MetricType& metric,
     KernelType& kernel,
     const bool sameSet) :
@@ -35,7 +34,6 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     densities(densities),
     absError(absError),
     relError(relError),
-    oldFromNewQueries(oldFromNewQueries),
     metric(metric),
     kernel(kernel),
     sameSet(sameSet),
@@ -66,10 +64,7 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
   // Calculations.
   double distance = metric.Evaluate(querySet.col(queryIndex),
                                     referenceSet.col(referenceIndex));
-  if (tree::TreeTraits<TreeType>::RearrangesDataset)
-    densities(oldFromNewQueries.at(queryIndex)) += kernel.Evaluate(distance);
-  else
-    densities(queryIndex) += kernel.Evaluate(distance);
+  densities(queryIndex) += kernel.Evaluate(distance);
 
   ++baseCases;
   lastQueryIndex = queryIndex;
@@ -121,16 +116,8 @@ Score(const size_t queryIndex, TreeType& referenceNode)
       kernelValue = EvaluateKernel(queryPoint, referenceStat.Centroid());
     }
 
-    // Add kernel value to density estimations
-    if (tree::TreeTraits<TreeType>::RearrangesDataset)
-    {
-      densities(oldFromNewQueries.at(queryIndex)) +=
-        referenceNode.NumDescendants() * kernelValue;
-    }
-    else
-    {
-      densities(queryIndex) += referenceNode.NumDescendants() * kernelValue;
-    }
+    densities(queryIndex) += referenceNode.NumDescendants() * kernelValue;
+
     // Don't explore this tree branch
     score = DBL_MAX;
   }
@@ -210,11 +197,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     // #pragma omp for
     for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
     {
-      if (tree::TreeTraits<TreeType>::RearrangesDataset)
-        densities(oldFromNewQueries.at(queryNode.Descendant(i))) +=
-          referenceNode.NumDescendants() * kernelValue;
-      else
-        densities(queryNode.Descendant(i)) +=
+      densities(queryNode.Descendant(i)) +=
           referenceNode.NumDescendants() * kernelValue;
     }
     score = DBL_MAX;

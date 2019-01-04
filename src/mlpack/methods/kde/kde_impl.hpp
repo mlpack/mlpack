@@ -329,7 +329,6 @@ Evaluate(Tree* queryTree,
                             estimations,
                             relError,
                             absError,
-                            oldFromNewQueries,
                             *metric,
                             *kernel,
                             false);
@@ -339,6 +338,9 @@ Evaluate(Tree* queryTree,
   traverser.Traverse(*queryTree, *referenceTree);
   estimations /= referenceTree->Dataset().n_cols;
   Timer::Stop("computing_kde");
+
+  // Rearrange if necessary.
+  RearrangeEstimations(oldFromNewQueries, estimations);
 
   Log::Info << rules.Scores() << " node combinations were scored." << std::endl;
   Log::Info << rules.BaseCases() << " base cases were calculated." << std::endl;
@@ -367,7 +369,6 @@ Evaluate(arma::vec& estimations)
                             estimations,
                             relError,
                             absError,
-                            *oldFromNewReferences,
                             *metric,
                             *kernel,
                             true);
@@ -377,6 +378,9 @@ Evaluate(arma::vec& estimations)
   traverser.Traverse(*referenceTree, *referenceTree);
   estimations /= referenceTree->Dataset().n_cols;
   Timer::Stop("computing_kde");
+
+  // Rearrange if necessary.
+  RearrangeEstimations(*oldFromNewReferences, estimations);
 
   Log::Info << rules.Scores() << " node combinations were scored." << std::endl;
   Log::Info << rules.BaseCases() << " base cases were calculated." << std::endl;
@@ -459,7 +463,7 @@ template<typename MetricType,
                   typename TreeMatType> class TreeType,
          template<typename> class DualTreeTraversalType>
 void KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
-CheckErrorValues(const double relError, const double absError) const
+CheckErrorValues(const double relError, const double absError)
 {
   if (relError < 0 || relError > 1)
     throw std::invalid_argument("Relative error tolerance must be a value "
@@ -467,6 +471,27 @@ CheckErrorValues(const double relError, const double absError) const
   if (absError < 0)
     throw std::invalid_argument("Absolute error tolerance must be a value "
                                 "greater or equal to 0");
+}
+
+template<typename MetricType,
+         typename MatType,
+         typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType>
+void KDE<MetricType, MatType, KernelType, TreeType, DualTreeTraversalType>::
+RearrangeEstimations(const std::vector<size_t>& oldFromNew,
+                     arma::vec& estimations)
+{
+  if (tree::TreeTraits<Tree>::RearrangesDataset)
+  {
+    const size_t n_queries = oldFromNew.size();
+    arma::vec rearranged_estimations(n_queries);
+    for (size_t i = 0; i < n_queries; ++i)
+      rearranged_estimations(oldFromNew.at(i)) = estimations(i);
+    estimations = std::move(rearranged_estimations);
+  }
 }
 
 } // namespace kde

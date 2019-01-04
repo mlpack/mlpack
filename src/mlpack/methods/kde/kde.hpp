@@ -243,7 +243,11 @@ class KDE
   bool trained;
 
   //! Check whether absolute and relative error values are compatible.
-  void CheckErrorValues(const double relError, const double absError) const;
+  static void CheckErrorValues(const double relError, const double absError);
+
+  //! Rearrange estimations vector if required.
+  static void RearrangeEstimations(const std::vector<size_t>& oldFromNew,
+                                   arma::vec& estimations);
 };
 
 } // namespace kde
