@@ -314,6 +314,7 @@ Evaluate(MatType querySet, arma::vec& estimations)
       throw std::invalid_argument("cannot evaluate KDE model: querySet and "
                                   "referenceSet dimensions don't match");
 
+    Timer::Start("computing_kde");
     // Evaluate
     typedef KDERules<MetricType, KernelType, Tree> RuleType;
     RuleType rules = RuleType(referenceTree->Dataset(),
