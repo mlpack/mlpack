@@ -28,10 +28,10 @@ PROGRAM_INFO("Kernel Density Estimation",
     "by applying a kernel function to each reference point. The computational "
     "complexity of this is O(N^2) where there are N query points and N "
     "reference points, but this implementation will typically see better "
-    "performance as it uses an approximate dual-tree algorithm for "
+    "performance as it uses an approximate dual or single tree algorithm for "
     "acceleration."
     "\n\n"
-    "Dual-tree optimization allows to avoid lots of barely relevant "
+    "Dual or single tree optimization allows to avoid lots of barely relevant "
     "calculations (as kernel function values decrease with distance), so it is "
     "an approximate computation. You can specify the maximum relative error "
     "tolerance for each query value with " + PRINT_PARAM_STRING("rel_error") +
@@ -40,14 +40,16 @@ PROGRAM_INFO("Kernel Density Estimation",
     "metric. Kernel function can be selected using the " +
     PRINT_PARAM_STRING("kernel") + " option. You can also choose what which "
     "type of tree to use for the dual-tree algorithm with " +
-    PRINT_PARAM_STRING("tree") +
+    PRINT_PARAM_STRING("tree") + ". It is also possible to select whether to "
+    "use dual-tree algorithm or single-tree algorithm using the " +
+    PRINT_PARAM_STRING("algorithm") + " option."
     "\n\n"
     "For example, the following will run KDE using the data in " +
     PRINT_DATASET("ref_data") + " for training and the data in " +
     PRINT_DATASET("qu_data") + " as query data. It will apply an Epanechnikov "
     "kernel with a 0.2 bandwidth to each reference point and use a KD-Tree for "
-    "the dual-tree optimization. The returned results will be within 5% of the "
-    "real KDE value for each query point."
+    "the dual-tree optimization. The returned predictions will be within 5% of "
+    "the real KDE value for each query point."
     "\n\n" +
     PRINT_CALL("kde", "reference", "ref_data", "query", "qu_data", "bandwidth",
         0.2, "kernel", "epanechnikov", "tree", "kd-tree", "rel_error",
@@ -57,12 +59,15 @@ PROGRAM_INFO("Kernel Density Estimation",
     PRINT_DATASET("out_data") + "."
     "\n"
     "If no " + PRINT_PARAM_STRING("query") + " is provided, then KDE will be "
-    "computed on the " + PRINT_PARAM_STRING("reference") + " dataset.");
+    "computed on the " + PRINT_PARAM_STRING("reference") + " dataset."
+    "\n"
+    "It is possible to select either a reference dataset or an input model "
+    "but not both at the same time.");
 
 // Required options.
-PARAM_MATRIX_IN("reference", "Input dataset to KDE on.", "r");
+PARAM_MATRIX_IN("reference", "Input reference dataset use for KDE.", "r");
 PARAM_MATRIX_IN("query", "Query dataset to KDE on.", "q");
-PARAM_DOUBLE_IN("bandwidth", "Bandwidth of the kernel", "b", 1.0);
+PARAM_DOUBLE_IN("bandwidth", "Bandwidth of the kernel.", "b", 1.0);
 
 // Load or save models.
 PARAM_MODEL_IN(KDEModel,
@@ -75,28 +80,29 @@ PARAM_MODEL_OUT(KDEModel,
                 "M");
 
 // Configuration options
-PARAM_STRING_IN("kernel", "Kernel to use for the estimation"
+PARAM_STRING_IN("kernel", "Kernel to use for the prediction."
     "('gaussian', 'epanechnikov', 'laplacian', 'spherical', 'triangular').",
     "k", "gaussian");
-PARAM_STRING_IN("tree", "Tree to use for the estimation"
+PARAM_STRING_IN("tree", "Tree to use for the prediction."
     "('kd-tree', 'ball-tree', 'cover-tree', 'octree', 'r-tree').",
     "t", "kd-tree");
-PARAM_STRING_IN("algorithm", "Algorithm to use for the estimation"
+PARAM_STRING_IN("algorithm", "Algorithm to use for the prediction."
     "('dual-tree', 'single-tree').",
     "a", "dual-tree");
 PARAM_DOUBLE_IN("rel_error",
-                "Relative error tolerance for the result",
+                "Relative error tolerance for the prediction.",
                 "e",
                 0.05);
 PARAM_DOUBLE_IN("abs_error",
-                "Relative error tolerance for the result",
+                "Relative error tolerance for the prediction.",
                 "E",
                 0.0);
-// Maybe in the future it could be interesting to implement different metrics.
 
 // Output predictions options.
 PARAM_COL_OUT("predictions", "Vector to store density predictions.",
     "p");
+
+// Maybe, in the future, it could be interesting to implement different metrics.
 
 static void mlpackMain()
 {
