@@ -88,7 +88,6 @@ void RunDBSCAN(RangeSearchType rs = RangeSearchType())
 
   // Load dataset.
   arma::mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
-  
   const double epsilon = CLI::GetParam<double>("epsilon");
   const size_t minSize = (size_t) CLI::GetParam<int>("min_size");
   arma::Row<size_t> assignments;

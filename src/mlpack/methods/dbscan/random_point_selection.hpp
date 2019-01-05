@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_DBSCAN_RANDOM_POINT_SELECTION_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <vector>
 
 namespace mlpack {
 namespace dbscan {
@@ -32,19 +31,19 @@ class RandomPointSelection
    */
   template<typename MatType>
   size_t Select(const size_t /* point */,
-                       const MatType& data /* data */)
+                const MatType& data)
   {
-    // Initialize the length of the unvisited bitset
+    // Initialize the length of the unvisited bitset.
     size_t size = data.n_cols; // Get the size of points.
     if (unvisited.size() != size) 
     {
-      unvisited.resize(size, true); // Resize & Set bitset to one
+      unvisited.resize(size, true); // Resize & Set bitset to one.
     }
-    
-    // Count the unvisited points and generate n-th index randomly
+
+    // Count the unvisited points and generate n-th index randomly.
     const size_t max = std::count(unvisited.begin(), unvisited.end(), true);
     const size_t index = math::RandInt(max);
-    
+
     // Select the index'th unvisited point.
     size_t found = 0;
     for (size_t i = 0; i < unvisited.size(); ++i)
@@ -54,7 +53,7 @@ class RandomPointSelection
 
       if (found > index)
       {
-        unvisited[i].flip(); // Set unvisited point to visited point
+        unvisited[i].flip(); // Set unvisited point to visited point.
         return i;
       }
     }
