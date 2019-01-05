@@ -299,4 +299,22 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidKernel)
   Log::Fatal.ignoreInput = false;
 }
 
+/**
+  * Ensure we get an exception when an invalid tree is specified.
+ **/
+BOOST_AUTO_TEST_CASE(KDEMainInvalidTree)
+{
+  arma::mat reference = arma::randu<arma::mat>(2, 10);
+  arma::mat query = arma::randu<arma::mat>(2, 5);
+
+  // Main params
+  SetInputParam("reference", reference);
+  SetInputParam("query", query);
+  SetInputParam("tree", std::string("olive"));
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
 BOOST_AUTO_TEST_SUITE_END();
