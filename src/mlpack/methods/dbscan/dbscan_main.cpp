@@ -97,6 +97,7 @@ void RunDBSCAN(RangeSearchType rs,
   DBSCAN<RangeSearchType, PointSelectionPolicy> d(epsilon, minSize,
       !CLI::HasParam("single_mode"), rs, pointSelector);
 
+  // If possible, avoid the overhead of calculating centroids.
   if (CLI::HasParam("centroids"))
   {
     arma::mat centroids;
@@ -167,8 +168,8 @@ static void mlpackMain()
     }
     else if (treeType == "r")
     {
-      ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance,
-          arma::mat, RTree>>();
+      ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
+          RTree>>();
     }
     else if (treeType == "r-star")
     {
