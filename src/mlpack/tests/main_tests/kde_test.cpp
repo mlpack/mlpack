@@ -281,4 +281,22 @@ BOOST_AUTO_TEST_CASE(KDEGaussianSingleKDTreeResultsMain)
     BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], relError);
 }
 
+/**
+  * Ensure we get an exception when an invalid kernel is specified.
+ **/
+BOOST_AUTO_TEST_CASE(KDEMainInvalidKernel)
+{
+  arma::mat reference = arma::randu<arma::mat>(2, 10);
+  arma::mat query = arma::randu<arma::mat>(2, 5);
+
+  // Main params
+  SetInputParam("reference", reference);
+  SetInputParam("query", query);
+  SetInputParam("kernel", std::string("linux"));
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
 BOOST_AUTO_TEST_SUITE_END();
