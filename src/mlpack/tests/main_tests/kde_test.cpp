@@ -335,4 +335,24 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidAlgorithm)
   Log::Fatal.ignoreInput = false;
 }
 
+/**
+  * Ensure we get an exception when both reference and input_model are
+  * specified.
+ **/
+BOOST_AUTO_TEST_CASE(KDEMainReferenceAndModel)
+{
+  arma::mat reference = arma::randu<arma::mat>(2, 10);
+  arma::mat query = arma::randu<arma::mat>(2, 5);
+  KDEModel* model = new KDEModel();
+
+  // Main params
+  SetInputParam("reference", reference);
+  SetInputParam("query", query);
+  SetInputParam("input_model", model);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
 BOOST_AUTO_TEST_SUITE_END();
