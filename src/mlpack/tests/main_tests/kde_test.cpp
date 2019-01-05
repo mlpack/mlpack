@@ -317,4 +317,22 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidTree)
   Log::Fatal.ignoreInput = false;
 }
 
+/**
+  * Ensure we get an exception when an invalid algorithm is specified.
+ **/
+BOOST_AUTO_TEST_CASE(KDEMainInvalidAlgorithm)
+{
+  arma::mat reference = arma::randu<arma::mat>(2, 10);
+  arma::mat query = arma::randu<arma::mat>(2, 5);
+
+  // Main params
+  SetInputParam("reference", reference);
+  SetInputParam("query", query);
+  SetInputParam("algorithm", std::string("bogosort"));
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
 BOOST_AUTO_TEST_SUITE_END();
