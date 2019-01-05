@@ -103,7 +103,17 @@ BOOST_AUTO_TEST_CASE(LRPridictionSizeCheck)
   mlpackMain();
 
   // Get the output predictions of the test data.
-  const arma::Row<size_t> &testY = CLI::GetParam<arma::Row<size_t>>("output");
+  //Parameter 'output' is depracated and replaced by parameter 'predictions' 
+  //testY3 can be completely removed in mlpack-4.0.0
+  const arma::Row<size_t> &testY3 = CLI::GetParam<arma::Row<size_t>>("output");
+
+  // Output predictions size must match the test data set size.
+  BOOST_REQUIRE_EQUAL(testY3.n_rows, 1);
+  BOOST_REQUIRE_EQUAL(testY3.n_cols, M);
+
+  // Get the output predictions of the test data.
+  const arma::Row<size_t> &testY 
+      = CLI::GetParam<arma::Row<size_t>>("predictions");
 
   // Output predictions size must match the test data set size.
   BOOST_REQUIRE_EQUAL(testY.n_rows, 1);
@@ -151,6 +161,9 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentationTest)
   // Get the output.
   const arma::Row<size_t> testY1 =
       std::move(CLI::GetParam<arma::Row<size_t>>("output"));
+  
+  const arma::Row<size_t> testY4 =
+      std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
 
   // Reset the settings.
   bindings::tests::CleanMemory();
@@ -172,9 +185,15 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentationTest)
   const arma::Row<size_t> &testY2 =
       CLI::GetParam<arma::Row<size_t>>("output");
 
+  const arma::Row<size_t> &testY5 =
+      CLI::GetParam<arma::Row<size_t>>("predictions");
+
   // Both solutions should be equal.
   BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
                                   testY2.begin(), testY2.end());
+
+  BOOST_REQUIRE_EQUAL_COLLECTIONS(testY4.begin(), testY5.end(),
+                                  testY4.begin(), testY5.end());                              
 }
 
 /**
@@ -209,6 +228,9 @@ BOOST_AUTO_TEST_CASE(LRModelReload)
   const arma::Row<size_t> testY1 =
       std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
+  const arma::Row<size_t> testY4 =
+      std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+
   // Reset the data passed.
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
   CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
@@ -224,9 +246,15 @@ BOOST_AUTO_TEST_CASE(LRModelReload)
   const arma::Row<size_t> &testY2 =
       CLI::GetParam<arma::Row<size_t>>("output");
 
+  const arma::Row<size_t> &testY5 =
+      CLI::GetParam<arma::Row<size_t>>("predictions");
+
   // Both solutions must be equal.
   BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
                                   testY2.begin(), testY2.end());
+
+  BOOST_REQUIRE_EQUAL_COLLECTIONS(testY4.begin(), testY5.end(),
+                                  testY4.begin(), testY5.end());
 }
 
 /**
@@ -618,7 +646,12 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
   mlpackMain();
 
   // Get the output after first training.
+  //Parameter 'output' is depracated and replaced by parameter 'predictions' 
+  //following line can be removed in mlpack-4.0.0
   const arma::Row<size_t> output1 = CLI::GetParam<arma::Row<size_t>>("output");
+  // Get the output after first training.
+  const arma::Row<size_t> predictions1 
+      = CLI::GetParam<arma::Row<size_t>>("predictions");
 
   // Reset the settings.
   bindings::tests::CleanMemory();
@@ -634,10 +667,19 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
   mlpackMain();
 
   // Get the output after second training.
+  //Parameter 'output' is depracated and replaced by parameter 'predictions' 
+  //following line can be removed in mlpack-4.0.0
   const arma::Row<size_t> &output2 = CLI::GetParam<arma::Row<size_t>>("output");
+  // Get the output after first training.
+  const arma::Row<size_t> &predictions2 = 
+      CLI::GetParam<arma::Row<size_t>>("predictions");
 
   // Check that the output changed when the decision boundary moved.
+  //Parameter 'output' is depracated and replaced by parameter 'predictions' 
+  //following line can be removed in mlpack-4.0.0
   BOOST_REQUIRE_GT(arma::accu(output1 != output2), 0);
+  // Check that the output changed when the decision boundary moved.
+  BOOST_REQUIRE_GT(arma::accu(predictions1 != predictions2), 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
