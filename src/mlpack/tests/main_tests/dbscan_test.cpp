@@ -436,7 +436,8 @@ BOOST_AUTO_TEST_CASE(DBSCANNaiveSearchTest)
 BOOST_AUTO_TEST_CASE(DBSCANRandomSelectionFlagTest)
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData)){
+  if (!data::Load("iris.csv", inputData))
+  {
     BOOST_FAIL("Unable to load dataset iris.csv!");
   }
 
