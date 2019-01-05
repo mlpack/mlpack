@@ -1,6 +1,6 @@
 ### mlpack 3.0.5
 ###### ????-??-??
-  * Change DBSCAN to use PointSelectionPolicy and add RandomSelectionPolicy (#1625).
+  * Change DBSCAN to use PointSelectionPolicy and add OrderedPointSelection (#1625).
   
 ### mlpack 3.0.4
 ###### 2018-11-13
