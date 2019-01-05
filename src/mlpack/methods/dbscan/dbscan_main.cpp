@@ -16,6 +16,7 @@
 #include <mlpack/core/tree/rectangle_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/methods/dbscan/random_point_selection.hpp>
+#include <mlpack/methods/dbscan/ordered_point_selection.hpp>
 #include "dbscan.hpp"
 
 using namespace mlpack;
@@ -80,8 +81,9 @@ PARAM_FLAG("random_selection", "If set, random point selection (not ordered) "
     "will be used.", "R");
 
 // Actually run the clustering, and process the output.
-template<typename RangeSearchType>
-void RunDBSCAN(RangeSearchType rs = RangeSearchType())
+template<typename RangeSearchType, typename PointSelectionPolicy>
+void RunDBSCAN(RangeSearchType rs,
+               PointSelectionPolicy pointSelector = PointSelectionPolicy())
 {
   if (CLI::HasParam("single_mode"))
     rs.SingleMode() = true;
@@ -92,48 +94,38 @@ void RunDBSCAN(RangeSearchType rs = RangeSearchType())
   const size_t minSize = (size_t) CLI::GetParam<int>("min_size");
   arma::Row<size_t> assignments;
 
-  // Check if random selection is used.
-  if (CLI::HasParam("random_selection")) // Random Selection
+  DBSCAN<RangeSearchType, PointSelectionPolicy> d(epsilon, minSize,
+      !CLI::HasParam("single_mode"), rs, pointSelector);
+
+  if (CLI::HasParam("centroids"))
   {
-    DBSCAN<RangeSearchType, RandomPointSelection> d(epsilon, minSize, 
-        !CLI::HasParam("single_mode"), rs);
+    arma::mat centroids;
 
-    // If possible, avoid the overhead of calculating centroids.
-    if (CLI::HasParam("centroids"))
-    {
-      arma::mat centroids;
+    d.Cluster(dataset, assignments, centroids);
 
-      d.Cluster(dataset, assignments, centroids);
-
-      CLI::GetParam<arma::mat>("centroids") = std::move(centroids);
-    }
-    else
-    {
-      d.Cluster(dataset, assignments);
-    }
+    CLI::GetParam<arma::mat>("centroids") = std::move(centroids);
   }
-  else // Ordered Selection
+  else
   {
-    DBSCAN<RangeSearchType> d(epsilon, minSize,
-        !CLI::HasParam("single_mode"), rs);
-        
-    // If possible, avoid the overhead of calculating centroids.
-    if (CLI::HasParam("centroids"))
-    {
-      arma::mat centroids;
-
-      d.Cluster(dataset, assignments, centroids);
-
-      CLI::GetParam<arma::mat>("centroids") = std::move(centroids);
-    }
-    else
-    {
-      d.Cluster(dataset, assignments);
-    }
+    d.Cluster(dataset, assignments);
   }
 
   if (CLI::HasParam("assignments"))
     CLI::GetParam<arma::Row<size_t>>("assignments") = std::move(assignments);
+}
+
+// Choose the point selection policy.
+template<typename RangeSearchType>
+void ChoosePointSelectionPolicy(RangeSearchType rs = RangeSearchType())
+{
+  if (CLI::HasParam("random_selection"))
+  {
+    RunDBSCAN<RangeSearchType, RandomPointSelection>(rs);
+  }
+  else
+  {
+    RunDBSCAN<RangeSearchType, OrderedPointSelection>(rs);
+  }
 }
 
 static void mlpackMain()
@@ -159,28 +151,54 @@ static void mlpackMain()
   if (CLI::HasParam("naive"))
   {
     RangeSearch<> rs(true);
-    RunDBSCAN(rs);
+    ChoosePointSelectionPolicy(rs);
   }
   else
   {
     const string treeType = CLI::GetParam<string>("tree_type");
     if (treeType == "kd")
-      RunDBSCAN<RangeSearch<>>();
+    {
+      ChoosePointSelectionPolicy<RangeSearch<>>();
+    }
     else if (treeType == "cover")
-      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>>();
+    {
+      ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
+          StandardCoverTree>>();
+    }
     else if (treeType == "r")
-      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, RTree>>();
+    {
+      ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance,
+          arma::mat, RTree>>();
+    }
     else if (treeType == "r-star")
-      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, RStarTree>>();
+    {
+      ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
+          RStarTree>>();
+    }
     else if (treeType == "x")
-      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, XTree>>();
+    {
+      ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
+          XTree>>();
+    }
     else if (treeType == "hilbert-r")
-      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, HilbertRTree>>();
+    {
+      ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
+          HilbertRTree>>();
+    }
     else if (treeType == "r-plus")
-      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, RPlusTree>>();
+    {
+      ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
+          RPlusTree>>();
+    }
     else if (treeType == "r-plus-plus")
-      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, RPlusPlusTree>>();
+    {
+      ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
+          RPlusPlusTree>>();
+    }
     else if (treeType == "ball")
-      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, BallTree>>();
+    {
+      ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
+          BallTree>>();
+    }
   }
 }

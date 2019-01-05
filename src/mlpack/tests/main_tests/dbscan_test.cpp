@@ -431,13 +431,14 @@ BOOST_AUTO_TEST_CASE(DBSCANNaiveSearchTest)
 
 /**
  * Check that the assignment of cluster is different if
- * different point selection policies.
+ * point selection policies are different.
  */
 BOOST_AUTO_TEST_CASE(DBSCANRandomSelectionFlagTest)
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!data::Load("iris.csv", inputData)){
     BOOST_FAIL("Unable to load dataset iris.csv!");
+  }
 
   SetInputParam("input", inputData);
   SetInputParam("epsilon", (double) 0.358);
