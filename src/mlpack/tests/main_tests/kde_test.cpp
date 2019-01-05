@@ -355,4 +355,27 @@ BOOST_AUTO_TEST_CASE(KDEMainReferenceAndModel)
   Log::Fatal.ignoreInput = false;
 }
 
+/**
+  * Ensure we get an exception when an invalid absolute error is specified.
+ **/
+BOOST_AUTO_TEST_CASE(KDEMainInvalidAbsoluteError)
+{
+  arma::mat reference = arma::randu<arma::mat>(1, 10);
+  arma::mat query = arma::randu<arma::mat>(1, 5);
+
+  // Main params
+  SetInputParam("reference", reference);
+  SetInputParam("query", query);
+
+  Log::Fatal.ignoreInput = true;
+  // Invalid value
+  SetInputParam("abs_error", -0.1);
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+
+  // Valid value
+  SetInputParam("abs_error", 5.8);
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  Log::Fatal.ignoreInput = false;
+}
+
 BOOST_AUTO_TEST_SUITE_END();
