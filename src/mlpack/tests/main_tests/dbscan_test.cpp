@@ -461,7 +461,7 @@ BOOST_AUTO_TEST_CASE(DBSCANRandomSelectionFlagTest)
   arma::Row<size_t> randomOutput;
   randomOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
 
-  BOOST_REQUIRE_LT(arma::accu(orderedOutput == randomOutput), 150);
+  BOOST_REQUIRE_GT(arma::accu(orderedOutput != randomOutput), 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

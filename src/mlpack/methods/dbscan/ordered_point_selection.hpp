@@ -1,8 +1,8 @@
 /**
  * @file ordered_point_selection.hpp
- * @author Kim Sang-Yeon
+ * @author Kim SangYeon
  *
- * sequentially select the next point for DBSCAN.
+ * Sequentially select the next point for DBSCAN.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -30,7 +30,7 @@ class OrderedPointSelection
    * @param data Unused data.
    */
   template<typename MatType>
-  size_t Select(const size_t point,
+  static size_t Select(const size_t point,
                        const MatType& /* data */)
   { 
     return point; // Just return point.
