@@ -40,7 +40,7 @@ class RandomPointSelection
       unvisited.resize(size, true); // Resize & Set bitset to one.
     }
 
-    // Count the unvisited points and generate n-th index randomly.
+    // Count the unvisited points and generate nth index randomly.
     const size_t max = std::count(unvisited.begin(), unvisited.end(), true);
     const size_t index = math::RandInt(max);
 
