@@ -144,6 +144,7 @@ add_executable(mlpack_test
   main_tests/radical_test.cpp
   main_tests/hmm_test_utils.hpp
   main_tests/kernel_pca_test.cpp
+  main_tests/range_search_test.cpp
 )
 
 # Link dependencies of test executable.
