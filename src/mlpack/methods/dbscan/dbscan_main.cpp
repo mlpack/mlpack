@@ -126,7 +126,7 @@ void ChoosePointSelectionPolicy(RangeSearchType rs = RangeSearchType())
   }
   else if (selectionType == "random")
   {
-    RunDBSCAN<RangeSearchType, RandomPointSelection>(rs); 
+    RunDBSCAN<RangeSearchType, RandomPointSelection>(rs);
   }
 }
 
