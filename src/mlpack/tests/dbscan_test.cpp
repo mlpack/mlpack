@@ -287,7 +287,7 @@ BOOST_AUTO_TEST_CASE(OrderedPointSelectionTest)
 
   BOOST_REQUIRE_EQUAL(clusters, 1);
 
-  // The number of assignments returned should be the same as points
+  // The number of assignments returned should be the same as points.
   BOOST_REQUIRE_EQUAL(assignments.n_elem, points.n_cols);
 }
 
@@ -305,7 +305,7 @@ BOOST_AUTO_TEST_CASE(RandomPointSelectionTest)
 
   BOOST_REQUIRE_EQUAL(clusters, 1);
 
-  // The number of assignments returned should be the same as points
+  // The number of assignments returned should be the same as points.
   BOOST_REQUIRE_EQUAL(assignments.n_elem, points.n_cols);
 }
 
