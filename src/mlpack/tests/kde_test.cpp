@@ -72,9 +72,9 @@ BOOST_AUTO_TEST_CASE(KDESimpleTest)
                                   0.00167470061366603324010116,
                                   0.07658867126520703394465527,
                                   0.01028120384800740999553525};
-  KDE<EuclideanDistance,
+  KDE<GaussianKernel,
+      EuclideanDistance,
       arma::mat,
-      GaussianKernel,
       KDTree>
     kde(0.0, 0.01, GaussianKernel(0.8));
   kde.Train(reference);
@@ -117,9 +117,9 @@ BOOST_AUTO_TEST_CASE(KDETreeAsArguments)
   std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
-  KDE<EuclideanDistance,
+  KDE<GaussianKernel,
+      EuclideanDistance,
       arma::mat,
-      GaussianKernel,
       KDTree>
     kde(0.0, 1e-6, GaussianKernel(kernelBandwidth));
   kde.Train(referenceTree, &oldFromNewReferences);
@@ -151,9 +151,9 @@ BOOST_AUTO_TEST_CASE(GaussianKDEBruteForceTest)
 
   // Optimized KDE
   metric::EuclideanDistance metric;
-  KDE<metric::EuclideanDistance,
+  KDE<GaussianKernel,
+      metric::EuclideanDistance,
       arma::mat,
-      kernel::GaussianKernel,
       tree::KDTree>
     kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
@@ -185,9 +185,9 @@ BOOST_AUTO_TEST_CASE(GaussianSingleKDEBruteForceTest)
 
   // Optimized KDE
   metric::EuclideanDistance metric;
-  KDE<metric::EuclideanDistance,
+  KDE<GaussianKernel,
+      metric::EuclideanDistance,
       arma::mat,
-      kernel::GaussianKernel,
       tree::KDTree>
     kde(relError, 0.0, kernel, KDEMode::SINGLE_TREE_MODE, metric);
   kde.Train(reference);
@@ -220,9 +220,9 @@ BOOST_AUTO_TEST_CASE(EpanechnikovCoverSingleKDETest)
 
   // Optimized KDE
   metric::EuclideanDistance metric;
-  KDE<metric::EuclideanDistance,
+  KDE<EpanechnikovKernel,
+      metric::EuclideanDistance,
       arma::mat,
-      kernel::EpanechnikovKernel,
       tree::StandardCoverTree>
     kde(relError, 0.0, kernel, KDEMode::SINGLE_TREE_MODE, metric);
   kde.Train(reference);
@@ -255,9 +255,9 @@ BOOST_AUTO_TEST_CASE(EpanechnikovOctreeSingleKDETest)
 
   // Optimized KDE
   metric::EuclideanDistance metric;
-  KDE<metric::EuclideanDistance,
+  KDE<EpanechnikovKernel,
+      metric::EuclideanDistance,
       arma::mat,
-      kernel::EpanechnikovKernel,
       tree::Octree>
     kde(relError, 0.0, kernel, KDEMode::SINGLE_TREE_MODE, metric);
   kde.Train(reference);
@@ -292,9 +292,9 @@ BOOST_AUTO_TEST_CASE(BallTreeGaussianKDETest)
   std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
-  KDE<EuclideanDistance,
+  KDE<GaussianKernel,
+      EuclideanDistance,
       arma::mat,
-      GaussianKernel,
       BallTree>
     kde(relError, 0.0, GaussianKernel(kernelBandwidth));
   kde.Train(referenceTree, &oldFromNewReferences);
@@ -329,9 +329,9 @@ BOOST_AUTO_TEST_CASE(OctreeGaussianKDETest)
 
   // Optimized KDE
   metric::EuclideanDistance metric;
-  KDE<metric::EuclideanDistance,
+  KDE<GaussianKernel,
+      metric::EuclideanDistance,
       arma::mat,
-      kernel::GaussianKernel,
       tree::Octree>
     kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
@@ -363,9 +363,9 @@ BOOST_AUTO_TEST_CASE(RTreeGaussianKDETest)
 
   // Optimized KDE
   metric::EuclideanDistance metric;
-  KDE<metric::EuclideanDistance,
+  KDE<GaussianKernel,
+      metric::EuclideanDistance,
       arma::mat,
-      kernel::GaussianKernel,
       tree::RTree>
     kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
@@ -398,9 +398,9 @@ BOOST_AUTO_TEST_CASE(StandardCoverTreeGaussianKDETest)
 
   // Optimized KDE
   metric::EuclideanDistance metric;
-  KDE<metric::EuclideanDistance,
+  KDE<GaussianKernel,
+      metric::EuclideanDistance,
       arma::mat,
-      kernel::GaussianKernel,
       tree::StandardCoverTree>
     kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
@@ -438,9 +438,9 @@ BOOST_AUTO_TEST_CASE(DuplicatedReferenceSampleKDETest)
   std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
-  KDE<EuclideanDistance,
+  KDE<GaussianKernel,
+      EuclideanDistance,
       arma::mat,
-      GaussianKernel,
       KDTree>
     kde(relError, 0.0, GaussianKernel(kernelBandwidth));
   kde.Train(referenceTree, &oldFromNewReferences);
@@ -473,9 +473,9 @@ BOOST_AUTO_TEST_CASE(DuplicatedQuerySampleKDETest)
   std::vector<size_t> oldFromNewQueries, oldFromNewReferences;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 2);
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
-  KDE<EuclideanDistance,
+  KDE<GaussianKernel,
+      EuclideanDistance,
       arma::mat,
-      GaussianKernel,
       KDTree>
     kde(relError, 0.0, GaussianKernel(kernelBandwidth));
   kde.Train(referenceTree, &oldFromNewReferences);
@@ -510,9 +510,9 @@ BOOST_AUTO_TEST_CASE(BreadthFirstKDETest)
 
   // Breadth-First KDE
   metric::EuclideanDistance metric;
-  KDE<metric::EuclideanDistance,
+  KDE<GaussianKernel,
+      metric::EuclideanDistance,
       arma::mat,
-      kernel::GaussianKernel,
       tree::KDTree,
       tree::KDTree<metric::EuclideanDistance,
                    kde::KDEStat,
@@ -547,9 +547,9 @@ BOOST_AUTO_TEST_CASE(OneDimensionalTest)
 
   // Optimized KDE
   metric::EuclideanDistance metric;
-  KDE<metric::EuclideanDistance,
+  KDE<GaussianKernel,
+      metric::EuclideanDistance,
       arma::mat,
-      kernel::GaussianKernel,
       tree::KDTree>
     kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
@@ -574,9 +574,9 @@ BOOST_AUTO_TEST_CASE(EmptyReferenceTest)
   // KDE
   metric::EuclideanDistance metric;
   GaussianKernel kernel(kernelBandwidth);
-  KDE<metric::EuclideanDistance,
+  KDE<GaussianKernel,
+      metric::EuclideanDistance,
       arma::mat,
-      kernel::GaussianKernel,
       tree::KDTree>
     kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
 
@@ -607,9 +607,9 @@ BOOST_AUTO_TEST_CASE(EvaluationMatchDimensionsTest)
   // KDE
   metric::EuclideanDistance metric;
   GaussianKernel kernel(kernelBandwidth);
-  KDE<metric::EuclideanDistance,
+  KDE<GaussianKernel,
+      metric::EuclideanDistance,
       arma::mat,
-      kernel::GaussianKernel,
       tree::KDTree>
     kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
@@ -642,9 +642,9 @@ BOOST_AUTO_TEST_CASE(EmptyQuerySetTest)
   // KDE
   metric::EuclideanDistance metric;
   GaussianKernel kernel(kernelBandwidth);
-  KDE<metric::EuclideanDistance,
+  KDE<GaussianKernel,
+      metric::EuclideanDistance,
       arma::mat,
-      kernel::GaussianKernel,
       tree::KDTree>
     kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
@@ -675,9 +675,9 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   const double relError = 0.25;
   const double absError = 0.0;
   arma::mat reference = arma::randu(4, 800);
-  KDE<metric::EuclideanDistance,
+  KDE<GaussianKernel,
+      metric::EuclideanDistance,
       arma::mat,
-      kernel::GaussianKernel,
       tree::KDTree>
     kde(relError, absError, GaussianKernel(0.25));
   kde.Train(reference);
@@ -688,9 +688,9 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   kde.Evaluate(query, estimations);
 
   // Initialize serialized objects.
-  KDE<metric::EuclideanDistance,
+  KDE<GaussianKernel,
+      metric::EuclideanDistance,
       arma::mat,
-      kernel::GaussianKernel,
       tree::KDTree> kdeXml, kdeText, kdeBinary;
   SerializeObjectAll(kde, kdeXml, kdeText, kdeBinary);
 
@@ -744,7 +744,7 @@ BOOST_AUTO_TEST_CASE(CopyConstructor)
   const double kernelBandwidth = 1.5;
   const double relError = 0.05;
 
-  typedef KDE<metric::EuclideanDistance, arma::mat, kernel::GaussianKernel>
+  typedef KDE<GaussianKernel, metric::EuclideanDistance, arma::mat>
       KDEType;
 
   // KDE
