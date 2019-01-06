@@ -73,12 +73,12 @@ PARAM_INT_IN("min_size", "Minimum number of points for a cluster.", "m", 5);
 PARAM_STRING_IN("tree_type", "If using single-tree or dual-tree search, the "
     "type of tree to use ('kd', 'r', 'r-star', 'x', 'hilbert-r', 'r-plus', "
     "'r-plus-plus', 'cover', 'ball').", "t", "kd");
+PARAM_STRING_IN("selection_type", "If using point selection policy, the "
+    "type of selection to use ('ordered', 'random').", "s", "ordered");
 PARAM_FLAG("single_mode", "If set, single-tree range search (not dual-tree) "
     "will be used.", "S");
 PARAM_FLAG("naive", "If set, brute-force range search (not tree-based) "
     "will be used.", "N");
-PARAM_FLAG("random_selection", "If set, random point selection (not ordered) "
-    "will be used.", "R");
 
 // Actually run the clustering, and process the output.
 template<typename RangeSearchType, typename PointSelectionPolicy>
@@ -119,13 +119,14 @@ void RunDBSCAN(RangeSearchType rs,
 template<typename RangeSearchType>
 void ChoosePointSelectionPolicy(RangeSearchType rs = RangeSearchType())
 {
-  if (CLI::HasParam("random_selection"))
-  {
-    RunDBSCAN<RangeSearchType, RandomPointSelection>(rs);
-  }
-  else
+  const string selectionType = CLI::GetParam<string>("selection_type");
+  if (selectionType == "ordered")
   {
     RunDBSCAN<RangeSearchType, OrderedPointSelection>(rs);
+  }
+  else if (selectionType == "random")
+  {
+    RunDBSCAN<RangeSearchType, RandomPointSelection>(rs); 
   }
 }
 
