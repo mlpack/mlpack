@@ -444,7 +444,7 @@ BOOST_AUTO_TEST_CASE(DBSCANRandomSelectionFlagTest)
   SetInputParam("input", inputData);
   SetInputParam("epsilon", (double) 0.358);
   SetInputParam("min_size", 1);
-  SetInputParam("random_selection", false);
+  SetInputParam("selection_type", std::string("ordered"));
 
   mlpackMain();
   
@@ -452,11 +452,16 @@ BOOST_AUTO_TEST_CASE(DBSCANRandomSelectionFlagTest)
   orderedOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
 
   bindings::tests::CleanMemory();
-  
+
+  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["epsilon"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["min_size"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["selection_type"].wasPassed = false;
+
   SetInputParam("input", inputData);
   SetInputParam("epsilon", (double) 0.358);
   SetInputParam("min_size", 1);
-  SetInputParam("random_selection", true);
+  SetInputParam("selection_type", std::string("random"));
 
   mlpackMain();
   
