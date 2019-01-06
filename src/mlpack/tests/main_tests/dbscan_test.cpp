@@ -437,9 +437,7 @@ BOOST_AUTO_TEST_CASE(DBSCANRandomSelectionFlagTest)
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-  {
     BOOST_FAIL("Unable to load dataset iris.csv!");
-  }
 
   SetInputParam("input", inputData);
   SetInputParam("epsilon", (double) 0.358);
@@ -447,7 +445,7 @@ BOOST_AUTO_TEST_CASE(DBSCANRandomSelectionFlagTest)
   SetInputParam("selection_type", std::string("ordered"));
 
   mlpackMain();
-  
+
   arma::Row<size_t> orderedOutput;
   orderedOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
 
@@ -464,7 +462,7 @@ BOOST_AUTO_TEST_CASE(DBSCANRandomSelectionFlagTest)
   SetInputParam("selection_type", std::string("random"));
 
   mlpackMain();
-  
+
   arma::Row<size_t> randomOutput;
   randomOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
 
