@@ -86,9 +86,7 @@ void RunDBSCAN(RangeSearchType rs,
                PointSelectionPolicy pointSelector = PointSelectionPolicy())
 {
   if (CLI::HasParam("single_mode"))
-  {
     rs.SingleMode() = true;
-  }
 
   // Load dataset.
   arma::mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
@@ -122,14 +120,11 @@ template<typename RangeSearchType>
 void ChoosePointSelectionPolicy(RangeSearchType rs = RangeSearchType())
 {
   const string selectionType = CLI::GetParam<string>("selection_type");
+
   if (selectionType == "ordered")
-  {
     RunDBSCAN<RangeSearchType, OrderedPointSelection>(rs);
-  }
   else if (selectionType == "random")
-  {
     RunDBSCAN<RangeSearchType, RandomPointSelection>(rs);
-  }
 }
 
 static void mlpackMain()
