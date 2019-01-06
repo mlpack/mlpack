@@ -733,4 +733,41 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   }
 }
 
+/**
+ * Test if the copy constructor and copy operator works properly.
+ */
+BOOST_AUTO_TEST_CASE(CopyConstructor)
+{
+  arma::mat reference = arma::randu(2, 300);
+  arma::mat query = arma::randu(2, 100);
+  arma::vec estimations1, estimations2, estimations3;
+  const double kernelBandwidth = 1.5;
+  const double relError = 0.05;
+
+  typedef KDE<metric::EuclideanDistance, arma::mat, kernel::GaussianKernel>
+      KDEType;
+
+  // KDE
+  KDEType kde(relError, 0, kernel::GaussianKernel(kernelBandwidth));
+  kde.Train(std::move(reference));
+
+  // Copy constructor KDE
+  KDEType constructor(kde);
+
+  // Copy operator KDE
+  KDEType oper = kde;
+
+  // Evaluations
+  kde.Evaluate(query, estimations1);
+  constructor.Evaluate(query, estimations2);
+  oper.Evaluate(query, estimations3);
+
+  // Check results
+  for (size_t i = 0; i < query.n_cols; ++i)
+  {
+    BOOST_REQUIRE_CLOSE(estimations1[i], estimations2[i], 1e-10);
+    BOOST_REQUIRE_CLOSE(estimations2[i], estimations3[i], 1e-10);
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END();
