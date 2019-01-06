@@ -40,9 +40,9 @@ enum KDEMode
  * @tparam KernelType Kernel function to use for KDE calculations.
  * @tparam TreeType Type of tree to use; must satisfy the TreeType policy API.
  */
-template<typename MetricType = mlpack::metric::EuclideanDistance,
+template<typename KernelType = kernel::GaussianKernel,
+         typename MetricType = mlpack::metric::EuclideanDistance,
          typename MatType = arma::mat,
-         typename KernelType = kernel::GaussianKernel,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType = tree::KDTree,
