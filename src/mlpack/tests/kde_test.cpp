@@ -161,7 +161,7 @@ BOOST_AUTO_TEST_CASE(GaussianKDEBruteForceTest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
 }
 
 /**
@@ -195,7 +195,7 @@ BOOST_AUTO_TEST_CASE(GaussianSingleKDEBruteForceTest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
 }
 
 /**
@@ -230,7 +230,7 @@ BOOST_AUTO_TEST_CASE(EpanechnikovCoverSingleKDETest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
 }
 
 /**
@@ -265,7 +265,7 @@ BOOST_AUTO_TEST_CASE(EpanechnikovOctreeSingleKDETest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
 }
 
 /**
@@ -302,7 +302,7 @@ BOOST_AUTO_TEST_CASE(BallTreeGaussianKDETest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
 
   delete queryTree;
   delete referenceTree;
@@ -339,7 +339,7 @@ BOOST_AUTO_TEST_CASE(OctreeGaussianKDETest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
 }
 
 /**
@@ -373,7 +373,7 @@ BOOST_AUTO_TEST_CASE(RTreeGaussianKDETest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
 }
 
 /**
@@ -408,7 +408,7 @@ BOOST_AUTO_TEST_CASE(StandardCoverTreeGaussianKDETest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
 }
 
 /**
@@ -448,7 +448,7 @@ BOOST_AUTO_TEST_CASE(DuplicatedReferenceSampleKDETest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
 
   delete queryTree;
   delete referenceTree;
@@ -482,7 +482,7 @@ BOOST_AUTO_TEST_CASE(DuplicatedQuerySampleKDETest)
   kde.Evaluate(queryTree, oldFromNewQueries, estimations);
 
   // Check whether results are equal.
-  BOOST_REQUIRE_CLOSE(estimations[2], estimations[3], relError);
+  BOOST_REQUIRE_CLOSE(estimations[2], estimations[3], relError*100);
 
   delete queryTree;
   delete referenceTree;
@@ -523,7 +523,7 @@ BOOST_AUTO_TEST_CASE(BreadthFirstKDETest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
 }
 
 /**
@@ -557,7 +557,7 @@ BOOST_AUTO_TEST_CASE(OneDimensionalTest)
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError*100);
 }
 
 /**
@@ -727,9 +727,9 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
 
   for (size_t i = 0; i < query.n_cols; ++i)
   {
-    BOOST_REQUIRE_CLOSE(estimations[i], xmlEstimations[i], relError);
-    BOOST_REQUIRE_CLOSE(estimations[i], textEstimations[i], relError);
-    BOOST_REQUIRE_CLOSE(estimations[i], binEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(estimations[i], xmlEstimations[i], relError*100);
+    BOOST_REQUIRE_CLOSE(estimations[i], textEstimations[i], relError*100);
+    BOOST_REQUIRE_CLOSE(estimations[i], binEstimations[i], relError*100);
   }
 }
 
