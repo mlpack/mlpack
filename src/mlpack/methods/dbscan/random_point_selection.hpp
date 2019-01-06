@@ -35,10 +35,8 @@ class RandomPointSelection
   {
     // Initialize the length of the unvisited bitset.
     size_t size = data.n_cols; // Get the size of points.
-    if (unvisited.size() != size) 
-    {
+    if (unvisited.size() != size)
       unvisited.resize(size, true); // Resize & Set bitset to one.
-    }
 
     // Count the unvisited points and generate nth index randomly.
     const size_t max = std::count(unvisited.begin(), unvisited.end(), true);
@@ -64,7 +62,7 @@ class RandomPointSelection
   // Bitset for unvisited points. If true, mean unvisited.
   std::vector<bool> unvisited;
 };
-  
+
 } // namespace dbscan
 } // namespace mlpack
 

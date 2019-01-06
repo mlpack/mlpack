@@ -297,7 +297,7 @@ BOOST_AUTO_TEST_CASE(OrderedPointSelectionTest)
 BOOST_AUTO_TEST_CASE(RandomPointSelectionTest)
 {
   arma::mat points(10, 200, arma::fill::randu);
-  
+
   DBSCAN<RangeSearch<>, RandomPointSelection> d(2.0, 2);
 
   arma::Row<size_t> assignments;
