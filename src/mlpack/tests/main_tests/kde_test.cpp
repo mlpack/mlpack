@@ -64,9 +64,9 @@ BOOST_AUTO_TEST_CASE(KDEGaussianRTreeResultsMain)
 
   kernel::GaussianKernel kernel(kernelBandwidth);
   metric::EuclideanDistance metric;
-  KDE<metric::EuclideanDistance,
+  KDE<kernel::GaussianKernel,
+      metric::EuclideanDistance,
       arma::mat,
-      kernel::GaussianKernel,
       tree::RTree>
     kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
@@ -106,9 +106,9 @@ BOOST_AUTO_TEST_CASE(KDETriangularBallTreeResultsMain)
 
   kernel::TriangularKernel kernel(kernelBandwidth);
   metric::EuclideanDistance metric;
-  KDE<metric::EuclideanDistance,
+  KDE<kernel::TriangularKernel,
+      metric::EuclideanDistance,
       arma::mat,
-      kernel::TriangularKernel,
       tree::BallTree>
     kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
@@ -145,9 +145,9 @@ BOOST_AUTO_TEST_CASE(KDEMonoResultsMain)
 
   kernel::EpanechnikovKernel kernel(kernelBandwidth);
   metric::EuclideanDistance metric;
-  KDE<metric::EuclideanDistance,
+  KDE<kernel::EpanechnikovKernel,
+      metric::EuclideanDistance,
       arma::mat,
-      kernel::EpanechnikovKernel,
       tree::StandardCoverTree>
     kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
@@ -254,9 +254,9 @@ BOOST_AUTO_TEST_CASE(KDEGaussianSingleKDTreeResultsMain)
 
   kernel::GaussianKernel kernel(kernelBandwidth);
   metric::EuclideanDistance metric;
-  KDE<metric::EuclideanDistance,
+  KDE<kernel::GaussianKernel,
+      metric::EuclideanDistance,
       arma::mat,
-      kernel::GaussianKernel,
       tree::BallTree>
     kde(relError, 0.0, kernel, KDEMode::SINGLE_TREE_MODE, metric);
   kde.Train(reference);
