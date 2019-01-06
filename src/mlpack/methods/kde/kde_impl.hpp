@@ -95,8 +95,9 @@ KDE(const KDE& other) :
   {
     if (ownsReferenceTree)
     {
-      oldFromNewReferences = new std::vector<size_t>;
-      referenceTree = new Tree(other.referenceTree, *oldFromNewReferences);
+      oldFromNewReferences =
+          new std::vector<size_t>(*other.oldFromNewReferences);
+      referenceTree = new Tree(*other.referenceTree);
     }
     else
     {
