@@ -86,7 +86,9 @@ void RunDBSCAN(RangeSearchType rs,
                PointSelectionPolicy pointSelector = PointSelectionPolicy())
 {
   if (CLI::HasParam("single_mode"))
+  {
     rs.SingleMode() = true;
+  }
 
   // Load dataset.
   arma::mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
