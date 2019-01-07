@@ -303,6 +303,10 @@ Evaluate(MatType querySet, arma::vec& estimations)
     estimations.set_size(querySet.n_cols);
     estimations.fill(arma::fill::zeros);
 
+    // Check whether has already been trained.
+    if (!trained)
+      throw std::runtime_error("cannot evaluate KDE model: model needs to be "
+                               "trained before evaluation");
     // Check querySet has at least 1 element to evaluate.
     if (querySet.n_cols == 0)
     {
@@ -367,6 +371,10 @@ Evaluate(Tree* queryTree,
   estimations.set_size(queryTree->Dataset().n_cols);
   estimations.fill(arma::fill::zeros);
 
+  // Check whether has already been trained.
+  if (!trained)
+    throw std::runtime_error("cannot evaluate KDE model: model needs to be "
+                             "trained before evaluation");
   // Check querySet has at least 1 element to evaluate.
   if (queryTree->Dataset().n_cols == 0)
   {
@@ -426,6 +434,11 @@ void KDE<KernelType,
          SingleTreeTraversalType>::
 Evaluate(arma::vec& estimations)
 {
+  // Check whether has already been trained.
+  if (!trained)
+    throw std::runtime_error("cannot evaluate KDE model: model needs to be "
+                             "trained before evaluation");
+
   // Get estimations vector ready.
   estimations.clear();
   estimations.set_size(referenceTree->Dataset().n_cols);
