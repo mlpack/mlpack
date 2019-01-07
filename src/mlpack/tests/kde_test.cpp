@@ -799,4 +799,23 @@ BOOST_AUTO_TEST_CASE(MoveConstructor)
     BOOST_REQUIRE_CLOSE(estimations1[i], estimations2[i], 1e-10);
 }
 
+/**
+ * Test if an untrained KDE works properly.
+ */
+BOOST_AUTO_TEST_CASE(NotTrained)
+{
+  arma::mat query = arma::randu(1, 10);
+  std::vector<size_t> oldFromNew;
+  arma::vec estimations;
+
+  KDE<> kde;
+  KDE<>::Tree queryTree(query, oldFromNew);
+
+  // Check results
+  BOOST_REQUIRE_THROW(kde.Evaluate(query, estimations), std::runtime_error);
+  BOOST_REQUIRE_THROW(kde.Evaluate(&queryTree, oldFromNew, estimations),
+                      std::runtime_error);
+  BOOST_REQUIRE_THROW(kde.Evaluate(estimations), std::runtime_error);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
