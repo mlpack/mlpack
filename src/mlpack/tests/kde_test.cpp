@@ -770,4 +770,33 @@ BOOST_AUTO_TEST_CASE(CopyConstructor)
   }
 }
 
+/**
+ * Test if the move constructor works properly.
+ */
+BOOST_AUTO_TEST_CASE(MoveConstructor)
+{
+  arma::mat reference = arma::randu(2, 300);
+  arma::mat query = arma::randu(2, 100);
+  arma::vec estimations1, estimations2, estimations3;
+  const double kernelBandwidth = 1.2;
+  const double relError = 0.05;
+
+  typedef KDE<EpanechnikovKernel, metric::EuclideanDistance, arma::mat>
+      KDEType;
+
+  // KDE
+  KDEType kde(relError, 0, kernel::EpanechnikovKernel(kernelBandwidth));
+  kde.Train(std::move(reference));
+  kde.Evaluate(query, estimations1);
+
+  // Move constructor KDE
+  KDEType constructor(std::move(kde));
+  constructor.Evaluate(query, estimations2);
+
+  // Check results
+  BOOST_REQUIRE_THROW(kde.Evaluate(query, estimations3), std::runtime_error);
+  for (size_t i = 0; i < query.n_cols; ++i)
+    BOOST_REQUIRE_CLOSE(estimations1[i], estimations2[i], 1e-10);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
