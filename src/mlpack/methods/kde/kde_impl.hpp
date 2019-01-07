@@ -122,8 +122,8 @@ KDE<KernelType,
     DualTreeTraversalType,
     SingleTreeTraversalType>::
 KDE(KDE&& other) :
-    kernel(other.kernel),
-    metric(other.metric),
+    kernel(std::move(other.kernel)),
+    metric(std::move(other.metric)),
     referenceTree(other.referenceTree),
     oldFromNewReferences(other.oldFromNewReferences),
     relError(other.relError),
@@ -132,8 +132,8 @@ KDE(KDE&& other) :
     trained(other.trained),
     mode(other.mode)
 {
-  other.kernel = KernelType();
-  other.metric = MetricType();
+  other.kernel = std::move(KernelType());
+  other.metric = std::move(MetricType());
   other.referenceTree = nullptr;
   other.oldFromNewReferences = nullptr;
   other.ownsReferenceTree = false;
