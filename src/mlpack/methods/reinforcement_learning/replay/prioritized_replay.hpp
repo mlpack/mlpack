@@ -34,7 +34,7 @@ namespace rl {
  * @tparam EnvironmentType Desired task.
  */
 template <typename EnvironmentType>
-class PrioritizedReplay: public RandomReplay
+class PrioritizedReplay
 {
  public:
   /**
@@ -119,7 +119,7 @@ class PrioritizedReplay: public RandomReplay
     sampledNextStates = nextStates.cols(sampledIndices);
     isTerminal = this->isTerminal.elem(sampledIndices);
 
-//    btodo: caculate the weights of sampled transitions
+//    btodo: calculate the weights of sampled transitions
 
   }
 
@@ -129,9 +129,41 @@ class PrioritizedReplay: public RandomReplay
   }
 
 private:
+  //! How much prioritization is used.
   double alpha;
+
   double max_priority;
+
+  //! Locally-stored the prefix sum of prioritization
   SumTree idxSum;
+
+  //! Locally-stored number of examples of each sample.
+  size_t batchSize;
+
+  //! Locally-stored total memory limit.
+  size_t capacity;
+
+  //! Indicate the position to store new transition.
+  size_t position;
+
+  //! Locally-stored encoded previous states.
+  arma::mat states;
+
+  //! Locally-stored previous actions.
+  arma::icolvec actions;
+
+  //! Locally-stored previous rewards.
+  arma::colvec rewards;
+
+  //! Locally-stored encoded previous next states.
+  arma::mat nextStates;
+
+  //! Locally-stored termination information of previous experience.
+  arma::icolvec isTerminal;
+
+  //! Locally-stored indicator that whether the memory is full or not
+  bool full;
+
 };
 
 } // namespace rl
