@@ -103,6 +103,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   if (newCalculations &&
       bound <= (absError + relError * minKernel) / referenceSet.n_cols)
   {
+    // Estimate values.
     double kernelValue;
 
     // Calculate kernel value based on reference node centroid.
@@ -118,7 +119,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
 
     densities(queryIndex) += referenceNode.NumDescendants() * kernelValue;
 
-    // Don't explore this tree branch
+    // Don't explore this tree branch.
     score = DBL_MAX;
   }
   else
@@ -171,7 +172,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     bound = maxKernel - minKernel;
   }
 
-  // If possible, avoid some calculations because of the error tolerance
+  // If possible, avoid some calculations because of the error tolerance.
   if (newCalculations &&
       bound <= (absError + relError * minKernel) / referenceSet.n_cols)
   {
@@ -214,13 +215,14 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   return score;
 }
 
-//! Double-tree
+//! Double-tree rescore.
 template<typename MetricType, typename KernelType, typename TreeType>
 inline double KDERules<MetricType, KernelType, TreeType>::
 Rescore(TreeType& /*queryNode*/,
         TreeType& /*referenceNode*/,
         const double oldScore) const
 {
+  // If a branch is pruned then it continues to be pruned.
   return oldScore;
 }
 

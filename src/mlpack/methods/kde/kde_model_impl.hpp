@@ -32,7 +32,7 @@ inline KDEModel::KDEModel(const double bandwidth,
   kernelType(kernelType),
   treeType(treeType)
 {
-  // Nothing to do
+  // Nothing to do.
 }
 
 // Copy constructor.
@@ -43,7 +43,7 @@ inline KDEModel::KDEModel(const KDEModel& other) :
   kernelType(other.kernelType),
   treeType(other.treeType)
 {
-  // Nothing to do
+  // Nothing to do.
 }
 
 // Move constructor.
@@ -55,7 +55,7 @@ inline KDEModel::KDEModel(KDEModel&& other) :
   treeType(other.treeType),
   kdeModel(std::move(other.kdeModel))
 {
-  // Reset other model
+  // Reset other model.
   other.bandwidth = 1.0;
   other.relError = 0.05;
   other.absError = 0;
@@ -76,7 +76,7 @@ inline KDEModel& KDEModel::operator=(KDEModel other)
   return *this;
 }
 
-// Clean memory
+// Clean memory.
 inline KDEModel::~KDEModel()
 {
   boost::apply_visitor(DeleteVisitor(), kdeModel);
@@ -87,6 +87,7 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
   // Clean memory, if necessary.
   boost::apply_visitor(DeleteVisitor(), kdeModel);
 
+  // Build the actual model.
   if (kernelType == GAUSSIAN_KERNEL && treeType == KD_TREE)
   {
     kdeModel = new KDEType<kernel::GaussianKernel, tree::KDTree>
@@ -213,11 +214,12 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
         (relError, absError, kernel::TriangularKernel(bandwidth));
   }
 
+  // Train the model.
   TrainVisitor train(std::move(referenceSet));
   boost::apply_visitor(train, kdeModel);
 }
 
-// Perform bichromatic evaluation
+// Perform bichromatic evaluation.
 inline void KDEModel::Evaluate(arma::mat&& querySet, arma::vec& estimations)
 {
   Log::Info << "Evaluating KDE..." << std::endl;
@@ -225,7 +227,7 @@ inline void KDEModel::Evaluate(arma::mat&& querySet, arma::vec& estimations)
   boost::apply_visitor(eval, kdeModel);
 }
 
-// Perform monochromatic evaluation
+// Perform monochromatic evaluation.
 inline void KDEModel::Evaluate(arma::vec& estimations)
 {
   Log::Info << "Evaluating KDE..." << std::endl;
@@ -233,18 +235,18 @@ inline void KDEModel::Evaluate(arma::vec& estimations)
   boost::apply_visitor(eval, kdeModel);
 }
 
-// Clean memory
+// Clean memory.
 inline void KDEModel::CleanMemory()
 {
   boost::apply_visitor(DeleteVisitor(), kdeModel);
 }
 
-// Parameters for KDE evaluation
+// Parameters for KDE evaluation.
 DualMonoKDE::DualMonoKDE(arma::vec& estimations):
     estimations(estimations)
 {}
 
-// Default KDE evaluation
+// Default KDE evaluation.
 template<typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
@@ -260,17 +262,19 @@ void DualMonoKDE::operator()(KDETypeT<KernelType, TreeType>* kde) const
                                                   estimations);
   }
   else
+  {
     throw std::runtime_error("no KDE model initialized");
+  }
 }
 
-// Parameters for KDE evaluation
+// Parameters for KDE evaluation.
 DualBiKDE::DualBiKDE(arma::mat&& querySet, arma::vec& estimations):
     dimension(querySet.n_rows),
     querySet(std::move(querySet)),
     estimations(estimations)
 {}
 
-// Default KDE evaluation
+// Default KDE evaluation.
 template<typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
@@ -285,7 +289,9 @@ void DualBiKDE::operator()(KDETypeT<KernelType, TreeType>* kde) const
                                                   estimations);
   }
   else
+  {
     throw std::runtime_error("no KDE model initialized");
+  }
 }
 
 // Parameters for Train.
@@ -293,7 +299,7 @@ TrainVisitor::TrainVisitor(arma::mat&& referenceSet) :
     referenceSet(std::move(referenceSet))
 {}
 
-// Default Train
+// Default Train.
 template<typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
@@ -307,7 +313,7 @@ void TrainVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
     throw std::runtime_error("no KDE model initialized");
 }
 
-// Delete model
+// Delete model.
 template<typename KDEType>
 void DeleteVisitor::operator()(KDEType* kde) const
 {
@@ -315,7 +321,7 @@ void DeleteVisitor::operator()(KDEType* kde) const
     delete kde;
 }
 
-// Mode of model
+// Mode of model.
 template<typename KDEType>
 KDEMode& ModeVisitor::operator()(KDEType* kde) const
 {
@@ -325,13 +331,13 @@ KDEMode& ModeVisitor::operator()(KDEType* kde) const
     throw std::runtime_error("no KDE model initialized");
 }
 
-// Get mode of model
+// Get mode of model.
 KDEMode KDEModel::Mode() const
 {
   return boost::apply_visitor(ModeVisitor(), kdeModel);
 }
 
-// Modify mode of model
+// Modify mode of model.
 KDEMode& KDEModel::Mode()
 {
   return boost::apply_visitor(ModeVisitor(), kdeModel);

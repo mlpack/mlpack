@@ -32,29 +32,31 @@ class KDERules
            KernelType& kernel,
            const bool sameSet);
 
-  //! Base Case
+  //! Base Case.
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
-  //! SingleTree Rescore
+  //! SingleTree Rescore.
   double Score(const size_t queryIndex, TreeType& referenceNode);
 
-  //! SingleTree Score
+  //! SingleTree Score.
   double Rescore(const size_t queryIndex,
                  TreeType& referenceNode,
                  const double oldScore) const;
 
-  //! DoubleTree Score
+  //! DoubleTree Score.
   double Score(TreeType& queryNode, TreeType& referenceNode);
 
-  //! DoubleTree Rescore
+  //! DoubleTree Rescore.
   double Rescore(TreeType& queryNode,
                  TreeType& referenceNode,
                  const double oldScore) const;
 
   typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
 
+  //! Get traversal information.
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
 
+  //! Modify traversal information.
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
 
   //! Get the number of base cases.
@@ -90,7 +92,7 @@ class KDERules
   //! Instantiated metric.
   MetricType& metric;
 
-  //! Instantiated kernel
+  //! Instantiated kernel.
   KernelType& kernel;
 
   //! Whether reference and query sets are the same.
@@ -102,6 +104,7 @@ class KDERules
   //! The last reference index.
   size_t lastReferenceIndex;
 
+  //! Traversal information.
   TraversalInfoType traversalInfo;
 
   //! The number of base cases.

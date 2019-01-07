@@ -39,6 +39,7 @@ add_executable(mlpack_test
   hyperplane_test.cpp
   imputation_test.cpp
   init_rules_test.cpp
+  kde_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
   kernel_traits_test.cpp
@@ -109,7 +110,6 @@ add_executable(mlpack_test
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
-  kde_test.cpp
   wgan_test.cpp
   main_tests/test_helper.hpp
   main_tests/emst_test.cpp
@@ -120,6 +120,7 @@ add_executable(mlpack_test
   main_tests/det_test.cpp
   main_tests/decision_tree_test.cpp
   main_tests/decision_stump_test.cpp
+  main_tests/kde_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/logistic_regression_test.cpp
   main_tests/lmnn_test.cpp
@@ -145,7 +146,6 @@ add_executable(mlpack_test
   main_tests/radical_test.cpp
   main_tests/hmm_test_utils.hpp
   main_tests/kernel_pca_test.cpp
-  main_tests/kde_test.cpp
 )
 
 # Link dependencies of test executable.

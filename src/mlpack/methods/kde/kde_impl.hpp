@@ -16,7 +16,7 @@
 namespace mlpack {
 namespace kde {
 
-//! Construct tree that rearranges the dataset
+//! Construct tree that rearranges the dataset.
 template<typename TreeType, typename MatType>
 TreeType* BuildTree(
     MatType&& dataset,
@@ -27,7 +27,7 @@ TreeType* BuildTree(
   return new TreeType(std::forward<MatType>(dataset), oldFromNew);
 }
 
-//! Construct tree that doesn't rearrange the dataset
+//! Construct tree that doesn't rearrange the dataset.
 template<typename TreeType, typename MatType>
 TreeType* BuildTree(
     MatType&& dataset,
@@ -228,11 +228,13 @@ Train(MatType referenceSet)
   if (referenceSet.n_cols == 0)
     throw std::invalid_argument("cannot train KDE model with an empty "
                                 "reference set");
+
   if (ownsReferenceTree)
   {
     delete referenceTree;
     delete oldFromNewReferences;
   }
+
   this->ownsReferenceTree = true;
   Timer::Start("building_reference_tree");
   this->oldFromNewReferences = new std::vector<size_t>;
@@ -262,11 +264,13 @@ Train(Tree* referenceTree, std::vector<size_t>* oldFromNewReferences)
   if (referenceTree->Dataset().n_cols == 0)
     throw std::invalid_argument("cannot train KDE model with an empty "
                                 "reference set");
+
   if (ownsReferenceTree == true)
   {
     delete this->referenceTree;
     delete this->oldFromNewReferences;
   }
+
   this->ownsReferenceTree = false;
   this->referenceTree = referenceTree;
   this->oldFromNewReferences = oldFromNewReferences;
@@ -307,8 +311,11 @@ Evaluate(MatType querySet, arma::vec& estimations)
 
     // Check whether has already been trained.
     if (!trained)
+    {
       throw std::runtime_error("cannot evaluate KDE model: model needs to be "
                                "trained before evaluation");
+    }
+
     // Check querySet has at least 1 element to evaluate.
     if (querySet.n_cols == 0)
     {
@@ -316,10 +323,13 @@ Evaluate(MatType querySet, arma::vec& estimations)
                 << "be returned" << std::endl;
       return;
     }
+
     // Check whether dimensions match.
     if (querySet.n_rows != referenceTree->Dataset().n_rows)
+    {
       throw std::invalid_argument("cannot evaluate KDE model: querySet and "
                                   "referenceSet dimensions don't match");
+    }
 
     Timer::Start("computing_kde");
     // Evaluate
@@ -375,8 +385,11 @@ Evaluate(Tree* queryTree,
 
   // Check whether has already been trained.
   if (!trained)
+  {
     throw std::runtime_error("cannot evaluate KDE model: model needs to be "
                              "trained before evaluation");
+  }
+
   // Check querySet has at least 1 element to evaluate.
   if (queryTree->Dataset().n_cols == 0)
   {
@@ -384,19 +397,25 @@ Evaluate(Tree* queryTree,
               << "be returned" << std::endl;
     return;
   }
+
   // Check whether dimensions match.
   if (queryTree->Dataset().n_rows != referenceTree->Dataset().n_rows)
+  {
     throw std::invalid_argument("cannot evaluate KDE model: querySet and "
                                 "referenceSet dimensions don't match");
+  }
+
   // Check the mode is correct.
   if (mode != DUAL_TREE_MODE)
+  {
     throw std::invalid_argument("cannot evaluate KDE model: cannot use "
                                 "a query tree when mode is different from "
                                 "dual-tree");
+  }
 
   Timer::Start("computing_kde");
 
-  // Evaluate
+  // Evaluate.
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
   RuleType rules = RuleType(referenceTree->Dataset(),
                             queryTree->Dataset(),
@@ -438,8 +457,10 @@ Evaluate(arma::vec& estimations)
 {
   // Check whether has already been trained.
   if (!trained)
+  {
     throw std::runtime_error("cannot evaluate KDE model: model needs to be "
                              "trained before evaluation");
+  }
 
   // Get estimations vector ready.
   estimations.clear();
@@ -579,11 +600,15 @@ void KDE<KernelType,
 CheckErrorValues(const double relError, const double absError)
 {
   if (relError < 0 || relError > 1)
+  {
     throw std::invalid_argument("Relative error tolerance must be a value "
                                 "between 0 and 1");
+  }
   if (absError < 0)
+  {
     throw std::invalid_argument("Absolute error tolerance must be a value "
                                 "greater or equal to 0");
+  }
 }
 
 template<typename KernelType,
@@ -605,11 +630,14 @@ RearrangeEstimations(const std::vector<size_t>& oldFromNew,
 {
   if (tree::TreeTraits<Tree>::RearrangesDataset)
   {
-    const size_t n_queries = oldFromNew.size();
-    arma::vec rearranged_estimations(n_queries);
-    for (size_t i = 0; i < n_queries; ++i)
-      rearranged_estimations(oldFromNew.at(i)) = estimations(i);
-    estimations = std::move(rearranged_estimations);
+    const size_t nQueries = oldFromNew.size();
+    arma::vec rearrangedEstimations(nQueries);
+
+    // Remap vector.
+    for (size_t i = 0; i < nQueries; ++i)
+      rearrangedEstimations(oldFromNew.at(i)) = estimations(i);
+
+    estimations = std::move(rearrangedEstimations);
   }
 }
 

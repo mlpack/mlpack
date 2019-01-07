@@ -12,16 +12,16 @@
 #ifndef MLPACK_METHODS_KDE_MODEL_HPP
 #define MLPACK_METHODS_KDE_MODEL_HPP
 
-// Include trees
+// Include trees.
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/octree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 
-// Include core
+// Include core.
 #include <mlpack/core.hpp>
 
-// Remaining includes
+// Remaining includes.
 #include <boost/variant.hpp>
 #include "kde.hpp"
 
@@ -220,8 +220,10 @@ class KDEModel
   //! Absolute error tolerance.
   double absError;
 
+  //! Type of kernel.
   KernelTypes kernelType;
 
+  //! Type of tree.
   TreeTypes treeType;
 
   /**

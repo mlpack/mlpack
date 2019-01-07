@@ -79,7 +79,7 @@ PARAM_MODEL_OUT(KDEModel,
                 "If specified, the KDE model will be saved here.",
                 "M");
 
-// Configuration options
+// Configuration options.
 PARAM_STRING_IN("kernel", "Kernel to use for the prediction."
     "('gaussian', 'epanechnikov', 'laplacian', 'spherical', 'triangular').",
     "k", "gaussian");
@@ -113,6 +113,7 @@ static void mlpackMain()
   const std::string modeStr = CLI::GetParam<std::string>("algorithm");
   const double relError = CLI::GetParam<double>("rel_error");
   const double absError = CLI::GetParam<double>("abs_error");
+
   // Initialize results vector.
   arma::vec estimations;
 
@@ -142,12 +143,12 @@ static void mlpackMain()
     arma::mat reference = std::move(CLI::GetParam<arma::mat>("reference"));
 
     kde = new KDEModel();
-    // Set parameters
+    // Set parameters.
     kde->Bandwidth() = bandwidth;
     kde->RelativeError() = relError;
     kde->AbsoluteError() = absError;
 
-    // Set KernelType
+    // Set KernelType.
     if (kernelStr == "gaussian")
       kde->KernelType() = KDEModel::GAUSSIAN_KERNEL;
     else if (kernelStr == "epanechnikov")
@@ -159,7 +160,7 @@ static void mlpackMain()
     else if (kernelStr == "triangular")
       kde->KernelType() = KDEModel::TRIANGULAR_KERNEL;
 
-    // Set TreeType
+    // Set TreeType.
     if (treeStr == "kd-tree")
       kde->TreeType() = KDEModel::KD_TREE;
     else if (treeStr == "ball-tree")
@@ -171,10 +172,10 @@ static void mlpackMain()
     else if (treeStr == "r-tree")
       kde->TreeType() = KDEModel::R_TREE;
 
-    // Build model
+    // Build model.
     kde->BuildModel(std::move(reference));
 
-    // Set Mode
+    // Set Mode.
     if (modeStr == "dual-tree")
       kde->Mode() = KDEMode::DUAL_TREE_MODE;
     else if (modeStr == "single-tree")
@@ -182,18 +183,20 @@ static void mlpackMain()
   }
   else
   {
-    // Load model
+    // Load model.
     kde = CLI::GetParam<KDEModel*>("input_model");
   }
 
-  // Evaluation
+  // Evaluation.
   if (CLI::HasParam("query"))
   {
     arma::mat query = std::move(CLI::GetParam<arma::mat>("query"));
     kde->Evaluate(std::move(query), estimations);
   }
   else
+  {
     kde->Evaluate(estimations);
+  }
 
   // Output predictions if needed.
   if (CLI::HasParam("predictions"))

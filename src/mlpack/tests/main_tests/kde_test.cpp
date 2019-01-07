@@ -55,7 +55,7 @@ BOOST_FIXTURE_TEST_SUITE(KDEMainTest, KDETestFixture);
  **/
 BOOST_AUTO_TEST_CASE(KDEGaussianRTreeResultsMain)
 {
-  // Datasets
+  // Datasets.
   arma::mat reference = arma::randu(3, 500);
   arma::mat query = arma::randu(3, 100);
   arma::vec kdeEstimations, mainEstimations;
@@ -68,13 +68,13 @@ BOOST_AUTO_TEST_CASE(KDEGaussianRTreeResultsMain)
       metric::EuclideanDistance,
       arma::mat,
       tree::RTree>
-    kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
+      kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
   kde.Evaluate(query, kdeEstimations);
-  // Normalize estimations
+  // Normalize estimations.
   kdeEstimations /= kernel.Normalizer(reference.n_rows);
 
-  // Main estimations
+  // Main estimations.
   SetInputParam("reference", reference);
   SetInputParam("query", query);
   SetInputParam("kernel", std::string("gaussian"));
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(KDEGaussianRTreeResultsMain)
  **/
 BOOST_AUTO_TEST_CASE(KDETriangularBallTreeResultsMain)
 {
-  // Datasets
+  // Datasets.
   arma::mat reference = arma::randu(3, 300);
   arma::mat query = arma::randu(3, 100);
   arma::vec kdeEstimations, mainEstimations;
@@ -110,11 +110,11 @@ BOOST_AUTO_TEST_CASE(KDETriangularBallTreeResultsMain)
       metric::EuclideanDistance,
       arma::mat,
       tree::BallTree>
-    kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
+      kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
   kde.Train(reference);
   kde.Evaluate(query, kdeEstimations);
 
-  // Main estimations
+  // Main estimations.
   SetInputParam("reference", reference);
   SetInputParam("query", query);
   SetInputParam("kernel", std::string("triangular"));
@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_CASE(KDETriangularBallTreeResultsMain)
  **/
 BOOST_AUTO_TEST_CASE(KDEMonoResultsMain)
 {
-  // Datasets
+  // Datasets.
   arma::mat reference = arma::randu(2, 300);
   arma::vec kdeEstimations, mainEstimations;
   double kernelBandwidth = 2.3;
@@ -153,10 +153,10 @@ BOOST_AUTO_TEST_CASE(KDEMonoResultsMain)
   kde.Train(reference);
   // Perform monochromatic KDE.
   kde.Evaluate(kdeEstimations);
-  // Normalize
+  // Normalize.
   kdeEstimations /= kernel.Normalizer(reference.n_rows);
 
-  // Main estimations
+  // Main estimations.
   SetInputParam("reference", reference);
   SetInputParam("kernel", std::string("epanechnikov"));
   SetInputParam("tree", std::string("cover-tree"));
@@ -193,12 +193,12 @@ BOOST_AUTO_TEST_CASE(KDEOutputSize)
   arma::mat reference = arma::randu<arma::mat>(dim, 325);
   arma::mat query = arma::randu<arma::mat>(dim, samples);
 
-  // Main params
+  // Main params.
   SetInputParam("reference", reference);
   SetInputParam("query", query);
 
   mlpackMain();
-  // Check number of output elements
+  // Check number of output elements.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::vec>("predictions").size(), samples);
 }
 
@@ -213,7 +213,7 @@ BOOST_AUTO_TEST_CASE(KDEModelReuse)
   arma::mat reference = arma::randu<arma::mat>(dim, 300);
   arma::mat query = arma::randu<arma::mat>(dim, samples);
 
-  // Main params
+  // Main params.
   SetInputParam("reference", reference);
   SetInputParam("query", query);
   SetInputParam("bandwidth", 2.4);
@@ -223,7 +223,7 @@ BOOST_AUTO_TEST_CASE(KDEModelReuse)
 
   arma::vec oldEstimations = std::move(CLI::GetParam<arma::vec>("predictions"));
 
-  // Change parameters and load model
+  // Change parameters and load model.
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   SetInputParam("bandwidth", 0.5);
   SetInputParam("query", query);
@@ -234,7 +234,7 @@ BOOST_AUTO_TEST_CASE(KDEModelReuse)
 
   arma::vec newEstimations = std::move(CLI::GetParam<arma::vec>("predictions"));
 
-  // Check estimations are the same
+  // Check estimations are the same.
   for (size_t i = 0; i < samples; ++i)
     BOOST_REQUIRE_CLOSE(oldEstimations[i], newEstimations[i], relError);
 }
@@ -245,7 +245,7 @@ BOOST_AUTO_TEST_CASE(KDEModelReuse)
  **/
 BOOST_AUTO_TEST_CASE(KDEGaussianSingleKDTreeResultsMain)
 {
-  // Datasets
+  // Datasets.
   arma::mat reference = arma::randu(3, 400);
   arma::mat query = arma::randu(3, 400);
   arma::vec kdeEstimations, mainEstimations;
@@ -258,12 +258,12 @@ BOOST_AUTO_TEST_CASE(KDEGaussianSingleKDTreeResultsMain)
       metric::EuclideanDistance,
       arma::mat,
       tree::BallTree>
-    kde(relError, 0.0, kernel, KDEMode::SINGLE_TREE_MODE, metric);
+      kde(relError, 0.0, kernel, KDEMode::SINGLE_TREE_MODE, metric);
   kde.Train(reference);
   kde.Evaluate(query, kdeEstimations);
   kdeEstimations /= kernel.Normalizer(reference.n_rows);
 
-  // Main estimations
+  // Main estimations.
   SetInputParam("reference", reference);
   SetInputParam("query", query);
   SetInputParam("kernel", std::string("gaussian"));
@@ -289,7 +289,7 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidKernel)
   arma::mat reference = arma::randu<arma::mat>(2, 10);
   arma::mat query = arma::randu<arma::mat>(2, 5);
 
-  // Main params
+  // Main params.
   SetInputParam("reference", reference);
   SetInputParam("query", query);
   SetInputParam("kernel", std::string("linux"));
@@ -307,7 +307,7 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidTree)
   arma::mat reference = arma::randu<arma::mat>(2, 10);
   arma::mat query = arma::randu<arma::mat>(2, 5);
 
-  // Main params
+  // Main params.
   SetInputParam("reference", reference);
   SetInputParam("query", query);
   SetInputParam("tree", std::string("olive"));
@@ -325,7 +325,7 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidAlgorithm)
   arma::mat reference = arma::randu<arma::mat>(2, 10);
   arma::mat query = arma::randu<arma::mat>(2, 5);
 
-  // Main params
+  // Main params.
   SetInputParam("reference", reference);
   SetInputParam("query", query);
   SetInputParam("algorithm", std::string("bogosort"));
@@ -345,7 +345,7 @@ BOOST_AUTO_TEST_CASE(KDEMainReferenceAndModel)
   arma::mat query = arma::randu<arma::mat>(2, 5);
   KDEModel* model = new KDEModel();
 
-  // Main params
+  // Main params.
   SetInputParam("reference", reference);
   SetInputParam("query", query);
   SetInputParam("input_model", model);
@@ -363,16 +363,16 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidAbsoluteError)
   arma::mat reference = arma::randu<arma::mat>(1, 10);
   arma::mat query = arma::randu<arma::mat>(1, 5);
 
-  // Main params
+  // Main params.
   SetInputParam("reference", reference);
   SetInputParam("query", query);
 
   Log::Fatal.ignoreInput = true;
-  // Invalid value
+  // Invalid value.
   SetInputParam("abs_error", -0.1);
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
-  // Valid value
+  // Valid value.
   SetInputParam("abs_error", 5.8);
   BOOST_REQUIRE_NO_THROW(mlpackMain());
   Log::Fatal.ignoreInput = false;
@@ -386,7 +386,7 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidRelativeError)
   arma::mat reference = arma::randu<arma::mat>(1, 10);
   arma::mat query = arma::randu<arma::mat>(1, 5);
 
-  // Main params
+  // Main params.
   SetInputParam("reference", reference);
   SetInputParam("query", query);
 
@@ -399,7 +399,7 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidRelativeError)
   SetInputParam("rel_error", 1.1);
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
-  // Valid value
+  // Valid value.
   SetInputParam("rel_error", 0.3);
   BOOST_REQUIRE_NO_THROW(mlpackMain());
   Log::Fatal.ignoreInput = false;

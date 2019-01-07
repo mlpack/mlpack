@@ -17,6 +17,7 @@ set(DIRS
   gmm
   hmm
   hoeffding_trees
+  kde
   kernel_pca
   kmeans
   lars
@@ -48,7 +49,6 @@ set(DIRS
   sparse_coding
   sparse_svm
   svdplusplus
-  kde
 )
 
 foreach(dir ${DIRS})
