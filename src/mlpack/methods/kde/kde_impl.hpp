@@ -59,6 +59,8 @@ KDE(const double relError,
     MetricType metric) :
     kernel(kernel),
     metric(metric),
+    referenceTree(nullptr),
+    oldFromNewReferences(nullptr),
     relError(relError),
     absError(absError),
     ownsReferenceTree(false),

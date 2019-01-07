@@ -62,8 +62,8 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
     return 0.0;
 
   // Calculations.
-  double distance = metric.Evaluate(querySet.col(queryIndex),
-                                    referenceSet.col(referenceIndex));
+  const double distance = metric.Evaluate(querySet.col(queryIndex),
+                                          referenceSet.col(referenceIndex));
   densities(queryIndex) += kernel.Evaluate(distance);
 
   ++baseCases;
@@ -74,7 +74,7 @@ double KDERules<MetricType, KernelType, TreeType>::BaseCase(
 
 //! Single-tree scoring function.
 template<typename MetricType, typename KernelType, typename TreeType>
-double KDERules<MetricType, KernelType, TreeType>::
+inline double KDERules<MetricType, KernelType, TreeType>::
 Score(const size_t queryIndex, TreeType& referenceNode)
 {
   double score, maxKernel, minKernel, bound;
@@ -133,7 +133,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
 }
 
 template<typename MetricType, typename KernelType, typename TreeType>
-double KDERules<MetricType, KernelType, TreeType>::Rescore(
+inline double KDERules<MetricType, KernelType, TreeType>::Rescore(
     const size_t /* queryIndex */,
     TreeType& /* referenceNode */,
     const double oldScore) const
@@ -216,7 +216,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
 //! Double-tree
 template<typename MetricType, typename KernelType, typename TreeType>
-double KDERules<MetricType, KernelType, TreeType>::
+inline double KDERules<MetricType, KernelType, TreeType>::
 Rescore(TreeType& /*queryNode*/,
         TreeType& /*referenceNode*/,
         const double oldScore) const
