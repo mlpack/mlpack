@@ -4,6 +4,7 @@
 set(SOURCES
   sparse_svm_function.hpp
   sparse_svm_function_impl.hpp
+  sparse_svm.hpp
 )
 
 # add directory name to sources
