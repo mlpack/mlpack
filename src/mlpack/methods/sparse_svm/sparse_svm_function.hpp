@@ -53,6 +53,15 @@ class SparseSVMFunction
   template <typename GradType>
   void Gradient(const arma::mat& parameters, size_t id, GradType& gradient);
 
+  /**
+   * Simultaneously compute both the objective function and gradient for model
+   * parameters.
+   *
+   * @param parameters The parameters of the SVM.
+   * @param gradient Sparse matrix to output the gradient into.
+   */
+  double EvaluateWithGradient(const arma::mat& parameters, arma::mat& gradient);
+
   //! Return the initial point for the optimization.
   const arma::mat& InitialPoint() const { return initialPoint; }
   //! Modify the initial point for the optimization.
