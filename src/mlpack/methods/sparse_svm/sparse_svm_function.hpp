@@ -49,9 +49,13 @@ class SparseSVMFunction
    * @param parameters The parameters of the SVM.
    * @param id Index of the datapoint to use for the gradient evaluation.
    * @param gradient Sparse matrix to output the gradient into.
+   * @param batchSize Size of batch to process
    */
   template <typename GradType>
-  void Gradient(const arma::mat& parameters, size_t id, GradType& gradient);
+  void Gradient(const arma::mat& parameters,
+                const size_t firstId,
+                GradType& gradient,
+                const size_t batchSize = 1);
 
   //! Return the initial point for the optimization.
   const arma::mat& InitialPoint() const { return initialPoint; }
