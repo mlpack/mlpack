@@ -12,7 +12,7 @@
 #include <string>
 
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "Range Search";
+static const std::string testName = "RangeSearchMain";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
@@ -23,9 +23,11 @@ static const std::string testName = "Range Search";
 #include "../test_tools.hpp"
 
 using namespace mlpack;
+
 struct RangeSearchTestFixture
 {
  public:
+
   RangeSearchTestFixture()
   {
     // Cache in the options for this program.
@@ -37,4 +39,9 @@ struct RangeSearchTestFixture
     bindings::tests::CleanMemory();
     CLI::ClearSettings();
   }
+BOOST_FIXTURE_TEST_SUITE(RangeSearchMainTest, RangeSearchTestFixture);
+BOOST_AUTO_TEST_CASE(SyntheticRangeSearch)
+{
+  mlpackMain();
 }
+BOOST_AUTO_TEST_SUITE_END();
