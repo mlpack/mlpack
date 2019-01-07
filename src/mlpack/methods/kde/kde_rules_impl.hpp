@@ -193,9 +193,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
                                    referenceStat.Centroid());
     }
 
-    // Can be paralellized but we avoid it for now because of a compilation
-    // error in visual C++ compiler.
-    // #pragma omp for
+    // Sum up estimations.
     for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
     {
       densities(queryNode.Descendant(i)) +=
