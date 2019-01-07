@@ -179,6 +179,12 @@ class KDE
   //! Modify the kernel.
   KernelType& Kernel() { return kernel; }
 
+  //! Get the metric.
+  const MetricType& Metric() const { return metric; }
+
+  //! Modify the metric.
+  MetricType& Metric() { return metric; }
+
   //! Get the reference tree.
   Tree* ReferenceTree() { return referenceTree; }
 
