@@ -107,9 +107,9 @@ PARAM_INT_IN("new_dimensionality", "If not 0, reduce the dimensionality of "
 PARAM_FLAG("center", "If set, the transformed data will be centered about the "
     "origin.", "c");
 
-PARAM_FLAG("nystroem_method", "If set, the nystroem method will be used.", "n");
+PARAM_FLAG("nystroem_method", "If set, the Nystroem method will be used.", "n");
 
-PARAM_STRING_IN("sampling", "Sampling scheme to use for the nystroem method: "
+PARAM_STRING_IN("sampling", "Sampling scheme to use for the Nystroem method: "
     "'kmeans', 'random', 'ordered'", "s", "kmeans");
 
 PARAM_DOUBLE_IN("kernel_scale", "Scale, for 'hyptan' kernel.", "S", 1.0);
@@ -135,19 +135,19 @@ void RunKPCA(arma::mat& dataset,
     if (sampling == "kmeans")
     {
       KernelPCA<KernelType, NystroemKernelRule<KernelType,
-          KMeansSelection<> > >kpca;
+          KMeansSelection<> > > kpca(kernel, centerTransformedData);
       kpca.Apply(dataset, newDim);
     }
     else if (sampling == "random")
     {
       KernelPCA<KernelType, NystroemKernelRule<KernelType,
-          RandomSelection> > kpca;
+          RandomSelection> > kpca(kernel, centerTransformedData);
       kpca.Apply(dataset, newDim);
     }
     else if (sampling == "ordered")
     {
       KernelPCA<KernelType, NystroemKernelRule<KernelType,
-          OrderedSelection> > kpca;
+          OrderedSelection> > kpca(kernel, centerTransformedData);
       kpca.Apply(dataset, newDim);
     }
     else
