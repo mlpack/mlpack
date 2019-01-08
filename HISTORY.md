@@ -324,7 +324,7 @@
 
   * Add support for observation weights to LinearRegression.
 
-  * MahalanobisDistance<> now takes root of the distance by default and
+  * MahalanobisDistance<> now takes the root of the distance by default and
     therefore satisfies the triangle inequality (TakeRoot now defaults to true).
 
   * Better handling of optional Armadillo HDF5 dependency.
