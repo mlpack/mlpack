@@ -80,6 +80,10 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     "Note : The following parameters are deprecated and " 
     "will be removed in mlpack 4: " + PRINT_PARAM_STRING("output") + 
     ", " + PRINT_PARAM_STRING("output_probabilities") + 
+    "\nUse " + PRINT_PARAM_STRING("predictions") + " instead of " + 
+    PRINT_PARAM_STRING("output") + "\nUse " +
+    PRINT_PARAM_STRING("probabilities") + " instead of " + 
+    PRINT_PARAM_STRING("output_probabilities") + 
     "\n\n"
     "This implementation of logistic regression does not support the general "
     "multi-class case but instead only the two-class case.  Any labels must "
@@ -335,8 +339,6 @@ static void mlpackMain()
           << trainingDimensionality << ")!" << endl;
     }
 
-    // The CLI param "output" is deprecated and replaced by "predictions"
-    // "output" parameter will be removed in mlpack 4.
     // We must perform predictions on the test set.  Training (and the
     // optimizer) are irrelevant here; we'll pass in the model we have.
     if (CLI::HasParam("output") || CLI::HasParam("output"))
@@ -344,19 +346,18 @@ static void mlpackMain()
       Log::Info << "Predicting classes of points in '"
           << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
       model->Classify(testSet, predictions, decisionBoundary);
+
+      // The CLI param "output" is deprecated and replaced by "predictions"
+      // "output" parameter will be removed in mlpack 4.
       if (CLI::HasParam("output"))
-      {
         CLI::GetParam<arma::Row<size_t>>("output") = std::move(predictions);
-      }
-      else
-      {
+      if (CLI::HasParam("predictions"))
         CLI::GetParam<arma::Row<size_t>>("predictions") 
             = std::move(predictions);  
-      }
     }
 
     // The CLI param "output_probabilites" is deprecated 
-    //and replaced by "probabilities"
+    // and replaced by "probabilities"
     // "output_probabilites" parameter will be removed in mlpack 4.
     if (CLI::HasParam("output_probabilities") || CLI::HasParam("probabilities"))
     {
