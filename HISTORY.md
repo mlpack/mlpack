@@ -90,7 +90,7 @@
   * Add hyperparameter tuning infrastructure and cross-validation infrastructure
     in src/mlpack/core/cv/ and src/mlpack/core/hpt/.
 
-  * Fix bug in a mean shift.
+  * Fix bug in mean shift.
 
   * Add random forests (see src/mlpack/methods/random_forest).
 
@@ -279,7 +279,7 @@
   * Added MatrixCompletion class (matrix_completion), which performs nuclear
     norm minimization to fill unknown values of an input matrix.
 
-  * No more dependence on Boost. Random; now we use C++11 STL random support.
+  * No more dependence on Boost.Random; now we use C++11 STL random support.
 
   * Add softmax regression, contributed by Siddharth Agrawal and QiaoAn Chen.
 
@@ -305,7 +305,7 @@
   * Add --input_model_file and --output_model_file options to appropriate
     machine learning algorithms.
 
-  * Rename all executables to start with a "mlpack" prefix (#229).
+  * Rename all executables to start with an "mlpack" prefix (#229).
 
   * Add HoeffdingTree and mlpack_hoeffding_tree, an implementation of the
     streaming decision tree methodology from Domingos and Hulten in 2000.
@@ -324,7 +324,7 @@
 
   * Add support for observation weights to LinearRegression.
 
-  * MahalanobisDistance<> now takes the root of the distance by default and
+  * MahalanobisDistance<> now takes root of the distance by default and
     therefore satisfies the triangle inequality (TakeRoot now defaults to true).
 
   * Better handling of optional Armadillo HDF5 dependency.
