@@ -88,7 +88,7 @@ std::string GetPrintableType(
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::enable_if<data::HasSerialize<T>>::type*)
 {
-  return data.cppType + " model filename (xml/txt/bin)";
+  return data.cppType + " filename (xml/txt/bin)";
 }
 
 } // namespace cli
