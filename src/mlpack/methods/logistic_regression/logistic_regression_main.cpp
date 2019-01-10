@@ -140,10 +140,10 @@ PARAM_UROW_OUT("predictions", "If test data is specified, this matrix is where "
 //and it can be removed in mlpack 4
 PARAM_MATRIX_OUT("output_probabilities", "If test data is specified, this "
     "matrix is where the class probabilities for the test set will be saved.",
-    "p");
+    "x");
 PARAM_MATRIX_OUT("probabilities", "If test data is specified, this "
     "matrix is where the class probabilities for the test set will be saved.",
-    "x");
+    "p");
 PARAM_DOUBLE_IN("decision_boundary", "Decision boundary for prediction; if the "
     "logistic function for a point is less than the boundary, the class is "
     "taken to be 0; otherwise, the class is 1.", "d", 0.5);
@@ -349,11 +349,10 @@ static void mlpackMain()
 
       // The CLI param "output" is deprecated and replaced by "predictions"
       // "output" parameter will be removed in mlpack 4.
-      if (CLI::HasParam("output"))
-        CLI::GetParam<arma::Row<size_t>>("output") = std::move(predictions);
       if (CLI::HasParam("predictions"))
-        CLI::GetParam<arma::Row<size_t>>("predictions") 
-            = std::move(predictions);  
+        CLI::GetParam<arma::Row<size_t>>("predictions") = predictions;
+      if (CLI::HasParam("output"))
+        CLI::GetParam<arma::Row<size_t>>("output") = std::move(predictions);    
     }
 
     // The CLI param "output_probabilites" is deprecated 
@@ -365,16 +364,11 @@ static void mlpackMain()
           << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
       arma::mat probabilities;
       model->Classify(testSet, probabilities);
+
       if (CLI::HasParam("output_probabilities"))
-      {
-        CLI::GetParam<arma::mat>("output_probabilities") =
-            std::move(probabilities);
-      }
-      else
-      {
-        CLI::GetParam<arma::mat>("probabilities") =
-            std::move(probabilities);
-      }
+        CLI::GetParam<arma::mat>("output_probabilities") = probabilities;
+      if (CLI::HasParam("probabilities"))
+        CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
     }
   }
 
