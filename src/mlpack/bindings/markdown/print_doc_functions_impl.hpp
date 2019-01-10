@@ -50,19 +50,22 @@ inline std::string GetBindingName(const std::string& bindingName)
 template<typename T>
 inline std::string PrintValue(const T& value, bool quotes)
 {
+  std::string result;
   if (BindingInfo::Language() == "cli")
   {
-    return cli::PrintValue(value, quotes);
+    result = cli::PrintValue(value, quotes);
   }
   else if (BindingInfo::Language() == "python")
   {
-    return python::PrintValue(value, quotes);
+    result = python::PrintValue(value, quotes);
   }
   else
   {
     throw std::invalid_argument("PrintValue(): unknown "
         "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
+
+  return "`" + result + "`";
 }
 
 /**
@@ -106,39 +109,45 @@ inline std::string PrintDefault(const std::string& paramName)
  */
 inline std::string PrintDataset(const std::string& dataset)
 {
+  std::string result;
   if (BindingInfo::Language() == "cli")
   {
-    return cli::PrintDataset(dataset);
+    result = cli::PrintDataset(dataset);
   }
   else if (BindingInfo::Language() == "python")
   {
-    return python::PrintDataset(dataset);
+    result = python::PrintDataset(dataset);
   }
   else
   {
     throw std::invalid_argument("PrintDataset(): unknown "
         "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
+
+  return "`" + result + "`";
 }
 
 /**
- * Print a model type parameter (add .bin and return).
+ * Print a model type parameter.
  */
 inline std::string PrintModel(const std::string& model)
 {
+  std::string result;
   if (BindingInfo::Language() == "cli")
   {
-    return cli::PrintModel(model);
+    result = cli::PrintModel(model);
   }
   else if (BindingInfo::Language() == "python")
   {
-    return python::PrintModel(model);
+    result = python::PrintModel(model);
   }
   else
   {
     throw std::invalid_argument("PrintModel(): unknown "
         "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
+
+  return "`" + result + "`";
 }
 
 /**
@@ -192,7 +201,7 @@ inline std::string ParamString(const std::string& paramName)
         "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
 
-  return s.substr(1, s.size() - 2);
+  return "`" + s.substr(1, s.size() - 2) + "`";
 }
 
 /**
@@ -203,7 +212,7 @@ inline std::string ParamType(const util::ParamData& d)
   std::string output;
   CLI::GetSingleton().functionMap[d.tname]["GetPrintableType"](d, NULL,
       &output);
-  return output;
+  return "`" + output + "`";
 }
 
 template<typename T>

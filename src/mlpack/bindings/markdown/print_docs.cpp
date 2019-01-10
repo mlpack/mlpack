@@ -92,8 +92,8 @@ void PrintDocs(const std::string& bindingName,
 
       // Print name, type, description, default.
       cout << "| ";
-      cout << "`" << ParamString(it->second.name) << "` | ";
-      cout << "`" << ParamType(it->second) << "` | ";
+      cout << ParamString(it->second.name) << " | ";
+      cout << ParamType(it->second) << " | ";
       cout << it->second.desc << " | "; // just a string
       string def = PrintDefault(it->second.name);
       if (def.size() > 0)
@@ -119,8 +119,8 @@ void PrintDocs(const std::string& bindingName,
 
       // Print name, type, description.
       cout << "| ";
-      cout << "`" << ParamString(it->second.name) << "` | ";
-      cout << "`" << ParamType(it->second) << "` | ";
+      cout << ParamString(it->second.name) << " | ";
+      cout << ParamType(it->second) << " | ";
       cout << it->second.desc << "|";
       cout << endl;
     }
