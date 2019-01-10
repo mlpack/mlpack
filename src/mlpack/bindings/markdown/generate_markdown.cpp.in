@@ -16,10 +16,25 @@ using namespace std;
 int main()
 {
   cout << "<div id=\"header\" markdown=\"1\">" << endl;
+
+  // We need to create the input form selector for the language.
+  cout << "<form>" << endl;
+  cout << "  <div class=\"language-select-div\">" << endl;
+  cout << "  <select id=\"language-select\" onchange=\"changeLanguage()\">"
+      << endl;
+  ${MARKDOWN_SELECT_CODE}
+  cout << "  </select>" << endl;
+  cout << "  </div>" << endl;
+  cout << "</form>" << endl;
+  cout << endl;
+
   ${MARKDOWN_HEADER_CODE}
   cout << "</div>" << endl << endl;
 
   cout << "<div id=\"docs\" markdown=\"1\">" << endl;
   ${MARKDOWN_CALL_CODE}
   cout << "</div>" << endl << endl;
+
+  // Make sure script gets included for changeLanguage().
+  cout << "<script src=\"res/change_language.js\"></script>" << endl;
 }

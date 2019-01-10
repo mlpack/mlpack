@@ -31,11 +31,9 @@ void PrintHeaders(const std::string& bindingName,
   {
     BindingInfo::Language() = languages[i];
 
-    cout << "<div class=\"language-link\" id=\"" << languages[i]
-        << "\" markdown=\"1\">" << endl;
     cout << " - [" << GetBindingName(bindingName) << "](#"
-        << GetBindingName(bindingName) << ")" << endl;
-    cout << "</div>" << endl;
+        << GetBindingName(bindingName) << "){:class=\"language-link\" id=\""
+        << languages[i] << "\"}" << endl;
   }
 }
 

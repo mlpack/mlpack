@@ -56,7 +56,9 @@ macro (add_markdown_docs name languages)
   set(PROGRAM_MAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp")
   foreach (lang ${languages})
     set(LANGUAGES_PUSH_BACK_CODE "${LANGUAGES_PUSH_BACK_CODE}\n  languages.push_back(\"${lang}\");")
+    set(MARKDOWN_ALL_LANGUAGES_LIST ${MARKDOWN_ALL_LANGUAGES_LIST} ${lang})
   endforeach ()
+  list(REMOVE_DUPLICATES MARKDOWN_ALL_LANGUAGES_LIST)
 
   configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/generate_markdown.binding.hpp.in
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown.${name}.hpp)
@@ -71,6 +73,7 @@ macro (add_markdown_docs name languages)
   set (MARKDOWN_SRCS ${MARKDOWN_SRCS} PARENT_SCOPE)
   set (MARKDOWN_NAMES ${MARKDOWN_NAMES} ${name})
   set (MARKDOWN_NAMES ${MARKDOWN_NAMES} PARENT_SCOPE)
+  set (MARKDOWN_ALL_LANGUAGES_LIST ${MARKDOWN_ALL_LANGUAGES_LIST} PARENT_SCOPE)
 endmacro ()
 
 # After all the methods/ directories have been traversed, we can add the
@@ -78,10 +81,18 @@ endmacro ()
 function (post_markdown_setup)
   # We need to generate the program file.
   message(STATUS "MARKDOWN_NAMES: ${MARKDOWN_NAMES}")
+  message(STATUS "MARKDOWN_LANGUAGES: ${MARKDOWN_ALL_LANGUAGES_LIST}")
   foreach (name ${MARKDOWN_NAMES})
     set (MARKDOWN_INCLUDE_CODE "${MARKDOWN_INCLUDE_CODE}\n#include \"generate_markdown.${name}.hpp\"")
-    set (MARKDOWN_HEADER_CODE "${MARKDOWN_HEADER_CODE}\n Print${name}Headers();")
+    set (MARKDOWN_HEADER_CODE "${MARKDOWN_HEADER_CODE}\n  Print${name}Headers();")
     set (MARKDOWN_CALL_CODE "${MARKDOWN_CALL_CODE}\n  Print${name}Docs();")
+  endforeach ()
+  # Print the first language manually.
+  list (GET MARKDOWN_ALL_LANGUAGES_LIST 0 FIRST_LANG)
+  list (REMOVE_AT MARKDOWN_ALL_LANGUAGES_LIST 0)
+  set (MARKDOWN_SELECT_CODE "  cout << \"    <option value=\\\"${FIRST_LANG}\\\" selected>${FIRST_LANG}</option>\" << endl;")
+  foreach (lang ${MARKDOWN_ALL_LANGUAGES_LIST})
+    set (MARKDOWN_SELECT_CODE "${MARKDOWN_SELECT_CODE}\n  cout << \"    <option value=\\\"${lang}\\\">${lang}</option>\" << endl;")
   endforeach ()
 
   configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/generate_markdown.cpp.in
