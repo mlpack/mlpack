@@ -29,7 +29,7 @@ int main()
   cout << endl;
 
   ${MARKDOWN_HEADER_CODE}
-  cout << "</div>" << endl << endl;
+  cout << endl << "</div>" << endl << endl;
 
   cout << "<div id=\"docs\" markdown=\"1\">" << endl;
   ${MARKDOWN_CALL_CODE}
