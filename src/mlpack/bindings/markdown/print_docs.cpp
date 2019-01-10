@@ -58,11 +58,10 @@ void PrintDocs(const std::string& bindingName,
 
   // Next we want to print the logical name of the binding (that's known by
   // ProgramInfo).
-  cout << "```logicalName" << endl;
-  cout << programDoc.programName << endl;
-  cout << "```" << endl;
+  cout << "#### " << programDoc.programName << endl;
   cout << endl;
-  cout << programDoc.shortDocumentation << endl;
+  cout << programDoc.shortDocumentation << " [Detailed documentation](#"
+      << bindingName << "_detailed-documentation" << ")." << endl;
 
   // Next, print the PROGRAM_INFO() documentation for each language.
   for (size_t i = 0; i < languages.size(); ++i)
@@ -127,7 +126,8 @@ void PrintDocs(const std::string& bindingName,
     }
     cout << endl;
 
-    cout << "### Detailed documentation" << endl;
+    cout << "### <a name=\"" << bindingName << "_detailed-documentation\"></a> "
+        << "Detailed documentation" << endl;
     cout << endl;
     cout << programDoc.documentation() << endl;
     cout << endl;
