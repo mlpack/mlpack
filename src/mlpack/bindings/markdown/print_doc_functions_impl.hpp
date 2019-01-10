@@ -148,19 +148,22 @@ inline std::string PrintModel(const std::string& model)
 template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args)
 {
+  std::string s = "```\n";
   if (BindingInfo::Language() == "cli")
   {
-    return cli::ProgramCall(GetBindingName(programName), args...);
+    s += cli::ProgramCall(GetBindingName(programName), args...);
   }
   else if (BindingInfo::Language() == "python")
   {
-    return python::ProgramCall(GetBindingName(programName), args...);
+    s += python::ProgramCall(GetBindingName(programName), args...);
   }
   else
   {
     throw std::invalid_argument("ProgramCall(): unknown "
         "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
+  s += "\n```";
+  return s;
 }
 
 /**
@@ -171,19 +174,25 @@ std::string ProgramCall(const std::string& programName, Args... args)
  */
 inline std::string ParamString(const std::string& paramName)
 {
+  // These functions always put a '' around the parameter, so we will skip that
+  // bit.
+  std::string s;
   if (BindingInfo::Language() == "cli")
   {
-    return cli::ParamString(paramName);
+    // The CLI bindings put a '' around the parameter, so skip that...
+    s = cli::ParamString(paramName);
   }
   else if (BindingInfo::Language() == "python")
   {
-    return python::ParamString(paramName);
+    s = python::ParamString(paramName);
   }
   else
   {
     throw std::invalid_argument("ParamString(): unknown "
         "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
+
+  return s.substr(1, s.size() - 2);
 }
 
 /**

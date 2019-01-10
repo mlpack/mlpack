@@ -25,7 +25,7 @@ namespace python {
 inline std::string GetBindingName(const std::string& bindingName)
 {
   // No modification is needed to the name---we just use it as-is.
-  return bindingName;
+  return bindingName + "()";
 }
 
 /**
