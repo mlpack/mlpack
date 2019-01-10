@@ -51,8 +51,10 @@ void PrintDocs(const std::string& bindingName,
   {
     BindingInfo::Language() = languages[i];
 
-    cout << "<!-- language: " << languages[i] << " -->" << endl;
+    cout << "<div class=\"language-title\" id=\"" << languages[i]
+        << "\" markdown=\"1\">" << endl;
     cout << "## " << GetBindingName(bindingName) << endl;
+    cout << "</div>" << endl;
   }
   cout << endl;
 
@@ -62,13 +64,16 @@ void PrintDocs(const std::string& bindingName,
   cout << programDoc.programName << endl;
   cout << "```" << endl;
   cout << endl;
+  cout << programDoc.shortDocumentation << endl;
 
   // Next, print the PROGRAM_INFO() documentation for each language.
   for (size_t i = 0; i < languages.size(); ++i)
   {
     BindingInfo::Language() = languages[i];
 
-    cout << "<!-- language: " << languages[i] << " -->" << endl;
+    // This works with the Kramdown processor.
+    cout << "<div class=\"language-section\" id=\"" << languages[i]
+        << "\" markdown=\"1\">" << endl;
 
     // We need to print the signature.
 
@@ -79,7 +84,7 @@ void PrintDocs(const std::string& bindingName,
 
     cout << "| ***name*** | ***type*** | ***description*** | ***default*** |"
         << endl;
-    cout << "---------------------------------------------------------------"
+    cout << "|------------|------------|-------------------|---------------|"
         << endl;
     map<string, ParamData>& parameters = CLI::Parameters();
     for (map<string, ParamData>::const_iterator it = parameters.begin();
@@ -90,10 +95,14 @@ void PrintDocs(const std::string& bindingName,
 
       // Print name, type, description, default.
       cout << "| ";
-      cout << ParamString(it->second.name) << " | ";
-      cout << ParamType(it->second) << " | ";
+      cout << "`" << ParamString(it->second.name) << "` | ";
+      cout << "`" << ParamType(it->second) << "` | ";
       cout << it->second.desc << " | "; // just a string
-      cout << PrintDefault(it->second.name) << " |"; // needs implementation
+      string def = PrintDefault(it->second.name);
+      if (def.size() > 0)
+        cout << "`" << def << "` |";
+      else
+        cout << " |";
       cout << endl;
     }
     cout << endl;
@@ -101,10 +110,10 @@ void PrintDocs(const std::string& bindingName,
     // Next, iterate through the list of output options.
     cout << "### Output options" << endl;
     cout << endl;
-    cout << programDoc.shortDocumentation << endl;
+    // TODO: add descriptions about output parameters.
     cout << endl;
     cout << "| ***name*** | ***type*** | ***description*** |" << endl;
-    cout << "-----------------------------------------------" << endl;
+    cout << "|------------|------------|-------------------|" << endl;
     for (map<string, ParamData>::const_iterator it = parameters.begin();
          it != parameters.end(); ++it)
     {
@@ -113,8 +122,8 @@ void PrintDocs(const std::string& bindingName,
 
       // Print name, type, description.
       cout << "| ";
-      cout << ParamString(it->second.name) << " | ";
-      cout << ParamType(it->second) << " | ";
+      cout << "`" << ParamString(it->second.name) << "` | ";
+      cout << "`" << ParamType(it->second) << "` | ";
       cout << it->second.desc << "|";
       cout << endl;
     }
@@ -129,7 +138,14 @@ void PrintDocs(const std::string& bindingName,
     cout << endl;
     for (size_t i = 0; i < programDoc.seeAlso.size(); ++i)
     {
-      cout << " - " << "[" << programDoc.seeAlso[i].first << "](";
+      cout << " - " << "[";
+      // We need special processing if the user has specified a binding name
+      // starting with @ (i.e., '@kfn' or similar).
+      if (programDoc.seeAlso[i].first[0] == '@')
+        cout << GetBindingName(programDoc.seeAlso[i].first.substr(1));
+      else
+        cout << programDoc.seeAlso[i].first;
+      cout << "](";
 
       // We need special handling of Doxygen information.
       if (programDoc.seeAlso[i].second.substr(0, 8) == "@doxygen")
@@ -140,6 +156,9 @@ void PrintDocs(const std::string& bindingName,
       cout << ")" << endl;
 
     }
+    cout << endl;
+
+    cout << "</div>" << endl;
     cout << endl;
   }
 
