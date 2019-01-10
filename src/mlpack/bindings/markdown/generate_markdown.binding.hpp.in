@@ -19,6 +19,7 @@ namespace mlpack {
 namespace bindings {
 namespace markdown {
 
+void Print${BINDING}Headers();
 void Print${BINDING}Docs();
 
 } // namespace markdown

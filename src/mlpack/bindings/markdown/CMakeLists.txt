@@ -80,6 +80,7 @@ function (post_markdown_setup)
   message(STATUS "MARKDOWN_NAMES: ${MARKDOWN_NAMES}")
   foreach (name ${MARKDOWN_NAMES})
     set (MARKDOWN_INCLUDE_CODE "${MARKDOWN_INCLUDE_CODE}\n#include \"generate_markdown.${name}.hpp\"")
+    set (MARKDOWN_HEADER_CODE "${MARKDOWN_HEADER_CODE}\n Print${name}Headers();")
     set (MARKDOWN_CALL_CODE "${MARKDOWN_CALL_CODE}\n  Print${name}Docs();")
   endforeach ()
 

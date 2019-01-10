@@ -22,6 +22,23 @@ using namespace mlpack::util;
 using namespace mlpack::bindings;
 using namespace mlpack::bindings::markdown;
 
+void PrintHeaders(const std::string& bindingName,
+                  const std::vector<std::string>& languages)
+{
+  // We just want to print the name of the function and a link, as Markdown.
+  // We have to mark it as having the right language with a div.
+  for (size_t i = 0; i < languages.size(); ++i)
+  {
+    BindingInfo::Language() = languages[i];
+
+    cout << "<div class=\"language-link\" id=\"" << languages[i]
+        << "\" markdown=\"1\">" << endl;
+    cout << " - [" << GetBindingName(bindingName) << "](#"
+        << GetBindingName(bindingName) << ")" << endl;
+    cout << "</div>" << endl;
+  }
+}
+
 void PrintDocs(const std::string& bindingName,
                const vector<string>& languages)
 {

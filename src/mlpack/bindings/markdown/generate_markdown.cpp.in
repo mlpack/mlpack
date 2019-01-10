@@ -11,8 +11,15 @@ ${MARKDOWN_INCLUDE_CODE}
 using namespace mlpack;
 using namespace mlpack::bindings;
 using namespace mlpack::bindings::markdown;
+using namespace std;
 
 int main()
 {
+  cout << "<div id=\"header\" markdown=\"1\">" << endl;
+  ${MARKDOWN_HEADER_CODE}
+  cout << "</div>" << endl << endl;
+
+  cout << "<div id=\"docs\" markdown=\"1\">" << endl;
   ${MARKDOWN_CALL_CODE}
+  cout << "</div>" << endl << endl;
 }

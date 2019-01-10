@@ -23,6 +23,15 @@ namespace mlpack {
 namespace bindings {
 namespace markdown {
 
+void Print${BINDING}Headers()
+{
+  // Fill the vector of languages for which we want to print.
+  vector<string> languages;
+  ${LANGUAGES_PUSH_BACK_CODE}
+
+  PrintHeaders("${BINDING}", languages);
+}
+
 void Print${BINDING}Docs()
 {
   // Fill the vector of languages for which we want to print.
