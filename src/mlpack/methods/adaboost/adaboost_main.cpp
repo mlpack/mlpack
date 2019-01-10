@@ -79,7 +79,7 @@ PROGRAM_INFO("AdaBoost",
     "classes for each point in the test dataset are output to the " +
     PRINT_PARAM_STRING("output") + " output parameter.  The AdaBoost model "
     "itself is output to the " + PRINT_PARAM_STRING("output_model") +
-    "output parameter."
+    " output parameter."
     "\n\n"
     "For example, to run AdaBoost on an input dataset " +
     PRINT_DATASET("data") + " with perceptrons as the weak learner type, "
