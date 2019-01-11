@@ -42,6 +42,11 @@ inline std::string PrintImport(const std::string& bindingName);
 inline std::string PrintOutputOptionInfo(const std::string& language);
 
 /**
+ * Print details about the different types for a language.
+ */
+inline std::string PrintTypeDocs();
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>

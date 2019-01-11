@@ -38,6 +38,18 @@ void GetPrintableType(const util::ParamData& data,
   }
 }
 
+/**
+ * Print the type of a parameter.  The type printed depends on the current
+ * setting of BindingInfo::Language().
+ */
+template<typename T>
+std::string GetPrintableType(const util::ParamData& data)
+{
+  std::string output;
+  GetPrintableType<T>(data, (void*) NULL, (void*) &output);
+  return output;
+}
+
 } // namespace markdown
 } // namespace bindings
 } // namespace mlpack

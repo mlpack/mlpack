@@ -15,6 +15,8 @@
 
 #include "print_doc_functions.hpp"
 #include "binding_info.hpp"
+#include "print_type_doc.hpp"
+#include "get_printable_type.hpp"
 
 #include <mlpack/bindings/cli/print_doc_functions.hpp>
 #include <mlpack/bindings/python/print_doc_functions.hpp>
@@ -102,6 +104,159 @@ inline std::string PrintOutputOptionInfo()
     throw std::invalid_argument("PrintOutputOptionInfo(): unknown "
         "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
+}
+
+namespace priv {
+
+// We'll need a fake class for printing model type documentation.
+class mlpackModel
+{
+ public:
+  // Fake serialization to make SFINAE work right for this type.
+  template<typename Archive>
+  void serialize(Archive&, const unsigned int) {}
+};
+
+} // namespace priv
+
+/**
+ * Print details about the different types for a language.
+ */
+inline std::string PrintTypeDocs()
+{
+  std::ostringstream oss;
+  oss << "<div id=\"" << BindingInfo::Language()
+      << "\" class=\"language-types\" markdown=\"1\">" << std::endl;
+  oss << "## data formats" << std::endl;
+  oss << "{: .language-types-h2 #" << BindingInfo::Language()
+      << "_data-formats }" << std::endl;
+  oss << std::endl;
+
+  // Iterate through each of the types that we care about.
+  oss << "mlpack bindings for " << PrintLanguage(BindingInfo::Language())
+      << " take and return a restricted set of types, for simplicity.  These "
+      << "include primitive types, matrix/vector types, categorical matrix "
+      << "types, and model types.  Each type is detailed below." << std::endl;
+  oss << std::endl;
+
+  // Create fake ParamData to pass around.
+  util::ParamData data;
+  data.desc = "fake";
+  data.name = "fake";
+  data.tname = std::string(typeid(int).name());
+  data.cppType = "int";
+  data.alias = 'f';
+  data.wasPassed = false;
+  data.noTranspose = true;
+  data.required = false;
+  data.input = true;
+  data.loaded = false;
+  data.persistent = false;
+  data.value = boost::any(int(0));
+
+  oss << " - `" << GetPrintableType<int>(data) << "`: "
+      << PrintTypeDoc<int>(data) << std::endl;
+
+  data.tname = std::string(typeid(double).name());
+  data.cppType = "double";
+  data.value = boost::any(double(0.0));
+
+  oss << " - `" << GetPrintableType<double>(data) << "`: "
+      << PrintTypeDoc<double>(data) << std::endl;
+
+  data.tname = std::string(typeid(bool).name());
+  data.cppType = "double";
+  data.value = boost::any(bool(0.0));
+
+  oss << " - `" << GetPrintableType<bool>(data) << "`: "
+      << PrintTypeDoc<bool>(data) << std::endl;
+
+  data.tname = std::string(typeid(std::string).name());
+  data.cppType = "std::string";
+  data.value = boost::any(std::string(""));
+
+  oss << " - `" << GetPrintableType<std::string>(data) << "`: "
+      << PrintTypeDoc<std::string>(data) << std::endl;
+
+  data.tname = std::string(typeid(std::vector<int>).name());
+  data.cppType = "std::vector<int>";
+  data.value = boost::any(std::vector<int>());
+
+  oss << " - `" << GetPrintableType<std::vector<int>>(data) << "`: "
+      << PrintTypeDoc<std::vector<int>>(data) << std::endl;
+
+  data.tname = std::string(typeid(std::vector<std::string>).name());
+  data.cppType = "std::vector<std::string>";
+  data.value = boost::any(std::vector<std::string>());
+
+  oss << " - `" << GetPrintableType<std::vector<std::string>>(data) << "`: "
+      << PrintTypeDoc<std::vector<std::string>>(data) << std::endl;
+
+  data.tname = std::string(typeid(arma::mat).name());
+  data.cppType = "arma::mat";
+  data.value = boost::any(arma::mat());
+
+  oss << " - `" << GetPrintableType<arma::mat>(data) << "`: "
+      << PrintTypeDoc<arma::mat>(data) << std::endl;
+
+  data.tname = std::string(typeid(arma::Mat<size_t>).name());
+  data.cppType = "arma::Mat<size_t>";
+  data.value = boost::any(arma::Mat<size_t>());
+
+  oss << " - `" << GetPrintableType<arma::Mat<size_t>>(data) << "`: "
+      << PrintTypeDoc<arma::Mat<size_t>>(data) << std::endl;
+
+  data.tname = std::string(typeid(arma::rowvec).name());
+  data.cppType = "arma::rowvec";
+  data.value = boost::any(arma::rowvec());
+
+  oss << " - `" << GetPrintableType<arma::rowvec>(data) << "`: "
+      << PrintTypeDoc<arma::rowvec>(data) << std::endl;
+
+  data.tname = std::string(typeid(arma::Row<size_t>).name());
+  data.cppType = "arma::Row<size_t>";
+  data.value = boost::any(arma::Row<size_t>());
+
+  oss << " - `" << GetPrintableType<arma::Row<size_t>>(data) << "`: "
+      << PrintTypeDoc<arma::Row<size_t>>(data) << std::endl;
+
+  data.tname = std::string(typeid(arma::vec).name());
+  data.cppType = "arma::vec";
+  data.value = boost::any(arma::vec());
+
+  oss << " - `" << GetPrintableType<arma::vec>(data) << "`: "
+      << PrintTypeDoc<arma::vec>(data) << std::endl;
+
+  data.tname = std::string(typeid(arma::Col<size_t>).name());
+  data.cppType = "arma::Col<size_t>";
+  data.value = boost::any(arma::Col<size_t>());
+
+  oss << " - `" << GetPrintableType<arma::Col<size_t>>(data) << "`: "
+      << PrintTypeDoc<arma::Col<size_t>>(data) << std::endl;
+
+  data.tname =
+      std::string(typeid(std::tuple<data::DatasetInfo, arma::mat>).name());
+  data.cppType = "std::tuple<data::DatasetInfo, arma::mat>";
+  data.value = boost::any(std::tuple<data::DatasetInfo, arma::mat>());
+
+  oss << " - `"
+      << GetPrintableType<std::tuple<data::DatasetInfo, arma::mat>>(data)
+      << "`: " << PrintTypeDoc<std::tuple<data::DatasetInfo, arma::mat>>(data)
+      << std::endl;
+
+  data.tname = std::string(typeid(priv::mlpackModel).name());
+  data.cppType = "priv::mlpackModel";
+  data.value = boost::any(new priv::mlpackModel());
+
+  oss << " - `" << GetPrintableType<priv::mlpackModel*>(data) << "`: "
+      << PrintTypeDoc<priv::mlpackModel*>(data) << std::endl;
+
+  // Clean up memory.
+  delete boost::any_cast<priv::mlpackModel*>(data.value);
+
+  oss << std::endl << "</div>" << std::endl;
+
+  return oss.str();
 }
 
 /**
