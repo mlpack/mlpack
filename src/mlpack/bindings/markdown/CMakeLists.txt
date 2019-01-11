@@ -11,6 +11,10 @@ endmacro ()
 # We don't need to find any libraries or anything to generate markdown
 # documentation.
 
+# Get categories.
+include(MarkdownCategories.cmake)
+set(MARKDOWN_CATEGORIES ${MARKDOWN_CATEGORIES} PARENT_SCOPE)
+
 # Move sources to the right directory.
 set(SOURCES
   "binding_info.hpp"
@@ -43,11 +47,12 @@ endforeach()
 
 # Create the add_markdown_docs() macro.  It's meant to be used as
 # 'add_markdown_docs(knn, "cli;python;julia")', for instance.
-macro (add_markdown_docs name languages)
-  # First, we should filter any languages that aren't being compiled in the
-  # build.  TODO: probably this requires modifying other CMakeLists.txts for
-  # each of the bindings so that we know what languages are enabled and what
-  # languages aren't.
+macro (add_markdown_docs name languages category)
+  # First, make sure that the category is a valid category.
+  list(FIND MARKDOWN_CATEGORIES ${category} cat_index)
+  if (${cat_index} EQUAL -1)
+    message(FATAL_ERROR "add_markdown_docs(): unknown category ${category}!  See the categories in src/mlpack/bindings/markdown/MarkdownCategories.cmake.")
+  endif ()
 
   # Next, we should use configure_file() to generate each
   # generate_markdown.<binding>.cpp.
@@ -73,6 +78,8 @@ macro (add_markdown_docs name languages)
   set (MARKDOWN_SRCS ${MARKDOWN_SRCS} PARENT_SCOPE)
   set (MARKDOWN_NAMES ${MARKDOWN_NAMES} ${name})
   set (MARKDOWN_NAMES ${MARKDOWN_NAMES} PARENT_SCOPE)
+  set (MARKDOWN_NAME_CATEGORIES ${MARKDOWN_NAME_CATEGORIES} ${category})
+  set (MARKDOWN_NAME_CATEGORIES ${MARKDOWN_NAME_CATEGORIES} PARENT_SCOPE)
   set (MARKDOWN_ALL_LANGUAGES_LIST ${MARKDOWN_ALL_LANGUAGES_LIST} PARENT_SCOPE)
 endmacro ()
 
@@ -82,17 +89,44 @@ function (post_markdown_setup)
   # We need to generate the program file.
   message(STATUS "MARKDOWN_NAMES: ${MARKDOWN_NAMES}")
   message(STATUS "MARKDOWN_LANGUAGES: ${MARKDOWN_ALL_LANGUAGES_LIST}")
-  foreach (name ${MARKDOWN_NAMES})
-    set (MARKDOWN_INCLUDE_CODE "${MARKDOWN_INCLUDE_CODE}\n#include \"generate_markdown.${name}.hpp\"")
-    set (MARKDOWN_HEADER_CODE "${MARKDOWN_HEADER_CODE}\n  Print${name}Headers();")
-    set (MARKDOWN_CALL_CODE "${MARKDOWN_CALL_CODE}\n  Print${name}Docs();")
-  endforeach ()
+
   # Print the first language manually.
   list (GET MARKDOWN_ALL_LANGUAGES_LIST 0 FIRST_LANG)
   list (REMOVE_AT MARKDOWN_ALL_LANGUAGES_LIST 0)
   set (MARKDOWN_SELECT_CODE "  cout << \"    <option value=\\\"${FIRST_LANG}\\\" selected>${FIRST_LANG}</option>\" << endl;")
   foreach (lang ${MARKDOWN_ALL_LANGUAGES_LIST})
     set (MARKDOWN_SELECT_CODE "${MARKDOWN_SELECT_CODE}\n  cout << \"    <option value=\\\"${lang}\\\">${lang}</option>\" << endl;")
+  endforeach ()
+
+  # Iterate over categories of binding.
+  list(LENGTH MARKDOWN_NAMES NUM_MARKDOWN_BINDINGS)
+  list(LENGTH MARKDOWN_CATEGORIES NUM_MARKDOWN_CATEGORIES)
+  math(EXPR cat_limit "${NUM_MARKDOWN_CATEGORIES} - 1")
+  foreach (i RANGE ${cat_limit})
+    list (GET MARKDOWN_CATEGORIES ${i} cat)
+    # Put the things in this category in a div.
+    set (MARKDOWN_HEADER_CODE "${MARKDOWN_HEADER_CODE}  cout << \"<div class=\\\"category\\\" markdown=\\\"1\\\">\" << endl;")
+    set (MARKDOWN_HEADER_CODE "${MARKDOWN_HEADER_CODE}\n  cout << \"<h5>${cat}:</h5>\" << endl;")
+
+    # Add an option for this binding.
+    math(EXPR range_limit "${NUM_MARKDOWN_BINDINGS} - 1")
+    foreach (j RANGE ${range_limit})
+      list (GET MARKDOWN_NAME_CATEGORIES ${j} category)
+      if (NOT category STREQUAL cat)
+        continue ()
+      endif ()
+
+      list (GET MARKDOWN_NAMES ${j} name)
+      set (MARKDOWN_HEADER_CODE "${MARKDOWN_HEADER_CODE}\n  Print${name}Headers();")
+    endforeach ()
+
+    set (MARKDOWN_HEADER_CODE "${MARKDOWN_HEADER_CODE}\n  cout << \"</div>\" <<
+endl << endl;")
+  endforeach ()
+
+  foreach (name ${MARKDOWN_NAMES})
+    set (MARKDOWN_INCLUDE_CODE "${MARKDOWN_INCLUDE_CODE}\n#include \"generate_markdown.${name}.hpp\"")
+    set (MARKDOWN_CALL_CODE "${MARKDOWN_CALL_CODE}\n  Print${name}Docs();")
   endforeach ()
 
   configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/generate_markdown.cpp.in
