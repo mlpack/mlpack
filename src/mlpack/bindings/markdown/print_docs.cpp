@@ -22,15 +22,6 @@ using namespace mlpack::util;
 using namespace mlpack::bindings;
 using namespace mlpack::bindings::markdown;
 
-// A function to imitate how kramdown will strip non-alphanumeric characters.
-std::string StripAnchor(const std::string& input)
-{
-  std::string s(input);
-  s.erase(std::remove_if(s.begin(), s.end(),
-      [](char c) -> bool { return !std::isalnum(c); }), s.end());
-  return s;
-}
-
 void PrintHeaders(const std::string& bindingName,
                   const std::vector<std::string>& languages)
 {
