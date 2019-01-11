@@ -13,6 +13,7 @@
 #define MLPACK_BINDINGS_MARKDOWN_MD_OPTION_HPP
 
 #include <mlpack/core/util/param_data.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include "default_param.hpp"
 #include "get_param.hpp"
 #include "get_printable_param.hpp"
@@ -59,7 +60,8 @@ class MDOption
     data.input = input;
     data.loaded = false;
     // Only "verbose" and "copy_all_inputs" will be persistent.
-    if (identifier == "verbose" || identifier == "copy_all_inputs")
+    if (identifier == "verbose" || identifier == "copy_all_inputs" ||
+        identifier == "help" || identifier == "info" || identifier == "version")
       data.persistent = true;
     else
       data.persistent = false;
@@ -92,7 +94,8 @@ class MDOption
     // import more than one .so that uses CLI, so we have to keep the options
     // separate.  programName is a global variable from mlpack_main.hpp.
     CLI::Add(std::move(data));
-    if (identifier != "verbose" && identifier != "copy_all_inputs")
+    if (identifier != "verbose" && identifier != "copy_all_inputs" &&
+        identifier != "help" && identifier != "info" && identifier != "version")
       CLI::StoreSettings(bindingName);
     CLI::ClearSettings();
   }

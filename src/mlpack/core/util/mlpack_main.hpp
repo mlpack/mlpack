@@ -187,6 +187,13 @@ using Option = mlpack::bindings::markdown::MDOption<T>;
 
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
+
+// CLI-specific parameters.
+PARAM_FLAG("help", "Default help info.", "h");
+PARAM_STRING_IN("info", "Print help on a specific option.", "", "");
+PARAM_FLAG("version", "Display the version of mlpack.", "V");
+
+// Python-specific parameters.
 PARAM_FLAG("copy_all_inputs", "If specified, all input parameters will be deep"
     " copied before the method is run.  This is useful for debugging problems "
     "where the input parameters are being modified by the algorithm, but can "
