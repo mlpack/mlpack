@@ -26,6 +26,15 @@ function changeLanguage()
       titles[i].style.display = "none";
   }
 
+  var details = document.getElementsByClassName("language-detail-link");
+  for (i = 0; i < details.length; ++i)
+  {
+    if (details[i].id == lang)
+      details[i].style.display = "inline";
+    else
+      details[i].style.display = "none";
+  }
+
   var sections = document.getElementsByClassName("language-section");
   for (i = 0; i < sections.length; ++i)
   {
@@ -36,4 +45,30 @@ function changeLanguage()
   }
 }
 
-document.body.onload = changeLanguage()
+document.body.onload = function() {
+  // Do we need to manually set the language because the user came with an
+  // anchor?
+  if (window.location.hash)
+  {
+    // Try to extract the language.
+    firstUnderscore = window.location.hash.indexOf("_");
+    if (firstUnderscore !== -1)
+    {
+      var lang = window.location.hash.substring(1, firstUnderscore);
+      // Now see if it's in the list of languages.
+      var select = document.getElementById("language-select");
+      for (i = 0; i < select.length; ++i)
+      {
+        var select_lang = select[i].value;
+        // Is the language a match?
+        if (lang === select_lang)
+        {
+          select.value = select_lang;
+          break;
+        }
+      }
+    }
+  }
+
+  changeLanguage();
+}

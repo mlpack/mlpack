@@ -22,6 +22,15 @@ using namespace mlpack::util;
 using namespace mlpack::bindings;
 using namespace mlpack::bindings::markdown;
 
+// A function to imitate how kramdown will strip non-alphanumeric characters.
+std::string StripAnchor(const std::string& input)
+{
+  std::string s(input);
+  s.erase(std::remove_if(s.begin(), s.end(),
+      [](char c) -> bool { return !std::isalnum(c); }), s.end());
+  return s;
+}
+
 void PrintHeaders(const std::string& bindingName,
                   const std::vector<std::string>& languages)
 {
@@ -31,9 +40,9 @@ void PrintHeaders(const std::string& bindingName,
   {
     BindingInfo::Language() = languages[i];
 
-    cout << " - [" << GetBindingName(bindingName) << "](#"
-        << GetBindingName(bindingName) << "){:class=\"language-link\" id=\""
-        << languages[i] << "\"}" << endl;
+    cout << " - [" << GetBindingName(bindingName) << "](#" << languages[i]
+        << "_" << bindingName << "){: .language-link #" << languages[i] << " }"
+        << endl;
   }
 }
 
@@ -52,6 +61,7 @@ void PrintDocs(const std::string& bindingName,
     cout << "<div class=\"language-title\" id=\"" << languages[i]
         << "\" markdown=\"1\">" << endl;
     cout << "## " << GetBindingName(bindingName) << endl;
+    cout << "{: #" << languages[i] << "_" << bindingName << " }" << endl;
     cout << "</div>" << endl;
   }
   cout << endl;
