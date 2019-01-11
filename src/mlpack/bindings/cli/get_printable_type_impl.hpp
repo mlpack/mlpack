@@ -48,9 +48,9 @@ std::string GetPrintableType(
     const util::ParamData& data,
     const typename std::enable_if<util::IsStdVector<T>::value>::type*)
 {
-  if (std::is_same<T, int>::value)
+  if (std::is_same<T, std::vector<int>>::value)
     return "int vector";
-  else if (std::is_same<T, std::string>::value)
+  else if (std::is_same<T, std::vector<std::string>>::value)
     return "string vector";
   else
     throw std::invalid_argument("unknown vector type " + data.cppType);

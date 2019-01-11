@@ -11,7 +11,7 @@ function changeLanguage()
   {
     // With each of the links, we get the inner <a>, but we need the parent
     // <li>.
-    if (links[i].id == lang)
+    if (links[i].id == lang || links[i].id == "always")
       links[i].parentElement.style.display = "list-item";
     else
       links[i].parentElement.style.display = "none";
@@ -24,6 +24,15 @@ function changeLanguage()
       titles[i].style.display = "inline";
     else
       titles[i].style.display = "none";
+  }
+
+  var types = document.getElementsByClassName("language-types");
+  for (i = 0; i < types.length; ++i)
+  {
+    if (types[i].id == lang)
+      types[i].style.display = "inline";
+    else
+      types[i].style.display = "none";
   }
 
   var details = document.getElementsByClassName("language-detail-link");

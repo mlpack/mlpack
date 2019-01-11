@@ -64,6 +64,8 @@ set(BINDING_SOURCES
   print_output_processing.hpp
   print_pyx.hpp
   print_pyx.cpp
+  print_type_doc.hpp
+  print_type_doc_impl.hpp
   py_option.hpp
   strip_type.hpp
   mlpack/arma_util.hpp

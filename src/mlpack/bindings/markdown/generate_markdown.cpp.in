@@ -6,6 +6,8 @@
  * the project.
  */
 #include <mlpack/core.hpp>
+#include "binding_info.hpp"
+#include "print_doc_functions.hpp"
 ${MARKDOWN_INCLUDE_CODE}
 
 using namespace mlpack;
@@ -28,10 +30,41 @@ int main()
   cout << "</form>" << endl;
   cout << endl;
 
+  // The links to the data type sections get put here.
+  cout << " - [mlpack overview](#mlpack-overview){: .language-link #always }"
+      << endl;
+
   ${MARKDOWN_HEADER_CODE}
   cout << endl << "</div>" << endl << endl;
 
   cout << "<div id=\"docs\" markdown=\"1\">" << endl;
+
+  /**
+   * "mlpack overview" section.  This will go at the top of the page.
+   */
+  cout << "## mlpack overview" << endl;
+  cout << endl;
+  cout << "mlpack is an intuitive, fast, and flexible C++ machine learning "
+      "library with bindings to other languages.  It is meant to be a machine "
+      "learning analog to LAPACK, and aims to implement a wide array of machine"
+      " learning methods and functions as a \"swiss army knife\" for machine "
+      "learning researchers.";
+  cout << endl << endl;
+  cout << "This reference page details mlpack's bindings to other languages. "
+      "Further useful mlpack documentation links are given below.";
+  cout << endl << endl;
+  cout << " - [mlpack homepage](https://www.mlpack.org/)" << endl;
+  cout << " - [mlpack on Github](https://github.com/mlpack/mlpack)" << endl;
+  cout << " - [mlpack main documentation page]"
+      << "(https://www.mlpack.org/docs.html)" << endl;
+  cout << endl;
+
+  /**
+   * Discussion of different data types section.  This goes just below the
+   * overview section at the top of the page.
+   */
+  ${MARKDOWN_DATATYPES_CODE}
+
   ${MARKDOWN_CALL_CODE}
   cout << "</div>" << endl << endl;
 

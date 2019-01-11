@@ -37,6 +37,11 @@ inline std::string PrintImport(const std::string& bindingName);
 inline std::string PrintOutputOptionInfo();
 
 /**
+ * Print documentation for each of the types.
+ */
+inline std::string PrintTypeDocs();
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>
