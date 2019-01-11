@@ -11,11 +11,12 @@ endmacro ()
 # We don't need to find any libraries or anything to generate markdown
 # documentation.
 
-# Get categories.
+# Get categories.  The list of allowable categories for add_markdown_docs() is
+# in that file.
 include(MarkdownCategories.cmake)
 set(MARKDOWN_CATEGORIES ${MARKDOWN_CATEGORIES} PARENT_SCOPE)
 
-# Move sources to the right directory.
+# Add sources for Markdown bindings.
 set(SOURCES
   "binding_info.hpp"
   "binding_info.cpp"
@@ -34,6 +35,7 @@ set(SOURCES
   "program_doc_wrapper.hpp"
 )
 
+# Copy all Markdown sources to the build directory.
 add_custom_target(markdown_copy)
 add_custom_command(TARGET markdown_copy PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory
@@ -46,8 +48,11 @@ foreach(file ${SOURCES})
 endforeach()
 
 # Create the add_markdown_docs() macro.  It's meant to be used as
-# 'add_markdown_docs(knn, "cli;python;julia")', for instance.
+# 'add_markdown_docs(knn, "cli;python;julia", "classification")', for instance.
+# See the file 'MarkdownCategories.cmake' for valid categories that can be used
+# by the macro.
 macro (add_markdown_docs name languages category)
+
   # First, make sure that the category is a valid category.
   list(FIND MARKDOWN_CATEGORIES ${category} cat_index)
   if (${cat_index} EQUAL -1)
@@ -55,23 +60,27 @@ macro (add_markdown_docs name languages category)
   endif ()
 
   # Next, we should use configure_file() to generate each
-  # generate_markdown.<binding>.cpp.
+  # generate_markdown.<binding>.cpp.  We need to loop over all the languages for
+  # this binding to do that.
   set(BINDING ${name})
   set(LANGUAGES_PUSH_BACK_CODE "")
   set(PROGRAM_MAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp")
   foreach (lang ${languages})
-    set(LANGUAGES_PUSH_BACK_CODE "${LANGUAGES_PUSH_BACK_CODE}\n  languages.push_back(\"${lang}\");")
+    set(LANGUAGES_PUSH_BACK_CODE
+        "${LANGUAGES_PUSH_BACK_CODE}\n  languages.push_back(\"${lang}\");")
     set(MARKDOWN_ALL_LANGUAGES_LIST ${MARKDOWN_ALL_LANGUAGES_LIST} ${lang})
   endforeach ()
   list(REMOVE_DUPLICATES MARKDOWN_ALL_LANGUAGES_LIST)
 
+  # Do the actual file configuration.
   configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/generate_markdown.binding.hpp.in
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown.${name}.hpp)
   configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/generate_markdown.binding.cpp.in
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown.${name}.cpp)
 
   # Lastly, that generate_markdown.<binding>.cpp should be added to the list of
-  # files to be compiled for the 'generate_markdown' target.
+  # files to be compiled for the 'generate_markdown' target.  We also need to
+  # add information about this binding to a set of variables we have to track.
   set (MARKDOWN_SRCS ${MARKDOWN_SRCS}
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown.${name}.hpp
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown.${name}.cpp)
@@ -84,13 +93,19 @@ macro (add_markdown_docs name languages category)
 endmacro ()
 
 # After all the methods/ directories have been traversed, we can add the
-# 'generate_markdown' target.
+# 'generate_markdown' target.  This function is run at the bottom of
+# methods/CMakeLists.txt.
 function (post_markdown_setup)
-  # We need to generate the program file.
-  message(STATUS "MARKDOWN_NAMES: ${MARKDOWN_NAMES}")
-  message(STATUS "MARKDOWN_LANGUAGES: ${MARKDOWN_ALL_LANGUAGES_LIST}")
+  # We need to generate the program file.  This consists of generating three
+  # things:
+  #
+  # - MARKDOWN_INCLUDES: the list of files to be included.
+  # - MARKDOWN_HEADER_CODE: the code used to print the header/sidebar.
+  # - MARKDOWN_CALL_CODE: the code to actually call the functions to print
+  #       documentation for each binding.
 
-  # Print the first language manually.
+  # Print the first language manually, so we can set it as the selected language
+  # in the list.
   list (GET MARKDOWN_ALL_LANGUAGES_LIST 0 FIRST_LANG)
   list (REMOVE_AT MARKDOWN_ALL_LANGUAGES_LIST 0)
   set (MARKDOWN_SELECT_CODE "  cout << \"    <option value=\\\"${FIRST_LANG}\\\" selected>${FIRST_LANG}</option>\" << endl;")
@@ -132,7 +147,8 @@ endl << endl;")
   configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/generate_markdown.cpp.in
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown.cpp)
 
-  # Remember that this is being run from some other directory.
+  # Remember that this is being run from some other directory, so we have to be
+  # explicit with the locations of the files we are compiling against.
   add_executable(generate_markdown
       ${MARKDOWN_SRCS}
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/binding_info.hpp"
@@ -161,7 +177,7 @@ endl << endl;")
   add_custom_command(TARGET markdown PRE_BUILD
       COMMAND ${CMAKE_COMMAND}
           -DPROGRAM=${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown
-          -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/mlpack.md
+          -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/doc/mlpack.md
           -P ${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake
       COMMENT "Generating Markdown documentation for mlpack bindings...")
 endfunction ()
