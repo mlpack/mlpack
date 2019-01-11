@@ -95,8 +95,8 @@ class MountainCar
    * @param velocityMax Maximum legal velocity.
    */
   MountainCar(const double positionMin = -1.2,
-              const double positionMax = 0.5,
-              const double positionGoal = 0.45,
+              const double positionMax = 0.6,
+              const double positionGoal = 0.5,
               const double velocityMin = -0.07,
               const double velocityMax = 0.07,
               const double doneReward = 0) :
@@ -133,10 +133,9 @@ class MountainCar
     nextState.Position() = std::min(
         std::max(nextState.Position(), positionMin), positionMax);
 
-    if (std::abs(nextState.Position() - positionMin) <= 1e-5)
-    {
+    if (nextState.Position() == positionMin && nextState.Velocity() < 0)
       nextState.Velocity() = 0.0;
-    }
+
     bool done = IsTerminal(nextState);
     /**
      * If done is true , it means that car has reached its goal.
@@ -186,7 +185,7 @@ class MountainCar
    */
   bool IsTerminal(const State& state) const
   {
-    return bool(state.Position() >= positionGoal);
+    return state.Position() >= positionGoal;
   }
 
  private:
