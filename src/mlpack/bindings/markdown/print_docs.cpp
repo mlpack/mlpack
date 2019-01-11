@@ -60,8 +60,28 @@ void PrintDocs(const std::string& bindingName,
   // ProgramInfo).
   cout << "#### " << programDoc.programName << endl;
   cout << endl;
-  cout << programDoc.shortDocumentation << " [Detailed documentation](#"
-      << bindingName << "_detailed-documentation" << ")." << endl;
+
+  for (size_t i = 0; i < languages.size(); ++i)
+  {
+    BindingInfo::Language() = languages[i];
+
+    cout << "<div class=\"language-import\" id=\"" << languages[i]
+        << "\" markdown=\"1\">" << endl;
+    string import = PrintImport(bindingName);
+    if (import.size() > 1)
+      cout << "```" << languages[i] << endl << import << endl << "```" << endl;
+    cout << "</div>" << endl;
+  }
+  cout << endl;
+
+  cout << programDoc.shortDocumentation << " ";
+  for (size_t i = 0; i < languages.size(); ++i)
+  {
+    cout << "[Detailed documentation](#" << languages[i] << "_"
+      << bindingName << "_detailed-documentation){: .language-detail-link #"
+      << languages[i] << " }";
+  }
+  cout << "." << endl;
 
   // Next, print the PROGRAM_INFO() documentation for each language.
   for (size_t i = 0; i < languages.size(); ++i)
@@ -90,11 +110,27 @@ void PrintDocs(const std::string& bindingName,
       if (!it->second.input)
         continue;
 
+      // There are some special options that don't exist in some languages.
+      if (languages[i] != "python" && it->second.name == "copy_all_inputs")
+        continue;
+      if (languages[i] != "cli" &&
+          (it->second.name == "help" || it->second.name == "info" ||
+           it->second.name == "version"))
+        continue;
+
       // Print name, type, description, default.
       cout << "| ";
       cout << ParamString(it->second.name) << " | ";
       cout << ParamType(it->second) << " | ";
-      cout << it->second.desc << " | "; // just a string
+      cout << it->second.desc; // just a string
+      // Print whether or not it's a "special" language-only parameter.
+      if (it->second.name == "copy_all_inputs" || it->second.name == "help" ||
+          it->second.name == "info" || it->second.name == "version")
+      {
+        cout << "  <span class=\"special\">Only exists in "
+            << PrintLanguage(languages[i]) << " binding.</span>";
+      }
+      cout << " | ";
       string def = PrintDefault(it->second.name);
       if (def.size() > 0)
         cout << "`" << def << "` |";
@@ -107,7 +143,9 @@ void PrintDocs(const std::string& bindingName,
     // Next, iterate through the list of output options.
     cout << "### Output options" << endl;
     cout << endl;
-    // TODO: add descriptions about output parameters.
+    string outputInfo = PrintOutputOptionInfo();
+    if (outputInfo.size() > 0)
+      cout << outputInfo << endl;
     cout << endl;
     cout << "| ***name*** | ***type*** | ***description*** |" << endl;
     cout << "|------------|------------|-------------------|" << endl;
@@ -121,13 +159,22 @@ void PrintDocs(const std::string& bindingName,
       cout << "| ";
       cout << ParamString(it->second.name) << " | ";
       cout << ParamType(it->second) << " | ";
-      cout << it->second.desc << "|";
+      cout << it->second.desc;
+      // Print whether or not it's a "special" language-only parameter.
+      if (it->second.name == "copy_all_inputs" || it->second.name == "help" ||
+          it->second.name == "info" || it->second.name == "version")
+      {
+        cout << "  <span class=\"special\">Only exists in "
+            << PrintLanguage(languages[i]) << " binding.</span>";
+      }
+      cout << " |";
       cout << endl;
     }
     cout << endl;
 
-    cout << "### <a name=\"" << bindingName << "_detailed-documentation\"></a> "
-        << "Detailed documentation" << endl;
+    cout << "### Detailed documentation" << endl;
+    cout << "{: #" << languages[i] << "_" << bindingName
+        << "_detailed-documentation }" << endl;
     cout << endl;
     cout << programDoc.documentation() << endl;
     cout << endl;

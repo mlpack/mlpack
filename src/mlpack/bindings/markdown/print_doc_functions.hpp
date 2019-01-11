@@ -27,6 +27,21 @@ namespace markdown {
 inline std::string GetBindingName(const std::string& bindingName);
 
 /**
+ * Print the name of the given language.
+ */
+inline std::string PrintLanguage(const std::string& language);
+
+/**
+ * Print any imports that need to be done before using the binding.
+ */
+inline std::string PrintImport(const std::string& bindingName);
+
+/**
+ * Print any special information about output options.
+ */
+inline std::string PrintOutputOptionInfo(const std::string& language);
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>

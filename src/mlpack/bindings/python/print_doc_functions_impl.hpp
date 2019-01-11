@@ -29,6 +29,23 @@ inline std::string GetBindingName(const std::string& bindingName)
 }
 
 /**
+ * Print any import information for the Python binding.
+ */
+inline std::string PrintImport(const std::string& bindingName)
+{
+  return "from mlpack import " + bindingName;
+}
+
+/**
+ * Print any special information about output options.
+ */
+inline std::string PrintOutputOptionInfo()
+{
+  return "Results are returned in a Python dictionary.  The keys of the "
+      "dictionary are the names of the output parameters.";
+}
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>

@@ -30,6 +30,22 @@ inline std::string GetBindingName(const std::string& bindingName)
 }
 
 /**
+ * Print any imports for CLI (there are none, so this returns an empty string).
+ */
+inline std::string PrintImport(const std::string& /* bindingName */)
+{
+  return "";
+}
+
+/**
+ * Print any special information about output options.
+ */
+inline std::string PrintOutputOptionInfo()
+{
+  return "";
+}
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>

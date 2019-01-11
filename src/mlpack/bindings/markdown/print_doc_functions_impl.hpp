@@ -45,6 +45,66 @@ inline std::string GetBindingName(const std::string& bindingName)
 }
 
 /**
+ * Print the name of the given language.
+ */
+inline std::string PrintLanguage(const std::string& language)
+{
+  if (language == "cli")
+  {
+    return "CLI";
+  }
+  else if (language == "python")
+  {
+    return "Python";
+  }
+  else
+  {
+    throw std::invalid_argument("PrintLanguage(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+}
+
+/**
+ * Print any imports that need to be done before using the binding.
+ */
+inline std::string PrintImport(const std::string& bindingName)
+{
+  if (BindingInfo::Language() == "cli")
+  {
+    return cli::PrintImport(bindingName);
+  }
+  else if (BindingInfo::Language() == "python")
+  {
+    return python::PrintImport(bindingName);
+  }
+  else
+  {
+    throw std::invalid_argument("PrintImport(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+}
+
+/**
+ * Print any special information about output options.
+ */
+inline std::string PrintOutputOptionInfo()
+{
+  if (BindingInfo::Language() == "cli")
+  {
+    return cli::PrintOutputOptionInfo();
+  }
+  else if (BindingInfo::Language() == "python")
+  {
+    return python::PrintOutputOptionInfo();
+  }
+  else
+  {
+    throw std::invalid_argument("PrintOutputOptionInfo(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+}
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>
