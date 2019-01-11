@@ -17,3 +17,4 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(dbscan)
 add_python_binding(dbscan)
+add_markdown_docs(dbscan "cli;python" "clustering")
