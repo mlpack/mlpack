@@ -30,8 +30,6 @@ std::string GetPrintableType(
     return "flag";
   else if (std::is_same<T, int>::value)
     return "int";
-  else if (std::is_same<T, float>::value)
-    return "double"; // Not quite right but I'd rather print fewer type names.
   else if (std::is_same<T, double>::value)
     return "double";
   else if (std::is_same<T, std::string>::value)

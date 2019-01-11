@@ -41,16 +41,6 @@ inline std::string GetCythonType<int>(
 }
 
 template<>
-inline std::string GetCythonType<float>(
-    const util::ParamData& /* d */,
-    const typename boost::disable_if<util::IsStdVector<float>>::type*,
-    const typename boost::disable_if<data::HasSerialize<float>>::type*,
-    const typename boost::disable_if<arma::is_arma_type<float>>::type*)
-{
-  return "float";
-}
-
-template<>
 inline std::string GetCythonType<double>(
     const util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<double>>::type*,
