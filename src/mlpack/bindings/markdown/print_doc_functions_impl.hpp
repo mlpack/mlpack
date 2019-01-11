@@ -154,85 +154,113 @@ inline std::string PrintTypeDocs()
   data.persistent = false;
   data.value = boost::any(int(0));
 
-  oss << " - `" << GetPrintableType<int>(data) << "`: "
+  oss << " - `" << GetPrintableType<int>(data) << "`{: #doc_"
+      << BindingInfo::Language() << "_" << GetPrintableType<int>(data) << " }: "
       << PrintTypeDoc<int>(data) << std::endl;
 
   data.tname = std::string(typeid(double).name());
   data.cppType = "double";
   data.value = boost::any(double(0.0));
 
-  oss << " - `" << GetPrintableType<double>(data) << "`: "
-      << PrintTypeDoc<double>(data) << std::endl;
+  oss << " - `" << GetPrintableType<double>(data) << "`{: #doc_"
+      << BindingInfo::Language() << "_" << GetPrintableType<double>(data)
+      << " }: " << PrintTypeDoc<double>(data) << std::endl;
 
   data.tname = std::string(typeid(bool).name());
   data.cppType = "double";
   data.value = boost::any(bool(0.0));
 
-  oss << " - `" << GetPrintableType<bool>(data) << "`: "
-      << PrintTypeDoc<bool>(data) << std::endl;
+  oss << " - `" << GetPrintableType<bool>(data) << "`{: #doc_"
+      << BindingInfo::Language() << "_" << GetPrintableType<bool>(data)
+      << " }: " << PrintTypeDoc<bool>(data) << std::endl;
 
   data.tname = std::string(typeid(std::string).name());
   data.cppType = "std::string";
   data.value = boost::any(std::string(""));
 
-  oss << " - `" << GetPrintableType<std::string>(data) << "`: "
-      << PrintTypeDoc<std::string>(data) << std::endl;
+  oss << " - `" << GetPrintableType<std::string>(data) << "`{: #doc_"
+      << BindingInfo::Language() << "_" << GetPrintableType<std::string>(data)
+      << " }: " << PrintTypeDoc<std::string>(data) << std::endl;
 
   data.tname = std::string(typeid(std::vector<int>).name());
   data.cppType = "std::vector<int>";
   data.value = boost::any(std::vector<int>());
 
-  oss << " - `" << GetPrintableType<std::vector<int>>(data) << "`: "
+  oss << " - `" << GetPrintableType<std::vector<int>>(data) << "`{: #doc_"
+      << BindingInfo::Language() << "_"
+      << GetPrintableType<std::vector<int>>(data) << " }:"
       << PrintTypeDoc<std::vector<int>>(data) << std::endl;
 
   data.tname = std::string(typeid(std::vector<std::string>).name());
   data.cppType = "std::vector<std::string>";
   data.value = boost::any(std::vector<std::string>());
 
-  oss << " - `" << GetPrintableType<std::vector<std::string>>(data) << "`: "
+  oss << " - `" << GetPrintableType<std::vector<std::string>>(data) << "`{: "
+      << "#doc_" << BindingInfo::Language() << "_"
+      << GetPrintableType<std::vector<std::string>>(data) << " }: "
       << PrintTypeDoc<std::vector<std::string>>(data) << std::endl;
 
   data.tname = std::string(typeid(arma::mat).name());
   data.cppType = "arma::mat";
   data.value = boost::any(arma::mat());
 
-  oss << " - `" << GetPrintableType<arma::mat>(data) << "`: "
-      << PrintTypeDoc<arma::mat>(data) << std::endl;
+  oss << " - `" << GetPrintableType<arma::mat>(data) << "`{: #doc_"
+      << BindingInfo::Language() << "_" << GetPrintableType<arma::mat>(data)
+      << " }: " << PrintTypeDoc<arma::mat>(data) << std::endl;
 
   data.tname = std::string(typeid(arma::Mat<size_t>).name());
   data.cppType = "arma::Mat<size_t>";
   data.value = boost::any(arma::Mat<size_t>());
 
-  oss << " - `" << GetPrintableType<arma::Mat<size_t>>(data) << "`: "
+  oss << " - `" << GetPrintableType<arma::Mat<size_t>>(data) << "`{: #doc_"
+      << BindingInfo::Language() << "_"
+      << GetPrintableType<arma::Mat<size_t>>(data) << " }: "
       << PrintTypeDoc<arma::Mat<size_t>>(data) << std::endl;
 
   data.tname = std::string(typeid(arma::rowvec).name());
   data.cppType = "arma::rowvec";
   data.value = boost::any(arma::rowvec());
+  const std::string& rowType = GetPrintableType<arma::rowvec>(data);
 
-  oss << " - `" << GetPrintableType<arma::rowvec>(data) << "`: "
-      << PrintTypeDoc<arma::rowvec>(data) << std::endl;
+  oss << " - `" << rowType << "`{: #doc_" << BindingInfo::Language() << "_"
+      << rowType << " }: " << PrintTypeDoc<arma::rowvec>(data) << std::endl;
 
   data.tname = std::string(typeid(arma::Row<size_t>).name());
   data.cppType = "arma::Row<size_t>";
   data.value = boost::any(arma::Row<size_t>());
+  const std::string& urowType = GetPrintableType<arma::Row<size_t>>(data);
 
-  oss << " - `" << GetPrintableType<arma::Row<size_t>>(data) << "`: "
-      << PrintTypeDoc<arma::Row<size_t>>(data) << std::endl;
+  oss << " - `" << urowType << "`{: #doc_" << BindingInfo::Language() << "_"
+      << urowType << " }: " << PrintTypeDoc<arma::Row<size_t>>(data)
+      << std::endl;
 
   data.tname = std::string(typeid(arma::vec).name());
   data.cppType = "arma::vec";
   data.value = boost::any(arma::vec());
+  const std::string& colType = GetPrintableType<arma::vec>(data);
 
-  oss << " - `" << GetPrintableType<arma::vec>(data) << "`: "
-      << PrintTypeDoc<arma::vec>(data) << std::endl;
+  // For some languages there is no distinction between column and row vectors.
+  // If that is the case, then don't print both.
+  if (colType != rowType)
+  {
+    oss << " - `" << colType << "`{: #doc_" << BindingInfo::Language() << "_"
+        << colType << " }: " << PrintTypeDoc<arma::vec>(data)
+        << std::endl;
+  }
 
   data.tname = std::string(typeid(arma::Col<size_t>).name());
   data.cppType = "arma::Col<size_t>";
   data.value = boost::any(arma::Col<size_t>());
+  const std::string& ucolType = GetPrintableType<arma::Col<size_t>>(data);
 
-  oss << " - `" << GetPrintableType<arma::Col<size_t>>(data) << "`: "
-      << PrintTypeDoc<arma::Col<size_t>>(data) << std::endl;
+  // For some languages there is no distinction between column and row vectors.
+  // If that is the case, then don't print both.
+  if (ucolType != urowType)
+  {
+    oss << " - `" << ucolType << "`{ #doc_" << BindingInfo::Language() << "_"
+        << ucolType << " }: " << PrintTypeDoc<arma::Col<size_t>>(data)
+        << std::endl;
+  }
 
   data.tname =
       std::string(typeid(std::tuple<data::DatasetInfo, arma::mat>).name());
@@ -241,14 +269,17 @@ inline std::string PrintTypeDocs()
 
   oss << " - `"
       << GetPrintableType<std::tuple<data::DatasetInfo, arma::mat>>(data)
-      << "`: " << PrintTypeDoc<std::tuple<data::DatasetInfo, arma::mat>>(data)
+      << "`{: #doc_" << BindingInfo::Language() << "_"
+      << GetPrintableType<std::tuple<data::DatasetInfo, arma::mat>>(data)
+      << " }: " << PrintTypeDoc<std::tuple<data::DatasetInfo, arma::mat>>(data)
       << std::endl;
 
   data.tname = std::string(typeid(priv::mlpackModel).name());
-  data.cppType = "priv::mlpackModel";
+  data.cppType = "mlpackModel";
   data.value = boost::any(new priv::mlpackModel());
 
-  oss << " - `" << GetPrintableType<priv::mlpackModel*>(data) << "`: "
+  oss << " - `" << GetPrintableType<priv::mlpackModel*>(data) << "`{: #doc_"
+      << BindingInfo::Language() << "_model }: "
       << PrintTypeDoc<priv::mlpackModel*>(data) << std::endl;
 
   // Clean up memory.
@@ -427,7 +458,15 @@ inline std::string ParamType(const util::ParamData& d)
   std::string output;
   CLI::GetSingleton().functionMap[d.tname]["GetPrintableType"](d, NULL,
       &output);
-  return "`" + output + "`";
+  // We want to make this a link to the type documentation.
+  std::string anchorType = output;
+  bool result;
+  CLI::GetSingleton().functionMap[d.tname]["IsSerializable"](d, NULL, &result);
+  if (result)
+    anchorType = "model";
+
+  return "[`" + output + "`](#doc_" + BindingInfo::Language() + "_" +
+      anchorType + ")";
 }
 
 template<typename T>

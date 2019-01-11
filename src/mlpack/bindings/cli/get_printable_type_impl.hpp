@@ -61,10 +61,23 @@ std::string GetPrintableType(
  */
 template<typename T>
 std::string GetPrintableType(
-    const util::ParamData& /* data */,
+    const util::ParamData& data,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type*)
 {
-  return "data filename (csv/txt/h5/bin)";
+  if (std::is_same<T, arma::mat>::value)
+    return "2-d matrix file";
+  else if (std::is_same<T, arma::Mat<size_t>>::value)
+    return "2-d index matrix file";
+  else if (std::is_same<T, arma::rowvec>::value)
+    return "1-d matrix file";
+  else if (std::is_same<T, arma::Row<size_t>>::value)
+    return "1-d index matrix file";
+  else if (std::is_same<T, arma::vec>::value)
+    return "1-d matrix file";
+  else if (std::is_same<T, arma::Col<size_t>>::value)
+    return "1-d index matrix file";
+  else
+    throw std::invalid_argument("unknown Armadillo type" + data.cppType);
 }
 
 /**
@@ -76,7 +89,7 @@ std::string GetPrintableType(
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
-  return "categorical/numeric data filename (arff/csv)";
+  return "2-d categorical matrix file";
 }
 
 /**
@@ -88,7 +101,7 @@ std::string GetPrintableType(
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::enable_if<data::HasSerialize<T>>::type*)
 {
-  return data.cppType + " filename (xml/txt/bin)";
+  return data.cppType + " file";
 }
 
 } // namespace cli

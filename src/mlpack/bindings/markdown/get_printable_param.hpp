@@ -119,7 +119,7 @@ void GetPrintableParam(const util::ParamData& data,
       GetPrintableParam<typename std::remove_pointer<T>::type>(data);
 }
 
-} // namespace python
+} // namespace markdown
 } // namespace bindings
 } // namespace mlpack
 

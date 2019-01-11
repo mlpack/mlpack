@@ -36,6 +36,11 @@ void GetPrintableType(const util::ParamData& data,
     *((std::string*) output) =
         python::GetPrintableType<typename std::remove_pointer<T>::type>(data);
   }
+  else
+  {
+    throw std::invalid_argument("GetPrintableType(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
 }
 
 /**
