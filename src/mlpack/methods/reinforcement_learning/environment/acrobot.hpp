@@ -351,6 +351,11 @@ class Acrobot
   double doneReward;
 }; // class Acrobot
 
+/**
+ * Add an alias for backward compatibility.
+ */
+typedef Acrobot Acrobat;
+
 } // namespace rl
 } // namespace mlpack
 
