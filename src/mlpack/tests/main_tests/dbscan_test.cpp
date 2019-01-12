@@ -429,4 +429,44 @@ BOOST_AUTO_TEST_CASE(DBSCANNaiveSearchTest)
   CheckMatrices(output, naiveOutput);
 }
 
+/**
+ * Check that the assignment of cluster is different if
+ * point selection policies are different.
+ */
+BOOST_AUTO_TEST_CASE(DBSCANRandomSelectionFlagTest)
+{
+  arma::mat inputData;
+  if (!data::Load("iris.csv", inputData))
+    BOOST_FAIL("Unable to load dataset iris.csv!");
+
+  SetInputParam("input", inputData);
+  SetInputParam("epsilon", (double) 0.358);
+  SetInputParam("min_size", 1);
+  SetInputParam("selection_type", std::string("ordered"));
+
+  mlpackMain();
+
+  arma::Row<size_t> orderedOutput;
+  orderedOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+
+  bindings::tests::CleanMemory();
+
+  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["epsilon"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["min_size"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["selection_type"].wasPassed = false;
+
+  SetInputParam("input", inputData);
+  SetInputParam("epsilon", (double) 0.358);
+  SetInputParam("min_size", 1);
+  SetInputParam("selection_type", std::string("random"));
+
+  mlpackMain();
+
+  arma::Row<size_t> randomOutput;
+  randomOutput = std::move(CLI::GetParam<arma::Row<size_t>>("assignments"));
+
+  BOOST_REQUIRE_GT(arma::accu(orderedOutput != randomOutput), 0);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

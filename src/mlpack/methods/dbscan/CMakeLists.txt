@@ -4,6 +4,7 @@ set(SOURCES
   dbscan.hpp
   dbscan_impl.hpp
   random_point_selection.hpp
+  ordered_point_selection.hpp
 )
 
 # Add directory name to sources.

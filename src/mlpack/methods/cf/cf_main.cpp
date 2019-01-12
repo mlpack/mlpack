@@ -71,7 +71,7 @@ PROGRAM_INFO("Collaborative Filtering",
     "addition, the number of recommendations per user to generate can be "
     "specified with the " + PRINT_PARAM_STRING("recommendations") + " "
     "parameter, and the number of similar users (the size of the neighborhood) "
-    " to be considered when generating recommendations can be specified with "
+    "to be considered when generating recommendations can be specified with "
     "the " + PRINT_PARAM_STRING("neighborhood") + " parameter."
     "\n\n"
     "For performing the matrix decomposition, the following optimization "

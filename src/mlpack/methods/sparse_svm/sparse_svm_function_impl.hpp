@@ -48,11 +48,10 @@ double SparseSVMFunction::Evaluate(const arma::mat& parameters,
 }
 
 template <typename GradType>
-void SparseSVMFunction::Gradient(
-    const arma::mat& parameters,
-    const size_t firstId,
-    GradType& gradient,
-    const size_t batchSize)
+void SparseSVMFunction::Gradient(const arma::mat& parameters,
+                                 const size_t firstId,
+                                 GradType& gradient,
+                                 const size_t batchSize)
 {
   // Evaluate the gradient of the hinge loss function.
   const size_t lastId = firstId + batchSize - 1;

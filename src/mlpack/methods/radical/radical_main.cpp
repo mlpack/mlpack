@@ -2,7 +2,8 @@
  * @file radical_main.cpp
  * @author Nishant Mehta
  *
- * Executable for RADICAL.
+ * Executable for RADICAL. RADICAL is Robust, Accurate, Direct ICA
+ * aLgorithm.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

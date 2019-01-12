@@ -765,7 +765,7 @@ BOOST_AUTO_TEST_CASE(LSTMRrhoTest)
   modelB.Add<LSTM<> >(10, 3);
   modelB.Add<LogSoftMax<> >();
 
-  optimization::StandardSGD opt(0.1, 1, 5, -100, false);
+  ens::StandardSGD opt(0.1, 1, 5, -100, false);
   modelA.Train(input, target, opt);
   modelB.Train(input, target, opt);
 
@@ -846,7 +846,7 @@ BOOST_AUTO_TEST_CASE(FastLSTMRrhoTest)
   modelB.Add<FastLSTM<> >(10, 3);
   modelB.Add<LogSoftMax<> >();
 
-  optimization::StandardSGD opt(0.1, 1, 5, -100, false);
+  ens::StandardSGD opt(0.1, 1, 5, -100, false);
   modelA.Train(input, target, opt);
   modelB.Train(input, target, opt);
 
@@ -2022,6 +2022,102 @@ BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerBetaTest)
     arma::mat& Parameters() { return model->Parameters(); }
 
     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
+ * Simple residual module test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleResidualLayerTest)
+{
+  arma::mat outputA, outputB, input, deltaA, deltaB;
+
+  Sequential<>* sequential = new Sequential<>(true);
+  Residual<>* residual = new Residual<>(true);
+
+  Linear<>* linearA = new Linear<>(10, 10);
+  linearA->Parameters().randu();
+  linearA->Reset();
+  Linear<>* linearB = new Linear<>(10, 10);
+  linearB->Parameters().randu();
+  linearB->Reset();
+
+  // Add the same layers (with the same parameters) to both Sequential and
+  // Residual object.
+  sequential->Add(linearA);
+  sequential->Add(linearB);
+
+  residual->Add(linearA);
+  residual->Add(linearB);
+
+  // Test the Forward function (pass the same input to both).
+  input = arma::randu(10, 1);
+  sequential->Forward(std::move(input), std::move(outputA));
+  residual->Forward(std::move(input), std::move(outputB));
+
+  CheckMatrices(outputA, outputB - input);
+
+  // Test the Backward function (pass the same error to both).
+  sequential->Backward(std::move(input), std::move(input), std::move(deltaA));
+  residual->Backward(std::move(input), std::move(input), std::move(deltaB));
+
+  CheckMatrices(deltaA, deltaB - input);
+
+  delete sequential;
+  delete residual;
+  delete linearA;
+  delete linearB;
+}
+
+/**
+ * Sequential layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientSequentialLayerTest)
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::mat("1");
+
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+
+      sequential = new Sequential<>();
+      sequential->Add<Linear<> >(10, 10);
+      sequential->Add<ReLULayer<> >();
+      sequential->Add<Linear<> >(10, 5);
+      sequential->Add<ReLULayer<> >();
+
+      model->Add(sequential);
+      model->Add<Linear<> >(5, 2);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      sequential->DeleteModules();
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    Sequential<>* sequential;
     arma::mat input, target;
   } function;
 
