@@ -103,30 +103,8 @@ function (post_markdown_setup)
   #
   # - MARKDOWN_INCLUDES: the list of files to be included.
   # - MARKDOWN_HEADER_CODE: the code used to print the header/sidebar.
-  # - MARKDOWN_DATATYPES_CODE: the code to print the documentation about the
-  #       data types.
   # - MARKDOWN_CALL_CODE: the code to actually call the functions to print
   #       documentation for each binding.
-
-  # Print the first language manually, so we can set it as the selected language
-  # in the list.
-  list (GET MARKDOWN_ALL_LANGUAGES_LIST 0 FIRST_LANG)
-  list (REMOVE_AT MARKDOWN_ALL_LANGUAGES_LIST 0)
-  set (MARKDOWN_SELECT_CODE "cout << \"    <option value=\\\"${FIRST_LANG}\\\" selected>${FIRST_LANG}</option>\" << endl;")
-  set (MARKDOWN_HEADER_CODE "cout << \" - [data formats](#${FIRST_LANG}_data-formats){: .language-link #${FIRST_LANG} }\" << endl;\n")
-
-  set (MARKDOWN_DATATYPES_CODE "BindingInfo::Language() = \"${FIRST_LANG}\";")
-  set (MARKDOWN_DATATYPES_CODE "${MARKDOWN_DATATYPES_CODE}\n  cout << PrintTypeDocs() << endl;")
-  foreach (lang ${MARKDOWN_ALL_LANGUAGES_LIST})
-    set (MARKDOWN_SELECT_CODE "${MARKDOWN_SELECT_CODE}\n  cout << \"    <option value=\\\"${lang}\\\">${lang}</option>\" << endl;")
-
-    # We also need to add to the header code, for the data formats
-    # documentation.
-    set (MARKDOWN_HEADER_CODE "${MARKDOWN_HEADER_CODE}  cout << \" - [data formats](#${lang}_data-formats){: .language-link #${lang} }\" << endl;\n")
-
-    set (MARKDOWN_DATATYPES_CODE "${MARKDOWN_DATATYPES_CODE}\n  BindingInfo::Language() = \"${lang}\";")
-    set (MARKDOWN_DATATYPES_CODE "${MARKDOWN_DATATYPES_CODE}\n  cout << PrintTypeDocs() << endl;")
-  endforeach ()
 
   # Iterate over categories of binding.
   list(LENGTH MARKDOWN_NAMES NUM_MARKDOWN_BINDINGS)
@@ -150,8 +128,7 @@ function (post_markdown_setup)
       set (MARKDOWN_HEADER_CODE "${MARKDOWN_HEADER_CODE}\n  Print${name}Headers();")
     endforeach ()
 
-    set (MARKDOWN_HEADER_CODE "${MARKDOWN_HEADER_CODE}\n  cout << \"</div>\" <<
-endl << endl;")
+    set (MARKDOWN_HEADER_CODE "${MARKDOWN_HEADER_CODE}\n  cout << \"</div>\" << endl << endl;")
   endforeach ()
 
   foreach (name ${MARKDOWN_NAMES})

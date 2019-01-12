@@ -66,11 +66,9 @@ void PrintDocs(const std::string& bindingName,
   {
     BindingInfo::Language() = languages[i];
 
-    cout << "<div class=\"language-import\" id=\"" << languages[i]
+    cout << "<div class=\"language-decl\" id=\"" << languages[i]
         << "\" markdown=\"1\">" << endl;
-    string import = PrintImport(bindingName);
-    if (import.size() > 1)
-      cout << "```" << languages[i] << endl << import << endl << "```" << endl;
+    cout << ProgramCall(bindingName);
     cout << "</div>" << endl;
   }
   cout << endl;
@@ -182,22 +180,31 @@ void PrintDocs(const std::string& bindingName,
 
     cout << "### See also" << endl;
     cout << endl;
-    for (size_t i = 0; i < programDoc.seeAlso.size(); ++i)
+    for (size_t j = 0; j < programDoc.seeAlso.size(); ++j)
     {
       cout << " - " << "[";
       // We need special processing if the user has specified a binding name
       // starting with @ (i.e., '@kfn' or similar).
-      if (programDoc.seeAlso[i].first[0] == '@')
-        cout << GetBindingName(programDoc.seeAlso[i].first.substr(1));
+      if (programDoc.seeAlso[j].first[0] == '@')
+        cout << GetBindingName(programDoc.seeAlso[j].first.substr(1));
       else
-        cout << programDoc.seeAlso[i].first;
+        cout << programDoc.seeAlso[j].first;
       cout << "](";
 
       // We need special handling of Doxygen information.
-      if (programDoc.seeAlso[i].second.substr(0, 8) == "@doxygen")
-        cout << DOXYGEN_PREFIX << programDoc.seeAlso[i].second.substr(9);
+      if (programDoc.seeAlso[j].second.substr(0, 8) == "@doxygen")
+      {
+        cout << DOXYGEN_PREFIX << programDoc.seeAlso[j].second.substr(9);
+      }
+      else if (programDoc.seeAlso[j].second[0] == '#')
+      {
+        cout << "#" << languages[i] << "_"
+            << programDoc.seeAlso[j].second.substr(1);
+      }
       else
-        cout << programDoc.seeAlso[i].second;
+      {
+        cout << programDoc.seeAlso[j].second;
+      }
 
       cout << ")" << endl;
 

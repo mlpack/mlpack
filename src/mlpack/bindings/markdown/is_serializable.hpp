@@ -24,11 +24,23 @@ bool IsSerializable(
 }
 
 /**
+ * Return false, because even though the type is serializable, it is an
+ * Armadillo type not an mlpack model.
+ */
+template<typename T>
+bool IsSerializable(
+    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+{
+  return false;
+}
+
+/**
  * Return true, because the type is serializable.
  */
 template<typename T>
 bool IsSerializable(
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0,
+    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0)
 {
   return true;
 }

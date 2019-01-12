@@ -17,6 +17,17 @@ using namespace std;
 
 int main()
 {
+  // These come to use from CMake separated by semicolons.
+  string languageList = "${MARKDOWN_ALL_LANGUAGES_LIST}";
+  vector<string> languages;
+  size_t index;
+  while ((index = languageList.find(';')) != string::npos)
+  {
+    languages.push_back(languageList.substr(0, index));
+    languageList = languageList.substr(index + 1);
+  }
+  languages.push_back(languageList);
+
   cout << "<div id=\"header\" markdown=\"1\">" << endl;
 
   // We need to create the input form selector for the language.
@@ -24,7 +35,16 @@ int main()
   cout << "  <div class=\"language-select-div\">" << endl;
   cout << "  <select id=\"language-select\" onchange=\"changeLanguage()\">"
       << endl;
-  ${MARKDOWN_SELECT_CODE}
+
+  // Print the first manually, because it is selected.
+  cout << "    <option value=\"" << languages[0] << "\" selected>"
+      << languages[0] << "</option>" << endl;
+  for (size_t i = 1; i < languages.size(); ++i)
+  {
+    cout << "    <option value=\"" << languages[i] << "\">" << languages[i]
+        << "</option>" << endl;
+  }
+
   cout << "  </select>" << endl;
   cout << "  </div>" << endl;
   cout << "</form>" << endl;
@@ -33,11 +53,28 @@ int main()
   // The links to the data type sections get put here.
   cout << " - [mlpack overview](#mlpack-overview){: .language-link #always }"
       << endl;
+  for (size_t i = 0; i < languages.size(); ++i)
+  {
+    cout << " - [data formats](#" << languages[i] << "_data-formats){: "
+        << ".language-link #" << languages[i] << " }" << endl;
+  }
 
   ${MARKDOWN_HEADER_CODE}
+
   cout << endl << "</div>" << endl << endl;
 
   cout << "<div id=\"docs\" markdown=\"1\">" << endl;
+  cout << endl;
+
+  // Create all the headers for each language.
+  for (size_t i = 0; i < languages.size(); ++i)
+  {
+    cout << "<div id=\"" << languages[i] << "\" class=\"language-header\" "
+        << "markdown=\"1\">" << endl;
+    cout << "# " << util::GetVersion() << " " << PrintLanguage(languages[i])
+        << " binding documentation" << endl;
+    cout << "</div>" << endl;
+  }
 
   /**
    * "mlpack overview" section.  This will go at the top of the page.
@@ -63,7 +100,11 @@ int main()
    * Discussion of different data types section.  This goes just below the
    * overview section at the top of the page.
    */
-  ${MARKDOWN_DATATYPES_CODE}
+  for (size_t i = 0; i < languages.size(); ++i)
+  {
+    BindingInfo::Language() = languages[i];
+    cout << PrintTypeDocs() << endl;
+  }
 
   ${MARKDOWN_CALL_CODE}
   cout << "</div>" << endl << endl;
