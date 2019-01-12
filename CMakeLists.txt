@@ -18,13 +18,15 @@ option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 # set BUILD_PYTHON_BINDINGS to OFF when the platform is Windows.
 if (WIN32)
   option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
+  option(BUILD_SHARED_LIBS
+      "Compile shared libraries (if OFF, static libraries are compiled)." OFF)
   message(WARNING "By default Python bindings are not compiled for Windows because they are not known to work.  Set BUILD_PYTHON_BINDINGS to ON if you want them built.")
 else ()
   option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
+  option(BUILD_SHARED_LIBS
+      "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 endif()
 
-option(BUILD_SHARED_LIBS
-    "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 option(BUILD_WITH_COVERAGE
     "Build with support for code coverage tools (gcc only)." OFF)
 option(MATHJAX
@@ -350,6 +352,7 @@ endif ()
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.69.0" "1.69"
   "1.68.0" "1.68"
   "1.67.0" "1.67"
   "1.66.0" "1.66"

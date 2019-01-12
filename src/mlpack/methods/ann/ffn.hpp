@@ -191,6 +191,7 @@ class FFN
   /**
    * Evaluate the feedforward network with the given parameters.
    * This function is usually called by the optimizer to train the model.
+   * This just calls the overload of EvaluateWithGradient() with batchSize = 1.
    *
    * @param parameters Matrix model parameters.
    * @param gradient Matrix to output gradient into.
@@ -201,8 +202,7 @@ class FFN
    /**
    * Evaluate the feedforward network with the given parameters, but using only
    * a number of data points. This is useful for optimizers such as SGD, which
-   * require a separable objective function.  This just calls the overload of
-   * Evaluate() with deterministic = true.
+   * require a separable objective function.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function

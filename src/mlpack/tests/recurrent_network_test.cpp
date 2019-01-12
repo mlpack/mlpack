@@ -452,7 +452,8 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
                              const bool recursive = false,
                              const size_t averageRecursion = 3,
                              const size_t maxRecursion = 5,
-                             const size_t iterations = 10)
+                             const size_t iterations = 10,
+                             const size_t trials = 5)
 {
   const size_t trainReberGrammarCount = 700;
   const size_t testReberGrammarCount = 250;
@@ -493,7 +494,7 @@ void ReberGrammarTestNetwork(const size_t hiddenSize = 4,
   // to escape from local minima and to solve the task.
   size_t successes = 0;
   size_t offset = 0;
-  for (size_t trial = 0; trial < 5; ++trial)
+  for (size_t trial = 0; trial < trials; ++trial)
   {
     const size_t outputSize = 7;
     const size_t inputSize = 7;
@@ -601,7 +602,7 @@ BOOST_AUTO_TEST_CASE(FastLSTMReberGrammarTest)
  */
 BOOST_AUTO_TEST_CASE(GRURecursiveReberGrammarTest)
 {
-  ReberGrammarTestNetwork<GRU<> >(16, true);
+  ReberGrammarTestNetwork<GRU<> >(16, true, 3, 5, 10, 7);
 }
 
 /*
@@ -988,12 +989,12 @@ void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
    *            .......
    */
   // It isn't guaranteed that the recurrent network will converge in the
-  // specified number of iterations using random weights. If this works 1 of 5
+  // specified number of iterations using random weights. If this works 1 of 10
   // times, I'm fine with that. All I want to know is that the network is able
   // to escape from local minima and to solve the task.
   size_t successes = 0;
   size_t offset = 0;
-  for (size_t trial = 0; trial < 5; ++trial)
+  for (size_t trial = 0; trial < 10; ++trial)
   {
     const size_t outputSize = 7;
     const size_t inputSize = 7;
@@ -1068,7 +1069,7 @@ void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
     }
 
     error /= testReberGrammarCount;
-    if (error <= 0.3)
+    if (error <= 0.35)
     {
       ++successes;
       break;

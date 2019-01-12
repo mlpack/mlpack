@@ -245,18 +245,18 @@ BOOST_AUTO_TEST_CASE(KernelPCAOffsetTest)
   for (std::string& kernel: kernels)
   {
     ResetSettings();
-    arma::mat x = arma::randu<arma::mat>(5, 5);
+    arma::mat x = arma::randu<arma::mat>(5, 100);
 
     SetInputParam("input", x);
     SetInputParam("new_dimensionality", (int) 3);
     SetInputParam("kernel", kernel);
-    SetInputParam("offset", (double) 1);
+    SetInputParam("offset", (double) 0.01);
 
     mlpackMain();
     arma::mat output1 = CLI::GetParam<arma::mat>("output");
 
     SetInputParam("input", std::move(x));
-    SetInputParam("offset", (double) 2);
+    SetInputParam("offset", (double) 0.1);
 
     mlpackMain();
     arma::mat output2 = CLI::GetParam<arma::mat>("output");
@@ -323,10 +323,10 @@ BOOST_AUTO_TEST_CASE(KernelPCASamplingSchemeTest)
 {
   ResetSettings();
 
-  arma::mat x = arma::randu<arma::mat>(5, 5);
+  arma::mat x = arma::randu<arma::mat>(5, 500);
 
   SetInputParam("input", x);
-  SetInputParam("new_dimensionality", (int) 1);
+  SetInputParam("new_dimensionality", (int) 3);
   SetInputParam("kernel", (std::string) "gaussian");
   SetInputParam("nystroem_method", true);
   SetInputParam("sampling", (std::string) "kmeans");
