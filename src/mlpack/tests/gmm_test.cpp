@@ -111,10 +111,11 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMOneGaussian)
     arma::mat actualCovar = ccov(data, 1 /* biased estimator */);
 
     // Check the model to see that it is correct.
-    CheckMatrices(gmm.Component(0).Mean(), actualMean);
-    CheckMatrices(gmm.Component(0).Covariance(), actualCovar);
+    BOOST_REQUIRE_LT(arma::norm(gmm.Component(0).Mean() - actualMean), 1e-5);
+    BOOST_REQUIRE_LT(arma::norm(gmm.Component(0).Covariance() - actualCovar),
+        1e-4);
 
-    BOOST_REQUIRE_CLOSE(gmm.Weights()[0], 1.0, 1e-5);
+    BOOST_REQUIRE_CLOSE(gmm.Weights()[0], 1.0, 1e-4);
   }
 }
 
