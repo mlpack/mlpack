@@ -77,7 +77,7 @@ This tutorial follows the second approach for simplicity.
 - Run cmake: 
 
 @code
-cmake -G "Visual Studio 15 2017 Win64" -DBLAS_LIBRARY:FILEPATH="C:/mlpack/mlpack-3.0.4/packages/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DLAPACK_LIBRARY:FILEPATH="C:/mlpack/mlpack-3.0.4/packages/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DCMAKE_PREFIX:FILEPATH="C:/mlpack/armadillo" -DBUILD_SHARED_LIBS=OFF ..
+cmake -G "Visual Studio 15 2017 Win64" -DBLAS_LIBRARY:FILEPATH="C:/mlpack/mlpack-3.0.4/packages/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DLAPACK_LIBRARY:FILEPATH="C:/mlpack/mlpack-3.0.4/packages/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DCMAKE_PREFIX:FILEPATH="C:/mlpack/armadillo" ..
 @endcode
 
 @note If you are using different directory paths, a different configuration (e.g. Release)

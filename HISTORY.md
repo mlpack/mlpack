@@ -1,3 +1,7 @@
+### mlpack 3.0.5
+###### ????-??-??
+  * Change DBSCAN to use PointSelectionPolicy and add OrderedPointSelection (#1625).
+  
 ### mlpack 3.0.4
 ###### 2018-11-13
   * Bump minimum CMake version to 3.3.2.
@@ -320,7 +324,7 @@
 
   * Add support for observation weights to LinearRegression.
 
-  * MahalanobisDistance<> now takes root of the distance by default and
+  * MahalanobisDistance<> now takes the root of the distance by default and
     therefore satisfies the triangle inequality (TakeRoot now defaults to true).
 
   * Better handling of optional Armadillo HDF5 dependency.
@@ -534,7 +538,7 @@
 
   * Added range search executable (#192).
 
-  * Adapted citations in documentation to BiBTeX; no citations in -h output
+  * Adapted citations in documentation to BibTeX; no citations in -h output
     (#195).
 
   * Stop use of 'const char*' and prefer 'std::string' (#176).

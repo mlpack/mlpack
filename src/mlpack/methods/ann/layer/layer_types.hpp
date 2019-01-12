@@ -76,6 +76,7 @@ class AddMerge;
 
 template<typename InputDataType,
          typename OutputDataType,
+         bool residual,
          typename... CustomLayers
 >
 class Sequential;
@@ -192,7 +193,8 @@ using LayerTypes = boost::variant<
     ReinforceNormal<arma::mat, arma::mat>*,
     Reparametrization<arma::mat, arma::mat>*,
     Select<arma::mat, arma::mat>*,
-    Sequential<arma::mat, arma::mat>*,
+    Sequential<arma::mat, arma::mat, false>*,
+    Sequential<arma::mat, arma::mat, true>*,
     Subview<arma::mat, arma::mat>*,
     VRClassReward<arma::mat, arma::mat>*,
     CustomLayers*...
