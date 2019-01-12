@@ -72,14 +72,19 @@ namespace rl {
 
     T sum(size_t _start, size_t _end)
     {
-//      btodo: caculate the sum of contiguous subsequence of the array.
+//    caculate the sum of contiguous subsequence of the array.
       _end -= 1;
       return sumHelper(_start, _end, 1, 0, capacity-1);
     }
 
+    T sum()
+    {
+      return sum(0, capacity);
+    }
+
     size_t findPrefixSum(T mass)
     {
-//      btodo: Find the highest index `idx` in the array such that
+//    Find the highest index `idx` in the array such that
 //            sum(arr[0] + arr[1] + ... + arr[i - i]) <= prefixsum
       int idx = 1;
       while (idx < capacity)
