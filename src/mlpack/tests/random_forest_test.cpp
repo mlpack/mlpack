@@ -238,7 +238,7 @@ BOOST_AUTO_TEST_CASE(UnweightedCategoricalLearningTest)
   size_t rfCorrect = arma::accu(rfPredictions == testLabels);
   size_t dtCorrect = arma::accu(dtPredictions == testLabels);
 
-  BOOST_REQUIRE_GE(rfCorrect, dtCorrect - 30);
+  BOOST_REQUIRE_GE(rfCorrect, dtCorrect - 50);
   BOOST_REQUIRE_GE(rfCorrect, size_t(0.7 * testData.n_cols));
 }
 
@@ -295,7 +295,7 @@ BOOST_AUTO_TEST_CASE(WeightedCategoricalLearningTest)
   size_t rfCorrect = arma::accu(rfPredictions == testLabels);
   size_t dtCorrect = arma::accu(dtPredictions == testLabels);
 
-  BOOST_REQUIRE_GE(rfCorrect, dtCorrect - 30);
+  BOOST_REQUIRE_GE(rfCorrect, dtCorrect - 50);
   BOOST_REQUIRE_GE(rfCorrect, size_t(0.7 * testData.n_cols));
 }
 
