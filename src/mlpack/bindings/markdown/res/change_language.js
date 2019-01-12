@@ -26,6 +26,24 @@ function changeLanguage()
       titles[i].style.display = "none";
   }
 
+  var headers = document.getElementsByClassName("language-header");
+  for (i = 0; i < headers.length; ++i)
+  {
+    if (headers[i].id == lang)
+      headers[i].style.display = "inline";
+    else
+      headers[i].style.display = "none";
+  }
+
+  var decls = document.getElementsByClassName("language-decl");
+  for (i = 0; i < decls.length; ++i)
+  {
+    if (decls[i].id == lang)
+      decls[i].style.display = "inline";
+    else
+      decls[i].style.display = "none";
+  }
+
   var types = document.getElementsByClassName("language-types");
   for (i = 0; i < types.length; ++i)
   {
