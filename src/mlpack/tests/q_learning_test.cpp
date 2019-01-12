@@ -19,7 +19,7 @@
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/reinforcement_learning/q_learning.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/acrobat.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
@@ -173,8 +173,8 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
   BOOST_REQUIRE(converged);
 }
 
-//! Test DQN in Acrobat task.
-BOOST_AUTO_TEST_CASE(AcrobatWithDQN)
+//! Test DQN in Acrobot task.
+BOOST_AUTO_TEST_CASE(AcrobotWithDQN)
 {
   // We will allow three trials, although it would be very uncommon for the test
   // to use more than one.
@@ -191,8 +191,8 @@ BOOST_AUTO_TEST_CASE(AcrobatWithDQN)
     model.Add<Linear<>>(32, 3);
 
     // Set up the policy and replay method.
-    GreedyPolicy<Acrobat> policy(1.0, 1000, 0.1);
-    RandomReplay<Acrobat> replayMethod(20, 10000);
+    GreedyPolicy<Acrobot> policy(1.0, 1000, 0.1);
+    RandomReplay<Acrobot> replayMethod(20, 10000);
 
     TrainingConfig config;
     config.StepSize() = 0.01;
@@ -203,7 +203,7 @@ BOOST_AUTO_TEST_CASE(AcrobatWithDQN)
     config.StepLimit() = 400;
 
     // Set up DQN agent.
-    QLearning<Acrobat, decltype(model), AdamUpdate, decltype(policy)>
+    QLearning<Acrobot, decltype(model), AdamUpdate, decltype(policy)>
         agent(std::move(config), std::move(model), std::move(policy),
         std::move(replayMethod));
 
@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_CASE(AcrobatWithDQN)
 
       if (episodes > 1000)
       {
-        Log::Debug << "Acrobat with DQN failed." << std::endl;
+        Log::Debug << "Acrobot with DQN failed." << std::endl;
         converged = false;
         break;
       }
