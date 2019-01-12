@@ -22,6 +22,10 @@ else ()
   option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
 endif()
 
+# Build Markdown bindings for documentation.  This is used as part of website
+# generation.
+option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentation." OFF)
+
 option(BUILD_SHARED_LIBS
     "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 option(BUILD_WITH_COVERAGE

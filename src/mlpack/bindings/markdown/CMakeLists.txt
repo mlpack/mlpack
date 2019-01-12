@@ -1,12 +1,20 @@
 macro (not_found_return message)
   message(STATUS "${message}")
 
-  macro (add_markdown_docs name languages)
+  macro (add_markdown_docs name languages category)
     # Do nothing.
   endmacro()
 
+  function (post_markdown_setup)
+
+  endfunction ()
+
   return ()
 endmacro ()
+
+if (NOT BUILD_MARKDOWN_BINDINGS)
+  not_found_return("Not building Markdown bindings.")
+endif ()
 
 # We don't need to find any libraries or anything to generate markdown
 # documentation.
@@ -165,11 +173,20 @@ function (post_markdown_setup)
       COMPILE_FLAGS -DBINDING_TYPE=BINDING_TYPE_MARKDOWN
       RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/)
 
-  add_custom_target(markdown ALL DEPENDS generate_markdown)
-  add_custom_command(TARGET markdown PRE_BUILD
-      COMMAND ${CMAKE_COMMAND}
+  add_custom_target(markdown ALL
+      ${CMAKE_COMMAND}
           -DPROGRAM=${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown
           -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/doc/mlpack.md
           -P ${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake
+      COMMAND ${CMAKE_COMMAND} -E copy
+          ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/res/change_language.js
+          ${CMAKE_BINARY_DIR}/doc/res/change_languages.js
+      COMMAND ${CMAKE_COMMAND} -E copy
+          ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/res/menu_bg.png
+          ${CMAKE_BINARY_DIR}/doc/res/menu_bg.png
+      COMMAND ${CMAKE_COMMAND} -E copy
+          ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/res/formatting.css
+          ${CMAKE_BINARY_DIR}/doc/res/formatting.css
+      DEPENDS generate_markdown
       COMMENT "Generating Markdown documentation for mlpack bindings...")
 endfunction ()
