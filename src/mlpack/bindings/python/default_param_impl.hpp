@@ -109,15 +109,22 @@ std::string DefaultParamImpl(
 {
   // Get the filename and return it, or return an empty string.
   if (std::is_same<T, arma::rowvec>::value ||
-      std::is_same<T, arma::Row<size_t>>::value ||
-      std::is_same<T, arma::vec>::value ||
-      std::is_same<T, arma::Col<size_t>>::value)
+      std::is_same<T, arma::vec>::value)
   {
-    return "empty 1-d ndarray";
+    return "np.empty([0])";
+  }
+  else if (std::is_same<T, arma::Col<size_t>>::value ||
+           std::is_same<T, arma::Row<size_t>>::value)
+  {
+    return "np.empty([0], dtype=np.uint64)";
+  }
+  else if (std::is_same<T, arma::Mat<size_t>>::value)
+  {
+    return "np.empty([0, 0], dtype=np.uint64)";
   }
   else
   {
-    return "empty 2-d ndarray";
+    return "np.empty([0, 0])";
   }
 }
 

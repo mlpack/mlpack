@@ -154,6 +154,72 @@ std::string ProgramCall(const std::string& programName, Args... args)
 }
 
 /**
+ * Given a program name, print a program call invocation assuming that all
+ * options are specified.
+ */
+inline std::string ProgramCall(const std::string& programName)
+{
+  std::ostringstream oss;
+  oss << "$ " << programName;
+
+  // Handle all options---first input options, then output options.
+  const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    if (!it->second.input || it->second.persistent)
+      continue;
+
+    // Otherwise, print the name and the default value.
+    std::string name;
+    CLI::GetSingleton().functionMap[it->second.tname]["GetPrintableParamName"](
+        it->second, NULL, (void*) &name);
+
+    std::string value;
+    CLI::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
+        it->second, NULL, (void*) &value);
+    if (value == "''")
+      value = "<string>";
+
+    oss << " ";
+    if (!it->second.required)
+      oss << "[";
+
+    oss << name;
+    if (it->second.cppType != "bool")
+      oss << " " << value;
+
+    if (!it->second.required)
+      oss << "]";
+  }
+
+  // Now get the output options.
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    if (it->second.input)
+      continue;
+
+    // Otherwise, print the name and the default value.
+    std::string name;
+    CLI::GetSingleton().functionMap[it->second.tname]["GetPrintableParamName"](
+        it->second, NULL, (void*) &name);
+
+    std::string value;
+    CLI::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
+        it->second, NULL, (void*) &value);
+    if (value == "''")
+      value = "<string>";
+
+    oss << " [" << name;
+    if (it->second.cppType != "bool")
+      oss << " " << value;
+    oss << "]";
+  }
+
+  return util::HyphenateString(oss.str(), 8);
+}
+
+/**
  * Print what a user would type to invoke the given option name.  Note that the
  * name *must* exist in the CLI module.  (Note that because of the way
  * ProgramInfo is structured, this doesn't mean that all of the PARAM_*()

@@ -119,6 +119,15 @@ class mlpackModel
 
 } // namespace priv
 
+// Utility function that returns the first word (as delimited by spaces) of a
+// string.
+inline std::string ToUnderscores(const std::string& str)
+{
+  std::string ret(str);
+  std::replace(ret.begin(), ret.end(), ' ', '_');
+  return ret;
+}
+
 /**
  * Print details about the different types for a language.
  */
@@ -154,68 +163,71 @@ inline std::string PrintTypeDocs()
   data.persistent = false;
   data.value = boost::any(int(0));
 
-  oss << " - `" << GetPrintableType<int>(data) << "`{: #doc_"
-      << BindingInfo::Language() << "_" << GetPrintableType<int>(data) << " }: "
-      << PrintTypeDoc<int>(data) << std::endl;
+  std::string type = GetPrintableType<int>(data);
+  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
+      << ToUnderscores(type) << " }: " << PrintTypeDoc<int>(data) << std::endl;
 
   data.tname = std::string(typeid(double).name());
   data.cppType = "double";
   data.value = boost::any(double(0.0));
 
-  oss << " - `" << GetPrintableType<double>(data) << "`{: #doc_"
-      << BindingInfo::Language() << "_" << GetPrintableType<double>(data)
-      << " }: " << PrintTypeDoc<double>(data) << std::endl;
+  type = GetPrintableType<double>(data);
+  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
+      << ToUnderscores(type) << " }: " << PrintTypeDoc<double>(data)
+      << std::endl;
 
   data.tname = std::string(typeid(bool).name());
   data.cppType = "double";
   data.value = boost::any(bool(0.0));
 
-  oss << " - `" << GetPrintableType<bool>(data) << "`{: #doc_"
-      << BindingInfo::Language() << "_" << GetPrintableType<bool>(data)
-      << " }: " << PrintTypeDoc<bool>(data) << std::endl;
+  type = GetPrintableType<bool>(data);
+  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
+      << ToUnderscores(type) << " }: " << PrintTypeDoc<bool>(data) << std::endl;
 
   data.tname = std::string(typeid(std::string).name());
   data.cppType = "std::string";
   data.value = boost::any(std::string(""));
 
-  oss << " - `" << GetPrintableType<std::string>(data) << "`{: #doc_"
-      << BindingInfo::Language() << "_" << GetPrintableType<std::string>(data)
-      << " }: " << PrintTypeDoc<std::string>(data) << std::endl;
+  type = GetPrintableType<std::string>(data);
+  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
+      << ToUnderscores(type) << " }: " << PrintTypeDoc<std::string>(data)
+      << std::endl;
 
   data.tname = std::string(typeid(std::vector<int>).name());
   data.cppType = "std::vector<int>";
   data.value = boost::any(std::vector<int>());
 
-  oss << " - `" << GetPrintableType<std::vector<int>>(data) << "`{: #doc_"
-      << BindingInfo::Language() << "_"
-      << GetPrintableType<std::vector<int>>(data) << " }:"
-      << PrintTypeDoc<std::vector<int>>(data) << std::endl;
+  type = GetPrintableType<std::vector<int>>(data);
+  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
+      << ToUnderscores(type) << " }: " << PrintTypeDoc<std::vector<int>>(data)
+      << std::endl;
 
   data.tname = std::string(typeid(std::vector<std::string>).name());
   data.cppType = "std::vector<std::string>";
   data.value = boost::any(std::vector<std::string>());
 
-  oss << " - `" << GetPrintableType<std::vector<std::string>>(data) << "`{: "
-      << "#doc_" << BindingInfo::Language() << "_"
-      << GetPrintableType<std::vector<std::string>>(data) << " }: "
+  type = GetPrintableType<std::vector<std::string>>(data);
+  oss << " - `" << type << "`{: " << "#doc_" << BindingInfo::Language() << "_"
+      << ToUnderscores(type) << " }: "
       << PrintTypeDoc<std::vector<std::string>>(data) << std::endl;
 
   data.tname = std::string(typeid(arma::mat).name());
   data.cppType = "arma::mat";
   data.value = boost::any(arma::mat());
 
-  oss << " - `" << GetPrintableType<arma::mat>(data) << "`{: #doc_"
-      << BindingInfo::Language() << "_" << GetPrintableType<arma::mat>(data)
-      << " }: " << PrintTypeDoc<arma::mat>(data) << std::endl;
+  type = GetPrintableType<arma::mat>(data);
+  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
+      << ToUnderscores(type) << " }: " << PrintTypeDoc<arma::mat>(data)
+      << std::endl;
 
   data.tname = std::string(typeid(arma::Mat<size_t>).name());
   data.cppType = "arma::Mat<size_t>";
   data.value = boost::any(arma::Mat<size_t>());
 
-  oss << " - `" << GetPrintableType<arma::Mat<size_t>>(data) << "`{: #doc_"
-      << BindingInfo::Language() << "_"
-      << GetPrintableType<arma::Mat<size_t>>(data) << " }: "
-      << PrintTypeDoc<arma::Mat<size_t>>(data) << std::endl;
+  type = GetPrintableType<arma::Mat<size_t>>(data);
+  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
+      << ToUnderscores(type) << " }: " << PrintTypeDoc<arma::Mat<size_t>>(data)
+      << std::endl;
 
   data.tname = std::string(typeid(arma::rowvec).name());
   data.cppType = "arma::rowvec";
@@ -223,7 +235,8 @@ inline std::string PrintTypeDocs()
   const std::string& rowType = GetPrintableType<arma::rowvec>(data);
 
   oss << " - `" << rowType << "`{: #doc_" << BindingInfo::Language() << "_"
-      << rowType << " }: " << PrintTypeDoc<arma::rowvec>(data) << std::endl;
+      << ToUnderscores(rowType) << " }: " << PrintTypeDoc<arma::rowvec>(data)
+      << std::endl;
 
   data.tname = std::string(typeid(arma::Row<size_t>).name());
   data.cppType = "arma::Row<size_t>";
@@ -231,7 +244,7 @@ inline std::string PrintTypeDocs()
   const std::string& urowType = GetPrintableType<arma::Row<size_t>>(data);
 
   oss << " - `" << urowType << "`{: #doc_" << BindingInfo::Language() << "_"
-      << urowType << " }: " << PrintTypeDoc<arma::Row<size_t>>(data)
+      << ToUnderscores(urowType) << " }: " << PrintTypeDoc<arma::Row<size_t>>(data)
       << std::endl;
 
   data.tname = std::string(typeid(arma::vec).name());
@@ -244,7 +257,7 @@ inline std::string PrintTypeDocs()
   if (colType != rowType)
   {
     oss << " - `" << colType << "`{: #doc_" << BindingInfo::Language() << "_"
-        << colType << " }: " << PrintTypeDoc<arma::vec>(data)
+        << ToUnderscores(colType) << " }: " << PrintTypeDoc<arma::vec>(data)
         << std::endl;
   }
 
@@ -258,8 +271,8 @@ inline std::string PrintTypeDocs()
   if (ucolType != urowType)
   {
     oss << " - `" << ucolType << "`{ #doc_" << BindingInfo::Language() << "_"
-        << ucolType << " }: " << PrintTypeDoc<arma::Col<size_t>>(data)
-        << std::endl;
+        << ToUnderscores(ucolType) << " }: "
+        << PrintTypeDoc<arma::Col<size_t>>(data) << std::endl;
   }
 
   data.tname =
@@ -267,20 +280,19 @@ inline std::string PrintTypeDocs()
   data.cppType = "std::tuple<data::DatasetInfo, arma::mat>";
   data.value = boost::any(std::tuple<data::DatasetInfo, arma::mat>());
 
-  oss << " - `"
-      << GetPrintableType<std::tuple<data::DatasetInfo, arma::mat>>(data)
-      << "`{: #doc_" << BindingInfo::Language() << "_"
-      << GetPrintableType<std::tuple<data::DatasetInfo, arma::mat>>(data)
-      << " }: " << PrintTypeDoc<std::tuple<data::DatasetInfo, arma::mat>>(data)
+  type = GetPrintableType<std::tuple<data::DatasetInfo, arma::mat>>(data);
+  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language() << "_"
+      << ToUnderscores(type) << " }: "
+      << PrintTypeDoc<std::tuple<data::DatasetInfo, arma::mat>>(data)
       << std::endl;
 
   data.tname = std::string(typeid(priv::mlpackModel).name());
   data.cppType = "mlpackModel";
   data.value = boost::any(new priv::mlpackModel());
 
-  oss << " - `" << GetPrintableType<priv::mlpackModel*>(data) << "`{: #doc_"
-      << BindingInfo::Language() << "_model }: "
-      << PrintTypeDoc<priv::mlpackModel*>(data) << std::endl;
+  type = GetPrintableType<priv::mlpackModel*>(data);
+  oss << " - `" << type << "`{: #doc_" << BindingInfo::Language()
+      << "_model }: " << PrintTypeDoc<priv::mlpackModel*>(data) << std::endl;
 
   // Clean up memory.
   delete boost::any_cast<priv::mlpackModel*>(data.value);
@@ -403,13 +415,15 @@ inline std::string PrintModel(const std::string& model)
 template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args)
 {
-  std::string s = "```\n";
+  std::string s = "```";
   if (BindingInfo::Language() == "cli")
   {
+    s += "bash\n";
     s += cli::ProgramCall(GetBindingName(programName), args...);
   }
   else if (BindingInfo::Language() == "python")
   {
+    s += "python\n";
     s += python::ProgramCall(GetBindingName(programName), args...);
   }
   else
@@ -418,6 +432,37 @@ std::string ProgramCall(const std::string& programName, Args... args)
         "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
   s += "\n```";
+  return s;
+}
+
+/**
+ * Given a program name, print a call assuming that all arguments are specified.
+ */
+inline std::string ProgramCall(const std::string& programName)
+{
+  std::string s = "```";
+  if (BindingInfo::Language() == "cli")
+  {
+    s += "bash\n";
+    std::string import = PrintImport(GetBindingName(programName));
+    if (import.size() > 0)
+      s += "$ " + import + "\n";
+    s += cli::ProgramCall(GetBindingName(programName));
+  }
+  else if (BindingInfo::Language() == "python")
+  {
+    s += "python\n";
+    std::string import = PrintImport(GetBindingName(programName));
+    if (import.size() > 0)
+      s += ">>> " + import + "\n";
+    s += python::ProgramCall(GetBindingName(programName));
+  }
+  else
+  {
+    throw std::invalid_argument("ProgramCall(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+  s += "\n```\n";
   return s;
 }
 
@@ -466,7 +511,7 @@ inline std::string ParamType(const util::ParamData& d)
     anchorType = "model";
 
   return "[`" + output + "`](#doc_" + BindingInfo::Language() + "_" +
-      anchorType + ")";
+      ToUnderscores(anchorType) + ")";
 }
 
 template<typename T>

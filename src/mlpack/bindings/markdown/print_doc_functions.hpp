@@ -76,6 +76,11 @@ template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args);
 
 /**
+ * Given a program name, print a call assuming that all arguments are specified.
+ */
+inline std::string ProgramCall(const std::string& programName);
+
+/**
  * Print what a user would type to invoke the given option name.  Note that the
  * name *must* exist in the CLI module.  (Note that because of the way
  * ProgramInfo is structured, this doesn't mean that all of the PARAM_*()

@@ -192,7 +192,9 @@ std::string ProgramCall(const std::string& programName, Args... args)
   ossOutput << PrintOutputOptions(args...);
   if (ossOutput.str() != "")
     oss << "output = ";
-  oss << programName << "(";
+  // The programName will actually have a () in it already, so we have to remove
+  // it.
+  oss << programName.substr(0, programName.size() - 2) << "(";
 
   // Now process each input option.
   oss << PrintInputOptions(args...);
@@ -210,6 +212,78 @@ std::string ProgramCall(const std::string& programName, Args... args)
 }
 
 /**
+ * Given the name of a binding, print a program call assuming that all options
+ * are specified.
+ */
+inline std::string ProgramCall(const std::string& programName)
+{
+  std::ostringstream oss;
+  oss << ">>> ";
+
+  // Determine if we have any output options.
+  const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+  bool hasOutput = false;
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    if (!it->second.input)
+    {
+      hasOutput = true;
+      break;
+    }
+  }
+
+  if (hasOutput)
+    oss << "d = ";
+
+  // The programName will actually have a () in it already, so we have to remove
+  // it.
+  oss << programName.substr(0, programName.size() - 2) << "(";
+
+  // Now iterate over every input option.
+  bool first = true;
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    if (!it->second.input || it->second.persistent)
+      continue;
+
+    if (!first)
+      oss << ", ";
+    else
+      first = false;
+
+    // Print the input option.
+    if (it->second.name != "lambda") // Don't print Python keywords.
+      oss << it->second.name << "=";
+    else
+      oss << it->second.name << "_=";
+
+    std::string value;
+    CLI::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
+        it->second, NULL, (void*) &value);
+    oss << value;
+  }
+  oss << ")";
+
+  std::string result = util::HyphenateString(oss.str(), 8);
+
+  oss.str("");
+  oss << result;
+
+  // Now print output lines.
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    if (it->second.input)
+      continue;
+
+    // Print a new line for the output option.
+    oss << std::endl << ">>> " << it->second.name << " = d['"
+        << it->second.name << "']";
+  }
+
+  return oss.str();
+}
+
+/**
  * Given the name of a model, print it.  Here we do not need to modify anything.
  */
 inline std::string PrintModel(const std::string& modelName)
@@ -224,14 +298,6 @@ inline std::string PrintModel(const std::string& modelName)
 inline std::string PrintDataset(const std::string& datasetName)
 {
   return "'" + datasetName + "'";
-}
-
-/**
- * Given the name of a binding, print its invocation.
- */
-inline std::string ProgramCall(const std::string& programName)
-{
-  return ">>> " + programName + "(";
 }
 
 /**
