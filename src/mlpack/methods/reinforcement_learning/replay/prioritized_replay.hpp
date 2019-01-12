@@ -107,11 +107,14 @@ class PrioritizedReplay
               arma::icolvec& sampledActions,
               arma::colvec& sampledRewards,
               arma::mat& sampledNextStates,
-              arma::icolvec& isTerminal)
+              arma::icolvec& isTerminal,
+              arma::uvec& sampledIndices,
+              arma::rowvec& weights,
+              double beta)
   {
     size_t upperBound = full ? capacity : position;
 
-    arma::uvec sampledIndices = sampleProportional();
+    sampledIndices = sampleProportional();
 
     sampledStates = states.cols(sampledIndices);
     sampledActions = actions.elem(sampledIndices);
@@ -119,13 +122,26 @@ class PrioritizedReplay
     sampledNextStates = nextStates.cols(sampledIndices);
     isTerminal = this->isTerminal.elem(sampledIndices);
 
-//    btodo: calculate the weights of sampled transitions
+//  calculate the weights of sampled transitions
 
+    size_t num_sample = full ? capacity : position;
+
+    for (size_t i = 0; i < sampledIndices.n_rows; ++ i)
+    {
+      double p_sample = idxSum[sampledIndices[i]] / idxSum.sum();
+      weights(i) = pow(num_sample * p_sample, -beta);
+    }
+    weights /= weights.max();
   }
 
-  void update_priorities(double beta) 
+  void update_priorities(arma::uvec& indices, arma::uvec& priorities)
   {
-//    btodo: update priorities of sampled transitions.
+//    update priorities of sampled transitions.
+      for (sizt_t i = 0; i < indices.n_rows; ++i)
+      {
+        idxSum[indices[i]] = alpha * priorities[i];
+        max_priority = max(max_priority, priorities[i]);
+      }
   }
 
 private:
