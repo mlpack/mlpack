@@ -23,6 +23,19 @@ template<typename MetricType, typename KernelType, typename TreeType>
 class KDERules
 {
  public:
+  /**
+   * Construct KDERules.
+   *
+   * @param referenceSet Reference set data.
+   * @param querySet Query set data.
+   * @param densities Vector where estimations will be written.
+   * @param relError Relative error tolerance.
+   * @param absError Absolute error tolerance.
+   * @param metric Instantiated metric.
+   * @param kernel Instantiated kernel.
+   * @param sameSet True if query and reference sets are the same
+   *                (monochromatic evaluation).
+   */
   KDERules(const arma::mat& referenceSet,
            const arma::mat& querySet,
            arma::vec& densities,

@@ -30,15 +30,17 @@ enum KDEMode
 
 /**
  * The KDE class is a template class for performing Kernel Density Estimations.
- * In statistics, kernel density estimation, is a way to estimate the
+ * In statistics, kernel density estimation is a way to estimate the
  * probability density function of a variable in a non parametric way.
  * This implementation performs this estimation using a tree-independent
  * dual-tree algorithm. Details about this algorithm are available in KDERules.
  *
+ * @tparam KernelType Kernel function to use for KDE calculations.
  * @tparam MetricType Metric to use for KDE calculations.
  * @tparam MatType Type of data to use.
- * @tparam KernelType Kernel function to use for KDE calculations.
  * @tparam TreeType Type of tree to use; must satisfy the TreeType policy API.
+ * @tparam DualTreeTraversalType Type of dual-tree traversal to use.
+ * @tparam SingleTreeTraversalType Type of single-tree traversal to use.
  */
 template<typename KernelType = kernel::GaussianKernel,
          typename MetricType = mlpack::metric::EuclideanDistance,
