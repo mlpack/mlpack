@@ -1,6 +1,6 @@
 /**
  * @file kde.hpp
- * @author Roberto Hueso (robertohueso96@gmail.com)
+ * @author Roberto Hueso
  *
  * Kernel Density Estimation.
  *

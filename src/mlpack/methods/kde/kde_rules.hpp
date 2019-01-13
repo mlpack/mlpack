@@ -1,6 +1,6 @@
 /**
  * @file kde_rules.hpp
- * @author Roberto Hueso (robertohueso96@gmail.com)
+ * @author Roberto Hueso
  *
  * Rules Kernel Density estimation, so that it can be done with arbitrary tree
  * types.

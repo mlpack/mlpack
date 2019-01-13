@@ -1,6 +1,6 @@
 /**
  * @file kde_impl.hpp
- * @author Roberto Hueso (robertohueso96@gmail.com)
+ * @author Roberto Hueso
  *
  * Implementation of Kernel Density Estimation.
  *
