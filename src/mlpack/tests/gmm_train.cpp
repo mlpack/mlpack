@@ -20,16 +20,16 @@ using namespace mlpack;
 
 struct GmmTrainTestFixture
 {
-public:
-	GmmTrainTestFixture()
-	{
-		CLI::RestoreSettings(testname);
-	}
+  public:
+	  GmmTrainTestFixture()
+	  {
+		  CLI::RestoreSettings(testname);
+	  }
 
-	~GmmTrainTestFixture()
-	{
-		CLI::ClearSettings();
-	}
+	  ~GmmTrainTestFixture()
+	  {
+		  CLI::ClearSettings();
+	  }
 };
 
 void ResetGmmTrainSetting()
@@ -40,113 +40,114 @@ void ResetGmmTrainSetting()
 
 BOOST_FIXTURE_TEST_SUITE(GmmTrainMainTest , GmmTrainTestFixture);
 
-//To check if the gaussian is positive or not
+//To check if the gaussian is positive or not.
 BOOST_AUTO_TEST_CASE(GmmTrainValidGaussian)
 {
-  	arma::mat inputData;
-  	if (!data::Load("vc2.csv", inputData))
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
     
-    SetInputParam("input" , std::move(inputdata));
-    SetInputParam("gaussian" , (int) -1); //invalid
+  SetInputParam("input" , std::move(inputdata));
+  SetInputParam("gaussian" , (int) -1); //invalid
 
-    Log::Fatal.ignoreInput = true;
-    BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
-    Log::Fatal.ignoreInput = false;
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 
 }
 
-//Number of trials is provided or not
+//Number of trials is provided or not.
 BOOST_AUTO_TEST_CASE(GmmTrainValidTrials)
 {
-  	int g = 3;
-  	int trials = 0;
+  int g = 3;
+  int trials = 0;
 	
 	arma::mat inputData;
-    if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
 
 	SetInputParam("input" , std::move(inputdata));
 	SetInputParam("gaussians" , g);
-	SetInputParam("trials" , trials) //invalid
+	SetInputParam("trials" , trials)//invalid
 
 	Log::Fatal.ignoreInput = true;
 	BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 	Log::Fatal.ignoreInput = false;
 }
-// if covariance flag is false then no_force_positive parameter is not specified
+
+
+// If covariance flag is false then no_force_positive parameter is not specified.
 BOOST_AUTO_TEST_CASE(GmmTrainDiagonalCovarianceCheck)
 {
-  	int g = 3;
-  	int t = 2;
-  	int n_f_p = 2;
+  int g = 3;
+  int t = 2;
+  int n_f_p = 2;
 
-  	arma::mat inputData;
-    if (!data::Load("vc2.csv", inputData))
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
 
-  	SetInputParam("input" , std::move(inputdata));
-  	SetInputParam("gaussians" , g);
-  	SetInputParam("trials" , t);
-  	SetInputParam("Diagonal_covariance" , false);
-  	SetinputParam("no_force_positive" , n_f_p); //invalid
-  	SetInputParam("noise" , (int) 0);
+  SetInputParam("input" , std::move(inputdata));
+  SetInputParam("gaussians" , g);
+  SetInputParam("trials" , t);
+  SetInputParam("Diagonal_covariance" , false);
+  SetinputParam("no_force_positive" , n_f_p); //invalid
+  SetInputParam("noise" , (int) 0);
 
-  	Log::Fatal.ignoreInput = true;
-  	BOOST_REQUIRE_THROW(mlpackMain() , runtime_error);
-  	Log::Fatal.ignoreInput = false;
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain() , runtime_error);
+  Log::Fatal.ignoreInput = false;
 
 }
 
-
-//max iterations must be positive)
+//max iterations must be positive
 BOOST_AUTO_TEST_CASE(GmmTrainMaxIterations)
 {
-  	int g = 3;
-  	int t = 2;
-  	int mi = -1;
+  int g = 3;
+  int t = 2;
+  int mi = -1;
 
-    arma::mat inputData;
-    if (!data::Load("vc2.csv", inputData))
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
 
-  	SetinputParam("input" , std::move(inputdata));
-  	SetinputParam("gaussians", g);
-  	SetinputParam("trials" , t);
-  	SetinputParam("max_iterations" ,mi)//invalid
+  SetinputParam("input" , std::move(inputdata));
+  SetinputParam("gaussians", g);
+  SetinputParam("trials" , t);
+  SetinputParam("max_iterations" ,mi)//invalid
 
-  	Log::Fatal.ignoreInput = true;
-  	BOOST_REQUIRE_THROW(mlpackMain() , runtime_error);
-  	Log::Fatal.ignoreInput = false;
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain() , runtime_error);
+  Log::Fatal.ignoreInput = false;
+
 }
 
 //tolerence must be positive 
 BOOST_AUTO_TEST_CASE(GmmTrainTolerence)
 {
+  int g = 3;
+  int t = 2;
+  int mi = 3;
+  int tol = -1;
 
-  	int g = 3;
-  	int t = 2;
-  	int mi = 3;
-  	int tol = -1;
-
-  	arma::mat inputData;
-    if (!data::Load("vc2.csv", inputData))
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
 
-  	SetinputParam("input" , std::move(inputdata));
-  	SetinputParam("gaussians", g);
-  	SetinputParam("trials" , t);
-  	SetinputParam("max_iterations" ,mi);
-  	SetinputParam("tolerence" , tol);//invalid
+  SetinputParam("input" , std::move(inputdata));
+  SetinputParam("gaussians", g);
+  SetinputParam("trials" , t);
+  SetinputParam("max_iterations" ,mi);
+  SetinputParam("tolerence" , tol);//invalid
 
-  	Log::Fatal.ignoreInput = true;
-  	BOOST_REQUIRE_THROW(mlpackMain() , runtime_error);
-  	Log::Fatal.ignoreInput = false;
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain() , runtime_error);
+  Log::Fatal.ignoreInput = false;
 
 }
  
@@ -155,28 +156,25 @@ BOOST_AUTO_TEST_CASE(GmmTrainTolerence)
 */
 BOOST_AUTO_TEST_CASE(RefinedStartPercentageTest)
 {
-  	int g = 3;
-  	int t = 2;
-  	int mi = 3;
-  	int tol = -1;
-  	int c = 2;
-  	double P = 2.0;
-  	arma::mat inputData;
-  	if (!data::Load("vc2.csv", inputData))
+  int g = 3;
+  int t = 2;
+  int mi = 3;
+  int tol = -1;
+  int c = 2;
+  double P = 2.0;
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
-  	SetInputParam("input", std::move(inputData));
-  	SetInputParam("refined_start", true);
-  	SetInputParam("clusters", c);
-  	SetInputParam("percentage", std::move(P));     // Invalid
+  SetInputParam("input", std::move(inputData));
+  SetInputParam("refined_start", true);
+  SetInputParam("clusters", c);
+  SetInputParam("percentage", std::move(P));     // Invalid
 
-  	Log::Fatal.ignoreInput = true;
-  	BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
-  	Log::Fatal.ignoreInput = false;
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 }
-
-
-
 
 BOOST_AUTO_TEST_SUITE_END();
 
