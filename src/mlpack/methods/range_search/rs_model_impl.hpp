@@ -59,6 +59,17 @@ inline RSModel::RSModel(RSModel&& other) :
   other.rSearch = decltype(other.rSearch)();
 }
 
+inline bool RSModel::operator==(RSModel other)
+{
+if((this->treeType==other.treeType) && (this->leafSize==other.leafSize)
+                                   && (this->randomBasis==other.randomBasis)
+                           && arma::approx_equal(this->q,other.q,"absdiff",1e-5)
+                                   && (this->rSearch==other.rSearch))
+    return true;
+  else
+    return false;
+}
+
 inline RSModel& RSModel::operator=(RSModel other)
 {
   boost::apply_visitor(DeleteVisitor(), rSearch);
@@ -271,7 +282,7 @@ void MonoSearchVisitor::operator()(RSType* rs) const
 }
 
 //! Save parameters for bichromatic range search.
-BiSearchVisitor::BiSearchVisitor(const arma::mat& querySet,
+inline BiSearchVisitor::BiSearchVisitor(const arma::mat& querySet,
                                  const math::Range& range,
                                  std::vector<std::vector<size_t>>& neighbors,
                                  std::vector<std::vector<double>>& distances,
@@ -295,7 +306,7 @@ void BiSearchVisitor::operator()(RSTypeT<TreeType>* rs) const
 }
 
 //! Bichromatic range search on the given RSType specialized for KDTrees.
-void BiSearchVisitor::operator()(RSTypeT<tree::KDTree>* rs) const
+inline void BiSearchVisitor::operator()(RSTypeT<tree::KDTree>* rs) const
 {
   if (rs)
     return SearchLeaf(rs);
@@ -303,7 +314,7 @@ void BiSearchVisitor::operator()(RSTypeT<tree::KDTree>* rs) const
 }
 
 //! Bichromatic range search on the given RSType specialized for BallTrees.
-void BiSearchVisitor::operator()(RSTypeT<tree::BallTree>* rs) const
+inline void BiSearchVisitor::operator()(RSTypeT<tree::BallTree>* rs) const
 {
   if (rs)
     return SearchLeaf(rs);
@@ -311,7 +322,7 @@ void BiSearchVisitor::operator()(RSTypeT<tree::BallTree>* rs) const
 }
 
 //! Bichromatic range search specialized for Ocrees.
-void BiSearchVisitor::operator()(RSTypeT<tree::Octree>* rs) const
+inline void BiSearchVisitor::operator()(RSTypeT<tree::Octree>* rs) const
 {
   if (rs)
     return SearchLeaf(rs);
@@ -351,7 +362,7 @@ void BiSearchVisitor::SearchLeaf(RSType* rs) const
 }
 
 //! Save parameters for Train.
-TrainVisitor::TrainVisitor(arma::mat&& referenceSet,
+inline TrainVisitor::TrainVisitor(arma::mat&& referenceSet,
                            const size_t leafSize) :
     referenceSet(std::move(referenceSet)),
     leafSize(leafSize)
@@ -369,7 +380,7 @@ void TrainVisitor::operator()(RSTypeT<TreeType>* rs) const
 }
 
 //! Train on the given RSType specialized for KDTrees.
-void TrainVisitor::operator()(RSTypeT<tree::KDTree>* rs) const
+inline void TrainVisitor::operator()(RSTypeT<tree::KDTree>* rs) const
 {
   if (rs)
     return TrainLeaf(rs);
@@ -377,7 +388,7 @@ void TrainVisitor::operator()(RSTypeT<tree::KDTree>* rs) const
 }
 
 //! Train on the given RSType specialized for BallTrees.
-void TrainVisitor::operator()(RSTypeT<tree::BallTree>* rs) const
+inline void TrainVisitor::operator()(RSTypeT<tree::BallTree>* rs) const
 {
   if (rs)
     return TrainLeaf(rs);
@@ -385,7 +396,7 @@ void TrainVisitor::operator()(RSTypeT<tree::BallTree>* rs) const
 }
 
 //! Train specialized for Octrees.
-void TrainVisitor::operator()(RSTypeT<tree::Octree>* rs) const
+inline void TrainVisitor::operator()(RSTypeT<tree::Octree>* rs) const
 {
   if (rs)
     return TrainLeaf(rs);

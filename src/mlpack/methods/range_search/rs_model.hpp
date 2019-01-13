@@ -293,6 +293,7 @@ class RSModel
    */
   RSModel& operator=(RSModel other);
 
+  bool operator==(RSModel other);
   /**
    * Clean memory, if necessary.
    */
