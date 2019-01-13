@@ -42,7 +42,7 @@ namespace ann /** Artificial Neural Network. */ {
  * f'(x) &=& \left\{
  *   \begin{array}{lr}
  *     1 & : x > 0 \\
- *     y + \alpha & : x \le 0
+ *     f(x) + \alpha & : x \le 0
  *   \end{array}
  * \right.
  * @f}
@@ -73,7 +73,7 @@ namespace ann /** Artificial Neural Network. */ {
  * f'(x) &=& \left\{
  *   \begin{array}{lr}
  *     \lambda & : x > 0 \\
- *     \lambda * (y + \alpha) & : x \le 0
+ *     f(x) + \lambda * \alpha & : x \le 0
  *   \end{array}
  * \right.
  * @f}
@@ -205,19 +205,19 @@ class ELU
   /**
    * Computes the first derivative of the activation function.
    *
-   * @param x Input data.
+   * @param y Propagated data f(x).
    * @return f'(x)
    */
   double Deriv(const double y)
   {
-    return (y > 0) ? lambda : lambda * (y + alpha);
+    return (y > 0) ? lambda : y + lambda * alpha;
   }
 
   /**
    * Computes the first derivative of the activation function.
    *
-   * @param y Input activations.
-   * @param x The resulting derivatives.
+   * @param x Input activations.
+   * @param y The resulting derivatives.
    */
   template<typename InputType, typename OutputType>
   void Deriv(const InputType& x, OutputType& y)
