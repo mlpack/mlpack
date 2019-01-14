@@ -27,7 +27,7 @@ before_install:
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
 
 install:
-  - mkdir build && cd build && cmake $CMAKE_OPTIONS .. && make -j2
+  - mkdir build && cd build && cmake $CMAKE_OPTIONS .. && travis_wait 30 make -j2
 
 script:
   - CTEST_OUTPUT_ON_FAILURE=1 travis_wait 30 ctest -j2
