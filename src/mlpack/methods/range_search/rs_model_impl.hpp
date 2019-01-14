@@ -61,10 +61,10 @@ inline RSModel::RSModel(RSModel&& other) :
 
 inline bool RSModel::operator==(RSModel other)
 {
-if((this->treeType==other.treeType) && (this->leafSize==other.leafSize)
-                                   && (this->randomBasis==other.randomBasis)
-                           && arma::approx_equal(this->q,other.q,"absdiff",1e-5)
-                                   && (this->rSearch==other.rSearch))
+if ( (this->treeType == other.treeType) && (this->leafSize == other.leafSize)
+                                     && (this->randomBasis == other.randomBasis)
+                        && arma::approx_equal(this->q, other.q, "absdiff", 1e-5)
+                                            && (this->rSearch == other.rSearch))
     return true;
   else
     return false;

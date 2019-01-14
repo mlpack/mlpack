@@ -173,18 +173,18 @@ inline std::string FilterFileName(const std::string& inputString)
 }
 //Templated Check for 2 matrices of type nested vectors
 template<typename N>
-inline void CheckMatrices(std::vector<std::vector<N>> vec1,std::vector<std::vector<N>> vec2,float tolerance=1e-3)
+inline void CheckMatrices( std::vector<std::vector<N>> vec1, std::vector<std::vector<N>> vec2, float tolerance=1e-3)
 {
 
-  BOOST_REQUIRE_EQUAL(vec1.size(),vec2.size());
-  for(size_t i=0;i<vec1.size();i++)
+  BOOST_REQUIRE_EQUAL( vec1.size() , vec2.size() );
+  for ( size_t i = 0; i < vec1.size() ; i++)
   {
-    BOOST_REQUIRE_EQUAL(vec1[i].size(),vec2[i].size());
-    std::sort(vec1[i].begin(),vec1[i].end());
-    std::sort(vec2[i].begin(),vec2[i].end());
-    for(size_t j=0;j<vec1[i].size();j++)
+    BOOST_REQUIRE_EQUAL( vec1[i].size(), vec2[i].size() );
+    std::sort(vec1[i].begin(), vec1[i].end());
+    std::sort(vec2[i].begin(), vec2[i].end());
+    for (size_t j = 0 ; j < vec1[i].size() ; j++)
     {
-      BOOST_REQUIRE_CLOSE((float)vec1[i][j],(float)vec2[i][j],tolerance);
+      BOOST_REQUIRE_CLOSE((float) vec1[i][j], (float) vec2[i][j], tolerance);
     }
   }
 }
