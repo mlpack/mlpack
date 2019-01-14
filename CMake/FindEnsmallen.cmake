@@ -3,7 +3,7 @@
 #
 # This module sets the following variables:
 #  ENSMALLEN_FOUND - set to true if the library is found
-#  ENSMALLEN_INCLUDE_DIRS - list of required include directories
+#  ENSMALLEN_INCLUDE_DIR - list of required include directories
 #  ENSMALLEN_VERSION_MAJOR - major version number
 #  ENSMALLEN_VERSION_MINOR - minor version number
 #  ENSMALLEN_VERSION_PATCH - patch version number
