@@ -24,7 +24,8 @@
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
+
+#include <ensmallen.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -102,7 +103,7 @@ class RNN
   /**
    * Train the recurrent neural network on the given input data. By default, the
    * SGD optimization algorithm is used, but others can be specified
-   * (such as mlpack::optimization::RMSprop).
+   * (such as ens::RMSprop).
    *
    * This will use the existing model parameters as a starting point for the
    * optimization. If this is not what you want, then you should access the
@@ -122,7 +123,7 @@ class RNN
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    */
-  template<typename OptimizerType = mlpack::optimization::StandardSGD>
+  template<typename OptimizerType = ens::StandardSGD>
   void Train(arma::cube predictors, arma::cube responses);
 
   /**
@@ -182,8 +183,7 @@ class RNN
 
   /**
    * Evaluate the recurrent neural network with the given parameters. This
-   * function is usually called by the optimizer to train the model.  This just
-   * calls the other overload of Evaluate() with deterministic = true.
+   * function is usually called by the optimizer to train the model.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function

@@ -86,11 +86,6 @@ Recurrent<InputDataType, OutputDataType, CustomLayers...>::Recurrent(
   boost::apply_visitor(AddVisitor<CustomLayers...>(transferModule),
                        initialModule);
 
-  boost::apply_visitor(weightSizeVisitor, startModule);
-  boost::apply_visitor(weightSizeVisitor, inputModule);
-  boost::apply_visitor(weightSizeVisitor, feedbackModule);
-  boost::apply_visitor(weightSizeVisitor, transferModule);
-
   boost::apply_visitor(AddVisitor<CustomLayers...>(inputModule), mergeModule);
   boost::apply_visitor(AddVisitor<CustomLayers...>(feedbackModule),
                        mergeModule);
@@ -270,11 +265,6 @@ void Recurrent<InputDataType, OutputDataType, CustomLayers...>::serialize(
                          initialModule);
     boost::apply_visitor(AddVisitor<CustomLayers...>(transferModule),
                          initialModule);
-
-    boost::apply_visitor(weightSizeVisitor, startModule);
-    boost::apply_visitor(weightSizeVisitor, inputModule);
-    boost::apply_visitor(weightSizeVisitor, feedbackModule);
-    boost::apply_visitor(weightSizeVisitor, transferModule);
 
     boost::apply_visitor(AddVisitor<CustomLayers...>(inputModule),
                          mergeModule);

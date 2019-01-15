@@ -15,7 +15,7 @@
 
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
+#include <ensmallen.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
@@ -23,7 +23,6 @@
 
 using namespace mlpack;
 using namespace mlpack::ann;
-using namespace mlpack::optimization;
 
 BOOST_AUTO_TEST_SUITE(KSInitialization);
 
@@ -86,7 +85,7 @@ void BuildVanillaNetwork(MatType& trainData,
   model.Add<LeakyReLU<> >();
   model.Add<Linear<> >(hiddenLayerSize, outputSize);
 
-  RMSProp opt(0.01, 1, 0.88, 1e-8, maxEpochs * trainData.n_cols, 1e-18);
+  ens::RMSProp opt(0.01, 1, 0.88, 1e-8, maxEpochs * trainData.n_cols, 1e-18);
 
   model.Train(trainData, trainLabels, opt);
 

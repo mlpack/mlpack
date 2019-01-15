@@ -101,6 +101,11 @@ class HRectBound
   //! Modify the minimum width of the bound.
   ElemType& MinWidth() { return minWidth; }
 
+  //! Get the instantiated metric associated with the bound.
+  const MetricType& Metric() const { return metric; }
+  //! Modify the instantiated metric associated with the bound.
+  MetricType& Metric() { return metric; }
+
   /**
    * Calculates the center of the range, placing it into the given vector.
    *
@@ -227,6 +232,8 @@ class HRectBound
   math::RangeType<ElemType>* bounds;
   //! Cached minimum width of bound.
   ElemType minWidth;
+  //! Instantiated metric (likely has size 0).
+  MetricType metric;
 };
 
 // A specialization of BoundTraits for this class.

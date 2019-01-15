@@ -18,7 +18,6 @@
 #include "../visitor/delete_visitor.hpp"
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
-#include "../visitor/weight_size_visitor.hpp"
 
 #include "layer_types.hpp"
 #include "add_merge.hpp"
@@ -191,9 +190,6 @@ class Recurrent
 
   //! Locally-stored merge module.
   LayerTypes<CustomLayers...> mergeModule;
-
-  //! Locally-stored weight size visitor.
-  WeightSizeVisitor weightSizeVisitor;
 
   //! Locally-stored delta visitor.
   DeltaVisitor deltaVisitor;

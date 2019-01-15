@@ -34,15 +34,20 @@ void* GetValueVisitor::operator()(CFType<DecompositionPolicy>* c) const
   return (void*) c;
 }
 
-PredictVisitor::PredictVisitor(
+template <typename NeighborSearchPolicy,
+          typename InterpolationPolicy>
+PredictVisitor<NeighborSearchPolicy, InterpolationPolicy>::PredictVisitor(
     const arma::Mat<size_t>& combinations,
     arma::vec& predictions) :
     combinations(combinations),
     predictions(predictions)
 { }
 
+template <typename NeighborSearchPolicy,
+          typename InterpolationPolicy>
 template<typename DecompositionPolicy>
-void PredictVisitor::operator()(CFType<DecompositionPolicy>* c) const
+void PredictVisitor<NeighborSearchPolicy, InterpolationPolicy>
+        ::operator()(CFType<DecompositionPolicy>* c) const
 {
   if (!c)
   {
@@ -50,10 +55,14 @@ void PredictVisitor::operator()(CFType<DecompositionPolicy>* c) const
     return;
   }
 
-  c->Predict(combinations, predictions);
+  c->template Predict<NeighborSearchPolicy,
+      InterpolationPolicy>(combinations, predictions);
 }
 
-RecommendationVisitor::RecommendationVisitor(
+template <typename NeighborSearchPolicy,
+          typename InterpolationPolicy>
+RecommendationVisitor<NeighborSearchPolicy, InterpolationPolicy>
+        ::RecommendationVisitor(
     const size_t numRecs,
     arma::Mat<size_t>& recommendations,
     const arma::Col<size_t>& users,
@@ -64,8 +73,11 @@ RecommendationVisitor::RecommendationVisitor(
     usersGiven(usersGiven)
 { }
 
+template <typename NeighborSearchPolicy,
+          typename InterpolationPolicy>
 template<typename DecompositionPolicy>
-void RecommendationVisitor::operator()(CFType<DecompositionPolicy>* c) const
+void RecommendationVisitor<NeighborSearchPolicy, InterpolationPolicy>
+        ::operator()(CFType<DecompositionPolicy>* c) const
 {
   if (!c)
   {
@@ -74,9 +86,11 @@ void RecommendationVisitor::operator()(CFType<DecompositionPolicy>* c) const
   }
 
   if (usersGiven)
-    c->GetRecommendations(numRecs, recommendations, users);
+    c->template GetRecommendations<NeighborSearchPolicy, InterpolationPolicy>
+        (numRecs, recommendations, users);
   else
-    c->GetRecommendations(numRecs, recommendations);
+    c->template GetRecommendations<NeighborSearchPolicy, InterpolationPolicy>
+        (numRecs, recommendations);
 }
 
 CFModel::~CFModel()
@@ -103,28 +117,37 @@ void CFModel::Train(const MatType& data,
 }
 
 //! Make predictions.
+template <typename NeighborSearchPolicy,
+          typename InterpolationPolicy>
 void CFModel::Predict(const arma::Mat<size_t>& combinations,
                       arma::vec& predictions)
 {
-  PredictVisitor predict(combinations, predictions);
+  PredictVisitor<NeighborSearchPolicy, InterpolationPolicy>
+      predict(combinations, predictions);
   boost::apply_visitor(predict, cf);
 }
 
 //! Compute recommendations for queried users.
+template<typename NeighborSearchPolicy,
+         typename InterpolationPolicy>
 void CFModel::GetRecommendations(const size_t numRecs,
                                  arma::Mat<size_t>& recommendations,
                                  const arma::Col<size_t>& users)
 {
-  RecommendationVisitor recommendation(numRecs, recommendations, users, true);
+  RecommendationVisitor<NeighborSearchPolicy, InterpolationPolicy>
+      recommendation(numRecs, recommendations, users, true);
   boost::apply_visitor(recommendation, cf);
 }
 
 //! Compute recommendations for all users.
+template<typename NeighborSearchPolicy,
+         typename InterpolationPolicy>
 void CFModel::GetRecommendations(const size_t numRecs,
                                  arma::Mat<size_t>& recommendations)
 {
   arma::Col<size_t> users;
-  RecommendationVisitor recommendation(numRecs, recommendations, users, false);
+  RecommendationVisitor<NeighborSearchPolicy, InterpolationPolicy>
+      recommendation(numRecs, recommendations, users, false);
   boost::apply_visitor(recommendation, cf);
 }
 
