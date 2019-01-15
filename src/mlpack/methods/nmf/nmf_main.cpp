@@ -105,7 +105,13 @@ static void mlpackMain()
   RequireAtLeastOnePassed({ "h", "w" }, false, "no output will be saved");
   RequireNoneOrAllPassed({"initial_w", "initial_h"}, true);
 
-  // Load input dataset.
+  // Load input dataset.  Note that this dataset will typically be transposed on
+  // load, since we are likely receiving it from a row-major language, but we
+  // get it in a column-major form.  Therefore, we're actually decomposing V^T =
+  // W^T * H^T.  Effectively this means we are solving, for the user, V = H*W.
+  // Therefore, we actually have to switch what we are saving, so we will save
+  // the W we get from amf.Apply() as H, and vice versa.  We know if the data is
+  // transposed based on the BINDING_MATRIX_TRANSPOSED macro.
   arma::mat V = std::move(CLI::GetParam<arma::mat>("input"));
 
   arma::mat W;
@@ -121,9 +127,15 @@ static void mlpackMain()
     if (CLI::HasParam("initial_w"))
     {
       // Initialization with given W, H matrices.
+#ifdef BINDING_MATRIX_TRANSPOSED
+      GivenInitialization ginit = GivenInitialization(
+          std::move(CLI::GetParam<arma::mat>("initial_h")),
+          std::move(CLI::GetParam<arma::mat>("initial_w")));
+#else
       GivenInitialization ginit = GivenInitialization(
           std::move(CLI::GetParam<arma::mat>("initial_w")),
           std::move(CLI::GetParam<arma::mat>("initial_h")));
+#endif
       AMF<SimpleResidueTermination,
           GivenInitialization> amf(srt, ginit);
       amf.Apply(V, r, W, H);
@@ -143,9 +155,15 @@ static void mlpackMain()
     if (CLI::HasParam("initial_w"))
     {
       // Initialization with given W, H matrices.
+#ifdef BINDING_MATRIX_TRANSPOSED
+      GivenInitialization ginit = GivenInitialization(
+          std::move(CLI::GetParam<arma::mat>("initial_h")),
+          std::move(CLI::GetParam<arma::mat>("initial_w")));
+#else
       GivenInitialization ginit = GivenInitialization(
           std::move(CLI::GetParam<arma::mat>("initial_w")),
           std::move(CLI::GetParam<arma::mat>("initial_h")));
+#endif
       AMF<SimpleResidueTermination,
           GivenInitialization,
           NMFMultiplicativeDivergenceUpdate> amf(srt, ginit);
@@ -168,9 +186,15 @@ static void mlpackMain()
     if (CLI::HasParam("initial_w"))
     {
       // Initialization with given W, H matrices.
+#ifdef BINDING_MATRIX_TRANSPOSED
+      GivenInitialization ginit = GivenInitialization(
+          std::move(CLI::GetParam<arma::mat>("initial_h")),
+          std::move(CLI::GetParam<arma::mat>("initial_w")));
+#else
       GivenInitialization ginit = GivenInitialization(
           std::move(CLI::GetParam<arma::mat>("initial_w")),
           std::move(CLI::GetParam<arma::mat>("initial_h")));
+#endif
       AMF<SimpleResidueTermination,
           GivenInitialization,
           NMFALSUpdate> amf(srt, ginit);
@@ -185,9 +209,17 @@ static void mlpackMain()
     }
   }
 
-  // Save results.
+  // Save results.  Remember from our discussion in the comments earlier that we
+  // may need to switch the names of the outputs.
+#ifdef BINDING_MATRIX_TRANSPOSED
+  if (CLI::HasParam("w"))
+    CLI::GetParam<arma::mat>("w") = std::move(H);
+  if (CLI::HasParam("h"))
+    CLI::GetParam<arma::mat>("h") = std::move(W);
+#else
   if (CLI::HasParam("w"))
     CLI::GetParam<arma::mat>("w") = std::move(W);
   if (CLI::HasParam("h"))
     CLI::GetParam<arma::mat>("h") = std::move(H);
+#endif
 }
