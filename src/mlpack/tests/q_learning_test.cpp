@@ -297,7 +297,7 @@ BOOST_AUTO_TEST_CASE(MountainCarWithDQN)
     }
 
     /**
-     * Set a threshold of -370 to check a convergence.
+     * Set a threshold of -370 to check convergence.
      */
     Log::Debug << "Average return: " << averageReturn.mean()
         << " Episode return: " << episodeReturn << std::endl;
