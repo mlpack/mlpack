@@ -184,7 +184,7 @@ inline void CheckMatrices( std::vector<std::vector<N>> vec1, std::vector<std::ve
     std::sort(vec2[i].begin(), vec2[i].end());
     for (size_t j = 0 ; j < vec1[i].size() ; j++)
     {
-      BOOST_REQUIRE_CLOSE((float) vec1[i][j], (float) vec2[i][j], tolerance);
+      BOOST_REQUIRE_CLOSE(static_cast<float>(vec1[i][j]), static_cast<float>(vec2[i][j]), tolerance);
     }
   }
 }
