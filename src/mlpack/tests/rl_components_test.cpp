@@ -16,7 +16,7 @@
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/acrobat.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
 #include <mlpack/methods/reinforcement_learning/replay/random_replay.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
@@ -68,20 +68,20 @@ BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTest)
 }
 
 /**
- * Constructs a Acrobat instance and check if the main rountine works as
+ * Constructs a Acrobot instance and check if the main rountine works as
  * it should be.
  */
-BOOST_AUTO_TEST_CASE(SimpleAcrobatTest)
+BOOST_AUTO_TEST_CASE(SimpleAcrobotTest)
 {
-  const Acrobat task = Acrobat();
+  const Acrobot task = Acrobot();
 
-  Acrobat::State state = task.InitialSample();
-  Acrobat::Action action = Acrobat::Action::negativeTorque;
+  Acrobot::State state = task.InitialSample();
+  Acrobot::Action action = Acrobot::Action::negativeTorque;
   double reward = task.Sample(state, action);
 
   BOOST_REQUIRE_EQUAL(reward, -1.0);
   BOOST_REQUIRE(!task.IsTerminal(state));
-  BOOST_REQUIRE_EQUAL(3, Acrobat::Action::size);
+  BOOST_REQUIRE_EQUAL(3, Acrobot::Action::size);
 }
 
 /**
