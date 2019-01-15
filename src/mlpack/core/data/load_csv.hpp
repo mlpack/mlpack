@@ -180,7 +180,7 @@ class LoadCSV
             stringRule[findRowSize] % delimiterRule);
 
         // Now that we know the dimensionality, initialize the DatasetMapper.
-        info = DatasetMapper<MapPolicy>(rows);
+        info.SetDimensionality(rows);
       }
 
       // If we need to do a first pass for the DatasetMapper, do it.
