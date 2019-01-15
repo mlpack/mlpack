@@ -19,9 +19,5 @@ mlpack's Contributors team, to ensure that (if applicable):
    [Style Guide](http://github.com/mlpack/mlpack/wiki/DesignGuidelines)
  * any new functionality is tested and working
 
-Once the pull request is approved by one member of the Contributors team, it may
-be merged between 3 and 7 days after approval.  This allows other contributors
-and maintainers to have time to also review the PR.  If a pull request has at
-least two approvals from members of the Contributors team, then the pull
-request may be immediately merged.  This applies even if the submitter of the
-PR is a member of the Contributors team.
+Once the pull request is approved by one member of the Contributors team, it can
+be merged.
