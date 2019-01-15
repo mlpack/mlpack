@@ -3,16 +3,18 @@
 #
 # This module sets the following variables:
 #  ENSMALLEN_FOUND - set to true if the library is found
-#  ENSMALLEN_INCLUDE_DIRS - list of required include directories
+#  ENSMALLEN_INCLUDE_DIR - list of required include directories
 #  ENSMALLEN_VERSION_MAJOR - major version number
 #  ENSMALLEN_VERSION_MINOR - minor version number
 #  ENSMALLEN_VERSION_PATCH - patch version number
 #  ENSMALLEN_VERSION_STRING - version number as a string (ex: "1.0.4")
 #  ENSMALLEN_VERSION_NAME - name of the version (ex: "Antipodean Antileech")
 
+file(GLOB ENSMALLEN_SEARCH_PATHS
+    ${CMAKE_BINARY_DIR}/deps/ensmallen-[0-9]*.[0-9]*.[0-9]*)
 find_path(ENSMALLEN_INCLUDE_DIR
   NAMES ensmallen.hpp
-  PATHS "$ENV{ProgramFiles}/ensmallen/include")
+  PATHS ${ENSMALLEN_SEARCH_PATHS}/include)
 
 if(ENSMALLEN_INCLUDE_DIR)
   # ------------------------------------------------------------------------
@@ -26,15 +28,17 @@ if(ENSMALLEN_INCLUDE_DIR)
 
   if(EXISTS "${ENSMALLEN_INCLUDE_DIR}/ensmallen_bits/ens_version.hpp")
 
+    set(ENSMALLEN_FOUND YES)
+
     # Read and parse armdillo version header file for version number
     file(READ "${ENSMALLEN_INCLUDE_DIR}/ensmallen_bits/ens_version.hpp"
         _ensmallen_HEADER_CONTENTS)
     string(REGEX REPLACE ".*#define ENS_VERSION_MAJOR ([0-9]+).*" "\\1"
-        ENSMALLEN_VERSION_MAJOR "${_armadillo_HEADER_CONTENTS}")
+        ENSMALLEN_VERSION_MAJOR "${_ensmallen_HEADER_CONTENTS}")
     string(REGEX REPLACE ".*#define ENS_VERSION_MINOR ([0-9]+).*" "\\1"
-        ENSMALLEN_VERSION_MINOR "${_armadillo_HEADER_CONTENTS}")
+        ENSMALLEN_VERSION_MINOR "${_ensmallen_HEADER_CONTENTS}")
     string(REGEX REPLACE ".*#define ENS_VERSION_PATCH ([0-9]+).*" "\\1"
-        ENSMALLEN_VERSION_PATCH "${_armadillo_HEADER_CONTENTS}")
+        ENSMALLEN_VERSION_PATCH "${_ensmallen_HEADER_CONTENTS}")
 
     # WARNING: The number of spaces before the version name is not one.
     string(REGEX REPLACE

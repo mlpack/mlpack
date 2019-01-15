@@ -346,12 +346,13 @@ ${ENS_DOWNLOAD_ERROR}!  Error log: ${ENS_DOWBLOAD_LOG}")
     endif ()
   endif ()
 else ()
-  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ENSMALLEN_INCLUDE_DIRS})
+  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 endif ()
 
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.69.0" "1.69"
   "1.68.0" "1.68"
   "1.67.0" "1.67"
   "1.66.0" "1.66"
