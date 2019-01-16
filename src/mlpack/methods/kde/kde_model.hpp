@@ -44,13 +44,13 @@ using KDEType = KDE<KernelType,
                              kde::KDEStat,
                              arma::mat>::template SingleTreeTraverser>;
 /**
- * KernerlNormalizer holds a set of methods to normalize estimations applying
+ * KernelNormalizer holds a set of methods to normalize estimations applying
  * in each case the appropiate kernel normalizer function.
  */
 class KernelNormalizer
 {
  private:
-  // SFINAE helper to check if has a Normalizer function.
+  // SFINAE check if Normalizer function is present.
   HAS_MEM_FUNC(Normalizer, HasNormalizer);
 
  public:
