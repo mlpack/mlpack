@@ -13,7 +13,7 @@
 #define MLPACK_METHODS_RL_PRIORITIZED_REPLAY_HPP
 
 #include <mlpack/prereqs.hpp>
-#include "random_replay.hpp"
+#include "sumtree.hpp"
 
 namespace mlpack {
 namespace rl {
@@ -37,6 +37,15 @@ template <typename EnvironmentType>
 class PrioritizedReplay
 {
  public:
+  //! Convenient typedef for action.
+  using ActionType = typename EnvironmentType::Action;
+
+  //! Convenient typedef for state.
+  using StateType = typename EnvironmentType::State;
+
+  PrioritizedReplay()
+  { /* Nothing to do here. */ }
+
   /**
    * Construct an instance of prioritized experience replay class.
    *
@@ -59,13 +68,17 @@ class PrioritizedReplay
       nextStates(dimension, capacity),
       isTerminal(capacity),
       full(false),
-      max_priority(1.0)
+      max_priority(1.0),
+      initial_beta(0.6),
+      replay_beta_iters(10000)
   { 
     int size = 1;
     while (size < capacity) {
       size *= 2;
     }
-    idxSum = new SumTree(size);
+
+    beta = initial_beta;
+    idxSum = SumTree<double>(size);
   }
 
   void Store(const StateType& state,
@@ -80,7 +93,7 @@ class PrioritizedReplay
     nextStates.col(position) = nextState.Encode();
     isTerminal(position) = isEnd;
 
-    idxSum[position] = max_priority * alpha;
+    idxSum.set(position, max_priority * alpha);
 
     position++;
     if (position == capacity)
@@ -90,15 +103,15 @@ class PrioritizedReplay
     }
   }
 
-  arma::uvec sampleProportional()
+  arma::ucolvec sampleProportional()
   {
-    arma::uvec idxes(batchSize);
+    arma::ucolvec idxes(batchSize);
     double totalSum = idxSum.sum(0, (full ? capacity : position) - 1);
     double sumPerRange = totalSum / batchSize;
     for (size_t bt = 0; bt < batchSize; bt ++) {
       double mass = arma::randu() * sumPerRange + bt * sumPerRange;
-      int idx = idxSum.findPrefixSum(mass);
-      idxes(bt) = idx;
+      size_t idx = idxSum.findPrefixSum(mass);
+      idxes[bt] = idx;
     }
     return idxes;
   }
@@ -108,9 +121,8 @@ class PrioritizedReplay
               arma::colvec& sampledRewards,
               arma::mat& sampledNextStates,
               arma::icolvec& isTerminal,
-              arma::uvec& sampledIndices,
-              arma::rowvec& weights,
-              double beta)
+              arma::ucolvec& sampledIndices,
+              arma::rowvec& weights)
   {
     size_t upperBound = full ? capacity : position;
 
@@ -128,20 +140,25 @@ class PrioritizedReplay
 
     for (size_t i = 0; i < sampledIndices.n_rows; ++ i)
     {
-      double p_sample = idxSum[sampledIndices[i]] / idxSum.sum();
-      weights(i) = pow(num_sample * p_sample, -beta);
+      double p_sample = idxSum.get(sampledIndices[i]) / idxSum.sum();
+      weights[i] = pow(num_sample * p_sample, -beta);
     }
     weights /= weights.max();
   }
 
-  void update_priorities(arma::uvec& indices, arma::uvec& priorities)
+  void update_priorities(arma::ucolvec& indices, arma::colvec& priorities)
   {
 //    update priorities of sampled transitions.
-      for (sizt_t i = 0; i < indices.n_rows; ++i)
+      for (size_t i = 0; i < indices.n_rows; ++i)
       {
-        idxSum[indices[i]] = alpha * priorities[i];
-        max_priority = max(max_priority, priorities[i]);
+        idxSum.set(indices[i], alpha * priorities[i]);
+        max_priority = std::max(max_priority, priorities[i]);
       }
+  }
+
+  void betaAnneal()
+  {
+    beta = beta + (1 - initial_beta) * 1.0 / replay_beta_iters;
   }
 
 private:
@@ -150,8 +167,14 @@ private:
 
   double max_priority;
 
+  double initial_beta;
+
+  double beta;
+
+  size_t replay_beta_iters;
+
   //! Locally-stored the prefix sum of prioritization
-  SumTree idxSum;
+  SumTree<double> idxSum;
 
   //! Locally-stored number of examples of each sample.
   size_t batchSize;
