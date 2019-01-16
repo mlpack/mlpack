@@ -104,31 +104,19 @@ build_script:
   - ps: >
       if (Test-Path "C:\projects\mlpack\src\mlpack\core\util\gitversion.hpp")
       {
-        # Converting string to x.x.x.x format.
-        $ver = (Get-Content "C:\projects\mlpack\src\mlpack\core\util\gitversion.hpp");
-        $gitversion = ($ver.Split('"')[1].Split(' ')[1].Split('-')[1]) + '0';
-        for ($i=0; $i -lt 4; $i++)
-        {
-          $env:MLPACK_VERSION += ([convert]::toint16($gitversion.substring($i*2, 2), 16)).ToString();
-          if ($i -lt 3)
-          {
-            $env:MLPACK_VERSION += '.'
-          }
-        }
+        $ver = (Get-Content "C:\projects\mlpack\src\mlpack\core\util\gitversion.hpp")
+        $env:INSTALL_VERSION = $ver.Split('"')[1].Split(' ')[1]
+        $env:MLPACK_VERSION = "0.0.0"
       }
       else
       {
-        $ver = (Get-Content "${env:APPVEYOR_BUILD_FOLDER}\src\mlpack\core\util\version.hpp" | where {$_ -like "*MLPACK_VERSION*"});
-        for ($i=0; $i -lt 3; $i++)
-        {
-          $env:MLPACK_VERSION += $ver[$i].substring($ver[$i].length-1,1)
-          if ($i -lt 2)
-          {
-            $env:MLPACK_VERSION += '.'
-          }
-        }
+        $ver = (Get-Content "C:\projects\mlpack\src\mlpack\core\util\version.hpp" | where {$_ -like "*MLPACK_VERSION*"});
+        $env:INSTALL_VERSION += $ver[0].substring($ver[0].length - 1, 1)
+        $env:INSTALL_VERSION += $ver[1].substring($ver[1].length - 1, 1)
+        $env:INSTALL_VERSION += $ver[2].substring($ver[2].length - 1, 1)
+        $env:MLPACK_VERSION = $env:INSTALL_VERSION
       }
-  - echo MLPACK_VERSION is %MLPACK_VERSION%
+  - echo INSTALL_VERSION is %INSTALL_VERSION%
 
   # Building MSI installer.
   - cd C:\projects\mlpack\dist\win-installer\mlpack-win-installer
@@ -152,7 +140,7 @@ build_script:
     -arch x64
     -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUIExtension.dll" Product.wxs HeatGeneratedFileList.wxs
   - >
-    light -out .\bin\x64\Release\mlpack-%MLPACK_VERSION%.msi
+    light -out .\bin\x64\Release\mlpack-%INSTALL_VERSION%.msi
     -pdbout .\bin\x64\Release\mlpack-windows.wixpdb
     -cultures:null
     -loc mlpack-localization.wxl
