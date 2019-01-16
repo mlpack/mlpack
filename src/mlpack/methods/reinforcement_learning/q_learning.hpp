@@ -16,6 +16,7 @@
 #include <mlpack/prereqs.hpp>
 
 #include "replay/random_replay.hpp"
+#include "replay/prioritized_replay.hpp"
 #include "training_config.hpp"
 
 namespace mlpack {
@@ -52,7 +53,8 @@ template <
   typename NetworkType,
   typename UpdaterType,
   typename PolicyType,
-  typename ReplayType = RandomReplay<EnvironmentType>
+  typename ReplayType = RandomReplay<EnvironmentType>,
+  typename PrioritizedReplayType = PrioritizedReplay<EnvironmentType>
 >
 class QLearning
 {
@@ -80,6 +82,13 @@ class QLearning
             NetworkType network,
             PolicyType policy,
             ReplayType replayMethod,
+            UpdaterType updater = UpdaterType(),
+            EnvironmentType environment = EnvironmentType());
+
+  QLearning(TrainingConfig config,
+            NetworkType network,
+            PolicyType policy,
+            PrioritizedReplayType prioritizedReplayMethod,
             UpdaterType updater = UpdaterType(),
             EnvironmentType environment = EnvironmentType());
 
@@ -131,6 +140,9 @@ class QLearning
   //! Locally-stored experience method.
   ReplayType replayMethod;
 
+  //! Locally-stored experience method.
+  PrioritizedReplayType prioritizedReplayMethod;
+
   //! Locally-stored reinforcement learning task.
   EnvironmentType environment;
 
@@ -142,6 +154,8 @@ class QLearning
 
   //! Locally-stored flag indicating training mode or test mode.
   bool deterministic;
+
+  bool prioritized_replay;
 };
 
 } // namespace rl
