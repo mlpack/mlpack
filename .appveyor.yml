@@ -102,6 +102,11 @@ build_script:
   
   # Checking current gitversion or mlpack version.
   - ps: >
+      $ver = (Get-Content "${env:APPVEYOR_BUILD_FOLDER}\src\mlpack\core\util\version.hpp" | where {$_ -like "*MLPACK_VERSION*"});
+      $env:INSTALL_VERSION += $ver[0].substring($ver[0].length - 1, 1) + '.';
+      $env:INSTALL_VERSION += $ver[1].substring($ver[1].length - 1, 1) + '.';
+      $env:INSTALL_VERSION += $ver[2].substring($ver[2].length - 1, 1);
+      $env:MLPACK_VERSION = $env:INSTALL_VERSION
       #if (Test-Path "C:\projects\mlpack\src\mlpack\core\util\gitversion.hpp")
       #{
       #  $ver = (Get-Content "C:\projects\mlpack\src\mlpack\core\util\gitversion.hpp")
@@ -116,11 +121,6 @@ build_script:
       #  $env:INSTALL_VERSION += $ver[2].substring($ver[2].length - 1, 1);
       #  $env:MLPACK_VERSION = $env:INSTALL_VERSION
       #}
-      $ver = (Get-Content "${env:APPVEYOR_BUILD_FOLDER}\src\mlpack\core\util\version.hpp" | where {$_ -like "*MLPACK_VERSION*"});
-      $env:INSTALL_VERSION += $ver[0].substring($ver[0].length - 1, 1) + '.';
-      $env:INSTALL_VERSION += $ver[1].substring($ver[1].length - 1, 1) + '.';
-      $env:INSTALL_VERSION += $ver[2].substring($ver[2].length - 1, 1);
-      $env:MLPACK_VERSION = $env:INSTALL_VERSION
   - echo INSTALL_VERSION is %INSTALL_VERSION%
 
   # Building MSI installer.
