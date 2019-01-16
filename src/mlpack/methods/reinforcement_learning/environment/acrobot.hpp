@@ -1,8 +1,8 @@
 /**
- * @file acrobat.hpp
+ * @file acrobot.hpp
  * @author Rohan Raj
  *
- * This file is an implementation of Acrobat task:
+ * This file is an implementation of Acrobot task:
  * https://gym.openai.com/envs/Acrobot-v1/
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_RL_ENVIRONMENT_ACROBAT_HPP
-#define MLPACK_METHODS_RL_ENVIRONMENT_ACROBAT_HPP
+#ifndef MLPACK_METHODS_RL_ENVIRONMENT_ACROBOT_HPP
+#define MLPACK_METHODS_RL_ENVIRONMENT_ACROBOT_HPP
 
 #include <mlpack/core.hpp>
 
@@ -19,17 +19,17 @@ namespace mlpack{
 namespace rl{
 
 /**
- * Implementation of Acrobat game. Acrobot is a 2-link pendulum with only the
+ * Implementation of Acrobot game. Acrobot is a 2-link pendulum with only the
  * second joint actuated. Intitially, both links point downwards. The goal is
  * to swing the end-effector at a height at least the length of one link above
  * the base. Both links can swing freely and can pass by each other, i.e.,
  * they don't collide when they have the same angle.
  */
-class Acrobat
+class Acrobot
 {
  public:
    /*
-    * Implementation of Acrobat State. Each State is a tuple vector
+    * Implementation of Acrobot State. Each State is a tuple vector
     * (theta1, thetha2, angular velocity 1, angular velocity 2).
     */
   class State
@@ -83,7 +83,7 @@ class Acrobat
   };
 
   /*
-   * Implementation of action for Acrobat
+   * Implementation of action for Acrobot
    */
   enum Action
   {
@@ -96,7 +96,7 @@ class Acrobat
   };
 
    /**
-    * Construct a Acrobat instance using the given constants.
+    * Construct a Acrobot instance using the given constants.
     *
     * @param gravity The gravity parameter.
     * @param linkLength1 The length of link 1.
@@ -110,7 +110,7 @@ class Acrobat
     * @param maxVel2 The max angular velocity of link2.
     * @param dt The differential value.
     */
-  Acrobat(const double gravity = 9.81,
+  Acrobot(const double gravity = 9.81,
           const double linkLength1 = 1.0,
           const double linkLength2 = 1.0,
           const double linkMass1 = 1.0,
@@ -137,7 +137,7 @@ class Acrobat
   { /* Nothing to do here */ }
 
   /**
-   * Dynamics of the Acrobat System. To get reward and next state based on
+   * Dynamics of the Acrobot System. To get reward and next state based on
    * current state and current action. Always return -1 reward.
    *
    * @param state The current State.
@@ -165,7 +165,7 @@ class Acrobat
     nextState.AngularVelocity2() = std::min(
         std::max(currentNextState[3], -maxVel2), maxVel2);
     /**
-     * If the acrobat reaches a terminal state, it should be given a positive
+     * If the acrobot reaches a terminal state, it should be given a positive
      * reward. This will ensure that the agent learns the goal of the game.
      */
     bool done = IsTerminal(nextState);
@@ -175,7 +175,7 @@ class Acrobat
   };
 
   /**
-   * Dynamics of the Acrobat System. To get reward and next state based on
+   * Dynamics of the Acrobot System. To get reward and next state based on
    * current state and current action. This function calls the Sample function
    * to estimate the next state return reward for taking a particular action.
    *
@@ -198,7 +198,7 @@ class Acrobat
   }
 
   /**
-   * This function checks if the acrobat has reached the terminal state.
+   * This function checks if the acrobot has reached the terminal state.
    *
    * @param state The current State.
    */
@@ -349,7 +349,12 @@ class Acrobat
 
   //! Locally-stored done reward.
   double doneReward;
-}; // class Acrobat
+}; // class Acrobot
+
+/**
+ * Add an alias for backward compatibility.
+ */
+typedef Acrobot Acrobat;
 
 } // namespace rl
 } // namespace mlpack
