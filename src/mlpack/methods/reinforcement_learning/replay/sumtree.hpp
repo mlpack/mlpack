@@ -28,6 +28,10 @@ template<typename T>
 class SumTree
 {
  public:
+
+  SumTree()
+  { /* Nothing to do here. */ }
+
   SumTree(size_t capacity):
       capacity(capacity)
   {

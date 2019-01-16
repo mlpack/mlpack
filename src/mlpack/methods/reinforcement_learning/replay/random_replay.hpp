@@ -49,6 +49,9 @@ class RandomReplay
   //! Convenient typedef for state.
   using StateType = typename EnvironmentType::State;
 
+  RandomReplay()
+  { /* Nothing to do here. */ }
+
   /**
    * Construct an instance of random experience replay class.
    *
