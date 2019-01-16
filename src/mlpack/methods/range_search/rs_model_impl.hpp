@@ -289,10 +289,10 @@ void MonoSearchVisitor::operator()(RSType* rs) const
 
 //! Save parameters for bichromatic range search.
 inline BiSearchVisitor::BiSearchVisitor(const arma::mat& querySet,
-                                 const math::Range& range,
-                                 std::vector<std::vector<size_t>>& neighbors,
-                                 std::vector<std::vector<double>>& distances,
-                                 const size_t leafSize):
+                                        const math::Range& range,
+                                    std::vector<std::vector<size_t>>& neighbors,
+                                    std::vector<std::vector<double>>& distances,
+                                        const size_t leafSize):
     querySet(querySet),
     range(range),
     neighbors(neighbors),
@@ -503,6 +503,29 @@ inline bool RSModel::Naive() const
 inline bool& RSModel::Naive()
 {
   return boost::apply_visitor(NaiveVisitor(), rSearch);
+}
+//Save a RSModel into file
+inline void SaveModel(RSModel* model,std::string filename)
+{
+  std::ofstream ofs(filename);
+  boost::archive::text_oarchive oa(ofs);
+  oa << model;
+}
+//Load a RSModel from file
+inline std::string LoadModel(std::string filename)
+{
+  std::ifstream ifs(filename);
+  std::stringstream buffer;
+  buffer << ifs.rdbuf();
+  return buffer.str();
+}
+//Compare two RSModels by serialising them and then comparing their documents
+inline bool CheckModelSerial(RSModel* model1, RSModel* model2)
+{
+  std::string strmodel1="model1",strmodel2="model2";
+  SaveModel(model1,strmodel1);
+  SaveModel(model2,strmodel2);
+  return !LoadModel(strmodel1).compare(LoadModel(strmodel2));
 }
 
 } // namespace range

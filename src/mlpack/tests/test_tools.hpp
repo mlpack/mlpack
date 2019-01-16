@@ -188,5 +188,22 @@ inline void CheckMatrices( std::vector<std::vector<N>> vec1, std::vector<std::ve
     }
   }
 }
-
+//Load A csv file into a vector of vector of templated datatype (code strips ',')
+template<typename T>
+std::vector<std::vector<T>> ReadData(std::string const& path)
+{
+    std::ifstream ifs(path);
+    std::vector<std::vector<T>> table;
+    std::string line;
+    while (std::getline(ifs, line))
+    {
+      std::vector<T> numbers ;
+      T n ;
+      std::replace(line.begin(), line.end(), ',', ' ');
+      std::istringstream stm(line) ;
+      while( stm >> n ) numbers.push_back(n) ;
+      table.push_back(numbers);
+    }
+    return table;
+}
 #endif

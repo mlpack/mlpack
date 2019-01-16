@@ -386,6 +386,10 @@ class RSModel
    */
   void CleanMemory();
 };
+std::string LoadModel(std::string s);
+void SaveModel(RSModel* model,std::string s);
+//Serialize 2 models and then check their equality
+bool CheckModelSerial(RSModel* , RSModel* );
 
 } // namespace range
 } // namespace mlpack
