@@ -20,4 +20,7 @@ mlpack's Contributors team, to ensure that (if applicable):
  * any new functionality is tested and working
 
 Once the pull request is approved by one member of the Contributors team, it can
-be merged.
+be merged.  Members of the Contributors team are encouraged to review pull
+requests that have already been reviewed, and pull request contributors are
+encouraged to seek multiple reviews.  Reviews from anyone not on the
+Contributors team are always appreciated.
