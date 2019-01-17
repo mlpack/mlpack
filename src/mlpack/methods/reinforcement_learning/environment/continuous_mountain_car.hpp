@@ -184,7 +184,7 @@ class ContinuousMountainCar
    */
   bool IsTerminal(const State& state) const
   {
-    return bool(state.Position() >= positionGoal);
+    return state.Position() >= positionGoal;
   }
 
  private:
