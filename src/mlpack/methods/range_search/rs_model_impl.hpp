@@ -61,19 +61,21 @@ inline RSModel::RSModel(RSModel&& other) :
 
 inline bool RSModel::operator==(RSModel other)
 {
-  if ( (this->treeType == other.treeType) && (this->leafSize == other.leafSize)
+  if ((this->treeType == other.treeType) && (this->leafSize == other.leafSize)
                                      && (this->randomBasis == other.randomBasis)
                                      && (this->rSearch == other.rSearch)
                                      && (this->q.n_cols ==other.q.n_cols)
-                                     && (this->q.n_rows == other.q.n_rows) )
+                                     && (this->q.n_rows == other.q.n_rows))
   {
-    for (size_t i = 0; i < this->q.n_elem ; i++)
-      if (this->q[i] != other.q[i] )
+    for (size_t i = 0; i < q.n_elem; i++)
+      if (q[i] != other.q[i])
         return false;
     return true;
   }
   else
+  {
     return false;
+  }
 }
 
 inline RSModel& RSModel::operator=(RSModel other)
@@ -290,8 +292,8 @@ void MonoSearchVisitor::operator()(RSType* rs) const
 //! Save parameters for bichromatic range search.
 inline BiSearchVisitor::BiSearchVisitor(const arma::mat& querySet,
                                         const math::Range& range,
-                                    std::vector<std::vector<size_t>>& neighbors,
-                                    std::vector<std::vector<double>>& distances,
+                                        std::vector<std::vector<size_t>>& neighbors,
+                                        std::vector<std::vector<double>>& distances,
                                         const size_t leafSize):
     querySet(querySet),
     range(range),
@@ -369,7 +371,7 @@ void BiSearchVisitor::SearchLeaf(RSType* rs) const
 
 //! Save parameters for Train.
 inline TrainVisitor::TrainVisitor(arma::mat&& referenceSet,
-                           const size_t leafSize) :
+                                  const size_t leafSize) :
     referenceSet(std::move(referenceSet)),
     leafSize(leafSize)
 {}
@@ -503,29 +505,6 @@ inline bool RSModel::Naive() const
 inline bool& RSModel::Naive()
 {
   return boost::apply_visitor(NaiveVisitor(), rSearch);
-}
-//Save a RSModel into file
-inline void SaveModel(RSModel* model,std::string filename)
-{
-  std::ofstream ofs(filename);
-  boost::archive::text_oarchive oa(ofs);
-  oa << model;
-}
-//Load a RSModel from file
-inline std::string LoadModel(std::string filename)
-{
-  std::ifstream ifs(filename);
-  std::stringstream buffer;
-  buffer << ifs.rdbuf();
-  return buffer.str();
-}
-//Compare two RSModels by serialising them and then comparing their documents
-inline bool CheckModelSerial(RSModel* model1, RSModel* model2)
-{
-  std::string strmodel1="model1",strmodel2="model2";
-  SaveModel(model1,strmodel1);
-  SaveModel(model2,strmodel2);
-  return !LoadModel(strmodel1).compare(LoadModel(strmodel2));
 }
 
 } // namespace range
