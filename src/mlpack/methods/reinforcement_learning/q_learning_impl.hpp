@@ -149,8 +149,16 @@ double QLearning<
   double reward = environment.Sample(state, action, nextState);
 
   // Store the transition for replay.
-  replayMethod.Store(state, action, reward,
-      nextState, environment.IsTerminal(nextState));
+  if (prioritized_replay)
+  {
+    prioritizedReplayMethod.Store(state, action, reward,
+                       nextState, environment.IsTerminal(nextState));
+  }
+  else
+  {
+    replayMethod.Store(state, action, reward,
+                       nextState, environment.IsTerminal(nextState));
+  }
 
   // Update current state.
   state = nextState;
@@ -220,16 +228,16 @@ double QLearning<
   learningNetwork.Backward(target, gradients);
   updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
 
-  // if (prioritized_replay)
-  // {
-  //   arma::colvec td_error(target.n_cols);
-  //   for (size_t i = 0; i < target.n_cols; i ++)
-  //   {
-  //     td_error[i] = nextActionValues(sampledActions[i], i) - target(sampledActions[i], i);
-  //   }
-  //   td_error = arma::abs(td_error);
-  //   prioritizedReplayMethod.update_priorities(sampledIndices, td_error);
-  // }
+   if (prioritized_replay)
+   {
+     arma::colvec td_error(target.n_cols);
+     for (size_t i = 0; i < target.n_cols; i ++)
+     {
+       td_error[i] = nextActionValues(sampledActions[i], i) - target(sampledActions[i], i);
+     }
+     td_error = arma::abs(td_error);
+     prioritizedReplayMethod.update_priorities(sampledIndices, td_error);
+   }
   return reward;
 }
 

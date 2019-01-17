@@ -106,7 +106,7 @@ class PrioritizedReplay
   arma::ucolvec sampleProportional()
   {
     arma::ucolvec idxes(batchSize);
-    double totalSum = idxSum.sum(0, (full ? capacity : position) - 1);
+    double totalSum = idxSum.sum(0, (full ? capacity : position));
     double sumPerRange = totalSum / batchSize;
     for (size_t bt = 0; bt < batchSize; bt ++) {
       double mass = arma::randu() * sumPerRange + bt * sumPerRange;
@@ -137,6 +137,7 @@ class PrioritizedReplay
 //  calculate the weights of sampled transitions
 
     size_t num_sample = full ? capacity : position;
+    weights = arma::rowvec(sampledIndices.n_rows);
 
     for (size_t i = 0; i < sampledIndices.n_rows; ++ i)
     {
