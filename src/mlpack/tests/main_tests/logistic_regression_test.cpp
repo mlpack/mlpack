@@ -148,8 +148,7 @@ BOOST_AUTO_TEST_CASE(LRWrongResponseSizeTest)
  * extra parameter) and ensuring that predictions are the same.
  */
 //The parameter "output" is deprecated and replaced by "predictions"
-//The test case LRResponsesRepresentationTest2 can be removed in mlpack 4
-BOOST_AUTO_TEST_CASE(LRResponsesRepresentationTest2)
+BOOST_AUTO_TEST_CASE(LRResponsesRepresentationTest)
 {
   arma::mat trainX1({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}, {0, 1, 1}});
   arma::mat testX({{4.0, 5.0}, {1.0, 6.0}});
@@ -162,7 +161,7 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentationTest2)
 
   // Get the output.
   const arma::Row<size_t> testY1 =
-      std::move(CLI::GetParam<arma::Row<size_t>>("output"));
+      std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
 
   // Reset the settings.
   bindings::tests::CleanMemory();
@@ -182,53 +181,11 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentationTest2)
 
   // get the output
   const arma::Row<size_t> &testY2 =
-      CLI::GetParam<arma::Row<size_t>>("output");
+      CLI::GetParam<arma::Row<size_t>>("predictions");
 
   // Both solutions should be equal.
   BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
                                   testY2.begin(), testY2.end());                              
-}
-
-/**
- * Checking two options of specifying responses (extra row in train matrix and
- * extra parameter) and ensuring that predictions are the same.
- */
-BOOST_AUTO_TEST_CASE(LRResponsesRepresentationTest)
-{
-  arma::mat trainX1({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}, {0, 1, 1}});
-  arma::mat testX({{4.0, 5.0}, {1.0, 6.0}});
-
-  SetInputParam("training", std::move(trainX1));
-  SetInputParam("test", testX);
-
-  // The first solution.
-  mlpackMain();
-
-  const arma::Row<size_t> testY4 =
-      std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
-
-  // Reset the settings.
-  bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
-
-  // Now train by providing labels as extra parameter.
-  arma::mat trainX2({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}});
-  arma::Row<size_t> trainY2({0, 1, 1});
-
-  SetInputParam("training", std::move(trainX2));
-  SetInputParam("labels", std::move(trainY2));
-  SetInputParam("test", std::move(testX));
-
-  // The second solution.
-  mlpackMain();
-
-  const arma::Row<size_t> &testY5 =
-      CLI::GetParam<arma::Row<size_t>>("predictions");
-
-  // Both solutions should be equal.
-  BOOST_REQUIRE_EQUAL_COLLECTIONS(testY4.begin(), testY5.end(),
-                                  testY4.begin(), testY5.end());                              
 }
 /**
  * Check that model can saved / loaded and used. Ensuring that results are the
