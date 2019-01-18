@@ -171,4 +171,5 @@ inline std::string FilterFileName(const std::string& inputString)
 
   return fileName;
 }
+
 #endif
