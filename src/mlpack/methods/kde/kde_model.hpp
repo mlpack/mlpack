@@ -90,7 +90,7 @@ class DualMonoKDE : public boost::static_visitor<void>
   arma::vec& estimations;
 
  public:
-  //! Alias template necessary for visual C++ compiler.
+  //! Alias template necessary for Visual C++ compiler.
   template<typename KernelType,
            template<typename TreeMetricType,
                     typename TreeStatType,
@@ -127,7 +127,7 @@ class DualBiKDE : public boost::static_visitor<void>
   arma::vec& estimations;
 
  public:
-  //! Alias template necessary for visual C++ compiler.
+  //! Alias template necessary for Visual C++ compiler.
   template<typename KernelType,
            template<typename TreeMetricType,
                     typename TreeStatType,
@@ -331,7 +331,7 @@ class KDEModel
   //! Get the mode of the model.
   KDEMode Mode() const;
 
-  //! Modify de mode of the model.
+  //! Modify the mode of the model.
   KDEMode& Mode();
 
   /**

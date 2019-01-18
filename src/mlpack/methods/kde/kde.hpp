@@ -122,7 +122,7 @@ class KDE
    * - If TreeTraits<TreeType>::RearrangesDataset is False then it is possible
    *   to use an empty oldFromNewReferences vector.
    *
-   * @param referenceTree New already created reference tree.
+   * @param referenceTree Built reference tree.
    * @param oldFromNewReferences Permutations of reference points obtained
    *                             during tree generation.
    */

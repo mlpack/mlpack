@@ -184,7 +184,7 @@ BOOST_AUTO_TEST_CASE(KDENoInputData)
 }
 
 /**
-  * Check that there're as many densities in the result as query points.
+  * Check result has as many densities as query points.
  **/
 BOOST_AUTO_TEST_CASE(KDEOutputSize)
 {
