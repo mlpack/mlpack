@@ -18,6 +18,40 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+template<typename InputDataType, typename OutputDataType>
+DiceLoss<InputDataType, OutputDataType>::DiceLoss(
+    const double eps) : eps(eps)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename TargetType>
+double DiceLoss<InputDataType, OutputDataType>::Forward(
+    const InputType&& input, const TargetType&& target)
+{
+
+}
+
+template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename TargetType, typename OutputType>
+void DiceLoss<InputDataType, OutputDataType>::Backward(
+    const InputType&& input,
+    const TargetType&& target,
+    OutputType&& output)
+{
+
+}
+
+template<typename InputDataType, typename OutputDataType>
+template<typename Archive>
+void DiceLoss<InputDataType, OutputDataType>::serialize(
+    Archive& ar,
+    const unsigned int /* version */)
+{
+  ar & BOOST_SERIALIZATION_NVP(eps);
+}
+
 } // namespace ann
 } // namespace mlpack
 
