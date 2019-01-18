@@ -37,10 +37,9 @@ class DiceLoss
   /**
    * Create the DiceLoss object.
    *
-   * @param eps The minimum value used for computing
-   *            denominators in a numerically stable way.
+   * @param smooth The parameter to avoid overfitting.
    */
-  DiceLoss(const double eps = 1e-10);
+  DiceLoss(const double smooth = 1);
 
   /*
    * Computes the dice loss function.
@@ -68,10 +67,10 @@ class DiceLoss
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
-  //! Get the epsilon.
-  double Eps() const { return eps; }
-  //! Modify the epsilon.
-  double& Eps() { return eps; }
+  //! Get the smooth.
+  double Smooth() const { return smooth; }
+  //! Modify the smooth.
+  double& Smooth() { return smooth; }
 
   /**
    * Serialize the layer.
@@ -83,8 +82,8 @@ class DiceLoss
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! The minimum value used for computing denominators
-  double eps;
+  //! The parameter to avoid overfitting
+  double smooth;
 }; // class DiceLoss
 
 } // namespace ann

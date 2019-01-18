@@ -20,7 +20,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 DiceLoss<InputDataType, OutputDataType>::DiceLoss(
-    const double eps) : eps(eps)
+    const double smooth) : smooth(smooth)
 {
   // Nothing to do here.
 }
@@ -30,7 +30,9 @@ template<typename InputType, typename TargetType>
 double DiceLoss<InputDataType, OutputDataType>::Forward(
     const InputType&& input, const TargetType&& target)
 {
-
+  return 1 - ((2 * arma::accu(target % input) + smooth) /
+    (arma::accu(target % target) + arma::accu(
+    input % input) + smooth))
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -40,7 +42,10 @@ void DiceLoss<InputDataType, OutputDataType>::Backward(
     const TargetType&& target,
     OutputType&& output)
 {
-
+  output = -2 * (target * (arma::accu(input % input) +
+    arma::accu(target % target)) - 2 * input *
+    (arma::accu(target % input))) / (arma::accu(target % target)
+    + arma::accu(input % input))
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -49,7 +54,7 @@ void DiceLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(eps);
+  ar & BOOST_SERIALIZATION_NVP(smooth);
 }
 
 } // namespace ann
