@@ -87,11 +87,11 @@ std::vector<std::vector<T>> ReadData(const std::string& path)
   while (std::getline(ifs, line))
   {
     std::vector<T> numbers;
-    T n ;
+    T n;
     std::replace(line.begin(), line.end(), ',', ' ');
     std::istringstream stm(line) ;
     while ( stm >> n )
-      numbers.push_back(n) ;
+      numbers.push_back(n);
     table.push_back(numbers);
   }
   return table;
