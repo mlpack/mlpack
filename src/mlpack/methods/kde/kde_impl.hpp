@@ -164,14 +164,14 @@ KDE<KernelType,
     SingleTreeTraversalType>::
 operator=(KDE other)
 {
-  // Clean memory
+  // Clean memory.
   if (ownsReferenceTree)
   {
     delete referenceTree;
     delete oldFromNewReferences;
   }
 
-  // Move
+  // Move the other object.
   this->kernel = std::move(other.kernel);
   this->metric = std::move(other.metric);
   this->referenceTree = std::move(other.referenceTree);
@@ -226,8 +226,10 @@ Train(MatType referenceSet)
 {
   // Check if referenceSet is not an empty set.
   if (referenceSet.n_cols == 0)
+  {
     throw std::invalid_argument("cannot train KDE model with an empty "
                                 "reference set");
+  }
 
   if (ownsReferenceTree)
   {
@@ -262,8 +264,10 @@ Train(Tree* referenceTree, std::vector<size_t>* oldFromNewReferences)
 {
   // Check if referenceTree dataset is not an empty set.
   if (referenceTree->Dataset().n_cols == 0)
+  {
     throw std::invalid_argument("cannot train KDE model with an empty "
                                 "reference set");
+  }
 
   if (ownsReferenceTree == true)
   {
@@ -332,7 +336,8 @@ Evaluate(MatType querySet, arma::vec& estimations)
     }
 
     Timer::Start("computing_kde");
-    // Evaluate
+
+    // Evaluate.
     typedef KDERules<MetricType, KernelType, Tree> RuleType;
     RuleType rules = RuleType(referenceTree->Dataset(),
                               querySet,
@@ -468,7 +473,8 @@ Evaluate(arma::vec& estimations)
   estimations.fill(arma::fill::zeros);
 
   Timer::Start("computing_kde");
-  // Evaluate
+
+  // Evaluate.
   typedef KDERules<MetricType, KernelType, Tree> RuleType;
   RuleType rules = RuleType(referenceTree->Dataset(),
                             referenceTree->Dataset(),

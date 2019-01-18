@@ -43,6 +43,7 @@ using KDEType = KDE<KernelType,
                     TreeType<metric::EuclideanDistance,
                              kde::KDEStat,
                              arma::mat>::template SingleTreeTraverser>;
+
 /**
  * KernelNormalizer holds a set of methods to normalize estimations applying
  * in each case the appropiate kernel normalizer function.

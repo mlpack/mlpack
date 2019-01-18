@@ -18,7 +18,8 @@ namespace mlpack {
 namespace kde {
 
 /**
- * Extra data for each node in the tree.
+ * Extra data for each node in the tree for the task of kernel density
+ * estimation.
  */
 class KDEStat
 {

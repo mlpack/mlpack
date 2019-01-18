@@ -119,7 +119,7 @@ class KDE
   /**
    * Trains the KDE model. Sets the reference tree to an already created tree.
    *
-   * - If TreeTraits<TreeType>::RearrangesDataset is False then it is possible
+   * - If TreeTraits<TreeType>::RearrangesDataset is false then it is possible
    *   to use an empty oldFromNewReferences vector.
    *
    * @param referenceTree Built reference tree.
