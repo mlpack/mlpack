@@ -93,7 +93,7 @@ Copyright:
   Copyright 2018, B Kartheek Reddy <bkartheekreddy@gmail.com>
   Copyright 2018, Atharva Khandait <akhandait45@gmail.com>
   Copyright 2018, Wenhao Huang <wenhao.huang.work@gmail.com>
-  Copyright 2018, Roberto Hueso <robertohueso96@gmail.com>
+  Copyright 2018-2019, Roberto Hueso <robertohueso96@gmail.com>
   Copyright 2018, Prabhat Sharma <prabhatsharma7298@gmail.com>
   Copyright 2018, Tan Jun An <yamidarkxxx@gmail.com>
   Copyright 2018, Moksh Jain <mokshjn00@gmail.com>
