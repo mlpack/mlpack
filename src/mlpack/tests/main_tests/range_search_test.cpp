@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(RangeSearchInputModelNoQuery)
   arma::mat inputData;
   double minVal = 0, maxVal = 3;
   string distanceFile = "distances.csv";
-  string neighborfile = "neighbors.csv";
+  string neighborsFile = "neighbors.csv";
 
   if (!data::Load("iris.csv", inputData))
     BOOST_FAIL("Unable to load dataset iris.csv!");
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(RangeSearchInputModelNoQuery)
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
   SetInputParam("distances_file", distanceFile);
-  SetInputParam("neighbors_file", neighborfile);
+  SetInputParam("neighbors_file", neighborsFile);
 
   mlpackMain();
 
@@ -90,6 +90,9 @@ BOOST_AUTO_TEST_CASE(RangeSearchInputModelNoQuery)
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
+
+  remove(neighborsFile.c_str( ));
+  remove(distanceFile.c_str( ));
 }
 
 /*
@@ -100,7 +103,7 @@ BOOST_AUTO_TEST_CASE(RangeSearchDifferentTree)
   arma::mat inputData;
   double minVal = 0, maxVal = 3;
   string distanceFile = "distances.csv";
-  string neighborfile = "neighbors.csv";
+  string neighborsFile = "neighbors.csv";
   string wrongTreeType = "RST";
   if (!data::Load("iris.csv", inputData))
     BOOST_FAIL("Unable to load dataset iris.csv!");
@@ -109,12 +112,15 @@ BOOST_AUTO_TEST_CASE(RangeSearchDifferentTree)
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
   SetInputParam("distances_file", distanceFile);
-  SetInputParam("neighbors_file", neighborfile);
+  SetInputParam("neighbors_file", neighborsFile);
   SetInputParam("tree_type", wrongTreeType);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
+
+  remove(neighborsFile.c_str( ));
+  remove(distanceFile.c_str( ));
 }
 
 /*
@@ -125,7 +131,7 @@ BOOST_AUTO_TEST_CASE(RangeSearchBothReferenceandModel)
   arma::mat inputData, queryData;
   double minVal = 0, maxVal = 3;
   string distanceFile = "distances.csv";
-  string neighborfile = "neighbors.csv";
+  string neighborsFile = "neighbors.csv";
 
   if (!data::Load("iris.csv", inputData))
     BOOST_FAIL("Unable to load dataset iris.csv!");
@@ -136,7 +142,7 @@ BOOST_AUTO_TEST_CASE(RangeSearchBothReferenceandModel)
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
   SetInputParam("distances_file", distanceFile);
-  SetInputParam("neighbors_file", neighborfile);
+  SetInputParam("neighbors_file", neighborsFile);
   SetInputParam("query", queryData);
 
   mlpackMain();
@@ -147,6 +153,9 @@ BOOST_AUTO_TEST_CASE(RangeSearchBothReferenceandModel)
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
+
+  remove(neighborsFile.c_str( ));
+  remove(distanceFile.c_str( ));
 }
 
 /*
@@ -191,6 +200,9 @@ BOOST_AUTO_TEST_CASE(RangeSearchTest)
 
   CheckMatrices(neighbors, neighborVal);
   CheckMatrices(distances, distanceVal);
+
+  remove(neighborsFile.c_str( ));
+  remove(distanceFile.c_str( ));
 }
 
 /*
@@ -232,6 +244,8 @@ BOOST_AUTO_TEST_CASE(RangeSeachTestwithQuery)
   CheckMatrices(neighbors, neighborVal);
   CheckMatrices(distances, distanceVal);
 
+  remove(neighborsFile.c_str( ));
+  remove(distanceFile.c_str( ));
 }
 
 /*
@@ -244,7 +258,7 @@ BOOST_AUTO_TEST_CASE(ModelCheck)
   arma::mat inputData, queryData;
   double minVal = 0, maxVal = 3;
   string distanceFile = "distances.csv";
-  string neighborfile = "neighbors.csv";
+  string neighborsFile = "neighbors.csv";
   vector<vector<size_t>> neighbors, neighborsTemp;
   vector<vector<double>> distances, distancetemp;
 
@@ -257,12 +271,12 @@ BOOST_AUTO_TEST_CASE(ModelCheck)
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
   SetInputParam("distances_file", distanceFile);
-  SetInputParam("neighbors_file", neighborfile);
+  SetInputParam("neighbors_file", neighborsFile);
   SetInputParam("query", queryData);
 
   mlpackMain();
 
-  neighbors = ReadData<size_t>(neighborfile);
+  neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
 
   RSModel* outputModel = move(CLI::GetParam<RSModel*>("output_model"));
@@ -273,7 +287,7 @@ BOOST_AUTO_TEST_CASE(ModelCheck)
 
   mlpackMain();
 
-  neighborsTemp = ReadData<size_t>(neighborfile);
+  neighborsTemp = ReadData<size_t>(neighborsFile);
   distancetemp = ReadData<double>(distanceFile);
 
   CheckMatrices(neighbors, neighborsTemp);
@@ -283,6 +297,9 @@ BOOST_AUTO_TEST_CASE(ModelCheck)
   {
     BOOST_FAIL("Models are not Equal");
   }
+
+  remove(neighborsFile.c_str( ));
+  remove(distanceFile.c_str( ));
 }
 
 /*
@@ -335,6 +352,9 @@ BOOST_AUTO_TEST_CASE(LeafValueTesting)
     BOOST_REQUIRE_NE(ModelToString(outputModel1),
                      ModelToString(CLI::GetParam<RSModel*>("output_model")));
   }
+
+  remove(neighborsFile.c_str( ));
+  remove(distanceFile.c_str( ));
 }
 
 /*
@@ -400,6 +420,9 @@ BOOST_AUTO_TEST_CASE(TreeTypeTesting)
     BOOST_REQUIRE_NE(ModelToString(outputModel1),
                      ModelToString(CLI::GetParam<RSModel*>("output_model")));
   }
+
+  remove(neighborsFile.c_str( ));
+  remove(distanceFile.c_str( ));
 }
 
 /*
@@ -438,6 +461,9 @@ BOOST_AUTO_TEST_CASE(RandomBasisTesting)
 
   BOOST_REQUIRE_NE(ModelToString(outputModel),
                    ModelToString(CLI::GetParam<RSModel*>("output_model")));
+
+  remove(neighborsFile.c_str( ));
+  remove(distanceFile.c_str( ));
 }
 
 /*
@@ -487,6 +513,9 @@ BOOST_AUTO_TEST_CASE(NaiveModeTest)
 
   BOOST_REQUIRE_NE(ModelToString(outputModel),
                    ModelToString(CLI::GetParam<RSModel*>("output_model")));
+
+  remove(neighborsFile.c_str( ));
+  remove(distanceFile.c_str( ));
 }
 
 /*
@@ -535,6 +564,9 @@ BOOST_AUTO_TEST_CASE(SingleModeTest)
   CheckMatrices(distances, distancestemp);
   BOOST_REQUIRE_NE(ModelToString(outputModel),
                    ModelToString(CLI::GetParam<RSModel*>("output_model")));
+
+  remove(neighborsFile.c_str( ));
+  remove(distanceFile.c_str( ));
 }
 
 BOOST_AUTO_TEST_SUITE_END();
