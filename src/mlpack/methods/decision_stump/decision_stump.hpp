@@ -82,7 +82,7 @@ class DecisionStump
    * @param numClasses Number of classes in the dataset.
    * @param bucketSize Minimum size of bucket when splitting.
    */
-  void Train(const MatType& data,
+  double Train(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
              const size_t bucketSize);
@@ -98,7 +98,7 @@ class DecisionStump
    * @param numClasses Number of classes in the dataset.
    * @param bucketSize Minimum size of bucket when splitting.
    */
-  void Train(const MatType& data,
+  double Train(const MatType& data,
              const arma::Row<size_t>& labels,
              const arma::rowvec& weights,
              const size_t numClasses,
@@ -216,7 +216,7 @@ class DecisionStump
    *      (otherwise they are ignored).
    */
   template<bool UseWeights>
-  void Train(const MatType& data,
+  double Train(const MatType& data,
              const arma::Row<size_t>& labels,
              const arma::rowvec& weights);
 };

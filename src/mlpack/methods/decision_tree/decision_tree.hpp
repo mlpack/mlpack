@@ -212,7 +212,7 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType>
-  void Train(MatType data,
+  double Train(MatType data,
              const data::DatasetInfo& datasetInfo,
              LabelsType labels,
              const size_t numClasses,
@@ -235,7 +235,7 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType>
-  void Train(MatType data,
+  double Train(MatType data,
              LabelsType labels,
              const size_t numClasses,
              const size_t minimumLeafSize = 10,
@@ -260,7 +260,7 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
-  void Train(MatType data,
+  double Train(MatType data,
              const data::DatasetInfo& datasetInfo,
              LabelsType labels,
              const size_t numClasses,
@@ -287,7 +287,7 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
-  void Train(MatType data,
+  double Train(MatType data,
              LabelsType labels,
              const size_t numClasses,
              WeightsType weights,
@@ -423,7 +423,7 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<bool UseWeights, typename MatType>
-  void Train(MatType& data,
+  double Train(MatType& data,
              const size_t begin,
              const size_t count,
              const data::DatasetInfo& datasetInfo,
@@ -448,7 +448,7 @@ class DecisionTree :
    * @param minimumGainSplit Minimum gain for the node to split.
    */
   template<bool UseWeights, typename MatType>
-  void Train(MatType& data,
+  double Train(MatType& data,
              const size_t begin,
              const size_t count,
              arma::Row<size_t>& labels,

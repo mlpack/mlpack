@@ -340,7 +340,7 @@ template<typename FitnessFunction,
          typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType>
-void DecisionTree<FitnessFunction,
+double DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   DimensionSelectionType,
@@ -371,8 +371,8 @@ void DecisionTree<FitnessFunction,
 
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
-  Train<false>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
-      weights, minimumLeafSize, minimumGainSplit);
+  return Train<false>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels,
+      numClasses, weights, minimumLeafSize, minimumGainSplit);
 }
 
 //! Train on the given data, assuming all dimensions are numeric.
@@ -383,7 +383,7 @@ template<typename FitnessFunction,
          typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType>
-void DecisionTree<FitnessFunction,
+double DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   DimensionSelectionType,
@@ -413,8 +413,8 @@ void DecisionTree<FitnessFunction,
 
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
-  Train<false>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, weights,
-      minimumLeafSize, minimumGainSplit);
+  return Train<false>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses,
+      weights, minimumLeafSize, minimumGainSplit);
 }
 
 //! Train on the given weighted data.
@@ -425,7 +425,7 @@ template<typename FitnessFunction,
          typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType, typename WeightsType>
-void DecisionTree<FitnessFunction,
+double DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   DimensionSelectionType,
@@ -461,8 +461,8 @@ void DecisionTree<FitnessFunction,
   TrueWeightsType tmpWeights(std::move(weights));
 
   // Pass off work to the Train() method.
-  Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
-      tmpWeights, minimumLeafSize, minimumGainSplit);
+  return Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels,
+      numClasses, tmpWeights, minimumLeafSize, minimumGainSplit);
 }
 
 //! Train on the given weighted data.
@@ -473,7 +473,7 @@ template<typename FitnessFunction,
          typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType, typename WeightsType>
-void DecisionTree<FitnessFunction,
+double DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   DimensionSelectionType,
@@ -508,8 +508,8 @@ void DecisionTree<FitnessFunction,
   TrueWeightsType tmpWeights(std::move(weights));
 
   // Pass off work to the Train() method.
-  Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, tmpWeights,
-      minimumLeafSize, minimumGainSplit);
+  return Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses,
+      tmpWeights, minimumLeafSize, minimumGainSplit);
 }
 
 //! Train on the given data.
@@ -520,7 +520,7 @@ template<typename FitnessFunction,
          typename ElemType,
          bool NoRecursion>
 template<bool UseWeights, typename MatType>
-void DecisionTree<FitnessFunction,
+double DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   DimensionSelectionType,
@@ -624,7 +624,7 @@ void DecisionTree<FitnessFunction,
     }
 
     // Figure out counts of children.
-    arma::Row<size_t> childCounts(numClasses, arma::fill::zeros);
+    arma::Row<size_t> childCounts(numChildren, arma::fill::zeros);
     for (size_t i = begin; i < begin + count; ++i)
       childCounts[childAssignments[i - begin]]++;
 
@@ -656,9 +656,24 @@ void DecisionTree<FitnessFunction,
       }
       else
       {
-        child->Train<UseWeights>(data, currentChildBegin,
+        double prevChildGain = FitnessFunction::template Evaluate<UseWeights>(
+            labels.subvec(currentChildBegin, currentCol - 1),
+            numClasses,
+            UseWeights ? weights.subvec(currentChildBegin, currentCol - 1) :
+                weights);
+        // During recursion entropy of child node may change
+        double newChildGain = child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, datasetInfo, labels, numClasses,
             weights, minimumLeafSize, minimumGainSplit);
+        newChildGain = -newChildGain;
+        if(newChildGain>prevChildGain)
+        {
+          double prevContribute = prevChildGain * childCounts[i] / count ;
+          double newBestGain = bestGain - prevContribute;
+          double newContribute = newChildGain * childCounts[i] / count;
+          newBestGain = newBestGain + newContribute;
+          bestGain = std::max(bestGain,newBestGain);
+        }
       }
       children.push_back(child);
     }
@@ -675,6 +690,7 @@ void DecisionTree<FitnessFunction,
         numClasses,
         UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   }
+  return -bestGain;
 }
 
 //! Train on the given data, assuming all dimensions are numeric.
@@ -685,7 +701,7 @@ template<typename FitnessFunction,
          typename ElemType,
          bool NoRecursion>
 template<bool UseWeights, typename MatType>
-void DecisionTree<FitnessFunction,
+double DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   DimensionSelectionType,
@@ -793,9 +809,24 @@ void DecisionTree<FitnessFunction,
       }
       else
       {
-        child->Train<UseWeights>(data, currentChildBegin,
+        double prevChildGain = FitnessFunction::template Evaluate<UseWeights>(
+            labels.subvec(currentChildBegin, currentCol - 1),
+            numClasses,
+            UseWeights ? weights.subvec(currentChildBegin, currentCol - 1) :
+                weights);
+        // During recursion entropy of child node may change
+        double newChildGain = child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, labels, numClasses, weights,
             minimumLeafSize, minimumGainSplit);
+        newChildGain = -newChildGain;
+        if(newChildGain>prevChildGain)
+        {
+          double prevContribute = prevChildGain * childCounts[i] / count ;
+          double newBestGain = bestGain - prevContribute;
+          double newContribute = newChildGain * childCounts[i] / count;
+          newBestGain = newBestGain + newContribute;
+          bestGain = std::max(bestGain,newBestGain);
+        }
       }
       children.push_back(child);
     }
@@ -811,6 +842,7 @@ void DecisionTree<FitnessFunction,
         numClasses,
         UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   }
+  return -bestGain;
 }
 
 //! Return the class.

@@ -141,7 +141,7 @@ class AdaBoost
    * @param labels Labels for each point in the dataset.
    * @param learner Learner to use for training.
    */
-  void Train(const MatType& data,
+  double Train(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
              const WeakLearnerType& learner,
