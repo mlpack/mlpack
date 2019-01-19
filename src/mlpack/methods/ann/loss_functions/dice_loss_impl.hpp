@@ -32,7 +32,7 @@ double DiceLoss<InputDataType, OutputDataType>::Forward(
 {
   return 1 - ((2 * arma::accu(target % input) + smooth) /
     (arma::accu(target % target) + arma::accu(
-    input % input) + smooth))
+    input % input) + smooth));
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -45,7 +45,7 @@ void DiceLoss<InputDataType, OutputDataType>::Backward(
   output = -2 * (target * (arma::accu(input % input) +
     arma::accu(target % target)) - 2 * input *
     (arma::accu(target % input))) / (arma::accu(target % target)
-    + arma::accu(input % input))
+    + arma::accu(input % input));
 }
 
 template<typename InputDataType, typename OutputDataType>

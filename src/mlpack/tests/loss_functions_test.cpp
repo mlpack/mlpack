@@ -20,6 +20,7 @@
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
+#include <mlpack/methods/ann/loss_functions/dice_loss.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -361,7 +362,7 @@ BOOST_AUTO_TEST_CASE(DiceLossTest)
 {
   arma::mat input1, input2, target, output;
   double loss;
-  DiceLoss<> module();
+  DiceLoss<> module;
 
   // Test the Forward function. Loss should be 0 if input = target.
   input1 = arma::ones(10, 1);
