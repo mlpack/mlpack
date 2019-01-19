@@ -168,6 +168,7 @@ class DiscreteDistribution
     return log(Probability(observation));
   }
 
+  void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
   /**
    * Return a randomly generated observation (one-dimensional vector; one
    * observation) according to the probability distribution defined by this
@@ -218,6 +219,25 @@ class DiscreteDistribution
   //! probabilities for the observations in each dimension.
   std::vector<arma::vec> probabilities;
 };
+
+/**
+* Calculates the Discrete log probability function for each
+* data point (column) in the given matrix
+*
+* @param x List of observations.
+* @param probabilities Output log probabilities for each input observation.
+*/
+inline void DiscreteDistribution::LogProbability(
+    const arma::mat& x,
+    arma::vec& logProbabilities) const
+{
+  arma::vec logProbs(x.n_cols);
+  for (size_t i = 0; i < x.n_cols; i++)
+    logProbs(i) = log(Probability(x.unsafe_col(i)));
+
+  logProbabilities = logProbs;
+}
+
 
 } // namespace distribution
 } // namespace mlpack

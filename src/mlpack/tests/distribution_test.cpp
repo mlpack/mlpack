@@ -188,6 +188,29 @@ BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionTrainProTest)
   BOOST_REQUIRE_CLOSE(d.Probability("2 1 0"), 0.015625, 1e-5);
 }
 
+/**
+ * Test the LogProbability() function, for multiple points in the multivariate
+ * Discrete case.
+ */
+BOOST_AUTO_TEST_CASE(DiscreteLogProbabilityTest)
+{
+  // Same case as before.
+  DiscreteDistribution d("5 5");
+
+  arma::mat obs("0 2;"
+                "1 2;");
+
+  arma::vec logProb;
+
+
+  d.LogProbability(obs, logProb);
+
+  BOOST_REQUIRE_EQUAL(logProb.n_cols, 2);
+
+  BOOST_REQUIRE_CLOSE(logProb(0), -3.2188758248682, 1e-3);  
+  BOOST_REQUIRE_CLOSE(logProb(1), -3.2188758248682, 1e-3);
+}
+
 /*********************************/
 /** Gaussian Distribution Tests **/
 /*********************************/
