@@ -354,4 +354,45 @@ BOOST_AUTO_TEST_CASE(GradientReconstructionLossTest)
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
+/*
+ * Simple test for the dice loss function.
+ */
+BOOST_AUTO_TEST_CASE(DiceLossTest)
+{
+  arma::mat input1, input2, target, output;
+  double loss;
+  DiceLoss<> module();
+
+  // Test the Forward function. Loss should be 0 if input = target.
+  input1 = arma::ones(10, 1);
+  target = arma::ones(10, 1);
+  loss = module.Forward(std::move(input1), std::move(target));
+  BOOST_REQUIRE_SMALL(loss, 0.00001);
+
+  // Test the Forward function. Loss should be 0.185185185.
+  input2 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
+  loss = module.Forward(std::move(input2), std::move(target));
+  BOOST_REQUIRE_SMALL(loss - 0.185185185, 0.00001);
+
+  // Test the Backward function for input = target.
+  module.Backward(std::move(input1), std::move(target), std::move(output));
+  for (double el : output)
+  {
+    // For input = target we should get 0 everywhere.
+    BOOST_REQUIRE_SMALL(el, 0.00001);
+  }
+  BOOST_REQUIRE_EQUAL(output.n_rows, input1.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
+
+  // Test the Backward function.
+  module.Backward(std::move(input2), std::move(target), std::move(output));
+  for (double el : output)
+  {
+    // For the 0.5 constant vector we should get -1.2 everywhere.
+    BOOST_REQUIRE_SMALL(el + 1.2, 0.00001);
+  }
+  BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
