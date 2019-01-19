@@ -281,7 +281,7 @@ BOOST_AUTO_TEST_CASE(ModelCheck)
   RSModel* outputModel = move(CLI::GetParam<RSModel*>("output_model"));
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
 
-  SetInputParam("input_model", move(outputModel));
+  SetInputParam("input_model", outputModel);
   SetInputParam("query", move(queryData));
 
   mlpackMain();
@@ -292,7 +292,7 @@ BOOST_AUTO_TEST_CASE(ModelCheck)
   CheckMatrices(neighbors, neighborsTemp);
   CheckMatrices(distances, distancetemp);
 
-  BOOST_REQUIRE_NE(ModelToString(outputModel),
+  BOOST_REQUIRE_EQUAL(ModelToString(outputModel),
                    ModelToString(CLI::GetParam<RSModel*>("output_model")));
 
   remove(neighborsFile.c_str());

@@ -37,8 +37,8 @@ inline std::string ModelToString(RSModel* model)
 * @param vec2 vector 2 to be checked
 * @param tolerance difference in values in allowed
 */
-inline void CheckMatrices(const std::vector<std::vector<double>>& vec1,
-                          const std::vector<std::vector<double>>& vec2,
+inline void CheckMatrices(std::vector<std::vector<double>>& vec1,
+                          std::vector<std::vector<double>>& vec2,
                           const float tolerance = 1e-3)
 {
   BOOST_REQUIRE_EQUAL(vec1.size() , vec2.size());
@@ -60,8 +60,8 @@ inline void CheckMatrices(const std::vector<std::vector<double>>& vec1,
 * @param vec1 vector 1 to be checked
 * @param vec2 vector 2 to be checked
 */
-inline void CheckMatrices(const std::vector<std::vector<size_t>>& vec1,
-                          const std::vector<std::vector<size_t>>& vec2)
+inline void CheckMatrices(std::vector<std::vector<size_t>>& vec1,
+                          std::vector<std::vector<size_t>>& vec2)
 {
   BOOST_REQUIRE_EQUAL(vec1.size() , vec2.size());
   for (size_t i = 0; i < vec1.size(); i++)
