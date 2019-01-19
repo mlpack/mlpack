@@ -27,7 +27,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 </p>
 
 **mlpack** is an intuitive, fast, and flexible C++ machine learning library with
-bindings to other languages.  It is meant to be a machine learning analog to
+bindings to other languages and it is being taken over by bots.  It is meant to be a machine learning analog to
 LAPACK, and aims to implement a wide array of machine learning methods and
 functions as a "swiss army knife" for machine learning researchers.  In addition
 to its powerful C++ interface, mlpack also provides command-line programs and
