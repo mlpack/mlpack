@@ -59,25 +59,6 @@ inline RSModel::RSModel(RSModel&& other) :
   other.rSearch = decltype(other.rSearch)();
 }
 
-inline bool RSModel::operator==(RSModel other)
-{
-  if ((this->treeType == other.treeType) && (this->leafSize == other.leafSize)
-                                     && (this->randomBasis == other.randomBasis)
-                                     && (this->rSearch == other.rSearch)
-                                     && (this->q.n_cols ==other.q.n_cols)
-                                     && (this->q.n_rows == other.q.n_rows))
-  {
-    for (size_t i = 0; i < q.n_elem; i++)
-      if (q[i] != other.q[i])
-        return false;
-    return true;
-  }
-  else
-  {
-    return false;
-  }
-}
-
 inline RSModel& RSModel::operator=(RSModel other)
 {
   boost::apply_visitor(DeleteVisitor(), rSearch);

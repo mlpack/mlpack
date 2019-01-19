@@ -11,7 +11,7 @@
  */
 
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "RangeSearchMain";
+static const string testName = "RangeSearchMain";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
@@ -91,8 +91,8 @@ BOOST_AUTO_TEST_CASE(RangeSearchInputModelNoQuery)
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
-  remove(neighborsFile.c_str( ));
-  remove(distanceFile.c_str( ));
+  remove(neighborsFile.c_str());
+  remove(distanceFile.c_str());
 }
 
 /*
@@ -119,8 +119,8 @@ BOOST_AUTO_TEST_CASE(RangeSearchDifferentTree)
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
-  remove(neighborsFile.c_str( ));
-  remove(distanceFile.c_str( ));
+  remove(neighborsFile.c_str());
+  remove(distanceFile.c_str());
 }
 
 /*
@@ -154,8 +154,8 @@ BOOST_AUTO_TEST_CASE(RangeSearchBothReferenceandModel)
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
-  remove(neighborsFile.c_str( ));
-  remove(distanceFile.c_str( ));
+  remove(neighborsFile.c_str());
+  remove(distanceFile.c_str());
 }
 
 /*
@@ -165,12 +165,12 @@ BOOST_AUTO_TEST_CASE(RangeSearchBothReferenceandModel)
 */
 BOOST_AUTO_TEST_CASE(RangeSearchTest)
 {
-  //Matrix Input is expected in this format
+  //The Matrix Input is expected in this format.
   arma::mat x = {{0, 3, 3, 4, 3, 1},
                  {4, 4, 4, 5, 5, 2},
                  {0, 1, 2, 2, 3, 3}};
-  std::string distanceFile = "distances.csv";
-  std::string neighborsFile = "neighbors.csv";
+string distanceFile = "distances.csv";
+string neighborsFile = "neighbors.csv";
   double minVal = 0, maxVal = 3;
   vector<vector<size_t>> neighborVal = {{},
                                         {2, 3, 4},
@@ -187,7 +187,6 @@ BOOST_AUTO_TEST_CASE(RangeSearchTest)
   vector<vector<size_t>> neighbors;
   vector<vector<double>> distances;
   SetInputParam("reference", move(x));
-  //To prevent warning for lack of definition
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
   SetInputParam("distances_file", distanceFile);
@@ -201,8 +200,8 @@ BOOST_AUTO_TEST_CASE(RangeSearchTest)
   CheckMatrices(neighbors, neighborVal);
   CheckMatrices(distances, distanceVal);
 
-  remove(neighborsFile.c_str( ));
-  remove(distanceFile.c_str( ));
+  remove(neighborsFile.c_str());
+  remove(distanceFile.c_str());
 }
 
 /*
@@ -244,8 +243,8 @@ BOOST_AUTO_TEST_CASE(RangeSeachTestwithQuery)
   CheckMatrices(neighbors, neighborVal);
   CheckMatrices(distances, distanceVal);
 
-  remove(neighborsFile.c_str( ));
-  remove(distanceFile.c_str( ));
+  remove(neighborsFile.c_str());
+  remove(distanceFile.c_str());
 }
 
 /*
@@ -293,13 +292,11 @@ BOOST_AUTO_TEST_CASE(ModelCheck)
   CheckMatrices(neighbors, neighborsTemp);
   CheckMatrices(distances, distancetemp);
 
-  if (!(outputModel == CLI::GetParam<RSModel*>("output_model") ))
-  {
-    BOOST_FAIL("Models are not Equal");
-  }
+  BOOST_REQUIRE_NE(ModelToString(outputModel),
+                   ModelToString(CLI::GetParam<RSModel*>("output_model")));
 
-  remove(neighborsFile.c_str( ));
-  remove(distanceFile.c_str( ));
+  remove(neighborsFile.c_str());
+  remove(distanceFile.c_str());
 }
 
 /*
@@ -324,7 +321,7 @@ BOOST_AUTO_TEST_CASE(LeafValueTesting)
   SetInputParam("distances_file", distanceFile);
   SetInputParam("neighbors_file", neighborsFile);
   SetInputParam("leaf_size", arr[0]);
-  //Default leaf size is 20
+  //The default leaf size is 20.
 
   mlpackMain();
 
@@ -353,8 +350,8 @@ BOOST_AUTO_TEST_CASE(LeafValueTesting)
                      ModelToString(CLI::GetParam<RSModel*>("output_model")));
   }
 
-  remove(neighborsFile.c_str( ));
-  remove(distanceFile.c_str( ));
+  remove(neighborsFile.c_str());
+  remove(distanceFile.c_str());
 }
 
 /*
@@ -380,7 +377,7 @@ BOOST_AUTO_TEST_CASE(TreeTypeTesting)
   if (!data::Load("iris_test.csv", queryData))
     BOOST_FAIL("Unable to load dataset iris_test.csv!");
 
-  //Define Base Parameters with kd Tree
+  //Define Base Parameters with kd Tree.
   SetInputParam("tree_type", trees[0]);
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
@@ -421,8 +418,8 @@ BOOST_AUTO_TEST_CASE(TreeTypeTesting)
                      ModelToString(CLI::GetParam<RSModel*>("output_model")));
   }
 
-  remove(neighborsFile.c_str( ));
-  remove(distanceFile.c_str( ));
+  remove(neighborsFile.c_str());
+  remove(distanceFile.c_str());
 }
 
 /*
@@ -462,8 +459,8 @@ BOOST_AUTO_TEST_CASE(RandomBasisTesting)
   BOOST_REQUIRE_NE(ModelToString(outputModel),
                    ModelToString(CLI::GetParam<RSModel*>("output_model")));
 
-  remove(neighborsFile.c_str( ));
-  remove(distanceFile.c_str( ));
+  remove(neighborsFile.c_str());
+  remove(distanceFile.c_str());
 }
 
 /*
@@ -514,8 +511,8 @@ BOOST_AUTO_TEST_CASE(NaiveModeTest)
   BOOST_REQUIRE_NE(ModelToString(outputModel),
                    ModelToString(CLI::GetParam<RSModel*>("output_model")));
 
-  remove(neighborsFile.c_str( ));
-  remove(distanceFile.c_str( ));
+  remove(neighborsFile.c_str());
+  remove(distanceFile.c_str());
 }
 
 /*
@@ -565,8 +562,8 @@ BOOST_AUTO_TEST_CASE(SingleModeTest)
   BOOST_REQUIRE_NE(ModelToString(outputModel),
                    ModelToString(CLI::GetParam<RSModel*>("output_model")));
 
-  remove(neighborsFile.c_str( ));
-  remove(distanceFile.c_str( ));
+  remove(neighborsFile.c_str());
+  remove(distanceFile.c_str());
 }
 
 BOOST_AUTO_TEST_SUITE_END();

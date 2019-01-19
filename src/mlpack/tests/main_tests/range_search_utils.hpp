@@ -16,6 +16,7 @@
 #include <mlpack/methods/range_search/rs_model.hpp>
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
+
 /*
 * Convert a Model to String by calling the RSModel serialize function of the
 * boost library and return the Model in String Form
@@ -32,18 +33,18 @@ inline std::string ModelToString(RSModel* model)
 /*
 * Check for 2 matrices of type vector<vector<double>> to ensure that their
 * values dont differ by more than tolerance , default is 0.001%
-* @param vec1 - vector 1 to be checked
-* @param vec2 - vector 2 to be checked
-* @param tolerance - difference in values in allowed
+* @param vec1 vector 1 to be checked
+* @param vec2 vector 2 to be checked
+* @param tolerance difference in values in allowed
 */
-inline void CheckMatrices(std::vector<std::vector<double>> vec1,
-                          std::vector<std::vector<double>> vec2,
-                          float tolerance=1e-3)
+inline void CheckMatrices(const std::vector<std::vector<double>>& vec1,
+                          const std::vector<std::vector<double>>& vec2,
+                          const float tolerance = 1e-3)
 {
-  BOOST_REQUIRE_EQUAL(vec1.size() , vec2.size() );
+  BOOST_REQUIRE_EQUAL(vec1.size() , vec2.size());
   for (size_t i = 0; i < vec1.size(); i++)
   {
-    BOOST_REQUIRE_EQUAL(vec1[i].size(), vec2[i].size() );
+    BOOST_REQUIRE_EQUAL(vec1[i].size(), vec2[i].size());
     std::sort(vec1[i].begin(), vec1[i].end());
     std::sort(vec2[i].begin(), vec2[i].end());
     for (size_t j = 0 ; j < vec1[i].size(); j++)
@@ -56,17 +57,16 @@ inline void CheckMatrices(std::vector<std::vector<double>> vec1,
 /*
 * Check for 2 matrices of type vector<vector<size_t>> to ensure that their
 * values match
-* @param vec1 - vector 1 to be checked
-* @param vec2 - vector 2 to be checked
+* @param vec1 vector 1 to be checked
+* @param vec2 vector 2 to be checked
 */
-inline void CheckMatrices(std::vector<std::vector<size_t>> vec1,
-                          std::vector<std::vector<size_t>> vec2)
+inline void CheckMatrices(const std::vector<std::vector<size_t>>& vec1,
+                          const std::vector<std::vector<size_t>>& vec2)
 {
-
-  BOOST_REQUIRE_EQUAL(vec1.size() , vec2.size() );
+  BOOST_REQUIRE_EQUAL(vec1.size() , vec2.size());
   for (size_t i = 0; i < vec1.size(); i++)
   {
-    BOOST_REQUIRE_EQUAL(vec1[i].size(), vec2[i].size() );
+    BOOST_REQUIRE_EQUAL(vec1[i].size(), vec2[i].size());
     std::sort(vec1[i].begin(), vec1[i].end());
     std::sort(vec2[i].begin(), vec2[i].end());
     for (size_t j = 0; j < vec1[i].size(); j++)
@@ -77,9 +77,10 @@ inline void CheckMatrices(std::vector<std::vector<size_t>> vec1,
 }
 
 /*
-* Load A csv file into a vector of vector of templated datatype (code strips ',')
-* by splitting on '\n' for lines and spaces for parts of a line
-* @param path - path of the string
+* Load a CSV file into a vector of vector with a templated datatype.  Any ','
+* characters are stripped from the input; lines are split on '\n' and elements
+* of each line are split on spaces.
+* @param path path of the string
 */
 template<typename T>
 std::vector<std::vector<T>> ReadData(const std::string& path)
