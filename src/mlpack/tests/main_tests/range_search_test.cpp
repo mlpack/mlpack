@@ -11,7 +11,7 @@
  */
 
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const string testName = "RangeSearchMain";
+static const std::string testName = "RangeSearchMain";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
