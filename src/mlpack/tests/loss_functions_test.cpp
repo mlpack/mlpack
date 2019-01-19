@@ -386,6 +386,7 @@ BOOST_AUTO_TEST_CASE(DiceLossTest)
   BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
 
   // Test the Backward function.
+  input2 = input2.t();
   module.Backward(std::move(input2), std::move(target), std::move(output));
   for (double el : output)
   {
