@@ -22,6 +22,18 @@ namespace ann /** Artificial Neural Network. */ {
  * performance according to the dice coeffecient
  * between the input and target distributions.
  *
+ * For more information see the following.
+ *
+ * @inproceedings{milletari2016v,
+ *   title = {V-net: Fully convolutional neural networks
+ *            for volumetric medical image segmentation},
+ *   author = {Milletari, Fausto and Navab, Nassir and Ahmadi, Seyed-Ahmad},
+ *   booktitle = {3D Vision (3DV), 2016 Fourth International Conference on},
+ *   pages = {565--571},
+ *   year = {2016},
+ *   organization = {IEEE}
+ * }
+ *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
@@ -82,7 +94,7 @@ class DiceLoss
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! The parameter to avoid overfitting
+  //! The parameter to avoid overfitting.
   double smooth;
 }; // class DiceLoss
 

@@ -371,8 +371,7 @@ BOOST_AUTO_TEST_CASE(DiceLossTest)
   BOOST_REQUIRE_SMALL(loss, 0.00001);
 
   // Test the Forward function. Loss should be 0.185185185.
-  input2 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
-  input2 = input2.t();
+  input2 = arma::ones(10, 1) * 0.5;
   loss = module.Forward(std::move(input2), std::move(target));
   BOOST_REQUIRE_SMALL(loss - 0.185185185, 0.00001);
 
