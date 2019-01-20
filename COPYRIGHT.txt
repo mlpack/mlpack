@@ -108,6 +108,7 @@ Copyright:
   Copyright 2018, Ayush Chamoli
   Copyright 2018, Tommi Laivamaa <tommi.laivamaa@protonmail.com>
   Copyright 2019, Kim SangYeon <sy0814k@gmail.com>
+  Copyright 2019, Niteya Shah <niteya.56@gmail.com>
   
 License: BSD-3-clause
   All rights reserved.
