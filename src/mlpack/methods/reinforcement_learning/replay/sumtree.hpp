@@ -22,6 +22,12 @@ namespace rl {
 
 /**
  * Implementation of SumTree.
+ *
+ * Build a Segment Tree like data strucuture.
+ * https://en.wikipedia.org/wiki/Segment_tree
+ *
+ * Used to maintain prefix-sum of an array.
+ *
  */
 
 template<typename T>
@@ -29,15 +35,29 @@ class SumTree
 {
  public:
 
+  /**
+   * Empty constructor
+   */
   SumTree()
   { /* Nothing to do here. */ }
 
+  /**
+   * Construct an instance of SumTree class
+   *
+   * @param capacity The size of data
+   */
   SumTree(size_t capacity):
       capacity(capacity)
   {
     element = std::vector<T> (2 * capacity);
   }
 
+  /**
+   * Set the data array with idx
+   *
+   * @param idx  The array idx to be changed
+   * @param value  The data that array with idx to be
+   */
   void set(size_t idx, T value)
   {
     idx += capacity;
@@ -50,12 +70,26 @@ class SumTree
     }
   }
 
+  /**
+   * Get the data array with idx
+   *
+   * @param idx The array idx to get data
+   */
   T get(size_t idx)
   {
     idx += capacity;
     return element[idx];
   }
 
+  /**
+   * Help function for the `sum` function
+   *
+   * @param _start The starting position of subsequence
+   * @param _end The end position of subsequence
+   * @param node Reference position
+   * @param node_start Starting position of reference segment
+   * @param node_end End position of reference segment
+   */
   T sumHelper(size_t _start, size_t _end, size_t node, size_t node_start, size_t node_end)
   {
     if (_start == node_start && _end == node_end)
@@ -81,22 +115,34 @@ class SumTree
     }
   }
 
+  /**
+   * Calculate the sum of contiguous subsequence of the array.
+   *
+   * @param _start The starting position of subsequence
+   * @param _end The end position of subsequence
+   */
   T sum(size_t _start, size_t _end)
   {
-//  caculate the sum of contiguous subsequence of the array.
     _end -= 1;
     return sumHelper(_start, _end, 1, 0, capacity-1);
   }
 
+  /**
+   * Shortcut for calculating the sum of whole array
+   */
   T sum()
   {
     return sum(0, capacity);
   }
 
+  /**
+   * Find the highest index `idx` in the array such that
+   * sum(arr[0] + arr[1] + ... + arr[idx]) <= mass
+   *
+   * @param mass
+   * */
   size_t findPrefixSum(T mass)
   {
-//    Find the highest index `idx` in the array such that
-//            sum(arr[0] + arr[1] + ... + arr[i]) <= mass
     int idx = 1;
     while (idx < capacity)
     {
@@ -114,7 +160,10 @@ class SumTree
   }
 
  private:
+  //! The capacity of the data array
   size_t capacity;
+
+  //! double size of capacity, maintain the segment sum of data
   std::vector<T> element;
 };
 
