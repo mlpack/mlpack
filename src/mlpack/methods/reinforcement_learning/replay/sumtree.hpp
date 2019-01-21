@@ -36,7 +36,7 @@ class SumTree
  public:
 
   /**
-   * Empty constructor
+   * Default constructor
    */
   SumTree()
   { /* Nothing to do here. */ }
