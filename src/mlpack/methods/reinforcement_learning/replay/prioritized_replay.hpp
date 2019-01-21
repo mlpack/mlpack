@@ -43,6 +43,9 @@ class PrioritizedReplay
   //! Convenient typedef for state.
   using StateType = typename EnvironmentType::State;
 
+  /**
+   * Default constructor
+   */
   PrioritizedReplay()
   { /* Nothing to do here. */ }
 
@@ -51,7 +54,7 @@ class PrioritizedReplay
    *
    * @param batchSize Number of examples returned at each sample.
    * @param capacity Total memory size in terms of number of examples.
-   * @param alpha
+   * @param alpha How much prioritization is used
    * @param dimension The dimension of an encoded state.
    */
   PrioritizedReplay(const size_t batchSize,
@@ -81,6 +84,16 @@ class PrioritizedReplay
     idxSum = SumTree<double>(size);
   }
 
+  /**
+   * Store the given experience
+   * Set priorities for the given experience
+   *
+   * @param state Given state.
+   * @param action Given action.
+   * @param reward Given reward.
+   * @param nextState Given next state.
+   * @param isEnd Whether next state is terminal state.
+ */
   void Store(const StateType& state,
              ActionType action,
              double reward,
@@ -103,6 +116,11 @@ class PrioritizedReplay
     }
   }
 
+  /**
+   * Samle some experience accroding to their priorities.
+   *
+   * @return The indices to be chosen.
+   */
   arma::ucolvec sampleProportional()
   {
     arma::ucolvec idxes(batchSize);
@@ -116,6 +134,18 @@ class PrioritizedReplay
     return idxes;
   }
 
+  /**
+   * Samle some experience accroding to their priorities.
+   *
+   * @param sampledStates Sampled encoded states.
+   * @param sampledActions Sampled actions.
+   * @param sampledRewards Sampled rewards.
+   * @param sampledNextStates Sampled encoded next states.
+   * @param isTerminal Indicate whether corresponding next state is terminal
+   *        state.
+   * @param sampledIndices Sampled indices
+   * @param weights Corresponding weight for updating the loss
+   */
   void Sample(arma::mat& sampledStates,
               arma::icolvec& sampledActions,
               arma::colvec& sampledRewards,
@@ -127,6 +157,7 @@ class PrioritizedReplay
     size_t upperBound = full ? capacity : position;
 
     sampledIndices = sampleProportional();
+    betaAnneal();
 
     sampledStates = states.cols(sampledIndices);
     sampledActions = actions.elem(sampledIndices);
@@ -147,9 +178,14 @@ class PrioritizedReplay
     weights /= weights.max();
   }
 
+  /**
+   * Update priorities of sampled transitions.
+   *
+   * @param indices The indices of sample to be updated.
+   * @param priorities Their corresponding priorities.
+   */
   void update_priorities(arma::ucolvec& indices, arma::colvec& priorities)
   {
-//    update priorities of sampled transitions.
       for (size_t i = 0; i < indices.n_rows; ++i)
       {
         idxSum.set(indices[i], alpha * priorities[i]);
@@ -157,6 +193,19 @@ class PrioritizedReplay
       }
   }
 
+  /**
+   * Get the number of transitions in the memory.
+   *
+   * @return Actual used memory size
+   */
+  const size_t& Size()
+  {
+    return full ? capacity : position;
+  }
+
+  /**
+   *  Annealing the beta
+   */
   void betaAnneal()
   {
     beta = beta + (1 - initial_beta) * 1.0 / replay_beta_iters;
@@ -164,17 +213,21 @@ class PrioritizedReplay
 
 private:
   //! How much prioritization is used.
+  //  (0 - no prioritization, 1 - full prioritization)
   double alpha;
 
   double max_priority;
 
+  //! Initial value of beta for prioritized replay buffer.
   double initial_beta;
 
+  //! The value of beta for current sample.
   double beta;
 
+  //! How many iteration for replay beta to decay.
   size_t replay_beta_iters;
 
-  //! Locally-stored the prefix sum of prioritization
+  //! Locally-stored the prefix sum of prioritization.
   SumTree<double> idxSum;
 
   //! Locally-stored number of examples of each sample.
