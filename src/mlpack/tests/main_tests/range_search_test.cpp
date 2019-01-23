@@ -9,7 +9,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #define BINDING_TYPE BINDING_TYPE_TEST
 static const std::string testName = "RangeSearchMain";
 
@@ -19,7 +18,6 @@ static const std::string testName = "RangeSearchMain";
 #include <mlpack/methods/range_search/range_search_main.cpp>
 #include "range_search_utils.hpp"
 #include <boost/test/unit_test.hpp>
-
 
 using namespace mlpack;
 
@@ -42,8 +40,8 @@ struct RangeSearchTestFixture
 
 BOOST_FIXTURE_TEST_SUITE(RangeSearchMainTest, RangeSearchTestFixture);
 
-/*
- * Check that we have to specify a Reference or Input Model.
+/**
+ * Check that we have to specify a reference set or input model.
  */
 BOOST_AUTO_TEST_CASE(RangeSearchNoReference)
 {
@@ -52,7 +50,7 @@ BOOST_AUTO_TEST_CASE(RangeSearchNoReference)
   Log::Fatal.ignoreInput = false;
 }
 
-/*
+/**
  * Check that we cannot pass an incorrect parameter.
  */
 BOOST_AUTO_TEST_CASE(RangeSearchWrongParameter)
@@ -64,8 +62,8 @@ BOOST_AUTO_TEST_CASE(RangeSearchWrongParameter)
   Log::Fatal.ignoreInput = false;
 }
 
-/*
- * Check that we have to specify a query if an Input Model is specified.
+/**
+ * Check that we have to specify a query if an input model is specified.
  */
 BOOST_AUTO_TEST_CASE(RangeSearchInputModelNoQuery)
 {
@@ -85,6 +83,7 @@ BOOST_AUTO_TEST_CASE(RangeSearchInputModelNoQuery)
 
   mlpackMain();
 
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   SetInputParam("input_model", move(CLI::GetParam<RSModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
@@ -95,8 +94,8 @@ BOOST_AUTO_TEST_CASE(RangeSearchInputModelNoQuery)
   remove(distanceFile.c_str());
 }
 
-/*
- * Check that we cannot specify a tree type which is not available or wrong
+/**
+ * Check that we cannot specify a tree type which is not available or wrong.
  */
 BOOST_AUTO_TEST_CASE(RangeSearchDifferentTree)
 {
@@ -123,10 +122,10 @@ BOOST_AUTO_TEST_CASE(RangeSearchDifferentTree)
   remove(distanceFile.c_str());
 }
 
-/*
- * Check that we cannot specify both a Reference and Input Model
+/**
+ * Check that we cannot specify both a reference set and input model.
  */
-BOOST_AUTO_TEST_CASE(RangeSearchBothReferenceandModel)
+BOOST_AUTO_TEST_CASE(RangeSearchBothReferenceAndModel)
 {
   arma::mat inputData, queryData;
   double minVal = 0, maxVal = 3;
@@ -158,19 +157,19 @@ BOOST_AUTO_TEST_CASE(RangeSearchBothReferenceandModel)
   remove(distanceFile.c_str());
 }
 
-/*
-* Check that the correct output is returned for a small synthetic input
-* case , where the parameters of location , min value and max value are provided
-* and are checked with pre-calculated neighbor and distance values
-*/
+/**
+ * Check that the correct output is returned for a small synthetic input case,
+ * by comparing with pre-calculated neighbor and distance values, when no query
+ * set is specified.
+ */
 BOOST_AUTO_TEST_CASE(RangeSearchTest)
 {
-  //The Matrix Input is expected in this format.
   arma::mat x = {{0, 3, 3, 4, 3, 1},
                  {4, 4, 4, 5, 5, 2},
                  {0, 1, 2, 2, 3, 3}};
-string distanceFile = "distances.csv";
-string neighborsFile = "neighbors.csv";
+
+  string distanceFile = "distances.csv";
+  string neighborsFile = "neighbors.csv";
   double minVal = 0, maxVal = 3;
   vector<vector<size_t>> neighborVal = {{},
                                         {2, 3, 4},
@@ -184,8 +183,10 @@ string neighborsFile = "neighbors.csv";
                                         {1.73205, 1.41421, 1.41421},
                                         {2.23607, 1.41421, 1.41421},
                                         {3}};
+
   vector<vector<size_t>> neighbors;
   vector<vector<double>> distances;
+
   SetInputParam("reference", move(x));
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
@@ -204,10 +205,9 @@ string neighborsFile = "neighbors.csv";
   remove(distanceFile.c_str());
 }
 
-/*
- * Check that the correct output is returned for a small synthetic input
- * case , where the parameters of location , min value and max value and Query are provided
- * and are checked with pre-calculated neighbor and distance values
+/**
+ * Check that the correct output is returned for a small synthetic input case,
+ * when a query set is provided.
  */
 BOOST_AUTO_TEST_CASE(RangeSeachTestwithQuery)
 {
@@ -215,6 +215,7 @@ BOOST_AUTO_TEST_CASE(RangeSeachTestwithQuery)
   arma::mat x = {{0, 3, 3, 4, 3, 1},
                  {4, 4, 4, 5, 5, 2},
                  {0, 1, 2, 2, 3, 3}};
+
   vector<vector<double>> distanceVal = {
                 {2.82843, 2.23607, 1.73205, 2.23607, 4.47214},
                 {3.74166, 2, 2.23607, 3.31662, 3.60555, 2.82843},
@@ -222,6 +223,7 @@ BOOST_AUTO_TEST_CASE(RangeSeachTestwithQuery)
   vector<vector<size_t>> neighborVal = {{1, 2, 3, 4, 5},
                                         {0, 1, 2, 3, 4, 5},
                                         {4, 5}};
+
   vector<vector<size_t>> neighbors;
   vector<vector<double>> distances;
   string distanceFile = "distances.csv";
@@ -247,10 +249,9 @@ BOOST_AUTO_TEST_CASE(RangeSeachTestwithQuery)
   remove(distanceFile.c_str());
 }
 
-/*
- * Train a Model Using a Synthetic dataset and then output the model, then
- * Use the output model as input and ensure that it is read properly and that
- * queries are properly executed
+/**
+ * Train a model using a synthetic dataset and then output the model, and ensure
+ * it can be used again.
  */
 BOOST_AUTO_TEST_CASE(ModelCheck)
 {
@@ -299,29 +300,32 @@ BOOST_AUTO_TEST_CASE(ModelCheck)
   remove(distanceFile.c_str());
 }
 
-/*
- * Read the Iris dataset , and perform range search on it using the test set as
- * the query on 3 models with different leaf sizes and ensure that while the
- * results match , the models are different
+/**
+ * Check that the models are different but the results are the same for three
+ * different leaf size parameters.
  */
 BOOST_AUTO_TEST_CASE(LeafValueTesting)
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
     BOOST_FAIL("Unable to load dataset iris.csv!");
+
   string distanceFile = "distances.csv";
   string neighborsFile = "neighbors.csv";
   double minVal = 0, maxVal = 3;
+
   vector<vector<size_t>> neighbors, neighborsTemp;
   vector<vector<double>> distances, distancestemp;
-  vector<int> arr{20, 15, 25};
+
+  vector<int> leafSizes {20, 15, 25};
+
   SetInputParam("reference", inputData);
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
   SetInputParam("distances_file", distanceFile);
   SetInputParam("neighbors_file", neighborsFile);
-  SetInputParam("leaf_size", arr[0]);
-  //The default leaf size is 20.
+  SetInputParam("leaf_size", leafSizes[0]);
+  // The default leaf size is 20.
 
   mlpackMain();
 
@@ -329,9 +333,9 @@ BOOST_AUTO_TEST_CASE(LeafValueTesting)
   neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
 
-  for (size_t i = 1; i < arr.size(); i++)
+  for (size_t i = 1; i < leafSizes.size(); i++)
   {
-    SetInputParam("leaf_size", arr[i]);
+    SetInputParam("leaf_size", leafSizes[i]);
     SetInputParam("reference", inputData);
     SetInputParam("min", minVal);
     SetInputParam("max", maxVal);
@@ -354,16 +358,16 @@ BOOST_AUTO_TEST_CASE(LeafValueTesting)
   remove(distanceFile.c_str());
 }
 
-/*
- * Using the Iris dataset as input dataset and the Iris Test as query , compare
- * all the available tree structures and ensure that the models created are
- * different but the results are same for all . We use the default kd tree as our
- * base .
+/**
+ * Make sure that the models are different but the results are the same for
+ * different tree types.  We use the default kd-tree as the base model to
+ * compare against.
  */
 BOOST_AUTO_TEST_CASE(TreeTypeTesting)
 {
   string distanceFile = "distances.csv";
   string neighborsFile = "neighbors.csv";
+
   double minVal = 0, maxVal = 3;
   arma::mat queryData, inputData;
   vector<vector<size_t>> neighbors, neighborsTemp;
@@ -377,7 +381,7 @@ BOOST_AUTO_TEST_CASE(TreeTypeTesting)
   if (!data::Load("iris_test.csv", queryData))
     BOOST_FAIL("Unable to load dataset iris_test.csv!");
 
-  //Define Base Parameters with kd Tree.
+  // Define base parameters with the kd-tree.
   SetInputParam("tree_type", trees[0]);
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
@@ -422,15 +426,16 @@ BOOST_AUTO_TEST_CASE(TreeTypeTesting)
   remove(distanceFile.c_str());
 }
 
-/*
- * Project input of one model onto a Random Basis and while keeping the other on the
- * original and check that the models created are different
+/**
+ * Project the data onto a random basis and ensure that this gives identical
+ * results to non-projected data but different models.
  */
 BOOST_AUTO_TEST_CASE(RandomBasisTesting)
 {
   string distanceFile = "distances.csv";
   string neighborsFile = "neighbors.csv";
   double minVal = 0, maxVal = 3;
+
   arma::mat queryData, inputData;
   if (!data::Load("iris.csv", inputData))
     BOOST_FAIL("Unable to load dataset iris.csv!");
@@ -463,19 +468,19 @@ BOOST_AUTO_TEST_CASE(RandomBasisTesting)
   remove(distanceFile.c_str());
 }
 
-/*
- * Naive mode is used for computation for one model , while the other remains the
- * same and both models are checked to be different , but their results should be
- * the same
+/**
+ * Ensure that naive mode gives the same result, but different models.
  */
 BOOST_AUTO_TEST_CASE(NaiveModeTest)
 {
   string distanceFile = "distances.csv";
   string neighborsFile = "neighbors.csv";
   double minVal = 0, maxVal = 3;
+
   arma::mat queryData, inputData;
   vector<vector<size_t>> neighbors, neighborsTemp;
   vector<vector<double>> distances, distancestemp;
+
   if (!data::Load("iris.csv", inputData))
     BOOST_FAIL("Unable to load dataset iris.csv!");
   if (!data::Load("iris_test.csv", queryData))
@@ -515,19 +520,19 @@ BOOST_AUTO_TEST_CASE(NaiveModeTest)
   remove(distanceFile.c_str());
 }
 
-/*
- * 2 Models are created , one that uses single tree search , while the other uses
- * dual-tree search , and both models are checked to be unequal , while the results
- * should be the same
+/**
+ * Ensure that single-tree mode gives the same result but different models.
  */
 BOOST_AUTO_TEST_CASE(SingleModeTest)
 {
   string distanceFile = "distances.csv";
   string neighborsFile = "neighbors.csv";
   double minVal = 0, maxVal = 3;
+
   arma::mat queryData, inputData;
   vector<vector<size_t>> neighbors, neighborsTemp;
   vector<vector<double>> distances, distancestemp;
+
   if (!data::Load("iris.csv", inputData))
     BOOST_FAIL("Unable to load dataset iris.csv!");
   if (!data::Load("iris_test.csv", queryData))
