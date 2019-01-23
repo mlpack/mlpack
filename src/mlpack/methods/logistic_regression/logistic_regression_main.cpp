@@ -341,7 +341,7 @@ static void mlpackMain()
 
     // We must perform predictions on the test set.  Training (and the
     // optimizer) are irrelevant here; we'll pass in the model we have.
-    if (CLI::HasParam("output") || CLI::HasParam("output"))
+    if (CLI::HasParam("predictions") || CLI::HasParam("output"))
     {
       Log::Info << "Predicting classes of points in '"
           << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
