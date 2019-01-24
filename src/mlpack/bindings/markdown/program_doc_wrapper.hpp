@@ -8,6 +8,8 @@
 #ifndef MLPACK_BINDINGS_MARKDOWN_PROGRAM_DOC_WRAPPER_HPP
 #define MLPACK_BINDINGS_MARKDOWN_PROGRAM_DOC_WRAPPER_HPP
 
+#include "binding_info.hpp"
+
 namespace mlpack {
 namespace bindings {
 namespace markdown {

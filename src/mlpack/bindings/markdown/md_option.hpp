@@ -34,8 +34,8 @@ class MDOption
 {
  public:
   /**
-   * Construct a PyOption object.  When constructed, it will register itself
-   * with CLI. The testName parameter is not used and added for compatibility 
+   * Construct an MDOption object.  When constructed, it will register itself
+   * with CLI. The testName parameter is not used and added for compatibility
    * reasons.
    */
   MDOption(const T defaultValue,
@@ -60,7 +60,7 @@ class MDOption
     data.required = required;
     data.input = input;
     data.loaded = false;
-    // Only "verbose" and "copy_all_inputs" will be persistent.
+    // Several options from Python and CLI bindings are persistent.
     if (identifier == "verbose" || identifier == "copy_all_inputs" ||
         identifier == "help" || identifier == "info" || identifier == "version")
       data.persistent = true;
@@ -68,17 +68,17 @@ class MDOption
       data.persistent = false;
     data.cppType = cppName;
 
-    // Every parameter we'll get from Python will have the correct type.
+    // Every parameter we'll get from Markdown will have the correct type.
     data.value = boost::any(defaultValue);
 
     // Restore the parameters for this program.
     if (identifier != "verbose" && identifier != "copy_all_inputs")
       CLI::RestoreSettings(bindingName, false);
 
-    // Set the function pointers that we'll need.  All of these function
-    // pointers will be used by both the program that generates the pyx, and
-    // also the binding itself.  (The binding itself will only use GetParam,
-    // GetPrintableParam, and GetRawParam.)
+    // Set the function pointers that we'll need.  Most of these simply delegate
+    // to the current binding type's implementation.  Any new language will need
+    // to have all of these implemented, and the Markdown implementation will
+    // need to properly delegate.
     CLI::GetSingleton().functionMap[data.tname]["DefaultParam"] =
         &DefaultParam<T>;
     CLI::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
@@ -93,9 +93,7 @@ class MDOption
     CLI::GetSingleton().functionMap[data.tname]["IsSerializable"] =
         &IsSerializable<T>;
 
-    // Add the ParamData object, then store.  This is necessary because we may
-    // import more than one .so that uses CLI, so we have to keep the options
-    // separate.  programName is a global variable from mlpack_main.hpp.
+    // Add the option.
     CLI::Add(std::move(data));
     if (identifier != "verbose" && identifier != "copy_all_inputs" &&
         identifier != "help" && identifier != "info" && identifier != "version")

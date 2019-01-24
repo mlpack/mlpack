@@ -72,7 +72,8 @@ function changeLanguage()
   }
 }
 
-document.body.onload = function() {
+document.body.onload = function()
+{
   // Do we need to manually set the language because the user came with an
   // anchor?
   if (window.location.hash)

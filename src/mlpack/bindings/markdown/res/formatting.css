@@ -1,20 +1,24 @@
-body {
+body
+{
   background: #000000;
 }
 
 /* Don't display other languages by default. */
-div.language-title, div.language-header, div.language-decl, 
-div.language-detail-link, div.language-types, div.language-section {
+div.language-title, div.language-header, div.language-decl,
+div.language-detail-link, div.language-types, div.language-section
+{
   display: none;
 }
 
 /* Just display cli documentation. */
 div.language-title#cli, div.language-header#cli, div.language-decl#cli,
-div.language-detail-link#cli, div.language-types#cli, div.language-section#cli {
+div.language-detail-link#cli, div.language-types#cli, div.language-section#cli
+{
   display: none;
 }
 
-div#header {
+div#header
+{
   padding-top: 10px;
   width: 200px;
   background: #000000;
@@ -27,7 +31,8 @@ div#header {
   overflow-y: scroll;
 }
 
-div#header .language-select-div select {
+div#header .language-select-div select
+{
   color: #ffffff;
   background: transparent;
   border: none;
@@ -36,7 +41,8 @@ div#header .language-select-div select {
   width: 190px;
 }
 
-div#header .language-select-div {
+div#header .language-select-div
+{
   color: #ffffff;
   border: 2px solid #333333;
   background: url('../res/menu_bg.png') no-repeat 96% 0;
@@ -50,7 +56,8 @@ div#header .language-select-div {
   border-radius: 5px;
 }
 
-div#header ul {
+div#header ul
+{
   padding-top: 5px;
   margin-bottom: 5px;
   color: #bb2000;
@@ -61,34 +68,41 @@ div#header ul {
   font-size: 75%;
 }
 
-div#header ul li {
+div#header ul li
+{
   line-height: 1.3em;
 }
 
-div#header ul li a {
+div#header ul li a
+{
   color: #eab72c;
   font-weight: none;
 }
 
-div#header ul li a:hover {
+div#header ul li a:hover
+{
   color: #ffffff;
   font-weight: none;
 }
 
-div#docs {
+div#docs
+{
   margin-left: 200px;
 }
 
-span.special {
+span.special
+{
   font-size: 85%;
   color: #eab72c;
 }
 
-div.category {
+div.category
+{
   text-align: left;
 }
 
-div.category h5 {
+div.category h5
+{
   text-align: left;
   margin-top: 0;
   margin-bottom: 0;

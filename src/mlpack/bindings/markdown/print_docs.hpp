@@ -9,6 +9,10 @@
 
 #include <mlpack/prereqs.hpp>
 
+namespace mlpack {
+namespace bindings {
+namespace markdown {
+
 /**
  * Given the current settings of CLI, print the header (which will be the
  * navigation tab) for the binding types that are registered for these options.
@@ -29,5 +33,9 @@ void PrintHeaders(const std::string& bindingName,
  */
 void PrintDocs(const std::string& bindingName,
                const std::vector<std::string>& languages);
+
+} // namespace markdown
+} // namespace bindings
+} // namespace mlpack
 
 #endif
