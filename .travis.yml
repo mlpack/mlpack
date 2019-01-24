@@ -40,6 +40,7 @@ matrix:
       env: CMAKE_OPTIONS="-DCMAKE_CXX_COMPILER=icc -DDEBUG=OFF -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF"
       before_install:
         - curl https://raw.githubusercontent.com/nemequ/icc-travis/master/install-icc.sh > install-icc.sh
+        - chmod +x ./install-icc.sh
         - ./install-icc.sh
         - curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
         - cmake . && make && sudo make install && cd ..
