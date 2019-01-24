@@ -149,7 +149,7 @@ std::string ProcessOptions(const std::string& paramName,
 template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args)
 {
-  return util::HyphenateString("$ " + programName + " " +
+  return util::HyphenateString("$ " + GetBindingName(programName) + " " +
       ProcessOptions(args...), 2);
 }
 
@@ -160,7 +160,7 @@ std::string ProgramCall(const std::string& programName, Args... args)
 inline std::string ProgramCall(const std::string& programName)
 {
   std::ostringstream oss;
-  oss << "$ " << programName;
+  oss << "$ " << GetBindingName(programName);
 
   // Handle all options---first input options, then output options.
   const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();

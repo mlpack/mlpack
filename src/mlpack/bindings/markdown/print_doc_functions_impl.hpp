@@ -419,12 +419,12 @@ std::string ProgramCall(const std::string& programName, Args... args)
   if (BindingInfo::Language() == "cli")
   {
     s += "bash\n";
-    s += cli::ProgramCall(GetBindingName(programName), args...);
+    s += cli::ProgramCall(programName, args...);
   }
   else if (BindingInfo::Language() == "python")
   {
     s += "python\n";
-    s += python::ProgramCall(GetBindingName(programName), args...);
+    s += python::ProgramCall(programName, args...);
   }
   else
   {
@@ -447,7 +447,7 @@ inline std::string ProgramCall(const std::string& programName)
     std::string import = PrintImport(GetBindingName(programName));
     if (import.size() > 0)
       s += "$ " + import + "\n";
-    s += cli::ProgramCall(GetBindingName(programName));
+    s += cli::ProgramCall(programName);
   }
   else if (BindingInfo::Language() == "python")
   {
@@ -455,7 +455,7 @@ inline std::string ProgramCall(const std::string& programName)
     std::string import = PrintImport(GetBindingName(programName));
     if (import.size() > 0)
       s += ">>> " + import + "\n";
-    s += python::ProgramCall(GetBindingName(programName));
+    s += python::ProgramCall(programName);
   }
   else
   {

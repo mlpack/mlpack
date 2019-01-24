@@ -179,7 +179,8 @@ std::string PrintOutputOptions(const std::string& paramName,
 
 /**
  * Given a name of a binding and a variable number of arguments (and their
- * contents), print the corresponding function call.
+ * contents), print the corresponding function call.  The given programName
+ * should not be the output of GetBindingName().
  */
 template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args)
@@ -192,9 +193,7 @@ std::string ProgramCall(const std::string& programName, Args... args)
   ossOutput << PrintOutputOptions(args...);
   if (ossOutput.str() != "")
     oss << "output = ";
-  // The programName will actually have a () in it already, so we have to remove
-  // it.
-  oss << programName.substr(0, programName.size() - 2) << "(";
+  oss << programName << "(";
 
   // Now process each input option.
   oss << PrintInputOptions(args...);
@@ -213,7 +212,7 @@ std::string ProgramCall(const std::string& programName, Args... args)
 
 /**
  * Given the name of a binding, print a program call assuming that all options
- * are specified.
+ * are specified.  The programName should not be the output of GetBindingName().
  */
 inline std::string ProgramCall(const std::string& programName)
 {
@@ -235,9 +234,7 @@ inline std::string ProgramCall(const std::string& programName)
   if (hasOutput)
     oss << "d = ";
 
-  // The programName will actually have a () in it already, so we have to remove
-  // it.
-  oss << programName.substr(0, programName.size() - 2) << "(";
+  oss << programName << "(";
 
   // Now iterate over every input option.
   bool first = true;
