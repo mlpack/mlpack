@@ -213,7 +213,7 @@ static void mlpackMain()
     rs = CLI::GetParam<RSModel*>("input_model");
 
     Log::Info << "Using range search model from '"
-        << CLI::GetPrintableParam<RSModel>("input_model") << "' ("
+        << CLI::GetPrintableParam<RSModel*>("input_model") << "' ("
         << "trained on " << rs->Dataset().n_rows << "x" << rs->Dataset().n_cols
         << " dataset)." << endl;
 

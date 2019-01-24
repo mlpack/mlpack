@@ -11,7 +11,7 @@ interested in participating in Google Summer of Code, see
 
 ## Pull request process
 
-Once a pull request is submitted, it must be reviewed by at least one member of
+Once a pull request is submitted, it must be approved by at least one member of
 mlpack's Contributors team, to ensure that (if applicable):
 
  * the design meshes with the rest of mlpack
@@ -19,9 +19,11 @@ mlpack's Contributors team, to ensure that (if applicable):
    [Style Guide](http://github.com/mlpack/mlpack/wiki/DesignGuidelines)
  * any new functionality is tested and working
 
-Once the pull request is approved by one member of the Contributors team, it may
-be merged between 3 and 7 days after approval.  This allows other contributors
-and maintainers to have time to also review the PR.  If a pull request has at
-least two approvals from members of the Contributors team, then the pull
-request may be immediately merged.  This applies even if the submitter of the
-PR is a member of the Contributors team.
+The pull request can be merged as soon as it receives two approvals; 24 hours
+after the first approval, mlpack-bot will provide a second approval.  This is to
+leave time for anyone to comment on the PR before it is merged.
+
+Members of the Contributors team are encouraged to review pull requests that
+have already been reviewed, and pull request contributors are encouraged to seek
+multiple reviews.  Reviews from anyone not on the Contributors team are always
+appreciated and encouraged!

@@ -1,12 +1,13 @@
-# Define the files we need to compile
+# Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  mountain_car.hpp
-  cart_pole.hpp
-  continuous_mountain_car.hpp
-  acrobot.hpp
-  pendulum.hpp
-  reward_clipping.hpp
+  kde.hpp
+  kde_impl.hpp
+  kde_rules.hpp
+  kde_rules_impl.hpp
+  kde_stat.hpp
+  kde_model.hpp
+  kde_model_impl.hpp
 )
 
 # Add directory name to sources.
@@ -17,3 +18,6 @@ endforeach()
 # Append sources (with directory name) to list of all mlpack sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+add_cli_executable(kde)
+add_python_binding(kde)

@@ -30,6 +30,9 @@
 
 #if (BINDING_TYPE == BINDING_TYPE_CLI) // This is a command-line executable.
 
+// Matrices are transposed on load/save.
+#define BINDING_MATRIX_TRANSPOSED true
+
 #include <mlpack/bindings/cli/cli_option.hpp>
 #include <mlpack/bindings/cli/print_doc_functions.hpp>
 
@@ -75,6 +78,9 @@ int main(int argc, char** argv)
 
 #elif(BINDING_TYPE == BINDING_TYPE_TEST) // This is a unit test.
 
+// Matrices are not transposed on load/save.
+#define BINDING_MATRIX_TRANSPOSED false
+
 #include <mlpack/bindings/tests/test_option.hpp>
 #include <mlpack/bindings/tests/ignore_check.hpp>
 #include <mlpack/bindings/tests/clean_memory.hpp>
@@ -105,6 +111,9 @@ using Option = mlpack::bindings::tests::TestOption<T>;
     []() { return DESC; }, { __VA_ARGS__ })
 
 #elif(BINDING_TYPE == BINDING_TYPE_PYX) // This is a Python binding.
+
+// Matrices are transposed on load/save.
+#define BINDING_MATRIX_TRANSPOSED true
 
 #include <mlpack/bindings/python/py_option.hpp>
 #include <mlpack/bindings/python/print_doc_functions.hpp>

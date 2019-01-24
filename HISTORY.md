@@ -1,3 +1,8 @@
+### mlpack 3.1.0
+###### ????-??-??
+  * Add kernel density estimation (KDE) implementation with bindings to other
+    languages (#1301).
+
 ### mlpack 3.0.5
 ###### ????-??-??
   * Change DBSCAN to use PointSelectionPolicy and add OrderedPointSelection (#1625).
