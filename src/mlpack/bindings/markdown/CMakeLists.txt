@@ -66,7 +66,10 @@ macro (add_markdown_docs name languages category)
   # First, make sure that the category is a valid category.
   list(FIND MARKDOWN_CATEGORIES ${category} cat_index)
   if (${cat_index} EQUAL -1)
-    message(FATAL_ERROR "add_markdown_docs(): unknown category ${category}!  See the categories in src/mlpack/bindings/markdown/MarkdownCategories.cmake.")
+    string(CONCAT error_str "add_markdown_docs(): unknown category ${category}!"
+        "  See the categories in "
+        "src/mlpack/bindings/markdown/MarkdownCategories.cmake.")
+    message(FATAL_ERROR "${ERROR_STR}")
   endif ()
 
   # Next, we should use configure_file() to generate each
@@ -83,10 +86,13 @@ macro (add_markdown_docs name languages category)
   list(REMOVE_DUPLICATES MARKDOWN_ALL_LANGUAGES_LIST)
 
   # Do the actual file configuration.
-  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/generate_markdown.binding.hpp.in
-      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown.${name}.hpp)
-  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/generate_markdown.binding.cpp.in
-      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown.${name}.cpp)
+  set(BINDING_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown)
+  set(BINDING_BINARY_DIR ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown)
+
+  configure_file(${BINDING_SOURCE_DIR}/generate_markdown.binding.hpp.in
+      ${BINDING_BINARY_DIR}/generate_markdown.${name}.hpp)
+  configure_file(${BINDING_SOURCE_DIR}/generate_markdown.binding.cpp.in
+      ${BINDING_BINARY_DIR}/generate_markdown.${name}.cpp)
 
   # Lastly, that generate_markdown.<binding>.cpp should be added to the list of
   # files to be compiled for the 'generate_markdown' target.  We also need to
@@ -121,8 +127,10 @@ function (post_markdown_setup)
   foreach (i RANGE ${cat_limit})
     list (GET MARKDOWN_CATEGORIES ${i} cat)
     # Put the things in this category in a div.
-    set (MARKDOWN_HEADER_CODE "${MARKDOWN_HEADER_CODE}  cout << \"<div class=\\\"category\\\" markdown=\\\"1\\\">\" << endl;")
-    set (MARKDOWN_HEADER_CODE "${MARKDOWN_HEADER_CODE}\n  cout << \"<h5>${cat}:</h5>\" << endl;")
+    string(CONCAT header_code "${MARKDOWN_HEADER_CODE}  cout << "
+        "\"<div class=\\\"category\\\" markdown=\\\"1\\\">\" << endl;\n  "
+        "cout << \"<h5>${cat}:</h5>\" << endl;\n")
+    set(MARKDOWN_HEADER_CODE ${header_code})
 
     # Add an option for this binding.
     math(EXPR range_limit "${NUM_MARKDOWN_BINDINGS} - 1")
@@ -133,62 +141,68 @@ function (post_markdown_setup)
       endif ()
 
       list (GET MARKDOWN_NAMES ${j} name)
-      set (MARKDOWN_HEADER_CODE "${MARKDOWN_HEADER_CODE}\n  Print${name}Headers();")
+      set (MARKDOWN_HEADER_CODE
+          "${MARKDOWN_HEADER_CODE}\n  Print${name}Headers();")
     endforeach ()
 
-    set (MARKDOWN_HEADER_CODE "${MARKDOWN_HEADER_CODE}\n  cout << \"</div>\" << endl << endl;")
+    set (MARKDOWN_HEADER_CODE
+        "${MARKDOWN_HEADER_CODE}\n  cout << \"</div>\" << endl << endl;")
   endforeach ()
 
   foreach (name ${MARKDOWN_NAMES})
-    set (MARKDOWN_INCLUDE_CODE "${MARKDOWN_INCLUDE_CODE}\n#include \"generate_markdown.${name}.hpp\"")
+    set (MARKDOWN_INCLUDE_CODE
+        "${MARKDOWN_INCLUDE_CODE}\n#include \"generate_markdown.${name}.hpp\"")
     set (MARKDOWN_CALL_CODE "${MARKDOWN_CALL_CODE}\n  Print${name}Docs();")
   endforeach ()
 
-  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/generate_markdown.cpp.in
-      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown.cpp)
+  set(BINDING_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown)
+  set(BINDING_BINARY_DIR ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown)
+
+  configure_file(${BINDING_SOURCE_DIR}/generate_markdown.cpp.in
+      ${BINDING_BINARY_DIR}/generate_markdown.cpp)
 
   # Remember that this is being run from some other directory, so we have to be
   # explicit with the locations of the files we are compiling against.
   add_executable(generate_markdown
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown.cpp"
+      "${BINDING_BINARY_DIR}/generate_markdown.cpp"
       ${MARKDOWN_SRCS}
-      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/binding_info.hpp"
-      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/binding_info.cpp"
-      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/default_param.hpp"
-      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/get_binding_name.hpp"
-      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/get_binding_name.cpp"
-      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/get_param.hpp"
-      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/get_printable_param.hpp"
-      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/get_printable_param_name.hpp"
-      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/get_printable_param_name_impl.hpp"
-      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/md_option.hpp"
-      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/print_doc_functions.hpp"
-      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/print_doc_functions_impl.hpp"
-      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/print_docs.hpp"
-      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/print_docs.cpp"
-      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/program_doc_wrapper.hpp"
-      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/generate_markdown.cpp")
+      "${BINDING_SOURCE_DIR}/binding_info.hpp"
+      "${BINDING_SOURCE_DIR}/binding_info.cpp"
+      "${BINDING_SOURCE_DIR}/default_param.hpp"
+      "${BINDING_SOURCE_DIR}/get_binding_name.hpp"
+      "${BINDING_SOURCE_DIR}/get_binding_name.cpp"
+      "${BINDING_SOURCE_DIR}/get_param.hpp"
+      "${BINDING_SOURCE_DIR}/get_printable_param.hpp"
+      "${BINDING_SOURCE_DIR}/get_printable_param_name.hpp"
+      "${BINDING_SOURCE_DIR}/get_printable_param_name_impl.hpp"
+      "${BINDING_SOURCE_DIR}/md_option.hpp"
+      "${BINDING_SOURCE_DIR}/print_doc_functions.hpp"
+      "${BINDING_SOURCE_DIR}/print_doc_functions_impl.hpp"
+      "${BINDING_SOURCE_DIR}/print_docs.hpp"
+      "${BINDING_SOURCE_DIR}/print_docs.cpp"
+      "${BINDING_SOURCE_DIR}/program_doc_wrapper.hpp"
+      "${BINDING_SOURCE_DIR}/generate_markdown.cpp")
   target_link_libraries(generate_markdown mlpack ${MLPACK_LIBRARIES})
   add_dependencies(generate_markdown markdown_copy)
   set_target_properties(generate_markdown PROPERTIES
       COMPILE_FLAGS -DBINDING_TYPE=BINDING_TYPE_MARKDOWN
-      RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/)
+      RUNTIME_OUTPUT_DIRECTORY ${BINDING_BINARY_DIR})
 
   add_custom_target(markdown ALL
       ${CMAKE_COMMAND} -E make_directory
           ${CMAKE_BINARY_DIR}/doc/
       COMMAND ${CMAKE_COMMAND}
-          -DPROGRAM=${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown
+          -DPROGRAM=${BINDING_BINARY_DIR}/generate_markdown
           -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/doc/mlpack.md
           -P ${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake
       COMMAND ${CMAKE_COMMAND} -E copy
-          ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/res/change_language.js
+          ${BINDING_SOURCE_DIR}/res/change_language.js
           ${CMAKE_BINARY_DIR}/doc/res/change_languages.js
       COMMAND ${CMAKE_COMMAND} -E copy
-          ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/res/menu_bg.png
+          ${BINDING_SOURCE_DIR}/res/menu_bg.png
           ${CMAKE_BINARY_DIR}/doc/res/menu_bg.png
       COMMAND ${CMAKE_COMMAND} -E copy
-          ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/res/formatting.css
+          ${BINDING_SOURCE_DIR}/res/formatting.css
           ${CMAKE_BINARY_DIR}/doc/res/formatting.css
       DEPENDS generate_markdown
       COMMENT "Generating Markdown documentation for mlpack bindings...")
