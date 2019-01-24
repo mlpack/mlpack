@@ -30,8 +30,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 } // namespace mlpack
 
 /**
- * Provide a link for a binding's "see also" documentation section.  This link
- * can be specified by calling SEE_ALSO("description", "link"), where
+ * Provide a link for a binding's "see also" documentation section, which is
+ * primarily (but not necessarily exclusively) used by the Markdown bindings
+ * This link can be specified by calling SEE_ALSO("description", "link"), where
  * "description" is the description of the link and "link" may be one of the
  * following:
  *
