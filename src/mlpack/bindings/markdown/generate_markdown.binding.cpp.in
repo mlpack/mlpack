@@ -8,6 +8,7 @@
  */
 #define BINDING_NAME "${BINDING}"
 
+#include <mlpack/core.hpp>
 #include "generate_markdown.${BINDING}.hpp"
 #include "binding_info.hpp"
 #include "print_docs.hpp"

@@ -1,5 +1,5 @@
 /**
- * @file generate_markdown.binding.cpp.in
+ * @file generate_markdown.binding.hpp.in
  * @author Ryan Curtin
  *
  * Print Markdown for a specific binding.  This provides two utility
@@ -9,7 +9,6 @@
 #ifndef MLPACK_BINDINGS_MARKDOWN_GENERATE_MARKDOWN_${BINDING}_HPP
 #define MLPACK_BINDINGS_MARKDOWN_GENERATE_MARKDOWN_${BINDING}_HPP
 
-#include "generate_markdown.${BINDING}.hpp"
 #include "print_docs.hpp"
 #include "get_binding_name.hpp"
 

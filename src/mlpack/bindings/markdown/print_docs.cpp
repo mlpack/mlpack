@@ -19,10 +19,8 @@
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::util;
-
-namespace mlpack {
-namespace bindings {
-namespace markdown {
+using namespace mlpack::bindings;
+using namespace mlpack::bindings::markdown;
 
 void PrintHeaders(const std::string& bindingName,
                   const std::vector<std::string>& languages)
@@ -219,7 +217,3 @@ void PrintDocs(const std::string& bindingName,
 
   CLI::ClearSettings();
 }
-
-} // namespace markdown
-} // namespace bindings
-} // namespace mlpack
