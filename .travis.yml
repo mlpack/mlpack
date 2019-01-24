@@ -3,7 +3,8 @@ language: cpp
 
 matrix:
   include:
-    - os: linux
+    - name: xenial-python2
+      os: linux
       dist: xenial
       env: CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON=/usr/bin/python"
       before_install:
@@ -14,7 +15,8 @@ matrix:
         - cmake . && make && sudo make install && cd ..
         - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
 
-    - os: linux
+    - name: xenial-python3
+      os: linux
       dist: xenial
       env: CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON=/usr/bin/python3"
       before_install:
@@ -25,7 +27,8 @@ matrix:
         - cmake . && make && sudo make install && cd ..
         - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
 
-    - os: linux
+    - name: xenial-debug
+      os: linux
       dist: xenial
       env: CMAKE_OPTIONS="-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF"
       before_install:
@@ -35,7 +38,8 @@ matrix:
         - cmake . && make && sudo make install && cd ..
         - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
 
-    - os: linux
+    - name: xenial-icc
+      os: linux
       dist: xenial
       env: CMAKE_OPTIONS="-DCMAKE_CXX_COMPILER=icc -DDEBUG=OFF -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF"
       before_install:
@@ -46,7 +50,8 @@ matrix:
         - cmake . && make && sudo make install && cd ..
         - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
 
-    - os: osx
+    - name: osx
+      os: osx
       osx_image: xcode9.4 # Maybe we can try some different ones?
       env: CMAKE_OPTIONS="-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF"
       before_install:
