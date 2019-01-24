@@ -35,6 +35,16 @@ matrix:
         - cmake . && make && sudo make install && cd ..
         - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
 
+    - os: linux
+      dist: xenial
+      env: CMAKE_OPTIONS="-DCMAKE_CXX_COMPILER=icc -DDEBUG=OFF -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF"
+      before_install:
+        - curl https://raw.githubusercontent.com/nemequ/icc-travis/master/install-icc.sh > install-icc.sh
+        - ./install-icc.sh
+        - curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
+        - cmake . && make && sudo make install && cd ..
+        - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
+
     - os: osx
       osx_image: xcode9.4 # Maybe we can try some different ones?
       env: CMAKE_OPTIONS="-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF"
