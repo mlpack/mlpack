@@ -59,9 +59,13 @@ void NystroemMethod<KernelType, PointSelectionPolicy>::GetKernelMatrix(
 {
   // Assemble mini-kernel matrix.
   for (size_t i = 0; i < rank; ++i)
+  {
     for (size_t j = 0; j < rank; ++j)
+    {
       miniKernel(i, j) = kernel.Evaluate(data.col(selectedPoints(i)),
                                          data.col(selectedPoints(j)));
+    }
+  }
 
   // Construct semi-kernel matrix with interactions between selected points and
   // all points.
@@ -85,8 +89,13 @@ void NystroemMethod<KernelType, PointSelectionPolicy>::Apply(arma::mat& output)
   arma::vec s;
   arma::svd(U, s, V, miniKernel);
 
-  // Construct the output matrix.
+  // Construct the output matrix.  We need to have special handling when
+  // miniKernel ended up being low-rank.
   arma::mat normalization = arma::diagmat(1.0 / sqrt(s));
+  for (size_t i = 0; i < s.n_elem; ++i)
+    if (std::abs(s[i]) <= 1e-20)
+      normalization(i, i) = 0.0;
+
   output = semiKernel * U * normalization * V;
 }
 
