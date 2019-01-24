@@ -43,7 +43,7 @@ matrix:
       dist: xenial
       env:
         global:
-          - secure: "YO9kOZQ2xxDeZs801ZBo22aRv5UXNGenp9O5imlMDQpz3kPosGuAqPOYAGuk1MjmodTpNIHrQIrF1ab6CaF0VcWI+C+XWBgu1hUSVMRArZTI13ezx5DDN4XUjWZQ4MWtdINXk4EVa38/HRwJBf7dO3wjYLzZHzp48uWrBhy6W4w="
+          - secure: YO9kOZQ2xxDeZs801ZBo22aRv5UXNGenp9O5imlMDQpz3kPosGuAqPOYAGuk1MjmodTpNIHrQIrF1ab6CaF0VcWI+C+XWBgu1hUSVMRArZTI13ezx5DDN4XUjWZQ4MWtdINXk4EVa38/HRwJBf7dO3wjYLzZHzp48uWrBhy6W4w=
           - CMAKE_OPTIONS="-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF"
       before_install:
         - curl https://raw.githubusercontent.com/nemequ/icc-travis/master/install-icc.sh > install-icc.sh
