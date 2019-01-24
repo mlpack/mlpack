@@ -150,23 +150,24 @@ function (post_markdown_setup)
   # Remember that this is being run from some other directory, so we have to be
   # explicit with the locations of the files we are compiling against.
   add_executable(generate_markdown
+      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown.cpp"
       ${MARKDOWN_SRCS}
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/binding_info.hpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/binding_info.cpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/default_param.hpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/get_binding_name.hpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/get_binding_name.cpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/get_param.hpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/get_printable_param.hpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/get_printable_param_name.hpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/get_printable_param_name_impl.hpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/md_option.hpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/print_doc_functions.hpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/print_doc_functions_impl.hpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/print_docs.hpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/print_docs.cpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/program_doc_wrapper.hpp"
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown.cpp")
+      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/binding_info.hpp"
+      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/binding_info.cpp"
+      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/default_param.hpp"
+      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/get_binding_name.hpp"
+      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/get_binding_name.cpp"
+      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/get_param.hpp"
+      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/get_printable_param.hpp"
+      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/get_printable_param_name.hpp"
+      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/get_printable_param_name_impl.hpp"
+      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/md_option.hpp"
+      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/print_doc_functions.hpp"
+      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/print_doc_functions_impl.hpp"
+      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/print_docs.hpp"
+      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/print_docs.cpp"
+      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/program_doc_wrapper.hpp"
+      "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown/generate_markdown.cpp")
   target_link_libraries(generate_markdown mlpack ${MLPACK_LIBRARIES})
   add_dependencies(generate_markdown markdown_copy)
   set_target_properties(generate_markdown PROPERTIES
@@ -174,7 +175,9 @@ function (post_markdown_setup)
       RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/)
 
   add_custom_target(markdown ALL
-      ${CMAKE_COMMAND}
+      ${CMAKE_COMMAND} -E make_directory
+          ${CMAKE_BINARY_DIR}/doc/
+      COMMAND ${CMAKE_COMMAND}
           -DPROGRAM=${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown/generate_markdown
           -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/doc/mlpack.md
           -P ${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake
