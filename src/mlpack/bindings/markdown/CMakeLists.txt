@@ -6,7 +6,7 @@ macro (not_found_return message)
   endmacro()
 
   function (post_markdown_setup)
-
+    # Do nothing.
   endfunction ()
 
   return ()

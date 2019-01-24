@@ -125,7 +125,5 @@ if (BUILD_PYTHON_BINDINGS)
 endif ()
 
 # If we are building Markdown documentation, we have to run some setup after we
-# recurse into methods/.
-#if (BUILD_MARKDOWN_DOCS)
-  post_markdown_setup()
-#endif ()
+# recurse into methods/.  If not, this function is empty.
+post_markdown_setup()
