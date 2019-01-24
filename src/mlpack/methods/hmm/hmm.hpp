@@ -166,7 +166,7 @@ class HMM
    *
    * @param dataSeq Vector of observation sequences.
    */
-  void Train(const std::vector<arma::mat>& dataSeq);
+  double Train(const std::vector<arma::mat>& dataSeq);
 
   /**
    * Train the model using the given labeled observations; the transition and

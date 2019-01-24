@@ -134,7 +134,7 @@ template<
     typename ElemType
 >
 template<typename MatType>
-void RandomForest<
+double RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
@@ -149,34 +149,7 @@ void RandomForest<
   // Pass off to Train().
   data::DatasetInfo info; // Ignored by Train().
   arma::rowvec weights; // Ignored by Train().
-  Train<false, false>(dataset, info, labels, numClasses, weights, numTrees,
-      minimumLeafSize);
-}
-
-template<
-    typename FitnessFunction,
-    typename DimensionSelectionType,
-    template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType,
-    typename ElemType
->
-template<typename MatType>
-void RandomForest<
-    FitnessFunction,
-    DimensionSelectionType,
-    NumericSplitType,
-    CategoricalSplitType,
-    ElemType
->::Train(const MatType& dataset,
-         const data::DatasetInfo& datasetInfo,
-         const arma::Row<size_t>& labels,
-         const size_t numClasses,
-         const size_t numTrees,
-         const size_t minimumLeafSize)
-{
-  // Pass off to Train().
-  arma::rowvec weights; // Ignored by Train().
-  Train<false, true>(dataset, datasetInfo, labels, numClasses, weights,
+  return Train<false, false>(dataset, info, labels, numClasses, weights,
       numTrees, minimumLeafSize);
 }
 
@@ -188,7 +161,34 @@ template<
     typename ElemType
 >
 template<typename MatType>
-void RandomForest<
+double RandomForest<
+    FitnessFunction,
+    DimensionSelectionType,
+    NumericSplitType,
+    CategoricalSplitType,
+    ElemType
+>::Train(const MatType& dataset,
+         const data::DatasetInfo& datasetInfo,
+         const arma::Row<size_t>& labels,
+         const size_t numClasses,
+         const size_t numTrees,
+         const size_t minimumLeafSize)
+{
+  // Pass off to Train().
+  arma::rowvec weights; // Ignored by Train().
+  return Train<false, true>(dataset, datasetInfo, labels, numClasses, weights,
+      numTrees, minimumLeafSize);
+}
+
+template<
+    typename FitnessFunction,
+    typename DimensionSelectionType,
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType,
+    typename ElemType
+>
+template<typename MatType>
+double RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
@@ -203,8 +203,8 @@ void RandomForest<
 {
   // Pass off to Train().
   data::DatasetInfo info; // Ignored by Train().
-  Train<false, true>(dataset, info, labels, numClasses, weights, numTrees,
-      minimumLeafSize);
+  return Train<false, true>(dataset, info, labels, numClasses, weights,
+      numTrees, minimumLeafSize);
 }
 
 template<
@@ -215,7 +215,7 @@ template<
     typename ElemType
 >
 template<typename MatType>
-void RandomForest<
+double RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
@@ -230,8 +230,8 @@ void RandomForest<
          const size_t minimumLeafSize)
 {
   // Pass off to Train().
-  Train<true, true>(dataset, datasetInfo, labels, numClasses, weights, numTrees,
-      minimumLeafSize);
+  return Train<true, true>(dataset, datasetInfo, labels, numClasses, weights,
+      numTrees, minimumLeafSize);
 }
 
 template<
@@ -415,7 +415,7 @@ template<
     typename ElemType
 >
 template<bool UseWeights, bool UseDatasetInfo, typename MatType>
-void RandomForest<
+double RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
@@ -431,6 +431,7 @@ void RandomForest<
 {
   // Train each tree individually.
   trees.resize(numTrees); // This will fill the vector with untrained trees.
+  double avgGain = 0.0;
 
   #pragma omp parallel for
   for (omp_size_t i = 0; i < numTrees; ++i)
@@ -446,27 +447,29 @@ void RandomForest<
     {
       if (UseDatasetInfo)
       {
-        trees[i].Train(dataset, datasetInfo, labels, numClasses, weights,
-            minimumLeafSize);
+        avgGain += trees[i].Train(dataset, datasetInfo, labels, numClasses,
+            weights, minimumLeafSize);
       }
       else
       {
-        trees[i].Train(dataset, labels, numClasses, weights, minimumLeafSize);
+        avgGain += trees[i].Train(dataset, labels, numClasses, weights,
+            minimumLeafSize);
       }
     }
     else
     {
       if (UseDatasetInfo)
       {
-        trees[i].Train(dataset, datasetInfo, labels, numClasses,
+        avgGain += trees[i].Train(dataset, datasetInfo, labels, numClasses,
             minimumLeafSize);
       }
       else
       {
-        trees[i].Train(dataset, labels, numClasses, minimumLeafSize);
+        avgGain += trees[i].Train(dataset, labels, numClasses, minimumLeafSize);
       }
     }
   }
+  return avgGain / numTrees;
 }
 
 } // namespace tree

@@ -131,7 +131,7 @@ class RandomForest
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    */
   template<typename MatType>
-  void Train(const MatType& data,
+  double Train(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
              const size_t numTrees = 50,
@@ -151,7 +151,7 @@ class RandomForest
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    */
   template<typename MatType>
-  void Train(const MatType& data,
+  double Train(const MatType& data,
              const data::DatasetInfo& datasetInfo,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
@@ -171,7 +171,7 @@ class RandomForest
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    */
   template<typename MatType>
-  void Train(const MatType& data,
+  double Train(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
              const arma::rowvec& weights,
@@ -193,7 +193,7 @@ class RandomForest
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    */
   template<typename MatType>
-  void Train(const MatType& data,
+  double Train(const MatType& data,
              const data::DatasetInfo& datasetInfo,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
@@ -281,7 +281,7 @@ class RandomForest
    * @tparam MatType The type of data matrix (i.e. arma::mat).
    */
   template<bool UseWeights, bool UseDatasetInfo, typename MatType>
-  void Train(const MatType& data,
+  double Train(const MatType& data,
              const data::DatasetInfo& datasetInfo,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
