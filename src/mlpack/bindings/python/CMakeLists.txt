@@ -203,9 +203,9 @@ if (BUILD_PYTHON_BINDINGS)
       -DBINDING_TYPE=BINDING_TYPE_PYX)
   add_custom_command(TARGET generate_pyx_${name} POST_BUILD
       COMMAND ${CMAKE_COMMAND}
-          -DGENERATE_PYX_PROGRAM=${CMAKE_BINARY_DIR}/bin/generate_pyx_${name}
-          -DPYX_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${name}.pyx
-          -P ${CMAKE_SOURCE_DIR}/CMake/GeneratePYX.cmake)
+          -DPROGRAM=${CMAKE_BINARY_DIR}/bin/generate_pyx_${name}
+          -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${name}.pyx
+          -P ${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake)
 
   # Build the pyx.  Since distutils doesn't support a parallel build, we'll
   # enforce it here.  Although this will always be rebuilt, that's okay because
