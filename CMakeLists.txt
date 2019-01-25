@@ -27,6 +27,10 @@ else ()
       "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 endif()
 
+# Build Markdown bindings for documentation.  This is used as part of website
+# generation.
+option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentation." OFF)
+
 option(BUILD_WITH_COVERAGE
     "Build with support for code coverage tools (gcc only)." OFF)
 option(MATHJAX

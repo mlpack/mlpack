@@ -19,3 +19,4 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 # sets with p-stable LSH.
 add_cli_executable(lsh)
 add_python_binding(lsh)
+add_markdown_docs(lsh "cli;python" "geometry")

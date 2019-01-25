@@ -15,3 +15,4 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(radical)
 add_python_binding(radical)
+add_markdown_docs(radical "cli;python" "transformations")

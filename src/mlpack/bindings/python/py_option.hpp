@@ -13,6 +13,7 @@
 #define MLPACK_BINDINGS_PYTHON_PY_OPTION_HPP
 
 #include <mlpack/core/util/param_data.hpp>
+#include "default_param.hpp"
 #include "get_param.hpp"
 #include "get_printable_param.hpp"
 #include "print_class_defn.hpp"
@@ -84,6 +85,9 @@ class PyOption
     CLI::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
     CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
         &GetPrintableParam<T>;
+
+    CLI::GetSingleton().functionMap[data.tname]["DefaultParam"] =
+        &DefaultParam<T>;
 
     // These are used by the pyx generator.
     CLI::GetSingleton().functionMap[data.tname]["PrintClassDefn"] =
