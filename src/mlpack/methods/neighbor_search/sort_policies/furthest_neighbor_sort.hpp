@@ -24,7 +24,7 @@ namespace neighbor {
  * minimum distance is the best (so, when used with NeighborSearch, the output
  * is furthest neighbors).
  */
-class FurthestNeighborSort
+class FurthestNS
 {
  public:
   /**
@@ -195,6 +195,8 @@ class FurthestNeighborSort
     return ConvertToScore(score);
   }
 };
+
+using FurthestNeighborSort = FurthestNS;
 
 } // namespace neighbor
 } // namespace mlpack

@@ -28,7 +28,7 @@ namespace neighbor {
  * SortPolicy.  All of the methods implemented here must be implemented by any
  * other SortPolicy classes.
  */
-class NearestNeighborSort
+class NearestNS
 {
  public:
   /**
@@ -194,6 +194,8 @@ class NearestNeighborSort
     return score;
   }
 };
+
+using NearestNeighborSort = NearestNS;
 
 } // namespace neighbor
 } // namespace mlpack
