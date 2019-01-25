@@ -226,6 +226,12 @@ double QLearning<
   // Learn form experience.
   arma::mat gradients;
   learningNetwork.Backward(target, gradients);
+
+  if (prioritized_replay)
+  {
+    gradients = arma::mean(weights) * gradients;
+  }
+
   updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
 
    if (prioritized_replay)
