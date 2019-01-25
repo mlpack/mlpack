@@ -77,4 +77,23 @@ BOOST_AUTO_TEST_CASE(FindPrefixSum)
   BOOST_CHECK_EQUAL(sumtree.findPrefixSum(3.0), 3);
 }
 
+/**
+ * Test that we find the highest index in the array such that
+ * sum(arr[0] + arr[1] + arr[2] ... + arr[i]) <= mass .
+ */
+
+BOOST_AUTO_TEST_CASE(BatchUpdate)
+{
+  SumTree<double> sumtree(4);
+  arma::ucolvec indices = {0, 1, 2, 3};
+  arma::colvec data = {1.0, 0.8, 0.6, 0.4};
+
+  sumtree.batchUpdate(indices, data);
+
+  BOOST_CHECK_EQUAL(sumtree.findPrefixSum(0), 0);
+  BOOST_CHECK_EQUAL(sumtree.findPrefixSum(1), 1);
+  BOOST_CHECK_EQUAL(sumtree.findPrefixSum(2.8), 3);
+  BOOST_CHECK_EQUAL(sumtree.findPrefixSum(3.0), 3);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

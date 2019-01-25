@@ -23,7 +23,7 @@ namespace rl {
 /**
  * Implementation of SumTree.
  *
- * Build a Segment Tree like data strucuture.
+ * Build a Segment Tree like data structure.
  * https://en.wikipedia.org/wiki/Segment_tree
  *
  * Used to maintain prefix-sum of an array.
@@ -67,6 +67,26 @@ class SumTree
     {
       element[idx] = element[2 * idx] + element[2 * idx + 1];
       idx /= 2;
+    }
+  }
+
+
+  /**
+   * Update the data with batch rather loop over the indices with set method
+   *
+   * @param indices The indices of data to be changed
+   * @param data  The data that array with indices to be
+   */
+  void batchUpdate(arma::ucolvec indices, arma::Col<T> data)
+  {
+    for (size_t i = 0; i < indices.n_rows; i ++)
+    {
+      element[indices[i] + capacity] = data[i];
+    }
+    // update the total tree with bottom-up technique
+    for (size_t i = capacity-1; i > 0; i --)
+    {
+      element[i] = element[2 * i] + element[2 * i + 1];
     }
   }
 
