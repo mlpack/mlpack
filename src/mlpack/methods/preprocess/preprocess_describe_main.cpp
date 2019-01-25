@@ -22,12 +22,17 @@ using namespace mlpack::util;
 using namespace std;
 using namespace boost;
 
-PROGRAM_INFO("Descriptive Statistics", "This utility takes a dataset and "
-    "prints out the descriptive statistics of the data. Descriptive statistics "
-    "is the discipline of quantitatively describing the main features of a "
-    "collection of information, or the quantitative description itself. The "
-    "program does not modify the original file, but instead prints out the "
-    "statistics to the console. The printed result will look like a table."
+PROGRAM_INFO("Descriptive Statistics",
+    // Short description.
+    "A utility for printing descriptive statistics about a dataset.  This "
+    "prints a number of details about a dataset in a tabular format.",
+    // Long description.
+    "This utility takes a dataset and prints out the descriptive statistics "
+    "of the data. Descriptive statistics is the discipline of quantitatively "
+    "describing the main features of a collection of information, or the "
+    "quantitative description itself. The program does not modify the original "
+    "file, but instead prints out the statistics to the console. The printed "
+    "result will look like a table."
     "\n\n"
     "Optionally, width and precision of the output can be adjusted by a user "
     "using the " + PRINT_PARAM_STRING("width") + " and " +
@@ -47,7 +52,10 @@ PROGRAM_INFO("Descriptive Statistics", "This utility takes a dataset and "
     "the dataset as a population, we could run"
     "\n\n" +
     PRINT_CALL("preprocess_describe", "input", "X", "width", 10, "precision", 5,
-        "verbose", true));
+        "verbose", true),
+    SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
+    SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"),
+    SEE_ALSO("@preprocess_split", "#preprocess_split"));
 
 // Define parameters for data.
 PARAM_MATRIX_IN_REQ("input", "Matrix containing data,", "i");

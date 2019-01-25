@@ -29,6 +29,13 @@ using namespace mlpack::util;
 
 // Information about the program itself.
 PROGRAM_INFO("Range Search",
+    // Short description.
+    "An implementation of range search with single-tree and dual-tree "
+    "algorithms.  Given a set of reference points and a set of query points and"
+    " a range, this can find the set of reference points within the desired "
+    "range for each query point, and any trees built during the computation can"
+    " be saved for reuse with future range searches.",
+    // Long description.
     "This program implements range search with a Euclidean distance metric. "
     "For a given query point, a given range, and a given set of reference "
     "points, the program will return all of the reference points with distance "
@@ -55,7 +62,14 @@ PROGRAM_INFO("Range Search",
     " resultant CSV-like files may not be loadable by many programs.  However, "
     "at this time a better way to store this non-square result is not known.  "
     "As a result, any output files will be written as CSVs in this manner, "
-    "regardless of the given extension.");
+    "regardless of the given extension.",
+    SEE_ALSO("@knn", "#knn"),
+    SEE_ALSO("Range searching on Wikipedia",
+        "https://en.wikipedia.org/wiki/Range_searching"),
+    SEE_ALSO("Tree-independent dual-tree algorithms (pdf)",
+        "http://proceedings.mlr.press/v28/curtin13.pdf"),
+    SEE_ALSO("mlpack::range::RangeSearch C++ class documentation",
+        "@doxygen/classmlpack_1_1range_1_1RangeSearch.html"));
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
@@ -199,7 +213,7 @@ static void mlpackMain()
     rs = CLI::GetParam<RSModel*>("input_model");
 
     Log::Info << "Using range search model from '"
-        << CLI::GetPrintableParam<RSModel>("input_model") << "' ("
+        << CLI::GetPrintableParam<RSModel*>("input_model") << "' ("
         << "trained on " << rs->Dataset().n_rows << "x" << rs->Dataset().n_cols
         << " dataset)." << endl;
 

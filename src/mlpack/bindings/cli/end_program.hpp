@@ -50,7 +50,7 @@ inline void EndProgram()
     while (it != parameters.end())
     {
       // Now, figure out what type it is, and print it.
-      // We can handle strings, ints, bools, floats, doubles.
+      // We can handle strings, ints, bools, doubles.
       const util::ParamData& data = it->second;
       std::string boostName;
       CLI::GetSingleton().functionMap[data.tname]["MapParameterName"](data,

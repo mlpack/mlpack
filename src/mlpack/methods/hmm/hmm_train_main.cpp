@@ -27,9 +27,15 @@ using namespace mlpack::math;
 using namespace arma;
 using namespace std;
 
-PROGRAM_INFO("Hidden Markov Model (HMM) Training", "This program allows a "
-    "Hidden Markov Model to be trained on labeled or unlabeled data.  It "
-    "support three types of HMMs: discrete HMMs, Gaussian HMMs, or GMM HMMs."
+PROGRAM_INFO("Hidden Markov Model (HMM) Training",
+    // Short description.
+    "An implementation of training algorithms for Hidden Markov Models (HMMs). "
+    "Given labeled or unlabeled data, an HMM can be trained for further use "
+    "with other mlpack HMM tools.",
+    // Long description.
+    "This program allows a Hidden Markov Model to be trained on labeled or "
+    "unlabeled data.  It supports three types of HMMs: discrete HMMs, "
+    "Gaussian HMMs, or GMM HMMs."
     "\n\n"
     "Either one input sequence can be specified (with --input_file), or, a "
     "file containing files in which input sequences can be found (when "
@@ -46,7 +52,14 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Training", "This program allows a "
     "\n\n"
     "Optionally, a pre-created HMM model can be used as a guess for the "
     "transition matrix and emission probabilities; this is specifiable with "
-    "--model_file.");
+    "--model_file.",
+    SEE_ALSO("@hmm_generate", "#hmm_generate"),
+    SEE_ALSO("@hmm_loglik", "#hmm_loglik"),
+    SEE_ALSO("@hmm_viterbi", "#hmm_viterbi"),
+    SEE_ALSO("Hidden Mixture Models on Wikipedia",
+        "https://en.wikipedia.org/wiki/Hidden_Markov_model"),
+    SEE_ALSO("mlpack::hmm::HMM class documentation",
+        "@doxygen/classmlpack_1_1hmm_1_1HMM.html"));
 
 PARAM_STRING_IN_REQ("input_file", "File containing input observations.", "i");
 PARAM_STRING_IN("type", "Type of HMM: discrete | gaussian | gmm.", "t",

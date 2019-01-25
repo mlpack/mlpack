@@ -21,3 +21,4 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 # This program computes approximate furthest neighbors.
 add_cli_executable(approx_kfn)
 add_python_binding(approx_kfn)
+add_markdown_docs(approx_kfn "cli;python" "geometry")

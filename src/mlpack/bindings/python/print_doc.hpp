@@ -14,7 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/hyphenate_string.hpp>
-#include "get_python_type.hpp"
+#include "get_printable_type.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -44,24 +44,20 @@ void PrintDoc(const util::ParamData& d,
     oss << d.name << "_ (";
   else
     oss << d.name << " (";
-  oss << GetPythonType<typename std::remove_pointer<T>::type>(d) << "): "
+  oss << GetPrintableType<typename std::remove_pointer<T>::type>(d) << "): "
       << d.desc;
 
   // Print a default, if possible.
   if (!d.required)
   {
-    if (d.cppType == "std::string")
+    // Call the correct overload to get the default value directly.
+    if (d.cppType == "std::string" || d.cppType == "double" ||
+        d.cppType == "int" || d.cppType == "std::vector<int>" ||
+        d.cppType == "std::vector<std::string>" ||
+        d.cppType == "std::vector<double>")
     {
-      oss << "  Default value '" << boost::any_cast<std::string>(d.value)
-          << "'.";
-    }
-    else if (d.cppType == "double")
-    {
-      oss << "  Default value " << boost::any_cast<double>(d.value) << ".";
-    }
-    else if (d.cppType == "int")
-    {
-      oss << "  Default value " << boost::any_cast<int>(d.value) << ".";
+      std::string defaultValue = DefaultParamImpl<T>(d);
+      oss << "  Default value " << defaultValue << ".";
     }
   }
 

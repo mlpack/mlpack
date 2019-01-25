@@ -21,6 +21,12 @@ using namespace mlpack::data;
 using namespace mlpack::util;
 
 PROGRAM_INFO("Decision tree",
+    // Short description.
+    "An implementation of an ID3-style decision tree for classification, which"
+    " supports categorical data.  Given labeled data with numeric or "
+    "categorical features, a decision tree can be trained and saved; or, an "
+    "existing decision tree can be used for classification on new points.",
+    // Long description.
     "Train and evaluate using a decision tree.  Given a dataset containing "
     "numeric or categorical features, and associated labels for each point in "
     "the dataset, this program can train a decision tree on that data."
@@ -70,7 +76,15 @@ PROGRAM_INFO("Decision tree",
     PRINT_DATASET("predictions") + ", one could call "
     "\n\n" +
     PRINT_CALL("decision_tree", "input_model", "tree", "test", "test_set",
-        "test_labels", "test_labels", "predictions", "predictions"));
+        "test_labels", "test_labels", "predictions", "predictions"),
+    SEE_ALSO("Decision stump", "#decision_stump"),
+    SEE_ALSO("Random forest", "#random_forest"),
+    SEE_ALSO("Decision trees on Wikipedia",
+        "https://en.wikipedia.org/wiki/Decision_tree_learning"),
+    SEE_ALSO("Induction of Decision Trees (pdf)",
+        "https://link.springer.com/content/pdf/10.1007/BF00116251.pdf"),
+    SEE_ALSO("mlpack::tree::DecisionTree class documentation",
+        "@doxygen/classmlpack_1_1tree_1_1DecisionTree.html"));
 
 // Datasets.
 PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",
