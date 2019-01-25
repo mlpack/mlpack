@@ -170,9 +170,9 @@ static void mlpackMain()
         "be saved");
   }
 
-  // options "output" and "output_probabilites" are deprecated and replaced by 
-  //"predictions" and "probabilties" respectively 
-  // options "output" and "output_probabilites" can be removed in mlpack 4
+  // options "output" and "output_probabilities" are deprecated and replaced by
+  //"predictions" and "probabilities" respectively
+  // options "output" and "output_probabilities" can be removed in mlpack 4
   RequireAtLeastOnePassed({ "output_model", "output", "output_probabilities",
       "predictions", "probabilities"}, false, "no output will be saved");
 
@@ -180,7 +180,7 @@ static void mlpackMain()
   ReportIgnoredParam({{ "test", false }}, "output");
   ReportIgnoredParam({{ "test", false }}, "output_probabilities");
   ReportIgnoredParam({{ "test", false }}, "predictions");
-  ReportIgnoredParam({{ "test", false }}, "probabilites");
+  ReportIgnoredParam({{ "test", false }}, "probabilities");
 
   // Max Iterations needs to be positive.
   RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; },
@@ -355,9 +355,9 @@ static void mlpackMain()
         CLI::GetParam<arma::Row<size_t>>("output") = std::move(predictions);    
     }
 
-    // The CLI param "output_probabilites" is deprecated 
+    // The CLI param "output_probabilities" is deprecated 
     // and replaced by "probabilities"
-    // "output_probabilites" parameter will be removed in mlpack 4.
+    // "output_probabilities" parameter will be removed in mlpack 4.
     if (CLI::HasParam("output_probabilities") || CLI::HasParam("probabilities"))
     {
       Log::Info << "Calculating class probabilities of points in '"
