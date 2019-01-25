@@ -186,11 +186,13 @@ class PrioritizedReplay
    */
   void update_priorities(arma::ucolvec& indices, arma::colvec& priorities)
   {
+      arma::colvec alphaPri(indices.n_rows);
       for (size_t i = 0; i < indices.n_rows; ++i)
       {
-        idxSum.set(indices[i], alpha * priorities[i]);
+        alphaPri = alpha * priorities[i];
         max_priority = std::max(max_priority, priorities[i]);
       }
+      idxSum.batchUpdate(indices, alphaPri);
   }
 
   /**
