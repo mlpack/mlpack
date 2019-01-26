@@ -390,7 +390,7 @@ BOOST_AUTO_TEST_CASE(DiceLossTest)
   for (double el : output)
   {
     // For the 0.5 constant vector we should get -1.2 everywhere.
-    BOOST_REQUIRE_SMALL(el + 0.96, 0.00001);
+    BOOST_REQUIRE_SMALL(el + 0.096, 0.00001);
   }
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
