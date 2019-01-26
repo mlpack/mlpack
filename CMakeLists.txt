@@ -86,6 +86,15 @@ if (MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
 endif ()
 
+# If we are using MINGW, we need sections and big-obj, otherwise we create too
+# many sections.
+if(CMAKE_COMPILER_IS_GNUCC AND WIN32)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffunction-sections -fdata-sections
+   -Wa,-mbig-obj")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffunction-sections -fdata-sections
+   -Wa,-mbig-obj")
+endif()
+
 # If using clang, we have to link against libc++ depending on the
 # OS (at least on some systems). Further, gcc sometimes optimizes calls to
 # math.h functions, making -lm unnecessary with gcc, but it may still be
