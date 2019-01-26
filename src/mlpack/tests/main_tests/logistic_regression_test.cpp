@@ -640,4 +640,37 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
   BOOST_REQUIRE_GT(arma::accu(output1 != output2), 0);
 }
 
+/**
+  * Ensuring that the parameter 'output' and the parameter 'predictions' give
+  * the same output
+ **/
+// The following test case is to check whether the old parameter 'output' and
+// the new parameter 'predictions' give the same output
+// This test case will be removed in mlpack4 when
+// the deprecated parameter: 'output' is removed
+BOOST_AUTO_TEST_CASE(LROPtionConsistencyTest){
+  
+  //some data for training and testing
+  arma::mat trainX1({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}, {0, 1, 1}});
+  arma::mat testX({{4.0, 5.0}, {1.0, 6.0}});
+
+  SetInputParam("training", std::move(trainX1));
+  SetInputParam("test", testX);
+
+  // The solution.
+  mlpackMain();
+
+  // Get the output from 'predictions' parameter
+  const arma::Row<size_t> testY1 =
+      CLI::GetParam<arma::Row<size_t>>("predictions");
+  
+  // Get output from 'output' parameter
+  const arma::Row<size_t> testY2 =
+      std::move(CLI::GetParam<arma::Row<size_t>>("output"));
+
+  // Both solutions must be equal.
+  BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
+                                  testY2.begin(), testY2.end());
+}
+
 BOOST_AUTO_TEST_SUITE_END();
