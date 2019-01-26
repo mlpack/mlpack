@@ -22,3 +22,4 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(fastmks)
 add_python_binding(fastmks)
+add_markdown_docs(fastmks "cli;python" "geometry")

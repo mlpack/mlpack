@@ -20,6 +20,10 @@ using namespace mlpack::gmm;
 using namespace mlpack::util;
 
 PROGRAM_INFO("GMM Sample Generator",
+    // Short description.
+    "A sample generator for pre-trained GMMs.  Given a pre-trained GMM, this "
+    "can sample new points randomly from that distribution.",
+    // Long description.
     "This program is able to generate samples from a pre-trained GMM (use "
     "gmm_train to train a GMM).  The pre-trained GMM must be specified with "
     "the " + PRINT_PARAM_STRING("input_model") + " parameter.  The number "
@@ -32,7 +36,13 @@ PROGRAM_INFO("GMM Sample Generator",
     "samples in " + PRINT_DATASET("samples") + ":"
     "\n\n" +
     PRINT_CALL("gmm_generate", "input_model", "gmm", "samples", 100, "output",
-        "samples"));
+        "samples"),
+    SEE_ALSO("@gmm_train", "#gmm_train"),
+    SEE_ALSO("@gmm_probability", "#gmm_probability"),
+    SEE_ALSO("Gaussian Mixture Models on Wikipedia",
+        "https://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model"),
+    SEE_ALSO("mlpack::gmm::GMM class documentation",
+        "@doxygen/classmlpack_1_1gmm_1_1GMM.html"));
 
 PARAM_MODEL_IN_REQ(GMM, "input_model", "Input GMM model to generate samples "
     "from.", "m");

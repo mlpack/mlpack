@@ -28,10 +28,15 @@ using namespace mlpack::util;
 using namespace std;
 
 // Document program.
-PROGRAM_INFO("Non-negative Matrix Factorization", "This program performs "
-    "non-negative matrix factorization on the given dataset, storing the "
-    "resulting decomposed matrices in the specified files.  For an input "
-    "dataset V, NMF decomposes V into two matrices W and H such that "
+PROGRAM_INFO("Non-negative Matrix Factorization",
+    // Short description.
+    "An implementation of non-negative matrix factorization.  This can be used "
+    "to decompose an input dataset into two low-rank non-negative components.",
+    // Long description.
+    "This program performs non-negative matrix factorization on the given "
+    "dataset, storing the resulting decomposed matrices in the specified "
+    "files.  For an input dataset V, NMF decomposes V into two matrices W "
+    "and H such that "
     "\n\n"
     "V = W * H"
     "\n\n"
@@ -60,7 +65,17 @@ PROGRAM_INFO("Non-negative Matrix Factorization", "This program performs "
     PRINT_DATASET("H") + ", the following command could be used: "
     "\n\n" +
     PRINT_CALL("nmf", "input", "V", "w", "W", "h", "H", "rank", 10,
-        "update_rules", "multdist"));
+        "update_rules", "multdist"),
+    SEE_ALSO("@cf", "#cf"),
+    SEE_ALSO("Alternating matrix factorization tutorial",
+        "@doxygen/amftutorial.html"),
+    SEE_ALSO("Non-negative matrix factorization on Wikipedia",
+        "https://en.wikipedia.org/wiki/Non-negative_matrix_factorization"),
+    SEE_ALSO("Algorithms for non-negative matrix factorization (pdf)",
+        "http://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-"
+        "factorization.pdf"),
+    SEE_ALSO("mlpack::amf::AMF C++ class documentation",
+        "@doxygen/classmlpack_1_1amf_1_1AMF.html"));
 
 // Parameters for program.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform NMF on.", "i");

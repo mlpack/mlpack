@@ -34,6 +34,12 @@ typedef NSModel<FurthestNeighborSort> KFNModel;
 
 // Information about the program itself.
 PROGRAM_INFO("k-Furthest-Neighbors Search",
+    // Short description.
+    "An implementation of k-furthest-neighbor search using single-tree and "
+    "dual-tree algorithms.  Given a set of reference points and query points, "
+    "this can find the k furthest neighbors in the reference set of each query"
+    " point using trees; trees that are built can be saved for future use.",
+    // Long description.
     "This program will calculate the k-furthest-neighbors of a set of "
     "points. You may specify a separate set of reference points and query "
     "points, or just a reference set which will be used as both the reference "
@@ -51,7 +57,13 @@ PROGRAM_INFO("k-Furthest-Neighbors Search",
     "neighbors output matrix corresponds to the index of the point in the "
     "reference set which is the j'th furthest neighbor from the point in the "
     "query set with index i.  Row i and column j in the distances output file "
-    "corresponds to the distance between those two points.");
+    "corresponds to the distance between those two points.",
+    SEE_ALSO("@approx_kfn", "#approx_kfn"),
+    SEE_ALSO("@knn", "#knn"),
+    SEE_ALSO("Tree-independent dual-tree algorithms (pdf)",
+        "http://proceedings.mlr.press/v28/curtin13.pdf"),
+    SEE_ALSO("mlpack::neighbor::NeighborSearch C++ class documentation",
+        "@doxygen/classmlpack_1_1neighbor_1_1NeighborSearch.html"));
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");

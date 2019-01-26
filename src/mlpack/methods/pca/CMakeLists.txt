@@ -20,3 +20,4 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(pca)
 add_python_binding(pca)
+add_markdown_docs(pca "cli;python" "transformations")

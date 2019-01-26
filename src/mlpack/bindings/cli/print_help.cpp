@@ -118,7 +118,11 @@ void PrintHelp(const std::string& param)
       }
 
       // Append default value to description.
-      if (pass >= 1 && data.cppType != "bool")
+      if (pass >= 1 && (data.cppType == "int" || data.cppType == "double" ||
+                        data.cppType == "std::string" ||
+                        data.cppType == "std::vector<int>" ||
+                        data.cppType == "std::vector<double>" ||
+                        data.cppType == "std::vector<std::string>"))
       {
         std::string defaultValue;
         CLI::GetSingleton().functionMap[data.tname]["DefaultParam"](data,

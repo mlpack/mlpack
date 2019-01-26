@@ -22,6 +22,12 @@ using namespace std;
 
 // Define parameters for the executable.
 PROGRAM_INFO("Kernel Density Estimation",
+    // Short description.
+    "An implementation of kernel density estimation with dual-tree algorithms. "
+    "Given a set of reference points and query points and a kernel function, "
+    "this can estimate the density function at the location of each query point"
+    " using trees; trees that are built can be saved for later use.",
+    // Long description.
     "This program performs a Kernel Density Estimation. KDE is a "
     "non-parametric way of estimating probability density function. "
     "For each query point the program will estimate its probability density "
@@ -62,7 +68,12 @@ PROGRAM_INFO("Kernel Density Estimation",
     "computed on the " + PRINT_PARAM_STRING("reference") + " dataset."
     "\n"
     "It is possible to select either a reference dataset or an input model "
-    "but not both at the same time.");
+    "but not both at the same time.",
+    SEE_ALSO("@knn", "#knn"),
+    SEE_ALSO("Kernel density estimation on Wikipedia",
+        "https://en.wikipedia.org/wiki/Kernel_density_estimation"),
+    SEE_ALSO("mlpack::kde::KDE C++ class documentation",
+        "@doxygen/classmlpack_1_1kde_1_1KDE.html"));
 
 // Required options.
 PARAM_MATRIX_IN("reference", "Input reference dataset use for KDE.", "r");
