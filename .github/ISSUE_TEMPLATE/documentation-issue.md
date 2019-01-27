@@ -1,9 +1,9 @@
 ---
-name: documentation issue
+name: Documentation issue
 about: Use this template to report an issue you've found with the documentation.
-title: 
-labels: 
-assignees: 
+title: ''
+labels: 't: bug report, c: documentation, s: unanswered'
+assignees: ''
 
 ---
 
