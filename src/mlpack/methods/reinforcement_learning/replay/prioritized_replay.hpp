@@ -60,6 +60,7 @@ class PrioritizedReplay
   PrioritizedReplay(const size_t batchSize,
                const size_t capacity,
                const double alpha,
+
                const size_t dimension = StateType::dimension) :
       batchSize(batchSize),
       capacity(capacity),
@@ -74,7 +75,8 @@ class PrioritizedReplay
       max_priority(1.0),
       initial_beta(0.6),
       replay_beta_iters(10000)
-  { 
+  {
+    arma_rng::set_value(seed);
     int size = 1;
     while (size < capacity) {
       size *= 2;
@@ -117,7 +119,7 @@ class PrioritizedReplay
   }
 
   /**
-   * Samle some experience accroding to their priorities.
+   * Sample some experience according to their priorities.
    *
    * @return The indices to be chosen.
    */
@@ -135,7 +137,7 @@ class PrioritizedReplay
   }
 
   /**
-   * Samle some experience accroding to their priorities.
+   * Sample some experience according to their priorities.
    *
    * @param sampledStates Sampled encoded states.
    * @param sampledActions Sampled actions.
