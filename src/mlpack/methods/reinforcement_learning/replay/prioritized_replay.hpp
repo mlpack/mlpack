@@ -60,7 +60,7 @@ class PrioritizedReplay
   PrioritizedReplay(const size_t batchSize,
                const size_t capacity,
                const double alpha,
-
+               int seed = 1024,
                const size_t dimension = StateType::dimension) :
       batchSize(batchSize),
       capacity(capacity),
@@ -76,7 +76,7 @@ class PrioritizedReplay
       initial_beta(0.6),
       replay_beta_iters(10000)
   {
-    arma_rng::set_value(seed);
+    arma::arma_rng::set_seed(seed);
     int size = 1;
     while (size < capacity) {
       size *= 2;
