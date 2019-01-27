@@ -1,7 +1,6 @@
 ---
 name: documentation issue
 about: Use this template to report an issue you've found with the documentation.
-labels: "t: bug report", "c: documentation", "s: unanswered"
 
 ---
 
