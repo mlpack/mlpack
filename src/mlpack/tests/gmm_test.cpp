@@ -13,6 +13,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/gmm/gmm.hpp>
+#include <mlpack/methods/gmm/gmm_diag.hpp>
 
 #include <mlpack/methods/gmm/no_constraint.hpp>
 #include <mlpack/methods/gmm/positive_definite_constraint.hpp>
@@ -828,9 +829,9 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainTest)
   }
 
   // Now train the model.  3 dimensions, 3 components.
-  GMM g(3, 3);
+  DiagonalGMM g(3, 3);
 
-  g.Train<EMFit<kmeans::KMeans<>, DiagonalConstraint>>(points, 5);
+  g.Train(points, 5);
 
   // Now check the results.  We need to order by weights so that when we do the
   // checking, things will be correct.
@@ -891,6 +892,47 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainTest)
       else
         BOOST_REQUIRE_SMALL(v, 1e-5);
     }
+  }
+}
+
+/**
+ * Test training a model on only one Gaussian (randomly generated) in two
+ * dimensions.  We will vary the dataset size from small to large.  The EM
+ * algorithm is used for training the DiagonalGMM.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMOneGaussian)
+{
+  for (size_t iterations = 0; iterations < 4; iterations++)
+  {
+    // Determine random covariance and mean.
+    arma::vec mean;
+    mean.randu(2);
+    arma::vec covar;
+    covar.randu(2);
+
+    arma::mat data;
+    data.randn(2 /* dimension */, 150 * pow(10, (iterations / 3.0)));
+
+    // Now apply mean and covariance.
+    data.row(0) *= covar(0);
+    data.row(1) *= covar(1);
+
+    data.row(0) += mean(0);
+    data.row(1) += mean(1);
+
+    // Now, train the model.
+    DiagonalGMM gmm(1, 2);
+    gmm.Train(data, 10);
+
+    arma::vec actualMean = arma::mean(data, 1);
+    arma::mat actualCovar = arma::diagmat(
+        arma::ccov(data, 1 /* biased estimator */));
+
+    // Check the model to see that it is correct.
+    CheckMatrices(gmm.Component(0).Mean(), actualMean);
+    CheckMatrices(gmm.Component(0).Covariance(), actualCovar);
+
+    BOOST_REQUIRE_CLOSE(gmm.Weights()[0], 1.0, 1e-5);
   }
 }
 
