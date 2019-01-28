@@ -36,15 +36,15 @@ class SumTree
  public:
 
   /**
-   * Default constructor
+   * Default constructor.
    */
   SumTree()
   { /* Nothing to do here. */ }
 
   /**
-   * Construct an instance of SumTree class
+   * Construct an instance of SumTree class.
    *
-   * @param capacity The size of data
+   * @param capacity Size of data.
    */
   SumTree(size_t capacity):
       capacity(capacity)
@@ -53,12 +53,12 @@ class SumTree
   }
 
   /**
-   * Set the data array with idx
+   * Set the data array with idx.
    *
-   * @param idx  The array idx to be changed
-   * @param value  The data that array with idx to be
+   * @param idx The array idx to be changed.
+   * @param value The data that array with idx to be.
    */
-  void set(size_t idx, T value)
+  void Set(size_t idx, T value)
   {
     idx += capacity;
     element[idx] = value;
@@ -72,12 +72,12 @@ class SumTree
 
 
   /**
-   * Update the data with batch rather loop over the indices with set method
+   * Update the data with batch rather loop over the indices with set method.
    *
-   * @param indices The indices of data to be changed
-   * @param data  The data that array with indices to be
+   * @param indices The indices of data to be changed.
+   * @param data  The data that array with indices to be.
    */
-  void batchUpdate(arma::ucolvec indices, arma::Col<T> data)
+  void BatchUpdate(arma::ucolvec indices, arma::Col<T> data)
   {
     for (size_t i = 0; i < indices.n_rows; i ++)
     {
@@ -91,11 +91,11 @@ class SumTree
   }
 
   /**
-   * Get the data array with idx
+   * Get the data array with idx.
    *
-   * @param idx The array idx to get data
+   * @param idx The array idx to get data.
    */
-  T get(size_t idx)
+  T Get(size_t idx)
   {
     idx += capacity;
     return element[idx];
@@ -104,33 +104,33 @@ class SumTree
   /**
    * Help function for the `sum` function
    *
-   * @param _start The starting position of subsequence
-   * @param _end The end position of subsequence
+   * @param start The starting position of subsequence.
+   * @param end The end position of subsequence.
    * @param node Reference position
-   * @param node_start Starting position of reference segment
-   * @param node_end End position of reference segment
+   * @param node_start Starting position of reference segment.
+   * @param node_end End position of reference segment.
    */
-  T sumHelper(size_t _start, size_t _end, size_t node, size_t node_start, size_t node_end)
+  T SumHelper(size_t start, size_t end, size_t node, size_t nodeStart, size_t nodeEnd)
   {
-    if (_start == node_start && _end == node_end)
+    if (start == nodeStart && end == nodeEnd)
     {
       return element[node];
     }
-    size_t mid = (node_start + node_end) / 2;
-    if (_end <= mid)
+    size_t mid = (nodeStart + nodeEnd) / 2;
+    if (end <= mid)
     {
-      return sumHelper(_start, _end, 2 * node, node_start, mid);
+      return SumHelper(start, end, 2 * node, nodeStart, mid);
     }
     else
     {
-      if (mid + 1 <= _start)
+      if (mid + 1 <= start)
       {
-        return sumHelper(_start, _end, 2 * node + 1, mid + 1 , node_end);
+        return SumHelper(start, end, 2 * node + 1, mid + 1 , nodeEnd);
       }
       else
       {
-        return sumHelper(_start, mid, 2 * node, node_start, mid) +
-                sumHelper(mid+1, _end, 2 * node + 1, mid + 1 , node_end);
+        return SumHelper(start, mid, 2 * node, nodeStart, mid) +
+          SumHelper(mid+1, end, 2 * node + 1, mid + 1 , nodeEnd);
       }
     }
   }
@@ -138,30 +138,30 @@ class SumTree
   /**
    * Calculate the sum of contiguous subsequence of the array.
    *
-   * @param _start The starting position of subsequence
-   * @param _end The end position of subsequence
+   * @param start The starting position of subsequence.
+   * @param _end The end position of subsequence.
    */
-  T sum(size_t _start, size_t _end)
+  T Sum(size_t start, size_t end)
   {
-    _end -= 1;
-    return sumHelper(_start, _end, 1, 0, capacity-1);
+    end -= 1;
+    return SumHelper(start, end, 1, 0, capacity-1);
   }
 
   /**
-   * Shortcut for calculating the sum of whole array
+   * Shortcut for calculating the sum of whole array.
    */
-  T sum()
+  T Sum()
   {
-    return sum(0, capacity);
+    return Sum(0, capacity);
   }
 
   /**
    * Find the highest index `idx` in the array such that
-   * sum(arr[0] + arr[1] + ... + arr[idx]) <= mass
+   * sum(arr[0] + arr[1] + ... + arr[idx]) <= mass.
    *
    * @param mass
    * */
-  size_t findPrefixSum(T mass)
+  size_t FindPrefixSum(T mass)
   {
     int idx = 1;
     while (idx < capacity)
@@ -180,10 +180,10 @@ class SumTree
   }
 
  private:
-  //! The capacity of the data array
+  //! The capacity of the data array.
   size_t capacity;
 
-  //! double size of capacity, maintain the segment sum of data
+  //! double size of capacity, maintain the segment sum of data.
   std::vector<T> element;
 };
 
