@@ -1,6 +1,9 @@
 ---
-name: question
+name: Question
 about: Use this template for other problems, requests, or questions.
+title: ''
+labels: ''
+assignees: ''
 
 ---
 

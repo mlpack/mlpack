@@ -1,7 +1,9 @@
 ---
-name: bug report
+name: Bug report
 about: Use this template for reporting a bug that you have found in mlpack.
-labels: "t: bug report", "s: unanswered"
+title: ''
+labels: 't: bug report, s: unanswered'
+assignees: ''
 
 ---
 
