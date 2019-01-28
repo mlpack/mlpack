@@ -171,6 +171,54 @@ BOOST_AUTO_TEST_CASE(HMMGenerateGMMHMMCheckDimensionsTest)
   BOOST_REQUIRE_EQUAL(stateSeq.n_elem, (size_t) length);
 }
 
+BOOST_AUTO_TEST_CASE(HMMGenerateDiagonalGMMHMMCheckDimensionsTest)
+{
+  // Initialize and train a DiagonalGMM HMM model.
+  HMMModel* h = new HMMModel(DiagonalGaussianMixtureModelHMM);
+  *(h->DiagGMMHMM()) = HMM<DiagonalGMM>(2, DiagonalGMM(2, 2));
+
+  // Manually set the components.
+  h->DiagGMMHMM()->Transition() = arma::mat("0.30 0.70; 0.70 0.30");
+  h->DiagGMMHMM()->Emission().resize(2);
+  h->DiagGMMHMM()->Emission()[0] = DiagonalGMM(2, 2);
+  h->DiagGMMHMM()->Emission()[0].Weights() = arma::vec("0.2 0.8");
+  h->DiagGMMHMM()->Emission()[0].Component(0) = GaussianDistribution(
+      "2.75 1.60", "0.50 0.00; 0.00 0.50");
+  h->DiagGMMHMM()->Emission()[0].Component(1) = GaussianDistribution(
+      "6.15 2.51", "1.00 0.00; 0.00 1.50");
+  h->DiagGMMHMM()->Emission()[1] = DiagonalGMM(2, 2);
+  h->DiagGMMHMM()->Emission()[1].Weights() = arma::vec("0.4 0.6");
+  h->DiagGMMHMM()->Emission()[1].Component(0) = GaussianDistribution(
+      "-1.00 -3.42", "0.20 0.00; 0.00 1.00");
+  h->DiagGMMHMM()->Emission()[1].Component(1) = GaussianDistribution(
+      "-3.10 -5.05", "1.20 0.00; 0.00 0.80");
+
+  // Now that we have a trained HMM model, we can use it to generate a sequence
+  // of states and observations - using the hmm_generate utility.
+  // Load the input model to be used for inference and the length of sequence
+  // to be generated.
+  int length = 3;
+  SetInputParam("model", h);
+  SetInputParam("length", length);
+
+  // Call to hmm_generate_main
+  mlpackMain();
+
+  // Get the generated observation sequence. Ensure that the generated sequence
+  // has the correct length (as provided in the input).
+  arma::mat obsSeq = CLI::GetParam<arma::mat>("output");
+  BOOST_REQUIRE_EQUAL(obsSeq.n_cols, (size_t) length);
+  BOOST_REQUIRE_EQUAL(obsSeq.n_rows, (size_t) 2);
+  BOOST_REQUIRE_EQUAL(obsSeq.n_elem, (size_t) (length*2));
+
+  // Get the generated state sequence. Ensure that the generated sequence
+  // has the correct length (as provided in the input).
+  arma::Mat<size_t> stateSeq = CLI::GetParam<arma::Mat<size_t>>("state");
+  BOOST_REQUIRE_EQUAL(stateSeq.n_cols, (size_t) length);
+  BOOST_REQUIRE_EQUAL(stateSeq.n_rows, (size_t) 1);
+  BOOST_REQUIRE_EQUAL(stateSeq.n_elem, (size_t) length);
+}
+
 BOOST_AUTO_TEST_CASE(HMMGenerateLengthPositiveTest)
 {
   // Load data to train a Gaussian Mixture Model HMM model with.

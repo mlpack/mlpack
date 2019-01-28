@@ -165,6 +165,40 @@ inline void ApproximatelyEqual(HMMModel& h1,
       CheckMatrices(d1[i].Weights()*100, d2[i].Weights()*100, tolerance);
     }
   }
+  else if (hmmType == DiagonalGaussianMixtureModelHMM)
+  {
+    CheckMatrices(
+        h1.DiagGMMHMM()->Transition()*100,
+        h2.DiagGMMHMM()->Transition()*100,
+        tolerance);
+    CheckMatrices(
+        h1.DiagGMMHMM()->Initial()*100,
+        h2.DiagGMMHMM()->Initial()*100,
+        tolerance);
+    // Check if emission dists are equal.
+    std::vector<gmm::DiagonalGMM> d1 = h1.DiagGMMHMM()->Emission();
+    std::vector<gmm::DiagonalGMM> d2 = h2.DiagGMMHMM()->Emission();
+
+    BOOST_REQUIRE_EQUAL(d1.size(), d2.size());
+
+    // Check if gaussian, mean, covariance and weights are equal.
+    size_t states = d1.size();
+    for (size_t i=0; i<states; i++)
+    {
+      BOOST_REQUIRE_EQUAL(d1[i].Gaussians(), d2[i].Gaussians());
+      size_t gaussians = d1[i].Gaussians();
+      for(size_t j=0; j<gaussians; j++)
+      {
+        CheckMatrices(d1[i].Component(j).Mean()*100,
+            d2[i].Component(j).Mean()*100,
+            tolerance);
+        CheckMatrices(d1[i].Component(j).Covariance()*100,
+            d2[i].Component(j).Covariance()*100,
+            tolerance);
+      }
+      CheckMatrices(d1[i].Weights()*100, d2[i].Weights()*100, tolerance);
+    }
+  }
 }
 
 // Make sure that the number of states cannot be negative
@@ -227,6 +261,25 @@ BOOST_AUTO_TEST_CASE(HMMTrainGaussianTest)
   std::string inputFileName = "hmm_train_obs.csv";
   int states = 3;
   std::string hmmType = "gmm";
+  int gaussians = -2;
+
+  FileExists(inputFileName);
+  SetInputParam("input_file", std::move(inputFileName));
+  SetInputParam("states", states);
+  SetInputParam("type", std::move(hmmType));
+  SetInputParam("gaussians", gaussians);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+// Make sure that the number of gaussians cannot be less than 0.
+BOOST_AUTO_TEST_CASE(HMMTrainDiagonalGaussianTest)
+{
+  std::string inputFileName = "hmm_train_obs.csv";
+  int states = 3;
+  std::string hmmType = "gmm_diag";
   int gaussians = -2;
 
   FileExists(inputFileName);
