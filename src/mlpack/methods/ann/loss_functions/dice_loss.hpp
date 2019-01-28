@@ -19,7 +19,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The dice loss performance function measures the network's
- * performance according to the dice coeffecient
+ * performance according to the dice coefficient
  * between the input and target distributions.
  *
  * For more information see the following.

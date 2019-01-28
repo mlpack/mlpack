@@ -389,7 +389,7 @@ BOOST_AUTO_TEST_CASE(DiceLossTest)
   module.Backward(std::move(input2), std::move(target), std::move(output));
   for (double el : output)
   {
-    // For the 0.5 constant vector we should get -1.2 everywhere.
+    // For the 0.5 constant vector we should get -0.096 everywhere.
     BOOST_REQUIRE_CLOSE(el, -0.096, 0.00001);
   }
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
