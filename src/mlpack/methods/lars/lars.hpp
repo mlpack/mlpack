@@ -184,7 +184,7 @@ class LARS
    * @param beta Vector to store the solution (the coefficients) in.
    * @param transposeData Set to false if the data is row-major.
    */
-  void Train(const arma::mat& data,
+  double Train(const arma::mat& data,
              const arma::rowvec& responses,
              arma::vec& beta,
              const bool transposeData = true);
@@ -202,7 +202,7 @@ class LARS
    * @param transposeData Should be true if the input data is column-major and
    *     false otherwise.
    */
-  void Train(const arma::mat& data,
+  double Train(const arma::mat& data,
              const arma::rowvec& responses,
              const bool transposeData = true);
 
