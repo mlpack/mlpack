@@ -373,7 +373,7 @@ BOOST_AUTO_TEST_CASE(DiceLossTest)
   // Test the Forward function. Loss should be 0.185185185.
   input2 = arma::ones(10, 1) * 0.5;
   loss = module.Forward(std::move(input2), std::move(target));
-  BOOST_REQUIRE_SMALL(loss - 0.185185185, 0.00001);
+  BOOST_REQUIRE_CLOSE(loss, 0.185185185, 0.00001);
 
   // Test the Backward function for input = target.
   module.Backward(std::move(input1), std::move(target), std::move(output));
@@ -390,7 +390,7 @@ BOOST_AUTO_TEST_CASE(DiceLossTest)
   for (double el : output)
   {
     // For the 0.5 constant vector we should get -1.2 everywhere.
-    BOOST_REQUIRE_SMALL(el + 0.096, 0.00001);
+    BOOST_REQUIRE_CLOSE(el, -0.096, 0.00001);
   }
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
