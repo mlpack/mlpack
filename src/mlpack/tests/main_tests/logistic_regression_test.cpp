@@ -694,12 +694,12 @@ BOOST_AUTO_TEST_CASE(LROPtionConsistencyTest2){
   mlpackMain();
 
   // Get the output from 'predictions' parameter
-  const arma::Row<size_t> testY1 =
-      CLI::GetParam<arma::Row<size_t>>("output_probabilities");
+  const arma::mat testY1 =
+      CLI::GetParam<arma::mat>("output_probabilities");
   
   // Get output from 'output' parameter
-  const arma::Row<size_t> testY2 =
-      std::move(CLI::GetParam<arma::Row<size_t>>("probabilities"));
+  const arma::mat testY2 =
+      std::move(CLI::GetParam<arma::mat>("probabilities"));
 
   // Both solutions must be equal.
   BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
