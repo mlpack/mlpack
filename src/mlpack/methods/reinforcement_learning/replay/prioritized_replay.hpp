@@ -128,7 +128,7 @@ class PrioritizedReplay
     arma::ucolvec idxes(batchSize);
     double totalSum = idxSum.Sum(0, (full ? capacity : position));
     double sumPerRange = totalSum / batchSize;
-    for (size_t bt = 0; bt < batchSize; bt ++) {
+    for (size_t bt = 0; bt < batchSize; bt++) {
       double mass = arma::randu() * sumPerRange + bt * sumPerRange;
       size_t idx = idxSum.FindPrefixSum(mass);
       idxes[bt] = idx;
@@ -172,7 +172,7 @@ class PrioritizedReplay
     size_t numSample = full ? capacity : position;
     weights = arma::rowvec(sampledIndices.n_rows);
 
-    for (size_t i = 0; i < sampledIndices.n_rows; ++ i)
+    for (size_t i = 0; i < sampledIndices.n_rows; i++)
     {
       double p_sample = idxSum.Get(sampledIndices[i]) / idxSum.Sum();
       weights[i] = pow(numSample * p_sample, -beta);

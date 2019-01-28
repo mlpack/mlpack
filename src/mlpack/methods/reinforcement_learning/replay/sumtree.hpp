@@ -79,12 +79,12 @@ class SumTree
    */
   void BatchUpdate(arma::ucolvec indices, arma::Col<T> data)
   {
-    for (size_t i = 0; i < indices.n_rows; i ++)
+    for (size_t i = 0; i < indices.n_rows; i++)
     {
       element[indices[i] + capacity] = data[i];
     }
     // update the total tree with bottom-up technique
-    for (size_t i = capacity-1; i > 0; i --)
+    for (size_t i = capacity-1; i > 0; i--)
     {
       element[i] = element[2 * i] + element[2 * i + 1];
     }
