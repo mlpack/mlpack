@@ -242,7 +242,7 @@ double QLearning<
        td_error[i] = nextActionValues(sampledActions[i], i) - target(sampledActions[i], i);
      }
      td_error = arma::abs(td_error);
-     prioritizedReplayMethod.update_priorities(sampledIndices, td_error);
+     prioritizedReplayMethod.UpdatePriorities(sampledIndices, td_error);
    }
   return reward;
 }
