@@ -17,6 +17,7 @@
 #include "hmm_model.hpp"
 
 #include <mlpack/methods/gmm/gmm.hpp>
+#include <mlpack/methods/gmm/gmm_diag.hpp>
 
 using namespace mlpack;
 using namespace mlpack::hmm;
@@ -34,8 +35,8 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Training",
     "with other mlpack HMM tools.",
     // Long description.
     "This program allows a Hidden Markov Model to be trained on labeled or "
-    "unlabeled data.  It supports three types of HMMs: discrete HMMs, "
-    "Gaussian HMMs, or GMM HMMs."
+    "unlabeled data.  It supports four types of HMMs: Discrete HMMs, "
+    "Gaussian HMMs, GMM HMMs, or Diagonal GMM HMMs"
     "\n\n"
     "Either one input sequence can be specified (with --input_file), or, a "
     "file containing files in which input sequences can be found (when "
@@ -62,8 +63,8 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Training",
         "@doxygen/classmlpack_1_1hmm_1_1HMM.html"));
 
 PARAM_STRING_IN_REQ("input_file", "File containing input observations.", "i");
-PARAM_STRING_IN("type", "Type of HMM: discrete | gaussian | gmm.", "t",
-    "gaussian");
+PARAM_STRING_IN("type", "Type of HMM: discrete | gaussian | gmm | gmm_diag.",
+    "t", "gaussian");
 
 PARAM_FLAG("batch", "If true, input_file (and if passed, labels_file) are "
     "expected to contain a list of files to use as input observation sequences "
@@ -180,6 +181,40 @@ struct Init
     }
   }
 
+  //! Helper function to create Diagonal GMM HMM.
+  static void Create(HMM<DiagonalGMM>& hmm,
+                     vector<mat>& trainSeq,
+                     size_t states,
+                     double tolerance)
+  {
+    // Find dimension of the data.
+    const size_t dimensionality = trainSeq[0].n_rows;
+    const int gaussians = CLI::GetParam<int>("gaussians");
+
+    if (gaussians == 0)
+    {
+      Log::Fatal << "Number of gaussians for each GMM must be specified "
+          << "when type = 'gmm_diag'!" << endl;
+    }
+
+    if (gaussians < 0)
+    {
+      Log::Fatal << "Invalid number of gaussians (" << gaussians << "); must "
+          << "be greater than or equal to 1." << endl;
+    }
+
+    // Create HMM object.
+    hmm = HMM<DiagonalGMM>(size_t(states), DiagonalGMM(size_t(gaussians),
+        dimensionality), tolerance);
+
+    // Issue a warning if the user didn't give labels.
+    if (!CLI::HasParam("labels_file"))
+    {
+      Log::Warn << "Unlabeled training of Diagonal GMM HMMs is almost "
+          << "certainly not going to produce good results!" << endl;
+    }
+  }  
+
   //! Helper function for discrete emission distributions.
   static void RandomInitialize(vector<DiscreteDistribution>& e)
   {
@@ -225,6 +260,29 @@ struct Init
       }
     }
   }
+
+  //! Helper function for Diagonal GMM emission distributions.
+  static void RandomInitialize(vector<DiagonalGMM>& e)
+  {
+    for (size_t i = 0; i < e.size(); ++i)
+    {
+      // Random weights.
+      e[i].Weights().randu();
+      e[i].Weights() /= arma::accu(e[i].Weights());
+
+      // Random means and covariances.
+      for (int g = 0; g < CLI::GetParam<int>("gaussians"); ++g)
+      {
+        const size_t dimensionality = e[i].Component(g).Mean().n_rows;
+        e[i].Component(g).Mean().randu();
+
+        // Generate random diagonal covariance.
+        arma::mat r = arma::diagmat(arma::randu<arma::mat>(dimensionality,
+            dimensionality));
+        e[i].Component(g).Covariance(r * r.t());
+      }
+    }
+  }  
 };
 
 // Because we don't know what the type of our HMM is, we need to write a
@@ -388,8 +446,8 @@ static void mlpackMain()
 
   if (!CLI::HasParam("input_model"))
   {
-    RequireParamInSet<string>("type", { "discrete", "gaussian", "gmm" }, true,
-        "unknown HMM type");
+    RequireParamInSet<string>("type", { "discrete", "gaussian", "gmm",
+        "gmm_diag" }, true, "unknown HMM type");
   }
 
   RequireParamValue<double>("tolerance", [](double x) { return x >= 0; }, true,
@@ -448,8 +506,10 @@ static void mlpackMain()
     typeId = HMMType::DiscreteHMM;
   else if (type == "gaussian")
     typeId = HMMType::GaussianHMM;
-  else
+  else if (type == "gmm")
     typeId = HMMType::GaussianMixtureModelHMM;
+  else
+    typeId = HMMType::DiagonalGaussianMixtureModelHMM;
 
   // If we have a model file, we can autodetect the type.
   HMMModel* hmm;
