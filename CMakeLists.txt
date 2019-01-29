@@ -89,10 +89,8 @@ endif ()
 # If we are using MINGW, we need sections and big-obj, otherwise we create too
 # many sections.
 if(CMAKE_COMPILER_IS_GNUCC AND WIN32)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffunction-sections -fdata-sections
-   -Wa,-mbig-obj")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffunction-sections -fdata-sections
-   -Wa,-mbig-obj")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffunction-sections -fdata-sections -Wa,-mbig-obj")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffunction-sections -fdata-sections -Wa,-mbig-obj")
 endif()
 
 # If using clang, we have to link against libc++ depending on the
