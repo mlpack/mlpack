@@ -24,14 +24,21 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * For more information see the following.
  *
- * @inproceedings{milletari2016v,
- *   title = {V-net: Fully convolutional neural networks
- *            for volumetric medical image segmentation},
- *   author = {Milletari, Fausto and Navab, Nassir and Ahmadi, Seyed-Ahmad},
- *   booktitle = {3D Vision (3DV), 2016 Fourth International Conference on},
- *   pages = {565--571},
- *   year = {2016},
- *   organization = {IEEE}
+ * @article{DBLP:journals/corr/MilletariNA16,
+ *   author    = {Fausto Milletari and
+ *                Nassir Navab and
+ *                Seyed{-}Ahmad Ahmadi},
+ *   title     = {V-Net: Fully Convolutional Neural Networks for Volumetric Medical
+ *                Image Segmentation},
+ *   journal   = {CoRR},
+ *   volume    = {abs/1606.04797},
+ *   year      = {2016},
+ *   url       = {http://arxiv.org/abs/1606.04797},
+ *   archivePrefix = {arXiv},
+ *   eprint    = {1606.04797},
+ *   timestamp = {Mon, 13 Aug 2018 16:48:14 +0200},
+ *   biburl    = {https://dblp.org/rec/bib/journals/corr/MilletariNA16},
+ *   bibsource = {dblp computer science bibliography, https://dblp.org}
  * }
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
