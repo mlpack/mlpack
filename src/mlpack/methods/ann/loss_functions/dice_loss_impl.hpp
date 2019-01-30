@@ -43,9 +43,10 @@ void DiceLoss<InputDataType, OutputDataType>::Backward(
     OutputType&& output)
 {
   output = -2 * (target * (arma::accu(input % input) +
-    arma::accu(target % target)) - 2 * input *
-    (arma::accu(target % input))) / std::pow(arma::accu(target % target)
-    + arma::accu(input % input), 2.0);
+    arma::accu(target % target) + smooth) - 2 * input *
+    (arma::accu(target % input) + smooth)) / std::pow(
+    arma::accu(target % target) + arma::accu(input % input)
+    + smooth, 2.0);
 }
 
 template<typename InputDataType, typename OutputDataType>
