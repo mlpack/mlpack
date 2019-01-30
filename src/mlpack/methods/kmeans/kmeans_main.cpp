@@ -28,17 +28,11 @@ using namespace mlpack::util;
 using namespace std;
 
 // Define parameters for the executable.
-PROGRAM_INFO("K-Means Clustering",
-    // Short description.
-    "An implementation of several strategies for efficient k-means clustering. "
-    "Given a dataset and a value of k, this computes and returns a k-means "
-    "clustering on that data.",
-    // Long description.
-    "This program performs K-Means clustering on the given dataset.  It can "
-    "return the learned cluster assignments, and the centroids of the clusters."
-    "  Empty clusters are not allowed by default; when a cluster becomes empty,"
-    " the point furthest from the centroid of the cluster with maximum variance"
-    " is taken to fill that cluster."
+PROGRAM_INFO("K-Means Clustering", "This program performs K-Means clustering "
+    "on the given dataset.  It can return the learned cluster assignments, and "
+    "the centroids of the clusters.  Empty clusters are not allowed by default;"
+    " when a cluster becomes empty, the point furthest from the centroid of the"
+    " cluster with maximum variance is taken to fill that cluster."
     "\n\n"
     "Optionally, the Bradley and Fayyad approach (\"Refining initial points for"
     " k-means clustering\", 1998) can be used to select initial points by "
@@ -91,21 +85,7 @@ PROGRAM_INFO("K-Means Clustering",
     "following command may be used:"
     "\n\n" +
     PRINT_CALL("kmeans", "input", "data", "initial_centroids", "initial",
-        "clusters", 10, "max_iterations", 500, "centroid", "final"),
-    SEE_ALSO("K-Means tutorial", "@doxygen/kmtutorial.html"),
-    SEE_ALSO("@dbscan", "#dbscan"),
-    SEE_ALSO("Using the triangle inequality to accelerate k-means (pdf)",
-        "http://www.aaai.org/Papers/ICML/2003/ICML03-022.pdf"),
-    SEE_ALSO("Making k-means even faster (pdf)",
-        "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.586.2554"
-        "&rep=rep1&type=pdf"),
-    SEE_ALSO("Accelerating exact k-means algorithms with geometric reasoning "
-        "(pdf)", "http://reports-archive.adm.cs.cmu.edu/anon/anon/usr/ftp/"
-        "usr0/ftp/2000/CMU-CS-00-105.pdf"),
-    SEE_ALSO("A dual-tree algorithm for fast k-means clustering with large k "
-        "(pdf)", "http://www.ratml.org/pub/pdf/2017dual.pdf"),
-    SEE_ALSO("mlpack::kmeans::KMeans class documentation",
-        "@doxygen/classmlpack_1_1kmeans_1_1KMeans.html"));
+        "clusters", 10, "max_iterations", 500, "centroid", "final"));
 
 // Required options.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform clustering on.", "i");
@@ -116,7 +96,7 @@ PARAM_INT_IN_REQ("clusters", "Number of clusters to find (0 autodetects from "
 PARAM_FLAG("in_place", "If specified, a column containing the learned cluster "
     "assignments will be added to the input dataset file.  In this case, "
     "--output_file is overridden. (Do not use in Python.)", "P");
-PARAM_MATRIX_OUT("output", "Matrix to store output labels or labeled data to.",
+PARAM_MATRIX_OUT("predictions", "Matrix to store output labels or labeled data to.",
     "o");
 PARAM_MATRIX_OUT("centroid", "If specified, the centroids of each cluster will "
     " be written to the given file.", "C");
@@ -263,7 +243,8 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
   const int maxIterations = CLI::GetParam<int>("max_iterations");
 
   // Make sure we have an output file if we're not doing the work in-place.
-  RequireAtLeastOnePassed({ "in_place", "output", "centroid" }, false,
+  //options"output"may be deprecated in mlpack 4.0
+  RequireAtLeastOnePassed({ "in_place", "output","predictions","centroid" }, false,
       "no results will be saved");
 
   arma::mat dataset = CLI::GetParam<arma::mat>("input");  // Load our dataset.
@@ -289,7 +270,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
          EmptyClusterPolicy,
          LloydStepType> kmeans(maxIterations, metric::EuclideanDistance(), ipp);
 
-  if (CLI::HasParam("output") || CLI::HasParam("in_place"))
+  if (CLI::HasParam("output")|| CLI::HasParam("predictions") || CLI::HasParam("in_place"))
   {
     // We need to get the assignments.
     arma::Row<size_t> assignments;
@@ -312,7 +293,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
       // the input file correctly.
       CLI::GetPrintableParam<arma::mat>("output") =
           CLI::GetPrintableParam<arma::mat>("input");
-      CLI::GetParam<arma::mat>("output") = std::move(dataset);
+      CLI::GetParam<arma::mat>("predictions") = std::move(dataset);
     }
     else
     {
@@ -320,7 +301,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
       {
         // Save only the labels.  TODO: figure out how to get this to output an
         // arma::Mat<size_t> instead of an arma::mat.
-        CLI::GetParam<arma::mat>("output") =
+        CLI::GetParam<arma::mat>("predictions") =
             arma::conv_to<arma::mat>::from(assignments);
       }
       else
@@ -333,7 +314,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
         dataset.insert_rows(dataset.n_rows, converted);
 
         // Now save, in the different file.
-        CLI::GetParam<arma::mat>("output") = std::move(dataset);
+        CLI::GetParam<arma::mat>("predictions") = std::move(dataset);
       }
     }
   }
