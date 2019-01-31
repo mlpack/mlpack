@@ -28,11 +28,7 @@ void LoadARFF(const std::string& filename,
 {
   // First, open the file.
   std::ifstream ifs;
-#ifdef _WIN32
   ifs.open(filename, std::ios::in | std::ios::binary);
-#else
-  ifs.open(filename);
-#endif
 
   std::string line;
   size_t dimensionality = 0;
