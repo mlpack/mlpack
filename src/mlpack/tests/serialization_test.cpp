@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(BallBoundTest)
   BOOST_REQUIRE_CLOSE(b.Radius(), textB.Radius(), 1e-8);
   BOOST_REQUIRE_CLOSE(b.Radius(), binaryB.Radius(), 1e-8);
 
-  // Now check the vectors.ƒ
+  // Now check the vectors.
   CheckMatrices(b.Center(), xmlB.Center(), textB.Center(), binaryB.Center());
 }
 
