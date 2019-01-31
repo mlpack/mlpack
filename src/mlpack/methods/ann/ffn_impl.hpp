@@ -70,7 +70,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::ResetData(
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename OptimizerType>
-void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
+double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
       arma::mat predictors,
       arma::mat responses,
       OptimizerType& optimizer)
@@ -84,12 +84,13 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out
       << "." << std::endl;
+  return out;    
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename OptimizerType>
-void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
+double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::mat predictors, arma::mat responses)
 {
   ResetData(std::move(predictors), std::move(responses));
@@ -103,6 +104,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out
       << "." << std::endl;
+  return out;
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,

@@ -100,7 +100,7 @@ class GAN
 
   // Train function.
   template<typename OptimizerType>
-  void Train(OptimizerType& Optimizer);
+  double Train(OptimizerType& Optimizer);
 
   /**
    * Evaluate function for the Standard GAN and DCGAN.

@@ -89,7 +89,7 @@ class RBM
    * @param optimizer Optimizer type.
    */
   template<typename OptimizerType>
-  void Train(OptimizerType& optimizer);
+  double Train(OptimizerType& optimizer);
 
   /**
    * Evaluate the RBM network with the given parameters.

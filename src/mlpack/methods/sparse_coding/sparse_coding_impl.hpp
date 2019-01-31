@@ -40,7 +40,7 @@ SparseCoding::SparseCoding(
 }
 
 template<typename DictionaryInitializer>
-void SparseCoding::Train(
+double SparseCoding::Train(
     const arma::mat& data,
     const DictionaryInitializer& initializer)
 {
@@ -106,6 +106,7 @@ void SparseCoding::Train(
   }
 
   Timer::Stop("sparse_coding");
+  return lastObjVal;
 }
 
 template<typename Archive>

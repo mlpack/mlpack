@@ -91,7 +91,7 @@ template<
   typename PolicyType
 >
 template<typename OptimizerType>
-void RBM<InitializationRuleType, DataType, PolicyType>::Train(
+double RBM<InitializationRuleType, DataType, PolicyType>::Train(
     OptimizerType& optimizer)
 {
   if (!reset)
@@ -99,7 +99,7 @@ void RBM<InitializationRuleType, DataType, PolicyType>::Train(
     Reset();
   }
 
-  optimizer.Optimize(*this, parameter);
+  return optimizer.Optimize(*this, parameter);
 }
 
 template<

@@ -99,7 +99,7 @@ class FFN
    * @param optimizer Instantiated optimizer used to train the model.
    */
   template<typename OptimizerType>
-  void Train(arma::mat predictors,
+  double Train(arma::mat predictors,
              arma::mat responses,
              OptimizerType& optimizer);
 
@@ -120,7 +120,7 @@ class FFN
    * @param responses Outputs results from input training variables.
    */
   template<typename OptimizerType = ens::RMSProp>
-  void Train(arma::mat predictors, arma::mat responses);
+  double Train(arma::mat predictors, arma::mat responses);
 
   /**
    * Predict the responses to a given set of predictors. The responses will

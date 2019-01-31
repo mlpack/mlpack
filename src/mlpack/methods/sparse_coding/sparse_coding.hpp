@@ -179,7 +179,7 @@ class SparseCoding
    * Train the sparse coding model on the given dataset.
    */
   template<typename DictionaryInitializer = DataDependentRandomInitializer>
-  void Train(const arma::mat& data,
+  double Train(const arma::mat& data,
              const DictionaryInitializer& initializer =
                  DictionaryInitializer());
 
