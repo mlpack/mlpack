@@ -96,7 +96,7 @@ PARAM_INT_IN_REQ("clusters", "Number of clusters to find (0 autodetects from "
 PARAM_FLAG("in_place", "If specified, a column containing the learned cluster "
     "assignments will be added to the input dataset file.  In this case, "
     "--output_file is overridden. (Do not use in Python.)", "P");
-PARAM_MATRIX_OUT("predictions", "Matrix to store output labels or labeled data to.",
+PARAM_MATRIX_OUT("output", "Matrix to store output labels or labeled data to.",
     "o");
 PARAM_MATRIX_OUT("centroid", "If specified, the centroids of each cluster will "
     " be written to the given file.", "C");
@@ -243,8 +243,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
   const int maxIterations = CLI::GetParam<int>("max_iterations");
 
   // Make sure we have an output file if we're not doing the work in-place.
-  //options"output"may be deprecated in mlpack 4.0
-  RequireAtLeastOnePassed({ "in_place", "output","predictions","centroid" }, false,
+  RequireAtLeastOnePassed({ "in_place", "output", "centroid" }, false,
       "no results will be saved");
 
   arma::mat dataset = CLI::GetParam<arma::mat>("input");  // Load our dataset.
@@ -270,7 +269,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
          EmptyClusterPolicy,
          LloydStepType> kmeans(maxIterations, metric::EuclideanDistance(), ipp);
 
-  if (CLI::HasParam("output")|| CLI::HasParam("predictions") || CLI::HasParam("in_place"))
+  if (CLI::HasParam("output") || CLI::HasParam("in_place"))
   {
     // We need to get the assignments.
     arma::Row<size_t> assignments;
@@ -293,7 +292,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
       // the input file correctly.
       CLI::GetPrintableParam<arma::mat>("output") =
           CLI::GetPrintableParam<arma::mat>("input");
-      CLI::GetParam<arma::mat>("predictions") = std::move(dataset);
+      CLI::GetParam<arma::mat>("output") = std::move(dataset);
     }
     else
     {
@@ -301,7 +300,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
       {
         // Save only the labels.  TODO: figure out how to get this to output an
         // arma::Mat<size_t> instead of an arma::mat.
-        CLI::GetParam<arma::mat>("predictions") =
+        CLI::GetParam<arma::mat>("output") =
             arma::conv_to<arma::mat>::from(assignments);
       }
       else
@@ -314,7 +313,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
         dataset.insert_rows(dataset.n_rows, converted);
 
         // Now save, in the different file.
-        CLI::GetParam<arma::mat>("predictions") = std::move(dataset);
+        CLI::GetParam<arma::mat>("output") = std::move(dataset);
       }
     }
   }
