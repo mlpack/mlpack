@@ -26,11 +26,6 @@ using namespace std;
 using namespace arma;
 
 PROGRAM_INFO("Parametric Naive Bayes Classifier",
-    // Short description.
-    "An implementation of the Naive Bayes Classifier, used for classification. "
-    "Given labeled data, an NBC model can be trained and saved, or, a "
-    "pre-trained model can be used for classification.",
-    // Long description.
     "This program trains the Naive Bayes classifier on the given labeled "
     "training set, or loads a model from the given model file, and then may use"
     " that trained model to classify the points in a given test set."
@@ -52,9 +47,10 @@ PROGRAM_INFO("Parametric Naive Bayes Classifier",
     "\n\n"
     "If classifying a test set is desired, the test set may be specified with "
     "the " + PRINT_PARAM_STRING("test") + " parameter, and the "
-    "classifications may be saved with the " + PRINT_PARAM_STRING("output") +
-    " output parameter.  If saving the trained model is desired, this may be "
-    "done with the " + PRINT_PARAM_STRING("output_model") + " output "
+    "classifications may be saved with the " + 
+    PRINT_PARAM_STRING("predictions") +"parameter."+
+    "If saving the trained model is desired,"
+    "this may be done with the" + PRINT_PARAM_STRING("output_model") + " output "
     "parameter."
     "\n\n"
     "For example, to train a Naive Bayes classifier on the dataset " +
@@ -71,14 +67,7 @@ PROGRAM_INFO("Parametric Naive Bayes Classifier",
     "may be used:"
     "\n\n" +
     PRINT_CALL("nbc", "input_model", "nbc_model", "test", "test_set", "output",
-        "predictions"),
-    SEE_ALSO("@softmax_regression", "#softmax_regression"),
-    SEE_ALSO("@random_forest", "#random_forest"),
-    SEE_ALSO("Naive Bayes classifier on Wikipedia",
-        "https://en.wikipedia.org/wiki/Naive_Bayes_classifier"),
-    SEE_ALSO("mlpack::naive_bayes::NaiveBayesClassifier C++ class "
-        "documentation", "@doxygen/classmlpack_1_1naive__bayes_1_1"
-        "NaiveBayesClassifier.html"));
+        "predictions"));
 
 // A struct for saving the model with mappings.
 struct NBCModel
@@ -112,7 +101,8 @@ PARAM_FLAG("incremental_variance", "The variance of each class will be "
 
 // Test parameters.
 PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
-PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
+//PARAM_UROW_OUT("output"...) is to be deprecated and removed in mlpack 4.0
+PARAM_UROW_OUT("predictions", "The matrix in which the predicted labels for the"
     " test set will be written.", "o");
 PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability"
     " of labels for the test set will be written.", "p");
@@ -123,7 +113,7 @@ static void mlpackMain()
   RequireOnlyOnePassed({ "training", "input_model" }, true);
   ReportIgnoredParam({{ "training", false }}, "labels");
   ReportIgnoredParam({{ "training", false }}, "incremental_variance");
-  RequireAtLeastOnePassed({ "output", "output_model", "output_probs" }, false,
+  RequireAtLeastOnePassed({ "predictions","output_model", "output_probs" }, false,
       "no output will be saved");
   ReportIgnoredParam({{ "test", false }}, "output");
   if (CLI::HasParam("input_model") && !CLI::HasParam("test"))
@@ -188,14 +178,12 @@ static void mlpackMain()
     model->nbc.Classify(testingData, predictions, probabilities);
     Timer::Stop("nbc_testing");
 
-    if (CLI::HasParam("output"))
+    if (CLI::HasParam("predictions"))
     {
       // Un-normalize labels to prepare output.
       Row<size_t> rawResults;
       data::RevertLabels(predictions, model->mappings, rawResults);
-
-      // Output results.
-      CLI::GetParam<Row<size_t>>("output") = std::move(rawResults);
+      CLI::GetParam<Row<size_t>>("predictions") = std::move(predictions);
     }
 
     CLI::GetParam<mat>("output_probs") = probabilities;
