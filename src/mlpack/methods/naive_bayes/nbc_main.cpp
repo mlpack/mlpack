@@ -183,7 +183,7 @@ static void mlpackMain()
       // Un-normalize labels to prepare output.
       Row<size_t> rawResults;
       data::RevertLabels(predictions, model->mappings, rawResults);
-      CLI::GetParam<Row<size_t>>("predictions") = std::move(predictions);
+      CLI::GetParam<Row<size_t>>("predictions") = std::move(rawResults);
     }
 
     CLI::GetParam<mat>("output_probs") = probabilities;
