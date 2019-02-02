@@ -21,6 +21,10 @@ static const std:: string testname = "gmm_train"
 #include "test_helper.hpp"
 #include <mlpack/methods/gmm/gmm_train_main.cpp>
 #include <mlpack/methods/kmeans/kmeans_main.cpp>
+#include <mlpack/methods/gmm/no_constraint.hpp>
+#include <mlpack/methods/gmm/positive_definite_constraint.hpp>
+#include <mlpack/methods/gmm/diagonal_constraint.hpp>
+#include <mlpack/methods/gmm/eigenvalue_ratio_constraint.hpp>
 
 
 #include "no_constraint.hpp"
@@ -38,14 +42,14 @@ struct GmmTrainTestFixture
 public:
   GmmTrainTestFixture()
   {
-    //cache in the options for this program
+    // Cache in the options for this program.
     CLI::RestoreSettings(testname);
   }
 
 
   ~GmmTrainTestFixture()
   {
-    //clear the settings.
+    // Clear the settings.
     CLI::ClearSettings();
   }
 };
@@ -60,7 +64,7 @@ void ResetGmmTrainSetting()
 BOOST_FIXTURE_TEST_SUITE(GmmTrainMainTest , GmmTrainTestFixture);
 
 
-//To check if the gaussian is positive or not
+// To check if the gaussian is positive or not.
 BOOST_AUTO_TEST_CASE(GmmTrainValidGaussian)
 {
   arma::mat inputData;
@@ -78,11 +82,11 @@ BOOST_AUTO_TEST_CASE(GmmTrainValidGaussian)
 }
 
 
-/*To check if the number of gaussians in the output model is same as
-that of input gaussian parameter or not*/
+/* To check if the number of gaussians in the output model is same as
+that of input gaussian parameter or not. */
 BOOST_AUTO_TEST_CASE(GmmTrainOutputModelGaussian)
 {
-   int g = 3;
+  int g = 3;
   int trials = 2;
 
   arma::mat inputData;
@@ -93,14 +97,14 @@ BOOST_AUTO_TEST_CASE(GmmTrainOutputModelGaussian)
   SetInputParam("gaussians" , g);
   SetInputParam("trials" , trials);
   
-  MlpackMain();
+  mlpackMain();
 
   GMM* gmm = CLI::GetParam<GMM*>("output_model");
   BOOST_REQUIRE_EQUAL(gmm->gaussians() , g);
 }
 
 
-//Number of trials is provided or not
+// Number of trials is provided or not.
 BOOST_AUTO_TEST_CASE(GmmTrainValidTrials)
 {
   int g = 3;
@@ -113,7 +117,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainValidTrials)
 
   SetInputParam("input" , std::move(inputdata));
   SetInputParam("gaussians" , g);
-  SetInputParam("trials" , trials) //invalid
+  SetInputParam("trials" , trials) // Invalid
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -121,7 +125,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainValidTrials)
 }
 
 
-// if covariance flag is false then no_force_positive parameter is not specified
+// If covariance flag is false then no_force_positive parameter is not specified.
 BOOST_AUTO_TEST_CASE(GmmTrainDiagonalCovarianceCheck)
 {
   int g = 3;
@@ -136,7 +140,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiagonalCovarianceCheck)
   SetInputParam("gaussians" , g);
   SetInputParam("trials" , t);
   SetInputParam("Diagonal_covariance" , false);
-  SetinputParam("no_force_positive" , n_f_p); //invalid
+  SetinputParam("no_force_positive" , n_f_p); // Invalid.
   SetInputParam("noise" , (int) 0);
 
   Log::Fatal.ignoreInput = true;
@@ -161,7 +165,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainMaxIterations)
   SetinputParam("input" , std::move(inputdata));
   SetinputParam("gaussians", g);
   SetinputParam("trials" , t);
-  SetinputParam("max_iterations" ,mi)//invalid
+  SetinputParam("max_iterations" ,mi);// Invalid
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain() , runtime_error);
@@ -169,7 +173,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainMaxIterations)
 }
 
 
-//tolerence must be positive 
+// Tolerence must be positive. 
 BOOST_AUTO_TEST_CASE(GmmTrainTolerence)
 {
   int g = 3;
@@ -195,7 +199,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainTolerence)
 
 
  /**
- * Checking that percentage is between 0 and 1 when --refined_start is specified
+ *  Checking that percentage is between 0 and 1 when --refined_start is specified.
 */
 BOOST_AUTO_TEST_CASE(RefinedStartPercentageTest)
 {
@@ -212,7 +216,7 @@ BOOST_AUTO_TEST_CASE(RefinedStartPercentageTest)
   SetInputParam("input", std::move(inputData));
   SetInputParam("refined_start", true);
   SetInputParam("clusters", c);
-  SetInputParam("percentage", std::move(P));     // Invalid
+  SetInputParam("percentage", std::move(P));// Invalid
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -220,7 +224,7 @@ BOOST_AUTO_TEST_CASE(RefinedStartPercentageTest)
 }
 
 
-//Make sure that output model can be reused.
+// Make sure that output model can be reused.
 BOOST_AUTO_TEST_CASE(GmmTrainReuseGmmModel)
 {
   int g = 3;
@@ -235,9 +239,9 @@ BOOST_AUTO_TEST_CASE(GmmTrainReuseGmmModel)
   SetinputParam("input" , std::move(inputdata));
   SetinputParam("gaussians", g);
   SetinputParam("trials" , t);
-  SetinputParam("max_iterations" ,mi)
+  SetinputParam("max_iterations" ,mi);
 
-  mlpakMain();
+  mlpackMain();
   
   GMM* gmm = CLI::GetParam<GMM*>("output_model");
 
@@ -255,10 +259,8 @@ BOOST_AUTO_TEST_CASE(GmmTrainReuseGmmModel)
 
 }
 
-//number of gaussians in the model trained from input model.
+// Number of gaussians in the model trained from input model.
 BOOST_AUTO_TEST_CASE(GmmTrainNumberOfGaussian)
-{
-  BOOST_AUTO_TEST_CASE(GmmTrainReuseGmmModel)
 {
   int g = 3;
   int t = 2;
@@ -292,7 +294,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainNumberOfGaussian)
 
 }
 
-//checking that after noise addition matrix is invertible
+// Checking that after noise addition matrix is invertible.
 BOOST_AUTO_TEST_CASE(GmmTrainNoiseAddition)
 {
   int g = 3;
@@ -310,7 +312,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainNoiseAddition)
   SetinputParam("max_iterations" ,maxi);
   SetInputParam("noise" , noise);
 
-  mlapckMain();
+  mlpackMain();
 
   GMM* gmm = CLI::GeParam<GMM*>("output_model");
 
