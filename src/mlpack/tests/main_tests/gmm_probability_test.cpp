@@ -1,11 +1,27 @@
+/**
+ * @file gmm_probability_test.cpp
+ * @author Gaurav Tripathi
+ *
+ * Test mlpackMain() of gmm_probability_main.cpp.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-static const std::string testName = "Gmm_Probability"
+static const std::string testName = "gmm_Probability"
 
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/gmm/gmm_probabiity_main.cpp>
 #include <mlpack/methods/gmm/gmm_train_main.cpp>
+#include <mlpack/methods/gmm/no_constraint.hpp>
+#include <mlpack/methods/gmm/positive_definite_constraint.hpp>
+#include <mlpack/methods/gmm/diagonal_constraint.hpp>
+#include <mlpack/methods/gmm/eigenvalue_ratio_constraint.hpp>
 #include "test_helper.hpp"
 
 #include <boost/test/unit_tests.hpp>
@@ -16,29 +32,28 @@ using namespace mlpack;
 struct GmmProbabilityTestFixture
 {
   public:
-    GmmProbabilityTestFixture()
-    {
-      CLI::RestoreSettings(testname);
-    }
+   GmmProbabilityTestFixture()
+   {
+     CLI::RestoreSettings(testname);
+   }
 
-    ~GmmProbabilityTestFixture()
-    {
-      bindings::tests::CleanMemory();
-      CLI::ClearSettings();
-    }
+   ~GmmProbabilityTestFixture()
+   {
+     bindings::tests::CleanMemory();
+     CLI::ClearSettings();
+   }
 };
-
 
 BOOST_FIXTURE_TEST_SUITE(GmmProbabilityMainTest,
                          GmmProbabilityTestFixture);
 
-//Make sure that input model is provided
+// Make sure that input model is provided.
 BOOST_AUTO_TEST_CASE(GmmProbabilityInputModelTest)
 {
   arma::mat InputData;
 
   InputData << 0 << 1 << 2<< 3 << 4 << 5 << 6 << 7 << endr
-            << 0 << 4 << 3 << 4 << 8 << 9 << 2 << 5 <<endr;
+            << 0 << 4 << 3 << 4 << 8 << 9 << 2 << 5 << endr;
 
   SetInputParam("input" , std::move(InputData));
 
@@ -47,37 +62,32 @@ BOOST_AUTO_TEST_CASE(GmmProbabilityInputModelTest)
   Log::Fatal.ignoreInput = false;
 }
   
-//Make sure that input points are provided
-BOOST_AUTO_TEST_CASE()
+// Make sure that input points are provided
+BOOST_AUTO_TEST_CASE(GmmProbabilityInputPoints)
 {
-  int g = 3;
-  int trials = 2;
-
-
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
   BOOST_FAIL("Unable to load train dataset vc2.csv!");
   
-  gmm = new GMM((size_t)g , inputdata.n_rows);
+  GMM gmm(1, 2);
+  gmm.Train(inputData, 10);
 
   SetInputParam("input_model" , std::move(gmm));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
-  Log::Fatal.ignoreInput = false;
+  Log::Fatal.ignoreInput = false;     
 }
 
-//checking the input and output dimensionality
-BOOST_AUTO_TEST_CASE()
+// Checking the input and output dimensionality.
+BOOST_AUTO_TEST_CASE(GmmProbabilityDimensionality)
 {
-  int g= 3;
-  int trials = 2;
-
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
   BOOST_FAIL("Unable to load train dataset vc2.csv!");
   
-  gmm = new GMM((size_t)g , inputdata.n_rows);
+  GMM gmm(1, 2);
+  gmm.Train(inputData, 10);
   
   arma::mat InputData;
   InputData << 0 << 1 << 2<< 3 << 4 << 5 << 6 << 7 << endr
