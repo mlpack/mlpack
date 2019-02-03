@@ -1,6 +1,7 @@
 /**
  * @file sparse_svm_function.hpp
  * @author Shikhar Bhardwaj
+ * @author Ayush Chamoli
  *
  * Implementation of the hinge loss function for training a sparse SVM with the
  * parallel SGD algorithm.
@@ -15,37 +16,108 @@
 
 #include <mlpack/prereqs.hpp>
 
+namespace mlpack {
+namespace svm {
+
+template <typename MatType = arma::sp_mat>
 class SparseSVMFunction
 {
  public:
   //! Nothing to do for the default constructor.
   SparseSVMFunction() {}
 
-  //! Member initialization constructor.
-  SparseSVMFunction(const arma::sp_mat& dataset, const arma::vec& labels);
+  /**
+   * Construct the Sparse SVM objective function with given parameters.
+   *
+   * @param dataset Input training data, each column associate with one sample
+   * @param labels Labels associated with the feature data.
+   * @param numClasses Number of classes for classification.
+   * @param lambda L2-regularization constant.
+   */
+  SparseSVMFunction(const MatType& dataset,
+                    const arma::Row<size_t>& labels,
+                    const size_t numClasses,
+                    const double lambda = 0.0001);
 
   /**
    * Shuffle the dataset.
    */
   void Shuffle();
 
+  //! Initializes the parameters of the model to suitable values.
+  const arma::mat InitializeWeights();
+
+  /**
+   * Initialize Sparse SVM weights (trainable parameters) with the given
+   * parameters.
+   *
+   * @param featureSize The number of features in the training set.
+   * @param numClasses Number of classes for classification.
+   * @return Initialized model weights.
+   */
+  static const arma::mat InitializeWeights(const size_t featureSize,
+                                           const size_t numClasses);
+
+  /**
+   * Initialize Sparse SVM weights (trainable parameters) with the given
+   * parameters.
+   *
+   * @param weights This will be filled with the initialized model weights.
+   * @param featureSize The number of features in the training set.
+   * @param numClasses Number of classes for classification.
+   * @return Initialized model weights.
+   */
+  static void InitializeWeights(arma::mat& weights,
+                                const size_t featureSize,
+                                const size_t numClasses);
+
+  /**
+   * Constructs the ground truth label matrix with the passed labels.
+   *
+   * @param labels Labels associated with the training data.
+   * @param groundTruth Pointer to arma::mat which stores the computed matrix.
+   */
+  void GetGroundTruthMatrix(const arma::Row<size_t>& labels,
+                            arma::sp_mat& groundTruth);
+
+  /**
+   * Evaluate the hinge loss function for all the datapoints
+   *
+   * @param paramters The parameters of the SVM.
+   * @return The value of the loss function for the entire dataset.
+   */
+  double Evaluate(const arma::mat& parameters);
+
   /**
    * Evaluate the hinge loss function on the specified datapoints.
    *
    * @param parameters The parameters of the SVM.
-   * @param startId First index of the datapoints to use for function
+   * @param firstId Index of the datapoints to use for function
    *      evaluation.
    * @param batchSize Size of batch to process.
-   * @return The value of the loss function at the given parameters.
+   * @return The value of the loss function for the given parameters.
    */
   double Evaluate(const arma::mat& parameters,
-                  const size_t startId,
+                  const size_t firstId,
                   const size_t batchSize = 1);
 
   /**
-   * Evaluate the gradient the gradient of the hinge loss function, following
+   * Evaluate the gradient of the hinge loss function following the
+   * SparseFunctionType requirements on the Gradient function.
+   *
+   * @tparam GradType Type of the gradient matrix.
+   * @param parameters The parameters of the SVM.
+   * @param gradient Sparse matrix to output the gradient into.
+   */
+  template <typename GradType>
+  void Gradient(const arma::mat& parameters,
+                GradType& gradient);
+
+  /**
+   * Evaluate the gradient of the hinge loss function, following
    * the SparseFunctionType requirements on the Gradient function.
    *
+   * @tparam GradType Type of the gradient matrix.
    * @param parameters The parameters of the SVM.
    * @param firstId Index of the datapoint to use for the gradient evaluation.
    * @param gradient Sparse matrix to output the gradient into.
@@ -56,6 +128,41 @@ class SparseSVMFunction
                 const size_t firstId,
                 GradType& gradient,
                 const size_t batchSize = 1);
+
+  /**
+   * Evaluate the gradient of the hinge loss function, following
+   * the SparseFunctionType requirements on the Gradient function
+   * followed by evaluation of the hinge loss function on all the
+   * datapoints
+   *
+   * @tparam GradType Type of the gradient matrix.
+   * @param parameters The parameters of the SVM.
+   * @param gradient Sparse matrix to output the gradient into.
+   * @return The value of the loss function at the given parameters.
+   */
+  template <typename GradType>
+  double EvaluateWithGradient(const arma::mat& parameters,
+                              GradType& gradient) const;
+
+  /**
+   * Evaluate the gradient of the hinge loss function, following
+   * the SparseFunctionType requirements on the Gradient function
+   * followed by evaluation of the hinge loss function on the specified
+   * datapoints.
+   *
+   * @tparam GradType Type of the gradient matrix.
+   * @param parameters The parameters of the SVM.
+   * @param firstId Index of the datapoint to use for the gradient and function
+   * evaluation.
+   * @param gradient Sparse matrix to output the gradient into.
+   * @param batchSize Size of the batch to process.
+   * @return The value of the loss function at the given parameters.
+   */
+  template <typename GradType>
+  double EvaluateWithGradient(const arma::mat& parameters,
+                              const size_t firstId,
+                              GradType& gradient,
+                              const size_t batchSize = 1) const;
 
   //! Return the initial point for the optimization.
   const arma::mat& InitialPoint() const { return initialPoint; }
@@ -72,19 +179,37 @@ class SparseSVMFunction
   //! Modify the labels.
   arma::vec& Labels() { return labels; }
 
+  //! Sets the regularization parameter.
+  double& Lambda() { return lambda; }
+  //! Gets the regularization parameter.
+  double Lambda() const { return lambda; }
+
+
   //! Return the number of functions.
-  size_t NumFunctions();
+  size_t NumFunctions() const;
 
  private:
   //! The initial point, from which to start the optimization.
   arma::mat initialPoint;
 
+  //! Label matrix for provided data
+  arma::sp_mat groundTruth;
+
   //! The datapoints for training.
-  arma::sp_mat dataset;
+  MatType dataset;
+
+  //! Number of Classes.
+  size_t numClasses;
 
   //! The labels, y_i.
-  arma::vec labels;
+  arma::Row<size_t> labels;
+
+  //! The regularization parameter for L2-regularization.
+  double lambda;
 };
+
+} // namespace svm
+} // namespace mlpack
 
 // Include implementation
 #include "sparse_svm_function_impl.hpp"
