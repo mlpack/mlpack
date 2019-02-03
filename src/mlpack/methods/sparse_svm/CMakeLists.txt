@@ -2,6 +2,8 @@
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
+  sparse_svm.hpp
+  sparse_svm_impl.hpp
   sparse_svm_function.hpp
   sparse_svm_function_impl.hpp
 )
