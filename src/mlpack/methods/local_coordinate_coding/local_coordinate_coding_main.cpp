@@ -191,7 +191,6 @@ static void mlpackMain()
       lcc->Train(matX);
     }
   }
-
   // Now, do we have any matrix to encode?
   if (CLI::HasParam("test"))
   {
@@ -216,7 +215,6 @@ static void mlpackMain()
 
     CLI::GetParam<mat>("codes") = std::move(codes);
   }
-
   // Save the dictionary and the model.
   CLI::GetParam<mat>("dictionary") = lcc->Dictionary();
   CLI::GetParam<LocalCoordinateCoding*>("output_model") = lcc;
