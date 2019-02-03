@@ -196,6 +196,8 @@ class FurthestNS
   }
 };
 
+// Due to an internal MinGW compiler bug (string table overflow) we have to
+// truncate the class name. For backward compatibility we setup an alias here.
 using FurthestNeighborSort = FurthestNS;
 
 } // namespace neighbor
