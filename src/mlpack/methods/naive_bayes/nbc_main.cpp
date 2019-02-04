@@ -47,22 +47,9 @@ PROGRAM_INFO("Parametric Naive Bayes Classifier",
     "\n\n"
     "If classifying a test set is desired, the test set may be specified with "
     "the " + PRINT_PARAM_STRING("test") + " parameter, and the "
-<<<<<<< HEAD
-<<<<<<< HEAD
     "classifications may be saved with the " + PRINT_PARAM_STRING("predictions") +
     " predictions parameter.  If saving the trained model is desired, this may be "
-    "done with the " + PRINT_PARAM_STRING("output_model") + " output "
-=======
-=======
->>>>>>> origin/master
-    "classifications may be saved with the " + 
-    PRINT_PARAM_STRING("predictions") +"parameter."+
-    "If saving the trained model is desired,"
-    "this may be done with the" + PRINT_PARAM_STRING("output_model") + " output "
-<<<<<<< HEAD
->>>>>>> f73a26d7ef79b7ccd9964751ca5a48c3e9de9322
-=======
->>>>>>> origin/master
+    "done with the " + PRINT_PARAM_STRING("output_model")  + " output "
     "parameter."
     "\n\n"
     "For example, to train a Naive Bayes classifier on the dataset " +
@@ -125,15 +112,11 @@ static void mlpackMain()
   RequireOnlyOnePassed({ "training", "input_model" }, true);
   ReportIgnoredParam({{ "training", false }}, "labels");
   ReportIgnoredParam({{ "training", false }}, "incremental_variance");
-<<<<<<< HEAD
-<<<<<<< HEAD
   RequireAtLeastOnePassed({ "predictions", "output_model", "output_probs" }, false,
-=======
+"no output will be saved");
   RequireAtLeastOnePassed({ "predictions","output_model", "output_probs" }, false,
->>>>>>> f73a26d7ef79b7ccd9964751ca5a48c3e9de9322
-=======
+"no output will be saved");
   RequireAtLeastOnePassed({ "predictions","output_model", "output_probs" }, false,
->>>>>>> origin/master
       "no output will be saved");
   ReportIgnoredParam({{ "test", false }}, "output");
   if (CLI::HasParam("input_model") && !CLI::HasParam("test"))
