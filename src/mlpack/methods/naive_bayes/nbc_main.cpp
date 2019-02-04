@@ -48,15 +48,21 @@ PROGRAM_INFO("Parametric Naive Bayes Classifier",
     "If classifying a test set is desired, the test set may be specified with "
     "the " + PRINT_PARAM_STRING("test") + " parameter, and the "
 <<<<<<< HEAD
+<<<<<<< HEAD
     "classifications may be saved with the " + PRINT_PARAM_STRING("predictions") +
     " predictions parameter.  If saving the trained model is desired, this may be "
     "done with the " + PRINT_PARAM_STRING("output_model") + " output "
 =======
+=======
+>>>>>>> origin/master
     "classifications may be saved with the " + 
     PRINT_PARAM_STRING("predictions") +"parameter."+
     "If saving the trained model is desired,"
     "this may be done with the" + PRINT_PARAM_STRING("output_model") + " output "
+<<<<<<< HEAD
 >>>>>>> f73a26d7ef79b7ccd9964751ca5a48c3e9de9322
+=======
+>>>>>>> origin/master
     "parameter."
     "\n\n"
     "For example, to train a Naive Bayes classifier on the dataset " +
@@ -120,10 +126,14 @@ static void mlpackMain()
   ReportIgnoredParam({{ "training", false }}, "labels");
   ReportIgnoredParam({{ "training", false }}, "incremental_variance");
 <<<<<<< HEAD
+<<<<<<< HEAD
   RequireAtLeastOnePassed({ "predictions", "output_model", "output_probs" }, false,
 =======
   RequireAtLeastOnePassed({ "predictions","output_model", "output_probs" }, false,
 >>>>>>> f73a26d7ef79b7ccd9964751ca5a48c3e9de9322
+=======
+  RequireAtLeastOnePassed({ "predictions","output_model", "output_probs" }, false,
+>>>>>>> origin/master
       "no output will be saved");
   ReportIgnoredParam({{ "test", false }}, "output");
   if (CLI::HasParam("input_model") && !CLI::HasParam("test"))
@@ -193,11 +203,7 @@ static void mlpackMain()
       // Un-normalize labels to prepare output.
       Row<size_t> rawResults;
       data::RevertLabels(predictions, model->mappings, rawResults);
-<<<<<<< HEAD
-
-      // Output results.
-=======
->>>>>>> f73a26d7ef79b7ccd9964751ca5a48c3e9de9322
+      // Output results
       CLI::GetParam<Row<size_t>>("predictions") = std::move(rawResults);
     }
 
