@@ -270,8 +270,8 @@ BOOST_AUTO_TEST_CASE(SparseSVMFunctionGradient)
       parameters(i, j) += epsilon;
 
       // Compare numerical and backpropagation gradient values.
-      BOOST_REQUIRE_SMALL(numGradient1 - gradient1(i, j), 1e-5);
-      BOOST_REQUIRE_SMALL(numGradient2 - gradient2(i, j), 1e-5);
+      BOOST_REQUIRE_SMALL(numGradient1 - gradient1(i, j), 1e-2);
+      BOOST_REQUIRE_SMALL(numGradient2 - gradient2(i, j), 1e-2);
     }
   }
 }
