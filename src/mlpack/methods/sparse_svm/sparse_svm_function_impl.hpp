@@ -30,8 +30,6 @@ SparseSVMFunction<MatType>::SparseSVMFunction(
   const size_t numClasses,
   const double lambda) :
   dataset(math::MakeAlias(const_cast<MatType&>(dataset), false)),
-  labels(math::MakeAlias(const_cast<arma::Row<size_t>&>(labels),
-      false)),
   numClasses(numClasses),
   lambda(lambda)
 {
@@ -158,12 +156,12 @@ double SparseSVMFunction<MatType>::Evaluate(
   // Calculate the loss and regularization terms.
   double loss, regularization, cost;
 
-  arma::mat scores = dataset.t() * parameters;
-  arma::mat correct = scores
-      % arma::conv_to<arma::mat>::from(groundTruth).t();
-  arma::mat margin = scores - arma::repmat(correct
-      * arma::ones(numClasses), 1, numClasses) + 1
-      - groundTruth.t();
+  arma::mat scores = parameters * dataset;
+  arma::mat correct = arma::conv_to<arma::mat>::from(scores
+      % groundTruth);
+  arma::mat margin = scores
+      - arma::repmat(arma::ones(numClasses).t() * correct, numClasses, 1)
+      + 1 - groundTruth;
 
   // The Hinge Loss Function
   loss = arma::accu(arma::clamp(margin, 0.0, margin.max()));
@@ -188,13 +186,12 @@ double SparseSVMFunction<MatType>::Evaluate(
   // Calculate the loss and regularization terms.
   double loss, regularization, cost;
 
-  arma::mat scores = dataset.cols(firstId, lastId).t()
-      * parameters;
-  arma::mat correct = scores
-      % arma::conv_to<arma::mat>::from(groundTruth).cols(firstId, lastId).t();
-  arma::mat margin = scores - arma::repmat(correct
-      * arma::ones(numClasses), 1, numClasses) + 1
-      - arma::conv_to<arma::mat>::from(groundTruth).cols(firstId, lastId).t();
+  arma::mat scores = parameters * dataset.cols(firstId, lastId);
+  arma::mat correct = arma::conv_to<arma::mat>::from(scores
+      % groundTruth.cols(firstId, lastId));
+  arma::mat margin = scores
+      - arma::repmat(arma::ones(numClasses).t() * correct, numClasses, 1)
+      + 1 - groundTruth.cols(firstId, lastId);
 
   // The Hinge Loss Function
   loss = arma::accu(arma::clamp(margin, 0.0, margin.max()));
@@ -214,23 +211,23 @@ void SparseSVMFunction<MatType>::Gradient(
     const arma::mat& parameters,
     GradType& gradient)
 {
-  arma::mat scores = dataset.t() * parameters;
-  arma::mat correct = scores
-      % arma::conv_to<arma::mat>::from(groundTruth).t();
-  arma::mat margin = scores - arma::repmat(correct
-      * arma::ones(numClasses), 1, numClasses) + 1
-      - groundTruth.t();
+  arma::mat scores = parameters * dataset;
+  arma::mat correct = arma::conv_to<arma::mat>::from(scores
+      % groundTruth);
+  arma::mat margin = scores
+      - arma::repmat(arma::ones(numClasses).t() * correct, numClasses, 1)
+      + 1 - groundTruth;
 
   // For each sample, find the total number of classes where
   // ( margin > 0 )
   arma::mat mask = margin.for_each([](arma::mat::elem_type& val)
       { val = (val > 0) ? 1: 0; });
 
-  arma::mat incorrectLabels = arma::conv_to<arma::mat>::from(groundTruth).t()
-      % (-arma::repmat(arma::sum(mask, 1), 1, numClasses));
+  arma::sp_mat incorrectLabels = groundTruth
+      % (-arma::repmat(arma::sum(mask), numClasses, 1));
   arma::mat difference = incorrectLabels + mask;
 
-  gradient = dataset * difference;
+  gradient = difference * dataset.t();
   gradient /= dataset.n_cols;
 
   // Adding the regularization contribution to the gradient.
@@ -246,25 +243,23 @@ void SparseSVMFunction<MatType>::Gradient(
     const size_t batchSize)
 {
   const size_t lastId = firstId + batchSize - 1;
-  arma::mat scores = dataset.cols(firstId, lastId).t()
-      * parameters;
-  arma::mat correct = scores
-      % arma::conv_to<arma::mat>::from(groundTruth).cols(firstId, lastId).t();
-  arma::mat margin = scores - arma::repmat(correct
-      * arma::ones(numClasses), 1, numClasses) + 1
-      - arma::conv_to<arma::mat>::from(groundTruth).cols(firstId, lastId).t();
+  arma::mat scores = parameters * dataset.cols(firstId, lastId);
+  arma::mat correct = arma::conv_to<arma::mat>::from(scores
+      % groundTruth.cols(firstId, lastId));
+  arma::mat margin = scores
+      - arma::repmat(arma::ones(numClasses).t() * correct, numClasses, 1)
+      + 1 - groundTruth.cols(firstId, lastId);
 
   // For each sample, find the total number of classes where
   // ( margin > 0 )
   arma::mat mask = margin.for_each([](arma::mat::elem_type& val)
       { val = (val > 0) ? 1: 0; });
 
-  arma::mat incorrectLabels =
-      arma::conv_to<arma::mat>::from(groundTruth).cols(firstId, lastId).t() %
-      (-arma::repmat(arma::sum(mask.rows(firstId, lastId), 1), 1, numClasses));
+  arma::sp_mat incorrectLabels = groundTruth.cols(firstId, lastId)
+      % (-arma::repmat(arma::sum(mask.cols(firstId, lastId)), numClasses, 1));
   arma::mat difference = incorrectLabels + mask;
 
-  gradient = dataset.cols(firstId, lastId) * difference;
+  gradient = difference * dataset.cols(firstId, lastId).t();
   gradient /= batchSize;
 
   // Adding the regularization contribution to the gradient.
@@ -279,23 +274,23 @@ double SparseSVMFunction<MatType>::EvaluateWithGradient(
 {
   double loss, regularization, cost;
 
-  arma::mat scores = dataset.t() * parameters;
-  arma::mat correct = scores
-      % arma::conv_to<arma::mat>::from(groundTruth).t();
-  arma::mat margin = scores - arma::repmat(correct
-       * arma::ones(numClasses), 1, numClasses) + 1
-       - groundTruth.t();
+  arma::mat scores = parameters * dataset;
+  arma::mat correct = arma::conv_to<arma::mat>::from(scores
+      % groundTruth);
+  arma::mat margin = scores
+      - arma::repmat(arma::ones(numClasses).t() * correct, numClasses, 1)
+      + 1 - groundTruth;
 
   // For each sample, find the total number of classes where
   // ( margin > 0 )
   arma::mat mask = margin.for_each([](arma::mat::elem_type& val)
       { val = (val > 0) ? 1: 0; });
 
-  arma::mat incorrectLabels = arma::conv_to<arma::mat>::from(groundTruth).t()
-      % (-arma::repmat(arma::sum(mask, 1), 1, numClasses));
+  arma::sp_mat incorrectLabels = groundTruth
+       % (-arma::repmat(arma::sum(mask), numClasses, 1));
   arma::mat difference = incorrectLabels + mask;
 
-  gradient = dataset * difference;
+  gradient = difference * dataset.t();
   gradient /= dataset.n_cols;
 
   // Adding the regularization contribution to the gradient.
@@ -326,25 +321,23 @@ double SparseSVMFunction<MatType>::EvaluateWithGradient(
   // Calculate the loss and regularization terms.
   double loss, regularization, cost;
 
-  arma::mat scores = dataset.cols(firstId, lastId).t()
-                     * parameters;
-  arma::mat correct = scores
-      % arma::conv_to<arma::mat>::from(groundTruth).cols(firstId, lastId).t();
-  arma::mat margin = scores - arma::repmat(correct
-      * arma::ones(numClasses), 1, numClasses) + 1
-      - arma::conv_to<arma::mat>::from(groundTruth).cols(firstId, lastId).t();
+  arma::mat scores = parameters * dataset.cols(firstId, lastId);
+  arma::mat correct = arma::conv_to<arma::mat>::from(scores
+      % groundTruth.cols(firstId, lastId));
+  arma::mat margin = scores
+      - arma::repmat(arma::ones(numClasses).t() * correct, numClasses, 1)
+      + 1 - groundTruth.cols(firstId, lastId);
 
   // For each sample, find the total number of classes where
   // ( margin > 0 )
   arma::mat mask = margin.for_each([](arma::mat::elem_type& val)
       { val = (val > 0) ? 1: 0; });
 
-  arma::mat incorrectLabels =
-      arma::conv_to<arma::mat>::from(groundTruth).cols(firstId, lastId).t() %
-      (-arma::repmat(arma::sum(mask.rows(firstId, lastId), 1), 1, numClasses));
+  arma::sp_mat incorrectLabels = groundTruth.cols(firstId, lastId)
+      % (-arma::repmat(arma::sum(mask.cols(firstId, lastId)), numClasses, 1));
   arma::mat difference = incorrectLabels + mask;
 
-  gradient = dataset.cols(firstId, lastId) * difference;
+  gradient = difference * dataset.cols(firstId, lastId).t();
   gradient /= batchSize;
 
   // Adding the regularization contribution to the gradient.

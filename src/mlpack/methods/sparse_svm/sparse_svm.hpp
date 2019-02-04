@@ -55,14 +55,37 @@ class SparseSVM
             OptimizerType optimizer = OptimizerType());
 
   /**
-   * Classify the given points, returning  predicted class label  for 
-   * each data point. 
+   * Classify the given points, returning the predicted labels for each point.
    *
-   * @param dataset Matrix of data points to be classified.
+   * @param data Set of points to classify.
    * @param labels Predicted labels for each point.
    */
-  void Classify(const MatType& dataset,
+  void Classify(const MatType& data,
                 arma::Row<size_t>& labels) const;
+
+  /**
+   * Classify the given points, returning class scores and predicted
+   * class label for each point.
+   * The function calculates the scores for every class, given a data
+   * point. It then chooses the class which has the highest probability among
+   * all.
+   *
+   * @param data Matrix of data points to be classified.
+   * @param labels Predicted labels for each point.
+   * @param scores Class probabilities for each point.
+   */
+  void Classify(const MatType& data,
+                arma::Row<size_t>& labels,
+                arma::mat& scores) const;
+
+    /**
+   * Classify the given points, returning class scores for each point.
+   *
+   * @param data Matrix of data points to be classified.
+   * @param scores Class scores for each point.
+   */
+    void Classify(const MatType& data,
+                  arma::mat& scores) const;
 
   /**
    * Computes accuracy of the learned model given the feature data and the
@@ -94,10 +117,24 @@ class SparseSVM
                const double lambda = 0.0001,
                OptimizerType optimizer = OptimizerType());
 
+
+  //! Sets the number of classes.
+  size_t& NumClasses() { return numClasses; }
+  //! Gets the number of classes.
+  size_t NumClasses() const { return numClasses; }
+
+  //! Sets the regularization parameter.
+  double& Lambda() { return lambda; }
+  //! Gets the regularization parameter.
+  double Lambda() const { return lambda; }
+
   //! Set the model parameters.
   arma::mat& Parameters() { return parameters; }
   //! Get the model parameters.
   const arma::mat& Parameters() const { return parameters; }
+
+  //! Gets the features size of the training data
+  size_t FeatureSize() const { return parameters.n_cols; }
 
   /**
    * Serialize the SparseSVM model.
@@ -106,11 +143,17 @@ class SparseSVM
   void serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & BOOST_SERIALIZATION_NVP(parameters);
+    ar & BOOST_SERIALIZATION_NVP(numClasses);
+    ar & BOOST_SERIALIZATION_NVP(lambda);
   }
 
  private:
   //! Parameters after optimization.
   arma::mat parameters;
+  //! Number of classes.
+  size_t numClasses;
+  //! L2-Regularization constant.
+  double lambda;
 };
 
 } // namespace svm
