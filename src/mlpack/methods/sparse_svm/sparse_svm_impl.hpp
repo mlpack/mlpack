@@ -25,7 +25,9 @@ SparseSVM<MatType>::SparseSVM(
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const double lambda,
-    OptimizerType optimizer)
+    OptimizerType optimizer) :
+    numClasses(numClasses),
+    lambda(lambda)
 {
   Train(data, labels, numClasses, lambda, optimizer);
 }
@@ -39,8 +41,8 @@ double SparseSVM<MatType>::Train(
     const double lambda,
     OptimizerType optimizer)
 {
-  SparseSVMFunction<MatType> svm(arma::conv_to<arma::sp_mat>::from(data),
-                                 labels, numClasses, lambda);
+  SparseSVMFunction<MatType> svm(data, labels,
+      numClasses, lambda);
   if (parameters.is_empty())
     parameters = svm.InitialPoint();
 
@@ -57,13 +59,81 @@ double SparseSVM<MatType>::Train(
 
 template <typename MatType>
 void SparseSVM<MatType>::Classify(
-    const MatType& dataset,
-    arma::Row<size_t>& labels)
+    const MatType& data,
+    arma::Row<size_t> &labels)
 const
 {
-  // Classify each point of dataset into their suitable class.
-  labels = arma::conv_to<arma::Row<size_t>>::from(
-      arma::index_max(parameters.t() * dataset));
+  arma::mat scores;
+  Classify(data, scores);
+
+  // Prepare necessary data
+  labels.zeros(data.n_cols);
+  double maxScore = 0;
+
+  // For each test input.
+  for (size_t i = 0; i < data.n_cols; ++i)
+  {
+    // For each class.
+    for (size_t j = 0; j < numClasses; ++j) {
+      // If a higher class probability is encountered, change score.
+      if (scores(j, i) > maxScore)
+      {
+        maxScore = scores(j, i);
+        labels(i) = j;
+      }
+    }
+
+    // Set maximum probability to zero for next input.
+    maxScore = 0;
+  }
+}
+
+template <typename MatType>
+void SparseSVM<MatType>::Classify(
+        const MatType& data,
+        arma::Row<size_t> &labels,
+        arma::mat& scores)
+const
+{
+  Classify(data, scores);
+
+  // Prepare necessary data
+  labels.zeros(data.n_cols);
+  double maxScore = 0;
+
+  // For each test input.
+  for (size_t i = 0; i < data.n_cols; ++i)
+  {
+    // For each class.
+    for (size_t j = 0; j < numClasses; ++j) {
+      // If a higher class probability is encountered, change score.
+      if (scores(j, i) > maxScore)
+      {
+        maxScore = scores(j, i);
+        labels(i) = j;
+      }
+    }
+
+    // Set maximum probability to zero for next input.
+    maxScore = 0;
+  }
+}
+
+template <typename MatType>
+void SparseSVM<MatType>::Classify(
+        const MatType& data,
+        arma::mat& scores)
+const
+{
+  if (data.n_rows != FeatureSize())
+  {
+    std::ostringstream oss;
+    oss << "SparseSVM::Classify(): dataset has " << data.n_rows
+        << " dimensions, but model has " << FeatureSize() << " dimensions!";
+    throw std::invalid_argument(oss.str());
+  }
+
+  scores = parameters * data;
 }
 
 template <typename MatType>

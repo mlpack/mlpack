@@ -174,11 +174,6 @@ class SparseSVMFunction
   //! Modify the dataset.
   arma::sp_mat& Dataset() { return dataset; }
 
-  //! Get the labels.
-  const arma::vec& Labels() const { return labels; }
-  //! Modify the labels.
-  arma::vec& Labels() { return labels; }
-
   //! Sets the regularization parameter.
   double& Lambda() { return lambda; }
   //! Gets the regularization parameter.
@@ -200,9 +195,6 @@ class SparseSVMFunction
 
   //! Number of Classes.
   size_t numClasses;
-
-  //! The labels, y_i.
-  arma::Row<size_t> labels;
 
   //! The regularization parameter for L2-regularization.
   double lambda;
