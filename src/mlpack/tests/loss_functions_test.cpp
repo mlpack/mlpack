@@ -20,7 +20,11 @@
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
+<<<<<<< HEAD
 #include <mlpack/methods/ann/loss_functions/dice_loss.hpp>
+=======
+#include <mlpack/methods/ann/loss_functions/contrastive_loss.hpp>
+>>>>>>> Added contrastive loss impl
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -356,6 +360,7 @@ BOOST_AUTO_TEST_CASE(GradientReconstructionLossTest)
 }
 
 /*
+<<<<<<< HEAD
  * Simple test for the dice loss function.
  */
 BOOST_AUTO_TEST_CASE(DiceLossTest)
@@ -396,4 +401,58 @@ BOOST_AUTO_TEST_CASE(DiceLossTest)
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
 }
 
+=======
+ * Simple test for Contrastive Loss Function.
+ */
+
+
+BOOST_AUTO_TEST_CASE(SimpleContrastiveLossTest)
+{
+  arma::mat input1, input2, input3, input4, output,
+            target1, target2;
+
+  double expected;
+  ContrastiveLoss<> module;
+
+
+  input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
+  input2 = arma::ones(1,8);
+  target1 = arma::zeros(1, 8);
+
+  // Testing the forward function
+  double error1 = module.Forward(std::move(input1), std::move(input2), std::move(target1));
+  BOOST_REQUIRE_EQUAL(error1, 1);
+
+  input3 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
+  input4 = arma::ones(1,8);
+  target2 = arma::ones(1,8);
+  expected = 0.16;
+  double error2 = module.Forward(std::move(input1), std::move(input2), std::move(target1));
+  BOOST_REQUIRE_SMALL(error2 - expected, 1e-4);
+
+  // Testing the backward function
+  module.Backward(std::move(input1), std::move(input2),std::move(target1), std::move(output));
+  arma::mat expected_output = -0.2 * arma::ones(1, input3.n_cols);
+
+  for (size_t i = 0; i < output.n_elem; i++)
+    BOOST_REQUIRE_SMALL(output(i) - expected_output(i), 1e-5);
+
+  BOOST_REQUIRE_EQUAL(output.n_rows, input1.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
+
+
+  module.Backward(std::move(input3), std::move(input4),std::move(target1), std::move(output));
+  expected_output = 0.5 * arma::ones(1, input3.n_cols); 
+
+  for (size_t i = 0; i < output.n_elem; i++)
+    BOOST_REQUIRE_SMALL(output(i) - expected_output(i), 1e-5);
+
+  BOOST_REQUIRE_EQUAL(output.n_rows, input3.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input3.n_cols);
+
+}
+
+
+>>>>>>> Added contrastive loss impl
 BOOST_AUTO_TEST_SUITE_END();
+
