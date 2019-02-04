@@ -188,7 +188,7 @@ static void mlpackMain()
     model->nbc.Classify(testingData, predictions, probabilities);
     Timer::Stop("nbc_testing");
 
-    if (CLI::HasParam("output"))
+    if (CLI::HasParam("predictions"))
     {
       // Un-normalize labels to prepare output.
       Row<size_t> rawResults;
