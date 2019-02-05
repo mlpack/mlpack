@@ -628,6 +628,12 @@ double DecisionTree<FitnessFunction,
     for (size_t i = begin; i < begin + count; ++i)
       childCounts[childAssignments[i - begin]]++;
 
+    //Initialize bestGain if recursive split is allowed
+    if(!NoRecursion)
+    {
+      bestGain = 0.0;
+    }
+
     // Split into children.
     size_t currentCol = begin;
     for (size_t i = 0; i < numChildren; ++i)
@@ -656,24 +662,11 @@ double DecisionTree<FitnessFunction,
       }
       else
       {
-        double prevChildGain = FitnessFunction::template Evaluate<UseWeights>(
-            labels.subvec(currentChildBegin, currentCol - 1),
-            numClasses,
-            UseWeights ? weights.subvec(currentChildBegin, currentCol - 1) :
-                weights);
         // During recursion entropy of child node may change
-        double newChildGain = child->Train<UseWeights>(data, currentChildBegin,
+        double childGain = child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, datasetInfo, labels, numClasses,
             weights, minimumLeafSize, minimumGainSplit);
-        newChildGain = -newChildGain;
-        if(newChildGain>prevChildGain)
-        {
-          double prevContribute = prevChildGain * childCounts[i] / count ;
-          double newBestGain = bestGain - prevContribute;
-          double newContribute = newChildGain * childCounts[i] / count;
-          newBestGain = newBestGain + newContribute;
-          bestGain = std::max(bestGain,newBestGain);
-        }
+        bestGain += double(childCounts[i]) / double(count) * (-childGain);
       }
       children.push_back(child);
     }
@@ -782,6 +775,12 @@ double DecisionTree<FitnessFunction,
     for (size_t j = begin; j < begin + count; ++j)
       childCounts[childAssignments[j - begin]]++;
 
+    //Initialize bestGain if recursive split is allowed
+    if(!NoRecursion)
+    {
+      bestGain = 0.0;
+    }
+
     size_t currentCol = begin;
     for (size_t i = 0; i < numChildren; ++i)
     {
@@ -809,24 +808,11 @@ double DecisionTree<FitnessFunction,
       }
       else
       {
-        double prevChildGain = FitnessFunction::template Evaluate<UseWeights>(
-            labels.subvec(currentChildBegin, currentCol - 1),
-            numClasses,
-            UseWeights ? weights.subvec(currentChildBegin, currentCol - 1) :
-                weights);
         // During recursion entropy of child node may change
-        double newChildGain = child->Train<UseWeights>(data, currentChildBegin,
+        double childGain = child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, labels, numClasses, weights,
             minimumLeafSize, minimumGainSplit);
-        newChildGain = -newChildGain;
-        if(newChildGain>prevChildGain)
-        {
-          double prevContribute = prevChildGain * childCounts[i] / count ;
-          double newBestGain = bestGain - prevContribute;
-          double newContribute = newChildGain * childCounts[i] / count;
-          newBestGain = newBestGain + newContribute;
-          bestGain = std::max(bestGain,newBestGain);
-        }
+        bestGain += double(childCounts[i]) / double(count) * (-childGain);
       }
       children.push_back(child);
     }

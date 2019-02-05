@@ -433,7 +433,7 @@ double RandomForest<
   trees.resize(numTrees); // This will fill the vector with untrained trees.
   double avgGain = 0.0;
 
-  #pragma omp parallel for
+  #pragma omp parallel for reduction( + : avgGain)
   for (omp_size_t i = 0; i < numTrees; ++i)
   {
     MatType bootstrapDataset;
