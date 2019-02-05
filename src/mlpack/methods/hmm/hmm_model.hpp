@@ -185,7 +185,7 @@ class HMMModel
       gmmHMM = NULL;
 
       // Backward compatibility: new versions of HMM has a Diagonal GMM type.
-      if (version != 0)
+      if (version > 0)
       {
         delete diagGMMHMM;
 
@@ -201,7 +201,7 @@ class HMMModel
       ar & BOOST_SERIALIZATION_NVP(gmmHMM);
     
     // Backward compatibility: new versions of HMM has a Diagonal GMM type.
-    if (version != 0)
+    if (version > 0)
     {
       if (type == HMMType::DiagonalGaussianMixtureModelHMM)
         ar & BOOST_SERIALIZATION_NVP(diagGMMHMM);
@@ -238,5 +238,8 @@ class HMMModel
 
 } // namespace hmm
 } // namespace mlpack
+
+//! Set the serialization version of the HMMModel class.
+BOOST_CLASS_VERSION(mlpack::hmm::HMMModel, 1);
 
 #endif
