@@ -1,9 +1,9 @@
 /**
- * @file sparse_svm_function_impl.hpp
+ * @file linear_svm_function_impl.hpp
  * @author Shikhar Bhardwaj
  * @author Ayush Chamoli
  *
- * Implementation of the hinge loss function for training a sparse SVM with the
+ * Implementation of the hinge loss function for training a linear SVM with the
  * parallel SGD algorithm
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -11,20 +11,20 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_SPARSE_SVM_SPARSE_SVM_FUNCTION_IMPL_HPP
-#define MLPACK_METHODS_SPARSE_SVM_SPARSE_SVM_FUNCTION_IMPL_HPP
+#ifndef MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_FUNCTION_IMPL_HPP
+#define MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_FUNCTION_IMPL_HPP
 
 #include <mlpack/core/math/make_alias.hpp>
 #include <mlpack/core/math/shuffle_data.hpp>
 
 // In case it hasn't been included yet.
-#include "sparse_svm_function.hpp"
+#include "linear_svm_function.hpp"
 
 namespace mlpack {
 namespace svm {
 
 template <typename MatType>
-SparseSVMFunction<MatType>::SparseSVMFunction(
+LinearSVMFunction<MatType>::LinearSVMFunction(
   const MatType& dataset,
   const arma::Row<size_t>& labels,
   const size_t numClasses,
@@ -46,13 +46,13 @@ SparseSVMFunction<MatType>::SparseSVMFunction(
  * lead to each class output being the same.
  */
 template <typename MatType>
-const arma::mat SparseSVMFunction<MatType>::InitializeWeights()
+const arma::mat LinearSVMFunction<MatType>::InitializeWeights()
 {
   return InitializeWeights(dataset.n_rows, numClasses);
 }
 
 template <typename MatType>
-const arma::mat SparseSVMFunction<MatType>::InitializeWeights(
+const arma::mat LinearSVMFunction<MatType>::InitializeWeights(
         const size_t featureSize,
         const size_t numClasses)
 {
@@ -62,7 +62,7 @@ const arma::mat SparseSVMFunction<MatType>::InitializeWeights(
 }
 
 template <typename MatType>
-void SparseSVMFunction<MatType>::InitializeWeights(
+void LinearSVMFunction<MatType>::InitializeWeights(
         arma::mat &weights,
         const size_t featureSize,
         const size_t numClasses)
@@ -79,7 +79,7 @@ void SparseSVMFunction<MatType>::InitializeWeights(
  * calculations in the Evaluate() and Gradient() methods.
  */
 template <typename MatType>
-void SparseSVMFunction<MatType>::GetGroundTruthMatrix(
+void LinearSVMFunction<MatType>::GetGroundTruthMatrix(
         const arma::Row<size_t>& labels, arma::sp_mat& groundTruth)
 {
   // Calculate the ground truth matrix according to the labels passed. The
@@ -112,7 +112,7 @@ void SparseSVMFunction<MatType>::GetGroundTruthMatrix(
  * Shuffle the data.
  */
 template <typename MatType>
-void SparseSVMFunction<MatType>::Shuffle()
+void LinearSVMFunction<MatType>::Shuffle()
 {
   // Determine new ordering.
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -147,7 +147,7 @@ void SparseSVMFunction<MatType>::Shuffle()
 }
 
 template <typename MatType>
-double SparseSVMFunction<MatType>::Evaluate(
+double LinearSVMFunction<MatType>::Evaluate(
     const arma::mat& parameters)
 {
   // The objective function is the hinge loss function and it is
@@ -176,7 +176,7 @@ double SparseSVMFunction<MatType>::Evaluate(
 }
 
 template <typename MatType>
-double SparseSVMFunction<MatType>::Evaluate(
+double LinearSVMFunction<MatType>::Evaluate(
     const arma::mat& parameters,
     const size_t firstId,
     const size_t batchSize)
@@ -207,7 +207,7 @@ double SparseSVMFunction<MatType>::Evaluate(
 
 template <typename MatType>
 template <typename GradType>
-void SparseSVMFunction<MatType>::Gradient(
+void LinearSVMFunction<MatType>::Gradient(
     const arma::mat& parameters,
     GradType& gradient)
 {
@@ -236,7 +236,7 @@ void SparseSVMFunction<MatType>::Gradient(
 
 template <typename MatType>
 template <typename GradType>
-void SparseSVMFunction<MatType>::Gradient(
+void LinearSVMFunction<MatType>::Gradient(
     const arma::mat& parameters,
     const size_t firstId,
     GradType& gradient,
@@ -268,7 +268,7 @@ void SparseSVMFunction<MatType>::Gradient(
 
 template <typename MatType>
 template <typename GradType>
-double SparseSVMFunction<MatType>::EvaluateWithGradient(
+double LinearSVMFunction<MatType>::EvaluateWithGradient(
     const arma::mat& parameters,
     GradType& gradient) const
 {
@@ -310,7 +310,7 @@ double SparseSVMFunction<MatType>::EvaluateWithGradient(
 
 template <typename MatType>
 template <typename GradType>
-double SparseSVMFunction<MatType>::EvaluateWithGradient(
+double LinearSVMFunction<MatType>::EvaluateWithGradient(
     const arma::mat& parameters,
     const size_t firstId,
     GradType& gradient,
@@ -356,7 +356,7 @@ double SparseSVMFunction<MatType>::EvaluateWithGradient(
 }
 
 template <typename MatType>
-size_t SparseSVMFunction<MatType>::NumFunctions() const
+size_t LinearSVMFunction<MatType>::NumFunctions() const
 {
   // The number of points in the dataset is the number of functions, as this
   // is a data dependent function.
@@ -367,4 +367,4 @@ size_t SparseSVMFunction<MatType>::NumFunctions() const
 } // namespace mlpack
 
 
-#endif // MLPACK_METHODS_SPARSE_SVM_SPARSE_SVM_FUNCTION_IMPL_HPP
+#endif // MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_FUNCTION_IMPL_HPP

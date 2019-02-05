@@ -1,26 +1,26 @@
 /**
- * @file sparse_svm.cpp
+ * @file linear_svm.cpp
  * @author Ayush Chamoli
  *
- * Implementation of Sparse SVM.
+ * Implementation of Linear SVM.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_SPARSE_SVM_SPARSE_SVM_IMPL_HPP
-#define MLPACK_METHODS_SPARSE_SVM_SPARSE_SVM_IMPL_HPP
+#ifndef MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_IMPL_HPP
+#define MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "sparse_svm.hpp"
+#include "linear_svm.hpp"
 
 namespace mlpack {
 namespace svm {
 
 template <typename MatType>
 template <typename OptimizerType>
-SparseSVM<MatType>::SparseSVM(
+LinearSVM<MatType>::LinearSVM(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
@@ -34,31 +34,31 @@ SparseSVM<MatType>::SparseSVM(
 
 template <typename MatType>
 template <typename OptimizerType>
-double SparseSVM<MatType>::Train(
+double LinearSVM<MatType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const double lambda,
     OptimizerType optimizer)
 {
-  SparseSVMFunction<MatType> svm(data, labels,
+  LinearSVMFunction<MatType> svm(data, labels,
       numClasses, lambda);
   if (parameters.is_empty())
     parameters = svm.InitialPoint();
 
   // Train the model.
-  Timer::Start("sparse_svm_optimization");
+  Timer::Start("linear_svm_optimization");
   const double out = optimizer.Optimize(svm, parameters);
-  Timer::Stop("sparse_svm_optimization");
+  Timer::Stop("linear_svm_optimization");
 
-  Log::Info << "SparseSVM::SparseSVM(): final objective of "
+  Log::Info << "LinearSVM::LinearSVM(): final objective of "
             << "trained model is " << out << "." << std::endl;
 
   return out;
 }
 
 template <typename MatType>
-void SparseSVM<MatType>::Classify(
+void LinearSVM<MatType>::Classify(
     const MatType& data,
     arma::Row<size_t> &labels)
 const
@@ -89,7 +89,7 @@ const
 }
 
 template <typename MatType>
-void SparseSVM<MatType>::Classify(
+void LinearSVM<MatType>::Classify(
         const MatType& data,
         arma::Row<size_t> &labels,
         arma::mat& scores)
@@ -120,7 +120,7 @@ const
 }
 
 template <typename MatType>
-void SparseSVM<MatType>::Classify(
+void LinearSVM<MatType>::Classify(
         const MatType& data,
         arma::mat& scores)
 const
@@ -128,7 +128,7 @@ const
   if (data.n_rows != FeatureSize())
   {
     std::ostringstream oss;
-    oss << "SparseSVM::Classify(): dataset has " << data.n_rows
+    oss << "LinearSVM::Classify(): dataset has " << data.n_rows
         << " dimensions, but model has " << FeatureSize() << " dimensions!";
     throw std::invalid_argument(oss.str());
   }
@@ -137,7 +137,7 @@ const
 }
 
 template <typename MatType>
-double SparseSVM<MatType>::ComputeAccuracy(
+double LinearSVM<MatType>::ComputeAccuracy(
     const MatType& testData,
     const arma::Row<size_t>& testLabels)
 const
@@ -160,4 +160,4 @@ const
 } // namespace svm
 } // namespace mlpack
 
-#endif
+#endif // MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_IMPL_HPP

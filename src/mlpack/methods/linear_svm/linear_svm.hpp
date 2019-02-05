@@ -1,44 +1,49 @@
 /**
- * @file sparse_svm.hpp
+ * @file linear_svm.hpp
  * @author Ayush Chamoli
  *
- * An implementation of Sparse SVM.
+ * An implementation of Linear SVM.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_SPARSE_SVM_SPARSE_SVM_HPP
-#define MLPACK_METHODS_SPARSE_SVM_SPARSE_SVM_HPP
+#ifndef MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_HPP
+#define MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <ensmallen.hpp>
 
-#include "sparse_svm_function.hpp"
+#include "linear_svm_function.hpp"
 
 namespace mlpack {
 namespace svm {
 
 /**
- * The SparseSVM class implements an L2-regularized Support Vector
+ * The LinearSVM class implements an L2-regularized support vector machine
  * model, and supports training with multiple optimizers and classification.
  * The class supports different observation types via the MatType template
  * parameter; for instance, support vector classification can be performed
  * on sparse datasets by specifying arma::sp_mat as the MatType parameter.
- * More technical details about the model can be found on the following webpage:
  *
- * http://www.jmlr.org/papers/volume3/bi03a/bi03a.pdf
+ * Linear SVM can be used for general classification tasks which will work
+ * on multiclass classification. More technical details about
+ * the model can be found on the following webpage:
+ *
+ * https://link.springer.com/content/pdf/10.1007%2FBF00994018.pdf
  *
  * @tparam MatType Type of data matrix.
  */
 template <typename MatType>
-class SparseSVM
+class LinearSVM
 {
  public:
   /**
-   * Construct the SparseSVM class with the provided data and labels.
-   * This will train the model.
+   * Construct the LinearSVM class with the provided data and labels.
+   * This will train the model. Optionally, the parameter 'lambda' can be
+   * passed, which controls the amount of L2-regularization in the objective
+   * function. By default, the model takes a small value.
    *
    * @tparam OptimizerType Desired differentiable separable optimizer
    * @param data Input training features. Each column associate with one sample
@@ -48,7 +53,7 @@ class SparseSVM
    * @param optimizer Desired optimizer.
    */
   template <typename OptimizerType = ens::ParallelSGD<>>
-  SparseSVM(const MatType& data,
+  LinearSVM(const MatType& data,
             const arma::Row<size_t>& labels,
             const size_t numClasses = 2,
             const double lambda = 0.0001,
@@ -56,6 +61,9 @@ class SparseSVM
 
   /**
    * Classify the given points, returning the predicted labels for each point.
+   * The function calculates the probabilities for every class, given a data
+   * point. It then chooses the class which has the highest probability among
+   * all.
    *
    * @param data Set of points to classify.
    * @param labels Predicted labels for each point.
@@ -78,14 +86,14 @@ class SparseSVM
                 arma::Row<size_t>& labels,
                 arma::mat& scores) const;
 
-    /**
+  /**
    * Classify the given points, returning class scores for each point.
    *
    * @param data Matrix of data points to be classified.
    * @param scores Class scores for each point.
    */
-    void Classify(const MatType& data,
-                  arma::mat& scores) const;
+  void Classify(const MatType& data,
+                arma::mat& scores) const;
 
   /**
    * Computes accuracy of the learned model given the feature data and the
@@ -100,7 +108,7 @@ class SparseSVM
                          const arma::Row<size_t>& testLabels) const;
 
   /**
-   * Train the Sparse SVM with the given training data.
+   * Train the Linear SVM with the given training data.
    *
    * @tparam OptimizerType Desired optimizer
    * @param data Input training features. Each column associate with one sample
@@ -137,7 +145,7 @@ class SparseSVM
   size_t FeatureSize() const { return parameters.n_cols; }
 
   /**
-   * Serialize the SparseSVM model.
+   * Serialize the LinearSVM model.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
@@ -160,6 +168,6 @@ class SparseSVM
 } // namespace mlpack
 
 // Include implementation.
-#include "sparse_svm_impl.hpp"
+#include "linear_svm_impl.hpp"
 
-#endif
+#endif // MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_HPP
