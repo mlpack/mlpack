@@ -279,7 +279,7 @@ struct Init
         // Generate random diagonal covariance.
         arma::mat r = arma::diagmat(arma::randu<arma::mat>(dimensionality,
             dimensionality));
-        e[i].Component(g).Covariance(r * r.t());
+        e[i].Component(g).Covariance(r);
       }
     }
   }  

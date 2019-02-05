@@ -203,8 +203,6 @@ class DiagonalGMM
    * procedure is deterministic after the initial position is given, then
    * 'trials' should be set to 1.
    *
-   * @tparam FittingType The type of fitting method which should be used
-   *     (EMFit<> is suggested).
    * @param observations Observations of the model.
    * @param trials Number of trials to perform; the model in these trials with
    *      the greatest log-likelihood will be selected.
@@ -212,11 +210,10 @@ class DiagonalGMM
    *      model for the estimation.
    * @return The log-likelihood of the best fit.
    */
-  template<typename FittingType = EMFit<>>
+  template<typename InitialClusteringType = kmeans::KMeans<>>
   double Train(const arma::mat& observations,
                const size_t trials = 1,
-               const bool useExistingModel = false,
-               FittingType fitter = FittingType());
+               const bool useExistingModel = false);
 
   /**
    * Estimate the probability distribution directly from the given observations,
@@ -242,12 +239,11 @@ class DiagonalGMM
    *     model for the estimation.
    * @return The log-likelihood of the best fit.
    */
-  template<typename FittingType = EMFit<>>
+  template<typename InitialClusteringType = kmeans::KMeans<>>
   double Train(const arma::mat& observations,
                const arma::vec& probabilities,
                const size_t trials = 1,
-               const bool useExistingModel = false,
-               FittingType fitter = FittingType());
+               const bool useExistingModel = false);
   /**
    * Classify the given observations as being from an individual component in
    * this DiagonalGMM. The resultant classifications are stored in the 'labels'

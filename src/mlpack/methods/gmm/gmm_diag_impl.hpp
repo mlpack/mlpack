@@ -22,15 +22,13 @@ namespace gmm {
 /**
  * Fit the DiagonalGMM to the given observations.
  */
-template<typename FittingType>
+template<typename InitialClusteringType>
 double DiagonalGMM::Train(const arma::mat& observations,
                           const size_t trials,
-                          const bool useExistingModel,
-                          FittingType fitter)
+                          const bool useExistingModel)
 {
   // To use armadillo gmm_diag class, we create fitter for DiagonalConstraint.
-  EMFit<typename std::remove_reference<decltype(fitter.Clusterer())>::type,
-        DiagonalConstraint> armaFitter;
+  EMFit<InitialClusteringType, DiagonalConstraint> fitter;
 
   double bestLikelihood; // This will be reported later.
 
@@ -40,7 +38,7 @@ double DiagonalGMM::Train(const arma::mat& observations,
     // Train the model.  The user will have been warned earlier if the
     // DiagonalGMM was initialized with no parameters (0 gaussians,
     // dimensionality of 0).
-    armaFitter.Estimate(observations, dists, weights, useExistingModel);
+    fitter.Estimate(observations, dists, weights, useExistingModel);
     bestLikelihood = LogLikelihood(observations, dists, weights);
   }
   else
@@ -61,7 +59,7 @@ double DiagonalGMM::Train(const arma::mat& observations,
     // We need to keep temporary copies.  We'll do the first training into the
     // actual model position, so that if it's the best we don't need to
     // copy it.
-    armaFitter.Estimate(observations, dists, weights, useExistingModel);
+    fitter.Estimate(observations, dists, weights, useExistingModel);
     bestLikelihood = LogLikelihood(observations, dists, weights);
 
     Log::Info << "DiagonalGMM::Train(): Log-likelihood of trial 0 is "
@@ -80,7 +78,7 @@ double DiagonalGMM::Train(const arma::mat& observations,
         weightsTrial = weightsOrig;
       }
 
-      armaFitter.Estimate(observations, dists, weights, useExistingModel);
+      fitter.Estimate(observations, dists, weights, useExistingModel);
 
       // Check to see if the log-likelihood of this one is better.
       double newLikelihood = LogLikelihood(observations, distsTrial,
@@ -110,13 +108,15 @@ double DiagonalGMM::Train(const arma::mat& observations,
  * Fit the DiagonalGMM to the given observations, each of which has a certain
  * probability of being from this distribution.
  */
-template<typename FittingType>
+template<typename InitialClusteringType>
 double DiagonalGMM::Train(const arma::mat& observations,
                   const arma::vec& probabilities,
                   const size_t trials,
-                  const bool useExistingModel,
-                  FittingType fitter)
+                  const bool useExistingModel)
 {
+  // To use armadillo gmm_diag class, we create fitter for DiagonalConstraint.
+  EMFit<InitialClusteringType, DiagonalConstraint> fitter;
+  
   double bestLikelihood; // This will be reported later.
 
   // We don't need to store temporary models if we are only doing one trial.
