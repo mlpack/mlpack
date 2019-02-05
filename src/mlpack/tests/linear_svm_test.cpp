@@ -1,8 +1,8 @@
 /**
- * @file sparse_svm_test.cpp
+ * @file linear_svm_test.cpp
  * @author Ayush Chamoli
  *
- * Test the Sparse SVM class.
+ * Test the Linear SVM class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/sparse_svm/sparse_svm.hpp>
+#include <mlpack/methods/linear_svm/linear_svm.hpp>
 #include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -20,12 +20,12 @@ using namespace mlpack;
 using namespace mlpack::svm;
 using namespace mlpack::distribution;
 
-BOOST_AUTO_TEST_SUITE(SparseSVMTest);
+BOOST_AUTO_TEST_SUITE(LinearSVMTest);
 
 /**
- * A simple test for SparseSVMFunction
+ * A simple test for LinearSVMFunction
  */
-BOOST_AUTO_TEST_CASE(SparseSVMFunctionEvaluate)
+BOOST_AUTO_TEST_CASE(LinearSVMFunctionEvaluate)
 {
   // A very simple fake dataset
   arma::mat dataset = "2 0 0;"
@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(SparseSVMFunctionEvaluate)
   //  Corresponding labels
   arma::Row<size_t> labels = "1 0 1";
 
-  SparseSVMFunction<arma::mat> svmf(dataset, labels, 2,
+  LinearSVMFunction<arma::mat> svmf(dataset, labels, 2,
       0.0 /* no regularization */);
 
   // These were hand-calculated using Python.
@@ -63,10 +63,10 @@ BOOST_AUTO_TEST_CASE(SparseSVMFunctionEvaluate)
 }
 
 /**
- * A complicated test for the SparseSVMFunction for binary-class
+ * A complicated test for the LinearSVMFunction for binary-class
  * classification.
  */
-BOOST_AUTO_TEST_CASE(SparseSVMFunctionRandomBinaryEvaluate)
+BOOST_AUTO_TEST_CASE(LinearSVMFunctionRandomBinaryEvaluate)
 {
   const size_t points = 1000;
   const size_t trials = 25;
@@ -82,8 +82,8 @@ BOOST_AUTO_TEST_CASE(SparseSVMFunctionRandomBinaryEvaluate)
   for (size_t i = 0; i < points; i++)
     labels(i) = math::RandInt(0, numClasses);
 
-  // Create a SparseSVMFunction, Regularization term ignored.
-  SparseSVMFunction<arma::mat> svmf(data, labels, numClasses,
+  // Create a LinearSVMFunction, Regularization term ignored.
+  LinearSVMFunction<arma::mat> svmf(data, labels, numClasses,
       0.0 /* no regularization */);
 
   // Run a number of trials.
@@ -115,10 +115,10 @@ BOOST_AUTO_TEST_CASE(SparseSVMFunctionRandomBinaryEvaluate)
 }
 
 /**
- * A complicated test for the SparseSVMFunction for multi-class
+ * A complicated test for the LinearSVMFunction for multi-class
  * classification.
  */
-BOOST_AUTO_TEST_CASE(SparseSVMFunctionRandomEvaluate)
+BOOST_AUTO_TEST_CASE(LinearSVMFunctionRandomEvaluate)
 {
   const size_t points = 1000;
   const size_t trials = 25;
@@ -134,8 +134,8 @@ BOOST_AUTO_TEST_CASE(SparseSVMFunctionRandomEvaluate)
   for (size_t i = 0; i < points; i++)
     labels(i) = math::RandInt(0, numClasses);
 
-  // Create a SparseSVMFunction, Regularization term ignored.
-  SparseSVMFunction<arma::mat> svmf(data, labels, numClasses,
+  // Create a LinearSVMFunction, Regularization term ignored.
+  LinearSVMFunction<arma::mat> svmf(data, labels, numClasses,
       0.0 /* no regularization */);
 
   // Run a number of trials.
@@ -167,10 +167,10 @@ BOOST_AUTO_TEST_CASE(SparseSVMFunctionRandomEvaluate)
 }
 
 /**
- * Test regularization for the SparseSVMFunction Evaluate()
+ * Test regularization for the LinearSVMFunction Evaluate()
  * function.
  */
-BOOST_AUTO_TEST_CASE(SparseSVMFunctionRegularizationEvaluate)
+BOOST_AUTO_TEST_CASE(LinearSVMFunctionRegularizationEvaluate)
 {
   const size_t points = 1000;
   const size_t trials = 50;
@@ -187,9 +187,9 @@ BOOST_AUTO_TEST_CASE(SparseSVMFunctionRegularizationEvaluate)
     labels(i) = math::RandInt(0, numClasses);
 
   // 3 objects for comparing regularization costs.
-  SparseSVMFunction<arma::mat> svmfNoReg(data, labels, numClasses, 0);
-  SparseSVMFunction<arma::mat> svmfSmallReg(data, labels, numClasses, 1);
-  SparseSVMFunction<arma::mat> svmfBigReg(data, labels, numClasses, 20);
+  LinearSVMFunction<arma::mat> svmfNoReg(data, labels, numClasses, 0);
+  LinearSVMFunction<arma::mat> svmfSmallReg(data, labels, numClasses, 1);
+  LinearSVMFunction<arma::mat> svmfBigReg(data, labels, numClasses, 20);
 
   // Run a number of trials.
   for (size_t i = 0; i < trials; i++)
@@ -212,7 +212,7 @@ BOOST_AUTO_TEST_CASE(SparseSVMFunctionRegularizationEvaluate)
   }
 }
 
-BOOST_AUTO_TEST_CASE(SparseSVMFunctionGradient)
+BOOST_AUTO_TEST_CASE(LinearSVMFunctionGradient)
 {
   const size_t points = 1000;
   const size_t inputSize = 10;
@@ -229,8 +229,8 @@ BOOST_AUTO_TEST_CASE(SparseSVMFunctionGradient)
 
   // 2 objects for 2 terms in the cost function. Each term contributes towards
   // the gradient and thus need to be checked independently.
-  SparseSVMFunction<arma::mat> svmf1(data, labels, numClasses, 0);
-  SparseSVMFunction<arma::mat> svmf2(data, labels, numClasses, 10);
+  LinearSVMFunction<arma::mat> svmf1(data, labels, numClasses, 0);
+  LinearSVMFunction<arma::mat> svmf2(data, labels, numClasses, 10);
 
   // Create a random set of parameters.
   arma::mat parameters;

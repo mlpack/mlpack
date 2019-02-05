@@ -1,9 +1,9 @@
 /**
- * @file sparse_svm_function.hpp
+ * @file linear_svm_function.hpp
  * @author Shikhar Bhardwaj
  * @author Ayush Chamoli
  *
- * Implementation of the hinge loss function for training a sparse SVM with the
+ * Implementation of the hinge loss function for training a linear SVM with the
  * parallel SGD algorithm.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -11,30 +11,34 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_SPARSE_SVM_SPARSE_SVM_FUNCTION_HPP
-#define MLPACK_METHODS_SPARSE_SVM_SPARSE_SVM_FUNCTION_HPP
+#ifndef MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_FUNCTION_HPP
+#define MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace svm {
-
-template <typename MatType = arma::sp_mat>
-class SparseSVMFunction
+/**
+ * The hinge loss function for the linear SVM objective function.
+ * This is used by various ensmallen optimizers to train the linear
+ * SVM model.
+ */
+template <typename MatType = arma::mat>
+class LinearSVMFunction
 {
  public:
   //! Nothing to do for the default constructor.
-  SparseSVMFunction() {}
+  LinearSVMFunction() {}
 
   /**
-   * Construct the Sparse SVM objective function with given parameters.
+   * Construct the Linear SVM objective function with given parameters.
    *
    * @param dataset Input training data, each column associate with one sample
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
    */
-  SparseSVMFunction(const MatType& dataset,
+  LinearSVMFunction(const MatType& dataset,
                     const arma::Row<size_t>& labels,
                     const size_t numClasses,
                     const double lambda = 0.0001);
@@ -48,7 +52,7 @@ class SparseSVMFunction
   const arma::mat InitializeWeights();
 
   /**
-   * Initialize Sparse SVM weights (trainable parameters) with the given
+   * Initialize Linear SVM weights (trainable parameters) with the given
    * parameters.
    *
    * @param featureSize The number of features in the training set.
@@ -59,7 +63,7 @@ class SparseSVMFunction
                                            const size_t numClasses);
 
   /**
-   * Initialize Sparse SVM weights (trainable parameters) with the given
+   * Initialize Linear SVM weights (trainable parameters) with the given
    * parameters.
    *
    * @param weights This will be filled with the initialized model weights.
@@ -103,11 +107,11 @@ class SparseSVMFunction
 
   /**
    * Evaluate the gradient of the hinge loss function following the
-   * SparseFunctionType requirements on the Gradient function.
+   * LinearFunctionType requirements on the Gradient function.
    *
    * @tparam GradType Type of the gradient matrix.
    * @param parameters The parameters of the SVM.
-   * @param gradient Sparse matrix to output the gradient into.
+   * @param gradient Linear matrix to output the gradient into.
    */
   template <typename GradType>
   void Gradient(const arma::mat& parameters,
@@ -115,12 +119,12 @@ class SparseSVMFunction
 
   /**
    * Evaluate the gradient of the hinge loss function, following
-   * the SparseFunctionType requirements on the Gradient function.
+   * the LinearFunctionType requirements on the Gradient function.
    *
    * @tparam GradType Type of the gradient matrix.
    * @param parameters The parameters of the SVM.
    * @param firstId Index of the datapoint to use for the gradient evaluation.
-   * @param gradient Sparse matrix to output the gradient into.
+   * @param gradient Linear matrix to output the gradient into.
    * @param batchSize Size of the batch to process.
    */
   template <typename GradType>
@@ -131,13 +135,13 @@ class SparseSVMFunction
 
   /**
    * Evaluate the gradient of the hinge loss function, following
-   * the SparseFunctionType requirements on the Gradient function
+   * the LinearFunctionType requirements on the Gradient function
    * followed by evaluation of the hinge loss function on all the
    * datapoints
    *
    * @tparam GradType Type of the gradient matrix.
    * @param parameters The parameters of the SVM.
-   * @param gradient Sparse matrix to output the gradient into.
+   * @param gradient Linear matrix to output the gradient into.
    * @return The value of the loss function at the given parameters.
    */
   template <typename GradType>
@@ -146,7 +150,7 @@ class SparseSVMFunction
 
   /**
    * Evaluate the gradient of the hinge loss function, following
-   * the SparseFunctionType requirements on the Gradient function
+   * the LinearFunctionType requirements on the Gradient function
    * followed by evaluation of the hinge loss function on the specified
    * datapoints.
    *
@@ -154,7 +158,7 @@ class SparseSVMFunction
    * @param parameters The parameters of the SVM.
    * @param firstId Index of the datapoint to use for the gradient and function
    * evaluation.
-   * @param gradient Sparse matrix to output the gradient into.
+   * @param gradient Linear matrix to output the gradient into.
    * @param batchSize Size of the batch to process.
    * @return The value of the loss function at the given parameters.
    */
@@ -204,6 +208,6 @@ class SparseSVMFunction
 } // namespace mlpack
 
 // Include implementation
-#include "sparse_svm_function_impl.hpp"
+#include "linear_svm_function_impl.hpp"
 
-#endif // MLPACK_METHODS_SPARSE_SVM_SPARSE_SVM_FUNCTION_HPP
+#endif // MLPACK_METHODS_LINEAR_SVM_LINEAR_SVM_FUNCTION_HPP
