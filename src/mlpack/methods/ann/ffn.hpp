@@ -100,8 +100,8 @@ class FFN
    */
   template<typename OptimizerType>
   double Train(arma::mat predictors,
-             arma::mat responses,
-             OptimizerType& optimizer);
+               arma::mat responses,
+               OptimizerType& optimizer);
 
   /**
    * Train the feedforward network on the given input data. By default, the

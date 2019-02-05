@@ -132,10 +132,10 @@ class RandomForest
    */
   template<typename MatType>
   double Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const size_t numTrees = 50,
-             const size_t minimumLeafSize = 20);
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const size_t numTrees = 50,
+               const size_t minimumLeafSize = 20);
 
   /**
    * Train the random forest on the given labeled training data with the given
@@ -152,11 +152,11 @@ class RandomForest
    */
   template<typename MatType>
   double Train(const MatType& data,
-             const data::DatasetInfo& datasetInfo,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const size_t numTrees = 50,
-             const size_t minimumLeafSize = 20);
+               const data::DatasetInfo& datasetInfo,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const size_t numTrees = 50,
+               const size_t minimumLeafSize = 20);
 
   /**
    * Train the random forest on the given weighted labeled training data with
@@ -172,11 +172,11 @@ class RandomForest
    */
   template<typename MatType>
   double Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const arma::rowvec& weights,
-             const size_t numTrees = 50,
-             const size_t minimumLeafSize = 20);
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const arma::rowvec& weights,
+               const size_t numTrees = 50,
+               const size_t minimumLeafSize = 20);
 
   /**
    * Train the random forest on the given weighted labeled training data with
@@ -194,12 +194,12 @@ class RandomForest
    */
   template<typename MatType>
   double Train(const MatType& data,
-             const data::DatasetInfo& datasetInfo,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const arma::rowvec& weights,
-             const size_t numTrees = 50,
-             const size_t minimumLeafSize = 20);
+               const data::DatasetInfo& datasetInfo,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const arma::rowvec& weights,
+               const size_t numTrees = 50,
+               const size_t minimumLeafSize = 20);
 
   /**
    * Predict the class of the given point.  If the random forest has not been
@@ -282,12 +282,12 @@ class RandomForest
    */
   template<bool UseWeights, bool UseDatasetInfo, typename MatType>
   double Train(const MatType& data,
-             const data::DatasetInfo& datasetInfo,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const arma::rowvec& weights,
-             const size_t numTrees,
-             const size_t minimumLeafSize);
+               const data::DatasetInfo& datasetInfo,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const arma::rowvec& weights,
+               const size_t numTrees,
+               const size_t minimumLeafSize);
 
   //! The trees in the forest.
   std::vector<DecisionTreeType> trees;

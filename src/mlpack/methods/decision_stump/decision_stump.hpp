@@ -83,9 +83,9 @@ class DecisionStump
    * @param bucketSize Minimum size of bucket when splitting.
    */
   double Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const size_t bucketSize);
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const size_t bucketSize);
 
   /**
    * Train the decision stump on the given data, with the given weights.  This
@@ -99,10 +99,10 @@ class DecisionStump
    * @param bucketSize Minimum size of bucket when splitting.
    */
   double Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const arma::rowvec& weights,
-             const size_t numClasses,
-             const size_t bucketSize);
+               const arma::Row<size_t>& labels,
+               const arma::rowvec& weights,
+               const size_t numClasses,
+               const size_t bucketSize);
 
   /**
    * Classification function. After training, classify test, and put the
@@ -217,8 +217,8 @@ class DecisionStump
    */
   template<bool UseWeights>
   double Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const arma::rowvec& weights);
+               const arma::Row<size_t>& labels,
+               const arma::rowvec& weights);
 };
 
 } // namespace decision_stump

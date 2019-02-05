@@ -185,9 +185,9 @@ class LARS
    * @param transposeData Set to false if the data is row-major.
    */
   double Train(const arma::mat& data,
-             const arma::rowvec& responses,
-             arma::vec& beta,
-             const bool transposeData = true);
+               const arma::rowvec& responses,
+               arma::vec& beta,
+               const bool transposeData = true);
 
   /**
    * Run LARS.  The input matrix (like all mlpack matrices) should be
@@ -203,8 +203,8 @@ class LARS
    *     false otherwise.
    */
   double Train(const arma::mat& data,
-             const arma::rowvec& responses,
-             const bool transposeData = true);
+               const arma::rowvec& responses,
+               const bool transposeData = true);
 
   /**
    * Predict y_i for each data point in the given data matrix using the

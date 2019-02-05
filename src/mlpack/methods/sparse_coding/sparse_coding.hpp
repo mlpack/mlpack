@@ -180,8 +180,8 @@ class SparseCoding
    */
   template<typename DictionaryInitializer = DataDependentRandomInitializer>
   double Train(const arma::mat& data,
-             const DictionaryInitializer& initializer =
-                 DictionaryInitializer());
+               const DictionaryInitializer& initializer =
+                   DictionaryInitializer());
 
   /**
    * Sparse code each point in the given dataset via LARS, using the current

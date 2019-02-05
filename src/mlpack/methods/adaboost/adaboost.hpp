@@ -142,11 +142,11 @@ class AdaBoost
    * @param learner Learner to use for training.
    */
   double Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const WeakLearnerType& learner,
-             const size_t iterations = 100,
-             const double tolerance = 1e-6);
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const WeakLearnerType& learner,
+               const size_t iterations = 100,
+               const double tolerance = 1e-6);
 
   /**
    * Classify the given test points.

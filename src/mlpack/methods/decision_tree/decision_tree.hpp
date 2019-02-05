@@ -213,11 +213,11 @@ class DecisionTree :
    */
   template<typename MatType, typename LabelsType>
   double Train(MatType data,
-             const data::DatasetInfo& datasetInfo,
-             LabelsType labels,
-             const size_t numClasses,
-             const size_t minimumLeafSize = 10,
-             const double minimumGainSplit = 1e-7);
+               const data::DatasetInfo& datasetInfo,
+               LabelsType labels,
+               const size_t numClasses,
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7);
 
   /**
    * Train the decision tree on the given data, assuming that all dimensions are
@@ -236,10 +236,10 @@ class DecisionTree :
    */
   template<typename MatType, typename LabelsType>
   double Train(MatType data,
-             LabelsType labels,
-             const size_t numClasses,
-             const size_t minimumLeafSize = 10,
-             const double minimumGainSplit = 1e-7);
+               LabelsType labels,
+               const size_t numClasses,
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7);
 
   /**
    * Train the decision tree on the given weighted data.  This will overwrite
@@ -261,14 +261,14 @@ class DecisionTree :
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
   double Train(MatType data,
-             const data::DatasetInfo& datasetInfo,
-             LabelsType labels,
-             const size_t numClasses,
-             WeightsType weights,
-             const size_t minimumLeafSize = 10,
-             const double minimumGainSplit = 1e-7,
-             const std::enable_if_t<arma::is_arma_type<typename
-                 std::remove_reference<WeightsType>::type>::value>* = 0);
+               const data::DatasetInfo& datasetInfo,
+               LabelsType labels,
+               const size_t numClasses,
+               WeightsType weights,
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7,
+               const std::enable_if_t<arma::is_arma_type<typename
+                   std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
    * Train the decision tree on the given weighted data, assuming that all
@@ -288,13 +288,13 @@ class DecisionTree :
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
   double Train(MatType data,
-             LabelsType labels,
-             const size_t numClasses,
-             WeightsType weights,
-             const size_t minimumLeafSize = 10,
-             const double minimumGainSplit = 1e-7,
-             const std::enable_if_t<arma::is_arma_type<typename
-                 std::remove_reference<WeightsType>::type>::value>* = 0);
+               LabelsType labels,
+               const size_t numClasses,
+               WeightsType weights,
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7,
+               const std::enable_if_t<arma::is_arma_type<typename
+                   std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
    * Classify the given point, using the entire tree.  The predicted label is

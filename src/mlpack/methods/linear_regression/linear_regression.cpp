@@ -85,7 +85,7 @@ double LinearRegression::Train(const arma::mat& predictors,
       lambda * arma::eye<arma::mat>(p.n_rows, p.n_rows);
 
   parameters = arma::solve(cov, p * r.t());
-  return ComputeError(predictors,responses);
+  return ComputeError(predictors, responses);
 }
 
 void LinearRegression::Predict(const arma::mat& points,

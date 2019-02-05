@@ -73,8 +73,8 @@ class LinearRegression
    * @param intercept Whether or not to fit an intercept term.
    */
   double Train(const arma::mat& predictors,
-             const arma::rowvec& responses,
-             const bool intercept = true);
+               const arma::rowvec& responses,
+               const bool intercept = true);
 
   /**
    * Train the LinearRegression model on the given data and weights. Careful!
@@ -89,9 +89,9 @@ class LinearRegression
    * @param weights Observation weights (for boosting).
    */
   double Train(const arma::mat& predictors,
-             const arma::rowvec& responses,
-             const arma::rowvec& weights,
-             const bool intercept = true);
+               const arma::rowvec& responses,
+               const arma::rowvec& weights,
+               const bool intercept = true);
 
   /**
    * Calculate y_i for each data point in points.

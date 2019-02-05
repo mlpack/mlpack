@@ -97,8 +97,8 @@ class RNN
    */
   template<typename OptimizerType>
   double Train(arma::cube predictors,
-             arma::cube responses,
-             OptimizerType& optimizer);
+               arma::cube responses,
+               OptimizerType& optimizer);
 
   /**
    * Train the recurrent neural network on the given input data. By default, the
