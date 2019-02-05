@@ -61,7 +61,7 @@ void DiagCovGaussianDistribution::LogDeterminant()
 
 arma::vec DiagCovGaussianDistribution::Random() const
 {
-  return covariance * arma::randn<arma::vec>(mean.n_elem) + mean;
+  return arma::sqrt(covariance) * arma::randn<arma::vec>(mean.n_elem) + mean;
 }
 
 void DiagCovGaussianDistribution::Train(const arma::mat& observations)

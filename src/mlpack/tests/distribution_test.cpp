@@ -1344,10 +1344,13 @@ BOOST_AUTO_TEST_CASE(DiagCovGaussianDistributionRandomTest)
   BOOST_REQUIRE_CLOSE(obsMean[0], mean[0], 10.0);
   BOOST_REQUIRE_CLOSE(obsMean[1], mean[1], 10.0);
 
-  BOOST_REQUIRE_CLOSE(obsCov(0, 0), cov(0, 0), 10.0);
-  BOOST_REQUIRE_CLOSE(obsCov(0, 1), cov(0, 1), 10.0);
-  BOOST_REQUIRE_CLOSE(obsCov(1, 0), cov(1, 0), 10.0);
-  BOOST_REQUIRE_CLOSE(obsCov(1, 1), cov(1, 1), 10.0);
+  BOOST_REQUIRE_CLOSE(obsCov(0, 0), cov(0, 0), 10);
+  BOOST_REQUIRE_CLOSE(obsCov(1, 1), cov(1, 1), 10);
+
+  // Non-diagonal elements are tested using BOOST_REQUIRE_SMALL(), because
+  // it can be 0 / 0 (division by zero). 
+  BOOST_REQUIRE_SMALL(obsCov(0, 1) - cov(0, 1), 0.1 );
+  BOOST_REQUIRE_SMALL(obsCov(1, 0) - cov(1, 0), 0.1 );
 }
 
 /**
