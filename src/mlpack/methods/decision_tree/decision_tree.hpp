@@ -424,14 +424,14 @@ class DecisionTree :
    */
   template<bool UseWeights, typename MatType>
   double Train(MatType& data,
-             const size_t begin,
-             const size_t count,
-             const data::DatasetInfo& datasetInfo,
-             arma::Row<size_t>& labels,
-             const size_t numClasses,
-             arma::rowvec& weights,
-             const size_t minimumLeafSize = 10,
-             const double minimumGainSplit = 1e-7);
+               const size_t begin,
+               const size_t count,
+               const data::DatasetInfo& datasetInfo,
+               arma::Row<size_t>& labels,
+               const size_t numClasses,
+               arma::rowvec& weights,
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7);
 
   /**
    * Corresponding to the public Train() method, this method is designed for
@@ -449,13 +449,13 @@ class DecisionTree :
    */
   template<bool UseWeights, typename MatType>
   double Train(MatType& data,
-             const size_t begin,
-             const size_t count,
-             arma::Row<size_t>& labels,
-             const size_t numClasses,
-             arma::rowvec& weights,
-             const size_t minimumLeafSize = 10,
-             const double minimumGainSplit = 1e-7);
+               const size_t begin,
+               const size_t count,
+               arma::Row<size_t>& labels,
+               const size_t numClasses,
+               arma::rowvec& weights,
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7);
 };
 
 /**

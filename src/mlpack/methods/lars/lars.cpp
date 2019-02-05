@@ -69,9 +69,9 @@ LARS::LARS(const arma::mat& data,
 }
 
 double LARS::Train(const arma::mat& matX,
-                 const arma::rowvec& y,
-                 arma::vec& beta,
-                 const bool transposeData)
+                   const arma::rowvec& y,
+                   arma::vec& beta,
+                   const bool transposeData)
 {
   Timer::Start("lars_regression");
 
@@ -365,8 +365,8 @@ double LARS::Train(const arma::mat& matX,
 }
 
 double LARS::Train(const arma::mat& data,
-                 const arma::rowvec& responses,
-                 const bool transposeData)
+                   const arma::rowvec& responses,
+                   const bool transposeData)
 {
   arma::vec beta;
   return Train(data, responses, beta, transposeData);

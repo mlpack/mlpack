@@ -58,9 +58,9 @@ DecisionStump<MatType>::DecisionStump() :
  */
 template<typename MatType>
 double DecisionStump<MatType>::Train(const MatType& data,
-                                   const arma::Row<size_t>& labels,
-                                   const size_t numClasses,
-                                   const size_t bucketSize)
+                                     const arma::Row<size_t>& labels,
+                                     const size_t numClasses,
+                                     const size_t bucketSize)
 {
   this->numClasses = numClasses;
   this->bucketSize = bucketSize;
@@ -77,10 +77,10 @@ double DecisionStump<MatType>::Train(const MatType& data,
  */
 template<typename MatType>
 double DecisionStump<MatType>::Train(const MatType& data,
-                                   const arma::Row<size_t>& labels,
-                                   const arma::rowvec& weights,
-                                   const size_t numClasses,
-                                   const size_t bucketSize)
+                                     const arma::Row<size_t>& labels,
+                                     const arma::rowvec& weights,
+                                     const size_t numClasses,
+                                     const size_t bucketSize)
 {
   this->numClasses = numClasses;
   this->bucketSize = bucketSize;
@@ -99,8 +99,8 @@ double DecisionStump<MatType>::Train(const MatType& data,
 template<typename MatType>
 template<bool UseWeights>
 double DecisionStump<MatType>::Train(const MatType& data,
-                                   const arma::Row<size_t>& labels,
-                                   const arma::rowvec& weights)
+                                     const arma::Row<size_t>& labels,
+                                     const arma::rowvec& weights)
 {
   // If classLabels are not all identical, proceed with training.
   size_t bestDim = 0;

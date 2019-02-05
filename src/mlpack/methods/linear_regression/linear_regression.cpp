@@ -35,16 +35,16 @@ LinearRegression::LinearRegression(const arma::mat& predictors,
 }
 
 double LinearRegression::Train(const arma::mat& predictors,
-                             const arma::rowvec& responses,
-                             const bool intercept)
+                               const arma::rowvec& responses,
+                               const bool intercept)
 {
   return Train(predictors, responses, arma::rowvec(), intercept);
 }
 
 double LinearRegression::Train(const arma::mat& predictors,
-                             const arma::rowvec& responses,
-                             const arma::rowvec& weights,
-                             const bool intercept)
+                               const arma::rowvec& responses,
+                               const arma::rowvec& weights,
+                               const bool intercept)
 {
   this->intercept = intercept;
 

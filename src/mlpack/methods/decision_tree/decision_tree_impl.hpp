@@ -341,16 +341,16 @@ template<typename FitnessFunction,
          bool NoRecursion>
 template<typename MatType, typename LabelsType>
 double DecisionTree<FitnessFunction,
-                  NumericSplitType,
-                  CategoricalSplitType,
-                  DimensionSelectionType,
-                  ElemType,
-                  NoRecursion>::Train(MatType data,
-                                      const data::DatasetInfo& datasetInfo,
-                                      LabelsType labels,
-                                      const size_t numClasses,
-                                      const size_t minimumLeafSize,
-                                      const double minimumGainSplit)
+                    NumericSplitType,
+                    CategoricalSplitType,
+                    DimensionSelectionType,
+                    ElemType,
+                    NoRecursion>::Train(MatType data,
+                                        const data::DatasetInfo& datasetInfo,
+                                        LabelsType labels,
+                                        const size_t numClasses,
+                                        const size_t minimumLeafSize,
+                                        const double minimumGainSplit)
 {
   // Sanity check on data.
   if (data.n_cols != labels.n_elem)
@@ -384,15 +384,15 @@ template<typename FitnessFunction,
          bool NoRecursion>
 template<typename MatType, typename LabelsType>
 double DecisionTree<FitnessFunction,
-                  NumericSplitType,
-                  CategoricalSplitType,
-                  DimensionSelectionType,
-                  ElemType,
-                  NoRecursion>::Train(MatType data,
-                                      LabelsType labels,
-                                      const size_t numClasses,
-                                      const size_t minimumLeafSize,
-                                      const double minimumGainSplit)
+                    NumericSplitType,
+                    CategoricalSplitType,
+                    DimensionSelectionType,
+                    ElemType,
+                    NoRecursion>::Train(MatType data,
+                                        LabelsType labels,
+                                        const size_t numClasses,
+                                        const size_t minimumLeafSize,
+                                        const double minimumGainSplit)
 {
   // Sanity check on data.
   if (data.n_cols != labels.n_elem)
@@ -426,20 +426,21 @@ template<typename FitnessFunction,
          bool NoRecursion>
 template<typename MatType, typename LabelsType, typename WeightsType>
 double DecisionTree<FitnessFunction,
-                  NumericSplitType,
-                  CategoricalSplitType,
-                  DimensionSelectionType,
-                  ElemType,
-                  NoRecursion>::Train(MatType data,
-                                      const data::DatasetInfo& datasetInfo,
-                                      LabelsType labels,
-                                      const size_t numClasses,
-                                      WeightsType weights,
-                                      const size_t minimumLeafSize,
-                                      const double minimumGainSplit,
-                                      const std::enable_if_t<arma::is_arma_type<
-                                          typename std::remove_reference<
-                                          WeightsType>::type>::value>*)
+                    NumericSplitType,
+                    CategoricalSplitType,
+                    DimensionSelectionType,
+                    ElemType,
+                    NoRecursion>::Train(MatType data,
+                                        const data::DatasetInfo& datasetInfo,
+                                        LabelsType labels,
+                                        const size_t numClasses,
+                                        WeightsType weights,
+                                        const size_t minimumLeafSize,
+                                        const double minimumGainSplit,
+                                        const std::enable_if_t<
+                                            arma::is_arma_type<
+                                            typename std::remove_reference<
+                                            WeightsType>::type>::value>*)
 {
   // Sanity check on data.
   if (data.n_cols != labels.n_elem)
@@ -474,19 +475,20 @@ template<typename FitnessFunction,
          bool NoRecursion>
 template<typename MatType, typename LabelsType, typename WeightsType>
 double DecisionTree<FitnessFunction,
-                  NumericSplitType,
-                  CategoricalSplitType,
-                  DimensionSelectionType,
-                  ElemType,
-                  NoRecursion>::Train(MatType data,
-                                      LabelsType labels,
-                                      const size_t numClasses,
-                                      WeightsType weights,
-                                      const size_t minimumLeafSize,
-                                      const double minimumGainSplit,
-                                      const std::enable_if_t<arma::is_arma_type<
-                                          typename std::remove_reference<
-                                          WeightsType>::type>::value>*)
+                    NumericSplitType,
+                    CategoricalSplitType,
+                    DimensionSelectionType,
+                    ElemType,
+                    NoRecursion>::Train(MatType data,
+                                        LabelsType labels,
+                                        const size_t numClasses,
+                                        WeightsType weights,
+                                        const size_t minimumLeafSize,
+                                        const double minimumGainSplit,
+                                        const std::enable_if_t<
+                                            arma::is_arma_type<
+                                            typename std::remove_reference<
+                                            WeightsType>::type>::value>*)
 {
   // Sanity check on data.
   if (data.n_cols != labels.n_elem)
@@ -521,19 +523,19 @@ template<typename FitnessFunction,
          bool NoRecursion>
 template<bool UseWeights, typename MatType>
 double DecisionTree<FitnessFunction,
-                  NumericSplitType,
-                  CategoricalSplitType,
-                  DimensionSelectionType,
-                  ElemType,
-                  NoRecursion>::Train(MatType& data,
-                                      const size_t begin,
-                                      const size_t count,
-                                      const data::DatasetInfo& datasetInfo,
-                                      arma::Row<size_t>& labels,
-                                      const size_t numClasses,
-                                      arma::rowvec& weights,
-                                      const size_t minimumLeafSize,
-                                      const double minimumGainSplit)
+                    NumericSplitType,
+                    CategoricalSplitType,
+                    DimensionSelectionType,
+                    ElemType,
+                    NoRecursion>::Train(MatType& data,
+                                        const size_t begin,
+                                        const size_t count,
+                                        const data::DatasetInfo& datasetInfo,
+                                        arma::Row<size_t>& labels,
+                                        const size_t numClasses,
+                                        arma::rowvec& weights,
+                                        const size_t minimumLeafSize,
+                                        const double minimumGainSplit)
 {
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
@@ -695,18 +697,18 @@ template<typename FitnessFunction,
          bool NoRecursion>
 template<bool UseWeights, typename MatType>
 double DecisionTree<FitnessFunction,
-                  NumericSplitType,
-                  CategoricalSplitType,
-                  DimensionSelectionType,
-                  ElemType,
-                  NoRecursion>::Train(MatType& data,
-                                      const size_t begin,
-                                      const size_t count,
-                                      arma::Row<size_t>& labels,
-                                      const size_t numClasses,
-                                      arma::rowvec& weights,
-                                      const size_t minimumLeafSize,
-                                      const double minimumGainSplit)
+                    NumericSplitType,
+                    CategoricalSplitType,
+                    DimensionSelectionType,
+                    ElemType,
+                    NoRecursion>::Train(MatType& data,
+                                        const size_t begin,
+                                        const size_t count,
+                                        arma::Row<size_t>& labels,
+                                        const size_t numClasses,
+                                        arma::rowvec& weights,
+                                        const size_t minimumLeafSize,
+                                        const double minimumGainSplit)
 {
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
