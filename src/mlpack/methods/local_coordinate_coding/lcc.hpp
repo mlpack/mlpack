@@ -140,9 +140,9 @@ class LocalCoordinateCoding
       typename DictionaryInitializer =
           sparse_coding::DataDependentRandomInitializer
   >
-  void Train(const arma::mat& data,
-             const DictionaryInitializer& initializer =
-                 DictionaryInitializer());
+  double Train(const arma::mat& data,
+               const DictionaryInitializer& initializer =
+                   DictionaryInitializer());
 
   /**
    * Code each point via distance-weighted LARS.
