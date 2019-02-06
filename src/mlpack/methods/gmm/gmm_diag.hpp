@@ -37,12 +37,12 @@ namespace gmm /** Gaussian Mixture Models. */ {
  *
  * @code
  * void Estimate(const arma::mat& observations,
- *               std::vector<distribution::GaussianDistribution>& dists,
+ *               std::vector<distribution::DiagCovGaussianDistribution>& dists,
  *               arma::vec& weights);
  *
  * void Estimate(const arma::mat& observations,
  *               const arma::vec& probabilities,
- *               std::vector<distribution::GaussianDistribution>& dists,
+ *               std::vector<distribution::DiagCovGaussianDistribution>& dists,
  *               arma::vec& weights);
  * @endcode
  *
@@ -74,7 +74,7 @@ class DiagonalGMM
   size_t dimensionality;
 
   //! Vector of Gaussians
-  std::vector<distribution::GaussianDistribution> dists;
+  std::vector<distribution::DiagCovGaussianDistribution> dists;
 
   //! Vector of a priori weights for each Gaussian.
   arma::vec weights;
@@ -109,8 +109,8 @@ class DiagonalGMM
    * @param dists Distributions of the model.
    * @param weights Weights of the model.
    */
-  DiagonalGMM(const std::vector<distribution::GaussianDistribution> & dists,
-      const arma::vec& weights) :
+  DiagonalGMM(const std::vector<distribution::DiagCovGaussianDistribution>&
+      dists, const arma::vec& weights) :
       gaussians(dists.size()),
       dimensionality((!dists.empty()) ? dists[0].Mean().n_elem : 0),
       dists(dists),
@@ -132,14 +132,15 @@ class DiagonalGMM
    *
    * @param i index of component.
    */
-  const distribution::GaussianDistribution& Component(size_t i) const {
+  const distribution::DiagCovGaussianDistribution& Component(size_t i) const {
       return dists[i]; }
   /**
    * Return a reference to a component distribution.
    *
    * @param i index of component.
    */
-  distribution::GaussianDistribution& Component(size_t i) { return dists[i]; }
+  distribution::DiagCovGaussianDistribution& Component(size_t i) {
+      return dists[i]; }
 
   //! Return a const reference to the a priori weights of each Gaussian.
   const arma::vec& Weights() const { return weights; }
@@ -282,7 +283,7 @@ class DiagonalGMM
    */
   double LogLikelihood(
       const arma::mat& dataPoints,
-      const std::vector<distribution::GaussianDistribution>& distsL,
+      const std::vector<distribution::DiagCovGaussianDistribution>& distsL,
       const arma::vec& weights) const;
 };
 

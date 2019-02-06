@@ -179,15 +179,15 @@ BOOST_AUTO_TEST_CASE(HMMViterbiDiagonalGMMHMMCheckDimensionsTest)
   std::vector<DiagonalGMM> gmms(2, DiagonalGMM(2, 2));
   gmms[0].Weights() = arma::vec("0.2 0.8");
 
-  gmms[0].Component(0) = GaussianDistribution("2.75 1.60",
+  gmms[0].Component(0) = DiagCovGaussianDistribution("2.75 1.60",
       "0.50 0.00; 0.00 0.50");
-  gmms[0].Component(1) = GaussianDistribution("6.15 2.51",
+  gmms[0].Component(1) = DiagCovGaussianDistribution("6.15 2.51",
       "1.00 0.00; 0.00 1.50");
   gmms[1].Weights() = arma::vec("0.4 0.6");
 
-  gmms[1].Component(0) = GaussianDistribution("-1.00 -3.42",
+  gmms[1].Component(0) = DiagCovGaussianDistribution("-1.00 -3.42",
       "0.20 0.00; 0.00 1.00");
-  gmms[1].Component(1) = GaussianDistribution("-3.10 -5.05",
+  gmms[1].Component(1) = DiagCovGaussianDistribution("-3.10 -5.05",
       "1.20 0.00; 0.00 0.80");
 
   // Transition matrix.

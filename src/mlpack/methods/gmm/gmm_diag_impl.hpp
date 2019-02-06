@@ -28,7 +28,8 @@ double DiagonalGMM::Train(const arma::mat& observations,
                           const bool useExistingModel)
 {
   // To use armadillo gmm_diag class, we create fitter for DiagonalConstraint.
-  EMFit<InitialClusteringType, DiagonalConstraint> fitter;
+  EMFit<InitialClusteringType, DiagonalConstraint,
+        distribution::DiagCovGaussianDistribution> fitter;
 
   double bestLikelihood; // This will be reported later.
 
@@ -48,7 +49,7 @@ double DiagonalGMM::Train(const arma::mat& observations,
 
     // If each trial must start from the same initial location,
     // we must save it.
-    std::vector<distribution::GaussianDistribution> distsOrig;
+    std::vector<distribution::DiagCovGaussianDistribution> distsOrig;
     arma::vec weightsOrig;
     if (useExistingModel)
     {
@@ -66,8 +67,8 @@ double DiagonalGMM::Train(const arma::mat& observations,
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<distribution::GaussianDistribution> distsTrial(gaussians,
-                distribution::GaussianDistribution(dimensionality));
+    std::vector<distribution::DiagCovGaussianDistribution> distsTrial(gaussians,
+        distribution::DiagCovGaussianDistribution(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)
@@ -115,7 +116,8 @@ double DiagonalGMM::Train(const arma::mat& observations,
                   const bool useExistingModel)
 {
   // To use armadillo gmm_diag class, we create fitter for DiagonalConstraint.
-  EMFit<InitialClusteringType, DiagonalConstraint> fitter;
+  EMFit<InitialClusteringType, DiagonalConstraint,
+        distribution::DiagCovGaussianDistribution> fitter;
   
   double bestLikelihood; // This will be reported later.
 
@@ -135,7 +137,7 @@ double DiagonalGMM::Train(const arma::mat& observations,
       return -DBL_MAX; // It's what they asked for...
 
     // If each trial must start from the same initial location, we must save it.
-    std::vector<distribution::GaussianDistribution> distsOrig;
+    std::vector<distribution::DiagCovGaussianDistribution> distsOrig;
     arma::vec weightsOrig;
     if (useExistingModel)
     {
@@ -154,8 +156,8 @@ double DiagonalGMM::Train(const arma::mat& observations,
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<distribution::GaussianDistribution> distsTrial(gaussians,
-        distribution::GaussianDistribution(dimensionality));
+    std::vector<distribution::DiagCovGaussianDistribution> distsTrial(gaussians,
+        distribution::DiagCovGaussianDistribution(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)

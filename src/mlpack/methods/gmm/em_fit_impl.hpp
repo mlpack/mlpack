@@ -21,24 +21,32 @@ namespace mlpack {
 namespace gmm {
 
 //! Constructor.
-template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
-EMFit<InitialClusteringType, CovarianceConstraintPolicy>::EMFit(
-    const size_t maxIterations,
-    const double tolerance,
-    InitialClusteringType clusterer,
-    CovarianceConstraintPolicy constraint) :
+template<typename InitialClusteringType,
+         typename CovarianceConstraintPolicy,
+         typename DistributionType>
+EMFit<InitialClusteringType,
+      CovarianceConstraintPolicy,
+      DistributionType>::
+EMFit(const size_t maxIterations,
+      const double tolerance,
+      InitialClusteringType clusterer,
+      CovarianceConstraintPolicy constraint) :
     maxIterations(maxIterations),
     tolerance(tolerance),
     clusterer(clusterer),
     constraint(constraint)
 { /* Nothing to do. */ }
 
-template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
-void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
-    const arma::mat& observations,
-    std::vector<distribution::GaussianDistribution>& dists,
-    arma::vec& weights,
-    const bool useInitialModel)
+template<typename InitialClusteringType,
+         typename CovarianceConstraintPolicy,
+         typename DistributionType>
+void EMFit<InitialClusteringType,
+           CovarianceConstraintPolicy,
+           DistributionType>::
+Estimate(const arma::mat& observations,
+         std::vector<DistributionType>& dists,
+         arma::vec& weights,
+         const bool useInitialModel)
 {
   // Shortcut: if the user is using the DiagonalConstraint, then we will call
   // out to Armadillo.  But Armadillo uses uword internally as an OpenMP index
@@ -131,13 +139,17 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
   }
 }
 
-template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
-void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
-    const arma::mat& observations,
-    const arma::vec& probabilities,
-    std::vector<distribution::GaussianDistribution>& dists,
-    arma::vec& weights,
-    const bool useInitialModel)
+template<typename InitialClusteringType,
+         typename CovarianceConstraintPolicy,
+         typename DistributionType>
+void EMFit<InitialClusteringType,
+           CovarianceConstraintPolicy,
+           DistributionType>::
+Estimate(const arma::mat& observations,
+         const arma::vec& probabilities,
+         std::vector<DistributionType>& dists,
+         arma::vec& weights,
+         const bool useInitialModel)
 {
   if (!useInitialModel)
     InitialClustering(observations, dists, weights);
@@ -219,10 +231,14 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
   }
 }
 
-template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
-void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::
+template<typename InitialClusteringType,
+         typename CovarianceConstraintPolicy,
+         typename DistributionType>
+void EMFit<InitialClusteringType,
+           CovarianceConstraintPolicy,
+           DistributionType>::
 InitialClustering(const arma::mat& observations,
-                  std::vector<distribution::GaussianDistribution>& dists,
+                  std::vector<DistributionType>& dists,
                   arma::vec& weights)
 {
   // Assignments from clustering.
@@ -286,11 +302,15 @@ InitialClustering(const arma::mat& observations,
   weights /= accu(weights);
 }
 
-template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
-double EMFit<InitialClusteringType, CovarianceConstraintPolicy>::LogLikelihood(
-    const arma::mat& observations,
-    const std::vector<distribution::GaussianDistribution>& dists,
-    const arma::vec& weights) const
+template<typename InitialClusteringType,
+         typename CovarianceConstraintPolicy,
+         typename DistributionType>
+double EMFit<InitialClusteringType,
+             CovarianceConstraintPolicy,
+             DistributionType>::
+LogLikelihood(const arma::mat& observations,
+              const std::vector<DistributionType>& dists,
+              const arma::vec& weights) const
 {
   double logLikelihood = 0;
 
@@ -314,9 +334,14 @@ double EMFit<InitialClusteringType, CovarianceConstraintPolicy>::LogLikelihood(
   return logLikelihood;
 }
 
-template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
+template<typename InitialClusteringType,
+         typename CovarianceConstraintPolicy,
+         typename DistributionType>
 template<typename Archive>
-void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::serialize(
+void EMFit<InitialClusteringType,
+           CovarianceConstraintPolicy,
+           DistributionType>::
+serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
@@ -329,10 +354,14 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::serialize(
 // Armadillo uses uword internally as an OpenMP index type, which crashes Visual
 // Studio.
 #ifndef _WIN32
-template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
-void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::
+template<typename InitialClusteringType,
+         typename CovarianceConstraintPolicy,
+         typename DistributionType>
+void EMFit<InitialClusteringType,
+           CovarianceConstraintPolicy,
+           DistributionType>::
 ArmadilloGMMWrapper(const arma::mat& observations,
-                    std::vector<distribution::GaussianDistribution>& dists,
+                    std::vector<DistributionType>& dists,
                     arma::vec& weights,
                     const bool useInitialModel)
 {
