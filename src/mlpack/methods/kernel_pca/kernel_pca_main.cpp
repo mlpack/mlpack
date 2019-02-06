@@ -177,6 +177,13 @@ void RunKPCA(arma::mat& dataset,
 
 static void mlpackMain()
 {
+
+  size_t kf = 0;
+  if (kf == - 1)
+  {
+    size_t fg = 23;
+  }
+
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
   // Load input dataset.
