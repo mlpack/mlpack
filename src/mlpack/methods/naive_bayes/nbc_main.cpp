@@ -79,7 +79,6 @@ PROGRAM_INFO("Parametric Naive Bayes Classifier",
     SEE_ALSO("mlpack::naive_bayes::NaiveBayesClassifier C++ class "
         "documentation", "@doxygen/classmlpack_1_1naive__bayes_1_1"
         "NaiveBayesClassifier.html"));
-
 // A struct for saving the model with mappings.
 struct NBCModel
 {
@@ -112,8 +111,11 @@ PARAM_FLAG("incremental_variance", "The variance of each class will be "
 
 // Test parameters.
 PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
-PARAM_UROW_OUT("predictions", "The matrix in which the predicted labels for the"
+//parameter output is to be deprecated and removed in mlpack 4.0
+PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
     " test set will be written.", "o");
+PARAM_UROW_OUT("predictions", "The matrix in which the predicted labels for the"
+    " test set will be written.", "a");
 PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability"
     " of labels for the test set will be written.", "p");
 
@@ -123,9 +125,10 @@ static void mlpackMain()
   RequireOnlyOnePassed({ "training", "input_model" }, true);
   ReportIgnoredParam({{ "training", false }}, "labels");
   ReportIgnoredParam({{ "training", false }}, "incremental_variance");
-  RequireAtLeastOnePassed({ "predictions", "output_model", "output_probs" }, false,
+  RequireAtLeastOnePassed({ "output","predictions","output_model", "output_probs" }, false,
       "no output will be saved");
   ReportIgnoredParam({{ "test", false }}, "output");
+  ReportIgnoredParam({{ "test", false }}, "predictions");
   if (CLI::HasParam("input_model") && !CLI::HasParam("test"))
     Log::Warn << "No test set given; no task will be performed!" << std::endl;
 
@@ -188,14 +191,17 @@ static void mlpackMain()
     model->nbc.Classify(testingData, predictions, probabilities);
     Timer::Stop("nbc_testing");
 
-    if (CLI::HasParam("predictions"))
+    if (CLI::HasParam("output")||CLI::HasParam("predictions"))
     {
       // Un-normalize labels to prepare output.
       Row<size_t> rawResults;
       data::RevertLabels(predictions, model->mappings, rawResults);
 
-      // prediction results.
       CLI::GetParam<Row<size_t>>("predictions") = std::move(rawResults);
+      if(CLI::HasParam("output"))
+      {
+         CLI::GetParam<Row<size_t>>("output") = std::move(predictions);
+      }
     }
 
     CLI::GetParam<mat>("output_probs") = probabilities;
