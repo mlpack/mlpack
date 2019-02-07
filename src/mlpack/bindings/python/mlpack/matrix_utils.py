@@ -55,7 +55,10 @@ def to_matrix(x, dtype=np.double, copy=False):
   else:
     if isinstance(x, pd.core.series.Series):
       x = pd.DataFrame(x)
-    return np.array(x, copy=True, dtype=dtype, order='C'), True
+    if copy: # Copy the matrix if required.
+      return np.array(x, copy=True, dtype=dtype, order='C'), True
+    else:
+      return np.array(x, dtype=dtype), False
 
 def to_matrix_with_info(x, dtype, copy=False):
   """
