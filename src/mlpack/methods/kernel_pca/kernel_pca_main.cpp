@@ -179,7 +179,7 @@ static void mlpackMain()
 {
 
   size_t kf = 0;
-  if (kf == - 1)
+  if (kf == -2)
   {
     size_t fg = 23;
   }
