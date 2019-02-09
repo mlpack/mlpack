@@ -245,7 +245,7 @@ class BRNN
    */
   void Add(LayerTypes<CustomLayers...> layer);
 
-  //! Return the number of separable functions (the number of predictor points).
+  //! Return the number of separable functions. (number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
 
   //! Return the initial point for the optimization.
@@ -379,14 +379,12 @@ class BRNN
 
   //! Backward RNN
   RNN<OutputLayerType, InitializationRuleType, CustomLayers...> backwardRNN;
-
 }; // class BRNN
 
 } // namespace ann
 } // namespace mlpack
 
-//! Set the serialization version of the BRNN class.  Multiple template arguments
-//! makes this ugly...
+//! Set the serialization version of the BRNN class.
 namespace boost {
 namespace serialization {
 

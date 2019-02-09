@@ -473,17 +473,20 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
           std::move(forwardRNNOutputParameter)),
           forwardRNN.network[networkSize - 1 - l]);
     }
-    boost::apply_visitor(BackwardVisitor(std::move(
-        boost::apply_visitor(outputParameterVisitor, forwardRNN.network.back())),
-        std::move(allDelta[rho - seqNum - 1]), std::move(delta), 0), mergeLayer);
+    boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
+        outputParameterVisitor, forwardRNN.network.back())),
+        std::move(allDelta[rho - seqNum - 1]), std::move(delta), 0),
+        mergeLayer);
 
     for (size_t i = 2; i < networkSize; ++i)
     {
       boost::apply_visitor(BackwardVisitor(
           std::move(boost::apply_visitor(outputParameterVisitor,
-          forwardRNN.network[networkSize - i])), std::move(boost::apply_visitor(
-          deltaVisitor, forwardRNN.network[networkSize - i + 1])), std::move(
-          boost::apply_visitor(deltaVisitor, forwardRNN.network[networkSize - i]))),
+          forwardRNN.network[networkSize - i])),
+          std::move(boost::apply_visitor(deltaVisitor,
+          forwardRNN.network[networkSize - i + 1])), std::move(
+          boost::apply_visitor(deltaVisitor,
+          forwardRNN.network[networkSize - i]))),
           forwardRNN.network[networkSize - i]);
     }
     forwardRNN.Gradient(std::move(
@@ -510,7 +513,8 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
           backwardRNN.network[networkSize - 1 - l]);
     }
     boost::apply_visitor(BackwardVisitor(std::move(
-        boost::apply_visitor(outputParameterVisitor, backwardRNN.network.back())),
+        boost::apply_visitor(outputParameterVisitor,
+        backwardRNN.network.back())),
         std::move(allDelta[seqNum]), std::move(delta), 1), mergeLayer);
     for (size_t i = 2; i < networkSize; ++i)
     {
@@ -518,7 +522,8 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
         std::move(boost::apply_visitor(outputParameterVisitor,
         backwardRNN.network[networkSize - i])), std::move(boost::apply_visitor(
         deltaVisitor, backwardRNN.network[networkSize - i + 1])), std::move(
-        boost::apply_visitor(deltaVisitor, backwardRNN.network[networkSize - i]))),
+        boost::apply_visitor(deltaVisitor,
+        backwardRNN.network[networkSize - i]))),
         backwardRNN.network[networkSize - i]);
     }
 
@@ -589,10 +594,10 @@ void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
 {
   if (!reset)
   {
-    boost::apply_visitor(AddVisitor<CustomLayers...>(forwardRNN.network.back()),
-        mergeLayer);
-    boost::apply_visitor(AddVisitor<CustomLayers...>(backwardRNN.network.back()),
-        mergeLayer);
+    boost::apply_visitor(AddVisitor<CustomLayers...>(
+        forwardRNN.network.back()), mergeLayer);
+    boost::apply_visitor(AddVisitor<CustomLayers...>(
+        backwardRNN.network.back()), mergeLayer);
     boost::apply_visitor(RunSetVisitor(false), mergeLayer);
   }
 
@@ -604,7 +609,8 @@ void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
   size_t rnnWeights = 0;
   for (size_t i = 0; i < forwardRNN.network.size(); ++i)
   {
-    rnnWeights += boost::apply_visitor(weightSizeVisitor, forwardRNN.network[i]);
+    rnnWeights += boost::apply_visitor(weightSizeVisitor,
+        forwardRNN.network[i]);
   }
 
   parameter.set_size(2 * rnnWeights, 1);

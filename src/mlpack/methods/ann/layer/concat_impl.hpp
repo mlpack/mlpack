@@ -75,11 +75,13 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
     arma::mat delta;
     for (size_t i = 0; i < network.size(); ++i)
     {
-      // Backward rows from the error corresponding to the output from each layer.
-      size_t rows = boost::apply_visitor(outputParameterVisitor, network[i]).n_rows;
+      // Use rows from the error corresponding to the output from each layer.
+      size_t rows = boost::apply_visitor(
+          outputParameterVisitor, network[i]).n_rows;
       delta = gy.rows(rowCount, rowCount + rows - 1);
-      boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-          outputParameterVisitor, network[i])), std::move(delta), std::move(
+      boost::apply_visitor(BackwardVisitor(std::move(
+          boost::apply_visitor(outputParameterVisitor,
+          network[i])), std::move(delta), std::move(
           boost::apply_visitor(deltaVisitor, network[i]))), network[i]);
       rowCount += rows;
     }
@@ -130,7 +132,8 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
     size_t rowCount = 0;
     for (size_t i = 0; i < network.size(); ++i)
     {
-      size_t rows = boost::apply_visitor(outputParameterVisitor, network[i]).n_rows;
+      size_t rows = boost::apply_visitor(
+          outputParameterVisitor, network[i]).n_rows;
       boost::apply_visitor(GradientVisitor(std::move(input),
           std::move(error.rows(rowCount, rowCount + rows - 1))), network[i]);
       rowCount += rows;
@@ -152,7 +155,8 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
   {
     rowCount += boost::apply_visitor(outputParameterVisitor, network[i]).n_rows;
   }
-  size_t rows = boost::apply_visitor(outputParameterVisitor, network[index]).n_rows;
+  size_t rows = boost::apply_visitor(
+      outputParameterVisitor, network[index]).n_rows;
   boost::apply_visitor(GradientVisitor(std::move(input),
       std::move(error.rows(rowCount, rowCount + rows - 1))), network[index]);
 }
