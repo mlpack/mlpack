@@ -168,7 +168,7 @@ class DiscreteDistribution
     // TODO: consider storing log probabilities instead?
     return log(Probability(observation));
   }
-  
+
   /**
    * Calculates the discrete probability density function for each
    * data point (column) in the given matrix.
