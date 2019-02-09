@@ -24,21 +24,16 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * For more information see the following.
  *
- * @article{DBLP:journals/corr/MilletariNA16,
- *   author    = {Fausto Milletari and
- *                Nassir Navab and
- *                Seyed{-}Ahmad Ahmadi},
- *   title     = {V-Net: Fully Convolutional Neural Networks for Volumetric Medical
- *                Image Segmentation},
+ * @article{Milletari2016,
+ *   author    = {Fausto Milletari and Nassir Navab and Seyed{-}Ahmad Ahmadi},
+ *   title     = {V-Net: Fully Convolutional Neural Networks for
+ *                Volumetric Medical Image Segmentation},
  *   journal   = {CoRR},
  *   volume    = {abs/1606.04797},
  *   year      = {2016},
  *   url       = {http://arxiv.org/abs/1606.04797},
  *   archivePrefix = {arXiv},
  *   eprint    = {1606.04797},
- *   timestamp = {Mon, 13 Aug 2018 16:48:14 +0200},
- *   biburl    = {https://dblp.org/rec/bib/journals/corr/MilletariNA16},
- *   bibsource = {dblp computer science bibliography, https://dblp.org}
  * }
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -56,7 +51,7 @@ class DiceLoss
   /**
    * Create the DiceLoss object.
    *
-   * @param smooth The parameter to avoid overfitting.
+   * @param smooth The laplace smoothing parameter.
    */
   DiceLoss(const double smooth = 1);
 
