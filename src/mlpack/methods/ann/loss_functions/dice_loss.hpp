@@ -51,7 +51,7 @@ class DiceLoss
   /**
    * Create the DiceLoss object.
    *
-   * @param smooth The laplace smoothing parameter.
+   * @param smooth The Laplace smoothing parameter.
    */
   DiceLoss(const double smooth = 1);
 
