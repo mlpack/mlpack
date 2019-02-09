@@ -349,8 +349,8 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionParallelOptimize)
   // Iterate till convergence.
   // The threadShareSize is chosen such that each function gets optimized.
   ens::ParallelSGD<ens::ConstantStep> optimizer(0,
-      std::ceil((float) biasSVDFunc.NumFunctions() / omp_get_max_threads()), 1e-5,
-      true, decayPolicy);
+      std::ceil((float) biasSVDFunc.NumFunctions() / omp_get_max_threads()),
+      1e-5, true, decayPolicy);
 
   // Obtain optimized parameters after training.
   arma::mat optParameters = arma::randu(rank + 1, numUsers + numItems);

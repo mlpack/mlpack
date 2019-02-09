@@ -273,7 +273,8 @@ BOOST_AUTO_TEST_CASE(GridSearchTest)
   for (size_t d = 0; d < datasetInfo.Dimensionality(); d++)
   {
     numCategories[d] = datasetInfo.NumMappings(d);
-    categoricalDimensions[d] = datasetInfo.Type(d) == mlpack::data::Datatype::categorical;
+    categoricalDimensions[d] = datasetInfo.Type(d) ==
+        mlpack::data::Datatype::categorical;
   }
 
   double actualObjective = optimizer.Optimize(cvFun, actualParameters,

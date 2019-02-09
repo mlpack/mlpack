@@ -41,7 +41,7 @@ void BruteForceKDE(const arma::mat& reference,
   {
     for (size_t j = 0; j < reference.n_cols; ++j)
     {
-      double distance = metric.Evaluate(query.col(i),reference.col(j));
+      double distance = metric.Evaluate(query.col(i), reference.col(j));
       densities(i) += kernel.Evaluate(distance);
     }
   }

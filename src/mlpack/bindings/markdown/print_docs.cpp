@@ -207,7 +207,6 @@ void PrintDocs(const std::string& bindingName,
       }
 
       cout << ")" << endl;
-
     }
     cout << endl;
 

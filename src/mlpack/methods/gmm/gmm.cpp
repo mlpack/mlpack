@@ -60,7 +60,8 @@ double GMM::LogProbability(const arma::vec& observation) const
   // multiply by the prior for each Gaussian too).
   double sum = -std::numeric_limits<double>::infinity();
   for (size_t i = 0; i < gaussians; i++)
-    sum = math::LogAdd(sum, log(weights[i]) + dists[i].LogProbability(observation));
+    sum = math::LogAdd(sum, log(weights[i]) +
+        dists[i].LogProbability(observation));
 
   return sum;
 }

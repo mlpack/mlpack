@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(KernelPCADimensionTest)
       "hyptan", "laplacian", "epanechnikov", "cosine"
   };
 
-  for (std::string& kernel: kernels)
+  for (std::string& kernel : kernels)
   {
     ResetSettings();
     arma::mat x = arma::randu<arma::mat>(5, 5);
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(KernelPCABandWidthTest)
       "gaussian", "epanechnikov", "laplacian"
   };
 
-  for (std::string& kernel: kernels)
+  for (std::string& kernel : kernels)
   {
     ResetSettings();
     arma::mat x = arma::randu<arma::mat>(5, 5);
@@ -242,7 +242,7 @@ BOOST_AUTO_TEST_CASE(KernelPCAOffsetTest)
       "polynomial", "hyptan"
   };
 
-  for (std::string& kernel: kernels)
+  for (std::string& kernel : kernels)
   {
     ResetSettings();
     arma::mat x = arma::randu<arma::mat>(5, 100);
