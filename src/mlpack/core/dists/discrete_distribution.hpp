@@ -1,6 +1,7 @@
 /**
  * @file discrete_distribution.hpp
  * @author Ryan Curtin
+ * @author Rohan Raj
  *
  * Implementation of the discrete distribution, where each discrete observation
  * has a given probability.
@@ -173,7 +174,8 @@ class DiscreteDistribution
    * in logProbabilities.
    *
    * @param x List of observations.
-   * @param logProbabilities
+   * @param logProbabilities probabilities Output probabilities for each 
+   *   input observation.
   */
   void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
   /**
