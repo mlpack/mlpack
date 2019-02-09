@@ -2,6 +2,7 @@
  * @file distribution_test.cpp
  * @author Ryan Curtin
  * @author Yannis Mentekidis
+ * @author Rohan Raj
  *
  * Tests for the classes:
  *  * mlpack::distribution::DiscreteDistribution
@@ -205,7 +206,7 @@ BOOST_AUTO_TEST_CASE(DiscreteLogProbabilityTest)
 
   d.LogProbability(obs, logProb);
 
-  BOOST_REQUIRE_EQUAL(logProb.n_cols, 2);
+  BOOST_REQUIRE_EQUAL(logProb.n_elem, 2);
 
   BOOST_REQUIRE_CLOSE(logProb(0), -3.2188758248682, 1e-3);  
   BOOST_REQUIRE_CLOSE(logProb(1), -3.2188758248682, 1e-3);
