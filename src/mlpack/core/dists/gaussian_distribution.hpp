@@ -95,6 +95,14 @@ class GaussianDistribution
     probabilities = arma::exp(logProbabilities);
   }
 
+  /**
+   * Returns the Log probability of the given matrix. These values are stored
+   * in logProbabilities.
+   *
+   * @param x List of observations.
+   * @param logProbabilities probabilities Output probabilities for each 
+   *   input observation.
+  */
   void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
 
   /**

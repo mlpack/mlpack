@@ -168,6 +168,13 @@ class DiscreteDistribution
     return log(Probability(observation));
   }
 
+  /**
+   * Returns the Log probability of the given matrix. These values are stored
+   * in logProbabilities.
+   *
+   * @param x List of observations.
+   * @param logProbabilities
+  */
   void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
   /**
    * Return a randomly generated observation (one-dimensional vector; one
