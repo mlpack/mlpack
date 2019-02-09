@@ -168,6 +168,20 @@ class DiscreteDistribution
     // TODO: consider storing log probabilities instead?
     return log(Probability(observation));
   }
+  
+  /**
+   * Calculates the discrete probability density function for each
+   * data point (column) in the given matrix.
+   *
+   * @param x List of observations.
+   * @param probabilities Output probabilities for each input observation.
+   */
+  void Probability(const arma::mat& x, arma::vec& probabilities) const
+  {
+    arma::vec logProbabilities;
+    LogProbability(x, logProbabilities);
+    probabilities = arma::exp(logProbabilities);
+  }
 
   /**
    * Returns the Log probability of the given matrix. These values are stored
