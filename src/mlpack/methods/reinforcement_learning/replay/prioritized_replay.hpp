@@ -211,6 +211,19 @@ class PrioritizedReplay
     beta = beta + (1 - initialBeta) * 1.0 / replayBetaIters;
   }
 
+  void Update(arma::mat target, arma::icolvec sampledActions,
+              arma::mat nextActionValues, arma::ucolvec sampledIndices)
+  {
+    arma::colvec td_error(target.n_cols);
+    for (size_t i = 0; i < target.n_cols; i ++)
+    {
+      td_error[i] = nextActionValues(sampledActions[i], i) - target(sampledActions[i], i);
+    }
+    td_error = arma::abs(td_error);
+    UpdatePriorities(sampledIndices, td_error);
+  }
+
+
 private:
   //! How much prioritization is used.
   //  (0 - no prioritization, 1 - full prioritization)

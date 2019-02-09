@@ -138,6 +138,12 @@ class RandomReplay
     return full ? capacity : position;
   }
 
+  void Update(arma::mat target, arma::icolvec sampledActions,
+              arma::mat nextActionValues, arma::ucolvec sampledIndices)
+  {
+    /* do nothing for random replay*/
+  }
+
  private:
   //! Locally-stored number of examples of each sample.
   size_t batchSize;

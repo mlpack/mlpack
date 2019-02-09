@@ -236,13 +236,11 @@ double QLearning<
 
    if (prioritized_replay)
    {
-     arma::colvec td_error(target.n_cols);
-     for (size_t i = 0; i < target.n_cols; i ++)
-     {
-       td_error[i] = nextActionValues(sampledActions[i], i) - target(sampledActions[i], i);
-     }
-     td_error = arma::abs(td_error);
-     prioritizedReplayMethod.UpdatePriorities(sampledIndices, td_error);
+     prioritizedReplayMethod.Update(target, sampledActions, nextActionValues, sampledIndices);
+   }
+   else
+   {
+     replayMethod.Update(target, sampledActions, nextActionValues, sampledIndices);
    }
   return reward;
 }
