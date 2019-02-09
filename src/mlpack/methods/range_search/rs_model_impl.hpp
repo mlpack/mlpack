@@ -271,12 +271,12 @@ void MonoSearchVisitor::operator()(RSType* rs) const
 }
 
 //! Save parameters for bichromatic range search.
-inline BiSearchVisitor::
-BiSearchVisitor(const arma::mat& querySet,
-                const math::Range& range,
-                std::vector<std::vector<size_t>>& neighbors,
-                std::vector<std::vector<double>>& distances,
-                const size_t leafSize):
+inline BiSearchVisitor::BiSearchVisitor(
+    const arma::mat& querySet,
+    const math::Range& range,
+    std::vector<std::vector<size_t>>& neighbors,
+    std::vector<std::vector<double>>& distances,
+    const size_t leafSize) :
     querySet(querySet),
     range(range),
     neighbors(neighbors),
