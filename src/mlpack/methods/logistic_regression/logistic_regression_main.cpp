@@ -142,12 +142,13 @@ PARAM_MODEL_OUT(LogisticRegression<>, "output_model", "Output for trained "
 
 // Testing.
 PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
-// The PARAM_UROW_OUT("output"..) is deprecated and can be removed in mlpack4.0.0
+// The PARAM_UROW_OUT("output"..) is deprecated and can be removed
+// in mlpack 4.0.0
 PARAM_UROW_OUT("output", "If test data is specified, this matrix is where "
     "the predictions for the test set will be saved.", "o");
 PARAM_UROW_OUT("predictions", "If test data is specified, this matrix is where "
     "the predictions for the test set will be saved.", "P");
-// PARAM_MATRIX_OUT("output_probabilities"..) is deprecated 
+// PARAM_MATRIX_OUT("output_probabilities"..) is deprecated
 // and it can be removed in mlpack 4
 PARAM_MATRIX_OUT("output_probabilities", "If test data is specified, this "
     "matrix is where the class probabilities for the test set will be saved.",
