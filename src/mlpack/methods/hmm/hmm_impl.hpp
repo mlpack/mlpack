@@ -517,7 +517,7 @@ void HMM<Distribution>::Filter(const arma::mat& dataSeq,
   arma::vec logScales;
   Forward(dataSeq, logScales, forwardLogProb);
 
-  arma::mat forwardProb = exp(forwardProb);
+  arma::mat forwardProb = exp(forwardLogProb);
 
   // Propagate state ahead.
   if (ahead != 0)
