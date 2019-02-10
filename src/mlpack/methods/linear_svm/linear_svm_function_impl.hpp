@@ -157,10 +157,9 @@ double LinearSVMFunction<MatType>::Evaluate(
   double loss, regularization, cost;
 
   arma::mat scores = parameters * dataset;
-  arma::mat correct = arma::conv_to<arma::mat>::from(scores
-      % groundTruth);
+  arma::sp_mat correctScores = scores % groundTruth;
   arma::mat margin = scores
-      - arma::repmat(arma::ones(numClasses).t() * correct, numClasses, 1)
+      - arma::repmat(arma::ones(numClasses).t() * correctScores, numClasses, 1)
       + 1 - groundTruth;
 
   // The Hinge Loss Function
@@ -186,15 +185,15 @@ double LinearSVMFunction<MatType>::Evaluate(
   // Calculate the loss and regularization terms.
   double loss, regularization, cost;
 
-  arma::mat scores = parameters * dataset.cols(firstId, lastId);
-  arma::mat correct = arma::conv_to<arma::mat>::from(scores
-      % groundTruth.cols(firstId, lastId));
+  arma::mat scores = parameters * dataset;
+  arma::sp_mat correctScores = scores % groundTruth;
   arma::mat margin = scores
-      - arma::repmat(arma::ones(numClasses).t() * correct, numClasses, 1)
-      + 1 - groundTruth.cols(firstId, lastId);
+      - arma::repmat(arma::ones(numClasses).t() * correctScores, numClasses, 1)
+      + 1 - groundTruth;
 
   // The Hinge Loss Function
-  loss = arma::accu(arma::clamp(margin, 0.0, margin.max()));
+  loss = arma::accu(arma::clamp(margin.cols(firstId, lastId),
+      0.0, margin.max()));
   loss /= batchSize;
 
   // Adding the regularization term.
@@ -212,20 +211,18 @@ void LinearSVMFunction<MatType>::Gradient(
     GradType& gradient)
 {
   arma::mat scores = parameters * dataset;
-  arma::mat correct = arma::conv_to<arma::mat>::from(scores
-      % groundTruth);
+  arma::sp_mat correctScores = scores % groundTruth;
   arma::mat margin = scores
-      - arma::repmat(arma::ones(numClasses).t() * correct, numClasses, 1)
+      - arma::repmat(arma::ones(numClasses).t() * correctScores, numClasses, 1)
       + 1 - groundTruth;
 
   // For each sample, find the total number of classes where
-  // ( margin > 0 )
+  // ( margin > 0 ).
   arma::mat mask = margin.for_each([](arma::mat::elem_type& val)
       { val = (val > 0) ? 1: 0; });
 
-  arma::sp_mat incorrectLabels = groundTruth
-      % (-arma::repmat(arma::sum(mask), numClasses, 1));
-  arma::mat difference = incorrectLabels + mask;
+  arma::mat difference = groundTruth
+      % (-arma::repmat(arma::sum(mask), numClasses, 1)) + mask;
 
   gradient = difference * dataset.t();
   gradient /= dataset.n_cols;
@@ -243,23 +240,22 @@ void LinearSVMFunction<MatType>::Gradient(
     const size_t batchSize)
 {
   const size_t lastId = firstId + batchSize - 1;
-  arma::mat scores = parameters * dataset.cols(firstId, lastId);
-  arma::mat correct = arma::conv_to<arma::mat>::from(scores
-      % groundTruth.cols(firstId, lastId));
+  arma::mat scores = parameters * dataset;
+  arma::sp_mat correctScores = scores % groundTruth;
   arma::mat margin = scores
-      - arma::repmat(arma::ones(numClasses).t() * correct, numClasses, 1)
-      + 1 - groundTruth.cols(firstId, lastId);
+      - arma::repmat(arma::ones(numClasses).t() * correctScores, numClasses, 1)
+      + 1 - groundTruth;
 
   // For each sample, find the total number of classes where
-  // ( margin > 0 )
+  // ( margin > 0 ).
   arma::mat mask = margin.for_each([](arma::mat::elem_type& val)
       { val = (val > 0) ? 1: 0; });
 
-  arma::sp_mat incorrectLabels = groundTruth.cols(firstId, lastId)
-      % (-arma::repmat(arma::sum(mask.cols(firstId, lastId)), numClasses, 1));
-  arma::mat difference = incorrectLabels + mask;
+  arma::mat difference = groundTruth
+      % (-arma::repmat(arma::sum(mask), numClasses, 1)) + mask;
 
-  gradient = difference * dataset.cols(firstId, lastId).t();
+  gradient = difference.cols(firstId, lastId)
+      * dataset.cols(firstId, lastId).t();
   gradient /= batchSize;
 
   // Adding the regularization contribution to the gradient.
@@ -275,20 +271,18 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
   double loss, regularization, cost;
 
   arma::mat scores = parameters * dataset;
-  arma::mat correct = arma::conv_to<arma::mat>::from(scores
-      % groundTruth);
+  arma::sp_mat correctScores = scores % groundTruth;
   arma::mat margin = scores
-      - arma::repmat(arma::ones(numClasses).t() * correct, numClasses, 1)
+      - arma::repmat(arma::ones(numClasses).t() * correctScores, numClasses, 1)
       + 1 - groundTruth;
 
   // For each sample, find the total number of classes where
-  // ( margin > 0 )
+  // ( margin > 0 ).
   arma::mat mask = margin.for_each([](arma::mat::elem_type& val)
       { val = (val > 0) ? 1: 0; });
 
-  arma::sp_mat incorrectLabels = groundTruth
-       % (-arma::repmat(arma::sum(mask), numClasses, 1));
-  arma::mat difference = incorrectLabels + mask;
+  arma::mat difference = groundTruth
+      % (-arma::repmat(arma::sum(mask), numClasses, 1)) + mask;
 
   gradient = difference * dataset.t();
   gradient /= dataset.n_cols;
@@ -321,30 +315,31 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
   // Calculate the loss and regularization terms.
   double loss, regularization, cost;
 
-  arma::mat scores = parameters * dataset.cols(firstId, lastId);
-  arma::mat correct = arma::conv_to<arma::mat>::from(scores
-      % groundTruth.cols(firstId, lastId));
+  arma::mat scores = parameters * dataset;
+  arma::sp_mat correctScores = scores % groundTruth;
   arma::mat margin = scores
-      - arma::repmat(arma::ones(numClasses).t() * correct, numClasses, 1)
-      + 1 - groundTruth.cols(firstId, lastId);
+      - arma::repmat(arma::ones(numClasses).t() * correctScores, numClasses, 1)
+      + 1 - groundTruth;
 
   // For each sample, find the total number of classes where
-  // ( margin > 0 )
+  // ( margin > 0 ).
   arma::mat mask = margin.for_each([](arma::mat::elem_type& val)
       { val = (val > 0) ? 1: 0; });
 
-  arma::sp_mat incorrectLabels = groundTruth.cols(firstId, lastId)
-      % (-arma::repmat(arma::sum(mask.cols(firstId, lastId)), numClasses, 1));
-  arma::mat difference = incorrectLabels + mask;
+  arma::mat difference = groundTruth
+      % (-arma::repmat(arma::sum(mask), numClasses, 1)) + mask;
 
-  gradient = difference * dataset.cols(firstId, lastId).t();
+  gradient = difference.cols(firstId, lastId)
+             * dataset.cols(firstId, lastId).t();
   gradient /= batchSize;
+
 
   // Adding the regularization contribution to the gradient.
   gradient += lambda * parameters;
 
   // The Hinge Loss Function
-  loss = arma::accu(arma::clamp(margin, 0.0, margin.max()));
+  loss = arma::accu(arma::clamp(margin.cols(firstId, lastId),
+      0.0, margin.max()));
   loss /= batchSize;
 
   // Adding the regularization term.

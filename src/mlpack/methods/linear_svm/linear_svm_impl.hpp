@@ -60,38 +60,17 @@ double LinearSVM<MatType>::Train(
 template <typename MatType>
 void LinearSVM<MatType>::Classify(
     const MatType& data,
-    arma::Row<size_t> &labels)
+    arma::Row<size_t>& labels)
 const
 {
   arma::mat scores;
-  Classify(data, scores);
-
-  // Prepare necessary data
-  labels.zeros(data.n_cols);
-  double maxScore = 0;
-
-  // For each test input.
-  for (size_t i = 0; i < data.n_cols; ++i)
-  {
-    // For each class.
-    for (size_t j = 0; j < numClasses; ++j) {
-      // If a higher class probability is encountered, change score.
-      if (scores(j, i) > maxScore)
-      {
-        maxScore = scores(j, i);
-        labels(i) = j;
-      }
-    }
-
-    // Set maximum probability to zero for next input.
-    maxScore = 0;
-  }
+  Classify(data, labels, scores);
 }
 
 template <typename MatType>
 void LinearSVM<MatType>::Classify(
         const MatType& data,
-        arma::Row<size_t> &labels,
+        arma::Row<size_t>& labels,
         arma::mat& scores)
 const
 {
@@ -105,7 +84,8 @@ const
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     // For each class.
-    for (size_t j = 0; j < numClasses; ++j) {
+    for (size_t j = 0; j < numClasses; ++j)
+    {
       // If a higher class probability is encountered, change score.
       if (scores(j, i) > maxScore)
       {

@@ -87,7 +87,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRandomBinaryEvaluate)
       0.0 /* no regularization */);
 
   // Run a number of trials.
-  for (size_t i = 0; i < trials; ++i) {
+  for (size_t i = 0; i < trials; ++i)
+  {
     // Create a random set of parameters.
     arma::mat parameters;
     parameters.randu(numClasses, inputSize);
@@ -96,10 +97,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRandomBinaryEvaluate)
     double hingeLoss = 0;
 
     // Compute error for each training example.
-    for (size_t j = 0; j < points; ++j) {
+    for (size_t j = 0; j < points; ++j)
+    {
       arma::mat score = parameters * data.col(j);
       double correct = score[labels(j)];
-      for (size_t k = 0; k < numClasses; ++k) {
+      for (size_t k = 0; k < numClasses; ++k)
+      {
         if (k == labels[j])
           continue;
         double margin = score[k] - correct + 1;
@@ -139,7 +142,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRandomEvaluate)
       0.0 /* no regularization */);
 
   // Run a number of trials.
-  for (size_t i = 0; i < trials; ++i) {
+  for (size_t i = 0; i < trials; ++i)
+  {
     // Create a random set of parameters.
     arma::mat parameters;
     parameters.randu(numClasses, inputSize);
@@ -148,10 +152,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRandomEvaluate)
     double hingeLoss = 0;
 
     // Compute error for each training example.
-    for (size_t j = 0; j < points; ++j) {
+    for (size_t j = 0; j < points; ++j)
+    {
       arma::mat score = parameters * data.col(j);
       double correct = score[labels(j)];
-      for (size_t k = 0; k < numClasses; ++k) {
+      for (size_t k = 0; k < numClasses; ++k)
+      {
         if (k == labels[j])
           continue;
         double margin = score[k] - correct + 1;
@@ -173,9 +179,9 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRandomEvaluate)
 BOOST_AUTO_TEST_CASE(LinearSVMFunctionRegularizationEvaluate)
 {
   const size_t points = 1000;
-  const size_t trials = 50;
+  const size_t trials = 25;
   const size_t inputSize = 10;
-  const size_t numClasses = 5;
+  const size_t numClasses = 3;
 
   // Initialize a random dataset.
   arma::mat data;
@@ -212,6 +218,103 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRegularizationEvaluate)
   }
 }
 
+/**
+ * Test individual Evaluate() functions to be used for
+ * optimization.
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMFunctionSeparableEvaluate)
+{
+  const size_t points = 1000;
+  const size_t trials = 25;
+  const size_t inputSize = 10;
+  const size_t numClasses = 3;
+
+  // Initialize a random dataset.
+  arma::mat data;
+  data.randu(inputSize, points);
+
+  // Create random class labels.
+  arma::Row<size_t> labels(points);
+  for (size_t i = 0; i < points; i++)
+    labels(i) = math::RandInt(0, numClasses);
+
+  LinearSVMFunction<> svmf(data, labels, numClasses);
+
+  for (size_t i = 0; i < trials; ++i)
+  {
+    // Create a random set of parameters.
+    arma::mat parameters;
+    parameters.randu(numClasses, inputSize);
+
+    double hingeLoss = 0;
+    for (size_t j = 0; j < points; ++j)
+      hingeLoss += svmf.Evaluate(parameters, j, 1);
+
+    hingeLoss /= points;
+
+    // Compare with the value returned by the function.
+    BOOST_REQUIRE_CLOSE(svmf.Evaluate(parameters), hingeLoss, 1e-5);
+  }
+}
+
+/**
+ *
+ * Test regularization for the separable Evaluate() function
+ * to be used Optimizers.
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMFunctionRegularizationSeparableEvaluate)
+{
+  const size_t points = 1000;
+  const size_t trials = 25;
+  const size_t inputSize = 10;
+  const size_t numClasses = 3;
+
+  // Initialize a random dataset.
+  arma::mat data;
+  data.randu(inputSize, points);
+
+  // Create random class labels.
+  arma::Row<size_t> labels(points);
+  for (size_t i = 0; i < points; i++)
+    labels(i) = math::RandInt(0, numClasses);
+
+  LinearSVMFunction<> svmfNoReg(data, labels, numClasses, 0.0);
+  LinearSVMFunction<> svmfSmallReg(data, labels, numClasses, 0.5);
+  LinearSVMFunction<> svmfBigReg(data, labels, numClasses, 20.0);
+
+
+  // Check that the number of functions is correct.
+  BOOST_REQUIRE_EQUAL(svmfNoReg.NumFunctions(), points);
+  BOOST_REQUIRE_EQUAL(svmfSmallReg.NumFunctions(), points);
+  BOOST_REQUIRE_EQUAL(svmfBigReg.NumFunctions(), points);
+
+
+  for (size_t i = 0; i < trials; ++i)
+  {
+    // Create a random set of parameters.
+    arma::mat parameters;
+    parameters.randu(numClasses, inputSize);
+
+    double wL2SquaredNorm;
+    wL2SquaredNorm = 0.5 * arma::accu(parameters % parameters);
+
+    // Calculate regularization terms.
+    const double smallRegTerm = 0.5 * wL2SquaredNorm;
+    const double bigRegTerm = 20 * wL2SquaredNorm;
+
+    for (size_t j = 0; j < points; ++j)
+    {
+      BOOST_REQUIRE_CLOSE(svmfNoReg.Evaluate(parameters, j, 1) + smallRegTerm,
+          svmfSmallReg.Evaluate(parameters, j, 1), 1e-5);
+      BOOST_REQUIRE_CLOSE(svmfNoReg.Evaluate(parameters, j, 1) + bigRegTerm,
+          svmfBigReg.Evaluate(parameters, j, 1), 1e-5);
+    }
+  }
+}
+
+/**
+ * Test gradient for the LinearSVMFunction.
+ */
 BOOST_AUTO_TEST_CASE(LinearSVMFunctionGradient)
 {
   const size_t points = 1000;
@@ -229,8 +332,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionGradient)
 
   // 2 objects for 2 terms in the cost function. Each term contributes towards
   // the gradient and thus need to be checked independently.
-  LinearSVMFunction<arma::mat> svmf1(data, labels, numClasses, 0);
-  LinearSVMFunction<arma::mat> svmf2(data, labels, numClasses, 10);
+  LinearSVMFunction<arma::mat> svmf1(data, labels, numClasses, 0.0);
+  LinearSVMFunction<arma::mat> svmf2(data, labels, numClasses, 10.0);
 
   // Create a random set of parameters.
   arma::mat parameters;
@@ -270,8 +373,68 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionGradient)
       parameters(i, j) += epsilon;
 
       // Compare numerical and backpropagation gradient values.
-      BOOST_REQUIRE_SMALL(numGradient1 - gradient1(i, j), 1e-2);
-      BOOST_REQUIRE_SMALL(numGradient2 - gradient2(i, j), 1e-2);
+      BOOST_REQUIRE_SMALL(numGradient1 - gradient1(i, j), 1e-5);
+      BOOST_REQUIRE_SMALL(numGradient2 - gradient2(i, j), 1e-5);
+    }
+  }
+}
+
+/**
+ * Test separable Gradient() of the LinearSVMFunction when regularization
+ * is used.
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMFunctionSeparableGradient)
+{
+  const size_t points = 1000;
+  const size_t trials = 3;
+  const size_t inputSize = 10;
+  const size_t numClasses = 3;
+
+  // Initialize a random dataset.
+  arma::mat data;
+  data.randu(inputSize, points);
+
+  // Create random class labels.
+  arma::Row<size_t> labels(points);
+  for (size_t i = 0; i < points; i++)
+    labels(i) = math::RandInt(0, numClasses);
+
+  LinearSVMFunction<> svmfNoReg(data, labels, numClasses, 0.0);
+  LinearSVMFunction<> svmfSmallReg(data, labels, numClasses, 0.5);
+  LinearSVMFunction<> svmfBigReg(data, labels, numClasses, 20.0);
+
+  for (size_t i = 0; i < trials; ++i)
+  {
+    // Create a random set of parameters.
+    arma::mat parameters;
+    parameters.randu(numClasses, inputSize);
+
+    arma::mat gradient;
+    arma::mat smallRegGradient;
+    arma::mat bigRegGradient;
+
+    // Test separable gradient for each point.  Regularization will be the same.
+    for (size_t k = 0; k < points; ++k)
+    {
+      svmfNoReg.Gradient(parameters, k, gradient, 1);
+      svmfSmallReg.Gradient(parameters, k, smallRegGradient, 1);
+      svmfBigReg.Gradient(parameters, k, bigRegGradient, 1);
+
+      // Check sizes of gradients.
+      BOOST_REQUIRE_EQUAL(gradient.n_elem, parameters.n_elem);
+      BOOST_REQUIRE_EQUAL(smallRegGradient.n_elem, parameters.n_elem);
+      BOOST_REQUIRE_EQUAL(bigRegGradient.n_elem, parameters.n_elem);
+
+      // Check other terms.
+      for (size_t j = 0; j < parameters.n_elem; ++j)
+      {
+        const double smallRegTerm = 0.5 * parameters[j];
+        const double bigRegTerm = 20.0 * parameters[j];
+
+        BOOST_REQUIRE_CLOSE(gradient[j] + smallRegTerm, smallRegGradient[j],
+                            1e-5);
+        BOOST_REQUIRE_CLOSE(gradient[j] + bigRegTerm, bigRegGradient[j], 1e-5);
+      }
     }
   }
 }
