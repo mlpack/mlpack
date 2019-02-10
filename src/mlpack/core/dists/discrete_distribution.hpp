@@ -190,7 +190,7 @@ class DiscreteDistribution
    * @param x List of observations.
    * @param logProbabilities probabilities Output probabilities for each 
    *   input observation.
-  */
+   */
   void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
   /**
    * Return a randomly generated observation (one-dimensional vector; one
@@ -244,12 +244,12 @@ class DiscreteDistribution
 };
 
 /**
-* Calculates the Discrete log probability function for each
-* data point (column) in the given matrix
-*
-* @param x List of observations.
-* @param probabilities Output log probabilities for each input observation.
-*/
+ * Calculates the Discrete log probability function for each
+ * data point (column) in the given matrix
+ *
+ * @param x List of observations.
+ * @param probabilities Output log probabilities for each input observation.
+ */
 inline void DiscreteDistribution::LogProbability(
     const arma::mat& x,
     arma::vec& logProbabilities) const
