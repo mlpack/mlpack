@@ -630,8 +630,8 @@ double DecisionTree<FitnessFunction,
     for (size_t i = begin; i < begin + count; ++i)
       childCounts[childAssignments[i - begin]]++;
 
-    //Initialize bestGain if recursive split is allowed
-    if(!NoRecursion)
+    // Initialize bestGain if recursive split is allowed.
+    if (!NoRecursion)
     {
       bestGain = 0.0;
     }
@@ -664,7 +664,7 @@ double DecisionTree<FitnessFunction,
       }
       else
       {
-        // During recursion entropy of child node may change
+        // During recursion entropy of child node may change.
         double childGain = child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, datasetInfo, labels, numClasses,
             weights, minimumLeafSize, minimumGainSplit);
@@ -777,8 +777,8 @@ double DecisionTree<FitnessFunction,
     for (size_t j = begin; j < begin + count; ++j)
       childCounts[childAssignments[j - begin]]++;
 
-    //Initialize bestGain if recursive split is allowed
-    if(!NoRecursion)
+    // Initialize bestGain if recursive split is allowed.
+    if (!NoRecursion)
     {
       bestGain = 0.0;
     }
@@ -810,7 +810,7 @@ double DecisionTree<FitnessFunction,
       }
       else
       {
-        // During recursion entropy of child node may change
+        // During recursion entropy of child node may change.
         double childGain = child->Train<UseWeights>(data, currentChildBegin,
             currentCol - currentChildBegin, labels, numClasses, weights,
             minimumLeafSize, minimumGainSplit);
