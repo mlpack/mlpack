@@ -174,12 +174,12 @@ class GaussianDistribution
 };
 
 /**
-* Calculates the multivariate Gaussian log probability density function for each
-* data point (column) in the given matrix
-*
-* @param x List of observations.
-* @param probabilities Output log probabilities for each input observation.
-*/
+ * Calculates the multivariate Gaussian log probability density function for each
+ * data point (column) in the given matrix
+ *
+ * @param x List of observations.
+ * @param probabilities Output log probabilities for each input observation.
+ */
 inline void GaussianDistribution::LogProbability(
     const arma::mat& x,
     arma::vec& logProbabilities) const
