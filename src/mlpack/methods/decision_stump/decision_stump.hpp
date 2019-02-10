@@ -81,6 +81,7 @@ class DecisionStump
    * @param labels Labels for each point in the dataset.
    * @param numClasses Number of classes in the dataset.
    * @param bucketSize Minimum size of bucket when splitting.
+   * @return final entropy after splitting.
    */
   double Train(const MatType& data,
                const arma::Row<size_t>& labels,
@@ -97,6 +98,7 @@ class DecisionStump
    * @param weights Weights for each point in the dataset.
    * @param numClasses Number of classes in the dataset.
    * @param bucketSize Minimum size of bucket when splitting.
+   * @return final entropy after splitting.
    */
   double Train(const MatType& data,
                const arma::Row<size_t>& labels,
@@ -214,6 +216,7 @@ class DecisionStump
    * @param weights Weights for this set of labels.
    * @tparam UseWeights If true, the weights in the weight vector will be used
    *      (otherwise they are ignored).
+   * @return final entropy after splitting.
    */
   template<bool UseWeights>
   double Train(const MatType& data,

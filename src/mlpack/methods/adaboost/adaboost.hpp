@@ -140,6 +140,7 @@ class AdaBoost
    * @param data Dataset to train on.
    * @param labels Labels for each point in the dataset.
    * @param learner Learner to use for training.
+   * @return ztProduct an upper bound for training error.
    */
   double Train(const MatType& data,
                const arma::Row<size_t>& labels,

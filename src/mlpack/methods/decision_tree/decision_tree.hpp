@@ -210,6 +210,7 @@ class DecisionTree :
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @return final entropy of decision tree.
    */
   template<typename MatType, typename LabelsType>
   double Train(MatType data,
@@ -233,6 +234,7 @@ class DecisionTree :
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @return final entropy of decision tree.
    */
   template<typename MatType, typename LabelsType>
   double Train(MatType data,
@@ -258,6 +260,7 @@ class DecisionTree :
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @return final entropy of decision tree.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
   double Train(MatType data,
@@ -285,6 +288,7 @@ class DecisionTree :
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @return final entropy of decision tree.
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
   double Train(MatType data,
@@ -421,6 +425,7 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @return final entropy of decision tree.
    */
   template<bool UseWeights, typename MatType>
   double Train(MatType& data,
@@ -446,6 +451,7 @@ class DecisionTree :
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
+   * @return final entropy of decision tree.
    */
   template<bool UseWeights, typename MatType>
   double Train(MatType& data,

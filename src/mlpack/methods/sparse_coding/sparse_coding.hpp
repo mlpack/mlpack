@@ -177,6 +177,7 @@ class SparseCoding
 
   /**
    * Train the sparse coding model on the given dataset.
+   * @return final objective value.
    */
   template<typename DictionaryInitializer = DataDependentRandomInitializer>
   double Train(const arma::mat& data,

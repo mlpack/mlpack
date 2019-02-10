@@ -71,6 +71,7 @@ class LinearRegression
    * @param predictors X, the matrix of data points to train the model on.
    * @param responses y, the responses to the data points.
    * @param intercept Whether or not to fit an intercept term.
+   * @return least squares error after training.
    */
   double Train(const arma::mat& predictors,
                const arma::rowvec& responses,
@@ -87,6 +88,7 @@ class LinearRegression
    * @param responses y, the responses to the data points.
    * @param intercept Whether or not to fit an intercept term.
    * @param weights Observation weights (for boosting).
+   * @return ordinary least squares error.
    */
   double Train(const arma::mat& predictors,
                const arma::rowvec& responses,

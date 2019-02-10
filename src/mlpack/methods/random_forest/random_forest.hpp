@@ -129,6 +129,7 @@ class RandomForest
    * @param numClasses Number of classes in dataset.
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   * @return average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
   double Train(const MatType& data,
@@ -149,6 +150,7 @@ class RandomForest
    * @param numClasses Number of classes in dataset.
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   * @return average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
   double Train(const MatType& data,
@@ -169,6 +171,7 @@ class RandomForest
    * @param weights Weights (importances) of each point in the dataset.
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   * @return average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
   double Train(const MatType& data,
@@ -191,6 +194,7 @@ class RandomForest
    * @param weights Weights (importances) of each point in the dataset.
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   * @return average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
   double Train(const MatType& data,
@@ -279,6 +283,7 @@ class RandomForest
    * @tparam UseWeights Whether or not to use the weights parameter.
    * @tparam UseDatasetInfo Whether or not to use the datasetInfo parameter.
    * @tparam MatType The type of data matrix (i.e. arma::mat).
+   * @return average entropy of all the decision trees trained under forest.
    */
   template<bool UseWeights, bool UseDatasetInfo, typename MatType>
   double Train(const MatType& data,

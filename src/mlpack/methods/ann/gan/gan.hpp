@@ -98,7 +98,10 @@ class GAN
   // Reset function.
   void Reset();
 
-  // Train function.
+  /**
+   * Train function.
+   * @return final objective value.
+   */
   template<typename OptimizerType>
   double Train(OptimizerType& Optimizer);
 
