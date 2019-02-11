@@ -54,9 +54,9 @@ def to_matrix(x, dtype=np.double, copy=False):
       return x, False
   elif (isinstance(x, np.ndarray) and x.dtype == dtype and x.flags.f_contiguous):
     if copy: # Copy the matrix if required.
-      return np.ma.array(x,copy = True,order= 'C'),True
+      return np.ma.array(x,copy = True, dtype=dtype ,order= 'C'),True
     else:
-      return np.ma.array(x,order= 'C'),False
+      return np.ma.array(x, dtype=dtype,order= 'C'),False
   else:
     if isinstance(x, pd.core.series.Series):
       y = x.to_numpy()
