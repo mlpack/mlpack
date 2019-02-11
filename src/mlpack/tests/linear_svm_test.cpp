@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionEvaluate)
   BOOST_REQUIRE_CLOSE(svmf.Evaluate(parameters), 1.0, 1e-5);
 
   parameters = "2 0 1 2 2;"
-               " 1 2 2 2 2";
+               "1 2 2 2 2";
   BOOST_REQUIRE_CLOSE(svmf.Evaluate(parameters), 2.0, 1e-5);
 
   parameters = "-0.1425 8.3228 0.1724 -0.3374 0.1548;"
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionEvaluate)
 BOOST_AUTO_TEST_CASE(LinearSVMFunctionRandomBinaryEvaluate)
 {
   const size_t points = 1000;
-  const size_t trials = 25;
+  const size_t trials = 10;
   const size_t inputSize = 10;
   const size_t numClasses = 2;
 
@@ -123,8 +123,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRandomBinaryEvaluate)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMFunctionRandomEvaluate)
 {
-  const size_t points = 1000;
-  const size_t trials = 25;
+  const size_t points = 500;
+  const size_t trials = 10;
   const size_t inputSize = 10;
   const size_t numClasses = 5;
 
@@ -178,8 +178,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRandomEvaluate)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMFunctionRegularizationEvaluate)
 {
-  const size_t points = 1000;
-  const size_t trials = 25;
+  const size_t points = 500;
+  const size_t trials = 10;
   const size_t inputSize = 10;
   const size_t numClasses = 3;
 
@@ -224,8 +224,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRegularizationEvaluate)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMFunctionSeparableEvaluate)
 {
-  const size_t points = 1000;
-  const size_t trials = 25;
+  const size_t points = 500;
+  const size_t trials = 10;
   const size_t inputSize = 10;
   const size_t numClasses = 3;
 
@@ -264,8 +264,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionSeparableEvaluate)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMFunctionRegularizationSeparableEvaluate)
 {
-  const size_t points = 500;
-  const size_t trials = 10;
+  const size_t points = 100;
+  const size_t trials = 3;
   const size_t inputSize = 10;
   const size_t numClasses = 3;
 
@@ -317,7 +317,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRegularizationSeparableEvaluate)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMFunctionGradient)
 {
-  const size_t points = 1000;
+  const size_t points = 500;
   const size_t inputSize = 10;
   const size_t numClasses = 3;
 
@@ -373,8 +373,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionGradient)
       parameters(i, j) += epsilon;
 
       // Compare numerical and backpropagation gradient values.
-      BOOST_REQUIRE_CLOSE(numGradient1, gradient1(i, j), 1e-5);
-      BOOST_REQUIRE_CLOSE(numGradient2, gradient2(i, j), 1e-5);
+      BOOST_REQUIRE_SMALL(numGradient1 - gradient1(i, j), 1e-2);
+      BOOST_REQUIRE_SMALL(numGradient2 - gradient2(i, j), 1e-2);
     }
   }
 }
@@ -385,10 +385,10 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionGradient)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMFunctionSeparableGradient)
 {
-  const size_t points = 1000;
+  const size_t points = 100;
   const size_t trials = 3;
-  const size_t inputSize = 10;
-  const size_t numClasses = 3;
+  const size_t inputSize = 5;
+  const size_t numClasses = 5;
 
   // Initialize a random dataset.
   arma::mat data;
@@ -457,7 +457,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMPSGDSimpleTest)
 
   // Create a linear svm object using a custom Parallel
   // SGD object.
-  ens::ParallelSGD<> psgd(500000, 3, 1e-5);
+  ens::ParallelSGD<> psgd(1000, 3, 1e-5);
   LinearSVM<arma::mat> lsvm(dataset, labels, 2, 0.0001, psgd);
 
   // Compare training accuracy to 100.
@@ -519,7 +519,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMPSGDTwoClasses)
   }
 
   // Train linear svm object using Parallel SGD optimizer.
-  ens::ParallelSGD<> psgd(1000, 1000, 1e-5);
+  ens::ParallelSGD<> psgd(1000, 500, 1e-5);
   LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda, psgd);
 
   // Compare training accuracy to 100.
@@ -549,7 +549,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMPSGDTwoClasses)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMLBFGSTwoClasses)
 {
-  const size_t points = 1000;
+  const size_t points = 500;
   const size_t inputSize = 3;
   const size_t numClasses = 2;
   const double lambda = 0.5;
@@ -624,7 +624,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMSparseLBFGSTest)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMLBFGSMultipleClasses)
 {
-  const size_t points = 5000;
+  const size_t points = 500;
   const size_t inputSize = 5;
   const size_t numClasses = 5;
   const double lambda = 0.5;
@@ -742,7 +742,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMTrainTest)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMClassifySinglePointTest)
 {
-  const size_t points = 1000;
+  const size_t points = 500;
   const size_t inputSize = 5;
   const size_t numClasses = 5;
   const double lambda = 0.5;
@@ -827,7 +827,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMClassifySinglePointTest)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMClassifyTest)
 {
-  const size_t points = 1000;
+  const size_t points = 500;
   const size_t inputSize = 5;
   const size_t numClasses = 5;
   const double lambda = 0.5;
@@ -902,7 +902,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMClassifyTest)
   arma::Row<size_t> predictions;
   lsvm.Classify(data, predictions);
 
-  BOOST_REQUIRE_GE((double) arma::accu(predictions == labels), 900);
+  BOOST_REQUIRE_GE((double) arma::accu(predictions == labels), 450);
 }
 
 /**
@@ -911,7 +911,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMClassifyTest)
  */
 BOOST_AUTO_TEST_CASE(SinglePointClassifyTest)
 {
-  const size_t points = 1000;
+  const size_t points = 500;
   const size_t inputSize = 5;
   const size_t numClasses = 5;
   const double lambda = 0.5;
