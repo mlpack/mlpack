@@ -52,12 +52,24 @@ class LinearSVM
    * @param lambda L2-regularization constant.
    * @param optimizer Desired optimizer.
    */
-  template <typename OptimizerType = ens::ParallelSGD<>>
+  template <typename OptimizerType>
   LinearSVM(const MatType& data,
             const arma::Row<size_t>& labels,
             const size_t numClasses = 2,
             const double lambda = 0.0001,
             OptimizerType optimizer = OptimizerType());
+
+  /**
+   * Initialize the SoftmaxRegression without performing training.  Default
+   * value of lambda is 0.0001.  Be sure to use Train() before calling
+   * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
+   *
+   * @param inputSize Size of the input feature vector.
+   * @param numClasses Number of classes for classification.
+   * @param fitIntercept add intercept term or not.
+   */
+  LinearSVM(const size_t inputSize = 0,
+            const size_t numClasses = 0);
 
   /**
    * Classify the given points, returning the predicted labels for each point.
@@ -96,6 +108,17 @@ class LinearSVM
                 arma::mat& scores) const;
 
   /**
+   * Classify the given point. The predicted class label is returned.
+   * The function calculates the scores for every class, given the point.
+   * It then chooses the class which has the highest probability among all.
+   *
+   * @param point Point to be classified.
+   * @return Predicted class label of the point.
+   */
+  template<typename VecType>
+  size_t Classify(const VecType& point) const;
+
+  /**
    * Computes accuracy of the learned model given the feature data and the
    * labels associated with each data point. Predictions are made using the
    * provided data and are compared with the actual labels.
@@ -118,11 +141,10 @@ class LinearSVM
    * @param optimizer Desired optimizer.
    * @return Objective value of the final point.
    */
-  template <typename OptimizerType = ens::ParallelSGD<>>
+  template <typename OptimizerType>
   double Train(const MatType& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses = 2,
-               const double lambda = 0.0001,
                OptimizerType optimizer = OptimizerType());
 
 

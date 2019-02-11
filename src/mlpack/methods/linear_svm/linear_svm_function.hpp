@@ -27,9 +27,6 @@ template <typename MatType = arma::mat>
 class LinearSVMFunction
 {
  public:
-  //! Nothing to do for the default constructor.
-  LinearSVMFunction() {}
-
   /**
    * Construct the Linear SVM objective function with given parameters.
    *

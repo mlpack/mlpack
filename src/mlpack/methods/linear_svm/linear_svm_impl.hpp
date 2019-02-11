@@ -29,7 +29,18 @@ LinearSVM<MatType>::LinearSVM(
     numClasses(numClasses),
     lambda(lambda)
 {
-  Train(data, labels, numClasses, lambda, optimizer);
+  Train(data, labels, numClasses, optimizer);
+}
+
+template <typename MatType>
+LinearSVM<MatType>::LinearSVM(
+    const size_t inputSize,
+    const size_t numClasses) :
+    numClasses(numClasses),
+    lambda(0.0001)
+{
+  LinearSVMFunction<MatType>::InitializeWeights(
+      parameters, inputSize, numClasses);
 }
 
 template <typename MatType>
@@ -38,7 +49,6 @@ double LinearSVM<MatType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    const double lambda,
     OptimizerType optimizer)
 {
   LinearSVMFunction<MatType> svm(data, labels,
@@ -117,6 +127,15 @@ const
 }
 
 template <typename MatType>
+template <typename VecType>
+size_t LinearSVM<MatType>::Classify(const VecType& point) const
+{
+  arma::Row<size_t> label(1);
+  Classify(point, label);
+  return size_t(label(0));
+}
+
+template <typename MatType>
 double LinearSVM<MatType>::ComputeAccuracy(
     const MatType& testData,
     const arma::Row<size_t>& testLabels)
@@ -130,7 +149,7 @@ const
   // Increment count for every correctly predicted label.
   size_t count = 0;
   for (size_t i = 0; i < labels.n_elem ; i++)
-    if (testLabels(i))
+    if (testLabels(i) == labels(i))
       count++;
 
   // Return percentage accuracy
