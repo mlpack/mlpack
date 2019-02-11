@@ -264,8 +264,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionSeparableEvaluate)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMFunctionRegularizationSeparableEvaluate)
 {
-  const size_t points = 1000;
-  const size_t trials = 25;
+  const size_t points = 500;
+  const size_t trials = 10;
   const size_t inputSize = 10;
   const size_t numClasses = 3;
 
@@ -373,8 +373,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionGradient)
       parameters(i, j) += epsilon;
 
       // Compare numerical and backpropagation gradient values.
-      BOOST_REQUIRE_SMALL(numGradient1 - gradient1(i, j), 1e-5);
-      BOOST_REQUIRE_SMALL(numGradient2 - gradient2(i, j), 1e-5);
+      BOOST_REQUIRE_CLOSE(numGradient1, gradient1(i, j), 1e-5);
+      BOOST_REQUIRE_CLOSE(numGradient2, gradient2(i, j), 1e-5);
     }
   }
 }
@@ -436,6 +436,561 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionSeparableGradient)
         BOOST_REQUIRE_CLOSE(gradient[j] + bigRegTerm, bigRegGradient[j], 1e-5);
       }
     }
+  }
+}
+
+/**
+ * Test training of linear svm on a simple dataset using
+ * Parallel SGD optimizer.
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMPSGDSimpleTest)
+{
+  // A very simple fake dataset
+  arma::mat dataset = "2 0 0;"
+                      "0 0 0;"
+                      "0 2 1;"
+                      "1 0 2;"
+                      "0 1 0";
+
+  //  Corresponding labels
+  arma::Row<size_t> labels = "1 0 1";
+
+  // Create a linear svm object using a custom Parallel
+  // SGD object.
+  ens::ParallelSGD<> psgd(500000, 3, 1e-5);
+  LinearSVM<arma::mat> lsvm(dataset, labels, 2, 0.0001, psgd);
+
+  // Compare training accuracy to 100.
+  const double acc = lsvm.ComputeAccuracy(dataset, labels);
+  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
+}
+
+/**
+ * Test training of linear svm on a simple dataset using
+ * L-BFGS optimizer
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMLGFGSSimpleTest)
+{
+    // A very simple fake dataset
+    arma::mat dataset = "2 0 0;"
+                        "0 0 0;"
+                        "0 2 1;"
+                        "1 0 2;"
+                        "0 1 0";
+
+    //  Corresponding labels
+    arma::Row<size_t> labels = "1 0 1";
+
+    // Create a linear svm object using a custom L-BFGS object.
+    LinearSVM<arma::mat> lsvm(dataset, labels, 2, 0.0001, ens::L_BFGS());
+
+    // Compare training accuracy to 100.
+    const double acc = lsvm.ComputeAccuracy(dataset, labels);
+    BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
+}
+
+/**
+ * Test training of linear svm for two classes on a complex gaussian dataset
+ * using Parallel SGD optimizer.
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMPSGDTwoClasses)
+{
+  const size_t points = 1000;
+  const size_t inputSize = 3;
+  const size_t numClasses = 2;
+  const double lambda = 0.5;
+
+  // Generate two-Gaussian dataset.
+  GaussianDistribution g1(arma::vec("1.0 9.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("4.0 3.0 4.0"), arma::eye<arma::mat>(3, 3));
+
+  arma::mat data(inputSize, points);
+  arma::Row<size_t> labels(points);
+
+  for (size_t i = 0; i < points / 2; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 2; i < points; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+
+  // Train linear svm object using Parallel SGD optimizer.
+  ens::ParallelSGD<> psgd(1000, 1000, 1e-5);
+  LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda, psgd);
+
+  // Compare training accuracy to 100.
+  const double acc = lsvm.ComputeAccuracy(data, labels);
+  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
+
+  // Create test dataset.
+  for (size_t i = 0; i < points / 2; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) =  0;
+  }
+  for (size_t i = points / 2; i < points; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+
+  // Compare test accuracy to 100.
+  const double testAcc = lsvm.ComputeAccuracy(data, labels);
+  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6);
+}
+
+/**
+ * Test training of linear svm for two classes on a complex gaussian dataset
+ * using L-BFGS optimizer.
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMLBFGSTwoClasses)
+{
+  const size_t points = 1000;
+  const size_t inputSize = 3;
+  const size_t numClasses = 2;
+  const double lambda = 0.5;
+
+  // Generate two-Gaussian dataset.
+  GaussianDistribution g1(arma::vec("1.0 9.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("4.0 3.0 4.0"), arma::eye<arma::mat>(3, 3));
+
+  arma::mat data(inputSize, points);
+  arma::Row<size_t> labels(points);
+
+  for (size_t i = 0; i < points / 2; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 2; i < points; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+
+  // Train linear svm object using L-BFGS optimizer.
+  LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda, ens::L_BFGS());
+
+  // Compare training accuracy to 100.
+  const double acc = lsvm.ComputeAccuracy(data, labels);
+  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
+
+  // Create test dataset.
+  for (size_t i = 0; i < points / 2; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) =  0;
+  }
+  for (size_t i = points / 2; i < points; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+
+  // Compare test accuracy to 100.
+  const double testAcc = lsvm.ComputeAccuracy(data, labels);
+  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6);
+}
+
+/**
+ * Test sparse and dense linear svm and make sure they both work the
+ * same using the L-BFGS optimizer.
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMSparseLBFGSTest)
+{
+  // Create a random dataset.
+  arma::sp_mat dataset;
+  dataset.sprandu(10, 800, 0.3);
+  arma::mat denseDataset(dataset);
+  arma::Row<size_t> labels(800);
+  for (size_t i = 0; i < 800; ++i)
+    labels[i] = math::RandInt(0, 2);
+
+  LinearSVM<arma::mat> lr(denseDataset, labels, 2, 0.3, ens::L_BFGS());
+  LinearSVM<arma::sp_mat> lrSparse(dataset, labels, 2, 0.3, ens::L_BFGS());
+
+  BOOST_REQUIRE_EQUAL(lr.Parameters().n_elem, lrSparse.Parameters().n_elem);
+  for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(lr.Parameters()[i], lrSparse.Parameters()[i], 5e-4);
+}
+
+/**
+ * Test training of linear svm for multiple classes on a complex gaussian
+ * dataset using L-BFGS optimizer.
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMLBFGSMultipleClasses)
+{
+  const size_t points = 5000;
+  const size_t inputSize = 5;
+  const size_t numClasses = 5;
+  const double lambda = 0.5;
+
+  // Generate five-Gaussian dataset.
+  arma::mat identity = arma::eye<arma::mat>(5, 5);
+  GaussianDistribution g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
+  GaussianDistribution g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
+  GaussianDistribution g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
+  GaussianDistribution g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
+  GaussianDistribution g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
+
+  arma::mat data(inputSize, points);
+  arma::Row<size_t> labels(points);
+
+  for (size_t i = 0; i < points / 5; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  {
+    data.col(i) = g3.Random();
+    labels(i) = 2;
+  }
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  {
+    data.col(i) = g4.Random();
+    labels(i) = 3;
+  }
+  for (size_t i = (4 * points) / 5; i < points; i++)
+  {
+    data.col(i) = g5.Random();
+    labels(i) = 4;
+  }
+
+  // Train linear svm object using L-BFGS optimizer.
+  LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda, ens::L_BFGS());
+
+  // Compare training accuracy to 100.
+  const double acc = lsvm.ComputeAccuracy(data, labels);
+  BOOST_REQUIRE_CLOSE(acc, 100.0, 2.0);
+
+  // Create test dataset.
+  for (size_t i = 0; i < points / 5; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  {
+    data.col(i) = g3.Random();
+    labels(i) = 2;
+  }
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  {
+    data.col(i) = g4.Random();
+    labels(i) = 3;
+  }
+  for (size_t i = (4 * points) / 5; i < points; i++)
+  {
+    data.col(i) = g5.Random();
+    labels(i) = 4;
+  }
+
+  // Compare test accuracy to 100.
+  const double testAcc = lsvm.ComputeAccuracy(data, labels);
+  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 2.0);
+}
+
+/**
+ * Testing Train() in LinearSVM.
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMTrainTest)
+{
+  // Test the stability of the LinearSVM.
+  arma::mat dataset = arma::randu<arma::mat>(5, 1000);
+  arma::Row<size_t> labels(1000);
+  for (size_t i = 0; i < 500; ++i)
+    labels[i] = size_t(0.0);
+  for (size_t i = 500; i < 1000; ++i)
+    labels[i] = size_t(1.0);
+
+  LinearSVM<arma::mat> lsvm(dataset.n_rows, 2);
+  LinearSVM<arma::mat> lsvm2(dataset.n_rows, 2);
+  lsvm.Parameters() = lsvm2.Parameters();
+  ens::L_BFGS lbfgs;
+  lsvm.Train(dataset, labels, 2, std::move(lbfgs));
+  lsvm2.Train(dataset, labels, 2, std::move(lbfgs));
+
+  // Ensure that the parameters are the same.
+  BOOST_REQUIRE_EQUAL(lsvm.Parameters().n_rows, lsvm2.Parameters().n_rows);
+  BOOST_REQUIRE_EQUAL(lsvm.Parameters().n_cols, lsvm2.Parameters().n_cols);
+  for (size_t i = 0; i < lsvm.Parameters().n_elem; ++i)
+  {
+    if (std::abs(lsvm.Parameters()[i]) < 1e-4)
+      BOOST_REQUIRE_SMALL(lsvm2.Parameters()[i], 1e-4);
+    else
+      BOOST_REQUIRE_CLOSE(lsvm.Parameters()[i], lsvm2.Parameters()[i], 1e-4);
+  }
+}
+
+/**
+ * Testing single point classification (Classify()).
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMClassifySinglePointTest)
+{
+  const size_t points = 1000;
+  const size_t inputSize = 5;
+  const size_t numClasses = 5;
+  const double lambda = 0.5;
+
+  // Generate five-Gaussian dataset.
+  arma::mat identity = arma::eye<arma::mat>(5, 5);
+  GaussianDistribution g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
+  GaussianDistribution g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
+  GaussianDistribution g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
+  GaussianDistribution g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
+  GaussianDistribution g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
+
+  arma::mat data(inputSize, points);
+  arma::Row<size_t> labels(points);
+
+  for (size_t i = 0; i < points / 5; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  {
+    data.col(i) = g3.Random();
+    labels(i) = 2;
+  }
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  {
+    data.col(i) = g4.Random();
+    labels(i) = 3;
+  }
+  for (size_t i = (4 * points) / 5; i < points; i++)
+  {
+    data.col(i) = g5.Random();
+    labels(i) = 4;
+  }
+
+  // Train linear svm object.
+  LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda, ens::L_BFGS());
+
+  // Create test dataset.
+  for (size_t i = 0; i < points / 5; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  {
+    data.col(i) = g3.Random();
+    labels(i) = 2;
+  }
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  {
+    data.col(i) = g4.Random();
+    labels(i) = 3;
+  }
+  for (size_t i = (4 * points) / 5; i < points; i++)
+  {
+    data.col(i) = g5.Random();
+    labels(i) = 4;
+  }
+
+  lsvm.Classify(data, labels);
+
+  for (size_t i = 0; i < data.n_cols; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(lsvm.Classify(data.col(i)), labels(i));
+  }
+}
+
+/**
+ * Test multi-point classification (Classify()).
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMClassifyTest)
+{
+  const size_t points = 1000;
+  const size_t inputSize = 5;
+  const size_t numClasses = 5;
+  const double lambda = 0.5;
+
+  // Generate five-Gaussian dataset.
+  arma::mat identity = arma::eye<arma::mat>(5, 5);
+  GaussianDistribution g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
+  GaussianDistribution g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
+  GaussianDistribution g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
+  GaussianDistribution g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
+  GaussianDistribution g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
+
+  arma::mat data(inputSize, points);
+  arma::Row<size_t> labels(points);
+
+  for (size_t i = 0; i < points / 5; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  {
+    data.col(i) = g3.Random();
+    labels(i) = 2;
+  }
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  {
+    data.col(i) = g4.Random();
+    labels(i) = 3;
+  }
+  for (size_t i = (4 * points) / 5; i < points; i++)
+  {
+    data.col(i) = g5.Random();
+    labels(i) = 4;
+  }
+
+  // Train linear svm object.
+  LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda, ens::L_BFGS());
+
+  // Create test dataset.
+  for (size_t i = 0; i < points / 5; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  {
+    data.col(i) = g3.Random();
+    labels(i) = 2;
+  }
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  {
+    data.col(i) = g4.Random();
+    labels(i) = 3;
+  }
+  for (size_t i = (4 * points) / 5; i < points; i++)
+  {
+    data.col(i) = g5.Random();
+    labels(i) = 4;
+  }
+
+  arma::Row<size_t> predictions;
+  lsvm.Classify(data, predictions);
+
+  BOOST_REQUIRE_GE((double) arma::accu(predictions == labels), 900);
+}
+
+/**
+ * Test that single-point classification gives the same results as multi-point
+ * classification.
+ */
+BOOST_AUTO_TEST_CASE(SinglePointClassifyTest)
+{
+  const size_t points = 1000;
+  const size_t inputSize = 5;
+  const size_t numClasses = 5;
+  const double lambda = 0.5;
+
+  // Generate five-Gaussian dataset.
+  arma::mat identity = arma::eye<arma::mat>(5, 5);
+  GaussianDistribution g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
+  GaussianDistribution g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
+  GaussianDistribution g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
+  GaussianDistribution g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
+  GaussianDistribution g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
+
+  arma::mat data(inputSize, points);
+  arma::Row<size_t> labels(points);
+
+  for (size_t i = 0; i < points / 5; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  {
+    data.col(i) = g3.Random();
+    labels(i) = 2;
+  }
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  {
+    data.col(i) = g4.Random();
+    labels(i) = 3;
+  }
+  for (size_t i = (4 * points) / 5; i < points; i++)
+  {
+    data.col(i) = g5.Random();
+    labels(i) = 4;
+  }
+
+  // Train linear svm object.
+  LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda, ens::L_BFGS());
+
+  // Create test dataset.
+  for (size_t i = 0; i < points / 5; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  {
+    data.col(i) = g3.Random();
+    labels(i) = 2;
+  }
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  {
+    data.col(i) = g4.Random();
+    labels(i) = 3;
+  }
+  for (size_t i = (4 * points) / 5; i < points; i++)
+  {
+    data.col(i) = g5.Random();
+    labels(i) = 4;
+  }
+
+  arma::Row<size_t> predictions;
+  lsvm.Classify(data, predictions);
+
+  for (size_t i = 0; i < data.n_cols; ++i)
+  {
+    size_t pred = lsvm.Classify(data.col(i));
+
+    BOOST_REQUIRE_EQUAL(pred, predictions[i]);
   }
 }
 
