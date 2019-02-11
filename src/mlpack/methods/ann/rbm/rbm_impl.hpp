@@ -50,6 +50,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::RBM(
     reset(false)
 {
   numFunctions = this->predictors.n_cols;
+  steps = 0;
 }
 
 template<
@@ -135,12 +136,8 @@ RBM<InitializationRuleType, DataType, PolicyType>::Phase(
   DataType hiddenBiasGrad = DataType(gradient.memptr() + weightGrad.n_elem,
       hiddenSize, 1, false, false);
 
-  DataType visibleBiasGrad = DataType(gradient.memptr() + weightGrad.n_elem +
-      hiddenBiasGrad.n_elem, visibleSize, 1, false, false);
-
   HiddenMean(std::move(input), std::move(hiddenBiasGrad));
   weightGrad.slice(0) = hiddenBiasGrad * input.t();
-  visibleBiasGrad = input;
 }
 
 template<
