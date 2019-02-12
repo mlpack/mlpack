@@ -12,7 +12,7 @@
 #include<string>
 
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std:: string testname = "GmmTrain"
+static const std:: string testName = "GmmTrain";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
@@ -30,7 +30,7 @@ public:
  GmmTrainTestFixture()
  {
    // Cache in the options for this program.
-   CLI::RestoreSettings(testname);
+   CLI::RestoreSettings(testName);
  }
 
  ~GmmTrainTestFixture()
@@ -43,7 +43,7 @@ public:
 void ResetGmmTrainSetting()
 {
   CLI::ClearSettings();
-  CLI::RestoreSettings(testname);
+  CLI::RestoreSettings(testName);
 }
 
 BOOST_FIXTURE_TEST_SUITE(GmmTrainMainTest , GmmTrainTestFixture);
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainValidGaussian)
     BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
   SetInputParam("input" , std::move(inputData));
-  SetInputParam("gaussian" , (int) -1); //invalid
+  SetInputParam("gaussian" , (int) -1);// Invalid
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainOutputModelGaussian)
   mlpackMain();
 
   GMM* gmm = CLI::GetParam<GMM*>("output_model");
-  BOOST_REQUIRE_EQUAL(gmm->gaussians() , g);
+  BOOST_REQUIRE_EQUAL(gmm->Gaussians() , g);
 }
 
 // Number of trials is provided or not.
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainValidTrials)
   if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Unable to load train dataset vc2.csv!");
 
-  SetInputParam("input" , std::move(inputdata));
+  SetInputParam("input" , std::move(inputData));
   SetInputParam("gaussians" , g);
   SetInputParam("trials" , trials);// Invalid.
 
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiagonalCovarianceCheck)
   SetInputParam("gaussians" , g);
   SetInputParam("trials" , t);
   SetInputParam("Diagonal_covariance" , false);
-  SetinputParam("no_force_positive" , n_f_p); // Invalid.
+  SetInputParam("no_force_positive" , n_f_p); // Invalid.
   SetInputParam("noise" , (int) 0);
 
   Log::Fatal.ignoreInput = true;
@@ -177,8 +177,6 @@ BOOST_AUTO_TEST_CASE(RefinedStartPercentageTest)
 {
   int g = 3;
   int t = 2;
-  int mi = 3;
-  int tol = -1;
   int c = 2;
   double P = 2.0;
   arma::mat inputData;
@@ -225,7 +223,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainNumberOfGaussian)
 
   GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
 
-  BOOST_REQUIRE_EQUAL(gmm1->gaussians(), g);
+  BOOST_REQUIRE_EQUAL(gmm1->Gaussians(), g);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
