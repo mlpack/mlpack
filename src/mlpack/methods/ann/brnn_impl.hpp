@@ -156,6 +156,8 @@ void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
 
   std::vector<arma::mat> results1, results2;
   arma::mat input;
+
+  // Forward both RNN's from opposite directions.
   for (size_t begin = 0; begin < predictors.n_cols; begin += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize,
@@ -175,6 +177,8 @@ void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
           std::move(results2)), backwardRNN.network.back());
     }
     reverse(results1.begin(), results1.end());
+
+    // Forward outputs from both RNN's through merge layer for each time step.
     for (size_t seqNum = 0; seqNum < rho; ++seqNum)
     {
       boost::apply_visitor(LoadOutputParameterVisitor(
@@ -267,6 +271,7 @@ double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
   }
   reverse(results1.begin(), results1.end());
 
+  // Performance calculation after forwarding through merge layer.
   arma::mat input;
   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
   {
