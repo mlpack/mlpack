@@ -30,8 +30,11 @@ class BackwardVisitor : public boost::static_visitor<void>
  public:
   //! Execute the Backward() function given the input, error and delta
   //! parameter.
+  BackwardVisitor(arma::mat&& input, arma::mat&& error, arma::mat&& delta);
+
+  //! Execute the Backward() function for the layer with the specified index.
   BackwardVisitor(arma::mat&& input, arma::mat&& error, arma::mat&& delta,
-      int layer = -1);
+      const size_t index);
 
   //! Execute the Backward() function.
   template<typename LayerType>
@@ -48,7 +51,10 @@ class BackwardVisitor : public boost::static_visitor<void>
   arma::mat&& delta;
 
   //! The index of the layer to run.
-  int index;
+  size_t index;
+
+  //! Indicates whether to use index or not
+  bool hasIndex;
 
   //! Execute the Backward() function if the module does not have Run()
   //! check.

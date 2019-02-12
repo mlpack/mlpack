@@ -21,12 +21,25 @@ namespace ann {
 //! BackwardVisitor visitor class.
 inline BackwardVisitor::BackwardVisitor(arma::mat&& input,
                                         arma::mat&& error,
-                                        arma::mat&& delta,
-                                        int layer) :
+                                        arma::mat&& delta) :
   input(std::move(input)),
   error(std::move(error)),
   delta(std::move(delta)),
-  index(layer)
+  index(0),
+  hasIndex(false)
+{
+  /* Nothing to do here. */
+}
+
+inline BackwardVisitor::BackwardVisitor(arma::mat&& input,
+                                        arma::mat&& error,
+                                        arma::mat&& delta,
+                                        const size_t index) :
+  input(std::move(input)),
+  error(std::move(error)),
+  delta(std::move(delta)),
+  index(index),
+  hasIndex(true)
 {
   /* Nothing to do here. */
 }
@@ -50,7 +63,7 @@ inline typename std::enable_if<
     HasRunCheck<T, bool&(T::*)(void)>::value, void>::type
 BackwardVisitor::LayerBackward(T* layer, arma::mat& /* input */) const
 {
-  if (index == -1)
+  if (!hasIndex)
   {
     layer->Backward(std::move(input), std::move(error),
         std::move(delta));

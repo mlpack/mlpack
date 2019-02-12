@@ -30,7 +30,10 @@ class GradientVisitor : public boost::static_visitor<void>
  public:
   //! Executes the Gradient() method of the given module using the input and
   //! delta parameter.
-  GradientVisitor(arma::mat&& input, arma::mat&& delta, int layer = -1);
+  GradientVisitor(arma::mat&& input, arma::mat&& delta);
+
+  //! Executes the Gradient() method for the layer with the specified index.
+  GradientVisitor(arma::mat&& input, arma::mat&& delta, const size_t index);
 
   //! Executes the Gradient() method.
   template<typename LayerType>
@@ -44,7 +47,10 @@ class GradientVisitor : public boost::static_visitor<void>
   arma::mat&& delta;
 
   //! Index of the layer to run.
-  int index;
+  size_t index;
+
+  //! Indicates whether to use index or not
+  bool hasIndex;
 
   //! Execute the Gradient() function if the module implements the Gradient()
   //! function.

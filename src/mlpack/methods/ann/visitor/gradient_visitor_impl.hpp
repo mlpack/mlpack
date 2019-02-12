@@ -19,11 +19,21 @@ namespace mlpack {
 namespace ann {
 
 //! GradientVisitor visitor class.
-inline GradientVisitor::GradientVisitor(arma::mat&& input, arma::mat&& delta,
-                                        int layer) :
+inline GradientVisitor::GradientVisitor(arma::mat&& input, arma::mat&& delta) :
     input(std::move(input)),
     delta(std::move(delta)),
-    index(layer)
+    index(0),
+    hasIndex(false)
+{
+  /* Nothing to do here. */
+}
+
+inline GradientVisitor::GradientVisitor(arma::mat&& input, arma::mat&& delta,
+                                        const size_t index) :
+    input(std::move(input)),
+    delta(std::move(delta)),
+    index(index),
+    hasIndex(true)
 {
   /* Nothing to do here. */
 }
@@ -50,7 +60,7 @@ inline typename std::enable_if<
     HasRunCheck<T, bool&(T::*)(void)>::value, void>::type
 GradientVisitor::LayerGradients(T* layer, arma::mat& /* input */) const
 {
-  if (index == -1)
+  if (!hasIndex)
   {
     layer->Gradient(std::move(input), std::move(delta),
         std::move(layer->Gradient()));
