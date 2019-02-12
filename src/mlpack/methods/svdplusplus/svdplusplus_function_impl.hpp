@@ -20,10 +20,11 @@ namespace mlpack {
 namespace svd {
 
 template <typename MatType>
-SVDPlusPlusFunction<MatType>::SVDPlusPlusFunction(const MatType& data,
-                                                  const arma::sp_mat& implicitData,
-                                                  const size_t rank,
-                                                  const double lambda) :
+SVDPlusPlusFunction<MatType>::SVDPlusPlusFunction(
+    const MatType& data,
+    const arma::sp_mat& implicitData,
+    const size_t rank,
+    const double lambda) :
     data(math::MakeAlias(const_cast<MatType&>(data), false)),
     implicitData(implicitData),
     rank(rank),
