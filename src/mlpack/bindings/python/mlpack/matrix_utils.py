@@ -54,16 +54,16 @@ def to_matrix(x, dtype=np.double, copy=False):
       return x, False
   elif (isinstance(x, np.ndarray) and x.dtype == dtype and x.flags.f_contiguous):
     if copy: # Copy the matrix if required.
-      return np.ma.array(x,copy = True, dtype=dtype ,order= 'C'),True
+      return np.ndarray(x.shape,buffer=x.flatten(),dtype=dtype,order = 'C').copy("C"),True
     else:
-      return np.ma.array(x, dtype=dtype,order= 'C'),False
+      return np.ndarray(x.shape,buffer=x.flatten(),dtype=dtype, order = 'C'),False
   else:
     if isinstance(x, pd.core.series.Series):
       y = x.to_numpy()
     if copy: # Copy the matrix if required.
-      return np.ma.array(y,copy = True, dtype=dtype, order='C'), True
+      return np.ndarray(y.shape,buffer=y.flatten(),dtype=dtype,order = 'C').copy("C"),True
     else:
-      return np.ma.array(y, dtype=dtype,order = 'C'), False
+      return np.ndarray(y.shape,buffer=y.flatten(),dtype=dtype, order = 'C'),False
     
 
 def to_matrix_with_info(x, dtype, copy=False):
