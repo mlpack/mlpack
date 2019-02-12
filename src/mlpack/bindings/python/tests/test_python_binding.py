@@ -140,7 +140,7 @@ class TestPythonBinding(unittest.TestCase):
     for j in range(100):
       self.assertEqual(2 * x[j, 2], output['matrix_out'][j, 2])
       
-   def testPandasMatrix(self):
+  def testPandasMatrix(self):
     """
     The matrix we pass in, we should get back with the third dimension doubled
     and the fifth forgotten.
@@ -163,7 +163,7 @@ class TestPythonBinding(unittest.TestCase):
     for j in range(100):
       self.assertEqual(2 * x.iloc[j, 2], output['matrix_out'][j, 2])
 
-   def testPandasMatrixForceCopy(self):
+  def testPandasMatrixForceCopy(self):
     """
     The matrix we pass in, we should get back with the third dimension doubled
     and the fifth forgotten.
