@@ -12,17 +12,16 @@
               
 #define BINDING_TYPE BINDING_TYPE_TEST
 
-#include <mlpack/core.hpp>
-static const std::string testName = "GmmProbability"
+static const std::string testName = "GmmProbability";
 
+#include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/methods/gmm/gmm_probabiity_main.cpp>
-#include <mlpack/methods/gmm/gmm_train_main.cpp>
+#include <mlpack/methods/gmm/gmm_probability_main.cpp>
 
 #include "test_helper.hpp"
 
-#include <boost/test/unit_tests.hpp>
-#include "../test_tools.hpp"
+#include <boost/test/unit_test.hpp>
+
 
 using namespace mlpack;
 
@@ -31,7 +30,7 @@ struct GmmProbabilityTestFixture
   public:
    GmmProbabilityTestFixture()
    {
-     CLI::RestoreSettings(testname);
+     CLI::RestoreSettings(testName);
    }
 
    ~GmmProbabilityTestFixture()
@@ -41,17 +40,17 @@ struct GmmProbabilityTestFixture
    }
 };
 
-BOOST_FIXTURE_TEST_SUITE(GmmProbabilityMainTest,GmmProbabilityTestFixture);
+BOOST_FIXTURE_TEST_SUITE(GmmProbabilityMainTest, GmmProbabilityTestFixture);
 
 // Make sure that input model is provided.
 BOOST_AUTO_TEST_CASE(GmmProbabilityInputModelTest)
 {
-  arma::mat inputData;
+  arma::mat inputPoints;
 
-  InputData << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << endr
-            << 0 << 4 << 3 << 4 << 8 << 9 << 2 << 5 << endr;
+  inputPoints << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << arma::endr
+              << 0 << 4 << 3 << 4 << 8 << 9 << 2 << 5 << arma::endr;
 
-  SetInputParam("input" , std::move(inputData));
+  SetInputParam("input" , std::move(inputPoints));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -85,12 +84,12 @@ BOOST_AUTO_TEST_CASE(GmmProbabilityDimensionality)
   GMM gmm(1, 2);
   gmm.Train(inputData, 10);
   
-  arma::mat InputData;
-  InputData << 0 << 1 << 2<< 3 << 4 << 5 << 6 << 7 << endr
-            << 0 << 4 << 3 << 4 << 8 << 9 << 2 << 5 << endr;
+  arma::mat inputPoints;
+  inputPoints << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << arma::endr
+              << 0 << 4 << 3 << 4 << 8 << 9 << 2 << 5 << arma::endr;
 
   SetInputParam("input_model", std::move(gmm));
-  SetInputParam("input", std::move(inputData));
+  SetInputParam("input", std::move(inputPoints));
 
   mlpackMain();
 
