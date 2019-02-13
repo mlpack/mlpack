@@ -204,10 +204,10 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM)
   observations.push_back("1 1 1 0 0 0 1 1 1 0 0 0");
   observations.push_back("0 1 0 1 0 1 0 1 0 1 0 1");
   observations.push_back("0 0 0 0 0 0 1 1 1 1 1 1");
-  observations.push_back("1 1 1 1 1 1 0 0 0 0 0 0");
-  observations.push_back("1 1 1 0 0 0 1 1 1 0 0 0");
-  observations.push_back("0 0 1 1 0 0 0 0 1 1 1 1");
-  observations.push_back("1 1 1 0 0 0 1 1 1 0 0 0");
+  observations.push_back("1 1 1 1 1 0 1 0 0 0 0 0");
+  observations.push_back("1 1 1 0 0 1 0 1 1 0 0 0");
+  observations.push_back("0 0 1 1 0 0 0 1 0 1 1 1");
+  observations.push_back("1 1 1 0 0 1 0 1 1 0 0 0");
 
   hmm.Train(observations);
 
@@ -797,15 +797,6 @@ BOOST_AUTO_TEST_CASE(GaussianHMMPredictTest)
   for (size_t i = 0; i < numState; ++i)
   {
     GaussianDistribution& emission = hmm.Emission().at(i);
-    emission.Mean() = mean.at(i);
-    emission.Covariance(cov.at(i));
-  }
-
-  hmm.Initial() = initial;
-  hmm.Transition() = transition;
-  for (size_t i = 0; i < numState; ++i)
-  {
-    GaussianDistribution &emission = hmm.Emission().at(i);
     emission.Mean() = mean.at(i);
     emission.Covariance(cov.at(i));
   }
