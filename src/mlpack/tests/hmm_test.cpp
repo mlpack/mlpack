@@ -862,7 +862,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
   // It's possible, but extremely unlikely, that this test can fail.  So we are
   // willing to do three trials in case the first two fail.
   bool success = false;
-  for (size_t trial = 0; trial < 2; ++trial)
+  for (size_t trial = 0; trial < 3; ++trial)
   {
     // We will use two GMMs; one with two components and one with three.
     std::vector<GMM> gmms(2);
