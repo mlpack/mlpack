@@ -50,6 +50,10 @@ class RandomReplay
   using StateType = typename EnvironmentType::State;
 
   RandomReplay()
+      batchSize(0),
+      capacity(0),
+      position(0),
+      full(false)
   { /* Nothing to do here. */ }
 
   /**

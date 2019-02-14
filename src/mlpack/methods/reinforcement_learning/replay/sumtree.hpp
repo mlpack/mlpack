@@ -39,6 +39,7 @@ class SumTree
    * Default constructor.
    */
   SumTree()
+      capacity(0)
   { /* Nothing to do here. */ }
 
   /**
