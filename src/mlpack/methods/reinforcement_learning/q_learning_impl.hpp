@@ -180,13 +180,13 @@ double QLearning<
   if (!prioritized_replay)
   {
     replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
-                        sampledNextStates, isTerminal);
+        sampledNextStates, isTerminal);
   }
   else
   {
-    prioritizedReplayMethod.Sample(sampledStates, sampledActions, sampledRewards,
-                        sampledNextStates, isTerminal, sampledIndices,
-                        weights);
+    prioritizedReplayMethod.Sample(sampledStates, sampledActions,
+        sampledRewards, sampledNextStates, isTerminal,
+        sampledIndices, weights);
   }
 
   // Compute action value for next state with target network.
@@ -234,14 +234,16 @@ double QLearning<
 
   updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
 
-   if (prioritized_replay)
-   {
-     prioritizedReplayMethod.Update(target, sampledActions, nextActionValues, sampledIndices);
-   }
-   else
-   {
-     replayMethod.Update(target, sampledActions, nextActionValues, sampledIndices);
-   }
+  if (prioritized_replay)
+  {
+    prioritizedReplayMethod.Update(target, sampledActions,
+        nextActionValues, sampledIndices);
+  }
+  else
+  {
+    replayMethod.Update(target, sampledActions,
+        nextActionValues, sampledIndices);
+  }
   return reward;
 }
 

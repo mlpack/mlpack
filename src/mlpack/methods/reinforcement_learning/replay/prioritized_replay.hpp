@@ -217,16 +217,17 @@ class PrioritizedReplay
     arma::colvec td_error(target.n_cols);
     for (size_t i = 0; i < target.n_cols; i ++)
     {
-      td_error[i] = nextActionValues(sampledActions[i], i) - target(sampledActions[i], i);
+      td_error[i] = nextActionValues(sampledActions[i], i) -
+          target(sampledActions[i], i);
     }
     td_error = arma::abs(td_error);
     UpdatePriorities(sampledIndices, td_error);
   }
 
 
-private:
+ private:
   //! How much prioritization is used.
-  //  (0 - no prioritization, 1 - full prioritization)
+  //! (0 - no prioritization, 1 - full prioritization)
   double alpha;
 
   double maxPriority;
@@ -269,7 +270,6 @@ private:
 
   //! Locally-stored indicator that whether the memory is full or not
   bool full;
-
 };
 
 } // namespace rl

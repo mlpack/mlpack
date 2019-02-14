@@ -34,11 +34,10 @@ template<typename T>
 class SumTree
 {
  public:
-
   /**
    * Default constructor.
    */
-  SumTree()
+  SumTree():
       capacity(0)
   { /* Nothing to do here. */ }
 
@@ -111,7 +110,8 @@ class SumTree
    * @param node_start Starting position of reference segment.
    * @param node_end End position of reference segment.
    */
-  T SumHelper(size_t start, size_t end, size_t node, size_t nodeStart, size_t nodeEnd)
+  T SumHelper(size_t start, size_t end, size_t node,
+              size_t nodeStart, size_t nodeEnd)
   {
     if (start == nodeStart && end == nodeEnd)
     {

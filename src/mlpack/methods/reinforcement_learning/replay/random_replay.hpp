@@ -49,7 +49,7 @@ class RandomReplay
   //! Convenient typedef for state.
   using StateType = typename EnvironmentType::State;
 
-  RandomReplay()
+  RandomReplay():
       batchSize(0),
       capacity(0),
       position(0),
