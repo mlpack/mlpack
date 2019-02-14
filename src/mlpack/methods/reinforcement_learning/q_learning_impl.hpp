@@ -152,12 +152,12 @@ double QLearning<
   if (prioritized_replay)
   {
     prioritizedReplayMethod.Store(state, action, reward,
-                       nextState, environment.IsTerminal(nextState));
+        nextState, environment.IsTerminal(nextState));
   }
   else
   {
     replayMethod.Store(state, action, reward,
-                       nextState, environment.IsTerminal(nextState));
+        nextState, environment.IsTerminal(nextState));
   }
 
   // Update current state.
