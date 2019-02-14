@@ -60,10 +60,10 @@ def to_matrix(x, dtype=np.double, copy=False):
   else:
     if isinstance(x, pd.core.series.Series) or isinstance(x, pd.DataFrame):
       y = x.to_numpy()
-    if copy: # Copy the matrix if required.
-      return np.ndarray(y.shape,buffer=y.flatten(),dtype=dtype,order = 'C').copy("C"),True
-    else:
-      return np.ndarray(y.shape,buffer=y.flatten(),dtype=dtype, order = 'C'),False
+      if copy: # Copy the matrix if required.
+        return np.ndarray(y.shape,buffer=y.flatten(),dtype=dtype,order = 'C').copy("C"),True
+      else:
+        return np.ndarray(y.shape,buffer=y.flatten(),dtype=dtype, order = 'C'),False
     
 
 def to_matrix_with_info(x, dtype, copy=False):
