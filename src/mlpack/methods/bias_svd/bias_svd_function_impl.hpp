@@ -332,7 +332,6 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
           j < (threadId + 1) * threadShareSize && j < visitationOrder.n_elem;
           ++j)
       {
-
         // Indices for accessing the the correct parameter columns.
         const size_t user = data(0, visitationOrder[j]);
         const size_t item = data(1, visitationOrder[j]) + numUsers;

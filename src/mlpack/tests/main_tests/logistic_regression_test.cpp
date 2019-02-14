@@ -103,7 +103,8 @@ BOOST_AUTO_TEST_CASE(LRPridictionSizeCheck)
   mlpackMain();
 
   // Get the output predictions of the test data.
-  const arma::Row<size_t> &testY = CLI::GetParam<arma::Row<size_t>>("predictions");
+  const arma::Row<size_t> &testY =
+      CLI::GetParam<arma::Row<size_t>>("predictions");
 
   // Output predictions size must match the test data set size.
   BOOST_REQUIRE_EQUAL(testY.n_rows, 1);
@@ -618,7 +619,8 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
   mlpackMain();
 
   // Get the output after first training.
-  const arma::Row<size_t> output1 = CLI::GetParam<arma::Row<size_t>>("predictions");
+  const arma::Row<size_t> output1 =
+      CLI::GetParam<arma::Row<size_t>>("predictions");
 
   // Reset the settings.
   bindings::tests::CleanMemory();
@@ -634,7 +636,8 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
   mlpackMain();
 
   // Get the output after second training.
-  const arma::Row<size_t> &output2 = CLI::GetParam<arma::Row<size_t>>("predictions");
+  const arma::Row<size_t> &output2 =
+      CLI::GetParam<arma::Row<size_t>>("predictions");
 
   // Check that the output changed when the decision boundary moved.
   BOOST_REQUIRE_GT(arma::accu(output1 != output2), 0);
@@ -646,11 +649,10 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
  **/
 // The following test case is to check whether the old parameter 'output' and
 // the new parameter 'predictions' give the same output
-// This test case will be removed in mlpack 4 
+// This test case will be removed in mlpack 4
 // when the deprecated parameter: 'output' is removed
 BOOST_AUTO_TEST_CASE(LROPtionConsistencyTest){
-  
-  //some data for training and testing
+  // Some data for training and testing
   arma::mat trainX1({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}, {0, 1, 1}});
   arma::mat testX({{4.0, 5.0}, {1.0, 6.0}});
 
@@ -663,7 +665,7 @@ BOOST_AUTO_TEST_CASE(LROPtionConsistencyTest){
   // Get the output from 'predictions' parameter
   const arma::Row<size_t> testY1 =
       CLI::GetParam<arma::Row<size_t>>("predictions");
-  
+
   // Get output from 'output' parameter
   const arma::Row<size_t> testY2 =
       std::move(CLI::GetParam<arma::Row<size_t>>("output"));
@@ -674,16 +676,15 @@ BOOST_AUTO_TEST_CASE(LROPtionConsistencyTest){
 }
 
 /**
-  * Ensuring that the parameter 'output_probabilities' and the parameter 
+  * Ensuring that the parameter 'output_probabilities' and the parameter
   * 'probabilities' give the same output
  **/
-// The following test case is to check whether the old parameter 
-// 'output_probabilities' and the new parameter 'probabilities' give the same 
-// output. This test case will be removed in mlpack 4 
+// The following test case is to check whether the old parameter
+// 'output_probabilities' and the new parameter 'probabilities' give the same
+// output. This test case will be removed in mlpack 4
 // when the deprecated parameter: 'output_probabilities' is removed
 BOOST_AUTO_TEST_CASE(LROPtionConsistencyTest2){
-  
-  //some data for training and testing
+  // Some data for training and testing
   arma::mat trainX1({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}, {0, 1, 1}});
   arma::mat testX({{4.0, 5.0}, {1.0, 6.0}});
 
@@ -696,7 +697,7 @@ BOOST_AUTO_TEST_CASE(LROPtionConsistencyTest2){
   // Get the output from 'predictions' parameter
   const arma::mat testY1 =
       CLI::GetParam<arma::mat>("output_probabilities");
-  
+
   // Get output from 'output' parameter
   const arma::mat testY2 =
       std::move(CLI::GetParam<arma::mat>("probabilities"));
