@@ -87,7 +87,7 @@ class RBM
    * parameters vector directly with Parameters() and modify it as desired.
    *
    * @param optimizer Optimizer type.
-   * @return final objective value.
+   * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType>
   double Train(OptimizerType& optimizer);

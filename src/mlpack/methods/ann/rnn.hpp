@@ -94,7 +94,7 @@ class RNN
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
-   * @return final objective value.
+   * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType>
   double Train(arma::cube predictors,
@@ -123,7 +123,7 @@ class RNN
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
-   * @return final objective value.
+   * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType = ens::StandardSGD>
   double Train(arma::cube predictors, arma::cube responses);

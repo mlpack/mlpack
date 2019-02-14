@@ -135,7 +135,7 @@ class LocalCoordinateCoding
    * @param objTolerance Tolerance of objective function.  When the objective
    *     function changes by a value lower than this tolerance, the optimization
    *     terminates.
-   * @return final objective value.
+   * @return The final objective value.
    */
   template<
       typename DictionaryInitializer =

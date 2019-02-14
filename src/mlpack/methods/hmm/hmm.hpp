@@ -165,7 +165,7 @@ class HMM
    * @endnote
    *
    * @param dataSeq Vector of observation sequences.
-   * @return final log likelihood after training.
+   * @return Log-likelihood of state sequence.
    */
   double Train(const std::vector<arma::mat>& dataSeq);
 

@@ -100,7 +100,8 @@ class GAN
 
   /**
    * Train function.
-   * @return final objective value.
+   *
+   * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType>
   double Train(OptimizerType& Optimizer);
