@@ -98,9 +98,13 @@ class GAN
   // Reset function.
   void Reset();
 
-  // Train function.
+  /**
+   * Train function.
+   *
+   * @return The final objective of the trained model (NaN or Inf on error).
+   */
   template<typename OptimizerType>
-  void Train(OptimizerType& Optimizer);
+  double Train(OptimizerType& Optimizer);
 
   /**
    * Evaluate function for the Standard GAN and DCGAN.

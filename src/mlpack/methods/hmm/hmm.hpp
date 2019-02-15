@@ -41,12 +41,12 @@ namespace hmm /** Hidden Markov Models. */ {
  *   double Probability(const DataType& observation) const;
  *
  *   // Estimate the distribution based on the given observations.
- *   void Train(const std::vector<DataType>& observations);
+ *   double Train(const std::vector<DataType>& observations);
  *
  *   // Estimate the distribution based on the given observations, given also
  *   // the probability of each observation coming from this distribution.
- *   void Train(const std::vector<DataType>& observations,
- *              const std::vector<double>& probabilities);
+ *   double Train(const std::vector<DataType>& observations,
+ *                const std::vector<double>& probabilities);
  * };
  * @endcode
  *
@@ -165,8 +165,9 @@ class HMM
    * @endnote
    *
    * @param dataSeq Vector of observation sequences.
+   * @return Log-likelihood of state sequence.
    */
-  void Train(const std::vector<arma::mat>& dataSeq);
+  double Train(const std::vector<arma::mat>& dataSeq);
 
   /**
    * Train the model using the given labeled observations; the transition and
