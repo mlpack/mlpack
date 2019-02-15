@@ -47,10 +47,10 @@ RBM<InitializationRuleType, DataType, PolicyType>::RBM(
     slabPenalty(slabPenalty),
     radius(2 * radius),
     persistence(persistence),
-    reset(false)
+    reset(false),
+    steps(0)
 {
   numFunctions = this->predictors.n_cols;
-  steps = 0;
 }
 
 template<
