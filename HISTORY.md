@@ -2,9 +2,10 @@
 ###### ????-??-??
   * Add kernel density estimation (KDE) implementation with bindings to other
     languages (#1301).
+
   * Where relevant, all models with a `Train()` method now return a `double`
-    value representing the goodness of fit
-    (i.e. final objective value, error, etc.) (#1678).  
+    value representing the goodness of fit (i.e. final objective value, error,
+    etc.) (#1678).
 
 ### mlpack 3.0.5
 ###### ????-??-??
