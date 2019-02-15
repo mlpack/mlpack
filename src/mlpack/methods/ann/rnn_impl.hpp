@@ -214,15 +214,6 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
       responseSeq = seqNum;
     }
 
-    if (!deterministic)
-    {
-      for (size_t l = 0; l < network.size(); ++l)
-      {
-        boost::apply_visitor(SaveOutputParameterVisitor(
-            std::move(moduleOutputParameter)), network[l]);
-      }
-    }
-
     performance += outputLayer.Forward(std::move(boost::apply_visitor(
         outputParameterVisitor, network.back())),
         std::move(arma::mat(responses.slice(responseSeq).colptr(begin),
