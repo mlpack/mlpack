@@ -88,7 +88,7 @@ class LinearRegression
    * @param responses y, the responses to the data points.
    * @param intercept Whether or not to fit an intercept term.
    * @param weights Observation weights (for boosting).
-   * @return ordinary least squares error.
+   * @return The least squares error after training.
    */
   double Train(const arma::mat& predictors,
                const arma::rowvec& responses,
