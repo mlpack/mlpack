@@ -13,7 +13,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/gmm/gmm.hpp>
-#include <mlpack/methods/gmm/gmm_diag.hpp>
+#include <mlpack/methods/gmm/diagonal_gmm.hpp>
 
 #include <mlpack/methods/gmm/no_constraint.hpp>
 #include <mlpack/methods/gmm/positive_definite_constraint.hpp>
@@ -806,15 +806,9 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainTest)
 {
   // We'll have three diagonal-covariance Gaussian distributions from this
   // mixture.
-  distribution::GaussianDistribution d1("0.0 1.0 0.0", "1.0 0.0 0.0;"
-                                                       "0.0 0.8 0.0;"
-                                                       "0.0 0.0 1.0");
-  distribution::GaussianDistribution d2("2.0 -1.0 5.0", "3.0 0.0 0.0;"
-                                                        "0.0 1.2 0.0;"
-                                                        "0.0 0.0 1.3");
-  distribution::GaussianDistribution d3("0.0 5.0 -3.0", "2.0 0.0 0.0;"
-                                                        "0.0 0.3 0.0;"
-                                                        "0.0 0.0 1.0");
+  distribution::DiagCovGaussianDistribution d1("0.0 1.0 0.0", "1.0 0.8 1.0;");
+  distribution::DiagCovGaussianDistribution d2("2.0 -1.0 5.0", "3.0 1.2 1.3;");
+  distribution::DiagCovGaussianDistribution d3("0.0 5.0 -3.0", "2.0 0.3 1.0;");
 
   // Now we'll generate points and probabilities.  1500 points.  Slower than I
   // would like...
@@ -848,16 +842,10 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainTest)
     BOOST_REQUIRE_SMALL((g.Component(sortedIndices[0]).Mean()[i]
         - d1.Mean()[i]), 0.4);
 
-  for (size_t row = 0; row < 3; ++row)
+  for (size_t i = 0; i < 3; i++)
   {
-    for (size_t col = 0; col < 3; ++col)
-    {
-      const double v = g.Component(sortedIndices[0]).Covariance()(row, col);
-      if (row == col)
-        BOOST_REQUIRE_SMALL(v - d1.Covariance()(row, col), 0.5);
-      else
-        BOOST_REQUIRE_SMALL(v, 1e-5);
-    }
+    const double v = g.Component(sortedIndices[0]).Covariance()(i);
+    BOOST_REQUIRE_SMALL(v - d1.Covariance()(i), 0.5);
   }
 
   // Second Gaussian (d2).
@@ -867,16 +855,10 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainTest)
     BOOST_REQUIRE_SMALL((g.Component(sortedIndices[1]).Mean()[i]
         - d2.Mean()[i]), 0.4);
 
-  for (size_t row = 0; row < 3; ++row)
+  for (size_t i = 0; i < 3; i++)
   {
-    for (size_t col = 0; col < 3; ++col)
-    {
-      const double v = g.Component(sortedIndices[1]).Covariance()(row, col);
-      if (row == col)
-        BOOST_REQUIRE_SMALL(v - d2.Covariance()(row, col), 0.5);
-      else
-        BOOST_REQUIRE_SMALL(v, 1e-5);
-    }
+    const double v = g.Component(sortedIndices[1]).Covariance()(i);
+    BOOST_REQUIRE_SMALL(v - d2.Covariance()(i), 0.5);
   }
 
   // Third Gaussian (d3).
@@ -886,16 +868,10 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainTest)
     BOOST_REQUIRE_SMALL((g.Component(sortedIndices[2]).Mean()[i]
         - d3.Mean()[i]), 0.4);
 
-  for (size_t row = 0; row < 3; ++row)
+  for (size_t i = 0; i < 3; i++)
   {
-    for (size_t col = 0; col < 3; ++col)
-    {
-      const double v = g.Component(sortedIndices[2]).Covariance()(row, col);
-      if (row == col)
-        BOOST_REQUIRE_SMALL(v - d3.Covariance()(row, col), 0.5);
-      else
-        BOOST_REQUIRE_SMALL(v, 1e-5);
-    }
+    const double v = g.Component(sortedIndices[2]).Covariance()(i);
+    BOOST_REQUIRE_SMALL(v - d3.Covariance()(i), 0.5);
   }
 }
 
