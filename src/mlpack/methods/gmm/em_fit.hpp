@@ -40,8 +40,7 @@ namespace gmm {
  * each point to a cluster.
  */
 template<typename InitialClusteringType = kmeans::KMeans<>,
-         typename CovarianceConstraintPolicy = PositiveDefiniteConstraint,
-         typename DistributionType = distribution::GaussianDistribution>
+         typename CovarianceConstraintPolicy = PositiveDefiniteConstraint>
 class EMFit
 {
  public:
@@ -83,7 +82,7 @@ class EMFit
    *      clustering.
    */
   void Estimate(const arma::mat& observations,
-                std::vector<DistributionType>& dists,
+                std::vector<distribution::GaussianDistribution>& dists,
                 arma::vec& weights,
                 const bool useInitialModel = false);
 
@@ -106,7 +105,7 @@ class EMFit
    */
   void Estimate(const arma::mat& observations,
                 const arma::vec& probabilities,
-                std::vector<DistributionType>& dists,
+                std::vector<distribution::GaussianDistribution>& dists,
                 arma::vec& weights,
                 const bool useInitialModel = false);
 
@@ -145,9 +144,10 @@ class EMFit
    * @param covariances Vector to store covariances in.
    * @param weights Vector to store a priori weights in.
    */
-  void InitialClustering(const arma::mat& observations,
-                         std::vector<DistributionType>& dists,
-                         arma::vec& weights);
+  void InitialClustering(
+      const arma::mat& observations,
+      std::vector<distribution::GaussianDistribution>& dists,
+      arma::vec& weights);
 
   /**
    * Calculate the log-likelihood of a model.  Yes, this is reimplemented in the
@@ -159,9 +159,10 @@ class EMFit
    * @param covariances Vector of covariance matrices.
    * @param weights Vector of a priori weights.
    */
-  double LogLikelihood(const arma::mat& data,
-                       const std::vector<DistributionType>& dists,
-                       const arma::vec& weights) const;
+  double LogLikelihood(
+      const arma::mat& data,
+      const std::vector<distribution::GaussianDistribution>& dists,
+      const arma::vec& weights) const;
 
   // Armadillo uses uword internally as an OpenMP index type, which crashes
   // Visual Studio.
@@ -178,7 +179,7 @@ class EMFit
    */
   void ArmadilloGMMWrapper(
       const arma::mat& observations,
-      std::vector<DistributionType>& dists,
+      std::vector<distribution::GaussianDistribution>& dists,
       arma::vec& weights,
       const bool useInitialModel);
   #endif
