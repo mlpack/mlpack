@@ -248,16 +248,6 @@ double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
         predictors.slice(rho - seqNum - 1).colptr(begin),
         predictors.n_rows, batchSize, false, true)));
 
-    if (!deterministic)
-    {
-      for (size_t l = 0; l < forwardRNN.network.size(); ++l)
-      {
-        boost::apply_visitor(SaveOutputParameterVisitor(
-            std::move(forwardRNNOutputParameter)), forwardRNN.network[l]);
-        boost::apply_visitor(SaveOutputParameterVisitor(
-            std::move(backwardRNNOutputParameter)), backwardRNN.network[l]);
-      }
-    }
     boost::apply_visitor(SaveOutputParameterVisitor(
         std::move(results1)), forwardRNN.network.back());
     boost::apply_visitor(SaveOutputParameterVisitor(
