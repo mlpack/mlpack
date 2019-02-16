@@ -17,24 +17,23 @@ using namespace mlpack::distribution;
 
 DiagCovGaussianDistribution::DiagCovGaussianDistribution(
     const arma::vec& mean,
-    const arma::mat& covariance)
-  : mean(mean)
+    const arma::vec& covariance) :
+    mean(mean)
 {
   Covariance(covariance);
 }
 
-void DiagCovGaussianDistribution::Covariance(const arma::mat& covariance)
+void DiagCovGaussianDistribution::Covariance(const arma::vec& covariance)
 {
-  this->covariance = arma::diagmat(covariance);
-  InverseCovariance();
+  this->covariance = covariance;
+  InvertCovariance();
   LogDeterminant();
 }
 
-void DiagCovGaussianDistribution::Covariance(arma::mat&& covariance)
+void DiagCovGaussianDistribution::Covariance(arma::vec&& covariance)
 {
   this->covariance = std::move(covariance);
-  this->covariance = arma::diagmat(this->covariance);
-  InverseCovariance();
+  InvertCovariance();
   LogDeterminant();
 }
 
@@ -47,29 +46,28 @@ double DiagCovGaussianDistribution::LogProbability(
   return -0.5 * k * log2pi - 0.5 * logDetCov - 0.5 * logExponent(0);
 }
 
-void DiagCovGaussianDistribution::InverseCovariance()
+void DiagCovGaussianDistribution::InvertCovariance()
 {
   // Calculate the inverse of the diagonal covariance.
-  invCov = 1/covariance.diag();
+  invCov = 1/covariance;
 }
 
 void DiagCovGaussianDistribution::LogDeterminant()
 {
   // Calculate Log determinant of the diagonal covariance.
-  logDetCov = arma::accu(log(covariance.diag()));
+  logDetCov = arma::accu(log(covariance));
 }
 
 arma::vec DiagCovGaussianDistribution::Random() const
 {
-  return arma::sqrt(covariance) * arma::randn<arma::vec>(mean.n_elem) + mean;
+  return (arma::sqrt(covariance) % arma::randn<arma::vec>(mean.n_elem)) + mean;
 }
 
 void DiagCovGaussianDistribution::Train(const arma::mat& observations)
 {
   if (observations.n_cols > 1)
   {
-    mean.zeros(observations.n_rows);
-    covariance.zeros(observations.n_rows, observations.n_rows);
+    covariance.zeros(observations.n_rows);
   }
   else
   {
@@ -79,27 +77,21 @@ void DiagCovGaussianDistribution::Train(const arma::mat& observations)
   }
 
   // Calculate the mean.
-  for (size_t i = 0; i < observations.n_cols; i++)
-    mean += observations.col(i);
+  mean = arma::sum(observations, 1);
 
   // Normalize the mean.
   mean /= observations.n_cols;
 
   // Now calculate the covariance.
-  for (size_t i = 0; i < observations.n_cols; i++)
-  {
-    arma::vec obsNoMean = observations.col(i) - mean;
-    covariance.diag() += arma::diagvec(obsNoMean * trans(obsNoMean));
-  }
+  const arma::mat onesRow = arma::ones<arma::rowvec>(observations.n_cols);
+  const arma::mat diffs = observations - mean * onesRow;
+  covariance += arma::sum(diffs % diffs, 1);
 
   // Finish estimating the covariance by normalizing, with the (1 / (n - 1))
   // to make the estimator unbiased.
-  covariance.diag() /= (observations.n_cols - 1);
+  covariance /= (observations.n_cols - 1);
 
-  // Ensure that the covariance is diagonal.
-  gmm::DiagonalConstraint::ApplyConstraint(covariance);
-
-  InverseCovariance();
+  InvertCovariance();
   LogDeterminant();
 }
 
@@ -108,8 +100,7 @@ void DiagCovGaussianDistribution::Train(const arma::mat& observations,
 {
   if (observations.n_cols > 0)
   {
-    mean.zeros(observations.n_rows);
-    covariance.zeros(observations.n_rows, observations.n_rows);
+    covariance.zeros(observations.n_rows);
   }
   else
   {
@@ -121,18 +112,17 @@ void DiagCovGaussianDistribution::Train(const arma::mat& observations,
   // We'll normalize the covariance with (v1 - (v2 / v1))
   // for unbiased estimator in the weighted arithmetic mean. The v1 is the sum
   // of the weights, and the v2 is the sum of the each weight squared.
-  // If you want to know more detailed description, 
+  // If you want to know more detailed description,
   // please refer to https://en.wikipedia.org/wiki/Weighted_arithmetic_mean
   double v1 = arma::accu(probabilities);
-  double v2 = 0;
   arma::vec normalizedProbs = probabilities;
 
   // If their sum is 0, there is nothing in this Gaussian.
   // At least, set the covariance so that it's invertible.
   if (v1 == 0)
   {
-    covariance.diag() += 1e-50;
-    InverseCovariance();
+    covariance += 1e-50;
+    InvertCovariance();
     LogDeterminant();
     return;
   }
@@ -145,26 +135,21 @@ void DiagCovGaussianDistribution::Train(const arma::mat& observations,
   }
 
   // Calculate the mean.
-  for (size_t i = 0; i < observations.n_cols; i++)
-    mean += normalizedProbs[i] * observations.col(i);
+  mean = observations * normalizedProbs;
 
-  // Now find the covariance.
-  for (size_t i = 0; i < observations.n_cols; i++)
-  {
-    arma::vec obsNoMean = observations.col(i) - mean;
-    covariance.diag() += arma::diagvec(
-        normalizedProbs[i] * (obsNoMean * trans(obsNoMean)));
-    v2 += normalizedProbs(i) * normalizedProbs(i);
-  }
+  // Now calculate the covariance.
+  const arma::mat onesRow = arma::ones<arma::rowvec>(observations.n_cols);
+  const arma::mat diffs = observations - mean * onesRow;
+  covariance += (diffs % diffs) * normalizedProbs;
+
+  // Calculate the sum of each weight squared.
+  const double v2 = arma::accu(normalizedProbs % normalizedProbs);
 
   // Finish estimating the covariance by normalizing, with
   // the (1 / (v1 - (v2 / v1))) to make the estimator unbiased.
   if (v2 != 1)
-    covariance.diag() /= (1 - v2);
+    covariance /= (1 - v2);
 
-  // Ensure that the covariance is positive definite.
-  gmm::DiagonalConstraint::ApplyConstraint(covariance);
-
-  InverseCovariance();
+  InvertCovariance();
   LogDeterminant();
 }

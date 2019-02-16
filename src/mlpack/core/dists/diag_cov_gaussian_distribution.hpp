@@ -1,5 +1,5 @@
 /**
- * @file diag_gaussian_distribution.hpp
+ * @file diag_cov_gaussian_distribution.hpp
  * @author Kim SangYeon
  *
  * Implementation of the Gaussian distribution with diagonal covariance.
@@ -17,16 +17,14 @@
 namespace mlpack {
 namespace distribution {
 
-/**
- * A single multivariate Gaussian distribution with diagonal covariance.
- */
+//! A single multivariate Gaussian distribution with diagonal covariance.
 class DiagCovGaussianDistribution
 {
  private:
   //! Mean of the distribution.
   arma::vec mean;
   //! Diagonal covariance of the distribution.
-  arma::mat covariance;
+  arma::vec covariance;
   //! Cached inverse of covariance.
   arma::vec invCov;
   //! Cached logdet(cov).
@@ -35,19 +33,23 @@ class DiagCovGaussianDistribution
   //! log(2pi)
   static const constexpr double log2pi = 1.83787706640934533908193770912475883;
 
+  //! Caculates the log determinant of the given diagonal covariance.
+  void LogDeterminant();
+
+  //! Calculates the inverse of the given diagonal covariance.
+  void InvertCovariance();
+
  public:
-  /**
-   * Default constructor, which creates a Gaussian with zero dimension.
-   */
+  //! Default constructor, which creates a Gaussian with zero dimension.
   DiagCovGaussianDistribution() : logDetCov(0.0) { /* nothing to do. */ }
-  
+
   /**
    * Create a Gaussian Distribution with zero mean and diagonal covariance
    * with the given dimensionality.
    */
   DiagCovGaussianDistribution(const size_t dimension) :
       mean(arma::zeros<arma::vec>(dimension)),
-      covariance(arma::eye<arma::mat>(dimension, dimension)),
+      covariance(arma::ones<arma::vec>(dimension)),
       invCov(arma::ones<arma::vec>(dimension)),
       logDetCov(0)
   { /* nothing to do. */ }
@@ -56,25 +58,19 @@ class DiagCovGaussianDistribution
    * Create a Guassian distribution with the given mean and diagonal
    * covariance.
    */
-  DiagCovGaussianDistribution(const arma::vec& mean, 
-                              const arma::mat& covariance);
+  DiagCovGaussianDistribution(const arma::vec& mean,
+                              const arma::vec& covariance);
 
-  /**
-   * Return the dimensionalty of this distribution.
-   */
+  //! Return the dimensionalty of this distribution.
   size_t Dimensionality() const { return mean.n_elem; }
 
-  /**
-   * Return the probability of the given observation.
-   */
+  //! Return the probability of the given observation.
   double Probability(const arma::vec& observation) const
   {
     return exp(LogProbability(observation));
   }
 
-  /**
-   * Return the log probability of the given observation.
-   */
+  //! Return the log probability of the given observation.
   double LogProbability(const arma::vec& observation) const;
 
   /**
@@ -100,16 +96,6 @@ class DiagCovGaussianDistribution
   */
   void LogProbability(const arma::mat& observations,
                       arma::vec& logProbabilites) const;
-
-  /**
-   * Caculates the log determinant of the given diagonal covariance.
-   */
-  void LogDeterminant();
-
-  /**
-   * Calculates the inverse of the given diagonal covariance.
-   */
-  void InverseCovariance();
 
   /**
    * Return a randomly generated observation according to the probability
@@ -138,31 +124,21 @@ class DiagCovGaussianDistribution
   void Train(const arma::mat& observations,
              const arma::vec& probabilities);
 
-  /**
-   * Return the mean.
-   */
+  //! Return the mean.
   const arma::vec& Mean() const { return mean; }
 
-  /**
-   * Return a modifiable copy of the mean.
-   */
+  //! Return a modifiable copy of the mean.
   arma::vec& Mean() { return mean; }
 
-  /**
-   * Return the covariance matrix.
-   */
-  const arma::mat& Covariance() const { return covariance; }
+  //! Return the covariance matrix.
+  const arma::vec& Covariance() const { return covariance; }
 
-  /**
-   * Set the covariance.
-   */
-  void Covariance(const arma::mat& covariance);
-  
-  void Covariance(arma::mat&& covariance);
+  //! Set the covariance.
+  void Covariance(const arma::vec& covariance);
 
-  /**
-   * Serialize the distribution.
-   */
+  void Covariance(arma::vec&& covariance);
+
+  //! Serialize the distribution.
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
@@ -185,21 +161,16 @@ inline void DiagCovGaussianDistribution::LogProbability(
     const arma::mat& observations,
     arma::vec& logProbabilities) const
 {
+  const size_t k = observations.n_rows;
+
   // Column i of 'diffs' is the difference between observations.col(i) and
   // the mean.
-  arma::mat diffs = observations -
-      (mean * arma::ones<arma::rowvec>(observations.n_cols));
+  arma::mat onesRow = arma::ones<arma::rowvec>(observations.n_cols);
+  arma::mat diffs = observations - mean * onesRow;
 
-  // Now, we only want to calculate the diagonal elements of (diffs' * cov^-1 *
-  // diffs).  We just don't need any of the other elements.  We can calculate
-  // the right hand part of the equation (instead of the left side) so that
-  // later we are referencing columns, not rows -- that is faster.
-  const size_t k = observations.n_rows;
-  const arma::mat rhs = -0.5 * arma::diagmat(invCov) * diffs;
-  arma::vec logExponents(diffs.n_cols);
-  
-  for (size_t i = 0; i < diffs.n_cols; i++)
-    logExponents(i) = accu(diffs.unsafe_col(i) % rhs.unsafe_col(i));
+  // Calculates log of exponent equation in multivariate gaussian distribution.
+  // We use only diagonal part for faster computation.
+  arma::vec logExponents = -0.5 * arma::trans(diffs % diffs) * invCov;
 
   logProbabilities = -0.5 * k * log2pi - 0.5 * logDetCov + logExponents;
 }
