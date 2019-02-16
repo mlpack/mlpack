@@ -1,6 +1,6 @@
 /**
  * @author Kim SangYeon
- * @file gmm_diag_impl.hpp
+ * @file diagonal_gmm_impl.hpp
  *
  * Implementation of template-based DiagonalGMM methods.
  *
@@ -10,11 +10,11 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_GMM_DIAG_GMM_IMPL_HPP
-#define MLPACK_METHODS_GMM_DIAG_GMM_IMPL_HPP
+#ifndef MLPACK_METHODS_GMM_DIAGONAL_GMM_IMPL_HPP
+#define MLPACK_METHODS_GMM_DIAGONAL_GMM_IMPL_HPP
 
 // In case it hasn't already been included.
-#include "gmm_diag.hpp"
+#include "diagonal_gmm.hpp"
 
 namespace mlpack {
 namespace gmm {
@@ -212,7 +212,7 @@ void DiagonalGMM::Estimate(
   if (tolerance != EMFit<>().Tolerance())
     Log::Warn << "DiagonalGMM::Train(): tolerance ignored when training GMMs."
         << std::endl;
-  
+
   // If the initial clustering is the default k-means, we'll just use
   // Armadillo's implementation.  If mlpack ever changes k-means defaults to use
   // something that is reliably quicker than the Lloyd iteration k-means update,
@@ -311,8 +311,8 @@ void DiagonalGMM::Estimate(const arma::mat& observations,
     // M step: Update the paramters using the current responsibilities.
     for (size_t k = 0; k < dists.size(); k++)
     {
-      // Calculate the sum of conditional probabilities of each point, being from
-      // Gaussian i, multiplied by the probability of the point.
+      // Calculate the sum of conditional probabilities of each point, being
+      // from Gaussian i, multiplied by the probability of the point.
       arma::vec responsibilities = condProb.col(k);
       responsibilities %= probabilities;
 
@@ -411,19 +411,11 @@ void DiagonalGMM::serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(gaussians);
   ar & BOOST_SERIALIZATION_NVP(dimensionality);
-
-  // Load (or save) the gaussians.  Not going to use the default std::vector
-  // serialize here because it won't call out correctly to serialize() for each
-  // Gaussian distribution.
-  if (Archive::is_loading::value)
-    dists.resize(gaussians);
-
   ar & BOOST_SERIALIZATION_NVP(dists);
-
   ar & BOOST_SERIALIZATION_NVP(weights);
 }
 
 } // namespace gmm
 } // namespace mlpack
 
-#endif // MLPACK_METHODS_GMM_DIAG_GMM_IMPL_HPP
+#endif // MLPACK_METHODS_GMM_DIAGONAL_GMM_IMPL_HPP

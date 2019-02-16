@@ -17,7 +17,7 @@
 #include "hmm_model.hpp"
 
 #include <mlpack/methods/gmm/gmm.hpp>
-#include <mlpack/methods/gmm/gmm_diag.hpp>
+#include <mlpack/methods/gmm/diagonal_gmm.hpp>
 
 using namespace mlpack;
 using namespace mlpack::hmm;
@@ -63,7 +63,7 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Training",
         "@doxygen/classmlpack_1_1hmm_1_1HMM.html"));
 
 PARAM_STRING_IN_REQ("input_file", "File containing input observations.", "i");
-PARAM_STRING_IN("type", "Type of HMM: discrete | gaussian | gmm | gmm_diag.",
+PARAM_STRING_IN("type", "Type of HMM: discrete | gaussian | diag_gmm | gmm.",
     "t", "gaussian");
 
 PARAM_FLAG("batch", "If true, input_file (and if passed, labels_file) are "
@@ -194,7 +194,7 @@ struct Init
     if (gaussians == 0)
     {
       Log::Fatal << "Number of gaussians for each GMM must be specified "
-          << "when type = 'gmm_diag'!" << endl;
+          << "when type = 'diag_gmm'!" << endl;
     }
 
     if (gaussians < 0)
@@ -446,7 +446,7 @@ static void mlpackMain()
   if (!CLI::HasParam("input_model"))
   {
     RequireParamInSet<string>("type", { "discrete", "gaussian", "gmm",
-        "gmm_diag" }, true, "unknown HMM type");
+        "diag_gmm" }, true, "unknown HMM type");
   }
 
   RequireParamValue<double>("tolerance", [](double x) { return x >= 0; }, true,

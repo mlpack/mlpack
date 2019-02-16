@@ -1,5 +1,5 @@
 /**
- * @file gmm_diag.cpp
+ * @file diagonal_gmm.cpp
  * @author Kim SangYeon
  *
  * Implementation of template-based GMM methods.
@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#include "gmm_diag.hpp"
+#include "diagonal_gmm.hpp"
 #include <mlpack/core/math/log_add.hpp>
 
 namespace mlpack {

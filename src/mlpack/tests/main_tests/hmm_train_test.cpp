@@ -279,7 +279,7 @@ BOOST_AUTO_TEST_CASE(HMMTrainDiagonalGaussianTest)
 {
   std::string inputFileName = "hmm_train_obs.csv";
   int states = 3;
-  std::string hmmType = "gmm_diag";
+  std::string hmmType = "diag_gmm";
   int gaussians = -2;
 
   FileExists(inputFileName);

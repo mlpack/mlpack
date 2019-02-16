@@ -1,6 +1,6 @@
 /**
  * @author Kim SangYeon
- * @file gmm_diag.hpp
+ * @file diagonal_gmm.hpp
  *
  * Defines a Diagonal Gaussian Mixture model and estimates the parameters
  * of the model.
@@ -11,8 +11,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_GMM_DIAG_GMM_HPP
-#define MLPACK_METHODS_GMM_DIAG_GMM_HPP
+#ifndef MLPACK_METHODS_GMM_DIAGONAL_GMM_HPP
+#define MLPACK_METHODS_GMM_DIAGONAL_GMM_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -206,17 +206,17 @@ class DiagonalGMM
    *
    * @param observations Observations of the model.
    * @param trials Number of trials to perform; the model in these trials with
-   *      the greatest log-likelihood will be selected.
+   *     the greatest log-likelihood will be selected.
    * @param useExistingModel If true, the existing model is used as an initial
-   *      model for the estimation.
-	 * @param fitter Fitting type that estimates observations.
+   *     model for the estimation.
+   * @param fitter Fitting type that estimates observations.
    * @return The log-likelihood of the best fit.
    */
   template<typename FittingType = EMFit<>>
   double Train(const arma::mat& observations,
                const size_t trials = 1,
                const bool useExistingModel = false,
-							 FittingType fitter = FittingType());
+               FittingType fitter = FittingType());
 
   /**
    * Estimate the probability distribution directly from the given observations,
@@ -240,7 +240,7 @@ class DiagonalGMM
    *     the greatest log-likelihood will be selected.
    * @param useExistingModel If true, the existing model is used as an initial
    *     model for the estimation.
-	 * @param fitter Fitting type that estimates observations.
+   * @param fitter Fitting type that estimates observations.
    * @return The log-likelihood of the best fit.
    */
   template<typename FittingType = EMFit<>>
@@ -248,7 +248,7 @@ class DiagonalGMM
                const arma::vec& probabilities,
                const size_t trials = 1,
                const bool useExistingModel = false,
-							 FittingType fitter = FittingType());
+               FittingType fitter = FittingType());
   /**
    * Classify the given observations as being from an individual component in
    * this DiagonalGMM. The resultant classifications are stored in the 'labels'
@@ -283,28 +283,28 @@ class DiagonalGMM
    * @param covariances Covariances of the given mixture model.
    * @param weights Weights of the given mixture model.
    * @param useInitialModel If true, the given model is used for the initial
-   * 		clustering.
-	 * @param maxIterations Maximum number of iterations for EM.
+   *     clustering.
+   * @param maxIterations Maximum number of iterations for EM.
    * @param tolerance Log-likelihood tolerance required for convergence.
-	 * @param clusterer Object which will perform the initial clustering.
+   * @param clusterer Object which will perform the initial clustering.
    */
-	template<typename InitialClusteringType = kmeans::KMeans<>>
+  template<typename InitialClusteringType = kmeans::KMeans<>>
   void Estimate(const arma::mat& observations,
                 std::vector<distribution::DiagCovGaussianDistribution>& dists,
                 arma::vec& weights,
                 const bool useInitialModel = false,
-								const size_t maxIterations = 300,
-								const double tolerance = 1e-10,
-								InitialClusteringType clusterer = InitialClusteringType());
+                const size_t maxIterations = 300,
+                const double tolerance = 1e-10,
+                InitialClusteringType clusterer = InitialClusteringType());
 
-	/**
+  /**
    * Fit the observations to a Gaussian mixture model with diagonal covariance
-	 * (DiagonalGMM) using the EM algorithm, taking into account 
-	 * the probabilities of each point being from this mixture.  The size of the
-	 * vectors (indicating the number of components) must already be set.
-	 * Optionally, if useInitialModel is set to true, then the model given in the
-	 * means, covariances, and weights parameters is used as the initial model,
-	 * instead of using the InitialClusteringType::Cluster() option.
+   * (DiagonalGMM) using the EM algorithm, taking into account 
+   * the probabilities of each point being from this mixture.  The size of the
+   * vectors (indicating the number of components) must already be set.
+   * Optionally, if useInitialModel is set to true, then the model given in the
+   * means, covariances, and weights parameters is used as the initial model,
+   * instead of using the InitialClusteringType::Cluster() option.
    *
    * @param observations List of observations.
    * @param probabilities Probability of each point being from this model.
@@ -312,20 +312,20 @@ class DiagonalGMM
    * @param covariances Covariances of the given mixture model.
    * @param weights Weights of the given mixture model.
    * @param useInitialModel If true, the given model is used for the initial
-   * 		clustering.
-	 * @param maxIterations Maximum number of iterations for EM.
+   *     clustering.
+   * @param maxIterations Maximum number of iterations for EM.
    * @param tolerance Log-likelihood tolerance required for convergence.
-	 * @param clusterer Object which will perform the initial clustering.
+   * @param clusterer Object which will perform the initial clustering.
    */
-	template<typename InitialClusteringType = kmeans::KMeans<>>
-	void Estimate(const arma::mat& observations,
-								const arma::vec& probabilities,
-								std::vector<distribution::DiagCovGaussianDistribution>& dists,
-								arma::vec& weights,
-								const bool useInitialModel = false,
-								const size_t maxIterations = 300,
-								const double tolerance = 1e-10,
-								InitialClusteringType clusterer = InitialClusteringType());
+  template<typename InitialClusteringType = kmeans::KMeans<>>
+  void Estimate(const arma::mat& observations,
+                const arma::vec& probabilities,
+                std::vector<distribution::DiagCovGaussianDistribution>& dists,
+                arma::vec& weights,
+                const bool useInitialModel = false,
+                const size_t maxIterations = 300,
+                const double tolerance = 1e-10,
+                InitialClusteringType clusterer = InitialClusteringType());
 
   /**
    * Serialize the DigonalGMM.
@@ -370,6 +370,6 @@ class DiagonalGMM
 } // namespace mlpack
 
 // Include implementation.
-#include "gmm_diag_impl.hpp"
+#include "diagonal_gmm_impl.hpp"
 
-#endif // MLPACK_METHODS_GMM_DIAG_GMM_HPP
+#endif // MLPACK_METHODS_GMM_DIAGONAL_GMM_HPP

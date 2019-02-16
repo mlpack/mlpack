@@ -1219,7 +1219,7 @@ BOOST_AUTO_TEST_CASE(DiagCovGaussianDistributionProbabilityTest)
 BOOST_AUTO_TEST_CASE(DiagCovGaussianUnivariateProbabilityTest)
 {
   DiagCovGaussianDistribution d(arma::vec("0.0"), arma::vec("1.0"));
-  
+
   // Mean: 0.0, Covariance: 1.0
   BOOST_REQUIRE_CLOSE(d.Probability("0.0"), 0.3989422804014327, 1e-5);
   BOOST_REQUIRE_CLOSE(d.Probability("1.0"), 0.24197072451914337, 1e-5);
@@ -1340,13 +1340,13 @@ BOOST_AUTO_TEST_CASE(DiagCovGaussianDistributionTrainTest)
 
   for (size_t i = 0; i < 10000; i++)
     observations.col(i) = (arma::sqrt(cov) % arma::randn<arma::vec>(4)) + mean;
-  
+
   DiagCovGaussianDistribution d;
 
   // Calculate the actual mean and covariance of data using armadillo.
   arma::vec actualMean = arma::mean(observations, 1);
   arma::mat actualCov = arma::ccov(observations);
-  
+
   // Estimate the parameter.
   d.Train(observations);
 

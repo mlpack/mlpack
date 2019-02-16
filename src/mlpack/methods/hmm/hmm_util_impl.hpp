@@ -16,6 +16,7 @@
 
 #include <mlpack/methods/hmm/hmm.hpp>
 #include <mlpack/methods/gmm/gmm.hpp>
+#include <mlpack/methods/gmm/diagonal_gmm.hpp>
 
 namespace mlpack {
 namespace hmm {
@@ -86,6 +87,10 @@ void LoadHMMAndPerformActionHelper(const std::string& modelFile,
       DeserializeHMMAndPerformAction<ActionType, ArchiveType,
           HMM<gmm::GMM>>(ar, x);
       break;
+    
+    case HMMType::DiagonalGaussianMixtureModelHMM:
+      DeserializeHMMAndPerformAction<ActionType, ArchiveType,
+          HMM<gmm::DiagonalGMM>>(ar, x);
 
     default:
       Log::Fatal << "Unknown HMM type '" << (unsigned int) type << "'!"
@@ -167,6 +172,12 @@ template<>
 char GetHMMType<HMM<gmm::GMM>>()
 {
   return HMMType::GaussianMixtureModelHMM;
+}
+
+template<>
+char GetHMMType<HMM<gmm::DiagonalGMM>>()
+{
+  return HMMType::DiagonalGaussianMixtureModelHMM;
 }
 
 } // namespace hmm

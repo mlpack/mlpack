@@ -118,7 +118,7 @@ struct InitHMMModel
     if (gaussians == 0)
     {
       Log::Fatal << "Number of gaussians for each GMM must be specified "
-          << "when type = 'gmm_diag'!" << endl;
+          << "when type = 'diag_gmm'!" << endl;
     }
 
     if (gaussians < 0)

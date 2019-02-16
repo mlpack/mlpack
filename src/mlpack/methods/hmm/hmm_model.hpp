@@ -14,7 +14,7 @@
 
 #include "hmm.hpp"
 #include <mlpack/methods/gmm/gmm.hpp>
-#include <mlpack/methods/gmm/gmm_diag.hpp>
+#include <mlpack/methods/gmm/diagonal_gmm.hpp>
 
 namespace mlpack {
 namespace hmm {
@@ -179,18 +179,12 @@ class HMMModel
       delete discreteHMM;
       delete gaussianHMM;
       delete gmmHMM;
+      delete diagGMMHMM;
 
       discreteHMM = NULL;
       gaussianHMM = NULL;
       gmmHMM = NULL;
-
-      // Backward compatibility: new versions of HMM has a Diagonal GMM type.
-      if (version > 0)
-      {
-        delete diagGMMHMM;
-
-        diagGMMHMM = NULL;
-      }
+      diagGMMHMM = NULL;
     }
 
     if (type == HMMType::DiscreteHMM)

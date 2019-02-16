@@ -4,9 +4,9 @@ set(SOURCES
   gmm.hpp
   gmm.cpp
   gmm_impl.hpp
-  gmm_diag.hpp
-  gmm_diag.cpp
-  gmm_diag_impl.hpp
+  diagonal_gmm.hpp
+  diagonal_gmm.cpp
+  diagonal_gmm_impl.hpp
   em_fit.hpp
   em_fit_impl.hpp
   no_constraint.hpp
