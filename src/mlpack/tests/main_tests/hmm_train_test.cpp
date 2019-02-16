@@ -183,11 +183,11 @@ inline void ApproximatelyEqual(HMMModel& h1,
 
     // Check if gaussian, mean, covariance and weights are equal.
     size_t states = d1.size();
-    for (size_t i=0; i<states; i++)
+    for (size_t i = 0; i < states; i++)
     {
       BOOST_REQUIRE_EQUAL(d1[i].Gaussians(), d2[i].Gaussians());
       size_t gaussians = d1[i].Gaussians();
-      for(size_t j=0; j<gaussians; j++)
+      for (size_t j = 0; j < gaussians; j++)
       {
         CheckMatrices(d1[i].Component(j).Mean()*100,
             d2[i].Component(j).Mean()*100,

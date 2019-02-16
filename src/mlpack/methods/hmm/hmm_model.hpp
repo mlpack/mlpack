@@ -199,7 +199,7 @@ class HMMModel
       ar & BOOST_SERIALIZATION_NVP(gaussianHMM);
     else if (type == HMMType::GaussianMixtureModelHMM)
       ar & BOOST_SERIALIZATION_NVP(gmmHMM);
-    
+
     // Backward compatibility: new versions of HMM has a Diagonal GMM type.
     if (version > 0)
     {
