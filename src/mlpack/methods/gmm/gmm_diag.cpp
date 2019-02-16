@@ -59,7 +59,7 @@ double DiagonalGMM::LogProbability(const arma::vec& observation) const
   // multiply by the prior for each Gaussian too).
   double sum = -std::numeric_limits<double>::infinity();
   for (size_t i = 0; i < gaussians; i++)
-    sum = math::LogAdd(sum, log(weights[i]) + 
+    sum = math::LogAdd(sum, log(weights[i]) +
           dists[i].LogProbability(observation));
 
   return sum;
@@ -82,7 +82,7 @@ double DiagonalGMM::LogProbability(const arma::vec& observation,
 {
   // We are only considering one Gaussian component -- so we only need to call
   // Probability() once.  We do consider the prior probability!
-  return log(weights[component]) + 
+  return log(weights[component]) +
          dists[component].LogProbability(observation);
 }
 
@@ -153,24 +153,30 @@ void DiagonalGMM::Classify(const arma::mat& observations,
  * Get the log-likelihood of this data's fit to the model.
  */
 double DiagonalGMM::LogLikelihood(
-    const arma::mat& data,
-    const std::vector<distribution::DiagCovGaussianDistribution>& distsL,
-    const arma::vec& weightsL) const
+    const arma::mat& observations,
+    const std::vector<distribution::DiagCovGaussianDistribution>& dists,
+    const arma::vec& weights) const
 {
-  double loglikelihood = 0;
+  double logLikelihood = 0;
   arma::vec phis;
-  arma::mat likelihoods(gaussians, data.n_cols);
+  arma::mat likelihoods(gaussians, observations.n_cols);
 
   for (size_t i = 0; i < gaussians; i++)
   {
-    distsL[i].Probability(data, phis);
-    likelihoods.row(i) = weightsL(i) * trans(phis);
+    dists[i].Probability(observations, phis);
+    likelihoods.row(i) = weights(i) * trans(phis);
   }
 
   // Now sum over every point.
-  for (size_t j = 0; j < data.n_cols; j++)
-    loglikelihood += log(accu(likelihoods.col(j)));
-  return loglikelihood;
+  for (size_t j = 0; j < observations.n_cols; j++)
+  {
+    if (accu(likelihoods.col(j)) == 0)
+      Log::Info << "Likelihood of point " << j << " is 0!  It is probably an "
+          << "outlier." << std::endl;
+    logLikelihood += log(accu(likelihoods.col(j)));
+  }
+
+  return logLikelihood;
 }
 
 } // namespace gmm
