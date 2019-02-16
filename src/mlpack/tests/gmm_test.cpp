@@ -795,6 +795,10 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
   }
 }
 
+/*******************************************/
+/** Diagonal Gaussian Mixture Model Tests **/
+/*******************************************/
+
 /**
  * Make sure we can fit a diagonal GMM reasonably.
  */
@@ -925,7 +929,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMOneGaussian)
     gmm.Train(data, 10);
 
     arma::vec actualMean = arma::mean(data, 1);
-    arma::mat actualCovar = arma::diagmat(
+    arma::vec actualCovar = arma::diagvec(
         arma::ccov(data, 1 /* biased estimator */));
 
     // Check the model to see that it is correct.

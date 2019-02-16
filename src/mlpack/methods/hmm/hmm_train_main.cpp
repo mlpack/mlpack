@@ -213,7 +213,7 @@ struct Init
       Log::Warn << "Unlabeled training of Diagonal GMM HMMs is almost "
           << "certainly not going to produce good results!" << endl;
     }
-  }  
+  }
 
   //! Helper function for discrete emission distributions.
   static void RandomInitialize(vector<DiscreteDistribution>& e)
@@ -277,12 +277,11 @@ struct Init
         e[i].Component(g).Mean().randu();
 
         // Generate random diagonal covariance.
-        arma::mat r = arma::diagmat(arma::randu<arma::mat>(dimensionality,
-            dimensionality));
+        arma::vec r = arma::randu<arma::vec>(dimensionality);
         e[i].Component(g).Covariance(r);
       }
     }
-  }  
+  }
 };
 
 // Because we don't know what the type of our HMM is, we need to write a
