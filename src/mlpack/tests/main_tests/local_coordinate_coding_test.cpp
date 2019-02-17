@@ -50,22 +50,23 @@ BOOST_AUTO_TEST_CASE(LCCDimensionsTest)
 {
   arma::mat x;
   x.load("mnist_first250_training_4s_and_9s.arm");
+  int rows = x.n_rows, cols = x.n_cols;
   arma::mat t = x;
+  int atoms = 10;
 
   SetInputParam("training", std::move(x));
-  SetInputParam("test",std::move(t));
-  SetInputParam("atoms", (int) 10);
+  SetInputParam("test", std::move(t));
+  SetInputParam("atoms", atoms);
   SetInputParam("max_iterations", (int) 2);
 
   mlpackMain();
 
   // Check that the output has correct dimensions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("codes").n_rows, 10);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("codes").n_cols, 500);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("dictionary").n_rows, 784);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("dictionary").n_cols, 10);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("codes").n_rows, atoms);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("codes").n_cols, cols);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("dictionary").n_rows, rows);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("dictionary").n_cols, atoms);
 }
-
 
 /**
  * Ensure that trained model can be reused.
@@ -88,19 +89,16 @@ BOOST_AUTO_TEST_CASE(LCCOutputModelTest)
   arma::mat initDict = CLI::GetParam<arma::mat>("dictionary");
   LocalCoordinateCoding* outputModel = std::move(CLI::GetParam<LocalCoordinateCoding*>("output_model"));
 
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::Parameters()["training"].wasPassed = false;
 
   SetInputParam("input_model", std::move(outputModel));
   SetInputParam("test", std::move(t));
 
   mlpackMain();
 
-  // Get the codes and the dictionary after reusing the trained model.
-  arma::mat newCodes = CLI::GetParam<arma::mat>("codes");
-  arma::mat newDict = CLI::GetParam<arma::mat>("dictionary");
-
-  CheckMatrices(initCodes, newCodes);
-  CheckMatrices(initDict, newDict);
+  // Compare the output after reusing the trained model to the original matrices.
+  CheckMatrices(initCodes, CLI::GetParam<arma::mat>("codes"));
+  CheckMatrices(initDict, CLI::GetParam<arma::mat>("dictionary"));
 }
 
 /**
@@ -109,8 +107,8 @@ BOOST_AUTO_TEST_CASE(LCCOutputModelTest)
  */
 BOOST_AUTO_TEST_CASE(LCCInitDictTrainTest)
 {
-  arma::mat x = {{1,1,1,1},{2,2,2,2},{3,3,3,3},{4,4,4,4}};
-  arma::mat initDict = {{1,1},{2,2},{3,3}};
+  arma::mat x = {{1, 1, 1, 1}, {2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
+  arma::mat initDict = {{1, 1}, {2, 2}, {3, 3}};
 
   SetInputParam("training", std::move(x));
   SetInputParam("initial_dictionary", std::move(initDict));
@@ -127,8 +125,8 @@ BOOST_AUTO_TEST_CASE(LCCInitDictTrainTest)
  */
 BOOST_AUTO_TEST_CASE(LCCInitDictAtomTest)
 {
-  arma::mat x = {{1,1,1,1},{2,2,2,2},{3,3,3,3},{4,4,4,4}};
-  arma::mat initDict = {{1,1},{2,2},{3,3},{4,4}};
+  arma::mat x = {{1, 1, 1, 1}, {2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
+  arma::mat initDict = {{1, 1}, {2, 2}, {3, 3}, {4, 4}};
 
   SetInputParam("training", std::move(x));
   SetInputParam("initial_dictionary", std::move(initDict));
@@ -211,6 +209,199 @@ BOOST_AUTO_TEST_CASE(LCCTrainedModelDimTest)
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
+}
+
+/*
+* Ensure that the program throws error for negative number of atoms.
+*/
+BOOST_AUTO_TEST_CASE(LCCAtomsBoundTest)
+{
+	arma::mat x = {{1, 1, 1, 1}, {2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
+	SetInputParam("training", std::move(x));
+  SetInputParam("atoms", (int) -1);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/*
+* Ensure that the program throws error for negative regularization parameter.
+*/
+BOOST_AUTO_TEST_CASE(LCCNegativeLambdaTest)
+{
+	arma::mat x = {{1, 1, 1, 1}, {2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
+	SetInputParam("training", std::move(x));
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("lambda", -1.0);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/*
+* Ensure that the program throws error for negative tolerance.
+*/
+BOOST_AUTO_TEST_CASE(LCCNegativeToleranceTest)
+{
+	arma::mat x = {{1, 1, 1, 1}, {2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
+	SetInputParam("training", std::move(x));
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("tolerance", -1.0);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/*
+* Ensure that the normalize parameter works.
+*/
+BOOST_AUTO_TEST_CASE(LCCNormalizationTest)
+{
+	arma::mat x = {{1, 2, 3, 4}, {2, 2, 3, 1}, {3, 2, 3, 0}, {1, 1, 4, 4}};
+	arma::mat t = x;
+  arma::mat initDict = {{1, 2}, {2, 3}, {3, 4}, {4, 5}};
+
+  SetInputParam("training", x);
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("initial_dictionary", initDict);
+  SetInputParam("max_iterations", 2);
+  SetInputParam("test", t);
+  SetInputParam("normalize", (bool) true);
+
+  mlpackMain();
+
+  arma::mat codes = CLI::GetParam<arma::mat>("codes");
+  arma::mat dictionary = CLI::GetParam<arma::mat>("dictionary");
+
+  bindings::tests::CleanMemory();
+  CLI::Parameters()["normalize"].wasPassed = false;
+
+  // Normalize the datasets.
+  for (size_t i = 0; i < x.n_cols; i++)
+    x.col(i) /= norm(x.col(i), 2);
+
+  for (size_t i = 0; i < t.n_cols; i++)
+    t.col(i) /= norm(t.col(i), 2);
+
+  SetInputParam("training", std::move(x));
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("initial_dictionary", std::move(initDict));
+  SetInputParam("max_iterations", (int) 2);
+  SetInputParam("test", std::move(t));
+
+  mlpackMain();
+
+  CheckMatrices(dictionary, CLI::GetParam<arma::mat>("dictionary"));
+  CheckMatrices(codes, CLI::GetParam<arma::mat>("codes"));
+}
+
+/*
+* Ensure that changing max iterations changes the output.
+*/
+BOOST_AUTO_TEST_CASE(LCCMaxIterTest)
+{
+	// Minimum required difference between the encodings of the test data.
+	double delta = 1.0;
+
+	arma::mat x = {{1, 2, 3, 4}, {2, 2, 3, 1}, {3, 2, 3, 0}, {1, 1, 4, 4}};
+	arma::mat t = x;
+  arma::mat initDict = {{1, 2}, {2, 3}, {3, 4}, {4, 5}};
+
+
+  SetInputParam("training", x);
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("initial_dictionary", initDict);
+  SetInputParam("max_iterations", 2);
+  SetInputParam("test", t);
+
+  mlpackMain();
+  arma::mat codes = CLI::GetParam<arma::mat>("codes");
+
+  bindings::tests::CleanMemory();
+
+  SetInputParam("training", std::move(x));
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("initial_dictionary", std::move(initDict));
+  SetInputParam("max_iterations", (int) 4);
+  SetInputParam("test", std::move(t));
+
+  mlpackMain();
+
+  double normDiff = arma::norm(CLI::GetParam<arma::mat>("codes") - codes, "fro");
+  BOOST_REQUIRE_GT(normDiff, delta);
+}
+
+/*
+* Ensure that changing tolerance changes the output.
+*/
+BOOST_AUTO_TEST_CASE(LCCToleranceTest)
+{
+	// Minimum required difference between the encodings of the test data.
+	double delta = 0.05;
+
+	arma::mat x = {{1, 2, 3, 4}, {2, 2, 3, 1}, {3, 2, 3, 0}, {1, 1, 4, 4}};
+	arma::mat t = x;
+  arma::mat initDict = {{1, 2}, {2, 3}, {3, 4}, {4, 5}};
+
+  SetInputParam("training", x);
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("initial_dictionary", initDict);
+  SetInputParam("test", t);
+  SetInputParam("tolerance", (double) 0.01);
+
+  mlpackMain();
+  arma::mat codes = CLI::GetParam<arma::mat>("codes");
+
+  bindings::tests::CleanMemory();
+
+  SetInputParam("training", std::move(x));
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("initial_dictionary", std::move(initDict));
+  SetInputParam("test", std::move(t));
+  SetInputParam("tolerance", (double) 100.0);
+
+  mlpackMain();
+
+  double normDiff = arma::norm(CLI::GetParam<arma::mat>("codes") - codes, "fro");
+  BOOST_REQUIRE_GT(normDiff, delta);
+}
+
+/*
+* Ensure that changing regularization parameter changes the output.
+*/
+BOOST_AUTO_TEST_CASE(LCCLambdaTest)
+{
+	// Minimum required difference between the encodings of the test data.
+	double delta = 1.0;
+
+	arma::mat x = {{1, 2, 3, 4}, {2, 2, 3, 1}, {3, 2, 3, 0}, {1, 1, 4, 4}};
+	arma::mat t = x;
+  arma::mat initDict = {{1, 2}, {2, 3}, {3, 4}, {4, 5}};
+
+  SetInputParam("training", x);
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("initial_dictionary", initDict);
+  SetInputParam("test", t);
+  SetInputParam("lambda", (double) 0.0);
+
+  mlpackMain();
+  arma::mat codes = CLI::GetParam<arma::mat>("codes");
+
+  bindings::tests::CleanMemory();
+
+  SetInputParam("training", std::move(x));
+  SetInputParam("atoms", (int) 2);
+  SetInputParam("initial_dictionary", std::move(initDict));
+  SetInputParam("test", std::move(t));
+  SetInputParam("lambda", (double) 1.0);
+
+  mlpackMain();
+
+  double normDiff = arma::norm(CLI::GetParam<arma::mat>("codes") - codes, "fro");
+  BOOST_REQUIRE_GT(normDiff, delta);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

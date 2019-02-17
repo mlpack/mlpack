@@ -64,7 +64,7 @@ RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::~RNN()
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename OptimizerType>
-void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
+double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::cube predictors,
     arma::cube responses,
     OptimizerType& optimizer)
@@ -89,6 +89,7 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out
       << "." << std::endl;
+  return out;
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
@@ -105,7 +106,7 @@ void RNN<OutputLayerType, InitializationRuleType,
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename OptimizerType>
-void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
+double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::cube predictors,
     arma::cube responses)
 {
@@ -131,6 +132,7 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out
       << "." << std::endl;
+  return out;
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,

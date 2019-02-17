@@ -244,7 +244,8 @@ inline std::string PrintTypeDocs()
   const std::string& urowType = GetPrintableType<arma::Row<size_t>>(data);
 
   oss << " - `" << urowType << "`{: #doc_" << BindingInfo::Language() << "_"
-      << ToUnderscores(urowType) << " }: " << PrintTypeDoc<arma::Row<size_t>>(data)
+      << ToUnderscores(urowType) << " }: "
+      << PrintTypeDoc<arma::Row<size_t>>(data)
       << std::endl;
 
   data.tname = std::string(typeid(arma::vec).name());

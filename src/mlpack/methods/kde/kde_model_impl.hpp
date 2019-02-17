@@ -198,17 +198,17 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
     kdeModel = new KDEType<kernel::TriangularKernel, tree::BallTree>
         (relError, absError, kernel::TriangularKernel(bandwidth));
   }
-   else if (kernelType == TRIANGULAR_KERNEL && treeType == COVER_TREE)
+  else if (kernelType == TRIANGULAR_KERNEL && treeType == COVER_TREE)
   {
     kdeModel = new KDEType<kernel::TriangularKernel, tree::StandardCoverTree>
         (relError, absError, kernel::TriangularKernel(bandwidth));
   }
-   else if (kernelType == TRIANGULAR_KERNEL && treeType == OCTREE)
+  else if (kernelType == TRIANGULAR_KERNEL && treeType == OCTREE)
   {
     kdeModel = new KDEType<kernel::TriangularKernel, tree::Octree>
         (relError, absError, kernel::TriangularKernel(bandwidth));
   }
-   else if (kernelType == TRIANGULAR_KERNEL && treeType == R_TREE)
+  else if (kernelType == TRIANGULAR_KERNEL && treeType == R_TREE)
   {
     kdeModel = new KDEType<kernel::TriangularKernel, tree::RTree>
         (relError, absError, kernel::TriangularKernel(bandwidth));

@@ -55,14 +55,16 @@ AdaBoost<WeakLearnerType, MatType>::AdaBoost(
 // Empty constructor.
 template<typename WeakLearnerType, typename MatType>
 AdaBoost<WeakLearnerType, MatType>::AdaBoost(const double tolerance) :
-    tolerance(tolerance)
+    tolerance(tolerance),
+    numClasses(0),
+    ztProduct(1.0)
 {
   // Nothing to do.
 }
 
 // Train AdaBoost.
 template<typename WeakLearnerType, typename MatType>
-void AdaBoost<WeakLearnerType, MatType>::Train(
+double AdaBoost<WeakLearnerType, MatType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
@@ -198,6 +200,7 @@ void AdaBoost<WeakLearnerType, MatType>::Train(
     // Accumulate the value of zt for the Hamming loss bound.
     ztProduct *= zt;
   }
+  return ztProduct;
 }
 
 /**

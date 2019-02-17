@@ -129,7 +129,7 @@ class LogisticRegression
    */
   template<typename OptimizerType = ens::L_BFGS>
   double Train(const MatType& predictors,
-             const arma::Row<size_t>& responses);
+               const arma::Row<size_t>& responses);
 
   /**
    * Train the LogisticRegression model with the given instantiated optimizer.
@@ -150,8 +150,8 @@ class LogisticRegression
    */
   template<typename OptimizerType>
   double Train(const MatType& predictors,
-             const arma::Row<size_t>& responses,
-             OptimizerType& optimizer);
+               const arma::Row<size_t>& responses,
+               OptimizerType& optimizer);
 
   //! Return the parameters (the b vector).
   const arma::rowvec& Parameters() const { return parameters; }

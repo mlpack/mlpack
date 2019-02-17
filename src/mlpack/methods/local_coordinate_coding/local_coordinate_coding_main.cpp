@@ -149,6 +149,18 @@ static void mlpackMain()
         matX.col(i) /= norm(matX.col(i), 2);
     }
 
+    if(CLI::GetParam<int>("atoms") < 1){
+      Log::Fatal << "The number of atoms should be atleast one!" << endl;
+    }
+
+    if(CLI::GetParam<double>("lambda") < 0){
+      Log::Fatal << "The regularization parameter should be a positive real number!" << endl;
+    }
+
+    if(CLI::GetParam<double>("tolerance") < 0){
+      Log::Fatal << "The tolerance should be a positive real number!" << endl;
+    }
+
     lcc->Lambda() = CLI::GetParam<double>("lambda");
     lcc->Atoms() = (size_t) CLI::GetParam<int>("atoms");
     lcc->MaxIterations() = (size_t) CLI::GetParam<int>("max_iterations");
@@ -191,6 +203,7 @@ static void mlpackMain()
       lcc->Train(matX);
     }
   }
+
   // Now, do we have any matrix to encode?
   if (CLI::HasParam("test"))
   {
@@ -215,6 +228,7 @@ static void mlpackMain()
 
     CLI::GetParam<mat>("codes") = std::move(codes);
   }
+  
   // Save the dictionary and the model.
   CLI::GetParam<mat>("dictionary") = lcc->Dictionary();
   CLI::GetParam<LocalCoordinateCoding*>("output_model") = lcc;

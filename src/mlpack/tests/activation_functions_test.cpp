@@ -248,7 +248,8 @@ void CheckELUDerivativeCorrect(const arma::colvec input,
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
   lrf.Forward(std::move(input), std::move(activations));
-  lrf.Backward(std::move(activations), std::move(error), std::move(derivatives));
+  lrf.Backward(std::move(activations), std::move(error),
+      std::move(derivatives));
   for (size_t i = 0; i < derivatives.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
@@ -387,7 +388,8 @@ BOOST_AUTO_TEST_CASE(SELUFunctionDerivativeTest)
   SELU selu;
 
   selu.Forward(std::move(input), activations);
-  selu.Backward(std::move(activations), std::move(error), std::move(derivatives));
+  selu.Backward(std::move(activations), std::move(error),
+      std::move(derivatives));
 
   BOOST_REQUIRE_LE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
       selu.Lambda())), 10e-4);
@@ -395,7 +397,8 @@ BOOST_AUTO_TEST_CASE(SELUFunctionDerivativeTest)
   input.fill(-1);
 
   selu.Forward(std::move(input), activations);
-  selu.Backward(std::move(activations), std::move(error), std::move(derivatives));
+  selu.Backward(std::move(activations), std::move(error),
+      std::move(derivatives));
 
   BOOST_REQUIRE_LE(arma::as_scalar(arma::abs(arma::mean(derivatives) -
       selu.Lambda() * selu.Alpha() - arma::mean(activations))), 10e-4);
