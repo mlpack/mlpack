@@ -139,8 +139,55 @@ class TestPythonBinding(unittest.TestCase):
 
     for j in range(100):
       self.assertEqual(2 * x[j, 2], output['matrix_out'][j, 2])
-      
-  def testPandasMatrix(self):
+
+
+  def testNumpyFContiguousMatrix(self):
+    """
+    The matrix with F_CONTIGUOUS set we pass in, we should get back with the third 
+    dimension doubled and the fifth forgotten.
+    """
+    x = np.array(np.random.rand(100, 5),order = 'F');
+    z = copy.copy(x)
+
+    output = test_python_binding(string_in='hello',
+                                 int_in=12,
+                                 double_in=4.0,
+                                 matrix_in=z)
+
+    self.assertEqual(output['matrix_out'].shape[0], 100)
+    self.assertEqual(output['matrix_out'].shape[1], 4)
+    self.assertEqual(output['matrix_out'].dtype, np.double)
+    for i in [0, 1, 3]:
+      for j in range(100):
+        self.assertEqual(x[j, i], output['matrix_out'][j, i])
+
+    for j in range(100):
+      self.assertEqual(2 * x[j, 2], output['matrix_out'][j, 2])
+
+  def testNumpyFContiguousMatrixForceCopy(self):
+    """
+    The matrix with F_CONTIGUOUS set we pass in, we should get back with the third 
+    dimension doubled and the fifth forgotten.
+    """
+    x = np.array(np.random.rand(100, 5),order = 'F');
+
+    output = test_python_binding(string_in='hello',
+                                 int_in=12,
+                                 double_in=4.0,
+                                 matrix_in=x,
+                                 copy_all_inputs=True)
+
+    self.assertEqual(output['matrix_out'].shape[0], 100)
+    self.assertEqual(output['matrix_out'].shape[1], 4)
+    self.assertEqual(output['matrix_out'].dtype, np.double)
+    for i in [0, 1, 3]:
+      for j in range(100):
+        self.assertEqual(x[j, i], output['matrix_out'][j, i])
+
+    for j in range(100):
+      self.assertEqual(2 * x[j, 2], output['matrix_out'][j, 2])
+
+  def testPandasDataFrameMatrix(self):
     """
     The matrix we pass in, we should get back with the third dimension doubled
     and the fifth forgotten.
@@ -163,7 +210,7 @@ class TestPythonBinding(unittest.TestCase):
     for j in range(100):
       self.assertEqual(2 * x.iloc[j, 2], output['matrix_out'][j, 2])
 
-  def testPandasMatrixForceCopy(self):
+  def testPandasDataFrameMatrixForceCopy(self):
     """
     The matrix we pass in, we should get back with the third dimension doubled
     and the fifth forgotten.
@@ -174,7 +221,7 @@ class TestPythonBinding(unittest.TestCase):
                                  int_in=12,
                                  double_in=4.0,
                                  matrix_in=x,
-				                         copy_all_inputs=True)
+				 copy_all_inputs=True)
 
     self.assertEqual(output['matrix_out'].shape[0], 100)
     self.assertEqual(output['matrix_out'].shape[1], 4)
@@ -185,6 +232,42 @@ class TestPythonBinding(unittest.TestCase):
 
     for j in range(100):
       self.assertEqual(2 * x.iloc[j, 2], output['matrix_out'][j, 2])
+
+  def testPandasSeries(self):
+    """
+    Test a Pandas Series input paramter
+    """
+    x =  pd.Series(np.random.rand(100))
+    z = copy.copy(x)
+
+    output = test_python_binding(string_in='hello',
+                                 int_in=12,
+                                 double_in=4.0,
+                                 col_in=z)
+
+    self.assertEqual(output['col_out'].shape[0], 100)
+    self.assertEqual(output['col_out'].dtype, np.double)
+
+    for i in range(100):
+      self.assertEqual(output['col_out'][i], x[i] * 2)
+
+  def testPandasSeriesForceCopy(self):
+    """
+    Test a Pandas Series input paramter
+    """
+    x =  pd.Series(np.random.rand(100))
+ 
+    output = test_python_binding(string_in='hello',
+                                 int_in=12,
+                                 double_in=4.0,
+                                 col_in=x,
+                                 copy_all_inputs=True)
+
+    self.assertEqual(output['col_out'].shape[0], 100)
+    self.assertEqual(output['col_out'].dtype, np.double)
+
+    for i in range(100):
+      self.assertEqual(output['col_out'][i], x[i] * 2)
 
   def testArraylikeMatrix(self):
     """
