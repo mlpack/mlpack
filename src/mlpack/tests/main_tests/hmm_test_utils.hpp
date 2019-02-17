@@ -192,7 +192,7 @@ struct InitHMMModel
         e[i].Component(g).Mean().randu();
 
         // Generate random diagonal covariance.
-        arma::mat r = arma::randu<arma::mat>(dimensionality, dimensionality);
+        arma::vec r = arma::randu<arma::vec>(dimensionality);
         e[i].Component(g).Covariance(r);
       }
     }
