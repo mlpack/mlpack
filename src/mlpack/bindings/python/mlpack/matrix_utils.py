@@ -59,7 +59,7 @@ def to_matrix(x, dtype=np.double, copy=False):
       return np.ndarray(x.shape,buffer=x.flatten(),dtype=dtype, order = 'C'),False
   else:
     if isinstance(x, pd.core.series.Series) or isinstance(x, pd.DataFrame):
-      y = x.to_numpy()
+      y = x.values
       if copy: # Copy the matrix if required.
         return np.ndarray(y.shape,buffer=y.flatten(),dtype=dtype,order = 'C').copy("C"),True
       else:
