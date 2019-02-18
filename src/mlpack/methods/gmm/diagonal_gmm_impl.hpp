@@ -210,9 +210,8 @@ void DiagonalGMM::Estimate(
   #ifndef _WIN32
   ArmadilloGMMWrapper(observations, dists, weights, useInitialModel,
       maxIterations, tolerance, clusterer);
-  return;
-  #endif
 
+  #else
   if (!useInitialModel)
     InitialClustering(observations, dists, weights, clusterer);
 
@@ -288,6 +287,7 @@ void DiagonalGMM::Estimate(
 
     iteration++;
   }
+  #endif
 }
 
 template<typename InitialClusteringType>

@@ -366,8 +366,8 @@ class DiagonalGMM
       InitialClusteringType clusterer = InitialClusteringType());
 
   // Armadillo uses uword internally as an OpenMP index type, which crashes
-	// Visual Studio.
-	#ifndef _WIN32
+  // Visual Studio.
+  #ifndef _WIN32
 	/**
 	 * Use the Armadillo gmm_diag clusterer to train a GMM with diagonal
 	 * covariance.  If InitialClusteringType == kmeans::KMeans<>, this will use
@@ -381,16 +381,16 @@ class DiagonalGMM
 	 * @param tolerance Log-likelihood tolerance required for convergence.
 	 * @param clusterer Object which will perform the initial clustering.
 	 */
-	template<typename InitialClusteringType = kmeans::KMeans<>>
-	void ArmadilloGMMWrapper(
-		  const arma::mat& observations,
-		  std::vector<distribution::DiagCovGaussianDistribution>& dists,
-		  arma::vec& weights,
-		  const bool useInitialModel = false,
+  template<typename InitialClusteringType = kmeans::KMeans<>>
+  void ArmadilloGMMWrapper(
+      const arma::mat& observations,
+      std::vector<distribution::DiagCovGaussianDistribution>& dists,
+      arma::vec& weights,
+      const bool useInitialModel = false,
       const size_t maxIterations = 300,
       const double tolerance = 1e-10,
-		  InitialClusteringType clusterer = InitialClusteringType());
-	#endif
+      InitialClusteringType clusterer = InitialClusteringType());
+  #endif
 };
 
 } // namespace gmm
