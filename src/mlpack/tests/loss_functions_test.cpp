@@ -396,7 +396,7 @@ BOOST_AUTO_TEST_CASE(SimpleContrastiveLossTest)
   BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
 
 
-  module.Backward(std::move(input3), std::move(input4),std::move(target1), std::move(output));
+  module.Backward(std::move(input3), std::move(input4),std::move(target2), std::move(output));
   expected_output = 0.5 * arma::ones(1, input3.n_cols); 
 
   for (size_t i = 0; i < output.n_elem; i++)
