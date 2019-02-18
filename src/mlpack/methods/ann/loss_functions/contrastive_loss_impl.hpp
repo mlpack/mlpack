@@ -66,8 +66,8 @@ void ContrastiveLoss<InputDataType, OutputDataType>::Backward(
 
       arma::mat margin_vector = (margin * arma::ones(1,distances_prime.n_cols));
 
-      for(size_t i = 0; i<margin_vector.n_cols; i++){
-        if(margin_vector(0,i) < distances_prime(0,i))
+      for (size_t i = 0; i<margin_vector.n_cols; i++){
+        if (margin_vector(0,i) < distances_prime(0,i))
             result(0,i) = target(0,i) * distances_prime(0,i);
         else
             result(0,i) = (target(0,i) * distances_prime(0,i)) - ((1 - target(0,i)) * (margin_vector(0,i) - distances_prime(0,i))); 
