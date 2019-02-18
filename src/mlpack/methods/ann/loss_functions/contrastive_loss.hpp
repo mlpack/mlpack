@@ -46,7 +46,7 @@ class ContrastiveLoss
    * @param margin 
    * @param lambda - for avoiding poor gradients
    */
-    ContrastiveLoss(const double margin = 0.7, const double lambda = pow(10,-6));
+    ContrastiveLoss(const double margin = 0.7, const double lambda = pow(10, -6));
 
     /*
    * Computes the contrastive loss function.
@@ -56,7 +56,7 @@ class ContrastiveLoss
    * @param target The target vector.
    */
     template<typename InputType, typename TargetType>
-      double Forward(const InputType&& input1, const InputType&& input2, const TargetType&& target); 
+    double Forward(const InputType&& input1, const InputType&& input2, const TargetType&& target); 
 
 
     /**
@@ -74,19 +74,19 @@ class ContrastiveLoss
                 OutputType&& output);
 
    //! Get the output parameter.
-   OutputDataType& OutputParameter() const { return outputParameter; }
+    OutputDataType& OutputParameter() const { return outputParameter; }
    //! Modify the output parameter.
-   OutputDataType& OutputParameter() { return outputParameter; }
+    OutputDataType& OutputParameter() { return outputParameter; }
 
    //! Get the margin.
-   double Margin() const { return margin; }
+    double Margin() const { return margin; }
    //! Modify the margin.
-   double& Margin() { return margin; }
+    double& Margin() { return margin; }
 
    //! Get the lambda.
-   double Lambda() const { return lambda; }
+    double Lambda() const { return lambda; }
    //! Modify the lamda.
-   double& Lambda() { return lambda; }
+    double& Lambda() { return lambda; }
 
    /**
    * Serialize the layer.
@@ -103,7 +103,7 @@ class ContrastiveLoss
 
    //! The parameter to avoid poor gradients
    double lambda;
-  }; // class ContrastiveLoss
+}; // class ContrastiveLoss
 
 } // namespace ann
 } // namespace mlpack
