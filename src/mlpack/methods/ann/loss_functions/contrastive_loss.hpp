@@ -46,7 +46,8 @@ class ContrastiveLoss
    * @param margin 
    * @param lambda - for avoiding poor gradients
    */
-    ContrastiveLoss(const double margin = 0.7, const double lambda = pow(10, -6));
+    ContrastiveLoss(const double margin = 0.7,
+                    const double lambda = pow(10, -6));
 
     /*
    * Computes the contrastive loss function.
@@ -56,8 +57,8 @@ class ContrastiveLoss
    * @param target The target vector.
    */
     template<typename InputType, typename TargetType>
-    double Forward(const InputType&& input1, const InputType&& input2, const TargetType&& target); 
-
+    double Forward(const InputType&& input1, 
+                   const InputType&& input2, const TargetType&& target); 
 
     /**
    * Ordinary feed backward pass of a neural network.
