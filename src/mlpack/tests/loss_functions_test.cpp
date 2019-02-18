@@ -382,7 +382,7 @@ BOOST_AUTO_TEST_CASE(SimpleContrastiveLossTest)
   input4 = arma::ones(1,8);
   target2 = arma::ones(1,8);
   expected = 0.16;
-  double error2 = module.Forward(std::move(input1), std::move(input2), std::move(target1));
+  double error2 = module.Forward(std::move(input3), std::move(input4), std::move(target2));
   BOOST_REQUIRE_SMALL(error2 - expected, 1e-4);
 
   // Testing the backward function
