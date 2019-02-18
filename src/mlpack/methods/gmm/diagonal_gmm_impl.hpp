@@ -205,54 +205,88 @@ void DiagonalGMM::Estimate(
     const double tolerance,
     InitialClusteringType clusterer)
 {
-  arma::gmm_diag gmm;
+  // If it is not on Windows, we use the Armadillo's gmm_diag class by calling
+  // ArmadilloGMMWrapper().
+  #ifndef _WIN32
+  ArmadilloGMMWrapper(observations, dists, weights, useInitialModel,
+      maxIterations, tolerance, clusterer);
+  return;
+  #endif
 
-  // Warn the user that tolerance isn't used for convergence here if they've
-  // specified a non-default value.
-  if (tolerance != EMFit<>().Tolerance())
-    Log::Warn << "DiagonalGMM::Train(): tolerance ignored when training GMMs."
-        << std::endl;
+  if (!useInitialModel)
+    InitialClustering(observations, dists, weights, clusterer);
 
-  // If the initial clustering is the default k-means, we'll just use
-  // Armadillo's implementation.  If mlpack ever changes k-means defaults to use
-  // something that is reliably quicker than the Lloyd iteration k-means update,
-  // then this code maybe should be revisited.
-  if (!std::is_same<InitialClusteringType, mlpack::kmeans::KMeans<>>::value ||
-      useInitialModel)
+  // Set the initial log likelihood.
+  double l = LogLikelihood(observations, dists, weights);
+
+  Log::Debug << "DiagonalGMM::Estimate(): initial clustering log likelihood: "
+      << l << std::endl;
+
+  // Initialize the old log likelihood for comparison later.
+  double lOld = -DBL_MAX;
+
+  // Create the conditional probability matrix.
+  arma::mat condProb(observations.n_cols, dists.size());
+
+  // Iterate to update the model until no more improvement is found.
+  size_t iteration = 1;
+  while (std::abs(l - lOld) > tolerance && iteration != maxIterations)
   {
-    // Use clusterer to get initial values.
-    if (!useInitialModel)
-      InitialClustering(observations, dists, weights, clusterer);
-
-    // Assemble matrix of means.
-    arma::mat means(observations.n_rows, dists.size());
-    arma::mat covs(observations.n_rows, dists.size());
-    for (size_t i = 0; i < dists.size(); ++i)
+    // E step: Calculate the conditional probabilities of the given
+    // observations choosing a particular gaussian using current parameters.
+    for (size_t k = 0; k < dists.size(); k++)
     {
-      means.col(i) = dists[i].Mean();
-      covs.col(i) = dists[i].Covariance();
+      arma::vec condProbAlias = condProb.unsafe_col(k);
+      dists[k].Probability(observations, condProbAlias);
+      condProbAlias *= weights[k];
     }
 
-    gmm.reset(observations.n_rows, dists.size());
-    gmm.set_params(std::move(means), std::move(covs), weights.t());
+    // Normalize row-wise.
+    for (size_t j = 0; j < condProb.n_rows; j++)
+    {
+      // Avoid dividing by zero.
+      const double probSum = accu(condProb.row(j));
+      if (probSum != 0.0)
+        condProb.row(j) /= probSum;
+    }
 
-    gmm.learn(observations, dists.size(), arma::eucl_dist, arma::keep_existing,
-        0, maxIterations, 1e-10, false /* no printing */);
-  }
-  else
-  {
-    // Use Armadillo for the initial clustering.  We'll try and match mlpack
-    // defaults.
-    gmm.learn(observations, dists.size(), arma::eucl_dist, arma::static_subset,
-        1000, maxIterations, 1e-10, false /* no printing */);
-  }
+    // Store the sum of responsibilities over all the observations.
+    arma::vec N = arma::trans(arma::sum(condProb));
+    arma::vec onesVec = arma::ones<arma::vec>(observations.n_rows);
+    arma::mat onesRowVec = arma::ones<arma::rowvec>(observations.n_cols);
 
-  // Extract means, covariances, and weights.
-  weights = gmm.hefts.t();
-  for (size_t i = 0; i < dists.size(); ++i)
-  {
-    dists[i].Mean() = gmm.means.col(i);
-    dists[i].Covariance(gmm.dcovs.col(i));
+    // M step: Update the paramters using the current responsibilities.
+    for (size_t k = 0; k < dists.size(); k++)
+    {
+      // Update the mean and covariance using the responsibilities.
+      // If N[k] is zero, we don't update them.
+      if (N[k] == 0)
+        continue;
+
+      // Calculate the sum of conditional probabilities of each point, being
+      // from Gaussian i, multiplied by the probability of the point.
+      arma::vec responsibilities = condProb.col(k);
+
+      // Update the mean of distribution k.
+      dists[k].Mean() = (observations * responsibilities) / N[k];
+
+      // Update the diagonal covariance of distribution k.
+      // We only need the diagonal elements in the covariances.
+      arma::mat diffs = observations - (dists[k].Mean() * onesRowVec);
+      arma::vec covs = arma::sum((diffs % diffs) %
+          (onesVec * trans(responsibilities)), 1) / N[k];
+
+      dists[k].Covariance(std::move(covs));
+    }
+
+    // Update the mixing coefficients.
+    weights = N / observations.n_cols;
+
+    // Update log likelihood and Keep the old likelihood for comparison.
+    lOld = l;
+    l = LogLikelihood(observations, dists, weights);
+
+    iteration++;
   }
 }
 
@@ -273,9 +307,9 @@ void DiagonalGMM::Estimate(const arma::mat& observations,
   double l = LogLikelihood(observations, dists, weights);
 
   Log::Debug << "DiagonalGMM::Estimate(): initial clustering log likelihood: "
-       << l << std::endl;
+      << l << std::endl;
 
-  // Initialze the old log likelihood.
+  // Initialze the old log likelihood for comparison later.
   double lOld = -DBL_MAX;
 
   // Create the conditional probability matrix.
@@ -318,10 +352,16 @@ void DiagonalGMM::Estimate(const arma::mat& observations,
 
       N[k] = arma::accu(responsibilities);
 
+      // Update the mean and covariance using the responsibilities.
+      // If N[k] is zero, we don't update them.
+      if (N[k] == 0)
+        continue;
+
       // Update the mean of distribution k.
       dists[k].Mean() = (observations * responsibilities) / N[k];
 
       // Update the diagonal covariance of distribution k.
+      // We only need the diagonal elements in the covariances.
       arma::mat diffs = observations - (dists[k].Mean() * onesRowVec);
       arma::vec covs = arma::sum((diffs % diffs) %
           (onesVec * trans(responsibilities)), 1) / N[k];
@@ -404,6 +444,71 @@ void DiagonalGMM::InitialClustering(
   // Normalize weights.
   weights /= arma::accu(weights);
 }
+
+// Armadillo uses uword internally as an OpenMP index type, which crashes
+// Visual Studio.
+#ifndef _WIN32
+template<typename InitialClusteringType>
+void DiagonalGMM::ArmadilloGMMWrapper(
+    const arma::mat& observations,
+    std::vector<distribution::DiagCovGaussianDistribution>& dists,
+    arma::vec& weights,
+    const bool useInitialModel,
+    const size_t maxIterations,
+    const double tolerance,
+    InitialClusteringType clusterer)
+{
+  arma::gmm_diag gmm;
+
+  // Warn the user that tolerance isn't used for convergence here if they've
+  // specified a non-default value.
+  if (tolerance != EMFit<>().Tolerance())
+    Log::Warn << "DiagonalGMM::Train(): tolerance ignored when training GMMs."
+        << std::endl;
+
+  // If the initial clustering is the default k-means, we'll just use
+  // Armadillo's implementation.  If mlpack ever changes k-means defaults to use
+  // something that is reliably quicker than the Lloyd iteration k-means update,
+  // then this code maybe should be revisited.
+  if (!std::is_same<InitialClusteringType, mlpack::kmeans::KMeans<>>::value ||
+      useInitialModel)
+  {
+    // Use clusterer to get initial values.
+    if (!useInitialModel)
+      InitialClustering(observations, dists, weights, clusterer);
+
+    // Assemble matrix of means.
+    arma::mat means(observations.n_rows, dists.size());
+    arma::mat covs(observations.n_rows, dists.size());
+    for (size_t i = 0; i < dists.size(); ++i)
+    {
+      means.col(i) = dists[i].Mean();
+      covs.col(i) = dists[i].Covariance();
+    }
+
+    gmm.reset(observations.n_rows, dists.size());
+    gmm.set_params(std::move(means), std::move(covs), weights.t());
+
+    gmm.learn(observations, dists.size(), arma::eucl_dist, arma::keep_existing,
+        0, maxIterations, 1e-10, false /* no printing */);
+  }
+  else
+  {
+    // Use Armadillo for the initial clustering.  We'll try and match mlpack
+    // defaults.
+    gmm.learn(observations, dists.size(), arma::eucl_dist, arma::static_subset,
+        1000, maxIterations, 1e-10, false /* no printing */);
+  }
+
+  // Extract means, covariances, and weights.
+  weights = gmm.hefts.t();
+  for (size_t i = 0; i < dists.size(); ++i)
+  {
+    dists[i].Mean() = gmm.means.col(i);
+    dists[i].Covariance(gmm.dcovs.col(i));
+  }
+}
+#endif
 
 //! Serialize the object.
 template<typename Archive>
