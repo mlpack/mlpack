@@ -73,7 +73,6 @@ BackwardVisitor::LayerBackward(T* layer, arma::mat& /* input */) const
     layer->Backward(std::move(input), std::move(error),
         std::move(delta), index);
   }
-
 }
 
 } // namespace ann

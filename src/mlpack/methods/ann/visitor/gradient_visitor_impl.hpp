@@ -70,7 +70,6 @@ GradientVisitor::LayerGradients(T* layer, arma::mat& /* input */) const
     layer->Gradient(std::move(input), std::move(delta),
         std::move(layer->Gradient()), index);
   }
-
 }
 
 template<typename T, typename P>

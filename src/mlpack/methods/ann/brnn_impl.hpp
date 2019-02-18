@@ -329,10 +329,10 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   if (backwardGradient.is_empty())
   {
     backwardGradient = arma::zeros<arma::mat>(
-        parameter.n_rows/2,
+        parameter.n_rows/ 2,
         parameter.n_cols);
     forwardGradient = arma::zeros<arma::mat>(
-        parameter.n_rows/2,
+        parameter.n_rows/ 2,
         parameter.n_cols);
   }
   if (this->deterministic)
@@ -650,7 +650,6 @@ void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
   forwardRNN.ResetDeterministic();
   backwardRNN.ResetDeterministic();
 }
-
 
 template<typename OutputLayerType, typename MergeLayerType,
          typename MergeOutputType, typename InitializationRuleType,
