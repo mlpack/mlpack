@@ -149,15 +149,19 @@ static void mlpackMain()
         matX.col(i) /= norm(matX.col(i), 2);
     }
 
-    if(CLI::GetParam<int>("atoms") < 1){
+    if(CLI::GetParam<int>("atoms") < 1)
+    {
       Log::Fatal << "The number of atoms should be atleast one!" << endl;
     }
 
-    if(CLI::GetParam<double>("lambda") < 0){
-      Log::Fatal << "The regularization parameter should be a positive real number!" << endl;
+    if(CLI::GetParam<double>("lambda") < 0)
+    {
+      Log::Fatal << "The regularization parameter "
+          << "should be a positive real number!" << endl;
     }
 
-    if(CLI::GetParam<double>("tolerance") < 0){
+    if(CLI::GetParam<double>("tolerance") < 0)
+    {
       Log::Fatal << "The tolerance should be a positive real number!" << endl;
     }
 
@@ -228,7 +232,7 @@ static void mlpackMain()
 
     CLI::GetParam<mat>("codes") = std::move(codes);
   }
-  
+
   // Save the dictionary and the model.
   CLI::GetParam<mat>("dictionary") = lcc->Dictionary();
   CLI::GetParam<LocalCoordinateCoding*>("output_model") = lcc;

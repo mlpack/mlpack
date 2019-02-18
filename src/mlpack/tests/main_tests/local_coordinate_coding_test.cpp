@@ -26,7 +26,7 @@ using namespace mlpack;
 
 struct LCCTestFixture
 {
-  public:
+ public:
   LCCTestFixture()
   {
     // Cache in the options for this program.
@@ -87,7 +87,8 @@ BOOST_AUTO_TEST_CASE(LCCOutputModelTest)
   // Get the encoded output and dictionary after training.
   arma::mat initCodes = CLI::GetParam<arma::mat>("codes");
   arma::mat initDict = CLI::GetParam<arma::mat>("dictionary");
-  LocalCoordinateCoding* outputModel = std::move(CLI::GetParam<LocalCoordinateCoding*>("output_model"));
+  LocalCoordinateCoding* outputModel =
+      std::move(CLI::GetParam<LocalCoordinateCoding*>("output_model"));
 
   CLI::Parameters()["training"].wasPassed = false;
 
@@ -96,7 +97,8 @@ BOOST_AUTO_TEST_CASE(LCCOutputModelTest)
 
   mlpackMain();
 
-  // Compare the output after reusing the trained model to the original matrices.
+  // Compare the output after reusing the trained model
+  // to the original matrices.
   CheckMatrices(initCodes, CLI::GetParam<arma::mat>("codes"));
   CheckMatrices(initDict, CLI::GetParam<arma::mat>("dictionary"));
 }
@@ -147,7 +149,7 @@ BOOST_AUTO_TEST_CASE(LCCTrainAndTestDataDimTest)
   x.load("mnist_first250_training_4s_and_9s.arm");
   arma::mat t = x;
 
-  t.shed_rows(1,2);
+  t.shed_rows(1, 2);
 
   // Input data.
   SetInputParam("training", x);
@@ -174,7 +176,8 @@ BOOST_AUTO_TEST_CASE(LCCTrainAndInputModelTest)
 
   mlpackMain();
 
-  LocalCoordinateCoding* outputModel = std::move(CLI::GetParam<LocalCoordinateCoding*>("output_model"));
+  LocalCoordinateCoding* outputModel =
+      std::move(CLI::GetParam<LocalCoordinateCoding*>("output_model"));
 
   // No need to input training data again.
   SetInputParam("input_model", std::move(outputModel));
@@ -193,7 +196,7 @@ BOOST_AUTO_TEST_CASE(LCCTrainedModelDimTest)
   arma::mat x;
   x.load("mnist_first250_training_4s_and_9s.arm");
   arma:: mat t = x;
-  t.shed_rows(1,2);
+  t.shed_rows(1, 2);
 
   SetInputParam("training", x);
   SetInputParam("atoms", (int) 10);
@@ -201,7 +204,8 @@ BOOST_AUTO_TEST_CASE(LCCTrainedModelDimTest)
 
   mlpackMain();
 
-  LocalCoordinateCoding* outputModel = std::move(CLI::GetParam<LocalCoordinateCoding*>("output_model"));
+  LocalCoordinateCoding* outputModel =
+      std::move(CLI::GetParam<LocalCoordinateCoding*>("output_model"));
 
   SetInputParam("input_model", std::move(outputModel));
   SetInputParam("test", std::move(t));
@@ -216,8 +220,8 @@ BOOST_AUTO_TEST_CASE(LCCTrainedModelDimTest)
 */
 BOOST_AUTO_TEST_CASE(LCCAtomsBoundTest)
 {
-	arma::mat x = {{1, 1, 1, 1}, {2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
-	SetInputParam("training", std::move(x));
+  arma::mat x = {{1, 1, 1, 1}, {2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
+  SetInputParam("training", std::move(x));
   SetInputParam("atoms", (int) -1);
 
   Log::Fatal.ignoreInput = true;
@@ -230,8 +234,8 @@ BOOST_AUTO_TEST_CASE(LCCAtomsBoundTest)
 */
 BOOST_AUTO_TEST_CASE(LCCNegativeLambdaTest)
 {
-	arma::mat x = {{1, 1, 1, 1}, {2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
-	SetInputParam("training", std::move(x));
+  arma::mat x = {{1, 1, 1, 1}, {2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
+  SetInputParam("training", std::move(x));
   SetInputParam("atoms", (int) 2);
   SetInputParam("lambda", -1.0);
 
@@ -245,8 +249,8 @@ BOOST_AUTO_TEST_CASE(LCCNegativeLambdaTest)
 */
 BOOST_AUTO_TEST_CASE(LCCNegativeToleranceTest)
 {
-	arma::mat x = {{1, 1, 1, 1}, {2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
-	SetInputParam("training", std::move(x));
+  arma::mat x = {{1, 1, 1, 1}, {2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
+  SetInputParam("training", std::move(x));
   SetInputParam("atoms", (int) 2);
   SetInputParam("tolerance", -1.0);
 
@@ -260,8 +264,8 @@ BOOST_AUTO_TEST_CASE(LCCNegativeToleranceTest)
 */
 BOOST_AUTO_TEST_CASE(LCCNormalizationTest)
 {
-	arma::mat x = {{1, 2, 3, 4}, {2, 2, 3, 1}, {3, 2, 3, 0}, {1, 1, 4, 4}};
-	arma::mat t = x;
+  arma::mat x = {{1, 2, 3, 4}, {2, 2, 3, 1}, {3, 2, 3, 0}, {1, 1, 4, 4}};
+  arma::mat t = x;
   arma::mat initDict = {{1, 2}, {2, 3}, {3, 4}, {4, 5}};
 
   SetInputParam("training", x);
@@ -303,11 +307,11 @@ BOOST_AUTO_TEST_CASE(LCCNormalizationTest)
 */
 BOOST_AUTO_TEST_CASE(LCCMaxIterTest)
 {
-	// Minimum required difference between the encodings of the test data.
-	double delta = 1.0;
+  // Minimum required difference between the encodings of the test data.
+  double delta = 1.0;
 
-	arma::mat x = {{1, 2, 3, 4}, {2, 2, 3, 1}, {3, 2, 3, 0}, {1, 1, 4, 4}};
-	arma::mat t = x;
+  arma::mat x = {{1, 2, 3, 4}, {2, 2, 3, 1}, {3, 2, 3, 0}, {1, 1, 4, 4}};
+  arma::mat t = x;
   arma::mat initDict = {{1, 2}, {2, 3}, {3, 4}, {4, 5}};
 
 
@@ -330,7 +334,9 @@ BOOST_AUTO_TEST_CASE(LCCMaxIterTest)
 
   mlpackMain();
 
-  double normDiff = arma::norm(CLI::GetParam<arma::mat>("codes") - codes, "fro");
+  double normDiff =
+      arma::norm(CLI::GetParam<arma::mat>("codes") - codes, "fro");
+
   BOOST_REQUIRE_GT(normDiff, delta);
 }
 
@@ -339,11 +345,11 @@ BOOST_AUTO_TEST_CASE(LCCMaxIterTest)
 */
 BOOST_AUTO_TEST_CASE(LCCToleranceTest)
 {
-	// Minimum required difference between the encodings of the test data.
-	double delta = 0.05;
+  // Minimum required difference between the encodings of the test data.
+  double delta = 0.05;
 
-	arma::mat x = {{1, 2, 3, 4}, {2, 2, 3, 1}, {3, 2, 3, 0}, {1, 1, 4, 4}};
-	arma::mat t = x;
+  arma::mat x = {{1, 2, 3, 4}, {2, 2, 3, 1}, {3, 2, 3, 0}, {1, 1, 4, 4}};
+  arma::mat t = x;
   arma::mat initDict = {{1, 2}, {2, 3}, {3, 4}, {4, 5}};
 
   SetInputParam("training", x);
@@ -365,7 +371,9 @@ BOOST_AUTO_TEST_CASE(LCCToleranceTest)
 
   mlpackMain();
 
-  double normDiff = arma::norm(CLI::GetParam<arma::mat>("codes") - codes, "fro");
+  double normDiff =
+      arma::norm(CLI::GetParam<arma::mat>("codes") - codes, "fro");
+
   BOOST_REQUIRE_GT(normDiff, delta);
 }
 
@@ -374,11 +382,11 @@ BOOST_AUTO_TEST_CASE(LCCToleranceTest)
 */
 BOOST_AUTO_TEST_CASE(LCCLambdaTest)
 {
-	// Minimum required difference between the encodings of the test data.
-	double delta = 1.0;
+  // Minimum required difference between the encodings of the test data.
+  double delta = 1.0;
 
-	arma::mat x = {{1, 2, 3, 4}, {2, 2, 3, 1}, {3, 2, 3, 0}, {1, 1, 4, 4}};
-	arma::mat t = x;
+  arma::mat x = {{1, 2, 3, 4}, {2, 2, 3, 1}, {3, 2, 3, 0}, {1, 1, 4, 4}};
+  arma::mat t = x;
   arma::mat initDict = {{1, 2}, {2, 3}, {3, 4}, {4, 5}};
 
   SetInputParam("training", x);
@@ -400,7 +408,9 @@ BOOST_AUTO_TEST_CASE(LCCLambdaTest)
 
   mlpackMain();
 
-  double normDiff = arma::norm(CLI::GetParam<arma::mat>("codes") - codes, "fro");
+  double normDiff =
+      arma::norm(CLI::GetParam<arma::mat>("codes") - codes, "fro");
+
   BOOST_REQUIRE_GT(normDiff, delta);
 }
 
