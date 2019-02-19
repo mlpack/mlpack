@@ -1228,5 +1228,33 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLoadSaveTest)
           hmm2.Emission()[j].Probabilities()[i], 1e-3);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+/**
+ * Test that HMM::Train() returns finite loglikelihood.
+ */
+BOOST_AUTO_TEST_CASE(HMMTrainReturnLogLikelihood)
+{
+  HMM<DiscreteDistribution> hmm(1, 2); // 1 state, 2 emissions.
+  // Randomize the emission matrix.
+  hmm.Emission()[0].Probabilities() = arma::randu<arma::vec>(2);
+  hmm.Emission()[0].Probabilities() /= accu(hmm.Emission()[0].Probabilities());
 
+  std::vector<arma::mat> observations;
+  observations.push_back("0 1 0 1 0 1 0 1 0 1 0 1");
+  observations.push_back("0 0 0 0 0 0 1 1 1 1 1 1");
+  observations.push_back("1 1 1 1 1 1 0 0 0 0 0 0");
+  observations.push_back("1 1 1 0 0 0 1 1 1 0 0 0");
+  observations.push_back("0 0 1 1 0 0 0 0 1 1 1 1");
+  observations.push_back("1 1 1 0 0 0 1 1 1 0 0 0");
+  observations.push_back("0 1 0 1 0 1 0 1 0 1 0 1");
+  observations.push_back("0 0 0 0 0 0 1 1 1 1 1 1");
+  observations.push_back("1 1 1 1 1 0 1 0 0 0 0 0");
+  observations.push_back("1 1 1 0 0 1 0 1 1 0 0 0");
+  observations.push_back("0 0 1 1 0 0 0 1 0 1 1 1");
+  observations.push_back("1 1 1 0 0 1 0 1 1 0 0 0");
+
+  double loglik = hmm.Train(observations);
+
+  BOOST_REQUIRE_EQUAL(fpclassify(loglik), FP_NORMAL);
+}
+
+BOOST_AUTO_TEST_SUITE_END();

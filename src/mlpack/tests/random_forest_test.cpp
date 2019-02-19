@@ -281,8 +281,8 @@ BOOST_AUTO_TEST_CASE(WeightedCategoricalLearningTest)
   arma::Row<size_t> fullLabels = arma::join_rows(trainingLabels, randomLabels);
 
   // Build a random forest and a decision tree.
-  RandomForest<> rf(fullData, di, fullLabels, 5, 15 /* 15 trees */, 5);
-  DecisionTree<> dt(fullData, di, fullLabels, 5, 5);
+  RandomForest<> rf(fullData, di, fullLabels, 5, weights, 15 /* 15 trees */, 5);
+  DecisionTree<> dt(fullData, di, fullLabels, 5, weights, 5);
 
   // Get performance statistics on test data.
   arma::Row<size_t> rfPredictions;
@@ -393,6 +393,98 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
       binaryPredictions);
   CheckMatrices(beforeProbabilities, xmlProbabilities, textProbabilities,
       binaryProbabilities);
+}
+
+/**
+ * Test that RandomForest::Train() returns finite average entropy on numeric
+ * dataset.
+ */
+BOOST_AUTO_TEST_CASE(RandomForestNumericTrainReturnEntropy)
+{
+  arma::mat dataset;
+  arma::Row<size_t> labels;
+  data::Load("vc2.csv", dataset);
+  data::Load("vc2_labels.txt", labels);
+
+  // Add some noise.
+  arma::mat noise(dataset.n_rows, 1000, arma::fill::randu);
+  arma::Row<size_t> noiseLabels(1000);
+  for (size_t i = 0; i < noiseLabels.n_elem; ++i)
+    noiseLabels[i] = math::RandInt(3); // Random label.
+
+  // Concatenate data matrices.
+  arma::mat data = arma::join_rows(dataset, noise);
+  arma::Row<size_t> fullLabels = arma::join_rows(labels, noiseLabels);
+
+  // Now set weights.
+  arma::rowvec weights(dataset.n_cols + 1000);
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+    weights[i] = math::Random(0.9, 1.0);
+  for (size_t i = dataset.n_cols; i < dataset.n_cols + 1000; ++i)
+    weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
+
+  double entropy;
+
+  // Test random forest on unweighted numeric dataset.
+  RandomForest<GiniGain, RandomDimensionSelect> rf;
+  entropy = rf.Train(dataset, labels, 3, 10, 5);
+
+  BOOST_REQUIRE_EQUAL(fpclassify(entropy), FP_NORMAL);
+
+  // Test random forest on weighted numeric dataset.
+  RandomForest<GiniGain, RandomDimensionSelect> wrf;
+  entropy = wrf.Train(dataset, labels, 3, weights, 10, 5);
+
+  BOOST_REQUIRE_EQUAL(fpclassify(entropy), FP_NORMAL);
+}
+
+/**
+ * Test that RandomForest::Train() returns finite average entropy on categorical
+ * dataset.
+ */
+BOOST_AUTO_TEST_CASE(RandomForestCategoricalTrainReturnEntropy)
+{
+  arma::mat d;
+  arma::Row<size_t> l;
+  data::DatasetInfo di;
+  MockCategoricalData(d, l, di);
+
+  // Now create random points.
+  arma::mat randomNoise(4, 2000);
+  arma::Row<size_t> randomLabels(2000);
+  for (size_t i = 0; i < 2000; ++i)
+  {
+    randomNoise(0, i) = math::Random();
+    randomNoise(1, i) = math::Random();
+    randomNoise(2, i) = math::RandInt(4);
+    randomNoise(3, i) = math::RandInt(2);
+    randomLabels[i] = math::RandInt(5);
+  }
+
+  // Generate weights.
+  arma::rowvec weights(6000);
+  for (size_t i = 0; i < 4000; ++i)
+    weights[i] = math::Random(0.9, 1.0);
+  for (size_t i = 4000; i < 6000; ++i)
+    weights[i] = math::Random(0.0, 0.001);
+
+  arma::mat fullData = arma::join_rows(d, randomNoise);
+  arma::Row<size_t> fullLabels = arma::join_rows(l, randomLabels);
+
+  double entropy;
+
+  // Test random forest on unweighted categorical dataset.
+  RandomForest<> rf;
+  entropy = rf.Train(fullData, di, fullLabels, 5, 15 /* 15 trees */, 5);
+
+  BOOST_REQUIRE_EQUAL(fpclassify(entropy), FP_NORMAL);
+
+  // Test random forest on weighted categorical dataset.
+  RandomForest<> wrf;
+  entropy = wrf.Train(fullData, di, fullLabels, 5, weights, 15 /* 15 trees */,
+      5);
+
+  BOOST_REQUIRE_EQUAL(fpclassify(entropy), FP_NORMAL);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
