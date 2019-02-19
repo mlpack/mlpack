@@ -146,7 +146,7 @@ class TestPythonBinding(unittest.TestCase):
     The matrix with F_CONTIGUOUS set we pass in, we should get back with the third 
     dimension doubled and the fifth forgotten.
     """
-    x = np.array(np.random.rand(100, 5),order = 'F');
+    x = np.array(np.random.rand(100, 5), order='F');
     z = copy.copy(x)
 
     output = test_python_binding(string_in='hello',
@@ -169,7 +169,7 @@ class TestPythonBinding(unittest.TestCase):
     The matrix with F_CONTIGUOUS set we pass in, we should get back with the third 
     dimension doubled and the fifth forgotten.
     """
-    x = np.array(np.random.rand(100, 5),order = 'F');
+    x = np.array(np.random.rand(100, 5), order='F');
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
