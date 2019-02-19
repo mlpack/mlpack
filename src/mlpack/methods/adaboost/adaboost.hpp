@@ -106,9 +106,6 @@ class AdaBoost
    */
   AdaBoost(const double tolerance = 1e-6);
 
-  // Return the value of ztProduct.
-  double ZtProduct() { return ztProduct; }
-
   //! Get the tolerance for stopping the optimization during training.
   double Tolerance() const { return tolerance; }
   //! Modify the tolerance for stopping the optimization during training.
@@ -175,8 +172,6 @@ class AdaBoost
   //! The weights corresponding to each weak learner.
   std::vector<double> alpha;
 
-  //! To check for the bound for the Hamming loss.
-  double ztProduct;
 }; // class AdaBoost
 
 } // namespace adaboost

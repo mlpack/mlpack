@@ -51,7 +51,9 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
   // Define parameters for AdaBoost.
   size_t iterations = 100;
   double tolerance = 1e-10;
-  AdaBoost<> a(inputData, labels.row(0), numClasses, p, iterations, tolerance);
+  AdaBoost<> a(tolerance);
+  double ztProduct = a.Train(inputData, labels.row(0), numClasses, p,
+      iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -62,7 +64,9 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
       countError++;
   double hammingLoss = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE_LE(hammingLoss, a.ZtProduct());
+  // Check that ztProduct is finite.
+  BOOST_REQUIRE_EQUAL(fpclassify(ztProduct), FP_NORMAL);
+  BOOST_REQUIRE_LE(hammingLoss, ztProduct);
 }
 
 /**
@@ -140,7 +144,9 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   double tolerance = 1e-10;
-  AdaBoost<> a(inputData, labels.row(0), numClasses, p, iterations, tolerance);
+  AdaBoost<> a(tolerance);
+  double ztProduct = a.Train(inputData, labels.row(0), numClasses, p,
+      iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -151,7 +157,9 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
       countError++;
   double hammingLoss = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE_LE(hammingLoss, a.ZtProduct());
+  // Check that ztProduct is finite.
+  BOOST_REQUIRE_EQUAL(fpclassify(ztProduct), FP_NORMAL);
+  BOOST_REQUIRE_LE(hammingLoss, ztProduct);
 }
 
 /**
@@ -227,7 +235,9 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   double tolerance = 1e-10;
-  AdaBoost<> a(inputData, labels.row(0), numClasses, p, iterations, tolerance);
+  AdaBoost<> a(tolerance);
+  double ztProduct = a.Train(inputData, labels.row(0), numClasses, p,
+      iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
   a.Classify(inputData, predictedLabels);
@@ -238,7 +248,9 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
       countError++;
   double hammingLoss = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE_LE(hammingLoss, a.ZtProduct());
+  // Check that ztProduct is finite.
+  BOOST_REQUIRE_EQUAL(fpclassify(ztProduct), FP_NORMAL);
+  BOOST_REQUIRE_LE(hammingLoss, ztProduct);
 }
 
 /**
@@ -312,7 +324,8 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
   // Define parameters for AdaBoost.
   size_t iterations = 50;
   double tolerance = 1e-10;
-  AdaBoost<DecisionStump<>> a(inputData, labels.row(0), numClasses, ds,
+  AdaBoost<DecisionStump<>> a(tolerance);
+  double ztProduct = a.Train(inputData, labels.row(0), numClasses, ds,
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
@@ -324,7 +337,9 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
       countError++;
   double hammingLoss = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE_LE(hammingLoss, a.ZtProduct());
+  // Check that ztProduct is finite.
+  BOOST_REQUIRE_EQUAL(fpclassify(ztProduct), FP_NORMAL);
+  BOOST_REQUIRE_LE(hammingLoss, ztProduct);
 }
 
 /**
@@ -405,7 +420,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
   size_t iterations = 50;
   double tolerance = 1e-10;
 
-  AdaBoost<DecisionStump<>> a(inputData, labels.row(0), numClasses, ds,
+  AdaBoost<DecisionStump<>> a(tolerance);
+  double ztProduct = a.Train(inputData, labels.row(0), numClasses, ds,
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
@@ -417,7 +433,9 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
       countError++;
   double hammingLoss = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE_LE(hammingLoss, a.ZtProduct());
+  // Check that ztProduct is finite.
+  BOOST_REQUIRE_EQUAL(fpclassify(ztProduct), FP_NORMAL);
+  BOOST_REQUIRE_LE(hammingLoss, ztProduct);
 }
 
 /**
@@ -494,7 +512,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
   size_t iterations = 50;
   double tolerance = 1e-10;
 
-  AdaBoost<DecisionStump<> > a(inputData, labels.row(0), numClasses, ds,
+  AdaBoost<DecisionStump<>> a(tolerance);
+  double ztProduct = a.Train(inputData, labels.row(0), numClasses, ds,
       iterations, tolerance);
 
   arma::Row<size_t> predictedLabels;
@@ -506,7 +525,9 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
       countError++;
   double hammingLoss = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE_LE(hammingLoss, a.ZtProduct());
+  // Check that ztProduct is finite.
+  BOOST_REQUIRE_EQUAL(fpclassify(ztProduct), FP_NORMAL);
+  BOOST_REQUIRE_LE(hammingLoss, ztProduct);
 }
 
 /**
@@ -805,10 +826,6 @@ BOOST_AUTO_TEST_CASE(PerceptronSerializationTest)
   BOOST_REQUIRE_CLOSE(ab.Tolerance(), abText.Tolerance(), 1e-5);
   BOOST_REQUIRE_CLOSE(ab.Tolerance(), abBinary.Tolerance(), 1e-5);
 
-  BOOST_REQUIRE_CLOSE(ab.ZtProduct(), abXml.ZtProduct(), 1e-5);
-  BOOST_REQUIRE_CLOSE(ab.ZtProduct(), abText.ZtProduct(), 1e-5);
-  BOOST_REQUIRE_CLOSE(ab.ZtProduct(), abBinary.ZtProduct(), 1e-5);
-
   BOOST_REQUIRE_EQUAL(ab.WeakLearners(), abXml.WeakLearners());
   BOOST_REQUIRE_EQUAL(ab.WeakLearners(), abText.WeakLearners());
   BOOST_REQUIRE_EQUAL(ab.WeakLearners(), abBinary.WeakLearners());
@@ -861,10 +878,6 @@ BOOST_AUTO_TEST_CASE(DecisionStumpSerializationTest)
   BOOST_REQUIRE_CLOSE(ab.Tolerance(), abXml.Tolerance(), 1e-5);
   BOOST_REQUIRE_CLOSE(ab.Tolerance(), abText.Tolerance(), 1e-5);
   BOOST_REQUIRE_CLOSE(ab.Tolerance(), abBinary.Tolerance(), 1e-5);
-
-  BOOST_REQUIRE_CLOSE(ab.ZtProduct(), abXml.ZtProduct(), 1e-5);
-  BOOST_REQUIRE_CLOSE(ab.ZtProduct(), abText.ZtProduct(), 1e-5);
-  BOOST_REQUIRE_CLOSE(ab.ZtProduct(), abBinary.ZtProduct(), 1e-5);
 
   BOOST_REQUIRE_EQUAL(ab.WeakLearners(), abXml.WeakLearners());
   BOOST_REQUIRE_EQUAL(ab.WeakLearners(), abText.WeakLearners());

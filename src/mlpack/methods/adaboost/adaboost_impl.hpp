@@ -55,9 +55,8 @@ AdaBoost<WeakLearnerType, MatType>::AdaBoost(
 // Empty constructor.
 template<typename WeakLearnerType, typename MatType>
 AdaBoost<WeakLearnerType, MatType>::AdaBoost(const double tolerance) :
-    tolerance(tolerance),
     numClasses(0),
-    ztProduct(1.0)
+    tolerance(tolerance)
 {
   // Nothing to do.
 }
@@ -83,7 +82,7 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
   // changing by less than the tolerance.
   double rt, crt = 0.0, alphat = 0.0, zt;
 
-  ztProduct = 1.0;
+  double ztProduct = 1.0;
 
   // To be used for prediction by the weak learner.
   arma::Row<size_t> predictedLabels(labels.n_cols);
@@ -246,7 +245,6 @@ void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
 {
   ar & BOOST_SERIALIZATION_NVP(numClasses);
   ar & BOOST_SERIALIZATION_NVP(tolerance);
-  ar & BOOST_SERIALIZATION_NVP(ztProduct);
   ar & BOOST_SERIALIZATION_NVP(alpha);
 
   // Now serialize each weak learner.
