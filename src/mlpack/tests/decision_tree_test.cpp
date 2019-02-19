@@ -1126,4 +1126,60 @@ BOOST_AUTO_TEST_CASE(RegularisedDecisionTree)
   BOOST_REQUIRE_GT(count, 0);
 }
 
+/**
+ * Test that DecisionTree::Train() returns finite entropy on numeric dataset.
+ */
+BOOST_AUTO_TEST_CASE(DecisionTreeNumericTrainReturnEntropy)
+{
+  arma::mat dataset(10, 1000, arma::fill::randu);
+  arma::Row<size_t> labels(1000);
+  arma::rowvec weights(labels.n_elem);
+  weights.ones();
+
+  for (size_t i = 0; i < 1000; ++i)
+    labels[i] = i % 3; // 3 classes.
+
+  double entropy;
+
+  // Train a simpe tree on numeric dataset.
+  DecisionTree<> d(3);
+  entropy = d.Train(dataset, labels, 3, 50);
+  
+  BOOST_REQUIRE_EQUAL(fpclassify(entropy), FP_NORMAL);
+
+  // Train a tree with weights on numeric dataset.
+  DecisionTree<> wd(3);
+  entropy = wd.Train(dataset, labels, 3, weights, 50);
+
+  BOOST_REQUIRE_EQUAL(fpclassify(entropy), FP_NORMAL);
+}
+
+/**
+ * Test that DecisionTree::Train() returns finite entropy on categorical
+ * dataset.
+ */
+BOOST_AUTO_TEST_CASE(DecisionTreeCategoricalTrainReturnEntropy)
+{
+  arma::mat d;
+  arma::Row<size_t> l;
+  data::DatasetInfo di;
+  MockCategoricalData(d, l, di);
+
+  arma::Row<double> weights = arma::ones<arma::Row<double>>(l.n_elem);
+
+  double entropy;
+
+  // Train a simple tree on categorical dataset.
+  DecisionTree<> dtree(5);
+  entropy = dtree.Train(d, di, l, 5, 10);
+
+  BOOST_REQUIRE_EQUAL(fpclassify(entropy), FP_NORMAL);
+
+  // Train a tree with weights on categorical dataset.
+  DecisionTree<> wdtree(5);
+  entropy = wdtree.Train(d, di, l, 5, weights, 10);
+
+  BOOST_REQUIRE_EQUAL(fpclassify(entropy), FP_NORMAL);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

@@ -391,4 +391,37 @@ BOOST_AUTO_TEST_CASE(IntTest)
   BOOST_CHECK_EQUAL(predictedLabels(0, 7), 2);
 }
 
+/**
+ * Test that DecisionStump::Train() returns finite gain.
+ */
+BOOST_AUTO_TEST_CASE(DecisionStumpTrainReturnEntropy)
+{
+  const size_t numClasses = 2;
+  const size_t inpBucketSize = 2;
+
+  mat trainingData;
+  trainingData << -1 << 1 << -2 << 2 << -3 << 3;
+
+  // No need to normalize labels here.
+  Mat<size_t> labelsIn;
+  labelsIn << 0 << 1 << 0 << 1 << 0 << 1;
+
+  arma::Row<double> weights = arma::ones<arma::Row<double>>(labelsIn.n_elem);
+
+  double gain;
+
+  // Train a simple decision stump without weights.
+  DecisionStump<> ds;
+  gain = ds.Train(trainingData, labelsIn.row(0), numClasses, inpBucketSize);
+
+  BOOST_REQUIRE_EQUAL(fpclassify(gain), FP_NORMAL);
+
+  // Train decision stump with weights.
+  DecisionStump<> wds;
+  gain = wds.Train(trainingData, labelsIn.row(0), weights, numClasses,
+      inpBucketSize);
+
+  BOOST_REQUIRE_EQUAL(fpclassify(gain), FP_NORMAL);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
