@@ -35,7 +35,7 @@ namespace svm {
  *
  * @tparam MatType Type of data matrix.
  */
-template <typename MatType>
+template <typename MatType = arma::mat>
 class LinearSVM
 {
  public:

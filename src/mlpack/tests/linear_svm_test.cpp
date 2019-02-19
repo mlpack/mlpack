@@ -491,60 +491,6 @@ BOOST_AUTO_TEST_CASE(LinearSVMLGFGSSimpleTest)
 
 /**
  * Test training of linear svm for two classes on a complex gaussian dataset
- * using Parallel SGD optimizer.
- */
-BOOST_AUTO_TEST_CASE(LinearSVMPSGDTwoClasses)
-{
-  const size_t points = 1000;
-  const size_t inputSize = 3;
-  const size_t numClasses = 2;
-  const double lambda = 0.5;
-
-  // Generate two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 9.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("4.0 3.0 4.0"), arma::eye<arma::mat>(3, 3));
-
-  arma::mat data(inputSize, points);
-  arma::Row<size_t> labels(points);
-
-  for (size_t i = 0; i < points / 2; i++)
-  {
-    data.col(i) = g1.Random();
-    labels(i) = 0;
-  }
-  for (size_t i = points / 2; i < points; i++)
-  {
-    data.col(i) = g2.Random();
-    labels(i) = 1;
-  }
-
-  // Train linear svm object using Parallel SGD optimizer.
-  ens::ParallelSGD<> psgd(1000, 500, 1e-5);
-  LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda, psgd);
-
-  // Compare training accuracy to 100.
-  const double acc = lsvm.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
-
-  // Create test dataset.
-  for (size_t i = 0; i < points / 2; i++)
-  {
-    data.col(i) = g1.Random();
-    labels(i) =  0;
-  }
-  for (size_t i = points / 2; i < points; i++)
-  {
-    data.col(i) = g2.Random();
-    labels(i) = 1;
-  }
-
-  // Compare test accuracy to 100.
-  const double testAcc = lsvm.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6);
-}
-
-/**
- * Test training of linear svm for two classes on a complex gaussian dataset
  * using L-BFGS optimizer.
  */
 BOOST_AUTO_TEST_CASE(LinearSVMLBFGSTwoClasses)
