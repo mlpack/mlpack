@@ -375,7 +375,7 @@ BOOST_AUTO_TEST_CASE(SimpleContrastiveLossTest)
   target1 = arma::zeros(1, 8);
 
   // Testing the forward function
-  double error1 = module.Forward(std::move(input1), 
+  double error1 = module.Forward(std::move(input1),
                   std::move(input2), std::move(target1));
   BOOST_REQUIRE_EQUAL(error1, 1);
 
@@ -383,12 +383,12 @@ BOOST_AUTO_TEST_CASE(SimpleContrastiveLossTest)
   input4 = arma::ones(1, 8);
   target2 = arma::ones(1, 8);
   expected = 0.16;
-  double error2 = module.Forward(std::move(input3), 
+  double error2 = module.Forward(std::move(input3),
                   std::move(input4), std::move(target2));
   BOOST_REQUIRE_SMALL(expected - error2, 1e-4);
 
   // Testing the backward function
-  module.Backward(std::move(input1), std::move(input2), 
+  module.Backward(std::move(input1), std::move(input2),
                   std::move(target1), std::move(output));
   arma::mat expected_output = -0.2 * arma::ones(1, input3.n_cols);
 
@@ -399,18 +399,16 @@ BOOST_AUTO_TEST_CASE(SimpleContrastiveLossTest)
   BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
 
 
-  module.Backward(std::move(input3), std::move(input4), 
+  module.Backward(std::move(input3), std::move(input4),
                   std::move(target2), std::move(output));
-  expected_output = 0.5 * arma::ones(1, input3.n_cols); 
+  expected_output = 0.5 * arma::ones(1, input3.n_cols);
 
   for (size_t i = 0; i < output.n_elem; i++)
     BOOST_REQUIRE_SMALL(output(i) - expected_output(i), 1e-5);
 
   BOOST_REQUIRE_EQUAL(output.n_rows, input3.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input3.n_cols);
-
 }
-
 
 BOOST_AUTO_TEST_SUITE_END();
 
