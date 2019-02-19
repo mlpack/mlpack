@@ -1144,7 +1144,7 @@ BOOST_AUTO_TEST_CASE(DecisionTreeNumericTrainReturnEntropy)
   // Train a simpe tree on numeric dataset.
   DecisionTree<> d(3);
   entropy = d.Train(dataset, labels, 3, 50);
-  
+
   BOOST_REQUIRE_EQUAL(fpclassify(entropy), FP_NORMAL);
 
   // Train a tree with weights on numeric dataset.

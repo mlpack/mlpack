@@ -978,7 +978,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTrainReturnObjective)
   // Check with L_BFGS optimizer.
   LogisticRegression<> lr1(data.n_rows, 0.5);
   objVal = lr1.Train<ens::L_BFGS>(data, responses);
-  
+
   BOOST_REQUIRE_EQUAL(fpclassify(objVal), FP_NORMAL);
 
   // Check with a pre-defined L_BFGS optimizer.

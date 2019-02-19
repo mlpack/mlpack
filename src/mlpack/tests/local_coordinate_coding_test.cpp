@@ -184,7 +184,6 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTrainReturnObjective)
     X.col(i) /= norm(X.col(i), 2);
   }
 
-  //mat Z;
   LocalCoordinateCoding lcc(nAtoms, lambda1, 10);
   double objVal = lcc.Train(X);
 

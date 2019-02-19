@@ -171,7 +171,6 @@ class AdaBoost
   std::vector<WeakLearnerType> wl;
   //! The weights corresponding to each weak learner.
   std::vector<double> alpha;
-
 }; // class AdaBoost
 
 } // namespace adaboost

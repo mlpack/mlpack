@@ -610,7 +610,7 @@ BOOST_AUTO_TEST_CASE(FFNTrainReturnObjective)
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
 
   double objVal = model.Train(trainData, trainLabels, opt);
-  
+
   BOOST_REQUIRE_EQUAL(fpclassify(objVal), FP_NORMAL);
 }
 BOOST_AUTO_TEST_SUITE_END();

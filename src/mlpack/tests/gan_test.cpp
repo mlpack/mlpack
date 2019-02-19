@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
   double objVal = gan.Train(optimizer);
 
   // Test that objective value returned by GAN::Train() is finite.
-  //BOOST_REQUIRE_EQUAL(fpclassify(objVal), FP_NAN);
+  BOOST_REQUIRE_EQUAL(fpclassify(objVal), FP_NAN);
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;
