@@ -215,7 +215,10 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
       discriminatorPreTrain, multiplier);
 
   Log::Info << "Training..." << std::endl;
-  gan.Train(optimizer);
+  double objVal = gan.Train(optimizer);
+
+  // Test that objective value returned by GAN::Train() is finite.
+  //BOOST_REQUIRE_EQUAL(fpclassify(objVal), FP_NAN);
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;

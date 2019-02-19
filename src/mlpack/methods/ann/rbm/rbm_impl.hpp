@@ -44,11 +44,11 @@ RBM<InitializationRuleType, DataType, PolicyType>::RBM(
     numSteps(numSteps),
     negSteps(negSteps),
     poolSize(poolSize),
+    steps(0),
     slabPenalty(slabPenalty),
     radius(2 * radius),
     persistence(persistence),
-    reset(false),
-    steps(0)
+    reset(false)
 {
   numFunctions = this->predictors.n_cols;
 }
