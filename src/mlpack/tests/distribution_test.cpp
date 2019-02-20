@@ -203,13 +203,34 @@ BOOST_AUTO_TEST_CASE(DiscreteLogProbabilityTest)
 
   arma::vec logProb;
 
-
   d.LogProbability(obs, logProb);
 
   BOOST_REQUIRE_EQUAL(logProb.n_elem, 2);
 
   BOOST_REQUIRE_CLOSE(logProb(0), -3.2188758248682, 1e-3);
   BOOST_REQUIRE_CLOSE(logProb(1), -3.2188758248682, 1e-3);
+}
+
+/**
+ * Test the Probability() function, for multiple points in the multivariate
+ * Discrete case.
+ */
+BOOST_AUTO_TEST_CASE(DiscreteProbabilityTest)
+{
+  // Same case as before.
+  DiscreteDistribution d("5 5");
+
+  arma::mat obs("0 2;"
+                "1 2;");
+
+  arma::vec Prob;
+
+  d.Probability(obs, Prob);
+
+  BOOST_REQUIRE_EQUAL(Prob.n_elem, 2);
+
+  BOOST_REQUIRE_CLOSE(Prob(0), 0.4000000000000, 1e-3);
+  BOOST_REQUIRE_CLOSE(Prob(1), 0.4000000000000, 1e-3);
 }
 
 /*********************************/
