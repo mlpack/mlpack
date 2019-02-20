@@ -23,6 +23,7 @@
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 #include "ann_test_tools.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -2124,6 +2125,62 @@ BOOST_AUTO_TEST_CASE(GradientSequentialLayerTest)
   } function;
 
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+// General ANN serialization test.
+template<typename LayerType>
+void ANNLayerSerializationTest(LayerType& layer)
+{
+  arma::mat input(5, 100, arma::fill::randu);
+  arma::mat output(5, 100, arma::fill::randu);
+
+  FFN<NegativeLogLikelihood<>, ann::RandomInitialization> model;
+  model.Add<Linear<>>(input.n_rows, 10);
+  model.Add<LayerType>(layer);
+  model.Add<ReLULayer<>>();
+  model.Add<Linear<>>(10, output.n_rows);
+  model.Add<LogSoftMax<>>();
+
+  ens::StandardSGD opt(0.1, 1, 5, -100, false);
+  model.Train(input, output, opt);
+
+  arma::mat originalOutput;
+  model.Predict(input.col(0), originalOutput);
+
+  // Now serialize the model.
+  FFN<NegativeLogLikelihood<>, ann::RandomInitialization> xmlModel, textModel,
+      binaryModel;
+  SerializeObjectAll(model, xmlModel, textModel, binaryModel);
+
+  // Ensure that predictions are the same.
+  arma::mat modelOutput, xmlOutput, textOutput, binaryOutput;
+  model.Predict(input.col(0), modelOutput);
+  xmlModel.Predict(input.col(0), xmlOutput);
+  textModel.Predict(input.col(0), textOutput);
+  binaryModel.Predict(input.col(0), binaryOutput);
+
+  CheckMatrices(originalOutput, modelOutput, 1e-5);
+  CheckMatrices(originalOutput, xmlOutput, 1e-5);
+  CheckMatrices(originalOutput, textOutput, 1e-5);
+  CheckMatrices(originalOutput, binaryOutput, 1e-5);
+}
+
+/**
+ * Simple serialization test for batch normalization layer.
+ */
+BOOST_AUTO_TEST_CASE(BatchNormSerializationTest)
+{
+  BatchNorm<> layer(10);
+  ANNLayerSerializationTest(layer);
+}
+
+/**
+ * Simple serialization test for layer normalization layer.
+ */
+BOOST_AUTO_TEST_CASE(LayerNormSerializationTest)
+{
+  LayerNorm<> layer(10);
+  ANNLayerSerializationTest(layer);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

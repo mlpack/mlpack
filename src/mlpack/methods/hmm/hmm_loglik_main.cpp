@@ -26,8 +26,14 @@ using namespace mlpack::gmm;
 using namespace arma;
 using namespace std;
 
-PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Log-Likelihood", "This "
-    "utility takes an already-trained HMM, specified with the " +
+PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Log-Likelihood",
+    // Short description.
+    "A utility for computing the log-likelihood of a sequence for Hidden Markov"
+    " Models (HMMs).  Given a pre-trained HMM and an observation sequence, this"
+    " computes and returns the log-likelihood of that sequence being observed "
+    "from that HMM.",
+    // Long description.
+    "This utility takes an already-trained HMM, specified with the " +
     PRINT_PARAM_STRING("input_model") + " parameter, and evaluates the "
     "log-likelihood of a sequence of observations, given with the " +
     PRINT_PARAM_STRING("input") + " parameter.  The computed log-likelihood is"
@@ -37,7 +43,14 @@ PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Log-Likelihood", "This "
     PRINT_DATASET("seq") + " with the pre-trained HMM " + PRINT_MODEL("hmm") +
     ", the following command may be used: "
     "\n\n" +
-    PRINT_CALL("hmm_loglik", "input", "seq", "input_model", "hmm"));
+    PRINT_CALL("hmm_loglik", "input", "seq", "input_model", "hmm"),
+    SEE_ALSO("@hmm_train", "#hmm_train"),
+    SEE_ALSO("@hmm_generate", "#hmm_generate"),
+    SEE_ALSO("@hmm_viterbi", "#hmm_viterbi"),
+    SEE_ALSO("Hidden Mixture Models on Wikipedia",
+        "https://en.wikipedia.org/wiki/Hidden_Markov_model"),
+    SEE_ALSO("mlpack::hmm::HMM class documentation",
+        "@doxygen/classmlpack_1_1hmm_1_1HMM.html"));
 
 PARAM_MATRIX_IN_REQ("input", "File containing observations,", "i");
 PARAM_MODEL_IN_REQ(HMMModel, "input_model", "File containing HMM.", "m");

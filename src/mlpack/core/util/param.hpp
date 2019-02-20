@@ -30,6 +30,21 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 } // namespace mlpack
 
 /**
+ * Provide a link for a binding's "see also" documentation section, which is
+ * primarily (but not necessarily exclusively) used by the Markdown bindings
+ * This link can be specified by calling SEE_ALSO("description", "link"), where
+ * "description" is the description of the link and "link" may be one of the
+ * following:
+ *
+ * - A direct URL, starting with http:// or https://.
+ * - A page anchor for documentation, referencing another binding by its CMake
+ *      binding name, i.e. "#knn".
+ * - A link to a Doxygen page, using the mangled Doxygen name after a
+ *      '@doxygen/', i.e., "@doxygen/mlpack1_1_adaboost1_1_AdaBoost".
+ */
+#define SEE_ALSO(DESCRIPTION, LINK) {DESCRIPTION, LINK}
+
+/**
  * Document an executable.  Only one instance of this macro should be
  * present in your program!  Therefore, use it in the main.cpp
  * (or corresponding executable) in your program.
@@ -41,14 +56,22 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().
  *
  * @param NAME Short string representing the name of the program.
+ * @param SHORT_DESC Short two-sentence description of the program; it should
+ *     describe what the program implements and does, and a quick overview of
+ *     how it can be used and what it should be used for.
  * @param DESC Long string describing what the program does and possibly a
  *     simple usage example.  Newlines should not be used here; this is taken
  *     care of by CLI (however, you can explicitly specify newlines to denote
- *     new paragraphs).
+ *     new paragraphs).  You can also use printing macros like
+ *     PRINT_PARAM_STRING(), PRINT_DATASET(), and others.
+ * @param SEE_ALSOS A set of SEE_ALSO() macros that are used for generating
+ *     documentation.  See the SEE_ALSO() macro.  This is a varargs argument, so
+ *     you can add as many SEE_ALSO()s as you like.
  */
-#define PROGRAM_INFO(NAME, DESC) static mlpack::util::ProgramDoc \
-    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, \
-    []() { return DESC; })
+#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
+    static mlpack::util::ProgramDoc \
+    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
+    []() { return DESC; }, { __VA_ARGS__ } )
 
 /**
  * Define a flag parameter.

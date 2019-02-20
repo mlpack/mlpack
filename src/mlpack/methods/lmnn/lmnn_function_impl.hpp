@@ -200,7 +200,8 @@ inline void LMNNFunction<MetricType>::TransDiff(
       }
       else
       {
-        transformationDiffs[lastTransformationIndices[i]] = arma::norm(transformation -
+        transformationDiffs[lastTransformationIndices[i]] =
+            arma::norm(transformation -
             oldTransformationMatrices[lastTransformationIndices(i)]);
       }
     }

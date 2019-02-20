@@ -1,7 +1,16 @@
+### mlpack 3.1.0
+###### ????-??-??
+  * Add kernel density estimation (KDE) implementation with bindings to other
+    languages (#1301).
+
+  * Where relevant, all models with a `Train()` method now return a `double`
+    value representing the goodness of fit (i.e. final objective value, error,
+    etc.) (#1678).
+
 ### mlpack 3.0.5
 ###### ????-??-??
   * Change DBSCAN to use PointSelectionPolicy and add OrderedPointSelection (#1625).
-  
+
 ### mlpack 3.0.4
 ###### 2018-11-13
   * Bump minimum CMake version to 3.3.2.
