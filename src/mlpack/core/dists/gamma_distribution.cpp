@@ -223,8 +223,10 @@ void GammaDistribution::LogProbability(const arma::mat& observations,
     }
   }
 }
-// Returns the log probability for one observation.
-double GammaDistribution::Probability(double x, size_t dim) const
+
+// Returns the log probability of one observation (x) for one of the Gamma's
+// dimensions.
+double GammaDistribution::LogProbability(double x, size_t dim) const
 {
   return std::log(std::pow(x, alpha(dim) - 1) * std::exp(-x / beta(dim)) /
       (std::tgamma(alpha(dim)) * std::pow(beta(dim), alpha(dim))));
