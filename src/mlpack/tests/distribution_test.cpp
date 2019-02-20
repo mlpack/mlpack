@@ -228,14 +228,14 @@ BOOST_AUTO_TEST_CASE(DiscreteProbabilityTest)
   arma::mat obs("0 2;"
                 "1 2;");
 
-  arma::vec Prob;
+  arma::vec prob;
 
-  d.Probability(obs, Prob);
+  d.Probability(obs, prob);
 
-  BOOST_REQUIRE_EQUAL(Prob.n_elem, 2);
+  BOOST_REQUIRE_EQUAL(prob.n_elem, 2);
 
-  BOOST_REQUIRE_CLOSE(Prob(0), 0.4000000000000, 1e-3);
-  BOOST_REQUIRE_CLOSE(Prob(1), 0.4000000000000, 1e-3);
+  BOOST_REQUIRE_CLOSE(prob(0), 0.0400000000000, 1e-3);
+  BOOST_REQUIRE_CLOSE(prob(1), 0.0400000000000, 1e-3);
 }
 
 /*********************************/
