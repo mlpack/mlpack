@@ -84,7 +84,6 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out
       << "." << std::endl;
-
   return out;
 }
 
@@ -105,7 +104,6 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out
       << "." << std::endl;
-
   return out;
 }
 

@@ -29,7 +29,8 @@ template<typename Policy>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::Reset()
 {
-  size_t shape = (visibleSize * hiddenSize * poolSize) + visibleSize + hiddenSize;
+  size_t shape = (visibleSize * hiddenSize * poolSize) + visibleSize +
+      hiddenSize;
   parameter.set_size(shape, 1);
   positiveGradient.set_size(shape, 1);
   negativeGradient.set_size(shape, 1);

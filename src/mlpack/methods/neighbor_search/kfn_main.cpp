@@ -30,7 +30,7 @@ using namespace mlpack::metric;
 using namespace mlpack::util;
 
 // Convenience typedef.
-typedef NSModel<FurthestNeighborSort> KFNModel;
+typedef NSModel<FurthestNS> KFNModel;
 
 // Information about the program itself.
 PROGRAM_INFO("k-Furthest-Neighbors Search",
@@ -169,7 +169,7 @@ static void mlpackMain()
     epsilon = 1 - percentage;
 
   // We either have to load the reference data, or we have to load the model.
-  NSModel<FurthestNeighborSort>* kfn;
+  NSModel<FurthestNS>* kfn;
 
   const string algorithm = CLI::GetParam<string>("algorithm");
   RequireParamInSet<string>("algorithm", { "naive", "single_tree", "dual_tree",

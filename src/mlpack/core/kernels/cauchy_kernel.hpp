@@ -95,4 +95,3 @@ class KernelTraits<CauchyKernel>
 } // namespace mlpack
 
 #endif
- 

@@ -77,6 +77,21 @@ class AddMerge
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g);
 
+  /**
+   * This is the overload of Backward() that runs only a specific layer with
+   * the given input.
+   *
+   * @param input The propagated input activation.
+   * @param gy The backpropagated error.
+   * @param g The calculated gradient.
+   * @param The index of the layer to run.
+   */
+  template<typename eT>
+  void Backward(const arma::Mat<eT>&& /* input */,
+                arma::Mat<eT>&& gy,
+                arma::Mat<eT>&& g,
+                const size_t index);
+
   /*
    * Calculate the gradient using the output delta and the input activation.
    *
@@ -88,6 +103,21 @@ class AddMerge
   void Gradient(arma::Mat<eT>&& input,
                 arma::Mat<eT>&& error,
                 arma::Mat<eT>&& gradient);
+
+  /*
+   * This is the overload of Gradient() that runs a specific layer with the
+   * given input.
+   *
+   * @param input The input parameter used for calculating the gradient.
+   * @param error The calculated error.
+   * @param gradient The calculated gradient.
+   * @param The index of the layer to run.
+   */
+  template<typename eT>
+  void Gradient(arma::Mat<eT>&& input,
+                arma::Mat<eT>&& error,
+                arma::Mat<eT>&& gradient,
+                const size_t index);
 
   /*
    * Add a new module to the model.
@@ -134,6 +164,11 @@ class AddMerge
   OutputDataType const& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
+
+  //! Get the value of run parameter.
+  bool Run() const { return run; }
+  //! Modify the value of run parameter.
+  bool& Run() { return run; }
 
   /**
    * Serialize the layer.
