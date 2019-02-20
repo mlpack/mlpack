@@ -14,6 +14,7 @@
 #include <mlpack/methods/decision_tree/random_dimension_select.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include "test_tools.hpp"
 #include "serialization.hpp"
 #include "mock_categorical_data.hpp"
@@ -429,13 +430,13 @@ BOOST_AUTO_TEST_CASE(RandomForestNumericTrainReturnEntropy)
   RandomForest<GiniGain, RandomDimensionSelect> rf;
   entropy = rf.Train(dataset, labels, 3, 10, 5);
 
-  BOOST_REQUIRE_EQUAL(fpclassify(entropy), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(entropy), FP_NORMAL);
 
   // Test random forest on weighted numeric dataset.
   RandomForest<GiniGain, RandomDimensionSelect> wrf;
   entropy = wrf.Train(dataset, labels, 3, weights, 10, 5);
 
-  BOOST_REQUIRE_EQUAL(fpclassify(entropy), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(entropy), FP_NORMAL);
 }
 
 /**
@@ -477,14 +478,14 @@ BOOST_AUTO_TEST_CASE(RandomForestCategoricalTrainReturnEntropy)
   RandomForest<> rf;
   entropy = rf.Train(fullData, di, fullLabels, 5, 15 /* 15 trees */, 5);
 
-  BOOST_REQUIRE_EQUAL(fpclassify(entropy), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(entropy), FP_NORMAL);
 
   // Test random forest on weighted categorical dataset.
   RandomForest<> wrf;
   entropy = wrf.Train(fullData, di, fullLabels, 5, weights, 15 /* 15 trees */,
       5);
 
-  BOOST_REQUIRE_EQUAL(fpclassify(entropy), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(entropy), FP_NORMAL);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

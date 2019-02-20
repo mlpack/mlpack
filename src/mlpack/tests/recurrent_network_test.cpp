@@ -19,6 +19,7 @@
 #include <mlpack/core/math/random.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include "test_tools.hpp"
 #include "serialization.hpp"
 #include "custom_layer.hpp"
@@ -1277,7 +1278,7 @@ BOOST_AUTO_TEST_CASE(RNNTrainReturnObjective)
   StandardSGD opt(0.1, 1, input.n_cols /* 1 epoch */, -100);
   double objVal = model.Train(input, labels, opt);
 
-  BOOST_REQUIRE_EQUAL(fpclassify(objVal), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(objVal), FP_NORMAL);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

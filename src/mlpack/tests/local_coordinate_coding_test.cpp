@@ -15,6 +15,7 @@
 #include <mlpack/methods/local_coordinate_coding/lcc.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include "test_tools.hpp"
 #include "serialization.hpp"
 
@@ -187,7 +188,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTrainReturnObjective)
   LocalCoordinateCoding lcc(nAtoms, lambda1, 10);
   double objVal = lcc.Train(X);
 
-  BOOST_REQUIRE_EQUAL(fpclassify(objVal), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(objVal), FP_NORMAL);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

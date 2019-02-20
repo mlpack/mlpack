@@ -21,6 +21,7 @@
 #include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
@@ -218,7 +219,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
   double objVal = gan.Train(optimizer);
 
   // Test that objective value returned by GAN::Train() is finite.
-  BOOST_REQUIRE_EQUAL(fpclassify(objVal), FP_NAN);
+  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(objVal), FP_NAN);
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;

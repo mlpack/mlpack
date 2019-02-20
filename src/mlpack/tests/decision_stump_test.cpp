@@ -13,6 +13,7 @@
 #include <mlpack/methods/decision_stump/decision_stump.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
@@ -414,14 +415,14 @@ BOOST_AUTO_TEST_CASE(DecisionStumpTrainReturnEntropy)
   DecisionStump<> ds;
   gain = ds.Train(trainingData, labelsIn.row(0), numClasses, inpBucketSize);
 
-  BOOST_REQUIRE_EQUAL(fpclassify(gain), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(gain), FP_NORMAL);
 
   // Train decision stump with weights.
   DecisionStump<> wds;
   gain = wds.Train(trainingData, labelsIn.row(0), weights, numClasses,
       inpBucketSize);
 
-  BOOST_REQUIRE_EQUAL(fpclassify(gain), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(gain), FP_NORMAL);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
