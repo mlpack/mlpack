@@ -138,7 +138,7 @@ The full list of options mlpack allows:
        (default ON)
  - BUILD_PYTHON_BINDINGS=(ON/OFF): compile the bindings for Python, if the
        necessary Python libraries are available (default ON except on Windows)
- - BUILD_SHARED_LIBRARIES=(ON/OFF): compile shared libraries as opposed to
+ - BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
        static libraries (default ON)
  - TEST_VERBOSE=(ON/OFF): run test cases in \c mlpack_test with verbose output
        (default OFF)
