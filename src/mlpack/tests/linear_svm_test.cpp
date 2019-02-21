@@ -439,31 +439,6 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionSeparableGradient)
   }
 }
 
-/**
- * Test training of linear svm on a simple dataset using
- * Parallel SGD optimizer.
- */
-BOOST_AUTO_TEST_CASE(LinearSVMPSGDSimpleTest)
-{
-  // A very simple fake dataset
-  arma::mat dataset = "2 0 0;"
-                      "0 0 0;"
-                      "0 2 1;"
-                      "1 0 2;"
-                      "0 1 0";
-
-  //  Corresponding labels
-  arma::Row<size_t> labels = "1 0 1";
-
-  // Create a linear svm object using a custom Parallel
-  // SGD object.
-  ens::ParallelSGD<> psgd(1000, 3, 1e-5);
-  LinearSVM<arma::mat> lsvm(dataset, labels, 2, 0.0001, psgd);
-
-  // Compare training accuracy to 100.
-  const double acc = lsvm.ComputeAccuracy(dataset, labels);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
-}
 
 /**
  * Test training of linear svm on a simple dataset using
@@ -471,6 +446,9 @@ BOOST_AUTO_TEST_CASE(LinearSVMPSGDSimpleTest)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMLGFGSSimpleTest)
 {
+  const size_t numClasses = 2;
+  const double lambda = 0.0001;
+
     // A very simple fake dataset
     arma::mat dataset = "2 0 0;"
                         "0 0 0;"
@@ -481,12 +459,44 @@ BOOST_AUTO_TEST_CASE(LinearSVMLGFGSSimpleTest)
     //  Corresponding labels
     arma::Row<size_t> labels = "1 0 1";
 
-    // Create a linear svm object using a custom L-BFGS object.
-    LinearSVM<arma::mat> lsvm(dataset, labels, 2, 0.0001, ens::L_BFGS());
+    // Create a linear svm object using L-BFGS optimizer.
+    LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, lambda,
+        ens::L_BFGS());
 
     // Compare training accuracy to 100.
     const double acc = lsvm.ComputeAccuracy(dataset, labels);
     BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
+}
+
+/**
+ * Test training of linear svm on a simple dataset using
+ * Gradient Descent optimizer
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMGradientDescentSimpleTest)
+{
+  const size_t numClasses = 2;
+  const size_t maxIterations = 10000;
+  const double stepSize = 0.01;
+  const double tolerance = 1e-5;
+  const double lambda = 0.0001;
+
+  // A very simple fake dataset
+  arma::mat dataset = "2 0 0;"
+                      "0 0 0;"
+                      "0 2 1;"
+                      "1 0 2;"
+                      "0 1 0";
+
+  //  Corresponding labels
+  arma::Row<size_t> labels = "1 0 1";
+
+  // Create a linear svm object using custom gradient descent optimizer.
+  ens::GradientDescent optimizer(stepSize, maxIterations, tolerance);
+  LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, lambda, optimizer);
+
+  // Compare training accuracy to 100.
+  const double acc = lsvm.ComputeAccuracy(dataset, labels);
+  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
 }
 
 /**
@@ -518,8 +528,9 @@ BOOST_AUTO_TEST_CASE(LinearSVMLBFGSTwoClasses)
     labels(i) = 1;
   }
 
-  // Train linear svm object using L-BFGS optimizer.
-  LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda, ens::L_BFGS());
+  // Create a linear svm object using L-BFGS optimizer.
+  LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda,
+      ens::L_BFGS());
 
   // Compare training accuracy to 100.
   const double acc = lsvm.ComputeAccuracy(data, labels);
@@ -541,6 +552,108 @@ BOOST_AUTO_TEST_CASE(LinearSVMLBFGSTwoClasses)
   const double testAcc = lsvm.ComputeAccuracy(data, labels);
   BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6);
 }
+
+/**
+ * The test is only compiled if the user has specified OpenMP to be
+ * used.
+ */
+#ifdef HAS_OPENMP
+
+/**
+ * Test training of linear svm on a simple dataset using
+ * Parallel SGD optimizer.
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMPSGDSimpleTest)
+{
+  const size_t numClasses = 2;
+  const double lambda = 0.5;
+  const double alpha = 0.01;
+
+  // A very simple fake dataset
+  arma::mat dataset = "2 0 0;"
+                      "0 0 0;"
+                      "0 2 1;"
+                      "1 0 2;"
+                      "0 1 0";
+
+  //  Corresponding labels
+  arma::Row<size_t> labels = "1 0 1";
+
+  ens::ConstantStep decayPolicy(alpha);
+
+  // Train linear svm object using Parallel SGD optimizer.
+  // The threadShareSize is chosen such that each function gets optimized.
+  ens::ParallelSGD<ens::ConstantStep> optimizer(0,
+      std::ceil((float) dataset.n_cols / omp_get_max_threads()),
+      1e-5, true, decayPolicy);
+  LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, lambda, optimizer);
+
+  // Compare training accuracy to 100.
+  const double acc = lsvm.ComputeAccuracy(dataset, labels);
+  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
+}
+
+/**
+ * Test training of linear svm for two classes on a complex gaussian dataset
+ * using Parallel SGD optimizer.
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMParallelSGDTwoClasses)
+{
+  const size_t points = 500;
+  const size_t inputSize = 3;
+  const size_t numClasses = 2;
+  const double lambda = 0.5;
+  const double alpha = 0.01;
+
+  // Generate two-Gaussian dataset.
+  GaussianDistribution g1(arma::vec("1.0 9.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("4.0 3.0 4.0"), arma::eye<arma::mat>(3, 3));
+
+  arma::mat data(inputSize, points);
+  arma::Row<size_t> labels(points);
+
+  for (size_t i = 0; i < points / 2; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 2; i < points; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+
+  ens::ConstantStep decayPolicy(alpha);
+
+  // Train linear svm object using Parallel SGD optimizer.
+  // The threadShareSize is chosen such that each function gets optimized.
+  ens::ParallelSGD<ens::ConstantStep> optimizer(0,
+      std::ceil((float) data.n_cols / omp_get_max_threads()),
+      1e-5, true, decayPolicy);
+  LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda, optimizer);
+
+  // Compare training accuracy to 100.
+  const double acc = lsvm.ComputeAccuracy(data, labels);
+  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
+
+  // Create test dataset.
+  for (size_t i = 0; i < points / 2; i++)
+  {
+    data.col(i) = g1.Random();
+    labels(i) =  0;
+  }
+  for (size_t i = points / 2; i < points; i++)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+
+  // Compare test accuracy to 100.
+  const double testAcc = lsvm.ComputeAccuracy(data, labels);
+  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6);
+}
+
+#endif
 
 /**
  * Test sparse and dense linear svm and make sure they both work the
@@ -667,9 +780,9 @@ BOOST_AUTO_TEST_CASE(LinearSVMTrainTest)
   LinearSVM<arma::mat> lsvm(dataset.n_rows, 2);
   LinearSVM<arma::mat> lsvm2(dataset.n_rows, 2);
   lsvm.Parameters() = lsvm2.Parameters();
-  ens::L_BFGS lbfgs;
-  lsvm.Train(dataset, labels, 2, std::move(lbfgs));
-  lsvm2.Train(dataset, labels, 2, std::move(lbfgs));
+  ens::L_BFGS optimizer;
+  lsvm.Train(dataset, labels, 2, std::move(optimizer));
+  lsvm2.Train(dataset, labels, 2, std::move(optimizer));
 
   // Ensure that the parameters are the same.
   BOOST_REQUIRE_EQUAL(lsvm.Parameters().n_rows, lsvm2.Parameters().n_rows);

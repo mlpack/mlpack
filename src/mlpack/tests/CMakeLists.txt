@@ -183,7 +183,8 @@ set(parallel_tests
   "SVDIncrementalTest;SVDBatchTest;"
   "LocalCoordinateCodingTest;FeedForwardNetworkTest;SparseAutoencoderTest;"
   "GMMTest;CFTest;ConvolutionalNetworkTest;HMMTest;LARSTest;"
-  "LogisticRegressionTest")
+  "LogisticRegressionTest"
+  "LinearSVMTest")
 
 # Add tests to the testing framework
 # Get the list of sources from the test target
