@@ -83,8 +83,8 @@ void DiagCovGaussianDistribution::Train(const arma::mat& observations)
   mean /= observations.n_cols;
 
   // Now calculate the covariance.
-  const arma::mat onesRow = arma::ones<arma::rowvec>(observations.n_cols);
-  const arma::mat diffs = observations - mean * onesRow;
+  const arma::mat diffs = observations - mean *
+      arma::ones<arma::rowvec>(observations.n_cols);
   covariance += arma::sum(diffs % diffs, 1);
 
   // Finish estimating the covariance by normalizing, with the (1 / (n - 1))
@@ -138,8 +138,8 @@ void DiagCovGaussianDistribution::Train(const arma::mat& observations,
   mean = observations * normalizedProbs;
 
   // Now calculate the covariance.
-  const arma::mat onesRow = arma::ones<arma::rowvec>(observations.n_cols);
-  const arma::mat diffs = observations - mean * onesRow;
+  const arma::mat diffs = observations - mean *
+      arma::ones<arma::rowvec>(observations.n_cols);
   covariance += (diffs % diffs) * normalizedProbs;
 
   // Calculate the sum of each weight squared.

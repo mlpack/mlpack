@@ -251,8 +251,6 @@ void DiagonalGMM::Estimate(
 
     // Store the sum of responsibilities over all the observations.
     arma::vec N = arma::trans(arma::sum(condProb));
-    arma::vec onesVec = arma::ones<arma::vec>(observations.n_rows);
-    arma::mat onesRowVec = arma::ones<arma::rowvec>(observations.n_cols);
 
     // M step: Update the paramters using the current responsibilities.
     for (size_t k = 0; k < dists.size(); k++)
@@ -271,9 +269,12 @@ void DiagonalGMM::Estimate(
 
       // Update the diagonal covariance of distribution k.
       // We only need the diagonal elements in the covariances.
-      arma::mat diffs = observations - (dists[k].Mean() * onesRowVec);
+      arma::mat diffs = observations - (dists[k].Mean() *
+          arma::ones<arma::rowvec>(observations.n_cols));
+
       arma::vec covs = arma::sum((diffs % diffs) %
-          (onesVec * trans(responsibilities)), 1) / N[k];
+          (arma::ones<arma::vec>(observations.n_rows) *
+          trans(responsibilities)), 1) / N[k];
 
       dists[k].Covariance(std::move(covs));
     }
@@ -339,8 +340,6 @@ void DiagonalGMM::Estimate(const arma::mat& observations,
 
     // Store the sum of responsibilities over all the observations.
     arma::vec N(dists.size());
-    arma::vec onesVec = arma::ones<arma::vec>(observations.n_rows);
-    arma::mat onesRowVec = arma::ones<arma::rowvec>(observations.n_cols);
 
     // M step: Update the paramters using the current responsibilities.
     for (size_t k = 0; k < dists.size(); k++)
@@ -362,9 +361,12 @@ void DiagonalGMM::Estimate(const arma::mat& observations,
 
       // Update the diagonal covariance of distribution k.
       // We only need the diagonal elements in the covariances.
-      arma::mat diffs = observations - (dists[k].Mean() * onesRowVec);
+      arma::mat diffs = observations - (dists[k].Mean() *
+          arma::ones<arma::rowvec>(observations.n_cols));
+
       arma::vec covs = arma::sum((diffs % diffs) %
-          (onesVec * trans(responsibilities)), 1) / N[k];
+          (arma::ones<arma::vec>(observations.n_rows) *
+          trans(responsibilities)), 1) / N[k];
 
       dists[k].Covariance(std::move(covs));
     }

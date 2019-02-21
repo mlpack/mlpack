@@ -893,7 +893,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMOneGaussian)
  */
 BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMOneGaussianWithProbability)
 {
-  // Generate a diagonal covariance gaussian distribution. 
+  // Generate a diagonal covariance gaussian distribution.
   distribution::DiagCovGaussianDistribution d("0.3 0.2", "1.0 2.0");
 
   // Generate 20000 observations, each with random probabilities.
@@ -906,7 +906,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMOneGaussianWithProbability)
 
   // Create DiagonalGMM.
   DiagonalGMM gmm(1, 2);
-  size_t trials =10;
+  size_t trials = 10;
 
   // Train this model.
   gmm.Train(observations, probabilities, trials);
