@@ -174,7 +174,7 @@ class GaussianDistribution
 };
 
 /**
- * Calculates the multivariate Gaussian log probability density function for each
+ * Calculates the multivariate Gaussian Log probability density function for each
  * data point (column) in the given matrix
  *
  * @param x List of observations.
