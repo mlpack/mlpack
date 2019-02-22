@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
 
   // Test that objective value returned by GAN::Train() is finite.
   BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
-  
+
   // Generate samples
   Log::Info << "Sampling..." << std::endl;
   arma::mat noise(noiseDim, 1);
