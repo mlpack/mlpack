@@ -173,34 +173,43 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
             << trainData.n_cols << ")" << std::endl;
   Log::Info << trainData.n_rows << "--------" << trainData.n_cols << std::endl;
 
-  // Create the Discriminator network
+  // Create the Discriminator network.
   FFN<CrossEntropyError<> > discriminator;
-  discriminator.Add<Convolution<> >(1, dNumKernels, 5, 5, 1, 1, 2, 2, 28, 28);
-  discriminator.Add<ReLULayer<> >();
-  discriminator.Add<MeanPooling<> >(2, 2, 2, 2);
-  discriminator.Add<Convolution<> >(dNumKernels, 2 * dNumKernels, 5, 5, 1, 1,
-      2, 2, 14, 14);
-  discriminator.Add<ReLULayer<> >();
-  discriminator.Add<MeanPooling<> >(2, 2, 2, 2);
-  discriminator.Add<Linear<> >(7 * 7 * 2 * dNumKernels, 1024);
-  discriminator.Add<ReLULayer<> >();
-  discriminator.Add<Linear<> >(1024, 1);
+  discriminator.Add<Convolution<> >(1, dNumKernels, 4, 4, 2, 2, 1, 1, 28, 28);
+  discriminator.Add<LeakyReLU<> >(0.2);
+  discriminator.Add<Convolution<> >(dNumKernels, 2 * dNumKernels, 4, 4, 2, 2,
+      1, 1, 14, 14);
+  discriminator.Add<LeakyReLU<> >(0.2);
+  discriminator.Add<Convolution<> >(2 * dNumKernels, 4 * dNumKernels, 4, 4,
+      2, 2, 1, 1, 7, 7);
+  discriminator.Add<LeakyReLU<> >(0.2);
+  discriminator.Add<Convolution<> >(4 * dNumKernels, 8 * dNumKernels, 4, 4,
+      2, 2, 2, 2, 3, 3);
+  discriminator.Add<LeakyReLU<> >(0.2);
+  discriminator.Add<Convolution<> >(8 * dNumKernels, 1, 4, 4, 1, 1,
+      1, 1, 2, 2);
+  discriminator.Add<SigmoidLayer<> >();
 
-  // Create the Generator network
+  // Create the Generator network.
   FFN<CrossEntropyError<> > generator;
-  generator.Add<Linear<> >(noiseDim, 3136);
+  generator.Add<TransposedConvolution<> >(noiseDim, 8 * dNumKernels, 2, 2,
+      1, 1, 1, 1, 1, 1);
+  generator.Add<BatchNorm<> >(1024);
+  generator.Add<ReLULayer<> >();
+  generator.Add<TransposedConvolution<> >(8 * dNumKernels, 4 * dNumKernels,
+      2, 2, 1, 1, 0, 0, 2, 2);
+  generator.Add<BatchNorm<> >(1152);
+  generator.Add<ReLULayer<> >();
+  generator.Add<TransposedConvolution<> >(4 * dNumKernels, 2 * dNumKernels,
+      5, 5, 2, 2, 1, 1, 3, 3);
   generator.Add<BatchNorm<> >(3136);
   generator.Add<ReLULayer<> >();
-  generator.Add<Convolution<> >(1, noiseDim / 2, 3, 3, 2, 2, 1, 1, 56, 56);
-  generator.Add<BatchNorm<> >(39200);
+  generator.Add<TransposedConvolution<> >(2 * dNumKernels, dNumKernels, 8, 8,
+      1, 1, 1, 1, 7, 7);
+  generator.Add<BatchNorm<> >(6272);
   generator.Add<ReLULayer<> >();
-  generator.Add<BilinearInterpolation<> >(28, 28, 56, 56, noiseDim / 2);
-  generator.Add<Convolution<> >(noiseDim / 2, noiseDim / 4, 3, 3, 2, 2, 1, 1,
-      56, 56);
-  generator.Add<BatchNorm<> >(19600);
-  generator.Add<ReLULayer<> >();
-  generator.Add<BilinearInterpolation<> >(28, 28, 56, 56, noiseDim / 4);
-  generator.Add<Convolution<> >(noiseDim / 4, 1, 3, 3, 2, 2, 1, 1, 56, 56);
+  generator.Add<TransposedConvolution<> >(dNumKernels, 1, 15, 15, 1, 1, 1, 1,
+      14, 14);
   generator.Add<TanHLayer<> >();
 
   // Create GAN
