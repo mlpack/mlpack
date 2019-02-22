@@ -17,7 +17,6 @@
 #include <mlpack/methods/decision_tree/multiple_random_dimension_select.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include "test_tools.hpp"
 #include "serialization.hpp"
 #include "mock_categorical_data.hpp"
@@ -1146,13 +1145,13 @@ BOOST_AUTO_TEST_CASE(DecisionTreeNumericTrainReturnEntropy)
   DecisionTree<> d(3);
   entropy = d.Train(dataset, labels, 3, 50);
 
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(entropy), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
 
   // Train a tree with weights on numeric dataset.
   DecisionTree<> wd(3);
   entropy = wd.Train(dataset, labels, 3, weights, 50);
 
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(entropy), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
 }
 
 /**
@@ -1174,13 +1173,13 @@ BOOST_AUTO_TEST_CASE(DecisionTreeCategoricalTrainReturnEntropy)
   DecisionTree<> dtree(5);
   entropy = dtree.Train(d, di, l, 5, 10);
 
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(entropy), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
 
   // Train a tree with weights on categorical dataset.
   DecisionTree<> wdtree(5);
   entropy = wdtree.Train(d, di, l, 5, weights, 10);
 
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(entropy), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

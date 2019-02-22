@@ -12,7 +12,6 @@
 #include <mlpack/methods/linear_regression/linear_regression.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include "test_tools.hpp"
 #include "serialization.hpp"
 
@@ -266,7 +265,7 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTrainReturnObjective)
   LinearRegression lr;
   double error = lr.Train(predictors, responses);
 
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(error), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(error), true);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

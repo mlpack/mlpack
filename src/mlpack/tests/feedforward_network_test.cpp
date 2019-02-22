@@ -19,7 +19,6 @@
 #include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include "test_tools.hpp"
 #include "serialization.hpp"
 #include "custom_layer.hpp"
@@ -612,6 +611,6 @@ BOOST_AUTO_TEST_CASE(FFNTrainReturnObjective)
 
   double objVal = model.Train(trainData, trainLabels, opt);
 
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(objVal), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 }
 BOOST_AUTO_TEST_SUITE_END();

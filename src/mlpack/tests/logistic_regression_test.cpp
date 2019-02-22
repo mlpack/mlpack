@@ -15,7 +15,6 @@
 #include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
@@ -980,20 +979,20 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTrainReturnObjective)
   LogisticRegression<> lr1(data.n_rows, 0.5);
   objVal = lr1.Train<ens::L_BFGS>(data, responses);
 
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(objVal), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
   // Check with a pre-defined L_BFGS optimizer.
   LogisticRegression<> lr2(data.n_rows, 0.5);
   ens::L_BFGS lbfgsOpt;
   objVal = lr2.Train(data, responses, lbfgsOpt);
 
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(objVal), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
   // Check with SGD optimizer.
   LogisticRegression<> lr3(data.n_rows, 0.5);
   objVal = lr3.Train<ens::StandardSGD>(data, responses);
 
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(objVal), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
   // Check with pre-defined SGD optimizer.
   LogisticRegression<> lr4(data.n_rows, 0.0005);
@@ -1002,7 +1001,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTrainReturnObjective)
   sgdOpt.Tolerance() = 1e-75;
   objVal = lr4.Train(data, responses, sgdOpt);
 
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(objVal), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

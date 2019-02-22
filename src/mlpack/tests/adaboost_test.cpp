@@ -13,7 +13,6 @@
 #include <mlpack/methods/adaboost/adaboost.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include "test_tools.hpp"
 #include "serialization.hpp"
 
@@ -66,7 +65,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
   double hammingLoss = (double) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(ztProduct), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(ztProduct), true);
   BOOST_REQUIRE_LE(hammingLoss, ztProduct);
 }
 
@@ -159,7 +158,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
   double hammingLoss = (double) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(ztProduct), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(ztProduct), true);
   BOOST_REQUIRE_LE(hammingLoss, ztProduct);
 }
 
@@ -250,7 +249,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
   double hammingLoss = (double) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(ztProduct), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(ztProduct), true);
   BOOST_REQUIRE_LE(hammingLoss, ztProduct);
 }
 
@@ -339,7 +338,7 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
   double hammingLoss = (double) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(ztProduct), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(ztProduct), true);
   BOOST_REQUIRE_LE(hammingLoss, ztProduct);
 }
 
@@ -435,7 +434,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
   double hammingLoss = (double) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(ztProduct), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(ztProduct), true);
   BOOST_REQUIRE_LE(hammingLoss, ztProduct);
 }
 
@@ -527,7 +526,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
   double hammingLoss = (double) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(ztProduct), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(ztProduct), true);
   BOOST_REQUIRE_LE(hammingLoss, ztProduct);
 }
 

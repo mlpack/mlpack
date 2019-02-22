@@ -16,7 +16,6 @@
 #include <mlpack/core/data/load.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
@@ -375,7 +374,7 @@ BOOST_AUTO_TEST_CASE(LARSTrainReturnCorrelation)
   arma::vec betaOpt1;
   maxCorr = lars1.Train(X, y, betaOpt1);
 
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(maxCorr), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(maxCorr), true);
 
   // Test without Cholesky decomposition and with lasso.
 
@@ -383,21 +382,21 @@ BOOST_AUTO_TEST_CASE(LARSTrainReturnCorrelation)
   arma::vec betaOpt2;
   maxCorr = lars2.Train(X, y, betaOpt2);
 
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(maxCorr), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(maxCorr), true);
 
   // Test with Cholesky decomposition and with elasticnet.
   LARS lars3(true, lambda1, lambda2);
   arma::vec betaOpt3;
   maxCorr = lars3.Train(X, y, betaOpt3);
 
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(maxCorr), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(maxCorr), true);
 
   // Test without Cholesky decomposition and with elasticnet.
   LARS lars4(false, lambda1, lambda2);
   arma::vec betaOpt4;
   maxCorr = lars4.Train(X, y, betaOpt4);
 
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(maxCorr), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(maxCorr), true);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

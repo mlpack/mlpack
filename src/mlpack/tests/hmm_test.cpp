@@ -13,7 +13,6 @@
 #include <mlpack/methods/gmm/gmm.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
@@ -1255,7 +1254,7 @@ BOOST_AUTO_TEST_CASE(HMMTrainReturnLogLikelihood)
 
   double loglik = hmm.Train(observations);
 
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(loglik), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(loglik), true);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

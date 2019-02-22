@@ -27,7 +27,6 @@
 #include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include "test_tools.hpp"
 
 using namespace mlpack;
@@ -85,7 +84,7 @@ BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
   double objVal = model.Train(msgd);
 
   // Test that objective value returned by RBM::Train() is finite.
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(objVal), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
@@ -186,7 +185,7 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   double objVal = modelssRBM.Train(msgd);
 
   // Test that objective value returned by RBM::Train() is finite.
-  BOOST_REQUIRE_EQUAL(boost::math::fpclassify(objVal), FP_NORMAL);
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
