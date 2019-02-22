@@ -176,6 +176,23 @@ class AdaBoost
 } // namespace adaboost
 } // namespace mlpack
 
+//! Set the serialization version of the adaboost class.  Multiple template
+//! arguments makes this ugly...
+namespace boost {
+namespace serialization {
+
+template<typename WeakLearnerType,
+         typename MatType>
+struct version<
+    mlpack::adaboost::AdaBoost<WeakLearnerType, MatType>>
+{
+  BOOST_STATIC_CONSTANT(int, value = 1);
+};
+
+} // namespace serialization
+} // namespace boost
+
+// Include implementation.
 #include "adaboost_impl.hpp"
 
 #endif

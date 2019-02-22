@@ -241,10 +241,16 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
 template<typename WeakLearnerType, typename MatType>
 template<typename Archive>
 void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
-                                               const unsigned int /* version */)
+                                               const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_NVP(numClasses);
   ar & BOOST_SERIALIZATION_NVP(tolerance);
+  if (version == 0 && Archive::is_loading::value)
+  {
+    // Load unused ztProduct double and forget it.
+    double tmpZtProduct = 0.0;
+    ar & BOOST_SERIALIZATION_NVP(tmpZtProduct);
+  }
   ar & BOOST_SERIALIZATION_NVP(alpha);
 
   // Now serialize each weak learner.
