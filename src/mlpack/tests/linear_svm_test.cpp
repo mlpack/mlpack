@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRandomBinaryEvaluate)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMFunctionRandomEvaluate)
 {
-  const size_t points = 500;
+  const size_t points = 1000;
   const size_t trials = 10;
   const size_t inputSize = 10;
   const size_t numClasses = 5;
@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRandomEvaluate)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMFunctionRegularizationEvaluate)
 {
-  const size_t points = 500;
+  const size_t points = 1000;
   const size_t trials = 10;
   const size_t inputSize = 10;
   const size_t numClasses = 3;
@@ -224,7 +224,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRegularizationEvaluate)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMFunctionSeparableEvaluate)
 {
-  const size_t points = 500;
+  const size_t points = 1000;
   const size_t trials = 10;
   const size_t inputSize = 10;
   const size_t numClasses = 3;
@@ -505,7 +505,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMGradientDescentSimpleTest)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMLBFGSTwoClasses)
 {
-  const size_t points = 500;
+  const size_t points = 1000;
   const size_t inputSize = 3;
   const size_t numClasses = 2;
   const double lambda = 0.5;
@@ -683,7 +683,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMSparseLBFGSTest)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMLBFGSMultipleClasses)
 {
-  const size_t points = 500;
+  const size_t points = 1000;
   const size_t inputSize = 5;
   const size_t numClasses = 5;
   const double lambda = 0.5;
