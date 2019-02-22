@@ -16,6 +16,7 @@
 
 // In case it hasn't yet been included.
 #include "triplet_loss.hpp"
+#include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -25,6 +26,36 @@ TripletLoss<InputDataType, OutputDataType>
 ::TripletLoss(const double margin) : margin(margin)
 {
   // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename TargetType>
+double TripletLoss<InputDataType, OutputDataType>::Forward(
+    const InputType&& anchor, const InputType&& positive,
+    const InputType&& negative, const TargetType&& target)
+{
+  arma::mat positive_distance = 
+      metric::SquaredEuclideanDistance::Evaluate(anchor, positive);
+  
+  arma::mat negative_distance = 
+       metric::SquaredEuclideanDistance::Evaluate(anchor, negative);
+
+  double triplet_loss = 
+      std::max(positive_distance - negative_distance + margin, 0);
+
+  return triplet_loss;
+}
+
+template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename TargetType, typename OutputType>
+void TripletLoss<InputDataType, OutputDataType>::Backward(
+    const InputType&& anchor,
+    const InputType&& positive,
+    const InputType&& negative,
+    const TargetType&& target,
+    OutputType&& output)
+{
+  
 }
 
 } // namespace ann

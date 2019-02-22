@@ -46,29 +46,34 @@ class TripletLoss{
   TripletLoss(const double margin = 0.2);
 
   /**
-   * Computes the contrastive loss function.
+   * Computes the triplet loss function.
    *
-   * @param input1 Input vector 1.
-   * @param input1 Input vector 2.
+   * @param anchor Anchor with which postive and negative example will 
+   * be compared.
+   * @param positive Example which belongs to same class as anchor.
+   * @param negative Example which belongs to different class than the anchor
    * @param target The target vector.
    */
   template<typename InputType, typename TargetType>
-  double Forward(const InputType&& input1, 
-                 const InputType&& input2, 
+  double Forward(const InputType&& anchor, 
+                 const InputType&& positive,
+                 const InputType&& negative, 
                  const TargetType&& target); 
 
   /**
    * Ordinary feed backward pass of a neural network.
    *
-   * @param input1 The propagated input1 (from net 1) activation.
-   * @param input2 The propogated input2 (from net 2) activation.
+   * @param anchor Anchor with which postive and negative example will 
+   * be compared.
+   * @param positive Example which belongs to same class as anchor.
+   * @param negative Example which belongs to different class than the anchor
    * @param target The target vector.
    * @param output The calculated error.
    */
   template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType&& input1, 
-                const InputType&& input2,
-                const TargetType&& target,
+  void Backward(const InputType&& anchor, 
+                const InputType&& positive,
+                const InputType&& negative,
                 OutputType&& output);
 
   //! Get the output parameter.
