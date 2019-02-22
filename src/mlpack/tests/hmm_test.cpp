@@ -11,6 +11,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/hmm/hmm.hpp>
 #include <mlpack/methods/gmm/gmm.hpp>
+#include <mlpack/methods/gmm/diagonal_gmm.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -1228,5 +1229,339 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLoadSaveTest)
           hmm2.Emission()[j].Probabilities()[i], 1e-3);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+/********************************************/
+/** DiagonalGMM Hidden Markov Models Tests **/
+/********************************************/
 
+//! Make sure the prediction of DiagonalGMM HMMs is reasonable.
+BOOST_AUTO_TEST_CASE(DiagonalGMMHMMPredictTest)
+{
+  // This test is probabilistic, so we perform it three times for robustness.
+  bool success = false;
+  for (size_t trial = 0; trial < 3; trial++)
+  {
+    std::vector<DiagonalGMM> gmms(2);
+    gmms[0] = DiagonalGMM(2, 2);
+
+    gmms[0].Component(0) = DiagCovGaussianDistribution("3.25 2.10",
+        "0.97 1.00");
+    gmms[0].Component(1) = DiagCovGaussianDistribution("5.03 7.28",
+        "1.20 0.89");
+
+    gmms[1] = DiagonalGMM(3, 2);
+    gmms[1].Weights() = arma::vec("0.3 0.2 0.5");
+    gmms[1].Component(0) = DiagCovGaussianDistribution("-2.48 -3.02",
+        "1.02 0.80");
+    gmms[1].Component(0) = DiagCovGaussianDistribution("-1.24 -2.40",
+        "0.85 0.78");
+    gmms[1].Component(0) = DiagCovGaussianDistribution("-5.68 -4.83",
+        "1.42 0.96");
+
+    // Initial probabilities.
+    arma::vec initial("1 0");
+
+    // Transition matrix.
+    arma::mat transProb("0.20 0.70;"
+                        "0.80 0.30");
+
+    // Build the model.
+    HMM<DiagonalGMM> hmm(initial, transProb, gmms);
+
+    // Make a sequence of observations.
+    arma::mat observations(2, 1000);
+    arma::Row<size_t> states(1000);
+    states[0] = 0;
+    observations.col(0) = gmms[0].Random();
+
+    for (size_t i = 1; i < 1000; i++)
+    {
+      double randValue = math::Random();
+
+      if (randValue <= transProb(0, states[i - 1]))
+        states[i] = 0;
+      else
+        states[i] = 1;
+
+      observations.col(i) = gmms[states[i]].Random();
+    }
+
+    // Predict the most probable hidden state sequence.
+    arma::Row<size_t> predictions;
+    hmm.Predict(observations, predictions);
+
+    // Check them.
+    success = true;
+    for (size_t i = 0; i < 1000; i++)
+    {
+      if (predictions[i] != states[i])
+      {
+        success = false;
+        break;
+      }
+    }
+
+    if (success)
+      break;
+  }
+}
+
+/**
+ * Make sure generating a random data sequence is correct when the emission
+ * distribution is DiagonalGMM.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGMMHMMGenerateTest)
+{
+  // Build the model.
+  HMM<DiagCovGaussianDistribution> hmm(3, DiagCovGaussianDistribution(2));
+  hmm.Transition() = arma::mat("0.2 0.3 0.8;"
+                               "0.4 0.5 0.1;"
+                               "0.4 0.2 0.1");
+
+  hmm.Emission()[0] = DiagCovGaussianDistribution("0.0 0.0", "1.0 0.7");
+  hmm.Emission()[1] = DiagCovGaussianDistribution("1.0 1.0", "0.7 0.5");
+  hmm.Emission()[2] = DiagCovGaussianDistribution("-3.0 2.0", "2.0 0.3");
+
+  // Now we will generate a long sequence.
+  std::vector<arma::mat> observations(1);
+  std::vector<arma::Row<size_t> > states(1);
+
+  // Generate a random data sequence.
+  hmm.Generate(10000, observations[0], states[0], 1);
+
+  // Build the hmm2.
+  HMM<DiagCovGaussianDistribution> hmm2(3, DiagCovGaussianDistribution(2));
+
+  // Now estimate the HMM from the generated sequence.
+  hmm2.Train(observations, states);
+
+  // Check that the estimated matrices are the same.
+  BOOST_REQUIRE_LT(arma::norm(hmm.Transition() - hmm2.Transition()), 0.05);
+
+  // Check that each Gaussian is the same.
+  for (size_t dist = 0; dist < 3; dist++)
+  {
+    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[dist].Mean() -
+        hmm2.Emission()[dist].Mean()), 0.1);
+    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[dist].Covariance() -
+        hmm2.Emission()[dist].Covariance()), 0.2);
+  }
+}
+
+/**
+ * Make sure the training is reasonable given a sigle distribution with
+ * diagonal covariance.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGMMHMMSimpleTrainingTest)
+{
+  // Create a gaussian distribution with diagonal covariance.
+  DiagCovGaussianDistribution d("2.05 3.45", "0.89 1.05");
+
+  // Make a sequence of observations.
+  std::vector<arma::mat> observations(1, arma::mat(2, 5000));
+  for (size_t obs = 0; obs < 1; obs++)
+  {
+    observations[obs].col(0) = d.Random();
+
+    for (size_t i = 1; i < 5000; i++)
+    {
+      observations[obs].col(i) = d.Random();
+    }
+  }
+
+  // Build the model.
+  HMM<DiagonalGMM> hmm(1, DiagonalGMM(1, 2));
+
+  // Train with observations.
+  hmm.Train(observations);
+
+  // Generate the ground truth values.
+  arma::vec actualMean = arma::mean(observations[0], 1);
+  arma::vec actualCovar = arma::diagvec(
+      arma::ccov(observations[0], 1 /* biased estimator */));
+
+  // Check the model to see that it is correct.
+  CheckMatrices(hmm.Emission()[0].Component(0).Mean(), actualMean);
+  CheckMatrices(hmm.Emission()[0].Component(0).Covariance(), actualCovar);
+}
+
+BOOST_AUTO_TEST_CASE(DiagonalGMMHMMLabeledTrainingTest)
+{
+  // Create a sequence of DiagonalGMMs.
+  std::vector<DiagonalGMM> gmms(2, DiagonalGMM(2, 2));
+  gmms[0].Weights() = arma::vec("0.3 0.7");
+  gmms[0].Component(0) = DiagCovGaussianDistribution("2.25 7.10",
+      "0.97 1.00");
+  gmms[0].Component(1) = DiagCovGaussianDistribution("5.03 2.28",
+      "1.20 0.89");
+
+  gmms[1].Weights() = arma::vec("0.4 0.6");
+  gmms[1].Component(0) = DiagCovGaussianDistribution("-4.48 -6.02",
+        "1.02 0.80");
+  gmms[1].Component(1) = DiagCovGaussianDistribution("-5.24 -2.40",
+        "0.85 1.58");
+
+  // Transition matrix.
+  arma::mat transProbs("0.30 0.80;"
+                       "0.70 0.20");
+
+  // Make a sequence of observations.
+  std::vector<arma::mat> observations(5, arma::mat(2, 2500));
+  std::vector<arma::Row<size_t>> states(5, arma::Row<size_t>(2500));
+  for (size_t obs = 0; obs < 5; obs++)
+  {
+    states[obs][0] = 0;
+    observations[obs].col(0) = gmms[0].Random();
+
+    for (size_t i = 1; i < 2500; i++)
+    {
+      double randValue = math::Random();
+
+      if (randValue <= transProbs(0, states[obs][i - 1]))
+        states[obs][i] = 0;
+      else
+        states[obs][i] = 1;
+
+      observations[obs].col(i) = gmms[states[obs][i]].Random();
+    }
+  }
+
+  // Build the model.
+  HMM<DiagonalGMM> hmm(2, DiagonalGMM(2, 2));
+
+  // Train the model.
+  hmm.Train(observations, states);
+
+  // Check the initial weights.
+  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 0.01);
+  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.01);
+
+  // Check the transition probability matrix.
+  BOOST_REQUIRE_SMALL(hmm.Transition()(0, 0) - transProbs(0, 0), 0.03);
+  BOOST_REQUIRE_SMALL(hmm.Transition()(0, 1) - transProbs(0, 1), 0.03);
+  BOOST_REQUIRE_SMALL(hmm.Transition()(1, 0) - transProbs(1, 0), 0.03);
+  BOOST_REQUIRE_SMALL(hmm.Transition()(1, 1) - transProbs(1, 1), 0.03);
+
+  // Sort the first DiagonalGMM for comparison.
+  arma::uvec sortedIndices = sort_index(hmm.Emission()[0].Weights());
+
+  // Check the estimated weights of the first DiagonalGMM.
+  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Weights()[sortedIndices[0]] -
+      gmms[0].Weights()[0], 0.08);
+  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Weights()[sortedIndices[1]] -
+      gmms[0].Weights()[1], 0.08);
+
+  // Check the estimated means of the first DiagonalGMM.
+  BOOST_REQUIRE_LT(arma::norm(
+      hmm.Emission()[0].Component(sortedIndices[0]).Mean() -
+      gmms[0].Component(0).Mean()), 0.2);
+  BOOST_REQUIRE_LT(arma::norm(
+      hmm.Emission()[0].Component(sortedIndices[1]).Mean() -
+      gmms[0].Component(1).Mean()), 0.2);
+
+  // Check the estimated covariances of the first DiagonalGMM.
+  BOOST_REQUIRE_LT(arma::norm(
+      hmm.Emission()[0].Component(sortedIndices[0]).Covariance() -
+      gmms[0].Component(0).Covariance()), 0.5);
+  BOOST_REQUIRE_LT(arma::norm(
+      hmm.Emission()[0].Component(sortedIndices[1]).Covariance() -
+      gmms[0].Component(0).Covariance()), 0.5);
+
+  // Sort the second DiagonalGMM for comparison.
+  sortedIndices = sort_index(hmm.Emission()[1].Weights());
+
+  // Check the estimated weights of the second DiagonalGMM.
+  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Weights()[sortedIndices[0]] -
+      gmms[1].Weights()[0], 0.08);
+  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Weights()[sortedIndices[1]] -
+      gmms[1].Weights()[1], 0.08);
+
+  // Check the estimated means of the first DiagonalGMM.
+  BOOST_REQUIRE_LT(arma::norm(
+      hmm.Emission()[1].Component(sortedIndices[0]).Mean() -
+      gmms[1].Component(0).Mean()), 0.2);
+  BOOST_REQUIRE_LT(arma::norm(
+      hmm.Emission()[1].Component(sortedIndices[1]).Mean() -
+      gmms[1].Component(1).Mean()), 0.2);
+
+  // Check the estimated covariances of the first DiagonalGMM.
+  BOOST_REQUIRE_LT(arma::norm(
+      hmm.Emission()[1].Component(sortedIndices[0]).Covariance() -
+      gmms[1].Component(0).Covariance()), 0.5);
+  BOOST_REQUIRE_LT(arma::norm(
+      hmm.Emission()[1].Component(sortedIndices[1]).Covariance() -
+      gmms[1].Component(1).Covariance()), 0.5);
+}
+
+/**
+ * Make sure loading and saving the model is correct.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGMMHMMLoadSaveTest)
+{
+  // Create a GMM HMM, save and load it.
+  HMM<DiagonalGMM> hmm(3, DiagonalGMM(4, 3));
+
+  // Generate intial random values.
+  for (size_t j = 0; j < hmm.Emission().size(); j++)
+  {
+    hmm.Emission()[j].Weights().randu();
+    for (size_t i = 0; i < hmm.Emission()[j].Gaussians(); i++)
+    {
+      hmm.Emission()[j].Component(i).Mean().randu();
+      arma::vec covariance = arma::randu<arma::vec>(
+          hmm.Emission()[j].Component(i).Covariance().n_elem);
+
+      covariance += arma::ones<arma::vec>(covariance.n_elem);
+      hmm.Emission()[j].Component(i).Covariance(std::move(covariance));
+    }
+  }
+
+  // Save the HMM.
+  {
+    std::ofstream ofs("test-hmm-save.xml");
+    boost::archive::xml_oarchive ar(ofs);
+    ar << BOOST_SERIALIZATION_NVP(hmm);
+  }
+
+  // Load the HMM.
+  HMM<DiagonalGMM> hmm2(3, DiagonalGMM(4, 3));
+  {
+    std::ifstream ifs("test-hmm-save.xml");
+    boost::archive::xml_iarchive ar(ifs);
+    ar >> BOOST_SERIALIZATION_NVP(hmm2);
+  }
+
+  // Remove clutter.
+  remove("test-hmm-save.xml");
+
+  for (size_t j = 0; j < hmm.Emission().size(); j++)
+  {
+    // Check the number of gaussians.
+    BOOST_REQUIRE_EQUAL(hmm.Emission()[j].Gaussians(),
+                        hmm2.Emission()[j].Gaussians());
+    
+    // Check the dimensionality.
+    BOOST_REQUIRE_EQUAL(hmm.Emission()[j].Dimensionality(),
+                        hmm2.Emission()[j].Dimensionality());
+
+    for (size_t i = 0; i < hmm.Emission()[j].Dimensionality(); i++)
+      // Check the weights.
+      BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Weights()[i],
+                          hmm2.Emission()[j].Weights()[i], 1e-3);
+
+    for (size_t i = 0; i < hmm.Emission()[j].Gaussians(); i++)
+    {
+      for (size_t l = 0; l < hmm.Emission()[j].Dimensionality(); l++)
+      {
+        // Check the means.
+        BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Component(i).Mean()[l],
+            hmm2.Emission()[j].Component(i).Mean()[l], 1e-3);
+
+        // Check the covariances.
+        BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Component(i).Covariance()[l],
+            hmm2.Emission()[j].Component(i).Covariance()[l], 1e-3);
+      }
+    }
+  }
+}
+
+BOOST_AUTO_TEST_SUITE_END();
