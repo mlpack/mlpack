@@ -173,9 +173,8 @@ class GammaDistribution
     void LogProbability(const arma::mat& observations,
                         arma::vec& LogProbabilities) const;
     /*
-     * This is a shortcut to the Log Probability(arma::mat&, arma::vec&)
-     * function for when we want to evaluate only the log probability of one
-     * dimension of the gamma.
+     * This function returns the logarithm of the probability of a single
+     * observation. 
      *
      * @param x The 1-dimensional observation.
      * @param dim The dimension for which to calculate the probability
