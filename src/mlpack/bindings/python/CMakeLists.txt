@@ -85,6 +85,7 @@ set(CYTHON_SOURCES
   mlpack/matrix_utils.py
   mlpack/serialization.hpp
   mlpack/serialization.pxd
+  mlpack/xml2json/xml2json.hpp
 )
 
 set(TEST_SOURCES
