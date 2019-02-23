@@ -149,21 +149,16 @@ static void mlpackMain()
         matX.col(i) /= norm(matX.col(i), 2);
     }
 
-    if (CLI::GetParam<int>("atoms") < 1)
-    {
-      Log::Fatal << "The number of atoms should be atleast one!" << endl;
-    }
+    //Check if the parameters lie within the bounds.
+    RequireParamValue<int>("atoms", [&matX](int x)
+        { return (x > 0) && ((size_t) x < matX.n_cols); }, 1,
+        "Number of atoms must lie between 1 and number of training points");
 
-    if (CLI::GetParam<double>("lambda") < 0)
-    {
-      Log::Fatal << "The regularization parameter "
-          << "should be a positive real number!" << endl;
-    }
+    RequireParamValue<double>("lambda", [](double x) { return x >= 0; }, 1,
+        "The regularization parameter should be a non-negative real number");
 
-    if (CLI::GetParam<double>("tolerance") < 0)
-    {
-      Log::Fatal << "The tolerance should be a positive real number!" << endl;
-    }
+    RequireParamValue<double>("tolerance", [](double x) { return x > 0; }, 1,
+        "Tolerance should be a positive real number");
 
     lcc->Lambda() = CLI::GetParam<double>("lambda");
     lcc->Atoms() = (size_t) CLI::GetParam<int>("atoms");
