@@ -32,6 +32,10 @@ class BackwardVisitor : public boost::static_visitor<void>
   //! parameter.
   BackwardVisitor(arma::mat&& input, arma::mat&& error, arma::mat&& delta);
 
+  //! Execute the Backward() function for the layer with the specified index.
+  BackwardVisitor(arma::mat&& input, arma::mat&& error, arma::mat&& delta,
+      const size_t index);
+
   //! Execute the Backward() function.
   template<typename LayerType>
   void operator()(LayerType* layer) const;
@@ -45,6 +49,25 @@ class BackwardVisitor : public boost::static_visitor<void>
 
   //! The delta parameter.
   arma::mat&& delta;
+
+  //! The index of the layer to run.
+  size_t index;
+
+  //! Indicates whether to use index or not
+  bool hasIndex;
+
+  //! Execute the Backward() function if the module does not have Run()
+  //! check.
+  template<typename T>
+  typename std::enable_if<
+      !HasRunCheck<T, bool&(T::*)(void)>::value, void>::type
+  LayerBackward(T* layer, arma::mat& input) const;
+
+  //! Execute the Backward() function if the module is has Run() function.
+  template<typename T>
+  typename std::enable_if<
+      HasRunCheck<T, bool&(T::*)(void)>::value, void>::type
+  LayerBackward(T* layer, arma::mat& input) const;
 };
 
 } // namespace ann
