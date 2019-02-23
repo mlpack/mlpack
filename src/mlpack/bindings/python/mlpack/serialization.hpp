@@ -13,6 +13,7 @@
 #define MLPACK_BINDINGS_PYTHON_MLPACK_SERIALIZATION_HPP
 
 #include <mlpack/core.hpp>
+#include <mlpack/bindings/python/mlpack/xml2json/xml2json.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -28,6 +29,17 @@ std::string SerializeOut(T* t, const std::string& name)
     b << boost::serialization::make_nvp(name.c_str(), *t);
   }
   return oss.str();
+}
+
+template<typename T>
+std::string SerializeParamsOut(T* t, const std::string& name)
+{
+  std::ostringstream oss;
+  {
+    boost::archive::xml_oarchive oa(oss);
+    oa << BOOST_SERIALIZATION_NVP(t);
+  }
+  return xml2json( oss.str().data() );
 }
 
 template<typename T>
