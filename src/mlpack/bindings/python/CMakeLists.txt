@@ -83,6 +83,7 @@ set(CYTHON_SOURCES
   mlpack/cli.pxd
   mlpack/cli_util.hpp
   mlpack/matrix_utils.py
+  mlpack/pythonize_model.py
   mlpack/serialization.hpp
   mlpack/serialization.pxd
   mlpack/xml2json/xml2json.hpp
@@ -91,6 +92,7 @@ set(CYTHON_SOURCES
 set(TEST_SOURCES
   tests/dataset_info_test.py
   tests/test_python_binding.py
+  tests/pythonize_model_test.py
 )
 
 # Set the include directories correctly.
