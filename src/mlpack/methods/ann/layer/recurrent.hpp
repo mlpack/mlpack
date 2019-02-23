@@ -17,6 +17,7 @@
 
 #include "../visitor/delete_visitor.hpp"
 #include "../visitor/delta_visitor.hpp"
+#include "../visitor/copy_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
 
 #include "layer_types.hpp"
@@ -51,6 +52,9 @@ class Recurrent
 
   //! Destructor to release allocated memory.
   ~Recurrent();
+
+  //! Copy constructor.
+  Recurrent(const Recurrent&);
 
   /**
    * Create the Recurrent object using the specified modules.
@@ -144,6 +148,9 @@ class Recurrent
  private:
   //! Locally-stored delete visitor module object.
   DeleteVisitor deleteVisitor;
+
+  //! Locally-stored copy visitor
+  CopyVisitor<CustomLayers...> copyVisitor;
 
   //! Locally-stored start module.
   LayerTypes<CustomLayers...> startModule;

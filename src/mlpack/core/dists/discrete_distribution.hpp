@@ -170,7 +170,7 @@ class DiscreteDistribution
   }
 
   /**
-   * Calculates the discrete probability density function for each
+   * Calculates the Discrete probability density function for each
    * data point (column) in the given matrix.
    *
    * @param x List of observations.
@@ -178,10 +178,9 @@ class DiscreteDistribution
    */
   void Probability(const arma::mat& x, arma::vec& probabilities) const
   {
-    arma::vec probability(x.n_cols);
+    probabilities.set_size(x.n_cols);
     for (size_t i = 0; i < x.n_cols; i++)
-      probability(i) = Probability(x.unsafe_col(i));
-    probabilities = probability;
+      probabilities(i) = Probability(x.unsafe_col(i));
   }
 
   /**
@@ -245,7 +244,7 @@ class DiscreteDistribution
 };
 
 /**
- * Calculates the Discrete log probability function for each
+ * Calculates the Discrete log-probability function for each
  * data point (column) in the given matrix
  *
  * @param x List of observations.
@@ -255,13 +254,10 @@ inline void DiscreteDistribution::LogProbability(
     const arma::mat& x,
     arma::vec& logProbabilities) const
 {
-  arma::vec logProbs(x.n_cols);
+  logProbabilities.set_size(x.n_cols);
   for (size_t i = 0; i < x.n_cols; i++)
-    logProbs(i) = log(Probability(x.unsafe_col(i)));
-
-  logProbabilities = logProbs;
+    logProbabilities(i) = log(Probability(x.unsafe_col(i)));
 }
-
 
 } // namespace distribution
 } // namespace mlpack
