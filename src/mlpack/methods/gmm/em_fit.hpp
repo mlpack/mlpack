@@ -16,7 +16,6 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/dists/gaussian_distribution.hpp>
-#include <mlpack/core/dists/diag_cov_gaussian_distribution.hpp>
 
 // Default clustering mechanism.
 #include <mlpack/methods/kmeans/kmeans.hpp>
