@@ -172,7 +172,8 @@ class GammaDistribution
      */
     void LogProbability(const arma::mat& observations,
                         arma::vec& LogProbabilities) const;
-    /*
+
+    /**
      * This function returns the logarithm of the probability of a single
      * observation. 
      *
