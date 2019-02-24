@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(GmmProbabilityInputPoints)
   GMM gmm(1, 2);
   gmm.Train(inputData, 2);
 
-  SetInputParam("input_model" , std::move(gmm));
+  SetInputParam("input_model", &gmm);
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(GmmProbabilityDimensionality)
   inputPoints << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << arma::endr
               << 0 << 4 << 3 << 4 << 8 << 9 << 2 << 5 << arma::endr;
 
-  SetInputParam("input_model", std::move(gmm));
+  SetInputParam("input_model", &gmm);
   SetInputParam("input", std::move(inputPoints));
 
   mlpackMain();
