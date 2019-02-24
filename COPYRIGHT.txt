@@ -110,6 +110,7 @@ Copyright:
   Copyright 2019, Kim SangYeon <sy0814k@gmail.com>
   Copyright 2019, Niteya Shah <niteya.56@gmail.com>
   Copyright 2019, Toshal Agrawal <tagrawal1339@gmail.com>
+  Copyright 2019, Dan Timson
 
 License: BSD-3-clause
   All rights reserved.
