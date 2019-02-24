@@ -260,12 +260,8 @@ void DiagonalGMM::Estimate(
       if (N[k] == 0)
         continue;
 
-      // Calculate the sum of conditional probabilities of each point, being
-      // from Gaussian i, multiplied by the probability of the point.
-      arma::vec responsibilities = condProb.col(k);
-
       // Update the mean of distribution k.
-      dists[k].Mean() = (observations * responsibilities) / N[k];
+      dists[k].Mean() = (observations * condProb.col(k)) / N[k];
 
       // Update the diagonal covariance of distribution k.
       // We only need the diagonal elements in the covariances.
@@ -274,7 +270,7 @@ void DiagonalGMM::Estimate(
 
       arma::vec covs = arma::sum((diffs % diffs) %
           (arma::ones<arma::vec>(observations.n_rows) *
-          trans(responsibilities)), 1) / N[k];
+          trans(condProb.col(k))), 1) / N[k];
 
       covs = arma::clamp(covs, 1e-10, DBL_MAX);
       dists[k].Covariance(std::move(covs));
@@ -347,10 +343,7 @@ void DiagonalGMM::Estimate(const arma::mat& observations,
     {
       // Calculate the sum of conditional probabilities of each point, being
       // from Gaussian i, multiplied by the probability of the point.
-      arma::vec responsibilities = condProb.col(k);
-      responsibilities %= probabilities;
-
-      N[k] = arma::accu(responsibilities);
+      N[k] = arma::accu(condProb.col(k) % probabilities);
 
       // Update the mean and covariance using the responsibilities.
       // If N[k] is zero, we don't update them.
@@ -358,7 +351,8 @@ void DiagonalGMM::Estimate(const arma::mat& observations,
         continue;
 
       // Update the mean of distribution k.
-      dists[k].Mean() = (observations * responsibilities) / N[k];
+      dists[k].Mean() = (observations * (condProb.col(k) % probabilities)) /
+          N[k];
 
       // Update the diagonal covariance of distribution k.
       // We only need the diagonal elements in the covariances.
@@ -367,7 +361,7 @@ void DiagonalGMM::Estimate(const arma::mat& observations,
 
       arma::vec covs = arma::sum((diffs % diffs) %
           (arma::ones<arma::vec>(observations.n_rows) *
-          trans(responsibilities)), 1) / N[k];
+          trans(condProb.col(k) % probabilities)), 1) / N[k];
 
       covs = arma::clamp(covs, 1e-10, DBL_MAX);
       dists[k].Covariance(std::move(covs));
