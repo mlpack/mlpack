@@ -15,6 +15,7 @@
 #define MLPACK_METHODS_GMM_DIAGONAL_GMM_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/dists/diag_cov_gaussian_distribution.hpp>
 
 // This is the default fitting method class.
 #include "em_fit.hpp"
