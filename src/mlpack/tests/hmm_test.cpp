@@ -1538,7 +1538,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMLoadSaveTest)
     // Check the number of gaussians.
     BOOST_REQUIRE_EQUAL(hmm.Emission()[j].Gaussians(),
                         hmm2.Emission()[j].Gaussians());
-    
+
     // Check the dimensionality.
     BOOST_REQUIRE_EQUAL(hmm.Emission()[j].Dimensionality(),
                         hmm2.Emission()[j].Dimensionality());

@@ -894,7 +894,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMOneGaussian)
 BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMOneGaussianWithProbability)
 {
   // Generate a diagonal covariance gaussian distribution.
-  distribution::DiagCovGaussianDistribution d("0.3 0.2", "1.0 2.0");
+  distribution::DiagCovGaussianDistribution d("1.0 0.8", "1.0 2.0");
 
   // Generate 20000 observations, each with random probabilities.
   arma::mat observations(2, 20000);
@@ -913,8 +913,8 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMOneGaussianWithProbability)
 
   // Check the model is trained correctly.
   // 10% tolerance, because of possible noise.
-  BOOST_REQUIRE_CLOSE(gmm.Component(0).Mean()[0], 0.3, 18.0);
-  BOOST_REQUIRE_CLOSE(gmm.Component(0).Mean()[1], 0.2, 18.0);
+  BOOST_REQUIRE_CLOSE(gmm.Component(0).Mean()[0], 1.0, 8.0);
+  BOOST_REQUIRE_CLOSE(gmm.Component(0).Mean()[1], 0.8, 8.0);
 
   // 6% tolerance, because of possible noise.
   BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()[0], 1.0, 6.0);
@@ -1041,7 +1041,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussiansWithProbability)
   arma::uvec sortedIndices = sort_index(g.Weights());
 
   // First Gaussian (d1).
-  BOOST_REQUIRE_CLOSE(g.Weights()[sortedIndices[0]], 0.2, 20.0);
+  BOOST_REQUIRE_CLOSE(g.Weights()[sortedIndices[0]], 0.2, 10.0);
 
   for (size_t i = 0; i < 3; i++)
     BOOST_REQUIRE_CLOSE(g.Component(sortedIndices[0]).Mean()[i],
@@ -1054,7 +1054,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussiansWithProbability)
   }
 
   // Second Gaussian (d2).
-  BOOST_REQUIRE_CLOSE(g.Weights()[sortedIndices[1]], 0.3, 20.0);
+  BOOST_REQUIRE_CLOSE(g.Weights()[sortedIndices[1]], 0.3, 10.0);
 
   for (size_t i = 0; i < 3; i++)
     BOOST_REQUIRE_CLOSE(g.Component(sortedIndices[1]).Mean()[i],
@@ -1067,7 +1067,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussiansWithProbability)
   }
 
   // Third Gaussian (d3).
-  BOOST_REQUIRE_CLOSE(g.Weights()[sortedIndices[2]], 0.5, 20.0);
+  BOOST_REQUIRE_CLOSE(g.Weights()[sortedIndices[2]], 0.5, 10.0);
 
   for (size_t i = 0; i < 3; ++i)
     BOOST_REQUIRE_CLOSE(g.Component(sortedIndices[2]).Mean()[i],

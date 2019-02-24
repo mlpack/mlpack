@@ -78,8 +78,8 @@ double DiagonalGMM::Train(const arma::mat& observations,
         weightsTrial = weightsOrig;
       }
 
-      Estimate(observations, dists, weights, useExistingModel, maxIterations,
-          tolerance, fitter.Clusterer());
+      Estimate(observations, distsTrial, weightsTrial, useExistingModel,
+          maxIterations, tolerance, fitter.Clusterer());
 
       // Check to see if the log-likelihood of this one is better.
       double newLikelihood = LogLikelihood(observations, distsTrial,
@@ -168,8 +168,8 @@ double DiagonalGMM::Train(const arma::mat& observations,
         weightsTrial = weightsOrig;
       }
 
-      Estimate(observations, probabilities, dists, weights, useExistingModel,
-          maxIterations, tolerance, fitter.Clusterer());
+      Estimate(observations, probabilities, distsTrial, weightsTrial,
+          useExistingModel, maxIterations, tolerance, fitter.Clusterer());
 
       // Check to see if the log-likelihood of this one is better.
       double newLikelihood = LogLikelihood(observations, distsTrial,
@@ -276,6 +276,7 @@ void DiagonalGMM::Estimate(
           (arma::ones<arma::vec>(observations.n_rows) *
           trans(responsibilities)), 1) / N[k];
 
+      covs = arma::clamp(covs, 1e-10, DBL_MAX);
       dists[k].Covariance(std::move(covs));
     }
 
@@ -368,6 +369,7 @@ void DiagonalGMM::Estimate(const arma::mat& observations,
           (arma::ones<arma::vec>(observations.n_rows) *
           trans(responsibilities)), 1) / N[k];
 
+      covs = arma::clamp(covs, 1e-10, DBL_MAX);
       dists[k].Covariance(std::move(covs));
     }
 
@@ -440,6 +442,8 @@ void DiagonalGMM::InitialClustering(
     covariances[i] /= (weights[i] > 1) ? weights[i] : 1;
 
     std::swap(dists[i].Mean(), means[i]);
+
+    covariances[i] = arma::clamp(covariances[i], 1e-10, DBL_MAX);
     dists[i].Covariance(std::move(covariances[i]));
   }
 
