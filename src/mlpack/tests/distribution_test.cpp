@@ -2,6 +2,7 @@
  * @file distribution_test.cpp
  * @author Ryan Curtin
  * @author Yannis Mentekidis
+ * @author Rohan Raj
  *
  * Tests for the classes:
  *  * mlpack::distribution::DiscreteDistribution
@@ -191,6 +192,50 @@ BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionTrainProTest)
   BOOST_REQUIRE_CLOSE(d.Probability("0 0 0"), 0.00390625, 1e-5);
   BOOST_REQUIRE_CLOSE(d.Probability("1 0 1"), 0.0078125, 1e-5);
   BOOST_REQUIRE_CLOSE(d.Probability("2 1 0"), 0.015625, 1e-5);
+}
+
+/**
+ * Test the LogProbability() function, for multiple points in the multivariate
+ * Discrete case.
+ */
+BOOST_AUTO_TEST_CASE(DiscreteLogProbabilityTest)
+{
+  // Same case as before.
+  DiscreteDistribution d("5 5");
+
+  arma::mat obs("0 2;"
+                "1 2;");
+
+  arma::vec logProb;
+
+  d.LogProbability(obs, logProb);
+
+  BOOST_REQUIRE_EQUAL(logProb.n_elem, 2);
+
+  BOOST_REQUIRE_CLOSE(logProb(0), -3.2188758248682, 1e-3);
+  BOOST_REQUIRE_CLOSE(logProb(1), -3.2188758248682, 1e-3);
+}
+
+/**
+ * Test the Probability() function, for multiple points in the multivariate
+ * Discrete case.
+ */
+BOOST_AUTO_TEST_CASE(DiscreteProbabilityTest)
+{
+  // Same case as before.
+  DiscreteDistribution d("5 5");
+
+  arma::mat obs("0 2;"
+                "1 2;");
+
+  arma::vec prob;
+
+  d.Probability(obs, prob);
+
+  BOOST_REQUIRE_EQUAL(prob.n_elem, 2);
+
+  BOOST_REQUIRE_CLOSE(prob(0), 0.0400000000000, 1e-3);
+  BOOST_REQUIRE_CLOSE(prob(1), 0.0400000000000, 1e-3);
 }
 
 /*********************************/

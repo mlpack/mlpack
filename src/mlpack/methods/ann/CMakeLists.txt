@@ -5,6 +5,8 @@ set(SOURCES
   ffn_impl.hpp
   rnn.hpp
   rnn_impl.hpp
+  brnn.hpp
+  brnn_impl.hpp
 )
 
 add_subdirectory(visitor)

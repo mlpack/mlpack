@@ -183,11 +183,12 @@ class LARS
    * @param responses A vector of targets.
    * @param beta Vector to store the solution (the coefficients) in.
    * @param transposeData Set to false if the data is row-major.
+   * @return The final absolute maximum correlation.
    */
-  void Train(const arma::mat& data,
-             const arma::rowvec& responses,
-             arma::vec& beta,
-             const bool transposeData = true);
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses,
+               arma::vec& beta,
+               const bool transposeData = true);
 
   /**
    * Run LARS.  The input matrix (like all mlpack matrices) should be
@@ -201,10 +202,11 @@ class LARS
    * @param responses A vector of targets.
    * @param transposeData Should be true if the input data is column-major and
    *     false otherwise.
+   * @return The final absolute maximum correlation.
    */
-  void Train(const arma::mat& data,
-             const arma::rowvec& responses,
-             const bool transposeData = true);
+  double Train(const arma::mat& data,
+               const arma::rowvec& responses,
+               const bool transposeData = true);
 
   /**
    * Predict y_i for each data point in the given data matrix using the
