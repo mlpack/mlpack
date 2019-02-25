@@ -70,7 +70,7 @@ arma::cube conv_block(arma::cube<eT>&& input, const size_t input_size,
   input.n_cols, input.n_rows);
   c.Forward(input, input);
 
-  if(dropout_rate)
+  if (dropout_rate)
   {
     Dropout<> d(dropout_rate);
     d.Forward(input, input);
@@ -100,7 +100,7 @@ template<typename eT>
 void Dense<InputDataType, OutputDataType>::Backward(
     const arma::cube<eT>&& input, arma::cube<eT>&& gy, arma::cube<eT>&& g)
 {
-
+  // Yet to be implemented.
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -110,7 +110,7 @@ void Dense<InputDataType, OutputDataType>::Gradient(
     arma::cube<eT>&& error,
     arma::cube<eT>&& gradient)
 {
-
+  // Yet to be implemented.
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -118,7 +118,7 @@ template<typename Archive>
 void BatchNorm<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-
+  // Yet to be implemented.
 }
 
 } // namespace ann
