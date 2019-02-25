@@ -35,7 +35,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::RBM(
     const size_t poolSize,
     const ElemType slabPenalty,
     const ElemType radius,
-    const bool persistence):
+    const bool persistence) :
     predictors(std::move(predictors)),
     initializeRule(initializeRule),
     visibleSize(visibleSize),
