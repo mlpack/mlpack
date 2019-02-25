@@ -980,17 +980,21 @@ BOOST_AUTO_TEST_CASE(GammaDistributionLogProbabilityTest)
   // Train two 1-dimensional distributions.
   const arma::vec a1("2.0"), b1("0.9"), a2("3.1"), b2("1.4");
   arma::mat x1("2.0"), x2("2.94");
-  arma::vec prob1, prob2;
+  arma::vec logprob1, logprob2;
 
   // Evaluated at wolfram|alpha
   GammaDistribution d1(a1, b1);
-  d1.LogProbability(x1, prob1);
-  BOOST_REQUIRE_CLOSE(prob1(0), std::log(0.267575), 1e-3);
+  d1.LogProbability(x1, logprob1);
+  BOOST_REQUIRE_CLOSE(logprob1(0), std::log(0.267575), 1e-3);
 
   // Evaluated at wolfram|alpha
   GammaDistribution d2(a2, b2);
-  d2.LogProbability(x2, prob2);
-  BOOST_REQUIRE_CLOSE(prob2(0), std::log(0.189043), 1e-3);
+  d2.LogProbability(x2, logprob2);
+  BOOST_REQUIRE_CLOSE(logprob2(0), std::log(0.189043), 1e-3);
+
+  // Check that the overload that returns the log probability for
+  // 1 dimension agrees.
+  BOOST_REQUIRE_CLOSE(logprob2(0), d2.LogProbability(2.94, 0), 1e-5);
 
   // Combine into one 2-dimensional distribution.
   const arma::vec a3("2.0 3.1"), b3("0.9 1.4");
@@ -998,14 +1002,14 @@ BOOST_AUTO_TEST_CASE(GammaDistributionLogProbabilityTest)
   x3
     << 2.0 << 2.94 << arma::endr
     << 2.0 << 2.94;
-  arma::vec prob3;
+  arma::vec logprob3;
 
   // Expect that the 2-dimensional distribution returns the product of the
   // 1-dimensional distributions (evaluated at wolfram|alpha).
   GammaDistribution d3(a3, b3);
-  d3.LogProbability(x3, prob3);
-  BOOST_REQUIRE_CLOSE(prob3(0), std::log(0.04408), 1e-3);
-  BOOST_REQUIRE_CLOSE(prob3(1), std::log(0.026165), 1e-3);
+  d3.LogProbability(x3, logprob3);
+  BOOST_REQUIRE_CLOSE(logprob3(0), std::log(0.04408), 1e-3);
+  BOOST_REQUIRE_CLOSE(logprob3(1), std::log(0.026165), 1e-3);
 }
 
 /**

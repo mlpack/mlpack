@@ -1,6 +1,7 @@
 /**
  * @file gamma_distribution.cpp
  * @author Yannis Mentekidis
+ * @author Rohan Raj
  *
  * Implementation of the methods of GammaDistribution.
  *
@@ -221,6 +222,14 @@ void GammaDistribution::LogProbability(const arma::mat& observations,
       LogProbabilities(i) += std::log(numerator * factor / denominators(d));
     }
   }
+}
+
+// Returns the log probability of one observation (x) for one of the Gamma's
+// dimensions.
+double GammaDistribution::LogProbability(double x, size_t dim) const
+{
+  return std::log(std::pow(x, alpha(dim) - 1) * std::exp(-x / beta(dim)) /
+      (std::tgamma(alpha(dim)) * std::pow(beta(dim), alpha(dim))));
 }
 
 // Returns a gamma-random d-dimensional vector.
