@@ -68,6 +68,20 @@ class Dense
     const double weight_decay = 1e-4);
 
   /**
+   * Create the Convolution block used for building dense blocks.
+   * 
+   * @param input Input data used for evaluating the specified function.
+   * @param growth_rate Growth rate of the dense block.
+   * @param bottleneck Bottleneck convolution block is added to each convolution
+   *        block if true.
+   * @param dropout_rate Dropout rate for the dropout layer.
+   * @param weight_decay Weight decay factor.
+   */
+  template<typename eT>
+  arma::mat conv_block(const arma::Mat<eT>&& input, const size_t growth_rate,
+    const bool bottleneck, const double dropout_rate, const double weight_decay);
+
+  /**
    * Ordinary feed forward pass of the dense layer.
    *
    * @param input Input data used for evaluating the specified function.
