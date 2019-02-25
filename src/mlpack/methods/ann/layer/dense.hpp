@@ -45,8 +45,8 @@ namespace ann /** Artificial Neural Network. */ {
  * bibsource = {dblp computer science bibliography, https://dblp.org}
  * }
  */
-template<typename InputDataType = arma::mat,
-         typename OutputDataType = arma::mat>
+template<typename InputDataType = arma::cube,
+         typename OutputDataType = arma::cube>
 class Dense
 {
  public:
@@ -78,8 +78,9 @@ class Dense
    * @param weight_decay Weight decay factor.
    */
   template<typename eT>
-  arma::mat conv_block(const arma::Mat<eT>&& input, const size_t growth_rate,
-    const bool bottleneck, const double dropout_rate, const double weight_decay);
+  arma::cube conv_block(arma::cube<eT>&& input, const size_t input_size,
+    const size_t growth_rate, const bool bottleneck,
+    const double dropout_rate, const double weight_decay);
 
   /**
    * Ordinary feed forward pass of the dense layer.
@@ -88,7 +89,7 @@ class Dense
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::cube<eT>&& input, arma::cube<eT>&& output);
 
   /**
    * Ordinary feed backward pass of the dense layer.
@@ -98,9 +99,9 @@ class Dense
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::cube<eT>&& /* input */,
+                arma::cube<eT>&& gy,
+                arma::cube<eT>&& g);
 
   /**
    * Calculate the gradient using the output delta and the input activations.
@@ -110,9 +111,9 @@ class Dense
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
+  void Gradient(const arma::cube<eT>&& input,
+                arma::cube<eT>&& error,
+                arma::cube<eT>&& gradient);
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
