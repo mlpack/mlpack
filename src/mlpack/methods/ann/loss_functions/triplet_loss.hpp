@@ -54,11 +54,10 @@ class TripletLoss{
    * @param negative Example which belongs to different class than the anchor
    * @param target The target vector.
    */
-  template<typename InputType, typename TargetType>
+  template<typename InputType>
   double Forward(const InputType&& anchor, 
                  const InputType&& positive,
-                 const InputType&& negative, 
-                 const TargetType&& target); 
+                 const InputType&& negative); 
 
   /**
    * Ordinary feed backward pass of a neural network.

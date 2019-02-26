@@ -29,10 +29,10 @@ TripletLoss<InputDataType, OutputDataType>
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
+template<typename InputType>
 double TripletLoss<InputDataType, OutputDataType>::Forward(
     const InputType&& anchor, const InputType&& positive,
-    const InputType&& negative, const TargetType&& target)
+    const InputType&& negative)
 {
   arma::mat positive_distance = 
       metric::SquaredEuclideanDistance::Evaluate(anchor, positive);
@@ -47,14 +47,25 @@ double TripletLoss<InputDataType, OutputDataType>::Forward(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename InputType, typename OutputType>
 void TripletLoss<InputDataType, OutputDataType>::Backward(
     const InputType&& anchor,
     const InputType&& positive,
     const InputType&& negative,
-    const TargetType&& target,
     OutputType&& output)
 {
+  if (TripletLoss<InputDataType, OutputDataType>
+      ::Forward(anchor, positive, negative) != 0)
+  {
+    float output_anchor =arma::accu(2*(negative - positive));
+    float output_positive = arma::accu(-2*(anchor - positive));
+    float output_negative = arma::accu(2*(anchor - negative));
+    output = arma::colvec(output_anchor, output_positive, output_negative); 
+  }
+  else
+  {
+    output.zeros;
+  }
   
 }
 
