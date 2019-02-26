@@ -529,6 +529,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
         std::move(boost::apply_visitor(outputParameterVisitor,
         backwardRNN.network[networkSize - 2])),
         std::move(allDelta[seqNum]), 1), mergeLayer);
+    totalGradient += backwardGradient;
   }
   return performance;
 }
