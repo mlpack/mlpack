@@ -33,6 +33,23 @@ namespace svm {
  *
  * https://link.springer.com/content/pdf/10.1007%2FBF00994018.pdf
  *
+ * An example on how to use the interface is shown below:
+ *
+ * @code
+ * arma::mat train_data; // Training data matrix.
+ * arma::Row<size_t> labels; // Labels associated with the data.
+ * const size_t inputSize = 1000; // Size of input feature vector.
+ * const size_t numClasses = 5; // Number of classes.
+ *
+ * // Train the model using default options.
+ * LinearSVM<> lsvm(train_data, labels, inputSize, numClasses, lambda,
+ *     L_BFGS());
+ *
+ * arma::mat test_data;
+ * arma::Row<size_t> predictions;
+ * lsvm.Classify(test_data, predictions);
+ * @endcode
+ *
  * @tparam MatType Type of data matrix.
  */
 template <typename MatType = arma::mat>
