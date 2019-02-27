@@ -9,16 +9,16 @@ assignees: ''
 
 <!--
 
-Welcome!  Unfortunately not all documentation is perfect, and if you're opening
+Welcome!Unfortunately, not all documentation is perfect, and if you're opening
 a documentation issue we are interested in fixing it.  Please fill out the
-template below so that we can solve the problem more quickly; or, alternately,
+template below so that we can solve the problem more quickly; or, alternatively,
 open a PR with a fix, if you like.
 
 -->
 
 #### Problem location
 
-<!-- Link to incorrect website or location of source file with bad
+<!-- Link to incorrect website or location of the source file with bad
 documentation. -->
 
 #### Description of problem
