@@ -28,6 +28,7 @@ add_executable(mlpack_test
   det_test.cpp
   distribution_test.cpp
   drusilla_select_test.cpp
+  emfit_test.cpp
   emst_test.cpp
   fastmks_test.cpp
   feedforward_network_test.cpp
