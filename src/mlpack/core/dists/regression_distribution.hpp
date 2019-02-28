@@ -175,7 +175,7 @@ inline void RegressionDistribution::LogProbability(
 {
   logProbabilities.set_size(x.n_cols);
   for (size_t i = 0; i < x.n_cols; i++)
-    logProbabilities(i) = log(Probability(x.unsafe_col(i)));
+    logProbabilities(i) = LogProbability(x.unsafe_col(i));
 }
 
 } // namespace distribution
