@@ -1348,10 +1348,12 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMGenerateTest)
 }
 
 /**
- * Make sure the training is reasonable given a sigle distribution with
- * diagonal covariance.
+ * Make sure the unlabeled training works reasonably given a sigle distribution
+ * with diagonal covariance.  If labels are not given, when training GMM, the
+ * estimated probabilities based on the forward and backward probabilities is
+ * used.
  */
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMSimpleTrainingTest)
+BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianUnlabeledTrainingTest)
 {
   // Create a gaussian distribution with diagonal covariance.
   DiagCovGaussianDistribution d("2.05 3.45", "0.89 1.05");
@@ -1384,7 +1386,11 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMSimpleTrainingTest)
   CheckMatrices(hmm.Emission()[0].Component(0).Covariance(), actualCovar);
 }
 
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMLabeledTrainingTest)
+/**
+ * Make sure the labeled training works reasonably given multiple distributions
+ * with diagonal covariance.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansLabeledTrainingTest)
 {
   // Create a sequence of DiagonalGMMs.
   std::vector<DiagonalGMM> gmms(2, DiagonalGMM(2, 2));
@@ -1475,7 +1481,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMLabeledTrainingTest)
   BOOST_REQUIRE_SMALL(hmm.Emission()[1].Weights()[sortedIndices[1]] -
       gmms[1].Weights()[1], 0.08);
 
-  // Check the estimated means of the first DiagonalGMM.
+  // Check the estimated means of the second DiagonalGMM.
   BOOST_REQUIRE_LT(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[0]).Mean() -
       gmms[1].Component(0).Mean()), 0.2);
@@ -1483,7 +1489,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMLabeledTrainingTest)
       hmm.Emission()[1].Component(sortedIndices[1]).Mean() -
       gmms[1].Component(1).Mean()), 0.2);
 
-  // Check the estimated covariances of the first DiagonalGMM.
+  // Check the estimated covariances of the second DiagonalGMM.
   BOOST_REQUIRE_LT(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[0]).Covariance() -
       gmms[1].Component(0).Covariance()), 0.5);
