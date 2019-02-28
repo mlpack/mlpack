@@ -64,6 +64,20 @@ double RegressionDistribution::Probability(const arma::vec& observation) const
   return err.Probability(observation(0)-fitted.t());
 }
 
+/**
+ * Evaluate probability density function of given observation.
+ *
+ * @param x List of observations.
+ * @param probabilities Output probabilities for each input observation.
+ */
+void RegressionDistribution::Probability(const arma::mat& x,
+                                         arma::vec& probabilities) const
+{
+  probabilities.set_size(x.n_cols);
+  for (size_t i = 0; i < x.n_cols; i++)
+    logProbabilities(i) = log(Probability(x.unsafe_col(i)));
+}
+
 void RegressionDistribution::Predict(const arma::mat& points,
                                      arma::vec& predictions) const
 {

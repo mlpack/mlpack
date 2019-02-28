@@ -1,6 +1,7 @@
 /**
  * @file regression_distribution.hpp
  * @author Michael Fox
+ * @author Rohan Raj
  *
  * Implementation of conditional Gaussian distribution for HMM regression (HMMR)
  *
@@ -120,6 +121,14 @@ class RegressionDistribution
   double Probability(const arma::vec& observation) const;
 
   /**
+  * Evaluate probability density function of given observation
+  *
+  * @param x List of observations.
+  * @param probabilities Output probabilities for each input observation.
+  */
+  void Probability(const arma::mat& x, arma::vec& probabilities) const;
+
+  /**
   * Evaluate log probability density function of given observation
   *
   * @param observation point to evaluate log probability at
@@ -127,6 +136,14 @@ class RegressionDistribution
   double LogProbability(const arma::vec& observation) const {
     return log(Probability(observation));
   }
+
+  /**
+  * Evaluate log probability density function of given observation
+  *
+  * @param x List of observations.
+  * @param logProbabilities Output probabilities for each input observation.
+  */
+  void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
 
   /**
    * Calculate y_i for each data point in points.
@@ -152,6 +169,14 @@ class RegressionDistribution
   size_t Dimensionality() const { return rf.Parameters().n_elem; }
 };
 
+inline void RegressionDistribution::LogProbability(
+    const arma::mat& x,
+    arma::vec& logProbabilities) const
+{
+  logProbabilities.set_size(x.n_cols);
+  for (size_t i = 0; i < x.n_cols; i++)
+    logProbabilities(i) = log(Probability(x.unsafe_col(i)));
+}
 
 } // namespace distribution
 } // namespace mlpack
