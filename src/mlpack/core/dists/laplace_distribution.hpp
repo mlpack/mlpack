@@ -109,8 +109,8 @@ class LaplaceDistribution
    * @param x List of observations.
    * @param logProbabilities Output probabilities for each input observation.
    */
-
   void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
+
   /**
    * Return a randomly generated observation according to the probability
    * distribution defined by this object.  This is inlined for speed.
