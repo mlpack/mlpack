@@ -463,9 +463,9 @@ BOOST_AUTO_TEST_CASE(LinearSVMLGFGSSimpleTest)
     LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, lambda,
         ens::L_BFGS());
 
-    // Compare training accuracy to 100.
+    // Compare training accuracy to 1.
     const double acc = lsvm.ComputeAccuracy(dataset, labels);
-    BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
+    BOOST_REQUIRE_CLOSE(acc, 1.0, 0.5);
 }
 
 /**
@@ -494,9 +494,9 @@ BOOST_AUTO_TEST_CASE(LinearSVMGradientDescentSimpleTest)
   ens::GradientDescent optimizer(stepSize, maxIterations, tolerance);
   LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, lambda, optimizer);
 
-  // Compare training accuracy to 100.
+  // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(dataset, labels);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
+  BOOST_REQUIRE_CLOSE(acc, 1.0, 0.5);
 }
 
 /**
@@ -532,9 +532,9 @@ BOOST_AUTO_TEST_CASE(LinearSVMLBFGSTwoClasses)
   LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda,
       ens::L_BFGS());
 
-  // Compare training accuracy to 100.
+  // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
+  BOOST_REQUIRE_CLOSE(acc, 1.0, 0.5);
 
   // Create test dataset.
   for (size_t i = 0; i < points / 2; i++)
@@ -548,9 +548,9 @@ BOOST_AUTO_TEST_CASE(LinearSVMLBFGSTwoClasses)
     labels(i) = 1;
   }
 
-  // Compare test accuracy to 100.
+  // Compare test accuracy to 1.
   const double testAcc = lsvm.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6);
+  BOOST_REQUIRE_CLOSE(testAcc, 1.0, 0.6);
 }
 
 /**
@@ -588,9 +588,9 @@ BOOST_AUTO_TEST_CASE(LinearSVMPSGDSimpleTest)
       1e-5, true, decayPolicy);
   LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, lambda, optimizer);
 
-  // Compare training accuracy to 100.
+  // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(dataset, labels);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
+  BOOST_REQUIRE_CLOSE(acc, 1.0, 0.5);
 }
 
 /**
@@ -632,9 +632,9 @@ BOOST_AUTO_TEST_CASE(LinearSVMParallelSGDTwoClasses)
       1e-5, true, decayPolicy);
   LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda, optimizer);
 
-  // Compare training accuracy to 100.
+  // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
+  BOOST_REQUIRE_CLOSE(acc, 1.0, 0.5);
 
   // Create test dataset.
   for (size_t i = 0; i < points / 2; i++)
@@ -648,9 +648,9 @@ BOOST_AUTO_TEST_CASE(LinearSVMParallelSGDTwoClasses)
     labels(i) = 1;
   }
 
-  // Compare test accuracy to 100.
+  // Compare test accuracy to 1.
   const double testAcc = lsvm.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6);
+  BOOST_REQUIRE_CLOSE(testAcc, 1.0, 0.6);
 }
 
 #endif
@@ -728,9 +728,9 @@ BOOST_AUTO_TEST_CASE(LinearSVMLBFGSMultipleClasses)
   // Train linear svm object using L-BFGS optimizer.
   LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda, ens::L_BFGS());
 
-  // Compare training accuracy to 100.
+  // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 2.0);
+  BOOST_REQUIRE_CLOSE(acc, 1.0, 2.0);
 
   // Create test dataset.
   for (size_t i = 0; i < points / 5; i++)
@@ -759,9 +759,9 @@ BOOST_AUTO_TEST_CASE(LinearSVMLBFGSMultipleClasses)
     labels(i) = 4;
   }
 
-  // Compare test accuracy to 100.
+  // Compare test accuracy to 1.
   const double testAcc = lsvm.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 2.0);
+  BOOST_REQUIRE_CLOSE(testAcc, 1.0, 2.0);
 }
 
 /**
