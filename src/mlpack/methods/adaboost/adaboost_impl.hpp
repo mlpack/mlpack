@@ -55,8 +55,8 @@ AdaBoost<WeakLearnerType, MatType>::AdaBoost(
 // Empty constructor.
 template<typename WeakLearnerType, typename MatType>
 AdaBoost<WeakLearnerType, MatType>::AdaBoost(const double tolerance) :
-    tolerance(tolerance),
     numClasses(0),
+    tolerance(tolerance),
     ztProduct(1.0)
 {
   // Nothing to do.
