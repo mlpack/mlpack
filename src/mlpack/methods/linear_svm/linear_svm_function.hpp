@@ -18,6 +18,7 @@
 
 namespace mlpack {
 namespace svm {
+
 /**
  * The hinge loss function for the linear SVM objective function.
  * This is used by various ensmallen optimizers to train the linear

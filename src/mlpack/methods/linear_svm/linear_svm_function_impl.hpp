@@ -25,13 +25,13 @@ namespace svm {
 
 template <typename MatType>
 LinearSVMFunction<MatType>::LinearSVMFunction(
-  const MatType& dataset,
-  const arma::Row<size_t>& labels,
-  const size_t numClasses,
-  const double lambda) :
-  dataset(math::MakeAlias(const_cast<MatType&>(dataset), false)),
-  numClasses(numClasses),
-  lambda(lambda)
+    const MatType& dataset,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const double lambda) :
+    dataset(math::MakeAlias(const_cast<MatType&>(dataset), false)),
+    numClasses(numClasses),
+    lambda(lambda)
 {
   // Initialize the parameters to suitable values.
   initialPoint = InitializeWeights();
@@ -53,8 +53,8 @@ const arma::mat LinearSVMFunction<MatType>::InitializeWeights()
 
 template <typename MatType>
 const arma::mat LinearSVMFunction<MatType>::InitializeWeights(
-        const size_t featureSize,
-        const size_t numClasses)
+    const size_t featureSize,
+    const size_t numClasses)
 {
   arma::mat parameters;
   InitializeWeights(parameters, featureSize, numClasses);
@@ -63,9 +63,9 @@ const arma::mat LinearSVMFunction<MatType>::InitializeWeights(
 
 template <typename MatType>
 void LinearSVMFunction<MatType>::InitializeWeights(
-        arma::mat &weights,
-        const size_t featureSize,
-        const size_t numClasses)
+    arma::mat &weights,
+    const size_t featureSize,
+    const size_t numClasses)
 {
   // Initialize values to 0.005 * r. 'r' is a matrix of random values taken from
   // a Gaussian distribution with mean zero and variance one.
@@ -80,7 +80,8 @@ void LinearSVMFunction<MatType>::InitializeWeights(
  */
 template <typename MatType>
 void LinearSVMFunction<MatType>::GetGroundTruthMatrix(
-        const arma::Row<size_t>& labels, arma::sp_mat& groundTruth)
+    const arma::Row<size_t>& labels,
+    arma::sp_mat& groundTruth)
 {
   // Calculate the ground truth matrix according to the labels passed. The
   // ground truth matrix is a matrix of dimensions 'numClasses * numExamples',
