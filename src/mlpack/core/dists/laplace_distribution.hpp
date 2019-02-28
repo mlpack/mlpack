@@ -89,11 +89,11 @@ class LaplaceDistribution
   }
 
   /**
-  * Evaluate probability density function of given observation
-  *
-  * @param x List of observations.
-  * @param probabilities Output probabilities for each input observation.
-  */
+   * Evaluate probability density function of given observation
+   *
+   * @param x List of observations.
+   * @param probabilities Output probabilities for each input observation.
+   */
   void Probability(const arma::mat& x, arma::vec& probabilities) const;
 
   /**
@@ -104,11 +104,11 @@ class LaplaceDistribution
   double LogProbability(const arma::vec& observation) const;
 
   /**
-  * Evaluate log probability density function of given observation
-  *
-  * @param x List of observations.
-  * @param logProbabilities Output probabilities for each input observation.
-  */
+   * Evaluate log probability density function of given observation
+   *
+   * @param x List of observations.
+   * @param logProbabilities Output probabilities for each input observation.
+   */
 
   void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
   /**
