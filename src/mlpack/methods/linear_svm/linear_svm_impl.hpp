@@ -152,8 +152,8 @@ const
     if (testLabels(i) == labels(i))
       count++;
 
-  // Return percentage accuracy
-  return count / labels.n_elem;
+  // Return the accuracy.
+  return (double)count / labels.n_elem;
 }
 
 } // namespace svm
