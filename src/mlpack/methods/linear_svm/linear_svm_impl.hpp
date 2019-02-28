@@ -153,7 +153,7 @@ const
       count++;
 
   // Return percentage accuracy
-  return (count * 100.0) / labels.n_elem;
+  return count / labels.n_elem;
 }
 
 } // namespace svm

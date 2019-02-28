@@ -164,7 +164,7 @@ double LinearSVMFunction<MatType>::Evaluate(
       + 1 - groundTruth;
 
   // The Hinge Loss Function
-  loss = arma::accu(arma::clamp(margin, 0.0, margin.max()));
+  loss = arma::accu(arma::clamp(margin, 0.0, DBL_MAX));
   loss /= dataset.n_cols;
 
   // Adding the regularization term.
@@ -194,7 +194,7 @@ double LinearSVMFunction<MatType>::Evaluate(
 
   // The Hinge Loss Function
   loss = arma::accu(arma::clamp(margin.cols(firstId, lastId),
-      0.0, margin.max()));
+      0.0, DBL_MAX));
   loss /= batchSize;
 
   // Adding the regularization term.
@@ -292,7 +292,7 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
   gradient += lambda * parameters;
 
   // The Hinge Loss Function
-  loss = arma::accu(arma::clamp(margin, 0.0, margin.max()));
+  loss = arma::accu(arma::clamp(margin, 0.0, DBL_MAX));
   loss /= dataset.n_cols;
 
   // Adding the regularization term.
@@ -340,7 +340,7 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
 
   // The Hinge Loss Function
   loss = arma::accu(arma::clamp(margin.cols(firstId, lastId),
-      0.0, margin.max()));
+      0.0, DBL_MAX));
   loss /= batchSize;
 
   // Adding the regularization term.
