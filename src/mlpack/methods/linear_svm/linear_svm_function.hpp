@@ -46,20 +46,6 @@ class LinearSVMFunction
    */
   void Shuffle();
 
-  //! Initializes the parameters of the model to suitable values.
-  const arma::mat InitializeWeights();
-
-  /**
-   * Initialize Linear SVM weights (trainable parameters) with the given
-   * parameters.
-   *
-   * @param featureSize The number of features in the training set.
-   * @param numClasses Number of classes for classification.
-   * @return Initialized model weights.
-   */
-  static const arma::mat InitializeWeights(const size_t featureSize,
-                                           const size_t numClasses);
-
   /**
    * Initialize Linear SVM weights (trainable parameters) with the given
    * parameters.

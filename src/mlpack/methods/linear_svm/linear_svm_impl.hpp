@@ -34,13 +34,12 @@ LinearSVM<MatType>::LinearSVM(
 
 template <typename MatType>
 LinearSVM<MatType>::LinearSVM(
-    const size_t inputSize,
-    const size_t numClasses) :
+    const size_t numClasses,
+    const double lambda) :
     numClasses(numClasses),
-    lambda(0.0001)
+    lambda(lambda)
 {
-  LinearSVMFunction<MatType>::InitializeWeights(
-      parameters, inputSize, numClasses);
+  // No training to do here.
 }
 
 template <typename MatType>
