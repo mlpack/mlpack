@@ -188,7 +188,7 @@ class DiscreteDistribution
    * in logProbabilities.
    *
    * @param x List of observations.
-   * @param logProbabilities Output probabilities for each input
+   * @param logProbabilities Output log of probabilities for each input
    *   observation.
    */
   void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
