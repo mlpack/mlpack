@@ -79,9 +79,9 @@ const
 
 template <typename MatType>
 void LinearSVM<MatType>::Classify(
-        const MatType& data,
-        arma::Row<size_t>& labels,
-        arma::mat& scores)
+    const MatType& data,
+    arma::Row<size_t>& labels,
+    arma::mat& scores)
 const
 {
   Classify(data, scores);
@@ -111,8 +111,8 @@ const
 
 template <typename MatType>
 void LinearSVM<MatType>::Classify(
-        const MatType& data,
-        arma::mat& scores)
+    const MatType& data,
+    arma::mat& scores)
 const
 {
   if (data.n_rows != FeatureSize())
