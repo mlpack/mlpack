@@ -1236,7 +1236,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLoadSaveTest)
 //! Make sure the prediction of DiagonalGMM HMMs is reasonable.
 BOOST_AUTO_TEST_CASE(DiagonalGMMHMMPredictTest)
 {
-  // This test is probabilistic, so we perform it three times for robustness.
+  // This test is probabilistic, so we perform it three times to make it robust.
   bool success = false;
   for (size_t trial = 0; trial < 3; trial++)
   {
@@ -1261,15 +1261,17 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMPredictTest)
     arma::vec initial("1 0");
 
     // Transition matrix.
-    arma::mat transProb("0.20 0.70;"
-                        "0.80 0.30");
+    arma::mat transProb("0.40 0.70;"
+                        "0.60 0.30");
 
     // Build the model.
     HMM<DiagonalGMM> hmm(initial, transProb, gmms);
 
-    // Make a sequence of observations.
+    // Make a sequence of observations according to transition probabilities.
     arma::mat observations(2, 1000);
     arma::Row<size_t> states(1000);
+
+    // Set initial state to zero.
     states[0] = 0;
     observations.col(0) = gmms[0].Random();
 
@@ -1306,7 +1308,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMPredictTest)
 }
 
 /**
- * Make sure generating a random data sequence is correct when the emission
+ * Make sure a random data sequence generation is correct when the emission
  * distribution is DiagonalGMM.
  */
 BOOST_AUTO_TEST_CASE(DiagonalGMMHMMGenerateTest)
@@ -1348,12 +1350,10 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMGenerateTest)
 }
 
 /**
- * Make sure the unlabeled training works reasonably given a sigle distribution
- * with diagonal covariance.  If labels are not given, when training GMM, the
- * estimated probabilities based on the forward and backward probabilities is
- * used.
+ * Make sure the unlabeled 1-state training works reasonably given a sigle
+ * distribution with diagonal covariance.
  */
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianUnlabeledTrainingTest)
+BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianOneStateTrainingTest)
 {
   // Create a gaussian distribution with diagonal covariance.
   DiagCovGaussianDistribution d("2.05 3.45", "0.89 1.05");
@@ -1387,23 +1387,285 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianUnlabeledTrainingTest)
 }
 
 /**
+ * Make sure the unlabeled training works reasonably given a sigle distribution
+ * with diagonal covariance.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianUnlabeledTrainingTest)
+{
+  // Create a sequence of DiagonalGMMs. Each GMM has one gaussian distribution.
+  std::vector<DiagonalGMM> gmms(2, DiagonalGMM(1, 2));
+  gmms[0].Component(0) = DiagCovGaussianDistribution("1.25 2.10",
+      "0.97 1.00");
+
+  gmms[1].Component(0) = DiagCovGaussianDistribution("-2.48 -3.02",
+      "1.02 0.80");
+
+  // Transition matrix.
+  arma::mat transProbs("0.30 0.80;"
+                       "0.70 0.20");
+
+  arma::vec initialProb("1 0");
+
+  // Make a sequence of observations.
+  std::vector<arma::mat> observations(2, arma::mat(2, 500));
+  std::vector<arma::Row<size_t>> states(2, arma::Row<size_t>(500));
+  for (size_t obs = 0; obs < 2; obs++)
+  {
+    states[obs][0] = 0;
+    observations[obs].col(0) = gmms[0].Random();
+
+    for (size_t i = 1; i < 500; i++)
+    {
+      double randValue = math::Random();
+
+      if (randValue <= transProbs(0, states[obs][i - 1]))
+        states[obs][i] = 0;
+      else
+        states[obs][i] = 1;
+
+      observations[obs].col(i) = gmms[states[obs][i]].Random();
+    }
+  }
+
+  // Build the model.
+  HMM<DiagonalGMM> hmm(initialProb, transProbs, gmms);
+
+  // Train the model. If labels are not given, when training GMM, the estimated
+  // probabilities based on the forward and backward probabilities is used.
+  hmm.Train(observations);
+
+  // Check the initial weights.
+  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 0.01);
+  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.01);
+
+  // Check the transition probability matrix.
+  for (size_t i = 0; i < 2; i++)
+    for (size_t j = 0; j < 2; j++)
+      BOOST_REQUIRE_SMALL(hmm.Transition()(i, j) - transProbs(i, j), 0.08);
+
+  // Check the estimated weights of the each emission distribution.
+  for (size_t i = 0; i < 2; i++)
+    BOOST_REQUIRE_SMALL(hmm.Emission()[i].Weights()[0] - gmms[i].Weights()[0],
+        0.08);
+
+  // Check the estimated means of the each emission distribution.
+  for (size_t i = 0; i < 2; i++)
+    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[i].Component(0).Mean() -
+        gmms[i].Component(0).Mean()), 0.2);
+
+  // Check the estimated covariances of the each emission distribution.
+  for (size_t i = 0; i < 2; i++)
+    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[i].Component(0).Covariance() -
+        gmms[i].Component(0).Covariance()), 0.5);
+}
+
+/**
+ * Make sure the labeled training works reasonably given a sigle distribution
+ * with diagonal covariance.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianLabeledTrainingTest)
+{
+  // Create a sequence of DiagonalGMMs.
+  std::vector<DiagonalGMM> gmms(3, DiagonalGMM(1, 2));
+  gmms[0].Component(0) = DiagCovGaussianDistribution("5.25 7.10",
+      "0.97 1.00");
+
+  gmms[1].Component(0) = DiagCovGaussianDistribution("4.48 6.02",
+      "1.02 0.80");
+
+  gmms[2].Component(0) = DiagCovGaussianDistribution("-3.28 -5.30",
+      "0.87 1.05");
+
+  // Transition matrix.
+  arma::mat transProbs("0.2 0.4 0.4;"
+                       "0.3 0.4 0.3;"
+                       "0.5 0.2 0.3");
+
+  arma::vec initialProb("1 0 0");
+
+  // Make a sequence of observations.
+  std::vector<arma::mat> observations(3, arma::mat(2, 5000));
+  std::vector<arma::Row<size_t>> states(3, arma::Row<size_t>(5000));
+  for (size_t obs = 0; obs < 3; obs++)
+  {
+    states[obs][0] = 0;
+    observations[obs].col(0) = gmms[0].Random();
+
+    for (size_t i = 1; i < 5000; i++)
+    {
+      double randValue = math::Random();
+      double probSum = 0;
+      for (size_t state = 0; state < 3; state++)
+      {
+        probSum += transProbs(state, states[obs][i - 1]);
+        if (randValue <= probSum)
+        {
+          states[obs][i] = state;
+          break;
+        }
+      }
+
+      observations[obs].col(i) = gmms[states[obs][i]].Random();
+    }
+  }
+
+  // Build the model.
+  HMM<DiagonalGMM> hmm(3, DiagonalGMM(1, 2));
+
+  // Train the model.
+  hmm.Train(observations, states);
+
+  // Check the initial weights.
+  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 0.01);
+  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.01);
+  BOOST_REQUIRE_SMALL(hmm.Initial()[2], 0.01);
+
+  // Check the transition probability matrix.
+  for (size_t i = 0; i < 3; i++)
+    for (size_t j = 0; j < 3; j++)
+      BOOST_REQUIRE_SMALL(hmm.Transition()(i, j) - transProbs(i, j), 0.03);
+
+  // Check the estimated weights of the each emission distribution.
+  for (size_t i = 0; i < 3; i++)
+    BOOST_REQUIRE_SMALL(hmm.Emission()[i].Weights()[0] - gmms[i].Weights()[0],
+        0.08);
+
+  // Check the estimated means of the each emission distribution.
+  for (size_t i = 0; i < 3; i++)
+    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[i].Component(0).Mean() -
+        gmms[i].Component(0).Mean()), 0.2);
+
+  // Check the estimated covariances of the each emission distribution.
+  for (size_t i = 0; i < 3; i++)
+    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[i].Component(0).Covariance() -
+        gmms[i].Component(0).Covariance()), 0.5);
+}
+
+/**
+ * Make sure the unlabeled training works reasonably given multiple
+ * distributions with diagonal covariance.
+ */
+BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansUnlabeledTrainingTest)
+{
+  // Create a sequence of DiagonalGMMs.
+  std::vector<DiagonalGMM> gmms(2, DiagonalGMM(2, 2));
+  gmms[0].Weights() = arma::vec("0.3 0.7");
+  gmms[0].Component(0) = DiagCovGaussianDistribution("8.25 7.10",
+      "0.97 1.00");
+  gmms[0].Component(1) = DiagCovGaussianDistribution("-3.03 -2.28",
+      "1.20 0.89");
+
+  gmms[1].Weights() = arma::vec("0.4 0.6");
+  gmms[1].Component(0) = DiagCovGaussianDistribution("4.48 6.02",
+        "1.02 0.80");
+  gmms[1].Component(1) = DiagCovGaussianDistribution("-9.24 -8.40",
+        "0.85 1.58");
+
+  // Transition matrix.
+  arma::mat transProbs("0.30 0.40;"
+                       "0.70 0.60");
+
+  arma::vec initialProb("1 0");
+
+  // Make a sequence of observations.
+  std::vector<arma::mat> observations(2, arma::mat(2, 1000));
+  std::vector<arma::Row<size_t>> states(2, arma::Row<size_t>(1000));
+  for (size_t obs = 0; obs < 2; obs++)
+  {
+    states[obs][0] = 0;
+    observations[obs].col(0) = gmms[0].Random();
+
+    for (size_t i = 1; i < 1000; i++)
+    {
+      double randValue = math::Random();
+
+      if (randValue <= transProbs(0, states[obs][i - 1]))
+        states[obs][i] = 0;
+      else
+        states[obs][i] = 1;
+
+      observations[obs].col(i) = gmms[states[obs][i]].Random();
+    }
+  }
+
+  // Build the model.
+  HMM<DiagonalGMM> hmm(initialProb, transProbs, gmms);
+
+  // Train the model. If labels are not given, when training GMM, the estimated
+  // probabilities based on the forward and backward probabilities is used.
+  hmm.Train(observations);
+
+  // Check the initial weights.
+  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 0.01);
+  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.01);
+
+  // Check the transition probability matrix.
+  for (size_t i = 0; i < 2; i++)
+    for (size_t j = 0; j < 2; j++)
+      BOOST_REQUIRE_SMALL(hmm.Transition()(i, j) - transProbs(i, j), 0.08);
+
+  // Sort by the estimated weights of the first emission distribution.
+  arma::uvec sortedIndices = sort_index(hmm.Emission()[0].Weights());
+
+  // Check the first emission distribution.
+  for (size_t i = 0; i < 2; i++)
+  {
+    // Check the estimated weights using the first DiagonalGMM.
+    BOOST_REQUIRE_SMALL(hmm.Emission()[0].Weights()[sortedIndices[i]] -
+        gmms[0].Weights()[i], 0.08);
+
+    // Check the estimated means using the first DiagonalGMM.
+    BOOST_REQUIRE_LT(arma::norm(
+      hmm.Emission()[0].Component(sortedIndices[i]).Mean() -
+      gmms[0].Component(i).Mean()), 0.35);
+
+    // Check the estimated covariances using the first DiagonalGMM.
+    BOOST_REQUIRE_LT(arma::norm(
+      hmm.Emission()[0].Component(sortedIndices[i]).Covariance() -
+      gmms[0].Component(i).Covariance()), 0.6);
+  }
+
+  // Sort by the estimated weights of the second emission distribution.
+  sortedIndices = sort_index(hmm.Emission()[1].Weights());
+
+  // Check the second emission distribution.
+  for (size_t i = 0; i < 2; i++)
+  {
+    // Check the estimated weights using the second DiagonalGMM.
+    BOOST_REQUIRE_SMALL(hmm.Emission()[1].Weights()[sortedIndices[i]] -
+        gmms[1].Weights()[i], 0.08);
+
+    // Check the estimated means using the second DiagonalGMM.
+    BOOST_REQUIRE_LT(arma::norm(
+      hmm.Emission()[1].Component(sortedIndices[i]).Mean() -
+      gmms[1].Component(i).Mean()), 0.35);
+
+    // Check the estimated covariances using the second DiagonalGMM.
+    BOOST_REQUIRE_LT(arma::norm(
+      hmm.Emission()[1].Component(sortedIndices[i]).Covariance() -
+      gmms[1].Component(i).Covariance()), 0.6);
+  }
+}
+
+/**
  * Make sure the labeled training works reasonably given multiple distributions
  * with diagonal covariance.
  */
 BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansLabeledTrainingTest)
 {
+  math::RandomSeed(std::time(NULL));
   // Create a sequence of DiagonalGMMs.
   std::vector<DiagonalGMM> gmms(2, DiagonalGMM(2, 2));
   gmms[0].Weights() = arma::vec("0.3 0.7");
-  gmms[0].Component(0) = DiagCovGaussianDistribution("2.25 7.10",
+  gmms[0].Component(0) = DiagCovGaussianDistribution("2.25 5.30",
       "0.97 1.00");
-  gmms[0].Component(1) = DiagCovGaussianDistribution("5.03 2.28",
+  gmms[0].Component(1) = DiagCovGaussianDistribution("-3.15 -2.50",
       "1.20 0.89");
 
   gmms[1].Weights() = arma::vec("0.4 0.6");
-  gmms[1].Component(0) = DiagCovGaussianDistribution("-4.48 -6.02",
+  gmms[1].Component(0) = DiagCovGaussianDistribution("-4.48 -6.30",
         "1.02 0.80");
-  gmms[1].Component(1) = DiagCovGaussianDistribution("-5.24 -2.40",
+  gmms[1].Component(1) = DiagCovGaussianDistribution("5.24 2.40",
         "0.85 1.58");
 
   // Transition matrix.
@@ -1442,60 +1704,51 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansLabeledTrainingTest)
   BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.01);
 
   // Check the transition probability matrix.
-  BOOST_REQUIRE_SMALL(hmm.Transition()(0, 0) - transProbs(0, 0), 0.03);
-  BOOST_REQUIRE_SMALL(hmm.Transition()(0, 1) - transProbs(0, 1), 0.03);
-  BOOST_REQUIRE_SMALL(hmm.Transition()(1, 0) - transProbs(1, 0), 0.03);
-  BOOST_REQUIRE_SMALL(hmm.Transition()(1, 1) - transProbs(1, 1), 0.03);
+  for (size_t i = 0; i < 2; i++)
+    for (size_t j = 0; j < 2; j++)
+      BOOST_REQUIRE_SMALL(hmm.Transition()(i, j) - transProbs(i, j), 0.03);
 
-  // Sort the first DiagonalGMM for comparison.
+  // Sort by the estimated weights of the first emission distribution.
   arma::uvec sortedIndices = sort_index(hmm.Emission()[0].Weights());
 
-  // Check the estimated weights of the first DiagonalGMM.
-  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Weights()[sortedIndices[0]] -
-      gmms[0].Weights()[0], 0.08);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Weights()[sortedIndices[1]] -
-      gmms[0].Weights()[1], 0.08);
+  // Check the first emission distribution.
+  for (size_t i = 0; i < 2; i++)
+  {
+    // Check the estimated weights using the first DiagonalGMM.
+    BOOST_REQUIRE_SMALL(hmm.Emission()[0].Weights()[sortedIndices[i]] -
+        gmms[0].Weights()[i], 0.08);
 
-  // Check the estimated means of the first DiagonalGMM.
-  BOOST_REQUIRE_LT(arma::norm(
-      hmm.Emission()[0].Component(sortedIndices[0]).Mean() -
-      gmms[0].Component(0).Mean()), 0.2);
-  BOOST_REQUIRE_LT(arma::norm(
-      hmm.Emission()[0].Component(sortedIndices[1]).Mean() -
-      gmms[0].Component(1).Mean()), 0.2);
+    // Check the estimated means using the first DiagonalGMM.
+    BOOST_REQUIRE_LT(arma::norm(
+      hmm.Emission()[0].Component(sortedIndices[i]).Mean() -
+      gmms[0].Component(i).Mean()), 0.2);
 
-  // Check the estimated covariances of the first DiagonalGMM.
-  BOOST_REQUIRE_LT(arma::norm(
-      hmm.Emission()[0].Component(sortedIndices[0]).Covariance() -
-      gmms[0].Component(0).Covariance()), 0.5);
-  BOOST_REQUIRE_LT(arma::norm(
-      hmm.Emission()[0].Component(sortedIndices[1]).Covariance() -
-      gmms[0].Component(0).Covariance()), 0.5);
+    // Check the estimated covariances using the first DiagonalGMM.
+    BOOST_REQUIRE_LT(arma::norm(
+      hmm.Emission()[0].Component(sortedIndices[i]).Covariance() -
+      gmms[0].Component(i).Covariance()), 0.5);
+  }
 
-  // Sort the second DiagonalGMM for comparison.
+  // Sort by the estimated weights of the second emission distribution.
   sortedIndices = sort_index(hmm.Emission()[1].Weights());
 
-  // Check the estimated weights of the second DiagonalGMM.
-  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Weights()[sortedIndices[0]] -
-      gmms[1].Weights()[0], 0.08);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Weights()[sortedIndices[1]] -
-      gmms[1].Weights()[1], 0.08);
+  // Check the second emission distribution.
+  for (size_t i = 0; i < 2; i++)
+  {
+    // Check the estimated weights using the second DiagonalGMM.
+    BOOST_REQUIRE_SMALL(hmm.Emission()[1].Weights()[sortedIndices[i]] -
+        gmms[1].Weights()[i], 0.08);
 
-  // Check the estimated means of the second DiagonalGMM.
-  BOOST_REQUIRE_LT(arma::norm(
-      hmm.Emission()[1].Component(sortedIndices[0]).Mean() -
-      gmms[1].Component(0).Mean()), 0.2);
-  BOOST_REQUIRE_LT(arma::norm(
-      hmm.Emission()[1].Component(sortedIndices[1]).Mean() -
-      gmms[1].Component(1).Mean()), 0.2);
+    // Check the estimated means using the second DiagonalGMM.
+    BOOST_REQUIRE_LT(arma::norm(
+      hmm.Emission()[1].Component(sortedIndices[i]).Mean() -
+      gmms[1].Component(i).Mean()), 0.2);
 
-  // Check the estimated covariances of the second DiagonalGMM.
-  BOOST_REQUIRE_LT(arma::norm(
-      hmm.Emission()[1].Component(sortedIndices[0]).Covariance() -
-      gmms[1].Component(0).Covariance()), 0.5);
-  BOOST_REQUIRE_LT(arma::norm(
-      hmm.Emission()[1].Component(sortedIndices[1]).Covariance() -
-      gmms[1].Component(1).Covariance()), 0.5);
+    // Check the estimated covariances using the second DiagonalGMM.
+    BOOST_REQUIRE_LT(arma::norm(
+      hmm.Emission()[1].Component(sortedIndices[i]).Covariance() -
+      gmms[1].Component(i).Covariance()), 0.5);
+  }
 }
 
 /**
