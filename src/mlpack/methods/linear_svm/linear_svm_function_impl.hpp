@@ -33,8 +33,10 @@ LinearSVMFunction<MatType>::LinearSVMFunction(
     numClasses(numClasses),
     lambda(lambda)
 {
-  // Initialize the parameters to suitable values.
-  initialPoint = InitializeWeights();
+  // Initialize values to 0.005 * r. 'r' is a matrix of random values taken from
+  // a Gaussian distribution with mean zero and variance one.
+  initialPoint.randn(numClasses, dataset.n_rows);
+  initialPoint *= 0.005;
 
   // Calculate the label matrix.
   GetGroundTruthMatrix(labels, groundTruth);
@@ -45,22 +47,6 @@ LinearSVMFunction<MatType>::LinearSVMFunction(
  * normal distribution. The weights cannot be initialized to zero, as that will
  * lead to each class output being the same.
  */
-template <typename MatType>
-const arma::mat LinearSVMFunction<MatType>::InitializeWeights()
-{
-  return InitializeWeights(dataset.n_rows, numClasses);
-}
-
-template <typename MatType>
-const arma::mat LinearSVMFunction<MatType>::InitializeWeights(
-    const size_t featureSize,
-    const size_t numClasses)
-{
-  arma::mat parameters;
-  InitializeWeights(parameters, featureSize, numClasses);
-  return parameters;
-}
-
 template <typename MatType>
 void LinearSVMFunction<MatType>::InitializeWeights(
     arma::mat &weights,

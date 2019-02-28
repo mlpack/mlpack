@@ -77,16 +77,15 @@ class LinearSVM
             OptimizerType optimizer = OptimizerType());
 
   /**
-   * Initialize the SoftmaxRegression without performing training.  Default
+   * Initialize the Linear SVM without performing training.  Default
    * value of lambda is 0.0001.  Be sure to use Train() before calling
    * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
    *
-   * @param inputSize Size of the input feature vector.
    * @param numClasses Number of classes for classification.
-   * @param fitIntercept add intercept term or not.
+   * @param lambda L2-regularization constant.
    */
-  LinearSVM(const size_t inputSize = 0,
-            const size_t numClasses = 0);
+  LinearSVM(const size_t numClasses = 0,
+            const double lambda = 0.0001);
 
   /**
    * Classify the given points, returning the predicted labels for each point.
