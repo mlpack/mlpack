@@ -1,6 +1,7 @@
 /*
  * @file laplace.hpp
  * @author Zhihao Lou
+ * @author Rohan Raj
  *
  * Laplace (double exponential) distribution used in SA.
  *
@@ -79,6 +80,8 @@ class LaplaceDistribution
 
   /**
    * Return the probability of the given observation.
+   *
+   * @param observation point to evaluate probability at.
    */
   double Probability(const arma::vec& observation) const
   {
@@ -86,10 +89,28 @@ class LaplaceDistribution
   }
 
   /**
+  * Evaluate probability density function of given observation
+  *
+  * @param x List of observations.
+  * @param probabilities Output probabilities for each input observation.
+  */
+  void Probability(const arma::mat& x, arma::vec& probabilities) const;
+
+  /**
    * Return the log probability of the given observation.
+   *
+   * @param observation point to evaluate logarithm of probability.
    */
   double LogProbability(const arma::vec& observation) const;
 
+  /**
+  * Evaluate log probability density function of given observation
+  *
+  * @param x List of observations.
+  * @param logProbabilities Output probabilities for each input observation.
+  */
+
+  void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
   /**
    * Return a randomly generated observation according to the probability
    * distribution defined by this object.  This is inlined for speed.
@@ -156,6 +177,15 @@ class LaplaceDistribution
   //! Scale parameter of the distribution.
   double scale;
 };
+
+inline void LaplaceDistribution::LogProbability(
+    const arma::mat& x,
+    arma::vec& logProbabilities) const
+{
+  logProbabilities.set_size(x.n_cols);
+  for (size_t i = 0; i < x.n_cols; i++)
+    logProbabilities(i) = LogProbability(x.unsafe_col(i));
+}
 
 } // namespace distribution
 } // namespace mlpack
