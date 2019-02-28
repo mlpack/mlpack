@@ -1,6 +1,7 @@
 /**
  * @file regression_distribution.cpp
  * @author Michael Fox
+ * @author Rohan Raj
  *
  * Implementation of conditional Gaussian distribution for HMM regression (HMMR)
  *
