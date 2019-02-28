@@ -76,7 +76,7 @@ void RegressionDistribution::Probability(const arma::mat& x,
 {
   probabilities.set_size(x.n_cols);
   for (size_t i = 0; i < x.n_cols; i++)
-    logProbabilities(i) = Probability(x.unsafe_col(i));
+    probabilities(i) = Probability(x.unsafe_col(i));
 }
 
 void RegressionDistribution::Predict(const arma::mat& points,
