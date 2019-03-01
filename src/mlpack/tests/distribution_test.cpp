@@ -1129,13 +1129,13 @@ BOOST_AUTO_TEST_CASE(LaplaceDistributionTest)
  */
 BOOST_AUTO_TEST_CASE(LaplaceDistributionProbabilityTest)
 {
-  LaplaceDistribution l(arma::vec("0.0"), arma::mat("1.0"));
+  LaplaceDistribution l(arma::vec("0.0"), 1.0);
 
   // Simple case.
-  BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("0.0")), 0.500000000000000,
-    1e-5);
-  BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("1.0")), 0.183939720585721,
-    1e-5);
+  BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("0.0")),
+    0.500000000000000, 1e-5);
+  BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("1.0")),
+    0.183939720585721, 1e-5);
 
   arma::mat points = "0.0;"
                      "1.0;";
@@ -1155,7 +1155,7 @@ BOOST_AUTO_TEST_CASE(LaplaceDistributionProbabilityTest)
  */
 BOOST_AUTO_TEST_CASE(LaplaceDistributionLogProbabilityTest)
 {
-  LaplaceDistribution l(arma::vec("0.0"), arma::mat("1.0"));
+  LaplaceDistribution l(arma::vec("0.0"), 1.0);
 
   // Simple case.
   BOOST_REQUIRE_CLOSE(g.LogProbability(arma::vec("0.0")),
@@ -1172,8 +1172,10 @@ BOOST_AUTO_TEST_CASE(LaplaceDistributionLogProbabilityTest)
 
   BOOST_REQUIRE_EQUAL(logProbabilities.n_elem, 2);
 
-  BOOST_REQUIRE_CLOSE(logProbabilities(0), -0.693147180559945, 1e-5);
-  BOOST_REQUIRE_CLOSE(logProbabilities(1), -1.693147180559946, 1e-5);
+  BOOST_REQUIRE_CLOSE(logProbabilities(0), -0.693147180559945,
+    1e-5);
+  BOOST_REQUIRE_CLOSE(logProbabilities(1), -1.693147180559946,
+    1e-5);
 }
 
 /**
