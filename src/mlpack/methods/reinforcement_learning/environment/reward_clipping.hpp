@@ -93,7 +93,6 @@ class RewardClipping
     // Clip rewards according to the min and max limit and return.
     return std::min(std::max(unclippedReward, minReward), maxReward);
   }
-  
 
   /**
    * Dynamics of Environment. The rewards returned from the base environment
@@ -132,7 +131,7 @@ class RewardClipping
   double minReward;
 
   //! Maximum possible value of clipped reward.
-  double maxReward;  
+  double maxReward;
 };
 
 } // namespace rl

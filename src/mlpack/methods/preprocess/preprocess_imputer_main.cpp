@@ -2,8 +2,7 @@
  * @file preprocess_imputer_main.cpp
  * @author Keon Kim
  *
- * a utility that provides imputation strategies fore
- * missing values.
+ * A utility that provides imputation strategies for missing values.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -23,8 +22,14 @@
 #include <mlpack/core/data/imputation_methods/custom_imputation.hpp>
 #include <mlpack/core/data/imputation_methods/listwise_deletion.hpp>
 
-PROGRAM_INFO("Impute Data", "This utility takes a dataset and converts user "
-    "defined missing variable to another to provide more meaningful analysis "
+PROGRAM_INFO("Impute Data",
+    // Short description.
+    "This utility provides several imputation strategies for missing data. "
+    "Given a dataset with missing values, this can impute according to several "
+    "strategies, including user-defined values.",
+    // Long description.
+    "This utility takes a dataset and converts a user-defined missing variable "
+    "to another to provide more meaningful analysis."
     "\n\n"
     "The program does not modify the original file, but instead makes a "
     "separate file to save the output data; You can save the output by "
@@ -35,7 +40,10 @@ PROGRAM_INFO("Impute Data", "This utility takes a dataset and converts user "
     "column-wise dataset, and save the result to result.csv, we could run"
     "\n\n"
     "$ mlpack_preprocess_imputer -i dataset.csv -o result.csv -m NULL -d 0 \n"
-    "> -s listwise_deletion");
+    "> -s listwise_deletion",
+    SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
+    SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
+    SEE_ALSO("@preprocess_split", "#preprocess_split"));
 
 PARAM_STRING_IN_REQ("input_file", "File containing data.", "i");
 PARAM_STRING_OUT("output_file", "File to save output into.", "o");

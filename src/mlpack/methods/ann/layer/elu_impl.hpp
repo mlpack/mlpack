@@ -29,7 +29,8 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InputDataType, typename OutputDataType>
 ELU<InputDataType, OutputDataType>::ELU() :
     alpha(1.6732632423543774),
-    lambda(1.0507009873554802)
+    lambda(1.0507009873554802),
+    deterministic(false)
 {
   // Nothing to do here.
 }
@@ -38,7 +39,9 @@ ELU<InputDataType, OutputDataType>::ELU() :
 // is fixed and equal to 1.  'alpha' is a hyperparameter.
 template<typename InputDataType, typename OutputDataType>
 ELU<InputDataType, OutputDataType>::ELU(const double alpha) :
-    alpha(alpha), lambda(1)
+    alpha(alpha),
+    lambda(1),
+    deterministic(false)
 {
   // Nothing to do here.
 }
@@ -49,15 +52,18 @@ void ELU<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
   Fn(input, output);
+
+  if (!deterministic)
+  {
+    Deriv(input, output);
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
 void ELU<InputDataType, OutputDataType>::Backward(
-    const DataType&& input, DataType&& gy, DataType&& g)
+    const DataType&& /* input */, DataType&& gy, DataType&& g)
 {
-  DataType derivative;
-  Deriv(input, derivative);
   g = gy % derivative;
 }
 

@@ -74,12 +74,6 @@ inline void StringTypeParam<std::string>(const util::ParamData& /* data */,
                                          const void* /* input */,
                                          void* output);
 
-//! Return "float".
-template<>
-inline void StringTypeParam<float>(const util::ParamData& /* data */,
-                                   const void* /* input */,
-                                   void* output);
-
 //! Return "double".
 template<>
 inline void StringTypeParam<double>(const util::ParamData& /* data */,

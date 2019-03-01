@@ -15,7 +15,7 @@
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/acrobat.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/reward_clipping.hpp>
 
@@ -54,8 +54,8 @@ BOOST_AUTO_TEST_CASE(ClippedRewardTest)
   BOOST_REQUIRE(reward >= -2.0);
 }
 
-//! Test DQN in Acrobat task.
-BOOST_AUTO_TEST_CASE(RewardClippedAcrobatWithDQN)
+//! Test DQN in Acrobot task.
+BOOST_AUTO_TEST_CASE(RewardClippedAcrobotWithDQN)
 {
     // Set up the network.
   FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
@@ -67,12 +67,12 @@ BOOST_AUTO_TEST_CASE(RewardClippedAcrobatWithDQN)
   model.Add<Linear<>>(32, 3);
 
   // Set up the policy and replay method.
-  GreedyPolicy<RewardClipping<Acrobat>> policy(1.0, 1000, 0.1);
-  RandomReplay<RewardClipping<Acrobat>> replayMethod(20, 10000);
+  GreedyPolicy<RewardClipping<Acrobot>> policy(1.0, 1000, 0.1);
+  RandomReplay<RewardClipping<Acrobot>> replayMethod(20, 10000);
 
-  // Set up Acrobat task and reward clipping wrapper
-  Acrobat task;
-  RewardClipping<Acrobat> rewardClipping(task, -2.0, +2.0);
+  // Set up Acrobot task and reward clipping wrapper
+  Acrobot task;
+  RewardClipping<Acrobot> rewardClipping(task, -2.0, +2.0);
 
   // Set up update rule
   AdamUpdate update;
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(RewardClippedAcrobatWithDQN)
 
     if (episodes > 1000)
     {
-      Log::Debug << "Acrobat with DQN failed." << std::endl;
+      Log::Debug << "Acrobot with DQN failed." << std::endl;
       converged = false;
       break;
     }

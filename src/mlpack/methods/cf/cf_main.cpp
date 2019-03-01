@@ -42,7 +42,13 @@ using namespace mlpack::util;
 using namespace std;
 
 // Document program.
-PROGRAM_INFO("Collaborative Filtering", "This program performs collaborative "
+PROGRAM_INFO("Collaborative Filtering",
+    // Short description.
+    "An implementation of several collaborative filtering (CF) techniques for "
+    "recommender systems.  This can be used to train a new CF model, or use an"
+    " existing CF model to compute recommendations.",
+    // Long description.
+    "This program performs collaborative "
     "filtering (CF) on the given dataset. Given a list of user, item and "
     "preferences (the " + PRINT_PARAM_STRING("training") + " parameter), "
     "the program will perform a matrix decomposition and then can perform a "
@@ -111,7 +117,20 @@ PROGRAM_INFO("Collaborative Filtering", "This program performs collaborative "
     "call "
     "\n\n" +
     PRINT_CALL("cf", "input_model", "model", "query", "users",
-        "recommendations", 5, "output", "recommendations"));
+        "recommendations", 5, "output", "recommendations"),
+    SEE_ALSO("Collaborative filtering tutorial", "@doxygen/cftutorial.html"),
+    SEE_ALSO("Alternating Matrix Factorization tutorial",
+        "@doxygen/amftutorial.html"),
+    SEE_ALSO("Collaborative Filtering on Wikipedia",
+        "https://en.wikipedia.org/wiki/Collaborative_filtering"),
+    SEE_ALSO("Matrix factorization on Wikipedia",
+        "https://en.wikipedia.org/wiki/Matrix_factorization_"
+        "(recommender_systems)"),
+    SEE_ALSO("Matrix factorization techniques for recommender systems (pdf)",
+        "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.441.3234"
+        "&rep=rep1&type=pdf"),
+    SEE_ALSO("mlpack::cf::CFType class documentation",
+        "@doxygen/classmlpack_1_1cf_1_1CFType.html"));
 
 // Parameters for training a model.
 PARAM_MATRIX_IN("training", "Input dataset to perform CF on.", "t");

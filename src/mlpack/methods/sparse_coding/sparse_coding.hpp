@@ -177,11 +177,12 @@ class SparseCoding
 
   /**
    * Train the sparse coding model on the given dataset.
+   * @return The final objective value.
    */
   template<typename DictionaryInitializer = DataDependentRandomInitializer>
-  void Train(const arma::mat& data,
-             const DictionaryInitializer& initializer =
-                 DictionaryInitializer());
+  double Train(const arma::mat& data,
+               const DictionaryInitializer& initializer =
+                   DictionaryInitializer());
 
   /**
    * Sparse code each point in the given dataset via LARS, using the current

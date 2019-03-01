@@ -28,7 +28,7 @@ void LoadARFF(const std::string& filename,
 {
   // First, open the file.
   std::ifstream ifs;
-  ifs.open(filename);
+  ifs.open(filename, std::ios::in | std::ios::binary);
 
   std::string line;
   size_t dimensionality = 0;

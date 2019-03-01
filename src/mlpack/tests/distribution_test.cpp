@@ -2,6 +2,7 @@
  * @file distribution_test.cpp
  * @author Ryan Curtin
  * @author Yannis Mentekidis
+ * @author Rohan Raj
  *
  * Tests for the classes:
  *  * mlpack::distribution::DiscreteDistribution
@@ -15,11 +16,16 @@
  */
 #include <mlpack/core.hpp>
 
+#include <mlpack/core/dists/regression_distribution.hpp>
+#include <mlpack/core/metrics/mahalanobis_distance.hpp>
+
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::distribution;
+using namespace mlpack::metric;
 using namespace mlpack::math;
 
 BOOST_AUTO_TEST_SUITE(DistributionTest);
@@ -186,6 +192,50 @@ BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionTrainProTest)
   BOOST_REQUIRE_CLOSE(d.Probability("0 0 0"), 0.00390625, 1e-5);
   BOOST_REQUIRE_CLOSE(d.Probability("1 0 1"), 0.0078125, 1e-5);
   BOOST_REQUIRE_CLOSE(d.Probability("2 1 0"), 0.015625, 1e-5);
+}
+
+/**
+ * Test the LogProbability() function, for multiple points in the multivariate
+ * Discrete case.
+ */
+BOOST_AUTO_TEST_CASE(DiscreteLogProbabilityTest)
+{
+  // Same case as before.
+  DiscreteDistribution d("5 5");
+
+  arma::mat obs("0 2;"
+                "1 2;");
+
+  arma::vec logProb;
+
+  d.LogProbability(obs, logProb);
+
+  BOOST_REQUIRE_EQUAL(logProb.n_elem, 2);
+
+  BOOST_REQUIRE_CLOSE(logProb(0), -3.2188758248682, 1e-3);
+  BOOST_REQUIRE_CLOSE(logProb(1), -3.2188758248682, 1e-3);
+}
+
+/**
+ * Test the Probability() function, for multiple points in the multivariate
+ * Discrete case.
+ */
+BOOST_AUTO_TEST_CASE(DiscreteProbabilityTest)
+{
+  // Same case as before.
+  DiscreteDistribution d("5 5");
+
+  arma::mat obs("0 2;"
+                "1 2;");
+
+  arma::vec prob;
+
+  d.Probability(obs, prob);
+
+  BOOST_REQUIRE_EQUAL(prob.n_elem, 2);
+
+  BOOST_REQUIRE_CLOSE(prob(0), 0.0400000000000, 1e-3);
+  BOOST_REQUIRE_CLOSE(prob(1), 0.0400000000000, 1e-3);
 }
 
 /*********************************/
@@ -930,17 +980,21 @@ BOOST_AUTO_TEST_CASE(GammaDistributionLogProbabilityTest)
   // Train two 1-dimensional distributions.
   const arma::vec a1("2.0"), b1("0.9"), a2("3.1"), b2("1.4");
   arma::mat x1("2.0"), x2("2.94");
-  arma::vec prob1, prob2;
+  arma::vec logprob1, logprob2;
 
   // Evaluated at wolfram|alpha
   GammaDistribution d1(a1, b1);
-  d1.LogProbability(x1, prob1);
-  BOOST_REQUIRE_CLOSE(prob1(0), std::log(0.267575), 1e-3);
+  d1.LogProbability(x1, logprob1);
+  BOOST_REQUIRE_CLOSE(logprob1(0), std::log(0.267575), 1e-3);
 
   // Evaluated at wolfram|alpha
   GammaDistribution d2(a2, b2);
-  d2.LogProbability(x2, prob2);
-  BOOST_REQUIRE_CLOSE(prob2(0), std::log(0.189043), 1e-3);
+  d2.LogProbability(x2, logprob2);
+  BOOST_REQUIRE_CLOSE(logprob2(0), std::log(0.189043), 1e-3);
+
+  // Check that the overload that returns the log probability for
+  // 1 dimension agrees.
+  BOOST_REQUIRE_CLOSE(logprob2(0), d2.LogProbability(2.94, 0), 1e-5);
 
   // Combine into one 2-dimensional distribution.
   const arma::vec a3("2.0 3.1"), b3("0.9 1.4");
@@ -948,14 +1002,192 @@ BOOST_AUTO_TEST_CASE(GammaDistributionLogProbabilityTest)
   x3
     << 2.0 << 2.94 << arma::endr
     << 2.0 << 2.94;
-  arma::vec prob3;
+  arma::vec logprob3;
 
   // Expect that the 2-dimensional distribution returns the product of the
   // 1-dimensional distributions (evaluated at wolfram|alpha).
   GammaDistribution d3(a3, b3);
-  d3.LogProbability(x3, prob3);
-  BOOST_REQUIRE_CLOSE(prob3(0), std::log(0.04408), 1e-3);
-  BOOST_REQUIRE_CLOSE(prob3(1), std::log(0.026165), 1e-3);
+  d3.LogProbability(x3, logprob3);
+  BOOST_REQUIRE_CLOSE(logprob3(0), std::log(0.04408), 1e-3);
+  BOOST_REQUIRE_CLOSE(logprob3(1), std::log(0.026165), 1e-3);
+}
+
+/**
+ * Discrete Distribution serialization test.
+ */
+BOOST_AUTO_TEST_CASE(DiscreteDistributionTest)
+{
+  // I assume that I am properly saving vectors, so, this should be
+  // straightforward.
+  arma::vec prob;
+  prob.randu(12);
+  std::vector<arma::vec> probVector = std::vector<arma::vec>(1, prob);
+  DiscreteDistribution t(probVector);
+
+  DiscreteDistribution xmlT, textT, binaryT;
+
+  // Load and save with all serializers.
+  SerializeObjectAll(t, xmlT, textT, binaryT);
+
+  for (size_t i = 0; i < 12; ++i)
+  {
+    arma::vec obs(1);
+    obs[0] = i;
+    const double prob = t.Probability(obs);
+    if (prob == 0.0)
+    {
+      BOOST_REQUIRE_SMALL(xmlT.Probability(obs), 1e-8);
+      BOOST_REQUIRE_SMALL(textT.Probability(obs), 1e-8);
+      BOOST_REQUIRE_SMALL(binaryT.Probability(obs), 1e-8);
+    }
+    else
+    {
+      BOOST_REQUIRE_CLOSE(prob, xmlT.Probability(obs), 1e-8);
+      BOOST_REQUIRE_CLOSE(prob, textT.Probability(obs), 1e-8);
+      BOOST_REQUIRE_CLOSE(prob, binaryT.Probability(obs), 1e-8);
+    }
+  }
+}
+
+/**
+ * Gaussian Distribution serialization test.
+ */
+BOOST_AUTO_TEST_CASE(GaussianDistributionTest)
+{
+  arma::vec mean(10);
+  mean.randu();
+  // Generate a covariance matrix.
+  arma::mat cov;
+  cov.randu(10, 10);
+  cov = (cov * cov.t());
+
+  GaussianDistribution g(mean, cov);
+  GaussianDistribution xmlG, textG, binaryG;
+
+  SerializeObjectAll(g, xmlG, textG, binaryG);
+
+  BOOST_REQUIRE_EQUAL(g.Dimensionality(), xmlG.Dimensionality());
+  BOOST_REQUIRE_EQUAL(g.Dimensionality(), textG.Dimensionality());
+  BOOST_REQUIRE_EQUAL(g.Dimensionality(), binaryG.Dimensionality());
+
+  // First, check the means.
+  CheckMatrices(g.Mean(), xmlG.Mean(), textG.Mean(), binaryG.Mean());
+
+  // Now, check the covariance.
+  CheckMatrices(g.Covariance(), xmlG.Covariance(), textG.Covariance(),
+      binaryG.Covariance());
+
+  // Lastly, run some observations through and make sure the probability is the
+  // same.  This should test anything cached internally.
+  arma::mat randomObs;
+  randomObs.randu(10, 500);
+
+  for (size_t i = 0; i < 500; ++i)
+  {
+    const double prob = g.Probability(randomObs.unsafe_col(i));
+
+    if (prob == 0.0)
+    {
+      BOOST_REQUIRE_SMALL(xmlG.Probability(randomObs.unsafe_col(i)), 1e-8);
+      BOOST_REQUIRE_SMALL(textG.Probability(randomObs.unsafe_col(i)), 1e-8);
+      BOOST_REQUIRE_SMALL(binaryG.Probability(randomObs.unsafe_col(i)), 1e-8);
+    }
+    else
+    {
+      BOOST_REQUIRE_CLOSE(prob, xmlG.Probability(randomObs.unsafe_col(i)),
+          1e-8);
+      BOOST_REQUIRE_CLOSE(prob, textG.Probability(randomObs.unsafe_col(i)),
+          1e-8);
+      BOOST_REQUIRE_CLOSE(prob, binaryG.Probability(randomObs.unsafe_col(i)),
+          1e-8);
+    }
+  }
+}
+
+/**
+ * Laplace Distribution serialization test.
+ */
+BOOST_AUTO_TEST_CASE(LaplaceDistributionTest)
+{
+  arma::vec mean(20);
+  mean.randu();
+
+  LaplaceDistribution l(mean, 2.5);
+  LaplaceDistribution xmlL, textL, binaryL;
+
+  SerializeObjectAll(l, xmlL, textL, binaryL);
+
+  BOOST_REQUIRE_CLOSE(l.Scale(), xmlL.Scale(), 1e-8);
+  BOOST_REQUIRE_CLOSE(l.Scale(), textL.Scale(), 1e-8);
+  BOOST_REQUIRE_CLOSE(l.Scale(), binaryL.Scale(), 1e-8);
+
+  CheckMatrices(l.Mean(), xmlL.Mean(), textL.Mean(), binaryL.Mean());
+}
+
+/**
+ * Mahalanobis Distance serialization test.
+ */
+BOOST_AUTO_TEST_CASE(MahalanobisDistanceTest)
+{
+  MahalanobisDistance<> d;
+  d.Covariance().randu(50, 50);
+
+  MahalanobisDistance<> xmlD, textD, binaryD;
+
+  SerializeObjectAll(d, xmlD, textD, binaryD);
+
+  // Check the covariance matrices.
+  CheckMatrices(d.Covariance(),
+                xmlD.Covariance(),
+                textD.Covariance(),
+                binaryD.Covariance());
+}
+
+/**
+ * Regression distribution serialization test.
+ */
+BOOST_AUTO_TEST_CASE(RegressionDistributionTest)
+{
+  // Generate some random data.
+  arma::mat data;
+  data.randn(15, 800);
+  arma::rowvec responses;
+  responses.randn(800);
+
+  RegressionDistribution rd(data, responses);
+  RegressionDistribution xmlRd, textRd, binaryRd;
+
+  // Okay, now save it and load it.
+  SerializeObjectAll(rd, xmlRd, textRd, binaryRd);
+
+  // Check the gaussian distribution.
+  CheckMatrices(rd.Err().Mean(),
+                xmlRd.Err().Mean(),
+                textRd.Err().Mean(),
+                binaryRd.Err().Mean());
+  CheckMatrices(rd.Err().Covariance(),
+                xmlRd.Err().Covariance(),
+                textRd.Err().Covariance(),
+                binaryRd.Err().Covariance());
+
+  // Check the regression function.
+  if (rd.Rf().Lambda() == 0.0)
+  {
+    BOOST_REQUIRE_SMALL(xmlRd.Rf().Lambda(), 1e-8);
+    BOOST_REQUIRE_SMALL(textRd.Rf().Lambda(), 1e-8);
+    BOOST_REQUIRE_SMALL(binaryRd.Rf().Lambda(), 1e-8);
+  }
+  else
+  {
+    BOOST_REQUIRE_CLOSE(rd.Rf().Lambda(), xmlRd.Rf().Lambda(), 1e-8);
+    BOOST_REQUIRE_CLOSE(rd.Rf().Lambda(), textRd.Rf().Lambda(), 1e-8);
+    BOOST_REQUIRE_CLOSE(rd.Rf().Lambda(), binaryRd.Rf().Lambda(), 1e-8);
+  }
+
+  CheckMatrices(rd.Rf().Parameters(),
+                xmlRd.Rf().Parameters(),
+                textRd.Rf().Parameters(),
+                binaryRd.Rf().Parameters());
 }
 
 BOOST_AUTO_TEST_SUITE_END();

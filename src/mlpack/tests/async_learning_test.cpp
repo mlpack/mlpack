@@ -147,8 +147,11 @@ BOOST_AUTO_TEST_CASE(OneStepSarsaTest)
     config.StepLimit() = 200;
     config.TargetNetworkSyncInterval() = 200;
 
-    OneStepSarsa<CartPole, decltype(model), ens::VanillaUpdate, decltype(policy)>
-        agent(std::move(config), std::move(model), std::move(policy));
+    OneStepSarsa<CartPole,
+                 decltype(model),
+                 ens::VanillaUpdate,
+                 decltype(policy)>
+    agent(std::move(config), std::move(model), std::move(policy));
 
     arma::vec rewards(20, arma::fill::zeros);
     size_t pos = 0;

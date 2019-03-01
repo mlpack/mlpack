@@ -37,6 +37,14 @@ inline DatasetMapper<PolicyType, InputType>::DatasetMapper(PolicyType& policy,
   // Nothing to initialize here.
 }
 
+template<typename PolicyType, typename InputType>
+inline void DatasetMapper<PolicyType, InputType>::SetDimensionality(
+    const size_t dimensionality)
+{
+  types = std::vector<Datatype>(dimensionality, Datatype::numeric);
+  maps.clear();
+}
+
 // Utility helper function to call MapFirstPass.
 template<typename PolicyType, typename InputType, typename T>
 void CallMapFirstPass(

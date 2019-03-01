@@ -80,16 +80,6 @@ inline void StringTypeParam<std::string>(const util::ParamData& /* data */,
   *outstr = "string";
 }
 
-//! Return "float".
-template<>
-inline void StringTypeParam<float>(const util::ParamData& /* data */,
-                                   const void* /* input */,
-                                   void* output)
-{
-  std::string* outstr = (std::string*) output;
-  *outstr = "float";
-}
-
 //! Return "double".
 template<>
 inline void StringTypeParam<double>(const util::ParamData& /* data */,
