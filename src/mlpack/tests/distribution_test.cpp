@@ -1260,8 +1260,8 @@ BOOST_AUTO_TEST_CASE(RegressionDistributionProbabilityTest)
   arma::mat observations;
   observations.randn(15, 2);
 
-  obs0 = observations.col(0);
-  obs1 = observations.col(1);
+  arma::vec obs0 = observations.col(0);
+  arma::vec obs1 = observations.col(1);
 
   arma::vec probabilities;
 
@@ -1291,8 +1291,8 @@ BOOST_AUTO_TEST_CASE(RegressionDistributionLogProbabilityTest)
   arma::mat observations;
   observations.randn(15, 2);
 
-  obs0 = observations.col(0);
-  obs1 = observations.col(1);
+  arma::vec obs0 = observations.col(0);
+  arma::vec obs1 = observations.col(1);
 
   arma::vec logProbabilities;
 
