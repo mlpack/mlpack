@@ -1142,7 +1142,7 @@ BOOST_AUTO_TEST_CASE(LaplaceDistributionProbabilityTest)
 
   arma::vec probabilities;
 
-  l.LogProbability(points, probabilities);
+  l.Probability(points, probabilities);
 
   BOOST_REQUIRE_EQUAL(probabilities.n_elem, 2);
 
