@@ -1267,6 +1267,8 @@ BOOST_AUTO_TEST_CASE(RegressionDistributionProbabilityTest)
 
   rd.Probability(observations, probabilities);
 
+  BOOST_REQUIRE_EQUAL(probabilities.n_elem, 2);
+
   BOOST_REQUIRE_CLOSE(probabilities(0), rd.Probability(obs0),
     1e-5);
   BOOST_REQUIRE_CLOSE(probabilities(1), rd.Probability(obs1),
@@ -1294,7 +1296,9 @@ BOOST_AUTO_TEST_CASE(RegressionDistributionLogProbabilityTest)
 
   arma::vec logProbabilities;
 
-  rd.Probability(observations, logProbabilities);
+  rd.LogProbability(observations, logProbabilities);
+
+  BOOST_REQUIRE_EQUAL(logProbabilities.n_elem, 2);
 
   BOOST_REQUIRE_CLOSE(logProbabilities(0), rd.LogProbability(obs0),
     1e-5);
