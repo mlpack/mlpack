@@ -1132,8 +1132,10 @@ BOOST_AUTO_TEST_CASE(LaplaceDistributionProbabilityTest)
   LaplaceDistribution l(arma::vec("0.0"), arma::mat("1.0"));
 
   // Simple case.
-  BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("0.0")), 0.500000000000000, 1e-5);
-  BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("1.0")), 0.183939720585721, 1e-5);
+  BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("0.0")), 0.500000000000000,
+    1e-5);
+  BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("1.0")), 0.183939720585721,
+    1e-5);
 
   arma::mat points = "0.0;"
                      "1.0;";
