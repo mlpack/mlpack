@@ -1125,6 +1125,54 @@ BOOST_AUTO_TEST_CASE(LaplaceDistributionTest)
 }
 
 /**
+ * Laplace Distribution Probability Test
+ */
+BOOST_AUTO_TEST_CASE(LaplaceDistributionProbabilityTest)
+{
+  LaplaceDistribution l(arma::vec("0.0"), arma::mat("1.0"));
+
+  // Simple case.
+  BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("0.0")), 0.500000000000000, 1e-5);
+  BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("1.0")), 0.183939720585721, 1e-5);
+
+  arma::mat points = "0.0;"
+                     "1.0;";
+
+  arma::vec probabilities;
+
+  l.LogProbability(points, probabilities);
+
+  BOOST_REQUIRE_EQUAL(probabilities.n_elem, 2);
+
+  BOOST_REQUIRE_CLOSE(probabilities(0), 0.500000000000000, 1e-5);
+  BOOST_REQUIRE_CLOSE(probabilities(1), 0.183939720585721, 1e-5);
+}
+
+/**
+ * Laplace Distribution Log Probability Test
+ */
+BOOST_AUTO_TEST_CASE(LaplaceDistributionLogProbabilityTest)
+{
+  LaplaceDistribution l(arma::vec("0.0"), arma::mat("1.0"));
+
+  // Simple case.
+  BOOST_REQUIRE_CLOSE(g.LogProbability(arma::vec("0.0")), -0.693147180559945, 1e-5);
+  BOOST_REQUIRE_CLOSE(g.LogProbability(arma::vec("1.0")), -1.693147180559946, 1e-5);
+
+  arma::mat points = "0.0;"
+                     "1.0;";
+
+  arma::vec logProbabilities;
+
+  l.LogProbability(points, logProbabilities);
+
+  BOOST_REQUIRE_EQUAL(logProbabilities.n_elem, 2);
+
+  BOOST_REQUIRE_CLOSE(logProbabilities(0), -0.693147180559945, 1e-5);
+  BOOST_REQUIRE_CLOSE(logProbabilities(1), -1.693147180559946, 1e-5);
+}
+
+/**
  * Mahalanobis Distance serialization test.
  */
 BOOST_AUTO_TEST_CASE(MahalanobisDistanceTest)
