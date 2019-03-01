@@ -674,8 +674,8 @@ bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   const double p1 = (double) (left + rightFrontier) / points.n_elem;
   const double p2 = (double) (right + leftFrontier) / points.n_elem;
 
-  if ((p1 <= rho || rightFrontier == 0) &&
-      (p2 <= rho || leftFrontier == 0))
+  if ((p1 <= this->NumChildren()*rho || rightFrontier == 0) &&
+      (p2 <= this->NumChildren()*rho || leftFrontier == 0) && tau != 0)
   {
     // Perform the actual splitting considering the overlapping buffer.  Points
     // with projection value in the range (-tau, tau) are included in both,
