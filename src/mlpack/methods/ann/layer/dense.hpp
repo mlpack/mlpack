@@ -64,7 +64,7 @@ class Dense
    * @param weight_decay Weight decay factor.
    */
   Dense(const size_t nb_layers, const size_t growth_rate,
-    const bool bottleneck = false, const double dropout_rate,
+    const bool bottleneck = false, const double dropout_rate = 0.2,
     const double weight_decay = 1e-4);
 
   /**
@@ -78,7 +78,7 @@ class Dense
    * @param weight_decay Weight decay factor.
    */
   template<typename eT>
-  arma::cube conv_block(arma::cube<eT>&& input, const size_t input_size,
+  arma::cube conv_block(arma::Cube<eT>&& input, const size_t input_size,
     const size_t growth_rate, const bool bottleneck,
     const double dropout_rate, const double weight_decay);
 
@@ -89,7 +89,7 @@ class Dense
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::cube<eT>&& input, arma::cube<eT>&& output);
+  void Forward(const arma::Cube<eT>&& input, arma::Cube<eT>&& output);
 
   /**
    * Ordinary feed backward pass of the dense layer.
@@ -99,9 +99,9 @@ class Dense
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::cube<eT>&& /* input */,
-                arma::cube<eT>&& gy,
-                arma::cube<eT>&& g);
+  void Backward(const arma::Cube<eT>&& /* input */,
+                arma::Cube<eT>&& gy,
+                arma::Cube<eT>&& g);
 
   /**
    * Calculate the gradient using the output delta and the input activations.
@@ -111,9 +111,9 @@ class Dense
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::cube<eT>&& input,
-                arma::cube<eT>&& error,
-                arma::cube<eT>&& gradient);
+  void Gradient(const arma::Cube<eT>&& input,
+                arma::Cube<eT>&& error,
+                arma::Cube<eT>&& gradient);
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }

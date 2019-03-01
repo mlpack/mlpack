@@ -31,8 +31,8 @@ Dense<InputDataType, OutputDataType>::Dense()
 }
 template<typename InputDataType, typename OutputDataType>
 Dense<InputDataType, OutputDataType>::Dense(const size_t nb_layers,
-    const size_t growth_rate, const bool bottleneck = false,
-    const double dropout_rate, const double weight_decay = 1e-4) :
+    const size_t growth_rate, const bool bottleneck,
+    const double dropout_rate, const double weight_decay) :
     nb_layers(nb_layers),
     growth_rate(growth_rate),
     bottleneck(bottleneck),
@@ -43,7 +43,7 @@ Dense<InputDataType, OutputDataType>::Dense(const size_t nb_layers,
 }
 
 template<typename eT>
-arma::cube conv_block(arma::cube<eT>&& input, const size_t input_size,
+arma::cube conv_block(arma::Cube<eT>&& input, const size_t input_size,
     const size_t growth_rate, const bool bottleneck,
     const double dropout_rate, const double weight_decay)
 {
@@ -59,7 +59,7 @@ arma::cube conv_block(arma::cube<eT>&& input, const size_t input_size,
   {
     Convolution<> b(input_size, growth_rate, 1, 1, 1, 1, 0, 0,
     input.n_cols, input.n_rows);
-    c.Forward(input, input);
+    b.Forward(input, input);
 
     bn.Forward(std::move(input), input);
 
@@ -82,7 +82,7 @@ arma::cube conv_block(arma::cube<eT>&& input, const size_t input_size,
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Dense<InputDataType, OutputDataType>::Forward(
-    const arma::cube<eT>&& input, arma::cube<eT>&& output)
+    const arma::Cube<eT>&& input, arma::Cube<eT>&& output)
 {
   output = input;
   for (size_t i = 0; i < nb_layers; i++)
@@ -98,7 +98,7 @@ void Dense<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Dense<InputDataType, OutputDataType>::Backward(
-    const arma::cube<eT>&& input, arma::cube<eT>&& gy, arma::cube<eT>&& g)
+    const arma::Cube<eT>&& input, arma::Cube<eT>&& gy, arma::Cube<eT>&& g)
 {
   // Yet to be implemented.
 }
@@ -106,16 +106,16 @@ void Dense<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Dense<InputDataType, OutputDataType>::Gradient(
-    const arma::cube<eT>&& /* input */,
-    arma::cube<eT>&& error,
-    arma::cube<eT>&& gradient)
+    const arma::Cube<eT>&& /* input */,
+    arma::Cube<eT>&& error,
+    arma::Cube<eT>&& gradient)
 {
   // Yet to be implemented.
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void BatchNorm<InputDataType, OutputDataType>::serialize(
+void Dense<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   // Yet to be implemented.

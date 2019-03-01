@@ -22,6 +22,7 @@
 #include <mlpack/methods/ann/layer/bilinear_interpolation.hpp>
 #include <mlpack/methods/ann/layer/constant.hpp>
 #include <mlpack/methods/ann/layer/concatenate.hpp>
+#include <mlpack/methods/ann/layer/dense.hpp>
 #include <mlpack/methods/ann/layer/dropout.hpp>
 #include <mlpack/methods/ann/layer/elu.hpp>
 #include <mlpack/methods/ann/layer/hard_tanh.hpp>
@@ -52,6 +53,7 @@ namespace mlpack {
 namespace ann {
 
 template<typename InputDataType, typename OutputDataType> class BatchNorm;
+template<typename InputDataType, typename OutputDataType> class Dense;
 template<typename InputDataType, typename OutputDataType> class DropConnect;
 template<typename InputDataType, typename OutputDataType> class Glimpse;
 template<typename InputDataType, typename OutputDataType> class LayerNorm;

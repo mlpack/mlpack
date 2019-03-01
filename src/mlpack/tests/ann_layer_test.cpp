@@ -2162,6 +2162,11 @@ void ANNLayerSerializationTest(LayerType& layer)
   CheckMatrices(originalOutput, binaryOutput, 1e-5);
 }
 
+BOOST_AUTO_TEST_CASE(DenseTest)
+{
+  Dense<> layer;
+}
+
 /**
  * Simple serialization test for batch normalization layer.
  */

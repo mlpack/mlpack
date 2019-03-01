@@ -17,6 +17,7 @@
 #include "batch_norm.hpp"
 #include "concat_performance.hpp"
 #include "convolution.hpp"
+#include "dense.hpp"
 #include "dropconnect.hpp"
 #include "glimpse.hpp"
 #include "layer_norm.hpp"
