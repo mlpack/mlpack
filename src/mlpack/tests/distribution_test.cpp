@@ -1137,8 +1137,7 @@ BOOST_AUTO_TEST_CASE(LaplaceDistributionProbabilityTest)
   BOOST_REQUIRE_CLOSE(l.Probability(arma::vec("1.0")),
     0.183939720585721, 1e-5);
 
-  arma::mat points = "0.0;"
-                     "1.0;";
+  arma::mat points = "0.0 1.0;";
 
   arma::vec probabilities;
 
@@ -1163,8 +1162,7 @@ BOOST_AUTO_TEST_CASE(LaplaceDistributionLogProbabilityTest)
   BOOST_REQUIRE_CLOSE(l.LogProbability(arma::vec("1.0")),
     -1.693147180559946, 1e-5);
 
-  arma::mat points = "0.0;"
-                     "1.0;";
+  arma::mat points = "0.0 1.0;";
 
   arma::vec logProbabilities;
 
