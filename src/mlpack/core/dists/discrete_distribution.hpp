@@ -1,6 +1,7 @@
 /**
  * @file discrete_distribution.hpp
  * @author Ryan Curtin
+ * @author Rohan Raj
  *
  * Implementation of the discrete distribution, where each discrete observation
  * has a given probability.
@@ -169,6 +170,29 @@ class DiscreteDistribution
   }
 
   /**
+   * Calculates the Discrete probability density function for each
+   * data point (column) in the given matrix.
+   *
+   * @param x List of observations.
+   * @param probabilities Output probabilities for each input observation.
+   */
+  void Probability(const arma::mat& x, arma::vec& probabilities) const
+  {
+    probabilities.set_size(x.n_cols);
+    for (size_t i = 0; i < x.n_cols; i++)
+      probabilities(i) = Probability(x.unsafe_col(i));
+  }
+
+  /**
+   * Returns the Log probability of the given matrix. These values are stored
+   * in logProbabilities.
+   *
+   * @param x List of observations.
+   * @param logProbabilities probabilities Output probabilities for each 
+   *   input observation.
+   */
+  void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
+  /**
    * Return a randomly generated observation (one-dimensional vector; one
    * observation) according to the probability distribution defined by this
    * object.
@@ -218,6 +242,22 @@ class DiscreteDistribution
   //! probabilities for the observations in each dimension.
   std::vector<arma::vec> probabilities;
 };
+
+/**
+ * Calculates the Discrete log-probability function for each
+ * data point (column) in the given matrix
+ *
+ * @param x List of observations.
+ * @param probabilities Output log probabilities for each input observation.
+ */
+inline void DiscreteDistribution::LogProbability(
+    const arma::mat& x,
+    arma::vec& logProbabilities) const
+{
+  logProbabilities.set_size(x.n_cols);
+  for (size_t i = 0; i < x.n_cols; i++)
+    logProbabilities(i) = log(Probability(x.unsafe_col(i)));
+}
 
 } // namespace distribution
 } // namespace mlpack

@@ -83,7 +83,7 @@ HMM<Distribution>::HMM(const arma::vec& initial,
  * @param dataSeq Set of data sequences to train on.
  */
 template<typename Distribution>
-void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
+double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
 {
   // We should allow a guess at the transition and emission matrices.
   double loglik = 0;
@@ -211,6 +211,7 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
     Log::Debug << "Iteration " << iter << ": log-likelihood " << loglik
         << "." << std::endl;
   }
+  return loglik;
 }
 
 /**

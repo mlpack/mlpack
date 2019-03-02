@@ -1,6 +1,7 @@
 /**
  * @file gamma_distribution.hpp
  * @author Yannis Mentekidis
+ * @author Rohan Raj
  *
  * Implementation of a Gamma distribution of multidimensional data that fits
  * gamma parameters (alpha, beta) to data.
@@ -171,6 +172,15 @@ class GammaDistribution
      */
     void LogProbability(const arma::mat& observations,
                         arma::vec& LogProbabilities) const;
+
+    /**
+     * This function returns the logarithm of the probability of a single
+     * observation. 
+     *
+     * @param x The 1-dimensional observation.
+     * @param dim The dimension for which to calculate the probability
+     */
+    double LogProbability(double x, size_t dim) const;
 
     /**
      * This function returns an observation of this distribution

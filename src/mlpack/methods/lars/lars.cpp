@@ -68,10 +68,10 @@ LARS::LARS(const arma::mat& data,
   Train(data, responses, transposeData);
 }
 
-void LARS::Train(const arma::mat& matX,
-                 const arma::rowvec& y,
-                 arma::vec& beta,
-                 const bool transposeData)
+double LARS::Train(const arma::mat& matX,
+                   const arma::rowvec& y,
+                   arma::vec& beta,
+                   const bool transposeData)
 {
   Timer::Start("lars_regression");
 
@@ -129,7 +129,7 @@ void LARS::Train(const arma::mat& matX,
   {
     lambdaPath[0] = lambda1;
     Timer::Stop("lars_regression");
-    return;
+    return maxCorr;
   }
 
   // Compute the Gram matrix.  If this is the elastic net problem, we will add
@@ -361,14 +361,15 @@ void LARS::Train(const arma::mat& matX,
   beta = betaPath.back();
 
   Timer::Stop("lars_regression");
+  return maxCorr;
 }
 
-void LARS::Train(const arma::mat& data,
-                 const arma::rowvec& responses,
-                 const bool transposeData)
+double LARS::Train(const arma::mat& data,
+                   const arma::rowvec& responses,
+                   const bool transposeData)
 {
   arma::vec beta;
-  Train(data, responses, beta, transposeData);
+  return Train(data, responses, beta, transposeData);
 }
 
 void LARS::Predict(const arma::mat& points,
