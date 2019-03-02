@@ -404,13 +404,16 @@ void DiagonalGMM::InitialClustering(
     covariances[i].zeros(dists[i].Covariance().n_elem);
   }
 
-  // From the assignments, generate the means and weights.
+  // From the assignments, generate means, covariances, and weights.
   for (size_t i = 0; i < observations.n_cols; i++)
   {
     const size_t cluster = assignments[i];
 
     // Add this to the relevant mean.
     means[cluster] += observations.col(i);
+
+    // Add this to the relevant covariance.
+    covariances[cluster] += observations.col(i) % observations.col(i);
 
     // Add one to the weights to normalize parameters later.
     weights[cluster]++;
@@ -422,7 +425,7 @@ void DiagonalGMM::InitialClustering(
     means[i] /= (weights[i] > 1) ? weights[i] : 1;
   }
 
-  // Generate the covariances.
+  // Calculate the covariances.
   for (size_t i = 0; i < observations.n_cols; i++)
   {
     const size_t cluster = assignments[i];
