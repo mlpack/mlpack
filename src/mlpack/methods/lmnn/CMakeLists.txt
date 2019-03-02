@@ -20,3 +20,4 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(lmnn)
 add_python_binding(lmnn)
+add_markdown_docs(lmnn "cli;python" "transformations")

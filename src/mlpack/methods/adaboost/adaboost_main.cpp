@@ -46,7 +46,14 @@ using namespace mlpack::decision_stump;
 using namespace mlpack::perceptron;
 using namespace mlpack::util;
 
-PROGRAM_INFO("AdaBoost", "This program implements the AdaBoost (or Adaptive "
+PROGRAM_INFO("AdaBoost",
+    // Short description.
+    "An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for "
+    "classification.  This can be used to train an AdaBoost model on labeled "
+    "data or use an existing AdaBoost model to predict the classes of new "
+    "points.",
+    // Long description.
+    "This program implements the AdaBoost (or Adaptive "
     "Boosting) algorithm. The variant of AdaBoost implemented here is "
     "AdaBoost.MH. It uses a weak learner, either decision stumps or "
     "perceptrons, and over many iterations, creates a strong learner that is a "
@@ -72,7 +79,7 @@ PROGRAM_INFO("AdaBoost", "This program implements the AdaBoost (or Adaptive "
     "classes for each point in the test dataset are output to the " +
     PRINT_PARAM_STRING("output") + " output parameter.  The AdaBoost model "
     "itself is output to the " + PRINT_PARAM_STRING("output_model") +
-    "output parameter."
+    " output parameter."
     "\n\n"
     "For example, to run AdaBoost on an input dataset " +
     PRINT_DATASET("data") + " with perceptrons as the weak learner type, "
@@ -88,7 +95,15 @@ PROGRAM_INFO("AdaBoost", "This program implements the AdaBoost (or Adaptive "
     PRINT_DATASET("predictions") + " with the following command: "
     "\n\n" +
     PRINT_CALL("adaboost", "input_model", "model", "test", "test_data",
-        "output", "predictions"));
+        "output", "predictions"),
+    // See also...
+    SEE_ALSO("AdaBoost on Wikipedia", "https://en.wikipedia.org/wiki/AdaBoost"),
+    SEE_ALSO("Improved boosting algorithms using confidence-rated predictions "
+        "(pdf)", "http://rob.schapire.net/papers/SchapireSi98.pdf"),
+    SEE_ALSO("Perceptron", "#perceptron"),
+    SEE_ALSO("Decision Stump", "#decision_stump"),
+    SEE_ALSO("mlpack::adaboost::AdaBoost C++ class documentation",
+        "@doxygen/classmlpack_1_1adaboost_1_1AdaBoost.html"));
 
 // Input for training.
 PARAM_MATRIX_IN("training", "Dataset for training AdaBoost.", "t");

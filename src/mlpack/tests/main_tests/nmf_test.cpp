@@ -58,7 +58,7 @@ BOOST_FIXTURE_TEST_SUITE(NMFMainTest, NMFTestFixture);
  */
 BOOST_AUTO_TEST_CASE(NMFMultdistShapeTest)
 {
-  mat v = randu<mat>(10, 10);
+  mat v = randu<mat>(8, 10);
   int r = 5;
 
   SetInputParam("update_rules", std::string("multdist"));
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(NMFMultdistShapeTest)
   const mat& h = CLI::GetParam<mat>("h");
 
   // Check the shapes of W and H.
-  BOOST_REQUIRE_EQUAL(w.n_rows, 10);
+  BOOST_REQUIRE_EQUAL(w.n_rows, 8);
   BOOST_REQUIRE_EQUAL(w.n_cols, 5);
   BOOST_REQUIRE_EQUAL(h.n_rows, 5);
   BOOST_REQUIRE_EQUAL(h.n_cols, 10);
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(NMFMultdistShapeTest)
  */
 BOOST_AUTO_TEST_CASE(NMFMultdivShapeTest)
 {
-  mat v = randu<mat>(10, 10);
+  mat v = randu<mat>(8, 10);
   int r = 5;
 
   SetInputParam("update_rules", std::string("multdiv"));
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE(NMFMultdivShapeTest)
   const mat& h = CLI::GetParam<mat>("h");
 
   // Check the shapes of W and H.
-  BOOST_REQUIRE_EQUAL(w.n_rows, 10);
+  BOOST_REQUIRE_EQUAL(w.n_rows, 8);
   BOOST_REQUIRE_EQUAL(w.n_cols, 5);
   BOOST_REQUIRE_EQUAL(h.n_rows, 5);
   BOOST_REQUIRE_EQUAL(h.n_cols, 10);
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE(NMFMultdivShapeTest)
  */
 BOOST_AUTO_TEST_CASE(NMFAlsShapeTest)
 {
-  mat v = randu<mat>(10, 10);
+  mat v = randu<mat>(8, 10);
   int r = 5;
 
   SetInputParam("update_rules", std::string("als"));
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(NMFAlsShapeTest)
   const mat& h = CLI::GetParam<mat>("h");
 
   // Check the shapes of W and H.
-  BOOST_REQUIRE_EQUAL(w.n_rows, 10);
+  BOOST_REQUIRE_EQUAL(w.n_rows, 8);
   BOOST_REQUIRE_EQUAL(w.n_cols, 5);
   BOOST_REQUIRE_EQUAL(h.n_rows, 5);
   BOOST_REQUIRE_EQUAL(h.n_cols, 10);

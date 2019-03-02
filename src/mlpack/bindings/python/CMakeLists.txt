@@ -14,7 +14,6 @@ if (NOT BUILD_PYTHON_BINDINGS)
 endif ()
 
 # Generate Python setuptools file.
-# We can probably use FindPythonInterp when we require CMake 3.0.
 find_package(PythonInterp)
 if (NOT PYTHON_EXECUTABLE)
   not_found_return("Python not found; not building Python bindings.")
@@ -43,6 +42,8 @@ endif ()
 
 # Nothing in this directory will be compiled into mlpack.
 set(BINDING_SOURCES
+  default_param.hpp
+  default_param_impl.hpp
   generate_pyx.hpp
   generate_pyx.cpp
   get_arma_type.hpp
@@ -62,6 +63,8 @@ set(BINDING_SOURCES
   print_output_processing.hpp
   print_pyx.hpp
   print_pyx.cpp
+  print_type_doc.hpp
+  print_type_doc_impl.hpp
   py_option.hpp
   strip_type.hpp
   mlpack/arma_util.hpp
@@ -117,7 +120,7 @@ add_custom_command(TARGET python_copy PRE_BUILD
     COMMAND ${CMAKE_COMMAND} ARGS -E copy
         ${CMAKE_CURRENT_SOURCE_DIR}/setup.cfg
         ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/
-	BYPRODUCTS ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${cython_file})
+    BYPRODUCTS ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${cython_file})
 add_custom_command(TARGET python_copy PRE_BUILD
     COMMAND ${CMAKE_COMMAND} ARGS -E copy
         ${CMAKE_CURRENT_SOURCE_DIR}/copy_artifacts.py
@@ -129,7 +132,7 @@ if (BUILD_TESTS)
         COMMAND ${CMAKE_COMMAND} ARGS -E copy
             ${CMAKE_CURRENT_SOURCE_DIR}/${test_file}
             ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/tests/
-	BYPRODUCTS ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/tests/${test_file})
+        BYPRODUCTS ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/tests/${test_file})
   endforeach ()
 endif ()
 
@@ -164,13 +167,14 @@ add_dependencies(python python_copy)
 # Configure installation script file.
 execute_process(COMMAND ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/print_python_version.py" "${CMAKE_INSTALL_PREFIX}"
-    OUTPUT_VARIABLE NEW_PYTHONPATH)
-install(CODE "set(ENV{PYTHONPATH} ${NEW_PYTHONPATH})")
-install(CODE "execute_process(COMMAND mkdir -p $ENV{DESTDIR}${NEW_PYTHONPATH})")
-install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE}
-    \"${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py\" install
-    --prefix=${CMAKE_INSTALL_PREFIX} --root=$ENV{DESTDIR}
-    WORKING_DIRECTORY \"${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/\")")
+    OUTPUT_VARIABLE CMAKE_PYTHON_PATH)
+string(STRIP "${CMAKE_PYTHON_PATH}" CMAKE_PYTHON_PATH)
+install(CODE "set(ENV{PYTHONPATH} ${CMAKE_PYTHON_PATH})")
+install(CODE "set(PYTHON_EXECUTABLE \"${PYTHON_EXECUTABLE}\")")
+install(CODE "set(CMAKE_BINARY_DIR \"${CMAKE_BINARY_DIR}\")")
+install(CODE "set(CMAKE_INSTALL_PREFIX \"${CMAKE_INSTALL_PREFIX}\")")
+install(CODE "execute_process(COMMAND mkdir -p $ENV{DESTDIR}${CMAKE_PYTHON_PATH})")
+install(SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/PythonInstall.cmake)
 
 # Prepare __init__.py for having all of the convenience imports appended to it.
 file(COPY mlpack/__init__.py DESTINATION
@@ -199,9 +203,9 @@ if (BUILD_PYTHON_BINDINGS)
       -DBINDING_TYPE=BINDING_TYPE_PYX)
   add_custom_command(TARGET generate_pyx_${name} POST_BUILD
       COMMAND ${CMAKE_COMMAND}
-          -DGENERATE_PYX_PROGRAM=${CMAKE_BINARY_DIR}/bin/generate_pyx_${name}
-          -DPYX_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${name}.pyx
-          -P ${CMAKE_SOURCE_DIR}/CMake/GeneratePYX.cmake)
+          -DPROGRAM=${CMAKE_BINARY_DIR}/bin/generate_pyx_${name}
+          -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${name}.pyx
+          -P ${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake)
 
   # Build the pyx.  Since distutils doesn't support a parallel build, we'll
   # enforce it here.  Although this will always be rebuilt, that's okay because

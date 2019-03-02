@@ -22,7 +22,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="http://www.mlpack.org/files/mlpack-3.0.3.tar.gz">current stable version (3.0.3)</a>
+    <a href="http://www.mlpack.org/files/mlpack-3.0.4.tar.gz">current stable version (3.0.4)</a>
   </em>
 </p>
 
@@ -59,7 +59,7 @@ documentation. The website should be consulted for further information:
 ### 2. Citation details
 
 If you use mlpack in your research or software, please cite mlpack using the
-citation below (given in BiBTeX format):
+citation below (given in BibTeX format):
 
     @article{mlpack2018,
         title     = {mlpack 3: a fast, flexible machine learning library},
@@ -148,7 +148,7 @@ information:
 
     $ cmake -D DEBUG=ON -D PROFILE=ON ../
 
-Options are specified with the -D flag.  A list of options allowed:
+Options are specified with the -D flag.  The allowed options include:
 
     DEBUG=(ON/OFF): compile with debugging symbols
     PROFILE=(ON/OFF): compile with profiling symbols
@@ -159,11 +159,16 @@ Options are specified with the -D flag.  A list of options allowed:
     BUILD_CLI_EXECUTABLES=(ON/OFF): whether or not to build command-line programs
     BUILD_PYTHON_BINDINGS=(ON/OFF): whether or not to build Python bindings
     BUILD_TESTS=(ON/OFF): whether or not to build tests
+    BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
+       static libraries
+    DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
+    ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory
+       for ensmallen
     USE_OPENMP=(ON/OFF): whether or not to use OpenMP if available
 
 Other tools can also be used to configure CMake, but those are not documented
 here.  See [this section of the build guide](http://www.mlpack.org/docs/mlpack-git/doxygen/build.html#build_config)
-for more details.
+for more details, including a full list of options, and their default values.
 
 By default, command-line programs will be built, and if the Python dependencies
 (Cython, setuptools, numpy, pandas) are available, then Python bindings will
@@ -232,7 +237,7 @@ be stated more simply: for each point in the dataset, we wish to know the k
 nearest points to that point.
 
 Each mlpack program has extensive help documentation which details what the
-method does, what each of the parameters are, and how to use them:
+method does, what each of the parameters is, and how to use them:
 
 ```shell
 $ mlpack_knn --help

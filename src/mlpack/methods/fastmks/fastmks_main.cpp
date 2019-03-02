@@ -25,6 +25,12 @@ using namespace mlpack::metric;
 using namespace mlpack::util;
 
 PROGRAM_INFO("FastMKS (Fast Max-Kernel Search)",
+    // Short description.
+    "An implementation of the single-tree and dual-tree fast max-kernel search"
+    " (FastMKS) algorithm.  Given a set of reference points and a set of query"
+    " points, this can find the reference point with maximum kernel value for "
+    "each query point; trained models can be reused for future queries.",
+    // Long description.
     "This program will find the k maximum kernels of a set of points, "
     "using a query set and a reference set (which can optionally be the same "
     "set). More specifically, for each point in the query set, the k points in"
@@ -51,7 +57,14 @@ PROGRAM_INFO("FastMKS (Fast Max-Kernel Search)",
     "\n\n"
     "This program performs FastMKS using a cover tree.  The base used to build "
     "the cover tree can be specified with the " + PRINT_PARAM_STRING("base") +
-    " parameter.");
+    " parameter.",
+    SEE_ALSO("Fast max-kernel search tutorial (fastmks)",
+        "@doxygen/fmkstutorial.html"),
+    SEE_ALSO("k-nearest-neighbor search", "#knn"),
+    SEE_ALSO("Dual-tree Fast Exact Max-Kernel Search (pdf)",
+        "http://mlpack.org/papers/fmks.pdf"),
+    SEE_ALSO("mlpack::fastmks::FastMKS class documentation",
+        "@doxygen/classmlpack_1_1fastmks_1_1FastMKS.html"));
 
 // Model-building parameters.
 PARAM_MATRIX_IN("reference", "The reference dataset.", "r");

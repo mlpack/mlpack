@@ -993,6 +993,7 @@ void CellBound<MetricType, ElemType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(numBounds);
   ar & BOOST_SERIALIZATION_NVP(loAddress);
   ar & BOOST_SERIALIZATION_NVP(hiAddress);
+  ar & BOOST_SERIALIZATION_NVP(metric);
 }
 
 } // namespace bound

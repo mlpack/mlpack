@@ -12,14 +12,14 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/svdplusplus/svdplusplus.hpp>
-#include <mlpack/core/optimizers/parallel_sgd/parallel_sgd.hpp>
-#include <mlpack/core/optimizers/parallel_sgd/decay_policies/constant_step.hpp>
+
+#include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
+
 using namespace mlpack;
 using namespace mlpack::svd;
-using namespace mlpack::optimization;
 
 BOOST_AUTO_TEST_SUITE(SVDPlusPlusTest);
 
@@ -119,7 +119,8 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionRegularizationEvaluate)
   // Make three SVDPlusPlusFunction objects with different amounts of
   // regularization.
   SVDPlusPlusFunction<arma::mat> svdPPFuncNoReg(data, implicitData, rank, 0);
-  SVDPlusPlusFunction<arma::mat> svdPPFuncSmallReg(data, implicitData, rank, 0.5);
+  SVDPlusPlusFunction<arma::mat> svdPPFuncSmallReg(data, implicitData, rank,
+      0.5);
   SVDPlusPlusFunction<arma::mat> svdPPFuncBigReg(data, implicitData, rank, 20);
 
   for (size_t i = 0; i < numTrials; i++)
@@ -149,7 +150,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionRegularizationEvaluate)
       for (; it != it_end; ++it)
       {
         if (implicitVecsNormSquare(it.row()) < 0)
-        { 
+        {
           implicitVecsNormSquare(it.row()) = arma::dot(
             parameters.col(implicitStart + it.row()).subvec(0, rank - 1),
             parameters.col(implicitStart + it.row()).subvec(0, rank - 1));
@@ -272,7 +273,8 @@ BOOST_AUTO_TEST_CASE(SVDplusPlusOutputSizeTest)
 
   // Apply SVD++.
   SVDPlusPlus<> svdPP(iterations);
-  svdPP.Apply(data, rank, itemLatent, userLatent, itemBias, userBias, itemImplicit);
+  svdPP.Apply(data, rank, itemLatent, userLatent, itemBias, userBias,
+      itemImplicit);
 
   // Check the size of outputs.
   BOOST_REQUIRE_EQUAL(itemLatent.n_rows, numItems);
@@ -389,7 +391,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionOptimize)
 
   // Make the SVD++ function and the optimizer.
   SVDPlusPlusFunction<arma::mat> svdPPFunc(data, implicitData, rank, lambda);
-  mlpack::optimization::StandardSGD optimizer(alpha, iterations * numRatings);
+  ens::StandardSGD optimizer(alpha, iterations * numRatings);
 
   // Obtain optimized parameters after training.
   arma::mat optParameters = arma::randu(rank + 1, numUsers + 2 * numItems);
@@ -497,11 +499,11 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionParallelOptimize)
   // Make the SVD++ function and the optimizer.
   SVDPlusPlusFunction<arma::mat> svdPPFunc(data, implicitData, rank, lambda);
 
-  ConstantStep decayPolicy(alpha);
+  ens::ConstantStep decayPolicy(alpha);
 
   // Iterate till convergence.
   // The threadShareSize is chosen such that each function gets optimized.
-  ParallelSGD<ConstantStep> optimizer(iterations,
+  ens::ParallelSGD<ens::ConstantStep> optimizer(iterations,
       std::ceil((float) svdPPFunc.NumFunctions() / omp_get_max_threads()), 1e-5,
       true, decayPolicy);
 

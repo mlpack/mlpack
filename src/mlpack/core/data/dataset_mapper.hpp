@@ -56,6 +56,14 @@ class DatasetMapper
   explicit DatasetMapper(PolicyType& policy, const size_t dimensionality = 0);
 
   /**
+   * Set the dimensionality of an existing DatasetMapper object.  This resets
+   * all mappings (but not the PolicyType).
+   *
+   * @param dimensionality New dimensionality.
+   */
+  void SetDimensionality(const size_t dimensionality);
+
+  /**
    * Preprocessing: during a first pass of the data, pass the input on to the
    * MapPolicy if they are needed.
    *

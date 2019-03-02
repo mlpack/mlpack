@@ -34,17 +34,17 @@ LinearRegression::LinearRegression(const arma::mat& predictors,
   Train(predictors, responses, weights, intercept);
 }
 
-void LinearRegression::Train(const arma::mat& predictors,
-                             const arma::rowvec& responses,
-                             const bool intercept)
+double LinearRegression::Train(const arma::mat& predictors,
+                               const arma::rowvec& responses,
+                               const bool intercept)
 {
-  Train(predictors, responses, arma::rowvec(), intercept);
+  return Train(predictors, responses, arma::rowvec(), intercept);
 }
 
-void LinearRegression::Train(const arma::mat& predictors,
-                             const arma::rowvec& responses,
-                             const arma::rowvec& weights,
-                             const bool intercept)
+double LinearRegression::Train(const arma::mat& predictors,
+                               const arma::rowvec& responses,
+                               const arma::rowvec& weights,
+                               const bool intercept)
 {
   this->intercept = intercept;
 
@@ -85,6 +85,7 @@ void LinearRegression::Train(const arma::mat& predictors,
       lambda * arma::eye<arma::mat>(p.n_rows, p.n_rows);
 
   parameters = arma::solve(cov, p * r.t());
+  return ComputeError(predictors, responses);
 }
 
 void LinearRegression::Predict(const arma::mat& points,

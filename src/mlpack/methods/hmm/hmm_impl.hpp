@@ -83,7 +83,7 @@ HMM<Distribution>::HMM(const arma::vec& initial,
  * @param dataSeq Set of data sequences to train on.
  */
 template<typename Distribution>
-void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
+double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
 {
   // We should allow a guess at the transition and emission matrices.
   double loglik = 0;
@@ -136,7 +136,8 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
       arma::vec logScales;
 
       // Add the log-likelihood of this sequence.  This is the E-step.
-      loglik += LogEstimate(dataSeq[seq], stateLogProb, forwardLog, backwardLog, logScales);
+      loglik += LogEstimate(dataSeq[seq], stateLogProb, forwardLog,
+          backwardLog, logScales);
 
       // Add to estimate of initial probability for state j.
       for (size_t j = 0; j < transition.n_cols; ++j)
@@ -210,6 +211,7 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
     Log::Debug << "Iteration " << iter << ": log-likelihood " << loglik
         << "." << std::endl;
   }
+  return loglik;
 }
 
 /**
@@ -516,7 +518,7 @@ void HMM<Distribution>::Filter(const arma::mat& dataSeq,
   arma::vec logScales;
   Forward(dataSeq, logScales, forwardLogProb);
 
-  arma::mat forwardProb = exp(forwardProb);
+  arma::mat forwardProb = exp(forwardLogProb);
 
   // Propagate state ahead.
   if (ahead != 0)
@@ -541,7 +543,8 @@ void HMM<Distribution>::Smooth(const arma::mat& dataSeq,
   arma::mat forwardLogProb;
   arma::mat backwardLogProb;
   arma::mat logScales;
-  LogEstimate(dataSeq, stateLogProb, forwardLogProb, backwardLogProb, logScales);
+  LogEstimate(dataSeq, stateLogProb, forwardLogProb, backwardLogProb,
+      logScales);
 
   // Compute expected emissions.
   // Will not work for distributions without a Mean() function.
@@ -598,7 +601,7 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
 
     // Normalize probability.
     logScales[t] = math::AccuLog(forwardLogProb.col(t));
-    if(std::isfinite(logScales[t]))
+    if (std::isfinite(logScales[t]))
         forwardLogProb.col(t) -= logScales[t];
   }
 }

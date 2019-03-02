@@ -1,5 +1,5 @@
 /***
- * @file mahalanobis_dstance.h
+ * @file mahalanobis_distance.hpp
  * @author Ryan Curtin
  *
  * The Mahalanobis distance.
@@ -81,7 +81,8 @@ class MahalanobisDistance
    *
    * @param covariance The covariance matrix to use for this distance.
    */
-  MahalanobisDistance(const arma::mat& covariance) : covariance(covariance) { }
+  MahalanobisDistance(arma::mat covariance) :
+      covariance(std::move(covariance)) { }
 
   /**
    * Evaluate the distance between the two given points using this Mahalanobis

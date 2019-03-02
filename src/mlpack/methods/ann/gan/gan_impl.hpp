@@ -193,12 +193,12 @@ template<
   typename PolicyType
 >
 template<typename OptimizerType>
-void GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
+double GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
     OptimizerType& Optimizer)
 {
   if (!reset)
     Reset();
-  Optimizer.Optimize(*this, parameter);
+  return Optimizer.Optimize(*this, parameter);
 }
 
 template<

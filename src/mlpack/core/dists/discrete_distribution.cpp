@@ -1,6 +1,7 @@
 /**
  * @file discrete_distribution.cpp
  * @author Ryan Curtin
+ * @author Rohan Raj
  *
  * Implementation of DiscreteDistribution probability distribution.
  *

@@ -35,7 +35,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::RBM(
     const size_t poolSize,
     const ElemType slabPenalty,
     const ElemType radius,
-    const bool persistence):
+    const bool persistence) :
     predictors(std::move(predictors)),
     initializeRule(initializeRule),
     visibleSize(visibleSize),
@@ -44,6 +44,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::RBM(
     numSteps(numSteps),
     negSteps(negSteps),
     poolSize(poolSize),
+    steps(0),
     slabPenalty(slabPenalty),
     radius(2 * radius),
     persistence(persistence),
@@ -91,7 +92,7 @@ template<
   typename PolicyType
 >
 template<typename OptimizerType>
-void RBM<InitializationRuleType, DataType, PolicyType>::Train(
+double RBM<InitializationRuleType, DataType, PolicyType>::Train(
     OptimizerType& optimizer)
 {
   if (!reset)
@@ -99,7 +100,7 @@ void RBM<InitializationRuleType, DataType, PolicyType>::Train(
     Reset();
   }
 
-  optimizer.Optimize(*this, parameter);
+  return optimizer.Optimize(*this, parameter);
 }
 
 template<
@@ -135,12 +136,8 @@ RBM<InitializationRuleType, DataType, PolicyType>::Phase(
   DataType hiddenBiasGrad = DataType(gradient.memptr() + weightGrad.n_elem,
       hiddenSize, 1, false, false);
 
-  DataType visibleBiasGrad = DataType(gradient.memptr() + weightGrad.n_elem +
-      hiddenBiasGrad.n_elem, visibleSize, 1, false, false);
-
   HiddenMean(std::move(input), std::move(hiddenBiasGrad));
   weightGrad.slice(0) = hiddenBiasGrad * input.t();
-  visibleBiasGrad = input;
 }
 
 template<

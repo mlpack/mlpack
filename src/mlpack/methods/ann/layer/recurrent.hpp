@@ -17,8 +17,8 @@
 
 #include "../visitor/delete_visitor.hpp"
 #include "../visitor/delta_visitor.hpp"
+#include "../visitor/copy_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
-#include "../visitor/weight_size_visitor.hpp"
 
 #include "layer_types.hpp"
 #include "add_merge.hpp"
@@ -52,6 +52,9 @@ class Recurrent
 
   //! Destructor to release allocated memory.
   ~Recurrent();
+
+  //! Copy constructor.
+  Recurrent(const Recurrent&);
 
   /**
    * Create the Recurrent object using the specified modules.
@@ -146,6 +149,9 @@ class Recurrent
   //! Locally-stored delete visitor module object.
   DeleteVisitor deleteVisitor;
 
+  //! Locally-stored copy visitor
+  CopyVisitor<CustomLayers...> copyVisitor;
+
   //! Locally-stored start module.
   LayerTypes<CustomLayers...> startModule;
 
@@ -191,9 +197,6 @@ class Recurrent
 
   //! Locally-stored merge module.
   LayerTypes<CustomLayers...> mergeModule;
-
-  //! Locally-stored weight size visitor.
-  WeightSizeVisitor weightSizeVisitor;
 
   //! Locally-stored delta visitor.
   DeltaVisitor deltaVisitor;

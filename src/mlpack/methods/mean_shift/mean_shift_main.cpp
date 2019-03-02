@@ -23,9 +23,15 @@ using namespace mlpack::util;
 using namespace std;
 
 // Define parameters for the executable.
-PROGRAM_INFO("Mean Shift Clustering", "This program performs mean shift "
-    "clustering on the given dataset, storing the learned cluster assignments "
-    "either as a column of labels in the input dataset or separately."
+PROGRAM_INFO("Mean Shift Clustering",
+    // Short description.
+    "A fast implementation of mean-shift clustering using dual-tree range "
+    "search.  Given a dataset, this uses the mean shift algorithm to produce "
+    "and return a clustering of the data.",
+    // Long description.
+    "This program performs mean shift clustering on the given dataset, storing "
+    "the learned cluster assignments either as a column of labels in the input "
+    "dataset or separately."
     "\n\n"
     "The input dataset should be specified with the " +
     PRINT_PARAM_STRING("input") + " parameter, and the radius used for search"
@@ -42,7 +48,16 @@ PROGRAM_INFO("Mean Shift Clustering", "This program performs mean shift "
     PRINT_DATASET("data") + " and store the centroids to " +
     PRINT_DATASET("centroids") + ", the following command may be used: "
     "\n\n" +
-    PRINT_CALL("mean_shift", "input", "data", "centroid", "centroids"));
+    PRINT_CALL("mean_shift", "input", "data", "centroid", "centroids"),
+    SEE_ALSO("@kmeans", "#kmeans"),
+    SEE_ALSO("@dbscan", "#dbscan"),
+    SEE_ALSO("Mean shift on Wikipedia",
+        "https://en.wikipedia.org/wiki/Mean_shift"),
+    SEE_ALSO("Mean Shift, Mode Seeking, and Clustering (pdf)",
+        "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.510.1222"
+        "&rep=rep1&type=pdf"),
+    SEE_ALSO("mlpack::mean_shift::MeanShift C++ class documentation",
+        "@doxygen/classmlpack_1_1meanshift_1_1MeanShift.html"));
 
 // Required options.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform clustering on.", "i");

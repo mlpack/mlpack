@@ -52,8 +52,6 @@ progress to complex, extensible uses.
 These tutorials discuss some of the more advanced functionality contained in
 mlpack.
 
- - \ref optimizertutorial
- - \ref cnetutorial
  - \ref bindings
  - \ref cv
  - \ref hpt

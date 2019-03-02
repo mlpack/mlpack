@@ -15,7 +15,6 @@
 #include "lmnn_function.hpp"
 
 #include <mlpack/core/math/make_alias.hpp>
-#include <mlpack/core/optimizers/function.hpp>
 
 namespace mlpack {
 namespace lmnn {
@@ -209,7 +208,8 @@ inline void LMNNFunction<MetricType>::TransDiff(
       }
       else
       {
-        transformationDiffs[lastTransformationIndices[i]] = arma::norm(transformation -
+        transformationDiffs[lastTransformationIndices[i]] =
+            arma::norm(transformation -
             oldTransformationMatrices[lastTransformationIndices(i)]);
       }
     }

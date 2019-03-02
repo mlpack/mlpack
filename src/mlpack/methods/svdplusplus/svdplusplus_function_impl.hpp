@@ -20,10 +20,11 @@ namespace mlpack {
 namespace svd {
 
 template <typename MatType>
-SVDPlusPlusFunction<MatType>::SVDPlusPlusFunction(const MatType& data,
-                                                  const arma::sp_mat& implicitData,
-                                                  const size_t rank,
-                                                  const double lambda) :
+SVDPlusPlusFunction<MatType>::SVDPlusPlusFunction(
+    const MatType& data,
+    const arma::sp_mat& implicitData,
+    const size_t rank,
+    const double lambda) :
     data(math::MakeAlias(const_cast<MatType&>(data), false)),
     implicitData(implicitData),
     rank(rank),
@@ -104,7 +105,7 @@ double SVDPlusPlusFunction<MatType>::Evaluate(const arma::mat& parameters,
     {
       userVec += parameters.col(implicitStart + it.row()).subvec(0, rank - 1);
       if (implicitVecsNormSquare(it.row()) < 0)
-      { 
+      {
         implicitVecsNormSquare(it.row()) = arma::dot(
             parameters.col(implicitStart + it.row()).subvec(0, rank - 1),
             parameters.col(implicitStart + it.row()).subvec(0, rank - 1));
@@ -288,8 +289,7 @@ void SVDPlusPlusFunction<MatType>::Gradient(const arma::mat& parameters,
 } // namespace mlpack
 
 // Template specialization for the SGD optimizer.
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template <>
 template <>
@@ -324,7 +324,7 @@ double StandardSGD::Optimize(
     if ((currentFunction % numFunctions) == 0)
     {
       const size_t epoch = i / numFunctions + 1;
-      Log::Info << "Epoch " << epoch << "; " << "objective "
+      mlpack::Log::Info << "Epoch " << epoch << "; " << "objective "
           << overallObjective << "." << std::endl;
 
       // Reset the counter variables.
@@ -431,21 +431,21 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
     }
 
     // Output current objective function.
-    Log::Info << "Parallel SGD: iteration " << i << ", objective "
-      << overallObjective << "." << std::endl;
+    mlpack::Log::Info << "Parallel SGD: iteration " << i << ", objective "
+        << overallObjective << "." << std::endl;
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
-      Log::Warn << "Parallel SGD: converged to " << overallObjective
-        << "; terminating with failure. Try a smaller step size?"
-        << std::endl;
+      mlpack::Log::Warn << "Parallel SGD: converged to " << overallObjective
+          << "; terminating with failure. Try a smaller step size?"
+          << std::endl;
       return overallObjective;
     }
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
-      Log::Info << "SGD: minimized within tolerance " << tolerance << "; "
-        << "terminating optimization." << std::endl;
+      mlpack::Log::Info << "SGD: minimized within tolerance " << tolerance
+          << "; terminating optimization." << std::endl;
       return overallObjective;
     }
 
@@ -548,13 +548,12 @@ inline double ParallelSGD<ExponentialBackoff>::Optimize(
       }
     }
   }
-  Log::Info << "\n Parallel SGD terminated with objective : "
-    << overallObjective << std::endl;
+  mlpack::Log::Info << "\n Parallel SGD terminated with objective : "
+      << overallObjective << std::endl;
 
   return overallObjective;
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

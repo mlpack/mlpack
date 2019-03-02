@@ -64,7 +64,7 @@ RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::~RNN()
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename OptimizerType>
-void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
+double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::cube predictors,
     arma::cube responses,
     OptimizerType& optimizer)
@@ -89,6 +89,7 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out
       << "." << std::endl;
+  return out;
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
@@ -105,7 +106,7 @@ void RNN<OutputLayerType, InitializationRuleType,
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename OptimizerType>
-void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
+double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::cube predictors,
     arma::cube responses)
 {
@@ -131,6 +132,7 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
   Log::Info << "RNN::RNN(): final objective of trained model is " << out
       << "." << std::endl;
+  return out;
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
@@ -214,15 +216,6 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
       responseSeq = seqNum;
     }
 
-    if (!deterministic)
-    {
-      for (size_t l = 0; l < network.size(); ++l)
-      {
-        boost::apply_visitor(SaveOutputParameterVisitor(
-            std::move(moduleOutputParameter)), network[l]);
-      }
-    }
-
     performance += outputLayer.Forward(std::move(boost::apply_visitor(
         outputParameterVisitor, network.back())),
         std::move(arma::mat(responses.slice(responseSeq).colptr(begin),
@@ -304,13 +297,10 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
       responseSeq = seqNum;
     }
 
-    if (!deterministic)
+    for (size_t l = 0; l < network.size(); ++l)
     {
-      for (size_t l = 0; l < network.size(); ++l)
-      {
-        boost::apply_visitor(SaveOutputParameterVisitor(
-            std::move(moduleOutputParameter)), network[l]);
-      }
+      boost::apply_visitor(SaveOutputParameterVisitor(
+          std::move(moduleOutputParameter)), network[l]);
     }
 
     performance += outputLayer.Forward(std::move(boost::apply_visitor(
