@@ -1149,9 +1149,9 @@ BOOST_AUTO_TEST_CASE(RegressionDistributionTest)
  * Make sure Diagonal Covariance Gaussian distributions are initialized
  * correctly.
  */
-BOOST_AUTO_TEST_CASE(DiagCovGaussianDistributionEmptyConstructor)
+BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionEmptyConstructor)
 {
-  DiagCovGaussianDistribution d;
+  DiagonalGaussianDistribution d;
 
   BOOST_REQUIRE_EQUAL(d.Mean().n_elem, 0);
   BOOST_REQUIRE_EQUAL(d.Covariance().n_elem, 0);
@@ -1161,9 +1161,9 @@ BOOST_AUTO_TEST_CASE(DiagCovGaussianDistributionEmptyConstructor)
  * Make sure Diagonal Covariance Gaussian distributions are initialized to
  * the correct dimensionality.
  */
-BOOST_AUTO_TEST_CASE(DiagCovGaussianDistributionDimensionalityConstructor)
+BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionDimensionalityConstructor)
 {
-  DiagCovGaussianDistribution d(4);
+  DiagonalGaussianDistribution d(4);
 
   BOOST_REQUIRE_EQUAL(d.Mean().n_elem, 4);
   BOOST_REQUIRE_EQUAL(d.Covariance().n_elem, 4);
@@ -1173,12 +1173,12 @@ BOOST_AUTO_TEST_CASE(DiagCovGaussianDistributionDimensionalityConstructor)
  * Make sure Diagonal Covariance Gaussian distributions are initialized
  * correctly when we give a mean and covariance.
  */
-BOOST_AUTO_TEST_CASE(DiagCovGaussianDistributionConstructor)
+BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionConstructor)
 {
   arma::vec mean = arma::randu<arma::vec>(3);
   arma::vec covariance = arma::randu<arma::vec>(3);
 
-  DiagCovGaussianDistribution d(mean, covariance);
+  DiagonalGaussianDistribution d(mean, covariance);
 
   // Make sure the mean and covariance is correct.
   for (size_t i = 0; i < 3; i++)
@@ -1192,12 +1192,12 @@ BOOST_AUTO_TEST_CASE(DiagCovGaussianDistributionConstructor)
  * Make sure the probability of observations is correct.
  * The values were calculated using 'dmvnorm' in R.
  */
-BOOST_AUTO_TEST_CASE(DiagCovGaussianDistributionProbabilityTest)
+BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionProbabilityTest)
 {
   arma::vec mean("2 5 3 4 1");
   arma::vec cov("3 1 5 3 2");
 
-  DiagCovGaussianDistribution d(mean, cov);
+  DiagonalGaussianDistribution d(mean, cov);
 
   // Observations lists randomly selected.
   BOOST_REQUIRE_CLOSE(d.LogProbability("3 5 2 7 8"), -20.861264167855161,
@@ -1213,12 +1213,12 @@ BOOST_AUTO_TEST_CASE(DiagCovGaussianDistributionProbabilityTest)
 }
 
 /**
- * Test DiagCovGaussianDistribution::Probability() in the univariate case.
+ * Test DiagonalGaussianDistribution::Probability() in the univariate case.
  * The values were calculated using 'dmvnorm' in R.
  */
-BOOST_AUTO_TEST_CASE(DiagCovGaussianUnivariateProbabilityTest)
+BOOST_AUTO_TEST_CASE(DiagonalGaussianUnivariateProbabilityTest)
 {
-  DiagCovGaussianDistribution d(arma::vec("0.0"), arma::vec("1.0"));
+  DiagonalGaussianDistribution d(arma::vec("0.0"), arma::vec("1.0"));
 
   // Mean: 0.0, Covariance: 1.0
   BOOST_REQUIRE_CLOSE(d.Probability("0.0"), 0.3989422804014327, 1e-5);
@@ -1246,16 +1246,16 @@ BOOST_AUTO_TEST_CASE(DiagCovGaussianUnivariateProbabilityTest)
 }
 
 /**
- * Test DiagCovGaussianDistribution::Probability() in the multivariate case.
+ * Test DiagonalGaussianDistribution::Probability() in the multivariate case.
  * The values were calculated using 'dmvnorm' in R.
  */
-BOOST_AUTO_TEST_CASE(DiagCovGaussianMultivariateProbabilityTest)
+BOOST_AUTO_TEST_CASE(DiagonalGaussianMultivariateProbabilityTest)
 {
   arma::vec mean("0 0");
   arma::vec cov("2 2");
   arma::vec obs("0 0");
 
-  DiagCovGaussianDistribution d(mean, cov);
+  DiagonalGaussianDistribution d(mean, cov);
 
   BOOST_REQUIRE_CLOSE(d.Probability(obs), 0.079577471545947673, 1e-5);
 
@@ -1277,7 +1277,7 @@ BOOST_AUTO_TEST_CASE(DiagCovGaussianMultivariateProbabilityTest)
  * Test the phi() function, for multiple points in the multivariate Gaussian
  * case. The values were calculated using 'dmvnorm' in R.
  */
-BOOST_AUTO_TEST_CASE(DiagCovGaussianMultipointMultivariateProbabilityTest)
+BOOST_AUTO_TEST_CASE(DiagonalGaussianMultipointMultivariateProbabilityTest)
 {
   arma::vec mean = "2 5 3 7 2";
   arma::vec cov("9 2 1 4 8");
@@ -1287,7 +1287,7 @@ BOOST_AUTO_TEST_CASE(DiagCovGaussianMultipointMultivariateProbabilityTest)
                      "6 8 4 7 9 2;"
                      "4 6 7 7 3 2";
   arma::vec phis;
-  DiagCovGaussianDistribution d(mean, cov);
+  DiagonalGaussianDistribution d(mean, cov);
   d.LogProbability(points, phis);
 
   BOOST_REQUIRE_EQUAL(phis.n_elem, 6);
@@ -1303,12 +1303,12 @@ BOOST_AUTO_TEST_CASE(DiagCovGaussianMultipointMultivariateProbabilityTest)
 /**
  * Make sure random observations follow the probability distribution correctly.
  */
-BOOST_AUTO_TEST_CASE(DiagCovGaussianDistributionRandomTest)
+BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionRandomTest)
 {
   arma::vec mean("2.5 1.25");
   arma::vec cov("0.50 0.25");
 
-  DiagCovGaussianDistribution d(mean, cov);
+  DiagonalGaussianDistribution d(mean, cov);
 
   arma::mat obs(2, 5000);
 
@@ -1330,7 +1330,7 @@ BOOST_AUTO_TEST_CASE(DiagCovGaussianDistributionRandomTest)
 /**
  * Make sure that we can properly estimate from given observations.
  */
-BOOST_AUTO_TEST_CASE(DiagCovGaussianDistributionTrainTest)
+BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionTrainTest)
 {
   arma::vec mean("2.5 1.5 8.2 3.1");
   arma::vec cov("1.2 3.1 8.3 4.3");
@@ -1341,7 +1341,7 @@ BOOST_AUTO_TEST_CASE(DiagCovGaussianDistributionTrainTest)
   for (size_t i = 0; i < 10000; i++)
     observations.col(i) = (arma::sqrt(cov) % arma::randn<arma::vec>(4)) + mean;
 
-  DiagCovGaussianDistribution d;
+  DiagonalGaussianDistribution d;
 
   // Calculate the actual mean and covariance of data using armadillo.
   arma::vec actualMean = arma::mean(observations, 1);
@@ -1362,7 +1362,7 @@ BOOST_AUTO_TEST_CASE(DiagCovGaussianDistributionTrainTest)
  * Make sure the unbiased estimator of the weighted sample works correctly.
  * The values were calculated using 'cov.wt' in R.
  */
-BOOST_AUTO_TEST_CASE(DiagCovGaussianUnbiasedEstimatorTest)
+BOOST_AUTO_TEST_CASE(DiagonalGaussianUnbiasedEstimatorTest)
 {
   // Generate the observations.
   arma::mat observations("3 5 2 7;"
@@ -1372,7 +1372,7 @@ BOOST_AUTO_TEST_CASE(DiagCovGaussianUnbiasedEstimatorTest)
 
   arma::vec probs("0.3 0.4 0.1 0.2");
 
-  DiagCovGaussianDistribution d;
+  DiagonalGaussianDistribution d;
 
   // Estimate
   d.Train(observations, probs);
@@ -1393,7 +1393,7 @@ BOOST_AUTO_TEST_CASE(DiagCovGaussianUnbiasedEstimatorTest)
  * the weighted mean and covariance reduce to the unweighted sample mean and
  * covariance.
  */
-BOOST_AUTO_TEST_CASE(DiagCovGaussianWeightedParametersReductionTest)
+BOOST_AUTO_TEST_CASE(DiagonalGaussianWeightedParametersReductionTest)
 {
   arma::vec mean("2.5 1.5 8.2 3.1");
   arma::vec cov("1.2 3.1 8.3 4.3");
@@ -1405,8 +1405,8 @@ BOOST_AUTO_TEST_CASE(DiagCovGaussianWeightedParametersReductionTest)
   for (size_t i = 0; i < 5; i++)
     obs.col(i) = (arma::sqrt(cov) % arma::randn<arma::vec>(4)) + mean;
 
-  DiagCovGaussianDistribution d1;
-  DiagCovGaussianDistribution d2;
+  DiagonalGaussianDistribution d1;
+  DiagonalGaussianDistribution d2;
 
   // Estimate
   d1.Train(obs);

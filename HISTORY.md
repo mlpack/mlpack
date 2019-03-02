@@ -1,6 +1,6 @@
 ### mlpack 3.1.0
 ###### ????-??-??
-  * Add DiagCovGaussianDistribution and DiagonalGMM classes to speed up the
+  * Add DiagonalGaussianDistribution and DiagonalGMM classes to speed up the
     diagonal covariance computation and deprecate DiagonalConstraint (#1666).
 
   * Add kernel density estimation (KDE) implementation with bindings to other

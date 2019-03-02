@@ -26,7 +26,8 @@ namespace gmm {
 DiagonalGMM::DiagonalGMM(const size_t gaussians, const size_t dimensionality) :
     gaussians(gaussians),
     dimensionality(dimensionality),
-    dists(gaussians, distribution::DiagCovGaussianDistribution(dimensionality)),
+    dists(gaussians,
+    distribution::DiagonalGaussianDistribution(dimensionality)),
     weights(gaussians)
 {
   // Set equal weights. Technically this model is still valid, but only barely.
@@ -154,7 +155,7 @@ void DiagonalGMM::Classify(const arma::mat& observations,
  */
 double DiagonalGMM::LogLikelihood(
     const arma::mat& observations,
-    const std::vector<distribution::DiagCovGaussianDistribution>& dists,
+    const std::vector<distribution::DiagonalGaussianDistribution>& dists,
     const arma::vec& weights) const
 {
   double logLikelihood = 0;

@@ -1,5 +1,5 @@
 /**
- * @file diag_cov_gaussian_distribution.hpp
+ * @file diagonal_gaussian_distribution.hpp
  * @author Kim SangYeon
  *
  * Implementation of the Gaussian distribution with diagonal covariance.
@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DISTRIBUTIONS_DIAG_COV_GAUSSIAN_DISTRIBUTION_HPP
-#define MLPACK_CORE_DISTRIBUTIONS_DIAG_COV_GAUSSIAN_DISTRIBUTION_HPP
+#ifndef MLPACK_CORE_DISTRIBUTIONS_DIAGONAL_GAUSSIAN_DISTRIBUTION_HPP
+#define MLPACK_CORE_DISTRIBUTIONS_DIAGONAL_GAUSSIAN_DISTRIBUTION_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -18,7 +18,7 @@ namespace mlpack {
 namespace distribution {
 
 //! A single multivariate Gaussian distribution with diagonal covariance.
-class DiagCovGaussianDistribution
+class DiagonalGaussianDistribution
 {
  private:
   //! Mean of the distribution.
@@ -41,13 +41,13 @@ class DiagCovGaussianDistribution
 
  public:
   //! Default constructor, which creates a Gaussian with zero dimension.
-  DiagCovGaussianDistribution() : logDetCov(0.0) { /* nothing to do. */ }
+  DiagonalGaussianDistribution() : logDetCov(0.0) { /* nothing to do. */ }
 
   /**
    * Create a Gaussian Distribution with zero mean and diagonal covariance
    * with the given dimensionality.
    */
-  DiagCovGaussianDistribution(const size_t dimension) :
+  DiagonalGaussianDistribution(const size_t dimension) :
       mean(arma::zeros<arma::vec>(dimension)),
       covariance(arma::ones<arma::vec>(dimension)),
       invCov(arma::ones<arma::vec>(dimension)),
@@ -58,8 +58,8 @@ class DiagCovGaussianDistribution
    * Create a Guassian distribution with the given mean and diagonal
    * covariance.
    */
-  DiagCovGaussianDistribution(const arma::vec& mean,
-                              const arma::vec& covariance);
+  DiagonalGaussianDistribution(const arma::vec& mean,
+                               const arma::vec& covariance);
 
   //! Return the dimensionalty of this distribution.
   size_t Dimensionality() const { return mean.n_elem; }
@@ -157,7 +157,7 @@ class DiagCovGaussianDistribution
 * @param observations Matrix of observations.
 * @param probabilities Output log probabilities for each input observation.
 */
-inline void DiagCovGaussianDistribution::LogProbability(
+inline void DiagonalGaussianDistribution::LogProbability(
     const arma::mat& observations,
     arma::vec& logProbabilities) const
 {

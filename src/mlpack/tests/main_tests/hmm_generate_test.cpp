@@ -182,15 +182,15 @@ BOOST_AUTO_TEST_CASE(HMMGenerateDiagonalGMMHMMCheckDimensionsTest)
   h->DiagGMMHMM()->Emission().resize(2);
   h->DiagGMMHMM()->Emission()[0] = DiagonalGMM(2, 2);
   h->DiagGMMHMM()->Emission()[0].Weights() = arma::vec("0.2 0.8");
-  h->DiagGMMHMM()->Emission()[0].Component(0) = DiagCovGaussianDistribution(
+  h->DiagGMMHMM()->Emission()[0].Component(0) = DiagonalGaussianDistribution(
       "2.75 1.60", "0.50 0.50");
-  h->DiagGMMHMM()->Emission()[0].Component(1) = DiagCovGaussianDistribution(
+  h->DiagGMMHMM()->Emission()[0].Component(1) = DiagonalGaussianDistribution(
       "6.15 2.51", "1.00 1.50");
   h->DiagGMMHMM()->Emission()[1] = DiagonalGMM(2, 2);
   h->DiagGMMHMM()->Emission()[1].Weights() = arma::vec("0.4 0.6");
-  h->DiagGMMHMM()->Emission()[1].Component(0) = DiagCovGaussianDistribution(
+  h->DiagGMMHMM()->Emission()[1].Component(0) = DiagonalGaussianDistribution(
       "-1.00 -3.42", "0.20 1.00");
-  h->DiagGMMHMM()->Emission()[1].Component(1) = DiagCovGaussianDistribution(
+  h->DiagGMMHMM()->Emission()[1].Component(1) = DiagonalGaussianDistribution(
       "-3.10 -5.05", "1.20 0.80");
 
   // Now that we have a trained HMM model, we can use it to generate a sequence

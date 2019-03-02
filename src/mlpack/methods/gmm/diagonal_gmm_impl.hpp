@@ -47,7 +47,7 @@ double DiagonalGMM::Train(const arma::mat& observations,
 
     // If each trial must start from the same initial location,
     // we must save it.
-    std::vector<distribution::DiagCovGaussianDistribution> distsOrig;
+    std::vector<distribution::DiagonalGaussianDistribution> distsOrig;
     arma::vec weightsOrig;
     if (useExistingModel)
     {
@@ -66,8 +66,8 @@ double DiagonalGMM::Train(const arma::mat& observations,
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<distribution::DiagCovGaussianDistribution> distsTrial(gaussians,
-        distribution::DiagCovGaussianDistribution(dimensionality));
+    std::vector<distribution::DiagonalGaussianDistribution> distsTrial(
+        gaussians, distribution::DiagonalGaussianDistribution(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)
@@ -137,7 +137,7 @@ double DiagonalGMM::Train(const arma::mat& observations,
       return -DBL_MAX; // It's what they asked for...
 
     // If each trial must start from the same initial location, we must save it.
-    std::vector<distribution::DiagCovGaussianDistribution> distsOrig;
+    std::vector<distribution::DiagonalGaussianDistribution> distsOrig;
     arma::vec weightsOrig;
     if (useExistingModel)
     {
@@ -156,8 +156,8 @@ double DiagonalGMM::Train(const arma::mat& observations,
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<distribution::DiagCovGaussianDistribution> distsTrial(gaussians,
-        distribution::DiagCovGaussianDistribution(dimensionality));
+    std::vector<distribution::DiagonalGaussianDistribution> distsTrial(
+        gaussians, distribution::DiagonalGaussianDistribution(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)
@@ -198,7 +198,7 @@ double DiagonalGMM::Train(const arma::mat& observations,
 template<typename InitialClusteringType>
 void DiagonalGMM::Estimate(
     const arma::mat& observations,
-    std::vector<distribution::DiagCovGaussianDistribution>& dists,
+    std::vector<distribution::DiagonalGaussianDistribution>& dists,
     arma::vec& weights,
     const bool useInitialModel,
     const size_t maxIterations,
@@ -291,7 +291,7 @@ void DiagonalGMM::Estimate(
 template<typename InitialClusteringType>
 void DiagonalGMM::Estimate(const arma::mat& observations,
     const arma::vec& probabilities,
-    std::vector<distribution::DiagCovGaussianDistribution>& dists,
+    std::vector<distribution::DiagonalGaussianDistribution>& dists,
     arma::vec& weights,
     const bool useInitialModel,
     const size_t maxIterations,
@@ -382,7 +382,7 @@ void DiagonalGMM::Estimate(const arma::mat& observations,
 template<typename InitialClusteringType>
 void DiagonalGMM::InitialClustering(
     const arma::mat& observations,
-    std::vector<distribution::DiagCovGaussianDistribution>& dists,
+    std::vector<distribution::DiagonalGaussianDistribution>& dists,
     arma::vec& weights,
     InitialClusteringType clusterer)
 {
@@ -451,7 +451,7 @@ void DiagonalGMM::InitialClustering(
 template<typename InitialClusteringType>
 void DiagonalGMM::ArmadilloGMMWrapper(
     const arma::mat& observations,
-    std::vector<distribution::DiagCovGaussianDistribution>& dists,
+    std::vector<distribution::DiagonalGaussianDistribution>& dists,
     arma::vec& weights,
     const bool useInitialModel,
     const size_t maxIterations,

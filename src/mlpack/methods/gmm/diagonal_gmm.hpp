@@ -15,7 +15,7 @@
 #define MLPACK_METHODS_GMM_DIAGONAL_GMM_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/dists/diag_cov_gaussian_distribution.hpp>
+#include <mlpack/core/dists/diagonal_gaussian_distribution.hpp>
 
 // This is the default fitting method class.
 #include "em_fit.hpp"
@@ -37,14 +37,16 @@ namespace gmm /** Gaussian Mixture Models. */ {
  * It must provide the following two functions:
  *
  * @code
- * void Estimate(const arma::mat& observations,
- *               std::vector<distribution::DiagCovGaussianDistribution>& dists,
- *               arma::vec& weights);
+ * void Estimate(
+ *     const arma::mat& observations,
+ *     std::vector<distribution::DiagonalGaussianDistribution>& dists,
+ *     arma::vec& weights);
  *
- * void Estimate(const arma::mat& observations,
- *               const arma::vec& probabilities,
- *               std::vector<distribution::DiagCovGaussianDistribution>& dists,
- *               arma::vec& weights);
+ * void Estimate(
+ *     const arma::mat& observations,
+ *     const arma::vec& probabilities,
+ *     std::vector<distribution::DiagonalGaussianDistribution>& dists,
+ *     arma::vec& weights);
  * @endcode
  *
  * Example use:
@@ -75,7 +77,7 @@ class DiagonalGMM
   size_t dimensionality;
 
   //! Vector of Gaussians
-  std::vector<distribution::DiagCovGaussianDistribution> dists;
+  std::vector<distribution::DiagonalGaussianDistribution> dists;
 
   //! Vector of a priori weights for each Gaussian.
   arma::vec weights;
@@ -110,7 +112,7 @@ class DiagonalGMM
    * @param dists Distributions of the model.
    * @param weights Weights of the model.
    */
-  DiagonalGMM(const std::vector<distribution::DiagCovGaussianDistribution>&
+  DiagonalGMM(const std::vector<distribution::DiagonalGaussianDistribution>&
       dists, const arma::vec& weights) :
       gaussians(dists.size()),
       dimensionality((!dists.empty()) ? dists[0].Mean().n_elem : 0),
@@ -133,14 +135,14 @@ class DiagonalGMM
    *
    * @param i index of component.
    */
-  const distribution::DiagCovGaussianDistribution& Component(size_t i) const {
+  const distribution::DiagonalGaussianDistribution& Component(size_t i) const {
       return dists[i]; }
   /**
    * Return a reference to a component distribution.
    *
    * @param i index of component.
    */
-  distribution::DiagCovGaussianDistribution& Component(size_t i) {
+  distribution::DiagonalGaussianDistribution& Component(size_t i) {
       return dists[i]; }
 
   //! Return a const reference to the a priori weights of each Gaussian.
@@ -291,7 +293,7 @@ class DiagonalGMM
    */
   template<typename InitialClusteringType = kmeans::KMeans<>>
   void Estimate(const arma::mat& observations,
-                std::vector<distribution::DiagCovGaussianDistribution>& dists,
+                std::vector<distribution::DiagonalGaussianDistribution>& dists,
                 arma::vec& weights,
                 const bool useInitialModel = false,
                 const size_t maxIterations = 300,
@@ -321,7 +323,7 @@ class DiagonalGMM
   template<typename InitialClusteringType = kmeans::KMeans<>>
   void Estimate(const arma::mat& observations,
                 const arma::vec& probabilities,
-                std::vector<distribution::DiagCovGaussianDistribution>& dists,
+                std::vector<distribution::DiagonalGaussianDistribution>& dists,
                 arma::vec& weights,
                 const bool useInitialModel = false,
                 const size_t maxIterations = 300,
@@ -346,7 +348,7 @@ class DiagonalGMM
    */
   double LogLikelihood(
       const arma::mat& observations,
-      const std::vector<distribution::DiagCovGaussianDistribution>& dists,
+      const std::vector<distribution::DiagonalGaussianDistribution>& dists,
       const arma::vec& weights) const;
 
   /**
@@ -362,7 +364,7 @@ class DiagonalGMM
   template<typename InitialClusteringType = kmeans::KMeans<>>
   void InitialClustering(
       const arma::mat& observations,
-      std::vector<distribution::DiagCovGaussianDistribution>& dists,
+      std::vector<distribution::DiagonalGaussianDistribution>& dists,
       arma::vec& weights,
       InitialClusteringType clusterer = InitialClusteringType());
 
@@ -385,7 +387,7 @@ class DiagonalGMM
   template<typename InitialClusteringType = kmeans::KMeans<>>
   void ArmadilloGMMWrapper(
       const arma::mat& observations,
-      std::vector<distribution::DiagCovGaussianDistribution>& dists,
+      std::vector<distribution::DiagonalGaussianDistribution>& dists,
       arma::vec& weights,
       const bool useInitialModel = false,
       const size_t maxIterations = 300,
