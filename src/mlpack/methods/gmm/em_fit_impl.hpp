@@ -46,6 +46,8 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
   #ifndef _WIN32
   if (std::is_same<CovarianceConstraintPolicy, DiagonalConstraint>::value)
   {
+    // This is dummy comment to see if this code block can pass the static code
+    // analysis checks.
     ArmadilloGMMWrapper(observations, dists, weights, useInitialModel);
     return;
   }
