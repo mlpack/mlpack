@@ -121,8 +121,8 @@ class GaussianDistribution
   void Train(const arma::mat& observations);
 
   /**
-   * Estimate the Gaussian distribution from the given observations, taking into
-   * account the probability of each observation actually being from this
+   * Estimate the Gaussian distribution from the given observations, taking
+   * into account the probability of each observation actually being from this
    * distribution.
    */
   void Train(const arma::mat& observations,
@@ -167,18 +167,18 @@ class GaussianDistribution
  private:
   /**
    * This factors the covariance using arma::chol().  The function assumes that
-   * the given matrix is factorizable via the Cholesky decomposition.  If not, a
-   * std::runtime_error will be thrown.
+   * the given matrix is factorizable via the Cholesky decomposition.  If not,
+   * a std::runtime_error will be thrown.
    */
   void FactorCovariance();
 };
 
 /**
- * Calculates the multivariate Gaussian Log probability density function for each
- * data point (column) in the given matrix
+ * Calculates the multivariate Gaussian Log probability density function for
+ * each data point (column) in the given matrix.
  *
  * @param x List of observations.
- * @param probabilities Output log probabilities for each input observation.
+ * @param logProbabilities Output log probabilities for each input observation.
  */
 inline void GaussianDistribution::LogProbability(
     const arma::mat& x,

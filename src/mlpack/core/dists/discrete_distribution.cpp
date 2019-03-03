@@ -58,8 +58,8 @@ void DiscreteDistribution::Train(const arma::mat& observations)
   // Make sure the observations have same dimension as the probabilities.
   if (observations.n_rows != probabilities.size())
   {
-    throw std::invalid_argument("observations must have same dimensionality as "
-        "the DiscreteDistribution object");
+    throw std::invalid_argument("observations must have same dimensionality as"
+        " the DiscreteDistribution object");
   }
 
   // Get the dimension size of the distribution.
@@ -113,8 +113,8 @@ void DiscreteDistribution::Train(const arma::mat& observations,
   // Make sure the observations have same dimension as the probabilities.
   if (observations.n_rows != probabilities.size())
   {
-    throw std::invalid_argument("observations must have same dimensionality as "
-        "the DiscreteDistribution object");
+    throw std::invalid_argument("observations must have same dimensionality as"
+        " the DiscreteDistribution object");
   }
 
   // Get the dimension size of the distribution.

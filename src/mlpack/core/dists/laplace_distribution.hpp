@@ -24,8 +24,8 @@ namespace distribution {
  * \f]
  *
  * given scale parameter \f$\theta\f$ and mean \f$\mu\f$.  This implementation
- * assumes a diagonal covariance, but a rewrite to support arbitrary covariances
- * is possible.
+ * assumes a diagonal covariance, but a rewrite to support arbitrary
+ * covariances is possible.
  *
  * See the following paper for more information on the non-diagonal-covariance
  * Laplace distribution and estimation techniques:
@@ -42,9 +42,9 @@ namespace distribution {
  * }
  * @endcode
  *
- * Note that because of the diagonal covariance restriction, much of the algebra
- * in the paper above becomes simplified, and the PDF takes roughly the same
- * form as the univariate case.
+ * Note that because of the diagonal covariance restriction, much of the
+ * algebra in the paper above becomes simplified, and the PDF takes roughly
+ * the same form as the univariate case.
  */
 class LaplaceDistribution
 {
@@ -56,8 +56,8 @@ class LaplaceDistribution
   LaplaceDistribution() : scale(0) { }
 
   /**
-   * Construct the Laplace distribution with the given scale and dimensionality.
-   * The mean is initialized to zero.
+   * Construct the Laplace distribution with the given scale and
+   * dimensionality. The mean is initialized to zero.
    *
    * @param dimensionality Dimensionality of distribution.
    * @param scale Scale of distribution.
@@ -66,7 +66,8 @@ class LaplaceDistribution
       mean(arma::zeros<arma::vec>(dimensionality)), scale(scale) { }
 
   /**
-   * Construct the Laplace distribution with the given mean and scale parameter.
+   * Construct the Laplace distribution with the given mean and scale
+   * parameter.
    *
    * @param mean Mean of distribution.
    * @param scale Scale of distribution.

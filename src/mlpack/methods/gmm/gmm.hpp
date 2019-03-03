@@ -190,7 +190,7 @@ class GMM
    * @param component Index of the component of the GMM to be considered.
    */
   double LogProbability(const arma::vec& observation,
-                     const size_t component) const;
+                        const size_t component) const;
   /**
    * Return a randomly generated observation according to the probability
    * distribution defined by this object.
