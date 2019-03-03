@@ -25,18 +25,10 @@ namespace ann /** Artificial Neural Network. */ {
 class ConstInitialization
 {
  public:
-
-  /**
-   *  Create the ConstantInitialization object.
-   *  Allow it to be used as a template argument.
-   */
-  ConstInitialization() : initVal(0.0) {};
-
-  
   /**
    *  Create the ConstantInitialization object.
    */
-  ConstInitialization(const double initVal) : initVal(initVal)
+  ConstInitialization(const double initVal = 0) : initVal(initVal)
   { /* Nothing to do here */ }
 
   /**
