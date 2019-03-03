@@ -212,7 +212,7 @@ Estimate(const arma::mat& observations,
 template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
 void DiagonalEMFit<InitialClusteringType, CovarianceConstraintPolicy>::
 InitialClustering(
-	  const arma::mat& observations,
+    const arma::mat& observations,
     std::vector<distribution::DiagonalGaussianDistribution>& dists,
     arma::vec& weights)
 {
@@ -324,7 +324,7 @@ serialize(Archive& ar, const unsigned int /* version */)
 template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
 void DiagonalEMFit<InitialClusteringType, CovarianceConstraintPolicy>::
 ArmadilloGMMWrapper(
-	  const arma::mat& observations,
+    const arma::mat& observations,
     std::vector<distribution::DiagonalGaussianDistribution>& dists,
     arma::vec& weights,
     const bool useInitialModel)
@@ -339,8 +339,8 @@ ArmadilloGMMWrapper(
 
   // If the initial clustering is the default k-means, we'll just use
   // Armadillo's implementation.  If mlpack ever changes k-means defaults to
-	// use something that is reliably quicker than the Lloyd iteration k-means
-	// update, then this code maybe should be revisited.
+  // use something that is reliably quicker than the Lloyd iteration k-means
+  // update, then this code maybe should be revisited.
   if (!std::is_same<InitialClusteringType, mlpack::kmeans::KMeans<>>::value ||
       useInitialModel)
   {
