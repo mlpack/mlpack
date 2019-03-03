@@ -144,7 +144,7 @@ class GammaDistribution
     *     observation.
     */
    void Probability(const arma::mat& observations,
-                    arma::vec& Probabilities) const;
+                    arma::vec& probabilities) const;
 
    /*
     * This is a shortcut to the Probability(arma::mat&, arma::vec&) function
@@ -173,7 +173,7 @@ class GammaDistribution
     *     observation.
     */
    void LogProbability(const arma::mat& observations,
-                       arma::vec& LogProbabilities) const;
+                       arma::vec& logProbabilities) const;
 
    /**
     * This function returns the logarithm of the probability of a single
