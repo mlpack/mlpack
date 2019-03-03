@@ -27,13 +27,23 @@ LoadCSV::LoadCSV(const std::string& file) :
   // Set rules.
   if (extension == "csv" || extension == "txt")
   {
+    // Match quoted strings as: "string" or 'string'
     // Match all characters that are not ',', '\r', or '\n'.
-    stringRule = qi::raw[*~qi::char_(" ,\r\n")];
+    stringRule = qi::raw[(qi::char_("'") >> *((qi::char_ - "'") |
+                                 "'" >> qi::char_("'")) >> "'") |
+                         (qi::char_('"') >> *((qi::char_ - '"') |
+                                 '"' >> qi::char_('"')) >> '"') |
+                         *~qi::char_(",\r\n")];
   }
   else
   {
+    // Match quoted strings as: "string" or 'string'
     // Match all characters that are not '\t', '\r', or '\n'.
-    stringRule = qi::raw[*~qi::char_(" \t\r\n")];
+    stringRule = qi::raw[(qi::char_("'") >> *((qi::char_ - "'") |
+                                 "'" >> qi::char_("'")) >> "'") |
+                         (qi::char_('"') >> *((qi::char_ - '"') |
+                                 '"' >> qi::char_('"')) >> '"') |
+                         *~qi::char_("\t\r\n")];
   }
 
   if (extension == "csv")
