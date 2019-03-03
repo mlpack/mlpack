@@ -18,7 +18,7 @@
 #include <mlpack/core/dists/diagonal_gaussian_distribution.hpp>
 
 // This is the default fitting method class.
-#include "em_fit.hpp"
+#include "diagonal_em_fit.hpp"
 
 namespace mlpack {
 namespace gmm /** Gaussian Mixture Models. */ {
@@ -215,7 +215,7 @@ class DiagonalGMM
    * @param fitter Fitting type that estimates observations.
    * @return The log-likelihood of the best fit.
    */
-  template<typename FittingType = EMFit<>>
+  template<typename FittingType = DiagonalEMFit<>>
   double Train(const arma::mat& observations,
                const size_t trials = 1,
                const bool useExistingModel = false,
@@ -246,7 +246,7 @@ class DiagonalGMM
    * @param fitter Fitting type that estimates observations.
    * @return The log-likelihood of the best fit.
    */
-  template<typename FittingType = EMFit<>>
+  template<typename FittingType = DiagonalEMFit<>>
   double Train(const arma::mat& observations,
                const arma::vec& probabilities,
                const size_t trials = 1,
@@ -273,64 +273,6 @@ class DiagonalGMM
                 arma::Row<size_t>& labels) const;
 
   /**
-   * Fit the observations to a Gaussian mixture model with diagonal covariance
-   * (DiagonalGMM) using the Armadillo gmm_diag class.
-   * The size of the vectors (indicating the number of components) must already
-   * be set.
-   * Optionally, if useInitialModel is set to true, then the model given in the
-   * means, covariances, and weights parameters is used as the initial model,
-   * instead of using the InitialClusteringType::Cluster() option.
-   *
-   * @param observations List of observations.
-   * @param means Means of the given mixture model.
-   * @param covariances Covariances of the given mixture model.
-   * @param weights Weights of the given mixture model.
-   * @param useInitialModel If true, the given model is used for the initial
-   *     clustering.
-   * @param maxIterations Maximum number of iterations for EM.
-   * @param tolerance Log-likelihood tolerance required for convergence.
-   * @param clusterer Object which will perform the initial clustering.
-   */
-  template<typename InitialClusteringType = kmeans::KMeans<>>
-  void Estimate(const arma::mat& observations,
-                std::vector<distribution::DiagonalGaussianDistribution>& dists,
-                arma::vec& weights,
-                const bool useInitialModel = false,
-                const size_t maxIterations = 300,
-                const double tolerance = 1e-10,
-                InitialClusteringType clusterer = InitialClusteringType());
-
-  /**
-   * Fit the observations to a Gaussian mixture model with diagonal covariance
-   * (DiagonalGMM) using the EM algorithm, taking into account 
-   * the probabilities of each point being from this mixture.  The size of the
-   * vectors (indicating the number of components) must already be set.
-   * Optionally, if useInitialModel is set to true, then the model given in the
-   * means, covariances, and weights parameters is used as the initial model,
-   * instead of using the InitialClusteringType::Cluster() option.
-   *
-   * @param observations List of observations.
-   * @param probabilities Probability of each point being from this model.
-   * @param means Means of the given mixture model.
-   * @param covariances Covariances of the given mixture model.
-   * @param weights Weights of the given mixture model.
-   * @param useInitialModel If true, the given model is used for the initial
-   *     clustering.
-   * @param maxIterations Maximum number of iterations for EM.
-   * @param tolerance Log-likelihood tolerance required for convergence.
-   * @param clusterer Object which will perform the initial clustering.
-   */
-  template<typename InitialClusteringType = kmeans::KMeans<>>
-  void Estimate(const arma::mat& observations,
-                const arma::vec& probabilities,
-                std::vector<distribution::DiagonalGaussianDistribution>& dists,
-                arma::vec& weights,
-                const bool useInitialModel = false,
-                const size_t maxIterations = 300,
-                const double tolerance = 1e-10,
-                InitialClusteringType clusterer = InitialClusteringType());
-
-  /**
    * Serialize the DigonalGMM.
    */
   template<typename Archive>
@@ -350,50 +292,6 @@ class DiagonalGMM
       const arma::mat& observations,
       const std::vector<distribution::DiagonalGaussianDistribution>& dists,
       const arma::vec& weights) const;
-
-  /**
-   * Run the clusterer, and then turn the cluster assignments into Gaussians.
-   * This is a helper function for both overloads of Estimate().  The vectors
-   * must be already set to the number of clusters.
-   *
-   * @param observations List of observations.
-   * @param means Means of the given mixture model.
-   * @param covariances Covariances of the given mixture model.
-   * @param weights Weights of the given mixture model.
-   */
-  template<typename InitialClusteringType = kmeans::KMeans<>>
-  void InitialClustering(
-      const arma::mat& observations,
-      std::vector<distribution::DiagonalGaussianDistribution>& dists,
-      arma::vec& weights,
-      InitialClusteringType clusterer = InitialClusteringType());
-
-  // Armadillo uses uword internally as an OpenMP index type, which crashes
-  // Visual Studio.
-  #ifndef _WIN32
-	/**
-	 * Use the Armadillo gmm_diag clusterer to train a GMM with diagonal
-	 * covariance.  If InitialClusteringType == kmeans::KMeans<>, this will use
-	 * Armadillo's initialization also.
-	 * 
-	 * @param observations List of observations.
-	 * @param dists Distributions to store model in.
-	 * @param weights Weights of the given mixture model.
-	 * @param usuInitialModel If true, the existing model will be used.
-	 * @param maxIterations Maximum number of iterations for EM.
-	 * @param tolerance Log-likelihood tolerance required for convergence.
-	 * @param clusterer Object which will perform the initial clustering.
-	 */
-  template<typename InitialClusteringType = kmeans::KMeans<>>
-  void ArmadilloGMMWrapper(
-      const arma::mat& observations,
-      std::vector<distribution::DiagonalGaussianDistribution>& dists,
-      arma::vec& weights,
-      const bool useInitialModel = false,
-      const size_t maxIterations = 300,
-      const double tolerance = 1e-10,
-      InitialClusteringType clusterer = InitialClusteringType());
-  #endif
 };
 
 } // namespace gmm
