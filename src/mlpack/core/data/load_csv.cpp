@@ -25,7 +25,7 @@ LoadCSV::LoadCSV(const std::string& file) :
   CheckOpen();
 
   // Set rules.
-  if (extension == "csv" || extension == "txt")
+  if (extension == "csv")
   {
     // Match quoted strings as: "string" or 'string'
     // Match all characters that are not ',', '\r', or '\n'.
@@ -34,6 +34,10 @@ LoadCSV::LoadCSV(const std::string& file) :
                          (qi::char_('"') >> *((qi::char_ - '"') |
                                  '"' >> qi::char_('"')) >> '"') |
                          *~qi::char_(",\r\n")];
+  }
+  else if(extension == "txt"){
+    // Match all characters that are not ',', '\r', or '\n'.
+    stringRule = qi::raw[*~qi::char_(" ,\r\n")]; 
   }
   else
   {
@@ -81,3 +85,4 @@ void LoadCSV::CheckOpen()
 
 } // namespace data
 } // namespace mlpack
+
