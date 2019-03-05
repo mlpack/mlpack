@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionEvaluate)
 
   // These were hand-calculated using Python.
   arma::mat parameters = "1 1 1 1 1;"
-                         " 1 1 1 1 1";
+                         "1 1 1 1 1";
   BOOST_REQUIRE_CLOSE(svmf.Evaluate(parameters), 1.0, 1e-5);
 
   parameters = "2 0 1 2 2;"
