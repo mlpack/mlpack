@@ -67,6 +67,7 @@ class LinearSVM
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
+   * @paran delta Margin of difference between correct class and other classes.
    * @param optimizer Desired optimizer.
    */
   template <typename OptimizerType>
@@ -74,6 +75,7 @@ class LinearSVM
             const arma::Row<size_t>& labels,
             const size_t numClasses = 2,
             const double lambda = 0.0001,
+            const double delta = 1.0,
             OptimizerType optimizer = OptimizerType());
 
   /**
@@ -83,9 +85,11 @@ class LinearSVM
    *
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
+   * @paran delta Margin of difference between correct class and other classes.
    */
   LinearSVM(const size_t numClasses = 0,
-            const double lambda = 0.0001);
+            const double lambda = 0.0001,
+            const double delta = 1.0);
 
   /**
    * Classify the given points, returning the predicted labels for each point.
@@ -200,6 +204,8 @@ class LinearSVM
   size_t numClasses;
   //! L2-Regularization constant.
   double lambda;
+  //! The margin between the correct class and all other classes.
+  double delta;
 };
 
 } // namespace svm
