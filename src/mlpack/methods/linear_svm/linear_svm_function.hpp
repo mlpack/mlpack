@@ -35,7 +35,7 @@ class LinearSVMFunction
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
-   * @paran delta Margin of difference between correct class and other class.
+   * @paran delta Margin of difference between correct class and other classes.
    */
   LinearSVMFunction(const MatType& dataset,
                     const arma::Row<size_t>& labels,
@@ -189,7 +189,7 @@ class LinearSVMFunction
   //! The regularization parameter for L2-regularization.
   double lambda;
 
-  //! The margin between the correct class and all other class.
+  //! The margin between the correct class and all other classes.
   double delta;
 };
 

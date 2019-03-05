@@ -25,9 +25,11 @@ LinearSVM<MatType>::LinearSVM(
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const double lambda,
+    const double delta,
     OptimizerType optimizer) :
     numClasses(numClasses),
-    lambda(lambda)
+    lambda(lambda),
+    delta(delta)
 {
   Train(data, labels, numClasses, optimizer);
 }
@@ -35,9 +37,11 @@ LinearSVM<MatType>::LinearSVM(
 template <typename MatType>
 LinearSVM<MatType>::LinearSVM(
     const size_t numClasses,
-    const double lambda) :
+    const double lambda,
+    const double delta) :
     numClasses(numClasses),
-    lambda(lambda)
+    lambda(lambda),
+    delta(delta)
 {
   // No training to do here.
 }
@@ -51,7 +55,7 @@ double LinearSVM<MatType>::Train(
     OptimizerType optimizer)
 {
   LinearSVMFunction<MatType> svm(data, labels,
-      numClasses, lambda);
+      numClasses, lambda, delta);
   if (parameters.is_empty())
     parameters = svm.InitialPoint();
 
