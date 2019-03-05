@@ -31,20 +31,21 @@ class Dijkstra
    * Function to supply new source nodes to Dijkstra's Algorithm, so that all
    * pair shortest path is calculated.
    * 
-   * @param disMat -neighbourhood graph from input dataset 
+   * @param disMat -neighbourhood graph from input dataset
   */
   void FindShortestPath(arma::mat& disMat)
   {
     for (size_t i = 0; i < disMat.n_rows; i++)
     {
-      //to store the calculated shortest distances for a source
+      // to store the calculated shortest distances for a source
       arma::rowvec temp(disMat.n_cols);
-      
-      //performs Dijkstra's Algorithm using the given source
+
+      // performs Dijkstra's Algorithm using the given source
       Apply(disMat, i, temp);
-      disMat.row(i) = temp;  
+      disMat.row(i) = temp;
     }
-  } 
+  }
+
  private:
   /**
    * Function to implement Dijkstra's Algorithm for a given source.
@@ -62,11 +63,11 @@ class Dijkstra
     temp(source) = 0;
     bool visited[disMat.n_cols] = {0};
 
-    //minimum priority queue used for Dijkstra's Algorithm
-    std::priority_queue < std::pair< size_t, double>, 
-                          std::vector< std::pair< size_t, double> >, 
+    // minimum priority queue used for Dijkstra's Algorithm
+    std::priority_queue < std::pair< size_t, double>,
+                          std::vector< std::pair< size_t, double> >,
                           std::greater < std::pair< size_t, double> > > pq;
-    pq.push({source,0.0});
+    pq.push({source, 0.0});
     while (!pq.empty())
     {
       std::pair <size_t, double> top = pq.top();
@@ -81,7 +82,7 @@ class Dijkstra
           if ((disMat(top.first, i)+top.second) < temp(i))
           {
             temp(i) = disMat(top.first, i) + top.second;
-            pq.push({i,temp(i)});
+            pq.push({i, temp(i)});
           }
         }
       }
@@ -89,10 +90,7 @@ class Dijkstra
   }
 };
 
-
-} //namespace isomap
-} //namespace mlpack
-
-
+} // namespace isomap&quot;
+} // namespace mlpack&quot;
 
 #endif

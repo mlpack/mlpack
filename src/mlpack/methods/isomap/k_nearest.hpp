@@ -3,7 +3,7 @@
  * @author Rishabh Ranjan
  * 
  * This file defines the class K_Nearest which constructs the neighbourhood
- * graph for Isomap, according to the number of neighbours provided. 
+ * graph for Isomap, according to the number of neighbours provided.
  * 
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -37,24 +37,25 @@ class K_Nearest
   void MakeNeighbourhoodGraph(arma::mat &disMat,
                               const int n_neighbours)
   {
-    //go through every row
+    // go through every row
     for (size_t i = 0; i < disMat.n_rows; i++)
     {
       arma::uvec temp;
-      
-      //find indices if row is sorted in descending order
+
+      // find indices if row is sorted in descending order
       temp = sort_index(disMat.row(i), "descend");
-      
-      //set distance to inf for every neighbour farther that n_neighbours 
+
+      // set distance to inf for every neighbour farther that n_neighbours
       for (size_t j = 0; j < temp.size()-n_neighbours-1; j++)
         disMat(i, temp(j)) = LLONG_MAX;
     }
 
-    //check if neighbourhood graph is connected
+    // check if neighbourhood graph is connected
     if (!IsConnected(disMat))
       Log::Fatal << "Constructed neighbourhood graph is not connected."
                   << "Increase the number of neighbours (Default is 3).\n";
   }
+
  private:
   /**
    * Function to check if the neighbourhood graph is connected or not.
@@ -67,13 +68,13 @@ class K_Nearest
   {
     bool flag = 1;
     bool visited[disMat.n_rows] = {0};
-    
-    //queue required for BFS
+
+    // queue required for BFS
     std::queue <size_t> q;
     q.push(0);
     visited[0] = 0;
-    
-    //BFS
+
+    // BFS
     while (!q.empty())
     {
       size_t front = q.front();
@@ -88,12 +89,12 @@ class K_Nearest
       }
     }
 
-    //checking if a node is not visited
+    // checking if a node is not visited
     for (size_t i = 0; i < disMat.n_rows; i++)
     {
       if (!visited[i])
       {
-        flag = 0; //means disconnected graph
+        flag = 0; // means disconnected graph
         break;
       }
     }
@@ -101,9 +102,8 @@ class K_Nearest
     return flag;
   }
 };
-} //namespcae isomap
-} //namespace mlpack
 
+} // namespcae isomap&quot;
+} // namespace mlpack&quot;
 
-
-#endif 
+#endif

@@ -36,42 +36,41 @@ class MDS
    */
   void Apply(arma::mat& disMat)
   {
-    //check to see if the incoming matrix is valid for cMDS
+    // check to see if the incoming matrix is valid for cMDS
     IsValidMatrix(disMat);
-    
+
     size_t n = disMat.n_rows;
     arma::mat temp(n, n);
 
-    //Spectral decomposition
-    
-    arma::mat H = arma::eye<arma::mat>(n, n) - temp.fill( (double) (1.0/n));
+    // Spectral decomposition
+
+    arma::mat H = arma::eye<arma::mat>(n, n) - temp.fill((double) (1.0/n));
     arma::mat B = H * (-0.5 * (disMat % disMat) ) * H;
-    arma::mat eigen_vecs; 
+    arma::mat eigen_vecs;
     arma::vec eigen_vals;
-    
-    //guard eigen values against round-off errors
+
+    // guard eigen values against round-off errors
     arma::eig_sym(eigen_vals, eigen_vecs, (B + B.t())/2);
-    
+
     arma::uvec index = arma::sort_index(eigen_vals, "descend");
     eigen_vals = arma::sort(eigen_vals, "descend");
-    
-    //keep only positive eigen values
-    arma::uvec keep = arma::find(eigen_vals > arma::max(arma::abs(eigen_vals)) * (double) pow(DBL_EPSILON, 0.75)); 
-    
+
+    // keep only positive eigen values
+    arma::uvec keep = arma::find(eigen_vals >
+        arma::max(arma::abs(eigen_vals)) * (double) pow(DBL_EPSILON, 0.75));
+
     if (keep.is_empty())
     {
-      //if none of the eigen values are positive, vector of zeros is returned
+      // if none of the eigen values are positive, vector of zeros is returned
       disMat = arma::zeros<arma::vec>(n);
     }
     else
     {
       index = index(keep);
-      disMat = eigen_vecs.cols(index) * arma::diagmat(arma::pow(eigen_vals(keep), 0.5));
+      disMat = 
+      eigen_vecs.cols(index) * arma::diagmat(arma::pow(eigen_vals(keep), 0.5));
     }
   }
-
-
-
 
  private:
   /**
@@ -85,26 +84,26 @@ class MDS
   {
     bool flag = 1;
     double minDiff = 10*DBL_EPSILON;
-    //checking if matrix is a square matrix
+    // checking if matrix is a square matrix
     flag = disMat.is_square();
     if (flag)
     {
-      //Checking for symmetric. could not find is_symmetric in armadillo
+      // Checking for symmetric. could not find is_symmetric in armadillo
       flag = arma::approx_equal(disMat, disMat.t(), "absdiff", minDiff);
       if (flag)
       {
-        //checking if all elements are non-zero
+        // checking if all elements are non-zero
         flag = arma::all(vectorise(disMat) >= 0);
         if (!flag)
         {
           Log::Fatal << "All elements of the matrix must be non-zero (required "
-                  << "for classical Multidimensional Scaling\n";  
+                  << "for classical Multidimensional Scaling\n";
         }
       }
       else
       {
         Log::Fatal << "Matrix provided is not a symmetric matrix (required "
-                  << "for classical Multidimensional Scaling\n";  
+                  << "for classical Multidimensional Scaling\n";
       }
     }
     else
@@ -112,14 +111,10 @@ class MDS
       Log::Fatal << "Matrix provided is not a square matrix (required "
                   << "for classical Multidimensional Scaling\n";
     }
-    
   }
 };
 
-
-
-}
-}
-
+} // namespace isomap&quot;
+} // namepsace mlpack&quot;
 
 #endif
