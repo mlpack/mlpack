@@ -29,9 +29,13 @@ namespace svm {
  *
  * Linear SVM can be used for general classification tasks which will work
  * on multiclass classification. More technical details about
- * the model can be found on the following webpage:
+ * the model can be found from the following:
  *
  * https://link.springer.com/content/pdf/10.1007%2FBF00994018.pdf
+ *
+ * and
+ *
+ * https://www.elen.ucl.ac.be/Proceedings/esann/esannpdf/es1999-461.pdf
  *
  * An example on how to use the interface is shown below:
  *
@@ -43,7 +47,7 @@ namespace svm {
  *
  * // Train the model using default options.
  * LinearSVM<> lsvm(train_data, labels, inputSize, numClasses, lambda,
- *     L_BFGS());
+ *     delta, L_BFGS());
  *
  * arma::mat test_data;
  * arma::Row<size_t> predictions;
