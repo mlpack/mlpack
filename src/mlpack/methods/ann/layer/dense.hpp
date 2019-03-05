@@ -13,6 +13,11 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_DENSE_HPP
 #define MLPACK_METHODS_ANN_LAYER_DENSE_HPP
 
+#include "batch_norm.hpp"
+#include "leaky_relu.hpp"
+#include "convolution.hpp"
+#include "dropout.hpp"
+
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
@@ -78,9 +83,9 @@ class Dense
    * @param weight_decay Weight decay factor.
    */
   template<typename eT>
-  arma::cube conv_block(arma::Cube<eT>&& input, const size_t input_size,
-    const size_t growth_rate, const bool bottleneck,
-    const double dropout_rate, const double weight_decay);
+  arma::cube conv_block(arma::Cube<eT>&& input, const size_t& input_size,
+    const size_t& growth_rate, const bool& bottleneck,
+    const double& dropout_rate, const double& weight_decay);
 
   /**
    * Ordinary feed forward pass of the dense layer.
@@ -142,6 +147,16 @@ class Dense
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
+
+  std::vector<BatchNorm<>> bn_set, bn_set_back, bn_set_grad;
+
+  std::vector<LeakyReLU<>> leaky_relu_set, leaky_relu_set_back;
+
+  std::vector<Convolution<>> conv_set,
+    conv_set_back, conv_set_grad;
+
+  std::vector<Dropout<>> dropout_set, dropout_set_back;
+
   //! Locally-stored number of convolution blocks to append to the block.
   size_t nb_layers;
 
