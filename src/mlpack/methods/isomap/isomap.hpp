@@ -90,7 +90,6 @@ class Isomap
   }
 
  private:
-
   /**
    * Function to calculate distance matric from the given input dataset.
    * disMat is requred to store the distance matrix calculated.
@@ -126,7 +125,7 @@ class Isomap
   ShortestPathAlgo shortestPath;
 };
 
-} // namespace isomap&quot;
-} // namespace mlpack&quot;
+} // namespace isomap
+} // namespace mlpack
 
 #endif

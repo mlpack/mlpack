@@ -103,7 +103,7 @@ class K_Nearest
   }
 };
 
-} // namespcae isomap&quot;
-} // namespace mlpack&quot;
+} // namespcae isomap
+} // namespace mlpack
 
 #endif

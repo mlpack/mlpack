@@ -90,7 +90,7 @@ class Dijkstra
   }
 };
 
-} // namespace isomap&quot;
-} // namespace mlpack&quot;
+} // namespace isomap
+} // namespace mlpack
 
 #endif

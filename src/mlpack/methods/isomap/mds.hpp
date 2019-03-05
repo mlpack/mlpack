@@ -67,7 +67,7 @@ class MDS
     else
     {
       index = index(keep);
-      disMat = 
+      disMat =
       eigen_vecs.cols(index) * arma::diagmat(arma::pow(eigen_vals(keep), 0.5));
     }
   }
@@ -114,7 +114,7 @@ class MDS
   }
 };
 
-} // namespace isomap&quot;
-} // namepsace mlpack&quot;
+} // namespace isomap
+} // namepsace mlpack
 
 #endif
