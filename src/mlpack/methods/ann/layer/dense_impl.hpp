@@ -104,25 +104,25 @@ template<typename eT>
 void Dense<InputDataType, OutputDataType>::Backward(
     const arma::Cube<eT>&& input, arma::Cube<eT>&& gy, arma::Cube<eT>&& g)
 {
-  for(int i = 0; i < bn_set.size(); i++)
+  for (int i = 0; i < bn_set.size(); i++)
   {
     bn_set[i].Backward(std::move(input), std::move(gy), std::move(g));
     bn_set_back.push_back(g);
   }
 
-  for(int i = 0; i < leaky_relu_set.size(); i++)
+  for (int i = 0; i < leaky_relu_set.size(); i++)
   {
     leaky_relu_set[i].Backward(std::move(input), std::move(gy), std::move(g));
     leaky_relu_set_back.push_back(g);
   }
 
-  for(int i = 0; i < conv_set.size(); i++)
+  for (int i = 0; i < conv_set.size(); i++)
   {
     conv_set[i].Backward(std::move(input), std::move(gy), std::move(g));
     conv_set_back.push_back(g);
   }
 
-  for(int i = 0; i < dropout_set.size(); i++)
+  for (int i = 0; i < dropout_set.size(); i++)
   {
     dropout_set[i].Backward(std::move(input), std::move(gy), std::move(g));
     dropout_set_back.push_back(g);
@@ -136,14 +136,14 @@ void Dense<InputDataType, OutputDataType>::Gradient(
     arma::Cube<eT>&& error,
     arma::Cube<eT>&& gradient)
 {
-  for(int i = 0; i < bn_set.size(); i++)
+  for (int i = 0; i < bn_set.size(); i++)
   {
     bn_set[i].Gradient(std::move(input), std::move(error),
     std::move(gradient));
     bn_set_grad.push_back(gradient);
   }
 
-  for(int i = 0; i < conv_set.size(); i++)
+  for (int i = 0; i < conv_set.size(); i++)
   {
     conv_set[i].Gradient(std::move(input), std::move(error),
     std::move(gradient));

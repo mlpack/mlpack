@@ -147,14 +147,17 @@ class Dense
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-
+  //! Vectors to store batch norm objects.
   std::vector<BatchNorm<>> bn_set, bn_set_back, bn_set_grad;
 
+  //! Vectors to store leaky relu objects.
   std::vector<LeakyReLU<>> leaky_relu_set, leaky_relu_set_back;
 
+  //! Vectors to store convolution objects.
   std::vector<Convolution<>> conv_set,
     conv_set_back, conv_set_grad;
 
+  //! Vectors to store dropout objects.
   std::vector<Dropout<>> dropout_set, dropout_set_back;
 
   //! Locally-stored number of convolution blocks to append to the block.
