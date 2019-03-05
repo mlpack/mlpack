@@ -140,14 +140,14 @@ class GMM
   /**
    * Return a const reference to a component distribution.
    *
-   * @param i index of component.
+   * @param i Index of component.
    */
   const distribution::GaussianDistribution& Component(size_t i) const {
       return dists[i]; }
   /**
    * Return a reference to a component distribution.
    *
-   * @param i index of component.
+   * @param i Index of component.
    */
   distribution::GaussianDistribution& Component(size_t i) { return dists[i]; }
 

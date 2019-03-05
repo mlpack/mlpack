@@ -140,7 +140,7 @@ class GammaDistribution
    * independent, so the product rule is used.
    *
    * @param observations Matrix of observations, one per column.
-   * @param probabilities column vector of probabilities, one per
+   * @param probabilities Column vector of probabilities, one per
    *     observation.
    */
   void Probability(const arma::mat& observations,
@@ -169,7 +169,7 @@ class GammaDistribution
    * independent, so the product rule is used.
    *
    * @param observations Matrix of observations, one per column.
-   * @param logProbabilities column vector of log probabilities, one per
+   * @param logProbabilities Column vector of log probabilities, one per
    *     observation.
    */
   void LogProbability(const arma::mat& observations,
@@ -215,11 +215,11 @@ class GammaDistribution
    * smaller than the tolerance ratio.
    *
    * @param aOld old value of parameter we want to estimate (alpha in our
-   *      case).
+   *     case).
    * @param aNew new value of parameter (the value after 1 iteration from
-   *      aOld).
+   *     aOld).
    * @param tol Convergence tolerance. Relative measure (see documentation of
-   *      GammaDistribution::Train).
+   *     GammaDistribution::Train).
    */
   inline bool Converged(const double aOld,
                         const double aNew,

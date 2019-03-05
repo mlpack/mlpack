@@ -34,7 +34,7 @@ void RegressionDistribution::Train(const arma::mat& observations)
 /**
  * Estimate parameters using provided observation weights.
  *
- * @param weights probability that given observation is from distribution.
+ * @param weights Probability that given observation is from distribution.
  */
 void RegressionDistribution::Train(const arma::mat& observations,
                                    const arma::vec& weights)
@@ -56,7 +56,7 @@ void RegressionDistribution::Train(const arma::mat& observations,
 /**
  * Evaluate probability density function of given observation.
  *
- * @param observation point to evaluate probability at.
+ * @param observation Point to evaluate probability at.
  */
 double RegressionDistribution::Probability(const arma::vec& observation) const
 {

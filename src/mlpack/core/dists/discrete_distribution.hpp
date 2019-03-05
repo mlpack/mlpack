@@ -128,7 +128,7 @@ class DiscreteDistribution
   double Probability(const arma::vec& observation) const
   {
     double probability = 1.0;
-    // Ensure the observation has the same dimension with the probabilities
+    // Ensure the observation has the same dimension with the probabilities.
     if (observation.n_elem != probabilities.size())
     {
       Log::Fatal << "DiscreteDistribution::Probability(): observation has "
@@ -189,8 +189,8 @@ class DiscreteDistribution
    * in logProbabilities.
    *
    * @param x List of observations.
-   * @param logProbabilities probabilities Output probabilities for each 
-   *   input observation.
+   * @param logProbabilities Probabilities Output probabilities for each 
+   *     input observation.
    */
   void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
   /**
@@ -218,7 +218,7 @@ class DiscreteDistribution
    *
    * @param observations List of observations.
    * @param probabilities List of probabilities that each observation is
-   *    actually from this distribution.
+   *     actually from this distribution.
    */
   void Train(const arma::mat& observations,
              const arma::vec& probabilities);
@@ -246,7 +246,7 @@ class DiscreteDistribution
 
 /**
  * Calculates the Discrete log-probability function for each
- * data point (column) in the given matrix
+ * data point (column) in the given matrix.
  *
  * @param x List of observations.
  * @param logProbabilities Output log probabilities for each input observation.

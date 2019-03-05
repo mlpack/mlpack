@@ -102,7 +102,7 @@ class RegressionDistribution
    * Estimate parameters using provided observation weights.
    *
    * @param observations List of observations.
-   * @param weights probability that given observation is from distribution.
+   * @param weights Probability that given observation is from distribution.
    */
   mlpack_deprecated void Train(const arma::mat& observations,
                                const arma::vec& weights);
@@ -111,21 +111,21 @@ class RegressionDistribution
    * Estimate parameters using provided observation weights.
    *
    * @param observations List of observations.
-   * @param weights probability that given observation is from distribution.
+   * @param weights Probability that given observation is from distribution.
    */
   void Train(const arma::mat& observations, const arma::rowvec& weights);
 
   /**
   * Evaluate probability density function of given observation.
   *
-  * @param observation point to evaluate probability at.
+  * @param observation Point to evaluate probability at.
   */
   double Probability(const arma::vec& observation) const;
 
   /**
   * Evaluate log probability density function of given observation.
   *
-  * @param observation point to evaluate log probability at.
+  * @param observation Point to evaluate log probability at.
   */
   double LogProbability(const arma::vec& observation) const
   { return log(Probability(observation)); }
@@ -133,8 +133,8 @@ class RegressionDistribution
   /**
    * Calculate y_i for each data point in points.
    *
-   * @param points the data points to calculate with.
-   * @param predictions y, will contain calculated values on completion.
+   * @param points The data points to calculate with.
+   * @param predictions Y, will contain calculated values on completion.
    */
   mlpack_deprecated void Predict(const arma::mat& points,
                                  arma::vec& predictions) const;
@@ -142,8 +142,8 @@ class RegressionDistribution
   /**
    * Calculate y_i for each data point in points.
    *
-   * @param points the data points to calculate with.
-   * @param predictions y, will contain calculated values on completion.
+   * @param points The data points to calculate with.
+   * @param predictions Y, will contain calculated values on completion.
    */
   void Predict(const arma::mat& points, arma::rowvec& predictions) const;
 

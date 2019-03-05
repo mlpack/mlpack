@@ -69,7 +69,7 @@ void DiscreteDistribution::Train(const arma::mat& observations)
   for (size_t i = 0; i < dimensions; i++)
     probabilities[i].zeros();
 
-  // Iterate all the probabilities in each dimension
+  // Iterate all the probabilities in each dimension.
   for (size_t r = 0; r < observations.n_cols; ++r)
   {
     for (size_t i = 0; i < dimensions; ++i)
