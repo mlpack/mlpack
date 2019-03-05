@@ -17,6 +17,7 @@ set(DIRS
   gmm
   hmm
   hoeffding_trees
+  isomap
   kde
   kernel_pca
   kmeans
