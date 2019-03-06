@@ -145,31 +145,28 @@ double LinearSVMFunction<MatType>::Evaluate(
   // Calculate the loss and regularization terms.
   // L_i = Σ_i Σ_m max(0, Δ + (w_m x_i + b_m) - (w_{y_i} x_i + b_{y_i}))
   // where (m != y_i)
-  double loss, regularization, cost;
+  double loss, regularization;
 
   // Scores for each class are evaluated.
   arma::mat scores = parameters * dataset;
 
-  // Make a matrix where each column holds the value of the
-  // correct class Score.
-  arma::mat correctScores = arma::repmat(arma::ones(numClasses).t()
-      * (scores % groundTruth), numClasses, 1);
-
-  // Evaluates the margin and makes (y_i) term 0 so that
-  // they don't have any contribution in the summation.
-  arma::mat margin = scores - correctScores + delta -
-      (delta * groundTruth);
+  // Evaluate the margin by the following steps:
+  //  - Subtracting the score of correct class from all the class scores.
+  //  - Adding the margin parameter `delta`.
+  //  - Removing the `delta` parameter from correct class label in each
+  //    column.
+  arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
+      * (scores % groundTruth), numClasses, 1)) + delta
+      - (delta * groundTruth);
 
   // The Hinge Loss Function
-  loss = arma::accu(arma::clamp(margin, 0.0, DBL_MAX));
-  loss /= dataset.n_cols;
+  loss = arma::accu(arma::clamp(margin, 0.0, DBL_MAX)) / dataset.n_cols;
 
   // Adding the regularization term.
   regularization = 0.5 * lambda * arma::dot(parameters,
       parameters);
 
-  cost = loss + regularization;
-  return cost;
+  return loss + regularization;
 }
 
 template <typename MatType>
@@ -184,9 +181,8 @@ double LinearSVMFunction<MatType>::Evaluate(
   double loss, regularization, cost;
 
   arma::mat scores = parameters * dataset;
-  arma::mat correctScores = arma::repmat(arma::ones(numClasses).t()
-      * (scores % groundTruth), numClasses, 1);
-  arma::mat margin = scores - correctScores + delta
+  arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
+      * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
 
   // The Hinge Loss Function
@@ -209,9 +205,8 @@ void LinearSVMFunction<MatType>::Gradient(
     GradType& gradient)
 {
   arma::mat scores = parameters * dataset;
-  arma::mat correctScores = arma::repmat(arma::ones(numClasses).t()
-      * (scores % groundTruth), numClasses, 1);
-  arma::mat margin = scores - correctScores + delta
+  arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
+      * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
 
   // For each sample, find the total number of classes where
@@ -239,9 +234,8 @@ void LinearSVMFunction<MatType>::Gradient(
 {
   const size_t lastId = firstId + batchSize - 1;
   arma::mat scores = parameters * dataset;
-  arma::mat correctScores = arma::repmat(arma::ones(numClasses).t()
-      * (scores % groundTruth), numClasses, 1);
-  arma::mat margin = scores - correctScores + delta
+  arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
+      * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
 
   // For each sample, find the total number of classes where
@@ -269,9 +263,8 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
   double loss, regularization, cost;
 
   arma::mat scores = parameters * dataset;
-  arma::mat correctScores = arma::repmat(arma::ones(numClasses).t()
-      * (scores % groundTruth), numClasses, 1);
-  arma::mat margin = scores - correctScores + delta
+  arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
+      * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
 
   // For each sample, find the total number of classes where
@@ -314,9 +307,8 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
   double loss, regularization, cost;
 
   arma::mat scores = parameters * dataset;
-  arma::mat correctScores = arma::repmat(arma::ones(numClasses).t()
-      * (scores % groundTruth), numClasses, 1);
-  arma::mat margin = scores - correctScores + delta
+  arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
+      * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
 
   // For each sample, find the total number of classes where
