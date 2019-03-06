@@ -31,11 +31,30 @@ namespace svm {
  * on multiclass classification. More technical details about
  * the model can be found from the following:
  *
- * https://link.springer.com/content/pdf/10.1007%2FBF00994018.pdf
+ * @code
+ * @inproceedings{weston1999support,
+ * title        = {Support vector machines for multi-class pattern
+ *                 recognition.},
+ * author       = {Weston, Jason and Watkins, Chris and others},
+ * booktitle    = {Esann},
+ * volume       = {99},
+ * pages        = {219--224},
+ * year         = {1999}
+ * }
+ * @endcode
  *
- * and
- *
- * https://www.elen.ucl.ac.be/Proceedings/esann/esannpdf/es1999-461.pdf
+ * @code
+ * @article{cortes1995support,
+ * title        = {Support-vector networks},
+ * author       = {Cortes, Corinna and Vapnik, Vladimir},
+ * journal      = {Machine learning},
+ * volume       = {20},
+ * number       = {3},
+ * pages        = {273--297},
+ * year         = {1995},
+ * publisher    = {Springer}
+ * }
+ * @endcode
  *
  * An example on how to use the interface is shown below:
  *
