@@ -452,23 +452,23 @@ BOOST_AUTO_TEST_CASE(LinearSVMLGFGSSimpleTest)
   const double lambda = 0.0001;
   const double delta = 1.0;
 
-    // A very simple fake dataset
-    arma::mat dataset = "2 0 0;"
-                        "0 0 0;"
-                        "0 2 1;"
-                        "1 0 2;"
-                        "0 1 0";
+  // A very simple fake dataset
+  arma::mat dataset = "2 0 0;"
+                      "0 0 0;"
+                      "0 2 1;"
+                      "1 0 2;"
+                      "0 1 0";
 
-    //  Corresponding labels
-    arma::Row<size_t> labels = "1 0 1";
+  //  Corresponding labels
+  arma::Row<size_t> labels = "1 0 1";
 
-    // Create a linear svm object using L-BFGS optimizer.
-    LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, lambda,
-        delta, ens::L_BFGS());
+  // Create a linear svm object using L-BFGS optimizer.
+  LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, lambda,
+      delta, ens::L_BFGS());
 
-    // Compare training accuracy to 1.
-    const double acc = lsvm.ComputeAccuracy(dataset, labels);
-    BOOST_REQUIRE_CLOSE(acc, 1.0, 0.5);
+  // Compare training accuracy to 1.
+  const double acc = lsvm.ComputeAccuracy(dataset, labels);
+  BOOST_REQUIRE_CLOSE(acc, 1.0, 0.5);
 }
 
 /**
@@ -1032,7 +1032,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMClassifyTest)
   arma::Row<size_t> predictions;
   lsvm.Classify(data, predictions);
 
-  BOOST_REQUIRE_GE((double) arma::accu(predictions == labels), 450);
+  BOOST_REQUIRE_GE((double) arma::accu(predictions == labels), 495);
 }
 
 /**
