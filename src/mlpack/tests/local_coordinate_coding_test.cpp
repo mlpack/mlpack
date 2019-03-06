@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTrainReturnObjective)
   X.load("mnist_first250_training_4s_and_9s.arm");
   uword nPoints = X.n_cols;
 
-  // normalize each point since these are images
+  // Normalize each point since these are images.
   for (uword i = 0; i < nPoints; i++)
   {
     X.col(i) /= norm(X.col(i), 2);

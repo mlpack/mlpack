@@ -377,7 +377,6 @@ BOOST_AUTO_TEST_CASE(LARSTrainReturnCorrelation)
   BOOST_REQUIRE_EQUAL(std::isfinite(maxCorr), true);
 
   // Test without Cholesky decomposition and with lasso.
-
   LARS lars2(false, lambda1, 0.0);
   arma::vec betaOpt2;
   maxCorr = lars2.Train(X, y, betaOpt2);
