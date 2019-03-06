@@ -116,17 +116,17 @@ class RegressionDistribution
   void Train(const arma::mat& observations, const arma::rowvec& weights);
 
   /**
-  * Evaluate probability density function of given observation.
-  *
-  * @param observation Point to evaluate probability at.
-  */
+   * Evaluate probability density function of given observation.
+   *
+   * @param observation Point to evaluate probability at.
+   */
   double Probability(const arma::vec& observation) const;
 
   /**
-  * Evaluate log probability density function of given observation.
-  *
-  * @param observation Point to evaluate log probability at.
-  */
+   * Evaluate log probability density function of given observation.
+   *
+   * @param observation Point to evaluate log probability at.
+   */
   double LogProbability(const arma::vec& observation) const
   { return log(Probability(observation)); }
 
