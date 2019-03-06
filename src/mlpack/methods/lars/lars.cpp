@@ -383,6 +383,27 @@ void LARS::Predict(const arma::mat& points,
     predictions = betaPath.back().t() * points;
 }
 
+double LARS::ComputeError(const arma::mat& data,
+	                  const vector<arma::vec> betaPath, 
+	                  const doubel lambda1,
+              		  const arma::rowvec& responses)
+{
+  arm::vec beta = betaPath.back();
+  double error = 0.0;
+  for(size_t i = 0; i < data.n_rows; i++)
+  {
+    double row_sum = 0.0 , penality_sum = 0.0;
+    for(size_t j=0; j < data.n_col; j++)
+    {
+      row_sum += (data[i][j] * beta[j]);
+      penality_sum += lambda1 * beta[j];
+    }
+    error += ( (responses[i] - row_sum) * (responses[i] - row_sum) + penality_sum); 
+  }
+ 
+  return error;
+}
+
 // Private functions.
 void LARS::Deactivate(const size_t activeVarInd)
 {
