@@ -2357,7 +2357,7 @@ BOOST_AUTO_TEST_CASE(SimpleHighwayLayerTest)
   linearB->Reset();
 
   // Add the same layers (with the same parameters) to both Sequential and
-  // Residual object.
+  // Highway object.
   highway->Add(linearA);
   highway->Add(linearB);
   sequential->Add(linearA);

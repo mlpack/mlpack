@@ -162,10 +162,10 @@ class Highway
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-   //! Locally-stored number of input units.
+  //! Locally-stored number of input units.
   size_t inSize;
 
-   //! Parameter which indicates if the modules should be exposed.
+  //! Parameter which indicates if the modules should be exposed.
   bool model;
 
   //! Indicator if we already initialized the model.
@@ -230,7 +230,6 @@ class Highway
 
   //! Locally-stored output height visitor.
   OutputHeightVisitor outputHeightVisitor;
-
 }; // class Highway
 
 } // namespace ann

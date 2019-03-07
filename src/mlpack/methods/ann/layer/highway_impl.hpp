@@ -24,8 +24,14 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType, typename... CustomLayers>
-Highway<InputDataType, OutputDataType, CustomLayers...>::Highway()
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+Highway<InputDataType, OutputDataType, CustomLayers...>::Highway() :
+    inSize(0),
+    model(true),
+    reset(false),
+    width(0),
+    height(0)
 {
   // Nothing to do here.
 }
@@ -44,8 +50,8 @@ Highway<InputDataType, OutputDataType, CustomLayers...>::Highway(
   weights.set_size(inSize * inSize + inSize, 1);
 }
 
-template <typename InputDataType, typename OutputDataType,
-          typename... CustomLayers>
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 Highway<InputDataType, OutputDataType, CustomLayers...>::~Highway()
 {
   if (!model)
@@ -55,8 +61,8 @@ Highway<InputDataType, OutputDataType, CustomLayers...>::~Highway()
   }
 }
 
-template <typename InputDataType, typename OutputDataType,
-          typename... CustomLayers>
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 void Highway<
     InputDataType, OutputDataType, CustomLayers...>::DeleteModules()
 {
