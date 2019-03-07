@@ -86,6 +86,12 @@ template<typename InputDataType,
          typename OutputDataType,
          typename... CustomLayers
 >
+class Highway;
+
+template<typename InputDataType,
+         typename OutputDataType,
+         typename... CustomLayers
+>
 class Recurrent;
 
 template<typename InputDataType,
@@ -173,6 +179,7 @@ using LayerTypes = boost::variant<
     FlexibleReLU<arma::mat, arma::mat>*,
     Glimpse<arma::mat, arma::mat>*,
     HardTanH<arma::mat, arma::mat>*,
+    Highway<arma::mat, arma::mat>*,
     Join<arma::mat, arma::mat>*,
     LayerNorm<arma::mat, arma::mat>*,
     LeakyReLU<arma::mat, arma::mat>*,
