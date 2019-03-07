@@ -390,15 +390,17 @@ double LARS::ComputeError(const arma::mat& data,
 {
   arm::vec beta = betaPath.back();
   double error = 0.0;
+
   for(size_t i = 0; i < data.n_rows; i++)
   {
     double row_sum = 0.0 , penality_sum = 0.0;
-    for(size_t j=0; j < data.n_col; j++)
+    for(size_t j=0; j < data.n_cols; j++)
     {
       row_sum += (data[i][j] * beta[j]);
-      penality_sum += lambda1 * beta[j];
+      penality_sum += beta[j];
     }
-    error += ( (responses[i] - row_sum) * (responses[i] - row_sum) + penality_sum); 
+
+    error += ( (responses[i] - row_sum) * (responses[i] - row_sum) + lambda1 * penality_sum); 
   }
  
   return error;

@@ -247,9 +247,9 @@ class LARS
    *  @return The lagrange multiplier value
    */
   double ComputeError(const arma::mat& data,
-	      const vector<arma::vec> betaPath, 
-	      const doubel lambda1,
-              const arma::rowvec& responses);
+	              const vector<arma::vec> betaPath, 
+	              const doubel lambda1,
+                      const arma::rowvec& responses);
 
   /**
    * Serialize the LARS model.
