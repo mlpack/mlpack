@@ -204,19 +204,29 @@ void LinearSVMFunction<MatType>::Gradient(
     const arma::mat& parameters,
     GradType& gradient)
 {
+  // The objective is to minimize the loss, which is evaluated as the sum
+  // of all the positive elements of `margin` matrix.
+  // So, we focus of these positive elements and reduce them.
+  // Also, we need to increase the score of the correct class.
   arma::mat scores = parameters * dataset;
   arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
       * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
 
-  // For each sample, find the total number of classes where
-  // ( margin > 0 ).
+  // An element of `mask` matrix holds `1` corresponding to
+  // each positive element of `margin` matrix.
   arma::mat mask = margin.for_each([](arma::mat::elem_type& val)
       { val = (val > 0) ? 1: 0; });
 
   arma::mat difference = groundTruth
       % (-arma::repmat(arma::sum(mask), numClasses, 1)) + mask;
 
+  // The gradient is evaluated as follows:
+  //  - Add `x_i` to `w_m` if `margin_i_m`.
+  //  - Subtract `x_i` from `w_y_i` for each positive
+  //    `margin_i_m`.
+  //  - Take the average over the size of dataset.
+  //  - Add the regularization parameter.
   gradient = difference * dataset.t();
   gradient /= dataset.n_cols;
 
