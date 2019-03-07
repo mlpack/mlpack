@@ -29,15 +29,15 @@ LinearSVMFunction<MatType>::LinearSVMFunction(
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const double lambda,
-    const double delta) :
+    const double delta,
+    const bool fitIntercept) :
     dataset(math::MakeAlias(const_cast<MatType&>(dataset), false)),
     numClasses(numClasses),
     lambda(lambda),
-    delta(delta)
+    delta(delta),
+    fitIntercept(fitIntercept)
 {
-  // Initialize values to 0.005 * r. 'r' is a matrix of random values taken from
-  // a Gaussian distribution with mean zero and variance one.
-  initialPoint.randn(numClasses, dataset.n_rows);
+  InitializeWeights(initialPoint, dataset.n_rows, numClasses, fitIntercept);
   initialPoint *= 0.005;
 
   // Calculate the label matrix.
@@ -53,11 +53,15 @@ template <typename MatType>
 void LinearSVMFunction<MatType>::InitializeWeights(
     arma::mat &weights,
     const size_t featureSize,
-    const size_t numClasses)
+    const size_t numClasses,
+    const bool fitIntercept)
 {
   // Initialize values to 0.005 * r. 'r' is a matrix of random values taken from
   // a Gaussian distribution with mean zero and variance one.
-  weights.randn(numClasses, featureSize);
+  if (fitIntercept)
+    weights.randn(numClasses, featureSize + 1);
+  else
+    weights.randn(numClasses, featureSize);
   weights *= 0.005;
 }
 
@@ -222,9 +226,9 @@ void LinearSVMFunction<MatType>::Gradient(
       % (-arma::repmat(arma::sum(mask), numClasses, 1)) + mask;
 
   // The gradient is evaluated as follows:
-  //  - Add `x_i` to `w_m` if `margin_i_m`.
+  //  - Add `x_i` to `w_j` if `margin_i_m`is positive.
   //  - Subtract `x_i` from `w_y_i` for each positive
-  //    `margin_i_m`.
+  //    `margin_i_j`.
   //  - Take the average over the size of dataset.
   //  - Add the regularization parameter.
   gradient = difference * dataset.t();

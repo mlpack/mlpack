@@ -36,12 +36,14 @@ class LinearSVMFunction
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
    * @paran delta Margin of difference between correct class and other classes.
+   * @param fitIntercept Intercept term flag.
    */
   LinearSVMFunction(const MatType& dataset,
                     const arma::Row<size_t>& labels,
                     const size_t numClasses,
                     const double lambda = 0.0001,
-                    const double delta = 1.0);
+                    const double delta = 1.0,
+                    const bool fitIntercept = false);
 
   /**
    * Shuffle the dataset.
@@ -55,11 +57,13 @@ class LinearSVMFunction
    * @param weights This will be filled with the initialized model weights.
    * @param featureSize The number of features in the training set.
    * @param numClasses Number of classes for classification.
+   * @param fitIntercept If true, an intercept is fitted.
    * @return Initialized model weights.
    */
   static void InitializeWeights(arma::mat& weights,
                                 const size_t featureSize,
-                                const size_t numClasses);
+                                const size_t numClasses,
+                                const bool fitIntercept = false);
 
   /**
    * Constructs the ground truth label matrix with the passed labels.
@@ -169,6 +173,8 @@ class LinearSVMFunction
   //! Gets the regularization parameter.
   double Lambda() const { return lambda; }
 
+  //! Gets the intercept flag.
+  bool FitIntercept() const { return fitIntercept; }
 
   //! Return the number of functions.
   size_t NumFunctions() const;
@@ -191,6 +197,9 @@ class LinearSVMFunction
 
   //! The margin between the correct class and all other classes.
   double delta;
+
+  //! Intercept term flag.
+  bool fitIntercept;
 };
 
 } // namespace svm
