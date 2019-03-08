@@ -81,7 +81,7 @@ class LaplaceDistribution
   /**
    * Return the probability of the given observation.
    *
-   * @param observation point to evaluate probability at.
+   * @param observation Point to evaluate probability at.
    */
   double Probability(const arma::vec& observation) const
   {
@@ -89,7 +89,7 @@ class LaplaceDistribution
   }
 
   /**
-   * Evaluate probability density function of given observation
+   * Evaluate probability density function of given observation.
    *
    * @param x List of observations.
    * @param probabilities Output probabilities for each input observation.
@@ -99,7 +99,7 @@ class LaplaceDistribution
   /**
    * Return the log probability of the given observation.
    *
-   * @param observation point to evaluate logarithm of probability.
+   * @param observation Point to evaluate logarithm of probability.
    */
   double LogProbability(const arma::vec& observation) const;
 
@@ -184,7 +184,9 @@ inline void LaplaceDistribution::LogProbability(
 {
   logProbabilities.set_size(x.n_cols);
   for (size_t i = 0; i < x.n_cols; i++)
+  {
     logProbabilities(i) = LogProbability(x.unsafe_col(i));
+  }
 }
 
 } // namespace distribution

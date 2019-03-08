@@ -1125,7 +1125,7 @@ BOOST_AUTO_TEST_CASE(LaplaceDistributionTest)
 }
 
 /**
- * Laplace Distribution Probability Test
+ * Laplace Distribution Probability Test.
  */
 BOOST_AUTO_TEST_CASE(LaplaceDistributionProbabilityTest)
 {
@@ -1150,7 +1150,7 @@ BOOST_AUTO_TEST_CASE(LaplaceDistributionProbabilityTest)
 }
 
 /**
- * Laplace Distribution Log Probability Test
+ * Laplace Distribution Log Probability Test.
  */
 BOOST_AUTO_TEST_CASE(LaplaceDistributionLogProbabilityTest)
 {
