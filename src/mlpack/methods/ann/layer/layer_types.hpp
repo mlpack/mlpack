@@ -167,6 +167,7 @@ using LayerTypes = boost::variant<
     TransposedConvolution<NaiveConvolution<ValidConvolution>,
             NaiveConvolution<FullConvolution>,
             NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
+    Dense<arma::cube, arma::cube>*,
     DropConnect<arma::mat, arma::mat>*,
     Dropout<arma::mat, arma::mat>*,
     AlphaDropout<arma::mat, arma::mat>*,
