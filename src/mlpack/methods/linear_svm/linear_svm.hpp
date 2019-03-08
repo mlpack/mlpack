@@ -207,7 +207,7 @@ class LinearSVM
   const arma::mat& Parameters() const { return parameters; }
 
   //! Gets the features size of the training data
-  size_t FeatureSize() const { return parameters.n_cols; }
+  size_t FeatureSize() const { return parameters.n_rows; }
 
   /**
    * Serialize the LinearSVM model.
