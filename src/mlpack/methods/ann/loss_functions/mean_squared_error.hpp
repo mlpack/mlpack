@@ -39,7 +39,7 @@ class MeanSquaredError
    */
   MeanSquaredError();
 
-  /*
+  /**
    * Computes the mean squared error function.
    *
    * @param input Input data used for evaluating the specified function.

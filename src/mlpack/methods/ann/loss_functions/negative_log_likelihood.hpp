@@ -40,7 +40,7 @@ class NegativeLogLikelihood
    */
   NegativeLogLikelihood();
 
-  /*
+  /**
    * Computes the Negative log likelihood.
    *
    * @param input Input data used for evaluating the specified function.
@@ -52,7 +52,7 @@ class NegativeLogLikelihood
 
   /**
    * Ordinary feed backward pass of a neural network. The negative log
-   * likelihood layer expectes that the input contains log-probabilities for
+   * likelihood layer expects that the input contains log-probabilities for
    * each class. The layer also expects a class index, in the range between 1
    * and the number of classes, as target when calling the Forward function.
    *
