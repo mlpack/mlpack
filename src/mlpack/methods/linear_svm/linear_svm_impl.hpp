@@ -38,14 +38,18 @@ LinearSVM<MatType>::LinearSVM(
 
 template <typename MatType>
 LinearSVM<MatType>::LinearSVM(
+    const size_t inputSize,
     const size_t numClasses,
     const double lambda,
-    const double delta) :
+    const double delta,
+    const bool fitIntercept) :
     numClasses(numClasses),
     lambda(lambda),
-    delta(delta)
+    delta(delta),
+    fitIntercept(fitIntercept)
 {
-  // No training to do here.
+  LinearSVMFunction<MatType>::InitializeWeights(
+      parameters, inputSize, numClasses, fitIntercept);
 }
 
 template <typename MatType>

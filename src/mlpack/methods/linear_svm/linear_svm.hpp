@@ -107,13 +107,17 @@ class LinearSVM
    * value of lambda is 0.0001.  Be sure to use Train() before calling
    * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
    *
+   * @param inputSize Size of the input feature vector.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
    * @paran delta Margin of difference between correct class and other classes.
+   * @param fitIntercept add intercept term or not.
    */
-  LinearSVM(const size_t numClasses = 0,
+  LinearSVM(const size_t inputSize,
+            const size_t numClasses = 0,
             const double lambda = 0.0001,
-            const double delta = 1.0);
+            const double delta = 1.0,
+            const bool fitIntercept = false);
 
   /**
    * Classify the given points, returning the predicted labels for each point.
