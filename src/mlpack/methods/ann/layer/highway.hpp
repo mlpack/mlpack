@@ -1,5 +1,6 @@
 /**
  * @file highway.hpp
+ * @author Konstantin Sidorov
  * @author Saksham Bansal
  *
  * Definition of highway layer first introduced in the paper "Highway networks"

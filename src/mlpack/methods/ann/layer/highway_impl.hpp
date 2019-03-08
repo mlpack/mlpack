@@ -1,5 +1,6 @@
 /**
  * @file highway_impl.hpp
+ * @author Konstantin Sidorov
  * @author Saksham Bansal
  *
  * Implementation of highway layer.
