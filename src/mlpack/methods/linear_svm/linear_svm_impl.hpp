@@ -126,7 +126,7 @@ const
     throw std::invalid_argument(oss.str());
   }
 
-  scores = parameters * data;
+  scores = parameters.t() * data;
 }
 
 template <typename MatType>

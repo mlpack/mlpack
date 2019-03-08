@@ -59,9 +59,9 @@ void LinearSVMFunction<MatType>::InitializeWeights(
   // Initialize values to 0.005 * r. 'r' is a matrix of random values taken from
   // a Gaussian distribution with mean zero and variance one.
   if (fitIntercept)
-    weights.randn(numClasses, featureSize + 1);
+    weights.randn(featureSize + 1, numClasses);
   else
-    weights.randn(numClasses, featureSize);
+    weights.randn(featureSize, numClasses);
   weights *= 0.005;
 }
 
@@ -152,7 +152,7 @@ double LinearSVMFunction<MatType>::Evaluate(
   double loss, regularization;
 
   // Scores for each class are evaluated.
-  arma::mat scores = parameters * dataset;
+  arma::mat scores = parameters.t() * dataset;
 
   // Evaluate the margin by the following steps:
   //  - Subtracting the score of correct class from all the class scores.
@@ -184,7 +184,7 @@ double LinearSVMFunction<MatType>::Evaluate(
   // Calculate the loss and regularization terms.
   double loss, regularization, cost;
 
-  arma::mat scores = parameters * dataset;
+  arma::mat scores = parameters.t() * dataset;
   arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
       * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
@@ -212,7 +212,7 @@ void LinearSVMFunction<MatType>::Gradient(
   // of all the positive elements of `margin` matrix.
   // So, we focus of these positive elements and reduce them.
   // Also, we need to increase the score of the correct class.
-  arma::mat scores = parameters * dataset;
+  arma::mat scores = parameters.t() * dataset;
   arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
       * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
@@ -231,7 +231,7 @@ void LinearSVMFunction<MatType>::Gradient(
   //    `margin_i_j`.
   //  - Take the average over the size of dataset.
   //  - Add the regularization parameter.
-  gradient = difference * dataset.t();
+  gradient = dataset * difference.t();
   gradient /= dataset.n_cols;
 
   // Adding the regularization contribution to the gradient.
@@ -247,7 +247,7 @@ void LinearSVMFunction<MatType>::Gradient(
     const size_t batchSize)
 {
   const size_t lastId = firstId + batchSize - 1;
-  arma::mat scores = parameters * dataset;
+  arma::mat scores = parameters.t() * dataset;
   arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
       * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
@@ -260,8 +260,8 @@ void LinearSVMFunction<MatType>::Gradient(
   arma::mat difference = groundTruth
       % (-arma::repmat(arma::sum(mask), numClasses, 1)) + mask;
 
-  gradient = difference.cols(firstId, lastId)
-      * dataset.cols(firstId, lastId).t();
+  gradient = dataset.cols(firstId, lastId)
+      * difference.cols(firstId, lastId).t();
   gradient /= batchSize;
 
   // Adding the regularization contribution to the gradient.
@@ -276,7 +276,7 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
 {
   double loss, regularization, cost;
 
-  arma::mat scores = parameters * dataset;
+  arma::mat scores = parameters.t() * dataset;
   arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
       * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
@@ -289,7 +289,7 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
   arma::mat difference = groundTruth
       % (-arma::repmat(arma::sum(mask), numClasses, 1)) + mask;
 
-  gradient = difference * dataset.t();
+  gradient = dataset * difference.t();
   gradient /= dataset.n_cols;
 
   // Adding the regularization contribution to the gradient.
@@ -320,7 +320,7 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
   // Calculate the loss and regularization terms.
   double loss, regularization, cost;
 
-  arma::mat scores = parameters * dataset;
+  arma::mat scores = parameters.t() * dataset;
   arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
       * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
@@ -333,8 +333,8 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
   arma::mat difference = groundTruth
       % (-arma::repmat(arma::sum(mask), numClasses, 1)) + mask;
 
-  gradient = difference.cols(firstId, lastId)
-             * dataset.cols(firstId, lastId).t();
+  gradient = dataset.cols(firstId, lastId)
+      * difference.cols(firstId, lastId).t();
   gradient /= batchSize;
 
 
