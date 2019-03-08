@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRegularizationEvaluate)
     parameters.randu(inputSize, numClasses);
 
     double wL2SquaredNorm;
-    wL2SquaredNorm = arma::accu(parameters % parameters);
+    wL2SquaredNorm = arma::dot(parameters, parameters);
 
     // Calculate regularization terms.
     const double smallRegTerm = 0.5 * wL2SquaredNorm;
@@ -298,7 +298,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRegularizationSeparableEvaluate)
     parameters.randu(inputSize, numClasses);
 
     double wL2SquaredNorm;
-    wL2SquaredNorm = 0.5 * arma::accu(parameters % parameters);
+    wL2SquaredNorm = 0.5 * arma::dot(parameters, parameters);
 
     // Calculate regularization terms.
     const double smallRegTerm = 0.5 * wL2SquaredNorm;
