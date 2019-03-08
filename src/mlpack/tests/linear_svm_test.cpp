@@ -315,6 +315,78 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRegularizationSeparableEvaluate)
 }
 
 /**
+ * Test Gradient() of the LinearSVMFunction.
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMFunctionGradient)
+{
+  const size_t points = 1000;
+  const size_t trials = 10;
+  const size_t inputSize = 10;
+  const size_t numClasses = 5;
+  const double delta = 1.0;
+
+  // Initialize a random dataset.
+  arma::mat data;
+  data.randu(inputSize, points);
+
+  // Create random class labels.
+  arma::Row<size_t> labels(points);
+  for (size_t i = 0; i < points; i++)
+    labels(i) = math::RandInt(0, numClasses);
+
+  // Create a LinearSVMFunction, Regularization term ignored.
+  LinearSVMFunction<arma::mat> svmf(data, labels, numClasses,
+                                    0.0 /* no regularization */,
+                                    delta);
+
+  // Run a number of trials.
+  for (size_t i = 0; i < trials; ++i)
+  {
+    // Create a random set of parameters.
+    arma::mat parameters;
+    parameters.randu(inputSize, numClasses);
+
+    // Hand-calculate the gradient.
+    arma::mat difference;
+    difference.zeros(numClasses, points);
+
+    // Compute error for each training example.
+    for (size_t j = 0; j < points; ++j)
+    {
+      arma::mat score = parameters.t() * data.col(j);
+      double correct = score[labels(j)];
+      size_t differenceCount = 0;
+      for (size_t k = 0; k < numClasses; ++k)
+      {
+        if (k == labels[j])
+          continue;
+        double margin = score[k] - correct + delta;
+        if (margin > 0)
+        {
+          differenceCount += 1;
+          difference(k, j) = 1;
+        }
+      }
+      difference(labels(j), j) -= differenceCount;
+    }
+
+    arma::mat gradient = (data * difference.t()) / points;
+    arma::mat evaluatedGradient;
+
+    svmf.Gradient(parameters, evaluatedGradient);
+
+    // Compare with the values returned by Gradient().
+    for (size_t j = 0; j < inputSize ; ++j)
+    {
+      for (size_t k = 0; k < numClasses ; ++k)
+      {
+        BOOST_REQUIRE_CLOSE(gradient(j, k), evaluatedGradient(j, k), 1e-5);
+      }
+    }
+  }
+}
+
+/**
  * Test separable Gradient() of the LinearSVMFunction when regularization
  * is used.
  */
