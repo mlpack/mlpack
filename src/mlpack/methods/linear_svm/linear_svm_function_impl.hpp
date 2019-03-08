@@ -165,7 +165,6 @@ double LinearSVMFunction<MatType>::Evaluate(
     scores = parameters.rows(0, parameters.n_rows - 2).t() * dataset
         + arma::repmat(parameters.row(dataset.n_rows - 1).t(), 1,
         dataset.n_cols);
-
   }
   else
   {
@@ -210,7 +209,6 @@ double LinearSVMFunction<MatType>::Evaluate(
     scores = parameters.rows(0, parameters.n_rows - 2).t() * dataset
         + arma::repmat(parameters.row(dataset.n_rows - 1).t(), 1,
         dataset.n_cols);
-
   }
   else
   {
@@ -253,7 +251,6 @@ void LinearSVMFunction<MatType>::Gradient(
     scores = parameters.rows(0, parameters.n_rows - 2).t() * dataset
         + arma::repmat(parameters.row(dataset.n_rows - 1).t(), 1,
         dataset.n_cols);
-
   }
   else
   {
@@ -316,7 +313,6 @@ void LinearSVMFunction<MatType>::Gradient(
     scores = parameters.rows(0, parameters.n_rows - 2).t() * dataset
         + arma::repmat(parameters.row(dataset.n_rows - 1).t(), 1,
         dataset.n_cols);
-
   }
   else
   {
@@ -373,7 +369,6 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
     scores = parameters.rows(0, parameters.n_rows - 2).t() * dataset
         + arma::repmat(parameters.row(dataset.n_rows - 1).t(), 1,
         dataset.n_cols);
-
   }
   else
   {
@@ -444,7 +439,6 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
     scores = parameters.rows(0, parameters.n_rows - 2).t() * dataset
         + arma::repmat(parameters.row(dataset.n_rows - 1).t(), 1,
         dataset.n_cols);
-
   }
   else
   {

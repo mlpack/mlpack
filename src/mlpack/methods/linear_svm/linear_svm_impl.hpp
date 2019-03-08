@@ -26,10 +26,12 @@ LinearSVM<MatType>::LinearSVM(
     const size_t numClasses,
     const double lambda,
     const double delta,
+    const bool fitIntercept,
     OptimizerType optimizer) :
     numClasses(numClasses),
     lambda(lambda),
-    delta(delta)
+    delta(delta),
+    fitIntercept(fitIntercept)
 {
   Train(data, labels, numClasses, optimizer);
 }
@@ -55,7 +57,7 @@ double LinearSVM<MatType>::Train(
     OptimizerType optimizer)
 {
   LinearSVMFunction<MatType> svm(data, labels,
-      numClasses, lambda, delta);
+      numClasses, lambda, delta, fitIntercept);
   if (parameters.is_empty())
     parameters = svm.InitialPoint();
 
@@ -126,7 +128,16 @@ const
     throw std::invalid_argument(oss.str());
   }
 
-  scores = parameters.t() * data;
+  if (fitIntercept)
+  {
+    scores = parameters.rows(0, parameters.n_rows - 2).t() * data
+        + arma::repmat(parameters.row(data.n_rows - 1).t(), 1,
+        data.n_cols);
+  }
+  else
+  {
+    scores = parameters.t() * data;
+  }
 }
 
 template <typename MatType>
