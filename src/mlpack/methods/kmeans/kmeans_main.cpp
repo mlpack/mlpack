@@ -91,13 +91,25 @@ PROGRAM_INFO("K-Means Clustering",
     "following command may be used:"
     "\n\n" +
     PRINT_CALL("kmeans", "input", "data", "initial_centroids", "initial",
-        "clusters", 10, "max_iterations", 500, "centroid", "final"));
-
+        "clusters", 10, "max_iterations", 500, "centroid", "final"),
+    SEE_ALSO("K-Means tutorial", "@doxygen/kmtutorial.html"),
+    SEE_ALSO("@dbscan", "#dbscan"),
+    SEE_ALSO("Using the triangle inequality to accelerate k-means (pdf)",
+        "http://www.aaai.org/Papers/ICML/2003/ICML03-022.pdf"),
+    SEE_ALSO("Making k-means even faster (pdf)",
+        "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.586.2554"
+        "&rep=rep1&type=pdf"),
+    SEE_ALSO("Accelerating exact k-means algorithms with geometric reasoning "
+        "(pdf)", "http://reports-archive.adm.cs.cmu.edu/anon/anon/usr/ftp/"
+        "usr0/ftp/2000/CMU-CS-00-105.pdf"),
+    SEE_ALSO("A dual-tree algorithm for fast k-means clustering with large k "
+        "(pdf)", "http://www.ratml.org/pub/pdf/2017dual.pdf"),
+    SEE_ALSO("mlpack::kmeans::KMeans class documentation",
+        "@doxygen/classmlpack_1_1kmeans_1_1KMeans.html"));
 // Required options.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform clustering on.", "i");
 PARAM_INT_IN_REQ("clusters", "Number of clusters to find (0 autodetects from "
     "initial centroids).", "c");
-
 // Output options.
 PARAM_FLAG("in_place", "If specified, a column containing the learned cluster "
     "assignments will be added to the input dataset file.  In this case, "
@@ -106,7 +118,6 @@ PARAM_MATRIX_OUT("output", "Matrix to store output labels or labeled data to.",
     "o");
 PARAM_MATRIX_OUT("centroid", "If specified, the centroids of each cluster will "
     " be written to the given file.", "C");
-
 // k-means configuration options.
 PARAM_FLAG("allow_empty_clusters", "Allow empty clusters to be persist.", "e");
 PARAM_FLAG("kill_empty_clusters", "Remove empty clusters when they occur.",
@@ -117,7 +128,6 @@ PARAM_INT_IN("max_iterations", "Maximum number of iterations before k-means "
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_MATRIX_IN("initial_centroids", "Start with the specified initial "
     "centroids.", "I");
-
 // Parameters for "refined start" k-means.
 PARAM_FLAG("refined_start", "Use the refined initial point strategy by Bradley "
     "and Fayyad to choose initial points.", "r");
@@ -125,27 +135,22 @@ PARAM_INT_IN("samplings", "Number of samplings to perform for refined start "
     "(use when --refined_start is specified).", "S", 100);
 PARAM_DOUBLE_IN("percentage", "Percentage of dataset to use for each refined "
     "start sampling (use when --refined_start is specified).", "p", 0.02);
-
 PARAM_STRING_IN("algorithm", "Algorithm to use for the Lloyd iteration "
     "('naive', 'pelleg-moore', 'elkan', 'hamerly', 'dualtree', or "
     "'dualtree-covertree').", "a", "naive");
-
 // Given the type of initial partition policy, figure out the empty cluster
 // policy and run k-means.
 template<typename InitialPartitionPolicy>
 void FindEmptyClusterPolicy(const InitialPartitionPolicy& ipp);
-
 // Given the initial partitionining policy and empty cluster policy, figure out
 // the Lloyd iteration step type and run k-means.
 template<typename InitialPartitionPolicy, typename EmptyClusterPolicy>
 void FindLloydStepType(const InitialPartitionPolicy& ipp);
-
 // Given the template parameters, sanitize/load input and run k-means.
 template<typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType>
 void RunKMeans(const InitialPartitionPolicy& ipp);
-
 static void mlpackMain()
 {
   // Initialize random seed.
@@ -153,7 +158,6 @@ static void mlpackMain()
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
-
   // Now, start building the KMeans type that we'll be using.  Start with the
   // initial partition policy.  The call to FindEmptyClusterPolicy<> results in
   // a call to RunKMeans<> and the algorithm is completed.
