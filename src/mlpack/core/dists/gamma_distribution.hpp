@@ -127,14 +127,14 @@ class GammaDistribution
              const arma::vec& meanxVec,
              const double tol = 1e-8);
 
-
   /**
    * This function returns the probability of a group of observations.
    *
    * The probability of the value x is
    *
-   * \frac{x^(\alpha - 1)}{\Gamma(\alpha) * \beta^\alpha} * e ^
-   * {-\frac{x}{\beta}}
+   * \f[
+   * \frac{x^{(\alpha - 1)}}{\Gamma(\alpha) \beta^\alpha} e^{-\frac{x}{\beta}}
+   * \f]
    *
    * for one dimension. This implementation assumes each dimension is
    * independent, so the product rule is used.
@@ -162,8 +162,10 @@ class GammaDistribution
    *
    * The logarithm of the probability of a value x is
    *
-   * log(\frac{x^(\alpha - 1)}{\Gamma(\alpha) * \beta^\alpha} * e ^
+   * \f[
+   * \log(\frac{x^{(\alpha - 1)}}{\Gamma(\alpha) \beta^\alpha} e^
    * {-\frac{x}{\beta}})
+   * \f]
    *
    * for one dimension. This implementation assumes each dimension is
    * independent, so the product rule is used.
@@ -214,9 +216,9 @@ class GammaDistribution
    * This is a small function that returns true if the update of alpha is
    * smaller than the tolerance ratio.
    *
-   * @param aOld old value of parameter we want to estimate (alpha in our
+   * @param aOld Old value of parameter we want to estimate (alpha in our
    *     case).
-   * @param aNew new value of parameter (the value after 1 iteration from
+   * @param aNew New value of parameter (the value after 1 iteration from
    *     aOld).
    * @param tol Convergence tolerance. Relative measure (see documentation of
    *     GammaDistribution::Train).
