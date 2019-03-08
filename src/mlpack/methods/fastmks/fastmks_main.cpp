@@ -212,6 +212,10 @@ static void mlpackMain()
       const double base = CLI::GetParam<double>("base");
 
       arma::mat queryData = std::move(CLI::GetParam<arma::mat>("query"));
+      if (CLI::HasParam("reference") &&
+          (queryData.n_rows != referenceData.n_rows))
+        Log::Fatal << "Dimension of Reference and Query dataset"
+                       "must be equal" << endl;
 
       Log::Info << "Loaded query data (" << queryData.n_rows << " x "
           << queryData.n_cols << ")." << endl;
