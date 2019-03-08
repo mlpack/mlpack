@@ -152,7 +152,25 @@ double LinearSVMFunction<MatType>::Evaluate(
   double loss, regularization;
 
   // Scores for each class are evaluated.
-  arma::mat scores = parameters.t() * dataset;
+  arma::mat scores;
+
+  // Check the Intercept condition.
+  if (fitIntercept)
+  {
+    // When using `fitIntercept` we need to add the `b_i` term explicitly.
+    // The first `parameters.n_rows - 1` rows of parameters holds the value
+    // of Weights `w_i`, and the last row holds `b_i`.
+    // On calculating the score, we add `b_i` term to each element of
+    // `i_th` row of `scores`.
+    scores = parameters.rows(0, parameters.n_rows - 2).t() * dataset
+        + arma::repmat(parameters.row(dataset.n_rows - 1).t(), 1,
+        dataset.n_cols);
+
+  }
+  else
+  {
+    scores = parameters.t() * dataset;
+  }
 
   // Evaluate the margin by the following steps:
   //  - Subtracting the score of correct class from all the class scores.
@@ -184,7 +202,21 @@ double LinearSVMFunction<MatType>::Evaluate(
   // Calculate the loss and regularization terms.
   double loss, regularization, cost;
 
-  arma::mat scores = parameters.t() * dataset;
+  // Scores for each class are evaluated.
+  arma::mat scores;
+
+  if (fitIntercept)
+  {
+    scores = parameters.rows(0, parameters.n_rows - 2).t() * dataset
+        + arma::repmat(parameters.row(dataset.n_rows - 1).t(), 1,
+        dataset.n_cols);
+
+  }
+  else
+  {
+    scores = parameters.t() * dataset;
+  }
+
   arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
       * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
@@ -212,7 +244,22 @@ void LinearSVMFunction<MatType>::Gradient(
   // of all the positive elements of `margin` matrix.
   // So, we focus of these positive elements and reduce them.
   // Also, we need to increase the score of the correct class.
-  arma::mat scores = parameters.t() * dataset;
+
+  // Scores for each class are evaluated.
+  arma::mat scores;
+
+  if (fitIntercept)
+  {
+    scores = parameters.rows(0, parameters.n_rows - 2).t() * dataset
+        + arma::repmat(parameters.row(dataset.n_rows - 1).t(), 1,
+        dataset.n_cols);
+
+  }
+  else
+  {
+    scores = parameters.t() * dataset;
+  }
+
   arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
       * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
@@ -231,7 +278,20 @@ void LinearSVMFunction<MatType>::Gradient(
   //    `margin_i_j`.
   //  - Take the average over the size of dataset.
   //  - Add the regularization parameter.
-  gradient = dataset * difference.t();
+  if (fitIntercept)
+  {
+    arma::mat data = arma::zeros<arma::mat>(dataset.n_rows + 1,
+        dataset.n_cols);
+    data.submat(0, 0, data.n_rows - 2, data.n_cols - 1) = dataset;
+    data.row(data.n_rows - 1) = arma::ones<arma::rowvec>(data.n_cols);
+
+    gradient = data * difference.t();
+  }
+  else
+  {
+    gradient = dataset * difference.t();
+  }
+
   gradient /= dataset.n_cols;
 
   // Adding the regularization contribution to the gradient.
@@ -247,7 +307,22 @@ void LinearSVMFunction<MatType>::Gradient(
     const size_t batchSize)
 {
   const size_t lastId = firstId + batchSize - 1;
-  arma::mat scores = parameters.t() * dataset;
+
+  // Scores for each class are evaluated.
+  arma::mat scores;
+
+  if (fitIntercept)
+  {
+    scores = parameters.rows(0, parameters.n_rows - 2).t() * dataset
+        + arma::repmat(parameters.row(dataset.n_rows - 1).t(), 1,
+        dataset.n_cols);
+
+  }
+  else
+  {
+    scores = parameters.t() * dataset;
+  }
+
   arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
       * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
@@ -260,8 +335,22 @@ void LinearSVMFunction<MatType>::Gradient(
   arma::mat difference = groundTruth
       % (-arma::repmat(arma::sum(mask), numClasses, 1)) + mask;
 
-  gradient = dataset.cols(firstId, lastId)
-      * difference.cols(firstId, lastId).t();
+  if (fitIntercept)
+  {
+    arma::mat data = arma::zeros<arma::mat>(dataset.n_rows + 1,
+                                            dataset.n_cols);
+    data.submat(0, 0, data.n_rows - 2, data.n_cols - 1) = dataset;
+    data.row(data.n_rows - 1) = arma::ones<arma::rowvec>(data.n_cols);
+
+    gradient = data.cols(firstId, lastId)
+        * difference.cols(firstId, lastId).t();
+  }
+  else
+  {
+    gradient = dataset.cols(firstId, lastId)
+        * difference.cols(firstId, lastId).t();
+  }
+
   gradient /= batchSize;
 
   // Adding the regularization contribution to the gradient.
@@ -276,7 +365,21 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
 {
   double loss, regularization, cost;
 
-  arma::mat scores = parameters.t() * dataset;
+  // Scores for each class are evaluated.
+  arma::mat scores;
+
+  if (fitIntercept)
+  {
+    scores = parameters.rows(0, parameters.n_rows - 2).t() * dataset
+        + arma::repmat(parameters.row(dataset.n_rows - 1).t(), 1,
+        dataset.n_cols);
+
+  }
+  else
+  {
+    scores = parameters.t() * dataset;
+  }
+
   arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
       * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
@@ -289,7 +392,20 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
   arma::mat difference = groundTruth
       % (-arma::repmat(arma::sum(mask), numClasses, 1)) + mask;
 
-  gradient = dataset * difference.t();
+  if (fitIntercept)
+  {
+    arma::mat data = arma::zeros<arma::mat>(dataset.n_rows + 1,
+                                            dataset.n_cols);
+    data.submat(0, 0, data.n_rows - 2, data.n_cols - 1) = dataset;
+    data.row(data.n_rows - 1) = arma::ones<arma::rowvec>(data.n_cols);
+
+    gradient = data * difference.t();
+  }
+  else
+  {
+    gradient = dataset * difference.t();
+  }
+
   gradient /= dataset.n_cols;
 
   // Adding the regularization contribution to the gradient.
@@ -320,7 +436,21 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
   // Calculate the loss and regularization terms.
   double loss, regularization, cost;
 
-  arma::mat scores = parameters.t() * dataset;
+  // Scores for each class are evaluated.
+  arma::mat scores;
+
+  if (fitIntercept)
+  {
+    scores = parameters.rows(0, parameters.n_rows - 2).t() * dataset
+        + arma::repmat(parameters.row(dataset.n_rows - 1).t(), 1,
+        dataset.n_cols);
+
+  }
+  else
+  {
+    scores = parameters.t() * dataset;
+  }
+
   arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
       * (scores % groundTruth), numClasses, 1)) + delta
       - (delta * groundTruth);
@@ -333,8 +463,22 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
   arma::mat difference = groundTruth
       % (-arma::repmat(arma::sum(mask), numClasses, 1)) + mask;
 
-  gradient = dataset.cols(firstId, lastId)
-      * difference.cols(firstId, lastId).t();
+  if (fitIntercept)
+  {
+    arma::mat data = arma::zeros<arma::mat>(dataset.n_rows + 1,
+                                            dataset.n_cols);
+    data.submat(0, 0, data.n_rows - 2, data.n_cols - 1) = dataset;
+    data.row(data.n_rows - 1) = arma::ones<arma::rowvec>(data.n_cols);
+
+    gradient = data.cols(firstId, lastId)
+        * difference.cols(firstId, lastId).t();
+  }
+  else
+  {
+    gradient = dataset.cols(firstId, lastId)
+        * difference.cols(firstId, lastId).t();
+  }
+
   gradient /= batchSize;
 
 
