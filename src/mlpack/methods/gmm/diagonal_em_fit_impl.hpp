@@ -39,86 +39,7 @@ Estimate(const arma::mat& observations,
          arma::vec& weights,
          const bool useInitialModel)
 {
-  // If it is not on Windows, we use the Armadillo's gmm_diag class by calling
-  // ArmadilloGMMWrapper().
-  #ifndef _WIN32
   ArmadilloGMMWrapper(observations, dists, weights, useInitialModel);
-
-  #else
-  if (!useInitialModel)
-    InitialClustering(observations, dists, weights);
-
-  // Set the initial log likelihood.
-  double l = LogLikelihood(observations, dists, weights);
-
-  Log::Debug << "DiagonalGMM::Estimate(): initial clustering log likelihood: "
-      << l << std::endl;
-
-  // Initialize the old log likelihood for comparison later.
-  double lOld = -DBL_MAX;
-
-  // Create the conditional probability matrix.
-  arma::mat condProb(observations.n_cols, dists.size());
-
-  // Iterate to update the model until no more improvement is found.
-  size_t iteration = 1;
-  while (std::abs(l - lOld) > tolerance && iteration != maxIterations)
-  {
-    // E step: Calculate the conditional probabilities of the given
-    // observations choosing a particular gaussian using current parameters.
-    for (size_t k = 0; k < dists.size(); k++)
-    {
-      arma::vec condProbAlias = condProb.unsafe_col(k);
-      dists[k].Probability(observations, condProbAlias);
-      condProbAlias *= weights[k];
-    }
-
-    // Normalize row-wise.
-    for (size_t j = 0; j < condProb.n_rows; j++)
-    {
-      // Avoid dividing by zero.
-      const double probSum = accu(condProb.row(j));
-      if (probSum != 0.0)
-        condProb.row(j) /= probSum;
-    }
-
-    // Store the sum of responsibilities over all the observations.
-    arma::vec N = arma::trans(arma::sum(condProb));
-
-    // M step: Update the paramters using the current responsibilities.
-    for (size_t k = 0; k < dists.size(); k++)
-    {
-      // Update the mean and covariance using the responsibilities.
-      // If N[k] is zero, we don't update them.
-      if (N[k] == 0)
-        continue;
-
-      // Update the mean of distribution k.
-      dists[k].Mean() = (observations * condProb.col(k)) / N[k];
-
-      // Update the diagonal covariance of distribution k.
-      // We only need the diagonal elements in the covariances.
-      arma::mat diffs = observations - (dists[k].Mean() *
-          arma::ones<arma::rowvec>(observations.n_cols));
-
-      arma::vec covs = arma::sum((diffs % diffs) %
-          (arma::ones<arma::vec>(observations.n_rows) *
-          trans(condProb.col(k))), 1) / N[k];
-
-      covs = arma::clamp(covs, 1e-10, DBL_MAX);
-      dists[k].Covariance(std::move(covs));
-    }
-
-    // Update the mixing coefficients.
-    weights = N / observations.n_cols;
-
-    // Update log likelihood and Keep the old likelihood for comparison.
-    lOld = l;
-    l = LogLikelihood(observations, dists, weights);
-
-    iteration++;
-  }
-  #endif
 }
 
 template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
@@ -318,9 +239,6 @@ serialize(Archive& ar, const unsigned int /* version */)
   ar & BOOST_SERIALIZATION_NVP(constraint);
 }
 
-// Armadillo uses uword internally as an OpenMP index type, which crashes
-// Visual Studio.
-#ifndef _WIN32
 template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
 void DiagonalEMFit<InitialClusteringType, CovarianceConstraintPolicy>::
 ArmadilloGMMWrapper(
@@ -379,7 +297,6 @@ ArmadilloGMMWrapper(
     dists[i].Covariance(gmm.dcovs.col(i));
   }
 }
-#endif
 
 } // namespace gmm
 } // namespace mlpack

@@ -158,9 +158,6 @@ class DiagonalEMFit
       const std::vector<distribution::DiagonalGaussianDistribution>& dists,
       const arma::vec& weights) const;
 
-  // Armadillo uses uword internally as an OpenMP index type, which crashes
-  // Visual Studio.
-  #ifndef _WIN32
 	/**
 	 * Use the Armadillo gmm_diag clusterer to train a GMM with diagonal
 	 * covariance.  If InitialClusteringType == kmeans::KMeans<>, this will use
@@ -176,7 +173,6 @@ class DiagonalEMFit
       std::vector<distribution::DiagonalGaussianDistribution>& dists,
       arma::vec& weights,
       const bool useInitialModel = false);
-  #endif
 
   //! Maximum iterations of EM algorithm.
   size_t maxIterations;
