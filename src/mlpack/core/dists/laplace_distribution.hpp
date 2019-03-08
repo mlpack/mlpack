@@ -105,7 +105,7 @@ class LaplaceDistribution
   double LogProbability(const arma::vec& observation) const;
 
   /**
-   * Evaluate log probability density function of given observation
+   * Evaluate log probability density function of given observation.
    *
    * @param x List of observations.
    * @param logProbabilities Output probabilities for each input observation.
