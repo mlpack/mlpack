@@ -93,12 +93,13 @@ class LinearSVM
    * @paran delta Margin of difference between correct class and other classes.
    * @param optimizer Desired optimizer.
    */
-  template <typename OptimizerType>
+  template <typename OptimizerType = ens::L_BFGS>
   LinearSVM(const MatType& data,
             const arma::Row<size_t>& labels,
             const size_t numClasses = 2,
             const double lambda = 0.0001,
             const double delta = 1.0,
+            const bool fitIntercept = false,
             OptimizerType optimizer = OptimizerType());
 
   /**
@@ -184,7 +185,7 @@ class LinearSVM
    * @param optimizer Desired optimizer.
    * @return Objective value of the final point.
    */
-  template <typename OptimizerType>
+  template <typename OptimizerType = ens::L_BFGS>
   double Train(const MatType& data,
                const arma::Row<size_t>& labels,
                const size_t numClasses = 2,
@@ -207,7 +208,9 @@ class LinearSVM
   const arma::mat& Parameters() const { return parameters; }
 
   //! Gets the features size of the training data
-  size_t FeatureSize() const { return parameters.n_rows; }
+  size_t FeatureSize() const
+  { return fitIntercept ? parameters.n_rows - 1 :
+           parameters.n_rows; }
 
   /**
    * Serialize the LinearSVM model.
@@ -218,6 +221,7 @@ class LinearSVM
     ar & BOOST_SERIALIZATION_NVP(parameters);
     ar & BOOST_SERIALIZATION_NVP(numClasses);
     ar & BOOST_SERIALIZATION_NVP(lambda);
+    ar & BOOST_SERIALIZATION_NVP(fitIntercept);
   }
 
  private:
@@ -229,6 +233,8 @@ class LinearSVM
   double lambda;
   //! The margin between the correct class and all other classes.
   double delta;
+  //! Intercept term flag.
+  bool fitIntercept;
 };
 
 } // namespace svm
