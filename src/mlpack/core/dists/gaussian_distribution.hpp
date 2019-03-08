@@ -90,9 +90,11 @@ class GaussianDistribution
    */
   void Probability(const arma::mat& x, arma::vec& probabilities) const
   {
-    arma::vec logProbabilities;
-    LogProbability(x, logProbabilities);
-    probabilities = arma::exp(logProbabilities);
+    probabilities.set_size(x.n_cols);
+    for (size_t i = 0; i < x.n_cols; i++)
+    {
+      probabilities(i) = Probability(x.unsafe_col(i));
+    }
   }
 
   /**
@@ -194,7 +196,9 @@ inline void GaussianDistribution::LogProbability(
   const arma::mat rhs = -0.5 * invCov * diffs;
   arma::vec logExponents(diffs.n_cols); // We will now fill this.
   for (size_t i = 0; i < diffs.n_cols; i++)
+  {
     logExponents(i) = accu(diffs.unsafe_col(i) % rhs.unsafe_col(i));
+  }
 
   const size_t k = x.n_rows;
 
