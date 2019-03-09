@@ -95,6 +95,18 @@ const
 {
   Classify(data, scores);
 
+  #if ARMA_VERSION_MAJOR > 7 || ARMA_VERSION_MAJOR == 7 \
+  && ARMA_VERSION_MINOR >= 300
+
+  // Prepare necessary data
+  labels.zeros(data.n_cols);
+
+  labels = arma::conv_to<arma::Row<size_t>>::from(
+      arma::index_max(scores));
+
+  #else
+  // Once the minimum version is Armadillo is increased, remove this part.
+
   // Prepare necessary data
   labels.zeros(data.n_cols);
   double maxScore = 0;
@@ -116,6 +128,7 @@ const
     // Set maximum probability to zero for next input.
     maxScore = 0;
   }
+  #endif
 }
 
 template <typename MatType>

@@ -573,9 +573,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMFitIntercept)
   const double delta = 1.0;
 
   // Generate a two-Gaussian dataset,
-  // which can't be separated without adding the intercept term.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g1(arma::vec("1.0 9.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("4.0 3.0 4.0"), arma::eye<arma::mat>(3, 3));
 
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
@@ -710,7 +709,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMPSGDSimpleTest)
 
   // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(dataset, labels);
-  BOOST_REQUIRE_CLOSE(acc, 1.0, 0.5);
+  BOOST_REQUIRE_CLOSE(acc, 1.0, 1.0);
 }
 
 /**
@@ -756,7 +755,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMParallelSGDTwoClasses)
 
   // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(acc, 1.0, 0.5);
+  BOOST_REQUIRE_CLOSE(acc, 1.0, 1.0);
 
   // Create test dataset.
   for (size_t i = 0; i < points / 2; i++)
@@ -772,7 +771,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMParallelSGDTwoClasses)
 
   // Compare test accuracy to 1.
   const double testAcc = lsvm.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(testAcc, 1.0, 0.6);
+  BOOST_REQUIRE_CLOSE(testAcc, 1.0, 1.0);
 }
 
 #endif
