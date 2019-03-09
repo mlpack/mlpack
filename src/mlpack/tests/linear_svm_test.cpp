@@ -567,7 +567,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMLBFGSTwoClasses)
 BOOST_AUTO_TEST_CASE(LinearSVMFitIntercept)
 {
   const size_t points = 1000;
-  const size_t inputSize = 3;
+  const size_t inputSize = 5;
   const size_t numClasses = 2;
   const double lambda = 0.5;
   const double delta = 1.0;
@@ -886,38 +886,6 @@ BOOST_AUTO_TEST_CASE(LinearSVMLBFGSMultipleClasses)
   // Compare test accuracy to 1.
   const double testAcc = lsvm.ComputeAccuracy(data, labels);
   BOOST_REQUIRE_CLOSE(testAcc, 1.0, 2.0);
-}
-
-/**
- * Testing Train() in LinearSVM.
- */
-BOOST_AUTO_TEST_CASE(LinearSVMTrainTest)
-{
-  // Test the stability of the LinearSVM.
-  arma::mat dataset = arma::randu<arma::mat>(5, 1000);
-  arma::Row<size_t> labels(1000);
-  for (size_t i = 0; i < 500; ++i)
-    labels[i] = size_t(0.0);
-  for (size_t i = 500; i < 1000; ++i)
-    labels[i] = size_t(1.0);
-
-  LinearSVM<arma::mat> lsvm(dataset.n_rows, 2);
-  LinearSVM<arma::mat> lsvm2(dataset.n_rows, 2);
-  lsvm.Parameters() = lsvm2.Parameters();
-  ens::L_BFGS optimizer;
-  lsvm.Train(dataset, labels, 2, std::move(optimizer));
-  lsvm2.Train(dataset, labels, 2, std::move(optimizer));
-
-  // Ensure that the parameters are the same.
-  BOOST_REQUIRE_EQUAL(lsvm.Parameters().n_rows, lsvm2.Parameters().n_rows);
-  BOOST_REQUIRE_EQUAL(lsvm.Parameters().n_cols, lsvm2.Parameters().n_cols);
-  for (size_t i = 0; i < lsvm.Parameters().n_elem; ++i)
-  {
-    if (std::abs(lsvm.Parameters()[i]) < 1e-4)
-      BOOST_REQUIRE_SMALL(lsvm2.Parameters()[i], 1e-4);
-    else
-      BOOST_REQUIRE_CLOSE(lsvm.Parameters()[i], lsvm2.Parameters()[i], 1e-4);
-  }
 }
 
 /**
