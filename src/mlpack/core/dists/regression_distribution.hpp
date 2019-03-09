@@ -134,7 +134,8 @@ class RegressionDistribution
    *
    * @param observation Point to evaluate log probability at.
    */
-  double LogProbability(const arma::vec& observation) const {
+  double LogProbability(const arma::vec& observation) const
+  {
     return log(Probability(observation));
   }
 
