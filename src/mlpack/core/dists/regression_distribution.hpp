@@ -1,9 +1,9 @@
 /**
  * @file regression_distribution.hpp
  * @author Michael Fox
+ * @author Rohan Raj
  *
- * Implementation of conditional Gaussian distribution for HMM regression
- * (HMMR).
+ * Implementation of conditional Gaussian distribution for HMM regression (HMMR)
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -99,44 +99,57 @@ class RegressionDistribution
   void Train(const arma::mat& observations);
 
   /**
-   * Estimate parameters using provided observation weights.
+   * Estimate parameters using provided observation weights
    *
-   * @param observations List of observations.
-   * @param weights Probability that given observation is from distribution.
+   * @param weights probability that given observation is from distribution
    */
   mlpack_deprecated void Train(const arma::mat& observations,
                                const arma::vec& weights);
 
   /**
-   * Estimate parameters using provided observation weights.
+   * Estimate parameters using provided observation weights
    *
-   * @param observations List of observations.
-   * @param weights Probability that given observation is from distribution.
+   * @param weights probability that given observation is from distribution
    */
   void Train(const arma::mat& observations, const arma::rowvec& weights);
 
   /**
-   * Evaluate probability density function of given observation.
-   *
-   * @param observation Point to evaluate probability at.
-   */
+  * Evaluate probability density function of given observation
+  *
+  * @param observation point to evaluate probability at
+  */
   double Probability(const arma::vec& observation) const;
 
   /**
-   * Evaluate log probability density function of given observation.
-   *
-   * @param observation Point to evaluate log probability at.
-   */
-  double LogProbability(const arma::vec& observation) const
-  {
+  * Evaluate probability density function of given observation
+  *
+  * @param x List of observations.
+  * @param probabilities Output probabilities for each input observation.
+  */
+  void Probability(const arma::mat& x, arma::vec& probabilities) const;
+
+  /**
+  * Evaluate log probability density function of given observation
+  *
+  * @param observation point to evaluate log probability at
+  */
+  double LogProbability(const arma::vec& observation) const {
     return log(Probability(observation));
   }
 
   /**
+  * Evaluate log probability density function of given observation
+  *
+  * @param x List of observations.
+  * @param logProbabilities Output probabilities for each input observation.
+  */
+  void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
+
+  /**
    * Calculate y_i for each data point in points.
    *
-   * @param points The data points to calculate with.
-   * @param predictions Y, will contain calculated values on completion.
+   * @param points the data points to calculate with.
+   * @param predictions y, will contain calculated values on completion.
    */
   mlpack_deprecated void Predict(const arma::mat& points,
                                  arma::vec& predictions) const;
@@ -144,18 +157,26 @@ class RegressionDistribution
   /**
    * Calculate y_i for each data point in points.
    *
-   * @param points The data points to calculate with.
-   * @param predictions Y, will contain calculated values on completion.
+   * @param points the data points to calculate with.
+   * @param predictions y, will contain calculated values on completion.
    */
   void Predict(const arma::mat& points, arma::rowvec& predictions) const;
 
   //! Return the parameters (the b vector).
   const arma::vec& Parameters() const { return rf.Parameters(); }
 
-  //! Return the dimensionality.
+  //! Return the dimensionality
   size_t Dimensionality() const { return rf.Parameters().n_elem; }
 };
 
+inline void RegressionDistribution::LogProbability(
+    const arma::mat& x,
+    arma::vec& logProbabilities) const
+{
+  logProbabilities.set_size(x.n_cols);
+  for (size_t i = 0; i < x.n_cols; i++)
+    logProbabilities(i) = LogProbability(x.unsafe_col(i));
+}
 
 } // namespace distribution
 } // namespace mlpack
