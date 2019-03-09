@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(HMMGenerateDiagonalGMMHMMCheckDimensionsTest)
   SetInputParam("model", h);
   SetInputParam("length", length);
 
-  // Call to hmm_generate_main
+  // Call to hmm_generate_main.
   mlpackMain();
 
   // Get the generated observation sequence. Ensure that the generated sequence

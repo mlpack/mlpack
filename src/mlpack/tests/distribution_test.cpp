@@ -1377,10 +1377,10 @@ BOOST_AUTO_TEST_CASE(DiagonalGaussianUnbiasedEstimatorTest)
   // Estimate
   d.Train(observations, probs);
 
-  BOOST_REQUIRE_CLOSE(d.Mean()(0), 4.5000000000000000, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Mean()(1), 4.4000000000000004, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Mean()(2), 3.5000000000000000, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Mean()(3), 6.7999999999999998, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Mean()(0), 4.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Mean()(1), 4.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Mean()(2), 3.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Mean()(3), 6.8, 1e-5);
 
   BOOST_REQUIRE_CLOSE(d.Covariance()(0), 3.78571428571428603, 1e-5);
   BOOST_REQUIRE_CLOSE(d.Covariance()(1), 6.34285714285714253, 1e-5);

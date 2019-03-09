@@ -1387,8 +1387,8 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianOneStateTrainingTest)
 }
 
 /**
- * Make sure the unlabeled training works reasonably given a sigle distribution
- * with diagonal covariance.
+ * Make sure the unlabeled training works reasonably given a single
+ * distribution with diagonal covariance.
  */
 BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianUnlabeledTrainingTest)
 {
