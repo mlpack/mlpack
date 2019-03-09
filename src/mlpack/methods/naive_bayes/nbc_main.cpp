@@ -125,7 +125,7 @@ static void mlpackMain()
   RequireOnlyOnePassed({ "training", "input_model" }, true);
   ReportIgnoredParam({{ "training", false }}, "labels");
   ReportIgnoredParam({{ "training", false }}, "incremental_variance");
-  RequireAtLeastOnePassed({ "output","predictions","output_model", "output_probs" }, false,
+  RequireAtLeastOnePassed({ "output", "predictions", "output_model", "output_probs" }, false,
       "no output will be saved");
   ReportIgnoredParam({{ "test", false }}, "output");
   ReportIgnoredParam({{ "test", false }}, "predictions");
@@ -191,7 +191,7 @@ static void mlpackMain()
     model->nbc.Classify(testingData, predictions, probabilities);
     Timer::Stop("nbc_testing");
 
-    if (CLI::HasParam("output")||CLI::HasParam("predictions"))
+    if (CLI::HasParam("output") || CLI::HasParam("predictions"))
     {
       // Un-normalize labels to prepare output.
       Row<size_t> rawResults;
