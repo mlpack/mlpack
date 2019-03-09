@@ -110,7 +110,14 @@ class LaplaceDistribution
    * @param x List of observations.
    * @param logProbabilities Output probabilities for each input observation.
    */
-  void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
+  void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const
+  {
+    logProbabilities.set_size(x.n_cols);
+    for (size_t i = 0; i < x.n_cols; i++)
+    {
+      logProbabilities(i) = LogProbability(x.unsafe_col(i));
+    }
+  }
 
   /**
    * Return a randomly generated observation according to the probability
@@ -178,17 +185,6 @@ class LaplaceDistribution
   //! Scale parameter of the distribution.
   double scale;
 };
-
-inline void LaplaceDistribution::LogProbability(
-    const arma::mat& x,
-    arma::vec& logProbabilities) const
-{
-  logProbabilities.set_size(x.n_cols);
-  for (size_t i = 0; i < x.n_cols; i++)
-  {
-    logProbabilities(i) = LogProbability(x.unsafe_col(i));
-  }
-}
 
 } // namespace distribution
 } // namespace mlpack
