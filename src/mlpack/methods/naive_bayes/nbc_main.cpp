@@ -126,7 +126,7 @@ static void mlpackMain()
   ReportIgnoredParam({{ "training", false }}, "labels");
   ReportIgnoredParam({{ "training", false }}, "incremental_variance");
   RequireAtLeastOnePassed({ "output", "predictions", "output_model",
-   "output_probs" }, false,"no output will be saved");
+   "output_probs" }, false, "no output will be saved");
   ReportIgnoredParam({{ "test", false }}, "output");
   ReportIgnoredParam({{ "test", false }}, "predictions");
   if (CLI::HasParam("input_model") && !CLI::HasParam("test"))
