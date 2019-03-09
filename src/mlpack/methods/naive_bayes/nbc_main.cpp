@@ -111,7 +111,7 @@ PARAM_FLAG("incremental_variance", "The variance of each class will be "
 
 // Test parameters.
 PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
-//parameter output is to be deprecated and removed in mlpack 4.0
+// parameter output is to be deprecated and removed in mlpack 4.0
 PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
     " test set will be written.", "o");
 PARAM_UROW_OUT("predictions", "The matrix in which the predicted labels for the"
@@ -198,7 +198,7 @@ static void mlpackMain()
       data::RevertLabels(predictions, model->mappings, rawResults);
 
       CLI::GetParam<Row<size_t>>("predictions") = std::move(rawResults);
-      if(CLI::HasParam("output"))
+      if (CLI::HasParam("output"))
       {
          CLI::GetParam<Row<size_t>>("output") = std::move(predictions);
       }
