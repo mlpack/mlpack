@@ -3,7 +3,8 @@
  * @author Michael Fox
  * @author Rohan Raj
  *
- * Implementation of conditional Gaussian distribution for HMM regression (HMMR)
+ * Implementation of conditional Gaussian distribution for HMM regression
+ * (HMMR).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -17,7 +18,7 @@ using namespace mlpack;
 using namespace mlpack::distribution;
 
 /**
- * Estimate parameters using provided observation weights
+ * Estimate parameters using provided observation weights.
  *
  * @param observations List of observations.
  */
@@ -34,7 +35,7 @@ void RegressionDistribution::Train(const arma::mat& observations)
 /**
  * Estimate parameters using provided observation weights.
  *
- * @param weights probability that given observation is from distribution
+ * @param weights Probability that given observation is from distribution.
  */
 void RegressionDistribution::Train(const arma::mat& observations,
                                    const arma::vec& weights)
@@ -56,7 +57,7 @@ void RegressionDistribution::Train(const arma::mat& observations,
 /**
  * Evaluate probability density function of given observation.
  *
- * @param observation point to evaluate probability at
+ * @param observation Point to evaluate probability at.
  */
 double RegressionDistribution::Probability(const arma::vec& observation) const
 {
