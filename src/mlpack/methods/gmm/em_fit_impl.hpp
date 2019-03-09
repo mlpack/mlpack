@@ -198,7 +198,7 @@ Estimate(const arma::mat& observations,
       arma::mat tmp = observations - (dists[i].Mean() *
           arma::ones<arma::rowvec>(observations.n_cols));
 
-      if(std::is_same<Distribution,
+      if (std::is_same<Distribution,
           distribution::DiagonalGaussianDistribution>::value)
       {
         arma::vec cov = arma::sum((tmp % tmp) %
@@ -255,8 +255,8 @@ InitialClustering(const arma::mat& observations,
   std::vector<arma::vec> means(dists.size());
 
   // Conditional covariance instantiation.
-  std::vector<typename std::conditional<isDiagGaussDist, arma::vec, arma::mat>::type>
-      covs(dists.size());
+  std::vector<typename std::conditional<isDiagGaussDist,
+      arma::vec, arma::mat>::type> covs(dists.size());
 
   // Now calculate the means, covariances, and weights.
   weights.zeros();
@@ -401,7 +401,7 @@ ArmadilloGMMWrapper(const arma::mat& observations,
       means.col(i) = dists[i].Mean();
 
       // DiagonalGaussianDistribution has diagonal covariance as an arma::vec.
-      if(std::is_same<Distribution,
+      if (std::is_same<Distribution,
           distribution::DiagonalGaussianDistribution>::value)
         covs.col(i) = dists[i].Covariance();
       else
@@ -429,7 +429,7 @@ ArmadilloGMMWrapper(const arma::mat& observations,
     dists[i].Mean() = g.means.col(i);
 
     // DiagonalGaussianDistribution has diagonal covariance as an arma::vec.
-    if(std::is_same<Distribution,
+    if (std::is_same<Distribution,
         distribution::DiagonalGaussianDistribution>::value)
       dists[i].Covariance(g.dcovs.col(i));
     else

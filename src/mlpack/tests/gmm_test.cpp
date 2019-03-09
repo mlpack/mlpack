@@ -805,7 +805,6 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
  */
 BOOST_AUTO_TEST_CASE(DiagonalGMMProbabilityComponentTest)
 {
-  math::RandomSeed(std::time(NULL));
   // Create DiagonalGMM.
   DiagonalGMM gmm(2, 2);
   gmm.Component(0) = distribution::DiagonalGaussianDistribution("0 0", "1 1");
@@ -836,7 +835,6 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMProbabilityComponentTest)
  */
 BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMOneGaussian)
 {
-  math::RandomSeed(std::time(NULL));
   for (size_t iterations = 0; iterations < 4; iterations++)
   {
     // Determine random mean, covariance, and observations.
@@ -874,7 +872,6 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMOneGaussian)
  */
 BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMOneGaussianWithProbability)
 {
-  math::RandomSeed(std::time(NULL));
   // Generate a diagonal covariance gaussian distribution.
   distribution::DiagonalGaussianDistribution d("1.0 0.8", "1.0 2.0");
 
@@ -912,7 +909,6 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMOneGaussianWithProbability)
  */
 BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussians)
 {
-  math::RandomSeed(std::time(NULL));
   // We'll have three diagonal covariance Gaussian distributions from this
   // mixture.
   distribution::DiagonalGaussianDistribution d1("0.0 1.0 0.0",
@@ -993,7 +989,6 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussians)
  */
 BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussiansWithProbability)
 {
-  math::RandomSeed(std::time(NULL));
   // We'll have three diagonal covariance Gaussian distributions from this
   // mixture.
   distribution::DiagonalGaussianDistribution d1("1.5 0.8 1.0",
@@ -1031,7 +1026,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussiansWithProbability)
   arma::uvec sortedIndices = sort_index(g.Weights());
 
   // First Gaussian (d1).
-  BOOST_REQUIRE_CLOSE(g.Weights()[sortedIndices[0]], 0.2, 10);
+  BOOST_REQUIRE_CLOSE(g.Weights()[sortedIndices[0]], 0.2, 10.0);
 
   for (size_t i = 0; i < 3; i++)
     BOOST_REQUIRE_CLOSE(g.Component(sortedIndices[0]).Mean()[i],
@@ -1044,7 +1039,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussiansWithProbability)
   }
 
   // Second Gaussian (d2).
-  BOOST_REQUIRE_CLOSE(g.Weights()[sortedIndices[1]], 0.3, 10);
+  BOOST_REQUIRE_CLOSE(g.Weights()[sortedIndices[1]], 0.3, 10.0);
 
   for (size_t i = 0; i < 3; i++)
     BOOST_REQUIRE_CLOSE(g.Component(sortedIndices[1]).Mean()[i],
@@ -1057,7 +1052,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussiansWithProbability)
   }
 
   // Third Gaussian (d3).
-  BOOST_REQUIRE_CLOSE(g.Weights()[sortedIndices[2]], 0.5, 10);
+  BOOST_REQUIRE_CLOSE(g.Weights()[sortedIndices[2]], 0.5, 10.0);
 
   for (size_t i = 0; i < 3; ++i)
     BOOST_REQUIRE_CLOSE(g.Component(sortedIndices[2]).Mean()[i],
@@ -1077,7 +1072,6 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMMultipleGaussiansWithProbability)
  */
 BOOST_AUTO_TEST_CASE(DiagonalGMMRandomTest)
 {
-  math::RandomSeed(std::time(NULL));
   // Simple GMM distribution.
   DiagonalGMM gmm(2, 2);
   gmm.Weights() = arma::vec("0.40 0.60");
@@ -1132,7 +1126,6 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMRandomTest)
 //! Make sure load and save DiagonalGMM correctly.
 BOOST_AUTO_TEST_CASE(DiagonalGMMLoadSaveTest)
 {
-  math::RandomSeed(std::time(NULL));
   // Create a DiagonalGMM, save and load it.
   DiagonalGMM gmm(10, 4);
   gmm.Weights().randu();
@@ -1162,7 +1155,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMLoadSaveTest)
   }
 
   // Remove clutter.
-  //remove("test-diagonal-gmm-save.xml");
+  remove("test-diagonal-gmm-save.xml");
 
   // Check the parameters are the same.
   BOOST_REQUIRE_EQUAL(gmm.Gaussians(), gmm2.Gaussians());
