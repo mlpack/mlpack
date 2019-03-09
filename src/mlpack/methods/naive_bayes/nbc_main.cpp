@@ -51,9 +51,9 @@ PROGRAM_INFO("Parametric Naive Bayes Classifier",
     "cases."
     "\n\n"
     "If classifying a test set is desired, the test set may be specified with "
-    "the " + PRINT_PARAM_STRING("test") + " parameter, and the "
-    "classifications may be saved with the " + PRINT_PARAM_STRING("predictions") +
-    " predictions parameter.  If saving the trained model is desired, this may be "
+    "the " + PRINT_PARAM_STRING("test") + " parameter, and the classifications"
+    " may be saved with the " + PRINT_PARAM_STRING("predictions") +"predictions"
+    "  parameter.  If saving the trained model is desired, this may be "
     "done with the " + PRINT_PARAM_STRING("output_model") + " output "
     "parameter."
     "\n\n"
@@ -125,8 +125,8 @@ static void mlpackMain()
   RequireOnlyOnePassed({ "training", "input_model" }, true);
   ReportIgnoredParam({{ "training", false }}, "labels");
   ReportIgnoredParam({{ "training", false }}, "incremental_variance");
-  RequireAtLeastOnePassed({ "output", "predictions", "output_model", "output_probs" }, false,
-      "no output will be saved");
+  RequireAtLeastOnePassed({ "output", "predictions", "output_model",
+   "output_probs" }, false,"no output will be saved");
   ReportIgnoredParam({{ "test", false }}, "output");
   ReportIgnoredParam({{ "test", false }}, "predictions");
   if (CLI::HasParam("input_model") && !CLI::HasParam("test"))
