@@ -25,16 +25,16 @@ DiagonalGaussianDistribution::DiagonalGaussianDistribution(
 
 void DiagonalGaussianDistribution::Covariance(const arma::vec& covariance)
 {
+  this->invCov = 1 / covariance;
+  this->logDetCov = arma::accu(log(covariance));
   this->covariance = covariance;
-  InvertCovariance();
-  LogDeterminant();
 }
 
 void DiagonalGaussianDistribution::Covariance(arma::vec&& covariance)
 {
+  this->invCov = 1 / covariance;
+  this->logDetCov = arma::accu(log(covariance));
   this->covariance = std::move(covariance);
-  InvertCovariance();
-  LogDeterminant();
 }
 
 double DiagonalGaussianDistribution::LogProbability(
@@ -44,18 +44,6 @@ double DiagonalGaussianDistribution::LogProbability(
   const arma::vec diff = observation - mean;
   const arma::vec logExponent = (diff.t() * arma::diagmat(invCov) * diff);
   return -0.5 * k * log2pi - 0.5 * logDetCov - 0.5 * logExponent(0);
-}
-
-void DiagonalGaussianDistribution::InvertCovariance()
-{
-  // Calculate the inverse of the diagonal covariance.
-  invCov = 1/covariance;
-}
-
-void DiagonalGaussianDistribution::LogDeterminant()
-{
-  // Calculate Log determinant of the diagonal covariance.
-  logDetCov = arma::accu(log(covariance));
 }
 
 arma::vec DiagonalGaussianDistribution::Random() const
@@ -91,8 +79,8 @@ void DiagonalGaussianDistribution::Train(const arma::mat& observations)
   // to make the estimator unbiased.
   covariance /= (observations.n_cols - 1);
 
-  InvertCovariance();
-  LogDeterminant();
+  invCov = 1 / covariance;
+  logDetCov = arma::accu(log(covariance));
 }
 
 void DiagonalGaussianDistribution::Train(const arma::mat& observations,
@@ -115,24 +103,19 @@ void DiagonalGaussianDistribution::Train(const arma::mat& observations,
   // If you want to know more detailed description,
   // please refer to https://en.wikipedia.org/wiki/Weighted_arithmetic_mean
   double v1 = arma::accu(probabilities);
-  arma::vec normalizedProbs = probabilities;
 
   // If their sum is 0, there is nothing in this Gaussian.
   // At least, set the covariance so that it's invertible.
   if (v1 == 0)
   {
     covariance += 1e-50;
-    InvertCovariance();
-    LogDeterminant();
+    invCov = 1 / covariance;
+    logDetCov = arma::accu(log(covariance));
     return;
   }
 
-  // If their sum is not 1, divide the weights by them to normalize.
-  if (v1 != 1)
-  {
-    normalizedProbs = probabilities / v1;
-    v1 = arma::accu(normalizedProbs);
-  }
+  // Normalize the probabilities.
+  arma::vec normalizedProbs = probabilities / v1;
 
   // Calculate the mean.
   mean = observations * normalizedProbs;
@@ -150,6 +133,6 @@ void DiagonalGaussianDistribution::Train(const arma::mat& observations,
   if (v2 != 1)
     covariance /= (1 - v2);
 
-  InvertCovariance();
-  LogDeterminant();
+  invCov = 1 / covariance;
+  logDetCov = arma::accu(log(covariance));
 }

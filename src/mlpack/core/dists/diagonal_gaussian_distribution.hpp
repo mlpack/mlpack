@@ -33,12 +33,6 @@ class DiagonalGaussianDistribution
   //! log(2pi)
   static const constexpr double log2pi = 1.83787706640934533908193770912475883;
 
-  //! Caculates the log determinant of the given diagonal covariance.
-  void LogDeterminant();
-
-  //! Calculates the inverse of the given diagonal covariance.
-  void InvertCovariance();
-
  public:
   //! Default constructor, which creates a Gaussian with zero dimension.
   DiagonalGaussianDistribution() : logDetCov(0.0) { /* nothing to do. */ }

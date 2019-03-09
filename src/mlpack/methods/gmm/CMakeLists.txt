@@ -9,8 +9,6 @@ set(SOURCES
   diagonal_gmm_impl.hpp
   em_fit.hpp
   em_fit_impl.hpp
-  diagonal_em_fit.hpp
-  diagonal_em_fit_impl.hpp
   no_constraint.hpp
   positive_definite_constraint.hpp
   diagonal_constraint.hpp

@@ -18,7 +18,10 @@
 #include <mlpack/core/dists/diagonal_gaussian_distribution.hpp>
 
 // This is the default fitting method class.
-#include "diagonal_em_fit.hpp"
+#include "em_fit.hpp"
+
+// This is the default covariance matrix constraint.
+#include "diagonal_constraint.hpp"
 
 namespace mlpack {
 namespace gmm /** Gaussian Mixture Models. */ {
@@ -215,7 +218,8 @@ class DiagonalGMM
    * @param fitter Fitting type that estimates observations.
    * @return The log-likelihood of the best fit.
    */
-  template<typename FittingType = DiagonalEMFit<>>
+  template<typename FittingType = EMFit<kmeans::KMeans<>, DiagonalConstraint,
+      distribution::DiagonalGaussianDistribution>>
   double Train(const arma::mat& observations,
                const size_t trials = 1,
                const bool useExistingModel = false,
@@ -246,7 +250,8 @@ class DiagonalGMM
    * @param fitter Fitting type that estimates observations.
    * @return The log-likelihood of the best fit.
    */
-  template<typename FittingType = DiagonalEMFit<>>
+  template<typename FittingType = EMFit<kmeans::KMeans<>, DiagonalConstraint,
+      distribution::DiagonalGaussianDistribution>>
   double Train(const arma::mat& observations,
                const arma::vec& probabilities,
                const size_t trials = 1,
