@@ -130,9 +130,9 @@ class RegressionDistribution
   void Probability(const arma::mat& x, arma::vec& probabilities) const;
 
   /**
-   * Evaluate log probability density function of given observation
+   * Evaluate log probability density function of given observation.
    *
-   * @param observation point to evaluate log probability at
+   * @param observation Point to evaluate log probability at.
    */
   double LogProbability(const arma::vec& observation) const {
     return log(Probability(observation));
