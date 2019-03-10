@@ -196,9 +196,7 @@ inline void GaussianDistribution::LogProbability(
   const arma::mat rhs = -0.5 * invCov * diffs;
   arma::vec logExponents(diffs.n_cols); // We will now fill this.
   for (size_t i = 0; i < diffs.n_cols; i++)
-  {
     logExponents(i) = accu(diffs.unsafe_col(i) % rhs.unsafe_col(i));
-  }
 
   const size_t k = x.n_rows;
 

@@ -181,9 +181,7 @@ class DiscreteDistribution
   {
     probabilities.set_size(x.n_cols);
     for (size_t i = 0; i < x.n_cols; i++)
-    {
       probabilities(i) = Probability(x.unsafe_col(i));
-    }
   }
 
   /**
@@ -259,9 +257,7 @@ inline void DiscreteDistribution::LogProbability(
 {
   logProbabilities.set_size(x.n_cols);
   for (size_t i = 0; i < x.n_cols; i++)
-  {
     logProbabilities(i) = log(Probability(x.unsafe_col(i)));
-  }
 }
 
 } // namespace distribution

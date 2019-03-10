@@ -171,9 +171,7 @@ void GammaDistribution::Probability(const arma::mat& observations,
   // Compute denominator only once for each dimension.
   arma::vec denominators(alpha.n_elem);
   for (size_t d = 0; d < alpha.n_elem; ++d)
-  {
     denominators(d) = std::tgamma(alpha(d)) * std::pow(beta(d), alpha(d));
-  }
 
   // Compute probability of each observation.
   for (size_t i = 0; i < numObs; ++i)
@@ -209,9 +207,7 @@ void GammaDistribution::LogProbability(const arma::mat& observations,
   // Compute denominator only once for each dimension.
   arma::vec denominators(alpha.n_elem);
   for (size_t d = 0; d < alpha.n_elem; ++d)
-  {
     denominators(d) = std::tgamma(alpha(d)) * std::pow(beta(d), alpha(d));
-  }
 
   // Compute probability of each observation.
   for (size_t i = 0; i < numObs; ++i)
