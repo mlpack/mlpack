@@ -584,7 +584,7 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
 
 
   // Now compute the probabilities for each successive observation.
-  
+
   for (size_t j = 0; j < transition.n_rows; j++)
   {
     arma::vec logProb;
@@ -602,7 +602,7 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
     forwardLogProb(j, t) = math::AccuLog(tmp) + logProb(t);
     }
   }
-  
+
   // Then normalize the column.
   logScales[0] = math::AccuLog(forwardLogProb.col(0));
   if (std::isfinite(logScales[0]))
@@ -615,7 +615,6 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
     if (std::isfinite(logScales[t]))
         forwardLogProb.col(t) -= logScales[t];
   }
-
 }
 
 template<typename Distribution>
