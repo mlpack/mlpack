@@ -31,6 +31,17 @@ std::string SerializeOut(T* t, const std::string& name)
 }
 
 template<typename T>
+std::string SerializeParamsOut(T* t, const std::string& name)
+{
+  std::ostringstream oss;
+  {
+    boost::archive::xml_oarchive oa(oss);
+    oa << BOOST_SERIALIZATION_NVP(t);
+  }
+  return oss.str();
+}
+
+template<typename T>
 void SerializeIn(T* t, const std::string& str, const std::string& name)
 {
   std::istringstream iss(str);
