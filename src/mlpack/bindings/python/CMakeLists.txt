@@ -85,6 +85,7 @@ set(CYTHON_SOURCES
   mlpack/matrix_utils.py
   mlpack/serialization.hpp
   mlpack/serialization.pxd
+  mlpack/pythonize_model.py
 )
 
 set(TEST_SOURCES
