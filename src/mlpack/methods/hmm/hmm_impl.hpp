@@ -615,25 +615,7 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
     if (std::isfinite(logScales[t]))
         forwardLogProb.col(t) -= logScales[t];
   }
-  
-  // // Now compute the probabilities for each successive observation.
-  // for (size_t t = 1; t < dataSeq.n_cols; t++)
-  // {
-  //   for (size_t j = 0; j < transition.n_rows; j++)
-  //   {
-  //     // The forward probability of state j at time t is the sum over all states
-  //     // of the probability of the previous state transitioning to the current
-  //     // state and emitting the given observation.
-  //     arma::vec tmp = forwardLogProb.col(t - 1) + logTrans.col(j);
-  //     forwardLogProb(j, t) = math::AccuLog(tmp) +
-  //         emission[j].LogProbability(dataSeq.unsafe_col(t));
-  //   }
 
-  //   // Normalize probability.
-  //   logScales[t] = math::AccuLog(forwardLogProb.col(t));
-  //   if (std::isfinite(logScales[t]))
-  //       forwardLogProb.col(t) -= logScales[t];
-  // }
 }
 
 template<typename Distribution>
