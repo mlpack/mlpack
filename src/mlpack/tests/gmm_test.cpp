@@ -71,15 +71,15 @@ BOOST_AUTO_TEST_CASE(GMMLogProbabilityTest)
   gmm.Weights() = "0.3 0.7";
 
   // Now test a couple observations.  These comparisons are calculated by hand.
-  BOOST_REQUIRE_CLOSE(gmm.Probability("0 0"), -2.97693265851, 1e-5);
-  BOOST_REQUIRE_CLOSE(gmm.Probability("1 1"), -3.36621737829, 1e-5);
+  BOOST_REQUIRE_CLOSE(gmm.LogProbability("0 0"), -2.97693265851, 1e-5);
+  BOOST_REQUIRE_CLOSE(gmm.LogProbability("1 1"), -3.36621737829, 1e-5);
 
   arma::vec logProbs;
 
   arma::mat obs("0 1;"
                 "0 1;");
 
-  gmm.Probability(obs, logProbs);
+  gmm.LogProbability(obs, logProbs);
 
   BOOST_REQUIRE_EQUAL(logProbs.n_elem, 2);
 
