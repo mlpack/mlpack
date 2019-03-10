@@ -57,6 +57,14 @@ PROGRAM_INFO("Parametric Naive Bayes Classifier",
     "done with the " + PRINT_PARAM_STRING("output_model") + " output "
     "parameter."
     "\n\n"
+    "Note : The following parametes are deprecated and "
+    "will be removed in mlpack 4.0: " + PRINT_PARAM_STRING("output") +
+    ", " + PRINT_PARAM_STRING("output_probs") + 
+    "\nUse " + PRINT_PARAM_STRING("predictions") + " instead of " +
+    PRINT_PARAM_STRING("output") + "\nUse " +
+    PRINT_PARAM_STRING("probabilities") + " instead of " +
+    PRINT_PARAM_STRING("output_probs") +
+    ".\n\n"
     "For example, to train a Naive Bayes classifier on the dataset " +
     PRINT_DATASET("data") + " with labels " + PRINT_DATASET("labels") + " "
     "and save the model to " + PRINT_MODEL("nbc_model") + ", the following "
@@ -111,13 +119,16 @@ PARAM_FLAG("incremental_variance", "The variance of each class will be "
 
 // Test parameters.
 PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
-// parameter output is to be deprecated and removed in mlpack 4.0
+// The parameter 'output' is deprecated and will be removed in mlpack 4.0.0.
 PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
     " test set will be written.", "o");
 PARAM_UROW_OUT("predictions", "The matrix in which the predicted labels for the"
     " test set will be written.", "a");
-PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability"
+PARAM_MATRIX_OUT("probabilities", "The matrix in which the predicted probability"
     " of labels for the test set will be written.", "p");
+// The parameter 'output_probs' is deprecated and will be removed in mlack 4.0.0.
+PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability"
+    " of labels for the test set will be written.", "s");
 
 static void mlpackMain()
 {
@@ -126,7 +137,7 @@ static void mlpackMain()
   ReportIgnoredParam({{ "training", false }}, "labels");
   ReportIgnoredParam({{ "training", false }}, "incremental_variance");
   RequireAtLeastOnePassed({ "output", "predictions", "output_model",
-   "output_probs" }, false, "no output will be saved");
+     "output_probs", "probabilities" }, false, "no output will be saved");
   ReportIgnoredParam({{ "test", false }}, "output");
   ReportIgnoredParam({{ "test", false }}, "predictions");
   if (CLI::HasParam("input_model") && !CLI::HasParam("test"))
@@ -200,11 +211,18 @@ static void mlpackMain()
       CLI::GetParam<Row<size_t>>("predictions") = std::move(rawResults);
       if (CLI::HasParam("output"))
       {
-         CLI::GetParam<Row<size_t>>("output") = std::move(predictions);
+        CLI::GetParam<Row<size_t>>("output") = std::move(predictions);
       }
     }
-
-    CLI::GetParam<mat>("output_probs") = probabilities;
+    if (CLI::HasParam("output_probs") || CLI::HasParam("probabilities"))
+    {
+      CLI::GetParam<mat>("probabilities") = probabilities;
+      if(CLI::HasParam("output_probs"))
+      {
+        CLI::GetParam<mat>("output_probs") = probabilities;
+      } 
+    } 
+    
   }
 
   CLI::GetParam<NBCModel*>("output_model") = model;
