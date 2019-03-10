@@ -642,12 +642,9 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
       // Normalize by the weights from the forward algorithm.
       if (std::isfinite(logScales[t + 1]))
         backwardLogProb(j, t) -= logScales[t + 1];
-
       }
     }
-
   }
-
 }
 
 //! Serialize the HMM.
