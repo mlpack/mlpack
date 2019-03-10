@@ -240,15 +240,12 @@ class LARS
 
   /** 
    *  @param data Input data
-   *  @param betaPath the solution path
    *  @param lambda1 the l1-norm penality
    *  @param responses A vector of target
    *
    *  @return The lagrange multiplier value
    */
-  double ComputeError(const arma::mat& data,
-	              const vector<arma::vec> betaPath, 
-	              const doubel lambda1,
+  double ComputeError(const arma::mat& data, 
                       const arma::rowvec& responses);
 
   /**

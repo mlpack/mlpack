@@ -12,6 +12,7 @@
 #include "lars.hpp"
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/timers.hpp>
+#include <iostream>
 
 using namespace mlpack;
 using namespace mlpack::regression;
@@ -384,23 +385,21 @@ void LARS::Predict(const arma::mat& points,
 }
 
 double LARS::ComputeError(const arma::mat& data,
-	                  const vector<arma::vec> betaPath, 
-	                  const doubel lambda1,
               		  const arma::rowvec& responses)
 {
-  arm::vec beta = betaPath.back();
+  arma::vec beta = Beta();
   double error = 0.0;
 
   for(size_t i = 0; i < data.n_rows; i++)
   {
-    double row_sum = 0.0 , penality_sum = 0.0;
+    double row_sum = 0.0, penality_sum = 0.0;
     for(size_t j=0; j < data.n_cols; j++)
     {
-      row_sum += (data[i][j] * beta[j]);
-      penality_sum += beta[j];
+      row_sum += (double) (data[i][j] * beta[j]);
+      penality_sum += (double) beta[j];
     }
 
-    error += ( (responses[i] - row_sum) * (responses[i] - row_sum) + lambda1 * penality_sum); 
+    error += ( ((double) responses[i] - row_sum) * ((double) responses[i] - row_sum) + lambda1 * penality_sum); 
   }
  
   return error;

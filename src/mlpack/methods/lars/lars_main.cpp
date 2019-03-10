@@ -179,6 +179,7 @@ static void mlpackMain()
           << "is not equal to the dimensionality of the model ("
           << lars->BetaPath().back().n_elem << ")!" << endl;
 
+
     arma::rowvec predictions;
     lars->Predict(testPoints.t(), predictions, false);
 
