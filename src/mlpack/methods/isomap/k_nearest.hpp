@@ -47,18 +47,19 @@ class K_Nearest
 
       // set distance to inf for every neighbour farther that n_neighbours
       for (size_t j = 0; j < temp.size()-n_neighbours-1; j++)
-        disMat(i, temp(j)) = LLONG_MAX;
+        disMat(i, temp(j)) = DBL_MAX;
     }
 
     // check if neighbourhood graph is connected
     if (!IsConnected(disMat))
-      Log::Fatal << "Constructed neighbourhood graph is not connected."
+      Log::Fatal << "Constructed neighbourhood graph is not connected. "
                   << "Increase the number of neighbours (Default is 3).\n";
   }
 
  private:
   /**
-   * Function to check if the neighbourhood graph is connected or not.
+   * Function to check if the neighbourhood graph is connected (weakly
+   * connected at least) or not.
    * Isomap does not work if its not connected, thus program will be
    * terminated. Performs BFS for the check.
    * 
@@ -66,8 +67,12 @@ class K_Nearest
    */
   bool IsConnected(arma::mat &disMat)
   {
+    // making disMat directed to check if graph is at least
+    // weakly connected.
+    arma::mat tempMat = arma::min(disMat, disMat.t());
+
     bool flag = 1;
-    bool visited[disMat.n_rows] = {0};
+    bool visited[tempMat.n_rows] = {0};
 
     // queue required for BFS
     std::queue <size_t> q;
@@ -79,9 +84,9 @@ class K_Nearest
     {
       size_t front = q.front();
       q.pop();
-      for (size_t i = 0; i < disMat.n_cols; i++)
+      for (size_t i = 0; i < tempMat.n_cols; i++)
       {
-        if (!visited[i] && disMat(front, i) < LLONG_MAX)
+        if (!visited[i] && tempMat(front, i) < LLONG_MAX)
         {
           q.push(i);
           visited[i] = 1;
@@ -90,7 +95,7 @@ class K_Nearest
     }
 
     // checking if a node is not visited
-    for (size_t i = 0; i < disMat.n_rows; i++)
+    for (size_t i = 0; i < tempMat.n_rows; i++)
     {
       if (!visited[i])
       {
@@ -103,7 +108,7 @@ class K_Nearest
   }
 };
 
-} // namespcae isomap
+} // namespace isomap
 } // namespace mlpack
 
 #endif

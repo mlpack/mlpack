@@ -115,6 +115,6 @@ class MDS
 };
 
 } // namespace isomap
-} // namepsace mlpack
+} // namespace mlpack
 
 #endif

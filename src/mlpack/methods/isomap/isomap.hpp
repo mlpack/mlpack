@@ -52,11 +52,11 @@ class Isomap
    */
 
   Isomap(const size_t n_neighbours,
-          const NeighbourhoodFunction& neighbourhood = NeighbourhoodFunction(),
-          const ShortestPathAlgo& shortestPath = ShortestPathAlgo()) :
-          n_neighbours(n_neighbours),
-          neighbourhood(neighbourhood),
-          shortestPath(shortestPath)
+         const NeighbourhoodFunction& neighbourhood = NeighbourhoodFunction(),
+         const ShortestPathAlgo& shortestPath = ShortestPathAlgo()) :
+         n_neighbours(n_neighbours),
+         neighbourhood(neighbourhood),
+         shortestPath(shortestPath)
   { }
 
   /**
@@ -71,7 +71,7 @@ class Isomap
 
     // calculating distance matrix from the given input matrix
     CalcDistanceMatrix(input, disMat);
-
+  
     // constructing neighbourhood graph (K_nearest is used)
     neighbourhood.MakeNeighbourhoodGraph(disMat, n_neighbours);
 
@@ -104,13 +104,11 @@ class Isomap
     {
       disMat(i, i) = 0;
       arma::rowvec tempi = input.col(i);
-      for (size_t j = 0; j < input.n_cols; j++)
+      for (size_t j = i+1; j < input.n_cols; j++)
       {
-        if (i != j)
-        {
-          arma::rowvec tempj = input.col(j);
-          disMat(i, j) = metric::EuclideanDistance().Evaluate(tempi, tempj);
-        }
+        arma::rowvec tempj = input.col(j);
+        disMat(i, j) = metric::EuclideanDistance().Evaluate(tempi, tempj);
+        disMat(j, i) = disMat(i, j);
       }
     }
   }

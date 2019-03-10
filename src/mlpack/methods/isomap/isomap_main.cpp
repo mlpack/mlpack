@@ -66,7 +66,8 @@ static void mlpackMain()
 
   size_t n_neighbours = CLI::GetParam<int>("neighbours");
 
-  // Running isomap with the specified parameters
+  // Running isomap with the specified parameters (this call should be
+  // changed while including further variation)
   Isomap<K_Nearest, Dijkstra> iso(n_neighbours);
   iso.Apply(input);
 
