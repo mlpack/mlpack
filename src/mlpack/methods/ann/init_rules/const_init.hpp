@@ -28,7 +28,7 @@ class ConstInitialization
   /**
    *  Create the ConstantInitialization object.
    */
-  ConstInitialization(const double initVal) : initVal(initVal)
+  ConstInitialization(const double initVal = 0) : initVal(initVal)
   { /* Nothing to do here */ }
 
   /**
