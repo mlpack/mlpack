@@ -59,7 +59,7 @@ PROGRAM_INFO("Parametric Naive Bayes Classifier",
     "\n\n"
     "Note : The following parametes are deprecated and "
     "will be removed in mlpack 4.0: " + PRINT_PARAM_STRING("output") +
-    ", " + PRINT_PARAM_STRING("output_probs") + 
+    ", " + PRINT_PARAM_STRING("output_probs") +
     "\nUse " + PRINT_PARAM_STRING("predictions") + " instead of " +
     PRINT_PARAM_STRING("output") + "\nUse " +
     PRINT_PARAM_STRING("probabilities") + " instead of " +
@@ -216,7 +216,7 @@ static void mlpackMain()
     if (CLI::HasParam("output_probs"))
     {
       CLI::GetParam<mat>("output_probs") = probabilities;
-    }   
+    }
   }
 
   CLI::GetParam<NBCModel*>("output_model") = model;
