@@ -71,7 +71,7 @@ class Isomap
 
     // calculating distance matrix from the given input matrix
     CalcDistanceMatrix(input, disMat);
-  
+
     // constructing neighbourhood graph (K_nearest is used)
     neighbourhood.MakeNeighbourhoodGraph(disMat, n_neighbours);
 
