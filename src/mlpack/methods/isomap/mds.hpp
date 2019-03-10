@@ -89,7 +89,8 @@ class MDS
     if (flag)
     {
       // Checking for symmetric. could not find is_symmetric in armadillo
-      flag = arma::approx_equal(disMat, disMat.t(), "absdiff", minDiff);
+      arma::umat temp = arma::abs(disMat - disMat.t()) <= minDiff;
+      flag = arma::all(arma::vectorise(temp) == 1);
       if (flag)
       {
         // checking if all elements are non-zero
