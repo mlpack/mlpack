@@ -621,26 +621,33 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
   backwardLogProb.col(dataSeq.n_cols - 1).fill(0);
 
   // Now step backwards through all other observations.
-  for (size_t t = dataSeq.n_cols - 2; t + 1 > 0; t--)
+  for (size_t j = 0; j < transition.n_rows; j++)
   {
-    for (size_t j = 0; j < transition.n_rows; j++)
+    // The backward probability of state j at time t is the sum over all state
+    // of the probability of the next state having been a transition from the
+    // current state multiplied by the probability of each of those states
+    // emitting the given observation.
+    for (size_t state = 0; state < transition.n_rows; state++)
     {
-      // The backward probability of state j at time t is the sum over all state
-      // of the probability of the next state having been a transition from the
-      // current state multiplied by the probability of each of those states
-      // emitting the given observation.
-      for (size_t state = 0; state < transition.n_rows; state++)
-      {
-        backwardLogProb(j, t) = math::LogAdd(backwardLogProb(j, t),
-            logTrans(state, j) + backwardLogProb(state, t + 1)
-            + emission[state].LogProbability(dataSeq.unsafe_col(t + 1)));
-      }
+      arma::vec logProbs;
 
+      emission[state].LogProbability(dataSeq.cols(0, dataSeq.n_cols - 2),
+        logProbs);
+
+      for (size_t t = dataSeq.n_cols - 2; t >= 0; t--)
+      {
+      backwardLogProb(j, t) = math::LogAdd(backwardLogProb(j, t),
+          logTrans(state, j) + backwardLogProb(state, t + 1)
+          + logProbs(t));
       // Normalize by the weights from the forward algorithm.
       if (std::isfinite(logScales[t + 1]))
         backwardLogProb(j, t) -= logScales[t + 1];
+
+      }
     }
+
   }
+
 }
 
 //! Serialize the HMM.
