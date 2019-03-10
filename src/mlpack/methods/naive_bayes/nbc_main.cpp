@@ -119,14 +119,14 @@ PARAM_FLAG("incremental_variance", "The variance of each class will be "
 
 // Test parameters.
 PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
-// The parameter 'output' is deprecated and will be removed in mlpack 4.0.0.
+// The parameter 'output' is deprecated and will be removed in mlpack 4.0.
 PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
     " test set will be written.", "o");
 PARAM_UROW_OUT("predictions", "The matrix in which the predicted labels for the"
     " test set will be written.", "a");
-PARAM_MATRIX_OUT("probabilities", "The matrix in which the predicted probability"
-    " of labels for the test set will be written.", "p");
-// The parameter 'output_probs' is deprecated and will be removed in mlack 4.0.0.
+PARAM_MATRIX_OUT("probabilities", "The matrix in which the predicted"
+    " probability of labels for the test set will be written.", "p");
+// The parameter 'output_probs' is deprecated and can be removed in mlpack 4.0.
 PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability"
     " of labels for the test set will be written.", "s");
 
@@ -169,7 +169,6 @@ static void mlpackMain()
       // Remove the label row.
       trainingData.shed_row(trainingData.n_rows - 1);
     }
-
     const bool incrementalVariance = CLI::HasParam("incremental_variance");
 
     Timer::Start("nbc_training");
@@ -207,9 +206,9 @@ static void mlpackMain()
       // Un-normalize labels to prepare output.
       Row<size_t> rawResults;
       data::RevertLabels(predictions, model->mappings, rawResults);
-      predictions=rawResults;
-      
-      if(CLI::HasParam("output"))
+      predictions = rawResults;
+
+      if (CLI::HasParam("output"))
       {
         CLI::GetParam<Row<size_t>>("output") = std::move(predictions);
       }
@@ -217,8 +216,7 @@ static void mlpackMain()
     if (CLI::HasParam("output_probs"))
     {
       CLI::GetParam<mat>("output_probs") = probabilities;
-    } 
-    
+    }   
   }
 
   CLI::GetParam<NBCModel*>("output_model") = model;
