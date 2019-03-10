@@ -1,6 +1,8 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Michael Fox
+ * @author Rohan Raj
+ *
  * @file gmm.hpp
  *
  * Defines a Gaussian Mixture model and estimates the parameters of the model.
@@ -165,12 +167,28 @@ class GMM
   double Probability(const arma::vec& observation) const;
 
   /**
+   * Return the probability of the given observation(x) matrix.
+   *
+   * @param x Observation Matrix.
+   * @param probs Probability vector.
+   */
+  void Probability(const arma::mat& x, arma::vec& probs) const;
+
+  /**
    * Return the log probability that the given observation came from this
    * distribution.
    *
    * @param observation Observation to evaluate the probability of.
    */
   double LogProbability(const arma::vec& observation) const;
+
+  /**
+   * Return the log-probability of the given observation(x) matrix.
+   *
+   * @param x Observation Matrix.
+   * @param logProbs Log-Probability vector.
+   */
+  void LogProbability(const arma::mat& x, arma::vec& logProbs) const;
 
   /**
    * Return the probability that the given observation came from the given

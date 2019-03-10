@@ -3,6 +3,7 @@
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Ryan Curtin
  * @author Michael Fox
+ * @author Rohan Raj
  *
  * Implementation of template-based GMM methods.
  *

@@ -3,6 +3,7 @@
  * @author Ryan Curtin
  * @author Tran Quoc Long
  * @author Michael Fox
+ * @author Rohan Raj
  *
  * Definition of HMM class.
  *
