@@ -571,18 +571,6 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
 
   arma::mat logTrans = trans(log(transition));
 
-  // The first entry in the forward algorithm uses the initial state
-  // probabilities.  Note that MATLAB assumes that the starting state (at
-  // t = -1) is state 0; this is not our assumption here.  To force that
-  // behavior, you could append a single starting state to every single data
-  // sequence and that should produce results in line with MATLAB.
-  // for (size_t state = 0; state < transition.n_rows; state++)
-  // {
-  //   forwardLogProb(state, 0) = log(initial(state)) +
-  //       emission[state].LogProbability(dataSeq.unsafe_col(0));
-  // }
-
-
   // Now compute the probabilities for each successive observation.
 
   for (size_t j = 0; j < transition.n_rows; j++)
@@ -591,6 +579,11 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
 
     emission[j].LogProbability(dataSeq, logProb);
 
+    // The first entry in the forward algorithm uses the initial state
+    // probabilities.  Note that MATLAB assumes that the starting state (at
+    // t = -1) is state 0; this is not our assumption here.  To force that
+    // behavior, you could append a single starting state to every single data
+    // sequence and that should produce results in line with MATLAB.
     forwardLogProb(j, 0) = log(initial(j)) + logProb(0);
 
     for (size_t t = 1; t < dataSeq.n_cols; t++)
@@ -604,11 +597,7 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
   }
 
   // Then normalize the column.
-  logScales[0] = math::AccuLog(forwardLogProb.col(0));
-  if (std::isfinite(logScales[0]))
-    forwardLogProb.col(0) -= logScales[0];
-
-  for (size_t t = 1; t < dataSeq.n_cols; t++)
+  for (size_t t = 0; t < dataSeq.n_cols; t++)
   {
     // Normalize probability.
     logScales[t] = math::AccuLog(forwardLogProb.col(t));
