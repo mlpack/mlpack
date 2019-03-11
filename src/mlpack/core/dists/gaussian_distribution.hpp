@@ -108,10 +108,10 @@ class GaussianDistribution
     // Column i of 'diffs' is the difference between x.col(i) and the mean.
     arma::mat diffs = x - (mean * arma::ones<arma::rowvec>(x.n_cols));
 
-    // Now, we only want to calculate the diagonal elements of (diffs' * cov^-1 *
-    // diffs).  We just don't need any of the other elements.  We can calculate
-    // the right hand part of the equation (instead of the left side) so that
-    // later we are referencing columns, not rows -- that is faster.
+    // Now, we only want to calculate the diagonal elements of (diffs' * cov^-1
+    // * diffs).  We just don't need any of the other elements.  We can
+    // calculate the right hand part of the equation (instead of the left side)
+    // so that later we are referencing columns, not rows -- that is faster.
     const arma::mat rhs = -0.5 * invCov * diffs;
     arma::vec logExponents(diffs.n_cols); // We will now fill this.
     for (size_t i = 0; i < diffs.n_cols; i++)
