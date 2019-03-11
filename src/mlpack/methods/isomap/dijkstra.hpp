@@ -61,7 +61,9 @@ class Dijkstra
     for (size_t i = 0; i < disMat.n_cols; i++)
       temp(i) = LLONG_MAX;
     temp(source) = 0;
-    bool visited[disMat.n_cols] = {0};
+    bool visited[disMat.n_cols];
+    for (size_t i = 0; i < disMat.n_cols; i++)
+      visited[i] = 0;
 
     // minimum priority queue used for Dijkstra's Algorithm
     std::priority_queue < std::pair< size_t, double>,

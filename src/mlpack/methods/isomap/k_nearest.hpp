@@ -67,7 +67,7 @@ class K_Nearest
    */
   bool IsConnected(arma::mat &disMat)
   {
-    // making disMat directed to check if graph is at least
+    // making disMat undirected to check if graph is at least
     // weakly connected.
     arma::mat tempMat = arma::min(disMat, disMat.t());
 

@@ -103,10 +103,10 @@ class Isomap
     for (size_t i = 0; i < input.n_cols; i++)
     {
       disMat(i, i) = 0;
-      arma::rowvec tempi = input.col(i);
+      arma::vec tempi = input.col(i);
       for (size_t j = i+1; j < input.n_cols; j++)
       {
-        arma::rowvec tempj = input.col(j);
+        arma::vec tempj = input.col(j);
         disMat(i, j) = metric::EuclideanDistance().Evaluate(tempi, tempj);
         disMat(j, i) = disMat(i, j);
       }
