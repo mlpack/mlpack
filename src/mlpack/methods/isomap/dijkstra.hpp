@@ -61,9 +61,8 @@ class Dijkstra
     for (size_t i = 0; i < disMat.n_cols; i++)
       temp(i) = LLONG_MAX;
     temp(source) = 0;
-    bool visited[disMat.n_cols];
-    for (size_t i = 0; i < disMat.n_cols; i++)
-      visited[i] = 0;
+    arma::vec visited(disMat.n_cols);
+    visited.zeros();
 
     // minimum priority queue used for Dijkstra's Algorithm
     std::priority_queue < std::pair< size_t, double>,
@@ -74,9 +73,9 @@ class Dijkstra
     {
       std::pair <size_t, double> top = pq.top();
       pq.pop();
-      if (visited[top.first])
+      if (visited(top.first))
         continue;
-      visited[top.first] = 1;
+      visited(top.first) = 1;
       for (size_t i = 0; i < disMat.n_cols; i++)
       {
         if (disMat(top.first, i) < LLONG_MAX)

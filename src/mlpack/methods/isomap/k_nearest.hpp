@@ -72,12 +72,13 @@ class K_Nearest
     arma::mat tempMat = arma::min(disMat, disMat.t());
 
     bool flag = 1;
-    bool visited[tempMat.n_rows] = {0};
+    arma::vec visited(tempMat.n_rows);
+    visited.zeros();
 
     // queue required for BFS
     std::queue <size_t> q;
     q.push(0);
-    visited[0] = 0;
+    visited(0) = 0;
 
     // BFS
     while (!q.empty())
@@ -89,7 +90,7 @@ class K_Nearest
         if (!visited[i] && tempMat(front, i) < LLONG_MAX)
         {
           q.push(i);
-          visited[i] = 1;
+          visited(i) = 1;
         }
       }
     }
@@ -97,7 +98,7 @@ class K_Nearest
     // checking if a node is not visited
     for (size_t i = 0; i < tempMat.n_rows; i++)
     {
-      if (!visited[i])
+      if (!visited(i))
       {
         flag = 0; // means disconnected graph
         break;
