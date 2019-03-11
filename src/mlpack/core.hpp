@@ -21,7 +21,7 @@
  * bindings to other languages.  It is meant to be a machine learning analog to
  * LAPACK, and aims to implement a wide array of machine learning methods and
  * function as a "swiss army knife" for machine learning researchers.  The
- * mlpack website can be found at http://mlpack.org.
+ * mlpack website can be found at https://mlpack.org.
  *
  * @section howto How To Use This Documentation
  *
@@ -59,7 +59,7 @@
  * @section remarks Final Remarks
  *
  * For the list of contributors to mlpack, see
- * http://www.mlpack.org/contributors.html.  This library would not be possible
+ * https://www.mlpack.org/contributors.html.  This library would not be possible
  * without everyone's hard work and contributions!
  */
 
