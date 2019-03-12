@@ -119,9 +119,8 @@ class GaussianDistribution
     for (size_t i = 0; i < diffs.n_cols; i++)
       logExponents(i) = accu(diffs.unsafe_col(i) % rhs.unsafe_col(i));
 
-    const size_t k = x.n_rows;
-
-    logProbabilities = -0.5 * k * log2pi - 0.5 * logDetCov + logExponents;
+    logProbabilities = -0.5 * x.n_rows * log2pi - 0.5 * logDetCov +
+      logExponents;
   }
 
   /**
