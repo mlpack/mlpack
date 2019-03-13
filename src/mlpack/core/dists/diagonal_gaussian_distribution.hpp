@@ -165,8 +165,7 @@ inline void DiagonalGaussianDistribution::LogProbability(
 
   // Column i of 'diffs' is the difference between observations.col(i) and
   // the mean.
-  arma::mat diffs = observations - mean *
-      arma::ones<arma::rowvec>(observations.n_cols);
+  arma::mat diffs = observations.each_col() - mean;
 
   // Calculates log of exponent equation in multivariate gaussian distribution.
   // We use only diagonal part for faster computation.

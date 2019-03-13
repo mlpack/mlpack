@@ -46,8 +46,14 @@ Estimate(const arma::mat& observations,
 {
   if (std::is_same<CovarianceConstraintPolicy, DiagonalConstraint>::value)
   {
-    ArmadilloGMMWrapper(observations, dists, weights, useInitialModel);
-    return;
+    #ifdef _WIN32
+      Log::Warn << "Cannot use arma::gmm_diag on Visual Studio due to OpenMP"
+          << " compilation issues! Using slower EMFit::Estimate() instead..."
+          << std::endl;
+    #else
+      ArmadilloGMMWrapper(observations, dists, weights, useInitialModel);
+      return;
+    #endif
   }
 
   // Only perform initial clustering if the user wanted it.
@@ -100,18 +106,29 @@ Estimate(const arma::mat& observations,
       // Don't update if there's no probability of the Gaussian having points.
       if (probRowSums[i] != 0)
         dists[i].Mean() = (observations * condProb.col(i)) / probRowSums[i];
+      else
+        continue;
 
       // Calculate the new value of the covariances using the updated
       // conditional probabilities and the updated means.
-      arma::mat tmp = observations - (dists[i].Mean() *
-          arma::ones<arma::rowvec>(observations.n_cols));
-      arma::mat tmpB = tmp % (arma::ones<arma::vec>(observations.n_rows) *
-          trans(condProb.col(i)));
+      arma::mat tmp = observations.each_col() - dists[i].Mean();
 
-      // Don't update if there's no probability of the Gaussian having points.
-      if (probRowSums[i] != 0.0)
+      // If the distribution is DiagonalGaussianDistribution, calculate the
+      // covariance only with diagonal components.
+      if (std::is_same<Distribution,
+          distribution::DiagonalGaussianDistribution>::value)
       {
+        arma::vec covariance = arma::sum((tmp % tmp) %
+            (arma::ones<arma::vec>(observations.n_rows) *
+            trans(condProb.col(i))), 1) / probRowSums[i];
+        covariance = arma::clamp(covariance, 1e-10, DBL_MAX);
+        dists[i].Covariance(std::move(covariance));
+      }
+      else
+      {
+        arma::mat tmpB = tmp.each_row() % trans(condProb.col(i));
         arma::mat covariance = (tmp * trans(tmpB)) / probRowSums[i];
+
         // Apply covariance constraint.
         constraint.ApplyConstraint(covariance);
         dists[i].Covariance(std::move(covariance));
@@ -190,14 +207,21 @@ Estimate(const arma::mat& observations,
       // model.
       probRowSums[i] = accu(condProb.col(i) % probabilities);
 
-      dists[i].Mean() = (observations * (condProb.col(i) % probabilities)) /
-        probRowSums[i];
+      // Don't update if there's no probability of the Gaussian having points.
+      if (probRowSums[i] != 0)
+      {
+        dists[i].Mean() = (observations * (condProb.col(i) % probabilities)) /
+            probRowSums[i];
+      }
+      else
+        continue;
 
       // Calculate the new value of the covariances using the updated
       // conditional probabilities and the updated means.
-      arma::mat tmp = observations - (dists[i].Mean() *
-          arma::ones<arma::rowvec>(observations.n_cols));
+      arma::mat tmp = observations.each_col() - dists[i].Mean();
 
+      // If the distribution is DiagonalGaussianDistribution, calculate the
+      // covariance only with diagonal components.
       if (std::is_same<Distribution,
           distribution::DiagonalGaussianDistribution>::value)
       {
@@ -209,9 +233,8 @@ Estimate(const arma::mat& observations,
       }
       else
       {
-        arma::mat tmpB = tmp % (arma::ones<arma::vec>(observations.n_rows) *
-            trans(condProb.col(i) % probabilities));
-
+        arma::mat tmpB = tmp.each_row() % trans(condProb.col(i) %
+            probabilities);
         arma::mat cov = (tmp * trans(tmpB)) / probRowSums[i];
 
         // Apply covariance constraint.

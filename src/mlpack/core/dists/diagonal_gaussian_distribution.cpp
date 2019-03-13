@@ -116,8 +116,7 @@ void DiagonalGaussianDistribution::Train(const arma::mat& observations,
   mean = observations * normalizedProbs;
 
   // Now calculate the covariance.
-  const arma::mat diffs = observations - mean *
-      arma::ones<arma::rowvec>(observations.n_cols);
+  const arma::mat diffs = observations.each_col() - mean;
   covariance += (diffs % diffs) * normalizedProbs;
 
   // Calculate the sum of each weight squared.

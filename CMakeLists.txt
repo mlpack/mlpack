@@ -413,9 +413,7 @@ add_definitions(-DBOOST_TEST_DYN_LINK)
 
 # Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
 # to compile with OpenMP are returned and added and the HAS_OPENMP definition
-# is added for compilation.  Visual Studio doesn't support unsigned type index
-# in for loop, while OpenMP uses uword in for loop.  So to prevent build crash
-# on Windows, disable OpenMP, even though its support was detected.
+# is added for compilation.
 #
 # This way we can skip calls to functions defined in omp.h with code like:
 # #ifdef HAS_OPENMP
@@ -423,7 +421,7 @@ add_definitions(-DBOOST_TEST_DYN_LINK)
 #   ... openMP code here ...
 # }
 # #endif
-if (NOT WIN32 AND USE_OPENMP)
+if (USE_OPENMP)
   find_package(OpenMP)
 endif ()
 
