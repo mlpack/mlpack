@@ -42,7 +42,7 @@ double DiagonalGaussianDistribution::LogProbability(
 {
   const size_t k = observation.n_elem;
   const arma::vec diff = observation - mean;
-  const arma::vec logExponent = (diff.t() * arma::diagmat(invCov) * diff);
+  const arma::vec logExponent = diff.t() * arma::diagmat(invCov) * diff;
   return -0.5 * k * log2pi - 0.5 * logDetCov - 0.5 * logExponent(0);
 }
 
@@ -64,15 +64,11 @@ void DiagonalGaussianDistribution::Train(const arma::mat& observations)
     return;
   }
 
-  // Calculate the mean.
-  mean = arma::sum(observations, 1);
-
-  // Normalize the mean.
-  mean /= observations.n_cols;
+  // Calculate and normalize the mean.
+  mean = arma::sum(observations, 1) / observations.n_cols;
 
   // Now calculate the covariance.
-  const arma::mat diffs = observations - mean *
-      arma::ones<arma::rowvec>(observations.n_cols);
+  const arma::mat diffs = observations.each_col() - mean;
   covariance += arma::sum(diffs % diffs, 1);
 
   // Finish estimating the covariance by normalizing, with the (1 / (n - 1))
@@ -101,15 +97,14 @@ void DiagonalGaussianDistribution::Train(const arma::mat& observations,
   // for unbiased estimator in the weighted arithmetic mean. The v1 is the sum
   // of the weights, and the v2 is the sum of the each weight squared.
   // If you want to know more detailed description,
-  // please refer to https://en.wikipedia.org/wiki/Weighted_arithmetic_mean
+  // please refer to https://en.wikipedia.org/wiki/Weighted_arithmetic_mean.
   double v1 = arma::accu(probabilities);
 
   // If their sum is 0, there is nothing in this Gaussian.
   // At least, set the covariance so that it's invertible.
   if (v1 == 0)
   {
-    covariance += 1e-50;
-    invCov = 1 / covariance;
+    invCov = 1 / (covariance += 1e-50);
     logDetCov = arma::accu(log(covariance));
     return;
   }

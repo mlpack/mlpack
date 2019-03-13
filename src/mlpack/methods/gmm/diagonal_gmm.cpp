@@ -36,10 +36,10 @@ DiagonalGMM::DiagonalGMM(const size_t gaussians, const size_t dimensionality) :
 
 // Copy constructor for when the other GMM uses the same fitting type.
 DiagonalGMM::DiagonalGMM(const DiagonalGMM& other) :
-                         gaussians(other.Gaussians()),
-                         dimensionality(other.dimensionality),
-                         dists(other.dists),
-                         weights(other.weights) { /* Nothing to do. */ }
+    gaussians(other.Gaussians()),
+    dimensionality(other.dimensionality),
+    dists(other.dists),
+    weights(other.weights) { /* Nothing to do. */ }
 
 DiagonalGMM& DiagonalGMM::operator=(const DiagonalGMM& other)
 {
@@ -60,9 +60,10 @@ double DiagonalGMM::LogProbability(const arma::vec& observation) const
   // multiply by the prior for each Gaussian too).
   double sum = -std::numeric_limits<double>::infinity();
   for (size_t i = 0; i < gaussians; i++)
+  {
     sum = math::LogAdd(sum, log(weights[i]) +
-          dists[i].LogProbability(observation));
-
+        dists[i].LogProbability(observation));
+  }
   return sum;
 }
 

@@ -138,15 +138,19 @@ class DiagonalGMM
    *
    * @param i index of component.
    */
-  const distribution::DiagonalGaussianDistribution& Component(size_t i) const {
-      return dists[i]; }
+  const distribution::DiagonalGaussianDistribution& Component(size_t i) const
+  {
+    return dists[i];
+  }
   /**
    * Return a reference to a component distribution.
    *
    * @param i index of component.
    */
-  distribution::DiagonalGaussianDistribution& Component(size_t i) {
-      return dists[i]; }
+  distribution::DiagonalGaussianDistribution& Component(size_t i)
+  {
+    return dists[i];
+  }
 
   //! Return a const reference to the a priori weights of each Gaussian.
   const arma::vec& Weights() const { return weights; }

@@ -40,6 +40,8 @@ class DiagonalGaussianDistribution
   /**
    * Create a Gaussian Distribution with zero mean and diagonal covariance
    * with the given dimensionality.
+   * 
+   * @param dimension Number of dimensions.
    */
   DiagonalGaussianDistribution(const size_t dimension) :
       mean(arma::zeros<arma::vec>(dimension)),
@@ -51,6 +53,9 @@ class DiagonalGaussianDistribution
   /**
    * Create a Guassian distribution with the given mean and diagonal
    * covariance.
+   * 
+   * @param mean Mean of distribution.
+   * @param covariance Covariance of distribution.
    */
   DiagonalGaussianDistribution(const arma::vec& mean,
                                const arma::vec& covariance);
@@ -95,7 +100,7 @@ class DiagonalGaussianDistribution
    * Return a randomly generated observation according to the probability
    * distribution defined by this object.
    * 
-   * @ return Random observation from this Diagonal Gaussian distribution.
+   * @return Random observation from this Diagonal Gaussian distribution.
    */
   arma::vec Random() const;
 
@@ -130,6 +135,7 @@ class DiagonalGaussianDistribution
   //! Set the covariance.
   void Covariance(const arma::vec& covariance);
 
+  //! Set the covariance using move assignment.
   void Covariance(arma::vec&& covariance);
 
   //! Serialize the distribution.
