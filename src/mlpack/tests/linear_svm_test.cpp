@@ -567,7 +567,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMLBFGSTwoClasses)
 BOOST_AUTO_TEST_CASE(LinearSVMFitIntercept)
 {
   const size_t points = 1000;
-  const size_t inputSize = 10;
+  const size_t inputSize = 3;
   const size_t numClasses = 2;
   const double lambda = 0.5;
   const double delta = 1.0;
@@ -578,21 +578,20 @@ BOOST_AUTO_TEST_CASE(LinearSVMFitIntercept)
 
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
-
-  for (size_t i = 0; i < points / 2; i++)
+  for (size_t i = 0; i < points / 2; ++i)
   {
     data.col(i) = g1.Random();
-    labels(i) = 0;
+    labels[i] = 0;
   }
-  for (size_t i = points / 2; i < points; i++)
+  for (size_t i = points / 2; i < points; ++i)
   {
     data.col(i) = g2.Random();
-    labels(i) = 1;
+    labels[i] = 1;
   }
 
-  // Now train a logistic regression object on it.
+  // Now train a svm object on it.
   LinearSVM<arma::mat> svm(data, labels, numClasses, lambda,
-      delta, true, ens::L_BFGS(10, 50000));
+      delta, true, ens::L_BFGS());
 
   // Ensure that the error is close to zero.
   const double acc = svm.ComputeAccuracy(data, labels);
