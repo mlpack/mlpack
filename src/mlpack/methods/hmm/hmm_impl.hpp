@@ -571,11 +571,14 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
 
   arma::mat logTrans = trans(log(transition));
 
+  // Define a variable to store the value of log-probability for dataSeq.
   arma::mat logProbs(transition.n_rows, dataSeq.n_cols);
   logProbs.zeros();
 
+  // Save the values of log-probability to logProbs.
   for (size_t i = 0; i < transition.n_rows; i++)
   {
+    // Define arma::vec to store log-probability for any dataSeq column.
     arma::vec logProb;
     emission[i].LogProbability(dataSeq, logProb);
     for (size_t j = 0; j < logProb.n_elem; j++)
@@ -629,11 +632,14 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
   // The last element probability is 1.
   backwardLogProb.col(dataSeq.n_cols - 1).fill(0);
 
+  // Define a variable to store the value of log-probability for dataSeq.
   arma::mat logProbs(transition.n_rows, dataSeq.n_cols);
   logProbs.fill(-std::numeric_limits<double>::infinity());
 
+  // Save the values of log-probability to logProbs.
   for (size_t i = 0; i < transition.n_rows; i++)
   {
+    // Define arma::vec to store log-probability for any dataSeq column.
     arma::vec logProb;
     emission[i].LogProbability(dataSeq, logProb);
     for (size_t j = 0; j < logProb.n_elem; j++)
@@ -652,7 +658,8 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
       for (size_t state = 0; state < transition.n_rows; state++)
       {
         backwardLogProb(j, t) = math::LogAdd(backwardLogProb(j, t),
-            logTrans(state, j) + backwardLogProb(state, t + 1) + logProbs(state, t + 1));
+          logTrans(state, j) + backwardLogProb(state, t + 1) +
+            logProbs(state, t + 1));
       }
 
       // Normalize by the weights from the forward algorithm.
@@ -661,8 +668,6 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
     }
   }
 }
-
-
 
 //! Serialize the HMM.
 template<typename Distribution>
