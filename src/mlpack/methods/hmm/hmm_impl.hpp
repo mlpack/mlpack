@@ -572,13 +572,13 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
   arma::mat logTrans = trans(log(transition));
 
   arma::mat logProbs(transition.n_rows, dataSeq.n_cols);
-  logProbs.fill(-std::numeric_limits<double>::infinity());
+  logProbs.zeros();
 
-  for (size_t i; i < transition.n_rows; i++)
+  for (size_t i = 0; i < transition.n_rows; i++)
   {
     arma::vec logProb;
     emission[i].LogProbability(dataSeq, logProb);
-    for (size_t j; j < logProb.n_elem; j++)
+    for (size_t j = 0; j < logProb.n_elem; j++)
       logProbs(i, j) = logProb(j);
   }
   // The first entry in the forward algorithm uses the initial state
@@ -629,16 +629,16 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
   // The last element probability is 1.
   backwardLogProb.col(dataSeq.n_cols - 1).fill(0);
 
-  // arma::mat logProbs(transition.n_rows, dataSeq.n_cols);
-  // logProbs.fill(-std::numeric_limits<double>::infinity());
+  arma::mat logProbs(transition.n_rows, dataSeq.n_cols);
+  logProbs.fill(-std::numeric_limits<double>::infinity());
 
-  // for (size_t i; i < transition.n_rows; i++)
-  // {
-  //   arma::vec logProb;
-  //   emission[i].LogProbability(dataSeq, logProb);
-  //   for (size_t j; j < logProb.n_elem; j++)
-  //     logProbs(i, j) = logProb(j);
-  // }
+  for (size_t i = 0; i < transition.n_rows; i++)
+  {
+    arma::vec logProb;
+    emission[i].LogProbability(dataSeq, logProb);
+    for (size_t j = 0; j < logProb.n_elem; j++)
+      logProbs(i, j) = logProb(j);
+  }
 
   // Now step backwards through all other observations.
   for (size_t t = dataSeq.n_cols - 2; t + 1 > 0; t--)
@@ -652,8 +652,7 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
       for (size_t state = 0; state < transition.n_rows; state++)
       {
         backwardLogProb(j, t) = math::LogAdd(backwardLogProb(j, t),
-            logTrans(state, j) + backwardLogProb(state, t + 1)
-            + emission[state].LogProbability(dataSeq.unsafe_col(t + 1)));
+            logTrans(state, j) + backwardLogProb(state, t + 1) + logProbs(state, t + 1));
       }
 
       // Normalize by the weights from the forward algorithm.
