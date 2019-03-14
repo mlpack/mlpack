@@ -30,11 +30,16 @@ class DiagonalConstraint
     covariance = arma::diagmat(arma::clamp(covariance.diag(), 1e-10, DBL_MAX));
   }
 
-  //! Force a covariance vector to be non-zero.
-  static void ApplyConstraint(arma::vec& covariance)
+  /**
+   * Apply the diagonal constraint to the given diagonal covariance matrix
+   * (which is represented as a vector), and ensure each value on the diagonal
+   * is at least 1e-10.
+   */
+  static void ApplyConstraint(arma::vec& diagCovariance)
   {
-    // Clamp the covariance to be non-zero.
-    covariance = arma::clamp(covariance, 1e-10, DBL_MAX);
+    // Although the covariance is already diagonal, clamp it to ensure each
+    // value is at least 1e-10.
+    diagCovariance = arma::clamp(diagCovariance, 1e-10, DBL_MAX);
   }
 
   //! Serialize the constraint (which holds nothing, so, nothing to do).
