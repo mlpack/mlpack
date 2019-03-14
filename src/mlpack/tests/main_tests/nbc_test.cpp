@@ -331,4 +331,113 @@ BOOST_AUTO_TEST_CASE(NBCIncrementalVarianceTest)
   CheckMatrices(output_probs, CLI::GetParam<arma::mat>("output_probs"));
 }
 
+/**
+  * Ensuring that the parameter 'output' and the parameter 'predictions' give
+  * the same output.
+ **/
+// The following test case is to check whether the old parameter 'output' and
+// the new parameter 'predictions' give the same output.
+// This test case will be removed in mlpack4 
+// when the deprecated parameter: 'output' is removed.
+BOOST_AUTO_TEST_CASE(NBCOPtionConsistencyTest)
+{
+
+   arma::mat inputData;
+  if (!data::Load("trainSet.csv", inputData))
+    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+
+  // Get the labels out.
+  arma::Row<size_t> labels(inputData.n_cols);
+  for (size_t i = 0; i < inputData.n_cols; ++i)
+    labels[i] = inputData(inputData.n_rows - 1, i);
+
+  // Delete the last row containing labels from input dataset.
+  inputData.shed_row(inputData.n_rows - 1);
+
+  arma::mat testData;
+  if (!data::Load("testSet.csv", testData))
+    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+
+  // Delete the last row containing labels from test dataset.
+  testData.shed_row(testData.n_rows - 1);
+
+  size_t testSize = testData.n_cols;
+
+  // Input training data.
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("labels", std::move(labels));
+
+  // Input test data.
+  SetInputParam("test", std::move(testData));
+
+  mlpackMain();
+
+   // Get the output from 'predictions' parameter
+  const arma::Row<size_t> testY1 =
+      CLI::GetParam<arma::Row<size_t>>("predictions");
+
+   // Get output from 'output' parameter
+  const arma::Row<size_t> testY2 =
+      CLI::GetParam<arma::Row<size_t>>("output");
+
+   // Both solutions must be equal.
+  BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
+                                  testY2.begin(), testY2.end());
+}
+
+
+/**
+  * Ensuring that the parameter 'output_probabilities' and the parameter
+  * 'probabilities' give the same output
+ **/
+// The following test case is to check whether the old parameter
+// 'output_probabilities' and the new parameter 'probabilities' give the same
+// output. This test case will be removed in mlpack 4
+// when the deprecated parameter: 'output_probabilities' is removed
+BOOST_AUTO_TEST_CASE(NBCOPtionConsistencyTest2)
+{
+
+   arma::mat inputData;
+  if (!data::Load("trainSet.csv", inputData))
+    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+
+  // Get the labels out.
+  arma::Row<size_t> labels(inputData.n_cols);
+  for (size_t i = 0; i < inputData.n_cols; ++i)
+    labels[i] = inputData(inputData.n_rows - 1, i);
+
+  // Delete the last row containing labels from input dataset.
+  inputData.shed_row(inputData.n_rows - 1);
+
+  arma::mat testData;
+  if (!data::Load("testSet.csv", testData))
+    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+
+  // Delete the last row containing labels from test dataset.
+  testData.shed_row(testData.n_rows - 1);
+
+  size_t testSize = testData.n_cols;
+
+  // Input training data.
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("labels", std::move(labels));
+
+  // Input test data.
+  SetInputParam("test", std::move(testData));
+
+  mlpackMain();
+
+  // Get the output probabilites which is a deprecated parameter
+  const arma::mat testY1 =
+      CLI::GetParam<arma::mat>("output_probs");
+
+  // Get probabilities from 'predictions' parameter
+  const arma::mat testY2 =
+      CLI::GetParam<arma::mat>("probabilities");
+
+  // Both solutions must be equal.
+  BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
+                                  testY2.begin(), testY2.end());
+}
+
 BOOST_AUTO_TEST_SUITE_END();
