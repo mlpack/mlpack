@@ -108,8 +108,8 @@ class GaussianDistribution
   void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const
   {
     // Column i of 'diffs' is the difference between x.col(i) and the mean.
-    arma::mat diffs = x - (mean * arma::ones<arma::rowvec>(x.n_cols));
-
+    arma::mat diffs = x;
+    diffs.each_col() -= mean;
     // Now, we only want to calculate the diagonal elements of (diffs' * cov^-1
     // * diffs).  We just don't need any of the other elements.  We can
     // calculate the right hand part of the equation (instead of the left side)
