@@ -62,6 +62,50 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionEvaluate)
   BOOST_REQUIRE_CLOSE(svmf.Evaluate(parameters.t()), 11.0, 1e-5);
 }
 
+/*
+ * Temporary test case to check the validity of arma::sp_mat
+ * when we use the member function `cols()` on it.
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMTestCase1)
+{
+  // Uses conversions on groundTruth of separable Evaluate() only
+  // Should give correct results.
+  // A very simple fake dataset
+  arma::mat dataset = "2 0 0;"
+                      "0 0 0;"
+                      "0 2 1;"
+                      "1 0 2;"
+                      "0 1 0";
+
+  //  Corresponding labels
+  arma::Row<size_t> labels = "1 0 1";
+
+  LinearSVMFunction<arma::mat> svmf(dataset, labels, 2,
+      0.0 /* no regularization */);
+
+
+  arma::mat parameters = "-0.1425 8.3228 0.1724 -0.3374 0.1548;"
+                         "0.1435 0.0009 -0.1736 0.3356 -0.1544";
+
+  double hingeLoss = 0;
+  for (size_t j = 0; j < 3; ++j)
+    hingeLoss += svmf.Evaluate(parameters.t(), j, 1);
+
+  hingeLoss /= 3;
+
+  BOOST_REQUIRE_CLOSE(svmf.Evaluate(parameters.t()), hingeLoss, 1e-5);
+
+  parameters = "3 71 22 12 6;"
+               "100 39 30 57 22";
+  hingeLoss = 0;
+  for (size_t j = 0; j < 3; ++j)
+    hingeLoss += svmf.Evaluate(parameters.t(), j, 1);
+
+  hingeLoss /= 3;
+
+  BOOST_REQUIRE_CLOSE(svmf.Evaluate(parameters.t()), hingeLoss, 1e-5);
+}
+
 /**
  * A complicated test for the LinearSVMFunction for binary-class
  * classification.
