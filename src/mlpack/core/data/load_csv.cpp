@@ -25,15 +25,35 @@ LoadCSV::LoadCSV(const std::string& file) :
   CheckOpen();
 
   // Set rules.
-  if (extension == "csv" || extension == "txt")
+  if (extension == "csv")
   {
     // Match all characters that are not ',', '\r', or '\n'.
-    stringRule = qi::raw[*~qi::char_(" ,\r\n")];
+    // Match quoted strings as: "string" or 'string'
+    stringRule = qi::raw[(qi::char_("'") >> *((qi::char_ - "'") |
+                                 "'" >> qi::char_("'")) >> "'") |
+                         (qi::char_('"') >> *((qi::char_ - '"') |
+                                 '"' >> qi::char_('"')) >> '"') |
+                         *~qi::char_(",\r\n")];
+  }
+  else if (extension == "txt")
+  {
+    // Match all characters that are not ' ', ',', '\r', or '\n'.
+    // Match quoted strings as: "string" or 'string'
+    stringRule = qi::raw[(qi::char_("'") >> *((qi::char_ - "'") |
+                                 "'" >> qi::char_("'")) >> "'") |
+                         (qi::char_('"') >> *((qi::char_ - '"') |
+                                 '"' >> qi::char_('"')) >> '"') |
+                         *~qi::char_(" ,\r\n")];
   }
   else
   {
     // Match all characters that are not '\t', '\r', or '\n'.
-    stringRule = qi::raw[*~qi::char_(" \t\r\n")];
+    // Match quoted strings as: "string" or 'string'
+    stringRule = qi::raw[(qi::char_("'") >> *((qi::char_ - "'") |
+                                 "'" >> qi::char_("'")) >> "'") |
+                         (qi::char_('"') >> *((qi::char_ - '"') |
+                                 '"' >> qi::char_('"')) >> '"') |
+                         *~qi::char_("\t\r\n")];
   }
 
   if (extension == "csv")
