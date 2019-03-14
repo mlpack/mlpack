@@ -45,6 +45,12 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
     ResetDeterministic();
   }
 
+  if (!deterministic)
+  {
+    deterministic = true;
+    ResetDeterministic();
+  }
+
   currentInput = arma::mat(predictors.memptr() + (i * predictors.n_rows),
       predictors.n_rows, batchSize, false, false);
   currentTarget = arma::mat(responses.memptr() + i, 1, batchSize, false,

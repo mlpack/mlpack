@@ -35,9 +35,15 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
     const size_t i,
     const size_t /* batchSize */)
 {
-  if ((parameter.is_empty()))
+  if (parameter.is_empty())
   {
     Reset();
+  }
+
+  if (!deterministic)
+  {
+    deterministic = true;
+    ResetDeterministic();
   }
 
   if (!deterministic)

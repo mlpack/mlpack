@@ -56,6 +56,10 @@ BOOST_AUTO_TEST_CASE(GANTest)
 
   // Create the Discriminator network.
   FFN<SigmoidCrossEntropyError<> > discriminator;
+=======
+  // Create the Discriminator network.
+  FFN<CrossEntropyError<> > discriminator;
+>>>>>>> Improving Gan Serialization.
   discriminator.Add<Linear<> > (
       generatorOutputSize, discriminatorHiddenLayerSize * 2);
   discriminator.Add<ReLULayer<> >();

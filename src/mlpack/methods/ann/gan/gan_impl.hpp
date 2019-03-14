@@ -253,6 +253,12 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
     ResetDeterministic();
   }
 
+  if (!deterministic)
+  {
+    deterministic = true;
+    ResetDeterministic();
+  }
+
   currentInput = arma::mat(predictors.memptr() + (i * predictors.n_rows),
       predictors.n_rows, batchSize, false, false);
   currentTarget = arma::mat(responses.memptr() + i, 1, batchSize, false,
@@ -453,6 +459,12 @@ Predict(arma::mat input, arma::mat& output)
     ResetDeterministic();
   }
 
+  if (!deterministic)
+  {
+    deterministic = true;
+    ResetDeterministic();
+  }
+
   Forward(std::move(input));
 
   output = boost::apply_visitor(outputParameterVisitor,
@@ -482,7 +494,7 @@ template<
 >
 template<typename Archive>
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::
-serialize(Archive& ar, const unsigned int /* version */)
+serialize(Archive& ar, const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_NVP(parameter);
   ar & BOOST_SERIALIZATION_NVP(generator);

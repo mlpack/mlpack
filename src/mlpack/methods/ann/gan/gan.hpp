@@ -111,11 +111,11 @@ class GAN
 
   /**
    * Train function.
-   * 
+   *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @tparam CallbackTypes Types of Callback functions.
    * @param trainData The data points of real distribution.
-   * @param optimizer Instantiated optimizer used to train the model. 
+   * @param optimizer Instantiated optimizer used to train the model.
    * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error).
@@ -405,6 +405,26 @@ class GAN
 
 } // namespace ann
 } // namespace mlpack
+
+//! Set the serialization version of the GAN class.  Multiple template arguments
+//! makes this ugly...
+namespace boost {
+namespace serialization {
+
+template<
+  typename Model,
+  typename InitializationRuleType,
+  typename Noise,
+  typename PolicyType
+>
+struct version<
+    mlpack::ann::GAN<Model, InitializationRuleType, Noise, PolicyType>>
+{
+  BOOST_STATIC_CONSTANT(int, value = 1);
+};
+
+} // namespace serialization
+} // namespace boost
 
 // Include implementation.
 #include "gan_impl.hpp"
