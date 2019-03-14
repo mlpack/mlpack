@@ -22,6 +22,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -119,18 +120,18 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
       tolerance, shuffle);
   std::function<double()> noiseFunction = [] () {
       return math::RandNormal(0, 1);};
-  GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
-      std::function<double()>, DCGAN> dcgan(trainData, generator, discriminator,
-      gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
+  GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
+      std::function<double()>, DCGAN> dcgan(generator, discriminator, gaussian,
+      noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
   Log::Info << "Training..." << std::endl;
-  double objVal = dcgan.Train(optimizer);
+  double objVal = dcgan.Train(trainData, optimizer);
 
   // Test that objective value returned by GAN::Train() is finite.
   BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
-  // Generate samples
+  // Generate samples.
   Log::Info << "Sampling..." << std::endl;
   arma::mat noise(noiseDim, 1);
   size_t dim = std::sqrt(trainData.n_rows);
@@ -156,6 +157,38 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
   }
 
   Log::Info << "Output generated!" << std::endl;
+
+  // Check that Serialization is working correctly.
+  arma::mat orgPredictions;
+  dcgan.Predict(noise, orgPredictions);
+
+  GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
+      std::function<double()>, DCGAN> dcganText(generator, discriminator,
+      gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
+      discriminatorPreTrain, multiplier);
+
+  GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
+      std::function<double()>, DCGAN> dcganXml(generator, discriminator,
+      gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
+      discriminatorPreTrain, multiplier);
+
+  GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
+      std::function<double()>, DCGAN> dcganBinary(generator, discriminator,
+      gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
+      discriminatorPreTrain, multiplier);
+
+  SerializeObjectAll(dcgan, dcganXml, dcganText, dcganBinary);
+
+  arma::mat predictions, xmlPredictions, textPredictions, binaryPredictions;
+  dcgan.Predict(noise, predictions);
+  dcganXml.Predict(noise, xmlPredictions);
+  dcganText.Predict(noise, textPredictions);
+  dcganBinary.Predict(noise, binaryPredictions);
+
+  CheckMatrices(orgPredictions, predictions);
+  CheckMatrices(orgPredictions, xmlPredictions);
+  CheckMatrices(orgPredictions, textPredictions);
+  CheckMatrices(orgPredictions, binaryPredictions);
 }
 
 

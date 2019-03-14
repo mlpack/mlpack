@@ -30,7 +30,6 @@ template<
   typename PolicyType
 >
 GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
-    arma::mat& predictors,
     Model generator,
     Model discriminator,
     InitializationRuleType& initializeRule,
@@ -47,13 +46,17 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     initializeRule(initializeRule),
     noiseFunction(noiseFunction),
     noiseDim(noiseDim),
+    numFunctions(0),
     batchSize(batchSize),
+    counter(0),
+    currentBatch(0),
     generatorUpdateStep(generatorUpdateStep),
     preTrainSize(preTrainSize),
     multiplier(multiplier),
     clippingParameter(clippingParameter),
     lambda(lambda),
-    reset(false)
+    reset(false),
+    deterministic(false)
 {
   // Insert IdentityLayer for joining the Generator and Discriminator.
   this->discriminator.network.insert(
@@ -110,7 +113,8 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     currentBatch(network.currentBatch),
     parameter(network.parameter),
     numFunctions(network.numFunctions),
-    noise(network.noise)
+    noise(network.noise),
+    deterministic(network.deterministic)
 {
   /* Nothing to do here */
 }
@@ -141,9 +145,49 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     currentBatch(network.currentBatch),
     parameter(std::move(network.parameter)),
     numFunctions(network.numFunctions),
-    noise(std::move(network.noise))
+    noise(std::move(network.noise)),
+    deterministic(network.deterministic)
 {
   /* Nothing to do here */
+}
+
+template<
+  typename Model,
+  typename InitializationRuleType,
+  typename Noise,
+  typename PolicyType
+>
+void GAN<Model, InitializationRuleType, Noise, PolicyType>::ResetData(
+  arma::mat trainData)
+{
+  this->predictors = std::move(trainData);
+
+  counter = 0;
+  currentBatch = 0;
+
+  numFunctions = predictors.n_cols;
+  noise.set_size(noiseDim, batchSize);
+
+  deterministic = true;
+  ResetDeterministic();
+
+  responses.set_size(1, predictors.n_cols);
+  responses.ones();
+
+  this->discriminator.predictors.set_size(predictors.n_rows,
+      predictors.n_cols + batchSize);
+  this->discriminator.predictors.cols(0, predictors.n_cols - 1) = predictors;
+
+  this->discriminator.responses.set_size(1, predictors.n_cols + batchSize);
+  this->discriminator.responses.ones();
+  this->discriminator.responses.cols(predictors.n_cols,
+      predictors.n_cols + batchSize - 1) = arma::zeros(1, batchSize);
+
+  this->generator.predictors.set_size(noiseDim, batchSize);
+  this->generator.responses.set_size(predictors.n_rows, batchSize);
+
+  if (!reset)
+    Reset();
 }
 
 template<
@@ -192,10 +236,11 @@ template<
 >
 template<typename OptimizerType>
 double GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
+    arma::mat trainData,
     OptimizerType& Optimizer)
 {
-  if (!reset)
-    Reset();
+  ResetData(std::move(trainData));
+
   return Optimizer.Optimize(*this, parameter);
 }
 
@@ -213,8 +258,14 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
     const size_t i,
     const size_t /* batchSize */)
 {
-  if (!reset)
+  if (parameter.is_empty())
     Reset();
+
+  if (!deterministic)
+  {
+    deterministic = true;
+    ResetDeterministic();
+  }
 
   currentInput = arma::mat(predictors.memptr() + (i * predictors.n_rows),
       predictors.n_rows, batchSize, false, false);
@@ -262,7 +313,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
                      GradType& gradient,
                      const size_t /* batchSize */)
 {
-  if (!reset)
+  if (parameter.is_empty())
     Reset();
 
   if (gradient.is_empty())
@@ -273,6 +324,12 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   }
   else
     gradient.zeros();
+
+  if (this->deterministic)
+  {
+    this->deterministic = false;
+    ResetDeterministic();
+  }
 
   if (noiseGradientDiscriminator.is_empty())
   {
@@ -382,11 +439,11 @@ template<
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::Forward(
     arma::mat&& input)
 {
-  if (!reset)
+  if (parameter.is_empty())
     Reset();
 
   generator.Forward(std::move(input));
-  ganOutput = boost::apply_visitor(
+  arma::mat ganOutput = boost::apply_visitor(
       outputParameterVisitor,
       generator.network.back());
 
@@ -400,10 +457,16 @@ template<
   typename PolicyType
 >
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::
-Predict(arma::mat&& input, arma::mat& output)
+Predict(arma::mat input, arma::mat& output)
 {
-  if (!reset)
+  if (parameter.is_empty())
     Reset();
+
+  if (!deterministic)
+  {
+    deterministic = true;
+    ResetDeterministic();
+  }
 
   Forward(std::move(input));
 
@@ -417,14 +480,45 @@ template<
   typename Noise,
   typename PolicyType
 >
+void GAN<Model, InitializationRuleType, Noise, PolicyType>::
+ResetDeterministic()
+{
+  this->discriminator.deterministic = deterministic;
+  this->generator.deterministic = deterministic;
+  this->discriminator.ResetDeterministic();
+  this->generator.ResetDeterministic();
+}
+
+template<
+  typename Model,
+  typename InitializationRuleType,
+  typename Noise,
+  typename PolicyType
+>
 template<typename Archive>
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::
-serialize(Archive& ar, const unsigned int /* version */)
+serialize(Archive& ar, const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_NVP(parameter);
   ar & BOOST_SERIALIZATION_NVP(generator);
   ar & BOOST_SERIALIZATION_NVP(discriminator);
-  ar & BOOST_SERIALIZATION_NVP(noiseFunction);
+
+  // Earlier versions of the GAN code did not serialize whether or not the model
+  // was reset.
+  if (version > 0)
+  {
+    ar & BOOST_SERIALIZATION_NVP(reset);
+  }
+  if (Archive::is_loading::value)
+  {
+    // The behavior in earlier versions was to always assume the weights needed
+    // to be reset.
+    if (version == 0)
+      reset = false;
+
+    deterministic = true;
+    ResetDeterministic();
+  }
 }
 
 } // namespace ann
