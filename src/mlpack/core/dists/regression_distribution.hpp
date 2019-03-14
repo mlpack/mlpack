@@ -146,7 +146,12 @@ class RegressionDistribution
    * @param x List of observations.
    * @param logProbabilities Output probabilities for each input observation.
    */
-  void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
+  void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const
+  {
+    logProbabilities.set_size(x.n_cols);
+    for (size_t i = 0; i < x.n_cols; i++)
+      logProbabilities(i) = LogProbability(x.unsafe_col(i));
+  }
 
   /**
    * Calculate y_i for each data point in points.
@@ -171,15 +176,6 @@ class RegressionDistribution
   //! Return the dimensionality.
   size_t Dimensionality() const { return rf.Parameters().n_elem; }
 };
-
-inline void RegressionDistribution::LogProbability(
-    const arma::mat& x,
-    arma::vec& logProbabilities) const
-{
-  logProbabilities.set_size(x.n_cols);
-  for (size_t i = 0; i < x.n_cols; i++)
-    logProbabilities(i) = LogProbability(x.unsafe_col(i));
-}
 
 } // namespace distribution
 } // namespace mlpack
