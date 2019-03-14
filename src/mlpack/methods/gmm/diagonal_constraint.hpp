@@ -30,6 +30,13 @@ class DiagonalConstraint
     covariance = arma::diagmat(arma::clamp(covariance.diag(), 1e-10, DBL_MAX));
   }
 
+  //! Force a covariance vector to be non-zero.
+  static void ApplyConstraint(arma::vec& covariance)
+  {
+    // Clamp the covariance to be non-zero.
+    covariance = arma::clamp(covariance, 1e-10, DBL_MAX);
+  }
+
   //! Serialize the constraint (which holds nothing, so, nothing to do).
   template<typename Archive>
   static void serialize(Archive& /* ar */, const unsigned int /* version */) { }

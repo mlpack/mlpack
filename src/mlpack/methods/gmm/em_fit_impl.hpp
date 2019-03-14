@@ -44,7 +44,8 @@ Estimate(const arma::mat& observations,
          arma::vec& weights,
          const bool useInitialModel)
 {
-  if (std::is_same<CovarianceConstraintPolicy, DiagonalConstraint>::value)
+  if (std::is_same<Distribution,
+      distribution::DiagonalGaussianDistribution>::value)
   {
     #ifdef _WIN32
       Log::Warn << "Cannot use arma::gmm_diag on Visual Studio due to OpenMP"
@@ -54,6 +55,15 @@ Estimate(const arma::mat& observations,
       ArmadilloGMMWrapper(observations, dists, weights, useInitialModel);
       return;
     #endif
+  }
+  else if (std::is_same<CovarianceConstraintPolicy, DiagonalConstraint>::value
+      && std::is_same<Distribution, distribution::GaussianDistribution>::value)
+  {
+    // EMFit::Estimate() using DiagonalConstraint with GaussianDistribution
+    // uses slow implementation.
+    Log::Warn << "EMFit::Estimate() using DiagonalConstraint with "
+        << "GaussianDistribution uses slow implementation, so DiagonalGMM is "
+        << "recommended for faster training." << std::endl;
   }
 
   // Only perform initial clustering if the user wanted it.
@@ -121,7 +131,9 @@ Estimate(const arma::mat& observations,
         arma::vec covariance = arma::sum((tmp % tmp) %
             (arma::ones<arma::vec>(observations.n_rows) *
             trans(condProb.col(i))), 1) / probRowSums[i];
-        covariance = arma::clamp(covariance, 1e-10, DBL_MAX);
+
+        // Apply covariance constraint.
+        constraint.ApplyConstraint(covariance);
         dists[i].Covariance(std::move(covariance));
       }
       else
@@ -228,7 +240,9 @@ Estimate(const arma::mat& observations,
         arma::vec cov = arma::sum((tmp % tmp) %
             (arma::ones<arma::vec>(observations.n_rows) *
             trans(condProb.col(i) % probabilities)), 1) / probRowSums[i];
-        cov = arma::clamp(cov, 1e-10, DBL_MAX);
+
+        // Apply covariance constraint.
+        constraint.ApplyConstraint(cov);
         dists[i].Covariance(std::move(cov));
       }
       else
@@ -424,11 +438,7 @@ ArmadilloGMMWrapper(const arma::mat& observations,
       means.col(i) = dists[i].Mean();
 
       // DiagonalGaussianDistribution has diagonal covariance as an arma::vec.
-      if (std::is_same<Distribution,
-          distribution::DiagonalGaussianDistribution>::value)
-        covs.col(i) = dists[i].Covariance();
-      else
-        covs.col(i) = dists[i].Covariance().diag();
+      covs.col(i) = dists[i].Covariance();
     }
 
     g.reset(observations.n_rows, dists.size());
@@ -451,12 +461,12 @@ ArmadilloGMMWrapper(const arma::mat& observations,
   {
     dists[i].Mean() = g.means.col(i);
 
+    // Apply covariance constraint.
+    arma::vec covsAlias = g.dcovs.unsafe_col(i);
+    constraint.ApplyConstraint(covsAlias);
+
     // DiagonalGaussianDistribution has diagonal covariance as an arma::vec.
-    if (std::is_same<Distribution,
-        distribution::DiagonalGaussianDistribution>::value)
-      dists[i].Covariance(g.dcovs.col(i));
-    else
-      dists[i].Covariance(arma::diagmat(g.dcovs.col(i)));
+    dists[i].Covariance(g.dcovs.col(i));
   }
 }
 

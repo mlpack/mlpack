@@ -212,7 +212,7 @@ BOOST_AUTO_TEST_CASE(HMMViterbiDiagonalGMMHMMCheckDimensionsTest)
     observations.col(i) = gmms[states[i]].Random();
   }
 
-  // Initialize and train a digonal GMM HMM model.
+  // Initialize and train a diagonal GMM HMM model.
   HMMModel* h = new HMMModel(DiagonalGaussianMixtureModelHMM);
   *(h->DiagGMMHMM()) = HMM<DiagonalGMM>(2, DiagonalGMM(2, 2));
 

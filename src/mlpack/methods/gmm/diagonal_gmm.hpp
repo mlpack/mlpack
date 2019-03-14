@@ -36,7 +36,7 @@ namespace gmm /** Gaussian Mixture Models. */ {
  * The DiagonalGMM is the same as GMM except for wrapping gmm_diag class.
  *
  * The Train() method uses a template type 'FittingType'.  The FittingType
- * template class must provide a way for the DigonalGMM to train on data.
+ * template class must provide a way for the DiagonalGMM to train on data.
  * It must provide the following two functions:
  *
  * @code
@@ -282,7 +282,7 @@ class DiagonalGMM
                 arma::Row<size_t>& labels) const;
 
   /**
-   * Serialize the DigonalGMM.
+   * Serialize the DiagonalGMM.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
