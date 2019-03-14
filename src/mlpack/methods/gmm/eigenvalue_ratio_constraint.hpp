@@ -90,7 +90,7 @@ class EigenvalueRatioConstraint
     // shouldn't be any negative eigenvalues anyway, so it doesn't matter if we
     // are suddenly forcing them to be positive.  If the first eigenvalue is
     // negative, well, there are going to be some problems later...
-    eigvals = (eigvals[0] * ratios);
+    eigvals = eigvals[0] * ratios;
 
     // Reassemble the matrix.
     for (size_t i = 0; i < eigvalOrder.n_elem; ++i)
