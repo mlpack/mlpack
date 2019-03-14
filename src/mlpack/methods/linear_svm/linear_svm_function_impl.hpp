@@ -207,22 +207,23 @@ double LinearSVMFunction<MatType>::Evaluate(
   // Check intercept condition.
   if (!fitIntercept)
   {
-    scores = parameters.t() * dataset;
+    scores = parameters.t() * dataset.cols(firstId, lastId);
   }
   else
   {
-    scores = parameters.rows(0, dataset.n_rows - 1).t() * dataset
+    scores = parameters.rows(0, dataset.n_rows - 1).t()
+        * dataset.cols(firstId, lastId)
         + arma::repmat(parameters.row(dataset.n_rows).t(), 1,
         dataset.n_cols);
   }
 
   arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
-      * (scores % groundTruth), numClasses, 1)) + delta
-      - (delta * groundTruth);
+      * (scores % arma::conv_to<arma::mat>::from(groundTruth).cols(firstId,
+      lastId)), numClasses, 1)) + delta - (delta
+      * arma::conv_to<arma::mat>::from(groundTruth).cols(firstId, lastId));
 
   // The Hinge Loss Function
-  loss = arma::accu(arma::clamp(margin.cols(firstId, lastId),
-      0.0, DBL_MAX));
+  loss = arma::accu(arma::clamp(margin, 0.0, DBL_MAX));
   loss /= batchSize;
 
   // Adding the regularization term.
