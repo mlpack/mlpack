@@ -337,12 +337,11 @@ BOOST_AUTO_TEST_CASE(NBCIncrementalVarianceTest)
  **/
 // The following test case is to check whether the old parameter 'output' and
 // the new parameter 'predictions' give the same output.
-// This test case will be removed in mlpack4 
+// This test case will be removed in mlpack4
 // when the deprecated parameter: 'output' is removed.
 BOOST_AUTO_TEST_CASE(NBCOPtionConsistencyTest)
 {
-
-   arma::mat inputData;
+  arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
     BOOST_FAIL("Cannot load train dataset trainSet.csv!");
 
@@ -372,15 +371,15 @@ BOOST_AUTO_TEST_CASE(NBCOPtionConsistencyTest)
 
   mlpackMain();
 
-   // Get the output from 'predictions' parameter
+  // Get the output from 'predictions' parameter
   const arma::Row<size_t> testY1 =
       CLI::GetParam<arma::Row<size_t>>("predictions");
 
-   // Get output from 'output' parameter
+  // Get output from 'output' parameter
   const arma::Row<size_t> testY2 =
       CLI::GetParam<arma::Row<size_t>>("output");
 
-   // Both solutions must be equal.
+  // Both solutions must be equal.
   BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
                                   testY2.begin(), testY2.end());
 }
@@ -395,9 +394,7 @@ BOOST_AUTO_TEST_CASE(NBCOPtionConsistencyTest)
 // output. This test case will be removed in mlpack 4
 // when the deprecated parameter: 'output_probabilities' is removed
 BOOST_AUTO_TEST_CASE(NBCOPtionConsistencyTest2)
-{
-
-   arma::mat inputData;
+{   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
     BOOST_FAIL("Cannot load train dataset trainSet.csv!");
 
