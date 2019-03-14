@@ -2574,7 +2574,7 @@ void ANNLayerSerializationTest(LayerType& layer)
   model.Train(input, output, opt);
 
   arma::mat originalOutput;
-  model.Predict(input.col(0), originalOutput);
+  model.Predict(input, originalOutput);
 
   // Now serialize the model.
   FFN<NegativeLogLikelihood<>, ann::RandomInitialization> xmlModel, textModel,
@@ -2583,10 +2583,10 @@ void ANNLayerSerializationTest(LayerType& layer)
 
   // Ensure that predictions are the same.
   arma::mat modelOutput, xmlOutput, textOutput, binaryOutput;
-  model.Predict(input.col(0), modelOutput);
-  xmlModel.Predict(input.col(0), xmlOutput);
-  textModel.Predict(input.col(0), textOutput);
-  binaryModel.Predict(input.col(0), binaryOutput);
+  model.Predict(input, modelOutput);
+  xmlModel.Predict(input, xmlOutput);
+  textModel.Predict(input, textOutput);
+  binaryModel.Predict(input, binaryOutput);
 
   CheckMatrices(originalOutput, modelOutput, 1e-5);
   CheckMatrices(originalOutput, xmlOutput, 1e-5);
