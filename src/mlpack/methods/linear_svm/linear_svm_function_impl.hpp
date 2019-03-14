@@ -218,9 +218,8 @@ double LinearSVMFunction<MatType>::Evaluate(
   }
 
   arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
-      * (scores % arma::conv_to<arma::mat>::from(groundTruth).cols(firstId,
-      lastId)), numClasses, 1)) + delta - (delta
-      * arma::conv_to<arma::mat>::from(groundTruth).cols(firstId, lastId));
+      * (scores % groundTruth.cols(firstId,lastId)), numClasses, 1))
+      + delta - (delta * groundTruth.cols(firstId, lastId));
 
   // The Hinge Loss Function
   loss = arma::accu(arma::clamp(margin, 0.0, DBL_MAX));

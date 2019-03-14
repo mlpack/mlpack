@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionEvaluate)
  */
 BOOST_AUTO_TEST_CASE(LinearSVMTestCase1)
 {
-  // Uses conversions on groundTruth of separable Evaluate() only
+  // Doesnt use conversions on groundTruth of separable Evaluate().
   // Should give correct results.
   // A very simple fake dataset
   arma::mat dataset = "2 0 0;"
