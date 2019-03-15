@@ -68,7 +68,7 @@ class Imputer
   //! Get the strategy
   const StrategyType& Strategy() const { return strategy; }
 
-  //! Modify the given given strategy (be careful!)
+  //! Modify the given strategy (be careful!)
   StrategyType& Strategy() { return strategy; }
 
   //! Get the mapper
