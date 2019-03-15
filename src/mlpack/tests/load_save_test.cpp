@@ -234,6 +234,53 @@ BOOST_AUTO_TEST_CASE(LoadColVecTransposedCSVTest)
 }
 
 /**
+ * Make sure text in csv is loaded correctly.
+ */
+BOOST_AUTO_TEST_CASE(LoadTextCSVTest)
+{
+  fstream f;
+  f.open("test_file.csv", fstream::out);
+
+  f << "1,field 2,field 3" << endl;
+  f << "2,\"field 2, with comma\",field 3" << endl;
+  f << "3,field 2 with \"embedded quote\",field 3" << endl;
+  f << "4, field 2 with embedded \\ ,field 3" << endl;
+  f << "5, ,field 3" << endl;
+
+  f.close();
+
+  std::vector<std::string> elements;
+  elements.push_back("field 2");
+  elements.push_back("\"field 2, with comma\"");
+  elements.push_back("field 2 with \"embedded quote\"");
+  elements.push_back("field 2 with embedded \\");
+  elements.push_back("");
+
+  arma::mat test;
+  data::DatasetInfo info;
+  BOOST_REQUIRE(data::Load("test_file.csv", test, info, false, true) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(test.n_cols, 5);
+  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
+
+  // check each element
+  for (size_t i = 0; i < 5; ++i)
+    BOOST_REQUIRE_CLOSE(test.at(0, i), (double) (i + 1), 1e-5);
+
+  for (size_t i = 0; i < 5; ++i)
+    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(1, i), 1, 0), elements[i]);
+
+  for (size_t i = 0; i < 5; ++i)
+    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(2, i), 2, 0), "field 3");
+
+  // Clear the vector
+  elements.clear();
+  // Remove the file.
+  remove("test_file.csv");
+}
+
+/**
  * Make sure Load() throws an exception when trying to load a matrix into a
  * colvec or rowvec.
  */
