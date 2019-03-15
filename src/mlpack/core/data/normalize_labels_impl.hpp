@@ -49,13 +49,13 @@ void NormalizeLabels(const RowType& labelsIn,
     // If labelsIn[i] aldeardy there in Map then just its label
     if (hastTable[labelsIn[i]]!=0)
     {
-  	  labels[i]=hastTable[labelsIn[i]]-1
+  	  labels[i]=hastTable[labelsIn[i]]-1;
   	}
   	else
   	{
   	  // If labelsIn[i] not there then add it to Map
   	  hastTable[labelsIn[i]]=curLabel+1;
-  	  labels[i]=curLabel
+  	  labels[i]=curLabel;
       ++curLabel;
   	}
   
