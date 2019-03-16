@@ -301,10 +301,14 @@ InitialClustering(const arma::mat& observations,
   {
     means[i].zeros(dists[i].Mean().n_elem);
     if (isDiagGaussDist)
+    {
       covs[i].zeros(dists[i].Covariance().n_elem);
+    }
     else
+    {
       covs[i].zeros(dists[i].Covariance().n_rows,
                     dists[i].Covariance().n_cols);
+    }
   }
 
   // From the assignments, generate our means, covariances, and weights.

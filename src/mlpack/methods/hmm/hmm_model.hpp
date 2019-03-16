@@ -45,19 +45,8 @@ class HMMModel
   HMM<gmm::DiagonalGMM>* diagGMMHMM;
 
  public:
-  //! Construct an uninitialized model.
-  HMMModel() :
-      type(HMMType::DiscreteHMM),
-      discreteHMM(new HMM<distribution::DiscreteDistribution>()),
-      gaussianHMM(NULL),
-      gmmHMM(NULL),
-      diagGMMHMM(NULL)
-  {
-    // Nothing to do.
-  }
-
   //! Construct a model of the given type.
-  HMMModel(const HMMType type) :
+  HMMModel(const HMMType type = HMMType::DiscreteHMM) :
       type(type),
       discreteHMM(NULL),
       gaussianHMM(NULL),

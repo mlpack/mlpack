@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_CASE(HMMViterbiDiagonalGMMHMMCheckDimensionsTest)
 
   for (size_t i = 1; i < 50; ++i)
   {
-    double randValue = (double) rand() / (double) RAND_MAX;
+    double randValue = math::Random();
 
     if (randValue <= transMat(0, states[i - 1]))
       states[i] = 0;

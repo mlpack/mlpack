@@ -1252,9 +1252,9 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMPredictTest)
     gmms[1].Weights() = arma::vec("0.3 0.2 0.5");
     gmms[1].Component(0) = DiagonalGaussianDistribution("-2.48 -3.02",
         "1.02 0.80");
-    gmms[1].Component(0) = DiagonalGaussianDistribution("-1.24 -2.40",
+    gmms[1].Component(1) = DiagonalGaussianDistribution("-1.24 -2.40",
         "0.85 0.78");
-    gmms[1].Component(0) = DiagonalGaussianDistribution("-5.68 -4.83",
+    gmms[1].Component(2) = DiagonalGaussianDistribution("-5.68 -4.83",
         "1.42 0.96");
 
     // Initial probabilities.
@@ -1305,6 +1305,8 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMPredictTest)
     if (success)
       break;
   }
+
+  BOOST_REQUIRE_EQUAL(success, true);
 }
 
 /**
