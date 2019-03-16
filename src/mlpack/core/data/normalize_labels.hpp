@@ -15,7 +15,7 @@
 #define MLPACK_CORE_DATA_NORMALIZE_LABELS_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <map>
+
 
 namespace mlpack {
 namespace data {
