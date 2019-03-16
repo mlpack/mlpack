@@ -16,7 +16,6 @@
 // In case it hasn't been included yet.
 #include "normalize_labels.hpp"
 
-
 namespace mlpack {
 namespace data {
 
@@ -40,32 +39,32 @@ void NormalizeLabels(const RowType& labelsIn,
   // we'll resize it back down to its actual size.
   mapping.set_size(labelsIn.n_elem);
   labels.set_size(labelsIn.n_elem);
-  // Map for mapping labelIn to their label
-  std::map<eT, size_t> hastTable;
   size_t curLabel = 0;
   for (size_t i = 0; i < labelsIn.n_elem; ++i)
   {
-    // If labelsIn[i] aldeardy there in Map then just its label
-    if (hastTable[labelsIn[i]] != 0)
+    bool found = false;
+    for (size_t j = 0; j < curLabel; ++j)
     {
-      labels[i] = hastTable[labelsIn[i]]-1;
+      // Is the label already in the list of labels we have seen?
+      if (labelsIn[i] == mapping[j])
+      {
+        labels[i] = j;
+        found = true;
+        break;
+      }
     }
-    else
+
+    // Do we need to add this new label?
+    if (!found)
     {
-      // If labelsIn[i] not there then add it to Map
-      hastTable[labelsIn[i]] = curLabel+1;
+      mapping[curLabel] = labelsIn[i];
       labels[i] = curLabel;
       ++curLabel;
     }
   }
+
   // Resize mapping back down to necessary size.
   mapping.resize(curLabel);
-  // Mapping array created with encoded labels
-  for (auto it=hastTable.begin(); it != hastTable.end(); ++it)
-  {
-    mapping[(it->second)-1] = it->first;
-  }
-  hastTable.clear();
 }
 
 /**
