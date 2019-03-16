@@ -40,7 +40,7 @@ void NormalizeLabels(const RowType& labelsIn,
   // we'll resize it back down to its actual size.
   mapping.set_size(labelsIn.n_elem);
   labels.set_size(labelsIn.n_elem);
-  // Map for mapping labelIn to their label 
+  // Map for mapping labelIn to their label
   std::map<eT, size_t> hastTable;
   size_t curLabel = 0;
   for (size_t i = 0; i < labelsIn.n_elem; ++i)
@@ -61,7 +61,7 @@ void NormalizeLabels(const RowType& labelsIn,
   // Resize mapping back down to necessary size.
   mapping.resize(curLabel);
   // Mapping array created with encoded labels
-  for (auto it=hastTable.begin(); it!=hastTable.end(); ++it)
+  for (auto it=hastTable.begin(); it != hastTable.end(); ++it)
   {
     mapping[(it->second)-1] = it->first;
   }
