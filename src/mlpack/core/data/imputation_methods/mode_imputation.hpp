@@ -59,7 +59,7 @@ class ModeImputation
         }
         else
         {
-          elemsToKeep.push_back(input(dimension,i));
+          elemsToKeep.push_back(input(dimension, i));
         }
       }
     }
@@ -74,15 +74,17 @@ class ModeImputation
         }
         else
         {
-         elemsToKeep.push_back(input(i,dimension));
+         elemsToKeep.push_back(input(i, dimension));
         }
       }
     }
 
     // calculate mode
-    // elemsWithFreq contains the elements of elemsToKeep with their respective frequency
-    std::vector<PairType> elemsWithFreq; 
-    // modeCountPair is a PairType that contains the mode and it's count(number of occurences)
+    // elemsWithFreq contains the elements of elemsToKeep
+    // with their respective frequency
+    std::vector<PairType> elemsWithFreq;
+    // modeCountPair is a PairType that contains the mode 
+    // and it's count(number of occurences)
     PairType modeCountPair;
 
     for (size_t i = 0; i < elemsToKeep.size(); ++i)
@@ -113,7 +115,8 @@ class ModeImputation
 
      if (flag)
      {
-      // if the current element of elemsToKeep is not present in elemsWithFreq then add it
+      // if the current element of elemsToKeep 
+      // is not present in elemsWithFreq then add it
       elemsWithFreq.emplace_back(elemsToKeep[i], 1);
 
       if (modeCountPair.second == 1)
