@@ -57,16 +57,15 @@ void oneHotEncoding(const RowType& labelsIn,
     }
   }
   // Resize output matrix to necessary size.
-  output.set_size(labelsIn.n_elem,curLabel);
-  
+  output.set_size(labelsIn.n_elem, curLabel);
   // Fill it with zero
   output.fill(0);
 
   // Filling one at required place
   for (size_t i = 0; i < labelsIn.n_elem; ++i)
   {
-    output(i,labels[i])=1;
-  }  
+    output(i, labels[i]) = 1;
+  }
   hastTable.clear();
 }
 } // namespace data
