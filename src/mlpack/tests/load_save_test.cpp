@@ -196,7 +196,7 @@ BOOST_AUTO_TEST_CASE(LoadColVecCSVTest)
   f.close();
 
   arma::colvec test;
-  BOOST_REQUIRE(data::Load("LoadColVecCSVTestFile.csv",test, false) == true);
+  BOOST_REQUIRE(data::Load("LoadColVecCSVTestFile.csv", test, false) == true);
 
   BOOST_REQUIRE_EQUAL(test.n_cols, 1);
   BOOST_REQUIRE_EQUAL(test.n_rows, 8);
