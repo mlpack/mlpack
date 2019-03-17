@@ -169,7 +169,8 @@ BOOST_AUTO_TEST_CASE(LoadTransposedCSVTest)
   f.close();
 
   arma::mat test;
-  BOOST_REQUIRE(data::Load("LoadTransposedCSVTestFile.csv", test, false, true) == true);
+  BOOST_REQUIRE(data::Load("LoadTransposedCSVTestFile.csv",
+    test, false, true) == true);
 
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
   BOOST_REQUIRE_EQUAL(test.n_rows, 4);
@@ -195,7 +196,7 @@ BOOST_AUTO_TEST_CASE(LoadColVecCSVTest)
   f.close();
 
   arma::colvec test;
-  BOOST_REQUIRE(data::Load("LoadColVecCSVTestFile.csv", test, false) == true);
+  BOOST_REQUIRE(data::Load("LoadColVecCSVTestFile.csv",test, false) == true);
 
   BOOST_REQUIRE_EQUAL(test.n_cols, 1);
   BOOST_REQUIRE_EQUAL(test.n_rows, 8);
@@ -221,7 +222,8 @@ BOOST_AUTO_TEST_CASE(LoadColVecTransposedCSVTest)
   f.close();
 
   arma::colvec test;
-  BOOST_REQUIRE(data::Load("LoadColVecTransposedCSVTestFile.csv", test, false) == true);
+  BOOST_REQUIRE(data::Load("LoadColVecTransposedCSVTestFile.csv",
+    test, false) == true);
 
   BOOST_REQUIRE_EQUAL(test.n_cols, 1);
   BOOST_REQUIRE_EQUAL(test.n_rows, 9);
@@ -258,7 +260,8 @@ BOOST_AUTO_TEST_CASE(LoadTextCSVTest)
 
   arma::mat test;
   data::DatasetInfo info;
-  BOOST_REQUIRE(data::Load("LoadTextCSVTestFile.csv", test, info, false, true) == true);
+  BOOST_REQUIRE(data::Load("LoadTextCSVTestFile.csv",
+    test, info, false, true) == true);
 
   BOOST_REQUIRE_EQUAL(test.n_rows, 3);
   BOOST_REQUIRE_EQUAL(test.n_cols, 5);
@@ -299,7 +302,8 @@ BOOST_AUTO_TEST_CASE(LoadTextTxtTest)
 
   arma::mat test;
   data::DatasetInfo info;
-  BOOST_REQUIRE(data::Load("LoadTextTxtTestFile.txt", test, info, false, true) == true);
+  BOOST_REQUIRE(data::Load("LoadTextTxtTestFile.txt",
+    test, info, false, true) == true);
 
   BOOST_REQUIRE_EQUAL(test.n_rows, 3);
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
@@ -346,7 +350,8 @@ BOOST_AUTO_TEST_CASE(LoadTextTSVTest)
 
   arma::mat test;
   data::DatasetInfo info;
-  BOOST_REQUIRE(data::Load("LoadTextTSVTestFile.tsv", test, info, false, true) == true);
+  BOOST_REQUIRE(data::Load("LoadTextTSVTestFile.tsv",
+    test, info, false, true) == true);
 
   BOOST_REQUIRE_EQUAL(test.n_rows, 3);
   BOOST_REQUIRE_EQUAL(test.n_cols, 5);
@@ -439,7 +444,8 @@ BOOST_AUTO_TEST_CASE(LoadRowVecTransposedCSVTest)
   f.close();
 
   arma::rowvec test;
-  BOOST_REQUIRE(data::Load("LoadRowVecTransposedCSVTestFile.csv", test, false) == true);
+  BOOST_REQUIRE(data::Load("LoadRowVecTransposedCSVTestFile.csv",
+    test, false) == true);
 
   BOOST_REQUIRE_EQUAL(test.n_rows, 1);
   BOOST_REQUIRE_EQUAL(test.n_cols, 8);
@@ -465,7 +471,8 @@ BOOST_AUTO_TEST_CASE(LoadTransposedTSVTest)
   f.close();
 
   arma::mat test;
-  BOOST_REQUIRE(data::Load("LoadTransposedTSVTestFile.csv", test, false, true) == true);
+  BOOST_REQUIRE(data::Load("LoadTransposedTSVTestFile.csv",
+    test, false, true) == true);
 
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
   BOOST_REQUIRE_EQUAL(test.n_rows, 4);
@@ -491,7 +498,8 @@ BOOST_AUTO_TEST_CASE(LoadTransposedTSVExtensionTest)
   f.close();
 
   arma::mat test;
-  BOOST_REQUIRE(data::Load("LoadTransposedTSVExtensionTestFile.tsv", test, false, true) == true);
+  BOOST_REQUIRE(data::Load("LoadTransposedTSVExtensionTestFile.tsv",
+    test, false, true) == true);
 
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
   BOOST_REQUIRE_EQUAL(test.n_rows, 4);
@@ -517,7 +525,8 @@ BOOST_AUTO_TEST_CASE(LoadNonTransposedCSVTest)
   f.close();
 
   arma::mat test;
-  BOOST_REQUIRE(data::Load("LoadNonTransposedCSVTestFile.csv", test, false, false) == true);
+  BOOST_REQUIRE(data::Load("LoadNonTransposedCSVTestFile.csv",
+    test, false, false) == true);
 
   BOOST_REQUIRE_EQUAL(test.n_cols, 4);
   BOOST_REQUIRE_EQUAL(test.n_rows, 2);
@@ -539,11 +548,13 @@ BOOST_AUTO_TEST_CASE(SaveNonTransposedCSVTest)
                    "5 6;"
                    "7 8;";
 
-  BOOST_REQUIRE(data::Save("SaveNonTransposedCSVTestFile.csv", test, false, false) == true);
+  BOOST_REQUIRE(data::Save("SaveNonTransposedCSVTestFile.csv",
+    test, false, false) == true);
 
   // Load it in and make sure it is in the same.
   arma::mat test2;
-  BOOST_REQUIRE(data::Load("SaveNonTransposedCSVTestFile.csv", test2, false, false) == true);
+  BOOST_REQUIRE(data::Load("SaveNonTransposedCSVTestFile.csv",
+    test2, false, false) == true);
 
   BOOST_REQUIRE_EQUAL(test2.n_rows, 4);
   BOOST_REQUIRE_EQUAL(test2.n_cols, 2);
@@ -1445,7 +1456,8 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest00)
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("CategoricalNontransposedCSVLoadTest00File.csv", matrix, info, true, false); // No transpose.
+  data::Load("CategoricalNontransposedCSVLoadTest00File.csv",
+    matrix, info, true, false); // No transpose.
 
   BOOST_REQUIRE_EQUAL(matrix.n_cols, 3);
   BOOST_REQUIRE_EQUAL(matrix.n_rows, 7);
@@ -1534,7 +1546,8 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest01)
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("CategoricalNontransposedCSVLoadTest01File.csv", matrix, info, true, false); // No transpose.
+  data::Load("CategoricalNontransposedCSVLoadTest01File.csv",
+    matrix, info, true, false); // No transpose.
 
   BOOST_REQUIRE_EQUAL(matrix.n_cols, 3);
   BOOST_REQUIRE_EQUAL(matrix.n_rows, 4);
@@ -1579,7 +1592,8 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest02)
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("CategoricalNontransposedCSVLoadTest02File.csv", matrix, info, true, false); // No transpose.
+  data::Load("CategoricalNontransposedCSVLoadTest02File.csv",
+    matrix, info, true, false); // No transpose.
 
   BOOST_REQUIRE_EQUAL(matrix.n_cols, 3);
   BOOST_REQUIRE_EQUAL(matrix.n_rows, 4);
@@ -1624,7 +1638,8 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest03)
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("CategoricalNontransposedCSVLoadTest03File.csv", matrix, info, true, false); // No transpose.
+  data::Load("CategoricalNontransposedCSVLoadTest03File.csv",
+    matrix, info, true, false); // No transpose.
 
   BOOST_REQUIRE_EQUAL(matrix.n_cols, 3);
   BOOST_REQUIRE_EQUAL(matrix.n_rows, 4);
@@ -1669,7 +1684,8 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest04)
     // Load the test CSV.
     arma::umat matrix;
     DatasetInfo info;
-    data::Load("CategoricalNontransposedCSVLoadTest04File.csv", matrix, info, true, false); // No transpose.
+    data::Load("CategoricalNontransposedCSVLoadTest04File.csv",
+      matrix, info, true, false); // No transpose.
 
     BOOST_REQUIRE_EQUAL(matrix.n_cols, 3);
     BOOST_REQUIRE_EQUAL(matrix.n_rows, 4);
@@ -2039,7 +2055,8 @@ BOOST_AUTO_TEST_CASE(MalformedNoTransposeCSVTest)
   arma::mat dataset;
   DatasetInfo di;
 
-  BOOST_REQUIRE(!data::Load("MalformedNoTransposeCSVTestFile.csv", dataset, di, false, false));
+  BOOST_REQUIRE(!data::Load("MalformedNoTransposeCSVTestFile.csv",
+    dataset, di, false, false));
 
   remove("MalformedNoTransposeCSVTestFile.csv");
 }
@@ -2058,7 +2075,8 @@ BOOST_AUTO_TEST_CASE(LoadCSVNoTransposeTSVTest)
   arma::mat dataset;
   DatasetInfo di;
 
-  BOOST_REQUIRE(data::Load("LoadCSVNoTransposeTSVTestFile.tsv", dataset, di, false, false));
+  BOOST_REQUIRE(data::Load("LoadCSVNoTransposeTSVTestFile.tsv",
+    dataset, di, false, false));
 
   BOOST_REQUIRE_EQUAL(dataset.n_cols, 4);
   BOOST_REQUIRE_EQUAL(dataset.n_rows, 2);
@@ -2089,7 +2107,8 @@ BOOST_AUTO_TEST_CASE(LoadCSVNoTransposeTXTTest)
   arma::mat dataset;
   DatasetInfo di;
 
-  BOOST_REQUIRE(data::Load("LoadCSVNoTransposeTXTTestFile.txt", dataset, di, false, false));
+  BOOST_REQUIRE(data::Load("LoadCSVNoTransposeTXTTestFile.txt",
+    dataset, di, false, false));
 
   BOOST_REQUIRE_EQUAL(dataset.n_cols, 4);
   BOOST_REQUIRE_EQUAL(dataset.n_rows, 2);
