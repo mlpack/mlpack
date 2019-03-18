@@ -339,7 +339,7 @@ BOOST_AUTO_TEST_CASE(NBCIncrementalVarianceTest)
 // the new parameter 'predictions' give the same output.
 // This test case will be removed in mlpack4
 // when the deprecated parameter: 'output' is removed.
-BOOST_AUTO_TEST_CASE(NBCOPtionConsistencyTest)
+BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest)
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))

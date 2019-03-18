@@ -87,6 +87,7 @@ PROGRAM_INFO("Parametric Naive Bayes Classifier",
     SEE_ALSO("mlpack::naive_bayes::NaiveBayesClassifier C++ class "
         "documentation", "@doxygen/classmlpack_1_1naive__bayes_1_1"
         "NaiveBayesClassifier.html"));
+
 // A struct for saving the model with mappings.
 struct NBCModel
 {
@@ -137,7 +138,7 @@ static void mlpackMain()
   ReportIgnoredParam({{ "training", false }}, "labels");
   ReportIgnoredParam({{ "training", false }}, "incremental_variance");
   RequireAtLeastOnePassed({ "output", "predictions", "output_model",
-     "output_probs", "probabilities" }, false, "no output will be saved");
+      "output_probs", "probabilities" }, false, "no output will be saved");
   ReportIgnoredParam({{ "test", false }}, "output");
   ReportIgnoredParam({{ "test", false }}, "predictions");
   if (CLI::HasParam("input_model") && !CLI::HasParam("test"))
@@ -206,17 +207,19 @@ static void mlpackMain()
       // Un-normalize labels to prepare output.
       Row<size_t> rawResults;
       data::RevertLabels(predictions, model->mappings, rawResults);
-      predictions = rawResults;
-      CLI::GetParam<Row<size_t>>("predictions") = predictions;
+      //predictions = rawResults;
+      CLI::GetParam<Row<size_t>>("predictions") = rawResults;
       if (CLI::HasParam("output"))
       {
-        CLI::GetParam<Row<size_t>>("output") = std::move(predictions);
+        CLI::GetParam<Row<size_t>>("output") = std::move(rawResults);
       }
     }
-    CLI::GetParam<mat>("probabilities") = probabilities;
-    if (CLI::HasParam("output_probs"))
-    {
-      CLI::GetParam<mat>("output_probs") = probabilities;
+    if (CLI::HasParam("output_probs") || CLI::HasParam("probabilities")){
+      CLI::GetParam<mat>("probabilities") = probabilities;
+      if (CLI::HasParam("output_probs"))
+      {
+        CLI::GetParam<mat>("output_probs") = std::move(probabilities);
+      }
     }
   }
 
