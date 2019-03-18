@@ -207,7 +207,6 @@ static void mlpackMain()
       // Un-normalize labels to prepare output.
       Row<size_t> rawResults;
       data::RevertLabels(predictions, model->mappings, rawResults);
-      //predictions = rawResults;
       CLI::GetParam<Row<size_t>>("predictions") = rawResults;
       if (CLI::HasParam("output"))
       {
