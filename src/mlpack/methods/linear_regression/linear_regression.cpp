@@ -141,7 +141,7 @@ double LinearRegression::ComputeError(const arma::mat& predictors,
       Log::Fatal << "The test data must have the same number of columns as the "
           "training file." << std::endl;
     }
-    temp = responses - arma::trans(parameters) * predictors;
+    temp = responses - (arma::trans(parameters) * predictors);
   }
   const double cost = arma::dot(temp, temp) / nCols;
 
