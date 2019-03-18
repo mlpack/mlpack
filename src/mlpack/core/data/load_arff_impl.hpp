@@ -30,7 +30,7 @@ void LoadARFF(const std::string& filename,
   std::ifstream ifs;
   ifs.open(filename, std::ios::in | std::ios::binary);
 
-  // if file is not open throw an error.
+  // if file is not open throw an error (file not found).
   if (!ifs.is_open())
   {
     std::stringstream error;
