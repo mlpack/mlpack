@@ -34,7 +34,7 @@ void LoadARFF(const std::string& filename,
   if (!ifs.is_open())
   {
     std::stringstream error;
-    error << filename << " Not Found.";
+    error << "File: " << filename << " could not be opened.";
     throw std::runtime_error(error.str());
   }
 
