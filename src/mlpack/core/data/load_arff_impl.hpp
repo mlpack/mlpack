@@ -30,6 +30,14 @@ void LoadARFF(const std::string& filename,
   std::ifstream ifs;
   ifs.open(filename, std::ios::in | std::ios::binary);
 
+  // if file is not open throw an error.
+  if (!ifs.is_open())
+  {
+    std::stringstream error;
+    error << filename << " Not Found.";
+    throw std::runtime_error(error.str());
+  }
+
   std::string line;
   size_t dimensionality = 0;
   std::vector<bool> types;
