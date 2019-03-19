@@ -40,7 +40,7 @@ class AdjustedRSquared
 
   /**
    * Information for hyper-parameter tuning code. It indicates that we want
-   * to minimize the measurement.
+   * to maximize the measurement.
    */
   static const bool NeedsMinimization = false;
 };
