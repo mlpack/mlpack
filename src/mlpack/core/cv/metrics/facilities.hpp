@@ -45,7 +45,7 @@ void AssertColumnSizes(const DataType& data,
                        const ResponsesType& responses,
                        const std::string& callerDescription)
 {
- if (data.n_cols != responses.n_cols)
+  if (data.n_cols != responses.n_cols)
   {
     std::ostringstream oss;
     oss << callerDescription <<": number of points (" << data.n_cols << ") "
