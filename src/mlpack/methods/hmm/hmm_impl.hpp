@@ -651,7 +651,7 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
       {
         backwardLogProb(j, t) = math::LogAdd(backwardLogProb(j, t),
             logTrans(state, j) + backwardLogProb(state, t + 1) +
-              logProbs(t + 1, state));
+            logProbs(t + 1, state));
       }
 
       // Normalize by the weights from the forward algorithm.
