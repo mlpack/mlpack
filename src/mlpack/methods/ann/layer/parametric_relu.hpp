@@ -165,14 +165,14 @@ class PReLU
   /**
    * Computes the first derivative of the PReLU function.
    *
-   * @param y Input activations.
-   * @param x The resulting derivatives.
+   * @param x Input activations.
+   * @param y The resulting derivatives.
    */
 
   template<typename InputType, typename OutputType>
   void Deriv(const InputType& x, OutputType& y)
   {
-    y = x;
+    y.set_size(arma::size(x));
 
     for (size_t i = 0; i < x.n_elem; i++)
     {
