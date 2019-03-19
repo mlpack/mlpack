@@ -3,7 +3,7 @@
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Ryan Curtin
  * @author Michael Fox
- ^ @author Rohan Raj
+ * @author Rohan Raj
  *
  * Implementation of template-based GMM methods.
  *
@@ -81,7 +81,7 @@ void GMM::LogProbability(const arma::mat& x, arma::vec& logProbs) const
   // multiply by the prior for each Gaussian too).
   logProbs.set_size(x.n_cols);
   double sum;
-  for (size_t j=0; j < x.n_cols; j++)
+  for (size_t j = 0; j < x.n_cols; j++)
   {
     sum = -std::numeric_limits<double>::infinity();
     for (size_t i = 0; i < gaussians; i++)
@@ -117,8 +117,8 @@ void GMM::Probability(const arma::mat& x, arma::vec& probs) const
  * Return the log probability of the given observation being from the given
  * component in the mixture.
  *
- * @param observation Observation Matrix to compute log-probabilty.
- * @param component Calculate the log-probability for given component.
+ * @param observation Observation vector to compute log-probabilty.
+ * @param component Calculate the log-probability for given observation vector.
  */
 double GMM::LogProbability(const arma::vec& observation,
                         const size_t component) const
