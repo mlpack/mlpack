@@ -22,17 +22,17 @@ double RSquared::Evaluate(MLAlgorithm& model,
                      const DataType& data,
                      const ResponsesType& responses)
 {
-  AssertColumnSizes(data, responses, "RSquared::Evaluate()");  
+  AssertColumnSizes(data, responses, "RSquared::Evaluate()");
 
   ResponsesType predictedResponses;
   model.Predict(data, predictedResponses);
-  
+
   double mean_responses = arma::mean(responses);
 
-  //calculate SSR
+  // calculate SSR
   double SSR = arma::accu(arma::square(predictedResponses - mean_responses));
 
-  //calculate SST
+  // calculate SST
   double SST = arma::accu(arma::square(responses - mean_responses));
 
   return SSR / SST;
