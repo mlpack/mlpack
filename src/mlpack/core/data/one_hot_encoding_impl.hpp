@@ -32,9 +32,9 @@ namespace data {
  */
 template<typename eT, typename RowType>
 void oneHotEncoding(const RowType& labelsIn,
-                     arma::Mat<size_t>& output)
+                     arma::Mat<eT>& output)
 {
-  arma::Row<size_t>& labels;
+  arma::Row<size_t> labels;
   labels.set_size(labelsIn.n_elem);
 
   // Loop over the input labels, and develop the mapping.

@@ -86,6 +86,7 @@
 #include <mlpack/core/dists/gaussian_distribution.hpp>
 #include <mlpack/core/dists/laplace_distribution.hpp>
 #include <mlpack/core/dists/gamma_distribution.hpp>
+#include <mlpack/core/data/one_hot_encoding.hpp>
 
 // mlpack::backtrace only for linux
 #ifdef HAS_BFD_DL
