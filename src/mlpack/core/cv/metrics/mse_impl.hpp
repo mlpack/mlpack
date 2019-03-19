@@ -23,7 +23,7 @@ double MSE::Evaluate(MLAlgorithm& model,
                      const ResponsesType& responses)
 {
   AssertColumnSizes(data, responses, "MSE::Evaluate()");
-  
+
   ResponsesType predictedResponses;
   model.Predict(data, predictedResponses);
   double sum = arma::accu(arma::square(responses - predictedResponses));
