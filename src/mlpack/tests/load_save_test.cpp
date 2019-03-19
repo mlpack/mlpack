@@ -780,15 +780,15 @@ BOOST_AUTO_TEST_CASE(onehotencodingtest)
   // Fill it with zero
   matrix.fill(0);
 
-  matrix(0,0)=1;
-  matrix(1,1)=1;
-  matrix(2,0)=1;
-  matrix(3,0)=1;
-  matrix(4,0)=1;
-  matrix(5,0)=1;
-  matrix(6,1)=1;
-  matrix(7,0)=1;
-  
+  matrix(0, 0) = 1;
+  matrix(1, 1) = 1;
+  matrix(2, 0) = 1;
+  matrix(3, 0) = 1;
+  matrix(4, 0) = 1;
+  matrix(5, 0) = 1;
+  matrix(6, 1) = 1;
+  matrix(7, 0) = 1;
+
   // output matrix
   arma::Mat<int> output;
   arma::irowvec labels("-1 1 -1 -1 -1 -1 1 -1");
@@ -796,62 +796,25 @@ BOOST_AUTO_TEST_CASE(onehotencodingtest)
 
   BOOST_REQUIRE_EQUAL(matrix.n_cols, output.n_cols);
   BOOST_REQUIRE_EQUAL(matrix.n_rows, output.n_rows);
-  
-  BOOST_REQUIRE_EQUAL(1, matrix(0,0));
-  BOOST_REQUIRE_EQUAL(0, matrix(0,1));
-  BOOST_REQUIRE_EQUAL(0, matrix(1,0));
-  BOOST_REQUIRE_EQUAL(1, matrix(1,1));   
-  BOOST_REQUIRE_EQUAL(1, matrix(2,0));
-  BOOST_REQUIRE_EQUAL(0, matrix(2,1));
-  BOOST_REQUIRE_EQUAL(1, matrix(3,0));
-  BOOST_REQUIRE_EQUAL(0, matrix(3,1));
-  BOOST_REQUIRE_EQUAL(1, matrix(4,0));
-  BOOST_REQUIRE_EQUAL(0, matrix(4,1));
-  BOOST_REQUIRE_EQUAL(1, matrix(5,0));
-  BOOST_REQUIRE_EQUAL(0, matrix(5,1));
-  BOOST_REQUIRE_EQUAL(0, matrix(6,0));
-  BOOST_REQUIRE_EQUAL(1, matrix(6,1));
-  BOOST_REQUIRE_EQUAL(1, matrix(7,0));
-  BOOST_REQUIRE_EQUAL(0, matrix(7,1));
-  
-  BOOST_REQUIRE_EQUAL(1, output(0,0));
-  BOOST_REQUIRE_EQUAL(0, output(0,1));
-  BOOST_REQUIRE_EQUAL(0, output(1,0));
-  BOOST_REQUIRE_EQUAL(1, output(1,1));   
-  BOOST_REQUIRE_EQUAL(1, output(2,0));
-  BOOST_REQUIRE_EQUAL(0, output(2,1));
-  BOOST_REQUIRE_EQUAL(1, output(3,0));
-  BOOST_REQUIRE_EQUAL(0, output(3,1));
-  BOOST_REQUIRE_EQUAL(1, output(4,0));
-  BOOST_REQUIRE_EQUAL(0, output(4,1));
-  BOOST_REQUIRE_EQUAL(1, output(5,0));
-  BOOST_REQUIRE_EQUAL(0, output(5,1));
-  BOOST_REQUIRE_EQUAL(0, output(6,0));
-  BOOST_REQUIRE_EQUAL(1, output(6,1));
-  BOOST_REQUIRE_EQUAL(1, output(7,0));
-  BOOST_REQUIRE_EQUAL(0, output(7,1));
-  
 
-  BOOST_REQUIRE_EQUAL(output(0,0), matrix(0,0));
-  BOOST_REQUIRE_EQUAL(output(0,1), matrix(0,1));
-  BOOST_REQUIRE_EQUAL(output(1,0), matrix(1,0));
-  BOOST_REQUIRE_EQUAL(output(1,1), matrix(1,1));   
-  BOOST_REQUIRE_EQUAL(output(2,0), matrix(2,0));
-  BOOST_REQUIRE_EQUAL(output(2,1), matrix(2,1));
-  BOOST_REQUIRE_EQUAL(output(3,0), matrix(3,0));
-  BOOST_REQUIRE_EQUAL(output(3,1), matrix(3,1));
-  BOOST_REQUIRE_EQUAL(output(4,0), matrix(4,0));
-  BOOST_REQUIRE_EQUAL(output(4,1), matrix(4,1));
-  BOOST_REQUIRE_EQUAL(output(5,0), matrix(5,0));
-  BOOST_REQUIRE_EQUAL(output(5,1), matrix(5,1));
-  BOOST_REQUIRE_EQUAL(output(6,0), matrix(6,0));
-  BOOST_REQUIRE_EQUAL(output(6,1), matrix(6,1));
-  BOOST_REQUIRE_EQUAL(output(7,0), matrix(7,0));
-  BOOST_REQUIRE_EQUAL(output(7,1), matrix(7,1));
+  BOOST_REQUIRE_EQUAL(output(0, 0), matrix(0, 0));
+  BOOST_REQUIRE_EQUAL(output(0, 1), matrix(0, 1));
+  BOOST_REQUIRE_EQUAL(output(1, 0), matrix(1, 0));
+  BOOST_REQUIRE_EQUAL(output(1, 1), matrix(1, 1));
+  BOOST_REQUIRE_EQUAL(output(2, 0), matrix(2, 0));
+  BOOST_REQUIRE_EQUAL(output(2, 1), matrix(2, 1));
+  BOOST_REQUIRE_EQUAL(output(3, 0), matrix(3, 0));
+  BOOST_REQUIRE_EQUAL(output(3, 1), matrix(3, 1));
+  BOOST_REQUIRE_EQUAL(output(4, 0), matrix(4, 0));
+  BOOST_REQUIRE_EQUAL(output(4, 1), matrix(4, 1));
+  BOOST_REQUIRE_EQUAL(output(5, 0), matrix(5, 0));
+  BOOST_REQUIRE_EQUAL(output(5, 1), matrix(5, 1));
+  BOOST_REQUIRE_EQUAL(output(6, 0), matrix(6, 0));
+  BOOST_REQUIRE_EQUAL(output(6, 1), matrix(6, 1));
+  BOOST_REQUIRE_EQUAL(output(7, 0), matrix(7, 0));
+  BOOST_REQUIRE_EQUAL(output(7, 1), matrix(7, 1));
 
-  
 }
-
 /**
  * Test normalization of labels.
  */
