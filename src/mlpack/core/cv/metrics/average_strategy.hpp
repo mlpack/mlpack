@@ -21,6 +21,13 @@ namespace cv {
  *
  * The "Binary" strategy means binary classification is going to be used, and
  * there is no need to average.
+ *
+ * The "Micro" strategy is used for multiclass classification considering
+ * TP(True Positive), TN(True Negative) and FN(False Negative) all at once
+ * for evaluating both precision and recall.
+ *
+ * The "Macro" strategy is also used for multiclass classification but by
+ * taking the average of individually calculated precision and recall.
  */
 enum AverageStrategy
 {
