@@ -29,7 +29,8 @@ double AdjustedRSquared::Evaluate(MLAlgorithm& model,
   const size_t data_points = data.n_cols;
   const size_t total_parameters = data.n_rows;
 
-  double adj_r2 = 1 - ((1 - r2) * (data_points - 1) / (data_points - total_parameters - 1));
+  double adj_r2 = 1 - ((1 - r2) * (data_points - 1) /
+                  (data_points - total_parameters - 1));
 
   return adj_r2;
 }
