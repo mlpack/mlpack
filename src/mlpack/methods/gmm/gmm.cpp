@@ -55,7 +55,7 @@ GMM& GMM::operator=(const GMM& other)
 /**
  * Return the log probability of the given observation being from this GMM.
  *
- * @param observation Observation Matrix to compute log-probabilty.
+ * @param observation Observation vector to compute log-probabilty.
  */
 double GMM::LogProbability(const arma::vec& observation) const
 {
@@ -94,7 +94,7 @@ void GMM::LogProbability(const arma::mat& x, arma::vec& logProbs) const
 /**
  * Return the probability of the given observation being from this GMM.
  *
- * @param observation Observation Matrix to compute probabilty.
+ * @param observation Observation vector to compute probabilty.
  */
 double GMM::Probability(const arma::vec& observation) const
 {
