@@ -12,6 +12,8 @@
 #ifndef MLPACK_CORE_CV_METRICS_MSE_IMPL_HPP
 #define MLPACK_CORE_CV_METRICS_MSE_IMPL_HPP
 
+#include <mlpack/core/cv/metrics/facilities.hpp>
+
 namespace mlpack {
 namespace cv {
 
@@ -20,15 +22,8 @@ double MSE::Evaluate(MLAlgorithm& model,
                      const DataType& data,
                      const ResponsesType& responses)
 {
-  if (data.n_cols != responses.n_cols)
-  {
-    std::ostringstream oss;
-    oss << "MSE::Evaluate(): number of points (" << data.n_cols << ") "
-        << "does not match number of responses (" << responses.n_cols << ")!"
-        << std::endl;
-    throw std::invalid_argument(oss.str());
-  }
-
+  AssertColumnSizes(data, responses, "MSE::Evaluate()");
+  
   ResponsesType predictedResponses;
   model.Predict(data, predictedResponses);
   double sum = arma::accu(arma::square(responses - predictedResponses));
