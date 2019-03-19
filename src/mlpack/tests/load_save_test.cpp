@@ -813,7 +813,6 @@ BOOST_AUTO_TEST_CASE(onehotencodingtest)
   BOOST_REQUIRE_EQUAL(output(6, 1), matrix(6, 1));
   BOOST_REQUIRE_EQUAL(output(7, 0), matrix(7, 0));
   BOOST_REQUIRE_EQUAL(output(7, 1), matrix(7, 1));
-
 }
 /**
  * Test normalization of labels.
