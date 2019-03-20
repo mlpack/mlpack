@@ -509,11 +509,9 @@ void PrintInputProcessing(
     std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
     std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
-
   }
   else
   {
-
     std::cout << prefix << "    " << d.name << "_tuple = to_matrix_with_info("
         << d.name << ", dtype=np.double, copy=CLI.HasParam('copy_all_inputs'))"
         << std::endl;
