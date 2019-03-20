@@ -88,6 +88,17 @@ class LSTM
   void Forward(InputType&& input, OutputType&& output);
 
   /**
+   * Ordinary feed forward pass of a neural network, evaluating the function
+   * f(x) by propagating the activity forward through f.
+   *
+   * @param input Input data used for evaluating the specified function.
+   * @param output Resulting output activation.
+   * @param cellState Cell state of LSTM.
+   */
+  template<typename InputType, typename OutputType>
+  void Forward(InputType&& input, OutputType&& output, OutputType&& cellState);
+
+  /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.

@@ -159,10 +159,22 @@ void LSTM<InputDataType, OutputDataType>::Reset()
       offset, outSize, 1, false, false);
 }
 
+// Forward when cellState is not needed
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void LSTM<InputDataType, OutputDataType>::Forward(
     InputType&& input, OutputType&& output)
+{
+  //! Locally-stored cellState.
+  OutputType cellState;
+  Forward(std::move(input), std::move(output), std::move(cellState));
+}
+
+// Forward when cellState is needed overloaded LSTM::Forward()
+template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
+void LSTM<InputDataType, OutputDataType>::Forward(
+    InputType&& input, OutputType&& output, OutputType&& cellState)
 {
   // Check if the batch size changed, the number of cols is defines the input
   // batch size.
@@ -248,6 +260,9 @@ void LSTM<InputDataType, OutputDataType>::Forward(
 
   output = OutputType(outParameter.memptr() +
       (forwardStep + batchSize) * outSize, outSize, batchSize, false, false);
+
+  cellState = OutputType(cell.memptr() +
+      forwardStep * outSize, outSize, batchSize, false, false);
 
   forwardStep += batchSize;
   if ((forwardStep / batchSize) == bpttSteps)
