@@ -1006,9 +1006,7 @@ class TestPythonBinding(unittest.TestCase):
     """
     Test that we can pass a one dimension matrix with some categorical features.
     """
-    x = pd.DataFrame(np.random.rand(10), columns=list('a'))
-    x['e'] = pd.Series(['a', 'b', 'c', 'd', 'a', 'b', 'e', 'c', 'a', 'b'],
-        dtype='category')
+    x = pd.DataFrame(np.random.rand(10))
     z = copy.copy(x)
 
     output = test_python_binding(string_in='hello',
@@ -1017,21 +1015,16 @@ class TestPythonBinding(unittest.TestCase):
                                  matrix_and_info_in=z)
 
     self.assertEqual(output['matrix_and_info_out'].shape[0], 10)
-    self.assertEqual(output['matrix_and_info_out'].shape[1], 2)
-
-    cols = list('ae')
 
     for i in range(10):
-        self.assertEqual(output['matrix_and_info_out'][i, 0], z[cols[0]][i]*2)
+        self.assertEqual(output['matrix_and_info_out'][i, 0], z[0][i]*2)
 
   def testOneDimensionMatrixAndInfoPandasForceCopy(self):
     """
     Test that we can pass a one dimension matrix with some categorical features.
     """
-    x = pd.DataFrame(np.random.rand(10), columns=list('a'))
-    x['e'] = pd.Series(['a', 'b', 'c', 'd', 'a', 'b', 'e', 'c', 'a', 'b'],
-        dtype='category')
-
+    x = pd.DataFrame(np.random.rand(10))
+	
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
@@ -1039,12 +1032,9 @@ class TestPythonBinding(unittest.TestCase):
                                  copy_all_inputs=True)
 
     self.assertEqual(output['matrix_and_info_out'].shape[0], 10)
-    self.assertEqual(output['matrix_and_info_out'].shape[1], 2)
-
-    cols = list('ae')
 
     for j in range(10):
-      self.assertEqual(output['matrix_and_info_out'][j, 0], x[cols[0]][j]*2)
+      self.assertEqual(output['matrix_and_info_out'][j, 0], x[0][j]*2)
     
   def testThrownException(self):
 
