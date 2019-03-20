@@ -221,7 +221,7 @@ double LinearSVMFunction<MatType>::Evaluate(
   }
 
   arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
-      * (scores % groundTruth.cols(firstId,lastId)), numClasses, 1))
+      * (scores % groundTruth.cols(firstId, lastId)), numClasses, 1))
       + delta - (delta * groundTruth.cols(firstId, lastId));
 
   // The Hinge Loss Function
@@ -326,7 +326,7 @@ void LinearSVMFunction<MatType>::Gradient(
   }
 
   arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
-      * (scores % groundTruth.cols(firstId,lastId)), numClasses, 1))
+      * (scores % groundTruth.cols(firstId, lastId)), numClasses, 1))
       + delta - (delta * groundTruth.cols(firstId, lastId));
 
   // For each sample, find the total number of classes where
@@ -334,7 +334,7 @@ void LinearSVMFunction<MatType>::Gradient(
   arma::mat mask = margin.for_each([](arma::mat::elem_type& val)
       { val = (val > 0) ? 1: 0; });
 
-  arma::mat difference = groundTruth.cols(firstId,lastId)
+  arma::mat difference = groundTruth.cols(firstId, lastId)
       % (-arma::repmat(arma::sum(mask), numClasses, 1)) + mask;
 
   // Check intercept condition
@@ -454,7 +454,7 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
   }
 
   arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
-      * (scores % groundTruth.cols(firstId,lastId)), numClasses, 1))
+      * (scores % groundTruth.cols(firstId, lastId)), numClasses, 1))
       + delta - (delta * groundTruth.cols(firstId, lastId));
 
   // For each sample, find the total number of classes where
@@ -462,7 +462,7 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
   arma::mat mask = margin.for_each([](arma::mat::elem_type& val)
       { val = (val > 0) ? 1: 0; });
 
-  arma::mat difference = groundTruth.cols(firstId,lastId)
+  arma::mat difference = groundTruth.cols(firstId, lastId)
       % (-arma::repmat(arma::sum(mask), numClasses, 1)) + mask;
 
   // Check intercept condition
