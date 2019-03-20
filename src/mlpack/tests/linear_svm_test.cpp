@@ -754,7 +754,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMParallelSGDTwoClasses)
 
   // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(acc, 1.0, 1.0);
+  BOOST_REQUIRE_CLOSE(acc, 1.0, 2.0);
 
   // Create test dataset.
   for (size_t i = 0; i < points / 2; i++)
@@ -770,7 +770,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMParallelSGDTwoClasses)
 
   // Compare test accuracy to 1.
   const double testAcc = lsvm.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(testAcc, 1.0, 1.0);
+  BOOST_REQUIRE_CLOSE(testAcc, 1.0, 2.0);
 }
 
 #endif
