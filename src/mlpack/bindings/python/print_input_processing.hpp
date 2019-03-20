@@ -68,7 +68,7 @@ void PrintInputProcessing(
       << std::endl;
   if (!d.required)
   {
-    if (GetPrintableType<T>(d)== "bool")
+    if (GetPrintableType<T>(d) == "bool")
     {
       std::cout << prefix << "if isinstance(" << name << ", "
         << GetPrintableType<T>(d) << "):" << std::endl;
@@ -82,6 +82,7 @@ void PrintInputProcessing(
       std::cout << prefix << "  if isinstance(" << name << ", "
         << GetPrintableType<T>(d) << "):" << std::endl;
     }
+
     std::cout << prefix << "    SetParam[" << GetCythonType<T>(d)
       << "](<const string> '" << d.name << "', ";
     if (GetCythonType<T>(d) == "string")
@@ -172,11 +173,16 @@ void PrintInputProcessing(
 {
   const std::string prefix(indent, ' ');
 
+
   /**
+   * Print input processing for a vector type.
+   */
+  /**
+   * This gives us code like:
    *  if param_name is not None:
    *    if isinstance(param_name, list):
-   *      if len(param_name) > 0 :
-   *        if isinstance(param_name[0],str):
+   *      if len(param_name) > 0:
+   *        if isinstance(param_name[0], str):
    *          SetParam[vector[string]](<const string> 'param_name', param_name)
    *          CLI.SetPassed(<const string> 'param_name')
    *        else:
@@ -194,9 +200,9 @@ void PrintInputProcessing(
         << std::endl;
     std::cout << prefix << "  if isinstance(" << d.name << ", list):"
         << std::endl;
-    std::cout << prefix << "    if len(" << d.name << ") > 0 :"
+    std::cout << prefix << "    if len(" << d.name << ") > 0:"
         << std::endl;
-    std::cout << prefix << "      if isinstance(" << d.name << "[0],"
+    std::cout << prefix << "      if isinstance(" << d.name << "[0], "
         << GetPrintableType<typename T::value_type>(d) << "):" << std::endl;
     std::cout << prefix << "        SetParam[" << GetCythonType<T>(d)
         << "](<const string> '" << d.name << "', " << d.name;
@@ -215,9 +221,9 @@ void PrintInputProcessing(
   {
     std::cout << prefix << "if isinstance(" << d.name << ", list):"
         << std::endl;
-    std::cout << prefix << "  if len(" << d.name << ") > 0 :"
+    std::cout << prefix << "  if len(" << d.name << ") > 0:"
         << std::endl;
-    std::cout << prefix << "    if isinstance(" << d.name << "[0],"
+    std::cout << prefix << "    if isinstance(" << d.name << "[0], "
         << GetPrintableType<typename T::value_type>(d) << "):" << std::endl;
     std::cout << prefix << "      SetParam[" << GetCythonType<T>(d)
         << "](<const string> '" << d.name << "', " << d.name;
@@ -243,24 +249,18 @@ void PrintInputProcessing(
  *
  * # Detect if the parameter was passed; set if so.
  * if param_name is not None:
- *   if isinstance(param_name, np.ndarray) or isinstance(param_name,
- *       pd.DataFrame) or isinstance(param_name, pd.Series) or
- *       isinstance(param_name, list) or
- *       isinstance(param_name, tuple):
- *     param_name_tuple = to_matrix(param_name)
- *     if param_name_tuple[0].shape[0] == 1 or
- *         param_name_tuple[0].shape[1] == 1:
- *       param_name = param_name_tuple[0].ravel()
- *       param_name_mat = arma_numpy.numpy_to_rol_s(param_name,
+ *   param_name_tuple = to_matrix(param_name)
+ *   if param_name_tuple[0].shape[0] == 1 or
+ *       param_name_tuple[0].shape[1] == 1:
+ *     param_name_reshape = param_name_tuple[0].ravel()
+ *     param_name_mat = arma_numpy.numpy_to_mat_s(param_name_reshape,
  *	     param_name_tuple[1])
- *     else:
- *       param_name_mat = arma_numpy.numpy_to_rol_s(param_name_tuple[0],
- *	     param_name_tuple[1])
- *     SetParam[mat](<const string> 'param_name', dereference(param_name_mat))
- *     CLI.SetPassed(<const string> 'param_name')
  *   else:
- *     raise TypeError("'param_name' must have type 
- *         '(np.ndarray,pd.DataFrame,pd.Series)'!")
+ *     param_name_mat = arma_numpy.numpy_to_mat_s(param_name_tuple[0],
+ *         param_name_tuple[1])
+ *   SetParam[mat](<const string> 'param_name', dereference(param_name_mat))
+ *   CLI.SetPassed(<const string> 'param_name')
+ *
  */
 template<typename T>
 void PrintInputProcessing(
@@ -278,143 +278,107 @@ void PrintInputProcessing(
     if (T::is_row || T::is_col)
     {
       std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
-      std::cout << prefix << "  if isinstance(" << d.name << ", np.ndarray) or"
-          << " isinstance(" << d.name << ", pd.DataFrame) or "
-          << "isinstance(" << d.name << ", pd.Series) or "
-          << "isinstance(" << d.name << ", tuple) or "
-          << "isinstance(" << d.name << ", list):"<< std::endl;
-      std::cout << prefix << "    " << d.name << "_tuple = to_matrix("
+      std::cout << prefix << "  " << d.name << "_tuple = to_matrix("
           << d.name << ", dtype=" << GetNumpyType<typename T::elem_type>()
           << ", copy=CLI.HasParam('copy_all_inputs'))" << std::endl;
-      std::cout << prefix << "    " << "if len(" << d.name << "_tuple[0].shape"
+      std::cout << prefix << "  " << "if len(" << d.name << "_tuple[0].shape"
           << ") > 1:" << std::endl;
-      std::cout << prefix << "    " << prefix << "if " << d.name << "_tuple[0]"
+      std::cout << prefix << "  " << prefix << "if " << d.name << "_tuple[0]"
           << ".shape[0] == 1 or " << d.name << "_tuple[0].shape[1] == 1:"
           << std::endl;
-      std::cout << prefix << "    " << prefix << "  " << d.name
+      std::cout << prefix << "  " << prefix << "  " << d.name
           << "_reshape = " << d.name << "_tuple[0].ravel()" << std::endl;
-      std::cout << prefix << "      " << d.name << "_mat = arma_numpy.numpy_to_"
+      std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
           << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
           << "_reshape, " << d.name << "_tuple[1])" << std::endl;
-      std::cout << prefix << "    " << "else:" << std::endl;
-      std::cout << prefix << "      " << d.name << "_mat = arma_numpy.numpy_to_"
+      std::cout << prefix << "  " << "else:" << std::endl;
+      std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
           << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
           << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
-      std::cout << prefix << "    SetParam[" << GetCythonType<T>(d)
+      std::cout << prefix << "  SetParam[" << GetCythonType<T>(d)
           << "](<const string> '" << d.name << "', dereference("
           << d.name << "_mat))"<< std::endl;
-      std::cout << prefix << "    CLI.SetPassed(<const string> '" << d.name
+      std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name
           << "')" << std::endl;
-      std::cout << prefix << "    del " << d.name << "_mat" << std::endl;
-      std::cout << "    else:" << std::endl;
-      std::cout << "      raise TypeError(" <<"\"'"<< d.name <<"' must have"
-          << " type \'(np.ndarray,pd.DataFrame,pd.Series,list,tuple)'!\")"
-          << std::endl;
+      std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
     }
     else
     {
       std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
-      std::cout << prefix << "  if isinstance(" << d.name << ", np.ndarray) or"
-          << " isinstance(" << d.name << ", pd.DataFrame) or "
-          << "isinstance(" << d.name << ", pd.Series) or "
-          << "isinstance(" << d.name << ", tuple) or "
-          << "isinstance(" << d.name << ", list):"<< std::endl;
-      std::cout << prefix << "    " << d.name << "_tuple = to_matrix("
+      std::cout << prefix << "  " << d.name << "_tuple = to_matrix("
           << d.name << ", dtype=" << GetNumpyType<typename T::elem_type>()
           << ", copy=CLI.HasParam('copy_all_inputs'))" << std::endl;
-      std::cout << prefix << "    " << "if len(" << d.name << "_tuple[0].shape"
+      std::cout << prefix << "  " << "if len(" << d.name << "_tuple[0].shape"
           << ") < 2:" << std::endl;
-      std::cout << prefix << "    " << prefix << d.name
+      std::cout << prefix << "  " << prefix << d.name
           << "_reshape = np.reshape(("<< d.name << "_tuple[0]), (" << d.name
           << "_tuple[0].shape[0] , 1))" << std::endl;
-      std::cout << prefix << "      " << d.name << "_mat = arma_numpy.numpy_to_"
+      std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
           << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
           << "_reshape, " << d.name << "_tuple[1])" << std::endl;
-      std::cout << prefix << "    " << "else:" << std::endl;
-      std::cout << prefix << "      " << d.name << "_mat = arma_numpy.numpy_to_"
+      std::cout << prefix << "  " << "else:" << std::endl;
+      std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
           << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
           << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
-      std::cout << prefix << "    SetParam[" << GetCythonType<T>(d)
+      std::cout << prefix << "  SetParam[" << GetCythonType<T>(d)
           << "](<const string> '" << d.name << "', dereference("
           << d.name << "_mat))"<< std::endl;
-      std::cout << prefix << "    CLI.SetPassed(<const string> '" << d.name
+      std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name
           << "')" << std::endl;
-      std::cout << prefix << "    del " << d.name << "_mat" << std::endl;
-      std::cout << "    else:" << std::endl;
-      std::cout << "      raise TypeError(" <<"\"'"<< d.name <<"' must have"
-          << " type \'(np.ndarray,pd.DataFrame,pd.Series,list,tuple)'!\")"
-          << std::endl;
+      std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
     }
   }
   else
   {
     if (T::is_row || T::is_col)
     {
-      std::cout << prefix << "  if isinstance(" << d.name << ", np.ndarray) or"
-          << " isinstance(" << d.name << ", pd.DataFrame) or "
-                    << "isinstance(" << d.name << ", pd.Series) or "
-          << "isinstance(" << d.name << ", tuple) or "
-          << "isinstance(" << d.name << ", list):"<< std::endl;
-      std::cout << prefix << "    " << d.name << "_tuple = to_matrix("
+      std::cout << prefix << "  " << d.name << "_tuple = to_matrix("
           << d.name << ", dtype=" << GetNumpyType<typename T::elem_type>()
           << ", copy=CLI.HasParam('copy_all_inputs'))" << std::endl;
-      std::cout << prefix << "    " << "if len(" << d.name << "_tuple[0].shape"
+      std::cout << prefix << "  " << "if len(" << d.name << "_tuple[0].shape"
           << ") > 1:" << std::endl;
-      std::cout << prefix << "    " << prefix << "if " << d.name << "_tuple[0]"
+      std::cout << prefix << "  " << prefix << "if " << d.name << "_tuple[0]"
           << ".shape[0] == 1 or " << d.name << "_tuple[0].shape[1] == 1:"
           << std::endl;
-      std::cout << prefix << "    " << prefix << "  " << d.name
+      std::cout << prefix << "  " << prefix << "  " << d.name
           << "_reshape = " << d.name << "_tuple[0].ravel()" << std::endl;
-      std::cout << prefix << "      " << d.name << "_mat = arma_numpy.numpy_to_"
+      std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
           << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
           << "_reshape, " << d.name << "_tuple[1])" << std::endl;
-      std::cout << prefix << "    " << "else:" << std::endl;
-      std::cout << prefix << "      " << d.name << "_mat = arma_numpy.numpy_to_"
+      std::cout << prefix << "  " << "else:" << std::endl;
+      std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
           << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
           << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
-      std::cout << prefix << "    SetParam[" << GetCythonType<T>(d)
+      std::cout << prefix << "  SetParam[" << GetCythonType<T>(d)
           << "](<const string> '" << d.name << "', dereference("
           << d.name << "_mat))"<< std::endl;
-      std::cout << prefix << "    CLI.SetPassed(<const string> '" << d.name
+      std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name
           << "')" << std::endl;
-      std::cout << prefix << "    del " << d.name << "_mat" << std::endl;
-      std::cout << "    else:" << std::endl;
-      std::cout << "      raise TypeError(" <<"\"'"<< d.name <<"' must have"
-          << " type \'(np.ndarray,pd.DataFrame,pd.Series,list,tuple)'!\")"
-          << std::endl;
+      std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
     }
     else
     {
-      std::cout << prefix << "  if isinstance(" << d.name << ", np.ndarray) or"
-          << " isinstance(" << d.name << ", pd.DataFrame) or "
-          << "isinstance(" << d.name << ", pd.Series) or "
-          << "isinstance(" << d.name << ", tuple) or "
-          << "isinstance(" << d.name << ", list):"<< std::endl;
-      std::cout << prefix << "    " << d.name << "_tuple = to_matrix("
+      std::cout << prefix << "  " << d.name << "_tuple = to_matrix("
           << d.name << ", dtype=" << GetNumpyType<typename T::elem_type>()
           << ", copy=CLI.HasParam('copy_all_inputs'))" << std::endl;
-      std::cout << prefix << "    " << "if len(" << d.name << "_tuple[0].shape"
+      std::cout << prefix << "  " << "if len(" << d.name << "_tuple[0].shape"
           << ") < 2:" << std::endl;
-      std::cout << prefix << "    " << prefix << d.name
+      std::cout << prefix << "  " << prefix << d.name
           << "_reshape = np.reshape(("<< d.name << "_tuple[0]), (" << d.name
           << "_tuple[0].shape[0] , 1))" << std::endl;
-      std::cout << prefix << "      " << d.name << "_mat = arma_numpy.numpy_to_"
+      std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
           << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
           << "_reshape, " << d.name << "_tuple[1])" << std::endl;
-      std::cout << prefix << "    " << "else:" << std::endl;
-      std::cout << prefix << "      " << d.name << "_mat = arma_numpy.numpy_to_"
+      std::cout << prefix << "  " << "else:" << std::endl;
+      std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
           << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
           << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
-      std::cout << prefix << "    SetParam[" << GetCythonType<T>(d)
+      std::cout << prefix << "  SetParam[" << GetCythonType<T>(d)
           << "](<const string> '" << d.name << "', dereference("
           << d.name << "_mat))"<< std::endl;
-      std::cout << prefix << "    CLI.SetPassed(<const string> '" << d.name
+      std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name
           << "')" << std::endl;
-      std::cout << prefix << "    del " << d.name << "_mat" << std::endl;
-      std::cout << "    else:" << std::endl;
-      std::cout << "      raise TypeError(" <<"\"'"<< d.name <<"' must have"
-          << " type \'(np.ndarray,pd.DataFrame,pd.Series,list,tuple)'!\")"
-          << std::endl;
+      std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
     }
   }
   std::cout << std::endl;
@@ -509,17 +473,11 @@ void PrintInputProcessing(
   /** We want to generate code like the following:
    *
    * if param_name is not None:
-   *   if isinstance(param_name, np.ndarray) or isinstance(param_name,
-   *       pd.DataFrame) or isinstance(param_name, pd.Series) or
-   *       isinstance(param_name, list) or isinstance(param_name, tuple):
-   *    param_name_tuple = to_matrix_with_info(param_name)
-   *    param_name_mat = arma_numpy.numpy_to_matrix_d(param_name_tuple[0])
-   *    SetParamWithInfo[mat](<const string> 'param_name',
-   *        dereference(param_name_mat), &param_name_tuple[1][0])
-   *    CLI.SetPassed(<const string> 'param_name')
-   *   else:
-   *     raise TypeError("'param_name' must have type 
-   *         '(np.ndarray,pd.DataFrame,pd.Series)'!")
+   *  param_name_tuple = to_matrix_with_info(param_name)
+   *  param_name_mat = arma_numpy.numpy_to_matrix_d(param_name_tuple[0])
+   *  SetParamWithInfo[mat](<const string> 'param_name',
+   *      dereference(param_name_mat), &param_name_tuple[1][0])
+   *  CLI.SetPassed(<const string> 'param_name')
    */
   std::cout << prefix << "cdef np.ndarray " << d.name << "_dims" << std::endl;
   std::cout << prefix << "# Detect if the parameter was passed; set if so."
@@ -527,76 +485,58 @@ void PrintInputProcessing(
   if (!d.required)
   {
     std::cout << prefix << "if " << d.name << " is not None:" << std::endl;
-    std::cout << prefix << "  if isinstance(" << d.name << ", np.ndarray) or"
-        << " isinstance(" << d.name << ", pd.DataFrame) or "
-          << "isinstance(" << d.name << ", pd.Series) or "
-          << "isinstance(" << d.name << ", tuple) or "
-          << "isinstance(" << d.name << ", list):"<< std::endl;
-    std::cout << prefix << "    " << d.name << "_tuple = to_matrix_with_info("
+    std::cout << prefix << "  " << d.name << "_tuple = to_matrix_with_info("
         << d.name << ", dtype=np.double, copy=CLI.HasParam('copy_all_inputs'))"
         << std::endl;
-    std::cout << prefix << "    " << "if len(" << d.name << "_tuple[0].shape"
+    std::cout << prefix << "  " << "if len(" << d.name << "_tuple[0].shape"
         << ") < 2:" << std::endl;
-    std::cout << prefix << "    " << prefix << d.name
+    std::cout << prefix << "  " << prefix << d.name
         << "_reshape = np.reshape(("<< d.name << "_tuple[0]), (" << d.name
         << "_tuple[0].shape[0] , 1))" << std::endl;
-    std::cout << prefix << "      " << d.name << "_mat = arma_numpy.numpy_to_"
+    std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
         << "mat_d" << "(" << d.name
         << "_reshape, " << d.name << "_tuple[1])" << std::endl;
-    std::cout << prefix << "    " << "else:" << std::endl;
-    std::cout << prefix << "      " << d.name << "_mat = arma_numpy.numpy_to_"
+    std::cout << prefix << "  " << "else:" << std::endl;
+    std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
         << "mat_d" << "(" << d.name
         << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
 
-    std::cout << prefix << "    " << d.name << "_dims = " << d.name
+    std::cout << prefix << "  " << d.name << "_dims = " << d.name
         << "_tuple[2]" << std::endl;
-    std::cout << prefix << "    SetParamWithInfo[arma.Mat[double]](<const "
+    std::cout << prefix << "  SetParamWithInfo[arma.Mat[double]](<const "
         << "string> '" << d.name << "', dereference(" << d.name << "_mat), "
         << "<const cbool*> " << d.name << "_dims.data)" << std::endl;
-    std::cout << prefix << "    CLI.SetPassed(<const string> '" << d.name
+    std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
-    std::cout << prefix << "    del " << d.name << "_mat" << std::endl;
-    std::cout << "    else:" << std::endl;
-    std::cout << "      raise TypeError(" <<"\"'"<< d.name <<"' must have"
-        << " type \'(np.ndarray,pd.DataFrame,pd.Series,list,tuple)'!\")"
-        << std::endl;
+    std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
+
   }
   else
   {
-    std::cout << prefix << "  if isinstance(" << d.name << ", np.ndarray) or"
-        << " isinstance(" << d.name << ", pd.DataFrame) or "
-          << "isinstance(" << d.name << ", pd.Series) or "
-          << "isinstance(" << d.name << ", tuple) or "
-          << "isinstance(" << d.name << ", list):"<< std::endl;
+
     std::cout << prefix << "    " << d.name << "_tuple = to_matrix_with_info("
         << d.name << ", dtype=np.double, copy=CLI.HasParam('copy_all_inputs'))"
         << std::endl;
-
-
-    std::cout << prefix << "    " << "if len(" << d.name << "_tuple[0].shape"
+    std::cout << prefix << "  " << "if len(" << d.name << "_tuple[0].shape"
         << ") < 2:" << std::endl;
-    std::cout << prefix << "    " << prefix << d.name
+    std::cout << prefix << "  " << prefix << d.name
         << "_reshape = np.reshape(("<< d.name << "_tuple[0]), (" << d.name
         << "_tuple[0].shape[0] , 1))" << std::endl;
-    std::cout << prefix << "      " << d.name << "_mat = arma_numpy.numpy_to_"
+    std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
         << "mat_d" << "(" << d.name
         << "_reshape, " << d.name << "_tuple[1])" << std::endl;
-    std::cout << prefix << "    " << "else:" << std::endl;
-    std::cout << prefix << "      " << d.name << "_mat = arma_numpy.numpy_to_"
+    std::cout << prefix << "  " << "else:" << std::endl;
+    std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
         << "mat_d" << "(" << d.name
         << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
-    std::cout << prefix << "    " << d.name << "_dims = " << d.name
+    std::cout << prefix << "  " << d.name << "_dims = " << d.name
         << "_tuple[2]" << std::endl;
-    std::cout << prefix << "    SetParamWithInfo[arma.Mat[double]](<const "
+    std::cout << prefix << "  SetParamWithInfo[arma.Mat[double]](<const "
         << "string> '" << d.name << "', dereference(" << d.name << "_mat), "
         << "<const cbool*> " << d.name << "_dims.data)" << std::endl;
-    std::cout << prefix << "    CLI.SetPassed(<const string> '" << d.name
+    std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
-    std::cout << prefix << "    del " << d.name << "_mat" << std::endl;
-    std::cout << "    else:" << std::endl;
-    std::cout << "      raise TypeError(" <<"\"'"<< d.name <<"' must have"
-        << " type \'(np.ndarray,pd.DataFrame,pd.Series,list,tuple)'!\")"
-        << std::endl;
+    std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
   }
   std::cout << std::endl;
 }
