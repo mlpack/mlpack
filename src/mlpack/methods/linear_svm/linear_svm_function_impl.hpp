@@ -84,6 +84,9 @@ void LinearSVMFunction<MatType>::GetGroundTruthMatrix(
   arma::uvec rowPointers(labels.n_elem);
   arma::uvec colPointers(labels.n_elem + 1);
 
+  // colPointers[0] needs to be set to 0.
+  colPointers[0] = 0;
+
   // Row pointers are the labels of the examples, and column pointers are the
   // number of cumulative entries made uptil that column.
   for (size_t i = 0; i < labels.n_elem; i++)
