@@ -63,8 +63,10 @@ double GMM::LogProbability(const arma::vec& observation) const
   // multiply by the prior for each Gaussian too).
   double sum = -std::numeric_limits<double>::infinity();
   for (size_t i = 0; i < gaussians; i++)
+  {
     sum = math::LogAdd(sum, log(weights[i]) +
         dists[i].LogProbability(observation));
+  }
 
   return sum;
 }
@@ -72,7 +74,7 @@ double GMM::LogProbability(const arma::vec& observation) const
 /**
  * Return the log probability of the given observation GMM matrix.
  *
- * @param x Observation Matrix to compute log-probabilty.
+ * @param x Observation matrix to compute log-probabilty.
  * @param logProbs Stores the value of log-probability for x.
  */
 void GMM::LogProbability(const arma::mat& x, arma::vec& logProbs) const
@@ -104,7 +106,7 @@ double GMM::Probability(const arma::vec& observation) const
 /**
  * Return the probability of the given observation GMM matrix.
  *
- * @param x Observation Matrix to compute probabilty.
+ * @param x Observation matrix to compute probabilty.
  * @param probs Stores the value of probability for x.
  */
 void GMM::Probability(const arma::mat& x, arma::vec& probs) const
@@ -131,7 +133,7 @@ double GMM::LogProbability(const arma::vec& observation,
 /**
  * Return the probability of the given observation being from the given
  * component in the mixture.
- * @param observation Observation Matrix to compute probabilty.
+ * @param observation Observation matrix to compute probabilty.
  * @param component Calculate the probability for given component.
  */
 double GMM::Probability(const arma::vec& observation,
@@ -168,8 +170,8 @@ arma::vec GMM::Random() const
 /**
  * Classify the given observations as being from an individual component in this
  * GMM.
- * @param observation Observation Matrix for classification.
- * @param labels Save the lables for the given observation matrix..
+ * @param observation Observation matrix for classification.
+ * @param labels Save the lables for the given observation matrix.
  */
 void GMM::Classify(const arma::mat& observations,
                    arma::Row<size_t>& labels) const
@@ -198,7 +200,7 @@ void GMM::Classify(const arma::mat& observations,
 /**
  * Get the log-likelihood of this data's fit to the model.
  *
- * @param data Data matrix to compute LogLikelihood.
+ * @param data Data matrix to compute log-likelihood.
  * @parma distsL Vector of Gaussian distribution. 
  * @param weightsL Vector of weights for computing likelihoods.
  */

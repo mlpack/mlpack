@@ -167,9 +167,9 @@ class GMM
   double Probability(const arma::vec& observation) const;
 
   /**
-   * Return the probability of the given observation(x) matrix.
+   * Return the probability of the given observation (x) matrix.
    *
-   * @param x Observation Matrix.
+   * @param x Observation matrix.
    * @param probs Vector to store probability value of observation x.
    */
   void Probability(const arma::mat& x, arma::vec& probs) const;
@@ -185,7 +185,7 @@ class GMM
   /**
    * Return the log-probability of the given observation(x) matrix.
    *
-   * @param x Observation Matrix.
+   * @param x Observation matrix.
    * @param logProbs Vector to store log-probability value of observation x.
    */
   void LogProbability(const arma::mat& x, arma::vec& logProbs) const;
