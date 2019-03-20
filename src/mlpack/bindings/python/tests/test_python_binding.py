@@ -224,6 +224,43 @@ class TestPythonBinding(unittest.TestCase):
     for i in range(100):
       self.assertEqual(output['smatrix_out'][i,0], x.iloc[i] * 2)
 
+  def testPandasSeriesUMatrix(self):
+    """
+    Test that we can pass pandas.Series as input parameter. 
+    """
+    x = pd.Series(np.random.randint(0, high=500, size=100))
+    z = copy.copy(x)
+
+    output = test_python_binding(string_in='hello',
+                                 int_in=12,
+                                 double_in=4.0,
+                                 s_umatrix_in=z)
+
+    self.assertEqual(output['s_umatrix_out'].shape[0], 100)
+    self.assertEqual(output['s_umatrix_out'].dtype, np.long)
+
+    for i in range(100):
+      self.assertEqual(output['s_umatrix_out'][i,0], z.iloc[i] * 2)
+
+
+  def testPandasSeriesUMatrixForceCopy(self):
+    """
+    Test that we can pass pandas.Series as input parameter.
+    """
+    x = pd.Series(np.random.randint(0, high=500, size=100))
+
+    output = test_python_binding(string_in='hello',
+                                 int_in=12,
+                                 double_in=4.0,
+                                 s_umatrix_in=x,
+                                 copy_all_inputs=True)
+
+    self.assertEqual(output['s_umatrix_out'].shape[0], 100)
+    self.assertEqual(output['s_umatrix_out'].dtype, np.long)
+
+    for i in range(100):
+      self.assertEqual(output['s_umatrix_out'][i,0], x.iloc[i] * 2)
+
   def testPandasSeries(self):
     """
     Test a Pandas Series input paramter
@@ -546,7 +583,7 @@ class TestPythonBinding(unittest.TestCase):
     """
     Test a row vector input parameter.
     """
-    x = np.random.rand(50)
+    x = np.random.rand(100)
     z = copy.copy(x)
 
     output = test_python_binding(string_in='hello',
@@ -554,17 +591,17 @@ class TestPythonBinding(unittest.TestCase):
                                  double_in=4.0,
                                  row_in=z)
 
-    self.assertEqual(output['row_out'].shape[0], 50)
+    self.assertEqual(output['row_out'].shape[0], 100)
     self.assertEqual(output['row_out'].dtype, np.double)
 
-    for i in range(50):
+    for i in range(100):
       self.assertEqual(output['row_out'][i], x[i] * 2)
 
   def testRowForceCopy(self):
     """
     Test a row vector input parameter.
     """
-    x = np.random.rand(50)
+    x = np.random.rand(100)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -572,10 +609,10 @@ class TestPythonBinding(unittest.TestCase):
                                  row_in=x,
                                  copy_all_inputs=True)
 
-    self.assertEqual(output['row_out'].shape[0], 50)
+    self.assertEqual(output['row_out'].shape[0], 100)
     self.assertEqual(output['row_out'].dtype, np.double)
 
-    for i in range(50):
+    for i in range(100):
       self.assertEqual(output['row_out'][i], x[i] * 2)
 
   def testUrow(self):
@@ -677,13 +714,13 @@ class TestPythonBinding(unittest.TestCase):
 
     for j in range(10):
       self.assertEqual(output['matrix_and_info_out'][j, 4], z[cols[4]][j])
-      
+
   def testMatrixAndInfoPandasForceCopy(self):
     """
     Test that we can pass a matrix with some categorical features.
     """
-    x = pd.DataFrame(np.random.rand(9, 4), columns=list('abcd'))
-    x['e'] = pd.Series(['a', 'b', 'c', 'd', 'a', 'b', 'e', 'c', 'a' ],
+    x = pd.DataFrame(np.random.rand(10, 4), columns=list('abcd'))
+    x['e'] = pd.Series(['a', 'b', 'c', 'd', 'a', 'b', 'e', 'c', 'a','b'],
         dtype='category')
 
     output = test_python_binding(string_in='hello',
@@ -692,17 +729,18 @@ class TestPythonBinding(unittest.TestCase):
                                  matrix_and_info_in=x,
                                  copy_all_inputs=True)
 
-    self.assertEqual(output['matrix_and_info_out'].shape[0], 9)
+    self.assertEqual(output['matrix_and_info_out'].shape[0], 10)
     self.assertEqual(output['matrix_and_info_out'].shape[1], 5)
 
     cols = list('abcde')
 
     for i in range(4):
-      for j in range(9):
+      for j in range(10):
         self.assertEqual(output['matrix_and_info_out'][j, i], x[cols[i]][j] * 2)
 
-    for j in range(9):
+    for j in range(10):
       self.assertEqual(output['matrix_and_info_out'][j, 4], x[cols[4]][j])
+
   def testIntVector(self):
     """
     Test that we can pass a vector of ints and get back that same vector but
@@ -862,7 +900,7 @@ class TestPythonBinding(unittest.TestCase):
     """
     Test that we pass Two Dimension unsigned column vector input parameter.
     """
-    x = np.random.randint(0, high=500, size=(100,1))
+    x = np.random.randint(0, high=500, size=[100, 1])
     z = copy.copy(x)
 
     output = test_python_binding(string_in='hello',
@@ -879,7 +917,7 @@ class TestPythonBinding(unittest.TestCase):
     """
     Test that we pass Two Dimension unsigned column vector input parameter.
     """
-    x = np.random.randint(0, high=500, size=(100,1))
+    x = np.random.randint(0, high=500, size=[100, 1])
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -891,6 +929,78 @@ class TestPythonBinding(unittest.TestCase):
     self.assertEqual(output['ucol_out'].dtype, np.long)
     for i in range(100):
       self.assertEqual(output['ucol_out'][i], x[i] * 2)
+
+  def testTwoDimensionRow(self):
+    """
+    Test a two dimensional row vector input parameter.
+    """
+    x = np.random.rand(100,1)
+    z =copy.copy(x)
+
+    output = test_python_binding(string_in='hello',
+                                 int_in=12,
+                                 double_in=4.0,
+                                 row_in=x)
+
+    self.assertEqual(output['row_out'].shape[0], 100)
+    self.assertEqual(output['row_out'].dtype, np.double)
+
+    for i in range(100):
+      self.assertEqual(output['row_out'][i], z[i] * 2)
+
+  def testTwoDimensionRowForceCopy(self):
+    """
+    Test a two dimensional row vector input parameter.
+    """
+    x = np.random.rand(100,1)
+
+    output = test_python_binding(string_in='hello',
+                                 int_in=12,
+                                 double_in=4.0,
+                                 row_in=x,
+                                 copy_all_inputs=True)
+
+    self.assertEqual(output['row_out'].shape[0], 100)
+    self.assertEqual(output['row_out'].dtype, np.double)
+
+    for i in range(100):
+      self.assertEqual(output['row_out'][i], x[i] * 2)
+
+  def testTwoDimensionUrow(self):
+    """
+    Test an unsigned two dimensional row vector input parameter.
+    """
+    x = np.random.randint(0, high=500, size=[100, 1])
+    z = copy.copy(x)
+
+    output = test_python_binding(string_in='hello',
+                                 int_in=12,
+                                 double_in=4.0,
+                                 urow_in=z)
+
+    self.assertEqual(output['urow_out'].shape[0], 100)
+    self.assertEqual(output['urow_out'].dtype, np.long)
+
+    for i in range(100):
+      self.assertEqual(output['urow_out'][i], x[i] * 2)
+
+  def testTwoDimensionUrowForceCopy(self):
+    """
+    Test an unsigned two dimensional row vector input parameter.
+    """
+    x = np.random.randint(5, high=500, size=[1, 101])
+
+    output = test_python_binding(string_in='hello',
+                                 int_in=12,
+                                 double_in=4.0,
+                                 urow_in=x,
+                                 copy_all_inputs=True)
+
+    self.assertEqual(output['urow_out'].shape[0], 101)
+    self.assertEqual(output['urow_out'].dtype, np.long)
+
+    for i in range(101):
+      self.assertEqual(output['urow_out'][i], x[0][i] * 2)
 
   def testOneDimensionMatrixAndInfoPandas(self):
     """
@@ -913,7 +1023,6 @@ class TestPythonBinding(unittest.TestCase):
 
     for i in range(10):
         self.assertEqual(output['matrix_and_info_out'][i, 0], z[cols[0]][i]*2)
-
 
   def testOneDimensionMatrixAndInfoPandasForceCopy(self):
     """
