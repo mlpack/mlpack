@@ -65,7 +65,8 @@ class RectifierFunction
   template<typename eT>
   static void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
-    y = arma::max(arma::zeros<arma::Mat<eT> >(x.n_rows, x.n_cols), x);
+    y.zeros(x.n_rows, x.n_cols);
+    y = arma::max(y, x);
   }
 
   /**
@@ -77,9 +78,8 @@ class RectifierFunction
   template<typename eT>
   static void Fn(const arma::Cube<eT>& x, arma::Cube<eT>& y)
   {
-    y = x;
-    for (size_t s = 0; s < x.n_slices; s++)
-      Fn(x.slice(s), y.slice(s));
+    y.zeros(x.n_rows, x.n_cols, x.n_slices);
+    y = arma::max(y, x);
   }
 
   /**
@@ -90,7 +90,7 @@ class RectifierFunction
    */
   static double Deriv(const double y)
   {
-    return y > 0;
+    return (double)(y > 0);
   }
 
   /**
@@ -102,7 +102,7 @@ class RectifierFunction
   template<typename InputType, typename OutputType>
   static void Deriv(const InputType& y, OutputType& x)
   {
-    x = y;
+    x.set_size(arma::size(y));
 
     for (size_t i = 0; i < y.n_elem; i++)
       x(i) = Deriv(y(i));
