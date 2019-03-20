@@ -37,7 +37,7 @@ double MCC<PC>::Evaluate(MLAlgorithm& model,
   double mcc = (double) ((tp * tn) - (fp * fn)) /
                sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn));
 
-  return mcc; 
+  return mcc;
 }
 
 } // namespace cv
