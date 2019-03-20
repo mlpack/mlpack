@@ -1804,6 +1804,18 @@ BOOST_AUTO_TEST_CASE(BadDatasetInfoARFFTest)
 }
 
 /**
+ * If file is not found, it should throw.
+ */
+BOOST_AUTO_TEST_CASE(NonExistentFileARFFTest)
+{
+  arma::mat dataset;
+  DatasetInfo info;
+
+  BOOST_REQUIRE_THROW(data::LoadARFF("nonexistentfile.arff", dataset, info),
+      std::runtime_error);
+}
+
+/**
  * A test to check whether the arff loader is case insensitive to declarations:
  * @relation, @attribute, @data.
  */
