@@ -87,8 +87,10 @@ void GMM::LogProbability(const arma::mat& x, arma::vec& logProbs) const
   {
     sum = -std::numeric_limits<double>::infinity();
     for (size_t i = 0; i < gaussians; i++)
+    {
       sum = math::LogAdd(sum, log(weights[i]) +
           dists[i].LogProbability(x.unsafe_col(j)));
+    }
     logProbs(j) = sum;
   }
 }
