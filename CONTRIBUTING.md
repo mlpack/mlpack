@@ -1,8 +1,9 @@
 # Contributing to mlpack
 
-Anyone is welcome to contribute to mlpack and join the community.  If you would
-like to make improvements to the library or have found a bug that you know how
-to fix, please submit a pull request!
+mlpack is a community-led project; that means that anyone is welcome to
+contribute to mlpack and join the community!  If you would like to make
+improvements to the library, add new features that are useful to you and others,
+or have found a bug that you know how to fix, please submit a pull request!
 
 If you would like to learn more about how to get started contributing, see
 [Getting Involved](http://www.mlpack.org/involved.html), and if you are

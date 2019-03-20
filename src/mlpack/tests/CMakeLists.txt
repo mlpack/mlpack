@@ -123,6 +123,7 @@ add_executable(mlpack_test
   main_tests/kde_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/logistic_regression_test.cpp
+  main_tests/local_coordinate_coding_test.cpp
   main_tests/lmnn_test.cpp
   main_tests/lsh_test.cpp
   main_tests/mean_shift_test.cpp
