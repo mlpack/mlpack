@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(confusionmatrix)
   arma::Row<size_t> predictedLabels("0 0 0 0 0  1 1 1 1 1");
   // confusion matrix.
   arma::Mat<int> output;
-  data::confusionmatrix(predictedLabels,labels,output,2);
+  data::confusionmatrix(predictedLabels, labels, output, 2);
   BOOST_REQUIRE_EQUAL(output(0, 0), 4);
   BOOST_REQUIRE_EQUAL(output(0, 1), 1);
   BOOST_REQUIRE_EQUAL(output(1, 0), 2);
