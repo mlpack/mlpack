@@ -31,7 +31,7 @@
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 #include <mlpack/methods/naive_bayes/naive_bayes_classifier.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-
+#include <mlpack/core/data/cm.hpp>
 #include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -43,6 +43,7 @@ using namespace mlpack::cv;
 using namespace mlpack::naive_bayes;
 using namespace mlpack::regression;
 using namespace mlpack::tree;
+using namespace mlpack::data;
 
 BOOST_AUTO_TEST_SUITE(CVTest);
 
@@ -71,6 +72,25 @@ BOOST_AUTO_TEST_CASE(BinaryClassificationMetricsTest)
 
   double f1 = 2 * 0.6 * 0.75 / (0.6 + 0.75);
   BOOST_REQUIRE_CLOSE(F1<Binary>::Evaluate(lr, data, labels), f1, 1e-5);
+}
+
+/**
+ * Test for confusion matrix.
+ */
+BOOST_AUTO_TEST_CASE(confusionmatrix)
+{
+  // Labels that will be considered as "ground truth".
+  arma::Row<size_t> labels("0 0 1 0 0  1 0 1 0 1");
+
+  // predicted labels.
+  arma::Row<size_t> predictedLabels("0 0 0 0 0  1 1 1 1 1");
+  // confusion matrix.
+  arma::Mat<int> output;
+  data::confusionmatrix(predictedLabels,labels,output,2);
+  BOOST_REQUIRE_EQUAL(output(0, 0), 4);
+  BOOST_REQUIRE_EQUAL(output(0, 1), 1);
+  BOOST_REQUIRE_EQUAL(output(1, 0), 2);
+  BOOST_REQUIRE_EQUAL(output(1, 1), 3);
 }
 
 /**

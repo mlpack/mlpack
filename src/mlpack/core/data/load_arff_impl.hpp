@@ -29,12 +29,15 @@ void LoadARFF(const std::string& filename,
   // First, open the file.
   std::ifstream ifs;
   ifs.open(filename, std::ios::in | std::ios::binary);
-
+  if (!ifs.is_open())
+  {
+    Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
+  }
   std::string line;
   size_t dimensionality = 0;
   std::vector<bool> types;
   size_t headerLines = 0;
-  while (!ifs.eof())
+  while (ifs.good())
   {
     // Read the next line, then strip whitespace from either side.
     std::getline(ifs, line, '\n');
@@ -128,7 +131,7 @@ void LoadARFF(const std::string& filename,
   // We need to find out how many lines of data are in the file.
   std::streampos pos = ifs.tellg();
   size_t row = 0;
-  while (!ifs.eof())
+  while (ifs.good())
   {
     std::getline(ifs, line, '\n');
     ++row;
@@ -145,7 +148,7 @@ void LoadARFF(const std::string& filename,
 
   // Now we are looking at the @data section.
   row = 0;
-  while (!ifs.eof())
+  while (ifs.good())
   {
     std::getline(ifs, line, '\n');
     boost::trim(line);
