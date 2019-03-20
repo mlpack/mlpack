@@ -39,10 +39,10 @@ namespace data {
 template<typename eT, typename RowType>
 void confusionmatrix(const RowType& pred,
                      const RowType& actual,
-                     arma::Mat<eT>& output,const size_t& countlabels)
+                     arma::Mat<eT>& output, const size_t& countlabels)
 {
   // Loop over the input labels and predicted and just add the count
-  output.set_size(countlabels,countlabels);
+  output.set_size(countlabels, countlabels);
   output.fill(0);
   for (size_t i = 0; i < pred.n_elem; ++i)
   {
