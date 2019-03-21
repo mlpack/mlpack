@@ -39,9 +39,9 @@ double Specificity<AS, PC>::Evaluate(MLAlgorithm& model,
   model.Classify(data, predictedLabels);
 
   size_t tn = arma::sum((labels != PC) % (predictedLabels != PC));
-  size_t numberOfNegativeClassInstances = arma::sum(labels != PC);
+  size_t negativeLabels = arma::sum(labels != PC);
 
-  return double(tn) / numberOfNegativeClassInstances;
+  return double(tn) / negativeLabels;
 }
 
 template<AverageStrategy AS, size_t PC /* PositiveClass */>
@@ -53,8 +53,20 @@ double Specificity<AS, PC>::Evaluate(MLAlgorithm& model,
 {
   AssertSizes(data, labels, "Specificity<Micro>::Evaluate()");
 
-  // Microaveraged specificty turns out to be just accuracy.
-  return Accuracy::Evaluate(model, data, labels);
+  arma::Row<size_t> predictedLabels;
+  model.Classify(data, predictedLabels);
+
+  size_t numClasses = arma::max(labels) + 1;
+
+  arma::vec tn = arma::vec(numClasses);
+  arma::vec negativeLabels = arma::vec(numClasses);
+  for (size_t c = 0; c < numClasses; ++c)
+  {
+    tn(c) = arma::sum((labels != c) % (predictedLabels != c));
+    negativeLabels(c) = arma::sum(labels != c);
+  }
+
+  return double(arma::sum(tn)) / arma::sum(negativeLabels);
 }
 
 template<AverageStrategy AS, size_t PC /* PositiveClass */>
@@ -75,8 +87,8 @@ double Specificity<AS, PC>::Evaluate(MLAlgorithm& model,
   for (size_t c = 0; c < numClasses; ++c)
   {
     size_t tn = arma::sum((labels != c) % (predictedLabels != c));
-    size_t numberOfNegativeClassInstances = arma::sum(labels != c);
-    specificity(c) = double(tn) / numberOfNegativeClassInstances;
+    size_t negativeLabels = arma::sum(labels != c);
+    specificity(c) = double(tn) / negativeLabels;
   }
 
   return arma::mean(specificity);
