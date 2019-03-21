@@ -60,7 +60,7 @@ The directories and paths used in this tutorial are just for reference purposes.
 and make sure you can use it from the Command Prompt (may need to add to the PATH)
 
 - Download the latest mlpack release from here:
-<a href="http://www.mlpack.org/download.html">mlpack</a>
+<a href="http://www.mlpack.org/">mlpack website</a>
 
 @section build_windows_instructions Windows build instructions
 
