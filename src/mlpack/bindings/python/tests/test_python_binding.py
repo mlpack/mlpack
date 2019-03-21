@@ -1071,7 +1071,7 @@ class TestPythonBinding(unittest.TestCase):
                                                    int_in=12,
                                                    double_in=4.0,
                                                    flag1=True,
-                                                   matrix_in= 'bad'))
+                                                   matrix_in= 10.0))
 
     self.assertRaises(TypeError, 
                       lambda : test_python_binding(string_in='hello',
@@ -1099,7 +1099,7 @@ class TestPythonBinding(unittest.TestCase):
                                                    int_in=12,
                                                    double_in=4.0,
                                                    flag1=True,
-                                                   col_in = 'bad'))
+                                                   col_in = 10))
 
     self.assertRaises(TypeError,
                       lambda : test_python_binding(string_in='hello',
@@ -1120,7 +1120,7 @@ class TestPythonBinding(unittest.TestCase):
                                                    int_in=12,
                                                    double_in=4.0,
                                                    flag1=True,
-                                                   urow_in = 'bad'))
+                                                   urow_in = 10.0))
 
     self.assertRaises(TypeError,
                       lambda : test_python_binding(string_in='hello',
@@ -1134,7 +1134,7 @@ class TestPythonBinding(unittest.TestCase):
                                                    int_in=12,
                                                    double_in=4.0,
                                                    flag1=True,
-                                                   umatrix_in = 'bad'))
+                                                   umatrix_in = 10.0))
 
     self.assertRaises(TypeError, 
                       lambda : test_python_binding(string_in='hello',
