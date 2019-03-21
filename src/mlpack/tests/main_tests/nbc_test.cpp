@@ -394,7 +394,7 @@ BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest)
 // output. This test case will be removed in mlpack 4
 // when the deprecated parameter: 'output_probabilities' is removed
 BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest2)
-{   
+{
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
     BOOST_FAIL("Cannot load train dataset trainSet.csv!");
