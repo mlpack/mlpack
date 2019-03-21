@@ -53,8 +53,8 @@ double Specificity<AS, PC>::Evaluate(MLAlgorithm& model,
 {
   AssertSizes(data, labels, "Specificity<Micro>::Evaluate()");
 
-  // Microaveraged specificty turns out to be just 1-accuracy.
-  return 1 - Accuracy::Evaluate(model, data, labels);
+  // Microaveraged specificty turns out to be just accuracy.
+  return Accuracy::Evaluate(model, data, labels);
 }
 
 template<AverageStrategy AS, size_t PC /* PositiveClass */>
