@@ -35,7 +35,7 @@ double RSquared::Evaluate(MLAlgorithm& model,
   // calculate SST
   double SST = arma::accu(arma::square(responses - mean_responses));
 
-  return 1 - (SSE / SST);
+  return (SST == 0) ? 1 : 1 - (SSE / SST);
 }
 
 } // namespace cv
