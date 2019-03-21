@@ -41,38 +41,31 @@ def to_matrix(x, dtype=np.double, copy=False):
   """
   Given some array-like X, return a numpy ndarray of the same type.
   """
-  # Check the Type of input X
-  if isinstance(x, np.ndarray) or isinstance(x, pd.DataFrame) or isinstance(x,
-      pd.Series) or isinstance(x, list) or isinstance(x, tuple):
+  # Make sure it's array-like at all.
+  if not hasattr(x, '__len__') and \
+      not hasattr(x, 'shape') and \
+      not hasattr(x, '__array__'):
+    raise TypeError("given argument is not array-like")
 
-    # Make sure it's array-like at all.
-    if not hasattr(x, '__len__') and \
-        not hasattr(x, 'shape') and \
-        not hasattr(x, '__array__'):
-      raise TypeError("given argument is not array-like")
-
-    if (isinstance(x, np.ndarray) and x.dtype == dtype and x.flags.c_contiguous):
-      if copy: # Copy the matrix if required.
-        return x.copy("C"), True
-      else:
-        return x, False
-    elif (isinstance(x, np.ndarray) and x.dtype == dtype and x.flags.f_contiguous):
-      if copy: # Copy the matrix if required.
-        return np.ndarray(x.shape, buffer=x.flatten(), dtype=dtype, order='C').copy("C"), True
-      else:
-        return np.ndarray(x.shape, buffer=x.flatten(), dtype=dtype, order='C'), False
+  if (isinstance(x, np.ndarray) and x.dtype == dtype and x.flags.c_contiguous):
+    if copy: # Copy the matrix if required.
+      return x.copy("C"), True
     else:
-      if isinstance(x, pd.core.series.Series) or isinstance(x, pd.DataFrame):
-        y = x.values
-        if copy: # Copy the matrix if required.
-          return np.ndarray(y.shape, buffer=y.flatten(), dtype=dtype, order='C').copy("C"), True
-        else:
-          return np.ndarray(y.shape, buffer=y.flatten(), dtype=dtype, order='C'), False
-      else:
-        return np.array(x, copy=True, dtype=dtype, order='C'), True
+      return x, False
+  elif (isinstance(x, np.ndarray) and x.dtype == dtype and x.flags.f_contiguous):
+    if copy: # Copy the matrix if required.
+      return np.ndarray(x.shape, buffer=x.flatten(), dtype=dtype, order='C').copy("C"), True
+    else:
+      return np.ndarray(x.shape, buffer=x.flatten(), dtype=dtype, order='C'), False
   else:
-    raise TypeError("'x' must have type '(np.ndarray,pd.DataFrame,pd.Series,list,tuple)'!")
-
+    if isinstance(x, pd.core.series.Series) or isinstance(x, pd.DataFrame):
+      y = x.values
+      if copy: # Copy the matrix if required.
+        return np.ndarray(y.shape, buffer=y.flatten(), dtype=dtype, order='C').copy("C"), True
+      else:
+        return np.ndarray(y.shape, buffer=y.flatten(), dtype=dtype, order='C'), False
+    else:
+      return np.array(x, copy=True, dtype=dtype, order='C'), True
     
 
 def to_matrix_with_info(x, dtype, copy=False):
@@ -80,103 +73,97 @@ def to_matrix_with_info(x, dtype, copy=False):
   Given some array-like X (which should be either a numpy ndarray or a pandas
   DataFrame), convert it into a numpy matrix of the given dtype.
   """
-  # Check the Type of input X
-  if isinstance(x, np.ndarray) or isinstance(x, pd.DataFrame) or isinstance(x,
-      pd.Series) or isinstance(x, list) or isinstance(x, tuple):
+  # Make sure it's array-like at all.
+  if not hasattr(x, '__len__') and \
+      not hasattr(x, 'shape') and \
+      not hasattr(x, '__array__'):
+    raise TypeError("given argument is not array-like")
 
-    # Make sure it's array-like at all.
-    if not hasattr(x, '__len__') and \
-        not hasattr(x, 'shape') and \
-        not hasattr(x, '__array__'):
-      raise TypeError("given argument is not array-like")
+  if isinstance(x, np.ndarray):
+    # It is already an ndarray, so the vector of info is all 0s (all numeric).
+    d = np.zeros([x.shape[1]], dtype=np.bool)
 
-    if isinstance(x, np.ndarray):
-      # It is already an ndarray, so the vector of info is all 0s (all numeric).
-      d = np.zeros([x.shape[1]], dtype=np.bool)
+    # Copy the matrix if needed.
+    if copy:
+      return (x.copy(order="C"), True, d)
+    else:
+      return (x, False, d)
 
-      # Copy the matrix if needed.
-      if copy:
-        return (x.copy(order="C"), True, d)
-      else:
-        return (x, False, d)
+  if isinstance(x, pd.DataFrame) or isinstance(x, pd.Series):
+    # It's a pandas dataframe.  So we need to see if any of the dtypes are
+    # categorical or object, and if so, we need to convert them.  First see if
+    # we can take a shortcut without copying.
+    dtype_array = x.dtypes.values if len(x.dtypes) > 0 else [x.dtypes]
+    if not any(isinstance(t, CategoricalDtype)
+        for t in dtype_array) and \
+       not np.dtype(object) in dtype_array and \
+       not np.dtype(str) in dtype_array and \
+       not np.dtype(unicode) in dtype_array:
+        # We can just return the matrix as-is; it's all numeric.
+        t = to_matrix(x, dtype=dtype, copy=copy)
+        d = np.zeros([x.shape[1]], dtype=np.bool)
+        return (t[0], t[1], d)
 
-    if isinstance(x, pd.DataFrame) or isinstance(x, pd.Series):
-      # It's a pandas dataframe.  So we need to see if any of the dtypes are
-      # categorical or object, and if so, we need to convert them.  First see if
-      # we can take a shortcut without copying.
-      dtype_array = x.dtypes.values if len(x.dtypes) > 0 else [x.dtypes]
-      if not any(isinstance(t, CategoricalDtype)
-          for t in dtype_array) and \
-         not np.dtype(object) in dtype_array and \
-         not np.dtype(str) in dtype_array and \
-         not np.dtype(unicode) in dtype_array:
-          # We can just return the matrix as-is; it's all numeric.
-          t = to_matrix(x, dtype=dtype, copy=copy)
-          d = np.zeros([x.shape[1]], dtype=np.bool)
-          return (t[0], t[1], d)
+    if np.dtype(str) in dtype_array or np.dtype(unicode) in dtype_array:
+      raise TypeError('cannot convert matrices with string types')
 
-      if np.dtype(str) in dtype_array or np.dtype(unicode) in dtype_array:
-        raise TypeError('cannot convert matrices with string types')
+    if np.dtype(buffer) in dtype_array:
+      raise TypeError("'buffer' dtype not supported")
 
-      if np.dtype(buffer) in dtype_array:
-        raise TypeError("'buffer' dtype not supported")
+    # If we get to here, then we are going to need to do some type conversion,
+    # so go ahead and copy the dataframe and we'll work with y to make
+    # modifications.
+    y = x
+    d = np.zeros([x.shape[1]], dtype=np.bool)
 
-      # If we get to here, then we are going to need to do some type conversion,
-      # so go ahead and copy the dataframe and we'll work with y to make
-      # modifications.
-      y = x
-      d = np.zeros([x.shape[1]], dtype=np.bool)
+    # Convert any 'object', 'str', or 'unicode' types to categorical.
+    convertColumns = x.select_dtypes(['object'])
+    if not convertColumns.empty:
+      y[convertColumns] = y[convertColumns].astype('category')
 
-      # Convert any 'object', 'str', or 'unicode' types to categorical.
-      convertColumns = x.select_dtypes(['object'])
-      if not convertColumns.empty:
-        y[convertColumns] = y[convertColumns].astype('category')
+    catColumns = x.select_dtypes(['category']).columns
+    if len(catColumns) > 0:
+      # Do actual conversion to numeric types.  This converts to an int type.
+      y = x # Copy it... not great...
 
-      catColumns = x.select_dtypes(['category']).columns
-      if len(catColumns) > 0:
-        # Do actual conversion to numeric types.  This converts to an int type.
-        y = x # Copy it... not great...
+      # Note that this will map NaNs (missing values or unknown categories) to
+      # -1, so we will have to convert those back to NaN.
+      y[catColumns] = y[catColumns].apply(
+          lambda c: c.cat.codes).astype('double')
+      y[catColumns].replace(to_replace=[-1], value=float('NaN'))
 
-        # Note that this will map NaNs (missing values or unknown categories) to
-        # -1, so we will have to convert those back to NaN.
-        y[catColumns] = y[catColumns].apply(
-            lambda c: c.cat.codes).astype('double')
-        y[catColumns].replace(to_replace=[-1], value=float('NaN'))
+      # Construct dataset information: 1s represent categorical data, 0s
+      # represent otherwise.
+      catColumnIndices = [y.columns.get_loc(i) for i in catColumns]
+      d[catColumnIndices] = 1
 
-        # Construct dataset information: 1s represent categorical data, 0s
-        # represent otherwise.
-        catColumnIndices = [y.columns.get_loc(i) for i in catColumns]
-        d[catColumnIndices] = 1
+    # We'll have to force the second part of the tuple (whether or not to take
+    # ownership) to true.
+    t = to_matrix(y.apply(pd.to_numeric), dtype=dtype)
+    return (t[0], True, d)
 
-      # We'll have to force the second part of the tuple (whether or not to take
-      # ownership) to true.
-      t = to_matrix(y.apply(pd.to_numeric), dtype=dtype)
-      return (t[0], True, d)
+  if isinstance(x, list):
+    # Get the number of dimensions.
+    dims = 0
+    if isinstance(x[0], list):
+      dims = len(x[0])
+    else:
+      dims = len(x)
 
-    if isinstance(x, list):
-      # Get the number of dimensions.
-      dims = 0
-      if isinstance(x[0], list):
-        dims = len(x[0])
-      else:
-        dims = len(x)
+    d = np.zeros([dims])
+    out = np.array(x, dtype=dtype, copy=copy) # Try to avoid copy...
 
-      d = np.zeros([dims])
-      out = np.array(x, dtype=dtype, copy=copy) # Try to avoid copy...
+    # Since we don't have a great way to check if these are using the same
+    # memory location, we will probe manually (ugh).
+    oldval = x[0]
+    x[0] *= 2
+    alias = False
+    if out[0] == x[0]:
+      alias = True
+      x[0] = oldval
 
-      # Since we don't have a great way to check if these are using the same
-      # memory location, we will probe manually (ugh).
-      oldval = x[0]
-      x[0] *= 2
-      alias = False
-      if out[0] == x[0]:
-        alias = True
-        x[0] = oldval
+    return (out, not alias, d)
 
-      return (out, not alias, d)
-
-    # If we got here, the type is not known.
-    raise TypeError("given matrix is not a numpy ndarray or pandas DataFrame or "\
-        "Python array; not supported at this time");
-  else:
-    raise TypeError("'x' must have type '(np.ndarray,pd.DataFrame,pd.Series,list,tuple)'!")
+  # If we got here, the type is not known.
+  raise TypeError("given matrix is not a numpy ndarray or pandas DataFrame or "\
+      "Python array; not supported at this time");
