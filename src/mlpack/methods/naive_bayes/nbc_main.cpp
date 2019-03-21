@@ -129,7 +129,7 @@ PARAM_MATRIX_OUT("probabilities", "The matrix in which the predicted"
     " probability of labels for the test set will be written.", "p");
 // The parameter 'output_probs' is deprecated and can be removed in mlpack 4.0.
 PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability"
-    " of labels for the test set will be written.", "s");
+    " of labels for the test set will be written.", "");
 
 static void mlpackMain()
 {
@@ -207,17 +207,25 @@ static void mlpackMain()
       // Un-normalize labels to prepare output.
       Row<size_t> rawResults;
       data::RevertLabels(predictions, model->mappings, rawResults);
-      CLI::GetParam<Row<size_t>>("predictions") = rawResults;
+      
       if (CLI::HasParam("output"))
       {
         CLI::GetParam<Row<size_t>>("output") = std::move(rawResults);
       }
+      else
+      {
+        CLI::GetParam<Row<size_t>>("predictions") = rawResults;
+      }
     }
-    if (CLI::HasParam("output_probs") || CLI::HasParam("probabilities")){
-      CLI::GetParam<mat>("probabilities") = probabilities;
+    if (CLI::HasParam("output_probs") || CLI::HasParam("probabilities"))
+    {  
       if (CLI::HasParam("output_probs"))
       {
         CLI::GetParam<mat>("output_probs") = std::move(probabilities);
+      }
+      else
+      {
+        CLI::GetParam<mat>("probabilities") = probabilities;
       }
     }
   }

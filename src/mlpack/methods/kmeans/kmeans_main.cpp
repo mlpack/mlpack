@@ -167,6 +167,7 @@ static void mlpackMain()
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
+  
   // Now, start building the KMeans type that we'll be using.  Start with the
   // initial partition policy.  The call to FindEmptyClusterPolicy<> results in
   // a call to RunKMeans<> and the algorithm is completed.
