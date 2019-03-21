@@ -15,8 +15,12 @@
 #include <mlpack/core/cv/metrics/accuracy.hpp>
 #include <mlpack/core/cv/metrics/f1.hpp>
 #include <mlpack/core/cv/metrics/mse.hpp>
+#include <mlpack/core/cv/metrics/r_squared.hpp>
+#include <mlpack/core/cv/metrics/adjusted_r_squared.hpp>
 #include <mlpack/core/cv/metrics/precision.hpp>
 #include <mlpack/core/cv/metrics/recall.hpp>
+#include <mlpack/core/cv/metrics/specificity.hpp>
+#include <mlpack/core/cv/metrics/mcc.hpp>
 #include <mlpack/core/cv/simple_cv.hpp>
 #include <mlpack/core/cv/k_fold_cv.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
@@ -68,6 +72,10 @@ BOOST_AUTO_TEST_CASE(BinaryClassificationMetricsTest)
   BOOST_REQUIRE_CLOSE(Precision<Binary>::Evaluate(lr, data, labels), 0.6, 1e-5);
 
   BOOST_REQUIRE_CLOSE(Recall<Binary>::Evaluate(lr, data, labels), 0.75, 1e-5);
+  
+  BOOST_REQUIRE_CLOSE(Specificty<Binary>::Evaluate(lr, data, labels), 0.66, 1e-5);
+  
+  BOOST_REQUIRE_CLOSE(MCC::Evaluate(lr, data, labels), 0.408, 1e-5);
 
   double f1 = 2 * 0.6 * 0.75 / (0.6 + 0.75);
   BOOST_REQUIRE_CLOSE(F1<Binary>::Evaluate(lr, data, labels), f1, 1e-5);
@@ -102,25 +110,57 @@ BOOST_AUTO_TEST_CASE(MulticlassClassificationMetricsTest)
   double microaveragedRecall = double(1 + 1 + 3 + 4) / 12;
   BOOST_REQUIRE_CLOSE(Recall<Micro>::Evaluate(nb, data, labels),
       microaveragedRecall, 1e-5);
-
+  
+  double microaveragedSpecificity = double(9 + 8 + 8 + 8) / 36;
+  BOOST_REQUIRE_CLOSE(Specificity<Micro>::Evaluate(nb, data, labels),
+      microaveragedSpecificity, 1e-5);
+  
   double microaveragedF1 = 2 * microaveragedPrecision * microaveragedRecall /
     (microaveragedPrecision + microaveragedRecall);
   BOOST_REQUIRE_CLOSE(F1<Micro>::Evaluate(nb, data, labels),
       microaveragedF1, 1e-5);
 
-  double macroaveragedPrecision = (0.5 + 0.5 + 0.75 + 1.0) / 4;
+  double macroaveragedPrecision = (0.5 + 1.0 / 3 + 1.0 + 1.0) / 4;
   BOOST_REQUIRE_CLOSE(Precision<Macro>::Evaluate(nb, data, labels),
       macroaveragedPrecision, 1e-5);
 
-  double macroaveragedRecall = (0.5 + 1.0 / 3 + 1.0 + 1.0) / 4;
+  double macroaveragedRecall = (0.5 + 0.5 + 0.75 + 1.0) / 4;
   BOOST_REQUIRE_CLOSE(Recall<Macro>::Evaluate(nb, data, labels),
       macroaveragedRecall, 1e-5);
 
+  double macroaveragedSpecificity = (0.9 + 0.8 + 1.0 + 1.0) / 4;
+  BOOST_REQUIRE_CLOSE(Specificity<Macro>::Evaluate(nb, data, labels),
+      macroaveragedSpecificity, 1e-5);
+  
   double macroaveragedF1 = (2 * 0.5 * 0.5 / (0.5 + 0.5) +
       2 * 0.5 * (1.0 / 3) / (0.5 + (1.0 / 3)) + 2 * 0.75 * 1.0 / (0.75 + 1.0) +
       2 * 1.0 * 1.0 / (1.0 + 1.0)) / 4;
   BOOST_REQUIRE_CLOSE(F1<Macro>::Evaluate(nb, data, labels),
       macroaveragedF1, 1e-5);
+}
+
+/**
+ * Test metrics for regression
+ */
+BOOST_AUTO_TEST_CASE(RegressionMetricsTest)
+{
+  // Making two points that define the linear function f(x) = x - 1
+  arma::mat trainingData("0 1");
+  arma::rowvec trainingResponses("-1 0");
+
+  LinearRegression lr(trainingData, trainingResponses);
+
+  // Making three responses that differ from the correct ones by 0, 1, and 2
+  // respectively
+  arma::mat data("2 3 4");
+  arma::rowvec responses("1 3 5");
+
+  double SSE = (0 * 0) + (1 * 1) + (2 * 2);
+  double SST = (1 * 1) + (0 * 0) + (1 * 1);
+  double expectedR2 = 1 - (SSE / SST);
+
+  BOOST_REQUIRE_CLOSE(RSquared::Evaluate(lr, data, responses), expectedR2, 1e-5);
+  BOOST_REQUIRE_CLOSE(AdjustedRSquared::Evaluate(lr, data, responses), 1.0, 1e-5);
 }
 
 /**
