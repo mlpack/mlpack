@@ -29,13 +29,13 @@ double RSquared::Evaluate(MLAlgorithm& model,
 
   double mean_responses = arma::mean(responses);
 
-  // calculate SSR
-  double SSR = arma::accu(arma::square(predictedResponses - mean_responses));
+  // calculate SSE
+  double SSE = arma::accu(arma::square(responses - predictedResponses));
 
   // calculate SST
   double SST = arma::accu(arma::square(responses - mean_responses));
 
-  return SSR / SST;
+  return 1 - (SSE / SST);
 }
 
 } // namespace cv
