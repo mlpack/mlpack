@@ -93,18 +93,21 @@ class MountainCar
    * @param positionGoal Final target position.
    * @param velocityMin Minimum legal velocity.
    * @param velocityMax Maximum legal velocity.
+   * @param velocityGoal Final target velocity.
    */
   MountainCar(const double positionMin = -1.2,
               const double positionMax = 0.6,
               const double positionGoal = 0.5,
               const double velocityMin = -0.07,
               const double velocityMax = 0.07,
+              const double velocityGoal = 0.06,
               const double doneReward = 0) :
       positionMin(positionMin),
       positionMax(positionMax),
       positionGoal(positionGoal),
       velocityMin(velocityMin),
       velocityMax(velocityMax),
+      velocityGoal(velocityGoal),
       doneReward(doneReward)
   { /* Nothing to do here */ }
 
@@ -135,6 +138,9 @@ class MountainCar
 
     if (nextState.Position() == positionMin && nextState.Velocity() < 0)
       nextState.Velocity() = 0.0;
+
+    if (nextState.Velocity() == velocityMin && nextState.Position() < 0)
+      nextState.Position() = 0.0;
 
     bool done = IsTerminal(nextState);
     /**
@@ -185,7 +191,7 @@ class MountainCar
    */
   bool IsTerminal(const State& state) const
   {
-    return state.Position() >= positionGoal;
+    return state.Position() >= positionGoal && state.Velocity() >= velocityGoal;
   }
 
  private:
@@ -203,6 +209,9 @@ class MountainCar
 
   //! Locally-stored maximum legal velocity.
   double velocityMax;
+
+  //! Locally-stored goal velocity.
+  double velocityGoal;
 
   //! Locally-stored done reward.
   double doneReward;
