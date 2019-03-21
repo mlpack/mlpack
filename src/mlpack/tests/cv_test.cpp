@@ -72,9 +72,10 @@ BOOST_AUTO_TEST_CASE(BinaryClassificationMetricsTest)
   BOOST_REQUIRE_CLOSE(Precision<Binary>::Evaluate(lr, data, labels), 0.6, 1e-5);
 
   BOOST_REQUIRE_CLOSE(Recall<Binary>::Evaluate(lr, data, labels), 0.75, 1e-5);
-  
-  BOOST_REQUIRE_CLOSE(Specificty<Binary>::Evaluate(lr, data, labels), 0.66, 1e-5);
-  
+
+  BOOST_REQUIRE_CLOSE(Specificty<Binary>::Evaluate(lr, data, labels),
+                      0.66, 1e-5);
+
   BOOST_REQUIRE_CLOSE(MCC::Evaluate(lr, data, labels), 0.408, 1e-5);
 
   double f1 = 2 * 0.6 * 0.75 / (0.6 + 0.75);
@@ -110,11 +111,11 @@ BOOST_AUTO_TEST_CASE(MulticlassClassificationMetricsTest)
   double microaveragedRecall = double(1 + 1 + 3 + 4) / 12;
   BOOST_REQUIRE_CLOSE(Recall<Micro>::Evaluate(nb, data, labels),
       microaveragedRecall, 1e-5);
-  
+
   double microaveragedSpecificity = double(9 + 8 + 8 + 8) / 36;
   BOOST_REQUIRE_CLOSE(Specificity<Micro>::Evaluate(nb, data, labels),
       microaveragedSpecificity, 1e-5);
-  
+
   double microaveragedF1 = 2 * microaveragedPrecision * microaveragedRecall /
     (microaveragedPrecision + microaveragedRecall);
   BOOST_REQUIRE_CLOSE(F1<Micro>::Evaluate(nb, data, labels),
@@ -131,7 +132,7 @@ BOOST_AUTO_TEST_CASE(MulticlassClassificationMetricsTest)
   double macroaveragedSpecificity = (0.9 + 0.8 + 1.0 + 1.0) / 4;
   BOOST_REQUIRE_CLOSE(Specificity<Macro>::Evaluate(nb, data, labels),
       macroaveragedSpecificity, 1e-5);
-  
+
   double macroaveragedF1 = (2 * 0.5 * 0.5 / (0.5 + 0.5) +
       2 * 0.5 * (1.0 / 3) / (0.5 + (1.0 / 3)) + 2 * 0.75 * 1.0 / (0.75 + 1.0) +
       2 * 1.0 * 1.0 / (1.0 + 1.0)) / 4;
@@ -159,8 +160,10 @@ BOOST_AUTO_TEST_CASE(RegressionMetricsTest)
   double SST = (1 * 1) + (0 * 0) + (1 * 1);
   double expectedR2 = 1 - (SSE / SST);
 
-  BOOST_REQUIRE_CLOSE(RSquared::Evaluate(lr, data, responses), expectedR2, 1e-5);
-  BOOST_REQUIRE_CLOSE(AdjustedRSquared::Evaluate(lr, data, responses), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(RSquared::Evaluate(lr, data, responses),
+                      expectedR2, 1e-5);
+  BOOST_REQUIRE_CLOSE(AdjustedRSquared::Evaluate(lr, data, responses),
+                      1.0, 1e-5);
 }
 
 /**
