@@ -21,7 +21,7 @@ namespace cv {
  * The R-Squared also known as coefficient of determination is a metric of
  * performance for regression algorithms. It is the proportion of the
  * variance in Y being explained by the variation in X, and is given
- * by the ratio SSR/SST, where SSR is sum of squares regression and
+ * by (1 - SSE/SST), where SSE is sum of square errors and
  * SST is total sum of squares.
  */
 class RSquared
