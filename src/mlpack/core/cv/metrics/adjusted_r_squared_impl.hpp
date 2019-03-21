@@ -23,6 +23,8 @@ double AdjustedRSquared::Evaluate(MLAlgorithm& model,
                      const ResponsesType& responses)
 {
   double r2 = RSquared::Evaluate(model, data, responses);
+  
+  if (r2 == 1) return 1.0;
 
   // Reminder: Armadillo stores the data transposed from how we think of it,
   //           that is, columns are actually rows (see: column major order).
