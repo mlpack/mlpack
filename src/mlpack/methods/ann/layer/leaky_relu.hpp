@@ -134,14 +134,14 @@ class LeakyReLU
   /**
    * Computes the first derivative of the LeakyReLU function.
    *
-   * @param x Input activations.
-   * @param y The resulting derivatives.
+   * @param y Input activations.
+   * @param x The resulting derivatives.
    */
 
   template<typename InputType, typename OutputType>
   void Deriv(const InputType& x, OutputType& y)
   {
-    y.set_size(arma::size(x));
+    y = x;
 
     for (size_t i = 0; i < x.n_elem; i++)
     {
