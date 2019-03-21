@@ -373,11 +373,11 @@ BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest)
 
   // Get the output from 'predictions' parameter
   const arma::Row<size_t> testY1 =
-      CLI::GetParam<arma::Row<size_t>>("predictions");
+      std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
   // Get output from 'output' parameter
   const arma::Row<size_t> testY2 =
-      CLI::GetParam<arma::Row<size_t>>("output");
+      CLI::GetParam<arma::Row<size_t>>("predictions");
 
   // Both solutions must be equal.
   BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
@@ -427,7 +427,7 @@ BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest2)
 
   // Get the output probabilites which is a deprecated parameter
   const arma::mat testY1 =
-      CLI::GetParam<arma::mat>("output_probs");
+      std::move(CLI::GetParam<arma::mat>("output_probs"));
 
   // Get probabilities from 'predictions' parameter
   const arma::mat testY2 =

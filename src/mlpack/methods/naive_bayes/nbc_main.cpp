@@ -208,25 +208,17 @@ static void mlpackMain()
       Row<size_t> rawResults;
       data::RevertLabels(predictions, model->mappings, rawResults);
 
-      if (CLI::HasParam("output"))
-      {
-        CLI::GetParam<Row<size_t>>("output") = std::move(rawResults);
-      }
-      else
-      {
+      if (CLI::HasParam("predictions"))
         CLI::GetParam<Row<size_t>>("predictions") = rawResults;
-      }
+      if (CLI::HasParam("output"))
+        CLI::GetParam<Row<size_t>>("output") = std::move(rawResults);
     }
     if (CLI::HasParam("output_probs") || CLI::HasParam("probabilities"))
     {
-      if (CLI::HasParam("output_probs"))
-      {
-        CLI::GetParam<mat>("output_probs") = std::move(probabilities);
-      }
-      else
-      {
+      if (CLI::HasParam("probabilities"))
         CLI::GetParam<mat>("probabilities") = probabilities;
-      }
+      if (CLI::HasParam("output_probs"))
+        CLI::GetParam<mat>("output_probs") = std::move(probabilities);
     }
   }
 
