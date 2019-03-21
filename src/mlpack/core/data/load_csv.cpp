@@ -24,36 +24,29 @@ LoadCSV::LoadCSV(const std::string& file) :
   // Attempt to open stream.
   CheckOpen();
 
+  //! Spirit rule for parsing quoted string.
+  boost::spirit::qi::rule<std::string::iterator, iter_type()> quotedRule;
+  // Match quoted strings as: "string" or 'string'
+  quotedRule = qi::raw[(qi::char_("'") >> *((qi::char_ - "'") |
+                               "'" >> qi::char_("'")) >> "'") |
+                       (qi::char_('"') >> *((qi::char_ - '"') |
+                               '"' >> qi::char_('"')) >> '"') ];
+
   // Set rules.
   if (extension == "csv")
   {
     // Match all characters that are not ',', '\r', or '\n'.
-    // Match quoted strings as: "string" or 'string'
-    stringRule = qi::raw[(qi::char_("'") >> *((qi::char_ - "'") |
-                                 "'" >> qi::char_("'")) >> "'") |
-                         (qi::char_('"') >> *((qi::char_ - '"') |
-                                 '"' >> qi::char_('"')) >> '"') |
-                         *~qi::char_(",\r\n")];
+    stringRule = quotedRule.copy() | qi::raw[*~qi::char_(",\r\n")];
   }
   else if (extension == "txt")
   {
     // Match all characters that are not ' ', ',', '\r', or '\n'.
-    // Match quoted strings as: "string" or 'string'
-    stringRule = qi::raw[(qi::char_("'") >> *((qi::char_ - "'") |
-                                 "'" >> qi::char_("'")) >> "'") |
-                         (qi::char_('"') >> *((qi::char_ - '"') |
-                                 '"' >> qi::char_('"')) >> '"') |
-                         *~qi::char_(" ,\r\n")];
+    stringRule = quotedRule.copy() | qi::raw[*~qi::char_(" ,\r\n")];
   }
-  else
+  else // TSV.
   {
     // Match all characters that are not '\t', '\r', or '\n'.
-    // Match quoted strings as: "string" or 'string'
-    stringRule = qi::raw[(qi::char_("'") >> *((qi::char_ - "'") |
-                                 "'" >> qi::char_("'")) >> "'") |
-                         (qi::char_('"') >> *((qi::char_ - '"') |
-                                 '"' >> qi::char_('"')) >> '"') |
-                         *~qi::char_("\t\r\n")];
+    stringRule = quotedRule.copy() | qi::raw[*~qi::char_("\t\r\n")];
   }
 
   if (extension == "csv")

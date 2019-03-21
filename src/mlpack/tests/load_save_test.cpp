@@ -1195,7 +1195,7 @@ BOOST_AUTO_TEST_CASE(NontransposedCSVDatasetInfoLoad)
 BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest00)
 {
   fstream f;
-  f.open("test00.csv", fstream::out);
+  f.open("test.csv", fstream::out);
   f << "1, 2, hello" << endl;
   f << "3, 4, goodbye" << endl;
   f << "5, 6, coffee" << endl;
@@ -1208,7 +1208,7 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest00)
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("test00.csv", matrix, info);
+  data::Load("test.csv", matrix, info);
 
   BOOST_REQUIRE_EQUAL(matrix.n_cols, 7);
   BOOST_REQUIRE_EQUAL(matrix.n_rows, 3);
@@ -1249,13 +1249,13 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest00)
   BOOST_REQUIRE_EQUAL(info.UnmapString(2, 2), "coffee");
   BOOST_REQUIRE_EQUAL(info.UnmapString(3, 2), "confusion");
 
-  remove("test00.csv");
+  remove("test.csv");
 }
 
 BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest01)
 {
   fstream f;
-  f.open("test01.csv", fstream::out);
+  f.open("test.csv", fstream::out);
   f << "1, 1, 1" << endl;
   f << "1, 1, 1" << endl;
   f << " , 1, 1" << endl;
@@ -1265,7 +1265,7 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest01)
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("test01.csv", matrix, info, true);
+  data::Load("test.csv", matrix, info, true);
 
   BOOST_REQUIRE_EQUAL(matrix.n_cols, 4);
   BOOST_REQUIRE_EQUAL(matrix.n_rows, 3);
@@ -1294,13 +1294,13 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest01)
   BOOST_REQUIRE_EQUAL(info.UnmapString(0, 0), "1");
   BOOST_REQUIRE_EQUAL(info.UnmapString(1, 0), "");
 
-  remove("test01.csv");
+  remove("test.csv");
 }
 
 BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest02)
 {
   fstream f;
-  f.open("test02.csv", fstream::out);
+  f.open("test.csv", fstream::out);
   f << "1, 1, 1" << endl;
   f << ", 1, 1" << endl;
   f << "1, 1, 1" << endl;
@@ -1310,7 +1310,7 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest02)
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("test02.csv", matrix, info, true);
+  data::Load("test.csv", matrix, info, true);
 
   BOOST_REQUIRE_EQUAL(matrix.n_cols, 4);
   BOOST_REQUIRE_EQUAL(matrix.n_rows, 3);
@@ -1338,13 +1338,13 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest02)
   BOOST_REQUIRE_EQUAL(info.UnmapString(0, 0), "1");
   BOOST_REQUIRE_EQUAL(info.UnmapString(1, 0), "");
 
-  remove("test02.csv");
+  remove("test.csv");
 }
 
 BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest03)
 {
   fstream f;
-  f.open("test03.csv", fstream::out);
+  f.open("test.csv", fstream::out);
   f << ", 1, 1" << endl;
   f << "1, 1, 1" << endl;
   f << "1, 1, 1" << endl;
@@ -1354,7 +1354,7 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest03)
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("test03.csv", matrix, info, true);
+  data::Load("test.csv", matrix, info, true);
 
   BOOST_REQUIRE_EQUAL(matrix.n_cols, 4);
   BOOST_REQUIRE_EQUAL(matrix.n_rows, 3);
@@ -1382,13 +1382,13 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest03)
   BOOST_REQUIRE_EQUAL(info.UnmapString(0, 0), "");
   BOOST_REQUIRE_EQUAL(info.UnmapString(1, 0), "1");
 
-  remove("test03.csv");
+  remove("test.csv");
 }
 
 BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest04)
 {
   fstream f;
-  f.open("test04.csv", fstream::out);
+  f.open("test.csv", fstream::out);
   f << "200-DM, 1, 1" << endl;
   f << "1, 1, 1" << endl;
   f << "1, 1, 1" << endl;
@@ -1398,7 +1398,7 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest04)
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("test04.csv", matrix, info, true);
+  data::Load("test.csv", matrix, info, true);
 
   BOOST_REQUIRE_EQUAL(matrix.n_cols, 4);
   BOOST_REQUIRE_EQUAL(matrix.n_rows, 3);
@@ -1426,7 +1426,7 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest04)
   BOOST_REQUIRE_EQUAL(info.UnmapString(0, 0), "200-DM");
   BOOST_REQUIRE_EQUAL(info.UnmapString(1, 0), "1");
 
-  remove("test04.csv");
+  remove("test.csv");
 }
 
 BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest00)
@@ -1524,7 +1524,7 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest00)
 BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest01)
 {
   fstream f;
-  f.open("test01.csv", fstream::out);
+  f.open("test.csv", fstream::out);
   f << "1, 1, 1" << endl;
   f << "1, 1, 1" << endl;
   f << " , 1, 1" << endl;
@@ -1534,7 +1534,7 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest01)
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("test01.csv", matrix, info, true, false); // No transpose.
+  data::Load("test.csv", matrix, info, true, false); // No transpose.
 
   BOOST_REQUIRE_EQUAL(matrix.n_cols, 3);
   BOOST_REQUIRE_EQUAL(matrix.n_rows, 4);
@@ -1563,13 +1563,13 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest01)
   BOOST_REQUIRE_EQUAL(info.UnmapString(0, 2), "");
   BOOST_REQUIRE_EQUAL(info.UnmapString(1, 2), "1");
 
-  remove("test01.csv");
+  remove("test.csv");
 }
 
 BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest02)
 {
   fstream f;
-  f.open("test02.csv", fstream::out);
+  f.open("test.csv", fstream::out);
   f << "1, 1, 1" << endl;
   f << ", 1, 1" << endl;
   f << "1, 1, 1" << endl;
@@ -1579,7 +1579,7 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest02)
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("test02.csv", matrix, info, true, false); // No transpose.
+  data::Load("test.csv", matrix, info, true, false); // No transpose.
 
   BOOST_REQUIRE_EQUAL(matrix.n_cols, 3);
   BOOST_REQUIRE_EQUAL(matrix.n_rows, 4);
@@ -1608,13 +1608,13 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest02)
   BOOST_REQUIRE_EQUAL(info.UnmapString(0, 1), "");
   BOOST_REQUIRE_EQUAL(info.UnmapString(1, 1), "1");
 
-  remove("test02.csv");
+  remove("test.csv");
 }
 
 BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest03)
 {
   fstream f;
-  f.open("test03.csv", fstream::out);
+  f.open("test.csv", fstream::out);
   f << ",  1, 1" << endl;
   f << "1, 1, 1" << endl;
   f << "1, 1, 1" << endl;
@@ -1624,7 +1624,7 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest03)
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("test03.csv", matrix, info, true, false); // No transpose.
+  data::Load("test.csv", matrix, info, true, false); // No transpose.
 
   BOOST_REQUIRE_EQUAL(matrix.n_cols, 3);
   BOOST_REQUIRE_EQUAL(matrix.n_rows, 4);
@@ -1653,13 +1653,13 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest03)
   BOOST_REQUIRE_EQUAL(info.UnmapString(0, 1), "");
   BOOST_REQUIRE_EQUAL(info.UnmapString(1, 1), "1");
 
-  remove("test03.csv");
+  remove("test.csv");
 }
 
 BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest04)
 {
     fstream f;
-    f.open("test04.csv", fstream::out);
+    f.open("test.csv", fstream::out);
     f << " 200-DM ,   1  , 1  " << endl;
     f << "  1 , 1  , 1  " << endl;
     f << "  1  ,   1  ,  1  " << endl;
@@ -1669,7 +1669,7 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest04)
     // Load the test CSV.
     arma::umat matrix;
     DatasetInfo info;
-    data::Load("test04.csv", matrix, info, true, false); // No transpose.
+    data::Load("test.csv", matrix, info, true, false); // No transpose.
 
     BOOST_REQUIRE_EQUAL(matrix.n_cols, 3);
     BOOST_REQUIRE_EQUAL(matrix.n_rows, 4);
@@ -1698,7 +1698,7 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest04)
     BOOST_REQUIRE_EQUAL(info.UnmapString(0, 1), "200-DM");
     BOOST_REQUIRE_EQUAL(info.UnmapString(1, 1), "1");
 
-    remove("test04.csv");
+    remove("test.csv");
 }
 
 /**
