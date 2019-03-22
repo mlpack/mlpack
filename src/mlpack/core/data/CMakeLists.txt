@@ -24,6 +24,7 @@ set(SOURCES
   split_data.hpp
   imputer.hpp
   binarize.hpp
+  dict_encoding.hpp
 )
 
 # add directory name to sources
