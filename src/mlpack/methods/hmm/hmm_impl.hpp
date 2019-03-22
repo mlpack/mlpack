@@ -143,6 +143,17 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
       // Add to estimate of initial probability for state j.
       for (size_t j = 0; j < transition.n_cols; ++j)
         newLogInitial[j] = math::LogAdd(newLogInitial[j], stateLogProb(j, 0));
+      
+      // Define a variable to store the value of log-probability for data.
+      arma::mat logProbs(dataSeq[seq].n_cols, transition.n_rows);
+      // Save the values of log-probability to logProbs.
+      for (size_t i = 0; i < transition.n_rows; i++)
+      {
+        // Define arma::vec to store log-probability for any dataSeq column.
+        arma::vec logProb;
+        emission[i].LogProbability(dataSeq[seq], logProb);
+        logProbs.unsafe_col(i) = logProb;
+      }
 
       // Now re-estimate the parameters.  This is the M-step.
       //   pi_i = sum_d ((1 / P(seq[d])) sum_t (f(i, 0) b(i, 0))
@@ -161,9 +172,8 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
             for (size_t i = 0; i < transition.n_rows; i++)
             {
               newLogTransition(i, j) = math::LogAdd(newLogTransition(i, j),
-                  forwardLog(j, t) + backwardLog(i, t + 1) +
-                  emission[i].LogProbability(dataSeq[seq].unsafe_col(t + 1)) -
-                  logScales[t + 1]);
+                  forwardLog(j, t) + backwardLog(i, t + 1) + logProbs(t + 1, i)
+                  - logScales[t + 1]);
             }
           }
 
@@ -465,6 +475,18 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
 
   // Store the best first state.
   arma::uword index;
+  // Define a variable to store the value of log-probability for dataSeq.
+  arma::mat logProbs(dataSeq.n_cols, transition.n_rows);
+
+  // Save the values of log-probability to logProbs.
+  for (size_t i = 0; i < transition.n_rows; i++)
+  {
+    // Define arma::vec to store log-probability for any dataSeq column.
+    arma::vec logProb;
+    emission[i].LogProbability(dataSeq, logProb);
+    logProbs.unsafe_col(i) = logProb;
+  }
+
   for (size_t t = 1; t < dataSeq.n_cols; t++)
   {
     // Assemble the state probability for this element.
@@ -473,8 +495,7 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
     for (size_t j = 0; j < transition.n_rows; j++)
     {
       arma::vec prob = logStateProb.col(t - 1) + logTrans.col(j);
-      logStateProb(j, t) = prob.max(index) +
-          emission[j].LogProbability(dataSeq.unsafe_col(t));
+      logStateProb(j, t) = prob.max(index) + logProbs(t, j);
       stateSeqBack(j, t) = index;
     }
   }
