@@ -65,7 +65,7 @@ class SwishFunction
     y.set_size(arma::size(x));
 
     for (size_t i = 0; i < x.n_elem; i++)
-      y(i) = Fn(x(i));
+      y(i) = x(i) / (1.0 + std::exp(-x(i)));
   }
 
   /**
