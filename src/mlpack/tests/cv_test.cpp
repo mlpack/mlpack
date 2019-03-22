@@ -92,6 +92,21 @@ BOOST_AUTO_TEST_CASE(confusionmatrix)
   BOOST_REQUIRE_EQUAL(output(1, 0), 2);
   BOOST_REQUIRE_EQUAL(output(1, 1), 3);
 }
+/**
+ * Test for confusion matrix for continuous.
+ */
+
+BOOST_AUTO_TEST_CASE(confusionmatrixcontinuous)
+{
+  // Labels that will be considered as "ground truth".
+  arma::Row<size_t> labels("0.2 0.3 1.4 0.5 0.6  1.3 0 1 0 1");
+
+  // predicted labels.
+  arma::Row<size_t> predictedLabels("0 0.1 0.8 0.2 0  1.3 1 1.7 1.8 1");
+  // confusion matrix.
+  arma::Mat<int> output;
+  data::confusionmatrix(predictedLabels, labels, output, 2);
+}
 
 /**
  * Test metrics for multiclass classification.

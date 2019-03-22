@@ -39,8 +39,25 @@ namespace data {
 template<typename eT, typename RowType>
 void confusionmatrix(const RowType& pred,
                      const RowType& actual,
-                     arma::Mat<eT>& output, const size_t& countlabels)
+                     arma::Mat<eT>& output,
+                     const size_t countlabels)
 {
+  //finding whether continues or not 
+  bool find = true;
+  for (size_t i = 0; i < pred.n_elem; ++i)
+  {
+    if(pred[i] != int(pred[i]) || actual[i] != int(actual[i]))
+    {
+      //simply means continues data or different datatype
+      find = false;
+      break;
+    }
+  }
+  if(find == false)
+  {
+  	Log::Fatal << " Not discrete data " << std::endl;
+  	return;
+  }
   // Loop over the input labels and predicted and just add the count
   output.set_size(countlabels, countlabels);
   output.fill(0);
