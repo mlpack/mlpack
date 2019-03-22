@@ -87,7 +87,7 @@ mlpack has the following dependencies:
       CMake         >= 3.3.2
 
 All of those should be available in your distribution's package manager.  If
-not, you will have to compile each of them by hand.  Read each documentation of those pakages for more information.
+not, you will have to compile each of them by hand.  See each documentation of those packages for more information.
 
 If you would like to use or build the mlpack Python bindings, make sure that the
 following Python packages are installed:
