@@ -55,7 +55,7 @@ void confusionmatrix(const RowType& pred,
   }
   if (find == false)
   {
-    Log::Fatal << " Not discrete data " << std::endl;
+    throw std::runtime_error("Datatset should be discrete");
   }
   // Loop over the input labels and predicted and just add the count
   output.set_size(countlabels, countlabels);
