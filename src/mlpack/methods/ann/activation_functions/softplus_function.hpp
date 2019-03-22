@@ -65,8 +65,10 @@ class SoftplusFunction
   template<typename InputType, typename OutputType>
   static void Fn(const InputType& x, OutputType& y)
   {
-    y = x;
-    y.transform([](double val) {return (Fn(val));} );
+    y.set_size(arma::size(x));
+
+    for (size_t i = 0; i < x.n_elem; i++)
+      y(i) = Fn(x(i));
   }
 
   /**
@@ -112,8 +114,10 @@ class SoftplusFunction
   template<typename InputType, typename OutputType>
   static void Inv(const InputType& y, OutputType& x)
   {
-    x = y;
-    x.transform([](double val) {return (Inv(val));} );
+    x.set_size(arma::size(y));
+
+    for (size_t i = 0; i < y.n_elem; i++)
+      x(i) = Inv(y(i));
   }
 }; // class SoftplusFunction
 

@@ -41,7 +41,7 @@ class LogisticFunction
     if (x < arma::Datum<eT>::log_max)
     {
       if (x > -arma::Datum<eT>::log_max)
-        return 1.0 /  (1.0 + std::exp(-x));
+        return 1.0 / (1.0 + std::exp(-x));
 
       return 0.0;
     }
@@ -99,7 +99,7 @@ class LogisticFunction
    * Computes the inverse of the logistic function.
    *
    * @param y Input data.
-   * @return  x The resulting inverse of the input data.
+   * @return x The resulting inverse of the input data.
    */
   template<typename InputVecType, typename OutputVecType>
   static void Inv(const InputVecType& y, OutputVecType& x)
