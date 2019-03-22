@@ -143,7 +143,7 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
       // Add to estimate of initial probability for state j.
       for (size_t j = 0; j < transition.n_cols; ++j)
         newLogInitial[j] = math::LogAdd(newLogInitial[j], stateLogProb(j, 0));
-      
+
       // Define a variable to store the value of log-probability for data.
       arma::mat logProbs(dataSeq[seq].n_cols, transition.n_rows);
       // Save the values of log-probability to logProbs.
