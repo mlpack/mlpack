@@ -49,7 +49,7 @@ Python bindings.
 The mlpack website can be found at http://www.mlpack.org and it contains numerous
 tutorials and extensive documentation.  This README serves as a guide for what
 mlpack is, how to install it, how to run it, and where to find more
-documentation. The website should be consulted for further information:
+documentation. Read the links below for further information:
 
   - [mlpack homepage](http://www.mlpack.org/)
   - [Tutorials](http://www.mlpack.org/docs/mlpack-git/doxygen/tutorials.html)
@@ -87,8 +87,7 @@ mlpack has the following dependencies:
       CMake         >= 3.3.2
 
 All of those should be available in your distribution's package manager.  If
-not, you will have to compile each of them by hand.  See the documentation for
-each of those packages for more information.
+not, you will have to compile each of them by hand.  Read each documentation of those pakages for more information.
 
 If you would like to use or build the mlpack Python bindings, make sure that the
 following Python packages are installed:
@@ -103,7 +102,7 @@ If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 ### 4. Building mlpack from source
 
 This section discusses how to build mlpack from source.  However, mlpack is in
-the repositories of many Linux distributions and so it may be easier to use the
+the repositories of many Linux distributions so it may be easier to use the
 package manager for your system.  For example, on Ubuntu, you can install mlpack
 with the following command:
 
@@ -114,15 +113,14 @@ available---for instance, at the time of this writing, Ubuntu 16.04 only has
 mlpack 2.0.1 available.  Options include upgrading your Ubuntu version, finding
 a PPA or other non-official sources, or installing with a manual build.
 
-There are some other useful pages to consult in addition to this section:
+There are some useful pages to consult in addition to this section:
 
   - [Building mlpack From Source](http://www.mlpack.org/docs/mlpack-git/doxygen/build.html)
   - [Building mlpack From Source on Windows](http://www.mlpack.org/docs/mlpack-git/doxygen/build_windows.html)
 
 mlpack uses CMake as a build system and allows several flexible build
-configuration options. One can consult any of numerous CMake tutorials for
-further documentation, but this tutorial should be enough to get mlpack built
-and installed.
+configuration options. The users can consult any of the CMake tutorials for
+further documentation, but this tutorial can get mlpack built and installed.
 
 First, unpack the mlpack source and change into the unpacked directory.  Here we
 use mlpack-x.y.z where x.y.z is the version.
@@ -130,21 +128,18 @@ use mlpack-x.y.z where x.y.z is the version.
     $ tar -xzf mlpack-x.y.z.tar.gz
     $ cd mlpack-x.y.z
 
-Then, make a build directory.  The directory can have any name, not just
-'build', but 'build' is sufficient.
+Then, make a build directory.  The directory can have any name, but 'build' is sufficient.
 
     $ mkdir build
     $ cd build
 
 The next step is to run CMake to configure the project.  Running CMake is the
 equivalent to running `./configure` with autotools. If you run CMake with no
-options, it will configure the project to build with no debugging symbols and no
-profiling information:
+options, the project will get configured to build with no debugging symbols and not profiling information: 
 
     $ cmake ../
 
-You can specify options to compile with debugging information and profiling
-information:
+Options can be specified to compile with debugging information and profiling information:
 
     $ cmake -D DEBUG=ON -D PROFILE=ON ../
 
@@ -166,7 +161,7 @@ Options are specified with the -D flag.  The allowed options include:
        for ensmallen
     USE_OPENMP=(ON/OFF): whether or not to use OpenMP if available
 
-Other tools can also be used to configure CMake, but those are not documented
+Other tools can be used to configure CMake, but those are not documented
 here.  See [this section of the build guide](http://www.mlpack.org/docs/mlpack-git/doxygen/build.html#build_config)
 for more details, including a full list of options, and their default values.
 
@@ -179,22 +174,21 @@ Once CMake is configured, building the library is as simple as typing 'make'.
 This will build all library components as well as 'mlpack_test'.
 
     $ make
-
-You can specify individual components which you want to build, if you do not
-want to build everything in the library:
+    
+If you do not want to build everything in the library, individual components of the build can be specified:
 
     $ make mlpack_pca mlpack_knn mlpack_kfn
 
 If the build fails and you cannot figure out why, register an account on Github
-and submit an issue; the mlpack developers will quickly help you figure it out:
+and submit an issue. The mlpack developers will quickly help you figure it out:
 
 [mlpack on Github](https://www.github.com/mlpack/mlpack/)
 
 Alternately, mlpack help can be found in IRC at `#mlpack` on irc.freenode.net.
 
-If you wish to install mlpack to `/usr/local/include/mlpack/` and `/usr/local/lib/`
-and `/usr/local/bin/`, once it has built, make sure you have root privileges (or
-write permissions to those three directories), and simply type
+If you wish to install mlpack to `/usr/local/include/mlpack/` , `/usr/local/lib/`
+and `/usr/local/bin/`, make sure you have root privileges (or write permissions to those three directories) once it has built, 
+and simply type
 
     $ make install
 
@@ -202,7 +196,7 @@ You can now run the executables by name; you can link against mlpack with
     `-lmlpack`
 and the mlpack headers are found in
     `/usr/local/include/mlpack/`
-and if Python bindings were built, they will be accessible with the `mlpack`
+and if Python bindings were built, you can access with the `mlpack`
 package in Python.
 
 If running the programs (i.e. `$ mlpack_knn -h`) gives an error of the form
@@ -244,7 +238,7 @@ $ mlpack_knn --help
 ```
 
 Running `mlpack_knn` on one dataset (that is, the query and reference
-datasets are the same) and finding the 5 nearest neighbors is very simple:
+datasets are the same) and finding 5 nearest neighbors is very simple:
 
 ```shell
 $ mlpack_knn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
