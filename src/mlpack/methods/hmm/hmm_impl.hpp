@@ -633,10 +633,7 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
   // Save the values of log-probability to logProbs.
   for (size_t i = 0; i < transition.n_rows; i++)
   {
-    // Define arma::vec to store log-probability for any dataSeq column.
-    arma::vec logProb;
-    emission[i].LogProbability(dataSeq, logProb);
-    logProbs.unsafe_col(i) = logProb;
+    emission[i].LogProbability(dataSeq, logProbs.unsafe_col(i));
   }
 
   // Now step backwards through all other observations.
