@@ -577,7 +577,10 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
   // Save the values of log-probability to logProbs.
   for (size_t i = 0; i < transition.n_rows; i++)
   {
-    emission[i].LogProbability(dataSeq, logProbs.unsafe_col(i));
+    // Define arma::vec to store log-probability for any dataSeq column.
+    arma::vec logProb;
+    emission[i].LogProbability(dataSeq, logProb);
+    logProbs.unsafe_col(i) = logProb;
   }
   // The first entry in the forward algorithm uses the initial state
   // probabilities.  Note that MATLAB assumes that the starting state (at
@@ -633,7 +636,10 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
   // Save the values of log-probability to logProbs.
   for (size_t i = 0; i < transition.n_rows; i++)
   {
-    emission[i].LogProbability(dataSeq, logProbs.unsafe_col(i));
+    // Define arma::vec to store log-probability for any dataSeq column.
+    arma::vec logProb;
+    emission[i].LogProbability(dataSeq, logProb);
+    logProbs.unsafe_col(i) = logProb;
   }
 
   // Now step backwards through all other observations.

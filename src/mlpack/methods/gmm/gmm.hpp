@@ -182,7 +182,7 @@ class GMM
   double LogProbability(const arma::vec& observation) const;
 
   /**
-   * Return the log-probability of the given observation(x) matrix.
+   * Return the log-probability of the given observation (x) matrix.
    *
    * @param x Observation matrix.
    * @param logProbs Vector to store log-probability value of observation x.
