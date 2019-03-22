@@ -42,21 +42,21 @@ void confusionmatrix(const RowType& pred,
                      arma::Mat<eT>& output,
                      const size_t countlabels)
 {
-  //finding whether continues or not 
+  // finding whether continues or not
   bool find = true;
   for (size_t i = 0; i < pred.n_elem; ++i)
   {
-    if(pred[i] != int(pred[i]) || actual[i] != int(actual[i]))
+    if (pred[i] != int(pred[i]) || actual[i] != int(actual[i]))
     {
-      //simply means continues data or different datatype
+      // simply means continues data or different datatype
       find = false;
       break;
     }
   }
-  if(find == false)
+  if (find == false)
   {
-  	Log::Fatal << " Not discrete data " << std::endl;
-  	return;
+    Log::Fatal << " Not discrete data " << std::endl;
+    return;
   }
   // Loop over the input labels and predicted and just add the count
   output.set_size(countlabels, countlabels);

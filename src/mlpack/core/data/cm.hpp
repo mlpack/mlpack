@@ -37,7 +37,8 @@ namespace data {
 template<typename eT, typename RowType>
 void confusionmatrix(const RowType& pred,
                      const RowType& actual,
-                     arma::Mat<eT>& output, const size_t countlabels);
+                     arma::Mat<eT>& output,
+                     const size_t countlabels);
 } // namespace data
 } // namespace mlpack
 
