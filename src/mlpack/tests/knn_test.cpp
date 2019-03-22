@@ -1,4 +1,4 @@
-/**
+  /**
  * @file knn_test.cpp
  *
  * Test file for KNN class.
@@ -8,6 +8,10 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#include <string>
+#define BINDING_TYPE BINDING_TYPE_TEST
+static const std::string testName = "K-NearestNeighborsSearch";
+
 #include <mlpack/core.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <mlpack/methods/neighbor_search/unmap.hpp>
@@ -23,7 +27,49 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 using namespace mlpack::bound;
 
-BOOST_AUTO_TEST_SUITE(KNNTest);
+struct KNNTestFixture
+{
+ public:
+  KNNTestFixture()
+  {
+    // Cache in the options for this program.
+    CLI::RestoreSettings(testName);
+  }
+
+   ~KNNTestFixture()
+  {
+    // Clear the settings.
+    bindings::tests::CleanMemory();
+    CLI::ClearSettings();
+  }
+};
+
+BOOST_FIXTURE_TEST_SUITE(KNNTestFixture, KNNTest);
+
+/**
+ * Ensure resulting matrices have expected shape.
+ */
+BOOST_AUTO_TEST_CASE(KNNShapeTest)
+{
+  mat reference = randu<mat>(6, 100);
+  mat query = randu<mat>(6, 10);
+  int k = 5;
+
+  SetInputParam("reference", std::move(reference));
+  SetInputParam("query", std::move(query));
+  SetInputParam("k", k);
+
+  mlpackMain();
+
+  const mat& distances = CLI::GetParam<mat>("distances");
+  const Mat<size_t>& neighbors = CLI::GetParam<Mat<size_t>>("neighbors");
+
+  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 10);
+  BOOST_REQUIRE_EQUAL(distances.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(distances.n_cols, 10);
+}
+
 
 /**
  * Test that Unmap() works in the dual-tree case (see unmap.hpp).
