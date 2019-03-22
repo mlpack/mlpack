@@ -2,7 +2,6 @@
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Michael Fox
  * @author Rohan Raj
- *
  * @file gmm.hpp
  *
  * Defines a Gaussian Mixture model and estimates the parameters of the model.

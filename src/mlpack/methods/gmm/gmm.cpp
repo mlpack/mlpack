@@ -82,16 +82,9 @@ void GMM::LogProbability(const arma::mat& x, arma::vec& logProbs) const
   // Sum the probability for each Gaussian in our mixture (and we have to
   // multiply by the prior for each Gaussian too).
   logProbs.set_size(x.n_cols);
-  double sum;
   for (size_t j = 0; j < x.n_cols; j++)
   {
-    sum = -std::numeric_limits<double>::infinity();
-    for (size_t i = 0; i < gaussians; i++)
-    {
-      sum = math::LogAdd(sum, log(weights[i]) +
-          dists[i].LogProbability(x.unsafe_col(j)));
-    }
-    logProbs(j) = sum;
+    logProbs(j) = LogProbability(x.unsafe_col(j));
   }
 }
 
@@ -173,7 +166,7 @@ arma::vec GMM::Random() const
  * Classify the given observations as being from an individual component in this
  * GMM.
  * @param observation Observation matrix for classification.
- * @param labels Save the lables for the given observation matrix.
+ * @param labels Save the labels for the given observation matrix.
  */
 void GMM::Classify(const arma::mat& observations,
                    arma::Row<size_t>& labels) const
