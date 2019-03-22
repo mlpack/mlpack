@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_REGULARIZED_SVD_REGULARIZED_SVD_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <ensmallen.hpp>
 #include <mlpack/methods/cf/cf.hpp>
 
 #include "regularized_svd_function.hpp"
@@ -54,7 +54,7 @@ namespace svd {
  * rSVD.Apply(data, rank, u, v);
  * @endcode
  */
-template<typename OptimizerType = mlpack::optimization::StandardSGD>
+template<typename OptimizerType = ens::StandardSGD>
 class RegularizedSVD
 {
  public:
@@ -95,21 +95,6 @@ class RegularizedSVD
 };
 
 } // namespace svd
-} // namespace mlpack
-
-namespace mlpack {
-namespace cf {
-
-//! Factorizer traits of Regularized SVD.
-template<>
-class FactorizerTraits<mlpack::svd::RegularizedSVD<> >
-{
- public:
-  //! Data provided to RegularizedSVD need not be cleaned.
-  static const bool UsesCoordinateList = true;
-};
-
-} // namespace cf
 } // namespace mlpack
 
 // Include implementation.

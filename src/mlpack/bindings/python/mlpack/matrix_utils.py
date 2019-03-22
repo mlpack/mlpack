@@ -52,13 +52,26 @@ def to_matrix(x, dtype=np.double, copy=False):
       return x.copy("C"), True
     else:
       return x, False
+  elif (isinstance(x, np.ndarray) and x.dtype == dtype and x.flags.f_contiguous):
+    if copy: # Copy the matrix if required.
+      return np.ndarray(x.shape, buffer=x.flatten(), dtype=dtype, order='C').copy("C"), True
+    else:
+      return np.ndarray(x.shape, buffer=x.flatten(), dtype=dtype, order='C'), False
   else:
-    return np.array(x, copy=True, dtype=dtype, order='C'), True
+    if isinstance(x, pd.core.series.Series) or isinstance(x, pd.DataFrame):
+      y = x.values
+      if copy: # Copy the matrix if required.
+        return np.ndarray(y.shape, buffer=y.flatten(), dtype=dtype, order='C').copy("C"), True
+      else:
+        return np.ndarray(y.shape, buffer=y.flatten(), dtype=dtype, order='C'), False
+    else:
+      return np.array(x, copy=True, dtype=dtype, order='C'), True
+    
 
 def to_matrix_with_info(x, dtype, copy=False):
   """
   Given some array-like X (which should be either a numpy ndarray or a pandas
-  DataFrame, convert into a numpy matrix of the given dtype.
+  DataFrame), convert it into a numpy matrix of the given dtype.
   """
   # Make sure it's array-like at all.
   if not hasattr(x, '__len__') and \

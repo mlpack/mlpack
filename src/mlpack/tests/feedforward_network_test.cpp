@@ -12,10 +12,11 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
-#include <mlpack/core/optimizers/sgd/update_policies/vanilla_update.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
+
+#include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -24,7 +25,6 @@
 
 using namespace mlpack;
 using namespace mlpack::ann;
-using namespace mlpack::optimization;
 
 BOOST_AUTO_TEST_SUITE(FeedForwardNetworkTest);
 
@@ -70,7 +70,7 @@ void BuildVanillaNetwork(MatType& trainData,
   model.Add<LogSoftMax<> >();
 
   // RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
-  RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
   model.Train(trainData, trainLabels, opt);
 
   MatType predictionTemp;
@@ -103,35 +103,17 @@ void BuildVanillaNetwork(MatType& trainData,
 BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 {
   // Load the dataset.
-  arma::mat dataset;
-  data::Load("thyroid_train.csv", dataset, true);
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
 
-  arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
-      dataset.n_cols - 1);
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
 
-  arma::mat trainLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
-      dataset.n_rows - 1, dataset.n_cols - 1);
-  arma::mat trainLabels = arma::zeros<arma::mat>(1, trainLabelsTemp.n_cols);
-  for (size_t i = 0; i < trainLabelsTemp.n_cols; ++i)
-  {
-    trainLabels(i) = arma::as_scalar(arma::find(
-        arma::max(trainLabelsTemp.col(i)) == trainLabelsTemp.col(i), 1)) + 1;
-  }
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
 
-  data::Load("thyroid_test.csv", dataset, true);
-
-  arma::mat testData = dataset.submat(0, 0, dataset.n_rows - 4,
-      dataset.n_cols - 1);
-
-  arma::mat testLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
-      dataset.n_rows - 1, dataset.n_cols - 1);
-
-  arma::mat testLabels = arma::zeros<arma::mat>(1, testLabelsTemp.n_cols);
-  for (size_t i = 0; i < testLabels.n_cols; ++i)
-  {
-    testLabels(i) = arma::as_scalar(arma::find(
-        arma::max(testLabelsTemp.col(i)) == testLabelsTemp.col(i), 1)) + 1;
-  }
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
 
   // Vanilla neural net with logistic activation function.
   // Because 92 percent of the patients are not hyperthyroid the neural
@@ -139,6 +121,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   BuildVanillaNetwork<>
       (trainData, trainLabels, testData, testLabels, 3, 8, 10, 0.1);
 
+  arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
   // Normalize each point since these are images.
@@ -173,7 +156,7 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
   model.Add<Linear<> >(50, 10);
   model.Add<LogSoftMax<> >();
 
-  VanillaUpdate opt;
+  ens::VanillaUpdate opt;
   model.ResetParameters();
   opt.Initialize(model.Parameters().n_rows, model.Parameters().n_cols);
   double stepSize = 0.01;
@@ -272,7 +255,7 @@ void BuildDropoutNetwork(MatType& trainData,
   model.Add<Linear<> >(hiddenLayerSize, outputSize);
   model.Add<LogSoftMax<> >();
 
-  RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
 
   model.Train(trainData, trainLabels, opt);
 
@@ -306,35 +289,17 @@ void BuildDropoutNetwork(MatType& trainData,
 BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
 {
   // Load the dataset.
-  arma::mat dataset;
-  data::Load("thyroid_train.csv", dataset, true);
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
 
-  arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
-      dataset.n_cols - 1);
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
 
-  arma::mat trainLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
-      dataset.n_rows - 1, dataset.n_cols - 1);
-  arma::mat trainLabels = arma::zeros<arma::mat>(1, trainLabelsTemp.n_cols);
-  for (size_t i = 0; i < trainLabelsTemp.n_cols; ++i)
-  {
-    trainLabels(i) = arma::as_scalar(arma::find(
-        arma::max(trainLabelsTemp.col(i)) == trainLabelsTemp.col(i), 1)) + 1;
-  }
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
 
-  data::Load("thyroid_test.csv", dataset, true);
-
-  arma::mat testData = dataset.submat(0, 0, dataset.n_rows - 4,
-      dataset.n_cols - 1);
-
-  arma::mat testLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
-      dataset.n_rows - 1, dataset.n_cols - 1);
-
-  arma::mat testLabels = arma::zeros<arma::mat>(1, testLabelsTemp.n_cols);
-  for (size_t i = 0; i < testLabels.n_cols; ++i)
-  {
-    testLabels(i) = arma::as_scalar(arma::find(
-        arma::max(testLabelsTemp.col(i)) == testLabelsTemp.col(i), 1)) + 1;
-  }
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
 
   // Vanilla neural net with logistic activation function.
   // Because 92 percent of the patients are not hyperthyroid the neural
@@ -342,6 +307,7 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
   BuildDropoutNetwork<>
       (trainData, trainLabels, testData, testLabels, 3, 8, 10, 0.1);
 
+  arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
   // Normalize each point since these are images.
@@ -401,7 +367,7 @@ void BuildDropConnectNetwork(MatType& trainData,
   model.Add<DropConnect<> >(hiddenLayerSize, outputSize);
   model.Add<LogSoftMax<> >();
 
-  RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
 
   model.Train(trainData, trainLabels, opt);
 
@@ -435,35 +401,17 @@ void BuildDropConnectNetwork(MatType& trainData,
 BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
 {
   // Load the dataset.
-  arma::mat dataset;
-  data::Load("thyroid_train.csv", dataset, true);
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
 
-  arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
-      dataset.n_cols - 1);
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
 
-  arma::mat trainLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
-      dataset.n_rows - 1, dataset.n_cols - 1);
-  arma::mat trainLabels = arma::zeros<arma::mat>(1, trainLabelsTemp.n_cols);
-  for (size_t i = 0; i < trainLabelsTemp.n_cols; ++i)
-  {
-    trainLabels(i) = arma::as_scalar(arma::find(
-        arma::max(trainLabelsTemp.col(i)) == trainLabelsTemp.col(i), 1)) + 1;
-  }
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
 
-  data::Load("thyroid_test.csv", dataset, true);
-
-  arma::mat testData = dataset.submat(0, 0, dataset.n_rows - 4,
-      dataset.n_cols - 1);
-
-  arma::mat testLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
-      dataset.n_rows - 1, dataset.n_cols - 1);
-
-  arma::mat testLabels = arma::zeros<arma::mat>(1, testLabelsTemp.n_cols);
-  for (size_t i = 0; i < testLabels.n_cols; ++i)
-  {
-    testLabels(i) = arma::as_scalar(arma::find(
-        arma::max(testLabelsTemp.col(i)) == testLabelsTemp.col(i), 1)) + 1;
-  }
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
 
   // Vanilla neural net with logistic activation function.
   // Because 92 percent of the patients are not hyperthyroid the neural
@@ -471,6 +419,7 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
   BuildDropConnectNetwork<>
       (trainData, trainLabels, testData, testLabels, 3, 8, 10, 0.1);
 
+  arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
   // Normalize each point since these are images.
@@ -508,35 +457,17 @@ BOOST_AUTO_TEST_CASE(FFNMiscTest)
 BOOST_AUTO_TEST_CASE(SerializationTest)
 {
   // Load the dataset.
-  arma::mat dataset;
-  data::Load("thyroid_train.csv", dataset, true);
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
 
-  arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
-      dataset.n_cols - 1);
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
 
-  arma::mat trainLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
-      dataset.n_rows - 1, dataset.n_cols - 1);
-  arma::mat trainLabels = arma::zeros<arma::mat>(1, trainLabelsTemp.n_cols);
-  for (size_t i = 0; i < trainLabelsTemp.n_cols; ++i)
-  {
-    trainLabels(i) = arma::as_scalar(arma::find(
-        arma::max(trainLabelsTemp.col(i)) == trainLabelsTemp.col(i), 1)) + 1;
-  }
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
 
-  data::Load("thyroid_test.csv", dataset, true);
-
-  arma::mat testData = dataset.submat(0, 0, dataset.n_rows - 4,
-      dataset.n_cols - 1);
-
-  arma::mat testLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
-      dataset.n_rows - 1, dataset.n_cols - 1);
-
-  arma::mat testLabels = arma::zeros<arma::mat>(1, testLabelsTemp.n_cols);
-  for (size_t i = 0; i < testLabels.n_cols; ++i)
-  {
-    testLabels(i) = arma::as_scalar(arma::find(
-        arma::max(testLabelsTemp.col(i)) == testLabelsTemp.col(i), 1)) + 1;
-  }
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
 
   // Vanilla neural net with logistic activation function.
   // Because 92 percent of the patients are not hyperthyroid the neural
@@ -548,7 +479,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   model.Add<Linear<> >(8, 3);
   model.Add<LogSoftMax<> >();
 
-  RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
 
   model.Train(trainData, trainLabels, opt);
 
@@ -575,35 +506,17 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
 BOOST_AUTO_TEST_CASE(CustomLayerTest)
 {
   // Load the dataset.
-  arma::mat dataset;
-  data::Load("thyroid_train.csv", dataset, true);
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
 
-  arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
-      dataset.n_cols - 1);
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
 
-  arma::mat trainLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
-      dataset.n_rows - 1, dataset.n_cols - 1);
-  arma::mat trainLabels = arma::zeros<arma::mat>(1, trainLabelsTemp.n_cols);
-  for (size_t i = 0; i < trainLabelsTemp.n_cols; ++i)
-  {
-    trainLabels(i) = arma::as_scalar(arma::find(
-        arma::max(trainLabelsTemp.col(i)) == trainLabelsTemp.col(i), 1)) + 1;
-  }
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
 
-  data::Load("thyroid_test.csv", dataset, true);
-
-  arma::mat testData = dataset.submat(0, 0, dataset.n_rows - 4,
-      dataset.n_cols - 1);
-
-  arma::mat testLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
-      dataset.n_rows - 1, dataset.n_cols - 1);
-
-  arma::mat testLabels = arma::zeros<arma::mat>(1, testLabelsTemp.n_cols);
-  for (size_t i = 0; i < testLabels.n_cols; ++i)
-  {
-    testLabels(i) = arma::as_scalar(arma::find(
-        arma::max(testLabelsTemp.col(i)) == testLabelsTemp.col(i), 1)) + 1;
-  }
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
 
   FFN<NegativeLogLikelihood<>, RandomInitialization, CustomLayer<> > model;
   model.Add<Linear<> >(trainData.n_rows, 8);
@@ -611,12 +524,59 @@ BOOST_AUTO_TEST_CASE(CustomLayerTest)
   model.Add<Linear<> >(8, 3);
   model.Add<LogSoftMax<> >();
 
-  RMSProp opt(0.01, 32, 0.88, 1e-8, 15, -1);
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, 15, -1);
   model.Train(trainData, trainLabels, opt);
 
   arma::mat predictionTemp;
   model.Predict(testData, predictionTemp);
   arma::mat prediction = arma::zeros<arma::mat>(1, predictionTemp.n_cols);
+}
+
+/**
+ * Test the overload of Forward function which allows partial forward pass.
+ */
+BOOST_AUTO_TEST_CASE(PartialForwardTest)
+{
+  FFN<NegativeLogLikelihood<>, RandomInitialization> model;
+  model.Add<Linear<> >(5, 10);
+
+  // Add a new Add<> module which adds a constant term to the input.
+  Add<>* addModule = new Add<>(10);
+  model.Add(addModule);
+
+  LinearNoBias<>* linearNoBiasModule = new LinearNoBias<>(10, 10);
+  model.Add(linearNoBiasModule);
+
+  model.Add<Linear<> >(10, 10);
+
+  model.ResetParameters();
+  // Set the parameters of the Add<> module to a matrix of ones.
+  addModule->Parameters() = arma::ones(10, 1);
+  // Set the parameters of the LinearNoBias<> module to a matrix of ones.
+  linearNoBiasModule->Parameters() = arma::ones(10, 10);
+
+  arma::mat input = arma::ones(10, 1);
+  arma::mat output;
+
+  // Forward pass only through the Add module.
+  model.Forward(input,
+                output,
+                1 /* Index of the Add module */,
+                1 /* Index of the Add module */);
+
+  // As we only forward pass through Add module, input and output should
+  // differ by a matrix of ones.
+  CheckMatrices(input, output - 1);
+
+  // Forward pass only through the Add module and the LinearNoBias module.
+  model.Forward(input,
+                output,
+                1 /* Index of the Add module */,
+                2 /* Index of the LinearNoBias module */);
+
+  // As we only forward pass through Add module followed by the LinearNoBias
+  // module, output should be a matrix of 20s.(output = weight * input)
+  CheckMatrices(output, arma::ones(10, 1) * 20);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

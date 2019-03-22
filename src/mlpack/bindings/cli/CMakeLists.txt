@@ -25,6 +25,8 @@ set(SOURCES
   print_doc_functions_impl.hpp
   print_help.hpp
   print_help.cpp
+  print_type_doc.hpp
+  print_type_doc_impl.hpp
   set_param.hpp
   string_type_param.hpp
   string_type_param_impl.hpp
@@ -38,3 +40,30 @@ endforeach()
 # Append source (with directory name) to list of all mlpack sources (used at the
 # parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+# This macro adds a command-line executable with the given name.  It assumes
+# that the file with main() is in <name>_main.cpp, and produces an output
+# program with the name mlpack_<name>.
+macro (add_cli_executable name)
+if (BUILD_CLI_EXECUTABLES)
+  add_executable(mlpack_${name}
+    ${name}_main.cpp
+  )
+  target_link_libraries(mlpack_${name}
+    mlpack
+    ${ARMADILLO_LIBRARIES}
+    ${Boost_LIBRARIES}
+    ${COMPILER_SUPPORT_LIBRARIES}
+  )
+  # Make sure that we set BINDING_TYPE to cli so the command-line program is
+  # compiled with the correct int main() call.
+  set_target_properties(mlpack_${name} PROPERTIES COMPILE_FLAGS
+      -DBINDING_TYPE=BINDING_TYPE_CLI)
+  install(TARGETS mlpack_${name} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+  # If man documentation is being generated, make sure this is a dependency.
+  if (TXT2MAN)
+    add_dependencies(man mlpack_${name})
+  endif ()
+endif ()
+endmacro ()

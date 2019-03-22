@@ -17,8 +17,8 @@
 
 #include "../visitor/delete_visitor.hpp"
 #include "../visitor/delta_visitor.hpp"
+#include "../visitor/copy_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
-#include "../visitor/weight_size_visitor.hpp"
 
 #include "layer_types.hpp"
 #include "add_merge.hpp"
@@ -53,13 +53,16 @@ class Recurrent
   //! Destructor to release allocated memory.
   ~Recurrent();
 
+  //! Copy constructor.
+  Recurrent(const Recurrent&);
+
   /**
    * Create the Recurrent object using the specified modules.
    *
    * @param start The start module.
-   * @param start The input module.
-   * @param start The feedback module.
-   * @param start The transfer module.
+   * @param input The input module.
+   * @param feedback The feedback module.
+   * @param transfer The transfer module.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
   template<typename StartModuleType,
@@ -121,11 +124,6 @@ class Recurrent
   //! Modify the parameters.
   OutputDataType& Parameters() { return parameters; }
 
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -150,6 +148,9 @@ class Recurrent
  private:
   //! Locally-stored delete visitor module object.
   DeleteVisitor deleteVisitor;
+
+  //! Locally-stored copy visitor
+  CopyVisitor<CustomLayers...> copyVisitor;
 
   //! Locally-stored start module.
   LayerTypes<CustomLayers...> startModule;
@@ -197,9 +198,6 @@ class Recurrent
   //! Locally-stored merge module.
   LayerTypes<CustomLayers...> mergeModule;
 
-  //! Locally-stored weight size visitor.
-  WeightSizeVisitor weightSizeVisitor;
-
   //! Locally-stored delta visitor.
   DeltaVisitor deltaVisitor;
 
@@ -214,9 +212,6 @@ class Recurrent
 
   //! Locally-stored gradient object.
   OutputDataType gradient;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;

@@ -21,43 +21,52 @@
 #include <mlpack/methods/ann/layer/batch_norm.hpp>
 #include <mlpack/methods/ann/layer/bilinear_interpolation.hpp>
 #include <mlpack/methods/ann/layer/constant.hpp>
-#include <mlpack/methods/ann/layer/cross_entropy_error.hpp>
+#include <mlpack/methods/ann/layer/concatenate.hpp>
 #include <mlpack/methods/ann/layer/dropout.hpp>
 #include <mlpack/methods/ann/layer/elu.hpp>
 #include <mlpack/methods/ann/layer/hard_tanh.hpp>
 #include <mlpack/methods/ann/layer/join.hpp>
+#include <mlpack/methods/ann/layer/layer_norm.hpp>
 #include <mlpack/methods/ann/layer/leaky_relu.hpp>
 #include <mlpack/methods/ann/layer/flexible_relu.hpp>
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
 #include <mlpack/methods/ann/layer/lookup.hpp>
-#include <mlpack/methods/ann/layer/mean_squared_error.hpp>
 #include <mlpack/methods/ann/layer/multiply_constant.hpp>
-#include <mlpack/methods/ann/layer/negative_log_likelihood.hpp>
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
-#include <mlpack/methods/ann/layer/sigmoid_cross_entropy_error.hpp>
+#include <mlpack/methods/ann/layer/reparametrization.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
+#include <mlpack/methods/ann/layer/subview.hpp>
 
 // Convolution modules.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
 
+// Loss function modules.
+#include <mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp>
+
 namespace mlpack {
 namespace ann {
-
 
 template<typename InputDataType, typename OutputDataType> class BatchNorm;
 template<typename InputDataType, typename OutputDataType> class DropConnect;
 template<typename InputDataType, typename OutputDataType> class Glimpse;
+template<typename InputDataType, typename OutputDataType> class LayerNorm;
 template<typename InputDataType, typename OutputDataType> class Linear;
 template<typename InputDataType, typename OutputDataType> class LinearNoBias;
 template<typename InputDataType, typename OutputDataType> class LSTM;
 template<typename InputDataType, typename OutputDataType> class GRU;
 template<typename InputDataType, typename OutputDataType> class FastLSTM;
 template<typename InputDataType, typename OutputDataType> class VRClassReward;
+template<typename InputDataType, typename OutputDataType> class Concatenate;
+
+template<typename InputDataType,
+         typename OutputDataType
+>
+class Reparametrization;
 
 template<typename InputDataType,
          typename OutputDataType,
@@ -67,6 +76,7 @@ class AddMerge;
 
 template<typename InputDataType,
          typename OutputDataType,
+         bool residual,
          typename... CustomLayers
 >
 class Sequential;
@@ -100,29 +110,61 @@ template<
 class Convolution;
 
 template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+class TransposedConvolution;
+
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+class AtrousConvolution;
+
+template<
     typename InputDataType,
     typename OutputDataType
 >
 class RecurrentAttention;
 
+template<typename InputDataType,
+         typename OutputDataType,
+         typename... CustomLayers
+>
+class MultiplyMerge;
+
 template <typename... CustomLayers>
 using LayerTypes = boost::variant<
     Add<arma::mat, arma::mat>*,
     AddMerge<arma::mat, arma::mat>*,
+    AtrousConvolution<NaiveConvolution<ValidConvolution>,
+                      NaiveConvolution<FullConvolution>,
+                      NaiveConvolution<ValidConvolution>,
+                      arma::mat, arma::mat>*,
     BaseLayer<LogisticFunction, arma::mat, arma::mat>*,
     BaseLayer<IdentityFunction, arma::mat, arma::mat>*,
     BaseLayer<TanhFunction, arma::mat, arma::mat>*,
     BaseLayer<RectifierFunction, arma::mat, arma::mat>*,
+    BaseLayer<SoftplusFunction, arma::mat, arma::mat>*,
     BatchNorm<arma::mat, arma::mat>*,
     BilinearInterpolation<arma::mat, arma::mat>*,
     Concat<arma::mat, arma::mat>*,
+    Concatenate<arma::mat, arma::mat>*,
     ConcatPerformance<NegativeLogLikelihood<arma::mat, arma::mat>,
                       arma::mat, arma::mat>*,
     Constant<arma::mat, arma::mat>*,
     Convolution<NaiveConvolution<ValidConvolution>,
                 NaiveConvolution<FullConvolution>,
                 NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
-    CrossEntropyError<arma::mat, arma::mat>*,
+    TransposedConvolution<NaiveConvolution<ValidConvolution>,
+            NaiveConvolution<FullConvolution>,
+            NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
     DropConnect<arma::mat, arma::mat>*,
     Dropout<arma::mat, arma::mat>*,
     AlphaDropout<arma::mat, arma::mat>*,
@@ -131,6 +173,7 @@ using LayerTypes = boost::variant<
     Glimpse<arma::mat, arma::mat>*,
     HardTanH<arma::mat, arma::mat>*,
     Join<arma::mat, arma::mat>*,
+    LayerNorm<arma::mat, arma::mat>*,
     LeakyReLU<arma::mat, arma::mat>*,
     Linear<arma::mat, arma::mat>*,
     LinearNoBias<arma::mat, arma::mat>*,
@@ -141,16 +184,18 @@ using LayerTypes = boost::variant<
     FastLSTM<arma::mat, arma::mat>*,
     MaxPooling<arma::mat, arma::mat>*,
     MeanPooling<arma::mat, arma::mat>*,
-    MeanSquaredError<arma::mat, arma::mat>*,
     MultiplyConstant<arma::mat, arma::mat>*,
+    MultiplyMerge<arma::mat, arma::mat>*,
     NegativeLogLikelihood<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
     Recurrent<arma::mat, arma::mat>*,
     RecurrentAttention<arma::mat, arma::mat>*,
     ReinforceNormal<arma::mat, arma::mat>*,
-    SigmoidCrossEntropyError<arma::mat, arma::mat>*,
+    Reparametrization<arma::mat, arma::mat>*,
     Select<arma::mat, arma::mat>*,
-    Sequential<arma::mat, arma::mat>*,
+    Sequential<arma::mat, arma::mat, false>*,
+    Sequential<arma::mat, arma::mat, true>*,
+    Subview<arma::mat, arma::mat>*,
     VRClassReward<arma::mat, arma::mat>*,
     CustomLayers*...
 >;

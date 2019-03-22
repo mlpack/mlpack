@@ -36,13 +36,13 @@ namespace ann /** Artificial Neural Network. */ {
  * f(x) &=& \left\{
  *   \begin{array}{lr}
  *    x & : x > 0 \\
- *    alpha(e^x - 1) & : x \le 0
+ *    \alpha(e^x - 1) & : x \le 0
  *   \end{array}
  * \right. \\
  * f'(x) &=& \left\{
  *   \begin{array}{lr}
  *     1 & : x > 0 \\
- *     y + alpha & : x \le 0
+ *     f(x) + \alpha & : x \le 0
  *   \end{array}
  * \right.
  * @f}
@@ -66,14 +66,14 @@ namespace ann /** Artificial Neural Network. */ {
  * @f{eqnarray*}{
  * f(x) &=& \left\{
  *   \begin{array}{lr}
- *    lambda * x & : x > 0 \\
- *    lambda * alpha(e^x - 1) & : x \le 0
+ *    \lambda * x & : x > 0 \\
+ *    \lambda * \alpha(e^x - 1) & : x \le 0
  *   \end{array}
  * \right. \\
  * f'(x) &=& \left\{
  *   \begin{array}{lr}
- *     lambda & : x > 0 \\
- *     lambda * (y + alpha) & : x \le 0
+ *     \lambda & : x > 0 \\
+ *     f(x) + \lambda * \alpha & : x \le 0
  *   \end{array}
  * \right.
  * @f}
@@ -90,6 +90,10 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
+ * In the deterministic mode, there is no computation of the derivative.
+ *
+ * @note During training deterministic should be set to false and during
+ *       testing/inference deterministic should be set to true.
  * @note Make sure to use SELU activation function with normalized inputs and
  *       weights initialized with Lecun Normal Initialization.
  *
@@ -137,17 +141,12 @@ class ELU
    * f(x) by propagating x backwards through f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param input The propagated input activation f(x).
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename DataType>
   void Backward(const DataType&& input, DataType&& gy, DataType&& g);
-
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -199,7 +198,7 @@ class ELU
   template<typename eT>
   void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
-    y.set_size(size(x));
+    y.set_size(arma::size(x));
 
     for (size_t i = 0; i < x.n_elem; i++)
     {
@@ -211,38 +210,40 @@ class ELU
    * Computes the first derivative of the activation function.
    *
    * @param x Input data.
+   * @param y Propagated data f(x).
    * @return f'(x)
    */
-  double Deriv(const double y)
+  double Deriv(const double x, const double y)
   {
-    return (y > 0) ? lambda : lambda * (y + alpha);
+    return (x > 0) ? lambda : y + lambda * alpha;
   }
 
   /**
    * Computes the first derivative of the activation function.
    *
-   * @param y Input activations.
-   * @param x The resulting derivatives.
+   * @param x Input data.
+   * @param y Output activations f(x).
+   * @param z The resulting derivatives.
    */
   template<typename InputType, typename OutputType>
   void Deriv(const InputType& x, OutputType& y)
   {
-    y = x;
+    derivative.set_size(arma::size(x));
 
     for (size_t i = 0; i < x.n_elem; i++)
     {
-      y(i) = Deriv(x(i));
+      derivative(i) = Deriv(x(i), y(i));
     }
   }
 
   //! Locally-stored delta object.
   OutputDataType delta;
 
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
-
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! Locally stored first derivative of the activation function.
+  arma::mat derivative;
 
   //! ELU Hyperparameter (0 < alpha)
   //! SELU parameter fixed to 1.6732632423543774 for normalized inputs.
@@ -253,6 +254,9 @@ class ELU
   //! For SELU activation function, lambda = 1.0507009873554802 for normalized
   //! inputs.
   double lambda;
+
+  //! If true the derivative computation is disabled, see notes above.
+  bool deterministic;
 }; // class ELU
 
 // Template alias for SELU using ELU class.

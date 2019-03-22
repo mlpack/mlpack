@@ -21,6 +21,31 @@ namespace bindings {
 namespace cli {
 
 /**
+ * Given the name of a binding, print its command-line name (this returns
+ * "mlpack_<bindingName>".
+ */
+inline std::string GetBindingName(const std::string& bindingName)
+{
+  return "mlpack_" + bindingName;
+}
+
+/**
+ * Print any imports for CLI (there are none, so this returns an empty string).
+ */
+inline std::string PrintImport(const std::string& /* bindingName */)
+{
+  return "";
+}
+
+/**
+ * Print any special information about output options.
+ */
+inline std::string PrintOutputOptionInfo()
+{
+  return "";
+}
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>
@@ -33,6 +58,23 @@ inline std::string PrintValue(const T& value, bool quotes)
   if (quotes)
     oss << "'";
   return oss.str();
+}
+
+/**
+ * Given a parameter name, print its corresponding default value.
+ */
+inline std::string PrintDefault(const std::string& paramName)
+{
+  if (CLI::Parameters().count(paramName) == 0)
+    throw std::invalid_argument("unknown parameter " + paramName + "!");
+
+  const util::ParamData& d = CLI::Parameters()[paramName];
+
+  std::string defaultValue;
+  CLI::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL,
+      (void*) &defaultValue);
+
+  return defaultValue;
 }
 
 /**
@@ -107,8 +149,74 @@ std::string ProcessOptions(const std::string& paramName,
 template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args)
 {
-  return util::HyphenateString("$ " + programName + " " +
+  return util::HyphenateString("$ " + GetBindingName(programName) + " " +
       ProcessOptions(args...), 2);
+}
+
+/**
+ * Given a program name, print a program call invocation assuming that all
+ * options are specified.
+ */
+inline std::string ProgramCall(const std::string& programName)
+{
+  std::ostringstream oss;
+  oss << "$ " << GetBindingName(programName);
+
+  // Handle all options---first input options, then output options.
+  const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
+
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    if (!it->second.input || it->second.persistent)
+      continue;
+
+    // Otherwise, print the name and the default value.
+    std::string name;
+    CLI::GetSingleton().functionMap[it->second.tname]["GetPrintableParamName"](
+        it->second, NULL, (void*) &name);
+
+    std::string value;
+    CLI::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
+        it->second, NULL, (void*) &value);
+    if (value == "''")
+      value = "<string>";
+
+    oss << " ";
+    if (!it->second.required)
+      oss << "[";
+
+    oss << name;
+    if (it->second.cppType != "bool")
+      oss << " " << value;
+
+    if (!it->second.required)
+      oss << "]";
+  }
+
+  // Now get the output options.
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    if (it->second.input)
+      continue;
+
+    // Otherwise, print the name and the default value.
+    std::string name;
+    CLI::GetSingleton().functionMap[it->second.tname]["GetPrintableParamName"](
+        it->second, NULL, (void*) &name);
+
+    std::string value;
+    CLI::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
+        it->second, NULL, (void*) &value);
+    if (value == "''")
+      value = "<string>";
+
+    oss << " [" << name;
+    if (it->second.cppType != "bool")
+      oss << " " << value;
+    oss << "]";
+  }
+
+  return util::HyphenateString(oss.str(), 8);
 }
 
 /**

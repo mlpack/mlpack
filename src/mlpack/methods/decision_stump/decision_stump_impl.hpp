@@ -57,17 +57,17 @@ DecisionStump<MatType>::DecisionStump() :
  * Train on the given data and labels.
  */
 template<typename MatType>
-void DecisionStump<MatType>::Train(const MatType& data,
-                                   const arma::Row<size_t>& labels,
-                                   const size_t numClasses,
-                                   const size_t bucketSize)
+double DecisionStump<MatType>::Train(const MatType& data,
+                                     const arma::Row<size_t>& labels,
+                                     const size_t numClasses,
+                                     const size_t bucketSize)
 {
   this->numClasses = numClasses;
   this->bucketSize = bucketSize;
 
   // Pass to unweighted training function.
   arma::rowvec weights;
-  Train<false>(data, labels, weights);
+  return Train<false>(data, labels, weights);
 }
 
 /**
@@ -76,17 +76,17 @@ void DecisionStump<MatType>::Train(const MatType& data,
  * stump may be completely different.
  */
 template<typename MatType>
-void DecisionStump<MatType>::Train(const MatType& data,
-                                   const arma::Row<size_t>& labels,
-                                   const arma::rowvec& weights,
-                                   const size_t numClasses,
-                                   const size_t bucketSize)
+double DecisionStump<MatType>::Train(const MatType& data,
+                                     const arma::Row<size_t>& labels,
+                                     const arma::rowvec& weights,
+                                     const size_t numClasses,
+                                     const size_t bucketSize)
 {
   this->numClasses = numClasses;
   this->bucketSize = bucketSize;
 
   // Pass to weighted training function.
-  Train<true>(data, labels, weights);
+  return Train<true>(data, labels, weights);
 }
 
 /**
@@ -98,9 +98,9 @@ void DecisionStump<MatType>::Train(const MatType& data,
  */
 template<typename MatType>
 template<bool UseWeights>
-void DecisionStump<MatType>::Train(const MatType& data,
-                                   const arma::Row<size_t>& labels,
-                                   const arma::rowvec& weights)
+double DecisionStump<MatType>::Train(const MatType& data,
+                                     const arma::Row<size_t>& labels,
+                                     const arma::rowvec& weights)
 {
   // If classLabels are not all identical, proceed with training.
   size_t bestDim = 0;
@@ -134,6 +134,7 @@ void DecisionStump<MatType>::Train(const MatType& data,
 
   // Once the splitting column/dimension has been decided, train on it.
   TrainOnDim(data.row(splitDimension), labels);
+  return -bestGain;
 }
 
 /**

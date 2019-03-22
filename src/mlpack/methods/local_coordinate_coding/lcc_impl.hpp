@@ -36,7 +36,7 @@ LocalCoordinateCoding::LocalCoordinateCoding(
 }
 
 template<typename DictionaryInitializer>
-void LocalCoordinateCoding::Train(
+double LocalCoordinateCoding::Train(
     const arma::mat& data,
     const DictionaryInitializer& initializer)
 {
@@ -103,6 +103,7 @@ void LocalCoordinateCoding::Train(
   }
 
   Timer::Stop("local_coordinate_coding");
+  return lastObjVal;
 }
 
 template<typename Archive>

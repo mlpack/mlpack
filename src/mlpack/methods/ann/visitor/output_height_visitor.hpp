@@ -22,7 +22,7 @@ namespace mlpack {
 namespace ann {
 
 /**
- * OutputWidthVisitor exposes the OutputHeight() method of the given module.
+ * OutputHeightVisitor exposes the OutputHeight() method of the given module.
  */
 class OutputHeightVisitor : public boost::static_visitor<size_t>
 {
@@ -55,7 +55,7 @@ class OutputHeightVisitor : public boost::static_visitor<size_t>
       HasModelCheck<T>::value, size_t>::type
   LayerOutputHeight(T* layer) const;
 
-  //! Return the output height if the module implement the Model() or
+  //! Return the output height if the module implements the Model() or
   //! InputHeight() function.
   template<typename T>
   typename std::enable_if<

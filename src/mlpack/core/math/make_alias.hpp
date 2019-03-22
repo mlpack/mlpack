@@ -17,6 +17,19 @@ namespace mlpack {
 namespace math {
 
 /**
+ * Make an alias of a dense cube.  If strict is true, then the alias cannot be
+ * resized or pointed at new memory.
+ */
+template<typename ElemType>
+arma::Cube<ElemType> MakeAlias(arma::Cube<ElemType>& input,
+                               const bool strict = true)
+{
+  // Use the advanced constructor.
+  return arma::Cube<ElemType>(input.memptr(), input.n_rows, input.n_cols,
+      input.n_slices, false, strict);
+}
+
+/**
  * Make an alias of a dense matrix.  If strict is true, then the alias cannot be
  * resized or pointed at new memory.
  */

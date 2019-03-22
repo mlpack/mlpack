@@ -45,9 +45,10 @@ class AddMerge
   /**
    * Create the AddMerge object using the specified parameters.
    *
-   * @param model Expose the all network modules.
+   * @param model Expose all the network modules.
+   * @param run Call the Forward/Backward method before the output is merged.
    */
-  AddMerge(const bool model = false);
+  AddMerge(const bool model = false, const bool run = true);
 
   //! Destructor to release allocated memory.
   ~AddMerge();
@@ -60,7 +61,7 @@ class AddMerge
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& /* input */, OutputType&& output);
+  void Forward(InputType&& /* input */, OutputType&& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -76,20 +77,47 @@ class AddMerge
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g);
 
-  /*
-   * Add a new module to the model.
+  /**
+   * This is the overload of Backward() that runs only a specific layer with
+   * the given input.
    *
-   * @param layer The Layer to be added to the model.
+   * @param input The propagated input activation.
+   * @param gy The backpropagated error.
+   * @param g The calculated gradient.
+   * @param The index of the layer to run.
    */
-  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
+  template<typename eT>
+  void Backward(const arma::Mat<eT>&& /* input */,
+                arma::Mat<eT>&& gy,
+                arma::Mat<eT>&& g,
+                const size_t index);
 
   /*
-   * Add a new module to the model.
+   * Calculate the gradient using the output delta and the input activation.
    *
-   * @param layer The Layer to be added to the model.
+   * @param input The input parameter used for calculating the gradient.
+   * @param error The calculated error.
+   * @param gradient The calculated gradient.
    */
-  template<typename LayerType>
-  void Add(const LayerType& layer) { network.push_back(new LayerType(layer)); }
+  template<typename eT>
+  void Gradient(arma::Mat<eT>&& input,
+                arma::Mat<eT>&& error,
+                arma::Mat<eT>&& gradient);
+
+  /*
+   * This is the overload of Gradient() that runs a specific layer with the
+   * given input.
+   *
+   * @param input The input parameter used for calculating the gradient.
+   * @param error The calculated error.
+   * @param gradient The calculated gradient.
+   * @param The index of the layer to run.
+   */
+  template<typename eT>
+  void Gradient(arma::Mat<eT>&& input,
+                arma::Mat<eT>&& error,
+                arma::Mat<eT>&& gradient,
+                const size_t index);
 
   /*
    * Add a new module to the model.
@@ -98,6 +126,13 @@ class AddMerge
    */
   template <class LayerType, class... Args>
   void Add(Args... args) { network.push_back(new LayerType(args...)); }
+
+  /*
+   * Add a new module to the model.
+   *
+   * @param layer The Layer to be added to the model.
+   */
+  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
@@ -125,6 +160,16 @@ class AddMerge
     return empty;
   }
 
+  //! Get the parameters.
+  OutputDataType const& Parameters() const { return weights; }
+  //! Modify the parameters.
+  OutputDataType& Parameters() { return weights; }
+
+  //! Get the value of run parameter.
+  bool Run() const { return run; }
+  //! Modify the value of run parameter.
+  bool& Run() { return run; }
+
   /**
    * Serialize the layer.
    */
@@ -134,6 +179,10 @@ class AddMerge
  private:
   //! Parameter which indicates if the modules should be exposed.
   bool model;
+
+  //! Parameter which indicates if the Forward/Backward method should be called
+  //! before merging the output.
+  bool run;
 
   //! We need this to know whether we should delete the layer in the destructor.
   bool ownsLayer;
@@ -156,11 +205,17 @@ class AddMerge
   //! Locally-stored delta object.
   OutputDataType delta;
 
+  //! Locally-stored gradient object.
+  OutputDataType gradient;
+
   //! Locally-stored input parameter object.
   InputDataType inputParameter;
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! Locally-stored weight object.
+  OutputDataType weights;
 }; // class AddMerge
 
 } // namespace ann

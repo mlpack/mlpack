@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.8)
-
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
@@ -20,3 +18,4 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(adaboost)
 add_python_binding(adaboost)
+add_markdown_docs(adaboost "cli;python" "classification")

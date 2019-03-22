@@ -21,11 +21,17 @@ using namespace mlpack::data;
 using namespace mlpack::util;
 
 PROGRAM_INFO("Decision tree",
+    // Short description.
+    "An implementation of an ID3-style decision tree for classification, which"
+    " supports categorical data.  Given labeled data with numeric or "
+    "categorical features, a decision tree can be trained and saved; or, an "
+    "existing decision tree can be used for classification on new points.",
+    // Long description.
     "Train and evaluate using a decision tree.  Given a dataset containing "
     "numeric or categorical features, and associated labels for each point in "
     "the dataset, this program can train a decision tree on that data."
     "\n\n"
-    "The training file and associated labels are specified with the " +
+    "The training set and associated labels are specified with the " +
     PRINT_PARAM_STRING("training") + " and " + PRINT_PARAM_STRING("labels") +
     " parameters, respectively.  The labels should be in the range [0, "
     "num_classes - 1]. Optionally, if " +
@@ -35,7 +41,7 @@ PROGRAM_INFO("Decision tree",
     "When a model is trained, the " + PRINT_PARAM_STRING("output_model") + " "
     "output parameter may be used to save the trained model.  A model may be "
     "loaded for predictions with the " + PRINT_PARAM_STRING("input_model") +
-    "' parameter.  The " + PRINT_PARAM_STRING("input_model") + " parameter "
+    " parameter.  The " + PRINT_PARAM_STRING("input_model") + " parameter "
     "may not be specified when the " + PRINT_PARAM_STRING("training") + " "
     "parameter is specified.  The " + PRINT_PARAM_STRING("minimum_leaf_size") +
     " parameter specifies the minimum number of training points that must fall"
@@ -70,7 +76,15 @@ PROGRAM_INFO("Decision tree",
     PRINT_DATASET("predictions") + ", one could call "
     "\n\n" +
     PRINT_CALL("decision_tree", "input_model", "tree", "test", "test_set",
-        "test_labels", "test_labels", "predictions", "predictions"));
+        "test_labels", "test_labels", "predictions", "predictions"),
+    SEE_ALSO("Decision stump", "#decision_stump"),
+    SEE_ALSO("Random forest", "#random_forest"),
+    SEE_ALSO("Decision trees on Wikipedia",
+        "https://en.wikipedia.org/wiki/Decision_tree_learning"),
+    SEE_ALSO("Induction of Decision Trees (pdf)",
+        "https://link.springer.com/content/pdf/10.1007/BF00116251.pdf"),
+    SEE_ALSO("mlpack::tree::DecisionTree class documentation",
+        "@doxygen/classmlpack_1_1tree_1_1DecisionTree.html"));
 
 // Datasets.
 PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",
@@ -180,13 +194,30 @@ static void mlpackMain()
     {
       arma::Row<double> weights =
           std::move(CLI::GetParam<arma::Mat<double>>("weights"));
-      model->tree = DecisionTree<>(trainingSet, model->info, labels,
-          numClasses, weights, minLeafSize, minimumGainSplit);
+      if (CLI::HasParam("print_training_error"))
+      {
+        model->tree = DecisionTree<>(trainingSet, model->info, labels,
+            numClasses, std::move(weights), minLeafSize, minimumGainSplit);
+      }
+      else
+      {
+        model->tree = DecisionTree<>(std::move(trainingSet), model->info,
+            std::move(labels), numClasses, std::move(weights), minLeafSize,
+            minimumGainSplit);
+      }
     }
     else
     {
-      model->tree = DecisionTree<>(trainingSet, model->info, labels,
-          numClasses, minLeafSize, minimumGainSplit);
+      if (CLI::HasParam("print_training_error"))
+      {
+        model->tree = DecisionTree<>(trainingSet, model->info, labels,
+            numClasses, minLeafSize, minimumGainSplit);
+      }
+      else
+      {
+        model->tree = DecisionTree<>(std::move(trainingSet), model->info,
+            std::move(labels), numClasses, minLeafSize, minimumGainSplit);
+      }
     }
 
     // Do we need to print training error?

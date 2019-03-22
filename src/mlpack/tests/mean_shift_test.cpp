@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(GaussianClustering)
   // We may need to run this multiple times, because sometimes it may converge
   // to the wrong number of clusters.
   bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
+  for (size_t trial = 0; trial < 4; ++trial)
   {
     arma::mat dataset(3, 4000);
     for (size_t i = 0; i < 1000; ++i)

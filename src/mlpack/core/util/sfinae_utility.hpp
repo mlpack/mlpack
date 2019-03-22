@@ -99,11 +99,13 @@ struct MethodFormDetector<Class, MethodForm, 7>
   void operator()(MethodForm<Class, T1, T2, T3, T4, T5, T6, T7>);
 };
 
+//! Utility struct for checking signatures.
+template<typename U, U> struct SigCheck : std::true_type {};
+
 } // namespace sfinae
 } // namespace mlpack
 
-//! Utility struct for checking signatures.
-template<typename U, U> struct SigCheck : std::true_type {};
+
 
 /*
  * Constructs a template supporting the SFINAE pattern.
@@ -132,7 +134,7 @@ struct NAME                                                                    \
 <                                                                              \
   T,                                                                           \
   sig,                                                                         \
-  std::integral_constant<bool, SigCheck<sig, &T::FUNC>::value>                 \
+  std::integral_constant<bool, mlpack::sfinae::SigCheck<sig, &T::FUNC>::value> \
 > : std::true_type {};
 
 /**

@@ -226,7 +226,7 @@ Now, the matrix assignments holds the classification of each point in the
 dataset.
 
 In the next example, we create simple noisy sine sequences, which are trained
-later on, using the RNN class.
+later on, using the RNN class in the `RNNModel()` method.
 
 @code
 void GenerateNoisySines(arma::mat& data,
@@ -253,7 +253,10 @@ void GenerateNoisySines(arma::mat& data,
         arma::as_scalar(arma::randu(1) - 0.5) * noise;
     labels(1, sequences + seq) = 1;
   }
+}
 
+void RNNModel()
+{
   const size_t rho = 10;
 
   // Generate 12 (2 * 6) noisy sines. A single sine contains rho

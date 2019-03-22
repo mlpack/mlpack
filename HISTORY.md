@@ -1,3 +1,82 @@
+### mlpack 3.1.0
+###### ????-??-??
+  * Add kernel density estimation (KDE) implementation with bindings to other
+    languages (#1301).
+
+  * Where relevant, all models with a `Train()` method now return a `double`
+    value representing the goodness of fit (i.e. final objective value, error,
+    etc.) (#1678).
+
+### mlpack 3.0.5
+###### ????-??-??
+  * Change DBSCAN to use PointSelectionPolicy and add OrderedPointSelection (#1625).
+
+### mlpack 3.0.4
+###### 2018-11-13
+  * Bump minimum CMake version to 3.3.2.
+
+  * CMake fixes for Ninja generator by Marc Espie.
+
+### mlpack 3.0.3
+###### 2018-07-27
+  * Fix Visual Studio compilation issue (#1443).
+
+  * Allow running local_coordinate_coding binding with no initial_dictionary
+    parameter when input_model is not specified (#1457).
+
+  * Make use of OpenMP optional via the CMake 'USE_OPENMP' configuration
+    variable (#1474).
+
+  * Accelerate FNN training by 20-30% by avoiding redundant calculations
+    (#1467).
+
+  * Fix math::RandomSeed() usage in tests (#1462, #1440).
+
+  * Generate better Python setup.py with documentation (#1460).
+
+### mlpack 3.0.2
+###### 2018-06-08
+  * Documentation generation fixes for Python bindings (#1421).
+
+  * Fix build error for man pages if command-line bindings are not being built
+    (#1424).
+
+  * Add 'shuffle' parameter and Shuffle() method to KFoldCV (#1412).  This will
+    shuffle the data when the object is constructed, or when Shuffle() is
+    called.
+
+  * Added neural network layers: AtrousConvolution (#1390), Embedding (#1401),
+    and LayerNorm (layer normalization) (#1389).
+
+  * Add Pendulum environment for reinforcement learning (#1388) and update
+    Mountain Car environment (#1394).
+
+### mlpack 3.0.1
+###### 2018-05-10
+  * Fix intermittently failing tests (#1387).
+
+  * Add big-batch SGD (BBSGD) optimizer in
+    src/mlpack/core/optimizers/bigbatch_sgd/ (#1131).
+
+  * Fix simple compiler warnings (#1380, #1373).
+
+  * Simplify NeighborSearch constructor and Train() overloads (#1378).
+
+  * Add warning for OpenMP setting differences (#1358/#1382).  When mlpack is
+    compiled with OpenMP but another application is not (or vice versa), a
+    compilation warning will now be issued.
+
+  * Restructured loss functions in src/mlpack/methods/ann/ (#1365).
+
+  * Add environments for reinforcement learning tests (#1368, #1370, #1329).
+
+  * Allow single outputs for multiple timestep inputs for recurrent neural
+    networks (#1348).
+
+  * Add He and LeCun normal initializations for neural networks (#1342).
+    Neural networks: add He and LeCun normal initializations (#1342), add FReLU
+    and SELU activation functions (#1346, #1341), add alpha-dropout (#1349).
+
 ### mlpack 3.0.0
 ###### 2018-03-30
   * Speed and memory improvements for DBSCAN.  --single_mode can now be used for
@@ -254,7 +333,7 @@
 
   * Add support for observation weights to LinearRegression.
 
-  * MahalanobisDistance<> now takes root of the distance by default and
+  * MahalanobisDistance<> now takes the root of the distance by default and
     therefore satisfies the triangle inequality (TakeRoot now defaults to true).
 
   * Better handling of optional Armadillo HDF5 dependency.
@@ -468,7 +547,7 @@
 
   * Added range search executable (#192).
 
-  * Adapted citations in documentation to BiBTeX; no citations in -h output
+  * Adapted citations in documentation to BibTeX; no citations in -h output
     (#195).
 
   * Stop use of 'const char*' and prefer 'std::string' (#176).

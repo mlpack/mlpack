@@ -41,12 +41,12 @@ namespace hmm /** Hidden Markov Models. */ {
  *   double Probability(const DataType& observation) const;
  *
  *   // Estimate the distribution based on the given observations.
- *   void Train(const std::vector<DataType>& observations);
+ *   double Train(const std::vector<DataType>& observations);
  *
  *   // Estimate the distribution based on the given observations, given also
  *   // the probability of each observation coming from this distribution.
- *   void Train(const std::vector<DataType>& observations,
- *              const std::vector<double>& probabilities);
+ *   double Train(const std::vector<DataType>& observations,
+ *                const std::vector<double>& probabilities);
  * };
  * @endcode
  *
@@ -165,8 +165,9 @@ class HMM
    * @endnote
    *
    * @param dataSeq Vector of observation sequences.
+   * @return Log-likelihood of state sequence.
    */
-  void Train(const std::vector<arma::mat>& dataSeq);
+  double Train(const std::vector<arma::mat>& dataSeq);
 
   /**
    * Train the model using the given labeled observations; the transition and
@@ -191,6 +192,30 @@ class HMM
    */
   void Train(const std::vector<arma::mat>& dataSeq,
              const std::vector<arma::Row<size_t> >& stateSeq);
+
+  /**
+   * Estimate the probabilities of each hidden state at each time step for each
+   * given data observation, using the Forward-Backward algorithm.  Each matrix
+   * which is returned has columns equal to the number of data observations, and
+   * rows equal to the number of hidden states in the model.  The log-likelihood
+   * of the most probable sequence is returned.
+   *
+   * @param dataSeq Sequence of observations.
+   * @param stateProb Matrix in which the log probabilities of each state at each
+   *    time interval will be stored.
+   * @param forwardProb Matrix in which the forward log probabilities of each state
+   *    at each time interval will be stored.
+   * @param backwardProb Matrix in which the backward log probabilities of each
+   *    state at each time interval will be stored.
+   * @param scales Vector in which the log of scaling factors at each time interval
+   *    will be stored.
+   * @return Log-likelihood of most likely state sequence.
+   */
+  double LogEstimate(const arma::mat& dataSeq,
+                     arma::mat& stateLogProb,
+                     arma::mat& forwardLogProb,
+                     arma::mat& backwardLogProb,
+                     arma::vec& logScales) const;
 
   /**
    * Estimate the probabilities of each hidden state at each time step for each
@@ -341,8 +366,8 @@ class HMM
    * @param forwardProb Matrix in which forward probabilities will be saved.
    */
   void Forward(const arma::mat& dataSeq,
-               arma::vec& scales,
-               arma::mat& forwardProb) const;
+               arma::vec& logScales,
+               arma::mat& forwardLogProb) const;
 
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm).  Computes
@@ -356,8 +381,8 @@ class HMM
    * @param backwardProb Matrix in which backward probabilities will be saved.
    */
   void Backward(const arma::mat& dataSeq,
-                const arma::vec& scales,
-                arma::mat& backwardProb) const;
+                const arma::vec& logScales,
+                arma::mat& backwardLogProb) const;
 
   //! Set of emission probability distributions; one for each state.
   std::vector<Distribution> emission;

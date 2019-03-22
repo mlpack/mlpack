@@ -51,6 +51,8 @@ HoeffdingTree<
     ownsInfo(true),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
+    majorityClass(0),
+    majorityProbability(0.0),
     categoricalSplit(0),
     numericSplit()
 {
@@ -107,6 +109,8 @@ HoeffdingTree<
     ownsInfo(true),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
+    majorityClass(0),
+    majorityProbability(0.0),
     categoricalSplit(0),
     numericSplit()
 {
@@ -169,6 +173,8 @@ HoeffdingTree<
     ownsInfo(true),
     successProbability(0.95),
     splitDimension(size_t(-1)),
+    majorityClass(0),
+    majorityProbability(0.0),
     categoricalSplit(0),
     numericSplit()
 {

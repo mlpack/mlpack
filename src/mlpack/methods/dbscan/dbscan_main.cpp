@@ -15,7 +15,8 @@
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
-
+#include <mlpack/methods/dbscan/random_point_selection.hpp>
+#include <mlpack/methods/dbscan/ordered_point_selection.hpp>
 #include "dbscan.hpp"
 
 using namespace mlpack;
@@ -27,6 +28,10 @@ using namespace mlpack::util;
 using namespace std;
 
 PROGRAM_INFO("DBSCAN clustering",
+    // Short description.
+    "An implementation of DBSCAN clustering.  Given a dataset, this can "
+    "compute and return a clustering of that dataset.",
+    // Long description.
     "This program implements the DBSCAN algorithm for clustering using "
     "accelerated tree-based range search.  The type of tree that is used "
     "may be parameterized, or brute-force range search may also be used."
@@ -59,7 +64,13 @@ PROGRAM_INFO("DBSCAN clustering",
     PRINT_DATASET("input") + " with a radius of 0.5 and a minimum cluster size"
     " of 5 is given below:"
     "\n\n" +
-    PRINT_CALL("dbscan", "input", "input", "epsilon", 0.5, "min_size", 5));
+    PRINT_CALL("dbscan", "input", "input", "epsilon", 0.5, "min_size", 5),
+    SEE_ALSO("DBSCAN on Wikipedia", "https://en.wikipedia.org/wiki/DBSCAN"),
+    SEE_ALSO("A density-based algorithm for discovering clusters in large "
+        "spatial databases with noise (pdf)",
+        "http://www.aaai.org/Papers/KDD/1996/KDD96-037.pdf"),
+    SEE_ALSO("mlpack::dbscan::DBSCAN class documentation",
+        "@doxygen/classmlpack_1_1dbscan_1_1DBSCAN.html"));
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to cluster.", "i");
 PARAM_UROW_OUT("assignments", "Output matrix for assignments of each "
@@ -72,29 +83,31 @@ PARAM_INT_IN("min_size", "Minimum number of points for a cluster.", "m", 5);
 PARAM_STRING_IN("tree_type", "If using single-tree or dual-tree search, the "
     "type of tree to use ('kd', 'r', 'r-star', 'x', 'hilbert-r', 'r-plus', "
     "'r-plus-plus', 'cover', 'ball').", "t", "kd");
+PARAM_STRING_IN("selection_type", "If using point selection policy, the "
+    "type of selection to use ('ordered', 'random').", "s", "ordered");
 PARAM_FLAG("single_mode", "If set, single-tree range search (not dual-tree) "
     "will be used.", "S");
 PARAM_FLAG("naive", "If set, brute-force range search (not tree-based) "
     "will be used.", "N");
 
 // Actually run the clustering, and process the output.
-template<typename RangeSearchType>
-void RunDBSCAN(RangeSearchType rs = RangeSearchType())
+template<typename RangeSearchType, typename PointSelectionPolicy>
+void RunDBSCAN(RangeSearchType rs,
+               PointSelectionPolicy pointSelector = PointSelectionPolicy())
 {
   if (CLI::HasParam("single_mode"))
     rs.SingleMode() = true;
 
   // Load dataset.
   arma::mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
-
   const double epsilon = CLI::GetParam<double>("epsilon");
   const size_t minSize = (size_t) CLI::GetParam<int>("min_size");
+  arma::Row<size_t> assignments;
 
-  DBSCAN<RangeSearchType> d(epsilon, minSize, !CLI::HasParam("single_mode"),
-      rs);
+  DBSCAN<RangeSearchType, PointSelectionPolicy> d(epsilon, minSize,
+      !CLI::HasParam("single_mode"), rs, pointSelector);
 
   // If possible, avoid the overhead of calculating centroids.
-  arma::Row<size_t> assignments;
   if (CLI::HasParam("centroids"))
   {
     arma::mat centroids;
@@ -110,6 +123,18 @@ void RunDBSCAN(RangeSearchType rs = RangeSearchType())
 
   if (CLI::HasParam("assignments"))
     CLI::GetParam<arma::Row<size_t>>("assignments") = std::move(assignments);
+}
+
+// Choose the point selection policy.
+template<typename RangeSearchType>
+void ChoosePointSelectionPolicy(RangeSearchType rs = RangeSearchType())
+{
+  const string selectionType = CLI::GetParam<string>("selection_type");
+
+  if (selectionType == "ordered")
+    RunDBSCAN<RangeSearchType, OrderedPointSelection>(rs);
+  else if (selectionType == "random")
+    RunDBSCAN<RangeSearchType, RandomPointSelection>(rs);
 }
 
 static void mlpackMain()
@@ -135,28 +160,54 @@ static void mlpackMain()
   if (CLI::HasParam("naive"))
   {
     RangeSearch<> rs(true);
-    RunDBSCAN(rs);
+    ChoosePointSelectionPolicy(rs);
   }
   else
   {
     const string treeType = CLI::GetParam<string>("tree_type");
     if (treeType == "kd")
-      RunDBSCAN<RangeSearch<>>();
+    {
+      ChoosePointSelectionPolicy<RangeSearch<>>();
+    }
     else if (treeType == "cover")
-      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>>();
+    {
+      ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
+          StandardCoverTree>>();
+    }
     else if (treeType == "r")
-      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, RTree>>();
+    {
+      ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
+          RTree>>();
+    }
     else if (treeType == "r-star")
-      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, RStarTree>>();
+    {
+      ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
+          RStarTree>>();
+    }
     else if (treeType == "x")
-      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, XTree>>();
+    {
+      ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
+          XTree>>();
+    }
     else if (treeType == "hilbert-r")
-      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, HilbertRTree>>();
+    {
+      ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
+          HilbertRTree>>();
+    }
     else if (treeType == "r-plus")
-      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, RPlusTree>>();
+    {
+      ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
+          RPlusTree>>();
+    }
     else if (treeType == "r-plus-plus")
-      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, RPlusPlusTree>>();
+    {
+      ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
+          RPlusPlusTree>>();
+    }
     else if (treeType == "ball")
-      RunDBSCAN<RangeSearch<EuclideanDistance, arma::mat, BallTree>>();
+    {
+      ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
+          BallTree>>();
+    }
   }
 }

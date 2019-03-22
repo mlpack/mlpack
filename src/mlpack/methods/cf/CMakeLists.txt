@@ -3,10 +3,16 @@
 set(SOURCES
   cf.hpp
   cf_impl.hpp
-  cf.cpp
+  cf_model.hpp
+  cf_model_impl.hpp
   svd_wrapper.hpp
   svd_wrapper_impl.hpp
 )
+
+add_subdirectory(decomposition_policies)
+add_subdirectory(interpolation_policies)
+add_subdirectory(neighbor_search_policies)
+add_subdirectory(normalization)
 
 # Add directory name to sources.
 set(DIR_SRCS)
@@ -19,3 +25,4 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(cf)
 add_python_binding(cf)
+add_markdown_docs(cf "cli;python" "misc. / other")

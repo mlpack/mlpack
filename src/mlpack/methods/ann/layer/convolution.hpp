@@ -61,7 +61,7 @@ class Convolution
    * @param dH Stride of filter application in the y direction.
    * @param padW Padding width of the input.
    * @param padH Padding height of the input.
-   * @param inputWidth The widht of the input data.
+   * @param inputWidth The width of the input data.
    * @param inputHeight The height of the input data.
    */
   Convolution(const size_t inSize,
@@ -257,15 +257,18 @@ class Convolution
 
     for (size_t i = 0; i < input.n_slices; ++i)
     {
-      Pad<double>(input.slice(i), wPad, hPad, output.slice(i));
+      Pad<eT>(input.slice(i), wPad, hPad, output.slice(i));
     }
   }
 
-  //! Locally-stored number of input units.
+  //! Locally-stored number of input channels.
   size_t inSize;
 
-  //! Locally-stored number of output units.
+  //! Locally-stored number of output channels.
   size_t outSize;
+
+  //! Locally-stored number of input units.
+  size_t batchSize;
 
   //! Locally-stored filter/kernel width.
   size_t kW;

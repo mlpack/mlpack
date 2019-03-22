@@ -34,17 +34,17 @@ LinearRegression::LinearRegression(const arma::mat& predictors,
   Train(predictors, responses, weights, intercept);
 }
 
-void LinearRegression::Train(const arma::mat& predictors,
-                             const arma::rowvec& responses,
-                             const bool intercept)
+double LinearRegression::Train(const arma::mat& predictors,
+                               const arma::rowvec& responses,
+                               const bool intercept)
 {
-  Train(predictors, responses, arma::rowvec(), intercept);
+  return Train(predictors, responses, arma::rowvec(), intercept);
 }
 
-void LinearRegression::Train(const arma::mat& predictors,
-                             const arma::rowvec& responses,
-                             const arma::rowvec& weights,
-                             const bool intercept)
+double LinearRegression::Train(const arma::mat& predictors,
+                               const arma::rowvec& responses,
+                               const arma::rowvec& weights,
+                               const bool intercept)
 {
   this->intercept = intercept;
 
@@ -76,34 +76,16 @@ void LinearRegression::Train(const arma::mat& predictors,
     r = sqrt(weights) % responses;
   }
 
-  if (lambda != 0.0)
-  {
-    // Add the identity matrix to the predictors (this is equivalent to ridge
-    // regression).  See http://math.stackexchange.com/questions/299481/ for
-    // more information.
-    p.insert_cols(nCols, predictors.n_rows);
-    p.submat(p.n_rows - predictors.n_rows, nCols, p.n_rows - 1, nCols +
-    predictors.n_rows - 1) = sqrt(lambda) *
-        arma::eye<arma::mat>(predictors.n_rows, predictors.n_rows);
-  }
+  // Convert to this form:
+  // a * (X X^T) = y X^T.
+  // Then we'll use Armadillo to solve it.
+  // The total runtime of this should be O(d^2 N) + O(d^3) + O(dN).
+  // (assuming the SVD is used to solve it)
+  arma::mat cov = p * p.t() +
+      lambda * arma::eye<arma::mat>(p.n_rows, p.n_rows);
 
-  // We compute the QR decomposition of the predictors.
-  // We transpose the predictors because they are in column major order.
-  arma::mat Q, R;
-  arma::qr(Q, R, arma::trans(p));
-
-  // We compute the parameters, B, like so:
-  // R * B = Q^T * responses
-  // B = Q^T * responses * R^-1
-  // If lambda > 0, then we must add a bunch of empty responses.
-  if (lambda == 0.0)
-    arma::solve(parameters, R, arma::trans(r * Q));
-  else
-  {
-    // Copy responses into larger vector.
-    r.insert_cols(nCols, p.n_cols - nCols);
-    arma::solve(parameters, R, arma::trans(r * Q));
-  }
+  parameters = arma::solve(cov, p * r.t());
+  return ComputeError(predictors, responses);
 }
 
 void LinearRegression::Predict(const arma::mat& points,

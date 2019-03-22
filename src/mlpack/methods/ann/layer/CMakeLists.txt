@@ -7,21 +7,23 @@ set(SOURCES
   add_merge_impl.hpp
   alpha_dropout.hpp
   alpha_dropout_impl.hpp
+  atrous_convolution.hpp
+  atrous_convolution_impl.hpp
   base_layer.hpp
-  bilinear_interpolation.hpp
-  bilinear_interpolation_impl.hpp
   batch_norm.hpp
   batch_norm_impl.hpp
+  bilinear_interpolation.hpp
+  bilinear_interpolation_impl.hpp
   concat.hpp
   concat_impl.hpp
   concat_performance.hpp
   concat_performance_impl.hpp
+  concatenate.hpp
+  concatenate_impl.hpp
   constant.hpp
   constant_impl.hpp
   convolution.hpp
   convolution_impl.hpp
-  cross_entropy_error.hpp
-  cross_entropy_error_impl.hpp
   dropconnect.hpp
   dropconnect_impl.hpp
   dropout.hpp
@@ -41,6 +43,8 @@ set(SOURCES
   join.hpp
   join_impl.hpp
   layer.hpp
+  layer_norm.hpp
+  layer_norm_impl.hpp
   layer_traits.hpp
   layer_types.hpp
   leaky_relu.hpp
@@ -59,12 +63,10 @@ set(SOURCES
   max_pooling_impl.hpp
   mean_pooling.hpp
   mean_pooling_impl.hpp
-  mean_squared_error.hpp
-  mean_squared_error_impl.hpp
   multiply_constant.hpp
   multiply_constant_impl.hpp
-  negative_log_likelihood.hpp
-  negative_log_likelihood_impl.hpp
+  multiply_merge.hpp
+  multiply_merge_impl.hpp
   parametric_relu.hpp
   parametric_relu_impl.hpp
   recurrent.hpp
@@ -73,12 +75,15 @@ set(SOURCES
   recurrent_attention_impl.hpp
   reinforce_normal.hpp
   reinforce_normal_impl.hpp
-  sigmoid_cross_entropy_error.hpp
-  sigmoid_cross_entropy_error_impl.hpp
+  reparametrization.hpp
+  reparametrization_impl.hpp
   select.hpp
   select_impl.hpp
   sequential.hpp
   sequential_impl.hpp
+  subview.hpp
+  transposed_convolution.hpp
+  transposed_convolution_impl.hpp
   vr_class_reward.hpp
   vr_class_reward_impl.hpp
 )

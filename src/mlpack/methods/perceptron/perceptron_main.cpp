@@ -26,6 +26,12 @@ using namespace std;
 using namespace arma;
 
 PROGRAM_INFO("Perceptron",
+    // Short description.
+    "An implementation of a perceptron---a single level neural network--=for "
+    "classification.  Given labeled data, a perceptron can be trained and saved"
+    " for future use; or, a pre-trained perceptron can be used for "
+    "classification on new points.",
+    // Long description.
     "This program implements a perceptron, which is a single level neural "
     "network. The perceptron makes its predictions based on a linear predictor "
     "function combining a set of weights with the feature vector.  The "
@@ -55,17 +61,17 @@ PROGRAM_INFO("Perceptron",
     " perceptron for later classification.  The invocation below trains a "
     "perceptron on " + PRINT_DATASET("training_data") + " with labels " +
     PRINT_DATASET("training_labels") + ", and saves the model to " +
-    PRINT_MODEL("perceptron") + "."
+    PRINT_MODEL("perceptron_model") + "."
     "\n\n" +
     PRINT_CALL("perceptron", "training", "training_data", "labels",
-        "training_labels", "output_model", "perceptron") +
+        "training_labels", "output_model", "perceptron_model") +
     "\n\n"
     "Then, this model can be re-used for classification on the test data " +
     PRINT_DATASET("test_data") + ".  The example below does precisely that, "
     "saving the predicted classes to " + PRINT_DATASET("predictions") + "."
     "\n\n" +
-    PRINT_CALL("perceptron", "input_model", "perceptron", "test", "test_data",
-        "output", "predictions") +
+    PRINT_CALL("perceptron", "input_model", "perceptron_model", "test",
+        "test_data", "output", "predictions") +
     "\n\n"
     "Note that all of the options may be specified at once: predictions may be "
     "calculated right after training a model, and model training can occur even"
@@ -75,7 +81,12 @@ PROGRAM_INFO("Perceptron",
     "cannot pass a perceptron model trained on 2 classes and then re-train with"
     " a 4-class dataset.  Similarly, attempting classification on a "
     "3-dimensional dataset with a perceptron that has been trained on 8 "
-    "dimensions will cause an error.");
+    "dimensions will cause an error.",
+    SEE_ALSO("@adaboost", "#adaboost"),
+    SEE_ALSO("Perceptron on Wikipedia",
+        "https://en.wikipedia.org/wiki/Perceptron"),
+    SEE_ALSO("mlpack::perceptron::Perceptron C++ class documentation",
+        "@doxygen/classmlpack_1_1perceptron_1_1Perceptron.html"));
 
 // When we save a model, we must also save the class mappings.  So we use this
 // auxiliary structure to store both the perceptron and the mapping, and we'll
@@ -130,7 +141,7 @@ static void mlpackMain()
   // should issue a warning.
   RequireAtLeastOnePassed({ "output_model", "output" }, false,
       "no output will be saved");
-  ReportIgnoredParam({{ "test", true }}, "output");
+  ReportIgnoredParam({{ "test", false }}, "output");
 
   // Check parameter validity.
   RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; },

@@ -23,12 +23,14 @@
 #include "visitor/reset_visitor.hpp"
 #include "visitor/weight_size_visitor.hpp"
 #include "visitor/copy_visitor.hpp"
+#include "visitor/loss_visitor.hpp"
 
 #include "init_rules/network_init.hpp"
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/core/optimizers/rmsprop/rmsprop.hpp>
+#include <ensmallen.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -95,16 +97,17 @@ class FFN
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
+   * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType>
-  void Train(arma::mat predictors,
-             arma::mat responses,
-             OptimizerType& optimizer);
+  double Train(arma::mat predictors,
+               arma::mat responses,
+               OptimizerType& optimizer);
 
   /**
    * Train the feedforward network on the given input data. By default, the
    * RMSProp optimization algorithm is used, but others can be specified
-   * (such as mlpack::optimization::SGD).
+   * (such as ens::SGD).
    *
    * This will use the existing model parameters as a starting point for the
    * optimization. If this is not what you want, then you should access the
@@ -116,9 +119,10 @@ class FFN
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
+   * @return The final objective of the trained model (NaN or Inf on error).
    */
-  template<typename OptimizerType = mlpack::optimization::RMSProp>
-  void Train(arma::mat predictors, arma::mat responses);
+  template<typename OptimizerType = ens::RMSProp>
+  double Train(arma::mat predictors, arma::mat responses);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -134,6 +138,15 @@ class FFN
   void Predict(arma::mat predictors, arma::mat& results);
 
   /**
+   * Evaluate the feedforward network with the given predictors and responses.
+   * This functions is usually used to monitor progress while training.
+   *
+   * @param predictors Input variables.
+   * @param responses Target outputs for input variables.
+   */
+  double Evaluate(arma::mat predictors, arma::mat responses);
+
+  /**
    * Evaluate the feedforward network with the given parameters. This function
    * is usually called by the optimizer to train the model.
    *
@@ -145,8 +158,8 @@ class FFN
 
    /**
    * Evaluate the feedforward network with the given parameters, but using only
-   * one data point. This is useful for optimizers such as SGD, which require a
-   * separable objective function.
+   * a number of data points. This is useful for optimizers such as SGD, which
+   * require a separable objective function.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
@@ -163,9 +176,9 @@ class FFN
 
    /**
    * Evaluate the feedforward network with the given parameters, but using only
-   * one data point. This is useful for optimizers such as SGD, which require a
-   * separable objective function.  This just calls the overload of Evaluate()
-   * with deterministic = true.
+   * a number of data points. This is useful for optimizers such as SGD, which
+   * require a separable objective function. This just calls the overload of
+   * Evaluate() with deterministic = true.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
@@ -175,15 +188,41 @@ class FFN
    */
   double Evaluate(const arma::mat& parameters,
                   const size_t begin,
-                  const size_t batchSize)
-  {
-    return Evaluate(parameters, begin, batchSize, true);
-  }
+                  const size_t batchSize);
+
+  /**
+   * Evaluate the feedforward network with the given parameters.
+   * This function is usually called by the optimizer to train the model.
+   * This just calls the overload of EvaluateWithGradient() with batchSize = 1.
+   *
+   * @param parameters Matrix model parameters.
+   * @param gradient Matrix to output gradient into.
+   */
+  template<typename GradType>
+  double EvaluateWithGradient(const arma::mat& parameters, GradType& gradient);
+
+   /**
+   * Evaluate the feedforward network with the given parameters, but using only
+   * a number of data points. This is useful for optimizers such as SGD, which
+   * require a separable objective function.
+   *
+   * @param parameters Matrix model parameters.
+   * @param begin Index of the starting point to use for objective function
+   *        evaluation.
+   * @param gradient Matrix to output gradient into.
+   * @param batchSize Number of points to be passed at a time to use for
+   *        objective function evaluation.
+   */
+  template<typename GradType>
+  double EvaluateWithGradient(const arma::mat& parameters,
+                              const size_t begin,
+                              GradType& gradient,
+                              const size_t batchSize);
 
   /**
    * Evaluate the gradient of the feedforward network with the given parameters,
-   * and with respect to only one point in the dataset. This is useful for
-   * optimizers such as SGD, which require a separable objective function.
+   * and with respect to only a number of points in the dataset. This is useful
+   * for optimizers such as SGD, which require a separable objective function.
    *
    * @param parameters Matrix of the model parameters to be optimized.
    * @param begin Index of the starting point to use for objective function
@@ -256,6 +295,22 @@ class FFN
    * @param results The predicted results.
    */
   void Forward(arma::mat inputs, arma::mat& results);
+
+  /**
+   * Perform a partial forward pass of the data.
+   *
+   * This function is meant for the cases when users require a forward pass only
+   * through certain layers and not the entire network.
+   *
+   * @param inputs The input data for the specified first layer.
+   * @param results The predicted results from the specified last layer.
+   * @param begin The index of the first layer.
+   * @param end The index of the last layer.
+   */
+  void Forward(arma::mat inputs,
+               arma::mat& results,
+               const size_t begin,
+               const size_t end);
 
   /**
    * Perform the backward pass of the data in real batch mode.
@@ -371,6 +426,9 @@ class FFN
   //! Locally-stored output height visitor.
   OutputHeightVisitor outputHeightVisitor;
 
+  //! Locally-stored loss visitor
+  LossVisitor lossVisitor;
+
   //! Locally-stored reset visitor.
   ResetVisitor resetVisitor;
 
@@ -394,10 +452,36 @@ class FFN
 
   //! Locally-stored copy visitor
   CopyVisitor<CustomLayers...> copyVisitor;
+
+  // The GAN class should have access to internal members.
+  template<
+    typename Model,
+    typename InitializerType,
+    typename NoiseType,
+    typename PolicyType
+  >
+  friend class GAN;
 }; // class FFN
 
 } // namespace ann
 } // namespace mlpack
+
+//! Set the serialization version of the FFN class.  Multiple template arguments
+//! makes this ugly...
+namespace boost {
+namespace serialization {
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename... CustomLayer>
+struct version<
+    mlpack::ann::FFN<OutputLayerType, InitializationRuleType, CustomLayer...>>
+{
+  BOOST_STATIC_CONSTANT(int, value = 1);
+};
+
+} // namespace serialization
+} // namespace boost
 
 // Include implementation.
 #include "ffn_impl.hpp"

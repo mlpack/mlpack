@@ -30,6 +30,13 @@ typedef RAModel<NearestNeighborSort> RANNModel;
 
 // Information about the program itself.
 PROGRAM_INFO("K-Rank-Approximate-Nearest-Neighbors (kRANN)",
+    // Short description.
+    "An implementation of rank-approximate k-nearest-neighbor search (kRANN) "
+    " using single-tree and dual-tree algorithms.  Given a set of reference "
+    "points and query points, this can find the k nearest neighbors in the "
+    "reference set of each query point using trees; trees that are built can "
+    "be saved for future use.",
+    // Long description.
     "This program will calculate the k rank-approximate-nearest-neighbors of a "
     "set of points. You may specify a separate set of reference points and "
     "query points, or just a reference set which will be used as both the "
@@ -37,11 +44,13 @@ PROGRAM_INFO("K-Rank-Approximate-Nearest-Neighbors (kRANN)",
     "(and optionally the success probability)."
     "\n\n"
     "For example, the following will return 5 neighbors from the top 0.1% of "
-    "the data (with probability 0.95) for each point in 'input.csv' and store "
-    "the distances in 'distances.csv' and the neighbors in the file "
-    "'neighbors.csv':"
-    "\n\n"
-    "$ allkrann -k 5 -r input.csv -d distances.csv -n neighbors.csv --tau 0.1"
+    "the data (with probability 0.95) for each point in " +
+    PRINT_DATASET("input") + " and store the distances in " +
+    PRINT_DATASET("distances") + " and the neighbors in " +
+    PRINT_DATASET("neighbors.csv") + ":"
+    "\n\n" +
+    PRINT_CALL("krann", "reference", "input", "k", 5, "distances", "distances",
+        "neighbors", "neighbors", "tau", 0.1) +
     "\n\n"
     "Note that tau must be set such that the number of points in the "
     "corresponding percentile of the data is greater than k.  Thus, if we "
@@ -49,11 +58,19 @@ PROGRAM_INFO("K-Rank-Approximate-Nearest-Neighbors (kRANN)",
     "attempting to choose 5 nearest neighbors out of the closest 1 point -- "
     "this is invalid and the program will terminate with an error message."
     "\n\n"
-    "The output files are organized such that row i and column j in the "
+    "The output matrices are organized such that row i and column j in the "
     "neighbors output file corresponds to the index of the point in the "
     "reference set which is the i'th nearest neighbor from the point in the "
     "query set with index j.  Row i and column j in the distances output file "
-    "corresponds to the distance between those two points.");
+    "corresponds to the distance between those two points.",
+    SEE_ALSO("@knn", "#knn"),
+    SEE_ALSO("@lsh", "#lsh"),
+    SEE_ALSO("Rank-approximate nearest neighbor search: Retaining meaning and "
+        "speed in high dimensions (pdf)", "https://papers.nips.cc/paper/3864-"
+        "rank-approximate-nearest-neighbor-search-retaining-meaning-and-speed-"
+        "in-high-dimensions.pdf"),
+    SEE_ALSO("mlpack::neighbor::RASearch C++ class documentation",
+        "@doxygen/classmlpack_1_1neighbor_1_1RASearch.html"));
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");

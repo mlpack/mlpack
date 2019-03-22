@@ -13,6 +13,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::regression;
@@ -197,6 +198,30 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTrainTest)
   BOOST_REQUIRE_EQUAL(lr.Parameters().n_elem, lrTrain.Parameters().n_elem);
   for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
     BOOST_REQUIRE_CLOSE(lr.Parameters()[i], lrTrain.Parameters()[i], 1e-5);
+}
+
+/*
+ * Linear regression serialization test.
+ */
+BOOST_AUTO_TEST_CASE(LinearRegressionTest)
+{
+  // Generate some random data.
+  arma::mat data;
+  data.randn(15, 800);
+  arma::rowvec responses;
+  responses.randn(800);
+
+  LinearRegression lr(data, responses, 0.05); // Train the model.
+  LinearRegression xmlLr, textLr, binaryLr;
+
+  SerializeObjectAll(lr, xmlLr, textLr, binaryLr);
+
+  BOOST_REQUIRE_CLOSE(lr.Lambda(), xmlLr.Lambda(), 1e-8);
+  BOOST_REQUIRE_CLOSE(lr.Lambda(), textLr.Lambda(), 1e-8);
+  BOOST_REQUIRE_CLOSE(lr.Lambda(), binaryLr.Lambda(), 1e-8);
+
+  CheckMatrices(lr.Parameters(), xmlLr.Parameters(), textLr.Parameters(),
+      binaryLr.Parameters());
 }
 
 BOOST_AUTO_TEST_SUITE_END();

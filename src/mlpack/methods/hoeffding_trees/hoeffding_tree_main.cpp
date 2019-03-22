@@ -26,6 +26,12 @@ using namespace mlpack::data;
 using namespace mlpack::util;
 
 PROGRAM_INFO("Hoeffding trees",
+    // Short description.
+    "An implementation of Hoeffding trees, a form of streaming decision tree "
+    "for classification.  Given labeled data, a Hoeffding tree can be trained "
+    "and saved for later use, or a pre-trained Hoeffding tree can be used for "
+    "predicting the classifications of new points.",
+    // Long description.
     "This program implements Hoeffding trees, a form of streaming decision tree"
     " suited best for large (or streaming) datasets.  This program supports "
     "both categorical and numeric data.  Given an input dataset, this program "
@@ -70,7 +76,13 @@ PROGRAM_INFO("Hoeffding trees",
     PRINT_DATASET("class_probs") + " with the following command: "
     "\n\n" +
     PRINT_CALL("hoeffding_tree", "input_model", "tree", "test", "test_set",
-        "predictions", "predictions", "probabilities", "class_probs"));
+        "predictions", "predictions", "probabilities", "class_probs"),
+    SEE_ALSO("@decision_tree", "#decision_tree"),
+    SEE_ALSO("@random_forest", "#random_forest"),
+    SEE_ALSO("Mining High-Speed Data Streams (pdf)",
+        "http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf"),
+    SEE_ALSO("mlpack::tree::HoeffdingTree class documentation",
+        "@doxygen/classmlpack_1_1tree_1_1HoeffdingTree.html"));
 
 PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",
     "t");
@@ -157,7 +169,7 @@ static void mlpackMain()
       model = new HoeffdingTreeModel(HoeffdingTreeModel::GINI_BINARY);
     else if (CLI::HasParam("info_gain") && (numericSplitStrategy == "domingos"))
       model = new HoeffdingTreeModel(HoeffdingTreeModel::INFO_HOEFFDING);
-    else if (CLI::HasParam("info_gain") && (numericSplitStrategy == "binary"))
+    else
       model = new HoeffdingTreeModel(HoeffdingTreeModel::INFO_BINARY);
   }
 

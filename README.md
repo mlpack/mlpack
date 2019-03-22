@@ -13,7 +13,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 </h5>
 
 <p align="center">
-  <a href="http://masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/s/http/masterblaster.mlpack.org/job/mlpack%20-%20git%20commit%20test.svg?label=Linux%20build&style=flat-square" alt="Jenkins"></a>
+  <a href="http://ci.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/s/http/ci.mlpack.org/job/mlpack%20-%20git%20commit%20test.svg?label=Linux%20build&style=flat-square" alt="Jenkins"></a>
   <a href="https://ci.appveyor.com/project/mlpack/mlpack"><img src="https://img.shields.io/appveyor/ci/mlpack/mlpack/master.svg?label=Windows%20build&style=flat-square&logoWidth=0.1" alt="Appveyor"></a>
   <a href="https://coveralls.io/github/mlpack/mlpack?branch=master"><img src="https://img.shields.io/coveralls/mlpack/mlpack/master.svg?style=flat-square" alt="Coveralls"></a>
   <a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square" alt="License"></a>
@@ -22,7 +22,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="http://www.mlpack.org/files/mlpack-3.0.0.tar.gz">current stable version (3.0.0)</a>
+    <a href="http://www.mlpack.org/files/mlpack-3.0.4.tar.gz">current stable version (3.0.4)</a>
   </em>
 </p>
 
@@ -46,7 +46,7 @@ Python bindings.
 
 ###  1. Introduction
 
-The mlpack website can be found at http://www.mlpack.org and contains numerous
+The mlpack website can be found at http://www.mlpack.org and it contains numerous
 tutorials and extensive documentation.  This README serves as a guide for what
 mlpack is, how to install it, how to run it, and where to find more
 documentation. The website should be consulted for further information:
@@ -59,17 +59,20 @@ documentation. The website should be consulted for further information:
 ### 2. Citation details
 
 If you use mlpack in your research or software, please cite mlpack using the
-citation below (given in BiBTeX format):
+citation below (given in BibTeX format):
 
-    @article{mlpack2013,
-      title     = {{mlpack}: A Scalable {C++} Machine Learning Library},
-      author    = {Curtin, Ryan R. and Cline, James R. and Slagle, Neil P. and
-                   March, William B. and Ram, P. and Mehta, Nishant A. and Gray,
-                   Alexander G.},
-      journal   = {Journal of Machine Learning Research},
-      volume    = {14},
-      pages     = {801--805},
-      year      = {2013}
+    @article{mlpack2018,
+        title     = {mlpack 3: a fast, flexible machine learning library},
+        author    = {Curtin, Ryan R. and Edel, Marcus and Lozhnikov, Mikhail and
+                     Mentekidis, Yannis and Ghaisas, Sumedh and Zhang,
+                     Shangtong},
+        journal   = {Journal of Open Source Software},
+        volume    = {3},
+        issue     = {26},
+        pages     = {726},
+        year      = {2018},
+        doi       = {10.21105/joss.00726},
+        url       = {https://doi.org/10.21105/joss.00726}
     }
 
 Citations are beneficial for the growth and improvement of mlpack.
@@ -81,13 +84,13 @@ mlpack has the following dependencies:
       Armadillo     >= 6.500.0
       Boost (program_options, math_c99, unit_test_framework, serialization,
              spirit)
-      CMake         >= 2.8.5
+      CMake         >= 3.3.2
 
 All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for
 each of those packages for more information.
 
-If you would like use or build the mlpack Python bindings, make sure that the
+If you would like to use or build the mlpack Python bindings, make sure that the
 following Python packages are installed:
 
       setuptools
@@ -106,10 +109,15 @@ with the following command:
 
     $ sudo apt-get install libmlpack-dev
 
+Note: Older Ubuntu versions may not have the most recent version of mlpack
+available---for instance, at the time of this writing, Ubuntu 16.04 only has
+mlpack 2.0.1 available.  Options include upgrading your Ubuntu version, finding
+a PPA or other non-official sources, or installing with a manual build.
+
 There are some other useful pages to consult in addition to this section:
 
   - [Building mlpack From Source](http://www.mlpack.org/docs/mlpack-git/doxygen/build.html)
-  - [Building mlpack Under Windows](https://github.com/mlpack/mlpack/wiki/WindowsBuild)
+  - [Building mlpack From Source on Windows](http://www.mlpack.org/docs/mlpack-git/doxygen/build_windows.html)
 
 mlpack uses CMake as a build system and allows several flexible build
 configuration options. One can consult any of numerous CMake tutorials for
@@ -140,7 +148,7 @@ information:
 
     $ cmake -D DEBUG=ON -D PROFILE=ON ../
 
-Options are specified with the -D flag.  A list of options allowed:
+Options are specified with the -D flag.  The allowed options include:
 
     DEBUG=(ON/OFF): compile with debugging symbols
     PROFILE=(ON/OFF): compile with profiling symbols
@@ -150,13 +158,22 @@ Options are specified with the -D flag.  A list of options allowed:
     ARMADILLO_LIBRARY=(/path/to/armadillo/libarmadillo.so): Armadillo library
     BUILD_CLI_EXECUTABLES=(ON/OFF): whether or not to build command-line programs
     BUILD_PYTHON_BINDINGS=(ON/OFF): whether or not to build Python bindings
+    BUILD_TESTS=(ON/OFF): whether or not to build tests
+    BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
+       static libraries
+    DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
+    ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory
+       for ensmallen
+    USE_OPENMP=(ON/OFF): whether or not to use OpenMP if available
 
 Other tools can also be used to configure CMake, but those are not documented
-here.
+here.  See [this section of the build guide](http://www.mlpack.org/docs/mlpack-git/doxygen/build.html#build_config)
+for more details, including a full list of options, and their default values.
 
 By default, command-line programs will be built, and if the Python dependencies
 (Cython, setuptools, numpy, pandas) are available, then Python bindings will
-also be built.
+also be built.  OpenMP will be used for parallelization when possible by
+default.
 
 Once CMake is configured, building the library is as simple as typing 'make'.
 This will build all library components as well as 'mlpack_test'.
@@ -220,7 +237,7 @@ be stated more simply: for each point in the dataset, we wish to know the k
 nearest points to that point.
 
 Each mlpack program has extensive help documentation which details what the
-method does, what each of the parameters are, and how to use them:
+method does, what each of the parameters is, and how to use them:
 
 ```shell
 $ mlpack_knn --help

@@ -13,7 +13,7 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <ensmallen.hpp>
 
 #include <memory>
 #include <set>
@@ -24,11 +24,18 @@ using namespace mlpack::regression;
 using namespace mlpack::util;
 
 // Define parameters for the executable.
-PROGRAM_INFO("Softmax Regression", "This program performs softmax regression, "
-    "a generalization of logistic regression to the multiclass case, and has "
-    "support for L2 regularization.  The program is able to train a model, load"
-    " an existing model, and give predictions (and optionally their accuracy) "
-    "for test data."
+PROGRAM_INFO("Softmax Regression",
+    // Short description.
+    "An implementation of softmax regression for classification, which is a "
+    "multiclass generalization of logistic regression.  Given labeled data, a "
+    "softmax regression model can be trained and saved for future use, or, a "
+    "pre-trained softmax regression model can be used for classification of "
+    "new points.",
+    // Long description.
+    "This program performs softmax regression, a generalization of logistic "
+    "regression to the multiclass case, and has support for L2 regularization. "
+    " The program is able to train a model, load  an existing model, and give "
+    "predictions (and optionally their accuracy) for test data."
     "\n\n"
     "Training a softmax regression model is done by giving a file of training "
     "points with the " + PRINT_PARAM_STRING("training") + " parameter and their"
@@ -71,7 +78,14 @@ PROGRAM_INFO("Softmax Regression", "This program performs softmax regression, "
     " " + PRINT_DATASET("predictions") + ", the following command can be used:"
     "\n\n" +
     PRINT_CALL("softmax_regression", "input_model", "sr_model", "test",
-        "test_points", "predictions", "predictions"));
+        "test_points", "predictions", "predictions"),
+    SEE_ALSO("@logistic_regression", "#logistic_regression"),
+    SEE_ALSO("@random_forest", "#random_forest"),
+    SEE_ALSO("Multinomial logistic regression (softmax regression) on "
+        "Wikipedia",
+        "https://en.wikipedia.org/wiki/Multinomial_logistic_regression"),
+    SEE_ALSO("mlpack::regression::SoftmaxRegression C++ class documentation",
+        "@doxygen/classmlpack_1_1regression_1_1SoftmaxRegression.html"));
 
 // Required options.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "
@@ -256,7 +270,7 @@ Model* TrainSoftmax(const size_t maxIterations)
     const bool intercept = CLI::HasParam("no_intercept") ? false : true;
 
     const size_t numBasis = 5;
-    optimization::L_BFGS optimizer(numBasis, maxIterations);
+    ens::L_BFGS optimizer(numBasis, maxIterations);
     sm = new Model(trainData, trainLabels, numClasses,
         CLI::GetParam<double>("lambda"), intercept, std::move(optimizer));
   }

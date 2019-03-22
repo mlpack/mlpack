@@ -34,14 +34,38 @@ namespace ann /** Artificial Neural Network. */ {
  * feed-forward fully connected network container which plugs various layers
  * together.
  *
+ * This class can also be used as a container for a residual block. In that
+ * case, the sizes of the input and output matrices of this class should be
+ * equal. A typedef has been added for use as a Residual<> class.
+ *
+ * For more information, refer the following paper.
+ *
+ * @code
+ * @article{He15,
+ *   author    = {Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun},
+ *   title     = {Deep Residual Learning for Image Recognition},
+ *   year      = {2015},
+ *   url       = {https://arxiv.org/abs/1512.03385},
+ *   eprint    = {1512.03385},
+ * }
+ * @endcode
+ *
+ * Note: If this class is used as the first layer of a network, it should be
+ *       preceded by IdentityLayer<>.
+ *
+ * Note: This class should at least have two layers for a call to its Gradient()
+ *       function.
+ *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
+ * @tparam Residual If true, use the object as a Residual block.
  */
 template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat,
+    bool Residual = false,
     typename... CustomLayers
 >
 class Sequential
@@ -108,6 +132,11 @@ class Sequential
    */
   void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
 
+  /*
+   * Destroy all the modules added to the Sequential object.
+   */
+  void DeleteModules();
+
   //! Return the model modules.
   std::vector<LayerTypes<CustomLayers...> >& Model()
   {
@@ -124,6 +153,7 @@ class Sequential
   //! Modify the initial point for the optimization.
   arma::mat& Parameters() { return parameters; }
 
+  //! Get the input parameter.
   arma::mat const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   arma::mat& InputParameter() { return inputParameter; }
@@ -133,7 +163,7 @@ class Sequential
   //! Modify the output parameter.
   arma::mat& OutputParameter() { return outputParameter; }
 
-  //! Get the delta.e
+  //! Get the delta.
   arma::mat const& Delta() const { return delta; }
   //! Modify the delta.
   arma::mat& Delta() { return delta; }
@@ -198,6 +228,17 @@ class Sequential
   //! The input height.
   size_t height;
 }; // class Sequential
+
+/*
+ * Convenience typedef for use as Residual<> layer.
+ */
+template<
+  typename InputDataType = arma::mat,
+  typename OutputDataType = arma::mat,
+  typename... CustomLayers
+>
+using Residual = Sequential<
+    InputDataType, OutputDataType, true, CustomLayers...>;
 
 } // namespace ann
 } // namespace mlpack

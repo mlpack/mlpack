@@ -25,6 +25,13 @@ using namespace mlpack::util;
 
 // Information about the program itself.
 PROGRAM_INFO("K-Approximate-Nearest-Neighbor Search with LSH",
+    // Short description.
+    "An implementation of approximate k-nearest-neighbor search with "
+    "locality-sensitive hashing (LSH).  Given a set of reference points and a "
+    "set of query points, this will compute the k approximate nearest neighbors"
+    " of each query point in the reference set; models can be saved for future "
+    "use.",
+    // Long description.
     "This program will calculate the k approximate-nearest-neighbors of a set "
     "of points using locality-sensitive hashing. You may specify a separate set"
     " of reference points and query points, or just a reference set which will "
@@ -49,7 +56,15 @@ PROGRAM_INFO("K-Approximate-Nearest-Neighbor Search with LSH",
     " parameter can be specified to set the random seed."
     "\n\n"
     "This program also has many other parameters to control its functionality;"
-    " see the parameter-specific documentation for more information.");
+    " see the parameter-specific documentation for more information.",
+    SEE_ALSO("@knn", "#knn"),
+    SEE_ALSO("@krann", "#krann"),
+    SEE_ALSO("Locality-sensitive hashing on Wikipedia",
+        "https://en.wikipedia.org/wiki/Locality-sensitive_hashing"),
+    SEE_ALSO("Locality-sensitive hashing scheme based on p-stable distributions"
+        " (pdf)", "http://mlpack.org/papers/lsh.pdf"),
+    SEE_ALSO("mlpack::neighbor::LSHSearch C++ class documentation",
+        "@doxygen/classmlpack_1_1neighbor_1_1LSHSearch.html"));
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
@@ -201,6 +216,14 @@ static void mlpackMain()
     // Load the true neighbors.
     arma::Mat<size_t> trueNeighbors =
         std::move(CLI::GetParam<arma::Mat<size_t>>("true_neighbors"));
+
+    if (trueNeighbors.n_rows != neighbors.n_rows ||
+        trueNeighbors.n_cols != neighbors.n_cols)
+    {
+        Log::Fatal << "The true neighbors file must have the same number of "
+            << "values as the set of neighbors being queried!" << endl;
+    }
+
     Log::Info << "Using true neighbor indices from '"
         << CLI::GetPrintableParam<arma::Mat<size_t>>("true_neighbors") << "'."
         << endl;

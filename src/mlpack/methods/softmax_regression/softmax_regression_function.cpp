@@ -53,14 +53,14 @@ void SoftmaxRegressionFunction::Shuffle()
     reverseOrdering[ordering[i]] = i;
 
   arma::umat newLocations(2, groundTruth.n_nonzero);
-  arma::vec values(const_cast<double*>(groundTruth.values),
-      groundTruth.n_nonzero, false, true);
+  arma::vec values(groundTruth.n_nonzero);
   arma::sp_mat::const_iterator it = groundTruth.begin();
   size_t loc = 0;
   while (it != groundTruth.end())
   {
     newLocations(0, loc) = reverseOrdering(it.col());
     newLocations(1, loc) = it.row();
+    values(loc) = (*it);
 
     ++it;
     ++loc;

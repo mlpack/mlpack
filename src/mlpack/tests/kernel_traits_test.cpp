@@ -52,6 +52,7 @@ BOOST_AUTO_TEST_CASE(IsNormalizedTest)
   BOOST_REQUIRE_EQUAL((bool) KernelTraits<SphericalKernel>::IsNormalized, true);
   BOOST_REQUIRE_EQUAL((bool) KernelTraits<TriangularKernel>::IsNormalized,
       true);
+  BOOST_REQUIRE_EQUAL((bool) KernelTraits<CauchyKernel>::IsNormalized, true);
 
   // Unnormalized kernels.
   BOOST_REQUIRE_EQUAL((bool) KernelTraits<LinearKernel>::IsNormalized, false);

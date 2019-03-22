@@ -27,7 +27,8 @@ using namespace mlpack;
 using namespace mlpack::util;
 
 // Fake ProgramDoc in case none is supplied.
-static ProgramDoc emptyProgramDoc = ProgramDoc("", []() { return ""; });
+static ProgramDoc emptyProgramDoc = ProgramDoc("", "", []() { return ""; },
+    {});
 
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */

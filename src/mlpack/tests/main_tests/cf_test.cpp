@@ -164,7 +164,8 @@ BOOST_AUTO_TEST_CASE(CFNeighborhoodBoundTest)
 
 /**
  * Ensure algorithm is one of { "NMF", "BatchSVD",
- * "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD" }.
+ * "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD",
+ * "BiasSVD", "SVDPP" }.
  */
 BOOST_AUTO_TEST_CASE(CFAlgorithmBoundTest)
 {
@@ -185,19 +186,19 @@ BOOST_AUTO_TEST_CASE(CFAlgorithmBoundTest)
  */
 BOOST_AUTO_TEST_CASE(CFModelReuseTest)
 {
-  const size_t algorithmNum = 5;
-  std::string algorithms[algorithmNum] = { "NMF", "BatchSVD",
-      "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD" };
+  std::string algorithms[] = { "NMF", "BatchSVD",
+      "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD",
+      "BiasSVD", "SVDPP" };
 
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
 
-  for (size_t i = 0; i < algorithmNum; i++)
+  for (std::string& algorithm : algorithms)
   {
     ResetSettings();
     SetInputParam("training", dataset);
     SetInputParam("max_iterations", int(10));
-    SetInputParam("algorithm", algorithms[i]);
+    SetInputParam("algorithm", algorithm);
 
     mlpackMain();
 
@@ -215,7 +216,7 @@ BOOST_AUTO_TEST_CASE(CFModelReuseTest)
     SetInputParam("query", std::move(query));
     SetInputParam("recommendations", recommendations);
     SetInputParam("input_model",
-        std::move(CLI::GetParam<CF*>("output_model")));
+        std::move(CLI::GetParam<CFModel*>("output_model")));
 
     mlpackMain();
 
@@ -262,9 +263,9 @@ BOOST_AUTO_TEST_CASE(CFRankTest)
 
   mlpackMain();
 
-  const CF* outputModel = CLI::GetParam<CF*>("output_model");
+  const CFModel* outputModel = CLI::GetParam<CFModel*>("output_model");
 
-  BOOST_REQUIRE_EQUAL(outputModel->Rank(), rank);
+  BOOST_REQUIRE_EQUAL(outputModel->template CFPtr<NMFPolicy>()->Rank(), rank);
 }
 
 /**
@@ -274,7 +275,7 @@ BOOST_AUTO_TEST_CASE(CFMinResidueTest)
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
-  const CF* outputModel;
+  const CFModel* outputModel;
 
   // Set a larger min_residue.
   SetInputParam("min_residue", double(100));
@@ -286,9 +287,10 @@ BOOST_AUTO_TEST_CASE(CFMinResidueTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel =  CLI::GetParam<CF*>("output_model");
-  const mat w1 = outputModel->W();
-  const mat h1 = outputModel->H();
+  outputModel =  CLI::GetParam<CFModel*>("output_model");
+  // By default the main program use NMFPolicy.
+  const mat w1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
+  const mat h1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
 
   ResetSettings();
 
@@ -302,9 +304,10 @@ BOOST_AUTO_TEST_CASE(CFMinResidueTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel = CLI::GetParam<CF*>("output_model");
-  const mat w2 = outputModel->W();
-  const mat h2 = outputModel->H();
+  outputModel = CLI::GetParam<CFModel*>("output_model");
+  // By default the main program use NMFPolicy.
+  const mat w2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
+  const mat h2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
 
   // The resulting matrices should be different.
   BOOST_REQUIRE(arma::norm(w1 - w2) > 1e-5 || arma::norm(h1 - h2) > 1e-5);
@@ -317,7 +320,7 @@ BOOST_AUTO_TEST_CASE(CFIterationOnlyTerminationTest)
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
-  const CF* outputModel;
+  const CFModel* outputModel;
 
   // Set iteration_only_termination.
   SetInputParam("iteration_only_termination", true);
@@ -329,9 +332,10 @@ BOOST_AUTO_TEST_CASE(CFIterationOnlyTerminationTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel =  CLI::GetParam<CF*>("output_model");
-  const mat w1 = outputModel->W();
-  const mat h1 = outputModel->H();
+  outputModel =  CLI::GetParam<CFModel*>("output_model");
+  // By default, the main program use NMFPolicy.
+  const mat w1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
+  const mat h1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
 
   ResetSettings();
 
@@ -344,9 +348,10 @@ BOOST_AUTO_TEST_CASE(CFIterationOnlyTerminationTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel = CLI::GetParam<CF*>("output_model");
-  const mat w2 = outputModel->W();
-  const mat h2 = outputModel->H();
+  outputModel = CLI::GetParam<CFModel*>("output_model");
+  // By default, the main program use NMFPolicy.
+  const mat w2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
+  const mat h2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
 
   // The resulting matrices should be different.
   BOOST_REQUIRE(arma::norm(w1 - w2) > 1e-5 || arma::norm(h1 - h2) > 1e-5);
@@ -359,7 +364,7 @@ BOOST_AUTO_TEST_CASE(CFMaxIterationsTest)
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
-  const CF* outputModel;
+  const CFModel* outputModel;
 
   // Set a larger max_iterations.
   SetInputParam("max_iterations", int(100));
@@ -370,9 +375,10 @@ BOOST_AUTO_TEST_CASE(CFMaxIterationsTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel =  CLI::GetParam<CF*>("output_model");
-  const mat w1 = outputModel->W();
-  const mat h1 = outputModel->H();
+  outputModel =  CLI::GetParam<CFModel*>("output_model");
+  // By default, the main program use NMFPolicy.
+  const mat w1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
+  const mat h1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
 
   ResetSettings();
 
@@ -385,9 +391,10 @@ BOOST_AUTO_TEST_CASE(CFMaxIterationsTest)
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel = CLI::GetParam<CF*>("output_model");
-  const mat w2 = outputModel->W();
-  const mat h2 = outputModel->H();
+  outputModel = CLI::GetParam<CFModel*>("output_model");
+  // By default the main program use NMFPolicy.
+  const mat w2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
+  const mat h2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
 
   // The resulting matrices should be different.
   BOOST_REQUIRE(arma::norm(w1 - w2) > 1e-5 || arma::norm(h1 - h2) > 1e-5);
@@ -431,6 +438,182 @@ BOOST_AUTO_TEST_CASE(CFNeighborhoodTest)
 
   // The resulting matrices should be different.
   BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+}
+
+/**
+ * Ensure interpolation algorithm is one of { "average", "regression",
+ * "similarity" }.
+ */
+BOOST_AUTO_TEST_CASE(CFInterpolationAlgorithmBoundTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
+
+  const int querySize = 7;
+  Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
+
+  // interpolation algorithm should be valid.
+  SetInputParam("interpolation", std::string("invalid_algorithm"));
+  SetInputParam("training", std::move(dataset));
+  SetInputParam("query", query);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Ensure that using interpolation algorithm makes a difference.
+ */
+BOOST_AUTO_TEST_CASE(CFInterpolationTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
+
+  const int querySize = 7;
+  Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
+
+  // Query with different interpolation types.
+  ResetSettings();
+
+  // Using average interpolation algorithm.
+  SetInputParam("training", dataset);
+  SetInputParam("max_iterations", int(10));
+  SetInputParam("query", query);
+  SetInputParam("interpolation", std::string("average"));
+  SetInputParam("recommendations", 5);
+
+  mlpackMain();
+
+  const arma::Mat<size_t> output1 = CLI::GetParam<arma::Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output1.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(output1.n_cols, 7);
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["max_iterations"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
+
+  // Using regression interpolation algorithm.
+  SetInputParam("input_model",
+      std::move(CLI::GetParam<CFModel*>("output_model")));
+  SetInputParam("query", query);
+  SetInputParam("interpolation", std::string("regression"));
+  SetInputParam("recommendations", 5);
+
+  mlpackMain();
+
+  const arma::Mat<size_t> output2 = CLI::GetParam<arma::Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output2.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(output2.n_cols, 7);
+
+  // Using similarity interpolation algorithm.
+  SetInputParam("input_model",
+      std::move(CLI::GetParam<CFModel*>("output_model")));
+  SetInputParam("query", query);
+  SetInputParam("interpolation", std::string("similarity"));
+  SetInputParam("recommendations", 5);
+
+  mlpackMain();
+
+  const arma::Mat<size_t> output3 = CLI::GetParam<arma::Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output3.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(output3.n_cols, 7);
+
+  // The resulting matrices should be different.
+  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output3)));
+}
+
+/**
+ * Ensure neighbor search algorithm is one of { "cosine", "euclidean",
+ * "pearson" }.
+ */
+BOOST_AUTO_TEST_CASE(CFNeighborSearchAlgorithmBoundTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
+
+  const int querySize = 7;
+  Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
+
+  // neighbor search algorithm should be valid.
+  SetInputParam("neighbor_search", std::string("invalid_algorithm"));
+  SetInputParam("training", std::move(dataset));
+  SetInputParam("query", query);
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Ensure that using neighbor search algorithm makes a difference.
+ */
+BOOST_AUTO_TEST_CASE(CFNeighborSearchTest)
+{
+  mat dataset;
+  data::Load("GroupLensSmall.csv", dataset);
+
+  const int querySize = 7;
+  Mat<size_t> query = arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
+
+  // Query with different neighbor search types.
+  ResetSettings();
+
+  // Using euclidean neighbor search algorithm.
+  SetInputParam("training", dataset);
+  SetInputParam("max_iterations", int(10));
+  SetInputParam("query", query);
+  SetInputParam("neighbor_search", std::string("euclidean"));
+  SetInputParam("recommendations", 5);
+
+  mlpackMain();
+
+  const arma::Mat<size_t> output1 = CLI::GetParam<arma::Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output1.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(output1.n_cols, 7);
+
+  // Reset passed parameters.
+  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["max_iterations"].wasPassed = false;
+  CLI::GetSingleton().Parameters()["algorithm"].wasPassed = false;
+
+  // Using cosine neighbor search algorithm.
+  SetInputParam("input_model",
+      std::move(CLI::GetParam<CFModel*>("output_model")));
+  SetInputParam("query", query);
+  SetInputParam("neighbor_search", std::string("cosine"));
+  SetInputParam("recommendations", 5);
+
+  mlpackMain();
+
+  const arma::Mat<size_t> output2 = CLI::GetParam<arma::Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output2.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(output2.n_cols, 7);
+
+  // Using pearson neighbor search algorithm.
+  SetInputParam("input_model",
+      std::move(CLI::GetParam<CFModel*>("output_model")));
+  SetInputParam("query", query);
+  SetInputParam("neighbor_search", std::string("pearson"));
+  SetInputParam("recommendations", 5);
+
+  mlpackMain();
+
+  const arma::Mat<size_t> output3 = CLI::GetParam<arma::Mat<size_t>>("output");
+
+  BOOST_REQUIRE_EQUAL(output3.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(output3.n_cols, 7);
+
+  // The resulting matrices should be different.
+  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output3)));
 }
 
 BOOST_AUTO_TEST_SUITE_END();

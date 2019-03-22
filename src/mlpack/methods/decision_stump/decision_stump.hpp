@@ -81,11 +81,12 @@ class DecisionStump
    * @param labels Labels for each point in the dataset.
    * @param numClasses Number of classes in the dataset.
    * @param bucketSize Minimum size of bucket when splitting.
+   * @return The final entropy after splitting.
    */
-  void Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const size_t numClasses,
-             const size_t bucketSize);
+  double Train(const MatType& data,
+               const arma::Row<size_t>& labels,
+               const size_t numClasses,
+               const size_t bucketSize);
 
   /**
    * Train the decision stump on the given data, with the given weights.  This
@@ -97,12 +98,13 @@ class DecisionStump
    * @param weights Weights for each point in the dataset.
    * @param numClasses Number of classes in the dataset.
    * @param bucketSize Minimum size of bucket when splitting.
+   * @return The final entropy after splitting.
    */
-  void Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const arma::rowvec& weights,
-             const size_t numClasses,
-             const size_t bucketSize);
+  double Train(const MatType& data,
+               const arma::Row<size_t>& labels,
+               const arma::rowvec& weights,
+               const size_t numClasses,
+               const size_t bucketSize);
 
   /**
    * Classification function. After training, classify test, and put the
@@ -214,11 +216,12 @@ class DecisionStump
    * @param weights Weights for this set of labels.
    * @tparam UseWeights If true, the weights in the weight vector will be used
    *      (otherwise they are ignored).
+   * @return The final entropy after splitting.
    */
   template<bool UseWeights>
-  void Train(const MatType& data,
-             const arma::Row<size_t>& labels,
-             const arma::rowvec& weights);
+  double Train(const MatType& data,
+               const arma::Row<size_t>& labels,
+               const arma::rowvec& weights);
 };
 
 } // namespace decision_stump
