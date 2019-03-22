@@ -105,7 +105,7 @@ class RectifierFunction
     x.set_size(arma::size(y));
 
     for (size_t i = 0; i < y.n_elem; i++)
-      x(i) = (double)(y > 0);
+      x(i) = (y > 0);
   }
 }; // class RectifierFunction
 
