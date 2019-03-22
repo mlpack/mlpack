@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(GANTest)
   trainData = arma::sort(trainData);
 
   // Create the Discriminator network
-  FFN<CrossEntropyError<> > discriminator;
+  FFN<SigmoidCrossEntropyError<> > discriminator;
   discriminator.Add<Linear<> > (
       generatorOutputSize, discriminatorHiddenLayerSize * 2);
   discriminator.Add<ReLULayer<> >();
@@ -67,9 +67,9 @@ BOOST_AUTO_TEST_CASE(GANTest)
   discriminator.Add<ReLULayer<> >();
   discriminator.Add<Linear<> > (
       discriminatorHiddenLayerSize * 2, discriminatorOutputSize);
-  discriminator.Add<SigmoidLayer<> >();
+
   // Create the Generator network
-  FFN<CrossEntropyError<> > generator;
+  FFN<SigmoidCrossEntropyError<> > generator;
   generator.Add<Linear<> >(noiseDim, generatorHiddenLayerSize);
   generator.Add<SoftPlusLayer<> >();
   generator.Add<Linear<> >(generatorHiddenLayerSize, generatorOutputSize);
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(GANTest)
   GaussianInitialization gaussian(0, 0.1);
   std::function<double ()> noiseFunction = [](){ return math::Random(-8, 8) +
       math::RandNormal(0, 1) * 0.01;};
-  GAN<FFN<CrossEntropyError<> >,
+  GAN<FFN<SigmoidCrossEntropyError<> >,
       GaussianInitialization,
       std::function<double()> >
   gan(trainData, generator, discriminator, gaussian, noiseFunction,
@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
   generator.Add<ReLULayer<> >();
   generator.Add<BilinearInterpolation<> >(28, 28, 56, 56, noiseDim / 4);
   generator.Add<Convolution<> >(noiseDim / 4, 1, 3, 3, 2, 2, 1, 1, 56, 56);
-  generator.Add<SigmoidLayer<> >();
+  generator.Add<TanHLayer<> >();
 
   // Create GAN
   GaussianInitialization gaussian(0, 1);
