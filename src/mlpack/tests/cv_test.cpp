@@ -105,7 +105,8 @@ BOOST_AUTO_TEST_CASE(confusionmatrixcontinuous)
   arma::Row<size_t> predictedLabels("0 0.1 0.8 0.2 0  1.3 1 1.7 1.8 1");
   // confusion matrix.
   arma::Mat<int> output;
-  data::confusionmatrix(predictedLabels, labels, output, 2);
+  BOOST_REQUIRE_THROW(data::confusionmatrix(predictedLabels, labels,
+    output, 2), std::runtime_error);
 }
 
 /**
