@@ -60,10 +60,10 @@ Estimate(const arma::mat& observations,
       && std::is_same<Distribution, distribution::GaussianDistribution>::value)
   {
     // EMFit::Estimate() using DiagonalConstraint with GaussianDistribution
-    // uses slow implementation.
+    // makes use of slower implementation.
     Log::Warn << "EMFit::Estimate() using DiagonalConstraint with "
-        << "GaussianDistribution uses slow implementation, so DiagonalGMM is "
-        << "recommended for faster training." << std::endl;
+        << "GaussianDistribution makes use of slower implementation, so "
+        << "DiagonalGMM is recommended for faster training." << std::endl;
   }
 
   // Only perform initial clustering if the user wanted it.

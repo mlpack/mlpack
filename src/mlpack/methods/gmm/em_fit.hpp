@@ -120,8 +120,6 @@ class EMFit
   //! Modify the covariance constraint policy class.
   CovarianceConstraintPolicy& Constraint() { return constraint; }
 
-  //! Get the distribution.
-
   //! Get the maximum number of iterations of the EM algorithm.
   size_t MaxIterations() const { return maxIterations; }
   //! Modify the maximum number of iterations of the EM algorithm.

@@ -60,7 +60,7 @@ class DiagonalGaussianDistribution
   DiagonalGaussianDistribution(const arma::vec& mean,
                                const arma::vec& covariance);
 
-  //! Return the dimensionalty of this distribution.
+  //! Return the dimensionality of this distribution.
   size_t Dimensionality() const { return mean.n_elem; }
 
   //! Return the probability of the given observation.
@@ -73,10 +73,10 @@ class DiagonalGaussianDistribution
   double LogProbability(const arma::vec& observation) const;
 
   /**
-   * Calculates the multivariate Gaussian probability density function for each
+   * Calculate the multivariate Gaussian probability density function for each
    * data point (column) in the given matrix.
    * 
-   * @param x List of observations.
+   * @param x Matrix of observations.
    * @param probabilities Output probabilities for each input observation.
    */
   void Probability(const arma::mat& x, arma::vec& probabilities) const
@@ -87,14 +87,14 @@ class DiagonalGaussianDistribution
   }
 
   /**
-  * Calculates the multivariate Gaussian log probability density function for
-  * each data point (column) in the given matrix.
-  *
-  * @param observations Matrix of observations.
-  * @param probabilities Output log probabilities for each input observation.
-  */
+   * Calculate the multivariate Gaussian log probability density function for
+   * each data point (column) in the given matrix.
+   *
+   * @param observations Matrix of observations.
+   * @param probabilities Output log probabilities for each input observation.
+   */
   void LogProbability(const arma::mat& observations,
-                      arma::vec& logProbabilites) const;
+                      arma::vec& logProbabilities) const;
 
   /**
    * Return a randomly generated observation according to the probability
@@ -107,7 +107,7 @@ class DiagonalGaussianDistribution
   /**
    * Estimate the Gaussian distribution directly from the given observations.
    * 
-   * @param observations List of observations.
+   * @param observations Matrix of observations.
    */
   void Train(const arma::mat& observations);
 
@@ -132,10 +132,10 @@ class DiagonalGaussianDistribution
   //! Return the covariance matrix.
   const arma::vec& Covariance() const { return covariance; }
 
-  //! Set the covariance.
+  //! Set the covariance matrix.
   void Covariance(const arma::vec& covariance);
 
-  //! Set the covariance using move assignment.
+  //! Set the covariance matrix using move assignment.
   void Covariance(arma::vec&& covariance);
 
   //! Serialize the distribution.
@@ -149,30 +149,6 @@ class DiagonalGaussianDistribution
     ar & BOOST_SERIALIZATION_NVP(logDetCov);
   }
 };
-
-/**
-* Calculates the multivariate Gaussian log probability density function for
-* each data point (column) in the given matrix.
-*
-* @param observations Matrix of observations.
-* @param probabilities Output log probabilities for each input observation.
-*/
-inline void DiagonalGaussianDistribution::LogProbability(
-    const arma::mat& observations,
-    arma::vec& logProbabilities) const
-{
-  const size_t k = observations.n_rows;
-
-  // Column i of 'diffs' is the difference between observations.col(i) and
-  // the mean.
-  arma::mat diffs = observations.each_col() - mean;
-
-  // Calculates log of exponent equation in multivariate gaussian distribution.
-  // We use only diagonal part for faster computation.
-  arma::vec logExponents = -0.5 * arma::trans(diffs % diffs) * invCov;
-
-  logProbabilities = -0.5 * k * log2pi - 0.5 * logDetCov + logExponents;
-}
 
 } // namespace distribution
 } // namespace mlpack

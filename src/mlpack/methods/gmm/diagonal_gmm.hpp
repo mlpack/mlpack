@@ -275,7 +275,7 @@ class DiagonalGMM
    * double priorWeight = dgmm.Weights()[2];
    * @endcode
    *
-   * @param observations List of observations to classify.
+   * @param observations Matrix of observations to classify.
    * @param labels Object which will be filled with labels.
    */
   void Classify(const arma::mat& observations,
@@ -292,7 +292,7 @@ class DiagonalGMM
    * This function computes the loglikelihood of the given model. This function
    * is used by DiagonalGMM::Train().
    *
-   * @param observations List of observations.
+   * @param observations Matrix of observations.
    * @param means Means of the given mixture model.
    * @param covariances Covariances of the given mixture model.
    * @param weights Weights of the given mixture model.

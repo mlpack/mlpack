@@ -46,6 +46,23 @@ double DiagonalGaussianDistribution::LogProbability(
   return -0.5 * k * log2pi - 0.5 * logDetCov - 0.5 * logExponent(0);
 }
 
+void DiagonalGaussianDistribution::LogProbability(
+    const arma::mat& observations,
+    arma::vec& logProbabilities) const
+{
+  const size_t k = observations.n_rows;
+
+  // Column i of 'diffs' is the difference between observations.col(i) and
+  // the mean.
+  arma::mat diffs = observations.each_col() - mean;
+
+  // Calculates log of exponent equation in multivariate gaussian
+  // distribution. We use only diagonal part for faster computation.
+  arma::vec logExponents = -0.5 * arma::trans(diffs % diffs) * invCov;
+
+  logProbabilities = -0.5 * k * log2pi - 0.5 * logDetCov + logExponents;
+}
+
 arma::vec DiagonalGaussianDistribution::Random() const
 {
   return (arma::sqrt(covariance) % arma::randn<arma::vec>(mean.n_elem)) + mean;
