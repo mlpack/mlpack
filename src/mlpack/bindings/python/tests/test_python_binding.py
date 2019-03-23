@@ -1012,7 +1012,7 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 matrix_and_info_in=z)
+                                 matrix_and_info_in=z[0])
 
     self.assertEqual(output['matrix_and_info_out'].shape[0], 10)
 
@@ -1028,7 +1028,7 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
-                                 matrix_and_info_in=x,
+                                 matrix_and_info_in=x[0],
                                  copy_all_inputs=True)
 
     self.assertEqual(output['matrix_and_info_out'].shape[0], 10)
