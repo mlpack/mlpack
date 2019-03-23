@@ -38,7 +38,7 @@ void Encode(const std::vector<std::string>& strings,
   size_t globalsize = -1;
   for (size_t i = 0; i < string.size(); ++i)
   {
-    boost::split(temp,strings[i], boost::is_any_of(" "));
+    boost::split(temp, strings[i], boost::is_any_of(" "));
     dataset.push_back(temp);
     globalsize = max(globalsize, temp.size());
     temp.clear();
@@ -46,7 +46,7 @@ void Encode(const std::vector<std::string>& strings,
   size_t curLabel = 0;
   for (size_t i = 0; i < dataset.size(); ++i)
   {
-    for (size_t j = 0; j < dataset[i].size; ++j)
+    for (size_t j = 0; j < dataset[i].size(); ++j)
     {
       if (mapping[dataset[i][j]] == 0)
       {
@@ -59,7 +59,7 @@ void Encode(const std::vector<std::string>& strings,
   output.fill(0);
   for (size_t i = 0; i < dataset.size(); ++i)
   {
-    for (size_t j = 0; j < dataset[i].size; ++j)
+    for (size_t j = 0; j < dataset[i].size(); ++j)
     {
       output(i, j) = mapping[dataset[i][j]];
     }
