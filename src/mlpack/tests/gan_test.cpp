@@ -13,7 +13,6 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-#include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/gan/gan.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
