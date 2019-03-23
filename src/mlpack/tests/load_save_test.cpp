@@ -13,6 +13,7 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/data/load_arff.hpp>
+#include <mlpack/core/data/dict_encoding.hpp>
 #include <mlpack/core/data/map_policies/missing_policy.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -767,6 +768,33 @@ BOOST_AUTO_TEST_CASE(SaveHDF5Test)
 }
 
 #endif
+
+
+/**
+ * Test dictionary encoding.
+ */
+BOOST_AUTO_TEST_CASE(dictionaryencoding)
+{
+  std::vector<string>arr(3);
+  arr[0]="hello how are you";
+  arr[1]="i am good";
+  arr[2]="Good how are you";
+  std::map<string, size_t>mappings;
+  arma::mat output;
+  data::Encode(arr,mappings,output);
+  BOOST_REQUIRE_EQUAL(output(0,0), 1);
+  BOOST_REQUIRE_EQUAL(output(0,1), 2);
+  BOOST_REQUIRE_EQUAL(output(0,2), 3);
+  BOOST_REQUIRE_EQUAL(output(0,3), 4);
+  BOOST_REQUIRE_EQUAL(output(1,0), 5);
+  BOOST_REQUIRE_EQUAL(output(1,1), 6);
+  BOOST_REQUIRE_EQUAL(output(1,2), 7);
+  BOOST_REQUIRE_EQUAL(output(1,3), 0);
+  BOOST_REQUIRE_EQUAL(output(2,0), 8);
+  BOOST_REQUIRE_EQUAL(output(2,1), 2);
+  BOOST_REQUIRE_EQUAL(output(2,2), 3);
+  BOOST_REQUIRE_EQUAL(output(2,3), 4);
+}
 
 /**
  * Test normalization of labels.

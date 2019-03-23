@@ -26,6 +26,7 @@ namespace data {
  * @param mapping of string to their encoded number.
  * @param output matrix.
  */
+template<typename eT>
 void Encode(const std::vector<std::string>& strings,
             std::map<std::string, size_t>& mappings,
             arma::Mat<eT>& output);

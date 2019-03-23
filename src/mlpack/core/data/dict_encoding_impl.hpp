@@ -15,6 +15,9 @@
 
 // In case it hasn't been included yet.
 #include "dict_encoding.hpp"
+#include <string>
+#include <vector>
+#include <map>
 
 namespace mlpack {
 namespace data {
@@ -29,39 +32,40 @@ namespace data {
  * @param mapping of string to their encoded number.
  * @param output matrix.
  */
+template<typename eT>
 void Encode(const std::vector<std::string>& strings,
             std::map<std::string, size_t>& mappings,
             arma::Mat<eT>& output)
 {
-  std::vector< std::vector<string> > dataset;
-  std::std::vector<string> temp;
-  size_t globalsize = -1;
-  for (size_t i = 0; i < string.size(); ++i)
+  std::vector< std::vector<std::string> > dataset;
+  std::vector<std::string> temp;
+  size_t globalsize = 0;
+  for (size_t i = 0; i < strings.size(); ++i)
   {
     boost::split(temp, strings[i], boost::is_any_of(" "));
     dataset.push_back(temp);
-    globalsize = max(globalsize, temp.size());
+    globalsize = std::max(globalsize, temp.size());
     temp.clear();
   }
-  size_t curLabel = 0;
+  size_t curLabel = 1;
   for (size_t i = 0; i < dataset.size(); ++i)
   {
     for (size_t j = 0; j < dataset[i].size(); ++j)
     {
-      if (mapping[dataset[i][j]] == 0)
+      if (mappings[dataset[i][j]] == 0)
       {
-        mapping[dataset[i][j]] = curLabel;
+        mappings[dataset[i][j]] = curLabel;
         ++curLabel;
       }
     }
   }
-  output.set_size(globalsize, globalsize);
+  output.set_size(dataset.size(), globalsize);
   output.fill(0);
   for (size_t i = 0; i < dataset.size(); ++i)
   {
     for (size_t j = 0; j < dataset[i].size(); ++j)
     {
-      output(i, j) = mapping[dataset[i][j]];
+      output(i, j) = mappings[dataset[i][j]];
     }
   }
 }

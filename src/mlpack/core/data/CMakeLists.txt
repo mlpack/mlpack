@@ -25,6 +25,7 @@ set(SOURCES
   imputer.hpp
   binarize.hpp
   dict_encoding.hpp
+  dict_encoding_impl.hpp
 )
 
 # add directory name to sources
