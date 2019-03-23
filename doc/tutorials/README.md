@@ -29,7 +29,6 @@ These tutorials introduce the various methods mlpack offers, aimed at users who 
 * [Euclidean Minimum Spanning Trees tutorial (mlpack_emst)](https://www.mlpack.org/doc/mlpack-git/doxygen/emst_tutorial.html)
 * [Alternating Matrix Factorization Tutorial](https://www.mlpack.org/doc/mlpack-git/doxygen/amftutorial.html)
 * [Collaborative Filtering Tutorial](https://www.mlpack.org/doc/mlpack-git/doxygen/cftutorial.html)
-* [Conventional Neural Evolution Tutorial](https://www.mlpack.org/doc/mlpack-git/doxygen/cnetutorial.html)
 
 
 ### Policy Class Documentation
