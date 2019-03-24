@@ -82,7 +82,7 @@ def to_matrix_with_info(x, dtype, copy=False):
   if isinstance(x, np.ndarray):
     # It is already an ndarray, so the vector of info is all 0s (all numeric).
     if len(x.shape) < 2:
-      d = np.zeros(0, dtype=np.bool)
+      d = np.zeros(1, dtype=np.bool)
     else:
       d = np.zeros([x.shape[1]], dtype=np.bool)
 
@@ -105,7 +105,7 @@ def to_matrix_with_info(x, dtype, copy=False):
         # We can just return the matrix as-is; it's all numeric.
         t = to_matrix(x, dtype=dtype, copy=copy)
         if len(x.shape) < 2:
-          d = np.zeros(0, dtype=np.bool)
+          d = np.zeros(1, dtype=np.bool)
         else:
           d = np.zeros([x.shape[1]], dtype=np.bool)
         return (t[0], t[1], d)
