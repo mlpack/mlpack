@@ -120,7 +120,7 @@ page:
 
  - <a href="https://www.mlpack.org/doc/mlpack-git/python_documentation.html">Python documentation</a>
 
-For more information on what mlpack does, see https://www.mlpack.org/about.html.
+For more information on what mlpack does, see https://www.mlpack.org/.
 Next, let's go through another example for providing movie recommendations with
 mlpack.
 
