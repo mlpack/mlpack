@@ -24,7 +24,7 @@ namespace rl {
 /**
  * Implementation of Continuous Mountain Car task.
  */
-class ContinuousMountainCar
+class ContinuousMountainCarV2
 {
  public:
   /**
