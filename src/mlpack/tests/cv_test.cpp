@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(BinaryClassificationMetricsTest)
 
   BOOST_REQUIRE_CLOSE(Specificty<Binary>::Evaluate(lr, data, labels),
                       0.66, 1e-5);
-
+  
   BOOST_REQUIRE_CLOSE(MCC::Evaluate(lr, data, labels), 0.408, 1e-5);
 
   double f1 = 2 * 0.6 * 0.75 / (0.6 + 0.75);
@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE(MulticlassClassificationMetricsTest)
   BOOST_REQUIRE_CLOSE(Recall<Macro>::Evaluate(nb, data, labels),
       macroaveragedRecall, 1e-5);
 
-  double macroaveragedSpecificity = (0.9 + 0.8 + 1.0 + 1.0) / 4;
+  double macroaveragedSpecificity = (0.9 + 8.0 / 9 + 8.0 / 9 + 1.0) / 4;
   BOOST_REQUIRE_CLOSE(Specificity<Macro>::Evaluate(nb, data, labels),
       macroaveragedSpecificity, 1e-5);
 
