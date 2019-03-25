@@ -5,7 +5,7 @@ matrix:
   include:
     - os: linux
       dist: xenial
-      env: CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON=/usr/bin/python"
+      env: CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON_EXECUTABLE=/usr/bin/python"
       before_install:
         - sudo apt-get update
         - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev python-pip cython python-numpy python-pandas
@@ -16,7 +16,7 @@ matrix:
 
     - os: linux
       dist: xenial
-      env: CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON=/usr/bin/python3"
+      env: CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON_EXECUTABLE=/usr/bin/python3"
       before_install:
         - sudo apt-get update
         - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev python3-pip cython3 python3-numpy python3-pandas
