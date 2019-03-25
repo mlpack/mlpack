@@ -346,7 +346,7 @@ BOOST_AUTO_TEST_CASE(KNNDifferentTauTest)
   SetInputParam("k", (int) 10);
   SetInputParam("tree_type", (string) "spill");
   SetInputParam("tau", (double) 0.2);
-  SetInputParam("algorithm", (string) "GetParameedy");
+  SetInputParam("algorithm", (string) "greedy");
 
   mlpackMain();
 
@@ -572,7 +572,8 @@ BOOST_AUTO_TEST_CASE(KNNAllAlgorithmsTest)
 
     if (i == 0)
     {
-      neighbors_compare = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+      neighbors_compare = std::move(CLI::GetParam<arma::Mat<size_t>>
+        ("neighbors"));
       distances_compare = std::move(CLI::GetParam<arma::mat>("distances"));
     }
     else
@@ -629,7 +630,8 @@ BOOST_AUTO_TEST_CASE(KNNAllTreeTypesTest)
 
     if (i == 0)
     {
-      neighbors_compare = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+      neighbors_compare = std::move(CLI::GetParam<arma::Mat<size_t>>
+        ("neighbors"));
       distances_compare = std::move(CLI::GetParam<arma::mat>("distances"));
     }
     else
