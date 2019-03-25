@@ -124,11 +124,11 @@ BOOST_AUTO_TEST_CASE(NMFALSTest)
 
   const mat wh = w * h;
 
-  // Make sure reconstruction error is not too high.  8% tolerance.  It seems
+  // Make sure reconstruction error is not too high.  9% tolerance.  It seems
   // like ALS doesn't converge to results that are as good.  It also seems to be
   // particularly sensitive to initial conditions.
   BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"),
-      0.08);
+      0.09);
 }
 
 /**

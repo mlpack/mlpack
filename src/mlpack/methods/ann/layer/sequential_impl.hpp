@@ -25,17 +25,19 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template <typename InputDataType, typename OutputDataType,
+template <typename InputDataType, typename OutputDataType, bool Residual,
           typename... CustomLayers>
-Sequential<InputDataType, OutputDataType, CustomLayers...>::Sequential(
-    const bool model) : model(model), reset(false), width(0), height(0)
+Sequential<
+    InputDataType, OutputDataType, Residual, CustomLayers...>::Sequential(
+        const bool model) : model(model), reset(false), width(0), height(0)
 {
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType,
+template <typename InputDataType, typename OutputDataType, bool Residual,
           typename... CustomLayers>
-Sequential<InputDataType, OutputDataType, CustomLayers...>::~Sequential()
+Sequential<
+    InputDataType, OutputDataType, Residual, CustomLayers...>::~Sequential()
 {
   if (!model)
   {
@@ -44,11 +46,12 @@ Sequential<InputDataType, OutputDataType, CustomLayers...>::~Sequential()
   }
 }
 
-template<typename InputDataType, typename OutputDataType,
+template<typename InputDataType, typename OutputDataType, bool Residual,
          typename... CustomLayers>
 template<typename eT>
-void Sequential<InputDataType, OutputDataType, CustomLayers...>::Forward(
-    arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+void Sequential<
+    InputDataType, OutputDataType, Residual, CustomLayers...>::Forward(
+        arma::Mat<eT>&& input, arma::Mat<eT>&& output)
 {
   boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
       boost::apply_visitor(outputParameterVisitor, network.front()))),
@@ -99,19 +102,33 @@ void Sequential<InputDataType, OutputDataType, CustomLayers...>::Forward(
     }
   }
 
-if (!reset)
-{
-  reset = true;
-}
+  if (!reset)
+  {
+    reset = true;
+  }
 
   output = boost::apply_visitor(outputParameterVisitor, network.back());
+
+  if (Residual)
+  {
+    if (arma::size(output) != arma::size(input))
+    {
+      Log::Fatal << "The sizes of the output and input matrices of the Residual"
+          << " block should be equal. Please examine the network architecture."
+          << std::endl;
+    }
+    output += input;
+  }
 }
 
-template<typename InputDataType, typename OutputDataType,
+template<typename InputDataType, typename OutputDataType, bool Residual,
          typename... CustomLayers>
 template<typename eT>
-void Sequential<InputDataType, OutputDataType, CustomLayers...>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+void Sequential<
+    InputDataType, OutputDataType, Residual, CustomLayers...>::Backward(
+        const arma::Mat<eT>&& /* input */,
+        arma::Mat<eT>&& gy,
+        arma::Mat<eT>&& g)
 {
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
       outputParameterVisitor, network.back())), std::move(gy),
@@ -128,15 +145,21 @@ void Sequential<InputDataType, OutputDataType, CustomLayers...>::Backward(
   }
 
   g = boost::apply_visitor(deltaVisitor, network.front());
+
+  if (Residual)
+  {
+    g += gy;
+  }
 }
 
-template<typename InputDataType, typename OutputDataType,
+template<typename InputDataType, typename OutputDataType, bool Residual,
          typename... CustomLayers>
 template<typename eT>
-void Sequential<InputDataType, OutputDataType, CustomLayers...>::Gradient(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& /* gradient */)
+void Sequential<
+    InputDataType, OutputDataType, Residual, CustomLayers...>::Gradient(
+        arma::Mat<eT>&& input,
+        arma::Mat<eT>&& error,
+        arma::Mat<eT>&& /* gradient */)
 {
   boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
       outputParameterVisitor, network[network.size() - 2])), std::move(error)),
@@ -154,17 +177,34 @@ void Sequential<InputDataType, OutputDataType, CustomLayers...>::Gradient(
       boost::apply_visitor(deltaVisitor, network[1]))), network.front());
 }
 
-template<typename InputDataType, typename OutputDataType,
+template <typename InputDataType, typename OutputDataType, bool Residual,
+          typename... CustomLayers>
+void Sequential<
+    InputDataType, OutputDataType, Residual, CustomLayers...>::DeleteModules()
+{
+  if (model == true)
+  {
+    for (LayerTypes<CustomLayers...>& layer : network)
+    {
+      boost::apply_visitor(deleteVisitor, layer);
+    }
+  }
+}
+
+template<typename InputDataType, typename OutputDataType, bool Residual,
          typename... CustomLayers>
 template<typename Archive>
-void Sequential<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int /* version */)
+void Sequential<
+    InputDataType, OutputDataType, Residual, CustomLayers...>::serialize(
+        Archive& ar, const unsigned int /* version */)
 {
   // If loading, delete the old layers.
   if (Archive::is_loading::value)
   {
     for (LayerTypes<CustomLayers...>& layer : network)
+    {
       boost::apply_visitor(deleteVisitor, layer);
+    }
   }
 
   ar & BOOST_SERIALIZATION_NVP(model);

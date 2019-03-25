@@ -93,7 +93,7 @@ Copyright:
   Copyright 2018, B Kartheek Reddy <bkartheekreddy@gmail.com>
   Copyright 2018, Atharva Khandait <akhandait45@gmail.com>
   Copyright 2018, Wenhao Huang <wenhao.huang.work@gmail.com>
-  Copyright 2018, Roberto Hueso <robertohueso96@gmail.com>
+  Copyright 2018-2019, Roberto Hueso <robertohueso96@gmail.com>
   Copyright 2018, Prabhat Sharma <prabhatsharma7298@gmail.com>
   Copyright 2018, Tan Jun An <yamidarkxxx@gmail.com>
   Copyright 2018, Moksh Jain <mokshjn00@gmail.com>
@@ -104,7 +104,15 @@ Copyright:
   Copyright 2018, Shashank Shekhar <contactshashankshekhar@gmail.com>
   Copyright 2018, Yasmine Dumouchel <yasmine.dumouchel@gmail.com>
   Copyright 2018, German Lancioni
-  
+  Copyright 2018, Arash Abghari <arash.abghari@gmail.com>
+  Copyright 2018, Ayush Chamoli
+  Copyright 2018, Tommi Laivamaa <tommi.laivamaa@protonmail.com>
+  Copyright 2019, Kim SangYeon <sy0814k@gmail.com>
+  Copyright 2019, Niteya Shah <niteya.56@gmail.com>
+  Copyright 2019, Toshal Agrawal <tagrawal1339@gmail.com>
+  Copyright 2019, Dan Timson
+  Copyright 2019, Miguel Canteras <mcanteras@gmail.com>
+
 License: BSD-3-clause
   All rights reserved.
   .

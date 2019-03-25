@@ -21,10 +21,16 @@ using namespace mlpack;
 using namespace mlpack::regression;
 using namespace mlpack::util;
 
-PROGRAM_INFO("LARS", "An implementation of LARS: Least Angle Regression "
-    "(Stagewise/laSso).  This is a stage-wise homotopy-based algorithm for "
-    "L1-regularized linear regression (LASSO) and L1+L2-regularized linear "
-    "regression (Elastic Net)."
+PROGRAM_INFO("LARS",
+    // Short description.
+    "An implementation of Least Angle Regression (Stagewise/laSso), also known"
+    " as LARS.  This can train a LARS/LASSO/Elastic Net model and use that "
+    "model or a pre-trained model to output regression predictions for a test "
+    "set.",
+    // Long description.
+    "An implementation of LARS: Least Angle Regression (Stagewise/laSso).  "
+    "This is a stage-wise homotopy-based algorithm for L1-regularized linear "
+    "regression (LASSO) and L1+L2-regularized linear regression (Elastic Net)."
     "\n\n"
     "This program is able to train a LARS/LASSO/Elastic Net model or load a "
     "model from file, output regression predictions for a test set, and save "
@@ -80,7 +86,12 @@ PROGRAM_INFO("LARS", "An implementation of LARS: Least Angle Regression "
     "and save those responses to " + PRINT_DATASET("test_predictions") + ": "
     "\n\n" +
     PRINT_CALL("lars", "input_model", "lasso_model", "test", "test",
-        "output_predictions", "test_predictions"));
+        "output_predictions", "test_predictions"),
+    SEE_ALSO("@linear_regression", "#linear_regression"),
+    SEE_ALSO("Least angle regression (pdf)",
+        "http://mlpack.org/papers/lars.pdf"),
+    SEE_ALSO("mlpack::regression::LARS C++ class documentation",
+        "@doxygen/classmlpack_1_1regression_1_1LARS.html"));
 
 PARAM_TMATRIX_IN("input", "Matrix of covariates (X).", "i");
 PARAM_MATRIX_IN("responses", "Matrix of responses/observations (y).", "r");

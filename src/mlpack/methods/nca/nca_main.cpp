@@ -18,10 +18,16 @@
 
 #include "nca.hpp"
 
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <ensmallen.hpp>
 
 // Define parameters.
 PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
+    // Short description.
+    "An implementation of neighborhood components analysis, a distance learning"
+    " technique that can be used for preprocessing.  Given a labeled dataset, "
+    "this uses NCA, which seeks to improve the k-nearest-neighbor "
+    "classification, and returns the learned distance metric.",
+    // Long description.
     "This program implements Neighborhood Components Analysis, both a linear "
     "dimensionality reduction technique and a distance learning technique.  The"
     " method seeks to improve k-nearest-neighbor classification on a dataset "
@@ -82,7 +88,15 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
     "mlpack L-BFGS documentation (in lbfgs.hpp) or the vast set of published "
     "literature on L-BFGS."
     "\n\n"
-    "By default, the SGD optimizer is used.");
+    "By default, the SGD optimizer is used.",
+    SEE_ALSO("@lmnn", "#lmnn"),
+    SEE_ALSO("Neighbourhood components analysis on Wikipedia",
+        "https://en.wikipedia.org/wiki/Neighbourhood_components_analysis"),
+    SEE_ALSO("Neighbourhood components analysis (pdf)",
+        "http://papers.nips.cc/paper/2566-neighbourhood-components-"
+        "analysis.pdf"),
+    SEE_ALSO("mlpack::nca::NCA C++ class documentation",
+        "@doxygen/classmlpack_1_1nca_1_1NCA.html"));
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run NCA on.", "i");
 PARAM_MATRIX_OUT("output", "Output matrix for learned distance matrix.", "o");
@@ -120,7 +134,6 @@ PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 using namespace mlpack;
 using namespace mlpack::nca;
 using namespace mlpack::metric;
-using namespace mlpack::optimization;
 using namespace mlpack::util;
 using namespace std;
 
@@ -232,7 +245,7 @@ static void mlpackMain()
   }
   else if (optimizerType == "lbfgs")
   {
-    NCA<LMetric<2>, L_BFGS> nca(data, labels);
+    NCA<LMetric<2>, ens::L_BFGS> nca(data, labels);
     nca.Optimizer().NumBasis() = numBasis;
     nca.Optimizer().MaxIterations() = maxIterations;
     nca.Optimizer().ArmijoConstant() = armijoConstant;

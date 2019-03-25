@@ -42,7 +42,7 @@ class CrossEntropyError
    */
   CrossEntropyError(const double eps = 1e-10);
 
-  /*
+  /**
    * Computes the cross-entropy function.
    *
    * @param input Input data used for evaluating the specified function.

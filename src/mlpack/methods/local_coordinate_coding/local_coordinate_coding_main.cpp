@@ -24,6 +24,12 @@ using namespace mlpack::sparse_coding; // For NothingInitializer.
 using namespace mlpack::util;
 
 PROGRAM_INFO("Local Coordinate Coding",
+    // Short description.
+    "An implementation of Local Coordinate Coding (LCC), a data transformation "
+    "technique.  Given input data, this transforms each point to be expressed "
+    "as a linear combination of a few points in the dataset; once an LCC model "
+    "is trained, it can be used to transform points later also.",
+    // Long description.
     "An implementation of Local Coordinate Coding (LCC), which "
     "codes data that approximately lives on a manifold using a variation of l1-"
     "norm regularized sparse coding.  Given a dense data matrix X with n points"
@@ -67,7 +73,13 @@ PROGRAM_INFO("Local Coordinate Coding",
     "be used:"
     "\n\n" +
     PRINT_CALL("local_coordinate_coding", "input_model", "lcc_model", "test",
-        "points", "codes", "new_codes"));
+        "points", "codes", "new_codes"),
+    SEE_ALSO("@sparse_coding", "#sparse_coding"),
+    SEE_ALSO("Nonlinear learning using local coordinate coding (pdf)",
+        "https://papers.nips.cc/paper/3875-nonlinear-learning-using-local-"
+        "coordinate-coding.pdf"),
+    SEE_ALSO("mlpack::lcc::LocalCoordinateCoding C++ class documentation",
+        "@doxygen/classmlpack_1_1lcc_1_1LocalCoordinateCoding.html"));
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "Matrix of training data (X).", "t");
@@ -136,6 +148,17 @@ static void mlpackMain()
       for (size_t i = 0; i < matX.n_cols; ++i)
         matX.col(i) /= norm(matX.col(i), 2);
     }
+
+    // Check if the parameters lie within the bounds.
+    RequireParamValue<int>("atoms", [&matX](int x)
+        { return (x > 0) && ((size_t) x < matX.n_cols); }, 1,
+        "Number of atoms must lie between 1 and number of training points");
+
+    RequireParamValue<double>("lambda", [](double x) { return x >= 0; }, 1,
+        "The regularization parameter should be a non-negative real number");
+
+    RequireParamValue<double>("tolerance", [](double x) { return x > 0; }, 1,
+        "Tolerance should be a positive real number");
 
     lcc->Lambda() = CLI::GetParam<double>("lambda");
     lcc->Atoms() = (size_t) CLI::GetParam<int>("atoms");

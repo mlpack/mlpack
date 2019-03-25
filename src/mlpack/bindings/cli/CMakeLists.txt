@@ -25,6 +25,8 @@ set(SOURCES
   print_doc_functions_impl.hpp
   print_help.hpp
   print_help.cpp
+  print_type_doc.hpp
+  print_type_doc_impl.hpp
   set_param.hpp
   string_type_param.hpp
   string_type_param_impl.hpp
@@ -49,6 +51,7 @@ if (BUILD_CLI_EXECUTABLES)
   )
   target_link_libraries(mlpack_${name}
     mlpack
+    ${ARMADILLO_LIBRARIES}
     ${Boost_LIBRARIES}
     ${COMPILER_SUPPORT_LIBRARIES}
   )
@@ -56,7 +59,7 @@ if (BUILD_CLI_EXECUTABLES)
   # compiled with the correct int main() call.
   set_target_properties(mlpack_${name} PROPERTIES COMPILE_FLAGS
       -DBINDING_TYPE=BINDING_TYPE_CLI)
-  install(TARGETS mlpack_${name} RUNTIME DESTINATION bin)
+  install(TARGETS mlpack_${name} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
   # If man documentation is being generated, make sure this is a dependency.
   if (TXT2MAN)

@@ -140,14 +140,14 @@ class GMM
   /**
    * Return a const reference to a component distribution.
    *
-   * @param i index of component.
+   * @param i Index of component.
    */
   const distribution::GaussianDistribution& Component(size_t i) const {
       return dists[i]; }
   /**
    * Return a reference to a component distribution.
    *
-   * @param i index of component.
+   * @param i Index of component.
    */
   distribution::GaussianDistribution& Component(size_t i) { return dists[i]; }
 
@@ -165,6 +165,14 @@ class GMM
   double Probability(const arma::vec& observation) const;
 
   /**
+   * Return the log probability that the given observation came from this
+   * distribution.
+   *
+   * @param observation Observation to evaluate the probability of.
+   */
+  double LogProbability(const arma::vec& observation) const;
+
+  /**
    * Return the probability that the given observation came from the given
    * Gaussian component in this distribution.
    *
@@ -174,6 +182,15 @@ class GMM
   double Probability(const arma::vec& observation,
                      const size_t component) const;
 
+  /**
+   * Return the log probability that the given observation came from the given
+   * Gaussian component in this distribution.
+   *
+   * @param observation Observation to evaluate the probability of.
+   * @param component Index of the component of the GMM to be considered.
+   */
+  double LogProbability(const arma::vec& observation,
+                        const size_t component) const;
   /**
    * Return a randomly generated observation according to the probability
    * distribution defined by this object.

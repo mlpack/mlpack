@@ -125,10 +125,18 @@ using namespace std;
 // PRINT_DATASET() macros are used to print the name of the parameter as seen in
 // the binding type that is being used, and the PRINT_CALL() macro generates a
 // sample invocation of the program in the language of the binding type that is
-// being used.  Note that the macros must have + on either side of them.
-PROGRAM_INFO("Mean Shift Clustering", "This program performs mean shift "
-    "clustering on the given dataset, storing the learned cluster assignments "
-    "either as a column of labels in the input dataset or separately."
+// being used.  Note that the macros must have + on either side of them.  We
+// provide some extra references with the "SEE_ALSO()" macro, which is used to
+// generate documentation for the website.
+PROGRAM_INFO("Mean Shift Clustering",
+    // Short description.
+    "A fast implementation of mean-shift clustering using dual-tree range "
+    "search.  Given a dataset, this uses the mean shift algorithm to produce "
+    "and return a clustering of the data.",
+    // Long description.
+    "This program performs mean shift clustering on the given dataset, storing "
+    "the learned cluster assignments either as a column of labels in the input "
+    "dataset or separately."
     "\n\n"
     "The input dataset should be specified with the " +
     PRINT_PARAM_STRING("input") + " parameter, and the radius used for search"
@@ -145,13 +153,16 @@ PROGRAM_INFO("Mean Shift Clustering", "This program performs mean shift "
     PRINT_DATASET("data") + " and store the centroids to " +
     PRINT_DATASET("centroids") + ", the following command may be used: "
     "\n\n" +
-    PRINT_CALL("mean_shift", "input", "data", "centroid", "centroids"));
-    "clustering on the given dataset, specified with the " +
-    PRINT_PARAM_STRING("input") + " parameter. The output labels can be saved "
-    "with the " + PRINT_PARAM_STRING("output") + " output parameter, and the "
-    "centroids of each cluster can be saved with the " +
-    PRINT_PARAM_STRING("centroid") + " output parameter."
-    "\n\n"
+    PRINT_CALL("mean_shift", "input", "data", "centroid", "centroids"),
+    SEE_ALSO("@kmeans", "#kmeans"),
+    SEE_ALSO("@dbscan", "#dbscan"),
+    SEE_ALSO("Mean shift on Wikipedia",
+        "https://en.wikipedia.org/wiki/Mean_shift"),
+    SEE_ALSO("Mean Shift, Mode Seeking, and Clustering (pdf)",
+        "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.510.1222"
+        "&rep=rep1&type=pdf"),
+    SEE_ALSO("mlpack::mean_shift::MeanShift C++ class documentation",
+        "@doxygen/classmlpack_1_1meanshift_1_1MeanShift.html"));
 
 // Define parameters for the executable.
 
@@ -252,7 +263,12 @@ generating bindings for other languages is a simple addition to the
 @code
 add_cli_executable(program_name)
 add_python_binding(program_name)
+add_markdown_docs(program_name "cli;python" "category")
 @endcode
+
+In this example, @c add_markdown_docs() will generate documentation that is
+typically used to build the website.  The "category" parameter should be one of
+the categories in @c src/mlpack/bindings/markdown/MarkdownCategories.cmake.
 
 @section bindings_general How to write mlpack bindings
 
@@ -269,11 +285,23 @@ is available from the @c <mlpack/core/util/mlpack_main.hpp> header.  The macro
 is of the form
 
 @code
-PROGRAM_INFO("program name", "program documentation")
+PROGRAM_INFO("program name", "short documentation", "long documentation",
+    SEE_ALSO("link", "description"), ...)
 @endcode
 
-and although it is possible to provide very short documentation, it is certainly
-better to provide a description including
+The short documentation should be two sentences indicating what the program
+implements and does, and a quick overview of how it can be used and what it
+should be used for.  When writing new short documentation, it is a good idea to
+take a look at the existing documentation to get an idea of the general format.
+
+For the "see also" section, you can specify as many @c SEE_ALSO() calls as you
+see fit.  These are links used at the "see also" section of the website
+documentation for each binding, and it's very important that relevant links are
+provided (also to other bindings).  See the @c SEE_ALSO() documentation for more
+details.
+
+Although it is possible to provide very short documentation, it is certainly
+better to provide a long description including
 
  - what the program does
  - a basic overview of what input and output parameters the program has
@@ -1083,5 +1111,14 @@ what is done with Python, can be a useful strategy that should be considered.
 If this is the route that is desired, a large amount of CMake boilerplate may be
 necessary.  The Python CMake configuration can be referred to as an example, but
 probably a large amount of adaptation to other languages will be necessary.
+
+Lastly, when adding a new language, be sure to make sure it works with the
+Markdown documentation generator.  In order to make this happen, you will need
+to modify all of the @c add_markdown_docs() calls in the different
+@c CMakeLists.txt files to contain the name of the language you have written a
+binding for.  You will also need to modify every function in
+@c src/mlpack/bindings/markdown/print_doc_functions_impl.hpp to correctly call
+out to the corresponding function for the language that you have written
+bindings for.
 
 */

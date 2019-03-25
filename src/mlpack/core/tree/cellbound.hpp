@@ -142,6 +142,11 @@ class CellBound
   //! Modify the minimum width of the bound.
   ElemType& MinWidth() { return minWidth; }
 
+  //! Get the metric associated with this bound.
+  const MetricType& Metric() const { return metric; }
+  //! Modify the metric associated with this bound.
+  MetricType& Metric() { return metric; }
+
   /**
    * Calculates the center of the range, placing it into the given vector.
    *
@@ -264,6 +269,8 @@ class CellBound
   arma::Col<AddressElemType> hiAddress;
   //! The minimal width of the outer rectangle.
   ElemType minWidth;
+  //! The instantiated metric (likely has size 0).
+  MetricType metric;
 
   /**
    * Add a subrectangle to the bound.

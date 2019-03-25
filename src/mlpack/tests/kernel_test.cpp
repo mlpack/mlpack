@@ -19,6 +19,7 @@
 #include <mlpack/core/kernels/polynomial_kernel.hpp>
 #include <mlpack/core/kernels/spherical_kernel.hpp>
 #include <mlpack/core/kernels/pspectrum_string_kernel.hpp>
+#include <mlpack/core/kernels/cauchy_kernel.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/metrics/mahalanobis_distance.hpp>
 
@@ -606,6 +607,19 @@ BOOST_AUTO_TEST_CASE(PSpectrumStringEvaluateTest)
   a = "0 3";
   BOOST_REQUIRE_CLOSE(p.Evaluate(a, b), 11.0, 1e-5);
   BOOST_REQUIRE_CLOSE(p.Evaluate(b, a), 11.0, 1e-5);
+}
+
+/**
+ * Cauchy Kernel test.
+ */
+BOOST_AUTO_TEST_CASE(CauchyKernelTest)
+{
+  arma::vec a = "0 0 1";
+  arma::vec b = "0 1 0";
+
+  CauchyKernel ck(5.0);
+  BOOST_REQUIRE_CLOSE(ck.Evaluate(a, b), 0.92592588, 1e-5);
+  BOOST_REQUIRE_CLOSE(ck.Evaluate(b, a), 0.92592588, 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -46,7 +46,7 @@ class BernoulliDistribution
    * distributions. The shape of the matrix of distributions is the same as the
    * shape of the param matrix as each element of the param matrix parameterizes
    * one Bernoulli distribution.
-   * This is used in the ANN module to define distriution for each feature in
+   * This is used in the ANN module to define distribution for each feature in
    * each batch, where number of features becomes nofRows and batch size becomes
    * nofColumns.
    *
@@ -67,7 +67,7 @@ class BernoulliDistribution
   /**
    * Return the probabilities of the given matrix of observations.
    *
-   * @param oberservation The observation matrix.
+   * @param observation The observation matrix.
    */
   double Probability(const DataType&& observation) const
   {
@@ -77,7 +77,7 @@ class BernoulliDistribution
   /**
    * Return the log probabilities of the given matrix of observations.
    *
-   * @param oberservation The observation matrix.
+   * @param observation The observation matrix.
    */
   double LogProbability(const DataType&& observation) const;
 
@@ -85,7 +85,7 @@ class BernoulliDistribution
    * Stores the gradient of the log probabilities of the observations in the
    * output matrix.
    *
-   * @param oberservation The observation matrix.
+   * @param observation The observation matrix.
    * @param output The output matrix where the gradients are stored.
    */
   void LogProbBackward(const DataType&& observation, DataType&& output) const;

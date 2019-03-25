@@ -24,7 +24,8 @@
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
+
+#include <ensmallen.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -93,16 +94,17 @@ class RNN
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
+   * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType>
-  void Train(arma::cube predictors,
-             arma::cube responses,
-             OptimizerType& optimizer);
+  double Train(arma::cube predictors,
+               arma::cube responses,
+               OptimizerType& optimizer);
 
   /**
    * Train the recurrent neural network on the given input data. By default, the
    * SGD optimization algorithm is used, but others can be specified
-   * (such as mlpack::optimization::RMSprop).
+   * (such as ens::RMSprop).
    *
    * This will use the existing model parameters as a starting point for the
    * optimization. If this is not what you want, then you should access the
@@ -121,9 +123,10 @@ class RNN
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
+   * @return The final objective of the trained model (NaN or Inf on error).
    */
-  template<typename OptimizerType = mlpack::optimization::StandardSGD>
-  void Train(arma::cube predictors, arma::cube responses);
+  template<typename OptimizerType = ens::StandardSGD>
+  double Train(arma::cube predictors, arma::cube responses);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -182,8 +185,7 @@ class RNN
 
   /**
    * Evaluate the recurrent neural network with the given parameters. This
-   * function is usually called by the optimizer to train the model.  This just
-   * calls the other overload of Evaluate() with deterministic = true.
+   * function is usually called by the optimizer to train the model.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
@@ -381,6 +383,16 @@ class RNN
 
   //! The current gradient for the gradient pass.
   arma::mat currentGradient;
+
+  // The BRN class should have access to internal members.
+  template<
+    typename OutputLayerType1,
+    typename MergeLayerType1,
+    typename MergeOutputType1,
+    typename InitializationRuleType1,
+    typename... CustomLayers1
+  >
+  friend class BRNN;
 }; // class RNN
 
 } // namespace ann

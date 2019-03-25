@@ -15,7 +15,7 @@
 #define MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <ensmallen.hpp>
 
 #include "logistic_regression_function.hpp"
 
@@ -116,7 +116,7 @@ class LogisticRegression
   /**
    * Train the LogisticRegression model on the given input data.  By default,
    * the L-BFGS optimization algorithm is used, but others can be specified
-   * (such as mlpack::optimization::SGD).
+   * (such as ens::SGD).
    *
    * This will use the existing model parameters as a starting point for the
    * optimization.  If this is not what you want, then you should access the
@@ -127,9 +127,9 @@ class LogisticRegression
    * @param responses Outputs results from input training variables.
    * @return The final objective of the trained model (NaN or Inf on error)
    */
-  template<typename OptimizerType = mlpack::optimization::L_BFGS>
+  template<typename OptimizerType = ens::L_BFGS>
   double Train(const MatType& predictors,
-             const arma::Row<size_t>& responses);
+               const arma::Row<size_t>& responses);
 
   /**
    * Train the LogisticRegression model with the given instantiated optimizer.
@@ -150,8 +150,8 @@ class LogisticRegression
    */
   template<typename OptimizerType>
   double Train(const MatType& predictors,
-             const arma::Row<size_t>& responses,
-             OptimizerType& optimizer);
+               const arma::Row<size_t>& responses,
+               OptimizerType& optimizer);
 
   //! Return the parameters (the b vector).
   const arma::rowvec& Parameters() const { return parameters; }

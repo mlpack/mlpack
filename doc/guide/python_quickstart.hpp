@@ -31,9 +31,9 @@ build and install mlpack.  You can copy-paste the commands into your shell.
 @code{.sh}
 sudo apt-get install libboost-all-dev g++ cmake libarmadillo-dev python-pip wget
 sudo pip install cython setuptools distutils numpy pandas
-wget http://www.mlpack.org/files/mlpack-3.0.3.tar.gz
-tar -xvzpf mlpack-3.0.3.tar.gz
-mkdir -p mlpack-3.0.3/build/ && cd mlpack-3.0.3/build/
+wget https://www.mlpack.org/files/mlpack-3.0.4.tar.gz
+tar -xvzpf mlpack-3.0.4.tar.gz
+mkdir -p mlpack-3.0.4/build/ && cd mlpack-3.0.4/build/
 cmake ../ && make -j4 && sudo make install
 @endcode
 
@@ -114,31 +114,20 @@ different mlpack learners, or to interface with other machine learning toolkits.
 @section python_quickstart_whatelse What else does mlpack implement?
 
 The example above has only shown a little bit of the functionality of mlpack.
-Lots of other commands are available with different functionality.  Below is a
-list of all the mlpack functionality offered through Python, split into some
-categories.
+Lots of other commands are available with different functionality.  A full list
+of each of these commands and full documentation can be found on the following
+page:
 
- - Classification techniques: <tt><a
-   href="http://www.mlpack.org/docs/mlpack-git/python/adaboost.html">adaboost()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/decision_stump.html">decision_stump()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/decision_tree.html">decision_tree()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/hmm_train.html">hmm_train()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/hmm_generate.html">hmm_generate()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/hmm_loglik.html">hmm_loglik()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/hmm_viterbi.html">hmm_viterbi()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/hoeffding_tree.html">hoeffding_tree()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/logistic_regression.html">logistic_regression()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/nbc.html">nbc()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/perceptron.html">perceptron()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/random_forest.html">random_forest()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/softmax_regression.html">softmax_regression()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/cf.html">cf()</a></tt>
+ - <a href="https://www.mlpack.org/doc/mlpack-git/python_documentation.html">Python documentation</a>
 
- - Distance-based problems: <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/approx_kfn.html">approx_kfn()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/emst.html">emst()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/fastmks.html">fastmks()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/kfn.html">kfn()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/knn.html">knn()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/krann.html">krann()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/lsh.html">lsh()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/det.html">det()</a></tt>
-
- - Clustering: <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/kmeans.html">kmeans()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/mean_shift.html">mean_shift()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/gmm_train.html">gmm_train()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/gmm_generate.html">gmm_generate()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/gmm_probability.html">gmm_probability()</a></tt>
-
- - Transformations: <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/pca.html">pca()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/radical.html">radical()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/local_coordinate_coding.html">local_coordinate_coding()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/sparse_coding.html">sparse_coding()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/nca.html">nca()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/kernel_pca.html">kernel_pca()</a></tt>
-
- - Regression: <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/linear_regression.html">linear_regression()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/lars.html">lars()</a></tt>
-
- - Preprocessing/other: <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/preprocess_binarize.html">preprocess_binarize()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/preprocess_split.html">preprocess_split()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/preprocess_describe.html">preprocess_describe()</a></tt>, <tt><a href="http://www.mlpack.org/docs/mlpack-git/python/nmf.html">nmf()</a></tt>
-
-For more information on what mlpack does, see http://www.mlpack.org/about.html.
+For more information on what mlpack does, see https://www.mlpack.org/.
 Next, let's go through another example for providing movie recommendations with
 mlpack.
 
 @section python_quickstart_movierecs Using mlpack for movie recommendations
 
 In this example, we'll train a collaborative filtering model using mlpack's
-<tt><a href="http://www.mlpack.org/docs/mlpack-git/python/cf.html">cf()</a></tt> method.  We'll train this on the MovieLens dataset from
+<tt><a href="https://www.mlpack.org/doc/mlpack-git/python_documentation.html#cf">cf()</a></tt> method.  We'll train this on the MovieLens dataset from
 https://grouplens.org/datasets/movielens/, and then we'll use the model that we
 train to give recommendations.
 
@@ -204,7 +193,7 @@ Now that you have done some simple work with mlpack, you have seen how it can
 easily plug into a data science workflow in Python.  A great thing to do next
 would be to look at more documentation for the Python mlpack bindings:
 
- - <a href="http://www.mlpack.org/docs/mlpack-git/python.html">Python mlpack
+ - <a href="https://www.mlpack.org/doc/mlpack-git/python_documentation.html">Python mlpack
    binding documentation</a>
 
 Also, mlpack is much more flexible from C++ and allows much greater
@@ -212,13 +201,13 @@ functionality.  So, more complicated tasks are possible if you are willing to
 write C++ (or perhaps Cython).  To get started learning about mlpack in C++, the
 following resources might be helpful:
 
- - <a href="http://www.mlpack.org/docs/mlpack-git/doxygen/tutorials.html">mlpack
+ - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html">mlpack
    C++ tutorials</a>
- - <a href="http://www.mlpack.org/docs/mlpack-git/doxygen/build.html">mlpack
+ - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/build.html">mlpack
    build and installation guide</a>
- - <a href="http://www.mlpack.org/docs/mlpack-git/doxygen/sample.html">Simple
+ - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/sample.html">Simple
    sample C++ mlpack programs</a>
- - <a href="http://www.mlpack.org/docs/mlpack-git/doxygen/index.html">mlpack
+ - <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/index.html">mlpack
    Doxygen documentation homepage</a>
 
  */

@@ -22,6 +22,12 @@ using namespace arma;
 using namespace std;
 
 PROGRAM_INFO("Simple Linear Regression and Prediction",
+    // Short description.
+    "An implementation of simple linear regression and ridge regression using "
+    "ordinary least squares.  Given a dataset and responses, a model can be "
+    "trained and saved for later use, or a pre-trained model can be used to "
+    "output regression predictions for a test set.",
+    // Long description.
     "An implementation of simple linear regression and simple ridge regression "
     "using ordinary least squares. This solves the problem"
     "\n\n"
@@ -63,7 +69,13 @@ PROGRAM_INFO("Simple Linear Regression and Prediction",
     "used:"
     "\n\n" +
     PRINT_CALL("linear_regression", "input_model", "lr_model", "test", "X_test",
-        "output_predictions", "X_test_responses"));
+        "output_predictions", "X_test_responses"),
+    SEE_ALSO("Linear/ridge regression tutorial", "@doxygen/lrtutorial.html"),
+    SEE_ALSO("@lars", "#lars"),
+    SEE_ALSO("Linear regression on Wikipedia",
+        "https://en.wikipedia.org/wiki/Linear_regression"),
+    SEE_ALSO("mlpack::regression::LinearRegression C++ class documentation",
+        "@doxygen/classmlpack_1_1regression_1_1LinearRegression.html"));
 
 PARAM_MATRIX_IN("training", "Matrix containing training set X (regressors).",
     "t");

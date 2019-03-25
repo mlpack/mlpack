@@ -19,12 +19,16 @@
 
 #include "lmnn.hpp"
 
-#include <mlpack/core/optimizers/bigbatch_sgd/bigbatch_sgd.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <ensmallen.hpp>
 
 // Define parameters.
 PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
+    // Short description.
+    "An implementation of Large Margin Nearest Neighbors (LMNN), a distance "
+    "learning technique.  Given a labeled dataset, this learns a transformation"
+    " of the data that improves k-nearest-neighbor performance; this can be "
+    "useful as a preprocessing step.",
+    // Long description.
     "This program implements Large Margin Nearest Neighbors, a distance "
     "learning technique.  The method seeks to improve k-nearest-neighbor "
     "classification on a dataset.  The method employes the strategy of "
@@ -120,7 +124,15 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "with dataset having labels as last column can be made as: "
     "\n\n" +
     PRINT_CALL("mlpack_lmnn", "input", "letter_recognition", "k", 5,
-    "range", 10, "regularization", 0.4, "output", "output"));
+    "range", 10, "regularization", 0.4, "output", "output"),
+    SEE_ALSO("@nca", "#nca"),
+    SEE_ALSO("Large margin nearest neighbor on Wikipedia",
+        "https://en.wikipedia.org/wiki/Large_margin_nearest_neighbor"),
+    SEE_ALSO("Distance metric learning for large margin nearest neighbor "
+        "classification (pdf)", "http://papers.nips.cc/paper/2795-distance-"
+        "metric-learning-for-large-margin-nearest-neighbor-classification.pdf"),
+    SEE_ALSO("mlpack::lmnn::LMNN C++ class documentation",
+        "@doxygen/classmlpack_1_1lmnn_1_1LMNN.html"));
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run LMNN on.", "i");
 PARAM_MATRIX_IN("distance", "Initial distance matrix to be used as "
@@ -163,7 +175,6 @@ PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 using namespace mlpack;
 using namespace mlpack::lmnn;
 using namespace mlpack::metric;
-using namespace mlpack::optimization;
 using namespace mlpack::util;
 using namespace std;
 
@@ -354,7 +365,7 @@ static void mlpackMain()
   }
   else if (optimizerType == "bbsgd")
   {
-    LMNN<LMetric<2>, BBS_BB> lmnn(data, labels, k);
+    LMNN<LMetric<2>, ens::BBS_BB> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
     lmnn.Optimizer().StepSize() = stepSize;
@@ -369,7 +380,7 @@ static void mlpackMain()
   {
     // Using SGD is not recommended as the learning matrix can
     // diverge to inf causing serious memory problems.
-    LMNN<LMetric<2>, StandardSGD> lmnn(data, labels, k);
+    LMNN<LMetric<2>, ens::StandardSGD> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
     lmnn.Optimizer().StepSize() = stepSize;
@@ -382,7 +393,7 @@ static void mlpackMain()
   }
   else if (optimizerType == "lbfgs")
   {
-    LMNN<LMetric<2>, L_BFGS> lmnn(data, labels, k);
+    LMNN<LMetric<2>, ens::L_BFGS> lmnn(data, labels, k);
     lmnn.Regularization() = regularization;
     lmnn.Range() = range;
     lmnn.Optimizer().MaxIterations() = maxIterations;

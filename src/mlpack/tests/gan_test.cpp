@@ -17,7 +17,8 @@
 #include <mlpack/methods/ann/gan/gan.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-#include <mlpack/core/optimizers/adam/adam.hpp>
+
+#include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -25,7 +26,6 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace mlpack::math;
-using namespace mlpack::optimization;
 using namespace mlpack::regression;
 using namespace std::placeholders;
 
@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
 
   // Create GAN
   GaussianInitialization gaussian(0, 1);
-  Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
+  ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
       tolerance, shuffle);
   std::function<double()> noiseFunction = [] () {
       return math::RandNormal(0, 1);};

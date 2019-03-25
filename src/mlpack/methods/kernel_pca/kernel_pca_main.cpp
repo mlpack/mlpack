@@ -41,6 +41,11 @@ using namespace std;
 using namespace arma;
 
 PROGRAM_INFO("Kernel Principal Components Analysis",
+    // Short description.
+    "An implementation of Kernel Principal Components Analysis (KPCA).  This "
+    "can be used to perform nonlinear dimensionality reduction or preprocessing"
+    " on a given dataset.",
+    // Long description.
     "This program performs Kernel Principal Components Analysis (KPCA) on the "
     "specified dataset with the specified kernel.  This will transform the "
     "data onto the kernel principal components, and optionally reduce the "
@@ -93,7 +98,13 @@ PROGRAM_INFO("Kernel Principal Components Analysis",
     "the kernel matrix; to specify the sampling scheme, the " +
     PRINT_PARAM_STRING("sampling") + " parameter is used.  The "
     "sampling scheme for the Nystr\u00F6m method can be chosen from the "
-    "following list: 'kmeans', 'random', 'ordered'.");
+    "following list: 'kmeans', 'random', 'ordered'.",
+    SEE_ALSO("Kernel principal component analysis on Wikipedia",
+        "https://en.wikipedia.org/wiki/Kernel_principal_component_analysis"),
+    SEE_ALSO("Kernel Principal Component Analysis (pdf)",
+        "http://pca.narod.ru/scholkopf_kernel.pdf"),
+    SEE_ALSO("mlpack::kpca::KernelPCA class documentation",
+        "@doxygen/classmlpack_1_1kpca_1_1KernelPCA.html"));
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform KPCA on.", "i");
 PARAM_MATRIX_OUT("output", "Matrix to save modified dataset to.", "o");
@@ -107,9 +118,9 @@ PARAM_INT_IN("new_dimensionality", "If not 0, reduce the dimensionality of "
 PARAM_FLAG("center", "If set, the transformed data will be centered about the "
     "origin.", "c");
 
-PARAM_FLAG("nystroem_method", "If set, the nystroem method will be used.", "n");
+PARAM_FLAG("nystroem_method", "If set, the Nystroem method will be used.", "n");
 
-PARAM_STRING_IN("sampling", "Sampling scheme to use for the nystroem method: "
+PARAM_STRING_IN("sampling", "Sampling scheme to use for the Nystroem method: "
     "'kmeans', 'random', 'ordered'", "s", "kmeans");
 
 PARAM_DOUBLE_IN("kernel_scale", "Scale, for 'hyptan' kernel.", "S", 1.0);
@@ -135,19 +146,19 @@ void RunKPCA(arma::mat& dataset,
     if (sampling == "kmeans")
     {
       KernelPCA<KernelType, NystroemKernelRule<KernelType,
-          KMeansSelection<> > >kpca;
+          KMeansSelection<> > > kpca(kernel, centerTransformedData);
       kpca.Apply(dataset, newDim);
     }
     else if (sampling == "random")
     {
       KernelPCA<KernelType, NystroemKernelRule<KernelType,
-          RandomSelection> > kpca;
+          RandomSelection> > kpca(kernel, centerTransformedData);
       kpca.Apply(dataset, newDim);
     }
     else if (sampling == "ordered")
     {
       KernelPCA<KernelType, NystroemKernelRule<KernelType,
-          OrderedSelection> > kpca;
+          OrderedSelection> > kpca(kernel, centerTransformedData);
       kpca.Apply(dataset, newDim);
     }
     else

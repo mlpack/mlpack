@@ -28,11 +28,17 @@ using namespace mlpack::util;
 using namespace std;
 
 // Define parameters for the executable.
-PROGRAM_INFO("K-Means Clustering", "This program performs K-Means clustering "
-    "on the given dataset.  It can return the learned cluster assignments, and "
-    "the centroids of the clusters.  Empty clusters are not allowed by default;"
-    " when a cluster becomes empty, the point furthest from the centroid of the"
-    " cluster with maximum variance is taken to fill that cluster."
+PROGRAM_INFO("K-Means Clustering",
+    // Short description.
+    "An implementation of several strategies for efficient k-means clustering. "
+    "Given a dataset and a value of k, this computes and returns a k-means "
+    "clustering on that data.",
+    // Long description.
+    "This program performs K-Means clustering on the given dataset.  It can "
+    "return the learned cluster assignments, and the centroids of the clusters."
+    "  Empty clusters are not allowed by default; when a cluster becomes empty,"
+    " the point furthest from the centroid of the cluster with maximum variance"
+    " is taken to fill that cluster."
     "\n\n"
     "Optionally, the Bradley and Fayyad approach (\"Refining initial points for"
     " k-means clustering\", 1998) can be used to select initial points by "
@@ -85,7 +91,21 @@ PROGRAM_INFO("K-Means Clustering", "This program performs K-Means clustering "
     "following command may be used:"
     "\n\n" +
     PRINT_CALL("kmeans", "input", "data", "initial_centroids", "initial",
-        "clusters", 10, "max_iterations", 500, "centroid", "final"));
+        "clusters", 10, "max_iterations", 500, "centroid", "final"),
+    SEE_ALSO("K-Means tutorial", "@doxygen/kmtutorial.html"),
+    SEE_ALSO("@dbscan", "#dbscan"),
+    SEE_ALSO("Using the triangle inequality to accelerate k-means (pdf)",
+        "http://www.aaai.org/Papers/ICML/2003/ICML03-022.pdf"),
+    SEE_ALSO("Making k-means even faster (pdf)",
+        "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.586.2554"
+        "&rep=rep1&type=pdf"),
+    SEE_ALSO("Accelerating exact k-means algorithms with geometric reasoning "
+        "(pdf)", "http://reports-archive.adm.cs.cmu.edu/anon/anon/usr/ftp/"
+        "usr0/ftp/2000/CMU-CS-00-105.pdf"),
+    SEE_ALSO("A dual-tree algorithm for fast k-means clustering with large k "
+        "(pdf)", "http://www.ratml.org/pub/pdf/2017dual.pdf"),
+    SEE_ALSO("mlpack::kmeans::KMeans class documentation",
+        "@doxygen/classmlpack_1_1kmeans_1_1KMeans.html"));
 
 // Required options.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform clustering on.", "i");

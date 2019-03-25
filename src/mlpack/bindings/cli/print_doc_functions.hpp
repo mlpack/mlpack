@@ -21,10 +21,36 @@ namespace bindings {
 namespace cli {
 
 /**
+ * Given the name of a binding, print its command-line name (this returns
+ * "mlpack_<bindingName>".
+ */
+inline std::string GetBindingName(const std::string& bindingName);
+
+/**
+ * Print any imports for CLI (there are none, so this returns an empty string).
+ */
+inline std::string PrintImport(const std::string& bindingName);
+
+/**
+ * Print any special information about output options.
+ */
+inline std::string PrintOutputOptionInfo();
+
+/**
+ * Print documentation for each of the types.
+ */
+inline std::string PrintTypeDocs();
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>
 inline std::string PrintValue(const T& value, bool quotes);
+
+/**
+ * Given a parameter name, print its corresponding default value.
+ */
+inline std::string PrintDefault(const std::string& paramName);
 
 /**
  * Print a dataset type parameter (add .csv and return).
@@ -35,6 +61,12 @@ inline std::string PrintDataset(const std::string& dataset);
  * Print a model type parameter (add .bin and return).
  */
 inline std::string PrintModel(const std::string& model);
+
+/**
+ * Print the type of a parameter that a user would specify from the
+ * command-line.
+ */
+inline std::string PrintType(const util::ParamData& param);
 
 /**
  * Base case for recursion.
@@ -55,6 +87,12 @@ std::string ProcessOptions(const std::string& paramName,
  */
 template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args);
+
+/**
+ * Given a program name, print a program call invocation assuming that all
+ * options are specified.
+ */
+inline std::string ProgramCall(const std::string& programName);
 
 /**
  * Print what a user would type to invoke the given option name.  Note that the

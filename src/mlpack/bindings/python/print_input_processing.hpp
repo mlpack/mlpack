@@ -17,7 +17,6 @@
 #include "get_numpy_type.hpp"
 #include "get_numpy_type_char.hpp"
 #include "get_cython_type.hpp"
-#include "get_python_type.hpp"
 #include "strip_type.hpp"
 
 namespace mlpack {

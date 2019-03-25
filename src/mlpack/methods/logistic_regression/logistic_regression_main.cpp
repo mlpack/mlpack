@@ -15,15 +15,19 @@
 
 #include "logistic_regression.hpp"
 
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <ensmallen.hpp>
 
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::regression;
-using namespace mlpack::optimization;
 using namespace mlpack::util;
 
 PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
+    // Short description.
+    "An implementation of L2-regularized logistic regression for two-class "
+    "classification.  Given labeled data, a model can be trained and saved for "
+    "future use; or, a pre-trained model can be used to classify new points.",
+    // Long description.
     "An implementation of L2-regularized logistic regression using either the "
     "L-BFGS optimizer or SGD (stochastic gradient descent).  This solves the "
     "regression problem"
@@ -39,8 +43,8 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     "those things at once.  In addition, this program allows classification on "
     "a test dataset (specified with the " + PRINT_PARAM_STRING("test") + " "
     "parameter) and the classification results may be saved with the " +
-    PRINT_PARAM_STRING("output") + " output parameter.  The trained logistic "
-    "regression model may be saved using the " +
+    PRINT_PARAM_STRING("predictions") + " output parameter."
+    " The trained logistic regression model may be saved using the " +
     PRINT_PARAM_STRING("output_model") + " output parameter."
     "\n\n"
     "The training data, if specified, may have class labels as its last "
@@ -57,10 +61,10 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     PRINT_PARAM_STRING("max_iterations") + " parameter specifies the maximum "
     "number of allowed iterations, and the " +
     PRINT_PARAM_STRING("tolerance") + " parameter specifies the tolerance for "
-    " convergence.  For the SGD optimizer, the " +
-    PRINT_PARAM_STRING("step_size") + " parameter controls the step size taken"
-    " at each iteration by the optimizer.  The batch size for SGD is controlled"
-    " with the " + PRINT_PARAM_STRING("batch_size") + " parameter. If the "
+    "convergence.  For the SGD optimizer, the " +
+    PRINT_PARAM_STRING("step_size") + " parameter controls the step size taken "
+    "at each iteration by the optimizer.  The batch size for SGD is controlled "
+    "with the " + PRINT_PARAM_STRING("batch_size") + " parameter. If the "
     "objective function for your data is oscillating between Inf and 0, the "
     "step size is probably too large.  There are more parameters for the "
     "optimizers, but the C++ interface must be used to access these."
@@ -76,7 +80,15 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     "so long as an existing logistic regression model is given with the " +
     PRINT_PARAM_STRING("input_model") + " parameter.  The output predictions "
     "from the logistic regression model may be saved with the " +
-    PRINT_PARAM_STRING("output") + " parameter."
+    PRINT_PARAM_STRING("predictions") + " parameter." +
+    "\n\n"
+    "Note : The following parameters are deprecated and "
+    "will be removed in mlpack 4: " + PRINT_PARAM_STRING("output") +
+    ", " + PRINT_PARAM_STRING("output_probabilities") +
+    "\nUse " + PRINT_PARAM_STRING("predictions") + " instead of " +
+    PRINT_PARAM_STRING("output") + "\nUse " +
+    PRINT_PARAM_STRING("probabilities") + " instead of " +
+    PRINT_PARAM_STRING("output_probabilities") +
     "\n\n"
     "This implementation of logistic regression does not support the general "
     "multi-class case but instead only the two-class case.  Any labels must "
@@ -95,7 +107,13 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     PRINT_DATASET("predictions") + "', the following command may be used: "
     "\n\n" +
     PRINT_CALL("logistic_regression", "input_model", "lr_model", "test", "test",
-        "output", "predictions"));
+        "output", "predictions"),
+    SEE_ALSO("@softmax_regression", "#softmax_regression"),
+    SEE_ALSO("@random_forest", "#random_forest"),
+    SEE_ALSO("Logistic regression on Wikipedia",
+        "https://en.wikipedia.org/wiki/Logistic_regression"),
+    SEE_ALSO("mlpack::regression::LogisticRegression C++ class documentation",
+        "@doxygen/classmlpack_1_1regression_1_1LogisticRegression.html"));
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "
@@ -124,9 +142,18 @@ PARAM_MODEL_OUT(LogisticRegression<>, "output_model", "Output for trained "
 
 // Testing.
 PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
+// The PARAM_UROW_OUT("output"..) is deprecated and can be removed
+// in mlpack 4.0.0
 PARAM_UROW_OUT("output", "If test data is specified, this matrix is where "
     "the predictions for the test set will be saved.", "o");
+PARAM_UROW_OUT("predictions", "If test data is specified, this matrix is where "
+    "the predictions for the test set will be saved.", "P");
+// PARAM_MATRIX_OUT("output_probabilities"..) is deprecated
+// and it can be removed in mlpack 4
 PARAM_MATRIX_OUT("output_probabilities", "If test data is specified, this "
+    "matrix is where the class probabilities for the test set will be saved.",
+    "x");
+PARAM_MATRIX_OUT("probabilities", "If test data is specified, this "
     "matrix is where the class probabilities for the test set will be saved.",
     "p");
 PARAM_DOUBLE_IN("decision_boundary", "Decision boundary for prediction; if the "
@@ -155,11 +182,17 @@ static void mlpackMain()
         "be saved");
   }
 
-  RequireAtLeastOnePassed({ "output_model", "output", "output_probabilities" },
-      false, "no output will be saved");
+  // options "output" and "output_probabilities" are deprecated and replaced by
+  // "predictions" and "probabilities" respectively
+  // options "output" and "output_probabilities" can be removed in mlpack 4
+  RequireAtLeastOnePassed({ "output_model", "output", "output_probabilities",
+      "predictions", "probabilities"}, false, "no output will be saved");
 
+  // "output" and "output_probabilities" lines can be removed in mlpack 4
   ReportIgnoredParam({{ "test", false }}, "output");
   ReportIgnoredParam({{ "test", false }}, "output_probabilities");
+  ReportIgnoredParam({{ "test", false }}, "predictions");
+  ReportIgnoredParam({{ "test", false }}, "probabilities");
 
   // Max Iterations needs to be positive.
   RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; },
@@ -279,7 +312,7 @@ static void mlpackMain()
 
     if (optimizerType == "sgd")
     {
-      SGD<> sgdOpt;
+      ens::SGD<> sgdOpt;
       sgdOpt.MaxIterations() = maxIterations;
       sgdOpt.Tolerance() = tolerance;
       sgdOpt.StepSize() = stepSize;
@@ -291,7 +324,7 @@ static void mlpackMain()
     }
     else if (optimizerType == "lbfgs")
     {
-      L_BFGS lbfgsOpt;
+      ens::L_BFGS lbfgsOpt;
       lbfgsOpt.MaxIterations() = maxIterations;
       lbfgsOpt.MinGradientNorm() = tolerance;
       Log::Info << "Training model with L-BFGS optimizer." << endl;
@@ -320,24 +353,34 @@ static void mlpackMain()
 
     // We must perform predictions on the test set.  Training (and the
     // optimizer) are irrelevant here; we'll pass in the model we have.
-    if (CLI::HasParam("output"))
+    if (CLI::HasParam("predictions") || CLI::HasParam("output"))
     {
       Log::Info << "Predicting classes of points in '"
           << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
       model->Classify(testSet, predictions, decisionBoundary);
 
-      CLI::GetParam<arma::Row<size_t>>("output") = std::move(predictions);
+      // The CLI param "output" is deprecated and replaced by "predictions"
+      // "output" parameter will be removed in mlpack 4.
+      if (CLI::HasParam("predictions"))
+        CLI::GetParam<arma::Row<size_t>>("predictions") = predictions;
+      if (CLI::HasParam("output"))
+        CLI::GetParam<arma::Row<size_t>>("output") = std::move(predictions);
     }
 
-    if (CLI::HasParam("output_probabilities"))
+    // The CLI param "output_probabilities" is deprecated
+    // and replaced by "probabilities"
+    // "output_probabilities" parameter will be removed in mlpack 4.
+    if (CLI::HasParam("output_probabilities") || CLI::HasParam("probabilities"))
     {
       Log::Info << "Calculating class probabilities of points in '"
           << CLI::GetPrintableParam<arma::mat>("test") << "'." << endl;
       arma::mat probabilities;
       model->Classify(testSet, probabilities);
 
-      CLI::GetParam<arma::mat>("output_probabilities") =
-          std::move(probabilities);
+      if (CLI::HasParam("output_probabilities"))
+        CLI::GetParam<arma::mat>("output_probabilities") = probabilities;
+      if (CLI::HasParam("probabilities"))
+        CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
     }
   }
 

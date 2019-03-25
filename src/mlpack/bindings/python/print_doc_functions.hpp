@@ -20,6 +20,21 @@ namespace bindings {
 namespace python {
 
 /**
+ * Given the name of a binding, print its Python name.
+ */
+inline std::string GetBindingName(const std::string& bindingName);
+
+/**
+ * Print any import information for the Python binding.
+ */
+inline std::string PrintImport(const std::string& bindingName);
+
+/**
+ * Print any special information about output options.
+ */
+inline std::string PrintOutputOptionInfo();
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>
@@ -28,6 +43,11 @@ inline std::string PrintValue(const T& value, bool quotes);
 // Special overload for booleans.
 template<>
 inline std::string PrintValue(const bool& value, bool quotes);
+
+/**
+ * Given a parameter name, print its corresponding default value.
+ */
+inline std::string PrintDefault(const std::string& paramName);
 
 // Recursion base case.
 inline std::string PrintInputOptions();
@@ -56,6 +76,12 @@ std::string PrintOutputOptions(const std::string& paramName,
  */
 template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args);
+
+/**
+ * Given the name of a binding, print a program call assuming that all options
+ * are specified.
+ */
+inline std::string ProgramCall(const std::string& programName);
 
 /**
  * Given the name of a model, print it.  Here we do not need to modify anything.

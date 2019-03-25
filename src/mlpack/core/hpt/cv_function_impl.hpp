@@ -46,10 +46,12 @@ template<typename CVType,
          typename... BoundArgs>
 CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::CVFunction(
     CVType& cv,
+    data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
     const double relativeDelta,
     const double minDelta,
     const BoundArgs&... args) :
     cv(cv),
+    datasetInfo(datasetInfo),
     boundArgs(args...),
     bestObjective(std::numeric_limits<double>::max()),
     relativeDelta(relativeDelta),
@@ -158,8 +160,16 @@ double CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::PutNextArg(
     const arma::mat& parameters,
     const Args&... args)
 {
-  return Evaluate<BoundArgIndex, ParamIndex + 1>(
-      parameters, args..., parameters(ParamIndex, 0));
+  if (datasetInfo.Type(ParamIndex) == data::Datatype::categorical)
+  {
+    return Evaluate<BoundArgIndex, ParamIndex + 1>(parameters, args...,
+        datasetInfo.UnmapString(size_t(parameters(ParamIndex, 0)), ParamIndex));
+  }
+  else
+  {
+    return Evaluate<BoundArgIndex, ParamIndex + 1>(parameters, args...,
+        parameters(ParamIndex, 0));
+  }
 }
 
 } // namespace hpt
