@@ -234,9 +234,10 @@ BOOST_AUTO_TEST_CASE(LoadColVecTransposedCSVTest)
 }
 
 /**
- * Make sure text in csv is loaded correctly.
+ * Make sure besides numeric data "quoted strings" or
+ * 'quoted strings' in csv files are loaded correctly.
  */
-BOOST_AUTO_TEST_CASE(LoadTextCSVTest)
+BOOST_AUTO_TEST_CASE(LoadQuotedStringInCSVTest)
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -264,7 +265,7 @@ BOOST_AUTO_TEST_CASE(LoadTextCSVTest)
   BOOST_REQUIRE_EQUAL(test.n_cols, 5);
   BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
 
-  // check each element
+  // Check each element for equality/ closeness.
   for (size_t i = 0; i < 5; ++i)
     BOOST_REQUIRE_CLOSE(test.at(0, i), (double) (i + 1), 1e-5);
 
@@ -274,16 +275,17 @@ BOOST_AUTO_TEST_CASE(LoadTextCSVTest)
   for (size_t i = 0; i < 5; ++i)
     BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(2, i), 2, 0), "field 3");
 
-  // Clear the vector
+  // Clear the vector to free the space.
   elements.clear();
   // Remove the file.
   remove("test_file.csv");
 }
 
 /**
- * Make sure text in txt is loaded correctly.
+ * Make sure besides numeric data "quoted strings" or
+ * 'quoted strings' in txt files are loaded correctly.
  */
-BOOST_AUTO_TEST_CASE(LoadTextTxtTest)
+BOOST_AUTO_TEST_CASE(LoadQuotedStringInTXTTest)
 {
   fstream f;
   f.open("test_file.txt", fstream::out);
@@ -305,7 +307,7 @@ BOOST_AUTO_TEST_CASE(LoadTextTxtTest)
   BOOST_REQUIRE_EQUAL(test.n_cols, 2);
   BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
 
-  // check each element
+  // Check each element for equality/ closeness.
   for (size_t i = 0; i < 2; ++i)
     BOOST_REQUIRE_CLOSE(test.at(0, i), (double) (i + 1), 1e-5);
 
@@ -315,16 +317,17 @@ BOOST_AUTO_TEST_CASE(LoadTextTxtTest)
   for (size_t i = 0; i < 2; ++i)
     BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(2, i), 2, 0), "field3");
 
-  // Clear the vector
+  // Clear the vector to free the space.
   elements.clear();
   // Remove the file.
   remove("test_file.txt");
 }
 
 /**
- * Make sure text in tsv is loaded correctly.
+ * Make sure besides numeric data "quoted strings" or
+ * 'quoted strings' in tsv files are loaded correctly.
  */
-BOOST_AUTO_TEST_CASE(LoadTextTSVTest)
+BOOST_AUTO_TEST_CASE(LoadQuotedStringInTSVTest)
 {
   fstream f;
   f.open("test_file.tsv", fstream::out);
@@ -352,7 +355,7 @@ BOOST_AUTO_TEST_CASE(LoadTextTSVTest)
   BOOST_REQUIRE_EQUAL(test.n_cols, 5);
   BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
 
-  // check each element
+  // Check each element for equality/ closeness.
   for (size_t i = 0; i < 5; ++i)
     BOOST_REQUIRE_CLOSE(test.at(0, i), (double) (i + 1), 1e-5);
 
@@ -362,7 +365,7 @@ BOOST_AUTO_TEST_CASE(LoadTextTSVTest)
   for (size_t i = 0; i < 5; ++i)
     BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(2, i), 2, 0), "field 3");
 
-  // Clear the vector
+  // Clear the vector to free the space.
   elements.clear();
   // Remove the file.
   remove("test_file.tsv");
