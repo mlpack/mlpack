@@ -13,6 +13,7 @@
 #ifndef MLPACK_CORE_DATA_BINARIZE_HPP
 #define MLPACK_CORE_DATA_BINARIZE_HPP
 
+#include <vector>
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
@@ -116,7 +117,7 @@ template<typename T>
 void Binarize(const arma::Mat<T>& input,
               arma::Mat<T>& output,
               const double threshold,
-              vector<int>row)
+              std::vector<int>row)
 {
   output = input;
   for (size_t i = 0; i < row.size(); ++i)

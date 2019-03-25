@@ -15,6 +15,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
+#include <vector>
 
 using namespace mlpack;
 using namespace arma;
@@ -66,6 +67,45 @@ BOOST_AUTO_TEST_CASE(BinerizeAll)
   BOOST_REQUIRE_CLOSE(output(2, 0), 1.0, 1e-5); // 7
   BOOST_REQUIRE_CLOSE(output(2, 1), 1.0, 1e-5); // 8
   BOOST_REQUIRE_CLOSE(output(2, 2), 1.0, 1e-5); // 9
+}
+
+BOOST_AUTO_TEST_CASE(BinerizeError)
+{
+  mat input;
+  input << 1 << 2 << 3 << endr
+        << 4 << 5 << 6 << endr // this row will be tested
+        << 7 << 8 << 9;
+
+  mat output;
+  const size_t dimension = 3;
+  const double threshold = 5.0;
+  BOOST_REQUIRE_THROW(Binarize<double>(input, output, threshold, dimension),
+    std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(BinerizeMultipleDimension)
+{
+  mat input;
+  input << 1 << 2 << 3 << endr
+        << 4 << 5 << 6 << endr // this row will be tested
+        << 7 << 8 << 9;
+
+  mat output;
+  const double threshold = 5.0;
+  std::vector<int> row(2);
+  row[0]=0;
+  row[1]=1;
+  Binarize<double>(input, output, threshold,row);
+
+  BOOST_REQUIRE_SMALL(output(0, 0), 1e-5); // 1
+  BOOST_REQUIRE_SMALL(output(0, 1), 1e-5); // 2
+  BOOST_REQUIRE_SMALL(output(0, 2), 1e-5); // 3
+  BOOST_REQUIRE_SMALL(output(1, 0), 1e-5); // 4
+  BOOST_REQUIRE_SMALL(output(1, 1), 1e-5); // 5
+  BOOST_REQUIRE_CLOSE(output(1, 2), 1.0, 1e-5); // 6
+  BOOST_REQUIRE_CLOSE(output(2, 0), 7, 1e-5); // 7
+  BOOST_REQUIRE_CLOSE(output(2, 1), 8, 1e-5); // 8
+  BOOST_REQUIRE_CLOSE(output(2, 2), 9, 1e-5); // 9
 }
 
 BOOST_AUTO_TEST_SUITE_END();
