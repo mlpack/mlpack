@@ -35,7 +35,7 @@ namespace data {
  * Row is the predicted values and column are actual values.
  */
 template<typename eT, typename RowType>
-void confusionmatrix(const RowType& pred,
+void ConfusionMatrix(const RowType& pred,
                      const RowType& actual,
                      arma::Mat<eT>& output,
                      const size_t countlabels);

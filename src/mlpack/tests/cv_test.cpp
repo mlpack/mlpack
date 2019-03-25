@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(BinaryClassificationMetricsTest)
 /**
  * Test for confusion matrix.
  */
-BOOST_AUTO_TEST_CASE(confusionmatrix)
+BOOST_AUTO_TEST_CASE(ConfusionMatrixTest)
 {
   // Labels that will be considered as "ground truth".
   arma::Row<size_t> labels("0 0 1 0 0  1 0 1 0 1");
@@ -86,17 +86,17 @@ BOOST_AUTO_TEST_CASE(confusionmatrix)
   arma::Row<size_t> predictedLabels("0 0 0 0 0  1 1 1 1 1");
   // confusion matrix.
   arma::Mat<int> output;
-  data::confusionmatrix(predictedLabels, labels, output, 2);
+  data::ConfusionMatrix(predictedLabels, labels, output, 2);
   BOOST_REQUIRE_EQUAL(output(0, 0), 4);
   BOOST_REQUIRE_EQUAL(output(0, 1), 1);
   BOOST_REQUIRE_EQUAL(output(1, 0), 2);
   BOOST_REQUIRE_EQUAL(output(1, 1), 3);
 }
 /**
- * Test for confusion matrix for continuous.
+ * Test for confusion matrix for continuous data.
  */
 
-BOOST_AUTO_TEST_CASE(confusionmatrixcontinuous)
+BOOST_AUTO_TEST_CASE(ConfusionMatrixContinuousTest)
 {
   // Labels that will be considered as "ground truth".
   arma::Row<double> labels("0.2 0.3 1.4 0.5 0.6  1.3 0 1 0 1");
@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE(confusionmatrixcontinuous)
   arma::Row<double> predictedLabels("0 0.1 0.8 0.2 0  1.3 1 1.7 1.8 1");
   // confusion matrix.
   arma::Mat<int> output;
-  BOOST_REQUIRE_THROW(data::confusionmatrix(predictedLabels, labels,
+  BOOST_REQUIRE_THROW(data::ConfusionMatrix(predictedLabels, labels,
     output, 2), std::runtime_error);
 }
 
