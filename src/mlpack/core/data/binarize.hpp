@@ -79,13 +79,60 @@ void Binarize(const arma::Mat<T>& input,
               const double threshold,
               const size_t dimension)
 {
+  // stopping invalid memory access and crashes 
+  if (dimension >= input.n_rows)
+  {
+    throw std::invalid_argument("Invalid value for dimension");    
+  }
   output = input;
 
   #pragma omp parallel for
   for (omp_size_t i = 0; i < (omp_size_t) input.n_cols; ++i)
     output(dimension, i) = input(dimension, i) > threshold;
 }
-
+/**
+ * Given an input dataset and threshold, set values greater than threshold to
+ * 1 and values less than or equal to the threshold to 0. This overload takes
+ * a vector of dimension and applys the changes to the given vector of dimension.
+ *
+ * @code
+ * arma::Mat<double> input = loadData();
+ * arma::Mat<double> output;
+ * double threshold = 0.5;
+ * vector<int> dimension = {1,2};
+ *
+ * // Binarize the second and third dimension. All positive values in the second
+ * // and thirds dimensionwill be set to 1 and the values less than or equal
+ * // to 0 will become 0.
+ * Binarize<double>(input, output, threshold, dimension);
+ * @endcode
+ *
+ * @param input Input matrix to Binarize.
+ * @param output Matrix you want to save binarized data into.
+ * @param threshold Threshold can by any number.
+ * @param vector of dimension Feature to apply the Binarize function.
+ */
+template<typename T>
+void Binarize(const arma::Mat<T>& input,
+              arma::Mat<T>& output,
+              const double threshold,
+              vector<int>row)
+{
+  output = input;
+  for (size_t i = 0; i < row.size(); ++i)
+  {
+    if (row[i] >= input.n_rows)
+    {
+      throw std::invalid_argument("Inavlid value for dimension present");
+    }
+  }
+  #pragma omp parallel for
+  for (size_t j = 0; j < row.size(); ++j)
+  {
+    for (omp_size_t i = 0; i < (omp_size_t) input.n_cols; ++i)
+      output(row[j], i) = input(row[j], i) > threshold;
+  }
+}
 } // namespace data
 } // namespace mlpack
 
