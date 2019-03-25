@@ -50,13 +50,13 @@ BOOST_FIXTURE_TEST_SUITE(KNNMainTest, KNNTestFixture);
 BOOST_AUTO_TEST_CASE(KNNEqualDimensionTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+  referenceData.randu(100, 3); // 100 points in 3 dimensions.
 
   // Now we specify an invalid dimension(2) for the query data.
-  // Note that the number of points in query and reference matrices
+  // Note that the number of points  in query and referenceDatae matrices
   // are allowed to be different
   arma::mat queryData;
-  queryData.randu(2, 90); // 90 points in 2 dimensions.
+  queryData.randu(90, 2); // 90 points in 2 dimensions.
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", std::move(referenceData));
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(KNNEqualDimensionTest)
 BOOST_AUTO_TEST_CASE(KNNInvalidKTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+  referenceData.randu(100, 3); // 100 points in 3 dimensions.
 
   // Random input, some k > number of reference points.
   SetInputParam("reference", referenceData);
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(KNNInvalidKTest)
   // BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
   // CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  // CLI::GetSingleton().Parameters()["k"].wasPassed = false;
+  // CLI::GetSingleton().Parmaeters()["k"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) -1); // Invalid.
@@ -109,10 +109,10 @@ BOOST_AUTO_TEST_CASE(KNNInvalidKTest)
 BOOST_AUTO_TEST_CASE(KNNInvalidKQueryDataTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+  referenceData.randu(100, 3); // 100 points in 3 dimensions.
 
   arma::mat queryData;
-  queryData.randu(3, 90); // 90 points in 3 dimensions.
+  queryData.randu(90, 3); // 90 points in 3 dimensions.
 
   // Random input, some k > number of reference points.
   SetInputParam("reference", std::move(referenceData));
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(KNNInvalidKQueryDataTest)
 BOOST_AUTO_TEST_CASE(KNNLeafSizeTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+  referenceData.randu(100, 3); // 100 points in 3 dimensions.
 
   // Random input, negative leaf size.
   SetInputParam("reference", std::move(referenceData));
@@ -147,7 +147,7 @@ BOOST_AUTO_TEST_CASE(KNNLeafSizeTest)
 BOOST_AUTO_TEST_CASE(KNNRefModelTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+  referenceData.randu(100, 3); // 100 points in 3 dimensions.
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", std::move(referenceData));
@@ -170,7 +170,7 @@ BOOST_AUTO_TEST_CASE(KNNRefModelTest)
 BOOST_AUTO_TEST_CASE(KNNInvalidTreeTypeTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+  referenceData.randu(100, 3); // 100 points in 3 dimensions.
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", std::move(referenceData));
@@ -188,7 +188,7 @@ BOOST_AUTO_TEST_CASE(KNNInvalidTreeTypeTest)
 BOOST_AUTO_TEST_CASE(KNNInvalidAlgoTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+  referenceData.randu(100, 3); // 100 points in 3 dimensions.
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", std::move(referenceData));
@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE(KNNInvalidAlgoTest)
 BOOST_AUTO_TEST_CASE(KNNInvalidEpsilonTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+  referenceData.randu(100, 3); // 100 points in 3 dimensions.
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", std::move(referenceData));
@@ -224,7 +224,7 @@ BOOST_AUTO_TEST_CASE(KNNInvalidEpsilonTest)
 BOOST_AUTO_TEST_CASE(KNNInvalidTauTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+  referenceData.randu(100, 3); // 100 points in 3 dimensions.
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", std::move(referenceData));
@@ -242,7 +242,7 @@ BOOST_AUTO_TEST_CASE(KNNInvalidTauTest)
 BOOST_AUTO_TEST_CASE(KNNInvalidRhoTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+  referenceData.randu(100, 3); // 100 points in 3 dimensions.
 
   // some k <= number of reference points.
   SetInputParam("k", (int) 10);
@@ -272,7 +272,7 @@ BOOST_AUTO_TEST_CASE(KNNInvalidRhoTest)
 BOOST_AUTO_TEST_CASE(KNNOutputDimensionTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+  referenceData.randu(100, 3); // 100 points in 3 dimensions.
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", std::move(referenceData));
@@ -297,10 +297,10 @@ BOOST_AUTO_TEST_CASE(KNNOutputDimensionTest)
 BOOST_AUTO_TEST_CASE(KNNModelReuseTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+  referenceData.randu(100, 3); // 100 points in 3 dimensions.
 
   arma::mat queryData;
-  queryData.randu(3, 90); // 90 points in 3 dimensions.
+  queryData.randu(90, 3); // 90 points in 3 dimensions.
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", std::move(referenceData));
@@ -339,14 +339,14 @@ BOOST_AUTO_TEST_CASE(KNNModelReuseTest)
 BOOST_AUTO_TEST_CASE(KNNDifferentTauTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 1000); // 1000 points in 3 dimensions.
+  referenceData.randu(1000, 3); // 1000 points in 3 dimensions.
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 10);
   SetInputParam("tree_type", (string) "spill");
   SetInputParam("tau", (double) 0.2);
-  SetInputParam("algorithm", (string) "greedy");
+  SetInputParam("algorithm", (string) "GetParameedy");
 
   mlpackMain();
 
@@ -378,7 +378,7 @@ BOOST_AUTO_TEST_CASE(KNNDifferentTauTest)
 BOOST_AUTO_TEST_CASE(KNNDifferentRhoTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 1000); // 1000 points in 3 dimensions.
+  referenceData.randu(1000, 3); // 1000 points in 3 dimensions.
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", referenceData);
@@ -418,7 +418,7 @@ BOOST_AUTO_TEST_CASE(KNNDifferentRhoTest)
 BOOST_AUTO_TEST_CASE(KNNDifferentEpsilonTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 1000); // 1000 points in 3 dimensions.
+  referenceData.randu(1000, 3); // 1000 points in 3 dimensions.
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", referenceData);
@@ -455,7 +455,7 @@ BOOST_AUTO_TEST_CASE(KNNDifferentEpsilonTest)
 BOOST_AUTO_TEST_CASE(KNNRandomBasisTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 1000); // 1000 points in 3 dimensions.
+  referenceData.randu(1000, 3); // 1000 points in 3 dimensions.
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", referenceData);
@@ -491,7 +491,7 @@ BOOST_AUTO_TEST_CASE(KNNRandomBasisTest)
 BOOST_AUTO_TEST_CASE(KNNTrueNeighborDistanceTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+  referenceData.randu(100, 3); // 100 points in 3 dimensions.
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", referenceData);
@@ -518,8 +518,8 @@ BOOST_AUTO_TEST_CASE(KNNTrueNeighborDistanceTest)
   // True output matrices have incorrect shape.
   arma::Mat<size_t> dummy_neighbors;
   arma::mat dummy_distances;
-  dummy_neighbors.randu(20, 100);
-  dummy_distances.randu(20, 100);
+  dummy_neighbors.randu(100, 20);
+  dummy_distances.randu(100, 20);
 
   // bindings::tests::CleanMemory();
 
@@ -546,10 +546,10 @@ BOOST_AUTO_TEST_CASE(KNNAllAlgorithmsTest)
   const int nofalgorithms = 3;
 
   arma::mat referenceData;
-  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+  referenceData.randu(100, 3); // 100 points in 3 dimensions.
 
   arma::mat queryData;
-  queryData.randu(3, 90); // 90 points in 3 dimensions.
+  queryData.randu(90, 3); // 90 points in 3 dimensions.
 
   // Keep some k <= number of reference points same over all.
   SetInputParam("k", (int) 10);
@@ -603,10 +603,10 @@ BOOST_AUTO_TEST_CASE(KNNAllTreeTypesTest)
   const int noftreetypes = 14; // 15 including spill.
 
   arma::mat referenceData;
-  referenceData.randu(3, 100); // 100 points in 3 dimensions.
+  referenceData.randu(100, 3); // 100 points in 3 dimensions.
 
   arma::mat queryData;
-  queryData.randu(3, 90); // 90 points in 3 dimensions.
+  queryData.randu(90, 3); // 90 points in 3 dimensions.
 
   // Keep some k <= number of reference points same over all.
   SetInputParam("k", (int) 10);
