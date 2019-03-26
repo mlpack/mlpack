@@ -161,7 +161,7 @@ class GMM
    * Return the probability that the given observation came from this
    * distribution.
    *
-   * @param observation Observation vector to evaluate the probability.
+   * @param observation Observation vector to evaluate the probability of.
    */
   double Probability(const arma::vec& observation) const;
 
@@ -177,7 +177,7 @@ class GMM
    * Return the log probability that the given observation came from this
    * distribution.
    *
-   * @param observation Observation to evaluate the probability.
+   * @param observation Observation vector to evaluate the probability of.
    */
   double LogProbability(const arma::vec& observation) const;
 

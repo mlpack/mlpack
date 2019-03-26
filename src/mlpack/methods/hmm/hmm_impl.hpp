@@ -149,7 +149,9 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
       // Save the values of log-probability to logProbs.
       for (size_t i = 0; i < transition.n_rows; i++)
       {
-        emission[i].LogProbability(dataSeq[seq], logProbs.unsafe_col(i));
+        // Use advanced constructor for using logProbs directly.
+        emission[i].LogProbability(dataSeq[seq], arma::vec(logProbs.colptr(i),
+            logProbs.n_rows, false, true));
       }
 
       // Now re-estimate the parameters.  This is the M-step.
@@ -478,7 +480,9 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
   // Save the values of log-probability to logProbs.
   for (size_t i = 0; i < transition.n_rows; i++)
   {
-    emission[i].LogProbability(dataSeq, logProbs.unsafe_col(i));
+    // Use advanced constructor for using logProbs directly.
+    emission[i].LogProbability(dataSeq, arma::vec(logProbs.colptr(i),
+        logProbs.n_rows, false, true));
   }
 
   for (size_t t = 1; t < dataSeq.n_cols; t++)
@@ -592,7 +596,9 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
   // Save the values of log-probability to logProbs.
   for (size_t i = 0; i < transition.n_rows; i++)
   {
-    emission[i].LogProbability(dataSeq, logProbs.unsafe_col(i));
+    // Use advanced constructor for using logProbs directly.
+    emission[i].LogProbability(dataSeq, arma::vec(logProbs.colptr(i),
+        logProbs.n_rows, false, true));
   }
   // The first entry in the forward algorithm uses the initial state
   // probabilities.  Note that MATLAB assumes that the starting state (at
@@ -648,7 +654,9 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
   // Save the values of log-probability to logProbs.
   for (size_t i = 0; i < transition.n_rows; i++)
   {
-    emission[i].LogProbability(dataSeq, logProbs.unsafe_col(i));
+    // Use advanced constructor for using logProbs directly.
+    emission[i].LogProbability(dataSeq, arma::vec(logProbs.colptr(i),
+        logProbs.n_rows, false, true));
   }
 
   // Now step backwards through all other observations.
