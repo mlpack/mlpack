@@ -61,7 +61,7 @@ class Imputer
               const std::string& missingValue,
               const size_t dimension)
   {
-    if(columnMajor)
+    if (columnMajor)
     {
       if (dimension >= input.n_rows)
       {
