@@ -51,10 +51,6 @@ class MeanImputation
     // nan. while doing that, remember where mappedValue or NaN exists.
     if (columnMajor)
     {
-      if (dimension >= input.n_rows)
-      {
-        throw std::invalid_argument("Inavlid value for dimension present");
-      }      
       for (size_t i = 0; i < input.n_cols; ++i)
       {
         if (input(dimension, i) == mappedValue ||
@@ -71,10 +67,6 @@ class MeanImputation
     }
     else
     {
-      if (dimension >= input.n_cols)
-      {
-        throw std::invalid_argument("Inavlid value for dimension present");
-      }
       for (size_t i = 0; i < input.n_rows; ++i)
       {
         if (input(i, dimension) == mappedValue ||

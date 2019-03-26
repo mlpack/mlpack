@@ -61,6 +61,20 @@ class Imputer
               const std::string& missingValue,
               const size_t dimension)
   {
+    if(columnMajor)
+    {
+      if (dimension >= input.n_rows)
+      {
+        throw std::invalid_argument("Inavlid value for dimension present");
+      }
+    }
+    else
+    {
+      if (dimension >= input.n_cols)
+      {
+        throw std::invalid_argument("Inavlid value for dimension present");
+      }
+    }
     T mappedValue = static_cast<T>(mapper.UnmapValue(missingValue, dimension));
     strategy.Impute(input, mappedValue, dimension, columnMajor);
   }
