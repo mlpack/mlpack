@@ -80,10 +80,10 @@ void Binarize(const arma::Mat<T>& input,
               const double threshold,
               const size_t dimension)
 {
-  // stopping invalid memory access and crashes 
+  // stopping invalid memory access and crashes
   if (dimension >= input.n_rows)
   {
-    throw std::invalid_argument("Invalid value for dimension");    
+    throw std::invalid_argument("Invalid value for dimension");
   }
   output = input;
 

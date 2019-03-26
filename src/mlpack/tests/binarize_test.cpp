@@ -93,9 +93,9 @@ BOOST_AUTO_TEST_CASE(BinerizeMultipleDimension)
   mat output;
   const double threshold = 5.0;
   std::vector<int> row(2);
-  row[0]=0;
-  row[1]=1;
-  Binarize<double>(input, output, threshold,row);
+  row[0] = 0;
+  row[1] = 1;
+  Binarize<double>(input, output, threshold, row);
 
   BOOST_REQUIRE_SMALL(output(0, 0), 1e-5); // 1
   BOOST_REQUIRE_SMALL(output(0, 1), 1e-5); // 2
