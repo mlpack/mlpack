@@ -30,27 +30,21 @@ namespace markdown {
 class BindingInfo
 {
  public:
-  
   //! Return a ProgramDoc object for a given bindingName.
   static util::ProgramDoc& GetProgramDoc(const std::string& bindingName);
-
-   //! Register a ProgramDoc object with the given bindingName.
+  //! Register a ProgramDoc object with the given bindingName.
    static void RegisterProgramDoc(const std::string& bindingName,
                                  const util::ProgramDoc& programDoc);
-
   //! Get or modify the current language (don't set it to something invalid!).
   static std::string& Language();
 
  private:
   //! Private constructor, so that only one instance can be created.
   BindingInfo() { }
-
   //! Get the singleton.
   static BindingInfo& GetSingleton();
-
   //! Internally-held map for mapping a binding name to a ProgramDoc name.
   std::unordered_map<std::string, util::ProgramDoc> map;
-
   //! Holds the name of the language that we are currently printing.  This is
   //! modified before printing the documentation, and then used by
   //! print_doc_functions.hpp during printing to print the correct language.
