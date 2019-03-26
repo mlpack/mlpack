@@ -49,6 +49,10 @@ class CustomImputation
     // replace the target value to custom value
     if (columnMajor)
     {
+      if (dimension >= input.n_rows)
+      {
+        throw std::invalid_argument("Inavlid value for dimension present");
+      }
       for (size_t i = 0; i < input.n_cols; ++i)
       {
         if (input(dimension, i) == mappedValue ||
@@ -60,6 +64,10 @@ class CustomImputation
     }
     else
     {
+      if (dimension >= input.n_cols)
+      {
+        throw std::invalid_argument("Inavlid value for dimension present");
+      }
       for (size_t i = 0; i < input.n_rows; ++i)
       {
         if (input(i, dimension) == mappedValue ||
