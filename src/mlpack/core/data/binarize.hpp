@@ -128,7 +128,7 @@ void Binarize(const arma::Mat<T>& input,
     }
   }
   #pragma omp parallel for
-  for (size_t j = 0; j < row.size(); ++j)
+  for (omp_size_t j = 0; j < (omp_size_t) row.size(); ++j)
   {
     for (omp_size_t i = 0; i < (omp_size_t) input.n_cols; ++i)
       output(row[j], i) = input(row[j], i) > threshold;
