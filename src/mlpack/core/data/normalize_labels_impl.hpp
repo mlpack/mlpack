@@ -46,7 +46,7 @@ void NormalizeLabels(const RowType& labelsIn,
   for (size_t i = 0; i < labelsIn.n_elem; ++i)
   {
     // If labelsIn[i] is already in the map, use the existing label.
-    if (labelMap[labelsIn[i]].count() > 0)
+    if (labelMap.count(labelsIn[i]) > 0)
     {
       labels[i] = labelMap[labelsIn[i]] - 1;
     }
