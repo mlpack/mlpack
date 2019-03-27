@@ -57,14 +57,11 @@ PROGRAM_INFO("Parametric Naive Bayes Classifier",
     "done with the " + PRINT_PARAM_STRING("output_model") + " output "
     "parameter."
     "\n\n"
-    "Note : The following parametes are deprecated and "
-    "will be removed in mlpack 4.0: " + PRINT_PARAM_STRING("output") +
-    ", " + PRINT_PARAM_STRING("output_probs") +
-    "\nUse " + PRINT_PARAM_STRING("predictions") + " instead of " +
-    PRINT_PARAM_STRING("output") + "\nUse " +
-    PRINT_PARAM_STRING("probabilities") + " instead of " +
-    PRINT_PARAM_STRING("output_probs") +
-    ".\n\n"
+    "Note: the " + PRINT_PARAM_STRING("output") + " and " +
+    PRINT_PARAM_STRING("output_probs") + " parameters are deprecated and will "
+    "be removed in mlpack 4.0.0.  Use " + PRINT_PARAM_STRING("predictions") +
+    " and " + PRINT_PARAM_STRING("probabilities") + " instead."
+    "\n\n"
     "For example, to train a Naive Bayes classifier on the dataset " +
     PRINT_DATASET("data") + " with labels " + PRINT_DATASET("labels") + " "
     "and save the model to " + PRINT_MODEL("nbc_model") + ", the following "
@@ -120,16 +117,16 @@ PARAM_FLAG("incremental_variance", "The variance of each class will be "
 
 // Test parameters.
 PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
-// The parameter 'output' is deprecated and will be removed in mlpack 4.0.
+// The parameter 'output' is deprecated and will be removed in mlpack 4.
 PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
-    " test set will be written.", "o");
+    " test set will be written (deprecated).", "o");
 PARAM_UROW_OUT("predictions", "The matrix in which the predicted labels for the"
     " test set will be written.", "a");
+// The parameter 'output_probs' is deprecated and can be removed in mlpack 4.
+PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability"
+    " of labels for the test set will be written (deprecated).", "");
 PARAM_MATRIX_OUT("probabilities", "The matrix in which the predicted"
     " probability of labels for the test set will be written.", "p");
-// The parameter 'output_probs' is deprecated and can be removed in mlpack 4.0.
-PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability"
-    " of labels for the test set will be written.", "");
 
 static void mlpackMain()
 {

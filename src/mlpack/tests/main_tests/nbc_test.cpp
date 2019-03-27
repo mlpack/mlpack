@@ -332,10 +332,10 @@ BOOST_AUTO_TEST_CASE(NBCIncrementalVarianceTest)
 }
 
 /**
-  * Ensuring that the parameter 'output' and the parameter 'predictions' 
-  * give the same output.This test case will be removed in mlpack 4 when 
-  * the deprecated parameter: 'output' is removed.
- **/
+ * Ensure that the parameter 'output' and the parameter 'predictions' give the
+ * same output.  This test case should be removed in mlpack 4 when the
+ * deprecated parameter 'output' is removed.
+ */
 BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest)
 {
   arma::mat inputData;
@@ -357,8 +357,6 @@ BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest)
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
 
-  size_t testSize = testData.n_cols;
-
   // Input training data.
   SetInputParam("training", std::move(inputData));
   SetInputParam("labels", std::move(labels));
@@ -368,11 +366,11 @@ BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest)
 
   mlpackMain();
 
-  // Get the output from 'predictions' parameter
+  // Get the output from the 'output' parameter.
   const arma::Row<size_t> testY1 =
       std::move(CLI::GetParam<arma::Row<size_t>>("output"));
 
-  // Get output from 'output' parameter
+  // Get output from 'predictions' parameter.
   const arma::Row<size_t> testY2 =
       CLI::GetParam<arma::Row<size_t>>("predictions");
 
@@ -383,11 +381,10 @@ BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest)
 
 
 /**
-  * This test ensures that the parameter 'output_probabilities' and the 
-  * parameter 'probabilities' give the same output.This test case will be 
-  * removed in mlpack 4 when the deprecated parameter: 'output_probabilities'
-  *  is removed.
- **/
+ * This test ensures that the parameter 'output_probabilities' and the parameter
+ * 'probabilities' give the same output.  This test case should be removed in
+ * mlpack 4 when the deprecated parameter: 'output_probabilities' is removed.
+ */
 BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest2)
 {
   arma::mat inputData;
@@ -409,8 +406,6 @@ BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest2)
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
 
-  size_t testSize = testData.n_cols;
-
   // Input training data.
   SetInputParam("training", std::move(inputData));
   SetInputParam("labels", std::move(labels));
@@ -420,11 +415,11 @@ BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest2)
 
   mlpackMain();
 
-  // Get the output probabilites which is a deprecated parameter
+  // Get the output probabilites which is a deprecated parameter.
   const arma::mat testY1 =
       std::move(CLI::GetParam<arma::mat>("output_probs"));
 
-  // Get probabilities from 'predictions' parameter
+  // Get probabilities from 'predictions' parameter.
   const arma::mat testY2 =
       CLI::GetParam<arma::mat>("probabilities");
 
