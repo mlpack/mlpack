@@ -20,6 +20,7 @@
 using namespace mlpack;
 using namespace mlpack::data;
 using namespace std;
+using namespace arma;
 
 BOOST_AUTO_TEST_SUITE(LoadSaveTest);
 
