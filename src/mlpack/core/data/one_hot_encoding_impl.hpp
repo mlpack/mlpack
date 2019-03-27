@@ -31,7 +31,7 @@ namespace data {
  * @param output Binary matrix.
  */
 template<typename eT, typename RowType>
-void oneHotEncoding(const RowType& labelsIn,
+void OneHotEncoding(const RowType& labelsIn,
                      arma::Mat<eT>& output)
 {
   arma::Row<size_t> labels;
@@ -39,34 +39,32 @@ void oneHotEncoding(const RowType& labelsIn,
 
   // Loop over the input labels, and develop the mapping.
   // Map for mapping labelIn to their label
-  std::map<eT, size_t> hastTable;
+  std::unordered_map<eT, size_t> labelMap;
   size_t curLabel = 0;
   for (size_t i = 0; i < labelsIn.n_elem; ++i)
   {
-    // If labelsIn[i] aldeardy there in Map then just its label
-    if (hastTable[labelsIn[i]] != 0)
+    // If labelsIn[i] is already in the map, use the existing label.
+    if (labelMap.count(labelsIn[i]) != 0)
     {
-      labels[i] = hastTable[labelsIn[i]]-1;
+      labels[i] = labelMap[labelsIn[i]] - 1;
     }
     else
     {
       // If labelsIn[i] not there then add it to Map
-      hastTable[labelsIn[i]] = curLabel+1;
+      labelMap[labelsIn[i]] = curLabel + 1;
       labels[i] = curLabel;
       ++curLabel;
     }
   }
   // Resize output matrix to necessary size.
-  output.set_size(labelsIn.n_elem, curLabel);
   // Fill it with zero
-  output.fill(0);
-
+  output.zeros(labelsIn.n_elem, curLabel);
   // Filling one at required place
   for (size_t i = 0; i < labelsIn.n_elem; ++i)
   {
     output(i, labels[i]) = 1;
   }
-  hastTable.clear();
+  labelMap.clear();
 }
 } // namespace data
 } // namespace mlpack

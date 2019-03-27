@@ -3,7 +3,7 @@
  * @author Jeffin Sam
  *
  * One hot encoding functions
- * The puprose of this function is to convert
+ * The purpose of this function is to convert
  * categorical variables as binary vectors.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -30,7 +30,7 @@ namespace data {
  * @param output Binary matrix.
  */
 template<typename eT, typename RowType>
-void oneHotEncoding(const RowType& labelsIn,
+void OneHotEncoding(const RowType& labelsIn,
                      arma::Mat<eT>& output);
 
 
