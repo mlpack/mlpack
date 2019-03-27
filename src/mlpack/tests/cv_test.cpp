@@ -31,7 +31,7 @@
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 #include <mlpack/methods/naive_bayes/naive_bayes_classifier.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-#include <mlpack/core/data/cm.hpp>
+#include <mlpack/core/data/confusion_matrix.hpp>
 #include <ensmallen.hpp>
 
 #include <boost/test/unit_test.hpp>

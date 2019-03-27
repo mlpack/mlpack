@@ -1,23 +1,21 @@
 /**
- * @file cm_impl.hpp
+ * @file confusion_matrix.hpp
  * @author Jeffin Sam
  *
- * implementation of confusion matrix
+ * Function for confusion matrix
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_CM_IMPL_HPP
-#define MLPACK_CORE_DATA_CM_IMPL_HPP
+#ifndef MLPACK_CORE_DATA_CONFUSION_MATRIX_HPP
+#define MLPACK_CORE_DATA_CONFUSION_MATRIX_HPP
 
-// In case it hasn't been included yet.
-#include "cm.hpp"
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace data {
-
 /**
  * A confusion matrix is a summary of prediction results on a classification
  * problem.The number of correct and incorrect predictions are summarized
@@ -40,32 +38,11 @@ template<typename eT, typename RowType>
 void ConfusionMatrix(const RowType& pred,
                      const RowType& actual,
                      arma::Mat<eT>& output,
-                     const size_t countlabels)
-{
-  // finding whether continues or not
-  bool find = true;
-  for (size_t i = 0; i < pred.n_elem; ++i)
-  {
-    if (pred[i] != int(pred[i]) || actual[i] != int(actual[i]))
-    {
-      // simply means continues data or different datatype
-      find = false;
-      break;
-    }
-  }
-  if (find == false)
-  {
-    throw std::runtime_error("Datatset should be discrete");
-  }
-  // Loop over the input labels and predicted and just add the count
-  output.set_size(countlabels, countlabels);
-  output.fill(0);
-  for (size_t i = 0; i < pred.n_elem; ++i)
-  {
-    output(pred[i], actual[i]) = output(pred[i], actual[i]) + 1;
-  }
-}
+                     const size_t countlabels);
 } // namespace data
 } // namespace mlpack
+
+// Include implementation.
+#include "confusion_matrix_impl.hpp"
 
 #endif
