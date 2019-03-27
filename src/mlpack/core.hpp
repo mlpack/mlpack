@@ -255,7 +255,6 @@
  *   - Tommi Laivamaa <tommi.laivamaa@protonmail.com>
  *   - Kim SangYeon <sy0814k@gmail.com>
  *   - Niteya Shah <niteya.56@gmail.com>
- *   - Shashank Tiwari <shashanktwr007@gmail.com>
  */
 
 // First, include all of the prerequisites.
