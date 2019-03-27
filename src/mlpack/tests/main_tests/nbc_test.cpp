@@ -332,13 +332,10 @@ BOOST_AUTO_TEST_CASE(NBCIncrementalVarianceTest)
 }
 
 /**
-  * Ensuring that the parameter 'output' and the parameter 'predictions' give
-  * the same output.
+  * Ensuring that the parameter 'output' and the parameter 'predictions' 
+  * give the same output.This test case will be removed in mlpack 4 when 
+  * the deprecated parameter: 'output' is removed.
  **/
-// The following test case is to check whether the old parameter 'output' and
-// the new parameter 'predictions' give the same output.
-// This test case will be removed in mlpack4
-// when the deprecated parameter: 'output' is removed.
 BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest)
 {
   arma::mat inputData;
@@ -386,13 +383,11 @@ BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest)
 
 
 /**
-  * Ensuring that the parameter 'output_probabilities' and the parameter
-  * 'probabilities' give the same output
+  * This test ensures that the parameter 'output_probabilities' and the 
+  * parameter 'probabilities' give the same output.This test case will be 
+  * removed in mlpack 4 when the deprecated parameter: 'output_probabilities'
+  *  is removed.
  **/
-// The following test case is to check whether the old parameter
-// 'output_probabilities' and the new parameter 'probabilities' give the same
-// output. This test case will be removed in mlpack 4
-// when the deprecated parameter: 'output_probabilities' is removed
 BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest2)
 {
   arma::mat inputData;
