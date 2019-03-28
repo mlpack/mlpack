@@ -917,7 +917,7 @@ BOOST_AUTO_TEST_CASE(CellStateParamLSTMLayerTest)
   arma::mat out_lstm, cell_lstm;
 
   // LSTM layer.
-  LSTM<> lstm(inputSize,outputSize,rho);
+  LSTM<> lstm(inputSize, outputSize, rho);
   lstm.Reset();
   lstm.ResetCell(rho);
 
