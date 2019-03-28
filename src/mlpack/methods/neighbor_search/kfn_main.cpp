@@ -272,6 +272,11 @@ static void mlpackMain()
       Log::Info << "Using query data from '"
           << CLI::GetPrintableParam<arma::mat>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
+      if (queryData.n_rows != kfn->Dataset().n_rows)
+      {
+        Log::Fatal << "Query has invalid dimensions (" << queryData.n_rows <<
+            ") whereas it should be " << kfn->Dataset().n_rows << endl;
+      }
     }
 
     // Sanity check on k value: must be greater than 0, must be less than or
