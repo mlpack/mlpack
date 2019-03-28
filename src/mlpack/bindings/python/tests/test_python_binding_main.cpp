@@ -30,11 +30,13 @@ PARAM_DOUBLE_IN_REQ("double_in", "Input double, must be 4.0.", "d");
 PARAM_FLAG("flag1", "Input flag, must be specified.", "f");
 PARAM_FLAG("flag2", "Input flag, must not be specified.", "F");
 PARAM_MATRIX_IN("matrix_in", "Input matrix.", "m");
+PARAM_MATRIX_IN("smatrix_in", "Input matrix.", "");
 PARAM_UMATRIX_IN("umatrix_in", "Input unsigned matrix.", "u");
 PARAM_COL_IN("col_in", "Input column.", "c");
 PARAM_UCOL_IN("ucol_in", "Input unsigned column.", "");
 PARAM_ROW_IN("row_in", "Input row.", "");
 PARAM_UROW_IN("urow_in", "Input unsigned row.", "");
+PARAM_UMATRIX_IN("s_umatrix_in", "Input unsigned matrix.", "");
 PARAM_MATRIX_AND_INFO_IN("matrix_and_info_in", "Input matrix and info.", "");
 PARAM_VECTOR_IN(int, "vector_in", "Input vector of numbers.", "");
 PARAM_VECTOR_IN(string, "str_vector_in", "Input vector of strings.", "");
@@ -50,8 +52,10 @@ PARAM_COL_OUT("col_out", "Output column. 2x input column", "");
 PARAM_UCOL_OUT("ucol_out", "Output unsigned column. 2x input column.", "");
 PARAM_ROW_OUT("row_out", "Output row.  2x input row.", "");
 PARAM_UROW_OUT("urow_out", "Output unsigned row.  2x input row.", "");
+PARAM_UMATRIX_OUT("s_umatrix_out", "Output unsigned matrix.", "");
 PARAM_MATRIX_OUT("matrix_and_info_out", "Output matrix and info; all numeric "
     "elements multiplied by 3.", "");
+PARAM_MATRIX_OUT("smatrix_out", "Output matrix.", "");
 PARAM_VECTOR_OUT(int, "vector_out", "Output vector.", "");
 PARAM_VECTOR_OUT(string, "str_vector_out", "Output string vector.", "");
 PARAM_MODEL_OUT(GaussianKernel, "model_out", "Output model, with twice the "
@@ -103,6 +107,25 @@ static void mlpackMain()
     out.row(2) *= 2;
 
     CLI::GetParam<arma::Mat<size_t>>("umatrix_out") = move(out);
+  }
+
+  // An input matrix (pandas.Series) should have all elements multiplied by two.
+  if (CLI::HasParam("smatrix_in"))
+  {
+    arma::mat out = move(CLI::GetParam<arma::mat>("smatrix_in"));
+    out *= 2.0;
+
+    CLI::GetParam<arma::mat>("smatrix_out") = move(out);
+  }
+
+  // An input matrix (pandas.Series) should have all elements multiplied by two.
+  if (CLI::HasParam("s_umatrix_in"))
+  {
+    arma::Mat<size_t> out =
+        move(CLI::GetParam<arma::Mat<size_t>>("s_umatrix_in"));
+    out *= 2;
+
+    CLI::GetParam<arma::Mat<size_t>>("s_umatrix_out") = move(out);
   }
 
   // An input column or row should have all elements multiplied by two.
