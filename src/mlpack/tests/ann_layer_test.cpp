@@ -902,6 +902,74 @@ BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
 }
 
 /**
+ * Testting the overloaded Forward of LSTM Layer,
+ * besides ouput from the LSTM the overloaded function
+ * provides acces to cell state of LSTM.
+ */
+BOOST_AUTO_TEST_CASE(CellStateParamLSTMLayerTest)
+{
+  const size_t rho = 5, inputSize = 3, outputSize = 2;
+
+  // Provide input of all ones.
+  arma::cube input = arma::ones(inputSize, outputSize, rho);
+
+  arma::mat inputGate, forgetGate, outputGate, hidden;
+  arma::mat out_lstm, cell_lstm;
+
+  // LSTM layer.
+  LSTM<> lstm(inputSize,outputSize,rho);
+  lstm.Reset();
+  lstm.ResetCell(rho);
+
+  // Initialize the weights to all ones.
+  lstm.Parameters().ones();
+
+  arma::mat inputWeight = arma::ones(outputSize, inputSize);
+  arma::mat outputWeight = arma::ones(outputSize, outputSize);
+  arma::mat bias = arma::ones(outputSize, input.n_cols);
+  arma::mat cell_calc = arma::zeros(outputSize, input.n_cols);
+  arma::mat out_calc = arma::zeros(outputSize, input.n_cols);
+
+  for (size_t seqNum = 0; seqNum < rho; ++seqNum)
+  {
+      // Wrap a matrix around our data to avoid a copy.
+      arma::mat stepData(input.slice(seqNum).memptr(),
+          input.n_rows, input.n_cols, false, true);
+
+      // Apply Forward on LSTM layer.
+      lstm.Forward(std::move(stepData),
+                   std::move(out_lstm),
+                   std::move(cell_lstm));
+
+      // Compute the value of cell state and output.
+      // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b)
+      inputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+          outputWeight * out_calc + outputWeight % cell_calc + bias)));
+
+      // f = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b)
+      forgetGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+          outputWeight * out_calc + outputWeight % cell_calc + bias)));
+
+      // z = tanh(W.dot(x) + W.dot(h) + b)
+      hidden = arma::tanh(inputWeight * stepData +
+                     outputWeight * out_calc + bias);
+
+      // c = f * c + i * z
+      cell_calc = forgetGate % cell_calc + inputGate % hidden;
+
+      // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b)
+      outputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
+          outputWeight * out_calc + outputWeight % cell_calc + bias)));
+
+      // h = o * tanh(c)
+      out_calc = outputGate % arma::tanh(cell_calc);
+
+      CheckMatrices(out_lstm, out_calc, 1e-12);
+      CheckMatrices(cell_lstm, cell_calc, 1e-12);
+  }
+}
+
+/**
  * Check if the gradients computed by GRU cell are close enough to the
  * approximation of the gradients.
  */
