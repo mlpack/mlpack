@@ -774,7 +774,7 @@ BOOST_AUTO_TEST_CASE(SaveHDF5Test)
  */
 BOOST_AUTO_TEST_CASE(OneHotEncodingTest)
 {
-  arma::Mat<int> matrix;
+  arma::Mat<size_t> matrix;
   matrix << 1 << 0 << endr
         << 0 << 1 << endr // this row will be tested
         << 1 << 0 << endr
@@ -784,7 +784,7 @@ BOOST_AUTO_TEST_CASE(OneHotEncodingTest)
         << 0 << 1 << endr
         << 1 << 0 << endr;
   // output matrix
-  arma::Mat<int> output;
+  arma::Mat<size_t> output;
   arma::irowvec labels("-1 1 -1 -1 -1 -1 1 -1");
   data::OneHotEncoding(labels, output);
 
