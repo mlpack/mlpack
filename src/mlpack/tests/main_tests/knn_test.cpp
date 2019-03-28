@@ -47,7 +47,7 @@ BOOST_FIXTURE_TEST_SUITE(KNNMainTest, KNNTestFixture);
  * Check that we can't provide reference and query matrices
  * with different dimensions.
  */
-BOOST_AUTO_TEST_CAES(KNNEqualDimensionTest)
+BOOST_AUTO_TEST_CASE(KNNEqualDimensionTest)
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(KNNLeafSizeTest)
  * Check that we can't pass both input_model and reference matrix.
  */
 BOOST_AUTO_TEST_CASE(KNNRefModelTest)
-{`
+{
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
