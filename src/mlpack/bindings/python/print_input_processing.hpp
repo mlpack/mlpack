@@ -71,20 +71,20 @@ void PrintInputProcessing(
     if (GetPrintableType<T>(d) == "bool")
     {
       std::cout << prefix << "if isinstance(" << name << ", "
-        << GetPrintableType<T>(d) << "):" << std::endl;
+          << GetPrintableType<T>(d) << "):" << std::endl;
       std::cout << prefix << "  if " << name << " is not " << def << ":"
-        << std::endl;
+          << std::endl;
     }
     else
     {
       std::cout << prefix << "if " << name << " is not " << def << ":"
-        << std::endl;
+          << std::endl;
       std::cout << prefix << "  if isinstance(" << name << ", "
-        << GetPrintableType<T>(d) << "):" << std::endl;
+          << GetPrintableType<T>(d) << "):" << std::endl;
     }
 
     std::cout << prefix << "    SetParam[" << GetCythonType<T>(d)
-      << "](<const string> '" << d.name << "', ";
+        << "](<const string> '" << d.name << "', ";
     if (GetCythonType<T>(d) == "string")
       std::cout << name << ".encode(\"UTF-8\")";
     else if (GetCythonType<T>(d) == "vector[string]")
@@ -99,36 +99,36 @@ void PrintInputProcessing(
     if (d.name == "verbose")
     std::cout << prefix << "    EnableVerbose()" << std::endl;
 
-    if (GetPrintableType<T>(d)== "bool")
+    if (GetPrintableType<T>(d) == "bool")
     {
       std::cout << "  else:" << std::endl;
       std::cout << "    raise TypeError(" <<"\"'"<< name
-          <<"' must have type \'" << GetPrintableType<T>(d)
-          <<"'!\")" << std::endl;
+          << "' must have type \'" << GetPrintableType<T>(d)
+          << "'!\")" << std::endl;
     }
     else
     {
       std::cout << "    else:" << std::endl;
       std::cout << "      raise TypeError(" <<"\"'"<< name
-          <<"' must have type \'" << GetPrintableType<T>(d)
-          <<"'!\")" << std::endl;
+          << "' must have type \'" << GetPrintableType<T>(d)
+          << "'!\")" << std::endl;
     }
   }
   else
   {
-    if (GetPrintableType<T>(d)== "bool")
+    if (GetPrintableType<T>(d) == "bool")
     {
       std::cout << prefix << "if isinstance(" << name << ", "
-        << GetPrintableType<T>(d) << "):" << std::endl;
+          << GetPrintableType<T>(d) << "):" << std::endl;
       std::cout << prefix << "  if " << name << " is not " << def << ":"
-        << std::endl;
+          << std::endl;
     }
     else
     {
       std::cout << prefix << "if " << name << " is not " << def << ":"
-        << std::endl;
+          << std::endl;
       std::cout << prefix << "  if isinstance(" << name << ", "
-        << GetPrintableType<T>(d) << "):" << std::endl;
+          << GetPrintableType<T>(d) << "):" << std::endl;
     }
 
     std::cout << prefix << "    SetParam[" << GetCythonType<T>(d) << "](<const "
@@ -143,24 +143,27 @@ void PrintInputProcessing(
     std::cout << prefix << "    CLI.SetPassed(<const string> '"
         << d.name << "')" << std::endl;
 
-    if (GetPrintableType<T>(d)== "bool")
+    if (GetPrintableType<T>(d) == "bool")
     {
       std::cout << "  else:" << std::endl;
       std::cout << "    raise TypeError(" <<"\"'"<< name
-          <<"' must have type \'" << GetPrintableType<T>(d)
-          <<"'!\")" << std::endl;
+          << "' must have type \'" << GetPrintableType<T>(d)
+          << "'!\")" << std::endl;
     }
     else
     {
       std::cout << "    else:" << std::endl;
       std::cout << "      raise TypeError(" <<"\"'"<< name
-          <<"' must have type \'" << GetPrintableType<T>(d)
-          <<"'!\")" << std::endl;
+          << "' must have type \'" << GetPrintableType<T>(d)
+          << "'!\")" << std::endl;
     }
   }
   std::cout << std::endl; // Extra line is to clear up the code a bit.
 }
 
+/**
+ * Print input processing for a vector type.
+ */
 template<typename T>
 void PrintInputProcessing(
     const util::ParamData& d,
@@ -173,10 +176,6 @@ void PrintInputProcessing(
 {
   const std::string prefix(indent, ' ');
 
-
-  /**
-   * Print input processing for a vector type.
-   */
   /**
    * This gives us code like:
    *  if param_name is not None:
@@ -211,11 +210,11 @@ void PrintInputProcessing(
         << "')" << std::endl;
     std::cout << prefix << "      else:" << std::endl;
     std::cout << prefix << "        raise TypeError(" <<"\"'"<< d.name
-        <<"' must have type \'" << GetPrintableType<T>(d)
-        <<"'!\")" << std::endl;
+        << "' must have type \'" << GetPrintableType<T>(d)
+        << "'!\")" << std::endl;
     std::cout << prefix << "  else:" << std::endl;
     std::cout << prefix << "    raise TypeError(" <<"\"'"<< d.name
-        <<"' must have type \'list'!\")" << std::endl;
+        << "' must have type \'list'!\")" << std::endl;
   }
   else
   {
@@ -232,35 +231,16 @@ void PrintInputProcessing(
         << "')" << std::endl;
     std::cout << prefix << "    else:" << std::endl;
     std::cout << prefix << "      raise TypeError(" <<"\"'"<< d.name
-        <<"' must have type \'" << GetPrintableType<T>(d)
-        <<"'!\")" << std::endl;
+        << "' must have type \'" << GetPrintableType<T>(d)
+        << "'!\")" << std::endl;
     std::cout << prefix << "else:" << std::endl;
     std::cout << prefix << "  raise TypeError(" <<"\"'"<< d.name
-        <<"' must have type \'list'!\")" << std::endl;
+        << "' must have type \'list'!\")" << std::endl;
   }
 }
 
 /**
  * Print input processing for a matrix type.
- */
-
-/**
- * This gives us code like:
- *
- * # Detect if the parameter was passed; set if so.
- * if param_name is not None:
- *   param_name_tuple = to_matrix(param_name)
- *   if param_name_tuple[0].shape[0] == 1 or
- *       param_name_tuple[0].shape[1] == 1:
- *     param_name_reshape = param_name_tuple[0].ravel()
- *     param_name_mat = arma_numpy.numpy_to_mat_s(param_name_reshape,
- *	     param_name_tuple[1])
- *   else:
- *     param_name_mat = arma_numpy.numpy_to_mat_s(param_name_tuple[0],
- *         param_name_tuple[1])
- *   SetParam[mat](<const string> 'param_name', dereference(param_name_mat))
- *   CLI.SetPassed(<const string> 'param_name')
- *
  */
 template<typename T>
 void PrintInputProcessing(
@@ -271,6 +251,24 @@ void PrintInputProcessing(
 {
   const std::string prefix(indent, ' ');
 
+  /**
+   * This gives us code like:
+   *
+   * # Detect if the parameter was passed; set if so.
+   * if param_name is not None:
+   *   param_name_tuple = to_matrix(param_name)
+   *   if param_name_tuple[0].shape[0] == 1 or
+   *       param_name_tuple[0].shape[1] == 1:
+   *     param_name_reshape = param_name_tuple[0].ravel()
+   *     param_name_mat = arma_numpy.numpy_to_mat_s(param_name_reshape,
+   *         param_name_tuple[1])
+   *   else:
+   *     param_name_mat = arma_numpy.numpy_to_mat_s(param_name_tuple[0],
+   *         param_name_tuple[1])
+   *   SetParam[mat](<const string> 'param_name', dereference(param_name_mat))
+   *   CLI.SetPassed(<const string> 'param_name')
+   *
+   */
   std::cout << prefix << "# Detect if the parameter was passed; set if so."
       << std::endl;
   if (!d.required)
