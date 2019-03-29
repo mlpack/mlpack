@@ -75,8 +75,8 @@ double Recall<AS, PC>::Evaluate(MLAlgorithm& model,
   for (size_t c = 0; c < numClasses; ++c)
   {
     size_t tp = arma::sum((labels == c) % (predictedLabels == c));
-    size_t numberOfPositiveClassInstances = arma::sum(labels == c);
-    recalls(c) = double(tp) / numberOfPositiveClassInstances;
+    size_t positiveLabels = arma::sum(labels == c);
+    recalls(c) = double(tp) / positiveLabels;
   }
 
   return arma::mean(recalls);
