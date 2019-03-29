@@ -163,6 +163,9 @@ PARAM_FLAG("copy_all_inputs", "If specified, all input parameters will be deep"
 
 #elif(BINDING_TYPE == BINDING_TYPE_JL) // This is a Julia binding.
 
+// Matrices are transposed on load/save.
+#define BINDING_MATRIX_TRANSPOSED true
+
 #include <mlpack/bindings/julia/julia_option.hpp>
 #include <mlpack/bindings/julia/print_doc_functions.hpp>
 
@@ -186,9 +189,10 @@ static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
 #undef PROGRAM_INFO
-#define PROGRAM_INFO(NAME, DESC) static mlpack::util::ProgramDoc \
-    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, \
-        []() { return DESC; }); \
+#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) static \
+    mlpack::util::ProgramDoc \
+    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
+    []() { return DESC; }, { __VA_ARGS__ }); \
     namespace mlpack { \
     namespace bindings { \
     namespace julia { \
@@ -206,6 +210,9 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
 #ifndef BINDING_NAME
   #error "BINDING_NAME must be defined when BINDING_TYPE is Markdown!"
 #endif
+
+// This value doesn't actually matter, but it needs to be defined as something.
+#define BINDING_MATRIX_TRANSPOSED true
 
 #include <mlpack/bindings/markdown/md_option.hpp>
 #include <mlpack/bindings/markdown/print_doc_functions.hpp>

@@ -2,11 +2,12 @@
 # @author Ryan Curtin
 #
 # Tests for the Julia bindings.
-include("/home/ryan/src/mlpack-rc2/build/src/mlpack/bindings/julia/mlpack/test_julia_binding.jl")
 using Pkg
-Pkg.activate("/home/ryan/src/mlpack-rc2/build/src/mlpack/bindings/julia/")
+Pkg.activate(".")
 using Test
 using mlpack
+
+include(joinpath(pwd(), "src/test_julia_binding.jl"))
 
 # The return order for the binding is this:
 #
@@ -127,7 +128,7 @@ end
 # Same as TestMatrix but with an unsigned matrix.
 @testset "TestUMatrix" begin
   # Generate a random matrix of integers.
-  x = convert(Array{UInt64, 2}, rand(1:500, (100, 5)))
+  x = convert(Array{Int64, 2}, rand(1:500, (100, 5)))
 
   _, _, _, _, _, _, _, _, _, _, _, umatOut, _, _ =
       test_julia_binding(4.0, 12, "hello",
@@ -136,7 +137,7 @@ end
 
   @test size(umatOut, 1) == 100
   @test size(umatOut, 2) == 4
-  @test typeof(umatOut[1, 1]) == UInt64
+  @test typeof(umatOut[1, 1]) == Int64
   for i in [0, 1, 3]
     for j in 1:100
       @test umatOut[j, i + 1] == x[j, i + 1]
@@ -144,14 +145,16 @@ end
   end
 
   for j in 1;100
-    @test umatOut[j, 3] == 2 * x[j, 3]
+    # Since we subtract one when we convert to C++, and then add one when we
+    # convert back, we get a slightly different result here.
+    @test umatOut[j, 3] == 2 * x[j, 3] - 1
   end
 end
 
 # Same as TestMatrix but with an unsigned column major matrix.
 @testset "TestUMatrixColMajor" begin
   # Generate a random matrix of integers.
-  x = convert(Array{UInt64, 2}, rand(1:500, (5, 100)))
+  x = convert(Array{Int64, 2}, rand(1:500, (5, 100)))
 
   _, _, _, _, _, _, _, _, _, _, _, umatOut, _, _ =
       test_julia_binding(4.0, 12, "hello",
@@ -159,7 +162,7 @@ end
 
   @test size(umatOut, 1) == 4
   @test size(umatOut, 2) == 100
-  @test typeof(umatOut[1, 1]) == UInt64
+  @test typeof(umatOut[1, 1]) == Int64
   for i in 1:100
     for j in [0, 1, 3]
       @test umatOut[j + 1, i] == x[j + 1, i]
@@ -167,7 +170,9 @@ end
   end
 
   for j in 1;100
-    @test umatOut[3, j] == 2 * x[3, j]
+    # Since we subtract one when we convert to C++, and then add one when we
+    # convert back, we get a slightly different result here.
+    @test umatOut[3, j] == 2 * x[3, j] - 1
   end
 end
 
@@ -189,16 +194,18 @@ end
 
 # Test an unsigned column vector input parameter.
 @testset "TestUCol" begin
-  x = convert(Array{UInt64, 1}, rand(1:500, 100))
+  x = convert(Array{Int64, 1}, rand(1:500, 100))
 
   _, _, _, _, _, _, _, _, _, _, ucolOut, _, _, _ =
       test_julia_binding(4.0, 12, "hello",
                          ucol_in=x)
 
   @test size(ucolOut, 1) == 100
-  @test typeof(ucolOut) == Array{UInt64, 1}
+  @test typeof(ucolOut) == Array{Int64, 1}
   for i in 1:100
-    @test ucolOut[i] == 2 * x[i]
+    # Since we subtract one when we convert to C++, and then add one when we
+    # convert back, we get a slightly different result here.
+    @test ucolOut[i] == 2 * x[i] - 1
   end
 end
 
@@ -219,16 +226,18 @@ end
 
 # Test an unsigned row vector input parameter.
 @testset "TestURow" begin
-  x = convert(Array{UInt64, 1}, rand(1:500, 100))
+  x = convert(Array{Int64, 1}, rand(1:500, 100))
 
   _, _, _, _, _, _, _, _, _, _, _, _, urowOut, _ =
       test_julia_binding(4.0, 12, "hello",
                          urow_in=x)
 
   @test size(urowOut, 1) == 100
-  @test typeof(urowOut) == Array{UInt64, 1}
+  @test typeof(urowOut) == Array{Int64, 1}
   for i in 1:100
-    @test urowOut[i] == 2 * x[i]
+    # Since we subtract one when we convert to C++, and then add one when we
+    # convert back, we get a slightly different result here.
+    @test urowOut[i] == 2 * x[i] - 1
   end
 end
 

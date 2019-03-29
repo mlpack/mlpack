@@ -19,6 +19,7 @@ using namespace mlpack;
 using namespace mlpack::kernel;
 
 PROGRAM_INFO("Julia binding test",
+    "A simple program to test Julia binding functionality.",
     "A simple program to test Julia binding functionality.  You can build "
     "mlpack with the BUILD_TESTS option set to off, and this binding will "
     "no longer be built.");

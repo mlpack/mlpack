@@ -63,12 +63,12 @@ function CLISetParamUMat(paramName::String,
                          paramValue::Array{Int64, 2},
                          pointsAsRows::Bool)
   # Sanity check.
-  if minimum(d) == 0
-    throw(DomainError("Array{Int64, 2} input cannot have 0 values!  Must be 1" \
-        " or greater."))
+  if minimum(paramValue) <= 0
+    throw(DomainError("Input $(paramName)::Array{Int64, 2} cannot have 0 or " \
+        "negative values!  Must be 1 or greater."))
   end
 
-  m = convert(Array{UInt64, 2}, paramValue - 1)
+  m = convert(Array{UInt64, 2}, paramValue .- 1)
   ccall((:CLI_SetParamUMat, library), Nothing, (Cstring, Ptr{UInt64}, UInt64,
       UInt64, Bool), paramName, Base.pointer(m), size(paramValue, 1),
       size(paramValue, 2), pointsAsRows);
@@ -84,7 +84,7 @@ function CLISetParam(paramName::String,
       paramName, size(vector, 1));
   for i in 1:size(vector, 1)
     ccall((:CLI_SetParamVectorStrStr, library), Nothing, (Cstring, Cstring,
-        UInt64), paramName, vector[i], i - 1);
+        UInt64), paramName, vector[i], i .- 1);
   end
 end
 
@@ -112,34 +112,33 @@ end
 function CLISetParamCol(paramName::String,
                         paramValue::Array{Float64, 1})
   ccall((:CLI_SetParamCol, library), Nothing, (Cstring, Ptr{Float64}, UInt64),
-      paramName, Base.pointer(m), size(paramValue, 1));
+      paramName, Base.pointer(paramValue), size(paramValue, 1));
 end
 
 function CLISetParamURow(paramName::String,
                          paramValue::Array{Int64, 1})
   # Sanity check.
-  if minimum(d) == 0
-    throw(DomainError("Array{Int64, 2} input cannot have 0 values!  Must be 1" \
-        " or greater."))
+  if minimum(paramValue) <= 0
+    throw(DomainError("Input $(paramName)::Array{Int64, 1} cannot have 0 or " \
+        "negative values!  Must be 1 or greater."))
   end
-  m = convert(Array{UInt64, 1}, paramValue - 1)
+  m = convert(Array{UInt64, 1}, paramValue .- 1)
 
   ccall((:CLI_SetParamURow, library), Nothing, (Cstring, Ptr{UInt64}, UInt64),
-      paramName, Base.pointer(paramValue), size(paramValue, 1));
+      paramName, Base.pointer(m), size(paramValue, 1));
 end
 
 function CLISetParamUCol(paramName::String,
-                         paramValue::Array{UInt64, 1})
+                         paramValue::Array{Int64, 1})
   # Sanity check.
-  if minimum(d) == 0
-    throw(DomainError("Array{Int64, 2} input cannot have 0 values!  Must be 1" \
-        " or greater."))
+  if minimum(paramValue) <= 0
+    throw(DomainError("Input $(paramName)::Array{Int64, 1} cannot have 0 or " \
+        "negative values!  Must be 1 or greater."))
   end
-  m = convert(Array{UInt64, 1}, paramValue - 1)
+  m = convert(Array{UInt64, 1}, paramValue .- 1)
 
   ccall((:CLI_SetParamUCol, library), Nothing, (Cstring, Ptr{UInt64}, UInt64),
-      paramName, Base.pointer(m),
-      size(paramValue, 1));
+      paramName, Base.pointer(m), size(paramValue, 1));
 end
 
 function CLIGetParamBool(paramName::String)
@@ -168,7 +167,7 @@ function CLIGetParamVectorStr(paramName::String)
   out = Array{String, 1}()
   for i = 1:size
     s = ccall((:CLI_GetParamVectorStrStr, library), Cstring, (Cstring, UInt64),
-        paramName, i - 1)
+        paramName, i .- 1)
     push!(out, Base.unsafe_string(s))
   end
 
@@ -224,11 +223,11 @@ function CLIGetParamUMat(paramName::String, pointsAsRows::Bool)
   if pointsAsRows
     # In this case we have to transpose, unfortunately.
     m = Base.unsafe_wrap(Array{UInt64, 2}, ptr, (rows, cols), own=true);
-    return convert(Array{Int64, 2}, m + 1) # Add 1 because these are indexes.
+    return convert(Array{Int64, 2}, m' .+ 1)  # Add 1 because these are indexes.
   else
     # Here no transpose is necessary.
     m = Base.unsafe_wrap(Array{UInt64, 2}, ptr, (rows, cols), own=true);
-    return convert(Array{Int64, 2}, m + 1)
+    return convert(Array{Int64, 2}, m .+ 1)
   end
 end
 
@@ -266,7 +265,7 @@ function CLIGetParamUCol(paramName::String)
       (Cstring,), paramName);
 
   m = Base.unsafe_wrap(Array{UInt64, 1}, ptr, rows, own=true);
-  return convert(Array{Int64, 1}, m + 1)
+  return convert(Array{Int64, 1}, m .+ 1)
 end
 
 function CLIGetParamURow(paramName::String)
@@ -277,7 +276,7 @@ function CLIGetParamURow(paramName::String)
   ptr = ccall((:CLI_GetParamURow, library), Ptr{UInt64}, (Cstring,), paramName);
 
   m = Base.unsafe_wrap(Array{UInt64, 1}, ptr, cols, own=true);
-  return convert(Array{Int64, 1}, m + 1)
+  return convert(Array{Int64, 1}, m .+ 1)
 end
 
 function CLIGetParamMatWithInfo(paramName::String, pointsAsRows::Bool)
