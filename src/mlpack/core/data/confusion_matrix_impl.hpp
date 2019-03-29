@@ -25,7 +25,7 @@ namespace data {
  *
  * @param pred vector of predicted values.
  * @param actual vector of actual values.
- * @param output matrix which is represnted as confusion matrix.
+ * @param output matrix which is represented as confusion matrix.
  * @param countlables no of classes
  * for example for 2 classes the function will be
  * confusionmatrix(pred,actual,matrix,2)
