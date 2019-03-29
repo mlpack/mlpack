@@ -160,12 +160,11 @@ class ContinuousMountainCarV2
    */
   double Sample(const State& state, const Action& action) const
   {
-    ContinuousMountainCarV2 ob = ContinuousMountainCarV2(positionMin,
+    ContinuousMountainCar ob = ContinuousMountainCar(positionMin,
                                                            positionMax,
                                                            positionGoal,
                                                            velocityMin,
-                                                           velocityMax,
-                                                           velocityGoal)
+                                                           velocityMax)
     State nextState;
     return ob.Sample(state, action, nextState);
   }
