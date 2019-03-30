@@ -3,16 +3,24 @@
 set(SOURCES
   accuracy.hpp
   accuracy_impl.hpp
+  adjusted_r_squared.hpp
+  adjusted_r_squared_impl.hpp
   average_strategy.hpp
   f1.hpp
   f1_impl.hpp
   facilities.hpp
+  mcc.hpp
+  mcc_impl.hpp
   mse.hpp
   mse_impl.hpp
   precision.hpp
   precision_impl.hpp
+  r_squared.hpp
+  r_squared_impl.hpp
   recall.hpp
   recall_impl.hpp
+  specificity.hpp
+  specificity_impl.hpp
 )
 
 # Add directory name to sources.
