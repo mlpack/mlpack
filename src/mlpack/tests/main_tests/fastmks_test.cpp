@@ -241,7 +241,7 @@ BOOST_AUTO_TEST_CASE(FastMKSQueryRefTest)
   CLI::GetSingleton().Parameters()["query"].wasPassed = false;
 
 
-  SetInputParam("reference", referenceData);  
+  SetInputParam("reference", referenceData);
   SetInputParam("query", referenceData);
 
   mlpackMain();
@@ -368,7 +368,7 @@ BOOST_AUTO_TEST_CASE(FastMKSBasisTest)
 }
 
 /**
-  * Check that we can't specify base less than 2.
+  * Check that we can't specify base less than 1.
   */
 BOOST_AUTO_TEST_CASE(FastMKSBaseTest)
 {
