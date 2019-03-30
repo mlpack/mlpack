@@ -1053,6 +1053,28 @@ BOOST_AUTO_TEST_CASE(WriteCellStateParamLSTMLayerTest)
       CheckMatrices(outLstm, outCalc, 1e-12);
       CheckMatrices(cellLstm, cellCalc, 1e-12);
   }
+
+  // Attempting to write empty matrix into cell state.
+  lstm.Reset();
+  lstm.ResetCell(rho);
+  arma::mat stepData(input.slice(0).memptr(),
+      input.n_rows, input.n_cols, false, true);
+
+  lstm.Forward(std::move(stepData), // Input.
+                   std::move(outLstm),  // Output.
+                   std::move(cellLstm), // Cell state.
+                   true); // Write into cell State.
+
+  for (size_t seqNum = 1; seqNum < rho; ++seqNum)
+  {
+    arma::mat empty;
+    // Should throw error.
+    BOOST_REQUIRE_THROW(lstm.Forward(std::move(stepData), // Input.
+                                     std::move(outLstm),  // Output.
+                                     std::move(empty), // Cell state.
+                                     true),  // Write into cell State.
+                                     std::runtime_error);
+  }
 }
 
 /**

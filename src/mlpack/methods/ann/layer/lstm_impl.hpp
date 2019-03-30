@@ -200,10 +200,17 @@ void LSTM<InputDataType, OutputDataType>::Forward(
 
   if (forwardStep > 0)
   {
-    if (useCellState && !cellState.is_empty())
+    if (useCellState)
     {
-      cell.cols(forwardStep - batchSize,
-          forwardStep - batchSize + batchStep) = cellState;
+      if (!cellState.is_empty())
+      {
+        cell.cols(forwardStep - batchSize,
+            forwardStep - batchSize + batchStep) = cellState;
+      }
+      else
+      {
+        throw std::runtime_error("Cell parameter is empty");
+      }
     }
     inputGate.cols(forwardStep, forwardStep + batchStep) +=
         arma::repmat(cell2GateInputWeight, 1, batchSize) %
