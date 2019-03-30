@@ -938,9 +938,10 @@ BOOST_AUTO_TEST_CASE(ReadCellStateParamLSTMLayerTest)
           input.n_rows, input.n_cols, false, true);
 
       // Apply Forward on LSTM layer.
-      lstm.Forward(std::move(stepData),
-                   std::move(outLstm),
-                   std::move(cellLstm));
+      lstm.Forward(std::move(stepData), // Input.
+                   std::move(outLstm),  // Output.
+                   std::move(cellLstm), // Cell State.
+                   false); // Don't write into cell State.
 
       // Compute the value of cell state and output.
       // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b)

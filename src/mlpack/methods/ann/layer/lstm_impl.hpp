@@ -175,7 +175,7 @@ template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void LSTM<InputDataType, OutputDataType>::Forward(
     InputType&& input, OutputType&& output,
-    OutputType&& cellState, bool useCellState = false)
+    OutputType&& cellState, bool useCellState)
 {
   // Check if the batch size changed, the number of cols is defines the input
   // batch size.
