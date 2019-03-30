@@ -16,6 +16,7 @@
 #ifndef MLPACK_METHODS_RL_ENVIRONMENT_CONTINUOUS_MOUNTAIN_CAR_V2_HPP
 #define MLPACK_METHODS_RL_ENVIRONMENT_CONTINUOUS_MOUNTAIN_CAR_V2_HPP
 
+#include <mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp>
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {

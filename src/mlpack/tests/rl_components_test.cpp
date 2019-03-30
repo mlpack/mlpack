@@ -2,6 +2,7 @@
  * @file rl_environment_test.hpp
  * @author Shangtong Zhang
  * @author Rohan Raj
+ * @author Abhinav Sagar
  *
  * Basic test for the components of reinforcement learning algorithms.
  *
@@ -15,6 +16,7 @@
 
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/continuous_mountain_car_V2.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
