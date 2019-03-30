@@ -1,6 +1,7 @@
 /**
  * @file fastmks_test.cpp
  * @author Yashwant Singh
+ * @author Prabhat Sharma
  *
  * Test mlpackMain() of fastmks_main.cpp.
  *
@@ -64,7 +65,7 @@ BOOST_AUTO_TEST_CASE(FastMKSEqualDimensionTest)
   SetInputParam("k", (int) 4);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  BOOST_REQUIRE_THROW(mlpackMain(), std::invalid_argument);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -116,7 +117,7 @@ BOOST_AUTO_TEST_CASE(FastMKSRefModelTest)
   arma::mat referenceData(3, 100, arma::fill::randu);
 
   // Random input, some k <= number of reference points.
-  SetInputParam("reference", std::move(referenceData));
+  SetInputParam("reference", referenceData);
   SetInputParam("k", (int) 10);
 
   mlpackMain();
@@ -186,7 +187,7 @@ BOOST_AUTO_TEST_CASE(FastMKSModelReuseTest)
   arma::mat queryData(3, 90, arma::fill::randu);
 
   // Random input, some k <= number of reference points.
-  SetInputParam("reference", referenceData);
+  SetInputParam("reference", std::move(referenceData));
   SetInputParam("query", queryData);
 
   mlpackMain();
@@ -222,12 +223,9 @@ BOOST_AUTO_TEST_CASE(FastMKSQueryRefTest)
 {
   // 100 points in 3 dimensions.
   arma::mat referenceData(3, 100, arma::fill::randu);
-  // 100 points in 3 dimensions.
-  arma::mat queryData(3, 100, arma::fill::randu);
-
   // Random input, some k <= number of reference points.
   SetInputParam("reference", referenceData);
-  SetInputParam("query", queryData);
+  SetInputParam("query", referenceData);
   SetInputParam("k", (int) 10);
 
   mlpackMain();
@@ -243,8 +241,8 @@ BOOST_AUTO_TEST_CASE(FastMKSQueryRefTest)
   CLI::GetSingleton().Parameters()["query"].wasPassed = false;
 
 
-  SetInputParam("reference", referenceData);
-  SetInputParam("query", queryData);
+  SetInputParam("reference", referenceData);  
+  SetInputParam("query", referenceData);
 
   mlpackMain();
 
@@ -402,8 +400,8 @@ BOOST_AUTO_TEST_CASE(FastMKSKernelTest)
   // Keep some k <= number of reference points same over all.
   SetInputParam("k", (int) 10);
 
-  arma::Mat<size_t> indices_compare;
-  arma::mat kernels_compare;
+  arma::Mat<size_t> indicesCompare;
+  arma::mat kernelsCompare;
 
   arma::Mat<size_t> indices;
   arma::mat kernels;
@@ -420,17 +418,17 @@ BOOST_AUTO_TEST_CASE(FastMKSKernelTest)
 
     if (i == 0)
     {
-      indices_compare =
+      indicesCompare =
          std::move(CLI::GetParam<arma::Mat<size_t>>("indices"));
-      kernels_compare = std::move(CLI::GetParam<arma::mat>("kernels"));
+      kernelsCompare = std::move(CLI::GetParam<arma::mat>("kernels"));
     }
     else
     {
       indices = std::move(CLI::GetParam<arma::Mat<size_t>>("indices"));
       kernels = std::move(CLI::GetParam<arma::mat>("kernels"));
 
-      CheckMatricesNotEqual(indices_compare, indices);
-      CheckMatricesNotEqual(kernels_compare, kernels);
+      CheckMatricesNotEqual(indicesCompare, indices);
+      CheckMatricesNotEqual(kernelsCompare, kernels);
     }
 
     // Reset passed parameters.
@@ -655,4 +653,5 @@ BOOST_AUTO_TEST_CASE(FastMKSBandwidthTest)
   CheckMatricesNotEqual(triKernel,
       CLI::GetParam<arma::mat>("kernels"));
 }
+
 BOOST_AUTO_TEST_SUITE_END();
