@@ -509,7 +509,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   if (queryTree->Dataset().n_rows != referenceSet->n_rows)
   {
     std::stringstream ss;
-    ss << "The number of dimensions in the query set (" 
+    ss << "The number of dimensions in the query set ("
         << queryTree->Dataset().n_rows << ") must be equal to the number of "
         << "dimensions in the reference set (" << referenceSet->n_rows << ")!";
     throw std::invalid_argument(ss.str());
