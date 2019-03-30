@@ -1024,7 +1024,7 @@ BOOST_AUTO_TEST_CASE(WriteCellStateParamLSTMLayerTest)
       lstm.Forward(std::move(stepData), // Input.
                    std::move(outLstm),  // Output.
                    std::move(cellLstm), // Cell state.
-                   true);  // Write into cell State. 
+                   true);  // Write into cell State.
 
       // Compute the value of cell state and output.
       // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b)
