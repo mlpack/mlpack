@@ -94,9 +94,11 @@ class LSTM
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    * @param cellState Cell state of the LSTM.
+   * @param useCellState Use the cellState passed in the LSTM Cell.
    */
   template<typename InputType, typename OutputType>
-  void Forward(InputType&& input, OutputType&& output, OutputType&& cellState);
+  void Forward(InputType&& input, OutputType&& output,
+  	           OutputType&& cellState, bool useCellState);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function

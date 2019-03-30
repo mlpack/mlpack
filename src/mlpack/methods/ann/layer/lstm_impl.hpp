@@ -167,14 +167,15 @@ void LSTM<InputDataType, OutputDataType>::Forward(
 {
   //! Locally-stored cellState.
   OutputType cellState;
-  Forward(std::move(input), std::move(output), std::move(cellState));
+  Forward(std::move(input), std::move(output), std::move(cellState), false);
 }
 
 // Forward when cellState is needed overloaded LSTM::Forward()
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void LSTM<InputDataType, OutputDataType>::Forward(
-    InputType&& input, OutputType&& output, OutputType&& cellState)
+    InputType&& input, OutputType&& output,
+    OutputType&& cellState, bool useCellState = false)
 {
   // Check if the batch size changed, the number of cols is defines the input
   // batch size.
@@ -184,6 +185,7 @@ void LSTM<InputDataType, OutputDataType>::Forward(
     batchStep = batchSize - 1;
     ResetCell(rhoSize);
   }
+
 
   inputGate.cols(forwardStep, forwardStep + batchStep) = input2GateInputWeight *
       input + output2GateInputWeight * outParameter.cols(forwardStep,
@@ -199,6 +201,11 @@ void LSTM<InputDataType, OutputDataType>::Forward(
 
   if (forwardStep > 0)
   {
+    if (useCellState && !cellState.is_empty())
+    {
+      cell.cols(forwardStep - batchSize,
+          forwardStep - batchSize + batchStep) = cellState;
+    }
     inputGate.cols(forwardStep, forwardStep + batchStep) +=
         arma::repmat(cell2GateInputWeight, 1, batchSize) %
         cell.cols(forwardStep - batchSize, forwardStep - batchSize + batchStep);
