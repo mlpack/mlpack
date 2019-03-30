@@ -93,7 +93,7 @@ class LSTM
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
-   * @param cellState Cell state of LSTM.
+   * @param cellState Cell state of the LSTM.
    */
   template<typename InputType, typename OutputType>
   void Forward(InputType&& input, OutputType&& output, OutputType&& cellState);
