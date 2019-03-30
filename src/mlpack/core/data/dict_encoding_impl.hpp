@@ -2,8 +2,7 @@
  * @file dict_encoding_impl.hpp
  * @author Jeffin Sam
  *
- * Implementation of dictionary encoding functions;
- * 
+ * Implementation of dictionary encoding functions.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -17,7 +16,7 @@
 #include "dict_encoding.hpp"
 #include <string>
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 namespace mlpack {
 namespace data {
@@ -25,8 +24,7 @@ namespace data {
 /**
  * Dictionary Encoding
  * here we simply assign a word (or a character) to a numeric index
- * and treat the dataset as categorical
- * 
+ * and treat the dataset as categorical.
  *
  * @param vector of documents.
  * @param mapping of string to their encoded number.
@@ -34,7 +32,7 @@ namespace data {
  */
 template<typename eT>
 void Encode(const std::vector<std::string>& strings,
-            std::map<std::string, size_t>& mappings,
+            std::unordered_map<std::string, size_t>& mappings,
             arma::Mat<eT>& output)
 {
   std::vector< std::vector<std::string> > dataset;
@@ -52,15 +50,14 @@ void Encode(const std::vector<std::string>& strings,
   {
     for (size_t j = 0; j < dataset[i].size(); ++j)
     {
-      if (mappings[dataset[i][j]] == 0)
+      if (mappings.count(dataset[i][j]) == 0)
       {
         mappings[dataset[i][j]] = curLabel;
         ++curLabel;
       }
     }
   }
-  output.set_size(dataset.size(), globalsize);
-  output.fill(0);
+  output.zeros(dataset.size(), globalsize);
   for (size_t i = 0; i < dataset.size(); ++i)
   {
     for (size_t j = 0; j < dataset[i].size(); ++j)

@@ -773,13 +773,13 @@ BOOST_AUTO_TEST_CASE(SaveHDF5Test)
 /**
  * Test dictionary encoding.
  */
-BOOST_AUTO_TEST_CASE(dictionaryencoding)
+BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
 {
   std::vector<string>arr(3);
   arr[0] = "hello how are you";
   arr[1] = "i am good";
   arr[2] = "Good how are you";
-  std::map<string, size_t>mappings;
+  std::unordered_map<string, size_t>mappings;
   arma::mat output;
   data::Encode(arr, mappings, output);
   BOOST_REQUIRE_EQUAL(output(0, 0), 1);
