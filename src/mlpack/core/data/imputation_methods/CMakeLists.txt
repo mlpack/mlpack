@@ -5,6 +5,7 @@ set(SOURCES
   listwise_deletion.hpp
   mean_imputation.hpp
   median_imputation.hpp
+  mode_imputation.hpp
 )
 
 # Add directory name to sources.
