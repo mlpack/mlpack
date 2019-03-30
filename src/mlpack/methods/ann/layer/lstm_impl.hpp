@@ -186,7 +186,6 @@ void LSTM<InputDataType, OutputDataType>::Forward(
     ResetCell(rhoSize);
   }
 
-
   inputGate.cols(forwardStep, forwardStep + batchStep) = input2GateInputWeight *
       input + output2GateInputWeight * outParameter.cols(forwardStep,
       forwardStep + batchStep);
