@@ -68,24 +68,6 @@ BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTest)
 }
 
 /**
- * Constructs a Continuous MountainCarV2 instance and check if the main rountine
- * works as it should be.
- */
-BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTestV2)
-{
-  const ContinuousMountainCarV2 task = ContinuousMountainCarV2();
-
-  ContinuousMountainCarV2::State state = task.InitialSample();
-  ContinuousMountainCarV2::Action action;
-  action.action[0] = math::Random(-1.0, 1.0);
-  double reward = task.Sample(state, action);
-  // Maximum reward possible is 100.
-  BOOST_REQUIRE(reward <= 100.0);
-  BOOST_REQUIRE(!task.IsTerminal(state));
-  BOOST_REQUIRE_EQUAL(1, action.size);
-}
-
-/**
  * Constructs a Acrobot instance and check if the main rountine works as
  * it should be.
  */
