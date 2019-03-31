@@ -54,6 +54,19 @@ class Concat
          const bool run = true);
 
   /**
+   * Create the Concat object using the specified parameters.
+   *
+   * @param inputSize A vector denoting input size of each layer added.
+   * @param axis Concat axis.
+   * @param model Expose all network modules.
+   * @param run Call the Forward/Backward method before the output is merged.
+   */
+  Concat(std::vector<int> inputSize,
+         const int axis = -1,
+         const bool model = false,
+         const bool run = true);
+
+  /**
    * Destroy the layers held by the model.
    */
   ~Concat();
@@ -194,6 +207,18 @@ class Concat
   void serialize(Archive& /* ar */, const unsigned int /* version */);
 
  private:
+  //! Parameter which indicates the input size of modules.
+  std::vector<int> inputSize;
+
+  //! Parameter which indicates the axis of concatenation.
+  int axis;
+
+  //! Parameter to store oldColSize
+  size_t oldColSize;
+
+  //! Parameter to store newColSize
+  size_t newColSize;
+
   //! Parameter which indicates if the modules should be exposed.
   bool model;
 

@@ -20,7 +20,7 @@
 #include "../visitor/gradient_visitor.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
+namespace ann /** Artificial Neural Network. */ {  
 
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
@@ -28,6 +28,41 @@ Concat<InputDataType, OutputDataType, CustomLayers...>::Concat(
     const bool model, const bool run) : model(model), run(run)
 {
   parameters.set_size(0, 0);
+  axis = -1;
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+Concat<InputDataType,
+       OutputDataType,
+       CustomLayers...
+      >::Concat(
+      std::vector<int> inputSize,
+      const int axis,
+      const bool model,
+      const bool run) :
+      inputSize(inputSize),
+      axis(axis),
+      model(model),
+      run(run)
+{
+  parameters.set_size(0, 0);
+  int unknown = 0;
+  if (axis < 0)
+  {
+    for (int i = 0; i < inputSize.size(); ++i)
+    {
+      if (inputSize[i] < 0)
+      {
+        axis = i;
+        unknown++;
+      }
+    }
+    if (unknown > 1)
+    {
+      throw std::runtime_error("More than one dimension unknown.");
+    }
+  }
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -54,13 +89,51 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Forward(
           network[i]);
     }
   }
-  // Vertically concatentate output from each layer.
+
+  // Parameter to store dimensions(rowSize).
+  int rowSize;
   output = boost::apply_visitor(outputParameterVisitor, network.front());
+
+  newColSize = oldColSize = output.n_cols;
+
+  // Axis is not specified.
+  if (axis >= 0)
+  {
+    // Axis is specified without input dimension.
+    // Throw an error.
+    if (inputSize.size() == 0)
+    {
+      throw std::runtime_error("Input Dimensions not specified.");
+    }
+    else
+    {
+      // Calculate rowSize, newColSize based on the axis
+      // of concatenation. Finally concat along cols and
+      // reshape to original format i.e. (input, batch_size).
+      int i = std::min(axis, inputSize.size() - 1) + 1;
+      for (; i < inputSize.size(); ++i)
+      {
+        newColSize *= inputSize[i];
+      }
+    }
+  }
+
+  rowSize = output.n_rows * output.n_cols / newColSize;
+  output.reshape(rowSize, newColSize);
+
   for (size_t i = 1; i < network.size(); ++i)
   {
-    output = arma::join_cols(output,
-        boost::apply_visitor(outputParameterVisitor, network[i]));
+    arma::out = boost::apply_visitor(outputParameterVisitor, network[i]);
+
+    rowSize = out.n_rows * out.n_cols / newColSize;
+    out.reshape(rowSize, newColSize);
+
+    // Vertically concatentate output from each layer.
+    output = arma::join_cols(output, out);
   }
+
+  rowSize = output.n_rows * output.n_cols / oldColSize;
+  output.reshape(rowSize, oldColSize);
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -70,20 +143,24 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
   size_t rowCount = 0;
+  size_t channels = newColSize / oldColSize;
   if (run)
   {
     arma::mat delta;
+    gy.reshape(gy.n_rows / channels, gy.n_cols * channels);
     for (size_t i = 0; i < network.size(); ++i)
     {
       // Use rows from the error corresponding to the output from each layer.
       size_t rows = boost::apply_visitor(
           outputParameterVisitor, network[i]).n_rows;
-      delta = gy.rows(rowCount, rowCount + rows - 1);
+      delta = gy.rows(rowCount, rowCount + rows / channels - 1);
+      delta.reshape(delta.n_rows * channels, delta.n_cols / channels);
+
       boost::apply_visitor(BackwardVisitor(std::move(
           boost::apply_visitor(outputParameterVisitor,
           network[i])), std::move(delta), std::move(
           boost::apply_visitor(deltaVisitor, network[i]))), network[i]);
-      rowCount += rows;
+      rowCount += (rows / channels);
     }
 
     g = boost::apply_visitor(deltaVisitor, network[0]);
@@ -91,6 +168,7 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
     {
       g += boost::apply_visitor(deltaVisitor, network[i]);
     }
+    gy.reshape(gy.n_rows * channels, gy.n_cols / channels);
   }
   else
   {
@@ -106,15 +184,24 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
     const size_t index)
 {
   size_t rowCount = 0, rows = 0;
+  size_t channels = newColSize / oldColSize;
+
   for (size_t i = 0; i < index; ++i)
   {
     rowCount += boost::apply_visitor(outputParameterVisitor, network[i]).n_rows;
   }
   rows = boost::apply_visitor(outputParameterVisitor, network[index]).n_rows;
-  arma::mat delta = gy.rows(rowCount, rowCount + rows - 1);
+
+  gy.reshape(gy.n_rows / channels, gy.n_cols * channels);
+
+  arma::mat delta = gy.rows(rowCount / channels, (rowCount + rows) / channels - 1);
+  delta.reshape(delta.n_rows * channels, delta.n_cols / channels);
+
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
       outputParameterVisitor, network[index])), std::move(delta), std::move(
       boost::apply_visitor(deltaVisitor, network[index]))), network[index]);
+
+  gy.reshape(gy.n_rows * channels, gy.n_cols / channels);
 
   g = boost::apply_visitor(deltaVisitor, network[index]);
 }
@@ -130,14 +217,22 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
   if (run)
   {
     size_t rowCount = 0;
+    size_t channels = newColSize / oldColSize;
+
+    error.reshape(error.n_rows / channels, error.n_cols * channels);
     for (size_t i = 0; i < network.size(); ++i)
     {
       size_t rows = boost::apply_visitor(
           outputParameterVisitor, network[i]).n_rows;
+
+      arma::Mat<eT> err = error.rows(rowCount / channels, (rowCount + rows) / channels - 1);
+      err.reshape(delta.n_rows * channels, delta.n_cols / channels);
+
       boost::apply_visitor(GradientVisitor(std::move(input),
-          std::move(error.rows(rowCount, rowCount + rows - 1))), network[i]);
-      rowCount += rows;
+          std::move(err)), network[i]);
+      rowCount += (rows / channels);
     }
+    error.reshape(error.n_rows * channels, error.n_cols / channels);
   }
 }
 
@@ -151,14 +246,23 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
     const size_t index)
 {
   size_t rowCount = 0;
+  size_t channels = newColSize / oldColSize;
+
   for (size_t i = 0; i < index; ++i)
   {
     rowCount += boost::apply_visitor(outputParameterVisitor, network[i]).n_rows;
   }
   size_t rows = boost::apply_visitor(
       outputParameterVisitor, network[index]).n_rows;
+
+  error.reshape(error.n_rows / channels, error.n_cols * channels);
+  arma::Mat<eT> err = error.rows(rowCount / channels, (rowCount + rows) / channels - 1);
+  err.reshape(delta.n_rows * channels, delta.n_cols / channels);
+
   boost::apply_visitor(GradientVisitor(std::move(input),
-      std::move(error.rows(rowCount, rowCount + rows - 1))), network[index]);
+      std::move(err)), network[index]);
+
+  error.reshape(error.n_rows * channels, error.n_cols / channels);
 }
 
 template<typename InputDataType, typename OutputDataType,
