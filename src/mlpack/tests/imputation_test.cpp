@@ -227,6 +227,7 @@ BOOST_AUTO_TEST_CASE(MedianImputationTest)
   BOOST_REQUIRE_CLOSE(rowWiseInput(1, 3), 6.0, 1e-5);
   BOOST_REQUIRE_CLOSE(rowWiseInput(2, 0), 9.0, 1e-5);
   BOOST_REQUIRE_CLOSE(rowWiseInput(2, 1), 8.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(rowWiseInput(2, 2), 4.0, 1e-5);
 }
 
 /**
