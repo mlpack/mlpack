@@ -903,7 +903,7 @@ BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
 
 /**
  * Testing the overloaded Forward() of the LSTM layer, for retrieving the Cell
- * State. Besides output the overloaded function provides read access to cell
+ * State. Besides output, the overloaded function provides read access to cell
  * state of the LSTM layer.
  */
 BOOST_AUTO_TEST_CASE(ReadCellStateParamLSTMLayerTest)
@@ -972,7 +972,7 @@ BOOST_AUTO_TEST_CASE(ReadCellStateParamLSTMLayerTest)
 
 /**
  * Testing the overloaded Forward() of the LSTM layer, for retrieving the Cell
- * State. Besides output the overloaded function provides write access to cell
+ * State. Besides output, the overloaded function provides write access to cell
  * state of the LSTM layer.
  */
 BOOST_AUTO_TEST_CASE(WriteCellStateParamLSTMLayerTest)
