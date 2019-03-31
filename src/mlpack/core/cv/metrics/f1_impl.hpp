@@ -81,11 +81,11 @@ double F1<AS, PC>::Evaluate(MLAlgorithm& model,
   for (size_t c = 0; c < numClasses; ++c)
   {
     size_t tp = arma::sum((labels == c) % (predictedLabels == c));
-    size_t numberOfPositivePredictions = arma::sum(predictedLabels == c);
-    size_t numberOfClassInstances = arma::sum(labels == c);
+    size_t positivePredictions = arma::sum(predictedLabels == c);
+    size_t positiveLabels = arma::sum(labels == c);
 
-    double precision = double(tp) / numberOfPositivePredictions;
-    double recall = double(tp) / numberOfClassInstances;
+    double precision = double(tp) / positivePredictions;
+    double recall = double(tp) / positiveLabels;
     f1s(c) = (precision + recall == 0.0) ? 0.0 :
         2.0 * precision * recall / (precision + recall);
   }
