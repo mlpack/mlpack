@@ -83,7 +83,7 @@ class ModeImputation
     // elemsWithFreq contains the elements of elemsToKeep
     // with their respective frequency.
     std::vector<PairType> elemsWithFreq;
-    
+
     // modeCountPair is a PairType that contains the mode
     // and it's count(number of occurences).
 
@@ -113,22 +113,22 @@ class ModeImputation
 
     bool flag = false;
 
-    for(size_t i = 1; i < elemsWithFreq.size(); i++)
+    for (size_t i = 1; i < elemsWithFreq.size(); i++)
     {
-     if(elemsWithFreq[i].second > modeCountPair.second)
+     if (elemsWithFreq[i].second > modeCountPair.second)
      {
       modeCountPair = elemsWithFreq[i];
 
-      if(flag)
+      if (flag)
        flag = false;
      }
-     else if(elemsWithFreq[i].second == modeCountPair.second)
+     else if (elemsWithFreq[i].second == modeCountPair.second)
      {
       flag = true;
      }
     }
 
-    if(flag)
+    if (flag)
     {
      throw std::invalid_argument("Mode is not present");
     }
@@ -139,7 +139,6 @@ class ModeImputation
     {
      input(target.first, target.second) = modeCountPair.first;
     }
-   }
   }
 }; // class ModeImputation
 
