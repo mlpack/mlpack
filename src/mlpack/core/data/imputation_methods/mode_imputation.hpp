@@ -130,7 +130,7 @@ class ModeImputation
 
     if (flag)
     {
-     throw std::invalid_argument("Mode is not present");
+     throw std::invalid_argument("given dimension has no mode");
     }
 
     // Now replace the calculated mode to the missing variables.
