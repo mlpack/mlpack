@@ -26,8 +26,8 @@ class ModeImputation
  public:
   /**
    * Impute function searches through the input looking for mappedValue and
-   * replaces it with the mode of the given dimension. The result is overwritten
-   * to the input matrix.
+   * replaces it with the mode of the given dimension if exists otherwise it
+   * will throw exception. The result is overwritten to the input matrix.
    *
    * @param input Matrix that contains mappedValue.
    * @param mappedValue Value that the user wants to get rid of.
@@ -81,11 +81,11 @@ class ModeImputation
 
     // calculate mode
     // elemsWithFreq contains the elements of elemsToKeep
-    // with their respective frequency
+    // with their respective frequency.
     std::vector<PairType> elemsWithFreq;
+    
     // modeCountPair is a PairType that contains the mode
-    // and it's count(number of occurences)
-    PairType modeCountPair;
+    // and it's count(number of occurences).
 
     for (size_t i = 0; i < elemsToKeep.size(); ++i)
     {
@@ -96,18 +96,6 @@ class ModeImputation
       if (elemsToKeep[i] == elems.first)
       {
        elems.second += 1;     // increase the frequency by 1
-
-       if (elems.second > modeCountPair.second)
-       {
-        modeCountPair.first = elems.first;
-        modeCountPair.second = elems.second;
-       }
-       else if (elems.second == modeCountPair.second)
-       {
-        // if two element have the same frequency then take their avg as mode
-        modeCountPair.first = (elems.first + modeCountPair.first) / 2;
-       }
-
        flag = false;
        break;
       }
@@ -116,28 +104,42 @@ class ModeImputation
      if (flag)
      {
       // if the current element of elemsToKeep
-      // is not present in elemsWithFreq then add it
+      // is not present in elemsWithFreq then add it.
       elemsWithFreq.emplace_back(elemsToKeep[i], 1);
-
-      if (modeCountPair.second == 1)
-      {
-       modeCountPair.first = (modeCountPair.first + elemsToKeep[i]) / 2;
-      }
-
-      if (i == 0)
-      {
-       modeCountPair.first = elemsToKeep[i];
-       modeCountPair.second = 1;
-      }
      }
     }
 
-    // Now replace the calculated mode to the missing variables
+    PairType modeCountPair = elemsWithFreq[0];
+
+    bool flag = false;
+
+    for(size_t i = 1; i < elemsWithFreq.size(); i++)
+    {
+     if(elemsWithFreq[i].second > modeCountPair.second)
+     {
+      modeCountPair = elemsWithFreq[i];
+
+      if(flag)
+       flag = false;
+     }
+     else if(elemsWithFreq[i].second == modeCountPair.second)
+     {
+      flag = true;
+     }
+    }
+
+    if(flag)
+    {
+     throw std::invalid_argument("Mode is not present");
+    }
+
+    // Now replace the calculated mode to the missing variables.
     // It only needs to loop through targets vector, not the whole matrix.
     for (const PairType &target : targets)
     {
      input(target.first, target.second) = modeCountPair.first;
     }
+   }
   }
 }; // class ModeImputation
 
