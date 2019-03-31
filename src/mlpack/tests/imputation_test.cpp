@@ -21,6 +21,7 @@
 #include <mlpack/core/data/imputation_methods/listwise_deletion.hpp>
 #include <mlpack/core/data/imputation_methods/mean_imputation.hpp>
 #include <mlpack/core/data/imputation_methods/median_imputation.hpp>
+#include <mlpack/core/data/imputation_methods/mode_imputation.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -226,7 +227,53 @@ BOOST_AUTO_TEST_CASE(MedianImputationTest)
   BOOST_REQUIRE_CLOSE(rowWiseInput(1, 3), 6.0, 1e-5);
   BOOST_REQUIRE_CLOSE(rowWiseInput(2, 0), 9.0, 1e-5);
   BOOST_REQUIRE_CLOSE(rowWiseInput(2, 1), 8.0, 1e-5);
+}
+
+/**
+ * Make sure ModeImputation method replaces data 0 to mode value of each
+ * dimensions if mode exists in that given dimension.
+ */
+BOOST_AUTO_TEST_CASE(ModeImputationTest)
+{
+  arma::mat columnWiseInput("3.0 0.0 2.0 2.0;"
+                  "5.0 6.0 0.0 6.0;"
+                  "9.0 6.0 4.0 8.0;");
+  arma::mat rowWiseInput(columnWiseInput);
+  double mappedValue = 0.0;
+
+  ModeImputation<double> imputer;
+
+  // column wise
+  imputer.Impute(columnWiseInput, mappedValue, 0, true);
+
+  BOOST_REQUIRE_CLOSE(columnWiseInput(0, 0), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(columnWiseInput(0, 1), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(columnWiseInput(0, 2), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(columnWiseInput(0, 3), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(columnWiseInput(1, 0), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(columnWiseInput(1, 1), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(columnWiseInput(1, 2), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(columnWiseInput(1, 3), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(columnWiseInput(2, 0), 9.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(columnWiseInput(2, 1), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(columnWiseInput(2, 2), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(columnWiseInput(2, 3), 8.0, 1e-5);
+
+  // row wise
+  imputer.Impute(rowWiseInput, mappedValue, 1, false);
+
+  BOOST_REQUIRE_CLOSE(rowWiseInput(0, 0), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(rowWiseInput(0, 1), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(rowWiseInput(0, 2), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(rowWiseInput(0, 3), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(rowWiseInput(1, 0), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(rowWiseInput(1, 1), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(rowWiseInput(1, 2), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(rowWiseInput(1, 3), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(rowWiseInput(2, 0), 9.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(rowWiseInput(2, 1), 6.0, 1e-5);
   BOOST_REQUIRE_CLOSE(rowWiseInput(2, 2), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(rowWiseInput(2, 3), 8.0, 1e-5);
 }
 
 /**
