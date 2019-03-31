@@ -15,6 +15,9 @@
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
+// for high_resolution_clock
+#include <chrono>
+
 using namespace mlpack;
 using namespace mlpack::hmm;
 using namespace mlpack::distribution;
@@ -899,13 +902,15 @@ BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
     // Now build the model.
     HMM<GMM> hmm(initial, trans, gmms);
 
+    // Define a variable to store the number of observation.
+    size_t obs_size = 10000;
     // Make a sequence of observations.
-    arma::mat observations(2, 1000);
-    arma::Row<size_t> states(1000);
+    arma::mat observations(2, obs_size);
+    arma::Row<size_t> states(obs_size);
     states[0] = 0;
     observations.col(0) = gmms[0].Random();
 
-    for (size_t i = 1; i < 1000; i++)
+    for (size_t i = 1; i < obs_size; i++)
     {
       double randValue = math::Random();
 
@@ -923,7 +928,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
 
     // Check that the predictions were correct.
     success = true;
-    for (size_t i = 0; i < 1000; i++)
+    for (size_t i = 0; i < obs_size; i++)
     {
       if (predictions[i] != states[i])
       {
@@ -945,6 +950,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
  */
 BOOST_AUTO_TEST_CASE(GMMHMMLabeledTrainingTest)
 {
+  auto start = std::chrono::high_resolution_clock::now();
   // We will use two GMMs; one with two components and one with three.
   std::vector<GMM> gmms(2, GMM(2, 2));
   gmms[0].Weights() = arma::vec("0.3 0.7");
@@ -968,16 +974,17 @@ BOOST_AUTO_TEST_CASE(GMMHMMLabeledTrainingTest)
   // Transition matrix.
   arma::mat transMat("0.40 0.60;"
                      "0.60 0.40");
-
+  // Define a variable to store the number of observation.
+  size_t obs_size = 10000;
   // Make a sequence of observations.
-  std::vector<arma::mat> observations(5, arma::mat(2, 2500));
-  std::vector<arma::Row<size_t> > states(5, arma::Row<size_t>(2500));
+  std::vector<arma::mat> observations(5, arma::mat(2, obs_size));
+  std::vector<arma::Row<size_t> > states(5, arma::Row<size_t>(obs_size));
   for (size_t obs = 0; obs < 5; obs++)
   {
     states[obs][0] = 0;
     observations[obs].col(0) = gmms[0].Random();
 
-    for (size_t i = 1; i < 2500; i++)
+    for (size_t i = 1; i < obs_size; i++)
     {
       double randValue = (double) rand() / (double) RAND_MAX;
 
@@ -1051,6 +1058,9 @@ BOOST_AUTO_TEST_CASE(GMMHMMLabeledTrainingTest)
   BOOST_REQUIRE_LT(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[1]).Covariance() -
       gmms[1].Component(1).Covariance()), 0.5);
+  auto finish = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> elapsed = finish - start;
+  std::cout << "Elapsed time: " << elapsed.count() << " s\n";
 }
 
 /**
