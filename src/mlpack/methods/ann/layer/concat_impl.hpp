@@ -54,7 +54,7 @@ Concat<InputDataType,
     {
       if (inputSize[i] < 0)
       {
-        axis = i;
+        Concat::axis = i;
         unknown++;
       }
     }
@@ -101,29 +101,32 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Forward(
   {
     // Axis is specified without input dimension.
     // Throw an error.
-    if (inputSize.size() == 0)
-    {
-      throw std::runtime_error("Input Dimensions not specified.");
-    }
-    else
+    if (inputSize.size() > 0)
     {
       // Calculate rowSize, newColSize based on the axis
       // of concatenation. Finally concat along cols and
       // reshape to original format i.e. (input, batch_size).
-      int i = std::min(axis, inputSize.size() - 1) + 1;
+      int i = std::min(axis + 1, (int) inputSize.size());
       for (; i < inputSize.size(); ++i)
       {
         newColSize *= inputSize[i];
       }
     }
+    else
+    {
+      throw std::runtime_error("Input Dimensions not specified.");
+    }
   }
-
+  if (newColSize <= 0)
+  {
+      throw std::runtime_error("Output not found;");
+  }
   rowSize = output.n_rows * output.n_cols / newColSize;
   output.reshape(rowSize, newColSize);
 
   for (size_t i = 1; i < network.size(); ++i)
   {
-    arma::out = boost::apply_visitor(outputParameterVisitor, network[i]);
+    arma::Mat<eT> out = boost::apply_visitor(outputParameterVisitor, network[i]);
 
     rowSize = out.n_rows * out.n_cols / newColSize;
     out.reshape(rowSize, newColSize);
@@ -146,21 +149,21 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
   size_t channels = newColSize / oldColSize;
   if (run)
   {
-    arma::mat delta;
+    arma::Mat<eT> delta;
     gy.reshape(gy.n_rows / channels, gy.n_cols * channels);
     for (size_t i = 0; i < network.size(); ++i)
     {
       // Use rows from the error corresponding to the output from each layer.
       size_t rows = boost::apply_visitor(
           outputParameterVisitor, network[i]).n_rows;
-      delta = gy.rows(rowCount, rowCount + rows / channels - 1);
+      delta = gy.rows(rowCount / channels, (rowCount + rows) / channels - 1);
       delta.reshape(delta.n_rows * channels, delta.n_cols / channels);
 
       boost::apply_visitor(BackwardVisitor(std::move(
           boost::apply_visitor(outputParameterVisitor,
           network[i])), std::move(delta), std::move(
           boost::apply_visitor(deltaVisitor, network[i]))), network[i]);
-      rowCount += (rows / channels);
+      rowCount += rows;
     }
 
     g = boost::apply_visitor(deltaVisitor, network[0]);
@@ -194,7 +197,7 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
 
   gy.reshape(gy.n_rows / channels, gy.n_cols * channels);
 
-  arma::mat delta = gy.rows(rowCount / channels, (rowCount + rows) / channels - 1);
+  arma::Mat<eT> delta = gy.rows(rowCount / channels, (rowCount + rows) / channels - 1);
   delta.reshape(delta.n_rows * channels, delta.n_cols / channels);
 
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
@@ -226,11 +229,11 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
           outputParameterVisitor, network[i]).n_rows;
 
       arma::Mat<eT> err = error.rows(rowCount / channels, (rowCount + rows) / channels - 1);
-      err.reshape(delta.n_rows * channels, delta.n_cols / channels);
+      err.reshape(err.n_rows * channels, err.n_cols / channels);
 
       boost::apply_visitor(GradientVisitor(std::move(input),
           std::move(err)), network[i]);
-      rowCount += (rows / channels);
+      rowCount += rows;
     }
     error.reshape(error.n_rows * channels, error.n_cols / channels);
   }
@@ -257,7 +260,7 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
 
   error.reshape(error.n_rows / channels, error.n_cols * channels);
   arma::Mat<eT> err = error.rows(rowCount / channels, (rowCount + rows) / channels - 1);
-  err.reshape(delta.n_rows * channels, delta.n_cols / channels);
+  err.reshape(err.n_rows * channels, err.n_cols / channels);
 
   boost::apply_visitor(GradientVisitor(std::move(input),
       std::move(err)), network[index]);

@@ -206,7 +206,6 @@ class Concat
   template<typename Archive>
   void serialize(Archive& /* ar */, const unsigned int /* version */);
 
- private:
   //! Parameter which indicates the input size of modules.
   std::vector<int> inputSize;
 
@@ -219,6 +218,7 @@ class Concat
   //! Parameter to store newColSize
   size_t newColSize;
 
+ private:
   //! Parameter which indicates if the modules should be exposed.
   bool model;
 
