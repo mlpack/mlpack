@@ -65,18 +65,17 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
 
   this->discriminator.deterministic = this->generator.deterministic = true;
 
-  responses.set_size(1, predictors.n_cols);
-  responses.ones();
+  this->predictors.set_size(predictors.n_rows, predictors.n_cols + batchSize);
+  this->predictors.cols(0, predictors.n_cols - 1) = predictors;
+  this->discriminator.predictors = arma::mat(this->predictors.memptr(),
+      this->predictors.n_rows, this->predictors.n_cols, false, false);
 
-  this->discriminator.predictors.set_size(predictors.n_rows,
-      predictors.n_cols + batchSize);
-  this->discriminator.predictors.cols(0, predictors.n_cols - 1) = predictors;
-  this->predictors = arma::mat(this->discriminator.predictors.memptr(),
-      predictors.n_rows, predictors.n_cols, false, false);
-  this->discriminator.responses.set_size(1, predictors.n_cols + batchSize);
-  this->discriminator.responses.ones();
-  this->discriminator.responses.cols(predictors.n_cols,
+  responses.set_size(1, predictors.n_cols + batchSize);
+  responses.ones();
+  responses.cols(predictors.n_cols,
       predictors.n_cols + batchSize - 1) = arma::zeros(1, batchSize);
+  this->discriminator.responses = arma::mat(this->responses.memptr(),
+      this->responses.n_rows, this->responses.n_cols, false, false);
 
   numFunctions = predictors.n_cols;
 
@@ -232,14 +231,14 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
   noise.imbue( [&]() { return noiseFunction();} );
   generator.Forward(std::move(noise));
 
-  discriminator.predictors.cols(numFunctions, numFunctions + batchSize - 1) =
+  predictors.cols(numFunctions, numFunctions + batchSize - 1) =
       boost::apply_visitor(outputParameterVisitor, generator.network.back());
-  discriminator.Forward(std::move(discriminator.predictors.cols(numFunctions,
+  discriminator.Forward(std::move(predictors.cols(numFunctions,
       numFunctions + batchSize - 1)));
-  discriminator.responses.cols(numFunctions, numFunctions + batchSize - 1) =
+  responses.cols(numFunctions, numFunctions + batchSize - 1) =
       arma::zeros(1, batchSize);
 
-  currentTarget = arma::mat(discriminator.responses.memptr() + numFunctions,
+  currentTarget = arma::mat(responses.memptr() + numFunctions,
       1, batchSize, false, false);
   res += discriminator.outputLayer.Forward(
       std::move(boost::apply_visitor(
@@ -299,9 +298,9 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
 
   noise.imbue( [&]() { return noiseFunction();} );
   generator.Forward(std::move(noise));
-  discriminator.predictors.cols(numFunctions, numFunctions + batchSize - 1) =
+  predictors.cols(numFunctions, numFunctions + batchSize - 1) =
       boost::apply_visitor(outputParameterVisitor, generator.network.back());
-  discriminator.responses.cols(numFunctions, numFunctions + batchSize - 1) =
+  responses.cols(numFunctions, numFunctions + batchSize - 1) =
       arma::zeros(1, batchSize);
 
   // Get the gradients of the Generator.
@@ -313,7 +312,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   {
     // Minimize -log(D(G(noise))).
     // Pass the error from Discriminator to Generator.
-    discriminator.responses.cols(numFunctions, numFunctions + batchSize - 1) =
+    responses.cols(numFunctions, numFunctions + batchSize - 1) =
         arma::ones(1, batchSize);
     discriminator.Gradient(discriminator.parameter, numFunctions,
         noiseGradientDiscriminator, batchSize);
@@ -372,8 +371,8 @@ void GAN<Model, InitializationRuleType, Noise, PolicyType>::Shuffle()
 {
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
       numFunctions - 1, numFunctions));
-  discriminator.predictors.cols(0, numFunctions- 1) =
-      predictors.cols(ordering);
+  arma::mat temp = predictors.cols(ordering);
+  predictors.cols(0, numFunctions - 1) = temp;
 }
 
 template<
