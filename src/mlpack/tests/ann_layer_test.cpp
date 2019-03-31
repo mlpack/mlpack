@@ -944,33 +944,32 @@ BOOST_AUTO_TEST_CASE(ReadCellStateParamLSTMLayerTest)
                    false); // Don't write into cell State.
 
       // Compute the value of cell state and output.
-      // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b)
+      // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
       inputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 
-      // f = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b)
+      // f = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
       forgetGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 
-      // z = tanh(W.dot(x) + W.dot(h) + b)
+      // z = tanh(W.dot(x) + W.dot(h) + b).
       hidden = arma::tanh(inputWeight * stepData +
                      outputWeight * outCalc + bias);
 
       // c = f * c + i * z
       cellCalc = forgetGate % cellCalc + inputGate % hidden;
 
-      // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b)
+      // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
       outputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 
-      // h = o * tanh(c)
+      // h = o * tanh(c).
       outCalc = outputGate % arma::tanh(cellCalc);
 
       CheckMatrices(outLstm, outCalc, 1e-12);
       CheckMatrices(cellLstm, cellCalc, 1e-12);
   }
 }
-
 
 /**
  * Testing the overloaded Forward of the LSTM layer.
@@ -1028,26 +1027,26 @@ BOOST_AUTO_TEST_CASE(WriteCellStateParamLSTMLayerTest)
                    true);  // Write into cell State.
 
       // Compute the value of cell state and output.
-      // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b)
+      // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
       inputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 
-      // f = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b)
+      // f = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
       forgetGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 
-      // z = tanh(W.dot(x) + W.dot(h) + b)
+      // z = tanh(W.dot(x) + W.dot(h) + b).
       hidden = arma::tanh(inputWeight * stepData +
                      outputWeight * outCalc + bias);
 
       // c = f * c + i * z
       cellCalc = forgetGate % cellCalc + inputGate % hidden;
 
-      // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b)
+      // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
       outputGate = 1.0 /(1 + arma::exp(-(inputWeight * stepData +
           outputWeight * outCalc + outputWeight % cellCalc + bias)));
 
-      // h = o * tanh(c)
+      // h = o * tanh(c).
       outCalc = outputGate % arma::tanh(cellCalc);
 
       CheckMatrices(outLstm, outCalc, 1e-12);

@@ -97,8 +97,10 @@ class LSTM
    * @param useCellState Use the cellState passed in the LSTM Cell.
    */
   template<typename InputType, typename OutputType>
-  void Forward(InputType&& input, OutputType&& output,
-               OutputType&& cellState, bool useCellState);
+  void Forward(InputType&& input,
+               OutputType&& output,
+               OutputType&& cellState,
+               bool useCellState);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function

@@ -173,9 +173,10 @@ void LSTM<InputDataType, OutputDataType>::Forward(
 // Forward when cellState is needed overloaded LSTM::Forward()
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void LSTM<InputDataType, OutputDataType>::Forward(
-    InputType&& input, OutputType&& output,
-    OutputType&& cellState, bool useCellState)
+void LSTM<InputDataType, OutputDataType>::Forward(InputType&& input,
+                                                  OutputType&& output,
+                                                  OutputType&& cellState,
+                                                  bool useCellState)
 {
   // Check if the batch size changed, the number of cols is defines the input
   // batch size.
@@ -209,7 +210,7 @@ void LSTM<InputDataType, OutputDataType>::Forward(
       }
       else
       {
-        throw std::runtime_error("Cell parameter is empty");
+        throw std::runtime_error("Cell parameter is empty.");
       }
     }
     inputGate.cols(forwardStep, forwardStep + batchStep) +=
