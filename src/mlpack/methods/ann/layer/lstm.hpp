@@ -100,7 +100,7 @@ class LSTM
   void Forward(InputType&& input,
                OutputType&& output,
                OutputType&& cellState,
-               bool useCellState);
+               bool useCellState = false);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
