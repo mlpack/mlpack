@@ -165,7 +165,7 @@ class ContinuousMountainCarV2
                                                            positionMax,
                                                            positionGoal,
                                                            velocityMin,
-                                                           velocityMax)
+                                                           velocityMax);
     State nextState;
     return ob.Sample(state, action, nextState);
   }
