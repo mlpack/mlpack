@@ -184,7 +184,7 @@ BOOST_AUTO_TEST_CASE(MeanImputationTest)
 }
 
 /**
- * Make sure MeanImputation method replaces data 0 to median value of each
+ * Make sure MedianImputation method replaces data 0 to median value of each
  * dimensions.
  */
 BOOST_AUTO_TEST_CASE(MedianImputationTest)
