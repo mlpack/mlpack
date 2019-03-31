@@ -42,7 +42,6 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     const double multiplier,
     const double clippingParameter,
     const double lambda):
-    predictors(predictors),
     generator(std::move(generator)),
     discriminator(std::move(discriminator)),
     initializeRule(initializeRule),
@@ -72,7 +71,8 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
   this->discriminator.predictors.set_size(predictors.n_rows,
       predictors.n_cols + batchSize);
   this->discriminator.predictors.cols(0, predictors.n_cols - 1) = predictors;
-
+  this->predictors = arma::mat(this->discriminator.predictors.memptr(),
+      predictors.n_rows, predictors.n_cols, false, false);
   this->discriminator.responses.set_size(1, predictors.n_cols + batchSize);
   this->discriminator.responses.ones();
   this->discriminator.responses.cols(predictors.n_cols,
@@ -372,8 +372,8 @@ void GAN<Model, InitializationRuleType, Noise, PolicyType>::Shuffle()
 {
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
       numFunctions - 1, numFunctions));
-  predictors = predictors.cols(ordering);
-  discriminator.predictors.cols(0, numFunctions-1) = predictors;
+  discriminator.predictors.cols(0, numFunctions- 1) =
+      predictors.cols(ordering);
 }
 
 template<
