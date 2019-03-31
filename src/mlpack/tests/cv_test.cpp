@@ -121,11 +121,11 @@ BOOST_AUTO_TEST_CASE(MulticlassClassificationMetricsTest)
   BOOST_REQUIRE_CLOSE(F1<Micro>::Evaluate(nb, data, labels),
       microaveragedF1, 1e-5);
 
-  double macroaveragedPrecision = (0.5 + 1.0 / 3 + 1.0 + 1.0) / 4;
+  double macroaveragedPrecision = (0.5 + 0.5 + 0.75 + 1.0) / 4;
   BOOST_REQUIRE_CLOSE(Precision<Macro>::Evaluate(nb, data, labels),
       macroaveragedPrecision, 1e-5);
 
-  double macroaveragedRecall = (0.5 + 0.5 + 0.75 + 1.0) / 4;
+  double macroaveragedRecall = (0.5 + 1.0 / 3 + 1.0 + 1.0) / 4;
   BOOST_REQUIRE_CLOSE(Recall<Macro>::Evaluate(nb, data, labels),
       macroaveragedRecall, 1e-5);
 
