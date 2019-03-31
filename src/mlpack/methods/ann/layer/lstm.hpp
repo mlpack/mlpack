@@ -78,7 +78,7 @@ class LSTM
        const size_t rho = std::numeric_limits<size_t>::max());
 
   /**
-   * Ordinary feed forward pass of a neural network, evaluating the function
+   * Ordinary feed-forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
    * @param input Input data used for evaluating the specified function.
@@ -88,7 +88,7 @@ class LSTM
   void Forward(InputType&& input, OutputType&& output);
 
   /**
-   * Ordinary feed forward pass of a neural network, evaluating the function
+   * Ordinary feed-forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
    * @param input Input data used for evaluating the specified function.

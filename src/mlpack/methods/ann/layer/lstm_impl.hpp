@@ -159,7 +159,7 @@ void LSTM<InputDataType, OutputDataType>::Reset()
       offset, outSize, 1, false, false);
 }
 
-// Forward when cellState is not needed
+// Forward when cellState is not needed.
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void LSTM<InputDataType, OutputDataType>::Forward(
@@ -170,7 +170,7 @@ void LSTM<InputDataType, OutputDataType>::Forward(
   Forward(std::move(input), std::move(output), std::move(cellState), false);
 }
 
-// Forward when cellState is needed overloaded LSTM::Forward()
+// Forward when cellState is needed overloaded LSTM::Forward().
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void LSTM<InputDataType, OutputDataType>::Forward(InputType&& input,
