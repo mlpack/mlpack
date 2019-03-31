@@ -370,7 +370,10 @@ template<
 >
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::Shuffle()
 {
-  math::ShuffleData(predictors, responses, predictors, responses);
+  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
+      numFunctions - 1, numFunctions));
+  predictors = predictors.cols(ordering);
+  discriminator.predictors.cols(0, numFunctions-1) = predictors;
 }
 
 template<
