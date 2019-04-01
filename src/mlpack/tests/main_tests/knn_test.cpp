@@ -478,9 +478,9 @@ BOOST_AUTO_TEST_CASE(KNNRandomBasisTest)
 
   mlpackMain();
 
-  CheckMatricesNotEqual(neighbors,
+  CheckMatrices(neighbors,
       CLI::GetParam<arma::Mat<size_t>>("neighbors"));
-  CheckMatricesNotEqual(distances,
+  CheckMatrices(distances,
       CLI::GetParam<arma::mat>("distances"));
 }
 
