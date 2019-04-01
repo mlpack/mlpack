@@ -371,8 +371,7 @@ void GAN<Model, InitializationRuleType, Noise, PolicyType>::Shuffle()
 {
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
       numFunctions - 1, numFunctions));
-  arma::mat temp = predictors.cols(ordering);
-  predictors.cols(0, numFunctions - 1) = temp;
+  predictors.cols(0, numFunctions - 1) = predictors.cols(ordering);
 }
 
 template<
