@@ -109,7 +109,7 @@ class BallBound
   /**
    * Determines if a point is within this bound.
    *
-   * @param point Point to check the codition.
+   * @param point Point to check the condition.
    */
   bool Contains(const VecType& point) const;
 

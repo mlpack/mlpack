@@ -228,7 +228,7 @@ class CellBound
   /**
    * Determines if a point is within this bound.
    *
-   * @param point Point to check the codition.
+   * @param point Point to check the condition.
    */
   template<typename VecType>
   bool Contains(const VecType& point) const;
