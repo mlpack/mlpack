@@ -902,8 +902,8 @@ BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
 }
 
 /**
- * Testing the overloaded Forward() of the LSTM layer, for retrieving the Cell
- * State. Besides output, the overloaded function provides read access to cell
+ * Testing the overloaded Forward() of the LSTM layer, for retrieving the cell
+ * state. Besides output, the overloaded function provides read access to cell
  * state of the LSTM layer.
  */
 BOOST_AUTO_TEST_CASE(ReadCellStateParamLSTMLayerTest)
@@ -936,11 +936,11 @@ BOOST_AUTO_TEST_CASE(ReadCellStateParamLSTMLayerTest)
       arma::mat stepData(input.slice(seqNum).memptr(),
           input.n_rows, input.n_cols, false, true);
 
-      // Apply Forward on LSTM layer.
+      // Apply Forward() on LSTM layer.
       lstm.Forward(std::move(stepData), // Input.
                    std::move(outLstm),  // Output.
-                   std::move(cellLstm), // Cell State.
-                   false); // Don't write into cell State.
+                   std::move(cellLstm), // Cell state.
+                   false); // Don't write into the cell state.
 
       // Compute the value of cell state and output.
       // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
@@ -955,7 +955,7 @@ BOOST_AUTO_TEST_CASE(ReadCellStateParamLSTMLayerTest)
       hidden = arma::tanh(inputWeight * stepData +
                      outputWeight * outCalc + bias);
 
-      // c = f * c + i * z
+      // c = f * c + i * z.
       cellCalc = forgetGate % cellCalc + inputGate % hidden;
 
       // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
@@ -971,8 +971,8 @@ BOOST_AUTO_TEST_CASE(ReadCellStateParamLSTMLayerTest)
 }
 
 /**
- * Testing the overloaded Forward() of the LSTM layer, for retrieving the Cell
- * State. Besides output, the overloaded function provides write access to cell
+ * Testing the overloaded Forward() of the LSTM layer, for retrieving the cell
+ * state. Besides output, the overloaded function provides write access to cell
  * state of the LSTM layer.
  */
 BOOST_AUTO_TEST_CASE(WriteCellStateParamLSTMLayerTest)
@@ -1018,11 +1018,11 @@ BOOST_AUTO_TEST_CASE(WriteCellStateParamLSTMLayerTest)
         cellCalc = arma::zeros(cellCalc.n_rows, cellCalc.n_cols);
       }
 
-      // Apply Forward on LSTM layer.
+      // Apply Forward() on the LSTM layer.
       lstm.Forward(std::move(stepData), // Input.
                    std::move(outLstm),  // Output.
                    std::move(cellLstm), // Cell state.
-                   true);  // Write into cell State.
+                   true);  // Write into cell state.
 
       // Compute the value of cell state and output.
       // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
@@ -1037,7 +1037,7 @@ BOOST_AUTO_TEST_CASE(WriteCellStateParamLSTMLayerTest)
       hidden = arma::tanh(inputWeight * stepData +
                      outputWeight * outCalc + bias);
 
-      // c = f * c + i * z
+      // c = f * c + i * z.
       cellCalc = forgetGate % cellCalc + inputGate % hidden;
 
       // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
@@ -1060,7 +1060,7 @@ BOOST_AUTO_TEST_CASE(WriteCellStateParamLSTMLayerTest)
   lstm.Forward(std::move(stepData), // Input.
                    std::move(outLstm),  // Output.
                    std::move(cellLstm), // Cell state.
-                   true); // Write into cell State.
+                   true); // Write into cell state.
 
   for (size_t seqNum = 1; seqNum < rho; ++seqNum)
   {
@@ -1069,7 +1069,7 @@ BOOST_AUTO_TEST_CASE(WriteCellStateParamLSTMLayerTest)
     BOOST_REQUIRE_THROW(lstm.Forward(std::move(stepData), // Input.
                                      std::move(outLstm),  // Output.
                                      std::move(empty), // Cell state.
-                                     true),  // Write into cell State.
+                                     true),  // Write into cell state.
                                      std::runtime_error);
   }
 }
