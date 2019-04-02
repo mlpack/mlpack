@@ -96,14 +96,13 @@ void GMM::LogProbability(const arma::mat& x, arma::vec& logProbs) const
   // Save log(weights) as a vector.
   arma::vec logWeights = arma::log(weights);
   // Compute Log Probability.
+
+  logProb = logProb.t();
+
   for (size_t j = 0; j < x.n_cols; j++)
   {
-    double sum = -std::numeric_limits<double>::infinity();
-    for (size_t i = 0; i < gaussians; i++)
-    {
-      sum = math::LogAdd(sum, logWeights(i) + logProb(j, i));
-    }
-    logProbs(j) = sum;
+    const arma::vec sumVec = logWeights + logProb.unsafe_col(j);
+    logProbs(j) = math::AccuLog(sumVec);
   }
 }
 
