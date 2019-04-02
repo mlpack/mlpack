@@ -3,8 +3,7 @@
  * @author Konstantin Sidorov
  * @author Saksham Bansal
  *
- * Definition of highway layer first introduced in the paper "Highway networks"
- * https://arxiv.org/abs/1505.00387
+ * Definition of the highway layer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -31,7 +30,22 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The highway layer class.
+ * Implementation of the Highway layer. The highway class can vary its behavior
+ * between that of feed-forward fully connected network container and that
+ * of a layer which simply passes its inputs through depending on the transform
+ * gate. Note that the size of the input and output matrices of this class
+ * should be equal.
+ *
+ * For more information, refer the following paper.
+ *
+ * @code
+ * @article{Srivastava2015,
+ *   author  = {Rupesh Kumar Srivastava, Klaus Greff, Jurgen Schmidhuber},
+ *   title   = {Training Very Deep Networks},
+ *   journal = {Advances in Neural Information Processing Systems},
+ *   year    = {2015},
+ * }
+ * @endcode
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).

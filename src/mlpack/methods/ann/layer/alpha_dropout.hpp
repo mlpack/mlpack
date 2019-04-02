@@ -37,7 +37,6 @@ namespace ann /** Artificial Neural Network. */ {
  *   journal = {Advances in Neural Information Processing Systems},
  *   year    = {2017}
  * }
- * }
  * @endcode
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
