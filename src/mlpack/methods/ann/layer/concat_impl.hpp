@@ -60,7 +60,7 @@ Concat<InputDataType,
     }
     if (unknown > 1)
     {
-      throw std::runtime_error("More than one dimension unknown.");
+      throw std::logic_error("More than one dimension unknown.");
     }
   }
 }
@@ -114,12 +114,12 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Forward(
     }
     else
     {
-      throw std::runtime_error("Input Dimensions not specified.");
+      throw std::logic_error("Input Dimensions not specified.");
     }
   }
   if (newColSize <= 0)
   {
-      throw std::runtime_error("Col Size is zero.");
+      throw std::logic_error("Col Size is zero.");
   }
   rowSize = output.n_rows * output.n_cols / newColSize;
   output.reshape(rowSize, newColSize);
