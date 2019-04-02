@@ -142,6 +142,11 @@ class LogisticRegressionFunction
   double EvaluateWithGradient(const arma::mat& parameters,
                               GradType& gradient) const;
 
+  /**
+   * Evaluate the objective function and gradient of the logistic regression
+   * log-likelihood function simultaneously with the given parameters, for
+   * the given batch size from a given point the in dataset.
+   */
   template<typename GradType>
   double EvaluateWithGradient(const arma::mat& parameters,
                               const size_t begin,
