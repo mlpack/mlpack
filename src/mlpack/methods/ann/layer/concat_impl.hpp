@@ -20,7 +20,7 @@
 #include "../visitor/gradient_visitor.hpp"
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {  
+namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
@@ -160,7 +160,7 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
       size_t rows = boost::apply_visitor(
           outputParameterVisitor, network[i]).n_rows;
 
-      // Extract from gy the parameters for the i-th network. 
+      // Extract from gy the parameters for the i-th network.
       delta = gy.rows(rowCount / channels, (rowCount + rows) / channels - 1);
       delta.reshape(delta.n_rows * channels, delta.n_cols / channels);
 
@@ -238,7 +238,7 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
       size_t rows = boost::apply_visitor(
           outputParameterVisitor, network[i]).n_rows;
 
-      // Extract from error the parameters for the i-th network. 
+      // Extract from error the parameters for the i-th network.
       arma::Mat<eT> err = error.rows(rowCount / channels, (rowCount + rows) /
           channels - 1);
       err.reshape(err.n_rows * channels, err.n_cols / channels);

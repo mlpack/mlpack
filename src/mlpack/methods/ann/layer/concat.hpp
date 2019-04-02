@@ -207,7 +207,6 @@ class Concat
   void serialize(Archive& /* ar */, const unsigned int /* version */);
 
  private:
-
   //! Parameter which indicates the input size of modules.
   std::vector<int> inputSize;
 

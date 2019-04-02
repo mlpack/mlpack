@@ -1052,7 +1052,7 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
 
   input = arma::ones(inputWidth * inputHeight * inputChannel, batch);
 
-  Convolution<> moduleA(inputChannel, outputChannel, kW, kH,1, 1, 0, 0,
+  Convolution<> moduleA(inputChannel, outputChannel, kW, kH, 1, 1, 0, 0,
       inputWidth, inputHeight);
   Convolution<> moduleB(inputChannel, outputChannel, kW, kH, 1, 1, 0, 0,
       inputWidth, inputHeight);
@@ -1106,9 +1106,10 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
     module.Add(moduleA);
     module.Add(moduleB);
     module.Forward(std::move(input), std::move(output));
-    arma::cube concatOut(output.memptr(), x * outputWidth, y * outputHeight, z * outputChannel);
+    arma::cube concatOut(output.memptr(), x * outputWidth,
+        y * outputHeight, z * outputChannel);
 
-    // Verify if the output reshaped to cubes are similar. 
+    // Verify if the output reshaped to cubes are similar.
     CheckMatrices(concatOut, calculatedOut, 1e-12);
   }
 }
