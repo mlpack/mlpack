@@ -453,7 +453,7 @@ inline std::string ProgramCall(const std::string& programName)
   else if (BindingInfo::Language() == "python")
   {
     s += "python\n";
-    std::string import = PrintImport(GetBindingName(programName));
+    std::string import = PrintImport(programName);
     if (import.size() > 0)
       s += ">>> " + import + "\n";
     s += python::ProgramCall(programName);
