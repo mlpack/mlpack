@@ -82,9 +82,24 @@ void GMM::LogProbability(const arma::mat& x, arma::vec& logProbs) const
   // Sum the probability for each Gaussian in our mixture (and we have to
   // multiply by the prior for each Gaussian too).
   logProbs.set_size(x.n_cols);
+
+  arma::mat& logProb(x.ncols, gaussians);
+
+  for (size_t i = 0; i < gaussians; i++)
+  {
+  	arma::vec alias(logProb.colptr(i), x.ncols, false, true);
+  	dists[i].LogProbability(x, alias);
+  }
+
+  arma::vec logWeights = arma::log(weights);
   for (size_t j = 0; j < x.n_cols; j++)
   {
-    logProbs(j) = LogProbability(x.unsafe_col(j));
+  	double sum = -std::numeric_limits<double>::infinity();
+  	for (size_t i = 0; i < gaussians; i++)
+  	{
+  	  sum = math::LogAdd(sum, logWeights(i), logProb(j, i))
+  	}
+    logProbs(j) = sum;
   }
 }
 
