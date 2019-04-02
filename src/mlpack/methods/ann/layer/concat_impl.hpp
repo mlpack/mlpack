@@ -29,6 +29,7 @@ Concat<InputDataType, OutputDataType, CustomLayers...>::Concat(
 {
   parameters.set_size(0, 0);
   axis = -1;
+  channels = 1;
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -63,6 +64,7 @@ Concat<InputDataType,
       throw std::logic_error("More than one dimension unknown.");
     }
   }
+  Concat::channels = 1;
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -91,7 +93,7 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Forward(
   }
 
   // Parameter to store dimensions(rowSize).
-  int rowSize;
+  int rowSize, oldColSize, newColSize;
   output = boost::apply_visitor(outputParameterVisitor, network.front());
 
   newColSize = oldColSize = output.n_cols;
@@ -122,6 +124,7 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Forward(
       throw std::logic_error("Col Size is zero.");
   }
 
+  channels = newColSize / oldColSize;
   // Compute the rowSize after which join_cols() is called.
   rowSize = output.n_rows * output.n_cols / newColSize;
   output.reshape(rowSize, newColSize);
@@ -149,7 +152,6 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
     const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
 {
   size_t rowCount = 0;
-  size_t channels = newColSize / oldColSize;
   if (run)
   {
     arma::Mat<eT> delta;
@@ -192,7 +194,6 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
     const size_t index)
 {
   size_t rowCount = 0, rows = 0;
-  size_t channels = newColSize / oldColSize;
 
   for (size_t i = 0; i < index; ++i)
   {
@@ -229,7 +230,7 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
   if (run)
   {
     size_t rowCount = 0;
-    size_t channels = newColSize / oldColSize;
+
 
     // Reshape error to extract the i-th layer error.
     error.reshape(error.n_rows / channels, error.n_cols * channels);
@@ -263,7 +264,6 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
     const size_t index)
 {
   size_t rowCount = 0;
-  size_t channels = newColSize / oldColSize;
 
   for (size_t i = 0; i < index; ++i)
   {

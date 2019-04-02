@@ -213,11 +213,8 @@ class Concat
   //! Parameter which indicates the axis of concatenation.
   int axis;
 
-  //! Parameter to store oldColSize
-  size_t oldColSize;
-
-  //! Parameter to store newColSize
-  size_t newColSize;
+  //! Parameter to store channels
+  size_t channels;
 
   //! Parameter which indicates if the modules should be exposed.
   bool model;
