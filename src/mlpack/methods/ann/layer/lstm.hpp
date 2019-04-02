@@ -19,12 +19,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * An implementation of a lstm network layer.
- *
- * This class allows specification of the type of the activation functions used
- * for the gates and cells and also of the type of the function used to
- * initialize and update the peephole weights.
-
+ * Implementation of the LSTM module class.
  * The implementation corresponds to the following algorithm:
  *
  * @f{eqnarray}{
