@@ -93,7 +93,7 @@ void GMM::LogProbability(const arma::mat& x, arma::vec& logProbs) const
     dists[i].LogProbability(x, alias);
   }
 
-  // Save log(weights) as a vector. 
+  // Save log(weights) as a vector.
   arma::vec logWeights = arma::log(weights);
   // Compute Log Probability.
   for (size_t j = 0; j < x.n_cols; j++)
