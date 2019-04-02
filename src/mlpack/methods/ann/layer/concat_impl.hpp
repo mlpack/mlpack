@@ -119,14 +119,15 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Forward(
   }
   if (newColSize <= 0)
   {
-      throw std::runtime_error("Output not found;");
+      throw std::runtime_error("Col Size is zero.");
   }
   rowSize = output.n_rows * output.n_cols / newColSize;
   output.reshape(rowSize, newColSize);
 
   for (size_t i = 1; i < network.size(); ++i)
   {
-    arma::Mat<eT> out = boost::apply_visitor(outputParameterVisitor, network[i]);
+    arma::Mat<eT> out = boost::apply_visitor(outputParameterVisitor,
+        network[i]);
 
     rowSize = out.n_rows * out.n_cols / newColSize;
     out.reshape(rowSize, newColSize);
@@ -191,13 +192,15 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
 
   for (size_t i = 0; i < index; ++i)
   {
-    rowCount += boost::apply_visitor(outputParameterVisitor, network[i]).n_rows;
+    rowCount += boost::apply_visitor(
+        outputParameterVisitor, network[i]).n_rows;
   }
   rows = boost::apply_visitor(outputParameterVisitor, network[index]).n_rows;
 
   gy.reshape(gy.n_rows / channels, gy.n_cols * channels);
 
-  arma::Mat<eT> delta = gy.rows(rowCount / channels, (rowCount + rows) / channels - 1);
+  arma::Mat<eT> delta = gy.rows(rowCount / channels, (rowCount + rows) /
+      channels - 1);
   delta.reshape(delta.n_rows * channels, delta.n_cols / channels);
 
   boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
@@ -228,7 +231,8 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
       size_t rows = boost::apply_visitor(
           outputParameterVisitor, network[i]).n_rows;
 
-      arma::Mat<eT> err = error.rows(rowCount / channels, (rowCount + rows) / channels - 1);
+      arma::Mat<eT> err = error.rows(rowCount / channels, (rowCount + rows) /
+          channels - 1);
       err.reshape(err.n_rows * channels, err.n_cols / channels);
 
       boost::apply_visitor(GradientVisitor(std::move(input),
@@ -253,13 +257,15 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
 
   for (size_t i = 0; i < index; ++i)
   {
-    rowCount += boost::apply_visitor(outputParameterVisitor, network[i]).n_rows;
+    rowCount += boost::apply_visitor(outputParameterVisitor,
+        network[i]).n_rows;
   }
   size_t rows = boost::apply_visitor(
       outputParameterVisitor, network[index]).n_rows;
 
   error.reshape(error.n_rows / channels, error.n_cols * channels);
-  arma::Mat<eT> err = error.rows(rowCount / channels, (rowCount + rows) / channels - 1);
+  arma::Mat<eT> err = error.rows(rowCount / channels, (rowCount + rows) /
+      channels - 1);
   err.reshape(err.n_rows * channels, err.n_cols / channels);
 
   boost::apply_visitor(GradientVisitor(std::move(input),
