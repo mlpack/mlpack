@@ -84,12 +84,12 @@ void GMM::LogProbability(const arma::mat& x, arma::vec& logProbs) const
   logProbs.set_size(x.n_cols);
 
   // Store log-probability value in a matrix.
-  arma::mat& logProb(x.ncols, gaussians);
+  arma::mat logProb(x.n_cols, gaussians);
 
   // Assign value to the matrix.
   for (size_t i = 0; i < gaussians; i++)
   {
-    arma::vec alias(logProb.colptr(i), x.ncols, false, true);
+    arma::vec alias(logProb.colptr(i), x.n_cols, false, true);
     dists[i].LogProbability(x, alias);
   }
 
@@ -101,7 +101,7 @@ void GMM::LogProbability(const arma::mat& x, arma::vec& logProbs) const
     double sum = -std::numeric_limits<double>::infinity();
     for (size_t i = 0; i < gaussians; i++)
     {
-      sum = math::LogAdd(sum, logWeights(i), logProb(j, i))
+      sum = math::LogAdd(sum, logWeights(i) + logProb(j, i));
     }
     logProbs(j) = sum;
   }
