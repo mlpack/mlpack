@@ -1,8 +1,10 @@
 /**
- * @file confusion_matrix.hpp
+ * @file confusion_matrix_impl.hpp
  * @author Jeffin Sam
  *
- * Function for confusion matrix
+ * Implementation of confusion matrix
+ * Works only for discrete data/categorical data
+ * Helps you to understand your model better
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -16,27 +18,31 @@
 
 namespace mlpack {
 namespace data {
+
 /**
  * A confusion matrix is a summary of prediction results on a classification
  * problem.The number of correct and incorrect predictions are summarized
  * with count values and broken down by each class.
  *
- * @param pred vector of predicted values.
- * @param actual vector of actual values.
- * @param output matrix which is represented as confusion matrix.
- * @param countlables no of classes
+ * @param predictors Vector of data points.
+ * @param responses The measured data for each point in X.
+ * @param output Matrix which is represented as confusion matrix.
+ * @param countlables No of classes
+ *
  * for example for 2 classes the function will be
- * confusionmatrix(pred,actual,matrix,2)
+ * confusionmatrix(predictors, responses, output, 2)
  * output matrix will be of size 2 * 2
+ *
  *         0     1
  *    0    TP    FN
  *    1    FP    TN
- * confusion matrix for two labels will look like above.
+ *
+ * Confusion matrix for two labels will look like above.
  * Row is the predicted values and column are actual values.
  */
-template<typename eT, typename RowType>
-void ConfusionMatrix(const RowType& pred,
-                     const RowType& actual,
+template<typename eT>
+void ConfusionMatrix(const arma::Row<size_t> predictors,
+                     const arma::Row<size_t> responses,
                      arma::Mat<eT>& output,
                      const size_t countlabels);
 } // namespace data

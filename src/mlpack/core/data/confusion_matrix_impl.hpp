@@ -2,7 +2,9 @@
  * @file confusion_matrix_impl.hpp
  * @author Jeffin Sam
  *
- * implementation of confusion matrix
+ * Implementation of confusion matrix
+ * Works only for discrete data/categorical data
+ * Helps you to understand your model better
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -23,46 +25,33 @@ namespace data {
  * problem.The number of correct and incorrect predictions are summarized
  * with count values and broken down by each class.
  *
- * @param pred vector of predicted values.
- * @param actual vector of actual values.
- * @param output matrix which is represented as confusion matrix.
- * @param countlables no of classes
+ * @param predictors Vector of data points.
+ * @param responses The measured data for each point in X.
+ * @param output Matrix which is represented as confusion matrix.
+ * @param countlables No of classes
+ *
  * for example for 2 classes the function will be
- * confusionmatrix(pred,actual,matrix,2)
+ * confusionmatrix(predictors, responses, output, 2)
  * output matrix will be of size 2 * 2
+ *
  *         0     1
  *    0    TP    FN
  *    1    FP    TN
- * confusion matrix for two labels will look like above.
+ *
+ * Confusion matrix for two labels will look like above.
  * Row is the predicted values and column are actual values.
  */
-template<typename eT, typename RowType>
-void ConfusionMatrix(const RowType& pred,
-                     const RowType& actual,
+template<typename eT>
+void ConfusionMatrix(const arma::Row<size_t> predictors,
+                     const arma::Row<size_t> responses,
                      arma::Mat<eT>& output,
                      const size_t countlabels)
 {
-  // finding whether continues or not
-  bool find = true;
-  for (size_t i = 0; i < pred.n_elem; ++i)
+  // Loop over the actual labels and predicted labels and add the count
+  output = arma::zeros<arma::Mat<eT> >(countlabels, countlabels);
+  for (size_t i = 0; i < predictors.n_elem; ++i)
   {
-    if (pred[i] != int(pred[i]) || actual[i] != int(actual[i]))
-    {
-      // simply means continues data or different datatype
-      find = false;
-      break;
-    }
-  }
-  if (find == false)
-  {
-    throw std::runtime_error("Datatset should be discrete");
-  }
-  // Loop over the input labels and predicted and just add the count
-  output.set_size(countlabels, countlabels);
-  output.fill(0);
-  for (size_t i = 0; i < pred.n_elem; ++i)
-  {
-    output(pred[i], actual[i]) = output(pred[i], actual[i]) + 1;
+    output.at(predictors[i], responses[i])++;
   }
 }
 } // namespace data
