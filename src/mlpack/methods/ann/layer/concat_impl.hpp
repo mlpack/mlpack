@@ -121,6 +121,8 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Forward(
   {
       throw std::logic_error("Col Size is zero.");
   }
+
+  // Compute the rowSize after which join_cols() is called.
   rowSize = output.n_rows * output.n_cols / newColSize;
   output.reshape(rowSize, newColSize);
 
@@ -157,6 +159,8 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
       // Use rows from the error corresponding to the output from each layer.
       size_t rows = boost::apply_visitor(
           outputParameterVisitor, network[i]).n_rows;
+
+      // Extract from gy the parameters for the i-th network. 
       delta = gy.rows(rowCount / channels, (rowCount + rows) / channels - 1);
       delta.reshape(delta.n_rows * channels, delta.n_cols / channels);
 
@@ -197,6 +201,7 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
   }
   rows = boost::apply_visitor(outputParameterVisitor, network[index]).n_rows;
 
+  // Reshape gy to extract the i-th layer gy.
   gy.reshape(gy.n_rows / channels, gy.n_cols * channels);
 
   arma::Mat<eT> delta = gy.rows(rowCount / channels, (rowCount + rows) /
@@ -207,6 +212,7 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
       outputParameterVisitor, network[index])), std::move(delta), std::move(
       boost::apply_visitor(deltaVisitor, network[index]))), network[index]);
 
+  // Reshape gy to its original shape.
   gy.reshape(gy.n_rows * channels, gy.n_cols / channels);
 
   g = boost::apply_visitor(deltaVisitor, network[index]);
@@ -225,12 +231,14 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
     size_t rowCount = 0;
     size_t channels = newColSize / oldColSize;
 
+    // Reshape error to extract the i-th layer error.
     error.reshape(error.n_rows / channels, error.n_cols * channels);
     for (size_t i = 0; i < network.size(); ++i)
     {
       size_t rows = boost::apply_visitor(
           outputParameterVisitor, network[i]).n_rows;
 
+      // Extract from error the parameters for the i-th network. 
       arma::Mat<eT> err = error.rows(rowCount / channels, (rowCount + rows) /
           channels - 1);
       err.reshape(err.n_rows * channels, err.n_cols / channels);
@@ -239,6 +247,8 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
           std::move(err)), network[i]);
       rowCount += rows;
     }
+
+    // Reshape error to its original shape.
     error.reshape(error.n_rows * channels, error.n_cols / channels);
   }
 }

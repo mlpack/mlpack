@@ -1034,6 +1034,9 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
   BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
 }
 
+/**
+ * Test to check Concat<> along different axis.
+ */
 BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
 {
   arma::mat output, input, outputA, outputB;
@@ -1042,6 +1045,8 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
   int kW = 3, kH = 3;
   int batch = 1;
 
+  // Using Convolution<> layer as inout to Concat<> layer.
+  // Compute the output shape of convolution layer.
   outputWidth  = (inputWidth - kW) + 1;
   outputHeight = (inputHeight - kH) + 1;
 
@@ -1057,6 +1062,7 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
   moduleB.Reset();
   moduleB.Parameters().randu();
 
+  // Compute output of each layer.
   moduleA.Forward(std::move(input), std::move(outputA));
   moduleB.Forward(std::move(input), std::move(outputB));
 
@@ -1095,12 +1101,14 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
       z = 2;
     }
 
+    // Compute output of Concat<> layer.
     Concat<> module({outputWidth, outputHeight, outputChannel}, axis);
     module.Add(moduleA);
     module.Add(moduleB);
     module.Forward(std::move(input), std::move(output));
     arma::cube concatOut(output.memptr(), x * outputWidth, y * outputHeight, z * outputChannel);
 
+    // Verify if the output reshaped to cubes are similar. 
     CheckMatrices(concatOut, calculatedOut, 1e-12);
   }
 }
