@@ -32,13 +32,13 @@ class ContinuousMountainCarV2
    * Implementation of state of Continuous Mountain Car V2. Each state is a
    * (velocity, position) vector.
    */
-  class State
+  class StateV2
   {
    public:
     /**
      * Construct a state instance.
      */
-    State() : data(dimension, arma::fill::zeros)
+    StateV2() : data(dimension, arma::fill::zeros)
     { /* Nothing to do here. */ }
 
     /**
@@ -46,7 +46,7 @@ class ContinuousMountainCarV2
      *
      * @param data Data for the velocity and position.
      */
-    State(const arma::colvec& data): data(data)
+    StateV2(const arma::colvec& data): data(data)
     { /* Nothing to do here. */ }
 
     //! Modify the internal representation of the state.
@@ -124,19 +124,19 @@ class ContinuousMountainCarV2
    * @param nextState The next state.
    * @return reward, it's always -1.0.
    */
-  double Sample(const State& state,
+  double Sample(const StateV2& state,
                 const Action& action,
-                State& nextState) const
+                StateV2& nextState) const
   {
     // Calculate acceleration.
     double force = std::min(std::max(action.action[0], -1.0), 1.0);
 
     // Update states.
-    nextState.Velocity() = state.Velocity() + force * power - 0.0025 *
-        std::cos(3 * state.Position());
+    nextState.Velocity() = stateV2.Velocity() + force * power - 0.0025 *
+        std::cos(3 * stateV2.Position());
     nextState.Velocity() = std::min(
         std::max(nextState.Velocity(), velocityMin), velocityMax);
-    nextState.Position() = state.Position() + nextState.Velocity();
+    nextState.Position() = stateV2.Position() + nextState.Velocity();
     nextState.Position() = std::min(
         std::max(nextState.Position(), positionMin), positionMax);
     if (nextState.Position() == positionMin && nextState.Velocity() < 0)
@@ -159,7 +159,7 @@ class ContinuousMountainCarV2
    * @param action The current action.
    * @return reward, it's always -1.0.
    */
-  double Sample(const State& state, const Action& action) const
+  double Sample(const StateV2& state, const Action& action) const
   {
     ContinuousMountainCar ob = ContinuousMountainCar(positionMin,
                                                            positionMax,
@@ -176,9 +176,9 @@ class ContinuousMountainCarV2
    *
    * @return Initial state for each episode.
    */
-  State InitialSample() const
+  StateV2 InitialSample() const
   {
-    State state;
+    StateV2 state;
     state.Velocity() = 0.0;
     state.Position() = math::Random(-0.6, -0.4);
     return state;
@@ -190,7 +190,7 @@ class ContinuousMountainCarV2
    * @param state desired state.
    * @return true if state is a terminal state, otherwise false.
    */
-  bool IsTerminal(const State& state) const
+  bool IsTerminal(const StateV2& state) const
   {
     return state.Position() >= positionGoal && state.Velocity() >= velocityGoal;
   }
