@@ -41,13 +41,17 @@ class GreedyPolicy
    * @param annealInterval The steps during which the probability to explore
    *        will anneal.
    * @param minEpsilon Epsilon will never be less than this value.
+   *
+   * @param maxEpsilon Epsilon will never be more than this value.
    */
   GreedyPolicy(const double initialEpsilon,
                const size_t annealInterval,
-               const double minEpsilon) :
+               const double minEpsilon,
+               const double maxEpsilon) :
       epsilon(initialEpsilon),
       minEpsilon(minEpsilon),
-      delta((initialEpsilon - minEpsilon) / annealInterval)
+      maxEpsilon(maxEpsilon),
+      delta((initialEpsilon - (minEpsilon + maxEpsilon) / 2) / annealInterval)
   { /* Nothing to do here. */ }
 
   /**
@@ -76,7 +80,7 @@ class GreedyPolicy
   void Anneal()
   {
     epsilon -= delta;
-    epsilon = std::max(minEpsilon, epsilon);
+    epsilon = (std::max(minEpsilon, epsilon) + std::min(maxEpsilon, epsilon))/2;
   }
 
   /**
@@ -90,6 +94,9 @@ class GreedyPolicy
 
   //! Locally-stored lower bound for epsilon.
   double minEpsilon;
+
+  //! Locally-stored upper bound for epsilon.
+  double maxEpsilon;
 
   //! Locally-stored stride for epsilon to anneal.
   double delta;
