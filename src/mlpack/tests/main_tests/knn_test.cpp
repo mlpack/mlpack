@@ -339,11 +339,11 @@ BOOST_AUTO_TEST_CASE(KNNModelReuseTest)
 BOOST_AUTO_TEST_CASE(KNNDifferentTauTest)
 {
   arma::mat referenceData;
-  referenceData.randu(3, 1000); // 1000 points in 3 dimensions.
+  referenceData.randu(6, 1000); // 1000 points in 6 dimensions.
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", referenceData);
-  SetInputParam("k", (int) 10);
+  SetInputParam("k", (int) 4);
   SetInputParam("tree_type", (string) "spill");
   SetInputParam("tau", (double) 0.2);
   SetInputParam("algorithm", (string) "greedy");
