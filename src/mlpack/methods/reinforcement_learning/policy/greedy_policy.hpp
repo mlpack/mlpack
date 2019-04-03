@@ -80,7 +80,7 @@ class GreedyPolicy
   void Anneal()
   {
     epsilon -= delta;
-    epsilon = (std::max(minEpsilon, epsilon) + std::min(maxEpsilon, epsilon))/2;
+    epsilon = std::max(minEpsilon, epsilon);
   }
 
   /**
