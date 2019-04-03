@@ -124,19 +124,19 @@ class ContinuousMountainCarV2
    * @param nextState The next state.
    * @return reward, it's always -1.0.
    */
-  double Sample(const StateV2& state,
+  double Sample(const State& state,
                 const Action& action,
-                StateV2& nextState) const
+                State& nextState) const
   {
     // Calculate acceleration.
     double force = std::min(std::max(action.action[0], -1.0), 1.0);
 
     // Update states.
-    nextState.Velocity() = stateV2.Velocity() + force * power - 0.0025 *
-        std::cos(3 * stateV2.Position());
+    nextState.Velocity() = state.Velocity() + force * power - 0.0025 *
+        std::cos(3 * state.Position());
     nextState.Velocity() = std::min(
         std::max(nextState.Velocity(), velocityMin), velocityMax);
-    nextState.Position() = stateV2.Position() + nextState.Velocity();
+    nextState.Position() = state.Position() + nextState.Velocity();
     nextState.Position() = std::min(
         std::max(nextState.Position(), positionMin), positionMax);
     if (nextState.Position() == positionMin && nextState.Velocity() < 0)
