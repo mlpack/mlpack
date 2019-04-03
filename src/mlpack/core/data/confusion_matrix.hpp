@@ -2,8 +2,7 @@
  * @file confusion_matrix_impl.hpp
  * @author Jeffin Sam
  *
- * Implementation of confusion matrix function, which is useful in
- * summarizing the performance of a classification algorithm.
+ * Compute confusion matrix to evaluate the accuracy of a classification.
  * The function works only for discrete data/categorical data.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
