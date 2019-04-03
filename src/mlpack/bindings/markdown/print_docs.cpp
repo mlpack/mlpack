@@ -13,7 +13,7 @@
 
 // Make sure that this is defined.
 #ifndef DOXYGEN_PREFIX
-#define DOXYGEN_PREFIX "https://mlpack.org/docs/mlpack-git/doxygen/"
+#define DOXYGEN_PREFIX "https://mlpack.org/doc/mlpack-git/doxygen/"
 #endif
 
 using namespace std;
