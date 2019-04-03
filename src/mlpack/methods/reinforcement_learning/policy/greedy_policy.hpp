@@ -41,8 +41,6 @@ class GreedyPolicy
    * @param annealInterval The steps during which the probability to explore
    *        will anneal.
    * @param minEpsilon Epsilon will never be less than this value.
-   *
-   * @param maxEpsilon Epsilon will never be more than this value.
    */
   GreedyPolicy(const double initialEpsilon,
                const size_t annealInterval,
@@ -94,7 +92,7 @@ class GreedyPolicy
 
   //! Locally-stored lower bound for epsilon.
   double minEpsilon;
-
+ 
   //! Locally-stored upper bound for epsilon.
   double maxEpsilon;
 
