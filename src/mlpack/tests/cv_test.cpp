@@ -82,9 +82,9 @@ BOOST_AUTO_TEST_CASE(ConfusionMatrixTest)
   // Labels that will be considered as "ground truth".
   arma::Row<size_t> labels("0 0 1 0 0  1 0 1 0 1");
 
-  // predicted labels.
+  // Predicted labels.
   arma::Row<size_t> predictedLabels("0 0 0 0 0  1 1 1 1 1");
-  // confusion matrix.
+  // Confusion matrix.
   arma::Mat<int> output;
   data::ConfusionMatrix(predictedLabels, labels, output, 2);
   BOOST_REQUIRE_EQUAL(output(0, 0), 4);
