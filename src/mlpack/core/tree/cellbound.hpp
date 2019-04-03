@@ -89,6 +89,7 @@ class CellBound
   /**
    * Initializes to specified dimensionality with each dimension the empty
    * set.
+   *
    * @param dimension Dimensionality of bound.
    */
   CellBound(const size_t dimension);
