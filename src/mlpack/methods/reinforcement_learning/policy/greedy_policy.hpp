@@ -51,7 +51,7 @@ class GreedyPolicy
       epsilon(initialEpsilon),
       minEpsilon(minEpsilon),
       maxEpsilon(maxEpsilon),
-      delta((initialEpsilon - (minEpsilon + maxEpsilon) / 2) / annealInterval)
+      delta((initialEpsilon - minEpsilon) / annealInterval)
   { /* Nothing to do here. */ }
 
   /**
