@@ -79,7 +79,7 @@ class ContinuousMountainCar
    * force to be applied. This value is bounded in range -1.0 to 1.0.
    * Unlike the simple mountain car environment, where action space has a
    * discrete value, continuous mountain car has continous action space
-   * value. 
+   * value.
    */
   struct Action
   {
@@ -113,7 +113,7 @@ class ContinuousMountainCar
   { /* Nothing to do here */ }
 
   /**
-   * Dynamics of Continuous Mountain Car. Get reward and next state based 
+   * Dynamics of Continuous Mountain Car. Get reward and next state based
    * on current state and current action.
    *
    * @param state The current state.

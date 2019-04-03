@@ -19,6 +19,13 @@
 namespace mlpack {
 namespace rl {
 
+ /**
+   * @tparam WorkerType The type of the worker.
+   * @tparam EnvironmentType The type of the reinforcement learning task.
+   * @tparam NetworkType The type of the network model.
+   * @tparam UpdaterType The type of the optimizer.
+   * @tparam PolicyType The type of the behavior policy.
+   */
 template <
   typename WorkerType,
   typename EnvironmentType,
@@ -145,4 +152,3 @@ void AsyncLearning<
 } // namespace mlpack
 
 #endif
-
