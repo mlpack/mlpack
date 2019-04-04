@@ -1,5 +1,5 @@
 /**
- * @file feature_selection_imp.hpp
+ * @file feature_selection_impl.hpp
  * @author Jeffin Sam
  *
  * Feature selction based on variance thresholding.
@@ -35,15 +35,13 @@ namespace data {
  * @param output Output matrix with lesser number of features.
  */
 template<typename T>
-void SelectBestFeature(const arma::Mat<T>& input,
+void VarianceSelection(const arma::Mat<T>& input,
               const double threshold,
               arma::Mat<T>& output)
 {
-  // Making sure features have same scale
-  arma::Mat<double> scale = arma::normalise(input);
-  // Calculate variance of each feature
-  arma::Mat<double> value = arma::var(scale, 0, 1);
-  //count the dimension of new matrix
+  // Calculate variance of each scaled feature.
+  arma::mat value = arma::var(arma::normalise(input, 2, 1), 0, 1);
+  // Count the dimension of new matrix
   size_t count = 0;
   for (size_t i = 0; i < value.n_rows; i++)
   {
@@ -52,27 +50,22 @@ void SelectBestFeature(const arma::Mat<T>& input,
       count++;
     }
   }
-  // Now selecting those features which has high variance
+  // Now selecting features with high variance.
   output.resize(count, input.n_cols);
   count = 0;
-  bool flag = false;
   for (size_t i = 0; i < value.n_rows; i++)
   {
-    flag = false;
-    for (size_t j = 0; j < input.n_cols; j++)
+    if (value(i, 0) > threshold)
     {
-      if (value(i, 0) > threshold)
+      for (size_t j = 0; j < input.n_cols; j++)
       {
         output(count, j) = input(i, j);
-        flag = true;
       }
-    }
-    if (flag == true)
-    {
       count++;
     }
   }
 }
+
 } // namespace data
 } // namespace mlpack
 

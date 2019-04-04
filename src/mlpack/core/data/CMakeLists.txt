@@ -25,7 +25,7 @@ set(SOURCES
   imputer.hpp
   binarize.hpp
   feature_selection.hpp
-  feature_selection_imp.hpp
+  feature_selection_impl.hpp
 )
 
 # add directory name to sources
