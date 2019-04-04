@@ -55,20 +55,14 @@ void SelectBestFeature(const arma::Mat<T>& input,
   // Now selecting those features which has high variance
   output.resize(count, input.n_cols);
   count = 0;
-  bool flag = false;
   for (size_t i = 0; i < value.n_rows; i++)
   {
-    flag = false;
-    for (size_t j = 0; j < input.n_cols; j++)
+    if (value(i, 0) > threshold)
     {
-      if (value(i, 0) > threshold)
+      for (size_t j = 0; j < input.n_cols; j++)
       {
         output(count, j) = input(i, j);
-        flag = true;
       }
-    }
-    if (flag == true)
-    {
       count++;
     }
   }
