@@ -7,12 +7,16 @@ set(SOURCES
   f1.hpp
   f1_impl.hpp
   facilities.hpp
+  mae.hpp
+  mae_impl.hpp
   mse.hpp
   mse_impl.hpp
   precision.hpp
   precision_impl.hpp
   recall.hpp
   recall_impl.hpp
+  rmse.hpp
+  rmse_impl.hpp
 )
 
 # Add directory name to sources.
