@@ -17,13 +17,6 @@
 namespace mlpack {
 namespace rl {
 
-  /**
-    * @tparam EnvironmentType The type of the reinforcement learning task.
-    * @tparam NetworkType The type of the network model.
-    * @tparam UpdaterType The type of the optimizer.
-    * @tparam PolicyType The type of the behavior policy.
-    * @tparam ReplayType The type of the replay.
-    */
 template <
   typename EnvironmentType,
   typename NetworkType,
@@ -52,7 +45,7 @@ QLearning<
     totalSteps(0),
     deterministic(false)
 {
-  // Set up q learning network.
+  // Set up q-learning network.
   if (learningNetwork.Parameters().is_empty())
     learningNetwork.ResetParameters();
   this->updater.Initialize(learningNetwork.Parameters().n_rows,
@@ -75,7 +68,7 @@ arma::Col<size_t> QLearning<
   ReplayType
 >::BestAction(const arma::mat& actionValues)
 {
-  // Take best possible action at a particular instance
+  // Take best possible action at a particular instance.
   arma::Col<size_t> bestActions(actionValues.n_cols);
   arma::rowvec maxActionValues = arma::max(actionValues, 0);
   for (size_t i = 0; i < actionValues.n_cols; ++i)
