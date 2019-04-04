@@ -40,6 +40,21 @@ void AssertSizes(const DataType& data,
   }
 }
 
+template<typename DataType, typename ResponsesType>
+void AssertColumnSizes(const DataType& data,
+                       const ResponsesType& responses,
+                       const std::string& callerDescription)
+{
+  if (data.n_cols != responses.n_cols)
+  {
+    std::ostringstream oss;
+    oss << callerDescription <<": number of points (" << data.n_cols << ") "
+        << "does not match number of responses (" << responses.n_cols << ")!"
+        << std::endl;
+    throw std::invalid_argument(oss.str());
+  }
+}
+
 } // namespace cv
 } // namespace mlpack
 
