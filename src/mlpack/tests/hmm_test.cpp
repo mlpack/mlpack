@@ -1352,12 +1352,12 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMGenerateTest)
 }
 
 /**
- * Make sure the unlabeled 1-state training works reasonably given a sigle
+ * Make sure the unlabeled 1-state training works reasonably given a single
  * distribution with diagonal covariance.
  */
 BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianOneStateTrainingTest)
 {
-  // Create a gaussian distribution with diagonal covariance.
+  // Create a Gaussian distribution with diagonal covariance.
   DiagonalGaussianDistribution d("2.05 3.45", "0.89 1.05");
 
   // Make a sequence of observations.
@@ -1462,7 +1462,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianUnlabeledTrainingTest)
 }
 
 /**
- * Make sure the labeled training works reasonably given a sigle distribution
+ * Make sure the labeled training works reasonably given a single distribution
  * with diagonal covariance.
  */
 BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianLabeledTrainingTest)
@@ -1796,7 +1796,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMLoadSaveTest)
 
   for (size_t j = 0; j < hmm.Emission().size(); j++)
   {
-    // Check the number of gaussians.
+    // Check the number of Gaussians.
     BOOST_REQUIRE_EQUAL(hmm.Emission()[j].Gaussians(),
                         hmm2.Emission()[j].Gaussians());
 

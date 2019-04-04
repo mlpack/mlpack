@@ -79,7 +79,7 @@ class DiagonalGMM
   //! The dimensionality of the model.
   size_t dimensionality;
 
-  //! Vector of Gaussians
+  //! Vector of Gaussians.
   std::vector<distribution::DiagonalGaussianDistribution> dists;
 
   //! Vector of a priori weights for each Gaussian.
@@ -128,7 +128,7 @@ class DiagonalGMM
   //! Copy operator for DiagonalGMMs.
   DiagonalGMM& operator=(const DiagonalGMM& other);
 
-  //! Return the number of gaussians in the model.
+  //! Return the number of Gaussians in the model.
   size_t Gaussians() const { return gaussians; }
   //! Return the dimensionality of the model.
   size_t Dimensionality() const { return dimensionality; }
@@ -136,16 +136,17 @@ class DiagonalGMM
   /**
    * Return a const reference to a component distribution.
    *
-   * @param i index of component.
+   * @param i Index of component.
    */
   const distribution::DiagonalGaussianDistribution& Component(size_t i) const
   {
     return dists[i];
   }
+
   /**
    * Return a reference to a component distribution.
    *
-   * @param i index of component.
+   * @param i Index of component.
    */
   distribution::DiagonalGaussianDistribution& Component(size_t i)
   {
@@ -261,6 +262,7 @@ class DiagonalGMM
                const size_t trials = 1,
                const bool useExistingModel = false,
                FittingType fitter = FittingType());
+
   /**
    * Classify the given observations as being from an individual component in
    * this DiagonalGMM. The resultant classifications are stored in the 'labels'
@@ -289,8 +291,8 @@ class DiagonalGMM
 
  private:
   /**
-   * This function computes the loglikelihood of the given model. This function
-   * is used by DiagonalGMM::Train().
+   * This function computes the log-likelihood of the given model and is used
+   * by DiagonalGMM::Train().
    *
    * @param observations Matrix of observations.
    * @param means Means of the given mixture model.

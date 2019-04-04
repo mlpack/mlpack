@@ -75,8 +75,10 @@ class PositiveDefiniteConstraint
     // any particular reason).
     double maxEigval = -DBL_MAX;
     for (size_t i = 0; i < diagCovariance.n_elem; ++i)
+    {
       if (diagCovariance[i] > maxEigval)
         maxEigval = diagCovariance[i];
+    }
 
     for (size_t i = 0; i < diagCovariance.n_elem; ++i)
     {

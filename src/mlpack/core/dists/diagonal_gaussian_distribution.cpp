@@ -91,7 +91,6 @@ void DiagonalGaussianDistribution::Train(const arma::mat& observations)
   // Finish estimating the covariance by normalizing, with the (1 / (n - 1))
   // to make the estimator unbiased.
   covariance /= (observations.n_cols - 1);
-
   invCov = 1 / covariance;
   logDetCov = arma::accu(log(covariance));
 }

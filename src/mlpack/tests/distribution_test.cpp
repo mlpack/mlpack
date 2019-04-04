@@ -1347,7 +1347,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionTrainTest)
   arma::vec actualMean = arma::mean(observations, 1);
   arma::mat actualCov = arma::ccov(observations);
 
-  // Estimate the parameter.
+  // Estimate the parameters.
   d.Train(observations);
 
   // Check that the estimated parameters are right.
@@ -1374,7 +1374,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGaussianUnbiasedEstimatorTest)
 
   DiagonalGaussianDistribution d;
 
-  // Estimate
+  // Estimate the parameters.
   d.Train(observations, probs);
 
   BOOST_REQUIRE_CLOSE(d.Mean()(0), 4.5, 1e-5);
@@ -1408,7 +1408,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGaussianWeightedParametersReductionTest)
   DiagonalGaussianDistribution d1;
   DiagonalGaussianDistribution d2;
 
-  // Estimate
+  // Estimate the parameters.
   d1.Train(obs);
   d2.Train(obs, probs);
 

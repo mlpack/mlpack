@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE(HMMTrainGaussianTest)
   Log::Fatal.ignoreInput = false;
 }
 
-// Make sure that the number of gaussians cannot be less than 0.
+// Make sure that the number of Gaussians cannot be less than 0.
 BOOST_AUTO_TEST_CASE(HMMTrainDiagonalGaussianTest)
 {
   std::string inputFileName = "hmm_train_obs.csv";

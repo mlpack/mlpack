@@ -48,10 +48,10 @@ class DiagonalGaussianDistribution
       covariance(arma::ones<arma::vec>(dimension)),
       invCov(arma::ones<arma::vec>(dimension)),
       logDetCov(0)
-  { /* nothing to do. */ }
+  { /* Nothing to do. */ }
 
   /**
-   * Create a Guassian distribution with the given mean and diagonal
+   * Create a Gaussian distribution with the given mean and diagonal
    * covariance.
    * 
    * @param mean Mean of distribution.
