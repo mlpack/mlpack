@@ -43,7 +43,7 @@ void SelectBestFeature(const arma::Mat<T>& input,
   arma::Mat<double> scale = arma::normalise(input);
   // Calculate variance of each feature
   arma::Mat<double> value = arma::var(scale, 0, 1);
-  //count the dimension of new matrix
+  // Count the dimension of new matrix
   size_t count = 0;
   for (size_t i = 0; i < value.n_rows; i++)
   {

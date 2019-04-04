@@ -541,13 +541,13 @@ BOOST_AUTO_TEST_CASE(FeatureSelectionTest)
 
   // Output matirx with less features.
   arma::Mat<double> output;
-  data::SelectBestFeature<double>(matrix,0.009,output);
+  data::SelectBestFeature<double>(matrix, 0.009, output);
   BOOST_REQUIRE_EQUAL(output.n_rows, 2);
   BOOST_REQUIRE_EQUAL(output.n_cols, 4);
   for (size_t i = 0; i < output.n_cols; i++)
   {
     BOOST_REQUIRE_EQUAL(output(0, i), matrix(0, i));
-    BOOST_REQUIRE_EQUAL(output(1, i), matrix(2, i));    
+    BOOST_REQUIRE_EQUAL(output(1, i), matrix(2, i));
   }
 }
 
