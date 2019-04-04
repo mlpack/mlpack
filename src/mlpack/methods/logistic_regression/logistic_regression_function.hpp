@@ -31,8 +31,8 @@ class LogisticRegressionFunction
   /**
    * Creates the LogisticRegressionFunction.
    *
-   * @param predictors X, matrix of data points.
-   * @param responses y, the measured data for each point in X.
+   * @param predictors, the matrix of data points.
+   * @param responses, the measured data for each point in predictors.
    * @param lambda Regularization constant for ridge regression.
    */
   LogisticRegressionFunction(const MatType& predictors,
@@ -42,9 +42,9 @@ class LogisticRegressionFunction
   /**
    * Creates the LogisticRegressionFunction with initialPoint.
    *
-   * @param predictors X, matrix of data points.
-   * @param responses y, the measured data for each point in X.
-   * @param initialPoint from which to start the optimization.
+   * @param predictors, the matrix of data points.
+   * @param responses, the measured data for each point in predictors.
+   * @param initialPoint, point from which to start the optimization.
    * @param lambda Regularization constant for ridge regression.
    */
   LogisticRegressionFunction(const MatType& predictors,
