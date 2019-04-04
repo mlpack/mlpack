@@ -35,7 +35,7 @@ class LogisticRegressionFunction
    * @param responses y, the measured data for each point in X.
    * @param lambda Regularization constant for ridge regression.
    */
- LogisticRegressionFunction(const MatType& predictors,
+  LogisticRegressionFunction(const MatType& predictors,
                              const arma::Row<size_t>& responses,
                              const double lambda = 0);
 
