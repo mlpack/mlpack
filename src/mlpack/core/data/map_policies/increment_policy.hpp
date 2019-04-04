@@ -22,7 +22,7 @@ namespace data {
 /**
  * IncrementPolicy is used as a helper class for DatasetMapper. It tells how the
  * strings should be mapped. Purpose of this policy is to map all dimension if
- * one if the variables in a dimension turns out to be a categorical variable.
+ * one of the variables in a dimension turns out to be a categorical variable.
  * IncrementPolicy maps strings to incrementing unsigned integers (size_t).
  * The first input to be mapped will be mapped to 0, the next to 1 and so on.
  *

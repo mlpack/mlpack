@@ -90,9 +90,11 @@ class GaussianDistribution
    */
   void Probability(const arma::mat& x, arma::vec& probabilities) const
   {
-    arma::vec logProbabilities;
-    LogProbability(x, logProbabilities);
-    probabilities = arma::exp(logProbabilities);
+    probabilities.set_size(x.n_cols);
+    for (size_t i = 0; i < x.n_cols; i++)
+    {
+      probabilities(i) = Probability(x.unsafe_col(i));
+    }
   }
 
   /**
@@ -106,20 +108,19 @@ class GaussianDistribution
   void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const
   {
     // Column i of 'diffs' is the difference between x.col(i) and the mean.
-    arma::mat diffs = x - (mean * arma::ones<arma::rowvec>(x.n_cols));
-
-    // Now, we only want to calculate the diagonal elements of (diffs' * cov^-1 *
-    // diffs).  We just don't need any of the other elements.  We can calculate
-    // the right hand part of the equation (instead of the left side) so that
-    // later we are referencing columns, not rows -- that is faster.
+    arma::mat diffs = x;
+    diffs.each_col() -= mean;
+    // Now, we only want to calculate the diagonal elements of (diffs' * cov^-1
+    // * diffs).  We just don't need any of the other elements.  We can
+    // calculate the right hand part of the equation (instead of the left side)
+    // so that later we are referencing columns, not rows -- that is faster.
     const arma::mat rhs = -0.5 * invCov * diffs;
     arma::vec logExponents(diffs.n_cols); // We will now fill this.
     for (size_t i = 0; i < diffs.n_cols; i++)
       logExponents(i) = accu(diffs.unsafe_col(i) % rhs.unsafe_col(i));
 
-    const size_t k = x.n_rows;
-
-    logProbabilities = -0.5 * k * log2pi - 0.5 * logDetCov + logExponents;
+    logProbabilities = -0.5 * x.n_rows * log2pi - 0.5 * logDetCov +
+      logExponents;
   }
 
   /**

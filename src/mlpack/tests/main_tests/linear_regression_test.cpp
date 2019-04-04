@@ -232,7 +232,7 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest2)
 /**
  * Checking that that size and dimensionality of prediction is correct.
  */
-BOOST_AUTO_TEST_CASE(LRPridictionSizeCheck)
+BOOST_AUTO_TEST_CASE(LRPredictionSizeCheck)
 {
   constexpr int N = 10;
   constexpr int D = 3;
