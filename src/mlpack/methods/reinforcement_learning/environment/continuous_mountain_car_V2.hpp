@@ -124,7 +124,7 @@ class ContinuousMountainCarV2
    * @param nextState The next state.
    * @return reward, it's always -1.0.
    */
-  double Sample(const State& state,
+  double Sample(const StateV2& state,
                 const Action& action,
                 State& nextState) const
   {
