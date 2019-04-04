@@ -221,3 +221,4 @@ double QLearning<
 } // namespace mlpack
 
 #endif
+
