@@ -36,7 +36,8 @@ class MSE
   template<typename MLAlgorithm, typename DataType, typename ResponsesType>
   static double Evaluate(MLAlgorithm& model,
                          const DataType& data,
-                         const ResponsesType& responses);
+                         const ResponsesType& responses,
+						              const std::string& callerDescription = "MSE::Evaluate()");
 
   /**
    * Information for hyper-parameter tuning code. It indicates that we want
