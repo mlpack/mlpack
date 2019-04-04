@@ -15,6 +15,8 @@
 #include <mlpack/core/cv/metrics/accuracy.hpp>
 #include <mlpack/core/cv/metrics/f1.hpp>
 #include <mlpack/core/cv/metrics/mse.hpp>
+#include <mlpack/core/cv/metrics/mae.hpp>
+#include <mlpack/core/cv/metrics/rmse.hpp>
 #include <mlpack/core/cv/metrics/precision.hpp>
 #include <mlpack/core/cv/metrics/recall.hpp>
 #include <mlpack/core/cv/simple_cv.hpp>
@@ -142,6 +144,48 @@ BOOST_AUTO_TEST_CASE(MSETest)
   double expectedMSE = (0 * 0 + 1 * 1 + 2 * 2) / 3.0;
 
   BOOST_REQUIRE_CLOSE(MSE::Evaluate(lr, data, responses), expectedMSE, 1e-5);
+}
+
+/**
+ * Test the mean absolute error.
+ */
+BOOST_AUTO_TEST_CASE(MAETest)
+{
+  // Making two points that define the linear function f(x) = x - 1
+  arma::mat trainingData("0 1");
+  arma::rowvec trainingResponses("-1 0");
+
+  LinearRegression lr(trainingData, trainingResponses);
+
+  // Making three responses that differ from the correct ones by 0, 1, and 2
+  // respectively
+  arma::mat data("2 3 4");
+  arma::rowvec responses("1 3 5");
+
+  double expectedMAE = (0 + 1 + 2) / 3.0;
+
+  BOOST_REQUIRE_CLOSE(MAE::Evaluate(lr, data, responses), expectedMAE, 1e-5);
+}
+
+/**
+ * Test the root mean squared error.
+ */
+BOOST_AUTO_TEST_CASE(RMSETest)
+{
+  // Making two points that define the linear function f(x) = x - 1
+  arma::mat trainingData("0 1");
+  arma::rowvec trainingResponses("-1 0");
+
+  LinearRegression lr(trainingData, trainingResponses);
+
+  // Making three responses that differ from the correct ones by 0, 1, and 2
+  // respectively
+  arma::mat data("2 3 4");
+  arma::rowvec responses("1 3 5");
+
+  double expectedRMSE = sqrt((0 * 0 + 1 * 1 + 2 * 2) / 3.0);
+
+  BOOST_REQUIRE_CLOSE(RMSE::Evaluate(lr, data, responses), expectedRMSE, 1e-5);
 }
 
 /**
