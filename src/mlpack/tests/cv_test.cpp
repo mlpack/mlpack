@@ -73,10 +73,10 @@ BOOST_AUTO_TEST_CASE(BinaryClassificationMetricsTest)
 
   BOOST_REQUIRE_CLOSE(Recall<Binary>::Evaluate(lr, data, labels), 0.75, 1e-5);
 
-  BOOST_REQUIRE_CLOSE(Specificty<Binary>::Evaluate(lr, data, labels),
+  BOOST_REQUIRE_CLOSE(Specificity<Binary>::Evaluate(lr, data, labels),
                       0.66, 1e-5);
   
-  BOOST_REQUIRE_CLOSE(MCC::Evaluate(lr, data, labels), 0.408, 1e-5);
+  BOOST_REQUIRE_CLOSE(MCC<>::Evaluate(lr, data, labels), 0.408, 1e-5);
 
   double f1 = 2 * 0.6 * 0.75 / (0.6 + 0.75);
   BOOST_REQUIRE_CLOSE(F1<Binary>::Evaluate(lr, data, labels), f1, 1e-5);
