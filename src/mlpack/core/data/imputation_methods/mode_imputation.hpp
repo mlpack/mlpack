@@ -87,7 +87,7 @@ class ModeImputation
     for (size_t i = 0; i < elemsToKeep.size(); ++i)
     {
      bool flag = true;
-     
+
      for (PairType &elems : elemsWithFreq)
      {
       if (elemsToKeep[i] == elems.first)
