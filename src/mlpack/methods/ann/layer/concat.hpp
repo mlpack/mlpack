@@ -61,8 +61,8 @@ class Concat
    * @param model Expose all network modules.
    * @param run Call the Forward/Backward method before the output is merged.
    */
-  Concat(arma::Row<arma::sword> inputSize,
-         const int axis = -1,
+  Concat(arma::Row<size_t> inputSize,
+         const int axis,
          const bool model = false,
          const bool run = true);
 
@@ -208,7 +208,7 @@ class Concat
 
  private:
   //! Parameter which indicates the input size of modules.
-  arma::Row<arma::sword> inputSize;
+  arma::Row<size_t> inputSize;
 
   //! Parameter which indicates the axis of concatenation.
   int axis;

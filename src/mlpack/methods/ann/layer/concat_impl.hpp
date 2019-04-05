@@ -38,7 +38,7 @@ Concat<InputDataType,
        OutputDataType,
        CustomLayers...
       >::Concat(
-      arma::Row<arma::sword> inputSize,
+      arma::Row<size_t> inputSize,
       const int axis,
       const bool model,
       const bool run) :
@@ -48,23 +48,7 @@ Concat<InputDataType,
       run(run)
 {
   parameters.set_size(0, 0);
-  int unknown = 0;
-  if (axis < 0)
-  {
-    for (int i = 0; i < inputSize.n_elem; ++i)
-    {
-      if (inputSize[i] < 0)
-      {
-        Concat::axis = i;
-        unknown++;
-      }
-    }
-    if (unknown > 1)
-    {
-      throw std::logic_error("More than one dimension unknown.");
-    }
-  }
-  Concat::channels = 1;
+  channels = 1;
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -93,7 +77,7 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Forward(
   }
 
   // Parameter to store dimensions(rowSize).
-  int rowSize, oldColSize, newColSize;
+  size_t rowSize, oldColSize, newColSize;
   output = boost::apply_visitor(outputParameterVisitor, network.front());
 
   newColSize = oldColSize = output.n_cols;
@@ -108,7 +92,7 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Forward(
       // Calculate rowSize, newColSize based on the axis
       // of concatenation. Finally concat along cols and
       // reshape to original format i.e. (input, batch_size).
-      int i = std::min(axis + 1, (int) inputSize.n_elem);
+      size_t i = std::min(axis + 1, (int)inputSize.n_elem);
       for (; i < inputSize.n_elem; ++i)
       {
         newColSize *= inputSize[i];
@@ -116,12 +100,12 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Forward(
     }
     else
     {
-      throw std::logic_error("Input Dimensions not specified.");
+      throw std::logic_error("Input dimensions not specified.");
     }
   }
   if (newColSize <= 0)
   {
-      throw std::logic_error("Col Size is zero.");
+      throw std::logic_error("Col size is zero.");
   }
 
   channels = newColSize / oldColSize;
