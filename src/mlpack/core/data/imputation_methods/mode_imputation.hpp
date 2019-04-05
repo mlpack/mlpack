@@ -84,13 +84,10 @@ class ModeImputation
     // with their respective frequency.
     std::vector<PairType> elemsWithFreq;
 
-    // modeCountPair is a PairType that contains the mode
-    // and it's count(number of occurences).
-
     for (size_t i = 0; i < elemsToKeep.size(); ++i)
     {
      bool flag = true;
-
+     
      for (PairType &elems : elemsWithFreq)
      {
       if (elemsToKeep[i] == elems.first)
@@ -109,8 +106,9 @@ class ModeImputation
      }
     }
 
+    // modeCountPair is a PairType that contains the mode
+    // and it's count(number of occurences).
     PairType modeCountPair = elemsWithFreq[0];
-
     bool flag = false;
 
     for (size_t i = 1; i < elemsWithFreq.size(); i++)
