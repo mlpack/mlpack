@@ -50,8 +50,6 @@
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 
-#include "kaggle_utils.hpp"
-
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace mlpack::optimization;
@@ -193,6 +191,50 @@ void updateParams(map<string, double> &origParams, map<string, double> &newParam
     itr2->second = newParams.at(itr->first);
   }
   //printMap(origParams);
+}
+
+/**
+ * @author Eugene Freyman
+ * Returns labels bases on predicted probability (or log of probability)
+ * of classes.
+ * @param predOut matrix contains probabilities (or log of probability) of
+ * classes. Each row corresponds to a certain class, each column corresponds
+ * to a data point.
+ * @return a row vector of data point's classes. The classes starts from 1 to
+ * the number of rows in input matrix.
+ */
+arma::Row<size_t> getLabels(const arma::mat& predOut)
+{
+  arma::Row<size_t> pred(predOut.n_cols);
+
+  // Class of a j-th data point is chosen to be the one with maximum value
+  // in j-th column plus 1 (since column's elements are numbered from 0).
+  for (size_t j = 0; j < predOut.n_cols; ++j)
+  {
+    pred(j) = arma::as_scalar(arma::find(
+        arma::max(predOut.col(j)) == predOut.col(j), 1)) + 1;
+  }
+
+  return pred;
+}
+
+/**
+ * @author Eugene Freyman
+ * Returns the accuracy (percentage of correct answers).
+ * @param predLabels predicted labels of data points.
+ * @param realY real labels (they are double because we usually read them from
+ * CSV file that contain many other double values).
+ * @return percentage of correct answers.
+ */
+double accuracy(arma::Row<size_t> predLabels, const arma::mat& realY)
+{
+  // Calculating how many predicted classes are coincide with real labels.
+  size_t success = 0;
+  for (size_t j = 0; j < realY.n_cols; j++) 
+    success += predLabels(j) == std::round(realY(j));
+
+  // Calculating percentage of correctly classified data points.
+  return (double)success / (double)realY.n_cols * 100.0;
 }
 
 /**
@@ -1072,7 +1114,7 @@ boost::property_tree::ptree loadProperties(string fileName, Dataset& dataset,
 int main()
 {
   //arma::mat trainX, trainY;
-  string fileName = "network4.json";
+  string fileName = "network3.json";
   arma::mat dataset2;
   data::Load("train.csv", dataset2, true);
   cout << "Data loaded" << "\n\n";
