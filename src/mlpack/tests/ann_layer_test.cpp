@@ -1040,10 +1040,10 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
 BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
 {
   arma::mat output, input, outputA, outputB;
-  int inputWidth = 4, inputHeight = 4, inputChannel = 2;
-  int outputWidth, outputHeight, outputChannel = 2;
-  int kW = 3, kH = 3;
-  int batch = 1;
+  size_t inputWidth = 4, inputHeight = 4, inputChannel = 2;
+  size_t outputWidth, outputHeight, outputChannel = 2;
+  size_t kW = 3, kH = 3;
+  size_t batch = 1;
 
   // Using Convolution<> layer as inout to Concat<> layer.
   // Compute the output shape of convolution layer.
