@@ -246,6 +246,7 @@ BOOST_AUTO_TEST_CASE(TrainTreeTest)
   BOOST_REQUIRE_EQUAL(neighbors.n_cols, baselineNeighbors.n_cols);
   BOOST_REQUIRE_EQUAL(distances.n_rows, baselineDistances.n_rows);
   BOOST_REQUIRE_EQUAL(distances.n_cols, baselineDistances.n_cols);
+  BOOST_REQUIRE_EQUAL(oldFromNewReferences.size(), distances.n_rows);
 
   // We have to unmap the results.
   arma::mat tmpDistances(distances.n_rows, distances.n_cols);
@@ -1100,7 +1101,7 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
   models[26] = KNNModel(KNNModel::TreeTypes::OCTREE, true);
   models[27] = KNNModel(KNNModel::TreeTypes::OCTREE, false);
 
-  for (size_t j = 0; j < 2; ++j)
+  for (size_t j = 0; j <= 2; ++j)
   {
     // Get a baseline.
     KNN knn(referenceData);
@@ -1183,7 +1184,7 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
   models[26] = KNNModel(KNNModel::TreeTypes::OCTREE, true);
   models[27] = KNNModel(KNNModel::TreeTypes::OCTREE, false);
 
-  for (size_t j = 0; j < 2; ++j)
+  for (size_t j = 0; j <= 2; ++j)
   {
     // Get a baseline.
     KNN knn(referenceData);
