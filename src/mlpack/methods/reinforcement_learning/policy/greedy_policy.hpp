@@ -48,7 +48,7 @@ class GreedyPolicy
   GreedyPolicy(const double initialEpsilon,
                const size_t annealInterval,
                const double minEpsilon,
-               const double decayRate) :
+               const double decayRate = 1.0) :
       epsilon(initialEpsilon),
       minEpsilon(minEpsilon),
       delta(((initialEpsilon - minEpsilon) * decayRate) / annealInterval)
