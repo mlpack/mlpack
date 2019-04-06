@@ -70,8 +70,7 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
   this->discriminator.predictors = arma::mat(this->predictors.memptr(),
       this->predictors.n_rows, this->predictors.n_cols, false, false);
 
-  responses.set_size(1, predictors.n_cols + batchSize);
-  responses.ones();
+  responses.ones(1, predictors.n_cols + batchSize);
   responses.cols(predictors.n_cols,
       predictors.n_cols + batchSize - 1) = arma::zeros(1, batchSize);
   this->discriminator.responses = arma::mat(this->responses.memptr(),
@@ -369,7 +368,7 @@ template<
 >
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::Shuffle()
 {
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
+  const arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
       numFunctions - 1, numFunctions));
   predictors.cols(0, numFunctions - 1) = predictors.cols(ordering);
 }
