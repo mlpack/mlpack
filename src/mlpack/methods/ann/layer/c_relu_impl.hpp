@@ -40,7 +40,7 @@ void CReLU<InputDataType, OutputDataType>::Forward(
   InputType inptemp = -1 * input;
   Fn(inptemp, temp2);
   // Concat Neg and Pos Relu
-  output = arma::join_cols(temp1,temp2);
+  output = arma::join_cols(temp1, temp2);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -49,10 +49,11 @@ void CReLU<InputDataType, OutputDataType>::Backward(
     const DataType&& input, DataType&& gy, DataType&& g)
 {
   DataType derivative;
-  Deriv(input,derivative);
+  Deriv(input, derivative);
   DataType temp;
   temp = gy % derivative;
-  g= temp.rows(0, (input.n_rows / 2 - 1)) - temp.rows(input.n_rows / 2, (input.n_rows - 1));
+  g = temp.rows(0, (input.n_rows / 2 - 1)) - temp.rows(input.n_rows / 2,
+                                            (input.n_rows - 1));
 
   /**
   * Below implementation was a different varient but couldn't manage to implement it.
