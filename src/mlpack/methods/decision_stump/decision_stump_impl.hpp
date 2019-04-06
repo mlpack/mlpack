@@ -150,7 +150,8 @@ void DecisionStump<MatType>::Classify(const MatType& test,
                                       arma::Row<size_t>& predictedLabels)
 {
   predictedLabels.set_size(test.n_cols);
-  for (size_t i = 0; i < test.n_cols; i++)
+  #pragma omp parallel for
+  for (omp_size_t i = 0; i < test.n_cols; i++)
   {
     // Determine which bin the test point falls into.
     // Assume first that it falls into the first bin, then proceed through the
