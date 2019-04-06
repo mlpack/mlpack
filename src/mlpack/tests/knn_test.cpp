@@ -246,12 +246,12 @@ BOOST_AUTO_TEST_CASE(TrainTreeTest)
   BOOST_REQUIRE_EQUAL(neighbors.n_cols, baselineNeighbors.n_cols);
   BOOST_REQUIRE_EQUAL(distances.n_rows, baselineDistances.n_rows);
   BOOST_REQUIRE_EQUAL(distances.n_cols, baselineDistances.n_cols);
-  BOOST_REQUIRE_EQUAL(oldFromNewReferences.size(), distances.n_rows);
 
   // We have to unmap the results.
   arma::mat tmpDistances(distances.n_rows, distances.n_cols);
   arma::Mat<size_t> tmpNeighbors(neighbors.n_rows, neighbors.n_cols);
-  for (size_t i = 0; i < distances.n_cols; ++i)
+  for (size_t i = 0; i < distances.n_cols && i < oldFromNewReferences.size();
+      ++i)
   {
     tmpDistances.col(oldFromNewReferences[i]) = distances.col(i);
     for (size_t j = 0; j < distances.n_rows; ++j)
