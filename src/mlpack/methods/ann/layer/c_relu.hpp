@@ -140,7 +140,6 @@ class CReLU
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-
 }; // class CReLU
 
 } // namespace ann
