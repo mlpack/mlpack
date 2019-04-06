@@ -54,6 +54,8 @@ void Split(const arma::Mat<T>& input,
            arma::Row<U>& testLabel,
            const double testRatio)
 {
+  Timer::Start("splitting_data");
+
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
   const size_t trainSize = input.n_cols - testSize;
   trainData.set_size(input.n_rows, trainSize);
@@ -64,18 +66,20 @@ void Split(const arma::Mat<T>& input,
   const arma::Col<size_t> order =
       arma::shuffle(arma::linspace<arma::Col<size_t>>(0, input.n_cols - 1,
                                                       input.n_cols));
-
-  for (size_t i = 0; i != trainSize; ++i)
+  #pragma omp parallel for
+  for (omp_size_t i = 0; i < trainSize; ++i)
   {
     trainData.col(i) = input.col(order[i]);
     trainLabel(i) = inputLabel(order[i]);
   }
-
-  for (size_t i = 0; i != testSize; ++i)
+  #pragma omp parallel for
+  for (omp_size_t i = 0; i < testSize; ++i)
   {
     testData.col(i) = input.col(order[i + trainSize]);
     testLabel(i) = inputLabel(order[i + trainSize]);
   }
+
+  Timer::Stop("splitting_data");
 }
 
 /**
@@ -105,6 +109,8 @@ void Split(const arma::Mat<T>& input,
            arma::Mat<T>& testData,
            const double testRatio)
 {
+  Timer::Start("splitting_data");
+
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
   const size_t trainSize = input.n_cols - testSize;
   trainData.set_size(input.n_rows, trainSize);
@@ -113,15 +119,18 @@ void Split(const arma::Mat<T>& input,
   const arma::Col<size_t> order =
       arma::shuffle(arma::linspace<arma::Col<size_t>>(0, input.n_cols -1,
                                                       input.n_cols));
-
-  for (size_t i = 0; i != trainSize; ++i)
+  #pragma omp parallel for
+  for (omp_size_t i = 0; i < trainSize; ++i)
   {
     trainData.col(i) = input.col(order[i]);
   }
-  for (size_t i = 0; i != testSize; ++i)
+  #pragma omp parallel for
+  for (omp_size_t i = 0; i < testSize; ++i)
   {
     testData.col(i) = input.col(order[i + trainSize]);
   }
+
+  Timer::Stop("splitting_data");
 }
 
 /**
