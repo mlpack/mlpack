@@ -24,7 +24,6 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 using namespace mlpack::bound;
 
-
 BOOST_AUTO_TEST_SUITE(KNNTest);
 
 /**

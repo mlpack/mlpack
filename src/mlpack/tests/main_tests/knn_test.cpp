@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(KNNEqualDimensionTest)
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
 
   // Now we specify an invalid dimension(2) for the query data.
-  // Note that the number of points  in query and referenceDatae matrices
+  // Note that the number of points in queryData and referenceData matrices
   // are allowed to be different
   arma::mat queryData;
   queryData.randu(2, 90); // 90 points in 2 dimensions.
@@ -86,14 +86,6 @@ BOOST_AUTO_TEST_CASE(KNNInvalidKTest)
 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["k"].wasPassed = false;
-
-  // SetInputParam("reference", referenceData);
-  // SetInputParam("k", (int) 0); // Invalid. // Gives memory access violation
-
-  // BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
-
-  // CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  // CLI::GetSingleton().Parmaeters()["k"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) -1); // Invalid.
@@ -516,10 +508,10 @@ BOOST_AUTO_TEST_CASE(KNNTrueNeighborDistanceTest)
   BOOST_REQUIRE_NO_THROW(mlpackMain());
 
   // True output matrices have incorrect shape.
-  arma::Mat<size_t> dummy_neighbors;
-  arma::mat dummy_distances;
-  dummy_neighbors.randu(100, 20);
-  dummy_distances.randu(100, 20);
+  arma::Mat<size_t> dummyNeighbors;
+  arma::mat dummyDistances;
+  dummyNeighbors.randu(100, 20);
+  dummyDistances.randu(100, 20);
 
   // bindings::tests::CleanMemory();
 
@@ -528,8 +520,8 @@ BOOST_AUTO_TEST_CASE(KNNTrueNeighborDistanceTest)
   CLI::GetSingleton().Parameters()["true_distances"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
-  SetInputParam("true_neighbors", std::move(dummy_neighbors));
-  SetInputParam("true_distances", std::move(dummy_distances));
+  SetInputParam("true_neighbors", std::move(dummyNeighbors));
+  SetInputParam("true_distances", std::move(dummyDistances));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -554,8 +546,8 @@ BOOST_AUTO_TEST_CASE(KNNAllAlgorithmsTest)
   // Keep some k <= number of reference points same over all.
   SetInputParam("k", (int) 10);
 
-  arma::Mat<size_t> neighbors_compare;
-  arma::mat distances_compare;
+  arma::Mat<size_t> neighborsCompare;
+  arma::mat distancesCompare;
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
@@ -572,17 +564,17 @@ BOOST_AUTO_TEST_CASE(KNNAllAlgorithmsTest)
 
     if (i == 0)
     {
-      neighbors_compare = std::move(CLI::GetParam<arma::Mat<size_t>>
+      neighborsCompare = std::move(CLI::GetParam<arma::Mat<size_t>>
         ("neighbors"));
-      distances_compare = std::move(CLI::GetParam<arma::mat>("distances"));
+      distancesCompare = std::move(CLI::GetParam<arma::mat>("distances"));
     }
     else
     {
       neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
       distances = std::move(CLI::GetParam<arma::mat>("distances"));
 
-      CheckMatrices(neighbors_compare, neighbors);
-      CheckMatrices(distances_compare, distances);
+      CheckMatrices(neighborsCompare, neighbors);
+      CheckMatrices(distancesCompare, distances);
     }
 
     // Reset passed parameters.
@@ -612,8 +604,8 @@ BOOST_AUTO_TEST_CASE(KNNAllTreeTypesTest)
   // Keep some k <= number of reference points same over all.
   SetInputParam("k", (int) 10);
 
-  arma::Mat<size_t> neighbors_compare;
-  arma::mat distances_compare;
+  arma::Mat<size_t> neighborsCompare;
+  arma::mat distancesCompare;
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
@@ -630,17 +622,17 @@ BOOST_AUTO_TEST_CASE(KNNAllTreeTypesTest)
 
     if (i == 0)
     {
-      neighbors_compare = std::move(CLI::GetParam<arma::Mat<size_t>>
+      neighborsCompare = std::move(CLI::GetParam<arma::Mat<size_t>>
         ("neighbors"));
-      distances_compare = std::move(CLI::GetParam<arma::mat>("distances"));
+      distancesCompare = std::move(CLI::GetParam<arma::mat>("distances"));
     }
     else
     {
       neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
       distances = std::move(CLI::GetParam<arma::mat>("distances"));
 
-      CheckMatrices(neighbors_compare, neighbors);
-      CheckMatrices(distances_compare, distances);
+      CheckMatrices(neighborsCompare, neighbors);
+      CheckMatrices(distancesCompare, distances);
     }
 
     // Reset passed parameters.

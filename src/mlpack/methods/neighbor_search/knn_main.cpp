@@ -291,7 +291,7 @@ static void mlpackMain()
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
       if (queryData.n_rows != knn->Dataset().n_rows)
       {
-        Log::Fatal << "Query has invalid dimensions (" << queryData.n_rows <<
+        Log::Fatal << "Query has invalid dimensions(" << queryData.n_rows <<
             ") whereas it should be " << knn->Dataset().n_rows << endl;
       }
     }

@@ -535,7 +535,7 @@ BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
     if (i == 0)
     {
       neighbors_compare = std::move
-        (CLI::GetParam<arma::Mat<size_t>>("neighbors"));
+          (CLI::GetParam<arma::Mat<size_t>>("neighbors"));
       distances_compare = std::move(CLI::GetParam<arma::mat>("distances"));
     }
     else
@@ -592,7 +592,7 @@ BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
     if (i == 0)
     {
       neighbors_compare = std::move(CLI::GetParam<arma::Mat<size_t>>
-        ("neighbors"));
+          ("neighbors"));
       distances_compare = std::move(CLI::GetParam<arma::mat>("distances"));
     }
     else
