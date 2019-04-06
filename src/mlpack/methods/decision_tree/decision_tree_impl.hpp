@@ -12,6 +12,8 @@
 #ifndef MLPACK_METHODS_DECISION_TREE_DECISION_TREE_IMPL_HPP
 #define MLPACK_METHODS_DECISION_TREE_DECISION_TREE_IMPL_HPP
 
+#include "decision_tree.hpp"
+
 namespace mlpack {
 namespace tree {
 
@@ -121,6 +123,48 @@ DecisionTree<FitnessFunction,
 
 //! Construct and train with weights.
 template<typename FitnessFunction,
+        template<typename> class NumericSplitType,
+        template<typename> class CategoricalSplitType,
+        typename DimensionSelectionType,
+        typename ElemType,
+        bool NoRecursion>
+template<typename MatType, typename LabelsType, typename WeightsType>
+DecisionTree<FitnessFunction,
+        NumericSplitType,
+        CategoricalSplitType,
+        DimensionSelectionType,
+        ElemType,
+        NoRecursion>::DecisionTree(const DecisionTree& other,
+                                   MatType data,
+                                   const data::DatasetInfo& datasetInfo,
+                                   LabelsType labels,
+                                   const size_t numClasses,
+                                   WeightsType weights,
+                                   const size_t minimumLeafSize,
+                                   const double minimumGainSplit,
+                                   const std::enable_if_t<
+                                           arma::is_arma_type<
+                                                   typename std::remove_reference<
+                                                           WeightsType>::type>::value>*):
+        NumericAuxiliarySplitInfo(other),
+        CategoricalAuxiliarySplitInfo(other)
+{
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueWeightsType = typename std::decay<WeightsType>::type;
+
+  // Copy or move data.
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+  TrueWeightsType tmpWeights(std::move(weights));
+
+  // Pass off work to the weighted Train() method.
+  Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
+              tmpWeights, minimumLeafSize, minimumGainSplit);
+}
+
+//! Construct and train with weights.
+template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
@@ -155,6 +199,47 @@ DecisionTree<FitnessFunction,
   // Pass off work to the weighted Train() method.
   Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, tmpWeights,
       minimumLeafSize, minimumGainSplit);
+}
+
+//! Construct and train with weights.
+template<typename FitnessFunction,
+        template<typename> class NumericSplitType,
+        template<typename> class CategoricalSplitType,
+        typename DimensionSelectionType,
+        typename ElemType,
+        bool NoRecursion>
+template<typename MatType, typename LabelsType, typename WeightsType>
+DecisionTree<FitnessFunction,
+        NumericSplitType,
+        CategoricalSplitType,
+        DimensionSelectionType,
+        ElemType,
+        NoRecursion>::DecisionTree(const DecisionTree& other,
+                                   MatType data,
+                                   LabelsType labels,
+                                   const size_t numClasses,
+                                   WeightsType weights,
+                                   const size_t minimumLeafSize,
+                                   const double minimumGainSplit,
+                                   const std::enable_if_t<
+                                           arma::is_arma_type<
+                                                   typename std::remove_reference<
+                                                           WeightsType>::type>::value>*):
+        NumericAuxiliarySplitInfo(other),
+        CategoricalAuxiliarySplitInfo(other)  // other info does need to copy
+{
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueWeightsType = typename std::decay<WeightsType>::type;
+
+  // Copy or move data.
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+  TrueWeightsType tmpWeights(std::move(weights));
+
+  // Pass off work to the weighted Train() method.
+  Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, tmpWeights,
+              minimumLeafSize, minimumGainSplit);
 }
 
 //! Construct, don't train.
