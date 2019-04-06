@@ -29,7 +29,7 @@ to build mlpack on Windows, see \ref build_windows (alternatively, you can read
 is based on older versions).
 
 You can download the latest mlpack release from here:
-<a href="http://www.mlpack.org/files/mlpack-3.0.4.tar.gz">mlpack-3.0.4</a>
+<a href="https://www.mlpack.org/files/mlpack-3.0.4.tar.gz">mlpack-3.0.4</a>
 
 @section build_simple Simple Linux build instructions
 
@@ -37,7 +37,7 @@ Assuming all dependencies are installed in the system, you can run the commands
 below directly to build and install mlpack.
 
 @code
-$ wget http://www.mlpack.org/files/mlpack-3.0.4.tar.gz
+$ wget https://www.mlpack.org/files/mlpack-3.0.4.tar.gz
 $ tar -xvzpf mlpack-3.0.4.tar.gz
 $ mkdir mlpack-3.0.4/build && cd mlpack-3.0.4/build
 $ cmake ../
@@ -138,10 +138,18 @@ The full list of options mlpack allows:
        (default ON)
  - BUILD_PYTHON_BINDINGS=(ON/OFF): compile the bindings for Python, if the
        necessary Python libraries are available (default ON except on Windows)
- - BUILD_SHARED_LIBRARIES=(ON/OFF): compile shared libraries as opposed to
+ - MATLAB_BINDINGS=(ON/OFF): Compile MATLAB bindings if MATLAB is found
+       (default OFF)
+ - BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
        static libraries (default ON)
  - TEST_VERBOSE=(ON/OFF): run test cases in \c mlpack_test with verbose output
        (default OFF)
+ - DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
+       (default ON)
+ - BUILD_WITH_COVERAGE=(ON/OFF): Build with support for code coverage tools
+      (gcc only) (default OFF)
+ - BUILD_MARKDOWN_BINDINGS=(ON/OFF): Build Markdown bindings for website
+       documentation (default OFF)
  - MATHJAX=(ON/OFF): use MathJax for generated Doxygen documentation (default
        OFF)
  - FORCE_CXX11=(ON/OFF): assume that the compiler supports C++11 instead of
@@ -152,6 +160,17 @@ The full list of options mlpack allows:
 
 Each option can be specified to CMake with the '-D' flag.  Other tools can also
 be used to configure CMake, but those are not documented here.
+
+In addition, the following directories may be specified, to find include files
+and libraries. These also use the '-D' flag.
+
+ - ARMADILLO_INCLUDE_DIR=(/path/to/armadillo/include/): path to Armadillo headers
+ - ARMADILLO_LIBRARY=(/path/to/armadillo/libarmadillo.so): location of Armadillo
+       library
+ - BOOST_ROOT=(/path/to/boost/): path to root of boost installation
+ - ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory
+       for ensmallen
+ - MATHJAX_ROOT=(/path/to/mathjax): path to root of MathJax installation
 
 @section build_build Building mlpack
 
@@ -194,9 +213,9 @@ If the build fails and you cannot figure out why, register an account on Github
 and submit an issue and the mlpack developers will quickly help you figure it
 out:
 
-http://mlpack.org/
+https://mlpack.org/
 
-http://github.com/mlpack/mlpack
+https://github.com/mlpack/mlpack
 
 Alternately, mlpack help can be found in IRC at \#mlpack on irc.freenode.net.
 

@@ -55,7 +55,7 @@ class DiceLoss
    */
   DiceLoss(const double smooth = 1);
 
-  /*
+  /**
    * Computes the dice loss function.
    *
    * @param input Input data used for evaluating the specified function.

@@ -56,9 +56,8 @@ class EMFit
    *
    * @param maxIterations Maximum number of iterations for EM.
    * @param tolerance Log-likelihood tolerance required for convergence.
-   * @param forcePositive Check for positive-definiteness of each covariance
-   *     matrix at each iteration.
    * @param clusterer Object which will perform the initial clustering.
+   * @param constraint Constraint policy of covariance.
    */
   EMFit(const size_t maxIterations = 300,
         const double tolerance = 1e-10,

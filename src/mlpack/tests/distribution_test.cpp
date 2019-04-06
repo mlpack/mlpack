@@ -2,6 +2,7 @@
  * @file distribution_test.cpp
  * @author Ryan Curtin
  * @author Yannis Mentekidis
+ * @author Rohan Raj
  *
  * Tests for the classes:
  *  * mlpack::distribution::DiscreteDistribution
@@ -191,6 +192,50 @@ BOOST_AUTO_TEST_CASE(MultiDiscreteDistributionTrainProTest)
   BOOST_REQUIRE_CLOSE(d.Probability("0 0 0"), 0.00390625, 1e-5);
   BOOST_REQUIRE_CLOSE(d.Probability("1 0 1"), 0.0078125, 1e-5);
   BOOST_REQUIRE_CLOSE(d.Probability("2 1 0"), 0.015625, 1e-5);
+}
+
+/**
+ * Test the LogProbability() function, for multiple points in the multivariate
+ * Discrete case.
+ */
+BOOST_AUTO_TEST_CASE(DiscreteLogProbabilityTest)
+{
+  // Same case as before.
+  DiscreteDistribution d("5 5");
+
+  arma::mat obs("0 2;"
+                "1 2;");
+
+  arma::vec logProb;
+
+  d.LogProbability(obs, logProb);
+
+  BOOST_REQUIRE_EQUAL(logProb.n_elem, 2);
+
+  BOOST_REQUIRE_CLOSE(logProb(0), -3.2188758248682, 1e-3);
+  BOOST_REQUIRE_CLOSE(logProb(1), -3.2188758248682, 1e-3);
+}
+
+/**
+ * Test the Probability() function, for multiple points in the multivariate
+ * Discrete case.
+ */
+BOOST_AUTO_TEST_CASE(DiscreteProbabilityTest)
+{
+  // Same case as before.
+  DiscreteDistribution d("5 5");
+
+  arma::mat obs("0 2;"
+                "1 2;");
+
+  arma::vec prob;
+
+  d.Probability(obs, prob);
+
+  BOOST_REQUIRE_EQUAL(prob.n_elem, 2);
+
+  BOOST_REQUIRE_CLOSE(prob(0), 0.0400000000000, 1e-3);
+  BOOST_REQUIRE_CLOSE(prob(1), 0.0400000000000, 1e-3);
 }
 
 /*********************************/
@@ -935,17 +980,21 @@ BOOST_AUTO_TEST_CASE(GammaDistributionLogProbabilityTest)
   // Train two 1-dimensional distributions.
   const arma::vec a1("2.0"), b1("0.9"), a2("3.1"), b2("1.4");
   arma::mat x1("2.0"), x2("2.94");
-  arma::vec prob1, prob2;
+  arma::vec logprob1, logprob2;
 
   // Evaluated at wolfram|alpha
   GammaDistribution d1(a1, b1);
-  d1.LogProbability(x1, prob1);
-  BOOST_REQUIRE_CLOSE(prob1(0), std::log(0.267575), 1e-3);
+  d1.LogProbability(x1, logprob1);
+  BOOST_REQUIRE_CLOSE(logprob1(0), std::log(0.267575), 1e-3);
 
   // Evaluated at wolfram|alpha
   GammaDistribution d2(a2, b2);
-  d2.LogProbability(x2, prob2);
-  BOOST_REQUIRE_CLOSE(prob2(0), std::log(0.189043), 1e-3);
+  d2.LogProbability(x2, logprob2);
+  BOOST_REQUIRE_CLOSE(logprob2(0), std::log(0.189043), 1e-3);
+
+  // Check that the overload that returns the log probability for
+  // 1 dimension agrees.
+  BOOST_REQUIRE_CLOSE(logprob2(0), d2.LogProbability(2.94, 0), 1e-5);
 
   // Combine into one 2-dimensional distribution.
   const arma::vec a3("2.0 3.1"), b3("0.9 1.4");
@@ -953,14 +1002,14 @@ BOOST_AUTO_TEST_CASE(GammaDistributionLogProbabilityTest)
   x3
     << 2.0 << 2.94 << arma::endr
     << 2.0 << 2.94;
-  arma::vec prob3;
+  arma::vec logprob3;
 
   // Expect that the 2-dimensional distribution returns the product of the
   // 1-dimensional distributions (evaluated at wolfram|alpha).
   GammaDistribution d3(a3, b3);
-  d3.LogProbability(x3, prob3);
-  BOOST_REQUIRE_CLOSE(prob3(0), std::log(0.04408), 1e-3);
-  BOOST_REQUIRE_CLOSE(prob3(1), std::log(0.026165), 1e-3);
+  d3.LogProbability(x3, logprob3);
+  BOOST_REQUIRE_CLOSE(logprob3(0), std::log(0.04408), 1e-3);
+  BOOST_REQUIRE_CLOSE(logprob3(1), std::log(0.026165), 1e-3);
 }
 
 /**
@@ -1073,6 +1122,58 @@ BOOST_AUTO_TEST_CASE(LaplaceDistributionTest)
   BOOST_REQUIRE_CLOSE(l.Scale(), binaryL.Scale(), 1e-8);
 
   CheckMatrices(l.Mean(), xmlL.Mean(), textL.Mean(), binaryL.Mean());
+}
+
+/**
+ * Laplace Distribution Probability Test.
+ */
+BOOST_AUTO_TEST_CASE(LaplaceDistributionProbabilityTest)
+{
+  LaplaceDistribution l(arma::vec("0.0"), 1.0);
+
+  // Simple case.
+  BOOST_REQUIRE_CLOSE(l.Probability(arma::vec("0.0")),
+    0.500000000000000, 1e-5);
+  BOOST_REQUIRE_CLOSE(l.Probability(arma::vec("1.0")),
+    0.183939720585721, 1e-5);
+
+  arma::mat points = "0.0 1.0;";
+
+  arma::vec probabilities;
+
+  l.Probability(points, probabilities);
+
+  BOOST_REQUIRE_EQUAL(probabilities.n_elem, 2);
+
+  BOOST_REQUIRE_CLOSE(probabilities(0), 0.500000000000000, 1e-5);
+  BOOST_REQUIRE_CLOSE(probabilities(1), 0.183939720585721, 1e-5);
+}
+
+/**
+ * Laplace Distribution Log Probability Test.
+ */
+BOOST_AUTO_TEST_CASE(LaplaceDistributionLogProbabilityTest)
+{
+  LaplaceDistribution l(arma::vec("0.0"), 1.0);
+
+  // Simple case.
+  BOOST_REQUIRE_CLOSE(l.LogProbability(arma::vec("0.0")),
+    -0.693147180559945, 1e-5);
+  BOOST_REQUIRE_CLOSE(l.LogProbability(arma::vec("1.0")),
+    -1.693147180559946, 1e-5);
+
+  arma::mat points = "0.0 1.0;";
+
+  arma::vec logProbabilities;
+
+  l.LogProbability(points, logProbabilities);
+
+  BOOST_REQUIRE_EQUAL(logProbabilities.n_elem, 2);
+
+  BOOST_REQUIRE_CLOSE(logProbabilities(0), -0.693147180559945,
+    1e-5);
+  BOOST_REQUIRE_CLOSE(logProbabilities(1), -1.693147180559946,
+    1e-5);
 }
 
 /**

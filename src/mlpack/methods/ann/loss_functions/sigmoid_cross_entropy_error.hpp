@@ -57,7 +57,7 @@ class SigmoidCrossEntropyError
    */
   SigmoidCrossEntropyError();
 
-  /*
+  /**
    * Computes the Sigmoid CrossEntropy Error functions.
    *
    * @param input Input data used for evaluating the specified function.

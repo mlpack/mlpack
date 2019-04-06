@@ -1,26 +1,27 @@
 /**
- * @file rnn.hpp
- * @author Marcus Edel
+ * @file brnn.hpp
+ * @author Saksham Bansal
  *
- * Definition of the RNN class, which implements recurrent neural networks.
+ * Definition of the BRNN class, which implements bidirectional recurrent
+ * neural networks.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_RNN_HPP
-#define MLPACK_METHODS_ANN_RNN_HPP
+#ifndef MLPACK_METHODS_ANN_BRNN_HPP
+#define MLPACK_METHODS_ANN_BRNN_HPP
 
 #include <mlpack/prereqs.hpp>
 
 #include "visitor/delete_visitor.hpp"
 #include "visitor/delta_visitor.hpp"
+#include "visitor/copy_visitor.hpp"
 #include "visitor/output_parameter_visitor.hpp"
 #include "visitor/reset_visitor.hpp"
 
 #include "init_rules/network_init.hpp"
-
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
@@ -31,26 +32,30 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of a standard recurrent neural network container.
+ * Implementation of a standard bidirectional recurrent neural network container.
  *
  * @tparam OutputLayerType The output layer type used to evaluate the network.
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
  */
 template<
   typename OutputLayerType = NegativeLogLikelihood<>,
+  typename MergeLayerType = Concat<>,
+  typename MergeOutputType = LogSoftMax<>,
   typename InitializationRuleType = RandomInitialization,
   typename... CustomLayers
 >
-class RNN
+class BRNN
 {
  public:
   //! Convenience typedef for the internal model construction.
-  using NetworkType = RNN<OutputLayerType,
-                          InitializationRuleType,
-                          CustomLayers...>;
+  using NetworkType = BRNN<OutputLayerType,
+                           MergeLayerType,
+                           MergeOutputType,
+                           InitializationRuleType,
+                           CustomLayers...>;
 
   /**
-   * Create the RNN object.
+   * Create the BRNN object.
    *
    * Optionally, specify which initialize rule and performance function should
    * be used.
@@ -64,17 +69,16 @@ class RNN
    * @param initializeRule Optional instantiated InitializationRule object
    *        for initializing the network parameter.
    */
-  RNN(const size_t rho,
-      const bool single = false,
-      OutputLayerType outputLayer = OutputLayerType(),
-      InitializationRuleType initializeRule = InitializationRuleType());
-
-  //! Destructor to release allocated memory.
-  ~RNN();
+  BRNN(const size_t rho,
+       const bool single = false,
+       OutputLayerType outputLayer = OutputLayerType(),
+       MergeLayerType mergeLayer = MergeLayerType(),
+       MergeOutputType mergeOutput = MergeOutputType(),
+       InitializationRuleType initializeRule = InitializationRuleType());
 
   /**
-   * Train the recurrent neural network on the given input data using the given
-   * optimizer.
+   * Train the bidirectional recurrent neural network on the given input data
+   * using the given optimizer.
    *
    * This will use the existing model parameters as a starting point for the
    * optimization. If this is not what you want, then you should access the
@@ -94,16 +98,15 @@ class RNN
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
-   * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType>
-  double Train(arma::cube predictors,
-               arma::cube responses,
-               OptimizerType& optimizer);
+  void Train(arma::cube predictors,
+             arma::cube responses,
+             OptimizerType& optimizer);
 
   /**
-   * Train the recurrent neural network on the given input data. By default, the
-   * SGD optimization algorithm is used, but others can be specified
+   * Train the bidirectional recurrent neural network on the given input data.
+   * By default, the SGD optimization algorithm is used, but others can be specified
    * (such as ens::RMSprop).
    *
    * This will use the existing model parameters as a starting point for the
@@ -123,10 +126,9 @@ class RNN
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
-   * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType = ens::StandardSGD>
-  double Train(arma::cube predictors, arma::cube responses);
+  void Train(arma::cube predictors, arma::cube responses);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -152,8 +154,9 @@ class RNN
                const size_t batchSize = 256);
 
   /**
-   * Evaluate the recurrent neural network with the given parameters. This
-   * function is usually called by the optimizer to train the model.
+   * Evaluate the bidirectional recurrent neural network with the given
+   * parameters. This function is usually called by the optimizer to train
+   * the model.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
@@ -169,9 +172,10 @@ class RNN
                   const bool deterministic);
 
   /**
-   * Evaluate the recurrent neural network with the given parameters. This
-   * function is usually called by the optimizer to train the model.  This just
-   * calls the other overload of Evaluate() with deterministic = true.
+   * Evaluate the bidirectional recurrent neural network with the given
+   * parameters. This function is usually called by the optimizer to train
+   * the model.  This just calls the other overload of Evaluate() with
+   * deterministic = true.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
@@ -184,8 +188,10 @@ class RNN
                   const size_t batchSize);
 
   /**
-   * Evaluate the recurrent neural network with the given parameters. This
-   * function is usually called by the optimizer to train the model.
+   * Evaluate the bidirectional recurrent neural network with the given
+   * parameters. This function is usually called by the optimizer to train
+   * the model.  This just calls the other overload of Evaluate()
+   * with deterministic = true.
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
@@ -201,10 +207,10 @@ class RNN
                               const size_t batchSize);
 
   /**
-   * Evaluate the gradient of the recurrent neural network with the given
-   * parameters, and with respect to only one point in the dataset. This is
-   * useful for optimizers such as SGD, which require a separable objective
-   * function.
+   * Evaluate the gradient of the bidirectional recurrent neural network
+   * with the given parameters, and with respect to only one point in
+   * the dataset. This is useful for optimizers such as SGD, which require
+   * a separable objective function.
    *
    * @param parameters Matrix of the model parameters to be optimized.
    * @param begin Index of the starting point to use for objective function
@@ -230,16 +236,16 @@ class RNN
    * @param args The layer parameter.
    */
   template <class LayerType, class... Args>
-  void Add(Args... args) { network.push_back(new LayerType(args...)); }
+  void Add(Args... args);
 
   /*
    * Add a new module to the model.
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
+  void Add(LayerTypes<CustomLayers...> layer);
 
-  //! Return the number of separable functions (the number of predictor points).
+  //! Return the number of separable functions. (number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
 
   //! Return the initial point for the optimization.
@@ -281,47 +287,22 @@ class RNN
  private:
   // Helper functions.
   /**
-   * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
-   * forward probabilities for each module.
-   *
-   * @param input Data sequence to compute probabilities for.
-   */
-  void Forward(arma::mat&& input);
-
-  /**
-   * Reset the state of RNN cells in the network for new input sequence.
-   */
-  void ResetCells();
-
-  /**
-   * The Backward algorithm (part of the Forward-Backward algorithm). Computes
-   * backward pass for module.
-   */
-  void Backward();
-
-  /**
-   * Iterate through all layer modules and update the the gradient using the
-   * layer defined optimizer.
-   */
-  template<typename InputType>
-  void Gradient(InputType&& input);
-
-  /**
    * Reset the module status by setting the current deterministic parameter
    * for all modules that implement the Deterministic function.
    */
   void ResetDeterministic();
-
-  /**
-   * Reset the gradient for all modules that implement the Gradient function.
-   */
-  void ResetGradients(arma::mat& gradient);
 
   //! Number of steps to backpropagate through time (BPTT).
   size_t rho;
 
   //! Instantiated outputlayer used to evaluate the network.
   OutputLayerType outputLayer;
+
+  //! Locally-stored merge Layer
+  LayerTypes<CustomLayers...> mergeLayer;
+
+  //! Locally-stored merge Layer
+  LayerTypes<CustomLayers...> mergeOutput;
 
   //! Instantiated InitializationRule object for initializing the network
   //! parameter.
@@ -341,9 +322,6 @@ class RNN
 
     //! Only predict the last element of the input sequence.
   bool single;
-
-  //! Locally-stored model modules.
-  std::vector<LayerTypes<CustomLayers...> > network;
 
   //! The matrix of data points (predictors).
   arma::cube predictors;
@@ -366,8 +344,11 @@ class RNN
   //! Locally-stored output parameter visitor.
   OutputParameterVisitor outputParameterVisitor;
 
-  //! List of all module parameters for the backward pass (BBTT).
-  std::vector<arma::mat> moduleOutputParameter;
+  //! All output parameters for the backward pass (BBTT) for forward RNN.
+  std::vector<arma::mat> forwardRNNOutputParameter;
+
+  //! All output parameters for the backward pass (BBTT) for backward RNN.
+  std::vector<arma::mat> backwardRNNOutputParameter;
 
   //! Locally-stored weight size visitor.
   WeightSizeVisitor weightSizeVisitor;
@@ -378,36 +359,43 @@ class RNN
   //! Locally-stored delete visitor.
   DeleteVisitor deleteVisitor;
 
+  //! Locally-stored delete visitor.
+  CopyVisitor<CustomLayers...> copyVisitor;
+
   //! The current evaluation mode (training or testing).
   bool deterministic;
 
-  //! The current gradient for the gradient pass.
-  arma::mat currentGradient;
+  //! The current gradient for the gradient pass for forward RNN.
+  arma::mat forwardGradient;
 
-  // The BRN class should have access to internal members.
-  template<
-    typename OutputLayerType1,
-    typename MergeLayerType1,
-    typename MergeOutputType1,
-    typename InitializationRuleType1,
-    typename... CustomLayers1
-  >
-  friend class BRNN;
-}; // class RNN
+  //! The current gradient for the gradient pass for backward RNN.
+  arma::mat backwardGradient;
+
+  //! The total gradient from each gradient pass.
+  arma::mat totalGradient;
+
+  //! Forward RNN
+  RNN<OutputLayerType, InitializationRuleType, CustomLayers...> forwardRNN;
+
+  //! Backward RNN
+  RNN<OutputLayerType, InitializationRuleType, CustomLayers...> backwardRNN;
+}; // class BRNN
 
 } // namespace ann
 } // namespace mlpack
 
-//! Set the serialization version of the RNN class.  Multiple template arguments
-//! makes this ugly...
+//! Set the serialization version of the BRNN class.
 namespace boost {
 namespace serialization {
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
+         typename MergeLayerType,
+         typename MergeOutputType,
          typename... CustomLayer>
 struct version<
-    mlpack::ann::RNN<OutputLayerType, InitializationRuleType, CustomLayer...>>
+    mlpack::ann::BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
+        InitializationRuleType, CustomLayer...>>
 {
   BOOST_STATIC_CONSTANT(int, value = 1);
 };
@@ -416,6 +404,6 @@ struct version<
 } // namespace boost
 
 // Include implementation.
-#include "rnn_impl.hpp"
+#include "brnn_impl.hpp"
 
 #endif
