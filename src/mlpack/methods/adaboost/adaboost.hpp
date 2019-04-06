@@ -30,7 +30,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/perceptron/perceptron.hpp>
-#include <mlpack/methods/decision_stump/decision_stump.hpp>
+#include <mlpack/methods/decision_tree/decision_tree.hpp>
 
 namespace mlpack {
 namespace adaboost {
