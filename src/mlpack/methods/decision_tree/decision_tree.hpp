@@ -15,6 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include "gini_gain.hpp"
+#include "information_gain.hpp"
 #include "best_binary_numeric_split.hpp"
 #include "all_categorical_split.hpp"
 #include "all_dimension_select.hpp"
@@ -123,6 +124,18 @@ class DecisionTree :
                    typename std::remove_reference<WeightsType>::type>::value>*
                     = 0);
 
+  template<typename MatType, typename LabelsType, typename WeightsType>
+  DecisionTree(const DecisionTree& other,
+               MatType data,
+               const data::DatasetInfo& datasetInfo,
+               LabelsType labels,
+               const size_t numClasses,
+               WeightsType weights,
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7,
+               const std::enable_if_t<arma::is_arma_type<
+                       typename std::remove_reference<WeightsType>::type>::value>*
+               = 0);
   /**
    * Construct the decision tree on the given data and labels with weights,
    * assuming that the data is all of the numeric type. Setting minimumLeafSize
@@ -150,6 +163,17 @@ class DecisionTree :
                    typename std::remove_reference<WeightsType>::type>::value>*
                     = 0);
 
+  template<typename MatType, typename LabelsType, typename WeightsType>
+  DecisionTree(const DecisionTree& other,
+               MatType data,
+               LabelsType labels,
+               const size_t numClasses,
+               WeightsType weights,
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7,
+               const std::enable_if_t<arma::is_arma_type<
+                       typename std::remove_reference<WeightsType>::type>::value>*
+               = 0);
 
   /**
    * Construct a decision tree without training it.  It will be a leaf node with
@@ -479,6 +503,7 @@ using DecisionStump = DecisionTree<FitnessFunction,
                                    ElemType,
                                    false>;
 
+typedef DecisionTree<InformationGain, BestBinaryNumericSplit, AllCategoricalSplit, AllDimensionSelect, double, true> ID3DecisionStump;
 } // namespace tree
 } // namespace mlpack
 
