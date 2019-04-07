@@ -56,7 +56,7 @@ void DiagonalGaussianDistribution::LogProbability(
   // the mean.
   arma::mat diffs = observations.each_col() - mean;
 
-  // Calculates log of exponent equation in multivariate gaussian
+  // Calculates log of exponent equation in multivariate Gaussian
   // distribution. We use only diagonal part for faster computation.
   arma::vec logExponents = -0.5 * arma::trans(diffs % diffs) * invCov;
 
