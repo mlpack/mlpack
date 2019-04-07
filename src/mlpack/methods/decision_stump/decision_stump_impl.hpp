@@ -108,7 +108,8 @@ double DecisionStump<MatType>::Train(const MatType& data,
   const double rootEntropy = CalculateEntropy<UseWeights>(labels, weights);
 
   double gain, bestGain = 0.0;
-  for (size_t i = 0; i < data.n_rows; i++)
+  #pragma omp parallel for private(entropy, gain)
+  for (omp_size_t i = 0; i < data.n_rows; i++)
   {
     // Go through each dimension of the data.
     if (IsDistinct(data.row(i)))
@@ -123,6 +124,7 @@ double DecisionStump<MatType>::Train(const MatType& data,
 
       // We are maximizing gain, which is what is returned from
       // SetupSplitDimension().
+      #pragma omp critical
       if (gain < bestGain)
       {
         bestDim = i;
@@ -322,6 +324,7 @@ void DecisionStump<MatType>::TrainOnDim(const VecType& dimension,
   arma::Row<size_t> sortedLabels(dimension.n_elem);
   sortedLabels.fill(0);
 
+  #pragma omp parallel for
   for (i = 0; i < dimension.n_elem; i++)
     sortedLabels(i) = labels(sortedSplitIndexDim(i));
 
