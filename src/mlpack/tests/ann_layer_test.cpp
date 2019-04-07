@@ -1035,11 +1035,11 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
 }
 
 /**
- * Test to check Concat<> along different axis.
+ * Test to check Concat layer along different axes.
  */
 BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
 {
-  arma::mat output, input, outputA, outputB;
+  arma::mat output, input, error, outputA, outputB;
   size_t inputWidth = 4, inputHeight = 4, inputChannel = 2;
   size_t outputWidth, outputHeight, outputChannel = 2;
   size_t kW = 3, kH = 3;
@@ -1068,6 +1068,8 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
 
   arma::cube A(outputA.memptr(), outputWidth, outputHeight, outputChannel);
   arma::cube B(outputB.memptr(), outputWidth, outputHeight, outputChannel);
+
+  error = arma::ones(outputWidth * outputHeight * outputChannel * 2, 1);
 
   for (size_t axis = 0; axis < 3; ++axis)
   {
