@@ -70,15 +70,14 @@ double Radical::DoRadical2D(const mat& matX)
 {
   CopyAndPerturb(perturbed, matX);
 
-  mat::fixed<2, 2> matJacobi;
-
   vec values(angles);
-
-  for (size_t i = 0; i < angles; i++)
+  #pragma omp parallel for private(candidate)
+  for (omp_size_t i = 0; i < angles; i++)
   {
     const double theta = (i / (double) angles) * M_PI / 2.0;
     const double cosTheta = cos(theta);
     const double sinTheta = sin(theta);
+    mat::fixed<2, 2> matJacobi;
 
     matJacobi(0, 0) = cosTheta;
     matJacobi(1, 0) = -sinTheta;
@@ -132,10 +131,6 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
   Timer::Start("radical_do_radical");
   matW = matWhitening;
 
-  mat matYSubspace(nPoints, 2);
-
-  mat matJ = eye(nDims, nDims);
-
   for (size_t sweepNum = 0; sweepNum < sweeps; sweepNum++)
   {
     Log::Info << "RADICAL: sweep " << sweepNum << "." << std::endl;
@@ -146,6 +141,9 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
       {
         Log::Debug << "RADICAL 2D on dimensions " << i << " and " << j << "."
             << std::endl;
+
+        mat matYSubspace(nPoints, 2);
+        mat matJ = eye(nDims, nDims);
 
         matYSubspace.col(0) = matY.col(i);
         matYSubspace.col(1) = matY.col(j);
@@ -162,12 +160,6 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
         matJ(j, j) = cosThetaOpt;
 
         matY *= matJ;
-
-        // Unset elements of transformation matrix, so matJ = eye() again.
-        matJ(i, i) = 1;
-        matJ(j, i) = 0;
-        matJ(i, j) = 0;
-        matJ(j, j) = 1;
       }
     }
   }
