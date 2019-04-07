@@ -164,9 +164,16 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
       Forward(std::move(arma::mat(predictors.slice(seqNum).colptr(begin),
           predictors.n_rows, effectiveBatchSize, false, true)));
 
-      results.slice(seqNum).submat(0, begin, results.n_rows - 1, begin +
-          effectiveBatchSize - 1) = boost::apply_visitor(outputParameterVisitor,
+      arma::mat out = boost::apply_visitor(outputParameterVisitor,
           network.back());
+
+      if (results.n_rows == 0)
+      {
+        results.set_size(out.n_rows, predictors.n_cols, rho);
+      }
+
+      results.slice(seqNum).submat(0, begin, results.n_rows - 1, begin +
+          effectiveBatchSize - 1) = out;
     }
   }
 }
