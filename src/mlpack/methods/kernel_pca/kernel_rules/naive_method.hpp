@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_KERNEL_PCA_NAIVE_METHOD_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <iostream>
 
 namespace mlpack {
 namespace kpca {
@@ -74,6 +75,13 @@ class NaiveKernelRule
 
   // Eigendecompose the centered kernel matrix.
   arma::eig_sym(eigval, eigvec, kernelMatrix);
+
+  // Check if Eigen Values exists, if not raise std error.
+  if(!arma::eig_sym(eigval, eigvec, covariance)
+  {
+     std::cerr << "Eigen Value does not exist.";
+     return ;
+  }
 
   // Swap the eigenvalues since they are ordered backwards (we need largest to
   // smallest).

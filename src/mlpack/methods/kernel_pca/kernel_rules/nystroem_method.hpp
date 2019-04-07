@@ -16,6 +16,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/nystroem_method/kmeans_selection.hpp>
 #include <mlpack/methods/nystroem_method/nystroem_method.hpp>
+#include <iostream>
 
 namespace mlpack {
 namespace kpca {
@@ -65,6 +66,13 @@ class NystroemKernelRule
 
     // Eigendecompose the centered kernel matrix.
     arma::eig_sym(eigval, eigvec, transformedData);
+
+    // Check if Eigen Values exists, if not raise std error.
+    if(!arma::eig_sym(eigval, eigvec, covariance)
+    {
+       std::cerr << "Eigen Value does not exists.";
+       return ;
+    }
 
     // Swap the eigenvalues since they are ordered backwards (we need largest
     // to smallest).

@@ -12,6 +12,7 @@
 #include "lin_alg.hpp"
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
+#include <iostream>
 
 using namespace mlpack;
 using namespace math;
@@ -86,6 +87,13 @@ void mlpack::math::WhitenUsingEig(const arma::mat& x,
 
   // Get eigenvectors of covariance of input matrix.
   eig_sym(eigenvalues, eigenvectors, ccov(x));
+
+  // Check if Eigen Valuse exists, if not raise std error.
+  if(!arma::eig_sym(eigval, eigvec, covariance)
+  {
+     std::cerr << "Eigen Value does not have exist.";
+     return ;
+  }
 
   // Generate diagonal matrix using 1 / sqrt(eigenvalues) for each value.
   VectorPower(eigenvalues, -0.5);

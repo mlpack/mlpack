@@ -13,6 +13,7 @@
  */
 #include "gmm.hpp"
 #include <mlpack/core/math/log_add.hpp>
+#include <iostream>
 
 namespace mlpack {
 namespace gmm {
@@ -117,6 +118,12 @@ arma::vec GMM::Random() const
     }
   }
 
+  // Check if Cholesky decomposition exists, if not raise std error.
+  if(!arma::chol(dists[gaussian].Covariance()))
+  {
+     std::cerr << "Cholesky decomposition does not exists.";
+     return 0.0;
+  }
   return trans(chol(dists[gaussian].Covariance())) *
       arma::randn<arma::vec>(dimensionality) + dists[gaussian].Mean();
 }

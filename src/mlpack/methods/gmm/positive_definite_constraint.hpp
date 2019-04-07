@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_GMM_POSITIVE_DEFINITE_CONSTRAINT_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <iostream>
 
 namespace mlpack {
 namespace gmm {
@@ -47,19 +48,28 @@ class PositiveDefiniteConstraint
     // large, we must project it back onto the cone of positive definite
     // matrices with reasonable condition number (I'm picking 1e5 here, not for
     // any particular reason).
-    if ((eigval[0] < 0.0) || ((eigval[eigval.n_elem - 1] / eigval[0]) > 1e5) ||
-        (eigval[eigval.n_elem - 1] < 1e-50))
-    {
-      // Project any negative eigenvalues back to non-negative, and project any
-      // too-small eigenvalues to a large enough value.  Make them as small as
-      // possible to satisfy our constraint on the condition number.
-      const double minEigval = std::max(eigval[eigval.n_elem - 1] / 1e5, 1e-50);
-      for (size_t i = 0; i < eigval.n_elem; ++i)
-        eigval[i] = std::max(eigval[i], minEigval);
 
-      // Now reassemble the covariance matrix.
-      covariance = eigvec * arma::diagmat(eigval) * eigvec.t();
+    // Check if Eigen Values exists, if not raise std error.
+    if(!arma::eig_sym(eigval, eigvec, covariance)
+    {
+	     std::cerr << "Eigen Value does not exists.";
+	     return ;
     }
+    
+  	if ((eigval[0] < 0.0) || ((eigval[eigval.n_elem - 1] / eigval[0]) > 1e5) ||
+  	(eigval[eigval.n_elem - 1] < 1e-50))
+  	{
+  	// Project any negative eigenvalues back to non-negative, and project any
+  	// too-small eigenvalues to a large enough value.  Make them as small as
+  	// possible to satisfy our constraint on the condition number.
+  	const double minEigval = std::max(eigval[eigval.n_elem - 1] / 1e5, 1e-50);
+  	for (size_t i = 0; i < eigval.n_elem; ++i)
+  	eigval[i] = std::max(eigval[i], minEigval);
+
+  	// Now reassemble the covariance matrix.
+  	covariance = eigvec * arma::diagmat(eigval) * eigvec.t();
+  	}
+
   }
 
   //! Serialize the constraint (which stores nothing, so, nothing to do).

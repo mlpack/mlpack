@@ -21,6 +21,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
+#include <iostream>
 
 using namespace mlpack;
 using namespace mlpack::gmm;
@@ -627,6 +628,13 @@ BOOST_AUTO_TEST_CASE(EigenvalueRatioConstraintTest)
 
     // Decompose the matrix and make sure things are right.
     arma::vec eigenvalues = arma::eig_sym(cov);
+
+    // Check if Eigen Values exists, if not raise std error.
+    if(!arma::eig_sym(eigval, eigvec, covariance)
+    {
+       std::cerr << "Eigen Value does not exists.";
+       return ;
+    }
 
     for (size_t i = 0; i < eigenvalues.n_elem; ++i)
       BOOST_REQUIRE_CLOSE(eigenvalues[i] / eigenvalues[0], ratios[i], 1e-5);

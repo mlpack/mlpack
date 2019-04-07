@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_GMM_EIGENVALUE_RATIO_CONSTRAINT_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <iostream>
 
 namespace mlpack {
 namespace gmm {
@@ -65,6 +66,13 @@ class EigenvalueRatioConstraint
     arma::vec eigenvalues;
     arma::mat eigenvectors;
     arma::eig_sym(eigenvalues, eigenvectors, covariance);
+
+    // Check if Eigen Values exists, if not raise std error.
+    if(!arma::eig_sym(eigval, eigvec, covariance)
+    {
+       std::cerr << "Eigen Value does not exists.";
+       return ;
+    }
 
     // Change the eigenvalues to what we are forcing them to be.  There
     // shouldn't be any negative eigenvalues anyway, so it doesn't matter if we

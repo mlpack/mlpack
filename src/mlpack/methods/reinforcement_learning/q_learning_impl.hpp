@@ -45,7 +45,6 @@ QLearning<
     totalSteps(0),
     deterministic(false)
 {
-  // Set up q-learning network.
   if (learningNetwork.Parameters().is_empty())
     learningNetwork.ResetParameters();
   this->updater.Initialize(learningNetwork.Parameters().n_rows,
@@ -68,7 +67,6 @@ arma::Col<size_t> QLearning<
   ReplayType
 >::BestAction(const arma::mat& actionValues)
 {
-  // Take best possible action at a particular instance.
   arma::Col<size_t> bestActions(actionValues.n_cols);
   arma::rowvec maxActionValues = arma::max(actionValues, 0);
   for (size_t i = 0; i < actionValues.n_cols; ++i)

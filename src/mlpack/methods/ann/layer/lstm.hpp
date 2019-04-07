@@ -19,7 +19,12 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the LSTM module class.
+ * An implementation of a lstm network layer.
+ *
+ * This class allows specification of the type of the activation functions used
+ * for the gates and cells and also of the type of the function used to
+ * initialize and update the peephole weights.
+
  * The implementation corresponds to the following algorithm:
  *
  * @f{eqnarray}{
@@ -73,7 +78,7 @@ class LSTM
        const size_t rho = std::numeric_limits<size_t>::max());
 
   /**
-   * Ordinary feed-forward pass of a neural network, evaluating the function
+   * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
    * @param input Input data used for evaluating the specified function.
@@ -81,21 +86,6 @@ class LSTM
    */
   template<typename InputType, typename OutputType>
   void Forward(InputType&& input, OutputType&& output);
-
-  /**
-   * Ordinary feed-forward pass of a neural network, evaluating the function
-   * f(x) by propagating the activity forward through f.
-   *
-   * @param input Input data used for evaluating the specified function.
-   * @param output Resulting output activation.
-   * @param cellState Cell state of the LSTM.
-   * @param useCellState Use the cellState passed in the LSTM cell.
-   */
-  template<typename InputType, typename OutputType>
-  void Forward(InputType&& input,
-               OutputType&& output,
-               OutputType&& cellState,
-               bool useCellState = false);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function

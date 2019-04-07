@@ -10,8 +10,10 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+
 #include "gaussian_distribution.hpp"
 #include <mlpack/methods/gmm/positive_definite_constraint.hpp>
+#include <iostream>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -41,6 +43,12 @@ void GaussianDistribution::FactorCovariance()
   // On Armadillo < 4.500, the "lower" option isn't available.
   covLower = arma::chol(covariance, "lower");
 
+  // Check if Cholesky decomposition exists, if not raise std error.
+  if(!arma::chol(covariance, "lower"))
+  {
+     std::cerr << "Cholesky decomposition does not exists.";
+     return ;
+  }
   // Comment from rcurtin:
   //
   // I think the use of the word "interpret" in the Armadillo documentation
