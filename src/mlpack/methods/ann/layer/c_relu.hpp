@@ -91,7 +91,7 @@ class CReLU
    */
   double Fn(const double x)
   {
-    return std::max(x, 0 * x);
+    return std::max(x, 0.0);
   }
 
   /**
@@ -103,7 +103,7 @@ class CReLU
   template<typename eT>
   void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
-    y = arma::max(x, 0 * x);
+    y = arma::max(x, 0.0);
   }
 
   /**
