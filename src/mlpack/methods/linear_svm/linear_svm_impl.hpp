@@ -48,8 +48,8 @@ LinearSVM<MatType>::LinearSVM(
     delta(delta),
     fitIntercept(fitIntercept)
 {
-  LinearSVMFunction<MatType>::InitializeWeights(
-      parameters, inputSize, numClasses, fitIntercept);
+  LinearSVMFunction<MatType>::InitializeWeights( parameters, inputSize,
+      numClasses, fitIntercept);
 }
 
 template <typename MatType>
@@ -60,8 +60,8 @@ double LinearSVM<MatType>::Train(
     const size_t numClasses,
     OptimizerType optimizer)
 {
-  LinearSVMFunction<MatType> svm(data, labels,
-      numClasses, lambda, delta, fitIntercept);
+  LinearSVMFunction<MatType> svm(data, labels, numClasses, lambda, delta,
+      fitIntercept);
   if (parameters.is_empty())
     parameters = svm.InitialPoint();
 
@@ -79,8 +79,7 @@ double LinearSVM<MatType>::Train(
 template <typename MatType>
 void LinearSVM<MatType>::Classify(
     const MatType& data,
-    arma::Row<size_t>& labels)
-const
+    arma::Row<size_t>& labels) const
 {
   arma::mat scores;
   Classify(data, labels, scores);
@@ -90,13 +89,13 @@ template <typename MatType>
 void LinearSVM<MatType>::Classify(
     const MatType& data,
     arma::Row<size_t>& labels,
-    arma::mat& scores)
-const
+    arma::mat& scores) const
 {
   Classify(data, scores);
 
-  #if ARMA_VERSION_MAJOR > 7 || ARMA_VERSION_MAJOR == 7 \
-  && ARMA_VERSION_MINOR >= 300
+  #if ARMA_VERSION_MAJOR > 7 || \
+      (ARMA_VERSION_MAJOR == 7 && \
+       ARMA_VERSION_MINOR >= 300)
 
   // Prepare necessary data
   labels.zeros(data.n_cols);
@@ -134,8 +133,7 @@ const
 template <typename MatType>
 void LinearSVM<MatType>::Classify(
     const MatType& data,
-    arma::mat& scores)
-const
+    arma::mat& scores) const
 {
   if (data.n_rows != FeatureSize())
   {
@@ -169,8 +167,7 @@ size_t LinearSVM<MatType>::Classify(const VecType& point) const
 template <typename MatType>
 double LinearSVM<MatType>::ComputeAccuracy(
     const MatType& testData,
-    const arma::Row<size_t>& testLabels)
-const
+    const arma::Row<size_t>& testLabels) const
 {
   arma::Row<size_t> labels;
 
@@ -184,7 +181,7 @@ const
       count++;
 
   // Return the accuracy.
-  return (double)count / labels.n_elem;
+  return (double) count / labels.n_elem;
 }
 
 } // namespace svm

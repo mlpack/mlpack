@@ -35,8 +35,9 @@ namespace svm {
  * @inproceedings{weston1999support,
  * title        = {Support vector machines for multi-class pattern
  *                 recognition.},
- * author       = {Weston, Jason and Watkins, Chris and others},
- * booktitle    = {Esann},
+ * author       = {Weston, Jason and Watkins, Chris},
+ * booktitle    = {Proceedings of the 7th European Symposium on Artifical Neural
+ *                 Networks (ESANN '99)},
  * volume       = {99},
  * pages        = {219--224},
  * year         = {1999}
@@ -47,7 +48,7 @@ namespace svm {
  * @article{cortes1995support,
  * title        = {Support-vector networks},
  * author       = {Cortes, Corinna and Vapnik, Vladimir},
- * journal      = {Machine learning},
+ * journal      = {Machine Learning},
  * volume       = {20},
  * number       = {3},
  * pages        = {273--297},

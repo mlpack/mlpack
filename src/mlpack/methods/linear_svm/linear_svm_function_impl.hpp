@@ -187,8 +187,7 @@ double LinearSVMFunction<MatType>::Evaluate(
   loss = arma::accu(arma::clamp(margin, 0.0, DBL_MAX)) / dataset.n_cols;
 
   // Adding the regularization term.
-  regularization = 0.5 * lambda * arma::dot(parameters,
-      parameters);
+  regularization = 0.5 * lambda * arma::dot(parameters, parameters);
 
   return loss + regularization;
 }
@@ -229,8 +228,7 @@ double LinearSVMFunction<MatType>::Evaluate(
   loss /= batchSize;
 
   // Adding the regularization term.
-  regularization = 0.5 * lambda * arma::dot(parameters,
-      parameters);
+  regularization = 0.5 * lambda * arma::dot(parameters, parameters);
 
   cost = loss + regularization;
   return cost;
@@ -340,18 +338,15 @@ void LinearSVMFunction<MatType>::Gradient(
   // Check intercept condition
   if (!fitIntercept)
   {
-    gradient = dataset.cols(firstId, lastId)
-        * difference.t();
+    gradient = dataset.cols(firstId, lastId) * difference.t();
   }
   else
   {
     gradient.set_size(size(parameters));
     gradient.submat(0, 0, parameters.n_rows - 2, parameters.n_cols - 1) =
-        dataset.cols(firstId, lastId)
-        * difference.t();
+        dataset.cols(firstId, lastId) * difference.t();
     gradient.row(parameters.n_rows - 1) =
-        arma::ones<arma::rowvec>(batchSize)
-        * difference.t();
+        arma::ones<arma::rowvec>(batchSize) * difference.t();
   }
 
   gradient /= batchSize;
@@ -418,8 +413,7 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
   loss /= dataset.n_cols;
 
   // Adding the regularization term.
-  regularization = 0.5 * lambda * arma::dot(parameters,
-      parameters);
+  regularization = 0.5 * lambda * arma::dot(parameters, parameters);
 
   cost = loss + regularization;
   return cost;
@@ -468,18 +462,15 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
   // Check intercept condition
   if (!fitIntercept)
   {
-    gradient = dataset.cols(firstId, lastId)
-        * difference.t();
+    gradient = dataset.cols(firstId, lastId) * difference.t();
   }
   else
   {
     gradient.set_size(size(parameters));
     gradient.submat(0, 0, parameters.n_rows - 2, parameters.n_cols - 1) =
-        dataset.cols(firstId, lastId)
-        * difference.t();
+        dataset.cols(firstId, lastId) * difference.t();
     gradient.row(parameters.n_rows - 1) =
-        arma::ones<arma::rowvec>(batchSize)
-        * difference.t();
+        arma::ones<arma::rowvec>(batchSize) * difference.t();
   }
 
   gradient /= batchSize;
@@ -489,13 +480,11 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
   gradient += lambda * parameters;
 
   // The Hinge Loss Function
-  loss = arma::accu(arma::clamp(margin.cols(firstId, lastId),
-      0.0, DBL_MAX));
+  loss = arma::accu(arma::clamp(margin.cols(firstId, lastId), 0.0, DBL_MAX));
   loss /= batchSize;
 
   // Adding the regularization term.
-  regularization = 0.5 * lambda * arma::dot(parameters,
-      parameters);
+  regularization = 0.5 * lambda * arma::dot(parameters, parameters);
 
   cost = loss + regularization;
   return cost;

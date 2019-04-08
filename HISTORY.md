@@ -6,8 +6,9 @@
   * Where relevant, all models with a `Train()` method now return a `double`
     value representing the goodness of fit (i.e. final objective value, error,
     etc.) (#1678).
-    
-  * Add implementation for linear support vector machine(see src/mlpack/methods/linear_svm).
+
+  * Add implementation for linear support vector machine (see
+    `src/mlpack/methods/linear_svm`).
 
 ### mlpack 3.0.5
 ###### ????-??-??
