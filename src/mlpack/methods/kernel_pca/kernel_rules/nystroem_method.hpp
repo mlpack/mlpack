@@ -69,8 +69,8 @@ class NystroemKernelRule
     // Check if Eigen Value exists, if not raise an error log.
     if (eigval.is_empty())
     {
-      Log::Fatal << "Eigen Decomposition not possible as Eigen Value does not exists ."
-            << std::endl;
+      Log::Fatal << "Eigen Decomposition not possible as Eigen Value"
+            << " does not exists ." << std::endl;
       return;
     }
 
