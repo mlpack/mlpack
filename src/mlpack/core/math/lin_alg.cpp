@@ -89,7 +89,7 @@ void mlpack::math::WhitenUsingEig(const arma::mat& x,
   eig_sym(eigenvalues, eigenvectors, ccov(x));
 
   // Check if Eigen Valuse exists, if not raise std error.
-  if(!arma::eig_sym(eigval, eigvec, covariance)
+  if(!arma::eig_sym(eigenvalues, eigenvectors, ccov(x)))
   {
      std::cerr << "Eigen Value does not have exist.";
      return ;

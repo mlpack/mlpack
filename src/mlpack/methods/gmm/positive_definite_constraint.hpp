@@ -50,7 +50,7 @@ class PositiveDefiniteConstraint
     // any particular reason).
 
     // Check if Eigen Values exists, if not raise std error.
-    if(!arma::eig_sym(eigval, eigvec, covariance)
+    if(!arma::eig_sym(eigval, eigvec, covariance))
     {
 	     std::cerr << "Eigen Value does not exists.";
 	     return ;

@@ -77,7 +77,7 @@ class NaiveKernelRule
   arma::eig_sym(eigval, eigvec, kernelMatrix);
 
   // Check if Eigen Values exists, if not raise std error.
-  if(!arma::eig_sym(eigval, eigvec, covariance)
+  if(!arma::eig_sym(eigval, eigvec, kernelMatrix))
   {
      std::cerr << "Eigen Value does not exist.";
      return ;

@@ -630,7 +630,7 @@ BOOST_AUTO_TEST_CASE(EigenvalueRatioConstraintTest)
     arma::vec eigenvalues = arma::eig_sym(cov);
 
     // Check if Eigen Values exists, if not raise std error.
-    if(!arma::eig_sym(eigval, eigvec, covariance)
+    if(eigenvalues.is_empty())
     {
        std::cerr << "Eigen Value does not exists.";
        return ;

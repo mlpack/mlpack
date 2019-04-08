@@ -44,7 +44,7 @@ void GaussianDistribution::FactorCovariance()
   covLower = arma::chol(covariance, "lower");
 
   // Check if Cholesky decomposition exists, if not raise std error.
-  if(!arma::chol(covariance, "lower"))
+  if(covLower.is_empty())
   {
      std::cerr << "Cholesky decomposition does not exists.";
      return ;

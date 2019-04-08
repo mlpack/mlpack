@@ -117,12 +117,12 @@ arma::vec GMM::Random() const
       break;
     }
   }
-
+  arma::mat R = arma::chol(dists[gaussian].Covariance());
   // Check if Cholesky decomposition exists, if not raise std error.
-  if(!arma::chol(dists[gaussian].Covariance()))
+  if(R.is_empty())
   {
      std::cerr << "Cholesky decomposition does not exists.";
-     return 0.0;
+     return arma::vec();
   }
   return trans(chol(dists[gaussian].Covariance())) *
       arma::randn<arma::vec>(dimensionality) + dists[gaussian].Mean();
