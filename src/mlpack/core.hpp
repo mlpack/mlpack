@@ -59,7 +59,7 @@
  * @section remarks Final Remarks
  *
  * For the list of contributors to mlpack, see
- * https://www.mlpack.org/contributors.html.  This library would not be possible
+ * https://www.mlpack.org/community.html.  This library would not be possible
  * without everyone's hard work and contributions!
  */
 
