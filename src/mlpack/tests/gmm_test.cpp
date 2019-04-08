@@ -11,6 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
+#include <mlpack/core/math/ccov.hpp>
 
 #include <mlpack/methods/gmm/gmm.hpp>
 #include <mlpack/methods/gmm/diagonal_gmm.hpp>
@@ -109,7 +110,8 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMOneGaussian)
     gmm.Train(data, 10);
 
     arma::vec actualMean = arma::mean(data, 1);
-    arma::mat actualCovar = ccov(data, 1 /* biased estimator */);
+    arma::uword norm_type = 1;
+    arma::mat actualCovar = mlpack::math::ccov(data, norm_type /* biased estimator */);
 
     // Check the model to see that it is correct.
     BOOST_REQUIRE_LT(arma::norm(gmm.Component(0).Mean() - actualMean), 1e-5);
@@ -198,7 +200,9 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
       // Calculate the actual means and covariances because they will probably
       // be different (this is easier to do before we shuffle the points).
       means[i] = arma::mean(data.cols(point, point + counts[i] - 1), 1);
-      covars[i] = ccov(data.cols(point, point + counts[i] - 1), 1 /* biased */);
+      arma::uword norm_type = 1;
+      arma::mat sub = data.cols(point, point + counts[i] - 1);
+      covars[i] = mlpack::math::ccov(sub, norm_type /* biased */);
 
       point += counts[i];
     }
@@ -694,7 +698,9 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
     // Calculate the actual means and covariances because they will probably
     // be different (this is easier to do before we shuffle the points).
     means[i] = arma::mean(data.cols(point, point + counts[i] - 1), 1);
-    covars[i] = ccov(data.cols(point, point + counts[i] - 1), 1 /* biased */);
+    arma::uword norm_type = 1;
+    arma::mat sub = data.cols(point, point + counts[i] - 1);
+    covars[i] = mlpack::math::ccov(sub, norm_type /* biased */);
 
     point += counts[i];
   }
@@ -854,8 +860,9 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMOneGaussian)
     gmm.Train(data, 10);
 
     arma::vec actualMean = arma::mean(data, 1);
+    arma::uword norm_type = 1;
     arma::vec actualCovar = arma::diagvec(
-        arma::ccov(data, 1 /* biased estimator */));
+        mlpack::math::ccov(data, norm_type /* biased estimator */));
 
     // Check the model to see that it is correct.
     CheckMatrices(gmm.Component(0).Mean(), actualMean);

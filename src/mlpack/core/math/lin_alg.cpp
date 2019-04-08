@@ -12,6 +12,7 @@
 #include "lin_alg.hpp"
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
+#include <mlpack/core/math/ccov.hpp>
 
 using namespace mlpack;
 using namespace math;
@@ -60,7 +61,7 @@ void mlpack::math::WhitenUsingSVD(const arma::mat& x,
   arma::mat covX, u, v, invSMatrix, temp1;
   arma::vec sVector;
 
-  covX = ccov(x);
+  covX = mlpack::math::ccov(x);
 
   svd(u, sVector, v, covX);
 
@@ -85,7 +86,7 @@ void mlpack::math::WhitenUsingEig(const arma::mat& x,
   arma::vec eigenvalues;
 
   // Get eigenvectors of covariance of input matrix.
-  eig_sym(eigenvalues, eigenvectors, ccov(x));
+  eig_sym(eigenvalues, eigenvectors, mlpack::math::ccov(x));
 
   // Generate diagonal matrix using 1 / sqrt(eigenvalues) for each value.
   VectorPower(eigenvalues, -0.5);
@@ -135,7 +136,7 @@ void mlpack::math::Orthogonalize(const arma::mat& x, arma::mat& W)
   // eigendecomposition of the matrix A.
   arma::mat eigenvalues, eigenvectors;
   arma::vec egval;
-  eig_sym(egval, eigenvectors, ccov(x));
+  eig_sym(egval, eigenvectors, mlpack::math::ccov(x));
   VectorPower(egval, -0.5);
 
   eigenvalues.zeros(egval.n_elem, egval.n_elem);
