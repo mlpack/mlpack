@@ -64,10 +64,10 @@ class NystroemKernelRule
     G += arma::sum(colMean) / G.n_rows;
 
     // Eigendecompose the centered kernel matrix.
-    arma::eig_sym(eigval, eigvec, transformedData);
+    arma::mat sym_eigenvector = arma::symmatu(eigvec);
 
     // Check if Eigen Value exists, if not raise an error log.
-    if (eigval.is_empty())
+    if (arma::eig_sym(eigval, sym_eigenvector, transformedData) == false)
     {
       Log::Fatal << "Eigen Decomposition not possible as Eigen Value"
             << " does not exists ." << std::endl;

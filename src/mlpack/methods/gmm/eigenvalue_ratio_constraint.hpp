@@ -64,10 +64,10 @@ class EigenvalueRatioConstraint
     // Eigendecompose the matrix.
     arma::vec eigenvalues;
     arma::mat eigenvectors;
-    arma::eig_sym(eigenvalues, eigenvectors, covariance);
+    arma::mat sym_eigenvector = arma::symmatu(eigenvectors);
 
     // Check if Eigen Value exists, if not raise an error log.
-    if (eigenvalues.is_empty())
+    if (arma::eig_sym(eigenvalues, sym_eigenvector, covariance) == false)
     {
       Log::Fatal << "Eigen Decomposition failed as Eigen Value "
             << "does not exists ." << std::endl;

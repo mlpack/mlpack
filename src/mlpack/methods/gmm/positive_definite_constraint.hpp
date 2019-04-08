@@ -41,10 +41,10 @@ class PositiveDefiniteConstraint
     // eigenvalues are at least 1e-50).
     arma::vec eigval;
     arma::mat eigvec;
-    arma::eig_sym(eigval, eigvec, covariance);
+    arma::mat sym_eigenvector = arma::symmatu(eigvec);
 
     // Check if Eigen Value exists, if not raise an error log.
-    if (eigval.is_empty())
+    if (arma::eig_sym(eigval, sym_eigenvector, covariance) == false)
     {
       Log::Fatal << "Eigen Decomposition failed as Eigen Value "
             << "does not exists ." << std::endl;

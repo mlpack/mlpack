@@ -85,10 +85,10 @@ void mlpack::math::WhitenUsingEig(const arma::mat& x,
   arma::vec eigenvalues;
 
   // Get eigenvectors of covariance of input matrix.
-  eig_sym(eigenvalues, eigenvectors, ccov(x));
+  arma::mat sym_eigenvector = arma::symmatu(eigenvectors);
 
   // Check if Eigen Value exists, if not raise an error log.
-  if (eigenvalues.is_empty())
+  if (eig_sym(eigenvalues, sym_eigenvector, ccov(x)) == false)
   {
     Log::Fatal << "Eigen Decompositon failed as Eigen Value does not exists ."
           << std::endl;

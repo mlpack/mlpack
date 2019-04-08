@@ -73,10 +73,10 @@ class NaiveKernelRule
   kernelMatrix += arma::sum(rowMean) / kernelMatrix.n_cols;
 
   // Eigendecompose the centered kernel matrix.
-  arma::eig_sym(eigval, eigvec, kernelMatrix);
+  arma::mat sym_eigenvector = arma::symmatu(eigvec);
 
   // Check if Eigen Value exists, if not raise an error log.
-  if (eigval.is_empty())
+  if (arma::eig_sym(eigval, sym_eigenvector, kernelMatrix) == false)
   {
     Log::Fatal << "Eigen Decomposition failed as Eigne Value does not exists ."
           << std::endl;
