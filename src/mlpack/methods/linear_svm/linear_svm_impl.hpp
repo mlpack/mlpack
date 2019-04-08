@@ -48,7 +48,7 @@ LinearSVM<MatType>::LinearSVM(
     delta(delta),
     fitIntercept(fitIntercept)
 {
-  LinearSVMFunction<MatType>::InitializeWeights( parameters, inputSize,
+  LinearSVMFunction<MatType>::InitializeWeights(parameters, inputSize,
       numClasses, fitIntercept);
 }
 
