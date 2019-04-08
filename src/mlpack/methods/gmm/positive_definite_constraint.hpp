@@ -43,11 +43,12 @@ class PositiveDefiniteConstraint
     arma::mat eigvec;
     arma::eig_sym(eigval, eigvec, covariance);
 
-    //Check if Eigen Value exists, if not raise an error log.
+    // Check if Eigen Value exists, if not raise an error log.
     if (eigval.is_empty())
     {
-      Log::Fatal << "Eigen Decomposition failed as Eigen Value does not exists ." << std::endl;
-      return ;
+      Log::Fatal << "Eigen Decomposition failed as Eigen Value does not exists ."
+            << std::endl;
+      return;
     }
 
     // If the matrix is not positive definite or if the condition number is

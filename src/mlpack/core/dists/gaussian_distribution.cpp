@@ -41,12 +41,13 @@ void GaussianDistribution::FactorCovariance()
   // On Armadillo < 4.500, the "lower" option isn't available.
   covLower = arma::chol(covariance, "lower");
 
-  //Check if Cholesky Decomposition exists, if not raise an error log.
+  // Check if Cholesky Decomposition exists, if not raise an error log.
   if (covLower.is_empty())
   {
-    Log::Fatal << "Cholesky Decomposition failed as Matrix is Empty ." << std::endl;
-    return ;
-  }  
+    Log::Fatal << "Cholesky Decomposition failed as Matrix is Empty ."
+          << std::endl;
+    return;
+  }
 
   // Comment from rcurtin:
   //

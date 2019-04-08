@@ -66,11 +66,12 @@ class NystroemKernelRule
     // Eigendecompose the centered kernel matrix.
     arma::eig_sym(eigval, eigvec, transformedData);
 
-    //Check if Eigen Value exists, if not raise an error log.
+    // Check if Eigen Value exists, if not raise an error log.
     if (eigval.is_empty())
     {
-      Log::Fatal << "Eigen Decomposition not possible as Eigen Value does not exists ." << std::endl;
-      return ;
+      Log::Fatal << "Eigen Decomposition not possible as Eigen Value does not exists ."
+            << std::endl;
+      return;
     }
 
     // Swap the eigenvalues since they are ordered backwards (we need largest

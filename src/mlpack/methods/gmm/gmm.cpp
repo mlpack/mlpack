@@ -117,11 +117,12 @@ arma::vec GMM::Random() const
     }
   }
 
-  //Check if Cholesky Decomposition exists, if not raise an error log.
+  // Check if Cholesky Decomposition exists, if not raise an error log.
   arma::mat check_chol = chol(dists[gaussian].Covariance());
   if (check_chol.is_empty())
   {
-    Log::Fatal << "Cholesky Decomposition failed as Matrix is Empty ." << std::endl;
+    Log::Fatal << "Cholesky Decomposition failed as Matrix is Empty ."
+          << std::endl;
     return arma::vec();
   }
 
