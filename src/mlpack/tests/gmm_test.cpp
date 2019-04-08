@@ -632,7 +632,7 @@ BOOST_AUTO_TEST_CASE(EigenvalueRatioConstraintTest)
     // Check if Eigen Value exists, if not raise an error log.
     if (eigenvalues.is_empty())
     {
-      Log::Fatal << "Eigen Decomposition failed as Eigen Value " 
+      Log::Fatal << "Eigen Decomposition failed as Eigen Value "
             << "does not exists ." << std::endl;
       return;
     }
