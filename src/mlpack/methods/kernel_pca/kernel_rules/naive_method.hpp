@@ -74,6 +74,13 @@ class NaiveKernelRule
 
   // Eigendecompose the centered kernel matrix.
   arma::eig_sym(eigval, eigvec, kernelMatrix);
+  
+  //Check if Eigen Value exists, if not raise an error log.
+  if (eigval.is_empty())
+  {
+    Log::Fatal << "Eigen Decomposition failed as Eigne Value does not exists ." << std::endl;
+    return ;
+  }
 
   // Swap the eigenvalues since they are ordered backwards (we need largest to
   // smallest).
