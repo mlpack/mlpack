@@ -627,16 +627,7 @@ BOOST_AUTO_TEST_CASE(EigenvalueRatioConstraintTest)
     erc.ApplyConstraint(cov);
 
     // Decompose the matrix and make sure things are right.
-    arma::mat sym_eigenvector = arma::symmatu(cov);
-    arma::vec eigenvalues;
-
-    // Check if Eigen Value exists, if not raise an error log.
-    if (arma::eig_sym(eigenvalues, sym_eigenvector) == false)
-    {
-      Log::Fatal << "Eigen Decomposition failed as Eigen Value "
-            << "does not exists ." << std::endl;
-      return;
-    }
+    arma::vec eigenvalues = arma::eig_sym(cov);
 
     for (size_t i = 0; i < eigenvalues.n_elem; ++i)
       BOOST_REQUIRE_CLOSE(eigenvalues[i] / eigenvalues[0], ratios[i], 1e-5);
