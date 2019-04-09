@@ -110,8 +110,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMOneGaussian)
     gmm.Train(data, 10);
 
     arma::vec actualMean = arma::mean(data, 1);
-    arma::uword norm_type = 1;
-    arma::mat actualCovar = mlpack::math::ccov(data, norm_type /* biased estimator */);
+    arma::mat actualCovar = mlpack::math::ccov(data, arma::uword(1) /* biased estimator */);
 
     // Check the model to see that it is correct.
     BOOST_REQUIRE_LT(arma::norm(gmm.Component(0).Mean() - actualMean), 1e-5);
@@ -200,9 +199,8 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
       // Calculate the actual means and covariances because they will probably
       // be different (this is easier to do before we shuffle the points).
       means[i] = arma::mean(data.cols(point, point + counts[i] - 1), 1);
-      arma::uword norm_type = 1;
-      arma::mat sub = data.cols(point, point + counts[i] - 1);
-      covars[i] = mlpack::math::ccov(sub, norm_type /* biased */);
+      covars[i] = mlpack::math::ccov(arma::mat(data.cols(point, point + counts[i] - 1)),
+          arma::uword(1) /* biased */);
 
       point += counts[i];
     }
@@ -698,9 +696,8 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
     // Calculate the actual means and covariances because they will probably
     // be different (this is easier to do before we shuffle the points).
     means[i] = arma::mean(data.cols(point, point + counts[i] - 1), 1);
-    arma::uword norm_type = 1;
-    arma::mat sub = data.cols(point, point + counts[i] - 1);
-    covars[i] = mlpack::math::ccov(sub, norm_type /* biased */);
+    covars[i] = mlpack::math::ccov(arma::mat(data.cols(point, point + counts[i] - 1)),
+        arma::uword(1) /* biased */);
 
     point += counts[i];
   }
@@ -860,9 +857,8 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMOneGaussian)
     gmm.Train(data, 10);
 
     arma::vec actualMean = arma::mean(data, 1);
-    arma::uword norm_type = 1;
     arma::vec actualCovar = arma::diagvec(
-        mlpack::math::ccov(data, norm_type /* biased estimator */));
+        mlpack::math::ccov(data, arma::uword(1) /* biased estimator */));
 
     // Check the model to see that it is correct.
     CheckMatrices(gmm.Component(0).Mean(), actualMean);
