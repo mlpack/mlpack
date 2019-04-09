@@ -103,7 +103,7 @@ class CReLU
   template<typename eT>
   void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
   {
-    y = arma::max(x, 0.0);
+    y = arma::max(x, 0.0 * x);
   }
 
   /**
