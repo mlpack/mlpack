@@ -56,10 +56,6 @@ namespace arma {
   #include "hdf5_misc.hpp"
 
   // ccov()
-  #include "op_ccov_proto.hpp"
-  #include "op_ccov_meat.hpp"
-  #include "glue_ccov_proto.hpp"
-  #include "glue_ccov_meat.hpp"
   #include "fn_ccov.hpp"
 
   // inplace_reshape()
