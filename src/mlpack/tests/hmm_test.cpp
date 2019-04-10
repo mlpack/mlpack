@@ -1382,7 +1382,8 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianOneStateTrainingTest)
   // Generate the ground truth values.
   arma::vec actualMean = arma::mean(observations[0], 1);
   arma::vec actualCovar = arma::diagvec(
-      mlpack::math::ccov(observations[0], arma::uword(1) /* biased estimator */));
+      mlpack::math::ccov(observations[0],
+      arma::uword(1) /* biased estimator */));
 
   // Check the model to see that it is correct.
   CheckMatrices(hmm.Emission()[0].Component(0).Mean(), actualMean);
