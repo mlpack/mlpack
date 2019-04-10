@@ -19,6 +19,7 @@
 #include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
+#include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -172,6 +173,16 @@ template <
 using SoftPlusLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
+/**
+ * Standard HardSigmoid-Layer using the HardSigmoid activation function.
+ */
+template <
+    class ActivationFunction = HardSigmoidFunction,
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using HardSigmoidLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
 
 } // namespace ann
 } // namespace mlpack
