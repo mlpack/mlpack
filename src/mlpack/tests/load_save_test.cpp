@@ -917,21 +917,17 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
   arr[0] = "hello how are you";
   arr[1] = "i am good";
   arr[2] = "Good how are you";
-  std::unordered_map<string, size_t>mappings;
   arma::mat output;
-  data::Encode(arr, mappings, output);
-  BOOST_REQUIRE_EQUAL(output(0, 0), 1);
-  BOOST_REQUIRE_EQUAL(output(0, 1), 2);
-  BOOST_REQUIRE_EQUAL(output(0, 2), 3);
-  BOOST_REQUIRE_EQUAL(output(0, 3), 4);
-  BOOST_REQUIRE_EQUAL(output(1, 0), 5);
-  BOOST_REQUIRE_EQUAL(output(1, 1), 6);
-  BOOST_REQUIRE_EQUAL(output(1, 2), 7);
-  BOOST_REQUIRE_EQUAL(output(1, 3), 0);
-  BOOST_REQUIRE_EQUAL(output(2, 0), 8);
-  BOOST_REQUIRE_EQUAL(output(2, 1), 2);
-  BOOST_REQUIRE_EQUAL(output(2, 2), 3);
-  BOOST_REQUIRE_EQUAL(output(2, 3), 4);
+  data::DicitonaryEncoding en;
+  en.DictEncode(arr, output);
+  const std::unordered_map<std::string, size_t>maps = en.Mappings();
+  // Checking that everying is mapped to different numbers
+  std::unordered_map<size_t, size_t>cnt;
+  for (auto it = maps.begin(); it != maps.end(); it++)
+  {
+    cnt[it->second]++;
+    BOOST_REQUIRE_EQUAL(cnt[it->second], 1);
+  }
 }
 
 /**
