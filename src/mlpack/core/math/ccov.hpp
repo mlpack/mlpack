@@ -196,7 +196,7 @@ ccov(const arma::Mat< std::complex<T> >& A,
   {
     if (A.n_elem != B.n_elem)
     {
-      Log::Fatal << "ccov(): the number of elements in A and B must match" 
+      Log::Fatal << "ccov(): the number of elements in A and B must match"
           << std::endl;
     }
 

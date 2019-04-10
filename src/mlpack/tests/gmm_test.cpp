@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
       // be different (this is easier to do before we shuffle the points).
       means[i] = arma::mean(data.cols(point, point + counts[i] - 1), 1);
       covars[i] = mlpack::math::ccov(arma::mat(data.cols(point,
-          point + counts[i] - 1)),arma::uword(1) /* biased */);
+          point + counts[i] - 1)), arma::uword(1) /* biased */);
 
       point += counts[i];
     }
@@ -698,7 +698,7 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
     // be different (this is easier to do before we shuffle the points).
     means[i] = arma::mean(data.cols(point, point + counts[i] - 1), 1);
     covars[i] = mlpack::math::ccov(arma::mat(data.cols(point,
-        point + counts[i] - 1)),arma::uword(1) /* biased */);
+        point + counts[i] - 1)), arma::uword(1) /* biased */);
 
     point += counts[i];
   }
