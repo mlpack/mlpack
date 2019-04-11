@@ -9,7 +9,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/math/ccov.hpp>
 #include <mlpack/methods/hmm/hmm.hpp>
 #include <mlpack/methods/gmm/gmm.hpp>
 #include <mlpack/methods/gmm/diagonal_gmm.hpp>
@@ -1382,8 +1381,8 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianOneStateTrainingTest)
   // Generate the ground truth values.
   arma::vec actualMean = arma::mean(observations[0], 1);
   arma::vec actualCovar = arma::diagvec(
-      mlpack::math::ccov(observations[0],
-      arma::uword(1) /* biased estimator */));
+      mlpack::math::ColumnCovariance(observations[0],
+      arma::size_t(1) /* biased estimator */));
 
   // Check the model to see that it is correct.
   CheckMatrices(hmm.Emission()[0].Component(0).Mean(), actualMean);

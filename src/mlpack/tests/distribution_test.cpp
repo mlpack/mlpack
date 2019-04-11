@@ -15,7 +15,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/math/ccov.hpp>
 
 #include <mlpack/core/dists/regression_distribution.hpp>
 #include <mlpack/core/metrics/mahalanobis_distance.hpp>
@@ -462,7 +461,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionRandomTest)
 
   // Now make sure that reflects the actual distribution.
   arma::vec obsMean = arma::mean(obs, 1);
-  arma::mat obsCov = mlpack::math::ccov(obs);
+  arma::mat obsCov = mlpack::math::ColumnCovariance(obs);
 
   // 10% tolerance because this can be noisy.
   BOOST_REQUIRE_CLOSE(obsMean[0], mean[0], 10.0);
@@ -497,7 +496,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainTest)
 
   // Find actual mean and covariance of data.
   arma::vec actualMean = arma::mean(observations, 1);
-  arma::mat actualCov = mlpack::math::ccov(observations);
+  arma::mat actualCov = mlpack::math::ColumnCovariance(observations);
 
   d.Train(observations);
 
@@ -1419,7 +1418,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionRandomTest)
 
   // Make sure that reflects the actual distribution.
   arma::vec obsMean = arma::mean(obs, 1);
-  arma::mat obsCov = mlpack::math::ccov(obs);
+  arma::mat obsCov = mlpack::math::ColumnCovariance(obs);
 
   // 10% tolerance because this can be noisy.
   BOOST_REQUIRE_CLOSE(obsMean(0), mean(0), 10.0);
@@ -1447,7 +1446,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionTrainTest)
 
   // Calculate the actual mean and covariance of data using armadillo.
   arma::vec actualMean = arma::mean(observations, 1);
-  arma::mat actualCov = mlpack::math::ccov(observations);
+  arma::mat actualCov = mlpack::math::ColumnCovariance(observations);
 
   // Estimate the parameters.
   d.Train(observations);
