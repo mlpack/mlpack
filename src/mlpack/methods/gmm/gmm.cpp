@@ -122,7 +122,7 @@ arma::vec GMM::Random() const
   arma::mat check_chol;
   if (sym_cholmatrix.is_empty())
   {
-    Log::Fatal << "Cholesky Decomposition failed as Matrix is Empty ."
+    Log::Warn << "Cholesky Decomposition failed as Matrix is Empty ."
           << std::endl;
     return arma::vec();
   }

@@ -78,7 +78,7 @@ class NaiveKernelRule
   // Check if Eigen Value exists, if not raise an error log.
   if (sym_x.is_empty())
   {
-    Log::Fatal << "Eigen Decomposition failed as Eigne Value does not exists ."
+    Log::Warn << "Eigen Decomposition failed as Eigne Value does not exists ."
           << std::endl;
     return;
   }
