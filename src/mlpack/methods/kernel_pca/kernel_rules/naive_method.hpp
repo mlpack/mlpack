@@ -76,13 +76,13 @@ class NaiveKernelRule
   arma::mat sym_x = arma::symmatu(kernelMatrix);
 
   // Check if Eigen Value exists, if not raise an error log.
-  if (arma::eig_sym(eigval, eigvec, sym_x) == false)
+  if (sym_x.is_empty() || (sym_x.is_symmetric() == false))
   {
     Log::Fatal << "Eigen Decomposition failed as Eigne Value does not exists ."
           << std::endl;
     return;
   }
-
+  arma::eig_sym(eigval, eigvec, sym_x);
   // Swap the eigenvalues since they are ordered backwards (we need largest to
   // smallest).
   for (size_t i = 0; i < floor(eigval.n_elem / 2.0); ++i)

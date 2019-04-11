@@ -43,13 +43,13 @@ void GaussianDistribution::FactorCovariance()
   arma::mat covLower;
 
   // Check if Cholesky Decomposition exists, if not raise an error log.
-  if (arma::chol(covLower, sym_cholmatrix, "lower") == false)
+  if (sym_cholmatrix.is_empty() || (sym_cholmatrix.is_symmetric() == false))
   {
     Log::Fatal << "Cholesky Decomposition failed as Matrix is Empty ."
           << std::endl;
     return;
   }
-
+  arma::chol(covLower, sym_cholmatrix, "lower");
   // Comment from rcurtin:
   //
   // I think the use of the word "interpret" in the Armadillo documentation

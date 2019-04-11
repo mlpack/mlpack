@@ -88,13 +88,13 @@ void mlpack::math::WhitenUsingEig(const arma::mat& x,
   arma::mat sym_x = arma::symmatu(ccov(x));
 
   // Check if Eigen Value exists, if not raise an error log.
-  if (eig_sym(eigenvalues, eigenvectors, sym_x) == false)
+  if (sym_x.is_empty() || (sym_x.is_symmetric() == false))
   {
     Log::Fatal << "Eigen Decompositon failed as Eigen Value does not exists ."
           << std::endl;
     return;
   }
-
+  arma::eig_sym(eigenvalues, eigenvectors, sym_x);
   // Generate diagonal matrix using 1 / sqrt(eigenvalues) for each value.
   VectorPower(eigenvalues, -0.5);
   diag.zeros(eigenvalues.n_elem, eigenvalues.n_elem);

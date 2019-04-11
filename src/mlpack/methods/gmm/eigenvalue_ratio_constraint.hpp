@@ -67,13 +67,13 @@ class EigenvalueRatioConstraint
     arma::mat sym_x = arma::symmatu(covariance);
 
     // Check if Eigen Value exists, if not raise an error log.
-    if (arma::eig_sym(eigenvalues, eigenvectors, sym_x) == false)
+    if (sym_x.is_empty() || (sym_x.is_symmetric() == false))
     {
       Log::Fatal << "Eigen Decomposition failed as Eigen Value "
             << "does not exists ." << std::endl;
       return;
     }
-
+    arma::eig_sym(eigenvalues, eigenvectors, sym_x);
     // Change the eigenvalues to what we are forcing them to be.  There
     // shouldn't be any negative eigenvalues anyway, so it doesn't matter if we
     // are suddenly forcing them to be positive.  If the first eigenvalue is
