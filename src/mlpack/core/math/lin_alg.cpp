@@ -88,7 +88,7 @@ void mlpack::math::WhitenUsingEig(const arma::mat& x,
   arma::mat sym_x = arma::symmatu(ccov(x));
 
   // Check if Eigen Value exists, if not raise an error log.
-  if (sym_x.is_empty() || (sym_x.is_symmetric() == false))
+  if (sym_x.is_empty())
   {
     Log::Fatal << "Eigen Decompositon failed as Eigen Value does not exists ."
           << std::endl;

@@ -44,7 +44,7 @@ class PositiveDefiniteConstraint
     arma::mat sym_x = arma::symmatu(covariance);
 
     // Check if Eigen Value exists, if not raise an error log.
-    if (sym_x.is_empty() || (sym_x.is_symmetric() == false))
+    if (sym_x.is_empty())
     {
       Log::Warn << "Eigen Decomposition failed as Eigen Value "
             << "does not exists ." << std::endl;
