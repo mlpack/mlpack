@@ -115,7 +115,6 @@ or upgrade Boost to 1.59 or newer.
 // All code should have access to logging.
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/timers.hpp>
-#include <mlpack/core/math/ccov.hpp>
 
 // This can be removed with Visual Studio supports an OpenMP version with
 // unsigned loop variables.
