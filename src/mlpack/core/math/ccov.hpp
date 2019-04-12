@@ -3,7 +3,8 @@
  * @author Ryan Curtin
  * @author Conrad Sanderson
  *
- * ColumnCovariance(X) is same as cov(trans(X)) but without the cost of computing trans(X)
+ * ColumnCovariance(X) is same as cov(trans(X)) but without the cost
+ * of computing trans(X)
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
