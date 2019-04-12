@@ -1382,7 +1382,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianOneStateTrainingTest)
   arma::vec actualMean = arma::mean(observations[0], 1);
   arma::vec actualCovar = arma::diagvec(
       mlpack::math::ColumnCovariance(observations[0],
-      arma::size_t(1) /* biased estimator */));
+      1 /* biased estimator */));
 
   // Check the model to see that it is correct.
   CheckMatrices(hmm.Emission()[0].Component(0).Mean(), actualMean);

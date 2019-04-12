@@ -22,7 +22,7 @@ namespace math /** Miscellaneous math routines. */ {
 template<typename eT>
 inline
 arma::Mat<eT>
-ColumnCovariance(const arma::Mat<eT>& A, const arma::size_t norm_type = 0)
+ColumnCovariance(const arma::Mat<eT>& A, const size_t norm_type = 0)
 {
   if (norm_type > 1)
   {
@@ -44,7 +44,7 @@ ColumnCovariance(const arma::Mat<eT>& A, const arma::size_t norm_type = 0)
   }
   else
   {
-    const arma::size_t N = A.n_cols;
+    const size_t N = A.n_cols;
     const eT norm_val = (norm_type == 0) ?
         ( (N > 1) ? eT(N-1) : eT(1) ) : eT(N);
 
@@ -62,7 +62,7 @@ template<typename T>
 inline
 arma::Mat< std::complex<T> >
 ColumnCovariance(const arma::Mat< std::complex<T> >& A,
-     const arma::size_t norm_type = 0)
+     const size_t norm_type = 0)
 {
   if (norm_type > 1)
   {
@@ -90,7 +90,7 @@ ColumnCovariance(const arma::Mat< std::complex<T> >& A,
   }
   else
   {
-    const arma::size_t N = A.n_cols;
+    const size_t N = A.n_cols;
     const eT norm_val = (norm_type == 0) ?
         ( (N > 1) ? eT(N-1) : eT(1) ) : eT(N);
 
