@@ -24,12 +24,18 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
-Concat<InputDataType, OutputDataType, CustomLayers...>::Concat(
-    const bool model, const bool run) : model(model), run(run)
+Concat<InputDataType,
+       OutputDataType,
+       CustomLayers...
+      >::Concat(
+      const bool model,
+      const bool run) :
+      axis(-1),
+      model(model),
+      run(run),
+      channels(1)
 {
   parameters.set_size(0, 0);
-  axis = -1;
-  channels = 1;
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -45,10 +51,10 @@ Concat<InputDataType,
       inputSize(inputSize),
       axis(axis),
       model(model),
-      run(run)
+      run(run),
+      channels(1)
 {
   parameters.set_size(0, 0);
-  channels = 1;
 }
 
 template<typename InputDataType, typename OutputDataType,
