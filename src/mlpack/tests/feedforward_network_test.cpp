@@ -599,7 +599,7 @@ BOOST_AUTO_TEST_CASE(FFNTrainReturnObjective)
 
   // Vanilla neural net with logistic activation function.
   // Because 92 percent of the patients are not hyperthyroid the neural
-  // network must be significant better than 92%.
+  // network must be significantly better than 92%.
   FFN<NegativeLogLikelihood<> > model;
   model.Add<Linear<> >(trainData.n_rows, 8);
   model.Add<SigmoidLayer<> >();

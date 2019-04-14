@@ -1139,11 +1139,9 @@ BOOST_AUTO_TEST_CASE(DecisionTreeNumericTrainReturnEntropy)
   for (size_t i = 0; i < 1000; ++i)
     labels[i] = i % 3; // 3 classes.
 
-  double entropy;
-
   // Train a simpe tree on numeric dataset.
   DecisionTree<> d(3);
-  entropy = d.Train(dataset, labels, 3, 50);
+  double entropy = d.Train(dataset, labels, 3, 50);
 
   BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
 
@@ -1167,11 +1165,9 @@ BOOST_AUTO_TEST_CASE(DecisionTreeCategoricalTrainReturnEntropy)
 
   arma::Row<double> weights = arma::ones<arma::Row<double>>(l.n_elem);
 
-  double entropy;
-
   // Train a simple tree on categorical dataset.
   DecisionTree<> dtree(5);
-  entropy = dtree.Train(d, di, l, 5, 10);
+  double entropy = dtree.Train(d, di, l, 5, 10);
 
   BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
 

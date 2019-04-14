@@ -1230,7 +1230,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLoadSaveTest)
 }
 
 /**
- * Test that HMM::Train() returns finite loglikelihood.
+ * Test that HMM::Train() returns finite log-likelihood.
  */
 BOOST_AUTO_TEST_CASE(HMMTrainReturnLogLikelihood)
 {

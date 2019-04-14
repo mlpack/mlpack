@@ -408,11 +408,10 @@ BOOST_AUTO_TEST_CASE(DecisionStumpTrainReturnEntropy)
 
   arma::Row<double> weights = arma::ones<arma::Row<double>>(labelsIn.n_elem);
 
-  double gain;
-
   // Train a simple decision stump without weights.
   DecisionStump<> ds;
-  gain = ds.Train(trainingData, labelsIn.row(0), numClasses, inpBucketSize);
+  double gain = ds.Train(trainingData, labelsIn.row(0), numClasses,
+      inpBucketSize);
 
   BOOST_REQUIRE_EQUAL(std::isfinite(gain), true);
 

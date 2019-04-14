@@ -365,14 +365,13 @@ BOOST_AUTO_TEST_CASE(LARSTrainReturnCorrelation)
 
   arma::rowvec y = Y.row(0);
 
-  double maxCorr;
   double lambda1 = 0.1;
   double lambda2 = 0.1;
 
   // Test with Cholesky decomposition and with lasso.
   LARS lars1(true, lambda1, 0.0);
   arma::vec betaOpt1;
-  maxCorr = lars1.Train(X, y, betaOpt1);
+  double maxCorr = lars1.Train(X, y, betaOpt1);
 
   BOOST_REQUIRE_EQUAL(std::isfinite(maxCorr), true);
 

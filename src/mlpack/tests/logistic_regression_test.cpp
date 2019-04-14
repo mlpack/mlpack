@@ -973,11 +973,9 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTrainReturnObjective)
                  "1 2 3");
   arma::Row<size_t> responses("1 1 0");
 
-  double objVal;
-
   // Check with L_BFGS optimizer.
   LogisticRegression<> lr1(data.n_rows, 0.5);
-  objVal = lr1.Train<ens::L_BFGS>(data, responses);
+  double objVal = lr1.Train<ens::L_BFGS>(data, responses);
 
   BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 

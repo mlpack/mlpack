@@ -423,11 +423,9 @@ BOOST_AUTO_TEST_CASE(RandomForestNumericTrainReturnEntropy)
   for (size_t i = dataset.n_cols; i < dataset.n_cols + 1000; ++i)
     weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
 
-  double entropy;
-
   // Test random forest on unweighted numeric dataset.
   RandomForest<GiniGain, RandomDimensionSelect> rf;
-  entropy = rf.Train(dataset, labels, 3, 10, 5);
+  double entropy = rf.Train(dataset, labels, 3, 10, 5);
 
   BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
 
@@ -471,11 +469,9 @@ BOOST_AUTO_TEST_CASE(RandomForestCategoricalTrainReturnEntropy)
   arma::mat fullData = arma::join_rows(d, randomNoise);
   arma::Row<size_t> fullLabels = arma::join_rows(l, randomLabels);
 
-  double entropy;
-
   // Test random forest on unweighted categorical dataset.
   RandomForest<> rf;
-  entropy = rf.Train(fullData, di, fullLabels, 5, 15 /* 15 trees */, 5);
+  double entropy = rf.Train(fullData, di, fullLabels, 5, 15 /* 15 trees */, 5);
 
   BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
 
