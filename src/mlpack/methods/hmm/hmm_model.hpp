@@ -14,6 +14,7 @@
 
 #include "hmm.hpp"
 #include <mlpack/methods/gmm/gmm.hpp>
+#include <mlpack/methods/gmm/diagonal_gmm.hpp>
 
 namespace mlpack {
 namespace hmm {
@@ -22,7 +23,8 @@ enum HMMType : char
 {
   DiscreteHMM = 0,
   GaussianHMM,
-  GaussianMixtureModelHMM
+  GaussianMixtureModelHMM,
+  DiagonalGaussianMixtureModelHMM
 };
 
 /**
@@ -39,24 +41,17 @@ class HMMModel
   HMM<distribution::GaussianDistribution>* gaussianHMM;
   //! Not used if type is not GaussianMixtureModelHMM.
   HMM<gmm::GMM>* gmmHMM;
+  //! Not used if type is not DiagonalGaussianMixtureModelHMM.
+  HMM<gmm::DiagonalGMM>* diagGMMHMM;
 
  public:
-  //! Construct an uninitialized model.
-  HMMModel() :
-      type(HMMType::DiscreteHMM),
-      discreteHMM(new HMM<distribution::DiscreteDistribution>()),
-      gaussianHMM(NULL),
-      gmmHMM(NULL)
-  {
-    // Nothing to do.
-  }
-
   //! Construct a model of the given type.
-  HMMModel(const HMMType type) :
+  HMMModel(const HMMType type = HMMType::DiscreteHMM) :
       type(type),
       discreteHMM(NULL),
       gaussianHMM(NULL),
-      gmmHMM(NULL)
+      gmmHMM(NULL),
+      diagGMMHMM(NULL)
   {
     if (type == HMMType::DiscreteHMM)
       discreteHMM = new HMM<distribution::DiscreteDistribution>();
@@ -64,6 +59,8 @@ class HMMModel
       gaussianHMM = new HMM<distribution::GaussianDistribution>();
     else if (type == HMMType::GaussianMixtureModelHMM)
       gmmHMM = new HMM<gmm::GMM>();
+    else if (type == HMMType::DiagonalGaussianMixtureModelHMM)
+      diagGMMHMM = new HMM<gmm::DiagonalGMM>();
   }
 
   //! Copy another model.
@@ -71,7 +68,8 @@ class HMMModel
       type(other.type),
       discreteHMM(NULL),
       gaussianHMM(NULL),
-      gmmHMM(NULL)
+      gmmHMM(NULL),
+      diagGMMHMM(NULL)
   {
     if (type == HMMType::DiscreteHMM)
       discreteHMM =
@@ -81,6 +79,8 @@ class HMMModel
           new HMM<distribution::GaussianDistribution>(*other.gaussianHMM);
     else if (type == HMMType::GaussianMixtureModelHMM)
       gmmHMM = new HMM<gmm::GMM>(*other.gmmHMM);
+    else if (type == HMMType::DiagonalGaussianMixtureModelHMM)
+      diagGMMHMM = new HMM<gmm::DiagonalGMM>(*other.diagGMMHMM);
   }
 
   //! Take ownership of another model.
@@ -88,12 +88,14 @@ class HMMModel
       type(other.type),
       discreteHMM(other.discreteHMM),
       gaussianHMM(other.gaussianHMM),
-      gmmHMM(other.gmmHMM)
+      gmmHMM(other.gmmHMM),
+      diagGMMHMM(other.diagGMMHMM)
   {
     other.type = HMMType::DiscreteHMM;
     other.discreteHMM = new HMM<distribution::DiscreteDistribution>();
     other.gaussianHMM = NULL;
     other.gmmHMM = NULL;
+    other.diagGMMHMM = NULL;
   }
 
   //! Copy assignment operator.
@@ -105,10 +107,12 @@ class HMMModel
     delete discreteHMM;
     delete gaussianHMM;
     delete gmmHMM;
+    delete diagGMMHMM;
 
     discreteHMM = NULL;
     gaussianHMM = NULL;
     gmmHMM = NULL;
+    diagGMMHMM = NULL;
 
     type = other.type;
     if (type == HMMType::DiscreteHMM)
@@ -119,6 +123,8 @@ class HMMModel
           new HMM<distribution::GaussianDistribution>(*other.gaussianHMM);
     else if (type == HMMType::GaussianMixtureModelHMM)
       gmmHMM = new HMM<gmm::GMM>(*other.gmmHMM);
+    else if (type == HMMType::DiagonalGaussianMixtureModelHMM)
+      diagGMMHMM = new HMM<gmm::DiagonalGMM>(*other.diagGMMHMM);
 
     return *this;
   }
@@ -129,6 +135,7 @@ class HMMModel
     delete discreteHMM;
     delete gaussianHMM;
     delete gmmHMM;
+    delete diagGMMHMM;
   }
 
   /**
@@ -145,11 +152,13 @@ class HMMModel
       ActionType::Apply(*gaussianHMM, x);
     else if (type == HMMType::GaussianMixtureModelHMM)
       ActionType::Apply(*gmmHMM, x);
+    else if (type == HMMType::DiagonalGaussianMixtureModelHMM)
+      ActionType::Apply(*diagGMMHMM, x);
   }
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const unsigned int version)
   {
     ar & BOOST_SERIALIZATION_NVP(type);
 
@@ -159,10 +168,12 @@ class HMMModel
       delete discreteHMM;
       delete gaussianHMM;
       delete gmmHMM;
+      delete diagGMMHMM;
 
       discreteHMM = NULL;
       gaussianHMM = NULL;
       gmmHMM = NULL;
+      diagGMMHMM = NULL;
     }
 
     if (type == HMMType::DiscreteHMM)
@@ -171,13 +182,20 @@ class HMMModel
       ar & BOOST_SERIALIZATION_NVP(gaussianHMM);
     else if (type == HMMType::GaussianMixtureModelHMM)
       ar & BOOST_SERIALIZATION_NVP(gmmHMM);
+
+    // Backward compatibility: new versions of HMM has a Diagonal GMM type.
+    if (version > 0)
+    {
+      if (type == HMMType::DiagonalGaussianMixtureModelHMM)
+        ar & BOOST_SERIALIZATION_NVP(diagGMMHMM);
+    }
   }
 
   // Accessor method for type of HMM
   HMMType Type() { return type; }
 
   /**
-   * Accessor methods for discreteHMM, gaussianHMM and gmmHMM.
+   * Accessor methods for discreteHMM, gaussianHMM, gmmHMM, and diagGMMHMM.
    * Note that an instatiation of this class will only contain one type of HMM
    * (as indicated by the "type" instance variable) - the other two pointers
    * will be NULL.
@@ -186,9 +204,10 @@ class HMMModel
    * type         --> DiscreteHMM
    * gaussianHMM  --> NULL
    * gmmHMM       --> NULL
+   * diagGMMHMM   --> NULL
    * discreteHMM  --> HMM<DiscreteDistribution> object
-   * and hence, calls to GMMHMM() and GaussianHMM() will return NULL. Only the
-   * call to DiscreteHMM() will return a non NULL pointer.
+   * and hence, calls to GMMHMM(), DiagGMMHMM() and GaussianHMM() will return
+   * NULL. Only the call to DiscreteHMM() will return a non NULL pointer.
    *
    * Hence, in practice, a user should be careful to first check the type of HMM
    * (by calling the Type() accessor) and then perform subsequent actions, to
@@ -197,9 +216,13 @@ class HMMModel
   HMM<distribution::DiscreteDistribution>* DiscreteHMM() { return discreteHMM; }
   HMM<distribution::GaussianDistribution>* GaussianHMM() { return gaussianHMM; }
   HMM<gmm::GMM>* GMMHMM() { return gmmHMM; }
+  HMM<gmm::DiagonalGMM>* DiagGMMHMM() { return diagGMMHMM; }
 };
 
 } // namespace hmm
 } // namespace mlpack
+
+//! Set the serialization version of the HMMModel class.
+BOOST_CLASS_VERSION(mlpack::hmm::HMMModel, 1);
 
 #endif

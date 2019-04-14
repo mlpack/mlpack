@@ -23,7 +23,8 @@ enum HMMType : char
 {
   DiscreteHMM = 0,
   GaussianHMM,
-  GaussianMixtureModelHMM
+  GaussianMixtureModelHMM,
+  DiagonalGaussianMixtureModelHMM
 };
 
 //! ActionType should implement static void Apply(HMMType&).

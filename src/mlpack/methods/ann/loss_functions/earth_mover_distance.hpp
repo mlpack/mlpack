@@ -38,7 +38,7 @@ class EarthMoverDistance
    */
   EarthMoverDistance();
 
-  /*
+  /**
    * Ordinary feed forward pass of a neural network.
    *
    * @param input Input data used for evaluating the specified function.

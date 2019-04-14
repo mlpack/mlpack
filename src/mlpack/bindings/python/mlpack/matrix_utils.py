@@ -54,19 +54,26 @@ def to_matrix(x, dtype=np.double, copy=False):
       return x, False
   elif (isinstance(x, np.ndarray) and x.dtype == dtype and x.flags.f_contiguous):
     if copy: # Copy the matrix if required.
-      return np.ndarray(x.shape, buffer=x.flatten(), dtype=dtype, order='C').copy("C"), True
+      return np.ndarray(x.shape, buffer=x.flatten(), dtype=dtype,
+          order='C').copy("C"), True
     else:
-      return np.ndarray(x.shape, buffer=x.flatten(), dtype=dtype, order='C'), False
+      return np.ndarray(x.shape, buffer=x.flatten(), dtype=dtype, order='C'), \
+          False
   else:
     if isinstance(x, pd.core.series.Series) or isinstance(x, pd.DataFrame):
+      # We can only avoid a copy if the dtype is the same and the copy flag is
+      # false.  I'm actually not sure if this is possible, since in everything I
+      # have found, Pandas stores with F_CONTIGUOUS not C_CONTIGUOUS.
       y = x.values
-      if copy: # Copy the matrix if required.
-        return np.ndarray(y.shape, buffer=y.flatten(), dtype=dtype, order='C').copy("C"), True
+      if copy == False and y.dtype == dtype and y.flags.c_contiguous:
+        return np.ndarray(y.shape, buffer=y.flatten(), dtype=dtype, order='C'),\
+            False
       else:
-        return np.ndarray(y.shape, buffer=y.flatten(), dtype=dtype, order='C'), False
+        # We have to make a copy or change the dtype, so just do this directly.
+        return np.array(y, dtype=dtype, order='C', copy=True), True
     else:
       return np.array(x, copy=True, dtype=dtype, order='C'), True
-    
+
 
 def to_matrix_with_info(x, dtype, copy=False):
   """
@@ -81,7 +88,10 @@ def to_matrix_with_info(x, dtype, copy=False):
 
   if isinstance(x, np.ndarray):
     # It is already an ndarray, so the vector of info is all 0s (all numeric).
-    d = np.zeros([x.shape[1]], dtype=np.bool)
+    if len(x.shape) < 2:
+      d = np.zeros(1, dtype=np.bool)
+    else:
+      d = np.zeros([x.shape[1]], dtype=np.bool)
 
     # Copy the matrix if needed.
     if copy:
@@ -101,7 +111,10 @@ def to_matrix_with_info(x, dtype, copy=False):
        not np.dtype(unicode) in dtype_array:
         # We can just return the matrix as-is; it's all numeric.
         t = to_matrix(x, dtype=dtype, copy=copy)
-        d = np.zeros([x.shape[1]], dtype=np.bool)
+        if len(x.shape) < 2:
+          d = np.zeros(1, dtype=np.bool)
+        else:
+          d = np.zeros([x.shape[1]], dtype=np.bool)
         return (t[0], t[1], d)
 
     if np.dtype(str) in dtype_array or np.dtype(unicode) in dtype_array:

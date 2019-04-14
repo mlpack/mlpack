@@ -89,6 +89,8 @@ class CellBound
   /**
    * Initializes to specified dimensionality with each dimension the empty
    * set.
+   *
+   * @param dimension Dimensionality of bound.
    */
   CellBound(const size_t dimension);
 
@@ -219,11 +221,15 @@ class CellBound
 
   /**
    * Expands this region to encompass another bound.
+   *
+   * @param other Bound which needs to be encompassed.
    */
   CellBound& operator|=(const CellBound& other);
 
   /**
    * Determines if a point is within this bound.
+   *
+   * @param point Point to check the condition.
    */
   template<typename VecType>
   bool Contains(const VecType& point) const;

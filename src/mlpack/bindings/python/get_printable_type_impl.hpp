@@ -52,7 +52,7 @@ inline std::string GetPrintableType<double>(
     const typename boost::disable_if<std::is_same<double,
         std::tuple<data::DatasetInfo, arma::mat>>>::type*)
 {
-  return "double";
+  return "float";
 }
 
 template<>
@@ -64,7 +64,7 @@ inline std::string GetPrintableType<std::string>(
     const typename boost::disable_if<std::is_same<std::string,
         std::tuple<data::DatasetInfo, arma::mat>>>::type*)
 {
-  return "string";
+  return "str";
 }
 
 template<>
@@ -76,7 +76,7 @@ inline std::string GetPrintableType<size_t>(
     const typename boost::disable_if<std::is_same<size_t,
         std::tuple<data::DatasetInfo, arma::mat>>>::type*)
 {
-  return "size_t";
+  return "int";
 }
 
 template<>
