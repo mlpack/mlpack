@@ -41,7 +41,23 @@ class PositiveDefiniteConstraint
     // eigenvalues are at least 1e-50).
     arma::vec eigval;
     arma::mat eigvec;
-    arma::eig_sym(eigval, eigvec, covariance);
+    arma::mat sym_x = arma::symmatu(covariance);
+
+    // Check if Eigen Value exists, if not raise an error log.
+    if ((arma::eig_sym(eigval, eigvec, sym_x) == false))
+    {
+      Log::Fatal << "Eigen Decompositon failed as Eigen Value does not exists ."
+            << std::endl;
+      return;
+    }
+    if (sym_x.is_empty())
+    {
+      Log::Fatal << "Eigen Decompositon failed as Matrix is empty ."
+            << std::endl;
+      return; 
+    }
+    // Get eigenvectors of covariance of input matrix.
+    eig_sym(eigval, eigvec, sym_x);
 
     // If the matrix is not positive definite or if the condition number is
     // large, we must project it back onto the cone of positive definite
