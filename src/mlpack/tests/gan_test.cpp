@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(GANTest)
  * It's not viable to train on bigger parameters due to time constraints.
  * Please refer mlpack/models repository for the tutorial.
  */
-/*BOOST_AUTO_TEST_CASE(GANMNISTTest)
+BOOST_AUTO_TEST_CASE(GANMNISTTest)
 {
   size_t dNumKernels = 32;
   size_t discriminatorPreTrain = 5;
@@ -215,12 +215,9 @@ BOOST_AUTO_TEST_CASE(GANTest)
       discriminatorPreTrain, multiplier);
 
   Log::Info << "Training..." << std::endl;
-  double objVal = gan.Train(optimizer);
+  gan.Train(optimizer);
 
-  // Test that objective value returned by GAN::Train() is finite.
-  BOOST_REQUIRE_EQUAL(std::isnan(objVal), true);
-
-  // Generate samples
+  // Generate samples.
   Log::Info << "Sampling..." << std::endl;
   arma::mat noise(noiseDim, batchSize);
   size_t dim = std::sqrt(trainData.n_rows);
@@ -246,6 +243,6 @@ BOOST_AUTO_TEST_CASE(GANTest)
   }
 
   Log::Info << "Output generated!" << std::endl;
-}*/
+}
 
 BOOST_AUTO_TEST_SUITE_END();
