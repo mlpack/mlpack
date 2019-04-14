@@ -90,9 +90,11 @@ class GaussianDistribution
    */
   void Probability(const arma::mat& x, arma::vec& probabilities) const
   {
-    arma::vec logProbabilities;
-    LogProbability(x, logProbabilities);
-    probabilities = arma::exp(logProbabilities);
+    probabilities.set_size(x.n_cols);
+    for (size_t i = 0; i < x.n_cols; i++)
+    {
+      probabilities(i) = Probability(x.unsafe_col(i));
+    }
   }
 
   /**
@@ -100,10 +102,26 @@ class GaussianDistribution
    * in logProbabilities.
    *
    * @param x List of observations.
-   * @param logProbabilities probabilities Output probabilities for each 
-   *   input observation.
-  */
-  void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
+   * @param logProbabilities Output log probabilities for each input
+   *     observation.
+   */
+  void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const
+  {
+    // Column i of 'diffs' is the difference between x.col(i) and the mean.
+    arma::mat diffs = x;
+    diffs.each_col() -= mean;
+    // Now, we only want to calculate the diagonal elements of (diffs' * cov^-1
+    // * diffs).  We just don't need any of the other elements.  We can
+    // calculate the right hand part of the equation (instead of the left side)
+    // so that later we are referencing columns, not rows -- that is faster.
+    const arma::mat rhs = -0.5 * invCov * diffs;
+    arma::vec logExponents(diffs.n_cols); // We will now fill this.
+    for (size_t i = 0; i < diffs.n_cols; i++)
+      logExponents(i) = accu(diffs.unsafe_col(i) % rhs.unsafe_col(i));
+
+    logProbabilities = -0.5 * x.n_rows * log2pi - 0.5 * logDetCov +
+      logExponents;
+  }
 
   /**
    * Return a randomly generated observation according to the probability
@@ -121,8 +139,8 @@ class GaussianDistribution
   void Train(const arma::mat& observations);
 
   /**
-   * Estimate the Gaussian distribution from the given observations, taking into
-   * account the probability of each observation actually being from this
+   * Estimate the Gaussian distribution from the given observations, taking
+   * into account the probability of each observation actually being from this
    * distribution.
    */
   void Train(const arma::mat& observations,
@@ -167,40 +185,11 @@ class GaussianDistribution
  private:
   /**
    * This factors the covariance using arma::chol().  The function assumes that
-   * the given matrix is factorizable via the Cholesky decomposition.  If not, a
-   * std::runtime_error will be thrown.
+   * the given matrix is factorizable via the Cholesky decomposition.  If not,
+   * a std::runtime_error will be thrown.
    */
   void FactorCovariance();
 };
-
-/**
- * Calculates the multivariate Gaussian Log probability density function for each
- * data point (column) in the given matrix
- *
- * @param x List of observations.
- * @param probabilities Output log probabilities for each input observation.
- */
-inline void GaussianDistribution::LogProbability(
-    const arma::mat& x,
-    arma::vec& logProbabilities) const
-{
-  // Column i of 'diffs' is the difference between x.col(i) and the mean.
-  arma::mat diffs = x - (mean * arma::ones<arma::rowvec>(x.n_cols));
-
-  // Now, we only want to calculate the diagonal elements of (diffs' * cov^-1 *
-  // diffs).  We just don't need any of the other elements.  We can calculate
-  // the right hand part of the equation (instead of the left side) so that
-  // later we are referencing columns, not rows -- that is faster.
-  const arma::mat rhs = -0.5 * invCov * diffs;
-  arma::vec logExponents(diffs.n_cols); // We will now fill this.
-  for (size_t i = 0; i < diffs.n_cols; i++)
-    logExponents(i) = accu(diffs.unsafe_col(i) % rhs.unsafe_col(i));
-
-  const size_t k = x.n_rows;
-
-  logProbabilities = -0.5 * k * log2pi - 0.5 * logDetCov + logExponents;
-}
-
 
 } // namespace distribution
 } // namespace mlpack

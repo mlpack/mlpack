@@ -1,6 +1,8 @@
 /**
  * @file build_windows.hpp
  * @author German Lancioni
+ * @author Miguel Canteras
+ * @author Shikhar Jaiswal
 
 @page build_windows Building mlpack From Source on Windows
 
@@ -10,11 +12,34 @@ This document discusses how to build mlpack for Windows from source, so you can
 later create your own C++ applications.  There are a couple of other tutorials
 for Windows, but they may be out of date:
 
- * <a href="https://github.com/mlpack/mlpack/wiki/WindowsBuild">Github wiki Windows Build page</a>
- * <a href="http://keon.io/mlpack-on-windows">Keon's tutorial for mlpack 2.0.3</a>
- * <a href="https://overdosedblog.wordpress.com/2016/08/15/once_again/">Kirizaki's tutorial for mlpack 2</a>
+ * <a href="https://github.com/mlpack/mlpack/wiki/WindowsBuild">Github wiki Windows Build page</a><br/>
+ * <a href="http://keon.io/mlpack-on-windows">Keon's tutorial for mlpack 2.0.3</a><br/>
+ * <a href="https://overdosedblog.wordpress.com/2016/08/15/once_again/">Kirizaki's tutorial for mlpack 2</a><br/>
 
-Those guides could be used in addition to this tutorial.
+Those guides could be used in addition to this tutorial. Furthermore, mlpack is
+now available for Windows installation through vcpkg:
+
+- Install Git (https://git-scm.com/downloads and execute setup)
+
+- Install CMake (https://cmake.org/ and execute setup)
+
+- Install vcpkg (https://github.com/Microsoft/vcpkg and execute setup)
+
+- To install only mlpack library:
+
+@code
+PS> .\vcpkg install mlpack:x64-windows
+@endcode
+
+- To install mlpack and its console programs:
+@code
+PS> .\vcpkg install mlpack[tools]:x64-windows
+@endcode
+
+After installing, in Visual Studio, you can create a new project (or open
+an existing one). The library is immediately ready to be included
+(via preprocessor directives) and used in your project without additional
+configuration.
 
 @section build_windows_env Environment
 
@@ -35,7 +60,7 @@ The directories and paths used in this tutorial are just for reference purposes.
 and make sure you can use it from the Command Prompt (may need to add to the PATH)
 
 - Download the latest mlpack release from here:
-<a href="http://www.mlpack.org/download.html">mlpack</a>
+<a href="https://www.mlpack.org/">mlpack website</a>
 
 @section build_windows_instructions Windows build instructions
 
