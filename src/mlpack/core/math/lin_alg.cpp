@@ -84,8 +84,23 @@ void mlpack::math::WhitenUsingEig(const arma::mat& x,
   arma::mat diag, eigenvectors;
   arma::vec eigenvalues;
 
+  arma::mat sym_x = arma::symmatu(ccov(x));
+
+  // Check if Eigen Value exists, if not raise an error log.
+  if ((arma::eig_sym(eigenvalues, eigenvectors, sym_x) == false))
+  {
+    Log::Warn << "Eigen Decompositon failed as Eigen Value does not exists ."
+          << std::endl;
+    return;
+  }
+  if (sym_x.is_empty())
+  {
+    Log::Warn << "Eigen Decompositon failed as Matrix is empty ."
+          << std::endl;
+    return; 
+  }
   // Get eigenvectors of covariance of input matrix.
-  eig_sym(eigenvalues, eigenvectors, ccov(x));
+  eig_sym(eigenvalues, eigenvectors, sym_x);
 
   // Generate diagonal matrix using 1 / sqrt(eigenvalues) for each value.
   VectorPower(eigenvalues, -0.5);

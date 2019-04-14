@@ -71,9 +71,24 @@ class NaiveKernelRule
   kernelMatrix.each_col() -= arma::sum(kernelMatrix, 1) / kernelMatrix.n_cols;
   kernelMatrix.each_row() -= rowMean;
   kernelMatrix += arma::sum(rowMean) / kernelMatrix.n_cols;
+  arma::mat sym_x = arma::symmatu(kernelMatrix);
+
+  // Check if Eigen Value exists, if not raise an error log.
+  if ((arma::eig_sym(eigval, eigvec, sym_x) == false))
+  {
+    Log::Fatal << "Eigen Decompositon failed as Eigen Value does not exists ."
+          << std::endl;
+    return;
+  }
+  if (sym_x.is_empty())
+  {
+    Log::Fatal << "Eigen Decompositon failed as Matrix is empty ."
+          << std::endl;
+    return; 
+  }
 
   // Eigendecompose the centered kernel matrix.
-  arma::eig_sym(eigval, eigvec, kernelMatrix);
+  arma::eig_sym(eigval, eigvec, sym_x);
 
   // Swap the eigenvalues since they are ordered backwards (we need largest to
   // smallest).
