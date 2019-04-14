@@ -62,7 +62,7 @@ class Concat
    * @param run Call the Forward/Backward method before the output is merged.
    */
   Concat(arma::Row<size_t> inputSize,
-         const int axis,
+         const size_t axis,
          const bool model = false,
          const bool run = true);
 
@@ -211,7 +211,10 @@ class Concat
   arma::Row<size_t> inputSize;
 
   //! Parameter which indicates the axis of concatenation.
-  int axis;
+  size_t axis;
+
+  //! Parameter which indicates whether to use the axis of concatenation.
+  bool useAxis;
 
   //! Parameter to store channels
   size_t channels;

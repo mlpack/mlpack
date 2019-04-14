@@ -30,7 +30,8 @@ Concat<InputDataType,
       >::Concat(
       const bool model,
       const bool run) :
-      axis(-1),
+      axis(0),
+      useAxis(false),
       model(model),
       run(run),
       channels(1)
@@ -45,11 +46,12 @@ Concat<InputDataType,
        CustomLayers...
       >::Concat(
       arma::Row<size_t> inputSize,
-      const int axis,
+      const size_t axis,
       const bool model,
       const bool run) :
       inputSize(inputSize),
       axis(axis),
+      useAxis(true),
       model(model),
       run(run),
       channels(1)
@@ -88,8 +90,8 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Forward(
 
   newColSize = oldColSize = output.n_cols;
 
-  // Axis is not specified.
-  if (axis >= 0)
+  // Axis is specified and useAxis is true.
+  if (useAxis)
   {
     // Axis is specified without input dimension.
     // Throw an error.
@@ -98,7 +100,7 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Forward(
       // Calculate rowSize, newColSize based on the axis
       // of concatenation. Finally concat along cols and
       // reshape to original format i.e. (input, batch_size).
-      size_t i = std::min(axis + 1, (int)inputSize.n_elem);
+      size_t i = std::min(axis + 1, (size_t)inputSize.n_elem);
       for (; i < inputSize.n_elem; ++i)
       {
         newColSize *= inputSize[i];
