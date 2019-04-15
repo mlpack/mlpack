@@ -1,11 +1,17 @@
 ### mlpack 3.1.0
 ###### ????-??-??
+  * Add DiagonalGaussianDistribution and DiagonalGMM classes to speed up the
+    diagonal covariance computation and deprecate DiagonalConstraint (#1666).
+
   * Add kernel density estimation (KDE) implementation with bindings to other
     languages (#1301).
 
   * Where relevant, all models with a `Train()` method now return a `double`
     value representing the goodness of fit (i.e. final objective value, error,
     etc.) (#1678).
+
+  * Add implementation for linear support vector machine (see
+    `src/mlpack/methods/linear_svm`).
 
 ### mlpack 3.0.5
 ###### ????-??-??
