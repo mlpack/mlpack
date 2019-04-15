@@ -124,7 +124,7 @@ class ContinuousMountainCarV2
    * @param nextState The next state.
    * @return reward, it's always -1.0.
    */
-  double Sample(const StateV2& state,
+  double Sample(const State& state,
                 const Action& action,
                 State& nextState) const
   {
@@ -159,7 +159,7 @@ class ContinuousMountainCarV2
    * @param action The current action.
    * @return reward, it's always -1.0.
    */
-  double Sample(const StateV2& state, const Action& action) const
+  double Sample(const State& state, const Action& action) const
   {
     ContinuousMountainCar ob = ContinuousMountainCar(positionMin,
                                                            positionMax,
@@ -176,9 +176,9 @@ class ContinuousMountainCarV2
    *
    * @return Initial state for each episode.
    */
-  StateV2 InitialSample() const
+  State InitialSample() const
   {
-    StateV2 state;
+    State state;
     state.Velocity() = 0.0;
     state.Position() = math::Random(-0.6, -0.4);
     return state;
@@ -190,7 +190,7 @@ class ContinuousMountainCarV2
    * @param state desired state.
    * @return true if state is a terminal state, otherwise false.
    */
-  bool IsTerminal(const StateV2& state) const
+  bool IsTerminal(const State& state) const
   {
     return state.Position() >= positionGoal && state.Velocity() >= velocityGoal;
   }
