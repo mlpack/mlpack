@@ -32,13 +32,13 @@ class ContinuousMountainCarV2
    * Implementation of state of Continuous Mountain Car V2. Each state is a
    * (velocity, position) vector.
    */
-  class StateV2
+  class State
   {
    public:
     /**
      * Construct a state instance.
      */
-    StateV2() : data(dimension, arma::fill::zeros)
+    State() : data(dimension, arma::fill::zeros)
     { /* Nothing to do here. */ }
 
     /**
@@ -46,7 +46,7 @@ class ContinuousMountainCarV2
      *
      * @param data Data for the velocity and position.
      */
-    StateV2(const arma::colvec& data): data(data)
+    State(const arma::colvec& data): data(data)
     { /* Nothing to do here. */ }
 
     //! Modify the internal representation of the state.
