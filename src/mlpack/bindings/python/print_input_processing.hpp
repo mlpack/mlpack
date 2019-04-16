@@ -85,8 +85,6 @@ void PrintInputProcessing(
         << "](<const string> '" << d.name << "', ";
     if (GetCythonType<T>(d) == "string")
       std::cout << name << ".encode(\"UTF-8\")";
-    else if (GetCythonType<T>(d) == "vector[string]")
-      std::cout << "[i.encode(\"UTF-8\") for i in " << name << "]";
     else
       std::cout << name;
     std::cout << ")" << std::endl;
@@ -201,7 +199,12 @@ void PrintInputProcessing(
     std::cout << prefix << "      if isinstance(" << d.name << "[0], "
         << GetPrintableType<typename T::value_type>(d) << "):" << std::endl;
     std::cout << prefix << "        SetParam[" << GetCythonType<T>(d)
-        << "](<const string> '" << d.name << "', " << d.name;
+        << "](<const string> '" << d.name << "', ";
+    // Strings need special handling.
+    if (GetCythonType<T>(d) == "vector[string]")
+      std::cout << "[i.encode(\"UTF-8\") for i in " << d.name << "]";
+    else
+      std::cout << d.name;
     std::cout << ")" << std::endl;
     std::cout << prefix << "        CLI.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
@@ -222,7 +225,12 @@ void PrintInputProcessing(
     std::cout << prefix << "    if isinstance(" << d.name << "[0], "
         << GetPrintableType<typename T::value_type>(d) << "):" << std::endl;
     std::cout << prefix << "      SetParam[" << GetCythonType<T>(d)
-        << "](<const string> '" << d.name << "', " << d.name;
+        << "](<const string> '" << d.name << "', ";
+    // Strings need special handling.
+    if (GetCythonType<T>(d) == "vector[string]")
+      std::cout << "[i.encode(\"UTF-8\") for i in " << d.name << "]";
+    else
+      std::cout << d.name;
     std::cout << ")" << std::endl;
     std::cout << prefix << "      CLI.SetPassed(<const string> '" << d.name
         << "')" << std::endl;
