@@ -47,7 +47,7 @@ ColumnCovariance(const arma::Mat<eT>& A, const size_t norm_type)
     out /= norm_val;
   }
 
-  return out; 
+  return out;
 }
 
 template<typename T>
