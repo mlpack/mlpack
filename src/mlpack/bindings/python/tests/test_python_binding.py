@@ -192,7 +192,7 @@ class TestPythonBinding(unittest.TestCase):
     Test that we can pass pandas.Series as input parameter.
     """
     x = pd.Series(np.random.rand(100))
-    z = copy.copy(x)
+    z = x.copy(deep=True)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -229,7 +229,7 @@ class TestPythonBinding(unittest.TestCase):
     Test that we can pass pandas.Series as input parameter.
     """
     x = pd.Series(np.random.randint(0, high=500, size=100))
-    z = copy.copy(x)
+    z = x.copy(deep=True)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -303,7 +303,7 @@ class TestPythonBinding(unittest.TestCase):
     and the fifth forgotten.
     """
     x = pd.DataFrame(np.random.rand(100, 5))
-    z = copy.copy(x)
+    z = x.copy(deep=True)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -696,7 +696,7 @@ class TestPythonBinding(unittest.TestCase):
     x = pd.DataFrame(np.random.rand(10, 4), columns=list('abcd'))
     x['e'] = pd.Series(['a', 'b', 'c', 'd', 'a', 'b', 'e', 'c', 'a', 'b'],
         dtype='category')
-    z = copy.copy(x)
+    z = x.copy(deep=True)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -787,7 +787,7 @@ class TestPythonBinding(unittest.TestCase):
 
     self.assertEqual(output2['model_bw_out'], 20.0)
 
-  def testOneDimensionNumpymatrix(self):
+  def testOneDimensionNumpyMatrix(self):
     """
     Test that we can pass one dimension matrix from matrix_in
     """
@@ -1007,7 +1007,7 @@ class TestPythonBinding(unittest.TestCase):
     Test that we can pass a one dimension matrix with some categorical features.
     """
     x = pd.DataFrame(np.random.rand(10))
-    z = copy.copy(x)
+    z = x.copy(deep=True)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
