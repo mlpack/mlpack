@@ -30,8 +30,8 @@ template<typename InputType, typename OutputType>
 void CReLU<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
-  output = arma::join_cols(arma::max(input, 0.0 * input),arma::max(
-        (-1 * input), 0.0 * input)); 
+  output = arma::join_cols(arma::max(input, 0.0 * input), arma::max(
+        (-1 * input), 0.0 * input));
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -39,8 +39,6 @@ template<typename DataType>
 void CReLU<InputDataType, OutputDataType>::Backward(
     const DataType&& input, DataType&& gy, DataType&& g)
 {
-  //DataType derivative;
-  //Deriv(input, derivative);
   DataType temp;
   temp = gy % (input >= 0.0);
   g = temp.rows(0, (input.n_rows / 2 - 1)) - temp.rows(input.n_rows / 2,
