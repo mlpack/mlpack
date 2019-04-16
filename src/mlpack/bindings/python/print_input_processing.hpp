@@ -265,7 +265,7 @@ void PrintInputProcessing(
    *   if param_name_tuple[0].shape[0] == 1 or
    *       param_name_tuple[0].shape[1] == 1:
    *     param_name_tuple[0].shape = (param_name_tuple[0].size,)
-   *   param_name_mat = arma_numpy.numpy_to_mat_s(param_name_reshape,
+   *   param_name_mat = arma_numpy.numpy_to_mat_s(param_name_tuple[0],
    *       param_name_tuple[1])
    *   SetParam[mat](<const string> 'param_name', dereference(param_name_mat))
    *   CLI.SetPassed(<const string> 'param_name')
@@ -456,11 +456,13 @@ void PrintInputProcessing(
   /** We want to generate code like the following:
    *
    * if param_name is not None:
-   *  param_name_tuple = to_matrix_with_info(param_name)
-   *  param_name_mat = arma_numpy.numpy_to_matrix_d(param_name_tuple[0])
-   *  SetParamWithInfo[mat](<const string> 'param_name',
-   *      dereference(param_name_mat), &param_name_tuple[1][0])
-   *  CLI.SetPassed(<const string> 'param_name')
+   *   param_name_tuple = to_matrix_with_info(param_name)
+   *   if len(param_name_tuple[0].shape) < 2:
+   *     param_name_tuple[0].shape = (param_name_tuple[0].size,)
+   *   param_name_mat = arma_numpy.numpy_to_matrix_d(param_name_tuple[0])
+   *   SetParamWithInfo[mat](<const string> 'param_name',
+   *       dereference(param_name_mat), &param_name_tuple[1][0])
+   *   CLI.SetPassed(<const string> 'param_name')
    */
   std::cout << prefix << "cdef np.ndarray " << d.name << "_dims" << std::endl;
   std::cout << prefix << "# Detect if the parameter was passed; set if so."
@@ -471,19 +473,12 @@ void PrintInputProcessing(
     std::cout << prefix << "  " << d.name << "_tuple = to_matrix_with_info("
         << d.name << ", dtype=np.double, copy=CLI.HasParam('copy_all_inputs'))"
         << std::endl;
-    std::cout << prefix << "  " << "if len(" << d.name << "_tuple[0].shape"
+    std::cout << prefix << "  if len(" << d.name << "_tuple[0].shape"
         << ") < 2:" << std::endl;
-    std::cout << prefix << "  " << prefix << d.name
-        << "_reshape = np.reshape(("<< d.name << "_tuple[0]), (" << d.name
-        << "_tuple[0].shape[0] , 1))" << std::endl;
-    std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
-        << "mat_d" << "(" << d.name
-        << "_reshape, " << d.name << "_tuple[1])" << std::endl;
-    std::cout << prefix << "  " << "else:" << std::endl;
-    std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
-        << "mat_d" << "(" << d.name
-        << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
-
+    std::cout << prefix << "    " << d.name << "_tuple[0].shape = (" << d.name
+        << "_tuple[0].shape[0], 1)" << std::endl;
+    std::cout << prefix << "  " << d.name << "_mat = arma_numpy.numpy_to_mat_d("
+        << d.name << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
     std::cout << prefix << "  " << d.name << "_dims = " << d.name
         << "_tuple[2]" << std::endl;
     std::cout << prefix << "  SetParamWithInfo[arma.Mat[double]](<const "
@@ -495,29 +490,23 @@ void PrintInputProcessing(
   }
   else
   {
-    std::cout << prefix << "    " << d.name << "_tuple = to_matrix_with_info("
-        << d.name << ", dtype=np.double, copy=CLI.HasParam('copy_all_inputs'))"
+    std::cout << prefix << d.name << "_tuple = to_matrix_with_info(" << d.name
+        << ", dtype=np.double, copy=CLI.HasParam('copy_all_inputs'))"
         << std::endl;
-    std::cout << prefix << "  " << "if len(" << d.name << "_tuple[0].shape"
+    std::cout << prefix << "if len(" << d.name << "_tuple[0].shape"
         << ") < 2:" << std::endl;
-    std::cout << prefix << "  " << prefix << d.name
-        << "_reshape = np.reshape(("<< d.name << "_tuple[0]), (" << d.name
-        << "_tuple[0].shape[0] , 1))" << std::endl;
-    std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
-        << "mat_d" << "(" << d.name
-        << "_reshape, " << d.name << "_tuple[1])" << std::endl;
-    std::cout << prefix << "  " << "else:" << std::endl;
-    std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
-        << "mat_d" << "(" << d.name
-        << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
-    std::cout << prefix << "  " << d.name << "_dims = " << d.name
-        << "_tuple[2]" << std::endl;
-    std::cout << prefix << "  SetParamWithInfo[arma.Mat[double]](<const "
+    std::cout << prefix << "  " << d.name << "_tuple[0].shape = (" << d.name
+        << "_tuple[0].shape[0], 1)" << std::endl;
+    std::cout << prefix << d.name << "_mat = arma_numpy.numpy_to_mat_d("
+        << d.name << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
+    std::cout << prefix << d.name << "_dims = " << d.name << "_tuple[2]"
+        << std::endl;
+    std::cout << prefix << "SetParamWithInfo[arma.Mat[double]](<const "
         << "string> '" << d.name << "', dereference(" << d.name << "_mat), "
         << "<const cbool*> " << d.name << "_dims.data)" << std::endl;
-    std::cout << prefix << "  CLI.SetPassed(<const string> '" << d.name
-        << "')" << std::endl;
-    std::cout << prefix << "  del " << d.name << "_mat" << std::endl;
+    std::cout << prefix << "CLI.SetPassed(<const string> '" << d.name << "')"
+        << std::endl;
+    std::cout << prefix << "del " << d.name << "_mat" << std::endl;
   }
   std::cout << std::endl;
 }
