@@ -40,7 +40,10 @@ steps:
   displayName: 'Install Build Dependencies'
 
 # Configure mlpack (CMake)
-- script: unset BOOST_ROOT && mkdir build && cd build && cmake $(CMakeArgs) ..
+- script: |
+    export GOPATH=$PWD
+    go get gonum.org/v1/gonum/mat/...
+    unset BOOST_ROOT && mkdir build && cd build && cmake $(CMakeArgs) ..
   displayName: 'CMake'
 
 # Build mlpack
