@@ -33,20 +33,21 @@ ColumnCovariance(const arma::Mat<eT>& A, const size_t norm_type)
   if (A.n_elem > 0)
   {
     const arma::Mat<eT>& AA = (A.n_cols == 1)
-      ? arma::Mat<eT>(const_cast<eT*>(A.memptr()), A.n_cols, A.n_rows, false, false)
-      : arma::Mat<eT>(const_cast<eT*>(A.memptr()), A.n_rows, A.n_cols, false, false);
+      ? arma::Mat<eT>(const_cast<eT*>(A.memptr()), A.n_cols, A.n_rows, false,
+        false) : arma::Mat<eT>(const_cast<eT*>(A.memptr()), A.n_rows, A.n_cols,
+        false, false);
 
     const size_t N = AA.n_cols;
     const eT norm_val = (norm_type == 0) ?
         ( (N > 1) ? eT(N-1) : eT(1) ) : eT(N);
 
-    const arma::Mat<eT> tmp = AA.each_col() - arma::mean(AA,1);
+    const arma::Mat<eT> tmp = AA.each_col() - arma::mean(AA, 1);
 
     out = tmp * tmp.t();
     out /= norm_val;
   }
 
-  return out;
+  return out; 
 }
 
 template<typename T>
