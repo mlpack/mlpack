@@ -3,9 +3,6 @@
  * @author Jeffin Sam
  *
  * Implementation of CReLU layer.
- * Introduced by,
- * Wenling Shang, Kihyuk Sohn, Diogo Almeida, Honglak Lee,
- * "https://arxiv.org/abs/1603.05201", 16th March 2016.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -21,9 +18,27 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Concatenated ReLU has two outputs, one ReLU and one negative ReLU, concatenated together.
- * In other words, for positive x it produces [x, 0], and for negative x it produces [0, x].
- * Because it has two outputs, CReLU doubles the output dimension.
+ *
+ * A concatenated ReLU has two outputs, one ReLU and one negative ReLU,
+ * concatenated together.In other words, for positive x it produces [x, 0],
+ * and for negative x it produces [0, x].Because it has two outputs,
+ * CReLU doubles the output dimension.
+ *
+ * Note:
+ * During building of model, The next layer of crelu should have double the size
+ * as given input layer since it concatenates the input.
+ *
+ * For more information, see the following.
+ *
+ * @code
+ * @inproceedings{ICML2016,
+ *   title={Understanding and Improving Convolutional Neural Networks
+ *           via Concatenated Rectified Linear Units},
+ *   author = {LWenling Shang, Kihyuk Sohn, Diogo Almeida, Honglak Lee},
+ *   year = {2016}
+ * }
+ * @endcode
+ *
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -38,8 +53,7 @@ class CReLU
 {
  public:
   /**
-   * Create the CReLU object using the specified parameters.
-   * The non zero gradient can be adjusted by specifying the parameter
+   * Create the CReLU object.
    */
   CReLU();
 

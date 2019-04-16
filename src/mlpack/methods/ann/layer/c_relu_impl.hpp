@@ -3,9 +3,6 @@
  * @author Jeffin Sam
  *
  * Implementation of CReLU layer.
- * Introduced by,
- * Wenling Shang, Kihyuk Sohn, Diogo Almeida, Honglak Lee,
- * "https://arxiv.org/abs/1603.05201", 16th March 2016.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -33,14 +30,7 @@ template<typename InputType, typename OutputType>
 void CReLU<InputDataType, OutputDataType>::Forward(
     const InputType&& input, OutputType&& output)
 {
-  // Optimisation needed
-  OutputType temp1;
-  OutputType temp2;
-  Fn(input, temp1);
-  InputType inptemp = -1 * input;
-  Fn(inptemp, temp2);
-  // Concat Neg and Pos Relu
-  output = arma::join_cols(temp1, temp2);
+  output = arma::join_cols(std::max(input, 0.0), std::max(-1.0 * input, 0.0));
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -54,23 +44,6 @@ void CReLU<InputDataType, OutputDataType>::Backward(
   temp = gy % derivative;
   g = temp.rows(0, (input.n_rows / 2 - 1)) - temp.rows(input.n_rows / 2,
                                             (input.n_rows - 1));
-
-  /**
-  * Below implementation was a different varient but couldn't manage to implement it.
-  *
-  * Will Clear it once Pr is done with Review
-  * DataType temp1;
-  * DataType temp2;
-  * Deriv(input, temp1);
-  * DataType inptemp=-1*input;
-  * Deriv(inptemp,temp2);
-  * DataType g1;
-  * DataType g2;
-  * g1 = gy % temp1;
-  * g2 = gy % temp2;
-  * derivative=arma::join_cols(temp1,temp2);
-  * g=arma::join_cols(g1,g2);
-  **/
 }
 
 template<typename InputDataType, typename OutputDataType>
