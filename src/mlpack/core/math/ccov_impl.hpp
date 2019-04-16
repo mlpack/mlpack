@@ -30,27 +30,19 @@ ColumnCovariance(const arma::Mat<eT>& A, const size_t norm_type)
 
   arma::Mat<eT> out;
 
-  if (A.is_vec())
+  if (A.n_elem > 0)
   {
-    if (A.n_rows == 1)
-    {
-      out = arma::var(arma::trans(A), norm_type);
-    }
-    else
-    {
-      out = arma::var(A, norm_type);
-    }
-  }
-  else
-  {
-    const size_t N = A.n_cols;
+    const arma::Mat<eT>& AA = (A.n_cols == 1)
+      ? arma::Mat<eT>(const_cast<eT*>(A.memptr()), A.n_cols, A.n_rows, false, false)
+      : arma::Mat<eT>(const_cast<eT*>(A.memptr()), A.n_rows, A.n_cols, false, false);
+
+    const size_t N = AA.n_cols;
     const eT norm_val = (norm_type == 0) ?
         ( (N > 1) ? eT(N-1) : eT(1) ) : eT(N);
 
-    const arma::Col<eT> acc = arma::sum(A, 1);
+    const arma::Mat<eT> tmp = AA.each_col() - arma::mean(AA,1);
 
-    out = A * arma::trans(A);
-    out -= (acc * arma::trans(acc)) / eT(N);
+    out = tmp * tmp.t();
     out /= norm_val;
   }
 
