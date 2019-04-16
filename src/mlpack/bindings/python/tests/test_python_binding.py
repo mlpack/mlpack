@@ -203,7 +203,7 @@ class TestPythonBinding(unittest.TestCase):
     self.assertEqual(output['smatrix_out'].dtype, np.double)
 
     for i in range(100):
-      self.assertEqual(output['smatrix_out'][i,0], z.iloc[i] * 2)
+      self.assertEqual(output['smatrix_out'][i,0], x.iloc[i] * 2)
 
 
   def testPandasSeriesMatrixForceCopy(self):
@@ -240,7 +240,7 @@ class TestPythonBinding(unittest.TestCase):
     self.assertEqual(output['s_umatrix_out'].dtype, np.long)
 
     for i in range(100):
-      self.assertEqual(output['s_umatrix_out'][i, 0], z.iloc[i] * 2)
+      self.assertEqual(output['s_umatrix_out'][i, 0], x.iloc[i] * 2)
 
 
   def testPandasSeriesUMatrixForceCopy(self):
@@ -1017,7 +1017,7 @@ class TestPythonBinding(unittest.TestCase):
     self.assertEqual(output['matrix_and_info_out'].shape[0], 10)
 
     for i in range(10):
-        self.assertEqual(output['matrix_and_info_out'][i, 0], z[0][i] * 2)
+      self.assertEqual(output['matrix_and_info_out'][i, 0], x[0][i] * 2)
 
   def testOneDimensionMatrixAndInfoPandasForceCopy(self):
     """
