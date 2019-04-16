@@ -153,19 +153,25 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     ResetDeterministic();
   }
 
-  arma::mat resultsTemp;
-  Forward(std::move(arma::mat(predictors.slice(0).colptr(0),
-      predictors.n_rows, 1, false, true)));
-  outputSize = boost::apply_visitor(outputParameterVisitor,
-      network.back()).col(0).n_elem;
+  const size_t effectiveBatchSize = std::min(batchSize,
+      size_t(predictors.n_cols));
 
+  Forward(std::move(arma::mat(predictors.slice(0).colptr(0),
+      predictors.n_rows, effectiveBatchSize, false, true)));
+  arma::mat resultsTemp = boost::apply_visitor(outputParameterVisitor,
+      network.back());
+
+  outputSize = resultsTemp.n_rows;
   results = arma::zeros<arma::cube>(outputSize, predictors.n_cols, rho);
+  results.slice(0).submat(0, 0, results.n_rows - 1,
+      effectiveBatchSize - 1) = resultsTemp;
+
   // Process in accordance with the given batch size.
   for (size_t begin = 0; begin < predictors.n_cols; begin += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize,
         size_t(predictors.n_cols - begin));
-    for (size_t seqNum = 0; seqNum < rho; ++seqNum)
+    for (size_t seqNum = !begin; seqNum < rho; ++seqNum)
     {
       Forward(std::move(arma::mat(predictors.slice(seqNum).colptr(begin),
           predictors.n_rows, effectiveBatchSize, false, true)));
