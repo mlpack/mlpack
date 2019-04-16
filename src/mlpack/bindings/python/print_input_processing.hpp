@@ -62,8 +62,6 @@ void PrintInputProcessing(
    *   else:
    *     raise TypeError("'param_name' must have type 'list'!")
    */
-
-
   std::cout << prefix << "# Detect if the parameter was passed; set if so."
       << std::endl;
   if (!d.required)
@@ -190,7 +188,6 @@ void PrintInputProcessing(
    *      raise TypeError("'param_name' must have type 'list'!")
    *
    */
-
   std::cout << prefix << "# Detect if the parameter was passed; set if so."
       << std::endl;
   if (!d.required)
@@ -259,12 +256,9 @@ void PrintInputProcessing(
    *   param_name_tuple = to_matrix(param_name)
    *   if param_name_tuple[0].shape[0] == 1 or
    *       param_name_tuple[0].shape[1] == 1:
-   *     param_name_reshape = param_name_tuple[0].ravel()
-   *     param_name_mat = arma_numpy.numpy_to_mat_s(param_name_reshape,
-   *         param_name_tuple[1])
-   *   else:
-   *     param_name_mat = arma_numpy.numpy_to_mat_s(param_name_tuple[0],
-   *         param_name_tuple[1])
+   *     param_name_tuple[0].shape = (param_name_tuple[0].size,)
+   *   param_name_mat = arma_numpy.numpy_to_mat_s(param_name_reshape,
+   *       param_name_tuple[1])
    *   SetParam[mat](<const string> 'param_name', dereference(param_name_mat))
    *   CLI.SetPassed(<const string> 'param_name')
    *
@@ -279,18 +273,14 @@ void PrintInputProcessing(
       std::cout << prefix << "  " << d.name << "_tuple = to_matrix("
           << d.name << ", dtype=" << GetNumpyType<typename T::elem_type>()
           << ", copy=CLI.HasParam('copy_all_inputs'))" << std::endl;
-      std::cout << prefix << "  " << "if len(" << d.name << "_tuple[0].shape"
-          << ") > 1:" << std::endl;
-      std::cout << prefix << "  " << prefix << "if " << d.name << "_tuple[0]"
+      std::cout << prefix << "  if len(" << d.name << "_tuple[0].shape) > 1:"
+          << std::endl;
+      std::cout << prefix << "    if " << d.name << "_tuple[0]"
           << ".shape[0] == 1 or " << d.name << "_tuple[0].shape[1] == 1:"
           << std::endl;
-      std::cout << prefix << "  " << prefix << "  " << d.name
-          << "_reshape = " << d.name << "_tuple[0].ravel()" << std::endl;
-      std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
-          << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
-          << "_reshape, " << d.name << "_tuple[1])" << std::endl;
-      std::cout << prefix << "  " << "else:" << std::endl;
-      std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
+      std::cout << prefix << "      " << d.name << "_tuple[0].shape = ("
+          << d.name << "_tuple[0].size,)" << std::endl;
+      std::cout << prefix << "  " << d.name << "_mat = arma_numpy.numpy_to_"
           << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
           << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
       std::cout << prefix << "  SetParam[" << GetCythonType<T>(d)
@@ -306,16 +296,11 @@ void PrintInputProcessing(
       std::cout << prefix << "  " << d.name << "_tuple = to_matrix("
           << d.name << ", dtype=" << GetNumpyType<typename T::elem_type>()
           << ", copy=CLI.HasParam('copy_all_inputs'))" << std::endl;
-      std::cout << prefix << "  " << "if len(" << d.name << "_tuple[0].shape"
+      std::cout << prefix << "  if len(" << d.name << "_tuple[0].shape"
           << ") < 2:" << std::endl;
-      std::cout << prefix << "  " << prefix << d.name
-          << "_reshape = np.reshape(("<< d.name << "_tuple[0]), (" << d.name
-          << "_tuple[0].shape[0] , 1))" << std::endl;
-      std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
-          << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
-          << "_reshape, " << d.name << "_tuple[1])" << std::endl;
-      std::cout << prefix << "  " << "else:" << std::endl;
-      std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
+      std::cout << prefix << "    " << d.name << "_tuple[0].shape = (" << d.name
+          << "_tuple[0].shape[0], 1)" << std::endl;
+      std::cout << prefix << "  " << d.name << "_mat = arma_numpy.numpy_to_"
           << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
           << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
       std::cout << prefix << "  SetParam[" << GetCythonType<T>(d)
@@ -333,18 +318,14 @@ void PrintInputProcessing(
       std::cout << prefix << "  " << d.name << "_tuple = to_matrix("
           << d.name << ", dtype=" << GetNumpyType<typename T::elem_type>()
           << ", copy=CLI.HasParam('copy_all_inputs'))" << std::endl;
-      std::cout << prefix << "  " << "if len(" << d.name << "_tuple[0].shape"
-          << ") > 1:" << std::endl;
-      std::cout << prefix << "  " << prefix << "if " << d.name << "_tuple[0]"
+      std::cout << prefix << "  if len(" << d.name << "_tuple[0].shape) > 1:"
+          << std::endl;
+      std::cout << prefix << "    if " << d.name << "_tuple[0]"
           << ".shape[0] == 1 or " << d.name << "_tuple[0].shape[1] == 1:"
           << std::endl;
-      std::cout << prefix << "  " << prefix << "  " << d.name
-          << "_reshape = " << d.name << "_tuple[0].ravel()" << std::endl;
-      std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
-          << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
-          << "_reshape, " << d.name << "_tuple[1])" << std::endl;
-      std::cout << prefix << "  " << "else:" << std::endl;
-      std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
+      std::cout << prefix << "      " << d.name << "_tuple[0].shape = ("
+          << d.name << "_tuple[0].size,)" << std::endl;
+      std::cout << prefix << "  " << d.name << "_mat = arma_numpy.numpy_to_"
           << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
           << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
       std::cout << prefix << "  SetParam[" << GetCythonType<T>(d)
@@ -359,16 +340,11 @@ void PrintInputProcessing(
       std::cout << prefix << "  " << d.name << "_tuple = to_matrix("
           << d.name << ", dtype=" << GetNumpyType<typename T::elem_type>()
           << ", copy=CLI.HasParam('copy_all_inputs'))" << std::endl;
-      std::cout << prefix << "  " << "if len(" << d.name << "_tuple[0].shape"
-          << ") < 2:" << std::endl;
-      std::cout << prefix << "  " << prefix << d.name
-          << "_reshape = np.reshape(("<< d.name << "_tuple[0]), (" << d.name
-          << "_tuple[0].shape[0] , 1))" << std::endl;
-      std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
-          << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
-          << "_reshape, " << d.name << "_tuple[1])" << std::endl;
-      std::cout << prefix << "  " << "else:" << std::endl;
-      std::cout << prefix << "    " << d.name << "_mat = arma_numpy.numpy_to_"
+      std::cout << prefix << "  if len(" << d.name << "_tuple[0].shape) > 2:"
+          << std::endl;
+      std::cout << prefix << "    " << d.name << "_tuple[0].shape = (" << d.name
+          << "_tuple[0].shape[0], 1)" << std::endl;
+      std::cout << prefix << "  " << d.name << "_mat = arma_numpy.numpy_to_"
           << GetArmaType<T>() << "_" << GetNumpyTypeChar<T>() << "(" << d.name
           << "_tuple[0], " << d.name << "_tuple[1])" << std::endl;
       std::cout << prefix << "  SetParam[" << GetCythonType<T>(d)
@@ -381,6 +357,7 @@ void PrintInputProcessing(
   }
   std::cout << std::endl;
 }
+
 /**
  * Print input processing for a serializable type.
  */
