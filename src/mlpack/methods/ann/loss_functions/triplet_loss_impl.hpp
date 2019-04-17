@@ -41,7 +41,7 @@ double TripletLoss<InputDataType, OutputDataType>::Forward(
        metric::SquaredEuclideanDistance::Evaluate(anchor, negative);
 
   double triplet_loss = 
-      std::max(positive_distance - negative_distance + margin, 0);
+      std::max(arma::accu(positive_distance - negative_distance) + margin, 0);
 
   return triplet_loss;
 }
@@ -57,14 +57,14 @@ void TripletLoss<InputDataType, OutputDataType>::Backward(
   if (TripletLoss<InputDataType, OutputDataType>
       ::Forward(anchor, positive, negative) != 0)
   {
-    float output_anchor =arma::accu(2*(negative - positive));
-    float output_positive = arma::accu(-2*(anchor - positive));
-    float output_negative = arma::accu(2*(anchor - negative));
-    output = arma::colvec(output_anchor, output_positive, output_negative); 
+    float output_anchor =arma::accu((negative - positive)*2);
+    float output_positive = arma::accu((anchor - positive)*(-2));
+    float output_negative = arma::accu((anchor - negative)*2);
+    output = arma::mat(output_anchor, output_positive, output_negative); 
   }
   else
   {
-    output.zeros;
+    output.zeros();
   }
   
 }

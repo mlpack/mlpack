@@ -69,7 +69,7 @@ class TripletLoss{
    * @param target The target vector.
    * @param output The calculated error.
    */
-  template<typename InputType, typename TargetType, typename OutputType>
+  template<typename InputType, typename OutputType>
   void Backward(const InputType&& anchor, 
                 const InputType&& positive,
                 const InputType&& negative,
