@@ -100,7 +100,7 @@ class TestPythonBinding(unittest.TestCase):
     and the fifth forgotten.
     """
     x = np.random.rand(100, 5);
-    z = copy.copy(x)
+    z = copy.deepcopy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -147,7 +147,7 @@ class TestPythonBinding(unittest.TestCase):
     dimension doubled and the fifth forgotten.
     """
     x = np.array(np.random.rand(100, 5), order='F');
-    z = copy.copy(x)
+    z = copy.deepcopy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -266,7 +266,7 @@ class TestPythonBinding(unittest.TestCase):
     Test a Pandas Series input paramter
     """
     x =  pd.Series(np.random.rand(100))
-    z = copy.copy(x)
+    z = copy.deepcopy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -409,7 +409,7 @@ class TestPythonBinding(unittest.TestCase):
     Same as testNumpyMatrix() but with an unsigned matrix.
     """
     x = np.random.randint(0, high=500, size=[100, 5])
-    z = copy.copy(x)
+    z = copy.deepcopy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -514,7 +514,7 @@ class TestPythonBinding(unittest.TestCase):
     Test a column vector input parameter.
     """
     x = np.random.rand(100)
-    z = copy.copy(x)
+    z = copy.deepcopy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -550,7 +550,7 @@ class TestPythonBinding(unittest.TestCase):
     Test an unsigned column vector input parameter.
     """
     x = np.random.randint(0, high=500, size=100)
-    z = copy.copy(x)
+    z = copy.deepcopy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -584,7 +584,7 @@ class TestPythonBinding(unittest.TestCase):
     Test a row vector input parameter.
     """
     x = np.random.rand(100)
-    z = copy.copy(x)
+    z = copy.deepcopy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -620,7 +620,7 @@ class TestPythonBinding(unittest.TestCase):
     Test an unsigned row vector input parameter.
     """
     x = np.random.randint(0, high=500, size=100)
-    z = copy.copy(x)
+    z = copy.deepcopy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -656,7 +656,7 @@ class TestPythonBinding(unittest.TestCase):
     Test that we can pass a matrix with all numeric features.
     """
     x = np.random.rand(100, 10)
-    z = copy.copy(x)
+    z = copy.deepcopy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -792,7 +792,7 @@ class TestPythonBinding(unittest.TestCase):
     Test that we can pass one dimension matrix from matrix_in
     """
     x = np.random.rand(100)
-    z = copy.copy(x)
+    z = copy.deepcopy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -829,7 +829,7 @@ class TestPythonBinding(unittest.TestCase):
     Same as testNumpyMatrix() but with an unsigned matrix and One Dimension Matrix.
     """
     x = np.random.randint(0, high=500, size=100)
-    z = copy.copy(x)
+    z = copy.deepcopy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -865,7 +865,7 @@ class TestPythonBinding(unittest.TestCase):
     Test that we pass Two Dimension column vetor as input paramter
     """
     x = np.random.rand(100,1)
-    z = copy.copy(x)
+    z = copy.deepcopy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -901,7 +901,7 @@ class TestPythonBinding(unittest.TestCase):
     Test that we pass Two Dimension unsigned column vector input parameter.
     """
     x = np.random.randint(0, high=500, size=[100, 1])
-    z = copy.copy(x)
+    z = copy.deepcopy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -935,7 +935,7 @@ class TestPythonBinding(unittest.TestCase):
     Test a two dimensional row vector input parameter.
     """
     x = np.random.rand(100,1)
-    z =copy.copy(x)
+    z =copy.deepcopy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
@@ -971,7 +971,7 @@ class TestPythonBinding(unittest.TestCase):
     Test an unsigned two dimensional row vector input parameter.
     """
     x = np.random.randint(0, high=500, size=[100, 1])
-    z = copy.copy(x)
+    z = copy.deepcopy(x)
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,
