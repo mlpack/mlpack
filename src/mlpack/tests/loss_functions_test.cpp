@@ -21,6 +21,7 @@
 #include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/dice_loss.hpp>
+#include <mlpack/methods/ann/loss_functions/triplet_loss.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -394,6 +395,37 @@ BOOST_AUTO_TEST_CASE(DiceLossTest)
   }
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
+}
+
+/*
+ * Test for triplet loss function
+ */
+BOOST_AUTO_TEST_CASE(TripletLossTest)
+{
+  arma::mat anchor, positive, negative, output;
+  double loss;
+  TripletLoss<> module;
+
+  // Test the Forward function.
+  anchor = arma::ones(9, 1);
+  positive = arma::ones(9, 1);
+  negative = arma::ones(9, 1) * 2;
+
+  // set the margin
+  module.Margin() = 20;
+
+  loss = module.Forward(
+      std::move(anchor), std::move(positive), std::move(negative));
+  BOOST_REQUIRE_SMALL(loss, 17.0);
+
+  // Test the Backward function
+  module.Backward(
+      std::move(anchor), std::move(positive), 
+      std::move(negative), std::move(output));
+
+  BOOST_REQUIRE_EQUAL(output[0], 18.0);
+  BOOST_REQUIRE_EQUAL(output[1], 0);
+  BOOST_REQUIRE_EQUAL(output[2], -18.0); 
 }
 
 BOOST_AUTO_TEST_SUITE_END();
