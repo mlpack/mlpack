@@ -168,6 +168,30 @@ if(BUILD_WITH_COVERAGE)
   endif()
 endif()
 
+# Using Gold, I dont Know how much improvement it could make
+if (UNIX AND NOT APPLE)
+  execute_process(COMMAND ${CMAKE_CXX_COMPILER}
+                  -fuse-ld=gold -Wl,--version
+                  ERROR_QUIET OUTPUT_VARIABLE ld_version)
+  if ("${ld_version}" MATCHES "GNU gold")
+    message(STATUS "Found Gold linker, use faster linker")
+    set(CMAKE_EXE_LINKER_FLAGS
+        "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=gold")
+    set(CMAKE_SHARED_LINKER_FLAGS
+        "${CMAKE_SHARED_LINKER_FLAGS} -fuse-ld=gold ")
+  endif()
+endif()
+
+# Configure CCache if available
+find_program(CCACHE_FOUND ccache)
+if(CCACHE_FOUND)
+        message(STATUS "CCache Found")
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+endif(CCACHE_FOUND)
+
+
+
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
 if(DEBUG)
   if (NOT MSVC)
