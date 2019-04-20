@@ -3,7 +3,8 @@
  * @author Rishabh Ranjan
  * 
  * This file defines the class K_Nearest which constructs the neighbourhood
- * graph for Isomap, according to the number of neighbours provided.
+ * graph for Isomap, according to the number of neighbours provided, using the
+ * neighbor_search method.
  * 
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -15,42 +16,46 @@
 #define MLPACK_METHODS_ISOMAP_K_NEAREST
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <queue>
 
 namespace mlpack {
 namespace isomap {
-/**
- * This class implements the K-Nearest Neighbours function to construct
- * a neighbourhood graph for the given distance matrix.
-*/
 
-class K_Nearest
+/**
+ * This class uses the neighbor_search method to construct the k-nearest-
+ * neighbor graph.
+*/
+class KNearest
 {
  public:
   /**
    * Function to make the neighbourhood graph for the given distance matrix
-   * and number of neighbours.
+   * and number of neighbours using neighbor_search method.
    * 
-   * @param disMat -distance matrix to construct the graph
-   * @param n_neighbours -number of neighbours to consider
+   * @param disMat Distance matrix to construct the graph.
+   * @param k Number of neighbours to consider.
    */
-  void MakeNeighbourhoodGraph(arma::mat &disMat,
-                              const int n_neighbours)
+  void MakeNeighborhoodGraph(const int k,
+                             arma::mat& disMat)
   {
-    // go through every row
-    for (size_t i = 0; i < disMat.n_rows; i++)
+    // Using KNN method to find the k-nearest neighbors.
+    neighbor::KNN neighborSearch(disMat);
+    arma::Mat<size_t> neighbors;
+    arma::mat distance;
+    neighborSearch.Search(k, neighbors, distance);
+
+    // Constructing adjacency matrix from the matrices (neighbors and distance).
+    disMat.set_size(disMat.n_cols, disMat.n_cols);
+    disMat.fill(LLONG_MAX);
+    for (unsigned int j = 0; j < neighbors.n_cols; j++)
     {
-      arma::uvec temp;
-
-      // find indices if row is sorted in descending order
-      temp = sort_index(disMat.row(i), "descend");
-
-      // set distance to inf for every neighbour farther that n_neighbours
-      for (size_t j = 0; j < temp.size()-n_neighbours-1; j++)
-        disMat(i, temp(j)) = DBL_MAX;
+      disMat(j, j) = 0;
+      for (int i = 0; i < k; i++)
+        disMat(j, neighbors(i, j)) = distance(i, j);
     }
 
-    // check if neighbourhood graph is connected
+    // Check if neighbourhood graph is connected.
     if (!IsConnected(disMat))
       Log::Fatal << "Constructed neighbourhood graph is not connected. "
                   << "Increase the number of neighbours (Default is 3).\n";
@@ -67,11 +72,10 @@ class K_Nearest
    */
   bool IsConnected(arma::mat &disMat)
   {
-    // making disMat undirected to check if graph is at least
+    // Making disMat undirected to check if graph is at least
     // weakly connected.
     arma::mat tempMat = arma::min(disMat, disMat.t());
 
-    bool flag = 1;
     arma::vec visited(tempMat.n_rows);
     visited.zeros();
 
@@ -99,13 +103,10 @@ class K_Nearest
     for (size_t i = 0; i < tempMat.n_rows; i++)
     {
       if (!visited(i))
-      {
-        flag = 0; // means disconnected graph
-        break;
-      }
+        return false; // means disconnected graph
     }
 
-    return flag;
+    return true;
   }
 };
 

@@ -7,7 +7,7 @@
  * variations of constructing neighbourhood graphs and finding all pair
  * shortest paths in the graph. Presently, neighbourhood graph is constructed
  * using only K_Nearest_Neighbours and all pair shortest path is calcuated
- * using only Dijkstra's Algorithm
+ * using only Dijkstra's Algorithm.
  * 
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,9 +20,10 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
-#include "k_nearest.hpp"
+#include <mlpack/methods/cmds/cmds.hpp>
+
 #include "dijkstra.hpp"
-#include "mds.hpp"
+#include "k_nearest.hpp"
 
 namespace mlpack {
 namespace isomap {
@@ -34,28 +35,36 @@ namespace isomap {
  * it is assumed to belong from the higher dimensional space it is
  * currently embedded into.
  * This implementation is based on the paper:
- * Lawrence Cayton, 2005, 17, Algorithms for Manifold Learning
+ * @article{
+ *  author = {Joshua B. Tenenbaum, Vin de Silva, John C. Langford},
+ *  year = {2000},
+ *  pages = {2319--2322},
+ *  title = {A Global Geometric Frameworkfor Nonlinear Dimensionality 
+ *      Reduction},
+ *  journal = {Science Vol 290}
+ * }
  */
-
-template <typename NeighbourhoodFunction = K_Nearest,
+template <typename NeighborhoodFunction = KNearest,
           typename ShortestPathAlgo = Dijkstra>
 class Isomap
 {
  public:
   /**
-   * Create the Isomap obejct and set the n_neighbours parameter to
+   * Create the Isomap object and set the k parameter to
    * specify the number of neighbours to consider while constructing
    * neighbourhood graph.
    * 
-   * @param n_neighbours -number of neighbours to consider
-   *                      for neighbourhood graph
+   * @param k Number of neighbours to consider for neighbourhood graph
+   * @param d Number of dimensions to include in output
    */
 
-  Isomap(const size_t n_neighbours,
-         const NeighbourhoodFunction& neighbourhood = NeighbourhoodFunction(),
+  Isomap(const size_t k,
+         const size_t d,
+         const NeighborhoodFunction& neighborhood = NeighborhoodFunction(),
          const ShortestPathAlgo& shortestPath = ShortestPathAlgo()) :
-         n_neighbours(n_neighbours),
-         neighbourhood(neighbourhood),
+         k(k),
+         d(d),
+         neighborhood(neighborhood),
          shortestPath(shortestPath)
   { }
 
@@ -65,61 +74,36 @@ class Isomap
    * 
    * @param input -the input dataset to perform Isomap on.
    */
-  void Apply(arma::mat& input)
+  void Apply(arma::mat& dataset)
   {
-    arma::mat disMat(input.n_cols, input.n_cols);
+    // Constructing K-Nearest Neighborhood Graph.
+    neighborhood.MakeNeighborhoodGraph(k, dataset);
 
-    // calculating distance matrix from the given input matrix
-    CalcDistanceMatrix(input, disMat);
+    // Finding all pair shortest path in the neighborhood graph created.
+    shortestPath.FindShortestPath(dataset);
 
-    // constructing neighbourhood graph (K_nearest is used)
-    neighbourhood.MakeNeighbourhoodGraph(disMat, n_neighbours);
+    // Making sure the shortest distance matrix symmetric (required for cMDS).
+    dataset = arma::symmatu(dataset);
 
-    // finding all pair shortest path in the neighbourhood graph created
-    shortestPath.FindShortestPath(disMat);
+    // Cmds object to perform classical multidimensional scaling.
+    cmds::Cmds m;
 
-    // making the shortest distance matrix symmetric (required for cMDS)
-    disMat = arma::min(disMat, disMat.t());
-
-    // mds object to perform classical multidimensional scaling
-    MDS md;
-
-    // performing classical multidimensional scaling
-    md.Apply(disMat);
-    input = disMat.t();
+    // Performing classical multidimensional scaling which stores the result
+    // the same matrix given as argument.
+    m.Apply(false, d, dataset);
   }
 
  private:
-  /**
-   * Function to calculate distance matric from the given input dataset.
-   * disMat is requred to store the distance matrix calculated.
-   * 
-   * @param input -input dataset
-   * @param disMat -stores the distance matrix
-   */
-  void CalcDistanceMatrix(const arma:: mat& input,
-                         arma::mat& disMat)
-  {
-    for (size_t i = 0; i < input.n_cols; i++)
-    {
-      disMat(i, i) = 0;
-      arma::vec tempi = input.col(i);
-      for (size_t j = i+1; j < input.n_cols; j++)
-      {
-        arma::vec tempj = input.col(j);
-        disMat(i, j) = metric::EuclideanDistance().Evaluate(tempi, tempj);
-        disMat(j, i) = disMat(i, j);
-      }
-    }
-  }
+  // The number of neighbours for K-nearest.
+  size_t k;
 
-  // the number of neighbours for K-nearest
-  size_t n_neighbours;
+  // The number of dimensions in the output.
+  size_t d;
 
-  // the function to use to construct neighbourhood graph
-  NeighbourhoodFunction neighbourhood;
+  // The function to use to construct neighbourhood graph.
+  NeighborhoodFunction neighborhood;
 
-  // the algorithm to use to calculate all pair shortest distance
+  // The algorithm to use to calculate all pair shortest distance
   ShortestPathAlgo shortestPath;
 };
 

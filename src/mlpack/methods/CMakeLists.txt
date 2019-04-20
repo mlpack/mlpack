@@ -8,6 +8,7 @@ set(DIRS
   bias_svd
   block_krylov_svd
   cf
+  cmds
   dbscan
   decision_stump
   decision_tree

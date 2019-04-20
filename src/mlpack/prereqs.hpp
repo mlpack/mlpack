@@ -33,6 +33,7 @@
 #include <stdexcept>
 #include <tuple>
 #include <utility>
+#include <queue>
 
 // But if it's not defined, we'll do it.
 #ifndef M_PI

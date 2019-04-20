@@ -23,16 +23,16 @@ static const std::string testName = "Isomap";
 
 using namespace mlpack;
 
-struct IsoampFixture
+struct IsomapFixture
 {
  public:
-  IsoampFixture()
+  IsomapFixture()
   {
     // Cache in the options for this program.
     CLI::RestoreSettings(testName);
   }
 
-  ~IsoampFixture()
+  ~IsomapFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
@@ -40,7 +40,7 @@ struct IsoampFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(IsomapMainTest, IsoampFixture);
+BOOST_FIXTURE_TEST_SUITE(IsomapMainTest, IsomapFixture);
 
 /**
  * Check that no invalid numbers of neighbours can be specified.
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(IsomapInvalidNeighbourhoodSizeTest)
   arma::mat x = arma::randu<arma::mat>(5, 5);
 
   SetInputParam("input", std::move(x));
-  SetInputParam("neighbours", (int) 8); // more than number of data points
+  SetInputParam("neighbors", (int) 8); // more than number of data points
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -63,12 +63,12 @@ BOOST_AUTO_TEST_CASE(IsomapInvalidNeighbourhoodSizeTest)
  */
 BOOST_AUTO_TEST_CASE(IsomapNeighbourhoodGraphDisconnectedTest)
 {
-  // example to produce disconnected neighbourhood graph.
+  // Example to produce disconnected neighbourhood graph.
   arma::mat x("0 1 8 9;"
               "0 1 8 9");
 
   SetInputParam("input", std::move(x));
-  SetInputParam("neighbours", (int) 1); // too Low
+  SetInputParam("neighbors", (int) 1); // too low
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);

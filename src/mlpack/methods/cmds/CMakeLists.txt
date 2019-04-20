@@ -1,9 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  isomap.hpp
-  dijkstra.hpp
-  k_nearest.hpp
+  cmds.hpp
 )
 
 # Add directory name to sources.
@@ -15,4 +13,4 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_cli_executable(isomap)
+add_cli_executable(cmds)

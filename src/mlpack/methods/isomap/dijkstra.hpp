@@ -15,8 +15,6 @@
 #define MLPACK_METHODS_ISOMAP_DIJKSTRA
 
 #include <mlpack/prereqs.hpp>
-#include <queue>
-#include <utility>
 
 namespace mlpack {
 namespace isomap {
@@ -31,16 +29,16 @@ class Dijkstra
    * Function to supply new source nodes to Dijkstra's Algorithm, so that all
    * pair shortest path is calculated.
    * 
-   * @param disMat -neighbourhood graph from input dataset
+   * @param disMat Neighbourhood graph from input dataset
   */
   void FindShortestPath(arma::mat& disMat)
   {
     for (size_t i = 0; i < disMat.n_rows; i++)
     {
-      // to store the calculated shortest distances for a source
+      // This stores the calculated shortest distances for a given source.
       arma::rowvec temp(disMat.n_cols);
 
-      // performs Dijkstra's Algorithm using the given source
+      // Performs Dijkstra's Algorithm using the given source.
       Apply(disMat, i, temp);
       disMat.row(i) = temp;
     }
@@ -50,21 +48,21 @@ class Dijkstra
   /**
    * Function to implement Dijkstra's Algorithm for a given source.
    * 
-   * @param disMat -neighbourhood grapgh from input dataset
-   * @param source -source for Dijkstra's Algorithm
-   * @param temp -to store the calculated shortest distances
+   * @param disMat Neighbourhood grapgh from input dataset
+   * @param source Source for Dijkstra's Algorithm
+   * @param dist Stores the calculated shortest distances
    */
   void Apply(arma::mat& disMat,
               size_t source,
-              arma::rowvec& temp)
+              arma::rowvec& dist)
   {
     for (size_t i = 0; i < disMat.n_cols; i++)
-      temp(i) = LLONG_MAX;
-    temp(source) = 0;
+      dist(i) = LLONG_MAX;
+    dist(source) = 0;
     arma::vec visited(disMat.n_cols);
     visited.zeros();
 
-    // minimum priority queue used for Dijkstra's Algorithm
+    // Minimum priority queue used for Dijkstra's Algorithm.
     std::priority_queue < std::pair< size_t, double>,
                           std::vector< std::pair< size_t, double> >,
                           std::greater < std::pair< size_t, double> > > pq;
@@ -80,10 +78,10 @@ class Dijkstra
       {
         if (disMat(top.first, i) < LLONG_MAX)
         {
-          if ((disMat(top.first, i)+top.second) < temp(i))
+          if ((disMat(top.first, i)+top.second) < dist(i))
           {
-            temp(i) = disMat(top.first, i) + top.second;
-            pq.push({i, temp(i)});
+            dist(i) = disMat(top.first, i) + top.second;
+            pq.push({i, dist(i)});
           }
         }
       }
