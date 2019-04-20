@@ -103,7 +103,7 @@ class Pendulum
   { /* Nothing to do here */ }
 
   /**
-   * Dynamics of Pendulum. Get reward and next state based 
+   * Dynamics of Pendulum. Get reward and next state based
    * on current state and current action.
    *
    * @param state The current state.
@@ -120,7 +120,7 @@ class Pendulum
     double angularVelocity = state.AngularVelocity();
 
     // Define constants which specify our pendulum.
-    const double gravity = 10.0;
+    const double gravity = 9.8;
     const double mass = 1.0;
     const double length = 1.0;
 
