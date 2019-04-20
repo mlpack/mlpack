@@ -127,7 +127,10 @@ BOOST_AUTO_TEST_CASE(WGANMNISTTest)
       discriminatorPreTrain, multiplier, clippingParameter);
 
   Log::Info << "Training..." << std::endl;
-  wgan.Train(optimizer);
+  double objVal = wgan.Train(optimizer);
+
+  // Test that objective value returned by GAN::Train() is finite.
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;
@@ -255,7 +258,10 @@ BOOST_AUTO_TEST_CASE(WGANGPMNISTTest)
       lambda);
 
   Log::Info << "Training..." << std::endl;
-  wganGP.Train(optimizer);
+  double objVal = wganGP.Train(optimizer);
+
+  // Test that objective value returned by GAN::Train() is finite.
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;
