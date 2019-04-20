@@ -21,7 +21,7 @@ using namespace mlpack::isomap;
 using namespace mlpack::util;
 using namespace std;
 
-//Document program
+// Document program
 PROGRAM_INFO("Isomap",
     // Short Description
     "An implementation of Isomap algorithm for dimensionality reduction. "

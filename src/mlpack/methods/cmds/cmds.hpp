@@ -76,7 +76,7 @@ class Cmds
       if (d > data.n_cols)
         Log::Fatal << "Desired number of dimensions is more than what "
             << "the points can be represented with in Euclidean space ("
-            << data.n_cols << ")\n"; 
+            << data.n_cols << ")\n";
       if (d > 0)
         data = data.cols(0, d-1);
       data = data.t();

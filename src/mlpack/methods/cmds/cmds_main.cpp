@@ -76,6 +76,7 @@ static void mlpackMain()
   RequireParamValue<int>("dimensions",
       [](int x) { return x >= 0; }, true,
       "number of output dimensions must be non-negetive");
+
   bool cd = CLI::GetParam<bool>("calc_dissimilarity");
   int d = CLI::GetParam<int>("dimensions");
 
