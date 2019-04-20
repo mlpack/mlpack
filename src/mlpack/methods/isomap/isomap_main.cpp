@@ -59,7 +59,7 @@ PROGRAM_INFO("Isomap",
     "\n\n" +
     PRINT_CALL("isomap", "input", "data", "new_dimensionality", 5,
         "neighbors", 4, "output", "output"),
-    SEE_ALSO("Isomap on Wikipedia","https://en.wikipedia.org/wiki/Isomap"));
+    SEE_ALSO("Isomap on Wikipedia", "https://en.wikipedia.org/wiki/Isomap"));
 
 // Parameters for the program
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform Isomap on.", "i");

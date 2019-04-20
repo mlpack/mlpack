@@ -78,7 +78,7 @@ class Cmds
             << "the points can be represented with in Euclidean space ("
             << data.n_cols << ")\n"; 
       if (d > 0)
-        data = data.cols(0,d-1);
+        data = data.cols(0, d-1);
       data = data.t();
     }
   }
@@ -97,7 +97,8 @@ class Cmds
       disMat(i, i) = 0;
       for (size_t j = i+1; j < data.n_cols; j++)
       {
-        disMat(i, j) = metric::EuclideanDistance().Evaluate(data.col(i), data.col(j));
+        disMat(i, j) = metric::EuclideanDistance().Evaluate(data.col(i),
+                                                            data.col(j));
         disMat(j, i) = disMat(i, j);
       }
     }
@@ -105,7 +106,7 @@ class Cmds
   }
 };
 
-} // namespace isomap
+} // namespace cmds
 } // namespace mlpack
 
 #endif

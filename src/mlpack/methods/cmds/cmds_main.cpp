@@ -21,7 +21,7 @@ using namespace mlpack::cmds;
 using namespace mlpack::util;
 using namespace std;
 
-//Document program
+// Document program
 PROGRAM_INFO("Classical Multidimensional Scaling",
     // Short Description
     "An implementation of classical Multidimensional Scaling, which "
@@ -50,7 +50,7 @@ PROGRAM_INFO("Classical Multidimensional Scaling",
     "For example, to reduce the dimensionality of dataset " +
     PRINT_DATASET("data") + "to 5 dimensions and storing the output in " +
     PRINT_DATASET("output") + ", use the following command:" +
-    PRINT_CALL("cmds", "input", "data", "dimensions", 5, 
+    PRINT_CALL("cmds", "input", "data", "dimensions", 5,
         "calc_dimensionality", "true", "output", "output"),
     SEE_ALSO("Multidimensional Scaling on Wikipedia",
         "https://en.wikipedia.org/wiki/Multidimensional_scaling"));
@@ -74,9 +74,8 @@ static void mlpackMain()
 
   // The number of dimensions to include in output.
   RequireParamValue<int>("dimensions",
-      [](int x) { return x >= 0; }, true, 
+      [](int x) { return x >= 0; }, true,
       "number of output dimensions must be non-negetive");
-
   bool cd = CLI::GetParam<bool>("calc_dissimilarity");
   int d = CLI::GetParam<int>("dimensions");
 
