@@ -582,13 +582,15 @@ BOOST_AUTO_TEST_CASE(CReLUFunctionTest)
   crelu.Forward(std::move(activationData), std::move(activations));
   arma::colvec derivatives;
   // This error vector will be set to 1 to get the derivatives.
-  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  arma::colvec error = arma::ones<arma::colvec>(desiredActivations.n_elem);
   crelu.Backward(std::move(desiredActivations), std::move(error),
         std::move(derivatives));
-
-  for (size_t i = 0; i < activations.n_rows; i++)
+  for (size_t i = 0; i < activations.n_elem; i++)
   {
     BOOST_REQUIRE_CLOSE(activations.at(i), desiredActivations.at(i), 1e-3);
+  }
+  for (size_t i = 0; i < derivatives.n_elem; i++)
+  {
     BOOST_REQUIRE_CLOSE(derivatives.at(i), desiredDerivatives.at(i), 1e-3);
   }
 }
