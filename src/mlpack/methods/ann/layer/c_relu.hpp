@@ -16,29 +16,26 @@
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
-
 /**
  *
  * A concatenated ReLU has two outputs, one ReLU and one negative ReLU,
- * concatenated together.In other words, for positive x it produces [x, 0],
- * and for negative x it produces [0, x].Because it has two outputs,
+ * concatenated together. In other words, for positive x it produces [x, 0],
+ * and for negative x it produces [0, x]. Because it has two outputs,
  * CReLU doubles the output dimension.
  *
  * Note:
- * During building of model, The next layer of crelu should have double the size
- * as given input layer since it concatenates the input.
+ * The CReLU doubles the output size.
  *
  * For more information, see the following.
  *
  * @code
  * @inproceedings{ICML2016,
  *   title={Understanding and Improving Convolutional Neural Networks
- *           via Concatenated Rectified Linear Units},
+ *          via Concatenated Rectified Linear Units},
  *   author = {LWenling Shang, Kihyuk Sohn, Diogo Almeida, Honglak Lee},
  *   year = {2016}
  * }
  * @endcode
- *
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -97,58 +94,6 @@ class CReLU
   void serialize(Archive& /* ar */, const unsigned int /* version */);
 
  private:
-  /**
-   * Computes the ReLU function
-   *
-   * @param x Input data.
-   * @return f(x).
-   */
-  double Fn(const double x)
-  {
-    return std::max(x, 0.0);
-  }
-
-  /**
-   * Computes the ReLU function using a dense matrix as input.
-   *
-   * @param x Input data.
-   * @param y The resulting output activation.
-   */
-  template<typename eT>
-  void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
-  {
-    y = arma::max(x, 0.0 * x);
-  }
-
-  /**
-   * Computes the first derivative of the ReLU function.
-   *
-   * @param x Input data.
-   * @return f'(x)
-   */
-  double Deriv(const double x)
-  {
-    return (x >= 0) ? 1 : 0;
-  }
-
-  /**
-   * Computes the first derivative of the ReLU function.
-   *
-   * @param x Input activations.
-   * @param y The resulting derivatives.
-   */
-
-  template<typename InputType, typename OutputType>
-  void Deriv(const InputType& x, OutputType& y)
-  {
-    y.set_size(arma::size(x));
-
-    for (size_t i = 0; i < x.n_elem; i++)
-    {
-      y(i) = Deriv(x(i));
-    }
-  }
-
   //! Locally-stored delta object.
   OutputDataType delta;
 

@@ -15,7 +15,6 @@
 // In case it hasn't yet been included.
 #include "c_relu.hpp"
 
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 

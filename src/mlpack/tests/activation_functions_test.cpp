@@ -331,54 +331,6 @@ void CheckPReLUGradientCorrect(const arma::colvec input,
 }
 
 /*
- * Implementation of the CReLU activation function test. The function
- * is implemented as CReLU layer in the file c_relu.hpp
- *
- * @param input Input data used for evaluating the CReLU activation
- *   function.
- * @param target Target data used to evaluate the CReLU activation.
- */
-void CheckCReLUActivationCorrect(const arma::colvec input,
-                                          const arma::colvec target)
-{
-  CReLU<> crelu;
-
-  // Test the activation function using the entire vector as input.
-  arma::colvec activations;
-  crelu.Forward(std::move(input), std::move(activations));
-  for (size_t i = 0; i < activations.n_rows; i++)
-  {
-    BOOST_REQUIRE_CLOSE(activations.at(i), target.at(i), 1e-3);
-  }
-}
-
-/*
- * Implementation of the CReLU activation function derivative test.
- * The function is implemented as CReLU layer in the file
- * c_relu.hpp
- *
- * @param input Input data used for evaluating the CReLU activation
- *   function.
- * @param target Target data used to evaluate the CReLU activation.
- */
-void CheckCReLUDerivativeCorrect(const arma::colvec input,
-                                          const arma::colvec target)
-{
-  CReLU<> crelu;
-
-  // Test the calculation of the derivatives using the entire vector as input.
-  arma::colvec derivatives;
-
-  // This error vector will be set to 1 to get the derivatives.
-  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
-  crelu.Backward(std::move(input), std::move(error), std::move(derivatives));
-  for (size_t i = 0; i < derivatives.n_elem; i++)
-  {
-    BOOST_REQUIRE_CLOSE(derivatives.at(i), target.at(i), 1e-3);
-  }
-}
-
-/*
  * Simple SELU activation test to check whether the mean and variance remain
  * invariant after passing normalized inputs through the function.
  */
@@ -624,9 +576,21 @@ BOOST_AUTO_TEST_CASE(CReLUFunctionTest)
 
   const arma::colvec desiredDerivatives("0 0 0 0 \
                                          0 0 0 0");
+  CReLU<> crelu;
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations;
+  crelu.Forward(std::move(activationData), std::move(activations));
+  arma::colvec derivatives;
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  crelu.Backward(std::move(desiredActivations), std::move(error),
+        std::move(derivatives));
 
-  CheckCReLUActivationCorrect(activationData, desiredActivations);
-  CheckCReLUDerivativeCorrect(desiredActivations, desiredDerivatives);
+  for (size_t i = 0; i < activations.n_rows; i++)
+  {
+    BOOST_REQUIRE_CLOSE(activations.at(i), desiredActivations.at(i), 1e-3);
+    BOOST_REQUIRE_CLOSE(derivatives.at(i), desiredDerivatives.at(i), 1e-3);
+  }
 }
 
 /**
