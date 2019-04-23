@@ -412,8 +412,8 @@ set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS} ${Boost_LIBRARY_DIRS})
 add_definitions(-DBOOST_TEST_DYN_LINK)
 
 # Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
-# to compile with OpenMP are returned and added and the HAS_OPENMP definition is
-# added for compilation.
+# to compile with OpenMP are returned and added and the HAS_OPENMP definition
+# is added for compilation.
 #
 # This way we can skip calls to functions defined in omp.h with code like:
 # #ifdef HAS_OPENMP
