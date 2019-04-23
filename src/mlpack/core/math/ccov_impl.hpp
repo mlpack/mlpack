@@ -19,44 +19,42 @@ namespace mlpack {
 namespace math /** Miscellaneous math routines. */ {
 
 template<typename eT>
-inline
-arma::Mat<eT>
-ColumnCovariance(const arma::Mat<eT>& A, const size_t norm_type)
+inline arma::Mat<eT> ColumnCovariance(const arma::Mat<eT>& x,
+                                      const size_t normType)
 {
-  if (norm_type > 1)
+  if (normType > 1)
   {
-    Log::Fatal << "ColumnCovariance(): norm_type must be 0 or 1" << std::endl;
+    Log::Fatal << "ColumnCovariance(): norm_type must be 0 or 1!" << std::endl;
   }
 
   arma::Mat<eT> out;
 
-  if (A.n_elem > 0)
+  if (x.n_elem > 0)
   {
-    const arma::Mat<eT>& AA = (A.n_cols == 1)
-      ? arma::Mat<eT>(const_cast<eT*>(A.memptr()), A.n_cols, A.n_rows, false,
-        false) : arma::Mat<eT>(const_cast<eT*>(A.memptr()), A.n_rows, A.n_cols,
-        false, false);
+    const arma::Mat<eT>& xAlias = (x.n_cols == 1) ?
+        arma::Mat<eT>(const_cast<eT*>(x.memptr()), x.n_cols, x.n_rows, false,
+            false) :
+        arma::Mat<eT>(const_cast<eT*>(x.memptr()), x.n_rows, x.n_cols, false,
+            false);
 
-    const size_t N = AA.n_cols;
-    const eT norm_val = (norm_type == 0) ?
-        ( (N > 1) ? eT(N-1) : eT(1) ) : eT(N);
+    const size_t n = xAlias.n_cols;
+    const eT normVal = (normType == 0) ? ((n > 1) ? eT(n - 1) : eT(1)) : eT(n);
 
-    const arma::Mat<eT> tmp = AA.each_col() - arma::mean(AA, 1);
+    const arma::Mat<eT> tmp = xAlias.each_col() - arma::mean(xAlias, 1);
 
     out = tmp * tmp.t();
-    out /= norm_val;
+    out /= normVal;
   }
 
   return out;
 }
 
 template<typename T>
-inline
-arma::Mat< std::complex<T> >
-ColumnCovariance(const arma::Mat< std::complex<T> >& A,
-     const size_t norm_type)
+inline arma::Mat<std::complex<T>> ColumnCovariance(
+    const arma::Mat<std::complex<T>>& x,
+    const size_t normType)
 {
-  if (norm_type > 1)
+  if (normType > 1)
   {
     Log::Fatal << "ColumnCovariance(): norm_type must be 0 or 1" << std::endl;
   }
@@ -65,32 +63,32 @@ ColumnCovariance(const arma::Mat< std::complex<T> >& A,
 
   arma::Mat<eT> out;
 
-  if (A.is_vec())
+  if (x.is_vec())
   {
-    if (A.n_rows == 1)
+    if (x.n_rows == 1)
     {
-      const arma::Mat<T> tmp_mat = arma::var(arma::trans(A), norm_type);
+      const arma::Mat<T> tmpMat = arma::var(arma::trans(x), normType);
       out.set_size(1, 1);
-      out[0] = tmp_mat[0];
+      out[0] = tmpMat[0];
     }
     else
     {
-      const arma::Mat<T> tmp_mat = arma::var(A, norm_type);
+      const arma::Mat<T> tmpMat = arma::var(x, normType);
       out.set_size(1, 1);
-      out[0] = tmp_mat[0];
+      out[0] = tmpMat[0];
     }
   }
   else
   {
-    const size_t N = A.n_cols;
-    const eT norm_val = (norm_type == 0) ?
-        ( (N > 1) ? eT(N-1) : eT(1) ) : eT(N);
+    const size_t n = x.n_cols;
+    const eT normVal = (normType == 0) ?
+        ((n > 1) ? eT(n - 1) : eT(1)) : eT(n);
 
-    const arma::Col<eT> acc = arma::sum(A, 1);
+    const arma::Col<eT> acc = arma::sum(x, 1);
 
-    out = A * arma::trans(arma::conj(A));
-    out -= (acc * arma::trans(arma::conj(acc))) / eT(N);
-    out /= norm_val;
+    out = x * arma::trans(arma::conj(x));
+    out -= (acc * arma::trans(arma::conj(acc))) / eT(n);
+    out /= normVal;
   }
 
   return out;
@@ -98,6 +96,5 @@ ColumnCovariance(const arma::Mat< std::complex<T> >& A,
 
 } // namespace math
 } // namespace mlpack
-
 
 #endif // MLPACK_CORE_MATH_CCOV_IMPL_HPP
