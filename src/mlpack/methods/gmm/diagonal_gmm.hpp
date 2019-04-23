@@ -167,12 +167,28 @@ class DiagonalGMM
   double Probability(const arma::vec& observation) const;
 
   /**
+   * Return the probability that the given observation matrix.
+   *
+   * @param observation Observation to evaluate the probability of.
+   * @param probs Stores the value of probability for x.
+   */
+  void Probability(const arma::mat& observation, arma::vec& probs ) const;
+
+  /**
    * Return the log probability that the given observation came from this
    * distribution.
    *
-   * @param observation Observation to evaluate the probability of.
+   * @param observation Observation to evaluate the log-probability of.
    */
   double LogProbability(const arma::vec& observation) const;
+
+  /**
+   * Return the log probability that the given observation matrix.
+   *
+   * @param observation Observation to evaluate the log-probability of.
+   * @param logProbs Stores the value of log-probability for x.
+   */
+  void LogProbability(const arma::mat& observation, arma::vec& logProbs ) const;
 
   /**
    * Return the probability that the given observation came from the given

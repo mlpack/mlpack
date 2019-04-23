@@ -68,11 +68,58 @@ double DiagonalGMM::LogProbability(const arma::vec& observation) const
 }
 
 /**
+ * Return the log probability of the given observation GMM matrix.
+ *
+ * @param x Observation matrix to compute log-probabilty.
+ * @param logProbs Stores the value of log-probability for x.
+ */
+void DiagonalGMM::LogProbability(const arma::mat& x, arma::vec& logProbs) const
+{
+  // Sum the probability for each Gaussian in our mixture (and we have to
+  // multiply by the prior for each Gaussian too).
+  logProbs.set_size(x.n_cols);
+
+  // Store log-probability value in a matrix.
+  arma::mat logProb(x.n_cols, gaussians);
+
+  // Assign value to the matrix.
+  for (size_t i = 0; i < gaussians; i++)
+  {
+    arma::vec alias(logProb.colptr(i), x.n_cols, false, true);
+    dists[i].LogProbability(x, alias);
+  }
+
+  // Save log(weights) as a vector.
+  arma::vec logWeights = arma::log(weights);
+  // Compute Log Probability.
+
+  logProb = logProb.t();
+
+  for (size_t j = 0; j < x.n_cols; j++)
+  {
+    const arma::vec sumVec = logWeights + logProb.unsafe_col(j);
+    logProbs(j) = math::AccuLog(sumVec);
+  }
+}
+
+/**
  * Return the probability of the given observation being from this GMM.
  */
 double DiagonalGMM::Probability(const arma::vec& observation) const
 {
   return exp(LogProbability(observation));
+}
+
+/**
+ * Return the probability of the given observation GMM matrix.
+ *
+ * @param x Observation matrix to compute probabilty.
+ * @param probs Stores the value of probability for x.
+ */
+void DiagonalGMM::Probability(const arma::mat& x, arma::vec& probs) const
+{
+  LogProbability(x, probs);
+  probs = exp(probs);
 }
 
 /**
