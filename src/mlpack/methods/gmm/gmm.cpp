@@ -146,6 +146,7 @@ double GMM::LogProbability(const arma::vec& observation,
 /**
  * Return the probability of the given observation being from the given
  * component in the mixture.
+ *
  * @param observation Observation matrix to compute probabilty.
  * @param component Calculate the probability for given component.
  */
@@ -183,6 +184,7 @@ arma::vec GMM::Random() const
 /**
  * Classify the given observations as being from an individual component in this
  * GMM.
+ *
  * @param observation Observation matrix for classification.
  * @param labels Save the labels for the given observation matrix.
  */
