@@ -15,6 +15,7 @@
 #include <mlpack/core/data/load_arff.hpp>
 #include <mlpack/core/data/map_policies/missing_policy.hpp>
 #include <mlpack/core/data/scaler_methods/minmaxscaler.hpp>
+#include <mlpack/core/data/scaler_methods/maxabsscaler.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -1717,6 +1718,24 @@ BOOST_AUTO_TEST_CASE(MinMaxScalerTest)
     arma::mat scaled = "0 0.2500 0.5000 1.000;"
                        "0 0.2500 0.5000 1.000;";                    
     data::MinMaxScaler<double> scale;
+    scale.Transform(dataset);
+    CheckMatrices(dataset,scaled);
+    scale.InverseTransform(dataset);
+    CheckMatrices(dataset,datasetcopy);
+}
+
+/**
+ * Test For MaxAbs Scaler Class.
+ */
+BOOST_AUTO_TEST_CASE(MaxAbsScalerTest)
+{
+    arma::mat dataset = "-1 -0.5 0 1;"
+                        "2 6 10 18;";
+    arma::mat datasetcopy = "-1 -0.5 0 1;"
+                            "2 6 10 18;";
+    arma::mat scaled = "-1 -0.5 0 1;"
+                       "0.1111111111 0.3333333333 0.55555556 1.0000;";                    
+    data::MaxAbsScaler<double> scale;
     scale.Transform(dataset);
     CheckMatrices(dataset,scaled);
     scale.InverseTransform(dataset);
