@@ -3,6 +3,7 @@
  * @author Dakshit Agrawal
  * @author Sourabh Varshney
  * @author Atharva Khandait
+ * @author Abhinav Sagar
  *
  * Tests for loss functions in mlpack::methods::ann:loss_functions.
  *
@@ -16,6 +17,7 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/kl_divergence.hpp>
 #include <mlpack/methods/ann/loss_functions/earth_mover_distance.hpp>
+#include <mlpack/methods/ann/loss_functions/mean_absolute_error.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
@@ -89,6 +91,43 @@ BOOST_AUTO_TEST_CASE(KLDivergenceNoMeanTest)
   // Test the Backward function.
   module.Backward(std::move(input), std::move(target), std::move(output));
   BOOST_REQUIRE_CLOSE_FRACTION(arma::as_scalar(output), -1, 0.00001);
+}
+
+/*
+ * Simple test for the mean absolute error performance function.
+ */
+BOOST_AUTO_TEST_CASE(SimpleMeanAbsoluteErrorTest)
+{
+  arma::mat input, output, target;
+  MeanAbsoluteError<> module;
+
+  // Test the Forward function on a user generator input and compare it against
+  // the manually calculated result.
+  input = arma::mat("1.0 0.0 1.0 0.0 -1.0 0.0 -1.0 0.0");
+  target = arma::zeros(1, 8);
+  double error = module.Forward(std::move(input), std::move(target));
+  BOOST_REQUIRE_EQUAL(error, 1.0);
+
+  // Test the Backward function.
+  module.Backward(std::move(input), std::move(target), std::move(output));
+  // We subtract a zero vector, so according to the used backward formula:
+  // output = (input - target) / target.n_cols,
+  // output * nofColumns should be equal to input.
+  CheckMatrices(input, output * output.n_cols);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+
+  // Test the error function on a single input.
+  input = arma::mat("2");
+  target = arma::mat("3");
+  error = module.Forward(std::move(input), std::move(target));
+  BOOST_REQUIRE_EQUAL(error, 1.0);
+
+  // Test the Backward function on a single input.
+  module.Backward(std::move(input), std::move(target), std::move(output));
+  // Test whether the output is negative.
+  BOOST_REQUIRE_EQUAL(arma::accu(output), -1);
+  BOOST_REQUIRE_EQUAL(output.n_elem, 1);
 }
 
 /*
@@ -267,6 +306,49 @@ BOOST_AUTO_TEST_CASE(SimpleEarthMoverDistanceLayerTest)
     BOOST_REQUIRE_SMALL(output(i) - expectedOutput(i), 1e-5);
   BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
+}
+
+/*
+ * Mean Absolute Error numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientMeanAbsoluteErrorTest)
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(10, 1);
+      target = arma::randu(2, 1);
+
+      model = new FFN<MeanAbsoluteError<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(10, 2);
+      model->Add<SigmoidLayer<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      arma::mat output;
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<MeanAbsoluteError<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-2);
 }
 
 /*

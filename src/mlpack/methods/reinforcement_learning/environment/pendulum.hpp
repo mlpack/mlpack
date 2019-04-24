@@ -103,7 +103,7 @@ class Pendulum
   { /* Nothing to do here */ }
 
   /**
-   * Dynamics of Pendulum. Get reward and next state based 
+   * Dynamics of Pendulum. Get reward and next state based
    * on current state and current action.
    *
    * @param state The current state.

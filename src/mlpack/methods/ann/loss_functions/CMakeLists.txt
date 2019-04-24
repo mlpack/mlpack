@@ -9,6 +9,8 @@ set(SOURCES
   earth_mover_distance_impl.hpp
   kl_divergence.hpp
   kl_divergence_impl.hpp
+  mean_absolute_error.hpp
+  mean_absolute_error_impl.hpp
   mean_squared_error.hpp
   mean_squared_error_impl.hpp
   negative_log_likelihood.hpp
