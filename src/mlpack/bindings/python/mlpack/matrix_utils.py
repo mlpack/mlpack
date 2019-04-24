@@ -53,12 +53,8 @@ def to_matrix(x, dtype=np.double, copy=False):
     else:
       return x, False
   elif (isinstance(x, np.ndarray) and x.dtype == dtype and x.flags.f_contiguous):
-    if copy: # Copy the matrix if required.
-      return np.ndarray(x.shape, buffer=x.flatten(), dtype=dtype,
-          order='C').copy("C"), True
-    else:
-      return np.ndarray(x.shape, buffer=x.flatten(), dtype=dtype, order='C'), \
-          False
+    # A copy is always necessary here.
+    return x.copy("C"), True
   else:
     if isinstance(x, pd.core.series.Series) or isinstance(x, pd.DataFrame):
       # We can only avoid a copy if the dtype is the same and the copy flag is
@@ -66,7 +62,7 @@ def to_matrix(x, dtype=np.double, copy=False):
       # have found, Pandas stores with F_CONTIGUOUS not C_CONTIGUOUS.
       y = x.values
       if copy == False and y.dtype == dtype and y.flags.c_contiguous:
-        return np.ndarray(y.shape, buffer=y.flatten(), dtype=dtype, order='C'),\
+        return np.ndarray(y.shape, buffer=x.values, dtype=dtype, order='C'),\
             False
       else:
         # We have to make a copy or change the dtype, so just do this directly.

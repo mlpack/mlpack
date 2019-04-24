@@ -105,6 +105,11 @@ class QLearning
   //! Get the indicator of training mode / test mode.
   const bool& Deterministic() const { return deterministic; }
 
+  //! Return the learning network.
+  const NetworkType& Network() const { return learningNetwork; }
+  //! Modify the learning network.
+  NetworkType& Network() { return learningNetwork; }
+
  private:
   /**
    * Select the best action based on given action value.
