@@ -2,6 +2,7 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   minmaxscaler.hpp
+  maxabsscaler.hpp
 )
 
 # Add directory name to sources.
