@@ -49,6 +49,14 @@ class MinMaxScaler
     itemMin = arma::min(input, 1);
     itemMax = arma::max(input, 1);
     scale = (scalemax - scalemin) / (itemMax - itemMin);
+    // Handline Zeroes in scale vector
+    for (size_t i = 0; i < scale.n_elem; i++)
+    {
+      if(scale(i) == 0)
+      {
+        scale(i) = 1;
+      }
+    }
     for (size_t i = 0; i < input.n_rows; i++)
     {
       for (size_t j = 0; j < input.n_cols; j++)
