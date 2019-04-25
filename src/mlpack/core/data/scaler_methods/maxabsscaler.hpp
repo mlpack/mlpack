@@ -90,7 +90,7 @@ class MaxAbsScaler
   arma::colvec scale;
 }; // class MaxAbsScaler
 
-} // namespace ann
+} // namespace data
 } // namespace mlpack
 
 #endif

@@ -88,7 +88,7 @@ class StandardScaler
   arma::colvec itemStdev;
 }; // class StandardScaler
 
-} // namespace ann
+} // namespace data
 } // namespace mlpack
 
 #endif

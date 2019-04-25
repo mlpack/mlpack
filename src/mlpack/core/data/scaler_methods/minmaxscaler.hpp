@@ -92,7 +92,7 @@ class MinMaxScaler
   //! Get the upper range parameter.
   const double ScaleMax() const { return scalemax; }
   //! Get the lower range parameter.
-  const double ScaleMin() const { return scalemin; }  
+  const double ScaleMin() const { return scalemin; }
  private:
   // Min row vector which holds minimum of each feature
   arma::colvec itemMin;
@@ -103,10 +103,10 @@ class MinMaxScaler
   // Lower value for range
   double scalemin;
   // Upper value for range
-  double scalemax;  
+  double scalemax;
 }; // class MinMaxScaler
 
-} // namespace ann
+} // namespace data
 } // namespace mlpack
 
 #endif
