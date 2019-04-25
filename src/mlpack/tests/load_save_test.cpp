@@ -1717,7 +1717,7 @@ BOOST_AUTO_TEST_CASE(MinMaxScalerTest)
     arma::mat datasetcopy = "-1 -0.5 0 1;"
                             "2 6 10 18;";
     arma::mat scaled = "0 0.2500 0.5000 1.000;"
-                       "0 0.2500 0.5000 1.000;";                    
+                       "0 0.2500 0.5000 1.000;";
     data::MinMaxScaler<double> scale;
     scale.Transform(dataset);
     CheckMatrices(dataset, scaled);
@@ -1735,7 +1735,7 @@ BOOST_AUTO_TEST_CASE(MaxAbsScalerTest)
     arma::mat datasetcopy = "-1 -0.5 0 1;"
                             "2 6 10 18;";
     arma::mat scaled = "-1 -0.5 0 1;"
-                       "0.1111111111 0.3333333333 0.55555556 1.0000;";                    
+                       "0.1111111111 0.3333333333 0.55555556 1.0000;";
     data::MaxAbsScaler<double> scale;
     scale.Transform(dataset);
     CheckMatrices(dataset, scaled);
@@ -1753,7 +1753,7 @@ BOOST_AUTO_TEST_CASE(StandardScalerTest)
     arma::mat datasetcopy = "-1 -0.5 0 1;"
                             "2 6 10 18;";
     arma::mat scaled = "-1.18321596 -0.50709255  0.16903085 1.52127766;"
-                       "-1.18321596 -0.50709255  0.16903085 1.52127766;";                    
+                       "-1.18321596 -0.50709255  0.16903085 1.52127766;";
     data::StandardScaler<double> scale;
     scale.Transform(dataset);
     CheckMatrices(dataset, scaled);

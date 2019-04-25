@@ -88,7 +88,7 @@ class MaxAbsScaler
   arma::colvec itemMax;
   // Scale vector which is used to scale up each feature
   arma::colvec scale;
-};
+}; // class MaxAbsScaler
 
 } // namespace ann
 } // namespace mlpack

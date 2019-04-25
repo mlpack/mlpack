@@ -42,7 +42,7 @@ class StandardScaler
   {
     itemMean = arma::mean(input, 1);
     itemStdev = arma::stddev(input, 1, 1);
-    
+
     // Handline Zeroes in scale vector
     for (size_t i = 0; i < itemStdev.n_elem; i++)
     {
@@ -86,7 +86,7 @@ class StandardScaler
   arma::colvec itemMean;
   // Max row vector which holds maximum of each feature
   arma::colvec itemStdev;
-};
+}; // class StandardScaler
 
 } // namespace ann
 } // namespace mlpack

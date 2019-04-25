@@ -61,7 +61,7 @@ class MinMaxScaler
     {
       for (size_t j = 0; j < input.n_cols; j++)
       {
-        input(i, j) = scale(i) * input(i, j) + scalemin - itemMin(i) * 
+        input(i, j) = scale(i) * input(i, j) + scalemin - itemMin(i) *
             scale(i);
       }
     }
@@ -78,7 +78,7 @@ class MinMaxScaler
     {
       for (size_t j = 0; j < input.n_cols; j++)
       {
-        input(i, j) = (input(i, j) - scalemin + itemMin(i) * scale(i)) / 
+        input(i, j) = (input(i, j) - scalemin + itemMin(i) * scale(i)) /
             scale(i);
       }
     }
@@ -102,16 +102,11 @@ class MinMaxScaler
   arma::colvec scale;
   // Lower value for range
   double scalemin;
-  // Upper value for range 
-  double scalemax;
-  
-};
+  // Upper value for range
+  double scalemax;  
+}; // class MinMaxScaler
 
 } // namespace ann
 } // namespace mlpack
 
 #endif
-
-  
-
-
