@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_METRICS_MAHALANOBIS_DISTANCE_IMPL_HPP
-#define MLPACK_CORE_METRICS_MAHALANOBIS_DISTANCE_IMPL_HPP
+#ifndef MLPACK_CORE_METRICS_COSINE_SIMILARITY_IMPL_HPP
+#define MLPACK_CORE_METRICS_COSINE_SIMILARITY_IMPL_HPP
 
 #include "cosine_similarity.hpp"
 

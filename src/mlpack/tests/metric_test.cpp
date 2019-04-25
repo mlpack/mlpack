@@ -105,10 +105,10 @@ BOOST_AUTO_TEST_CASE(CosineSimilarityMetricTest)
   CosineSimilarity CosineMetric;
 
   BOOST_REQUIRE_CLOSE((double) arma::accu(arma::normalise(a1) %
-                      arma::normalise(b1)), CosineMetric.Evaluate(a1, b1), 1e-5);
+                  arma::normalise(b1)), CosineMetric.Evaluate(a1, b1), 1e-5);
 
   BOOST_REQUIRE_CLOSE((double) arma::accu(arma::normalise(a2) %
-                      arma::normalise(b2)), CosineMetric.Evaluate(a2, b2), 1e-5);
+                  arma::normalise(b2)), CosineMetric.Evaluate(a2, b2), 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
