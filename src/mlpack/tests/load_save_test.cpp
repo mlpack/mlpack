@@ -1720,9 +1720,9 @@ BOOST_AUTO_TEST_CASE(MinMaxScalerTest)
                        "0 0.2500 0.5000 1.000;";                    
     data::MinMaxScaler<double> scale;
     scale.Transform(dataset);
-    CheckMatrices(dataset,scaled);
+    CheckMatrices(dataset, scaled);
     scale.InverseTransform(dataset);
-    CheckMatrices(dataset,datasetcopy);
+    CheckMatrices(dataset, datasetcopy);
 }
 
 /**
@@ -1738,9 +1738,9 @@ BOOST_AUTO_TEST_CASE(MaxAbsScalerTest)
                        "0.1111111111 0.3333333333 0.55555556 1.0000;";                    
     data::MaxAbsScaler<double> scale;
     scale.Transform(dataset);
-    CheckMatrices(dataset,scaled);
+    CheckMatrices(dataset, scaled);
     scale.InverseTransform(dataset);
-    CheckMatrices(dataset,datasetcopy);
+    CheckMatrices(dataset, datasetcopy);
 }
 
 /**
@@ -1756,9 +1756,9 @@ BOOST_AUTO_TEST_CASE(StandardScalerTest)
                        "-1.18321596 -0.50709255  0.16903085 1.52127766;";                    
     data::StandardScaler<double> scale;
     scale.Transform(dataset);
-    CheckMatrices(dataset,scaled);
+    CheckMatrices(dataset, scaled);
     scale.InverseTransform(dataset);
-    CheckMatrices(dataset,datasetcopy);
+    CheckMatrices(dataset, datasetcopy);
 }
 
 /**

@@ -17,7 +17,7 @@
 namespace mlpack {
 namespace data {
 /**
- * A simple StandardScaler class
+ * A simple Standard Scaler class
  */
 template <typename T>
 class StandardScaler
@@ -46,7 +46,7 @@ class StandardScaler
     // Handline Zeroes in scale vector
     for (size_t i = 0; i < itemStdev.n_elem; i++)
     {
-      if(itemStdev(i) == 0)
+      if (itemStdev(i) == 0)
       {
         itemStdev(i) = 1;
       }
@@ -55,8 +55,8 @@ class StandardScaler
     {
       for (size_t j = 0; j < input.n_cols; j++)
       {
-        input(i,j) -= itemMean(i);
-        input(i,j) /= itemStdev(i);
+        input(i, j) -= itemMean(i);
+        input(i, j) /= itemStdev(i);
       }
     }
   }
@@ -72,8 +72,8 @@ class StandardScaler
     {
       for (size_t j = 0; j < input.n_cols; j++)
       {
-        input(i,j) *= itemStdev(i);
-        input(i,j) += itemMean(i);
+        input(i, j) *= itemStdev(i);
+        input(i, j) += itemMean(i);
       }
     }
   }

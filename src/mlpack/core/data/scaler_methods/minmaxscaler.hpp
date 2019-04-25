@@ -1,8 +1,8 @@
 /**
- * @file scaler.hpp
+ * @file minmaxscaler.hpp
  * @author Jeffin Sam
  *
- * Scaler class to scale features.
+ * MinMaxScaler class to scale features.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -17,7 +17,7 @@
 namespace mlpack {
 namespace data {
 /**
- * A simple SCALER class
+ * A simple MinMax Scaler class
  */
 template <typename T>
 class MinMaxScaler
@@ -29,7 +29,7 @@ class MinMaxScaler
   * @param min Lower range of scaling
   * @param max Upper range of scaling 
   */
-  MinMaxScaler(const double min = 0,const double max = 1)
+  MinMaxScaler(const double min = 0, const double max = 1)
   {
     scalemin = min;
     scalemax = max;
@@ -52,7 +52,7 @@ class MinMaxScaler
     // Handline Zeroes in scale vector
     for (size_t i = 0; i < scale.n_elem; i++)
     {
-      if(scale(i) == 0)
+      if (scale(i) == 0)
       {
         scale(i) = 1;
       }
@@ -61,7 +61,8 @@ class MinMaxScaler
     {
       for (size_t j = 0; j < input.n_cols; j++)
       {
-        input(i,j) = scale(i) * input(i,j) + scalemin - itemMin(i) * scale(i);
+        input(i, j) = scale(i) * input(i, j) + scalemin - itemMin(i) * 
+            scale(i);
       }
     }
   }
@@ -77,7 +78,8 @@ class MinMaxScaler
     {
       for (size_t j = 0; j < input.n_cols; j++)
       {
-        input(i,j) = (input(i,j) - scalemin + itemMin(i) * scale(i)) / scale(i);
+        input(i, j) = (input(i, j) - scalemin + itemMin(i) * scale(i)) / 
+            scale(i);
       }
     }
   }

@@ -17,7 +17,7 @@
 namespace mlpack {
 namespace data {
 /**
- * A simple MaxAbsScaler class
+ * A simple MaxAbs Scaler class
  */
 template <typename T>
 class MaxAbsScaler
@@ -46,7 +46,7 @@ class MaxAbsScaler
     // Handline Zeroes in scale vector
     for (size_t i = 0; i < scale.n_elem; i++)
     {
-      if(scale(i) == 0)
+      if (scale(i) == 0)
       {
         scale(i) = 1;
       }
@@ -55,7 +55,7 @@ class MaxAbsScaler
     {
       for (size_t j = 0; j < input.n_cols; j++)
       {
-        input(i,j) /= scale(i);
+        input(i, j) /= scale(i);
       }
     }
   }
@@ -71,7 +71,7 @@ class MaxAbsScaler
     {
       for (size_t j = 0; j < input.n_cols; j++)
       {
-        input(i,j) *= scale(i);
+        input(i, j) *= scale(i);
       }
     }
   }
