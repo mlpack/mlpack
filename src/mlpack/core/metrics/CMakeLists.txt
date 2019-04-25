@@ -7,6 +7,8 @@ set(SOURCES
   lmetric_impl.hpp
   mahalanobis_distance.hpp
   mahalanobis_distance_impl.hpp
+  cosine_similarity.hpp
+  cosine_similarity_impl.hpp
 )
 
 # add directory name to sources

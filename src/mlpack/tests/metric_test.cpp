@@ -10,6 +10,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/metrics/cosine_similarity.hpp>
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
@@ -85,6 +86,29 @@ BOOST_AUTO_TEST_CASE(LINFMetricTest)
 
   BOOST_REQUIRE_CLOSE((double) arma::as_scalar(arma::max(arma::abs(a2 - b2))),
                       lMetric.Evaluate(a2, b2), 1e-5);
+}
+
+BOOST_AUTO_TEST_CASE(CosineSimilarityMetricTest)
+{
+  arma::rowvec a1(5);
+  a1.randn();
+
+  arma::rowvec b1(5);
+  b1.randn();
+
+  arma::colvec a2(5);
+  a2 << 1 << 2 << 1 << 0 << 5;
+
+  arma::colvec b2(5);
+  b2 << 1 << 2 << 1 << 0 << 5;
+
+  CosineSimilarity CosineMetric;
+
+  BOOST_REQUIRE_CLOSE((double) arma::accu(arma::normalise(a1) %
+                      arma::normalise(b1)), CosineMetric.Evaluate(a1, b1), 1e-5);
+
+  BOOST_REQUIRE_CLOSE((double) arma::accu(arma::normalise(a2) %
+                      arma::normalise(b2)), CosineMetric.Evaluate(a2, b2), 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
