@@ -3,6 +3,7 @@
 set(SOURCES
   minmaxscaler.hpp
   maxabsscaler.hpp
+  standardscaler.hpp
 )
 
 # Add directory name to sources.
