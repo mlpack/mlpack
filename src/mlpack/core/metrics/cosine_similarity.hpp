@@ -19,6 +19,18 @@ namespace metric {
 
 /**
  * Class for Cosine Similarity
+ *
+ * For more information, see the following.
+ *
+ * @code
+ * @inproceedings{ICIDEAL 2013,
+ *   title  = {Distance Weighted Cosine Similarity Measure for Text
+ *             Classification},
+ *   author = {Baoli Li, Liping Han},
+ *   year   = {2013}
+ * }
+ * @endcode 
+ *
  */
 class CosineSimilarity
 {
