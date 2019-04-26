@@ -62,7 +62,7 @@ void NormalizeLabels(const RowType& labelsIn,
   // Mapping array created with encoded labels.
   for (auto it = labelMap.begin(); it != labelMap.end(); ++it)
   {
-    mapping[(it->second) - 1] = it->first;
+    mapping[it->second] = it->first;
   }
 }
 
