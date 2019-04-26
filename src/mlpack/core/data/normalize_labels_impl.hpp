@@ -16,7 +16,6 @@
 // In case it hasn't been included yet.
 #include "normalize_labels.hpp"
 
-
 namespace mlpack {
 namespace data {
 
@@ -40,7 +39,7 @@ void NormalizeLabels(const RowType& labelsIn,
   // we'll resize it back down to its actual size.
   mapping.set_size(labelsIn.n_elem);
   labels.set_size(labelsIn.n_elem);
-  // Map for mapping labelIn to their label
+  // Map for mapping labelIn to their label.
   std::unordered_map<eT, size_t> labelMap;
   size_t curLabel = 0;
   for (size_t i = 0; i < labelsIn.n_elem; ++i)
@@ -48,24 +47,23 @@ void NormalizeLabels(const RowType& labelsIn,
     // If labelsIn[i] is already in the map, use the existing label.
     if (labelMap.count(labelsIn[i]) > 0)
     {
-      labels[i] = labelMap[labelsIn[i]] - 1;
+      labels[i] = labelMap[labelsIn[i]];
     }
     else
     {
-      // If labelsIn[i] not there then add it to Map
-      labelMap[labelsIn[i]] = curLabel + 1;
+      // If labelsIn[i] not there then add it to map.
+      labelMap[labelsIn[i]] = curLabel;
       labels[i] = curLabel;
       ++curLabel;
     }
   }
   // Resize mapping back down to necessary size.
   mapping.resize(curLabel);
-  // Mapping array created with encoded labels
+  // Mapping array created with encoded labels.
   for (auto it = labelMap.begin(); it != labelMap.end(); ++it)
   {
     mapping[(it->second) - 1] = it->first;
   }
-  labelMap.clear();
 }
 
 /**
