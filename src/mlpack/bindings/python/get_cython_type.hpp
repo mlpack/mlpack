@@ -77,7 +77,7 @@ inline std::string GetCythonType<bool>(
     const typename boost::disable_if<data::HasSerialize<bool>>::type*,
     const typename boost::disable_if<arma::is_arma_type<bool>>::type*)
 {
-  return "bool";
+  return "cbool";
 }
 
 template<typename T>
