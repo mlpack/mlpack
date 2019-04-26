@@ -47,9 +47,17 @@ PROGRAM_INFO("Perceptron",
     " parameter), or both those things at once.  In addition, this program "
     "allows classification on a test dataset (via the " +
     PRINT_PARAM_STRING("test") + " parameter) and the classification results "
-    "on the test set may be saved with the " + PRINT_PARAM_STRING("output") +
+    "on the test set may be saved with the " + PRINT_PARAM_STRING("predictions") +
     "output parameter.  The perceptron model may be saved with the " +
     PRINT_PARAM_STRING("output_model") + " output parameter."
+    "\n\n"
+    "Note : The following parameters are deprecated and "
+    "will be removed in mlpack 4: " + PRINT_PARAM_STRING("output") +
+    ", " + PRINT_PARAM_STRING("output_probabilities") +
+    "\nUse " + PRINT_PARAM_STRING("predictions") + " instead of " +
+    PRINT_PARAM_STRING("output") + "\nUse " +
+    PRINT_PARAM_STRING("probabilities") + " instead of " +
+    PRINT_PARAM_STRING("output_probabilities") +
     "\n\n"
     "The training data given with the " + PRINT_PARAM_STRING("training") +
     " option may have class labels as its last dimension (so, if the training "
@@ -126,8 +134,14 @@ PARAM_MODEL_OUT(PerceptronModel, "output_model", "Output for trained perceptron"
 
 // Testing/classification parameters.
 PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
+/* 
+* The PARAM_UROW_OUT("output") is depracated and
+* can be removed in mlpack4.0.0.
+*/
 PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
     " test set will be written.", "o");
+PARAM_UROW_OUT("predictions", "The matrix in which the predicted labels for the"
+    " test set will be written.", "P");
 
 static void mlpackMain()
 {
@@ -141,7 +155,9 @@ static void mlpackMain()
   // should issue a warning.
   RequireAtLeastOnePassed({ "output_model", "output" }, false,
       "no output will be saved");
+  // "output" can be removed in mlpack 4  
   ReportIgnoredParam({{ "test", false }}, "output");
+  ReportIgnoredParam({{ "test", false }}, "predictions");
 
   // Check parameter validity.
   RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; },
@@ -297,6 +313,8 @@ static void mlpackMain()
     // Save the predicted labels.
     if (CLI::HasParam("output"))
       CLI::GetParam<arma::Row<size_t>>("output") = std::move(results);
+    if (CLI::HasParam("predictions"))
+      CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(results);
   }
 
   // Lastly, save the output model.
