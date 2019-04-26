@@ -22,7 +22,6 @@ add_executable(mlpack_test
   cosine_tree_test.cpp
   cv_test.cpp
   dbscan_test.cpp
-  dcgan_test.cpp
   decision_stump_test.cpp
   decision_tree_test.cpp
   det_test.cpp
@@ -31,7 +30,6 @@ add_executable(mlpack_test
   emst_test.cpp
   fastmks_test.cpp
   feedforward_network_test.cpp
-  gan_test.cpp
   gmm_test.cpp
   hmm_test.cpp
   hoeffding_tree_test.cpp
@@ -111,7 +109,6 @@ add_executable(mlpack_test
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
-  wgan_test.cpp
   main_tests/test_helper.hpp
   main_tests/emst_test.cpp
   main_tests/adaboost_test.cpp
