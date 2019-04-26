@@ -22,6 +22,7 @@ set(DIRS
   kmeans
   lars
   linear_regression
+  linear_svm
   lmnn
   local_coordinate_coding
   logistic_regression
@@ -47,7 +48,6 @@ set(DIRS
   softmax_regression
   sparse_autoencoder
   sparse_coding
-  sparse_svm
   svdplusplus
 )
 

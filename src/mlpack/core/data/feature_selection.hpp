@@ -1,5 +1,5 @@
 /**
- * @file feature_selection_imp.hpp
+ * @file feature_selection.hpp
  * @author Jeffin Sam
  *
  * Feature selction based on variance thresholding.
@@ -29,12 +29,22 @@ namespace data {
  * Variance Threshold doesn’t consider the relationship of
  * features with the target variable.
  *
+ * For more information, see the following.
+ *
+ * @code
+ * @inproceedings{ICETCS2009,
+ *   title  = {A VarianceMean Based Feature Selection in Text Classification},
+ *   author = {Shen Yin, Zongli Jiang},
+ *   year   = {2009}
+ * }
+ * @endcode
+ *
  * @param input Input dataset with actual number of features.
  * @param threshold Threshold for variance.
  * @param output Output matrix with lesser number of features.
  */
 template<typename T>
-void SelectBestFeature(const arma::Mat<T>& input,
+void VarianceSelection(const arma::Mat<T>& input,
               const double threshold,
               arma::Mat<T>& output);
 
@@ -42,6 +52,6 @@ void SelectBestFeature(const arma::Mat<T>& input,
 } // namespace mlpack
 
 // Include implementation.
-#include "feature_selection_imp.hpp"
+#include "feature_selection_impl.hpp"
 
 #endif
