@@ -528,20 +528,20 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithDTTest)
 }
 
 /**
- * Test for feature selection.
+ * Test for feature selection based on Variance.
  */
-BOOST_AUTO_TEST_CASE(FeatureSelectionTest)
+BOOST_AUTO_TEST_CASE(VarianceFeatureSelectionTest)
 {
   // Dataset with 4 features.
-  arma::Mat<double> matrix;
+  arma::mat matrix;
   matrix = "3 4 1 2;"
            "0 0 0 0;" // this row will be deleted since less variance
            "2 5 7 9;"
            "1 1 1 1;"; // this row will be deleted since less variance
 
   // Output matirx with less features.
-  arma::Mat<double> output;
-  data::SelectBestFeature<double>(matrix, 0.009, output);
+  arma::mat output;
+  data::VarianceSelection(matrix, 0.009, output);
   BOOST_REQUIRE_EQUAL(output.n_rows, 2);
   BOOST_REQUIRE_EQUAL(output.n_cols, 4);
   for (size_t i = 0; i < output.n_cols; i++)
