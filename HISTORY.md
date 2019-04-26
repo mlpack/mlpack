@@ -1,4 +1,6 @@
-### mlpack 3.1.0\n###### ????-??-??\n
+### mlpack 3.1.0
+###### ????-??-??
+
 ### mlpack 3.1.0
 ###### 2019-04-25
   * Add DiagonalGaussianDistribution and DiagonalGMM classes to speed up the
