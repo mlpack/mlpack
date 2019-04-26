@@ -6,6 +6,11 @@
  * for the Markdown bindings to map from a binding name (i.e. "knn") to
  * multiple ProgramDoc objects, which are then used to generate the
  * documentation.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_BINDINGS_MARKDOWN_BINDING_NAME_HPP
 #define MLPACK_BINDINGS_MARKDOWN_BINDING_NAME_HPP
