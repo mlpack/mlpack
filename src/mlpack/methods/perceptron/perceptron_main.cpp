@@ -154,7 +154,7 @@ static void mlpackMain()
   // should issue a warning.
   RequireAtLeastOnePassed({ "output_model", "output" }, false,
       "no output will be saved");
-  // "output" can be removed in mlpack 4  
+  // "output" can be removed in mlpack 4
   ReportIgnoredParam({{ "test", false }}, "output");
   ReportIgnoredParam({{ "test", false }}, "predictions");
 
