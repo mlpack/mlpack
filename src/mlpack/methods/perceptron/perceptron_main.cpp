@@ -56,7 +56,7 @@ PROGRAM_INFO("Perceptron",
     "will be removed in mlpack 4: " + PRINT_PARAM_STRING("output") +
     "."  +
     "\nUse " + PRINT_PARAM_STRING("predictions") + " instead of " +
-    PRINT_PARAM_STRING("output")+'.'
+    PRINT_PARAM_STRING("output") + '.' +
     "\n\n"
     "The training data given with the " + PRINT_PARAM_STRING("training") +
     " option may have class labels as its last dimension (so, if the training "
@@ -152,7 +152,7 @@ static void mlpackMain()
 
   // If the user isn't going to save the output model or any predictions, we
   // should issue a warning.
-  RequireAtLeastOnePassed({ "output_model", "output" }, false,
+  RequireAtLeastOnePassed({ "output_model", "output", "predictions" }, false,
       "no output will be saved");
   // "output" can be removed in mlpack 4
   ReportIgnoredParam({{ "test", false }}, "output");

@@ -77,9 +77,15 @@ PROGRAM_INFO("AdaBoost",
     "predictions for a given test dataset.  A test dataset may be specified "
     "with the " + PRINT_PARAM_STRING("test") + " parameter.  The predicted "
     "classes for each point in the test dataset are output to the " +
-    PRINT_PARAM_STRING("output") + " output parameter.  The AdaBoost model "
-    "itself is output to the " + PRINT_PARAM_STRING("output_model") +
+    PRINT_PARAM_STRING("predictions") + " output parameter.  The AdaBoost "
+    "model itself is output to the " + PRINT_PARAM_STRING("output_model") +
     " output parameter."
+    "\n\n"
+    "Note : The following parameter is deprecated and "
+    "will be removed in mlpack 4: " + PRINT_PARAM_STRING("output") +
+    "."  +
+    "\nUse " + PRINT_PARAM_STRING("predictions") + " instead of " +
+    PRINT_PARAM_STRING("output") + '.' +
     "\n\n"
     "For example, to run AdaBoost on an input dataset " +
     PRINT_DATASET("data") + " with perceptrons as the weak learner type, "
@@ -111,7 +117,12 @@ PARAM_UROW_IN("labels", "Labels for the training set.", "l");
 
 // Classification options.
 PARAM_MATRIX_IN("test", "Test dataset.", "T");
+/* 
+* The PARAM_UROW_OUT("output") is depracated and
+* can be removed in mlpack4.0.0.
+*/
 PARAM_UROW_OUT("output", "Predicted labels for the test set.", "o");
+PARAM_UROW_OUT("predictions", "Predicted labels for the test set.", "P");
 
 // Training options.
 PARAM_INT_IN("iterations", "The maximum number of boosting iterations to be run"
@@ -155,10 +166,12 @@ static void mlpackMain()
   if (CLI::HasParam("input_model"))
     RequireAtLeastOnePassed({ "test" }, false, "no task will be performed");
 
-  RequireAtLeastOnePassed({ "output_model", "output" }, false,
+  RequireAtLeastOnePassed({ "output_model", "output", "predictions" }, false,
       "no results will be saved");
 
+  // "output" can be removed in mlpack 4
   ReportIgnoredParam({{ "test", false }}, "output");
+  ReportIgnoredParam({{ "test", false }}, "predictions");
 
   AdaBoostModel* m;
   if (CLI::HasParam("training"))
@@ -230,7 +243,11 @@ static void mlpackMain()
     Row<size_t> results;
     data::RevertLabels(predictedLabels, m->Mappings(), results);
 
-    CLI::GetParam<arma::Row<size_t>>("output") = std::move(results);
+    // Save the predicted labels.
+    if (CLI::HasParam("output"))
+      CLI::GetParam<arma::Row<size_t>>("output") = std::move(results);
+    if (CLI::HasParam("predictions"))
+      CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(results);
   }
 
   CLI::GetParam<AdaBoostModel*>("output_model") = m;
