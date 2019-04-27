@@ -47,17 +47,16 @@ PROGRAM_INFO("Perceptron",
     " parameter), or both those things at once.  In addition, this program "
     "allows classification on a test dataset (via the " +
     PRINT_PARAM_STRING("test") + " parameter) and the classification results "
-    "on the test set may be saved with the " + PRINT_PARAM_STRING("predictions") +
-    "output parameter.  The perceptron model may be saved with the " +
+    "on the test set may be saved with the " +
+    PRINT_PARAM_STRING("predictions") +
+    " output parameter.  The perceptron model may be saved with the " +
     PRINT_PARAM_STRING("output_model") + " output parameter."
     "\n\n"
-    "Note : The following parameters are deprecated and "
+    "Note : The following parameter is deprecated and "
     "will be removed in mlpack 4: " + PRINT_PARAM_STRING("output") +
-    ", " + PRINT_PARAM_STRING("output_probabilities") +
+    "."  +
     "\nUse " + PRINT_PARAM_STRING("predictions") + " instead of " +
-    PRINT_PARAM_STRING("output") + "\nUse " +
-    PRINT_PARAM_STRING("probabilities") + " instead of " +
-    PRINT_PARAM_STRING("output_probabilities") +
+    PRINT_PARAM_STRING("output")+'.'
     "\n\n"
     "The training data given with the " + PRINT_PARAM_STRING("training") +
     " option may have class labels as its last dimension (so, if the training "
