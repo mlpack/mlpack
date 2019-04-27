@@ -105,7 +105,7 @@ setup(name='mlpack',
           'Source': 'https://github.com/mlpack/mlpack/',
           'Tracker': 'https://github.com/mlpack/mlpack/issues'},
       install_requires=['cython>=0.24', 'numpy', 'pandas'],
-      package_dir={ '': '${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/' },
+      package_dir={ '': '.' }, # Might be superfluous.
       packages=['mlpack'],
       cmdclass={ 'build_ext': build_ext },
       ext_modules = modules,
