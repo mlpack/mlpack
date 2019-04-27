@@ -20,7 +20,9 @@ if (WIN32)
   option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries are compiled)." OFF)
-  message(WARNING "By default Python bindings are not compiled for Windows because they are not known to work.  Set BUILD_PYTHON_BINDINGS to ON if you want them built.")
+  if (NOT BUILD_PYTHON_BINDINGS)
+    message(WARNING "By default Python bindings are not compiled for Windows because they are not known to work.  Set BUILD_PYTHON_BINDINGS to ON if you want them built.")
+  endif ()
 else ()
   option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
   option(BUILD_SHARED_LIBS
