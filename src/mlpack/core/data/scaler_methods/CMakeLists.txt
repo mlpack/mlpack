@@ -4,6 +4,7 @@ set(SOURCES
   minmaxscaler.hpp
   maxabsscaler.hpp
   standardscaler.hpp
+  meannormalization.hpp
 )
 
 # Add directory name to sources.

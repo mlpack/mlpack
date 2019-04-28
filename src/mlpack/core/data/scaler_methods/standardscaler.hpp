@@ -34,9 +34,9 @@ class StandardScaler
   ~StandardScaler(){}
 
   /**
-  * Function to scale Features
+  * Function to scale Features.
   *
-  * @param input Datset to scale features
+  * @param input Datset to scale features.
   */
   void Transform(arma::Mat<T>& input)
   {
@@ -62,9 +62,9 @@ class StandardScaler
   }
 
   /**
-  * Function to retrive original dataset
+  * Function to retrive original dataset.
   *
-  * @param input Scaled dataset
+  * @param input Scaled dataset.
   */
   void InverseTransform(arma::Mat<T>& input)
   {
@@ -77,14 +77,14 @@ class StandardScaler
       }
     }
   }
-  //! Get the Min row vector.
+  //! Get the Mean row vector.
   const arma::colvec& ItemMean() const { return itemMean; }
-  //! Get the Max row vector.
+  //! Get the Standard Devation row vector.
   const arma::colvec& ItemStdev() const { return itemStdev; }
  private:
-  // Min row vector which holds minimum of each feature
+  // Vector which holds mean of each feature
   arma::colvec itemMean;
-  // Max row vector which holds maximum of each feature
+  // Vector which holds standard devation of each feature
   arma::colvec itemStdev;
 }; // class StandardScaler
 

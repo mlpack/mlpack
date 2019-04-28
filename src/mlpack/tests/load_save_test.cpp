@@ -17,6 +17,7 @@
 #include <mlpack/core/data/scaler_methods/minmaxscaler.hpp>
 #include <mlpack/core/data/scaler_methods/maxabsscaler.hpp>
 #include <mlpack/core/data/scaler_methods/standardscaler.hpp>
+#include <mlpack/core/data/scaler_methods/meannormalization.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -1755,6 +1756,24 @@ BOOST_AUTO_TEST_CASE(StandardScalerTest)
     arma::mat scaled = "-1.18321596 -0.50709255  0.16903085 1.52127766;"
                        "-1.18321596 -0.50709255  0.16903085 1.52127766;";
     data::StandardScaler<double> scale;
+    scale.Transform(dataset);
+    CheckMatrices(dataset, scaled);
+    scale.InverseTransform(dataset);
+    CheckMatrices(dataset, datasetcopy);
+}
+
+/**
+ * Test For MeanNormalization Scaler Class.
+ */
+BOOST_AUTO_TEST_CASE(MeanNormalizationTest)
+{
+    arma::mat dataset = "-1 -0.5 0 1;"
+                        "2 6 10 18;";
+    arma::mat datasetcopy = "-1 -0.5 0 1;"
+                            "2 6 10 18;";
+    arma::mat scaled = "-0.43750000000 -0.187500000 0.062500000 0.562500000;"
+                       "-0.43750000000 -0.187500000 0.062500000 0.562500000;";
+    data::MeanNormalization<double> scale;
     scale.Transform(dataset);
     CheckMatrices(dataset, scaled);
     scale.InverseTransform(dataset);

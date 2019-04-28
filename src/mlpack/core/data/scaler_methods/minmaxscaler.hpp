@@ -26,8 +26,8 @@ class MinMaxScaler
   /**
   * Default constructor
   *
-  * @param min Lower range of scaling
-  * @param max Upper range of scaling 
+  * @param min Lower range of scaling.
+  * @param max Upper range of scaling. 
   */
   MinMaxScaler(const double min = 0, const double max = 1)
   {
@@ -40,9 +40,9 @@ class MinMaxScaler
   ~MinMaxScaler(){}
 
   /**
-  * Function to scale Features
+  * Function to scale Features.
   *
-  * @param input Datset to scale features
+  * @param input Datset to scale features.
   */
   void Transform(arma::Mat<T>& input)
   {
@@ -68,9 +68,9 @@ class MinMaxScaler
   }
 
   /**
-  * Function to retrive original dataset
+  * Function to retrive original dataset.
   *
-  * @param input Scaled dataset
+  * @param input Scaled dataset.
   */
   void InverseTransform(arma::Mat<T>& input)
   {
@@ -94,15 +94,15 @@ class MinMaxScaler
   //! Get the lower range parameter.
   const double ScaleMin() const { return scalemin; }
  private:
-  // Min row vector which holds minimum of each feature
+  // Vector which holds minimum of each feature.
   arma::colvec itemMin;
-  // Max row vector which holds maximum of each feature
+  // Vector which holds maximum of each feature.
   arma::colvec itemMax;
-  // Scale vector which is used to scale up each feature
+  // Scale vector which is used to scale up each feature.
   arma::colvec scale;
-  // Lower value for range
+  // Lower value for range.
   double scalemin;
-  // Upper value for range
+  // Upper value for range.
   double scalemax;
 }; // class MinMaxScaler
 
