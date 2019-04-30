@@ -216,7 +216,7 @@ class Concat
   //! Parameter which indicates whether to use the axis of concatenation.
   bool useAxis;
 
-  //! Parameter to store channels
+  //! Parameter to store channels.
   size_t channels;
 
   //! Parameter which indicates if the modules should be exposed.

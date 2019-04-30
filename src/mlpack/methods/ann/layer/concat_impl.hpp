@@ -57,6 +57,40 @@ Concat<InputDataType,
       channels(1)
 {
   parameters.set_size(0, 0);
+
+  // Parameters to help calculate the number of channels.
+  size_t  oldColSize = 1, newColSize = 1;
+  // Axis is specified and useAxis is true.
+  if (useAxis)
+  {
+    // Axis is specified without input dimension.
+    // Throw an error.
+    if (inputSize.n_elem > 0)
+    {
+      // Calculate rowSize, newColSize based on the axis
+      // of concatenation. Finally concat along cols and
+      // reshape to original format i.e. (input, batch_size).
+      size_t i = std::min(axis + 1, (size_t)inputSize.n_elem);
+      for (; i < inputSize.n_elem; ++i)
+      {
+        newColSize *= inputSize[i];
+      }
+    }
+    else
+    {
+      throw std::logic_error("Input dimensions not specified.");
+    }
+  }
+  else
+  {
+    channels = 1;
+  }
+  if (newColSize <= 0)
+  {
+      throw std::logic_error("Col size is zero.");
+  }
+  channels = newColSize / oldColSize;
+  inputSize.clear();
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -84,57 +118,23 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Forward(
     }
   }
 
-  // Parameter to store dimensions(rowSize).
-  size_t rowSize, oldColSize, newColSize;
   output = boost::apply_visitor(outputParameterVisitor, network.front());
 
-  newColSize = oldColSize = output.n_cols;
-
-  // Axis is specified and useAxis is true.
-  if (useAxis)
-  {
-    // Axis is specified without input dimension.
-    // Throw an error.
-    if (inputSize.n_elem > 0)
-    {
-      // Calculate rowSize, newColSize based on the axis
-      // of concatenation. Finally concat along cols and
-      // reshape to original format i.e. (input, batch_size).
-      size_t i = std::min(axis + 1, (size_t)inputSize.n_elem);
-      for (; i < inputSize.n_elem; ++i)
-      {
-        newColSize *= inputSize[i];
-      }
-    }
-    else
-    {
-      throw std::logic_error("Input dimensions not specified.");
-    }
-  }
-  if (newColSize <= 0)
-  {
-      throw std::logic_error("Col size is zero.");
-  }
-
-  channels = newColSize / oldColSize;
-  // Compute the rowSize after which join_cols() is called.
-  rowSize = output.n_rows * output.n_cols / newColSize;
-  output.reshape(rowSize, newColSize);
+  // Reshape output to incorporate the channels.
+  output.reshape(output.n_rows / channels, output.n_cols * channels);
 
   for (size_t i = 1; i < network.size(); ++i)
   {
     arma::Mat<eT> out = boost::apply_visitor(outputParameterVisitor,
         network[i]);
 
-    rowSize = out.n_rows * out.n_cols / newColSize;
-    out.reshape(rowSize, newColSize);
+    out.reshape(out.n_rows / channels, out.n_cols * channels);
 
     // Vertically concatentate output from each layer.
     output = arma::join_cols(output, out);
   }
-
-  rowSize = output.n_rows * output.n_cols / oldColSize;
-  output.reshape(rowSize, oldColSize);
+  // Reshape output to its original shape.
+  output.reshape(output.n_rows * channels, output.n_cols / channels);
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -222,8 +222,6 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
   if (run)
   {
     size_t rowCount = 0;
-
-
     // Reshape error to extract the i-th layer error.
     error.reshape(error.n_rows / channels, error.n_cols * channels);
     for (size_t i = 0; i < network.size(); ++i)
@@ -256,7 +254,6 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
     const size_t index)
 {
   size_t rowCount = 0;
-
   for (size_t i = 0; i < index; ++i)
   {
     rowCount += boost::apply_visitor(outputParameterVisitor,
