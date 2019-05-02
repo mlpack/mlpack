@@ -81,7 +81,7 @@ class ContinuousMountainCarV2
    * discrete value, continuous mountain car has continous action space
    * value.
    */
-  struct Action
+  struct ActionV2
   {
     double action[1];
     // Storing degree of freedom
@@ -124,9 +124,9 @@ class ContinuousMountainCarV2
    * @param nextState The next state.
    * @return reward, it's always -1.0.
    */
-  double Sample(const State& state,
-                const Action& action,
-                State& nextState) const
+  double Sample(const StateV2& state,
+                const ActionV2& action,
+                StateV2& nextState) const
   {
     // Calculate acceleration.
     double force = std::min(std::max(action.action[0], -1.0), 1.0);
@@ -159,15 +159,15 @@ class ContinuousMountainCarV2
    * @param action The current action.
    * @return reward, it's always -1.0.
    */
-  double Sample(const State& state, const Action& action) const
+  double SampleV2(const State& state, const Action& action) const
   {
-    ContinuousMountainCar ob = ContinuousMountainCar(positionMin,
+    ContinuousMountainCar cmc = ContinuousMountainCar(positionMin,
                                                            positionMax,
                                                            positionGoal,
                                                            velocityMin,
                                                            velocityMax);
     State nextState;
-    return ob.Sample(state, action, nextState);
+    return cmc.Sample(state, action, nextState);
   }
 
   /**
@@ -176,9 +176,9 @@ class ContinuousMountainCarV2
    *
    * @return Initial state for each episode.
    */
-  State InitialSample() const
+  StateV2 InitialSample() const
   {
-    State state;
+    StateV2 state;
     state.Velocity() = 0.0;
     state.Position() = math::Random(-0.6, -0.4);
     return state;
@@ -190,7 +190,7 @@ class ContinuousMountainCarV2
    * @param state desired state.
    * @return true if state is a terminal state, otherwise false.
    */
-  bool IsTerminal(const State& state) const
+  bool IsTerminalV2(const StateV2& state) const
   {
     return state.Position() >= positionGoal && state.Velocity() >= velocityGoal;
   }
