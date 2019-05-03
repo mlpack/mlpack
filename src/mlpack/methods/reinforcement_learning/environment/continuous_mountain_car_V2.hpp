@@ -159,15 +159,15 @@ class ContinuousMountainCarV2
    * @param action The current action.
    * @return reward, it's always -1.0.
    */
-  double SampleV2(const State& state, const Action& action) const
+  double SampleV2(const StateV2& state, const ActionV2& action) const
   {
     ContinuousMountainCar cmc = ContinuousMountainCar(positionMin,
                                                            positionMax,
                                                            positionGoal,
                                                            velocityMin,
                                                            velocityMax);
-    State nextState;
-    return cmc.Sample(state, action, nextState);
+    StateV2 nextState;
+    return cmc.SampleV2(state, action, nextState);
   }
 
   /**
