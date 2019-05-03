@@ -728,7 +728,9 @@ double DecisionTree<FitnessFunction,
       numClasses,
       UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   size_t bestDim = data.n_rows; // This means "no split".
-  for (size_t i = 0; i < data.n_rows; ++i)
+  DimensionSelectionType dimensions(data.n_rows);
+  for (size_t i = dimensions.Begin(); i != dimensions.End();
+       i = dimensions.Next())
   {
     const double dimGain = NumericSplitType<FitnessFunction>::template
         SplitIfBetter<UseWeights>(bestGain,
