@@ -77,13 +77,13 @@ BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTestV2)
 {
   const ContinuousMountainCarV2 task = ContinuousMountainCarV2();
 
-  ContinuousMountainCarV2::StateV2 state = task.InitialSample();
+  ContinuousMountainCarV2::StateV2 state = task.InitialSampleV2();
   ContinuousMountainCarV2::ActionV2 action;
   action.action[0] = math::Random(-1.0, 1.0);
-  double reward = task.Sample(state, action);
+  double reward = task.SampleV2(state, action);
   // Maximum reward possible is 100.
   BOOST_REQUIRE(reward <= 100.0);
-  BOOST_REQUIRE(!task.IsTerminal(state));
+  BOOST_REQUIRE(!task.IsTerminalV2(state));
   BOOST_REQUIRE_EQUAL(1, action.size);
 }
 
