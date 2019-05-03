@@ -1,5 +1,6 @@
-### mlpack 3.1.0
+### mlpack 3.1.1
 ###### ????-??-??
+  * Fix random forest bug for numerical-only data (#1887).
 
 ### mlpack 3.1.0
 ###### 2019-04-25
