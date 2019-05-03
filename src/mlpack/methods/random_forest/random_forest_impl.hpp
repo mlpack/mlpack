@@ -447,25 +447,26 @@ double RandomForest<
     {
       if (UseDatasetInfo)
       {
-        avgGain += trees[i].Train(dataset, datasetInfo, labels, numClasses,
-            weights, minimumLeafSize);
+        avgGain += trees[i].Train(bootstrapDataset, datasetInfo,
+            bootstrapLabels, numClasses, bootstrapWeights, minimumLeafSize);
       }
       else
       {
-        avgGain += trees[i].Train(dataset, labels, numClasses, weights,
-            minimumLeafSize);
+        avgGain += trees[i].Train(bootstrapDataset, bootstrapLabels, numClasses,
+            bootstrapWeights, minimumLeafSize);
       }
     }
     else
     {
       if (UseDatasetInfo)
       {
-        avgGain += trees[i].Train(dataset, datasetInfo, labels, numClasses,
-            minimumLeafSize);
+        avgGain += trees[i].Train(bootstrapDataset, datasetInfo,
+            bootstrapLabels, numClasses, minimumLeafSize);
       }
       else
       {
-        avgGain += trees[i].Train(dataset, labels, numClasses, minimumLeafSize);
+        avgGain += trees[i].Train(bootstrapDataset, bootstrapLabels, numClasses,
+            minimumLeafSize);
       }
     }
   }
