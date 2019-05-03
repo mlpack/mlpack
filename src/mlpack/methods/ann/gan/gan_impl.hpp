@@ -30,7 +30,6 @@ template<
   typename PolicyType
 >
 GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
-    arma::mat& predictors,
     Model generator,
     Model discriminator,
     InitializationRuleType& initializeRule,
@@ -59,29 +58,6 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
   this->discriminator.network.insert(
       this->discriminator.network.begin(),
       new IdentityLayer<>());
-
-  counter = 0;
-  currentBatch = 0;
-
-  this->discriminator.deterministic = this->generator.deterministic = true;
-
-  this->predictors.set_size(predictors.n_rows, predictors.n_cols + batchSize);
-  this->predictors.cols(0, predictors.n_cols - 1) = predictors;
-  this->discriminator.predictors = arma::mat(this->predictors.memptr(),
-      this->predictors.n_rows, this->predictors.n_cols, false, false);
-
-  responses.ones(1, predictors.n_cols + batchSize);
-  responses.cols(predictors.n_cols,
-      predictors.n_cols + batchSize - 1) = arma::zeros(1, batchSize);
-  this->discriminator.responses = arma::mat(this->responses.memptr(),
-      this->responses.n_rows, this->responses.n_cols, false, false);
-
-  numFunctions = predictors.n_cols;
-
-  noise.set_size(noiseDim, batchSize);
-
-  this->generator.predictors.set_size(noiseDim, batchSize);
-  this->generator.responses.set_size(predictors.n_rows, batchSize);
 }
 
 template<
@@ -152,6 +128,45 @@ template<
   typename Noise,
   typename PolicyType
 >
+void GAN<Model, InitializationRuleType, Noise, PolicyType>::ResetData(
+  arma::mat trainData)
+{
+  this->predictors = std::move(trainData);
+
+  counter = 0;
+  currentBatch = 0;
+
+  numFunctions = predictors.n_cols;
+  noise.set_size(noiseDim, batchSize);
+
+  deterministic = true;
+  ResetDeterministic();
+
+  responses.set_size(1, predictors.n_cols);
+  responses.ones();
+
+  this->discriminator.predictors.set_size(predictors.n_rows,
+      predictors.n_cols + batchSize);
+  this->discriminator.predictors.cols(0, predictors.n_cols - 1) = predictors;
+
+  this->discriminator.responses.set_size(1, predictors.n_cols + batchSize);
+  this->discriminator.responses.ones();
+  this->discriminator.responses.cols(predictors.n_cols,
+      predictors.n_cols + batchSize - 1) = arma::zeros(1, batchSize);
+
+  this->generator.predictors.set_size(noiseDim, batchSize);
+  this->generator.responses.set_size(predictors.n_rows, batchSize);
+
+  if (!reset)
+    Reset();
+}
+
+template<
+  typename Model,
+  typename InitializationRuleType,
+  typename Noise,
+  typename PolicyType
+>
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::Reset()
 {
   size_t genWeights = 0;
@@ -190,13 +205,128 @@ template<
   typename Noise,
   typename PolicyType
 >
-template<typename OptimizerType>
-double GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
+template<typename Policy, typename OptimizerType>
+typename std::enable_if<std::is_same<Policy, WGAN>::value ||
+                        std::is_same<Policy, WGANGP>::value, double>::type
+GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
+    arma::mat trainData,
     OptimizerType& Optimizer)
 {
-  if (!reset)
-    Reset();
+  ResetData(std::move(trainData));
+
   return Optimizer.Optimize(*this, parameter);
+}
+
+template<
+  typename Model,
+  typename InitializationRuleType,
+  typename Noise,
+  typename PolicyType
+>
+template<typename Policy, typename DiscOptimizerType, typename GenOptimizerType>
+typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
+                        std::is_same<Policy, DCGAN>::value, void>::type
+GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
+    arma :: mat trainData,
+    DiscOptimizerType& discriminatorOptimizer,
+    GenOptimizerType& generatorOptimizer,
+    size_t maxIterations)
+{
+  numFunctions = trainData.n_cols;
+  noise.set_size(noiseDim, batchSize);
+
+  // To keep track of where we are.
+  size_t currentFunction = 0;
+
+  // We pass two batches during training hence maxIterations is doubled.
+  discriminatorOptimizer.MaxIterations() =
+      discriminatorOptimizer.MaxIterations() * 2;
+
+  // Predictors and responses for generator and discriminator network.
+  arma::mat discriminatorPredictors;
+  arma::mat discriminatorResponses;
+
+  const size_t actualMaxIterations = (maxIterations == 0) ?
+      std::numeric_limits<size_t>::max() : maxIterations;
+  for (size_t i = 0; i < actualMaxIterations; i++)
+  {
+    // Is this iteration the start of a sequence?
+    if (currentFunction % numFunctions == 0 && i > 0)
+    {
+      currentFunction = 0;
+    }
+
+    // Find the effective batch size; we have to take the minimum of three
+    // things:
+    // - the batch size can't be larger than the user-specified batch size;
+    // - the batch size can't be larger than the number of functions left.
+    const size_t effectiveBatchSize = std::min(batchSize, numFunctions -
+        currentFunction);
+
+    // Training data for dicriminator.
+    if (effectiveBatchSize != batchSize)
+    {
+      noise.set_size(noiseDim, effectiveBatchSize);
+      discriminatorOptimizer.BatchSize() = effectiveBatchSize;
+      discriminatorOptimizer.MaxIterations() = effectiveBatchSize * 2;
+    }
+    noise.imbue( [&]() { return noiseFunction();} );
+    arma::mat fakeImages;
+    generator.Forward(noise, fakeImages);
+
+    discriminatorPredictors = arma::join_rows(
+        trainData.cols(currentFunction,  currentFunction + effectiveBatchSize -
+        1), fakeImages);
+
+    discriminatorResponses = arma::join_rows(arma::ones(1, effectiveBatchSize),
+        arma::zeros(1, effectiveBatchSize));
+
+    // Train the discriminator.
+    discriminator.Train(discriminatorPredictors, discriminatorResponses,
+        discriminatorOptimizer);
+
+    if (effectiveBatchSize != batchSize)
+    {
+      noise.set_size(noiseDim, batchSize);
+      discriminatorOptimizer.BatchSize() = batchSize;
+      discriminatorOptimizer.MaxIterations() = batchSize * 2;
+    }
+
+    if (preTrainSize == 0)
+    {
+      // Calculate error for generator network.
+      discriminatorResponses = arma::ones(1, batchSize);
+
+      noise.imbue( [&]() { return noiseFunction();} );
+      generator.Forward(std::move(noise));
+
+      discriminator.Forward(std::move(boost::apply_visitor(
+          outputParameterVisitor, generator.network.back())));
+
+      discriminator.outputLayer.Backward(
+          std::move(boost::apply_visitor(outputParameterVisitor,
+          discriminator.network.back())), std::move(discriminatorResponses),
+          std::move(discriminator.error));
+      discriminator.Backward();
+
+      generator.error = boost::apply_visitor(deltaVisitor,
+          discriminator.network[1]);
+
+      // Train the generator network.
+      generator.Train(noise, generatorOptimizer);
+    }
+
+    if (preTrainSize > 0)
+    {
+      preTrainSize--;
+    }
+
+    currentFunction += effectiveBatchSize;
+  }
+
+  // Changing maxIterations back to normal.
+  discriminatorOptimizer.MaxIterations() =
+      discriminatorOptimizer.MaxIterations() / 2;
 }
 
 template<
@@ -386,7 +516,7 @@ void GAN<Model, InitializationRuleType, Noise, PolicyType>::Forward(
     Reset();
 
   generator.Forward(std::move(input));
-  ganOutput = boost::apply_visitor(
+  arma::mat ganOutput = boost::apply_visitor(
       outputParameterVisitor,
       generator.network.back());
 
@@ -409,6 +539,21 @@ Predict(arma::mat&& input, arma::mat& output)
 
   output = boost::apply_visitor(outputParameterVisitor,
       discriminator.network.back());
+}
+
+template<
+  typename Model,
+  typename InitializationRuleType,
+  typename Noise,
+  typename PolicyType
+>
+void GAN<Model, InitializationRuleType, Noise, PolicyType>::
+ResetDeterministic()
+{
+  this->discriminator.deterministic = deterministic;
+  this->generator.deterministic = deterministic;
+  this->discriminator.ResetDeterministic();
+  this->generator.ResetDeterministic();
 }
 
 template<

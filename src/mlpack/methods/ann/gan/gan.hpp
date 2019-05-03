@@ -65,7 +65,6 @@ class GAN
   /**
    * Constructor for GAN class.
    *
-   * @param trainData The real data.
    * @param generator Generator network.
    * @param discriminator Discriminator network.
    * @param batchSize Batch size to be used for training.
@@ -76,8 +75,7 @@ class GAN
    * @param clippingParameter Weight range for enforcing Lipschitz constraint.
    * @param lambda Parameter for setting the gradient penalty.
    */
-  GAN(arma::mat& trainData,
-      Model generator,
+  GAN(Model generator,
       Model discriminator,
       InitializationRuleType& initializeRule,
       Noise& noiseFunction,
@@ -95,16 +93,45 @@ class GAN
   //! Move constructor.
   GAN(GAN&&);
 
+  /**
+   * Prepare the network for the given data.
+   * This function won't actually trigger training process.
+   *
+   * @param trainData The real data.
+   */
+  void ResetData(arma::mat trainData);
+
   // Reset function.
   void Reset();
 
   /**
    * Train function.
    *
+   * @param trainData The real data.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
-  template<typename OptimizerType>
-  double Train(OptimizerType& Optimizer);
+  template<typename Policy = PolicyType, typename OptimizerType>
+  typename std::enable_if<std::is_same<Policy, WGAN>::value ||
+                          std::is_same<Policy, WGANGP>::value, double>::type
+  Train(arma::mat trainData, OptimizerType& Optimizer);
+
+  /**
+   * Train function.
+   *
+   * @param trainData The real data.
+   * @param discriminatorOptimizer Optimizer for discriminator network.
+   * @param generatorOptimizer Optimizer for generator network.
+   * @param maxIterations Number of iterations for which to train GAN.
+   */
+  template<typename Policy = PolicyType,
+           typename DiscOptimizerType,
+           typename GenOptimizerType>
+  typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
+                          std::is_same<Policy, DCGAN>::value, void>::type
+  Train(arma::mat trainData,
+             DiscOptimizerType& discriminatorOptimizer,
+             GenOptimizerType& generatorOptimizer,
+             size_t maxIterations);
 
   /**
    * Evaluate function for the Standard GAN and DCGAN.
@@ -313,6 +340,11 @@ class GAN
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
+  /**
+  * Reset the module status by setting the current deterministic parameter
+  * for the discriminator and generator networks and their respective layers.
+  */
+  void ResetDeterministic();
   //! Locally stored parameter for training data + noise data.
   arma::mat predictors;
   //! Locally stored parameters of the network.
@@ -373,8 +405,8 @@ class GAN
   arma::mat noise;
   //! Locally stored gradient for Generator.
   arma::mat gradientGenerator;
-  //! Locally stored output of the Generator network.
-  arma::mat ganOutput;
+  //! The current evaluation mode (training or testing).
+  bool deterministic;
 };
 
 } // namespace ann

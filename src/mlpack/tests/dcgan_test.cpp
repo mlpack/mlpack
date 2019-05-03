@@ -44,7 +44,8 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
   size_t noiseDim = 100;
   size_t generatorUpdateStep = 1;
   size_t numSamples = 10;
-  double stepSize = 0.0003;
+  double disStepSize = 0.0003;
+  double genStepSize = 0.0001;
   double eps = 1e-8;
   size_t numEpoches = 1;
   double tolerance = 1e-5;
@@ -57,7 +58,8 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
       << " generatorUpdateStep = " << generatorUpdateStep << std::endl
       << " noiseDim = " << noiseDim << std::endl
       << " numSamples = " << numSamples << std::endl
-      << " stepSize = " << stepSize << std::endl
+      << " discriminator step size = " << disStepSize << std::endl
+      << " generator step size = " << genStepSize << std::endl
       << " numEpoches = " << numEpoches << std::endl
       << " tolerance = " << tolerance << std::endl
       << " shuffle = " << shuffle << std::endl;
@@ -115,20 +117,20 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
 
   // Create DCGAN
   GaussianInitialization gaussian(0, 1);
-  ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
-      tolerance, shuffle);
+  ens::Adam discriminatorOptimizer(disStepSize, batchSize, 0.9, 0.999, eps,
+      batchSize, tolerance, shuffle);
+  ens::Adam generatorOptimizer(genStepSize, batchSize, 0.9, 0.999, eps,
+      batchSize, tolerance, shuffle);
   std::function<double()> noiseFunction = [] () {
       return math::RandNormal(0, 1);};
   GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
-      std::function<double()>, DCGAN> dcgan(trainData, generator, discriminator,
+      std::function<double()>, DCGAN> dcgan(generator, discriminator,
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
   Log::Info << "Training..." << std::endl;
-  double objVal = dcgan.Train(optimizer);
-
-  // Test that objective value returned by GAN::Train() is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  dcgan.Train(trainData, discriminatorOptimizer,
+      generatorOptimizer, numIterations);
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;

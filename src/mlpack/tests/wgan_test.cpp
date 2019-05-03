@@ -122,12 +122,12 @@ BOOST_AUTO_TEST_CASE(WGANMNISTTest)
   std::function<double()> noiseFunction = [] () {
       return math::RandNormal(0, 1);};
   GAN<FFN<EarthMoverDistance<> >, GaussianInitialization,
-      std::function<double()>, WGAN> wgan(trainData, generator, discriminator,
+      std::function<double()>, WGAN> wgan(generator, discriminator,
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier, clippingParameter);
 
   Log::Info << "Training..." << std::endl;
-  double objVal = wgan.Train(optimizer);
+  double objVal = wgan.Train(trainData, optimizer);
 
   // Test that objective value returned by GAN::Train() is finite.
   BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
@@ -252,13 +252,13 @@ BOOST_AUTO_TEST_CASE(WGANGPMNISTTest)
   std::function<double()> noiseFunction = [] () {
       return math::RandNormal(0, 1);};
   GAN<FFN<EarthMoverDistance<> >, GaussianInitialization,
-      std::function<double()>, WGANGP > wganGP(trainData, generator,
+      std::function<double()>, WGANGP > wganGP(generator,
       discriminator, gaussian, noiseFunction, noiseDim, batchSize,
       generatorUpdateStep, discriminatorPreTrain, multiplier, clippingParameter,
       lambda);
 
   Log::Info << "Training..." << std::endl;
-  double objVal = wganGP.Train(optimizer);
+  double objVal = wganGP.Train(trainData, optimizer);
 
   // Test that objective value returned by GAN::Train() is finite.
   BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
