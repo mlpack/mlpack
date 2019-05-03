@@ -124,7 +124,7 @@ class ContinuousMountainCarV2
    * @param nextState The next state.
    * @return reward, it's always -1.0.
    */
-  double Sample(const StateV2& state,
+  double SampleV2(const StateV2& state,
                 const ActionV2& action,
                 StateV2& nextState) const
   {
@@ -176,7 +176,7 @@ class ContinuousMountainCarV2
    *
    * @return Initial state for each episode.
    */
-  StateV2 InitialSample() const
+  StateV2 InitialSampleV2() const
   {
     StateV2 state;
     state.Velocity() = 0.0;
