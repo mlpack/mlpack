@@ -52,7 +52,8 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     multiplier(multiplier),
     clippingParameter(clippingParameter),
     lambda(lambda),
-    reset(false)
+    reset(false),
+    deterministic(false)
 {
   // Insert IdentityLayer for joining the Generator and Discriminator.
   this->discriminator.network.insert(
@@ -86,7 +87,8 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     currentBatch(network.currentBatch),
     parameter(network.parameter),
     numFunctions(network.numFunctions),
-    noise(network.noise)
+    noise(network.noise),
+    deterministic(network.deterministic)
 {
   /* Nothing to do here */
 }
@@ -117,7 +119,8 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     currentBatch(network.currentBatch),
     parameter(std::move(network.parameter)),
     numFunctions(network.numFunctions),
-    noise(std::move(network.noise))
+    noise(std::move(network.noise)),
+    deterministic(network.deterministic)
 {
   /* Nothing to do here */
 }
