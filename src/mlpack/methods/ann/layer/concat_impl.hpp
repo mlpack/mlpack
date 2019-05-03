@@ -45,7 +45,7 @@ Concat<InputDataType,
        OutputDataType,
        CustomLayers...
       >::Concat(
-      arma::Row<size_t> inputSize,
+      arma::Row<size_t>& inputSize,
       const size_t axis,
       const bool model,
       const bool run) :
@@ -53,8 +53,7 @@ Concat<InputDataType,
       axis(axis),
       useAxis(true),
       model(model),
-      run(run),
-      channels(1)
+      run(run)
 {
   parameters.set_size(0, 0);
 

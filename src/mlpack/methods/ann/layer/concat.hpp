@@ -61,7 +61,7 @@ class Concat
    * @param model Expose all network modules.
    * @param run Call the Forward/Backward method before the output is merged.
    */
-  Concat(arma::Row<size_t> inputSize,
+  Concat(arma::Row<size_t>& inputSize,
          const size_t axis,
          const bool model = false,
          const bool run = true);

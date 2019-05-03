@@ -1104,7 +1104,8 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
     }
 
     // Compute output of Concat<> layer.
-    Concat<> module({outputWidth, outputHeight, outputChannel}, axis);
+    arma::Row<size_t> inputSize{outputWidth, outputHeight, outputChannel};
+    Concat<> module(inputSize, axis);
     module.Add(moduleA);
     module.Add(moduleB);
     module.Forward(std::move(input), std::move(output));
