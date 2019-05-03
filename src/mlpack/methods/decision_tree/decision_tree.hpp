@@ -363,6 +363,10 @@ class DecisionTree :
   //! Modify the child of the given index (be careful!).
   DecisionTree& Child(const size_t i) { return *children[i]; }
 
+  //! Get the split dimension (only meaningful is this is a non-leaf in a
+  //! trained tree).
+  size_t SplitDimension() const { return splitDimension; }
+
   /**
    * Given a point and that this node is not a leaf, calculate the index of the
    * child node this point would go towards.  This method is primarily used by

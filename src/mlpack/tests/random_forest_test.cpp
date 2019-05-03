@@ -483,4 +483,32 @@ BOOST_AUTO_TEST_CASE(RandomForestCategoricalTrainReturnEntropy)
   BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
 }
 
+/**
+ * Test that different trees get generated.
+  */
+BOOST_AUTO_TEST_CASE(DifferentTreesTest)
+{
+  arma::mat d(10, 100, arma::fill::randu);
+  arma::Row<size_t> l(100);
+  for (size_t i = 0; i < 50; ++i)
+    l(i) = 0;
+  for (size_t i = 50; i < 100; ++i)
+    l(i) = 1;
+
+  bool success = false;
+  size_t trial = 0;
+
+  while (!success && trial < 10)
+  {
+    RandomForest<GiniGain, RandomDimensionSelect> rf;
+    rf.Train(d, l, 2, 2, 5);
+
+    success = (rf.Tree(0).SplitDimension() != rf.Tree(1).SplitDimension());
+
+    ++trial;
+  }
+
+  BOOST_REQUIRE_EQUAL(success, true);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
