@@ -78,7 +78,7 @@ class NaiveKernelRule
   {
     Log::Fatal << "Eigen Decompositon failed as Matrix is empty ."
           << std::endl;
-    return; 
+    return;
   }
   if ((arma::eig_sym(eigval, eigvec, sym_x) == false))
   {

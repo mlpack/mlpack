@@ -71,7 +71,7 @@ class EigenvalueRatioConstraint
     {
       Log::Fatal << "Eigen Decompositon failed as Matrix is empty ."
             << std::endl;
-      return; 
+      return;
     }
     if ((arma::eig_sym(eigenvalues, eigenvectors, sym_x) == false))
     {

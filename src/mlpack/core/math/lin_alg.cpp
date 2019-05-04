@@ -91,7 +91,7 @@ void mlpack::math::WhitenUsingEig(const arma::mat& x,
   {
     Log::Warn << "Eigen Decompositon failed as Matrix is empty ."
           << std::endl;
-    return; 
+    return;
   }
   if ((arma::eig_sym(eigenvalues, eigenvectors, sym_x) == false))
   {

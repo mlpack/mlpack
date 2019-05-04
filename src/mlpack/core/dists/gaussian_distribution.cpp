@@ -47,7 +47,7 @@ void GaussianDistribution::FactorCovariance()
   {
     Log::Fatal << "Cholesky Decomposition failed as Matrix is Empty ."
           << std::endl;
-    return; 
+    return;
   }
   if ((arma::chol(covLower, sym_cholmatrix, "lower") == false))
   {
