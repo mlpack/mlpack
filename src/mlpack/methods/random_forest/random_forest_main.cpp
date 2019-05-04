@@ -106,6 +106,8 @@ PARAM_MATRIX_OUT("probabilities", "Predicted class probabilities for each "
 PARAM_UROW_OUT("predictions", "Predicted classes for each point in the test "
     "set.", "p");
 
+PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+
 /**
  * This is the class that we will serialize.  It is a pretty simple wrapper
  * around DecisionTree<>.  In order to support categoricals, it will need to
@@ -135,6 +137,12 @@ PARAM_MODEL_OUT(RandomForestModel, "output_model", "Model to save trained "
 
 static void mlpackMain()
 {
+  // Initialize random seed if needed.
+  if (CLI::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  else
+    math::RandomSeed((size_t) std::time(NULL));
+
   // Check for incompatible input parameters.
   RequireOnlyOnePassed({ "training", "input_model" }, true);
 
