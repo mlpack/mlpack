@@ -118,17 +118,17 @@ arma::vec GMM::Random() const
   }
   arma::mat res_chol;
   arma::mat sym_cholmatrix = symmatu(dists[gaussian].Covariance());
-  if (arma::chol(res_chol, sym_cholmatrix) == false)
-  {
-    Log::Fatal << "Cholesky Decomposition failed ."
-          << std::endl;
-    return arma::vec();    
-  }
   if (res_chol.is_empty())
   {
     Log::Fatal << "Cholesky Decomposition failed as Matrix is empty ."
           << std::endl;
     return arma::vec();
+  }
+  if (arma::chol(res_chol, sym_cholmatrix) == false)
+  {
+    Log::Fatal << "Cholesky Decomposition failed ."
+          << std::endl;
+    return arma::vec();   
   }
   return trans(chol(dists[gaussian].Covariance())) *
       arma::randn<arma::vec>(dimensionality) + dists[gaussian].Mean();
