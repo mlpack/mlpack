@@ -32,13 +32,13 @@ class ContinuousMountainCarV2
    * Implementation of state of Continuous Mountain Car V2. Each state is a
    * (velocity, position) vector.
    */
-  class StateV2
+  class State
   {
    public:
     /**
      * Construct a state instance.
      */
-    StateV2() : data(dimension, arma::fill::zeros)
+    State() : data(dimension, arma::fill::zeros)
     { /* Nothing to do here. */ }
 
     /**
@@ -46,7 +46,7 @@ class ContinuousMountainCarV2
      *
      * @param data Data for the velocity and position.
      */
-    StateV2(const arma::colvec& data): data(data)
+    State(const arma::colvec& data): data(data)
     { /* Nothing to do here. */ }
 
     //! Modify the internal representation of the state.
@@ -81,7 +81,7 @@ class ContinuousMountainCarV2
    * discrete value, continuous mountain car has continous action space
    * value.
    */
-  struct ActionV2
+  struct Action
   {
     double action[1];
     // Storing degree of freedom
@@ -124,9 +124,9 @@ class ContinuousMountainCarV2
    * @param nextState The next state.
    * @return reward, it's always -1.0.
    */
-  double SampleV2(const StateV2& state,
-                const ActionV2& action,
-                StateV2& nextState) const
+  double Sample(const State& state,
+                const Action& action,
+                State& nextState) const
   {
     // Calculate acceleration.
     double force = std::min(std::max(action.action[0], -1.0), 1.0);
@@ -159,15 +159,15 @@ class ContinuousMountainCarV2
    * @param action The current action.
    * @return reward, it's always -1.0.
    */
-  double SampleV2(const StateV2& state, const ActionV2& action) const
+  double Sample(const State& state, const Action& action) const
   {
-    ContinuousMountainCar cmc = ContinuousMountainCar(positionMin,
+    ContinuousMountainCarV2 cmc = ContinuousMountainCarV2(positionMin,
                                                            positionMax,
                                                            positionGoal,
                                                            velocityMin,
                                                            velocityMax);
-    StateV2 nextState;
-    return cmc.SampleV2(state, action, nextState);
+    State nextState;
+    return cmc.Sample(state, action, nextState);
   }
 
   /**
@@ -176,9 +176,9 @@ class ContinuousMountainCarV2
    *
    * @return Initial state for each episode.
    */
-  StateV2 InitialSampleV2() const
+  State InitialSample() const
   {
-    StateV2 state;
+    State state;
     state.Velocity() = 0.0;
     state.Position() = math::Random(-0.6, -0.4);
     return state;
@@ -190,7 +190,7 @@ class ContinuousMountainCarV2
    * @param state desired state.
    * @return true if state is a terminal state, otherwise false.
    */
-  bool IsTerminalV2(const StateV2& state) const
+  bool IsTerminal(const State& state) const
   {
     return state.Position() >= positionGoal && state.Velocity() >= velocityGoal;
   }
