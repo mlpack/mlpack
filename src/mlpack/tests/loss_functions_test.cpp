@@ -348,7 +348,7 @@ BOOST_AUTO_TEST_CASE(GradientMeanAbsoluteErrorTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 2.0);
+  BOOST_REQUIRE_LE(CheckGradient(function), 0.00005);
 }
 
 /*
