@@ -18,6 +18,22 @@ namespace mlpack {
 namespace data {
 /**
  * A simple MinMax Scaler class
+ *
+ * Given an input dataset this class helps you to scale each
+ * feature to a given range.
+ *
+ * @code
+ * arma::Mat<double> input = loadData();
+ * arma::Mat<double> output;
+ *
+ * // Scale the features using
+ * MinMaxScaler<double> scale;
+ * scale.Tranform(input, output);
+ *
+ * // The input can be retransformed using
+ * scale.InverseTransform(output, input);
+ * @endcode
+ *
  */
 template <typename T>
 class MinMaxScaler
@@ -34,18 +50,16 @@ class MinMaxScaler
     scalemin = min;
     scalemax = max;
   }
-  /**
-  * Default Destructor 
-  */
-  ~MinMaxScaler(){}
 
   /**
   * Function to scale Features.
   *
-  * @param input Datset to scale features.
+  * @param input Dataset to scale features.
+  * @param output Output matrix with scaled features.
   */
-  void Transform(arma::Mat<T>& input)
+  void Transform(arma::Mat<T>& input, arma::Mat<T>& output)
   {
+    output.set_size(size(input));
     itemMin = arma::min(input, 1);
     itemMax = arma::max(input, 1);
     scale = (scalemax - scalemin) / (itemMax - itemMin);
@@ -61,7 +75,7 @@ class MinMaxScaler
     {
       for (size_t j = 0; j < input.n_cols; j++)
       {
-        input(i, j) = scale(i) * input(i, j) + scalemin - itemMin(i) *
+        output(i, j) = scale(i) * input(i, j) + scalemin - itemMin(i) *
             scale(i);
       }
     }
@@ -71,18 +85,21 @@ class MinMaxScaler
   * Function to retrive original dataset.
   *
   * @param input Scaled dataset.
+  * @param output Output matrix with original Dataset.
   */
-  void InverseTransform(arma::Mat<T>& input)
+  void InverseTransform(arma::Mat<T>& input, arma::Mat<T>& output)
   {
+    output.set_size(size(input));
     for (size_t i = 0; i < input.n_rows; i++)
     {
       for (size_t j = 0; j < input.n_cols; j++)
       {
-        input(i, j) = (input(i, j) - scalemin + itemMin(i) * scale(i)) /
+        output(i, j) = (input(i, j) - scalemin + itemMin(i) * scale(i)) /
             scale(i);
       }
     }
   }
+
   //! Get the Min row vector.
   const arma::colvec& ItemMin() const { return itemMin; }
   //! Get the Max row vector.
@@ -93,6 +110,7 @@ class MinMaxScaler
   const double ScaleMax() const { return scalemax; }
   //! Get the lower range parameter.
   const double ScaleMin() const { return scalemin; }
+
  private:
   // Vector which holds minimum of each feature.
   arma::colvec itemMin;

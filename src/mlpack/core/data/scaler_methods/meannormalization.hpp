@@ -18,28 +18,37 @@ namespace mlpack {
 namespace data {
 /**
  * A simple Mean Normalization class
+ *
+ * Given an input dataset this class helps you to normalize each
+ * feature.
+ *
+ * @code
+ * arma::Mat<double> input = loadData();
+ * arma::Mat<double> output;
+ *
+ * // Scale the features using
+ * MeanNormalization<double> scale;
+ * scale.Tranform(input, output);
+ *
+ * // The input can be retransformed using
+ * scale.InverseTransform(output, input);
+ * @endcode
+ *
  */
 template <typename T>
 class MeanNormalization
 {
  public:
-  /**
-  * Default constructor
-  *
-  */
-  MeanNormalization(){}
-  /**
-  * Default Destructor 
-  */
-  ~MeanNormalization(){}
 
   /**
   * Function to scale Features.
   *
-  * @param input Datset to scale features.
+  * @param input Dataset to scale features.
+  * @param output Output matrix with scaled features.
   */
-  void Transform(arma::Mat<T>& input)
+  void Transform(arma::Mat<T>& input, arma::Mat<T>& output)
   {
+    output.set_size(size(input));
     itemMean = arma::mean(input, 1);
     itemMin = arma::min(input, 1);
     itemMax = arma::max(input, 1);
@@ -56,8 +65,8 @@ class MeanNormalization
     {
       for (size_t j = 0; j < input.n_cols; j++)
       {
-        input(i, j) -= itemMean(i);
-        input(i, j) /= scale(i);
+        output(i, j) = input(i, j) - itemMean(i);
+        output(i, j) /= scale(i);
       }
     }
   }
@@ -66,18 +75,21 @@ class MeanNormalization
   * Function to retrive original dataset.
   *
   * @param input Scaled dataset.
+  * @param output Output matrix with original Dataset.
   */
-  void InverseTransform(arma::Mat<T>& input)
+  void InverseTransform(arma::Mat<T>& input, arma::Mat<T>& output)
   {
+    output.set_size(size(input));
     for (size_t i = 0; i < input.n_rows; i++)
     {
       for (size_t j = 0; j < input.n_cols; j++)
       {
-        input(i, j) *= scale(i);
-        input(i, j) += itemMean(i);
+        output(i, j) = input(i, j) * scale(i);
+        output(i, j) += itemMean(i);
       }
     }
   }
+
   //! Get the Mean row vector.
   const arma::colvec& ItemMean() const { return itemMean; }
   //! Get the Min row vector.
@@ -86,6 +98,7 @@ class MeanNormalization
   const arma::colvec& ItemMax() const { return itemMax; }
   //! Get the Scale row vector.
   const arma::colvec& Scale() const { return scale; }
+
  private:
   // Vector which holds mean of each feature.
   arma::colvec itemMean;

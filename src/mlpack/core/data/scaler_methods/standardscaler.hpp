@@ -18,28 +18,37 @@ namespace mlpack {
 namespace data {
 /**
  * A simple Standard Scaler class
+ *
+ * Given an input dataset this class helps you to Standardize features
+ * by removing the mean and scaling to unit variance.
+ *
+ * @code
+ * arma::Mat<double> input = loadData();
+ * arma::Mat<double> output;
+ *
+ * // Scale the features using
+ * StandardScaler<double> scale;
+ * scale.Tranform(input, output);
+ *
+ * // The input can be retransformed using
+ * scale.InverseTransform(output, input);
+ * @endcode
+ *
  */
 template <typename T>
 class StandardScaler
 {
  public:
-  /**
-  * Default constructor
-  *
-  */
-  StandardScaler(){}
-  /**
-  * Default Destructor 
-  */
-  ~StandardScaler(){}
 
   /**
   * Function to scale Features.
   *
-  * @param input Datset to scale features.
+  * @param input Dataset to scale features.
+  * @param output Output matrix with scaled features.
   */
-  void Transform(arma::Mat<T>& input)
+  void Transform(arma::Mat<T>& input, arma::Mat<T>& output)
   {
+    output.set_size(size(input));
     itemMean = arma::mean(input, 1);
     itemStdev = arma::stddev(input, 1, 1);
 
@@ -55,8 +64,8 @@ class StandardScaler
     {
       for (size_t j = 0; j < input.n_cols; j++)
       {
-        input(i, j) -= itemMean(i);
-        input(i, j) /= itemStdev(i);
+        output(i, j) = input(i, j) - itemMean(i);
+        output(i, j) /= itemStdev(i);
       }
     }
   }
@@ -65,27 +74,32 @@ class StandardScaler
   * Function to retrive original dataset.
   *
   * @param input Scaled dataset.
+  * @param output Output matrix with original Dataset.
   */
-  void InverseTransform(arma::Mat<T>& input)
+  void InverseTransform(arma::Mat<T>& input, arma::Mat<T>& output)
   {
+    output.set_size(size(input));
     for (size_t i = 0; i < input.n_rows; i++)
     {
       for (size_t j = 0; j < input.n_cols; j++)
       {
-        input(i, j) *= itemStdev(i);
-        input(i, j) += itemMean(i);
+        output(i, j) = input(i, j) * itemStdev(i);
+        output(i, j) += itemMean(i);
       }
     }
   }
+
   //! Get the Mean row vector.
   const arma::colvec& ItemMean() const { return itemMean; }
   //! Get the Standard Devation row vector.
   const arma::colvec& ItemStdev() const { return itemStdev; }
+
  private:
   // Vector which holds mean of each feature
   arma::colvec itemMean;
   // Vector which holds standard devation of each feature
   arma::colvec itemStdev;
+
 }; // class StandardScaler
 
 } // namespace data

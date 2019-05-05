@@ -1715,15 +1715,15 @@ BOOST_AUTO_TEST_CASE(MinMaxScalerTest)
 {
     arma::mat dataset = "-1 -0.5 0 1;"
                         "2 6 10 18;";
-    arma::mat datasetcopy = "-1 -0.5 0 1;"
-                            "2 6 10 18;";
+    arma::mat scaleddataset;
+    arma::mat temp;
     arma::mat scaled = "0 0.2500 0.5000 1.000;"
                        "0 0.2500 0.5000 1.000;";
     data::MinMaxScaler<double> scale;
-    scale.Transform(dataset);
-    CheckMatrices(dataset, scaled);
-    scale.InverseTransform(dataset);
-    CheckMatrices(dataset, datasetcopy);
+    scale.Transform(dataset, scaleddataset);
+    scale.InverseTransform(scaleddataset, temp);
+    CheckMatrices(scaleddataset, scaled);
+    CheckMatrices(dataset, temp);
 }
 
 /**
@@ -1733,15 +1733,15 @@ BOOST_AUTO_TEST_CASE(MaxAbsScalerTest)
 {
     arma::mat dataset = "-1 -0.5 0 1;"
                         "2 6 10 18;";
-    arma::mat datasetcopy = "-1 -0.5 0 1;"
-                            "2 6 10 18;";
+    arma::mat scaleddataset;
+    arma::mat temp;
     arma::mat scaled = "-1 -0.5 0 1;"
                        "0.1111111111 0.3333333333 0.55555556 1.0000;";
     data::MaxAbsScaler<double> scale;
-    scale.Transform(dataset);
-    CheckMatrices(dataset, scaled);
-    scale.InverseTransform(dataset);
-    CheckMatrices(dataset, datasetcopy);
+    scale.Transform(dataset, scaleddataset);
+    scale.InverseTransform(scaleddataset, temp);
+    CheckMatrices(scaleddataset, scaled);
+    CheckMatrices(dataset, temp);
 }
 
 /**
@@ -1751,15 +1751,15 @@ BOOST_AUTO_TEST_CASE(StandardScalerTest)
 {
     arma::mat dataset = "-1 -0.5 0 1;"
                         "2 6 10 18;";
-    arma::mat datasetcopy = "-1 -0.5 0 1;"
-                            "2 6 10 18;";
+    arma::mat scaleddataset;
+    arma::mat temp;
     arma::mat scaled = "-1.18321596 -0.50709255  0.16903085 1.52127766;"
                        "-1.18321596 -0.50709255  0.16903085 1.52127766;";
     data::StandardScaler<double> scale;
-    scale.Transform(dataset);
-    CheckMatrices(dataset, scaled);
-    scale.InverseTransform(dataset);
-    CheckMatrices(dataset, datasetcopy);
+    scale.Transform(dataset, scaleddataset);
+    scale.InverseTransform(scaleddataset, temp);
+    CheckMatrices(scaleddataset, scaled);
+    CheckMatrices(dataset, temp);
 }
 
 /**
@@ -1769,15 +1769,15 @@ BOOST_AUTO_TEST_CASE(MeanNormalizationTest)
 {
     arma::mat dataset = "-1 -0.5 0 1;"
                         "2 6 10 18;";
-    arma::mat datasetcopy = "-1 -0.5 0 1;"
-                            "2 6 10 18;";
+    arma::mat scaleddataset;
+    arma::mat temp;
     arma::mat scaled = "-0.43750000000 -0.187500000 0.062500000 0.562500000;"
                        "-0.43750000000 -0.187500000 0.062500000 0.562500000;";
     data::MeanNormalization<double> scale;
-    scale.Transform(dataset);
-    CheckMatrices(dataset, scaled);
-    scale.InverseTransform(dataset);
-    CheckMatrices(dataset, datasetcopy);
+    scale.Transform(dataset, scaleddataset);
+    scale.InverseTransform(scaleddataset, temp);
+    CheckMatrices(scaleddataset, scaled);
+    CheckMatrices(dataset, temp);
 }
 
 /**

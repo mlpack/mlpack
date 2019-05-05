@@ -17,29 +17,37 @@
 namespace mlpack {
 namespace data {
 /**
- * A simple MaxAbs Scaler class
+ * A simple MaxAbs Scaler class.
+ *
+ * Given an input dataset this class helps you to scale each
+ * feature by its maximum absolute value.
+ *
+ * @code
+ * arma::Mat<double> input = loadData();
+ * arma::Mat<double> output;
+ *
+ * // Scale the features using
+ * MaxAbsScaler<double> scale;
+ * scale.Tranform(input, output);
+ *
+ * // The input can be retransformed using
+ * scale.InverseTransform(output, input);
+ * @endcode
+ *
  */
 template <typename T>
 class MaxAbsScaler
 {
  public:
   /**
-  * Default constructor
-  *
-  */
-  MaxAbsScaler(){}
-  /**
-  * Default Destructor 
-  */
-  ~MaxAbsScaler(){}
-
-  /**
   * Function to scale Features.
   *
-  * @param input Datset to scale features.
+  * @param input Dataset to scale features.
+  * @param output Output matrix with scaled features.
   */
-  void Transform(arma::Mat<T>& input)
+  void Transform(arma::Mat<T>& input,arma::Mat<T>& output)
   {
+    output.set_size(size(input));
     itemMin = arma::min(input, 1);
     itemMax = arma::max(input, 1);
     scale = arma::max(arma::abs(itemMin), arma::abs(itemMax));
@@ -55,7 +63,7 @@ class MaxAbsScaler
     {
       for (size_t j = 0; j < input.n_cols; j++)
       {
-        input(i, j) /= scale(i);
+        output(i, j) = input(i, j) / scale(i);
       }
     }
   }
@@ -64,23 +72,27 @@ class MaxAbsScaler
   * Function to retrive original dataset.
   *
   * @param input Scaled dataset.
+  * @param output Output matrix with original Dataset.
   */
-  void InverseTransform(arma::Mat<T>& input)
+  void InverseTransform(arma::Mat<T>& input, arma::Mat<T>& output)
   {
+    output.set_size(size(input));
     for (size_t i = 0; i < input.n_rows; i++)
     {
       for (size_t j = 0; j < input.n_cols; j++)
       {
-        input(i, j) *= scale(i);
+        output(i, j) = input(i, j) * scale(i);
       }
     }
   }
+
   //! Get the Min row vector.
   const arma::colvec& ItemMin() const { return itemMin; }
   //! Get the Max row vector.
   const arma::colvec& ItemMax() const { return itemMax; }
   //! Get the Scale row vector.
   const arma::colvec& Scale() const { return scale; }
+
  private:
   // Vector which holds minimum of each feature.
   arma::colvec itemMin;
