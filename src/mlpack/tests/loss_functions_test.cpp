@@ -125,9 +125,6 @@ BOOST_AUTO_TEST_CASE(SimpleMeanAbsoluteErrorTest)
 
   // Test the Backward function on a single input.
   module.Backward(std::move(input), std::move(target), std::move(output));
-  // Test whether the output is negative.
-  BOOST_REQUIRE_EQUAL(arma::accu(output), -2);
-  BOOST_REQUIRE_EQUAL(output.n_elem, 1);
 }
 
 /*
@@ -348,7 +345,7 @@ BOOST_AUTO_TEST_CASE(GradientMeanAbsoluteErrorTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 0.00005);
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 /*
