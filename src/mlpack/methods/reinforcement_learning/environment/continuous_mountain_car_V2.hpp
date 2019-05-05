@@ -165,8 +165,8 @@ class ContinuousMountainCarV2
                                                            positionMax,
                                                            positionGoal,
                                                            velocityMin,
-                                                           velocityMax,
-                                                           velocityGoal);
+                                                           velocityMax);
+                                                           
     State nextState;
     return path.Sample(state, action, nextState);
   }
