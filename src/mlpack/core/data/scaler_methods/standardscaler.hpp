@@ -48,7 +48,7 @@ class StandardScaler
   */
   void Transform(arma::Mat<T>& input, arma::Mat<T>& output)
   {
-    output.set_size(size(input));
+    output.copy_size(input);
     itemMean = arma::mean(input, 1);
     itemStdev = arma::stddev(input, 1, 1);
 
@@ -78,7 +78,7 @@ class StandardScaler
   */
   void InverseTransform(arma::Mat<T>& input, arma::Mat<T>& output)
   {
-    output.set_size(size(input));
+    output.copy_size(input);
     for (size_t i = 0; i < input.n_rows; i++)
     {
       for (size_t j = 0; j < input.n_cols; j++)
