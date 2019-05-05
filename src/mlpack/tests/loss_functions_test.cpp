@@ -344,8 +344,6 @@ BOOST_AUTO_TEST_CASE(GradientMeanAbsoluteErrorTest)
     FFN<MeanAbsoluteError<>, NguyenWidrowInitialization>* model;
     arma::mat input, target;
   } function;
-
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 /*
