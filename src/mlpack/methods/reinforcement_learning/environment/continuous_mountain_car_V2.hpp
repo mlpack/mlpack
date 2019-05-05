@@ -161,13 +161,13 @@ class ContinuousMountainCarV2
    */
   double Sample(const State& state, const Action& action) const
   {
-    ContinuousMountainCarV2 cmc = ContinuousMountainCarV2(positionMin,
+    ContinuousMountainCar path = ContinuousMountainCar(positionMin,
                                                            positionMax,
                                                            positionGoal,
                                                            velocityMin,
                                                            velocityMax);
     State nextState;
-    return cmc.Sample(state, action, nextState);
+    return path.Sample(state, action, nextState);
   }
 
   /**
