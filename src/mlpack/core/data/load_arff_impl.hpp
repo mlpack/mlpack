@@ -34,6 +34,12 @@ void LoadARFF(const std::string& filename,
     Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
   }
 
+  // if file is not open throw an error (file not found).
+  if (!ifs.is_open())
+  {
+    Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
+  }
+
   std::string line;
   size_t dimensionality = 0;
   std::vector<bool> types;
