@@ -117,7 +117,7 @@ or a different VS version, update the cmake command accordingly.
 cmake -G "Visual Studio 15 2017 Win64" -DBLAS_LIBRARY:FILEPATH="C:/mlpack/mlpack/packages/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DLAPACK_LIBRARY:FILEPATH="C:/mlpack/mlpack/packages/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DARMADILLO_INCLUDE_DIR="C:/mlpack/armadillo/include" -DARMADILLO_LIBRARY:FILEPATH="C:/mlpack/armadillo/build/Debug/armadillo.lib" -DBOOST_INCLUDEDIR:PATH="C:/boost/" -DBOOST_LIBRARYDIR:PATH="C:/boost/lib64-msvc-14.1" -DDEBUG=OFF -DPROFILE=OFF ..
 @endcode
 
-@note cmake will attempt to automatically download the ENSMALLEN dependency. If for some reason cmake can't download the dependency, you will need to manually download ENSMALLEN from http://ensmallen.org/ and extract it to "C:\mlpack\mlpack\deps\". Then, specify the path to ENSMALLEN using the flag: -DENSMALLEN_INCLUDE_DIR=C:/mlpack/mlpack/deps/ensmallen/include
+@note cmake will attempt to automatically download the ensmallen dependency. If for some reason cmake can't download the dependency, you will need to manually download ensmallen from http://ensmallen.org/ and extract it to "C:\mlpack\mlpack\deps\". Then, specify the path to ensmallen using the flag: -DENSMALLEN_INCLUDE_DIR=C:/mlpack/mlpack/deps/ensmallen/include
 
 - Once CMake configuration has successfully finished, open "C:\mlpack\mlpack\build\mlpack.sln"
 - Build > Build Solution (this may be by default in Debug mode)
