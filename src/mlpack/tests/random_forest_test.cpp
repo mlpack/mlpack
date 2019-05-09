@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_CASE(WeightedNumericLearningTest)
     weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
 
   // Train decision tree and random forest.
-  RandomForest<> rf(dataset, labels, 3, weights, 10, 1);
+  RandomForest<> rf(dataset, labels, 3, weights, 20, 1);
   DecisionTree<> dt(dataset, labels, 3, weights, 5);
 
   // Get performance statistics on test data.
