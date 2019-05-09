@@ -118,8 +118,7 @@ PARAM_UROW_IN("labels", "Labels for the training set.", "l");
 // Classification options.
 PARAM_MATRIX_IN("test", "Test dataset.", "T");
 /* 
-* The PARAM_UROW_OUT("output") is depracated and
-* can be removed in mlpack4.0.0.
+* The PARAM_UROW_OUT("output") is deprecated and can be removed in mlpack4.0.0.
 */
 PARAM_UROW_OUT("output", "Predicted labels for the test set.", "o");
 PARAM_UROW_OUT("predictions", "Predicted labels for the test set.", "P");
@@ -169,8 +168,7 @@ static void mlpackMain()
   RequireAtLeastOnePassed({ "output_model", "output", "predictions" }, false,
       "no results will be saved");
 
-  // "output" can be removed in mlpack 4
-  ReportIgnoredParam({{ "test", false }}, "output");
+  // "output" can be removed in mlpack 4.
   ReportIgnoredParam({{ "test", false }}, "predictions");
 
   AdaBoostModel* m;
@@ -245,7 +243,7 @@ static void mlpackMain()
 
     // Save the predicted labels.
     if (CLI::HasParam("output"))
-      CLI::GetParam<arma::Row<size_t>>("output") = std::move(results);
+      CLI::GetParam<arma::Row<size_t>>("output") = results;
     if (CLI::HasParam("predictions"))
       CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(results);
   }

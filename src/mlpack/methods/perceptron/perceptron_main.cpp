@@ -52,7 +52,7 @@ PROGRAM_INFO("Perceptron",
     " output parameter.  The perceptron model may be saved with the " +
     PRINT_PARAM_STRING("output_model") + " output parameter."
     "\n\n"
-    "Note : The following parameter is deprecated and "
+    "Note: The following parameter is deprecated and "
     "will be removed in mlpack 4: " + PRINT_PARAM_STRING("output") +
     "."  +
     "\nUse " + PRINT_PARAM_STRING("predictions") + " instead of " +
@@ -134,8 +134,7 @@ PARAM_MODEL_OUT(PerceptronModel, "output_model", "Output for trained perceptron"
 // Testing/classification parameters.
 PARAM_MATRIX_IN("test", "A matrix containing the test set.", "T");
 /* 
-* The PARAM_UROW_OUT("output") is depracated and
-* can be removed in mlpack4.0.0.
+* The PARAM_UROW_OUT("output") is deprecated and can be removed in mlpack4.0.0.
 */
 PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
     " test set will be written.", "o");
@@ -154,8 +153,7 @@ static void mlpackMain()
   // should issue a warning.
   RequireAtLeastOnePassed({ "output_model", "output", "predictions" }, false,
       "no output will be saved");
-  // "output" can be removed in mlpack 4
-  ReportIgnoredParam({{ "test", false }}, "output");
+  // "output" can be removed in mlpack 4.
   ReportIgnoredParam({{ "test", false }}, "predictions");
 
   // Check parameter validity.
@@ -311,7 +309,7 @@ static void mlpackMain()
 
     // Save the predicted labels.
     if (CLI::HasParam("output"))
-      CLI::GetParam<arma::Row<size_t>>("output") = std::move(results);
+      CLI::GetParam<arma::Row<size_t>>("output") = results;
     if (CLI::HasParam("predictions"))
       CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(results);
   }
