@@ -1,6 +1,14 @@
-### mlpack 3.1.0
+### mlpack 3.1.1
 ###### ????-??-??
+  * `output` option changed to `predictions` for adaboost and perceptron
+    binding.Old options are now deprecated and will be preserved until mlpack
+    4.0.0 (#1882).
 
+  * Concatenated ReLU layer (#1843).
+
+  * Accelerate NormalizeLabels function using hashing instead of linear search
+    (see `src/mlpack/core/data/normalize_labels_impl.hpp`)(#1780).
+  
 ### mlpack 3.1.0
 ###### 2019-04-25
   * Add DiagonalGaussianDistribution and DiagonalGMM classes to speed up the
