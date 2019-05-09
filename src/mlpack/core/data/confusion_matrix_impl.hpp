@@ -32,10 +32,10 @@ namespace data {
  *    1    FP    TN
  *
  * Confusion matrix for two labels will look like above.
- * Row is the predicted values and column are actual values.
+ * The row contains the predicted values and column contains the actual values.
  *
  * @param predictors Vector of data points.
- * @param responses The measured data for each point in X.
+ * @param responses The measured data for each point.
  * @param output Matrix which is represented as confusion matrix.
  * @param countlables No of classes
  *
@@ -46,7 +46,7 @@ void ConfusionMatrix(const arma::Row<size_t> predictors,
                      arma::Mat<eT>& output,
                      const size_t countlabels)
 {
-  // Loop over the actual labels and predicted labels and add the count
+  // Loop over the actual labels and predicted labels and add the count.
   output = arma::zeros<arma::Mat<eT> >(countlabels, countlabels);
   for (size_t i = 0; i < predictors.n_elem; ++i)
   {
