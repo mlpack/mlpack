@@ -80,7 +80,7 @@ and make sure you can use it from the Command Prompt (may need to add to the PAT
 You can either get Boost via NuGet or you can download the prebuilt Windows binaries separately.
 This tutorial follows the second approach for simplicity.
 
-- Download the "Prebuilt Windows binaries" of the Boost library ("boost_1_66_0-msvc-14.1-64") from 
+- Download the "Prebuilt Windows binaries" of the Boost library ("boost_1_66_0-msvc-14.1-64") from
 <a href="https://sourceforge.net/projects/boost/files/boost-binaries/">Sourceforge</a>
 
 @note Make sure you download the MSVC version that matches your Visual Studio
@@ -89,11 +89,11 @@ This tutorial follows the second approach for simplicity.
 
 <b> Armadillo Dependency </b>
 
-- Download "Armadillo" (armadillo-8.500.1.tar.xz) from <a href="http://arma.sourceforge.net/download.html">Sourceforge</a>
+- Download the newest version of Armadillo from <a href="http://arma.sourceforge.net/download.html">Sourceforge</a>
 - Unzip to "C:\mlpack\armadillo"
 - Create a "build" directory into "C:\mlpack\armadillo\"
 - Open the Command Prompt and navigate to "C:\mlpack\armadillo\build"
-- Run cmake: 
+- Run cmake:
 
 @code
 cmake -G "Visual Studio 15 2017 Win64" -DBLAS_LIBRARY:FILEPATH="C:/mlpack/mlpack/packages/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" -DLAPACK_LIBRARY:FILEPATH="C:/mlpack/mlpack/packages/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a" ..
