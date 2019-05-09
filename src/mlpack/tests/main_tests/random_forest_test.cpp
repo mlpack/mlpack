@@ -283,7 +283,8 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
 }
 
 /**
- * Ensure that test accuracy goes up as num_trees increases.
+ * Ensure that test accuracy changes as num_trees increases (we aren't
+ * guaranteed that accuracy will go up).
  */
 BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
 {
@@ -353,7 +354,8 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
   correct = arma::accu(predictions == testLabels);
   double accuracy10 = (double(correct) / double(testLabels.n_elem) * 100);
 
-  BOOST_REQUIRE(accuracy10 >= accuracy5 && accuracy5 >= accuracy1);
+  BOOST_REQUIRE_NE(accuracy10 != accuracy5);
+  BOOST_REQUIRE_NE(accuracy5 != accuracy1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
