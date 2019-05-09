@@ -470,7 +470,9 @@ BOOST_AUTO_TEST_CASE(DifferentTreesTest)
   bool success = false;
   size_t trial = 0;
 
-  while (!success && trial < 10)
+  // It's possible we might get the same random dimensions selected, so let's do
+  // multiple trials.
+  while (!success && trial < 3)
   {
     RandomForest<GiniGain, RandomDimensionSelect> rf;
     rf.Train(d, l, 2, 2, 5);
