@@ -20,6 +20,7 @@
 #include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -580,6 +581,26 @@ BOOST_AUTO_TEST_CASE(SwishFunctionTest)
 
   CheckActivationCorrect<SwishFunction>(activationData, desiredActivations);
   CheckDerivativeCorrect<SwishFunction>(desiredActivations,
+      desiredDerivatives);
+}
+
+/**
+ * Basic test of the hard sigmoid function.
+ */
+BOOST_AUTO_TEST_CASE(HardSigmoidFunctionTest)
+{
+  // Hand-calculated values using Python interpreter.
+  const arma::colvec desiredActivations("0.1 1 1 \
+                                         0 0.7 0.3 \
+                                         0.9 0.5");
+
+  const arma::colvec desiredDerivatives("0.2 0.0 0.0 \
+                                         0.0 0.2 0.2 0.2\
+                                         0.2");
+
+  CheckActivationCorrect<HardSigmoidFunction>(activationData,
+      desiredActivations);
+  CheckDerivativeCorrect<HardSigmoidFunction>(desiredActivations,
       desiredDerivatives);
 }
 
