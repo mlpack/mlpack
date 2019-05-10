@@ -26,16 +26,14 @@ namespace data {
  * arma::Mat<double> input = loadData();
  * arma::Mat<double> output;
  *
- * // Scale the features using
+ * // Scale the features.
  * StandardScaler<double> scale;
  * scale.Tranform(input, output);
  *
- * // The input can be retransformed using
+ * // Retransform the input.
  * scale.InverseTransform(output, input);
  * @endcode
- *
  */
-template <typename T>
 class StandardScaler
 {
  public:
@@ -46,13 +44,14 @@ class StandardScaler
   * @param input Dataset to scale features.
   * @param output Output matrix with scaled features.
   */
-  void Transform(arma::Mat<T>& input, arma::Mat<T>& output)
+  template<typename MatType>
+  void Transform(const MatType& input, MatType& output)
   {
     output.copy_size(input);
     itemMean = arma::mean(input, 1);
     itemStdev = arma::stddev(input, 1, 1);
 
-    // Handline Zeroes in scale vector
+    // Handline Zeroes in scale vector.
     for (size_t i = 0; i < itemStdev.n_elem; i++)
     {
       if (itemStdev(i) == 0)
@@ -76,7 +75,8 @@ class StandardScaler
   * @param input Scaled dataset.
   * @param output Output matrix with original Dataset.
   */
-  void InverseTransform(arma::Mat<T>& input, arma::Mat<T>& output)
+  template<typename MatType>
+  void InverseTransform(const MatType& input, MatType& output)
   {
     output.copy_size(input);
     for (size_t i = 0; i < input.n_rows; i++)

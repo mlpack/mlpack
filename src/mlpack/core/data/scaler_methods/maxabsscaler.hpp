@@ -26,16 +26,14 @@ namespace data {
  * arma::Mat<double> input = loadData();
  * arma::Mat<double> output;
  *
- * // Scale the features using
+ * // Scale the features.
  * MaxAbsScaler<double> scale;
  * scale.Tranform(input, output);
  *
- * // The input can be retransformed using
+ * // Retransform the input.
  * scale.InverseTransform(output, input);
  * @endcode
- *
  */
-template <typename T>
 class MaxAbsScaler
 {
  public:
@@ -45,13 +43,14 @@ class MaxAbsScaler
   * @param input Dataset to scale features.
   * @param output Output matrix with scaled features.
   */
-  void Transform(arma::Mat<T>& input, arma::Mat<T>& output)
+  template<typename MatType>
+  void Transform(const MatType& input, MatType& output)
   {
     output.copy_size(input);
     itemMin = arma::min(input, 1);
     itemMax = arma::max(input, 1);
     scale = arma::max(arma::abs(itemMin), arma::abs(itemMax));
-    // Handline Zeroes in scale vector
+    // Handline Zeroes in scale vector.
     for (size_t i = 0; i < scale.n_elem; i++)
     {
       if (scale(i) == 0)
@@ -74,7 +73,8 @@ class MaxAbsScaler
   * @param input Scaled dataset.
   * @param output Output matrix with original Dataset.
   */
-  void InverseTransform(arma::Mat<T>& input, arma::Mat<T>& output)
+  template<typename MatType>
+  void InverseTransform(const MatType& input, MatType& output)
   {
     output.copy_size(input);
     for (size_t i = 0; i < input.n_rows; i++)

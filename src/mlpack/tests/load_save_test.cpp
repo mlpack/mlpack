@@ -1719,7 +1719,7 @@ BOOST_AUTO_TEST_CASE(MinMaxScalerTest)
     arma::mat temp;
     arma::mat scaled = "0 0.2500 0.5000 1.000;"
                        "0 0.2500 0.5000 1.000;";
-    data::MinMaxScaler<double> scale;
+    data::MinMaxScaler scale;
     scale.Transform(dataset, scaleddataset);
     scale.InverseTransform(scaleddataset, temp);
     CheckMatrices(scaleddataset, scaled);
@@ -1737,7 +1737,7 @@ BOOST_AUTO_TEST_CASE(MaxAbsScalerTest)
     arma::mat temp;
     arma::mat scaled = "-1 -0.5 0 1;"
                        "0.1111111111 0.3333333333 0.55555556 1.0000;";
-    data::MaxAbsScaler<double> scale;
+    data::MaxAbsScaler scale;
     scale.Transform(dataset, scaleddataset);
     scale.InverseTransform(scaleddataset, temp);
     CheckMatrices(scaleddataset, scaled);
@@ -1755,7 +1755,7 @@ BOOST_AUTO_TEST_CASE(StandardScalerTest)
     arma::mat temp;
     arma::mat scaled = "-1.18321596 -0.50709255  0.16903085 1.52127766;"
                        "-1.18321596 -0.50709255  0.16903085 1.52127766;";
-    data::StandardScaler<double> scale;
+    data::StandardScaler scale;
     scale.Transform(dataset, scaleddataset);
     scale.InverseTransform(scaleddataset, temp);
     CheckMatrices(scaleddataset, scaled);
@@ -1773,7 +1773,7 @@ BOOST_AUTO_TEST_CASE(MeanNormalizationTest)
     arma::mat temp;
     arma::mat scaled = "-0.43750000000 -0.187500000 0.062500000 0.562500000;"
                        "-0.43750000000 -0.187500000 0.062500000 0.562500000;";
-    data::MeanNormalization<double> scale;
+    data::MeanNormalization scale;
     scale.Transform(dataset, scaleddataset);
     scale.InverseTransform(scaleddataset, temp);
     CheckMatrices(scaleddataset, scaled);
