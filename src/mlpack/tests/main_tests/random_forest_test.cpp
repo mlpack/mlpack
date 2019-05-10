@@ -354,8 +354,8 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
   correct = arma::accu(predictions == testLabels);
   double accuracy10 = (double(correct) / double(testLabels.n_elem) * 100);
 
-  BOOST_REQUIRE_NE(accuracy10 != accuracy5);
-  BOOST_REQUIRE_NE(accuracy5 != accuracy1);
+  BOOST_REQUIRE_NE(accuracy10, accuracy5);
+  BOOST_REQUIRE_NE(accuracy5, accuracy1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
