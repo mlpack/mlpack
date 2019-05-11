@@ -78,7 +78,7 @@ PROGRAM_INFO("Perceptron",
     "saving the predicted classes to " + PRINT_DATASET("predictions") + "."
     "\n\n" +
     PRINT_CALL("perceptron", "input_model", "perceptron_model", "test",
-        "test_data", "output", "predictions") +
+        "test_data", "predictions", "predictions") +
     "\n\n"
     "Note that all of the options may be specified at once: predictions may be "
     "calculated right after training a model, and model training can occur even"
@@ -154,7 +154,7 @@ static void mlpackMain()
   // should issue a warning.
   RequireAtLeastOnePassed({ "output_model", "output", "predictions" }, false,
       "no output will be saved");
-  // "output" can be removed in mlpack 4.
+  // "output" can be removed in mlpack 4.0.0.
   ReportIgnoredParam({{ "test", false }}, "predictions");
 
   // Check parameter validity.

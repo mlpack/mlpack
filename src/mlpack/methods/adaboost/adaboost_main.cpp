@@ -101,7 +101,7 @@ PROGRAM_INFO("AdaBoost",
     PRINT_DATASET("predictions") + " with the following command: "
     "\n\n" +
     PRINT_CALL("adaboost", "input_model", "model", "test", "test_data",
-        "output", "predictions"),
+        "predictions", "predictions"),
     // See also...
     SEE_ALSO("AdaBoost on Wikipedia", "https://en.wikipedia.org/wiki/AdaBoost"),
     SEE_ALSO("Improved boosting algorithms using confidence-rated predictions "

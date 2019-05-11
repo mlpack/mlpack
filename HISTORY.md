@@ -1,7 +1,7 @@
 ### mlpack 3.1.1
 ###### ????-??-??
   * `output` option changed to `predictions` for adaboost and perceptron
-    binding.Old options are now deprecated and will be preserved until mlpack
+    binding. Old options are now deprecated and will be preserved until mlpack
     4.0.0 (#1882).
 
   * Concatenated ReLU layer (#1843).
