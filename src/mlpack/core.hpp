@@ -59,7 +59,7 @@
  * @section remarks Final Remarks
  *
  * For the list of contributors to mlpack, see
- * https://www.mlpack.org/contributors.html.  This library would not be possible
+ * https://www.mlpack.org/community.html.  This library would not be possible
  * without everyone's hard work and contributions!
  */
 
@@ -81,11 +81,13 @@
 #include <mlpack/core/math/range.hpp>
 #include <mlpack/core/math/round.hpp>
 #include <mlpack/core/math/shuffle_data.hpp>
+#include <mlpack/core/math/ccov.hpp>
 #include <mlpack/core/math/make_alias.hpp>
 #include <mlpack/core/dists/discrete_distribution.hpp>
 #include <mlpack/core/dists/gaussian_distribution.hpp>
 #include <mlpack/core/dists/laplace_distribution.hpp>
 #include <mlpack/core/dists/gamma_distribution.hpp>
+#include <mlpack/core/dists/diagonal_gaussian_distribution.hpp>
 
 // mlpack::backtrace only for linux
 #ifdef HAS_BFD_DL

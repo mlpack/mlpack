@@ -40,12 +40,15 @@ void VarianceSelection(const arma::Mat<T>& input,
               arma::Mat<T>& output)
 {
 <<<<<<< HEAD:src/mlpack/core/data/feature_selection_impl.hpp
+<<<<<<< HEAD:src/mlpack/core/data/feature_selection_impl.hpp
   // Making sure features have same scale
   arma::Mat<double> scale = arma::normalise(input);
   // Calculate variance of each feature
   arma::Mat<double> value = arma::var(scale, 0, 1);
 =======
 >>>>>>> 69682898e... changed file name and also function name:src/mlpack/core/data/feature_selection_impl.hpp
+=======
+>>>>>>> b5387926c6c5b4905dc1bba1c5f29d0517693503:src/mlpack/core/data/feature_selection_impl.hpp
   // Calculate variance of each scaled feature.
   arma::mat value = arma::var(arma::normalise(input, 2, 1), 0, 1);
   // Count the dimension of new matrix

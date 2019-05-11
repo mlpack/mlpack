@@ -14,7 +14,6 @@
 #include <mlpack/core/cv/meta_info_extractor.hpp>
 #include <mlpack/core/cv/metrics/accuracy.hpp>
 #include <mlpack/core/cv/metrics/f1.hpp>
-#include <mlpack/core/data/feature_selection.hpp>
 #include <mlpack/core/cv/metrics/mse.hpp>
 #include <mlpack/core/cv/metrics/precision.hpp>
 #include <mlpack/core/cv/metrics/recall.hpp>
@@ -541,10 +540,13 @@ BOOST_AUTO_TEST_CASE(VarianceFeatureSelectionTest)
 
   // Output matirx with less features.
 <<<<<<< HEAD
+<<<<<<< HEAD
   arma::Mat<double> output;
   data::SelectBestFeature<double>(matrix, 0.009, output);
 =======
 >>>>>>> 69682898e... changed file name and also function name
+=======
+>>>>>>> b5387926c6c5b4905dc1bba1c5f29d0517693503
   arma::mat output;
   data::VarianceSelection(matrix, 0.009, output);
   BOOST_REQUIRE_EQUAL(output.n_rows, 2);
