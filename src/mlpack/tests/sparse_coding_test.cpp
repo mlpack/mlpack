@@ -189,5 +189,28 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   BOOST_REQUIRE_CLOSE(sc.NewtonTolerance(), scBinary.NewtonTolerance(), 1e-5);
 }
 
+/**
+ * Test that SparseCoding::Train() returns finite final objective value.
+ */
+BOOST_AUTO_TEST_CASE(SparseCodingTrainReturnObjective)
+{
+  const double tol = 1e-6;
+
+  double lambda1 = 0.1;
+  uword nAtoms = 25;
+
+  mat X;
+  X.load("mnist_first250_training_4s_and_9s.arm");
+  uword nPoints = X.n_cols;
+
+  // Normalize each point since these are images.
+  for (uword i = 0; i < nPoints; ++i)
+    X.col(i) /= norm(X.col(i), 2);
+
+  SparseCoding sc(nAtoms, lambda1, 0.0, 0, 0.01, tol);
+  double objVal = sc.Train(X);
+
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+}
 
 BOOST_AUTO_TEST_SUITE_END();
