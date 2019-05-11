@@ -16,6 +16,7 @@
 
 namespace mlpack {
 namespace data {
+
 /**
  * A simple MaxAbs Scaler class.
  *
@@ -23,11 +24,11 @@ namespace data {
  * feature by its maximum absolute value.
  *
  * @code
- * arma::Mat<double> input = loadData();
- * arma::Mat<double> output;
+ * arma::Mat input = loadData();
+ * arma::Mat output;
  *
  * // Scale the features.
- * MaxAbsScaler<double> scale;
+ * MaxAbsScaler scale;
  * scale.Tranform(input, output);
  *
  * // Retransform the input.
@@ -50,7 +51,7 @@ class MaxAbsScaler
     itemMin = arma::min(input, 1);
     itemMax = arma::max(input, 1);
     scale = arma::max(arma::abs(itemMin), arma::abs(itemMax));
-    // Handline Zeroes in scale vector.
+    // Handling zeros in scale vector.
     for (size_t i = 0; i < scale.n_elem; i++)
     {
       if (scale(i) == 0)
@@ -58,13 +59,7 @@ class MaxAbsScaler
         scale(i) = 1;
       }
     }
-    for (size_t i = 0; i < input.n_rows; i++)
-    {
-      for (size_t j = 0; j < input.n_cols; j++)
-      {
-        output(i, j) = input(i, j) / scale(i);
-      }
-    }
+    output = input.each_col() % (1.0 / scale);
   }
 
   /**
@@ -77,13 +72,7 @@ class MaxAbsScaler
   void InverseTransform(const MatType& input, MatType& output)
   {
     output.copy_size(input);
-    for (size_t i = 0; i < input.n_rows; i++)
-    {
-      for (size_t j = 0; j < input.n_cols; j++)
-      {
-        output(i, j) = input(i, j) * scale(i);
-      }
-    }
+    output = input.each_col() % scale; 
   }
 
   //! Get the Min row vector.

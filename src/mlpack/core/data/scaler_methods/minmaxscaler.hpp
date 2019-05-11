@@ -16,6 +16,7 @@
 
 namespace mlpack {
 namespace data {
+
 /**
  * A simple MinMax Scaler class
  *
@@ -23,11 +24,11 @@ namespace data {
  * feature to a given range.
  *
  * @code
- * arma::Mat<double> input = loadData();
- * arma::Mat<double> output;
+ * arma::Mat input = loadData();
+ * arma::Mat output;
  *
  * // Scale the features.
- * MinMaxScaler<double> scale;
+ * MinMaxScaler scale;
  * scale.Tranform(input, output);
  *
  * // Retransform the input.
@@ -61,8 +62,8 @@ class MinMaxScaler
     output.copy_size(input);
     itemMin = arma::min(input, 1);
     itemMax = arma::max(input, 1);
-    scale = (scalemax - scalemin) / (itemMax - itemMin);
-    // Handline Zeroes in scale vector.
+    scale = itemMax - itemMin;
+    // Handling zeros in scale vector.
     for (size_t i = 0; i < scale.n_elem; i++)
     {
       if (scale(i) == 0)
@@ -70,14 +71,11 @@ class MinMaxScaler
         scale(i) = 1;
       }
     }
-    for (size_t i = 0; i < input.n_rows; i++)
-    {
-      for (size_t j = 0; j < input.n_cols; j++)
-      {
-        output(i, j) = scale(i) * input(i, j) + scalemin - itemMin(i) *
-            scale(i);
-      }
-    }
+    scale = (scalemax - scalemin) / scale;
+    scalerowmin.copy_size(itemMin);
+    scalerowmin.fill(scalemin);
+    scalerowmin = scalerowmin - itemMin % scale;
+    output = (input.each_col() % scale).each_col() + scalerowmin; 
   }
 
   /**
@@ -90,14 +88,7 @@ class MinMaxScaler
   void InverseTransform(const MatType& input, MatType& output)
   {
     output.copy_size(input);
-    for (size_t i = 0; i < input.n_rows; i++)
-    {
-      for (size_t j = 0; j < input.n_cols; j++)
-      {
-        output(i, j) = (input(i, j) - scalemin + itemMin(i) * scale(i)) /
-            scale(i);
-      }
-    }
+    output = (input.each_col() - scalerowmin).each_col() % (1.0 / scale);
   }
 
   //! Get the Min row vector.
@@ -122,6 +113,8 @@ class MinMaxScaler
   double scalemin;
   // Upper value for range.
   double scalemax;
+  // Column vector of scalemin
+  arma::colvec scalerowmin;
 }; // class MinMaxScaler
 
 } // namespace data

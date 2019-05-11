@@ -16,6 +16,7 @@
 
 namespace mlpack {
 namespace data {
+
 /**
  * A simple Mean Normalization class
  *
@@ -23,11 +24,11 @@ namespace data {
  * feature.
  *
  * @code
- * arma::Mat<double> input = loadData();
- * arma::Mat<double> output;
+ * arma::Mat input = loadData();
+ * arma::Mat output;
  *
  * // Scale the features.
- * MeanNormalization<double> scale;
+ * MeanNormalization scale;
  * scale.Tranform(input, output);
  *
  * // Retransform the input.
@@ -37,7 +38,6 @@ namespace data {
 class MeanNormalization
 {
  public:
-
   /**
   * Function to scale Features.
   *
@@ -52,7 +52,7 @@ class MeanNormalization
     itemMin = arma::min(input, 1);
     itemMax = arma::max(input, 1);
     scale = itemMax - itemMin;
-    // Handline Zeroes in scale vector.
+    // Handling zeros in scale vector.
     for (size_t i = 0; i < scale.n_elem; i++)
     {
       if (scale(i) == 0)
@@ -60,15 +60,8 @@ class MeanNormalization
         scale(i) = 1;
       }
     }
-    for (size_t i = 0; i < input.n_rows; i++)
-    {
-      for (size_t j = 0; j < input.n_cols; j++)
-      {
-        output(i, j) = input(i, j) - itemMean(i);
-        output(i, j) /= scale(i);
-      }
-    }
-  }
+    output = (input.each_col() - itemMean).each_col() % (1.0 / scale);
+ }
 
   /**
   * Function to retrive original dataset.
@@ -80,14 +73,7 @@ class MeanNormalization
   void InverseTransform(const MatType& input, MatType& output)
   {
     output.copy_size(input);
-    for (size_t i = 0; i < input.n_rows; i++)
-    {
-      for (size_t j = 0; j < input.n_cols; j++)
-      {
-        output(i, j) = input(i, j) * scale(i);
-        output(i, j) += itemMean(i);
-      }
-    }
+    output = (input.each_col() % scale).each_col() + itemMean;
   }
 
   //! Get the Mean row vector.

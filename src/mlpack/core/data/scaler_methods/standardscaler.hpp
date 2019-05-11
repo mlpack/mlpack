@@ -16,6 +16,7 @@
 
 namespace mlpack {
 namespace data {
+
 /**
  * A simple Standard Scaler class
  *
@@ -23,11 +24,11 @@ namespace data {
  * by removing the mean and scaling to unit variance.
  *
  * @code
- * arma::Mat<double> input = loadData();
- * arma::Mat<double> output;
+ * arma::Mat input = loadData();
+ * arma::Mat output;
  *
  * // Scale the features.
- * StandardScaler<double> scale;
+ * StandardScaler scale;
  * scale.Tranform(input, output);
  *
  * // Retransform the input.
@@ -37,7 +38,6 @@ namespace data {
 class StandardScaler
 {
  public:
-
   /**
   * Function to scale Features.
   *
@@ -51,7 +51,7 @@ class StandardScaler
     itemMean = arma::mean(input, 1);
     itemStdev = arma::stddev(input, 1, 1);
 
-    // Handline Zeroes in scale vector.
+    // Handling zeros in scale vector.
     for (size_t i = 0; i < itemStdev.n_elem; i++)
     {
       if (itemStdev(i) == 0)
@@ -59,14 +59,7 @@ class StandardScaler
         itemStdev(i) = 1;
       }
     }
-    for (size_t i = 0; i < input.n_rows; i++)
-    {
-      for (size_t j = 0; j < input.n_cols; j++)
-      {
-        output(i, j) = input(i, j) - itemMean(i);
-        output(i, j) /= itemStdev(i);
-      }
-    }
+    output = (input.each_col() - itemMean).each_col() % (1.0 / itemStdev);
   }
 
   /**
@@ -79,14 +72,7 @@ class StandardScaler
   void InverseTransform(const MatType& input, MatType& output)
   {
     output.copy_size(input);
-    for (size_t i = 0; i < input.n_rows; i++)
-    {
-      for (size_t j = 0; j < input.n_cols; j++)
-      {
-        output(i, j) = input(i, j) * itemStdev(i);
-        output(i, j) += itemMean(i);
-      }
-    }
+    output = (input.each_col() % itemStdev).each_col() + itemMean;
   }
 
   //! Get the Mean row vector.
