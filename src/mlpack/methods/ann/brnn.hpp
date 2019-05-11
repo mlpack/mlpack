@@ -100,9 +100,9 @@ class BRNN
    * @param optimizer Instantiated optimizer used to train the model.
    */
   template<typename OptimizerType>
-  double Train(arma::cube predictors,
-               arma::cube responses,
-               OptimizerType& optimizer);
+  void Train(arma::cube predictors,
+             arma::cube responses,
+             OptimizerType& optimizer);
 
   /**
    * Train the bidirectional recurrent neural network on the given input data.
@@ -128,7 +128,7 @@ class BRNN
    * @param responses Outputs results from input training variables.
    */
   template<typename OptimizerType = ens::StandardSGD>
-  double Train(arma::cube predictors, arma::cube responses);
+  void Train(arma::cube predictors, arma::cube responses);
 
   /**
    * Predict the responses to a given set of predictors. The responses will

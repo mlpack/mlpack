@@ -352,49 +352,4 @@ BOOST_AUTO_TEST_CASE(TrainingConstructorWithNonDefaultsTest)
     BOOST_REQUIRE_CLOSE(beta[i], lars2.Beta()[i], 1e-5);
 }
 
-/**
- * Test that LARS::Train() returns finite correlation value.
- */
-BOOST_AUTO_TEST_CASE(LARSTrainReturnCorrelation)
-{
-  arma::mat X;
-  arma::mat Y;
-
-  data::Load("lars_dependent_x.csv", X);
-  data::Load("lars_dependent_y.csv", Y);
-
-  arma::rowvec y = Y.row(0);
-
-  double lambda1 = 0.1;
-  double lambda2 = 0.1;
-
-  // Test with Cholesky decomposition and with lasso.
-  LARS lars1(true, lambda1, 0.0);
-  arma::vec betaOpt1;
-  double maxCorr = lars1.Train(X, y, betaOpt1);
-
-  BOOST_REQUIRE_EQUAL(std::isfinite(maxCorr), true);
-
-  // Test without Cholesky decomposition and with lasso.
-  LARS lars2(false, lambda1, 0.0);
-  arma::vec betaOpt2;
-  maxCorr = lars2.Train(X, y, betaOpt2);
-
-  BOOST_REQUIRE_EQUAL(std::isfinite(maxCorr), true);
-
-  // Test with Cholesky decomposition and with elasticnet.
-  LARS lars3(true, lambda1, lambda2);
-  arma::vec betaOpt3;
-  maxCorr = lars3.Train(X, y, betaOpt3);
-
-  BOOST_REQUIRE_EQUAL(std::isfinite(maxCorr), true);
-
-  // Test without Cholesky decomposition and with elasticnet.
-  LARS lars4(false, lambda1, lambda2);
-  arma::vec betaOpt4;
-  maxCorr = lars4.Train(X, y, betaOpt4);
-
-  BOOST_REQUIRE_EQUAL(std::isfinite(maxCorr), true);
-}
-
 BOOST_AUTO_TEST_SUITE_END();

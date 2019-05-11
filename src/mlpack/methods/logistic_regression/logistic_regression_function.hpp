@@ -28,25 +28,10 @@ template<typename MatType = arma::mat>
 class LogisticRegressionFunction
 {
  public:
-  /**
-   * Creates the LogisticRegressionFunction.
-   *
-   * @param predictors The matrix of data points.
-   * @param responses The measured data for each point in predictors.
-   * @param lambda Regularization constant for ridge regression.
-   */
   LogisticRegressionFunction(const MatType& predictors,
                              const arma::Row<size_t>& responses,
                              const double lambda = 0);
 
-  /**
-   * Creates the LogisticRegressionFunction with initialPoint.
-   *
-   * @param predictors The matrix of data points.
-   * @param responses The measured data for each point in predictors.
-   * @param initialPoint Point from which to start the optimization.
-   * @param lambda Regularization constant for ridge regression.
-   */
   LogisticRegressionFunction(const MatType& predictors,
                              const arma::Row<size_t>& responses,
                              const arma::vec& initialPoint,
@@ -74,7 +59,7 @@ class LogisticRegressionFunction
 
   /**
    * Evaluate the logistic regression log-likelihood function with the given
-   * parameters. Note that if a point has 0 probability of being classified
+   * parameters.  Note that if a point has 0 probability of being classified
    * directly with the given parameters, then Evaluate() will return nan (this
    * is kind of a corner case and should not happen for reasonable models).
    *
@@ -87,9 +72,9 @@ class LogisticRegressionFunction
 
   /**
    * Evaluate the logistic regression log-likelihood function with the given
-   * parameters using the given batch size from the given point index. This is
+   * parameters using the given batch size from the given point index.  This is
    * useful for optimizers such as SGD, which require a separable objective
-   * function. Note that if the points have 0 probability of being classified
+   * function.  Note that if the points have 0 probability of being classified
    * correctly with the given parameters, then Evaluate() will return nan (this
    * is kind of a corner case and should not happen for reasonable models).
    *
@@ -117,8 +102,8 @@ class LogisticRegressionFunction
 
   /**
    * Evaluate the gradient of the logistic regression log-likelihood function
-   * with the given parameters, for the given batch size from a given point in
-   * the dataset. This is useful for optimizers such as SGD, which require a
+   * with the given parameters, for the given batch size from a given point the
+   * in dataset. This is useful for optimizers such as SGD, which require a
    * separable objective function.
    *
    * @param parameters Vector of logistic regression parameters.
@@ -137,7 +122,7 @@ class LogisticRegressionFunction
   /**
    * Evaluate the gradient of the logistic regression log-likelihood function
    * with the given parameters, and with respect to only one feature in the
-   * dataset. This is useful for optimizers such as SCD, which require
+   * dataset.  This is useful for optimizers such as SCD, which require
    * partial gradients.
    *
    * @param parameters Vector of logistic regression parameters.
@@ -157,11 +142,6 @@ class LogisticRegressionFunction
   double EvaluateWithGradient(const arma::mat& parameters,
                               GradType& gradient) const;
 
-  /**
-   * Evaluate the objective function and gradient of the logistic regression
-   * log-likelihood function simultaneously with the given parameters, for
-   * the given batch size from a given point in the dataset.
-   */
   template<typename GradType>
   double EvaluateWithGradient(const arma::mat& parameters,
                               const size_t begin,

@@ -126,10 +126,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
       discriminatorPreTrain, multiplier);
 
   Log::Info << "Training..." << std::endl;
-  double objVal = dcgan.Train(optimizer);
-
-  // Test that objective value returned by GAN::Train() is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  dcgan.Train(optimizer);
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;

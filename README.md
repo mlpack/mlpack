@@ -23,7 +23,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-3.1.0.tar.gz">current stable version (3.1.0)</a>
+    <a href="https://www.mlpack.org/files/mlpack-3.0.4.tar.gz">current stable version (3.0.4)</a>
   </em>
 </p>
 

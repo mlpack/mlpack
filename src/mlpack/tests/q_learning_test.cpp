@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
   model.Add<Linear<>>(128, 2);
 
   // Set up the policy and replay method.
-  GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
+  GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
   RandomReplay<CartPole> replayMethod(10, 10000);
 
   TrainingConfig config;
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
     model.Add<Linear<>>(20, 2);
 
     // Set up the policy and replay method.
-    GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
+    GreedyPolicy<CartPole> policy(1.0, 1000, 0.1);
     RandomReplay<CartPole> replayMethod(10, 10000);
 
     TrainingConfig config;
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE(AcrobotWithDQN)
     model.Add<Linear<>>(32, 3);
 
     // Set up the policy and replay method.
-    GreedyPolicy<Acrobot> policy(1.0, 1000, 0.1, 0.99);
+    GreedyPolicy<Acrobot> policy(1.0, 1000, 0.1);
     RandomReplay<Acrobot> replayMethod(20, 10000);
 
     TrainingConfig config;
@@ -268,7 +268,7 @@ BOOST_AUTO_TEST_CASE(MountainCarWithDQN)
     model.Add<Linear<>>(32, 3);
 
     // Set up the policy and replay method.
-    GreedyPolicy<MountainCar> policy(1.0, 1000, 0.1, 0.99);
+    GreedyPolicy<MountainCar> policy(1.0, 1000, 0.1);
     RandomReplay<MountainCar> replayMethod(20, 10000);
 
     TrainingConfig config;

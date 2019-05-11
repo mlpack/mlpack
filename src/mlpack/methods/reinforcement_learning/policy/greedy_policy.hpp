@@ -1,7 +1,6 @@
 /**
  * @file greedy_policy.hpp
  * @author Shangtong Zhang
- * @author Abhinav Sagar
  *
  * This file is an implementation of epsilon greedy policy.
  *
@@ -42,16 +41,13 @@ class GreedyPolicy
    * @param annealInterval The steps during which the probability to explore
    *        will anneal.
    * @param minEpsilon Epsilon will never be less than this value.
-   * @param decayRate How much to change the model in response to the
-   *        estimated error each time the model weights are updated.
    */
   GreedyPolicy(const double initialEpsilon,
                const size_t annealInterval,
-               const double minEpsilon,
-               const double decayRate = 1.0) :
+               const double minEpsilon) :
       epsilon(initialEpsilon),
       minEpsilon(minEpsilon),
-      delta(((initialEpsilon - minEpsilon) * decayRate) / annealInterval)
+      delta((initialEpsilon - minEpsilon) / annealInterval)
   { /* Nothing to do here. */ }
 
   /**

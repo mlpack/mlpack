@@ -86,8 +86,6 @@ set(SOURCES
   transposed_convolution_impl.hpp
   vr_class_reward.hpp
   vr_class_reward_impl.hpp
-  c_relu.hpp
-  c_relu_impl.hpp
 )
 
 # Add directory name to sources.

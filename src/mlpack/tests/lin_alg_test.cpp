@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(TestWhitenUsingEig)
   Center(tmp, tmp_centered);
   WhitenUsingEig(tmp_centered, whitened, whitening_matrix);
 
-  mat newcov = mlpack::math::ColumnCovariance(whitened);
+  mat newcov = ccov(whitened);
   for (int row = 0; row < 5; row++)
   {
     for (int col = 0; col < 5; col++)
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(TestOrthogonalize)
   Orthogonalize(tmp, orth);
 
   // test orthogonality
-  mat test = mlpack::math::ColumnCovariance(orth);
+  mat test = ccov(orth);
   double ival = test(0, 0);
   for (size_t row = 0; row < test.n_rows; row++)
   {

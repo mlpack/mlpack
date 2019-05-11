@@ -66,8 +66,6 @@ class HRectBound
   /**
    * Initializes to specified dimensionality with each dimension the empty
    * set.
-   *
-   * @param dimension Dimensionality of bound.
    */
   HRectBound(const size_t dimension);
 
@@ -192,16 +190,12 @@ class HRectBound
 
   /**
    * Determines if a point is within this bound.
-   *
-   * @param point Point to check the condition.   
    */
   template<typename VecType>
   bool Contains(const VecType& point) const;
 
   /**
    * Determines if this bound partially contains a bound.
-   *
-   * @param other Bound to check the condition.
    */
   bool Contains(const HRectBound& bound) const;
 

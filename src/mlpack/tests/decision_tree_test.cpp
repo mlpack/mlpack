@@ -439,11 +439,11 @@ BOOST_AUTO_TEST_CASE(AllCategoricalSplitNoGainTest)
 
   for (size_t i = 0; i < 300; i += 3)
   {
-    values[i] = int(i / 3) % 10;
+    values[i] = (i / 3) % 10;
     labels[i] = 0;
-    values[i + 1] = int(i / 3) % 10;
+    values[i + 1] = (i / 3) % 10;
     labels[i + 1] = 1;
-    values[i + 2] = int(i / 3) % 10;
+    values[i + 2] = (i / 3) % 10;
     labels[i + 2] = 2;
   }
 
@@ -1124,58 +1124,6 @@ BOOST_AUTO_TEST_CASE(RegularisedDecisionTree)
   }
 
   BOOST_REQUIRE_GT(count, 0);
-}
-
-/**
- * Test that DecisionTree::Train() returns finite entropy on numeric dataset.
- */
-BOOST_AUTO_TEST_CASE(DecisionTreeNumericTrainReturnEntropy)
-{
-  arma::mat dataset(10, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000);
-  arma::rowvec weights(labels.n_elem);
-  weights.ones();
-
-  for (size_t i = 0; i < 1000; ++i)
-    labels[i] = i % 3; // 3 classes.
-
-  // Train a simpe tree on numeric dataset.
-  DecisionTree<> d(3);
-  double entropy = d.Train(dataset, labels, 3, 50);
-
-  BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
-
-  // Train a tree with weights on numeric dataset.
-  DecisionTree<> wd(3);
-  entropy = wd.Train(dataset, labels, 3, weights, 50);
-
-  BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
-}
-
-/**
- * Test that DecisionTree::Train() returns finite entropy on categorical
- * dataset.
- */
-BOOST_AUTO_TEST_CASE(DecisionTreeCategoricalTrainReturnEntropy)
-{
-  arma::mat d;
-  arma::Row<size_t> l;
-  data::DatasetInfo di;
-  MockCategoricalData(d, l, di);
-
-  arma::Row<double> weights = arma::ones<arma::Row<double>>(l.n_elem);
-
-  // Train a simple tree on categorical dataset.
-  DecisionTree<> dtree(5);
-  double entropy = dtree.Train(d, di, l, 5, 10);
-
-  BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
-
-  // Train a tree with weights on categorical dataset.
-  DecisionTree<> wdtree(5);
-  entropy = wdtree.Train(d, di, l, 5, weights, 10);
-
-  BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

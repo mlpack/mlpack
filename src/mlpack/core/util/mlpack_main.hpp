@@ -177,9 +177,6 @@ PARAM_FLAG("copy_all_inputs", "If specified, all input parameters will be deep"
 #define PRINT_CALL mlpack::bindings::markdown::ProgramCall
 #define BINDING_IGNORE_CHECK mlpack::bindings::markdown::IgnoreCheck
 
-// This doesn't actually matter for this binding type.
-#define BINDING_MATRIX_TRANSPOSED true
-
 namespace mlpack {
 namespace util {
 

@@ -106,6 +106,9 @@ class AdaBoost
    */
   AdaBoost(const double tolerance = 1e-6);
 
+  // Return the value of ztProduct.
+  double ZtProduct() { return ztProduct; }
+
   //! Get the tolerance for stopping the optimization during training.
   double Tolerance() const { return tolerance; }
   //! Modify the tolerance for stopping the optimization during training.
@@ -171,25 +174,14 @@ class AdaBoost
   std::vector<WeakLearnerType> wl;
   //! The weights corresponding to each weak learner.
   std::vector<double> alpha;
+
+  //! To check for the bound for the Hamming loss.
+  double ztProduct;
 }; // class AdaBoost
 
 } // namespace adaboost
 } // namespace mlpack
 
-//! Set the serialization version of the adaboost class.
-namespace boost {
-namespace serialization {
-
-template<typename WeakLearnerType, typename MatType>
-struct version<mlpack::adaboost::AdaBoost<WeakLearnerType, MatType>>
-{
-  BOOST_STATIC_CONSTANT(int, value = 1);
-};
-
-} // namespace serialization
-} // namespace boost
-
-// Include implementation.
 #include "adaboost_impl.hpp"
 
 #endif

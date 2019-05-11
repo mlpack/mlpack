@@ -64,7 +64,7 @@ template<typename OutputLayerType, typename MergeLayerType,
          typename MergeOutputType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename OptimizerType>
-double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
+void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     InitializationRuleType, CustomLayers...>::Train(
     arma::cube predictors,
     arma::cube responses,
@@ -90,14 +90,13 @@ double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
 
   Log::Info << "BRNN::BRNN(): final objective of trained model is " << out
       << "." << std::endl;
-  return out;
 }
 
 template<typename OutputLayerType, typename MergeLayerType,
          typename MergeOutputType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename OptimizerType>
-double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
+void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     InitializationRuleType, CustomLayers...>::Train(
     arma::cube predictors,
     arma::cube responses)
@@ -122,7 +121,6 @@ double BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
 
   Log::Info << "BRNN::BRNN(): final objective of trained model is " << out
       << "." << std::endl;
-  return out;
 }
 
 template<typename OutputLayerType, typename MergeLayerType,

@@ -3,11 +3,6 @@
  * @author Ryan Curtin
  *
  * Implementation of functions to print Markdown from documentation.
- *
- * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "print_docs.hpp"
 
@@ -62,7 +57,7 @@ void PrintDocs(const std::string& bindingName,
   }
   cout << endl;
 
-  // Next, print the logical name of the binding (that's known by
+  // Next we want to print the logical name of the binding (that's known by
   // ProgramInfo).
   cout << "#### " << programDoc.programName << endl;
   cout << endl;

@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(SimplePendulumTest)
 }
 
 /**
- * Constructs a Continuous MountainCar instance and check if the main rountine
+ * Constructs a Continuous MountainCar instance and check if the main rountine 
  * works as it should be.
  */
 BOOST_AUTO_TEST_CASE(SimpleContinuousMountainCarTest)
@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
  */
 BOOST_AUTO_TEST_CASE(GreedyPolicyTest)
 {
-  GreedyPolicy<CartPole> policy(1.0, 10, 0.0, 0.99);
+  GreedyPolicy<CartPole> policy(1.0, 10, 0.0);
   for (size_t i = 0; i < 15; ++i)
     policy.Anneal();
   BOOST_REQUIRE_CLOSE(0.0, policy.Epsilon(), 1e-5);

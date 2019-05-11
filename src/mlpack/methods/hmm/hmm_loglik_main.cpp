@@ -17,7 +17,6 @@
 #include "hmm_model.hpp"
 
 #include <mlpack/methods/gmm/gmm.hpp>
-#include <mlpack/methods/gmm/diagonal_gmm.hpp>
 
 using namespace mlpack;
 using namespace mlpack::hmm;

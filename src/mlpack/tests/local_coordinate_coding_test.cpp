@@ -165,29 +165,4 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   BOOST_REQUIRE_EQUAL(lcc.MaxIterations(), lccBinary.MaxIterations());
 }
 
-/**
- * Test that LocalCoordinateCoding::Train() returns finite final objective
- * value.
- */
-BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTrainReturnObjective)
-{
-  double lambda1 = 0.1;
-  uword nAtoms = 10;
-
-  mat X;
-  X.load("mnist_first250_training_4s_and_9s.arm");
-  uword nPoints = X.n_cols;
-
-  // Normalize each point since these are images.
-  for (uword i = 0; i < nPoints; i++)
-  {
-    X.col(i) /= norm(X.col(i), 2);
-  }
-
-  LocalCoordinateCoding lcc(nAtoms, lambda1, 10);
-  double objVal = lcc.Train(X);
-
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
-}
-
 BOOST_AUTO_TEST_SUITE_END();

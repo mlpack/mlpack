@@ -28,7 +28,6 @@
 #include <mlpack/methods/ann/layer/join.hpp>
 #include <mlpack/methods/ann/layer/layer_norm.hpp>
 #include <mlpack/methods/ann/layer/leaky_relu.hpp>
-#include <mlpack/methods/ann/layer/c_relu.hpp>
 #include <mlpack/methods/ann/layer/flexible_relu.hpp>
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
 #include <mlpack/methods/ann/layer/lookup.hpp>
@@ -176,7 +175,6 @@ using LayerTypes = boost::variant<
     Join<arma::mat, arma::mat>*,
     LayerNorm<arma::mat, arma::mat>*,
     LeakyReLU<arma::mat, arma::mat>*,
-    CReLU<arma::mat, arma::mat>*,
     Linear<arma::mat, arma::mat>*,
     LinearNoBias<arma::mat, arma::mat>*,
     LogSoftMax<arma::mat, arma::mat>*,

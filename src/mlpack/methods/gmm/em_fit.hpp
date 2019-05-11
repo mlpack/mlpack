@@ -16,7 +16,6 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/dists/gaussian_distribution.hpp>
-#include <mlpack/core/dists/diagonal_gaussian_distribution.hpp>
 
 // Default clustering mechanism.
 #include <mlpack/methods/kmeans/kmeans.hpp>
@@ -40,8 +39,7 @@ namespace gmm {
  * each point to a cluster.
  */
 template<typename InitialClusteringType = kmeans::KMeans<>,
-         typename CovarianceConstraintPolicy = PositiveDefiniteConstraint,
-         typename Distribution = distribution::GaussianDistribution>
+         typename CovarianceConstraintPolicy = PositiveDefiniteConstraint>
 class EMFit
 {
  public:
@@ -82,7 +80,7 @@ class EMFit
    *      clustering.
    */
   void Estimate(const arma::mat& observations,
-                std::vector<Distribution>& dists,
+                std::vector<distribution::GaussianDistribution>& dists,
                 arma::vec& weights,
                 const bool useInitialModel = false);
 
@@ -105,7 +103,7 @@ class EMFit
    */
   void Estimate(const arma::mat& observations,
                 const arma::vec& probabilities,
-                std::vector<Distribution>& dists,
+                std::vector<distribution::GaussianDistribution>& dists,
                 arma::vec& weights,
                 const bool useInitialModel = false);
 
@@ -144,10 +142,9 @@ class EMFit
    * @param covariances Vector to store covariances in.
    * @param weights Vector to store a priori weights in.
    */
-  void InitialClustering(
-      const arma::mat& observations,
-      std::vector<Distribution>& dists,
-      arma::vec& weights);
+  void InitialClustering(const arma::mat& observations,
+                         std::vector<distribution::GaussianDistribution>& dists,
+                         arma::vec& weights);
 
   /**
    * Calculate the log-likelihood of a model.  Yes, this is reimplemented in the
@@ -159,11 +156,14 @@ class EMFit
    * @param covariances Vector of covariance matrices.
    * @param weights Vector of a priori weights.
    */
-  double LogLikelihood(
-      const arma::mat& data,
-      const std::vector<Distribution>& dists,
-      const arma::vec& weights) const;
+  double LogLikelihood(const arma::mat& data,
+                       const std::vector<distribution::GaussianDistribution>&
+                           dists,
+                       const arma::vec& weights) const;
 
+  // Armadillo uses uword internally as an OpenMP index type, which crashes
+  // Visual Studio.
+  #ifndef _WIN32
   /**
    * Use the Armadillo gmm_diag clusterer to train a GMM with diagonal
    * covariance.  If InitialClusteringType == kmeans::KMeans<>, this will use
@@ -176,9 +176,10 @@ class EMFit
    */
   void ArmadilloGMMWrapper(
       const arma::mat& observations,
-      std::vector<Distribution>& dists,
+      std::vector<distribution::GaussianDistribution>& dists,
       arma::vec& weights,
       const bool useInitialModel);
+  #endif
 
   //! Maximum iterations of EM algorithm.
   size_t maxIterations;

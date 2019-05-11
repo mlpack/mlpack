@@ -39,31 +39,32 @@ void NormalizeLabels(const RowType& labelsIn,
   // we'll resize it back down to its actual size.
   mapping.set_size(labelsIn.n_elem);
   labels.set_size(labelsIn.n_elem);
-  // Map for mapping labelIn to their label.
-  std::unordered_map<eT, size_t> labelMap;
   size_t curLabel = 0;
   for (size_t i = 0; i < labelsIn.n_elem; ++i)
   {
-    // If labelsIn[i] is already in the map, use the existing label.
-    if (labelMap.count(labelsIn[i]) > 0)
+    bool found = false;
+    for (size_t j = 0; j < curLabel; ++j)
     {
-      labels[i] = labelMap[labelsIn[i]];
+      // Is the label already in the list of labels we have seen?
+      if (labelsIn[i] == mapping[j])
+      {
+        labels[i] = j;
+        found = true;
+        break;
+      }
     }
-    else
+
+    // Do we need to add this new label?
+    if (!found)
     {
-      // If labelsIn[i] not there then add it to map.
-      labelMap[labelsIn[i]] = curLabel;
+      mapping[curLabel] = labelsIn[i];
       labels[i] = curLabel;
       ++curLabel;
     }
   }
+
   // Resize mapping back down to necessary size.
   mapping.resize(curLabel);
-  // Mapping array created with encoded labels.
-  for (auto it = labelMap.begin(); it != labelMap.end(); ++it)
-  {
-    mapping[it->second] = it->first;
-  }
 }
 
 /**
