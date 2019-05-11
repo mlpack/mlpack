@@ -1,11 +1,16 @@
 /**
- * @file binding_name.hpp
+ * @file binding_info.hpp
  * @author Ryan Curtin
  *
  * This file defines the BindingInfo singleton class that is used specifically
  * for the Markdown bindings to map from a binding name (i.e. "knn") to
  * multiple ProgramDoc objects, which are then used to generate the
  * documentation.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_BINDINGS_MARKDOWN_BINDING_NAME_HPP
 #define MLPACK_BINDINGS_MARKDOWN_BINDING_NAME_HPP
@@ -25,14 +30,11 @@ namespace markdown {
 class BindingInfo
 {
  public:
-  /**
-   * Return a ProgramDoc object for a given bindingName.
-   */
+
+  //! Return a ProgramDoc object for a given bindingName.
   static util::ProgramDoc& GetProgramDoc(const std::string& bindingName);
 
-  /**
-   * Register a ProgramDoc object with the given bindingName.
-   */
+  //! Register a ProgramDoc object with the given bindingName.
   static void RegisterProgramDoc(const std::string& bindingName,
                                  const util::ProgramDoc& programDoc);
 
@@ -40,6 +42,7 @@ class BindingInfo
   static std::string& Language();
 
  private:
+
   //! Private constructor, so that only one instance can be created.
   BindingInfo() { }
 
