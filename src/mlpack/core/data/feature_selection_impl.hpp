@@ -65,6 +65,7 @@ void VarianceSelection(const arma::Mat<T>& input,
     }
   }
 }
+
 } // namespace data
 } // namespace mlpack
 
