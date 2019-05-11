@@ -14,7 +14,6 @@
 #include <mlpack/core/cv/meta_info_extractor.hpp>
 #include <mlpack/core/cv/metrics/accuracy.hpp>
 #include <mlpack/core/cv/metrics/f1.hpp>
-#include <mlpack/core/data/feature_selection.hpp>
 #include <mlpack/core/cv/metrics/mse.hpp>
 #include <mlpack/core/cv/metrics/precision.hpp>
 #include <mlpack/core/cv/metrics/recall.hpp>
