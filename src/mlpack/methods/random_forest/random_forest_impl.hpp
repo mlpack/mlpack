@@ -308,18 +308,14 @@ void RandomForest<
     arma::vec treeProbs;
     size_t treePrediction; // Ignored.
     trees[i].Classify(point, treePrediction, treeProbs);
-//    std::cout << treeProbs.t();
 
     probabilities += treeProbs;
   }
-//  std::cout << "total probs:\n";
-//  std::cout << probabilities.t();
 
   // Find maximum element after renormalizing probabilities.
   probabilities /= trees.size();
   arma::uword maxIndex = 0;
   probabilities.max(maxIndex);
-//  std::cout << "max index " << maxIndex << "\n";
 
   // Set prediction.
   prediction = (size_t) maxIndex;
@@ -356,7 +352,6 @@ void RandomForest<
   #pragma omp parallel for
   for (omp_size_t i = 0; i < data.n_cols; ++i)
   {
-//    std::cout << "point " << i << "\n";
     predictions[i] = Classify(data.col(i));
   }
 }
