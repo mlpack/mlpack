@@ -24,6 +24,8 @@ set(SOURCES
   split_data.hpp
   imputer.hpp
   binarize.hpp
+  feature_selection.hpp
+  feature_selection_impl.hpp
 )
 
 # add directory name to sources
