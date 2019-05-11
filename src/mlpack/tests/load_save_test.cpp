@@ -920,7 +920,7 @@ BOOST_AUTO_TEST_CASE(OneHotEncodingTest)
            "1 0;"
            "0 1;"
            "1 0;";
-// output matrix
+// Output matrix to save onehotencoding results.
   arma::Mat<size_t> output;
   arma::irowvec labels("-1 1 -1 -1 -1 -1 1 -1");
   data::OneHotEncoding(labels, output);

@@ -29,10 +29,6 @@ void LoadARFF(const std::string& filename,
   // First, open the file.
   std::ifstream ifs;
   ifs.open(filename, std::ios::in | std::ios::binary);
-  if (!ifs.is_open())
-  {
-    Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
-  }
 
   // if file is not open throw an error (file not found).
   if (!ifs.is_open())
