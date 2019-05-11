@@ -39,10 +39,6 @@ void VarianceSelection(const arma::Mat<T>& input,
               const double threshold,
               arma::Mat<T>& output)
 {
-  // Making sure features have same scale
-  arma::Mat<double> scale = arma::normalise(input);
-  // Calculate variance of each feature
-  arma::Mat<double> value = arma::var(scale, 0, 1);
   // Calculate variance of each scaled feature.
   arma::mat value = arma::var(arma::normalise(input, 2, 1), 0, 1);
   // Count the dimension of new matrix

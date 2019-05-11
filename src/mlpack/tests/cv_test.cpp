@@ -540,8 +540,6 @@ BOOST_AUTO_TEST_CASE(VarianceFeatureSelectionTest)
            "1 1 1 1;"; // this row will be deleted since less variance
 
   // Output matirx with less features.
-  arma::Mat<double> output;
-  data::SelectBestFeature<double>(matrix, 0.009, output);
   arma::mat output;
   data::VarianceSelection(matrix, 0.009, output);
   BOOST_REQUIRE_EQUAL(output.n_rows, 2);
