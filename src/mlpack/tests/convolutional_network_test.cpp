@@ -99,7 +99,10 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
     // Train for only 8 epochs.
     ens::RMSProp opt(0.001, 1, 0.88, 1e-8, 8 * nPoints, -1);
 
-    model.Train(X, Y, opt);
+    double objVal = model.Train(X, Y, opt);
+
+    // Test that objective value returned by FFN::Train() is finite.
+    BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
     arma::mat predictionTemp;
     model.Predict(X, predictionTemp);

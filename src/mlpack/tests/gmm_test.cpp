@@ -109,7 +109,8 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMOneGaussian)
     gmm.Train(data, 10);
 
     arma::vec actualMean = arma::mean(data, 1);
-    arma::mat actualCovar = ccov(data, 1 /* biased estimator */);
+    arma::mat actualCovar = mlpack::math::ColumnCovariance(data,
+        1 /* biased estimator */);
 
     // Check the model to see that it is correct.
     BOOST_REQUIRE_LT(arma::norm(gmm.Component(0).Mean() - actualMean), 1e-5);
@@ -198,7 +199,8 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
       // Calculate the actual means and covariances because they will probably
       // be different (this is easier to do before we shuffle the points).
       means[i] = arma::mean(data.cols(point, point + counts[i] - 1), 1);
-      covars[i] = ccov(data.cols(point, point + counts[i] - 1), 1 /* biased */);
+      covars[i] = mlpack::math::ColumnCovariance(arma::mat(data.cols(point,
+          point + counts[i] - 1)), 1 /* biased */);
 
       point += counts[i];
     }
@@ -694,7 +696,8 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
     // Calculate the actual means and covariances because they will probably
     // be different (this is easier to do before we shuffle the points).
     means[i] = arma::mean(data.cols(point, point + counts[i] - 1), 1);
-    covars[i] = ccov(data.cols(point, point + counts[i] - 1), 1 /* biased */);
+    covars[i] = mlpack::math::ColumnCovariance(arma::mat(data.cols(point,
+        point + counts[i] - 1)), 1 /* biased */);
 
     point += counts[i];
   }
@@ -855,7 +858,8 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMTrainEMOneGaussian)
 
     arma::vec actualMean = arma::mean(data, 1);
     arma::vec actualCovar = arma::diagvec(
-        arma::ccov(data, 1 /* biased estimator */));
+        mlpack::math::ColumnCovariance(data,
+        1 /* biased estimator */));
 
     // Check the model to see that it is correct.
     CheckMatrices(gmm.Component(0).Mean(), actualMean);
