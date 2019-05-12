@@ -25,6 +25,8 @@ set(SOURCES
   imputer.hpp
   binarize.hpp
   confusion_matrix.hpp
+  one_hot_encoding.hpp
+  one_hot_encoding_impl.hpp
 )
 
 # add directory name to sources

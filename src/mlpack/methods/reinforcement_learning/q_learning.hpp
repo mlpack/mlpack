@@ -100,6 +100,16 @@ class QLearning
    */
   const size_t& TotalSteps() const { return totalSteps; }
 
+  //! Modify the state of the agent.
+  StateType& State() { return state; }
+  //! Get the state of the agent.
+  const StateType& State() const { return state; }
+
+  //! Modify the environment in which the agent is.
+  EnvironmentType& Environment() { return environment; }
+  //! Get the environment in which the agent is.
+  const EnvironmentType& Environment() const { return environment; }
+
   //! Modify the training mode / test mode indicator.
   bool& Deterministic() { return deterministic; }
   //! Get the indicator of training mode / test mode.
