@@ -205,9 +205,10 @@ BOOST_AUTO_TEST_CASE(AdaBoostTrainingDataOrModelTest)
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
+
 /**
- * This test can be removed in mlpack 4.0.0. Testing
- * the output and predictions outputs are the same.
+ * This test can be removed in mlpack 4.0.0.  This tests that the output and
+ * predictions outputs are the same.
  */
 BOOST_AUTO_TEST_CASE(AdaBoostOutputPredictionsTest)
 {

@@ -81,10 +81,11 @@ PROGRAM_INFO("AdaBoost",
     "model itself is output to the " + PRINT_PARAM_STRING("output_model") +
     " output parameter."
     "\n\n"
-    "Note : The following parameter is deprecated and "
+    "Note: the following parameter is deprecated and "
     "will be removed in mlpack 4.0.0: " + PRINT_PARAM_STRING("output") +
-    "."  +
-    "\nUse " + PRINT_PARAM_STRING("predictions") + " instead of " +
+    "."
+    "\n"
+    "Use " + PRINT_PARAM_STRING("predictions") + " instead of " +
     PRINT_PARAM_STRING("output") + '.' +
     "\n\n"
     "For example, to run AdaBoost on an input dataset " +
@@ -117,10 +118,7 @@ PARAM_UROW_IN("labels", "Labels for the training set.", "l");
 
 // Classification options.
 PARAM_MATRIX_IN("test", "Test dataset.", "T");
-/* 
-* The PARAM_UROW_OUT("output") is deprecated and will be removed in
-* mlpack 4.0.0.
-*/
+// PARAM_UROW_OUT("output") is deprecated and will be removed in mlpack 4.0.0.
 PARAM_UROW_OUT("output", "Predicted labels for the test set.", "o");
 PARAM_UROW_OUT("predictions", "Predicted labels for the test set.", "P");
 
@@ -169,7 +167,7 @@ static void mlpackMain()
   RequireAtLeastOnePassed({ "output_model", "output", "predictions" }, false,
       "no results will be saved");
 
-  // "output" can be removed in mlpack 4.0.0.
+  // "output" will be removed in mlpack 4.0.0.
   ReportIgnoredParam({{ "test", false }}, "predictions");
 
   AdaBoostModel* m;
