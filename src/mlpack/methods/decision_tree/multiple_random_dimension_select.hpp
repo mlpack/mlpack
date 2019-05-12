@@ -17,16 +17,16 @@ namespace tree {
 
 /**
  * This dimension selection policy allows the selection from a few random
- * dimensions.  The number of random dimensions to use is specified by the
- * NumDimensions template parameter.
- *
- * @tparam NumDimensions Number of random dimensions to select.
+ * dimensions.  The number of random dimensions to use is specified in the
+ * constructor.
  */
 class MultipleRandomDimensionSelect
 {
  public:
   /**
    * Instantiate the MultipleRandomDimensionSelect object.
+   *
+   * @param numDimensions Number of random dimensions to try for each split.
    */
   MultipleRandomDimensionSelect(const size_t numDimensions = 0) :
         numDimensions(numDimensions),
