@@ -62,10 +62,24 @@ class NystroemKernelRule
     G.each_row() -= arma::sum(G, 0) / G.n_rows;
     G.each_col() -= colMean;
     G += arma::sum(colMean) / G.n_rows;
+    arma::mat sym_x = arma::symmatu(transformedData);
+
+    // Check if Eigen Value exists, if not raise an error log.
+    if (sym_x.is_empty())
+    {
+      Log::Fatal << "Eigen Decompositon failed as Matrix is empty ."
+            << std::endl;
+      return;
+    }
+    if ((arma::eig_sym(eigval, eigvec, sym_x) == false))
+    {
+      Log::Fatal << "Eigen Decompositon failed as Eigen Value does not exists ."
+            << std::endl;
+      return;
+    }
 
     // Eigendecompose the centered kernel matrix.
-    arma::eig_sym(eigval, eigvec, transformedData);
-
+    arma::eig_sym(eigval, eigvec, sym_x);
     // Swap the eigenvalues since they are ordered backwards (we need largest
     // to smallest).
     for (size_t i = 0; i < floor(eigval.n_elem / 2.0); ++i)

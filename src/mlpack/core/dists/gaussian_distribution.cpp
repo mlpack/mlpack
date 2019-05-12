@@ -21,6 +21,7 @@ GaussianDistribution::GaussianDistribution(const arma::vec& mean,
                                            const arma::mat& covariance)
   : mean(mean)
 {
+  logDetCov;
   Covariance(covariance);
 }
 
@@ -39,8 +40,23 @@ void GaussianDistribution::Covariance(arma::mat&& covariance)
 void GaussianDistribution::FactorCovariance()
 {
   // On Armadillo < 4.500, the "lower" option isn't available.
-  covLower = arma::chol(covariance, "lower");
+  arma::mat sym_cholmatrix = arma::symmatu(covariance);
+  arma::mat covLower;
 
+  // Check if Cholesky Decomposition exists, if not raise an error log.
+  if (sym_cholmatrix.is_empty())
+  {
+    Log::Fatal << "Cholesky Decomposition failed as Matrix is Empty ."
+          << std::endl;
+    return;
+  }
+  if ((arma::chol(covLower, sym_cholmatrix, "lower") == false))
+  {
+    Log::Fatal << "Cholesky Decomposition failed  ."
+          << std::endl;
+    return;
+  }
+  covLower = arma::chol(covariance, "lower");
   // Comment from rcurtin:
   //
   // I think the use of the word "interpret" in the Armadillo documentation
