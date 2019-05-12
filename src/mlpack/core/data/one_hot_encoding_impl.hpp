@@ -2,8 +2,8 @@
  * @file one_hot_encoding_impl.hpp
  * @author Jeffin Sam
  *
- * Implementation of one hot encoding functions;
- * categorical variables as binary vectors.
+ * Implementation of one hot encoding functions; categorical variables as binary
+ * vectors.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -23,8 +23,8 @@ namespace data {
 /**
  * Given a set of labels of a particular datatype, convert them to binary
  * vector. The categorical values be mapped to integer values.
- * Then, each integer value is represented as a binary vector that is 
- * all zero values except the index of the integer, which is marked 
+ * Then, each integer value is represented as a binary vector that is
+ * all zero values except the index of the integer, which is marked
  * with a 1.
  *
  * @param labelsIn Input labels of arbitrary datatype.
@@ -32,14 +32,13 @@ namespace data {
  */
 template<typename eT, typename RowType>
 void OneHotEncoding(const RowType& labelsIn,
-                     arma::Mat<eT>& output)
+                    arma::Mat<eT>& output)
 {
   arma::Row<size_t> labels;
   labels.set_size(labelsIn.n_elem);
 
   // Loop over the input labels, and develop the mapping.
-  // Map for mapping labelIn to their label
-  std::unordered_map<eT, size_t> labelMap;
+  std::unordered_map<eT, size_t> labelMap; // Map for labelsIn to labels.
   size_t curLabel = 0;
   for (size_t i = 0; i < labelsIn.n_elem; ++i)
   {
@@ -50,16 +49,15 @@ void OneHotEncoding(const RowType& labelsIn,
     }
     else
     {
-      // If labelsIn[i] not there then add it to Map
+      // If labelsIn[i] not there then add it to the map.
       labelMap[labelsIn[i]] = curLabel + 1;
       labels[i] = curLabel;
       ++curLabel;
     }
   }
-  // Resize output matrix to necessary size.
-  // Fill it with zero
+  // Resize output matrix to necessary size, and fill it with zeros.
   output.zeros(labelsIn.n_elem, curLabel);
-  // Filling one at required place
+  // Fill ones in at the required places.
   for (size_t i = 0; i < labelsIn.n_elem; ++i)
   {
     output(i, labels[i]) = 1;

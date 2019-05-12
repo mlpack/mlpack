@@ -906,7 +906,6 @@ BOOST_AUTO_TEST_CASE(SaveHDF5Test)
 #endif
 
 /**
- *
  * Test one hot encoding.
  */
 BOOST_AUTO_TEST_CASE(OneHotEncodingTest)
@@ -929,6 +928,7 @@ BOOST_AUTO_TEST_CASE(OneHotEncodingTest)
   BOOST_REQUIRE_EQUAL(matrix.n_rows, output.n_rows);
   CheckMatrices(output, matrix);
 }
+
 /**
  * Test normalization of labels.
  */

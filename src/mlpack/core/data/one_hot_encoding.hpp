@@ -2,8 +2,8 @@
  * @file one_hot_encoding.hpp
  * @author Jeffin Sam
  *
- * One hot encoding functions .The purpose of this function is to convert
- * categorical variables as binary vectors.
+ * One hot encoding functions. The purpose of this function is to convert
+ * categorical variables to binary vectors.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -21,8 +21,8 @@ namespace data {
 /**
  * Given a set of labels of a particular datatype, convert them to binary
  * vector. The categorical values be mapped to integer values.
- * Then, each integer value is represented as a binary vector that is 
- * all zero values except the index of the integer, which is marked 
+ * Then, each integer value is represented as a binary vector that is
+ * all zero values except the index of the integer, which is marked
  * with a 1.
  *
  * @param labelsIn Input labels of arbitrary datatype.
@@ -30,7 +30,7 @@ namespace data {
  */
 template<typename eT, typename RowType>
 void OneHotEncoding(const RowType& labelsIn,
-                     arma::Mat<eT>& output);
+                    arma::Mat<eT>& output);
 
 } // namespace data
 } // namespace mlpack
