@@ -163,6 +163,39 @@ BOOST_AUTO_TEST_CASE(PerceptronLabelsLessDimensionTest)
 }
 
 /**
+ * This test can be removed in mlpack 4.0.0. Testing
+ * the output and predictions outputs are the same.
+ */
+BOOST_AUTO_TEST_CASE(PerceptronOutputPredictionsCheck)
+{
+  arma::mat trainX1;
+  arma::Row<size_t> labelsX1;
+
+  // Loading a train data set with 3 classes.
+  if (!data::Load("vc2.csv", trainX1))
+  {
+    BOOST_FAIL("Could not load the train data (vc2.csv)");
+  }
+
+  // Loading the corresponding labels to the dataset.
+  if (!data::Load("vc2_labels.txt", labelsX1))
+  {
+    BOOST_FAIL("Could not load the train data (vc2_labels.csv)");
+  }
+
+  SetInputParam("training", std::move(trainX1)); // Training data.
+  // Labels for the training data.
+  SetInputParam("labels", std::move(labelsX1));
+
+  // Training model using first training dataset.
+  mlpackMain();
+
+  // Check that the outputs are the same.
+  CheckMatrices(CLI::GetParam<arma::Row<size_t>>("output"),
+                CLI::GetParam<arma::Row<size_t>>("predictions"));
+}
+
+/**
  * Ensure that saved model can be used again.
  */
 BOOST_AUTO_TEST_CASE(PerceptronModelReuseTest)

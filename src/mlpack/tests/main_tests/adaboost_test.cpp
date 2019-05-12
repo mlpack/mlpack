@@ -205,6 +205,28 @@ BOOST_AUTO_TEST_CASE(AdaBoostTrainingDataOrModelTest)
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
+/**
+ * This test can be removed in mlpack 4.0.0. Testing
+ * the output and predictions outputs are the same.
+ */
+BOOST_AUTO_TEST_CASE(AdaBoostOutputPredictionsTest)
+{
+  arma::mat trainData;
+  if (!data::Load("vc2.csv", trainData))
+    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Unable to load label dataset vc2_labels.txt!");
+
+  SetInputParam("training", std::move(trainData));
+  SetInputParam("labels", std::move(labels));
+
+  mlpackMain();
+
+  CheckMatrices(CLI::GetParam<arma::Row<size_t>>("output"),
+                CLI::GetParam<arma::Row<size_t>>("predictions"));
+}
 
 /**
  * Weak learner should be either Decision Stump or Perceptron.
