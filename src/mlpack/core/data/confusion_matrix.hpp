@@ -36,8 +36,7 @@ namespace data {
  * @param predictors Vector of data points.
  * @param responses The measured data for each point.
  * @param output Matrix which is represented as confusion matrix.
- * @param countlables No of classes
- *
+ * @param countlables Number of classes.
  */
 template<typename eT>
 void ConfusionMatrix(const arma::Row<size_t> predictors,
