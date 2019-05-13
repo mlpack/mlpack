@@ -1,6 +1,5 @@
 macro (not_found_return message)
   message(STATUS "${message}")
-  set(BUILD_PYTHON_BINDINGS OFF)
   macro (add_python_binding name)
     # Do nothing.
   endmacro ()
@@ -40,6 +39,8 @@ find_python_module(pandas 0.15.0)
 if (NOT PY_PANDAS)
   not_found_return("pandas not found; not building Python bindings.")
 endif ()
+
+set(BUILDING_PYTHON_BINDINGS ON)
 
 # Nothing in this directory will be compiled into mlpack.
 set(BINDING_SOURCES

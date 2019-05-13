@@ -104,7 +104,7 @@ add_dependencies(mlpack mlpack_headers)
 
 # If we are building Python bindings, we have to configure setup.py but only
 # after we've recursed into methods/.
-if (BUILD_PYTHON_BINDINGS)
+if (BUILDING_PYTHON_BINDINGS)
   # Extract the version number.
   file(READ "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/version.hpp"
       VERSION_HPP_CONTENTS)
