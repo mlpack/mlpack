@@ -1,5 +1,6 @@
 macro (not_found_return message)
   message(STATUS "${message}")
+  set(BUILD_PYTHON_BINDINGS OFF)
   macro (add_python_binding name)
     # Do nothing.
   endmacro ()
@@ -10,8 +11,6 @@ endmacro ()
 # If we are not supposed to make Python bindings, define the macro so it does
 # nothing and leave this file.
 if (NOT BUILD_PYTHON_BINDINGS)
-  add_custom_target(python_configured ALL)
-  add_custom_target(python ALL)
   not_found_return("Not building Python bindings.")
 endif ()
 
