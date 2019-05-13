@@ -120,13 +120,13 @@ arma::vec GMM::Random() const
   arma::mat sym_cholmatrix = symmatu(dists[gaussian].Covariance());
   if (res_chol.is_empty())
   {
-    Log::Fatal << "Cholesky Decomposition failed as Matrix is empty ."
+    Log::Warn << "Cholesky Decomposition failed as Matrix is empty ."
           << std::endl;
     return arma::vec();
   }
   if (arma::chol(res_chol, sym_cholmatrix) == false)
   {
-    Log::Fatal << "Cholesky Decomposition failed ."
+    Log::Warn << "Cholesky Decomposition failed ."
           << std::endl;
     return arma::vec();
   }

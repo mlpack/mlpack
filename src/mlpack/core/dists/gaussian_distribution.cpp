@@ -46,13 +46,13 @@ void GaussianDistribution::FactorCovariance()
   // Check if Cholesky Decomposition exists, if not raise an error log.
   if (sym_cholmatrix.is_empty())
   {
-    Log::Fatal << "Cholesky Decomposition failed as Matrix is Empty ."
+    Log::Warn << "Cholesky Decomposition failed as Matrix is Empty ."
           << std::endl;
     return;
   }
   if ((arma::chol(covLower, sym_cholmatrix, "lower") == false))
   {
-    Log::Fatal << "Cholesky Decomposition failed  ."
+    Log::Warn << "Cholesky Decomposition failed  ."
           << std::endl;
     return;
   }
