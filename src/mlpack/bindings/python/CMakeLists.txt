@@ -105,6 +105,8 @@ endif ()
 
 add_custom_target(python ALL DEPENDS mlpack)
 add_custom_target(python_copy ALL DEPENDS mlpack)
+# The python_configure target is added later; this is a dummy target.
+add_custom_target(python_configured ALL)
 
 # Copy necessary files after making the mlpack/ directory.
 add_custom_command(TARGET python_copy PRE_BUILD
@@ -162,7 +164,7 @@ add_custom_command(TARGET python POST_BUILD
         ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/copy_artifacts.py
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
 
-add_dependencies(python python_copy)
+add_dependencies(python python_configured)
 
 # Configure installation script file.
 execute_process(COMMAND ${PYTHON_EXECUTABLE}
@@ -203,7 +205,7 @@ if (BUILD_PYTHON_BINDINGS)
       -DBINDING_TYPE=BINDING_TYPE_PYX)
   add_custom_command(TARGET generate_pyx_${name} POST_BUILD
       COMMAND ${CMAKE_COMMAND}
-          -DPROGRAM=${CMAKE_BINARY_DIR}/bin/generate_pyx_${name}
+          -DPROGRAM=$<TARGET_FILE:generate_pyx_${name}>
           -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${name}.pyx
           -P ${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake)
 
@@ -220,7 +222,7 @@ if (BUILD_PYTHON_BINDINGS)
 
   add_dependencies(python build_pyx_${name})
   add_dependencies(build_pyx_${name} generate_pyx_${name})
-  add_dependencies(generate_pyx_${name} python_copy)
+  add_dependencies(generate_pyx_${name} python_configured)
 
   # Add the convenience import to __init__.py.  Note that this happens during
   # configuration.

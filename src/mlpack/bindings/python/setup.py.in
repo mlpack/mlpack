@@ -22,7 +22,7 @@ from setuptools import setup
 from setuptools.extension import Extension
 from Cython.Distutils import build_ext
 
-pyxs='${MLPACK_PYXS}'.split(';')
+pyxs='${MLPACK_PYXS}'.split(' ')
 
 if not '${OpenMP_CXX_FLAGS}':
   extra_link_args=[]
@@ -35,46 +35,49 @@ if os.getenv('NO_BUILD') == '1':
 else:
   cxx_flags = '${CMAKE_CXX_FLAGS}'.strip()
   cxx_flags = re.sub(' +', ' ', cxx_flags)
-  extra_args = ['-DBINDING_TYPE=BINDING_TYPE_PYX',
-                '-std=c++11'] + cxx_flags.split(' ')
+  if cxx_flags:
+    extra_args = ['-DBINDING_TYPE=BINDING_TYPE_PYX',
+                  '-std=c++11',
+                  '-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION',
+                  '${OpenMP_CXX_FLAGS}'] + cxx_flags.split(' ')
+  else:
+    extra_args = ['-DBINDING_TYPE=BINDING_TYPE_PYX',
+                  '-std=c++11',
+                  '-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION',
+                  '${OpenMP_CXX_FLAGS}']
+
   # This is used for parallel builds; CMake will set PYX_TO_BUILD accordingly.
   if module is not None:
     modules=[\
         Extension('mlpack.' + name.split('.')[0],
-                  ['${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/' +
-                      name],
+                  ['mlpack/' + name],
                   language='c++',
                   include_dirs=[ \
                       np.get_include(), \
-                      '${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/'] +
-                      '${CYTHON_INCLUDE_DIRECTORIES}'.split(';'),
-                  libraries=['mlpack', 'boost_serialization'],
-                  library_dirs=['${CMAKE_LIBRARY_OUTPUT_DIRECTORY}'] +
-                                '${MLPACK_LIBRARY_DIRS}'.split(';'),
+                      '${OUTPUT_DIR}/src/mlpack/bindings/python/'] +
+                      '${CYTHON_INCLUDE_DIRECTORIES}'.split(' '),
+                  libraries=['${MLPACK_LIBRARY}', '${Boost_SERIALIZATION_LIBRARY}'],
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
                   extra_link_args=extra_link_args,
                   undef_macros=[] if len("${DISABLE_CFLAGS}") == 0 \
-                      else '${DISABLE_CFLAGS}'.split(';')) \
+                      else '${DISABLE_CFLAGS}'.split(' ')) \
         for name in pyxs if name == module]
   else:
     modules=[\
         Extension('mlpack.' + name.split('.')[0],
-                  ['${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/' +
-                      name],
+                  ['mlpack/' + name],
                   language='c++',
                   include_dirs=[ \
                       np.get_include(), \
-                      '${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/'] +
-                      '${CYTHON_INCLUDE_DIRECTORIES}'.split(';'),
-                  libraries=['mlpack', 'boost_serialization'],
-                  library_dirs=['${CMAKE_LIBRARY_OUTPUT_DIRECTORY}'] +
-                                '${MLPACK_LIBRARY_DIRS}'.split(';'),
+                      '${OUTPUT_DIR}/src/mlpack/bindings/python/'] +
+                      '${CYTHON_INCLUDE_DIRECTORIES}'.split(' '),
+                  libraries=['${MLPACK_LIBRARY}', '${Boost_SERIALIZATION_LIBRARY}'],
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
                   extra_link_args=extra_link_args,
                   undef_macros=[] if len("${DISABLE_CFLAGS}") == 0 \
-                      else '${DISABLE_CFLAGS}'.split(';')) \
+                      else '${DISABLE_CFLAGS}'.split(' ')) \
         for name in pyxs]
 
 setup(name='mlpack',

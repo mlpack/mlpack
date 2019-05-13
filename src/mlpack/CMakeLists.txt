@@ -120,8 +120,26 @@ if (BUILD_PYTHON_BINDINGS)
 
   get_property(CYTHON_INCLUDE_DIRECTORIES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       PROPERTY INCLUDE_DIRECTORIES)
-  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in
-                 ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py)
+  add_custom_target(python_configure
+      COMMAND ${CMAKE_COMMAND}
+          -D SETUP_PY_IN="${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in"
+          -D SETUP_PY_OUT="${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py"
+          -D PACKAGE_VERSION="${PACKAGE_VERSION}"
+          -D Boost_SERIALIZATION_LIBRARY="${Boost_SERIALIZATION_LIBRARY}"
+          -D MLPACK_LIBRARY="$<TARGET_FILE:mlpack>"
+          -D MLPACK_PYXS="${MLPACK_PYXS}"
+          -D OpenMP_CXX_FLAGS="${OpenMP_CXX_FLAGS}"
+          -D DISABLE_CFLAGS="${DISABLE_CFLAGS}"
+          -D CYTHON_INCLUDE_DIRECTORIES="${CYTHON_INCLUDE_DIRECTORIES}"
+          -D OUTPUT_DIR="${CMAKE_BINARY_DIR}"
+          -P "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/ConfigureSetup.cmake"
+      BYPRODUCTS "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py"
+      COMMENT "Configuring setup.py...")
+  add_dependencies(python_configure python_copy)
+  add_dependencies(python_configured python_configure)
+
+#  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in
+#                 ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py)
 endif ()
 
 # If we are building Markdown documentation, we have to run some setup after we
