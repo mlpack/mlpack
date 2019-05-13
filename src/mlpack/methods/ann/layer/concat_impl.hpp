@@ -1,6 +1,7 @@
 /**
  * @file concat_impl.hpp
  * @author Marcus Edel
+ * @author Mehul Kumar Nirala
  *
  * Implementation of the Concat class, which acts as a concatenation contain.
  *
@@ -24,41 +25,34 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
-Concat<InputDataType,
-       OutputDataType,
-       CustomLayers...
-      >::Concat(
-      const bool model,
-      const bool run) :
-      axis(0),
-      useAxis(false),
-      model(model),
-      run(run),
-      channels(1)
+Concat<InputDataType, OutputDataType, CustomLayers...>::Concat(
+    const bool model, const bool run) :
+    axis(0),
+    useAxis(false),
+    model(model),
+    run(run),
+    channels(1)
 {
   parameters.set_size(0, 0);
 }
 
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
-Concat<InputDataType,
-       OutputDataType,
-       CustomLayers...
-      >::Concat(
-      arma::Row<size_t>& inputSize,
-      const size_t axis,
-      const bool model,
-      const bool run) :
-      inputSize(inputSize),
-      axis(axis),
-      useAxis(true),
-      model(model),
-      run(run)
+Concat<InputDataType, OutputDataType, CustomLayers...>::Concat(
+    arma::Row<size_t>& inputSize,
+    const size_t axis,
+    const bool model,
+    const bool run) :
+    inputSize(inputSize),
+    axis(axis),
+    useAxis(true),
+    model(model),
+    run(run)
 {
   parameters.set_size(0, 0);
 
   // Parameters to help calculate the number of channels.
-  size_t  oldColSize = 1, newColSize = 1;
+  size_t oldColSize = 1, newColSize = 1;
   // Axis is specified and useAxis is true.
   if (useAxis)
   {
@@ -69,7 +63,7 @@ Concat<InputDataType,
       // Calculate rowSize, newColSize based on the axis
       // of concatenation. Finally concat along cols and
       // reshape to original format i.e. (input, batch_size).
-      size_t i = std::min(axis + 1, (size_t)inputSize.n_elem);
+      size_t i = std::min(axis + 1, (size_t) inputSize.n_elem);
       for (; i < inputSize.n_elem; ++i)
       {
         newColSize *= inputSize[i];
