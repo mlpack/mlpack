@@ -27,7 +27,7 @@ void BuildFastMKSModel(FastMKS<KernelType>& f,
   // Do we need to build the tree?
   if (base <= 1.0)
   {
-    throw std::invalid_argument("base must be greater than 2");
+    throw std::invalid_argument("base must be greater than 1");
   }
 
   if (f.Naive())
