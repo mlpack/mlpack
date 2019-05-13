@@ -38,12 +38,10 @@ else:
   if cxx_flags:
     extra_args = ['-DBINDING_TYPE=BINDING_TYPE_PYX',
                   '-std=c++11',
-                  '-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION',
                   '${OpenMP_CXX_FLAGS}'] + cxx_flags.split(' ')
   else:
     extra_args = ['-DBINDING_TYPE=BINDING_TYPE_PYX',
                   '-std=c++11',
-                  '-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION',
                   '${OpenMP_CXX_FLAGS}']
 
   # This is used for parallel builds; CMake will set PYX_TO_BUILD accordingly.
