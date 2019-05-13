@@ -122,6 +122,8 @@ BOOST_AUTO_TEST_CASE(FastMKSRefModelTest)
 
   mlpackMain();
 
+  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  SetInputParam("reference", referenceData);
   // Input pre-trained model.
   SetInputParam("input_model",
       std::move(CLI::GetParam<FastMKSModel*>("output_model")));
@@ -399,6 +401,10 @@ BOOST_AUTO_TEST_CASE(FastMKSKernelTest)
   arma::mat queryData(3, 90, arma::fill::randu);
   // Keep some k <= number of reference points same over all.
   SetInputParam("k", (int) 10);
+  // For Hyptan Kernel
+  arma::mat inputData;
+  if (!data::Load("data_3d_mixed.txt", inputData))
+    BOOST_FAIL("Cannot load test dataset data_3d_ind.txt!");
 
   arma::Mat<size_t> indicesCompare;
   arma::mat kernelsCompare;
@@ -407,13 +413,22 @@ BOOST_AUTO_TEST_CASE(FastMKSKernelTest)
   arma::mat kernels;
 
   // Looping over all the kernels
-  for (int i = 0; i < nofkerneltypes; i++)
+  for (size_t i = 0; i < nofkerneltypes; i++)
   {
-    // Same random inputs, different algorithms.
-    SetInputParam("reference", referenceData);
-    SetInputParam("query", queryData);
-    SetInputParam("kernel", kerneltypes[i]);
-
+    if(kerneltypes[i] == "hyptan")
+    {
+      // Same random inputs, different algorithms.
+      SetInputParam("reference", inputData);
+      SetInputParam("query", inputData);
+      SetInputParam("kernel", kerneltypes[i]);
+    }
+    else
+    {
+      // Same random inputs, different algorithms.
+      SetInputParam("reference", referenceData);
+      SetInputParam("query", queryData);
+      SetInputParam("kernel", kerneltypes[i]);
+    }
     mlpackMain();
 
     if (i == 0)
@@ -473,11 +488,15 @@ BOOST_AUTO_TEST_CASE(FastMKSOffsetTest)
 
   bindings::tests::CleanMemory();
 
+  arma::mat inputData;
+  if (!data::Load("data_3d_mixed.txt", inputData))
+    BOOST_FAIL("Cannot load test dataset data_3d_ind.txt!");
+
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["kernel"].wasPassed = false;
   CLI::GetSingleton().Parameters()["offset"].wasPassed = false;
 
-  SetInputParam("reference", referenceData);
+  SetInputParam("reference", inputData);
   SetInputParam("kernel", (std::string)"hyptan");
   SetInputParam("offset", 1.0);
 
@@ -491,7 +510,7 @@ BOOST_AUTO_TEST_CASE(FastMKSOffsetTest)
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["offset"].wasPassed = false;
 
-  SetInputParam("reference", referenceData);
+  SetInputParam("reference", inputData);
   SetInputParam("offset", 4.0);
   mlpackMain();
 
@@ -536,11 +555,12 @@ BOOST_AUTO_TEST_CASE(FastMKSDegreeTest)
 
 BOOST_AUTO_TEST_CASE(FastMKSScaleTest)
 {
-  // 100 points in 3 dimensions.
-  arma::mat referenceData(3, 100, arma::fill::randu);
+  arma::mat inputData;
+  if (!data::Load("data_3d_mixed.txt", inputData))
+    BOOST_FAIL("Cannot load test dataset data_3d_ind.txt!");
 
   // Random input, some k <= number of reference points.
-  SetInputParam("reference", referenceData);
+  SetInputParam("reference", inputData);
   SetInputParam("k", (int) 10);
   SetInputParam("kernel", (std::string)"hyptan");
   SetInputParam("scale", 1.0); // Default value.
@@ -555,10 +575,10 @@ BOOST_AUTO_TEST_CASE(FastMKSScaleTest)
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
   CLI::GetSingleton().Parameters()["scale"].wasPassed = false;
 
-  SetInputParam("reference", referenceData);
-  SetInputParam("scale", 4.0);
+  SetInputParam("reference", inputData);
+  SetInputParam("scale", 1.5);
 
-mlpackMain();
+  mlpackMain();
 
   CheckMatricesNotEqual(hyptanKernel,
       CLI::GetParam<arma::mat>("kernels"));
