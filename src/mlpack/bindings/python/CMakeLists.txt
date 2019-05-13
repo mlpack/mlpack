@@ -40,7 +40,7 @@ if (NOT PY_PANDAS)
   not_found_return("pandas not found; not building Python bindings.")
 endif ()
 
-set(BUILDING_PYTHON_BINDINGS ON)
+set(BUILDING_PYTHON_BINDINGS ON PARENT_SCOPE)
 
 # Nothing in this directory will be compiled into mlpack.
 set(BINDING_SOURCES
@@ -141,7 +141,7 @@ if (BUILD_TESTS)
 endif ()
 
 # Install any dependencies via setuptools automatically.
-add_custom_command(TARGET python_copy POST_BUILD
+add_custom_command(TARGET python_configured POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E env NO_BUILD=1 ${PYTHON_EXECUTABLE}
         ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py build
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)

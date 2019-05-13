@@ -137,9 +137,6 @@ if (BUILDING_PYTHON_BINDINGS)
       COMMENT "Configuring setup.py...")
   add_dependencies(python_configure python_copy)
   add_dependencies(python_configured python_configure)
-
-#  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in
-#                 ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py)
 endif ()
 
 # If we are building Markdown documentation, we have to run some setup after we
