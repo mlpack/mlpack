@@ -44,7 +44,8 @@ BOOST_AUTO_TEST_CASE(WGANMNISTTest)
   size_t noiseDim = 100;
   size_t generatorUpdateStep = 1;
   size_t numSamples = 10;
-  double stepSize = 0.0003;
+  double disStepSize = 0.0003;
+  double genStepSize = 0.0001;
   double eps = 1e-8;
   size_t numEpoches = 1;
   double tolerance = 1e-5;
@@ -58,8 +59,8 @@ BOOST_AUTO_TEST_CASE(WGANMNISTTest)
       << " generatorUpdateStep = " << generatorUpdateStep << std::endl
       << " noiseDim = " << noiseDim << std::endl
       << " numSamples = " << numSamples << std::endl
-      << " stepSize = " << stepSize << std::endl
-      << " numEpoches = " << numEpoches << std::endl
+      << " discriminator step size = " << disStepSize << std::endl
+      << " generator step size = " << genStepSize << std::endl
       << " tolerance = " << tolerance << std::endl
       << " shuffle = " << shuffle << std::endl;
 
@@ -68,6 +69,10 @@ BOOST_AUTO_TEST_CASE(WGANMNISTTest)
   Log::Info << arma::size(trainData) << std::endl;
 
   trainData = trainData.cols(0, datasetMaxCols - 1);
+
+  // Normalize the input data.
+  trainData = trainData - 127.5;
+  trainData = trainData / 127.5;
 
   size_t numIterations = trainData.n_cols * numEpoches;
   numIterations /= batchSize;
@@ -117,8 +122,10 @@ BOOST_AUTO_TEST_CASE(WGANMNISTTest)
 
   // Create WGAN
   GaussianInitialization gaussian(0, 1);
-  ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
-      tolerance, shuffle);
+  ens::Adam discriminatorOptimizer(disStepSize, batchSize, 0.9, 0.999, eps,
+     batchSize, tolerance, shuffle);
+  ens::Adam generatorOptimizer(genStepSize, batchSize, 0.9, 0.999, eps,
+     batchSize, tolerance, shuffle);
   std::function<double()> noiseFunction = [] () {
       return math::RandNormal(0, 1);};
   GAN<FFN<EarthMoverDistance<> >, GaussianInitialization,
@@ -127,10 +134,8 @@ BOOST_AUTO_TEST_CASE(WGANMNISTTest)
       discriminatorPreTrain, multiplier, clippingParameter);
 
   Log::Info << "Training..." << std::endl;
-  double objVal = wgan.Train(trainData, optimizer);
-
-  // Test that objective value returned by GAN::Train() is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  wgan.Train(trainData, discriminatorOptimizer, generatorOptimizer,
+      numIterations);
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;
@@ -156,6 +161,11 @@ BOOST_AUTO_TEST_CASE(WGANMNISTTest)
     generatedData.submat(dim,
         i * dim, 2 * dim - 1, i * dim + dim - 1) = samples;
   }
+
+  // Denormalize output.
+  generatedData = generatedData * (127.5);
+  generatedData = generatedData + 127.5;
+  generatedData = round(generatedData);
 
   Log::Info << "Output generated!" << std::endl;
 }

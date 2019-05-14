@@ -168,6 +168,10 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
 
   trainData = trainData.cols(0, datasetMaxCols - 1);
 
+  // Normalize the input data.
+  trainData = trainData - 127.5;
+  trainData = trainData / 127.5;
+
   size_t numIterations = trainData.n_cols * numEpoches;
   numIterations /= batchSize;
 
@@ -246,6 +250,11 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
     generatedData.submat(dim,
         i * dim, 2 * dim - 1, i * dim + dim - 1) = samples;
   }
+
+  // Denormalize output.
+  generatedData = generatedData * (127.5);
+  generatedData = generatedData + 127.5;
+  generatedData = round(generatedData);
 
   Log::Info << "Output generated!" << std::endl;
 }

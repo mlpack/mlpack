@@ -209,8 +209,7 @@ template<
   typename PolicyType
 >
 template<typename Policy, typename OptimizerType>
-typename std::enable_if<std::is_same<Policy, WGAN>::value ||
-                        std::is_same<Policy, WGANGP>::value, double>::type
+typename std::enable_if<std::is_same<Policy, WGANGP>::value, double>::type
 GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
     arma::mat trainData,
     OptimizerType& Optimizer)

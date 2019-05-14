@@ -111,8 +111,7 @@ class GAN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename Policy = PolicyType, typename OptimizerType>
-  typename std::enable_if<std::is_same<Policy, WGAN>::value ||
-                          std::is_same<Policy, WGANGP>::value, double>::type
+  typename std::enable_if<std::is_same<Policy, WGANGP>::value, double>::type
   Train(arma::mat trainData, OptimizerType& Optimizer);
 
   /**
@@ -134,19 +133,24 @@ class GAN
         size_t maxIterations);
 
   /**
-   * Evaluate function for the WGAN.
-   * This function gives the performance of the WGAN on the current input.
+   * Train function for WGAN.
    *
-   * @param parameters The parameters of the network.
-   * @param i Index of the current input.
-   * @param batchSize Variable to store the present number of inputs.
+   * @param trainData The real data.
+   * @param discriminatorOptimizer Optimizer for discriminator network.
+   * @param generatorOptimizer Optimizer for generator network.
+   * @param maxIterations Number of iterations for which to train GAN.
+   * @param discIterations Number of discriminator iterations in one iteration
+   *        of WGAN (Default: one iteration).
    */
-  template<typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, WGAN>::value,
-                          double>::type
-  Evaluate(const arma::mat& parameters,
-           const size_t i,
-           const size_t batchSize);
+  template<typename Policy = PolicyType,
+           typename DiscOptimizerType,
+           typename GenOptimizerType>
+  typename std::enable_if<std::is_same<Policy, WGAN>::value, void>::type
+  Train(arma::mat trainData,
+        DiscOptimizerType& discriminatorOptimizer,
+        GenOptimizerType& generatorOptimizer,
+        size_t maxIterations,
+        size_t discIterations = 1);
 
   /**
    * Evaluate function for the WGAN-GP.
@@ -162,24 +166,6 @@ class GAN
   Evaluate(const arma::mat& parameters,
            const size_t i,
            const size_t batchSize);
-
-  /**
-   * EvaluateWithGradient function for the WGAN.
-   * This function gives the performance of the WGAN on the
-   * current input, while updating Gradients.
-   *
-   * @param parameters The parameters of the network.
-   * @param i Index of the current input.
-   * @param gradient Variable to store the present gradient.
-   * @param batchSize Variable to store the present number of inputs.
-   */
-  template<typename GradType, typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, WGAN>::value,
-                          double>::type
-  EvaluateWithGradient(const arma::mat& parameters,
-                       const size_t i,
-                       GradType& gradient,
-                       const size_t batchSize);
 
   /**
    * EvaluateWithGradient function for the WGAN-GP.
@@ -198,23 +184,6 @@ class GAN
                        const size_t i,
                        GradType& gradient,
                        const size_t batchSize);
-
-  /**
-   * Gradient function for WGAN.
-   * This function passes the gradient based on which network is being
-   * trained, i.e., Generator or Discriminator.
-   *
-   * @param parameters present parameters of the network.
-   * @param i Index of the predictors.
-   * @param gradient Variable to store the present gradient.
-   * @param batchSize Variable to store the present number of inputs.
-   */
-  template<typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, WGAN>::value, void>::type
-  Gradient(const arma::mat& parameters,
-           const size_t i,
-           arma::mat& gradient,
-           const size_t batchSize);
 
   /**
    * Gradient function for WGAN-GP.
