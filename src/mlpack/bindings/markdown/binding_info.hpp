@@ -30,7 +30,6 @@ namespace markdown {
 class BindingInfo
 {
  public:
-
   //! Return a ProgramDoc object for a given bindingName.
   static util::ProgramDoc& GetProgramDoc(const std::string& bindingName);
 
@@ -42,7 +41,6 @@ class BindingInfo
   static std::string& Language();
 
  private:
-
   //! Private constructor, so that only one instance can be created.
   BindingInfo() { }
 
