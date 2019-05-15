@@ -220,6 +220,9 @@ template<typename KernelType,
 FastMKS<KernelType, MatType, TreeType>&
 FastMKS<KernelType, MatType, TreeType>::operator=(const FastMKS& other)
 {
+  if (this == &other)
+    return *this;
+
   // Clear anything we currently have.
   if (treeOwner)
     delete referenceTree;
