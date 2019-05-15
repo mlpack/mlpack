@@ -32,7 +32,7 @@ void BuildFastMKSModel(FastMKS<KernelType>& f,
 
   if (f.Naive())
   {
-    f.Train(referenceData, k);
+    f.Train(std::move(referenceData), k);
   }
   else
   {
