@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(RewardClippedAcrobotWithDQN)
   model.Add<Linear<>>(32, 3);
 
   // Set up the policy and replay method.
-  GreedyPolicy<RewardClipping<Acrobot>> policy(1.0, 1000, 0.1);
+  GreedyPolicy<RewardClipping<Acrobot>> policy(1.0, 1000, 0.1, 0.99);
   RandomReplay<RewardClipping<Acrobot>> replayMethod(20, 10000);
 
   // Set up Acrobot task and reward clipping wrapper
