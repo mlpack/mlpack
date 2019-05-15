@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(FastMKSRefModelTest)
   mlpackMain();
 
   CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  SetInputParam("reference", referenceData);
+  SetInputParam("reference", std::move(referenceData));
   // Input pre-trained model.
   SetInputParam("input_model",
       std::move(CLI::GetParam<FastMKSModel*>("output_model")));
