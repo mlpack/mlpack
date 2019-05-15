@@ -415,7 +415,7 @@ BOOST_AUTO_TEST_CASE(FastMKSKernelTest)
   // Looping over all the kernels
   for (size_t i = 0; i < nofkerneltypes; i++)
   {
-    if(kerneltypes[i] == "hyptan")
+    if (kerneltypes[i] == "hyptan")
     {
       // Same random inputs, different algorithms.
       SetInputParam("reference", inputData);
