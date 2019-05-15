@@ -1,5 +1,5 @@
 /**
- * @file minmaxscaler.hpp
+ * @file min_max_scaler.hpp
  * @author Jeffin Sam
  *
  * MinMaxScaler class to scale features.
@@ -23,13 +23,20 @@ namespace data {
  * Given an input dataset this class helps you to scale each
  * feature to a given range.
  *
+ * \[z = scale * x + scaleMin - min(x) * scale\]
+ * \[scale = (scaleMax - scaleMin) / (max(x) - min(x))\]
+ *
+ * where scaleMin, scaleMax = feature_range and min(x), max(x)
+ * are the minimum and maximum value of x respectively.
+ *
  * @code
- * arma::Mat input = loadData();
- * arma::Mat output;
+ * arma::mat input;
+ * Load("train.csv", input);
+ * arma::mat output;
  *
  * // Scale the features.
  * MinMaxScaler scale;
- * scale.Tranform(input, output);
+ * scale.Transform(input, output);
  *
  * // Retransform the input.
  * scale.InverseTransform(output, input);
@@ -46,12 +53,12 @@ class MinMaxScaler
   */
   MinMaxScaler(const double min = 0, const double max = 1)
   {
-    scalemin = min;
-    scalemax = max;
+    scaleMin = min;
+    scaleMax = max;
   }
 
   /**
-  * Function to scale Features.
+  * Function to scale features.
   *
   * @param input Dataset to scale features.
   * @param output Output matrix with scaled features.
@@ -64,22 +71,17 @@ class MinMaxScaler
     itemMax = arma::max(input, 1);
     scale = itemMax - itemMin;
     // Handling zeros in scale vector.
-    for (size_t i = 0; i < scale.n_elem; i++)
-    {
-      if (scale(i) == 0)
-      {
-        scale(i) = 1;
-      }
-    }
-    scale = (scalemax - scalemin) / scale;
+    scale.for_each( [](arma::vec::elem_type& val) { val =
+        (val == 0) ? 1 : val; } );
+    scale = (scaleMax - scaleMin) / scale;
     scalerowmin.copy_size(itemMin);
-    scalerowmin.fill(scalemin);
+    scalerowmin.fill(scaleMin);
     scalerowmin = scalerowmin - itemMin % scale;
     output = (input.each_col() % scale).each_col() + scalerowmin; 
   }
 
   /**
-  * Function to retrive original dataset.
+  * Function to retrieve original dataset.
   *
   * @param input Scaled dataset.
   * @param output Output matrix with original Dataset.
@@ -88,33 +90,33 @@ class MinMaxScaler
   void InverseTransform(const MatType& input, MatType& output)
   {
     output.copy_size(input);
-    output = (input.each_col() - scalerowmin).each_col() % (1.0 / scale);
+    output = (input.each_col() - scalerowmin).each_col() / scale;
   }
 
   //! Get the Min row vector.
-  const arma::colvec& ItemMin() const { return itemMin; }
+  const arma::vec& ItemMin() const { return itemMin; }
   //! Get the Max row vector.
-  const arma::colvec& ItemMax() const { return itemMax; }
+  const arma::vec& ItemMax() const { return itemMax; }
   //! Get the Scale row vector.
-  const arma::colvec& Scale() const { return scale; }
+  const arma::vec& Scale() const { return scale; }
   //! Get the upper range parameter.
-  const double ScaleMax() const { return scalemax; }
+  const double ScaleMax() const { return scaleMax; }
   //! Get the lower range parameter.
-  const double ScaleMin() const { return scalemin; }
+  const double ScaleMin() const { return scaleMin; }
 
  private:
   // Vector which holds minimum of each feature.
-  arma::colvec itemMin;
+  arma::vec itemMin;
   // Vector which holds maximum of each feature.
-  arma::colvec itemMax;
+  arma::vec itemMax;
   // Scale vector which is used to scale up each feature.
-  arma::colvec scale;
+  arma::vec scale;
   // Lower value for range.
-  double scalemin;
+  double scaleMin;
   // Upper value for range.
-  double scalemax;
+  double scaleMax;
   // Column vector of scalemin
-  arma::colvec scalerowmin;
+  arma::vec scalerowmin;
 }; // class MinMaxScaler
 
 } // namespace data

@@ -14,10 +14,6 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/data/load_arff.hpp>
 #include <mlpack/core/data/map_policies/missing_policy.hpp>
-#include <mlpack/core/data/scaler_methods/minmaxscaler.hpp>
-#include <mlpack/core/data/scaler_methods/maxabsscaler.hpp>
-#include <mlpack/core/data/scaler_methods/standardscaler.hpp>
-#include <mlpack/core/data/scaler_methods/meannormalization.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -1706,78 +1702,6 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest04)
     BOOST_REQUIRE_EQUAL(info.UnmapString(1, 1), "1");
 
     remove("test.csv");
-}
-
-/**
- * Test For MinMax Scaler Class.
- */
-BOOST_AUTO_TEST_CASE(MinMaxScalerTest)
-{
-    arma::mat dataset = "-1 -0.5 0 1;"
-                        "2 6 10 18;";
-    arma::mat scaleddataset;
-    arma::mat temp;
-    arma::mat scaled = "0 0.2500 0.5000 1.000;"
-                       "0 0.2500 0.5000 1.000;";
-    data::MinMaxScaler scale;
-    scale.Transform(dataset, scaleddataset);
-    scale.InverseTransform(scaleddataset, temp);
-    CheckMatrices(scaleddataset, scaled);
-    CheckMatrices(dataset, temp);
-}
-
-/**
- * Test For MaxAbs Scaler Class.
- */
-BOOST_AUTO_TEST_CASE(MaxAbsScalerTest)
-{
-    arma::mat dataset = "-1 -0.5 0 1;"
-                        "2 6 10 18;";
-    arma::mat scaleddataset;
-    arma::mat temp;
-    arma::mat scaled = "-1 -0.5 0 1;"
-                       "0.1111111111 0.3333333333 0.55555556 1.0000;";
-    data::MaxAbsScaler scale;
-    scale.Transform(dataset, scaleddataset);
-    scale.InverseTransform(scaleddataset, temp);
-    CheckMatrices(scaleddataset, scaled);
-    CheckMatrices(dataset, temp);
-}
-
-/**
- * Test For Standard Scaler Class.
- */
-BOOST_AUTO_TEST_CASE(StandardScalerTest)
-{
-    arma::mat dataset = "-1 -0.5 0 1;"
-                        "2 6 10 18;";
-    arma::mat scaleddataset;
-    arma::mat temp;
-    arma::mat scaled = "-1.18321596 -0.50709255  0.16903085 1.52127766;"
-                       "-1.18321596 -0.50709255  0.16903085 1.52127766;";
-    data::StandardScaler scale;
-    scale.Transform(dataset, scaleddataset);
-    scale.InverseTransform(scaleddataset, temp);
-    CheckMatrices(scaleddataset, scaled);
-    CheckMatrices(dataset, temp);
-}
-
-/**
- * Test For MeanNormalization Scaler Class.
- */
-BOOST_AUTO_TEST_CASE(MeanNormalizationTest)
-{
-    arma::mat dataset = "-1 -0.5 0 1;"
-                        "2 6 10 18;";
-    arma::mat scaleddataset;
-    arma::mat temp;
-    arma::mat scaled = "-0.43750000000 -0.187500000 0.062500000 0.562500000;"
-                       "-0.43750000000 -0.187500000 0.062500000 0.562500000;";
-    data::MeanNormalization scale;
-    scale.Transform(dataset, scaleddataset);
-    scale.InverseTransform(scaleddataset, temp);
-    CheckMatrices(scaleddataset, scaled);
-    CheckMatrices(dataset, temp);
 }
 
 /**

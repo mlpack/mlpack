@@ -1,10 +1,10 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  minmaxscaler.hpp
-  maxabsscaler.hpp
-  standardscaler.hpp
-  meannormalization.hpp
+  min_max_scaler.hpp
+  max_abs_scaler.hpp
+  standard_scaler.hpp
+  mean_normalization.hpp
 )
 
 # Add directory name to sources.

@@ -108,6 +108,7 @@ add_executable(mlpack_test
   timer_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
+  scaling_test.cpp
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
