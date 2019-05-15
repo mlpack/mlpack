@@ -328,7 +328,7 @@ void FastMKS<KernelType, MatType, TreeType>::Train(MatType&& referenceSet)
   }
   else
   {
-    this->referenceSet = MatType(std::move(referenceSet));
+    this->referenceSet = new MatType(std::move(referenceSet));
     this->setOwner = true;
   }
 }
@@ -356,7 +356,7 @@ void FastMKS<KernelType, MatType, TreeType>::Train(MatType&& referenceSet,
   }
   else
   {
-    this->referenceSet = MatType(std::move(referenceSet));
+    this->referenceSet = new MatType(std::move(referenceSet));
     this->setOwner = true;
   }
 }
