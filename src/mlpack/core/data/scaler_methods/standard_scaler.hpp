@@ -58,8 +58,8 @@ class StandardScaler
     itemStdev = arma::stddev(input, 1, 1);
 
     // Handling zeros in scale vector.
-    itemStdev.for_each( [](arma::vec::elem_type& val) { val =
-        (val == 0) ? 1 : val; } );
+    itemStdev.for_each([](arma::vec::elem_type& val) { val =
+        (val == 0) ? 1 : val; });
 
     output = (input.each_col() - itemMean).each_col() / itemStdev;
   }
@@ -87,10 +87,9 @@ class StandardScaler
   arma::vec itemMean;
   // Vector which holds standard devation of each feature
   arma::vec itemStdev;
-
 }; // class StandardScaler
 
-} // namespace dataset
+} // namespace data
 } // namespace mlpack
 
 #endif

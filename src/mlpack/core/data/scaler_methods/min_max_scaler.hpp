@@ -71,13 +71,13 @@ class MinMaxScaler
     itemMax = arma::max(input, 1);
     scale = itemMax - itemMin;
     // Handling zeros in scale vector.
-    scale.for_each( [](arma::vec::elem_type& val) { val =
-        (val == 0) ? 1 : val; } );
+    scale.for_each([](arma::vec::elem_type& val) { val =
+        (val == 0) ? 1 : val; });
     scale = (scaleMax - scaleMin) / scale;
     scalerowmin.copy_size(itemMin);
     scalerowmin.fill(scaleMin);
     scalerowmin = scalerowmin - itemMin % scale;
-    output = (input.each_col() % scale).each_col() + scalerowmin; 
+    output = (input.each_col() % scale).each_col() + scalerowmin;
   }
 
   /**

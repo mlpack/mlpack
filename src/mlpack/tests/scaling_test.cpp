@@ -126,7 +126,6 @@ BOOST_AUTO_TEST_CASE(ZeroScaleTest)
   scale.InverseTransform(scaleddataset, temp);
   CheckMatrices(scaleddataset, scaled);
   CheckMatrices(dataset, temp);
-
 }
 
 BOOST_AUTO_TEST_SUITE_END();

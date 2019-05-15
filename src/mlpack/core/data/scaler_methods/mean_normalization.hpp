@@ -58,8 +58,8 @@ class MeanNormalization
     itemMax = arma::max(input, 1);
     scale = itemMax - itemMin;
     // Handling zeros in scale vector.
-    scale.for_each( [](arma::vec::elem_type& val) { val =
-        (val == 0) ? 1 : val; } );
+    scale.for_each([](arma::vec::elem_type& val) { val =
+        (val == 0) ? 1 : val; });
     output = (input.each_col() - itemMean).each_col() / scale;
   }
 

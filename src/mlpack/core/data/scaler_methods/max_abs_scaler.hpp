@@ -57,8 +57,8 @@ class MaxAbsScaler
     itemMax = arma::max(input, 1);
     scale = arma::max(arma::abs(itemMin), arma::abs(itemMax));
     // Handling zeros in scale vector.
-    scale.for_each( [](arma::vec::elem_type& val) { val =
-        (val == 0) ? 1 : val; } );
+    scale.for_each([](arma::vec::elem_type& val) { val =
+        (val == 0) ? 1 : val; });
     output = input.each_col() / scale;
   }
 
@@ -72,7 +72,7 @@ class MaxAbsScaler
   void InverseTransform(const MatType& input, MatType& output)
   {
     output.copy_size(input);
-    output = input.each_col() % scale; 
+    output = input.each_col() % scale;
   }
 
   //! Get the Min row vector.
