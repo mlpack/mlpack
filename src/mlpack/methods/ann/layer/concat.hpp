@@ -1,6 +1,7 @@
 /**
  * @file concat.hpp
  * @author Marcus Edel
+ * @author Mehul Kumar Nirala
  *
  * Definition of the Concat class, which acts as a concatenation contain.
  *
@@ -216,15 +217,15 @@ class Concat
   //! Parameter which indicates whether to use the axis of concatenation.
   bool useAxis;
 
-  //! Parameter to store channels.
-  size_t channels;
-
   //! Parameter which indicates if the modules should be exposed.
   bool model;
 
   //! Parameter which indicates if the Forward/Backward method should be called
   //! before merging the output.
   bool run;
+
+  //! Parameter to store channels.
+  size_t channels;
 
   //! Locally-stored network modules.
   std::vector<LayerTypes<CustomLayers...> > network;
