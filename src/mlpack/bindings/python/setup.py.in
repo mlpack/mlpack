@@ -54,7 +54,10 @@ else:
                       np.get_include(), \
                       '${OUTPUT_DIR}/src/mlpack/bindings/python/'] +
                       '${CYTHON_INCLUDE_DIRECTORIES}'.split(' '),
-                  libraries=['${MLPACK_LIBRARY}', '${Boost_SERIALIZATION_LIBRARY}'],
+                  libraries=['${MLPACK_LIB_NAME}',
+                             '${Boost_SERIALIZATION_LIB_NAME}'],
+                  library_dirs=['${MLPACK_LIBDIR}'] +
+                                '${BOOST_LIBDIRS}'.split(' '),
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
                   extra_link_args=extra_link_args,
@@ -70,7 +73,10 @@ else:
                       np.get_include(), \
                       '${OUTPUT_DIR}/src/mlpack/bindings/python/'] +
                       '${CYTHON_INCLUDE_DIRECTORIES}'.split(' '),
-                  libraries=['${MLPACK_LIBRARY}', '${Boost_SERIALIZATION_LIBRARY}'],
+                  libraries=['${MLPACK_LIB_NAME}',
+                             '${Boost_SERIALIZATION_LIB_NAME}'],
+                  library_dirs=['${MLPACK_LIBDIR}'] +
+                                '${BOOST_LIBDIRS}'.split(' '),
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
                   extra_link_args=extra_link_args,
