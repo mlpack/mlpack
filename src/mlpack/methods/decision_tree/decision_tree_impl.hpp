@@ -596,7 +596,8 @@ double DecisionTree<FitnessFunction,
       numClasses,
       UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   size_t bestDim = datasetInfo.Dimensionality(); // This means "no split".
-  for (size_t i = dimensionSelector.Begin(); i != dimensionSelector.End();
+  const size_t end = dimensionSelector.End();
+  for (size_t i = dimensionSelector.Begin(); i != end;
        i = dimensionSelector.Next())
   {
     double dimGain = -DBL_MAX;

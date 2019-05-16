@@ -72,39 +72,35 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     classWeightSums.zeros(numClasses, 2);
     totalWeight = arma::accu(sortedWeights);
     bestFoundGain *= totalWeight;
+
+    // Initialize the counts.
+    // These points have to be on the left.
+    for (size_t i = 0; i < minimum - 1; ++i)
+    {
+      classWeightSums(sortedLabels[i], 0) += sortedWeights[i];
+      totalLeftWeight += sortedWeights[i];
+    }
+
+    // These points have to be on the right.
+    for (size_t i = minimum - 1; i < data.n_elem; ++i)
+    {
+      classWeightSums(sortedLabels[i], 1) += sortedWeights[i];
+      totalRightWeight += sortedWeights[i];
+    }
   }
   else
   {
     classCounts.zeros(numClasses, 2);
     bestFoundGain *= data.n_elem;
-  }
 
-  // Initialize the counts.
-  // These points have to be on the left.
-  for (size_t i = 0; i < minimum - 1; ++i)
-  {
-    if (UseWeights)
-    {
-      classWeightSums(sortedLabels[i], 0) += sortedWeights[i];
-      totalLeftWeight += sortedWeights[i];
-    }
-    else
-    {
+    // Initialize the counts.
+    // These points have to be on the left.
+    for (size_t i = 0; i < minimum - 1; ++i)
       ++classCounts(sortedLabels[i], 0);
-    }
-  }
-  // These points have to be on the right.
-  for (size_t i = minimum - 1; i < data.n_elem; ++i)
-  {
-    if (UseWeights)
-    {
-      classWeightSums(sortedLabels[i], 1) += sortedWeights[i];
-      totalRightWeight += sortedWeights[i];
-    }
-    else
-    {
+
+    // These points have to be on the right.
+    for (size_t i = minimum - 1; i < data.n_elem; ++i)
       ++classCounts(sortedLabels[i], 1);
-    }
   }
 
   for (size_t index = minimum; index < data.n_elem - minimum; ++index)
