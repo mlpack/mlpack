@@ -13,7 +13,7 @@
 #define MLPACK_METHODS_FASTMKS_IP_METRIC_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "ip_metric_impl.hpp"
+#include "ip_metric.hpp"
 
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
