@@ -132,7 +132,7 @@ if (BUILDING_PYTHON_BINDINGS)
           -D DISABLE_CFLAGS="${DISABLE_CFLAGS}"
           -D CYTHON_INCLUDE_DIRECTORIES="${CYTHON_INCLUDE_DIRECTORIES}"
           -D MLPACK_LIBDIR="$<TARGET_FILE_DIR:mlpack>"
-          -D BOOST_LIBDIRS="${BOOST_LIBRARY_DIRS}"
+          -D BOOST_LIBDIRS="${Boost_LIBRARY_DIRS}"
           -D OUTPUT_DIR="${CMAKE_BINARY_DIR}"
           -P "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/ConfigureSetup.cmake"
       BYPRODUCTS "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py"
