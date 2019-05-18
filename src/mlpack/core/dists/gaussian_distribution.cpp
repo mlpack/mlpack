@@ -50,7 +50,7 @@ void GaussianDistribution::FactorCovariance()
           << std::endl;
     return;
   }
-  if ((arma::chol(covLower, sym_cholmatrix, "lower") == false))
+  if (arma::chol(covLower, sym_cholmatrix, "lower") == false)
   {
     Log::Warn << "Cholesky Decomposition failed  ."
           << std::endl;
