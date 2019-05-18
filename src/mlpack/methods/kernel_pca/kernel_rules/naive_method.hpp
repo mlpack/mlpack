@@ -76,13 +76,13 @@ class NaiveKernelRule
   // Check if Eigen Value exists, if not raise an error log.
   if (sym_x.is_empty())
   {
-    Log::Warn << "Eigen Decompositon failed as Matrix is empty ."
+    Log::Fatal << "Eigen Decompositon failed as Matrix is empty ."
           << std::endl;
     return;
   }
   if ((arma::eig_sym(eigval, eigvec, sym_x) == false))
   {
-    Log::Warn << "Eigen Decompositon failed as Eigen Value does not exists ."
+    Log::Fatal << "Eigen Decompositon failed as Eigen Value does not exists ."
           << std::endl;
     return;
   }
