@@ -21,7 +21,7 @@ GaussianDistribution::GaussianDistribution(const arma::vec& mean,
                                            const arma::mat& covariance)
   : mean(mean)
 {
-  logDetCov(0.0);
+  logDetCov;
   Covariance(covariance);
 }
 
