@@ -48,6 +48,29 @@ IPMetric<KernelType>::~IPMetric()
 }
 
 template<typename KernelType>
+IPMetric<KernelType>::IPMetric(const IPMetric& other) :
+  kernel(other.kernel),
+  kernelOwner(other.kernelOwner)
+{
+  // Nothing to do.
+}
+
+template<typename KernelType>
+IPMetric<KernelType>& IPMetric<KernelType>::operator=(const IPMetric& other)
+{
+  if (this == &other)
+    return *this;
+
+  if(kernelOwner)
+    delete kernel;
+
+  kernel = NULL;
+  kernel = new KernelType(*other.kernel);
+  kernelOwner = true;
+  return *this;
+}
+
+template<typename KernelType>
 template<typename Vec1Type, typename Vec2Type>
 inline typename Vec1Type::elem_type IPMetric<KernelType>::Evaluate(
     const Vec1Type& a,
