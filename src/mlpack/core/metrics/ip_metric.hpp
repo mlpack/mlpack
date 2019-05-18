@@ -43,7 +43,7 @@ class IPMetric
 
   //! Copy the parameters of the given metric.
   IPMetric(const IPMetric& other);
-  
+
   //! Assign this metric to be a copy of the given metric.
   IPMetric& operator=(const IPMetric& other);
 

@@ -292,8 +292,7 @@ BOOST_AUTO_TEST_CASE(FastMKSNaiveModeTest)
 }
 
 /*
- * Ensure that single-tree search returns the same result
- * as dual-tree search
+ * Ensure that single-tree search returns the same result as dual-tree search.
  */
 BOOST_AUTO_TEST_CASE(FastMKSTreeTest)
 {
@@ -329,8 +328,8 @@ BOOST_AUTO_TEST_CASE(FastMKSTreeTest)
 }
 
 /*
- * Ensure that we get almost same results in cover tree
- * search mode when different basis is specified.
+ * Ensure that we get almost same results in cover tree search mode when
+ * different basis is specified.
  */
 BOOST_AUTO_TEST_CASE(FastMKSBasisTest)
 {
@@ -370,8 +369,8 @@ BOOST_AUTO_TEST_CASE(FastMKSBasisTest)
 }
 
 /**
-  * Check that we can't specify base less than 1.
-  */
+ * Check that we can't specify base less than 1.
+ */
 BOOST_AUTO_TEST_CASE(FastMKSBaseTest)
 {
   // 100 points in 3 dimensions.
@@ -388,8 +387,8 @@ BOOST_AUTO_TEST_CASE(FastMKSBaseTest)
 }
 
 /**
-  * Ensure that different kernels returns different results.
-  */
+ * Ensure that different kernels returns different results.
+ */
 BOOST_AUTO_TEST_CASE(FastMKSKernelTest)
 {
   std::string kerneltypes[] = {"polynomial", "cosine", "gaussian",
@@ -453,11 +452,9 @@ BOOST_AUTO_TEST_CASE(FastMKSKernelTest)
   }
 }
 
-
-/** Ensure that offset affects the final result of polynomial
- * and hyptan kernel
+/**
+ * Ensure that offset affects the final result of polynomial and hyptan kernel.
  */
-
 BOOST_AUTO_TEST_CASE(FastMKSOffsetTest)
 {
   // 100 points in 3 dimensions.
@@ -518,9 +515,9 @@ BOOST_AUTO_TEST_CASE(FastMKSOffsetTest)
       CLI::GetParam<arma::mat>("kernels"));
 }
 
-/** Ensure that degree affects the final result of polynomial kernel
+/**
+ * Ensure that degree affects the final result of polynomial kernel.
  */
-
 BOOST_AUTO_TEST_CASE(FastMKSDegreeTest)
 {
   // 100 points in 3 dimensions.
@@ -550,9 +547,9 @@ BOOST_AUTO_TEST_CASE(FastMKSDegreeTest)
       CLI::GetParam<arma::mat>("kernels"));
 }
 
-/** Ensure that scale affects the final result of hyptan kernel
+/**
+ * Ensure that scale affects the final result of hyptan kernel.
  */
-
 BOOST_AUTO_TEST_CASE(FastMKSScaleTest)
 {
   arma::mat inputData;
@@ -584,10 +581,10 @@ BOOST_AUTO_TEST_CASE(FastMKSScaleTest)
       CLI::GetParam<arma::mat>("kernels"));
 }
 
-/** Ensure that bandwidth affects the final result of Gaussian, Epanechnikov,
- *  and triangular kernel
+/**
+ * Ensure that bandwidth affects the final result of Gaussian, Epanechnikov, and
+ * triangular kernel.
  */
-
 BOOST_AUTO_TEST_CASE(FastMKSBandwidthTest)
 {
   // 100 points in 3 dimensions.
