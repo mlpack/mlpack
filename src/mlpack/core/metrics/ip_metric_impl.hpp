@@ -61,7 +61,7 @@ IPMetric<KernelType>& IPMetric<KernelType>::operator=(const IPMetric& other)
   if (this == &other)
     return *this;
 
-  if(kernelOwner)
+  if (kernelOwner)
     delete kernel;
 
   kernel = NULL;
