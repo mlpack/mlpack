@@ -161,7 +161,7 @@ static void mlpackMain()
   ReportIgnoredParam({{ "test", false }}, "test_labels");
 
   RequireAtLeastOnePassed({ "test", "output_model", "print_training_accuracy" },
-      "the trained forest model will not be used or saved");
+      false, "the trained forest model will not be used or saved");
 
   if (CLI::HasParam("training"))
   {

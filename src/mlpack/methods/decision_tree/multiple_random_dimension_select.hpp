@@ -30,6 +30,7 @@ class MultipleRandomDimensionSelect
    */
   MultipleRandomDimensionSelect(const size_t numDimensions = 0) :
         numDimensions(numDimensions),
+        i(0),
         dimensions(0)
   { }
 

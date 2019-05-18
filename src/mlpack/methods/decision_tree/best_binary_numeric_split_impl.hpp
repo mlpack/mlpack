@@ -64,7 +64,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   // We need to count the number of points for each class.
   arma::Mat<size_t> classCounts;
   arma::mat classWeightSums;
-  double totalWeight;
+  double totalWeight = 0.0;
   double totalLeftWeight = 0.0;
   double totalRightWeight = 0.0;
   if (UseWeights)
