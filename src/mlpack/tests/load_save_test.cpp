@@ -15,7 +15,6 @@
 #include <mlpack/core/data/load_arff.hpp>
 #include <mlpack/core/data/dict_encoding.hpp>
 #include <mlpack/core/data/map_policies/missing_policy.hpp>
-
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
@@ -928,6 +927,30 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
     cnt[it->second]++;
     BOOST_REQUIRE_EQUAL(cnt[it->second], 1);
   }
+}
+
+/**
+ * Test one hot encoding.
+ */
+BOOST_AUTO_TEST_CASE(OneHotEncodingTest)
+{
+  arma::Mat<size_t> matrix;
+  matrix = "1 0;"
+           "0 1;"
+           "1 0;"
+           "1 0;"
+           "1 0;"
+           "1 0;"
+           "0 1;"
+           "1 0;";
+// Output matrix to save onehotencoding results.
+  arma::Mat<size_t> output;
+  arma::irowvec labels("-1 1 -1 -1 -1 -1 1 -1");
+  data::OneHotEncoding(labels, output);
+
+  BOOST_REQUIRE_EQUAL(matrix.n_cols, output.n_cols);
+  BOOST_REQUIRE_EQUAL(matrix.n_rows, output.n_rows);
+  CheckMatrices(output, matrix);
 }
 
 /**

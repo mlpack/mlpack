@@ -1,18 +1,13 @@
-# Define the files we need to compile.
+# Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  arma_extend.hpp
-  fn_inplace_reshape.hpp
-  hdf5_misc.hpp
-  SpMat_extra_bones.hpp
-  SpMat_extra_meat.hpp
-  Mat_extra_bones.hpp
-  Mat_extra_meat.hpp
-  Cube_extra_bones.hpp
-  Cube_extra_meat.hpp
+  min_max_scaler.hpp
+  max_abs_scaler.hpp
+  standard_scaler.hpp
+  mean_normalization.hpp
 )
 
-# add directory name to sources
+# Add directory name to sources.
 set(DIR_SRCS)
 foreach(file ${SOURCES})
   set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})

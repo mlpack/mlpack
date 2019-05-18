@@ -461,7 +461,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionRandomTest)
 
   // Now make sure that reflects the actual distribution.
   arma::vec obsMean = arma::mean(obs, 1);
-  arma::mat obsCov = ccov(obs);
+  arma::mat obsCov = mlpack::math::ColumnCovariance(obs);
 
   // 10% tolerance because this can be noisy.
   BOOST_REQUIRE_CLOSE(obsMean[0], mean[0], 10.0);
@@ -496,7 +496,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainTest)
 
   // Find actual mean and covariance of data.
   arma::vec actualMean = arma::mean(observations, 1);
-  arma::mat actualCov = ccov(observations);
+  arma::mat actualCov = mlpack::math::ColumnCovariance(observations);
 
   d.Train(observations);
 
@@ -1418,7 +1418,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionRandomTest)
 
   // Make sure that reflects the actual distribution.
   arma::vec obsMean = arma::mean(obs, 1);
-  arma::mat obsCov = arma::ccov(obs);
+  arma::mat obsCov = mlpack::math::ColumnCovariance(obs);
 
   // 10% tolerance because this can be noisy.
   BOOST_REQUIRE_CLOSE(obsMean(0), mean(0), 10.0);
@@ -1446,7 +1446,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionTrainTest)
 
   // Calculate the actual mean and covariance of data using armadillo.
   arma::vec actualMean = arma::mean(observations, 1);
-  arma::mat actualCov = arma::ccov(observations);
+  arma::mat actualCov = mlpack::math::ColumnCovariance(observations);
 
   // Estimate the parameters.
   d.Train(observations);
