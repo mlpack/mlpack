@@ -26,6 +26,8 @@ set(SOURCES
   binarize.hpp
   dict_encoding.hpp
   dict_encoding_impl.hpp
+  one_hot_encoding.hpp
+  one_hot_encoding_impl.hpp
 )
 
 # add directory name to sources
