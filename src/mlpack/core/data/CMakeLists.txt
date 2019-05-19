@@ -24,10 +24,11 @@ set(SOURCES
   split_data.hpp
   imputer.hpp
   binarize.hpp
-  dict_encoding.hpp
-  dict_encoding_impl.hpp
+  dictionary_encoding.hpp
+  dictionary_encoding_impl.hpp
   one_hot_encoding.hpp
   one_hot_encoding_impl.hpp
+  tokenizer.hpp
 )
 
 # add directory name to sources

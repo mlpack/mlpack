@@ -13,7 +13,6 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/data/load_arff.hpp>
-#include <mlpack/core/data/dict_encoding.hpp>
 #include <mlpack/core/data/map_policies/missing_policy.hpp>
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -905,29 +904,6 @@ BOOST_AUTO_TEST_CASE(SaveHDF5Test)
 }
 
 #endif
-
-
-/**
- * Test dictionary encoding.
- */
-BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
-{
-  std::vector<string>arr(3);
-  arr[0] = "hello how are you";
-  arr[1] = "i am good";
-  arr[2] = "Good how are you";
-  arma::mat output;
-  data::DicitonaryEncoding en;
-  en.DictEncode(arr, output);
-  const std::unordered_map<std::string, size_t>maps = en.Mappings();
-  // Checking that everying is mapped to different numbers
-  std::unordered_map<size_t, size_t>cnt;
-  for (auto it = maps.begin(); it != maps.end(); it++)
-  {
-    cnt[it->second]++;
-    BOOST_REQUIRE_EQUAL(cnt[it->second], 1);
-  }
-}
 
 /**
  * Test one hot encoding.
