@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingCustomTest)
   data::DicitonaryEncoding en;
   // Passing a empty string to encode characters
   en.DictEncode(arr, "bad" ,
-        [](boost::string_view& str,boost::string_view& deliminator) 
+        [](boost::string_view& str, boost::string_view& deliminator)
         {
           if (str.empty())
           {
@@ -69,11 +69,10 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingCustomTest)
             str.clear();
             return retval;
           }
-          boost::string_view retval = str.substr (0,pos);
+          boost::string_view retval = str.substr(0, pos);
           str.remove_prefix(pos + deliminator.length());
           return retval;
-        },output
-        );
+        }, output);
   const std::unordered_map<std::string, size_t>maps = en.Mappings();
   // Checking that everying is mapped to different numbers
   std::unordered_map<size_t, size_t>cnt;

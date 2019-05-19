@@ -25,6 +25,14 @@
   #include <boost/serialization/unordered_map.hpp>
 #endif
 
+#if BOOST_VERSION < 106100
+  // Backported unordered_map.
+  #include "mlpack/core/boost_backport/string_view.hpp"
+#else
+  // Boost's version.
+  #include <boost/utility/string_view.hpp>
+#endif
+
 #if BOOST_VERSION == 105800
   /**
    * Boost versions 1.58.0 and earlier have a different vector serialization

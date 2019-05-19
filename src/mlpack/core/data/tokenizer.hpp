@@ -13,7 +13,6 @@
 #define MLPACK_CORE_DATA_TOKENIZER_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <boost/utility/string_view.hpp>
 
 namespace mlpack {
 namespace data {

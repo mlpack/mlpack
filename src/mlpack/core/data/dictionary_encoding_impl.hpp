@@ -28,10 +28,10 @@ void DicitonaryEncoding::CreateMap(std::string& strings,
     std::string delimiter)
 {
   // Empty string mean encoding char by char
-  if(delimiter == "")
+  if (delimiter == "")
   {
     CreateMap(strings, delimiter,
-        [](boost::string_view& str, boost::string_view ) 
+        [](boost::string_view& str, boost::string_view )
         {
           if (str.empty())
           {
@@ -40,8 +40,7 @@ void DicitonaryEncoding::CreateMap(std::string& strings,
           boost::string_view retval = str.substr(0, 1);
           str.remove_prefix(1);
           return retval;
-        }
-        );
+        });
   }
   else
   {
@@ -76,7 +75,7 @@ void DicitonaryEncoding::DictEncode(const std::vector<std::string>& strings,
   if (delimiter == "")
   {
     DictEncode(strings, delimiter,
-        [](boost::string_view& str,boost::string_view ) 
+        [](boost::string_view& str, boost::string_view)
         {
           if (str.empty())
           {
@@ -85,12 +84,11 @@ void DicitonaryEncoding::DictEncode(const std::vector<std::string>& strings,
           boost::string_view retval = str.substr(0, 1);
           str.remove_prefix(1);
           return retval;
-        }, output
-        );
+        }, output);
   }
   else
   {
-    DictEncode(strings, delimiter, data::Tokenizer(), output); 
+    DictEncode(strings, delimiter, data::Tokenizer(), output);
   }
 }
 
@@ -104,8 +102,8 @@ void DicitonaryEncoding::DictEncode(const std::vector<std::string>& strings,
   boost::string_view strdelimiter(delimiter);
   boost::string_view token;
   std::vector< std::vector<boost::string_view> > dataset;
-  size_t colSize = 0 ;
-  for (size_t i = 0; i<strings.size(); i++)
+  size_t colSize = 0;
+  for (size_t i = 0; i < strings.size(); i++)
   {
     strView = strings[i];
     token = tokenizer(strView, strdelimiter);
@@ -113,7 +111,7 @@ void DicitonaryEncoding::DictEncode(const std::vector<std::string>& strings,
     while (!token.empty())
     {
       dataset[i].push_back(token);
-      colSize = std::max (colSize, dataset[i].size());
+      colSize = std::max(colSize, dataset[i].size());
       token = tokenizer(strView, strdelimiter);
     }
   }
@@ -147,7 +145,7 @@ void DicitonaryEncoding::DictEncode(const std::vector<std::string>& strings,
     output.push_back(std::vector<int>() );
     strView = strings[i];
     token = tokenizer(strView, strdelimiter);
-    while(!token.empty())
+    while (!token.empty())
     {
       if (mappings.count(std::string(token)) == 0)
       {
@@ -165,7 +163,7 @@ void DicitonaryEncoding::DictEncode(const std::vector<std::string>& strings,
     if (delimiter == "")
     {
       DictEncode(strings, delimiter,
-          [](boost::string_view& str,boost::string_view ) 
+          [](boost::string_view& str, boost::string_view)
           {
             if (str.empty())
             {
@@ -174,8 +172,7 @@ void DicitonaryEncoding::DictEncode(const std::vector<std::string>& strings,
             boost::string_view retval = str.substr(0, 1);
             str.remove_prefix(1);
             return retval;
-          }, output
-          );
+          }, output);
     }
     else
     {

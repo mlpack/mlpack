@@ -22,7 +22,6 @@ namespace data {
 class DicitonaryEncoding
 {
  public:
-
   /**
   * A function to create map using a corpus.
   * 
@@ -112,7 +111,8 @@ class DicitonaryEncoding
   * @param output Vector of vectors to store encoded results..
   */
   void DictEncode(const std::vector<std::string>& strings,
-            std::vector<std::vector<int> >& output, const std::string delimiter = " ");
+                  std::vector<std::vector<int> >& output,
+                  const std::string delimiter = " ");
 
   //! Return the Mappings
   const std::unordered_map<std::string, size_t>& Mappings() const
