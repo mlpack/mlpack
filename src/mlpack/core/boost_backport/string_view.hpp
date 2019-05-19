@@ -19,8 +19,16 @@
 
 #include <boost/config.hpp>
 #include <boost/detail/workaround.hpp>
-#include <boost/utility/string_view_fwd.hpp>
+#include <boost/version.hpp>
 #include <boost/throw_exception.hpp>
+
+#if BOOST_VERSION < 106100
+  // Backported unordered_map.
+  #include "mlpack/core/boost_backport/string_view_fwd.hpp"
+#else
+  // Boost's version.
+  #include <boost/utility/string_view_fwd.hpp>
+#endif
 
 #include <cstddef>
 #include <stdexcept>

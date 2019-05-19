@@ -16,6 +16,7 @@ set(SOURCES
   unordered_map.hpp
   vector.hpp
   string_view.hpp
+  string_view_fwd.hpp
   collections_load_imp.hpp
   collections_save_imp.hpp
 )
