@@ -25,17 +25,17 @@ using namespace mlpack;
 struct GmmGenerateTestFixture
 {
   public:
-   GmmGenerateTestFixture()
-   {
-     // Cache in the options for this program.
-     CLI::RestoreSettings(testName);
-   }
+  GmmGenerateTestFixture()
+  {
+    // Cache in the options for this program.
+    CLI::RestoreSettings(testName);
+  }
 
-   ~GmmGenerateTestFixture()
-   {
-     // Clear the settings.
-     CLI::ClearSettings();
-   }
+  ~GmmGenerateTestFixture()
+  {
+    // Clear the settings.
+    CLI::ClearSettings();
+  }
 };
 
 BOOST_FIXTURE_TEST_SUITE(GmmGenerateMainTest, GmmGenerateTestFixture);
@@ -46,14 +46,14 @@ BOOST_AUTO_TEST_CASE(GmmGenerateSamplesTest)
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Unable to load train dataset vc2.csv!");
-  
+
   GMM gmm(1, 2);
   gmm.Train(inputData, 2);
 
   SetInputParam("input_model", &gmm);
 
   Log::Fatal.ignoreInput = true;
-  SetInputParam("samples", 0);// Invalid
+  SetInputParam("samples", 0); // Invalid
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(GmmGenerateSamples)
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Unable to load train dataset vc2.csv!");
-  
+
   GMM gmm(1, 2);
   gmm.Train(inputData, 2);
 
@@ -77,13 +77,13 @@ BOOST_AUTO_TEST_CASE(GmmGenerateSamples)
 
 // Checking dimensionality of output.
 BOOST_AUTO_TEST_CASE(GmmGenerateDimensionality)
-{ 
+{
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Unable to load train dataset vc2.csv!");
-  
+
   GMM gmm(1, 2);
-  gmm.Train(inputData,2);
+  gmm.Train(inputData, 2);
   SetInputParam("input_model", &gmm);
   SetInputParam("samples", (int) 10);
 
@@ -93,6 +93,6 @@ BOOST_AUTO_TEST_CASE(GmmGenerateDimensionality)
 
   BOOST_REQUIRE_EQUAL(output.n_rows, gmm.Dimensionality());
   BOOST_REQUIRE_EQUAL(output.n_cols, (int) 10);
- }
+}
 
 BOOST_AUTO_TEST_SUITE_END();

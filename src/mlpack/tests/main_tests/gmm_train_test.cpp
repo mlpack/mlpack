@@ -26,19 +26,19 @@ using namespace mlpack;
 
 struct GmmTrainTestFixture
 {
-public:
- GmmTrainTestFixture()
- {
-   // Cache in the options for this program.
-   CLI::RestoreSettings(testName);
- }
+  public:
+  GmmTrainTestFixture()
+  {
+    // Cache in the options for this program.
+    CLI::RestoreSettings(testName);
+  }
 
- ~GmmTrainTestFixture()
- {
-   // Clear the settings.
-   bindings::tests::CleanMemory();
-   CLI::ClearSettings();
- }
+  ~GmmTrainTestFixture()
+  {
+    // Clear the settings.
+    bindings::tests::CleanMemory();
+    CLI::ClearSettings();
+  }
 };
 
 void ResetGmmTrainSetting()
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainValidGaussianTest)
   arma::mat inputData(5, 10, arma::fill::randu);
 
   SetInputParam("input", std::move(inputData));
-  SetInputParam("gaussians", 0);// Invalid
+  SetInputParam("gaussians", 0); // Invalid
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainOutputModelGaussianTest)
   SetInputParam("input", std::move(inputData));
   SetInputParam("gaussians", (int) 2);
   SetInputParam("trials", (int) 2);
-  
+
   mlpackMain();
 
   GMM* gmm = CLI::GetParam<GMM*>("output_model");
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainMaxIterationsTest)
   SetInputParam("input", std::move(inputData));
   SetInputParam("gaussians", (int) 2);
   SetInputParam("trials", (int) 1);
-  SetInputParam("max_iterations", (int)-1);// Invalid.
+  SetInputParam("max_iterations", (int)-1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -102,8 +102,8 @@ BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("gaussians", (int) 2);
-  SetInputParam("trials", (int) 0);// Invalid.
- 
+  SetInputParam("trials", (int) 0); // Invalid.
+
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
@@ -118,10 +118,10 @@ BOOST_AUTO_TEST_CASE(RefinedStartPercentageTest)
   SetInputParam("refined_start", true);
 
   Log::Fatal.ignoreInput = true;
-  SetInputParam("percentage", (double) 2.0);// Invalid
+  SetInputParam("percentage", (double) 2.0); // Invalid
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
-  SetInputParam("percentage", (double) -1.0);// Invalid
+  SetInputParam("percentage", (double) -1.0); // Invalid
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
   Log::Fatal.ignoreInput = false;
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainSamplings)
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("refined_start", true);
-  SetInputParam("samplings", (int) 0);// Invalid
+  SetInputParam("samplings", (int) 0); // Invalid
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainNumberOfGaussian)
   SetInputParam("gaussians", (int) 2);
 
   mlpackMain();
-  
+
   GMM* gmm = CLI::GetParam<GMM*>("output_model");
 
   SetInputParam("input_model", gmm);
@@ -176,13 +176,13 @@ BOOST_AUTO_TEST_CASE(GmmTrainNoisetest)
   SetInputParam("noise", (double) 0.0);
 
   mlpackMain();
-  
+
   GMM* gmm = CLI::GetParam<GMM*>("output_model");
 
   CLI::GetSingleton().Parameters()["input"].wasPassed = false;
   CLI::GetSingleton().Parameters()["gaussians"].wasPassed = false;
   CLI::GetSingleton().Parameters()["noise"].wasPassed = false;
-  
+
   SetInputParam("input", std::move(inputData));
   SetInputParam("gaussians", (int) 2);
   SetInputParam("noise", (double) 1.5);
@@ -191,11 +191,10 @@ BOOST_AUTO_TEST_CASE(GmmTrainNoisetest)
   GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
 
   arma::uvec sortedIndices = sort_index(gmm->Weights());
- 
-  for(size_t k = 0; k < sortedIndices.n_elem; k++)
+
+  for (size_t k = 0; k < sortedIndices.n_elem; k++)
     CheckMatricesNotEqual(gmm->Component(sortedIndices[k]).Covariance(),
                             gmm1->Component(sortedIndices[k]).Covariance());
-
 }
 
 // Ensure that Percentage affects the final result when refined_start is true.
@@ -209,7 +208,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainPercentageTest)
   SetInputParam("percentage", (double) 0.02);
 
   mlpackMain();
-  
+
   GMM* gmm = CLI::GetParam<GMM*>("output_model");
 
   CLI::GetSingleton().Parameters()["input"].wasPassed = false;
@@ -227,8 +226,8 @@ BOOST_AUTO_TEST_CASE(GmmTrainPercentageTest)
   GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
 
   arma::uvec sortedIndices = sort_index(gmm->Weights());
- 
-  for(size_t k = 0; k < sortedIndices.n_elem; k++)
+
+  for (size_t k = 0; k < sortedIndices.n_elem; k++)
     CheckMatricesNotEqual(gmm->Component(sortedIndices[k]).Covariance(),
                             gmm1->Component(sortedIndices[k]).Covariance());
 }
@@ -245,7 +244,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainSamplingsTest)
   SetInputParam("samplings", (int) 100);
 
   mlpackMain();
-  
+
   GMM* gmm = CLI::GetParam<GMM*>("output_model");
 
   CLI::GetSingleton().Parameters()["input"].wasPassed = false;
@@ -265,8 +264,8 @@ BOOST_AUTO_TEST_CASE(GmmTrainSamplingsTest)
   GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
 
   arma::uvec sortedIndices = sort_index(gmm->Weights());
- 
-  for(size_t k = 0; k < sortedIndices.n_elem; k++)
+
+  for (size_t k = 0; k < sortedIndices.n_elem; k++)
     CheckMatricesNotEqual(gmm->Component(sortedIndices[k]).Covariance(),
                             gmm1->Component(sortedIndices[k]).Covariance());
 
@@ -284,7 +283,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainToleranceTest)
   SetInputParam("tolerance", (double) 1e-10);
 
   mlpackMain();
-  
+
   GMM* gmm = CLI::GetParam<GMM*>("output_model");
 
   CLI::GetSingleton().Parameters()["input"].wasPassed = false;
@@ -300,8 +299,8 @@ BOOST_AUTO_TEST_CASE(GmmTrainToleranceTest)
   GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
 
   arma::uvec sortedIndices = sort_index(gmm->Weights());
- 
-  for(size_t k = 0; k < sortedIndices.n_elem; k++)
+
+  for (size_t k = 0; k < sortedIndices.n_elem; k++)
     CheckMatricesNotEqual(gmm->Component(sortedIndices[k]).Covariance(),
                             gmm1->Component(sortedIndices[k]).Covariance());
 }
@@ -315,7 +314,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainModelReuseTest)
   SetInputParam("gaussians", (int) 2);
 
   mlpackMain();
-  
+
   GMM* gmm = CLI::GetParam<GMM*>("output_model");
 
   SetInputParam("input_model", gmm);
@@ -327,7 +326,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainModelReuseTest)
   mlpackMain();
 
   GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
- 
+
   SetInputParam("input_model", gmm1);
 
   CLI::GetSingleton().Parameters()["input"].wasPassed = false;
@@ -351,16 +350,16 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiagCovariance)
   SetInputParam("diagonal_covariance", true);
 
   mlpackMain();
-  
+
   GMM* gmm = CLI::GetParam<GMM*>("output_model");
 
   arma::uvec sortedIndices = sort_index(gmm->Weights());
 
-  for(size_t k = 0; k < sortedIndices.n_elem; k++)
+  for (size_t k = 0; k < sortedIndices.n_elem; k++)
   {
     arma::mat diagCov(gmm->Component(sortedIndices[k]).Covariance());
-      for(size_t i = 0; i < diagCov.n_rows; i++)
-        for(size_t j = 0; j < diagCov.n_cols; j++)
+      for (size_t i = 0; i < diagCov.n_rows; i++)
+        for (size_t j = 0; j < diagCov.n_cols; j++)
           if (i != j && diagCov(i, j) != (double) 0)
             BOOST_FAIL("Covariance Are Not Diagonal");
   }

@@ -9,7 +9,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-              
+
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 static const std::string testName = "GmmProbability";
@@ -28,17 +28,17 @@ using namespace mlpack;
 struct GmmProbabilityTestFixture
 {
   public:
-   GmmProbabilityTestFixture()
-   {
-     // Cache in the options for this program.
-     CLI::RestoreSettings(testName);
-   }
+  GmmProbabilityTestFixture()
+  {
+    // Cache in the options for this program.
+    CLI::RestoreSettings(testName);
+  }
 
-   ~GmmProbabilityTestFixture()
-   {
-     // Clear the settings.
-     CLI::ClearSettings();
-   }
+  ~GmmProbabilityTestFixture()
+  {
+    // Clear the settings.
+    CLI::ClearSettings();
+  }
 };
 
 void ResetGmmProbabilitySetting()
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(GmmProbabilityDimensionality)
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
     BOOST_FAIL("Unable to load train dataset vc2.csv!");
-  
+
   GMM gmm(1, 2);
   gmm.Train(std::move(inputData), 2);
 
@@ -66,8 +66,8 @@ BOOST_AUTO_TEST_CASE(GmmProbabilityDimensionality)
 
   mlpackMain();
 
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols,8);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows,1);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 8);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
