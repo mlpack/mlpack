@@ -14,7 +14,6 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/data/load_arff.hpp>
 #include <mlpack/core/data/map_policies/missing_policy.hpp>
-
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
@@ -231,6 +230,144 @@ BOOST_AUTO_TEST_CASE(LoadColVecTransposedCSVTest)
 
   // Remove the file.
   remove("test_file.csv");
+}
+
+/**
+ * Make sure besides numeric data "quoted strings" or
+ * 'quoted strings' in csv files are loaded correctly.
+ */
+BOOST_AUTO_TEST_CASE(LoadQuotedStringInCSVTest)
+{
+  fstream f;
+  f.open("test_file.csv", fstream::out);
+
+  f << "1,field 2,field 3" << endl;
+  f << "2,\"field 2, with comma\",field 3" << endl;
+  f << "3,field 2 with \"embedded quote\",field 3" << endl;
+  f << "4, field 2 with embedded \\ ,field 3" << endl;
+  f << "5, ,field 3" << endl;
+
+  f.close();
+
+  std::vector<std::string> elements;
+  elements.push_back("field 2");
+  elements.push_back("\"field 2, with comma\"");
+  elements.push_back("field 2 with \"embedded quote\"");
+  elements.push_back("field 2 with embedded \\");
+  elements.push_back("");
+
+  arma::mat test;
+  data::DatasetInfo info;
+  BOOST_REQUIRE(data::Load("test_file.csv", test, info, false, true) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(test.n_cols, 5);
+  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
+
+  // Check each element for equality/ closeness.
+  for (size_t i = 0; i < 5; ++i)
+    BOOST_REQUIRE_CLOSE(test.at(0, i), (double) (i + 1), 1e-5);
+
+  for (size_t i = 0; i < 5; ++i)
+    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(1, i), 1, 0), elements[i]);
+
+  for (size_t i = 0; i < 5; ++i)
+    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(2, i), 2, 0), "field 3");
+
+  // Clear the vector to free the space.
+  elements.clear();
+  // Remove the file.
+  remove("test_file.csv");
+}
+
+/**
+ * Make sure besides numeric data "quoted strings" or
+ * 'quoted strings' in txt files are loaded correctly.
+ */
+BOOST_AUTO_TEST_CASE(LoadQuotedStringInTXTTest)
+{
+  fstream f;
+  f.open("test_file.txt", fstream::out);
+
+  f << "1 field2 field3" << endl;
+  f << "2 \"field 2 with space\" field3" << endl;
+
+  f.close();
+
+  std::vector<std::string> elements;
+  elements.push_back("field2");
+  elements.push_back("\"field 2 with space\"");
+
+  arma::mat test;
+  data::DatasetInfo info;
+  BOOST_REQUIRE(data::Load("test_file.txt", test, info, false, true) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
+
+  // Check each element for equality/ closeness.
+  for (size_t i = 0; i < 2; ++i)
+    BOOST_REQUIRE_CLOSE(test.at(0, i), (double) (i + 1), 1e-5);
+
+  for (size_t i = 0; i < 2; ++i)
+    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(1, i), 1, 0), elements[i]);
+
+  for (size_t i = 0; i < 2; ++i)
+    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(2, i), 2, 0), "field3");
+
+  // Clear the vector to free the space.
+  elements.clear();
+  // Remove the file.
+  remove("test_file.txt");
+}
+
+/**
+ * Make sure besides numeric data "quoted strings" or
+ * 'quoted strings' in tsv files are loaded correctly.
+ */
+BOOST_AUTO_TEST_CASE(LoadQuotedStringInTSVTest)
+{
+  fstream f;
+  f.open("test_file.tsv", fstream::out);
+
+  f << "1\tfield 2\tfield 3" << endl;
+  f << "2\t\"field 2\t with tab\"\tfield 3" << endl;
+  f << "3\tfield 2 with \"embedded quote\"\tfield 3" << endl;
+  f << "4\t field 2 with embedded \\ \tfield 3" << endl;
+  f << "5\t \tfield 3" << endl;
+
+  f.close();
+
+  std::vector<std::string> elements;
+  elements.push_back("field 2");
+  elements.push_back("\"field 2\t with tab\"");
+  elements.push_back("field 2 with \"embedded quote\"");
+  elements.push_back("field 2 with embedded \\");
+  elements.push_back("");
+
+  arma::mat test;
+  data::DatasetInfo info;
+  BOOST_REQUIRE(data::Load("test_file.tsv", test, info, false, true) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(test.n_cols, 5);
+  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
+
+  // Check each element for equality/ closeness.
+  for (size_t i = 0; i < 5; ++i)
+    BOOST_REQUIRE_CLOSE(test.at(0, i), (double) (i + 1), 1e-5);
+
+  for (size_t i = 0; i < 5; ++i)
+    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(1, i), 1, 0), elements[i]);
+
+  for (size_t i = 0; i < 5; ++i)
+    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(2, i), 2, 0), "field 3");
+
+  // Clear the vector to free the space.
+  elements.clear();
+  // Remove the file.
+  remove("test_file.tsv");
 }
 
 /**
@@ -767,6 +904,30 @@ BOOST_AUTO_TEST_CASE(SaveHDF5Test)
 }
 
 #endif
+
+/**
+ * Test one hot encoding.
+ */
+BOOST_AUTO_TEST_CASE(OneHotEncodingTest)
+{
+  arma::Mat<size_t> matrix;
+  matrix = "1 0;"
+           "0 1;"
+           "1 0;"
+           "1 0;"
+           "1 0;"
+           "1 0;"
+           "0 1;"
+           "1 0;";
+// Output matrix to save onehotencoding results.
+  arma::Mat<size_t> output;
+  arma::irowvec labels("-1 1 -1 -1 -1 -1 1 -1");
+  data::OneHotEncoding(labels, output);
+
+  BOOST_REQUIRE_EQUAL(matrix.n_cols, output.n_cols);
+  BOOST_REQUIRE_EQUAL(matrix.n_rows, output.n_rows);
+  CheckMatrices(output, matrix);
+}
 
 /**
  * Test normalization of labels.
@@ -1801,6 +1962,18 @@ BOOST_AUTO_TEST_CASE(BadDatasetInfoARFFTest)
       std::invalid_argument);
 
   remove("test.arff");
+}
+
+/**
+ * If file is not found, it should throw.
+ */
+BOOST_AUTO_TEST_CASE(NonExistentFileARFFTest)
+{
+  arma::mat dataset;
+  DatasetInfo info;
+
+  BOOST_REQUIRE_THROW(data::LoadARFF("nonexistentfile.arff", dataset, info),
+      std::runtime_error);
 }
 
 /**

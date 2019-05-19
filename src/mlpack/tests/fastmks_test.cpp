@@ -325,7 +325,7 @@ BOOST_AUTO_TEST_CASE(FastMKSModelWrongModelTest)
   arma::mat data = arma::randu<arma::mat>(5, 5);
 
   FastMKSModel m(FastMKSModel::LINEAR_KERNEL);
-  BOOST_REQUIRE_THROW(m.BuildModel(data, pk, false, false, 2.0),
+  BOOST_REQUIRE_THROW(m.BuildModel(std::move(data), pk, false, false, 2.0),
       std::invalid_argument);
 }
 
@@ -334,6 +334,9 @@ BOOST_AUTO_TEST_CASE(FastMKSModelLinearTest)
 {
   LinearKernel lk;
   arma::mat referenceData = arma::randu<arma::mat>(10, 100);
+  arma::mat referenceCopy1(referenceData);
+  arma::mat referenceCopy2(referenceData);
+  arma::mat referenceCopy3(referenceData);
 
   FastMKS<LinearKernel> f(referenceData, lk);
 
@@ -341,9 +344,9 @@ BOOST_AUTO_TEST_CASE(FastMKSModelLinearTest)
   FastMKSModel mNaive(FastMKSModel::LINEAR_KERNEL);
   FastMKSModel mSingle(FastMKSModel::LINEAR_KERNEL);
 
-  m.BuildModel(referenceData, lk, false, false, 2.0);
-  mNaive.BuildModel(referenceData, lk, false, true, 2.0);
-  mSingle.BuildModel(referenceData, lk, true, false, 2.0);
+  m.BuildModel(std::move(referenceCopy1), lk, false, false, 2.0);
+  mNaive.BuildModel(std::move(referenceCopy2), lk, false, true, 2.0);
+  mSingle.BuildModel(std::move(referenceCopy3), lk, true, false, 2.0);
 
   // Now search, first monochromatically.
   arma::Mat<size_t> indices, mIndices, mNaiveIndices, mSingleIndices;
@@ -440,6 +443,9 @@ BOOST_AUTO_TEST_CASE(FastMKSModelPolynomialTest)
 {
   PolynomialKernel pk(2.0);
   arma::mat referenceData = arma::randu<arma::mat>(10, 100);
+  arma::mat referenceCopy1(referenceData);
+  arma::mat referenceCopy2(referenceData);
+  arma::mat referenceCopy3(referenceData);
 
   FastMKS<PolynomialKernel> f(referenceData, pk);
 
@@ -447,9 +453,9 @@ BOOST_AUTO_TEST_CASE(FastMKSModelPolynomialTest)
   FastMKSModel mNaive(FastMKSModel::POLYNOMIAL_KERNEL);
   FastMKSModel mSingle(FastMKSModel::POLYNOMIAL_KERNEL);
 
-  m.BuildModel(referenceData, pk, false, false, 2.0);
-  mNaive.BuildModel(referenceData, pk, false, true, 2.0);
-  mSingle.BuildModel(referenceData, pk, true, false, 2.0);
+  m.BuildModel(std::move(referenceCopy1), pk, false, false, 2.0);
+  mNaive.BuildModel(std::move(referenceCopy2), pk, false, true, 2.0);
+  mSingle.BuildModel(std::move(referenceCopy3), pk, true, false, 2.0);
 
   // Now search, first monochromatically.
   arma::Mat<size_t> indices, mIndices, mNaiveIndices, mSingleIndices;
@@ -546,6 +552,9 @@ BOOST_AUTO_TEST_CASE(FastMKSModelCosineTest)
 {
   CosineDistance ck;
   arma::mat referenceData = arma::randu<arma::mat>(10, 100);
+  arma::mat referenceCopy1(referenceData);
+  arma::mat referenceCopy2(referenceData);
+  arma::mat referenceCopy3(referenceData);
 
   FastMKS<CosineDistance> f(referenceData, ck);
 
@@ -553,9 +562,9 @@ BOOST_AUTO_TEST_CASE(FastMKSModelCosineTest)
   FastMKSModel mNaive(FastMKSModel::COSINE_DISTANCE);
   FastMKSModel mSingle(FastMKSModel::COSINE_DISTANCE);
 
-  m.BuildModel(referenceData, ck, false, false, 2.0);
-  mNaive.BuildModel(referenceData, ck, false, true, 2.0);
-  mSingle.BuildModel(referenceData, ck, true, false, 2.0);
+  m.BuildModel(std::move(referenceCopy1), ck, false, false, 2.0);
+  mNaive.BuildModel(std::move(referenceCopy2), ck, false, true, 2.0);
+  mSingle.BuildModel(std::move(referenceCopy3), ck, true, false, 2.0);
 
   // Now search, first monochromatically.
   arma::Mat<size_t> indices, mIndices, mNaiveIndices, mSingleIndices;
@@ -652,6 +661,9 @@ BOOST_AUTO_TEST_CASE(FastMKSModelGaussianTest)
 {
   GaussianKernel gk(1.5);
   arma::mat referenceData = arma::randu<arma::mat>(10, 100);
+  arma::mat referenceCopy1(referenceData);
+  arma::mat referenceCopy2(referenceData);
+  arma::mat referenceCopy3(referenceData);
 
   FastMKS<GaussianKernel> f(referenceData, gk);
 
@@ -659,9 +671,9 @@ BOOST_AUTO_TEST_CASE(FastMKSModelGaussianTest)
   FastMKSModel mNaive(FastMKSModel::GAUSSIAN_KERNEL);
   FastMKSModel mSingle(FastMKSModel::GAUSSIAN_KERNEL);
 
-  m.BuildModel(referenceData, gk, false, false, 2.0);
-  mNaive.BuildModel(referenceData, gk, false, true, 2.0);
-  mSingle.BuildModel(referenceData, gk, true, false, 2.0);
+  m.BuildModel(std::move(referenceCopy1), gk, false, false, 2.0);
+  mNaive.BuildModel(std::move(referenceCopy2), gk, false, true, 2.0);
+  mSingle.BuildModel(std::move(referenceCopy3), gk, true, false, 2.0);
 
   // Now search, first monochromatically.
   arma::Mat<size_t> indices, mIndices, mNaiveIndices, mSingleIndices;
@@ -758,6 +770,9 @@ BOOST_AUTO_TEST_CASE(FastMKSModelEpanTest)
 {
   EpanechnikovKernel ek(2.5);
   arma::mat referenceData = arma::randu<arma::mat>(10, 100);
+  arma::mat referenceCopy1(referenceData);
+  arma::mat referenceCopy2(referenceData);
+  arma::mat referenceCopy3(referenceData);
 
   FastMKS<EpanechnikovKernel> f(referenceData, ek);
 
@@ -765,9 +780,9 @@ BOOST_AUTO_TEST_CASE(FastMKSModelEpanTest)
   FastMKSModel mNaive(FastMKSModel::EPANECHNIKOV_KERNEL);
   FastMKSModel mSingle(FastMKSModel::EPANECHNIKOV_KERNEL);
 
-  m.BuildModel(referenceData, ek, false, false, 2.0);
-  mNaive.BuildModel(referenceData, ek, false, true, 2.0);
-  mSingle.BuildModel(referenceData, ek, true, false, 2.0);
+  m.BuildModel(std::move(referenceCopy1), ek, false, false, 2.0);
+  mNaive.BuildModel(std::move(referenceCopy2), ek, false, true, 2.0);
+  mSingle.BuildModel(std::move(referenceCopy3), ek, true, false, 2.0);
 
   // Now search, first monochromatically.
   arma::Mat<size_t> indices, mIndices, mNaiveIndices, mSingleIndices;
@@ -864,6 +879,9 @@ BOOST_AUTO_TEST_CASE(FastMKSModelTriangularTest)
 {
   TriangularKernel tk(2.0);
   arma::mat referenceData = arma::randu<arma::mat>(10, 100);
+  arma::mat referenceCopy1(referenceData);
+  arma::mat referenceCopy2(referenceData);
+  arma::mat referenceCopy3(referenceData);
 
   FastMKS<TriangularKernel> f(referenceData, tk);
 
@@ -871,9 +889,9 @@ BOOST_AUTO_TEST_CASE(FastMKSModelTriangularTest)
   FastMKSModel mNaive(FastMKSModel::TRIANGULAR_KERNEL);
   FastMKSModel mSingle(FastMKSModel::TRIANGULAR_KERNEL);
 
-  m.BuildModel(referenceData, tk, false, false, 2.0);
-  mNaive.BuildModel(referenceData, tk, false, true, 2.0);
-  mSingle.BuildModel(referenceData, tk, true, false, 2.0);
+  m.BuildModel(std::move(referenceCopy1), tk, false, false, 2.0);
+  mNaive.BuildModel(std::move(referenceCopy2), tk, false, true, 2.0);
+  mSingle.BuildModel(std::move(referenceCopy3), tk, true, false, 2.0);
 
   // Now search, first monochromatically.
   arma::Mat<size_t> indices, mIndices, mNaiveIndices, mSingleIndices;

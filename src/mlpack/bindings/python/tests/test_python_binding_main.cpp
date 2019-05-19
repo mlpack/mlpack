@@ -109,7 +109,7 @@ static void mlpackMain()
     CLI::GetParam<arma::Mat<size_t>>("umatrix_out") = move(out);
   }
 
-  // An input matrix(pandas.Series) should have all elements multiplied by two.
+  // An input matrix (pandas.Series) should have all elements multiplied by two.
   if (CLI::HasParam("smatrix_in"))
   {
     arma::mat out = move(CLI::GetParam<arma::mat>("smatrix_in"));
@@ -117,12 +117,13 @@ static void mlpackMain()
 
     CLI::GetParam<arma::mat>("smatrix_out") = move(out);
   }
-  // An input matrix(pandas.Series) should have all elements multiplied by two.
+
+  // An input matrix (pandas.Series) should have all elements multiplied by two.
   if (CLI::HasParam("s_umatrix_in"))
   {
     arma::Mat<size_t> out =
         move(CLI::GetParam<arma::Mat<size_t>>("s_umatrix_in"));
-    out*= 2;
+    out *= 2;
 
     CLI::GetParam<arma::Mat<size_t>>("s_umatrix_out") = move(out);
   }
