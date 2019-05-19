@@ -5,22 +5,22 @@ matrix:
   include:
     - os: linux
       dist: xenial
-      env: CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON=/usr/bin/python"
+      env: CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON_EXECUTABLE=/usr/bin/python"
       before_install:
         - sudo apt-get update
         - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev python-pip cython python-numpy python-pandas
-        - sudo pip install --upgrade --ignore-installed setuptools
+        - sudo pip install --upgrade --ignore-installed setuptools cython
         - curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
         - cmake . && make && sudo make install && cd ..
         - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
 
     - os: linux
       dist: xenial
-      env: CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON=/usr/bin/python3"
+      env: CMAKE_OPTIONS="-DDEBUG=OFF -DPROFILE=OFF -DPYTHON_EXECUTABLE=/usr/bin/python3"
       before_install:
         - sudo apt-get update
-        - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev python3-pip cython3 python3-numpy python3-pandas
-        - sudo pip3 install --upgrade --ignore-installed setuptools
+        - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev python3-pip cython3 python3-numpy
+        - sudo pip3 install --upgrade --ignore-installed setuptools cython pandas
         - curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
         - cmake . && make && sudo make install && cd ..
         - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp

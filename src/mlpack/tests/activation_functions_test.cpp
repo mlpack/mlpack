@@ -20,6 +20,7 @@
 #include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
 #include <mlpack/methods/ann/activation_functions/swish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/hard_sigmoid_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
@@ -565,6 +566,36 @@ BOOST_AUTO_TEST_CASE(PReLUFunctionTest)
 }
 
 /**
+ * Basic test of the CReLU function.
+ */
+BOOST_AUTO_TEST_CASE(CReLUFunctionTest)
+{
+  const arma::colvec desiredActivations("0 3.2 4.5 0 \
+                                       1 0 2 0 2 0 0 \
+                                       100.2 0 1 0 0");
+
+  const arma::colvec desiredDerivatives("0 0 0 0 \
+                                         0 0 0 0");
+  CReLU<> crelu;
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations;
+  crelu.Forward(std::move(activationData), std::move(activations));
+  arma::colvec derivatives;
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(desiredActivations.n_elem);
+  crelu.Backward(std::move(desiredActivations), std::move(error),
+        std::move(derivatives));
+  for (size_t i = 0; i < activations.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(activations.at(i), desiredActivations.at(i), 1e-3);
+  }
+  for (size_t i = 0; i < derivatives.n_elem; i++)
+  {
+    BOOST_REQUIRE_CLOSE(derivatives.at(i), desiredDerivatives.at(i), 1e-3);
+  }
+}
+
+/**
  * Basic test of the swish function.
  */
 BOOST_AUTO_TEST_CASE(SwishFunctionTest)
@@ -580,6 +611,26 @@ BOOST_AUTO_TEST_CASE(SwishFunctionTest)
 
   CheckActivationCorrect<SwishFunction>(activationData, desiredActivations);
   CheckDerivativeCorrect<SwishFunction>(desiredActivations,
+      desiredDerivatives);
+}
+
+/**
+ * Basic test of the hard sigmoid function.
+ */
+BOOST_AUTO_TEST_CASE(HardSigmoidFunctionTest)
+{
+  // Hand-calculated values using Python interpreter.
+  const arma::colvec desiredActivations("0.1 1 1 \
+                                         0 0.7 0.3 \
+                                         0.9 0.5");
+
+  const arma::colvec desiredDerivatives("0.2 0.0 0.0 \
+                                         0.0 0.2 0.2 0.2\
+                                         0.2");
+
+  CheckActivationCorrect<HardSigmoidFunction>(activationData,
+      desiredActivations);
+  CheckDerivativeCorrect<HardSigmoidFunction>(desiredActivations,
       desiredDerivatives);
 }
 
