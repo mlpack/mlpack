@@ -152,9 +152,7 @@ class PrioritizedReplay
               arma::icolvec& sampledActions,
               arma::colvec& sampledRewards,
               arma::mat& sampledNextStates,
-              arma::icolvec& isTerminal,
-              arma::ucolvec& sampledIndices,
-              arma::rowvec& weights)
+              arma::icolvec& isTerminal)
   {
     size_t upperBound = full ? capacity : position;
 
@@ -212,7 +210,7 @@ class PrioritizedReplay
   }
 
   void Update(arma::mat target, arma::icolvec sampledActions,
-              arma::mat nextActionValues, arma::ucolvec sampledIndices)
+              arma::mat nextActionValues, arma::mat& gradients)
   {
     arma::colvec td_error(target.n_cols);
     for (size_t i = 0; i < target.n_cols; i ++)
@@ -222,6 +220,9 @@ class PrioritizedReplay
     }
     td_error = arma::abs(td_error);
     UpdatePriorities(sampledIndices, td_error);
+
+    // Update the gradient
+    gradients = arma::mean(weights) * gradients;
   }
 
 
@@ -268,8 +269,14 @@ class PrioritizedReplay
   //! Locally-stored termination information of previous experience.
   arma::icolvec isTerminal;
 
-  //! Locally-stored indicator that whether the memory is full or not
+  //! Locally-stored indicator that whether the memory is full or not.
   bool full;
+
+  //! Locally-stored the indices of sampled transitions.
+  arma::ucolvec sampledIndices;
+
+  //! Locally-stored the weights of sampled transitions.
+  arma::rowvec weights;
 };
 
 } // namespace rl

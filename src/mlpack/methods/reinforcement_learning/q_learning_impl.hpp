@@ -174,8 +174,6 @@ double QLearning<
   arma::colvec sampledRewards;
   arma::mat sampledNextStates;
   arma::icolvec isTerminal;
-  arma::ucolvec sampledIndices;
-  arma::rowvec weights;
 
   if (!prioritized_replay)
   {
@@ -185,8 +183,7 @@ double QLearning<
   else
   {
     prioritizedReplayMethod.Sample(sampledStates, sampledActions,
-        sampledRewards, sampledNextStates, isTerminal,
-        sampledIndices, weights);
+        sampledRewards, sampledNextStates, isTerminal);
   }
 
   // Compute action value for next state with target network.
@@ -229,21 +226,17 @@ double QLearning<
 
   if (prioritized_replay)
   {
-    gradients = arma::mean(weights) * gradients;
-  }
-
-  updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
-
-  if (prioritized_replay)
-  {
     prioritizedReplayMethod.Update(target, sampledActions,
-        nextActionValues, sampledIndices);
+                                   nextActionValues, gradients);
   }
   else
   {
     replayMethod.Update(target, sampledActions,
-        nextActionValues, sampledIndices);
+                        nextActionValues, gradients);
   }
+
+  updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
+
   return reward;
 }
 

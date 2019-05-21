@@ -143,7 +143,7 @@ class RandomReplay
   }
 
   void Update(arma::mat target, arma::icolvec sampledActions,
-              arma::mat nextActionValues, arma::ucolvec sampledIndices)
+              arma::mat nextActionValues, arma::mat& gradients)
   {
     /* do nothing for random replay*/
   }
