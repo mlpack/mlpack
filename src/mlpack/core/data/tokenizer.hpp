@@ -19,28 +19,44 @@ namespace data {
 /**
  * A simple Tokenizer class
  */
-class Tokenizer {
+class Tokenizer
+{
  public:
-  boost::string_view operator()(boost::string_view& str,
-                                boost::string_view delimiter) const {
+  /**
+  * A constructor to set deimiter.
+  * @param Delimiter A string which you want to use as delimiter
+  */
+  Tokenizer(boost::string_view Delimiter)
+  {
+    delimiter = Delimiter;
+  }
+  /**
+  * A function object which take boost::string_view as input and
+  * return a boost::string_view (token).
+  * @param str A string to retieve token from.
+  */
+  boost::string_view operator()(boost::string_view& str) const
+  {
     boost::string_view retval;
-
-    while (retval.empty()) {
+    while (retval.empty())
+    {
       std::size_t pos = str.find_first_of(delimiter);
-
-      if (pos == str.npos) {
+      if (pos == str.npos)
+      {
         retval = str;
         str.clear();
         return retval;
       }
-
       retval = str.substr(0, pos);
-
       str.remove_prefix(pos + 1);
     }
     return retval;
   }
-};
+
+ private:
+  // Delimiter by which the string is tokenized.
+  boost::string_view delimiter;
+}; // Tokenizer class
 
 } // namespace data
 } // namespace mlpack

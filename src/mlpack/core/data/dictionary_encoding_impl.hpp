@@ -14,7 +14,6 @@
 
 // In case it hasn't been included yet.
 #include "dictionary_encoding.hpp"
-#include <mlpack/core/data/tokenizer.hpp>
 
 namespace mlpack {
 namespace data {
@@ -24,38 +23,13 @@ void DicitonaryEncoding::Reset()
   mappings.clear();
 }
 
-void DicitonaryEncoding::CreateMap(std::string& strings,
-    std::string delimiter)
-{
-  // Empty string mean encoding char by char
-  if (delimiter == "")
-  {
-    CreateMap(strings, delimiter,
-        [](boost::string_view& str, boost::string_view )
-        {
-          if (str.empty())
-          {
-            return str;
-          }
-          boost::string_view retval = str.substr(0, 1);
-          str.remove_prefix(1);
-          return retval;
-        });
-  }
-  else
-  {
-    CreateMap(strings, delimiter, data::Tokenizer());
-  }
-}
-
 template<typename TokenizerType>
-void DicitonaryEncoding::CreateMap(std::string& strings, std::string delimiter,
+void DicitonaryEncoding::CreateMap(std::string& strings,
     TokenizerType tokenizer)
 {
   boost::string_view strView(strings);
-  boost::string_view delimiterView(delimiter);
   boost::string_view token;
-  token = tokenizer(strView, delimiterView);
+  token = tokenizer(strView);
   std::size_t curLabels = mappings.size() + 1;
   while (!token.empty())
   {
@@ -63,57 +37,29 @@ void DicitonaryEncoding::CreateMap(std::string& strings, std::string delimiter,
     {
       mappings[std::move(std::string(token))] = curLabels++;
     }
-    token = tokenizer(strView, delimiterView);
-  }
-}
-
-template<typename MatType>
-void DicitonaryEncoding::DictEncode(const std::vector<std::string>& strings,
-                MatType& output,
-                const std::string& delimiter)
-{
-  if (delimiter == "")
-  {
-    DictEncode(strings, delimiter,
-        [](boost::string_view& str, boost::string_view)
-        {
-          if (str.empty())
-          {
-            return str;
-          }
-          boost::string_view retval = str.substr(0, 1);
-          str.remove_prefix(1);
-          return retval;
-        }, output);
-  }
-  else
-  {
-    DictEncode(strings, delimiter, data::Tokenizer(), output);
+    token = tokenizer(strView);
   }
 }
 
 template<typename MatType, typename TokenizerType>
 void DicitonaryEncoding::DictEncode(const std::vector<std::string>& strings,
-                const std::string& delimiter,
-                TokenizerType tokenizer,
-                MatType& output)
+                MatType& output, TokenizerType tokenizer)
 {
   boost::string_view strView;
-  boost::string_view strdelimiter(delimiter);
   boost::string_view token;
   std::vector< std::vector<boost::string_view> > dataset;
   size_t colSize = 0;
   for (size_t i = 0; i < strings.size(); i++)
   {
     strView = strings[i];
-    token = tokenizer(strView, strdelimiter);
+    token = tokenizer(strView);
     dataset.push_back(std::vector<boost::string_view>() );
     while (!token.empty())
     {
       dataset[i].push_back(token);
-      colSize = std::max(colSize, dataset[i].size());
-      token = tokenizer(strView, strdelimiter);
+      token = tokenizer(strView);
     }
+    colSize = std::max(colSize, dataset[i].size());
   }
   size_t curLabel = mappings.size() + 1;
   output.zeros(dataset.size(), colSize);
@@ -132,19 +78,16 @@ void DicitonaryEncoding::DictEncode(const std::vector<std::string>& strings,
 
 template<typename TokenizerType>
 void DicitonaryEncoding::DictEncode(const std::vector<std::string>& strings,
-            const std::string delimiter,
-            TokenizerType tokenizer,
-            std::vector<std::vector<int> >& output)
+            std::vector<std::vector<int> >& output, TokenizerType tokenizer)
 {
   boost::string_view strView;
-  boost::string_view strdelimiter(delimiter);
   boost::string_view token;
   size_t curLabel = mappings.size() + 1;
   for (size_t i = 0; i < strings.size(); ++i)
   {
     output.push_back(std::vector<int>() );
     strView = strings[i];
-    token = tokenizer(strView, strdelimiter);
+    token = tokenizer(strView);
     while (!token.empty())
     {
       if (mappings.count(std::string(token)) == 0)
@@ -152,32 +95,9 @@ void DicitonaryEncoding::DictEncode(const std::vector<std::string>& strings,
         mappings[std::string(token)] = curLabel++;
       }
     output[i].push_back(mappings[std::move(std::string(token))]);
-    token = tokenizer(strView, strdelimiter);
+    token = tokenizer(strView);
     }
   }
-}
-
-void DicitonaryEncoding::DictEncode(const std::vector<std::string>& strings,
-          std::vector<std::vector<int>>& output, const std::string delimiter)
-{
-    if (delimiter == "")
-    {
-      DictEncode(strings, delimiter,
-          [](boost::string_view& str, boost::string_view)
-          {
-            if (str.empty())
-            {
-              return str;
-            }
-            boost::string_view retval = str.substr(0, 1);
-            str.remove_prefix(1);
-            return retval;
-          }, output);
-    }
-    else
-    {
-      DictEncode(strings, delimiter, data::Tokenizer(), output);
-    }
 }
 
 } // namespace data

@@ -23,24 +23,20 @@ class DicitonaryEncoding
 {
  public:
   /**
-  * A function to create map using a corpus.
+  * A function to create mapping from a given corpus.
   * 
   * @param strings Corpus of text to encode.
-  * @param delimiter Delimiator use to split the corpus.
-  */
-  void CreateMap(std::string& strings, std::string delimiter = " ");
-
-  /**
-  * Overloaded function to create map using a corpus, which
-  * allowes users to provide their own custom tokenization.
-  * 
-  * @param strings Corpus of text to encode.
-  * @param delimiter Delimiator use to split the corpus.
-  * @param tokenizer A lamda function providing the rule for tokenization.
+  * @param tokenizer A function that accepts a boost::string_view as
+  *                  an argument and returns a token.
+  * This can either be a function pointer or function object or a lamda
+  * function. Its return value should be a boost::string_view, a token.
+  *
+  * Definiation of function should be of type
+  * boost::string_view fn()(boost::string_view& str)
+  *
   */
   template<typename TokenizerType>
-  void CreateMap(std::string& strings, std::string delimiter,
-                 TokenizerType tokenizer);
+  void CreateMap(std::string& strings, TokenizerType tokenizer);
 
   /**
   * A function to reset the mapping that is clear all the encodings
@@ -59,30 +55,22 @@ class DicitonaryEncoding
   * User may also provide their custom tokenization rule.
   *
   * @param strings Vector of strings.
-  * @param delimiter Delimiter used to split the strings.
-  * @param tokenizer A lamda function providing the rule for tokenization.
-  * @param output Output Matrix to store encoded results.
+  * @param output Output Matrix to store encoded results (sp_mat or mat).
+  * @param tokenizer A function that accepts a boost::string_view as
+  *                  an argument and returns a token.
+  * This can either be a function pointer or function object or a lamda
+  * function. Its return value should be a boost::string_view, a token.
+  *
+  * Definiation of function should be of type
+  * boost::string_view fn()(boost::string_view& str)
+  *
   */
   template<typename MatType, typename TokenizerType>
   void DictEncode(const std::vector<std::string>& strings,
-                  const std::string& delimiter,
-                  TokenizerType tokenizer,
-                  MatType& output);
+                  MatType& output, TokenizerType tokenizer);
 
   /**
-  * Overloaded function for the above for user to avoid specifiying
-  * tokenization rule and use standard tokenizer class.
-  *
-  * @param strings Vector of strings.
-  * @param output Output Matrix to store encoded results.
-  * @param delimiter Delimiter used to split the strings.
-  */
-  template<typename MatType>
-  void DictEncode(const std::vector<std::string>& strings,
-                  MatType& output, const std::string& delimiter = " ");
-
-  /**
-  * A fucntion to encode given array of strings using a particular delimiter,
+  * A function to encode given array of strings using a particular delimiter,
   * with custome tokenization.
   *
   * For example 
@@ -92,27 +80,19 @@ class DicitonaryEncoding
   * The function does not paddes 0 in this case.
   *
   * @param strings Vector of strings.
-  * @param delimiter Delimiter used to split the strings.
-  * @param tokenizer A lamda function providing the rule for tokenization.
   * @param output Vector of vectors to store encoded results.
+  * @param tokenizer A function that accepts a boost::string_view as
+  *                  an argument and returns a token.
+  * This can either be a function pointer or function object or a lamda
+  * function. Its return value should be a boost::string_view, a token.
+  *
+  * Definiation of function should be of type
+  * boost::string_view fn()(boost::string_view& str)
+  *
   */
   template<typename TokenizerType>
   void DictEncode(const std::vector<std::string>& strings,
-            const std::string delimiter,
-            TokenizerType tokenizer,
-            std::vector<std::vector<int>>& output);
-
-  /**
-  * Overloaded function for the above for user to avoid passing custom
-  * tokenization rule and use stadandard tokenizer.
-  *
-  * @param strings Vector of strings.
-  * @param delimiter Delimitor used to split the strings.
-  * @param output Vector of vectors to store encoded results..
-  */
-  void DictEncode(const std::vector<std::string>& strings,
-                  std::vector<std::vector<int> >& output,
-                  const std::string delimiter = " ");
+            std::vector<std::vector<int>>& output, TokenizerType tokenizer);
 
   //! Return the Mappings
   const std::unordered_map<std::string, size_t>& Mappings() const
