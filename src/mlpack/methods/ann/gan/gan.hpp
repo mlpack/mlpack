@@ -97,9 +97,9 @@ class GAN
    * Prepare the network for the given data.
    * This function won't actually trigger training process.
    *
-   * @param trainData The real data.
+   * @param predictors The data points of real distribution.
    */
-  void ResetData(arma::mat trainData);
+  void ResetData(arma::mat predictors);
 
   // Reset function.
   void Reset();
@@ -107,17 +107,18 @@ class GAN
   /**
    * Train function.
    *
-   * @param trainData The real data.
+   * @param predictors The data points of real distribution.
+   * @param optimizer Instantiated optimizer used to train the model.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename Policy = PolicyType, typename OptimizerType>
   typename std::enable_if<std::is_same<Policy, WGANGP>::value, double>::type
-  Train(arma::mat trainData, OptimizerType& Optimizer);
+  Train(arma::mat predictors, OptimizerType& optimizer);
 
   /**
    * Train function for the Standard GAN and DCGAN.
    *
-   * @param trainData The real data.
+   * @param predictors The data points of real distribution.
    * @param discriminatorOptimizer Optimizer for discriminator network.
    * @param generatorOptimizer Optimizer for generator network.
    * @param maxIterations Number of iterations for which to train GAN.
@@ -127,7 +128,7 @@ class GAN
            typename GenOptimizerType>
   typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
                           std::is_same<Policy, DCGAN>::value, void>::type
-  Train(arma::mat trainData,
+  Train(arma::mat predictors,
         DiscOptimizerType& discriminatorOptimizer,
         GenOptimizerType& generatorOptimizer,
         size_t maxIterations);
@@ -135,7 +136,7 @@ class GAN
   /**
    * Train function for WGAN.
    *
-   * @param trainData The real data.
+   * @param predictors The data points of real distribution.
    * @param discriminatorOptimizer Optimizer for discriminator network.
    * @param generatorOptimizer Optimizer for generator network.
    * @param maxIterations Number of iterations for which to train GAN.
@@ -146,7 +147,7 @@ class GAN
            typename DiscOptimizerType,
            typename GenOptimizerType>
   typename std::enable_if<std::is_same<Policy, WGAN>::value, void>::type
-  Train(arma::mat trainData,
+  Train(arma::mat predictors,
         DiscOptimizerType& discriminatorOptimizer,
         GenOptimizerType& generatorOptimizer,
         size_t maxIterations,

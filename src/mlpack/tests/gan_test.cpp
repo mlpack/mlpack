@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
             << trainData.n_cols << ")" << std::endl;
   Log::Info << trainData.n_rows << "--------" << trainData.n_cols << std::endl;
 
-  // Create the Discriminator network
+  // Create the Discriminator network.
   FFN<SigmoidCrossEntropyError<> > discriminator;
   discriminator.Add<Convolution<> >(1, dNumKernels, 5, 5, 1, 1, 2, 2, 28, 28);
   discriminator.Add<ReLULayer<> >();
@@ -192,7 +192,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
   discriminator.Add<ReLULayer<> >();
   discriminator.Add<Linear<> >(1024, 1);
 
-  // Create the Generator network
+  // Create the Generator network.
   FFN<SigmoidCrossEntropyError<> > generator;
   generator.Add<Linear<> >(noiseDim, 3136);
   generator.Add<BatchNorm<> >(3136);
