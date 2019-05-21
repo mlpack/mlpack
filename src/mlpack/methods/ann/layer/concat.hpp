@@ -1,6 +1,7 @@
 /**
  * @file concat.hpp
  * @author Marcus Edel
+ * @author Mehul Kumar Nirala
  *
  * Definition of the Concat class, which acts as a concatenation contain.
  *
@@ -51,6 +52,19 @@ class Concat
    * @param run Call the Forward/Backward method before the output is merged.
    */
   Concat(const bool model = false,
+         const bool run = true);
+
+  /**
+   * Create the Concat object using the specified parameters.
+   *
+   * @param inputSize A vector denoting input size of each layer added.
+   * @param axis Concat axis.
+   * @param model Expose all network modules.
+   * @param run Call the Forward/Backward method before the output is merged.
+   */
+  Concat(arma::Row<size_t>& inputSize,
+         const size_t axis,
+         const bool model = false,
          const bool run = true);
 
   /**
@@ -194,12 +208,24 @@ class Concat
   void serialize(Archive& /* ar */, const unsigned int /* version */);
 
  private:
+  //! Parameter which indicates the input size of modules.
+  arma::Row<size_t> inputSize;
+
+  //! Parameter which indicates the axis of concatenation.
+  size_t axis;
+
+  //! Parameter which indicates whether to use the axis of concatenation.
+  bool useAxis;
+
   //! Parameter which indicates if the modules should be exposed.
   bool model;
 
   //! Parameter which indicates if the Forward/Backward method should be called
   //! before merging the output.
   bool run;
+
+  //! Parameter to store channels.
+  size_t channels;
 
   //! Locally-stored network modules.
   std::vector<LayerTypes<CustomLayers...> > network;

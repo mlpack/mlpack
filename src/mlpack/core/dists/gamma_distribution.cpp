@@ -197,12 +197,12 @@ double GammaDistribution::Probability(double x, size_t dim) const
 
 // Returns the log probability of the provided observations.
 void GammaDistribution::LogProbability(const arma::mat& observations,
-                                       arma::vec& LogProbabilities) const
+                                       arma::vec& logProbabilities) const
 {
   size_t numObs = observations.n_cols;
 
   // Set all equal to 0 (addition neutral).
-  LogProbabilities.zeros(numObs);
+  logProbabilities.zeros(numObs);
 
   // Compute denominator only once for each dimension.
   arma::vec denominators(alpha.n_elem);
@@ -219,7 +219,7 @@ void GammaDistribution::LogProbability(const arma::mat& observations,
       double factor = std::exp(-observations(d, i) / beta(d));
       double numerator = std::pow(observations(d, i), alpha(d) - 1);
 
-      LogProbabilities(i) += std::log(numerator * factor / denominators(d));
+      logProbabilities(i) += std::log(numerator * factor / denominators(d));
     }
   }
 }

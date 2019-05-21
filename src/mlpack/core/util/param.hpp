@@ -536,6 +536,32 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
     PARAM_COL(ID, DESC, ALIAS, false, true, true)
 
 /**
+ * Define a required vector input parameter (type arma::vec).  From the command
+ * line, the user can specify the file that holds the vector, using the name of
+ * the vector parameter with "_file" appended (and the same alias).  So for
+ * instance, if the name of the vector parameter was "vec", the user could
+ * specify that the "vec" vector was held in vec.csv by giving the parameter:
+ *
+ * @code
+ * --vec_file vector.csv
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).
+ * @param ALIAS An alias for the parameter (one letter).
+ *
+ * @bug
+ * The __COUNTER__ variable is used in most cases to guarantee a unique global
+ * identifier for options declared using the PARAM_*() macros. However, not all
+ * compilers have this support--most notably, gcc < 4.3. In that case, the
+ * __LINE__ macro is used as an attempt to get a unique global identifier, but
+ * collisions are still possible, and they produce bizarre error messages.  See
+ * https://github.com/mlpack/mlpack/issues/100 for more information.
+ */
+#define PARAM_COL_IN_REQ(ID, DESC, ALIAS) \
+    PARAM_COL(ID, DESC, ALIAS, true, true, true)
+
+/**
  * Define a row vector input parameter (type arma::rowvec).  From the command
  * line, the user can specify the file that holds the vector, using the name of
  * the vector parameter with "_file" appended (and the same alias).  So for

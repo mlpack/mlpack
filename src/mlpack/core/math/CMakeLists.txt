@@ -18,6 +18,8 @@ set(SOURCES
   range_impl.hpp
   round.hpp
   shuffle_data.hpp
+  ccov.hpp
+  ccov_impl.hpp
 )
 
 # add directory name to sources

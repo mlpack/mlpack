@@ -579,4 +579,38 @@ BOOST_AUTO_TEST_CASE(PartialForwardTest)
   CheckMatrices(output, arma::ones(10, 1) * 20);
 }
 
+/**
+ * Test that FFN::Train() returns finite objective value.
+ */
+BOOST_AUTO_TEST_CASE(FFNTrainReturnObjective)
+{
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
+
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
+
+  // Vanilla neural net with logistic activation function.
+  // Because 92 percent of the patients are not hyperthyroid the neural
+  // network must be significantly better than 92%.
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<SigmoidLayer<> >();
+  model.Add<Dropout<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
+
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+
+  double objVal = model.Train(trainData, trainLabels, opt);
+
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+}
 BOOST_AUTO_TEST_SUITE_END();

@@ -42,7 +42,7 @@ class ReconstructionLoss
    */
   ReconstructionLoss();
 
-  /*
+  /**
    * Computes the reconstruction loss.
    *
    * @param input Input data used for evaluating the specified function.
