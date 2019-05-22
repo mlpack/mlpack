@@ -8,7 +8,10 @@
 
   * Accelerate NormalizeLabels function using hashing instead of linear search
     (see `src/mlpack/core/data/normalize_labels_impl.hpp`)(#1780).
-  
+
+  * Add `ConfusionMatrix()` function for checking performance of classifiers
+    (#1798).
+
 ### mlpack 3.1.0
 ###### 2019-04-25
   * Add DiagonalGaussianDistribution and DiagonalGMM classes to speed up the

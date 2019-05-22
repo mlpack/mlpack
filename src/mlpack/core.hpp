@@ -91,7 +91,6 @@
 #include <mlpack/core/data/confusion_matrix.hpp>
 #include <mlpack/core/data/one_hot_encoding.hpp>
 
-
 // mlpack::backtrace only for linux
 #ifdef HAS_BFD_DL
   #include <mlpack/core/util/backtrace.hpp>
