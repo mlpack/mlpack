@@ -48,11 +48,11 @@ PROGRAM_INFO("Random forests",
     "into each leaf for it to be split.  The " +
     PRINT_PARAM_STRING("num_trees") +
     " controls the number of trees in the random forest.  The " +
-    PRINT_PARAM_STRING("minimum_gain_split") + " parameter control the minimum "
-    "required gain for a decision tree node to split.  Larger values will force"
-    " higher-confidence splits.  The " + PRINT_PARAM_STRING("subspace_dim") +
-    " parameter is used to control the number of random dimensions chosen for "
-    "an individual node's split.  If " +
+    PRINT_PARAM_STRING("minimum_gain_split") + " parameter controls the minimum"
+    " required gain for a decision tree node to split.  Larger values will "
+    "force higher-confidence splits.  The " +
+    PRINT_PARAM_STRING("subspace_dim") + " parameter is used to control the "
+    "number of random dimensions chosen for an individual node's split.  If " +
     PRINT_PARAM_STRING("print_training_accuracy") + " is specified, the "
     "calculated accuracy on the training set will be printed."
     "\n\n"
