@@ -209,17 +209,27 @@ class PrioritizedReplay
     beta = beta + (1 - initialBeta) * 1.0 / replayBetaIters;
   }
 
-  void Update(arma::mat target, arma::icolvec sampledActions,
-              arma::mat nextActionValues, arma::mat& gradients)
+  /**
+    *  Update the priorities of transitions and Update the gradients.
+    *
+    *  @param target The learned value
+    *  @param sampledActions Agent's sampled action
+    *  @param nextActionValues Agent's next action
+    *  @param gradients The model's gradients
+    */
+  void Update(arma::mat target,
+              arma::icolvec sampledActions,
+              arma::mat nextActionValues,
+              arma::mat& gradients)
   {
-    arma::colvec td_error(target.n_cols);
+    arma::colvec tdError(target.n_cols);
     for (size_t i = 0; i < target.n_cols; i ++)
     {
-      td_error[i] = nextActionValues(sampledActions[i], i) -
+      tdError[i] = nextActionValues(sampledActions[i], i) -
           target(sampledActions[i], i);
     }
-    td_error = arma::abs(td_error);
-    UpdatePriorities(sampledIndices, td_error);
+    tdError = arma::abs(tdError);
+    UpdatePriorities(sampledIndices, tdError);
 
     // Update the gradient
     gradients = arma::mean(weights) * gradients;

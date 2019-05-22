@@ -142,8 +142,18 @@ class RandomReplay
     return full ? capacity : position;
   }
 
-  void Update(arma::mat target, arma::icolvec sampledActions,
-              arma::mat nextActionValues, arma::mat& gradients)
+  /**
+    *  Update the priorities of transitions and Update the gradients.
+    *
+    *  @param target The learned value
+    *  @param sampledActions Agent's sampled action
+    *  @param nextActionValues Agent's next action
+    *  @param gradients The model's gradients
+    */
+  void Update(arma::mat target,
+              arma::icolvec sampledActions,
+              arma::mat nextActionValues,
+              arma::mat& gradients)
   {
     /* do nothing for random replay*/
   }
