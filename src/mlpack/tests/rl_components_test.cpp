@@ -16,6 +16,7 @@
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/multiple_pole_cart.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
 #include <mlpack/methods/reinforcement_learning/replay/random_replay.hpp>
@@ -116,6 +117,25 @@ BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
   BOOST_REQUIRE_EQUAL(reward, 1.0);
   BOOST_REQUIRE(!task.IsTerminal(state));
   BOOST_REQUIRE_EQUAL(2, CartPole::Action::size);
+}
+
+/**
+ * Constructs a MultiplePoleCart instance and check if the main rountine works as
+ * it should be.
+ */
+BOOST_AUTO_TEST_CASE(MultiplePoleCartTest)
+{
+  arma::vec poleLengths = {1,0.5};
+  arma::vec poleMasses = {1,1};
+  const MultiplePoleCart task = MultiplePoleCart(2, poleLengths, poleMasses);
+
+  MultiplePoleCart::State state = task.InitialSample();
+  MultiplePoleCart::Action action = MultiplePoleCart::Action::backward;
+  double reward = task.Sample(state, action);
+
+  BOOST_REQUIRE_EQUAL(reward, 1.0);
+  BOOST_REQUIRE(!task.IsTerminal(state));
+  BOOST_REQUIRE_EQUAL(2, MultiplePoleCart::Action::size);
 }
 
 /**
