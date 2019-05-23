@@ -125,8 +125,8 @@ BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
  */
 BOOST_AUTO_TEST_CASE(MultiplePoleCartTest)
 {
-  arma::vec poleLengths = {1,0.5};
-  arma::vec poleMasses = {1,1};
+  arma::vec poleLengths = {1, 0.5};
+  arma::vec poleMasses = {1, 1};
   const MultiplePoleCart task = MultiplePoleCart(2, poleLengths, poleMasses);
 
   MultiplePoleCart::State state = task.InitialSample();

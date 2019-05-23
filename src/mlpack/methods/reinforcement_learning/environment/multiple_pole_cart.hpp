@@ -38,7 +38,7 @@ class MultiplePoleCart
      * @param numPoles The number of poles.
      */
     State(size_t numPoles)
-    { 
+    {
       data = arma::mat(dimension, numPoles, arma::fill::zeros);
     }
 
@@ -129,11 +129,13 @@ class MultiplePoleCart
       thetaThresholdRadians(thetaThresholdRadians),
       xThreshold(xThreshold),
       doneReward(doneReward)
-  { 
+  {
     if (poleNum != poleLengths.n_elem)
-      Log::Fatal << "The number of lengths should be the same as the number of poles." << std::endl;
+      Log::Fatal << "The number of lengths should be the same as the number of poles." 
+          << std::endl;
     if (poleNum != poleMasses.n_elem)
-      Log::Fatal << "The number of masses should be the same as the number of poles." << std::endl;
+      Log::Fatal << "The number of masses should be the same as the number of poles."
+          << std::endl;
   }
 
   /**
@@ -157,8 +159,8 @@ class MultiplePoleCart
       double poleOmega = state.AngularVelocity(i);
       double sinTheta = sin(state.Angle(i));
       double cosTheta = cos(state.Angle(i));
-      totalForce += (poleMasses[i] * poleLengths[i] * poleOmega * poleOmega * sinTheta) +
-          0.75 * poleMasses[i] * cosTheta * gravity * sinTheta; 
+      totalForce += (poleMasses[i] * poleLengths[i] * poleOmega * poleOmega *
+          sinTheta) + 0.75 * poleMasses[i] * cosTheta * gravity * sinTheta;
       totalMass += poleMasses[i] * (1 - 0.75 * cosTheta * cosTheta);
     }
     double xAcc = totalForce / totalMass;
@@ -169,7 +171,7 @@ class MultiplePoleCart
       double sinTheta = sin(state.Angle(i));
       double cosTheta = cos(state.Angle(i));
       nextState.Angle(i) = state.Angle(i) + tau * state.AngularVelocity(i);
-      nextState.AngularVelocity(i) += -tau * 0.75 * (xAcc * cosTheta + 
+      nextState.AngularVelocity(i) += -tau * 0.75 * (xAcc * cosTheta +
           gravity * sinTheta) / poleLengths[i];
     }
 
