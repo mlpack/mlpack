@@ -81,7 +81,7 @@ static void mlpackMain()
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
   // Check scaler method.
   RequireParamValue<std::string>("scaler_method",
-      [](std::string x) { return x == "standard_scaler" || x == 
+      [](std::string x) { return x == "standard_scaler" || x ==
       "min_max_scaler" || x == "mean_normalization" || x == "max_abs_scaler";},
       true, "scaler_method must be one among standard_scaler, max_abs_scaler,"
       "min_max_scaler or mean_normalization.");
