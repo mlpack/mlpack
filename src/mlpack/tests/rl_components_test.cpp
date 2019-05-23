@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(SimpleMountainCarTest)
 }
 
 /**
- * Constructs a CartPole instance and check if the main rountine works as
+ * Constructs a CartPole instance and check if the main routine works as
  * it should be.
  */
 BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(SimpleCartPoleTest)
 }
 
 /**
- * Constructs a MultiplePoleCart instance and check if the main rountine works as
+ * Constructs a MultiplePoleCart instance and check if the main routine works as
  * it should be.
  */
 BOOST_AUTO_TEST_CASE(MultiplePoleCartTest)

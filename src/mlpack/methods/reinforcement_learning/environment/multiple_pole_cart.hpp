@@ -2,7 +2,7 @@
  * @file multiple_pole_cart.hpp
  * @author Rahul Ganesh Prabhu
  *
- * This file is an implementation of Multiple Pole Cart Balancing Task
+ * This file is an implementation of Multiple Pole Cart Balancing Task.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -24,14 +24,18 @@ class MultiplePoleCart
 {
  public:
   /**
-   * Implementation of the state of Multiple Pole Cart. Each state is a tuple vector
-   * (position, velocity, angle, angular velocity).
+   * Implementation of the state of Multiple Pole Cart. The state is expressed as
+   * a matrix where the $0^{th}$ column is the state of the cart, represented by a tuple
+   * (position, velocity) and the $i^{th}$ column is the state of the $i^{th}$ pole, represented
+   * by a tuple (angle, angular velocity).
    */
   class State
   {
    public:
     /**
      * Construct a state instance.
+     * 
+     * @param numPoles The number of poles.
      */
     State(size_t numPoles)
     { 
@@ -69,20 +73,14 @@ class MultiplePoleCart
     //! Modify the angular velocity of the $i^{th}$ pole.
     double& AngularVelocity(size_t i) { return data(1, i); }
 
-    //! Get the state of the cart.
-    arma::colvec CartState() const { return data.col(0); }
-
-    //! Get the state of the $i^{th}$ pole.
-    arma::colvec PoleState(size_t i) const { return data.col(i); }
-
     //! Encode the state to a matrix.
     const arma::mat& Encode() const { return data; }
 
     //! Dimension of the encoded state.
-    size_t dimension = 2;
+    const size_t dimension = 2;
 
    private:
-    //! Locally-stored (position, velocity, angle, angular velocity).
+    //! Locally-stored state data.
     arma::mat data;
   };
 
