@@ -170,7 +170,7 @@ class MultiplePoleCart
       double cosTheta = cos(state.Angle(i));
       nextState.Angle(i) = state.Angle(i) + tau * state.AngularVelocity(i);
       nextState.AngularVelocity(i) += -tau * 0.75 * (xAcc * cosTheta + 
-          gravity * sinTheta);
+          gravity * sinTheta) / poleLengths[i];
     }
 
     // Update state of the cart.
