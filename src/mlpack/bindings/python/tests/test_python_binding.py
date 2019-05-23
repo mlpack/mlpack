@@ -29,6 +29,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  flag1=True)
 
     self.assertEqual(output['string_out'], 'hello2')
@@ -41,7 +43,9 @@ class TestPythonBinding(unittest.TestCase):
     """
     output = test_python_binding(string_in='hello',
                                  int_in=12,
-                                 double_in=4.0)
+                                 double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0])
 
     self.assertNotEqual(output['string_out'], 'hello2')
     self.assertNotEqual(output['int_out'], 13)
@@ -54,6 +58,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='goodbye',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  flag1=True)
 
     self.assertNotEqual(output['string_out'], 'hello2')
@@ -65,6 +71,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=15,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  flag1=True)
 
     self.assertNotEqual(output['int_out'], 13)
@@ -76,6 +84,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=2.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  flag1=True)
 
     self.assertNotEqual(output['double_out'], 5.0)
@@ -87,6 +97,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  flag1=True,
                                  flag2=True)
 
@@ -105,6 +117,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  matrix_in=z)
 
     self.assertEqual(output['matrix_out'].shape[0], 100)
@@ -127,6 +141,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  matrix_in=x,
                                  copy_all_inputs=True)
 
@@ -152,6 +168,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  matrix_in=z)
 
     self.assertEqual(output['matrix_out'].shape[0], 100)
@@ -174,6 +192,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  matrix_in=x,
                                  copy_all_inputs=True)
 
@@ -197,6 +217,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  smatrix_in=z)
 
     self.assertEqual(output['smatrix_out'].shape[0], 100)
@@ -215,6 +237,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  smatrix_in=x,
                                  copy_all_inputs=True)
 
@@ -234,6 +258,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  s_umatrix_in=z)
 
     self.assertEqual(output['s_umatrix_out'].shape[0], 100)
@@ -252,6 +278,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  s_umatrix_in=x,
                                  copy_all_inputs=True)
 
@@ -271,6 +299,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  col_in=z)
 
     self.assertEqual(output['col_out'].shape[0], 100)
@@ -288,6 +318,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  col_in=x,
                                  copy_all_inputs=True)
 
@@ -308,6 +340,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  matrix_in=z)
 
     self.assertEqual(output['matrix_out'].shape[0], 100)
@@ -330,6 +364,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  matrix_in=x,
                                  copy_all_inputs=True)
 
@@ -354,6 +390,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  matrix_in=x)
 
     self.assertEqual(output['matrix_out'].shape[0], 3)
@@ -383,6 +421,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  matrix_in=x,
                                  copy_all_inputs=True)
 
@@ -414,6 +454,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  umatrix_in=z)
 
     self.assertEqual(output['umatrix_out'].shape[0], 100)
@@ -435,6 +477,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  umatrix_in=x,
                                  copy_all_inputs=True)
 
@@ -459,6 +503,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  umatrix_in=x)
 
     self.assertEqual(output['umatrix_out'].shape[0], 3)
@@ -488,6 +534,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  umatrix_in=x,
                                  copy_all_inputs=True)
 
@@ -519,6 +567,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  col_in=z)
 
     self.assertEqual(output['col_out'].shape[0], 100)
@@ -536,6 +586,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  col_in=x,
                                  copy_all_inputs=True)
 
@@ -555,6 +607,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  ucol_in=z)
 
     self.assertEqual(output['ucol_out'].shape[0], 100)
@@ -571,6 +625,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  ucol_in=x,
                                  copy_all_inputs=True)
 
@@ -589,6 +645,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  row_in=z)
 
     self.assertEqual(output['row_out'].shape[0], 100)
@@ -606,6 +664,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  row_in=x,
                                  copy_all_inputs=True)
 
@@ -625,6 +685,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  urow_in=z)
 
     self.assertEqual(output['urow_out'].shape[0], 100)
@@ -642,6 +704,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  urow_in=x,
                                  copy_all_inputs=True)
 
@@ -661,6 +725,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  matrix_and_info_in=z)
 
     self.assertEqual(output['matrix_and_info_out'].shape[0], 100)
@@ -679,6 +745,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  matrix_and_info_in=x,
                                  copy_all_inputs=True)
 
@@ -701,6 +769,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  matrix_and_info_in=z)
 
     self.assertEqual(output['matrix_and_info_out'].shape[0], 10)
@@ -726,6 +796,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  matrix_and_info_in=x,
                                  copy_all_inputs=True)
 
@@ -751,6 +823,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  vector_in=x)
 
     self.assertEqual(output['vector_out'], [1, 2, 3, 4])
@@ -765,6 +839,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  str_vector_in=x)
 
     self.assertEqual(output['str_vector_out'],
@@ -778,11 +854,15 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  build_model=True)
 
     output2 = test_python_binding(string_in='hello',
                                   int_in=12,
                                   double_in=4.0,
+                                  mat_req_in=[[1.0]],
+                                  col_req_in=[1.0],
                                   model_in=output['model_out'])
 
     self.assertEqual(output2['model_bw_out'], 20.0)
@@ -797,6 +877,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  smatrix_in=z)
 
     self.assertEqual(output['smatrix_out'].shape[0], 100)
@@ -815,6 +897,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  smatrix_in=x,
                                  copy_all_inputs=True)
 
@@ -834,6 +918,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  s_umatrix_in=z)
 
     self.assertEqual(output['s_umatrix_out'].shape[0], 100)
@@ -851,6 +937,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  s_umatrix_in=x,
                                  copy_all_inputs=True)
 
@@ -870,6 +958,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  col_in=z)
 
     self.assertEqual(output['col_out'].shape[0], 100)
@@ -887,6 +977,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  col_in=x,
                                  copy_all_inputs=True)
 
@@ -906,6 +998,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  ucol_in=z)
 
     self.assertEqual(output['ucol_out'].shape[0], 100)
@@ -922,6 +1016,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  ucol_in=x,
                                  copy_all_inputs=True)
 
@@ -940,6 +1036,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  row_in=x)
 
     self.assertEqual(output['row_out'].shape[0], 100)
@@ -957,6 +1055,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  row_in=x,
                                  copy_all_inputs=True)
 
@@ -976,6 +1076,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  urow_in=z)
 
     self.assertEqual(output['urow_out'].shape[0], 100)
@@ -993,6 +1095,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  urow_in=x,
                                  copy_all_inputs=True)
 
@@ -1012,6 +1116,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  matrix_and_info_in=z[0])
 
     self.assertEqual(output['matrix_and_info_out'].shape[0], 10)
@@ -1028,6 +1134,8 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  matrix_and_info_in=x[0],
                                  copy_all_inputs=True)
 
@@ -1045,24 +1153,32 @@ class TestPythonBinding(unittest.TestCase):
                       lambda : test_python_binding(string_in=10,
                                                    int_in=12,
                                                    double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
                                                    flag1=True))
 
     self.assertRaises(TypeError,
                       lambda : test_python_binding(string_in='hello',
                                                    int_in=10.0,
                                                    double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
                                                    flag1=True))
 
     self.assertRaises(TypeError,
                       lambda : test_python_binding(string_in='hello',
                                                    int_in=12,
                                                    double_in='bad',
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
                                                    flag1=True))
 
     self.assertRaises(TypeError,
                       lambda : test_python_binding(string_in='hello',
                                                    int_in=12,
                                                    double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
                                                    flag1=True,
                                                    flag2=10))
 
@@ -1070,6 +1186,8 @@ class TestPythonBinding(unittest.TestCase):
                       lambda : test_python_binding(string_in='hello',
                                                    int_in=12,
                                                    double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
                                                    flag1=True,
                                                    matrix_in= 10.0))
 
@@ -1077,6 +1195,8 @@ class TestPythonBinding(unittest.TestCase):
                       lambda : test_python_binding(string_in='hello',
                                                    int_in=12,
                                                    double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
                                                    flag1=True,
                                                    matrix_in= 1))
 
@@ -1084,6 +1204,8 @@ class TestPythonBinding(unittest.TestCase):
                       lambda : test_python_binding(string_in='hello',
                                                    int_in=12,
                                                    double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
                                                    flag1=True,
                                                    matrix_and_info_in = 10.0))
 
@@ -1091,6 +1213,8 @@ class TestPythonBinding(unittest.TestCase):
                       lambda : test_python_binding(string_in='hello',
                                                    int_in=12,
                                                    double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
                                                    flag1=True,
                                                    copy_all_inputs = 10.0))
 
@@ -1098,6 +1222,8 @@ class TestPythonBinding(unittest.TestCase):
                       lambda : test_python_binding(string_in='hello',
                                                    int_in=12,
                                                    double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
                                                    flag1=True,
                                                    col_in = 10))
 
@@ -1105,6 +1231,8 @@ class TestPythonBinding(unittest.TestCase):
                       lambda : test_python_binding(string_in='hello',
                                                    int_in=12,
                                                    double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
                                                    flag1=True,
                                                    row_in = 10.0))
 
@@ -1112,6 +1240,8 @@ class TestPythonBinding(unittest.TestCase):
                       lambda : test_python_binding(string_in='hello',
                                                    int_in=12,
                                                    double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
                                                    flag1=True,
                                                    str_vector_in = 'bad'))
 
@@ -1119,6 +1249,8 @@ class TestPythonBinding(unittest.TestCase):
                       lambda : test_python_binding(string_in='hello',
                                                    int_in=12,
                                                    double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
                                                    flag1=True,
                                                    urow_in = 10.0))
 
@@ -1126,6 +1258,8 @@ class TestPythonBinding(unittest.TestCase):
                       lambda : test_python_binding(string_in='hello',
                                                    int_in=12,
                                                    double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
                                                    flag1=True,
                                                    ucol_in = 10.0))
 
@@ -1133,6 +1267,8 @@ class TestPythonBinding(unittest.TestCase):
                       lambda : test_python_binding(string_in='hello',
                                                    int_in=12,
                                                    double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
                                                    flag1=True,
                                                    umatrix_in = 10.0))
 
@@ -1140,6 +1276,8 @@ class TestPythonBinding(unittest.TestCase):
                       lambda : test_python_binding(string_in='hello',
                                                    int_in=12,
                                                    double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
                                                    flag1=True,
                                                    verbose = 10))
 
@@ -1147,8 +1285,26 @@ class TestPythonBinding(unittest.TestCase):
                       lambda : test_python_binding(string_in='hello',
                                                    int_in=12,
                                                    double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
                                                    flag1=True,
                                                    vector_in = 10.0))
+
+    self.assertRaises(TypeError,
+                      lambda : test_python_binding(string_in='hello',
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=False,
+                                                   col_req_in=[1.0],
+                                                   flag1=True))
+
+    self.assertRaises(TypeError,
+                      lambda : test_python_binding(string_in='hello',
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=False,
+                                                   flag1=True))
 
   def testModelForceCopy(self):
     """
@@ -1158,17 +1314,23 @@ class TestPythonBinding(unittest.TestCase):
     output = test_python_binding(string_in='hello',
                                  int_in=12,
                                  double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
                                  build_model=True)
 
     output2 = test_python_binding(string_in='hello',
                                   int_in=12,
                                   double_in=4.0,
+                                  mat_req_in=[[1.0]],
+                                  col_req_in=[1.0],
                                   model_in=output['model_out'],
                                   copy_all_inputs=True)
 
     output3 = test_python_binding(string_in='hello',
                                   int_in=12,
                                   double_in=4.0,
+                                  mat_req_in=[[1.0]],
+                                  col_req_in=[1.0],
                                   model_in=output['model_out'])
 
     self.assertEqual(output2['model_bw_out'], 20.0)

@@ -24,6 +24,7 @@ set(SOURCES
   split_data.hpp
   imputer.hpp
   binarize.hpp
+  confusion_matrix.hpp
   one_hot_encoding.hpp
   one_hot_encoding_impl.hpp
 )
