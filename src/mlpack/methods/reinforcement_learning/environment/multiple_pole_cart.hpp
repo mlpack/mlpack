@@ -131,11 +131,11 @@ class MultiplePoleCart
       doneReward(doneReward)
   {
     if (poleNum != poleLengths.n_elem)
-      Log::Fatal << "The number of lengths should be the same as the number of poles." 
-          << std::endl;
+      Log::Fatal << "The number of lengths should be the same as the number of"
+          "poles." << std::endl;
     if (poleNum != poleMasses.n_elem)
-      Log::Fatal << "The number of masses should be the same as the number of poles."
-          << std::endl;
+      Log::Fatal << "The number of masses should be the same as the number of"
+          "poles." << std::endl;
   }
 
   /**
@@ -238,17 +238,14 @@ class MultiplePoleCart
   //! Locally-stored length of poles.
   arma::vec poleLengths;
 
+  //! Locally-stored mass of the pole.
+  arma::vec poleMasses;
+
   //! Locally-stored gravity.
   double gravity;
 
   //! Locally-stored mass of the cart.
   double massCart;
-
-  //! Locally-stored mass of the pole.
-  arma::vec poleMasses;
-
-  //! Locally-stored length of the pole.
-  double length;
 
   //! Locally-stored magnitude of the applied force.
   double forceMag;
