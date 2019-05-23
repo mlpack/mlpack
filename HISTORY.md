@@ -1,5 +1,15 @@
 ### mlpack 3.1.1
 ###### ????-??-??
+  * Fix random forest bug for numerical-only data (#1887).
+
+  * Significant speedups for random forest (#1887).
+
+  * Random forest now has `minimum_gain_split` and `subspace_dim` parameters
+    (#1887).
+
+  * Decision tree parameter `print_training_error` deprecated in favor of
+    `print_training_accuracy`.
+
   * `output` option changed to `predictions` for adaboost and perceptron
     binding. Old options are now deprecated and will be preserved until mlpack
     4.0.0 (#1882).
