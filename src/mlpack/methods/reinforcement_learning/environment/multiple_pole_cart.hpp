@@ -152,7 +152,7 @@ class MultiplePoleCart
     // Calculate acceleration.
     double totalForce = action ? forceMag : -forceMag;
     double totalMass = massCart;
-    for( size_t i = 0; i < poleNum; i++)
+    for (size_t i = 0; i < poleNum; i++)
     {
       double poleOmega = state.AngularVelocity(i);
       double sinTheta = sin(state.Angle(i));
@@ -164,7 +164,7 @@ class MultiplePoleCart
     double xAcc = totalForce / totalMass;
 
     // Update states of the poles.
-    for( size_t i = 0; i < poleNum; i++)
+    for (size_t i = 0; i < poleNum; i++)
     {
       double sinTheta = sin(state.Angle(i));
       double cosTheta = cos(state.Angle(i));
@@ -192,7 +192,7 @@ class MultiplePoleCart
   }
 
   /**
-   * Dynamics of Cart Pole. Get reward based on current state and current
+   * Dynamics of Multiple Pole Cart. Get reward based on current state and current
    * action.
    *
    * @param state The current state.
