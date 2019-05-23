@@ -99,7 +99,8 @@ output = mlpack.random_forest(input_model=random_forest,
 
 # Now print the accuracy.  The 'probabilities' output could also be used
 # to generate an ROC curve.
-correct = np.sum(output['predictions'] == test_labels)
+correct = np.sum(
+    output['predictions'] == np.reshape(test_labels, (test_labels.shape[0],)))
 print(str(correct) + ' correct out of ' + str(len(test_labels)) + ' (' +
     str(100 * float(correct) / float(len(test_labels))) + '%).')
 @endcode

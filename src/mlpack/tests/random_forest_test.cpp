@@ -129,8 +129,7 @@ BOOST_AUTO_TEST_CASE(UnweightedNumericLearningTest)
   data::Load("vc2_labels.txt", labels);
 
   // Build a random forest and a decision tree.
-  RandomForest<GiniGain, RandomDimensionSelect> rf(dataset, labels, 3,
-      10 /* 10 trees */, 5);
+  RandomForest<> rf(dataset, labels, 3, 20 /* 20 trees */, 1, 1e-7);
   DecisionTree<> dt(dataset, labels, 3, 5);
 
   // Get performance statistics on test data.
@@ -149,7 +148,7 @@ BOOST_AUTO_TEST_CASE(UnweightedNumericLearningTest)
   size_t rfCorrect = arma::accu(rfPredictions == testLabels);
   size_t dtCorrect = arma::accu(dtPredictions == testLabels);
 
-  BOOST_REQUIRE_GE(rfCorrect, dtCorrect);
+  BOOST_REQUIRE_GE(rfCorrect, dtCorrect * 0.9);
   BOOST_REQUIRE_GE(rfCorrect, size_t(0.7 * testDataset.n_cols));
 }
 
@@ -182,8 +181,7 @@ BOOST_AUTO_TEST_CASE(WeightedNumericLearningTest)
     weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
 
   // Train decision tree and random forest.
-  RandomForest<GiniGain, RandomDimensionSelect> rf(dataset, labels, 3, weights,
-      10, 5);
+  RandomForest<> rf(dataset, labels, 3, weights, 20, 1);
   DecisionTree<> dt(dataset, labels, 3, weights, 5);
 
   // Get performance statistics on test data.
@@ -202,7 +200,7 @@ BOOST_AUTO_TEST_CASE(WeightedNumericLearningTest)
   size_t rfCorrect = arma::accu(rfPredictions == testLabels);
   size_t dtCorrect = arma::accu(dtPredictions == testLabels);
 
-  BOOST_REQUIRE_GE(rfCorrect, dtCorrect);
+  BOOST_REQUIRE_GE(rfCorrect, dtCorrect * 0.9);
   BOOST_REQUIRE_GE(rfCorrect, size_t(0.7 * testDataset.n_cols));
 }
 
@@ -224,7 +222,7 @@ BOOST_AUTO_TEST_CASE(UnweightedCategoricalLearningTest)
   arma::Row<size_t> testLabels = l.subvec(2000, 3999);
 
   // Train a random forest and a decision tree.
-  RandomForest<> rf(trainingData, di, trainingLabels, 5, 15 /* 15 trees */, 5);
+  RandomForest<> rf(trainingData, di, trainingLabels, 5, 15 /* 15 trees */, 1);
   DecisionTree<> dt(trainingData, di, trainingLabels, 5, 5);
 
   // Get performance statistics on test data.
@@ -238,7 +236,7 @@ BOOST_AUTO_TEST_CASE(UnweightedCategoricalLearningTest)
   size_t rfCorrect = arma::accu(rfPredictions == testLabels);
   size_t dtCorrect = arma::accu(dtPredictions == testLabels);
 
-  BOOST_REQUIRE_GE(rfCorrect, dtCorrect - 50);
+  BOOST_REQUIRE_GE(rfCorrect, dtCorrect - 15);
   BOOST_REQUIRE_GE(rfCorrect, size_t(0.7 * testData.n_cols));
 }
 
@@ -281,7 +279,7 @@ BOOST_AUTO_TEST_CASE(WeightedCategoricalLearningTest)
   arma::Row<size_t> fullLabels = arma::join_rows(trainingLabels, randomLabels);
 
   // Build a random forest and a decision tree.
-  RandomForest<> rf(fullData, di, fullLabels, 5, weights, 15 /* 15 trees */, 5);
+  RandomForest<> rf(fullData, di, fullLabels, 5, weights, 15 /* 15 trees */, 1);
   DecisionTree<> dt(fullData, di, fullLabels, 5, weights, 5);
 
   // Get performance statistics on test data.
@@ -295,31 +293,8 @@ BOOST_AUTO_TEST_CASE(WeightedCategoricalLearningTest)
   size_t rfCorrect = arma::accu(rfPredictions == testLabels);
   size_t dtCorrect = arma::accu(dtPredictions == testLabels);
 
-  BOOST_REQUIRE_GE(rfCorrect, dtCorrect - 50);
+  BOOST_REQUIRE_GE(rfCorrect, dtCorrect - 15);
   BOOST_REQUIRE_GE(rfCorrect, size_t(0.7 * testData.n_cols));
-}
-
-/**
- * Test that learning with a leaf size of 1 successfully memorizes the training
- * set.
- */
-BOOST_AUTO_TEST_CASE(LeafSize1Test)
-{
-  // Load the vc2 dataset.
-  arma::mat dataset;
-  data::Load("vc2.csv", dataset);
-  arma::Row<size_t> labels;
-  data::Load("vc2_labels.txt", labels);
-
-  // Build a random forest with a leaf size of 1.
-  RandomForest<> rf(dataset, labels, 3, 10 /* 10 trees */, 1);
-
-  // Predict on the training set.
-  arma::Row<size_t> predictions;
-  rf.Classify(dataset, predictions);
-
-  const size_t correct = arma::accu(predictions == labels);
-  BOOST_REQUIRE_EQUAL(correct, dataset.n_cols);
 }
 
 /**
@@ -337,24 +312,20 @@ BOOST_AUTO_TEST_CASE(LeafSizeDatasetTest)
   // dataset.
   RandomForest<> rf(dataset, labels, 3, 10 /* 10 trees */, dataset.n_cols);
 
-  // Calculate majority probabilities.
-  arma::vec majorityProbs(3, arma::fill::zeros);
-  for (size_t i = 0; i < dataset.n_cols; ++i)
-    majorityProbs[labels[i]]++;
-  majorityProbs /= dataset.n_cols;
-  arma::uword max;
-  majorityProbs.max(max);
-  size_t majorityClass = (size_t) max;
-
   // Predict on the training set.
   arma::Row<size_t> predictions;
   arma::mat probabilities;
   rf.Classify(dataset, predictions, probabilities);
 
+  // We want to check that all the classes and probabilities are the same for
+  // all predictions.
+  size_t majorityClass = predictions[0];
+  arma::vec majorityProbs = probabilities.col(0);
+
   BOOST_REQUIRE_EQUAL(probabilities.n_rows, 3);
   BOOST_REQUIRE_EQUAL(probabilities.n_cols, dataset.n_cols);
   BOOST_REQUIRE_EQUAL(predictions.n_elem, dataset.n_cols);
-  for (size_t i = 0; i < predictions.n_cols; ++i)
+  for (size_t i = 1; i < predictions.n_cols; ++i)
   {
     BOOST_REQUIRE_EQUAL(predictions[i], majorityClass);
     for (size_t j = 0; j < probabilities.n_rows; ++j)
@@ -371,14 +342,14 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   arma::Row<size_t> labels;
   data::Load("vc2_labels.txt", labels);
 
-  RandomForest<> rf(dataset, labels, 3, 10 /* 10 trees */, 10);
+  RandomForest<> rf(dataset, labels, 3, 10 /* 10 trees */, 1);
 
   arma::Row<size_t> beforePredictions;
   arma::mat beforeProbabilities;
   rf.Classify(dataset, beforePredictions, beforeProbabilities);
 
   RandomForest<> xmlForest, textForest, binaryForest;
-  binaryForest.Train(dataset, labels, 3, 3, 50);
+  binaryForest.Train(dataset, labels, 3, 3, 5, 1);
   SerializeObjectAll(rf, xmlForest, textForest, binaryForest);
 
   // Now check that we get the same results serializing other things.
@@ -425,13 +396,13 @@ BOOST_AUTO_TEST_CASE(RandomForestNumericTrainReturnEntropy)
 
   // Test random forest on unweighted numeric dataset.
   RandomForest<GiniGain, RandomDimensionSelect> rf;
-  double entropy = rf.Train(dataset, labels, 3, 10, 5);
+  double entropy = rf.Train(dataset, labels, 3, 10, 1);
 
   BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
 
   // Test random forest on weighted numeric dataset.
   RandomForest<GiniGain, RandomDimensionSelect> wrf;
-  entropy = wrf.Train(dataset, labels, 3, weights, 10, 5);
+  entropy = wrf.Train(dataset, labels, 3, weights, 10, 1);
 
   BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
 }
@@ -471,16 +442,47 @@ BOOST_AUTO_TEST_CASE(RandomForestCategoricalTrainReturnEntropy)
 
   // Test random forest on unweighted categorical dataset.
   RandomForest<> rf;
-  double entropy = rf.Train(fullData, di, fullLabels, 5, 15 /* 15 trees */, 5);
+  double entropy = rf.Train(fullData, di, fullLabels, 5, 15 /* 15 trees */, 1,
+      1e-7, MultipleRandomDimensionSelect(3));
 
   BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
 
   // Test random forest on weighted categorical dataset.
   RandomForest<> wrf;
   entropy = wrf.Train(fullData, di, fullLabels, 5, weights, 15 /* 15 trees */,
-      5);
+      1, 1e-7, MultipleRandomDimensionSelect(3));
 
   BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
+}
+
+/**
+ * Test that different trees get generated.
+ */
+BOOST_AUTO_TEST_CASE(DifferentTreesTest)
+{
+  arma::mat d(10, 100, arma::fill::randu);
+  arma::Row<size_t> l(100);
+  for (size_t i = 0; i < 50; ++i)
+    l(i) = 0;
+  for (size_t i = 50; i < 100; ++i)
+    l(i) = 1;
+
+  bool success = false;
+  size_t trial = 0;
+
+  // It's possible we might get the same random dimensions selected, so let's do
+  // multiple trials.
+  while (!success && trial < 3)
+  {
+    RandomForest<GiniGain, RandomDimensionSelect> rf;
+    rf.Train(d, l, 2, 2, 5);
+
+    success = (rf.Tree(0).SplitDimension() != rf.Tree(1).SplitDimension());
+
+    ++trial;
+  }
+
+  BOOST_REQUIRE_EQUAL(success, true);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

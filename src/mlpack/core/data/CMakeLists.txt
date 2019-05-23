@@ -26,6 +26,7 @@ set(SOURCES
   binarize.hpp
   dictionary_encoding.hpp
   dictionary_encoding_impl.hpp
+  confusion_matrix.hp
   one_hot_encoding.hpp
   one_hot_encoding_impl.hpp
   tokenizer.hpp
