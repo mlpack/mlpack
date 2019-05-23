@@ -7,10 +7,12 @@
   * Concatenated ReLU layer (#1843).
 
   * Accelerate NormalizeLabels function using hashing instead of linear search
-    (see `src/mlpack/core/data/normalize_labels_impl.hpp`)(#1780).
+    (see `src/mlpack/core/data/normalize_labels_impl.hpp`) (#1780).
 
   * Add `ConfusionMatrix()` function for checking performance of classifiers
     (#1798).
+
+  * Install ensmallen headers when it is downloaded during build (#1900).
 
 ### mlpack 3.1.0
 ###### 2019-04-25
