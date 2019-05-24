@@ -1,32 +1,33 @@
 /**
- * @file tokenizer.hpp
+ * @file strtok.hpp
  * @author Jeffin Sam
  *
- * Implementation of Tokenizer class.
+ * Implementation of Strtok class which tokenizes using single character.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_TOKENIZER_HPP
-#define MLPACK_CORE_DATA_TOKENIZER_HPP
+#ifndef MLPACK_CORE_DATA_STRTOK_HPP
+#define MLPACK_CORE_DATA_STRTOK_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
 
 namespace mlpack {
 namespace data {
 /**
- * A simple Tokenizer class
+ * A simple Strtok class
  */
-class Tokenizer
+class Strtok
 {
  public:
   /**
   * A constructor to set deimiter.
   * @param Delimiter A string which you want to use as delimiter
   */
-  Tokenizer(boost::string_view Delimiter)
+  Strtok(std::string Delimiter)
   {
     delimiter = Delimiter;
   }
@@ -38,9 +39,10 @@ class Tokenizer
   boost::string_view operator()(boost::string_view& str) const
   {
     boost::string_view retval;
+    boost::string_view delimiterView(delimiter);
     while (retval.empty())
     {
-      std::size_t pos = str.find_first_of(delimiter);
+      std::size_t pos = str.find_first_of(delimiterView);
       if (pos == str.npos)
       {
         retval = str;
@@ -55,8 +57,8 @@ class Tokenizer
 
  private:
   // Delimiter by which the string is tokenized.
-  boost::string_view delimiter;
-}; // Tokenizer class
+  std::string delimiter;
+}; // Strtok class
 
 } // namespace data
 } // namespace mlpack

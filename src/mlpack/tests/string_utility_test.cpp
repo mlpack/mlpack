@@ -11,7 +11,8 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/data/dictionary_encoding.hpp>
-#include <mlpack/core/data/tokenizer.hpp>
+#include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
+#include <mlpack/core/data/tokenizer/strtok.hpp>
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
@@ -48,8 +49,8 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
   arr[2] = "Good how are you";
   arma::sp_mat output;
   data::DicitonaryEncoding en;
-  en.DictEncode(arr, output, tokenizer);
-  const std::unordered_map<std::string, size_t>maps = en.Mappings();
+  en.Encode(arr, output, tokenizer);
+  const std::unordered_map<boost::string_view, size_t, data::Hasher>maps = en.Mappings();
   // Checking that everything is mapped to different numbers
   std::unordered_map<size_t, size_t>cnt;
   for (auto it = maps.begin(); it != maps.end(); it++)
@@ -61,19 +62,18 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
 }
 
 /**
-* Test Standard Tokenizer.
+* Test for Strtok class.
 */
-BOOST_AUTO_TEST_CASE(TokenizerTest)
+BOOST_AUTO_TEST_CASE(StrtokTest)
 {
   std::vector<string>arr(3);
   arr[0] = "hello how are you";
   arr[1] = "i am good";
   arr[2] = "Good how are you";
   arma::sp_mat output;
-  boost::string_view delimiter(" ");
   data::DicitonaryEncoding en;
-  en.DictEncode(arr, output, data::Tokenizer(delimiter));
-  const std::unordered_map<std::string, size_t>maps = en.Mappings();
+  en.Encode(arr, output, data::Strtok(" "));
+  const std::unordered_map<boost::string_view, size_t, data::Hasher>maps = en.Mappings();
   // Checking that everything is mapped to different numbers.
   std::unordered_map<size_t, size_t>cnt;
   for (auto it = maps.begin(); it != maps.end(); it++)
@@ -96,14 +96,14 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingCharTest)
   arma::sp_mat output;
   data::DicitonaryEncoding en;
   // Passing a empty string to encode characters
-  en.DictEncode(arr, output, [](boost::string_view& str) {
+  en.Encode(arr, output, [](boost::string_view& str) {
       if (str.empty())
         return str;
       boost::string_view retval = str.substr(0, 1);
       str.remove_prefix(1);
       return retval;
   });
-  const std::unordered_map<std::string, size_t>maps = en.Mappings();
+  const std::unordered_map<boost::string_view, size_t, data::Hasher>maps = en.Mappings();
   // Checking that everything is mapped to different numbers.
   std::unordered_map<size_t, size_t>cnt;
   for (auto it = maps.begin(); it != maps.end(); it++)
@@ -124,15 +124,15 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingNoPaddingTest)
   arr[1] = "ABCABCD";
   arr[2] = "GAB";
   data::DicitonaryEncoding en;
-  std::vector<std::vector<int> > output;
-  en.DictEncode(arr, output, [](boost::string_view& str) {
+  std::vector<std::vector<size_t> > output;
+  en.Encode(arr, output, [](boost::string_view& str) {
       if (str.empty())
         return str;
       boost::string_view retval = str.substr(0, 1);
       str.remove_prefix(1);
       return retval;
   });
-  const std::unordered_map<std::string, size_t>maps = en.Mappings();
+  const std::unordered_map<boost::string_view, size_t, data::Hasher>maps = en.Mappings();
   // Checking that everything is mapped to different numbers.
   std::unordered_map<size_t, size_t>cnt;
   for (auto it = maps.begin(); it != maps.end(); it++)

@@ -13,9 +13,23 @@
 #define MLPACK_CORE_DATA_DICT_ENCODING_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
+#include <boost/functional/hash.hpp>
 
 namespace mlpack {
 namespace data {
+
+/*
+* Class Hasher importanant to remove inablitiy of unordered_map to store
+* boost::string_view as key.
+*/
+class Hasher {
+ public:
+  std::size_t operator()(boost::string_view str) const {
+    return boost::hash_range<const char*>(str.begin(), str.end());
+  }
+};
+ 
 /**
  * A simple Dictionary Enocding class
  */
@@ -66,7 +80,7 @@ class DicitonaryEncoding
   *
   */
   template<typename MatType, typename TokenizerType>
-  void DictEncode(const std::vector<std::string>& strings,
+  void Encode(const std::vector<std::string>& strings,
                   MatType& output, TokenizerType tokenizer);
 
   /**
@@ -91,19 +105,19 @@ class DicitonaryEncoding
   *
   */
   template<typename TokenizerType>
-  void DictEncode(const std::vector<std::string>& strings,
-            std::vector<std::vector<int>>& output, TokenizerType tokenizer);
+  void Encode(const std::vector<std::string>& strings,
+            std::vector<std::vector<size_t>>& output, TokenizerType tokenizer);
 
   //! Return the Mappings
-  const std::unordered_map<std::string, size_t>& Mappings() const
+  const std::unordered_map<boost::string_view, size_t, Hasher>& Mappings() const
       { return mappings; }
 
   //! Modify the Mappings.
-  std::unordered_map<std::string, size_t>& Mappings() { return mappings; }
+  std::unordered_map<boost::string_view, size_t, Hasher>& Mappings() { return mappings; }
 
  private:
   //! A map which stores information about mapping.
-  std::unordered_map<std::string, size_t>mappings;
+  std::unordered_map<boost::string_view, size_t, Hasher>mappings;
 }; // class DicitonaryEncoding
 
 } // namespace data

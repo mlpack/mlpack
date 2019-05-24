@@ -33,16 +33,16 @@ void DicitonaryEncoding::CreateMap(std::string& strings,
   std::size_t curLabels = mappings.size() + 1;
   while (!token.empty())
   {
-    if (mappings.find(std::string(token)) == mappings.end())
+    if (mappings.find(token) == mappings.end())
     {
-      mappings[std::move(std::string(token))] = curLabels++;
+      mappings[std::move(token)] = curLabels++;
     }
     token = tokenizer(strView);
   }
 }
 
 template<typename MatType, typename TokenizerType>
-void DicitonaryEncoding::DictEncode(const std::vector<std::string>& strings,
+void DicitonaryEncoding::Encode(const std::vector<std::string>& strings,
                 MatType& output, TokenizerType tokenizer)
 {
   boost::string_view strView;
@@ -67,34 +67,34 @@ void DicitonaryEncoding::DictEncode(const std::vector<std::string>& strings,
   {
     for (size_t j = 0; j < dataset[i].size(); ++j)
     {
-      if (mappings.count(std::string(dataset[i][j])) == 0)
+      if (mappings.count(dataset[i][j]) == 0)
       {
-        mappings[std::string(dataset[i][j])] = curLabel++;
+        mappings[dataset[i][j]] = curLabel++;
       }
-      output.at(i, j) = mappings.at(std::move(std::string(dataset[i][j])));
+      output.at(i, j) = mappings.at(std::move(dataset[i][j]));
     }
   }
 }
 
 template<typename TokenizerType>
-void DicitonaryEncoding::DictEncode(const std::vector<std::string>& strings,
-            std::vector<std::vector<int> >& output, TokenizerType tokenizer)
+void DicitonaryEncoding::Encode(const std::vector<std::string>& strings,
+            std::vector<std::vector<size_t> >& output, TokenizerType tokenizer)
 {
   boost::string_view strView;
   boost::string_view token;
   size_t curLabel = mappings.size() + 1;
   for (size_t i = 0; i < strings.size(); ++i)
   {
-    output.push_back(std::vector<int>() );
+    output.push_back(std::vector<size_t>() );
     strView = strings[i];
     token = tokenizer(strView);
     while (!token.empty())
     {
-      if (mappings.count(std::string(token)) == 0)
+      if (mappings.count(token) == 0)
       {
-        mappings[std::string(token)] = curLabel++;
+        mappings[token] = curLabel++;
       }
-    output[i].push_back(mappings[std::move(std::string(token))]);
+    output[i].push_back(mappings[std::move(token)]);
     token = tokenizer(strView);
     }
   }
