@@ -64,14 +64,14 @@ class MultiplePoleCart
     double& Velocity() { return data(1, 0); }
 
     //! Get the angle of the $i^{th}$ pole with the vertical.
-    double Angle(size_t i) const { return data(0, i); }
+    double Angle(const size_t i) const { return data(0, i); }
     //! Modify the angle of the $i^{th}$ pole with the vertical.
-    double& Angle(size_t i) { return data(0, i); }
+    double& Angle(const size_t i) { return data(0, i); }
 
     //! Get the angular velocity of the $i^{th}$ pole.
-    double AngularVelocity(size_t i) const { return data(1, i); }
+    double AngularVelocity(const size_t i) const { return data(1, i); }
     //! Modify the angular velocity of the $i^{th}$ pole.
-    double& AngularVelocity(size_t i) { return data(1, i); }
+    double& AngularVelocity(const size_t i) { return data(1, i); }
 
     //! Encode the state to a matrix.
     const arma::mat& Encode() const { return data; }
