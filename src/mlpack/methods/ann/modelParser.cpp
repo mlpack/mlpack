@@ -57,6 +57,7 @@ using namespace arma;
 using namespace std;
 using namespace boost::property_tree;
 
+bool error = false;
 /**
  * Implementation of the entire dataset consisting of the training data
  * and validation data
@@ -185,12 +186,20 @@ void printMap(map<string, double> params)
 void updateParams(map<string, double> &origParams, map<string, double> &newParams)
 {
   map<string, double>::iterator itr;
-  for (itr = newParams.begin(); itr != newParams.end(); ++itr)
+  for (itr = origParams.begin(); itr != origParams.end(); ++itr)
   {
-    map<string, double>::iterator itr2 = origParams.find(itr->first);
-    itr2->second = newParams.at(itr->first);
+    map<string, double>::iterator itr2 = newParams.find(itr->first);
+    //if(itr->first == "initval") cout<< "\n\nInitval is: " << itr->second << "\n";
+    if (itr2 == newParams.end() && isnan(itr->second))
+    {
+      std::cout << "Required parameter: " << itr->first << "\n";
+      error = true;
+    }
+    else if (itr2 != newParams.end())
+      itr->second = newParams.at(itr->first);
   }
-  //printMap(origParams);
+  if(error)
+    exit(1);
 }
 
 /**
@@ -313,6 +322,8 @@ void trainModel(OptimizerType optimizer, FFN<LossType, InitType> model,
  * 
  * @tparam LossType Type of loss function to use to evaluate the network
  * @tparam InitType Type of initialization to initialize the network parameters
+ * @param loss Loss function used to evaluate the network
+ * @param init Initializer to initialize the network
  * @param optimizerType Type of optimizer to use to train the model
  * @param optimizerParams Parameters to use to define the optimizer
  * @param layers The queue of defined layers of type LayerTypes
@@ -321,12 +332,14 @@ void trainModel(OptimizerType optimizer, FFN<LossType, InitType> model,
  * data
  */
 template <typename LossType, typename InitType>
-void createModel(string optimizerType,
+void createModel(LossType& loss,
+                 InitType& init,
+                 string& optimizerType,
                  map<string, double>& optimizerParams,
                  queue<LayerTypes<> >& layers,
                  Dataset& dataset)
 {
-  FFN<LossType, InitType> model;
+  FFN<LossType, InitType> model(loss, init);
   while (!layers.empty())
   {
     model.Add(layers.front());
@@ -614,8 +627,10 @@ void createModel(string optimizerType,
  * that stores the loss function type
  * 
  * @tparam InitType Type of initialization to initialize the network parameters
+ * @param init Initializer to initialize the network
  * @param lossType Type of loss function to use to evaluate the network
  * @param optimizerType Type of optimizer to use to train the model
+ * @param lossParams Parameters used to define the loss function
  * @param optimizerParams Parameters to use to define the optimizer
  * @param layers The queue of defined layers of type LayerTypes
  * to build the feedforward network
@@ -623,14 +638,22 @@ void createModel(string optimizerType,
  * data
  */
 template <typename InitType>
-void getLossType(string lossType, string optimizerType,
-                 map<string, double> optimizerParams,
+void getLossType(InitType& init,
+                 string& lossType, string& optimizerType,
+                 map<string, double>& lossParams,
+                 map<string, double>& optimizerParams,
                  queue<LayerTypes<> >& layers,
                  Dataset& dataset)
 {
+  map<string, double> origParams;
   if (lossType == "crossentropyerror")
   {
-    createModel<CrossEntropyError<>, InitType>(optimizerType,
+    origParams["eps"] = 1e-10;
+    updateParams(origParams, lossParams);
+    CrossEntropyError<> loss(origParams["eps"]);
+    createModel<CrossEntropyError<>, InitType>(loss,
+                                               init,
+                                               optimizerType,
                                                optimizerParams,
                                                layers,
                                                dataset);
@@ -641,21 +664,32 @@ void getLossType(string lossType, string optimizerType,
   }
   else if (lossType == "kldivergence")
   {
-    createModel<KLDivergence<>, InitType>(optimizerType,
+    origParams["takemean"] = false;
+    updateParams(origParams, lossParams);
+    KLDivergence<> loss(origParams["takemean"]);
+    createModel<KLDivergence<>, InitType>(loss,
+                                          init,
+                                          optimizerType,
                                           optimizerParams,
                                           layers,
                                           dataset);
   }
   else if (lossType == "meansquarederror")
   {
-    createModel<MeanSquaredError<>, InitType>(optimizerType,
+    MeanSquaredError<> loss;
+    createModel<MeanSquaredError<>, InitType>(loss,
+                                              init,
+                                              optimizerType,
                                               optimizerParams,
                                               layers,
                                               dataset);
   }
   else if (lossType == "negativeloglikelihood")
   {
-    createModel<NegativeLogLikelihood<>, InitType>(optimizerType,
+    NegativeLogLikelihood<> loss;
+    createModel<NegativeLogLikelihood<>, InitType>(loss,
+                                                   init,
+                                                   optimizerType,
                                                    optimizerParams,
                                                    layers,
                                                    dataset);
@@ -686,7 +720,8 @@ void getLossType(string lossType, string optimizerType,
  * 
  * @param initType Type of initialization to initialize the network parameters
  * @param lossType Type of loss function to use to evaluate the network
- * @param initDetails Parameters to use to define the initializer
+ * @param initParams Parameters to use to define the initializer
+ * @param lossParams Parameters to use to define the loss function
  * @param optimizerType Type of optimizer to use to train the model
  * @param optimizerParams Parameters to use to define the optimizer
  * @param layers The queue of defined layers of type LayerTypes
@@ -694,36 +729,46 @@ void getLossType(string lossType, string optimizerType,
  * @param dataset The Dataset object that contains the training and validation
  * data
  */
-void getInitType(string initType, string lossType,
-                 map<string, double> initDetails,
-                 string optimizerType, map<string,
-                 double> optimizerParams,
+void getInitType(string& initType, string& lossType,
+                 map<string, double>& initParams,
+                 map<string, double>& lossParams,
+                 string& optimizerType, map<string,
+                 double>& optimizerParams,
                  queue<LayerTypes<> >& layers,
                  Dataset& dataset)
 {
+  map<string, double> origParams;
   if (initType == "const")
   {
-    //initLayer = new ConstInitialization(3.0);
-    map<string, double> origParams;
-    origParams["initval"];
-    //getLossType<ConstInitialization>(lossType);
+    origParams["initval"] = NAN;
+    updateParams(origParams, initParams);
+    ConstInitialization init(origParams["initval"]);
+    getLossType<ConstInitialization>(init, lossType,
+                                     optimizerType, lossParams,
+                                     optimizerParams,
+                                     layers, dataset);
   }
   else if (initType == "gaussian")
   {
-    getLossType<GaussianInitialization>(lossType, optimizerType,
-                                        optimizerParams, layers,
+    origParams["mean"] = 0;
+    origParams["variance"] = 1;
+    GaussianInitialization init(origParams["mean"], origParams["variance"]);
+    getLossType<GaussianInitialization>(init, lossType, optimizerType,
+                                        lossParams, optimizerParams, layers,
                                         dataset);
   }
   else if (initType == "glorot")
   {
-    getLossType<GlorotInitialization>(lossType, optimizerType,
-                                      optimizerParams, layers,
+    GlorotInitialization init;
+    getLossType<GlorotInitialization>(init, lossType, optimizerType,
+                                      lossParams, optimizerParams, layers,
                                       dataset);
   }
   else if (initType == "he")
   {
-    getLossType<HeInitialization>(lossType, optimizerType,
-                                  optimizerParams, layers,
+    HeInitialization init;
+    getLossType<HeInitialization>(init, lossType, optimizerType,
+                                  lossParams, optimizerParams, layers,
                                   dataset);
   }
   else if (initType == "kathirvalavakumar_subavathi")
@@ -734,30 +779,44 @@ void getInitType(string initType, string lossType,
   }
   else if (initType == "lecun_normal")
   {
-    getLossType<LecunNormalInitialization>(lossType, optimizerType,
-                                           optimizerParams, layers,
+    LecunNormalInitialization init;
+    getLossType<LecunNormalInitialization>(init, lossType, optimizerType,
+                                           lossParams, optimizerParams, layers,
                                            dataset);
   }
   else if (initType == "nguyen_widrow")
   {
-    getLossType<NguyenWidrowInitialization>(lossType, optimizerType,
-                                            optimizerParams, layers,
-                                            dataset);
+    origParams["lowerbound"] = -0.5;
+    origParams["upperbound"] = 0.5;
+    updateParams(origParams, initParams);
+    NguyenWidrowInitialization init(origParams["lowerbound"],
+                                    origParams["upperbound"]);
+    getLossType<NguyenWidrowInitialization>(init, lossType, optimizerType,
+                                            lossParams, optimizerParams,
+                                            layers, dataset);
   }
   else if (initType == "oivs")
   {
-    //getLossType<OivsInitialization>(lossType, optimizerType, optimizerParams);
+  //getLossType<OivsInitialization>(lossType, optimizerType, optimizerParams);
   }
   else if (initType == "orthogonal")
   {
-    getLossType<OrthogonalInitialization>(lossType, optimizerType,
-                                          optimizerParams, layers,
+    origParams["gain"] = 1.0;
+    updateParams(origParams, initParams);
+    OrthogonalInitialization init(origParams["gain"]);
+    getLossType<OrthogonalInitialization>(init, lossType, optimizerType,
+                                          lossParams, optimizerParams, layers,
                                           dataset);
   }
   else if (initType == "random")
   {
-    getLossType<RandomInitialization>(lossType, optimizerType,
-                                      optimizerParams, layers,
+    origParams["lowerbound"] = -1.0;
+    origParams["upperbound"] = 1.0;
+    updateParams(origParams, initParams);
+    RandomInitialization init(origParams["lowerbound"],
+                                    origParams["upperbound"]);
+    getLossType<RandomInitialization>(init, lossType, optimizerType,
+                                      lossParams, optimizerParams, layers,
                                       dataset);
   }
   else
@@ -775,14 +834,18 @@ void testMaps()
   param1["id2"] = 2.0;
   param1["id3"] = 3.0;
   param1["id4"] = 4.0;
+  param1["id5"] = NAN;
+  param1["id6"] = NAN;
 
   param2["id1"] = 11.0;
   param2["id2"] = 12.0;
   param2["id6"] = 13.0;
   param2["id7"] = 14.0;
+  param2["id8"] = 15.0;
 
   updateParams(param1, param2);
   printMap(param1);
+  cout << "Error: " << error << "\n";
 }
 
 /**
@@ -794,7 +857,7 @@ void testMaps()
  * @return A LayerTypes<> object that is of the given type and is 
  * initialized by the given parameters
  */
-LayerTypes<> getNetworkReference(string layerType, map<string, double>& layerParams)
+LayerTypes<> getNetworkReference(string& layerType, map<string, double>& layerParams)
 {
   map<string, double> origParams;
   LayerTypes<> layer;
@@ -813,16 +876,16 @@ LayerTypes<> getNetworkReference(string layerType, map<string, double>& layerPar
   }
   else if (layerType == "constant")
   {
-    origParams["outsize"];
+    origParams["outsize"] = NAN;
     origParams["scalar"] = 0.0;
     layer = new Constant<>(origParams["outsize"], origParams["scalar"]);
   }
   else if (layerType == "convolution")
   {
-    origParams["insize"];
-    origParams["outsize"];
-    origParams["kw"];
-    origParams["kh"];
+    origParams["insize"] = NAN;
+    origParams["outsize"] = NAN;
+    origParams["kw"] = NAN;
+    origParams["kh"] = NAN;
     origParams["dw"] = 1;
     origParams["dh"] = 1;
     origParams["padw"] = 0;
@@ -862,22 +925,22 @@ LayerTypes<> getNetworkReference(string layerType, map<string, double>& layerPar
   }
   else if (layerType == "linearnobias")
   {
-    origParams["insize"];
-    origParams["outsize"];
+    origParams["insize"] = NAN;
+    origParams["outsize"] = NAN;
     updateParams(origParams, layerParams);
     layer = new LinearNoBias<>(origParams["insize"], origParams["outsize"]);
   }
   else if (layerType == "linear")
   {
-    origParams["insize"];
-    origParams["outsize"];
+    origParams["insize"] = NAN;
+    origParams["outsize"] = NAN;
     updateParams(origParams, layerParams);
     layer = new Linear<>(origParams["insize"], origParams["outsize"]);
   }
   else if (layerType == "maxpooling")
   {
-    origParams["kw"];
-    origParams["kh"];
+    origParams["kw"] = NAN;
+    origParams["kh"] = NAN;
     origParams["dw"] = 1;
     origParams["dh"] = 1;
     origParams["floor"] = 1; // 1 for true, 0 for false
@@ -887,8 +950,8 @@ LayerTypes<> getNetworkReference(string layerType, map<string, double>& layerPar
   }
   else if (layerType == "meanpooling")
   {
-    origParams["kw"];
-    origParams["kh"];
+    origParams["kw"] = NAN;
+    origParams["kh"] = NAN;
     origParams["dw"] = 1;
     origParams["dh"] = 1;
     origParams["floor"] = true;
@@ -908,10 +971,10 @@ LayerTypes<> getNetworkReference(string layerType, map<string, double>& layerPar
   }
   else if (layerType == "transposedconvolution")
   {
-    origParams["insize"];
-    origParams["outsize"];
-    origParams["kw"];
-    origParams["kh"];
+    origParams["insize"] = NAN;
+    origParams["outsize"] = NAN;
+    origParams["kw"] = NAN;
+    origParams["kh"] = NAN;
     origParams["dw"] = 1;
     origParams["dh"] = 1;
     origParams["padw"] = 0;
@@ -1014,10 +1077,24 @@ void traverseModel(const ptree& tree, Dataset& dataset, double& inSize)
   const ptree &network = tree.get_child("network");
   queue<LayerTypes<> > layers;
 
-  string lossType = loss.get_value<string>();
-  cout << "Loss type : " << lossType << "\n\n";
+  map<string, double> lossParams;
+  string lossType;
+  BOOST_FOREACH (ptree::value_type const &v, loss.get_child(""))
+  {
+    const ptree &attributes = v.second;
+    if (v.first == "type")
+    {
+      lossType = attributes.get_value<string>();
+    }
+    else
+    {
+      lossParams[v.first] = attributes.get_value<double>();
+    }
+  }
+  cout << "Loss details:\ntype : " << lossType << endl;
+  printMap(lossParams);
 
-  map<string, double> initDetails;
+  map<string, double> initParams;
   string initType;
   BOOST_FOREACH (ptree::value_type const &v, init.get_child(""))
   {
@@ -1028,11 +1105,11 @@ void traverseModel(const ptree& tree, Dataset& dataset, double& inSize)
     }
     else
     {
-      initDetails[v.first] = attributes.get_value<double>();
+      initParams[v.first] = attributes.get_value<double>();
     }
   }
-  cout << "Init details:\ntype : " << initType << endl;
-  printMap(initDetails);
+  cout << "\nInit details:\ntype : " << initType << endl;
+  printMap(initParams);
   
   map<string, double> optimizerDetails;
   string optimizerType;
@@ -1084,12 +1161,12 @@ void traverseModel(const ptree& tree, Dataset& dataset, double& inSize)
     layers.push(getNetworkReference(layerType, params));
     cout << endl;
   }
-  getInitType(initType, lossType, initDetails, optimizerType,
-      optimizerDetails, layers, dataset);
+  getInitType(initType, lossType, initParams, lossParams,
+      optimizerType, optimizerDetails, layers, dataset);
 }
 
 /**
- * Create a propert tree from the given json file
+ * Create a property tree from the given json file
  * 
  * @param fileName Path to the json file from which the network
  * properties would be loaded
@@ -1097,7 +1174,7 @@ void traverseModel(const ptree& tree, Dataset& dataset, double& inSize)
  * data
  * @param inSize The input size of the first layer
  */
-boost::property_tree::ptree loadProperties(string fileName, Dataset& dataset,
+boost::property_tree::ptree loadProperties(string& fileName, Dataset& dataset,
                                            double inSize)
 {
   ptree pt;
@@ -1107,13 +1184,12 @@ boost::property_tree::ptree loadProperties(string fileName, Dataset& dataset,
 }
 
 /** The final implementation of this file would not have a main method. This is 
- * merely to ease testing. The following include satement can hence be 
+ * merely to ease testing. The following include statement can hence be 
  * removed later
 */
 #include <mlpack/core/data/split_data.hpp>
 int main()
 {
-  //arma::mat trainX, trainY;
   string fileName = "network3.json";
   arma::mat dataset2;
   data::Load("train.csv", dataset2, true);
