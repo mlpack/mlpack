@@ -37,9 +37,9 @@ class MultiplePoleCart
      * 
      * @param numPoles The number of poles.
      */
-    State(size_t numPoles)
+    State(const size_t numPoles)
     {
-      data = arma::mat(dimension, numPoles, arma::fill::zeros);
+      data = arma::zeros<arma::mat>(dimension, numPoles);
     }
 
     /**
@@ -108,17 +108,18 @@ class MultiplePoleCart
    * @param tau The time interval.
    * @param thetaThresholdRadians The maximum angle.
    * @param xThreshold The maximum position.
+   * @param doneReward The reward recieved on termination.
    */
   MultiplePoleCart(const size_t poleNum,
-           const arma::vec poleLengths,
-           const arma::vec poleMasses,
-           const double gravity = 9.8,
-           const double massCart = 1.0,
-           const double forceMag = 10.0,
-           const double tau = 0.02,
-           const double thetaThresholdRadians = 12 * 2 * 3.1416 / 360,
-           const double xThreshold = 2.4,
-           const double doneReward = 0.0) :
+                   const arma::vec& poleLengths,
+                   const arma::vec& poleMasses,
+                   const double gravity = 9.8,
+                   const double massCart = 1.0,
+                   const double forceMag = 10.0,
+                   const double tau = 0.02,
+                   const double thetaThresholdRadians = 12 * 2 * 3.1416 / 360,
+                   const double xThreshold = 2.4,
+                   const double doneReward = 0.0) :
       poleNum(poleNum),
       poleLengths(poleLengths),
       poleMasses(poleMasses),
