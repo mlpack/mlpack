@@ -23,13 +23,15 @@ namespace data {
 * Class Hasher importanant to remove inablitiy of unordered_map to store
 * boost::string_view as key.
 */
-class Hasher {
+class Hasher
+{
  public:
-  std::size_t operator()(boost::string_view str) const {
+  std::size_t operator()(boost::string_view str) const
+  {
     return boost::hash_range<const char*>(str.begin(), str.end());
   }
 };
- 
+
 /**
  * A simple Dictionary Enocding class
  */
@@ -109,11 +111,12 @@ class DicitonaryEncoding
             std::vector<std::vector<size_t>>& output, TokenizerType tokenizer);
 
   //! Return the Mappings
-  const std::unordered_map<boost::string_view, size_t, Hasher>& Mappings() const
-      { return mappings; }
+  const std::unordered_map<boost::string_view, size_t, Hasher>& Mappings()
+      const { return mappings; }
 
   //! Modify the Mappings.
-  std::unordered_map<boost::string_view, size_t, Hasher>& Mappings() { return mappings; }
+  std::unordered_map<boost::string_view, size_t, Hasher>& Mappings()
+      { return mappings; }
 
  private:
   //! A map which stores information about mapping.
