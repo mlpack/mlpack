@@ -216,10 +216,10 @@ double QLearning<
   for (size_t i = 0; i < sampledNextStates.n_cols; ++i)
   {
     if (isTerminal[i])
-      target(sampledActions[i], i) = sampledRewards[i];
+      target(sampledActions(i), i) = sampledRewards(i);
     else
-      target(sampledActions[i], i) = sampledRewards[i] + config.Discount() *
-          nextActionValues(bestActions[i], i);
+      target(sampledActions(i), i) = sampledRewards(i) + config.Discount() *
+          nextActionValues(bestActions(i), i);
   }
 
   // Learn form experience.

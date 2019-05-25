@@ -131,7 +131,7 @@ class PrioritizedReplay
     for (size_t bt = 0; bt < batchSize; bt++) {
       double mass = arma::randu() * sumPerRange + bt * sumPerRange;
       size_t idx = idxSum.FindPrefixSum(mass);
-      idxes[bt] = idx;
+      idxes(bt) = idx;
     }
     return idxes;
   }
@@ -172,8 +172,8 @@ class PrioritizedReplay
 
     for (size_t i = 0; i < sampledIndices.n_rows; i++)
     {
-      double p_sample = idxSum.Get(sampledIndices[i]) / idxSum.Sum();
-      weights[i] = pow(numSample * p_sample, -beta);
+      double p_sample = idxSum.Get(sampledIndices(i)) / idxSum.Sum();
+      weights(i) = pow(numSample * p_sample, -beta);
     }
     weights /= weights.max();
   }
@@ -225,8 +225,8 @@ class PrioritizedReplay
     arma::colvec tdError(target.n_cols);
     for (size_t i = 0; i < target.n_cols; i ++)
     {
-      tdError[i] = nextActionValues(sampledActions[i], i) -
-          target(sampledActions[i], i);
+      tdError(i) = nextActionValues(sampledActions(i), i) -
+          target(sampledActions(i), i);
     }
     tdError = arma::abs(tdError);
     UpdatePriorities(sampledIndices, tdError);
