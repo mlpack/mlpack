@@ -132,11 +132,15 @@ class MultiplePoleCart
       doneReward(doneReward)
   {
     if (poleNum != poleLengths.n_elem)
+    {
       Log::Fatal << "The number of lengths should be the same as the number of"
           "poles." << std::endl;
+    }
     if (poleNum != poleMasses.n_elem)
+    {
       Log::Fatal << "The number of masses should be the same as the number of"
           "poles." << std::endl;
+    }
   }
 
   /**
