@@ -13,7 +13,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-#include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
+#include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/gan/gan.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(GANTest)
   trainData = arma::sort(trainData);
 
   // Create the Discriminator network
-  FFN<CrossEntropyError<> > discriminator;
+  FFN<SigmoidCrossEntropyError<> > discriminator;
   discriminator.Add<Linear<> > (
       generatorOutputSize, discriminatorHiddenLayerSize * 2);
   discriminator.Add<ReLULayer<> >();
@@ -66,9 +66,9 @@ BOOST_AUTO_TEST_CASE(GANTest)
   discriminator.Add<ReLULayer<> >();
   discriminator.Add<Linear<> > (
       discriminatorHiddenLayerSize * 2, discriminatorOutputSize);
-  discriminator.Add<SigmoidLayer<> >();
+
   // Create the Generator network
-  FFN<CrossEntropyError<> > generator;
+  FFN<SigmoidCrossEntropyError<> > generator;
   generator.Add<Linear<> >(noiseDim, generatorHiddenLayerSize);
   generator.Add<SoftPlusLayer<> >();
   generator.Add<Linear<> >(generatorHiddenLayerSize, generatorOutputSize);
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(GANTest)
   GaussianInitialization gaussian(0, 0.1);
   std::function<double ()> noiseFunction = [](){ return math::Random(-8, 8) +
       math::RandNormal(0, 1) * 0.01;};
-  GAN<FFN<CrossEntropyError<> >,
+  GAN<FFN<SigmoidCrossEntropyError<> >,
       GaussianInitialization,
       std::function<double()> >
   gan(trainData, generator, discriminator, gaussian, noiseFunction,
@@ -173,8 +173,8 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
             << trainData.n_cols << ")" << std::endl;
   Log::Info << trainData.n_rows << "--------" << trainData.n_cols << std::endl;
 
-  // Create the Discriminator network.
-  FFN<CrossEntropyError<> > discriminator;
+  // Create the Discriminator network
+  FFN<SigmoidCrossEntropyError<> > discriminator;
   discriminator.Add<Convolution<> >(1, dNumKernels, 5, 5, 1, 1, 2, 2, 28, 28);
   discriminator.Add<ReLULayer<> >();
   discriminator.Add<MeanPooling<> >(2, 2, 2, 2);
@@ -186,8 +186,8 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
   discriminator.Add<ReLULayer<> >();
   discriminator.Add<Linear<> >(1024, 1);
 
-  // Create the Generator network.
-  FFN<CrossEntropyError<> > generator;
+  // Create the Generator network
+  FFN<SigmoidCrossEntropyError<> > generator;
   generator.Add<Linear<> >(noiseDim, 3136);
   generator.Add<BatchNorm<> >(3136);
   generator.Add<ReLULayer<> >();
@@ -209,13 +209,14 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
       tolerance, shuffle);
   std::function<double()> noiseFunction = [] () {
       return math::RandNormal(0, 1);};
-  GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
+  GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
       std::function<double()> > gan(trainData, generator, discriminator,
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
   Log::Info << "Training..." << std::endl;
-  gan.Train(optimizer);
+  double objVal = gan.Train(optimizer);
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
 
   // Generate samples.
   Log::Info << "Sampling..." << std::endl;
