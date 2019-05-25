@@ -36,7 +36,9 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
     const size_t /* batchSize */)
 {
   if (!reset)
+  {
     Reset();
+  }
 
   currentInput = arma::mat(predictors.memptr() + (i * predictors.n_rows),
       predictors.n_rows, batchSize, false, false);
@@ -97,16 +99,22 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
                      const size_t /* batchSize */)
 {
   if (!reset)
+  {
     Reset();
+  }
 
   if (gradient.is_empty())
   {
     if (parameter.is_empty())
+    {
       Reset();
+    }
     gradient = arma::zeros<arma::mat>(parameter.n_elem, 1);
   }
   else
+  {
     gradient.zeros();
+  }
 
   if (noiseGradientDiscriminator.is_empty())
   {

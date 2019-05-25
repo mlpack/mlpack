@@ -35,7 +35,9 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
     const size_t /* batchSize */)
 {
   if (!reset)
+  {
     Reset();
+  }
 
   currentInput = arma::mat(predictors.memptr() + (i * predictors.n_rows),
       predictors.n_rows, batchSize, false, false);
@@ -44,8 +46,7 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
 
   discriminator.Forward(std::move(currentInput));
   double res = discriminator.outputLayer.Forward(
-      std::move(boost::apply_visitor(
-      outputParameterVisitor,
+      std::move(boost::apply_visitor(outputParameterVisitor,
       discriminator.network.back())), std::move(currentTarget));
 
   noise.imbue( [&]() { return noiseFunction();} );
@@ -83,16 +84,22 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
                      const size_t /* batchSize */)
 {
   if (!reset)
+  {
     Reset();
+  }
 
   if (gradient.is_empty())
   {
     if (parameter.is_empty())
+    {
       Reset();
+    }
     gradient = arma::zeros<arma::mat>(parameter.n_elem, 1);
   }
   else
+  {
     gradient.zeros();
+  }
 
   if (noiseGradientDiscriminator.is_empty())
   {

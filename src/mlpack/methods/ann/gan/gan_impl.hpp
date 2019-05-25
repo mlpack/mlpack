@@ -30,7 +30,7 @@ template<
   typename PolicyType
 >
 GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
-    arma::mat& predictors,
+    arma::mat& trainData,
     Model generator,
     Model discriminator,
     InitializationRuleType& initializeRule,
@@ -42,7 +42,7 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     const double multiplier,
     const double clippingParameter,
     const double lambda):
-    predictors(predictors),
+    predictors(trainData),
     generator(std::move(generator)),
     discriminator(std::move(discriminator)),
     initializeRule(initializeRule),
@@ -57,8 +57,7 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     reset(false)
 {
   // Insert IdentityLayer for joining the Generator and Discriminator.
-  this->discriminator.network.insert(
-      this->discriminator.network.begin(),
+  this->discriminator.network.insert(this->discriminator.network.begin(),
       new IdentityLayer<>());
 
   counter = 0;
@@ -66,24 +65,24 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
 
   this->discriminator.deterministic = this->generator.deterministic = true;
 
-  responses.set_size(1, predictors.n_cols);
+  responses.set_size(1, trainData.n_cols);
   responses.ones();
 
-  this->discriminator.predictors.set_size(predictors.n_rows,
-      predictors.n_cols + batchSize);
-  this->discriminator.predictors.cols(0, predictors.n_cols - 1) = predictors;
+  this->discriminator.predictors.set_size(trainData.n_rows,
+      trainData.n_cols + batchSize);
+  this->discriminator.predictors.cols(0, trainData.n_cols - 1) = trainData;
 
-  this->discriminator.responses.set_size(1, predictors.n_cols + batchSize);
+  this->discriminator.responses.set_size(1, trainData.n_cols + batchSize);
   this->discriminator.responses.ones();
-  this->discriminator.responses.cols(predictors.n_cols,
-      predictors.n_cols + batchSize - 1) = arma::zeros(1, batchSize);
+  this->discriminator.responses.cols(trainData.n_cols,
+      trainData.n_cols + batchSize - 1) = arma::zeros(1, batchSize);
 
-  numFunctions = predictors.n_cols;
+  numFunctions = trainData.n_cols;
 
   noise.set_size(noiseDim, batchSize);
 
   this->generator.predictors.set_size(noiseDim, batchSize);
-  this->generator.responses.set_size(predictors.n_rows, batchSize);
+  this->generator.responses.set_size(trainData.n_rows, batchSize);
 }
 
 template<
@@ -197,7 +196,9 @@ double GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
     OptimizerType& Optimizer)
 {
   if (!reset)
+  {
     Reset();
+  }
   return Optimizer.Optimize(*this, parameter);
 }
 
@@ -216,7 +217,9 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
     const size_t /* batchSize */)
 {
   if (!reset)
+  {
     Reset();
+  }
 
   currentInput = arma::mat(predictors.memptr() + (i * predictors.n_rows),
       predictors.n_rows, batchSize, false, false);
@@ -265,16 +268,22 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
                      const size_t /* batchSize */)
 {
   if (!reset)
+  {
     Reset();
+  }
 
   if (gradient.is_empty())
   {
     if (parameter.is_empty())
+    {
       Reset();
+    }
     gradient = arma::zeros<arma::mat>(parameter.n_elem, 1);
   }
   else
+  {
     gradient.zeros();
+  }
 
   if (noiseGradientDiscriminator.is_empty())
   {
@@ -293,7 +302,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
       gradientGenerator.n_elem,
       discriminator.Parameters().n_elem, 1, false, false);
 
-  // Get the gradients of the Discriminator.
+  // Get the gradients from the real data.
   double res = discriminator.EvaluateWithGradient(discriminator.parameter,
       i, gradientDiscriminator, batchSize);
 
@@ -304,7 +313,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   discriminator.responses.cols(numFunctions, numFunctions + batchSize - 1) =
       arma::zeros(1, batchSize);
 
-  // Get the gradients of the Generator.
+  // Get the gradients from the generated data.
   res += discriminator.EvaluateWithGradient(discriminator.parameter,
       numFunctions, noiseGradientDiscriminator, batchSize);
   gradientDiscriminator += noiseGradientDiscriminator;
@@ -383,7 +392,9 @@ void GAN<Model, InitializationRuleType, Noise, PolicyType>::Forward(
     arma::mat&& input)
 {
   if (!reset)
+  {
     Reset();
+  }
 
   generator.Forward(std::move(input));
   ganOutput = boost::apply_visitor(
@@ -403,7 +414,9 @@ void GAN<Model, InitializationRuleType, Noise, PolicyType>::
 Predict(arma::mat&& input, arma::mat& output)
 {
   if (!reset)
+  {
     Reset();
+  }
 
   Forward(std::move(input));
 
