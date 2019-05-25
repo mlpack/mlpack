@@ -209,7 +209,7 @@ void TransposedConvolution<
       outSize * batchSize, false, false);
 
   arma::Cube<eT> mappedErrorPadded;
-  if (kW - padW - 1 > 0 || kH - padH - 1 > 0)
+  if ((int)(kW - padW - 1) > 0 || (int)(kH - padH - 1) > 0)
     Pad(mappedError, kW - padW - 1, kH - padH - 1, 0, 0, mappedErrorPadded);
 
   g.set_size(inputTemp.n_rows * inputTemp.n_cols * inSize, batchSize);
@@ -231,7 +231,7 @@ void TransposedConvolution<
     {
       arma::Mat<eT> output;
 
-      if (kW - padW - 1 > 0 || kH - padH - 1 > 0)
+      if ((int)(kW - padW - 1) > 0 || (int)(kH - padH - 1) > 0)
       {
         BackwardConvolutionRule::Convolution(mappedErrorPadded.slice(outMap),
             weight.slice(outMapIdx), output, dW, dH);

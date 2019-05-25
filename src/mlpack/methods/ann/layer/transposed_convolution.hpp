@@ -294,7 +294,8 @@ class TransposedConvolution
     {
       for (size_t j = 0; j < output.n_cols; j += dW)
       {
-        // TODO: Use [] instead of () for speedup after this is completely debugged and approved.
+        // TODO: Use [] instead of () for speedup after this is completely
+        // debugged and approved.
         output(i, j) = input(i / dH, j / dW);
       }
     }
