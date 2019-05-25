@@ -222,7 +222,8 @@ BOOST_AUTO_TEST_CASE(UnweightedCategoricalLearningTest)
   arma::Row<size_t> testLabels = l.subvec(2000, 3999);
 
   // Train a random forest and a decision tree.
-  RandomForest<> rf(trainingData, di, trainingLabels, 5, 15 /* 15 trees */, 1);
+  RandomForest<> rf(trainingData, di, trainingLabels, 5, 25 /* 25 trees */, 1,
+      1e-7, MultipleRandomDimensionSelect(4));
   DecisionTree<> dt(trainingData, di, trainingLabels, 5, 5);
 
   // Get performance statistics on test data.
@@ -236,7 +237,7 @@ BOOST_AUTO_TEST_CASE(UnweightedCategoricalLearningTest)
   size_t rfCorrect = arma::accu(rfPredictions == testLabels);
   size_t dtCorrect = arma::accu(dtPredictions == testLabels);
 
-  BOOST_REQUIRE_GE(rfCorrect, dtCorrect - 15);
+  BOOST_REQUIRE_GE(rfCorrect, dtCorrect - 25);
   BOOST_REQUIRE_GE(rfCorrect, size_t(0.7 * testData.n_cols));
 }
 
@@ -279,7 +280,8 @@ BOOST_AUTO_TEST_CASE(WeightedCategoricalLearningTest)
   arma::Row<size_t> fullLabels = arma::join_rows(trainingLabels, randomLabels);
 
   // Build a random forest and a decision tree.
-  RandomForest<> rf(fullData, di, fullLabels, 5, weights, 15 /* 15 trees */, 1);
+  RandomForest<> rf(fullData, di, fullLabels, 5, weights, 25 /* 20 trees */, 1,
+      1e-7, MultipleRandomDimensionSelect(4));
   DecisionTree<> dt(fullData, di, fullLabels, 5, weights, 5);
 
   // Get performance statistics on test data.
@@ -293,7 +295,7 @@ BOOST_AUTO_TEST_CASE(WeightedCategoricalLearningTest)
   size_t rfCorrect = arma::accu(rfPredictions == testLabels);
   size_t dtCorrect = arma::accu(dtPredictions == testLabels);
 
-  BOOST_REQUIRE_GE(rfCorrect, dtCorrect - 15);
+  BOOST_REQUIRE_GE(rfCorrect, dtCorrect - 25);
   BOOST_REQUIRE_GE(rfCorrect, size_t(0.7 * testData.n_cols));
 }
 
@@ -472,7 +474,7 @@ BOOST_AUTO_TEST_CASE(DifferentTreesTest)
 
   // It's possible we might get the same random dimensions selected, so let's do
   // multiple trials.
-  while (!success && trial < 3)
+  while (!success && trial < 5)
   {
     RandomForest<GiniGain, RandomDimensionSelect> rf;
     rf.Train(d, l, 2, 2, 5);
