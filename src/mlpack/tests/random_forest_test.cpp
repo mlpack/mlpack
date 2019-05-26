@@ -280,7 +280,7 @@ BOOST_AUTO_TEST_CASE(WeightedCategoricalLearningTest)
   arma::Row<size_t> fullLabels = arma::join_rows(trainingLabels, randomLabels);
 
   // Build a random forest and a decision tree.
-  RandomForest<> rf(fullData, di, fullLabels, 5, weights, 25 /* 20 trees */, 1,
+  RandomForest<> rf(fullData, di, fullLabels, 5, weights, 25 /* 25 trees */, 1,
       1e-7, MultipleRandomDimensionSelect(4));
   DecisionTree<> dt(fullData, di, fullLabels, 5, weights, 5);
 
