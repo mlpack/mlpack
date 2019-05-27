@@ -308,7 +308,6 @@ class GAN
   //! Modify the matrix of data points (predictors).
   arma::mat& Predictors() { return predictors; }
 
-
   //! Serialize the model.
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
