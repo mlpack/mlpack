@@ -26,7 +26,7 @@ using namespace mlpack;
 
 struct GmmTrainTestFixture
 {
-  public:
+ public:
   GmmTrainTestFixture()
   {
     // Cache in the options for this program.
@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainPercentageTest)
   SetInputParam("input", inputData);
   SetInputParam("gaussians", (int) 2);
   SetInputParam("refined_start", true);
-  SetInputParam("percentage", (double) 0.02);
+  SetInputParam("percentage", (double) 0.22);
 
   mlpackMain();
 
@@ -219,7 +219,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainPercentageTest)
   SetInputParam("input", std::move(inputData));
   SetInputParam("gaussians", (int) 2);
   SetInputParam("refined_start", true);
-  SetInputParam("percentage", (double) 0.52);
+  SetInputParam("percentage", (double) 0.82);
 
   mlpackMain();
 

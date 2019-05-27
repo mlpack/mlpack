@@ -27,7 +27,7 @@ using namespace mlpack;
 
 struct GmmProbabilityTestFixture
 {
-  public:
+ public:
   GmmProbabilityTestFixture()
   {
     // Cache in the options for this program.
@@ -52,9 +52,7 @@ BOOST_FIXTURE_TEST_SUITE(GmmProbabilityMainTest, GmmProbabilityTestFixture);
 // Checking the input and output dimensionality.
 BOOST_AUTO_TEST_CASE(GmmProbabilityDimensionality)
 {
-  arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+  arma::mat inputData(5, 10, arma::fill::randu);
 
   GMM gmm(1, 2);
   gmm.Train(std::move(inputData), 2);
@@ -71,3 +69,4 @@ BOOST_AUTO_TEST_CASE(GmmProbabilityDimensionality)
 }
 
 BOOST_AUTO_TEST_SUITE_END();
+
