@@ -13,6 +13,7 @@ option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
+option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 
 # Currently Python bindings aren't known to build successfully on Windows, so
 # set BUILD_PYTHON_BINDINGS to OFF when the platform is Windows.
@@ -310,6 +311,29 @@ endif ()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
+# Download stb_image for image loading.
+if (DOWNLOAD_STB_IMAGE)
+  set(STB_DIR "stb")
+  install(DIRECTORY DESTINATION ${CMAKE_BINARY_DIR}/deps/${STB_DIR})
+  file(DOWNLOAD https://raw.githubusercontent.com/nothings/stb/master/stb_image.h
+      "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h"
+      STATUS STB_DOWNLOAD_STATUS_LIST LOG STB_DOWNLOAD_LOG
+      SHOW_PROGRESS)
+  list(GET STB_DOWNLOAD_STATUS_LIST 0 STB_DOWNLOAD_STATUS)
+  if (STB_DOWNLOAD_STATUS EQUAL 0)
+      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+          "${CMAKE_BINARY_DIR}/deps/${STB_DIR}")
+      message(STATUS
+          "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+      # Now we have to also ensure these header files get installed.
+      install(FILES ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  else ()
+    list(GET STB_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
+    message(FATAL_ERROR
+        "Could not download stb! Error code ${STB_DOWNLOAD_STATUS}: ${STB_DOWNLOAD_ERROR}!  Error log: ${STB_DOWNLOAD_LOG}")
+  endif ()
+endif ()
+
 # Find ensmallen.
 # Once ensmallen is readily available in package repos, the automatic downloader
 # here can be removed.
@@ -392,6 +416,8 @@ find_package(Boost 1.49
       program_options
       unit_test_framework
       serialization
+      system
+      filesystem
     REQUIRED
 )
 
