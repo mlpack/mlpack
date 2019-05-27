@@ -23,7 +23,7 @@
 #include "extension.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include <stb_image.h>
 
 namespace mlpack {
 namespace data {
@@ -129,5 +129,7 @@ private:
 
 } // namespace data
 } // namespace mlpack
+
+#include "load_img_impl.hpp"
 
 #endif
