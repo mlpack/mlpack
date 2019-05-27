@@ -1,4 +1,29 @@
-### mlpack 3.1.0\n###### ????-??-??\n
+### mlpack 3.1.1
+###### ????-??-??
+  * Fix random forest bug for numerical-only data (#1887).
+
+  * Significant speedups for random forest (#1887).
+
+  * Random forest now has `minimum_gain_split` and `subspace_dim` parameters
+    (#1887).
+
+  * Decision tree parameter `print_training_error` deprecated in favor of
+    `print_training_accuracy`.
+
+  * `output` option changed to `predictions` for adaboost and perceptron
+    binding. Old options are now deprecated and will be preserved until mlpack
+    4.0.0 (#1882).
+
+  * Concatenated ReLU layer (#1843).
+
+  * Accelerate NormalizeLabels function using hashing instead of linear search
+    (see `src/mlpack/core/data/normalize_labels_impl.hpp`) (#1780).
+
+  * Add `ConfusionMatrix()` function for checking performance of classifiers
+    (#1798).
+
+  * Install ensmallen headers when it is downloaded during build (#1900).
+
 ### mlpack 3.1.0
 ###### 2019-04-25
   * Add DiagonalGaussianDistribution and DiagonalGMM classes to speed up the

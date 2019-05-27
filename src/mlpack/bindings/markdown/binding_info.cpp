@@ -28,9 +28,8 @@ util::ProgramDoc& BindingInfo::GetProgramDoc(const std::string& bindingName)
   return GetSingleton().map.at(bindingName);
 }
 
-/**
- * Register a ProgramDoc object with the given bindingName.
- */
+
+//! Register a ProgramDoc object with the given bindingName.
 void BindingInfo::RegisterProgramDoc(const std::string& bindingName,
                                      const util::ProgramDoc& programDoc)
 {

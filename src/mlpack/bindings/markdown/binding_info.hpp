@@ -1,5 +1,5 @@
 /**
- * @file binding_name.hpp
+ * @file binding_info.hpp
  * @author Ryan Curtin
  *
  * This file defines the BindingInfo singleton class that is used specifically
@@ -30,14 +30,10 @@ namespace markdown {
 class BindingInfo
 {
  public:
-  /**
-   * Return a ProgramDoc object for a given bindingName.
-   */
+  //! Return a ProgramDoc object for a given bindingName.
   static util::ProgramDoc& GetProgramDoc(const std::string& bindingName);
 
-  /**
-   * Register a ProgramDoc object with the given bindingName.
-   */
+  //! Register a ProgramDoc object with the given bindingName.
   static void RegisterProgramDoc(const std::string& bindingName,
                                  const util::ProgramDoc& programDoc);
 

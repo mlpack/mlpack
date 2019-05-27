@@ -40,7 +40,7 @@ std::string PrintTypeDoc(const util::ParamData& data)
   else
   {
     throw std::invalid_argument("PrintTypeDoc(): unknown "
-        "BindingInfo::Language()" + BindingInfo::Language() + "!");
+        "BindingInfo::Language() " + BindingInfo::Language() + "!");
   }
 }
 
