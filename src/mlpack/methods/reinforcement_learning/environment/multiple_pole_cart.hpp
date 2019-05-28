@@ -167,7 +167,7 @@ class MultiplePoleCart
       totalForce += (poleMasses[i] * poleLengths[i] * poleOmega * poleOmega *
           sinTheta) + 0.75 * poleMasses[i] * gravity * sin(2 * state.Angle(i))
           / 2;
-      totalMass += poleMasses[i] * (1 - 0.75 * (cos(2 * state.Angle(i)) + 1) 
+      totalMass += poleMasses[i] * (1 - 0.75 * (cos(2 * state.Angle(i)) + 1)
           / 2);
     }
     double xAcc = totalForce / totalMass;
