@@ -153,8 +153,10 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
         discriminator.network[1]);
 
     generator.Predictors() = noise;
+    generator.Backward();
     generator.ResetGradients(gradientGenerator);
-    generator.Gradient(generator.parameter, 0, gradientGenerator, batchSize);
+    generator.Gradient(std::move(generator.Predictors().cols(0,
+        batchSize - 1)));
 
     gradientGenerator *= multiplier;
   }
