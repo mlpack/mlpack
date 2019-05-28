@@ -297,9 +297,12 @@ BOOST_AUTO_TEST_CASE(GANMemorySharingTest)
       noiseDim, batchSize, generatorUpdateStep, discriminatorPreTrain,
       multiplier);
 
+  CheckMatrices(gan.Predictors().head_cols(trainData.n_cols), trainData);
   CheckMatrices(gan.Predictors(), gan.Discriminator().Predictors());
   gan.Shuffle();
   CheckMatrices(gan.Predictors(), gan.Discriminator().Predictors());
+  CheckMatricesNotEqual(gan.Predictors().head_cols(trainData.n_cols),
+      trainData);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
