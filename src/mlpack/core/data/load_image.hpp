@@ -48,7 +48,7 @@ namespace data {
 
 class LoadImage
 {
-public:
+ public:
   LoadImage();
 
   /**
@@ -119,8 +119,7 @@ public:
 
   ~LoadImage();
 
-private:
-
+ private:
   // To store supported image types.
   std::vector<std::string> fileTypes;
 
@@ -132,7 +131,6 @@ private:
 
   // To store channels.
   int channels;
-  
 };
 
 } // namespace data

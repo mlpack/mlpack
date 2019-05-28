@@ -89,8 +89,9 @@ BOOST_AUTO_TEST_CASE(LoadImagesInVector)
   // Matrix to load contents of dir into.
   arma::Mat<unsigned char> img;
 
-  std::vector<std:: string> files{"test_image.png","test_image.png",
-                                                    "test_image.png"};
+  std::vector<std:: string> files{"test_image.png",
+                                  "test_image.png",
+                                  "test_image.png"};
   BOOST_REQUIRE(loader.Load(files, std::move(img)) == true);
   BOOST_REQUIRE_EQUAL(img.n_cols, 512 * 512 * 3); // width * height * channels.
   BOOST_REQUIRE_EQUAL(img.n_rows, files.size());

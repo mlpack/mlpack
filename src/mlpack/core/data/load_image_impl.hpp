@@ -28,7 +28,7 @@ LoadImage::LoadImage():
 
   // Declare supported file types.
   fileTypes.insert(fileTypes.end(),
-    {"jpg","png","tga", "bmp", "psd", "gif", "hdr", "pic", "pnm"});
+    {"jpg", "png", "tga", "bmp", "psd", "gif", "hdr", "pic", "pnm"});
 }
 
 LoadImage::LoadImage(int width,
@@ -42,7 +42,7 @@ LoadImage::LoadImage(int width,
 
   // Declare supported file types.
   fileTypes.insert(fileTypes.end(),
-    {"jpg","png","tga", "bmp", "psd", "gif", "hdr", "pic", "pnm"});
+    {"jpg", "png", "tga", "bmp", "psd", "gif", "hdr", "pic", "pnm"});
 }
 
 LoadImage::~LoadImage()
@@ -51,9 +51,9 @@ LoadImage::~LoadImage()
 }
 
 bool LoadImage::isImageFile(std::string fileName)
-{   
+{
   // Iterate over all supported file types.
-  for (auto extension: fileTypes){
+  for (auto extension : fileTypes){
     std::transform(extension.begin(), extension.end(), extension.begin(),
                     ::tolower);
     if (extension == Extension(fileName))
@@ -69,15 +69,13 @@ bool LoadImage::Load(std::string fileName,
                       int *channels)
 {
   unsigned char *image;
-  char fileNameTemp[fileName.size() + 1];
-  strcpy(fileNameTemp, fileName.c_str());
 
   if (!isImageFile(fileName))
   {
     std::ostringstream oss;
     oss << "File type " << Extension(fileName) << " not supported.\n";
     oss << "Cuurently it supports ";
-    for (auto extension: fileTypes)
+    for (auto extension : fileTypes)
       oss << " " << extension;
     oss << std::endl;
     throw std::runtime_error(oss.str());
@@ -88,7 +86,7 @@ bool LoadImage::Load(std::string fileName,
   // For grayscale images
   if (*channels == 1)
   {
-    image = stbi_load(fileNameTemp,
+    image = stbi_load(fileName.c_str(),
              width,
              height,
              channels,
@@ -96,7 +94,7 @@ bool LoadImage::Load(std::string fileName,
   }
   else
   {
-    image = stbi_load(fileNameTemp,
+    image = stbi_load(fileName.c_str(),
              width,
              height,
              channels,
@@ -115,7 +113,7 @@ bool LoadImage::Load(std::string fileName,
   int size = (*width)*(*height)*(*channels);
 
   // Copy memory location into armadillo Mat.
-  outputMatrix = arma::Mat<unsigned char>(image, 1, size, false, true );
+  outputMatrix = arma::Mat<unsigned char>(image, 1, size, false, true);
   return true;
 }
 
@@ -180,7 +178,7 @@ bool LoadImage::Load(std::vector<std::string>& files,
 bool LoadImage::LoadDIR(std::string dirPath,
                         arma::Mat<unsigned char>&& outputMatrix)
 {
-  boost::filesystem::path p (dirPath);
+  boost::filesystem::path p(dirPath);
 
   boost::filesystem::directory_iterator end_itr;
 
