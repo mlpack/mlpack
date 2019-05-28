@@ -2394,6 +2394,7 @@ BOOST_AUTO_TEST_CASE(GradientHighwayLayerTest)
       model->Responses() = target;
       model->Add<IdentityLayer<> >();
       model->Add<Linear<> >(5, 10);
+
       highway = new Highway<>(10);
       highway->Add<Linear<> >(10, 10);
       highway->Add<ReLULayer<> >();

@@ -164,7 +164,7 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void Highway<InputDataType, OutputDataType, CustomLayers...>::Backward(
-    const arma::Mat<eT>&& input,
+    const arma::Mat<eT>&& /* input */,
     arma::Mat<eT>&& gy,
     arma::Mat<eT>&& g)
 {

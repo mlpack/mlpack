@@ -103,7 +103,7 @@ class Highway
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
+  void Backward(const arma::Mat<eT>&& /* input */,
                 arma::Mat<eT>&& gy,
                 arma::Mat<eT>&& g);
 
@@ -207,13 +207,13 @@ class Highway
   //! Bias for transformation of output.
   OutputDataType transformBias;
 
-  //! Locally-stored transform gate parameters
+  //! Locally-stored transform gate parameters.
   OutputDataType transformGate;
 
-  //! Locally-stored transform gate activation
+  //! Locally-stored transform gate activation.
   OutputDataType transformGateActivation;
 
-  //! Locally-stored transform gate activation
+  //! Locally-stored transform gate error.
   OutputDataType transformGateError;
 
   //! Locally-stored input parameter object.
@@ -228,7 +228,7 @@ class Highway
   //! The input height.
   size_t height;
 
-  //! The normal output without highway network
+  //! The normal output without highway network.
   OutputDataType networkOutput;
 
   //! Locally-stored delta visitor.

@@ -198,14 +198,14 @@ using LayerTypes = boost::variant<
     NegativeLogLikelihood<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
     Recurrent<arma::mat, arma::mat>*,
-    RecurrentAttention<arma::mat, arma::mat>*,
+    // RecurrentAttention<arma::mat, arma::mat>*,
     ReinforceNormal<arma::mat, arma::mat>*,
     Reparametrization<arma::mat, arma::mat>*,
     Select<arma::mat, arma::mat>*,
     Sequential<arma::mat, arma::mat, false>*,
     Sequential<arma::mat, arma::mat, true>*,
     Subview<arma::mat, arma::mat>*,
-    VRClassReward<arma::mat, arma::mat>*,
+    // VRClassReward<arma::mat, arma::mat>*,
     CustomLayers*...
 >;
 
