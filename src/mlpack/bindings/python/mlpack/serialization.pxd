@@ -11,5 +11,5 @@ from libcpp.string cimport string
 
 cdef extern from "serialization.hpp" namespace "mlpack::bindings::python" nogil:
   string SerializeOut[T](T* t, string name) nogil
-  string SerializeParamsOut[T](T* t, string name) nogil
+  string SerializeToXML[T](T* t, string name) nogil
   void SerializeIn[T](T* t, string str, string name) nogil

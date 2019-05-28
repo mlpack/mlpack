@@ -31,7 +31,7 @@ std::string SerializeOut(T* t, const std::string& name)
 }
 
 template<typename T>
-std::string SerializeParamsOut(T* t, const std::string& name)
+std::string SerializeToXML(T* t, const std::string& name)
 {
   std::ostringstream oss;
   {

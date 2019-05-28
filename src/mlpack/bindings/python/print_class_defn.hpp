@@ -99,7 +99,7 @@ void PrintClassDefn(
       << std::endl;
   std::cout << std::endl;
   std::cout << "  def __getparams__(self):" << std::endl;
-  std::cout << "    return SerializeParamsOut(self.modelptr, \"" << printedType
+  std::cout << "    return SerializeToXML(self.modelptr, \"" << printedType
       << "\")" << std::endl;
   std::cout << std::endl;
 }
