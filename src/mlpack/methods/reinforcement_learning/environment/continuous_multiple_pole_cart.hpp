@@ -115,7 +115,8 @@ class ContinuousMultiplePoleCart
                              const double gravity = 9.8,
                              const double massCart = 1.0,
                              const double tau = 0.02,
-                             const double thetaThresholdRadians = 12 * 2 * 3.1416 / 360,
+                             const double thetaThresholdRadians = 12 * 2 *
+                                3.1416 / 360,
                              const double xThreshold = 2.4,
                              const double doneReward = 0.0) :
       poleNum(poleNum),
