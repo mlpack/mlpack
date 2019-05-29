@@ -1,7 +1,5 @@
 # mlpack test executable.
 add_executable(mlpack_test
-  neat_test.cpp
-  neat_test_tools.hpp
   activation_functions_test.cpp
   adaboost_test.cpp
   akfn_test.cpp
@@ -70,6 +68,8 @@ add_executable(mlpack_test
   mock_categorical_data.hpp
   nbc_test.cpp
   nca_test.cpp
+  neat_test.cpp
+  neat_test_tools.hpp
   nmf_test.cpp
   nystroem_method_test.cpp
   octree_test.cpp
