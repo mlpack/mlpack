@@ -54,7 +54,7 @@ class ContinuousRLTask
     double fitness = 0;
     while (!environment.IsTerminal())
     {
-
+      // Choose the action to perform.
       typename EnvironmentType::Action action;
       action.action[0] = genome.Output()[0];
 
@@ -89,6 +89,7 @@ class DiscreteRLTask
     double fitness = 0;
     while (!environment.IsTerminal())
     {
+      // Choose the action to perform.
       const int size = EnvironmentType::Action::size;
       typename EnvironmentType::Action action = static_cast<typename EnvironmentType::Action>(
         std::round(arma::clamp(genome.Output(), 0, size - 1)[0]));

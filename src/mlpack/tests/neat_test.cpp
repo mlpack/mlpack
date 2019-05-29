@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(NEATXORTest)
   double finalFitness = task.Evaluate(bestGenome);
 
   // Check if the final fitness is acceptable.
-  BOOST_REQUIRE(finalFitness >= 3.9);
+  BOOST_REQUIRE(finalFitness >= 3.9); 
 }
 
 /**
@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(NEATPendulumTest)
   Genome bestGenome = model.Train();
   double finalFitness = task.Evaluate(bestGenome);
 
-  // Check if the final fitness is acceptable.
+  // Check if the final fitness is acceptable (Placeholder).
   BOOST_REQUIRE(finalFitness >= 90);
 }
 
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(NEATContinuousMountainCarTest)
   Genome bestGenome = model.Train();
   double finalFitness = task.Evaluate(bestGenome);
 
-  // Check if the final fitness is acceptable.
+  // Check if the final fitness is acceptable (Placeholder).
   BOOST_REQUIRE(finalFitness >= 90);
 }
 
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(NEATMountainCarTest)
   Genome bestGenome = model.Train();
   double finalFitness = task.Evaluate(bestGenome);
 
-  // Check if the final fitness is acceptable.
+  // Check if the final fitness is acceptable (Placeholder).
   BOOST_REQUIRE(finalFitness >= 90);
 }
 
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(NEATAcrobotTest)
   Genome bestGenome = model.Train();
   double finalFitness = task.Evaluate(bestGenome);
 
-  // Check if the final fitness is acceptable.
+  // Check if the final fitness is acceptable (Placeholder).
   BOOST_REQUIRE(finalFitness >= 90);
 }
 
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(NEATCartPoleTest)
   Genome bestGenome = model.Train();
   double finalFitness = task.Evaluate(bestGenome);
 
-  // Check if the final fitness is acceptable.
+  // Check if the final fitness is acceptable (Placeholder).
   BOOST_REQUIRE(finalFitness >= 90);
 }
 
@@ -147,7 +147,7 @@ BOOST_AUTO_TEST_CASE(NEATDoublePoleCartTest)
   Genome bestGenome = model.Train();
   double finalFitness = task.Evaluate(bestGenome);
 
-  // Check if the final fitness is acceptable.
+  // Check if the final fitness is acceptable (Placeholder).
   BOOST_REQUIRE(finalFitness >= 90);
 }
 
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(NEATDoublePoleCartNoVelocitiesTest)
   Genome bestGenome = model.Train();
   double finalFitness = task.Evaluate(bestGenome);
 
-  // Check if the final fitness is acceptable.
+  // Check if the final fitness is acceptable (Placeholder).
   BOOST_REQUIRE(finalFitness >= 90);
 }
 
