@@ -62,29 +62,6 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
   this->discriminator.network.insert(
       this->discriminator.network.begin(),
       new IdentityLayer<>());
-
-  counter = 0;
-  currentBatch = 0;
-
-  this->discriminator.deterministic = this->generator.deterministic = true;
-
-  this->predictors.set_size(predictors.n_rows, predictors.n_cols + batchSize);
-  this->predictors.cols(0, predictors.n_cols - 1) = predictors;
-  this->discriminator.predictors = arma::mat(this->predictors.memptr(),
-      this->predictors.n_rows, this->predictors.n_cols, false, false);
-
-  responses.ones(1, predictors.n_cols + batchSize);
-  responses.cols(predictors.n_cols,
-      predictors.n_cols + batchSize - 1) = arma::zeros(1, batchSize);
-  this->discriminator.responses = arma::mat(this->responses.memptr(),
-      this->responses.n_rows, this->responses.n_cols, false, false);
-
-  numFunctions = predictors.n_cols;
-
-  noise.set_size(noiseDim, batchSize);
-
-  this->generator.predictors.set_size(noiseDim, batchSize);
-  this->generator.responses.set_size(predictors.n_rows, batchSize);
 }
 
 template<
@@ -160,28 +137,25 @@ template<
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::ResetData(
   arma::mat trainData)
 {
-  this->predictors = std::move(trainData);
-
   counter = 0;
   currentBatch = 0;
 
-  numFunctions = predictors.n_cols;
+  numFunctions = trainData.n_cols;
   noise.set_size(noiseDim, batchSize);
 
   deterministic = true;
   ResetDeterministic();
 
-  responses.set_size(1, predictors.n_cols);
-  responses.ones();
+  this->predictors.set_size(trainData.n_rows, numFunctions + batchSize);
+  this->predictors.cols(0, numFunctions - 1) = std::move(trainData);
+  this->discriminator.predictors = arma::mat(this->predictors.memptr(),
+      this->predictors.n_rows, this->predictors.n_cols, false, false);
 
-  this->discriminator.predictors.set_size(predictors.n_rows,
-      predictors.n_cols + batchSize);
-  this->discriminator.predictors.cols(0, predictors.n_cols - 1) = predictors;
-
-  this->discriminator.responses.set_size(1, predictors.n_cols + batchSize);
-  this->discriminator.responses.ones();
-  this->discriminator.responses.cols(predictors.n_cols,
-      predictors.n_cols + batchSize - 1) = arma::zeros(1, batchSize);
+  responses.ones(1, numFunctions + batchSize);
+  responses.cols(numFunctions, numFunctions + batchSize - 1) =
+      arma::zeros(1, batchSize);
+  this->discriminator.responses = arma::mat(this->responses.memptr(),
+      this->responses.n_rows, this->responses.n_cols, false, false);
 
   this->generator.predictors.set_size(noiseDim, batchSize);
   this->generator.responses.set_size(predictors.n_rows, batchSize);
@@ -198,8 +172,8 @@ template<
 >
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::Reset()
 {
-  size_t genWeights = 0;
-  size_t discWeights = 0;
+  genWeights = 0;
+  discWeights = 0;
 
   NetworkInitialization<InitializationRuleType> networkInit(initializeRule);
 
@@ -510,6 +484,8 @@ serialize(Archive& ar, const unsigned int version)
   if (version > 0)
   {
     ar & BOOST_SERIALIZATION_NVP(reset);
+    ar & BOOST_SERIALIZATION_NVP(genWeights);
+    ar & BOOST_SERIALIZATION_NVP(discWeights);
   }
   if (Archive::is_loading::value)
   {
@@ -517,6 +493,30 @@ serialize(Archive& ar, const unsigned int version)
     // to be reset.
     if (version == 0)
       reset = false;
+
+    // Share the parameters between the network.
+    generator.Parameters() = arma::mat(parameter.memptr(), genWeights, 1, false,
+        false);
+    discriminator.Parameters() = arma::mat(parameter.memptr() + genWeights,
+        discWeights, 1, false, false);
+
+    size_t offset = 0;
+    for (size_t i = 0; i < generator.network.size(); ++i)
+    {
+      offset += boost::apply_visitor(WeightSetVisitor(std::move(
+          generator.parameter), offset), generator.network[i]);
+
+      boost::apply_visitor(resetVisitor, generator.network[i]);
+    }
+
+    offset = 0;
+    for (size_t i = 0; i < discriminator.network.size(); ++i)
+    {
+      offset += boost::apply_visitor(WeightSetVisitor(std::move(
+          discriminator.parameter), offset), discriminator.network[i]);
+
+      boost::apply_visitor(resetVisitor, discriminator.network[i]);
+    }
 
     deterministic = true;
     ResetDeterministic();
