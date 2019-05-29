@@ -17,6 +17,7 @@
 #include <mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/multiple_pole_cart.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/continuous_multiple_pole_cart.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
 #include <mlpack/methods/reinforcement_learning/replay/random_replay.hpp>
@@ -136,6 +137,27 @@ BOOST_AUTO_TEST_CASE(MultiplePoleCartTest)
   BOOST_REQUIRE_EQUAL(reward, 1.0);
   BOOST_REQUIRE(!task.IsTerminal(state));
   BOOST_REQUIRE_EQUAL(2, MultiplePoleCart::Action::size);
+}
+
+/**
+ * Constructs a ContinuousMultiplePoleCart instance and check if the main 
+ * routine works as it should be.
+ */
+BOOST_AUTO_TEST_CASE(ContinuousMultiplePoleCartTest)
+{
+  arma::vec poleLengths = {1, 0.5};
+  arma::vec poleMasses = {1, 1};
+  const ContinuousMultiplePoleCart task = ContinuousMultiplePoleCart(2,
+      poleLengths, poleMasses);
+
+  ContinuousMultiplePoleCart::State state = task.InitialSample();
+  ContinuousMultiplePoleCart::Action action;
+  action.action[0] = math::Random(-1.0, 1.0);
+  double reward = task.Sample(state, action);
+
+  BOOST_REQUIRE_EQUAL(reward, 1.0);
+  BOOST_REQUIRE(!task.IsTerminal(state));
+  BOOST_REQUIRE_EQUAL(1, action.size);
 }
 
 /**

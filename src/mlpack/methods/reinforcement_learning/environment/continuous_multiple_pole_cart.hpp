@@ -1,8 +1,9 @@
 /**
- * @file multiple_pole_cart.hpp
+ * @file continuous_multiple_pole_cart.hpp
  * @author Rahul Ganesh Prabhu
  *
- * This file is an implementation of Multiple Pole Cart Balancing Task.
+ * This file is an implementation of Continuous Multiple Pole Cart Balancing
+ * Task.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -10,8 +11,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_RL_ENVIRONMENT_MULTIPLE_POLE_CART_HPP
-#define MLPACK_METHODS_RL_ENVIRONMENT_MULTIPLE_POLE_CART_HPP
+#ifndef MLPACK_METHODS_RL_ENVIRONMENT_CONTINUOUS_MULTIPLE_POLE_CART_HPP
+#define MLPACK_METHODS_RL_ENVIRONMENT_CONTINUOUS_MULTIPLE_POLE_CART_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -19,13 +20,13 @@ namespace mlpack {
 namespace rl {
 
 /**
- * Implementation of Multiple Pole Cart Balancing task.
+ * Implementation of Continuous Multiple Pole Cart Balancing task.
  */
-class MultiplePoleCart
+class ContinuousMultiplePoleCart
 {
  public:
   /**
-   * Implementation of the state of Multiple Pole Cart. The state is expressed as
+   * Implementation of the state of Continuous Multiple Pole Cart. The state is expressed as
    * a matrix where the $0^{th}$ column is the state of the cart, represented by a tuple
    * (position, velocity) and the $i^{th}$ column is the state of the $i^{th}$ pole, represented
    * by a tuple (angle, angular velocity).
@@ -86,15 +87,13 @@ class MultiplePoleCart
   };
 
   /**
-   * Implementation of action of Multiple Pole Cart.
+   * Implementation of action of Continuous Multiple Pole Cart.
    */
-  enum Action
+  struct Action
   {
-    backward,
-    forward,
-
+    double action[1];
     // Track the size of the action space.
-    size
+    const int size = 1;
   };
 
   /**
@@ -105,28 +104,25 @@ class MultiplePoleCart
    * @param massCart The mass of the cart.
    * @param massPole The mass of the pole.
    * @param length The length of the pole.
-   * @param forceMag The magnitude of the applied force.
    * @param tau The time interval.
    * @param thetaThresholdRadians The maximum angle.
    * @param xThreshold The maximum position.
    * @param doneReward The reward recieved on termination.
    */
-  MultiplePoleCart(const size_t poleNum,
-                   const arma::vec& poleLengths,
-                   const arma::vec& poleMasses,
-                   const double gravity = 9.8,
-                   const double massCart = 1.0,
-                   const double forceMag = 10.0,
-                   const double tau = 0.02,
-                   const double thetaThresholdRadians = 12 * 2 * 3.1416 / 360,
-                   const double xThreshold = 2.4,
-                   const double doneReward = 0.0) :
+  ContinuousMultiplePoleCart(const size_t poleNum,
+                             const arma::vec& poleLengths,
+                             const arma::vec& poleMasses,
+                             const double gravity = 9.8,
+                             const double massCart = 1.0,
+                             const double tau = 0.02,
+                             const double thetaThresholdRadians = 12 * 2 * 3.1416 / 360,
+                             const double xThreshold = 2.4,
+                             const double doneReward = 0.0) :
       poleNum(poleNum),
       poleLengths(poleLengths),
       poleMasses(poleMasses),
       gravity(gravity),
       massCart(massCart),
-      forceMag(forceMag),
       tau(tau),
       thetaThresholdRadians(thetaThresholdRadians),
       xThreshold(xThreshold),
@@ -145,8 +141,8 @@ class MultiplePoleCart
   }
 
   /**
-   * Dynamics of Multiple Pole Cart instance. Get reward and next state based on current
-   * state and current action.
+   * Dynamics of Continuous Multiple Pole Cart instance. Get reward and next state 
+   * based on current state and current action.
    *
    * @param state The current state.
    * @param action The current action.
@@ -158,7 +154,7 @@ class MultiplePoleCart
                 State& nextState) const
   {
     // Calculate acceleration.
-    double totalForce = action ? forceMag : -forceMag;
+    double totalForce = action.action[0];
     double totalMass = massCart;
     for (size_t i = 0; i < poleNum; i++)
     {
@@ -200,8 +196,8 @@ class MultiplePoleCart
   }
 
   /**
-   * Dynamics of Multiple Pole Cart. Get reward based on current state and current
-   * action.
+   * Dynamics of Continuous Multiple Pole Cart. Get reward based on current
+   * state and current action.
    *
    * @param state The current state.
    * @param action The current action.
@@ -252,9 +248,6 @@ class MultiplePoleCart
 
   //! Locally-stored mass of the cart.
   double massCart;
-
-  //! Locally-stored magnitude of the applied force.
-  double forceMag;
 
   //! Locally-stored time interval.
   double tau;
