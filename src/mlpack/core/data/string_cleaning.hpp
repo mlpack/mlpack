@@ -24,7 +24,7 @@ std::string stopwords =
 class Hasher
 {
  public:
-  std::size_t operator()(boost::string_view str)
+  std::size_t operator()(boost::string_view str) const
   {
     return boost::hash_range<const char*>(str.begin(), str.end());
   }

@@ -113,7 +113,7 @@ static void mlpackMain()
   std::vector<std::string> temp;
   std::vector<std::string> input;
   std::vector<std::vector<std::string>> dataset;
-  const int Column = CLI::GetParam<int>("dimension");
+  const size_t Column = CLI::GetParam<int>("dimension");
   while (std::getline(fin, line))
   {
     boost::split(temp, line, boost::is_any_of(std::string(1, ',')));
@@ -139,9 +139,9 @@ static void mlpackMain()
       "_dataset");
   fstream fout;
   fout.open(filename2, ios::out | ios::trunc);
-  for (int i = 0 ; i < dataset.size(); i++)
+  for (size_t i = 0 ; i < dataset.size(); i++)
   {
-    for (int j =0 ; j < dataset[i].size(); j++)
+    for (size_t j =0 ; j < dataset[i].size(); j++)
     {
       if (j == Column)
       {
