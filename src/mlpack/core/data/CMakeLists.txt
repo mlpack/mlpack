@@ -24,6 +24,8 @@ set(SOURCES
   split_data.hpp
   imputer.hpp
   binarize.hpp
+  string_cleaning.hpp
+  tokenizer/strtok.hpp
 )
 
 # add directory name to sources
