@@ -12,11 +12,11 @@
 
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/neat/neat.hpp>
+// #include <mlpack/methods/neat/neat.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/multiple_pole_cart.hpp>
+// #include <mlpack/methods/reinforcement_learning/environment/continuous_multiple_pole_cart.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
 #include <mlpack/tests/neat_test_tools.hpp>
@@ -138,9 +138,10 @@ BOOST_AUTO_TEST_CASE(NEATDoublePoleCartTest)
 {
   arma::vec poleLengths = {1, 0.1};
   arma::vec poleMasses = {1, 0.1};
-  const MultiplePoleCart env = MultiplePoleCart(2, poleLengths, poleMasses);
+  const ContinuousMultiplePoleCart env = ContinuousMultiplePoleCart(2,
+      poleLengths, poleMasses);
   DPVTask task(env);
-  NEAT<Task> model(task, 6, 1);
+  NEAT<DPVTask> model(task, 6, 1);
 
   // Find the best genome and it's fitness.
   Genome bestGenome = model.Train();
@@ -157,9 +158,10 @@ BOOST_AUTO_TEST_CASE(NEATDoublePoleCartNoVelocitiesTest)
 {
   arma::vec poleLengths = {1, 0.1};
   arma::vec poleMasses = {1, 0.1};
-  const MultiplePoleCart env = MultiplePoleCart(2, poleLengths, poleMasses);
+  const ContinuousMultiplePoleCart env = ContinuousMultiplePoleCart(2,
+      poleLengths, poleMasses);
   DPNVTask task(env);
-  NEAT<Task> model(task, 3, 1);
+  NEAT<DPNVTask> model(task, 3, 1);
 
   // Find the best genome and it's fitness.
   Genome bestGenome = model.Train();

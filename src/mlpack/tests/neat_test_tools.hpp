@@ -13,6 +13,7 @@
 #define MLPACK_TESTS_NEAT_TEST_TOOLS_HPP
 
 #include <mlpack/core.hpp>
+// #include <mlpack/methods/reinforcement_learning/environment/continuous_multiple_pole_cart.hpp>
 
 using namespace mlpack;
 using namespace mlpack::neat;
@@ -23,7 +24,7 @@ class XORTask
   double Evaluate(const Genome& genome)
   {
     // Create a random input of 0s and 1s.
-    arma::vec input = arma::randi<arma::vec>(2, distr_param(0, 1));
+    arma::vec input = arma::randi<arma::vec>(2, arma::distr_param(0, 1));
     genome.Input(input);
     arma::vec output = genome.Output();
     
@@ -90,7 +91,7 @@ class DiscreteRLTask
     {
       const int size = EnvironmentType::Action::size;
       typename EnvironmentType::Action action = static_cast<typename EnvironmentType::Action>(
-        std::round(arma::clamp(genome.Output(), 0, size - 1))[0]);
+        std::round(arma::clamp(genome.Output(), 0, size - 1)[0]));
 
       // Use the current action to get the next state.
       fitness += environment.Sample(state, action, state);
@@ -108,49 +109,68 @@ class DiscreteRLTask
 // A class that defines the Double Pole Balancing Task with velocities.
 class DPVTask
 {
-  DPVTask(const MultiplePoleCart env)::environment(env)
+  DPVTask(const ContinuousMultiplePoleCart env)::environment(env)
   { /* Nothing to do here */ }
 
   double Evaluate(Genome& genome)
   {
-    MultiplePoleCart::State state = environment.InitialSample();
+    ContinuousMultiplePoleCart::State state = environment.InitialSample();
     arma::mat inputMatrix = state.Data();
-    arma::vec input = {inputMatrix[0, 0], inputMatrix[1, 0], inputMatrix[0, 1], 
-        inputMatrix[1, 1], inputMatrix[0, 2]}, inputMatrix[1, 2]};
+    double angleThreshold = 12 * 2 * 3.1416 / 360;
+
+    // Input a vector scaled down features.
+    arma::vec input = {inputMatrix[0, 0] / 2.4, inputMatrix[1, 0] / 100,
+        inputMatrix[0, 1] / angleThreshold, inputMatrix[1, 1] / 100,
+        inputMatrix[0, 2] / angleThreshold, inputMatrix[1, 2] / 100};
     genome.Input(input);
 
-    double fitness = 0;
+    double fitnessDenom = 0;
+    int timeStep = 0;
     while (!environment.IsTerminal())
     {
       timeStep++;
-      MultiplePoleCart::Action action = static_cast<MultiplePoleCart::Action>(
-      std::round(arma::clamp(genome.Output(), 0, 3))[0]);
+
+      // Choose an action.
+      ContinuousMultiplePoleCart::Action action;
+      action.action[0] = genome.Output()[0];
 
       // Use the current action to get the next state.
-      fitness += environment.Sample(state, action, state);
+      environment.Sample(state, action, state);
 
       // Update the state of the genome for the next step.
       inputMatrix = state.Data();
-      input = {inputMatrix[0, 0], inputMatrix[0, 1], inputMatrix[1, 0], 
-          inputMatrix[1, 1], inputMatrix[2, 0]}, inputMatrix[2, 1]};
+      arma::vec input = {inputMatrix[0, 0] / 2.4, inputMatrix[1, 0] / 100,
+          inputMatrix[0, 1] / angleThreshold, inputMatrix[1, 1] / 100,
+          inputMatrix[0, 2] / angleThreshold, inputMatrix[1, 2] / 100};
       genome.Input(input);
+
+      if(timeStep >= 1000)
+        continue;
+
+      if(timeStep >= 100)
+      {
+        int pow = timeStep - 100;
+        arma::vec temp = {inputMatrix[0, 0], inputMatrix[1, 0], inputMatrix[0, 1], 
+            inputMatrix[1, 1]};
+        fitnessDenom += arma::accu(arma::pow(temp, pow));
+      }
     }
-    return fitness;
+    return timeStep / 10000 + 0.675 / fitnessDenom;
   }
 
  private:
-  MultiplePoleCart environment;
+  ContinuousMultiplePoleCart environment;
 };
 
 // A class that defines the Double Pole Balancing Task without velocities.
 class DPNVTask
 {
-  DPNVTask(const MultiplePoleCart env)::environment(env)
+  DPNVTask(const ContinuousMultiplePoleCart env)::environment(env)
   { /* Nothing to do here */ }
 
   double Evaluate(Genome& genome)
   {
-    MultiplePoleCart::State state = environment.InitialSample();
+    ContinuousMultiplePoleCart::State state = environment.InitialSample();
     arma::mat inputMatrix = state.Data();
     arma::vec input = inputMatrix.row(0);
     genome.Input(input);
@@ -160,9 +180,10 @@ class DPNVTask
     while (!environment.IsTerminal())
     {
       timeStep++;
+
       // Choose an action.
-      MultiplePoleCart::Action action = static_cast<MultiplePoleCart::Action>(
-        std::round(arma::clamp(genome.Output(), 0, 3))[0]);
+      ContinuousMultiplePoleCart::Action action;
+      action.action[0] = genome.Output()[0];
 
       // Use the current action to get the next state.
       environment.Sample(state, action, state);
@@ -177,21 +198,22 @@ class DPNVTask
       input[2] /= 12 * 2 * 3.1416 / 360;
       genome.Input(input);
 
+      if(timeStep >= 1000)
+        continue;
+
       if(timeStep >= 100)
       {
         int pow = timeStep - 100;
         arma::vec temp = {inputMatrix[0, 0], inputMatrix[1, 0], inputMatrix[0, 1], 
             inputMatrix[1, 1]};
-        fitnessDenom += arma::sum(arma::pow(temp, pow));
-      } 
-      if(timeStep >= 1000)
-        break;
+        fitnessDenom += arma::accu(arma::pow(temp, pow));
+      }
     }
     return timeStep / 10000 + 0.675 / fitnessDenom;
   }
 
  private:
-  MultiplePoleCart environment;
+  ContinuousMultiplePoleCart environment;
 };
 
 #endif
