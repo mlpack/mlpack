@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
       tolerance, shuffle);
   std::function<double()> noiseFunction = [] () {
       return math::RandNormal(0, 1);};
-  GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
+  GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
       std::function<double()>, DCGAN> dcgan(generator, discriminator, gaussian,
       noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
 
   // Generate samples.
   Log::Info << "Sampling..." << std::endl;
-  arma::mat noise(noiseDim, 1);
+  arma::mat noise(noiseDim, batchSize);
   size_t dim = std::sqrt(trainData.n_rows);
   arma::mat generatedData(2 * dim, dim * numSamples);
 
@@ -162,17 +162,17 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
   arma::mat orgPredictions;
   dcgan.Predict(noise, orgPredictions);
 
-  GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
+  GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
       std::function<double()>, DCGAN> dcganText(generator, discriminator,
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
-  GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
+  GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
       std::function<double()>, DCGAN> dcganXml(generator, discriminator,
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
-  GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
+  GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
       std::function<double()>, DCGAN> dcganBinary(generator, discriminator,
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);

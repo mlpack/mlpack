@@ -54,13 +54,8 @@ BOOST_AUTO_TEST_CASE(GANTest)
   trainData.imbue( [&]() { return arma::as_scalar(RandNormal(4, 0.5));});
   trainData = arma::sort(trainData);
 
-<<<<<<< HEAD
   // Create the Discriminator network
   FFN<SigmoidCrossEntropyError<> > discriminator;
-=======
-  // Create the Discriminator network.
-  FFN<CrossEntropyError<> > discriminator;
->>>>>>> Improving Gan Serialization.
   discriminator.Add<Linear<> > (
       generatorOutputSize, discriminatorHiddenLayerSize * 2);
   discriminator.Add<ReLULayer<> >();
@@ -72,15 +67,9 @@ BOOST_AUTO_TEST_CASE(GANTest)
   discriminator.Add<ReLULayer<> >();
   discriminator.Add<Linear<> > (
       discriminatorHiddenLayerSize * 2, discriminatorOutputSize);
-<<<<<<< HEAD
 
   // Create the Generator network
   FFN<SigmoidCrossEntropyError<> > generator;
-=======
-  discriminator.Add<SigmoidLayer<> >();
-  // Create the Generator network.
-  FFN<CrossEntropyError<> > generator;
->>>>>>> Improving Gan Serialization.
   generator.Add<Linear<> >(noiseDim, generatorHiddenLayerSize);
   generator.Add<SoftPlusLayer<> >();
   generator.Add<Linear<> >(generatorHiddenLayerSize, generatorOutputSize);
@@ -257,7 +246,6 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
   Log::Info << "Output generated!" << std::endl;
 }
 
-<<<<<<< HEAD
 /*
  * Create GAN network and test for memory sharing
  * between discriminator and gan predictors.
@@ -273,6 +261,11 @@ BOOST_AUTO_TEST_CASE(GANMemorySharingTest)
   size_t noiseDim = 1;
   size_t generatorUpdateStep = 1;
   double multiplier = 1;
+  double eps = 1e-8;
+  double stepSize = 0.0003;
+  size_t numIterations = 2;
+  double tolerance = 1e-5;
+  bool shuffle = true;
 
   arma::mat trainData(1, 10000);
   trainData.imbue( [&]() { return arma::as_scalar(RandNormal(4, 0.5));});
@@ -300,14 +293,18 @@ BOOST_AUTO_TEST_CASE(GANMemorySharingTest)
 
   // Create GAN
   GaussianInitialization gaussian(0, 0.1);
+  ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
+      tolerance, shuffle);
   std::function<double ()> noiseFunction = [](){ return math::Random(-8, 8) +
       math::RandNormal(0, 1) * 0.01;};
   GAN<FFN<SigmoidCrossEntropyError<> >,
       GaussianInitialization,
       std::function<double()> >
-  gan(trainData, generator, discriminator, gaussian, noiseFunction,
+  gan(generator, discriminator, gaussian, noiseFunction,
       noiseDim, batchSize, generatorUpdateStep, discriminatorPreTrain,
       multiplier);
+
+  gan.Train(trainData, optimizer);
 
   CheckMatrices(gan.Predictors().head_cols(trainData.n_cols), trainData);
   CheckMatrices(gan.Predictors(), gan.Discriminator().Predictors());
@@ -317,141 +314,4 @@ BOOST_AUTO_TEST_CASE(GANMemorySharingTest)
       trainData);
 }
 
-=======
-/**
-* Test that serialization works ok.
-*/
-BOOST_AUTO_TEST_CASE(SerializationTest)
-{
-  size_t dNumKernels = 32;
-  size_t discriminatorPreTrain = 5;
-  size_t batchSize = 5;
-  size_t noiseDim = 100;
-  size_t generatorUpdateStep = 1;
-  size_t numSamples = 10;
-  double stepSize = 0.0003;
-  double eps = 1e-8;
-  size_t numEpoches = 1;
-  double tolerance = 1e-5;
-  int datasetMaxCols = 10;
-  bool shuffle = true;
-  double multiplier = 10;
-
-  Log::Info << std::boolalpha
-    << " batchSize = " << batchSize << std::endl
-    << " generatorUpdateStep = " << generatorUpdateStep << std::endl
-    << " noiseDim = " << noiseDim << std::endl
-    << " numSamples = " << numSamples << std::endl
-    << " stepSize = " << stepSize << std::endl
-    << " numEpoches = " << numEpoches << std::endl
-    << " tolerance = " << tolerance << std::endl
-    << " shuffle = " << shuffle << std::endl;
-
-  arma::mat trainData, testData;
-  trainData.load("mnist_first250_training_4s_and_9s.arm");
-  Log::Info << arma::size(trainData) << std::endl;
-
-  trainData = trainData.cols(0, datasetMaxCols - 1);
-
-  size_t numIterations = trainData.n_cols * numEpoches;
-  numIterations /= batchSize;
-
-  Log::Info << "Dataset loaded (" << trainData.n_rows << ", "
-          << trainData.n_cols << ")" << std::endl;
-  Log::Info << trainData.n_rows << "--------" << trainData.n_cols << std::endl;
-
-  // Create the Discriminator network.
-  FFN<CrossEntropyError<> > discriminator;
-  discriminator.Add<Convolution<> >(1, dNumKernels, 4, 4, 2, 2, 1, 1, 28, 28);
-  discriminator.Add<LeakyReLU<> >(0.2);
-  discriminator.Add<Convolution<> >(dNumKernels, 2 * dNumKernels, 4, 4, 2, 2,
-    1, 1, 14, 14);
-  discriminator.Add<LeakyReLU<> >(0.2);
-  discriminator.Add<Convolution<> >(2 * dNumKernels, 4 * dNumKernels, 4, 4,
-    2, 2, 1, 1, 7, 7);
-  discriminator.Add<LeakyReLU<> >(0.2);
-  discriminator.Add<Convolution<> >(4 * dNumKernels, 8 * dNumKernels, 4, 4,
-    2, 2, 2, 2, 3, 3);
-  discriminator.Add<LeakyReLU<> >(0.2);
-  discriminator.Add<Convolution<> >(8 * dNumKernels, 1, 4, 4, 1, 1,
-    1, 1, 2, 2);
-  discriminator.Add<SigmoidLayer<> >();
-
-  // Create the Generator network.
-  FFN<CrossEntropyError<> > generator;
-  generator.Add<TransposedConvolution<> >(noiseDim, 8 * dNumKernels, 2, 2,
-    1, 1, 1, 1, 1, 1);
-  generator.Add<BatchNorm<> >(1024);
-  generator.Add<ReLULayer<> >();
-  generator.Add<TransposedConvolution<> >(8 * dNumKernels, 4 * dNumKernels,
-    2, 2, 1, 1, 0, 0, 2, 2);
-  generator.Add<BatchNorm<> >(1152);
-  generator.Add<ReLULayer<> >();
-  generator.Add<TransposedConvolution<> >(4 * dNumKernels, 2 * dNumKernels,
-    5, 5, 2, 2, 1, 1, 3, 3);
-  generator.Add<BatchNorm<> >(3136);
-  generator.Add<ReLULayer<> >();
-  generator.Add<TransposedConvolution<> >(2 * dNumKernels, dNumKernels, 8, 8,
-    1, 1, 1, 1, 7, 7);
-  generator.Add<BatchNorm<> >(6272);
-  generator.Add<ReLULayer<> >();
-  generator.Add<TransposedConvolution<> >(dNumKernels, 1, 15, 15, 1, 1, 1, 1,
-    14, 14);
-  generator.Add<TanHLayer<> >();
-
-  // Noise Function.
-  std::function<double()> noiseFunction = [] () {
-    return math::RandNormal(0, 1);};
-
-  // Create Noise.
-  arma::mat noise;
-  noise.set_size(noiseDim, batchSize);
-  noise.imbue( [&]() { return noiseFunction();} );
-
-  // Create GAN.
-  GaussianInitialization gaussian(0, 1);
-  ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
-    tolerance, shuffle);
-
-  GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
-      std::function<double()> > gan(generator, discriminator, gaussian,
-      noiseFunction, noiseDim, batchSize, generatorUpdateStep,
-      discriminatorPreTrain, multiplier);
-
-  Log::Info << "Training..." << std::endl;
-  gan.Train(trainData, optimizer);
-
-  // Check that Serialization is working correctly.
-  arma::mat orgPredictions;
-  gan.Predict(noise, orgPredictions);
-
-  GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
-      std::function<double()> > ganText(generator, discriminator, gaussian,
-      noiseFunction, noiseDim, batchSize, generatorUpdateStep,
-      discriminatorPreTrain, multiplier);
-
-  GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
-      std::function<double()> > ganXml(generator, discriminator, gaussian,
-      noiseFunction, noiseDim, batchSize, generatorUpdateStep,
-      discriminatorPreTrain, multiplier);
-
-  GAN<FFN<CrossEntropyError<> >, GaussianInitialization,
-      std::function<double()> > ganBinary(generator, discriminator, gaussian,
-      noiseFunction, noiseDim, batchSize, generatorUpdateStep,
-      discriminatorPreTrain, multiplier);
-
-  SerializeObjectAll(gan, ganXml, ganText, ganBinary);
-
-  arma::mat predictions, xmlPredictions, textPredictions, binaryPredictions;
-  gan.Predict(noise, predictions);
-  ganXml.Predict(noise, xmlPredictions);
-  ganText.Predict(noise, textPredictions);
-  ganBinary.Predict(noise, binaryPredictions);
-
-  /*CheckMatrices(orgPredictions, predictions);
-  CheckMatrices(orgPredictions, xmlPredictions);
-  CheckMatrices(orgPredictions, textPredictions);
-  CheckMatrices(orgPredictions, binaryPredictions);*/
-}
->>>>>>> Improving Gan Serialization.
 BOOST_AUTO_TEST_SUITE_END();

@@ -390,6 +390,10 @@ class GAN
   arma::mat gradientGenerator;
   //! The current evaluation mode (training or testing).
   bool deterministic;
+  //! To keep track of number of generator weights in total weights.
+  size_t genWeights;
+  //! To keep track of number of discriminator weights in total weights.
+  size_t discWeights;
 };
 
 } // namespace ann
