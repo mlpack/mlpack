@@ -152,8 +152,8 @@ class DPVTask
       if (timeStep >= 100)
       {
         int pow = timeStep - 100;
-        arma::vec temp = {inputMatrix[0, 0], inputMatrix[1, 0], inputMatrix[0, 1], 
-            inputMatrix[1, 1]};
+        arma::vec temp = {inputMatrix[0, 0], inputMatrix[1, 0],
+            inputMatrix[0, 1], inputMatrix[1, 1]};
         fitnessDenom += arma::accu(arma::pow(temp, pow));
       }
     }
@@ -200,10 +200,10 @@ class DPNVTask
       input[2] /= 12 * 2 * 3.1416 / 360;
       genome.Input(input);
 
-      if(timeStep >= 1000)
+      if (timeStep >= 1000)
         continue;
 
-      if(timeStep >= 100)
+      if (timeStep >= 100)
       {
         int pow = timeStep - 100;
         arma::vec temp = {inputMatrix[0, 0], inputMatrix[1, 0],
