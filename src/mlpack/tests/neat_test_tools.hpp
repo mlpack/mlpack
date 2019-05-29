@@ -29,7 +29,7 @@ class XORTask
     arma::vec output = genome.Output();
     
     // The expected output of the XOR gate.
-    arma::vec answer = {(input[0] + input[1]) * (!input[0] + input[1])}; 
+    arma::vec answer = {(input[0] + input[1]) * (!input[0] + !input[1])}; 
     
     // The fitness of the genome. 
     return 4 - std::pow(answer[0] - output[0], 2);
