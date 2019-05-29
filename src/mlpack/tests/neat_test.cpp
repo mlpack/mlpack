@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(NEATXORTest)
   double finalFitness = task.Evaluate(bestGenome);
 
   // Check if the final fitness is acceptable.
-  BOOST_REQUIRE(finalFitness >= 3.9); 
+  BOOST_REQUIRE(finalFitness >= 3.9);
 }
 
 /**

@@ -27,11 +27,11 @@ class XORTask
     arma::vec input = arma::randi<arma::vec>(2, arma::distr_param(0, 1));
     genome.Input(input);
     arma::vec output = genome.Output();
-    
+
     // The expected output of the XOR gate.
-    arma::vec answer = {(input[0] + input[1]) * (!input[0] + !input[1])}; 
-    
-    // The fitness of the genome. 
+    arma::vec answer = {(input[0] + input[1]) * (!input[0] + !input[1])};
+
+    // The fitness of the genome.
     return 4 - std::pow(answer[0] - output[0], 2);
   }
 };
@@ -42,7 +42,7 @@ class XORTask
 template<class EnvironmentType>
 class ContinuousRLTask
 {
-  ContinuousRLTask(const EnvironmentType& environment) : environment(environment)
+  ContinuousRLTask(const EnvironmentType& env) : environment(env)
   { /* Nothing to do here */ }
 
   double Evaluate(Genome& genome)
@@ -74,10 +74,10 @@ class ContinuousRLTask
 /**
  * A Task class that wraps a discrete RL environment.
  */
-template<class EnvironmentType> 
+template<class EnvironmentType>
 class DiscreteRLTask
 {
-  DiscreteRLTask(const EnvironmentType& environment) : environment(environment)
+  DiscreteRLTask(const EnvironmentType& env) : environment(env)
   { /* Nothing to do here */ }
 
   double Evaluate(Genome& genome)
@@ -91,8 +91,9 @@ class DiscreteRLTask
     {
       // Choose the action to perform.
       const int size = EnvironmentType::Action::size;
-      typename EnvironmentType::Action action = static_cast<typename EnvironmentType::Action>(
-        std::round(arma::clamp(genome.Output(), 0, size - 1)[0]));
+      int actionInt = std::round(arma::clamp(genome.Output(), 0, size - 1)[0];
+      typename EnvironmentType::Action action = static_cast<typename
+          EnvironmentType::Action>(actionInt);
 
       // Use the current action to get the next state.
       fitness += environment.Sample(state, action, state);
@@ -145,10 +146,10 @@ class DPVTask
           inputMatrix[0, 2] / angleThreshold, inputMatrix[1, 2] / 100};
       genome.Input(input);
 
-      if(timeStep >= 1000)
+      if (timeStep >= 1000)
         continue;
 
-      if(timeStep >= 100)
+      if (timeStep >= 100)
       {
         int pow = timeStep - 100;
         arma::vec temp = {inputMatrix[0, 0], inputMatrix[1, 0], inputMatrix[0, 1], 
@@ -205,8 +206,8 @@ class DPNVTask
       if(timeStep >= 100)
       {
         int pow = timeStep - 100;
-        arma::vec temp = {inputMatrix[0, 0], inputMatrix[1, 0], inputMatrix[0, 1], 
-            inputMatrix[1, 1]};
+        arma::vec temp = {inputMatrix[0, 0], inputMatrix[1, 0],
+            inputMatrix[0, 1], inputMatrix[1, 1]};
         fitnessDenom += arma::accu(arma::pow(temp, pow));
       }
     }
