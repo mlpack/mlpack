@@ -13,21 +13,23 @@
 #include <mlpack/prereqs.hpp>
 #include <boost/range/algorithm/remove_if.hpp>
 #include <boost/algorithm/string/classification.hpp>
-#include <boost/utility/string_view.hpp>
+#include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
 #include <mlpack/core/data/tokenizer/strtok.hpp>
 #include <boost/functional/hash.hpp>
 
-std::string stopwords = 
+std::string stopwords =
 #include "mlpack/core/data/stopwords.txt"
 ;
 
-class Hasher {
+class Hasher
+{
  public:
-  std::size_t operator()(boost::string_view str) const {
+  std::size_t operator()(boost::string_view str)
+  {
     return boost::hash_range<const char*>(str.begin(), str.end());
   }
 };
- 
+
 namespace mlpack {
 namespace data {
 
@@ -36,7 +38,6 @@ namespace data {
  *
  * @param input Vector of strings
  */
-
 void RemovePunctuation(std::vector<std::string>& input)
 {
   std::string punctuation = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
@@ -53,7 +54,7 @@ void RemovePunctuation(std::vector<std::string>& input)
  */
 void LowerCase(std::vector<std::string>& input)
 {
-  for(auto& str : input)
+  for (auto& str : input)
   {
     boost::algorithm::to_lower(str);
   }
@@ -80,9 +81,9 @@ void RemoveStopWords(std::vector<std::string>& input, TokenizerType tokenizer)
   std::unordered_map<boost::string_view, std::size_t, Hasher> stopword;
   data::Strtok split("\n");
   token = split(strView);
-  while(!token.empty())
+  while (!token.empty())
   {
-    if(stopword.count(token) == 0)
+    if (stopword.count(token) == 0)
     {
       stopword[std::move(token)] = 1;
     }
@@ -95,9 +96,9 @@ void RemoveStopWords(std::vector<std::string>& input, TokenizerType tokenizer)
     copy = str;
     strView = copy;
     token = tokenizer(strView);
-    while(!token.empty())
+    while (!token.empty())
     {
-      if(stopword.count(token) > 0)
+      if (stopword.count(token) > 0)
       {
         // token is a  a stop word remove it;
         // Search for the stopword in string
@@ -114,7 +115,7 @@ void RemoveStopWords(std::vector<std::string>& input, TokenizerType tokenizer)
       token = tokenizer(strView);
     }
   }
-}  
+}
 
 } // namespace data
 } // namespace mlpack

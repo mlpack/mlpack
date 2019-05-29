@@ -29,3 +29,7 @@ add_markdown_docs(preprocess_describe "cli;python" "preprocessing")
 add_cli_executable(preprocess_imputer)
 #add_python_binding(preprocess_imputer)
 add_markdown_docs(preprocess_imputer "cli" "preprocessing")
+
+add_cli_executable(preprocess_string)
+add_python_binding(preprocess_string)
+add_markdown_docs(preprocess_string "cli" "preprocessing")
