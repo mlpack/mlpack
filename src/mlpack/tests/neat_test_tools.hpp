@@ -13,7 +13,7 @@
 #define MLPACK_TESTS_NEAT_TEST_TOOLS_HPP
 
 #include <mlpack/core.hpp>
-// #include <mlpack/methods/reinforcement_learning/environment/continuous_multiple_pole_cart.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/continuous_multiple_pole_cart.hpp>
 
 using namespace mlpack;
 using namespace mlpack::neat;

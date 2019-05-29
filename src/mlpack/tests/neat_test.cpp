@@ -12,11 +12,11 @@
 
 #include <mlpack/core.hpp>
 
-// #include <mlpack/methods/neat/neat.hpp>
+#include <mlpack/methods/neat/neat.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
-// #include <mlpack/methods/reinforcement_learning/environment/continuous_multiple_pole_cart.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/continuous_multiple_pole_cart.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
 #include <mlpack/tests/neat_test_tools.hpp>
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE(NEATDoublePoleCartTest)
   const ContinuousMultiplePoleCart env = ContinuousMultiplePoleCart(2,
       poleLengths, poleMasses);
   DPVTask task(env);
-  NEAT<DPVTask> model(task, 6, 1);
+  NEAT<DPVTask> model(task, 6 /* Input nodes */, 1 /* Output nodes */);
 
   // Find the best genome and it's fitness.
   Genome bestGenome = model.Train();
@@ -161,7 +161,7 @@ BOOST_AUTO_TEST_CASE(NEATDoublePoleCartNoVelocitiesTest)
   const ContinuousMultiplePoleCart env = ContinuousMultiplePoleCart(2,
       poleLengths, poleMasses);
   DPNVTask task(env);
-  NEAT<DPNVTask> model(task, 3, 1);
+  NEAT<DPNVTask> model(task, 3 /* Input nodes */, 1 /* Output nodes */);
 
   // Find the best genome and it's fitness.
   Genome bestGenome = model.Train();
