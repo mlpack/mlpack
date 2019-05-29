@@ -31,8 +31,8 @@ BOOST_AUTO_TEST_CASE(StopWordsTest)
   arr[0] = "isn't mlpack great?";
   arr[1] = "2019 gsoc is great.";
   mlpack::data::RemoveStopWords(arr, data::Strtok(" "));
-  BOOST_TEST(arr[0] == "mlpack great?");
-  BOOST_TEST(arr[1] == "2019 gsoc great.");
+  BOOST_CHECK_EQUAL(arr[0], "mlpack great?");
+  BOOST_CHECK_EQUAL(arr[1], "2019 gsoc great.");
 }
 
 /**
@@ -44,8 +44,8 @@ BOOST_AUTO_TEST_CASE(PunctuationTest)
   arr[0] = "isn't mlpack great?";
   arr[1] = "2019 gsoc is great.";
   mlpack::data::RemovePunctuation(arr);
-  BOOST_TEST(arr[0] == "isnt mlpack great");
-  BOOST_TEST(arr[1] == "2019 gsoc is great");
+  BOOST_CHECK_EQUAL(arr[0], "isnt mlpack great");
+  BOOST_CHECK_EQUAL(arr[1], "2019 gsoc is great");
 }
 
 /**
@@ -57,8 +57,8 @@ BOOST_AUTO_TEST_CASE(LowerCaseTest)
   arr[0] = "IsN'T MlPaCk GrEaT?";
   arr[1] = "2019 gSoC iS grEat.";
   mlpack::data::LowerCase(arr);
-  BOOST_TEST(arr[0] == "isn't mlpack great?");
-  BOOST_TEST(arr[1] == "2019 gsoc is great.");
+  BOOST_CHECK_EQUAL(arr[0], "isn't mlpack great?");
+  BOOST_CHECK_EQUAL(arr[1], "2019 gsoc is great.");
 }
 
 BOOST_AUTO_TEST_SUITE_END();
