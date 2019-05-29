@@ -28,6 +28,24 @@ class GiniGain
 {
  public:
   /**
+   * Evaluate the Gini impurity given a vector of class weight counts.
+   */
+  template<bool UseWeights, typename CountType>
+  static double EvaluatePtr(const CountType* counts,
+                            const size_t countLength,
+                            const CountType totalCount)
+  {
+    if (totalCount == 0)
+      return 0.0;
+
+    CountType impurity = 0.0;
+    for (size_t i = 0; i < countLength; ++i)
+      impurity += counts[i] * (totalCount - counts[i]);
+
+    return -((double) impurity / ((double) std::pow(totalCount, 2)));
+  }
+
+  /**
    * Evaluate the Gini impurity on the given set of labels.  RowType should be
    * an Armadillo vector that holds size_t objects.
    *

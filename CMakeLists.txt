@@ -336,14 +336,17 @@ if (NOT ENSMALLEN_FOUND)
             "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include")
         message(STATUS
             "Successfully downloaded ensmallen into ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/")
+
+        # Now we have to also ensure these header files get installed.
+        install(DIRECTORY ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen_bits/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ensmallen_bits)
+        install(FILES ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
       else ()
         message(FATAL_ERROR "Problem unpacking ensmallen!  Expected only one directory ensmallen-x.y.z/; found ${ENS_DIRECTORIES}. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
       endif ()
     else ()
       list(GET ENS_DOWNLOAD_STATUS_LIST 1 ENS_DOWNLOAD_ERROR)
       message(FATAL_ERROR
-          "Could not download ensmallen! Error code ${ENS_DOWNLOAD_STATUS}:
-${ENS_DOWNLOAD_ERROR}!  Error log: ${ENS_DOWBLOAD_LOG}")
+          "Could not download ensmallen! Error code ${ENS_DOWNLOAD_STATUS}: ${ENS_DOWNLOAD_ERROR}!  Error log: ${ENS_DOWNLOAD_LOG}")
     endif ()
   else ()
     # Release versions will have ensmallen packaged with the release so we can

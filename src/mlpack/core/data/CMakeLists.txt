@@ -26,6 +26,9 @@ set(SOURCES
   binarize.hpp
   string_cleaning.hpp
   tokenizer/strtok.hpp
+  confusion_matrix.hpp
+  one_hot_encoding.hpp
+  one_hot_encoding_impl.hpp
 )
 
 # add directory name to sources
