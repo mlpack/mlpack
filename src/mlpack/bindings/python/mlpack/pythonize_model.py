@@ -102,6 +102,6 @@ def transform(model):
 
   # Convert the XML tree to python dict.
   model_dict = etree_to_dict(tree)
-  model_dict = model_dict[model_dict.keys()[0]]
-  model_dict = model_dict[model_dict.keys()[0]]
+  model_dict = model_dict[list(model_dict.keys())[0]]
+  model_dict = model_dict[list(model_dict.keys())[0]]
   return recursive_transform(model_dict)
