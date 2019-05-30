@@ -27,8 +27,8 @@ PROGRAM_INFO("Scale Data",
     "This utility takes a dataset and performs feature scaling using one of "
     "the six scaler methods namely: 'max_abs_scaler', 'mean_normalization', "
     "'min_max_scaler' ,'standard_scaler', 'pcawhitening' and 'zcawhitening'."
-    " The function takes a matrice as " + PRINT_PARAM_STRING("input") + 
-    " and a scaling method type which you can specify using " + 
+    " The function takes a matrice as " + PRINT_PARAM_STRING("input") +
+    " and a scaling method type which you can specify using " +
     PRINT_PARAM_STRING("scaler_method") + " parameter; the default is "
     "standard scaler, and outputs a matrice with scaled feature."
     "\n\n"
@@ -95,8 +95,8 @@ static void mlpackMain()
   RequireParamValue<std::string>("scaler_method",
       [](std::string x) { return x == "standard_scaler" || x ==
       "min_max_scaler" || x == "mean_normalization" || x == "max_abs_scaler" ||
-      x == "whitening";},true, "scaler_method must be one among min_max_scaler"
-      ",max_abs_scaler, pcawhitening, standard_scaler, zcawhitening"
+      x == "whitening";}, true, "scaler_method must be one among min_max_"
+      "scaler, max_abs_scaler, pcawhitening, standard_scaler, zcawhitening"
       " or mean_normalization.");
 
   // Load the data.
@@ -126,10 +126,10 @@ static void mlpackMain()
   }
   else
   {
-    RequireParamValue<double>("epsilon",[](double x) { return x <= 1.0 &&
+    RequireParamValue<double>("epsilon", [](double x) { return x <= 1.0 &&
     x >= -1.0;}, true, "regularization parameter should be between -1 "
     "and 1.");
-    
+
     if (scalerMethod == "pcawhitening")
     {
       data::PcaWhitening scale(CLI::GetParam<double>("epsilon"));

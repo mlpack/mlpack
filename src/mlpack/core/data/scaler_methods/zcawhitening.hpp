@@ -68,7 +68,7 @@ class ZcaWhitening
     // Important to store results, so that i can use in InverseTranform().
     eigenVectors = scale.EigenVectors();
     itemMean = scale.ItemMean();
-    eigenValues = scale.EigenValues(); 
+    eigenValues = scale.EigenValues();
     output = eigenVectors * output;
   }
 

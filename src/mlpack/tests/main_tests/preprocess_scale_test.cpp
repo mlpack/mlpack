@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(TwoScalerTest)
   mlpackMain();
   arma::mat max_abs_scaler_output = CLI::GetParam<arma::mat>("output");
 
-  method = "standard_scaler"; 
+  method = "standard_scaler";
   SetInputParam("input", dataset);
   SetInputParam("scaler_method", std::move(method));
 
