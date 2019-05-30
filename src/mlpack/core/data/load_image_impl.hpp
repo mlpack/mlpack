@@ -181,7 +181,7 @@ bool LoadImage::LoadDIR(std::string& dirPath,
   std::vector<std::string> files;
 #ifdef HAS_FILESYSTEM
   // cycle through the directory
-  for(auto& file : std::experimental::filesystem::directory_iterator(dirPath))
+  for (auto& file : std::experimental::filesystem::directory_iterator(dirPath))
   {
     // If it's not a directory, list it.
     if (std::experimental::filesystem::is_regular_file(file)) {
