@@ -9,7 +9,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/data/scaler_methods/whitening.hpp>
+#include <mlpack/core/data/scaler_methods/pcawhitening.hpp>
+#include <mlpack/core/data/scaler_methods/zcawhitening.hpp>
 #include <mlpack/core/data/scaler_methods/min_max_scaler.hpp>
 #include <mlpack/core/data/scaler_methods/max_abs_scaler.hpp>
 #include <mlpack/core/data/scaler_methods/standard_scaler.hpp>
@@ -134,16 +135,16 @@ BOOST_AUTO_TEST_CASE(ZeroScaleTest)
 */
 BOOST_AUTO_TEST_CASE(PCAWhiteningTest)
 {
-  data::Whitening scale(0);
+  data::PcaWhitening scale;
   arma::mat output;
-  scale.PCA(dataset, output);
+  scale.Transform(dataset, output);
   arma::mat cov = mlpack::math::ColumnCovariance(output);
   arma::vec diagonals = cov.diag();
   // Checking covarience is 1.0
   double ccovsum = 0.0;
   for (size_t i = 0; i < diagonals.n_elem; i++)
     ccovsum += diagonals(i);
-  BOOST_REQUIRE_CLOSE(ccovsum, 1.0, 1e-6);
+  BOOST_REQUIRE_CLOSE(ccovsum, 1.0, 1e-3);
 }
 
 /**
@@ -151,16 +152,16 @@ BOOST_AUTO_TEST_CASE(PCAWhiteningTest)
 */
 BOOST_AUTO_TEST_CASE(ZCAWhiteningTest)
 {
-  data::Whitening scale(0);
+  data::ZcaWhitening scale;
   arma::mat output;
-  scale.ZCA(dataset, output);
+  scale.Transform(dataset, output);
   arma::mat cov = mlpack::math::ColumnCovariance(output);
   arma::vec diagonals = cov.diag();
   // Checking covarience is 1.0
   double ccovsum = 0.0;
   for (size_t i = 0; i < diagonals.n_elem; i++)
     ccovsum += diagonals(i);
-  BOOST_REQUIRE_CLOSE(ccovsum, 1.0, 1e-6);
+  BOOST_REQUIRE_CLOSE(ccovsum, 1.0, 1e-3);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -16,7 +16,8 @@
 #include <mlpack/core/data/scaler_methods/max_abs_scaler.hpp>
 #include <mlpack/core/data/scaler_methods/mean_normalization.hpp>
 #include <mlpack/core/data/scaler_methods/min_max_scaler.hpp>
-#include <mlpack/core/data/scaler_methods/whitening.hpp>
+#include <mlpack/core/data/scaler_methods/pcawhitening.hpp>
+#include <mlpack/core/data/scaler_methods/zcawhitening.hpp>
 #include <mlpack/core/data/scaler_methods/standard_scaler.hpp>
 
 PROGRAM_INFO("Scale Data",
@@ -24,12 +25,12 @@ PROGRAM_INFO("Scale Data",
     "A utility to perform feature scaling.",
     // Long description.
     "This utility takes a dataset and performs feature scaling using one of "
-    "the five scaler methods namely: max_abs_scaler, mean_normalization, "
-    "min_max_scaler ,standard_scaler and whitening. The function takes a "
-    "matrice as " + PRINT_PARAM_STRING("input") + " and a scaling method type"
-    " which you can specify using " + PRINT_PARAM_STRING("scaler_method") +
-    " parameter; the default is standard scaler, and outputs a matrice "
-    "with scaled feature."
+    "the six scaler methods namely: 'max_abs_scaler', 'mean_normalization', "
+    "'min_max_scaler' ,'standard_scaler', 'pcawhitening' and 'zcawhitening'."
+    " The function takes a matrice as " + PRINT_PARAM_STRING("input") + 
+    " and a scaling method type which you can specify using " + 
+    PRINT_PARAM_STRING("scaler_method") + " parameter; the default is "
+    "standard scaler, and outputs a matrice with scaled feature."
     "\n\n"
     "The output scaled feature matrices may be saved with the " +
     PRINT_PARAM_STRING("output") + " output parameters."
@@ -47,7 +48,7 @@ PROGRAM_INFO("Scale Data",
     "we coud run "
     "\n\n" +
     PRINT_CALL("preprocess_scale", "input", "X", "output", "X_scaled",
-    "scaler_method", "whitening", "whitening_method", "PCA", "epsilon", 0.01) +
+    "scaler_method", "pcawhitening", "epsilon", 0.01) +
     "\n\n"
     "Another simple example where we want to scale the dataset " +
     PRINT_DATASET("X") + " into " + PRINT_DATASET("X_scaled") + " with "
@@ -65,10 +66,8 @@ PARAM_MATRIX_IN_REQ("input", "Matrix containing data.", "i");
 PARAM_MATRIX_OUT("output", "Matrix to save scaled data to.", "o");
 PARAM_STRING_IN("scaler_method", "method to use for scaling, the "
     "default is standard_scaler.", "a", "standard_scaler");
-PARAM_STRING_IN("whitening_method", "method to use for whitening, the "
-    "default is ZCA.", "w", "ZCA");
-PARAM_DOUBLE_IN("epsilon", "regularization Parameter, should be between"
-  "-1 to 1.", "r", 0.000001);
+PARAM_DOUBLE_IN("epsilon", "regularization Parameter for pcawhitening,"
+    " or zcawhitening, should be between -1 to 1.", "r", 0.000001);
 
 PARAM_INT_IN("seed", "Random seed (0 for std::time(NULL)).", "s", 0);
 PARAM_INT_IN("min_value", "Starting value of range for min_max_scaler.",
@@ -97,29 +96,14 @@ static void mlpackMain()
       [](std::string x) { return x == "standard_scaler" || x ==
       "min_max_scaler" || x == "mean_normalization" || x == "max_abs_scaler" ||
       x == "whitening";},true, "scaler_method must be one among min_max_scaler"
-      ",max_abs_scaler, whitening, standard_scaler or mean_normalization.");
-  // If scaler_method is not set, warn the user.
-  if (!CLI::HasParam("scaler_method"))
-  {
-    Log::Warn << "You did not specify " << PRINT_PARAM_STRING("scaler_method")
-        << ", so it will be automatically set to standard_scaler." << endl;
-  }
+      ",max_abs_scaler, pcawhitening, standard_scaler, zcawhitening"
+      " or mean_normalization.");
 
   // Load the data.
-  arma::mat input = CLI::GetParam<arma::mat>("input");
+  arma::mat& input = CLI::GetParam<arma::mat>("input");
   arma::mat output;
   if (scalerMethod == "min_max_scaler")
   {
-    if (!CLI::HasParam("min_value"))
-    {
-      Log::Warn << "You did not specify " << PRINT_PARAM_STRING("min_value")
-          << ", so it will be automatically set to 0." << endl;
-    }
-    if (!CLI::HasParam("max_value"))
-    {
-      Log::Warn << "You did not specify " << PRINT_PARAM_STRING("max_value")
-          << ", so it will be automatically set to 1." << endl;
-    }
     const int minValue = CLI::GetParam<int>("min_value");
     const int maxValue = CLI::GetParam<int>("max_value");
     data::MinMaxScaler scale(minValue, maxValue);
@@ -142,30 +126,19 @@ static void mlpackMain()
   }
   else
   {
-    if (!CLI::HasParam("epsilon"))
+    RequireParamValue<double>("epsilon",[](double x) { return x <= 1.0 &&
+    x >= -1.0;}, true, "regularization parameter should be between -1 "
+    "and 1.");
+    
+    if (scalerMethod == "pcawhitening")
     {
-      Log::Warn << "You did not specify " << PRINT_PARAM_STRING("epsilon")
-          << ", so it will be set to default 0.000001." << endl;
+      data::PcaWhitening scale(CLI::GetParam<double>("epsilon"));
+      scale.Transform(input, output);
     }
     else
     {
-      RequireParamValue<double>("epsilon",[](double x) { return x <= 1.0 &&
-      x >= -1.0;}, true, "regularization parameter should be between -1 "
-      "and 1.");
-    }
-    data::Whitening scale(CLI::GetParam<double>("epsilon"));
-    if (!CLI::HasParam("whitening_method"))
-    {
-      Log::Warn << "You did not specify " << PRINT_PARAM_STRING("whitening"
-        "_method") << ", so it will be automatically set to ZCA." << endl;        
-    }
-    if (CLI::GetParam<string>("whitening_method") == "PCA")
-    {
-      scale.PCA(input, output);
-    }
-    else
-    {
-      scale.ZCA(input, output);
+      data::ZcaWhitening scale(CLI::GetParam<double>("epsilon"));
+      scale.Transform(input, output);
     }
   }
   // save the output
