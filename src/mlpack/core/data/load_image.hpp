@@ -18,7 +18,10 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/prereqs.hpp>
-#include <boost/filesystem.hpp>
+
+#ifdef HAS_FILESYSTEM
+#include <experimental/filesystem>
+#endif
 
 #include "extension.hpp"
 
@@ -31,6 +34,11 @@ namespace data {
 /**
  * Loads a matrix with image. It also supports loading image from 
  * an entire directory.
+ * @code
+ * arma::Mat<unsigned char> img;
+ * data::LoadImage loader;
+ * loader.Load("test_image.png", std::move(img));
+ * @endcode
  *
  * The supported types of files are:
  * 
@@ -45,18 +53,20 @@ namespace data {
  * - PIC (Softimage PIC)
  * - PNM (PPM and PGM binary only).
  */
-
 class LoadImage
 {
  public:
+  /**
+   * LoadImage default constructor.
+   */
   LoadImage();
 
   /**
-   * LoadImage constructor.
+   * Instantiate the LoadImage object with the image width, height, channels..
    *
-   * @param width Matrix width for output matrix.
-   * @param height Matrix height for output matrix.
-   * @param channels Matrix channels for output matrix.
+   * @param width Matrix width for the output matrix.
+   * @param height Matrix height for the output matrix.
+   * @param channels Matrix channels for the output matrix.
    */
   LoadImage(int width, int height, int channels);
 
@@ -66,22 +76,19 @@ class LoadImage
    * @param filename Name of the image file.
    * @return Boolean value indicating success if it is an image.
    */
-  bool isImageFile(std::string fileName);
-
+  bool IsImageFile(std::string& fileName);
 
   /**
    * Load the image file into the given matrix.
-   * Throws exceptions on errors.
    *
    * @param fileName Name of the image file.
    * @param outputMatrix Matrix to load into.
    * @return Boolean value indicating success or failure of load.
    */
-  bool Load(std::string fileName, arma::Mat<unsigned char>&& outputMatrix);
+  bool Load(std::string& fileName, arma::Mat<unsigned char>&& outputMatrix);
 
   /**
    * Load the image file into the given matrix.
-   * Throws exceptions on errors.
    *
    * @param fileName Name of the image file.
    * @param width Width of the image file.
@@ -90,7 +97,7 @@ class LoadImage
    * @param outputMatrix Matrix to load into.
    * @return Boolean value indicating success or failure of load.
    */
-  bool Load(std::string fileName,
+  bool Load(std::string& fileName,
           arma::Mat<unsigned char>&& outputMatrix,
           int *width,
           int *height,
@@ -98,7 +105,6 @@ class LoadImage
 
   /**
    * Load the image file into the given matrix.
-   * Throws exceptions on errors.
    *
    * @param files A vector containing names of the image file to be loaded.
    * @param outputMatrix Matrix to load into.
@@ -109,14 +115,16 @@ class LoadImage
 
   /**
    * Load the image file into the given matrix.
-   * Throws exceptions on errors.
    *
    * @param dirPath Path containing the image files.
    * @param outputMatrix Matrix to load into.
    * @return Boolean value indicating success or failure of load.
    */
-  bool LoadDIR(std::string dirPath, arma::Mat<unsigned char>&& outputMatrix);
+  bool LoadDIR(std::string& dirPath, arma::Mat<unsigned char>&& outputMatrix);
 
+  /**
+   * LoadImage default destructor.
+   */
   ~LoadImage();
 
  private:

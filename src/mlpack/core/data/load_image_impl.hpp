@@ -50,7 +50,7 @@ LoadImage::~LoadImage()
   // Do nothing.
 }
 
-bool LoadImage::isImageFile(std::string fileName)
+bool LoadImage::IsImageFile(std::string& fileName)
 {
   // Iterate over all supported file types.
   for (auto extension : fileTypes){
@@ -62,7 +62,7 @@ bool LoadImage::isImageFile(std::string fileName)
   return false;
 }
 
-bool LoadImage::Load(std::string fileName,
+bool LoadImage::Load(std::string& fileName,
                       arma::Mat<unsigned char>&& outputMatrix,
                       int *width,
                       int *height,
@@ -70,11 +70,11 @@ bool LoadImage::Load(std::string fileName,
 {
   unsigned char *image;
 
-  if (!isImageFile(fileName))
+  if (!IsImageFile(fileName))
   {
     std::ostringstream oss;
     oss << "File type " << Extension(fileName) << " not supported.\n";
-    oss << "Cuurently it supports ";
+    oss << "Currently it supports ";
     for (auto extension : fileTypes)
       oss << " " << extension;
     oss << std::endl;
@@ -117,7 +117,7 @@ bool LoadImage::Load(std::string fileName,
   return true;
 }
 
-bool LoadImage::Load(std::string fileName,
+bool LoadImage::Load(std::string& fileName,
                     arma::Mat<unsigned char>&& outputMatrix)
 {
   int width, height;
@@ -175,29 +175,25 @@ bool LoadImage::Load(std::vector<std::string>& files,
   return status;
 }
 
-bool LoadImage::LoadDIR(std::string dirPath,
+bool LoadImage::LoadDIR(std::string& dirPath,
                         arma::Mat<unsigned char>&& outputMatrix)
 {
-  boost::filesystem::path p(dirPath);
-
-  boost::filesystem::directory_iterator end_itr;
-
   std::vector<std::string> files;
-
+#ifdef HAS_FILESYSTEM
   // cycle through the directory
-  for (boost::filesystem::directory_iterator itr(p); itr != end_itr; ++itr)
+  for(auto& file : std::experimental::filesystem::directory_iterator(dirPath))
   {
-    // If it's not a directory, list it. If you want to list directories too,
-    // just remove this check.
-    if (boost::filesystem::is_regular_file(itr->path())) {
-      std::string currentFile = itr->path().string();
+    // If it's not a directory, list it.
+    if (std::experimental::filesystem::is_regular_file(file)) {
       // Load only image files in the directory.
-      if (isImageFile(currentFile))
+      if (IsImageFile(currentFile))
         files.push_back(currentFile);
     }
   }
-
   return Load(files, std::move(outputMatrix));
+#else
+  return false;
+#endif
 }
 
 } // namespace data

@@ -416,8 +416,6 @@ find_package(Boost 1.49
       program_options
       unit_test_framework
       serialization
-      system
-      filesystem
     REQUIRED
 )
 

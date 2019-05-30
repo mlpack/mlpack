@@ -27,7 +27,8 @@ BOOST_AUTO_TEST_CASE(LoadInvalidExtensionFile)
 {
   data::LoadImage loader;
   arma::Mat<unsigned char> img;
-  BOOST_REQUIRE_THROW(loader.Load("invalidExtendion.p4ng",
+  std::string file("invalidExtendion.p4ng");
+  BOOST_REQUIRE_THROW(loader.Load(file,
       std::move(img)),  std::runtime_error);
 }
 
@@ -40,11 +41,13 @@ BOOST_AUTO_TEST_CASE(LoadImageIntoMatrixFromFile)
 
   // Matrix to load contents of file into.
   arma::Mat<unsigned char> img;
-  BOOST_REQUIRE(loader.Load("test_image.png", std::move(img)) == true);
-  BOOST_REQUIRE_EQUAL(img.n_cols, 512 * 512 * 3); // width * height * channels
+  std::string file("test_image.png");
+  BOOST_REQUIRE(loader.Load(file, std::move(img)) == true);
+  BOOST_REQUIRE_EQUAL(img.n_cols, 50 * 50 * 3); // width * height * channels
   BOOST_REQUIRE_EQUAL(img.n_rows, 1);
 }
 
+#ifdef HAS_FILESYSTEM
 /**
  * Test all the images in dir are loaded correctly.
  */
@@ -55,9 +58,10 @@ BOOST_AUTO_TEST_CASE(LoadImageIntoMatrixFromDir)
   // Matrix to load contents of dir into.
   arma::Mat<unsigned char> img;
   BOOST_REQUIRE(loader.LoadDIR(".", std::move(img)) == true);
-  BOOST_REQUIRE_EQUAL(img.n_cols, 512 * 512 * 3); // width * height * channels.
+  BOOST_REQUIRE_EQUAL(img.n_cols, 50 * 50 * 3); // width * height * channels.
   BOOST_REQUIRE_EQUAL(img.n_rows, 1);
 }
+#endif
 
 /**
  * Test height, width and channels are correctly loaded.
@@ -70,12 +74,13 @@ BOOST_AUTO_TEST_CASE(GetImageHeightWidthChannels)
   arma::Mat<unsigned char> img;
   int height, width, channels;
 
-  BOOST_REQUIRE(loader.Load("test_image.png", std::move(img),
+  std::string file("test_image.png");
+  BOOST_REQUIRE(loader.Load(file, std::move(img),
       &width, &height, &channels) == true);
-  BOOST_REQUIRE_EQUAL(img.n_cols, 512 * 512 * 3); // width * height * channels.
+  BOOST_REQUIRE_EQUAL(img.n_cols, 50 * 50 * 3); // width * height * channels.
   BOOST_REQUIRE_EQUAL(img.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(width, 512);
-  BOOST_REQUIRE_EQUAL(height, 512);
+  BOOST_REQUIRE_EQUAL(width, 50);
+  BOOST_REQUIRE_EQUAL(height, 50);
   BOOST_REQUIRE_EQUAL(channels, 3);
 }
 
@@ -93,7 +98,7 @@ BOOST_AUTO_TEST_CASE(LoadImagesInVector)
                                   "test_image.png",
                                   "test_image.png"};
   BOOST_REQUIRE(loader.Load(files, std::move(img)) == true);
-  BOOST_REQUIRE_EQUAL(img.n_cols, 512 * 512 * 3); // width * height * channels.
+  BOOST_REQUIRE_EQUAL(img.n_cols, 50 * 50 * 3); // width * height * channels.
   BOOST_REQUIRE_EQUAL(img.n_rows, files.size());
 }
 
