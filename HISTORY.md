@@ -1,5 +1,6 @@
 ### mlpack 3.1.2
 ###### ????-??-??
+  * Added functionality for scaling of data (#1876).
 
 ### mlpack 3.1.1
 ###### 2019-05-26
