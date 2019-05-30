@@ -32,6 +32,7 @@ set(DIRS
   naive_bayes
   nca
   neighbor_search
+  neat
   nmf
   nystroem_method
   pca
