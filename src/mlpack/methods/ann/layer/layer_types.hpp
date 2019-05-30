@@ -84,6 +84,11 @@ class VirtualBatchNorm;
 template<typename InputDataType,
          typename OutputDataType
 >
+class MinibatchDiscrimination;
+
+template<typename InputDataType,
+         typename OutputDataType
+>
 class Reparametrization;
 
 template<typename InputDataType,
@@ -223,6 +228,7 @@ using LayerTypes = boost::variant<
     FastLSTM<arma::mat, arma::mat>*,
     MaxPooling<arma::mat, arma::mat>*,
     MeanPooling<arma::mat, arma::mat>*,
+    MinibatchDiscrimination<arma::mat, arma::mat>*,
     MultiplyConstant<arma::mat, arma::mat>*,
     MultiplyMerge<arma::mat, arma::mat>*,
     NegativeLogLikelihood<arma::mat, arma::mat>*,

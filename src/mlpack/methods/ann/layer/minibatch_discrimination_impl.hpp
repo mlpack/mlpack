@@ -1,0 +1,127 @@
+/**
+ * @file minibatch_discrimination_impl.hpp
+ * @author Saksham Bansal
+ *
+ * Implementation of the MinibatchDiscrimination layer class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+#ifndef MLPACK_METHODS_ANN_LAYER_MINIBATCH_DISCRIMINATION_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_MINIBATCH_DISCRIMINATION_IMPL_HPP
+
+// In case it hasn't yet been included.
+#include "minibatch_discrimination.hpp"
+
+namespace mlpack {
+namespace ann /** Artificial Neural Network. */ {
+
+template<typename InputDataType, typename OutputDataType>
+MinibatchDiscrimination<InputDataType, OutputDataType
+>::MinibatchDiscrimination() :
+  A(0),
+  B(0),
+  C(0),
+  batchSize(0)
+{
+  // Nothing to do here.
+}
+
+template <typename InputDataType, typename OutputDataType>
+MinibatchDiscrimination<InputDataType, OutputDataType
+>::MinibatchDiscrimination(
+    const size_t inSize,
+    const size_t outSize,
+    const size_t features) :
+    A(inSize),
+    B(outSize - inSize),
+    C(features),
+    batchSize(0)
+{
+  weights.set_size(A * B * C, 1);
+}
+
+template<typename InputDataType, typename OutputDataType>
+void MinibatchDiscrimination<InputDataType, OutputDataType>::Reset()
+{
+  weight = arma::mat(weights.memptr(), B * C, A, false, false);
+}
+
+template<typename InputDataType, typename OutputDataType>
+template<typename eT>
+void MinibatchDiscrimination<InputDataType, OutputDataType>::Forward(
+    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+{
+  batchSize = input.n_cols;
+  tempM = weight * input;
+  M = arma::cube(tempM.memptr(), B, C, batchSize, false, false);
+  distances.set_size(B, batchSize, batchSize);
+  output.set_size(B, batchSize);
+  for (size_t i =0; i < M.n_slices; i++)
+  {
+    arma::colvec c(B, arma::fill::zeros);
+    for (size_t j = 0; j < M.n_slices; j++)
+    {
+      distances.slice(i).col(j) =
+          arma::exp(-arma::sum(abs(M.slice(i) - M.slice(j)), 1));
+      c += distances.slice(i).col(j);
+    }
+    output.col(i) = c;
+  }
+  output = join_cols(input, output); // (A + B) x batchSize
+}
+
+template<typename InputDataType, typename OutputDataType>
+template<typename eT>
+void MinibatchDiscrimination<InputDataType, OutputDataType>::Backward(
+    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+{
+  g = gy.head_rows(A);
+  arma::Mat<eT> gM = gy.tail_rows(B);
+  deltaM.zeros(B, C, batchSize);
+  for (size_t i =0; i < M.n_slices; i++)
+  {
+    for (size_t j = 0; j < M.n_slices; j++)
+    {
+      arma::mat t = arma::sign(M.slice(i) - M.slice(j));
+      t.each_col() %= distances.slice(i).col(j);
+      t.each_col() %= gM.col(i);
+      deltaM.slice(i) -= t;
+      deltaM.slice(j) += t;
+    }
+  }
+  deltaTemp = arma::mat(deltaM.memptr(), B * C, batchSize, false, false);
+  g += weight.t() * deltaTemp;
+}
+
+template<typename InputDataType, typename OutputDataType>
+template<typename eT>
+void MinibatchDiscrimination<InputDataType, OutputDataType>::Gradient(
+    const arma::Mat<eT>&& input,
+    arma::Mat<eT>&& /* error */,
+    arma::Mat<eT>&& gradient)
+{
+  gradient = arma::vectorise(deltaTemp * input.t());
+}
+
+template<typename InputDataType, typename OutputDataType>
+template<typename Archive>
+void MinibatchDiscrimination<InputDataType, OutputDataType>::serialize(
+    Archive& ar, const unsigned int /* version */)
+{
+  ar & BOOST_SERIALIZATION_NVP(A);
+  ar & BOOST_SERIALIZATION_NVP(B);
+  ar & BOOST_SERIALIZATION_NVP(C);
+
+  // This is inefficient, but we have to allocate this memory so that
+  // WeightSetVisitor gets the right size.
+  if (Archive::is_loading::value)
+    weights.set_size(A * B * C, 1);
+}
+
+} // namespace ann
+} // namespace mlpack
+
+#endif

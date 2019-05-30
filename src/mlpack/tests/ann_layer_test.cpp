@@ -1657,6 +1657,49 @@ BOOST_AUTO_TEST_CASE(GradientVirtualBatchNormTest)
 }
 
 /**
+ * MinibatchDiscrimination layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(MinibatchDiscriminationTest)
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randn(5, 4);
+      arma::mat target;
+      target.ones(1, 4);
+
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<Linear<> >(5, 5);
+      model->Add<MinibatchDiscrimination<> >(5, 10, 16);
+      model->Add<Linear<> >(10, 2);
+      model->Add<LogSoftMax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      return model->EvaluateWithGradient(model->Parameters(), 0, gradient, 4);
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+}
+
+/**
  * Simple Transposed Convolution layer test.
  */
 BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
