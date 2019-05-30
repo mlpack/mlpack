@@ -27,9 +27,9 @@ class Strtok
   * A constructor to set deimiter.
   * @param Delimiter A string which you want to use as delimiter
   */
-  Strtok(std::string Delimiter)
+  Strtok(std::string delimiter)
   {
-    delimiter = Delimiter;
+    this->delimiter = delimiter;
   }
   /**
   * A function object which take boost::string_view as input and

@@ -21,6 +21,38 @@ namespace data {
 void DicitonaryEncoding::Reset()
 {
   mappings.clear();
+  stringq.clear();
+}
+
+DicitonaryEncoding::DicitonaryEncoding(const DicitonaryEncoding &old_obj)
+{
+  this->mappings.clear();
+  this->stringq.clear();
+  for (auto it = old_obj.mappings.begin(); it != old_obj.mappings.end(); it++)
+  {
+    this->stringq.push_back(std::string(it->first));
+    this->mappings[stringq.back()] = it->second;
+  }
+}
+
+void DicitonaryEncoding::operator= (const
+    DicitonaryEncoding &old_obj)
+{
+  if (this != &old_obj)
+  {
+    this->mappings.clear();
+    this->stringq.clear();
+    for (auto it = old_obj.mappings.begin(); it != old_obj.mappings.end(); it++)
+    {
+      this->stringq.push_back(std::string(it->first));
+      this->mappings[stringq.back()] = it->second;
+    }
+  }
+  else
+  {
+    this->mappings = old_obj.mappings;
+    this->stringq = old_obj.stringq;
+  }
 }
 
 template<typename TokenizerType>
@@ -73,7 +105,7 @@ void DicitonaryEncoding::Encode(const std::vector<std::string>& strings,
         stringq.push_back(std::string(dataset[i][j]));
         mappings[stringq.back()] = curLabel++;
       }
-      output.at(i, j) = mappings.at(std::move(dataset[i][j]));
+      output.at(i, j) = mappings.at(dataset[i][j]);
     }
   }
 }
@@ -101,6 +133,14 @@ void DicitonaryEncoding::Encode(const std::vector<std::string>& strings,
     token = tokenizer(strView);
     }
   }
+}
+
+template<typename Archive>
+void DicitonaryEncoding::serialize(Archive& ar, const unsigned int
+    /* version */)
+{
+  ar & BOOST_SERIALIZATION_NVP(mappings);
+  ar & BOOST_SERIALIZATION_NVP(stringq);
 }
 
 } // namespace data

@@ -14,6 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
+#include <utility>
 
 namespace mlpack {
 namespace data {
@@ -39,7 +40,18 @@ class DicitonaryEncoding
   */
   template<typename TokenizerType>
   void CreateMap(std::string& strings, TokenizerType tokenizer);
-
+  /*
+  * Default Constructor
+  */
+  DicitonaryEncoding() {}
+  /*
+  * Copy Constructor
+  */
+  DicitonaryEncoding(const DicitonaryEncoding &old_obj);
+  /*
+  * Assignment Operators
+  */
+  void operator= (const DicitonaryEncoding &old_obj);
   /**
   * A function to reset the mapping that is clear all the encodings
   */
@@ -96,17 +108,27 @@ class DicitonaryEncoding
   void Encode(const std::vector<std::string>& strings,
             std::vector<std::vector<size_t>>& output, TokenizerType tokenizer);
 
+  //! Modify the stringq.
+  std::deque<std::string>& Stringq() { return stringq; }
+
   //! Return the Mappings
   const std::unordered_map<boost::string_view, size_t,
       boost::hash<boost::string_view>>& Mappings() const { return mappings; }
 
   //! Modify the Mappings.
-  std::unordered_map<boost::string_view, size_t,
-      boost::hash<boost::string_view>>& Mappings() { return mappings; }
+  std::tuple<std::unordered_map<boost::string_view, size_t,
+      boost::hash<boost::string_view>>&, std::deque<std::string>&>
+      Mapping() { return std::tie(mappings, stringq); }
+
+  /**
+   * Serialize the class to the given archive.
+   */
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */);
  private:
   //! A map which stores information about mapping.
   std::unordered_map<boost::string_view, size_t,
-      boost::hash<boost::string_view>>mappings;
+      boost::hash<boost::string_view>> mappings;
   // Vector which hold the string for map's string_view.
   std::deque<std::string> stringq;
 }; // class DicitonaryEncoding
