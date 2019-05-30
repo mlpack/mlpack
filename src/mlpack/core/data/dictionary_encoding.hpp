@@ -14,23 +14,9 @@
 
 #include <mlpack/prereqs.hpp>
 #include "mlpack/core/boost_backport/boost_backport_string_view.hpp"
-#include <boost/functional/hash.hpp>
 
 namespace mlpack {
 namespace data {
-
-/*
-* Class Hasher importanant to remove inablitiy of unordered_map to store
-* boost::string_view as key.
-*/
-class Hasher
-{
- public:
-  std::size_t operator()(boost::string_view str) const
-  {
-    return boost::hash_range<const char*>(str.begin(), str.end());
-  }
-};
 
 /**
  * A simple Dictionary Enocding class
@@ -111,16 +97,18 @@ class DicitonaryEncoding
             std::vector<std::vector<size_t>>& output, TokenizerType tokenizer);
 
   //! Return the Mappings
-  const std::unordered_map<boost::string_view, size_t, Hasher>& Mappings()
-      const { return mappings; }
+  const std::unordered_map<boost::string_view, size_t,
+      boost::hash<boost::string_view>>& Mappings() const { return mappings; }
 
   //! Modify the Mappings.
-  std::unordered_map<boost::string_view, size_t, Hasher>& Mappings()
-      { return mappings; }
-
+  std::unordered_map<boost::string_view, size_t,
+      boost::hash<boost::string_view>>& Mappings() { return mappings; }
  private:
   //! A map which stores information about mapping.
-  std::unordered_map<boost::string_view, size_t, Hasher>mappings;
+  std::unordered_map<boost::string_view, size_t,
+      boost::hash<boost::string_view>>mappings;
+  // Vector which hold the string for map's string_view.
+  std::deque<std::string> stringq;
 }; // class DicitonaryEncoding
 
 } // namespace data

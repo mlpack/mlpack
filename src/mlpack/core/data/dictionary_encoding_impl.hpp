@@ -35,7 +35,8 @@ void DicitonaryEncoding::CreateMap(std::string& strings,
   {
     if (mappings.find(token) == mappings.end())
     {
-      mappings[std::move(token)] = curLabels++;
+        stringq.push_back(std::string(token));
+        mappings[stringq.back()] = curLabels++;
     }
     token = tokenizer(strView);
   }
@@ -67,9 +68,10 @@ void DicitonaryEncoding::Encode(const std::vector<std::string>& strings,
   {
     for (size_t j = 0; j < dataset[i].size(); ++j)
     {
-      if (mappings.count(dataset[i][j]) == 0)
+      if (mappings.find(dataset[i][j]) == mappings.end())
       {
-        mappings[dataset[i][j]] = curLabel++;
+        stringq.push_back(std::string(dataset[i][j]));
+        mappings[stringq.back()] = curLabel++;
       }
       output.at(i, j) = mappings.at(std::move(dataset[i][j]));
     }
@@ -92,9 +94,10 @@ void DicitonaryEncoding::Encode(const std::vector<std::string>& strings,
     {
       if (mappings.count(token) == 0)
       {
-        mappings[token] = curLabel++;
+        stringq.push_back(std::string(token));
+        mappings[stringq.back()] = curLabel++;
       }
-    output[i].push_back(mappings[std::move(token)]);
+    output[i].push_back(mappings.at(token));
     token = tokenizer(strView);
     }
   }
