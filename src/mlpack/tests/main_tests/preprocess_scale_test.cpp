@@ -53,7 +53,7 @@ arma::mat dataset = "-1 -0.5 0 1;"
 BOOST_AUTO_TEST_CASE(TwoScalerTest)
 {
   std::string method = "max_abs_scaler";
-  // Input custom data points and labels.
+  // Input custom data points.
   SetInputParam("input", dataset);
   SetInputParam("scaler_method", std::move(method));
 
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(TwoScalerTest)
 BOOST_AUTO_TEST_CASE(TwoOptionTest)
 {
   std::string method = "min_max_scaler";
-  // Input custom data points and labels.
+  // Input custom data points.
   SetInputParam("input", dataset);
   SetInputParam("scaler_method", method);
 
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(TwoOptionTest)
 BOOST_AUTO_TEST_CASE(UnrelatedOptionTest)
 {
   std::string method = "standard_scaler";
-  // Input custom data points and labels.
+  // Input custom data points.
   SetInputParam("input", dataset);
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("min_value", 2);
