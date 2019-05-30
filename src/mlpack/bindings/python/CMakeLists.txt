@@ -91,6 +91,7 @@ set(CYTHON_SOURCES
 set(TEST_SOURCES
   tests/dataset_info_test.py
   tests/test_python_binding.py
+  tests/test_python_interpretation.py
 )
 
 # Set the include directories correctly.
