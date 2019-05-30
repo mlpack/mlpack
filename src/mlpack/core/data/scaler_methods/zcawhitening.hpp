@@ -33,9 +33,12 @@ namespace data {
  * Load("train.csv", input);
  * arma::mat output;
  *
- * // Scale the features using ZCA.
+ * // Scale the features.
  * ZcaWhitening scale;
  * scale.Transform(input, output);
+ *
+ * // Retransform the input.
+ * scale.InverseTransform(output, input);
  * @endcode
  */
 class ZcaWhitening
@@ -62,20 +65,33 @@ class ZcaWhitening
   {
     data::PcaWhitening scale(epsilon);
     scale.Transform(input, output);
+    // Important to store results, so that i can use in InverseTranform().
     eigenVectors = scale.EigenVectors();
     itemMean = scale.ItemMean();
-    whiteningMatrix = scale.WhiteningMatrix();
     eigenValues = scale.EigenValues(); 
     output = eigenVectors * output;
   }
+
+  /**
+  * Function to retrieve original dataset.
+  *
+  * @param input Scaled dataset.
+  * @param output Output matrix with original Dataset.
+  */
+  template<typename MatType>
+  void InverseTransform(const MatType& input, MatType& output)
+  {
+    output = inv(eigenVectors) * arma::diagmat(arma::sqrt(eigenValues))
+        * inv(eigenVectors.t()) * input;
+    output = (output.each_col() + itemMean);
+  }
+
   //! Get the Mean row vector.
   const arma::vec& ItemMean() const { return itemMean; }
   //! Get the eigenvalues vector.
   const arma::vec& EigenValues() const { return eigenValues; }
   //! Get the eigenvector.
   const arma::mat& EigenVectors() const { return eigenVectors; }
-  //! Get the WhiteningMatrix.
-  const arma::mat& WhiteningMatrix() const { return whiteningMatrix; }
   //! Get the Regularisation Parameter.
   const double& Epsilon() const { return epsilon; }
 
@@ -84,8 +100,6 @@ class ZcaWhitening
   arma::vec itemMean;
   // Mat which hold the eigenvectors.
   arma::mat eigenVectors;
-  // Mat which hold the WhiteningMatrix.
-  arma::mat whiteningMatrix;
   // Regularization Paramter.
   double epsilon;
   // Vector which hold the eigenvalues.

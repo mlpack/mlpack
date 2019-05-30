@@ -32,9 +32,12 @@ namespace data {
  * Load("train.csv", input);
  * arma::mat output;
  *
- * // Scale the features using PCA.
+ * // Scale the features.
  * PcaWhitening scale;
  * scale.Transform(input, output);
+ *
+ * // Retransform the input.
+ * scale.InverseTransform(output, input);
  * @endcode
  */
 class PcaWhitening
@@ -66,19 +69,30 @@ class PcaWhitening
     eig_sym(eigenValues, eigenVectors, mlpack::math::ColumnCovariance(output));
     for (size_t i = 0; i < eigenValues.n_elem; i++)
         eigenValues(i) = eigenValues(i) + epsilon;
-    // Our whitening matrix is diag(1 / sqrt(eigenvectors + epsilon)) * eigenvalues.
-    whiteningMatrix =  arma::diagmat(1.0 / (arma::sqrt(eigenValues))) * eigenVectors.t();
-    // Now apply the whitening matrix.
-    output = whiteningMatrix * output;
+    output = arma::diagmat(1.0 / (arma::sqrt(eigenValues))) * eigenVectors.t()
+        * output;
   }
+
+  /**
+  * Function to retrieve original dataset.
+  *
+  * @param input Scaled dataset.
+  * @param output Output matrix with original Dataset.
+  */
+  template<typename MatType>
+  void InverseTransform(const MatType& input, MatType& output)
+  {
+    output = arma::diagmat(arma::sqrt(eigenValues)) * inv(eigenVectors.t())
+        * input;
+    output = (output.each_col() + itemMean);
+  }
+
   //! Get the Mean row vector.
   const arma::vec& ItemMean() const { return itemMean; }
   //! Get the eigenvalues vector.
   const arma::vec& EigenValues() const { return eigenValues; }
   //! Get the eigenvector.
   const arma::mat& EigenVectors() const { return eigenVectors; }
-  //! Get the WhiteningMatrix.
-  const arma::mat& WhiteningMatrix() const { return whiteningMatrix; }
   //! Get the Regularisation Parameter.
   const double& Epsilon() const { return epsilon; }
 
@@ -87,13 +101,11 @@ class PcaWhitening
   arma::vec itemMean;
   // Mat which hold the eigenvectors.
   arma::mat eigenVectors;
-  // Mat which hold the WhiteningMatrix.
-  arma::mat whiteningMatrix;
   // Regularization Paramter.
   double epsilon;
   // Vector which hold the eigenvalues.
   arma::vec eigenValues;
-}; // class Whitening
+}; // class PcaWhitening
 
 } // namespace data
 } // namespace mlpack

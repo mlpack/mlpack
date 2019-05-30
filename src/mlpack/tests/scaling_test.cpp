@@ -138,13 +138,14 @@ BOOST_AUTO_TEST_CASE(PCAWhiteningTest)
   data::PcaWhitening scale;
   arma::mat output;
   scale.Transform(dataset, output);
-  arma::mat cov = mlpack::math::ColumnCovariance(output);
-  arma::vec diagonals = cov.diag();
-  // Checking covarience is 1.0
+  arma::vec diagonals = (mlpack::math::ColumnCovariance(output)).diag();
+  // Checking covarience is close to 1.0
   double ccovsum = 0.0;
   for (size_t i = 0; i < diagonals.n_elem; i++)
     ccovsum += diagonals(i);
   BOOST_REQUIRE_CLOSE(ccovsum, 1.0, 1e-3);
+  scale.InverseTransform(output, temp);
+  CheckMatrices(dataset, temp);
 }
 
 /**
@@ -155,13 +156,14 @@ BOOST_AUTO_TEST_CASE(ZCAWhiteningTest)
   data::ZcaWhitening scale;
   arma::mat output;
   scale.Transform(dataset, output);
-  arma::mat cov = mlpack::math::ColumnCovariance(output);
-  arma::vec diagonals = cov.diag();
-  // Checking covarience is 1.0
+  arma::vec diagonals = (mlpack::math::ColumnCovariance(output)).diag();
+  // Checking covarience is close to 1.0
   double ccovsum = 0.0;
   for (size_t i = 0; i < diagonals.n_elem; i++)
     ccovsum += diagonals(i);
   BOOST_REQUIRE_CLOSE(ccovsum, 1.0, 1e-3);
+  scale.InverseTransform(output, temp);
+  CheckMatrices(dataset, temp);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
