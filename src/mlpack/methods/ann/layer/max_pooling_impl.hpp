@@ -148,6 +148,7 @@ void MaxPooling<InputDataType, OutputDataType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(dW);
   ar & BOOST_SERIALIZATION_NVP(dH);
   ar & BOOST_SERIALIZATION_NVP(batchSize);
+  ar & BOOST_SERIALIZATION_NVP(floor);
   ar & BOOST_SERIALIZATION_NVP(inputWidth);
   ar & BOOST_SERIALIZATION_NVP(inputHeight);
   ar & BOOST_SERIALIZATION_NVP(outputWidth);
