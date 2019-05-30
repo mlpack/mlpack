@@ -16,7 +16,7 @@
 #include "gene.hpp"
 
 namespace mlpack{
-namespace neat /** NeuroEvolution of Augmenting Topologies {
+namespace neat /** NeuroEvolution of Augmenting Topologies */{
 
 BaseGene::BaseGene(const size_t geneID) : geneID(geneID)
 { /* Nothing to do here */ }
@@ -36,7 +36,7 @@ template<class ActivationFunction>
 double NodeGene<ActivationFunction>::Activate(const arma::vec& input,
                                               const arma::vec& weights)
 {
-  return actFn.Fn(arma::dot(input,weights));
+  return actFn.Fn(arma::dot(input, weights));
 }
 
 BiasGene::BiasGene(const size_t geneID,
@@ -58,8 +58,8 @@ void BiasGene::Mutate(const double mutationSize)
 ConnectionGene::ConnectionGene(const size_t geneID,
                                const size_t globalInnovationID,
                                const double weight,
-                               const BaseGene* origin,
-                               const BaseGene* destination):
+                               BaseGene* origin,
+                               BaseGene* destination):
     BaseGene(geneID),
     globalInnovationID(globalInnovationID),
     weight(weight),

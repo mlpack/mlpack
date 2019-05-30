@@ -34,9 +34,9 @@ class BaseGene
   size_t getGeneID() const { return geneID; }
   //! Set the gene ID.
   size_t& setGeneID() { return geneID; }
- 
+
  private:
-  //! The ID of the gene. 
+  //! The ID of the gene.
   size_t geneID;
 };
 
@@ -137,8 +137,8 @@ class ConnectionGene : public BaseGene
   ConnectionGene(const size_t geneID,
                  const size_t globalInnovationID,
                  const double weight,
-                 const BaseGene* origin,
-                 const BaseGene* destination);
+                 BaseGene* origin,
+                 BaseGene* destination);
 
   /**
    * Destroys the connection gene.
