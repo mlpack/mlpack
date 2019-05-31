@@ -425,8 +425,7 @@ void GAN<Model, InitializationRuleType, Noise, PolicyType>::Forward(
     Reset();
 
   generator.Forward(std::move(input));
-  arma::mat ganOutput = boost::apply_visitor(
-      outputParameterVisitor,
+  arma::mat ganOutput = boost::apply_visitor(outputParameterVisitor,
       generator.network.back());
 
   discriminator.Forward(std::move(ganOutput));
@@ -479,27 +478,17 @@ template<
 >
 template<typename Archive>
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::
-serialize(Archive& ar, const unsigned int version)
+serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(parameter);
   ar & BOOST_SERIALIZATION_NVP(generator);
   ar & BOOST_SERIALIZATION_NVP(discriminator);
+  ar & BOOST_SERIALIZATION_NVP(reset);
+  ar & BOOST_SERIALIZATION_NVP(genWeights);
+  ar & BOOST_SERIALIZATION_NVP(discWeights);
 
-  // Earlier versions of the GAN code did not serialize whether or not the model
-  // was reset.
-  if (version > 0)
-  {
-    ar & BOOST_SERIALIZATION_NVP(reset);
-    ar & BOOST_SERIALIZATION_NVP(genWeights);
-    ar & BOOST_SERIALIZATION_NVP(discWeights);
-  }
   if (Archive::is_loading::value)
   {
-    // The behavior in earlier versions was to always assume the weights needed
-    // to be reset.
-    if (version == 0)
-      reset = false;
-
     // Share the parameters between the network.
     generator.Parameters() = arma::mat(parameter.memptr(), genWeights, 1, false,
         false);

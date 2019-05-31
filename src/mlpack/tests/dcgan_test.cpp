@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
             << trainData.n_cols << ")" << std::endl;
   Log::Info << trainData.n_rows << "--------" << trainData.n_cols << std::endl;
 
-  // Create the Discriminator network
+  // Create the Discriminator network.
   FFN<SigmoidCrossEntropyError<> > discriminator;
   discriminator.Add<Convolution<> >(1, dNumKernels, 4, 4, 2, 2, 1, 1, 28, 28);
   discriminator.Add<LeakyReLU<> >(0.2);
@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
   discriminator.Add<Convolution<> >(8 * dNumKernels, 1, 4, 4, 1, 1,
       1, 1, 2, 2);
 
-  // Create the Generator network
+  // Create the Generator network.
   FFN<SigmoidCrossEntropyError<> > generator;
   generator.Add<TransposedConvolution<> >(noiseDim, 8 * dNumKernels, 2, 2,
       1, 1, 1, 1, 1, 1);
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
       14, 14);
   generator.Add<TanHLayer<> >();
 
-  // Create DCGAN
+  // Create DCGAN.
   GaussianInitialization gaussian(0, 1);
   ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
       tolerance, shuffle);
@@ -236,7 +236,7 @@ BOOST_AUTO_TEST_CASE(DCGANCelebATest)
             << trainData.n_cols << ")" << std::endl;
   Log::Info << trainData.n_rows << "--------" << trainData.n_cols << std::endl;
 
-  // Create the Discriminator network
+  // Create the Discriminator network.
   FFN<SigmoidCrossEntropyError<> > discriminator;
   discriminator.Add<Convolution<> >(3, dNumKernels, 4, 4, 2, 2, 1, 1, 64, 64);
   discriminator.Add<LeakyReLU<> >(0.2);
@@ -252,7 +252,7 @@ BOOST_AUTO_TEST_CASE(DCGANCelebATest)
   discriminator.Add<Convolution<> >(8 * dNumKernels, 1, 4, 4, 1, 1,
       0, 0, 4, 4);
 
-  // Create the Generator network
+  // Create the Generator network.
   FFN<SigmoidCrossEntropyError<> > generator;
   generator.Add<TransposedConvolution<> >(noiseDim, 8 * dNumKernels, 4, 4,
       1, 1, 2, 2, 1, 1);
@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE(DCGANCelebATest)
       32, 32);
   generator.Add<TanHLayer<> >();
 
-  // Create DCGAN
+  // Create DCGAN.
   GaussianInitialization gaussian(0, 1);
   ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
       tolerance, shuffle);
@@ -288,7 +288,7 @@ BOOST_AUTO_TEST_CASE(DCGANCelebATest)
   Log::Info << "Training..." << std::endl;
   dcgan.Train(optimizer);
 
-  // Generate samples
+  // Generate samples.
   Log::Info << "Sampling..." << std::endl;
   arma::mat noise(noiseDim, 1);
   size_t dim = std::sqrt(trainData.n_rows);
