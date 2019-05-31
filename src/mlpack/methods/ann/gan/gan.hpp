@@ -102,8 +102,12 @@ class GAN
    * This function won't actually trigger training process.
    *
    * @param trainData The data points of real distribution.
+   * @param realLabel The label for data points from real distribution.
+   * @param fakeLabel The label for data points which are generated.
    */
-  void ResetData(arma::mat trainData);
+  void ResetData(arma::mat trainData,
+                 double realLabel = 1.0,
+                 double fakeLabel = 0.0);
 
   // Reset function.
   void Reset();
@@ -112,10 +116,16 @@ class GAN
    * Train function.
    *
    * @param trainData The data points of real distribution.
+   * @param optimizer Instantiated optimizer used to train the model.
+   * @param realLabel The label for data points from real distribution.
+   * @param fakeLabel The label for data points which are generated.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType>
-  double Train(arma::mat trainData, OptimizerType& Optimizer);
+  double Train(arma::mat trainData,
+               OptimizerType& Optimizer,
+               double realLabel = 1.0,
+               double fakeLabel = 0.0);
 
   /**
    * Evaluate function for the Standard GAN and DCGAN.

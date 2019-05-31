@@ -141,7 +141,9 @@ template<
   typename PolicyType
 >
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::ResetData(
-  arma::mat trainData)
+    arma::mat trainData,
+    double realLabel,
+    double fakeLabel)
 {
   counter = 0;
   currentBatch = 0;
@@ -157,9 +159,15 @@ void GAN<Model, InitializationRuleType, Noise, PolicyType>::ResetData(
   this->discriminator.predictors = arma::mat(this->predictors.memptr(),
       this->predictors.n_rows, this->predictors.n_cols, false, false);
 
-  responses.ones(1, numFunctions + batchSize);
-  responses.cols(numFunctions, numFunctions + batchSize - 1) =
-      arma::zeros(1, batchSize);
+  responses.set_size(1, numFunctions);
+  responses.fill(realLabel);
+
+  arma::mat fakeResponses;
+  fakeResponses.set_size(1, batchSize);
+  fakeResponses.fill(fakeLabel);
+
+  responses = arma::join_rows(responses, fakeResponses);
+
   this->discriminator.responses = arma::mat(this->responses.memptr(),
       this->responses.n_rows, this->responses.n_cols, false, false);
 
@@ -217,9 +225,11 @@ template<
 template<typename OptimizerType>
 double GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
     arma::mat trainData,
-    OptimizerType& Optimizer)
+    OptimizerType& Optimizer,
+    double realLabel,
+    double fakeLabel)
 {
-  ResetData(std::move(trainData));
+  ResetData(std::move(trainData), realLabel, fakeLabel);
 
   return Optimizer.Optimize(*this, parameter);
 }
