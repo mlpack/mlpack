@@ -141,7 +141,7 @@ template<
   typename PolicyType
 >
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::ResetData(
-  arma::mat trainData)
+    arma::mat trainData)
 {
   counter = 0;
   currentBatch = 0;

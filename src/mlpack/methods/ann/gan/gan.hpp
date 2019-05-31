@@ -113,6 +113,7 @@ class GAN
    * Train function.
    *
    * @param trainData The data points of real distribution.
+   * @param optimizer Instantiated optimizer used to train the model.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType>
