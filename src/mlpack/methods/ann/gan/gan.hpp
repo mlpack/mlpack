@@ -103,8 +103,12 @@ class GAN
    * training. This function won't actually trigger training process.
    *
    * @param trainData The data points of real distribution.
+   * @param realLabel The label for data points from real distribution.
+   * @param fakeLabel The label for data points which are generated.
    */
-  void ResetData(arma::mat trainData);
+  void ResetData(arma::mat trainData,
+                 double realLabel = 1.0,
+                 double fakeLabel = 0.0);
 
   // Reset function.
   void Reset();
@@ -116,6 +120,8 @@ class GAN
    * @tparam CallbackTypes Types of Callback functions.
    * @param trainData The data points of real distribution.
    * @param optimizer Instantiated optimizer used to train the model.
+   * @param realLabel The label for data points from real distribution.
+   * @param fakeLabel The label for data points which are generated.
    * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error).
@@ -123,6 +129,8 @@ class GAN
   template<typename OptimizerType, typename... CallbackTypes>
   double Train(arma::mat trainData,
                OptimizerType& Optimizer,
+               double realLabel = 1.0,
+               double fakeLabel = 0.0,
                CallbackTypes&&... callbacks);
 
   /**
