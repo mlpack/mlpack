@@ -54,8 +54,8 @@ BOOST_AUTO_TEST_CASE(GmmProbabilityDimensionality)
 {
   arma::mat inputData(5, 10, arma::fill::randu);
 
-  GMM gmm(1, 2);
-  gmm.Train(std::move(inputData), 2);
+  GMM gmm(1, 5);
+  gmm.Train(std::move(inputData), 5);
 
   arma::mat inputPoints(1, 8, arma::fill::randu);
 

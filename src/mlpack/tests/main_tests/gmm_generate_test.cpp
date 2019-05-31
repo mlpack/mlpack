@@ -45,8 +45,8 @@ BOOST_AUTO_TEST_CASE(GmmGenerateSamplesTest)
 {
   arma::mat inputData(5, 10, arma::fill::randu);
 
-  GMM gmm(1, 2);
-  gmm.Train(inputData, 2);
+  GMM gmm(1, 5);
+  gmm.Train(inputData, 5);
 
   SetInputParam("input_model", &gmm);
 
@@ -61,8 +61,8 @@ BOOST_AUTO_TEST_CASE(GmmGenerateSamples)
 {
   arma::mat inputData(5, 10, arma::fill::randu);
 
-  GMM gmm(1, 2);
-  gmm.Train(inputData, 2);
+  GMM gmm(1, 5);
+  gmm.Train(inputData, 5);
 
   SetInputParam("input_model", &gmm);
 
@@ -76,8 +76,8 @@ BOOST_AUTO_TEST_CASE(GmmGenerateDimensionality)
 {
   arma::mat inputData(5, 10, arma::fill::randu);
 
-  GMM gmm(1, 2);
-  gmm.Train(inputData, 2);
+  GMM gmm(1, 5);
+  gmm.Train(inputData, 5);
   SetInputParam("input_model", &gmm);
   SetInputParam("samples", (int) 10);
 
