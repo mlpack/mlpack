@@ -30,11 +30,13 @@ class ConnectionGene
    * @param weight The weight of the connection.
    * @param source The source of the connection.
    * @param target The target of the connection.
+   * @param enabled Denotes whether the connection is enabled or not.
    */
   ConnectionGene(const size_t globalInnovationID,
                  const double weight,
                  const size_t source,
-                 const size_t target);
+                 const size_t target,
+                 const bool enabled = true);
 
   /**
    * Destroys the connection gene.
@@ -59,14 +61,19 @@ class ConnectionGene
   double& setWeight() { return weight; }
 
   //! Get Source gene.
-  size_t getSource() const { return Source; }
+  size_t getSource() const { return source; }
   //! Set Source gene.
-  size_t& setSource() { return Source; }
+  size_t& setSource() { return source; }
 
   //! Get target gene.
   size_t getTarget() const { return target; }
   //! Set target gene.
   size_t& setTarget() { return target; }
+
+  //! Check if the connection is enabled.
+  bool isEnabled() const { return enabled; }
+  //! Enable or disable the connection.
+  bool& setEnabled() { return enabled; }
 
  private:
   //! Global Innovation ID.
@@ -80,6 +87,9 @@ class ConnectionGene
 
   //! Target gene.
   size_t target;
+
+  //! Boolean denoting whether or not the connection is enabled.
+  bool enabled;
 };
 
 } // namespace neat

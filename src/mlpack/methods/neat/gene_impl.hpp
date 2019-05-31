@@ -21,11 +21,13 @@ namespace neat /** NeuroEvolution of Augmenting Topologies */{
 ConnectionGene::ConnectionGene(const size_t globalInnovationID,
                                const double weight,
                                const size_t source,
-                               const size_t target):
+                               const size_t target,
+                               const bool enabled = true):
     globalInnovationID(globalInnovationID),
     weight(weight),
     source(source),
-    target(target)
+    target(target),
+    enabled(enabled)
 { /* Nothing to do here */ }
 
 ConnectionGene::~ConnectionGene()
