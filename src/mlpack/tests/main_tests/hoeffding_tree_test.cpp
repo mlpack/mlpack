@@ -66,25 +66,25 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeOutputDimensionTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
+    CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
-      testSize);
+                      testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+    CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
+    CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
 }
 
 /**
@@ -109,25 +109,25 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeCategoricalOutputDimensionTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>
-      ("predictions").n_cols, testSize);
+                        ("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
-      testSize);
+                      testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+    CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
+    CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
 }
 
 /**
@@ -157,25 +157,25 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
+    CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
-      testSize);
+                      testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+    CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
+    CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
 
   // Reset passed parameters.
   CLI::GetSingleton().Parameters()["training"].wasPassed = false;
@@ -191,8 +191,8 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
   inputData.shed_row(inputData.n_rows - 1);
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
+  SetInputParam("test", std::make_tuple(info, testData));
   // Pass Labels.
   SetInputParam("labels", std::move(labels));
 
@@ -200,21 +200,21 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
+    CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
+    CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+    CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
+    CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
 
   // Check that initial and current predictions are same.
   CheckMatrices(
-      predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
+    predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
   CheckMatrices(
-      probabilities, CLI::GetParam<arma::mat>("probabilities"));
+    probabilities, CLI::GetParam<arma::mat>("probabilities"));
 }
 
 /**
@@ -262,26 +262,26 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(std::make_tuple(info, testData)));
   SetInputParam("input_model",
-      CLI::GetParam<HoeffdingTreeModel*>("output_model"));
+                CLI::GetParam<HoeffdingTreeModel*>("output_model"));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
+    CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
+    CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+    CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
 
   // Check that initial predictions and predictions using saved model are same.
   CheckMatrices(
-      predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
+    predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
   CheckMatrices(
-      probabilities, CLI::GetParam<arma::mat>("probabilities"));
+    probabilities, CLI::GetParam<arma::mat>("probabilities"));
 }
 
 /**
@@ -305,11 +305,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelCategoricalReuseTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   mlpackMain();
 
@@ -329,27 +329,27 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelCategoricalReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(std::make_tuple(info, testData)));
   SetInputParam("input_model",
-      CLI::GetParam<HoeffdingTreeModel*>("output_model"));
+                CLI::GetParam<HoeffdingTreeModel*>("output_model"));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
+    CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
+    CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+    CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
+    CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
 
   // Check that initial predictions and predictions using saved model are same.
   CheckMatrices(
-      predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
+    predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
   CheckMatrices(
-      probabilities, CLI::GetParam<arma::mat>("probabilities"));
+    probabilities, CLI::GetParam<arma::mat>("probabilities"));
 }
 
 /**
@@ -372,11 +372,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingMinSamplesTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("min_samples", 10);
   SetInputParam("confidence", 0.25);
@@ -404,11 +404,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingMinSamplesTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("min_samples", 2000);
   SetInputParam("confidence", 0.25);
@@ -417,8 +417,8 @@ BOOST_AUTO_TEST_CASE(HoeffdingMinSamplesTest)
 
   // Check that small min_samples creates larger model.
   BOOST_REQUIRE_LT(
-      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(),
-      nodes);
+    (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(),
+    nodes);
 }
 
 /**
@@ -441,11 +441,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingMaxSamplesTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("max_samples", 50000);
   SetInputParam("confidence", 0.95);
@@ -473,11 +473,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingMaxSamplesTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("max_samples", 5);
   SetInputParam("confidence", 0.95);
@@ -486,7 +486,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingMaxSamplesTest)
 
   // Check that large max_samples creates smaller model.
   BOOST_REQUIRE_LT(nodes,
-      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
+                   (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
 }
 
 /**
@@ -509,11 +509,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingConfidenceTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("confidence", 0.95);
 
@@ -540,11 +540,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingConfidenceTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   // Model with low confidence.
   SetInputParam("confidence", 0.25);
@@ -552,7 +552,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingConfidenceTest)
   mlpackMain();
   // Check that higher confidence creates smaller tree.
   BOOST_REQUIRE_LT(nodes,
-      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
+                   (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
 }
 
 /**
@@ -575,11 +575,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingPassesTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("passes", 1);
 
@@ -606,11 +606,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingPassesTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   // Model with larger number of passes.
   SetInputParam("passes", 100);
@@ -619,7 +619,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingPassesTest)
 
   // Check that model with larger number of passes has greater number of nodes.
   BOOST_REQUIRE_LT(nodes,
-      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
+                   (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
 }
 
 /**
@@ -641,11 +641,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingBinarySplittingStrategyTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("numeric_split_strategy", (string) "binary");
   SetInputParam("max_samples", 50);
@@ -656,7 +656,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingBinarySplittingStrategyTest)
 
   // Check that number of children is 2.
   BOOST_REQUIRE_EQUAL(
-      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes()-1, 2);
+    (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes()-1, 2);
 }
 
 /**
@@ -679,11 +679,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingDomingosSplittingStrategyTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("numeric_split_strategy", (string) "domingos");
   SetInputParam("max_samples", 50);
@@ -714,11 +714,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingDomingosSplittingStrategyTest)
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("numeric_split_strategy", (string) "domingos");
   SetInputParam("max_samples", 50);
@@ -728,7 +728,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingDomingosSplittingStrategyTest)
 
   // Check that both models have different number of nodes.
   BOOST_CHECK_NE(
-      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(), nodes);
+    (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(), nodes);
 }
 
 /**
@@ -756,11 +756,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingBinningTest)
   modLabels = labels.cols(0, 49);
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, modData)));
+  SetInputParam("training", std::make_tuple(info, modData));
   SetInputParam("labels", std::move(modLabels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   SetInputParam("numeric_split_strategy", (string) "domingos");
   SetInputParam("min_samples", 10);
@@ -773,7 +773,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingBinningTest)
 
   // Check that no splitting has happened.
   BOOST_REQUIRE_EQUAL(
-      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(), 1);
+    (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(), 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
