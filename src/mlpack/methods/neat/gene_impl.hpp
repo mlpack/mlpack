@@ -18,53 +18,14 @@
 namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */{
 
-BaseGene::BaseGene(const size_t geneID) : geneID(geneID)
-{ /* Nothing to do here */ }
-
-template<class ActivationFunction>
-NodeGene<ActivationFunction>::NodeGene(const size_t geneID,
-                                       const ActivationFunction& actFn):
-    BaseGene(geneID),
-    actFn(actFn)
-{ /* Nothing to do here */ }
-
-template<class ActivationFunction>
-NodeGene<ActivationFunction>::~NodeGene()
-{ /* Nothing to do here */ }
-
-template<class ActivationFunction>
-double NodeGene<ActivationFunction>::Activate(const arma::vec& input,
-                                              const arma::vec& weights)
-{
-  return actFn.Fn(arma::dot(input, weights));
-}
-
-BiasGene::BiasGene(const size_t geneID,
-                   const double bias):
-    BaseGene(geneID),
-    bias(bias)
-{ /* Nothing to do here */ }
-
-double BiasGene::Activate()
-{
-  return bias;
-}
-
-void BiasGene::Mutate(const double mutationSize)
-{
-  bias += mutationSize * arma::randu<double>();
-}
-
-ConnectionGene::ConnectionGene(const size_t geneID,
-                               const size_t globalInnovationID,
+ConnectionGene::ConnectionGene(const size_t globalInnovationID,
                                const double weight,
-                               BaseGene* origin,
-                               BaseGene* destination):
-    BaseGene(geneID),
+                               const size_t source,
+                               const size_t target):
     globalInnovationID(globalInnovationID),
     weight(weight),
-    origin(origin),
-    destination(destination)
+    source(source),
+    target(target)
 { /* Nothing to do here */ }
 
 ConnectionGene::~ConnectionGene()

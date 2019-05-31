@@ -18,127 +18,23 @@ namespace mlpack{
 namespace neat /** NeuroEvolution of Augmenting Topologies */ {
 
 /**
- * Base Gene class.
- */
-class BaseGene
-{
- public:
-  /**
-   * Creates a base gene object.
-   * 
-   * @param geneID ID of the gene.
-   */
-  BaseGene(const size_t geneID);
-
-  //! Get the gene ID.
-  size_t getGeneID() const { return geneID; }
-  //! Set the gene ID.
-  size_t& setGeneID() { return geneID; }
-
- private:
-  //! The ID of the gene.
-  size_t geneID;
-};
-
-/**
- * Node gene class.
- * 
- * @tparam ActivationFunction The activation function to use.
- */
-template<class ActivationFunction>
-class NodeGene : public BaseGene
-{
- public:
-  /**
-   * Creates a node gene.
-   * 
-   * @param geneID ID of the gene.
-   * @param actFn The activation function used by the gene.
-   */ 
-  NodeGene(const size_t geneID,
-           const ActivationFunction& actFn);
-
-  /**
-   * Destroys the node gene.
-   */
-  ~NodeGene();
-
-  /**
-   * Computes the output of the node gene.
-   * 
-   * @param input The input of the node gene.
-   * @param weights The weights of the connection genes connected to this
-   *     node gene.
-   */
-  double Activate(const arma::vec& input,
-                  const arma::vec& weights);
-
- private:
-  //! Activation function.
-  ActivationFunction actFn;
-};
-
-/**
- * Bias gene class.
- */
-class BiasGene : public BaseGene
-{
- public:
-  /**
-   * Creates a bias gene.
-   * 
-   * @param geneID ID of the gene.
-   * @param bias The bias.
-   */
-  BiasGene(const size_t geneID,
-           const double bias);
-
-  /**
-   * Computes the output of the bias gene, which is it's bias.
-   */
-  double Activate();
-
-  /*
-   * Mutate the bias of the gene.
-   */
-  void Mutate(const double mutationSize);
-
-  //! Get the bias.
-  double getBias() const { return bias; }
-  //! Set the bias.
-  double& setBias() { return bias; }
-
-  //! Get the global innovation ID. It is always zero.
-  double getGlobalInnovationID() const { return globalInnovationID; }
-
- private:
-  //! Global innovation ID. It is always zero.
-  const size_t globalInnovationID = 0;
-
-  //! Bias.
-  double bias;
-};
-
-/**
  * Connection gene class.
  */
-class ConnectionGene : public BaseGene
+class ConnectionGene
 {
  public:
   /**
    * Creates a connection gene between two node genes.
-   * 
-   * @param geneID ID of the gene.
+   *
    * @param globalInnovationID The global innovation ID of the gene.
    * @param weight The weight of the connection.
-   * @param origin The origin of the connection.
-   * @param destination The destination of the connection.
+   * @param source The source of the connection.
+   * @param target The target of the connection.
    */
-  ConnectionGene(const size_t geneID,
-                 const size_t globalInnovationID,
+  ConnectionGene(const size_t globalInnovationID,
                  const double weight,
-                 BaseGene* origin,
-                 BaseGene* destination);
+                 const size_t source,
+                 const size_t target);
 
   /**
    * Destroys the connection gene.
@@ -147,7 +43,7 @@ class ConnectionGene : public BaseGene
 
   /*
    * Mutate the weights of the gene.
-   * 
+   *
    * @param mutationSize The strength of mutation noise to be added.
    */
   void Mutate(const double mutationSize);
@@ -162,15 +58,15 @@ class ConnectionGene : public BaseGene
   //! Set connection weight.
   double& setWeight() { return weight; }
 
-  //! Get origin gene.
-  BaseGene* getOrigin() const { return origin; }
-  //! Set origin gene.
-  BaseGene*& setOrigin() { return origin; }
+  //! Get Source gene.
+  size_t getSource() const { return Source; }
+  //! Set Source gene.
+  size_t& setSource() { return Source; }
 
-  //! Get destination gene.
-  BaseGene* getOrigin() const { return destination; }
-  //! Set destination gene.
-  BaseGene*& setOrigin() { return destination; }
+  //! Get target gene.
+  size_t getTarget() const { return target; }
+  //! Set target gene.
+  size_t& setTarget() { return target; }
 
  private:
   //! Global Innovation ID.
@@ -179,11 +75,11 @@ class ConnectionGene : public BaseGene
   //! Weight of the connection.
   double weight;
 
-  //! Origin gene.
-  BaseGene* origin;
+  //! Source gene.
+  size_t source;
 
-  //! Destination gene.
-  BaseGene* destination;
+  //! Target gene.
+  size_t target;
 };
 
 } // namespace neat
