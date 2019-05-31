@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeOutputDimensionTest)
   BOOST_REQUIRE_EQUAL(
     CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
-                      testSize);
+    testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
@@ -119,9 +119,9 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeCategoricalOutputDimensionTest)
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>
-                        ("predictions").n_cols, testSize);
+    ("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
-                      testSize);
+    testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
   BOOST_REQUIRE_EQUAL(
     CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
-                      testSize);
+    testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
@@ -262,7 +262,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(std::make_tuple(info, testData)));
   SetInputParam("input_model",
-                CLI::GetParam<HoeffdingTreeModel*>("output_model"));
+    CLI::GetParam<HoeffdingTreeModel*>("output_model"));
 
   mlpackMain();
 
@@ -329,7 +329,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelCategoricalReuseTest)
   // Input trained model.
   SetInputParam("test", std::move(std::make_tuple(info, testData)));
   SetInputParam("input_model",
-                CLI::GetParam<HoeffdingTreeModel*>("output_model"));
+    CLI::GetParam<HoeffdingTreeModel*>("output_model"));
 
   mlpackMain();
 
@@ -486,7 +486,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingMaxSamplesTest)
 
   // Check that large max_samples creates smaller model.
   BOOST_REQUIRE_LT(nodes,
-                   (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
+    (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
 }
 
 /**
@@ -552,7 +552,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingConfidenceTest)
   mlpackMain();
   // Check that higher confidence creates smaller tree.
   BOOST_REQUIRE_LT(nodes,
-                   (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
+    (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
 }
 
 /**
@@ -619,7 +619,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingPassesTest)
 
   // Check that model with larger number of passes has greater number of nodes.
   BOOST_REQUIRE_LT(nodes,
-                   (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
+    (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
 }
 
 /**
