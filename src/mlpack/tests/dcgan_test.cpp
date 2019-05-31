@@ -269,7 +269,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
       14, 14);
   generator.Add<TanHLayer<> >();
 
-  // Create DCGAN
+  // Create DCGAN.
   GaussianInitialization gaussian(0, 1);
   ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
       tolerance, shuffle);

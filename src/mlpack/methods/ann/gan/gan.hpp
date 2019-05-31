@@ -406,26 +406,6 @@ class GAN
 } // namespace ann
 } // namespace mlpack
 
-//! Set the serialization version of the GAN class.  Multiple template arguments
-//! makes this ugly...
-namespace boost {
-namespace serialization {
-
-template<
-  typename Model,
-  typename InitializationRuleType,
-  typename Noise,
-  typename PolicyType
->
-struct version<
-    mlpack::ann::GAN<Model, InitializationRuleType, Noise, PolicyType>>
-{
-  BOOST_STATIC_CONSTANT(int, value = 1);
-};
-
-} // namespace serialization
-} // namespace boost
-
 // Include implementation.
 #include "gan_impl.hpp"
 #include "wgan_impl.hpp"
