@@ -98,10 +98,11 @@ class GAN
   GAN(GAN&&);
 
   /**
-   * Prepare the network for the given data.
+   * Intialize the generator, discriminator and weights of the model for
+   * training.
    * This function won't actually trigger training process.
    *
-   * @param trainData The real data.
+   * @param trainData The data points of real distribution.
    */
   void ResetData(arma::mat trainData);
 
@@ -111,7 +112,7 @@ class GAN
   /**
    * Train function.
    *
-   * @param trainData The real data.
+   * @param trainData The data points of real distribution.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType>
@@ -399,26 +400,6 @@ class GAN
 
 } // namespace ann
 } // namespace mlpack
-
-//! Set the serialization version of the GAN class.  Multiple template arguments
-//! makes this ugly...
-namespace boost {
-namespace serialization {
-
-template<
-  typename Model,
-  typename InitializationRuleType,
-  typename Noise,
-  typename PolicyType
->
-struct version<
-    mlpack::ann::GAN<Model, InitializationRuleType, Noise, PolicyType>>
-{
-  BOOST_STATIC_CONSTANT(int, value = 1);
-};
-
-} // namespace serialization
-} // namespace boost
 
 // Include implementation.
 #include "gan_impl.hpp"

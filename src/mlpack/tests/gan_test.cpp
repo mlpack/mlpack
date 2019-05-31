@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(GANTest)
   trainData.imbue( [&]() { return arma::as_scalar(RandNormal(4, 0.5));});
   trainData = arma::sort(trainData);
 
-  // Create the Discriminator network
+  // Create the Discriminator network.
   FFN<SigmoidCrossEntropyError<> > discriminator;
   discriminator.Add<Linear<> > (
       generatorOutputSize, discriminatorHiddenLayerSize * 2);
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(GANTest)
   discriminator.Add<Linear<> > (
       discriminatorHiddenLayerSize * 2, discriminatorOutputSize);
 
-  // Create the Generator network
+  // Create the Generator network.
   FFN<SigmoidCrossEntropyError<> > generator;
   generator.Add<Linear<> >(noiseDim, generatorHiddenLayerSize);
   generator.Add<SoftPlusLayer<> >();
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(GANTest)
   parameters.load("preTrainedGAN.arm");
   gan.Parameters() = parameters;
 
-  // Generate samples
+  // Generate samples.
   Log::Info << "Sampling..." << std::endl;
   arma::mat noise(noiseDim, batchSize);
 
@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
             << trainData.n_cols << ")" << std::endl;
   Log::Info << trainData.n_rows << "--------" << trainData.n_cols << std::endl;
 
-  // Create the Discriminator network
+  // Create the Discriminator network.
   FFN<SigmoidCrossEntropyError<> > discriminator;
   discriminator.Add<Convolution<> >(1, dNumKernels, 5, 5, 1, 1, 2, 2, 28, 28);
   discriminator.Add<ReLULayer<> >();
@@ -186,7 +186,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
   discriminator.Add<ReLULayer<> >();
   discriminator.Add<Linear<> >(1024, 1);
 
-  // Create the Generator network
+  // Create the Generator network.
   FFN<SigmoidCrossEntropyError<> > generator;
   generator.Add<Linear<> >(noiseDim, 3136);
   generator.Add<BatchNorm<> >(3136);
@@ -203,7 +203,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
   generator.Add<Convolution<> >(noiseDim / 4, 1, 3, 3, 2, 2, 1, 1, 56, 56);
   generator.Add<TanHLayer<> >();
 
-  // Create GAN
+  // Create GAN.
   GaussianInitialization gaussian(0, 1);
   ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
       tolerance, shuffle);
@@ -271,7 +271,7 @@ BOOST_AUTO_TEST_CASE(GANMemorySharingTest)
   trainData.imbue( [&]() { return arma::as_scalar(RandNormal(4, 0.5));});
   trainData = arma::sort(trainData);
 
-  // Create the Discriminator network
+  // Create the Discriminator network.
   FFN<SigmoidCrossEntropyError<> > discriminator;
   discriminator.Add<Linear<> > (
       generatorOutputSize, discriminatorHiddenLayerSize * 2);
@@ -285,13 +285,13 @@ BOOST_AUTO_TEST_CASE(GANMemorySharingTest)
   discriminator.Add<Linear<> > (
       discriminatorHiddenLayerSize * 2, discriminatorOutputSize);
 
-  // Create the Generator network
+  // Create the Generator network.
   FFN<SigmoidCrossEntropyError<> > generator;
   generator.Add<Linear<> >(noiseDim, generatorHiddenLayerSize);
   generator.Add<SoftPlusLayer<> >();
   generator.Add<Linear<> >(generatorHiddenLayerSize, generatorOutputSize);
 
-  // Create GAN
+  // Create GAN.
   GaussianInitialization gaussian(0, 0.1);
   ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
       tolerance, shuffle);
