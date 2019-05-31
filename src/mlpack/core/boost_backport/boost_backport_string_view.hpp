@@ -24,4 +24,16 @@
   #include <boost/utility/string_view.hpp>
 #endif
 
+namespace boost
+{
+  template<>
+  struct hash<boost::string_view>
+  {
+    std::size_t operator()(boost::string_view str) const
+    {
+      return boost::hash_range<const char*>(str.begin(), str.end());
+    }
+  };
+}
+
 #endif // MLPACK_CORE_BOOST_BACKPORT_STRING_VIEW_HPP

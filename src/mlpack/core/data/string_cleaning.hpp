@@ -21,15 +21,6 @@ std::string stopwords =
 #include "mlpack/core/data/stopwords.txt"
 ;
 
-class Hasher
-{
- public:
-  std::size_t operator()(boost::string_view str) const
-  {
-    return boost::hash_range<const char*>(str.begin(), str.end());
-  }
-};
-
 namespace mlpack {
 namespace data {
 
@@ -78,7 +69,8 @@ void RemoveStopWords(std::vector<std::string>& input, TokenizerType tokenizer)
 {
   boost::string_view strView(stopwords);
   boost::string_view token;
-  std::unordered_map<boost::string_view, std::size_t, Hasher> stopword;
+  std::unordered_map<boost::string_view, std::size_t,
+      boost::hash<boost::string_view>> stopword;
   data::Strtok split("\n");
   token = split(strView);
   while (!token.empty())
