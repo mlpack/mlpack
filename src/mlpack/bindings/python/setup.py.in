@@ -29,6 +29,12 @@ if not '${OpenMP_CXX_FLAGS}':
 else:
   extra_link_args=['${OpenMP_CXX_FLAGS}']
 
+# Get list of library dirs.
+library_dirs = filter(None, ['${MLPACK_LIBDIR}'] +
+    '${BOOST_LIBDIRS}'.split(' '))
+if library_dirs == []:
+  library_dirs = None
+
 # Only build the extensions if we are asked to.
 if os.getenv('NO_BUILD') == '1':
   modules = []
@@ -56,8 +62,7 @@ else:
                       '${CYTHON_INCLUDE_DIRECTORIES}'.split(' '),
                   libraries=['${MLPACK_LIB_NAME}',
                              '${Boost_SERIALIZATION_LIB_NAME}'],
-                  library_dirs=filter(None, ['${MLPACK_LIBDIR}'] +
-                                '${BOOST_LIBDIRS}'.split(' ')),
+                  library_dirs=library_dirs,
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
                   extra_link_args=extra_link_args,
@@ -75,8 +80,7 @@ else:
                       '${CYTHON_INCLUDE_DIRECTORIES}'.split(' '),
                   libraries=['${MLPACK_LIB_NAME}',
                              '${Boost_SERIALIZATION_LIB_NAME}'],
-                  library_dirs=filter(None, ['${MLPACK_LIBDIR}'] +
-                                '${BOOST_LIBDIRS}'.split(' ')),
+                  library_dirs=library_dirs,
                   # CMAKE_CXX_FLAGS seems to have an extra space.
                   extra_compile_args=extra_args,
                   extra_link_args=extra_link_args,
