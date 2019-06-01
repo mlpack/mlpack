@@ -187,6 +187,26 @@ BOOST_AUTO_TEST_CASE(RandomForestMinimumLeafSizeTest)
 }
 
 /**
+ * Make sure maximum depth specified is always a positive number.
+ */
+BOOST_AUTO_TEST_CASE(RandomForestMaximumDepthTest)
+{
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
+    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+
+  SetInputParam("maximum_depth", (int) 0); // Invalid.
+
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
  * Make sure only one of training data or pre-trained model is passed.
  */
 BOOST_AUTO_TEST_CASE(RandomForestTrainingVerTest)

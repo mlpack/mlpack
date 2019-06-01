@@ -50,6 +50,7 @@ class RandomForest
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
+   * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
   template<typename MatType>
@@ -59,6 +60,7 @@ class RandomForest
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 20,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -77,6 +79,7 @@ class RandomForest
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
+   * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
   template<typename MatType>
@@ -87,6 +90,7 @@ class RandomForest
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 20,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -101,6 +105,9 @@ class RandomForest
    * @param weights Weights (importances) of each point in the dataset.
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
+   * @param minimumGainSplit Minimum gain for splitting a decision tree node.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
    */
   template<typename MatType>
   RandomForest(const MatType& dataset,
@@ -110,6 +117,7 @@ class RandomForest
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 20,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -129,6 +137,7 @@ class RandomForest
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
+   * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
   template<typename MatType>
@@ -140,6 +149,7 @@ class RandomForest
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 20,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -156,6 +166,7 @@ class RandomForest
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
+   * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
@@ -166,6 +177,7 @@ class RandomForest
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 20,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -185,6 +197,7 @@ class RandomForest
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
+   * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
@@ -196,6 +209,7 @@ class RandomForest
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 20,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -213,6 +227,7 @@ class RandomForest
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
+   * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
@@ -224,6 +239,7 @@ class RandomForest
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 20,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -243,6 +259,7 @@ class RandomForest
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
+   * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
@@ -255,6 +272,7 @@ class RandomForest
                const size_t numTrees = 20,
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 20,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -334,6 +352,7 @@ class RandomForest
    * @param numTrees Number of trees in the forest.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
+   * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    * @tparam UseWeights Whether or not to use the weights parameter.
    * @tparam UseDatasetInfo Whether or not to use the datasetInfo parameter.
@@ -349,6 +368,7 @@ class RandomForest
                const size_t numTrees,
                const size_t minimumLeafSize,
                const double minimumGainSplit,
+               const size_t maximumDepth,
                DimensionSelectionType& dimensionSelector);
 
   //! The trees in the forest.

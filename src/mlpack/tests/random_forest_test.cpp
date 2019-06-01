@@ -223,7 +223,7 @@ BOOST_AUTO_TEST_CASE(UnweightedCategoricalLearningTest)
 
   // Train a random forest and a decision tree.
   RandomForest<> rf(trainingData, di, trainingLabels, 5, 25 /* 25 trees */, 1,
-      1e-7, MultipleRandomDimensionSelect(4));
+      1e-7, 20, MultipleRandomDimensionSelect(4));
   DecisionTree<> dt(trainingData, di, trainingLabels, 5, 5);
 
   // Get performance statistics on test data.
@@ -281,7 +281,7 @@ BOOST_AUTO_TEST_CASE(WeightedCategoricalLearningTest)
 
   // Build a random forest and a decision tree.
   RandomForest<> rf(fullData, di, fullLabels, 5, weights, 25 /* 25 trees */, 1,
-      1e-7, MultipleRandomDimensionSelect(4));
+      1e-7, 20, MultipleRandomDimensionSelect(4));
   DecisionTree<> dt(fullData, di, fullLabels, 5, weights, 5);
 
   // Get performance statistics on test data.
@@ -445,14 +445,14 @@ BOOST_AUTO_TEST_CASE(RandomForestCategoricalTrainReturnEntropy)
   // Test random forest on unweighted categorical dataset.
   RandomForest<> rf;
   double entropy = rf.Train(fullData, di, fullLabels, 5, 15 /* 15 trees */, 1,
-      1e-7, MultipleRandomDimensionSelect(3));
+      1e-7, 20, MultipleRandomDimensionSelect(3));
 
   BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
 
   // Test random forest on weighted categorical dataset.
   RandomForest<> wrf;
   entropy = wrf.Train(fullData, di, fullLabels, 5, weights, 15 /* 15 trees */,
-      1, 1e-7, MultipleRandomDimensionSelect(3));
+      1, 1e-7, 20, MultipleRandomDimensionSelect(3));
 
   BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
 }

@@ -50,7 +50,9 @@ PROGRAM_INFO("Random forests",
     " controls the number of trees in the random forest.  The " +
     PRINT_PARAM_STRING("minimum_gain_split") + " parameter controls the minimum"
     " required gain for a decision tree node to split.  Larger values will "
-    "force higher-confidence splits.  The " +
+    "force higher-confidence splits. The " +
+    PRINT_PARAM_STRING("maximum_depth") + " parameter specifies "
+    "the maximum depth of the tree.  The " +
     PRINT_PARAM_STRING("subspace_dim") + " parameter is used to control the "
     "number of random dimensions chosen for an individual node's split.  If " +
     PRINT_PARAM_STRING("print_training_accuracy") + " is specified, the "
@@ -105,7 +107,8 @@ PARAM_FLAG("print_training_accuracy", "If set, then the accuracy of the model "
 PARAM_INT_IN("num_trees", "Number of trees in the random forest.", "N", 10);
 PARAM_INT_IN("minimum_leaf_size", "Minimum number of points in each leaf "
     "node.", "n", 1);
-
+PARAM_INT_IN("maximum_depth", "Maximum Depth of the tree.", "D",
+    20);
 PARAM_MATRIX_OUT("probabilities", "Predicted class probabilities for each "
     "point in the test set.", "P");
 PARAM_UROW_OUT("predictions", "Predicted classes for each point in the test "
@@ -177,6 +180,8 @@ static void mlpackMain()
 
   RequireParamValue<int>("minimum_leaf_size", [](int x) { return x > 0; }, true,
       "minimum leaf size must be greater than 0");
+  RequireParamValue<int>("maximum_depth", [](int x) { return x > 0; }, true,
+      "depth must be positive");
   RequireParamValue<int>("subspace_dim", [](int x) { return x >= 0; }, true,
       "subspace dimensionality must be nonnegative");
   RequireParamValue<double>("minimum_gain_split",
@@ -205,6 +210,7 @@ static void mlpackMain()
     const size_t numTrees = (size_t) CLI::GetParam<int>("num_trees");
     const size_t minimumLeafSize =
         (size_t) CLI::GetParam<int>("minimum_leaf_size");
+    const size_t maxDepth = (size_t) CLI::GetParam<int>("maximum_depth");
     const double minimumGainSplit = CLI::GetParam<double>("minimum_gain_split");
     const size_t randomDims = (CLI::GetParam<int>("subspace_dim") == 0) ?
         (size_t) std::sqrt(data.n_rows) :
@@ -218,7 +224,7 @@ static void mlpackMain()
 
     // Train the model.
     rfModel->rf.Train(data, labels, numClasses, numTrees, minimumLeafSize,
-        minimumGainSplit, mrds);
+        minimumGainSplit, maxDepth, mrds);
     Timer::Stop("rf_training");
 
     // Did we want training accuracy?

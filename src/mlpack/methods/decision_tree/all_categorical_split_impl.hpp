@@ -26,9 +26,14 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
+    const size_t maximumDepth,
     arma::Col<typename VecType::elem_type>& classProbabilities,
     AuxiliarySplitInfo<typename VecType::elem_type>& /* aux */)
 {
+  // First sanity check: if we have reached maximum depth, we can't split.
+  if (maximumDepth == 1)
+    return DBL_MAX;
+
   // Count the number of elements in each potential child.
   const double epsilon = 1e-7; // Tolerance for floating-point errors.
   arma::Col<size_t> counts(numCategories, arma::fill::zeros);
