@@ -312,6 +312,21 @@ BOOST_AUTO_TEST_CASE(GANMemorySharingTest)
   CheckMatrices(gan.Predictors(), gan.Discriminator().Predictors());
   CheckMatricesNotEqual(gan.Predictors().head_cols(trainData.n_cols),
       trainData);
+
+  // Check Label Smoothing.
+  gan.Train(trainData, optimizer, 0.8, 0.2);
+
+  arma::mat expectedResponses;
+  expectedResponses.set_size(1, 10000);
+  expectedResponses.fill(0.8);
+
+  arma::mat fakeResponses;
+  fakeResponses.set_size(1, batchSize);
+  fakeResponses.fill(0.2);
+
+  expectedResponses = arma::join_rows(expectedResponses, fakeResponses);
+
+  CheckMatrices(expectedResponses, gan.Discriminator().Responses());
 }
 
 BOOST_AUTO_TEST_SUITE_END();
