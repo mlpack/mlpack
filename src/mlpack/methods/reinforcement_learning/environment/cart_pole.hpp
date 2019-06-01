@@ -104,6 +104,7 @@ class CartPole
    * @param tau The time interval.
    * @param thetaThresholdRadians The maximum angle.
    * @param xThreshold The maximum position.
+   * @param doneReward Reward recieved on termination.
    */
   CartPole(const double gravity = 9.8,
            const double massCart = 1.0,
