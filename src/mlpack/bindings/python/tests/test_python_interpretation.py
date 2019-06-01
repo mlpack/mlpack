@@ -35,8 +35,8 @@ class TestPythonInterpretation(unittest.TestCase):
     weights = python_interpretation['p']['weights']
     biases = python_interpretation['p']['biases']
 
-    self.assertEqual(len(weights['item']), 20)
-    self.assertEqual(len(biases['item']), 2)
+    self.assertEqual(weights['item'].shape[0], 20)
+    self.assertEqual(biases['item'].shape[0], 2)
     self.assertEqual(weights['vec_state'], 'matrix')
     self.assertEqual(weights['n_elem'], 2.0 * 10.0)
     self.assertEqual(weights['n_cols'], 2.0)
@@ -53,7 +53,7 @@ class TestPythonInterpretation(unittest.TestCase):
     output = logistic_regression(labels=y, training=x)
     python_interpretation = pythonize_model.transform(output['output_model'])
     weights = python_interpretation['parameters']['item']
-    self.assertEqual(len(weights), 11)
+    self.assertEqual(weights.shape[0], 11)
     self.assertEqual(python_interpretation['parameters']['n_cols'], 11.0)
     self.assertEqual(python_interpretation['parameters']['n_rows'], 1.0)
 
