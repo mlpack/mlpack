@@ -57,7 +57,9 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     reset(false),
     deterministic(false),
     genWeights(0),
-    discWeights(0)
+    discWeights(0),
+    realLabel(0),
+    fakeLabel(0)
 {
   // Insert IdentityLayer for joining the Generator and Discriminator.
   this->discriminator.network.insert(
@@ -93,7 +95,9 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     noise(network.noise),
     deterministic(network.deterministic),
     genWeights(network.genWeights),
-    discWeights(network.discWeights)
+    discWeights(network.discWeights),
+    realLabel(network.realLabel),
+    fakeLabel(network.fakeLabel)
 {
   /* Nothing to do here */
 }
@@ -126,7 +130,9 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
     noise(std::move(network.noise)),
     deterministic(network.deterministic),
     genWeights(network.genWeights),
-    discWeights(network.discWeights)
+    discWeights(network.discWeights),
+    realLabel(network.realLabel),
+    fakeLabel(network.fakeLabel)
 {
   /* Nothing to do here */
 }
@@ -143,6 +149,8 @@ void GAN<Model, InitializationRuleType, Noise, PolicyType>::ResetData(
     double fakeLabel)
 {
   currentBatch = 0;
+  this->realLabel = realLabel;
+  this->fakeLabel = fakeLabel;
 
   numFunctions = trainData.n_cols;
   noise.set_size(noiseDim, batchSize);
@@ -225,8 +233,39 @@ template<
   typename Noise,
   typename PolicyType
 >
-template<typename OptimizerType, typename... CallbackTypes>
-double GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
+template<
+  typename Policy,
+  typename OptimizerType,
+  typename... CallbackTypes
+>
+typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
+                        std::is_same<Policy, DCGAN>::value, double>::type
+GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
+    arma::mat trainData,
+    OptimizerType& Optimizer,
+    double realLabel,
+    double fakeLabel,
+    CallbackTypes&&... callbacks)
+{
+  ResetData(std::move(trainData), realLabel, fakeLabel);
+
+  return Optimizer.Optimize(*this, parameter, callbacks...);
+}
+
+template<
+  typename Model,
+  typename InitializationRuleType,
+  typename Noise,
+  typename PolicyType
+>
+template<
+  typename Policy,
+  typename OptimizerType,
+  typename... CallbackTypes
+>
+typename std::enable_if<std::is_same<Policy, WGAN>::value ||
+                        std::is_same<Policy, WGANGP>::value, double>::type
+GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
     arma::mat trainData,
     OptimizerType& Optimizer,
     double realLabel,
@@ -287,8 +326,10 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
       boost::apply_visitor(outputParameterVisitor, generator.network.back());
   discriminator.Forward(std::move(predictors.cols(numFunctions,
       numFunctions + batchSize - 1)));
-  responses.cols(numFunctions, numFunctions + batchSize - 1) =
-      arma::zeros(1, batchSize);
+
+  arma::mat fakeResponses(1, batchSize);
+  fakeResponses.fill(fakeLabel);
+  responses.cols(numFunctions, numFunctions + batchSize - 1) = fakeResponses;
 
   currentTarget = arma::mat(responses.memptr() + numFunctions,
       1, batchSize, false, false);
@@ -360,8 +401,10 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   generator.Forward(std::move(noise));
   predictors.cols(numFunctions, numFunctions + batchSize - 1) =
       boost::apply_visitor(outputParameterVisitor, generator.network.back());
-  responses.cols(numFunctions, numFunctions + batchSize - 1) =
-      arma::zeros(1, batchSize);
+
+  arma::mat fakeResponses(1, batchSize);
+  fakeResponses.fill(fakeLabel);
+  responses.cols(numFunctions, numFunctions + batchSize - 1) = fakeResponses;
 
   // Get the gradients of the Generator.
   res += discriminator.EvaluateWithGradient(discriminator.parameter,
@@ -372,8 +415,9 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   {
     // Minimize -log(D(G(noise))).
     // Pass the error from Discriminator to Generator.
-    responses.cols(numFunctions, numFunctions + batchSize - 1) =
-        arma::ones(1, batchSize);
+    arma::mat fakeResponses(1, batchSize);
+    fakeResponses.fill(realLabel);
+    responses.cols(numFunctions, numFunctions + batchSize - 1) = fakeResponses;
     discriminator.Gradient(discriminator.parameter, numFunctions,
         noiseGradientDiscriminator, batchSize);
     generator.error = boost::apply_visitor(deltaVisitor,

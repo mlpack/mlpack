@@ -114,7 +114,7 @@ class GAN
   void Reset();
 
   /**
-   * Train function.
+   * Train function for standard GAN and DCGAN.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @tparam CallbackTypes Types of Callback functions.
@@ -126,12 +126,44 @@ class GAN
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
-  template<typename OptimizerType, typename... CallbackTypes>
-  double Train(arma::mat trainData,
-               OptimizerType& Optimizer,
-               double realLabel = 1.0,
-               double fakeLabel = 0.0,
-               CallbackTypes&&... callbacks);
+  template<
+    typename Policy = PolicyType,
+    typename OptimizerType,
+    typename... CallbackTypes
+  >
+  typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
+                          std::is_same<Policy, DCGAN>::value, double>::type
+  Train(arma::mat trainData,
+        OptimizerType& Optimizer,
+        double realLabel = 1.0,
+        double fakeLabel = 0.0,
+        CallbackTypes&&... callbacks);
+
+  /**
+   * Train function for WGAN and WGANGP.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback functions.
+   * @param trainData The data points of real distribution.
+   * @param optimizer Instantiated optimizer used to train the model.
+   * @param realLabel The label for data points from real distribution.
+   * @param fakeLabel The label for data points which are generated.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return The final objective of the trained model (NaN or Inf on error).
+   */
+  template<
+    typename Policy = PolicyType,
+    typename OptimizerType,
+    typename... CallbackTypes
+  >
+  typename std::enable_if<std::is_same<Policy, WGAN>::value ||
+                          std::is_same<Policy, WGANGP>::value, double>::type
+  Train(arma::mat trainData,
+        OptimizerType& Optimizer,
+        double realLabel = 1.0,
+        double fakeLabel = -1.0,
+        CallbackTypes&&... callbacks);
 
   /**
    * Evaluate function for the Standard GAN and DCGAN.
@@ -409,6 +441,10 @@ class GAN
   size_t genWeights;
   //! To keep track of number of discriminator weights in total weights.
   size_t discWeights;
+  //! Responses for data points in real distribution.
+  double realLabel;
+  //! Responses for data points which are generated.
+  double fakeLabel;
 };
 
 } // namespace ann
