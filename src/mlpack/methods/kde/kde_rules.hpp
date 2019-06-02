@@ -34,8 +34,12 @@ class KDERules
    * @param densities Vector where estimations will be written.
    * @param relError Relative error tolerance.
    * @param absError Absolute error tolerance.
+   * @param MCProb Probability of relative error compliance for Monte Carlo
+                   estimations.
    * @param metric Instantiated metric.
    * @param kernel Instantiated kernel.
+   * @param monteCarlo If true Monte Carlo estimations will be applied when
+   *                   possible.
    * @param sameSet True if query and reference sets are the same
    *                (monochromatic evaluation).
    */
@@ -44,8 +48,10 @@ class KDERules
            arma::vec& densities,
            const double relError,
            const double absError,
+           const double MCProb,
            MetricType& metric,
            KernelType& kernel,
+           const bool monteCarlo,
            const bool sameSet);
 
   //! Base Case.
@@ -105,11 +111,17 @@ class KDERules
   //! Relatve error tolerance.
   const double relError;
 
+  //! Probability of relative error compliance for Monte Carlo estimations.
+  const double MCProb;
+
   //! Instantiated metric.
   MetricType& metric;
 
   //! Instantiated kernel.
   KernelType& kernel;
+
+  //! Whether Monte Carlo estimations are going to be applied.
+  const bool monteCarlo;
 
   //! Whether reference and query sets are the same.
   const bool sameSet;

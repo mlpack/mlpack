@@ -16,6 +16,9 @@
 // In case it hasn't been included yet.
 #include "kde_rules.hpp"
 
+// Used for Monte Carlo estimation.
+#include <boost/math/distributions/normal.hpp>
+
 namespace mlpack {
 namespace kde {
 
@@ -26,16 +29,20 @@ KDERules<MetricType, KernelType, TreeType>::KDERules(
     arma::vec& densities,
     const double relError,
     const double absError,
+    const double MCProb,
     MetricType& metric,
     KernelType& kernel,
+    const bool monteCarlo,
     const bool sameSet) :
     referenceSet(referenceSet),
     querySet(querySet),
     densities(densities),
     absError(absError),
     relError(relError),
+    MCProb(MCProb),
     metric(metric),
     kernel(kernel),
+    monteCarlo(monteCarlo),
     sameSet(sameSet),
     lastQueryIndex(querySet.n_cols),
     lastReferenceIndex(referenceSet.n_cols),
@@ -100,6 +107,10 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     bound = maxKernel - minKernel;
   }
 
+  // TODO Just for testing purposes.
+  const size_t initialSamples = 30;
+  const size_t t = 5;
+
   if (newCalculations &&
       bound <= (absError + relError * minKernel) / referenceSet.n_cols)
   {
@@ -118,6 +129,51 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     }
 
     densities(queryIndex) += referenceNode.NumDescendants() * kernelValue;
+
+    // Don't explore this tree branch.
+    score = DBL_MAX;
+  }
+  else if (monteCarlo &&
+           referenceNode.NumDescendants() >= t * initialSamples &&
+           std::is_same<KernelType, kernel::GaussianKernel>::value)
+  {
+    // Monte Carlo probabilistic estimation.
+    const double currentAlpha =
+        MCProb / std::pow(2, referenceNode.Stat().Depth());
+    const boost::math::normal normalDist;
+    const double z = boost::math::quantile(normalDist, currentAlpha / 2);
+    const size_t numDesc = referenceNode.NumDescendants();
+    arma::vec sample;
+    size_t m = initialSamples;
+    double meanSample;
+    while (m > 0)
+    {
+      const size_t oldSize = sample.size();
+      sample.resize(oldSize + m);
+      for (size_t i = 0; i < m; ++i)
+      {
+        // Sample and evaluate random points from the reference node.
+        const size_t randomPoint = math::RandInt(0, numDesc);
+        sample(oldSize + i) =
+            EvaluateKernel(queryIndex, referenceNode.Descendant(randomPoint));
+      }
+      meanSample = arma::mean(sample);
+      const double stddev = arma::stddev(sample);
+      minKernel +=
+          numDesc * (meanSample - (z * stddev) / (std::sqrt(sample.size())));
+      const double numerator = numDesc + relError * numDesc;
+      const double denominator = relError * (minKernel + numDesc * meanSample);
+      size_t mThresh = z * stddev * (numerator / denominator);
+      mThresh *= mThresh;
+
+      if (sample.size() < mThresh)
+        m = mThresh - sample.size();
+      else
+        m = 0;
+    }
+
+    // Update density.
+    densities(queryIndex) += numDesc * meanSample;
 
     // Don't explore this tree branch.
     score = DBL_MAX;
